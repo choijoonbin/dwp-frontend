@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import {
   Tree,
   formatFiles,
@@ -6,7 +8,6 @@ import {
   readJson,
   updateJson,
 } from '@nx/devkit';
-import * as path from 'path';
 
 interface NewRemoteSchema {
   name: string;
