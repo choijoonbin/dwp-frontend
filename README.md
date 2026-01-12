@@ -2,8 +2,8 @@
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
-Nx Monorepo 구조를 **준비**한 DWP 프론트엔드 워크스페이스입니다.  
-현재는 **Vite 기반 Host/Remote 개발환경**을 우선 구성해 빠르게 UI/테마/공통 라이브러리 분리를 완료했고, 추후 **Webpack Module Federation(MFE)** 으로 확장할 수 있도록 디렉토리/포트/공통 모듈 규칙을 정리했습니다.
+Nx Monorepo 구조를 기반으로 구축된 DWP 프론트엔드 워크스페이스입니다.  
+현재 **Host(Shell)와 Remote(Mail) 구조**가 Vite 기반으로 구성되어 있으며, 공통 UI 라이브러리(`design-system`)와 유틸리티(`shared-utils`)를 통해 마이크로 프론트엔드(MFE) 아키텍처를 실현하고 있습니다.
 
 ## 📋 목차
 
@@ -18,228 +18,110 @@ Nx Monorepo 구조를 **준비**한 DWP 프론트엔드 워크스페이스입니
 
 ## 🛠 기술 스택
 
-- **Framework**: React + TypeScript
+- **Framework**: React 18+ + TypeScript
 - **UI**: MUI v5 (Minimal UI Kit 기반)
-- **Icons**: `@iconify/react` + 템플릿 Icon registry
+- **Icons**: `@iconify/react` (표준 아이콘 시스템)
+- **State Management**: 
+  - **Global/Layout**: `Zustand` (Sidebar, Auth 상태 통합 관리)
+  - **Server Data**: `TanStack Query` (사용 준비 완료)
 - **Build/Dev**: Vite
-- **Monorepo (준비)**: Nx 스타일 디렉토리/설정(`nx.json`, `tsconfig.base.json`)
+- **Monorepo**: Nx (apps/libs 구조 및 Path Aliases 적용)
 
 ## 🏗 아키텍처
 
 ### Host / Remotes
 
-- **Host 앱 (`apps/dwp`)**: 레이아웃(사이드바/상단바) + 라우팅 + Remote가 들어올 공간(페이지/Outlet)을 제공
-- **Remote 앱들 (`apps/remotes/*`)**: 독립 실행 가능한 기능 모듈 (현재 `mail`만 샘플 구현)
+- **Host 앱 (`apps/dwp`)**: 메인 쉘(Shell). 전체 레이아웃 소유, 인증 관리, 글로벌 네비게이션 제공.
+- **Remote 앱들 (`apps/remotes/*`)**: 독립적인 비즈니스 모듈 (예: `mail`, `chat`, `approval`).
 - **공통 라이브러리**
-  - `libs/design-system`: 템플릿 테마/컴포넌트/훅을 공통화
-  - `libs/shared-utils`: API base URL, API 함수, axiosInstance(현재는 fetch 기반 wrapper)
-
-### 상태 (중요)
-
-- **Nx / Module Federation**: 현재 워크스페이스는 *Nx 폴더 구조와 설정을 “준비”한 단계*입니다.  
-  실제 `nx serve` / Webpack Module Federation 설정은 다음 단계에서 적용합니다.
+  - `libs/design-system`: 공통 테마(ThemeProvider), 전역 스타일, 재사용 컴포넌트, 공유 훅.
+  - `libs/shared-utils`: API 클라이언트(axiosInstance), 인증 처리(Auth), 공통 타입 및 유틸.
 
 ## 📁 프로젝트 구조
 
 ```
 dwp-frontend/
 ├── apps/
-│   ├── dwp/                  # Host (Vite) - port 4200
-│   │   ├── index.html
-│   │   └── src/
-│   │       ├── layouts/       # DashboardLayout 기반 레이아웃
-│   │       ├── routes/        # react-router 구성
-│   │       ├── pages/         # Dashboard/Mail/Chat/Approval
-│   │       └── features/
-│   │           └── health/    # Main API Health Check UI
+│   ├── dwp/                  # Host (Shell) - port 4200
+│   │   ├── src/
+│   │   │   ├── layouts/       # Zustand 기반 DashboardLayout (Sidebar/Header)
+│   │   │   ├── store/         # useLayoutStore (Zustand)
+│   │   │   ├── routes/        # react-router (AuthGuard 적용 가능 구조)
+│   │   │   └── pages/         # Dashboard, Sign-in, Feature Pages
 │   └── remotes/
-│       └── mail/             # Remote (Vite) - port 4201
-│           ├── vite.config.ts
-│           └── src/
-│               └── mail-app.tsx
+│       └── mail/             # Remote (Mail) - port 4201
 │
 ├── libs/
-│   ├── design-system/         # 공통 테마/컴포넌트/훅
+│   ├── design-system/         # UI 표준 라이브러리
 │   │   └── src/
-│   │       ├── theme/         # ThemeProvider + light/dark 토글
-│   │       ├── components/    # Iconify/Label/Scrollbar 등
-│   │       └── hooks/         # router hooks 등
-│   └── shared-utils/          # API/유틸
+│   │       ├── theme/         # MUI Theme + Dark/Light 토글 로직
+│   │       └── components/    # Logo V3, Iconify, Workspaces, Label 등 공통 컴포넌트
+│   └── shared-utils/          # 공통 비즈니스 로직
 │       └── src/
-│           ├── env.ts
-│           ├── axios-instance.ts
-│           └── api/
-│               └── main-api.ts
-│
-├── vite.config.ts             # Host Vite config (apps/dwp root)
-├── nx.json                    # Nx workspace layout (준비)
-├── tsconfig.base.json         # TS path aliases
-└── package.json
+│           ├── auth/          # AuthProvider, useAuth, JWT 스토리지
+│           ├── api/           # auth-api, main-api 등 실제 엔드포인트 호출
+│           ├── axios-instance.ts # fetch 기반 axios-like wrapper (Auth 헤더 자동 포함)
+│           └── types.ts       # ApiResponse<T> 등 공통 타입 정의
 ```
 
 ## 🔌 포트 할당 규칙
 
 | 앱 | 포트 | 역할 |
 |---|---:|---|
-| dwp | 4200 | Host 앱 |
-| mail | 4201 | Remote 앱 |
-| chat | 4202 | Remote 앱 (예정) |
-| approval | 4203 | Remote 앱 (예정) |
+| dwp | 4200 | Host 앱 (Main Shell) |
+| mail | 4201 | Remote 앱 (메일 모듈) |
+| chat | 4202 | Remote 앱 (채팅 모듈 - 예정) |
+| approval | 4203 | Remote 앱 (결재 모듈 - 예정) |
 
-- **규칙**: Host는 `4200`, Remote는 `4201`부터 순차 할당
-- **Remote 추가 시**: 다음 Remote는 `4202`, 그 다음은 `4203`… (중복 금지)
+- **규칙**: Host는 `4200`, Remote는 `4201`부터 순차 할당. 중복 절대 금지.
 
 ## 🔧 환경 변수(.env) 구성
 
-운영 배포를 대비해 API 엔드포인트는 **환경 변수 `NX_API_URL`**로 주입됩니다.
+API 엔드포인트는 **환경 변수 `NX_API_URL`**로 주입됩니다.
 
-- **local**: `.env`
+- **local**: `.env` (개발 시 localhost:8080 주소 등 설정)
 - **dev**: `.env.dev`
 - **prod**: `.env.prod`
 
-예시:
-
-```bash
-# .env (local)
-NX_API_URL=http://localhost:8080
-```
-
-> **참고**
->
-> 현재(현 단계) 워크스페이스는 **Vite**에서 `loadEnv()`로 위 파일들을 읽고, 빌드/실행 시 `define`으로
-> `process.env.NX_API_URL`을 **빌드 타임 주입**합니다.
->
-> - Host: `vite.config.ts`
-> - Remote 예시(mail): `apps/remotes/mail/vite.config.ts`
->
-> **Nx + Webpack Module Federation 전환 시(향후)**에는 `webpack.config.js`(또는 federation config)에서
-> `DefinePlugin`으로 `process.env.NX_API_URL`을 동일하게 주입해야 합니다.
->
-> 예시(개념):
->
-> ```js
-> // webpack.config.js (concept)
-> plugins: [
->   new webpack.DefinePlugin({
->     'process.env.NX_API_URL': JSON.stringify(process.env.NX_API_URL ?? 'http://localhost:8080'),
->   }),
-> ]
-> ```
+Vite의 `define` 설정을 통해 `process.env.NX_API_URL` 형태로 코드 어디서든 참조 가능합니다.
 
 ## 🚀 시작하기
 
-### 설치
+### 설치 및 실행
 
 ```bash
 npm install
-```
-
-### Host 실행 (local)
-
-```bash
-npm run dev
-```
-
-- 접속: `http://localhost:4200`
-
-### Host 실행 (dev 모드)
-
-```bash
-npm run dev:dev
-```
-
-### Remote(mail) 실행 (local)
-
-```bash
-npm run dev:mail
-```
-
-- 접속: `http://localhost:4201`
-
-### Remote(mail) 실행 (dev 모드)
-
-```bash
-npm run dev:mail:dev
-```
-
-### 빌드 (prod 모드)
-
-```bash
-npm run build
-npm run build:mail
+npm run dev      # Host(4200) 실행
+npm run dev:mail # Remote Mail(4201) 실행
 ```
 
 ## ✅ 주요 구현
 
-### 테마/다크모드 토글
+### 1. 인증 시스템 (Auth)
+- **AuthProvider**: `libs/shared-utils`에 위치하며 JWT 토큰 저장 및 자동 `Authorization` 헤더 주입 기능을 포함합니다.
+- **Sign-in**: 실제 `dwp-auth-server`의 `/api/auth/login` 엔드포인트와 연동되도록 설계되었습니다.
 
-- `libs/design-system`의 `ThemeProvider`가 전역 테마를 제공
-- 상단바에서 **Light/Dark 토글** 가능 (localStorage에 저장)
+### 2. 고도화된 사이드바 및 레이아웃 (Zustand)
+- **Dynamic Sidebar**: `Zustand` 기반으로 확장(300px) 및 축소(88px) 기능을 제공합니다.
+- **Micro UI Optimization**: 축소 시 메뉴 아이템 사이즈를 **79*58**로 고정하고, 아이콘 아래에 메뉴명을 배치하여 가독성을 극대화했습니다.
+- **Grouped Menu**: 메뉴를 'Management', 'Apps' 등 논리적 그룹으로 분리하고 독립적인 컨테이너(`Box`)로 감싸 정교한 CSS 관리가 가능합니다.
+- **Header Workspace**: 팀 선택기(`WorkspacesPopover`)를 사이드바에서 상단 헤더 좌측으로 이동하여 접근성을 높였습니다.
 
-### Host 레이아웃
+### 3. DWP V3 로고 시스템
+- **신규 로고 적용**: 가독성을 높인 'D', 'P' 분리형 V3 로고를 적용했습니다.
+- **UI 무결성**: 원형 잘림이나 찌그러짐 방지를 위해 `overflow: visible` 처리 및 `rx: 10` 사각형 배경을 적용했습니다.
+- **테마 동기화**: 로고 색상이 MUI Primary 팔레트와 실시간 연동되어 프리셋 변경 시 자동 대응됩니다.
 
-- DashboardLayout 기반
-- 사이드바 메뉴: **Dashboard / Mail / Chat / Approval**
-- 중앙 영역: Remote 모듈이 들어올 수 있도록 페이지/Outlet 기반으로 확장
-
-### Main API Health Check
-
-#### 엔드포인트 규칙
-
-- **Base URL**: `NX_API_URL` (기본값 `http://localhost:8080`)
-- **Gateway 단일 진입점**: `http://localhost:8080`
-- **Main API prefix**: `/api/main/**`
-
-#### 사용 엔드포인트
-
-- `GET /api/main/health`
-
-#### 예상 응답 스키마
-
-```ts
-type ApiResponse<T> = {
-  success: boolean;
-  message?: string;
-  data: T;
-};
-
-type MainHealthPayload = {
-  status: string;
-  timestamp?: string;
-};
-```
-
-- Host Dashboard 화면 상단에서 `GET /api/main/health` 결과를 Alert/Chip으로 표시
-- API base URL은 `NX_API_URL`을 사용
-
-## 🗺️ 로드맵 (다음 단계)
-
-- **Nx CLI / 프로젝트 생성 표준화**
-  - `nx serve/build` 기반으로 Host/Remote 실행 전환
-  - `apps/remotes/chat`, `apps/remotes/approval` 생성 및 포트(4202/4203) 적용
-- **MFE(Module Federation) 적용**
-  - Host에서 Remote를 런타임 로드하도록 Webpack Module Federation 설정 추가
-  - Host ↔ Remote 직접 import 금지, 공유 코드는 `libs/*`로만 유지
-- **API 통신 표준화 (Critical)**
-  - `libs/shared-utils/src/axios-instance.ts`를 **axios 기반**으로 교체
-  - 서버 데이터는 **TanStack Query(React Query)** 로 통일
-  - 템플릿의 Mock API 호출부 제거 및 실제 백엔드 연동
+### 4. API 통신 규격
+- **ApiResponse<T>**: `status`, `message`, `data`, `timestamp`를 포함하는 백엔드 공통 규격을 사용합니다.
+- **HttpError**: 상태 코드(404, 401 등)에 따른 분기 처리를 위해 전역 에러 객체를 지원합니다.
 
 ## 💻 개발 규칙
 
-- **코드 스타일/규칙**: `.cursorrules` 준수
-  - Functional Component + `export const`
-  - `any` 금지
-  - Icon은 **반드시 `@iconify/react`(템플릿 표준) 우선 사용**
-    - `lucide-react` 등 다른 아이콘 라이브러리 혼용 금지(디자인 일관성 깨짐)
-- **공통화 원칙**
-  - 앱 간 공유는 반드시 `libs/*`로 올리고, Host/Remote 간 직접 의존성은 만들지 않기
+- **컴포넌트**: 반드시 화살표 함수(`export const`) 형식을 사용합니다.
+- **아이콘**: 디자인 일관성을 위해 모든 아이콘은 **Iconify(`@iconify/react`)**를 표준으로 사용합니다.
+- **공통화**: 앱 간 공유가 필요한 모든 코드는 반드시 `libs/*` 하위 라이브러리로 분리합니다. Host/Remote 간 직접적인 import는 금지됩니다.
 
-## 🔤 폰트 로딩 (최적화/일관성)
-
-폰트는 템플릿 표준(DM Sans + Barlow)을 사용하며, **각 앱의 `main.tsx`에서 공통 CSS를 import**하여
-Host/Remote 모두 동일하게 로딩됩니다.
-
-- 공통 CSS: `libs/design-system/src/styles/global.css`
-- Host: `apps/dwp/src/main.tsx`
-- Remote(mail): `apps/remotes/mail/src/main.tsx`
+## 🔤 폰트 및 스타일
+- **Fonts**: DM Sans(본문), Barlow(헤더) 표준 폰트를 사용합니다.
+- **Global CSS**: `libs/design-system/src/styles/global.css`에서 중앙 관리합니다.

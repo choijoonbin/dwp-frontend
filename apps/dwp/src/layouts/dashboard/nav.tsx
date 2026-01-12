@@ -47,8 +47,6 @@ export function NavDesktop({
   return (
     <Box
       sx={{
-        pt: 2.5,
-        px: collapsed ? 1.5 : 2.5,
         top: 0,
         left: 0,
         height: 1,
@@ -58,9 +56,9 @@ export function NavDesktop({
         zIndex: 'var(--layout-nav-zIndex)',
         width: 'var(--layout-nav-current-width)',
         borderRight: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
-        transition: theme.transitions.create(['width', 'padding'], {
-          easing: 'var(--layout-transition-easing)',
-          duration: 'var(--layout-transition-duration)',
+        transition: theme.transitions.create(['width']),
+        ...(collapsed && {
+          alignItems: 'center',
         }),
         [theme.breakpoints.up(layoutQuery)]: {
           display: 'flex',
@@ -136,106 +134,168 @@ export function NavMobile({
 export function NavContent({ data, slots, workspaces, sx, collapsed }: NavContentProps) {
   const pathname = usePathname();
 
+  // Group data by group name
+  const groupedData = data.reduce(
+    (acc, item) => {
+      const groupName = item.group || '';
+      if (!acc[groupName]) {
+        acc[groupName] = [];
+      }
+      acc[groupName].push(item);
+      return acc;
+    },
+    {} as Record<string, typeof data>
+  );
+
   return (
     <>
-      <Logo sx={{ mb: 1, ml: collapsed ? 0.5 : 0 }} />
+      <Box
+        className="nav-logo-wrapper"
+        sx={{
+          pt: 2.5,
+          pb: 1,
+          px: collapsed ? 0.5 : 2.5,
+          transition: (theme) => theme.transitions.create(['padding']),
+        }}
+      >
+        <Logo sx={{ ml: collapsed ? 0.5 : 0 }} />
+      </Box>
 
       {slots?.topArea}
 
       <Scrollbar fillContent>
         <Box
           component="nav"
+          className="nav-menu-wrapper"
           sx={[
             {
               display: 'flex',
               flex: '1 1 auto',
               flexDirection: 'column',
+              px: collapsed ? 0.5 : 2.5,
+              transition: (theme) => theme.transitions.create(['padding']),
             },
             ...(Array.isArray(sx) ? sx : [sx]),
           ]}
         >
-          <Box
-            component="ul"
-            sx={{
-              gap: 0.5,
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            {data.reduce((acc: React.ReactNode[], item, index) => {
-              const isActived = item.path === pathname;
-              const prevItem = data[index - 1];
-              const showGroup = item.group && (!prevItem || prevItem.group !== item.group);
+          {Object.entries(groupedData).map(([groupName, items]) => (
+            <Box
+              key={groupName}
+              className="nav-group-wrapper"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                mb: collapsed ? 1.5 : 2,
+                borderRadius: 1.5, // 박스 형태를 명확히 함
+                transition: (theme) => theme.transitions.create(['background-color']),
+                '&:hover': {
+                  // 개발자 도구뿐만 아니라 실제 마우스 오버 시 영역 확인 가능 (선택 사항)
+                  // bgcolor: (theme) => varAlpha(theme.vars.palette.action.hoverChannel, 0.04),
+                },
+                '&:last-child': { mb: 0 },
+              }}
+            >
+              {groupName && !collapsed && (
+                <ListSubheader
+                  sx={{
+                    px: 2,
+                    py: 1.5,
+                    lineHeight: 1,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: 'text.disabled',
+                    bgcolor: 'transparent',
+                    textTransform: 'uppercase',
+                    cursor: 'default',
+                  }}
+                >
+                  {groupName}
+                </ListSubheader>
+              )}
 
-              if (showGroup && !collapsed) {
-                acc.push(
-                  <ListSubheader
-                    key={`group-${item.group}`}
-                    sx={{
-                      px: 2,
-                      py: 1.5,
-                      lineHeight: 1,
-                      fontSize: 11,
-                      fontWeight: 700,
-                      color: 'text.disabled',
-                      bgcolor: 'transparent',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {item.group}
-                  </ListSubheader>
-                );
-              }
+              <Box
+                component="ul"
+                sx={{
+                  gap: 0.5,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: 0,
+                  margin: 0,
+                  listStyle: 'none',
+                }}
+              >
+                {items.map((item) => {
+                  const isActived = item.path === pathname;
 
-              acc.push(
-                <ListItem disableGutters disablePadding key={item.title}>
-                  <ListItemButton
-                    disableGutters
-                    component={RouterLink}
-                    href={item.path}
-                    sx={[
-                      (theme) => ({
-                        pl: collapsed ? 1.5 : 2,
-                        py: 1,
-                        gap: collapsed ? 0 : 2,
-                        pr: collapsed ? 1.5 : 1.5,
-                        borderRadius: 0.75,
-                        typography: 'body2',
-                        fontWeight: 'fontWeightMedium',
-                        color: theme.vars.palette.text.secondary,
-                        minHeight: 44,
-                        ...(isActived && {
-                          fontWeight: 'fontWeightSemiBold',
-                          color: theme.vars.palette.primary.main,
-                          bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
-                          '&:hover': {
-                            bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.16),
-                          },
-                        }),
-                        ...(collapsed && {
-                          justifyContent: 'center',
-                        }),
-                      }),
-                    ]}
-                  >
-                    <Box component="span" sx={{ width: 24, height: 24, flexShrink: 0 }}>
-                      {item.icon}
-                    </Box>
+                  return (
+                    <ListItem disableGutters disablePadding key={item.title}>
+                      <ListItemButton
+                        disableGutters
+                        component={RouterLink}
+                        href={item.path}
+                        sx={[
+                          (theme) => ({
+                            pl: 2,
+                            py: 1,
+                            gap: 2,
+                            pr: 1.5,
+                            borderRadius: 0.75,
+                            typography: 'body2',
+                            fontWeight: 'fontWeightMedium',
+                            color: theme.vars.palette.text.secondary,
+                            minHeight: 44,
+                            ...(isActived && {
+                              fontWeight: 'fontWeightSemiBold',
+                              color: theme.vars.palette.primary.main,
+                              bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+                              '&:hover': {
+                                bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.16),
+                              },
+                            }),
+                            ...(collapsed && {
+                              py: 0,
+                              px: 0,
+                              gap: 0.25,
+                              width: 79,
+                              height: 58,
+                              minHeight: 58,
+                              flexDirection: 'column',
+                              justifyContent: 'center',
+                            }),
+                          }),
+                        ]}
+                      >
+                        <Box component="span" sx={{ width: 24, height: 24, flexShrink: 0 }}>
+                          {item.icon}
+                        </Box>
 
-                    {!collapsed && (
-                      <Box component="span" sx={{ flexGrow: 1, whiteSpace: 'nowrap' }}>
-                        {item.title}
-                      </Box>
-                    )}
+                        <Box
+                          component="span"
+                          sx={{
+                            flexGrow: 1,
+                            whiteSpace: 'nowrap',
+                            ...(collapsed && {
+                              fontSize: 10,
+                              fontWeight: 'fontWeightSemiBold',
+                              lineHeight: '16px',
+                              textAlign: 'center',
+                              width: 1,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }),
+                          }}
+                        >
+                          {item.title}
+                        </Box>
 
-                    {!collapsed && item.info && item.info}
-                  </ListItemButton>
-                </ListItem>
-              );
-
-              return acc;
-            }, [])}
-          </Box>
+                        {!collapsed && item.info && item.info}
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                })}
+              </Box>
+            </Box>
+          ))}
         </Box>
       </Scrollbar>
 
