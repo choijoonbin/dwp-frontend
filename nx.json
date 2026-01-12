@@ -1,0 +1,8 @@
+{
+  "npmScope": "dwp-frontend",
+  "workspaceLayout": {
+    "appsDir": "apps",
+    "libsDir": "libs"
+  }
+}
+

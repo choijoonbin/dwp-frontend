@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    /* Bundler */
+    "baseUrl": ".",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "resolveJsonModule": true,
+
+    /* Build */
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "incremental": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+
+    /* Paths (Nx-style workspace + backwards-compatible 'src/*') */
+    "paths": {
+      "src/theme": ["libs/design-system/src/theme/index.ts"],
+      "src/theme/*": ["libs/design-system/src/theme/*"],
+      "src/components/*": ["libs/design-system/src/components/*"],
+      "src/routes/hooks": ["libs/design-system/src/hooks/router/index.ts"],
+      "src/routes/hooks/*": ["libs/design-system/src/hooks/router/*"],
+      "src/*": ["apps/dwp/src/*"],
+
+      "@dwp-frontend/design-system": ["libs/design-system/src/index.ts"],
+      "@dwp-frontend/design-system/*": ["libs/design-system/src/*"],
+      "@dwp-frontend/shared-utils": ["libs/shared-utils/src/index.ts"],
+      "@dwp-frontend/shared-utils/*": ["libs/shared-utils/src/*"]
+    },
+
+    /* Linting */
+    "strict": true,
+    "noEmit": true,
+    "strictNullChecks": true
+  }
+}
+
