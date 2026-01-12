@@ -103,7 +103,9 @@ export const MailApp = () => {
                     {mail.tags.map((tag) => (
                       <Label
                         key={`${mail.id}-${tag}`}
-                        color={tag === 'Approval' ? 'info' : tag === 'Finance' ? 'warning' : 'default'}
+                        color={
+                          tag === 'Approval' ? 'info' : tag === 'Finance' ? 'warning' : 'default'
+                        }
                         variant="soft"
                       >
                         {tag}

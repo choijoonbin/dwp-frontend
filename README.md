@@ -140,6 +140,7 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 
 - **컴포넌트**: 반드시 화살표 함수(`export const`) 형식을 사용합니다.
 - **아이콘**: 디자인 일관성을 위해 모든 아이콘은 **Iconify(`@iconify/react`)**를 표준으로 사용합니다.
+  - **오프라인 등록**: 아이콘 로딩 시 깜빡임(flickering) 방지를 위해, 빈번히 사용되는 아이콘은 `libs/design-system/src/components/iconify/icon-sets.ts`에 등록하여 사용합니다.
 - **공통화**: 앱 간 공유가 필요한 모든 코드는 반드시 `libs/*` 하위 라이브러리로 분리합니다. Host/Remote 간 직접적인 import는 금지됩니다.
 
 ## 🔤 폰트 및 스타일
