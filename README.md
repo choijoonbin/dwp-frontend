@@ -95,6 +95,26 @@ npm run dev      # Host(4200) 실행
 npm run dev:mail # Remote Mail(4201) 실행
 ```
 
+## 🛠 신규 모듈 생성 가이드 (Custom Nx Generator)
+
+새로운 Remote 모듈(앱)을 추가할 때는 표준화된 스켈레톤을 생성해주는 커스텀 Generator를 사용합니다.
+
+### 1. 신규 모듈 생성 명령어
+```bash
+# npx nx workspace-generator [이름] --name=[모듈명] --port=[포트번호]
+npx nx workspace-generator new-remote --name=chat --port=4202
+```
+
+### 2. 생성 후 단계
+1.  **개발 시작**: `apps/remotes/[모듈명]/src/entry.tsx` 파일에서 비즈니스 로직 개발을 시작합니다.
+2.  **Host 연결**: `apps/dwp/src/layouts/nav-config-dashboard.tsx`에 신규 모듈의 메뉴 정보를 추가합니다.
+3.  **MFE 등록 (향후)**: Webpack Module Federation 도입 시 `module-federation.config.ts`에 노출 정보를 등록합니다.
+
+### 3. 개발 표준 준수
+- **테마 주입**: 모든 Remote는 `libs/design-system`의 `ThemeProvider`로 감싸져야 합니다. (Generator 자동 포함)
+- **API 호출**: `libs/shared-utils`의 `axiosInstance`를 사용하세요.
+- **아이콘**: `@iconify/react`를 사용하세요.
+
 ## ✅ 주요 구현
 
 ### 1. 인증 시스템 (Auth)

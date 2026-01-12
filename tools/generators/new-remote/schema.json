@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "id": "new-remote",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Remote 앱의 이름 (예: chat, approval)",
+      "x-prompt": "Remote 앱의 이름을 입력하세요"
+    },
+    "port": {
+      "type": "number",
+      "description": "할당할 포트 번호 (예: 4202)",
+      "x-prompt": "할당할 포트 번호를 입력하세요"
+    }
+  },
+  "required": ["name", "port"]
+}

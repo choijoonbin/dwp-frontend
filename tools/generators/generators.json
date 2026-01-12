@@ -1,0 +1,9 @@
+{
+  "generators": {
+    "new-remote": {
+      "factory": "./new-remote/index",
+      "schema": "./new-remote/schema.json",
+      "description": "새로운 DWP Remote 앱을 생성합니다."
+    }
+  }
+}
