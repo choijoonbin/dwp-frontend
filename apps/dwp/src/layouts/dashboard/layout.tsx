@@ -29,6 +29,7 @@ import { AccountPopover } from '../components/account-popover';
 import { LanguagePopover } from '../components/language-popover';
 import { WorkspacesPopover } from '../components/workspaces-popover';
 import { NotificationsPopover } from '../components/notifications-popover';
+import { AuraBar } from '../components/aura-bar';
 
 import type { MainSectionProps } from '../core/main-section';
 import type { HeaderSectionProps } from '../core/header-section';
@@ -187,6 +188,7 @@ export function DashboardLayout({
       ]}
     >
       {renderMain()}
+      <AuraBar />
     </LayoutSection>
   );
 }

@@ -136,6 +136,13 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 - **ApiResponse<T>**: `status`, `message`, `data`, `timestamp`를 포함하는 백엔드 공통 규격을 사용합니다.
 - **HttpError**: 상태 코드(404, 401 등)에 따른 분기 처리를 위해 전역 에러 객체를 지원합니다.
 
+### 5. 에이전틱 AI 연동 표준 (Aura)
+- **useAgentStream**: SSE(Server-Sent Events)를 지원하는 TanStack Query 기반 스트리밍 훅입니다. '추론(Thinking)' 상태와 실시간 텍스트 출력을 지원합니다.
+- **Agent Context Utility**: 현재 활성 앱, URL 경로, 항목 ID 등을 자동으로 수집하여 에이전트 요청 시 문맥(Context)을 전달합니다.
+- **Aura 전역 바**: Host 앱 레이아웃에 상주하며 모든 리모트 앱 위에서 일관된 AI 인터페이스를 제공합니다.
+- **ApprovalDialog**: 에이전트가 주요 액션을 수행하기 전 사용자의 명시적 승인을 받기 위한 HITL(Human-in-the-loop) 표준 UI 컴포넌트입니다.
+- **Header Interceptors**: `axiosInstance`를 통해 모든 요청에 `X-Tenant-ID` 및 `X-Agent-ID`를 자동으로 주입합니다.
+
 ## 💻 개발 규칙
 
 - **컴포넌트**: 반드시 화살표 함수(`export const`) 형식을 사용합니다.

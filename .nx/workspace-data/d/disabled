@@ -1,0 +1,26 @@
+Daemon process terminated and closed the connection
+
+Messages from the log:
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.624Z - Handled json message GET_NX_CONSOLE_STATUS. Handling time: 0. Response time: 1.
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.662Z - Established a connection. Number of open connections: 2
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.663Z - Time taken for 'loadSpecifiedNxPlugins' 15.394172000000026ms
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.667Z - Closed a connection. Number of open connections: 1
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.667Z - Closed a connection. Number of open connections: 0
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.696Z - Established a connection. Number of open connections: 1
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.696Z - Closed a connection. Number of open connections: 0
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.697Z - Established a connection. Number of open connections: 1
+Time for 'plugin worker 2870 code loading' 5.122568000000001
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.839Z - Received raw message of length 32
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.840Z - Received json message of type REQUEST_PROJECT_GRAPH
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:18.841Z - [REQUEST]: Client Request for Project Graph Received
+Time for 'plugin worker 2874 code loading' 12.446728000000007
+Time for 'plugin worker 2878 code loading' 56.57119700000001
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:19.528Z - Time taken for 'Load Nx Plugin: /Users/joonbinchoi/Work/dwp/dwp-frontend/node_modules/nx/src/plugins/project-json/build-nodes/project-json' 885.499641ms
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:19.534Z - Time taken for 'Load Nx Plugin: /Users/joonbinchoi/Work/dwp/dwp-frontend/node_modules/nx/src/plugins/js' 893.5755459999999ms
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:19.562Z - Closed a connection. Number of open connections: 0
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:19.563Z - [WATCHER]: Stopping the watcher for /Users/joonbinchoi/Work/dwp/dwp-frontend (sources)
+[NX v22.3.3 Daemon Server] - 2026-01-15T03:34:19.563Z - [WATCHER]: Stopping the watcher for /Users/joonbinchoi/Work/dwp/dwp-frontend (outputs)
+
+
+
+More information: /Users/joonbinchoi/Work/dwp/dwp-frontend/.nx/workspace-data/d/daemon.log

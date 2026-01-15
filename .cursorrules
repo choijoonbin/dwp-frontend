@@ -39,7 +39,12 @@
 - **Logic Separation**: UI 컴포넌트 내부에 복잡한 비즈니스 로직을 두지 않고, 반드시 Custom Hook으로 분리한다.
 - **State Management**: 전역 UI 상태는 `Zustand`, 서버 데이터 캐싱 및 비동기 통신은 `TanStack Query`를 사용한다.
 - **API Client**: `libs/shared-utils`의 `axiosInstance`를 사용하며, 백엔드 `ApiResponse<T>` 규격에 맞춰 타입을 정의한다.
-
+- **Agent Integration (Aura)**:
+  - **Streaming UI**: Aura-Platform의 SSE(Server-Sent Events) 응답을 처리할 때, `fetch` API와 `ReadableStream`을 사용하여 실시간 타이핑 효과를 구현한다.
+  - **Thought Trace**: 에이전트의 '추론 과정'과 '최종 답변'을 구분하여 렌더링한다. (예: `thinking` 상태 표시 UI 활용)
+  - **Action Approval (HITL)**: 에이전트가 승인을 요청할 경우(Human-in-the-loop), 전용 Modal 또는 알림 컴포넌트를 통해 사용자 확정을 받은 후 `dwp_backend`로 결과를 전송한다.
+  - **Context Provider**: 현재 사용자가 보고 있는 화면의 컨텍스트(테넌트 정보, 현재 메뉴 등)를 에이전트 질문 시 메타데이터로 함께 전송한다.
+  
 ## 6. 금지 및 주의 사항 (Hard Rules)
 - ❌ **Direct Import 금지**: Host와 Remote 간에 직접적인 상대 경로 import를 금지한다. (반드시 MFE 로더나 라이브러리 경로 사용)
 - ❌ **No Any**: `any` 타입 사용을 절대 금지하며, 인터페이스 정의가 어려운 경우에만 `unknown`을 고려한다.
