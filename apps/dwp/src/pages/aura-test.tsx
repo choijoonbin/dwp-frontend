@@ -4,4 +4,6 @@ import { AuraStreamingTest } from 'src/test/AuraStreamingTest';
 
 // ----------------------------------------------------------------------
 
-export const AuraTestPage = () => <AuraStreamingTest />;
+export default function Page() {
+  return <AuraStreamingTest />;
+}
