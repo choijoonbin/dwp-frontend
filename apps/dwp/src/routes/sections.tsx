@@ -16,7 +16,7 @@ export const DashboardPage = lazy(() => import('src/pages/dashboard'));
 export const MailPage = lazy(() => import('src/pages/mail'));
 export const ChatPage = lazy(() => import('src/pages/chat'));
 export const ApprovalPage = lazy(() => import('src/pages/approval'));
-export const AuraTestPage = lazy(() => import('src/pages/aura-test'));
+export const AIWorkspacePage = lazy(() => import('src/pages/ai-workspace'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
@@ -54,7 +54,7 @@ export const routesSection: RouteObject[] = [
       { path: 'mail', element: <MailPage /> },
       { path: 'chat', element: <ChatPage /> },
       { path: 'approval', element: <ApprovalPage /> },
-      { path: 'aura-test', element: <AuraTestPage /> },
+      { path: 'ai-workspace', element: <AIWorkspacePage /> },
     ],
   },
   {

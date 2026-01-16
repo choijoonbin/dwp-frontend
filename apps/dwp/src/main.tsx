@@ -2,8 +2,8 @@ import '@dwp-frontend/design-system/styles/global.css';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@dwp-frontend/shared-utils';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router';
 
 import { ThemeProvider } from 'src/theme/theme-provider';
