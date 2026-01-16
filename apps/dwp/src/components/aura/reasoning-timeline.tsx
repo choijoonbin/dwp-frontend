@@ -27,7 +27,7 @@ type ReasoningTimelineProps = {
 };
 
 export const ReasoningTimeline = ({ steps, currentStepIndex }: ReasoningTimelineProps) => {
-  const getStatusColor = (status: TimelineStep['status']) => {
+  const getStatusColor = (status: TimelineStep['status']): 'success' | 'warning' | 'error' | 'grey' => {
     switch (status) {
       case 'completed':
         return 'success';
@@ -36,7 +36,7 @@ export const ReasoningTimeline = ({ steps, currentStepIndex }: ReasoningTimeline
       case 'failed':
         return 'error';
       default:
-        return 'default';
+        return 'grey';
     }
   };
 
