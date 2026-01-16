@@ -22,10 +22,11 @@ import { useAuraStore, useAuraActions } from 'src/store/use-aura-store';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
-import { ResultViewer } from 'src/components/aura/result-viewer';
-import { ReasoningTimeline } from 'src/components/aura/reasoning-timeline';
-import { HitlApprovalDialog } from 'src/components/aura/hitl-approval-dialog';
-import { ActionExecutionView } from 'src/components/aura/action-execution-view';
+
+import { ResultViewer } from '../../components/aura/result-viewer';
+import { ReasoningTimeline } from '../../components/aura/reasoning-timeline';
+import { HitlApprovalDialog } from '../../components/aura/hitl-approval-dialog';
+import { ActionExecutionView } from '../../components/aura/action-execution-view';
 
 // ----------------------------------------------------------------------
 
