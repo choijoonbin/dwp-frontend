@@ -45,12 +45,12 @@ dwp-frontend/
 │   ├── dwp/                  # Host (Shell) - port 4200
 │   │   ├── src/
 │   │   │   ├── layouts/       # Zustand 기반 DashboardLayout (Sidebar/Header)
-│   │   ├── components/    # Aura FloatingButton, MiniOverlay 등
-│   │   │   └── aura/      # AI 업무 파트너 UI 컴포넌트
-│   │   ├── hooks/         # usePageContext 등 커스텀 훅
-│   │   ├── store/         # useLayoutStore, useAuraStore (Zustand)
-│   │   ├── routes/        # react-router (AuthGuard 적용 가능 구조)
-│   │   └── pages/         # Dashboard, Sign-in, AI Workspace 등
+│   │   │   ├── components/    # Aura FloatingButton, MiniOverlay 등
+│   │   │   │   └── aura/      # AI 업무 파트너 UI 컴포넌트
+│   │   │   ├── hooks/         # usePageContext 등 커스텀 훅
+│   │   │   ├── store/         # useLayoutStore, useAuraStore (Zustand)
+│   │   │   ├── routes/        # react-router (AuthGuard 적용 가능 구조)
+│   │   │   └── pages/         # Dashboard, Sign-in, AI Workspace 등
 │   └── remotes/
 │       └── mail/             # Remote (Mail) - port 4201
 │
