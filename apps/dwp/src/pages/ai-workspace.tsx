@@ -23,10 +23,10 @@ import { useAuraStore, useAuraActions } from 'src/store/use-aura-store';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
-import { ActionExecutionView } from '../components/aura/action-execution-view';
-import { HitlApprovalDialog } from '../components/aura/hitl-approval-dialog';
-import { ReasoningTimeline } from '../components/aura/reasoning-timeline';
 import { ResultViewer } from '../components/aura/result-viewer';
+import { ReasoningTimeline } from '../components/aura/reasoning-timeline';
+import { HitlApprovalDialog } from '../components/aura/hitl-approval-dialog';
+import { ActionExecutionView } from '../components/aura/action-execution-view';
 
 // ----------------------------------------------------------------------
 
