@@ -134,6 +134,10 @@ export default function Page() {
     const tenantId = getTenantId();
 
     try {
+      // NOTE: Backend supports GET /api/aura/test/stream?message={message}
+      // Currently using POST for context data. If backend requires GET, use:
+      // const url = `${NX_API_URL}/api/aura/test/stream?message=${encodeURIComponent(prompt)}`;
+      // const response = await fetch(url, { headers: {...}, signal: ... });
       const response = await fetch(`${NX_API_URL}/api/aura/test/stream`, {
         method: 'POST',
         headers: {

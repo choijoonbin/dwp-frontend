@@ -81,6 +81,11 @@ export async function rejectHitlRequest(
   });
 
   if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || `HITL rejection failed: ${response.status}`);
+  }
+
+  if (!response.ok) {
     throw new Error(`HITL rejection failed: ${response.status}`);
   }
 
