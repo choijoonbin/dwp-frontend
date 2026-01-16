@@ -1,48 +1,58 @@
-# 🎭 DWP Frontend Unified Enterprise Rules (v1.2)
+🎭 DWP Frontend Unified Enterprise Rules (v1.3)
 
-## 🌌 Project Identity & Architecture
-- **Core**: React 18+, TypeScript (Strict Mode).
-- **Structure**: Nx Monorepo + Webpack Module Federation (MFE).
-- **Host (apps/dwp)**: 시스템의 Shell 역할. 사이드바, 헤더, 인증 상태 소유.
-- **Remote (apps/remotes/*)**: 비즈니스 모듈. 자체 레이아웃 중복 구현 절대 금지.
+🌌 Project Identity & Architecture
+Core: React 18+, TypeScript (Strict Mode).
+Structure: Nx Monorepo + Webpack Module Federation (MFE).
+Host (apps/dwp): 시스템의 Shell 역할. 사이드바, 헤더, 인증 전역 상태 및 테넌트 식별 소유.
+Remote (apps/remotes/*): 개별 비즈니스 모듈. 자체 레이아웃(헤더/사이드바) 중복 구현 절대 금지.
 
-## 🛠 UI/UX Standard (Standardization)
-- **UI Library**: **MUI v5 전용**. (shadcn/ui, Radix 등 타 라이브러리 사용 금지).
-- **Styling**: MUI System (sx, styled) + Emotion 기반. Tailwind는 레이아웃 보조용으로만 제한적 사용.
-- **Icons**: Iconify (`@iconify/react`)만 사용 (Lucide, Heroicons 금지).
-- **Theme**: Host의 `ThemeProvider`를 모든 Remote가 상속하며 실시간 동기화 보장.
-- Responsive Strategy: 모든 컴포넌트는 Mobile-First 전략을 취하며, MUI의 브레이크포인트(xs, sm, md)를 사용하여 데스크탑과 모바일 UI를 동적으로 전환한다.
+🛠 UI/UX & Responsive Standard
+UI Library: MUI v5 전용. (shadcn/ui, Radix UI 등 타 UI 라이브러리 사용 절대 금지).
+Styling: MUI System (sx, styled) + Emotion 기반. Tailwind는 레이아웃 보조용으로만 제한적 사용.
+Icons: Iconify (@iconify/react)만 사용 (Lucide, Heroicons 사용 금지).
+Theme: Host의 ThemeProvider를 모든 Remote가 상속하며, 다크/라이트 모드 실시간 동기화 보장.
+Responsive Strategy: Mobile-First 전략 준수. MUI 브레이크포인트(xs, sm, md)를 사용하여 데스크탑-태블릿-모바일 UI 동적 전환.
+Hybrid Bridge: 하이브리드 앱(WebView) 대응을 위해 window.ReactNativeWebView 등 네이티브 통신 인터페이스를 libs/shared-utils에 추상화하여 구현.
 
-Hybrid Bridge: 하이브리드 앱 전환을 고려하여 window.ReactNativeWebView 등 네이티브 브릿지 통신을 위한 인터페이스를 libs/shared-utils에 추상화하여 구현한다.
+🧠 Agentic AI Integration (Aura Specifics)
+Streaming UI: fetch 및 ReadableStream을 사용하여 SSE 응답의 실시간 타이핑 효과 구현.
+Thought Trace: 에이전트의 '추론 과정(Thinking)'과 '최종 답변'을 시각적으로 분리.
 
 Mobile AI UX:
 
-모바일 환경에서 Mini Chat Overlay는 화면의 90% 이상을 차지하는 Bottom Sheet 형태로 전환한다.
+모바일 환경에서 Mini Chat Overlay는 하단 Bottom Sheet 형태로 전환.
 
-Full AI Workspace는 모바일에서 탭(Tab) 기반 UI로 변경하여 '대화'와 '결과물(Diff/Report)'을 한 화면에 겹치지 않게 배치한다.
+Full AI Workspace는 모바일에서 탭(Tab) UI를 적용하여 대화와 결과물(Diff/Report)을 분리 배치.
 
-모든 터치 타겟은 최소 44x44px 이상을 유지한다.
+모든 터치 타겟은 최소 44x44px 이상 유지.
 
-## 🧠 Agentic AI Integration (Aura Specifics)
-- **Streaming UI**: Aura-Platform의 SSE 응답 처리 시 `fetch`와 `ReadableStream`을 사용하여 실시간 타이핑 효과 구현.
-- **Thought Trace**: 에이전트의 '추론 과정(Thinking)'과 '최종 답변'을 UI상에서 명확히 분리하여 렌더링.
-- **HITL (Human-in-the-loop)**: 에이전트 승인 요청 시 전용 Modal/Notification을 통해 사용자 확정 후 결과 전송.
-- **Context Awareness**: 질문 시 현재 테넌트 정보, 현재 메뉴 등 화면 컨텍스트를 메타데이터로 자동 포함.
+HITL (Human-in-the-loop): 에이전트 승인 요청 시 전용 Modal/Notification을 통해 사용자 확정 후 결과 전송.
 
-## 📜 Development & Coding Standards
-- **Component**: 모든 컴포넌트는 화살표 함수(`export const Component = ...`) 사용.
-- **Logic Separation**: UI 내 복잡한 로직 금지. 반드시 Custom Hook으로 분리.
-- **State Management**: 전역 UI 상태는 `Zustand`, 서버 데이터 캐싱은 `TanStack Query` 사용.
-- **API Client**: `libs/shared-utils`의 `axiosInstance`를 필수 사용하며 `ApiResponse<T>` 규격 준수.
+Context Awareness: 질문 시 현재 테넌트 정보, 현재 메뉴 등 화면 컨텍스트 메타데이터 자동 포함.
 
-## 🔒 Multi-tenancy & Security
-- **Tenant ID**: 서브도메인을 통해 식별하며, 전용 유틸리티를 통해 테넌트 키 추출.
-- **Unified Session**: SSO 및 일반 로그인 세션을 동일한 JWT 모델로 통합 관리.
-- **Auth Guard**: 모든 라우트는 테넌트 권한과 세션 유효성을 검증하는 `AuthGuard` 필수 적용.
+📜 Development & Coding Standards
+Component: 모든 컴포넌트는 화살표 함수(export const Component = ...) 사용.
 
-## ⚠️ Hard Rules (Strictly Prohibited)
-- ❌ **No Any**: `any` 타입 사용 절대 금지. 정의 불가 시 `unknown` 고려.
-- ❌ **Direct Import**: Host와 Remote 간 상대 경로 import 금지 (MFE 로더/라이브러리 경로 사용).
-- ❌ **Duplicate Layout**: Remote 내부에서 상단바/사이드바 중복 구현 금지.
-- MFE Expose Standard: 모든 Remote App은 src/remote-entry.ts를 통해서만 기능을 노출하며, Host에서 호출할 메인 컴포넌트명은 반드시 Module로 통일한다.
-- Zustand Store Isolation: Remote App은 Host의 전역 상태를 직접 수정할 수 없으며, 필요한 경우 Host가 props로 전달한 actions를 통해서만 소통한다.
+Logic Separation: UI 컴포넌트 내 복잡한 로직 금지. 반드시 Custom Hook으로 비즈니스 로직 분리.
+
+State Management: 전역 UI 상태는 Zustand, 서버 데이터 캐싱은 TanStack Query 사용.
+
+API Client: libs/shared-utils의 axiosInstance 필수 사용 및 ApiResponse<T> 규격 준수.
+
+🔒 Multi-tenancy & Security
+Tenant ID: 서브도메인을 통해 식별하며, 전용 유틸리티를 통해 테넌트 키 추출.
+
+Unified Session: SSO 및 일반 로그인 세션을 동일한 JWT 모델로 통합 관리.
+
+Auth Guard: 모든 라우트는 테넌트 권한과 세션 유효성을 검증하는 AuthGuard 필수 적용.
+
+⚠️ Hard Rules (Strictly Prohibited)
+❌ No Any: any 타입 사용 절대 금지. 정의 불가 시 unknown 사용.
+
+❌ Direct Import: Host와 Remote 간 상대 경로 import 금지 (MFE 로더/라이브러리 경로 사용).
+
+❌ Duplicate Layout: Remote 내부에서 별도의 상단바/사이드바 중복 구현 금지.
+
+❌ MFE Expose Standard: 모든 Remote는 src/remote-entry.ts를 통해서만 기능을 노출하며, 메인 컴포넌트명은 반드시 Module로 통일한다.
+
+❌ Zustand Store Isolation: Remote는 Host의 상태를 직접 수정할 수 없으며, Host가 전달한 actions를 통해서만 소통한다.

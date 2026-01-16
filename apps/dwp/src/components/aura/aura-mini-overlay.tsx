@@ -38,7 +38,7 @@ export const AuraMiniOverlay = () => {
   const isThinking = useAuraStore((state) => state.isThinking);
   const timelineSteps = useAuraStore((state) => state.timelineSteps);
   const currentStepIndex = useAuraStore((state) => state.currentStepIndex);
-  const { closeOverlay, addMessage, setStreaming, setThinking, setReturnPath } = useAuraActions();
+  const { closeOverlay, addMessage, setStreaming, setThinking, setReturnPath, setIsExpanding, setContextSnapshot } = useAuraActions();
 
   const [prompt, setPrompt] = useState('');
   const [streamingText, setStreamingText] = useState('');

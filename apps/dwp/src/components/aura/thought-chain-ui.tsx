@@ -55,7 +55,7 @@ export const ThoughtChainUI = ({ thoughts }: ThoughtChainUIProps) => {
     }
   };
 
-  const getTypeColor = (type: ThoughtChain['type']) => {
+  const getTypeColor = (type: ThoughtChain['type']): 'info' | 'primary' | 'warning' | 'success' | 'grey' => {
     switch (type) {
       case 'analysis':
         return 'info';
@@ -66,7 +66,7 @@ export const ThoughtChainUI = ({ thoughts }: ThoughtChainUIProps) => {
       case 'verification':
         return 'success';
       default:
-        return 'default';
+        return 'grey';
     }
   };
 

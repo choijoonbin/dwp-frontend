@@ -20,6 +20,7 @@ type LiveExecutionLogProps = {
   logs: ExecutionLog[];
   isOpen?: boolean;
   onToggle?: () => void;
+  contextOpen?: boolean;
 };
 
 export const LiveExecutionLog = ({ logs, isOpen = true, onToggle, contextOpen = false }: LiveExecutionLogProps) => {
