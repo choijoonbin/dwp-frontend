@@ -642,6 +642,32 @@ Aura Platform에서 사용 가능한 도구들:
 
 ---
 
-**문서 버전**: 1.0  
-**최종 업데이트**: 2026-01-15  
+**문서 버전**: 1.1  
+**최종 업데이트**: 2026-01-16  
 **작성자**: DWP Frontend Team
+
+---
+
+## 백엔드 통합 상태
+
+### ✅ 구현 완료
+
+1. **HITL 승인/거절 API**: `approveHitlRequest`, `rejectHitlRequest` 함수 구현 완료
+2. **사용자 ID 관리**: JWT 토큰에서 자동 추출 및 localStorage 저장
+3. **SSE 이벤트 파싱**: `event:` 및 `data:` 형식 모두 지원
+4. **에러 처리**: 백엔드 `ApiResponse` 형식에 맞춘 에러 처리
+
+### ⚠️ 주의사항
+
+1. **SSE 스트리밍 방식**: 
+   - 백엔드 문서는 `GET /api/aura/test/stream?message={message}`를 권장하지만,
+   - 현재 프론트엔드는 `POST` 방식을 사용하여 `context` 정보를 전달합니다.
+   - 백엔드가 GET만 지원하는 경우, 코드 내 주석을 참조하여 GET 방식으로 변경 가능합니다.
+
+2. **사용자 ID**:
+   - 로그인 시 JWT 토큰에서 자동 추출됩니다 (`sub`, `userId`, `user_id` 필드 확인).
+   - 추출 실패 시 HITL API 호출이 실패할 수 있으므로, 백엔드가 사용자 ID를 응답에 포함하는 것을 권장합니다.
+
+3. **HITL requestId**:
+   - 백엔드에서 전달하는 `requestId`를 그대로 사용합니다.
+   - 프론트엔드가 생성한 임시 ID(`hitl-${timestamp}`)는 백엔드 `requestId`로 교체됩니다.
