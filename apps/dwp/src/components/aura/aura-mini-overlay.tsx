@@ -29,6 +29,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 export const AuraMiniOverlay = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -174,14 +175,17 @@ export const AuraMiniOverlay = () => {
       },
       timestamp: new Date(),
     });
+    // Close overlay before navigation
+    closeOverlay();
     // Delay navigation to allow expansion animation
     setTimeout(() => {
       navigate('/ai-workspace');
       setIsExpanding(false);
-    }, 800);
+    }, 300); // Reduced delay since we're closing overlay immediately
   };
 
-  if (!isOverlayOpen) return null;
+  // Don't show mini overlay when on full workspace page
+  if (!isOverlayOpen || location.pathname === '/ai-workspace') return null;
 
   return (
     <Slide direction="left" in={isOverlayOpen} mountOnEnter unmountOnExit>
