@@ -11,6 +11,17 @@
 - **Styling**: MUI System (sx, styled) + Emotion 기반. Tailwind는 레이아웃 보조용으로만 제한적 사용.
 - **Icons**: Iconify (`@iconify/react`)만 사용 (Lucide, Heroicons 금지).
 - **Theme**: Host의 `ThemeProvider`를 모든 Remote가 상속하며 실시간 동기화 보장.
+- Responsive Strategy: 모든 컴포넌트는 Mobile-First 전략을 취하며, MUI의 브레이크포인트(xs, sm, md)를 사용하여 데스크탑과 모바일 UI를 동적으로 전환한다.
+
+Hybrid Bridge: 하이브리드 앱 전환을 고려하여 window.ReactNativeWebView 등 네이티브 브릿지 통신을 위한 인터페이스를 libs/shared-utils에 추상화하여 구현한다.
+
+Mobile AI UX:
+
+모바일 환경에서 Mini Chat Overlay는 화면의 90% 이상을 차지하는 Bottom Sheet 형태로 전환한다.
+
+Full AI Workspace는 모바일에서 탭(Tab) 기반 UI로 변경하여 '대화'와 '결과물(Diff/Report)'을 한 화면에 겹치지 않게 배치한다.
+
+모든 터치 타겟은 최소 44x44px 이상을 유지한다.
 
 ## 🧠 Agentic AI Integration (Aura Specifics)
 - **Streaming UI**: Aura-Platform의 SSE 응답 처리 시 `fetch`와 `ReadableStream`을 사용하여 실시간 타이핑 효과 구현.

@@ -103,15 +103,27 @@ export default function Page() {
       content: prompt,
     });
 
-    // Create initial plan steps
-    const planSteps = [
+    // Create initial plan steps for DynamicPlanBoard
+    const newPlanSteps = [
+      { title: '요청 분석', description: '사용자 요청을 분석하고 이해합니다.', order: 0, canSkip: false, status: 'processing' as const, confidence: 0.9 },
+      { title: '계획 수립', description: '작업 단계를 계획합니다.', order: 1, canSkip: false, status: 'pending' as const, confidence: 0.85 },
+      { title: '실행', description: '계획된 작업을 실행합니다.', order: 2, canSkip: true, status: 'pending' as const, confidence: 0.8 },
+      { title: '결과 검증', description: '실행 결과를 검증합니다.', order: 3, canSkip: false, status: 'pending' as const, confidence: 0.9 },
+    ];
+
+    newPlanSteps.forEach((step) => {
+      addPlanStep(step);
+    });
+
+    // Create timeline steps for ReasoningTimeline
+    const timelineStepsData = [
       { title: '요청 분석', description: '사용자 요청을 분석하고 이해합니다.', status: 'processing' as const },
       { title: '계획 수립', description: '작업 단계를 계획합니다.', status: 'pending' as const },
       { title: '실행', description: '계획된 작업을 실행합니다.', status: 'pending' as const },
       { title: '결과 검증', description: '실행 결과를 검증합니다.', status: 'pending' as const },
     ];
 
-    planSteps.forEach((step, index) => {
+    timelineStepsData.forEach((step, index) => {
       addTimelineStep(step);
       if (index === 0) {
         setCurrentStepIndex(0);
