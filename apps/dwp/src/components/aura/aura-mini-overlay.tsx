@@ -163,7 +163,22 @@ export const AuraMiniOverlay = () => {
 
   const handleExpand = () => {
     setReturnPath(window.location.pathname);
-    navigate('/ai-workspace');
+    setIsExpanding(true);
+    // Capture context snapshot
+    setContextSnapshot({
+      url: window.location.href,
+      title: document.title,
+      metadata: {
+        pathname: window.location.pathname,
+        timestamp: new Date().toISOString(),
+      },
+      timestamp: new Date(),
+    });
+    // Delay navigation to allow expansion animation
+    setTimeout(() => {
+      navigate('/ai-workspace');
+      setIsExpanding(false);
+    }, 800);
   };
 
   if (!isOverlayOpen) return null;

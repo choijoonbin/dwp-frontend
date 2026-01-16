@@ -45,6 +45,42 @@ export type HitlRequest = {
   action: string;
   params: Record<string, any>;
   timestamp: Date;
+  confidence?: number;
+  editableContent?: string;
+};
+
+export type ThoughtChain = {
+  id: string;
+  type: 'analysis' | 'planning' | 'execution' | 'verification';
+  content: string;
+  timestamp: Date;
+  sources?: Array<{ type: 'code' | 'conversation' | 'metadata'; name: string; path?: string }>;
+};
+
+export type PlanStep = {
+  id: string;
+  title: string;
+  description: string;
+  order: number;
+  canSkip: boolean;
+  status: 'pending' | 'approved' | 'skipped' | 'executing' | 'completed' | 'failed';
+  confidence?: number;
+};
+
+export type ExecutionLog = {
+  id: string;
+  timestamp: Date;
+  type: 'command' | 'api' | 'info' | 'error' | 'success';
+  content: string;
+  metadata?: Record<string, any>;
+};
+
+export type ContextSnapshot = {
+  url: string;
+  title: string;
+  screenshot?: string;
+  metadata?: Record<string, any>;
+  timestamp: Date;
 };
 
 export type AuraState = {
@@ -59,6 +95,11 @@ export type AuraState = {
   actionExecutions: ActionExecution[];
   pendingHitl: HitlRequest | null;
   currentStepIndex: number;
+  thoughtChains: ThoughtChain[];
+  planSteps: PlanStep[];
+  executionLogs: ExecutionLog[];
+  contextSnapshot: ContextSnapshot | null;
+  isExpanding: boolean;
   actions: {
     openOverlay: () => void;
     closeOverlay: () => void;
@@ -77,6 +118,14 @@ export type AuraState = {
     approveHitl: (requestId: string) => void;
     rejectHitl: (requestId: string) => void;
     setCurrentStepIndex: (index: number) => void;
+    addThoughtChain: (thought: Omit<ThoughtChain, 'id' | 'timestamp'>) => void;
+    addPlanStep: (step: Omit<PlanStep, 'id'>) => void;
+    updatePlanStep: (id: string, updates: Partial<PlanStep>) => void;
+    reorderPlanSteps: (stepIds: string[]) => void;
+    addExecutionLog: (log: Omit<ExecutionLog, 'id' | 'timestamp'>) => void;
+    setContextSnapshot: (snapshot: ContextSnapshot | null) => void;
+    setIsExpanding: (expanding: boolean) => void;
+    updateHitlEditableContent: (requestId: string, content: string) => void;
   };
 };
 
@@ -92,6 +141,11 @@ export const useAuraStore = create<AuraState>((set) => ({
   actionExecutions: [],
   pendingHitl: null,
   currentStepIndex: -1,
+  thoughtChains: [],
+  planSteps: [],
+  executionLogs: [],
+  contextSnapshot: null,
+  isExpanding: false,
   actions: {
     openOverlay: () => set({ isOverlayOpen: true }),
     closeOverlay: () => set({ isOverlayOpen: false }),
@@ -161,6 +215,60 @@ export const useAuraStore = create<AuraState>((set) => ({
         return {};
       }),
     setCurrentStepIndex: (index) => set({ currentStepIndex: index }),
+    addThoughtChain: (thought) =>
+      set((state) => ({
+        thoughtChains: [
+          ...state.thoughtChains,
+          {
+            ...thought,
+            id: `thought-${Date.now()}-${Math.random()}`,
+            timestamp: new Date(),
+          },
+        ],
+      })),
+    addPlanStep: (step) =>
+      set((state) => ({
+        planSteps: [
+          ...state.planSteps,
+          {
+            ...step,
+            id: `plan-${Date.now()}-${Math.random()}`,
+          },
+        ].sort((a, b) => a.order - b.order),
+      })),
+    updatePlanStep: (id, updates) =>
+      set((state) => ({
+        planSteps: state.planSteps.map((step) => (step.id === id ? { ...step, ...updates } : step)),
+      })),
+    reorderPlanSteps: (stepIds) =>
+      set((state) => {
+        const stepMap = new Map(state.planSteps.map((step) => [step.id, step]));
+        const reordered = stepIds.map((id, index) => {
+          const step = stepMap.get(id);
+          return step ? { ...step, order: index } : null;
+        }).filter(Boolean) as PlanStep[];
+        return { planSteps: reordered };
+      }),
+    addExecutionLog: (log) =>
+      set((state) => ({
+        executionLogs: [
+          ...state.executionLogs,
+          {
+            ...log,
+            id: `log-${Date.now()}-${Math.random()}`,
+            timestamp: new Date(),
+          },
+        ],
+      })),
+    setContextSnapshot: (snapshot) => set({ contextSnapshot: snapshot }),
+    setIsExpanding: (expanding) => set({ isExpanding: expanding }),
+    updateHitlEditableContent: (requestId, content) =>
+      set((state) => {
+        if (state.pendingHitl?.id === requestId) {
+          return { pendingHitl: { ...state.pendingHitl, editableContent: content } };
+        }
+        return {};
+      }),
   },
 }));
 

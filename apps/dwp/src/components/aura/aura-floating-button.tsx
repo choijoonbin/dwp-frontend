@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { keyframes } from '@emotion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Badge from '@mui/material/Badge';
@@ -48,6 +49,7 @@ export const AuraFloatingButton = () => {
   const notificationCount = useAuraStore((state) => state.notificationCount);
   const isThinking = useAuraStore((state) => state.isThinking);
   const isStreaming = useAuraStore((state) => state.isStreaming);
+  const isExpanding = useAuraStore((state) => state.isExpanding);
   const { toggleOverlay } = useAuraActions();
 
   const isActive = isThinking || isStreaming;
@@ -65,70 +67,89 @@ export const AuraFloatingButton = () => {
   }, []);
 
   return (
-    <Box
-      sx={{
+    <motion.div
+      animate={{
+        scale: isExpanding ? [1, 1.2, 1.5, 2, 2.5] : 1,
+        opacity: isExpanding ? [1, 0.9, 0.7, 0.5, 0] : 1,
+      }}
+      transition={{
+        duration: isExpanding ? 0.8 : 0.3,
+        ease: 'easeInOut',
+      }}
+      style={{
         position: 'fixed',
         bottom: 24,
         right: 24,
         zIndex: theme.zIndex.drawer + 200,
       }}
     >
-      <Badge
-        badgeContent={hasNotification ? notificationCount || '!' : 0}
-        color="primary"
-        overlap="circular"
-        sx={{
-          '& .MuiBadge-badge': {
-            animation: hasNotification ? `${pulse} 2s infinite` : 'none',
-          },
-        }}
-      >
-        <IconButton
-          onClick={toggleOverlay}
-          sx={{
-            width: 64,
-            height: 64,
-            borderRadius: '50%',
-            bgcolor: 'background.paper',
-            boxShadow: theme.customShadows.z24,
-            border: `2px solid ${theme.vars.palette.primary.main}`,
-            position: 'relative',
-            overflow: 'hidden',
-            animation: isActive ? `${thinkingPulse} 2s ease-in-out infinite` : 'none',
-            '&:hover': {
-              animation: isActive ? `${thinkingPulse} 2s ease-in-out infinite` : `${bounce} 0.3s ease-in-out`,
-              boxShadow: isActive
-                ? `0 0 25px ${theme.vars.palette.primary.main}60`
-                : `0 0 20px ${theme.vars.palette.primary.main}40`,
-            },
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              inset: 0,
-              borderRadius: '50%',
-              padding: '2px',
-              background: `linear-gradient(135deg, ${theme.vars.palette.primary.light}, ${theme.vars.palette.primary.main})`,
-              WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-              WebkitMaskComposite: 'xor',
-              maskComposite: 'exclude',
-              opacity: isOverlayOpen ? 1 : 0.5,
-              transition: 'opacity 0.3s',
-            },
-          }}
-        >
-          <Box
-            component="img"
-            src="/assets/images/arua.gif"
-            alt="Aura AI Assistant"
-            sx={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              borderRadius: '50%',
-            }}
-          />
-        </IconButton>
-      </Badge>
-    </Box>
+      <AnimatePresence>
+        {!isExpanding && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Badge
+              badgeContent={hasNotification ? notificationCount || '!' : 0}
+              color="primary"
+              overlap="circular"
+              sx={{
+                '& .MuiBadge-badge': {
+                  animation: hasNotification ? `${pulse} 2s infinite` : 'none',
+                },
+              }}
+            >
+              <IconButton
+                onClick={toggleOverlay}
+                sx={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: '50%',
+                  bgcolor: 'background.paper',
+                  boxShadow: theme.customShadows.z24,
+                  border: `2px solid ${theme.vars.palette.primary.main}`,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  animation: isActive ? `${thinkingPulse} 2s ease-in-out infinite` : 'none',
+                  '&:hover': {
+                    animation: isActive ? `${thinkingPulse} 2s ease-in-out infinite` : `${bounce} 0.3s ease-in-out`,
+                    boxShadow: isActive
+                      ? `0 0 25px ${theme.vars.palette.primary.main}60`
+                      : `0 0 20px ${theme.vars.palette.primary.main}40`,
+                  },
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '50%',
+                    padding: '2px',
+                    background: `linear-gradient(135deg, ${theme.vars.palette.primary.light}, ${theme.vars.palette.primary.main})`,
+                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                    WebkitMaskComposite: 'xor',
+                    maskComposite: 'exclude',
+                    opacity: isOverlayOpen ? 1 : 0.5,
+                    transition: 'opacity 0.3s',
+                  },
+                }}
+              >
+                <Box
+                  component="img"
+                  src="/assets/images/arua.gif"
+                  alt="Aura AI Assistant"
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '50%',
+                  }}
+                />
+              </IconButton>
+            </Badge>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };

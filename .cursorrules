@@ -1,56 +1,37 @@
-# DWP Frontend 개발 표준 가이드 (Unified Enterprise Standard)
+# 🎭 DWP Frontend Unified Enterprise Rules (v1.2)
 
-이 문서는 DWP Frontend 프로젝트의 단일 개발 기준이다. Cursor AI와 모든 개발자는 이 규칙을 엄격히 준수하여 코드 일관성과 시스템 안정성을 유지한다.
-
-## 1. 프레임워크 및 UI 스택 (UI/UX 정체성)
+## 🌌 Project Identity & Architecture
 - **Core**: React 18+, TypeScript (Strict Mode).
-- **UI Library**: MUI(Material UI) v5를 유일한 표준 UI 라이브러리로 사용한다. 
-- 디자인 시스템은 **Minimal UI Kit**의 구조와 테마 스타일을 계승한다.
-- ❌ shadcn/ui, Radix UI 등 타 UI 라이브러리 사용을 금지한다.
-- **Styling**: MUI System (`sx`, `styled`) + Emotion 기반 스타일링을 우선한다.
-- Tailwind CSS는 레이아웃(flex, grid) 보조 및 미세 조정 용도로만 사용하며, UI 컴포넌트 자체를 Tailwind로 구현하지 않는다.
-- **Icons**: Iconify (`@iconify/react`)를 표준으로 사용한다. (Lucide, Heroicons 사용 금지)
-- **Theme**: Host의 `ThemeProvider`를 모든 Remote가 상속하며, Light/Dark 모드가 실시간 동기화되어야 한다.
+- **Structure**: Nx Monorepo + Webpack Module Federation (MFE).
+- **Host (apps/dwp)**: 시스템의 Shell 역할. 사이드바, 헤더, 인증 상태 소유.
+- **Remote (apps/remotes/*)**: 비즈니스 모듈. 자체 레이아웃 중복 구현 절대 금지.
 
-## 2. 아키텍처 원칙 (Nx + Micro Frontends)
-- **구조**: Nx Monorepo 기반, Webpack Module Federation 기술을 사용하여 독립 배포 가능한 구조를 취한다.
-- **Host (apps/dwp)**: 시스템의 뼈대(Shell). 사이드바, 헤더, 글로벌 설정, 테넌트 식별 및 인증 전역 상태를 소유한다.
-- **Remote (apps/remotes/*)**: 개별 비즈니스 기능 모듈. 자체 레이아웃(사이드바/헤더)을 직접 구현하지 않고 Host의 콘텐츠 슬롯에 렌더링된다.
-- **Shared Libraries**: 
-- `libs/design-system`: 템플릿 추출 컴포넌트, 테마, 공통 훅, 에셋 관리.
-- `libs/shared-utils`: `axiosInstance`, 테넌트 추출 유틸, 인증 가드, 공통 타입 정의.
+## 🛠 UI/UX Standard (Standardization)
+- **UI Library**: **MUI v5 전용**. (shadcn/ui, Radix 등 타 라이브러리 사용 금지).
+- **Styling**: MUI System (sx, styled) + Emotion 기반. Tailwind는 레이아웃 보조용으로만 제한적 사용.
+- **Icons**: Iconify (`@iconify/react`)만 사용 (Lucide, Heroicons 금지).
+- **Theme**: Host의 `ThemeProvider`를 모든 Remote가 상속하며 실시간 동기화 보장.
 
-## 3. 멀티 테넌시 및 인증 (Multi-tenancy & SSO)
-- **Tenant Identification**: 고객사는 서브도메인(예: `client-a.dwp.com`)으로 식별한다.
-- `window.location.hostname`을 분석하여 테넌트 키를 추출하는 유틸리티를 필수 사용한다.
-- **Auth Strategy**: 앱 진입 시 백엔드로부터 해당 테넌트의 인증 설정(SSO 전용, 자체 로그인, 혼합형 등)을 조회하여 로그인 흐름을 결정한다.
-- **Unified Session**: SSO 로그인과 일반 로그인 모두 최종적으로 동일한 User 정보와 JWT 모델로 통합 관리한다.
-- **Auth Guard**: 모든 라우트는 세션 유효성과 테넌트 권한을 검증하는 `AuthGuard`를 통과해야 한다.
+## 🧠 Agentic AI Integration (Aura Specifics)
+- **Streaming UI**: Aura-Platform의 SSE 응답 처리 시 `fetch`와 `ReadableStream`을 사용하여 실시간 타이핑 효과 구현.
+- **Thought Trace**: 에이전트의 '추론 과정(Thinking)'과 '최종 답변'을 UI상에서 명확히 분리하여 렌더링.
+- **HITL (Human-in-the-loop)**: 에이전트 승인 요청 시 전용 Modal/Notification을 통해 사용자 확정 후 결과 전송.
+- **Context Awareness**: 질문 시 현재 테넌트 정보, 현재 메뉴 등 화면 컨텍스트를 메타데이터로 자동 포함.
 
-## 4. 신규 Remote App 생성 및 개발 가이드
-신규 모듈 추가 시 다음 프로토콜을 반드시 준수한다.
-1. **Port 할당**: `readme.md`의 포트 맵을 확인하여 4201번부터 중복되지 않게 순차 할당한다.
-2. **Theme 주입**: Remote 앱의 엔트리 포인트(`main.tsx`)를 반드시 `@dwp-frontend/design-system`의 `ThemeProvider`로 감싸 디자인 일관성을 확보한다.
-3. **Menu Metadata**: Remote는 사이드바를 직접 그리지 않는다. 대신 Host가 렌더링할 수 있도록 메뉴명, 아이콘, 경로 정보가 담긴 메타데이터만 제공한다.
-4. **Expose 설정**: `module-federation.config.ts`에서 외부에 노출할 엔트리를 `./Module`로 명명하여 노출한다.
+## 📜 Development & Coding Standards
+- **Component**: 모든 컴포넌트는 화살표 함수(`export const Component = ...`) 사용.
+- **Logic Separation**: UI 내 복잡한 로직 금지. 반드시 Custom Hook으로 분리.
+- **State Management**: 전역 UI 상태는 `Zustand`, 서버 데이터 캐싱은 `TanStack Query` 사용.
+- **API Client**: `libs/shared-utils`의 `axiosInstance`를 필수 사용하며 `ApiResponse<T>` 규격 준수.
 
-## 5. 코드 작성 및 데이터 통신 규칙
-- **Component**: 모든 컴포넌트는 화살표 함수(`export const Component = () => {}`)를 사용한다.
-- **Logic Separation**: UI 컴포넌트 내부에 복잡한 비즈니스 로직을 두지 않고, 반드시 Custom Hook으로 분리한다.
-- **State Management**: 전역 UI 상태는 `Zustand`, 서버 데이터 캐싱 및 비동기 통신은 `TanStack Query`를 사용한다.
-- **API Client**: `libs/shared-utils`의 `axiosInstance`를 사용하며, 백엔드 `ApiResponse<T>` 규격에 맞춰 타입을 정의한다.
-- **Agent Integration (Aura)**:
-  - **Streaming UI**: Aura-Platform의 SSE(Server-Sent Events) 응답을 처리할 때, `fetch` API와 `ReadableStream`을 사용하여 실시간 타이핑 효과를 구현한다.
-  - **Thought Trace**: 에이전트의 '추론 과정'과 '최종 답변'을 구분하여 렌더링한다. (예: `thinking` 상태 표시 UI 활용)
-  - **Action Approval (HITL)**: 에이전트가 승인을 요청할 경우(Human-in-the-loop), 전용 Modal 또는 알림 컴포넌트를 통해 사용자 확정을 받은 후 `dwp_backend`로 결과를 전송한다.
-  - **Context Provider**: 현재 사용자가 보고 있는 화면의 컨텍스트(테넌트 정보, 현재 메뉴 등)를 에이전트 질문 시 메타데이터로 함께 전송한다.
-  
-## 6. 금지 및 주의 사항 (Hard Rules)
-- ❌ **Direct Import 금지**: Host와 Remote 간에 직접적인 상대 경로 import를 금지한다. (반드시 MFE 로더나 라이브러리 경로 사용)
-- ❌ **No Any**: `any` 타입 사용을 절대 금지하며, 인터페이스 정의가 어려운 경우에만 `unknown`을 고려한다.
-- ❌ **Duplicate Layout 금지**: Remote 앱 내부에서 별도의 상단바나 사이드바를 중복 구현하는 행위를 금지한다.
-- ❌ **Icons**: 디자인 통일성을 위해 반드시 `@iconify/react` 라이브러리의 아이콘만 사용한다.
+## 🔒 Multi-tenancy & Security
+- **Tenant ID**: 서브도메인을 통해 식별하며, 전용 유틸리티를 통해 테넌트 키 추출.
+- **Unified Session**: SSO 및 일반 로그인 세션을 동일한 JWT 모델로 통합 관리.
+- **Auth Guard**: 모든 라우트는 테넌트 권한과 세션 유효성을 검증하는 `AuthGuard` 필수 적용.
 
-## 7. 에셋 및 환경 변수 관리
-- **Assets**: 모든 공통 이미지 및 SVG는 `libs/design-system/src/assets`에서 관리한다.
-- **Env**: 환경 변수는 `process.env.NX_API_URL` 형식을 사용하며, Webpack `DefinePlugin`을 통해 빌드 타임에 주입됨을 보장한다.
+## ⚠️ Hard Rules (Strictly Prohibited)
+- ❌ **No Any**: `any` 타입 사용 절대 금지. 정의 불가 시 `unknown` 고려.
+- ❌ **Direct Import**: Host와 Remote 간 상대 경로 import 금지 (MFE 로더/라이브러리 경로 사용).
+- ❌ **Duplicate Layout**: Remote 내부에서 상단바/사이드바 중복 구현 금지.
+- MFE Expose Standard: 모든 Remote App은 src/remote-entry.ts를 통해서만 기능을 노출하며, Host에서 호출할 메인 컴포넌트명은 반드시 Module로 통일한다.
+- Zustand Store Isolation: Remote App은 Host의 전역 상태를 직접 수정할 수 없으며, 필요한 경우 Host가 props로 전달한 actions를 통해서만 소통한다.

@@ -24,8 +24,13 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { ResultViewer } from '../components/aura/result-viewer';
+import { ThoughtChainUI } from '../components/aura/thought-chain-ui';
+import { ConfidenceScore } from '../components/aura/confidence-score';
+import { ContextualBridge } from '../components/aura/contextual-bridge';
+import { DynamicPlanBoard } from '../components/aura/dynamic-plan-board';
+import { LiveExecutionLog } from '../components/aura/live-execution-log';
 import { ReasoningTimeline } from '../components/aura/reasoning-timeline';
-import { HitlApprovalDialog } from '../components/aura/hitl-approval-dialog';
+import { CheckpointApproval } from '../components/aura/checkpoint-approval';
 import { ActionExecutionView } from '../components/aura/action-execution-view';
 
 // ----------------------------------------------------------------------
@@ -43,8 +48,31 @@ export default function Page() {
   const actionExecutions = useAuraStore((state) => state.actionExecutions);
   const pendingHitl = useAuraStore((state) => state.pendingHitl);
   const currentStepIndex = useAuraStore((state) => state.currentStepIndex);
+  const thoughtChains = useAuraStore((state) => state.thoughtChains);
+  const planSteps = useAuraStore((state) => state.planSteps);
+  const executionLogs = useAuraStore((state) => state.executionLogs);
+  const contextSnapshot = useAuraStore((state) => state.contextSnapshot);
 
-  const { addMessage, setStreaming, setThinking, setReturnPath, addTimelineStep, updateTimelineStep, addActionExecution, updateActionExecution, setPendingHitl, approveHitl, rejectHitl, setCurrentStepIndex } = useAuraActions();
+  const {
+    addMessage,
+    setStreaming,
+    setThinking,
+    setReturnPath,
+    addTimelineStep,
+    updateTimelineStep,
+    addActionExecution,
+    updateActionExecution,
+    setPendingHitl,
+    approveHitl,
+    rejectHitl,
+    setCurrentStepIndex,
+    addThoughtChain,
+    addPlanStep,
+    updatePlanStep,
+    reorderPlanSteps,
+    addExecutionLog,
+    updateHitlEditableContent,
+  } = useAuraActions();
 
   const [prompt, setPrompt] = useState('');
   const [streamingText, setStreamingText] = useState('');
@@ -144,6 +172,20 @@ export default function Page() {
           try {
             const data = JSON.parse(dataStr);
 
+            // Handle thought chain
+            if (data.type === 'thought' || data.type === 'thinking') {
+              setThinking(true);
+              addThoughtChain({
+                type: data.thoughtType || 'analysis',
+                content: data.content || data.message || '사고 중...',
+                sources: data.sources,
+              });
+              addExecutionLog({
+                type: 'info',
+                content: `[사고] ${data.content || data.message || '처리 중...'}`,
+              });
+            }
+
             // Handle HITL request
             if (data.type === 'hitl' || data.type === 'approval_required') {
               setPendingHitl({
@@ -153,22 +195,37 @@ export default function Page() {
                 action: data.action || 'unknown',
                 params: data.params || {},
                 timestamp: new Date(),
+                confidence: data.confidence,
+                editableContent: data.editableContent || data.message,
+              });
+              addExecutionLog({
+                type: 'info',
+                content: '[승인 대기] 사용자 승인이 필요한 작업이 있습니다.',
               });
               continue;
             }
 
             // Handle tool execution
             if (data.type === 'tool_execution' || data.type === 'action') {
+              const tool = data.tool || 'unknown';
               const execId = addActionExecution({
-                tool: data.tool || 'unknown',
+                tool,
                 params: data.params || {},
                 status: 'executing',
+              });
+              addExecutionLog({
+                type: 'command',
+                content: `실행: ${tool} ${JSON.stringify(data.params || {})}`,
               });
               // Simulate completion after a delay
               setTimeout(() => {
                 updateActionExecution(execId, {
                   status: 'completed',
                   result: data.result,
+                });
+                addExecutionLog({
+                  type: 'success',
+                  content: `완료: ${tool}`,
                 });
               }, 1000);
             }
@@ -221,8 +278,11 @@ export default function Page() {
     setPrompt('');
   };
 
-  const handleApproveHitl = () => {
+  const handleApproveHitl = (editedContent?: string) => {
     if (pendingHitl) {
+      if (editedContent) {
+        updateHitlEditableContent(pendingHitl.id, editedContent);
+      }
       approveHitl(pendingHitl.id);
       // Continue execution logic here
     }
@@ -235,6 +295,24 @@ export default function Page() {
     }
   };
 
+  const handleEditHitl = (content: string) => {
+    if (pendingHitl) {
+      updateHitlEditableContent(pendingHitl.id, content);
+    }
+  };
+
+  const handleApprovePlanStep = (id: string) => {
+    updatePlanStep(id, { status: 'approved' });
+  };
+
+  const handleSkipPlanStep = (id: string) => {
+    updatePlanStep(id, { status: 'skipped' });
+  };
+
+  const handleReorderPlanSteps = (stepIds: string[]) => {
+    reorderPlanSteps(stepIds);
+  };
+
   const handleReturn = () => {
     if (returnPath) {
       navigate(returnPath);
@@ -244,20 +322,46 @@ export default function Page() {
     }
   };
 
+  const [logOpen, setLogOpen] = useState(true);
+  const [contextOpen, setContextOpen] = useState(true);
+
   return (
     <>
       {pendingHitl && (
-        <HitlApprovalDialog request={pendingHitl} onApprove={handleApproveHitl} onReject={handleRejectHitl} />
+        <CheckpointApproval
+          request={pendingHitl}
+          onApprove={handleApproveHitl}
+          onReject={handleRejectHitl}
+          onEdit={handleEditHitl}
+        />
       )}
 
-      <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-        {/* Left: Chat Panel */}
-        <Box sx={{ width: '40%', display: 'flex', flexDirection: 'column', borderRight: 1, borderColor: 'divider' }}>
-          <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Typography variant="h6">Aura AI Workspace</Typography>
-            <Button variant="outlined" size="small" onClick={handleReturn} startIcon={<Iconify icon="solar:arrow-left-bold" />}>
-              돌아가기
-            </Button>
+      <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+        {contextSnapshot && contextOpen && (
+          <ContextualBridge snapshot={contextSnapshot} onClose={() => setContextOpen(false)} />
+        )}
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1,
+            marginRight: contextSnapshot && contextOpen ? '320px' : 0,
+            transition: 'margin-right 0.3s',
+          }}
+        >
+          {/* Left: Chat Panel */}
+          <Box sx={{ width: '40%', display: 'flex', flexDirection: 'column', borderRight: 1, borderColor: 'divider' }}>
+          <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
+              <Typography variant="h6">Aura AI Workspace</Typography>
+              <Button variant="outlined" size="small" onClick={handleReturn} startIcon={<Iconify icon="solar:arrow-left-bold" />}>
+                돌아가기
+              </Button>
+            </Stack>
+            {pendingHitl?.confidence !== undefined && (
+              <ConfidenceScore confidence={pendingHitl.confidence} onRequestInfo={() => {}} />
+            )}
           </Box>
 
           <Scrollbar sx={{ flex: 1 }}>
@@ -327,42 +431,86 @@ export default function Page() {
           </Box>
         </Box>
 
-        {/* Right: Timeline & Execution Panel */}
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', bgcolor: 'background.neutral' }}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)}>
-              <Tab label="계획 및 실행" />
-              <Tab label="도구 실행 로그" />
-              <Tab label="결과" />
-            </Tabs>
-          </Box>
-
-          <Scrollbar sx={{ flex: 1 }}>
-            <Box sx={{ p: 3 }}>
-              {activeTab === 0 && (
-                <ReasoningTimeline steps={timelineSteps} currentStepIndex={currentStepIndex} />
-              )}
-              {activeTab === 1 && <ActionExecutionView executions={actionExecutions} />}
-              {activeTab === 2 && (
-                <Stack spacing={2}>
-                  {messages
-                    .filter((msg) => msg.role === 'assistant' && msg.metadata?.result)
-                    .map((msg) => (
-                      <ResultViewer key={msg.id} result={msg.metadata?.result} />
-                    ))}
-                  {messages.filter((msg) => msg.role === 'assistant' && msg.metadata?.result).length === 0 && (
-                    <Paper sx={{ p: 3, textAlign: 'center' }}>
-                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        결과가 여기에 표시됩니다.
-                      </Typography>
-                    </Paper>
-                  )}
-                </Stack>
-              )}
+          {/* Right: Timeline & Execution Panel */}
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', bgcolor: 'background.neutral' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)}>
+                <Tab label="사고 과정" />
+                <Tab label="작업 계획" />
+                <Tab label="실행 로그" />
+                <Tab label="결과" />
+              </Tabs>
             </Box>
-          </Scrollbar>
+
+            <Scrollbar sx={{ flex: 1 }}>
+              <Box sx={{ p: 3 }}>
+                {activeTab === 0 && (
+                  <Stack spacing={3}>
+                    {thoughtChains.length > 0 && (
+                      <Box>
+                        <Typography variant="h6" sx={{ mb: 2 }}>
+                          사고 체인
+                        </Typography>
+                        <ThoughtChainUI thoughts={thoughtChains} />
+                      </Box>
+                    )}
+                    <Box>
+                      <Typography variant="h6" sx={{ mb: 2 }}>
+                        실행 타임라인
+                      </Typography>
+                      <ReasoningTimeline steps={timelineSteps} currentStepIndex={currentStepIndex} />
+                    </Box>
+                  </Stack>
+                )}
+                {activeTab === 1 && (
+                  <DynamicPlanBoard
+                    steps={planSteps}
+                    onReorder={handleReorderPlanSteps}
+                    onUpdate={updatePlanStep}
+                    onApprove={handleApprovePlanStep}
+                    onSkip={handleSkipPlanStep}
+                  />
+                )}
+                {activeTab === 2 && (
+                  <Stack spacing={2}>
+                    <ActionExecutionView executions={actionExecutions} />
+                    {actionExecutions.length === 0 && (
+                      <Paper sx={{ p: 3, textAlign: 'center' }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                          실행 로그가 없습니다.
+                        </Typography>
+                      </Paper>
+                    )}
+                  </Stack>
+                )}
+                {activeTab === 3 && (
+                  <Stack spacing={2}>
+                    {messages
+                      .filter((msg) => msg.role === 'assistant' && msg.metadata?.result)
+                      .map((msg) => (
+                        <ResultViewer key={msg.id} result={msg.metadata?.result} />
+                      ))}
+                    {messages.filter((msg) => msg.role === 'assistant' && msg.metadata?.result).length === 0 && (
+                      <Paper sx={{ p: 3, textAlign: 'center' }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                          결과가 여기에 표시됩니다.
+                        </Typography>
+                      </Paper>
+                    )}
+                  </Stack>
+                )}
+              </Box>
+            </Scrollbar>
+          </Box>
         </Box>
       </Box>
+
+      <LiveExecutionLog
+        logs={executionLogs}
+        isOpen={logOpen}
+        onToggle={() => setLogOpen(!logOpen)}
+        contextOpen={contextSnapshot !== null && contextOpen}
+      />
     </>
   );
 }
