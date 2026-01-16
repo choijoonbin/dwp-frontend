@@ -2,6 +2,7 @@ import '@dwp-frontend/design-system/styles/global.css';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@dwp-frontend/shared-utils';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router';
 
@@ -12,6 +13,15 @@ import { routesSection } from './routes/sections';
 import { ErrorBoundary } from './routes/components';
 
 // ----------------------------------------------------------------------
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const router = createBrowserRouter([
   {
@@ -29,10 +39,12 @@ const root = createRoot(document.getElementById('root')!);
 
 root.render(
   <StrictMode>
-    <ThemeProvider>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   </StrictMode>
 );
