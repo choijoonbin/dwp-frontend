@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
+import { getAgentContext } from './context-util';
+
+import { getAccessToken } from '../auth/token-storage';
 import { NX_API_URL } from '../env';
 import { getTenantId } from '../tenant-util';
-import { getAccessToken } from '../auth/token-storage';
-import { getAgentContext } from './context-util';
 
 // ----------------------------------------------------------------------
 

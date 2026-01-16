@@ -1,20 +1,23 @@
 // ----------------------------------------------------------------------
 
-import { useState, useRef, useEffect } from 'react';
-import { useTheme } from '@mui/material/styles';
+import { useEffect, useRef, useState } from 'react';
+
+import Alert from '@mui/material/Alert';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import InputAdornment from '@mui/material/InputAdornment';
 import CircularProgress from '@mui/material/CircularProgress';
 import Collapse from '@mui/material/Collapse';
-import Avatar from '@mui/material/Avatar';
-import Alert from '@mui/material/Alert';
-import { Iconify } from 'src/components/iconify';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+
 import { useAgentStream, type AgentMessage } from '@dwp-frontend/shared-utils';
+
+import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 // ----------------------------------------------------------------------
@@ -104,8 +107,8 @@ export const AuraBar = () => {
           p: 1.5,
           borderRadius: 2,
           bgcolor: 'background.paper',
-          border: (theme) => `solid 1px ${theme.vars.palette.divider}`,
-          boxShadow: (theme) => theme.customShadows.z20,
+          border: (t) => `solid 1px ${t.vars.palette.divider}`,
+          boxShadow: (t) => t.customShadows.z20,
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
