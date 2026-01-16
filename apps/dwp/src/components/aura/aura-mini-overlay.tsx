@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
 import { NX_API_URL , getTenantId , getAccessToken } from '@dwp-frontend/shared-utils';
 
