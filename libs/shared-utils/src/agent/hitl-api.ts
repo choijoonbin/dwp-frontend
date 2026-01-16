@@ -43,11 +43,18 @@ export async function approveHitlRequest(
   });
 
   if (!response.ok) {
-    throw new Error(`HITL approval failed: ${response.status}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || `HITL approval failed: ${response.status}`);
   }
 
   const result = await response.json();
-  return result.data;
+  
+  // Backend returns ApiResponse<HitlApprovalResponse>
+  if (result.status === 'SUCCESS' || result.success) {
+    return result.data;
+  }
+  
+  throw new Error(result.message || 'HITL approval failed');
 }
 
 /**
@@ -85,12 +92,14 @@ export async function rejectHitlRequest(
     throw new Error(errorData.message || `HITL rejection failed: ${response.status}`);
   }
 
-  if (!response.ok) {
-    throw new Error(`HITL rejection failed: ${response.status}`);
-  }
-
   const result = await response.json();
-  return result.data;
+  
+  // Backend returns ApiResponse<HitlApprovalResponse>
+  if (result.status === 'SUCCESS' || result.success) {
+    return result.data;
+  }
+  
+  throw new Error(result.message || 'HITL rejection failed');
 }
 
 /**
@@ -108,10 +117,16 @@ export async function getHitlRequest(requestId: string): Promise<any> {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to get HITL request: ${response.status}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || `Failed to get HITL request: ${response.status}`);
   }
 
   const result = await response.json();
-  // Backend returns data as JSON string, parse it
-  return typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+  
+  // Backend returns ApiResponse with data as JSON string, parse it
+  if (result.status === 'SUCCESS' || result.success) {
+    return typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+  }
+  
+  throw new Error(result.message || 'Failed to get HITL request');
 }
