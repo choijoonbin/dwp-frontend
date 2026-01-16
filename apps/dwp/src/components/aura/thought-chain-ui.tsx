@@ -70,6 +70,21 @@ export const ThoughtChainUI = ({ thoughts }: ThoughtChainUIProps) => {
     }
   };
 
+  const getChipColor = (type: ThoughtChain['type']): 'info' | 'primary' | 'warning' | 'success' | 'default' => {
+    switch (type) {
+      case 'analysis':
+        return 'info';
+      case 'planning':
+        return 'primary';
+      case 'execution':
+        return 'warning';
+      case 'verification':
+        return 'success';
+      default:
+        return 'default';
+    }
+  };
+
   if (thoughts.length === 0) {
     return (
       <Paper sx={{ p: 3, textAlign: 'center', bgcolor: 'background.neutral' }}>
@@ -113,7 +128,7 @@ export const ThoughtChainUI = ({ thoughts }: ThoughtChainUIProps) => {
                       <Chip
                         label={getTypeLabel(thought.type)}
                         size="small"
-                        color={getTypeColor(thought.type)}
+                        color={getChipColor(thought.type)}
                         icon={<Iconify icon={getTypeIcon(thought.type)} width={14} />}
                       />
                       <Typography variant="caption" sx={{ color: 'text.secondary', ml: 'auto' }}>
