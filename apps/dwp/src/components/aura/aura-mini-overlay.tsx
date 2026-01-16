@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
-import { useNavigate, useLocation } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { NX_API_URL , getTenantId , getAccessToken } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
