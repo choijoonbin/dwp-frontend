@@ -45,9 +45,12 @@ dwp-frontend/
 │   ├── dwp/                  # Host (Shell) - port 4200
 │   │   ├── src/
 │   │   │   ├── layouts/       # Zustand 기반 DashboardLayout (Sidebar/Header)
-│   │   │   ├── store/         # useLayoutStore (Zustand)
-│   │   │   ├── routes/        # react-router (AuthGuard 적용 가능 구조)
-│   │   │   └── pages/         # Dashboard, Sign-in, Feature Pages
+│   │   ├── components/    # Aura FloatingButton, MiniOverlay 등
+│   │   │   └── aura/      # AI 업무 파트너 UI 컴포넌트
+│   │   ├── hooks/         # usePageContext 등 커스텀 훅
+│   │   ├── store/         # useLayoutStore, useAuraStore (Zustand)
+│   │   ├── routes/        # react-router (AuthGuard 적용 가능 구조)
+│   │   └── pages/         # Dashboard, Sign-in, AI Workspace 등
 │   └── remotes/
 │       └── mail/             # Remote (Mail) - port 4201
 │
@@ -60,6 +63,9 @@ dwp-frontend/
 │       └── src/
 │           ├── auth/          # AuthProvider, useAuth, JWT 스토리지
 │           ├── api/           # auth-api, main-api 등 실제 엔드포인트 호출
+│           ├── agent/         # AI 에이전트 관련 유틸리티
+│           │   ├── context-util.ts  # 페이지 컨텍스트 수집
+│           │   └── use-agent-stream.ts # SSE 스트리밍 훅
 │           ├── axios-instance.ts # fetch 기반 axios-like wrapper (Auth 헤더 자동 포함)
 │           └── types.ts       # ApiResponse<T> 등 공통 타입 정의
 ```
@@ -180,9 +186,23 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 - **HttpError**: 상태 코드(404, 401 등)에 따른 분기 처리를 위해 전역 에러 객체를 지원합니다.
 
 ### 5. 에이전틱 AI 연동 표준 (Aura)
+글로벌 SaaS 수준의 Agentic AI 업무 파트너 시스템을 구현했습니다.
+
+#### 핵심 기능
+- **Floating AI Button**: 우측 하단에 고정된 원형 버튼으로 `arua.gif` 애니메이션을 사용합니다. 알림 배지, hover 애니메이션, 글로우 효과가 포함되어 있습니다.
+- **Mini AI Chat Overlay**: 버튼 클릭 시 우측에 슬라이드되는 오버레이로, 현재 페이지를 가리지 않고 빠른 상호작용을 제공합니다.
+- **Full AI Workspace**: `/ai-workspace` 경로의 전체 페이지로, 좌측 채팅 패널과 우측 타임라인 UI(계획 → 실행 → 결과)를 제공합니다.
+- **Context Awareness**: `usePageContext` 훅을 통해 현재 URL, 페이지 제목, 메타데이터를 자동으로 수집하여 AI에게 전달합니다.
+- **Quick Actions**: Mini Overlay 상단에 "현재 화면 요약", "다음 행동 추천" 버튼을 제공합니다.
+- **Return Path**: AI Workspace에서 작업 완료 후 이전 페이지로 복귀할 수 있는 기능입니다.
+
+#### 상태 관리
+- **Zustand Store (`use-aura-store.ts`)**: 대화 히스토리, 오버레이 상태, 알림 상태를 전역으로 관리합니다. Mini Overlay와 Full Workspace 간 상태가 자동으로 동기화됩니다.
+- **메시지 유지**: 오버레이에서 시작한 대화가 Workspace로 확장되어도 히스토리가 그대로 유지됩니다.
+
+#### 기술 구현
 - **useAgentStream**: SSE(Server-Sent Events)를 지원하는 TanStack Query 기반 스트리밍 훅입니다. '추론(Thinking)' 상태와 실시간 텍스트 출력을 지원하며, `AbortController`를 통한 중단 기능을 포함합니다.
 - **Agent Context Utility**: 현재 활성 앱, URL 경로, 항목 ID 등을 자동으로 수집하여 에이전트 요청 시 문맥(Context)을 전달합니다.
-- **Aura 전역 바**: Host 앱 레이아웃에 상주하며 모든 리모트 앱 위에서 일관된 대화형 인터페이스를 제공합니다. 메시지 히스토리 관리 및 자동 스크롤 기능이 포함되어 있습니다.
 - **ApprovalDialog**: 에이전트가 주요 액션을 수행하기 전 사용자의 명시적 승인을 받기 위한 HITL(Human-in-the-loop) 표준 UI 컴포넌트입니다.
 - **Header Interceptors**: `axiosInstance`를 통해 모든 요청에 `X-Tenant-ID` 및 `X-Agent-ID`를 자동으로 주입합니다.
 
