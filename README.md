@@ -120,7 +120,9 @@ npm run dev:all
 ```
 
 > **참고**: 새로운 Remote 앱이 추가되면 `package.json`의 `dev:all` 스크립트에 해당 앱의 실행 명령을 추가해야 합니다.
-> 예: `"dev:all": "concurrently \"npm run dev\" \"npm run dev:mail\" \"npm run dev:chat\""`
+> 예: `"dev:all": "npx concurrently \"npm run dev\" \"npm run dev:mail\" \"npm run dev:chat\""`
+> 
+> `npx`를 사용하면 `concurrently` 패키지가 설치되어 있지 않아도 자동으로 다운로드하여 실행합니다.
 
 **방법 2: Nx run-many 사용** (Nx 타겟이 설정된 경우)
 

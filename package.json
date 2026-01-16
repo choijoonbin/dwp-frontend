@@ -15,7 +15,7 @@
     "dev:dev": "vite --mode dev",
     "dev:mail": "vite --config apps/remotes/mail/vite.config.ts",
     "dev:mail:dev": "vite --mode dev --config apps/remotes/mail/vite.config.ts",
-    "dev:all": "concurrently \"npm run dev\" \"npm run dev:mail\"",
+    "dev:all": "npx concurrently \"npm run dev\" \"npm run dev:mail\"",
     "start": "vite preview",
     "build": "tsc && vite build --mode prod",
     "build:mail": "tsc && vite build --mode prod --config apps/remotes/mail/vite.config.ts",
