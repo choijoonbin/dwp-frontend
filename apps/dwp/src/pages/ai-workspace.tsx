@@ -2,7 +2,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
-import { NX_API_URL, getTenantId, getAccessToken } from '@dwp-frontend/shared-utils';
+import { NX_API_URL, getTenantId, getAccessToken, rejectHitlRequest, approveHitlRequest } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -176,7 +176,14 @@ export default function Page() {
 
         for (const line of lines) {
           const trimmedLine = line.trim();
-          if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+          
+          // Handle SSE event format: "event: {type}" or "data: {json}"
+          if (trimmedLine.startsWith('event: ')) {
+            // Event type is stored for next data line
+            continue;
+          }
+          
+          if (!trimmedLine.startsWith('data: ')) continue;
 
           const dataStr = trimmedLine.slice(6);
           if (dataStr === '[DONE]') break;
@@ -184,67 +191,101 @@ export default function Page() {
           try {
             const data = JSON.parse(dataStr);
 
+            // Handle different event types from backend
+            // Backend sends: { type: 'thought', data: {...} } or { type: 'hitl', data: {...} }
+            const eventType = data.type;
+            const eventData = data.data || data;
+
             // Handle thought chain
-            if (data.type === 'thought' || data.type === 'thinking') {
+            if (eventType === 'thought' || eventType === 'thinking') {
               setThinking(true);
               addThoughtChain({
-                type: data.thoughtType || 'analysis',
-                content: data.content || data.message || '사고 중...',
-                sources: data.sources,
+                type: eventData.thoughtType || 'analysis',
+                content: eventData.content || eventData.message || '사고 중...',
+                sources: eventData.sources,
               });
               addExecutionLog({
                 type: 'info',
-                content: `[사고] ${data.content || data.message || '처리 중...'}`,
+                content: `[사고] ${eventData.content || eventData.message || '처리 중...'}`,
+              });
+            }
+
+            // Handle plan step
+            if (eventType === 'plan_step') {
+              addPlanStep({
+                title: eventData.title || '계획 단계',
+                description: eventData.description || '',
+                order: eventData.order || planSteps.length,
+                canSkip: eventData.canSkip || false,
+                status: 'pending',
+                confidence: eventData.confidence,
               });
             }
 
             // Handle HITL request
-            if (data.type === 'hitl' || data.type === 'approval_required') {
+            if (eventType === 'hitl' || eventType === 'approval_required') {
+              const requestId = eventData.requestId || `hitl-${Date.now()}`;
               setPendingHitl({
-                id: `hitl-${Date.now()}`,
-                stepId: timelineSteps[1]?.id || '',
-                message: data.message || '이 작업을 실행하시겠습니까?',
-                action: data.action || 'unknown',
-                params: data.params || {},
+                id: requestId,
+                stepId: timelineSteps[currentStepIndex]?.id || '',
+                message: eventData.message || '이 작업을 실행하시겠습니까?',
+                action: eventData.actionType || eventData.action || 'unknown',
+                params: eventData.params || {},
                 timestamp: new Date(),
-                confidence: data.confidence,
-                editableContent: data.editableContent || data.message,
+                confidence: eventData.confidence,
+                editableContent: eventData.editableContent || eventData.message,
               });
               addExecutionLog({
                 type: 'info',
                 content: '[승인 대기] 사용자 승인이 필요한 작업이 있습니다.',
               });
-              continue;
+              setStreaming(false);
+              setThinking(false);
+              break; // Stop streaming for approval
             }
 
             // Handle tool execution
-            if (data.type === 'tool_execution' || data.type === 'action') {
-              const tool = data.tool || 'unknown';
+            if (eventType === 'tool_execution' || eventType === 'action') {
+              const tool = eventData.tool || 'unknown';
               const execId = addActionExecution({
                 tool,
-                params: data.params || {},
+                params: eventData.params || {},
                 status: 'executing',
               });
               addExecutionLog({
                 type: 'command',
-                content: `실행: ${tool} ${JSON.stringify(data.params || {})}`,
+                content: `실행: ${tool} ${JSON.stringify(eventData.params || {})}`,
               });
-              // Simulate completion after a delay
-              setTimeout(() => {
+              
+              // Update execution status based on backend response
+              if (eventData.status === 'completed') {
                 updateActionExecution(execId, {
                   status: 'completed',
-                  result: data.result,
+                  result: eventData.result,
                 });
                 addExecutionLog({
                   type: 'success',
                   content: `완료: ${tool}`,
                 });
-              }, 1000);
+              } else if (eventData.status === 'failed') {
+                updateActionExecution(execId, {
+                  status: 'failed',
+                  error: eventData.error,
+                });
+                addExecutionLog({
+                  type: 'error',
+                  content: `실패: ${tool} - ${eventData.error}`,
+                });
+              }
             }
 
-            if (data.type === 'thought' || data.type === 'thinking') {
-              setThinking(true);
-            } else if (data.content || data.message) {
+            // Handle content/message
+            if (eventType === 'content' || eventType === 'message') {
+              setThinking(false);
+              accumulatedText += eventData.content || eventData.message || '';
+              setStreamingText(accumulatedText);
+            } else if (!eventType && (data.content || data.message)) {
+              // Fallback for non-typed events
               setThinking(false);
               accumulatedText += data.content || data.message || '';
               setStreamingText(accumulatedText);
@@ -290,20 +331,61 @@ export default function Page() {
     setPrompt('');
   };
 
-  const handleApproveHitl = (editedContent?: string) => {
-    if (pendingHitl) {
+  const handleApproveHitl = async (editedContent?: string) => {
+    if (!pendingHitl) return;
+
+    try {
       if (editedContent) {
         updateHitlEditableContent(pendingHitl.id, editedContent);
       }
-      approveHitl(pendingHitl.id);
-      // Continue execution logic here
+
+      // Extract requestId from pendingHitl (backend format)
+      const requestId = pendingHitl.id.startsWith('hitl-') ? pendingHitl.id.replace('hitl-', '') : pendingHitl.id;
+      
+      await approveHitlRequest(requestId);
+      
+      // Clear HITL and resume streaming
+      setPendingHitl(null);
+      setStreaming(true);
+      setThinking(true);
+      
+      // Note: Backend should continue the stream after approval
+      // If needed, re-initiate the stream here
+    } catch (error: any) {
+      console.error('HITL approval failed:', error);
+      addMessage({
+        role: 'assistant',
+        content: `승인 처리 중 오류가 발생했습니다: ${error.message}`,
+      });
     }
   };
 
-  const handleRejectHitl = () => {
-    if (pendingHitl) {
-      rejectHitl(pendingHitl.id);
-      // Handle rejection logic here
+  const handleRejectHitl = async () => {
+    if (!pendingHitl) return;
+
+    try {
+      const requestId = pendingHitl.id.startsWith('hitl-') ? pendingHitl.id.replace('hitl-', '') : pendingHitl.id;
+      
+      await rejectHitlRequest(requestId, '사용자가 작업을 거부했습니다.');
+      
+      setPendingHitl(null);
+      addMessage({
+        role: 'assistant',
+        content: '작업이 거부되었습니다.',
+      });
+      
+      if (timelineSteps.length > 0 && currentStepIndex >= 0) {
+        updateTimelineStep(timelineSteps[currentStepIndex].id, { status: 'failed' });
+      }
+      
+      setStreaming(false);
+      setThinking(false);
+    } catch (error: any) {
+      console.error('HITL rejection failed:', error);
+      addMessage({
+        role: 'assistant',
+        content: `거절 처리 중 오류가 발생했습니다: ${error.message}`,
+      });
     }
   };
 

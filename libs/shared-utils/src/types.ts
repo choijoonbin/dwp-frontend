@@ -16,6 +16,8 @@ export interface ApiResponse<T> {
   status: ApiStatus;
   message: string;
   data: T;
+  success?: boolean;
   timestamp: string;
+  errorCode?: string;
 }
 

@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { NX_API_URL , getTenantId , getAccessToken } from '@dwp-frontend/shared-utils';
+import { NX_API_URL, getTenantId, getAccessToken } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -39,7 +39,18 @@ export const AuraMiniOverlay = () => {
   const isThinking = useAuraStore((state) => state.isThinking);
   const timelineSteps = useAuraStore((state) => state.timelineSteps);
   const currentStepIndex = useAuraStore((state) => state.currentStepIndex);
-  const { closeOverlay, addMessage, setStreaming, setThinking, setReturnPath, setIsExpanding, setContextSnapshot } = useAuraActions();
+  const {
+    closeOverlay,
+    addMessage,
+    setStreaming,
+    setThinking,
+    setReturnPath,
+    setIsExpanding,
+    setContextSnapshot,
+    addTimelineStep,
+    addActionExecution,
+    setPendingHitl,
+  } = useAuraActions();
 
   const [prompt, setPrompt] = useState('');
   const [streamingText, setStreamingText] = useState('');
@@ -110,7 +121,14 @@ export const AuraMiniOverlay = () => {
 
         for (const line of lines) {
           const trimmedLine = line.trim();
-          if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+          
+          // Handle SSE event format: "event: {type}" or "data: {json}"
+          if (trimmedLine.startsWith('event: ')) {
+            // Event type is stored for next data line
+            continue;
+          }
+          
+          if (!trimmedLine.startsWith('data: ')) continue;
 
           const dataStr = trimmedLine.slice(6);
           if (dataStr === '[DONE]') break;
@@ -118,9 +136,46 @@ export const AuraMiniOverlay = () => {
           try {
             const data = JSON.parse(dataStr);
 
-            if (data.type === 'thought' || data.type === 'thinking') {
+            // Handle different event types from backend
+            // Backend sends: { type: 'thought', data: {...} } or { type: 'hitl', data: {...} }
+            const eventType = data.type;
+            const eventData = data.data || data;
+
+            if (eventType === 'thought' || eventType === 'thinking') {
               setThinking(true);
-            } else if (data.content || data.message) {
+            } else if (eventType === 'plan_step') {
+              addTimelineStep({
+                title: eventData.title || '계획 단계',
+                description: eventData.description || '',
+                status: 'processing',
+              });
+            } else if (eventType === 'tool_execution' || eventType === 'action') {
+              addActionExecution({
+                tool: eventData.tool || 'unknown',
+                params: eventData.params || {},
+                status: 'executing',
+              });
+            } else if (eventType === 'hitl' || eventType === 'approval_required') {
+              const requestId = eventData.requestId || `hitl-${Date.now()}`;
+              setPendingHitl({
+                id: requestId,
+                stepId: timelineSteps[currentStepIndex]?.id || '',
+                message: eventData.message || '이 작업을 실행하시겠습니까?',
+                action: eventData.actionType || eventData.action || 'unknown',
+                params: eventData.params || {},
+                timestamp: new Date(),
+                confidence: eventData.confidence,
+                editableContent: eventData.editableContent || eventData.message,
+              });
+              setStreaming(false);
+              setThinking(false);
+              break; // Stop streaming for approval
+            } else if (eventType === 'content' || eventType === 'message') {
+              setThinking(false);
+              accumulatedText += eventData.content || eventData.message || '';
+              setStreamingText(accumulatedText);
+            } else if (!eventType && (data.content || data.message)) {
+              // Fallback for non-typed events
               setThinking(false);
               accumulatedText += data.content || data.message || '';
               setStreamingText(accumulatedText);

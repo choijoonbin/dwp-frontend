@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect , useContext, useCallback, createContext }
 
 import { login as loginApi } from '../api/auth-api';
 import { getAccessToken, setAccessToken, clearAccessToken } from './token-storage';
+import { setUserId, clearUserId, extractUserIdFromToken } from './user-id-storage';
 
 import type { LoginRequest } from '../api/auth-api';
 
@@ -55,10 +56,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     setAccessToken(token);
     setAccessTokenState(token);
+    
+    // Extract and store user ID from JWT token
+    const userId = extractUserIdFromToken(token);
+    if (userId) {
+      setUserId(userId);
+    }
   }, []);
 
   const logout = useCallback(() => {
     clearAccessToken();
+    clearUserId();
     setAccessTokenState(null);
   }, []);
 
