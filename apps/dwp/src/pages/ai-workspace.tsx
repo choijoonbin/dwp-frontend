@@ -288,11 +288,34 @@ export default function Page() {
               setThinking(false);
               accumulatedText += eventData.content || eventData.message || '';
               setStreamingText(accumulatedText);
+              
+              // Store result metadata if present
+              if (eventData.metadata?.result) {
+                setLastResultMetadata(eventData.metadata.result);
+              }
             } else if (!eventType && (data.content || data.message)) {
               // Fallback for non-typed events
               setThinking(false);
               accumulatedText += data.content || data.message || '';
               setStreamingText(accumulatedText);
+            }
+            
+            // Handle plan_step_update
+            if (eventType === 'plan_step_update') {
+              updatePlanStep(eventData.id, {
+                status: eventData.status,
+                description: eventData.description,
+                confidence: eventData.confidence,
+              });
+            }
+            
+            // Handle timeline_step_update
+            if (eventType === 'timeline_step_update') {
+              updateTimelineStep(eventData.id, {
+                status: eventData.status,
+                title: eventData.title,
+                description: eventData.description,
+              });
             }
           } catch (e) {
             console.error('Parse error:', e);
@@ -313,7 +336,9 @@ export default function Page() {
         addMessage({
           role: 'assistant',
           content: accumulatedText,
+          metadata: lastResultMetadata ? { result: lastResultMetadata } : undefined,
         });
+        setLastResultMetadata(null); // Reset after use
       }
     } catch (err: any) {
       if (err.name !== 'AbortError') {

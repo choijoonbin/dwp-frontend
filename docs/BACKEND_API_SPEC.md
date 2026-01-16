@@ -303,6 +303,9 @@ data: [DONE]\n\n
 }
 ```
 
+**중요**: `metadata.result`가 포함된 `content` 이벤트는 마지막 `content` 이벤트여야 합니다.
+프론트엔드는 스트리밍 종료 시 마지막 `content` 이벤트의 `metadata.result`를 메시지에 저장합니다.
+
 **프론트엔드 처리**:
 - 채팅창에 스트리밍 텍스트로 표시
 - `metadata.result`가 있으면 "결과" 탭에 `ResultViewer`로 표시
