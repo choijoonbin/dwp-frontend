@@ -1995,36 +1995,6 @@
     "type": "static"
   },
   {
-    "source": "npm:@babel/runtime",
-    "target": "npm:regenerator-runtime",
-    "type": "static"
-  },
-  {
-    "source": "npm:@babel/runtime",
-    "target": "npm:regenerator-runtime",
-    "type": "static"
-  },
-  {
-    "source": "npm:@babel/runtime",
-    "target": "npm:regenerator-runtime",
-    "type": "static"
-  },
-  {
-    "source": "npm:@babel/runtime",
-    "target": "npm:regenerator-runtime",
-    "type": "static"
-  },
-  {
-    "source": "npm:@babel/runtime",
-    "target": "npm:regenerator-runtime",
-    "type": "static"
-  },
-  {
-    "source": "npm:@babel/runtime",
-    "target": "npm:regenerator-runtime",
-    "type": "static"
-  },
-  {
     "source": "npm:@babel/template",
     "target": "npm:@babel/code-frame",
     "type": "static"
@@ -2452,6 +2422,11 @@
   {
     "source": "npm:@emotion/cache",
     "target": "npm:stylis",
+    "type": "static"
+  },
+  {
+    "source": "npm:@emotion/is-prop-valid",
+    "target": "npm:@emotion/memoize",
     "type": "static"
   },
   {
@@ -3650,8 +3625,8 @@
     "type": "static"
   },
   {
-    "source": "npm:@types/node",
-    "target": "npm:undici-types",
+    "source": "npm:@types/hast",
+    "target": "npm:@types/unist",
     "type": "static"
   },
   {
@@ -3667,6 +3642,16 @@
   {
     "source": "npm:@types/node",
     "target": "npm:undici-types",
+    "type": "static"
+  },
+  {
+    "source": "npm:@types/node",
+    "target": "npm:undici-types",
+    "type": "static"
+  },
+  {
+    "source": "npm:@types/react-syntax-highlighter",
+    "target": "npm:@types/react",
     "type": "static"
   },
   {
@@ -4840,6 +4825,16 @@
     "type": "static"
   },
   {
+    "source": "npm:chalk",
+    "target": "npm:ansi-styles",
+    "type": "static"
+  },
+  {
+    "source": "npm:chalk",
+    "target": "npm:supports-color",
+    "type": "static"
+  },
+  {
     "source": "npm:chokidar",
     "target": "npm:readdirp",
     "type": "static"
@@ -4887,6 +4882,36 @@
   {
     "source": "npm:combined-stream",
     "target": "npm:delayed-stream",
+    "type": "static"
+  },
+  {
+    "source": "npm:concurrently",
+    "target": "npm:chalk",
+    "type": "static"
+  },
+  {
+    "source": "npm:concurrently",
+    "target": "npm:rxjs",
+    "type": "static"
+  },
+  {
+    "source": "npm:concurrently",
+    "target": "npm:shell-quote",
+    "type": "static"
+  },
+  {
+    "source": "npm:concurrently",
+    "target": "npm:supports-color@8.1.1",
+    "type": "static"
+  },
+  {
+    "source": "npm:concurrently",
+    "target": "npm:tree-kill",
+    "type": "static"
+  },
+  {
+    "source": "npm:concurrently",
+    "target": "npm:yargs",
     "type": "static"
   },
   {
@@ -5017,6 +5042,11 @@
   {
     "source": "npm:debug",
     "target": "npm:ms",
+    "type": "static"
+  },
+  {
+    "source": "npm:decode-named-character-reference",
+    "target": "npm:character-entities",
     "type": "static"
   },
   {
@@ -8990,6 +9020,11 @@
     "type": "static"
   },
   {
+    "source": "npm:fault",
+    "target": "npm:format",
+    "type": "static"
+  },
+  {
     "source": "npm:figures",
     "target": "npm:escape-string-regexp@1.0.5",
     "type": "static"
@@ -9062,6 +9097,21 @@
   {
     "source": "npm:form-data",
     "target": "npm:mime-types",
+    "type": "static"
+  },
+  {
+    "source": "npm:framer-motion",
+    "target": "npm:motion-dom",
+    "type": "static"
+  },
+  {
+    "source": "npm:framer-motion",
+    "target": "npm:motion-utils",
+    "type": "static"
+  },
+  {
+    "source": "npm:framer-motion",
+    "target": "npm:tslib",
     "type": "static"
   },
   {
@@ -9465,6 +9515,36 @@
     "type": "static"
   },
   {
+    "source": "npm:hast-util-parse-selector",
+    "target": "npm:@types/hast",
+    "type": "static"
+  },
+  {
+    "source": "npm:hastscript",
+    "target": "npm:@types/hast",
+    "type": "static"
+  },
+  {
+    "source": "npm:hastscript",
+    "target": "npm:comma-separated-tokens",
+    "type": "static"
+  },
+  {
+    "source": "npm:hastscript",
+    "target": "npm:hast-util-parse-selector",
+    "type": "static"
+  },
+  {
+    "source": "npm:hastscript",
+    "target": "npm:property-information",
+    "type": "static"
+  },
+  {
+    "source": "npm:hastscript",
+    "target": "npm:space-separated-tokens",
+    "type": "static"
+  },
+  {
     "source": "npm:hoist-non-react-statics",
     "target": "npm:react-is@16.13.1",
     "type": "static"
@@ -9492,6 +9572,16 @@
   {
     "source": "npm:internal-slot",
     "target": "npm:side-channel",
+    "type": "static"
+  },
+  {
+    "source": "npm:is-alphanumerical",
+    "target": "npm:is-alphabetical",
+    "type": "static"
+  },
+  {
+    "source": "npm:is-alphanumerical",
+    "target": "npm:is-decimal",
     "type": "static"
   },
   {
@@ -9950,6 +10040,16 @@
     "type": "static"
   },
   {
+    "source": "npm:lowlight",
+    "target": "npm:fault",
+    "type": "static"
+  },
+  {
+    "source": "npm:lowlight",
+    "target": "npm:highlight.js",
+    "type": "static"
+  },
+  {
     "source": "npm:lru-cache",
     "target": "npm:yallist",
     "type": "static"
@@ -9997,6 +10097,11 @@
   {
     "source": "npm:minimatch@9.0.3",
     "target": "npm:brace-expansion",
+    "type": "static"
+  },
+  {
+    "source": "npm:motion-dom",
+    "target": "npm:motion-utils",
     "type": "static"
   },
   {
@@ -10885,6 +10990,41 @@
     "type": "static"
   },
   {
+    "source": "npm:parse-entities",
+    "target": "npm:@types/unist@2.0.11",
+    "type": "static"
+  },
+  {
+    "source": "npm:parse-entities",
+    "target": "npm:character-entities-legacy",
+    "type": "static"
+  },
+  {
+    "source": "npm:parse-entities",
+    "target": "npm:character-reference-invalid",
+    "type": "static"
+  },
+  {
+    "source": "npm:parse-entities",
+    "target": "npm:decode-named-character-reference",
+    "type": "static"
+  },
+  {
+    "source": "npm:parse-entities",
+    "target": "npm:is-alphanumerical",
+    "type": "static"
+  },
+  {
+    "source": "npm:parse-entities",
+    "target": "npm:is-decimal",
+    "type": "static"
+  },
+  {
+    "source": "npm:parse-entities",
+    "target": "npm:is-hexadecimal",
+    "type": "static"
+  },
+  {
     "source": "npm:parse-json",
     "target": "npm:@babel/code-frame",
     "type": "static"
@@ -10990,6 +11130,11 @@
     "type": "static"
   },
   {
+    "source": "npm:react-dom",
+    "target": "npm:scheduler",
+    "type": "static"
+  },
+  {
     "source": "npm:react-router-dom",
     "target": "npm:react-router",
     "type": "static"
@@ -11002,6 +11147,36 @@
   {
     "source": "npm:react-router",
     "target": "npm:set-cookie-parser",
+    "type": "static"
+  },
+  {
+    "source": "npm:react-syntax-highlighter",
+    "target": "npm:@babel/runtime",
+    "type": "static"
+  },
+  {
+    "source": "npm:react-syntax-highlighter",
+    "target": "npm:highlight.js",
+    "type": "static"
+  },
+  {
+    "source": "npm:react-syntax-highlighter",
+    "target": "npm:highlightjs-vue",
+    "type": "static"
+  },
+  {
+    "source": "npm:react-syntax-highlighter",
+    "target": "npm:lowlight",
+    "type": "static"
+  },
+  {
+    "source": "npm:react-syntax-highlighter",
+    "target": "npm:prismjs",
+    "type": "static"
+  },
+  {
+    "source": "npm:react-syntax-highlighter",
+    "target": "npm:refractor",
     "type": "static"
   },
   {
@@ -11132,6 +11307,26 @@
   {
     "source": "npm:reflect.getprototypeof",
     "target": "npm:which-builtin-type",
+    "type": "static"
+  },
+  {
+    "source": "npm:refractor",
+    "target": "npm:@types/hast",
+    "type": "static"
+  },
+  {
+    "source": "npm:refractor",
+    "target": "npm:@types/prismjs",
+    "type": "static"
+  },
+  {
+    "source": "npm:refractor",
+    "target": "npm:hastscript",
+    "type": "static"
+  },
+  {
+    "source": "npm:refractor",
+    "target": "npm:parse-entities",
     "type": "static"
   },
   {
@@ -11292,6 +11487,11 @@
   {
     "source": "npm:run-parallel",
     "target": "npm:queue-microtask",
+    "type": "static"
+  },
+  {
+    "source": "npm:rxjs",
+    "target": "npm:tslib",
     "type": "static"
   },
   {
@@ -11746,6 +11946,11 @@
   },
   {
     "source": "npm:supports-color",
+    "target": "npm:has-flag",
+    "type": "static"
+  },
+  {
+    "source": "npm:supports-color@8.1.1",
     "target": "npm:has-flag",
     "type": "static"
   },
@@ -12787,6 +12992,41 @@
   {
     "source": "npm:wrap-ansi",
     "target": "npm:strip-ansi@6.0.1",
+    "type": "static"
+  },
+  {
+    "source": "npm:yargs",
+    "target": "npm:cliui",
+    "type": "static"
+  },
+  {
+    "source": "npm:yargs",
+    "target": "npm:escalade",
+    "type": "static"
+  },
+  {
+    "source": "npm:yargs",
+    "target": "npm:get-caller-file",
+    "type": "static"
+  },
+  {
+    "source": "npm:yargs",
+    "target": "npm:require-directory",
+    "type": "static"
+  },
+  {
+    "source": "npm:yargs",
+    "target": "npm:string-width",
+    "type": "static"
+  },
+  {
+    "source": "npm:yargs",
+    "target": "npm:y18n",
+    "type": "static"
+  },
+  {
+    "source": "npm:yargs",
+    "target": "npm:yargs-parser",
     "type": "static"
   },
   {

@@ -30,12 +30,27 @@ const bounce = keyframes`
   }
 `;
 
+const thinkingPulse = keyframes`
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(99, 73, 253, 0.7);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 15px rgba(99, 73, 253, 0);
+    transform: scale(1.02);
+  }
+`;
+
 export const AuraFloatingButton = () => {
   const theme = useTheme();
   const isOverlayOpen = useAuraStore((state) => state.isOverlayOpen);
   const hasNotification = useAuraStore((state) => state.hasNotification);
   const notificationCount = useAuraStore((state) => state.notificationCount);
+  const isThinking = useAuraStore((state) => state.isThinking);
+  const isStreaming = useAuraStore((state) => state.isStreaming);
   const { toggleOverlay } = useAuraActions();
+
+  const isActive = isThinking || isStreaming;
 
   // Check for notifications periodically (example)
   useEffect(() => {
@@ -79,9 +94,12 @@ export const AuraFloatingButton = () => {
             border: `2px solid ${theme.vars.palette.primary.main}`,
             position: 'relative',
             overflow: 'hidden',
+            animation: isActive ? `${thinkingPulse} 2s ease-in-out infinite` : 'none',
             '&:hover': {
-              animation: `${bounce} 0.3s ease-in-out`,
-              boxShadow: `0 0 20px ${theme.vars.palette.primary.main}40`,
+              animation: isActive ? `${thinkingPulse} 2s ease-in-out infinite` : `${bounce} 0.3s ease-in-out`,
+              boxShadow: isActive
+                ? `0 0 25px ${theme.vars.palette.primary.main}60`
+                : `0 0 20px ${theme.vars.palette.primary.main}40`,
             },
             '&::before': {
               content: '""',

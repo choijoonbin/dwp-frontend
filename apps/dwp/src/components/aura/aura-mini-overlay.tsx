@@ -36,6 +36,8 @@ export const AuraMiniOverlay = () => {
   const messages = useAuraStore((state) => state.messages);
   const isStreaming = useAuraStore((state) => state.isStreaming);
   const isThinking = useAuraStore((state) => state.isThinking);
+  const timelineSteps = useAuraStore((state) => state.timelineSteps);
+  const currentStepIndex = useAuraStore((state) => state.currentStepIndex);
   const { closeOverlay, addMessage, setStreaming, setThinking, setReturnPath } = useAuraActions();
 
   const [prompt, setPrompt] = useState('');
@@ -192,7 +194,14 @@ export const AuraMiniOverlay = () => {
           }}
         >
           <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
-            <Typography variant="h6">Aura AI</Typography>
+            <Box>
+              <Typography variant="h6">Aura AI</Typography>
+              {timelineSteps.length > 0 && currentStepIndex >= 0 && (
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  진행 중: {currentStepIndex + 1}/{timelineSteps.length} 단계
+                </Typography>
+              )}
+            </Box>
             <Stack direction="row" spacing={1}>
               <Button size="small" variant="outlined" onClick={() => handleQuickAction('summary')}>
                 요약

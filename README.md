@@ -200,11 +200,19 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 - **Zustand Store (`use-aura-store.ts`)**: 대화 히스토리, 오버레이 상태, 알림 상태를 전역으로 관리합니다. Mini Overlay와 Full Workspace 간 상태가 자동으로 동기화됩니다.
 - **메시지 유지**: 오버레이에서 시작한 대화가 Workspace로 확장되어도 히스토리가 그대로 유지됩니다.
 
+#### 고급 시각화 기능
+- **Reasoning & Plan Timeline**: 에이전트의 단계별 계획 수립 과정을 시각화합니다. 각 단계는 Pending, Processing, Completed, Failed 상태로 구분되며, Framer Motion을 활용한 부드러운 애니메이션을 제공합니다.
+- **Action Execution View**: 실제 도구(Git, Jira 등) 호출 시 파라미터와 결과를 다크 테마의 로그 뷰어 스타일로 표시합니다.
+- **Result Viewer**: 결과물을 Diff(코드 변경사항), 문서 프리뷰, 체크리스트 등 다양한 형태로 렌더링합니다. `react-syntax-highlighter`를 사용하여 코드를 가독성 있게 표시합니다.
+- **HITL Approval Dialog**: 에이전트가 사용자 승인이 필요한 단계에서 실행을 멈추고, 승인/거절 버튼을 강조하여 표시합니다.
+
 #### 기술 구현
 - **useAgentStream**: SSE(Server-Sent Events)를 지원하는 TanStack Query 기반 스트리밍 훅입니다. '추론(Thinking)' 상태와 실시간 텍스트 출력을 지원하며, `AbortController`를 통한 중단 기능을 포함합니다.
 - **Agent Context Utility**: 현재 활성 앱, URL 경로, 항목 ID 등을 자동으로 수집하여 에이전트 요청 시 문맥(Context)을 전달합니다.
 - **ApprovalDialog**: 에이전트가 주요 액션을 수행하기 전 사용자의 명시적 승인을 받기 위한 HITL(Human-in-the-loop) 표준 UI 컴포넌트입니다.
 - **Header Interceptors**: `axiosInstance`를 통해 모든 요청에 `X-Tenant-ID` 및 `X-Agent-ID`를 자동으로 주입합니다.
+- **Framer Motion**: Timeline 및 Floating Button의 애니메이션에 사용됩니다.
+- **react-syntax-highlighter**: 코드 Diff 및 코드 블록 렌더링에 사용됩니다.
 
 ## 🧪 통합 테스트 가이드 (Aura-Platform)
 
