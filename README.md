@@ -105,7 +105,7 @@ npm run dev:mail # Remote Mail(4201) 실행
 npx nx workspace-generator new-remote --name=chat --port=4202
 ```
 
-### 2. 생성 후 단계
+### 2. 생성 후 단
 1.  **개발 시작**: `apps/remotes/[모듈명]/src/entry.tsx` 파일에서 비즈니스 로직 개발을 시작합니다.
 2.  **Host 연결**: `apps/dwp/src/layouts/nav-config-dashboard.tsx`에 신규 모듈의 메뉴 정보를 추가합니다.
 3.  **MFE 등록 (향후)**: Webpack Module Federation 도입 시 `module-federation.config.ts`에 노출 정보를 등록합니다.
@@ -137,11 +137,20 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 - **HttpError**: 상태 코드(404, 401 등)에 따른 분기 처리를 위해 전역 에러 객체를 지원합니다.
 
 ### 5. 에이전틱 AI 연동 표준 (Aura)
-- **useAgentStream**: SSE(Server-Sent Events)를 지원하는 TanStack Query 기반 스트리밍 훅입니다. '추론(Thinking)' 상태와 실시간 텍스트 출력을 지원합니다.
+- **useAgentStream**: SSE(Server-Sent Events)를 지원하는 TanStack Query 기반 스트리밍 훅입니다. '추론(Thinking)' 상태와 실시간 텍스트 출력을 지원하며, `AbortController`를 통한 중단 기능을 포함합니다.
 - **Agent Context Utility**: 현재 활성 앱, URL 경로, 항목 ID 등을 자동으로 수집하여 에이전트 요청 시 문맥(Context)을 전달합니다.
-- **Aura 전역 바**: Host 앱 레이아웃에 상주하며 모든 리모트 앱 위에서 일관된 AI 인터페이스를 제공합니다.
+- **Aura 전역 바**: Host 앱 레이아웃에 상주하며 모든 리모트 앱 위에서 일관된 대화형 인터페이스를 제공합니다. 메시지 히스토리 관리 및 자동 스크롤 기능이 포함되어 있습니다.
 - **ApprovalDialog**: 에이전트가 주요 액션을 수행하기 전 사용자의 명시적 승인을 받기 위한 HITL(Human-in-the-loop) 표준 UI 컴포넌트입니다.
 - **Header Interceptors**: `axiosInstance`를 통해 모든 요청에 `X-Tenant-ID` 및 `X-Agent-ID`를 자동으로 주입합니다.
+
+## 🧪 통합 테스트 가이드 (Aura-Platform)
+
+Aura-Platform 및 Gateway와의 통합 테스트를 위해 다음 사항을 점검하세요:
+
+1.  **엔드포인트 설정**: `.env` 파일의 `NX_API_URL`이 Gateway 주소(예: `http://localhost:8080`)를 정확히 가리키고 있는지 확인하세요.
+2.  **SSE 데이터 규격**: 백엔드는 `data: {"content": "..."}\n\n` 또는 `data: {"type": "thought"}\n\n` 형식을 준수해야 하며, 스트림 종료 시 `data: [DONE]`을 전송해야 합니다.
+3.  **CORS 허용 헤더**: Gateway에서 `X-Tenant-ID`, `X-Agent-ID`, `Authorization` 헤더를 CORS 허용 목록에 추가해야 합니다.
+4.  **컨텍스트 수집**: 대화 시작 시 `context` 객체가 백엔드로 정상 전달되는지 브라우저 네트워크 탭에서 확인하세요.
 
 ## 💻 개발 규칙
 

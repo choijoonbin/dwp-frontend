@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
 import { NX_API_URL } from '../env';
@@ -22,14 +22,22 @@ export type StreamOptions = {
 
 /**
  * Custom hook for Aura-Platform SSE (Server-Sent Events) streaming.
- * Handles text streaming and thinking state.
+ * Handles text streaming and thinking state with robust chunk parsing.
  */
 export const useAgentStream = () => {
   const [streamingText, setStreamingText] = useState('');
   const [isThinking, setIsThinking] = useState(false);
 
   const mutation = useMutation({
-    mutationFn: async ({ prompt, options }: { prompt: string; options?: StreamOptions }) => {
+    mutationFn: async ({ 
+      prompt, 
+      options,
+      abortController 
+    }: { 
+      prompt: string; 
+      options?: StreamOptions;
+      abortController?: AbortController;
+    }) => {
       setStreamingText('');
       setIsThinking(true);
 
@@ -48,6 +56,7 @@ export const useAgentStream = () => {
           prompt,
           context,
         }),
+        signal: abortController?.signal,
       });
 
       if (!response.ok) {
@@ -57,6 +66,7 @@ export const useAgentStream = () => {
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let accumulatedText = '';
+      let buffer = '';
 
       if (!reader) {
         throw new Error('No reader available');
@@ -67,27 +77,31 @@ export const useAgentStream = () => {
           const { done, value } = await reader.read();
           if (done) break;
 
-          const chunk = decoder.decode(value, { stream: true });
+          buffer += decoder.decode(value, { stream: true });
           
-          // Basic SSE parsing logic
-          // Format: event: message\ndata: {"content": "..."}\n\n
-          const lines = chunk.split('\n');
+          const lines = buffer.split('\n');
+          // Keep the last partial line in the buffer
+          buffer = lines.pop() || '';
+
           for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.slice(6));
-                
-                if (data.type === 'thought') {
-                  // If backend sends thought trace
-                  setIsThinking(true);
-                } else if (data.content) {
-                  setIsThinking(false);
-                  accumulatedText += data.content;
-                  setStreamingText(accumulatedText);
-                }
-              } catch (e) {
-                // Ignore parse errors for incomplete chunks
+            const trimmedLine = line.trim();
+            if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+
+            const dataStr = trimmedLine.slice(6);
+            if (dataStr === '[DONE]') break;
+
+            try {
+              const data = JSON.parse(dataStr);
+              
+              if (data.type === 'thought') {
+                setIsThinking(true);
+              } else if (data.content) {
+                setIsThinking(false);
+                accumulatedText += data.content;
+                setStreamingText(accumulatedText);
               }
+            } catch (e) {
+              console.error('Error parsing SSE data chunk:', e, dataStr);
             }
           }
         }

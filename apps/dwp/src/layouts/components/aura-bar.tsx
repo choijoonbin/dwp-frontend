@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -10,20 +10,78 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import CircularProgress from '@mui/material/CircularProgress';
+import Collapse from '@mui/material/Collapse';
+import Avatar from '@mui/material/Avatar';
+import Alert from '@mui/material/Alert';
 import { Iconify } from 'src/components/iconify';
-import { useAgentStream } from '@dwp-frontend/shared-utils';
+import { useAgentStream, type AgentMessage } from '@dwp-frontend/shared-utils';
+import { Scrollbar } from 'src/components/scrollbar';
 
 // ----------------------------------------------------------------------
 
 export const AuraBar = () => {
   const theme = useTheme();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  
   const [prompt, setPrompt] = useState('');
-  const { stream, streamingText, isThinking, isLoading } = useAgentStream();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [messages, setMessages] = useState<AgentMessage[]>([]);
+  
+  const { stream, streamingText, isThinking, isLoading, error } = useAgentStream();
+
+  // Auto scroll to bottom
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, streamingText, isThinking]);
 
   const handleSend = () => {
-    if (!prompt.trim()) return;
-    stream({ prompt });
+    if (!prompt.trim() || isLoading) return;
+
+    // Abort previous request if any
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+
+    const userMessage: AgentMessage = { role: 'user', content: prompt };
+    setMessages((prev) => [...prev, userMessage]);
+    setIsExpanded(true);
+    
+    stream({ 
+      prompt,
+      abortController: abortControllerRef.current,
+      options: {
+        onSuccess: (fullText) => {
+          setMessages((prev) => [...prev, { role: 'assistant', content: fullText }]);
+          abortControllerRef.current = null;
+        },
+        onError: () => {
+          abortControllerRef.current = null;
+        }
+      }
+    });
+    
     setPrompt('');
+  };
+
+  const handleStop = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+  };
+
+  const handleToggleExpand = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  const handleClear = () => {
+    handleStop();
+    setMessages([]);
+    setIsExpanded(false);
   };
 
   return (
@@ -35,8 +93,9 @@ export const AuraBar = () => {
         transform: 'translateX(-50%)',
         zIndex: theme.zIndex.drawer + 100,
         width: '100%',
-        maxWidth: 600,
+        maxWidth: isExpanded ? 700 : 600,
         px: 2,
+        transition: theme.transitions.create(['max-width']),
       }}
     >
       <Paper
@@ -47,72 +106,128 @@ export const AuraBar = () => {
           bgcolor: 'background.paper',
           border: (theme) => `solid 1px ${theme.vars.palette.divider}`,
           boxShadow: (theme) => theme.customShadows.z20,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
         }}
       >
-        <Stack spacing={1}>
-          {(isThinking || streamingText) && (
-            <Box
-              sx={{
-                px: 1.5,
-                py: 1,
-                maxHeight: 200,
-                overflowY: 'auto',
-                bgcolor: 'background.neutral',
-                borderRadius: 1,
-              }}
-            >
-              <Stack direction="row" spacing={1} alignItems="flex-start">
-                <Iconify
-                  icon="solar:magic-stick-bold-duotone"
-                  sx={{ color: 'primary.main', mt: 0.5 }}
-                />
-                <Box>
-                  {isThinking && (
-                    <Typography variant="caption" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-                      Aura가 생각 중입니다...
-                    </Typography>
-                  )}
-                  {streamingText && (
-                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                      {streamingText}
-                    </Typography>
-                  )}
-                </Box>
+        <Collapse in={isExpanded}>
+          <Box sx={{ mb: 2 }}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.5, px: 0.5 }}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Avatar sx={{ width: 24, height: 24, bgcolor: 'primary.main' }}>
+                  <Iconify icon="solar:magic-stick-bold-duotone" width={16} />
+                </Avatar>
+                <Typography variant="subtitle2">Aura 에이전트</Typography>
+                {isLoading && (
+                  <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+                    • Streaming...
+                  </Typography>
+                )}
               </Stack>
-            </Box>
-          )}
+              <Stack direction="row" spacing={0.5}>
+                <IconButton size="small" onClick={handleClear} title="대화 초기화">
+                  <Iconify icon="solar:trash-bin-minimalistic-bold" width={18} />
+                </IconButton>
+                <IconButton size="small" onClick={handleToggleExpand}>
+                  <Iconify icon="solar:alt-arrow-down-bold" width={18} />
+                </IconButton>
+              </Stack>
+            </Stack>
 
-          <TextField
-            fullWidth
-            placeholder="Aura에게 무엇이든 물어보세요..."
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Iconify icon="solar:user-bold" sx={{ color: 'text.disabled' }} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton color="primary" onClick={handleSend} disabled={isLoading || !prompt.trim()}>
-                    {isLoading ? (
-                      <CircularProgress size={24} color="inherit" />
-                    ) : (
-                      <Iconify icon="solar:paper-plane-bold" />
-                    )}
+            <Scrollbar sx={{ maxHeight: 400, minHeight: 100 }}>
+              <Box ref={scrollRef} sx={{ px: 0.5 }}>
+                <Stack spacing={2}>
+                  {messages.map((msg, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          maxWidth: '85%',
+                          p: 1.5,
+                          borderRadius: 1.5,
+                          typography: 'body2',
+                          whiteSpace: 'pre-wrap',
+                          ...(msg.role === 'user'
+                            ? { bgcolor: 'primary.main', color: 'primary.contrastText' }
+                            : { bgcolor: 'background.neutral' }),
+                        }}
+                      >
+                        {msg.content}
+                      </Box>
+                    </Box>
+                  ))}
+
+                  {(isThinking || streamingText) && (
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                      <Box sx={{ maxWidth: '85%', p: 1.5, borderRadius: 1.5, bgcolor: 'background.neutral' }}>
+                        {isThinking && !streamingText && (
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            <CircularProgress size={16} color="inherit" />
+                            <Typography variant="caption" sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
+                              생각 중...
+                            </Typography>
+                          </Stack>
+                        )}
+                        {streamingText && (
+                          <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                            {streamingText}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+                  )}
+
+                  {error && (
+                    <Alert severity="error" sx={{ mt: 1 }}>
+                      요청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
+                    </Alert>
+                  )}
+                </Stack>
+              </Box>
+            </Scrollbar>
+          </Box>
+        </Collapse>
+
+        <TextField
+          fullWidth
+          placeholder="Aura에게 무엇이든 물어보세요..."
+          value={prompt}
+          autoComplete="off"
+          onClick={() => !isExpanded && setIsExpanded(true)}
+          onChange={(e) => setPrompt(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Iconify icon="solar:user-bold" sx={{ color: 'text.disabled' }} />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                {isLoading ? (
+                  <IconButton color="error" onClick={handleStop} title="중단">
+                    <Iconify icon="solar:stop-circle-bold" />
                   </IconButton>
-                </InputAdornment>
-              ),
-              sx: {
-                '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                bgcolor: 'background.neutral',
-                borderRadius: 1.5,
-              },
-            }}
-          />
-        </Stack>
+                ) : (
+                  <IconButton color="primary" onClick={handleSend} disabled={!prompt.trim()}>
+                    <Iconify icon="solar:paper-plane-bold" />
+                  </IconButton>
+                )}
+              </InputAdornment>
+            ),
+            sx: {
+              '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+              bgcolor: 'background.neutral',
+              borderRadius: 1.5,
+            },
+          }}
+        />
       </Paper>
     </Box>
   );

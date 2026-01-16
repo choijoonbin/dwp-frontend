@@ -5954,17 +5954,17 @@
     "design-system": [
       {
         "source": "design-system",
+        "target": "npm:@mui/material",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
         "target": "npm:react",
         "type": "static"
       },
       {
         "source": "design-system",
         "target": "npm:minimal-shared",
-        "type": "static"
-      },
-      {
-        "source": "design-system",
-        "target": "npm:@mui/material",
         "type": "static"
       },
       {
@@ -6039,6 +6039,11 @@
       {
         "source": "shared-utils",
         "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "shared-utils",
+        "target": "npm:@tanstack/react-query",
         "type": "static"
       }
     ],
@@ -13581,5 +13586,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1768467574325
+  "computedAt": 1768530330916
 }
