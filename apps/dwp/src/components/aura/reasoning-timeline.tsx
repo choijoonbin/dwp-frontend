@@ -40,6 +40,19 @@ export const ReasoningTimeline = ({ steps, currentStepIndex }: ReasoningTimeline
     }
   };
 
+  const getChipColor = (status: TimelineStep['status']): 'success' | 'warning' | 'error' | 'default' => {
+    switch (status) {
+      case 'completed':
+        return 'success';
+      case 'processing':
+        return 'warning';
+      case 'failed':
+        return 'error';
+      default:
+        return 'default';
+    }
+  };
+
   const getStatusIcon = (status: TimelineStep['status']) => {
     switch (status) {
       case 'completed':
@@ -138,7 +151,7 @@ export const ReasoningTimeline = ({ steps, currentStepIndex }: ReasoningTimeline
                     <Chip
                       label={getStatusLabel(step.status)}
                       size="small"
-                      color={getStatusColor(step.status)}
+                      color={getChipColor(step.status)}
                       icon={
                         step.status === 'processing' ? (
                           <CircularProgress size={12} color="inherit" />

@@ -21,8 +21,6 @@ type ActionExecutionViewProps = {
 };
 
 export const ActionExecutionView = ({ executions }: ActionExecutionViewProps) => {
-  const theme = useTheme();
-
   if (executions.length === 0) return null;
 
   return (
