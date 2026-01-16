@@ -207,20 +207,18 @@ AI의 사고 과정을 실시간으로 전달합니다.
 #### 승인 요청
 
 ```http
-POST /api/aura/hitl/approve
+POST /api/aura/hitl/approve/{requestId}
 Content-Type: application/json
 Authorization: Bearer {JWT_TOKEN}
 X-Tenant-ID: {TENANT_ID}
+X-User-ID: {USER_ID}
 
 {
-  "requestId": "hitl-1234567890",
-  "approved": true,
-  "editedContent": "메일 2개를 삭제하시겠습니까?",  // 사용자가 수정한 경우
-  "params": {  // 사용자가 파라미터를 수정한 경우 (선택)
-    "ids": ["msg-123", "msg-456"]
-  }
+  "userId": "{USER_ID}"
 }
 ```
+
+**참고**: 프론트엔드는 `requestId`를 URL 경로에 포함하고, body에 `userId`만 전달합니다.
 
 #### 승인 응답
 
@@ -239,16 +237,19 @@ X-Tenant-ID: {TENANT_ID}
 #### 거절 요청
 
 ```http
-POST /api/aura/hitl/reject
+POST /api/aura/hitl/reject/{requestId}
 Content-Type: application/json
 Authorization: Bearer {JWT_TOKEN}
 X-Tenant-ID: {TENANT_ID}
+X-User-ID: {USER_ID}
 
 {
-  "requestId": "hitl-1234567890",
-  "reason": "사용자가 취소함"
+  "userId": "{USER_ID}",
+  "reason": "사용자가 취소함"  // 선택
 }
 ```
+
+**참고**: 프론트엔드는 `requestId`를 URL 경로에 포함하고, body에 `userId`와 선택적으로 `reason`을 전달합니다.
 
 ### 4. 컨텍스트 정보
 
@@ -487,12 +488,25 @@ while (true) {
 
 ### 1. SSE 엔드포인트 구현
 
+**엔드포인트**: `GET /api/aura/test/stream?message={message}` 또는 `POST /api/aura/test/stream`
+
+**현재 프론트엔드 구현**: POST 방식을 사용하며, body에 `prompt`와 `context`를 포함합니다.
+백엔드가 GET 방식을 요구하는 경우, 쿼리 파라미터로 메시지를 전달하도록 수정 가능합니다.
+
 **필수 헤더**:
 - `Content-Type: text/event-stream`
 - `Cache-Control: no-cache`
 - `Connection: keep-alive`
+- `Authorization: Bearer {JWT_TOKEN}`
+- `X-Tenant-ID: {TENANT_ID}`
 
 **응답 형식**:
+```
+event: {type}
+data: {JSON_OBJECT}\n\n
+```
+
+또는 간단한 형식:
 ```
 data: {JSON_OBJECT}\n\n
 ```
