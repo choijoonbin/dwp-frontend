@@ -19,6 +19,7 @@ export const ChatPage = lazy(() => import('src/pages/chat'));
 export const ApprovalPage = lazy(() => import('src/pages/approval'));
 export const AIWorkspacePage = lazy(() => import('src/pages/ai-workspace'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
+export const ForgotPasswordPage = lazy(() => import('src/pages/forgot-password'));
 export const Page403 = lazy(() => import('src/pages/page-403'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
@@ -66,6 +67,14 @@ export const routesSection: RouteObject[] = [
     element: (
       <AuthLayout>
         <SignInPage />
+      </AuthLayout>
+    ),
+  },
+  {
+    path: 'forgot-password',
+    element: (
+      <AuthLayout>
+        <ForgotPasswordPage />
       </AuthLayout>
     ),
   },

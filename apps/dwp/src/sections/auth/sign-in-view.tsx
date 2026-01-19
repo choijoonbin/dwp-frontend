@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';
+import { RouterLink } from 'src/routes/components';
 
 // ----------------------------------------------------------------------
 
@@ -79,7 +80,13 @@ export const SignInView = () => {
         }}
       />
 
-      <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
+      <Link
+        component={RouterLink}
+        href="/forgot-password"
+        variant="body2"
+        color="inherit"
+        sx={{ mb: 1.5 }}
+      >
         Forgot password?
       </Link>
 
