@@ -1,10 +1,11 @@
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
-import { useEffect } from 'react';
 import { varAlpha } from 'minimal-shared/utils';
+import { useEffect, useState, useMemo } from 'react';
 
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
+import Collapse from '@mui/material/Collapse';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import ListSubheader from '@mui/material/ListSubheader';
@@ -131,8 +132,211 @@ export function NavMobile({
 
 // ----------------------------------------------------------------------
 
+/**
+ * Check if pathname matches any child path
+ */
+const hasActiveChild = (item: NavItem, pathname: string): boolean => {
+  if (item.path === pathname) {
+    return true;
+  }
+  if (item.children) {
+    return item.children.some((child) => hasActiveChild(child, pathname));
+  }
+  return false;
+};
+
+/**
+ * Render a single nav item with children support
+ */
+const NavItemComponent = ({
+  item,
+  pathname,
+  collapsed,
+  openStates,
+  onToggleOpen,
+}: {
+  item: NavItem;
+  pathname: string;
+  collapsed?: boolean;
+  openStates: Map<string, boolean>;
+  onToggleOpen: (key: string) => void;
+}) => {
+  const hasChildren = item.children && item.children.length > 0;
+  const isActive = item.path === pathname;
+  const hasActive = hasActiveChild(item, pathname);
+  const isOpen = openStates.get(item.title) ?? hasActive; // Auto-open if has active child
+
+  // If collapsed, don't show children
+  if (collapsed) {
+    return (
+      <ListItem disableGutters disablePadding>
+        <ListItemButton
+          disableGutters
+          component={RouterLink}
+          href={item.path}
+          sx={[
+            (theme) => ({
+              py: 0,
+              px: 0,
+              gap: 0.25,
+              width: 79,
+              height: 58,
+              minHeight: 58,
+              flexDirection: 'column',
+              justifyContent: 'center',
+              borderRadius: 0.75,
+              typography: 'body2',
+              fontWeight: 'fontWeightMedium',
+              color: theme.vars.palette.text.secondary,
+              ...(isActive && {
+                fontWeight: 'fontWeightSemiBold',
+                color: theme.vars.palette.primary.main,
+                bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+              }),
+            }),
+          ]}
+        >
+          <Box component="span" sx={{ width: 24, height: 24, flexShrink: 0 }}>
+            {item.icon}
+          </Box>
+          <Box
+            component="span"
+            sx={{
+              fontSize: 10,
+              fontWeight: 'fontWeightSemiBold',
+              lineHeight: '16px',
+              textAlign: 'center',
+              width: 1,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {item.title}
+          </Box>
+        </ListItemButton>
+      </ListItem>
+    );
+  }
+
+  return (
+    <>
+      <ListItem disableGutters disablePadding>
+        <ListItemButton
+          disableGutters
+          component={hasChildren ? 'div' : RouterLink}
+          href={hasChildren ? undefined : item.path}
+          onClick={hasChildren ? () => onToggleOpen(item.title) : undefined}
+          sx={[
+            (theme) => ({
+              pl: 2,
+              py: 1,
+              gap: 2,
+              pr: 1.5,
+              borderRadius: 0.75,
+              typography: 'body2',
+              fontWeight: 'fontWeightMedium',
+              color: theme.vars.palette.text.secondary,
+              minHeight: 44,
+              ...(isActive && {
+                fontWeight: 'fontWeightSemiBold',
+                color: theme.vars.palette.primary.main,
+                bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+                '&:hover': {
+                  bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.16),
+                },
+              }),
+              ...(hasActive && !isActive && {
+                color: theme.vars.palette.primary.main,
+              }),
+            }),
+          ]}
+        >
+          <Box component="span" sx={{ width: 24, height: 24, flexShrink: 0 }}>
+            {item.icon}
+          </Box>
+
+          <Box
+            component="span"
+            sx={{
+              flexGrow: 1,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {item.title}
+          </Box>
+
+          {hasChildren && (
+            <Iconify
+              width={16}
+              icon={isOpen ? 'solar:alt-arrow-up-bold' : 'solar:alt-arrow-down-bold'}
+              sx={{ flexShrink: 0 }}
+            />
+          )}
+
+          {!hasChildren && item.info && item.info}
+        </ListItemButton>
+      </ListItem>
+
+      {hasChildren && (
+        <Collapse in={isOpen} timeout="auto" unmountOnExit>
+          <Box
+            component="ul"
+            sx={{
+              gap: 0.5,
+              display: 'flex',
+              flexDirection: 'column',
+              padding: 0,
+              margin: 0,
+              listStyle: 'none',
+              pl: 4, // Indent children
+            }}
+          >
+            {item.children!.map((child) => (
+              <NavItemComponent
+                key={child.title}
+                item={child}
+                pathname={pathname}
+                collapsed={collapsed}
+                openStates={openStates}
+                onToggleOpen={onToggleOpen}
+              />
+            ))}
+          </Box>
+        </Collapse>
+      )}
+    </>
+  );
+};
+
 export function NavContent({ data, slots, workspaces, sx, collapsed }: NavContentProps) {
   const pathname = usePathname();
+  const [openStates, setOpenStates] = useState<Map<string, boolean>>(new Map());
+
+  // Initialize open states based on active path
+  const initialOpenStates = useMemo(() => {
+    const states = new Map<string, boolean>();
+    const checkItem = (item: NavItem) => {
+      if (item.children && item.children.length > 0) {
+        const hasActive = hasActiveChild(item, pathname);
+        states.set(item.title, hasActive);
+        item.children.forEach(checkItem);
+      }
+    };
+    data.forEach(checkItem);
+    return states;
+  }, [data, pathname]);
+
+  useEffect(() => {
+    setOpenStates(initialOpenStates);
+  }, [initialOpenStates]);
+
+  const handleToggleOpen = (key: string) => {
+    setOpenStates((prev) => {
+      const next = new Map(prev);
+      next.set(key, !prev.get(key));
+      return next;
+    });
+  };
 
   // Group data by group name
   const groupedData = data.reduce(
@@ -146,6 +350,22 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
     },
     {} as Record<string, typeof data>
   );
+
+  // Define group display order (MANAGEMENT first, then APPS)
+  const groupOrder = ['MANAGEMENT', 'APPS'];
+  const sortedGroupEntries = Object.entries(groupedData).sort(([groupA], [groupB]) => {
+    const indexA = groupOrder.indexOf(groupA);
+    const indexB = groupOrder.indexOf(groupB);
+    // If both groups are in the order list, sort by their position
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+    // If only one is in the list, prioritize it
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    // If neither is in the list, sort alphabetically
+    return groupA.localeCompare(groupB);
+  });
 
   return (
     <>
@@ -178,7 +398,7 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
             ...(Array.isArray(sx) ? sx : [sx]),
           ]}
         >
-          {Object.entries(groupedData).map(([groupName, items]) => (
+          {sortedGroupEntries.map(([groupName, items]) => (
             <Box
               key={groupName}
               className="nav-group-wrapper"
@@ -224,75 +444,16 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
                   listStyle: 'none',
                 }}
               >
-                {items.map((item) => {
-                  const isActived = item.path === pathname;
-
-                  return (
-                    <ListItem disableGutters disablePadding key={item.title}>
-                      <ListItemButton
-                        disableGutters
-                        component={RouterLink}
-                        href={item.path}
-                        sx={[
-                          (theme) => ({
-                            pl: 2,
-                            py: 1,
-                            gap: 2,
-                            pr: 1.5,
-                            borderRadius: 0.75,
-                            typography: 'body2',
-                            fontWeight: 'fontWeightMedium',
-                            color: theme.vars.palette.text.secondary,
-                            minHeight: 44,
-                            ...(isActived && {
-                              fontWeight: 'fontWeightSemiBold',
-                              color: theme.vars.palette.primary.main,
-                              bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
-                              '&:hover': {
-                                bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.16),
-                              },
-                            }),
-                            ...(collapsed && {
-                              py: 0,
-                              px: 0,
-                              gap: 0.25,
-                              width: 79,
-                              height: 58,
-                              minHeight: 58,
-                              flexDirection: 'column',
-                              justifyContent: 'center',
-                            }),
-                          }),
-                        ]}
-                      >
-                        <Box component="span" sx={{ width: 24, height: 24, flexShrink: 0 }}>
-                          {item.icon}
-                        </Box>
-
-                        <Box
-                          component="span"
-                          sx={{
-                            flexGrow: 1,
-                            whiteSpace: 'nowrap',
-                            ...(collapsed && {
-                              fontSize: 10,
-                              fontWeight: 'fontWeightSemiBold',
-                              lineHeight: '16px',
-                              textAlign: 'center',
-                              width: 1,
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                            }),
-                          }}
-                        >
-                          {item.title}
-                        </Box>
-
-                        {!collapsed && item.info && item.info}
-                      </ListItemButton>
-                    </ListItem>
-                  );
-                })}
+                {items.map((item) => (
+                  <NavItemComponent
+                    key={item.title}
+                    item={item}
+                    pathname={pathname}
+                    collapsed={collapsed}
+                    openStates={openStates}
+                    onToggleOpen={handleToggleOpen}
+                  />
+                ))}
               </Box>
             </Box>
           ))}

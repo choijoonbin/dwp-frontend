@@ -91,6 +91,72 @@
       "nx/core/project-json"
     ]
   },
+  "apps/remotes/admin": {
+    "root": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputPath": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.executor": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.buildTarget": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.port": [
+      "apps/remotes/admin/project.json",
+      "nx/core/project-json"
+    ]
+  },
   "apps/remotes/mail": {
     "root": [
       "apps/remotes/mail/project.json",

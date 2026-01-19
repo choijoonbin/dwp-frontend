@@ -18,9 +18,9 @@ import { NavMobile, NavDesktop } from './nav';
 import { layoutClasses } from '../core/classes';
 import { _account } from '../nav-config-account';
 import { dashboardLayoutVars } from './css-vars';
-import { navData } from '../nav-config-dashboard';
 import { MainSection } from '../core/main-section';
 import { Searchbar } from '../components/searchbar';
+import { useNavData } from '../nav-config-dashboard';
 import { _workspaces } from '../nav-config-workspace';
 import { MenuButton } from '../components/menu-button';
 import { HeaderSection } from '../core/header-section';
@@ -61,6 +61,7 @@ export function DashboardLayout({
   const sidebarOpen = useLayoutStore((state) => state.sidebarOpen);
   const sidebarCollapsed = useLayoutStore((state) => state.sidebarCollapsed);
   const { setSidebarOpen, toggleCollapse } = useLayoutActions();
+  const navData = useNavData(); // 권한 기반 필터링된 메뉴 데이터
 
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = {

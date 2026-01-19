@@ -36,6 +36,42 @@
         "tags": []
       }
     },
+    "admin": {
+      "name": "admin",
+      "type": "app",
+      "data": {
+        "root": "apps/remotes/admin",
+        "name": "admin",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "sourceRoot": "apps/remotes/admin/src",
+        "targets": {
+          "build": {
+            "executor": "@nx/vite:build",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/remotes/admin"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "serve": {
+            "executor": "@nx/vite:dev-server",
+            "options": {
+              "buildTarget": "admin:build",
+              "port": 4204
+            },
+            "configurations": {},
+            "parallelism": true,
+            "continuous": true
+          }
+        },
+        "implicitDependencies": [],
+        "tags": []
+      }
+    },
     "design-system": {
       "name": "design-system",
       "type": "lib",
@@ -6248,6 +6284,48 @@
         "type": "static"
       }
     ],
+    "admin": [
+      {
+        "source": "admin",
+        "target": "npm:react-router-dom",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "design-system",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "npm:react-dom",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "npm:@mui/material",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "shared-utils",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "npm:vite",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "npm:@vitejs/plugin-react-swc",
+        "type": "static"
+      }
+    ],
     "design-system": [
       {
         "source": "design-system",
@@ -6282,6 +6360,11 @@
       {
         "source": "design-system",
         "target": "npm:@iconify/react",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "shared-utils",
         "type": "static"
       },
       {
@@ -6335,6 +6418,11 @@
     "shared-utils": [
       {
         "source": "shared-utils",
+        "target": "npm:vitest",
+        "type": "static"
+      },
+      {
+        "source": "shared-utils",
         "target": "npm:@tanstack/react-query",
         "type": "static"
       },
@@ -6350,7 +6438,7 @@
       },
       {
         "source": "shared-utils",
-        "target": "npm:vitest",
+        "target": "npm:zustand",
         "type": "static"
       }
     ],
@@ -6369,6 +6457,11 @@
         "source": "dwp",
         "target": "npm:@mui/material",
         "type": "static"
+      },
+      {
+        "source": "dwp",
+        "target": "admin",
+        "type": "dynamic"
       },
       {
         "source": "dwp",
@@ -14153,5 +14246,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1768796607462
+  "computedAt": 1768818126674
 }

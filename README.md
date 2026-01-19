@@ -32,7 +32,7 @@ Nx Monorepo 구조를 기반으로 구축된 DWP 프론트엔드 워크스페이
 ### Host / Remotes
 
 - **Host 앱 (`apps/dwp`)**: 메인 쉘(Shell). 전체 레이아웃 소유, 인증 관리, 글로벌 네비게이션 제공.
-- **Remote 앱들 (`apps/remotes/*`)**: 독립적인 비즈니스 모듈 (예: `mail`, `chat`, `approval`).
+- **Remote 앱들 (`apps/remotes/*`)**: 독립적인 비즈니스 모듈 (예: `mail`, `admin`, `chat`, `approval`).
 - **공통 라이브러리**
   - `libs/design-system`: 공통 테마(ThemeProvider), 전역 스타일, 재사용 컴포넌트, 공유 훅.
   - `libs/shared-utils`: API 클라이언트(axiosInstance), 인증 처리(Auth), 공통 타입 및 유틸.
@@ -52,7 +52,8 @@ dwp-frontend/
 │   │   │   ├── routes/        # react-router (AuthGuard 적용 가능 구조)
 │   │   │   └── pages/         # Dashboard, Sign-in, AI Workspace 등
 │   └── remotes/
-│       └── mail/             # Remote (Mail) - port 4201
+│       ├── mail/             # Remote (Mail) - port 4201
+│       └── admin/            # Remote (Admin) - port 4204
 │
 ├── libs/
 │   ├── design-system/         # UI 표준 라이브러리
@@ -82,6 +83,7 @@ dwp-frontend/
 | mail | 4201 | Remote 앱 (메일 모듈) |
 | chat | 4202 | Remote 앱 (채팅 모듈 - 예정) |
 | approval | 4203 | Remote 앱 (결재 모듈 - 예정) |
+| admin | 4204 | Remote 앱 (관리자 모듈) |
 
 - **규칙**: Host는 `4200`, Remote는 `4201`부터 순차 할당. 중복 절대 금지.
 
@@ -123,6 +125,7 @@ npm run dev:mail
 # 향후 추가될 Remote 앱들도 동일한 방식으로 실행
 # npm run dev:chat      # 포트 4202
 # npm run dev:approval  # 포트 4203
+# npm run dev:admin     # 포트 4204
 ```
 
 #### 모든 앱 동시 실행
@@ -136,7 +139,7 @@ npm run dev:all
 ```
 
 > **참고**: 새로운 Remote 앱이 추가되면 `package.json`의 `dev:all` 스크립트에 해당 앱의 실행 명령을 추가해야 합니다.
-> 예: `"dev:all": "npx concurrently \"npm run dev\" \"npm run dev:mail\" \"npm run dev:chat\""`
+> 예: `"dev:all": "npx concurrently \"npm run dev\" \"npm run dev:mail\" \"npm run dev:admin\" \"npm run dev:chat\""`
 > 
 > `npx`를 사용하면 `concurrently` 패키지가 설치되어 있지 않아도 자동으로 다운로드하여 실행합니다.
 
@@ -203,6 +206,27 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 - **HttpError**: 상태 코드(404, 401 등)에 따른 분기 처리를 위해 전역 에러 객체를 지원합니다.
 
 ### 5. 에이전틱 AI 연동 표준 (Aura)
+### 6. 권한 기반 Admin 모듈 (Admin Remote)
+- **Admin Remote**: `apps/remotes/admin` (포트 4204) 신규 추가
+- **접근 제어**: `menu.admin` VIEW 권한 없으면 메뉴/라우트 접근 불가
+- **권한 스토어**: `libs/shared-utils/src/auth/permissions-store.ts` (Zustand)
+- **권한 훅**: `usePermissions()`로 `hasPermission`, `canViewMenu`, `canUseButton` 제공
+- **Route Guard**: `/admin/*` 경로에 PermissionRouteGuard 적용
+- **CRUD 기능**: Users, Roles, Resources, Codes 관리 화면 구현 완료
+  - **Users**: 사용자 목록, 생성/수정/삭제, 역할 할당, 비밀번호 초기화
+  - **Roles**: 역할 목록, 생성/수정/삭제, 멤버 관리, 권한 매핑
+  - **Resources**: 리소스 트리 뷰, 생성/수정/삭제, 타입별 필터링
+  - **Codes**: 코드 그룹 및 코드 CRUD, 활성화/비활성화 관리
+- **권한 기반 UI 제어**: `PermissionGate` 컴포넌트로 버튼/액션 제어
+- **코드 사용 정책**: 메뉴별 `resourceKey` 기반 코드 조회 (`/api/admin/codes/usage`)
+- **로그인 정책 기반 UI 분기**: 테넌트별 인증 정책(LOCAL/SSO)에 따라 로그인 UI 자동 분기
+  - `/api/auth/policy` API로 정책 조회
+  - `allowedLoginTypes`에 따라 ID/PW 폼 또는 SSO 버튼 표시
+  - 정책 조회 실패 시 fallback 없이 Alert 표시 (보안 강화)
+- **테넌트 ID 설정**: 테스트용으로 기본값 "1" 사용 (`libs/shared-utils/src/tenant-util.ts`)
+  - 모든 API 요청에 `X-Tenant-ID: 1` 헤더 자동 주입
+  - 향후 실제 테넌트 ID 추출 로직으로 변경 예정
+
 글로벌 SaaS 수준의 Agentic AI 업무 파트너 시스템을 구현했습니다.
 
 #### 핵심 기능
@@ -252,6 +276,9 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 - **`docs/INTEGRATION_CHECKLIST.md`**: 통/협업 관점 통합 체크리스트 (포트 충돌, 사용자 식별자, SSE 전송 방식 등 확인 필요 사항)
 - **`docs/FRONTEND_VERIFICATION_RESPONSE.md`**: 프론트엔드 확인 응답 체크리스트 (백엔드 확인 요청에 대한 구현 상태 응답)
 - **`docs/FRONTEND_VERIFICATION_REQUIREMENTS.md`**: 프론트엔드 확인 요청 사항 (JWT 매핑, POST SSE, 재연결, CORS, 에러 처리 상세 가이드)
+- **`docs/ADMIN_CRUD_UI.md`**: Admin Remote CRUD 화면 구현 가이드 (Users, Roles, Resources, Codes 관리)
+- **`docs/ADMIN_REMOTE_IMPLEMENTATION.md`**: Admin Remote 구현 상세 (권한 시스템, 코드 사용 정책, API 통합)
+- **`docs/LOGIN_POLICY_UI.md`**: 로그인 정책 기반 UI 분기 구현 가이드 (LOCAL/SSO 자동 분기)
 
 ## 🧪 통합 테스트 가이드 (Aura-Platform)
 

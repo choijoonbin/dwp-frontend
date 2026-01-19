@@ -18,6 +18,7 @@ export const MailPage = lazy(() => import('src/pages/mail'));
 export const ChatPage = lazy(() => import('src/pages/chat'));
 export const ApprovalPage = lazy(() => import('src/pages/approval'));
 export const AIWorkspacePage = lazy(() => import('src/pages/ai-workspace'));
+export const AdminPage = lazy(() => import('../pages/admin'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ForgotPasswordPage = lazy(() => import('src/pages/forgot-password'));
 export const Page403 = lazy(() => import('src/pages/page-403'));
@@ -60,6 +61,7 @@ export const routesSection: RouteObject[] = [
       { path: 'chat', element: <ChatPage /> },
       { path: 'approval', element: <ApprovalPage /> },
       { path: 'ai-workspace', element: <AIWorkspacePage /> },
+      { path: 'admin/*', element: <AdminPage /> },
     ],
   },
   {

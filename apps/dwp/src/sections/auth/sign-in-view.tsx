@@ -1,19 +1,32 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { useAuth, HttpError, safeReturnUrl } from '@dwp-frontend/shared-utils';
+import {
+  useAuth,
+  HttpError,
+  safeReturnUrl,
+  useAuthPolicyQuery,
+  useIdpQuery,
+  type LoginType,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import InputAdornment from '@mui/material/InputAdornment';
+import CircularProgress from '@mui/material/CircularProgress';
+
+import { RouterLink } from 'src/routes/components';
 
 import { Iconify } from 'src/components/iconify';
-import { RouterLink } from 'src/routes/components';
 
 // ----------------------------------------------------------------------
 
@@ -23,12 +36,38 @@ export const SignInView = () => {
   const [searchParams] = useSearchParams();
   const auth = useAuth();
 
+  // Auth policy query
+  const { data: authPolicy, isLoading: policyLoading, error: policyError } = useAuthPolicyQuery();
+  const { data: idpConfig } = useIdpQuery();
+
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState('hello@gmail.com');
-  const [password, setPassword] = useState('@demo1234');
+  const [username, setUsername] = useState('admin');
+  const [password, setPassword] = useState('admin1234!');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [errorSeverity, setErrorSeverity] = useState<'error' | 'warning'>('error');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ssoDialogOpen, setSsoDialogOpen] = useState(false);
+
+  // Determine UI visibility based on policy
+  const showLocalLogin = useMemo(() => {
+    if (!authPolicy) return false;
+    return authPolicy.allowedLoginTypes.includes('LOCAL');
+  }, [authPolicy]);
+
+  const showSsoLogin = useMemo(() => {
+    if (!authPolicy) return false;
+    return authPolicy.allowedLoginTypes.includes('SSO');
+  }, [authPolicy]);
+
+  const isDefaultLocal = useMemo(() => {
+    if (!authPolicy) return true; // Default to LOCAL if policy not loaded
+    return authPolicy.defaultLoginType === 'LOCAL';
+  }, [authPolicy]);
+
+  const isDefaultSso = useMemo(() => {
+    if (!authPolicy) return false;
+    return authPolicy.defaultLoginType === 'SSO';
+  }, [authPolicy]);
 
   const handleSignIn = useCallback(async () => {
     setErrorMessage(null);
@@ -36,7 +75,7 @@ export const SignInView = () => {
 
     try {
       await auth.login({ username, password });
-      
+
       // Handle returnUrl: redirect to safe returnUrl or default to /
       const returnUrl = safeReturnUrl(searchParams.get('returnUrl'));
       navigate(returnUrl || '/', { replace: true });
@@ -54,7 +93,81 @@ export const SignInView = () => {
     }
   }, [auth, username, password, navigate, searchParams]);
 
-  const renderForm = (
+  const handleSsoLogin = useCallback(() => {
+    if (idpConfig?.authUrl) {
+      // If authUrl is provided, redirect to SSO provider
+      window.location.href = idpConfig.authUrl;
+    } else {
+      // Otherwise, show placeholder dialog
+      setSsoDialogOpen(true);
+    }
+  }, [idpConfig]);
+
+  // Policy loading state
+  if (policyLoading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 400,
+        }}
+      >
+        <CircularProgress />
+        <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
+          로그인 정책을 불러오는 중...
+        </Typography>
+      </Box>
+    );
+  }
+
+  // Policy error state - NO FALLBACK
+  if (policyError || !authPolicy) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 400,
+        }}
+      >
+        <Alert severity="error" sx={{ width: '100%', maxWidth: 400 }}>
+          테넌트 정책 조회 실패
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            {policyError instanceof Error ? policyError.message : '로그인 정책을 불러올 수 없습니다.'}
+          </Typography>
+        </Alert>
+      </Box>
+    );
+  }
+
+  // No login methods available
+  if (!showLocalLogin && !showSsoLogin) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 400,
+        }}
+      >
+        <Alert severity="warning" sx={{ width: '100%', maxWidth: 400 }}>
+          사용 가능한 로그인 방법이 없습니다.
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            관리자에게 문의하세요.
+          </Typography>
+        </Alert>
+      </Box>
+    );
+  }
+
+  const renderLocalForm = showLocalLogin ? (
     <Box
       sx={{
         display: 'flex',
@@ -80,15 +193,17 @@ export const SignInView = () => {
         }}
       />
 
-      <Link
-        component={RouterLink}
-        href="/forgot-password"
-        variant="body2"
-        color="inherit"
-        sx={{ mb: 1.5 }}
-      >
-        Forgot password?
-      </Link>
+      {showLocalLogin && (
+        <Link
+          component={RouterLink}
+          href="/forgot-password"
+          variant="body2"
+          color="inherit"
+          sx={{ mb: 1.5 }}
+        >
+          Forgot password?
+        </Link>
+      )}
 
       <TextField
         fullWidth
@@ -116,7 +231,7 @@ export const SignInView = () => {
         fullWidth
         size="large"
         type="submit"
-        color="inherit"
+        color={isDefaultLocal ? 'primary' : 'inherit'}
         variant="contained"
         onClick={handleSignIn}
         disabled={isSubmitting}
@@ -124,10 +239,25 @@ export const SignInView = () => {
         {isSubmitting ? 'Signing in…' : 'Sign in'}
       </Button>
     </Box>
-  );
+  ) : null;
+
+  const renderSsoButton = showSsoLogin ? (
+    <Button
+      fullWidth
+      size="large"
+      color={isDefaultSso ? 'primary' : 'inherit'}
+      variant={isDefaultSso ? 'contained' : 'outlined'}
+      onClick={handleSsoLogin}
+      startIcon={<Iconify icon="solar:shield-user-bold" />}
+    >
+      SSO로 로그인
+    </Button>
+  ) : null;
+
+  const showDivider = showLocalLogin && showSsoLogin;
 
   return (
-    <>
+    <Box>
       <Box
         sx={{
           gap: 1.5,
@@ -144,38 +274,59 @@ export const SignInView = () => {
             color: 'text.secondary',
           }}
         >
-          Don’t have an account?
+          Don&apos;t have an account?
           <Link variant="subtitle2" sx={{ ml: 0.5 }}>
             Get started
           </Link>
         </Typography>
       </Box>
-      {renderForm}
-      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
-        <Typography
-          variant="overline"
-          sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
-        >
-          OR
-        </Typography>
-      </Divider>
-      <Box
-        sx={{
-          gap: 1,
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:google" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:github" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:twitter" />
-        </IconButton>
-      </Box>
-    </>
+
+      {isDefaultSso && showSsoLogin ? (
+        <Box>
+          {renderSsoButton}
+          {showDivider && (
+            <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
+              <Typography
+                variant="overline"
+                sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
+              >
+                OR
+              </Typography>
+            </Divider>
+          )}
+          {renderLocalForm}
+        </Box>
+      ) : (
+        <Box>
+          {renderLocalForm}
+          {showDivider && (
+            <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
+              <Typography
+                variant="overline"
+                sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
+              >
+                OR
+              </Typography>
+            </Divider>
+          )}
+          {renderSsoButton}
+        </Box>
+      )}
+
+      <Dialog open={ssoDialogOpen} onClose={() => setSsoDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>SSO 로그인</DialogTitle>
+        <DialogContent>
+          <Alert severity="info" sx={{ mb: 2 }}>
+            SSO 연동은 준비중입니다.
+          </Alert>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            SSO(Single Sign-On) 기능은 현재 개발 중입니다. 관리자에게 문의하세요.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSsoDialogOpen(false)}>확인</Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };

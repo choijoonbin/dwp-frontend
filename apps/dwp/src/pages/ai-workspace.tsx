@@ -2,7 +2,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
-import { getUserId, NX_API_URL, getTenantId, getAccessToken, getAgentContext, rejectHitlRequest, approveHitlRequest } from '@dwp-frontend/shared-utils';
+import { getUserId, NX_API_URL, getTenantId, getAccessToken, getAgentContext, rejectHitlRequest, approveHitlRequest, postEvent } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -95,6 +95,20 @@ export default function Page() {
     setStreamingText('');
     setStreaming(true);
     setThinking(true);
+
+    // Track "AI Workspace 실행" event
+    postEvent({
+      eventType: 'execute',
+      resourceKey: 'menu.ai.workspace',
+      action: 'execute_ai',
+      label: 'AI Workspace 실행',
+      metadata: {
+        promptLength: prompt.length,
+        timestamp: new Date().toISOString(),
+      },
+    }).catch((error) => {
+      console.debug('[Event Tracking] Failed to post execute_ai event:', error);
+    });
 
     addMessage({
       role: 'user',

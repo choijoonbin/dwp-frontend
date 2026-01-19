@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { usePathname } from 'src/routes/hooks';
 
+import { usePageViewTracking } from './hooks/use-page-view-tracking';
 import { AuthUnauthorizedHandler } from './components/auth-unauthorized-handler';
 
 // ----------------------------------------------------------------------
@@ -12,6 +13,7 @@ type AppProps = {
 
 export default function App({ children }: AppProps) {
   useScrollToTop();
+  usePageViewTracking(); // Track page views on route changes
 
   return (
     <>
