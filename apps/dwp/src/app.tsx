@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 
 import { usePathname } from 'src/routes/hooks';
 
+import { AuthUnauthorizedHandler } from './components/auth-unauthorized-handler';
+
 // ----------------------------------------------------------------------
 
 type AppProps = {
@@ -11,7 +13,12 @@ type AppProps = {
 export default function App({ children }: AppProps) {
   useScrollToTop();
 
-  return children;
+  return (
+    <>
+      <AuthUnauthorizedHandler />
+      {children}
+    </>
+  );
 }
 
 // ----------------------------------------------------------------------

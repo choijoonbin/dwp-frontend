@@ -21,6 +21,51 @@ export const setAgentId = (id: string | null) => {
   currentAgentId = id;
 };
 
+// Global error handlers (injected by Host app)
+type UnauthorizedHandler = (status: number) => void;
+let onUnauthorizedHandler: UnauthorizedHandler | null = null;
+let isHandlingUnauthorized = false; // Prevent infinite loop
+
+/**
+ * Set global unauthorized handler (401/403)
+ * Should be called once by Host app during initialization
+ */
+export const setUnauthorizedHandler = (handler: UnauthorizedHandler | null) => {
+  onUnauthorizedHandler = handler;
+};
+
+/**
+ * Handle 401/403 errors globally
+ * - 401: Calls onUnauthorizedHandler (logout + redirect)
+ * - 403: Calls onUnauthorizedHandler (no logout, just redirect to /403)
+ */
+const handleAuthError = (status: number): void => {
+  // Prevent infinite loop: if already handling, don't handle again
+  if (isHandlingUnauthorized) {
+    return;
+  }
+
+  // Prevent redirect if already on sign-in or 403 page
+  if (typeof window !== 'undefined') {
+    const currentPath = window.location.pathname;
+    if (currentPath === '/sign-in' || currentPath === '/403') {
+      return;
+    }
+  }
+
+  if (onUnauthorizedHandler) {
+    isHandlingUnauthorized = true;
+    try {
+      onUnauthorizedHandler(status);
+    } finally {
+      // Reset flag after a short delay to allow redirect
+      setTimeout(() => {
+        isHandlingUnauthorized = false;
+      }, 100);
+    }
+  }
+};
+
 /**
  * NOTE:
  * - Workspace에서 axios/@tanstack/react-query 설치가 불가한 환경에서도 앱을 실행할 수 있도록
@@ -53,7 +98,12 @@ export const axiosInstance = {
     });
 
     if (!res.ok) {
-      throw new HttpError(`Request failed: ${res.status} ${res.statusText}`, res.status);
+      const status = res.status;
+      // Handle 401/403 globally
+      if (status === 401 || status === 403) {
+        handleAuthError(status);
+      }
+      throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
     }
 
     const data = (await res.json()) as T;
@@ -89,7 +139,12 @@ export const axiosInstance = {
     });
 
     if (!res.ok) {
-      throw new HttpError(`Request failed: ${res.status} ${res.statusText}`, res.status);
+      const status = res.status;
+      // Handle 401/403 globally
+      if (status === 401 || status === 403) {
+        handleAuthError(status);
+      }
+      throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
     }
 
     const data = (await res.json()) as T;

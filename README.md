@@ -62,10 +62,14 @@ dwp-frontend/
 │   └── shared-utils/          # 공통 비즈니스 로직
 │       └── src/
 │           ├── auth/          # AuthProvider, useAuth, JWT 스토리지
+│           │   ├── auth-provider.tsx  # AuthProvider 컴포넌트
+│           │   ├── token-storage.ts   # JWT 토큰 저장/조회
+│           │   └── user-id-storage.ts # 사용자 ID 저장/조회 (JWT에서 추출)
 │           ├── api/           # auth-api, main-api 등 실제 엔드포인트 호출
 │           ├── agent/         # AI 에이전트 관련 유틸리티
 │           │   ├── context-util.ts  # 페이지 컨텍스트 수집
-│           │   └── use-agent-stream.ts # SSE 스트리밍 훅
+│           │   ├── use-agent-stream.ts # SSE 스트리밍 훅
+│           │   └── hitl-api.ts     # HITL 승인/거절 API
 │           ├── axios-instance.ts # fetch 기반 axios-like wrapper (Auth 헤더 자동 포함)
 │           └── types.ts       # ApiResponse<T> 등 공통 타입 정의
 ```
@@ -88,6 +92,12 @@ API 엔드포인트는 **환경 변수 `NX_API_URL`**로 주입됩니다.
 - **local**: `.env` (개발 시 localhost:8080 주소 등 설정)
 - **dev**: `.env.dev`
 - **prod**: `.env.prod`
+
+**중요**: Gateway(8080)를 통해 Aura-Platform(9000)과 통신하므로, `.env` 파일에 다음을 설정하세요:
+
+```bash
+NX_API_URL=http://localhost:8080
+```
 
 Vite의 `define` 설정을 통해 `process.env.NX_API_URL` 형태로 코드 어디서든 참조 가능합니다.
 
@@ -169,6 +179,13 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 ### 1. 인증 시스템 (Auth)
 - **AuthProvider**: `libs/shared-utils`에 위치하며 JWT 토큰 저장 및 자동 `Authorization` 헤더 주입 기능을 포함합니다.
 - **Sign-in**: 실제 `dwp-auth-server`의 `/api/auth/login` 엔드포인트와 연동되도록 설계되었습니다.
+  - 요청 Body: `{ username, password, tenantId }` 형식으로 전송
+  - `Content-Type: application/json` 헤더 자동 포함
+  - `X-Tenant-ID` 헤더 자동 주입 (서브도메인 기반 자동 추출)
+- **로그인 상태 유지**: `localStorage`에 토큰 저장으로 브라우저 재시작 후에도 로그인 상태 유지
+- **AuthGuard**: 보호된 라우트에 자동 적용되어 인증되지 않은 사용자는 `/sign-in`으로 리다이렉트
+- **401/403 전역 처리**: `axiosInstance`에서 401/403 응답 시 자동으로 로그아웃 및 리다이렉트 처리
+- **returnUrl 지원**: 로그인 후 원래 접근하려던 페이지로 자동 복귀
 
 ### 2. 고도화된 사이드바 및 레이아웃 (Zustand)
 - **Dynamic Sidebar**: `Zustand` 기반으로 확장(300px) 및 축소(88px) 기능을 제공합니다.
@@ -201,27 +218,50 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 - **메시지 유지**: 오버레이에서 시작한 대화가 Workspace로 확장되어도 히스토리가 그대로 유지됩니다.
 
 #### 고급 시각화 기능
-- **Reasoning & Plan Timeline**: 에이전트의 단계별 계획 수립 과정을 시각화합니다. 각 단계는 Pending, Processing, Completed, Failed 상태로 구분되며, Framer Motion을 활용한 부드러운 애니메이션을 제공합니다.
-- **Action Execution View**: 실제 도구(Git, Jira 등) 호출 시 파라미터와 결과를 다크 테마의 로그 뷰어 스타일로 표시합니다.
-- **Result Viewer**: 결과물을 Diff(코드 변경사항), 문서 프리뷰, 체크리스트 등 다양한 형태로 렌더링합니다. `react-syntax-highlighter`를 사용하여 코드를 가독성 있게 표시합니다.
-- **HITL Approval Dialog**: 에이전트가 사용자 승인이 필요한 단계에서 실행을 멈추고, 승인/거절 버튼을 강조하여 표시합니다.
+- **사고 과정 탭 (Thought Process)**: AI의 내부 사고 체인을 타임라인으로 시각화합니다. `thought` 이벤트를 통해 실시간으로 사고 과정을 표시하며, 참고 자료(코드 파일, 대화 기록 등)를 칩 형태로 표시합니다. `timeline_step_update` 이벤트로 타임라인 단계 상태를 실시간 업데이트합니다.
+- **작업 계획 탭 (Work Plan)**: 에이전트의 단계별 실행 계획을 카드 형태로 표시합니다. 사용자가 순서 변경, 승인, 건너뛰기를 할 수 있으며, `plan_step` 및 `plan_step_update` 이벤트로 실시간 업데이트됩니다.
+- **실행 로그 탭 (Execution Log)**: 실제 도구(Git, Jira 등) 호출 시 파라미터와 결과를 다크 테마의 로그 뷰어 스타일로 표시합니다. `tool_execution` 이벤트를 통해 실행 상태(executing/completed/failed)를 실시간으로 표시합니다.
+- **결과 탭 (Results)**: 결과물을 Diff(코드 변경사항), 문서 프리뷰, 체크리스트 등 다양한 형태로 렌더링합니다. `content` 이벤트의 `metadata.result`를 통해 결과를 표시하며, `react-syntax-highlighter`를 사용하여 코드를 가독성 있게 표시합니다.
+- **Reasoning Timeline**: 에이전트의 단계별 계획 수립 과정을 시각화합니다. 각 단계는 Pending, Processing, Completed, Failed 상태로 구분되며, Framer Motion을 활용한 부드러운 애니메이션을 제공합니다.
+- **HITL Approval Dialog**: 에이전트가 사용자 승인이 필요한 단계에서 실행을 멈추고, 승인/거절 버튼을 강조하여 표시합니다. 사용자가 작업 내용을 인라인으로 수정할 수 있습니다.
 
 #### 기술 구현
-- **useAgentStream**: SSE(Server-Sent Events)를 지원하는 TanStack Query 기반 스트리밍 훅입니다. '추론(Thinking)' 상태와 실시간 텍스트 출력을 지원하며, `AbortController`를 통한 중단 기능을 포함합니다.
-- **Agent Context Utility**: 현재 활성 앱, URL 경로, 항목 ID 등을 자동으로 수집하여 에이전트 요청 시 문맥(Context)을 전달합니다.
-- **ApprovalDialog**: 에이전트가 주요 액션을 수행하기 전 사용자의 명시적 승인을 받기 위한 HITL(Human-in-the-loop) 표준 UI 컴포넌트입니다.
+- **SSE 스트리밍**: `fetch` API의 `ReadableStream`을 사용하여 백엔드로부터 실시간 스트리밍을 받습니다. `thought`, `plan_step`, `tool_execution`, `hitl`, `content`, `plan_step_update`, `timeline_step_update` 등 다양한 이벤트 타입을 처리합니다.
+- **SSE 자동 재연결**: 네트워크 일시 단절 시 Exponential Backoff 방식으로 최대 5회 자동 재연결을 시도합니다. 재연결 시 `Last-Event-ID` 헤더를 통해 마지막으로 받은 이벤트 ID를 전달하여 중단 지점부터 재개합니다.
+- **MFE Context Bridge**: Remote 앱(Mail 등)의 내부 상태(선택된 항목, 그리드 선택 값, 뷰 상태)를 `window.dwpContextProvider` 인터페이스를 통해 동적으로 수집합니다. Remote 앱은 이 인터페이스를 구현하여 컨텍스트를 제공할 수 있습니다.
+- **HITL API 통합**: `libs/shared-utils/src/agent/hitl-api.ts`에서 승인/거절 API를 제공합니다. 백엔드의 `/api/aura/hitl/approve/{requestId}` 및 `/api/aura/hitl/reject/{requestId}` 엔드포인트와 통합됩니다.
+- **HITL 낙관적 업데이트**: `checkpoint-approval.tsx`에서 사용자가 내용을 수정할 경우, 즉시 `use-aura-store`에 반영하여 UI가 즉시 업데이트됩니다. 백엔드 전송 전에도 수정된 내용이 UI에 반영됩니다.
+- **사용자 ID 관리**: `libs/shared-utils/src/auth/user-id-storage.ts`에서 JWT 토큰에서 사용자 ID를 자동 추출하여 localStorage에 저장합니다. 로그인 시 자동으로 추출되며, HITL API 호출 시 자동으로 포함됩니다.
+- **결과 메타데이터 추적**: `content` 이벤트의 `metadata.result`를 추적하여 결과 탭에 표시합니다. Diff, Preview, Checklist, Text 등 다양한 결과 타입을 지원합니다.
+- **Agent Context Utility**: `libs/shared-utils/src/agent/context-util.ts`에서 현재 활성 앱, URL 경로, 항목 ID 등을 자동으로 수집하여 에이전트 요청 시 문맥(Context)을 전달합니다.
 - **Header Interceptors**: `axiosInstance`를 통해 모든 요청에 `X-Tenant-ID` 및 `X-Agent-ID`를 자동으로 주입합니다.
 - **Framer Motion**: Timeline 및 Floating Button의 애니메이션에 사용됩니다.
 - **react-syntax-highlighter**: 코드 Diff 및 코드 블록 렌더링에 사용됩니다.
+
+#### 백엔드 통합
+- **API 스펙 문서**: `docs/BACKEND_API_SPEC.md`에 백엔드 개발팀을 위한 상세한 API 스펙이 정의되어 있습니다.
+- **SSE 이벤트 타입**: `thought`, `plan_step`, `tool_execution`, `hitl`, `content`, `timeline_step_update`, `plan_step_update` 등 모든 이벤트 타입이 정의되어 있습니다.
+- **HITL 승인 플로우**: 승인 요청 → 사용자 승인/거절 → 스트리밍 재개/종료 플로우가 완전히 구현되어 있습니다.
+
+## 📚 문서
+
+프로젝트 관련 상세 문서는 `docs/` 디렉토리에서 확인할 수 있습니다:
+
+- **`docs/aura.md`**: Aura AI 통합 가이드 (프론트엔드 구현 상세)
+- **`docs/BACKEND_API_SPEC.md`**: 백엔드 개발팀을 위한 API 스펙서 (SSE 이벤트 타입, HITL API, UI 탭별 데이터 요구사항)
+- **`docs/INTEGRATION_CHECKLIST.md`**: 통/협업 관점 통합 체크리스트 (포트 충돌, 사용자 식별자, SSE 전송 방식 등 확인 필요 사항)
+- **`docs/FRONTEND_VERIFICATION_RESPONSE.md`**: 프론트엔드 확인 응답 체크리스트 (백엔드 확인 요청에 대한 구현 상태 응답)
+- **`docs/FRONTEND_VERIFICATION_REQUIREMENTS.md`**: 프론트엔드 확인 요청 사항 (JWT 매핑, POST SSE, 재연결, CORS, 에러 처리 상세 가이드)
 
 ## 🧪 통합 테스트 가이드 (Aura-Platform)
 
 Aura-Platform 및 Gateway와의 통합 테스트를 위해 다음 사항을 점검하세요:
 
 1.  **엔드포인트 설정**: `.env` 파일의 `NX_API_URL`이 Gateway 주소(예: `http://localhost:8080`)를 정확히 가리키고 있는지 확인하세요.
-2.  **SSE 데이터 규격**: 백엔드는 `data: {"content": "..."}\n\n` 또는 `data: {"type": "thought"}\n\n` 형식을 준수해야 하며, 스트림 종료 시 `data: [DONE]`을 전송해야 합니다.
-3.  **CORS 허용 헤더**: Gateway에서 `X-Tenant-ID`, `X-Agent-ID`, `Authorization` 헤더를 CORS 허용 목록에 추가해야 합니다.
+2.  **SSE 데이터 규격**: 백엔드는 `data: {"type": "thought", "content": "..."}\n\n` 형식을 준수해야 하며, 스트림 종료 시 `data: [DONE]`을 전송해야 합니다. 자세한 스펙은 `docs/BACKEND_API_SPEC.md`를 참조하세요.
+3.  **CORS 허용 헤더**: Gateway에서 `X-Tenant-ID`, `X-User-ID`, `Authorization` 헤더를 CORS 허용 목록에 추가해야 합니다.
 4.  **컨텍스트 수집**: 대화 시작 시 `context` 객체가 백엔드로 정상 전달되는지 브라우저 네트워크 탭에서 확인하세요.
+5.  **HITL 승인 플로우**: 승인 요청 시 스트리밍이 일시 중지되고, 승인/거절 후 적절히 재개/종료되는지 확인하세요.
 
 ## 💻 개발 규칙
 

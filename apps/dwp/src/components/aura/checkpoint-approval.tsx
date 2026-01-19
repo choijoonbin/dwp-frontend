@@ -32,10 +32,16 @@ export const CheckpointApproval = ({ request, onApprove, onReject, onEdit }: Che
   const [editedContent, setEditedContent] = useState(request.editableContent || request.message);
   const confidence = request.confidence ?? 1.0;
 
-  const handleSaveEdit = () => {
+  const handleContentChange = (newContent: string) => {
+    setEditedContent(newContent);
+    // Optimistic update: 즉시 store에 반영
     if (onEdit) {
-      onEdit(editedContent);
+      onEdit(newContent);
     }
+  };
+
+  const handleSaveEdit = () => {
+    // Content is already updated via handleContentChange
     setIsEditing(false);
   };
 
@@ -96,7 +102,7 @@ export const CheckpointApproval = ({ request, onApprove, onReject, onEdit }: Che
                 multiline
                 rows={4}
                 value={editedContent}
-                onChange={(e) => setEditedContent(e.target.value)}
+                onChange={(e) => handleContentChange(e.target.value)}
                 variant="outlined"
                 sx={{ mt: 1 }}
               />

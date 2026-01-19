@@ -14,7 +14,7 @@ export type AuthState = {
 };
 
 export type AuthContextValue = AuthState & {
-  login: (payload: LoginRequest) => Promise<void>;
+  login: (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => Promise<void>;
   logout: () => void;
 };
 
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => window.removeEventListener('dwp-auth-token', onTokenChange);
   }, []);
 
-  const login = useCallback(async (payload: LoginRequest) => {
+  const login = useCallback(async (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => {
     const res = await loginApi(payload);
     const token = extractAccessToken(res.data);
     if (!token) {

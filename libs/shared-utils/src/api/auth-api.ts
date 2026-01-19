@@ -1,12 +1,14 @@
 import { axiosInstance } from '../axios-instance';
+import { getTenantId } from '../tenant-util';
 
 import type { ApiResponse } from '../types';
 
 // ----------------------------------------------------------------------
 
 export type LoginRequest = {
-  email: string;
+  username: string;
   password: string;
+  tenantId: string;
 };
 
 export type LoginResponseData =
@@ -26,10 +28,19 @@ export type LoginResponseData =
  */
 const DEFAULT_LOGIN_PATH = '/api/auth/login';
 
-export const login = async (payload: LoginRequest) => {
+export const login = async (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => {
+  // tenantId가 제공되지 않으면 자동으로 가져옴
+  const tenantId = payload.tenantId || getTenantId();
+  
+  const requestBody: LoginRequest = {
+    username: payload.username,
+    password: payload.password,
+    tenantId,
+  };
+
   const res = await axiosInstance.post<ApiResponse<LoginResponseData>, LoginRequest>(
     DEFAULT_LOGIN_PATH,
-    payload,
+    requestBody,
     { withCredentials: true }
   );
   return res.data;

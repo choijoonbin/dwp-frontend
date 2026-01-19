@@ -36,6 +36,46 @@
   "nxJsonPlugins": [],
   "fileMap": {
     "projectFileMap": {
+      "mail": [
+        {
+          "file": "apps/remotes/mail/index.html",
+          "hash": "864866553890463834"
+        },
+        {
+          "file": "apps/remotes/mail/project.json",
+          "hash": "14904217479067949789"
+        },
+        {
+          "file": "apps/remotes/mail/src/mail-app.tsx",
+          "hash": "1842251242111642309",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/mail/src/main.tsx",
+          "hash": "16353890226058499549",
+          "deps": [
+            "design-system",
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "apps/remotes/mail/src/vite-env.d.ts",
+          "hash": "10470006326540176307"
+        },
+        {
+          "file": "apps/remotes/mail/vite.config.ts",
+          "hash": "2541363759865362330",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react-swc"
+          ]
+        }
+      ],
       "shared-utils": [
         {
           "file": "libs/shared-utils/project.json",
@@ -43,14 +83,18 @@
         },
         {
           "file": "libs/shared-utils/src/agent/context-util.ts",
-          "hash": "14034442462462117928"
+          "hash": "3695356138661456911"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/hitl-api.ts",
+          "hash": "12497076655583257328"
         },
         {
           "file": "libs/shared-utils/src/agent/use-agent-stream.ts",
-          "hash": "9858561235563349527",
+          "hash": "14121859586150587437",
           "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query"
+            "npm:@tanstack/react-query",
+            "npm:react"
           ]
         },
         {
@@ -62,10 +106,36 @@
           "hash": "16790591095199076360"
         },
         {
+          "file": "libs/shared-utils/src/auth/auth-guard.tsx",
+          "hash": "11445583064159240513",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
           "file": "libs/shared-utils/src/auth/auth-provider.tsx",
-          "hash": "11050724342375224916",
+          "hash": "7818279027788001983",
           "deps": [
             "npm:react"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-redirect.test.ts",
+          "hash": "15623788010970177248",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-redirect.ts",
+          "hash": "1443545607187007706"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/token-storage.test.ts",
+          "hash": "11518970991805364294",
+          "deps": [
+            "npm:vitest"
           ]
         },
         {
@@ -73,8 +143,19 @@
           "hash": "1983648834487626635"
         },
         {
+          "file": "libs/shared-utils/src/auth/user-id-storage.ts",
+          "hash": "3003508536947905025"
+        },
+        {
+          "file": "libs/shared-utils/src/axios-instance.test.ts",
+          "hash": "1792088186394072090",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
           "file": "libs/shared-utils/src/axios-instance.ts",
-          "hash": "12334664477200006802"
+          "hash": "2859226479836029845"
         },
         {
           "file": "libs/shared-utils/src/env.ts",
@@ -86,7 +167,7 @@
         },
         {
           "file": "libs/shared-utils/src/index.ts",
-          "hash": "14270402310763514719"
+          "hash": "6135807163063233179"
         },
         {
           "file": "libs/shared-utils/src/tenant-util.ts",
@@ -94,400 +175,7 @@
         },
         {
           "file": "libs/shared-utils/src/types.ts",
-          "hash": "666722908954309123"
-        }
-      ],
-      "design-system": [
-        {
-          "file": "libs/design-system/project.json",
-          "hash": "10937936829318947319"
-        },
-        {
-          "file": "libs/design-system/src/components/approval-dialog/approval-dialog.tsx",
-          "hash": "2388814655182677262",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/chart.tsx",
-          "hash": "15990414331484826300",
-          "deps": [
-            "npm:react",
-            "npm:minimal-shared",
-            "npm:@mui/material",
-            [
-              "npm:react-apexcharts",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/classes.ts",
-          "hash": "13448803951318615463"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/components/chart-legends.tsx",
-          "hash": "13519885268218213398",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/components/chart-loading.tsx",
-          "hash": "12159728191277331976",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/components/index.ts",
-          "hash": "7704243789903803765"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/index.ts",
-          "hash": "17026374020244711307"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/styles.css",
-          "hash": "13031029736610266452"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/types.ts",
-          "hash": "14887766845857205498",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react-apexcharts"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/use-chart.ts",
-          "hash": "7186824922162965344",
-          "deps": [
-            "npm:@mui/material",
-            "npm:es-toolkit",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/classes.ts",
-          "hash": "5581510735206127944"
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/color-picker.tsx",
-          "hash": "2545015726553284510",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/color-preview.tsx",
-          "hash": "12450105687848861299",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/index.ts",
-          "hash": "17205574814626732367"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/classes.ts",
-          "hash": "5614495216971202705"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/icon-sets.ts",
-          "hash": "12873807217040794741"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/iconify.tsx",
-          "hash": "14278513607450369456",
-          "deps": [
-            "npm:@iconify/react",
-            "npm:react",
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/index.ts",
-          "hash": "17835854880567713080"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/register-icons.ts",
-          "hash": "1855439278111521489",
-          "deps": [
-            "npm:@iconify/react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/index.ts",
-          "hash": "11963989716759472572"
-        },
-        {
-          "file": "libs/design-system/src/components/label/classes.ts",
-          "hash": "10216243487412079881"
-        },
-        {
-          "file": "libs/design-system/src/components/label/index.ts",
-          "hash": "17861490292983094747"
-        },
-        {
-          "file": "libs/design-system/src/components/label/label.tsx",
-          "hash": "443434773925413083",
-          "deps": [
-            "npm:es-toolkit",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/label/styles.tsx",
-          "hash": "1811336073576718369",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/label/types.ts",
-          "hash": "6530222753035242745",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/logo/classes.ts",
-          "hash": "3233155800273695178"
-        },
-        {
-          "file": "libs/design-system/src/components/logo/index.ts",
-          "hash": "10544061452619858687"
-        },
-        {
-          "file": "libs/design-system/src/components/logo/logo.tsx",
-          "hash": "1156077461606560601",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/classes.ts",
-          "hash": "16486606500501144452"
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/index.ts",
-          "hash": "17842248874773705294"
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/scrollbar.tsx",
-          "hash": "695544807360633187",
-          "deps": [
-            "npm:simplebar-react",
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/styles.css",
-          "hash": "5263464215027149794"
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/types.ts",
-          "hash": "4998603477604898069",
-          "deps": [
-            "npm:@mui/material",
-            "npm:simplebar-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/classes.ts",
-          "hash": "15345731999837158773"
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/index.ts",
-          "hash": "7916128723121912032"
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/svg-color.tsx",
-          "hash": "5707149224118210095",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/types.ts",
-          "hash": "7172266532185956907",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/hooks/index.ts",
-          "hash": "13016108691721261929"
-        },
-        {
-          "file": "libs/design-system/src/hooks/router/index.ts",
-          "hash": "11139150266187246973"
-        },
-        {
-          "file": "libs/design-system/src/hooks/router/use-pathname.ts",
-          "hash": "11036719986362388067",
-          "deps": [
-            "npm:react",
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/hooks/router/use-router.ts",
-          "hash": "5482890111004519923",
-          "deps": [
-            "npm:react",
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/index.ts",
-          "hash": "12022157027770211216"
-        },
-        {
-          "file": "libs/design-system/src/styles/global.css",
-          "hash": "8325894914213820854"
-        },
-        {
-          "file": "libs/design-system/src/theme/core/components.tsx",
-          "hash": "3932988326486082726",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/custom-shadows.ts",
-          "hash": "5085678479816703120",
-          "deps": [
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/index.ts",
-          "hash": "12563650796825881998"
-        },
-        {
-          "file": "libs/design-system/src/theme/core/palette.ts",
-          "hash": "3312676751992468797",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/shadows.ts",
-          "hash": "3242283092768752689",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/typography.ts",
-          "hash": "10939852778802819532",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/create-classes.ts",
-          "hash": "9863844494207890905"
-        },
-        {
-          "file": "libs/design-system/src/theme/create-theme.ts",
-          "hash": "1772669969832128739",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/extend-theme-types.d.ts",
-          "hash": "5843731201755380017",
-          "deps": [
-            "npm:@mui/lab",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/index.ts",
-          "hash": "15496765687472201915"
-        },
-        {
-          "file": "libs/design-system/src/theme/theme-config.ts",
-          "hash": "1432500443791728194",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/theme-mode.tsx",
-          "hash": "9833422954086801296",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/theme-provider.tsx",
-          "hash": "6901935421150242241",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/types.ts",
-          "hash": "7499571595499420034",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        }
-      ],
-      "remote-starter": [
-        {
-          "file": "apps/remotes/_starter/index.html",
-          "hash": "10948028599418712495"
-        },
-        {
-          "file": "apps/remotes/_starter/project.json",
-          "hash": "6624486865221641296"
-        },
-        {
-          "file": "apps/remotes/_starter/src/entry.tsx",
-          "hash": "3036542923397360097",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/_starter/src/main.tsx",
-          "hash": "4737932262371874061",
-          "deps": [
-            "design-system",
-            "npm:react",
-            "npm:react-dom"
-          ]
-        },
-        {
-          "file": "apps/remotes/_starter/vite.config.ts",
-          "hash": "18311644572241391603",
-          "deps": [
-            "npm:vite",
-            "npm:@vitejs/plugin-react-swc"
-          ]
+          "hash": "16497816272801057550"
         }
       ],
       "dwp": [
@@ -513,10 +201,133 @@
         },
         {
           "file": "apps/dwp/src/app.tsx",
-          "hash": "991263644887159238",
+          "hash": "11541397681520711084",
           "deps": [
             "npm:react",
             "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/action-execution-view.tsx",
+          "hash": "15892573304301124896",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/aura-floating-button.tsx",
+          "hash": "7561505876423508032",
+          "deps": [
+            "npm:react",
+            "npm:@emotion/react",
+            "npm:framer-motion",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/aura-mini-overlay.tsx",
+          "hash": "3112028988173239918",
+          "deps": [
+            "npm:react",
+            "npm:framer-motion",
+            "npm:react-router-dom",
+            "shared-utils",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/checkpoint-approval.tsx",
+          "hash": "4759948311027316760",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/confidence-score.tsx",
+          "hash": "5382721197565988025",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/contextual-bridge.tsx",
+          "hash": "9507299285247166562",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/dynamic-plan-board.tsx",
+          "hash": "1049363385434138860",
+          "deps": [
+            "npm:react",
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/hitl-approval-dialog.tsx",
+          "hash": "16775678529470342742",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/index.ts",
+          "hash": "5940866430217232571"
+        },
+        {
+          "file": "apps/dwp/src/components/aura/live-execution-log.tsx",
+          "hash": "17047430484924762703",
+          "deps": [
+            "npm:react",
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/reasoning-timeline.tsx",
+          "hash": "9296585066010996171",
+          "deps": [
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "npm:@mui/lab",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/result-viewer.tsx",
+          "hash": "3368819405240586856",
+          "deps": [
+            "npm:react-syntax-highlighter",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/thought-chain-ui.tsx",
+          "hash": "12976066185482679981",
+          "deps": [
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "npm:@mui/lab",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/auth-unauthorized-handler.tsx",
+          "hash": "17589962539829081599",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "shared-utils"
           ]
         },
         {
@@ -530,6 +341,14 @@
             "npm:react",
             "shared-utils",
             "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/hooks/use-page-context.ts",
+          "hash": "640832127419751661",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
           ]
         },
         {
@@ -561,10 +380,6 @@
             "npm:react",
             "design-system"
           ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/aura-bar.tsx",
-          "hash": "3927844425989650041"
         },
         {
           "file": "apps/dwp/src/layouts/components/language-popover.tsx",
@@ -675,7 +490,7 @@
         },
         {
           "file": "apps/dwp/src/layouts/dashboard/layout.tsx",
-          "hash": "9350262207872612838",
+          "hash": "7822438545330687319",
           "deps": [
             "npm:@mui/material",
             "npm:es-toolkit",
@@ -712,7 +527,7 @@
         },
         {
           "file": "apps/dwp/src/main.tsx",
-          "hash": "10015776338548627971",
+          "hash": "10700730853833826691",
           "deps": [
             "design-system",
             "npm:react",
@@ -720,6 +535,17 @@
             "shared-utils",
             "npm:@tanstack/react-query",
             "npm:react-router"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/ai-workspace.tsx",
+          "hash": "10703340024445828698",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material",
+            "design-system"
           ]
         },
         {
@@ -749,6 +575,14 @@
           "hash": "2397008715153872271",
           "deps": [
             "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/page-403.tsx",
+          "hash": "7271543994477914562",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
           ]
         },
         {
@@ -788,12 +622,13 @@
         },
         {
           "file": "apps/dwp/src/routes/sections.tsx",
-          "hash": "7892700650092985762",
+          "hash": "10900256002597822395",
           "deps": [
             "npm:react-router",
             "npm:react",
             "npm:react-router-dom",
             "npm:minimal-shared",
+            "shared-utils",
             "npm:@mui/material"
           ]
         },
@@ -803,9 +638,10 @@
         },
         {
           "file": "apps/dwp/src/sections/auth/sign-in-view.tsx",
-          "hash": "6426614159906955319",
+          "hash": "12902902467583776969",
           "deps": [
             "npm:react",
+            "npm:react-router-dom",
             "shared-utils",
             "npm:@mui/material",
             "design-system"
@@ -1051,6 +887,13 @@
           ]
         },
         {
+          "file": "apps/dwp/src/store/use-aura-store.ts",
+          "hash": "9250283369171839773",
+          "deps": [
+            "npm:zustand"
+          ]
+        },
+        {
           "file": "apps/dwp/src/store/use-layout-store.ts",
           "hash": "2200331581096022741",
           "deps": [
@@ -1073,27 +916,25 @@
           "hash": "10470006326540176307"
         }
       ],
-      "mail": [
+      "remote-starter": [
         {
-          "file": "apps/remotes/mail/index.html",
-          "hash": "864866553890463834"
+          "file": "apps/remotes/_starter/index.html",
+          "hash": "10948028599418712495"
         },
         {
-          "file": "apps/remotes/mail/project.json",
-          "hash": "14904217479067949789"
+          "file": "apps/remotes/_starter/project.json",
+          "hash": "6624486865221641296"
         },
         {
-          "file": "apps/remotes/mail/src/mail-app.tsx",
-          "hash": "1842251242111642309",
+          "file": "apps/remotes/_starter/src/entry.tsx",
+          "hash": "3036542923397360097",
           "deps": [
-            "npm:react",
-            "design-system",
             "npm:@mui/material"
           ]
         },
         {
-          "file": "apps/remotes/mail/src/main.tsx",
-          "hash": "16353890226058499549",
+          "file": "apps/remotes/_starter/src/main.tsx",
+          "hash": "4737932262371874061",
           "deps": [
             "design-system",
             "npm:react",
@@ -1101,15 +942,369 @@
           ]
         },
         {
-          "file": "apps/remotes/mail/src/vite-env.d.ts",
-          "hash": "10470006326540176307"
-        },
-        {
-          "file": "apps/remotes/mail/vite.config.ts",
-          "hash": "2541363759865362330",
+          "file": "apps/remotes/_starter/vite.config.ts",
+          "hash": "18311644572241391603",
           "deps": [
             "npm:vite",
             "npm:@vitejs/plugin-react-swc"
+          ]
+        }
+      ],
+      "design-system": [
+        {
+          "file": "libs/design-system/project.json",
+          "hash": "10937936829318947319"
+        },
+        {
+          "file": "libs/design-system/src/components/approval-dialog/approval-dialog.tsx",
+          "hash": "16531999336562305506",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/chart.tsx",
+          "hash": "15990414331484826300",
+          "deps": [
+            "npm:react",
+            "npm:minimal-shared",
+            "npm:@mui/material",
+            [
+              "npm:react-apexcharts",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/classes.ts",
+          "hash": "13448803951318615463"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/components/chart-legends.tsx",
+          "hash": "13519885268218213398",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/components/chart-loading.tsx",
+          "hash": "12159728191277331976",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/components/index.ts",
+          "hash": "7704243789903803765"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/index.ts",
+          "hash": "17026374020244711307"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/styles.css",
+          "hash": "13031029736610266452"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/types.ts",
+          "hash": "14887766845857205498",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react-apexcharts"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/use-chart.ts",
+          "hash": "7186824922162965344",
+          "deps": [
+            "npm:@mui/material",
+            "npm:es-toolkit",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/classes.ts",
+          "hash": "5581510735206127944"
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/color-picker.tsx",
+          "hash": "2545015726553284510",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/color-preview.tsx",
+          "hash": "12450105687848861299",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/index.ts",
+          "hash": "17205574814626732367"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/classes.ts",
+          "hash": "5614495216971202705"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/icon-sets.ts",
+          "hash": "12873807217040794741"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/iconify.tsx",
+          "hash": "14278513607450369456",
+          "deps": [
+            "npm:@iconify/react",
+            "npm:react",
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/index.ts",
+          "hash": "17835854880567713080"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/register-icons.ts",
+          "hash": "1855439278111521489",
+          "deps": [
+            "npm:@iconify/react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/index.ts",
+          "hash": "11963989716759472572"
+        },
+        {
+          "file": "libs/design-system/src/components/label/classes.ts",
+          "hash": "10216243487412079881"
+        },
+        {
+          "file": "libs/design-system/src/components/label/index.ts",
+          "hash": "17861490292983094747"
+        },
+        {
+          "file": "libs/design-system/src/components/label/label.tsx",
+          "hash": "443434773925413083",
+          "deps": [
+            "npm:es-toolkit",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/label/styles.tsx",
+          "hash": "1811336073576718369",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/label/types.ts",
+          "hash": "6530222753035242745",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/logo/classes.ts",
+          "hash": "3233155800273695178"
+        },
+        {
+          "file": "libs/design-system/src/components/logo/index.ts",
+          "hash": "10544061452619858687"
+        },
+        {
+          "file": "libs/design-system/src/components/logo/logo.tsx",
+          "hash": "2932737301110380064",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/classes.ts",
+          "hash": "16486606500501144452"
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/index.ts",
+          "hash": "17842248874773705294"
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/scrollbar.tsx",
+          "hash": "695544807360633187",
+          "deps": [
+            "npm:simplebar-react",
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/styles.css",
+          "hash": "5263464215027149794"
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/types.ts",
+          "hash": "4998603477604898069",
+          "deps": [
+            "npm:@mui/material",
+            "npm:simplebar-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/classes.ts",
+          "hash": "15345731999837158773"
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/index.ts",
+          "hash": "7916128723121912032"
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/svg-color.tsx",
+          "hash": "5707149224118210095",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/types.ts",
+          "hash": "7172266532185956907",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/hooks/index.ts",
+          "hash": "13016108691721261929"
+        },
+        {
+          "file": "libs/design-system/src/hooks/router/index.ts",
+          "hash": "11139150266187246973"
+        },
+        {
+          "file": "libs/design-system/src/hooks/router/use-pathname.ts",
+          "hash": "11036719986362388067",
+          "deps": [
+            "npm:react",
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/hooks/router/use-router.ts",
+          "hash": "5482890111004519923",
+          "deps": [
+            "npm:react",
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/index.ts",
+          "hash": "12022157027770211216"
+        },
+        {
+          "file": "libs/design-system/src/styles/global.css",
+          "hash": "8325894914213820854"
+        },
+        {
+          "file": "libs/design-system/src/theme/core/components.tsx",
+          "hash": "3932988326486082726",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/custom-shadows.ts",
+          "hash": "5085678479816703120",
+          "deps": [
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/index.ts",
+          "hash": "12563650796825881998"
+        },
+        {
+          "file": "libs/design-system/src/theme/core/palette.ts",
+          "hash": "3312676751992468797",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/shadows.ts",
+          "hash": "3242283092768752689",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/typography.ts",
+          "hash": "10939852778802819532",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/create-classes.ts",
+          "hash": "9863844494207890905"
+        },
+        {
+          "file": "libs/design-system/src/theme/create-theme.ts",
+          "hash": "1772669969832128739",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/extend-theme-types.d.ts",
+          "hash": "5843731201755380017",
+          "deps": [
+            "npm:@mui/lab",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/index.ts",
+          "hash": "15496765687472201915"
+        },
+        {
+          "file": "libs/design-system/src/theme/theme-config.ts",
+          "hash": "1432500443791728194",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/theme-mode.tsx",
+          "hash": "9833422954086801296",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/theme-provider.tsx",
+          "hash": "6901935421150242241",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/types.ts",
+          "hash": "7499571595499420034",
+          "deps": [
+            "npm:@mui/material"
           ]
         }
       ]
@@ -1117,7 +1312,7 @@
     "nonProjectFiles": [
       {
         "file": ".cursorrules",
-        "hash": "16489739031804219225"
+        "hash": "3867782966317073237"
       },
       {
         "file": ".env.dev",
@@ -1145,7 +1340,35 @@
       },
       {
         "file": "README.md",
-        "hash": "16329152158556234372"
+        "hash": "8813028139727628162"
+      },
+      {
+        "file": "docs/AUTH_IMPLEMENTATION_SUMMARY.md",
+        "hash": "17137659473117577051"
+      },
+      {
+        "file": "docs/AUTH_STATUS_ANALYSIS.md",
+        "hash": "8368124396234063519"
+      },
+      {
+        "file": "docs/BACKEND_API_SPEC.md",
+        "hash": "13333934358456392123"
+      },
+      {
+        "file": "docs/FRONTEND_VERIFICATION_REQUIREMENTS.md",
+        "hash": "2007883945428083389"
+      },
+      {
+        "file": "docs/FRONTEND_VERIFICATION_RESPONSE.md",
+        "hash": "15608973069849391412"
+      },
+      {
+        "file": "docs/INTEGRATION_CHECKLIST.md",
+        "hash": "9308210736543463802"
+      },
+      {
+        "file": "docs/aura.md",
+        "hash": "5021904671703174580"
       },
       {
         "file": "eslint.config.mjs",
@@ -1157,11 +1380,11 @@
       },
       {
         "file": "package-lock.json",
-        "hash": "11462914072240109775"
+        "hash": "10601185403680143507"
       },
       {
         "file": "package.json",
-        "hash": "2328107566600644057"
+        "hash": "61105109642632074"
       },
       {
         "file": "prettier.config.mjs",
@@ -1266,6 +1489,10 @@
       {
         "file": "public/assets/illustrations/illustration-dashboard.webp",
         "hash": "17433998981270240511"
+      },
+      {
+        "file": "public/assets/images/arua.gif",
+        "hash": "6249817014819241628"
       },
       {
         "file": "public/assets/images/avatar/avatar-1.webp",
@@ -1464,6 +1691,18 @@
         "hash": "8098989024630980810"
       },
       {
+        "file": "public/assets/images/dwp.gif",
+        "hash": "12313809452854767242"
+      },
+      {
+        "file": "public/assets/images/dwp.png",
+        "hash": "9132231396602267704"
+      },
+      {
+        "file": "public/assets/images/dwp2.gif",
+        "hash": "1484550313585109896"
+      },
+      {
         "file": "public/assets/images/minimal-free-preview.jpg",
         "hash": "5948068974655794722"
       },
@@ -1601,7 +1840,7 @@
       },
       {
         "file": "yarn.lock",
-        "hash": "4668624691421581702"
+        "hash": "6797227122394971313"
       }
     ]
   },

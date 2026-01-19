@@ -6335,12 +6335,22 @@
     "shared-utils": [
       {
         "source": "shared-utils",
+        "target": "npm:@tanstack/react-query",
+        "type": "static"
+      },
+      {
+        "source": "shared-utils",
         "target": "npm:react",
         "type": "static"
       },
       {
         "source": "shared-utils",
-        "target": "npm:@tanstack/react-query",
+        "target": "npm:react-router-dom",
+        "type": "static"
+      },
+      {
+        "source": "shared-utils",
+        "target": "npm:vitest",
         "type": "static"
       }
     ],
@@ -6357,12 +6367,37 @@
       },
       {
         "source": "dwp",
+        "target": "npm:@mui/material",
+        "type": "static"
+      },
+      {
+        "source": "dwp",
+        "target": "npm:@emotion/react",
+        "type": "static"
+      },
+      {
+        "source": "dwp",
+        "target": "npm:framer-motion",
+        "type": "static"
+      },
+      {
+        "source": "dwp",
+        "target": "npm:react-router-dom",
+        "type": "static"
+      },
+      {
+        "source": "dwp",
         "target": "shared-utils",
         "type": "static"
       },
       {
         "source": "dwp",
-        "target": "npm:@mui/material",
+        "target": "npm:@mui/lab",
+        "type": "static"
+      },
+      {
+        "source": "dwp",
+        "target": "npm:react-syntax-highlighter",
         "type": "static"
       },
       {
@@ -6388,16 +6423,6 @@
       {
         "source": "dwp",
         "target": "npm:react-router",
-        "type": "static"
-      },
-      {
-        "source": "dwp",
-        "target": "npm:react-router-dom",
-        "type": "static"
-      },
-      {
-        "source": "dwp",
-        "target": "npm:@mui/lab",
         "type": "static"
       },
       {
@@ -14128,5 +14153,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1768546347233
+  "computedAt": 1768789705568
 }

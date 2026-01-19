@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { useAuth, HttpError } from '@dwp-frontend/shared-utils';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useAuth, HttpError, safeReturnUrl } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -11,18 +12,18 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { useRouter } from 'src/routes/hooks';
-
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 export const SignInView = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const auth = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('hello@gmail.com');
+  const [username, setUsername] = useState('hello@gmail.com');
   const [password, setPassword] = useState('@demo1234');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [errorSeverity, setErrorSeverity] = useState<'error' | 'warning'>('error');
@@ -33,8 +34,11 @@ export const SignInView = () => {
     setIsSubmitting(true);
 
     try {
-      await auth.login({ email, password });
-      router.push('/');
+      await auth.login({ username, password });
+      
+      // Handle returnUrl: redirect to safe returnUrl or default to /
+      const returnUrl = safeReturnUrl(searchParams.get('returnUrl'));
+      navigate(returnUrl || '/', { replace: true });
     } catch (err) {
       if (err instanceof HttpError && err.status === 404) {
         setErrorSeverity('warning');
@@ -47,7 +51,7 @@ export const SignInView = () => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [auth, email, password, router]);
+  }, [auth, username, password, navigate, searchParams]);
 
   const renderForm = (
     <Box
@@ -65,10 +69,10 @@ export const SignInView = () => {
 
       <TextField
         fullWidth
-        name="email"
-        label="Email address"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        name="username"
+        label="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
         sx={{ mb: 3 }}
         slotProps={{
           inputLabel: { shrink: true },

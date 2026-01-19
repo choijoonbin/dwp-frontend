@@ -102,13 +102,17 @@ data: {"type":"plan_step","title":"1. 페이지 구조 분석","description":"�
 
 data: {"type":"plan_step","title":"2. 주요 기능 추출","description":"읽지 않은 메일 필터링, 정렬 기능 등을 추출합니다.","order":1,"confidence":0.85}
 
+data: {"type":"plan_step_update","id":"plan-step-123","status":"executing","description":"분석을 시작합니다."}
+
 data: {"type":"tool_execution","tool":"code_analyzer","params":{"file":"apps/mail/src/pages/inbox.tsx"},"status":"executing"}
 
 data: {"type":"tool_execution","tool":"code_analyzer","params":{"file":"apps/mail/src/pages/inbox.tsx"},"result":"Found 3 main components: MailList, FilterBar, SearchBox","status":"completed"}
 
-data: {"type":"hitl","message":"메일 3개를 삭제하시겠습니까?","action":"delete_emails","params":{"ids":["msg-123","msg-456","msg-789"]},"confidence":0.7,"editableContent":"메일 3개를 삭제하시겠습니까?"}
+data: {"type":"timeline_step_update","id":"timeline-step-123","status":"completed","title":"코드 분석 완료"}
 
-data: {"type":"content","content":"현재 페이지는 메일 인박스 화면입니다.\n\n**주요 기능:**\n- 읽지 않은 메일 필터링\n- 메일 목록 표시\n- 검색 기능\n\n**컴포넌트 구조:**\n1. MailList: 메일 목록 표시\n2. FilterBar: 필터링 UI\n3. SearchBox: 검색 입력"}
+data: {"type":"hitl","data":{"requestId":"hitl-1234567890","message":"메일 3개를 삭제하시겠습니까?","actionType":"delete_emails","params":{"ids":["msg-123","msg-456","msg-789"]},"confidence":0.7,"editableContent":"메일 3개를 삭제하시겠습니까?"}}
+
+data: {"type":"content","content":"현재 페이지는 메일 인박스 화면입니다.\n\n**주요 기능:**\n- 읽지 않은 메일 필터링\n- 메일 목록 표시\n- 검색 기능","metadata":{"result":{"type":"text","content":"분석 결과","title":"페이지 분석 결과"}}}
 
 data: [DONE]
 ```
@@ -146,6 +150,21 @@ AI의 사고 과정을 실시간으로 전달합니다.
   "canSkip": false
 }
 ```
+
+#### `plan_step_update`
+작업 계획 단계의 상태를 업데이트합니다. (선택)
+
+```json
+{
+  "type": "plan_step_update",
+  "id": "plan-step-123",  // 프론트엔드가 생성한 plan_step의 id
+  "status": "pending" | "approved" | "skipped" | "executing" | "completed" | "failed",
+  "description": "업데이트된 설명",
+  "confidence": 0.85
+}
+```
+
+**참고**: `id`는 프론트엔드가 `plan_step` 이벤트를 받을 때 생성한 ID와 일치해야 합니다. 백엔드가 `plan_step` 이벤트에 `id` 필드를 포함하여 전송하는 것을 권장합니다.
 
 #### `tool_execution`
 도구 실행 정보를 전달합니다.
@@ -201,6 +220,24 @@ AI의 사고 과정을 실시간으로 전달합니다.
   "message": "작업이 완료되었습니다."
 }
 ```
+
+**결과 메타데이터 포함 형식** (결과 탭에 표시):
+
+```json
+{
+  "type": "content",
+  "content": "코드 분석이 완료되었습니다.",
+  "metadata": {
+    "result": {
+      "type": "diff" | "preview" | "checklist" | "text",
+      "content": "...",
+      "title": "코드 변경사항"
+    }
+  }
+}
+```
+
+**중요**: `metadata.result`가 포함된 `content` 이벤트는 마지막 `content` 이벤트여야 합니다. 프론트엔드는 스트리밍 종료 시 마지막 `content` 이벤트의 `metadata.result`를 메시지에 저장합니다.
 
 ### 3. HITL 승인 처리 API
 
@@ -448,6 +485,8 @@ X-User-ID: {USER_ID}
 const reader = response.body?.getReader();
 const decoder = new TextDecoder();
 let buffer = '';
+let accumulatedText = '';
+let lastResultMetadata = null; // 결과 메타데이터 추적
 
 while (true) {
   const { done, value } = await reader.read();
@@ -638,11 +677,12 @@ Aura Platform에서 사용 가능한 도구들:
 
 백엔드/Aura Platform 구현 관련 문의:
 - Gateway API: `/api/aura/test/stream`, `/api/aura/hitl/approve`, `/api/aura/hitl/reject`
+- 상세 API 스펙: `docs/BACKEND_API_SPEC.md` 참조
 - Aura Platform: 별도 문서 참조
 
 ---
 
-**문서 버전**: 1.1  
+**문서 버전**: 1.2  
 **최종 업데이트**: 2026-01-16  
 **작성자**: DWP Frontend Team
 
@@ -652,10 +692,14 @@ Aura Platform에서 사용 가능한 도구들:
 
 ### ✅ 구현 완료
 
-1. **HITL 승인/거절 API**: `approveHitlRequest`, `rejectHitlRequest` 함수 구현 완료
-2. **사용자 ID 관리**: JWT 토큰에서 자동 추출 및 localStorage 저장
+1. **HITL 승인/거절 API**: `libs/shared-utils/src/agent/hitl-api.ts`에 `approveHitlRequest`, `rejectHitlRequest`, `getHitlRequest` 함수 구현 완료
+2. **사용자 ID 관리**: `libs/shared-utils/src/auth/user-id-storage.ts`에서 JWT 토큰에서 자동 추출 및 localStorage 저장
 3. **SSE 이벤트 파싱**: `event:` 및 `data:` 형식 모두 지원
-4. **에러 처리**: 백엔드 `ApiResponse` 형식에 맞춘 에러 처리
+4. **이벤트 핸들러**: 
+   - `plan_step_update` 이벤트 핸들러 추가 (작업 계획 단계 상태 업데이트)
+   - `timeline_step_update` 이벤트 핸들러 추가 (타임라인 단계 상태 업데이트)
+5. **결과 메타데이터 추적**: `lastResultMetadata` 상태를 통해 결과 탭에 표시할 메타데이터 추적
+6. **에러 처리**: 백엔드 `ApiResponse` 형식에 맞춘 에러 처리
 
 ### ⚠️ 주의사항
 

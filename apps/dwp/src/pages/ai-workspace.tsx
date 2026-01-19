@@ -2,7 +2,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
-import { NX_API_URL, getTenantId, getAccessToken, rejectHitlRequest, approveHitlRequest } from '@dwp-frontend/shared-utils';
+import { getUserId, NX_API_URL, getTenantId, getAccessToken, getAgentContext, rejectHitlRequest, approveHitlRequest } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -15,8 +15,6 @@ import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-
-import { usePageContext } from 'src/hooks/use-page-context';
 
 import { useAuraStore, useAuraActions } from 'src/store/use-aura-store';
 
@@ -77,8 +75,8 @@ export default function Page() {
   const [prompt, setPrompt] = useState('');
   const [streamingText, setStreamingText] = useState('');
   const [activeTab, setActiveTab] = useState(0);
+  const [lastResultMetadata, setLastResultMetadata] = useState<any>(null);
 
-  const pageContext = usePageContext();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -132,6 +130,36 @@ export default function Page() {
 
     const token = getAccessToken();
     const tenantId = getTenantId();
+    const userId = getUserId();
+
+    // getAgentContext를 사용하여 명세에 맞는 context 생성
+    const agentContext = getAgentContext();
+
+    // 디버깅: 요청 정보 로깅
+    const requestPayload = {
+      prompt,
+      context: agentContext,
+    };
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Aura SSE Request]', {
+        endpoint: `${NX_API_URL}/api/aura/test/stream`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Tenant-ID': tenantId,
+          'Authorization': token ? 'Bearer ***' : 'none',
+          'X-User-ID': userId || 'none',
+        },
+        payload: requestPayload,
+        contextCheck: {
+          hasPathname: 'pathname' in agentContext,
+          hasActiveApp: 'activeApp' in agentContext,
+          pathname: agentContext.pathname,
+          activeApp: agentContext.activeApp,
+        },
+      });
+    }
 
     try {
       // NOTE: Backend supports GET /api/aura/test/stream?message={message}
@@ -142,13 +170,12 @@ export default function Page() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'text/event-stream', // SSE 요청 시 Accept 헤더 포함
           'X-Tenant-ID': tenantId,
           ...(token && { Authorization: `Bearer ${token}` }),
+          ...(userId && { 'X-User-ID': userId }), // User ID 헤더 추가
         },
-        body: JSON.stringify({
-          prompt,
-          context: pageContext,
-        }),
+        body: JSON.stringify(requestPayload),
         signal: abortControllerRef.current.signal,
       });
 
