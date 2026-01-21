@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import { memo, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import {
   toSelectOptions,
   getCodesByGroupFromMap,
@@ -42,6 +42,19 @@ export const RolePermissionsMatrix = memo(({ roleId, onSuccess }: RolePermission
     return map;
   }, [rolePermissions]);
 
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+  const handleToggle = useCallback((nodeId: string) => {
+    setExpandedNodes((prev) => {
+      const next = new Set(prev);
+      if (next.has(nodeId)) {
+        next.delete(nodeId);
+      } else {
+        next.add(nodeId);
+      }
+      return next;
+    });
+  }, []);
+
   if (!resourcesTree || resourcesTree.length === 0) {
     return (
       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -56,6 +69,8 @@ export const RolePermissionsMatrix = memo(({ roleId, onSuccess }: RolePermission
         nodes={resourcesTree}
         permissionMap={permissionMap}
         permissionCodes={permissionCodes}
+        expandedNodes={expandedNodes}
+        onToggle={handleToggle}
         roleId={roleId}
         onSuccess={onSuccess}
       />

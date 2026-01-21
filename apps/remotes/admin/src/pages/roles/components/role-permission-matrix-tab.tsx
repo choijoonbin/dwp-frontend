@@ -1,5 +1,6 @@
 // ----------------------------------------------------------------------
 
+import { Iconify } from '@dwp-frontend/design-system';
 import { memo, useMemo, useState, useEffect, useCallback } from 'react';
 import {
   trackEvent,
@@ -11,7 +12,6 @@ import {
   useAdminRolePermissionsQuery,
   useUpdateAdminRolePermissionsMutation,
 } from '@dwp-frontend/shared-utils';
-import { Iconify } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -22,6 +22,9 @@ import Snackbar from '@mui/material/Snackbar';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { PermissionMatrixRow } from './permission-matrix-row';
+import { PermissionMatrixHeader } from './permission-matrix-header';
+import { PermissionMatrixLegend } from './permission-matrix-legend';
 import { useRolePermissionsState } from '../hooks/use-role-permissions-state';
 import {
   toPermissionMap,
@@ -29,9 +32,6 @@ import {
   filterResourceTreeByKeyword,
   toPermissionAssignmentPayload,
 } from '../adapters/role-permission-adapter';
-import { PermissionMatrixRow } from './permission-matrix-row';
-import { PermissionMatrixHeader } from './permission-matrix-header';
-import { PermissionMatrixLegend } from './permission-matrix-legend';
 
 // ----------------------------------------------------------------------
 
@@ -64,7 +64,7 @@ export const RolePermissionMatrixTab = memo(({ roleId, onSuccess, onDirtyChange,
   // Get permission codes from Code API
   const permissionCodes = useMemo(() => {
     const codes = getCodesByGroupFromMap(codeMap, 'PERMISSION_CODE');
-    return toSelectOptions(codes).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+    return toSelectOptions(codes);
   }, [codeMap]);
 
   // State for current modifications

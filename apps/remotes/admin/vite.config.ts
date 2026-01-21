@@ -25,6 +25,10 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: [
         {
+          find: /^@admin\/(.*)$/,
+          replacement: path.resolve(__dirname, './src/$1'),
+        },
+        {
           find: /^@dwp-frontend\/design-system(.*)$/,
           replacement: path.resolve(__dirname, '../../../libs/design-system/src$1'),
         },

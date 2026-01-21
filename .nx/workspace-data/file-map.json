@@ -20,6 +20,9 @@
     "src/*": [
       "apps/dwp/src/*"
     ],
+    "@admin/*": [
+      "apps/remotes/admin/src/*"
+    ],
     "@dwp-frontend/design-system": [
       "libs/design-system/src/index.ts"
     ],
@@ -36,1183 +39,6 @@
   "nxJsonPlugins": [],
   "fileMap": {
     "projectFileMap": {
-      "design-system": [
-        {
-          "file": "libs/design-system/project.json",
-          "hash": "10937936829318947319"
-        },
-        {
-          "file": "libs/design-system/src/components/approval-dialog/approval-dialog.tsx",
-          "hash": "16531999336562305506",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/chart.tsx",
-          "hash": "15990414331484826300",
-          "deps": [
-            "npm:react",
-            "npm:minimal-shared",
-            "npm:@mui/material",
-            [
-              "npm:react-apexcharts",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/classes.ts",
-          "hash": "13448803951318615463"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/components/chart-legends.tsx",
-          "hash": "13519885268218213398",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/components/chart-loading.tsx",
-          "hash": "12159728191277331976",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/components/index.ts",
-          "hash": "7704243789903803765"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/index.ts",
-          "hash": "17026374020244711307"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/styles.css",
-          "hash": "13031029736610266452"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/types.ts",
-          "hash": "14887766845857205498",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react-apexcharts"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/use-chart.ts",
-          "hash": "7186824922162965344",
-          "deps": [
-            "npm:@mui/material",
-            "npm:es-toolkit",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/classes.ts",
-          "hash": "5581510735206127944"
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/color-picker.tsx",
-          "hash": "2545015726553284510",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/color-preview.tsx",
-          "hash": "12450105687848861299",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/index.ts",
-          "hash": "17205574814626732367"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/classes.ts",
-          "hash": "5614495216971202705"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/icon-sets.ts",
-          "hash": "12942744679063344237"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/iconify.tsx",
-          "hash": "14278513607450369456",
-          "deps": [
-            "npm:@iconify/react",
-            "npm:react",
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/index.ts",
-          "hash": "17835854880567713080"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/register-icons.ts",
-          "hash": "1855439278111521489",
-          "deps": [
-            "npm:@iconify/react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/index.ts",
-          "hash": "10909077036370594329"
-        },
-        {
-          "file": "libs/design-system/src/components/label/classes.ts",
-          "hash": "10216243487412079881"
-        },
-        {
-          "file": "libs/design-system/src/components/label/index.ts",
-          "hash": "17861490292983094747"
-        },
-        {
-          "file": "libs/design-system/src/components/label/label.tsx",
-          "hash": "443434773925413083",
-          "deps": [
-            "npm:es-toolkit",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/label/styles.tsx",
-          "hash": "1811336073576718369",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/label/types.ts",
-          "hash": "6530222753035242745",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/logo/classes.ts",
-          "hash": "3233155800273695178"
-        },
-        {
-          "file": "libs/design-system/src/components/logo/index.ts",
-          "hash": "10544061452619858687"
-        },
-        {
-          "file": "libs/design-system/src/components/logo/logo.tsx",
-          "hash": "16058246659828974659",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/permission-gate/index.ts",
-          "hash": "2822994586813939657"
-        },
-        {
-          "file": "libs/design-system/src/components/permission-gate/permission-gate.tsx",
-          "hash": "14010263738048655735",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/classes.ts",
-          "hash": "16486606500501144452"
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/index.ts",
-          "hash": "17842248874773705294"
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/scrollbar.tsx",
-          "hash": "695544807360633187",
-          "deps": [
-            "npm:simplebar-react",
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/styles.css",
-          "hash": "5263464215027149794"
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/types.ts",
-          "hash": "4998603477604898069",
-          "deps": [
-            "npm:@mui/material",
-            "npm:simplebar-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/classes.ts",
-          "hash": "15345731999837158773"
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/index.ts",
-          "hash": "7916128723121912032"
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/svg-color.tsx",
-          "hash": "5707149224118210095",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/types.ts",
-          "hash": "7172266532185956907",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/hooks/index.ts",
-          "hash": "13016108691721261929"
-        },
-        {
-          "file": "libs/design-system/src/hooks/router/index.ts",
-          "hash": "11139150266187246973"
-        },
-        {
-          "file": "libs/design-system/src/hooks/router/use-pathname.ts",
-          "hash": "11036719986362388067",
-          "deps": [
-            "npm:react",
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/hooks/router/use-router.ts",
-          "hash": "5482890111004519923",
-          "deps": [
-            "npm:react",
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/index.ts",
-          "hash": "12022157027770211216"
-        },
-        {
-          "file": "libs/design-system/src/styles/global.css",
-          "hash": "8325894914213820854"
-        },
-        {
-          "file": "libs/design-system/src/theme/core/components.tsx",
-          "hash": "3932988326486082726",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/custom-shadows.ts",
-          "hash": "5085678479816703120",
-          "deps": [
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/index.ts",
-          "hash": "12563650796825881998"
-        },
-        {
-          "file": "libs/design-system/src/theme/core/palette.ts",
-          "hash": "3312676751992468797",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/shadows.ts",
-          "hash": "3242283092768752689",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/typography.ts",
-          "hash": "10939852778802819532",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/create-classes.ts",
-          "hash": "9863844494207890905"
-        },
-        {
-          "file": "libs/design-system/src/theme/create-theme.ts",
-          "hash": "1772669969832128739",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/extend-theme-types.d.ts",
-          "hash": "5843731201755380017",
-          "deps": [
-            "npm:@mui/lab",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/index.ts",
-          "hash": "15496765687472201915"
-        },
-        {
-          "file": "libs/design-system/src/theme/theme-config.ts",
-          "hash": "1432500443791728194",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/theme-mode.tsx",
-          "hash": "9833422954086801296",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/theme-provider.tsx",
-          "hash": "6901935421150242241",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/types.ts",
-          "hash": "7499571595499420034",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        }
-      ],
-      "mail": [
-        {
-          "file": "apps/remotes/mail/index.html",
-          "hash": "864866553890463834"
-        },
-        {
-          "file": "apps/remotes/mail/project.json",
-          "hash": "14904217479067949789"
-        },
-        {
-          "file": "apps/remotes/mail/src/mail-app.tsx",
-          "hash": "1842251242111642309",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/mail/src/main.tsx",
-          "hash": "16353890226058499549",
-          "deps": [
-            "design-system",
-            "npm:react",
-            "npm:react-dom"
-          ]
-        },
-        {
-          "file": "apps/remotes/mail/src/vite-env.d.ts",
-          "hash": "10470006326540176307"
-        },
-        {
-          "file": "apps/remotes/mail/vite.config.ts",
-          "hash": "2541363759865362330",
-          "deps": [
-            "npm:vite",
-            "npm:@vitejs/plugin-react-swc"
-          ]
-        }
-      ],
-      "admin": [
-        {
-          "file": "apps/remotes/admin/index.html",
-          "hash": "17865941849263075276"
-        },
-        {
-          "file": "apps/remotes/admin/project.json",
-          "hash": "14233757690026035070"
-        },
-        {
-          "file": "apps/remotes/admin/src/admin-app.tsx",
-          "hash": "15333258406545782111",
-          "deps": [
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/main.tsx",
-          "hash": "15390380422291229257",
-          "deps": [
-            "design-system",
-            "npm:react",
-            "npm:react-dom"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/audit/components/audit-log-detail-drawer.tsx",
-          "hash": "13772559715417693443",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/audit/components/audit-logs-filter-bar.tsx",
-          "hash": "495069301162893646",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/audit/components/audit-logs-table.tsx",
-          "hash": "15092522418792461625",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/audit/hooks/use-audit-logs-table-state.ts",
-          "hash": "7100027602071412189",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/audit/page.tsx",
-          "hash": "13311850914423521105",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/audit/types.ts",
-          "hash": "7792348712080318536"
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/code-usages/components/code-groups-panel.tsx",
-          "hash": "764875645958481811",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/code-usages/components/code-usage-editor-modal.tsx",
-          "hash": "14175746122602177450",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/code-usages/components/delete-confirm-dialog.tsx",
-          "hash": "14686499628828484999",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/code-usages/components/resource-menu-list.tsx",
-          "hash": "2175520279973258075",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/code-usages/hooks/use-code-usages-table-state.ts",
-          "hash": "13835039018316375379",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/code-usages/page.tsx",
-          "hash": "5218576275064741409",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/code-usages/types.ts",
-          "hash": "1537271768418409784",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/codes/components/code-editor-modal.tsx",
-          "hash": "1244329081110018950",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/codes/components/code-group-editor-modal.tsx",
-          "hash": "2529973550254911545",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/codes/components/code-groups-tab.tsx",
-          "hash": "1323550776211452646",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/codes/components/codes-tab.tsx",
-          "hash": "4933536208674631652",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/codes/components/delete-confirm-dialog.tsx",
-          "hash": "14686499628828484999",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/codes/hooks/use-code-groups-table-state.ts",
-          "hash": "16854454813471300728",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/codes/hooks/use-codes-table-state.ts",
-          "hash": "12159301536771680227",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/codes/page.tsx",
-          "hash": "1476411545647349805",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/codes/types.ts",
-          "hash": "15529636275113144986",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/menus/adapters/menu-adapter.ts",
-          "hash": "15780908557934600210",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/menus/components/delete-confirm-dialog.tsx",
-          "hash": "14686499628828484999",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/menus/components/menu-create-modal.tsx",
-          "hash": "10731662111644254340",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/menus/components/menu-detail-editor.tsx",
-          "hash": "8143865519393003029",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/menus/components/menu-tree-panel.tsx",
-          "hash": "6722462208426895952",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/menus/hooks/use-menu-actions.ts",
-          "hash": "16455286477350106543",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/menus/hooks/use-menu-editor-state.ts",
-          "hash": "16132586290939462984",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/menus/hooks/use-menus-table-state.ts",
-          "hash": "11028152422024570740",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/menus/page.tsx",
-          "hash": "18368327432275301847",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/menus/types.ts",
-          "hash": "14633603413613492673",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/monitoring.tsx",
-          "hash": "10019979626797660410"
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/monitoring/monitoring-charts.tsx",
-          "hash": "5546587061227617762",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/monitoring/monitoring-filter-bar.tsx",
-          "hash": "5971670631158049499",
-          "deps": [
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/monitoring/monitoring-kpi-cards.tsx",
-          "hash": "13840156581273001408",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/monitoring/monitoring-tabs.tsx",
-          "hash": "16791817336140719760",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/monitoring/page.tsx",
-          "hash": "6005122137789328490",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources.tsx",
-          "hash": "17904408522118881111"
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/adapters/resource-adapter.ts",
-          "hash": "16551903282149282303",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/components/delete-confirm-dialog.tsx",
-          "hash": "14686499628828484999",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/components/resource-editor-modal.tsx",
-          "hash": "7133803856538122457",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/components/resources-filters.tsx",
-          "hash": "13888629912502740463",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/components/resources-tree.tsx",
-          "hash": "9848759063011116169",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/components/tracking-config-section.tsx",
-          "hash": "6489603050944585406",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/hooks/use-resource-actions.ts",
-          "hash": "310051842956013376",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/hooks/use-resource-editor-state.ts",
-          "hash": "9645954843039973560",
-          "deps": [
-            "shared-utils",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/hooks/use-resources-table-state.ts",
-          "hash": "14128772980801907410",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/page.tsx",
-          "hash": "3389823675597335532",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/resources/types.ts",
-          "hash": "15334727749386235888",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles.tsx",
-          "hash": "8112981744990990361"
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/adapters/__tests__/permission-matrix.test.ts",
-          "hash": "15821149151392234076",
-          "deps": [
-            "shared-utils",
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/adapters/__tests__/role-adapter.test.ts",
-          "hash": "11967767280622389460",
-          "deps": [
-            "shared-utils",
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/adapters/permission-matrix.ts",
-          "hash": "6486824770807828934",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/adapters/role-adapter.ts",
-          "hash": "14981209192713652473",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/delete-confirm-dialog.tsx",
-          "hash": "2652491517381783369",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/permission-checkbox.tsx",
-          "hash": "6646215062246171200",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/resource-tree-node.tsx",
-          "hash": "4667758640245334791",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/resource-tree-view.tsx",
-          "hash": "17700584327566182029",
-          "deps": [
-            "shared-utils",
-            "design-system",
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/role-detail-view.tsx",
-          "hash": "1744664979073044834",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/role-editor-modal.tsx",
-          "hash": "6616597301089646006",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/role-members-section.tsx",
-          "hash": "988962229260169302",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/role-permissions-dialog.tsx",
-          "hash": "7548896616179912221",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/role-permissions-matrix.tsx",
-          "hash": "18254093429954445991",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/role-permissions-section.tsx",
-          "hash": "16810694140306408270",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/roles-filter-bar.tsx",
-          "hash": "12112331433084864864",
-          "deps": [
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/roles-table.tsx",
-          "hash": "13707591097490247454",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/components/row-action-menu.tsx",
-          "hash": "11520997518581445732",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/hooks/use-role-actions.ts",
-          "hash": "10591092352822366675",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/hooks/use-role-editor-state.ts",
-          "hash": "14101197524841074620",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/hooks/use-role-table-state.ts",
-          "hash": "11949331948512042011",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/page.tsx",
-          "hash": "14366368312262791972",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/roles/types.ts",
-          "hash": "16908557549460446061",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/adapters/user-adapter.ts",
-          "hash": "14002640325295562056",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/components/delete-confirm-dialog.tsx",
-          "hash": "14686499628828484999",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/components/reset-password-dialog.tsx",
-          "hash": "14067796508500783750",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/components/user-detail-drawer.tsx",
-          "hash": "553495520754454468",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/components/user-editor-modal.tsx",
-          "hash": "17668045769198936416",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/components/user-role-assign.tsx",
-          "hash": "5592319486750624699",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/components/users-filters.tsx",
-          "hash": "14412633622210542371",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/components/users-table.tsx",
-          "hash": "1104004086125539975",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/hooks/use-user-actions.ts",
-          "hash": "9690966831509354705",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/hooks/use-user-editor-state.ts",
-          "hash": "13292834900013302014",
-          "deps": [
-            "shared-utils",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/hooks/use-users-table-state.ts",
-          "hash": "9496540595819384868",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/index.tsx",
-          "hash": "1801336037648238500",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/src/pages/users/types.ts",
-          "hash": "2997305951735046323",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/remotes/admin/vite.config.ts",
-          "hash": "267286195902364905",
-          "deps": [
-            "npm:vite",
-            "npm:@vitejs/plugin-react-swc"
-          ]
-        }
-      ],
       "remote-starter": [
         {
           "file": "apps/remotes/_starter/index.html",
@@ -1617,7 +443,7 @@
         },
         {
           "file": "apps/dwp/src/layouts/dashboard/layout.tsx",
-          "hash": "5463500123305071772",
+          "hash": "16926076041274806623",
           "deps": [
             "npm:@mui/material",
             "npm:react",
@@ -1740,7 +566,7 @@
         },
         {
           "file": "apps/dwp/src/pages/sso-callback.tsx",
-          "hash": "7413946655597219523",
+          "hash": "15805976494171231860",
           "deps": [
             "npm:react",
             "npm:react-router-dom",
@@ -2084,31 +910,19 @@
         },
         {
           "file": "libs/shared-utils/src/admin/__tests__/admin-utils.test.ts",
-          "hash": "17377309983746625237",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "17377309983746625237"
         },
         {
           "file": "libs/shared-utils/src/admin/__tests__/code-utils.test.ts",
-          "hash": "2611829214683652260",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "2611829214683652260"
         },
         {
           "file": "libs/shared-utils/src/admin/__tests__/event-actions.test.ts",
-          "hash": "4998784353112432378",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "4998784353112432378"
         },
         {
           "file": "libs/shared-utils/src/admin/__tests__/role-permission-matrix.test.ts",
-          "hash": "6321928931840038590",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "6321928931840038590"
         },
         {
           "file": "libs/shared-utils/src/admin/code-utils.ts",
@@ -2128,21 +942,15 @@
         },
         {
           "file": "libs/shared-utils/src/admin/types.ts",
-          "hash": "13144570287477749507"
+          "hash": "1628274534912051394"
         },
         {
           "file": "libs/shared-utils/src/agent/__tests__/sse-parser.test.ts",
-          "hash": "8558493327071614392",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "8558493327071614392"
         },
         {
           "file": "libs/shared-utils/src/agent/__tests__/stream-status.test.ts",
-          "hash": "15174029235037669908",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "15174029235037669908"
         },
         {
           "file": "libs/shared-utils/src/agent/agent-session.ts",
@@ -2177,14 +985,11 @@
         },
         {
           "file": "libs/shared-utils/src/api/__tests__/api-error-handler.test.ts",
-          "hash": "9483541707811828293",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "9483541707811828293"
         },
         {
           "file": "libs/shared-utils/src/api/admin-iam-api.ts",
-          "hash": "13367678478056048992"
+          "hash": "227775049419856632"
         },
         {
           "file": "libs/shared-utils/src/api/api-error-alert.tsx",
@@ -2238,10 +1043,7 @@
         },
         {
           "file": "libs/shared-utils/src/auth/auth-redirect.test.ts",
-          "hash": "15623788010970177248",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "15623788010970177248"
         },
         {
           "file": "libs/shared-utils/src/auth/auth-redirect.ts",
@@ -2271,10 +1073,7 @@
         },
         {
           "file": "libs/shared-utils/src/auth/token-storage.test.ts",
-          "hash": "11518970991805364294",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "11518970991805364294"
         },
         {
           "file": "libs/shared-utils/src/auth/token-storage.ts",
@@ -2294,10 +1093,7 @@
         },
         {
           "file": "libs/shared-utils/src/axios-instance.test.ts",
-          "hash": "1792088186394072090",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "1792088186394072090"
         },
         {
           "file": "libs/shared-utils/src/axios-instance.ts",
@@ -2309,7 +1105,7 @@
         },
         {
           "file": "libs/shared-utils/src/hooks/use-mutation-error-handler.ts",
-          "hash": "3040367655841970939",
+          "hash": "10076309737658500407",
           "deps": [
             "npm:react"
           ]
@@ -2328,14 +1124,11 @@
         },
         {
           "file": "libs/shared-utils/src/queries/__tests__/monitoring-utils.test.ts",
-          "hash": "12307794480396789215",
-          "deps": [
-            "npm:vitest"
-          ]
+          "hash": "12307794480396789215"
         },
         {
           "file": "libs/shared-utils/src/queries/use-admin-audit-logs-query.ts",
-          "hash": "7646448413502742927",
+          "hash": "10464934102113210623",
           "deps": [
             "npm:@tanstack/react-query"
           ]
@@ -2356,7 +1149,7 @@
         },
         {
           "file": "libs/shared-utils/src/queries/use-admin-role-members-query.ts",
-          "hash": "4849004017202202793",
+          "hash": "7866962792191452750",
           "deps": [
             "npm:@tanstack/react-query"
           ]
@@ -2502,6 +1295,1856 @@
           "file": "libs/shared-utils/src/types.ts",
           "hash": "16497816272801057550"
         }
+      ],
+      "admin": [
+        {
+          "file": "apps/remotes/admin/index.html",
+          "hash": "17865941849263075276"
+        },
+        {
+          "file": "apps/remotes/admin/project.json",
+          "hash": "14233757690026035070"
+        },
+        {
+          "file": "apps/remotes/admin/src/admin-app.tsx",
+          "hash": "13078635146070257815",
+          "deps": [
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/main.tsx",
+          "hash": "15390380422291229257",
+          "deps": [
+            "design-system",
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/audit/components/audit-log-detail-drawer.tsx",
+          "hash": "13212889451184028591",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/audit/components/audit-logs-filter-bar.tsx",
+          "hash": "495069301162893646",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/audit/components/audit-logs-table.tsx",
+          "hash": "7792976663635241101",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/audit/hooks/use-audit-logs-table-state.ts",
+          "hash": "12074721886852016534",
+          "deps": [
+            "shared-utils",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/audit/page.tsx",
+          "hash": "10195587488082976873",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/audit/types.ts",
+          "hash": "7792348712080318536"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/code-usages/components/code-groups-panel.tsx",
+          "hash": "6578540400780074288",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/code-usages/components/code-usage-editor-modal.tsx",
+          "hash": "14175746122602177450",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/code-usages/components/delete-confirm-dialog.tsx",
+          "hash": "14686499628828484999",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/code-usages/components/resource-menu-list.tsx",
+          "hash": "12500094968538599704",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/code-usages/hooks/use-code-usages-table-state.ts",
+          "hash": "2055018715342448646",
+          "deps": [
+            "shared-utils",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/code-usages/page.tsx",
+          "hash": "6473348258252423362",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/code-usages/types.ts",
+          "hash": "1537271768418409784",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/codes/components/code-editor-modal.tsx",
+          "hash": "1244329081110018950",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/codes/components/code-group-editor-modal.tsx",
+          "hash": "2529973550254911545",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/codes/components/code-groups-tab.tsx",
+          "hash": "13912294333328846326",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/codes/components/codes-tab.tsx",
+          "hash": "4324418204486606132",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/codes/components/delete-confirm-dialog.tsx",
+          "hash": "14686499628828484999",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/codes/hooks/use-code-groups-table-state.ts",
+          "hash": "17991915184304439756",
+          "deps": [
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/codes/hooks/use-codes-table-state.ts",
+          "hash": "1926423357911867498",
+          "deps": [
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/codes/page.tsx",
+          "hash": "10831126806226694235",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/codes/types.ts",
+          "hash": "15529636275113144986",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/menus/adapters/menu-adapter.ts",
+          "hash": "15780908557934600210",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/menus/components/delete-confirm-dialog.tsx",
+          "hash": "14686499628828484999",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/menus/components/menu-create-modal.tsx",
+          "hash": "10731662111644254340",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/menus/components/menu-detail-editor.tsx",
+          "hash": "3414089985883647792",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/menus/components/menu-tree-panel.tsx",
+          "hash": "7721157638622490892",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/menus/hooks/use-menu-actions.ts",
+          "hash": "16455286477350106543",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/menus/hooks/use-menu-editor-state.ts",
+          "hash": "14162088429096553541",
+          "deps": [
+            "shared-utils",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/menus/hooks/use-menus-table-state.ts",
+          "hash": "8491664836871464613",
+          "deps": [
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/menus/page.tsx",
+          "hash": "14243163514385501338",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/menus/types.ts",
+          "hash": "14633603413613492673",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/monitoring.tsx",
+          "hash": "10019979626797660410"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/monitoring/monitoring-charts.tsx",
+          "hash": "5546587061227617762",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/monitoring/monitoring-filter-bar.tsx",
+          "hash": "5971670631158049499",
+          "deps": [
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/monitoring/monitoring-kpi-cards.tsx",
+          "hash": "13840156581273001408",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/monitoring/monitoring-tabs.tsx",
+          "hash": "16791817336140719760",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/monitoring/page.tsx",
+          "hash": "6005122137789328490",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources.tsx",
+          "hash": "17904408522118881111"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/adapters/resource-adapter.ts",
+          "hash": "16551903282149282303",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/components/delete-confirm-dialog.tsx",
+          "hash": "14686499628828484999",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/components/resource-editor-modal.tsx",
+          "hash": "13106418943500339726",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/components/resources-filters.tsx",
+          "hash": "13888629912502740463",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/components/resources-tree.tsx",
+          "hash": "10151967904952320498",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/components/tracking-config-section.tsx",
+          "hash": "6130547634769130166",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/hooks/use-resource-actions.ts",
+          "hash": "310051842956013376",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/hooks/use-resource-editor-state.ts",
+          "hash": "9645954843039973560",
+          "deps": [
+            "shared-utils",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/hooks/use-resources-table-state.ts",
+          "hash": "14128772980801907410",
+          "deps": [
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/page.tsx",
+          "hash": "3389823675597335532",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/resources/types.ts",
+          "hash": "15334727749386235888",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles.tsx",
+          "hash": "8112981744990990361"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/adapters/__tests__/permission-matrix.test.ts",
+          "hash": "15821149151392234076",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/adapters/__tests__/role-adapter.test.ts",
+          "hash": "11967767280622389460",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/adapters/permission-matrix.ts",
+          "hash": "6486824770807828934",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/adapters/role-adapter.ts",
+          "hash": "447923230141624277",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/adapters/role-permission-adapter.ts",
+          "hash": "10179140148521229489",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/create-role-modal.tsx",
+          "hash": "9427589724131441479",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/delete-confirm-dialog.tsx",
+          "hash": "2652491517381783369",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/empty-state.tsx",
+          "hash": "15916270494303553897",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/error-state.tsx",
+          "hash": "15212414579018568493",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/permission-checkbox.tsx",
+          "hash": "8101422061257355039",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/permission-matrix-cell.tsx",
+          "hash": "4532649685570012427",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/permission-matrix-header.tsx",
+          "hash": "18037650018384521279",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/permission-matrix-legend.tsx",
+          "hash": "17476486242150311362",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/permission-matrix-row.tsx",
+          "hash": "3530217398069681192",
+          "deps": [
+            "shared-utils",
+            "design-system",
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/resource-tree-node.tsx",
+          "hash": "1327947405062688512",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/resource-tree-view.tsx",
+          "hash": "5914658302524842013",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-detail-panel.tsx",
+          "hash": "13401738142937305332",
+          "deps": [
+            "design-system",
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-detail-view.tsx",
+          "hash": "1744664979073044834",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-editor-modal.tsx",
+          "hash": "7432845837653577456",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-list-panel.tsx",
+          "hash": "5505892353305826897",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-members-section.tsx",
+          "hash": "5955931862282220923",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-members-tab.tsx",
+          "hash": "15765530808571521977",
+          "deps": [
+            "design-system",
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-overview-tab.tsx",
+          "hash": "1572302176778278658",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-permission-matrix-tab.tsx",
+          "hash": "14513494192018928025",
+          "deps": [
+            "design-system",
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-permissions-dialog.tsx",
+          "hash": "12178040776550971341",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-permissions-matrix.tsx",
+          "hash": "5197783566021164613",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/role-permissions-section.tsx",
+          "hash": "16810694140306408270",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/roles-filter-bar.tsx",
+          "hash": "12112331433084864864",
+          "deps": [
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/roles-table.tsx",
+          "hash": "13707591097490247454",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/components/row-action-menu.tsx",
+          "hash": "11520997518581445732",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/hooks/use-role-actions.ts",
+          "hash": "17985441413151209885",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/hooks/use-role-editor-state.ts",
+          "hash": "14101197524841074620",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/hooks/use-role-members-state.ts",
+          "hash": "16804338915500558016",
+          "deps": [
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/hooks/use-role-permissions-state.ts",
+          "hash": "10160717123282597520",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/hooks/use-role-table-state.ts",
+          "hash": "11949331948512042011",
+          "deps": [
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/page.tsx",
+          "hash": "280424092298298386",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/.gitignore",
+          "hash": "2839488429184482053"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/app/globals.css",
+          "hash": "3440283735967277121"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/app/layout.tsx",
+          "hash": "16455776681021346795",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/app/page.tsx",
+          "hash": "18111201638492327295",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components.json",
+          "hash": "8635398981797680915"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/roles/create-role-dialog.tsx",
+          "hash": "15391580484320341788",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/roles/empty-state.tsx",
+          "hash": "1231136101859488184"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/roles/permission-matrix.tsx",
+          "hash": "3969803035773949266",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/roles/role-detail.tsx",
+          "hash": "662294745398967231",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/roles/role-list.tsx",
+          "hash": "3982793101541112929",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/roles/role-members.tsx",
+          "hash": "2783463612787235349",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/roles/role-overview.tsx",
+          "hash": "18137556401101043683"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/theme-provider.tsx",
+          "hash": "12025674608953184607",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/theme-toggle.tsx",
+          "hash": "9467543923988654258",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/accordion.tsx",
+          "hash": "10155419921117749568",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/alert-dialog.tsx",
+          "hash": "17917146157697971529",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/alert.tsx",
+          "hash": "8089758453274196721",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/aspect-ratio.tsx",
+          "hash": "3834836800920212141"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/avatar.tsx",
+          "hash": "112193970902906685",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/badge.tsx",
+          "hash": "14106663918995973110",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/breadcrumb.tsx",
+          "hash": "2382897203318396936",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/button-group.tsx",
+          "hash": "11533681895816130171"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/button.tsx",
+          "hash": "6914654645063473596",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/calendar.tsx",
+          "hash": "15906975942989305730",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/card.tsx",
+          "hash": "15416464549933605575",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/carousel.tsx",
+          "hash": "2358746340841009989",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/chart.tsx",
+          "hash": "18021152778066765804",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/checkbox.tsx",
+          "hash": "10648879750660048315",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/collapsible.tsx",
+          "hash": "12861751191180410396"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/command.tsx",
+          "hash": "9559569182592046123",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/context-menu.tsx",
+          "hash": "14877517295752710555",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/dialog.tsx",
+          "hash": "3066420888937737012",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/drawer.tsx",
+          "hash": "6061538931926363316",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/dropdown-menu.tsx",
+          "hash": "16736066480879327125",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/empty.tsx",
+          "hash": "15808049659128258180"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/field.tsx",
+          "hash": "2683088633141061456",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/form.tsx",
+          "hash": "804006314009051936",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/hover-card.tsx",
+          "hash": "353053414851202905",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/input-group.tsx",
+          "hash": "11442304667059702369"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/input-otp.tsx",
+          "hash": "6223890929317651874",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/input.tsx",
+          "hash": "913906877101269282",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/item.tsx",
+          "hash": "2168572256509781167",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/kbd.tsx",
+          "hash": "11189086523951554885"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/label.tsx",
+          "hash": "16081220158540435122",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/menubar.tsx",
+          "hash": "7445201301445509087",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/navigation-menu.tsx",
+          "hash": "9926773916969468784",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/pagination.tsx",
+          "hash": "2126860956397689866",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/popover.tsx",
+          "hash": "3700330346317028685",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/progress.tsx",
+          "hash": "159152385008945993",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/radio-group.tsx",
+          "hash": "5274264990764249582",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/resizable.tsx",
+          "hash": "16771197410703207765",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/scroll-area.tsx",
+          "hash": "14052685330349042977",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/select.tsx",
+          "hash": "13194018535963756915",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/separator.tsx",
+          "hash": "9272441460138406046",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/sheet.tsx",
+          "hash": "13557335649831688975",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/sidebar.tsx",
+          "hash": "6920823047442962011",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/skeleton.tsx",
+          "hash": "914188420360373664"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/slider.tsx",
+          "hash": "14885757931209476861",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/sonner.tsx",
+          "hash": "9087982701538359826"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/spinner.tsx",
+          "hash": "11174114506119669346"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/switch.tsx",
+          "hash": "9796267828133408293",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/table.tsx",
+          "hash": "2644243425995930270",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/tabs.tsx",
+          "hash": "3294089150473410927",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/textarea.tsx",
+          "hash": "11358591855138840789",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/toast.tsx",
+          "hash": "12283061580079852527",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/toaster.tsx",
+          "hash": "1210892035962424564"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/toggle-group.tsx",
+          "hash": "17677296951417559956",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/toggle.tsx",
+          "hash": "11939103043286606198",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/tooltip.tsx",
+          "hash": "2361125708955585576",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/use-mobile.tsx",
+          "hash": "11808312049290393370",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/components/ui/use-toast.ts",
+          "hash": "12166726604387392883",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/hooks/use-mobile.ts",
+          "hash": "11808312049290393370",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/hooks/use-toast.ts",
+          "hash": "12166726604387392883",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/lib/mock-data.ts",
+          "hash": "15494974596327279482"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/lib/types.ts",
+          "hash": "11173286893870152627"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/lib/utils.ts",
+          "hash": "3379895095160071251",
+          "deps": [
+            "npm:clsx"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/next.config.mjs",
+          "hash": "2079717348103346707"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/package.json",
+          "hash": "9917501168210112457"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/pnpm-lock.yaml",
+          "hash": "14417231529200795861"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/postcss.config.mjs",
+          "hash": "10220514512944190252"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/public/apple-icon.png",
+          "hash": "13835920650391744415"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/public/icon-dark-32x32.png",
+          "hash": "13589140278774312634"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/public/icon-light-32x32.png",
+          "hash": "5039890013555802910"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/public/icon.svg",
+          "hash": "7570583243196233047"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/public/placeholder-logo.png",
+          "hash": "11980608477649404665"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/public/placeholder-logo.svg",
+          "hash": "16087407587954228261"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/public/placeholder-user.jpg",
+          "hash": "1791361555052276298"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/public/placeholder.jpg",
+          "hash": "17969422676179785816"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/public/placeholder.svg",
+          "hash": "8334994000532407949"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/styles/globals.css",
+          "hash": "8925968361875319522"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/roles-screen-redesign/tsconfig.json",
+          "hash": "6452373557473745169"
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/roles/types.ts",
+          "hash": "16334968121422893329",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/adapters/user-adapter.ts",
+          "hash": "14002640325295562056",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/components/delete-confirm-dialog.tsx",
+          "hash": "14686499628828484999",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/components/reset-password-dialog.tsx",
+          "hash": "14067796508500783750",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/components/user-detail-drawer.tsx",
+          "hash": "553495520754454468",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/components/user-editor-modal.tsx",
+          "hash": "13273644592455545299",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/components/user-role-assign.tsx",
+          "hash": "5592319486750624699",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/components/users-filters.tsx",
+          "hash": "14412633622210542371",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/components/users-table.tsx",
+          "hash": "1104004086125539975",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/hooks/use-user-actions.ts",
+          "hash": "9690966831509354705",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/hooks/use-user-editor-state.ts",
+          "hash": "13292834900013302014",
+          "deps": [
+            "shared-utils",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/hooks/use-users-table-state.ts",
+          "hash": "9496540595819384868",
+          "deps": [
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/index.tsx",
+          "hash": "1801336037648238500",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/src/pages/users/types.ts",
+          "hash": "2997305951735046323",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/remotes/admin/vite.config.ts",
+          "hash": "267286195902364905",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react-swc"
+          ]
+        }
+      ],
+      "mail": [
+        {
+          "file": "apps/remotes/mail/index.html",
+          "hash": "864866553890463834"
+        },
+        {
+          "file": "apps/remotes/mail/project.json",
+          "hash": "14904217479067949789"
+        },
+        {
+          "file": "apps/remotes/mail/src/mail-app.tsx",
+          "hash": "1842251242111642309",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/mail/src/main.tsx",
+          "hash": "16353890226058499549",
+          "deps": [
+            "design-system",
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "apps/remotes/mail/src/vite-env.d.ts",
+          "hash": "10470006326540176307"
+        },
+        {
+          "file": "apps/remotes/mail/vite.config.ts",
+          "hash": "2541363759865362330",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react-swc"
+          ]
+        }
+      ],
+      "design-system": [
+        {
+          "file": "libs/design-system/project.json",
+          "hash": "10937936829318947319"
+        },
+        {
+          "file": "libs/design-system/src/components/approval-dialog/approval-dialog.tsx",
+          "hash": "16531999336562305506",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/chart.tsx",
+          "hash": "15990414331484826300",
+          "deps": [
+            "npm:react",
+            "npm:minimal-shared",
+            "npm:@mui/material",
+            [
+              "npm:react-apexcharts",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/classes.ts",
+          "hash": "13448803951318615463"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/components/chart-legends.tsx",
+          "hash": "13519885268218213398",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/components/chart-loading.tsx",
+          "hash": "12159728191277331976",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/components/index.ts",
+          "hash": "7704243789903803765"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/index.ts",
+          "hash": "17026374020244711307"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/styles.css",
+          "hash": "13031029736610266452"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/types.ts",
+          "hash": "14887766845857205498",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react-apexcharts"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/use-chart.ts",
+          "hash": "7186824922162965344",
+          "deps": [
+            "npm:@mui/material",
+            "npm:es-toolkit",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/classes.ts",
+          "hash": "5581510735206127944"
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/color-picker.tsx",
+          "hash": "2545015726553284510",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/color-preview.tsx",
+          "hash": "12450105687848861299",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/index.ts",
+          "hash": "17205574814626732367"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/classes.ts",
+          "hash": "5614495216971202705"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/icon-sets.ts",
+          "hash": "37278120664041844"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/iconify.tsx",
+          "hash": "14278513607450369456",
+          "deps": [
+            "npm:@iconify/react",
+            "npm:react",
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/index.ts",
+          "hash": "17835854880567713080"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/register-icons.ts",
+          "hash": "1855439278111521489",
+          "deps": [
+            "npm:@iconify/react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/index.ts",
+          "hash": "10909077036370594329"
+        },
+        {
+          "file": "libs/design-system/src/components/label/classes.ts",
+          "hash": "10216243487412079881"
+        },
+        {
+          "file": "libs/design-system/src/components/label/index.ts",
+          "hash": "17861490292983094747"
+        },
+        {
+          "file": "libs/design-system/src/components/label/label.tsx",
+          "hash": "443434773925413083",
+          "deps": [
+            "npm:es-toolkit",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/label/styles.tsx",
+          "hash": "1811336073576718369",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/label/types.ts",
+          "hash": "6530222753035242745",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/logo/classes.ts",
+          "hash": "3233155800273695178"
+        },
+        {
+          "file": "libs/design-system/src/components/logo/index.ts",
+          "hash": "10544061452619858687"
+        },
+        {
+          "file": "libs/design-system/src/components/logo/logo.tsx",
+          "hash": "16058246659828974659",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/permission-gate/index.ts",
+          "hash": "2822994586813939657"
+        },
+        {
+          "file": "libs/design-system/src/components/permission-gate/permission-gate.tsx",
+          "hash": "14010263738048655735",
+          "deps": [
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/classes.ts",
+          "hash": "16486606500501144452"
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/index.ts",
+          "hash": "17842248874773705294"
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/scrollbar.tsx",
+          "hash": "695544807360633187",
+          "deps": [
+            "npm:simplebar-react",
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/styles.css",
+          "hash": "5263464215027149794"
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/types.ts",
+          "hash": "4998603477604898069",
+          "deps": [
+            "npm:@mui/material",
+            "npm:simplebar-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/classes.ts",
+          "hash": "15345731999837158773"
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/index.ts",
+          "hash": "7916128723121912032"
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/svg-color.tsx",
+          "hash": "5707149224118210095",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/types.ts",
+          "hash": "7172266532185956907",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/hooks/index.ts",
+          "hash": "13016108691721261929"
+        },
+        {
+          "file": "libs/design-system/src/hooks/router/index.ts",
+          "hash": "11139150266187246973"
+        },
+        {
+          "file": "libs/design-system/src/hooks/router/use-pathname.ts",
+          "hash": "11036719986362388067",
+          "deps": [
+            "npm:react",
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/hooks/router/use-router.ts",
+          "hash": "5482890111004519923",
+          "deps": [
+            "npm:react",
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/index.ts",
+          "hash": "12022157027770211216"
+        },
+        {
+          "file": "libs/design-system/src/styles/global.css",
+          "hash": "8325894914213820854"
+        },
+        {
+          "file": "libs/design-system/src/theme/core/components.tsx",
+          "hash": "3932988326486082726",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/custom-shadows.ts",
+          "hash": "5085678479816703120",
+          "deps": [
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/index.ts",
+          "hash": "12563650796825881998"
+        },
+        {
+          "file": "libs/design-system/src/theme/core/palette.ts",
+          "hash": "3312676751992468797",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/shadows.ts",
+          "hash": "3242283092768752689",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/typography.ts",
+          "hash": "10939852778802819532",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/create-classes.ts",
+          "hash": "9863844494207890905"
+        },
+        {
+          "file": "libs/design-system/src/theme/create-theme.ts",
+          "hash": "1772669969832128739",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/extend-theme-types.d.ts",
+          "hash": "5843731201755380017",
+          "deps": [
+            "npm:@mui/lab",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/index.ts",
+          "hash": "15496765687472201915"
+        },
+        {
+          "file": "libs/design-system/src/theme/theme-config.ts",
+          "hash": "1432500443791728194",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/theme-mode.tsx",
+          "hash": "9833422954086801296",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/theme-provider.tsx",
+          "hash": "6901935421150242241",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/types.ts",
+          "hash": "7499571595499420034",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        }
       ]
     },
     "nonProjectFiles": [
@@ -2535,15 +3178,27 @@
       },
       {
         "file": "README.md",
-        "hash": "4140881337583318462"
+        "hash": "8854776785813379352"
       },
       {
         "file": "docs/ADMIN_CRUD_STANDARD_TEMPLATE.md",
         "hash": "15138805098952723266"
       },
       {
+        "file": "docs/BACKEND_API_ROLES_RESPONSE_FIX.md",
+        "hash": "16106207212649376788"
+      },
+      {
+        "file": "docs/BACKEND_API_ROLES_RESPONSE_STATUS.md",
+        "hash": "3444345441362634729"
+      },
+      {
         "file": "docs/README.md",
         "hash": "6723901121627166378"
+      },
+      {
+        "file": "docs/ROLES_SELECTION_DEBUG_CHECKLIST.md",
+        "hash": "7369750396337287611"
       },
       {
         "file": "docs/analysis/AUTH_STATUS_ANALYSIS.md",
@@ -3083,5 +3738,5 @@
       }
     ]
   },
-  "externalNodesHash": "11907774974124937123"
+  "externalNodesHash": "6506746698023506470"
 }

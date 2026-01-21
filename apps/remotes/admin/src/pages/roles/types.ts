@@ -33,6 +33,8 @@ export type ResourceTreeViewProps = {
   nodes: ResourceNode[];
   permissionMap: Map<string, Set<string>>;
   permissionCodes: Array<{ value: string; label: string }>;
+  expandedNodes: Set<string>;
+  onToggle: (nodeId: string) => void;
   roleId: string;
   onSuccess: () => void;
 };
@@ -132,6 +134,7 @@ export type RoleRowModel = {
   status: 'ACTIVE' | 'INACTIVE';
   statusLabel: string;
   statusColor: 'success' | 'default';
+  createdAt: string;
   memberCount?: number;
   departmentCount?: number;
   updatedAt?: string | null;

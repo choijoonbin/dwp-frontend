@@ -2,7 +2,7 @@
 
 import { Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@dwp-frontend/design-system/shadcn/components/ui/button";
 
 export function ThemeToggle() {
   const [isDark, setIsDark] = useState(true);

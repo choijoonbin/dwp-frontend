@@ -1,26 +1,26 @@
 "use client";
 
-import type { Role } from "@/lib/types";
+import type { Role } from "@admin/pages/roles/roles-screen-redesign/lib/types";
 
-import { cn } from "@/lib/utils";
-import { mockRoles } from "@/lib/mock-data";
-import { useToast } from "@/hooks/use-toast";
 import { useState, useCallback } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Toaster } from "@/components/ui/toaster";
-import { RoleList } from "@/components/roles/role-list";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { X, Menu, Shield, HelpCircle } from "lucide-react";
-import { RoleDetail } from "@/components/roles/role-detail";
-import { EmptyState } from "@/components/roles/empty-state";
-import { CreateRoleDialog } from "@/components/roles/create-role-dialog";
+import { cn } from "@dwp-frontend/design-system/shadcn/lib/utils";
+import { useToast } from "@dwp-frontend/design-system/shadcn/hooks/use-toast";
+import { Badge } from "@dwp-frontend/design-system/shadcn/components/ui/badge";
+import { Button } from "@dwp-frontend/design-system/shadcn/components/ui/button";
+import { mockRoles } from "@admin/pages/roles/roles-screen-redesign/lib/mock-data";
+import { Toaster } from "@dwp-frontend/design-system/shadcn/components/ui/toaster";
+import { RoleList } from "@admin/pages/roles/roles-screen-redesign/components/roles/role-list";
+import { ThemeToggle } from "@admin/pages/roles/roles-screen-redesign/components/theme-toggle";
+import { RoleDetail } from "@admin/pages/roles/roles-screen-redesign/components/roles/role-detail";
+import { EmptyState } from "@admin/pages/roles/roles-screen-redesign/components/roles/empty-state";
+import { CreateRoleDialog } from "@admin/pages/roles/roles-screen-redesign/components/roles/create-role-dialog";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   TooltipProvider,
-} from "@/components/ui/tooltip";
+} from "@dwp-frontend/design-system/shadcn/components/ui/tooltip";
 
 export default function RolesPage() {
   const [roles, setRoles] = useState<Role[]>(mockRoles);

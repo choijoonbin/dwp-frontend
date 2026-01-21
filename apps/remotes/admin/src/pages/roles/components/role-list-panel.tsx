@@ -75,7 +75,7 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
         return filter.sortOrder === 'asc' ? comparison : -comparison;
       }), [roles, filter]);
 
-  const formatDate = (dateString?: string) => {
+  const formatDate = (dateString?: string | null) => {
     if (!dateString) return '날짜 없음';
     const date = new Date(dateString);
     const now = new Date();
@@ -207,7 +207,7 @@ const RoleCard = memo<{
   role: RoleRowModel;
   selected: boolean;
   onSelect: (roleId: string) => void;
-  formatDate: (date?: string) => string;
+  formatDate: (date?: string | null) => string;
 }>(({ role, selected, onSelect, formatDate }) => {
   const handleClick = () => {
     if (role.id) {

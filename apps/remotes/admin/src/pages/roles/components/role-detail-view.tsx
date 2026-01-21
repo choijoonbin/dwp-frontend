@@ -108,8 +108,8 @@ export const RoleDetailView = memo(({ roleId, onEdit, onDelete, onSuccess }: Rol
           <Stack spacing={1}>
             {roleMembers.map((member) => (
               <Typography key={member.id} variant="body2">
-                {member.userName}
-                {member.email && ` (${member.email})`}
+                {member.subjectName}
+                {member.subjectEmail && ` (${member.subjectEmail})`}
               </Typography>
             ))}
           </Stack>

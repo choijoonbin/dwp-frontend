@@ -1,14 +1,14 @@
 "use client";
 
-import type { Role } from "@/lib/types";
+import type { Role } from "@admin/pages/roles/roles-screen-redesign/lib/types";
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@dwp-frontend/design-system/shadcn/components/ui/input";
+import { Label } from "@dwp-frontend/design-system/shadcn/components/ui/label";
+import { Button } from "@dwp-frontend/design-system/shadcn/components/ui/button";
+import { Switch } from "@dwp-frontend/design-system/shadcn/components/ui/switch";
+import { Textarea } from "@dwp-frontend/design-system/shadcn/components/ui/textarea";
 import {
   Dialog,
   DialogTitle,
@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogContent,
   DialogDescription,
-} from "@/components/ui/dialog";
+} from "@dwp-frontend/design-system/shadcn/components/ui/dialog";
 
 interface CreateRoleDialogProps {
   open: boolean;

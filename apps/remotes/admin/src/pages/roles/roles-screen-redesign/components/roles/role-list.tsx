@@ -1,19 +1,19 @@
 "use client";
 
-import type { Role, RoleFilter } from "@/lib/types";
+import type { Role, RoleFilter } from "@admin/pages/roles/roles-screen-redesign/lib/types";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { cn } from "@dwp-frontend/design-system/shadcn/lib/utils";
+import { Input } from "@dwp-frontend/design-system/shadcn/components/ui/input";
+import { Badge } from "@dwp-frontend/design-system/shadcn/components/ui/badge";
+import { Button } from "@dwp-frontend/design-system/shadcn/components/ui/button";
 import { Plus, Users, Clock, Search, Building2, ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@dwp-frontend/design-system/shadcn/components/ui/dropdown-menu";
 
 interface RoleListProps {
   roles: Role[];

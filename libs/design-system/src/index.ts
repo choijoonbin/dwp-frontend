@@ -1,4 +1,4 @@
 export * from './theme';
 export * from './hooks';
 export * from './components';
-
+export * as shadcn from './shadcn';

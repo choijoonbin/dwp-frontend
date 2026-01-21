@@ -1,20 +1,20 @@
 "use client";
 
-import type { Member } from "@/lib/types";
+import type { Member } from "@admin/pages/roles/roles-screen-redesign/lib/types";
 
-import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { searchableMembers } from "@/lib/mock-data";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@dwp-frontend/design-system/shadcn/lib/utils";
 import { X, User, Plus, Search, UserPlus, Building2 } from "lucide-react";
+import { Input } from "@dwp-frontend/design-system/shadcn/components/ui/input";
+import { Badge } from "@dwp-frontend/design-system/shadcn/components/ui/badge";
+import { Button } from "@dwp-frontend/design-system/shadcn/components/ui/button";
+import { searchableMembers } from "@admin/pages/roles/roles-screen-redesign/lib/mock-data";
+import { Tabs, TabsList, TabsTrigger } from "@dwp-frontend/design-system/shadcn/components/ui/tabs";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@dwp-frontend/design-system/shadcn/components/ui/popover";
 import {
   Command,
   CommandItem,
@@ -22,7 +22,7 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
-} from "@/components/ui/command";
+} from "@dwp-frontend/design-system/shadcn/components/ui/command";
 
 interface RoleMembersProps {
   members: Member[];

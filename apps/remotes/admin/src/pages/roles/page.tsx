@@ -104,6 +104,7 @@ const RolesPageContent = () => {
         id: role.id,
         roleName: role.roleName,
         roleCode: role.roleCode,
+        createdAt: role.createdAt,
         status: role.status,
       },
       selectedRoleId

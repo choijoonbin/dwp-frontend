@@ -25,6 +25,7 @@
       "src/routes/hooks": ["libs/design-system/src/hooks/router/index.ts"],
       "src/routes/hooks/*": ["libs/design-system/src/hooks/router/*"],
       "src/*": ["apps/dwp/src/*"],
+      "@admin/*": ["apps/remotes/admin/src/*"],
 
       "@dwp-frontend/design-system": ["libs/design-system/src/index.ts"],
       "@dwp-frontend/design-system/*": ["libs/design-system/src/*"],
@@ -38,4 +39,3 @@
     "strictNullChecks": true
   }
 }
-

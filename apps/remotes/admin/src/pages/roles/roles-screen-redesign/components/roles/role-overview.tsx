@@ -1,12 +1,12 @@
 "use client";
 
-import type { Role } from "@/lib/types";
+import type { Role } from "@admin/pages/roles/roles-screen-redesign/lib/types";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardTitle, CardHeader, CardContent, CardDescription } from "@/components/ui/card";
+import { Input } from "@dwp-frontend/design-system/shadcn/components/ui/input";
+import { Label } from "@dwp-frontend/design-system/shadcn/components/ui/label";
+import { Switch } from "@dwp-frontend/design-system/shadcn/components/ui/switch";
+import { Textarea } from "@dwp-frontend/design-system/shadcn/components/ui/textarea";
+import { Card, CardTitle, CardHeader, CardContent, CardDescription } from "@dwp-frontend/design-system/shadcn/components/ui/card";
 
 interface RoleOverviewProps {
   role: Role;

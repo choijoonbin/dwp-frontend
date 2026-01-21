@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus, Shield } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@dwp-frontend/design-system/shadcn/components/ui/button";
 
 interface EmptyStateProps {
   onCreateRole: () => void;

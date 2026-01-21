@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------
 
-import React, { memo, useMemo, useState } from 'react';
-import { Iconify } from '@dwp-frontend/design-system';
-
 import type { ResourceNode } from '@dwp-frontend/shared-utils';
+
+import { Iconify } from '@dwp-frontend/design-system';
+import React, { memo, useMemo, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';

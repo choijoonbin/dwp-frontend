@@ -164,7 +164,11 @@ export const customConfig = {
     'import/resolver': {
       ...importPlugin.configs.typescript.settings['import/resolver'],
       typescript: {
-        project: './tsconfig.json',
+        project: [
+          'tsconfig.base.json',
+          'apps/remotes/admin/tsconfig.json',
+          'apps/remotes/admin/tsconfig.app.json',
+        ],
       },
     },
   },

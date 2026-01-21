@@ -11,11 +11,11 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
+    "components": "@admin/pages/roles/roles-screen-redesign/components",
+    "utils": "@dwp-frontend/design-system/shadcn/lib/utils",
+    "ui": "@dwp-frontend/design-system/shadcn/components/ui",
+    "lib": "@admin/pages/roles/roles-screen-redesign/lib",
+    "hooks": "@dwp-frontend/design-system/shadcn/hooks"
   },
   "iconLibrary": "lucide"
 }

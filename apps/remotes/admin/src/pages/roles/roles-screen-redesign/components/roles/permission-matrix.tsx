@@ -1,19 +1,13 @@
 "use client";
 
-import type { Resource, Permission, PermissionCode, PermissionValue } from "@/lib/types";
+import type { Resource, Permission, PermissionCode, PermissionValue } from "@admin/pages/roles/roles-screen-redesign/lib/types";
 
-import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { flattenResources } from "@/lib/mock-data";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { cn } from "@dwp-frontend/design-system/shadcn/lib/utils";
+import { Input } from "@dwp-frontend/design-system/shadcn/components/ui/input";
+import { Badge } from "@dwp-frontend/design-system/shadcn/components/ui/badge";
+import { Button } from "@dwp-frontend/design-system/shadcn/components/ui/button";
+import { flattenResources } from "@admin/pages/roles/roles-screen-redesign/lib/mock-data";
 import {
   X,
   Check,
@@ -26,12 +20,18 @@ import {
   ChevronRight,
 } from "lucide-react";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@dwp-frontend/design-system/shadcn/components/ui/tooltip";
+import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from "@dwp-frontend/design-system/shadcn/components/ui/dropdown-menu";
 
 interface PermissionMatrixProps {
   resources: Resource[];

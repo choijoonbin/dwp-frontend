@@ -16,6 +16,7 @@ export const toRoleRowModel = (role: RoleSummary): RoleRowModel => ({
     status: role.status || 'INACTIVE',
     statusLabel: role.status === 'ACTIVE' ? '활성' : '비활성',
     statusColor: role.status === 'ACTIVE' ? 'success' : 'default',
+    createdAt: role.createdAt,
     memberCount: role.memberCount ?? 0,
     departmentCount: role.departmentCount ?? 0,
     updatedAt: role.createdAt, // Use createdAt as fallback for updatedAt

@@ -1,26 +1,26 @@
 "use client";
 
-import type { Role, Member, SaveState, Permission } from "@/lib/types";
+import type { Role, Member, SaveState, Permission } from "@admin/pages/roles/roles-screen-redesign/lib/types";
 
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { useState, useEffect, useCallback } from "react";
-import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@dwp-frontend/design-system/shadcn/lib/utils";
+import { Badge } from "@dwp-frontend/design-system/shadcn/components/ui/badge";
 import { Save, Clock, Trash2, AlertCircle, MoreHorizontal } from "lucide-react";
+import { Button } from "@dwp-frontend/design-system/shadcn/components/ui/button";
+import { Tabs, TabsList, TabsContent, TabsTrigger } from "@dwp-frontend/design-system/shadcn/components/ui/tabs";
 import {
   mockMembers,
   mockResources,
   mockPermissionCodes,
   generateInitialPermissions,
-} from "@/lib/mock-data";
+} from "@admin/pages/roles/roles-screen-redesign/lib/mock-data";
 import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from "@dwp-frontend/design-system/shadcn/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogTitle,
@@ -30,7 +30,7 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogDescription,
-} from "@/components/ui/alert-dialog";
+} from "@dwp-frontend/design-system/shadcn/components/ui/alert-dialog";
 
 import { RoleMembers } from "./role-members";
 import { RoleOverview } from "./role-overview";
