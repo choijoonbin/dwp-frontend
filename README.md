@@ -179,77 +179,47 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 
 ## ✅ 주요 구현
 
-### 1. 인증 시스템 (Auth)
+### 1. 인증 및 보안 시스템 (Auth)
 - **AuthProvider**: `libs/shared-utils`에 위치하며 JWT 토큰 저장 및 자동 `Authorization` 헤더 주입 기능을 포함합니다.
-- **Sign-in**: 실제 `dwp-auth-server`의 `/api/auth/login` 엔드포인트와 연동되도록 설계되었습니다.
-  - 요청 Body: `{ username, password, tenantId }` 형식으로 전송
-  - `Content-Type: application/json` 헤더 자동 포함
-  - `X-Tenant-ID` 헤더 자동 주입 (서브도메인 기반 자동 추출)
-- **로그인 상태 유지**: `localStorage`에 토큰 저장으로 브라우저 재시작 후에도 로그인 상태 유지
-- **AuthGuard**: 보호된 라우트에 자동 적용되어 인증되지 않은 사용자는 `/sign-in`으로 리다이렉트
-- **401/403 전역 처리**: `axiosInstance`에서 401/403 응답 시 자동으로 로그아웃 및 리다이렉트 처리
-- **returnUrl 지원**: 로그인 후 원래 접근하려던 페이지로 자동 복귀
+- **Login Policy Branching**: 테넌트별 인증 정책(LOCAL/SSO)에 따라 로그인 UI가 자동으로 분기됩니다.
+  - `/api/auth/policy` API 연동으로 허용된 로그인 타입만 노출
+  - SSO 선택 시 해당 IDP(Google, MS 등)로 리다이렉트 및 콜백 처리 (`/sso-callback`)
+- **AuthGuard & Route Protection**: 보호된 라우트에 자동 적용되어 인증되지 않은 사용자는 `/sign-in`으로 리다이렉트되며, `PermissionRouteGuard`를 통해 권한별 접근 제어를 수행합니다.
+- **401/403 전역 처리**: `axiosInstance`에서 401(토큰 만료) 시 로그아웃, 403(권한 없음) 시 전역 에러 알림 처리를 수행합니다.
 
 ### 2. 고도화된 사이드바 및 레이아웃 (Zustand)
-- **Dynamic Sidebar**: `Zustand` 기반으로 확장(300px) 및 축소(88px) 기능을 제공합니다.
-- **Micro UI Optimization**: 축소 시 메뉴 아이템 사이즈를 **79*58**로 고정하고, 아이콘 아래에 메뉴명을 배치하여 가독성을 극대화했습니다.
-- **Grouped Menu**: 메뉴를 'Management', 'Apps' 등 논리적 그룹으로 분리하고 독립적인 컨테이너(`Box`)로 감싸 정교한 CSS 관리가 가능합니다.
-- **Header Workspace**: 팀 선택기(`WorkspacesPopover`)를 사이드바에서 상단 헤더 좌측으로 이동하여 접근성을 높였습니다.
-- **모바일 사이드바 자동 닫기**: 화면 크기가 데스크탑으로 돌아가면 모바일 사이드바가 자동으로 닫혀 데스크탑 사이드바와 겹치지 않습니다.
-- **접근성 개선**: Drawer 닫힘 시 포커스 관리로 `aria-hidden` 관련 접근성 경고를 해결했습니다.
+- **Dynamic Sidebar**: `Zustand` 기반으로 확장(300px) 및 축소(88px) 기능을 제공하며, 축소 시 아이콘 아래 메뉴명을 배치하여 가독성을 높였습니다.
+- **UI UX 최적화**: 
+  - 사이드바 축소 시 서브메뉴 팝오버 위치 및 깜빡임 현상을 완벽히 해결했습니다.
+  - 모바일 환경에서 데스크탑 전환 시 사이드바가 자동으로 닫히는 지능형 레이아웃을 적용했습니다.
+  - **접근성(Aria)**: 팝오버 및 드로어 사용 시 `aria-hidden` 충돌을 방지하는 포커스 관리 로직을 보강했습니다.
 
-### 3. DWP 로고 시스템
-- **로고 적용**: Primary 색상 배경에 "D" 문자를 표시하는 간단한 로고를 적용했습니다.
-- **반응형 로고**: 사이드바 축소 시 "D" 아이콘만 표시, 확장 시 "D" 아이콘 + "DWP" 텍스트 조합으로 표시됩니다.
-- **테마 동기화**: 로고 색상이 MUI Primary 팔레트와 실시간 연동되어 프리셋 변경 시 자동 대응됩니다.
+### 3. DWP 통합 로고 시스템
+- **Logo V3**: Primary 팔레트와 연동되는 "D" 아이콘과 "DWP" 텍스트 조합의 반응형 로고를 적용했습니다.
+- **상태 연동**: 사이드바 축소 시 텍스트가 자동으로 숨겨지며 로고 정렬이 중앙으로 최적화됩니다.
 
-### 4. API 통신 규격
-- **ApiResponse<T>**: `status`, `message`, `data`, `timestamp`를 포함하는 백엔드 공통 규격을 사용합니다.
-- **HttpError**: 상태 코드(404, 401 등)에 따른 분기 처리를 위해 전역 에러 객체를 지원합니다.
+### 4. Admin CRUD 표준화 및 고도화
+- **Enterprise CRUD Pattern**: 모든 관리자 화면(Users, Roles, Resources, Menus 등)을 `Page(Orchestration) - Hooks(Logic) - Adapters(Transform) - Components(UI)`의 4계층 구조로 리팩토링했습니다.
+- **Roles 관리 화면 Redesign**:
+  - **3단 레이아웃**: 좌측 역할 리스트, 우측 상세 탭(개요/멤버/권한) 구조로 생산성을 높였습니다.
+  - **권한 매트릭스**: ALLOW/DENY/null 3단태 상태를 지원하는 인터랙티브 매트릭스를 구현했습니다. 행/열 일괄 처리 기능을 포함합니다.
+  - **Sticky Save Bar**: 데이터 수정 시 하단에 플로팅 저장 바가 나타나며, 변경사항 유실 방지를 위한 탭 이동 방지 팝업을 제공합니다.
+- **표준화된 에러 핸들링**: `HttpError` 클래스와 `useMutationErrorHandler`를 통해 백엔드 에러 메시지를 사용자 친화적으로 노출합니다.
 
-### 5. 에이전틱 AI 연동 표준 (Aura)
-### 6. 권한 기반 Admin 모듈 (Admin Remote)
-- **Admin Remote**: `apps/remotes/admin` (포트 4204) 신규 추가
-- **접근 제어**: `menu.admin` VIEW 권한 없으면 메뉴/라우트 접근 불가
-- **권한 스토어**: `libs/shared-utils/src/auth/permissions-store.ts` (Zustand)
-- **권한 훅**: `usePermissions()`로 `hasPermission`, `canViewMenu`, `canUseButton` 제공
-- **Route Guard**: `/admin/*` 경로에 PermissionRouteGuard 적용
-- **CRUD 기능**: Users, Roles, Resources, Codes 관리 화면 구현 완료
-  - **Users**: 사용자 목록, 생성/수정/삭제, 역할 할당, 비밀번호 초기화
-  - **Roles**: 역할 목록, 생성/수정/삭제, 멤버 관리, 권한 매핑
-  - **Resources**: 리소스 트리 뷰, 생성/수정/삭제, 타입별 필터링
-  - **Codes**: 코드 그룹 및 코드 CRUD, 활성화/비활성화 관리
-- **권한 기반 UI 제어**: `PermissionGate` 컴포넌트로 버튼/액션 제어
-- **코드 사용 정책**: 메뉴별 `resourceKey` 기반 코드 조회 (`/api/admin/codes/usage`)
-- **로그인 정책 기반 UI 분기**: 테넌트별 인증 정책(LOCAL/SSO)에 따라 로그인 UI 자동 분기
-  - `/api/auth/policy` API로 정책 조회
-  - `allowedLoginTypes`에 따라 ID/PW 폼 또는 SSO 버튼 표시
-  - 정책 조회 실패 시 fallback 없이 Alert 표시 (보안 강화)
-- **테넌트 ID 설정**: 테스트용으로 기본값 "1" 사용 (`libs/shared-utils/src/tenant-util.ts`)
-  - 모든 API 요청에 `X-Tenant-ID: 1` 헤더 자동 주입
-  - 향후 실제 테넌트 ID 추출 로직으로 변경 예정
+### 5. 데이터 분석 및 모니터링
+- **Standardized Event Tracking**: `trackEvent` 유틸리티를 통해 사용자 액션(VIEW, CLICK, SEARCH 등)을 표준화된 규격으로 수집합니다.
+- **Admin Audit Logs**: 시스템 내 모든 주요 변경 사항을 추적하는 감사 로그 화면을 제공합니다.
 
+### 6. 에이전틱 AI 연동 표준 (Aura)
 글로벌 SaaS 수준의 Agentic AI 업무 파트너 시스템을 구현했습니다.
 
 #### 핵심 기능
-- **Floating AI Button**: 우측 하단에 고정된 원형 버튼으로 `arua.gif` 애니메이션을 사용합니다. 알림 배지, hover 애니메이션, 글로우 효과가 포함되어 있습니다.
-- **Mini AI Chat Overlay**: 버튼 클릭 시 우측에 슬라이드되는 오버레이로, 현재 페이지를 가리지 않고 빠른 상호작용을 제공합니다.
-- **Full AI Workspace**: `/ai-workspace` 경로의 전체 페이지로, 좌측 채팅 패널과 우측 타임라인 UI(계획 → 실행 → 결과)를 제공합니다.
-- **Context Awareness**: `usePageContext` 훅을 통해 현재 URL, 페이지 제목, 메타데이터를 자동으로 수집하여 AI에게 전달합니다.
-- **Quick Actions**: Mini Overlay 상단에 "현재 화면 요약", "다음 행동 추천" 버튼을 제공합니다.
-- **Return Path**: AI Workspace에서 작업 완료 후 이전 페이지로 복귀할 수 있는 기능입니다.
-
-#### 상태 관리
-- **Zustand Store (`use-aura-store.ts`)**: 대화 히스토리, 오버레이 상태, 알림 상태를 전역으로 관리합니다. Mini Overlay와 Full Workspace 간 상태가 자동으로 동기화됩니다.
-- **메시지 유지**: 오버레이에서 시작한 대화가 Workspace로 확장되어도 히스토리가 그대로 유지됩니다.
-
-#### 고급 시각화 기능
-- **사고 과정 탭 (Thought Process)**: AI의 내부 사고 체인을 타임라인으로 시각화합니다. `thought` 이벤트를 통해 실시간으로 사고 과정을 표시하며, 참고 자료(코드 파일, 대화 기록 등)를 칩 형태로 표시합니다. `timeline_step_update` 이벤트로 타임라인 단계 상태를 실시간 업데이트합니다.
-- **작업 계획 탭 (Work Plan)**: 에이전트의 단계별 실행 계획을 카드 형태로 표시합니다. 사용자가 순서 변경, 승인, 건너뛰기를 할 수 있으며, `plan_step` 및 `plan_step_update` 이벤트로 실시간 업데이트됩니다.
-- **실행 로그 탭 (Execution Log)**: 실제 도구(Git, Jira 등) 호출 시 파라미터와 결과를 다크 테마의 로그 뷰어 스타일로 표시합니다. `tool_execution` 이벤트를 통해 실행 상태(executing/completed/failed)를 실시간으로 표시합니다.
-- **결과 탭 (Results)**: 결과물을 Diff(코드 변경사항), 문서 프리뷰, 체크리스트 등 다양한 형태로 렌더링합니다. `content` 이벤트의 `metadata.result`를 통해 결과를 표시하며, `react-syntax-highlighter`를 사용하여 코드를 가독성 있게 표시합니다.
-- **Reasoning Timeline**: 에이전트의 단계별 계획 수립 과정을 시각화합니다. 각 단계는 Pending, Processing, Completed, Failed 상태로 구분되며, Framer Motion을 활용한 부드러운 애니메이션을 제공합니다.
-- **HITL Approval Dialog**: 에이전트가 사용자 승인이 필요한 단계에서 실행을 멈추고, 승인/거절 버튼을 강조하여 표시합니다. 사용자가 작업 내용을 인라인으로 수정할 수 있습니다.
+- **Floating AI Button**: 우측 하단에 고정된 원형 버튼으로 `arua.gif` 애니메이션을 사용합니다. 
+- **Stream Status Banner**: AI 응답 스트리밍 상태(Connecting, Streaming, Error)를 실시간으로 알려주는 상단 배너를 추가했습니다.
+- **Mini AI Chat Overlay & Full AI Workspace**: 상황에 맞는 AI 업무 공간을 제공하며, 대화 히스토리가 실시간으로 동기화됩니다.
+- **Context Awareness**: `usePageContext`를 통해 현재 경로, 제목, 메타데이터를 AI에게 자동으로 전달합니다.
+- **Thought/Plan/Log/Result Visualizer**: AI의 사고 과정부터 실행 계획, 도구 로그, 최종 결과물까지 단계별로 시각화합니다.
+- **HITL (Human-In-The-Loop)**: 사용자 승인이 필요한 단계에서 실행을 멈추고 인라인 수정 및 승인/거절을 받는 인터페이스를 제공합니다.
 
 #### 기술 구현
 - **SSE 스트리밍**: `fetch` API의 `ReadableStream`을 사용하여 백엔드로부터 실시간 스트리밍을 받습니다. `thought`, `plan_step`, `tool_execution`, `hitl`, `content`, `plan_step_update`, `timeline_step_update` 등 다양한 이벤트 타입을 처리합니다.
