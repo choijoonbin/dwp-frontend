@@ -12,6 +12,7 @@ type AxiosLikeResponse<T> = { data: T };
 type AxiosLikeConfig = {
   headers?: Record<string, string>;
   withCredentials?: boolean;
+  responseType?: 'json' | 'blob' | 'text' | 'arraybuffer';
 };
 
 // Global state for agent ID (if needed across apps)
@@ -106,7 +107,18 @@ export const axiosInstance = {
       throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
     }
 
-    const data = (await res.json()) as T;
+    // Handle different response types
+    let data: T;
+    if (config.responseType === 'blob') {
+      data = (await res.blob()) as T;
+    } else if (config.responseType === 'text') {
+      data = (await res.text()) as T;
+    } else if (config.responseType === 'arraybuffer') {
+      data = (await res.arrayBuffer()) as T;
+    } else {
+      // Default: json
+      data = (await res.json()) as T;
+    }
     return { data };
   },
   post: async <T, B = unknown>(
@@ -133,6 +145,47 @@ export const axiosInstance = {
 
     const res = await fetch(`${baseURL}${url}`, {
       method: 'POST',
+      headers,
+      credentials: config.withCredentials ? 'include' : 'same-origin',
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const status = res.status;
+      // Handle 401/403 globally
+      if (status === 401 || status === 403) {
+        handleAuthError(status);
+      }
+      throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
+    }
+
+    const data = (await res.json()) as T;
+    return { data };
+  },
+  put: async <T, B = unknown>(
+    url: string,
+    body: B,
+    config: AxiosLikeConfig = {}
+  ): Promise<AxiosLikeResponse<T>> => {
+    const token = getAccessToken();
+    const tenantId = getTenantId();
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'X-Tenant-ID': tenantId,
+      ...(config.headers ?? {}),
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (currentAgentId) {
+      headers['X-Agent-ID'] = currentAgentId;
+    }
+
+    const res = await fetch(`${baseURL}${url}`, {
+      method: 'PUT',
       headers,
       credentials: config.withCredentials ? 'include' : 'same-origin',
       body: JSON.stringify(body),

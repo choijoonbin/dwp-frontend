@@ -44,9 +44,7 @@ export const useMonitoringApiHistoriesQuery = (params?: MonitoringListParams) =>
     queryKey: monitoringApiHistoriesQueryKey(tenantId, params),
     queryFn: async () => {
       const res = await getMonitoringApiHistories(params);
-      if (res.data) {
-        return res.data;
-      }
+      if (res.data) return res.data;
       throw new Error(res.message || 'Failed to fetch API histories');
     },
     enabled: isAuthenticated && Boolean(tenantId),

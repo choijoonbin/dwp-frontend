@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getUserId, NX_API_URL, getTenantId, getAccessToken, getAgentContext } from '@dwp-frontend/shared-utils';
+import { getUserId, NX_API_URL, getTenantId, getAccessToken, getAgentContext, getAgentSessionId } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -116,6 +116,7 @@ export const AuraMiniOverlay = () => {
       const token = getAccessToken();
       const tenantId = getTenantId();
       const userId = getUserId();
+      const agentId = getAgentSessionId(); // Get or create agent session ID
 
       // getAgentContext를 사용하여 명세에 맞는 context 생성
       const agentContext = getAgentContext();
@@ -135,6 +136,7 @@ export const AuraMiniOverlay = () => {
             'X-Tenant-ID': tenantId,
             'Authorization': token ? 'Bearer ***' : 'none',
             'X-User-ID': userId || 'none',
+            'X-Agent-ID': agentId,
           },
           payload: requestPayload,
           contextCheck: {
@@ -153,6 +155,7 @@ export const AuraMiniOverlay = () => {
             'Content-Type': 'application/json',
             'Accept': 'text/event-stream', 
             'X-Tenant-ID': tenantId,
+            'X-Agent-ID': agentId, // Agent session ID for Aura requests
             ...(token && { Authorization: `Bearer ${token}` }),
             ...(userId && { 'X-User-ID': userId }),
           },

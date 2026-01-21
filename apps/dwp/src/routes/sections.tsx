@@ -20,6 +20,7 @@ export const ApprovalPage = lazy(() => import('src/pages/approval'));
 export const AIWorkspacePage = lazy(() => import('src/pages/ai-workspace'));
 export const AdminPage = lazy(() => import('../pages/admin'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
+export const SSOCallbackPage = lazy(() => import('src/pages/sso-callback'));
 export const ForgotPasswordPage = lazy(() => import('src/pages/forgot-password'));
 export const Page403 = lazy(() => import('src/pages/page-403'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
@@ -57,6 +58,7 @@ export const routesSection: RouteObject[] = [
     ),
     children: [
       { index: true, element: <DashboardPage /> },
+      { path: 'dashboard', element: <DashboardPage /> },
       { path: 'mail', element: <MailPage /> },
       { path: 'chat', element: <ChatPage /> },
       { path: 'approval', element: <ApprovalPage /> },
@@ -71,6 +73,10 @@ export const routesSection: RouteObject[] = [
         <SignInPage />
       </AuthLayout>
     ),
+  },
+  {
+    path: 'sso-callback',
+    element: <SSOCallbackPage />,
   },
   {
     path: 'forgot-password',

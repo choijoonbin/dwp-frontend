@@ -2,7 +2,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
-import { getUserId, NX_API_URL, getTenantId, getAccessToken, getAgentContext, rejectHitlRequest, approveHitlRequest, postEvent } from '@dwp-frontend/shared-utils';
+import { getUserId, postEvent, NX_API_URL, getTenantId, getAccessToken, useStreamStore, getAgentContext, getAgentSessionId, rejectHitlRequest, approveHitlRequest } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -25,10 +25,12 @@ import { ResultViewer } from '../components/aura/result-viewer';
 import { ThoughtChainUI } from '../components/aura/thought-chain-ui';
 import { ConfidenceScore } from '../components/aura/confidence-score';
 import { ContextualBridge } from '../components/aura/contextual-bridge';
+import { StreamDebugPanel } from '../components/dev/stream-debug-panel';
 import { DynamicPlanBoard } from '../components/aura/dynamic-plan-board';
 import { LiveExecutionLog } from '../components/aura/live-execution-log';
 import { ReasoningTimeline } from '../components/aura/reasoning-timeline';
 import { CheckpointApproval } from '../components/aura/checkpoint-approval';
+import { StreamStatusBanner } from '../components/aura/stream-status-banner';
 import { ActionExecutionView } from '../components/aura/action-execution-view';
 
 // ----------------------------------------------------------------------
@@ -76,6 +78,14 @@ export default function Page() {
   const [streamingText, setStreamingText] = useState('');
   const [activeTab, setActiveTab] = useState(0);
   const [lastResultMetadata, setLastResultMetadata] = useState<any>(null);
+  const [lastPrompt, setLastPrompt] = useState<string>(''); // For retry functionality
+  
+  // Stream store
+  const setStatus = useStreamStore((state) => state.setStatus);
+  const setError = useStreamStore((state) => state.setError);
+  const setDebug = useStreamStore((state) => state.setDebug);
+  const addEventType = useStreamStore((state) => state.addEventType);
+  const resetStore = useStreamStore((state) => state.reset);
 
 
   useEffect(() => {
@@ -95,6 +105,18 @@ export default function Page() {
     setStreamingText('');
     setStreaming(true);
     setThinking(true);
+    
+    // Store prompt for retry
+    setLastPrompt(prompt);
+    
+    // Update stream status
+    const endpoint = '/api/aura/test/stream';
+    setStatus('CONNECTING');
+    setDebug({
+      endpoint,
+      retryCount: 0,
+      startedAt: new Date(),
+    });
 
     // Track "AI Workspace 실행" event
     postEvent({
@@ -142,12 +164,13 @@ export default function Page() {
       }
     });
 
-    const token = getAccessToken();
-    const tenantId = getTenantId();
-    const userId = getUserId();
+      const token = getAccessToken();
+      const tenantId = getTenantId();
+      const userId = getUserId();
+      const agentId = getAgentSessionId(); // Get or create agent session ID
 
-    // getAgentContext를 사용하여 명세에 맞는 context 생성
-    const agentContext = getAgentContext();
+      // getAgentContext를 사용하여 명세에 맞는 context 생성
+      const agentContext = getAgentContext();
 
     // 디버깅: 요청 정보 로깅
     const requestPayload = {
@@ -164,6 +187,7 @@ export default function Page() {
           'X-Tenant-ID': tenantId,
           'Authorization': token ? 'Bearer ***' : 'none',
           'X-User-ID': userId || 'none',
+          'X-Agent-ID': agentId,
         },
         payload: requestPayload,
         contextCheck: {
@@ -186,6 +210,7 @@ export default function Page() {
           'Content-Type': 'application/json',
           'Accept': 'text/event-stream', // SSE 요청 시 Accept 헤더 포함
           'X-Tenant-ID': tenantId,
+          'X-Agent-ID': agentId, // Agent session ID for Aura requests
           ...(token && { Authorization: `Bearer ${token}` }),
           ...(userId && { 'X-User-ID': userId }), // User ID 헤더 추가
         },
@@ -194,9 +219,12 @@ export default function Page() {
       });
 
       if (!response.ok) {
+        setStatus('ERROR');
+        setError(`HTTP ${response.status}`);
         throw new Error(`HTTP ${response.status}`);
       }
 
+      setStatus('STREAMING');
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
@@ -223,15 +251,28 @@ export default function Page() {
           const trimmedLine = line.trim();
           
           // Handle SSE event format: "event: {type}" or "data: {json}"
+          if (trimmedLine.startsWith('id: ')) {
+            const eventId = trimmedLine.slice(4).trim();
+            setDebug({ lastEventId: eventId });
+            continue;
+          }
+          
           if (trimmedLine.startsWith('event: ')) {
-            // Event type is stored for next data line
+            const eventType = trimmedLine.slice(7).trim();
+            if (eventType) {
+              addEventType(eventType);
+            }
             continue;
           }
           
           if (!trimmedLine.startsWith('data: ')) continue;
 
           const dataStr = trimmedLine.slice(6);
-          if (dataStr === '[DONE]') break;
+          if (dataStr === '[DONE]') {
+            setStatus('COMPLETED');
+            setDebug({ completedAt: new Date() });
+            break;
+          }
 
           try {
             const data = JSON.parse(dataStr);
@@ -239,6 +280,11 @@ export default function Page() {
             // Handle different event types from backend
             // Backend sends: { type: 'thought', data: {...} } or { type: 'hitl', data: {...} }
             const eventType = data.type;
+            
+            // Track event type
+            if (eventType) {
+              addEventType(eventType);
+            }
             const eventData = data.data || data;
 
             // Handle thought chain
@@ -382,7 +428,12 @@ export default function Page() {
         setLastResultMetadata(null); // Reset after use
       }
     } catch (err: any) {
-      if (err.name !== 'AbortError') {
+      // Check if aborted
+      if (err.name === 'AbortError') {
+        setStatus('ABORTED');
+      } else {
+        setStatus('ERROR');
+        setError(err.message || 'Stream error');
         addMessage({
           role: 'assistant',
           content: `오류가 발생했습니다: ${err.message}`,
@@ -399,6 +450,28 @@ export default function Page() {
     }
 
     setPrompt('');
+  };
+  
+  const handleCancel = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      setStatus('ABORTED');
+      setStreaming(false);
+      setThinking(false);
+      setStreamingText('');
+      abortControllerRef.current = null;
+    }
+    setPrompt('');
+  };
+  
+  const handleRetry = () => {
+    if (lastPrompt) {
+      setPrompt(lastPrompt);
+      // Trigger send after state update
+      setTimeout(() => {
+        handleSend();
+      }, 0);
+    }
   };
 
   const handleApproveHitl = async (editedContent?: string) => {
@@ -526,6 +599,9 @@ export default function Page() {
             {pendingHitl?.confidence !== undefined && (
               <ConfidenceScore confidence={pendingHitl.confidence} onRequestInfo={() => {}} />
             )}
+            <Box sx={{ mt: 1 }}>
+              <StreamStatusBanner onRetry={handleRetry} onCancel={handleCancel} />
+            </Box>
           </Box>
 
           <Scrollbar sx={{ flex: 1 }}>
@@ -675,6 +751,9 @@ export default function Page() {
         onToggle={() => setLogOpen(!logOpen)}
         contextOpen={contextSnapshot !== null && contextOpen}
       />
+      
+      {/* Dev Debug Panel */}
+      <StreamDebugPanel />
     </>
   );
 }

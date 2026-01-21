@@ -13,14 +13,10 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
 import InputAdornment from '@mui/material/InputAdornment';
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -38,7 +34,7 @@ export const SignInView = () => {
 
   // Auth policy query
   const { data: authPolicy, isLoading: policyLoading, error: policyError } = useAuthPolicyQuery();
-  const { data: idpConfig } = useIdpQuery();
+  const { data: idpConfig, isLoading: idpLoading, error: idpError } = useIdpQuery();
 
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('admin');
@@ -46,7 +42,6 @@ export const SignInView = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [errorSeverity, setErrorSeverity] = useState<'error' | 'warning'>('error');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [ssoDialogOpen, setSsoDialogOpen] = useState(false);
 
   // Determine UI visibility based on policy
   const showLocalLogin = useMemo(() => {
@@ -73,6 +68,14 @@ export const SignInView = () => {
     setErrorMessage(null);
     setIsSubmitting(true);
 
+    // Check if LOCAL login is allowed
+    if (!showLocalLogin) {
+      setErrorSeverity('error');
+      setErrorMessage('LOCAL 로그인이 허용되지 않습니다. SSO 로그인을 사용해주세요.');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       await auth.login({ username, password });
 
@@ -83,6 +86,9 @@ export const SignInView = () => {
       if (err instanceof HttpError && err.status === 404) {
         setErrorSeverity('warning');
         setErrorMessage('로그인 API는 아직 백엔드(dwp-auth-server)에 구현되어 있지 않습니다.');
+      } else if (err instanceof HttpError && err.status === 403) {
+        setErrorSeverity('error');
+        setErrorMessage('LOCAL 로그인 권한이 없습니다. SSO 로그인을 사용해주세요.');
       } else {
         setErrorSeverity('error');
         const msg = err instanceof Error ? err.message : 'Login failed';
@@ -91,20 +97,35 @@ export const SignInView = () => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [auth, username, password, navigate, searchParams]);
+  }, [auth, username, password, navigate, searchParams, showLocalLogin]);
 
   const handleSsoLogin = useCallback(() => {
-    if (idpConfig?.authUrl) {
-      // If authUrl is provided, redirect to SSO provider
-      window.location.href = idpConfig.authUrl;
-    } else {
-      // Otherwise, show placeholder dialog
-      setSsoDialogOpen(true);
+    if (!showSsoLogin) {
+      setErrorSeverity('error');
+      setErrorMessage('SSO 로그인이 허용되지 않습니다.');
+      return;
     }
-  }, [idpConfig]);
+
+    if (idpConfig?.authUrl) {
+      // Build callback URL
+      const returnUrl = safeReturnUrl(searchParams.get('returnUrl'));
+      const callbackUrl = `${window.location.origin}/sso-callback${returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`;
+      
+      // Append callback URL to authUrl if needed
+      const separator = idpConfig.authUrl.includes('?') ? '&' : '?';
+      const redirectUrl = `${idpConfig.authUrl}${separator}redirect_uri=${encodeURIComponent(callbackUrl)}`;
+      
+      // Redirect to SSO provider
+      window.location.href = redirectUrl;
+    } else {
+      // No authUrl configured
+      setErrorSeverity('error');
+      setErrorMessage('SSO 설정이 완료되지 않았습니다. 관리자에게 문의하세요.');
+    }
+  }, [idpConfig, showSsoLogin, searchParams]);
 
   // Policy loading state
-  if (policyLoading) {
+  if (policyLoading || (showSsoLogin && idpLoading)) {
     return (
       <Box
         sx={{
@@ -140,6 +161,33 @@ export const SignInView = () => {
           <Typography variant="body2" sx={{ mt: 1 }}>
             {policyError instanceof Error ? policyError.message : '로그인 정책을 불러올 수 없습니다.'}
           </Typography>
+        </Alert>
+      </Box>
+    );
+  }
+
+  // IDP error state (only if SSO is required)
+  if (showSsoLogin && idpError && !idpConfig) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 400,
+        }}
+      >
+        <Alert severity="warning" sx={{ width: '100%', maxWidth: 400 }}>
+          SSO 설정 조회 실패
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            {idpError instanceof Error ? idpError.message : 'SSO 설정을 불러올 수 없습니다.'}
+          </Typography>
+          {showLocalLogin && (
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              LOCAL 로그인을 사용할 수 있습니다.
+            </Typography>
+          )}
         </Alert>
       </Box>
     );
@@ -250,7 +298,7 @@ export const SignInView = () => {
       onClick={handleSsoLogin}
       startIcon={<Iconify icon="solar:shield-user-bold" />}
     >
-      SSO로 로그인
+      {idpConfig?.providerName ? `${idpConfig.providerName}로 로그인` : 'SSO로 로그인'}
     </Button>
   ) : null;
 
@@ -313,20 +361,6 @@ export const SignInView = () => {
         </Box>
       )}
 
-      <Dialog open={ssoDialogOpen} onClose={() => setSsoDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>SSO 로그인</DialogTitle>
-        <DialogContent>
-          <Alert severity="info" sx={{ mb: 2 }}>
-            SSO 연동은 준비중입니다.
-          </Alert>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            SSO(Single Sign-On) 기능은 현재 개발 중입니다. 관리자에게 문의하세요.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setSsoDialogOpen(false)}>확인</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };

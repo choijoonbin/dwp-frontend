@@ -10,10 +10,10 @@ import type { UserDetail } from '../admin/types';
 
 /**
  * Query key for admin user detail
- * Format: ["admin", "user", tenantId, userId]
+ * Format: ["admin", "users", "detail", tenantId, userId]
  */
 export const adminUserDetailQueryKey = (tenantId: string, userId: string) =>
-  ['admin', 'user', tenantId, userId] as const;
+  ['admin', 'users', 'detail', tenantId, userId] as const;
 
 /**
  * Hook to fetch admin user detail

@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
-import { getAdminUsers, createAdminUser, updateAdminUser, deleteAdminUser } from '../api/admin-iam-api';
+import { getAdminUsers, createAdminUser, updateAdminUser, deleteAdminUser, disableAdminUser } from '../api/admin-iam-api';
 
 import type { UserListParams, UserCreatePayload, UserUpdatePayload, PageResponse, UserSummary } from '../admin/types';
 
@@ -84,7 +84,7 @@ export const useUpdateAdminUserMutation = () => {
     onSuccess: (_, variables) => {
       // Invalidate users list and detail
       queryClient.invalidateQueries({ queryKey: ['admin', 'users', tenantId] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'user', tenantId, variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'detail', tenantId, variables.userId] });
     },
   });
 };
@@ -106,6 +106,28 @@ export const useDeleteAdminUserMutation = () => {
     },
     onSuccess: () => {
       // Invalidate users list
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users', tenantId] });
+    },
+  });
+};
+
+/**
+ * Hook to disable admin user (soft delete)
+ */
+export const useDisableAdminUserMutation = () => {
+  const queryClient = useQueryClient();
+  const tenantId = getTenantId();
+
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const res = await disableAdminUser(userId);
+      if (res.data?.success) {
+        return res.data;
+      }
+      throw new Error(res.message || 'Failed to disable user');
+    },
+    onSuccess: () => {
+      // Invalidate users list and detail
       queryClient.invalidateQueries({ queryKey: ['admin', 'users', tenantId] });
     },
   });

@@ -2,31 +2,42 @@ import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 import type {
-  PageResponse,
-  UserSummary,
+  Code,
+  CodeGroup,
   UserDetail,
+  RoleDetail,
+  UserSummary,
+  RoleSummary,
+  PageResponse,
+  ResourceNode,
+  AdminMenuNode,
+  UserListParams,
+  RoleListParams,
+  CodeListParams,
+  AuditLogDetail,
+  RoleMemberView,
+  ResourceSummary,
+  AuditLogSummary,
   UserCreatePayload,
   UserUpdatePayload,
-  UserListParams,
-  RoleSummary,
-  RoleDetail,
   RoleCreatePayload,
   RoleUpdatePayload,
-  RoleListParams,
-  RoleMemberAssignmentPayload,
-  RolePermissionAssignmentPayload,
-  ResourceSummary,
-  ResourceNode,
-  ResourceCreatePayload,
-  ResourceUpdatePayload,
-  ResourceListParams,
-  CodeGroup,
-  Code,
-  CodeGroupCreatePayload,
-  CodeGroupUpdatePayload,
+  MenuCreatePayload,
+  MenuUpdatePayload,
   CodeCreatePayload,
   CodeUpdatePayload,
+  ResourceListParams,
+  MenuReorderPayload,
+  AuditLogListParams,
+  CodeGroupListParams,
   ResetPasswordPayload,
+  ResourceCreatePayload,
+  ResourceUpdatePayload,
+  RolePermissionResponse,
+  CodeGroupCreatePayload,
+  CodeGroupUpdatePayload,
+  RoleMemberAssignmentPayload,
+  RolePermissionAssignmentPayload,
 } from '../admin/types';
 
 // ----------------------------------------------------------------------
@@ -80,7 +91,16 @@ export const updateAdminUser = async (
   userId: string,
   payload: UserUpdatePayload
 ): Promise<ApiResponse<UserDetail>> => {
-  const res = await axiosInstance.post<ApiResponse<UserDetail>>(`/api/admin/users/${userId}`, payload);
+  const res = await axiosInstance.put<ApiResponse<UserDetail>>(`/api/admin/users/${userId}`, payload);
+  return res.data;
+};
+
+/**
+ * Disable admin user (soft delete)
+ * PUT /api/admin/users/:userId/disable
+ */
+export const disableAdminUser = async (userId: string): Promise<ApiResponse<{ success: boolean }>> => {
+  const res = await axiosInstance.put<ApiResponse<{ success: boolean }>>(`/api/admin/users/${userId}/disable`, {});
   return res.data;
 };
 
@@ -123,10 +143,11 @@ export const getAdminUserRoles = async (userId: string): Promise<ApiResponse<Rol
  */
 export const updateAdminUserRoles = async (
   userId: string,
-  roleIds: string[]
+  payload: { roleIds: string[]; replace?: boolean }
 ): Promise<ApiResponse<{ success: boolean }>> => {
-  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(`/api/admin/users/${userId}/roles`, {
-    roleIds,
+  const res = await axiosInstance.put<ApiResponse<{ success: boolean }>>(`/api/admin/users/${userId}/roles`, {
+    roleIds: payload.roleIds,
+    replace: payload.replace ?? true, // Default to replace mode
   });
   return res.data;
 };
@@ -136,8 +157,74 @@ export const updateAdminUserRoles = async (
 // ============================================================================
 
 /**
+ * Backend role response structure
+ * Backend returns: { id (string), roleCode, roleName, description, createdAt, status, memberCount, userCount, departmentCount }
+ */
+type BackendRoleSummary = {
+  id: string; // 백엔드가 문자열로 반환
+  roleCode: string;
+  roleName: string;
+  description?: string | null;
+  createdAt: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  memberCount?: number;
+  userCount?: number;
+  departmentCount?: number;
+};
+
+/**
+ * Backend role detail response structure
+ */
+type BackendRoleDetail = {
+  id: string; // 백엔드가 문자열로 반환
+  roleCode: string;
+  roleName: string;
+  description?: string | null;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt: string;
+  updatedAt?: string | null;
+  memberCount?: number;
+  userCount?: number;
+  departmentCount?: number;
+};
+
+/**
+ * Convert backend role response to frontend RoleSummary
+ */
+const toRoleSummary = (backend: BackendRoleSummary): RoleSummary => ({
+  id: backend.id,
+  roleName: backend.roleName,
+  roleCode: backend.roleCode,
+  description: backend.description,
+  status: backend.status,
+  createdAt: backend.createdAt,
+  memberCount: backend.memberCount,
+  userCount: backend.userCount,
+  departmentCount: backend.departmentCount,
+});
+
+/**
+ * Convert backend role detail response to frontend RoleDetail
+ */
+const toRoleDetail = (backend: BackendRoleDetail): RoleDetail => ({
+  id: backend.id,
+  roleName: backend.roleName,
+  roleCode: backend.roleCode,
+  description: backend.description,
+  status: backend.status,
+  createdAt: backend.createdAt,
+  updatedAt: backend.updatedAt || null,
+  memberCount: backend.memberCount,
+  userCount: backend.userCount,
+  departmentCount: backend.departmentCount,
+});
+
+/**
  * Get admin roles list
  * GET /api/admin/roles
+ * 
+ * Backend returns: { comRoleId, roleCode, roleName, ... }
+ * Converts to frontend format: { id, roleCode, roleName, ... }
  */
 export const getAdminRoles = async (
   params?: RoleListParams
@@ -149,37 +236,102 @@ export const getAdminRoles = async (
   if (params?.status) queryParams.append('status', params.status);
 
   const url = `/api/admin/roles${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-  const res = await axiosInstance.get<ApiResponse<PageResponse<RoleSummary>>>(url);
-  return res.data;
+  const res = await axiosInstance.get<ApiResponse<PageResponse<BackendRoleSummary>>>(url);
+  
+  // Convert backend response to frontend format
+  // res.data is ApiResponse<PageResponse<BackendRoleSummary>>
+  // res.data.data is PageResponse<BackendRoleSummary>
+  if (res.data?.data?.items) {
+    return {
+      ...res.data,
+      data: {
+        ...res.data.data,
+        items: res.data.data.items.map(toRoleSummary),
+      },
+    };
+  }
+  
+  return res.data as ApiResponse<PageResponse<RoleSummary>>;
 };
 
 /**
  * Get admin role detail
  * GET /api/admin/roles/:roleId
+ * 
+ * Backend returns: { comRoleId, roleCode, roleName, ... }
+ * Converts to frontend format: { id, roleCode, roleName, ... }
  */
 export const getAdminRoleDetail = async (roleId: string): Promise<ApiResponse<RoleDetail>> => {
-  const res = await axiosInstance.get<ApiResponse<RoleDetail>>(`/api/admin/roles/${roleId}`);
-  return res.data;
+  const res = await axiosInstance.get<ApiResponse<BackendRoleDetail>>(`/api/admin/roles/${roleId}`);
+  
+  // Convert backend response to frontend format
+  // res.data is ApiResponse<BackendRoleDetail>
+  // res.data.data is BackendRoleDetail
+  if (res.data?.data) {
+    return {
+      ...res.data,
+      data: toRoleDetail(res.data.data),
+    };
+  }
+  
+  return res.data as ApiResponse<RoleDetail>;
 };
 
 /**
  * Create admin role
  * POST /api/admin/roles
+ * 
+ * Backend returns: { comRoleId, roleCode, roleName, ... }
+ * Converts to frontend format: { id, roleCode, roleName, ... }
  */
 export const createAdminRole = async (payload: RoleCreatePayload): Promise<ApiResponse<RoleDetail>> => {
-  const res = await axiosInstance.post<ApiResponse<RoleDetail>>('/api/admin/roles', payload);
-  return res.data;
+  const res = await axiosInstance.post<ApiResponse<BackendRoleDetail>>('/api/admin/roles', payload);
+  
+  // Convert backend response to frontend format
+  // res.data is ApiResponse<BackendRoleDetail>
+  // res.data.data is BackendRoleDetail
+  if (res.data?.data) {
+    return {
+      ...res.data,
+      data: toRoleDetail(res.data.data),
+    };
+  }
+  
+  return res.data as ApiResponse<RoleDetail>;
 };
 
 /**
  * Update admin role
  * PUT /api/admin/roles/:roleId
+ * 
+ * Backend returns: { comRoleId, roleCode, roleName, ... }
+ * Converts to frontend format: { id, roleCode, roleName, ... }
  */
 export const updateAdminRole = async (
   roleId: string,
   payload: RoleUpdatePayload
 ): Promise<ApiResponse<RoleDetail>> => {
-  const res = await axiosInstance.post<ApiResponse<RoleDetail>>(`/api/admin/roles/${roleId}`, payload);
+  const res = await axiosInstance.put<ApiResponse<BackendRoleDetail>>(`/api/admin/roles/${roleId}`, payload);
+  
+  // Convert backend response to frontend format
+  // res.data is ApiResponse<BackendRoleDetail>
+  // res.data.data is BackendRoleDetail
+  if (res.data?.data) {
+    return {
+      ...res.data,
+      data: toRoleDetail(res.data.data),
+    };
+  }
+  
+  return res.data as ApiResponse<RoleDetail>;
+};
+
+/**
+ * Disable admin role (soft delete)
+ * PUT /api/admin/roles/:roleId/disable
+ */
+export const disableAdminRole = async (roleId: string): Promise<ApiResponse<{ success: boolean }>> => {
+  const res = await axiosInstance.put<ApiResponse<{ success: boolean }>>(`/api/admin/roles/${roleId}/disable`, {});
   return res.data;
 };
 
@@ -193,12 +345,48 @@ export const deleteAdminRole = async (roleId: string): Promise<ApiResponse<{ suc
 };
 
 /**
+ * Backend role member response structure
+ */
+type BackendRoleMemberView = {
+  id: string;
+  subjectType: 'USER' | 'DEPARTMENT';
+  subjectName: string;
+  subjectCode?: string | null;
+  subjectEmail?: string | null;
+  departmentName?: string | null;
+};
+
+/**
+ * Convert backend role member to frontend RoleMemberView
+ */
+const toRoleMemberView = (backend: BackendRoleMemberView): RoleMemberView => ({
+  id: backend.id,
+  subjectType: backend.subjectType,
+  subjectName: backend.subjectName,
+  subjectCode: backend.subjectCode,
+  subjectEmail: backend.subjectEmail,
+  departmentName: backend.departmentName,
+});
+
+/**
  * Get admin role members
  * GET /api/admin/roles/:roleId/members
+ * 
+ * Backend returns: RoleMemberView[]
+ * Converts to frontend format: RoleMemberView[]
  */
-export const getAdminRoleMembers = async (roleId: string): Promise<ApiResponse<UserSummary[]>> => {
-  const res = await axiosInstance.get<ApiResponse<UserSummary[]>>(`/api/admin/roles/${roleId}/members`);
-  return res.data;
+export const getAdminRoleMembers = async (roleId: string): Promise<ApiResponse<RoleMemberView[]>> => {
+  const res = await axiosInstance.get<ApiResponse<BackendRoleMemberView[]>>(`/api/admin/roles/${roleId}/members`);
+  
+  // Convert backend response to frontend format
+  if (res.data?.data) {
+    return {
+      ...res.data,
+      data: res.data.data.map(toRoleMemberView),
+    };
+  }
+  
+  return res.data as ApiResponse<RoleMemberView[]>;
 };
 
 /**
@@ -222,22 +410,22 @@ export const updateAdminRoleMembers = async (
  */
 export const getAdminRolePermissions = async (
   roleId: string
-): Promise<ApiResponse<RolePermissionAssignmentPayload>> => {
-  const res = await axiosInstance.get<ApiResponse<RolePermissionAssignmentPayload>>(
+): Promise<ApiResponse<RolePermissionResponse>> => {
+  const res = await axiosInstance.get<ApiResponse<RolePermissionResponse>>(
     `/api/admin/roles/${roleId}/permissions`
   );
   return res.data;
 };
 
 /**
- * Update admin role permissions
+ * Update admin role permissions (bulk)
  * PUT /api/admin/roles/:roleId/permissions
  */
 export const updateAdminRolePermissions = async (
   roleId: string,
   payload: RolePermissionAssignmentPayload
 ): Promise<ApiResponse<{ success: boolean }>> => {
-  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(
+  const res = await axiosInstance.put<ApiResponse<{ success: boolean }>>(
     `/api/admin/roles/${roleId}/permissions`,
     payload
   );
@@ -320,15 +508,94 @@ export const deleteAdminResource = async (resourceId: string): Promise<ApiRespon
 };
 
 // ============================================================================
+// Menus API
+// ============================================================================
+
+/**
+ * Get admin menus tree
+ * GET /api/admin/menus/tree
+ */
+export const getAdminMenusTree = async (): Promise<ApiResponse<AdminMenuNode[]>> => {
+  const res = await axiosInstance.get<ApiResponse<AdminMenuNode[]>>('/api/admin/menus/tree');
+  return res.data;
+};
+
+/**
+ * Create admin menu
+ * POST /api/admin/menus
+ */
+export const createAdminMenu = async (payload: MenuCreatePayload): Promise<ApiResponse<AdminMenuNode>> => {
+  const res = await axiosInstance.post<ApiResponse<AdminMenuNode>>('/api/admin/menus', payload);
+  return res.data;
+};
+
+/**
+ * Update admin menu
+ * PUT /api/admin/menus/:menuId
+ */
+export const updateAdminMenu = async (
+  menuId: string,
+  payload: MenuUpdatePayload
+): Promise<ApiResponse<AdminMenuNode>> => {
+  const res = await axiosInstance.put<ApiResponse<AdminMenuNode>>(`/api/admin/menus/${menuId}`, payload);
+  return res.data;
+};
+
+/**
+ * Delete admin menu
+ * DELETE /api/admin/menus/:menuId
+ */
+export const deleteAdminMenu = async (menuId: string): Promise<ApiResponse<{ success: boolean }>> => {
+  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(`/api/admin/menus/${menuId}/delete`, {});
+  return res.data;
+};
+
+/**
+ * Reorder admin menus
+ * POST /api/admin/menus/reorder
+ */
+export const reorderAdminMenus = async (payload: MenuReorderPayload): Promise<ApiResponse<{ success: boolean }>> => {
+  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>('/api/admin/menus/reorder', payload);
+  return res.data;
+};
+
+// ============================================================================
 // Codes API
 // ============================================================================
 
 /**
- * Get code groups
+ * Get admin code groups
  * GET /api/admin/codes/groups
  */
-export const getCodeGroups = async (): Promise<ApiResponse<CodeGroup[]>> => {
-  const res = await axiosInstance.get<ApiResponse<CodeGroup[]>>('/api/admin/codes/groups');
+export const getAdminCodeGroups = async (params?: CodeGroupListParams): Promise<ApiResponse<CodeGroup[]>> => {
+  const queryParams = new URLSearchParams();
+  if (params?.keyword) queryParams.append('keyword', params.keyword);
+  if (params?.tenantScope && params.tenantScope !== 'ALL') queryParams.append('tenantScope', params.tenantScope);
+  if (params?.enabled !== undefined) queryParams.append('enabled', params.enabled.toString());
+
+  const url = `/api/admin/codes/groups${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  const res = await axiosInstance.get<ApiResponse<CodeGroup[]>>(url);
+  return res.data;
+};
+
+/**
+ * Get code groups (legacy, for backward compatibility)
+ * GET /api/admin/codes/groups
+ */
+export const getCodeGroups = async (): Promise<ApiResponse<CodeGroup[]>> => getAdminCodeGroups();
+
+/**
+ * Get admin codes
+ * GET /api/admin/codes
+ */
+export const getAdminCodes = async (params?: CodeListParams): Promise<ApiResponse<Code[]>> => {
+  const queryParams = new URLSearchParams();
+  if (params?.keyword) queryParams.append('keyword', params.keyword);
+  if (params?.tenantScope && params.tenantScope !== 'ALL') queryParams.append('tenantScope', params.tenantScope);
+  if (params?.enabled !== undefined) queryParams.append('enabled', params.enabled.toString());
+
+  const url = `/api/admin/codes${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  const res = await axiosInstance.get<ApiResponse<Code[]>>(url);
   return res.data;
 };
 
@@ -336,8 +603,14 @@ export const getCodeGroups = async (): Promise<ApiResponse<CodeGroup[]>> => {
  * Get codes by group
  * GET /api/admin/codes/:groupKey
  */
-export const getCodesByGroup = async (groupKey: string): Promise<ApiResponse<Code[]>> => {
-  const res = await axiosInstance.get<ApiResponse<Code[]>>(`/api/admin/codes/${groupKey}`);
+export const getCodesByGroup = async (groupKey: string, params?: CodeListParams): Promise<ApiResponse<Code[]>> => {
+  const queryParams = new URLSearchParams();
+  if (params?.keyword) queryParams.append('keyword', params.keyword);
+  if (params?.tenantScope && params.tenantScope !== 'ALL') queryParams.append('tenantScope', params.tenantScope);
+  if (params?.enabled !== undefined) queryParams.append('enabled', params.enabled.toString());
+
+  const url = `/api/admin/codes/${groupKey}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  const res = await axiosInstance.get<ApiResponse<Code[]>>(url);
   return res.data;
 };
 
@@ -407,5 +680,58 @@ export const updateCode = async (codeId: string, payload: CodeUpdatePayload): Pr
  */
 export const deleteCode = async (codeId: string): Promise<ApiResponse<{ success: boolean }>> => {
   const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(`/api/admin/codes/${codeId}/delete`, {});
+  return res.data;
+};
+
+// ============================================================================
+// Audit Logs API
+// ============================================================================
+
+/**
+ * Get admin audit logs
+ * GET /api/admin/audit-logs
+ */
+export const getAdminAuditLogs = async (
+  params?: AuditLogListParams
+): Promise<ApiResponse<PageResponse<AuditLogSummary>>> => {
+  const queryParams = new URLSearchParams();
+  if (params?.page) queryParams.append('page', params.page.toString());
+  if (params?.size) queryParams.append('size', params.size.toString());
+  if (params?.from) queryParams.append('from', params.from);
+  if (params?.to) queryParams.append('to', params.to);
+  if (params?.actor) queryParams.append('actor', params.actor);
+  if (params?.action) queryParams.append('action', params.action);
+  if (params?.keyword) queryParams.append('keyword', params.keyword);
+
+  const url = `/api/admin/audit-logs${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  const res = await axiosInstance.get<ApiResponse<PageResponse<AuditLogSummary>>>(url);
+  return res.data;
+};
+
+/**
+ * Get admin audit log detail
+ * GET /api/admin/audit-logs/:id
+ */
+export const getAdminAuditLogDetail = async (id: string): Promise<ApiResponse<AuditLogDetail>> => {
+  const res = await axiosInstance.get<ApiResponse<AuditLogDetail>>(`/api/admin/audit-logs/${id}`);
+  return res.data;
+};
+
+/**
+ * Export admin audit logs to Excel
+ * GET /api/admin/audit-logs/export
+ */
+export const exportAdminAuditLogs = async (params?: AuditLogListParams): Promise<Blob> => {
+  const queryParams = new URLSearchParams();
+  if (params?.from) queryParams.append('from', params.from);
+  if (params?.to) queryParams.append('to', params.to);
+  if (params?.actor) queryParams.append('actor', params.actor);
+  if (params?.action) queryParams.append('action', params.action);
+  if (params?.keyword) queryParams.append('keyword', params.keyword);
+
+  const url = `/api/admin/audit-logs/export${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  const res = await axiosInstance.get<Blob>(url, {
+    responseType: 'blob',
+  });
   return res.data;
 };

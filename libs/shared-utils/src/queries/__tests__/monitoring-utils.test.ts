@@ -183,7 +183,7 @@ describe('Monitoring Utils', () => {
         action: 'view_users',
         label: 'Admin Users 조회',
         visitorId: 'visitor-123',
-        userId: 'user-456',
+        userId: 456, // Backend uses number
         path: '/admin/users',
         metadata: { button: 'submit' },
       };

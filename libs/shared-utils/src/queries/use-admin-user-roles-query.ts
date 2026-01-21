@@ -11,10 +11,10 @@ import type { ResetPasswordPayload } from '../admin/types';
 
 /**
  * Query key for admin user roles
- * Format: ["admin", "user", tenantId, userId, "roles"]
+ * Format: ["admin", "users", "roles", tenantId, userId]
  */
 export const adminUserRolesQueryKey = (tenantId: string, userId: string) =>
-  ['admin', 'user', tenantId, userId, 'roles'] as const;
+  ['admin', 'users', 'roles', tenantId, userId] as const;
 
 /**
  * Hook to fetch admin user roles
@@ -53,8 +53,8 @@ export const useUpdateAdminUserRolesMutation = () => {
   const tenantId = getTenantId();
 
   return useMutation({
-    mutationFn: async ({ userId, roleIds }: { userId: string; roleIds: string[] }) => {
-      const res = await updateAdminUserRoles(userId, roleIds);
+    mutationFn: async ({ userId, roleIds, replace = true }: { userId: string; roleIds: string[]; replace?: boolean }) => {
+      const res = await updateAdminUserRoles(userId, { roleIds, replace });
       if (res.data?.success) {
         return res.data;
       }
@@ -62,8 +62,12 @@ export const useUpdateAdminUserRolesMutation = () => {
     },
     onSuccess: (_, variables) => {
       // Invalidate user roles and detail
-      queryClient.invalidateQueries({ queryKey: ['admin', 'user', tenantId, variables.userId, 'roles'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'user', tenantId, variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'roles', tenantId, variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'detail', tenantId, variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users', tenantId] }); // Invalidate list
+      // Invalidate permissions and menus if needed
+      queryClient.invalidateQueries({ queryKey: ['auth', 'permissions', tenantId] });
+      queryClient.invalidateQueries({ queryKey: ['auth', 'menus', tenantId] });
     },
   });
 };
@@ -85,7 +89,7 @@ export const useResetAdminUserPasswordMutation = () => {
     },
     onSuccess: (_, variables) => {
       // Invalidate user detail
-      queryClient.invalidateQueries({ queryKey: ['admin', 'user', tenantId, variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'detail', tenantId, variables.userId] });
     },
   });
 };

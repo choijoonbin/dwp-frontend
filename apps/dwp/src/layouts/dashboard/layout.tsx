@@ -1,12 +1,16 @@
 import type { Breakpoint } from '@mui/material/styles';
 
+import { useEffect } from 'react';
 import { merge } from 'es-toolkit';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import Tooltip from '@mui/material/Tooltip';
+import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
+
+import { usePathname } from 'src/routes/hooks';
 
 import { _langs, _notifications } from 'src/_mock';
 import { useThemeMode } from 'src/theme/theme-mode';
@@ -58,10 +62,30 @@ export function DashboardLayout({
   const theme = useTheme();
   const { mode, toggleMode } = useThemeMode();
 
+  const pathname = usePathname();
   const sidebarOpen = useLayoutStore((state) => state.sidebarOpen);
   const sidebarCollapsed = useLayoutStore((state) => state.sidebarCollapsed);
-  const { setSidebarOpen, toggleCollapse } = useLayoutActions();
+  const { setSidebarOpen, toggleCollapse, setSidebarCollapsed } = useLayoutActions();
   const navData = useNavData(); // 권한 기반 필터링된 메뉴 데이터
+
+  // 데스크탑 크기로 돌아가면 모바일 사이드바 자동 닫기
+  const isDesktop = useMediaQuery(theme.breakpoints.up(layoutQuery));
+  useEffect(() => {
+    if (isDesktop && sidebarOpen) {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+      setSidebarOpen(false);
+    }
+  }, [isDesktop, sidebarOpen, setSidebarOpen]);
+
+  // 라우트 변경 시 사이드바를 닫아(접고) 콘텐츠로 포커스 이동
+  useEffect(() => {
+    setSidebarOpen(false); // 모바일 드로어 닫기
+    if (isDesktop) {
+      setSidebarCollapsed(true); // 데스크탑에서도 자동 접기
+    }
+  }, [pathname, isDesktop, setSidebarOpen, setSidebarCollapsed]);
 
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = {

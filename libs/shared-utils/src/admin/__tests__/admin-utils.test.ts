@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import type { ResourceNode, RolePermissionAssignmentPayload } from '../types';
+import type { ResourceNode, RolePermissionResponse } from '../types';
 
 // ----------------------------------------------------------------------
 
@@ -57,10 +57,10 @@ const buildResourceTree = (resources: ResourceNode[]): ResourceNode[] => {
  */
 const mergeRolePermissions = (
   resources: ResourceNode[],
-  rolePermissions: RolePermissionAssignmentPayload
+  rolePermissions: RolePermissionResponse
 ): Array<{ resourceKey: string; resourceName: string; permissions: Record<string, boolean> }> => {
   const permissionMap = new Map<string, Set<string>>();
-  rolePermissions.permissions.forEach((perm) => {
+  rolePermissions.permissions.forEach((perm: { resourceKey: string; permissionCodes: string[] }) => {
     permissionMap.set(perm.resourceKey, new Set(perm.permissionCodes));
   });
 
@@ -224,7 +224,7 @@ describe('Admin Utils', () => {
         },
       ];
 
-      const rolePermissions: RolePermissionAssignmentPayload = {
+      const rolePermissions: RolePermissionResponse = {
         permissions: [
           {
             resourceKey: 'menu.one',
@@ -263,7 +263,7 @@ describe('Admin Utils', () => {
         },
       ];
 
-      const rolePermissions: RolePermissionAssignmentPayload = {
+      const rolePermissions: RolePermissionResponse = {
         permissions: [],
       };
 
@@ -300,7 +300,7 @@ describe('Admin Utils', () => {
         },
       ];
 
-      const rolePermissions: RolePermissionAssignmentPayload = {
+      const rolePermissions: RolePermissionResponse = {
         permissions: [
           {
             resourceKey: 'menu.parent',

@@ -42,9 +42,7 @@ export const useMonitoringEventsQuery = (params?: MonitoringEventsParams) => {
     queryKey: monitoringEventsQueryKey(tenantId, params),
     queryFn: async () => {
       const res = await getMonitoringEvents(params);
-      if (res.data) {
-        return res.data;
-      }
+      if (res.data) return res.data;
       throw new Error(res.message || 'Failed to fetch events');
     },
     enabled: isAuthenticated && Boolean(tenantId),

@@ -6307,12 +6307,22 @@
       },
       {
         "source": "admin",
+        "target": "shared-utils",
+        "type": "static"
+      },
+      {
+        "source": "admin",
         "target": "npm:@mui/material",
         "type": "static"
       },
       {
         "source": "admin",
-        "target": "shared-utils",
+        "target": "npm:@tanstack/react-query",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "npm:vitest",
         "type": "static"
       },
       {
@@ -6423,6 +6433,11 @@
       },
       {
         "source": "shared-utils",
+        "target": "npm:zustand",
+        "type": "static"
+      },
+      {
+        "source": "shared-utils",
         "target": "npm:@tanstack/react-query",
         "type": "static"
       },
@@ -6433,12 +6448,12 @@
       },
       {
         "source": "shared-utils",
-        "target": "npm:react-router-dom",
+        "target": "npm:@mui/material",
         "type": "static"
       },
       {
         "source": "shared-utils",
-        "target": "npm:zustand",
+        "target": "npm:react-router-dom",
         "type": "static"
       }
     ],
@@ -14246,5 +14261,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1768818126674
+  "computedAt": 1768989412897
 }

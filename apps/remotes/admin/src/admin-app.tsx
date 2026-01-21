@@ -1,11 +1,13 @@
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
-import { AuditPage } from './pages/audit';
-import { UsersPage } from './pages/users';
-import { RolesPage } from './pages/roles';
-import { CodesPage } from './pages/codes';
-import { ResourcesPage } from './pages/resources';
-import { MonitoringPage } from './pages/monitoring';
+import { AuditPage } from './pages/audit/page';
+import { CodesPage } from './pages/codes/page';
+import { RolesPage } from './pages/roles/page';
+import { MenusPage } from './pages/menus/page';
+import { UsersPage } from './pages/users/index';
+import { ResourcesPage } from './pages/resources/page';
+import { MonitoringPage } from './pages/monitoring/page';
+import { CodeUsagesPage } from './pages/code-usages/page';
 
 // ----------------------------------------------------------------------
 
@@ -20,10 +22,11 @@ export const AdminApp = ({ standalone = false }: { standalone?: boolean }) => {
       <Route path="monitoring" element={<MonitoringPage />} />
       <Route path="users" element={<UsersPage />} />
       <Route path="roles" element={<RolesPage />} />
+      <Route path="menus" element={<MenusPage />} />
       <Route path="resources" element={<ResourcesPage />} />
       <Route path="codes" element={<CodesPage />} />
+      <Route path="code-usages" element={<CodeUsagesPage />} />
       <Route path="audit" element={<AuditPage />} />
-      <Route index element={<MonitoringPage />} />
     </Routes>
   );
 

@@ -1,16 +1,19 @@
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
 import { varAlpha } from 'minimal-shared/utils';
-import { useEffect, useState, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
-import ListItem from '@mui/material/ListItem';
+import Popover from '@mui/material/Popover';
 import Collapse from '@mui/material/Collapse';
+import MenuList from '@mui/material/MenuList';
+import ListItem from '@mui/material/ListItem';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import ListSubheader from '@mui/material/ListSubheader';
 import ListItemButton from '@mui/material/ListItemButton';
 import Drawer, { drawerClasses } from '@mui/material/Drawer';
+import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { usePathname } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
@@ -58,6 +61,7 @@ export function NavDesktop({
         width: 'var(--layout-nav-current-width)',
         borderRight: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
         transition: theme.transitions.create(['width']),
+        overflow: 'visible',
         ...(collapsed && {
           alignItems: 'center',
         }),
@@ -67,7 +71,16 @@ export function NavDesktop({
         ...sx,
       }}
     >
-      <NavContent data={data} slots={slots} workspaces={workspaces} collapsed={collapsed} />
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
+      >
+        <NavContent data={data} slots={slots} workspaces={workspaces} collapsed={collapsed} />
+      </Box>
 
       <IconButton
         onClick={onToggleCollapse}
@@ -111,10 +124,18 @@ export function NavMobile({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  const handleClose = (event: React.SyntheticEvent | {}, reason?: string) => {
+    // Drawer가 닫히기 전에 포커스를 제거하여 접근성 경고 방지
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    onClose();
+  };
+
   return (
     <Drawer
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       sx={{
         [`& .${drawerClasses.paper}`]: {
           pt: 2.5,
@@ -161,60 +182,200 @@ const NavItemComponent = ({
   openStates: Map<string, boolean>;
   onToggleOpen: (key: string) => void;
 }) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const popoverPaperRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLDivElement | null>(null); // Ref for collapsed button
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const hasChildren = item.children && item.children.length > 0;
   const isActive = item.path === pathname;
   const hasActive = hasActiveChild(item, pathname);
   const isOpen = openStates.get(item.title) ?? hasActive; // Auto-open if has active child
+  const popoverOpen = Boolean(anchorEl);
 
-  // If collapsed, don't show children
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    if (hasChildren) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      // Use buttonRef if collapsed, otherwise use event.currentTarget
+      const target = collapsed && buttonRef.current ? buttonRef.current : event.currentTarget;
+      setAnchorEl(target);
+    }
+  };
+
+  const handlePopoverClose = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setAnchorEl(null);
+      timeoutRef.current = null;
+    }, 100);
+  };
+
+  const handlePopoverEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  };
+
+  const handleClose = () => {
+    const activeEl = document.activeElement as HTMLElement | null;
+    if (activeEl) {
+      if (popoverPaperRef.current?.contains(activeEl)) {
+        activeEl.blur();
+      } else if (anchorEl?.contains(activeEl)) {
+        activeEl.blur();
+      }
+    }
+    setAnchorEl(null);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  };
+
+  // If collapsed, show popover for items with children
   if (collapsed) {
     return (
-      <ListItem disableGutters disablePadding>
-        <ListItemButton
-          disableGutters
-          component={RouterLink}
-          href={item.path}
-          sx={[
-            (theme) => ({
-              py: 0,
-              px: 0,
-              gap: 0.25,
-              width: 79,
-              height: 58,
-              minHeight: 58,
-              flexDirection: 'column',
-              justifyContent: 'center',
-              borderRadius: 0.75,
-              typography: 'body2',
-              fontWeight: 'fontWeightMedium',
-              color: theme.vars.palette.text.secondary,
-              ...(isActive && {
-                fontWeight: 'fontWeightSemiBold',
-                color: theme.vars.palette.primary.main,
-                bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
-              }),
-            }),
-          ]}
+      <>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: 79,
+            mx: 'auto',
+          }}
         >
-          <Box component="span" sx={{ width: 24, height: 24, flexShrink: 0 }}>
-            {item.icon}
-          </Box>
-          <Box
-            component="span"
-            sx={{
-              fontSize: 10,
-              fontWeight: 'fontWeightSemiBold',
-              lineHeight: '16px',
-              textAlign: 'center',
-              width: 1,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
+          <ListItemButton
+            disableGutters
+            component={hasChildren ? 'div' : RouterLink}
+            href={hasChildren ? undefined : item.path}
+            onClick={hasChildren ? handlePopoverOpen : undefined}
+            onMouseEnter={hasChildren ? handlePopoverOpen : undefined}
+            onMouseLeave={hasChildren ? handlePopoverClose : undefined}
+            sx={[
+              (theme) => ({
+                py: 0,
+                px: 0,
+                gap: 0.25,
+                width: 79,
+                height: 58,
+                minHeight: 58,
+                flexDirection: 'column',
+                justifyContent: 'center',
+                borderRadius: 0.75,
+                typography: 'body2',
+                fontWeight: 'fontWeightMedium',
+                color: theme.vars.palette.text.secondary,
+                ...(isActive && {
+                  fontWeight: 'fontWeightSemiBold',
+                  color: theme.vars.palette.primary.main,
+                  bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+                }),
+              }),
+            ]}
           >
-            {item.title}
-          </Box>
-        </ListItemButton>
-      </ListItem>
+            <Box component="span" sx={{ width: 24, height: 24, flexShrink: 0 }}>
+              {item.icon}
+            </Box>
+            <Box
+              component="span"
+              sx={{
+                fontSize: 10,
+                fontWeight: 'fontWeightSemiBold',
+                lineHeight: '16px',
+                textAlign: 'center',
+                width: 1,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {item.title}
+            </Box>
+          </ListItemButton>
+        </Box>
+
+        {hasChildren && (
+          <Popover
+            open={popoverOpen}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+            slotProps={{
+              paper: {
+                ref: popoverPaperRef,
+                onMouseEnter: handlePopoverEnter,
+                onMouseLeave: handlePopoverClose,
+                sx: {
+                  mt: 0.5,
+                  ml: 1,
+                  minWidth: 200,
+                  boxShadow: (theme) => theme.shadows[8],
+                  pointerEvents: 'auto',
+                },
+              },
+            }}
+            sx={{
+              pointerEvents: 'none',
+            }}
+            hideBackdrop
+            disableScrollLock
+            disableAutoFocus
+            disableEnforceFocus
+            disableRestoreFocus
+          >
+            <MenuList
+              disablePadding
+              sx={{
+                p: 0.5,
+                gap: 0.5,
+                display: 'flex',
+                flexDirection: 'column',
+                [`& .${menuItemClasses.root}`]: {
+                  px: 1.5,
+                  py: 1,
+                  gap: 1.5,
+                  borderRadius: 0.75,
+                  color: 'text.secondary',
+                  '&:hover': { color: 'text.primary' },
+                  [`&.${menuItemClasses.selected}`]: {
+                    color: 'text.primary',
+                    bgcolor: 'action.selected',
+                    fontWeight: 'fontWeightSemiBold',
+                  },
+                },
+              }}
+            >
+              {item.children!.map((child) => {
+                const childIsActive = child.path === pathname;
+                return (
+                  <MenuItem
+                    key={child.title}
+                    component={RouterLink}
+                    href={child.path}
+                    selected={childIsActive}
+                    onClick={handlePopoverClose}
+                  >
+                    {child.icon && (
+                      <Box component="span" sx={{ width: 20, height: 20, flexShrink: 0 }}>
+                        {child.icon}
+                      </Box>
+                    )}
+                    <Box component="span" sx={{ flexGrow: 1 }}>
+                      {child.title}
+                    </Box>
+                  </MenuItem>
+                );
+              })}
+            </MenuList>
+          </Popover>
+        )}
+      </>
     );
   }
 
@@ -279,18 +440,18 @@ const NavItemComponent = ({
 
       {hasChildren && (
         <Collapse in={isOpen} timeout="auto" unmountOnExit>
-          <Box
-            component="ul"
-            sx={{
-              gap: 0.5,
-              display: 'flex',
-              flexDirection: 'column',
-              padding: 0,
-              margin: 0,
-              listStyle: 'none',
-              pl: 4, // Indent children
-            }}
-          >
+              <Box
+                component="ul"
+                sx={{
+                  gap: 0.5,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: 0,
+                  margin: 0,
+                  listStyle: 'none',
+                  pl: collapsed ? 0 : 4, // Indent children only when expanded
+                }}
+              >
             {item.children!.map((child) => (
               <NavItemComponent
                 key={child.title}
@@ -374,11 +535,13 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
         sx={{
           pt: 2.5,
           pb: 1,
-          px: collapsed ? 0.5 : 2.5,
-          transition: (theme) => theme.transitions.create(['padding']),
+          px: collapsed ? 0 : 2.5,
+          display: 'flex',
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          transition: (theme) => theme.transitions.create(['padding', 'justify-content']),
         }}
       >
-        <Logo sx={{ ml: collapsed ? 0.5 : 0 }} />
+        <Logo sx={{ ml: 0 }} />
       </Box>
 
       {slots?.topArea}
@@ -394,6 +557,7 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
               flexDirection: 'column',
               px: collapsed ? 0.5 : 2.5,
               transition: (theme) => theme.transitions.create(['padding']),
+              overflow: 'hidden',
             },
             ...(Array.isArray(sx) ? sx : [sx]),
           ]}

@@ -4,7 +4,7 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getAdminRoleMembers, updateAdminRoleMembers } from '../api/admin-iam-api';
 
-import type { UserSummary, RoleMemberAssignmentPayload } from '../admin/types';
+import type { RoleMemberAssignmentPayload } from '../admin/types';
 
 // ----------------------------------------------------------------------
 
@@ -62,6 +62,9 @@ export const useUpdateAdminRoleMembersMutation = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'role', tenantId, variables.roleId, 'members'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'role', tenantId, variables.roleId] });
+      // Invalidate auth queries for immediate reflection in sidebar and permissions
+      queryClient.invalidateQueries({ queryKey: ['auth', 'menus', 'tree', tenantId] });
+      queryClient.invalidateQueries({ queryKey: ['auth', 'permissions', tenantId] });
     },
   });
 };

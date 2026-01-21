@@ -8,6 +8,7 @@ import {
   createAdminRole,
   updateAdminRole,
   deleteAdminRole,
+  disableAdminRole,
 } from '../api/admin-iam-api';
 
 import type { RoleListParams, RoleCreatePayload, RoleUpdatePayload, PageResponse, RoleDetail } from '../admin/types';
@@ -143,6 +144,27 @@ export const useDeleteAdminRoleMutation = () => {
         return res.data;
       }
       throw new Error(res.message || 'Failed to delete role');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'roles', tenantId] });
+    },
+  });
+};
+
+/**
+ * Hook to disable admin role (soft delete)
+ */
+export const useDisableAdminRoleMutation = () => {
+  const queryClient = useQueryClient();
+  const tenantId = getTenantId();
+
+  return useMutation({
+    mutationFn: async (roleId: string) => {
+      const res = await disableAdminRole(roleId);
+      if (res.data?.success) {
+        return res.data;
+      }
+      throw new Error(res.message || 'Failed to disable role');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'roles', tenantId] });

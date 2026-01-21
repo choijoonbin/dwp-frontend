@@ -4,7 +4,7 @@ import { mergeClasses } from 'minimal-shared/utils';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 
 import { logoClasses } from './classes';
 
@@ -23,52 +23,62 @@ export function Logo({
   isSingle = true,
   ...other
 }: LogoProps) {
-  const theme = useTheme();
-
   const singleLogo = (
     <Box
       sx={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
+        width: 40,
+        height: 40,
+        borderRadius: 1.5,
         display: 'flex',
-        alignItems: 'stretch',
-        justifyContent: 'stretch',
-        padding: 0,
-        margin: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'primary.main',
+        color: 'primary.contrastText',
+        fontWeight: 'bold',
+        fontSize: '1.25rem',
+        transition: 'all 0.3s ease',
       }}
     >
-      <Box
-        component="img"
-        src="/assets/images/dwp.png"
-        alt="DWP Logo"
-        sx={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          position: 'relative',
-          zIndex: 1,
-          transition: 'opacity 0.3s ease',
-          padding: 0,
-          margin: 0,
-        }}
-      />
-      {/* 테마 primary 색상을 반영하는 오버레이 */}
-      <Box
-        sx={{
-          position: 'absolute',
-          inset: 0,
-          background: `linear-gradient(135deg, ${theme.vars.palette.primary.main}20, ${theme.vars.palette.primary.light}15)`,
-          mixBlendMode: 'multiply',
-          zIndex: 2,
-          pointerEvents: 'none',
-          transition: 'background 0.3s ease',
-        }}
-      />
+      M
     </Box>
   );
 
-  const fullLogo = singleLogo;
+  const fullLogo = (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1,
+      }}
+    >
+      <Box
+        sx={{
+          width: 32,
+          height: 32,
+          borderRadius: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: 'primary.main',
+          color: 'primary.contrastText',
+          fontWeight: 'bold',
+          fontSize: '1rem',
+        }}
+      >
+        D
+      </Box>
+      <Box
+        component="span"
+        sx={{
+          fontWeight: 'bold',
+          fontSize: '1.25rem',
+          color: 'text.primary',
+        }}
+      >
+        DWP
+      </Box>
+    </Box>
+  );
 
   return (
     <LogoRoot

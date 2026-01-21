@@ -44,9 +44,7 @@ export const useMonitoringPageViewsQuery = (params?: MonitoringListParams) => {
     queryKey: monitoringPageViewsQueryKey(tenantId, params),
     queryFn: async () => {
       const res = await getMonitoringPageViews(params);
-      if (res.data) {
-        return res.data;
-      }
+      if (res.data) return res.data;
       throw new Error(res.message || 'Failed to fetch page views');
     },
     enabled: isAuthenticated && Boolean(tenantId),

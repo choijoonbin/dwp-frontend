@@ -24,7 +24,7 @@ type PermissionRouteGuardProps = {
 export const PermissionRouteGuard = ({
   resource,
   permission = 'VIEW',
-  redirectTo = '/',
+  redirectTo = '/403',
   children,
 }: PermissionRouteGuardProps) => {
   const navigate = useNavigate();

@@ -40,9 +40,7 @@ export const useMonitoringVisitorsQuery = (params?: MonitoringVisitorsParams) =>
     queryKey: monitoringVisitorsQueryKey(tenantId, params),
     queryFn: async () => {
       const res = await getMonitoringVisitors(params);
-      if (res.data) {
-        return res.data;
-      }
+      if (res.data) return res.data;
       throw new Error(res.message || 'Failed to fetch visitors');
     },
     enabled: isAuthenticated && Boolean(tenantId),
