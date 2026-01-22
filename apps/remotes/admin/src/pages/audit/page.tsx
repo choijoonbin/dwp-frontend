@@ -139,6 +139,7 @@ const AuditPageContent = () => {
 
   return (
     <Box
+      data-testid="page-admin-audit"
       sx={{
         p: 3,
         height: '100%',

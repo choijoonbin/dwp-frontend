@@ -3,8 +3,8 @@
 import type { PageResponse , AuditLogSummary } from '@dwp-frontend/shared-utils';
 
 import { memo } from 'react';
-import { Iconify } from '@dwp-frontend/design-system';
 import { ApiErrorAlert } from '@dwp-frontend/shared-utils';
+import { Iconify, EmptyState } from '@dwp-frontend/design-system';
 
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -70,9 +70,11 @@ export const AuditLogsTable = memo(({
           ))}
         {!isLoading && (!data || data.items.length === 0) && (
           <Card sx={{ p: 3 }}>
-            <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
-              데이터가 없습니다.
-            </Typography>
+            <EmptyState
+              icon="solar:document-text-outline"
+              title="감사 로그가 없습니다"
+              description="검색 조건을 변경하거나 기간을 확대해보세요."
+            />
           </Card>
         )}
         {!isLoading &&
@@ -158,11 +160,13 @@ export const AuditLogsTable = memo(({
                 </TableRow>
               ))
             ) : !data || data.items.length === 0 ? (
-              <TableRow sx={{ height: 120 }}>
+              <TableRow sx={{ height: 200 }}>
                 <TableCell colSpan={6} align="center">
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    데이터가 없습니다.
-                  </Typography>
+                  <EmptyState
+                    icon="solar:document-text-outline"
+                    title="감사 로그가 없습니다"
+                    description="검색 조건을 변경하거나 기간을 확대해보세요."
+                  />
                 </TableCell>
               </TableRow>
             ) : (
