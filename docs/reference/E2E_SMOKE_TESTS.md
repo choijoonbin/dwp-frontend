@@ -445,10 +445,86 @@ await page.waitForTimeout(1000); // flaky!
 
 ---
 
+## 향후 작업 (Future Work / TODO)
+
+E2E 테스트 시스템을 더욱 강화하기 위한 계획입니다. **Admin 메뉴 개발 완료 후 착수 예정**입니다.
+
+### 📋 Option 2: E2E 테스트 확장
+
+**우선순위**: Medium  
+**예상 기간**: 6~8주
+
+#### 작업 목록
+
+1. **인증 플로우 테스트** (1주)
+   - `storageState` 기반 로그인 구현
+   - 로그인 성공/실패 시나리오
+   - 세션 만료 처리
+
+2. **CRUD 시나리오 테스트** (2주)
+   - Users/Roles/Resources CRUD 시나리오
+   - Form validation 테스트
+   - 에러 핸들링 테스트
+
+3. **반응형 테스트 강화** (1주)
+   - Mobile viewport에서 핵심 시나리오 검증
+   - Hamburger 메뉴, Drawer, Table overflow 테스트
+
+4. **Visual Regression Testing** (선택사항, 1주)
+   - `toHaveScreenshot()` 활용
+   - 주요 페이지 baseline 생성
+   - UI 변경 감지
+
+---
+
+### 📋 Option 3: CI/CD 통합
+
+**우선순위**: Medium  
+**예상 기간**: 2~3주
+
+#### 작업 목록
+
+1. **GitHub Actions 기본 설정** (3일)
+   - `.github/workflows/e2e.yml` 생성
+   - PR/Push 시 자동 실행
+   - HTML 리포트 아티팩트 업로드
+
+2. **CI 환경 최적화** (1주)
+   - 병렬 실행 (`workers: 2`)
+   - Playwright 브라우저 캐싱
+   - 실패 시 Slack/Teams 알림
+
+3. **Merge Blocking** (3일)
+   - Branch protection rules 설정
+   - E2E 실패 시 PR Merge 방지
+
+4. **테스트 실행 최적화** (1주)
+   - PR: 스모크 테스트만 (빠른 피드백)
+   - main Merge: 전체 E2E (완전한 검증)
+
+---
+
+### 📅 구현 스케줄 (제안)
+
+| 작업 | 우선순위 | 예상 기간 | 시작 조건 |
+|------|---------|-----------|-----------|
+| 인증 플로우 테스트 | High | 1주 | Admin 메뉴 개발 80% 완료 |
+| GitHub Actions 기본 설정 | High | 3일 | 인증 플로우 완료 |
+| CRUD 시나리오 테스트 | Medium | 2주 | Admin 메뉴 개발 100% 완료 |
+| CI 환경 최적화 | Medium | 1주 | GitHub Actions 완료 |
+| 반응형 테스트 강화 | Medium | 1주 | CRUD 시나리오 완료 |
+| Visual Regression | Low | 1주 | 팀 합의 필요 |
+
+**총 예상 기간**: 약 6~8주 (병렬 작업 가능)
+
+---
+
 ## 참고 문서
 
 - **[testid 표준](./E2E_TESTID_STANDARD.md)**: data-testid 네이밍 규칙
 - **[Playwright 공식 문서](https://playwright.dev/)**: Best Practices
+- **[Playwright 인증](https://playwright.dev/docs/auth)**: storageState 활용법
+- **[Playwright CI](https://playwright.dev/docs/ci)**: GitHub Actions 설정
 - **[Design System 마이그레이션](./DESIGN_SYSTEM_MIGRATION.md)**: Admin 페이지 개선 로드맵
 
 ---
