@@ -39,871 +39,6 @@
   "nxJsonPlugins": [],
   "fileMap": {
     "projectFileMap": {
-      "dwp": [
-        {
-          "file": "apps/dwp/index.html",
-          "hash": "17939470793331178914"
-        },
-        {
-          "file": "apps/dwp/project.json",
-          "hash": "13145188762207839363"
-        },
-        {
-          "file": "apps/dwp/src/_mock/_data.ts",
-          "hash": "17516849546646886115"
-        },
-        {
-          "file": "apps/dwp/src/_mock/_mock.ts",
-          "hash": "18016325097605325893"
-        },
-        {
-          "file": "apps/dwp/src/_mock/index.ts",
-          "hash": "6506261413655350933"
-        },
-        {
-          "file": "apps/dwp/src/app.tsx",
-          "hash": "4834641680956772670",
-          "deps": [
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/admin-module.tsx",
-          "hash": "16383451014523006977",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            [
-              "admin",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/action-execution-view.tsx",
-          "hash": "15892573304301124896",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/aura-floating-button.tsx",
-          "hash": "7561505876423508032",
-          "deps": [
-            "npm:react",
-            "npm:@emotion/react",
-            "npm:framer-motion",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/aura-mini-overlay.tsx",
-          "hash": "13326399996555465884",
-          "deps": [
-            "npm:react",
-            "npm:framer-motion",
-            "npm:react-router-dom",
-            "shared-utils",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/checkpoint-approval.tsx",
-          "hash": "4759948311027316760",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/confidence-score.tsx",
-          "hash": "5382721197565988025",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/contextual-bridge.tsx",
-          "hash": "3159488935626488347",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/dynamic-plan-board.tsx",
-          "hash": "1049363385434138860",
-          "deps": [
-            "npm:react",
-            "npm:framer-motion",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/hitl-approval-dialog.tsx",
-          "hash": "16775678529470342742",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/index.ts",
-          "hash": "5940866430217232571"
-        },
-        {
-          "file": "apps/dwp/src/components/aura/live-execution-log.tsx",
-          "hash": "650096683322132817",
-          "deps": [
-            "npm:react",
-            "npm:framer-motion",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/reasoning-timeline.tsx",
-          "hash": "4397739473768280162",
-          "deps": [
-            "npm:framer-motion",
-            "npm:@mui/material",
-            "npm:@mui/lab",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/result-viewer.tsx",
-          "hash": "3368819405240586856",
-          "deps": [
-            "npm:react-syntax-highlighter",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/stream-status-banner.tsx",
-          "hash": "6478238734704118856",
-          "deps": [
-            "shared-utils",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/thought-chain-ui.tsx",
-          "hash": "13664718832243213284",
-          "deps": [
-            "npm:framer-motion",
-            "npm:@mui/material",
-            "npm:@mui/lab",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/auth-unauthorized-handler.tsx",
-          "hash": "17589962539829081599",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/dev/stream-debug-panel.tsx",
-          "hash": "18059672267929630503",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/config-global.ts",
-          "hash": "12247388983537652361"
-        },
-        {
-          "file": "apps/dwp/src/features/health/main-api-health.tsx",
-          "hash": "8218355380706185858",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/hooks/use-event-tracking.ts",
-          "hash": "3584299566675493023",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/hooks/use-page-context.ts",
-          "hash": "640832127419751661",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/hooks/use-page-view-tracking.ts",
-          "hash": "11364417962088409237",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/hooks/use-standard-event-tracking.ts",
-          "hash": "1193356159292536991",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/auth/content.tsx",
-          "hash": "11261511144900465333",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/auth/index.ts",
-          "hash": "14949631564904057172"
-        },
-        {
-          "file": "apps/dwp/src/layouts/auth/layout.tsx",
-          "hash": "1270160781522937438",
-          "deps": [
-            "npm:@mui/material",
-            "npm:es-toolkit",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/account-popover.tsx",
-          "hash": "17827062424535331063",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/language-popover.tsx",
-          "hash": "10575808279056560114",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/menu-button.tsx",
-          "hash": "9655052205209790269",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/notifications-popover.tsx",
-          "hash": "3641936837165092944",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/searchbar.tsx",
-          "hash": "1614962610749124620",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/workspaces-popover.tsx",
-          "hash": "1960571670775057978",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/classes.ts",
-          "hash": "13461343996066069017",
-          "deps": [
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/css-vars.ts",
-          "hash": "1936802271280533196",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/header-section.tsx",
-          "hash": "17035361679034219890",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/index.ts",
-          "hash": "5087516577530814711"
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/layout-section.tsx",
-          "hash": "13136056995460256400",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/main-section.tsx",
-          "hash": "3013228332482591838",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/dashboard/content.tsx",
-          "hash": "8145305273693180430",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/dashboard/css-vars.ts",
-          "hash": "16816562538749029631",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/dashboard/index.ts",
-          "hash": "14949631564904057172"
-        },
-        {
-          "file": "apps/dwp/src/layouts/dashboard/layout.tsx",
-          "hash": "16930374815127537512",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:es-toolkit",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/dashboard/nav.tsx",
-          "hash": "12813774598403120167",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared",
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/nav-config-account.tsx",
-          "hash": "11889568017455973688",
-          "deps": [
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/nav-config-dashboard.tsx",
-          "hash": "6805364892269038820",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/nav-config-workspace.tsx",
-          "hash": "11427639975396272078"
-        },
-        {
-          "file": "apps/dwp/src/main.tsx",
-          "hash": "10700730853833826691",
-          "deps": [
-            "design-system",
-            "npm:react",
-            "npm:react-dom",
-            "shared-utils",
-            "npm:@tanstack/react-query",
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/admin.tsx",
-          "hash": "1722109046239665873",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/ai-workspace.tsx",
-          "hash": "6045114944755894222",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/aiworkspace/components/chat-panel.tsx",
-          "hash": "18277377709303311324",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/aiworkspace/components/workspace-tabs.tsx",
-          "hash": "18115013196544311394",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/aiworkspace/data/mock.ts",
-          "hash": "13160087569498470411"
-        },
-        {
-          "file": "apps/dwp/src/pages/aiworkspace/hooks/use-ai-workspace.ts",
-          "hash": "7817018467394678628",
-          "deps": [
-            "npm:react-router-dom",
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/aiworkspace/index.tsx",
-          "hash": "17806112945352007916",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/approval.tsx",
-          "hash": "9605123761036599757",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/blog.tsx",
-          "hash": "1785499431979978527"
-        },
-        {
-          "file": "apps/dwp/src/pages/chat.tsx",
-          "hash": "7616940309384708320",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/dashboard.tsx",
-          "hash": "1372780784462429009"
-        },
-        {
-          "file": "apps/dwp/src/pages/forgot-password.tsx",
-          "hash": "17335882303296048313"
-        },
-        {
-          "file": "apps/dwp/src/pages/mail.tsx",
-          "hash": "2397008715153872271",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/page-403.tsx",
-          "hash": "7271543994477914562",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/page-not-found.tsx",
-          "hash": "10801249517891335229"
-        },
-        {
-          "file": "apps/dwp/src/pages/products.tsx",
-          "hash": "11588341766245236050"
-        },
-        {
-          "file": "apps/dwp/src/pages/sign-in.tsx",
-          "hash": "477289466726758334"
-        },
-        {
-          "file": "apps/dwp/src/pages/sso-callback.tsx",
-          "hash": "15805976494171231860",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/user.tsx",
-          "hash": "2962921500561663848"
-        },
-        {
-          "file": "apps/dwp/src/routes/components/error-boundary.tsx",
-          "hash": "3467631826434846023",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/routes/components/index.ts",
-          "hash": "14077486825246220324"
-        },
-        {
-          "file": "apps/dwp/src/routes/components/router-link.tsx",
-          "hash": "9002064305839295676",
-          "deps": [
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/routes/sections.tsx",
-          "hash": "11380676219236893952",
-          "deps": [
-            "npm:react-router",
-            "npm:react",
-            "npm:minimal-shared",
-            "shared-utils",
-            "npm:react-router-dom",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/auth/forgot-password-view.tsx",
-          "hash": "723429468145224521",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/auth/index.ts",
-          "hash": "4418163381307047449"
-        },
-        {
-          "file": "apps/dwp/src/sections/auth/sign-in-view.tsx",
-          "hash": "873321504818077950",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "shared-utils",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/blog/post-item.tsx",
-          "hash": "7671663693039074327",
-          "deps": [
-            "npm:@mui/material",
-            "design-system",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/blog/post-search.tsx",
-          "hash": "2119049056461996884",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/blog/post-sort.tsx",
-          "hash": "17863412850096876051",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/blog/view/blog-view.tsx",
-          "hash": "13360796096814840131",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/blog/view/index.ts",
-          "hash": "5572359074980122273"
-        },
-        {
-          "file": "apps/dwp/src/sections/error/index.ts",
-          "hash": "2389369739966198623"
-        },
-        {
-          "file": "apps/dwp/src/sections/error/not-found-view.tsx",
-          "hash": "1661229755210852967",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-conversion-rates.tsx",
-          "hash": "6553502212912116683",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-current-subject.tsx",
-          "hash": "8829776651043400195",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-current-visits.tsx",
-          "hash": "18090240928036565697",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-news.tsx",
-          "hash": "15607822576922029777",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-order-timeline.tsx",
-          "hash": "12521163253466782820",
-          "deps": [
-            "npm:@mui/material",
-            "npm:@mui/lab"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-tasks.tsx",
-          "hash": "15420493741691172678",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-traffic-by-site.tsx",
-          "hash": "94121086466098684",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-website-visits.tsx",
-          "hash": "11017110401795957946",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-widget-summary.tsx",
-          "hash": "909541773952907885",
-          "deps": [
-            "npm:@mui/material",
-            "design-system",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/view/index.ts",
-          "hash": "16971434275731120297"
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/view/overview-analytics-view.tsx",
-          "hash": "8203919796011283916",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/product/product-cart-widget.tsx",
-          "hash": "8009422912028964918",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/product/product-filters.tsx",
-          "hash": "1188729325832786235",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/product/product-item.tsx",
-          "hash": "14067644666693004039",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/product/product-sort.tsx",
-          "hash": "7478271692970035114",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/product/view/index.ts",
-          "hash": "13072221893633259543"
-        },
-        {
-          "file": "apps/dwp/src/sections/product/view/products-view.tsx",
-          "hash": "15414312102191470337",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/table-empty-rows.tsx",
-          "hash": "603188706689913186",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/table-no-data.tsx",
-          "hash": "8343605928413013690",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/user-table-head.tsx",
-          "hash": "5167769533827516407",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/user-table-row.tsx",
-          "hash": "1728665887081168928",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/user-table-toolbar.tsx",
-          "hash": "2567035527539520465",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/utils.ts",
-          "hash": "18257741819385300827"
-        },
-        {
-          "file": "apps/dwp/src/sections/user/view/index.ts",
-          "hash": "13872062710550448634"
-        },
-        {
-          "file": "apps/dwp/src/sections/user/view/user-view.tsx",
-          "hash": "11522250744877361344",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/store/use-aura-store.ts",
-          "hash": "9250283369171839773",
-          "deps": [
-            "npm:zustand"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/store/use-layout-store.ts",
-          "hash": "2200331581096022741",
-          "deps": [
-            "npm:zustand"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/utils/format-number.ts",
-          "hash": "636866426588155976"
-        },
-        {
-          "file": "apps/dwp/src/utils/format-time.ts",
-          "hash": "9037868006219558892",
-          "deps": [
-            "npm:dayjs"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/vite-env.d.ts",
-          "hash": "10470006326540176307"
-        }
-      ],
       "admin": [
         {
           "file": "apps/remotes/admin/index.html",
@@ -2031,423 +1166,869 @@
           ]
         }
       ],
-      "shared-utils": [
+      "dwp": [
         {
-          "file": "libs/shared-utils/project.json",
-          "hash": "1291154405272111591"
+          "file": "apps/dwp/index.html",
+          "hash": "17939470793331178914"
         },
         {
-          "file": "libs/shared-utils/src/admin/__tests__/admin-utils.test.ts",
-          "hash": "13612121270860402833",
+          "file": "apps/dwp/project.json",
+          "hash": "13145188762207839363"
+        },
+        {
+          "file": "apps/dwp/src/_mock/_data.ts",
+          "hash": "17516849546646886115"
+        },
+        {
+          "file": "apps/dwp/src/_mock/_mock.ts",
+          "hash": "18016325097605325893"
+        },
+        {
+          "file": "apps/dwp/src/_mock/index.ts",
+          "hash": "6506261413655350933"
+        },
+        {
+          "file": "apps/dwp/src/app.tsx",
+          "hash": "4834641680956772670",
           "deps": [
-            "npm:vitest"
+            "npm:react",
+            "design-system"
           ]
         },
         {
-          "file": "libs/shared-utils/src/admin/__tests__/code-utils.test.ts",
-          "hash": "2611829214683652260"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/__tests__/event-actions.test.ts",
-          "hash": "4998784353112432378"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/__tests__/role-permission-matrix.test.ts",
-          "hash": "10008183034281037857",
+          "file": "apps/dwp/src/components/admin-module.tsx",
+          "hash": "16383451014523006977",
           "deps": [
-            "npm:vitest"
+            "npm:react",
+            "npm:@mui/material",
+            [
+              "admin",
+              "dynamic"
+            ]
           ]
         },
         {
-          "file": "libs/shared-utils/src/admin/code-utils.ts",
-          "hash": "13966185139560428368"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/event-actions.ts",
-          "hash": "14692312300542130251"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/form-validation.ts",
-          "hash": "885598105731993276"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/role-permission-matrix-utils.ts",
-          "hash": "3425494788422999206"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/types.ts",
-          "hash": "1628274534912051394"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/__tests__/sse-parser.test.ts",
-          "hash": "11196611739922345341",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/agent/__tests__/stream-status.test.ts",
-          "hash": "15174029235037669908"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/agent-session.ts",
-          "hash": "17822230008107950167"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/context-util.ts",
-          "hash": "3695356138661456911"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/hitl-api.ts",
-          "hash": "12497076655583257328"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/stream-status.ts",
-          "hash": "17274434232435623383"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/stream-store.ts",
-          "hash": "16645354225238575841",
-          "deps": [
-            "npm:zustand"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/agent/use-agent-stream.ts",
-          "hash": "17206942562429868454",
-          "deps": [
-            "npm:@tanstack/react-query",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/api/__tests__/api-error-handler.test.ts",
-          "hash": "17187031085165598186",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/api/admin-iam-api.ts",
-          "hash": "227775049419856632"
-        },
-        {
-          "file": "libs/shared-utils/src/api/api-error-alert.tsx",
-          "hash": "4375536377768195864",
+          "file": "apps/dwp/src/components/aura/action-execution-view.tsx",
+          "hash": "15892573304301124896",
           "deps": [
             "npm:@mui/material"
           ]
         },
         {
-          "file": "libs/shared-utils/src/api/api-error-handler.tsx",
-          "hash": "18085865775483147317"
+          "file": "apps/dwp/src/components/aura/aura-floating-button.tsx",
+          "hash": "7561505876423508032",
+          "deps": [
+            "npm:react",
+            "npm:@emotion/react",
+            "npm:framer-motion",
+            "npm:@mui/material"
+          ]
         },
         {
-          "file": "libs/shared-utils/src/api/auth-api.ts",
-          "hash": "7276677798576439407"
+          "file": "apps/dwp/src/components/aura/aura-mini-overlay.tsx",
+          "hash": "13326399996555465884",
+          "deps": [
+            "npm:react",
+            "npm:framer-motion",
+            "npm:react-router-dom",
+            "shared-utils",
+            "npm:@mui/material",
+            "design-system"
+          ]
         },
         {
-          "file": "libs/shared-utils/src/api/auth-policy-api.ts",
-          "hash": "2610608231778635145"
+          "file": "apps/dwp/src/components/aura/checkpoint-approval.tsx",
+          "hash": "4759948311027316760",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
         },
         {
-          "file": "libs/shared-utils/src/api/code-usage-api.ts",
-          "hash": "12791896040412068064"
+          "file": "apps/dwp/src/components/aura/confidence-score.tsx",
+          "hash": "5382721197565988025",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
         },
         {
-          "file": "libs/shared-utils/src/api/main-api.ts",
-          "hash": "16790591095199076360"
+          "file": "apps/dwp/src/components/aura/contextual-bridge.tsx",
+          "hash": "3159488935626488347",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
         },
         {
-          "file": "libs/shared-utils/src/api/monitoring-api.ts",
-          "hash": "9867706174876199381"
+          "file": "apps/dwp/src/components/aura/dynamic-plan-board.tsx",
+          "hash": "1049363385434138860",
+          "deps": [
+            "npm:react",
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "design-system"
+          ]
         },
         {
-          "file": "libs/shared-utils/src/auth/auth-guard.tsx",
-          "hash": "11445583064159240513",
+          "file": "apps/dwp/src/components/aura/hitl-approval-dialog.tsx",
+          "hash": "16775678529470342742",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/index.ts",
+          "hash": "5940866430217232571"
+        },
+        {
+          "file": "apps/dwp/src/components/aura/live-execution-log.tsx",
+          "hash": "650096683322132817",
+          "deps": [
+            "npm:react",
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/reasoning-timeline.tsx",
+          "hash": "4397739473768280162",
+          "deps": [
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "npm:@mui/lab",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/result-viewer.tsx",
+          "hash": "3368819405240586856",
+          "deps": [
+            "npm:react-syntax-highlighter",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/stream-status-banner.tsx",
+          "hash": "6478238734704118856",
+          "deps": [
+            "shared-utils",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/thought-chain-ui.tsx",
+          "hash": "13664718832243213284",
+          "deps": [
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "npm:@mui/lab",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/auth-unauthorized-handler.tsx",
+          "hash": "17589962539829081599",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/dev/stream-debug-panel.tsx",
+          "hash": "18059672267929630503",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/config-global.ts",
+          "hash": "12247388983537652361"
+        },
+        {
+          "file": "apps/dwp/src/features/health/main-api-health.tsx",
+          "hash": "8218355380706185858",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/hooks/use-event-tracking.ts",
+          "hash": "3584299566675493023",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/hooks/use-page-context.ts",
+          "hash": "640832127419751661",
           "deps": [
             "npm:react",
             "npm:react-router-dom"
           ]
         },
         {
-          "file": "libs/shared-utils/src/auth/auth-policy-types.ts",
-          "hash": "9783960228807377538"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/auth-provider.tsx",
-          "hash": "10087533260019935913",
+          "file": "apps/dwp/src/hooks/use-page-view-tracking.ts",
+          "hash": "11364417962088409237",
           "deps": [
-            "npm:react"
+            "npm:react",
+            "npm:react-router-dom",
+            "shared-utils"
           ]
         },
         {
-          "file": "libs/shared-utils/src/auth/auth-redirect.test.ts",
-          "hash": "15623788010970177248"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/auth-redirect.ts",
-          "hash": "1443545607187007706"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/menu-tree-store.ts",
-          "hash": "11331260578036432074",
+          "file": "apps/dwp/src/hooks/use-standard-event-tracking.ts",
+          "hash": "1193356159292536991",
           "deps": [
-            "npm:zustand"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/auth/permission-route-guard.tsx",
-          "hash": "10095115703022835167",
-          "deps": [
+            "shared-utils",
             "npm:react",
             "npm:react-router-dom"
           ]
         },
         {
-          "file": "libs/shared-utils/src/auth/permissions-store.ts",
-          "hash": "2219029370136075314",
+          "file": "apps/dwp/src/layouts/auth/content.tsx",
+          "hash": "11261511144900465333",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/auth/index.ts",
+          "hash": "14949631564904057172"
+        },
+        {
+          "file": "apps/dwp/src/layouts/auth/layout.tsx",
+          "hash": "1270160781522937438",
+          "deps": [
+            "npm:@mui/material",
+            "npm:es-toolkit",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/account-popover.tsx",
+          "hash": "17827062424535331063",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/language-popover.tsx",
+          "hash": "10575808279056560114",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/menu-button.tsx",
+          "hash": "9655052205209790269",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/notifications-popover.tsx",
+          "hash": "3641936837165092944",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/searchbar.tsx",
+          "hash": "1614962610749124620",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/workspaces-popover.tsx",
+          "hash": "1960571670775057978",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/classes.ts",
+          "hash": "13461343996066069017",
+          "deps": [
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/css-vars.ts",
+          "hash": "1936802271280533196",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/header-section.tsx",
+          "hash": "17035361679034219890",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/index.ts",
+          "hash": "5087516577530814711"
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/layout-section.tsx",
+          "hash": "13136056995460256400",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/main-section.tsx",
+          "hash": "3013228332482591838",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/dashboard/content.tsx",
+          "hash": "8145305273693180430",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/dashboard/css-vars.ts",
+          "hash": "16816562538749029631",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/dashboard/index.ts",
+          "hash": "14949631564904057172"
+        },
+        {
+          "file": "apps/dwp/src/layouts/dashboard/layout.tsx",
+          "hash": "16930374815127537512",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:es-toolkit",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/dashboard/nav.tsx",
+          "hash": "12813774598403120167",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared",
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/nav-config-account.tsx",
+          "hash": "11889568017455973688",
+          "deps": [
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/nav-config-dashboard.tsx",
+          "hash": "6805364892269038820",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/nav-config-workspace.tsx",
+          "hash": "11427639975396272078"
+        },
+        {
+          "file": "apps/dwp/src/main.tsx",
+          "hash": "10700730853833826691",
+          "deps": [
+            "design-system",
+            "npm:react",
+            "npm:react-dom",
+            "shared-utils",
+            "npm:@tanstack/react-query",
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/admin.tsx",
+          "hash": "1722109046239665873",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/ai-workspace.tsx",
+          "hash": "6045114944755894222",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/aiworkspace/components/chat-panel.tsx",
+          "hash": "18277377709303311324",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/aiworkspace/components/workspace-tabs.tsx",
+          "hash": "18115013196544311394",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/aiworkspace/data/mock.ts",
+          "hash": "13160087569498470411"
+        },
+        {
+          "file": "apps/dwp/src/pages/aiworkspace/hooks/use-ai-workspace.ts",
+          "hash": "7817018467394678628",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/aiworkspace/index.tsx",
+          "hash": "17806112945352007916",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/approval.tsx",
+          "hash": "9605123761036599757",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/blog.tsx",
+          "hash": "1785499431979978527"
+        },
+        {
+          "file": "apps/dwp/src/pages/chat.tsx",
+          "hash": "7616940309384708320",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/dashboard.tsx",
+          "hash": "1372780784462429009"
+        },
+        {
+          "file": "apps/dwp/src/pages/forgot-password.tsx",
+          "hash": "17335882303296048313"
+        },
+        {
+          "file": "apps/dwp/src/pages/mail.tsx",
+          "hash": "2397008715153872271",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/page-403.tsx",
+          "hash": "7271543994477914562",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/page-not-found.tsx",
+          "hash": "10801249517891335229"
+        },
+        {
+          "file": "apps/dwp/src/pages/products.tsx",
+          "hash": "11588341766245236050"
+        },
+        {
+          "file": "apps/dwp/src/pages/sign-in.tsx",
+          "hash": "477289466726758334"
+        },
+        {
+          "file": "apps/dwp/src/pages/sso-callback.tsx",
+          "hash": "15805976494171231860",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/user.tsx",
+          "hash": "2962921500561663848"
+        },
+        {
+          "file": "apps/dwp/src/routes/components/error-boundary.tsx",
+          "hash": "3467631826434846023",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/routes/components/index.ts",
+          "hash": "14077486825246220324"
+        },
+        {
+          "file": "apps/dwp/src/routes/components/router-link.tsx",
+          "hash": "9002064305839295676",
+          "deps": [
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/routes/sections.tsx",
+          "hash": "11380676219236893952",
+          "deps": [
+            "npm:react-router",
+            "npm:react",
+            "npm:minimal-shared",
+            "shared-utils",
+            "npm:react-router-dom",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/auth/forgot-password-view.tsx",
+          "hash": "723429468145224521",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/auth/index.ts",
+          "hash": "4418163381307047449"
+        },
+        {
+          "file": "apps/dwp/src/sections/auth/sign-in-view.tsx",
+          "hash": "873321504818077950",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "shared-utils",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/blog/post-item.tsx",
+          "hash": "7671663693039074327",
+          "deps": [
+            "npm:@mui/material",
+            "design-system",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/blog/post-search.tsx",
+          "hash": "2119049056461996884",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/blog/post-sort.tsx",
+          "hash": "17863412850096876051",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/blog/view/blog-view.tsx",
+          "hash": "13360796096814840131",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/blog/view/index.ts",
+          "hash": "5572359074980122273"
+        },
+        {
+          "file": "apps/dwp/src/sections/error/index.ts",
+          "hash": "2389369739966198623"
+        },
+        {
+          "file": "apps/dwp/src/sections/error/not-found-view.tsx",
+          "hash": "1661229755210852967",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-conversion-rates.tsx",
+          "hash": "6553502212912116683",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-current-subject.tsx",
+          "hash": "8829776651043400195",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-current-visits.tsx",
+          "hash": "18090240928036565697",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-news.tsx",
+          "hash": "15607822576922029777",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-order-timeline.tsx",
+          "hash": "12521163253466782820",
+          "deps": [
+            "npm:@mui/material",
+            "npm:@mui/lab"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-tasks.tsx",
+          "hash": "15420493741691172678",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-traffic-by-site.tsx",
+          "hash": "94121086466098684",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-website-visits.tsx",
+          "hash": "11017110401795957946",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-widget-summary.tsx",
+          "hash": "909541773952907885",
+          "deps": [
+            "npm:@mui/material",
+            "design-system",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/view/index.ts",
+          "hash": "16971434275731120297"
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/view/overview-analytics-view.tsx",
+          "hash": "8203919796011283916",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/product/product-cart-widget.tsx",
+          "hash": "8009422912028964918",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/product/product-filters.tsx",
+          "hash": "1188729325832786235",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/product/product-item.tsx",
+          "hash": "14067644666693004039",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/product/product-sort.tsx",
+          "hash": "7478271692970035114",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/product/view/index.ts",
+          "hash": "13072221893633259543"
+        },
+        {
+          "file": "apps/dwp/src/sections/product/view/products-view.tsx",
+          "hash": "15414312102191470337",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/table-empty-rows.tsx",
+          "hash": "603188706689913186",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/table-no-data.tsx",
+          "hash": "8343605928413013690",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/user-table-head.tsx",
+          "hash": "5167769533827516407",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/user-table-row.tsx",
+          "hash": "1728665887081168928",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/user-table-toolbar.tsx",
+          "hash": "2567035527539520465",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/utils.ts",
+          "hash": "18257741819385300827"
+        },
+        {
+          "file": "apps/dwp/src/sections/user/view/index.ts",
+          "hash": "13872062710550448634"
+        },
+        {
+          "file": "apps/dwp/src/sections/user/view/user-view.tsx",
+          "hash": "11522250744877361344",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/store/use-aura-store.ts",
+          "hash": "9250283369171839773",
           "deps": [
             "npm:zustand"
           ]
         },
         {
-          "file": "libs/shared-utils/src/auth/token-storage.test.ts",
-          "hash": "11518970991805364294"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/token-storage.ts",
-          "hash": "1983648834487626635"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/types.ts",
-          "hash": "7172306848271834868"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/use-permissions.ts",
-          "hash": "12070286715323163622"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/user-id-storage.ts",
-          "hash": "3003508536947905025"
-        },
-        {
-          "file": "libs/shared-utils/src/axios-instance.test.ts",
-          "hash": "1792088186394072090"
-        },
-        {
-          "file": "libs/shared-utils/src/axios-instance.ts",
-          "hash": "3531904741961479261"
-        },
-        {
-          "file": "libs/shared-utils/src/env.ts",
-          "hash": "2631743776831830161"
-        },
-        {
-          "file": "libs/shared-utils/src/hooks/use-mutation-error-handler.ts",
-          "hash": "10076309737658500407",
+          "file": "apps/dwp/src/store/use-layout-store.ts",
+          "hash": "2200331581096022741",
           "deps": [
-            "npm:react"
+            "npm:zustand"
           ]
         },
         {
-          "file": "libs/shared-utils/src/http-error.ts",
-          "hash": "1310142135678069300"
+          "file": "apps/dwp/src/utils/format-number.ts",
+          "hash": "636866426588155976"
         },
         {
-          "file": "libs/shared-utils/src/index.ts",
-          "hash": "14724711044369380677"
-        },
-        {
-          "file": "libs/shared-utils/src/monitoring/event-tracking.ts",
-          "hash": "14686775356928573894"
-        },
-        {
-          "file": "libs/shared-utils/src/queries/__tests__/monitoring-utils.test.ts",
-          "hash": "15555310717699951890",
+          "file": "apps/dwp/src/utils/format-time.ts",
+          "hash": "9037868006219558892",
           "deps": [
-            "npm:vitest"
+            "npm:dayjs"
           ]
         },
         {
-          "file": "libs/shared-utils/src/queries/use-admin-audit-logs-query.ts",
-          "hash": "10464934102113210623",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-menus-query.ts",
-          "hash": "10812327452188052376",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-resources-query.ts",
-          "hash": "9786117222609516903",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-role-members-query.ts",
-          "hash": "7866962792191452750",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-role-permissions-query.ts",
-          "hash": "8206075744060077210",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-roles-query.ts",
-          "hash": "9604520045345911368",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-user-detail-query.ts",
-          "hash": "16734151996728914330",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-user-roles-query.ts",
-          "hash": "5091143769692309257",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-users-query.ts",
-          "hash": "5865767188592572784",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-all-codes-query.ts",
-          "hash": "3480962221613646400",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-auth-policy-query.ts",
-          "hash": "6880657025198314569",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-code-groups-query.ts",
-          "hash": "13344053794277128926",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-code-usages-query.ts",
-          "hash": "7092400411765187806",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-codes-by-group-query.ts",
-          "hash": "16374827020129690053",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-codes-by-resource-query.ts",
-          "hash": "18046927826907552407",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-idp-query.ts",
-          "hash": "5222756824186443389",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-menu-tree-query.ts",
-          "hash": "14781937184431434642",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-apihistories-query.ts",
-          "hash": "13818526725987312945",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-events-query.ts",
-          "hash": "18413406719543228750",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-pageviews-query.ts",
-          "hash": "15234002344654781521",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-summary-query.ts",
-          "hash": "8931808327717649355",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-timeseries-query.ts",
-          "hash": "5462103478507921500",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-visitors-query.ts",
-          "hash": "1271696468558964048",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/router/__tests__/normalize-route-path.test.ts",
-          "hash": "4352556055189138849",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/router/normalize-route-path.ts",
-          "hash": "109874706733176798"
-        },
-        {
-          "file": "libs/shared-utils/src/tenant-util.ts",
-          "hash": "16689972145420517405"
-        },
-        {
-          "file": "libs/shared-utils/src/types.ts",
-          "hash": "16497816272801057550"
+          "file": "apps/dwp/src/vite-env.d.ts",
+          "hash": "10470006326540176307"
         }
       ],
       "remote-starter": [
@@ -3369,6 +2950,425 @@
             "npm:vite",
             "npm:@vitejs/plugin-react-swc"
           ]
+        }
+      ],
+      "shared-utils": [
+        {
+          "file": "libs/shared-utils/project.json",
+          "hash": "1291154405272111591"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/__tests__/admin-utils.test.ts",
+          "hash": "13612121270860402833",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/admin/__tests__/code-utils.test.ts",
+          "hash": "2611829214683652260"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/__tests__/event-actions.test.ts",
+          "hash": "4998784353112432378"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/__tests__/role-permission-matrix.test.ts",
+          "hash": "10008183034281037857",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/admin/code-utils.ts",
+          "hash": "13966185139560428368"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/event-actions.ts",
+          "hash": "14692312300542130251"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/form-validation.ts",
+          "hash": "885598105731993276"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/role-permission-matrix-utils.ts",
+          "hash": "3425494788422999206"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/types.ts",
+          "hash": "1628274534912051394"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/__tests__/sse-parser.test.ts",
+          "hash": "11196611739922345341",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/agent/__tests__/stream-status.test.ts",
+          "hash": "15174029235037669908"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/agent-session.ts",
+          "hash": "17822230008107950167"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/context-util.ts",
+          "hash": "3695356138661456911"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/hitl-api.ts",
+          "hash": "12497076655583257328"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/stream-status.ts",
+          "hash": "17274434232435623383"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/stream-store.ts",
+          "hash": "16645354225238575841",
+          "deps": [
+            "npm:zustand"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/agent/use-agent-stream.ts",
+          "hash": "17206942562429868454",
+          "deps": [
+            "npm:@tanstack/react-query",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/api/__tests__/api-error-handler.test.ts",
+          "hash": "17187031085165598186",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/api/admin-iam-api.ts",
+          "hash": "227775049419856632"
+        },
+        {
+          "file": "libs/shared-utils/src/api/api-error-alert.tsx",
+          "hash": "4375536377768195864",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/api/api-error-handler.tsx",
+          "hash": "18085865775483147317"
+        },
+        {
+          "file": "libs/shared-utils/src/api/auth-api.ts",
+          "hash": "7276677798576439407"
+        },
+        {
+          "file": "libs/shared-utils/src/api/auth-policy-api.ts",
+          "hash": "2610608231778635145"
+        },
+        {
+          "file": "libs/shared-utils/src/api/code-usage-api.ts",
+          "hash": "12791896040412068064"
+        },
+        {
+          "file": "libs/shared-utils/src/api/main-api.ts",
+          "hash": "16790591095199076360"
+        },
+        {
+          "file": "libs/shared-utils/src/api/monitoring-api.ts",
+          "hash": "9867706174876199381"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-guard.tsx",
+          "hash": "11445583064159240513",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-policy-types.ts",
+          "hash": "9783960228807377538"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-provider.tsx",
+          "hash": "10087533260019935913",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-redirect.test.ts",
+          "hash": "15623788010970177248"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-redirect.ts",
+          "hash": "1443545607187007706"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/menu-tree-store.ts",
+          "hash": "11331260578036432074",
+          "deps": [
+            "npm:zustand"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/permission-route-guard.tsx",
+          "hash": "10095115703022835167",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/permissions-store.ts",
+          "hash": "2219029370136075314",
+          "deps": [
+            "npm:zustand"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/token-storage.test.ts",
+          "hash": "11518970991805364294"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/token-storage.ts",
+          "hash": "1983648834487626635"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/types.ts",
+          "hash": "7172306848271834868"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/use-permissions.ts",
+          "hash": "12070286715323163622"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/user-id-storage.ts",
+          "hash": "3003508536947905025"
+        },
+        {
+          "file": "libs/shared-utils/src/axios-instance.test.ts",
+          "hash": "1792088186394072090"
+        },
+        {
+          "file": "libs/shared-utils/src/axios-instance.ts",
+          "hash": "3531904741961479261"
+        },
+        {
+          "file": "libs/shared-utils/src/env.ts",
+          "hash": "2631743776831830161"
+        },
+        {
+          "file": "libs/shared-utils/src/hooks/use-mutation-error-handler.ts",
+          "hash": "10076309737658500407",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/http-error.ts",
+          "hash": "1310142135678069300"
+        },
+        {
+          "file": "libs/shared-utils/src/index.ts",
+          "hash": "14724711044369380677"
+        },
+        {
+          "file": "libs/shared-utils/src/monitoring/event-tracking.ts",
+          "hash": "14686775356928573894"
+        },
+        {
+          "file": "libs/shared-utils/src/queries/__tests__/monitoring-utils.test.ts",
+          "hash": "15555310717699951890",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-audit-logs-query.ts",
+          "hash": "10464934102113210623",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-menus-query.ts",
+          "hash": "10812327452188052376",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-resources-query.ts",
+          "hash": "9786117222609516903",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-role-members-query.ts",
+          "hash": "7866962792191452750",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-role-permissions-query.ts",
+          "hash": "8206075744060077210",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-roles-query.ts",
+          "hash": "9604520045345911368",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-user-detail-query.ts",
+          "hash": "16734151996728914330",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-user-roles-query.ts",
+          "hash": "5091143769692309257",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-users-query.ts",
+          "hash": "5865767188592572784",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-all-codes-query.ts",
+          "hash": "3480962221613646400",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-auth-policy-query.ts",
+          "hash": "6880657025198314569",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-code-groups-query.ts",
+          "hash": "13344053794277128926",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-code-usages-query.ts",
+          "hash": "7092400411765187806",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-codes-by-group-query.ts",
+          "hash": "16374827020129690053",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-codes-by-resource-query.ts",
+          "hash": "18046927826907552407",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-idp-query.ts",
+          "hash": "5222756824186443389",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-menu-tree-query.ts",
+          "hash": "14781937184431434642",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-apihistories-query.ts",
+          "hash": "13818526725987312945",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-events-query.ts",
+          "hash": "18413406719543228750",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-pageviews-query.ts",
+          "hash": "15234002344654781521",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-summary-query.ts",
+          "hash": "8931808327717649355",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-timeseries-query.ts",
+          "hash": "5462103478507921500",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-visitors-query.ts",
+          "hash": "1271696468558964048",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/router/__tests__/normalize-route-path.test.ts",
+          "hash": "4352556055189138849",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/router/normalize-route-path.ts",
+          "hash": "109874706733176798"
+        },
+        {
+          "file": "libs/shared-utils/src/tenant-util.ts",
+          "hash": "16689972145420517405"
+        },
+        {
+          "file": "libs/shared-utils/src/types.ts",
+          "hash": "16497816272801057550"
         }
       ]
     },
