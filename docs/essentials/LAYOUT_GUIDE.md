@@ -191,14 +191,14 @@ MainSection: {
 - 각 영역이 **독립적으로 스크롤**되어야 하며
 - **전체 화면을 100% 활용**해야 하는 경우
 
-**예시**: 메뉴 관리, 권한 관리, AI 워크스페이스
+**예시**: 메뉴 관리, 권한 관리, 리소스 관리, AI 워크스페이스
 
 ### Scrollable 모드를 선택해야 할 때 ✅
 - 콘텐츠가 **세로로 길게 나열**되고
 - **브라우저 스크롤**이 자연스러운 경우
 - **간단한 리스트/폼** 화면
 
-**예시**: 대시보드, 모니터링, 사용자 관리, 코드 관리
+**예시**: 대시보드, 모니터링, 사용자 관리, 코드 관리, 감사 로그
 
 ### 판단 기준 요약
 
@@ -208,6 +208,115 @@ MainSection: {
 | 스크롤 | 내부 패널만 | 브라우저 전체 |
 | 콘텐츠 양 | 고정된 영역 | 가변적 |
 | UX 느낌 | 대시보드/앱 | 웹사이트 |
+
+---
+
+## Admin CRUD 표준 (Layout Mode별 패턴)
+
+### Fixed 모드 CRUD (좌우 분할)
+
+| 화면 | 경로 | 모드 | 좌측 | 우측 |
+|------|------|------|------|------|
+| 메뉴 관리 | `/admin/menus` | Fixed | 메뉴 트리 목록 | 메뉴 상세/편집 |
+| 권한 관리 | `/admin/roles` | Fixed | 권한 목록 | 권한 상세/멤버/권한 탭 |
+| 리소스 관리 | `/admin/resources` | Fixed (향후) | 리소스 목록 | 리소스 상세 |
+
+**구조 표준**:
+- 좌측 폭: 320px (md 이상)
+- 우측 폭: flex 1 (나머지 공간)
+- 모바일(xs, sm): 좌측 → 우측 stack 형태로 자동 전환
+
+### Scrollable 모드 CRUD (단순 테이블)
+
+| 화면 | 경로 | 모드 | 구조 |
+|------|------|------|------|
+| 사용자 관리 | `/admin/users` | Scrollable | 상단 필터 + 테이블 + 모달 |
+| 코드 관리 | `/admin/codes` | Scrollable | 탭 + 테이블 |
+| 코드 사용 정의 | `/admin/code-usages` | Scrollable | 상단 필터 + 테이블 |
+| 감사 로그 | `/admin/audit` | Scrollable | 상단 필터 + 테이블 + Drawer |
+| 통합 모니터링 | `/admin/monitoring` | Scrollable | KPI 카드 + 차트 + 탭 테이블 |
+
+**구조 표준**:
+- 상단: FilterBar (검색/필터/액션)
+- 중간: DataTable (테이블 또는 카드 리스트)
+- 하단: 페이지네이션
+- 편집: Modal 또는 Drawer
+
+---
+
+## 반응형 표준 (Mobile-First)
+
+### 모바일 규칙 (xs, sm)
+
+#### 1. 좌우 분할 → Stack 전환 (Fixed 모드)
+```typescript
+// ✅ DO: Grid size 기반 자동 전환
+<Grid container spacing={2} sx={{ flex: 1, minHeight: 0 }}>
+  <Grid size={{ xs: 12, md: 4 }} sx={{ minHeight: 0 }}>
+    {/* 좌측 목록: 모바일에서 상단으로 */}
+  </Grid>
+  <Grid size={{ xs: 12, md: 8 }} sx={{ minHeight: 0 }}>
+    {/* 우측 상세: 모바일에서 하단으로 */}
+  </Grid>
+</Grid>
+```
+
+#### 2. Table → overflowX auto (우선)
+```typescript
+// ✅ DO: 테이블 가로 스크롤 허용
+<Box sx={{ overflowX: 'auto' }}>
+  <Table sx={{ minWidth: 650 }}>  {/* 최소 너비 보장 */}
+    {/* 테이블 내용 */}
+  </Table>
+</Box>
+```
+
+**원칙**:
+- ❌ 모바일에서 컬럼 숨기기 금지 (정보 손실)
+- ❌ 테이블을 카드로 전환 금지 (과도한 리디자인)
+- ✅ 가로 스크롤을 허용해서 모든 컬럼 표시
+
+#### 3. FilterBar → Column Stack (Scrollable 모드)
+```typescript
+// ✅ DO: 모바일에서 자동 세로 배치
+<FilterBar
+  controls={
+    <>
+      <TextField placeholder="검색" sx={{ minWidth: 200 }} />
+      <Select>...</Select>
+    </>
+  }
+  actions={
+    <>
+      <Button variant="contained">추가</Button>
+      <Button variant="outlined">다운로드</Button>
+    </>
+  }
+/>
+
+// 자동 변환:
+// xs: controls와 actions가 세로로 stack
+// sm+: controls와 actions가 가로로 배치
+```
+
+### Breakpoint 기준
+
+| Breakpoint | 크기 | 적용 |
+|------------|------|------|
+| xs | 0~600px | 모바일 (세로 stack) |
+| sm | 600~900px | 태블릿 (일부 stack 유지) |
+| md | 900~1200px | 데스크탑 (좌우 분할 적용) |
+| lg | 1200~1536px | 큰 데스크탑 |
+| xl | 1536px+ | 매우 큰 화면 |
+
+### 반응형 체크리스트
+
+- [ ] 모바일(xs)에서 좌우 분할이 stack으로 전환됨
+- [ ] 테이블이 모바일에서 가로 스크롤 가능
+- [ ] FilterBar가 모바일에서 세로로 배치됨
+- [ ] 버튼이 화면 밖으로 밀리지 않음
+- [ ] 텍스트가 화면 밖으로 잘리지 않음 (noWrap + Tooltip 또는 줄바꿈)
+- [ ] 모든 컨텐츠가 터치 타겟 최소 44x44px 확보
 
 ---
 
