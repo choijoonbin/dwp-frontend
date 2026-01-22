@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
-import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { memo, useMemo, useState, useEffect, useCallback } from 'react';
+import { Iconify , EmptyState, PermissionGate } from '@dwp-frontend/design-system';
 import {
   HttpError,
   useAdminUsersQuery,
@@ -28,7 +28,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { EmptyState } from '@dwp-frontend/design-system';
 import { useRoleMembersState } from '../hooks/use-role-members-state';
 
 // ----------------------------------------------------------------------

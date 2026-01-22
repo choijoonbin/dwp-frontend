@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
-import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { memo, useRef, useState, useEffect, useCallback } from 'react';
+import { Iconify , EmptyState, PermissionGate } from '@dwp-frontend/design-system';
 import { useAdminRoleDetailQuery, useAdminRoleMembersQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -25,7 +25,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { EmptyState } from '@dwp-frontend/design-system';
 import { RoleMembersTab } from './role-members-tab';
 import { RoleOverviewTab } from './role-overview-tab';
 import { RolePermissionMatrixTab } from './role-permission-matrix-tab';

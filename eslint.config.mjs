@@ -42,6 +42,40 @@ const commonRules = () => ({
   '@typescript-eslint/no-empty-object-type': 0,
   '@typescript-eslint/consistent-type-imports': 1,
   '@typescript-eslint/no-unused-vars': [1, { args: 'none' }],
+  // design system enforcement (start with warning to prevent breaking existing code)
+  'no-restricted-imports': [
+    1, // warning level (1) instead of error (2) for soft introduction
+    {
+      paths: [
+        {
+          name: 'lucide-react',
+          message:
+            '❌ Use @iconify/react instead of lucide-react. See docs/essentials/DESIGN_SYSTEM.md',
+        },
+        {
+          name: 'class-variance-authority',
+          message:
+            '❌ Use MUI sx prop instead of class-variance-authority. See docs/essentials/THEME_TOKENS.md',
+        },
+        {
+          name: 'tailwind-merge',
+          message:
+            '❌ Use MUI sx prop instead of tailwind-merge. See docs/essentials/THEME_TOKENS.md',
+        },
+      ],
+      patterns: [
+        {
+          group: ['@radix-ui/*'],
+          message: '❌ Use MUI v5 components instead of Radix UI. See docs/essentials/DESIGN_SYSTEM.md',
+        },
+        {
+          group: ['**/components/ui/**'],
+          message:
+            '❌ Use @dwp-frontend/design-system patterns instead of local components/ui. See docs/essentials/DESIGN_SYSTEM.md',
+        },
+      ],
+    },
+  ],
 });
 
 /**
