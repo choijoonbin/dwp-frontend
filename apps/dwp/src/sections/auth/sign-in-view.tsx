@@ -233,6 +233,7 @@ export const SignInView = () => {
         label="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        data-testid="auth-username"
         sx={{ mb: 3 }}
         slotProps={{
           inputLabel: { shrink: true },
@@ -258,6 +259,7 @@ export const SignInView = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         type={showPassword ? 'text' : 'password'}
+        data-testid="auth-password"
         slotProps={{
           inputLabel: { shrink: true },
           input: {
@@ -281,6 +283,7 @@ export const SignInView = () => {
         variant="contained"
         onClick={handleSignIn}
         disabled={isSubmitting}
+        data-testid="auth-submit"
       >
         {isSubmitting ? 'Signing in…' : 'Sign in'}
       </Button>

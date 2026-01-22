@@ -1,4 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
+import { existsSync } from 'fs';
+import { join } from 'path';
+
+const STORAGE_STATE_PATH = process.env.E2E_STORAGE_STATE_PATH || 'e2e/.auth/user.json';
+const storageStatePath = join(process.cwd(), STORAGE_STATE_PATH);
+const hasStorageState = existsSync(storageStatePath);
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -18,31 +24,37 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:5173',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     /* Screenshot on failure */
     screenshot: 'only-on-failure',
+    /* Load storageState if exists (for authenticated tests) */
+    ...(hasStorageState ? { storageState: STORAGE_STATE_PATH } : {}),
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
 
     /* Test against mobile viewports. */
     {
       name: 'mobile',
-      use: { ...devices['iPhone 13'] },
+      use: {
+        ...devices['iPhone 13'],
+      },
     },
   ],
 
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'yarn dev',
-    url: 'http://localhost:3000',
+    url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },
