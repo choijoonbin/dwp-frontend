@@ -127,6 +127,120 @@ theme.breakpoints.up('xl')    // ≥ 1536px
 
 ---
 
+## Import 규칙 & Export 정책
+
+### ✅ 단일 Import Entry (필수)
+
+모든 Design System 컴포넌트는 **단일 entry**에서만 import 한다.
+
+```typescript
+// ✅ DO: 단일 entry로 import
+import {
+  // 패턴 컴포넌트
+  EmptyState,
+  ConfirmDialog,
+  SelectableCard,
+  TwoColumnLayout,
+  FilterBar,
+  ToolbarActions,
+  DataTable,
+  EditorModal,
+  // 기본 컴포넌트
+  Iconify,
+  PermissionGate,
+  Scrollbar,
+} from '@dwp-frontend/design-system';
+```
+
+```typescript
+// ❌ DON'T: 내부 경로 직접 import 금지
+import DataTable from 'libs/design-system/src/components/patterns/data-table';
+import { EmptyState } from '@dwp-frontend/design-system/patterns/empty-state';
+import Iconify from '@dwp-frontend/design-system/components/iconify';
+```
+
+### ❌ Remote에서 금지 사항
+
+#### 1. MUI 직접 커스터마이징 금지
+
+```typescript
+// ❌ DON'T: MUI 컴포넌트 직접 커스터마이징
+const StyledButton = styled(Button)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  '&:hover': { backgroundColor: theme.palette.primary.dark },
+}));
+
+// ✅ DO: Design System 컴포넌트 사용
+import { Button } from '@mui/material'; // 기본 사용은 OK
+// 또는 공통 패턴이 있다면 그것 사용
+```
+
+#### 2. components/ui 폴더 생성 금지
+
+```
+apps/remotes/admin/src/
+├── pages/
+│   └── <feature>/
+│       ├── components/        # ✅ Feature 전용 컴포넌트 OK
+│       └── ui/                # ❌ 로컬 UI 폴더 절대 금지
+```
+
+**이유**:
+- shadcn/ui 스타일의 로컬 UI 폴더는 Design System과 중복
+- Single Source of Truth 원칙 위반
+- 팀 간 UI 불일치 발생
+
+**대안**:
+- **공통 컴포넌트**: `libs/design-system`에 추가
+- **Feature 전용 컴포넌트**: `pages/<feature>/components/`에 배치
+
+#### 3. 하드코딩 색상/간격 금지
+
+```typescript
+// ❌ DON'T
+sx={{
+  bgcolor: '#ffffff',
+  color: '#000000',
+  padding: '16px',
+}}
+
+// ✅ DO
+sx={{
+  bgcolor: 'background.paper',
+  color: 'text.primary',
+  p: 2,
+}}
+```
+
+**참고**: `docs/essentials/THEME_TOKENS.md`
+
+### 📦 Export 구조 (참고)
+
+```
+libs/design-system/
+└── src/
+    ├── index.ts                    # 최상위 export
+    │   └── export * from './components';
+    └── components/
+        ├── index.ts                # 컴포넌트 통합 export
+        │   ├── export * from './patterns';
+        │   ├── export * from './iconify';
+        │   └── ...
+        └── patterns/
+            └── index.ts            # 패턴 컴포넌트 export
+                ├── export * from './empty-state';
+                ├── export * from './confirm-dialog';
+                └── ...
+```
+
+**결과**:
+```typescript
+// 모든 컴포넌트를 단일 entry에서 import 가능
+import { EmptyState, Iconify, PermissionGate } from '@dwp-frontend/design-system';
+```
+
+---
+
 ## 공통 컴포넌트 카탈로그
 
 ### 기본 컴포넌트

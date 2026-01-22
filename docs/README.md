@@ -50,8 +50,10 @@ docs/
 ├── reference/                   # 📚 참고 문서 (필요 시 참고)
 │   ├── api/
 │   │   └── backend-api-spec.md # 백엔드 API 명세
-│   └── architecture/
-│       └── (향후 추가 예정)
+│   ├── architecture/
+│   │   └── (향후 추가 예정)
+│   ├── DESIGN_SYSTEM_MIGRATION.md # Design System 마이그레이션 가이드
+│   └── PR_CHECKLIST_UI.md     # UI 개발자용 상세 PR 체크리스트
 │
 ├── archive/                     # 🗂️ 완료된 작업 아카이브
 │   ├── tasks/                  # 완료된 작업 기록
@@ -120,6 +122,12 @@ docs/
 
 ### "백엔드 API 스펙을 보고 싶어요"
 → `reference/api/backend-api-spec.md`
+
+### "기존 Admin 페이지를 Design System 패턴으로 마이그레이션하려고 해요"
+→ `reference/DESIGN_SYSTEM_MIGRATION.md`
+
+### "PR 리뷰 시 UI 체크리스트가 궁금해요"
+→ `reference/PR_CHECKLIST_UI.md`
 
 ---
 
