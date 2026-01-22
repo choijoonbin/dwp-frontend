@@ -843,9 +843,11 @@ export const MonitoringTabs = ({ filters }: MonitoringTabsProps) => {
         </Button>
       </Stack>
 
-      <Table>
-        {renderTableContent()}
-      </Table>
+      <Box sx={{ overflowX: 'auto' }}>
+        <Table sx={{ minWidth: 800 }}>
+          {renderTableContent()}
+        </Table>
+      </Box>
 
       <TablePagination
         component="div"
