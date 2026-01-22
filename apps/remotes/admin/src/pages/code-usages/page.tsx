@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect } from 'react';
-import { Iconify } from '@dwp-frontend/design-system';
+import { Iconify, ConfirmDialog, TwoColumnLayout } from '@dwp-frontend/design-system';
 import { HttpError, trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 import {
   useCodeGroupsQuery,
@@ -12,7 +12,6 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
@@ -20,7 +19,6 @@ import Typography from '@mui/material/Typography';
 
 import { CodeGroupsPanel } from './components/code-groups-panel';
 import { ResourceMenuList } from './components/resource-menu-list';
-import { DeleteConfirmDialog } from './components/delete-confirm-dialog';
 import { CodeUsageEditorModal } from './components/code-usage-editor-modal';
 import { useCodeUsagesTableState } from './hooks/use-code-usages-table-state';
 
@@ -236,6 +234,7 @@ const CodeUsagesPageContent = () => {
 
   return (
     <Box
+      data-testid="page-admin-code-usages"
       sx={{
         p: 3,
         height: '100%',
@@ -263,9 +262,10 @@ const CodeUsagesPageContent = () => {
         </Alert>
 
         {/* Main Content: Left Menu List + Right Groups Panel */}
-        <Grid container spacing={2}>
-          {/* Left: Resource Menu List */}
-          <Grid size={{ xs: 12, md: 4 }}>
+        <TwoColumnLayout
+          mode="fixed"
+          leftWidth={360}
+          left={
             <ResourceMenuList
               resourceKeyOptions={resourceKeyOptions}
               selectedResourceKey={selectedResourceKey}
@@ -276,10 +276,8 @@ const CodeUsagesPageContent = () => {
               onResourceSelect={setSelectedResourceKey}
               onKeywordChange={setKeyword}
             />
-          </Grid>
-
-          {/* Right: Code Groups Panel */}
-          <Grid size={{ xs: 12, md: 8 }}>
+          }
+          right={
             <CodeGroupsPanel
               resourceKey={selectedResourceKey}
               groups={selectedResourceGroups}
@@ -294,8 +292,8 @@ const CodeUsagesPageContent = () => {
               onDelete={handleDelete}
               onToggleEnabled={handleToggleEnabled}
             />
-          </Grid>
-        </Grid>
+          }
+        />
       </Stack>
 
       {/* Group Editor Modal */}
@@ -312,11 +310,14 @@ const CodeUsagesPageContent = () => {
 
       {/* Delete Dialog */}
       {selectedUsage && (
-        <DeleteConfirmDialog
+        <ConfirmDialog
           open={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}
           title="코드 그룹 삭제"
-          content={`정말 "${selectedUsage.codeGroupKey}" 코드 그룹을 "${selectedUsage.resourceKey}"에서 제거하시겠습니까?`}
+          description={`정말 "${selectedUsage.codeGroupKey}" 코드 그룹을 "${selectedUsage.resourceKey}"에서 제거하시겠습니까?`}
+          confirmText="삭제"
+          cancelText="취소"
+          severity="danger"
           onConfirm={handleDeleteConfirm}
         />
       )}
