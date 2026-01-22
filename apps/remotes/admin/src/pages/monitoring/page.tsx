@@ -254,7 +254,7 @@ export const MonitoringPage = () => {
   }, [filters.dateFrom, filters.dateTo, filters.period]);
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box data-testid="page-admin-monitoring" sx={{ p: 3 }}>
       <Stack spacing={3}>
         {/* Header */}
         <Stack spacing={1}>

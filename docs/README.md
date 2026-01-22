@@ -129,6 +129,9 @@ docs/
 ### "PR 리뷰 시 UI 체크리스트가 궁금해요"
 → `reference/PR_CHECKLIST_UI.md`
 
+### "E2E 테스트를 실행하고 싶어요"
+→ `reference/E2E_SMOKE_TESTS.md` + `reference/E2E_TESTID_STANDARD.md`
+
 ---
 
 ## 📝 문서 작성 규칙

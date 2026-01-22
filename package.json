@@ -34,7 +34,12 @@
     "re:build-npm": "npm run clean && npm install && npm run build",
     "tsc:dev": "yarn dev & yarn tsc:watch",
     "tsc:watch": "tsc --noEmit --watch",
-    "tsc:print": "npx tsc --showConfig"
+    "tsc:print": "npx tsc --showConfig",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:mobile": "playwright test --project=mobile",
+    "test:e2e:report": "playwright show-report"
   },
   "engines": {
     "node": ">=20"
@@ -47,6 +52,8 @@
     "@fontsource-variable/dm-sans": "^5.2.5",
     "@fontsource/barlow": "^5.2.5",
     "@iconify/react": "^5.2.1",
+    "@mui/lab": "^7.0.0-beta.10",
+    "@mui/material": "^7.0.1",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
     "@radix-ui/react-aspect-ratio": "1.1.1",
@@ -74,8 +81,6 @@
     "@radix-ui/react-toggle": "1.1.1",
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "1.1.6",
-    "@mui/lab": "^7.0.0-beta.10",
-    "@mui/material": "^7.0.1",
     "@tanstack/react-query": "^5.66.6",
     "@types/react-syntax-highlighter": "^15.5.13",
     "apexcharts": "^4.5.0",
@@ -100,9 +105,9 @@
     "react-router-dom": "^7.4.1",
     "react-syntax-highlighter": "^16.1.0",
     "recharts": "2.15.4",
+    "simplebar-react": "^3.3.0",
     "sonner": "^1.7.4",
     "tailwind-merge": "^3.3.1",
-    "simplebar-react": "^3.3.0",
     "vaul": "^1.1.2",
     "zustand": "^5.0.9"
   },
@@ -111,6 +116,7 @@
     "@nx/devkit": "^22.3.3",
     "@nx/js": "^22.3.3",
     "@nx/vite": "^22.3.3",
+    "@playwright/test": "^1.57.0",
     "@types/node": "^22.19.5",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.1",

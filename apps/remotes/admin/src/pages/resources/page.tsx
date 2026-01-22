@@ -161,6 +161,7 @@ const ResourcesPageContent = () => {
 
   return (
     <Box
+      data-testid="page-admin-resources"
       sx={{
         p: 3,
         height: '100%',

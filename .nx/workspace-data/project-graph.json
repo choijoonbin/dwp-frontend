@@ -2164,6 +2164,15 @@
         "hash": "sha512-3nVv+e2FQwsW8Aw6qTU6f+1rfcJ3hrcnvH/mu9i8YhxO+9sqbOfpL8m6PbET5+xKOlz/VSbp0RoYWYCtIsnmuA=="
       }
     },
+    "npm:@playwright/test": {
+      "type": "npm",
+      "name": "npm:@playwright/test",
+      "data": {
+        "version": "1.57.0",
+        "packageName": "@playwright/test",
+        "hash": "sha512-6TyEnHgd6SArQO8UO2OMTxshln3QMWBtPGrOCgs3wVEmQmwyuNtB10IZMfmYDE0riwNR1cu4q+pPcxMVtaG3TA=="
+      }
+    },
     "npm:@popperjs/core": {
       "type": "npm",
       "name": "npm:@popperjs/core",
@@ -5692,6 +5701,15 @@
         "hash": "sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow=="
       }
     },
+    "npm:fsevents@2.3.2": {
+      "type": "npm",
+      "name": "npm:fsevents@2.3.2",
+      "data": {
+        "version": "2.3.2",
+        "packageName": "fsevents",
+        "hash": "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA=="
+      }
+    },
     "npm:fsevents": {
       "type": "npm",
       "name": "npm:fsevents",
@@ -7148,6 +7166,24 @@
         "version": "4.0.3",
         "packageName": "picomatch",
         "hash": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q=="
+      }
+    },
+    "npm:playwright-core": {
+      "type": "npm",
+      "name": "npm:playwright-core",
+      "data": {
+        "version": "1.57.0",
+        "packageName": "playwright-core",
+        "hash": "sha512-agTcKlMw/mjBWOnD6kFZttAAGHgi/Nw0CZ2o6JqWSbMlI219lAFLZZCyqByTsvVAJq5XA5H8cA6PrvBRpBWEuQ=="
+      }
+    },
+    "npm:playwright": {
+      "type": "npm",
+      "name": "npm:playwright",
+      "data": {
+        "version": "1.57.0",
+        "packageName": "playwright",
+        "hash": "sha512-ilYQj1s8sr2ppEJ2YVadYBN0Mb3mdo9J0wQ+UuDhzYqURwSoW4n1Xs5vs7ORwgDGmyEh33tRMeS8KhdkMoLXQw=="
       }
     },
     "npm:possible-typed-array-names": {
@@ -8731,6 +8767,11 @@
       {
         "source": "admin",
         "target": "npm:lucide-react",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "npm:next-themes",
         "type": "static"
       },
       {
@@ -11749,6 +11790,13 @@
       {
         "source": "npm:@phenomnomnominal/tsquery",
         "target": "npm:esquery",
+        "type": "static"
+      }
+    ],
+    "npm:@playwright/test": [
+      {
+        "source": "npm:@playwright/test",
+        "target": "npm:playwright",
         "type": "static"
       }
     ],
@@ -17504,6 +17552,18 @@
         "type": "static"
       }
     ],
+    "npm:playwright": [
+      {
+        "source": "npm:playwright",
+        "target": "npm:playwright-core",
+        "type": "static"
+      },
+      {
+        "source": "npm:playwright",
+        "target": "npm:fsevents@2.3.2",
+        "type": "static"
+      }
+    ],
     "npm:postcss@8.5.6": [
       {
         "source": "npm:postcss@8.5.6",
@@ -19704,5 +19764,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1769084069865
+  "computedAt": 1769085184384
 }

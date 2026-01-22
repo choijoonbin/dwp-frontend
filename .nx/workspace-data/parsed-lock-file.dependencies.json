@@ -3000,6 +3000,11 @@
     "type": "static"
   },
   {
+    "source": "npm:@playwright/test",
+    "target": "npm:playwright",
+    "type": "static"
+  },
+  {
     "source": "npm:@radix-ui/react-accordion",
     "target": "npm:@radix-ui/primitive",
     "type": "static"
@@ -10647,6 +10652,16 @@
   {
     "source": "npm:parse-json",
     "target": "npm:lines-and-columns@1.2.4",
+    "type": "static"
+  },
+  {
+    "source": "npm:playwright",
+    "target": "npm:playwright-core",
+    "type": "static"
+  },
+  {
+    "source": "npm:playwright",
+    "target": "npm:fsevents@2.3.2",
     "type": "static"
   },
   {

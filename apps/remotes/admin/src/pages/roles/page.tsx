@@ -132,6 +132,7 @@ const RolesPageContent = () => {
 
   return (
     <Box
+      data-testid="page-admin-roles"
       sx={{
         p: 3,
         height: '100%',

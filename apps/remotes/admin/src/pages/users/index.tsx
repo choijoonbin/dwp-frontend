@@ -226,6 +226,7 @@ const UsersPageContent = () => {
 
   return (
     <Box
+      data-testid="page-admin-users"
       sx={{
         p: 3,
         height: '100%',
