@@ -135,6 +135,12 @@ docs/
 ### "E2E 테스트를 실행하고 싶어요"
 → `reference/E2E_SMOKE_TESTS.md` + `reference/E2E_TESTID_STANDARD.md`
 
+### "지금 단계에서 하지 말아야 할 작업이 궁금해요"
+→ `reference/WHAT_NOT_TO_DO.md`
+
+### "FE/BE 계약 정합성을 점검하고 싶어요"
+→ `reference/FE_BE_CONTRACT_CHECK.md`
+
 ---
 
 ## 📝 문서 작성 규칙
