@@ -4,7 +4,7 @@ import { useMenuTreeStore } from './menu-tree-store';
 import { usePermissionsStore } from './permissions-store';
 import { getAccessToken, setAccessToken, clearAccessToken } from './token-storage';
 import { setUserId, clearUserId, extractUserIdFromToken } from './user-id-storage';
-import { login as loginApi, getMe, getPermissions, getMenuTree } from '../api/auth-api';
+import { getMe, getMenuTree, getPermissions, login as loginApi } from '../api/auth-api';
 
 import type { LoginRequest } from '../api/auth-api';
 
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       try {
-        const [meRes, permissionsRes, menuTreeRes] = await Promise.all([
+        const [, permissionsRes, menuTreeRes] = await Promise.all([
           getMe(),
           getPermissions(),
           getMenuTree(),
@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Load user info, permissions, and menu tree after login
     try {
-      const [meRes, permissionsRes, menuTreeRes] = await Promise.all([
+      const [, permissionsRes, menuTreeRes] = await Promise.all([
         getMe(),
         getPermissions(),
         getMenuTree(),
@@ -156,4 +156,3 @@ export const useAuth = () => {
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 };
-

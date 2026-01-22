@@ -4,19 +4,16 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import {
   getCodeUsages,
-  getCodeUsageDetail,
   createCodeUsage,
   updateCodeUsage,
   deleteCodeUsage,
+  getCodeUsageDetail,
 } from '../api/code-usage-api';
 
 import type {
   CodeUsageListParams,
   CodeUsageCreatePayload,
   CodeUsageUpdatePayload,
-  PageResponse,
-  CodeUsageSummary,
-  CodeUsageDetail,
 } from '../admin/types';
 
 // ----------------------------------------------------------------------

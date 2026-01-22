@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { memo } from 'react';
+import { Iconify } from '@dwp-frontend/design-system';
 import { ApiErrorAlert } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -14,6 +15,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
+import InputAdornment from '@mui/material/InputAdornment';
 
 // ----------------------------------------------------------------------
 
@@ -54,14 +56,26 @@ export const ResourceMenuList = memo(({
   return (
     <Card>
       <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-        <TextField
-          label="메뉴 검색"
-          size="small"
-          fullWidth
-          value={keyword}
-          onChange={(e) => onKeywordChange(e.target.value)}
-          placeholder="resourceKey로 검색..."
-        />
+        <Stack spacing={1}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+            메뉴 선택
+          </Typography>
+          <TextField
+            label="메뉴 검색"
+            size="small"
+            fullWidth
+            value={keyword}
+            onChange={(e) => onKeywordChange(e.target.value)}
+            placeholder="resourceKey로 검색..."
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Iconify icon="solar:magnifer-bold" width={16} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Stack>
       </Box>
       {isLoading ? (
         <Box sx={{ p: 2 }}>

@@ -1,4 +1,4 @@
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, Navigate, BrowserRouter } from 'react-router-dom';
 
 import { AuditPage } from './pages/audit/page';
 import { CodesPage } from './pages/codes/page';
@@ -20,11 +20,13 @@ export const AdminApp = ({ standalone = false }: { standalone?: boolean }) => {
   const routes = (
     <Routes>
       <Route path="monitoring" element={<MonitoringPage />} />
+      <Route path="audit-logs" element={<Navigate to="audit" replace />} />
       <Route path="users" element={<UsersPage />} />
       <Route path="roles" element={<RolesPage />} />
       <Route path="menus" element={<MenusPage />} />
       <Route path="resources" element={<ResourcesPage />} />
       <Route path="codes" element={<CodesPage />} />
+      <Route path="code-usage" element={<Navigate to="code-usages" replace />} />
       <Route path="code-usages" element={<CodeUsagesPage />} />
       <Route path="audit" element={<AuditPage />} />
     </Routes>

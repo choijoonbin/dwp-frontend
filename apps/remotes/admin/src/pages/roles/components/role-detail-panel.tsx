@@ -17,11 +17,13 @@ import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Skeleton from '@mui/material/Skeleton';
+import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { EmptyState } from './empty-state';
 import { RoleMembersTab } from './role-members-tab';
@@ -35,12 +37,12 @@ import type { RoleDetailTab } from '../types';
 type RoleDetailPanelProps = {
   roleId: string | null;
   onCreateClick: () => void;
-  onEdit: (roleId: string) => void;
   onDelete: (roleId: string) => void;
   onSuccess: () => void;
+  onClose?: () => void;
 };
 
-export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, onSuccess }: RoleDetailPanelProps) => {
+export const RoleDetailPanel = memo(({ roleId, onCreateClick, onDelete, onSuccess, onClose }: RoleDetailPanelProps) => {
   const [tab, setTab] = useState<RoleDetailTab>('overview');
   const [saveState, setSaveState] = useState<{ isSaving: boolean; hasUnsavedChanges: boolean; lastSaved?: Date }>({
     isSaving: false,
@@ -50,6 +52,9 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, 
   const [pendingTab, setPendingTab] = useState<RoleDetailTab | null>(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const saveHandlerRef = useRef<(() => Promise<void>) | null>(null);
+
+  const theme = useTheme();
+  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
 
   const { data: roleDetail, isLoading } = useAdminRoleDetailQuery(roleId || '');
   const { data: roleMembers } = useAdminRoleMembersQuery(roleId || '');
@@ -146,10 +151,10 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, 
   }
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <Box sx={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {/* Header */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 3, py: 2, bgcolor: 'background.paper' }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 2 }, bgcolor: 'background.paper' }}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }}>
           <Stack spacing={0.5}>
             <Stack direction="row" spacing={1.5} alignItems="center">
               <Typography variant="h5" sx={{ fontWeight: 600 }}>
@@ -173,7 +178,27 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, 
             </Typography>
           </Stack>
 
-          <Stack direction="row" spacing={1.5} alignItems="center">
+          <Stack
+            direction="row"
+            spacing={1.5}
+            alignItems="center"
+            sx={{
+              flexWrap: 'wrap',
+              rowGap: 1,
+              width: { xs: '100%', sm: 'auto' },
+              justifyContent: { xs: 'flex-start', sm: 'flex-end' },
+            }}
+          >
+            {onClose && (
+              <IconButton
+                size="small"
+                onClick={onClose}
+                sx={{ border: 1, borderColor: 'divider', borderRadius: 1 }}
+                aria-label="상세 닫기"
+              >
+                <Iconify icon="solar:arrow-left-bold" width={18} />
+              </IconButton>
+            )}
             {saveState.lastSaved && (
               <Stack direction="row" spacing={0.5} alignItems="center" sx={{ color: 'text.secondary' }}>
                 <Iconify icon="solar:clock-circle-bold" width={14} />
@@ -201,7 +226,7 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, 
                 sx={{
                   px: 2,
                   fontWeight: 600,
-                  boxShadow: (theme) => theme.customShadows.primary,
+                  boxShadow: (muiTheme) => muiTheme.customShadows.primary,
                 }}
               >
                 {saveState.isSaving ? '저장 중...' : '저장'}
@@ -233,9 +258,15 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, 
       </Box>
 
       {/* Tabs */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', bgcolor: 'background.paper' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 3 }}>
-          <Tabs value={tab} onChange={(_, newValue) => handleTabChange(newValue as RoleDetailTab)} sx={{ minHeight: 48 }}>
+      <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', bgcolor: 'background.paper' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', px: { xs: 2, sm: 3 } }}>
+          <Tabs
+            value={tab}
+            onChange={(_, newValue) => handleTabChange(newValue as RoleDetailTab)}
+            sx={{ minHeight: 48 }}
+            variant={isSmUp ? 'standard' : 'scrollable'}
+            allowScrollButtonsMobile
+          >
             <Tab
               label="개요"
               value="overview"
@@ -289,7 +320,7 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, 
           </Tabs>
         </Box>
 
-        <Box sx={{ flex: 1, overflow: 'auto', p: 3, position: 'relative' }}>
+        <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto', p: { xs: 2, sm: 3 }, position: 'relative' }}>
           {tab === 'overview' && (
             <RoleOverviewTab
               roleId={roleId}
@@ -328,15 +359,17 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, 
         <Box
           sx={{
             p: 2,
-            px: 3,
+            px: { xs: 2, sm: 3 },
             borderTop: 1,
             borderColor: 'divider',
             bgcolor: 'background.paper',
             display: 'flex',
-            alignItems: 'center',
+            alignItems: { xs: 'flex-start', sm: 'center' },
             justifyContent: 'space-between',
-            boxShadow: (theme) => theme.customShadows.z20,
+            boxShadow: (muiTheme) => muiTheme.customShadows.z20,
             zIndex: 100,
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 2, sm: 0 },
           }}
         >
           <Stack direction="row" spacing={1.5} alignItems="center">
@@ -361,7 +394,7 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, 
             </Box>
           </Stack>
 
-          <Stack direction="row" spacing={1}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ width: { xs: '100%', sm: 'auto' } }}>
             <Button
               variant="outlined"
               color="inherit"
@@ -371,6 +404,7 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, 
                 setSaveState((prev) => ({ ...prev, hasUnsavedChanges: false }));
                 onSuccess(); // Refetch
               }}
+              sx={{ width: { xs: '100%', sm: 'auto' } }}
             >
               취소
             </Button>
@@ -380,7 +414,7 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onEdit, onDelete, 
               onClick={handleSave}
               disabled={saveState.isSaving}
               startIcon={<Iconify icon="solar:diskette-bold" />}
-              sx={{ px: 4 }}
+              sx={{ px: 4, width: { xs: '100%', sm: 'auto' } }}
             >
               {saveState.isSaving ? '저장 중...' : '저장하기'}
             </Button>

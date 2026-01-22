@@ -4,7 +4,6 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getAllCodes } from '../api/admin-iam-api';
 
-import type { Code } from '../admin/types';
 
 // ----------------------------------------------------------------------
 

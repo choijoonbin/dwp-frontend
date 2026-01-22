@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect } from 'react';
+import { Iconify } from '@dwp-frontend/design-system';
 import { HttpError, trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 import {
   useCodeGroupsQuery,
@@ -242,6 +243,15 @@ const CodeUsagesPageContent = () => {
             메뉴별로 사용할 코드 그룹을 정의합니다. 매핑된 코드 그룹의 코드는 해당 메뉴의 드롭다운에서 사용할 수 있습니다.
           </Typography>
         </Stack>
+
+        <Alert
+          severity="info"
+          icon={<Iconify icon="solar:info-circle-bold" width={18} />}
+          sx={{ alignItems: 'center' }}
+        >
+          <strong>코드 사용 정의(CodeUsage)</strong>는 메뉴별로 사용 가능한 드롭다운 코드 그룹을 매핑합니다.
+          매핑이 없으면 해당 화면의 selectbox가 비활성화됩니다.
+        </Alert>
 
         {/* Main Content: Left Menu List + Right Groups Panel */}
         <Grid container spacing={2}>

@@ -4,20 +4,17 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import {
   getAdminResources,
-  getAdminResourcesTree,
-  getAdminResourceDetail,
   createAdminResource,
   updateAdminResource,
   deleteAdminResource,
+  getAdminResourcesTree,
+  getAdminResourceDetail,
 } from '../api/admin-iam-api';
 
 import type {
   ResourceListParams,
   ResourceCreatePayload,
   ResourceUpdatePayload,
-  PageResponse,
-  ResourceSummary,
-  ResourceNode,
 } from '../admin/types';
 
 // ----------------------------------------------------------------------

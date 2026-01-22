@@ -4,7 +4,6 @@ import { Iconify } from '@dwp-frontend/design-system';
 import { memo, useMemo, useState, useEffect, useCallback } from 'react';
 import {
   trackEvent,
-  HttpError,
   toSelectOptions,
   getCodesByGroupFromMap,
   useCodesByResourceQuery,
@@ -236,19 +235,20 @@ export const RolePermissionMatrixTab = memo(({ roleId, onSuccess, onDirtyChange,
     >
       {/* Toolbar */}
       <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'background.neutral' }}>
-        <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-          <Stack direction="row" spacing={1} flex={1}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ xs: 'stretch', md: 'center' }} justifyContent="space-between">
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} flex={1} alignItems={{ xs: 'stretch', sm: 'center' }}>
             <TextField
               size="small"
               placeholder="리소스 검색..."
               value={searchKeyword}
               onChange={(e) => handleSearchChange(e.target.value)}
+              fullWidth
               InputProps={{
                 startAdornment: <Iconify icon="solar:magnifer-bold" width={18} sx={{ mr: 1, color: 'text.secondary' }} />,
               }}
-              sx={{ maxWidth: 300, bgcolor: 'background.paper' }}
+              sx={{ maxWidth: { xs: '100%', sm: 300 }, bgcolor: 'background.paper' }}
             />
-            <Stack direction="row" spacing={0.5}>
+            <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap', rowGap: 0.5 }}>
               {[
                 { value: 'ALL', label: '전체' },
                 { value: 'MENU', label: '메뉴' },
@@ -267,7 +267,7 @@ export const RolePermissionMatrixTab = memo(({ roleId, onSuccess, onDirtyChange,
             </Stack>
           </Stack>
 
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }}>
             {dirtyCount > 0 && (
               <Badge badgeContent={dirtyCount} color="warning" sx={{ '& .MuiBadge-badge': { right: -3, top: 3 } }}>
                 <Box sx={{ px: 1.5, py: 0.5, borderRadius: 1, bgcolor: 'warning.lighter', color: 'warning.darker', typography: 'caption', fontWeight: 700 }}>

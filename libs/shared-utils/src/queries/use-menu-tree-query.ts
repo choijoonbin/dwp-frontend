@@ -4,6 +4,7 @@ import { getTenantId } from '../tenant-util';
 import { getMenuTree } from '../api/auth-api';
 import { useAuth } from '../auth/auth-provider';
 import { useMenuTreeStore } from '../auth/menu-tree-store';
+import { normalizeRoutePath } from '../router/normalize-route-path';
 
 import type { MenuNode } from '../auth/types';
 
@@ -14,6 +15,13 @@ import type { MenuNode } from '../auth/types';
  * Format: ["auth", "menus", "tree", tenantId]
  */
 export const menuTreeQueryKey = (tenantId: string) => ['auth', 'menus', 'tree', tenantId] as const;
+
+const normalizeMenuTreePaths = (nodes: MenuNode[]): MenuNode[] =>
+  nodes.map((node) => ({
+    ...node,
+    path: normalizeRoutePath(node.path),
+    children: node.children ? normalizeMenuTreePaths(node.children) : undefined,
+  }));
 
 /**
  * Hook to fetch and manage menu tree
@@ -30,8 +38,9 @@ export const useMenuTreeQuery = () => {
     queryFn: async () => {
       const res = await getMenuTree();
       if (res.data?.menus && Array.isArray(res.data.menus)) {
-        actions.setMenuTree(res.data.menus);
-        return res.data.menus;
+        const normalizedMenus = normalizeMenuTreePaths(res.data.menus);
+        actions.setMenuTree(normalizedMenus);
+        return normalizedMenus;
       }
       return [];
     },

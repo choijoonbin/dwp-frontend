@@ -1,22 +1,22 @@
 // ----------------------------------------------------------------------
 
-import { describe, expect, it } from 'vitest';
+import { it, expect, describe } from 'vitest';
 
 import {
-  createMatrixState,
+  cycleState,
   isMatrixDirty,
+  resetMatrixState,
+  createMatrixState,
   generateDiffPayload,
   applyRowPermissions,
-  applyColumnPermissions,
   applyAllPermissions,
-  resetMatrixState,
-  togglePermissionEffect,
   setPermissionEffect,
   getChangedResources,
-  cycleState,
+  applyColumnPermissions,
+  togglePermissionEffect,
 } from '../role-permission-matrix-utils';
 
-import type { PermissionMatrixState, RolePermissionResponse } from '../types';
+import type { RolePermissionResponse } from '../types';
 
 // ----------------------------------------------------------------------
 

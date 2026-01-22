@@ -4,7 +4,6 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getAdminUserRoles, updateAdminUserRoles, resetAdminUserPassword } from '../api/admin-iam-api';
 
-import type { RoleSummary } from '../admin/types';
 import type { ResetPasswordPayload } from '../admin/types';
 
 // ----------------------------------------------------------------------

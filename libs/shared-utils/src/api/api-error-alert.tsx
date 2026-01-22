@@ -3,7 +3,7 @@
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 
-import { getApiErrorDisplayProps, classifyApiError } from './api-error-handler';
+import { classifyApiError, getApiErrorDisplayProps } from './api-error-handler';
 
 import type { ApiErrorDisplayProps } from './api-error-handler';
 

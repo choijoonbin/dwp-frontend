@@ -4,7 +4,7 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getAdminRolePermissions, updateAdminRolePermissions } from '../api/admin-iam-api';
 
-import type { RolePermissionAssignmentPayload, RolePermissionResponse } from '../admin/types';
+import type { RolePermissionAssignmentPayload } from '../admin/types';
 
 // ----------------------------------------------------------------------
 

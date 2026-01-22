@@ -8,13 +8,18 @@ import { ApiErrorAlert } from '@dwp-frontend/shared-utils';
 
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
+import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 import Skeleton from '@mui/material/Skeleton';
 import TableRow from '@mui/material/TableRow';
+import { useMediaQuery } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
 // ----------------------------------------------------------------------
@@ -40,6 +45,8 @@ export const AuditLogsTable = memo(({
   onRowsPerPageChange,
   onRowClick,
 }: AuditLogsTableProps) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   if (error) {
     return (
       <Card sx={{ p: 2 }}>
@@ -48,69 +55,163 @@ export const AuditLogsTable = memo(({
     );
   }
 
-  return (
-    <Card>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>발생일시</TableCell>
-            <TableCell>실행자</TableCell>
-            <TableCell>액션</TableCell>
-            <TableCell>리소스 타입</TableCell>
-            <TableCell>리소스 ID</TableCell>
-            <TableCell align="right">작업</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {isLoading ? (
-            Array.from({ length: rowsPerPage }).map((_, idx) => (
-              <TableRow key={idx}>
-                {Array.from({ length: 6 }).map((_unused, cellIdx) => (
-                  <TableCell key={cellIdx}>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : !data || data.items.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={6} align="center">
-                <Typography variant="body2" sx={{ color: 'text.secondary', py: 3 }}>
-                  데이터가 없습니다.
-                </Typography>
-              </TableCell>
-            </TableRow>
-          ) : (
-            data.items.map((log) => (
-              <TableRow key={log.id} hover sx={{ cursor: 'pointer' }} onClick={() => onRowClick(log)}>
-                <TableCell>
+  if (isMobile) {
+    return (
+      <Stack spacing={1.5}>
+        {isLoading &&
+          Array.from({ length: Math.min(rowsPerPage, 6) }).map((_, idx) => (
+            <Card key={`mobile-loading-${idx}`} sx={{ p: 2 }}>
+              <Stack spacing={1}>
+                <Skeleton variant="text" width="50%" />
+                <Skeleton variant="text" width="80%" />
+                <Skeleton variant="rectangular" height={32} />
+              </Stack>
+            </Card>
+          ))}
+        {!isLoading && (!data || data.items.length === 0) && (
+          <Card sx={{ p: 3 }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
+              데이터가 없습니다.
+            </Typography>
+          </Card>
+        )}
+        {!isLoading &&
+          data?.items.map((log) => (
+            <Card
+              key={log.id}
+              sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }}
+              onClick={() => onRowClick(log)}
+            >
+              <Stack spacing={1}>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   {new Date(log.occurredAt).toLocaleString('ko-KR', {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
                     hour: '2-digit',
                     minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false,
                   })}
-                </TableCell>
-                <TableCell>{log.actor}</TableCell>
-                <TableCell>{log.action}</TableCell>
-                <TableCell>{log.resourceType}</TableCell>
-                <TableCell>{log.resourceId || '-'}</TableCell>
-                <TableCell align="right">
-                  <IconButton size="small" onClick={(e) => {
-                    e.stopPropagation();
-                    onRowClick(log);
-                  }}>
+                </Typography>
+                <Typography variant="subtitle2" noWrap>
+                  {log.action} · {log.resourceType}
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+                  {log.actor}
+                </Typography>
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <Typography variant="caption" sx={{ color: 'text.secondary' }} noWrap>
+                    {log.resourceId || '-'}
+                  </Typography>
+                  <IconButton
+                    size="small"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onRowClick(log);
+                    }}
+                  >
                     <Iconify icon="solar:eye-bold" />
                   </IconButton>
+                </Stack>
+              </Stack>
+            </Card>
+          ))}
+
+        {data && (
+          <TablePagination
+            component="div"
+            count={data.total}
+            page={page}
+            onPageChange={(_e, newPage) => onPageChange(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
+            rowsPerPageOptions={[10, 20, 50, 100]}
+            labelRowsPerPage="페이지당 행 수:"
+          />
+        )}
+      </Stack>
+    );
+  }
+
+  return (
+    <Card>
+      <TableContainer sx={{ maxHeight: { md: 640 }, overflowX: 'auto' }}>
+        <Table stickyHeader sx={{ minWidth: 860, tableLayout: 'fixed' }}>
+          <TableHead>
+            <TableRow sx={{ height: 56 }}>
+              <TableCell sx={{ minWidth: 180 }}>발생일시</TableCell>
+              <TableCell sx={{ minWidth: 180 }}>실행자</TableCell>
+              <TableCell sx={{ width: 140 }}>액션</TableCell>
+              <TableCell sx={{ width: 140 }}>리소스 타입</TableCell>
+              <TableCell sx={{ minWidth: 200 }}>리소스 ID</TableCell>
+              <TableCell align="right" sx={{ width: 72 }} />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {isLoading ? (
+              Array.from({ length: rowsPerPage }).map((_, idx) => (
+                <TableRow key={idx} sx={{ height: 48 }}>
+                  {Array.from({ length: 6 }).map((_unused, cellIdx) => (
+                    <TableCell key={cellIdx}>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : !data || data.items.length === 0 ? (
+              <TableRow sx={{ height: 120 }}>
+                <TableCell colSpan={6} align="center">
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    데이터가 없습니다.
+                  </Typography>
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : (
+              data.items.map((log) => (
+                <TableRow key={log.id} hover sx={{ height: 48, cursor: 'pointer' }} onClick={() => onRowClick(log)}>
+                  <TableCell>
+                    {new Date(log.occurredAt).toLocaleString('ko-KR', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: false,
+                    })}
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip title={log.actor} placement="top-start">
+                      <Typography variant="body2" noWrap>
+                        {log.actor}
+                      </Typography>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell>{log.action}</TableCell>
+                  <TableCell>{log.resourceType}</TableCell>
+                  <TableCell>
+                    <Tooltip title={log.resourceId || '-'} placement="top-start">
+                      <Typography variant="body2" noWrap>
+                        {log.resourceId || '-'}
+                      </Typography>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      size="small"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onRowClick(log);
+                      }}
+                    >
+                      <Iconify icon="solar:eye-bold" />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       {data && (
         <TablePagination

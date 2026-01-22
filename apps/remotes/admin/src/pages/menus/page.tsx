@@ -2,7 +2,7 @@
 
 import type { AdminMenuNode } from '@dwp-frontend/shared-utils';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 
@@ -11,9 +11,12 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
+import Drawer from '@mui/material/Drawer';
 import Snackbar from '@mui/material/Snackbar';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useMenuActions } from './hooks/use-menu-actions';
 import { MenuTreePanel } from './components/menu-tree-panel';
@@ -22,6 +25,9 @@ import { MenuDetailEditor } from './components/menu-detail-editor';
 import { useMenusTableState } from './hooks/use-menus-table-state';
 import { useMenuEditorState } from './hooks/use-menu-editor-state';
 import { DeleteConfirmDialog } from './components/delete-confirm-dialog';
+import { getMenuSiblings, findMenuNodeById } from './adapters/menu-adapter';
+
+import type { MenuFormState } from './types';
 
 // ----------------------------------------------------------------------
 
@@ -42,15 +48,14 @@ const MenusPageContent = () => {
   } = useMenusTableState();
 
   const {
-    mode,
     open: editorOpen,
     draftForm,
     validationErrors,
     isCreateMode,
     selectedMenu,
+    resetForm,
     snackbar,
     openCreateDialog,
-    openEditDialog,
     closeDialog,
     updateFormField,
     validateForm,
@@ -64,10 +69,32 @@ const MenusPageContent = () => {
     refetch
   );
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   // Additional state for dialogs
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuToDelete, setMenuToDelete] = useState<AdminMenuNode | null>(null);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showDisabled, setShowDisabled] = useState(true);
+  const [actionMeta, setActionMeta] = useState<{ isFirst: boolean; isLast: boolean } | null>(null);
+
+  const createParent = useMemo(() => (
+    draftForm.parentId ? findMenuNodeById(menusTree, draftForm.parentId) : null
+  ), [draftForm.parentId, menusTree]);
+
+  const mapMenuToForm = useCallback((menu: AdminMenuNode): MenuFormState => ({
+    menuKey: menu.menuKey || '',
+    menuName: menu.menuName || '',
+    path: menu.path || '',
+    icon: menu.icon || '',
+    group: menu.group || '',
+    parentId: menu.parentId || '',
+    sortOrder: menu.sortOrder?.toString() || '',
+    enabled: menu.enabled ?? true,
+  }), []);
 
   // Track page view
   useEffect(() => {
@@ -83,16 +110,26 @@ const MenusPageContent = () => {
 
   // Handle tree actions
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, menu: AdminMenuNode) => {
+    const siblings = getMenuSiblings(menusTree, menu.id);
+    const index = siblings.findIndex((item) => item.id === menu.id);
+    setActionMeta({
+      isFirst: index <= 0,
+      isLast: index === siblings.length - 1,
+    });
     setAnchorEl(event.currentTarget);
     setSelectedMenu(menu);
   };
 
   const handleMenuClose = () => {
+    setActionMeta(null);
     setAnchorEl(null);
   };
 
   const handleMenuSelect = (menu: AdminMenuNode) => {
     setSelectedMenu(menu);
+    if (isMobile) {
+      setMobileDetailOpen(true);
+    }
     // Initialize form for detail editor (useMenuEditorState's useEffect will handle this)
     trackEvent({
       resourceKey: 'menu.admin.menus',
@@ -105,17 +142,26 @@ const MenusPageContent = () => {
     });
   };
 
-  const handleEdit = (menu: AdminMenuNode) => {
-    trackEvent({
-      resourceKey: 'btn.admin.menus.edit',
-      action: 'CLICK',
-      label: '메뉴 편집',
-      metadata: {
-        menuId: menu.id,
-        menuName: menu.menuName,
-      },
-    });
-    openEditDialog(menu);
+  const handleCreateChild = (menu: AdminMenuNode) => {
+    openCreateDialog(menu.id);
+    handleMenuClose();
+  };
+
+
+  const handleToggleEnabled = async (menu: AdminMenuNode) => {
+    const formData = mapMenuToForm(menu);
+    formData.enabled = !(menu.enabled ?? true);
+    await updateMenu(menu.id, formData);
+    handleMenuClose();
+  };
+
+  const handleCopyKey = async (menuKey: string) => {
+    try {
+      await navigator.clipboard.writeText(menuKey);
+      showSnackbar('메뉴 키가 복사되었습니다.');
+    } catch {
+      showSnackbar('메뉴 키 복사에 실패했습니다.', 'error');
+    }
     handleMenuClose();
   };
 
@@ -134,8 +180,9 @@ const MenusPageContent = () => {
     handleMenuClose();
   };
 
-  const handleReorder = (menuId: string, direction: 'UP' | 'DOWN') => {
-    reorderMenu(menuId, direction);
+  const handleReorder = async (menuId: string, direction: 'UP' | 'DOWN') => {
+    await reorderMenu(menuId, direction);
+    handleMenuClose();
   };
 
   // Handle form submit
@@ -164,6 +211,7 @@ const MenusPageContent = () => {
       setDeleteDialogOpen(false);
       setMenuToDelete(null);
       setSelectedMenu(null);
+      setMobileDetailOpen(false);
     }
   };
 
@@ -186,6 +234,10 @@ const MenusPageContent = () => {
     }
   };
 
+  const handleOpenCreateRoot = () => {
+    openCreateDialog();
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       <Stack spacing={3}>
@@ -197,37 +249,44 @@ const MenusPageContent = () => {
             </Typography>
           </Stack>
           <PermissionGate resource="menu.admin.menus" permission="CREATE">
-            <IconButton onClick={openCreateDialog} color="primary" sx={{ width: 48, height: 48 }}>
+            <IconButton onClick={handleOpenCreateRoot} color="primary" sx={{ width: 48, height: 48 }}>
               <Iconify icon="mingcute:add-line" width={24} />
             </IconButton>
           </PermissionGate>
         </Stack>
 
         {/* Main Content: Left Tree + Right Detail */}
-        <Grid container spacing={2}>
+        <Grid container spacing={2} alignItems="stretch">
           {/* Left: Menu Tree */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Card>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <MenuTreePanel
                 tree={menusTree}
                 expandedNodes={expandedNodes}
                 isLoading={isLoading}
                 error={error}
                 anchorEl={anchorEl}
+                actionMeta={actionMeta}
                 selectedMenu={selectedMenu}
+                showDisabled={showDisabled}
+                searchQuery={searchQuery}
                 onToggleNode={toggleNode}
                 onMenuOpen={handleMenuOpen}
                 onMenuClose={handleMenuClose}
                 onMenuSelect={handleMenuSelect}
-                onEdit={handleEdit}
+                onCreateChild={handleCreateChild}
+                onToggleEnabled={handleToggleEnabled}
+                onCopyKey={handleCopyKey}
                 onDelete={handleDelete}
                 onReorder={handleReorder}
+                onShowDisabledChange={setShowDisabled}
+                onSearchChange={setSearchQuery}
               />
             </Card>
           </Grid>
 
           {/* Right: Menu Detail Editor */}
-          <Grid size={{ xs: 12, md: 8 }}>
+          <Grid size={{ xs: 12, md: 8 }} sx={{ display: { xs: 'none', sm: 'block' } }}>
             <MenuDetailEditor
               menu={selectedMenu}
               menusTree={menusTree}
@@ -235,6 +294,8 @@ const MenusPageContent = () => {
               validationErrors={validationErrors}
               isLoading={isUpdating || isDeleting}
               onFormChange={updateFormField}
+              onReset={resetForm}
+              onCreateChild={handleCreateChild}
               onSave={handleDetailSave}
               onDelete={handleDetailDelete}
             />
@@ -245,6 +306,7 @@ const MenusPageContent = () => {
       {/* Create Modal */}
       <MenuCreateModal
         open={isCreateMode && editorOpen}
+        parentMenu={createParent}
         menusTree={menusTree}
         formData={draftForm}
         validationErrors={validationErrors}
@@ -279,6 +341,35 @@ const MenusPageContent = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      <Drawer
+        anchor="right"
+        open={mobileDetailOpen && isMobile}
+        onClose={() => setMobileDetailOpen(false)}
+        PaperProps={{
+          sx: {
+            width: '100%',
+            maxWidth: 520,
+          },
+        }}
+      >
+        <Box sx={{ height: '100%' }}>
+          <MenuDetailEditor
+            menu={selectedMenu}
+            menusTree={menusTree}
+            formData={draftForm}
+            validationErrors={validationErrors}
+            isLoading={isUpdating || isDeleting}
+            onFormChange={updateFormField}
+            onReset={resetForm}
+            onCreateChild={handleCreateChild}
+            onSave={handleDetailSave}
+            onDelete={handleDetailDelete}
+            onClose={() => setMobileDetailOpen(false)}
+            variant="drawer"
+          />
+        </Box>
+      </Drawer>
     </Box>
   );
 };

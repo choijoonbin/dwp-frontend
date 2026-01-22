@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getTenantId } from '../tenant-util';
 import { getIdentityProvider } from '../api/auth-policy-api';
 
-import type { IdentityProviderResponse } from '../auth/auth-policy-types';
 
 // ----------------------------------------------------------------------
 

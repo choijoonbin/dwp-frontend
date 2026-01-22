@@ -15,9 +15,11 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import { useTheme } from '@mui/material/styles';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +30,8 @@ type CreateRoleModalProps = {
 };
 
 export const CreateRoleModal = memo(({ open, onClose, onSuccess }: CreateRoleModalProps) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [formData, setFormData] = useState({
     roleName: '',
     roleCode: '',
@@ -91,7 +95,7 @@ export const CreateRoleModal = memo(({ open, onClose, onSuccess }: CreateRoleMod
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
       <DialogTitle>새 역할 생성</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 1 }}>

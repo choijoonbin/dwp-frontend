@@ -4,7 +4,7 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getMonitoringSummary } from '../api/monitoring-api';
 
-import type { MonitoringSummaryParams, MonitoringSummaryResponse } from '../api/monitoring-api';
+import type { MonitoringSummaryParams } from '../api/monitoring-api';
 
 // ----------------------------------------------------------------------
 

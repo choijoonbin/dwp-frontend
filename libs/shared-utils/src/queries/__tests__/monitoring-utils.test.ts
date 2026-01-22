@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { it, expect, describe } from 'vitest';
 
-import type { TimeseriesResponse, VisitorSummary, EventLogItem } from '../../api/monitoring-api';
+import type { EventLogItem, VisitorSummary, TimeseriesResponse } from '../../api/monitoring-api';
 
 // ----------------------------------------------------------------------
 

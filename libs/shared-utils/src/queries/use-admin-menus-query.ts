@@ -3,14 +3,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import {
-  getAdminMenusTree,
   createAdminMenu,
   updateAdminMenu,
   deleteAdminMenu,
+  getAdminMenusTree,
   reorderAdminMenus,
 } from '../api/admin-iam-api';
 
-import type { AdminMenuNode, MenuCreatePayload, MenuUpdatePayload, MenuReorderPayload } from '../admin/types';
+import type { MenuCreatePayload, MenuUpdatePayload, MenuReorderPayload } from '../admin/types';
 
 // ----------------------------------------------------------------------
 

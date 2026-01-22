@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import type { ResourcePermissionRow, PermissionMatrixState, RolePermissionAssignmentPayload, RolePermissionResponse, ResourceNode } from './types';
+import type { ResourceNode, PermissionMatrixState, RolePermissionResponse, RolePermissionAssignmentPayload } from './types';
 
 /**
  * Convert role permissions response to matrix state

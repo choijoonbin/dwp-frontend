@@ -1,11 +1,8 @@
-import { useState, useMemo, useEffect } from 'react';
-import { Iconify } from '@dwp-frontend/design-system';
+import { useMemo, useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
 import { MonitoringTabs } from './monitoring-tabs';

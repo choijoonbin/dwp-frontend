@@ -1,12 +1,14 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect } from 'react';
+import { Iconify } from '@dwp-frontend/design-system';
 import { trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
+import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 
 import { CodesTab } from './components/codes-tab';
@@ -57,10 +59,28 @@ const CodesPageContent = () => {
           </Typography>
         </Stack>
 
+        <Alert
+          severity="warning"
+          icon={<Iconify icon="solar:danger-triangle-bold" width={18} />}
+          sx={{ alignItems: 'center' }}
+        >
+          코드 변경은 드롭다운 및 검증에 즉시 영향을 미칩니다. 운영 환경 변경 시 주의하세요.
+        </Alert>
+
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabValue} onChange={handleTabChange}>
-            <Tab label="코드 그룹" />
-            <Tab label="코드" />
+          <Tabs value={tabValue} onChange={handleTabChange} sx={{ minHeight: 48 }}>
+            <Tab
+              label="코드 그룹"
+              icon={<Iconify icon="solar:layers-bold" width={18} />}
+              iconPosition="start"
+              sx={{ minHeight: 48, textTransform: 'none' }}
+            />
+            <Tab
+              label="코드"
+              icon={<Iconify icon="solar:hashtag-square-bold" width={18} />}
+              iconPosition="start"
+              sx={{ minHeight: 48, textTransform: 'none' }}
+            />
           </Tabs>
         </Box>
 

@@ -3,12 +3,12 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 import type {
   Code,
-  CodeUsageSummary,
+  PageResponse,
   CodeUsageDetail,
+  CodeUsageSummary,
+  CodeUsageListParams,
   CodeUsageCreatePayload,
   CodeUsageUpdatePayload,
-  CodeUsageListParams,
-  PageResponse,
 } from '../admin/types';
 
 // ----------------------------------------------------------------------

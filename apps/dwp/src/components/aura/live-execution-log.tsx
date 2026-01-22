@@ -71,15 +71,15 @@ export const LiveExecutionLog = ({ logs, isOpen = true, onToggle, contextOpen = 
       sx={{
         position: 'fixed',
         bottom: 0,
-        left: contextOpen ? '320px' : 0,
-        right: 0,
+        left: 'var(--layout-nav-current-width)',
+        right: contextOpen ? '320px' : 0,
         maxHeight: 200,
         bgcolor: 'grey.900',
         color: 'grey.100',
         borderTop: '1px solid',
         borderColor: 'grey.700',
         zIndex: 1300,
-        transition: 'left 0.3s',
+        transition: 'left 0.3s, right 0.3s',
       }}
     >
       <Box
@@ -95,7 +95,7 @@ export const LiveExecutionLog = ({ logs, isOpen = true, onToggle, contextOpen = 
         <Stack direction="row" spacing={1} alignItems="center">
           <Iconify icon="solar:terminal-bold" width={16} sx={{ color: 'grey.400' }} />
           <Typography variant="caption" sx={{ color: 'grey.400', fontFamily: 'monospace' }}>
-            실행 로그 ({logs.length})
+            스트림 로그 ({logs.length})
           </Typography>
         </Stack>
         {onToggle && (
@@ -177,7 +177,7 @@ export const LiveExecutionLog = ({ logs, isOpen = true, onToggle, contextOpen = 
           </AnimatePresence>
           {logs.length === 0 && (
             <Typography variant="caption" sx={{ color: 'grey.500', fontStyle: 'italic' }}>
-              실행 로그가 없습니다.
+              스트림 로그가 없습니다.
             </Typography>
           )}
         </Box>

@@ -34,7 +34,6 @@ const UsersPageContent = () => {
     statusFilter,
     loginTypeFilter,
     departmentFilter,
-    roleFilter,
     page,
     rowsPerPage,
     selectedUserId,
@@ -42,7 +41,6 @@ const UsersPageContent = () => {
     setStatusFilter,
     setLoginTypeFilter,
     setDepartmentFilter,
-    setRoleFilter,
     setPage,
     setRowsPerPage,
     setSelectedUserId,
@@ -54,10 +52,8 @@ const UsersPageContent = () => {
   } = useUsersTableState();
 
   const {
-    mode,
     open: editorOpen,
     draftForm,
-    dirty,
     validationErrors,
     isCreateMode,
     isEditMode,
@@ -65,7 +61,6 @@ const UsersPageContent = () => {
     openEditDialog,
     closeDialog,
     updateFormField,
-    resetForm,
     validateForm,
     selectedUser,
     snackbar,
@@ -73,7 +68,7 @@ const UsersPageContent = () => {
     closeSnackbar,
   } = useUserEditorState();
 
-  const { createUser, updateUser, deleteUser, updateUserRoles, isCreating, isUpdating, isDeleting, isUpdatingRoles } =
+  const { createUser, updateUser, deleteUser, updateUserRoles, isCreating, isUpdating, isUpdatingRoles } =
     useUserActions(showSnackbar, refetch);
 
   // Additional state for dialogs
@@ -169,6 +164,11 @@ const UsersPageContent = () => {
     handleMenuClose();
   };
 
+  const handleRowClick = (user: typeof userRowModels[0]) => {
+    setSelectedUserId(user.id);
+    setDetailDrawerOpen(true);
+  };
+
   const handleResetPassword = (user: typeof userRowModels[0]) => {
     setSelectedUserId(user.id);
     setResetPasswordDialogOpen(true);
@@ -259,13 +259,13 @@ const UsersPageContent = () => {
           anchorEl={anchorEl}
           onPageChange={setPage}
           onRowsPerPageChange={setRowsPerPage}
-          onUserSelect={setSelectedUserId}
           onMenuOpen={handleMenuOpen}
           onMenuClose={handleMenuClose}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onRoles={handleRoles}
           onResetPassword={handleResetPassword}
+          onRowClick={handleRowClick}
           onRetry={refetch}
         />
       </Stack>

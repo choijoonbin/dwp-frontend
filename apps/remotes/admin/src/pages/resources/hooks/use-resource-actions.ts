@@ -5,9 +5,9 @@ import type { ResourceNode, ResourceCreatePayload, ResourceUpdatePayload } from 
 import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
+  HttpError,
   trackEvent,
   getTenantId,
-  HttpError,
   useCreateAdminResourceMutation,
   useUpdateAdminResourceMutation,
   useDeleteAdminResourceMutation,

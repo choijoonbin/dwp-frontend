@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useMemo, useState, useCallback } from 'react';
 import {
   toSelectOptions,
   getCodesByGroupFromMap,

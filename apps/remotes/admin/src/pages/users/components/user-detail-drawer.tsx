@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { memo } from 'react';
-import { useAdminUserDetailQuery, useAdminUserRolesQuery } from '@dwp-frontend/shared-utils';
+import { useAdminUserRolesQuery, useAdminUserDetailQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -15,7 +15,6 @@ import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 
-import type { UserRowModel } from '../types';
 
 // ----------------------------------------------------------------------
 

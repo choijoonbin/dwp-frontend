@@ -65,10 +65,13 @@ export const useMenuEditorState = () => {
   }, [selectedMenu, initializeForm]);
 
   // Open create dialog
-  const openCreateDialog = useCallback(() => {
+  const openCreateDialog = useCallback((parentId?: string) => {
     setMode('create');
     setSelectedMenu(null);
     initializeForm(null);
+    if (parentId) {
+      setDraftForm((prev) => ({ ...prev, parentId }));
+    }
     setOpen(true);
   }, [initializeForm]);
 
@@ -89,6 +92,14 @@ export const useMenuEditorState = () => {
     setDirty(false);
     setValidationErrors({});
   }, []);
+
+  const resetForm = useCallback(() => {
+    if (selectedMenu) {
+      initializeForm(selectedMenu);
+    } else {
+      initializeForm(null);
+    }
+  }, [initializeForm, selectedMenu]);
 
   // Update form field
   const updateFormField = useCallback(<K extends keyof MenuFormState>(
@@ -149,6 +160,7 @@ export const useMenuEditorState = () => {
     openCreateDialog,
     openEditDialog,
     closeDialog,
+    resetForm,
     updateFormField,
     validateForm,
     setSelectedMenu,

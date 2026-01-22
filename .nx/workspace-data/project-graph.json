@@ -8725,7 +8725,12 @@
       },
       {
         "source": "admin",
-        "target": "npm:clsx",
+        "target": "npm:vitest",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "npm:lucide-react",
         "type": "static"
       },
       {
@@ -8792,6 +8797,211 @@
       },
       {
         "source": "design-system",
+        "target": "npm:lucide-react",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-accordion",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-alert-dialog",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:class-variance-authority",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-aspect-ratio",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-avatar",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-slot",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:react-day-picker",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:embla-carousel-react",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:recharts",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-checkbox",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-collapsible",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:cmdk",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-context-menu",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-dialog",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:vaul",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-dropdown-menu",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-label",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:react-hook-form",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-hover-card",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:input-otp",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-menubar",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-navigation-menu",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-popover",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-progress",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-radio-group",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:react-resizable-panels",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-scroll-area",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-select",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-separator",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-slider",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:sonner",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:next-themes",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-switch",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-tabs",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-toast",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-toggle-group",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-toggle",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:@radix-ui/react-tooltip",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:tailwind-merge",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
+        "target": "npm:clsx",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
         "target": "npm:@mui/lab",
         "type": "static"
       }
@@ -8829,6 +9039,11 @@
       }
     ],
     "shared-utils": [
+      {
+        "source": "shared-utils",
+        "target": "npm:vitest",
+        "type": "static"
+      },
       {
         "source": "shared-utils",
         "target": "npm:zustand",
@@ -19489,5 +19704,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1769005861711
+  "computedAt": 1769047028682
 }

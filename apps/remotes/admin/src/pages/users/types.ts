@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import type { UserSummary, UserDetail, UserAccount } from '@dwp-frontend/shared-utils';
+import type { UserSummary, UserAccount } from '@dwp-frontend/shared-utils';
 
 // ----------------------------------------------------------------------
 

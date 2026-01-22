@@ -4,7 +4,7 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getAdminUsers, createAdminUser, updateAdminUser, deleteAdminUser, disableAdminUser } from '../api/admin-iam-api';
 
-import type { UserListParams, UserCreatePayload, UserUpdatePayload, PageResponse, UserSummary } from '../admin/types';
+import type { UserListParams, UserCreatePayload, UserUpdatePayload } from '../admin/types';
 
 // ----------------------------------------------------------------------
 

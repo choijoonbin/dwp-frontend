@@ -13,8 +13,8 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import TimelineItem from '@mui/lab/TimelineItem';
 import Typography from '@mui/material/Typography';
 import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -96,7 +96,17 @@ export const ThoughtChainUI = ({ thoughts }: ThoughtChainUIProps) => {
   }
 
   return (
-    <Timeline sx={{ p: 0 }}>
+    <Timeline
+      position="right"
+      sx={{
+        p: 0,
+        m: 0,
+        '& .MuiTimelineItem-root:before': {
+          flex: 0,
+          padding: 0,
+        },
+      }}
+    >
       <AnimatePresence>
         {thoughts.map((thought, index) => (
           <motion.div
@@ -113,7 +123,7 @@ export const ThoughtChainUI = ({ thoughts }: ThoughtChainUIProps) => {
                 </TimelineDot>
                 {index < thoughts.length - 1 && <TimelineConnector />}
               </TimelineSeparator>
-              <TimelineContent>
+              <TimelineContent sx={{ pr: 0 }}>
                 <Paper
                   sx={{
                     p: 2,

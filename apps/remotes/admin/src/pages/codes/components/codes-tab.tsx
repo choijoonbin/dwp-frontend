@@ -21,6 +21,7 @@ import Table from '@mui/material/Table';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
+import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Skeleton from '@mui/material/Skeleton';
 import Snackbar from '@mui/material/Snackbar';
@@ -31,6 +32,7 @@ import TableHead from '@mui/material/TableHead';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import TableContainer from '@mui/material/TableContainer';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { CodeEditorModal } from './code-editor-modal';
@@ -190,13 +192,13 @@ export const CodesTab = () => {
                 </MenuItem>
               ))}
             </TextField>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }}>
               <TextField
                 label="검색"
                 size="small"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                sx={{ flex: 1 }}
+                sx={{ minWidth: { xs: 1, md: 240 }, flex: 1 }}
                 placeholder="코드 키, 코드명, 코드 값, 설명"
                 disabled={!selectedGroupKey}
               />
@@ -206,7 +208,7 @@ export const CodesTab = () => {
                 size="small"
                 value={tenantScope}
                 onChange={(e) => setTenantScope(e.target.value as 'COMMON' | 'TENANT' | 'ALL')}
-                sx={{ minWidth: 150 }}
+                sx={{ minWidth: { xs: 1, md: 140 } }}
                 disabled={!selectedGroupKey}
               >
                 <MenuItem value="ALL">전체</MenuItem>
@@ -223,16 +225,19 @@ export const CodesTab = () => {
                 }
                 label="활성화만"
               />
-              <PermissionGate resource="menu.admin.codes" permission="CREATE">
-                <Button
-                  variant="contained"
-                  startIcon={<Iconify icon="mingcute:add-line" />}
-                  onClick={handleCreateCode}
-                  disabled={!selectedGroupKey}
-                >
-                  코드 추가
-                </Button>
-              </PermissionGate>
+              <Box sx={{ ml: { md: 'auto' }, width: { xs: 1, md: 'auto' } }}>
+                <PermissionGate resource="menu.admin.codes" permission="CREATE">
+                  <Button
+                    variant="contained"
+                    startIcon={<Iconify icon="mingcute:add-line" />}
+                    onClick={handleCreateCode}
+                    disabled={!selectedGroupKey}
+                    sx={{ width: { xs: 1, md: 'auto' }, minHeight: 40 }}
+                  >
+                    코드 추가
+                  </Button>
+                </PermissionGate>
+              </Box>
             </Stack>
           </Stack>
         </Box>
@@ -261,48 +266,68 @@ export const CodesTab = () => {
             </Typography>
           </Box>
         ) : (
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>코드 키</TableCell>
-                <TableCell>코드명</TableCell>
-                <TableCell>코드 값</TableCell>
-                <TableCell>스코프</TableCell>
-                <TableCell>정렬 순서</TableCell>
-                <TableCell>상태</TableCell>
-                <TableCell align="right">작업</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredCodes.map((code) => (
-                <TableRow key={code.id}>
-                  <TableCell>{code.codeKey}</TableCell>
-                  <TableCell>{code.codeName}</TableCell>
-                  <TableCell>{code.codeValue || '-'}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={code.tenantScope === 'COMMON' ? '공통' : '테넌트'}
-                      color={code.tenantScope === 'COMMON' ? 'primary' : 'secondary'}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>{code.sortOrder ?? '-'}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={code.enabled ? '활성' : '비활성'}
-                      color={code.enabled ? 'success' : 'default'}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton size="small" onClick={(e) => handleCodeMenuOpen(e, code)}>
-                      <Iconify icon="solar:menu-dots-bold" />
-                    </IconButton>
-                  </TableCell>
+          <TableContainer sx={{ maxHeight: { md: 640 }, overflowX: 'auto' }}>
+            <Table stickyHeader sx={{ minWidth: 820, tableLayout: 'fixed' }}>
+              <TableHead>
+                <TableRow sx={{ height: 56 }}>
+                  <TableCell sx={{ minWidth: 160 }}>코드 키</TableCell>
+                  <TableCell sx={{ minWidth: 180 }}>코드명</TableCell>
+                  <TableCell sx={{ minWidth: 160 }}>코드 값</TableCell>
+                  <TableCell sx={{ width: 140 }}>스코프</TableCell>
+                  <TableCell sx={{ width: 120 }}>정렬 순서</TableCell>
+                  <TableCell sx={{ width: 120 }}>상태</TableCell>
+                  <TableCell align="right" sx={{ width: 72 }} />
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {filteredCodes.map((code) => (
+                  <TableRow key={code.id} sx={{ height: 48 }}>
+                    <TableCell>
+                      <Tooltip title={code.codeKey} placement="top-start">
+                        <Typography variant="body2" noWrap>
+                          {code.codeKey}
+                        </Typography>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title={code.codeName} placement="top-start">
+                        <Typography variant="body2" noWrap>
+                          {code.codeName}
+                        </Typography>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title={code.codeValue || '-'} placement="top-start">
+                        <Typography variant="body2" noWrap>
+                          {code.codeValue || '-'}
+                        </Typography>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={code.tenantScope === 'COMMON' ? '공통' : '테넌트'}
+                        color={code.tenantScope === 'COMMON' ? 'primary' : 'secondary'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>{code.sortOrder ?? '-'}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={code.enabled ? '활성' : '비활성'}
+                        color={code.enabled ? 'success' : 'default'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton size="small" onClick={(e) => handleCodeMenuOpen(e, code)}>
+                        <Iconify icon="solar:menu-dots-bold" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
       </Card>
 

@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
-import { useMonitoringSummaryQuery, ApiErrorAlert } from '@dwp-frontend/shared-utils';
+import { ApiErrorAlert, useMonitoringSummaryQuery } from '@dwp-frontend/shared-utils';
 
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
-import Alert from '@mui/material/Alert';
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 

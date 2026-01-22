@@ -5,13 +5,12 @@ import type { UserSummary, UserCreatePayload, UserUpdatePayload } from '@dwp-fro
 import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
+  HttpError,
   trackEvent,
   getTenantId,
-  HttpError,
   useCreateAdminUserMutation,
   useUpdateAdminUserMutation,
   useDeleteAdminUserMutation,
-  useDisableAdminUserMutation,
   useUpdateAdminUserRolesMutation,
 } from '@dwp-frontend/shared-utils';
 
@@ -35,7 +34,6 @@ export const useUserActions = (
   const createMutation = useCreateAdminUserMutation();
   const updateMutation = useUpdateAdminUserMutation();
   const deleteMutation = useDeleteAdminUserMutation();
-  const disableMutation = useDisableAdminUserMutation();
   const updateRolesMutation = useUpdateAdminUserRolesMutation();
 
   // Invalidate users queries after mutation

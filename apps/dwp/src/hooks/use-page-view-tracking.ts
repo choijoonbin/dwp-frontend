@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { postPageView, getUserId } from '@dwp-frontend/shared-utils';
+import { getUserId, postPageView } from '@dwp-frontend/shared-utils';
 
 // ----------------------------------------------------------------------
 

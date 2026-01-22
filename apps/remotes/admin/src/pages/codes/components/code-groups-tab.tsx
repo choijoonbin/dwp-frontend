@@ -20,6 +20,7 @@ import Table from '@mui/material/Table';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
+import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Skeleton from '@mui/material/Skeleton';
 import Snackbar from '@mui/material/Snackbar';
@@ -30,6 +31,7 @@ import TableHead from '@mui/material/TableHead';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import TableContainer from '@mui/material/TableContainer';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { DeleteConfirmDialog } from './delete-confirm-dialog';
@@ -158,13 +160,13 @@ export const CodeGroupsTab = () => {
       <Card>
         {/* Filter Bar */}
         <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }}>
             <TextField
               label="검색"
               size="small"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              sx={{ flex: 1 }}
+              sx={{ minWidth: { xs: 1, md: 240 }, flex: 1 }}
               placeholder="그룹 키, 그룹명, 설명"
             />
             <TextField
@@ -173,7 +175,7 @@ export const CodeGroupsTab = () => {
               size="small"
               value={tenantScope}
               onChange={(e) => setTenantScope(e.target.value as 'COMMON' | 'TENANT' | 'ALL')}
-              sx={{ minWidth: 150 }}
+              sx={{ minWidth: { xs: 1, md: 140 } }}
             >
               <MenuItem value="ALL">전체</MenuItem>
               <MenuItem value="COMMON">공통</MenuItem>
@@ -188,11 +190,18 @@ export const CodeGroupsTab = () => {
               }
               label="활성화만"
             />
-            <PermissionGate resource="menu.admin.codes" permission="CREATE">
-              <Button variant="contained" startIcon={<Iconify icon="mingcute:add-line" />} onClick={handleCreateGroup}>
-                그룹 추가
-              </Button>
-            </PermissionGate>
+            <Box sx={{ ml: { md: 'auto' }, width: { xs: 1, md: 'auto' } }}>
+              <PermissionGate resource="menu.admin.codes" permission="CREATE">
+                <Button
+                  variant="contained"
+                  startIcon={<Iconify icon="mingcute:add-line" />}
+                  onClick={handleCreateGroup}
+                  sx={{ width: { xs: 1, md: 'auto' }, minHeight: 40 }}
+                >
+                  그룹 추가
+                </Button>
+              </PermissionGate>
+            </Box>
           </Stack>
         </Box>
 
@@ -214,44 +223,58 @@ export const CodeGroupsTab = () => {
             </Typography>
           </Box>
         ) : (
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>그룹 키</TableCell>
-                <TableCell>그룹명</TableCell>
-                <TableCell>스코프</TableCell>
-                <TableCell>상태</TableCell>
-                <TableCell align="right">작업</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredGroups.map((group) => (
-                <TableRow key={group.id}>
-                  <TableCell>{group.groupKey}</TableCell>
-                  <TableCell>{group.groupName}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={group.tenantScope === 'COMMON' ? '공통' : '테넌트'}
-                      color={group.tenantScope === 'COMMON' ? 'primary' : 'secondary'}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={group.enabled ? '활성' : '비활성'}
-                      color={group.enabled ? 'success' : 'default'}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton size="small" onClick={(e) => handleGroupMenuOpen(e, group)}>
-                      <Iconify icon="solar:menu-dots-bold" />
-                    </IconButton>
-                  </TableCell>
+          <TableContainer sx={{ maxHeight: { md: 640 }, overflowX: 'auto' }}>
+            <Table stickyHeader sx={{ minWidth: 760, tableLayout: 'fixed' }}>
+              <TableHead>
+                <TableRow sx={{ height: 56 }}>
+                  <TableCell sx={{ minWidth: 180 }}>그룹 키</TableCell>
+                  <TableCell sx={{ minWidth: 200 }}>그룹명</TableCell>
+                  <TableCell sx={{ width: 140 }}>스코프</TableCell>
+                  <TableCell sx={{ width: 120 }}>상태</TableCell>
+                  <TableCell align="right" sx={{ width: 72 }} />
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {filteredGroups.map((group) => (
+                  <TableRow key={group.id} sx={{ height: 48 }}>
+                    <TableCell>
+                      <Tooltip title={group.groupKey} placement="top-start">
+                        <Typography variant="body2" noWrap>
+                          {group.groupKey}
+                        </Typography>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title={group.groupName} placement="top-start">
+                        <Typography variant="body2" noWrap>
+                          {group.groupName}
+                        </Typography>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={group.tenantScope === 'COMMON' ? '공통' : '테넌트'}
+                        color={group.tenantScope === 'COMMON' ? 'primary' : 'secondary'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={group.enabled ? '활성' : '비활성'}
+                        color={group.enabled ? 'success' : 'default'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton size="small" onClick={(e) => handleGroupMenuOpen(e, group)}>
+                        <Iconify icon="solar:menu-dots-bold" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
       </Card>
 

@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import { describe, it, expect } from 'vitest';
+import { it, expect, describe } from 'vitest';
 
 /**
  * Unit tests for SSE parser logic

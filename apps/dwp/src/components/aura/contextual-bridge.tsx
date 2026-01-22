@@ -17,26 +17,35 @@ import { Iconify } from 'src/components/iconify';
 type ContextualBridgeProps = {
   snapshot: ContextSnapshot | null;
   onClose?: () => void;
+  variant?: 'fixed' | 'embedded';
 };
 
-export const ContextualBridge = ({ snapshot, onClose }: ContextualBridgeProps) => {
+export const ContextualBridge = ({ snapshot, onClose, variant = 'fixed' }: ContextualBridgeProps) => {
   if (!snapshot) return null;
+
+  const isFixed = variant === 'fixed';
 
   return (
     <Paper
       sx={{
-        position: 'fixed',
-        right: 0,
-        top: 0,
-        bottom: 0,
-        width: 320,
+        position: isFixed ? 'fixed' : 'relative',
+        right: isFixed ? 0 : 'auto',
+        top: isFixed
+          ? 'calc(var(--layout-header-desktop-height) + var(--ai-workspace-header-height, 0px))'
+          : 'auto',
+        bottom: isFixed ? 'auto' : 'auto',
+        width: isFixed ? 320 : '100%',
+        height: isFixed
+          ? 'calc(100dvh - var(--layout-header-desktop-height) - var(--ai-workspace-header-height, 0px))'
+          : '100%',
         bgcolor: 'background.paper',
-        borderLeft: '1px solid',
+        borderLeft: isFixed ? '1px solid' : 'none',
+        borderTop: isFixed ? 'none' : '1px solid',
         borderColor: 'divider',
-        zIndex: 1200,
+        zIndex: isFixed ? 1200 : 'auto',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: (theme) => theme.customShadows.z24,
+        boxShadow: (theme) => (isFixed ? theme.customShadows.z24 : theme.customShadows.z8),
       }}
     >
       <Box

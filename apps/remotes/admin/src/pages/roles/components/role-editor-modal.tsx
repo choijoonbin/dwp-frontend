@@ -17,9 +17,11 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import { useTheme } from '@mui/material/styles';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 // ----------------------------------------------------------------------
 
@@ -31,6 +33,8 @@ type RoleEditorModalProps = {
 };
 
 export const RoleEditorModal = memo(({ open, onClose, role, onSuccess }: RoleEditorModalProps) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [formData, setFormData] = useState({
     roleName: '',
     roleCode: '',
@@ -120,7 +124,7 @@ export const RoleEditorModal = memo(({ open, onClose, role, onSuccess }: RoleEdi
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
       <DialogTitle>{role ? '역할 편집' : '역할 추가'}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 1 }}>

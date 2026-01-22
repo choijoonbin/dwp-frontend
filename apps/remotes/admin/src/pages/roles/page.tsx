@@ -1,13 +1,16 @@
 // ----------------------------------------------------------------------
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
+import Drawer from '@mui/material/Drawer';
 import Snackbar from '@mui/material/Snackbar';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useRoleActions } from './hooks/use-role-actions';
 import { RoleListPanel } from './components/role-list-panel';
@@ -37,11 +40,15 @@ const RolesPageContent = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedRoleIdForDelete, setSelectedRoleIdForDelete] = useState<string | null>(null);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false,
     message: '',
     severity: 'success',
   });
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const showSnackbar = (message: string, severity: 'success' | 'error' = 'success') => {
     setSnackbar({ open: true, message, severity });
@@ -84,10 +91,15 @@ const RolesPageContent = () => {
     showSnackbar('변경사항이 저장되었습니다.');
   };
 
-  const handleEdit = (roleId: string) => {
-    // Edit is handled in RoleDetailPanel via RoleOverviewTab
-    // This is a placeholder for future edit modal if needed
-  };
+  const handleRoleSelect = useCallback(
+    (roleId: string) => {
+      setSelectedRoleId(roleId);
+      if (isMobile) {
+        setMobileDetailOpen(true);
+      }
+    },
+    [isMobile, setSelectedRoleId]
+  );
 
   const handleDeleteClick = (roleId: string) => {
     setSelectedRoleIdForDelete(roleId);
@@ -117,9 +129,9 @@ const RolesPageContent = () => {
   };
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <Box sx={{ flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {/* Header */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 3, py: 2 }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 2 } }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Stack spacing={0.5}>
             <Typography variant="h5" sx={{ fontWeight: 600 }}>
@@ -133,13 +145,21 @@ const RolesPageContent = () => {
       </Box>
 
       {/* Main Content: Left List + Right Detail */}
-      <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <Box sx={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
         {/* Left: Roles List Panel */}
-        <Box sx={{ width: 320, borderRight: 1, borderColor: 'divider', overflow: 'hidden' }}>
+        <Box
+          sx={{
+            width: { xs: '100%', sm: 280, md: 320 },
+            borderRight: { xs: 0, sm: 1 },
+            borderColor: 'divider',
+            overflow: 'hidden',
+            minHeight: 0,
+          }}
+        >
           <RoleListPanel
             roles={roleRowModels}
             selectedRoleId={selectedRoleId}
-            onRoleSelect={setSelectedRoleId}
+            onRoleSelect={handleRoleSelect}
             onCreateClick={() => setCreateModalOpen(true)}
             isLoading={isLoading}
             error={error}
@@ -147,15 +167,37 @@ const RolesPageContent = () => {
         </Box>
 
         {/* Right: Role Detail Panel */}
-        <Box sx={{ flex: 1, overflow: 'hidden' }}>
-          <RoleDetailPanel
-            roleId={selectedRoleId}
-            onCreateClick={() => setCreateModalOpen(true)}
-            onEdit={handleEdit}
-            onDelete={handleDeleteClick}
-            onSuccess={handleDetailSuccess}
-          />
-        </Box>
+        {!isMobile ? (
+          <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+            <RoleDetailPanel
+              roleId={selectedRoleId}
+              onCreateClick={() => setCreateModalOpen(true)}
+              onDelete={handleDeleteClick}
+              onSuccess={handleDetailSuccess}
+            />
+          </Box>
+        ) : (
+          <Drawer
+            anchor="right"
+            open={mobileDetailOpen && Boolean(selectedRoleId)}
+            onClose={() => setMobileDetailOpen(false)}
+            PaperProps={{
+              sx: {
+                width: { xs: '100%', sm: '80%' },
+                maxWidth: 720,
+                height: '100%',
+              },
+            }}
+          >
+            <RoleDetailPanel
+              roleId={selectedRoleId}
+              onCreateClick={() => setCreateModalOpen(true)}
+              onDelete={handleDeleteClick}
+              onSuccess={handleDetailSuccess}
+              onClose={() => setMobileDetailOpen(false)}
+            />
+          </Drawer>
+        )}
       </Box>
 
       {/* Create Modal */}

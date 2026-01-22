@@ -10,7 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 // In production, this would be loaded via Module Federation.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - Remote app import path
-// eslint-disable-next-line import/no-unresolved
+ 
 const AdminApp = lazy(() => import('../../../remotes/admin/src/admin-app'));
 
 // ----------------------------------------------------------------------

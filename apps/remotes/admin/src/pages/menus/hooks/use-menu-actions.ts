@@ -3,11 +3,9 @@
 import type { AdminMenuNode, MenuCreatePayload, MenuUpdatePayload, MenuReorderPayload } from '@dwp-frontend/shared-utils';
 
 import { useCallback } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import {
-  trackEvent,
-  getTenantId,
   HttpError,
+  trackEvent,
   useCreateAdminMenuMutation,
   useUpdateAdminMenuMutation,
   useDeleteAdminMenuMutation,
@@ -25,9 +23,6 @@ export const useMenuActions = (
   showSnackbar: (message: string, severity?: 'success' | 'error') => void,
   refetch: () => void
 ) => {
-  const queryClient = useQueryClient();
-  const tenantId = getTenantId();
-
   const createMutation = useCreateAdminMenuMutation();
   const updateMutation = useUpdateAdminMenuMutation();
   const deleteMutation = useDeleteAdminMenuMutation();

@@ -4,14 +4,14 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import {
   getAdminRoles,
-  getAdminRoleDetail,
   createAdminRole,
   updateAdminRole,
   deleteAdminRole,
   disableAdminRole,
+  getAdminRoleDetail,
 } from '../api/admin-iam-api';
 
-import type { RoleListParams, RoleCreatePayload, RoleUpdatePayload, PageResponse, RoleDetail } from '../admin/types';
+import type { RoleListParams, RoleCreatePayload, RoleUpdatePayload } from '../admin/types';
 
 // ----------------------------------------------------------------------
 

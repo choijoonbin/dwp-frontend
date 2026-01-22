@@ -100,13 +100,24 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
   }
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', p: 2 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', p: { xs: 2, sm: 2 } }}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          spacing={1.5}
+          sx={{ mb: { xs: 1.5, sm: 2 } }}
+        >
           <Typography variant="h6">역할 목록</Typography>
           <PermissionGate resource="menu.admin.roles" permission="CREATE">
-            <Button size="small" startIcon={<Iconify icon="mingcute:add-line" />} onClick={onCreateClick}>
+            <Button
+              size="small"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={onCreateClick}
+              sx={{ width: { xs: '100%', sm: 'auto' } }}
+            >
               새 역할
             </Button>
           </PermissionGate>
@@ -122,11 +133,11 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
           InputProps={{
             startAdornment: <Iconify icon="solar:magnifer-bold" width={20} sx={{ mr: 1, color: 'text.secondary' }} />,
           }}
-          sx={{ mb: 1.5 }}
+          sx={{ mb: { xs: 1.25, sm: 1.5 } }}
         />
 
         {/* Filters */}
-        <Stack direction="row" spacing={1}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
           <FormControl size="small" sx={{ flex: 1 }}>
             <InputLabel>상태</InputLabel>
             <Select
@@ -156,7 +167,7 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
       </Box>
 
       {/* Role List */}
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
+      <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
         {isLoading ? (
           <Box sx={{ p: 2 }}>
             {Array.from({ length: 5 }).map((_, idx) => (
@@ -242,7 +253,13 @@ const RoleCard = memo<{
         },
       }}
     >
-    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
+    <Stack
+      direction={{ xs: 'column', sm: 'row' }}
+      justifyContent="space-between"
+      alignItems={{ xs: 'flex-start', sm: 'flex-start' }}
+      spacing={1}
+      sx={{ mb: 1 }}
+    >
       <Box>
         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
           {role.roleName}
@@ -259,7 +276,7 @@ const RoleCard = memo<{
       />
     </Stack>
 
-      <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.5, sm: 2 }} sx={{ mt: 1 }}>
         <Stack direction="row" spacing={0.5} alignItems="center">
           <Iconify icon="solar:users-group-rounded-bold" width={14} sx={{ color: 'text.secondary' }} />
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>

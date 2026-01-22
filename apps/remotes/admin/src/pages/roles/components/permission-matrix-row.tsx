@@ -2,8 +2,8 @@
 
 import type { ResourceNode } from '@dwp-frontend/shared-utils';
 
+import React, { memo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
-import React, { memo, useMemo, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -15,7 +15,6 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { PermissionMatrixCell } from './permission-matrix-cell';
-import { flattenResourceTree } from '../adapters/role-permission-adapter';
 
 // ----------------------------------------------------------------------
 
@@ -77,25 +76,6 @@ export const PermissionMatrixRow = memo(
       allRelatedKeys.forEach((key) => onRowBulkAction(key, value));
       handleMenuClose();
     };
-
-    // Check if row has any dirty cells
-    const hasDirtyCells = useMemo(() => {
-      const currentPerms = permissionMap.get(resource.resourceKey);
-      const originalPerms = originalMap.get(resource.resourceKey);
-
-      if (!currentPerms && !originalPerms) return false;
-      if (!currentPerms || !originalPerms) return true;
-
-      for (const [code, value] of currentPerms.entries()) {
-        if (originalPerms.get(code) !== value) return true;
-      }
-
-      for (const [code, value] of originalPerms.entries()) {
-        if (currentPerms.get(code) !== value) return true;
-      }
-
-      return false;
-    }, [resource.resourceKey, permissionMap, originalMap]);
 
     const getPermissionValue = (permissionCode: string): PermissionValue => permissionMap.get(resource.resourceKey)?.get(permissionCode) ?? null;
 

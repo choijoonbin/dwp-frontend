@@ -281,6 +281,9 @@ apps/remotes/admin/src/pages/<feature>/
 - PR Rule:
   - 변경된 로직에 대응되는 테스트 없이 머지 금지
 
+- Package manager is Yarn-only. Any pnpm usage or switching requires a separate ADR and explicit approval.
+- Mandatory checks must be run with Yarn (or corepack-activated Yarn) before PR completion.
+
 ────────────────────────────────────────────────────────
 ⚠️ Hard Rules (Strictly Prohibited) ✅ 위반 시 PR Reject
 ────────────────────────────────────────────────────────

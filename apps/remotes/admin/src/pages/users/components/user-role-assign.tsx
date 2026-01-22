@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { memo, useState, useEffect } from 'react';
-import { useAdminUserRolesQuery, useAdminRolesQuery } from '@dwp-frontend/shared-utils';
+import { useAdminRolesQuery, useAdminUserRolesQuery } from '@dwp-frontend/shared-utils';
 
 import Stack from '@mui/material/Stack';
 import Dialog from '@mui/material/Dialog';

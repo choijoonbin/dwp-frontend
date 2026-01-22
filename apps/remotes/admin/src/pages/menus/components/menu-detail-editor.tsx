@@ -2,19 +2,15 @@
 
 import type { AdminMenuNode } from '@dwp-frontend/shared-utils';
 
-import { memo, useMemo } from 'react';
-import { Iconify } from '@dwp-frontend/design-system';
+import { memo } from 'react';
 
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { flattenMenuTree } from '../adapters/menu-adapter';
+import { MenuDetailForm } from './menu-detail-form';
+import { MenuDetailFooter } from './menu-detail-footer';
+import { MenuDetailHeader } from './menu-detail-header';
+import { MenuDetailEmptyState } from './menu-detail-empty-state';
 
 import type { MenuFormState } from '../types';
 
@@ -27,8 +23,12 @@ type MenuDetailEditorProps = {
   validationErrors: Record<string, string>;
   isLoading: boolean;
   onFormChange: <K extends keyof MenuFormState>(field: K, value: MenuFormState[K]) => void;
+  onReset: () => void;
+  onCreateChild: (menu: AdminMenuNode) => void;
   onSave: () => void;
   onDelete: () => void;
+  onClose?: () => void;
+  variant?: 'default' | 'drawer';
 };
 
 export const MenuDetailEditor = memo(({
@@ -38,121 +38,41 @@ export const MenuDetailEditor = memo(({
   validationErrors,
   isLoading,
   onFormChange,
+  onReset,
+  onCreateChild,
   onSave,
   onDelete,
+  onClose,
+  variant = 'default',
 }: MenuDetailEditorProps) => {
-  // Flatten tree for parent selection (exclude current menu in edit mode)
-  const flatMenus = useMemo(() => {
-    if (menu) {
-      return flattenMenuTree(menusTree, menu.id);
-    }
-    return flattenMenuTree(menusTree);
-  }, [menusTree, menu]);
-
   if (!menu) {
-    return (
-      <Card sx={{ p: 3 }}>
-        <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
-          좌측에서 메뉴를 선택하세요.
-        </Typography>
-      </Card>
-    );
+    return <MenuDetailEmptyState />;
   }
 
+  const isFolder = !formData.path;
+
   return (
-    <Card sx={{ p: 3 }}>
-      <Stack spacing={3}>
-        <Stack spacing={1}>
-          <Typography variant="h6">메뉴 편집</Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            메뉴 정보를 수정할 수 있습니다.
-          </Typography>
-        </Stack>
-
-        <Stack spacing={2}>
-          <TextField
-            label="메뉴 키"
-            fullWidth
-            value={formData.menuKey}
-            disabled
-            helperText="메뉴 키는 수정할 수 없습니다."
-          />
-          <TextField
-            label="메뉴명 *"
-            fullWidth
-            value={formData.menuName}
-            onChange={(e) => onFormChange('menuName', e.target.value)}
-            required
-            error={!!validationErrors.menuName}
-            helperText={validationErrors.menuName}
-          />
-          <TextField
-            label="Path"
-            fullWidth
-            value={formData.path}
-            onChange={(e) => onFormChange('path', e.target.value)}
-            placeholder="/admin/users"
-          />
-          <TextField
-            label="아이콘"
-            fullWidth
-            value={formData.icon}
-            onChange={(e) => onFormChange('icon', e.target.value)}
-            placeholder="solar:user-bold"
-            helperText="Iconify 아이콘 이름을 입력하세요"
-          />
-          <TextField
-            label="그룹"
-            fullWidth
-            value={formData.group}
-            onChange={(e) => onFormChange('group', e.target.value)}
-            placeholder="MANAGEMENT"
-          />
-          <TextField
-            select
-            label="부모 메뉴"
-            fullWidth
-            value={formData.parentId}
-            onChange={(e) => onFormChange('parentId', e.target.value)}
-          >
-            <MenuItem value="">없음 (최상위)</MenuItem>
-            {flatMenus.map((m) => (
-              <MenuItem key={m.id} value={m.id}>
-                {m.menuName} ({m.menuKey})
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            label="정렬 순서"
-            type="number"
-            fullWidth
-            value={formData.sortOrder}
-            onChange={(e) => onFormChange('sortOrder', e.target.value)}
-            helperText="숫자가 작을수록 위에 표시됩니다"
-          />
-          <FormControlLabel
-            control={
-              <Switch checked={formData.enabled} onChange={(e) => onFormChange('enabled', e.target.checked)} />
-            }
-            label="활성화"
-          />
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <Button variant="contained" onClick={onSave} disabled={isLoading} startIcon={<Iconify icon="solar:diskette-bold" />}>
-            저장
-          </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={onDelete}
-            disabled={isLoading}
-            startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-          >
-            삭제
-          </Button>
-        </Stack>
-      </Stack>
+    <Card
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: variant === 'drawer' ? 0 : 2,
+      }}
+    >
+      <MenuDetailHeader menu={menu} enabled={formData.enabled} isFolder={isFolder} onClose={onClose} />
+      <Box sx={{ flex: 1, overflowY: 'auto', p: 3 }}>
+        <MenuDetailForm
+          menu={menu}
+          menusTree={menusTree}
+          formData={formData}
+          validationErrors={validationErrors}
+          onFormChange={onFormChange}
+          onCreateChild={onCreateChild}
+          onDelete={onDelete}
+        />
+      </Box>
+      <MenuDetailFooter isLoading={isLoading} onReset={onReset} onSave={onSave} />
     </Card>
   );
 });

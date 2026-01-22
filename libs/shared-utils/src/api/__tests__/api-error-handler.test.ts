@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { it, expect, describe } from 'vitest';
 
 import { HttpError } from '../../http-error';
-import { classifyApiError, getApiErrorMessage, isRetryableError, getApiErrorDisplayProps } from '../api-error-handler';
+import { classifyApiError, isRetryableError, getApiErrorMessage, getApiErrorDisplayProps } from '../api-error-handler';
 
 // ----------------------------------------------------------------------
 

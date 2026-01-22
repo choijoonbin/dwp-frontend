@@ -42,10 +42,8 @@ const ResourcesPageContent = () => {
   } = useResourcesTableState();
 
   const {
-    mode,
     open: editorOpen,
     draftForm,
-    dirty,
     validationErrors,
     isCreateMode,
     isEditMode,
@@ -53,7 +51,6 @@ const ResourcesPageContent = () => {
     openEditDialog,
     closeDialog,
     updateFormField,
-    resetForm,
     validateForm,
     selectedResource,
     setSelectedResource,
@@ -62,10 +59,7 @@ const ResourcesPageContent = () => {
     closeSnackbar,
   } = useResourceEditorState();
 
-  const { createResource, updateResource, deleteResource, isCreating, isUpdating, isDeleting } = useResourceActions(
-    showSnackbar,
-    refetch
-  );
+  const { createResource, updateResource, deleteResource, isCreating, isUpdating } = useResourceActions(showSnackbar, refetch);
 
   // Additional state for dialogs
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

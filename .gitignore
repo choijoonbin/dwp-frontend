@@ -36,3 +36,6 @@ build
 tsconfig.tsbuildinfo
 .ncurc.js
 knip.jsonc
+
+# docs (reference only, will be removed)
+docs/backend-src

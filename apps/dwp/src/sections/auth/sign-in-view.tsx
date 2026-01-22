@@ -1,12 +1,11 @@
-import { useState, useCallback, useMemo } from 'react';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useMemo, useState, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   useAuth,
   HttpError,
+  useIdpQuery,
   safeReturnUrl,
   useAuthPolicyQuery,
-  useIdpQuery,
-  type LoginType,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -28,7 +27,6 @@ import { Iconify } from 'src/components/iconify';
 
 export const SignInView = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const auth = useAuth();
 

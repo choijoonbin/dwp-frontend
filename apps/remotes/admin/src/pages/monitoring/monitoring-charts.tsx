@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { Chart, useChart } from '@dwp-frontend/design-system';
 import {
-  useMonitoringTimeseriesQuery,
   type TimeseriesResponse,
+  useMonitoringTimeseriesQuery,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';

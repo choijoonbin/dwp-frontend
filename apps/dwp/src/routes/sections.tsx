@@ -1,9 +1,9 @@
 import type { RouteObject } from 'react-router';
 
 import { lazy, Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
 import { varAlpha } from 'minimal-shared/utils';
 import { AuthGuard } from '@dwp-frontend/shared-utils';
+import { Outlet, Navigate, useParams } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
@@ -24,6 +24,14 @@ export const SSOCallbackPage = lazy(() => import('src/pages/sso-callback'));
 export const ForgotPasswordPage = lazy(() => import('src/pages/forgot-password'));
 export const Page403 = lazy(() => import('src/pages/page-403'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
+
+const AppAdminRedirect = () => {
+  const params = useParams();
+  const splat = params['*'] ?? '';
+  const target = splat ? `/admin/${splat}` : '/admin';
+
+  return <Navigate to={target} replace />;
+};
 
 const renderFallback = () => (
   <Box
@@ -63,6 +71,8 @@ export const routesSection: RouteObject[] = [
       { path: 'chat', element: <ChatPage /> },
       { path: 'approval', element: <ApprovalPage /> },
       { path: 'ai-workspace', element: <AIWorkspacePage /> },
+      { path: 'app/admin/aiworkspace', element: <Navigate to="/ai-workspace" replace /> },
+      { path: 'app/admin/*', element: <AppAdminRedirect /> },
       { path: 'admin/*', element: <AdminPage /> },
     ],
   },

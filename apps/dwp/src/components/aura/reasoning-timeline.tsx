@@ -12,10 +12,9 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import TimelineItem from '@mui/lab/TimelineItem';
 import Typography from '@mui/material/Typography';
 import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import CircularProgress from '@mui/material/CircularProgress';
-import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -90,7 +89,17 @@ export const ReasoningTimeline = ({ steps, currentStepIndex }: ReasoningTimeline
   }
 
   return (
-    <Timeline>
+    <Timeline
+      position="right"
+      sx={{
+        p: 0,
+        m: 0,
+        '& .MuiTimelineItem-root:before': {
+          flex: 0,
+          padding: 0,
+        },
+      }}
+    >
       {steps.map((step, index) => {
         const isActive = index === currentStepIndex;
         const isPast = index < currentStepIndex;
@@ -103,11 +112,6 @@ export const ReasoningTimeline = ({ steps, currentStepIndex }: ReasoningTimeline
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
             <TimelineItem>
-              <TimelineOppositeContent sx={{ flex: 0.2 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  {step.timestamp.toLocaleTimeString()}
-                </Typography>
-              </TimelineOppositeContent>
               <TimelineSeparator>
                 <TimelineDot
                   color={getStatusColor(step.status)}
@@ -137,7 +141,7 @@ export const ReasoningTimeline = ({ steps, currentStepIndex }: ReasoningTimeline
                   />
                 )}
               </TimelineSeparator>
-              <TimelineContent>
+              <TimelineContent sx={{ pr: 0 }}>
                 <Paper
                   sx={{
                     p: 2,
@@ -147,20 +151,27 @@ export const ReasoningTimeline = ({ steps, currentStepIndex }: ReasoningTimeline
                     transition: 'all 0.3s',
                   }}
                 >
-                  <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-                    <Chip
-                      label={getStatusLabel(step.status)}
-                      size="small"
-                      color={getChipColor(step.status)}
-                      icon={
-                        step.status === 'processing' ? (
-                          <CircularProgress size={12} color="inherit" />
-                        ) : undefined
-                      }
-                    />
-                    {step.metadata?.tool && (
-                      <Chip label={step.metadata.tool} size="small" variant="outlined" />
-                    )}
+                  <Stack spacing={1} sx={{ mb: 1 }}>
+                    <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Chip
+                          label={getStatusLabel(step.status)}
+                          size="small"
+                          color={getChipColor(step.status)}
+                          icon={
+                            step.status === 'processing' ? (
+                              <CircularProgress size={12} color="inherit" />
+                            ) : undefined
+                          }
+                        />
+                        {step.metadata?.tool && (
+                          <Chip label={step.metadata.tool} size="small" variant="outlined" />
+                        )}
+                      </Stack>
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        {step.timestamp.toLocaleTimeString()}
+                      </Typography>
+                    </Stack>
                   </Stack>
                   <Typography variant="subtitle2" sx={{ mb: 0.5, fontWeight: isActive ? 'bold' : 'normal' }}>
                     {step.title}

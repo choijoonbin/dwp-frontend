@@ -4,7 +4,7 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getMonitoringEvents } from '../api/monitoring-api';
 
-import type { MonitoringEventsParams, EventsResponse } from '../api/monitoring-api';
+import type { MonitoringEventsParams } from '../api/monitoring-api';
 
 // ----------------------------------------------------------------------
 

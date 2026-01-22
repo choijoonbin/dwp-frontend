@@ -3,7 +3,6 @@
 import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { memo, useMemo, useState, useEffect, useCallback } from 'react';
 import {
-  trackEvent,
   HttpError,
   useAdminUsersQuery,
   useAdminRoleMembersQuery,
@@ -20,12 +19,14 @@ import Dialog from '@mui/material/Dialog';
 import Skeleton from '@mui/material/Skeleton';
 import Snackbar from '@mui/material/Snackbar';
 import TextField from '@mui/material/TextField';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import Autocomplete from '@mui/material/Autocomplete';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { EmptyState } from './empty-state';
 import { useRoleMembersState } from '../hooks/use-role-members-state';
@@ -40,6 +41,8 @@ type RoleMembersTabProps = {
 };
 
 export const RoleMembersTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveRequest }: RoleMembersTabProps) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: roleMembers, isLoading } = useAdminRoleMembersQuery(roleId);
   const { data: allUsers } = useAdminUsersQuery({ size: 1000 });
   const updateMutation = useUpdateAdminRoleMembersMutation();
@@ -159,7 +162,7 @@ export const RoleMembersTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveRe
     <>
       <Stack spacing={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} spacing={1.5}>
           <Stack spacing={0.5}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
               멤버 관리
@@ -170,7 +173,12 @@ export const RoleMembersTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveRe
           </Stack>
 
           <PermissionGate resource="menu.admin.roles" permission="MANAGE">
-            <Button size="small" startIcon={<Iconify icon="mingcute:add-line" />} onClick={handleOpenDialog}>
+            <Button
+              size="small"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={handleOpenDialog}
+              sx={{ width: { xs: '100%', sm: 'auto' } }}
+            >
               멤버 추가
             </Button>
           </PermissionGate>
@@ -188,7 +196,7 @@ export const RoleMembersTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveRe
             }}
             sx={{ flex: 1 }}
           />
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', rowGap: 1 }}>
             <Button
               size="small"
               variant={memberTypeFilter === 'ALL' ? 'contained' : 'outlined'}
@@ -238,8 +246,10 @@ export const RoleMembersTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveRe
                     borderColor: 'divider',
                     borderRadius: 1,
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: { xs: 'flex-start', sm: 'center' },
                     justifyContent: 'space-between',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: { xs: 1.5, sm: 0 },
                     '&:hover': { bgcolor: 'action.hover' },
                   }}
                 >
@@ -290,7 +300,7 @@ export const RoleMembersTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveRe
                     <IconButton
                       size="small"
                       onClick={() => handleRemoveMember(member.id)}
-                      sx={{ color: 'text.secondary', '&:hover': { color: 'error.main' } }}
+                      sx={{ color: 'text.secondary', '&:hover': { color: 'error.main' }, alignSelf: { xs: 'flex-end', sm: 'center' } }}
                     >
                       <Iconify icon="solar:close-circle-bold" width={20} />
                     </IconButton>
@@ -304,7 +314,7 @@ export const RoleMembersTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveRe
         {/* Footer Stats */}
         {roleMembers && roleMembers.length > 0 && (
           <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 1 }}>
-            <Stack direction="row" spacing={2}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 표시: {filteredMembers.length}건
               </Typography>
@@ -317,7 +327,7 @@ export const RoleMembersTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveRe
       </Stack>
 
       {/* Member Management Dialog */}
-      <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="md" fullWidth>
+      <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="md" fullWidth fullScreen={fullScreen}>
         <DialogTitle>멤버 할당</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 2 }}>

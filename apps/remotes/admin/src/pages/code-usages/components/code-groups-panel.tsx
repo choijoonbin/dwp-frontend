@@ -14,6 +14,7 @@ import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
+import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Skeleton from '@mui/material/Skeleton';
 import TableRow from '@mui/material/TableRow';
@@ -22,6 +23,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import TableContainer from '@mui/material/TableContainer';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 // ----------------------------------------------------------------------
@@ -105,39 +107,47 @@ export const CodeGroupsPanel = memo(({
             </Typography>
           </Box>
         ) : (
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>코드 그룹 키</TableCell>
-                <TableCell>상태</TableCell>
-                <TableCell align="right">작업</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {groups.map((usage) => (
-                <TableRow key={usage.id}>
-                  <TableCell>{usage.codeGroupKey}</TableCell>
-                  <TableCell>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={usage.enabled}
-                          onChange={() => onToggleEnabled(usage)}
-                          size="small"
-                        />
-                      }
-                      label={<Chip label={usage.enabled ? '활성' : '비활성'} size="small" color={usage.enabled ? 'success' : 'default'} />}
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton size="small" onClick={(e) => onMenuOpen(e, usage)}>
-                      <Iconify icon="solar:menu-dots-bold" />
-                    </IconButton>
-                  </TableCell>
+          <TableContainer sx={{ maxHeight: { md: 640 }, overflowX: 'auto' }}>
+            <Table stickyHeader sx={{ minWidth: 520, tableLayout: 'fixed' }}>
+              <TableHead>
+                <TableRow sx={{ height: 56 }}>
+                  <TableCell sx={{ minWidth: 200 }}>코드 그룹 키</TableCell>
+                  <TableCell sx={{ width: 160 }}>상태</TableCell>
+                  <TableCell align="right" sx={{ width: 72 }} />
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {groups.map((usage) => (
+                  <TableRow key={usage.id} sx={{ height: 48 }}>
+                    <TableCell>
+                      <Tooltip title={usage.codeGroupKey} placement="top-start">
+                        <Typography variant="body2" noWrap>
+                          {usage.codeGroupKey}
+                        </Typography>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={usage.enabled}
+                            onChange={() => onToggleEnabled(usage)}
+                            size="small"
+                          />
+                        }
+                        label={<Chip label={usage.enabled ? '활성' : '비활성'} size="small" color={usage.enabled ? 'success' : 'default'} />}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton size="small" onClick={(e) => onMenuOpen(e, usage)}>
+                        <Iconify icon="solar:menu-dots-bold" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
       </Card>
 

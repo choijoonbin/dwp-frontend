@@ -2,7 +2,7 @@
 
 import type { Code } from '@dwp-frontend/shared-utils';
 
-import { memo, useEffect, useState } from 'react';
+import { memo, useState, useEffect } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';

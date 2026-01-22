@@ -36,7 +36,6 @@ const AuditPageContent = () => {
     data,
     isLoading,
     error,
-    refetch,
     params,
   } = useAuditLogsTableState();
 

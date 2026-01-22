@@ -4,7 +4,7 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getMonitoringTimeseries } from '../api/monitoring-api';
 
-import type { MonitoringTimeseriesParams, TimeseriesResponse } from '../api/monitoring-api';
+import type { MonitoringTimeseriesParams } from '../api/monitoring-api';
 
 // ----------------------------------------------------------------------
 

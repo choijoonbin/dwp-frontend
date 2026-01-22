@@ -4,7 +4,6 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getCodesByResourceKey } from '../api/code-usage-api';
 
-import type { CodeUsageResponse } from '../api/code-usage-api';
 
 // ----------------------------------------------------------------------
 

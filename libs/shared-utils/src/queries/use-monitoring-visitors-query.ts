@@ -4,7 +4,7 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getMonitoringVisitors } from '../api/monitoring-api';
 
-import type { MonitoringVisitorsParams, VisitorsResponse } from '../api/monitoring-api';
+import type { MonitoringVisitorsParams } from '../api/monitoring-api';
 
 // ----------------------------------------------------------------------
 

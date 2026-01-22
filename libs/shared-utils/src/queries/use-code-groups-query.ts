@@ -9,7 +9,7 @@ import {
   deleteCodeGroup,
 } from '../api/admin-iam-api';
 
-import type { CodeGroup, CodeGroupCreatePayload, CodeGroupUpdatePayload } from '../admin/types';
+import type { CodeGroupCreatePayload, CodeGroupUpdatePayload } from '../admin/types';
 
 // ----------------------------------------------------------------------
 

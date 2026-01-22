@@ -4,7 +4,7 @@ import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getMonitoringPageViews } from '../api/monitoring-api';
 
-import type { MonitoringListParams, PageViewsResponse } from '../api/monitoring-api';
+import type { MonitoringListParams } from '../api/monitoring-api';
 
 // ----------------------------------------------------------------------
 

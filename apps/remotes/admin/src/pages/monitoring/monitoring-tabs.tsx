@@ -1,16 +1,16 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import {
-  useMonitoringPageViewsQuery,
-  useMonitoringApiHistoriesQuery,
-  useMonitoringVisitorsQuery,
-  useMonitoringEventsQuery,
-  useCodesByResourceQuery,
-  getSelectOptionsByGroup,
   type PageViewItem,
+  type EventLogItem,
   type ApiHistoryItem,
   type VisitorSummary,
-  type EventLogItem,
+  useCodesByResourceQuery,
+  getSelectOptionsByGroup,
+  useMonitoringEventsQuery,
+  useMonitoringVisitorsQuery,
+  useMonitoringPageViewsQuery,
+  useMonitoringApiHistoriesQuery,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
