@@ -3,8 +3,8 @@
 import type { AdminMenuNode } from '@dwp-frontend/shared-utils';
 
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
+import { Iconify, ConfirmDialog, PermissionGate } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -24,7 +24,6 @@ import { MenuCreateModal } from './components/menu-create-modal';
 import { MenuDetailEditor } from './components/menu-detail-editor';
 import { useMenusTableState } from './hooks/use-menus-table-state';
 import { useMenuEditorState } from './hooks/use-menu-editor-state';
-import { DeleteConfirmDialog } from './components/delete-confirm-dialog';
 import { getMenuSiblings, findMenuNodeById } from './adapters/menu-adapter';
 
 import type { MenuFormState } from './types';
@@ -240,6 +239,7 @@ const MenusPageContent = () => {
 
   return (
     <Box
+      data-testid="page-admin-menus"
       sx={{
         p: 3,
         height: '100%',
@@ -329,14 +329,17 @@ const MenusPageContent = () => {
 
       {/* Delete Dialog */}
       {menuToDelete && (
-        <DeleteConfirmDialog
+        <ConfirmDialog
           open={deleteDialogOpen}
           onClose={() => {
             setDeleteDialogOpen(false);
             setMenuToDelete(null);
           }}
           title="메뉴 삭제"
-          content={`정말 "${menuToDelete.menuName}" 메뉴를 삭제하시겠습니까?`}
+          description={`정말 "${menuToDelete.menuName}" 메뉴를 삭제하시겠습니까?`}
+          confirmText="삭제"
+          cancelText="취소"
+          severity="danger"
           onConfirm={handleDeleteConfirm}
         />
       )}
