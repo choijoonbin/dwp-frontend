@@ -229,65 +229,361 @@ import { PermissionGate } from '@dwp-frontend/design-system';
 
 ---
 
-### 비즈니스 패턴 컴포넌트 (추가 예정)
+### 패턴 컴포넌트 (libs/design-system/patterns)
 
-아래 컴포넌트들은 **향후 추가 예정**이며, 추가 시 이 문서가 업데이트됩니다.
+아래 8개 패턴 컴포넌트는 **사용 가능** 상태이며, Admin CRUD 화면 개발 시 반드시 사용해야 합니다.
 
-#### 1. SelectableCard (선택 가능한 카드)
-**상태**: 📋 계획 중  
-**용도**: 메뉴 관리, 권한 관리 등 좌측 목록
+---
 
+#### 1. EmptyState ✅
+**상태**: ✅ 사용 가능  
+**위치**: `libs/design-system/src/components/patterns/empty-state`  
+**용도**: 데이터 없음/검색 결과 없음/권한 없음 상태 표시
+
+**Props**:
 ```typescript
-// 향후 사용 예시
-<SelectableCard
-  selected={selectedId === item.id}
-  onClick={() => setSelectedId(item.id)}
-  title={item.name}
-  subtitle={item.code}
-/>
+type EmptyStateProps = {
+  title?: string;              // 기본값: "데이터가 없습니다"
+  description?: string;
+  icon?: ReactNode;            // Iconify 아이콘 권장
+  action?: ReactNode;          // 버튼 등
+  minHeight?: number | string; // 기본값: 240
+};
 ```
 
-#### 2. DataTable (공통 테이블)
-**상태**: 📋 계획 중  
-**용도**: 정렬, 페이징, 필터가 있는 테이블
-
+**사용 예시**:
 ```typescript
-// 향후 사용 예시
-<DataTable
-  columns={columns}
-  rows={rows}
-  page={page}
-  rowsPerPage={rowsPerPage}
-  onPageChange={handlePageChange}
-/>
-```
+import { EmptyState } from '@dwp-frontend/design-system';
+import { Iconify } from '@dwp-frontend/design-system';
+import Button from '@mui/material/Button';
 
-#### 3. FilterBar (필터 바)
-**상태**: 📋 계획 중  
-**용도**: 검색/필터 UI 표준화
-
-```typescript
-// 향후 사용 예시
-<FilterBar
-  filters={filters}
-  onFilterChange={handleFilterChange}
-  onReset={handleReset}
-/>
-```
-
-#### 4. EmptyState (빈 상태)
-**상태**: 📋 계획 중  
-**용도**: 데이터가 없을 때 표시
-
-```typescript
-// 향후 사용 예시
+// ✅ DO: 아이콘과 액션 버튼 포함
 <EmptyState
-  title="데이터가 없습니다"
-  description="새로운 항목을 추가해주세요"
-  actionLabel="추가하기"
-  onAction={handleCreate}
+  title="권한을 선택하세요"
+  description="좌측에서 권한을 선택하거나 새 권한을 생성하세요."
+  icon={<Iconify icon="solar:shield-user-bold-duotone" width={28} />}
+  action={
+    <Button variant="contained" startIcon={<Iconify icon="mingcute:add-line" />} onClick={onCreate}>
+      새 권한 생성
+    </Button>
+  }
 />
 ```
+
+**적용 화면**:
+- ✅ Admin 권한 관리: `apps/remotes/admin/src/pages/roles`
+- 권한 목록 멤버 탭 빈 상태
+- 권한 선택 전 우측 상세 빈 상태
+
+---
+
+#### 2. ConfirmDialog ✅
+**상태**: ✅ 사용 가능  
+**위치**: `libs/design-system/src/components/patterns/confirm-dialog`  
+**용도**: 삭제/비활성화 등 위험한 작업 확인
+
+**Props**:
+```typescript
+type ConfirmDialogProps = {
+  open: boolean;
+  title: string;
+  description?: string;
+  confirmText?: string;        // 기본값: "확인"
+  cancelText?: string;         // 기본값: "취소"
+  severity?: 'default' | 'danger'; // 기본값: 'default'
+  loading?: boolean;
+  onConfirm: () => void;
+  onClose: () => void;
+};
+```
+
+**사용 예시**:
+```typescript
+import { ConfirmDialog } from '@dwp-frontend/design-system';
+
+// ✅ DO: 삭제 확인은 severity='danger' 사용
+<ConfirmDialog
+  open={deleteDialogOpen}
+  title="사용자 삭제"
+  description="정말로 이 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+  confirmText="삭제"
+  cancelText="취소"
+  severity="danger"
+  loading={isDeleting}
+  onConfirm={handleDelete}
+  onClose={handleCloseDialog}
+/>
+```
+
+**적용 화면**:
+- ✅ Admin 사용자 관리: `apps/remotes/admin/src/pages/users`
+- 사용자 삭제 확인
+
+---
+
+#### 3. SelectableCard ✅
+**상태**: ✅ 사용 가능  
+**위치**: `libs/design-system/src/components/patterns/selectable-card`  
+**용도**: 좌측 목록 선택 카드 (메뉴 관리, 권한 관리)
+
+**Props**:
+```typescript
+type SelectableCardProps = {
+  selected: boolean;
+  title: string;
+  subtitle?: string;
+  meta?: ReactNode;
+  onClick?: () => void;
+};
+```
+
+**사용 예시**:
+```typescript
+import { SelectableCard } from '@dwp-frontend/design-system';
+import Chip from '@mui/material/Chip';
+
+// ✅ DO: 선택 상태를 명확히 표시
+<SelectableCard
+  selected={selectedId === role.id}
+  onClick={() => onSelect(role.id)}
+  title={role.roleName}
+  subtitle={role.roleCode}
+  meta={<Chip label={role.status} color={role.statusColor} size="small" />}
+/>
+```
+
+**토큰 규칙**:
+- 선택 상태 배경: `action.selected`
+- 호버 배경: `action.hover`
+- 선택 상태 텍스트: `primary.main`
+
+**참고 구현**:
+- Admin 권한 관리 RoleCard: `apps/remotes/admin/src/pages/roles/components/role-list-panel.tsx`
+
+---
+
+#### 4. TwoColumnLayout ✅
+**상태**: ✅ 사용 가능  
+**위치**: `libs/design-system/src/components/patterns/two-column-layout`  
+**용도**: 좌측 목록 + 우측 상세 분할 레이아웃
+
+**Props**:
+```typescript
+type TwoColumnLayoutProps = {
+  left: ReactNode;
+  right: ReactNode;
+  leftWidth?: number;          // 기본값: 320
+  minRightWidth?: number;      // 기본값: 520
+  stickyHeader?: boolean;      // 기본값: false
+  mode?: 'fixed' | 'scrollable'; // 기본값: 'scrollable'
+};
+```
+
+**사용 예시**:
+```typescript
+import { TwoColumnLayout } from '@dwp-frontend/design-system';
+
+// ✅ DO: Fixed 모드에서 사용
+<TwoColumnLayout
+  mode="fixed"
+  left={<RoleListPanel />}
+  right={<RoleDetailPanel />}
+  leftWidth={320}
+  minRightWidth={520}
+/>
+```
+
+**반응형**:
+- xs/sm: 좌우 → 상하 stack 자동 전환
+- md+: 좌우 분할 유지
+
+**참고 구현**:
+- Admin 권한 관리: `apps/remotes/admin/src/pages/roles/page.tsx`
+- Admin 메뉴 관리: `apps/remotes/admin/src/pages/menus/page.tsx`
+
+---
+
+#### 5. FilterBar ✅
+**상태**: ✅ 사용 가능  
+**위치**: `libs/design-system/src/components/patterns/filter-bar`  
+**용도**: 검색/필터/액션 버튼 영역 표준화
+
+**Props**:
+```typescript
+type FilterBarProps = {
+  controls?: ReactNode;        // 검색/필터 컨트롤
+  actions?: ReactNode;         // 액션 버튼
+  spacing?: number;            // 기본값: 2
+};
+```
+
+**사용 예시**:
+```typescript
+import { FilterBar } from '@dwp-frontend/design-system';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+
+// ✅ DO: 좌측 컨트롤, 우측 액션
+<FilterBar
+  controls={
+    <>
+      <TextField placeholder="검색" size="small" />
+      <Select size="small">...</Select>
+    </>
+  }
+  actions={
+    <>
+      <Button variant="contained">추가</Button>
+      <Button variant="outlined">다운로드</Button>
+    </>
+  }
+/>
+```
+
+**반응형**:
+- xs: 세로 stack (controls → actions)
+- sm+: 가로 배치
+
+**참고 구현**:
+- Admin 통합 모니터링: `apps/remotes/admin/src/pages/monitoring/monitoring-filter-bar.tsx`
+
+---
+
+#### 6. ToolbarActions ✅
+**상태**: ✅ 사용 가능  
+**위치**: `libs/design-system/src/components/patterns/toolbar-actions`  
+**용도**: 버튼 그룹 정렬 표준화
+
+**Props**:
+```typescript
+type ToolbarActionsProps = {
+  left?: ReactNode;
+  right?: ReactNode;
+  spacing?: number;            // 기본값: 1
+};
+```
+
+**사용 예시**:
+```typescript
+import { ToolbarActions } from '@dwp-frontend/design-system';
+import Button from '@mui/material/Button';
+
+// ✅ DO: 좌측/우측 버튼 그룹 분리
+<ToolbarActions
+  left={
+    <>
+      <Button variant="outlined">필터</Button>
+      <Button variant="outlined">정렬</Button>
+    </>
+  }
+  right={
+    <>
+      <Button variant="contained">저장</Button>
+      <Button variant="outlined">취소</Button>
+    </>
+  }
+/>
+```
+
+**참고 구현**:
+- Admin 권한 관리 헤더: `apps/remotes/admin/src/pages/roles/components/role-list-panel.tsx`
+
+---
+
+#### 7. DataTable ✅
+**상태**: ✅ 사용 가능  
+**위치**: `libs/design-system/src/components/patterns/data-table`  
+**용도**: 테이블 컨테이너 (로딩/빈 상태/스크롤 통일)
+
+**Props**:
+```typescript
+type DataTableProps = {
+  title?: string;
+  toolbar?: ReactNode;
+  loading?: boolean;
+  empty?: boolean;
+  emptyNode?: ReactNode;
+  children: ReactNode;         // 실제 Table
+};
+```
+
+**사용 예시**:
+```typescript
+import { DataTable } from '@dwp-frontend/design-system';
+import Table from '@mui/material/Table';
+
+// ✅ DO: 테이블 감싸기 + 빈 상태 처리
+<DataTable
+  title="사용자 목록"
+  toolbar={<Button>추가</Button>}
+  loading={isLoading}
+  empty={users.length === 0}
+  emptyNode={<EmptyState title="사용자가 없습니다" />}
+>
+  <Table>
+    {/* 테이블 내용 */}
+  </Table>
+</DataTable>
+```
+
+**반응형**:
+- 테이블은 `overflowX: auto` 자동 적용
+- 모바일에서 가로 스크롤 허용 (컬럼 숨김 금지)
+
+**참고 구현**:
+- Admin 통합 모니터링 탭: `apps/remotes/admin/src/pages/monitoring/monitoring-tabs.tsx`
+
+---
+
+#### 8. EditorModal ✅
+**상태**: ✅ 사용 가능  
+**위치**: `libs/design-system/src/components/patterns/editor-modal`  
+**용도**: 생성/편집/보기 모달 표준화
+
+**Props**:
+```typescript
+type EditorModalProps = {
+  open: boolean;
+  title: string;
+  mode: 'create' | 'edit' | 'view';
+  onClose: () => void;
+  onSubmit?: () => void;
+  loading?: boolean;
+  children: ReactNode;
+  footer?: ReactNode;
+  fullScreen?: boolean;        // 기본값: false
+};
+```
+
+**사용 예시**:
+```typescript
+import { EditorModal } from '@dwp-frontend/design-system';
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
+
+// ✅ DO: mode에 따라 동작 자동 조정
+<EditorModal
+  open={open}
+  title={mode === 'create' ? '사용자 추가' : '사용자 편집'}
+  mode={mode}
+  onClose={handleClose}
+  onSubmit={handleSubmit}
+  loading={isSubmitting}
+>
+  <Stack spacing={2}>
+    <TextField label="이름" fullWidth />
+    <TextField label="이메일" fullWidth />
+  </Stack>
+</EditorModal>
+```
+
+**동작 규칙**:
+- `view` 모드: 저장 버튼 자동 숨김
+- xs: fullScreen 옵션 가능
+- 확인/취소 버튼 자동 제공
+
+**참고 구현**:
+- Admin 사용자 관리: `apps/remotes/admin/src/pages/users/components/user-editor-modal.tsx`
 
 ---
 
@@ -508,6 +804,65 @@ import { MyComponent } from '@dwp-frontend/design-system';
   }}
 >
 ```
+
+---
+
+## Admin CRUD 화면별 패턴 매핑
+
+아래 표는 각 Admin 화면이 어떤 패턴 컴포넌트를 사용하는지 정리한 것입니다.  
+**신규 화면 개발 시 이 표를 참고하여 동일한 패턴을 적용하세요.**
+
+| 화면 | 레이아웃 모드 | 패턴 컴포넌트 | 특징 |
+|------|---------------|---------------|------|
+| **메뉴 관리** (`/admin/menus`) | Fixed | TwoColumnLayout, SelectableCard, EmptyState | 좌측 메뉴 트리 + 우측 상세 편집 |
+| **권한 관리** (`/admin/roles`) | Fixed | TwoColumnLayout, SelectableCard, EmptyState, ConfirmDialog | 좌측 권한 목록 + 우측 상세 탭 (개요/멤버/권한) |
+| **사용자 관리** (`/admin/users`) | Scrollable | FilterBar, DataTable, EditorModal, ConfirmDialog | 상단 필터 + 테이블 + 편집 모달 + 삭제 확인 |
+| **코드 관리** (`/admin/codes`) | Scrollable | FilterBar, DataTable, EmptyState | 상단 필터 + 탭 + 테이블 |
+| **코드 사용 정의** (`/admin/code-usages`) | Scrollable | FilterBar, DataTable, EmptyState | 상단 필터 + 테이블 |
+| **감사 로그** (`/admin/audit`) | Scrollable | FilterBar, DataTable, EmptyState | 상단 필터 + 테이블 + Drawer |
+| **통합 모니터링** (`/admin/monitoring`) | Scrollable | FilterBar, DataTable, EmptyState | KPI 카드 + 차트 + 탭 테이블 |
+| **리소스 관리** (`/admin/resources`) | Fixed (향후) | TwoColumnLayout, SelectableCard, EmptyState | 좌측 리소스 목록 + 우측 상세 (예정) |
+
+### 패턴 선택 가이드
+
+#### Fixed 모드 화면 (좌우 분할 CRUD)
+```
+필수 패턴:
+- TwoColumnLayout (좌우 분할)
+- SelectableCard (좌측 목록 선택)
+- EmptyState (우측 빈 상태)
+
+권장 패턴:
+- ConfirmDialog (삭제 확인)
+- EditorModal (생성/편집)
+```
+
+#### Scrollable 모드 화면 (일반 CRUD)
+```
+필수 패턴:
+- FilterBar (상단 필터 영역)
+- DataTable (테이블 컨테이너)
+- EmptyState (데이터 없음)
+
+권장 패턴:
+- ToolbarActions (버튼 그룹)
+- EditorModal (생성/편집)
+- ConfirmDialog (삭제 확인)
+```
+
+### DO / DON'T
+
+#### ✅ DO
+- 패턴 컴포넌트를 먼저 확인하고 적용
+- 테마 토큰만 사용 (`theme.palette.*`, `theme.spacing()`)
+- 반응형 breakpoint 기반 레이아웃 (`direction={{ xs: 'column', md: 'row' }}`)
+- 테이블은 `overflowX: auto`로 가로 스크롤 허용
+
+#### ❌ DON'T
+- 패턴 컴포넌트를 무시하고 직접 구현
+- 하드코딩 색상 (`#1976d2`) 사용
+- 모바일에서 테이블 컬럼 숨기기 (정보 손실)
+- 패턴 없이 중복 UI 반복 구현
 
 ---
 
