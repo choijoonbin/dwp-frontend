@@ -12,8 +12,9 @@
 2. [테마 토큰](#테마-토큰)
 3. [공통 컴포넌트 카탈로그](#공통-컴포넌트-카탈로그)
 4. [레이아웃 패턴](#레이아웃-패턴)
-5. [스타일링 가이드](#스타일링-가이드)
-6. [신규 컴포넌트 추가 프로세스](#신규-컴포넌트-추가-프로세스)
+5. [Modal/Dialog UX 규칙 (통일 표준)](#modaldialog-ux-규칙-통일-표준)
+6. [스타일링 가이드](#스타일링-가이드)
+7. [신규 컴포넌트 추가 프로세스](#신규-컴포넌트-추가-프로세스)
 
 ---
 
@@ -755,6 +756,150 @@ import Stack from '@mui/material/Stack';
   </Grid>
 </Box>
 ```
+
+---
+
+## Modal/Dialog UX 규칙 (통일 표준)
+
+> **목적**: 팀이 커지면서 Modal/Dialog UX가 흔들리지 않게 최소 운영 규칙을 정의합니다.
+
+### 🎯 핵심 원칙
+
+#### 1. ConfirmDialog는 필수 사용 케이스
+
+다음 상황에서는 **반드시** `ConfirmDialog` 사용:
+- ✅ 삭제 액션 (Delete)
+- ✅ 승인/거절 액션 (Approve/Reject)
+- ✅ 위험한 행동 (되돌릴 수 없는 변경)
+- ✅ 데이터 손실 가능성이 있는 액션
+
+**사용 예시**:
+```typescript
+import { ConfirmDialog } from '@dwp-frontend/design-system';
+
+const [confirmOpen, setConfirmOpen] = useState(false);
+const [isDeleting, setIsDeleting] = useState(false);
+
+<ConfirmDialog
+  open={confirmOpen}
+  onClose={() => setConfirmOpen(false)}
+  onConfirm={handleDelete}
+  title="사용자 삭제"
+  message="정말로 이 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+  severity="danger"
+  loading={isDeleting}
+/>
+```
+
+---
+
+#### 2. 커스텀 Modal이라도 반드시 지켜야 할 규칙
+
+`ConfirmDialog`나 `EditorModal`을 사용하지 않고 커스텀 Modal을 만드는 경우에도 아래 규칙은 **필수**:
+
+##### 2-1. Title 위치
+- ✅ Modal 상단에 명확한 제목 (Typography variant="h6")
+- ✅ 닫기 버튼 (IconButton × 아이콘)
+
+```typescript
+<DialogTitle>
+  사용자 수정
+  <IconButton
+    onClick={onClose}
+    sx={{ position: 'absolute', right: 8, top: 8 }}
+  >
+    <Iconify icon="mdi:close" />
+  </IconButton>
+</DialogTitle>
+```
+
+##### 2-2. Action 버튼 순서
+- ✅ **Cancel → Confirm** 순서 (오른쪽이 Confirm)
+- ✅ Confirm 버튼은 색상으로 강조 (primary/error)
+
+```typescript
+<DialogActions>
+  <Button onClick={onClose}>취소</Button>
+  <Button onClick={onConfirm} variant="contained" color="primary">
+    확인
+  </Button>
+</DialogActions>
+```
+
+##### 2-3. ESC 키로 닫힘
+- ✅ ESC 키를 누르면 Modal이 닫혀야 함 (MUI Dialog 기본 동작)
+- ❌ `disableEscapeKeyDown` 사용 금지 (예외: 필수 입력 프로세스)
+
+```typescript
+<Dialog
+  open={open}
+  onClose={onClose}
+  // disableEscapeKeyDown={false} // 기본값 사용
+>
+```
+
+##### 2-4. Confirm 중 Loading 처리
+- ✅ Confirm 버튼 클릭 시 loading 상태 표시
+- ✅ Loading 중에는 Cancel 버튼 disable
+
+```typescript
+<Button
+  onClick={onConfirm}
+  variant="contained"
+  disabled={isLoading}
+>
+  {isLoading ? <CircularProgress size={20} /> : '확인'}
+</Button>
+<Button onClick={onClose} disabled={isLoading}>
+  취소
+</Button>
+```
+
+##### 2-5. Mobile 대응
+- ✅ Mobile에서는 fullScreen 또는 bottom-safe padding 적용
+- ✅ 터치 타겟 최소 44x44px 보장
+
+```typescript
+<Dialog
+  open={open}
+  onClose={onClose}
+  fullScreen={isMobile}  // useMediaQuery 사용
+  PaperProps={{
+    sx: {
+      ...(!isMobile && {
+        maxHeight: 'calc(100vh - 64px)',
+        borderRadius: 2,
+      }),
+    },
+  }}
+>
+```
+
+---
+
+### 📋 Modal/Dialog 체크리스트
+
+새로운 Modal을 만들 때 아래 체크리스트를 반드시 확인:
+
+- [ ] 삭제/위험 행동은 `ConfirmDialog` 사용했는가?
+- [ ] 커스텀 Modal의 경우:
+  - [ ] Title이 명확하게 표시되는가?
+  - [ ] 닫기 버튼(×)이 있는가?
+  - [ ] Cancel → Confirm 버튼 순서가 맞는가?
+  - [ ] ESC 키로 닫히는가?
+  - [ ] Confirm 중 loading 상태가 표시되는가?
+  - [ ] Mobile에서 fullScreen 또는 적절한 padding이 적용되는가?
+  - [ ] 터치 타겟이 44x44px 이상인가?
+
+---
+
+### 🚫 금지 사항
+
+- ❌ 삭제 액션에 일반 `alert`나 `confirm` 사용 금지
+- ❌ Modal 내부에 또 다른 Modal 열기 금지 (nested modal)
+- ❌ ESC 키 막기 금지 (예외: 필수 프로세스)
+- ❌ Cancel/Confirm 버튼 순서 바꾸기 금지
+- ❌ 하드코딩 색상 사용 금지 (theme.palette 사용)
 
 ---
 

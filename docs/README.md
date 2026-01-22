@@ -114,6 +114,9 @@ docs/
 ### "컴포넌트를 어떻게 써야 하죠?"
 → `essentials/DESIGN_SYSTEM.md`
 
+### "Modal/Dialog UX 규칙이 궁금해요"
+→ `essentials/DESIGN_SYSTEM.md` (Modal/Dialog UX 규칙 섹션)
+
 ### "레이아웃 스크롤이 안 되는데요?"
 → `essentials/LAYOUT_GUIDE.md`
 
