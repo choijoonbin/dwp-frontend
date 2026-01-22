@@ -25,7 +25,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { EmptyState } from './empty-state';
+import { EmptyState } from '@dwp-frontend/design-system';
 import { RoleMembersTab } from './role-members-tab';
 import { RoleOverviewTab } from './role-overview-tab';
 import { RolePermissionMatrixTab } from './role-permission-matrix-tab';
@@ -143,7 +143,16 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onDelete, onSucces
           overflow: 'hidden',
         }}
       >
-        <EmptyState title="권한을 선택하세요" description="좌측에서 권한을 선택하거나 새 권한을 생성하세요." actionLabel="새 권한 생성" onAction={onCreateClick} />
+        <EmptyState
+          title="권한을 선택하세요"
+          description="좌측에서 권한을 선택하거나 새 권한을 생성하세요."
+          icon={<Iconify icon="solar:shield-user-bold-duotone" width={28} />}
+          action={
+            <Button variant="contained" startIcon={<Iconify icon="mingcute:add-line" />} onClick={onCreateClick}>
+              새 권한 생성
+            </Button>
+          }
+        />
       </Card>
     );
   }

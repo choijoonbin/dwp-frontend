@@ -28,7 +28,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { EmptyState } from './empty-state';
+import { EmptyState } from '@dwp-frontend/design-system';
 import { useRoleMembersState } from '../hooks/use-role-members-state';
 
 // ----------------------------------------------------------------------
@@ -232,8 +232,14 @@ export const RoleMembersTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveRe
                   ? "상단의 '멤버 추가' 버튼을 클릭하여 사용자를 추가하세요"
                   : '다른 검색어를 입력해보세요'
               }
-              actionLabel={roleMembers && roleMembers.length === 0 ? '멤버 추가' : undefined}
-              onAction={roleMembers && roleMembers.length === 0 ? handleOpenDialog : undefined}
+              icon={<Iconify icon="solar:users-group-rounded-bold-duotone" width={28} />}
+              action={
+                roleMembers && roleMembers.length === 0 ? (
+                  <Button variant="contained" startIcon={<Iconify icon="mingcute:add-line" />} onClick={handleOpenDialog}>
+                    멤버 추가
+                  </Button>
+                ) : undefined
+              }
             />
           ) : (
             <Stack spacing={1}>

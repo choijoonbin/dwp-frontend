@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 // ----------------------------------------------------------------------
 
 export type EmptyStateProps = {
-  title: string;
+  title?: string;
   description?: string;
   icon?: ReactNode;
   action?: ReactNode;
@@ -14,7 +14,7 @@ export type EmptyStateProps = {
 };
 
 export function EmptyState({
-  title,
+  title = '데이터가 없습니다',
   description,
   icon,
   action,
@@ -33,8 +33,20 @@ export function EmptyState({
       }}
     >
       {icon && (
-        <Box sx={{ mb: 2, color: 'text.secondary', fontSize: 48 }}>
-          {icon}
+        <Box
+          sx={{
+            width: 64,
+            height: 64,
+            borderRadius: '50%',
+            bgcolor: 'action.hover',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mx: 'auto',
+            mb: 2,
+          }}
+        >
+          <Box sx={{ color: 'text.disabled', fontSize: 28 }}>{icon}</Box>
         </Box>
       )}
 
@@ -43,12 +55,12 @@ export function EmptyState({
       </Typography>
 
       {description && (
-        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
           {description}
         </Typography>
       )}
 
-      {action && <Box sx={{ mt: 2 }}>{action}</Box>}
+      {action && <Box>{action}</Box>}
     </Box>
   );
 }
