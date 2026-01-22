@@ -122,7 +122,7 @@ Vite의 `define` 설정을 통해 `process.env.NX_API_URL` 형태로 코드 어�
 ### 설치 및 실행
 
 ```bash
-npm install
+yarn install
 ```
 
 #### 개별 앱 실행
@@ -131,40 +131,40 @@ npm install
 
 ```bash
 # 터미널 1: Host 앱 (포트 4200)
-npm run dev
+yarn dev
 
 # 터미널 2: Mail Remote 앱 (포트 4201)
-npm run dev:mail
+yarn dev:mail
 
 # 향후 추가될 Remote 앱들도 동일한 방식으로 실행
-# npm run dev:chat      # 포트 4202
-# npm run dev:approval  # 포트 4203
-# npm run dev:admin     # 포트 4204
+# yarn dev:chat      # 포트 4202
+# yarn dev:approval  # 포트 4203
+# yarn dev:admin     # 포트 4204
 ```
 
 #### 모든 앱 동시 실행
 
-**방법 1: npm run dev:all 사용** (권장)
+**방법 1: yarn dev:all 사용** (권장)
 
 `package.json`에 이미 설정된 스크립트를 사용하여 모든 앱을 한 번에 실행합니다:
 
 ```bash
-npm run dev:all
+yarn dev:all
 ```
 
 > **참고**: 새로운 Remote 앱이 추가되면 `package.json`의 `dev:all` 스크립트에 해당 앱의 실행 명령을 추가해야 합니다.
 > 예: `"dev:all": "npx concurrently \"npm run dev\" \"npm run dev:mail\" \"npm run dev:admin\" \"npm run dev:chat\""`
-> 
-> `npx`를 사용하면 `concurrently` 패키지가 설치되어 있지 않아도 자동으로 다운로드하여 실행합니다.
+>
+> 네트워크 제한 환경에서는 `npx`가 의존성 다운로드에 실패할 수 있으므로, 아래의 **방법 3**(여러 터미널 실행)을 권장합니다.
 
 **방법 2: Nx run-many 사용** (Nx 타겟이 설정된 경우)
 
 ```bash
 # 특정 앱들만 지정하여 실행
-npx nx run-many --target=serve --projects=dwp,mail --parallel=2
+yarn nx run-many --target=serve --projects=dwp,mail --parallel=2
 
 # 모든 앱 자동 감지 (라이브러리 제외)
-npx nx run-many --target=serve --all --parallel
+yarn nx run-many --target=serve --all --parallel
 ```
 
 **방법 3: 여러 터미널에서 수동 실행**
@@ -177,8 +177,8 @@ npx nx run-many --target=serve --all --parallel
 
 ### 1. 신규 모듈 생성 명령어
 ```bash
-# npx nx workspace-generator [이름] --name=[모듈명] --port=[포트번호]
-npx nx workspace-generator new-remote --name=chat --port=4202
+# yarn nx workspace-generator [이름] --name=[모듈명] --port=[포트번호]
+yarn nx workspace-generator new-remote --name=chat --port=4202
 ```
 
 ### 2. 생성 후 단
@@ -272,17 +272,42 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 
 ## 📚 문서
 
-프로젝트 관련 상세 문서는 `docs/` 디렉토리에서 확인할 수 있습니다:
+### 신규 개발자 시작 가이드
+프로젝트에 처음 참여하신다면 아래 순서로 문서를 읽어주세요:
 
-- **`docs/aura.md`**: Aura AI 통합 가이드 (프론트엔드 구현 상세)
-- **`docs/BACKEND_API_SPEC.md`**: 백엔드 개발팀을 위한 API 스펙서 (SSE 이벤트 타입, HITL API, UI 탭별 데이터 요구사항)
-- **`docs/INTEGRATION_CHECKLIST.md`**: 통/협업 관점 통합 체크리스트 (포트 충돌, 사용자 식별자, SSE 전송 방식 등 확인 필요 사항)
-- **`docs/FRONTEND_VERIFICATION_RESPONSE.md`**: 프론트엔드 확인 응답 체크리스트 (백엔드 확인 요청에 대한 구현 상태 응답)
-- **`docs/FRONTEND_VERIFICATION_REQUIREMENTS.md`**: 프론트엔드 확인 요청 사항 (JWT 매핑, POST SSE, 재연결, CORS, 에러 처리 상세 가이드)
-- **`docs/ADMIN_CRUD_UI.md`**: Admin Remote CRUD 화면 구현 가이드 (Users, Roles, Resources, Codes 관리)
-- **`docs/ADMIN_REMOTE_IMPLEMENTATION.md`**: Admin Remote 구현 상세 (권한 시스템, 코드 사용 정책, API 통합)
-- **`docs/LOGIN_POLICY_UI.md`**: 로그인 정책 기반 UI 분기 구현 가이드 (LOCAL/SSO 자동 분기)
-- **`docs/ADMIN_UI_PORTING_VERIFICATION_REPORT.md`**: Admin UI 포팅 작업 최종 검증 리포트 (모든 Admin 메뉴 + AI Workspace 검증 결과, 완성도 87%)
+1. **[문서 인덱스](docs/README.md)** - 전체 문서 구조 파악 (5분)
+2. **[프로젝트 시작 가이드](docs/essentials/GETTING_STARTED.md)** - 로컬 환경 설정 및 첫 페이지 만들기 (15분)
+3. **[핵심 규칙](docs/essentials/PROJECT_RULES.md)** - 반드시 지켜야 할 개발 규칙 (20분)
+4. **[Admin CRUD 표준](docs/essentials/ADMIN_CRUD_STANDARD.md)** - CRUD 페이지 개발 표준 (30분)
+5. **[레이아웃 가이드](docs/essentials/LAYOUT_GUIDE.md)** - Fixed/Scrollable 모드 이해 (15분)
+6. **[디자인 시스템](docs/essentials/DESIGN_SYSTEM.md)** - 공통 컴포넌트 카탈로그 (30분)
+
+**총 학습 시간**: 약 2시간  
+**📌 위 6개 문서만 읽으면 프로젝트의 80%를 이해할 수 있습니다!**
+
+### 주요 문서
+- **[.cursorrules](.cursorrules)** - 프로젝트 전체 규칙 (AI 개발 도구용)
+- **[문서 인덱스](docs/README.md)** - 모든 문서의 인덱스
+- **[Aura AI 명세](docs/specs/aura.md)** - Aura 기능 상세 명세
+- **[로그인 정책 명세](docs/specs/login-policy.md)** - 로그인 정책 UI 분기
+- **[백엔드 API 명세](docs/reference/api/backend-api-spec.md)** - 백엔드 API 규격
+
+### 문서 구조
+```
+docs/
+├── essentials/     # ⭐ 필수 (신규 개발자 1주차 필독)
+│   ├── GETTING_STARTED.md      # 프로젝트 시작 가이드
+│   ├── PROJECT_RULES.md        # 핵심 규칙 요약
+│   ├── ADMIN_CRUD_STANDARD.md  # Admin CRUD 개발 표준
+│   ├── LAYOUT_GUIDE.md         # 레이아웃 모드 가이드
+│   └── DESIGN_SYSTEM.md        # 디자인 시스템 & 컴포넌트 카탈로그
+├── specs/          # 📋 기능 명세서
+├── reference/      # 📚 참고 문서 (API 명세, 아키텍처)
+├── archive/        # 🗂️ 완료된 작업 아카이브
+└── _deprecated/    # 🚫 삭제 대기
+```
+
+상세 내용은 **[docs/README.md](docs/README.md)**를 참고하세요.
 
 ## 🧪 통합 테스트 가이드 (Aura-Platform)
 

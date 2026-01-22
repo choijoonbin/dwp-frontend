@@ -31,4 +31,11 @@ describe('normalizeRoutePath', () => {
   it('maps app/admin aiworkspace to host ai-workspace', () => {
     expect(normalizeRoutePath('/app/admin/aiworkspace')).toBe('/ai-workspace');
   });
+
+  it('preserves querystring and hash', () => {
+    expect(normalizeRoutePath('/app/admin/users?page=2#top')).toBe('/admin/users?page=2#top');
+    expect(normalizeRoutePath('/admin/audit-logs?x=1')).toBe('/admin/audit?x=1');
+    expect(normalizeRoutePath('/app/admin/aiworkspace#section')).toBe('/ai-workspace#section');
+    expect(normalizeRoutePath('/app//admin//users/?q=1')).toBe('/admin/users?q=1');
+  });
 });

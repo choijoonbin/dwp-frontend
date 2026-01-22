@@ -80,8 +80,18 @@ export const WorkspaceTabs = ({
         </Tabs>
       </Box>
 
-      <Scrollbar sx={{ flex: 1, minHeight: 0 }}>
-        <Box sx={{ p: { xs: 2, md: 3 } }}>
+      <Scrollbar
+        sx={{
+          flex: 1,
+          minHeight: 0,
+          '& .simplebar-wrapper': { height: '100%' },
+          '& .simplebar-mask': { height: '100%' },
+          '& .simplebar-offset': { height: '100%' },
+          '& .simplebar-content-wrapper': { height: '100%', overflow: 'hidden auto !important' },
+          '& .simplebar-content': { height: '100%', display: 'flex', flexDirection: 'column' },
+        }}
+      >
+        <Box sx={{ p: { xs: 2, md: 3 }, flexGrow: 1 }}>
           {value === 0 && (
             <Stack spacing={3}>
               {thoughtChains.length > 0 ? (

@@ -131,12 +131,26 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onDelete, onSucces
   }, []);
 
   if (!roleId) {
-    return <EmptyState title="역할을 선택하세요" description="좌측에서 역할을 선택하거나 새 역할을 생성하세요." actionLabel="새 역할 생성" onAction={onCreateClick} />;
+    return (
+      <Card
+        sx={{
+          width: 1,
+          height: '100%',
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          borderRadius: 2,
+          overflow: 'hidden',
+        }}
+      >
+        <EmptyState title="권한을 선택하세요" description="좌측에서 권한을 선택하거나 새 권한을 생성하세요." actionLabel="새 권한 생성" onAction={onCreateClick} />
+      </Card>
+    );
   }
 
   if (isLoading) {
     return (
-      <Card sx={{ p: 3 }}>
+      <Card sx={{ width: 1, p: 3, minHeight: 0, overflow: 'hidden' }}>
         <Skeleton variant="rectangular" height={200} />
       </Card>
     );
@@ -144,14 +158,24 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onDelete, onSucces
 
   if (!roleDetail) {
     return (
-      <Card sx={{ p: 3 }}>
-        <Alert severity="error">역할 정보를 불러올 수 없습니다.</Alert>
+      <Card sx={{ width: 1, p: 3, minHeight: 0, overflow: 'hidden' }}>
+        <Alert severity="error">권한 정보를 불러올 수 없습니다.</Alert>
       </Card>
     );
   }
 
   return (
-    <Box sx={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <Card
+      sx={{
+        width: 1,
+        height: '100%',
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: 2,
+        overflow: 'hidden',
+      }}
+    >
       {/* Header */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 2 }, bgcolor: 'background.paper' }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }}>
@@ -243,13 +267,13 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onDelete, onSucces
               </MenuItem>
               <MenuItem onClick={handleMenuClose}>
                 <Iconify icon="solar:copy-bold" width={18} sx={{ mr: 1 }} />
-                역할 복제
+                권한 복제
               </MenuItem>
               <Divider />
               <PermissionGate resource="menu.admin.roles" permission="DELETE">
                 <MenuItem onClick={handleMenuDelete} sx={{ color: 'error.main' }}>
                   <Iconify icon="solar:trash-bin-trash-bold" width={18} sx={{ mr: 1 }} />
-                  역할 삭제
+                  권한 삭제
                 </MenuItem>
               </PermissionGate>
             </Menu>
@@ -437,7 +461,7 @@ export const RoleDetailPanel = memo(({ roleId, onCreateClick, onDelete, onSucces
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </Card>
   );
 });
 

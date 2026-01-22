@@ -105,11 +105,11 @@ export const RoleOverviewTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveR
   }
 
   if (error) {
-    return <Alert severity="error">역할 정보를 불러올 수 없습니다.</Alert>;
+    return <Alert severity="error">권한 정보를 불러올 수 없습니다.</Alert>;
   }
 
   if (!roleDetail) {
-    return <Alert severity="warning">역할 정보가 없습니다.</Alert>;
+    return <Alert severity="warning">권한 정보가 없습니다.</Alert>;
   }
 
   // Note: hasChanges is tracked via onDirtyChange callback
@@ -124,29 +124,29 @@ export const RoleOverviewTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveR
               기본 정보
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              역할의 기본 정보를 수정합니다
+              권한의 기본 정보를 수정합니다
             </Typography>
           </Stack>
 
           <Stack spacing={3}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <TextField
-                label="역할명"
+                label="권한명"
                 fullWidth
                 value={formData.roleName}
                 onChange={(e) => handleFieldChange('roleName', e.target.value)}
                 size="small"
-                placeholder="역할 이름을 입력하세요"
+                placeholder="권한 이름을 입력하세요"
               />
 
               <TextField
-                label="역할 코드"
+                label="권한 코드"
                 fullWidth
                 value={roleDetail.roleCode}
                 disabled
                 size="small"
                 sx={{ fontFamily: 'monospace' }}
-                helperText="역할 코드는 생성 후 변경할 수 없습니다"
+                helperText="권한 코드는 생성 후 변경할 수 없습니다"
               />
             </Stack>
 
@@ -158,7 +158,7 @@ export const RoleOverviewTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveR
               value={formData.description}
               onChange={(e) => handleFieldChange('description', e.target.value)}
               size="small"
-              placeholder="역할에 대한 설명을 입력하세요"
+              placeholder="권한에 대한 설명을 입력하세요"
             />
 
             <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2 }}>
@@ -168,7 +168,7 @@ export const RoleOverviewTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveR
                     활성 상태
                   </Typography>
                   <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    비활성화 시 이 역할을 가진 사용자의 권한이 적용되지 않습니다
+                    비활성화 시 이 권한을 가진 사용자의 권한이 적용되지 않습니다
                   </Typography>
                 </Stack>
                 <Switch
@@ -189,7 +189,7 @@ export const RoleOverviewTab = memo(({ roleId, onSuccess, onDirtyChange, onSaveR
               이력 정보
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              역할의 생성 및 수정 이력입니다
+              권한의 생성 및 수정 이력입니다
             </Typography>
           </Stack>
 

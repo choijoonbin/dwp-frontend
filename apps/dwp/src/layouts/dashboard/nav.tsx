@@ -77,6 +77,8 @@ export function NavDesktop({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
+          width: 1,
+          minWidth: 0,
         }}
       >
         <NavContent data={data} slots={slots} workspaces={workspaces} collapsed={collapsed} />
@@ -546,7 +548,13 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
 
       {slots?.topArea}
 
-      <Scrollbar fillContent>
+      <Scrollbar
+        fillContent
+        slotProps={{
+          contentWrapperSx: { width: 1, minWidth: 0 },
+          contentSx: { width: 1, minWidth: 0 },
+        }}
+      >
         <Box
           component="nav"
           className="nav-menu-wrapper"
@@ -555,6 +563,8 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
               display: 'flex',
               flex: '1 1 auto',
               flexDirection: 'column',
+              width: 1,
+              minWidth: 0,
               px: collapsed ? 0.5 : 2.5,
               transition: (theme) => theme.transitions.create(['padding']),
               overflow: 'hidden',

@@ -164,7 +164,27 @@ export function DashboardLayout({
 
   const renderFooter = () => null;
 
-  const renderMain = () => <MainSection {...slotProps?.main}>{children}</MainSection>;
+  const renderMain = (layoutMode: 'fixed' | 'scrollable') => (
+    <MainSection layoutMode={layoutMode} {...slotProps?.main}>
+      {children}
+    </MainSection>
+  );
+
+  // 레이아웃 모드 자동 감지: 특정 경로만 fixed 모드, 나머지는 scrollable (기본값)
+  // fixed 모드: Full-Height SPA 스타일 (브라우저 스크롤 차단, 내부 패널만 스크롤)
+  //   - /admin/menus: 메뉴 관리 (CRUD)
+  //   - /admin/roles: 권한 관리 (CRUD)
+  //   - /ai-workspace: AI 워크스페이스 (대화형 도구)
+  // scrollable 모드: 전통적인 브라우저 스크롤 (기본값)
+  //   - /admin/monitoring: 통합 모니터링 (차트/리스트가 길어서 스크롤 필요)
+  //   - /admin/users, /admin/codes 등: 기타 관리 페이지
+  //   - /dashboard: 대시보드
+  const layoutMode = (() => {
+    if (pathname.includes('/ai-workspace')) return 'fixed';
+    if (pathname === '/admin/menus' || pathname.startsWith('/admin/menus/')) return 'fixed';
+    if (pathname === '/admin/roles' || pathname.startsWith('/admin/roles/')) return 'fixed';
+    return 'scrollable';
+  })();
 
   return (
     <LayoutSection
@@ -191,6 +211,7 @@ export function DashboardLayout({
       /** **************************************
        * @Styles
        *************************************** */
+      layoutMode={layoutMode}
       cssVars={{
         ...dashboardLayoutVars(theme),
         '--layout-nav-current-width': sidebarCollapsed
@@ -213,7 +234,7 @@ export function DashboardLayout({
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      {renderMain()}
+      {renderMain(layoutMode)}
       <AuraFloatingButton />
       <AuraMiniOverlay />
     </LayoutSection>

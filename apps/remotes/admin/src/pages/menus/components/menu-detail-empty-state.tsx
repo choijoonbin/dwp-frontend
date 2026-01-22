@@ -10,7 +10,19 @@ import Typography from '@mui/material/Typography';
 // ----------------------------------------------------------------------
 
 export const MenuDetailEmptyState = memo(() => (
-  <Card sx={{ p: 4, textAlign: 'center' }}>
+  <Card
+    sx={{
+      p: 4,
+      textAlign: 'center',
+      width: 1,
+      height: '100%',
+      minHeight: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
     <Box
       sx={{
         width: 64,

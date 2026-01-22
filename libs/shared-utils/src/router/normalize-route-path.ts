@@ -1,8 +1,20 @@
 export const normalizeRoutePath = (input: string | null | undefined): string | null => {
   if (!input) return null;
 
-  let normalized = input.trim();
-  if (!normalized) return null;
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+
+  const queryIndex = trimmed.indexOf('?');
+  const hashIndex = trimmed.indexOf('#');
+  const splitIndex =
+    queryIndex === -1
+      ? hashIndex
+      : hashIndex === -1
+        ? queryIndex
+        : Math.min(queryIndex, hashIndex);
+
+  const suffix = splitIndex === -1 ? '' : trimmed.slice(splitIndex);
+  let normalized = splitIndex === -1 ? trimmed : trimmed.slice(0, splitIndex);
 
   normalized = normalized.replace(/\/{2,}/g, '/');
 
@@ -11,26 +23,26 @@ export const normalizeRoutePath = (input: string | null | undefined): string | n
   }
 
   if (normalized === '/app/admin/audit-logs') {
-    return '/admin/audit';
+    return `/admin/audit${suffix}`;
   }
 
   if (normalized === '/app/admin/code-usage') {
-    return '/admin/code-usages';
+    return `/admin/code-usages${suffix}`;
   }
 
   if (normalized === '/app/admin/aiworkspace') {
-    return '/ai-workspace';
+    return `/ai-workspace${suffix}`;
   }
 
   if (normalized.startsWith('/app/admin/')) {
     const rest = normalized.slice('/app/admin/'.length);
-    return rest ? `/admin/${rest}` : '/admin';
+    return `${rest ? `/admin/${rest}` : '/admin'}${suffix}`;
   }
 
   if (normalized.startsWith('/admin/')) {
-    if (normalized === '/admin/audit-logs') return '/admin/audit';
-    if (normalized === '/admin/code-usage') return '/admin/code-usages';
+    if (normalized === '/admin/audit-logs') return `/admin/audit${suffix}`;
+    if (normalized === '/admin/code-usage') return `/admin/code-usages${suffix}`;
   }
 
-  return normalized;
+  return `${normalized}${suffix}`;
 };

@@ -225,8 +225,17 @@ const UsersPageContent = () => {
   const selectedUserForReset = userRowModels.find((u) => u.id === selectedUserId);
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Stack spacing={3}>
+    <Box
+      sx={{
+        p: 3,
+        height: '100%',
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      <Stack spacing={3} sx={{ flex: 1, minHeight: 0 }}>
         <Stack spacing={1}>
           <Typography variant="h4">사용자 관리</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>

@@ -120,7 +120,7 @@ export const MenuTreePanel = memo(({
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Box sx={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ p: 2 }}>
         <TextField
           fullWidth
@@ -144,7 +144,7 @@ export const MenuTreePanel = memo(({
         </Stack>
       </Box>
       <Divider />
-      <Box sx={{ flex: 1, overflowY: 'auto', py: 1 }}>
+      <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', py: 1 }}>
         {filteredTree.length === 0 ? (
           <Box sx={{ py: 8, px: 3, textAlign: 'center' }}>
             <Iconify icon="solar:folder-bold" width={40} sx={{ color: 'text.disabled', mb: 2 }} />

@@ -63,7 +63,7 @@ export const useRoleActions = (
         trackEvent({
           resourceKey: 'btn.admin.roles.create',
           action: 'CLICK',
-          label: '역할 생성',
+          label: '권한 생성',
           metadata: {
             page: window.location.pathname,
             roleName: formData.roleName,
@@ -73,7 +73,7 @@ export const useRoleActions = (
 
         await createMutation.mutateAsync(payload);
         invalidateRolesQueries();
-        showSnackbar('역할이 생성되었습니다.');
+        showSnackbar('권한이 생성되었습니다.');
         return true;
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
@@ -102,7 +102,7 @@ export const useRoleActions = (
         trackEvent({
           resourceKey: 'btn.admin.roles.save',
           action: 'CLICK',
-          label: '역할 수정',
+          label: '권한 수정',
           metadata: {
             roleId,
             roleName: formData.roleName,
@@ -112,7 +112,7 @@ export const useRoleActions = (
 
         await updateMutation.mutateAsync({ roleId, payload });
         invalidateRolesQueries();
-        showSnackbar('역할이 수정되었습니다.');
+        showSnackbar('권한이 수정되었습니다.');
         return true;
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
@@ -134,7 +134,7 @@ export const useRoleActions = (
         trackEvent({
           resourceKey: 'btn.admin.roles.delete',
           action: 'CLICK',
-          label: '역할 삭제',
+          label: '권한 삭제',
           metadata: {
             roleId: role.id,
             roleName: role.roleName,
@@ -149,7 +149,7 @@ export const useRoleActions = (
           setSelectedRoleId(null);
         }
 
-        showSnackbar('역할이 삭제되었습니다.');
+        showSnackbar('권한이 삭제되었습니다.');
         return true;
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
@@ -157,7 +157,7 @@ export const useRoleActions = (
           showSnackbar('권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.', 'error');
         } else if (error instanceof HttpError && error.status === 409) {
           // Handle 409 Conflict (ROLE_IN_USE)
-          showSnackbar('멤버 또는 권한 매핑이 있는 역할은 삭제할 수 없습니다. 매핑을 해제한 후 다시 시도해주세요.', 'error');
+          showSnackbar('멤버 또는 권한 매핑이 있는 권한은 삭제할 수 없습니다. 매핑을 해제한 후 다시 시도해주세요.', 'error');
         } else {
           showSnackbar(error instanceof Error ? error.message : '삭제에 실패했습니다.', 'error');
         }
@@ -172,7 +172,7 @@ export const useRoleActions = (
     trackEvent({
       resourceKey: 'btn.admin.roles.create',
       action: 'CLICK',
-      label: '역할 추가',
+      label: '권한 추가',
       metadata: {
         page: window.location.pathname,
         actionDetail: 'open_create_dialog',
@@ -187,7 +187,7 @@ export const useRoleActions = (
       trackEvent({
         resourceKey: 'btn.admin.roles.edit',
         action: 'CLICK',
-        label: '역할 편집',
+        label: '권한 편집',
         metadata: {
           roleId: role.id,
           roleName: role.roleName,
@@ -204,7 +204,7 @@ export const useRoleActions = (
       trackEvent({
         resourceKey: 'btn.admin.roles.delete',
         action: 'CLICK',
-        label: '역할 삭제',
+        label: '권한 삭제',
         metadata: {
           roleId: role.id,
           roleName: role.roleName,

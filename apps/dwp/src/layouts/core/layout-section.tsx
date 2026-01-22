@@ -17,6 +17,7 @@ export type LayoutSectionProps = React.ComponentProps<'div'> & {
   footerSection?: React.ReactNode;
   headerSection?: React.ReactNode;
   sidebarSection?: React.ReactNode;
+  layoutMode?: 'fixed' | 'scrollable';
 };
 
 export function LayoutSection({
@@ -27,6 +28,7 @@ export function LayoutSection({
   headerSection,
   sidebarSection,
   className,
+  layoutMode = 'scrollable',
   ...other
 }: LayoutSectionProps) {
   const inputGlobalStyles = (
@@ -40,13 +42,14 @@ export function LayoutSection({
       <LayoutRoot
         id="root__layout"
         className={mergeClasses([layoutClasses.root, className])}
+        layoutMode={layoutMode}
         sx={sx}
         {...other}
       >
         {sidebarSection ? (
           <>
             {sidebarSection}
-            <LayoutSidebarContainer className={layoutClasses.sidebarContainer}>
+            <LayoutSidebarContainer className={layoutClasses.sidebarContainer} layoutMode={layoutMode}>
               {headerSection}
               {children}
               {footerSection}
@@ -66,11 +69,35 @@ export function LayoutSection({
 
 // ----------------------------------------------------------------------
 
-const LayoutRoot = styled('div')``;
+const LayoutRoot = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'layoutMode',
+})<{ layoutMode?: 'fixed' | 'scrollable' }>(({ layoutMode }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  width: '100vw',
+  ...(layoutMode === 'fixed'
+    ? {
+        height: '100vh',
+        overflow: 'hidden',
+      }
+    : {
+        minHeight: '100vh',
+      }),
+}));
 
-const LayoutSidebarContainer = styled('div')(() => ({
+const LayoutSidebarContainer = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'layoutMode',
+})<{ layoutMode?: 'fixed' | 'scrollable' }>(({ layoutMode }) => ({
   display: 'flex',
   flex: '1 1 auto',
   minWidth: 0,
   flexDirection: 'column',
+  ...(layoutMode === 'fixed'
+    ? {
+        height: '100%',
+        overflow: 'hidden',
+      }
+    : {
+        minHeight: '100%',
+      }),
 }));

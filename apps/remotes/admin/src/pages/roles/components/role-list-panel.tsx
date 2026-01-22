@@ -110,7 +110,7 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
           spacing={1.5}
           sx={{ mb: { xs: 1.5, sm: 2 } }}
         >
-          <Typography variant="h6">역할 목록</Typography>
+          <Typography variant="h6">권한 목록</Typography>
           <PermissionGate resource="menu.admin.roles" permission="CREATE">
             <Button
               size="small"
@@ -118,7 +118,7 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
               onClick={onCreateClick}
               sx={{ width: { xs: '100%', sm: 'auto' } }}
             >
-              새 역할
+              새 권한
             </Button>
           </PermissionGate>
         </Stack>
@@ -127,7 +127,7 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
         <TextField
           size="small"
           fullWidth
-          placeholder="역할명 또는 코드 검색..."
+          placeholder="권한명 또는 코드 검색..."
           value={filter.search}
           onChange={(e) => setFilter({ ...filter, search: e.target.value })}
           InputProps={{
@@ -203,7 +203,7 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
       {!isLoading && filteredRoles.length > 0 && (
         <Box sx={{ borderTop: 1, borderColor: 'divider', px: 2, py: 1 }}>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            총 {filteredRoles.length}개 역할
+            총 {filteredRoles.length}개 권한
           </Typography>
         </Box>
       )}
@@ -239,12 +239,13 @@ const RoleCard = memo<{
         borderRadius: 2,
         p: 1.5,
         mb: 1,
-        bgcolor: selected ? 'primary.lighter' : 'background.paper',
+        bgcolor: selected ? 'action.selected' : 'background.paper',
+        color: selected ? 'primary.main' : 'text.primary',
         transition: 'all 0.2s',
         cursor: 'pointer',
         '&:hover': {
           borderColor: 'primary.main',
-          bgcolor: selected ? 'primary.lighter' : 'action.hover',
+          bgcolor: selected ? 'action.selected' : 'action.hover',
         },
         '&:focus': {
           outline: '2px solid',
@@ -253,45 +254,78 @@ const RoleCard = memo<{
         },
       }}
     >
-    <Stack
-      direction={{ xs: 'column', sm: 'row' }}
-      justifyContent="space-between"
-      alignItems={{ xs: 'flex-start', sm: 'flex-start' }}
-      spacing={1}
-      sx={{ mb: 1 }}
-    >
-      <Box>
-        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-          {role.roleName}
-        </Typography>
-        <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
-          {role.roleCode}
-        </Typography>
-      </Box>
-      <Chip
-        label={role.statusLabel}
-        color={role.statusColor}
-        size="small"
-        sx={{ height: 20, fontSize: '0.7rem' }}
-      />
-    </Stack>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'flex-start', sm: 'flex-start' }}
+        spacing={1}
+        sx={{ mb: 1 }}
+      >
+        <Box>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              fontWeight: 600,
+              color: selected ? 'primary.main' : 'text.primary',
+            }}
+          >
+            {role.roleName}
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              fontFamily: 'monospace',
+              color: selected ? 'primary.darker' : 'text.secondary',
+            }}
+          >
+            {role.roleCode}
+          </Typography>
+        </Box>
+        <Chip
+          label={role.statusLabel}
+          color={role.statusColor}
+          size="small"
+          sx={{ height: 20, fontSize: '0.7rem' }}
+        />
+      </Stack>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.5, sm: 2 }} sx={{ mt: 1 }}>
         <Stack direction="row" spacing={0.5} alignItems="center">
-          <Iconify icon="solar:users-group-rounded-bold" width={14} sx={{ color: 'text.secondary' }} />
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+          <Iconify
+            icon="solar:users-group-rounded-bold"
+            width={14}
+            sx={{ color: selected ? 'primary.darker' : 'text.secondary' }}
+          />
+          <Typography
+            variant="caption"
+            sx={{ color: selected ? 'primary.darker' : 'text.secondary' }}
+          >
             {role.memberCount ?? 0}명
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.5} alignItems="center">
-          <Iconify icon="solar:buildings-bold" width={14} sx={{ color: 'text.secondary' }} />
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+          <Iconify
+            icon="solar:buildings-bold"
+            width={14}
+            sx={{ color: selected ? 'primary.darker' : 'text.secondary' }}
+          />
+          <Typography
+            variant="caption"
+            sx={{ color: selected ? 'primary.darker' : 'text.secondary' }}
+          >
             {role.departmentCount ?? 0}팀
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.5} alignItems="center">
-          <Iconify icon="solar:clock-circle-bold" width={14} sx={{ color: 'text.secondary' }} />
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+          <Iconify
+            icon="solar:clock-circle-bold"
+            width={14}
+            sx={{ color: selected ? 'primary.darker' : 'text.secondary' }}
+          />
+          <Typography
+            variant="caption"
+            sx={{ color: selected ? 'primary.darker' : 'text.secondary' }}
+          >
             {formatDate(role.updatedAt)}
           </Typography>
         </Stack>

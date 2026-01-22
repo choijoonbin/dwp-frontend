@@ -121,8 +121,18 @@ export const ChatPanel = ({
         </Box>
       )}
 
-      <Scrollbar sx={{ flex: 1, minHeight: 0 }}>
-        <Box ref={scrollRef} sx={{ p: { xs: 2, md: 2.5 } }}>
+      <Scrollbar
+        sx={{
+          flex: 1,
+          minHeight: 0,
+          '& .simplebar-wrapper': { height: '100%' },
+          '& .simplebar-mask': { height: '100%' },
+          '& .simplebar-offset': { height: '100%' },
+          '& .simplebar-content-wrapper': { height: '100%', overflow: 'hidden auto !important' },
+          '& .simplebar-content': { height: '100%', display: 'flex', flexDirection: 'column' },
+        }}
+      >
+        <Box ref={scrollRef} sx={{ p: { xs: 2, md: 2.5 }, flexGrow: 1 }}>
           <Stack spacing={2}>
             {messages.map((msg) => {
               const isUser = msg.role === 'user';
@@ -133,6 +143,7 @@ export const ChatPanel = ({
                   spacing={1.5}
                   justifyContent={isUser ? 'flex-end' : 'flex-start'}
                   alignItems="flex-start"
+                  sx={{ minWidth: 0 }}
                 >
                   {!isUser && (
                     <Box
@@ -151,7 +162,12 @@ export const ChatPanel = ({
                       <Iconify icon="solar:magic-stick-3-bold" width={16} />
                     </Box>
                   )}
-                  <Box sx={{ maxWidth: { xs: '100%', md: '85%' } }}>
+                  <Box
+                    sx={{
+                      maxWidth: { xs: 'calc(100% - 48px)', md: '85%' },
+                      minWidth: 0,
+                    }}
+                  >
                     <Box
                       sx={{
                         px: 2,
@@ -234,7 +250,15 @@ export const ChatPanel = ({
         </Box>
       </Scrollbar>
 
-      <Box sx={{ p: { xs: 2, md: 2.5 }, borderTop: '1px solid', borderColor: 'divider', bgcolor: 'background.neutral' }}>
+      <Box
+        sx={{
+          p: { xs: 2, md: 2.5 },
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          bgcolor: 'background.neutral',
+          minHeight: 80,
+        }}
+      >
         <TextField
           fullWidth
           multiline

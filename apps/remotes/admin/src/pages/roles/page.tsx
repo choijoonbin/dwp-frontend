@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Drawer from '@mui/material/Drawer';
@@ -73,7 +75,7 @@ const RolesPageContent = () => {
     trackEvent({
       resourceKey: 'menu.admin.roles',
       action: 'VIEW',
-      label: '권한 그룹 관리',
+      label: '권한 관리',
       metadata: {
         page: window.location.pathname,
       },
@@ -83,7 +85,7 @@ const RolesPageContent = () => {
   const handleCreateSuccess = () => {
     setCreateModalOpen(false);
     refetch();
-    showSnackbar('역할이 생성되었습니다.');
+    showSnackbar('권한이 생성되었습니다.');
   };
 
   const handleDetailSuccess = () => {
@@ -129,76 +131,79 @@ const RolesPageContent = () => {
   };
 
   return (
-    <Box sx={{ flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      {/* Header */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 2 } }}>
+    <Box
+      sx={{
+        p: 3,
+        height: '100%',
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      <Stack spacing={3} sx={{ flex: 1, minHeight: 0 }}>
+        {/* Header */}
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Stack spacing={0.5}>
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
-              권한 그룹 관리
-            </Typography>
+          <Stack spacing={1}>
+            <Typography variant="h4">권한 관리</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              역할(Role) 및 권한 그룹을 관리합니다.
+              권한 및 권한 그룹을 관리합니다.
             </Typography>
           </Stack>
         </Stack>
-      </Box>
 
-      {/* Main Content: Left List + Right Detail */}
-      <Box sx={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
-        {/* Left: Roles List Panel */}
-        <Box
-          sx={{
-            width: { xs: '100%', sm: 280, md: 320 },
-            borderRight: { xs: 0, sm: 1 },
-            borderColor: 'divider',
-            overflow: 'hidden',
-            minHeight: 0,
+        {/* Main Content: Left List + Right Detail */}
+        <Grid container spacing={2} alignItems="stretch" sx={{ flex: 1, minHeight: 0 }}>
+          {/* Left: Roles List Panel */}
+          <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', minHeight: 0, height: 1 }}>
+            <Card sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <RoleListPanel
+                roles={roleRowModels}
+                selectedRoleId={selectedRoleId}
+                onRoleSelect={handleRoleSelect}
+                onCreateClick={() => setCreateModalOpen(true)}
+                isLoading={isLoading}
+                error={error}
+              />
+            </Card>
+          </Grid>
+
+          {/* Right: Role Detail Panel */}
+          <Grid size={{ xs: 12, md: 8 }} sx={{ display: { xs: 'none', sm: 'flex' }, minHeight: 0, height: 1 }}>
+            <Box sx={{ flex: 1, minHeight: 0, width: 1, display: 'flex' }}>
+              <RoleDetailPanel
+                roleId={selectedRoleId}
+                onCreateClick={() => setCreateModalOpen(true)}
+                onDelete={handleDeleteClick}
+                onSuccess={handleDetailSuccess}
+              />
+            </Box>
+          </Grid>
+        </Grid>
+      </Stack>
+
+      {/* Mobile Drawer */}
+      {isMobile && (
+        <Drawer
+          anchor="right"
+          open={mobileDetailOpen && Boolean(selectedRoleId)}
+          onClose={() => setMobileDetailOpen(false)}
+          PaperProps={{
+            sx: {
+              width: '100%',
+              maxWidth: 520,
+            },
           }}
         >
-          <RoleListPanel
-            roles={roleRowModels}
-            selectedRoleId={selectedRoleId}
-            onRoleSelect={handleRoleSelect}
+          <RoleDetailPanel
+            roleId={selectedRoleId}
             onCreateClick={() => setCreateModalOpen(true)}
-            isLoading={isLoading}
-            error={error}
-          />
-        </Box>
-
-        {/* Right: Role Detail Panel */}
-        {!isMobile ? (
-          <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
-            <RoleDetailPanel
-              roleId={selectedRoleId}
-              onCreateClick={() => setCreateModalOpen(true)}
-              onDelete={handleDeleteClick}
-              onSuccess={handleDetailSuccess}
-            />
-          </Box>
-        ) : (
-          <Drawer
-            anchor="right"
-            open={mobileDetailOpen && Boolean(selectedRoleId)}
+            onDelete={handleDeleteClick}
+            onSuccess={handleDetailSuccess}
             onClose={() => setMobileDetailOpen(false)}
-            PaperProps={{
-              sx: {
-                width: { xs: '100%', sm: '80%' },
-                maxWidth: 720,
-                height: '100%',
-              },
-            }}
-          >
-            <RoleDetailPanel
-              roleId={selectedRoleId}
-              onCreateClick={() => setCreateModalOpen(true)}
-              onDelete={handleDeleteClick}
-              onSuccess={handleDetailSuccess}
-              onClose={() => setMobileDetailOpen(false)}
-            />
-          </Drawer>
-        )}
-      </Box>
+          />
+        </Drawer>
+      )}
 
       {/* Create Modal */}
       <CreateRoleModal open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSuccess={handleCreateSuccess} />
@@ -211,8 +216,8 @@ const RolesPageContent = () => {
             setDeleteDialogOpen(false);
             setSelectedRoleIdForDelete(null);
           }}
-          title="역할 삭제"
-          content={`정말 "${roleRowModels.find((r) => r.id === selectedRoleIdForDelete)?.roleName || ''}" 역할을 삭제하시겠습니까?`}
+          title="권한 삭제"
+          content={`정말 "${roleRowModels.find((r) => r.id === selectedRoleIdForDelete)?.roleName || ''}" 권한을 삭제하시겠습니까?`}
           onConfirm={handleDeleteConfirm}
         />
       )}

@@ -102,7 +102,7 @@ export const RoleEditorModal = memo(({ open, onClose, role, onSuccess }: RoleEdi
         trackEvent({
           resourceKey: 'menu.admin.roles',
           action: 'UPDATE_ROLE',
-          label: '역할 수정 완료',
+          label: '권한 수정 완료',
           metadata: {
             roleId: role.id,
             roleName: formData.roleName,
@@ -125,18 +125,18 @@ export const RoleEditorModal = memo(({ open, onClose, role, onSuccess }: RoleEdi
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
-      <DialogTitle>{role ? '역할 편집' : '역할 추가'}</DialogTitle>
+      <DialogTitle>{role ? '권한 편집' : '권한 추가'}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 1 }}>
           <TextField
-            label="역할명 *"
+            label="권한명 *"
             fullWidth
             value={formData.roleName}
             onChange={(e) => setFormData({ ...formData, roleName: e.target.value })}
             required
           />
           <TextField
-            label="역할 코드 *"
+            label="권한 코드 *"
             fullWidth
             value={formData.roleCode}
             onChange={(e) => setFormData({ ...formData, roleCode: e.target.value })}

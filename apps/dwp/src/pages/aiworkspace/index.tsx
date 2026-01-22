@@ -100,10 +100,7 @@ export default function Page() {
         sx={{
           flex: '1 1 auto',
           minHeight: 0,
-          height: {
-            xs: 'calc(100dvh - var(--layout-header-mobile-height))',
-            md: 'calc(100dvh - var(--layout-header-desktop-height))',
-          },
+          height: '100%',
           '--ai-workspace-header-height': { xs: '56px', md: '64px' },
           bgcolor: 'background.default',
           position: 'relative',
@@ -120,7 +117,7 @@ export default function Page() {
         {showDebugSidebar && <StreamDebugPanel variant="sidebar" onClose={() => setDebugOpen(false)} />}
 
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'hidden' }}>
           <Box
             sx={{
               borderBottom: '1px solid',
@@ -129,6 +126,7 @@ export default function Page() {
               px: { xs: 2, md: 2.5 },
               py: 1.5,
               minHeight: 'var(--ai-workspace-header-height)',
+              maxHeight: 'var(--ai-workspace-header-height)',
               display: 'flex',
               alignItems: 'center',
             }}
@@ -213,6 +211,7 @@ export default function Page() {
             sx={{
               flex: 1,
               minHeight: 0,
+              overflow: 'hidden',
               display: 'grid',
               gridTemplateColumns: isMdUp ? 'minmax(0, 0.42fr) minmax(0, 0.58fr)' : '1fr',
               gridTemplateRows: isMdUp ? '1fr' : isTablet ? 'minmax(0, 0.48fr) minmax(0, 0.52fr)' : '1fr',
@@ -224,8 +223,13 @@ export default function Page() {
                   borderRight: isMdUp ? '1px solid' : 'none',
                   borderBottom: isTablet ? '1px solid' : 'none',
                   borderColor: 'divider',
+                  height: '100%',
                   minHeight: 0,
+                  maxHeight: '100%',
+                  overflow: 'hidden',
                   bgcolor: 'background.paper',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
                 <ChatPanel
@@ -258,7 +262,17 @@ export default function Page() {
             )}
 
             {showWorkspacePanel && (
-              <Box sx={{ minHeight: 0, bgcolor: 'background.neutral' }}>
+              <Box
+                sx={{
+                  height: '100%',
+                  minHeight: 0,
+                  maxHeight: '100%',
+                  overflow: 'hidden',
+                  bgcolor: 'background.neutral',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
                 <WorkspaceTabs
                   value={activeTab}
                   onChange={setActiveTab}

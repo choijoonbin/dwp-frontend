@@ -239,8 +239,17 @@ const MenusPageContent = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Stack spacing={3}>
+    <Box
+      sx={{
+        p: 3,
+        height: '100%',
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      <Stack spacing={3} sx={{ flex: 1, minHeight: 0 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Stack spacing={1}>
             <Typography variant="h4">메뉴 관리</Typography>
@@ -256,10 +265,10 @@ const MenusPageContent = () => {
         </Stack>
 
         {/* Main Content: Left Tree + Right Detail */}
-        <Grid container spacing={2} alignItems="stretch">
+        <Grid container spacing={2} alignItems="stretch" sx={{ flex: 1, minHeight: 0 }}>
           {/* Left: Menu Tree */}
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', minHeight: 0, height: 1 }}>
+            <Card sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
               <MenuTreePanel
                 tree={menusTree}
                 expandedNodes={expandedNodes}
@@ -286,19 +295,21 @@ const MenusPageContent = () => {
           </Grid>
 
           {/* Right: Menu Detail Editor */}
-          <Grid size={{ xs: 12, md: 8 }} sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <MenuDetailEditor
-              menu={selectedMenu}
-              menusTree={menusTree}
-              formData={draftForm}
-              validationErrors={validationErrors}
-              isLoading={isUpdating || isDeleting}
-              onFormChange={updateFormField}
-              onReset={resetForm}
-              onCreateChild={handleCreateChild}
-              onSave={handleDetailSave}
-              onDelete={handleDetailDelete}
-            />
+          <Grid size={{ xs: 12, md: 8 }} sx={{ display: { xs: 'none', sm: 'flex' }, minHeight: 0, height: 1 }}>
+            <Box sx={{ flex: 1, minHeight: 0, width: 1, display: 'flex' }}>
+              <MenuDetailEditor
+                menu={selectedMenu}
+                menusTree={menusTree}
+                formData={draftForm}
+                validationErrors={validationErrors}
+                isLoading={isUpdating || isDeleting}
+                onFormChange={updateFormField}
+                onReset={resetForm}
+                onCreateChild={handleCreateChild}
+                onSave={handleDetailSave}
+                onDelete={handleDetailDelete}
+              />
+            </Box>
           </Grid>
         </Grid>
       </Stack>

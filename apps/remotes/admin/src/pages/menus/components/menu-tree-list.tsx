@@ -58,7 +58,7 @@ export const MenuTreeList = memo(({
               cursor: 'pointer',
               minHeight: 44,
               color: isSelected ? 'primary.main' : 'text.primary',
-              bgcolor: isSelected ? 'action.selected' : 'transparent',
+              bgcolor: isSelected ? 'action.selected' : 'background.paper',
               opacity: isDisabled ? 0.5 : 1,
               '&:hover': {
                 bgcolor: isSelected ? 'action.selected' : 'action.hover',

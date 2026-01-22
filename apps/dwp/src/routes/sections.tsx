@@ -71,6 +71,7 @@ export const routesSection: RouteObject[] = [
       { path: 'chat', element: <ChatPage /> },
       { path: 'approval', element: <ApprovalPage /> },
       { path: 'ai-workspace', element: <AIWorkspacePage /> },
+      { path: 'admin/aiworkspace', element: <Navigate to="/ai-workspace" replace /> },
       { path: 'app/admin/aiworkspace', element: <Navigate to="/ai-workspace" replace /> },
       { path: 'app/admin/*', element: <AppAdminRedirect /> },
       { path: 'admin/*', element: <AdminPage /> },

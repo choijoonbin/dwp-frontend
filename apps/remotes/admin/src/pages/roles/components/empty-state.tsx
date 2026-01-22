@@ -24,28 +24,30 @@ export const EmptyState = memo(({ title, description, actionLabel, onAction }: E
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      p: 8,
+      p: 4,
       textAlign: 'center',
     }}
   >
     <Box
       sx={{
-        mb: 3,
+        width: 64,
+        height: 64,
         borderRadius: '50%',
-        bgcolor: 'action.selected',
-        p: 3,
+        bgcolor: 'action.hover',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        mx: 'auto',
+        mb: 2,
       }}
     >
-      <Iconify icon="solar:shield-user-bold-duotone" width={48} sx={{ color: 'text.secondary' }} />
+      <Iconify icon="solar:shield-user-bold-duotone" width={28} sx={{ color: 'text.disabled' }} />
     </Box>
-    <Typography variant="h5" sx={{ mb: 1, fontWeight: 600, color: 'text.primary' }}>
+    <Typography variant="h6" sx={{ mb: 1 }}>
       {title || '데이터가 없습니다'}
     </Typography>
     {description && (
-      <Typography variant="body2" sx={{ mb: 3, color: 'text.secondary', maxWidth: 400 }}>
+      <Typography variant="body2" sx={{ mb: 3, color: 'text.secondary' }}>
         {description}
       </Typography>
     )}

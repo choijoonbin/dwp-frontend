@@ -64,7 +64,7 @@ export const CreateRoleModal = memo(({ open, onClose, onSuccess }: CreateRoleMod
       trackEvent({
         resourceKey: 'btn.admin.roles.create',
         action: 'CLICK',
-        label: '역할 생성',
+        label: '권한 생성',
         metadata: {
           page: window.location.pathname,
           roleName: formData.roleName,
@@ -81,7 +81,7 @@ export const CreateRoleModal = memo(({ open, onClose, onSuccess }: CreateRoleMod
       trackEvent({
         resourceKey: 'menu.admin.roles',
         action: 'CREATE_ROLE',
-        label: '역할 생성 완료',
+        label: '권한 생성 완료',
         metadata: {
           roleName: formData.roleName,
           status: formData.status,
@@ -96,18 +96,18 @@ export const CreateRoleModal = memo(({ open, onClose, onSuccess }: CreateRoleMod
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
-      <DialogTitle>새 역할 생성</DialogTitle>
+      <DialogTitle>새 권한 생성</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 1 }}>
           <TextField
-            label="역할명 *"
+            label="권한명 *"
             fullWidth
             value={formData.roleName}
             onChange={(e) => setFormData({ ...formData, roleName: e.target.value })}
             required
           />
           <TextField
-            label="역할 코드 *"
+            label="권한 코드 *"
             fullWidth
             value={formData.roleCode}
             onChange={(e) => setFormData({ ...formData, roleCode: e.target.value })}

@@ -54,14 +54,17 @@ export const MenuDetailEditor = memo(({
   return (
     <Card
       sx={{
+        width: 1,
         height: '100%',
+        minHeight: 0,
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
         borderRadius: variant === 'drawer' ? 0 : 2,
       }}
     >
       <MenuDetailHeader menu={menu} enabled={formData.enabled} isFolder={isFolder} onClose={onClose} />
-      <Box sx={{ flex: 1, overflowY: 'auto', p: 3 }}>
+      <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', p: 3 }}>
         <MenuDetailForm
           menu={menu}
           menusTree={menusTree}

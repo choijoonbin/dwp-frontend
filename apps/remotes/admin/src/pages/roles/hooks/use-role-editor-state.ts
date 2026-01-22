@@ -117,10 +117,10 @@ export const useRoleEditorState = () => {
   const validateForm = useCallback((): boolean => {
     const errors: Record<string, string> = {};
     if (!draftForm.roleName.trim()) {
-      errors.roleName = '역할명을 입력하세요.';
+      errors.roleName = '권한명을 입력하세요.';
     }
     if (!draftForm.roleCode.trim()) {
-      errors.roleCode = '역할 코드를 입력하세요.';
+      errors.roleCode = '권한 코드를 입력하세요.';
     }
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;

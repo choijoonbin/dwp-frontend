@@ -12,6 +12,7 @@ import { layoutClasses } from '../core/classes';
 export type DashboardContentProps = ContainerProps & {
   layoutQuery?: Breakpoint;
   disablePadding?: boolean;
+  layoutMode?: 'fixed' | 'scrollable';
 };
 
 export function DashboardContent({
@@ -21,6 +22,7 @@ export function DashboardContent({
   disablePadding,
   maxWidth = 'lg',
   layoutQuery = 'lg',
+  layoutMode = 'scrollable',
   ...other
 }: DashboardContentProps) {
   return (
@@ -32,6 +34,9 @@ export function DashboardContent({
           display: 'flex',
           flex: '1 1 auto',
           flexDirection: 'column',
+          ...(layoutMode === 'fixed' && {
+            minHeight: 0,
+          }),
           pt: 'var(--layout-dashboard-content-pt)',
           pb: 'var(--layout-dashboard-content-pb)',
           [theme.breakpoints.up(layoutQuery)]: {

@@ -13,7 +13,7 @@ export default function Page() {
       <title>{`Admin - ${CONFIG.appName}`}</title>
 
       <PermissionRouteGuard resource="menu.admin" permission="VIEW" redirectTo="/403">
-        <DashboardContent maxWidth={false}>
+        <DashboardContent maxWidth={false} layoutMode="fixed" sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
           <AdminModule />
         </DashboardContent>
       </PermissionRouteGuard>
