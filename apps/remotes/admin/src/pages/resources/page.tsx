@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect } from 'react';
+import { ConfirmDialog, TwoColumnLayout } from '@dwp-frontend/design-system';
 import { trackEvent, type ResourceNode, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -14,7 +15,7 @@ import { ResourcesTree } from './components/resources-tree';
 import { useResourceActions } from './hooks/use-resource-actions';
 import { ResourcesFilters } from './components/resources-filters';
 import { ResourceEditorModal } from './components/resource-editor-modal';
-import { DeleteConfirmDialog } from './components/delete-confirm-dialog';
+import { ResourceDetailPanel } from './components/resource-detail-panel';
 import { useResourcesTableState } from './hooks/use-resources-table-state';
 import { useResourceEditorState } from './hooks/use-resource-editor-state';
 
@@ -188,22 +189,28 @@ const ResourcesPageContent = () => {
           onCreateClick={openCreateDialog}
         />
 
-        {/* Tree */}
-        <Card>
-          <ResourcesTree
-            tree={filteredTree}
-            expandedNodes={expandedNodes}
-            isLoading={isLoading}
-            error={error}
-            anchorEl={anchorEl}
-            selectedResource={selectedResource}
-            onToggleNode={toggleNode}
-            onMenuOpen={handleMenuOpen}
-            onMenuClose={handleMenuClose}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </Card>
+        {/* Two Column Layout */}
+        <TwoColumnLayout
+          mode="fixed"
+          left={
+            <Card sx={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+              <ResourcesTree
+                tree={filteredTree}
+                expandedNodes={expandedNodes}
+                isLoading={isLoading}
+                error={error}
+                anchorEl={anchorEl}
+                selectedResource={selectedResource}
+                onToggleNode={toggleNode}
+                onMenuOpen={handleMenuOpen}
+                onMenuClose={handleMenuClose}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            </Card>
+          }
+          right={<ResourceDetailPanel resource={selectedResource} />}
+        />
       </Stack>
 
       {/* Create/Edit Modal */}
@@ -221,12 +228,15 @@ const ResourcesPageContent = () => {
 
       {/* Delete Dialog */}
       {selectedResource && (
-        <DeleteConfirmDialog
+        <ConfirmDialog
           open={deleteDialogOpen}
-          onClose={() => setDeleteDialogOpen(false)}
           title="리소스 삭제"
-          content={`정말 "${selectedResource.resourceName}" 리소스를 삭제하시겠습니까?`}
+          description={`정말 "${selectedResource.resourceName}" 리소스를 삭제하시겠습니까?`}
+          confirmText="삭제"
+          cancelText="취소"
+          severity="danger"
           onConfirm={handleDeleteConfirm}
+          onClose={() => setDeleteDialogOpen(false)}
         />
       )}
 
