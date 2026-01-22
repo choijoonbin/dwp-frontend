@@ -39,6 +39,911 @@
   "nxJsonPlugins": [],
   "fileMap": {
     "projectFileMap": {
+      "dwp": [
+        {
+          "file": "apps/dwp/index.html",
+          "hash": "17939470793331178914"
+        },
+        {
+          "file": "apps/dwp/project.json",
+          "hash": "13145188762207839363"
+        },
+        {
+          "file": "apps/dwp/src/_mock/_data.ts",
+          "hash": "17516849546646886115"
+        },
+        {
+          "file": "apps/dwp/src/_mock/_mock.ts",
+          "hash": "18016325097605325893"
+        },
+        {
+          "file": "apps/dwp/src/_mock/index.ts",
+          "hash": "6506261413655350933"
+        },
+        {
+          "file": "apps/dwp/src/app.tsx",
+          "hash": "4834641680956772670",
+          "deps": [
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/admin-module.tsx",
+          "hash": "16383451014523006977",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            [
+              "admin",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/action-execution-view.tsx",
+          "hash": "15892573304301124896",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/aura-floating-button.tsx",
+          "hash": "7561505876423508032",
+          "deps": [
+            "npm:react",
+            "npm:@emotion/react",
+            "npm:framer-motion",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/aura-mini-overlay.tsx",
+          "hash": "13326399996555465884",
+          "deps": [
+            "npm:react",
+            "npm:framer-motion",
+            "npm:react-router-dom",
+            "shared-utils",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/checkpoint-approval.tsx",
+          "hash": "4759948311027316760",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/confidence-score.tsx",
+          "hash": "5382721197565988025",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/contextual-bridge.tsx",
+          "hash": "3159488935626488347",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/dynamic-plan-board.tsx",
+          "hash": "1049363385434138860",
+          "deps": [
+            "npm:react",
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/hitl-approval-dialog.tsx",
+          "hash": "16775678529470342742",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/index.ts",
+          "hash": "5940866430217232571"
+        },
+        {
+          "file": "apps/dwp/src/components/aura/live-execution-log.tsx",
+          "hash": "650096683322132817",
+          "deps": [
+            "npm:react",
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/reasoning-timeline.tsx",
+          "hash": "4397739473768280162",
+          "deps": [
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "npm:@mui/lab",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/result-viewer.tsx",
+          "hash": "3368819405240586856",
+          "deps": [
+            "npm:react-syntax-highlighter",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/stream-status-banner.tsx",
+          "hash": "6478238734704118856",
+          "deps": [
+            "shared-utils",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/aura/thought-chain-ui.tsx",
+          "hash": "13664718832243213284",
+          "deps": [
+            "npm:framer-motion",
+            "npm:@mui/material",
+            "npm:@mui/lab",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/auth-unauthorized-handler.tsx",
+          "hash": "17589962539829081599",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/components/dev/stream-debug-panel.tsx",
+          "hash": "18059672267929630503",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/config-global.ts",
+          "hash": "12247388983537652361"
+        },
+        {
+          "file": "apps/dwp/src/features/health/main-api-health.tsx",
+          "hash": "8218355380706185858",
+          "deps": [
+            "npm:react",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/hooks/use-event-tracking.ts",
+          "hash": "3584299566675493023",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/hooks/use-page-context.ts",
+          "hash": "640832127419751661",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/hooks/use-page-view-tracking.ts",
+          "hash": "11364417962088409237",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/hooks/use-standard-event-tracking.ts",
+          "hash": "1193356159292536991",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/auth/content.tsx",
+          "hash": "11261511144900465333",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/auth/index.ts",
+          "hash": "14949631564904057172"
+        },
+        {
+          "file": "apps/dwp/src/layouts/auth/layout.tsx",
+          "hash": "1270160781522937438",
+          "deps": [
+            "npm:@mui/material",
+            "npm:es-toolkit",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/account-popover.tsx",
+          "hash": "17827062424535331063",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/language-popover.tsx",
+          "hash": "10575808279056560114",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/menu-button.tsx",
+          "hash": "9655052205209790269",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/notifications-popover.tsx",
+          "hash": "3641936837165092944",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/searchbar.tsx",
+          "hash": "1614962610749124620",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/components/workspaces-popover.tsx",
+          "hash": "1960571670775057978",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/classes.ts",
+          "hash": "13461343996066069017",
+          "deps": [
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/css-vars.ts",
+          "hash": "1936802271280533196",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/header-section.tsx",
+          "hash": "17035361679034219890",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/index.ts",
+          "hash": "5087516577530814711"
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/layout-section.tsx",
+          "hash": "13136056995460256400",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/core/main-section.tsx",
+          "hash": "3013228332482591838",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/dashboard/content.tsx",
+          "hash": "8145305273693180430",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/dashboard/css-vars.ts",
+          "hash": "16816562538749029631",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/dashboard/index.ts",
+          "hash": "14949631564904057172"
+        },
+        {
+          "file": "apps/dwp/src/layouts/dashboard/layout.tsx",
+          "hash": "16930374815127537512",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:es-toolkit",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/dashboard/nav.tsx",
+          "hash": "12813774598403120167",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared",
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/nav-config-account.tsx",
+          "hash": "11889568017455973688",
+          "deps": [
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/nav-config-dashboard.tsx",
+          "hash": "6805364892269038820",
+          "deps": [
+            "shared-utils",
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/layouts/nav-config-workspace.tsx",
+          "hash": "11427639975396272078"
+        },
+        {
+          "file": "apps/dwp/src/main.tsx",
+          "hash": "10700730853833826691",
+          "deps": [
+            "design-system",
+            "npm:react",
+            "npm:react-dom",
+            "shared-utils",
+            "npm:@tanstack/react-query",
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/admin.tsx",
+          "hash": "1722109046239665873",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/ai-workspace.tsx",
+          "hash": "6045114944755894222",
+          "deps": [
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/aiworkspace/components/chat-panel.tsx",
+          "hash": "18277377709303311324",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/aiworkspace/components/workspace-tabs.tsx",
+          "hash": "18115013196544311394",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/aiworkspace/data/mock.ts",
+          "hash": "13160087569498470411"
+        },
+        {
+          "file": "apps/dwp/src/pages/aiworkspace/hooks/use-ai-workspace.ts",
+          "hash": "7817018467394678628",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/aiworkspace/index.tsx",
+          "hash": "17806112945352007916",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/approval.tsx",
+          "hash": "9605123761036599757",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/blog.tsx",
+          "hash": "1785499431979978527"
+        },
+        {
+          "file": "apps/dwp/src/pages/chat.tsx",
+          "hash": "7616940309384708320",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/dashboard.tsx",
+          "hash": "1372780784462429009"
+        },
+        {
+          "file": "apps/dwp/src/pages/forgot-password.tsx",
+          "hash": "17335882303296048313"
+        },
+        {
+          "file": "apps/dwp/src/pages/mail.tsx",
+          "hash": "2397008715153872271",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/page-403.tsx",
+          "hash": "7271543994477914562",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/page-not-found.tsx",
+          "hash": "10801249517891335229"
+        },
+        {
+          "file": "apps/dwp/src/pages/products.tsx",
+          "hash": "11588341766245236050"
+        },
+        {
+          "file": "apps/dwp/src/pages/sign-in.tsx",
+          "hash": "477289466726758334"
+        },
+        {
+          "file": "apps/dwp/src/pages/sso-callback.tsx",
+          "hash": "15805976494171231860",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "shared-utils",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/pages/user.tsx",
+          "hash": "2962921500561663848"
+        },
+        {
+          "file": "apps/dwp/src/routes/components/error-boundary.tsx",
+          "hash": "3467631826434846023",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/routes/components/index.ts",
+          "hash": "14077486825246220324"
+        },
+        {
+          "file": "apps/dwp/src/routes/components/router-link.tsx",
+          "hash": "9002064305839295676",
+          "deps": [
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/routes/sections.tsx",
+          "hash": "11380676219236893952",
+          "deps": [
+            "npm:react-router",
+            "npm:react",
+            "npm:minimal-shared",
+            "shared-utils",
+            "npm:react-router-dom",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/auth/forgot-password-view.tsx",
+          "hash": "723429468145224521",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/auth/index.ts",
+          "hash": "4418163381307047449"
+        },
+        {
+          "file": "apps/dwp/src/sections/auth/sign-in-view.tsx",
+          "hash": "873321504818077950",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "shared-utils",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/blog/post-item.tsx",
+          "hash": "7671663693039074327",
+          "deps": [
+            "npm:@mui/material",
+            "design-system",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/blog/post-search.tsx",
+          "hash": "2119049056461996884",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/blog/post-sort.tsx",
+          "hash": "17863412850096876051",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/blog/view/blog-view.tsx",
+          "hash": "13360796096814840131",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/blog/view/index.ts",
+          "hash": "5572359074980122273"
+        },
+        {
+          "file": "apps/dwp/src/sections/error/index.ts",
+          "hash": "2389369739966198623"
+        },
+        {
+          "file": "apps/dwp/src/sections/error/not-found-view.tsx",
+          "hash": "1661229755210852967",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-conversion-rates.tsx",
+          "hash": "6553502212912116683",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-current-subject.tsx",
+          "hash": "8829776651043400195",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-current-visits.tsx",
+          "hash": "18090240928036565697",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-news.tsx",
+          "hash": "15607822576922029777",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-order-timeline.tsx",
+          "hash": "12521163253466782820",
+          "deps": [
+            "npm:@mui/material",
+            "npm:@mui/lab"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-tasks.tsx",
+          "hash": "15420493741691172678",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-traffic-by-site.tsx",
+          "hash": "94121086466098684",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-website-visits.tsx",
+          "hash": "11017110401795957946",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/analytics-widget-summary.tsx",
+          "hash": "909541773952907885",
+          "deps": [
+            "npm:@mui/material",
+            "design-system",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/view/index.ts",
+          "hash": "16971434275731120297"
+        },
+        {
+          "file": "apps/dwp/src/sections/overview/view/overview-analytics-view.tsx",
+          "hash": "8203919796011283916",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/product/product-cart-widget.tsx",
+          "hash": "8009422912028964918",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/product/product-filters.tsx",
+          "hash": "1188729325832786235",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/product/product-item.tsx",
+          "hash": "14067644666693004039",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/product/product-sort.tsx",
+          "hash": "7478271692970035114",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/product/view/index.ts",
+          "hash": "13072221893633259543"
+        },
+        {
+          "file": "apps/dwp/src/sections/product/view/products-view.tsx",
+          "hash": "15414312102191470337",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/table-empty-rows.tsx",
+          "hash": "603188706689913186",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/table-no-data.tsx",
+          "hash": "8343605928413013690",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/user-table-head.tsx",
+          "hash": "5167769533827516407",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/user-table-row.tsx",
+          "hash": "1728665887081168928",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/user-table-toolbar.tsx",
+          "hash": "2567035527539520465",
+          "deps": [
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/sections/user/utils.ts",
+          "hash": "18257741819385300827"
+        },
+        {
+          "file": "apps/dwp/src/sections/user/view/index.ts",
+          "hash": "13872062710550448634"
+        },
+        {
+          "file": "apps/dwp/src/sections/user/view/user-view.tsx",
+          "hash": "11522250744877361344",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "design-system"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/store/use-aura-store.ts",
+          "hash": "9250283369171839773",
+          "deps": [
+            "npm:zustand"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/store/use-layout-store.ts",
+          "hash": "2200331581096022741",
+          "deps": [
+            "npm:zustand"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/utils/format-number.ts",
+          "hash": "636866426588155976"
+        },
+        {
+          "file": "apps/dwp/src/utils/format-time.ts",
+          "hash": "9037868006219558892",
+          "deps": [
+            "npm:dayjs"
+          ]
+        },
+        {
+          "file": "apps/dwp/src/vite-env.d.ts",
+          "hash": "10470006326540176307"
+        }
+      ],
+      "mail": [
+        {
+          "file": "apps/remotes/mail/index.html",
+          "hash": "864866553890463834"
+        },
+        {
+          "file": "apps/remotes/mail/project.json",
+          "hash": "14904217479067949789"
+        },
+        {
+          "file": "apps/remotes/mail/src/mail-app.tsx",
+          "hash": "1842251242111642309",
+          "deps": [
+            "npm:react",
+            "design-system",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/mail/src/main.tsx",
+          "hash": "16353890226058499549",
+          "deps": [
+            "design-system",
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "apps/remotes/mail/src/vite-env.d.ts",
+          "hash": "10470006326540176307"
+        },
+        {
+          "file": "apps/remotes/mail/vite.config.ts",
+          "hash": "2541363759865362330",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react-swc"
+          ]
+        }
+      ],
       "shared-utils": [
         {
           "file": "libs/shared-utils/project.json",
@@ -456,6 +1361,853 @@
         {
           "file": "libs/shared-utils/src/types.ts",
           "hash": "16497816272801057550"
+        }
+      ],
+      "design-system": [
+        {
+          "file": "libs/design-system/project.json",
+          "hash": "10937936829318947319"
+        },
+        {
+          "file": "libs/design-system/src/components/approval-dialog/approval-dialog.tsx",
+          "hash": "16531999336562305506",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/chart.tsx",
+          "hash": "15990414331484826300",
+          "deps": [
+            "npm:react",
+            "npm:minimal-shared",
+            "npm:@mui/material",
+            [
+              "npm:react-apexcharts",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/classes.ts",
+          "hash": "13448803951318615463"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/components/chart-legends.tsx",
+          "hash": "13519885268218213398",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/components/chart-loading.tsx",
+          "hash": "12159728191277331976",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/components/index.ts",
+          "hash": "7704243789903803765"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/index.ts",
+          "hash": "17026374020244711307"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/styles.css",
+          "hash": "13031029736610266452"
+        },
+        {
+          "file": "libs/design-system/src/components/chart/types.ts",
+          "hash": "14887766845857205498",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react-apexcharts"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/chart/use-chart.ts",
+          "hash": "7186824922162965344",
+          "deps": [
+            "npm:@mui/material",
+            "npm:es-toolkit",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/classes.ts",
+          "hash": "5581510735206127944"
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/color-picker.tsx",
+          "hash": "2545015726553284510",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/color-preview.tsx",
+          "hash": "12450105687848861299",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/color-utils/index.ts",
+          "hash": "17205574814626732367"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/classes.ts",
+          "hash": "5614495216971202705"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/icon-sets.ts",
+          "hash": "12853390963022519661"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/iconify.tsx",
+          "hash": "14278513607450369456",
+          "deps": [
+            "npm:@iconify/react",
+            "npm:react",
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/index.ts",
+          "hash": "17835854880567713080"
+        },
+        {
+          "file": "libs/design-system/src/components/iconify/register-icons.ts",
+          "hash": "1855439278111521489",
+          "deps": [
+            "npm:@iconify/react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/index.ts",
+          "hash": "3024419441403342112"
+        },
+        {
+          "file": "libs/design-system/src/components/label/classes.ts",
+          "hash": "10216243487412079881"
+        },
+        {
+          "file": "libs/design-system/src/components/label/index.ts",
+          "hash": "17861490292983094747"
+        },
+        {
+          "file": "libs/design-system/src/components/label/label.tsx",
+          "hash": "443434773925413083",
+          "deps": [
+            "npm:es-toolkit",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/label/styles.tsx",
+          "hash": "1811336073576718369",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/label/types.ts",
+          "hash": "6530222753035242745",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/logo/classes.ts",
+          "hash": "3233155800273695178"
+        },
+        {
+          "file": "libs/design-system/src/components/logo/index.ts",
+          "hash": "10544061452619858687"
+        },
+        {
+          "file": "libs/design-system/src/components/logo/logo.tsx",
+          "hash": "16058246659828974659",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/permission-gate/index.ts",
+          "hash": "2822994586813939657"
+        },
+        {
+          "file": "libs/design-system/src/components/permission-gate/permission-gate.tsx",
+          "hash": "14010263738048655735",
+          "deps": [
+            "npm:react",
+            "shared-utils"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/classes.ts",
+          "hash": "16486606500501144452"
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/index.ts",
+          "hash": "17842248874773705294"
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/scrollbar.tsx",
+          "hash": "695544807360633187",
+          "deps": [
+            "npm:simplebar-react",
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/styles.css",
+          "hash": "5263464215027149794"
+        },
+        {
+          "file": "libs/design-system/src/components/scrollbar/types.ts",
+          "hash": "4998603477604898069",
+          "deps": [
+            "npm:@mui/material",
+            "npm:simplebar-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/classes.ts",
+          "hash": "15345731999837158773"
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/index.ts",
+          "hash": "7916128723121912032"
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/svg-color.tsx",
+          "hash": "5707149224118210095",
+          "deps": [
+            "npm:minimal-shared",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/components/svg-color/types.ts",
+          "hash": "7172266532185956907",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/hooks/index.ts",
+          "hash": "13016108691721261929"
+        },
+        {
+          "file": "libs/design-system/src/hooks/router/index.ts",
+          "hash": "11139150266187246973"
+        },
+        {
+          "file": "libs/design-system/src/hooks/router/use-pathname.ts",
+          "hash": "11036719986362388067",
+          "deps": [
+            "npm:react",
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/hooks/router/use-router.ts",
+          "hash": "5482890111004519923",
+          "deps": [
+            "npm:react",
+            "npm:react-router"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/index.ts",
+          "hash": "14456934581539553041"
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/accordion.tsx",
+          "hash": "12942931878162262859",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:@radix-ui/react-accordion"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/alert-dialog.tsx",
+          "hash": "5380013421390035656",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-alert-dialog"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/alert.tsx",
+          "hash": "10861439182405347284",
+          "deps": [
+            "npm:react",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/aspect-ratio.tsx",
+          "hash": "3834836800920212141",
+          "deps": [
+            "npm:@radix-ui/react-aspect-ratio"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/avatar.tsx",
+          "hash": "13174882156585541894",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-avatar"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/badge.tsx",
+          "hash": "6330818944212157629",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-slot",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/breadcrumb.tsx",
+          "hash": "9467369378238360557",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-slot",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/button-group.tsx",
+          "hash": "7650345025579823674",
+          "deps": [
+            "npm:@radix-ui/react-slot",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/button.tsx",
+          "hash": "16078701330297904968",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-slot",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/calendar.tsx",
+          "hash": "2469115615199685642",
+          "deps": [
+            "npm:react-day-picker",
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/card.tsx",
+          "hash": "13818741242507634176",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/carousel.tsx",
+          "hash": "3475751381688650682",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:embla-carousel-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/chart.tsx",
+          "hash": "6716214045535408181",
+          "deps": [
+            "npm:react",
+            "npm:recharts"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/checkbox.tsx",
+          "hash": "4523780237552682450",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:@radix-ui/react-checkbox"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/collapsible.tsx",
+          "hash": "12861751191180410396",
+          "deps": [
+            "npm:@radix-ui/react-collapsible"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/command.tsx",
+          "hash": "13064686893456371978",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:cmdk"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/context-menu.tsx",
+          "hash": "8990702272831799459",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-context-menu",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/dialog.tsx",
+          "hash": "11392331257964680310",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:@radix-ui/react-dialog"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/drawer.tsx",
+          "hash": "14385835036457052264",
+          "deps": [
+            "npm:react",
+            "npm:vaul"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/dropdown-menu.tsx",
+          "hash": "4278303444123613749",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-dropdown-menu",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/empty.tsx",
+          "hash": "2624941391103348266",
+          "deps": [
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/field.tsx",
+          "hash": "3561460521383713286",
+          "deps": [
+            "npm:react",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/form.tsx",
+          "hash": "2798132661383808924",
+          "deps": [
+            "npm:@radix-ui/react-label",
+            "npm:react",
+            "npm:@radix-ui/react-slot",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/hover-card.tsx",
+          "hash": "15389288661512487721",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-hover-card"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/index.ts",
+          "hash": "10157383145090463443"
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/input-group.tsx",
+          "hash": "14341116157703374393",
+          "deps": [
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/input-otp.tsx",
+          "hash": "12836918954737112573",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:input-otp"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/input.tsx",
+          "hash": "13587856690992631569",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/item.tsx",
+          "hash": "7898818505712677278",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-slot",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/kbd.tsx",
+          "hash": "6196367900543501500"
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/label.tsx",
+          "hash": "11240286118705285825",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-label"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/menubar.tsx",
+          "hash": "17688001526962734135",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-menubar",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/navigation-menu.tsx",
+          "hash": "15705845362941287857",
+          "deps": [
+            "npm:react",
+            "npm:class-variance-authority",
+            "npm:lucide-react",
+            "npm:@radix-ui/react-navigation-menu"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/pagination.tsx",
+          "hash": "9764389975451701869",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/popover.tsx",
+          "hash": "14515564489726569206",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-popover"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/progress.tsx",
+          "hash": "7388497651454174610",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-progress"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/radio-group.tsx",
+          "hash": "5701248303766300330",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:@radix-ui/react-radio-group"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/resizable.tsx",
+          "hash": "1832588912277518968",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:react-resizable-panels"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/scroll-area.tsx",
+          "hash": "10647335378623514427",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-scroll-area"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/select.tsx",
+          "hash": "235995149866134532",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-select",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/separator.tsx",
+          "hash": "4377691309361036685",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-separator"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/sheet.tsx",
+          "hash": "13211170313758467051",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:@radix-ui/react-dialog"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/sidebar.tsx",
+          "hash": "6966263990517330429",
+          "deps": [
+            "npm:class-variance-authority",
+            "npm:react",
+            "npm:@radix-ui/react-slot",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/skeleton.tsx",
+          "hash": "1695560236803492451"
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/slider.tsx",
+          "hash": "1519338369930942154",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-slider"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/sonner.tsx",
+          "hash": "9087982701538359826",
+          "deps": [
+            "npm:sonner",
+            "npm:next-themes"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/spinner.tsx",
+          "hash": "13182293013091219297",
+          "deps": [
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/switch.tsx",
+          "hash": "12425346744808708865",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-switch"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/table.tsx",
+          "hash": "10065440478758177818",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/tabs.tsx",
+          "hash": "9738844313745286563",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-tabs"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/textarea.tsx",
+          "hash": "12007672097846347019",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/toast.tsx",
+          "hash": "16979501021600193939",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:@radix-ui/react-toast",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/toaster.tsx",
+          "hash": "8636638089195742860"
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/toggle-group.tsx",
+          "hash": "6342874508578806716",
+          "deps": [
+            "npm:react",
+            "npm:class-variance-authority",
+            "npm:@radix-ui/react-toggle-group"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/toggle.tsx",
+          "hash": "12029590878149312962",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-toggle",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/components/ui/tooltip.tsx",
+          "hash": "14675972636382544191",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-tooltip"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/hooks/use-mobile.ts",
+          "hash": "11808312049290393370",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/hooks/use-toast.ts",
+          "hash": "15557326799570724972",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/shadcn/index.ts",
+          "hash": "6760548147315680432"
+        },
+        {
+          "file": "libs/design-system/src/shadcn/lib/utils.ts",
+          "hash": "3379895095160071251",
+          "deps": [
+            "npm:tailwind-merge",
+            "npm:clsx"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/styles/global.css",
+          "hash": "8325894914213820854"
+        },
+        {
+          "file": "libs/design-system/src/theme/core/components.tsx",
+          "hash": "3932988326486082726",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/custom-shadows.ts",
+          "hash": "5085678479816703120",
+          "deps": [
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/index.ts",
+          "hash": "12563650796825881998"
+        },
+        {
+          "file": "libs/design-system/src/theme/core/palette.ts",
+          "hash": "3312676751992468797",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/shadows.ts",
+          "hash": "3242283092768752689",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/core/typography.ts",
+          "hash": "10939852778802819532",
+          "deps": [
+            "npm:@mui/material",
+            "npm:minimal-shared"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/create-classes.ts",
+          "hash": "9863844494207890905"
+        },
+        {
+          "file": "libs/design-system/src/theme/create-theme.ts",
+          "hash": "1772669969832128739",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/extend-theme-types.d.ts",
+          "hash": "5843731201755380017",
+          "deps": [
+            "npm:@mui/lab",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/index.ts",
+          "hash": "15496765687472201915"
+        },
+        {
+          "file": "libs/design-system/src/theme/theme-config.ts",
+          "hash": "1432500443791728194",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/theme-mode.tsx",
+          "hash": "9833422954086801296",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/theme-provider.tsx",
+          "hash": "6901935421150242241",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/design-system/src/theme/types.ts",
+          "hash": "7499571595499420034",
+          "deps": [
+            "npm:@mui/material"
+          ]
         }
       ],
       "admin": [
@@ -1585,853 +3337,6 @@
           ]
         }
       ],
-      "design-system": [
-        {
-          "file": "libs/design-system/project.json",
-          "hash": "10937936829318947319"
-        },
-        {
-          "file": "libs/design-system/src/components/approval-dialog/approval-dialog.tsx",
-          "hash": "16531999336562305506",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/chart.tsx",
-          "hash": "15990414331484826300",
-          "deps": [
-            "npm:react",
-            "npm:minimal-shared",
-            "npm:@mui/material",
-            [
-              "npm:react-apexcharts",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/classes.ts",
-          "hash": "13448803951318615463"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/components/chart-legends.tsx",
-          "hash": "13519885268218213398",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/components/chart-loading.tsx",
-          "hash": "12159728191277331976",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/components/index.ts",
-          "hash": "7704243789903803765"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/index.ts",
-          "hash": "17026374020244711307"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/styles.css",
-          "hash": "13031029736610266452"
-        },
-        {
-          "file": "libs/design-system/src/components/chart/types.ts",
-          "hash": "14887766845857205498",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react-apexcharts"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/chart/use-chart.ts",
-          "hash": "7186824922162965344",
-          "deps": [
-            "npm:@mui/material",
-            "npm:es-toolkit",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/classes.ts",
-          "hash": "5581510735206127944"
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/color-picker.tsx",
-          "hash": "2545015726553284510",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/color-preview.tsx",
-          "hash": "12450105687848861299",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/color-utils/index.ts",
-          "hash": "17205574814626732367"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/classes.ts",
-          "hash": "5614495216971202705"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/icon-sets.ts",
-          "hash": "12853390963022519661"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/iconify.tsx",
-          "hash": "14278513607450369456",
-          "deps": [
-            "npm:@iconify/react",
-            "npm:react",
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/index.ts",
-          "hash": "17835854880567713080"
-        },
-        {
-          "file": "libs/design-system/src/components/iconify/register-icons.ts",
-          "hash": "1855439278111521489",
-          "deps": [
-            "npm:@iconify/react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/index.ts",
-          "hash": "3024419441403342112"
-        },
-        {
-          "file": "libs/design-system/src/components/label/classes.ts",
-          "hash": "10216243487412079881"
-        },
-        {
-          "file": "libs/design-system/src/components/label/index.ts",
-          "hash": "17861490292983094747"
-        },
-        {
-          "file": "libs/design-system/src/components/label/label.tsx",
-          "hash": "443434773925413083",
-          "deps": [
-            "npm:es-toolkit",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/label/styles.tsx",
-          "hash": "1811336073576718369",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/label/types.ts",
-          "hash": "6530222753035242745",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/logo/classes.ts",
-          "hash": "3233155800273695178"
-        },
-        {
-          "file": "libs/design-system/src/components/logo/index.ts",
-          "hash": "10544061452619858687"
-        },
-        {
-          "file": "libs/design-system/src/components/logo/logo.tsx",
-          "hash": "16058246659828974659",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/permission-gate/index.ts",
-          "hash": "2822994586813939657"
-        },
-        {
-          "file": "libs/design-system/src/components/permission-gate/permission-gate.tsx",
-          "hash": "14010263738048655735",
-          "deps": [
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/classes.ts",
-          "hash": "16486606500501144452"
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/index.ts",
-          "hash": "17842248874773705294"
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/scrollbar.tsx",
-          "hash": "695544807360633187",
-          "deps": [
-            "npm:simplebar-react",
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/styles.css",
-          "hash": "5263464215027149794"
-        },
-        {
-          "file": "libs/design-system/src/components/scrollbar/types.ts",
-          "hash": "4998603477604898069",
-          "deps": [
-            "npm:@mui/material",
-            "npm:simplebar-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/classes.ts",
-          "hash": "15345731999837158773"
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/index.ts",
-          "hash": "7916128723121912032"
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/svg-color.tsx",
-          "hash": "5707149224118210095",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/components/svg-color/types.ts",
-          "hash": "7172266532185956907",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/hooks/index.ts",
-          "hash": "13016108691721261929"
-        },
-        {
-          "file": "libs/design-system/src/hooks/router/index.ts",
-          "hash": "11139150266187246973"
-        },
-        {
-          "file": "libs/design-system/src/hooks/router/use-pathname.ts",
-          "hash": "11036719986362388067",
-          "deps": [
-            "npm:react",
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/hooks/router/use-router.ts",
-          "hash": "5482890111004519923",
-          "deps": [
-            "npm:react",
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/index.ts",
-          "hash": "14456934581539553041"
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/accordion.tsx",
-          "hash": "12942931878162262859",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:@radix-ui/react-accordion"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/alert-dialog.tsx",
-          "hash": "5380013421390035656",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-alert-dialog"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/alert.tsx",
-          "hash": "10861439182405347284",
-          "deps": [
-            "npm:react",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/aspect-ratio.tsx",
-          "hash": "3834836800920212141",
-          "deps": [
-            "npm:@radix-ui/react-aspect-ratio"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/avatar.tsx",
-          "hash": "13174882156585541894",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-avatar"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/badge.tsx",
-          "hash": "6330818944212157629",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/breadcrumb.tsx",
-          "hash": "9467369378238360557",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/button-group.tsx",
-          "hash": "7650345025579823674",
-          "deps": [
-            "npm:@radix-ui/react-slot",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/button.tsx",
-          "hash": "16078701330297904968",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/calendar.tsx",
-          "hash": "2469115615199685642",
-          "deps": [
-            "npm:react-day-picker",
-            "npm:react",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/card.tsx",
-          "hash": "13818741242507634176",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/carousel.tsx",
-          "hash": "3475751381688650682",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:embla-carousel-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/chart.tsx",
-          "hash": "6716214045535408181",
-          "deps": [
-            "npm:react",
-            "npm:recharts"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/checkbox.tsx",
-          "hash": "4523780237552682450",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:@radix-ui/react-checkbox"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/collapsible.tsx",
-          "hash": "12861751191180410396",
-          "deps": [
-            "npm:@radix-ui/react-collapsible"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/command.tsx",
-          "hash": "13064686893456371978",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:cmdk"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/context-menu.tsx",
-          "hash": "8990702272831799459",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-context-menu",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/dialog.tsx",
-          "hash": "11392331257964680310",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:@radix-ui/react-dialog"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/drawer.tsx",
-          "hash": "14385835036457052264",
-          "deps": [
-            "npm:react",
-            "npm:vaul"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/dropdown-menu.tsx",
-          "hash": "4278303444123613749",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-dropdown-menu",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/empty.tsx",
-          "hash": "2624941391103348266",
-          "deps": [
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/field.tsx",
-          "hash": "3561460521383713286",
-          "deps": [
-            "npm:react",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/form.tsx",
-          "hash": "2798132661383808924",
-          "deps": [
-            "npm:@radix-ui/react-label",
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:react-hook-form"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/hover-card.tsx",
-          "hash": "15389288661512487721",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-hover-card"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/index.ts",
-          "hash": "10157383145090463443"
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/input-group.tsx",
-          "hash": "14341116157703374393",
-          "deps": [
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/input-otp.tsx",
-          "hash": "12836918954737112573",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:input-otp"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/input.tsx",
-          "hash": "13587856690992631569",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/item.tsx",
-          "hash": "7898818505712677278",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/kbd.tsx",
-          "hash": "6196367900543501500"
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/label.tsx",
-          "hash": "11240286118705285825",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-label"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/menubar.tsx",
-          "hash": "17688001526962734135",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-menubar",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/navigation-menu.tsx",
-          "hash": "15705845362941287857",
-          "deps": [
-            "npm:react",
-            "npm:class-variance-authority",
-            "npm:lucide-react",
-            "npm:@radix-ui/react-navigation-menu"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/pagination.tsx",
-          "hash": "9764389975451701869",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/popover.tsx",
-          "hash": "14515564489726569206",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-popover"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/progress.tsx",
-          "hash": "7388497651454174610",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-progress"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/radio-group.tsx",
-          "hash": "5701248303766300330",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:@radix-ui/react-radio-group"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/resizable.tsx",
-          "hash": "1832588912277518968",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:react-resizable-panels"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/scroll-area.tsx",
-          "hash": "10647335378623514427",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-scroll-area"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/select.tsx",
-          "hash": "235995149866134532",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-select",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/separator.tsx",
-          "hash": "4377691309361036685",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-separator"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/sheet.tsx",
-          "hash": "13211170313758467051",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:@radix-ui/react-dialog"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/sidebar.tsx",
-          "hash": "6966263990517330429",
-          "deps": [
-            "npm:class-variance-authority",
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/skeleton.tsx",
-          "hash": "1695560236803492451"
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/slider.tsx",
-          "hash": "1519338369930942154",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slider"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/sonner.tsx",
-          "hash": "9087982701538359826",
-          "deps": [
-            "npm:sonner",
-            "npm:next-themes"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/spinner.tsx",
-          "hash": "13182293013091219297",
-          "deps": [
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/switch.tsx",
-          "hash": "12425346744808708865",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-switch"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/table.tsx",
-          "hash": "10065440478758177818",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/tabs.tsx",
-          "hash": "9738844313745286563",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-tabs"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/textarea.tsx",
-          "hash": "12007672097846347019",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/toast.tsx",
-          "hash": "16979501021600193939",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:@radix-ui/react-toast",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/toaster.tsx",
-          "hash": "8636638089195742860"
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/toggle-group.tsx",
-          "hash": "6342874508578806716",
-          "deps": [
-            "npm:react",
-            "npm:class-variance-authority",
-            "npm:@radix-ui/react-toggle-group"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/toggle.tsx",
-          "hash": "12029590878149312962",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-toggle",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/components/ui/tooltip.tsx",
-          "hash": "14675972636382544191",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-tooltip"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/hooks/use-mobile.ts",
-          "hash": "11808312049290393370",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/hooks/use-toast.ts",
-          "hash": "15557326799570724972",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/shadcn/index.ts",
-          "hash": "6760548147315680432"
-        },
-        {
-          "file": "libs/design-system/src/shadcn/lib/utils.ts",
-          "hash": "3379895095160071251",
-          "deps": [
-            "npm:tailwind-merge",
-            "npm:clsx"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/styles/global.css",
-          "hash": "8325894914213820854"
-        },
-        {
-          "file": "libs/design-system/src/theme/core/components.tsx",
-          "hash": "3932988326486082726",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/custom-shadows.ts",
-          "hash": "5085678479816703120",
-          "deps": [
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/index.ts",
-          "hash": "12563650796825881998"
-        },
-        {
-          "file": "libs/design-system/src/theme/core/palette.ts",
-          "hash": "3312676751992468797",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/shadows.ts",
-          "hash": "3242283092768752689",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/core/typography.ts",
-          "hash": "10939852778802819532",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/create-classes.ts",
-          "hash": "9863844494207890905"
-        },
-        {
-          "file": "libs/design-system/src/theme/create-theme.ts",
-          "hash": "1772669969832128739",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/extend-theme-types.d.ts",
-          "hash": "5843731201755380017",
-          "deps": [
-            "npm:@mui/lab",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/index.ts",
-          "hash": "15496765687472201915"
-        },
-        {
-          "file": "libs/design-system/src/theme/theme-config.ts",
-          "hash": "1432500443791728194",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/theme-mode.tsx",
-          "hash": "9833422954086801296",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/theme-provider.tsx",
-          "hash": "6901935421150242241",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/design-system/src/theme/types.ts",
-          "hash": "7499571595499420034",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        }
-      ],
       "remote-starter": [
         {
           "file": "apps/remotes/_starter/index.html",
@@ -2464,911 +3369,6 @@
             "npm:vite",
             "npm:@vitejs/plugin-react-swc"
           ]
-        }
-      ],
-      "mail": [
-        {
-          "file": "apps/remotes/mail/index.html",
-          "hash": "864866553890463834"
-        },
-        {
-          "file": "apps/remotes/mail/project.json",
-          "hash": "14904217479067949789"
-        },
-        {
-          "file": "apps/remotes/mail/src/mail-app.tsx",
-          "hash": "1842251242111642309",
-          "deps": [
-            "npm:react",
-            "design-system",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/mail/src/main.tsx",
-          "hash": "16353890226058499549",
-          "deps": [
-            "design-system",
-            "npm:react",
-            "npm:react-dom"
-          ]
-        },
-        {
-          "file": "apps/remotes/mail/src/vite-env.d.ts",
-          "hash": "10470006326540176307"
-        },
-        {
-          "file": "apps/remotes/mail/vite.config.ts",
-          "hash": "2541363759865362330",
-          "deps": [
-            "npm:vite",
-            "npm:@vitejs/plugin-react-swc"
-          ]
-        }
-      ],
-      "dwp": [
-        {
-          "file": "apps/dwp/index.html",
-          "hash": "17939470793331178914"
-        },
-        {
-          "file": "apps/dwp/project.json",
-          "hash": "13145188762207839363"
-        },
-        {
-          "file": "apps/dwp/src/_mock/_data.ts",
-          "hash": "17516849546646886115"
-        },
-        {
-          "file": "apps/dwp/src/_mock/_mock.ts",
-          "hash": "18016325097605325893"
-        },
-        {
-          "file": "apps/dwp/src/_mock/index.ts",
-          "hash": "6506261413655350933"
-        },
-        {
-          "file": "apps/dwp/src/app.tsx",
-          "hash": "4834641680956772670",
-          "deps": [
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/admin-module.tsx",
-          "hash": "16383451014523006977",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            [
-              "admin",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/action-execution-view.tsx",
-          "hash": "15892573304301124896",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/aura-floating-button.tsx",
-          "hash": "7561505876423508032",
-          "deps": [
-            "npm:react",
-            "npm:@emotion/react",
-            "npm:framer-motion",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/aura-mini-overlay.tsx",
-          "hash": "13326399996555465884",
-          "deps": [
-            "npm:react",
-            "npm:framer-motion",
-            "npm:react-router-dom",
-            "shared-utils",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/checkpoint-approval.tsx",
-          "hash": "4759948311027316760",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/confidence-score.tsx",
-          "hash": "5382721197565988025",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/contextual-bridge.tsx",
-          "hash": "3159488935626488347",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/dynamic-plan-board.tsx",
-          "hash": "1049363385434138860",
-          "deps": [
-            "npm:react",
-            "npm:framer-motion",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/hitl-approval-dialog.tsx",
-          "hash": "16775678529470342742",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/index.ts",
-          "hash": "5940866430217232571"
-        },
-        {
-          "file": "apps/dwp/src/components/aura/live-execution-log.tsx",
-          "hash": "650096683322132817",
-          "deps": [
-            "npm:react",
-            "npm:framer-motion",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/reasoning-timeline.tsx",
-          "hash": "4397739473768280162",
-          "deps": [
-            "npm:framer-motion",
-            "npm:@mui/material",
-            "npm:@mui/lab",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/result-viewer.tsx",
-          "hash": "3368819405240586856",
-          "deps": [
-            "npm:react-syntax-highlighter",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/stream-status-banner.tsx",
-          "hash": "6478238734704118856",
-          "deps": [
-            "shared-utils",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/aura/thought-chain-ui.tsx",
-          "hash": "13664718832243213284",
-          "deps": [
-            "npm:framer-motion",
-            "npm:@mui/material",
-            "npm:@mui/lab",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/auth-unauthorized-handler.tsx",
-          "hash": "17589962539829081599",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/components/dev/stream-debug-panel.tsx",
-          "hash": "18059672267929630503",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/config-global.ts",
-          "hash": "12247388983537652361"
-        },
-        {
-          "file": "apps/dwp/src/features/health/main-api-health.tsx",
-          "hash": "8218355380706185858",
-          "deps": [
-            "npm:react",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/hooks/use-event-tracking.ts",
-          "hash": "3584299566675493023",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/hooks/use-page-context.ts",
-          "hash": "640832127419751661",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/hooks/use-page-view-tracking.ts",
-          "hash": "11364417962088409237",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/hooks/use-standard-event-tracking.ts",
-          "hash": "1193356159292536991",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/auth/content.tsx",
-          "hash": "11261511144900465333",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/auth/index.ts",
-          "hash": "14949631564904057172"
-        },
-        {
-          "file": "apps/dwp/src/layouts/auth/layout.tsx",
-          "hash": "1270160781522937438",
-          "deps": [
-            "npm:@mui/material",
-            "npm:es-toolkit",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/account-popover.tsx",
-          "hash": "17827062424535331063",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/language-popover.tsx",
-          "hash": "10575808279056560114",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/menu-button.tsx",
-          "hash": "9655052205209790269",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/notifications-popover.tsx",
-          "hash": "3641936837165092944",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/searchbar.tsx",
-          "hash": "1614962610749124620",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/components/workspaces-popover.tsx",
-          "hash": "1960571670775057978",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/classes.ts",
-          "hash": "13461343996066069017",
-          "deps": [
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/css-vars.ts",
-          "hash": "1936802271280533196",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/header-section.tsx",
-          "hash": "17035361679034219890",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/index.ts",
-          "hash": "5087516577530814711"
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/layout-section.tsx",
-          "hash": "13136056995460256400",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/core/main-section.tsx",
-          "hash": "3013228332482591838",
-          "deps": [
-            "npm:minimal-shared",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/dashboard/content.tsx",
-          "hash": "8145305273693180430",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/dashboard/css-vars.ts",
-          "hash": "16816562538749029631",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/dashboard/index.ts",
-          "hash": "14949631564904057172"
-        },
-        {
-          "file": "apps/dwp/src/layouts/dashboard/layout.tsx",
-          "hash": "16930374815127537512",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:es-toolkit",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/dashboard/nav.tsx",
-          "hash": "12813774598403120167",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared",
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/nav-config-account.tsx",
-          "hash": "11889568017455973688",
-          "deps": [
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/nav-config-dashboard.tsx",
-          "hash": "6805364892269038820",
-          "deps": [
-            "shared-utils",
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/layouts/nav-config-workspace.tsx",
-          "hash": "11427639975396272078"
-        },
-        {
-          "file": "apps/dwp/src/main.tsx",
-          "hash": "10700730853833826691",
-          "deps": [
-            "design-system",
-            "npm:react",
-            "npm:react-dom",
-            "shared-utils",
-            "npm:@tanstack/react-query",
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/admin.tsx",
-          "hash": "1722109046239665873",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/ai-workspace.tsx",
-          "hash": "6045114944755894222",
-          "deps": [
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/aiworkspace/components/chat-panel.tsx",
-          "hash": "18277377709303311324",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/aiworkspace/components/workspace-tabs.tsx",
-          "hash": "18115013196544311394",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/aiworkspace/data/mock.ts",
-          "hash": "13160087569498470411"
-        },
-        {
-          "file": "apps/dwp/src/pages/aiworkspace/hooks/use-ai-workspace.ts",
-          "hash": "7817018467394678628",
-          "deps": [
-            "npm:react-router-dom",
-            "npm:react",
-            "shared-utils"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/aiworkspace/index.tsx",
-          "hash": "17806112945352007916",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/approval.tsx",
-          "hash": "9605123761036599757",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/blog.tsx",
-          "hash": "1785499431979978527"
-        },
-        {
-          "file": "apps/dwp/src/pages/chat.tsx",
-          "hash": "7616940309384708320",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/dashboard.tsx",
-          "hash": "1372780784462429009"
-        },
-        {
-          "file": "apps/dwp/src/pages/forgot-password.tsx",
-          "hash": "17335882303296048313"
-        },
-        {
-          "file": "apps/dwp/src/pages/mail.tsx",
-          "hash": "2397008715153872271",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/page-403.tsx",
-          "hash": "7271543994477914562",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/page-not-found.tsx",
-          "hash": "10801249517891335229"
-        },
-        {
-          "file": "apps/dwp/src/pages/products.tsx",
-          "hash": "11588341766245236050"
-        },
-        {
-          "file": "apps/dwp/src/pages/sign-in.tsx",
-          "hash": "477289466726758334"
-        },
-        {
-          "file": "apps/dwp/src/pages/sso-callback.tsx",
-          "hash": "15805976494171231860",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "shared-utils",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/pages/user.tsx",
-          "hash": "2962921500561663848"
-        },
-        {
-          "file": "apps/dwp/src/routes/components/error-boundary.tsx",
-          "hash": "3467631826434846023",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/routes/components/index.ts",
-          "hash": "14077486825246220324"
-        },
-        {
-          "file": "apps/dwp/src/routes/components/router-link.tsx",
-          "hash": "9002064305839295676",
-          "deps": [
-            "npm:react-router"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/routes/sections.tsx",
-          "hash": "11380676219236893952",
-          "deps": [
-            "npm:react-router",
-            "npm:react",
-            "npm:minimal-shared",
-            "shared-utils",
-            "npm:react-router-dom",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/auth/forgot-password-view.tsx",
-          "hash": "723429468145224521",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/auth/index.ts",
-          "hash": "4418163381307047449"
-        },
-        {
-          "file": "apps/dwp/src/sections/auth/sign-in-view.tsx",
-          "hash": "873321504818077950",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "shared-utils",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/blog/post-item.tsx",
-          "hash": "7671663693039074327",
-          "deps": [
-            "npm:@mui/material",
-            "design-system",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/blog/post-search.tsx",
-          "hash": "2119049056461996884",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/blog/post-sort.tsx",
-          "hash": "17863412850096876051",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/blog/view/blog-view.tsx",
-          "hash": "13360796096814840131",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/blog/view/index.ts",
-          "hash": "5572359074980122273"
-        },
-        {
-          "file": "apps/dwp/src/sections/error/index.ts",
-          "hash": "2389369739966198623"
-        },
-        {
-          "file": "apps/dwp/src/sections/error/not-found-view.tsx",
-          "hash": "1661229755210852967",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-conversion-rates.tsx",
-          "hash": "6553502212912116683",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-current-subject.tsx",
-          "hash": "8829776651043400195",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-current-visits.tsx",
-          "hash": "18090240928036565697",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-news.tsx",
-          "hash": "15607822576922029777",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-order-timeline.tsx",
-          "hash": "12521163253466782820",
-          "deps": [
-            "npm:@mui/material",
-            "npm:@mui/lab"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-tasks.tsx",
-          "hash": "15420493741691172678",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "npm:minimal-shared",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-traffic-by-site.tsx",
-          "hash": "94121086466098684",
-          "deps": [
-            "npm:@mui/material",
-            "npm:minimal-shared",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-website-visits.tsx",
-          "hash": "11017110401795957946",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/analytics-widget-summary.tsx",
-          "hash": "909541773952907885",
-          "deps": [
-            "npm:@mui/material",
-            "design-system",
-            "npm:minimal-shared"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/view/index.ts",
-          "hash": "16971434275731120297"
-        },
-        {
-          "file": "apps/dwp/src/sections/overview/view/overview-analytics-view.tsx",
-          "hash": "8203919796011283916",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/product/product-cart-widget.tsx",
-          "hash": "8009422912028964918",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/product/product-filters.tsx",
-          "hash": "1188729325832786235",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/product/product-item.tsx",
-          "hash": "14067644666693004039",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/product/product-sort.tsx",
-          "hash": "7478271692970035114",
-          "deps": [
-            "npm:@mui/material",
-            "npm:react",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/product/view/index.ts",
-          "hash": "13072221893633259543"
-        },
-        {
-          "file": "apps/dwp/src/sections/product/view/products-view.tsx",
-          "hash": "15414312102191470337",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/table-empty-rows.tsx",
-          "hash": "603188706689913186",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/table-no-data.tsx",
-          "hash": "8343605928413013690",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/user-table-head.tsx",
-          "hash": "5167769533827516407",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/user-table-row.tsx",
-          "hash": "1728665887081168928",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/user-table-toolbar.tsx",
-          "hash": "2567035527539520465",
-          "deps": [
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/sections/user/utils.ts",
-          "hash": "18257741819385300827"
-        },
-        {
-          "file": "apps/dwp/src/sections/user/view/index.ts",
-          "hash": "13872062710550448634"
-        },
-        {
-          "file": "apps/dwp/src/sections/user/view/user-view.tsx",
-          "hash": "11522250744877361344",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "design-system"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/store/use-aura-store.ts",
-          "hash": "9250283369171839773",
-          "deps": [
-            "npm:zustand"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/store/use-layout-store.ts",
-          "hash": "2200331581096022741",
-          "deps": [
-            "npm:zustand"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/utils/format-number.ts",
-          "hash": "636866426588155976"
-        },
-        {
-          "file": "apps/dwp/src/utils/format-time.ts",
-          "hash": "9037868006219558892",
-          "deps": [
-            "npm:dayjs"
-          ]
-        },
-        {
-          "file": "apps/dwp/src/vite-env.d.ts",
-          "hash": "10470006326540176307"
         }
       ]
     },

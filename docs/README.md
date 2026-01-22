@@ -40,7 +40,8 @@ docs/
 │   ├── PROJECT_RULES.md        # 핵심 규칙 요약
 │   ├── ADMIN_CRUD_STANDARD.md  # Admin CRUD 개발 표준
 │   ├── LAYOUT_GUIDE.md         # 레이아웃 모드 가이드
-│   └── DESIGN_SYSTEM.md        # 디자인 시스템 & 컴포넌트 카탈로그
+│   ├── DESIGN_SYSTEM.md        # 디자인 시스템 & 컴포넌트 카탈로그
+│   └── THEME_TOKENS.md         # 테마 토큰 운영 표준
 │
 ├── specs/                       # 📋 기능 명세서
 │   ├── aura.md                 # Aura AI 기능 명세
