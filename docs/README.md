@@ -141,6 +141,12 @@ docs/
 ### "FE/BE 계약 정합성을 점검하고 싶어요"
 → `reference/FE_BE_CONTRACT_CHECK.md`
 
+### "Admin API Gap 분석 및 보완 요청이 필요해요"
+→ `specs/admin/ADMIN_API_GAP_ANALYSIS.md` + `api-spec/FRONTEND_API_REQUEST_ADMIN_API_COMPLETION.md`
+
+### "Admin 개발 후 남은 작업이 궁금해요"
+→ `specs/admin/ADMIN_REMAINING_WORK.md`
+
 ---
 
 ## 📝 문서 작성 규칙
