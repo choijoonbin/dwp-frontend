@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect } from 'react';
-import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
+import { Iconify , ConfirmDialog, PermissionGate } from '@dwp-frontend/design-system';
 import {
   type Code,
   HttpError,
@@ -36,7 +36,6 @@ import TableContainer from '@mui/material/TableContainer';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { CodeEditorModal } from './code-editor-modal';
-import { DeleteConfirmDialog } from './delete-confirm-dialog';
 import { useCodesTableState } from '../hooks/use-codes-table-state';
 
 // ----------------------------------------------------------------------
@@ -359,11 +358,14 @@ export const CodesTab = () => {
 
       {/* Delete Dialog */}
       {selectedCode && (
-        <DeleteConfirmDialog
+        <ConfirmDialog
           open={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}
           title="코드 삭제"
-          content={`정말 "${selectedCode.codeName}" 코드를 삭제하시겠습니까?`}
+          description={`정말 "${selectedCode.codeName}" 코드를 삭제하시겠습니까?`}
+          confirmText="삭제"
+          cancelText="취소"
+          severity="danger"
           onConfirm={handleDeleteConfirm}
         />
       )}

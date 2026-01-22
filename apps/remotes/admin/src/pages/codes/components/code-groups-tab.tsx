@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState } from 'react';
-import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
+import { Iconify , ConfirmDialog, PermissionGate } from '@dwp-frontend/design-system';
 import {
   HttpError,
   ApiErrorAlert,
@@ -34,7 +34,6 @@ import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { DeleteConfirmDialog } from './delete-confirm-dialog';
 import { CodeGroupEditorModal } from './code-group-editor-modal';
 import { useCodeGroupsTableState } from '../hooks/use-code-groups-table-state';
 
@@ -305,11 +304,14 @@ export const CodeGroupsTab = () => {
 
       {/* Delete Dialog */}
       {selectedGroup && (
-        <DeleteConfirmDialog
+        <ConfirmDialog
           open={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}
           title="코드 그룹 삭제"
-          content={`정말 "${selectedGroup.groupName}" 코드 그룹을 삭제하시겠습니까?`}
+          description={`정말 "${selectedGroup.groupName}" 코드 그룹을 삭제하시겠습니까?`}
+          confirmText="삭제"
+          cancelText="취소"
+          severity="danger"
           onConfirm={handleDeleteConfirm}
         />
       )}

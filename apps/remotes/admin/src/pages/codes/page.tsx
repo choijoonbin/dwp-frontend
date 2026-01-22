@@ -51,6 +51,7 @@ const CodesPageContent = () => {
 
   return (
     <Box
+      data-testid="page-admin-codes"
       sx={{
         p: 3,
         height: '100%',
