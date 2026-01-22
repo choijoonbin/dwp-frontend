@@ -18,9 +18,9 @@ Nx Monorepo 구조를 기반으로 구축된 DWP 프론트엔드 워크스페이
 
 ## 🛠 기술 스택
 
-- **Framework**: React 18+ + TypeScript
+- **Framework**: React 19 + TypeScript (Strict Mode)
 - **UI**: MUI v5 (Minimal UI Kit 기반)
-- **Icons**: `@iconify/react` (표준 아이콘 시스템)
+- **Icons**: `@iconify/react` (Iconify 표준 아이콘 시스템)
 - **State Management**: 
   - **Global/Layout**: `Zustand` (Sidebar, Auth 상태 통합 관리)
   - **Server Data**: `TanStack Query` (사용 준비 완료)
@@ -51,9 +51,20 @@ dwp-frontend/
 │   │   │   ├── store/         # useLayoutStore, useAuraStore (Zustand)
 │   │   │   ├── routes/        # react-router (AuthGuard 적용 가능 구조)
 │   │   │   └── pages/         # Dashboard, Sign-in, AI Workspace 등
+│   │   │       └── aiworkspace/  # AI Workspace 페이지 (반응형 레이아웃)
 │   └── remotes/
 │       ├── mail/             # Remote (Mail) - port 4201
 │       └── admin/            # Remote (Admin) - port 4204
+│           └── src/
+│               └── pages/   # Admin 메뉴 페이지들
+│                   ├── users/      # 사용자 관리
+│                   ├── roles/      # 역할 관리
+│                   ├── audit/      # 감시관리 (Audit Logs)
+│                   ├── codes/      # 코드 관리
+│                   ├── code-usages/ # 코드 사용 매핑 관리
+│                   ├── menus/      # 메뉴 관리
+│                   ├── resources/   # 리소스 관리
+│                   └── monitoring/ # 통합 모니터링
 │
 ├── libs/
 │   ├── design-system/         # UI 표준 라이브러리
@@ -71,6 +82,9 @@ dwp-frontend/
 │           │   ├── context-util.ts  # 페이지 컨텍스트 수집
 │           │   ├── use-agent-stream.ts # SSE 스트리밍 훅
 │           │   └── hitl-api.ts     # HITL 승인/거절 API
+│           ├── router/        # 라우터 관련 유틸리티
+│           │   ├── normalize-route-path.ts  # 경로 정규화 함수
+│           │   └── __tests__/ # 경로 정규화 테스트
 │           ├── axios-instance.ts # fetch 기반 axios-like wrapper (Auth 헤더 자동 포함)
 │           └── types.ts       # ApiResponse<T> 등 공통 타입 정의
 ```
@@ -200,10 +214,22 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 
 ### 4. Admin CRUD 표준화 및 고도화
 - **Enterprise CRUD Pattern**: 모든 관리자 화면(Users, Roles, Resources, Menus 등)을 `Page(Orchestration) - Hooks(Logic) - Adapters(Transform) - Components(UI)`의 4계층 구조로 리팩토링했습니다.
+- **Admin UI 포팅 완료**: 
+  - **모든 Admin 메뉴 UI/UX 포팅 완료**: Users, Roles, Audit Logs, Codes, Code Usages, Menus, Resources 페이지를 Publishing 디자인 기준으로 포팅했습니다.
+  - **테이블 정렬 일관성**: 모든 테이블에서 헤더 56px, 바디 48px 높이를 일관되게 적용했습니다.
+  - **텍스트 Truncation**: 긴 텍스트는 `noWrap` + `Tooltip`으로 처리하여 가독성을 확보했습니다.
+  - **반응형 구현**: Mobile/Tablet/Desktop 각 breakpoint에 맞는 레이아웃을 구현했습니다.
+    - **Users, Audit Logs**: Mobile에서 Card 패턴으로 전환
+    - **Roles, Menus**: Mobile에서 Drawer로 상세 패널 표시
+    - **AI Workspace**: 3단계 반응형 레이아웃 (Desktop 좌우 분할, Tablet 2행, Mobile 탭 전환)
 - **Roles 관리 화면 Redesign**:
   - **3단 레이아웃**: 좌측 역할 리스트, 우측 상세 탭(개요/멤버/권한) 구조로 생산성을 높였습니다.
   - **권한 매트릭스**: ALLOW/DENY/null 3단태 상태를 지원하는 인터랙티브 매트릭스를 구현했습니다. 행/열 일괄 처리 기능을 포함합니다.
   - **Sticky Save Bar**: 데이터 수정 시 하단에 플로팅 저장 바가 나타나며, 변경사항 유실 방지를 위한 탭 이동 방지 팝업을 제공합니다.
+- **라우터 및 Path Normalization**:
+  - **라우터 alias 설정**: `/app/admin/*` 경로를 `/admin/*`로 자동 리다이렉트하도록 구현했습니다.
+  - **Path Normalization**: `normalizeRoutePath` 함수를 통해 백엔드 메뉴 트리의 경로를 프론트엔드 canonical 경로로 자동 변환합니다.
+  - **Menu Tree 통합**: 메뉴 트리 조회 시 자동으로 경로 정규화가 적용됩니다.
 - **표준화된 에러 핸들링**: `HttpError` 클래스와 `useMutationErrorHandler`를 통해 백엔드 에러 메시지를 사용자 친화적으로 노출합니다.
 
 ### 5. 데이터 분석 및 모니터링
@@ -217,6 +243,11 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 - **Floating AI Button**: 우측 하단에 고정된 원형 버튼으로 `arua.gif` 애니메이션을 사용합니다. 
 - **Stream Status Banner**: AI 응답 스트리밍 상태(Connecting, Streaming, Error)를 실시간으로 알려주는 상단 배너를 추가했습니다.
 - **Mini AI Chat Overlay & Full AI Workspace**: 상황에 맞는 AI 업무 공간을 제공하며, 대화 히스토리가 실시간으로 동기화됩니다.
+- **AI Workspace 반응형 레이아웃**: 
+  - **Desktop (md+)**: 좌우 분할 레이아웃 (Chat Panel 42%, Workspace Tabs 58%)
+  - **Tablet (sm ~ md)**: 2행 레이아웃 (Chat Panel 48%, Workspace Tabs 52%)
+  - **Mobile (xs)**: 단일 컬럼 + 탭 전환 (대화/워크스페이스)
+  - **Context Sidebar**: Desktop에서는 고정 사이드바, Mobile/Tablet에서는 Bottom Drawer로 표시
 - **Context Awareness**: `usePageContext`를 통해 현재 경로, 제목, 메타데이터를 AI에게 자동으로 전달합니다.
 - **Thought/Plan/Log/Result Visualizer**: AI의 사고 과정부터 실행 계획, 도구 로그, 최종 결과물까지 단계별로 시각화합니다.
 - **HITL (Human-In-The-Loop)**: 사용자 승인이 필요한 단계에서 실행을 멈추고 인라인 수정 및 승인/거절을 받는 인터페이스를 제공합니다.
@@ -251,6 +282,7 @@ npx nx workspace-generator new-remote --name=chat --port=4202
 - **`docs/ADMIN_CRUD_UI.md`**: Admin Remote CRUD 화면 구현 가이드 (Users, Roles, Resources, Codes 관리)
 - **`docs/ADMIN_REMOTE_IMPLEMENTATION.md`**: Admin Remote 구현 상세 (권한 시스템, 코드 사용 정책, API 통합)
 - **`docs/LOGIN_POLICY_UI.md`**: 로그인 정책 기반 UI 분기 구현 가이드 (LOCAL/SSO 자동 분기)
+- **`docs/ADMIN_UI_PORTING_VERIFICATION_REPORT.md`**: Admin UI 포팅 작업 최종 검증 리포트 (모든 Admin 메뉴 + AI Workspace 검증 결과, 완성도 87%)
 
 ## 🧪 통합 테스트 가이드 (Aura-Platform)
 
