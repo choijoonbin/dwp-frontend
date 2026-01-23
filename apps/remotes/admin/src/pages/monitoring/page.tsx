@@ -9,6 +9,7 @@ import { MonitoringTabs } from './monitoring-tabs';
 import { MonitoringCharts } from './monitoring-charts';
 import { MonitoringKPICards } from './monitoring-kpi-cards';
 import { MonitoringFilterBar } from './monitoring-filter-bar';
+import { AuraInsightBar } from './aura-insight-bar';
 
 // ----------------------------------------------------------------------
 
@@ -259,10 +260,12 @@ export const MonitoringPage = () => {
         {/* Header */}
         <Stack spacing={1}>
           <Typography variant="h4">통합 모니터링 대시보드</Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            시스템 사용 현황 및 API 모니터링을 확인할 수 있습니다.
-          </Typography>
         </Stack>
+
+        <AuraInsightBar
+          insightText="Aura 분석 결과: 현재 전체적인 트래픽은 안정적이나, 특정 IP에서의 반복적인 로그인 시도가 감지되었습니다. 보안 로그 확인을 권장합니다."
+          status="warning"
+        />
 
         {/* Filter Bar */}
         <Card sx={{ p: 2 }}>
