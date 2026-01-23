@@ -1,6 +1,11 @@
 import { useMemo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
-import { ApiErrorAlert, useMonitoringSummaryQuery } from '@dwp-frontend/shared-utils';
+import {
+  ApiErrorAlert,
+  useMonitoringSummaryQuery,
+  useMonitoringTimeseriesQuery,
+  type TimeseriesResponse,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -20,7 +25,42 @@ type MonitoringCardProps = {
   deltaPercent?: number;
   deltaValue?: number;
   isLoading?: boolean;
-  sparkline?: number[];
+  sparkline?: number[] | null;
+};
+
+const sampleValues = (values: number[], maxPoints = 12): number[] => {
+  if (values.length <= maxPoints) return values;
+  const step = (values.length - 1) / (maxPoints - 1);
+  return Array.from({ length: maxPoints }, (_, index) => values[Math.round(index * step)] ?? 0);
+};
+
+const extractValues = (data?: TimeseriesResponse): number[] =>
+  data?.dataPoints?.map((point) => point.value) ?? [];
+
+const buildRateValues = (
+  total?: TimeseriesResponse,
+  error?: TimeseriesResponse
+): number[] => {
+  if (!total?.dataPoints?.length || !error?.dataPoints?.length) return [];
+  const totalMap = new Map(total.dataPoints.map((point) => [point.timestamp, point.value]));
+  const errorMap = new Map(error.dataPoints.map((point) => [point.timestamp, point.value]));
+  const timestamps =
+    total.dataPoints.length >= error.dataPoints.length
+      ? total.dataPoints.map((point) => point.timestamp)
+      : error.dataPoints.map((point) => point.timestamp);
+
+  return timestamps.map((timestamp) => {
+    const totalValue = totalMap.get(timestamp) ?? 0;
+    const errorValue = errorMap.get(timestamp) ?? 0;
+    return totalValue > 0 ? (errorValue / totalValue) * 100 : 0;
+  });
+};
+
+const buildSparkline = (values: number[]): number[] | null => {
+  if (values.length === 0) return null;
+  const sampled = sampleValues(values);
+  const hasSignal = sampled.some((value) => value !== 0);
+  return hasSignal ? sampled : null;
 };
 
 const getSmoothPath = (points: { x: number; y: number }[]) => {
@@ -65,6 +105,10 @@ const getSparklinePaths = (values: number[]) => {
 };
 
 const Sparkline = ({ color, values }: { color: string; values: number[] }) => {
+  if (values.every((value) => value === 0)) {
+    return null;
+  }
+
   const { linePath, areaPath } = getSparklinePaths(values);
 
   return (
@@ -83,8 +127,8 @@ const Sparkline = ({ color, values }: { color: string; values: number[] }) => {
         zIndex: 0,
       }}
     >
-      <path d={areaPath} fill={alpha(color, 0.05)} />
-      <path d={linePath} fill="none" stroke={color} strokeWidth={2} strokeOpacity={0.3} />
+      <path d={areaPath} fill={alpha(color, 0.08)} />
+      <path d={linePath} fill="none" stroke={color} strokeWidth={2} strokeOpacity={0.4} />
     </Box>
   );
 };
@@ -137,15 +181,13 @@ const MonitoringCard = ({
   deltaPercent,
   deltaValue,
   isLoading,
-  sparkline = [18, 14, 16, 20, 18, 22, 19, 17, 18],
+  sparkline,
 }: MonitoringCardProps) => (
   <Card
     sx={{
       position: 'relative',
       overflow: 'hidden',
       borderRadius: 2,
-      border: '1px solid',
-      borderColor: '#f1f5f9',
       boxShadow: '0 12px 24px rgba(15, 23, 42, 0.08)',
       bgcolor: 'background.paper',
       minHeight: 180,
@@ -191,7 +233,7 @@ const MonitoringCard = ({
         </Box>
       )}
     </Box>
-    <Sparkline color={color} values={sparkline} />
+    {sparkline && <Sparkline color={color} values={sparkline} />}
   </Card>
 );
 
@@ -317,6 +359,64 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
     // compareTo: ...,
   });
 
+  const sparklineInterval = useMemo<'HOUR' | 'DAY'>(() => {
+    const fromTime = new Date(from).getTime();
+    const toTime = new Date(to).getTime();
+    if (!Number.isNaN(fromTime) && !Number.isNaN(toTime)) {
+      const diffHours = (toTime - fromTime) / (1000 * 60 * 60);
+      return diffHours <= 48 ? 'HOUR' : 'DAY';
+    }
+    return 'DAY';
+  }, [from, to]);
+
+  const pvTimeseriesQuery = useMonitoringTimeseriesQuery({
+    from,
+    to,
+    interval: sparklineInterval,
+    metric: 'PV',
+  });
+  const uvTimeseriesQuery = useMonitoringTimeseriesQuery({
+    from,
+    to,
+    interval: sparklineInterval,
+    metric: 'UV',
+  });
+  const eventTimeseriesQuery = useMonitoringTimeseriesQuery({
+    from,
+    to,
+    interval: sparklineInterval,
+    metric: 'EVENT',
+  });
+  const apiTotalTimeseriesQuery = useMonitoringTimeseriesQuery({
+    from,
+    to,
+    interval: sparklineInterval,
+    metric: 'API_TOTAL',
+  });
+  const apiErrorTimeseriesQuery = useMonitoringTimeseriesQuery({
+    from,
+    to,
+    interval: sparklineInterval,
+    metric: 'API_ERROR',
+  });
+
+  const pvSparkline = useMemo(
+    () => buildSparkline(extractValues(pvTimeseriesQuery.data)),
+    [pvTimeseriesQuery.data]
+  );
+  const uvSparkline = useMemo(
+    () => buildSparkline(extractValues(uvTimeseriesQuery.data)),
+    [uvTimeseriesQuery.data]
+  );
+  const eventSparkline = useMemo(
+    () => buildSparkline(extractValues(eventTimeseriesQuery.data)),
+    [eventTimeseriesQuery.data]
+  );
+  const apiErrorRateSparkline = useMemo(
+    () => buildSparkline(buildRateValues(apiTotalTimeseriesQuery.data, apiErrorTimeseriesQuery.data)),
+    [apiTotalTimeseriesQuery.data, apiErrorTimeseriesQuery.data]
+  );
+
   if (error) {
     return <ApiErrorAlert error={error} onRetry={() => refetch()} />;
   }
@@ -344,7 +444,7 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
           deltaPercent={pvDeltaPercent}
           deltaValue={pvDeltaValue}
           isLoading={isLoading}
-          sparkline={[14, 12, 16, 28, 22, 26, 20, 18, 21, 17, 19, 23]}
+          sparkline={pvSparkline}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -356,7 +456,7 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
           deltaPercent={uvDeltaPercent}
           deltaValue={uvDeltaValue}
           isLoading={isLoading}
-          sparkline={[10, 11, 13, 16, 14, 15, 12, 13, 11, 12, 14, 13]}
+          sparkline={uvSparkline}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -368,7 +468,7 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
           deltaPercent={eventDeltaPercent}
           deltaValue={eventDeltaValue}
           isLoading={isLoading}
-          sparkline={[8, 10, 12, 11, 14, 13, 15, 12, 14, 13, 12, 16]}
+          sparkline={eventSparkline}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -380,7 +480,7 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
           deltaPercent={apiErrorDeltaPercent}
           deltaValue={apiErrorDeltaValue}
           isLoading={isLoading}
-          sparkline={[6, 8, 9, 7, 10, 12, 9, 8, 7, 9, 11, 13]}
+          sparkline={apiErrorRateSparkline}
         />
       </Grid>
     </Grid>

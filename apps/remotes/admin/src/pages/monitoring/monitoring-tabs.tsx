@@ -844,7 +844,7 @@ export const MonitoringTabs = ({ filters }: MonitoringTabsProps) => {
       </Stack>
 
       <Box sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: 800 }}>
+        <Table size="small" sx={{ minWidth: 800 }}>
           {renderTableContent()}
         </Table>
       </Box>
