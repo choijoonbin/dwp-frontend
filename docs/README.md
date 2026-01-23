@@ -1,6 +1,6 @@
 # DWP Frontend 문서
 
-**최종 업데이트**: 2026-01-22
+**최종 업데이트**: 2026-01-23
 
 이 디렉토리는 DWP Frontend 프로젝트의 모든 문서를 체계적으로 관리합니다.
 
@@ -47,9 +47,16 @@ docs/
 │   ├── aura.md                 # Aura AI 기능 명세
 │   └── login-policy.md         # 로그인 정책 UI 명세
 │
+├── api-spec/                    # 📤 FE↔BE 협업: BE가 업로드한 결과·완료 문서
+│   └── README.md                # 폴더 용도 및 규칙 (상세: reference/FE_BE_API_SPEC_WORKFLOW.md)
+│
+├── backend-src/                 # (링크) 백엔드 프로젝트
+│   └── docs/api-spec/           # FE→BE 요청·검토 문서 (FE가 작성, BE가 확인)
+│
 ├── reference/                   # 📚 참고 문서 (필요 시 참고)
 │   ├── api/
 │   │   └── backend-api-spec.md # 백엔드 API 명세
+│   ├── FE_BE_API_SPEC_WORKFLOW.md # FE↔BE API Spec 협업 업무 정의
 │   ├── architecture/
 │   │   └── (향후 추가 예정)
 │   ├── DESIGN_SYSTEM_MIGRATION.md # Design System 마이그레이션 가이드
@@ -92,6 +99,15 @@ docs/
 **대상**: 중급 이상 개발자  
 **목적**: 깊이 있는 이해가 필요할 때  
 **기준**: "어떻게 동작하는가?"
+
+### 📤 api-spec/ (FE↔BE 협업)
+**대상**: 프론트·백엔드 협업  
+**목적**: API 작업 요청·검토·결과 문서 교환  
+**기준**:
+- **FE 요청 문서** → `backend-src/docs/api-spec/` (백엔드의 docs/api-spec)
+- **BE 결과 문서** → `api-spec/` (우리 쪽). BE가 완료 후 여기에 업로드(PR 등)
+- 추가 질문 시 요청 문서 `_v1`, `_v2`로 버전 관리  
+**상세**: `reference/FE_BE_API_SPEC_WORKFLOW.md`
 
 ### 🗂️ archive/ (아카이브)
 **대상**: 이력 추적 필요 시  
@@ -141,8 +157,18 @@ docs/
 ### "FE/BE 계약 정합성을 점검하고 싶어요"
 → `reference/FE_BE_CONTRACT_CHECK.md`
 
+### "백엔드에 API 작업 요청을 보내거나, BE 완료 결과를 확인하려면"
+→ `reference/FE_BE_API_SPEC_WORKFLOW.md`  
+→ 요청 문서: `backend-src/docs/api-spec/` | 결과 문서: `api-spec/`
+
 ### "Admin API Gap 분석 및 보완 요청이 필요해요"
-→ `specs/admin/ADMIN_API_GAP_ANALYSIS.md` + `api-spec/FRONTEND_API_REQUEST_ADMIN_API_COMPLETION.md`
+→ `specs/admin/ADMIN_API_GAP_ANALYSIS.md` + `backend-src/docs/api-spec/` (요청) + `api-spec/` (BE 결과)
+
+### "Admin API 보완 결과 확인"
+→ `api-spec/FRONTEND_API_REQUEST_ADMIN_API_COMPLETION_result.md`
+
+### "Admin API 연동 — BE에 확인 요청할 내용이 있어요"
+→ `backend-src/docs/api-spec/FE_BE_확인요청_ADMIN_API_연동_고려사항.md` (요청 문서: 백엔드 api-spec에 업로드)
 
 ### "Admin 개발 후 남은 작업이 궁금해요"
 → `specs/admin/ADMIN_REMAINING_WORK.md`

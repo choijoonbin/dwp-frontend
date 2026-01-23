@@ -33,29 +33,35 @@ export const AuditLogsFilterBar = memo(({
   <Card sx={{ p: 2 }}>
     <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }}>
       <TextField
+        id="audit-filter-from"
         label="시작일시"
         type="datetime-local"
         size="small"
         value={filters.from}
         onChange={(e) => onFilterChange('from', e.target.value)}
         InputLabelProps={{ shrink: true }}
+        inputProps={{ name: 'audit-from' }}
         sx={{ minWidth: { xs: 1, md: 200 } }}
       />
       <TextField
+        id="audit-filter-to"
         label="종료일시"
         type="datetime-local"
         size="small"
         value={filters.to}
         onChange={(e) => onFilterChange('to', e.target.value)}
         InputLabelProps={{ shrink: true }}
+        inputProps={{ name: 'audit-to' }}
         sx={{ minWidth: { xs: 1, md: 200 } }}
       />
       <TextField
+        id="audit-filter-actor"
         label="실행자"
         size="small"
         value={filters.actor}
         onChange={(e) => onFilterChange('actor', e.target.value)}
         placeholder="사용자 ID 또는 이름"
+        inputProps={{ name: 'audit-actor' }}
         sx={{ minWidth: { xs: 1, md: 200 }, flex: 1 }}
         InputProps={{
           startAdornment: (
@@ -66,6 +72,8 @@ export const AuditLogsFilterBar = memo(({
         }}
       />
       <TextField
+        id="audit-filter-action"
+        name="audit-action"
         select
         label="액션"
         size="small"
@@ -80,11 +88,13 @@ export const AuditLogsFilterBar = memo(({
         <MenuItem value="REORDER">REORDER</MenuItem>
       </TextField>
       <TextField
+        id="audit-filter-keyword"
         label="키워드"
         size="small"
         value={filters.keyword}
         onChange={(e) => onFilterChange('keyword', e.target.value)}
         placeholder="키워드 검색"
+        inputProps={{ name: 'audit-keyword' }}
         sx={{ minWidth: { xs: 1, md: 240 }, flex: 1 }}
         InputProps={{
           startAdornment: (

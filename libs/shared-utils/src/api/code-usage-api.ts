@@ -147,13 +147,13 @@ export const createCodeUsage = async (payload: CodeUsageCreatePayload): Promise<
 
 /**
  * Update code usage
- * PUT /api/admin/code-usages/:id
+ * PATCH /api/admin/code-usages/:id
  */
 export const updateCodeUsage = async (
   id: string,
   payload: CodeUsageUpdatePayload
 ): Promise<ApiResponse<CodeUsageDetail>> => {
-  const res = await axiosInstance.post<ApiResponse<CodeUsageDetail>>(`/api/admin/code-usages/${id}`, payload);
+  const res = await axiosInstance.patch<ApiResponse<CodeUsageDetail>>(`/api/admin/code-usages/${id}`, payload);
   return res.data;
 };
 
@@ -162,6 +162,6 @@ export const updateCodeUsage = async (
  * DELETE /api/admin/code-usages/:id
  */
 export const deleteCodeUsage = async (id: string): Promise<ApiResponse<{ success: boolean }>> => {
-  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(`/api/admin/code-usages/${id}/delete`, {});
+  const res = await axiosInstance.delete<ApiResponse<{ success: boolean }>>(`/api/admin/code-usages/${id}`);
   return res.data;
 };

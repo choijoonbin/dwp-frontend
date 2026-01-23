@@ -338,9 +338,10 @@ export const disableAdminRole = async (roleId: string): Promise<ApiResponse<{ su
 /**
  * Delete admin role
  * DELETE /api/admin/roles/:roleId
+ * (BE에 POST /delete 없음, DELETE만 지원 — ROADMAP P2-1)
  */
 export const deleteAdminRole = async (roleId: string): Promise<ApiResponse<{ success: boolean }>> => {
-  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(`/api/admin/roles/${roleId}/delete`, {});
+  const res = await axiosInstance.delete<ApiResponse<{ success: boolean }>>(`/api/admin/roles/${roleId}`);
   return res.data;
 };
 
@@ -491,7 +492,7 @@ export const updateAdminResource = async (
   resourceId: string,
   payload: ResourceUpdatePayload
 ): Promise<ApiResponse<ResourceSummary>> => {
-  const res = await axiosInstance.post<ApiResponse<ResourceSummary>>(`/api/admin/resources/${resourceId}`, payload);
+  const res = await axiosInstance.put<ApiResponse<ResourceSummary>>(`/api/admin/resources/${resourceId}`, payload);
   return res.data;
 };
 
@@ -500,10 +501,7 @@ export const updateAdminResource = async (
  * DELETE /api/admin/resources/:resourceId
  */
 export const deleteAdminResource = async (resourceId: string): Promise<ApiResponse<{ success: boolean }>> => {
-  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(
-    `/api/admin/resources/${resourceId}/delete`,
-    {}
-  );
+  const res = await axiosInstance.delete<ApiResponse<{ success: boolean }>>(`/api/admin/resources/${resourceId}`);
   return res.data;
 };
 
@@ -531,13 +529,13 @@ export const createAdminMenu = async (payload: MenuCreatePayload): Promise<ApiRe
 
 /**
  * Update admin menu
- * PUT /api/admin/menus/:menuId
+ * PATCH /api/admin/menus/:menuId
  */
 export const updateAdminMenu = async (
   menuId: string,
   payload: MenuUpdatePayload
 ): Promise<ApiResponse<AdminMenuNode>> => {
-  const res = await axiosInstance.put<ApiResponse<AdminMenuNode>>(`/api/admin/menus/${menuId}`, payload);
+  const res = await axiosInstance.patch<ApiResponse<AdminMenuNode>>(`/api/admin/menus/${menuId}`, payload);
   return res.data;
 };
 
@@ -546,16 +544,16 @@ export const updateAdminMenu = async (
  * DELETE /api/admin/menus/:menuId
  */
 export const deleteAdminMenu = async (menuId: string): Promise<ApiResponse<{ success: boolean }>> => {
-  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(`/api/admin/menus/${menuId}/delete`, {});
+  const res = await axiosInstance.delete<ApiResponse<{ success: boolean }>>(`/api/admin/menus/${menuId}`);
   return res.data;
 };
 
 /**
  * Reorder admin menus
- * POST /api/admin/menus/reorder
+ * PUT /api/admin/menus/reorder
  */
 export const reorderAdminMenus = async (payload: MenuReorderPayload): Promise<ApiResponse<{ success: boolean }>> => {
-  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>('/api/admin/menus/reorder', payload);
+  const res = await axiosInstance.put<ApiResponse<{ success: boolean }>>('/api/admin/menus/reorder', payload);
   return res.data;
 };
 
@@ -640,7 +638,7 @@ export const updateCodeGroup = async (
   groupId: string,
   payload: CodeGroupUpdatePayload
 ): Promise<ApiResponse<CodeGroup>> => {
-  const res = await axiosInstance.post<ApiResponse<CodeGroup>>(`/api/admin/codes/groups/${groupId}`, payload);
+  const res = await axiosInstance.put<ApiResponse<CodeGroup>>(`/api/admin/codes/groups/${groupId}`, payload);
   return res.data;
 };
 
@@ -649,10 +647,7 @@ export const updateCodeGroup = async (
  * DELETE /api/admin/codes/groups/:groupId
  */
 export const deleteCodeGroup = async (groupId: string): Promise<ApiResponse<{ success: boolean }>> => {
-  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(
-    `/api/admin/codes/groups/${groupId}/delete`,
-    {}
-  );
+  const res = await axiosInstance.delete<ApiResponse<{ success: boolean }>>(`/api/admin/codes/groups/${groupId}`);
   return res.data;
 };
 
@@ -670,7 +665,7 @@ export const createCode = async (payload: CodeCreatePayload): Promise<ApiRespons
  * PUT /api/admin/codes/:codeId
  */
 export const updateCode = async (codeId: string, payload: CodeUpdatePayload): Promise<ApiResponse<Code>> => {
-  const res = await axiosInstance.post<ApiResponse<Code>>(`/api/admin/codes/${codeId}`, payload);
+  const res = await axiosInstance.put<ApiResponse<Code>>(`/api/admin/codes/${codeId}`, payload);
   return res.data;
 };
 
@@ -679,7 +674,7 @@ export const updateCode = async (codeId: string, payload: CodeUpdatePayload): Pr
  * DELETE /api/admin/codes/:codeId
  */
 export const deleteCode = async (codeId: string): Promise<ApiResponse<{ success: boolean }>> => {
-  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(`/api/admin/codes/${codeId}/delete`, {});
+  const res = await axiosInstance.delete<ApiResponse<{ success: boolean }>>(`/api/admin/codes/${codeId}`);
   return res.data;
 };
 
@@ -720,6 +715,7 @@ export const getAdminAuditLogDetail = async (id: string): Promise<ApiResponse<Au
 /**
  * Export admin audit logs to Excel
  * GET /api/admin/audit-logs/export
+ * @see BE P1-9: resourceType, maxRows supported
  */
 export const exportAdminAuditLogs = async (params?: AuditLogListParams): Promise<Blob> => {
   const queryParams = new URLSearchParams();
@@ -728,6 +724,8 @@ export const exportAdminAuditLogs = async (params?: AuditLogListParams): Promise
   if (params?.actor) queryParams.append('actor', params.actor);
   if (params?.action) queryParams.append('action', params.action);
   if (params?.keyword) queryParams.append('keyword', params.keyword);
+  if (params?.resourceType) queryParams.append('resourceType', params.resourceType);
+  if (params?.maxRows != null) queryParams.append('maxRows', params.maxRows.toString());
 
   const url = `/api/admin/audit-logs/export${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
   const res = await axiosInstance.get<Blob>(url, {

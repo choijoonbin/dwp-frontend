@@ -3,12 +3,15 @@ import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+import { Iconify } from '../../iconify';
+
 // ----------------------------------------------------------------------
 
 export type EmptyStateProps = {
   title?: string;
   description?: string;
-  icon?: ReactNode;
+  /** Iconify icon name (e.g. 'solar:document-text-outline') or ReactNode. String is rendered via Iconify. */
+  icon?: ReactNode | string;
   action?: ReactNode;
   minHeight?: number | string;
 };
@@ -46,7 +49,9 @@ export function EmptyState({
             mb: 2,
           }}
         >
-          <Box sx={{ color: 'text.disabled', fontSize: 28 }}>{icon}</Box>
+          <Box sx={{ color: 'text.disabled', fontSize: 28 }}>
+            {typeof icon === 'string' ? <Iconify icon={icon} width={32} /> : icon}
+          </Box>
         </Box>
       )}
 

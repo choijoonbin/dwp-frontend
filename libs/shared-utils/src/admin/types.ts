@@ -237,6 +237,7 @@ export type RolePermissionView = {
 
 /**
  * Resource Summary (for list view)
+ * @see ROADMAP P1-8: BE 보완 예정 icon, status(enabled→ACTIVE/INACTIVE), description
  */
 export type ResourceSummary = {
   id: string;
@@ -250,6 +251,11 @@ export type ResourceSummary = {
   trackingEnabled?: boolean;
   eventActions?: string[];
   createdAt: string;
+  /** BE P1-8 보완 예정 */
+  icon?: string | null;
+  description?: string | null;
+  /** BE P1-8: enabled→ACTIVE/INACTIVE 매핑 시 사용 */
+  status?: 'ACTIVE' | 'INACTIVE' | null;
 };
 
 /**
@@ -331,6 +337,7 @@ export type Code = {
 
 /**
  * Menu Node (for admin menu management)
+ * @see ROADMAP P1-8: BE 보완 예정 permissionKey
  */
 export type AdminMenuNode = {
   id: string;
@@ -343,6 +350,8 @@ export type AdminMenuNode = {
   sortOrder?: number | null;
   enabled?: boolean;
   children?: AdminMenuNode[];
+  /** BE P1-8 보완 예정 (menuKey 또는 연동 리소스 키) */
+  permissionKey?: string | null;
 };
 
 /**
@@ -458,6 +467,7 @@ export type CodeUsageSummary = {
 
 /**
  * Code Usage Detail (for detail/edit view)
+ * @see ROADMAP P1-5: BE GET /{id} — createdBy, updatedBy는 Long(user id) 반환. FE 결과 5.2
  */
 export type CodeUsageDetail = {
   id: string;
@@ -466,6 +476,9 @@ export type CodeUsageDetail = {
   enabled: boolean;
   createdAt: string;
   updatedAt?: string | null;
+  /** BE: Long(user id). 표시명 필요 시 FE에서 id→이름 조회 */
+  createdBy?: string | number | null;
+  updatedBy?: string | number | null;
 };
 
 /**
@@ -510,10 +523,14 @@ export type AuditLogSummary = {
 
 /**
  * Audit Log Detail (for detail view)
+ * @see ROADMAP P1-4, FE 결과 5.1: actor/actorUserId(Long만 반환 가능), ipAddress 등 metadata_json 기반
  */
 export type AuditLogDetail = {
   id: string;
-  actor: string;
+  /** BE: string 또는 Long(actorUserId). 고려사항 5.1에서 actorUserId(Long)만 반환 가능 */
+  actor?: string | number | null;
+  /** BE: actorUserId만 제공 시 이 필드로 옴 */
+  actorUserId?: number | null;
   action: string;
   resourceType: string;
   resourceId?: string | null;
@@ -522,10 +539,16 @@ export type AuditLogDetail = {
   after?: Record<string, unknown> | null;
   metadata?: Record<string, unknown> | null;
   createdAt: string;
+  /** BE: metadata_json에서 추출 (키: ip/ipAddress, userAgent/user_agent, before, after) */
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  beforeValue?: string | null;
+  afterValue?: string | null;
 };
 
 /**
  * Audit Log List Params
+ * @see BE P1-9: Audit Export GET supports resourceType, maxRows
  */
 export type AuditLogListParams = {
   page?: number;
@@ -535,4 +558,6 @@ export type AuditLogListParams = {
   actor?: string;
   action?: string;
   keyword?: string;
+  resourceType?: string;
+  maxRows?: number;
 };

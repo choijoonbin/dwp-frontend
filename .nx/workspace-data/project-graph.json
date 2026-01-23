@@ -8823,6 +8823,11 @@
       },
       {
         "source": "design-system",
+        "target": "npm:@mui/lab",
+        "type": "static"
+      },
+      {
+        "source": "design-system",
         "target": "shared-utils",
         "type": "static"
       },
@@ -9039,11 +9044,6 @@
       {
         "source": "design-system",
         "target": "npm:clsx",
-        "type": "static"
-      },
-      {
-        "source": "design-system",
-        "target": "npm:@mui/lab",
         "type": "static"
       }
     ],
@@ -19764,5 +19764,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1769094899143
+  "computedAt": 1769144244277
 }

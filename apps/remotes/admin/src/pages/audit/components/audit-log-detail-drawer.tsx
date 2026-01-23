@@ -92,7 +92,9 @@ export const AuditLogDetailDrawer = memo(({
                   <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                     실행자
                   </Typography>
-                  <Typography variant="body2">{logDetail.actor}</Typography>
+                  <Typography variant="body2">
+                    {String(logDetail.actor ?? logDetail.actorUserId ?? '-')}
+                  </Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary' }}>
@@ -113,6 +115,48 @@ export const AuditLogDetailDrawer = memo(({
                     </Typography>
                     <Typography variant="body2">{logDetail.resourceId}</Typography>
                   </Box>
+                )}
+                {(logDetail.ipAddress ?? logDetail.userAgent ?? logDetail.beforeValue ?? logDetail.afterValue) && (
+                  <>
+                    {logDetail.ipAddress != null && (
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          IP
+                        </Typography>
+                        <Typography variant="body2">{logDetail.ipAddress}</Typography>
+                      </Box>
+                    )}
+                    {logDetail.userAgent != null && (
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          User-Agent
+                        </Typography>
+                        <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>
+                          {logDetail.userAgent}
+                        </Typography>
+                      </Box>
+                    )}
+                    {logDetail.beforeValue != null && (
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          변경 전 (요약)
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                          {logDetail.beforeValue}
+                        </Typography>
+                      </Box>
+                    )}
+                    {logDetail.afterValue != null && (
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          변경 후 (요약)
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                          {logDetail.afterValue}
+                        </Typography>
+                      </Box>
+                    )}
+                  </>
                 )}
               </Stack>
             </Stack>

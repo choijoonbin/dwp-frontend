@@ -113,6 +113,8 @@ export function RoleList({
         <div className="relative mb-3">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
+            id="role-list-redesign-search"
+            name="role-list-redesign-search"
             placeholder="역할명 또는 코드 검색..."
             value={filter.search}
             onChange={(e) => setFilter({ ...filter, search: e.target.value })}

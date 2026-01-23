@@ -62,21 +62,25 @@ export const MonitoringFilterBar = ({ filters, onChange, onReset }: MonitoringFi
       {/* Date Range */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
+          id="monitoring-filter-dateFrom"
           label="From"
           type="datetime-local"
           size="small"
           value={filters.dateFrom}
           onChange={(e) => onChange({ dateFrom: e.target.value })}
           InputLabelProps={{ shrink: true }}
+          inputProps={{ name: 'monitoring-dateFrom' }}
           sx={{ flex: 1 }}
         />
         <TextField
+          id="monitoring-filter-dateTo"
           label="To"
           type="datetime-local"
           size="small"
           value={filters.dateTo}
           onChange={(e) => onChange({ dateTo: e.target.value })}
           InputLabelProps={{ shrink: true }}
+          inputProps={{ name: 'monitoring-dateTo' }}
           sx={{ flex: 1 }}
         />
       </Stack>
@@ -84,55 +88,69 @@ export const MonitoringFilterBar = ({ filters, onChange, onReset }: MonitoringFi
       {/* Search Fields */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
+          id="monitoring-filter-route"
           label="Route"
           size="small"
           value={filters.route}
           onChange={(e) => onChange({ route: e.target.value })}
+          inputProps={{ name: 'monitoring-route' }}
           sx={{ flex: 1 }}
         />
         <TextField
+          id="monitoring-filter-menu"
           label="Menu"
           size="small"
           value={filters.menu}
           onChange={(e) => onChange({ menu: e.target.value })}
+          inputProps={{ name: 'monitoring-menu' }}
           sx={{ flex: 1 }}
         />
         <TextField
+          id="monitoring-filter-path"
           label="Path"
           size="small"
           value={filters.path}
           onChange={(e) => onChange({ path: e.target.value })}
+          inputProps={{ name: 'monitoring-path' }}
           sx={{ flex: 1 }}
         />
       </Stack>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
+          id="monitoring-filter-userId"
           label="User ID"
           size="small"
           value={filters.userId}
           onChange={(e) => onChange({ userId: e.target.value })}
+          inputProps={{ name: 'monitoring-userId' }}
           sx={{ flex: 1 }}
         />
         <TextField
+          id="monitoring-filter-apiName"
           label="API Name"
           size="small"
           value={filters.apiName}
           onChange={(e) => onChange({ apiName: e.target.value })}
+          inputProps={{ name: 'monitoring-apiName' }}
           sx={{ flex: 1 }}
         />
         <TextField
+          id="monitoring-filter-apiUrl"
           label="API URL"
           size="small"
           value={filters.apiUrl}
           onChange={(e) => onChange({ apiUrl: e.target.value })}
+          inputProps={{ name: 'monitoring-apiUrl' }}
           sx={{ flex: 1 }}
         />
         <TextField
+          id="monitoring-filter-statusCode"
           label="Status Code"
           size="small"
           value={filters.statusCode}
           onChange={(e) => onChange({ statusCode: e.target.value })}
+          inputProps={{ name: 'monitoring-statusCode' }}
           sx={{ flex: 1 }}
         />
       </Stack>

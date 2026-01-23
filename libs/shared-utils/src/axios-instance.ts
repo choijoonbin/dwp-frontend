@@ -203,5 +203,80 @@ export const axiosInstance = {
     const data = (await res.json()) as T;
     return { data };
   },
+  patch: async <T, B = unknown>(
+    url: string,
+    body: B,
+    config: AxiosLikeConfig = {}
+  ): Promise<AxiosLikeResponse<T>> => {
+    const token = getAccessToken();
+    const tenantId = getTenantId();
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'X-Tenant-ID': tenantId,
+      ...(config.headers ?? {}),
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (currentAgentId) {
+      headers['X-Agent-ID'] = currentAgentId;
+    }
+
+    const res = await fetch(`${baseURL}${url}`, {
+      method: 'PATCH',
+      headers,
+      credentials: config.withCredentials ? 'include' : 'same-origin',
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const status = res.status;
+      if (status === 401 || status === 403) {
+        handleAuthError(status);
+      }
+      throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
+    }
+
+    const data = (await res.json()) as T;
+    return { data };
+  },
+  delete: async <T>(url: string, config: AxiosLikeConfig = {}): Promise<AxiosLikeResponse<T>> => {
+    const token = getAccessToken();
+    const tenantId = getTenantId();
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'X-Tenant-ID': tenantId,
+      ...(config.headers ?? {}),
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (currentAgentId) {
+      headers['X-Agent-ID'] = currentAgentId;
+    }
+
+    const res = await fetch(`${baseURL}${url}`, {
+      method: 'DELETE',
+      headers,
+      credentials: config.withCredentials ? 'include' : 'same-origin',
+    });
+
+    if (!res.ok) {
+      const status = res.status;
+      if (status === 401 || status === 403) {
+        handleAuthError(status);
+      }
+      throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
+    }
+
+    const data = res.status === 204 ? ({} as T) : ((await res.json()) as T);
+    return { data };
+  },
 };
 

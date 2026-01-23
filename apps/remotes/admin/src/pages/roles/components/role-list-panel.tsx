@@ -125,11 +125,13 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
 
         {/* Search */}
         <TextField
+          id="role-list-search"
           size="small"
           fullWidth
           placeholder="권한명 또는 코드 검색..."
           value={filter.search}
           onChange={(e) => setFilter({ ...filter, search: e.target.value })}
+          inputProps={{ name: 'role-list-search' }}
           InputProps={{
             startAdornment: <Iconify icon="solar:magnifer-bold" width={20} sx={{ mr: 1, color: 'text.secondary' }} />,
           }}
@@ -138,12 +140,13 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
 
         {/* Filters */}
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <FormControl size="small" sx={{ flex: 1 }}>
+          <FormControl id="role-list-status" size="small" sx={{ flex: 1 }}>
             <InputLabel>상태</InputLabel>
             <Select
               value={filter.status}
               onChange={(e) => setFilter({ ...filter, status: e.target.value as typeof filter.status })}
               label="상태"
+              inputProps={{ name: 'role-list-status' }}
             >
               <MenuItem value="ALL">전체 상태</MenuItem>
               <MenuItem value="ACTIVE">활성</MenuItem>
@@ -151,12 +154,13 @@ export const RoleListPanel = memo(({ roles, selectedRoleId, onRoleSelect, onCrea
             </Select>
           </FormControl>
 
-          <FormControl size="small" sx={{ flex: 1 }}>
+          <FormControl id="role-list-sort" size="small" sx={{ flex: 1 }}>
             <InputLabel>정렬</InputLabel>
             <Select
               value={filter.sortBy}
               onChange={(e) => setFilter({ ...filter, sortBy: e.target.value as typeof filter.sortBy })}
               label="정렬"
+              inputProps={{ name: 'role-list-sort' }}
             >
               <MenuItem value="updatedAt">최근 수정</MenuItem>
               <MenuItem value="name">이름</MenuItem>

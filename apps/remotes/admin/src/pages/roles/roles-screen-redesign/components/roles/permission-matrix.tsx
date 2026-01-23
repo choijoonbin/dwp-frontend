@@ -308,6 +308,8 @@ export function PermissionMatrix({
           <div className="relative flex-1 sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
+              id="permission-matrix-search"
+              name="permission-matrix-search"
               placeholder="리소스 검색..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
