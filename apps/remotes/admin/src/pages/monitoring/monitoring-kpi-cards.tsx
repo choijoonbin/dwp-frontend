@@ -2,61 +2,196 @@ import { useMemo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { ApiErrorAlert, useMonitoringSummaryQuery } from '@dwp-frontend/shared-utils';
 
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles';
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 
 // ----------------------------------------------------------------------
 
-type KPICardProps = {
+type MonitoringCardProps = {
   title: string;
-  value: string | number;
+  value: string;
   icon: string;
-  color?: 'primary' | 'success' | 'warning' | 'error' | 'info';
-  trend?: {
-    value: number;
-    label: string;
-  };
+  color: string;
+  deltaPercent?: number;
+  deltaValue?: number;
   isLoading?: boolean;
+  sparkline?: number[];
 };
 
-const KPICard = ({ title, value, icon, color = 'primary', trend, isLoading }: KPICardProps) => (
-  <Card sx={{ p: 3 }}>
-    <Stack spacing={2}>
+const getSmoothPath = (points: { x: number; y: number }[]) => {
+  if (points.length < 2) return '';
+  let path = `M${points[0].x},${points[0].y}`;
+
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const p0 = points[i - 1] ?? points[i];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const p3 = points[i + 2] ?? p2;
+
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+    path += ` C${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
+  }
+
+  return path;
+};
+
+const getSparklinePaths = (values: number[]) => {
+  const width = 100;
+  const height = 40;
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = max - min || 1;
+
+  const points = values.map((value, index) => {
+    const x = (index / (values.length - 1)) * width;
+    const y = height - ((value - min) / range) * (height - 6) - 2;
+    return { x, y };
+  });
+
+  const linePath = getSmoothPath(points);
+
+  const areaPath = `${linePath} L${width},${height} L0,${height} Z`;
+
+  return { linePath, areaPath };
+};
+
+const Sparkline = ({ color, values }: { color: string; values: number[] }) => {
+  const { linePath, areaPath } = getSparklinePaths(values);
+
+  return (
+    <Box
+      component="svg"
+      viewBox="0 0 100 40"
+      preserveAspectRatio="none"
+      sx={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: 48,
+        opacity: 1,
+        zIndex: 0,
+      }}
+    >
+      <path d={areaPath} fill={alpha(color, 0.05)} />
+      <path d={linePath} fill="none" stroke={color} strokeWidth={2} strokeOpacity={0.3} />
+    </Box>
+  );
+};
+
+const DeltaBadge = ({
+  deltaPercent,
+  deltaValue,
+}: {
+  deltaPercent?: number;
+  deltaValue?: number;
+}) => {
+  if (deltaPercent === undefined) return null;
+
+  const isPositive = deltaPercent >= 0;
+  const badgeColor = isPositive ? '#10b981' : '#ef4444';
+  const arrow = isPositive ? '↑' : '↓';
+  const statusText = isPositive ? '상승' : '하락';
+  const percentText = `${Math.abs(deltaPercent).toFixed(2)}%`;
+  const valueText = deltaValue !== undefined ? `${deltaValue >= 0 ? '+' : ''}${deltaValue.toLocaleString()}` : null;
+
+  return (
+    <Box
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 1,
+        px: 1.5,
+        py: 0.3,
+        borderRadius: 9999,
+        bgcolor: alpha(badgeColor, 0.12),
+        color: badgeColor,
+        border: `1px solid ${alpha(badgeColor, 0.3)}`,
+        fontSize: 11,
+        fontWeight: 600,
+      }}
+    >
+      <Box component="span">{arrow}</Box>
+      <Box component="span">{statusText}</Box>
+      {valueText && <Box component="span">{valueText}</Box>}
+      <Box component="span">({percentText})</Box>
+    </Box>
+  );
+};
+
+const MonitoringCard = ({
+  title,
+  value,
+  icon,
+  color,
+  deltaPercent,
+  deltaValue,
+  isLoading,
+  sparkline = [18, 14, 16, 20, 18, 22, 19, 17, 18],
+}: MonitoringCardProps) => (
+  <Card
+    sx={{
+      position: 'relative',
+      overflow: 'hidden',
+      borderRadius: 2,
+      border: '1px solid',
+      borderColor: '#f1f5f9',
+      boxShadow: '0 12px 24px rgba(15, 23, 42, 0.08)',
+      bgcolor: 'background.paper',
+      minHeight: 180,
+    }}
+  >
+    <Box sx={{ height: 4, bgcolor: color }} />
+    <Box
+      sx={{
+        p: 2.5,
+        position: 'relative',
+        zIndex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1.25,
+      }}
+    >
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-          {title}
-        </Typography>
-        <Iconify
-          icon={icon}
-          width={24}
-          sx={{
-            color: (theme) =>
-              color === 'primary'
-                ? theme.palette.primary.main
-                : color === 'success'
-                  ? theme.palette.success.main
-                  : color === 'warning'
-                    ? theme.palette.warning.main
-                    : color === 'error'
-                      ? theme.palette.error.main
-                      : theme.palette.info.main,
-          }}
-        />
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Iconify icon={icon} width={22} sx={{ color }} />
+          <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+            {title}
+          </Typography>
+        </Stack>
+        {isLoading ? (
+          <Skeleton variant="text" width={80} height={40} />
+        ) : (
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: 900,
+              fontSize: { xs: 30, md: 34 },
+              lineHeight: 1,
+              fontFamily: '"Inter", "Pretendard", sans-serif',
+            }}
+          >
+            {value}
+          </Typography>
+        )}
       </Stack>
-      {isLoading ? (
-        <Skeleton variant="text" width="60%" height={48} />
-      ) : (
-        <Typography variant="h3">{typeof value === 'number' ? value.toLocaleString() : value}</Typography>
+      {!isLoading && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <DeltaBadge deltaPercent={deltaPercent} deltaValue={deltaValue} />
+        </Box>
       )}
-      {trend && !isLoading && (
-        <Typography variant="caption" sx={{ color: trend.value >= 0 ? 'success.main' : 'error.main' }}>
-          {trend.value >= 0 ? '↑' : '↓'} {Math.abs(trend.value).toFixed(1)}% {trend.label}
-        </Typography>
-      )}
-    </Stack>
+    </Box>
+    <Sparkline color={color} values={sparkline} />
   </Card>
 );
 
@@ -186,46 +321,66 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
     return <ApiErrorAlert error={error} onRetry={() => refetch()} />;
   }
 
+  const pvDeltaPercent = data?.pvDeltaPercent ?? data?.pvTrend;
+  const uvDeltaPercent = data?.uvDeltaPercent ?? data?.uvTrend;
+  const eventDeltaPercent = data?.eventDeltaPercent ?? data?.eventsTrend;
+  const apiErrorDeltaPercent = data?.apiErrorDeltaPercent ?? data?.apiErrorRateTrend;
+
+  const comparePeriod = data?.comparePeriod;
+  const pvDeltaValue = data && comparePeriod?.pv !== undefined ? data.pv - comparePeriod.pv : undefined;
+  const uvDeltaValue = data && comparePeriod?.uv !== undefined ? data.uv - comparePeriod.uv : undefined;
+  const eventDeltaValue = data && comparePeriod?.events !== undefined ? data.events - comparePeriod.events : undefined;
+  const apiErrorDeltaValue =
+    data && comparePeriod?.apiErrorRate !== undefined ? data.apiErrorRate - comparePeriod.apiErrorRate : undefined;
+
   return (
     <Grid container spacing={3}>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-        <KPICard
-          title="PV (페이지뷰)"
-          value={data?.pv ?? 0}
-          icon="solar:chart-bold"
-          color="primary"
-          trend={data?.pvTrend !== undefined ? { value: data.pvTrend, label: 'vs 전일' } : undefined}
+        <MonitoringCard
+          title="페이지뷰 PV"
+          value={(data?.pv ?? 0).toLocaleString()}
+          icon="lucide:eye"
+          color="#3b82f6"
+          deltaPercent={pvDeltaPercent}
+          deltaValue={pvDeltaValue}
           isLoading={isLoading}
+          sparkline={[14, 12, 16, 28, 22, 26, 20, 18, 21, 17, 19, 23]}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-        <KPICard
-          title="UV (고유방문자)"
-          value={data?.uv ?? 0}
-          icon="solar:users-group-rounded-bold"
-          color="success"
-          trend={data?.uvTrend !== undefined ? { value: data.uvTrend, label: 'vs 전일' } : undefined}
+        <MonitoringCard
+          title="고유 방문자 UV"
+          value={(data?.uv ?? 0).toLocaleString()}
+          icon="lucide:user"
+          color="#10b981"
+          deltaPercent={uvDeltaPercent}
+          deltaValue={uvDeltaValue}
           isLoading={isLoading}
+          sparkline={[10, 11, 13, 16, 14, 15, 12, 13, 11, 12, 14, 13]}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-        <KPICard
-          title="Events"
-          value={data?.events ?? 0}
-          icon="solar:graph-up-bold"
-          color="info"
-          trend={data?.eventsTrend !== undefined ? { value: data.eventsTrend, label: 'vs 전일' } : undefined}
+        <MonitoringCard
+          title="이벤트 Events"
+          value={(data?.events ?? 0).toLocaleString()}
+          icon="lucide:zap"
+          color="#8b5cf6"
+          deltaPercent={eventDeltaPercent}
+          deltaValue={eventDeltaValue}
           isLoading={isLoading}
+          sparkline={[8, 10, 12, 11, 14, 13, 15, 12, 14, 13, 12, 16]}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-        <KPICard
-          title="API Error Rate (%)"
-          value={`${data?.apiErrorRate?.toFixed(1) ?? '0.0'}%`}
-          icon="solar:danger-triangle-bold"
-          color="error"
-          trend={data?.apiErrorRateTrend !== undefined ? { value: data.apiErrorRateTrend, label: 'vs 전일' } : undefined}
+        <MonitoringCard
+          title="API 에러율 Error Rate"
+          value={`${(data?.apiErrorRate ?? 0).toFixed(2)}%`}
+          icon="lucide:alert-triangle"
+          color="#ef4444"
+          deltaPercent={apiErrorDeltaPercent}
+          deltaValue={apiErrorDeltaValue}
           isLoading={isLoading}
+          sparkline={[6, 8, 9, 7, 10, 12, 9, 8, 7, 9, 11, 13]}
         />
       </Grid>
     </Grid>

@@ -904,477 +904,6 @@
           "hash": "10470006326540176307"
         }
       ],
-      "shared-utils": [
-        {
-          "file": "libs/shared-utils/project.json",
-          "hash": "1291154405272111591"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/__tests__/admin-utils.test.ts",
-          "hash": "13612121270860402833",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/admin/__tests__/code-utils.test.ts",
-          "hash": "2611829214683652260",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/admin/__tests__/event-actions.test.ts",
-          "hash": "4998784353112432378",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/admin/__tests__/role-permission-matrix.test.ts",
-          "hash": "10008183034281037857",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/admin/code-utils.ts",
-          "hash": "13966185139560428368"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/event-actions.ts",
-          "hash": "14692312300542130251"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/form-validation.ts",
-          "hash": "885598105731993276"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/role-permission-matrix-utils.ts",
-          "hash": "3425494788422999206"
-        },
-        {
-          "file": "libs/shared-utils/src/admin/types.ts",
-          "hash": "1628274534912051394"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/__tests__/sse-parser.test.ts",
-          "hash": "11196611739922345341",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/agent/__tests__/stream-status.test.ts",
-          "hash": "15174029235037669908",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/agent/agent-session.ts",
-          "hash": "17822230008107950167"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/context-util.ts",
-          "hash": "3695356138661456911"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/hitl-api.ts",
-          "hash": "12497076655583257328"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/stream-status.ts",
-          "hash": "17274434232435623383"
-        },
-        {
-          "file": "libs/shared-utils/src/agent/stream-store.ts",
-          "hash": "16645354225238575841",
-          "deps": [
-            "npm:zustand"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/agent/use-agent-stream.ts",
-          "hash": "17206942562429868454",
-          "deps": [
-            "npm:@tanstack/react-query",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/api/__tests__/api-error-handler.test.ts",
-          "hash": "17187031085165598186",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/api/admin-iam-api.ts",
-          "hash": "227775049419856632"
-        },
-        {
-          "file": "libs/shared-utils/src/api/api-error-alert.tsx",
-          "hash": "4375536377768195864",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/api/api-error-handler.tsx",
-          "hash": "18085865775483147317"
-        },
-        {
-          "file": "libs/shared-utils/src/api/auth-api.ts",
-          "hash": "7276677798576439407"
-        },
-        {
-          "file": "libs/shared-utils/src/api/auth-policy-api.ts",
-          "hash": "2610608231778635145"
-        },
-        {
-          "file": "libs/shared-utils/src/api/code-usage-api.ts",
-          "hash": "12791896040412068064"
-        },
-        {
-          "file": "libs/shared-utils/src/api/main-api.ts",
-          "hash": "16790591095199076360"
-        },
-        {
-          "file": "libs/shared-utils/src/api/monitoring-api.ts",
-          "hash": "9867706174876199381"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/auth-guard.tsx",
-          "hash": "11445583064159240513",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/auth/auth-policy-types.ts",
-          "hash": "9783960228807377538"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/auth-provider.tsx",
-          "hash": "10087533260019935913",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/auth/auth-redirect.test.ts",
-          "hash": "15623788010970177248",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/auth/auth-redirect.ts",
-          "hash": "1443545607187007706"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/menu-tree-store.ts",
-          "hash": "11331260578036432074",
-          "deps": [
-            "npm:zustand"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/auth/permission-route-guard.tsx",
-          "hash": "10095115703022835167",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/auth/permissions-store.ts",
-          "hash": "2219029370136075314",
-          "deps": [
-            "npm:zustand"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/auth/token-storage.test.ts",
-          "hash": "11518970991805364294",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/auth/token-storage.ts",
-          "hash": "1983648834487626635"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/types.ts",
-          "hash": "7172306848271834868"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/use-permissions.ts",
-          "hash": "12070286715323163622"
-        },
-        {
-          "file": "libs/shared-utils/src/auth/user-id-storage.ts",
-          "hash": "3003508536947905025"
-        },
-        {
-          "file": "libs/shared-utils/src/axios-instance.test.ts",
-          "hash": "1792088186394072090",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/axios-instance.ts",
-          "hash": "3531904741961479261"
-        },
-        {
-          "file": "libs/shared-utils/src/env.ts",
-          "hash": "2631743776831830161"
-        },
-        {
-          "file": "libs/shared-utils/src/hooks/use-mutation-error-handler.ts",
-          "hash": "10076309737658500407",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/http-error.ts",
-          "hash": "1310142135678069300"
-        },
-        {
-          "file": "libs/shared-utils/src/index.ts",
-          "hash": "14724711044369380677"
-        },
-        {
-          "file": "libs/shared-utils/src/monitoring/event-tracking.ts",
-          "hash": "14686775356928573894"
-        },
-        {
-          "file": "libs/shared-utils/src/queries/__tests__/monitoring-utils.test.ts",
-          "hash": "15555310717699951890",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-audit-logs-query.ts",
-          "hash": "10464934102113210623",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-menus-query.ts",
-          "hash": "10812327452188052376",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-resources-query.ts",
-          "hash": "9786117222609516903",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-role-members-query.ts",
-          "hash": "7866962792191452750",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-role-permissions-query.ts",
-          "hash": "8206075744060077210",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-roles-query.ts",
-          "hash": "9604520045345911368",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-user-detail-query.ts",
-          "hash": "16734151996728914330",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-user-roles-query.ts",
-          "hash": "5091143769692309257",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-admin-users-query.ts",
-          "hash": "5865767188592572784",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-all-codes-query.ts",
-          "hash": "3480962221613646400",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-auth-policy-query.ts",
-          "hash": "6880657025198314569",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-code-groups-query.ts",
-          "hash": "13344053794277128926",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-code-usages-query.ts",
-          "hash": "7092400411765187806",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-codes-by-group-query.ts",
-          "hash": "16374827020129690053",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-codes-by-resource-query.ts",
-          "hash": "18046927826907552407",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-idp-query.ts",
-          "hash": "5222756824186443389",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-menu-tree-query.ts",
-          "hash": "14781937184431434642",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-apihistories-query.ts",
-          "hash": "13818526725987312945",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-events-query.ts",
-          "hash": "18413406719543228750",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-pageviews-query.ts",
-          "hash": "15234002344654781521",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-summary-query.ts",
-          "hash": "8931808327717649355",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-timeseries-query.ts",
-          "hash": "5462103478507921500",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/queries/use-monitoring-visitors-query.ts",
-          "hash": "1271696468558964048",
-          "deps": [
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/router/__tests__/normalize-route-path.test.ts",
-          "hash": "4352556055189138849",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "libs/shared-utils/src/router/normalize-route-path.ts",
-          "hash": "109874706733176798"
-        },
-        {
-          "file": "libs/shared-utils/src/tenant-util.ts",
-          "hash": "16689972145420517405"
-        },
-        {
-          "file": "libs/shared-utils/src/types.ts",
-          "hash": "16497816272801057550"
-        }
-      ],
-      "remote-starter": [
-        {
-          "file": "apps/remotes/_starter/index.html",
-          "hash": "10948028599418712495"
-        },
-        {
-          "file": "apps/remotes/_starter/project.json",
-          "hash": "6624486865221641296"
-        },
-        {
-          "file": "apps/remotes/_starter/src/entry.tsx",
-          "hash": "3036542923397360097",
-          "deps": [
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/remotes/_starter/src/main.tsx",
-          "hash": "4737932262371874061",
-          "deps": [
-            "design-system",
-            "npm:react",
-            "npm:react-dom"
-          ]
-        },
-        {
-          "file": "apps/remotes/_starter/vite.config.ts",
-          "hash": "18311644572241391603",
-          "deps": [
-            "npm:vite",
-            "npm:@vitejs/plugin-react-swc"
-          ]
-        }
-      ],
       "design-system": [
         {
           "file": "libs/design-system/project.json",
@@ -2323,6 +1852,40 @@
           ]
         }
       ],
+      "remote-starter": [
+        {
+          "file": "apps/remotes/_starter/index.html",
+          "hash": "10948028599418712495"
+        },
+        {
+          "file": "apps/remotes/_starter/project.json",
+          "hash": "6624486865221641296"
+        },
+        {
+          "file": "apps/remotes/_starter/src/entry.tsx",
+          "hash": "3036542923397360097",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/remotes/_starter/src/main.tsx",
+          "hash": "4737932262371874061",
+          "deps": [
+            "design-system",
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "apps/remotes/_starter/vite.config.ts",
+          "hash": "18311644572241391603",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react-swc"
+          ]
+        }
+      ],
       "mail": [
         {
           "file": "apps/remotes/mail/index.html",
@@ -2361,6 +1924,443 @@
             "npm:vite",
             "npm:@vitejs/plugin-react-swc"
           ]
+        }
+      ],
+      "shared-utils": [
+        {
+          "file": "libs/shared-utils/project.json",
+          "hash": "1291154405272111591"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/__tests__/admin-utils.test.ts",
+          "hash": "13612121270860402833",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/admin/__tests__/code-utils.test.ts",
+          "hash": "2611829214683652260",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/admin/__tests__/event-actions.test.ts",
+          "hash": "4998784353112432378",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/admin/__tests__/role-permission-matrix.test.ts",
+          "hash": "10008183034281037857",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/admin/code-utils.ts",
+          "hash": "13966185139560428368"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/event-actions.ts",
+          "hash": "14692312300542130251"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/form-validation.ts",
+          "hash": "885598105731993276"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/role-permission-matrix-utils.ts",
+          "hash": "3425494788422999206"
+        },
+        {
+          "file": "libs/shared-utils/src/admin/types.ts",
+          "hash": "1628274534912051394"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/__tests__/sse-parser.test.ts",
+          "hash": "11196611739922345341",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/agent/__tests__/stream-status.test.ts",
+          "hash": "15174029235037669908",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/agent/agent-session.ts",
+          "hash": "17822230008107950167"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/context-util.ts",
+          "hash": "3695356138661456911"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/hitl-api.ts",
+          "hash": "12497076655583257328"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/stream-status.ts",
+          "hash": "17274434232435623383"
+        },
+        {
+          "file": "libs/shared-utils/src/agent/stream-store.ts",
+          "hash": "16645354225238575841",
+          "deps": [
+            "npm:zustand"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/agent/use-agent-stream.ts",
+          "hash": "17206942562429868454",
+          "deps": [
+            "npm:@tanstack/react-query",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/api/__tests__/api-error-handler.test.ts",
+          "hash": "17187031085165598186",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/api/admin-iam-api.ts",
+          "hash": "227775049419856632"
+        },
+        {
+          "file": "libs/shared-utils/src/api/api-error-alert.tsx",
+          "hash": "4375536377768195864",
+          "deps": [
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/api/api-error-handler.tsx",
+          "hash": "18085865775483147317"
+        },
+        {
+          "file": "libs/shared-utils/src/api/auth-api.ts",
+          "hash": "7276677798576439407"
+        },
+        {
+          "file": "libs/shared-utils/src/api/auth-policy-api.ts",
+          "hash": "2610608231778635145"
+        },
+        {
+          "file": "libs/shared-utils/src/api/code-usage-api.ts",
+          "hash": "12791896040412068064"
+        },
+        {
+          "file": "libs/shared-utils/src/api/main-api.ts",
+          "hash": "16790591095199076360"
+        },
+        {
+          "file": "libs/shared-utils/src/api/monitoring-api.ts",
+          "hash": "9867706174876199381"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-guard.tsx",
+          "hash": "11445583064159240513",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-policy-types.ts",
+          "hash": "9783960228807377538"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-provider.tsx",
+          "hash": "10087533260019935913",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-redirect.test.ts",
+          "hash": "15623788010970177248",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/auth-redirect.ts",
+          "hash": "1443545607187007706"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/menu-tree-store.ts",
+          "hash": "11331260578036432074",
+          "deps": [
+            "npm:zustand"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/permission-route-guard.tsx",
+          "hash": "10095115703022835167",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/permissions-store.ts",
+          "hash": "2219029370136075314",
+          "deps": [
+            "npm:zustand"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/token-storage.test.ts",
+          "hash": "11518970991805364294",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/auth/token-storage.ts",
+          "hash": "1983648834487626635"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/types.ts",
+          "hash": "7172306848271834868"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/use-permissions.ts",
+          "hash": "12070286715323163622"
+        },
+        {
+          "file": "libs/shared-utils/src/auth/user-id-storage.ts",
+          "hash": "3003508536947905025"
+        },
+        {
+          "file": "libs/shared-utils/src/axios-instance.test.ts",
+          "hash": "1792088186394072090",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/axios-instance.ts",
+          "hash": "3531904741961479261"
+        },
+        {
+          "file": "libs/shared-utils/src/env.ts",
+          "hash": "2631743776831830161"
+        },
+        {
+          "file": "libs/shared-utils/src/hooks/use-mutation-error-handler.ts",
+          "hash": "10076309737658500407",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/http-error.ts",
+          "hash": "1310142135678069300"
+        },
+        {
+          "file": "libs/shared-utils/src/index.ts",
+          "hash": "14724711044369380677"
+        },
+        {
+          "file": "libs/shared-utils/src/monitoring/event-tracking.ts",
+          "hash": "14686775356928573894"
+        },
+        {
+          "file": "libs/shared-utils/src/queries/__tests__/monitoring-utils.test.ts",
+          "hash": "15555310717699951890",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-audit-logs-query.ts",
+          "hash": "10464934102113210623",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-menus-query.ts",
+          "hash": "10812327452188052376",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-resources-query.ts",
+          "hash": "9786117222609516903",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-role-members-query.ts",
+          "hash": "7866962792191452750",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-role-permissions-query.ts",
+          "hash": "8206075744060077210",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-roles-query.ts",
+          "hash": "9604520045345911368",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-user-detail-query.ts",
+          "hash": "16734151996728914330",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-user-roles-query.ts",
+          "hash": "5091143769692309257",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-admin-users-query.ts",
+          "hash": "5865767188592572784",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-all-codes-query.ts",
+          "hash": "3480962221613646400",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-auth-policy-query.ts",
+          "hash": "6880657025198314569",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-code-groups-query.ts",
+          "hash": "13344053794277128926",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-code-usages-query.ts",
+          "hash": "7092400411765187806",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-codes-by-group-query.ts",
+          "hash": "16374827020129690053",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-codes-by-resource-query.ts",
+          "hash": "18046927826907552407",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-idp-query.ts",
+          "hash": "5222756824186443389",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-menu-tree-query.ts",
+          "hash": "14781937184431434642",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-apihistories-query.ts",
+          "hash": "13818526725987312945",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-events-query.ts",
+          "hash": "18413406719543228750",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-pageviews-query.ts",
+          "hash": "15234002344654781521",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-summary-query.ts",
+          "hash": "8931808327717649355",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-timeseries-query.ts",
+          "hash": "5462103478507921500",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/queries/use-monitoring-visitors-query.ts",
+          "hash": "1271696468558964048",
+          "deps": [
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/router/__tests__/normalize-route-path.test.ts",
+          "hash": "4352556055189138849",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "libs/shared-utils/src/router/normalize-route-path.ts",
+          "hash": "109874706733176798"
+        },
+        {
+          "file": "libs/shared-utils/src/tenant-util.ts",
+          "hash": "16689972145420517405"
+        },
+        {
+          "file": "libs/shared-utils/src/types.ts",
+          "hash": "16497816272801057550"
         }
       ],
       "admin": [

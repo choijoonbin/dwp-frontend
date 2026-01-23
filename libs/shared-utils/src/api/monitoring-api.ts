@@ -22,10 +22,21 @@ export type MonitoringSummaryResponse = {
   uv: number; // Unique Visitors
   events: number; // Total Events
   apiErrorRate: number; // API Error Rate (%)
-  pvTrend?: number; // Percentage change vs comparison period
-  uvTrend?: number; // Percentage change vs comparison period
-  eventsTrend?: number; // Percentage change vs comparison period
-  apiErrorRateTrend?: number; // Percentage change vs comparison period
+  pvDeltaPercent?: number; // Percentage change vs comparison period
+  uvDeltaPercent?: number; // Percentage change vs comparison period
+  eventDeltaPercent?: number; // Percentage change vs comparison period
+  apiErrorDeltaPercent?: number; // Percentage change vs comparison period
+  comparePeriod?: {
+    pv?: number;
+    uv?: number;
+    events?: number;
+    apiErrorRate?: number;
+  };
+  // Legacy fields (backward compatibility)
+  pvTrend?: number;
+  uvTrend?: number;
+  eventsTrend?: number;
+  apiErrorRateTrend?: number;
 };
 
 /**
