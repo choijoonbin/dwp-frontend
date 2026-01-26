@@ -2,12 +2,12 @@ import type { IconProps } from '@iconify/react';
 
 import { useId } from 'react';
 import { Icon } from '@iconify/react';
-import { mergeClasses } from 'minimal-shared/utils';
 
 import { styled } from '@mui/material/styles';
 
+import { mergeClasses } from '../../utils';
 import { iconifyClasses } from './classes';
-import { allIconNames, registerIcons } from './register-icons';
+import { registerIcons } from './register-icons';
 
 import type { IconifyName } from './register-icons';
 
@@ -24,12 +24,6 @@ export type IconifyProps = React.ComponentProps<typeof IconRoot> &
 
 export function Iconify({ className, icon, width = 20, height, sx, ...other }: IconifyProps) {
   const id = useId();
-
-  if (typeof icon === 'string' && !allIconNames.includes(icon as IconifyName)) {
-    console.warn(
-      `Icon "${icon}" is loaded online and may flicker. Register it in libs/design-system/src/components/iconify/icon-sets.ts for offline use.`
-    );
-  }
 
   registerIcons();
 

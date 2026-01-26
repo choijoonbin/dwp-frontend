@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import type { PlanStep, ThoughtChain, AgentMessage, TimelineStep, ActionExecution } from 'src/store/use-aura-store';
+import type { PlanStep, ThoughtChain, AgentMessage, TimelineStep, ActionExecution } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -143,7 +143,15 @@ export const WorkspaceTabs = ({
           {value === 3 && (
             <Stack spacing={2}>
               {resultMessages.map((msg) => (
-                <ResultViewer key={msg.id} result={msg.metadata?.result} />
+                <ResultViewer
+                key={msg.id}
+                result={
+                  (msg.metadata?.result as { type: 'text' | 'diff' | 'preview' | 'checklist'; content: unknown; title?: string }) ?? {
+                    type: 'text' as const,
+                    content: '',
+                  }
+                }
+              />
               ))}
               {resultMessages.length === 0 && (
                 <Paper sx={{ p: 3, textAlign: 'center' }}>

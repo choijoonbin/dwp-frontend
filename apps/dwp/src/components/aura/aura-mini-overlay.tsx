@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuraStore, useAuraActions } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 import { getUserId, NX_API_URL, getTenantId, getAccessToken, getAgentContext, getAgentSessionId } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -17,8 +18,6 @@ import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { usePageContext } from 'src/hooks/use-page-context';
-
-import { useAuraStore, useAuraActions } from 'src/store/use-aura-store';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';

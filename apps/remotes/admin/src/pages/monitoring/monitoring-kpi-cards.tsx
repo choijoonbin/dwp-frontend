@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import {
   ApiErrorAlert,
+  type TimeseriesResponse,
   useMonitoringSummaryQuery,
   useMonitoringTimeseriesQuery,
-  type TimeseriesResponse,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -439,7 +439,7 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
         <MonitoringCard
           title="페이지뷰 PV"
           value={(data?.pv ?? 0).toLocaleString()}
-          icon="lucide:eye"
+          icon="solar:eye-bold"
           color="#3b82f6"
           deltaPercent={pvDeltaPercent}
           deltaValue={pvDeltaValue}
@@ -451,7 +451,7 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
         <MonitoringCard
           title="고유 방문자 UV"
           value={(data?.uv ?? 0).toLocaleString()}
-          icon="lucide:user"
+          icon="solar:user-bold"
           color="#10b981"
           deltaPercent={uvDeltaPercent}
           deltaValue={uvDeltaValue}
@@ -463,7 +463,7 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
         <MonitoringCard
           title="이벤트 Events"
           value={(data?.events ?? 0).toLocaleString()}
-          icon="lucide:zap"
+          icon="solar:bolt-bold"
           color="#8b5cf6"
           deltaPercent={eventDeltaPercent}
           deltaValue={eventDeltaValue}
@@ -475,7 +475,7 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
         <MonitoringCard
           title="API 에러율 Error Rate"
           value={`${(data?.apiErrorRate ?? 0).toFixed(2)}%`}
-          icon="lucide:alert-triangle"
+          icon="solar:danger-triangle-bold"
           color="#ef4444"
           deltaPercent={apiErrorDeltaPercent}
           deltaValue={apiErrorDeltaValue}

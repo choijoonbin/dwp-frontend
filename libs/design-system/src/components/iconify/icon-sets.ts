@@ -256,4 +256,58 @@ export default {
   'solar:diskette-bold': {
     body: '<path fill="currentColor" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2S2 6.477 2 12s4.477 10 10 10m-3-13a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H10a1 1 0 0 1-1-1zm1 6h4a1 1 0 1 1 0 2h-4a1 1 0 1 1 0-2"/>',
   },
+  'solar:magic-stick-3-bold': {
+    body: '<path fill="currentColor" d="M15 4V2h2v2h-2zm4 7v2h2v-2h-2zM3 13v-2H1v2h2zm18.07-7.93l-1.41 1.41l1.41 1.41l1.42-1.41l-1.42-1.41zM5.93 4.52L4.52 5.93L5.93 7.34l1.41-1.41L5.93 4.52zm12.14 12.14l-1.41 1.41l1.41 1.42l1.41-1.42l-1.41-1.41zM5.93 18.07l-1.41 1.41l1.41 1.42l1.42-1.42l-1.42-1.41zM12 6a6 6 0 1 0 0 12a6 6 0 0 0 0-12zm-1 2v2h2V8h-2zm0 4v2h2v-2h-2z"/>',
+  },
+  'solar:shield-user-bold': {
+    body: '<path fill="currentColor" fill-rule="evenodd" d="M3 10.417c0-3.198 0-4.797.378-5.335c.377-.537 1.88-1.052 4.887-2.081l.573-.196C10.405 2.268 11.188 2 12 2s1.595.268 3.162.805l.573.196c3.007 1.029 4.51 1.544 4.887 2.081C21 5.62 21 7.22 21 10.417v1.574c0 5.638-4.239 8.375-6.899 9.536C13.38 21.842 13.02 22 12 22s-1.38-.158-2.101-.473C7.239 20.365 3 17.63 3 11.991zm9-7.167a3 3 0 1 0 0 6a3 3 0 0 0 0-6zm-4.5 8c0-.83.67-1.5 1.5-1.5h6c.83 0 1.5.67 1.5 1.5c0 1.38-1.34 2.5-3 2.5h-3c-1.66 0-3-1.12-3-2.5z" clip-rule="evenodd"/>',
+  },
+  'solar:double-alt-arrow-down-bold': {
+    body: '<path fill="currentColor" d="M12 17.5l-6-6h4V5h4v6.5h4l-6 6zm0-3l2.5-2.5H14V6h-4v5.5H9.5L12 14.5z"/>',
+  },
+  'solar:double-alt-arrow-up-bold': {
+    body: '<path fill="currentColor" d="M12 6.5l6 6h-4V19h-4v-6.5H6l6-6zm0 3L9.5 12H10v5.5h4V12h.5L12 9.5z"/>',
+  },
+  'solar:minus-circle-bold': {
+    body: '<path fill="currentColor" fill-rule="evenodd" d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2s10 4.477 10 10zm-5.25-4a.75.75 0 0 1 .75.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 .75-.75z" clip-rule="evenodd"/>',
+  },
+  'solar:calendar-bold': {
+    body: '<path fill="currentColor" fill-rule="evenodd" d="M8 2a.75.75 0 0 1 .75.75V4h6.5V2.75a.75.75 0 0 1 1.5 0V4h1.5A2.75 2.75 0 0 1 20.25 6.75v12.5A2.75 2.75 0 0 1 17.5 22H6.5a2.75 2.75 0 0 1-2.75-2.75V6.75A2.75 2.75 0 0 1 6.5 4h1.5V2.75A.75.75 0 0 1 8 2M6.5 5.5c-.69 0-1.25.56-1.25 1.25v1.25h13.5V6.75c0-.69-.56-1.25-1.25-1.25zm12.25 5V18.25c0 .69-.56 1.25-1.25 1.25H6.5c-.69 0-1.25-.56-1.25-1.25V10.5z" clip-rule="evenodd"/>',
+  },
+  'solar:folder-with-files-bold': {
+    body: '<path fill="currentColor" d="M2 6.95V14c0 3.771 0 5.657 1.172 6.828S6.229 22 10 22h4c3.771 0 5.657 0 6.828-1.172S22 17.771 22 14V9.75c0-2.632 0-3.949-.77-4.804a3 3 0 0 0-.224-.225C20.151 4 18.834 4 16.202 4h-.374c-1.153 0-1.73 0-2.268-.153a4 4 0 0 1-.848-.352C12.224 3.224 11.816 2.815 11 2l-.55-.55C9.53 1.022 8.95.5 8.202.5H6.95C4.286.5 2.965 1.792 2.07 3.258M8 14h8v-2H8zm0 4h5v-2H8z"/>',
+  },
+  'solar:map-point-wave-bold': {
+    body: '<path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5a2.5 2.5 0 0 1 0 5z"/>',
+  },
+  'solar:server-square-cloud-bold': {
+    body: '<path fill="currentColor" d="M3 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3h-2v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2H3a3 3 0 0 1-3-3zm16 4V6a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zm-4 5v-2H9v2h6z"/>',
+  },
+  'solar:layers-bold': {
+    body: '<path fill="currentColor" d="M12 2L2 7l10 5l10-5l-10-5zM2 17l10 5l10-5l-10-5L2 17zm10-7.5L4 12l8 4.5l8-4.5l-8-4.5z"/>',
+  },
+  'solar:hashtag-square-bold': {
+    body: '<path fill="currentColor" fill-rule="evenodd" d="M2 6a4 4 0 0 1 4-4h12a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4zm7 3v2h2V9H9zm0 4v2h2v-2H9zm4-4v2h2V9h-2zm0 4v2h2v-2h-2zm-2-6h2V5h-2v2zm0 10h2v2h-2v-2zm4-10h2V5h-2v2zm0 10h2v2h-2v-2z" clip-rule="evenodd"/>',
+  },
+  'solar:add-circle-bold': {
+    body: '<path fill="currentColor" fill-rule="evenodd" d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2s10 4.477 10 10zm-5.25-4a.75.75 0 0 1 .75.75v4.5h4.5a.75.75 0 0 1 0 1.5h-4.5v4.5a.75.75 0 0 1-1.5 0v-4.5h-4.5a.75.75 0 0 1 0-1.5h4.5v-4.5a.75.75 0 0 1 .75-.75z" clip-rule="evenodd"/>',
+  },
+  'solar:widget-bold': {
+    body: '<path fill="currentColor" d="M3 5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zm0 8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zm10-8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2zm2 2v6h6V9zm-2 8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2zm2 2v6h6v-6z"/>',
+  },
+  'solar:bolt-bold': {
+    body: '<path fill="currentColor" d="M14 2h-4L6 10h4l-2 10l8-12h-4L14 2z"/>',
+  },
+  'solar:chat-round-line-duotone': {
+    body: '<path fill="currentColor" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2S2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22" opacity="0.4"/><path fill="currentColor" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2S2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22"/>',
+  },
+  'solar:users-group-rounded-bold-duotone': {
+    body: '<circle cx="9" cy="6" r="4" fill="currentColor" opacity="0.4"/><ellipse cx="9" cy="17" rx="7" ry="4" fill="currentColor" opacity="0.4"/><path fill="currentColor" d="M21 17c0 1.657-2.036 3-4.521 3c.732-.8 1.236-1.805 1.236-2.998c0-1.195-.505-2.2-1.239-3.001C18.962 14 21 15.344 21 17M18 6a3 3 0 0 1-4.029 2.82A5.7 5.7 0 0 0 14.714 6c0-1.025-.27-1.987-.742-2.819A3 3 0 0 1 18 6.001"/>',
+  },
+  'svg-spinners:ring-resize': {
+    body: '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="32" stroke-dashoffset="12"><animate attributeName="stroke-dasharray" dur="1.5s" values="4 28;16 16;4 28" repeatCount="indefinite"/><animate attributeName="stroke-dashoffset" dur="1.5s" values="0;-12;-24" repeatCount="indefinite"/></circle>',
+  },
+  'material-symbols:folder-off-outline': {
+    body: '<path fill="currentColor" d="M2 4h2.5l2 2H4v12h16v-2.5l2 2V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6L.5 4.5L2 3l4 4h10l2-2H8L6 4H2zm16 8.5V12h-2v.5l2 2zM6 6v.5L4.5 5H6zm8 0l-2 2V8h-2v2.5L8.5 8H14z"/>',
+  },
 };

@@ -1,6 +1,6 @@
 import type { CardProps } from '@mui/material/Card';
 
-import { varAlpha } from 'minimal-shared/utils';
+import { varAlpha } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';

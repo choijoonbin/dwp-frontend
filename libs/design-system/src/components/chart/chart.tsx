@@ -1,10 +1,10 @@
 import { lazy, Suspense } from 'react';
-import { useIsClient } from 'minimal-shared/hooks';
-import { mergeClasses } from 'minimal-shared/utils';
 
 import { styled } from '@mui/material/styles';
 
 import { chartClasses } from './classes';
+import { useIsClient } from '../../hooks';
+import { mergeClasses } from '../../utils';
 import { ChartLoading } from './components';
 
 import type { ChartProps } from './types';

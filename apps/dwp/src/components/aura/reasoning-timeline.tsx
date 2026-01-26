@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import type { TimelineStep } from 'src/store/use-aura-store';
+import type { TimelineStep } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import { motion } from 'framer-motion';
 

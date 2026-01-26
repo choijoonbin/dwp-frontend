@@ -60,7 +60,9 @@ docs/
 │   ├── architecture/
 │   │   └── (향후 추가 예정)
 │   ├── DESIGN_SYSTEM_MIGRATION.md # Design System 마이그레이션 가이드
-│   └── PR_CHECKLIST_UI.md     # UI 개발자용 상세 PR 체크리스트
+│   ├── PR_CHECKLIST_UI.md     # UI 개발자용 상세 PR 체크리스트
+│   ├── STATE_MANAGEMENT_AUDIT.md # 상태 관리(Store) 구조 점검
+│   └── MINIMALS_REMOVAL_ANALYSIS.md # Minimals 제거·라이센스 이탈 분석
 │
 ├── archive/                     # 🗂️ 완료된 작업 아카이브
 │   ├── tasks/                  # 완료된 작업 기록
@@ -172,6 +174,9 @@ docs/
 
 ### "Admin 개발 후 남은 작업이 궁금해요"
 → `specs/admin/ADMIN_REMAINING_WORK.md`
+
+### "상태 관리·스토어(Zustand) 구조가 체계적인지 점검하고 싶어요"
+→ `reference/STATE_MANAGEMENT_AUDIT.md`
 
 ---
 

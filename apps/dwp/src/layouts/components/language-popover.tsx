@@ -1,7 +1,7 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
 import { useState, useCallback } from 'react';
-import { usePopover } from 'minimal-shared/hooks';
+import { usePopover } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';

@@ -9,7 +9,7 @@ export type AgentMessage = {
   role: 'user' | 'assistant' | 'thought' | 'action';
   content: string;
   timestamp: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 };
 
 export type TimelineStepStatus = 'pending' | 'processing' | 'completed' | 'failed';
@@ -22,8 +22,8 @@ export type TimelineStep = {
   timestamp: Date;
   metadata?: {
     tool?: string;
-    params?: Record<string, any>;
-    result?: any;
+    params?: Record<string, unknown>;
+    result?: unknown;
     error?: string;
   };
 };
@@ -31,10 +31,10 @@ export type TimelineStep = {
 export type ActionExecution = {
   id: string;
   tool: string;
-  params: Record<string, any>;
+  params: Record<string, unknown>;
   timestamp: Date;
   status: 'executing' | 'completed' | 'failed';
-  result?: any;
+  result?: unknown;
   error?: string;
 };
 
@@ -43,7 +43,7 @@ export type HitlRequest = {
   stepId: string;
   message: string;
   action: string;
-  params: Record<string, any>;
+  params: Record<string, unknown>;
   timestamp: Date;
   confidence?: number;
   editableContent?: string;
@@ -72,14 +72,14 @@ export type ExecutionLog = {
   timestamp: Date;
   type: 'command' | 'api' | 'info' | 'error' | 'success';
   content: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 };
 
 export type ContextSnapshot = {
   url: string;
   title: string;
   screenshot?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   timestamp: Date;
 };
 
@@ -243,10 +243,12 @@ export const useAuraStore = create<AuraState>((set) => ({
     reorderPlanSteps: (stepIds) =>
       set((state) => {
         const stepMap = new Map(state.planSteps.map((step) => [step.id, step]));
-        const reordered = stepIds.map((id, index) => {
-          const step = stepMap.get(id);
-          return step ? { ...step, order: index } : null;
-        }).filter(Boolean) as PlanStep[];
+        const reordered = stepIds
+          .map((id, index) => {
+            const step = stepMap.get(id);
+            return step ? { ...step, order: index } : null;
+          })
+          .filter(Boolean) as PlanStep[];
         return { planSteps: reordered };
       }),
     addExecutionLog: (log) =>

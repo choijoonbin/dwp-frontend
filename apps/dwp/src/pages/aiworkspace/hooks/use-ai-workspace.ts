@@ -2,6 +2,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useRef, useMemo, useState, useEffect } from 'react';
+import { useAuraStore, useAuraActions } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 import {
   getUserId,
   postEvent,
@@ -14,8 +15,6 @@ import {
   rejectHitlRequest,
   approveHitlRequest,
 } from '@dwp-frontend/shared-utils';
-
-import { useAuraStore, useAuraActions } from 'src/store/use-aura-store';
 
 import { createAiWorkspaceMockData } from '../data/mock';
 

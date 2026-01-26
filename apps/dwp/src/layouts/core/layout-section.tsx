@@ -1,6 +1,6 @@
 import type { Theme, SxProps, CSSObject } from '@mui/material/styles';
 
-import { mergeClasses } from 'minimal-shared/utils';
+import { mergeClasses } from '@dwp-frontend/design-system';
 
 import { styled } from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';

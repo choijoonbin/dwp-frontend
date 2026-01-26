@@ -3,13 +3,12 @@
 import { useEffect } from 'react';
 import { keyframes } from '@emotion/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuraStore, useAuraActions } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import Box from '@mui/material/Box';
 import Badge from '@mui/material/Badge';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
-
-import { useAuraStore, useAuraActions } from 'src/store/use-aura-store';
 
 // ----------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 import type { RouteObject } from 'react-router';
 
 import { lazy, Suspense } from 'react';
-import { varAlpha } from 'minimal-shared/utils';
+import { varAlpha } from '@dwp-frontend/design-system';
 import { AuthGuard } from '@dwp-frontend/shared-utils';
 import { Outlet, Navigate, useParams } from 'react-router-dom';
 

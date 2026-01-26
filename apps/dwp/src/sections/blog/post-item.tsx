@@ -1,7 +1,7 @@
 import type { CardProps } from '@mui/material/Card';
 import type { IconifyName } from 'src/components/iconify';
 
-import { varAlpha } from 'minimal-shared/utils';
+import { varAlpha } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';

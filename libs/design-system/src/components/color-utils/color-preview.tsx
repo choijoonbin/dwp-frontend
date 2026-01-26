@@ -1,8 +1,7 @@
-import { varAlpha, mergeClasses } from 'minimal-shared/utils';
-
 import { styled } from '@mui/material/styles';
 
 import { colorPreviewClasses } from './classes';
+import { varAlpha, mergeClasses } from '../../utils';
 
 // ----------------------------------------------------------------------
 

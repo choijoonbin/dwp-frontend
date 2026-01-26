@@ -8,7 +8,7 @@ import type {
   ExecutionLog,
   ActionExecution,
   ContextSnapshot,
-} from 'src/store/use-aura-store';
+} from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 type AiWorkspaceMockData = {
   messages: AgentMessage[];

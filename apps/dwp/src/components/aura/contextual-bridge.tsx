@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import type { ContextSnapshot } from 'src/store/use-aura-store';
+import type { ContextSnapshot } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';

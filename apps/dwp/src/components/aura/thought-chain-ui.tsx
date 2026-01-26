@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import type { ThoughtChain } from 'src/store/use-aura-store';
+import type { ThoughtChain } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import { motion, AnimatePresence } from 'framer-motion';
 

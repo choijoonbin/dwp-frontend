@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
 import type { RefObject, KeyboardEvent } from 'react';
-import type { HitlRequest, AgentMessage } from 'src/store/use-aura-store';
+import type { HitlRequest, AgentMessage } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';

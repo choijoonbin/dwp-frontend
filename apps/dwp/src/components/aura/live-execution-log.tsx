@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import type { ExecutionLog } from 'src/store/use-aura-store';
+import type { ExecutionLog } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';

@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion';
 import { useMemo, useState, useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useAuraActions } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-
-import { useAuraActions } from 'src/store/use-aura-store';
 
 // ----------------------------------------------------------------------
 

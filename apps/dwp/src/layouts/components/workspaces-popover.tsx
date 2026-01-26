@@ -1,7 +1,7 @@
 import type { ButtonBaseProps } from '@mui/material/ButtonBase';
 
 import { useState, useCallback } from 'react';
-import { varAlpha } from 'minimal-shared/utils';
+import { varAlpha } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';

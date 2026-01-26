@@ -1,6 +1,6 @@
 ## DWP Frontend
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="docs/assets/nx-logo.png" width="45"></a>
 
 Nx Monorepo 구조를 기반으로 구축된 DWP 프론트엔드 워크스페이스입니다.  
 현재 **Host(Shell)와 Remote(Mail) 구조**가 Vite 기반으로 구성되어 있으며, 공통 UI 라이브러리(`design-system`)와 유틸리티(`shared-utils`)를 통해 마이크로 프론트엔드(MFE) 아키텍처를 실현하고 있습니다.
@@ -19,7 +19,7 @@ Nx Monorepo 구조를 기반으로 구축된 DWP 프론트엔드 워크스페이
 ## 🛠 기술 스택
 
 - **Framework**: React 19 + TypeScript (Strict Mode)
-- **UI**: MUI v5 (Minimal UI Kit 기반)
+- **UI**: MUI v5 기반 (design-system)
 - **Icons**: `@iconify/react` (Iconify 표준 아이콘 시스템)
 - **State Management**: 
   - **Global/Layout**: `Zustand` (Sidebar, Auth 상태 통합 관리)
@@ -48,7 +48,7 @@ dwp-frontend/
 │   │   │   ├── components/    # Aura FloatingButton, MiniOverlay 등
 │   │   │   │   └── aura/      # AI 업무 파트너 UI 컴포넌트
 │   │   │   ├── hooks/         # usePageContext 등 커스텀 훅
-│   │   │   ├── store/         # useLayoutStore, useAuraStore (Zustand)
+│   │   │   ├── store/         # useLayoutStore (Zustand, Host 전용). Aura는 libs/shared-utils
 │   │   │   ├── routes/        # react-router (AuthGuard 적용 가능 구조)
 │   │   │   └── pages/         # Dashboard, Sign-in, AI Workspace 등
 │   │   │       └── aiworkspace/  # AI Workspace 페이지 (반응형 레이아웃)

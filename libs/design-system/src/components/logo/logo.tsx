@@ -1,12 +1,11 @@
 import type { LinkProps } from '@mui/material/Link';
 
-import { mergeClasses } from 'minimal-shared/utils';
-
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import { styled } from '@mui/material/styles';
 
 import { logoClasses } from './classes';
+import { mergeClasses } from '../../utils';
 
 // ----------------------------------------------------------------------
 

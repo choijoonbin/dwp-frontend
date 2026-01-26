@@ -1,8 +1,8 @@
 import type { CSSObject } from '@mui/material/styles';
 
-import { varAlpha } from 'minimal-shared/utils';
-
 import { styled } from '@mui/material/styles';
+
+import { varAlpha } from '../../utils';
 
 import type { LabelProps } from './types';
 

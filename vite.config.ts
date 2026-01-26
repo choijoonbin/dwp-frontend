@@ -55,7 +55,7 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: [
-        // Keep existing Minimal UI imports working, but resolve shared parts from libs.
+        // Resolve src/theme, src/components to design-system (no external template dependency).
         {
           find: /^src\/theme(.*)$/,
           replacement: path.resolve(__dirname, 'libs/design-system/src/theme$1'),

@@ -1,6 +1,6 @@
 import type { BoxProps } from '@mui/material/Box';
 
-import { mergeClasses } from 'minimal-shared/utils';
+import { mergeClasses } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 

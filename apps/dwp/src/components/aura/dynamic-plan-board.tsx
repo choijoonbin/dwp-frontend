@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import type { PlanStep } from 'src/store/use-aura-store';
+import type { PlanStep } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import { useState } from 'react';
 import { motion, Reorder } from 'framer-motion';

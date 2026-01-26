@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-import type { HitlRequest } from 'src/store/use-aura-store';
+import type { HitlRequest } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
