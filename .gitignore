@@ -35,6 +35,9 @@ build
 .env.test.local
 .env.production.local
 
+# Nx workspace cache (auto-generated)
+.nx
+
 # misc
 .DS_Store
 .vercel
