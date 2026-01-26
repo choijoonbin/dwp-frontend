@@ -13,17 +13,17 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 
 // ----------------------------------------------------------------------
 
-export const DashboardPage = lazy(() => import('src/pages/dashboard'));
-export const MailPage = lazy(() => import('src/pages/mail'));
-export const ChatPage = lazy(() => import('src/pages/chat'));
-export const ApprovalPage = lazy(() => import('src/pages/approval'));
-export const AIWorkspacePage = lazy(() => import('src/pages/ai-workspace'));
+export const DashboardPage = lazy(() => import('../pages/dashboard'));
+export const MailPage = lazy(() => import('../pages/mail'));
+export const ChatPage = lazy(() => import('../pages/chat'));
+export const ApprovalPage = lazy(() => import('../pages/approval'));
+export const AIWorkspacePage = lazy(() => import('../pages/ai-workspace'));
 export const AdminPage = lazy(() => import('../pages/admin'));
-export const SignInPage = lazy(() => import('src/pages/sign-in'));
-export const SSOCallbackPage = lazy(() => import('src/pages/sso-callback'));
-export const ForgotPasswordPage = lazy(() => import('src/pages/forgot-password'));
-export const Page403 = lazy(() => import('src/pages/page-403'));
-export const Page404 = lazy(() => import('src/pages/page-not-found'));
+export const SignInPage = lazy(() => import('../pages/sign-in'));
+export const SSOCallbackPage = lazy(() => import('../pages/sso-callback'));
+export const ForgotPasswordPage = lazy(() => import('../pages/forgot-password'));
+export const Page403 = lazy(() => import('../pages/page-403'));
+export const Page404 = lazy(() => import('../pages/page-not-found'));
 
 const AppAdminRedirect = () => {
   const params = useParams();

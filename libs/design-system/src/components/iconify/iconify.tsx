@@ -27,11 +27,7 @@ export function Iconify({ className, icon, width = 20, height, sx, ...other }: I
 
   if (typeof icon === 'string' && !allIconNames.includes(icon as IconifyName)) {
     console.warn(
-      [
-        `Icon "${icon}" is currently loaded online, which may cause flickering effects.`,
-        `To ensure a smoother experience, please register your icon collection for offline use.`,
-        `More information is available at: https://docs.minimals.cc/icons/`,
-      ].join('\n')
+      `Icon "${icon}" is loaded online and may flicker. Register it in libs/design-system/src/components/iconify/icon-sets.ts for offline use.`
     );
   }
 

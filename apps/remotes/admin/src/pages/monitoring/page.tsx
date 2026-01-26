@@ -6,10 +6,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { MonitoringTabs } from './monitoring-tabs';
+import { AuraInsightBar } from './aura-insight-bar';
 import { MonitoringCharts } from './monitoring-charts';
 import { MonitoringKPICards } from './monitoring-kpi-cards';
 import { MonitoringFilterBar } from './monitoring-filter-bar';
-import { AuraInsightBar } from './aura-insight-bar';
 
 // ----------------------------------------------------------------------
 

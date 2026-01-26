@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useMemo, useState, useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import { alpha } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
 import { useAuraActions } from 'src/store/use-aura-store';
 
@@ -110,7 +110,7 @@ export const AuraInsightBar = ({ insightText, status }: AuraInsightBarProps) => 
               boxShadow: `0 0 12px ${alpha(accentColor, 0.4)}`,
             }}
           >
-            <Iconify icon="lucide:sparkles" width={22} />
+            <Iconify icon="solar:brain-bold" width={22} />
           </Box>
           <Typography variant="body2" sx={{ color: '#e2e8f0', lineHeight: 1.6 }}>
             {renderedText}
