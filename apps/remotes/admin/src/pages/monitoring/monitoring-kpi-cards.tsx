@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import {
   ApiErrorAlert,
+  getTimeseriesIntervalFromRange,
   type TimeseriesResponse,
   useMonitoringSummaryQuery,
   useMonitoringTimeseriesQuery,
@@ -9,23 +10,66 @@ import {
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 import { alpha } from '@mui/material/styles';
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
+import LinearProgress from '@mui/material/LinearProgress';
 
 // ----------------------------------------------------------------------
 
 type MonitoringCardProps = {
   title: string;
-  value: string;
+  /** 메인 지표 (예: "99.92%", "240ms", "12.3 RPS", "2.77%") */
+  mainValue: string;
   icon: string;
   color: string;
+  /** 서브 행 (예: "Downtime: 5m", "p50: 45 / p99: 620", "PV: 47 / UV: 2") */
+  subRow?: string;
+  /** 메인 옆 인라인 표시 (예: -1.1% → "(-1.1%)") */
   deltaPercent?: number;
+  /** 메인 옆 인라인 표시 (예: +30 → "(+30)") */
   deltaValue?: number;
+  /** true면 상승 시 빨간색 ▲ (에러율 등), false면 상승 시 녹색 */
+  deltaPositiveIsBad?: boolean;
   isLoading?: boolean;
   sparkline?: number[] | null;
+  /** Error 카드 전용: Budget 소진율 0-100, Progress Bar 표시 */
+  budgetPercent?: number;
+  /** Error Budget 소진 비율 0–1 (80% 이상이면 Bar 빨간색, 1.0 이상이면 100% cap + 강렬한 Red) */
+  consumedRatio?: number;
+  /** consumedRatio >= 1.0일 때 Bar 100% 고정 + 강렬한 Red 시각적 경고 */
+  isOverConsumed?: boolean;
+  /** 메인 수치 아래 Trend 행 (예: 전일 대비 +0.5pp) */
+  trendText?: string;
+  /** trendText를 위험(Red) 스타일로 표시 */
+  trendTextDanger?: boolean;
+  /** 에러율 3% 초과 시 카드 상단 Red + 경고 아이콘 */
+  isDanger?: boolean;
+  /** 가용성 카드: successRate < criticalThreshold 일 때 [Critical] + Red 테마 */
+  slaCritical?: boolean;
+  /** 가용성 카드: criticalThreshold ≤ successRate < sloTarget 일 때 [Below SLO] + Yellow 테마 */
+  slaWarning?: boolean;
+  /** 가용성 카드: Warning 배지 문구 (예: "Below SLO") */
+  warningBadgeLabel?: string;
+  /** 가용성 카드: 우측 상단 SLO 칩 (예: "SLO 99.9%") */
+  sloTargetChip?: string;
+  /** 가용성 카드: Downtime & Uptime 한 줄 또는 둘째 줄 */
+  subRow2?: string;
+  /** 서브 행을 커스텀 노드로 대체 (예: Latency p99 툴팁·강조) */
+  subRowNode?: React.ReactNode;
+  /** 스파크라인 최고점 높이 비율(0~1). 가용성 카드에서 텍스트와 겹치지 않도록 0.6 등으로 제한 */
+  sparklineMaxPeakRatio?: number;
+  onClick?: () => void;
+  /** 클릭 시 활성 상태 → Border 컬러 강조 */
+  isActive?: boolean;
+  /** 가용성 등급에 맞춘 변동률 색상(미지정 시 방향별 Red/Green) */
+  deltaColor?: string;
+  /** 변동률 숫자 표기 시 단위 (예: "ms") */
+  deltaUnit?: string;
 };
 
 const sampleValues = (values: number[], maxPoints = 12): number[] => {
@@ -84,16 +128,17 @@ const getSmoothPath = (points: { x: number; y: number }[]) => {
   return path;
 };
 
-const getSparklinePaths = (values: number[]) => {
+const getSparklinePaths = (values: number[], maxPeakRatio = 1) => {
   const width = 100;
   const height = 40;
   const max = Math.max(...values);
   const min = Math.min(...values);
   const range = max - min || 1;
+  const effectiveHeight = (height - 6) * Math.max(0.2, Math.min(1, maxPeakRatio));
 
   const points = values.map((value, index) => {
-    const x = (index / (values.length - 1)) * width;
-    const y = height - ((value - min) / range) * (height - 6) - 2;
+    const x = (values.length - 1) > 0 ? (index / (values.length - 1)) * width : 0;
+    const y = height - ((value - min) / range) * effectiveHeight - 2;
     return { x, y };
   });
 
@@ -104,12 +149,22 @@ const getSparklinePaths = (values: number[]) => {
   return { linePath, areaPath };
 };
 
-const Sparkline = ({ color, values }: { color: string; values: number[] }) => {
+/** 배경 스파크라인. 부모가 높이를 주면 100% 채움 (카드 하단 40% 영역 등). maxPeakRatio로 선 최고점을 하단으로 제한해 텍스트와 겹침 방지. */
+const Sparkline = ({
+  color,
+  values,
+  maxPeakRatio = 1,
+}: {
+  color: string;
+  values: number[];
+  /** 0~1. 1=전체 높이, 0.6=최고점이 컨테이너 높이의 60%로 제한되어 상단 텍스트와 겹치지 않음 */
+  maxPeakRatio?: number;
+}) => {
   if (values.every((value) => value === 0)) {
     return null;
   }
 
-  const { linePath, areaPath } = getSparklinePaths(values);
+  const { linePath, areaPath } = getSparklinePaths(values, maxPeakRatio);
 
   return (
     <Box
@@ -122,7 +177,7 @@ const Sparkline = ({ color, values }: { color: string; values: number[] }) => {
         right: 0,
         bottom: 0,
         width: '100%',
-        height: 48,
+        height: '100%',
         opacity: 1,
         zIndex: 0,
       }}
@@ -133,113 +188,365 @@ const Sparkline = ({ color, values }: { color: string; values: number[] }) => {
   );
 };
 
-const DeltaBadge = ({
+/** 메인 값 옆 인라인 델타 (예: "(-1.1%)", "(+968ms)"). deltaUnit 있으면 숫자 뒤에 단위 붙임. colorOverride 시 등급 색상 일치 */
+const InlineDelta = ({
   deltaPercent,
   deltaValue,
+  deltaPositiveIsBad,
+  colorOverride,
+  deltaUnit,
 }: {
   deltaPercent?: number;
   deltaValue?: number;
+  deltaPositiveIsBad?: boolean;
+  colorOverride?: string;
+  /** 숫자 표기 시 단위 (예: "ms") */
+  deltaUnit?: string;
 }) => {
-  if (deltaPercent === undefined) return null;
-
-  const isPositive = deltaPercent >= 0;
-  const badgeColor = isPositive ? '#10b981' : '#ef4444';
-  const arrow = isPositive ? '↑' : '↓';
-  const statusText = isPositive ? '상승' : '하락';
-  const percentText = `${Math.abs(deltaPercent).toFixed(2)}%`;
-  const valueText = deltaValue !== undefined ? `${deltaValue >= 0 ? '+' : ''}${deltaValue.toLocaleString()}` : null;
+  if (deltaPercent === undefined && deltaValue === undefined) return null;
+  const usePercent = deltaPercent !== undefined;
+  const value = usePercent ? (deltaPercent ?? 0) : (deltaValue ?? 0);
+  const isPositive = value >= 0;
+  const isBad = deltaPositiveIsBad ? isPositive : !isPositive;
+  const color = colorOverride ?? (isBad ? '#ef4444' : '#10b981');
+  const text = usePercent
+    ? `(${isPositive ? '+' : ''}${(deltaPercent ?? 0).toFixed(1)}%)`
+    : `(${isPositive ? '+' : ''}${deltaValue}${deltaUnit ?? ''})`;
+  const ArrowIcon = isPositive ? '▲' : '▼';
 
   return (
-    <Box
-      sx={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 1,
-        px: 1.5,
-        py: 0.3,
-        borderRadius: 9999,
-        bgcolor: alpha(badgeColor, 0.12),
-        color: badgeColor,
-        border: `1px solid ${alpha(badgeColor, 0.3)}`,
-        fontSize: 11,
-        fontWeight: 600,
-      }}
-    >
-      <Box component="span">{arrow}</Box>
-      <Box component="span">{statusText}</Box>
-      {valueText && <Box component="span">{valueText}</Box>}
-      <Box component="span">({percentText})</Box>
-    </Box>
+    <Typography component="span" sx={{ fontSize: 14, fontWeight: 600, color, ml: 0.5, display: 'inline-flex', alignItems: 'center', gap: 0.25 }}>
+      {ArrowIcon}
+      {text}
+    </Typography>
   );
 };
 
+const ERROR_DANGER_COLOR = '#EF4444';
+const WARNING_AMBER_COLOR = '#f59e0b';
+const ERROR_BUDGET_DANGER_THRESHOLD = 80; // % 이상 소진 시 Bar 빨간색
+
 const MonitoringCard = ({
   title,
-  value,
+  mainValue,
   icon,
   color,
+  subRow,
   deltaPercent,
   deltaValue,
+  deltaPositiveIsBad,
   isLoading,
   sparkline,
-}: MonitoringCardProps) => (
-  <Card
-    sx={{
-      position: 'relative',
-      overflow: 'hidden',
-      borderRadius: 2,
-      boxShadow: '0 12px 24px rgba(15, 23, 42, 0.08)',
-      bgcolor: 'background.paper',
-      minHeight: 180,
-    }}
-  >
-    <Box sx={{ height: 4, bgcolor: color }} />
-    <Box
-      sx={{
-        p: 2.5,
-        position: 'relative',
-        zIndex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 1.25,
-      }}
-    >
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Iconify icon={icon} width={22} sx={{ color }} />
-          <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-            {title}
-          </Typography>
+  budgetPercent,
+  consumedRatio,
+  isOverConsumed,
+  trendText,
+  trendTextDanger,
+  isDanger,
+  slaCritical,
+  slaWarning,
+  warningBadgeLabel,
+  sloTargetChip,
+  subRow2,
+  subRowNode,
+  sparklineMaxPeakRatio,
+  onClick,
+  isActive,
+  deltaColor,
+  deltaUnit,
+}: MonitoringCardProps) => {
+  /** 등급별 색상: Critical → Red, Warning → Amber, 그외 → color. 상단바·아이콘·메인·변동률·테두리 일관 적용 */
+  const topBarColor =
+    isDanger || slaCritical ? ERROR_DANGER_COLOR : slaWarning ? WARNING_AMBER_COLOR : color;
+  const cardIcon = isDanger
+    ? 'solar:bell-bold'
+    : slaCritical
+      ? 'solar:danger-triangle-bold'
+      : slaWarning
+        ? 'solar:warning-circle-bold'
+        : icon;
+  const barValue =
+    consumedRatio != null
+      ? Math.min(100, Math.max(0, consumedRatio * 100))
+      : budgetPercent != null
+        ? Math.min(100, Math.max(0, budgetPercent))
+        : undefined;
+  const barIsDanger = barValue != null && (barValue >= ERROR_BUDGET_DANGER_THRESHOLD || isOverConsumed);
+  const barColor = isOverConsumed ? ERROR_DANGER_COLOR : barIsDanger ? ERROR_DANGER_COLOR : color;
+
+  const content = (
+    <>
+      <Box sx={{ height: 4, bgcolor: topBarColor }} />
+      <Box
+        sx={{
+          p: 2.5,
+          position: 'relative',
+          zIndex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1.25,
+        }}
+      >
+        <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Iconify icon={cardIcon} width={22} sx={{ color: topBarColor }} />
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              {title}
+            </Typography>
+          </Stack>
+          {isLoading ? (
+            <Skeleton variant="text" width={80} height={40} />
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 1 }}>
+              {sloTargetChip && (
+                <Chip
+                  label={sloTargetChip}
+                  size="small"
+                  sx={{
+                    height: 22,
+                    typography: 'caption',
+                    fontWeight: 600,
+                    bgcolor: alpha(color, 0.12),
+                    color: 'text.secondary',
+                    border: '1px solid',
+                    borderColor: alpha(color, 0.3),
+                  }}
+                />
+              )}
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 900,
+                  fontSize: { xs: 28, md: 32 },
+                  lineHeight: 1,
+                  fontFamily: '"Inter", "Pretendard", sans-serif',
+                  color: slaCritical ? ERROR_DANGER_COLOR : slaWarning ? WARNING_AMBER_COLOR : undefined,
+                }}
+              >
+                {mainValue}
+              </Typography>
+              {slaCritical && (
+                <Box
+                  component="span"
+                  sx={{
+                    px: 1,
+                    py: 0.25,
+                    borderRadius: 0.5,
+                    typography: 'caption',
+                    fontWeight: 700,
+                    bgcolor: alpha(ERROR_DANGER_COLOR, 0.08),
+                    color: ERROR_DANGER_COLOR,
+                    border: '1px solid',
+                    borderColor: alpha(ERROR_DANGER_COLOR, 0.35),
+                  }}
+                >
+                  Critical
+                </Box>
+              )}
+              {slaWarning && warningBadgeLabel && !slaCritical && (
+                <Box
+                  component="span"
+                  sx={{
+                    px: 1,
+                    py: 0.25,
+                    borderRadius: 0.5,
+                    typography: 'caption',
+                    fontWeight: 700,
+                    bgcolor: alpha(WARNING_AMBER_COLOR, 0.12),
+                    color: WARNING_AMBER_COLOR,
+                    border: '1px solid',
+                    borderColor: alpha(WARNING_AMBER_COLOR, 0.4),
+                  }}
+                >
+                  {warningBadgeLabel}
+                </Box>
+              )}
+              <InlineDelta
+                deltaPercent={deltaPercent}
+                deltaValue={deltaValue}
+                deltaPositiveIsBad={deltaPositiveIsBad}
+                colorOverride={deltaColor}
+                deltaUnit={deltaUnit}
+              />
+            </Box>
+          )}
         </Stack>
-        {isLoading ? (
-          <Skeleton variant="text" width={80} height={40} />
-        ) : (
+        {!isLoading && trendText !== undefined && trendText !== '' && (
           <Typography
-            variant="h3"
+            variant="caption"
             sx={{
-              fontWeight: 900,
-              fontSize: { xs: 30, md: 34 },
-              lineHeight: 1,
-              fontFamily: '"Inter", "Pretendard", sans-serif',
+              color: trendTextDanger ? ERROR_DANGER_COLOR : 'text.secondary',
+              fontWeight: trendTextDanger ? 600 : undefined,
             }}
           >
-            {value}
+            {trendText}
           </Typography>
         )}
-      </Stack>
-      {!isLoading && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <DeltaBadge deltaPercent={deltaPercent} deltaValue={deltaValue} />
+        {!isLoading && (subRowNode != null || (subRow !== undefined && subRow !== '') || (subRow2 !== undefined && subRow2 !== '')) && (
+          <Box
+            sx={{
+              position: 'relative',
+              zIndex: 2,
+              bgcolor: 'background.paper',
+              px: 0.75,
+              py: 0.25,
+              borderRadius: 0.5,
+              alignSelf: 'flex-start',
+            }}
+          >
+            {subRowNode != null
+              ? subRowNode
+              : subRow !== undefined && subRow !== '' && (
+                  <Typography variant="caption" sx={{ color: 'text.secondary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }} title={subRow}>
+                    {subRow}
+                  </Typography>
+                )}
+            {subRow2 !== undefined && subRow2 !== '' && (
+              <Typography variant="caption" sx={{ color: 'text.secondary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }} title={subRow2}>
+                {subRow2}
+              </Typography>
+            )}
+          </Box>
+        )}
+        {!isLoading && barValue !== undefined && (
+          <Box sx={{ mt: 0.5 }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
+              Error Budget
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={barValue}
+              sx={{
+                height: 6,
+                borderRadius: 1,
+                bgcolor: alpha(barColor, 0.12),
+                '& .MuiLinearProgress-bar': {
+                  bgcolor: barColor,
+                  ...(isOverConsumed ? { opacity: 1, boxShadow: `0 0 8px ${alpha(ERROR_DANGER_COLOR, 0.5)}` } : {}),
+                },
+              }}
+            />
+          </Box>
+        )}
+      </Box>
+      {sparkline && (
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '35%',
+            maxHeight: 60,
+            zIndex: 0,
+            display: 'flex',
+            alignItems: 'flex-end',
+          }}
+        >
+          <Sparkline
+            color={topBarColor}
+            values={sparkline}
+            maxPeakRatio={sparklineMaxPeakRatio}
+          />
         </Box>
       )}
-    </Box>
-    {sparkline && <Sparkline color={color} values={sparkline} />}
-  </Card>
-);
+    </>
+  );
+
+  const cardSx = {
+    position: 'relative' as const,
+    overflow: 'hidden',
+    borderRadius: 2,
+    boxShadow: '0 12px 24px rgba(15, 23, 42, 0.08)',
+    bgcolor: 'background.paper',
+    minHeight: 180,
+    ...(isActive ? { border: `2px solid ${topBarColor}`, boxShadow: `0 0 0 1px ${alpha(topBarColor, 0.3)}` } : {}),
+    ...((isDanger || slaCritical) && !isActive ? { borderTop: `4px solid ${ERROR_DANGER_COLOR}` } : {}),
+    ...(slaWarning && !slaCritical && !isActive ? { borderTop: `4px solid ${WARNING_AMBER_COLOR}` } : {}),
+    ...(onClick
+      ? {
+          cursor: 'pointer',
+          ...(!isActive ? { border: '1px solid transparent' } : {}),
+          '&:hover': {
+            bgcolor: 'action.hover',
+            ...(!isActive ? { borderColor: alpha(topBarColor, 0.4) } : {}),
+          },
+        }
+      : {}),
+  };
+
+  if (onClick) {
+    return (
+      <Card role="button" tabIndex={0} onClick={onClick} onKeyDown={(e) => e.key === 'Enter' && onClick()} sx={cardSx}>
+        {content}
+      </Card>
+    );
+  }
+  return <Card sx={cardSx}>{content}</Card>;
+};
+
+export type MonitoringKpiCardKey = 'availability' | 'latency' | 'traffic' | 'error';
+
+/** 가용성 KPI 일부 필드 (차트 선 색상 판정용) */
+export type AvailabilityKpiForColor = {
+  successRate?: number;
+  successRatePercent?: number;
+  sloTargetSuccessRate?: number;
+  criticalThreshold?: number;
+};
+
+/** 지연 시간 KPI 일부 필드 (차트 선 색상 판정용). 숫자가 높을수록 위험(> 사용). 스펙: sloTarget/criticalThreshold(ms) */
+export type LatencyKpiForColor = {
+  p95Ms?: number;
+  sloTarget?: number;
+  criticalThreshold?: number;
+  sloTargetMs?: number;
+  criticalThresholdMs?: number;
+};
+
+/**
+ * 활성 KPI 카드와 동일한 색상을 우측 차트 선에 반영.
+ * Availability는 criticalThreshold/sloTarget 기반, Latency는 p95 > critical/slo 기반.
+ */
+export const getChartLineColorForKpi = (
+  activeKpi: MonitoringKpiCardKey | null | undefined,
+  availability?: AvailabilityKpiForColor | null,
+  latency?: LatencyKpiForColor | null
+): string => {
+  if (!activeKpi) return '#3b82f6';
+  switch (activeKpi) {
+    case 'availability': {
+      const rate = availability?.successRate ?? availability?.successRatePercent;
+      const sloTarget = availability?.sloTargetSuccessRate ?? DEFAULT_SLO_TARGET;
+      const criticalThreshold = availability?.criticalThreshold ?? DEFAULT_CRITICAL_THRESHOLD;
+      if (rate != null && rate < criticalThreshold) return ERROR_DANGER_COLOR;
+      if (rate != null && rate < sloTarget) return WARNING_AMBER_COLOR;
+      return '#3b82f6';
+    }
+    case 'latency': {
+      const p95 = latency?.p95Ms;
+      const sloMs = latency?.sloTarget ?? latency?.sloTargetMs ?? DEFAULT_LATENCY_SLO_MS;
+      const criticalMs = latency?.criticalThreshold ?? latency?.criticalThresholdMs ?? DEFAULT_LATENCY_CRITICAL_MS;
+      if (p95 != null && p95 > criticalMs) return ERROR_DANGER_COLOR;
+      if (p95 != null && p95 > sloMs) return WARNING_AMBER_COLOR;
+      return '#10b981';
+    }
+    case 'traffic':
+      return '#8b5cf6';
+    case 'error':
+      return ERROR_DANGER_COLOR;
+    default:
+      return '#3b82f6';
+  }
+};
 
 type MonitoringKPICardsProps = {
   dateFrom?: string;
   dateTo?: string;
+  /** 현재 드릴다운된 KPI → 해당 카드 Border 강조 */
+  activeKpi?: MonitoringKpiCardKey | null;
+  /** KPI 카드 클릭 시 API 히스토리 탭 이동 + 드릴다운 필터 적용 */
+  onKpiClick?: (cardKey: MonitoringKpiCardKey) => void;
 };
 
 /**
@@ -330,20 +637,414 @@ const getDateRangeFromPeriod = (period: '1h' | '24h' | '7d' | '30d'): { from: st
   };
 };
 
-export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps) => {
-  // Use period-based date range if explicit dates not provided
-  // Memoize to prevent infinite re-renders
-  // dateFrom and dateTo are already in UTC ISO format (from monitoring.tsx)
-  // If not provided, use 24h period and convert KST to UTC
+const emptyValue = '-';
+
+/** Fallback: kpi null/수치 없음 시 가용성 100.0%, 기타 0 (스펙·기획 가이드) */
+const AVAILABILITY_FALLBACK_MAIN = '100.00%';
+const AVAILABILITY_FALLBACK_SUB = 'Downtime: 0m';
+
+const DEFAULT_SLO_TARGET = 99.9; // 스펙 Fallback
+const DEFAULT_CRITICAL_THRESHOLD = 99.0; // 스펙 Fallback AVAILABILITY_CRITICAL_THRESHOLD
+
+/** uptimeMinutes → "29d 23h 36m" 형식 (스펙: 가동 시간 분) */
+const formatUptimeMinutes = (totalMinutes: number): string => {
+  if (totalMinutes < 0) return '0m';
+  const d = Math.floor(totalMinutes / (60 * 24));
+  const h = Math.floor((totalMinutes % (60 * 24)) / 60);
+  const m = Math.floor(totalMinutes % 60);
+  const parts: string[] = [];
+  if (d > 0) parts.push(`${d}d`);
+  if (h > 0) parts.push(`${h}h`);
+  if (m > 0 || parts.length === 0) parts.push(`${m}m`);
+  return parts.join(' ');
+};
+
+/**
+ * 가용성 상태 판정 (우선순위 순).
+ * 1) Critical(최우선): successRate < criticalThreshold → Red + [Critical].
+ * 2) Warning: successRate < sloTarget → Yellow + [Below SLO].
+ * 3) Normal: 그 외 → Blue, 배지 없음.
+ * DB 설정 오류로 criticalThreshold > sloTarget 이어도 Critical을 먼저 판정하여 위험 신호가 누락되지 않음.
+ */
+const formatAvailabilityCard = (kpi: {
+  successRate?: number;
+  successRatePercent?: number;
+  sloTargetSuccessRate?: number;
+  criticalThreshold?: number;
+  downtimeMinutes?: number;
+  uptimeMinutes?: number;
+  uptime?: string;
+  delta?: { successRatePp?: number };
+} | undefined) => {
+  if (!kpi) {
+    return {
+      main: AVAILABILITY_FALLBACK_MAIN,
+      sub: AVAILABILITY_FALLBACK_SUB,
+      deltaPercent: undefined,
+      isSlaCritical: false,
+      isSlaWarning: false,
+      warningBadgeLabel: undefined,
+      sloTargetChip: `SLO ${DEFAULT_SLO_TARGET}%`,
+    };
+  }
+  const rate = kpi.successRate ?? kpi.successRatePercent;
+  const sloTarget = kpi.sloTargetSuccessRate ?? DEFAULT_SLO_TARGET;
+  const criticalThreshold = kpi.criticalThreshold ?? DEFAULT_CRITICAL_THRESHOLD;
+  /** 메인 수치 소수점 둘째 자리 고정 (예: 96.40%) */
+  const main = rate !== undefined && rate !== null ? `${rate.toFixed(2)}%` : AVAILABILITY_FALLBACK_MAIN;
+  const downtimeStr = kpi.downtimeMinutes !== undefined && kpi.downtimeMinutes !== null ? `Downtime: ${kpi.downtimeMinutes}m` : AVAILABILITY_FALLBACK_SUB;
+  const uptimeStr =
+    kpi.uptimeMinutes !== undefined && kpi.uptimeMinutes !== null
+      ? `Uptime: ${formatUptimeMinutes(kpi.uptimeMinutes)}`
+      : kpi.uptime
+        ? `Uptime: ${kpi.uptime}`
+        : undefined;
+  const sub = uptimeStr ? `${downtimeStr} & ${uptimeStr}` : downtimeStr;
+  const deltaPercent = kpi.delta?.successRatePp;
+  const isSlaCritical = rate !== undefined && rate !== null && rate < criticalThreshold;
+  const isSlaWarning =
+    !isSlaCritical && rate !== undefined && rate !== null && sloTarget !== undefined && sloTarget !== null && rate < sloTarget;
+  const warningBadgeLabel = isSlaWarning ? 'Below SLO' : undefined;
+  const sloTargetChip = `SLO ${sloTarget}%`;
+  return { main, sub, deltaPercent, isSlaCritical, isSlaWarning, warningBadgeLabel, sloTargetChip };
+};
+
+const DEFAULT_LATENCY_SLO_MS = 500;
+const DEFAULT_LATENCY_CRITICAL_MS = 1500;
+
+/**
+ * Latency 상태 판정 (숫자가 높을수록 위험 → > 사용).
+ * Critical: p95 > criticalThresholdMs (1500ms 초과)
+ * Below SLO: p95 > sloTargetMs (500ms 초과)
+ * Normal: 그 외
+ */
+const formatLatencyCard = (kpi: {
+  p95Ms?: number;
+  p50Ms?: number;
+  p99Ms?: number;
+  p50Latency?: number;
+  p99Latency?: number;
+  avgLatency?: number;
+  sloTarget?: number;
+  criticalThreshold?: number;
+  sloTargetMs?: number;
+  criticalThresholdMs?: number;
+  prevAvgLatency?: number;
+  delta?: { p95Ms?: number; p99Ms?: number; p95MsPercent?: number };
+} | undefined) => {
+  if (!kpi) {
+    return {
+      main: '0ms',
+      sub: 'p50: 0 / p99: 0',
+      p50Ms: 0,
+      p99Ms: 0,
+      p99OverCritical: false,
+      deltaPercent: undefined,
+      deltaValue: undefined,
+      isSlaCritical: false,
+      isSlaWarning: false,
+      warningBadgeLabel: undefined,
+      sloTargetChip: `SLO < ${DEFAULT_LATENCY_SLO_MS}ms`,
+    };
+  }
+  const p95 = kpi.p95Ms !== undefined && kpi.p95Ms !== null ? kpi.p95Ms : 0;
+  const p50 = kpi.p50Ms ?? kpi.p50Latency;
+  const p99 = kpi.p99Ms ?? kpi.p99Latency;
+  const p50Val = p50 !== undefined && p50 !== null ? p50 : 0;
+  const p99Val = p99 !== undefined && p99 !== null ? p99 : 0;
+  const sloTargetMs = kpi.sloTarget ?? kpi.sloTargetMs ?? DEFAULT_LATENCY_SLO_MS;
+  const criticalThresholdMs = kpi.criticalThreshold ?? kpi.criticalThresholdMs ?? DEFAULT_LATENCY_CRITICAL_MS;
+
+  const main = `${p95}ms`;
+  const sub = `p50: ${p50Val} / p99: ${p99Val}`;
+  const isSlaCritical = p95 > criticalThresholdMs;
+  const isSlaWarning = !isSlaCritical && p95 > sloTargetMs;
+  const warningBadgeLabel = isSlaWarning ? 'Below SLO' : undefined;
+  const sloTargetChip = `SLO < ${sloTargetMs}ms`;
+  const p99OverCritical = p99Val > criticalThresholdMs;
+
+  const deltaValue = kpi.delta?.p95Ms;
+  const currentAvg = kpi.avgLatency ?? p95;
+  const prevAvg = kpi.prevAvgLatency;
+  const deltaPercent =
+    kpi.delta?.p95MsPercent ??
+    (prevAvg != null && prevAvg !== 0 && currentAvg != null
+      ? ((currentAvg - prevAvg) / prevAvg) * 100
+      : undefined);
+
+  return {
+    main,
+    sub,
+    p50Ms: p50Val,
+    p99Ms: p99Val,
+    p99OverCritical,
+    deltaPercent,
+    deltaValue,
+    isSlaCritical,
+    isSlaWarning,
+    warningBadgeLabel,
+    sloTargetChip,
+  };
+};
+
+const TRAFFIC_PURPLE = '#8b5cf6';
+const TRAFFIC_PURPLE_LIGHT = alpha(TRAFFIC_PURPLE, 0.1);
+const TRAFFIC_RPS_WARNING_THRESHOLD = 50;
+const TRAFFIC_RPS_WARNING_COLOR = '#f97316'; // orange-500
+
+/** 1,000 이상이면 1.2K 형태로 포맷 */
+const formatCompactNumber = (n: number): { display: string; full: string } => {
+  const full = n.toLocaleString();
+  if (n >= 1000) {
+    const truncated = (n / 1000).toFixed(1).replace(/\.0$/, '');
+    return { display: `${truncated}K`, full };
+  }
+  return { display: full, full };
+};
+
+/** Traffic: RPS 메인(소수점 1자리), PV/UV 인사이트, delta. Fallback 0.0 RPS (스펙·기획) */
+const formatTrafficCard = (
+  kpi: { rpsAvg?: number; rpsPeak?: number; delta?: { pvDeltaPercent?: number } } | undefined,
+  pv: number,
+  uv: number,
+  deltaPercent?: number
+) => {
+  const rpsAvg = kpi?.rpsAvg;
+  const rpsPeak = kpi?.rpsPeak;
+  const pvF = formatCompactNumber(pv);
+  const uvF = formatCompactNumber(uv);
+  const isEmpty = rpsAvg === undefined && rpsPeak === undefined;
+  const effectiveDelta = deltaPercent ?? kpi?.delta?.pvDeltaPercent;
+  return {
+    rpsAvg: isEmpty ? 0 : (rpsAvg ?? 0),
+    rpsPeak: rpsPeak ?? 0,
+    pvFormatted: pvF,
+    uvFormatted: uvF,
+    deltaPercent: effectiveDelta,
+    isEmpty,
+  };
+};
+
+/** Layer 1: 하단 30% 스파크라인 (Empty 시 플랫한 선) */
+const TrafficSparklineLayer = ({
+  values,
+  color,
+}: {
+  values: number[] | null;
+  color: string;
+}) => {
+  const flatLine = values == null || values.length === 0 || values.every((v) => v === 0);
+  const points: number[] = flatLine ? Array.from({ length: 12 }, () => 0) : sampleValues(values ?? [], 12);
+  const safePoints = points.length >= 2 ? points : [0, 0];
+  const { linePath, areaPath } = getSparklinePaths(safePoints);
+
+  return (
+    <Box
+      sx={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        height: '30%',
+        opacity: 0.4,
+        zIndex: 0,
+      }}
+    >
+      <Box
+        component="svg"
+        viewBox="0 0 100 40"
+        preserveAspectRatio="none"
+        sx={{ width: '100%', height: '100%', display: 'block' }}
+      >
+        <path d={areaPath} fill={alpha(color, 0.15)} />
+        <path d={linePath} fill="none" stroke={color} strokeWidth={2} strokeOpacity={0.5} />
+      </Box>
+    </Box>
+  );
+};
+
+/** Traffic 전용 카드: 4 Layer 구조, RPS 중심, PV/UV 인사이트, delta 배지 */
+const TrafficCard = ({
+  rpsAvg,
+  rpsPeak,
+  pvFormatted,
+  uvFormatted,
+  deltaPercent,
+  isEmpty,
+  sparklineValues,
+  isLoading,
+  isActive,
+  onClick,
+}: {
+  rpsAvg?: number;
+  rpsPeak?: number;
+  pvFormatted: { display: string; full: string };
+  uvFormatted: { display: string; full: string };
+  deltaPercent?: number;
+  isEmpty: boolean;
+  sparklineValues: number[] | null;
+  isLoading: boolean;
+  isActive: boolean;
+  onClick?: () => void;
+}) => {
+  const rpsColor =
+    rpsAvg != null && rpsAvg > TRAFFIC_RPS_WARNING_THRESHOLD
+      ? TRAFFIC_RPS_WARNING_COLOR
+      : TRAFFIC_PURPLE;
+  const rpsDisplay = (rpsAvg ?? 0).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const deltaUp = deltaPercent != null && deltaPercent >= 0;
+
+  const content = (
+    <>
+      <Box sx={{ height: 4, bgcolor: TRAFFIC_PURPLE }} />
+      <TrafficSparklineLayer values={sparklineValues} color={TRAFFIC_PURPLE} />
+      <Box sx={{ position: 'relative', zIndex: 1, p: 2.5, display: 'flex', flexDirection: 'column', gap: 0, minHeight: 180 }}>
+        {/* Layer 2: Header - Title & Delta */}
+        <Stack direction="row" alignItems="flex-start" justifyContent="space-between" sx={{ mb: 2 }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Iconify icon="solar:chart-2-bold" width={22} sx={{ color: TRAFFIC_PURPLE }} />
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              Traffic
+            </Typography>
+          </Stack>
+          {!isLoading && deltaPercent !== undefined && (
+            <Box
+              sx={{
+                px: 1.5,
+                py: 0.5,
+                borderRadius: '9999px',
+                typography: 'caption',
+                fontWeight: 600,
+                bgcolor: deltaUp ? alpha('#22c55e', 0.1) : alpha('#ef4444', 0.1),
+                color: deltaUp ? '#22c55e' : '#ef4444',
+              }}
+            >
+              {deltaUp ? '▲' : '▼'} {Math.abs(deltaPercent).toFixed(1)}%
+            </Box>
+          )}
+        </Stack>
+        {/* Layer 3: Main - RPS */}
+        {isLoading ? (
+          <Skeleton variant="text" width={120} height={48} sx={{ mb: 2 }} />
+        ) : (
+          <Stack direction="row" alignItems="baseline" spacing={1} sx={{ mb: 2 }}>
+            <Typography
+              variant="h3"
+              sx={{
+                fontWeight: 900,
+                fontSize: { xs: 28, md: 32 },
+                lineHeight: 1,
+                fontFamily: '"Inter", "Pretendard", sans-serif',
+                color: isEmpty ? 'text.secondary' : rpsColor,
+              }}
+            >
+              {rpsDisplay}
+            </Typography>
+            <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'uppercase' }}>
+              RPS
+            </Typography>
+          </Stack>
+        )}
+        {/* Layer 4: Insight Row (border-t) */}
+        {!isLoading && (
+          <Box
+            sx={{
+              pt: 2,
+              mt: 'auto',
+              borderTop: 1,
+              borderColor: 'divider',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              typography: 'caption',
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ color: 'text.secondary' }}>
+              <Tooltip title={pvFormatted.full}>
+                <Typography component="span" variant="caption" sx={{ color: 'text.secondary' }}>
+                  PV <Typography component="b" variant="caption" sx={{ color: 'text.primary', fontWeight: 600 }}>{pvFormatted.display}</Typography>
+                </Typography>
+              </Tooltip>
+              <Typography component="span" variant="caption" sx={{ color: 'text.disabled' }}>•</Typography>
+              <Tooltip title={uvFormatted.full}>
+                <Typography component="span" variant="caption" sx={{ color: 'text.secondary' }}>
+                  UV <Typography component="b" variant="caption" sx={{ color: 'text.primary', fontWeight: 600 }}>{uvFormatted.display}</Typography>
+                </Typography>
+              </Tooltip>
+            </Stack>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+              Peak: {rpsPeak != null ? rpsPeak.toLocaleString(undefined, { minimumFractionDigits: 1 }) : '-'}
+            </Typography>
+          </Box>
+        )}
+      </Box>
+    </>
+  );
+
+  const cardSx = {
+    position: 'relative' as const,
+    overflow: 'hidden',
+    borderRadius: 2,
+    boxShadow: '0 12px 24px rgba(15, 23, 42, 0.08)',
+    bgcolor: 'background.paper',
+    minHeight: 180,
+    ...(isActive
+      ? {
+          border: `2px solid ${TRAFFIC_PURPLE}`,
+          boxShadow: `0 0 0 1px ${alpha(TRAFFIC_PURPLE, 0.3)}`,
+        }
+      : {}),
+    ...(onClick ? { cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } } : {}),
+  };
+
+  if (onClick) {
+    return (
+      <Card role="button" tabIndex={0} onClick={onClick} onKeyDown={(e) => e.key === 'Enter' && onClick()} sx={cardSx}>
+        {content}
+      </Card>
+    );
+  }
+  return <Card sx={cardSx}>{content}</Card>;
+};
+
+/** Error: 메인 rate5xx(%) 소수점 2자리 | Trend rate5xxPp | consumedRatio Bar. Fallback 0.00%, 4xx/5xx: 0. consumedRatio >= 1이면 100% cap + 시각적 경고 */
+const formatErrorCard = (
+  kpi: {
+    count4xx?: number;
+    count5xx?: number;
+    rate5xx?: number;
+    consumedRatio?: number;
+    budget?: { consumedRatio?: number };
+    errorBudgetWeekBurnPercent?: number;
+    errorBudgetMonthBurnPercent?: number;
+    delta?: { rate5xxPp?: number };
+  } | undefined,
+  apiErrorRate?: number,
+  rate5xxPp?: number
+) => {
+  const mainRate = kpi?.rate5xx ?? apiErrorRate;
+  const main = mainRate !== undefined && mainRate !== null ? `${mainRate.toFixed(2)}%` : '0.00%';
+  const budgetConsumed = kpi?.budget?.consumedRatio;
+  const consumedRatio =
+    kpi?.consumedRatio ??
+    (budgetConsumed != null ? budgetConsumed : undefined) ??
+    (kpi?.errorBudgetMonthBurnPercent != null ? kpi.errorBudgetMonthBurnPercent / 100 : undefined) ??
+    (kpi?.errorBudgetWeekBurnPercent != null ? kpi.errorBudgetWeekBurnPercent / 100 : undefined);
+  const trendPp = rate5xxPp ?? kpi?.delta?.rate5xxPp;
+  const trendText =
+    trendPp !== undefined && trendPp !== null
+      ? `전일 대비 ${trendPp >= 0 ? '+' : ''}${trendPp.toFixed(1)}pp`
+      : undefined;
+  const trendTextDanger = trendPp != null && trendPp > 0;
+  const subRow = `4xx: ${kpi?.count4xx ?? 0} • 5xx: ${kpi?.count5xx ?? 0}`;
+  const isDanger = mainRate != null && mainRate > 3;
+  const isOverConsumed = consumedRatio != null && consumedRatio >= 1;
+  return { main, consumedRatio, trendText, trendTextDanger, subRow, isDanger, isOverConsumed };
+};
+
+export const MonitoringKPICards = ({ dateFrom, dateTo, activeKpi, onKpiClick }: MonitoringKPICardsProps) => {
   const { from, to } = useMemo(() => {
-    if (dateFrom && dateTo) {
-      // dateFrom and dateTo are already in UTC ISO format from monitoring.tsx
-      return {
-        from: dateFrom,
-        to: dateTo,
-      };
-    }
-    // If not provided, get 24h period in KST and convert to UTC
+    if (dateFrom && dateTo) return { from: dateFrom, to: dateTo };
     const kstRange = getDateRangeFromPeriod('24h');
     return {
       from: kstIsoToUtcIso(kstRange.from),
@@ -351,136 +1052,175 @@ export const MonitoringKPICards = ({ dateFrom, dateTo }: MonitoringKPICardsProps
     };
   }, [dateFrom, dateTo]);
 
-  const { data, isLoading, error, refetch } = useMonitoringSummaryQuery({
+  const { data, isLoading, error, refetch } = useMonitoringSummaryQuery({ from, to });
+
+  const sparklineInterval = useMemo(
+    () => getTimeseriesIntervalFromRange(from, to),
+    [from, to]
+  );
+
+  const pvTimeseriesQuery = useMonitoringTimeseriesQuery({ from, to, interval: sparklineInterval, metric: 'PV' });
+  const apiTotalTimeseriesQuery = useMonitoringTimeseriesQuery({ from, to, interval: sparklineInterval, metric: 'API_TOTAL' });
+  const apiErrorTimeseriesQuery = useMonitoringTimeseriesQuery({ from, to, interval: sparklineInterval, metric: 'API_ERROR' });
+  const latencyTimeseriesQuery = useMonitoringTimeseriesQuery({
     from,
     to,
-    // TODO: Add comparison period when BE supports it
-    // compareFrom: ...,
-    // compareTo: ...,
+    interval: sparklineInterval,
+    metric: 'LATENCY_P95',
   });
 
-  const sparklineInterval = useMemo<'HOUR' | 'DAY'>(() => {
-    const fromTime = new Date(from).getTime();
-    const toTime = new Date(to).getTime();
-    if (!Number.isNaN(fromTime) && !Number.isNaN(toTime)) {
-      const diffHours = (toTime - fromTime) / (1000 * 60 * 60);
-      return diffHours <= 48 ? 'HOUR' : 'DAY';
-    }
-    return 'DAY';
-  }, [from, to]);
-
-  const pvTimeseriesQuery = useMonitoringTimeseriesQuery({
-    from,
-    to,
-    interval: sparklineInterval,
-    metric: 'PV',
-  });
-  const uvTimeseriesQuery = useMonitoringTimeseriesQuery({
-    from,
-    to,
-    interval: sparklineInterval,
-    metric: 'UV',
-  });
-  const eventTimeseriesQuery = useMonitoringTimeseriesQuery({
-    from,
-    to,
-    interval: sparklineInterval,
-    metric: 'EVENT',
-  });
-  const apiTotalTimeseriesQuery = useMonitoringTimeseriesQuery({
-    from,
-    to,
-    interval: sparklineInterval,
-    metric: 'API_TOTAL',
-  });
-  const apiErrorTimeseriesQuery = useMonitoringTimeseriesQuery({
-    from,
-    to,
-    interval: sparklineInterval,
-    metric: 'API_ERROR',
-  });
-
-  const pvSparkline = useMemo(
-    () => buildSparkline(extractValues(pvTimeseriesQuery.data)),
-    [pvTimeseriesQuery.data]
+  const trafficSparkline = useMemo(() => buildSparkline(extractValues(pvTimeseriesQuery.data)), [pvTimeseriesQuery.data]);
+  const latencySparkline = useMemo(
+    () => buildSparkline(extractValues(latencyTimeseriesQuery.data)),
+    [latencyTimeseriesQuery.data]
   );
-  const uvSparkline = useMemo(
-    () => buildSparkline(extractValues(uvTimeseriesQuery.data)),
-    [uvTimeseriesQuery.data]
-  );
-  const eventSparkline = useMemo(
-    () => buildSparkline(extractValues(eventTimeseriesQuery.data)),
-    [eventTimeseriesQuery.data]
-  );
-  const apiErrorRateSparkline = useMemo(
+  const errorRateSparkline = useMemo(
     () => buildSparkline(buildRateValues(apiTotalTimeseriesQuery.data, apiErrorTimeseriesQuery.data)),
     [apiTotalTimeseriesQuery.data, apiErrorTimeseriesQuery.data]
   );
+  /** 백엔드 시간대별 API_TOTAL/API_ERROR 기반 가용성(100−에러율%) 배열. 랜덤 값 아님. */
+  const availabilitySparkline = useMemo(() => {
+    const errRates = buildRateValues(apiTotalTimeseriesQuery.data, apiErrorTimeseriesQuery.data);
+    if (!errRates.length) return null;
+    return buildSparkline(errRates.map((r) => 100 - r));
+  }, [apiTotalTimeseriesQuery.data, apiErrorTimeseriesQuery.data]);
 
   if (error) {
     return <ApiErrorAlert error={error} onRetry={() => refetch()} />;
   }
 
-  const pvDeltaPercent = data?.pvDeltaPercent ?? data?.pvTrend;
-  const uvDeltaPercent = data?.uvDeltaPercent ?? data?.uvTrend;
-  const eventDeltaPercent = data?.eventDeltaPercent ?? data?.eventsTrend;
+  const kpi = data?.kpi;
+  const pv = data?.pv ?? 0;
+  const uv = data?.uv ?? 0;
+  const apiErrorRate = data?.apiErrorRate;
   const apiErrorDeltaPercent = data?.apiErrorDeltaPercent ?? data?.apiErrorRateTrend;
+  const rate5xxPp = data?.rate5xxPp ?? kpi?.error?.delta?.rate5xxPp;
 
-  const comparePeriod = data?.comparePeriod;
-  const pvDeltaValue = data && comparePeriod?.pv !== undefined ? data.pv - comparePeriod.pv : undefined;
-  const uvDeltaValue = data && comparePeriod?.uv !== undefined ? data.uv - comparePeriod.uv : undefined;
-  const eventDeltaValue = data && comparePeriod?.events !== undefined ? data.events - comparePeriod.events : undefined;
-  const apiErrorDeltaValue =
-    data && comparePeriod?.apiErrorRate !== undefined ? data.apiErrorRate - comparePeriod.apiErrorRate : undefined;
+  const trafficDeltaPercent = data?.pvDeltaPercent ?? kpi?.traffic?.delta?.pvDeltaPercent;
+
+  const avail = formatAvailabilityCard(kpi?.availability);
+  const latency = formatLatencyCard(kpi?.latency);
+  const traffic = formatTrafficCard(kpi?.traffic, pv, uv, trafficDeltaPercent);
+  const errorCard = formatErrorCard(kpi?.error, apiErrorRate, rate5xxPp);
 
   return (
     <Grid container spacing={3}>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <MonitoringCard
-          title="페이지뷰 PV"
-          value={(data?.pv ?? 0).toLocaleString()}
-          icon="solar:eye-bold"
-          color="#3b82f6"
-          deltaPercent={pvDeltaPercent}
-          deltaValue={pvDeltaValue}
+          title="Availability"
+          mainValue={avail.main}
+          subRow={avail.sub}
+          deltaPercent={avail.deltaPercent}
+          icon="solar:check-circle-bold"
+          color={
+            avail.isSlaCritical
+              ? ERROR_DANGER_COLOR
+              : avail.isSlaWarning
+                ? WARNING_AMBER_COLOR
+                : '#3b82f6'
+          }
+          deltaColor={
+            avail.isSlaCritical
+              ? ERROR_DANGER_COLOR
+              : avail.isSlaWarning
+                ? WARNING_AMBER_COLOR
+                : undefined
+          }
           isLoading={isLoading}
-          sparkline={pvSparkline}
+          slaCritical={avail.isSlaCritical}
+          slaWarning={avail.isSlaWarning}
+          warningBadgeLabel={avail.warningBadgeLabel}
+          sloTargetChip={avail.sloTargetChip}
+          sparkline={availabilitySparkline}
+          sparklineMaxPeakRatio={0.6}
+          isActive={activeKpi === 'availability'}
+          onClick={onKpiClick ? () => onKpiClick('availability') : undefined}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <MonitoringCard
-          title="고유 방문자 UV"
-          value={(data?.uv ?? 0).toLocaleString()}
-          icon="solar:user-bold"
-          color="#10b981"
-          deltaPercent={uvDeltaPercent}
-          deltaValue={uvDeltaValue}
+          title="Latency"
+          mainValue={latency.main}
+          subRow={latency.sub}
+          subRowNode={
+            <Typography variant="caption" sx={{ color: 'text.secondary', whiteSpace: 'nowrap', display: 'block' }} component="span">
+              p50: {latency.p50Ms} /{' '}
+              <Tooltip title="상위 1% 사용자가 경험하는 최악의 지연 시간입니다">
+                <Typography
+                  component="span"
+                  variant="caption"
+                  sx={{
+                    color: latency.p99OverCritical ? ERROR_DANGER_COLOR : 'text.secondary',
+                    cursor: 'help',
+                  }}
+                >
+                  p99: {latency.p99Ms}ms
+                </Typography>
+              </Tooltip>
+            </Typography>
+          }
+          deltaPercent={latency.deltaPercent}
+          deltaValue={latency.deltaValue}
+          deltaPositiveIsBad
+          icon="solar:clock-circle-bold"
+          color={
+            latency.isSlaCritical
+              ? ERROR_DANGER_COLOR
+              : latency.isSlaWarning
+                ? WARNING_AMBER_COLOR
+                : '#10b981'
+          }
+          deltaColor={
+            latency.isSlaCritical
+              ? ERROR_DANGER_COLOR
+              : latency.isSlaWarning
+                ? WARNING_AMBER_COLOR
+                : undefined
+          }
+          slaCritical={latency.isSlaCritical}
+          slaWarning={latency.isSlaWarning}
+          warningBadgeLabel={latency.warningBadgeLabel}
+          sloTargetChip={latency.sloTargetChip}
+          sparkline={latencySparkline}
+          sparklineMaxPeakRatio={0.6}
+          deltaUnit="ms"
           isLoading={isLoading}
-          sparkline={uvSparkline}
+          isActive={activeKpi === 'latency'}
+          onClick={onKpiClick ? () => onKpiClick('latency') : undefined}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <TrafficCard
+          isEmpty={traffic.isEmpty}
+          rpsAvg={traffic.rpsAvg}
+          rpsPeak={traffic.rpsPeak}
+          pvFormatted={traffic.pvFormatted}
+          uvFormatted={traffic.uvFormatted}
+          deltaPercent={traffic.deltaPercent}
+          sparklineValues={trafficSparkline}
+          isLoading={isLoading}
+          isActive={activeKpi === 'traffic'}
+          onClick={onKpiClick ? () => onKpiClick('traffic') : undefined}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <MonitoringCard
-          title="이벤트 Events"
-          value={(data?.events ?? 0).toLocaleString()}
-          icon="solar:bolt-bold"
-          color="#8b5cf6"
-          deltaPercent={eventDeltaPercent}
-          deltaValue={eventDeltaValue}
-          isLoading={isLoading}
-          sparkline={eventSparkline}
-        />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-        <MonitoringCard
-          title="API 에러율 Error Rate"
-          value={`${(data?.apiErrorRate ?? 0).toFixed(2)}%`}
-          icon="solar:danger-triangle-bold"
-          color="#ef4444"
+          title="Error"
+          mainValue={errorCard.main}
+          subRow={errorCard.subRow}
           deltaPercent={apiErrorDeltaPercent}
-          deltaValue={apiErrorDeltaValue}
+          deltaPositiveIsBad
+          trendText={errorCard.trendText}
+          trendTextDanger={errorCard.trendTextDanger}
+          consumedRatio={errorCard.consumedRatio}
+          isOverConsumed={errorCard.isOverConsumed}
+          isDanger={errorCard.isDanger}
+          icon="solar:danger-triangle-bold"
+          color={ERROR_DANGER_COLOR}
           isLoading={isLoading}
-          sparkline={apiErrorRateSparkline}
+          sparkline={errorRateSparkline}
+          isActive={activeKpi === 'error'}
+          onClick={onKpiClick ? () => onKpiClick('error') : undefined}
         />
       </Grid>
     </Grid>

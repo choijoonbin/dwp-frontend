@@ -8,8 +8,8 @@ import Typography from '@mui/material/Typography';
 import { MonitoringTabs } from './monitoring-tabs';
 import { AuraInsightBar } from './aura-insight-bar';
 import { MonitoringCharts } from './monitoring-charts';
-import { MonitoringKPICards } from './monitoring-kpi-cards';
 import { MonitoringFilterBar } from './monitoring-filter-bar';
+import { MonitoringKPICards, type MonitoringKpiCardKey } from './monitoring-kpi-cards';
 
 // ----------------------------------------------------------------------
 
@@ -175,7 +175,12 @@ const datetimeLocalToIso = (localString: string): string => {
   return `${utcYear}-${utcMonth}-${utcDay}T${utcHours}:${utcMinutes}:${utcSeconds}`;
 };
 
+const API_HISTORY_TAB_INDEX = 3;
+
 export const MonitoringPage = () => {
+  const [activeTab, setActiveTab] = useState(0);
+  const [activeKpi, setActiveKpi] = useState<MonitoringKpiCardKey | null>(null);
+  const [chartTimeRange, setChartTimeRange] = useState<{ from: string; to: string } | null>(null);
   const [filters, setFilters] = useState(() => {
     const savedPeriod = loadPeriodFromStorage();
     const dateRange = getDateRangeFromPeriod(savedPeriod);
@@ -193,7 +198,7 @@ export const MonitoringPage = () => {
     };
   });
 
-  // Update dateFrom/dateTo when period changes
+  // Update dateFrom/dateTo when period changes; clear 좌측 차트 시간대 필터
   useEffect(() => {
     const dateRange = getDateRangeFromPeriod(filters.period);
     setFilters((prev) => ({
@@ -201,13 +206,13 @@ export const MonitoringPage = () => {
       dateFrom: isoToDatetimeLocal(dateRange.from),
       dateTo: isoToDatetimeLocal(dateRange.to),
     }));
+    setChartTimeRange(null);
     savePeriodToStorage(filters.period);
   }, [filters.period]);
 
   const handleFilterChange = (newFilters: Partial<typeof filters>) => {
     setFilters((prev) => {
       const updated = { ...prev, ...newFilters };
-      // If period changed, update dates automatically
       if (newFilters.period && newFilters.period !== prev.period) {
         const dateRange = getDateRangeFromPeriod(newFilters.period);
         updated.dateFrom = isoToDatetimeLocal(dateRange.from);
@@ -216,9 +221,17 @@ export const MonitoringPage = () => {
       }
       return updated;
     });
+    if (newFilters.dateFrom != null || newFilters.dateTo != null) setChartTimeRange(null);
+  };
+
+  const handleTabChange = (tab: number) => {
+    setActiveTab(tab);
+    if (tab !== API_HISTORY_TAB_INDEX) setActiveKpi(null);
   };
 
   const handleReset = () => {
+    setActiveKpi(null);
+    setChartTimeRange(null);
     const defaultPeriod = '24h';
     const dateRange = getDateRangeFromPeriod(defaultPeriod);
     setFilters({
@@ -272,25 +285,61 @@ export const MonitoringPage = () => {
           <MonitoringFilterBar filters={filters} onChange={handleFilterChange} onReset={handleReset} />
         </Card>
 
-        {/* KPI Cards */}
+        {/* KPI Cards: SLI/SLO 4종, 클릭 시 API 히스토리 탭 + 드릴다운 필터, Active State Border */}
         <MonitoringKPICards
           dateFrom={filters.dateFrom ? datetimeLocalToIso(filters.dateFrom) : chartDateRange.from}
           dateTo={filters.dateTo ? datetimeLocalToIso(filters.dateTo) : chartDateRange.to}
+          activeKpi={activeTab === API_HISTORY_TAB_INDEX ? activeKpi : null}
+          onKpiClick={(cardKey) => {
+            setActiveKpi(cardKey);
+            setActiveTab(API_HISTORY_TAB_INDEX);
+            if (cardKey === 'error') setFilters((prev) => ({ ...prev, statusCode: '4xx,5xx' }));
+            else if (cardKey === 'availability') setFilters((prev) => ({ ...prev, statusCode: '5xx' }));
+            else if (cardKey === 'latency' || cardKey === 'traffic') setFilters((prev) => ({ ...prev, statusCode: '' }));
+          }}
         />
 
         {/* Charts */}
         <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3}>
           <Card sx={{ flex: 1, p: 3 }}>
-            <MonitoringCharts type="pv-uv" from={chartDateRange.from} to={chartDateRange.to} />
+            <MonitoringCharts
+              type="pv-uv"
+              from={chartDateRange.from}
+              to={chartDateRange.to}
+              onPvUvRangeSelect={(fromIso, toIso) => {
+                setChartTimeRange({ from: fromIso, to: toIso });
+                setActiveTab(API_HISTORY_TAB_INDEX);
+              }}
+            />
           </Card>
           <Card sx={{ flex: 1, p: 3 }}>
-            <MonitoringCharts type="api" from={chartDateRange.from} to={chartDateRange.to} />
+            <MonitoringCharts
+              activeKpi={activeKpi}
+              forcedRightMetric={
+                activeKpi === 'availability' || activeKpi === 'error'
+                  ? 'API_5XX'
+                  : activeKpi === 'latency'
+                    ? 'LATENCY_P95'
+                    : activeKpi === 'traffic'
+                      ? 'API_TOTAL'
+                      : undefined
+              }
+              type="api"
+              from={chartDateRange.from}
+              to={chartDateRange.to}
+            />
           </Card>
         </Stack>
 
         {/* Detail Tabs */}
         <Card sx={{ p: 3 }}>
-          <MonitoringTabs filters={filters} />
+          <MonitoringTabs
+            activeKpi={activeKpi}
+            activeTab={activeTab}
+            chartTimeRangeOverride={chartTimeRange}
+            filters={filters}
+            onTabChange={handleTabChange}
+          />
         </Card>
       </Stack>
     </Box>

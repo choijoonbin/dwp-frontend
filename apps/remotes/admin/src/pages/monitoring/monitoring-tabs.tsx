@@ -15,26 +15,29 @@ import {
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
+import Chip from '@mui/material/Chip';
 import Tabs from '@mui/material/Tabs';
+import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import TableRow from '@mui/material/TableRow';
-import Skeleton from '@mui/material/Skeleton';
-import MenuItem from '@mui/material/MenuItem';
 import Collapse from '@mui/material/Collapse';
+import MenuItem from '@mui/material/MenuItem';
+import Skeleton from '@mui/material/Skeleton';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
 import TablePagination from '@mui/material/TablePagination';
+
+import type { MonitoringKpiCardKey } from './monitoring-kpi-cards';
 
 // ----------------------------------------------------------------------
 
@@ -51,6 +54,13 @@ type MonitoringTabsProps = {
     apiUrl: string;
     statusCode: string;
   };
+  /** 제어 모드: KPI 드릴다운 시 API 히스토리 탭으로 전환 */
+  activeTab?: number;
+  /** Latency KPI 클릭 시 응답시간 내림차순 정렬 및 안내 칩 노출 */
+  activeKpi?: MonitoringKpiCardKey | null;
+  /** 좌측 PV/UV 차트에서 포인트 클릭 시 해당 시간대로 API 히스토리만 필터 */
+  chartTimeRangeOverride?: { from: string; to: string } | null;
+  onTabChange?: (tab: number) => void;
 };
 
 /**
@@ -233,8 +243,16 @@ export const EventsTabFilters = ({
   );
 };
 
-export const MonitoringTabs = ({ filters }: MonitoringTabsProps) => {
-  const [activeTab, setActiveTab] = useState(0);
+export const MonitoringTabs = ({
+  activeKpi,
+  chartTimeRangeOverride,
+  filters,
+  activeTab: controlledTab,
+  onTabChange,
+}: MonitoringTabsProps) => {
+  const [internalTab, setInternalTab] = useState(0);
+  const activeTab = controlledTab ?? internalTab;
+  const setActiveTab = onTabChange ?? setInternalTab;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
@@ -336,20 +354,35 @@ export const MonitoringTabs = ({ filters }: MonitoringTabsProps) => {
     error: eventsError,
   } = useMonitoringEventsQuery(activeTab === 2 ? eventsParams : undefined);
 
-  // API Histories Query
+  // API Histories Query (좌측 차트 시간대 선택 시 chartTimeRangeOverride 사용)
+  const apiHistoriesFromTo = chartTimeRangeOverride?.from && chartTimeRangeOverride?.to
+    ? { from: chartTimeRangeOverride.from, to: chartTimeRangeOverride.to }
+    : { from, to };
+
   const apiHistoriesParams = useMemo(
     () => ({
       page: page + 1,
       size: rowsPerPage,
-      from,
-      to,
+      from: apiHistoriesFromTo.from,
+      to: apiHistoriesFromTo.to,
       apiName: filters.apiName || undefined,
       apiUrl: filters.apiUrl || undefined,
       statusCode: filters.statusCode || undefined,
       userId: filters.userId || undefined,
       keyword: filters.apiName || filters.apiUrl || undefined,
+      ...(activeKpi === 'latency' ? { sort: 'latencyMs,desc' as const } : activeKpi === 'traffic' ? { sort: 'createdAt,desc' as const } : {}),
     }),
-    [page, rowsPerPage, from, to, filters.apiName, filters.apiUrl, filters.statusCode, filters.userId]
+    [
+      page,
+      rowsPerPage,
+      apiHistoriesFromTo.from,
+      apiHistoriesFromTo.to,
+      filters.apiName,
+      filters.apiUrl,
+      filters.statusCode,
+      filters.userId,
+      activeKpi,
+    ]
   );
 
   const {
@@ -381,13 +414,22 @@ export const MonitoringTabs = ({ filters }: MonitoringTabsProps) => {
           isLoading: isLoadingEvents,
           error: eventsError,
         };
-      case 3: // API 히스토리
+      case 3: {
+        // API 히스토리 (Latency 드릴다운 시 응답시간 내림차순 정렬, 백엔드 미지원 시 클라이언트 정렬)
+        let items = apiHistoriesData?.items ?? [];
+        if (activeKpi === 'latency' && items.length > 0) {
+          items = [...items].sort(
+            (a, b) =>
+              ((b as ApiHistoryItem).responseTime ?? 0) - ((a as ApiHistoryItem).responseTime ?? 0)
+          );
+        }
         return {
-          items: apiHistoriesData?.items ?? [],
+          items,
           total: apiHistoriesData?.total ?? 0,
           isLoading: isLoadingApiHistories,
           error: apiHistoriesError,
         };
+      }
       default:
         return { items: [], total: 0, isLoading: false, error: null };
     }
@@ -744,7 +786,23 @@ export const MonitoringTabs = ({ filters }: MonitoringTabsProps) => {
                       </Typography>
                     </TableCell>
                     <TableCell>{row.userId || '-'}</TableCell>
-                    <TableCell>{row.responseTime ? `${row.responseTime}ms` : '-'}</TableCell>
+                    <TableCell>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        sx={{
+                          color:
+                            row.responseTime != null && row.responseTime > 1000
+                              ? row.responseTime > 3000
+                                ? 'error.main'
+                                : 'warning.main'
+                              : 'text.primary',
+                          fontWeight: row.responseTime != null && row.responseTime > 1000 ? 600 : undefined,
+                        }}
+                      >
+                        {row.responseTime != null ? `${row.responseTime}ms` : '-'}
+                      </Typography>
+                    </TableCell>
                     <TableCell>
                       {row.traceId ? (
                         <Typography
@@ -809,6 +867,51 @@ export const MonitoringTabs = ({ filters }: MonitoringTabsProps) => {
           ))}
         </Tabs>
       </Box>
+
+      {activeTab === 3 &&
+        (filters.statusCode ||
+          activeKpi === 'latency' ||
+          activeKpi === 'traffic' ||
+          chartTimeRangeOverride) && (
+          <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center">
+            {filters.statusCode && (
+              <Typography component="span" variant="caption" sx={{ color: 'primary.main', fontWeight: 600 }}>
+                Active Filter:{' '}
+                {filters.statusCode === '4xx,5xx'
+                  ? '4xx, 5xx Error'
+                  : filters.statusCode === '5xx'
+                    ? '5xx Error'
+                    : filters.statusCode === '2xx'
+                      ? '2xx Success'
+                      : filters.statusCode}
+              </Typography>
+            )}
+            {activeKpi === 'latency' && (
+              <Chip
+                size="small"
+                label="응답 시간 높은 순으로 정렬됨"
+                color="default"
+                variant="outlined"
+              />
+            )}
+            {activeKpi === 'traffic' && (
+              <Chip
+                size="small"
+                label="최신순 정렬됨"
+                color="default"
+                variant="outlined"
+              />
+            )}
+            {chartTimeRangeOverride && (
+              <Chip
+                size="small"
+                label="좌측 차트 선택 시간대 필터"
+                color="default"
+                variant="outlined"
+              />
+            )}
+          </Stack>
+        )}
 
       {/* Tab-specific filters */}
       {activeTab === 1 && (

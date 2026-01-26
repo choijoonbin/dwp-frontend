@@ -15,28 +15,128 @@ export type MonitoringSummaryParams = {
 };
 
 /**
+ * SLI/SLO KPI - Availability (성공률, 장애시간)
+ * 스펙: successRate(%), sloTargetSuccessRate(%), downtimeMinutes, uptimeMinutes, downtimeIntervals
+ */
+export type MonitoringKpiAvailability = {
+  successRate?: number;
+  successRatePercent?: number; // FE 호환
+  /** 가용성 SLO 목표 성공률(%). DB AVAILABILITY_SLO_TARGET, Fallback 99.9 */
+  sloTargetSuccessRate?: number;
+  /** Critical 임계치(%). DB AVAILABILITY_CRITICAL_THRESHOLD, Fallback 99.0. successRate < 이 값일 때만 Critical·Red UI */
+  criticalThreshold?: number;
+  successCount?: number;
+  totalCount?: number;
+  downtimeMinutes?: number;
+  /** 가동 시간(분) = 조회 기간 전체 분 − downtimeMinutes. Uptime 표시용 */
+  uptimeMinutes?: number;
+  /** 장애 구간 (UTC ISO). 차트 Red 영역용 */
+  downtimeIntervals?: { start: string; end: string }[];
+  /** 레거시: 가용 구간 문자열. uptimeMinutes 우선 사용 */
+  uptime?: string;
+  delta?: { successRatePp?: number; downtimeMinutes?: number };
+  topCause?: { path?: string; statusGroup?: string; count?: number } | null;
+};
+
+/**
+ * SLI/SLO KPI - Latency (스펙 §4.2·§6.3)
+ * sloTarget/criticalThreshold(ms). 미제공 시 FE Fallback 500/1500 사용
+ */
+export type MonitoringKpiLatency = {
+  /** 현재 평균 지연(ms). 스펙 avgLatency */
+  avgLatency?: number;
+  /** 50%ile(ms). 스펙 p50Latency / p50Ms */
+  p50Ms?: number;
+  p50Latency?: number;
+  p95Ms?: number;
+  /** 99%ile(ms). 스펙 p99Latency / p99Ms */
+  p99Ms?: number;
+  p99Latency?: number;
+  /** 지연 SLO 목표(ms). DB LATENCY_SLO_TARGET, 기본 500 */
+  sloTarget?: number;
+  /** 지연 Critical 임계치(ms). DB LATENCY_CRITICAL_THRESHOLD, 기본 1500 */
+  criticalThreshold?: number;
+  sloTargetMs?: number;
+  criticalThresholdMs?: number;
+  /** 비교 기간 평균 지연(ms). 변동률 계산용 (avgLatency - prevAvgLatency)/prevAvgLatency×100 */
+  prevAvgLatency?: number;
+  delta?: { p95Ms?: number; p99Ms?: number; p95MsPercent?: number };
+  topSlow?: { path?: string; p95Ms?: number } | null;
+};
+
+/**
+ * SLI/SLO KPI - Traffic (RPS + 흡수 PV/UV)
+ * 스펙: delta.pvDeltaPercent, delta.uvDeltaPercent 포함
+ */
+export type MonitoringKpiTraffic = {
+  rpsAvg?: number;
+  rpsPeak?: number;
+  requestCount?: number;
+  pv?: number;
+  uv?: number;
+  delta?: {
+    rpsAvg?: number;
+    requestCount?: number;
+    pv?: number;
+    uv?: number;
+    pvDeltaPercent?: number;
+    uvDeltaPercent?: number;
+  };
+  topTraffic?: { path?: string; requestCount?: number } | null;
+};
+
+/**
+ * SLI/SLO KPI - Error (4xx/5xx, Error Budget)
+ * 스펙: budget.consumedRatio = 소진율 (0.1 = 10%, 1.0 = 100%), delta.rate5xxPp
+ */
+export type MonitoringKpiError = {
+  rate4xx?: number;
+  rate5xx?: number;
+  count4xx?: number;
+  count5xx?: number;
+  delta?: { rate5xxPp?: number; count5xx?: number };
+  /** 스펙: period, sloTargetSuccessRate, consumedRatio(0~1, 1=100% 소진) */
+  budget?: { period?: string; sloTargetSuccessRate?: number; consumedRatio?: number };
+  consumedRatio?: number; // FE 호환 (0–1)
+  errorBudgetWeekBurnPercent?: number;
+  errorBudgetMonthBurnPercent?: number;
+  topError?: { path?: string; statusCode?: number; count?: number } | null;
+};
+
+export type MonitoringSummaryKpi = {
+  availability?: MonitoringKpiAvailability;
+  latency?: MonitoringKpiLatency;
+  traffic?: MonitoringKpiTraffic;
+  error?: MonitoringKpiError;
+};
+
+/**
  * Monitoring Summary Response
+ * 기존 필드 유지 + data.kpi 추가 (SLI/SLO 4종)
  */
 export type MonitoringSummaryResponse = {
-  pv: number; // Page Views
-  uv: number; // Unique Visitors
-  events: number; // Total Events
+  pv: number; // Page Views (Traffic 카드 Insight Row용)
+  uv: number; // Unique Visitors (Traffic 카드 Insight Row용)
+  events: number; // Total Events (이벤트 탭에서만 사용)
   apiErrorRate: number; // API Error Rate (%)
-  pvDeltaPercent?: number; // Percentage change vs comparison period
-  uvDeltaPercent?: number; // Percentage change vs comparison period
-  eventDeltaPercent?: number; // Percentage change vs comparison period
-  apiErrorDeltaPercent?: number; // Percentage change vs comparison period
+  pvDeltaPercent?: number;
+  uvDeltaPercent?: number;
+  eventDeltaPercent?: number;
+  apiErrorDeltaPercent?: number;
   comparePeriod?: {
     pv?: number;
     uv?: number;
     events?: number;
     apiErrorRate?: number;
   };
-  // Legacy fields (backward compatibility)
   pvTrend?: number;
   uvTrend?: number;
   eventsTrend?: number;
   apiErrorRateTrend?: number;
+  /** 전일 대비 5xx율 증감 (퍼센티지포인트, Trend 표시) */
+  rate5xxPp?: number;
+  /** SLI/SLO KPI 4종 (없으면 카드에 - 표기) */
+  kpi?: MonitoringSummaryKpi | null;
 };
 
 /**
@@ -54,7 +154,12 @@ export type MonitoringListParams = {
   userId?: string; // Filter by user ID
   apiName?: string; // Filter by API name
   apiUrl?: string; // Filter by API URL
-  statusCode?: string; // Filter by status code
+  /** Specific code only (e.g. 500, 502). Use statusGroup for range (2xx, 3xx, 4xx, 5xx). */
+  statusCode?: string;
+  /** Range filter: '2xx' | '3xx' | '4xx' | '5xx'. Preferred over statusCode for xxx values. */
+  statusGroup?: string;
+  /** Sort: e.g. "latencyMs,desc" (Spring Data style). */
+  sort?: string;
 };
 
 /**
@@ -82,13 +187,60 @@ export type MonitoringEventsParams = {
 };
 
 /**
+ * Timeseries metric for right chart toggle (API_5XX = API_ERROR, LATENCY_P95 백엔드 확장 예정)
+ */
+export type MonitoringTimeseriesMetric =
+  | 'PV'
+  | 'UV'
+  | 'API_TOTAL'
+  | 'API_ERROR'
+  | 'API_5XX' // UI 토글용, 호출 시 API_ERROR로 매핑 가능
+  | 'LATENCY_P95' // 백엔드 지원 시 사용
+  | 'EVENT';
+
+/**
  * Monitoring Timeseries API Parameters
  */
+/** 조회 기간별 추천 interval. 1m(60포인트) ~ 1d. 백엔드 미지원 시 HOUR/DAY로 폴백 가능 */
+export type MonitoringTimeseriesInterval =
+  | '1m'
+  | '30m'
+  | '1h'
+  | '6h'
+  | '12h'
+  | '1d'
+  | 'HOUR'
+  | 'DAY';
+
 export type MonitoringTimeseriesParams = {
   from: string; // ISO 8601 date string (required)
   to: string; // ISO 8601 date string (required)
-  interval: 'HOUR' | 'DAY'; // Time interval
-  metric: 'PV' | 'UV' | 'API_TOTAL' | 'API_ERROR' | 'EVENT'; // Metric type
+  interval: MonitoringTimeseriesInterval;
+  metric: 'PV' | 'UV' | 'API_TOTAL' | 'API_ERROR' | 'API_5XX' | 'LATENCY_P95' | 'EVENT'; // Metric type
+};
+
+/**
+ * from ~ to 기간에 따라 timeseries interval 권장값 반환.
+ * - 최근 1시간: 1m (약 60포인트)
+ * - 최근 24시간: 30m (약 48포인트)
+ * - 최근 7일: 6h
+ * - 최근 30일: 1d
+ */
+export const getTimeseriesIntervalFromRange = (
+  from: string,
+  to: string
+): MonitoringTimeseriesInterval => {
+  const fromTime = new Date(from).getTime();
+  const toTime = new Date(to).getTime();
+  if (Number.isNaN(fromTime) || Number.isNaN(toTime)) return 'DAY';
+  const diffMs = toTime - fromTime;
+  const diffHours = diffMs / (1000 * 60 * 60);
+  const diffDays = diffHours / 24;
+  if (diffHours <= 1) return '1m';
+  if (diffHours <= 24) return '30m';
+  if (diffDays <= 7) return '6h';
+  if (diffDays <= 30) return '1d';
+  return '1d';
 };
 
 /**
@@ -283,8 +435,8 @@ export type TimeseriesDataPoint = {
  * Timeseries Response (Backend format)
  */
 export type TimeseriesResponseBackend = {
-  metric: 'PV' | 'UV' | 'API_TOTAL' | 'API_ERROR' | 'EVENT';
-  interval: 'HOUR' | 'DAY';
+  metric: 'PV' | 'UV' | 'API_TOTAL' | 'API_ERROR' | 'EVENT' | 'LATENCY_P95';
+  interval: MonitoringTimeseriesInterval | 'HOUR' | 'DAY' | string;
   labels: string[]; // Time labels (X-axis)
   values: number[]; // Values (Y-axis)
 };
@@ -293,8 +445,8 @@ export type TimeseriesResponseBackend = {
  * Timeseries Response (Frontend format)
  */
 export type TimeseriesResponse = {
-  metric: 'PV' | 'UV' | 'API_TOTAL' | 'API_ERROR' | 'EVENT';
-  interval: 'HOUR' | 'DAY';
+  metric: 'PV' | 'UV' | 'API_TOTAL' | 'API_ERROR' | 'API_5XX' | 'LATENCY_P95' | 'EVENT';
+  interval: MonitoringTimeseriesInterval | string;
   dataPoints: TimeseriesDataPoint[];
 };
 
@@ -443,8 +595,20 @@ export const getMonitoringApiHistories = async (
   if (params?.keyword) queryParams.append('keyword', params.keyword);
   if (params?.apiName) queryParams.append('apiName', params.apiName);
   if (params?.apiUrl) queryParams.append('apiUrl', params.apiUrl);
-  if (params?.statusCode) queryParams.append('statusCode', params.statusCode);
+  // Backend: statusCode = Integer (500, 502); statusGroup = range ('2xx','3xx','4xx','5xx'), 복수 시 statusGroup 반복
+  const statusGroupOrCode = params?.statusGroup ?? params?.statusCode;
+  if (statusGroupOrCode) {
+    const parts = statusGroupOrCode.split(',').map((s) => s.trim()).filter(Boolean);
+    const groups = parts.filter((p) => /^[2345]xx$/i.test(p));
+    const singleCode = parts.filter((p) => !/^[2345]xx$/i.test(p))[0];
+    if (groups.length > 0) {
+      groups.forEach((g) => queryParams.append('statusGroup', g));
+    } else if (singleCode) {
+      queryParams.append('statusCode', singleCode);
+    }
+  }
   if (params?.userId) queryParams.append('userId', params.userId);
+  if (params?.sort) queryParams.append('sort', params.sort);
 
   const url = `/api/admin/monitoring/api-histories${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
   const res = await axiosInstance.get<ApiResponse<SpringPageResponse<ApiHistoryItemBackend> | ApiHistoriesResponse>>(url);
@@ -678,10 +842,18 @@ export const getMonitoringEvents = async (
   return res.data as ApiResponse<EventsResponse>;
 };
 
+/** 우측 차트 토글용: API_5XX -> API_ERROR. LATENCY_P95는 백엔드로 그대로 전달 */
+const mapTimeseriesMetricToBackend = (
+  m: MonitoringTimeseriesParams['metric']
+): TimeseriesResponseBackend['metric'] => {
+  if (m === 'API_5XX') return 'API_ERROR';
+  return m as TimeseriesResponseBackend['metric'];
+};
+
 /**
  * Get monitoring timeseries data
  * GET /api/admin/monitoring/timeseries
- * 
+ *
  * Backend returns: { interval, metric, labels: string[], values: number[] }
  * Frontend expects: { interval, metric, dataPoints: [{ timestamp, value }] }
  */
@@ -692,35 +864,34 @@ export const getMonitoringTimeseries = async (
   queryParams.append('from', params.from);
   queryParams.append('to', params.to);
   queryParams.append('interval', params.interval);
-  queryParams.append('metric', params.metric);
+  queryParams.append('metric', mapTimeseriesMetricToBackend(params.metric));
 
   const url = `/api/admin/monitoring/timeseries?${queryParams.toString()}`;
   const res = await axiosInstance.get<ApiResponse<TimeseriesResponseBackend>>(url);
-  
+
   // Convert backend format (labels + values) to frontend format (dataPoints)
   if (!res.data.data) {
     return {
       ...res.data,
       data: {
-        metric: params.metric,
+        metric: params.metric === 'API_5XX' ? 'API_ERROR' : params.metric,
         interval: params.interval,
         dataPoints: [],
       },
     } as ApiResponse<TimeseriesResponse>;
   }
-  
+
   const backendData = res.data.data;
-  
-  // Convert labels and values arrays to dataPoints array
+
   const dataPoints: TimeseriesDataPoint[] = backendData.labels.map((label, index) => ({
     timestamp: label,
     value: backendData.values[index] || 0,
   }));
-  
+
   return {
     ...res.data,
     data: {
-      metric: backendData.metric,
+      metric: params.metric === 'API_5XX' ? 'API_ERROR' : (backendData.metric ?? params.metric),
       interval: backendData.interval,
       dataPoints,
     },

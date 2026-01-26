@@ -30,6 +30,7 @@ export const monitoringApiHistoriesQueryKey = (
     params?.apiUrl,
     params?.statusCode,
     params?.userId,
+    params?.sort,
   ] as const;
 
 /**
