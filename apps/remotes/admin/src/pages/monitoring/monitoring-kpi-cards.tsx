@@ -1154,7 +1154,6 @@ const TrafficCard = ({
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   });
-  const deltaUp = deltaPercent != null && deltaPercent >= 0;
 
   const loadPercentage =
     loadPercentageProp ??
@@ -1168,96 +1167,114 @@ const TrafficCard = ({
   const content = (
     <>
       <Box sx={{ height: 4, bgcolor: rpsColor }} />
-      <TrafficSparklineLayer values={sparklineValues} color={rpsColor} maxPeakRatio={0.6} />
       <Box
         sx={{
+          p: 2.5,
           position: 'relative',
           zIndex: 1,
-          p: 2.5,
-          pb: 6,
           display: 'flex',
           flexDirection: 'column',
           gap: 1.25,
+          ...(sparklineValues && sparklineValues.length > 0 ? { pb: 6 } : {}),
         }}
       >
-        {/* 1행: 가용성/Latency와 동일 — 좌측 타이틀, 우측 값 블록 또는 Skeleton */}
-        <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
+        {/* 1행: 가용성/Latency와 동일 — Stack alignItems=center, SLO 칩 절대 중앙, 우측 메인값 ml:auto */}
+        <Stack direction="row" alignItems="center" sx={{ position: 'relative' }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <Iconify icon="solar:chart-2-bold" width={22} sx={{ color: rpsColor }} />
             <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
               Traffic
             </Typography>
           </Stack>
+          {sloTargetChip && (
+            <Chip
+              label={sloTargetChip}
+              size="small"
+              sx={{
+                height: 22,
+                typography: 'caption',
+                fontWeight: 600,
+                bgcolor: alpha(rpsColor, 0.12),
+                color: 'text.secondary',
+                border: '1px solid',
+                borderColor: alpha(rpsColor, 0.3),
+                position: 'absolute',
+                left: '50%',
+                transform: 'translateX(-50%)',
+              }}
+            />
+          )}
           {isLoading ? (
-            <Skeleton variant="text" width={80} height={40} />
+            <Skeleton variant="text" width={80} height={40} sx={{ ml: 'auto' }} />
           ) : (
-            <Stack direction="column" alignItems="flex-end" spacing={0.75}>
-              <Stack direction="row" alignItems="center" spacing={1.5} flexWrap="wrap">
-                {sloTargetChip && (
-                  <Chip
-                    label={sloTargetChip}
-                    size="small"
-                    sx={{
-                      height: 22,
-                      typography: 'caption',
-                      fontWeight: 600,
-                      bgcolor: alpha(TRAFFIC_PURPLE, 0.12),
-                      color: 'text.secondary',
-                      border: '1px solid',
-                      borderColor: alpha(TRAFFIC_PURPLE, 0.3),
-                    }}
-                  />
-                )}
-                <Typography
-                  variant="h3"
-                  sx={{
-                    fontWeight: 900,
-                    fontSize: { xs: 28, md: 32 },
-                    lineHeight: 1,
-                    fontFamily: '"Inter", "Pretendard", sans-serif',
-                    color: isEmpty ? 'text.secondary' : rpsColor,
-                  }}
-                >
-                  {rpsDisplay}
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'uppercase' }}>
-                  RPS
-                </Typography>
-              </Stack>
-              <Stack direction="row" alignItems="center" flexWrap="wrap" justifyContent="flex-end" gap={1}>
-                {warningBadgeLabel && (
-                  <Chip
-                    size="small"
-                    label={warningBadgeLabel}
-                    sx={{
-                      typography: 'caption',
-                      fontWeight: 700,
-                      bgcolor: isCritical ? alpha(ERROR_DANGER_COLOR, 0.12) : alpha(WARNING_AMBER_COLOR, 0.12),
-                      color: isCritical ? ERROR_DANGER_COLOR : WARNING_AMBER_COLOR,
-                    }}
-                  />
-                )}
-                {deltaPercent !== undefined && (
-                  <Box
-                    component="span"
-                    sx={{
-                      px: 1.5,
-                      py: 0.5,
-                      borderRadius: '9999px',
-                      typography: 'caption',
-                      fontWeight: 600,
-                      bgcolor: deltaUp ? alpha('#22c55e', 0.1) : alpha('#ef4444', 0.1),
-                      color: deltaUp ? '#22c55e' : '#ef4444',
-                    }}
-                  >
-                    {deltaUp ? '▲' : '▼'} {Math.abs(deltaPercent).toFixed(1)}%
-                  </Box>
-                )}
-              </Stack>
+            <Stack direction="row" alignItems="center" spacing={0.5} sx={{ ml: 'auto' }}>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 900,
+                  fontSize: { xs: 28, md: 32 },
+                  lineHeight: 1,
+                  fontFamily: '"Inter", "Pretendard", sans-serif',
+                  color: isEmpty ? 'text.secondary' : rpsColor,
+                }}
+              >
+                {rpsDisplay}
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'uppercase' }}>
+                RPS
+              </Typography>
             </Stack>
           )}
         </Stack>
-        {/* 하단: Latency subRow와 동일 — PV · UV · Peak 한 줄, 좌측 정렬, 차트와 겹치지 않도록 z-index 조정 */}
+        {/* 2행: 가용성/Latency와 동일 — 배지(향후 노출 시 동일 스타일) + InlineDelta, trendText */}
+        {!isLoading && (
+          <Stack direction="column" alignItems="flex-end" spacing={0.75}>
+            <Stack direction="row" alignItems="center" flexWrap="wrap" justifyContent="flex-end" gap={1}>
+              {isCritical && (
+                <Box
+                  component="span"
+                  sx={{
+                    px: 1,
+                    py: 0.25,
+                    borderRadius: 0.5,
+                    typography: 'caption',
+                    fontWeight: 700,
+                    bgcolor: alpha(ERROR_DANGER_COLOR, 0.08),
+                    color: ERROR_DANGER_COLOR,
+                    border: '1px solid',
+                    borderColor: alpha(ERROR_DANGER_COLOR, 0.35),
+                  }}
+                >
+                  Over Capacity
+                </Box>
+              )}
+              {isWarning && warningBadgeLabel && !isCritical && (
+                <Box
+                  component="span"
+                  sx={{
+                    px: 1,
+                    py: 0.25,
+                    borderRadius: 0.5,
+                    typography: 'caption',
+                    fontWeight: 700,
+                    bgcolor: alpha(WARNING_AMBER_COLOR, 0.12),
+                    color: WARNING_AMBER_COLOR,
+                    border: '1px solid',
+                    borderColor: alpha(WARNING_AMBER_COLOR, 0.4),
+                  }}
+                >
+                  {warningBadgeLabel}
+                </Box>
+              )}
+              <InlineDelta
+                deltaPercent={deltaPercent}
+                deltaPositiveIsBad={false}
+                colorOverride={undefined}
+              />
+            </Stack>
+          </Stack>
+        )}
+        {/* 3행: 가용성 subRow와 동일 — PV · UV · Peak 한 줄, 좌측 정렬 */}
         {!isLoading && (
           <Box
             sx={{
@@ -1287,6 +1304,9 @@ const TrafficCard = ({
           </Box>
         )}
       </Box>
+      {sparklineValues && sparklineValues.length > 0 && (
+        <TrafficSparklineLayer values={sparklineValues} color={rpsColor} maxPeakRatio={0.6} />
+      )}
     </>
   );
 
