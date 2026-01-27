@@ -79,8 +79,8 @@
 | **topCause.count** | Long | 해당 path에서 발생한 5xx 건수. |
 
 - **모니터링 설정 (Backend)**  
-  - 다운타임/장애 구간 판정 기준은 테넌트별 **sys_monitoring_configs**에서 조회하며, 없을 경우 **Fallback**: `MIN_REQ_PER_MINUTE`=1, `ERROR_RATE_THRESHOLD`=5.0, `AVAILABILITY_SLO_TARGET`=99.9, `AVAILABILITY_CRITICAL_THRESHOLD`=99.0, `LATENCY_SLO_TARGET`=500, `LATENCY_CRITICAL_THRESHOLD`=1500.  
-  - 설정 키는 **sys_codes** 코드값으로 관리(MONITORING_CONFIG_KEY 그룹: MIN_REQ_PER_MINUTE, ERROR_RATE_THRESHOLD, AVAILABILITY_SLO_TARGET, AVAILABILITY_CRITICAL_THRESHOLD, **LATENCY_SLO_TARGET**, **LATENCY_CRITICAL_THRESHOLD**). 다운타임 쿼리는 HAVING COUNT(*) >= 설정값 유지.  
+  - 다운타임/장애 구간 판정 기준은 테넌트별 **sys_monitoring_configs**에서 조회하며, 없을 경우 **Fallback**: `MIN_REQ_PER_MINUTE`=1, `ERROR_RATE_THRESHOLD`=5.0, `AVAILABILITY_SLO_TARGET`=99.9, `AVAILABILITY_CRITICAL_THRESHOLD`=99.0, `LATENCY_SLO_TARGET`=500, `LATENCY_CRITICAL_THRESHOLD`=1500, `TRAFFIC_SLO_TARGET`=100, `TRAFFIC_CRITICAL_THRESHOLD`=200, **TRAFFIC_PEAK_WINDOW_SECONDS**=60.  
+  - 설정 키는 **sys_codes** 코드값으로 관리(MONITORING_CONFIG_KEY 그룹: MIN_REQ_PER_MINUTE, ERROR_RATE_THRESHOLD, AVAILABILITY_SLO_TARGET, AVAILABILITY_CRITICAL_THRESHOLD, LATENCY_SLO_TARGET, LATENCY_CRITICAL_THRESHOLD, TRAFFIC_SLO_TARGET, TRAFFIC_CRITICAL_THRESHOLD, **TRAFFIC_PEAK_WINDOW_SECONDS**, ERROR_RATE_SLO_TARGET, ERROR_BUDGET_TOTAL). 다운타임 쿼리는 HAVING COUNT(*) >= 설정값 유지.  
 - **UI 활용**: 가용성 카드에 successRate(현재 성공률), sloTargetSuccessRate(목표), criticalThreshold(이 값 미만 시 Critical·빨간색 UI), uptimeMinutes(Uptime), downtimeMinutes(다운타임) 표시. topCause는 “가장 많은 5xx 원인” 요약용.
 
 ---
@@ -114,23 +114,35 @@
 
 | 필드 | 타입 | 의미 |
 |------|------|------|
-| **rpsAvg** | Double | **평균 RPS**: (조회 기간 전체 API 요청 수) / (조회 기간 초). **소수점 2자리** (낮은 값에서 0.0 고착 방지). |
-| **rpsPeak** | Double | **피크 RPS**: 조회 기간을 **1분 단위 버킷**으로 나눈 뒤, 각 버킷의 RPS(해당 분 요청 수/60) 중 **최댓값**. 소수점 2자리. |
-| **requestCount** | Long | 조회 기간 **전체 API 요청** 수. (상위 data와 동일 기간 기준) |
-| **pv** | Long | **data.pv와 동일**. 페이지뷰 총 건수. (한 번에 접근하기 위해 중복 제공) |
-| **uv** | Long | **data.uv와 동일**. 순 방문자 수. |
+| **rpsAvg** | Double | **평균 RPS**: (조회 기간 전체 API 요청 수) / (조회 기간 초). **소수점 2자리**. |
+| **rpsPeak** | Double | **피크 RPS**: 조회 기간 내 **TRAFFIC_PEAK_WINDOW_SECONDS**(기본 60초) 버킷별 요청 수 중 최댓값을 윈도우(초)로 나눈 값. 소수점 2자리. |
+| **currentRps** | Double | **실시간 RPS**: **최근 10초**간 평균 초당 요청 수. 메인 지표·실시간 활성도 표시용. |
+| **prevRps** | Double | **전일 동시간대 RPS**: 24시간 전 동일 10초 구간 평균. 변동률 산출 근거. |
+| **totalPv** | Long | **선택 기간(from~to) 내 총 API 호출 수**. (requestCount와 동일) |
+| **totalUv** | Long | **선택 기간 내 중복 제거 클라이언트 수**: IP 또는 User ID 기준 UV. |
+| **peakRps** | Double | **기간 내 Peak RPS**. rpsPeak와 동일값(설정 윈도우 기준). 명시용. |
+| **sloTarget** | Double | **트래픽 SLO 목표(RPS)**. DB `sys_monitoring_configs` **TRAFFIC_SLO_TARGET** (초기 100). 정상 범위 상한으로, currentRps와 비교해 시스템 부하 상태 판단. |
+| **criticalThreshold** | Double | **트래픽 Critical 임계치(RPS)**. DB **TRAFFIC_CRITICAL_THRESHOLD** (초기 200). 서버 수용 한계로, 초과 시 심각(경고)·서버 증설 신호(Red) 표시. |
+| **loadPercentage** | Double | **부하율(%)**: (currentRps / criticalThreshold) × 100. 소수점 2자리. 100 초과 가능. 상태 컬러링·SLO 칩·Red 배지 판단용. |
+| **requestCount** | Long | 조회 기간 **전체 API 요청** 수. (totalPv와 동일) |
+| **pv** | Long | **data.pv와 동일**. 페이지뷰 총 건수. |
+| **uv** | Long | **data.uv와 동일**. 순 방문자 수(페이지뷰 기준). |
 | **delta** | Object | 이전 비교 기간 대비 증감. |
 | **delta.rpsAvg** | Double | rpsAvg 증감 (소수점 2자리). |
 | **delta.requestCount** | Long | requestCount 증감. |
 | **delta.pv** | Long | pv 절대 증감. |
 | **delta.uv** | Long | uv 절대 증감. |
-| **delta.pvDeltaPercent** | Double | 이전 기간 대비 PV 증감 **백분율(%)**. 트래픽 카드 배지용. |
+| **delta.pvDeltaPercent** | Double | 이전 기간 대비 PV 증감 **백분율(%)**. |
 | **delta.uvDeltaPercent** | Double | 이전 기간 대비 UV 증감 **백분율(%)**. |
-| **topTraffic** | Object \| null | 해당 기간 **요청 수가 가장 많은 API 경로** 1건. 없으면 **null** — 프론트 null 체크 필수. |
-| **topTraffic.path** | String | API 경로 (예: `/monitoring/event`). |
+| **delta.rpsDeltaPercent** | Double | **전일 동시간대 대비 RPS 변동률(%)**. (currentRps − prevRps) / prevRps × 100. 트래픽 카드 변동률 배지용. |
+| **topTraffic** | Object \| null | 해당 기간 **요청 수가 가장 많은 API 경로** 1건. 없으면 **null**. |
+| **topTraffic.path** | String | API 경로. |
 | **topTraffic.requestCount** | Long | 해당 path의 요청 수. |
 
-- **참고**: `rpsAvg`가 0.0이어도 `requestCount`가 0이 아니면, 조회 기간(초)이 매우 길어서 평균이 작게 나온 경우일 수 있음.
+- **Peak RPS 윈도우**: **TRAFFIC_PEAK_WINDOW_SECONDS**(sys_monitoring_configs, 기본 60)로 집계 단위를 설정. 60이면 1분 버킷 기준 Peak, 10이면 10초당 최대 요청 수 기준으로 더 정밀한 Peak RPS 산출 가능.
+- **참고**: `rpsAvg`가 0.0이어도 `requestCount`가 0이 아니면, 조회 기간(초)이 길어 평균이 작게 나온 경우일 수 있음.
+- **스파크라인**: Timeseries API `metric=API_TOTAL` 요청 시, 프론트의 **interval**(1m, 5m, 1h, 1d)에 맞춰 **시간대별 평균 RPS**(각 버킷의 요청 건수/버킷초) 배열이 반환되므로, 별도 계산 없이 그대로 스파크라인으로 그리면 됨.
+- **상태 기반 컬러링·SLO 칩**: `loadPercentage`(부하율 %)와 `sloTarget`·`criticalThreshold`로 가용성/지연 카드와 동일한 패턴 적용. currentRps &lt;= sloTarget → 정상, sloTarget &lt; currentRps &lt;= criticalThreshold → 주의, currentRps &gt; criticalThreshold(또는 loadPercentage &gt; 100) → Critical(Red, 서버 증설 신호).
 
 ---
 
@@ -142,19 +154,29 @@
 | **rate5xx** | Double | **전체 API 요청 대비 5xx 비율(%)**. 소수점 2자리. |
 | **count4xx** | Long | 조회 기간 **4xx** 발생 건수. |
 | **count5xx** | Long | 조회 기간 **5xx** 발생 건수. |
+| **errorRate** | Double | **현재 실시간 에러율(%)** — 5xx 비율과 동일. Error 카드 메인 지표. |
+| **errorCounts** | Object | 4xx·5xx **각각의 합계** (`count4xx`, `count5xx`). |
+| **errorCounts.count4xx** | Long | 조회 기간 4xx 건수. |
+| **errorCounts.count5xx** | Long | 조회 기간 5xx 건수. |
+| **errorBudgetRemaining** | Double | **남은 에러 버짓(%)**. 0 미만이면 0. 버짓 넉넉(Blue)·주의(Yellow)·소진(Red) 판정용. |
+| **burnRate** | Double | **버짓 소진 속도**. 1.0 이상이면 위험(Red). |
 | **delta** | Object | 이전 비교 기간 대비 증감. |
 | **delta.rate5xxPp** | Double | rate5xx의 **퍼센트포인트(p.p.)** 증감. |
 | **delta.count5xx** | Long | count5xx 증감. |
 | **budget** | Object | SLO 기반 **에러 예산(Error Budget)**. |
 | **budget.period** | String | **조회 기간과 연동**: `"1H"`(≤1h), `"24H"`(≤24h), `"7D"`(≤7d), `"WEEK"`(그 이상). |
-| **budget.sloTargetSuccessRate** | Double | SLO 목표 성공률 (예: **99.9** = 99.9%). |
-| **budget.consumedRatio** | Double | **소진율** = min(rate5xx/0.1, **1.0**). **최대 1.0(100%)으로 제한**되어 Progress Bar 깨짐 방지. 0.27 = 27% 소진. |
+| **budget.sloTargetSuccessRate** | Double | SLO 목표 성공률 (%) = 100 − **ERROR_RATE_SLO_TARGET** (DB 설정, 기본 99.5). |
+| **budget.consumedRatio** | Double | **소진율** = min(rate5xx / ERROR_RATE_SLO_TARGET, **1.0**). **최대 1.0** 제한. 0.27 = 27% 소진. |
 | **topError** | Object \| null | 해당 기간 **가장 많이 발생한 에러** 1건 (path + statusCode 조합). 없으면 **null** — 프론트 null 체크 필수. |
 | **topError.path** | String | API 경로 (예: `/auth/permissions`). |
 | **topError.statusCode** | Integer | HTTP 상태 코드 (예: 401). |
 | **topError.count** | Long | 해당 path+statusCode 조합의 발생 건수. |
 
-- **consumedRatio**: 백엔드에서 **1.0 초과 시 1.0으로 cap**. 프론트는 0~1 구간으로 Progress Bar 표시하면 됨. (rate5xx 1%면 이론상 10.0이 되지만, **항상 최대 1.0** 반환.)
+- **에러 설정 (Backend)**  
+  - **ERROR_RATE_SLO_TARGET**: 목표 에러율(%) 미만 유지 (sys_monitoring_configs, 기본 **0.5**).  
+  - **ERROR_BUDGET_TOTAL**: 기준 기간 내 허용 에러 관련값 (sys_monitoring_configs, 기본 **100**).  
+  - 소진율·잔여 버짓·burnRate는 ERROR_RATE_SLO_TARGET 기준으로 계산. (consumedRatio = rate5xx/target, errorBudgetRemaining = (1−consumedRatio)×100, burnRate = rate5xx/target.)
+- **consumedRatio**: 백엔드에서 **1.0 초과 시 1.0으로 cap**. 프론트는 0~1 구간으로 Progress Bar/게이지 표시.
 
 ---
 
@@ -222,26 +244,39 @@
 
 | 항목 | 계산 로직 |
 |------|-----------|
-| **rpsAvg** | `조회 기간 전체 API 요청 수 / max(조회 기간 초, 1)`, **소수점 2자리** 반올림 (매우 낮을 때 0.0 고착 방지). |
-| **rpsPeak** | 조회 기간을 **1분 단위**로 나눈 뒤, 각 1분 버킷의 `(버킷 내 요청 수 / 60)` 계산 → 그중 **최댓값**, 소수점 2자리 반올림. |
-| **requestCount** | 조회 기간 **전체 API 요청** 건수 (summary 최상위와 동일 소스). |
-| **pv, uv** | **data.pv**, **data.uv**와 동일 값 매핑 (중복 제공). |
-| **delta** | rpsAvg/requestCount/pv/uv 절대 증감 + **pvDeltaPercent**, **uvDeltaPercent** (이전 대비 %). |
+| **rpsAvg** | `조회 기간 전체 API 요청 수 / max(조회 기간 초, 1)`, **소수점 2자리** 반올림. |
+| **rpsPeak, peakRps** | **TRAFFIC_PEAK_WINDOW_SECONDS**(기본 60) 초 단위 버킷별 요청 수를 구한 뒤 그중 **최댓값 / 윈도우(초)**. 즉 `maxCountInWindow / TRAFFIC_PEAK_WINDOW_SECONDS`. 소수점 2자리. (동일값) |
+| **currentRps** | **요청 시점 기준** 최근 10초 구간 API 요청 건수 / 10. 실시간 RPS. |
+| **prevRps** | **요청 시점 24시간 전** 동일 10초 구간 API 요청 건수 / 10. 변동률 분모. |
+| **totalPv, requestCount** | 조회 기간 **전체 API 요청** 건수 (동일 소스). |
+| **totalUv** | 조회 기간 API 호출 이력에서 **COALESCE(ip_address, 'u_' \|\| user_id)** 기준 **COUNT(DISTINCT)**. |
+| **sloTarget** | **sys_monitoring_configs**의 **TRAFFIC_SLO_TARGET** 조회값(코드 관리, 초기 100). 없으면 100.0. |
+| **criticalThreshold** | **sys_monitoring_configs**의 **TRAFFIC_CRITICAL_THRESHOLD** 조회값(코드 관리, 초기 200). 없으면 200.0. |
+| **loadPercentage** | `(currentRps / criticalThreshold) × 100`, 소수점 2자리. criticalThreshold가 0이면 분모 1로 대체. 100 초과 가능. |
+| **pv, uv** | **data.pv**, **data.uv**와 동일 (페이지뷰 이벤트 기반). |
+| **delta** | rpsAvg/requestCount/pv/uv 절대 증감 + **pvDeltaPercent**, **uvDeltaPercent**, **rpsDeltaPercent**. |
+| **delta.rpsDeltaPercent** | `(currentRps − prevRps) / prevRps × 100`. prevRps=0이면 currentRps>0일 때 100, 아니면 0. |
 | **topTraffic** | API 호출 이력 **path별 건수** 집계 → **건수 1위** path 1건. 없으면 null. |
 
 ### 6.5. error (오류) 및 budget
 
 | 항목 | 계산 로직 |
 |------|-----------|
-| **rate4xx** | `(4xx 건수 / 전체 API 요청 수) × 100`, 소수 둘째 자리. 전체 0건이면 0. |
-| **rate5xx** | `(5xx 건수 / 전체 API 요청 수) × 100`, 소수 둘째 자리. 전체 0건이면 0. |
+| **rate4xx, rate5xx** | `(4xx|5xx 건수 / 전체 API 요청 수) × 100`, 소수 둘째 자리. 전체 0건이면 0. |
 | **count4xx, count5xx** | API 호출 이력에서 **status_code 400~499**, **500~599** 각각 건수 집계. |
+| **errorRate** | **rate5xx**와 동일. 현재 실시간 에러율(%). |
+| **errorCounts** | `{ count4xx, count5xx }` — 위 count4xx, count5xx와 동일값. |
+| **errorBudgetRemaining** | `max(0, (1 − consumedRatio) × 100)`, 소수 둘째 자리. |
+| **burnRate** | `rate5xx / ERROR_RATE_SLO_TARGET`. 1.0 이상이면 위험. |
 | **delta.rate5xxPp** | 현재 기간 rate5xx − 비교 기간 rate5xx (퍼센트포인트). |
 | **delta.count5xx** | 현재 기간 count5xx − 비교 기간 count5xx. |
-| **budget.consumedRatio** | `min(rate5xx / 0.1, 1.0)`. 소수 둘째 자리 반올림. **최대 1.0**으로 제한. 예: 0.7 → 70% 소진. |
+| **budget.consumedRatio** | `min(rate5xx / ERROR_RATE_SLO_TARGET, 1.0)`. **최대 1.0** 제한. (설정 기본값 0.5%) |
 | **budget.period** | 조회 기간(초) 기준: ≤3600 → `"1H"`, ≤86400 → `"24H"`, ≤604800 → `"7D"`, 그 외 `"WEEK"`. |
-| **budget.sloTargetSuccessRate** | `99.9`. |
+| **budget.sloTargetSuccessRate** | `100 − ERROR_RATE_SLO_TARGET` (DB 설정, 기본 99.5). |
 | **topError** | API 호출 이력에서 **status_code ≥ 400**만 필터 후 **(path, status_code)별 건수** 집계 → **건수 1위** 1건. 없으면 null. |
+
+- **Timeseries (metric=API_ERROR)**  
+  - `GET /api/admin/monitoring/timeseries?metric=API_ERROR&interval=1m|5m|1h|1d` 요청 시, 프론트의 **interval**에 맞춰 **시간대별 에러 발생 건수**(4xx+5xx) 배열을 반환.
 
 ---
 
@@ -272,10 +307,12 @@
 | **Red Area** | 우측 차트 장애 영역은 **Error 또는 Availability** 모드일 때만 노출, Traffic/Latency 시 제거 |
 | **차트 제목** | `시간대별 API / Traffic` · `시간대별 API / Latency` · `시간대별 API / Error` |
 | **시간대 필터** | 좌측 PV/UV 차트 **포인트 클릭** 시** 해당 구간 from/to로 API 히스토리 재조회 (브러시 드래그는 미구현) |
-| **Error Budget Bar** | `budget.consumedRatio` 0~1 사용, **≥1.0이면 100% 고정 + 강렬한 Red** 시각 경고 |
-| **Traffic delta** | `data.pvDeltaPercent` 우선, 없으면 `kpi.traffic.delta.pvDeltaPercent` 사용 |
+| **Error Budget Bar** | **errorBudgetRemaining** 기준 잔여량 프로그레스 바. 색상: Green(≥80%), Yellow(20~80%), Red(&lt;20%). 라벨 `Error Budget Remaining: N%`. consumedRatio ≥1.0이면 100% 고정 + 강렬한 Red 시각 경고. |
+| **Traffic delta** | `data.pvDeltaPercent` 우선, 없으면 `kpi.traffic.delta.pvDeltaPercent` 사용. 트래픽 카드 변동률은 **delta.rpsDeltaPercent** 우선 표시. |
 | **로딩** | `useMonitoringSummaryQuery` isLoading 시 카드 Skeleton 적용 |
-| **Zero 데이터** | 트래픽 스파크라인 값 전부 0일 때 바닥 직선(플랫 라인) 표시 |
+| **Zero 데이터** | 트래픽 스파크라인 값 전부 0일 때 바닥 직선(플랫 라인) 표시. 에러 스파크라인도 전부 0일 때 **Zero-filling**(바닥 직선)으로 표시. |
+| **Traffic 카드 레이아웃** | SLO 칩 **Target &lt; 100 RPS**는 **메인 수치(0.0 RPS) 좌측** 배치. 하단 지표는 **PV · UV · Peak (Load%)** 한 줄 통합, 구분선 위 좌측 정렬. 배경 스파크라인 **max-height: 35%**, **bottom: 0** 밀착. |
+| **Error 카드 레이아웃** | SLO 칩 **Target &lt; 0.5%**는 **메인 수치 우측 상단**(타이틀 행 우측) 배치. 하단 **4xx · 5xx** 한 줄 통합 + Error Budget Remaining 프로그레스 바. 배경 스파크라인 **max-height: 35%**, 에러 발생 시에만 Spike, 없으면 Zero-filling. |
 
 ---
 
@@ -291,3 +328,9 @@
 | 2026-01-26 | **AVAILABILITY_CRITICAL_THRESHOLD** 추가: 코드·시드(99.0), **kpi.availability.criticalThreshold** 응답 필드, successRate 미만 시 Critical 배지·빨간색 UI 용도 명세 반영 |
 | 2026-01-26 | **지연 시간 SLO/Critical**: `LATENCY_SLO_TARGET`(500), `LATENCY_CRITICAL_THRESHOLD`(1500) 코드·시드 추가. **kpi.latency** 확장: avgLatency, p50Latency, p99Latency, sloTarget, criticalThreshold, prevAvgLatency. §4.2·§6.3·설정 Fallback 반영. |
 | 2026-01-26 | **FE 정합성 검토**: 백엔드 반영 문서 기준으로 타입·카드·차트 확인. `libs/shared-utils` 타입(§4.1~4.4), 카드(sloTarget/criticalThreshold, p50/p99, delta.p95Ms, prevAvgLatency, consumedRatio, traffic delta), 문서 경로(`docs/api-spec`) 반영. |
+| 2026-01-26 | **트래픽 카드 확장**: currentRps(최근 10초), prevRps(전일 동시간대), totalPv/totalUv/peakRps, delta.rpsDeltaPercent. totalUv=API 이력 IP/UserId 기준 distinct. Timeseries metric=API_TOTAL 시 interval(1m,5m,1h,1d)에 맞춰 시간대별 요청 건수 반환. |
+| 2026-01-26 | **트래픽 SLO/임계치**: `TRAFFIC_SLO_TARGET`(100), `TRAFFIC_CRITICAL_THRESHOLD`(200) 코드·시드 추가. **kpi.traffic**에 **sloTarget**, **criticalThreshold** 응답. 시스템 부하 상태(정상/경고/Critical) 판단용. |
+| 2026-01-26 | **트래픽 부하율·스파크라인**: **loadPercentage** (currentRps/criticalThreshold×100) 추가 — 상태 컬러링·서버 증설 신호(Red) 용. Timeseries **metric=API_TOTAL**은 interval에 맞춰 **시간대별 평균 RPS**(버킷당 RPS) 배열 반환으로 변경하여 스파크라인 직접 사용. |
+| 2026-01-26 | **Error 카드·버짓**: **ERROR_RATE_SLO_TARGET**(0.5), **ERROR_BUDGET_TOTAL**(100) 코드·시드 추가. **kpi.error** 확장: **errorRate**, **errorCounts**(count4xx/count5xx), **errorBudgetRemaining**, **burnRate**. budget.consumedRatio·sloTargetSuccessRate를 설정 기반으로 계산. Timeseries **metric=API_ERROR** 시 interval에 맞춰 시간대별 에러 건수(4xx+5xx) 배열 반환. |
+| 2026-01-26 | **Peak RPS 윈도우 설정**: **TRAFFIC_PEAK_WINDOW_SECONDS**(기본 60) 코드·시드 추가. rpsPeak = (조회 기간 내 N초 버킷별 요청 수 최댓값) / N. N=10이면 10초당 최대 RPS 기준으로 정밀 관제 가능. |
+| 2026-01-26 | **§8 FE 반영 요약 보강**: Traffic 카드 SLO 칩 메인 수치 좌측, 하단 PV·UV·Peak(Load%) 한 줄·좌측 정렬, 차트 35%·bottom 밀착. Error 카드 SLO 칩 우측 상단, 4xx·5xx 한 줄 + 잔여 버짓 바, errorBudgetRemaining 기반 Green/Yellow/Red 색상·라벨, 스파크라인 35%·Zero-filling. |

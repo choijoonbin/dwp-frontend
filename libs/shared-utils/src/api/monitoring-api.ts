@@ -65,15 +65,30 @@ export type MonitoringKpiLatency = {
 };
 
 /**
- * SLI/SLO KPI - Traffic (RPS + 흡수 PV/UV)
- * 스펙: delta.pvDeltaPercent, delta.uvDeltaPercent 포함
+ * SLI/SLO KPI - Traffic (스펙 §4.3·§6.4)
+ * 메인 지표: currentRps(실시간). 상태: currentRps ≤ sloTarget → 정상, sloTarget < currentRps ≤ criticalThreshold → 주의, 초과 → Critical
  */
 export type MonitoringKpiTraffic = {
   rpsAvg?: number;
   rpsPeak?: number;
+  /** 실시간 RPS(최근 10초). 메인 지표·상태 판정용. 없으면 rpsAvg 폴백 */
+  currentRps?: number;
+  /** 전일 동시간대 RPS. 변동률(rpsDeltaPercent) 산출용 */
+  prevRps?: number;
+  totalPv?: number;
+  totalUv?: number;
+  peakRps?: number;
   requestCount?: number;
   pv?: number;
   uv?: number;
+  /** RPS SLO 목표. DB TRAFFIC_SLO_TARGET (기본 100) */
+  sloTarget?: number;
+  sloTargetRps?: number;
+  /** RPS Critical 임계치. DB TRAFFIC_CRITICAL_THRESHOLD (기본 200) */
+  criticalThreshold?: number;
+  criticalThresholdRps?: number;
+  /** 부하율(%) = (currentRps / criticalThreshold)×100. BE 제공 시 우선 사용 */
+  loadPercentage?: number;
   delta?: {
     rpsAvg?: number;
     requestCount?: number;
@@ -81,23 +96,31 @@ export type MonitoringKpiTraffic = {
     uv?: number;
     pvDeltaPercent?: number;
     uvDeltaPercent?: number;
+    /** 전일 동시간대 대비 RPS 변동률(%). 트래픽 카드 배지용 */
+    rpsDeltaPercent?: number;
   };
   topTraffic?: { path?: string; requestCount?: number } | null;
 };
 
 /**
- * SLI/SLO KPI - Error (4xx/5xx, Error Budget)
- * 스펙: budget.consumedRatio = 소진율 (0.1 = 10%, 1.0 = 100%), delta.rate5xxPp
+ * SLI/SLO KPI - Error (스펙 §4.4·§6.5)
+ * errorBudgetRemaining(잔여 %), burnRate(≥1 위험), budget.consumedRatio(소진율 0~1)
  */
 export type MonitoringKpiError = {
   rate4xx?: number;
   rate5xx?: number;
   count4xx?: number;
   count5xx?: number;
+  /** 현재 실시간 에러율(%) = rate5xx. 메인 지표 */
+  errorRate?: number;
+  errorCounts?: { count4xx?: number; count5xx?: number };
+  /** 남은 에러 버짓(%). BE 제공 시 우선 사용, 없으면 (1-consumedRatio)*100 */
+  errorBudgetRemaining?: number;
+  /** 버짓 소진 속도. ≥1.0이면 위험(Red) */
+  burnRate?: number;
   delta?: { rate5xxPp?: number; count5xx?: number };
-  /** 스펙: period, sloTargetSuccessRate, consumedRatio(0~1, 1=100% 소진) */
   budget?: { period?: string; sloTargetSuccessRate?: number; consumedRatio?: number };
-  consumedRatio?: number; // FE 호환 (0–1)
+  consumedRatio?: number;
   errorBudgetWeekBurnPercent?: number;
   errorBudgetMonthBurnPercent?: number;
   topError?: { path?: string; statusCode?: number; count?: number } | null;

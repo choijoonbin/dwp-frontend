@@ -232,7 +232,8 @@ export const MonitoringCharts = ({
         ? getChartLineColorForKpi(
             activeKpi,
             summaryData?.kpi?.availability,
-            summaryData?.kpi?.latency
+            summaryData?.kpi?.latency,
+            summaryData?.kpi?.traffic
           )
         : getApiChartSeriesColorFallback(effectiveRightMetric);
       const seriesWithColor = singleSeries
@@ -269,7 +270,7 @@ export const MonitoringCharts = ({
       isLoading: false,
       error: null,
     };
-  }, [type, pvQuery, uvQuery, rightChartQuery, effectiveRightMetric, eventQuery, activeKpi, summaryData?.kpi?.availability, summaryData?.kpi?.latency]);
+  }, [type, pvQuery, uvQuery, rightChartQuery, effectiveRightMetric, eventQuery, activeKpi, summaryData?.kpi?.availability, summaryData?.kpi?.latency, summaryData?.kpi?.traffic]);
 
   const baseChartOptions = useMemo(
     () => ({
