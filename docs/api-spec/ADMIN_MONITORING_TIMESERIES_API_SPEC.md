@@ -52,7 +52,7 @@
 | `UV` | 고유 방문자 수 (Unique Visitor Count) | `sys_page_view_events` 또는 `sys_page_view_daily_stats` |
 | `EVENT` | 이벤트 발생 수 (Event Count) | `sys_event_logs` |
 | `API_TOTAL` | API 호출 총 수 (Total API Calls) | `sys_api_call_histories` |
-| `API_ERROR` | API 에러 수 (API Error Count) | `sys_api_call_histories` (status >= 400) |
+| `API_ERROR` | API 에러 수 (4xx+5xx 건수) 및 **에러율(%)** | `sys_api_call_histories` (status >= 400). **values**=건수, **valuesErrorRate**=버킷별 (에러건수/전체요청)×100 (%) |
 
 ### 지원되는 간격 (interval)
 
@@ -93,14 +93,16 @@
 
 | 필드 | 타입 | 설명 |
 |------|------|------|
-| `interval` | string | 집계 간격 (`DAY` 또는 `HOUR`) |
-| `metric` | string | 집계 지표 (`PV`, `UV`, `EVENT`, `API_TOTAL`, `API_ERROR`) |
+| `interval` | string | 집계 간격 (`DAY` 또는 `HOUR`, 또는 `1m`/`5m`/`1h`/`1d`) |
+| `metric` | string | 집계 지표 (`PV`, `UV`, `EVENT`, `API_TOTAL`, `API_ERROR` 등) |
 | `labels` | string[] | 시간 라벨 배열 (X축 라벨로 사용) |
-| `values` | number[] | 값 배열 (Y축 값으로 사용) |
+| `values` | number[] | 값 배열 (Y축 값). **metric=API_ERROR일 때 단위: 건수(4xx+5xx)** |
+| `valuesErrorRate` | number[] \| null | **metric=API_ERROR일 때만 존재**. 각 버킷별 **(에러 건수/전체 요청 수)×100** 에러율(%). 빨간 영역(value>5 등) 등 **% 기준 로직은 이 필드 사용**. 그 외 metric이면 **null** |
 
-**중요**: `labels`와 `values` 배열의 길이는 항상 같으며, 같은 인덱스의 요소가 쌍을 이룹니다.
-- `labels[0]` = `"2026-01-19"` → `values[0]` = `15` (2026-01-19의 API 에러 수: 15건)
-- `labels[1]` = `"2026-01-20"` → `values[1]` = `23` (2026-01-20의 API 에러 수: 23건)
+**중요**: `labels`와 `values` 배열의 길이는 항상 같으며, 같은 인덱스의 요소가 쌍을 이룹니다. **metric=API_ERROR** 요청 시에는 **values**(건수)와 **valuesErrorRate**(에러율 %) 모두 내려줍니다.
+- **values[i]**: 해당 시간 버킷의 **에러 건수**(4xx+5xx).
+- **valuesErrorRate[i]**: 해당 버킷의 **에러율(%)** = (에러 건수/전체 요청 수)×100. 프론트에서 "5% 초과 시 빨간 영역" 등 **백분율 비교는 반드시 valuesErrorRate 사용**.
+- 예: `labels[0]` = `"2026-01-19"` → `values[0]` = `15` (에러 15건), `valuesErrorRate[0]` = `2.3` (에러율 2.3%)
 
 ---
 

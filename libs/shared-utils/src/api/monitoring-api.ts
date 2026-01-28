@@ -30,6 +30,8 @@ export type MonitoringKpiAvailability = {
   downtimeMinutes?: number;
   /** 가동 시간(분) = 조회 기간 전체 분 − downtimeMinutes. Uptime 표시용 */
   uptimeMinutes?: number;
+  /** AVAILABILITY_ERROR_RATE_THRESHOLD(%). 5xx 에러율 이 값 초과 시 장애. 빨간 영역·다운타임 판정용 */
+  availabilityErrorRateThreshold?: number;
   /** 장애 구간 (UTC ISO). 차트 Red 영역용 */
   downtimeIntervals?: { start: string; end: string }[];
   /** Health Dots용: 버킷별 상태 이력. UP/WARNING/DOWN/NO_DATA */
@@ -463,7 +465,9 @@ export type TimeseriesResponseBackend = {
   metric: 'PV' | 'UV' | 'API_TOTAL' | 'API_ERROR' | 'EVENT' | 'LATENCY_P95';
   interval: MonitoringTimeseriesInterval | 'HOUR' | 'DAY' | string;
   labels: string[]; // Time labels (X-axis)
-  values: number[]; // Values (Y-axis)
+  values: number[]; // Values (Y-axis). API_ERROR일 때 에러 건수
+  /** API_ERROR일 때만. 버킷별 에러율(%). 빨간 영역 등 % 비교용 */
+  valuesErrorRate?: number[] | null;
 };
 
 /**
@@ -473,6 +477,8 @@ export type TimeseriesResponse = {
   metric: 'PV' | 'UV' | 'API_TOTAL' | 'API_ERROR' | 'API_5XX' | 'LATENCY_P95' | 'EVENT';
   interval: MonitoringTimeseriesInterval | string;
   dataPoints: TimeseriesDataPoint[];
+  /** API_ERROR(API_5XX)일 때만. 버킷별 에러율(%). 빨간 영역(Downtime) % 비교용 */
+  valuesErrorRate?: number[] | null;
 };
 
 /**
@@ -902,6 +908,7 @@ export const getMonitoringTimeseries = async (
         metric: params.metric === 'API_5XX' ? 'API_ERROR' : params.metric,
         interval: params.interval,
         dataPoints: [],
+        valuesErrorRate: undefined,
       },
     } as ApiResponse<TimeseriesResponse>;
   }
@@ -913,12 +920,19 @@ export const getMonitoringTimeseries = async (
     value: backendData.values[index] || 0,
   }));
 
+  const valuesErrorRate =
+    Array.isArray(backendData.valuesErrorRate) &&
+    backendData.valuesErrorRate.length === backendData.labels.length
+      ? backendData.valuesErrorRate
+      : undefined;
+
   return {
     ...res.data,
     data: {
       metric: params.metric === 'API_5XX' ? 'API_ERROR' : (backendData.metric ?? params.metric),
       interval: backendData.interval,
       dataPoints,
+      valuesErrorRate,
     },
   } as ApiResponse<TimeseriesResponse>;
 };

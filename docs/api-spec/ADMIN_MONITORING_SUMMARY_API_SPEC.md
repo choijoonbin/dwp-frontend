@@ -50,6 +50,25 @@
 | **eventDeltaPercent** | Double | 이전 비교 기간 대비 이벤트 수 증감 **백분율(%)**. |
 | **apiErrorDeltaPercent** | Double | 이전 비교 기간 대비 API 에러율 증감 **백분율(%)**. |
 | **kpi** | Object | 가용성·지연·트래픽·에러 4종 KPI 세부 객체. (아래 4절 참고) |
+| **monitoringConfig** | Object | **dwp_auth.public.sys_monitoring_configs** 현재 DB 설정값. key=config_key(코드값), value=config_value. 테넌트별 조회, 없으면 기본값 맵 반환. **각 config key가 어떤 KPI 카드에서 쓰이는지는 아래 표 참고.** |
+
+**monitoringConfig — config_key별 사용 카드·설명**
+
+각 설정값이 **어떤 KPI 카드에서 쓰이는지** 아래 표를 참고합니다. **data.kpi** 내 각 블록(availability/latency/traffic/error)에는 해당 KPI에서 사용하는 설정값을 필드로도 내려줍니다.
+
+| config_key | 기본값(예시) | 설명 | 사용 카드 |
+|------------|--------------|------|-----------|
+| **AVAILABILITY_MIN_REQ_PER_MINUTE** | 1 | 분당 최소 요청 건수. 이 값 이상일 때만 해당 분을 다운타임 판정 대상으로 둠. | **가용성** |
+| **AVAILABILITY_ERROR_RATE_THRESHOLD** | 5.0 | 5xx 에러율이 이 값(%)을 초과하면 해당 1분을 장애 분으로 집계. | **가용성** |
+| **AVAILABILITY_CRITICAL_THRESHOLD** | 99.0 | 가용성(성공률)이 이 값(%) 미만이면 Critical 배지·빨간색 UI 노출. | **가용성** |
+| **AVAILABILITY_SLO_TARGET** | 99.9 | 가용성 SLO 목표 성공률(%). 목표 대비 비교·Health Dots WARNING/UP 판정에 사용. | **가용성** |
+| **LATENCY_SLO_TARGET** | 500 | 지연 SLO 목표(ms). 0.5초 이내 응답 목표. | **지연** |
+| **LATENCY_CRITICAL_THRESHOLD** | 1500 | 지연이 이 값(ms) 초과 시 장애(심각). 1.5초 초과 시 Critical·빨간색 UI. | **지연** |
+| **TRAFFIC_SLO_TARGET** | 100 | 트래픽(RPS) 정상 범위 상한. 이 값 이하면 정상으로 간주. | **트래픽** |
+| **TRAFFIC_CRITICAL_THRESHOLD** | 200 | 트래픽 서버 수용 한계 RPS. 초과 시 Critical·서버 증설 신호(Red). | **트래픽** |
+| **TRAFFIC_PEAK_WINDOW_SECONDS** | 60 | Peak RPS 집계 윈도우(초). 60=1분 버킷, 10=10초 버킷 등. **kpi.traffic.trafficPeakWindowSeconds**로 동일값 반환. | **트래픽** |
+| **ERROR_RATE_SLO_TARGET** | 0.5 | 목표 에러율(%). 5xx 비율을 이 값 미만으로 유지할 목표. Error Budget·burnRate 계산에 사용. **kpi.error.errorRateSloTarget**으로 반환. | **에러** |
+| **ERROR_BUDGET_TOTAL** | 100 | 기준 기간 내 에러 예산 총량. **kpi.error.errorBudgetTotal**로 반환. | **에러** |
 
 - **표시 권장**: 수치가 없을 때 `-` 대신 **0** 또는 기획된 기본값을 사용할 수 있도록, 백엔드는 가능한 한 null 대신 숫자를 내려줍니다.
 
@@ -73,9 +92,11 @@
 | **successRate** | Double | **(성공 요청 수(2xx+3xx) / 전체 API 요청 수) × 100** (%)<br>• 전체 요청이 **0건이면 100.0**을 반환(시스템 정상으로 간주). |
 | **sloTargetSuccessRate** | Double | **가용성 SLO 목표 성공률(%)**. DB `sys_monitoring_configs`의 **AVAILABILITY_SLO_TARGET** 조회값(코드로 관리, 초기 99.9). 현재 성공률과 함께 목표 대비 비교용. |
 | **criticalThreshold** | Double | **Critical 임계치(%)**. DB **AVAILABILITY_CRITICAL_THRESHOLD** 조회값(코드 관리, 초기 99.0). **successRate가 이 값 미만일 때만** Critical 배지·빨간색 UI 노출. |
+| **availabilityMinReqPerMinute** | Integer | **AVAILABILITY_MIN_REQ_PER_MINUTE** 설정값. 분당 최소 요청 건수 이상일 때만 다운타임 판정. (해당 KPI에서 사용하는 설정) |
+| **availabilityErrorRateThreshold** | Double | **AVAILABILITY_ERROR_RATE_THRESHOLD** 설정값(%). 5xx 에러율이 이 값 초과 시 해당 1분을 장애로 집계. (해당 KPI에서 사용하는 설정) |
 | **successCount** | Long | 조회 기간 동안 **2xx·3xx** 응답 수. |
 | **totalCount** | Long | 조회 기간 동안 **전체 API 요청** 수. |
-| **downtimeMinutes** | Integer | **1분 단위**로 집계했을 때, **분당 요청 수 ≥ MIN_REQ_PER_MINUTE** 이면서 **5xx 에러율이 ERROR_RATE_THRESHOLD%를 초과한 분**의 개수 합. (설정은 테넌트별 `sys_monitoring_configs`, 없으면 1 / 5.0 Fallback) 데이터 없으면 **0**. |
+| **downtimeMinutes** | Integer | **1분 단위**로 집계했을 때, **분당 요청 수 ≥ AVAILABILITY_MIN_REQ_PER_MINUTE** 이면서 **5xx 에러율이 AVAILABILITY_ERROR_RATE_THRESHOLD%를 초과한 분**의 개수 합. (설정은 테넌트별 `sys_monitoring_configs`, 없으면 1 / 5.0 Fallback) 데이터 없으면 **0**. |
 | **uptimeMinutes** | Long | **가동 시간(분)** = 조회 기간 전체 분 − downtimeMinutes. 프론트 **Uptime** 표시용. |
 | **downtimeIntervals** | Array | **장애 구간 목록**. 위 기준을 만족하는 1분 버킷의 `{ start, end }` (ISO-8601 UTC). 차트 Red 영역 표시용. |
 | **downtimeIntervals[].start** | String | 구간 시작 시각 (UTC). |
@@ -93,8 +114,8 @@
 | **topCause.count** | Long | 해당 path에서 발생한 5xx 건수. |
 
 - **모니터링 설정 (Backend)**  
-  - 다운타임/장애 구간 판정 기준은 테넌트별 **sys_monitoring_configs**에서 조회하며, 없을 경우 **Fallback**: `MIN_REQ_PER_MINUTE`=1, `ERROR_RATE_THRESHOLD`=5.0, `AVAILABILITY_SLO_TARGET`=99.9, `AVAILABILITY_CRITICAL_THRESHOLD`=99.0, `LATENCY_SLO_TARGET`=500, `LATENCY_CRITICAL_THRESHOLD`=1500, `TRAFFIC_SLO_TARGET`=100, `TRAFFIC_CRITICAL_THRESHOLD`=200, **TRAFFIC_PEAK_WINDOW_SECONDS**=60.  
-  - 설정 키는 **sys_codes** 코드값으로 관리(MONITORING_CONFIG_KEY 그룹: MIN_REQ_PER_MINUTE, ERROR_RATE_THRESHOLD, AVAILABILITY_SLO_TARGET, AVAILABILITY_CRITICAL_THRESHOLD, LATENCY_SLO_TARGET, LATENCY_CRITICAL_THRESHOLD, TRAFFIC_SLO_TARGET, TRAFFIC_CRITICAL_THRESHOLD, **TRAFFIC_PEAK_WINDOW_SECONDS**, ERROR_RATE_SLO_TARGET, ERROR_BUDGET_TOTAL). 다운타임 쿼리는 HAVING COUNT(*) >= 설정값 유지.  
+  - 다운타임/장애 구간 판정 기준은 테넌트별 **sys_monitoring_configs**에서 조회하며, 없을 경우 **Fallback**: `AVAILABILITY_MIN_REQ_PER_MINUTE`=1, `AVAILABILITY_ERROR_RATE_THRESHOLD`=5.0, `AVAILABILITY_SLO_TARGET`=99.9, `AVAILABILITY_CRITICAL_THRESHOLD`=99.0, `LATENCY_SLO_TARGET`=500, `LATENCY_CRITICAL_THRESHOLD`=1500, `TRAFFIC_SLO_TARGET`=100, `TRAFFIC_CRITICAL_THRESHOLD`=200, **TRAFFIC_PEAK_WINDOW_SECONDS**=60.  
+  - 설정 키는 **sys_codes** 코드값으로 관리(MONITORING_CONFIG_KEY 그룹: AVAILABILITY_MIN_REQ_PER_MINUTE, AVAILABILITY_ERROR_RATE_THRESHOLD, AVAILABILITY_SLO_TARGET, AVAILABILITY_CRITICAL_THRESHOLD, LATENCY_SLO_TARGET, LATENCY_CRITICAL_THRESHOLD, TRAFFIC_SLO_TARGET, TRAFFIC_CRITICAL_THRESHOLD, **TRAFFIC_PEAK_WINDOW_SECONDS**, ERROR_RATE_SLO_TARGET, ERROR_BUDGET_TOTAL). 다운타임 쿼리는 HAVING COUNT(*) >= 설정값 유지.  
 - **UI 활용**: 가용성 카드에 successRate(현재 성공률), sloTargetSuccessRate(목표), criticalThreshold(이 값 미만 시 Critical·빨간색 UI), uptimeMinutes(Uptime), downtimeMinutes(다운타임) 표시. topCause는 “가장 많은 5xx 원인” 요약용.
 - **statusHistory (타임라인 히트맵 / Health Dots) — 산출 로직**  
   - **버킷**: 조회 기간에 따라 동적 조정.  
@@ -106,10 +127,18 @@
     - **30d (2592000초)**: 86400초(24시간=1일) 버킷 → **30 도트**  
     - 조회 기간이 **1h~6h 사이**인 경우, 도트 개수가 최소 30개 내외가 되도록 **2~10분 사이 버킷 크기를 유동적으로 조정**.  
     - 전체적으로 최대 40~50개 도트 이내로 제한하여 UI 가독성 유지.  
-  - **DOWN**: 해당 버킷 내 **downtimeMinutes**에 해당하는 1분이 1분이라도 존재할 경우.  
-  - **WARNING**: **가용성 &lt; AVAILABILITY_SLO_TARGET(99.9%)** 이지만 DOWN은 아닌 경우.  
-  - **UP**: **가용성 ≥ AVAILABILITY_SLO_TARGET**.  
-  - **NO_DATA**: 해당 구간 API 요청(**totalCount**)이 0건인 경우.
+  - **도트 색상 결정 — 에러율 임계치·지속 시간**  
+    - **DOWN(적색)**  
+      - **에러율 임계치**: **5xx 에러율 &gt; AVAILABILITY_ERROR_RATE_THRESHOLD**(sys_monitoring_configs, 기본 **5.0%**).  
+      - **지속 시간**: **1분** 단위로만 판정. 해당 도트 버킷(2분~24시간) 안에, **“분당 요청 수 ≥ AVAILABILITY_MIN_REQ_PER_MINUTE(기본 1)”** 이면서 **“(5xx/분당 전체)×100 &gt; AVAILABILITY_ERROR_RATE_THRESHOLD”** 인 **1분**이 **한 번이라도** 있으면 DOWN.  
+    - **WARNING(황색)**  
+      - **에러율 임계치**: 해당 도트 **버킷 전체**의 **성공률(2xx+3xx/전체)&lt; AVAILABILITY_SLO_TARGET(기본 99.9%)**. 즉 실패율 &gt; 0.1% 이면 WARNING.  
+      - **지속 시간**: **도트 버킷 전체**의 집계(버킷 내 전체 요청 기준 합산 후 비율 계산).  
+    - **UP(녹색)**  
+      - **에러율 임계치**: **성공률 ≥ AVAILABILITY_SLO_TARGET(99.9%)**.  
+      - **지속 시간**: 도트 버킷 전체.  
+    - **NO_DATA(회색)**  
+      - 해당 도트 버킷의 **API 요청(totalCount)이 0건**인 경우.
 
 ---
 
@@ -152,6 +181,7 @@
 | **sloTarget** | Double | **트래픽 SLO 목표(RPS)**. DB `sys_monitoring_configs` **TRAFFIC_SLO_TARGET** (초기 100). 정상 범위 상한으로, currentRps와 비교해 시스템 부하 상태 판단. |
 | **criticalThreshold** | Double | **트래픽 Critical 임계치(RPS)**. DB **TRAFFIC_CRITICAL_THRESHOLD** (초기 200). 서버 수용 한계로, 초과 시 심각(경고)·서버 증설 신호(Red) 표시. |
 | **loadPercentage** | Double | **부하율(%)**: (currentRps / criticalThreshold) × 100. 소수점 2자리. 100 초과 가능. 상태 컬러링·SLO 칩·Red 배지 판단용. |
+| **trafficPeakWindowSeconds** | Integer | **TRAFFIC_PEAK_WINDOW_SECONDS** 설정값(초). Peak RPS 집계 윈도우. 60=1분 버킷. (해당 KPI에서 사용하는 설정) |
 | **requestCount** | Long | 조회 기간 **전체 API 요청** 수. (totalPv와 동일) |
 | **pv** | Long | **data.pv와 동일**. 페이지뷰 총 건수. |
 | **uv** | Long | **data.uv와 동일**. 순 방문자 수(페이지뷰 기준). |
@@ -183,6 +213,8 @@
 | **count4xx** | Long | 조회 기간 **4xx** 발생 건수. |
 | **count5xx** | Long | 조회 기간 **5xx** 발생 건수. |
 | **errorRate** | Double | **현재 실시간 에러율(%)** — 5xx 비율과 동일. Error 카드 메인 지표. |
+| **errorRateSloTarget** | Double | **ERROR_RATE_SLO_TARGET** 설정값(%). 목표 에러율 미만 유지 목표. Error Budget·burnRate 계산에 사용. (해당 KPI에서 사용하는 설정) |
+| **errorBudgetTotal** | Double | **ERROR_BUDGET_TOTAL** 설정값. 기준 기간 내 에러 예산 총량. (해당 KPI에서 사용하는 설정) |
 | **errorCounts** | Object | 4xx·5xx **각각의 합계** (`count4xx`, `count5xx`). |
 | **errorCounts.count4xx** | Long | 조회 기간 4xx 건수. |
 | **errorCounts.count5xx** | Long | 조회 기간 5xx 건수. |
@@ -239,6 +271,7 @@
 | **events** | 조회 기간 내 **이벤트 로그** 테이블 건수 집계 (tenant 기준). |
 | **apiErrorRate** | `(4xx 건수 + 5xx 건수) / 전체 API 요청 수 × 100`. API 호출 이력 테이블에서 status_code 4xx·5xx 집계. |
 | **pvDeltaPercent, uvDeltaPercent, eventDeltaPercent, apiErrorDeltaPercent** | `(현재 기간 값 - 비교 기간 값) / 비교 기간 값 × 100`. 비교 기간 값이 0이면 현재 > 0일 때 100, 아니면 0. |
+| **monitoringConfig** | **dwp_auth.public.sys_monitoring_configs** 테넌트별 조회. config_key → config_value 맵. DB에 없으면 기본값 맵(AVAILABILITY_MIN_REQ_PER_MINUTE=1, AVAILABILITY_ERROR_RATE_THRESHOLD=5.0, AVAILABILITY_SLO_TARGET=99.9 등) 반환. |
 
 ### 6.2. availability (가용성)
 
@@ -249,7 +282,7 @@
 | **criticalThreshold** | **sys_monitoring_configs**의 **AVAILABILITY_CRITICAL_THRESHOLD** 조회값(코드 관리, 초기 99.0). successRate < 이 값이면 Critical·빨간색 UI. |
 | **successCount** | API 호출 이력에서 **status_code 200~399** 건수 집계. |
 | **totalCount** | API 호출 이력에서 조회 기간 내 **전체 건수**. |
-| **downtimeMinutes** | 테넌트 설정(`sys_monitoring_configs`)에서 **MIN_REQ_PER_MINUTE**, **ERROR_RATE_THRESHOLD** 조회 (없으면 1, 5.0). **1분 버킷** 중 **버킷 요청 수 ≥ MIN_REQ_PER_MINUTE** 이고 **(5xx/버킷전체)×100 > ERROR_RATE_THRESHOLD** 인 버킷 개수 합. 데이터 없으면 0. |
+| **downtimeMinutes** | 테넌트 설정(`sys_monitoring_configs`)에서 **AVAILABILITY_MIN_REQ_PER_MINUTE**, **AVAILABILITY_ERROR_RATE_THRESHOLD** 조회 (없으면 1, 5.0). **1분 버킷** 중 **버킷 요청 수 ≥ AVAILABILITY_MIN_REQ_PER_MINUTE** 이고 **(5xx/버킷전체)×100 > AVAILABILITY_ERROR_RATE_THRESHOLD** 인 버킷 개수 합. 데이터 없으면 0. |
 | **uptimeMinutes** | **조회 기간 전체(분) − downtimeMinutes** (0 미만이면 0). |
 | **downtimeIntervals** | 위 HAVING 조건을 만족하는 1분 버킷의 **시작 시각** 목록 조회 후, 각각 `start`(UTC ISO), `end = start + 1분`(UTC ISO) 로 배열 반환. |
 | **statusHistory** | 조회 기간을 **버킷**으로 나누어, 버킷별 total·success 집계 후 `timestamp`(버킷 시작 ISO-8601 UTC), `status`, `availability`(%) 반환. 버킷 크기: **1h=2분(30 도트)**, **3h=5분(36 도트)**, **6h=10분(36 도트)**, **24h=30분(48 도트)**, **7d=6시간(28 도트)**, **30d=24시간(30 도트)**. 조회 기간이 1h~6h 사이인 경우 도트 개수가 최소 30개 내외가 되도록 2~10분 사이 버킷으로 조정하며, 전체적으로 최대 40~50개 도트로 제한. **DOWN**=해당 버킷 내 downtimeMinutes에 해당하는 1분이 1분이라도 존재, **WARNING**=가용성 &lt; AVAILABILITY_SLO_TARGET(99.9%)이지만 DOWN 아님, **UP**=가용성 ≥ SLO, **NO_DATA**=해당 구간 API 요청(totalCount) 0건. |
@@ -354,7 +387,7 @@
 | 2026-01-26 | 문서 위치를 `docs/frontend-src/docs/api-spec` 로 통일, **항목별 계산 로직 요약** 섹션 추가 |
 | 2026-01-26 | **데이터 정합성·UX 보완** 반영: 가용성 fallback, consumedRatio 1.0 cap, budget.period 기간 연동, traffic.delta 퍼센트, downtimeIntervals, RPS 2자리, top null 명세 |
 | 2026-01-26 | **§8 프론트엔드 반영 요약** 추가 — KPI 카드·차트 안정화 기준으로 스펙 대비 FE 동작 정리 |
-| 2026-01-26 | **모니터링 설정·가용성 보강**: `sys_monitoring_configs` 기반 동적 다운타임 기준(MIN_REQ_PER_MINUTE, ERROR_RATE_THRESHOLD), **uptimeMinutes** 응답 추가, §4.1·§6.2 및 모니터링 설정 설명 반영 |
+| 2026-01-26 | **모니터링 설정·가용성 보강**: `sys_monitoring_configs` 기반 동적 다운타임 기준(MIN_REQ_PER_MINUTE, AVAILABILITY_ERROR_RATE_THRESHOLD), **uptimeMinutes** 응답 추가, §4.1·§6.2 및 모니터링 설정 설명 반영 |
 | 2026-01-26 | **AVAILABILITY_CRITICAL_THRESHOLD** 추가: 코드·시드(99.0), **kpi.availability.criticalThreshold** 응답 필드, successRate 미만 시 Critical 배지·빨간색 UI 용도 명세 반영 |
 | 2026-01-26 | **지연 시간 SLO/Critical**: `LATENCY_SLO_TARGET`(500), `LATENCY_CRITICAL_THRESHOLD`(1500) 코드·시드 추가. **kpi.latency** 확장: avgLatency, p50Latency, p99Latency, sloTarget, criticalThreshold, prevAvgLatency. §4.2·§6.3·설정 Fallback 반영. |
 | 2026-01-26 | **FE 정합성 검토**: 백엔드 반영 문서 기준으로 타입·카드·차트 확인. `libs/shared-utils` 타입(§4.1~4.4), 카드(sloTarget/criticalThreshold, p50/p99, delta.p95Ms, prevAvgLatency, consumedRatio, traffic delta), 문서 경로(`docs/api-spec`) 반영. |
@@ -366,5 +399,8 @@
 | 2026-01-26 | **§8 FE 반영 요약 보강**: Traffic 카드 SLO 칩 메인 수치 좌측, 하단 PV·UV·Peak(Load%) 한 줄·좌측 정렬, 차트 35%·bottom 밀착. Error 카드 SLO 칩 우측 상단, 4xx·5xx 한 줄 + 잔여 버짓 바, errorBudgetRemaining 기반 Green/Yellow/Red 색상·라벨, 스파크라인 35%·Zero-filling. |
 | 2026-01-26 | **가용성 타임라인(Health Dots)**: **kpi.availability.statusHistory** 추가. 버킷(24h 이내 30분, 7일 6h, 그 외 24h)별 `timestamp`, `status`(UP\|WARNING\|DOWN\|NO_DATA), `availability`(%) 반환. 최대 40~50개 도트로 제한(30일 기준 30 도트). DOWN=버킷 내 downtime 1분 포함, WARNING=가용성&lt;SLO이면서 DOWN 아님, NO_DATA=요청 0건. |
 | 2026-01-27 | **Health Dots 해상도 고도화**: 1h~6h 단기 조회 구간에 대해 버킷 크기를 2~10분으로 세분화하여 최소 30개 내외 도트가 그려지도록 개선(1h=2분, 3h=5분, 6h=10분). statusHistory 관련 설명 및 버킷 크기/도트 개수 스펙 업데이트. |
+| 2026-01-27 | **statusHistory 도트 색상**: DOWN/WARNING/UP/NO_DATA 결정을 위한 **에러율 임계치**(AVAILABILITY_ERROR_RATE_THRESHOLD 5%, AVAILABILITY_SLO_TARGET 99.9%) 및 **지속 시간**(DOWN=1분 단위, WARNING/UP=도트 버킷 전체) 로직 명시. |
+| 2026-01-27 | **data.monitoringConfig**: data 최상위에 **dwp_auth.public.sys_monitoring_configs** 현재 DB 설정값(config_key→config_value 맵) 추가. |
+| 2026-01-27 | **monitoringConfig config_key별 사용 카드**: 각 config_key가 **가용성/지연/트래픽/에러** 카드 중 어디에서 쓰이는지, 기본값·설명과 함께 표로 명시. |
 | 2026-01-26 | **KPI API 변경사항 통합**: 문서 위치 `docs/frontend-src/docs/api-spec` 명시. §4 앞에 **data.kpi 구조 개요** 표 추가(가용성·지연·트래픽·에러 4블록 및 statusHistory·loadPercentage·errorRate·errorCounts·errorBudgetRemaining·burnRate 등 현행 필드 반영). |
 | 2026-01-26 | **프론트 정합성**: §8에 가용성 **Health Dots·Top Cause** FE 반영 내용 추가. 문서 위치 표기를 실제 경로 **docs/api-spec**으로 통일(.cursorrules·FE_BE_API_SPEC_WORKFLOW 기준). |

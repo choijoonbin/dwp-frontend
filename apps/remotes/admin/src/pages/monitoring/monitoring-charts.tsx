@@ -31,11 +31,15 @@ type MonitoringChartsProps = {
   forcedRightMetric?: 'API_TOTAL' | 'API_5XX' | 'LATENCY_P95';
   /** 선택된 KPI 카드 → 선 색상을 해당 카드(테마)에 맞춤. Availability/Error 모두 Error 차트이면 카드별 다른 색 적용 */
   activeKpi?: MonitoringKpiCardKey | null;
+  /** 가용성 도트 클릭 시 저장된 timestamp. Error 차트 X축 강조선·해제 연동 */
+  activeTimestamp?: string | null;
+  /** 차트 빈 공간 클릭 시 콜백 (강조 해제용) */
+  onChartBackgroundClick?: () => void;
   /** 좌측 PV/UV 차트에서 포인트 클릭 시 해당 시간대로 API 히스토리 필터 (from, to ISO) */
   onPvUvRangeSelect?: (fromIso: string, toIso: string) => void;
 };
 
-const DOWNTIME_ERROR_RATE_THRESHOLD = 5; // 에러율 5% 초과 구간을 Downtime으로 표시
+const DEFAULT_AVAILABILITY_ERROR_RATE_THRESHOLD = 5; // availabilityErrorRateThreshold 없을 때 fallback (%)
 
 /** 우측 차트 선 색상: KPI 미선택 시 메트릭별 기본 색상 (카드 색상과 동일 hex) */
 function getApiChartSeriesColorFallback(
@@ -123,12 +127,49 @@ const addIntervalToTimestamp = (
   }
 };
 
+/** "YYYY-MM-DD" 또는 "YYYY-MM-DD HH:mm" / "YYYY-MM-DDTHH:mm:ssZ" 등에서 YYYY-MM-DD 추출 */
+const parseDateStr = (s: string): string | null => {
+  const m = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${m[1]}-${m[2]}-${m[3]}` : null;
+};
+
+/** X축 라벨/툴팁용 시점 포맷 (interval에 따라 "HH:mm" 또는 "MM/DD") */
+const formatPointLabel = (timestamp: string, interval: 'HOUR' | 'DAY'): string => {
+  const timeMatch = timestamp.match(/\d{2}:\d{2}/);
+  if (interval === 'HOUR' && timeMatch) return timeMatch[0];
+  const dateMatch = timestamp.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (dateMatch) return `${dateMatch[2]}/${dateMatch[3]}`;
+  try {
+    const d = new Date(timestamp);
+    return d.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' });
+  } catch {
+    return timestamp;
+  }
+};
+
+/** statusHistory를 날짜별로 묶은 맵. 키: YYYY-MM-DD, 값: 해당 일자의 버킷 목록 */
+const buildStatusHistoryByDate = (
+  items: { timestamp: string; status: string }[]
+): Map<string, { timestamp: string; status: string }[]> => {
+  const map = new Map<string, { timestamp: string; status: string }[]>();
+  for (const it of items) {
+    const d = parseDateStr(it.timestamp);
+    if (!d) continue;
+    const list = map.get(d) ?? [];
+    list.push(it);
+    map.set(d, list);
+  }
+  return map;
+};
+
 export const MonitoringCharts = ({
   type,
   from,
   to,
   forcedRightMetric,
   activeKpi,
+  activeTimestamp,
+  onChartBackgroundClick,
   onPvUvRangeSelect,
 }: MonitoringChartsProps) => {
   const theme = useTheme();
@@ -218,14 +259,49 @@ export const MonitoringCharts = ({
         LATENCY_P95: 'Latency',
       };
       const data = rightChartQuery.data;
-      const singleSeries = convertTimeseriesToSeries(data, labelMap[effectiveRightMetric]);
       const categories = getXAxisCategories(data);
-      const values = singleSeries?.data ?? [];
-      const downtimeIndices: number[] = [];
+      const rawThreshold = summaryData?.kpi?.availability?.availabilityErrorRateThreshold;
+      const errorRateThreshold =
+        typeof rawThreshold === 'number' && !Number.isNaN(rawThreshold)
+          ? rawThreshold
+          : DEFAULT_AVAILABILITY_ERROR_RATE_THRESHOLD;
+
+      let downtimeIndices: number[] | undefined;
+      const singleSeries: { name: string; data: number[] } | { name: string; data: [number, number][] } | null =
+        convertTimeseriesToSeries(data, labelMap[effectiveRightMetric]);
+
       if (effectiveRightMetric === 'API_5XX') {
-        values.forEach((v, i) => {
-          if (v > DOWNTIME_ERROR_RATE_THRESHOLD) downtimeIndices.push(i);
-        });
+        const statusHistory = summaryData?.kpi?.availability?.statusHistory ?? [];
+        const points = data?.dataPoints ?? [];
+        const useTimeRangeMatching =
+          statusHistory.length > 0 && points.length > 0;
+
+        if (useTimeRangeMatching) {
+          const byDate = buildStatusHistoryByDate(statusHistory);
+          let canParseAny = false;
+          const indices: number[] = [];
+          for (let i = 0; i < points.length; i++) {
+            const d = parseDateStr(points[i]!.timestamp);
+            if (!d) continue;
+            canParseAny = true;
+            const items = byDate.get(d);
+            if (items?.some((x) => x.status === 'DOWN')) indices.push(i);
+          }
+          if (!canParseAny) {
+            const rates = data?.valuesErrorRate ?? [];
+            rates.forEach((rate, i) => {
+              if ((rate ?? 0) > errorRateThreshold) indices.push(i);
+            });
+          }
+          downtimeIndices = indices;
+        } else {
+          const indices: number[] = [];
+          const rates = data?.valuesErrorRate ?? [];
+          rates.forEach((rate, i) => {
+            if ((rate ?? 0) > errorRateThreshold) indices.push(i);
+          });
+          downtimeIndices = indices;
+        }
       }
 
       const seriesColor = activeKpi
@@ -246,7 +322,7 @@ export const MonitoringCharts = ({
         categories,
         isLoading: rightChartQuery.isLoading,
         error: rightChartQuery.error,
-        downtimeIndices: effectiveRightMetric === 'API_5XX' ? downtimeIndices : undefined,
+        downtimeIndices,
       };
     }
 
@@ -272,14 +348,50 @@ export const MonitoringCharts = ({
     };
   }, [type, pvQuery, uvQuery, rightChartQuery, effectiveRightMetric, eventQuery, activeKpi, summaryData?.kpi?.availability, summaryData?.kpi?.latency, summaryData?.kpi?.traffic]);
 
+  /** 가용성 도트 클릭 시점의 차트 포인트 정보 (스티키 툴팁, X축 강조선용). API 차트는 항상 category 축 사용 */
+  const activePointInfo = useMemo(() => {
+    if (
+      type !== 'api' ||
+      effectiveRightMetric !== 'API_5XX' ||
+      !activeTimestamp ||
+      !rightChartQuery.data?.dataPoints?.length
+    )
+      return null;
+    const points = rightChartQuery.data.dataPoints;
+    const rates = rightChartQuery.data.valuesErrorRate ?? [];
+    const categories = chartData.categories;
+    const activeDate = parseDateStr(activeTimestamp);
+    if (!activeDate || !categories?.length) return null;
+    let index = -1;
+    for (let i = 0; i < points.length; i++) {
+      if (parseDateStr(points[i]!.timestamp) === activeDate) {
+        index = i;
+        break;
+      }
+    }
+    if (index < 0) return null;
+    const p = points[index]!;
+    const value = p.value ?? 0;
+    const errorRate = typeof rates[index] === 'number' && !Number.isNaN(rates[index])
+      ? (rates[index] as number)
+      : null;
+    const xLabel = formatPointLabel(p.timestamp, interval);
+    return { index, value, errorRate, xLabel, timestamp: p.timestamp };
+  }, [
+    type,
+    effectiveRightMetric,
+    activeTimestamp,
+    rightChartQuery.data,
+    chartData.categories,
+    interval,
+  ]);
+
   const baseChartOptions = useMemo(
     () => ({
       chart: {
         type: 'line' as const,
       },
-      xaxis: {
-        categories: chartData.categories,
-      },
+      xaxis: { categories: chartData.categories },
       stroke: {
         curve: 'smooth' as const,
       },
@@ -330,22 +442,75 @@ export const MonitoringCharts = ({
     type === 'api' && (effectiveRightMetric === 'API_5XX');
 
   const apiErrorAnnotationsOptions = useMemo(() => {
+    const xaxis: {
+      x: number | string;
+      x2?: number | string;
+      fillColor?: string;
+      opacity?: number;
+      strokeWidth?: number;
+      strokeDashArray?: number;
+      borderColor?: string;
+    }[] = [];
     if (!shouldShowDowntimeArea) {
-      return { annotations: { xaxis: [] } };
+      return { annotations: { xaxis } };
     }
     const downtimeIndices = (chartData as { downtimeIndices?: number[] }).downtimeIndices;
     const categories = chartData.categories;
-    if (!downtimeIndices?.length || !categories?.length) {
-      return { annotations: { xaxis: [] } };
+
+    if (downtimeIndices?.length && categories?.length) {
+      downtimeIndices.forEach((i) => {
+        xaxis.push({
+          x: categories[i] ?? '',
+          x2: categories[Math.min(i + 1, categories.length - 1)] ?? categories[i],
+          fillColor: theme.palette.error.main,
+          opacity: 0.2,
+        });
+      });
     }
-    const xaxis = downtimeIndices.map((i) => ({
-      x: categories[i] ?? '',
-      x2: categories[Math.min(i + 1, categories.length - 1)] ?? categories[i],
-      fillColor: theme.palette.error.main,
-      opacity: 0.2,
-    }));
+
+    if (activeTimestamp && categories?.length && rightChartQuery.data?.dataPoints?.length) {
+      const points = rightChartQuery.data.dataPoints;
+      const activeDate = parseDateStr(activeTimestamp);
+      if (activeDate) {
+        let idx = -1;
+        for (let i = 0; i < points.length; i++) {
+          if (parseDateStr(points[i]!.timestamp) === activeDate) {
+            idx = i;
+            break;
+          }
+        }
+        if (idx >= 0 && categories[idx]) {
+          const lineColor = '#1976d2';
+          xaxis.push({
+            x: categories[idx] as string,
+            strokeWidth: 2,
+            strokeDashArray: 4,
+            borderColor: lineColor,
+          });
+        }
+      }
+    }
     return { annotations: { xaxis } };
-  }, [shouldShowDowntimeArea, chartData, theme.palette.error.main]);
+  }, [shouldShowDowntimeArea, chartData, theme.palette.error.main, activeTimestamp, rightChartQuery.data]);
+
+  const apiChartClickOptions = useMemo(() => {
+    if (type !== 'api' || !onChartBackgroundClick || !activeTimestamp) return {};
+    return {
+      chart: {
+        events: {
+          click: (
+            ev: unknown,
+            _chartContext: unknown,
+            config: { dataPointIndex?: number; seriesIndex?: number }
+          ) => {
+            const idx = config?.dataPointIndex;
+            const isUserClick = typeof (ev as MouseEvent)?.isTrusted === 'boolean' && (ev as MouseEvent).isTrusted;
+            if ((idx == null || idx < 0) && isUserClick) onChartBackgroundClick();
+          },
+        },
+      },
+    };
+  }, [type, onChartBackgroundClick, activeTimestamp]);
 
   /** Latency 메트릭 시 Y축·툴팁에 ms 단위 명시 */
   const latencyUnitOptions = useMemo(() => {
@@ -364,10 +529,13 @@ export const MonitoringCharts = ({
     merge(
       merge(
         merge(
-          baseChartOptions,
-          type === 'pv-uv' && Object.keys(pvUvSelectionOptions).length > 0 ? pvUvSelectionOptions : {}
+          merge(
+            baseChartOptions,
+            type === 'pv-uv' && Object.keys(pvUvSelectionOptions).length > 0 ? pvUvSelectionOptions : {}
+          ),
+          apiErrorAnnotationsOptions
         ),
-        apiErrorAnnotationsOptions
+        apiChartClickOptions
       ),
       latencyUnitOptions
     )
@@ -394,7 +562,9 @@ export const MonitoringCharts = ({
     );
   }
 
-  if (chartData.series.length === 0 || chartData.categories.length === 0) {
+  const hasSeries = chartData.series.length > 0;
+  const hasCategories = chartData.categories.length > 0;
+  if (!hasSeries || !hasCategories) {
     return (
       <Stack spacing={2}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -420,6 +590,11 @@ export const MonitoringCharts = ({
     if (value !== null) setRightChartMetric(value);
   };
 
+  const showStickyTooltip =
+    type === 'api' &&
+    effectiveRightMetric === 'API_5XX' &&
+    activePointInfo != null;
+
   return (
     <Stack spacing={2}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={1}>
@@ -443,7 +618,38 @@ export const MonitoringCharts = ({
           </ToggleButtonGroup>
         </Stack>
       </Stack>
-      <Chart type="line" series={chartData.series} options={chartOptions} sx={{ height: 300 }} />
+      {showStickyTooltip && (
+        <Box
+          sx={{
+            px: 1.5,
+            py: 1,
+            borderRadius: 1,
+            bgcolor: 'action.hover',
+            border: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
+          <Typography component="span" variant="caption" sx={{ fontWeight: 600, color: 'text.primary' }}>
+            선택 시점:
+          </Typography>
+          <Typography component="span" variant="caption" sx={{ color: 'text.secondary', mx: 0.5 }}>
+            {activePointInfo.xLabel}
+          </Typography>
+          <Typography component="span" variant="caption" sx={{ color: 'text.secondary' }}>
+            · 에러 건수 {activePointInfo.value.toLocaleString()}건
+            {activePointInfo.errorRate != null
+              ? ` · 에러율 ${Number(activePointInfo.errorRate).toFixed(2)}%`
+              : ''}
+          </Typography>
+        </Box>
+      )}
+      <Chart
+        key={type === 'api' && effectiveRightMetric === 'API_5XX' ? 'api-error' : 'api-metric'}
+        type="line"
+        series={chartData.series}
+        options={chartOptions}
+        sx={{ height: 300 }}
+      />
     </Stack>
   );
 };
