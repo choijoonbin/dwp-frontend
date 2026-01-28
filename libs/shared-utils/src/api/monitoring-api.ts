@@ -32,6 +32,8 @@ export type MonitoringKpiAvailability = {
   uptimeMinutes?: number;
   /** 장애 구간 (UTC ISO). 차트 Red 영역용 */
   downtimeIntervals?: { start: string; end: string }[];
+  /** Health Dots용: 버킷별 상태 이력. UP/WARNING/DOWN/NO_DATA */
+  statusHistory?: { timestamp: string; status: 'UP' | 'WARNING' | 'DOWN' | 'NO_DATA'; availability: number }[];
   /** 레거시: 가용 구간 문자열. uptimeMinutes 우선 사용 */
   uptime?: string;
   delta?: { successRatePp?: number; downtimeMinutes?: number };

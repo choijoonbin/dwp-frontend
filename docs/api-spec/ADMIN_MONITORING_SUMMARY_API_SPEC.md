@@ -2,7 +2,7 @@
 
 > **API**: `GET /api/admin/monitoring/summary`  
 > **목적**: 프론트엔드에서 각 응답 필드의 의미를 해석하고 올바르게 표시하기 위한 필드별 설명 문서.  
-> **문서 위치**: `docs/api-spec` (본 저장소). BE 협업 시 FE 전달용으로 복사 가능.
+> **문서 위치**: `docs/frontend-src/docs/api-spec` (FE 전달·협업 시 사용).
 
 ---
 
@@ -33,6 +33,7 @@
 ```
 
 - **data**: 이하 모든 필드는 `data` 내부 값.
+- **data.kpi**: 가용성·지연·트래픽·에러 4종 KPI 블록. (§4 상세)
 
 ---
 
@@ -56,6 +57,15 @@
 
 ## 4. data.kpi — 4종 KPI 상세
 
+**data.kpi 구조 개요**
+
+| 블록 | 키 | 대표 필드·용도 |
+|------|-----|----------------|
+| **가용성** | `availability` | successRate, sloTargetSuccessRate, criticalThreshold, downtimeMinutes, uptimeMinutes, **statusHistory**(Health Dots), downtimeIntervals, topCause |
+| **지연** | `latency` | avgLatency, p50Ms, p95Ms, p99Ms, sloTarget, criticalThreshold, prevAvgLatency, topSlow |
+| **트래픽** | `traffic` | rpsAvg, rpsPeak, currentRps, prevRps, totalPv, totalUv, sloTarget, criticalThreshold, **loadPercentage**, delta.rpsDeltaPercent, topTraffic |
+| **에러** | `error` | rate4xx, rate5xx, **errorRate**, **errorCounts**, **errorBudgetRemaining**, **burnRate**, budget.consumedRatio, topError |
+
 ### 4.1. availability (가용성)
 
 | 필드 | 타입 | 의미 |
@@ -70,6 +80,10 @@
 | **downtimeIntervals** | Array | **장애 구간 목록**. 위 기준을 만족하는 1분 버킷의 `{ start, end }` (ISO-8601 UTC). 차트 Red 영역 표시용. |
 | **downtimeIntervals[].start** | String | 구간 시작 시각 (UTC). |
 | **downtimeIntervals[].end** | String | 구간 종료 시각 (UTC, start + 1분). |
+| **statusHistory** | Array | **타임라인 히트맵(Health Dots)**용. 버킷별 `{ timestamp, status, availability }` 목록. 버킷 크기: 1h=2분(30 도트), 3h=5분(36 도트), 6h=10분(36 도트), 24h=30분(48 도트), 7d=6시간(28 도트), 30d=24시간(30 도트). |
+| **statusHistory[].timestamp** | String | 버킷 시작 시각 (ISO-8601 UTC). |
+| **statusHistory[].status** | String | **UP** \| **WARNING** \| **DOWN** \| **NO_DATA**. (산출 로직은 아래 참고) |
+| **statusHistory[].availability** | Double | 해당 버킷 가용성(%) = (2xx+3xx)/전체×100. NO_DATA면 0. |
 | **delta** | Object | 이전 비교 기간 대비 증감. |
 | **delta.successRatePp** | Double | successRate의 **퍼센트포인트(p.p.)** 증감. (예: -3.59 = 3.59%p 감소) |
 | **delta.downtimeMinutes** | Integer | downtimeMinutes 증감(분). |
@@ -82,6 +96,20 @@
   - 다운타임/장애 구간 판정 기준은 테넌트별 **sys_monitoring_configs**에서 조회하며, 없을 경우 **Fallback**: `MIN_REQ_PER_MINUTE`=1, `ERROR_RATE_THRESHOLD`=5.0, `AVAILABILITY_SLO_TARGET`=99.9, `AVAILABILITY_CRITICAL_THRESHOLD`=99.0, `LATENCY_SLO_TARGET`=500, `LATENCY_CRITICAL_THRESHOLD`=1500, `TRAFFIC_SLO_TARGET`=100, `TRAFFIC_CRITICAL_THRESHOLD`=200, **TRAFFIC_PEAK_WINDOW_SECONDS**=60.  
   - 설정 키는 **sys_codes** 코드값으로 관리(MONITORING_CONFIG_KEY 그룹: MIN_REQ_PER_MINUTE, ERROR_RATE_THRESHOLD, AVAILABILITY_SLO_TARGET, AVAILABILITY_CRITICAL_THRESHOLD, LATENCY_SLO_TARGET, LATENCY_CRITICAL_THRESHOLD, TRAFFIC_SLO_TARGET, TRAFFIC_CRITICAL_THRESHOLD, **TRAFFIC_PEAK_WINDOW_SECONDS**, ERROR_RATE_SLO_TARGET, ERROR_BUDGET_TOTAL). 다운타임 쿼리는 HAVING COUNT(*) >= 설정값 유지.  
 - **UI 활용**: 가용성 카드에 successRate(현재 성공률), sloTargetSuccessRate(목표), criticalThreshold(이 값 미만 시 Critical·빨간색 UI), uptimeMinutes(Uptime), downtimeMinutes(다운타임) 표시. topCause는 “가장 많은 5xx 원인” 요약용.
+- **statusHistory (타임라인 히트맵 / Health Dots) — 산출 로직**  
+  - **버킷**: 조회 기간에 따라 동적 조정.  
+    - **1h (3600초)**: 120초(2분) 버킷 → **30 도트**  
+    - **3h (10800초)**: 300초(5분) 버킷 → **36 도트**  
+    - **6h (21600초)**: 600초(10분) 버킷 → **36 도트**  
+    - **24h (86400초)**: 1800초(30분) 버킷 → **48 도트**  
+    - **7d (604800초)**: 21600초(6시간) 버킷 → **28 도트**  
+    - **30d (2592000초)**: 86400초(24시간=1일) 버킷 → **30 도트**  
+    - 조회 기간이 **1h~6h 사이**인 경우, 도트 개수가 최소 30개 내외가 되도록 **2~10분 사이 버킷 크기를 유동적으로 조정**.  
+    - 전체적으로 최대 40~50개 도트 이내로 제한하여 UI 가독성 유지.  
+  - **DOWN**: 해당 버킷 내 **downtimeMinutes**에 해당하는 1분이 1분이라도 존재할 경우.  
+  - **WARNING**: **가용성 &lt; AVAILABILITY_SLO_TARGET(99.9%)** 이지만 DOWN은 아닌 경우.  
+  - **UP**: **가용성 ≥ AVAILABILITY_SLO_TARGET**.  
+  - **NO_DATA**: 해당 구간 API 요청(**totalCount**)이 0건인 경우.
 
 ---
 
@@ -224,6 +252,7 @@
 | **downtimeMinutes** | 테넌트 설정(`sys_monitoring_configs`)에서 **MIN_REQ_PER_MINUTE**, **ERROR_RATE_THRESHOLD** 조회 (없으면 1, 5.0). **1분 버킷** 중 **버킷 요청 수 ≥ MIN_REQ_PER_MINUTE** 이고 **(5xx/버킷전체)×100 > ERROR_RATE_THRESHOLD** 인 버킷 개수 합. 데이터 없으면 0. |
 | **uptimeMinutes** | **조회 기간 전체(분) − downtimeMinutes** (0 미만이면 0). |
 | **downtimeIntervals** | 위 HAVING 조건을 만족하는 1분 버킷의 **시작 시각** 목록 조회 후, 각각 `start`(UTC ISO), `end = start + 1분`(UTC ISO) 로 배열 반환. |
+| **statusHistory** | 조회 기간을 **버킷**으로 나누어, 버킷별 total·success 집계 후 `timestamp`(버킷 시작 ISO-8601 UTC), `status`, `availability`(%) 반환. 버킷 크기: **1h=2분(30 도트)**, **3h=5분(36 도트)**, **6h=10분(36 도트)**, **24h=30분(48 도트)**, **7d=6시간(28 도트)**, **30d=24시간(30 도트)**. 조회 기간이 1h~6h 사이인 경우 도트 개수가 최소 30개 내외가 되도록 2~10분 사이 버킷으로 조정하며, 전체적으로 최대 40~50개 도트로 제한. **DOWN**=해당 버킷 내 downtimeMinutes에 해당하는 1분이 1분이라도 존재, **WARNING**=가용성 &lt; AVAILABILITY_SLO_TARGET(99.9%)이지만 DOWN 아님, **UP**=가용성 ≥ SLO, **NO_DATA**=해당 구간 API 요청(totalCount) 0건. |
 | **delta.successRatePp** | 현재 기간 successRate − 비교 기간 successRate (퍼센트포인트). |
 | **delta.downtimeMinutes** | 현재 기간 downtimeMinutes − 비교 기간 downtimeMinutes. |
 | **topCause** | API 호출 이력에서 **status_code 500~599**만 필터 후 **path별 건수** 집계 → 건수 기준 1위 1건 (path, count). 없으면 null. |
@@ -313,6 +342,7 @@
 | **Zero 데이터** | 트래픽 스파크라인 값 전부 0일 때 바닥 직선(플랫 라인) 표시. 에러 스파크라인도 전부 0일 때 **Zero-filling**(바닥 직선)으로 표시. |
 | **Traffic 카드 레이아웃** | SLO 칩 **Target &lt; 100 RPS**는 **메인 수치(0.0 RPS) 좌측** 배치. 하단 지표는 **PV · UV · Peak (Load%)** 한 줄 통합, 구분선 위 좌측 정렬. 배경 스파크라인 **max-height: 35%**, **bottom: 0** 밀착. |
 | **Error 카드 레이아웃** | SLO 칩 **Target &lt; 0.5%**는 **메인 수치 우측 상단**(타이틀 행 우측) 배치. 하단 **4xx · 5xx** 한 줄 통합 + Error Budget Remaining 프로그레스 바. 배경 스파크라인 **max-height: 35%**, 에러 발생 시에만 Spike, 없으면 Zero-filling. |
+| **가용성 Health Dots·Top Cause** | **statusHistory** 있으면 버킷별 도트(UP=녹색, WARNING=황색, DOWN=적색, NO_DATA=회색), 툴팁에 timestamp·availability 표시. 없으면 기존 타임시리즈 기반 48도트 폴백. **topCause** 있으면 `⚠️ 주요 장애 원인: {path} (5xx: {count}건)` 한 줄, null이면 "현재 보고된 주요 장애 원인 없음". 타임라인 하단·좌측 정렬, caption(11~12px), 말줄임. |
 
 ---
 
@@ -334,3 +364,7 @@
 | 2026-01-26 | **Error 카드·버짓**: **ERROR_RATE_SLO_TARGET**(0.5), **ERROR_BUDGET_TOTAL**(100) 코드·시드 추가. **kpi.error** 확장: **errorRate**, **errorCounts**(count4xx/count5xx), **errorBudgetRemaining**, **burnRate**. budget.consumedRatio·sloTargetSuccessRate를 설정 기반으로 계산. Timeseries **metric=API_ERROR** 시 interval에 맞춰 시간대별 에러 건수(4xx+5xx) 배열 반환. |
 | 2026-01-26 | **Peak RPS 윈도우 설정**: **TRAFFIC_PEAK_WINDOW_SECONDS**(기본 60) 코드·시드 추가. rpsPeak = (조회 기간 내 N초 버킷별 요청 수 최댓값) / N. N=10이면 10초당 최대 RPS 기준으로 정밀 관제 가능. |
 | 2026-01-26 | **§8 FE 반영 요약 보강**: Traffic 카드 SLO 칩 메인 수치 좌측, 하단 PV·UV·Peak(Load%) 한 줄·좌측 정렬, 차트 35%·bottom 밀착. Error 카드 SLO 칩 우측 상단, 4xx·5xx 한 줄 + 잔여 버짓 바, errorBudgetRemaining 기반 Green/Yellow/Red 색상·라벨, 스파크라인 35%·Zero-filling. |
+| 2026-01-26 | **가용성 타임라인(Health Dots)**: **kpi.availability.statusHistory** 추가. 버킷(24h 이내 30분, 7일 6h, 그 외 24h)별 `timestamp`, `status`(UP\|WARNING\|DOWN\|NO_DATA), `availability`(%) 반환. 최대 40~50개 도트로 제한(30일 기준 30 도트). DOWN=버킷 내 downtime 1분 포함, WARNING=가용성&lt;SLO이면서 DOWN 아님, NO_DATA=요청 0건. |
+| 2026-01-27 | **Health Dots 해상도 고도화**: 1h~6h 단기 조회 구간에 대해 버킷 크기를 2~10분으로 세분화하여 최소 30개 내외 도트가 그려지도록 개선(1h=2분, 3h=5분, 6h=10분). statusHistory 관련 설명 및 버킷 크기/도트 개수 스펙 업데이트. |
+| 2026-01-26 | **KPI API 변경사항 통합**: 문서 위치 `docs/frontend-src/docs/api-spec` 명시. §4 앞에 **data.kpi 구조 개요** 표 추가(가용성·지연·트래픽·에러 4블록 및 statusHistory·loadPercentage·errorRate·errorCounts·errorBudgetRemaining·burnRate 등 현행 필드 반영). |
+| 2026-01-26 | **프론트 정합성**: §8에 가용성 **Health Dots·Top Cause** FE 반영 내용 추가. 문서 위치 표기를 실제 경로 **docs/api-spec**으로 통일(.cursorrules·FE_BE_API_SPEC_WORKFLOW 기준). |

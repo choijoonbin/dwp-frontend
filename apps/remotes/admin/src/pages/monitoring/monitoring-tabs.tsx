@@ -754,94 +754,101 @@ export const MonitoringTabs = ({
                   </TableCell>
                 </TableRow>
               ) : (
-                (paginatedData as ApiHistoryItem[]).map((row, index) => (
-                  <TableRow key={row.id || `api-history-${index}-${row.timestamp || index}`}>
-                    <TableCell>{row.apiName}</TableCell>
-                    <TableCell>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          px: 1,
-                          py: 0.5,
-                          borderRadius: 0.5,
-                          bgcolor: row.method === 'GET' ? 'primary.lighter' : 'success.lighter',
-                          color: row.method === 'GET' ? 'primary.darker' : 'success.darker',
-                        }}
-                      >
-                        {row.method}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          px: 1,
-                          py: 0.5,
-                          borderRadius: 0.5,
-                          bgcolor: row.statusCode >= 400 ? 'error.lighter' : 'success.lighter',
-                          color: row.statusCode >= 400 ? 'error.darker' : 'success.darker',
-                        }}
-                      >
-                        {row.statusCode}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>{row.userId || '-'}</TableCell>
-                    <TableCell>
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        sx={{
-                          color:
-                            row.responseTime != null && row.responseTime > 1000
-                              ? row.responseTime > 3000
-                                ? 'error.main'
-                                : 'warning.main'
-                              : 'text.primary',
-                          fontWeight: row.responseTime != null && row.responseTime > 1000 ? 600 : undefined,
-                        }}
-                      >
-                        {row.responseTime != null ? `${row.responseTime}ms` : '-'}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      {row.traceId ? (
+                (paginatedData as ApiHistoryItem[]).map((row, index) => {
+                  // apiUrl에서 path 추출 (query string 제거)
+                  const apiPath = row.apiUrl ? row.apiUrl.split('?')[0] : '';
+                  return (
+                    <TableRow 
+                      key={row.id || `api-history-${index}-${row.timestamp || index}`}
+                      data-api-path={apiPath}
+                    >
+                      <TableCell>{row.apiName}</TableCell>
+                      <TableCell>
                         <Typography
                           variant="caption"
                           sx={{
-                            fontFamily: 'monospace',
-                            fontSize: '0.75rem',
-                            color: 'text.secondary',
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 0.5,
+                            bgcolor: row.method === 'GET' ? 'primary.lighter' : 'success.lighter',
+                            color: row.method === 'GET' ? 'primary.darker' : 'success.darker',
                           }}
                         >
-                          {row.traceId}
+                          {row.method}
                         </Typography>
-                      ) : (
-                        '-'
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(row.timestamp).toLocaleString('ko-KR', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false,
-                      })}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Button
-                        size="small"
-                        onClick={() => {
-                          setDetailData(row);
-                          setDetailDialogOpen(true);
-                        }}
-                      >
-                        상세
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 0.5,
+                            bgcolor: row.statusCode >= 400 ? 'error.lighter' : 'success.lighter',
+                            color: row.statusCode >= 400 ? 'error.darker' : 'success.darker',
+                          }}
+                        >
+                          {row.statusCode}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>{row.userId || '-'}</TableCell>
+                      <TableCell>
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          sx={{
+                            color:
+                              row.responseTime != null && row.responseTime > 1000
+                                ? row.responseTime > 3000
+                                  ? 'error.main'
+                                  : 'warning.main'
+                                : 'text.primary',
+                            fontWeight: row.responseTime != null && row.responseTime > 1000 ? 600 : undefined,
+                          }}
+                        >
+                          {row.responseTime != null ? `${row.responseTime}ms` : '-'}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        {row.traceId ? (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              fontFamily: 'monospace',
+                              fontSize: '0.75rem',
+                              color: 'text.secondary',
+                            }}
+                          >
+                            {row.traceId}
+                          </Typography>
+                        ) : (
+                          '-'
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(row.timestamp).toLocaleString('ko-KR', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false,
+                        })}
+                      </TableCell>
+                      <TableCell align="right">
+                        <Button
+                          size="small"
+                          onClick={() => {
+                            setDetailData(row);
+                            setDetailDialogOpen(true);
+                          }}
+                        >
+                          상세
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </>

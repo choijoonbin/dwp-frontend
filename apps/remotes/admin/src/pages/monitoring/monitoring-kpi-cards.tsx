@@ -78,6 +78,8 @@ type MonitoringCardProps = {
   deltaColor?: string;
   /** 변동률 숫자 표기 시 단위 (예: "ms") */
   deltaUnit?: string;
+  /** 메인 수치 옆 보조 UI (가용성 카드: SLO 대비 소형 Progress Bar 등) */
+  mainValueSupplement?: React.ReactNode;
 };
 
 const sampleValues = (values: number[], maxPoints = 12): number[] => {
@@ -108,9 +110,9 @@ const buildRateValues = (
   });
 };
 
-const buildSparkline = (values: number[]): number[] | null => {
+const buildSparkline = (values: number[], maxPoints = 12): number[] | null => {
   if (values.length === 0) return null;
-  const sampled = sampleValues(values);
+  const sampled = sampleValues(values, maxPoints);
   const hasSignal = sampled.some((value) => value !== 0);
   return hasSignal ? sampled : null;
 };
@@ -136,22 +138,26 @@ const getSmoothPath = (points: { x: number; y: number }[]) => {
   return path;
 };
 
+/** 스파크라인 path. x는 도트 중심과 1:1 (0~100). n=48일 때 i번째 포인트 x = (i/(n-1))*100. */
 const getSparklinePaths = (values: number[], maxPeakRatio = 1) => {
   const width = 100;
   const height = 40;
-  const max = Math.max(...values);
-  const min = Math.min(...values);
+  const safe = values.map((v) => (v == null || Number.isNaN(v) ? 0 : v));
+  if (safe.length === 0) return { linePath: '', areaPath: '' };
+  const max = Math.max(...safe);
+  const min = Math.min(...safe);
   const range = max - min || 1;
   const effectiveHeight = (height - 6) * Math.max(0.2, Math.min(1, maxPeakRatio));
+  const n = safe.length;
 
-  const points = values.map((value, index) => {
-    const x = (values.length - 1) > 0 ? (index / (values.length - 1)) * width : 0;
+  const points = safe.map((value, index) => {
+    const x = n > 1 ? (index / (n - 1)) * width : 0;
     const y = height - ((value - min) / range) * effectiveHeight - 2;
     return { x, y };
   });
 
-  const linePath = getSmoothPath(points);
-
+  const linePath =
+    points.length === 1 ? `M0,${points[0].y} L${width},${points[0].y}` : getSmoothPath(points);
   const areaPath = `${linePath} L${width},${height} L0,${height} Z`;
 
   return { linePath, areaPath };
@@ -174,11 +180,13 @@ const Sparkline = ({
   /** true면 전부 0일 때도 바닥에 평평한 선(Zero-filling) 표시 */
   zeroFill?: boolean;
 }) => {
+  if (values.length === 0) return null;
   if (!zeroFill && values.every((value) => value === 0)) {
     return null;
   }
 
   const { linePath, areaPath } = getSparklinePaths(values, maxPeakRatio);
+  if (!linePath || !areaPath) return null;
 
   return (
     <Box
@@ -239,6 +247,315 @@ const InlineDelta = ({
 const ERROR_DANGER_COLOR = '#EF4444';
 const WARNING_AMBER_COLOR = '#f59e0b';
 const ERROR_BUDGET_DANGER_THRESHOLD = 80; // % 이상 소진 시 Bar 빨간색
+const AVAILABILITY_SUCCESS_COLOR = '#22c55e';
+const NO_DATA_GRAY = '#9ca3af';
+
+type StatusHistoryItem = { timestamp: string; status: string; availability: number };
+
+/** statusHistory 항목 기준 색상: UP=녹색, WARNING=황색, DOWN=적색, NO_DATA=회색 */
+const statusToColor = (status: string): string => {
+  switch (status) {
+    case 'UP':
+      return AVAILABILITY_SUCCESS_COLOR;
+    case 'WARNING':
+      return WARNING_AMBER_COLOR;
+    case 'DOWN':
+      return ERROR_DANGER_COLOR;
+    case 'NO_DATA':
+    default:
+      return NO_DATA_GRAY;
+  }
+};
+
+
+/** ISO-8601 UTC → KST 툴팁용 단축 포맷 "HH:mm" 또는 "MM-DD HH:mm" (한 줄 표시용) */
+const formatHealthDotTooltipTimeShort = (iso: string, sameDayRef?: Date): string => {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  try {
+    const opts: Intl.DateTimeFormatOptions = {
+      timeZone: 'Asia/Seoul',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    };
+    const f = new Intl.DateTimeFormat('ko-KR', opts);
+    const parts = f.formatToParts(d);
+    const m = parts.find((p) => p.type === 'month')?.value ?? '';
+    const day = parts.find((p) => p.type === 'day')?.value ?? '';
+    const h = parts.find((p) => p.type === 'hour')?.value ?? '';
+    const min = parts.find((p) => p.type === 'minute')?.value ?? '';
+    if (sameDayRef) {
+      const refParts = f.formatToParts(sameDayRef);
+      const refM = refParts.find((p) => p.type === 'month')?.value ?? '';
+      const refDay = refParts.find((p) => p.type === 'day')?.value ?? '';
+      if (m === refM && day === refDay) return `${h}:${min}`;
+    }
+    return `${m}-${day} ${h}:${min}`;
+  } catch {
+    const h = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${h}:${min}`;
+  }
+};
+
+const MAX_DOTS = 48; // 단일 행 유지: 최대 도트 개수 (40~50 범위)
+
+/** statusHistory 또는 values 배열을 최대 MAX_DOTS개로 샘플링 (단일 행 유지). Single Source용. */
+const sampleDots = <T,>(items: T[], maxDots: number): T[] => {
+  if (items.length <= maxDots) return items;
+  const step = (items.length - 1) / (maxDots - 1);
+  return Array.from({ length: maxDots }, (_, index) => items[Math.round(index * step)] ?? items[0]!);
+};
+
+/** 가용성 카드 Timeline. Single Source: statusHistory 우선 else values(48). 도트·차트 1:1. nowrap, flex:1, gap 최소, hover scale(1.5)/opacity 0.3. */
+const AvailabilityHealthBar = ({
+  values,
+  statusHistory,
+  sloTarget,
+  criticalThreshold,
+  downtimeCaption,
+  uptimeCaption,
+  showCaption = true,
+}: {
+  values: number[];
+  statusHistory?: StatusHistoryItem[];
+  sloTarget: number;
+  criticalThreshold: number;
+  downtimeCaption: string;
+  uptimeCaption?: string;
+  /** false면 캡션 행 미표시 (Row1에 별도 배치 시 사용) */
+  showCaption?: boolean;
+}) => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const useHistory = statusHistory != null && statusHistory.length > 0;
+  const dotColorByValue = (v: number) =>
+    v >= sloTarget ? AVAILABILITY_SUCCESS_COLOR : v >= criticalThreshold ? WARNING_AMBER_COLOR : ERROR_DANGER_COLOR;
+  const captionLine = uptimeCaption ? `${downtimeCaption} | ${uptimeCaption}` : downtimeCaption;
+
+  /** 부모에서 이미 Single Source 기반으로 샘플링·통일됨. 재샘플링 없이 1:1 사용 */
+  const dotItems = useHistory ? statusHistory : values;
+  const firstTs = useHistory && statusHistory[0] ? new Date(statusHistory[0].timestamp) : undefined;
+
+  // 툴팁: "[15:00] 가용성 93.8%" 또는 "[MM-DD HH:mm] 가용성 93.8%" + 상태 색상 점
+  const getHistoryTooltip = (item: StatusHistoryItem) => {
+    const timeStr = formatHealthDotTooltipTimeShort(item.timestamp, firstTs);
+    const statusColor = statusToColor(item.status);
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+        <Box
+          sx={{
+            width: 6,
+            height: 6,
+            borderRadius: '50%',
+            bgcolor: statusColor,
+            flexShrink: 0,
+          }}
+        />
+        <Typography variant="caption" sx={{ color: 'common.white', fontSize: '0.75rem' }}>
+          [{timeStr}] 가용성 {item.availability.toFixed(1)}%
+        </Typography>
+      </Box>
+    );
+  };
+
+  const getValueTooltip = (v: number) => {
+    const statusColor = dotColorByValue(v);
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+        <Box
+          sx={{
+            width: 6,
+            height: 6,
+            borderRadius: '50%',
+            bgcolor: statusColor,
+            flexShrink: 0,
+          }}
+        />
+        <Typography variant="caption" sx={{ color: 'common.white', fontSize: '0.75rem' }}>
+          [가용성] {v.toFixed(1)}%
+        </Typography>
+      </Box>
+    );
+  };
+
+  const tooltipSx = {
+    tooltip: {
+      sx: {
+        bgcolor: 'rgba(0, 0, 0, 0.8)',
+        backdropFilter: 'blur(4px)',
+        borderRadius: 1,
+        px: 1.5,
+        py: 1,
+      },
+    },
+    arrow: { sx: { color: 'rgba(0, 0, 0, 0.8)' } },
+  };
+
+  return (
+    <Box sx={{ position: 'relative', zIndex: 2 }}>
+      {showCaption && (
+        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', display: 'block', mb: 0.5 }}>
+          {captionLine}
+        </Typography>
+      )}
+      <Stack
+        direction="row"
+        spacing={0}
+        sx={{
+          flexWrap: 'nowrap',
+          overflow: 'hidden',
+          width: '100%',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 0.125,
+        }}
+      >
+        {useHistory
+          ? (dotItems as StatusHistoryItem[]).map((item, i) => {
+              const isHovered = hoveredIndex === i;
+              const color = statusToColor(item.status);
+              return (
+                <Box
+                  key={i}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  sx={{
+                    flex: '1 1 0',
+                    minWidth: 4,
+                    aspectRatio: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: hoveredIndex != null && !isHovered ? 0.3 : 1,
+                    transition: 'opacity 0.2s ease-in-out, transform 0.2s ease-in-out',
+                  }}
+                >
+                  <Tooltip title={getHistoryTooltip(item)} placement="top" arrow componentsProps={tooltipSx}>
+                    <Box
+                      component="span"
+                      sx={{
+                        width: '100%',
+                        height: '100%',
+                        maxWidth: 10,
+                        maxHeight: 10,
+                        borderRadius: 0.25,
+                        bgcolor: color,
+                        display: 'block',
+                        cursor: 'default',
+                        transform: isHovered ? 'scale(1.5)' : 'scale(1)',
+                        zIndex: isHovered ? 10 : 1,
+                        position: 'relative',
+                      }}
+                    />
+                  </Tooltip>
+                </Box>
+              );
+            })
+          : (dotItems as number[]).map((v, i) => {
+              const isHovered = hoveredIndex === i;
+              const color = dotColorByValue(v);
+              return (
+                <Box
+                  key={i}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  sx={{
+                    flex: '1 1 0',
+                    minWidth: 4,
+                    aspectRatio: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: hoveredIndex != null && !isHovered ? 0.3 : 1,
+                    transition: 'opacity 0.2s ease-in-out, transform 0.2s ease-in-out',
+                  }}
+                >
+                  <Tooltip title={getValueTooltip(v)} placement="top" arrow componentsProps={tooltipSx}>
+                    <Box
+                      component="span"
+                      sx={{
+                        width: '100%',
+                        height: '100%',
+                        maxWidth: 10,
+                        maxHeight: 10,
+                        borderRadius: 0.25,
+                        bgcolor: color,
+                        display: 'block',
+                        cursor: 'default',
+                        transform: isHovered ? 'scale(1.5)' : 'scale(1)',
+                        zIndex: isHovered ? 10 : 1,
+                        position: 'relative',
+                      }}
+                    />
+                  </Tooltip>
+                </Box>
+              );
+            })}
+      </Stack>
+    </Box>
+  );
+};
+
+/** 가용성 카드 Top Cause: 텍스트 중심 경량 칩 (배경 박스 없음). 클릭 시 API 히스토리 탭 이동 */
+const TopCauseInsight = ({
+  topCause,
+  onPathClick,
+}: {
+  topCause: { path?: string; statusGroup?: string; count?: number } | null | undefined;
+  onPathClick?: (path: string) => void;
+}) => {
+  const hasPath = topCause?.path != null;
+  const pathText = topCause?.path ?? '';
+  const countText = topCause?.count != null ? `${topCause.count}` : '0';
+
+  const handleClick = () => {
+    if (hasPath && topCause.path && onPathClick) {
+      onPathClick(topCause.path);
+    }
+  };
+
+  if (!hasPath) return null;
+
+  return (
+    <Box
+      component="button"
+      type="button"
+      onClick={handleClick}
+      sx={{
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 0.375,
+        maxWidth: '100%',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        border: 'none',
+        borderRadius: 0,
+        py: 0,
+        px: 0,
+        bgcolor: 'transparent',
+        transition: 'opacity 0.2s ease-in-out',
+        '&:hover': { opacity: 0.85 },
+      }}
+      title={`${pathText} (${countText}건)`}
+    >
+      <Iconify icon="solar:danger-triangle-bold" width={12} sx={{ color: WARNING_AMBER_COLOR, flexShrink: 0 }} />
+      <Typography component="span" variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 500, color: 'text.secondary' }}>
+        Top Cause:
+      </Typography>
+      <Typography component="span" variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 400, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        {pathText}
+      </Typography>
+      <Typography component="span" variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary', flexShrink: 0 }}>
+        ({countText}건)
+      </Typography>
+    </Box>
+  );
+};
 
 const MonitoringCard = ({
   title,
@@ -272,6 +589,7 @@ const MonitoringCard = ({
   isActive,
   deltaColor,
   deltaUnit,
+  mainValueSupplement,
 }: MonitoringCardProps) => {
   /** 등급별 색상: Critical → Red, Warning → Amber, 그외 → color. 상단바·아이콘·메인·변동률·테두리 일관 적용 */
   const topBarColor =
@@ -361,19 +679,21 @@ const MonitoringCard = ({
           {!sloChipInTitleRow && (isLoading ? (
             <Skeleton variant="text" width={80} height={40} sx={{ ml: 'auto' }} />
           ) : (
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 900,
-                fontSize: { xs: 28, md: 32 },
-                lineHeight: 1,
-                fontFamily: '"Inter", "Pretendard", sans-serif',
-                color: slaCritical ? ERROR_DANGER_COLOR : slaWarning ? WARNING_AMBER_COLOR : undefined,
-                ml: 'auto',
-              }}
-            >
-              {mainValue}
-            </Typography>
+            <Stack direction="column" alignItems="flex-end" spacing={0.25} sx={{ ml: 'auto' }}>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 900,
+                  fontSize: { xs: 28, md: 32 },
+                  lineHeight: 1,
+                  fontFamily: '"Inter", "Pretendard", sans-serif',
+                  color: slaCritical ? ERROR_DANGER_COLOR : slaWarning ? WARNING_AMBER_COLOR : undefined,
+                }}
+              >
+                {mainValue}
+              </Typography>
+              {mainValueSupplement}
+            </Stack>
           ))}
         </Stack>
         {!sloChipInTitleRow && !isLoading && (
@@ -544,7 +864,7 @@ const MonitoringCard = ({
               px: 0.75,
               py: 0.25,
               borderRadius: 0.5,
-              alignSelf: 'flex-start',
+              width: '100%',
             }}
           >
             {subRowNode != null
@@ -723,6 +1043,8 @@ type MonitoringKPICardsProps = {
   activeKpi?: MonitoringKpiCardKey | null;
   /** KPI 카드 클릭 시 API 히스토리 탭 이동 + 드릴다운 필터 적용 */
   onKpiClick?: (cardKey: MonitoringKpiCardKey) => void;
+  /** topCause.path 클릭 시 API 히스토리 탭 이동 + path 필터 + 스크롤 */
+  onTopCausePathClick?: (path: string) => void;
 };
 
 /**
@@ -859,12 +1181,15 @@ const formatAvailabilityCard = (kpi: {
       isSlaWarning: false,
       warningBadgeLabel: undefined,
       sloTargetChip: `SLO ${DEFAULT_SLO_TARGET}%`,
+      sloTargetNum: DEFAULT_SLO_TARGET,
+      criticalThresholdNum: DEFAULT_CRITICAL_THRESHOLD,
+      downtimeCaption: 'Downtime: 0m',
+      uptimeCaption: undefined as string | undefined,
     };
   }
   const rate = kpi.successRate ?? kpi.successRatePercent;
   const sloTarget = kpi.sloTargetSuccessRate ?? DEFAULT_SLO_TARGET;
   const criticalThreshold = kpi.criticalThreshold ?? DEFAULT_CRITICAL_THRESHOLD;
-  /** 메인 수치 소수점 둘째 자리 고정 (예: 96.40%) */
   const main = rate !== undefined && rate !== null ? `${rate.toFixed(2)}%` : AVAILABILITY_FALLBACK_MAIN;
   const downtimeStr = kpi.downtimeMinutes !== undefined && kpi.downtimeMinutes !== null ? `Downtime: ${kpi.downtimeMinutes}m` : AVAILABILITY_FALLBACK_SUB;
   const uptimeStr =
@@ -880,7 +1205,19 @@ const formatAvailabilityCard = (kpi: {
     !isSlaCritical && rate !== undefined && rate !== null && sloTarget !== undefined && sloTarget !== null && rate < sloTarget;
   const warningBadgeLabel = isSlaWarning ? 'Below SLO' : undefined;
   const sloTargetChip = `SLO ${sloTarget}%`;
-  return { main, sub, deltaPercent, isSlaCritical, isSlaWarning, warningBadgeLabel, sloTargetChip };
+  return {
+    main,
+    sub,
+    deltaPercent,
+    isSlaCritical,
+    isSlaWarning,
+    warningBadgeLabel,
+    sloTargetChip,
+    sloTargetNum: sloTarget,
+    criticalThresholdNum: criticalThreshold,
+    downtimeCaption: kpi.downtimeMinutes !== undefined && kpi.downtimeMinutes !== null ? `Downtime: ${kpi.downtimeMinutes}m` : 'Downtime: 0m',
+    uptimeCaption: uptimeStr,
+  };
 };
 
 const DEFAULT_LATENCY_SLO_MS = 500;
@@ -1345,6 +1682,7 @@ const formatErrorCard = (
   kpi: {
     count4xx?: number;
     count5xx?: number;
+    errorCounts?: { count4xx?: number; count5xx?: number };
     rate5xx?: number;
     errorRate?: number;
     consumedRatio?: number;
@@ -1380,7 +1718,9 @@ const formatErrorCard = (
       ? `전일 대비 ${trendPp >= 0 ? '+' : ''}${trendPp.toFixed(1)}pp`
       : undefined;
   const trendTextDanger = trendPp != null && trendPp > 0;
-  const subRow = `4xx: ${kpi?.count4xx ?? 0} · 5xx: ${kpi?.count5xx ?? 0}`;
+  const count4xx = kpi?.errorCounts?.count4xx ?? kpi?.count4xx ?? 0;
+  const count5xx = kpi?.errorCounts?.count5xx ?? kpi?.count5xx ?? 0;
+  const subRow = `4xx: ${count4xx} · 5xx: ${count5xx}`;
   const isDanger = mainRate != null && mainRate > 3;
   const isOverConsumed = consumedRatio != null && consumedRatio >= 1;
   const isBudgetExhausted = remainingPercent != null && remainingPercent <= 0;
@@ -1409,7 +1749,7 @@ const formatErrorCard = (
   };
 };
 
-export const MonitoringKPICards = ({ dateFrom, dateTo, activeKpi, onKpiClick }: MonitoringKPICardsProps) => {
+export const MonitoringKPICards = ({ dateFrom, dateTo, activeKpi, onKpiClick, onTopCausePathClick }: MonitoringKPICardsProps) => {
   const { from, to } = useMemo(() => {
     if (dateFrom && dateTo) return { from: dateFrom, to: dateTo };
     const kstRange = getDateRangeFromPeriod('24h');
@@ -1451,12 +1791,35 @@ export const MonitoringKPICards = ({ dateFrom, dateTo, activeKpi, onKpiClick }: 
     const built = buildSparkline(values);
     return built ?? Array.from({ length: 12 }, () => 0);
   }, [apiErrorTimeseriesQuery.data]);
-  /** 백엔드 시간대별 API_TOTAL/API_ERROR 기반 가용성(100−에러율%) 배열. 랜덤 값 아님. */
-  const availabilitySparkline = useMemo(() => {
+  /** 폴백: statusHistory 없을 때 Timeseries 기반 48샘플 (도트·차트 공통) */
+  const availabilityFallback48 = useMemo(() => {
     const errRates = buildRateValues(apiTotalTimeseriesQuery.data, apiErrorTimeseriesQuery.data);
-    if (!errRates.length) return null;
-    return buildSparkline(errRates.map((r) => 100 - r));
+    if (!errRates.length) return [];
+    return sampleValues(errRates.map((r) => 100 - r), 48);
   }, [apiTotalTimeseriesQuery.data, apiErrorTimeseriesQuery.data]);
+
+  /** 도트용 Single Source: statusHistory 우선, 없으면 fallback 48. */
+  const availabilityDotHistory = useMemo(() => {
+    const history = data?.kpi?.availability?.statusHistory;
+    if (history == null || history.length === 0) return undefined;
+    return sampleDots(history, MAX_DOTS);
+  }, [data?.kpi?.availability?.statusHistory]);
+
+  const availabilityDotValues = useMemo(
+    () => (availabilityDotHistory != null ? [] : availabilityFallback48),
+    [availabilityDotHistory, availabilityFallback48]
+  );
+
+  /** 스파크라인용: 도트와 1:1 동일 소스. 도트가 있으면 차트 데이터도 항상 있음. undefined/NaN → 0으로 정규화. */
+  const availabilityChartData = useMemo(() => {
+    if (availabilityDotHistory != null) {
+      return availabilityDotHistory.map((s) =>
+        typeof s.availability === 'number' && !Number.isNaN(s.availability) ? s.availability : 0
+      );
+    }
+    if (availabilityDotValues.length > 0) return availabilityDotValues;
+    return null;
+  }, [availabilityDotHistory, availabilityDotValues]);
 
   if (error) {
     return <ApiErrorAlert error={error} onRetry={() => refetch()} />;
@@ -1476,13 +1839,58 @@ export const MonitoringKPICards = ({ dateFrom, dateTo, activeKpi, onKpiClick }: 
   const traffic = formatTrafficCard(kpi?.traffic, pv, uv, trafficDeltaPercent);
   const errorCard = formatErrorCard(kpi?.error, apiErrorRate, rate5xxPp);
 
+  const availRateNum = kpi?.availability?.successRate ?? kpi?.availability?.successRatePercent;
+  const availSloProgressColor =
+    avail.isSlaCritical ? ERROR_DANGER_COLOR : avail.isSlaWarning ? WARNING_AMBER_COLOR : AVAILABILITY_SUCCESS_COLOR;
+  const availSloProgressValue =
+    availRateNum != null && avail.sloTargetNum != null && avail.sloTargetNum > 0
+      ? Math.min(100, (availRateNum / avail.sloTargetNum) * 100)
+      : undefined;
+
   return (
     <Grid container spacing={3}>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <MonitoringCard
           title="Availability"
           mainValue={avail.main}
-          subRow={avail.sub}
+          subRowNode={
+            <Box>
+              {/* Row 1: Downtime/Uptime(좌) | Top Cause(우) - 양끝 정렬 */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: 1,
+                  mb: 2,
+                  minHeight: 20,
+                }}
+              >
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', flexShrink: 0 }}>
+                  {avail.uptimeCaption ? `${avail.downtimeCaption} | ${avail.uptimeCaption}` : avail.downtimeCaption}
+                </Typography>
+                <TopCauseInsight topCause={kpi?.availability?.topCause} onPathClick={onTopCausePathClick} />
+              </Box>
+              {/* Row 2: 도트 시작/끝 = 스파크라인 시작/끝과 일치 (동일 Drawing Area = 카드 전체 너비) */}
+              <Box
+                sx={{
+                  width: (t) => `calc(100% + 2 * ${t.spacing(3.25)})`,
+                  marginLeft: (t) => t.spacing(-3.25),
+                  marginRight: (t) => t.spacing(-3.25),
+                }}
+              >
+                <AvailabilityHealthBar
+                  values={availabilityDotValues}
+                  statusHistory={availabilityDotHistory}
+                  sloTarget={avail.sloTargetNum}
+                  criticalThreshold={avail.criticalThresholdNum}
+                  downtimeCaption={avail.downtimeCaption}
+                  uptimeCaption={avail.uptimeCaption}
+                  showCaption={false}
+                />
+              </Box>
+            </Box>
+          }
           deltaPercent={avail.deltaPercent}
           icon="solar:check-circle-bold"
           color={
@@ -1504,8 +1912,24 @@ export const MonitoringKPICards = ({ dateFrom, dateTo, activeKpi, onKpiClick }: 
           slaWarning={avail.isSlaWarning}
           warningBadgeLabel={avail.warningBadgeLabel}
           sloTargetChip={avail.sloTargetChip}
-          sparkline={availabilitySparkline}
+          sparkline={availabilityChartData}
           sparklineMaxPeakRatio={0.6}
+          sparklineZeroFill
+          mainValueSupplement={
+            availSloProgressValue !== undefined ? (
+              <LinearProgress
+                variant="determinate"
+                value={availSloProgressValue}
+                sx={{
+                  width: 40,
+                  height: 4,
+                  borderRadius: 2,
+                  bgcolor: alpha(availSloProgressColor, 0.12),
+                  '& .MuiLinearProgress-bar': { bgcolor: availSloProgressColor },
+                }}
+              />
+            ) : undefined
+          }
           isActive={activeKpi === 'availability'}
           onClick={onKpiClick ? () => onKpiClick('availability') : undefined}
         />

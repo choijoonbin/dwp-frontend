@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -176,6 +176,7 @@ const datetimeLocalToIso = (localString: string): string => {
 };
 
 const API_HISTORY_TAB_INDEX = 3;
+const PAGE_VIEWS_TAB_INDEX = 0;
 
 export const MonitoringPage = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -227,6 +228,11 @@ export const MonitoringPage = () => {
   const handleTabChange = (tab: number) => {
     setActiveTab(tab);
     if (tab !== API_HISTORY_TAB_INDEX) setActiveKpi(null);
+    // Page Views 탭은 path/keyword 미지원. Top Cause 등으로 설정된 path가 그대로 전달되면
+    // page-views API 호출 시 결과 없음 발생 → 전환 시 path 초기화.
+    if (tab === PAGE_VIEWS_TAB_INDEX) {
+      setFilters((prev) => (prev.path ? { ...prev, path: '' } : prev));
+    }
   };
 
   const handleReset = () => {
@@ -267,6 +273,48 @@ export const MonitoringPage = () => {
     };
   }, [filters.dateFrom, filters.dateTo, filters.period]);
 
+  // TopCause 클릭 시 path로 스크롤하는 공통 함수 (클릭마다 실행 보장)
+  const scrollToApiPath = useCallback((path: string) => {
+    let attemptCount = 0;
+    const maxAttempts = 10;
+    const attemptInterval = 200;
+
+    const scrollToPath = () => {
+      attemptCount += 1;
+      const tableRow = document.querySelector(`[data-api-path="${path}"]`);
+      if (tableRow) {
+        // MonitoringTabs 영역으로 먼저 스크롤
+        const tabsSection = document.querySelector('[data-testid="page-admin-monitoring"]')?.querySelector('div[role="tabpanel"]');
+        if (tabsSection) {
+          (tabsSection as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        // 약간의 지연 후 해당 행으로 정확히 스크롤
+        setTimeout(() => {
+          tableRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // 하이라이트 효과
+          (tableRow as HTMLElement).style.transition = 'background-color 0.3s';
+          (tableRow as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+          setTimeout(() => {
+            (tableRow as HTMLElement).style.backgroundColor = '';
+          }, 2000);
+        }, 300);
+      } else if (attemptCount < maxAttempts) {
+        // 테이블이 아직 렌더링되지 않았으면 재시도
+        setTimeout(scrollToPath, attemptInterval);
+      }
+    };
+
+    // 첫 시도는 약간의 지연 후 시작 (탭 전환 완료 대기)
+    setTimeout(scrollToPath, 300);
+  }, []);
+
+  // TopCause 클릭 시 path 필터 적용 후 스크롤 이동 (useEffect는 다른 경로로 path 변경 시 대비)
+  useEffect(() => {
+    if (activeTab === API_HISTORY_TAB_INDEX && filters.path && activeKpi === 'availability') {
+      scrollToApiPath(filters.path);
+    }
+  }, [activeTab, filters.path, activeKpi, scrollToApiPath]);
+
   return (
     <Box data-testid="page-admin-monitoring" sx={{ p: 3 }}>
       <Stack spacing={3}>
@@ -296,6 +344,22 @@ export const MonitoringPage = () => {
             if (cardKey === 'error') setFilters((prev) => ({ ...prev, statusCode: '4xx,5xx' }));
             else if (cardKey === 'availability') setFilters((prev) => ({ ...prev, statusCode: '5xx' }));
             else if (cardKey === 'latency' || cardKey === 'traffic') setFilters((prev) => ({ ...prev, statusCode: '' }));
+          }}
+          onTopCausePathClick={(path) => {
+            // API 히스토리 탭으로 이동
+            setActiveTab(API_HISTORY_TAB_INDEX);
+            setActiveKpi('availability');
+            // path 필터 + 5xx 상태 코드 필터 설정
+            setFilters((prev) => ({
+              ...prev,
+              path,
+              statusCode: '5xx',
+            }));
+            // 클릭마다 스크롤 실행 보장 (같은 path 재클릭 시에도 동작)
+            // 탭 전환 및 테이블 렌더링 대기 시간을 두고 실행
+            setTimeout(() => {
+              scrollToApiPath(path);
+            }, 500);
           }}
         />
 
