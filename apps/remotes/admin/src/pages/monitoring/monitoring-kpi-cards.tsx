@@ -268,39 +268,6 @@ const statusToColor = (status: string): string => {
 };
 
 
-/** ISO-8601 UTC → KST 툴팁용 단축 포맷 "HH:mm" 또는 "MM-DD HH:mm" (한 줄 표시용) */
-const formatHealthDotTooltipTimeShort = (iso: string, sameDayRef?: Date): string => {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  try {
-    const opts: Intl.DateTimeFormatOptions = {
-      timeZone: 'Asia/Seoul',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    };
-    const f = new Intl.DateTimeFormat('ko-KR', opts);
-    const parts = f.formatToParts(d);
-    const m = parts.find((p) => p.type === 'month')?.value ?? '';
-    const day = parts.find((p) => p.type === 'day')?.value ?? '';
-    const h = parts.find((p) => p.type === 'hour')?.value ?? '';
-    const min = parts.find((p) => p.type === 'minute')?.value ?? '';
-    if (sameDayRef) {
-      const refParts = f.formatToParts(sameDayRef);
-      const refM = refParts.find((p) => p.type === 'month')?.value ?? '';
-      const refDay = refParts.find((p) => p.type === 'day')?.value ?? '';
-      if (m === refM && day === refDay) return `${h}:${min}`;
-    }
-    return `${m}-${day} ${h}:${min}`;
-  } catch {
-    const h = String(d.getHours()).padStart(2, '0');
-    const min = String(d.getMinutes()).padStart(2, '0');
-    return `${h}:${min}`;
-  }
-};
-
 const MAX_DOTS = 48; // 단일 행 유지: 최대 도트 개수 (40~50 범위)
 
 /** statusHistory 또는 values 배열을 최대 MAX_DOTS개로 샘플링 (단일 행 유지). Single Source용. */
@@ -346,27 +313,36 @@ const AvailabilityHealthBar = ({
 
   /** 부모에서 이미 Single Source 기반으로 샘플링·통일됨. 재샘플링 없이 1:1 사용 */
   const dotItems = useHistory ? statusHistory : values;
-  const firstTs = useHistory && statusHistory[0] ? new Date(statusHistory[0].timestamp) : undefined;
 
-  // 툴팁: "[15:00] 가용성 93.8%" 또는 "[MM-DD HH:mm] 가용성 93.8%" + 상태 색상 점
+  // 툴팁: 1행 년월일(YYYY-MM-DD), 2행 [HH:mm] 가용성 X% + 상태 색상 점
   const getHistoryTooltip = (item: StatusHistoryItem) => {
-    const timeStr = formatHealthDotTooltipTimeShort(item.timestamp, firstTs);
+    const d = new Date(item.timestamp);
+    const dateStr =
+      Number.isNaN(d.getTime()) ? item.timestamp : `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+    const h = String(d.getUTCHours()).padStart(2, '0');
+    const min = String(d.getUTCMinutes()).padStart(2, '0');
+    const timeStr = `${h}:${min}`;
     const statusColor = statusToColor(item.status);
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-        <Box
-          sx={{
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            bgcolor: statusColor,
-            flexShrink: 0,
-          }}
-        />
+      <Stack direction="column" spacing={0.25} sx={{ alignItems: 'flex-start' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+          <Box
+            sx={{
+              width: 6,
+              height: 6,
+              borderRadius: '50%',
+              bgcolor: statusColor,
+              flexShrink: 0,
+            }}
+          />
+          <Typography variant="caption" sx={{ color: 'common.white', fontSize: '0.75rem' }}>
+            {dateStr}
+          </Typography>
+        </Box>
         <Typography variant="caption" sx={{ color: 'common.white', fontSize: '0.75rem' }}>
           [{timeStr}] 가용성 {item.availability.toFixed(1)}%
         </Typography>
-      </Box>
+      </Stack>
     );
   };
 
