@@ -9,7 +9,11 @@ import { MonitoringTabs } from './monitoring-tabs';
 import { AuraInsightBar } from './aura-insight-bar';
 import { MonitoringCharts } from './monitoring-charts';
 import { MonitoringFilterBar } from './monitoring-filter-bar';
-import { MonitoringKPICards, type MonitoringKpiCardKey } from './monitoring-kpi-cards';
+import {
+  MonitoringKPICards,
+  type MonitoringKpiCardKey,
+  type AvailabilityDotClickPayload,
+} from './monitoring-kpi-cards';
 
 // ----------------------------------------------------------------------
 
@@ -342,7 +346,7 @@ export const MonitoringPage = () => {
           dateTo={filters.dateTo ? datetimeLocalToIso(filters.dateTo) : chartDateRange.to}
           activeKpi={activeTab === API_HISTORY_TAB_INDEX ? activeKpi : null}
           activeTimestamp={activeTimestamp}
-          onAvailabilityDotClick={(payload) => {
+          onAvailabilityDotClick={(payload: AvailabilityDotClickPayload) => {
             setActiveKpi('availability');
             setActiveTab(API_HISTORY_TAB_INDEX);
             setActiveTimestamp(payload.timestamp);

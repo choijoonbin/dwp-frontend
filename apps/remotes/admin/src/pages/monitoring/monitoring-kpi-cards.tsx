@@ -310,6 +310,12 @@ const sampleDots = <T,>(items: T[], maxDots: number): T[] => {
   return Array.from({ length: maxDots }, (_, index) => items[Math.round(index * step)] ?? items[0]!);
 };
 
+/** 가용성 도트 클릭 시 전달 payload (도트 클릭 → Error 차트 강조·API 히스토리 기간) */
+export type AvailabilityDotClickPayload = {
+  timestamp: string;
+  prevTimestamp: string | null;
+};
+
 /** 가용성 카드 Timeline. Single Source: statusHistory 우선 else values(48). 도트·차트 1:1. nowrap, flex:1, gap 최소, hover scale(1.5)/opacity 0.3. */
 const AvailabilityHealthBar = ({
   values,
@@ -319,7 +325,6 @@ const AvailabilityHealthBar = ({
   downtimeCaption,
   uptimeCaption,
   showCaption = true,
-  activeTimestamp,
   onDotClick,
 }: {
   values: number[];
@@ -330,10 +335,8 @@ const AvailabilityHealthBar = ({
   uptimeCaption?: string;
   /** false면 캡션 행 미표시 (Row1에 별도 배치 시 사용) */
   showCaption?: boolean;
-  /** 도트 클릭 시 Error 차트 연동 강조용. 선택된 도트의 timestamp */
-  activeTimestamp?: string;
-  /** 도트 클릭 콜백. statusHistory 있을 때만 사용. prevTimestamp 없으면 직전 도트 없음 */
-  onDotClick?: (payload: { timestamp: string; prevTimestamp: string | null }) => void;
+  /** statusHistory 사용 시에만 동작. 도트 클릭 시 { timestamp, prevTimestamp } 전달 */
+  onDotClick?: (payload: AvailabilityDotClickPayload) => void;
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const useHistory = statusHistory != null && statusHistory.length > 0;
@@ -422,20 +425,22 @@ const AvailabilityHealthBar = ({
         {useHistory
           ? (dotItems as StatusHistoryItem[]).map((item, i) => {
               const isHovered = hoveredIndex === i;
-              const isActive = activeTimestamp != null && item.timestamp === activeTimestamp;
               const color = statusToColor(item.status);
-              const prevTimestamp = i > 0 ? (dotItems as StatusHistoryItem[])[i - 1]!.timestamp : null;
-              const handleClick = (e: React.MouseEvent) => {
-                e.stopPropagation();
-                onDotClick?.({ timestamp: item.timestamp, prevTimestamp });
+              const prevItem = i > 0 ? (dotItems[i - 1] as StatusHistoryItem) : null;
+              const handleClick = () => {
+                if (onDotClick) {
+                  onDotClick({
+                    timestamp: item.timestamp,
+                    prevTimestamp: prevItem?.timestamp ?? null,
+                  });
+                }
               };
               return (
                 <Box
                   key={i}
                   onMouseEnter={() => setHoveredIndex(i)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  onClick={handleClick}
-                  role={onDotClick ? 'button' : undefined}
+                  onClick={onDotClick ? handleClick : undefined}
                   sx={{
                     flex: '1 1 0',
                     minWidth: 4,
@@ -459,10 +464,10 @@ const AvailabilityHealthBar = ({
                         borderRadius: 0.25,
                         bgcolor: color,
                         display: 'block',
+                        cursor: onDotClick ? 'pointer' : 'default',
                         transform: isHovered ? 'scale(1.5)' : 'scale(1)',
                         zIndex: isHovered ? 10 : 1,
                         position: 'relative',
-                        boxShadow: isActive ? `0 0 0 2px ${color}` : 'none',
                       }}
                     />
                   </Tooltip>
@@ -554,13 +559,7 @@ const TopCauseInsight = ({
         px: 0,
         bgcolor: 'transparent',
         transition: 'opacity 0.2s ease-in-out',
-        '&:hover': {
-          opacity: 1,
-          '& .top-cause-path': {
-            textDecoration: 'underline',
-            color: 'primary.main',
-          },
-        },
+        '&:hover': { opacity: 0.85 },
       }}
       title={`${pathText} (${countText}건)`}
     >
@@ -568,20 +567,7 @@ const TopCauseInsight = ({
       <Typography component="span" variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 500, color: 'text.secondary' }}>
         Top Cause:
       </Typography>
-      <Typography
-        className="top-cause-path"
-        component="span"
-        variant="caption"
-        sx={{
-          fontSize: '0.7rem',
-          fontWeight: 400,
-          color: 'text.primary',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          textDecoration: 'none',
-          transition: 'color 0.2s ease-in-out',
-        }}
-      >
+      <Typography component="span" variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 400, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis' }}>
         {pathText}
       </Typography>
       <Typography component="span" variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary', flexShrink: 0 }}>
@@ -1075,10 +1061,10 @@ type MonitoringKPICardsProps = {
   dateTo?: string;
   /** 현재 드릴다운된 KPI → 해당 카드 Border 강조 */
   activeKpi?: MonitoringKpiCardKey | null;
-  /** 가용성 도트 클릭 시 해당 timestamp (연동용). 도트·Error 차트 강조 */
+  /** 가용성 도트 클릭 시 Error 차트 강조·API 히스토리 기간 연동 */
   activeTimestamp?: string | null;
-  /** 가용성 도트 클릭 콜백. statusHistory 있을 때만 동작. prevTimestamp=직전 도트 시간 */
-  onAvailabilityDotClick?: (payload: { timestamp: string; prevTimestamp: string | null }) => void;
+  /** 가용성 도트 클릭 콜백 (timestamp, prevTimestamp) */
+  onAvailabilityDotClick?: (payload: AvailabilityDotClickPayload) => void;
   /** KPI 카드 클릭 시 API 히스토리 탭 이동 + 드릴다운 필터 적용 */
   onKpiClick?: (cardKey: MonitoringKpiCardKey) => void;
   /** topCause.path 클릭 시 API 히스토리 탭 이동 + path 필터 + 스크롤 */
@@ -1933,7 +1919,6 @@ export const MonitoringKPICards = ({
                   downtimeCaption={avail.downtimeCaption}
                   uptimeCaption={avail.uptimeCaption}
                   showCaption={false}
-                  activeTimestamp={activeTimestamp ?? undefined}
                   onDotClick={onAvailabilityDotClick}
                 />
               </Box>
