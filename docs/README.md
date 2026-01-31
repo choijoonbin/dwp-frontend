@@ -62,7 +62,6 @@ docs/
 │   ├── DESIGN_SYSTEM_MIGRATION.md # Design System 마이그레이션 가이드
 │   ├── PR_CHECKLIST_UI.md     # UI 개발자용 상세 PR 체크리스트
 │   ├── STATE_MANAGEMENT_AUDIT.md # 상태 관리(Store) 구조 점검
-│   └── MINIMALS_REMOVAL_ANALYSIS.md # Minimals 제거·라이센스 이탈 분석
 │
 ├── archive/                     # 🗂️ 완료된 작업 아카이브
 │   ├── tasks/                  # 완료된 작업 기록

@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
+import { showToast, useMonitoringSummaryQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -222,17 +223,29 @@ export const MonitoringPage = () => {
   }, [filters.period]);
 
   const handleFilterChange = (newFilters: Partial<typeof filters>) => {
-    setFilters((prev) => {
-      const updated = { ...prev, ...newFilters };
-      if (newFilters.period && newFilters.period !== prev.period) {
-        const dateRange = getDateRangeFromPeriod(newFilters.period);
-        updated.dateFrom = isoToDatetimeLocal(dateRange.from);
-        updated.dateTo = isoToDatetimeLocal(dateRange.to);
-        savePeriodToStorage(newFilters.period);
+    const updated = { ...filters, ...newFilters };
+    if (newFilters.period != null && newFilters.period !== filters.period) {
+      const dateRange = getDateRangeFromPeriod(newFilters.period);
+      updated.dateFrom = isoToDatetimeLocal(dateRange.from);
+      updated.dateTo = isoToDatetimeLocal(dateRange.to);
+      savePeriodToStorage(newFilters.period);
+    }
+
+    if (updated.dateFrom && updated.dateTo) {
+      const fromMs = new Date(updated.dateFrom.replace(/\s/g, 'T').trim()).getTime();
+      const toMs = new Date(updated.dateTo.replace(/\s/g, 'T').trim()).getTime();
+      if (!Number.isNaN(fromMs) && !Number.isNaN(toMs) && fromMs > toMs) {
+        showToast('시작일자는 종료일자보다 이전이어야 합니다. 다시 선택해 주세요.', 'error');
+        return;
       }
-      return updated;
-    });
+    }
+
+    setFilters(updated);
     if (newFilters.dateFrom != null || newFilters.dateTo != null) {
+      setChartTimeRange(null);
+      setDotTimeRangeOverride(null);
+    }
+    if (newFilters.period != null && newFilters.period !== filters.period) {
       setChartTimeRange(null);
       setDotTimeRangeOverride(null);
     }
@@ -322,6 +335,11 @@ export const MonitoringPage = () => {
 
   const effectiveChartTimeRangeOverride = dotTimeRangeOverride ?? chartTimeRange;
 
+  const summaryQuery = useMonitoringSummaryQuery({
+    from: chartDateRange.from,
+    to: chartDateRange.to,
+  });
+
   return (
     <Box data-testid="page-admin-monitoring" sx={{ p: 3 }}>
       <Stack spacing={3}>
@@ -344,6 +362,10 @@ export const MonitoringPage = () => {
         <MonitoringKPICards
           dateFrom={filters.dateFrom ? datetimeLocalToIso(filters.dateFrom) : chartDateRange.from}
           dateTo={filters.dateTo ? datetimeLocalToIso(filters.dateTo) : chartDateRange.to}
+          summaryData={summaryQuery.data}
+          summaryLoading={summaryQuery.isLoading}
+          summaryError={summaryQuery.error}
+          summaryRefetch={summaryQuery.refetch}
           activeKpi={activeTab === API_HISTORY_TAB_INDEX ? activeKpi : null}
           activeTimestamp={activeTimestamp}
           onAvailabilityDotClick={(payload: AvailabilityDotClickPayload) => {
@@ -367,9 +389,11 @@ export const MonitoringPage = () => {
             setDotTimeRangeOverride(null);
             setActiveKpi(cardKey);
             setActiveTab(API_HISTORY_TAB_INDEX);
-            if (cardKey === 'error') setFilters((prev) => ({ ...prev, statusCode: '4xx,5xx' }));
-            else if (cardKey === 'availability')
-              setFilters((prev) => ({ ...prev, statusCode: '5xx', path: '', apiUrl: '' }));
+            // KPI 카드별 1:1 매칭: availability→Availability 차트, error→Error 차트, latency→Latency, traffic→Traffic
+            if (cardKey === 'availability')
+              setFilters((prev) => ({ ...prev, statusCode: '', path: '', apiUrl: '' }));
+            else if (cardKey === 'error')
+              setFilters((prev) => ({ ...prev, statusCode: '4xx,5xx', path: '', apiUrl: '' }));
             else if (cardKey === 'latency' || cardKey === 'traffic')
               setFilters((prev) => ({ ...prev, statusCode: '', path: '', apiUrl: '' }));
           }}
@@ -409,17 +433,20 @@ export const MonitoringPage = () => {
               activeKpi={activeKpi}
               activeTimestamp={activeTimestamp}
               forcedRightMetric={
-                activeKpi === 'availability' || activeKpi === 'error'
-                  ? 'API_5XX'
-                  : activeKpi === 'latency'
-                    ? 'LATENCY_P95'
-                    : activeKpi === 'traffic'
-                      ? 'API_TOTAL'
-                      : undefined
+                activeKpi === 'availability'
+                  ? 'AVAILABILITY'
+                  : activeKpi === 'error'
+                    ? 'API_5XX'
+                    : activeKpi === 'latency'
+                      ? 'LATENCY_P95'
+                      : activeKpi === 'traffic'
+                        ? 'API_TOTAL'
+                        : undefined
               }
               type="api"
               from={chartDateRange.from}
               to={chartDateRange.to}
+              summaryData={summaryQuery.data}
               onChartBackgroundClick={() => {
                 setActiveTimestamp(null);
                 setDotTimeRangeOverride(null);

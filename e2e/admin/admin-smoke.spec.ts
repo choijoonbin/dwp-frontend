@@ -6,7 +6,7 @@ import { MOBILE_VIEWPORT, DESKTOP_VIEWPORT } from '../utils/viewports';
 /**
  * Admin Core Pages Smoke Tests
  * 
- * Purpose: Minimal smoke tests for 8 Admin pages
+ * Purpose: Basic smoke tests for 8 Admin pages
  * - Page load & rendering
  * - Core elements exist
  * - Responsive (mobile + desktop)

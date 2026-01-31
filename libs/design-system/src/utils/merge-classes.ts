@@ -1,5 +1,5 @@
 /**
- * State-based class names (compatible with minimal-shared StateProps).
+ * State-based class names.
  * [boolean, string] => use string when boolean is true; string key => use key when value is true.
  */
 export type StateProps = {

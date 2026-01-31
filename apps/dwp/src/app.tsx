@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { GlobalSnackbar } from '@dwp-frontend/design-system';
 
 import { usePathname } from 'src/routes/hooks';
 
@@ -21,6 +22,7 @@ export default function App({ children }: AppProps) {
     <>
       <AuthUnauthorizedHandler />
       {children}
+      <GlobalSnackbar />
     </>
   );
 }

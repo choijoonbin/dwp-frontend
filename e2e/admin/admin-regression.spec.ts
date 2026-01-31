@@ -4,7 +4,7 @@ import { ensureAuth } from '../utils/auth';
 import { DESKTOP_VIEWPORT } from '../utils/viewports';
 
 /**
- * Admin Regression Tests (Minimal)
+ * Admin Regression Tests
  * 
  * Purpose: Prevent critical operational flow breakage
  * Focus areas:

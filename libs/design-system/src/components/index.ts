@@ -6,6 +6,7 @@ export * from './patterns';
 export * from './scrollbar';
 export * from './svg-color';
 export * from './color-utils';
+export * from './global-snackbar';
 export * from './permission-gate';
 export * from './approval-dialog/approval-dialog';
 

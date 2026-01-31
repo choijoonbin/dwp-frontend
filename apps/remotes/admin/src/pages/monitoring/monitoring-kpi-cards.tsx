@@ -3,8 +3,8 @@ import { Iconify } from '@dwp-frontend/design-system';
 import {
   ApiErrorAlert,
   type TimeseriesResponse,
-  useMonitoringSummaryQuery,
   useMonitoringTimeseriesQuery,
+  type MonitoringSummaryResponse,
   getTimeseriesIntervalFromRange,
 } from '@dwp-frontend/shared-utils';
 
@@ -396,6 +396,7 @@ const AvailabilityHealthBar = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: 0.125,
+          ...(onDotClick ? { cursor: 'pointer' } : {}),
         }}
       >
         {useHistory
@@ -467,6 +468,7 @@ const AvailabilityHealthBar = ({
                     justifyContent: 'center',
                     opacity: hoveredIndex != null && !isHovered ? 0.3 : 1,
                     transition: 'opacity 0.2s ease-in-out, transform 0.2s ease-in-out',
+                    cursor: onDotClick ? 'pointer' : 'default',
                   }}
                 >
                   <Tooltip title={getValueTooltip(v)} placement="top" arrow componentsProps={tooltipSx}>
@@ -480,7 +482,7 @@ const AvailabilityHealthBar = ({
                         borderRadius: 0.25,
                         bgcolor: color,
                         display: 'block',
-                        cursor: 'default',
+                        cursor: onDotClick ? 'pointer' : 'default',
                         transform: isHovered ? 'scale(1.5)' : 'scale(1)',
                         zIndex: isHovered ? 10 : 1,
                         position: 'relative',
@@ -1035,6 +1037,11 @@ export const getChartLineColorForKpi = (
 type MonitoringKPICardsProps = {
   dateFrom?: string;
   dateTo?: string;
+  /** Summary API 응답 (Page에서 1회 fetch 후 전달) */
+  summaryData?: MonitoringSummaryResponse | null;
+  summaryLoading?: boolean;
+  summaryError?: Error | null;
+  summaryRefetch?: () => void;
   /** 현재 드릴다운된 KPI → 해당 카드 Border 강조 */
   activeKpi?: MonitoringKpiCardKey | null;
   /** 가용성 도트 클릭 시 Error 차트 강조·API 히스토리 기간 연동 */
@@ -1752,6 +1759,10 @@ const formatErrorCard = (
 export const MonitoringKPICards = ({
   dateFrom,
   dateTo,
+  summaryData,
+  summaryLoading,
+  summaryError,
+  summaryRefetch,
   activeKpi,
   activeTimestamp,
   onAvailabilityDotClick,
@@ -1766,8 +1777,6 @@ export const MonitoringKPICards = ({
       to: kstIsoToUtcIso(kstRange.to),
     };
   }, [dateFrom, dateTo]);
-
-  const { data, isLoading, error, refetch } = useMonitoringSummaryQuery({ from, to });
 
   /** 차트: from/to 기준 interval(1m|5m|1h|1d) 적용. Peak RPS는 BE TRAFFIC_PEAK_WINDOW_SECONDS 기준 rpsPeak 사용. */
   const sparklineInterval = useMemo(
@@ -1808,10 +1817,10 @@ export const MonitoringKPICards = ({
 
   /** 도트용 Single Source: statusHistory 우선, 없으면 fallback 48. */
   const availabilityDotHistory = useMemo(() => {
-    const history = data?.kpi?.availability?.statusHistory;
+    const history = summaryData?.kpi?.availability?.statusHistory;
     if (history == null || history.length === 0) return undefined;
     return sampleDots(history, MAX_DOTS);
-  }, [data?.kpi?.availability?.statusHistory]);
+  }, [summaryData?.kpi?.availability?.statusHistory]);
 
   const availabilityDotValues = useMemo(
     () => (availabilityDotHistory != null ? [] : availabilityFallback48),
@@ -1829,10 +1838,12 @@ export const MonitoringKPICards = ({
     return null;
   }, [availabilityDotHistory, availabilityDotValues]);
 
-  if (error) {
-    return <ApiErrorAlert error={error} onRetry={() => refetch()} />;
+  if (summaryError) {
+    return <ApiErrorAlert error={summaryError} onRetry={() => summaryRefetch?.()} />;
   }
 
+  const isLoading = summaryLoading ?? false;
+  const data = summaryData;
   const kpi = data?.kpi;
   const pv = data?.pv ?? 0;
   const uv = data?.uv ?? 0;

@@ -6,7 +6,7 @@ import { DESKTOP_VIEWPORT } from '../utils/viewports';
 /**
  * Admin Accessibility (A11y) Smoke Tests
  * 
- * Purpose: Minimal accessibility checks to prevent critical UX breakage
+ * Purpose: Basic accessibility checks to prevent critical UX breakage
  * Focus areas:
  * - Dialog focus management
  * - ESC key closure

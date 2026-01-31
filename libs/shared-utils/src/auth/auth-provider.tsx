@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect , useContext, useCallback, createContext } from 'react';
+import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
 
 import { useMenuTreeStore } from './menu-tree-store';
 import { usePermissionsStore } from './permissions-store';
@@ -7,6 +7,9 @@ import { setUserId, clearUserId, extractUserIdFromToken } from './user-id-storag
 import { getMe, getMenuTree, getPermissions, login as loginApi } from '../api/auth-api';
 
 import type { LoginRequest } from '../api/auth-api';
+
+/** Mount 시 me/permissions/tree 이중 fetch 방지 (Strict Mode 등). 모듈 단위로 유지 */
+let authDataLoadInProgress = false;
 
 // ----------------------------------------------------------------------
 
@@ -53,18 +56,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Load user info, permissions, and menu tree on mount if already authenticated (e.g., page refresh)
   useEffect(() => {
     const loadUserData = async () => {
-      // Use accessToken state instead of getAccessToken() to stay in sync
-      if (!accessToken) {
-        return;
-      }
+      if (!accessToken) return;
 
-      // Only load if not already loaded (avoid duplicate calls)
       const { isLoaded: permissionsLoaded } = usePermissionsStore.getState();
       const { isLoaded: menuTreeLoaded } = useMenuTreeStore.getState();
+      if (permissionsLoaded && menuTreeLoaded) return;
 
-      if (permissionsLoaded && menuTreeLoaded) {
-        return; // Already loaded
-      }
+      if (authDataLoadInProgress) return;
+      authDataLoadInProgress = true;
 
       try {
         const [, permissionsRes, menuTreeRes] = await Promise.all([
@@ -73,18 +72,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           getMenuTree(),
         ]);
 
-        // Store permissions
         if (permissionsRes.data && Array.isArray(permissionsRes.data)) {
           usePermissionsStore.getState().actions.setPermissions(permissionsRes.data);
         }
-
-        // Store menu tree
         if (menuTreeRes.data?.menus && Array.isArray(menuTreeRes.data.menus)) {
           useMenuTreeStore.getState().actions.setMenuTree(menuTreeRes.data.menus);
         }
       } catch (error) {
-        // Log error but don't fail silently
         console.error('Failed to load user info, permissions, or menu tree on mount:', error);
+      } finally {
+        authDataLoadInProgress = false;
       }
     };
 

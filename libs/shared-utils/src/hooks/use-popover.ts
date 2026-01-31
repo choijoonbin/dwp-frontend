@@ -11,7 +11,7 @@ export type UsePopoverReturn<T extends HTMLElement = HTMLElement> = {
 };
 
 /**
- * Manages popover open state and anchor element (compatible with minimal-shared usePopover).
+ * Manages popover open state and anchor element.
  */
 export const usePopover = <T extends HTMLElement = HTMLElement>(): UsePopoverReturn<T> => {
   const [anchorEl, setAnchorEl] = useState<T | null>(null);
