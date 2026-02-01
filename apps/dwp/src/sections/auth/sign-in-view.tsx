@@ -107,7 +107,7 @@ export const SignInView = () => {
     if (idpConfig?.authUrl) {
       // Build callback URL
       const returnUrl = safeReturnUrl(searchParams.get('returnUrl'));
-      const callbackUrl = `${window.location.origin}/sso-callback${returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`;
+      const callbackUrl = `${window.location.origin}/auth/oidc/callback${returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`;
       
       // Append callback URL to authUrl if needed
       const separator = idpConfig.authUrl.includes('?') ? '&' : '?';

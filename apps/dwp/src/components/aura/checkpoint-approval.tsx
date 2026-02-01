@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -25,9 +26,11 @@ type CheckpointApprovalProps = {
   onApprove: (editedContent?: string) => void;
   onReject: () => void;
   onEdit?: (content: string) => void;
+  /** When true, approve/reject buttons are disabled (prevents double submit). */
+  isSubmitting?: boolean;
 };
 
-export const CheckpointApproval = ({ request, onApprove, onReject, onEdit }: CheckpointApprovalProps) => {
+export const CheckpointApproval = ({ request, onApprove, onReject, onEdit, isSubmitting = false }: CheckpointApprovalProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(request.editableContent || request.message);
   const confidence = request.confidence ?? 1.0;

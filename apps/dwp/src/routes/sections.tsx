@@ -19,8 +19,10 @@ export const ChatPage = lazy(() => import('../pages/chat'));
 export const ApprovalPage = lazy(() => import('../pages/approval'));
 export const AIWorkspacePage = lazy(() => import('../pages/ai-workspace'));
 export const AdminPage = lazy(() => import('../pages/admin'));
+export const SynapsePage = lazy(() => import('../pages/synapse'));
 export const SignInPage = lazy(() => import('../pages/sign-in'));
 export const SSOCallbackPage = lazy(() => import('../pages/sso-callback'));
+export const OidcCallbackPage = lazy(() => import('../pages/auth/oidc-callback'));
 export const ForgotPasswordPage = lazy(() => import('../pages/forgot-password'));
 export const Page403 = lazy(() => import('../pages/page-403'));
 export const Page404 = lazy(() => import('../pages/page-not-found'));
@@ -75,6 +77,7 @@ export const routesSection: RouteObject[] = [
       { path: 'app/admin/aiworkspace', element: <Navigate to="/ai-workspace" replace /> },
       { path: 'app/admin/*', element: <AppAdminRedirect /> },
       { path: 'admin/*', element: <AdminPage /> },
+      { path: 'synapse/*', element: <SynapsePage /> },
     ],
   },
   {
@@ -88,6 +91,10 @@ export const routesSection: RouteObject[] = [
   {
     path: 'sso-callback',
     element: <SSOCallbackPage />,
+  },
+  {
+    path: 'auth/oidc/callback',
+    element: <OidcCallbackPage />,
   },
   {
     path: 'forgot-password',

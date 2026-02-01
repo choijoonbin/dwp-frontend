@@ -20,6 +20,8 @@ export type AuthState = {
 
 export type AuthContextValue = AuthState & {
   login: (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => Promise<void>;
+  /** OIDC/SSO callback: set token and load user/permissions/menu (no credentials) */
+  loginWithToken: (accessToken: string) => Promise<void>;
   logout: () => void;
 };
 
@@ -88,43 +90,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loadUserData();
   }, [accessToken]);
 
-  const login = useCallback(async (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => {
-    const res = await loginApi(payload);
-    const token = extractAccessToken(res.data);
-    if (!token) {
-      throw new Error('Login succeeded but access token was not found in response.data');
-    }
+  const loginWithToken = useCallback(async (token: string) => {
     setAccessToken(token);
     setAccessTokenState(token);
-    
-    // Extract and store user ID from JWT token
     const userId = extractUserIdFromToken(token);
-    if (userId) {
-      setUserId(userId);
-    }
-
-    // Load user info, permissions, and menu tree after login
+    if (userId) setUserId(userId);
     try {
       const [, permissionsRes, menuTreeRes] = await Promise.all([
         getMe(),
         getPermissions(),
         getMenuTree(),
       ]);
-
-      // Store permissions
       if (permissionsRes.data && Array.isArray(permissionsRes.data)) {
         usePermissionsStore.getState().actions.setPermissions(permissionsRes.data);
       }
-
-      // Store menu tree
       if (menuTreeRes.data?.menus && Array.isArray(menuTreeRes.data.menus)) {
         useMenuTreeStore.getState().actions.setMenuTree(menuTreeRes.data.menus);
       }
     } catch (error) {
-      // Log error but don't fail login
       console.error('Failed to load user info, permissions, or menu tree:', error);
     }
   }, []);
+
+  const login = useCallback(
+    async (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => {
+      const res = await loginApi(payload);
+      const token = extractAccessToken(res.data);
+      if (!token) {
+        throw new Error('Login succeeded but access token was not found in response.data');
+      }
+      await loginWithToken(token);
+    },
+    [loginWithToken]
+  );
 
   const logout = useCallback(() => {
     clearAccessToken();
@@ -140,9 +138,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       accessToken,
       isAuthenticated: Boolean(accessToken),
       login,
+      loginWithToken,
       logout,
     }),
-    [accessToken, login, logout]
+    [accessToken, login, loginWithToken, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

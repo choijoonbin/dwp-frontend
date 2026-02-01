@@ -94,3 +94,39 @@ export const getMenuTree = async (): Promise<ApiResponse<MenuTreeResponse>> => {
   const res = await axiosInstance.get<ApiResponse<MenuTreeResponse>>('/api/auth/menus/tree');
   return res.data;
 };
+
+/**
+ * OIDC callback: exchange authorization code for JWT
+ * GET /api/auth/oidc/callback?code=...&state=...&providerKey=...
+ * tenantId: sent via X-Tenant-ID header (axiosInstance); optional query param if BE supports it
+ */
+export type OidcCallbackParams = {
+  code: string;
+  state: string;
+  providerKey?: string;
+  tenantId?: string;
+};
+
+/** Extract access token from login/OIDC response for storage */
+export function extractAccessTokenFromLoginResponse(data: LoginResponseData | null | undefined): string | null {
+  if (!data) return null;
+  if (typeof data === 'string') return data;
+  const obj = data as Record<string, unknown>;
+  if (typeof obj.accessToken === 'string') return obj.accessToken;
+  if (typeof obj.token === 'string') return obj.token;
+  return null;
+}
+
+export const getOidcCallback = async (
+  params: OidcCallbackParams
+): Promise<ApiResponse<LoginResponseData>> => {
+  const search = new URLSearchParams();
+  search.set('code', params.code);
+  search.set('state', params.state);
+  if (params.providerKey) search.set('providerKey', params.providerKey);
+  if (params.tenantId) search.set('tenantId', params.tenantId);
+  const res = await axiosInstance.get<ApiResponse<LoginResponseData>>(
+    `/api/auth/oidc/callback?${search.toString()}`
+  );
+  return res.data;
+};

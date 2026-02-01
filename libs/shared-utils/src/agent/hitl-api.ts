@@ -42,6 +42,12 @@ export async function approveHitlRequest(
     }),
   });
 
+  if (response.status === 409) {
+    // Idempotent: already approved/rejected — treat as success so FE can clear UI
+    const body = await response.json().catch(() => ({}));
+    return (body.data ?? body) as HitlApprovalResponse;
+  }
+
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || `HITL approval failed: ${response.status}`);
