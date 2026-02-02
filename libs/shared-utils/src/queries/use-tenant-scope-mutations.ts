@@ -56,6 +56,8 @@ export const usePatchCompanyCodeMutation = (profileId?: string | null) => {
   });
 };
 
+type CurrencyItemForPatch = { waers: string; enabled: boolean; fxControlMode?: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED' };
+
 export const usePatchCurrencyMutation = (profileId?: string | null) => {
   const queryClient = useQueryClient();
   const tenantId = getTenantId();
@@ -64,17 +66,19 @@ export const usePatchCurrencyMutation = (profileId?: string | null) => {
     mutationFn: async ({
       waers,
       enabled,
+      fxControlMode,
       currentItems,
     }: {
+      currentItems: CurrencyItemForPatch[];
+      enabled?: boolean;
+      fxControlMode?: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED';
       waers: string;
-      enabled: boolean;
-      currentItems: { waers: string; enabled: boolean }[];
-      fxControlMode?: string;
     }) => {
       if (!profileId) throw new Error('Profile required');
       const updates = currentItems.map((i) => ({
         currencyCode: i.waers,
-        included: i.waers === waers ? enabled : i.enabled,
+        fxControlMode: i.waers === waers && fxControlMode !== undefined ? fxControlMode : i.fxControlMode ?? 'ALLOW',
+        included: i.waers === waers && enabled !== undefined ? enabled : i.enabled,
       }));
       const res = await putProfileScopedCurrenciesBulk(profileId, updates);
       if (res.status === 'SUCCESS' || res.success === true) {
@@ -94,6 +98,8 @@ export const usePatchCurrencyMutation = (profileId?: string | null) => {
   });
 };
 
+type SodRuleItemForPatch = { ruleKey: string; enabled: boolean; severity?: 'INFO' | 'WARN' | 'BLOCK' };
+
 export const usePatchSodRuleMutation = (profileId?: string | null) => {
   const queryClient = useQueryClient();
   const tenantId = getTenantId();
@@ -102,17 +108,19 @@ export const usePatchSodRuleMutation = (profileId?: string | null) => {
     mutationFn: async ({
       ruleKey,
       enabled,
+      severity,
       currentItems,
     }: {
+      currentItems: SodRuleItemForPatch[];
+      enabled?: boolean;
       ruleKey: string;
-      enabled: boolean;
-      currentItems: { ruleKey: string; enabled: boolean }[];
-      severity?: string;
+      severity?: 'INFO' | 'WARN' | 'BLOCK';
     }) => {
       if (!profileId) throw new Error('Profile required');
       const updates = currentItems.map((i) => ({
+        isEnabled: i.ruleKey === ruleKey && enabled !== undefined ? enabled : i.enabled,
         ruleKey: i.ruleKey,
-        isEnabled: i.ruleKey === ruleKey ? enabled : i.enabled,
+        severity: i.ruleKey === ruleKey && severity !== undefined ? severity : i.severity ?? 'WARN',
       }));
       const res = await putProfileScopedSodRulesBulk(profileId, updates);
       if (res.status === 'SUCCESS' || res.success === true) {
@@ -177,14 +185,20 @@ export const useAddCurrenciesMutation = (profileId?: string | null) => {
       waersList,
       currentItems,
     }: {
+      currentItems: { waers: string; enabled: boolean; fxControlMode?: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED' }[];
       waersList: string[];
-      currentItems: { waers: string; enabled: boolean }[];
     }) => {
       if (!profileId) throw new Error('Profile required');
       const existingKeys = new Set(currentItems.map((i) => i.waers));
       const updates = [
-        ...currentItems.map((i) => ({ currencyCode: i.waers, included: i.enabled })),
-        ...waersList.filter((w) => !existingKeys.has(w)).map((currencyCode) => ({ currencyCode, included: true })),
+        ...currentItems.map((i) => ({
+          currencyCode: i.waers,
+          fxControlMode: i.fxControlMode ?? 'ALLOW',
+          included: i.enabled,
+        })),
+        ...waersList
+          .filter((w) => !existingKeys.has(w))
+          .map((currencyCode) => ({ currencyCode, fxControlMode: 'ALLOW' as const, included: true })),
       ];
       const res = await putProfileScopedCurrenciesBulk(profileId, updates);
       if (res.status === 'SUCCESS' || res.success === true) {

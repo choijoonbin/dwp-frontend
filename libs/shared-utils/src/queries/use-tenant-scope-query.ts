@@ -3,6 +3,7 @@
  * Mutations는 use-tenant-scope-mutations.ts로 분리
  */
 
+import { useMemo } from 'react';
 import { useQuery, useQueries } from '@tanstack/react-query';
 
 import { getTenantId } from '../tenant-util';
@@ -108,27 +109,37 @@ export const useTenantScopeQuery = (
   const currData = currenciesRes.data;
   const sodData = sodRulesRes.data;
 
+  const lastUpdatedAt = useMemo(() => {
+    const dates = [ccData?.lastUpdatedAt, currData?.lastUpdatedAt, sodData?.lastUpdatedAt].filter(
+      (d): d is string => typeof d === 'string' && d.length > 0
+    );
+    if (dates.length === 0) return undefined;
+    return dates.reduce((a, b) => (a > b ? a : b));
+  }, [ccData?.lastUpdatedAt, currData?.lastUpdatedAt, sodData?.lastUpdatedAt]);
+
   const data: TenantScopeCombinedData | undefined =
     ccData?.items && currData?.items && sodData?.rules
       ? {
           companyCodes: ccData.items.map((i) => ({
             bukrs: i.bukrs,
-            enabled: i.included,
             bukrsName: i.bukrsName,
             defaultCurrency: i.defaultCurrency,
+            enabled: i.included,
             isActive: i.isActive,
           })),
           currencies: currData.items.map((i) => ({
-            waers: i.currencyCode,
             enabled: i.included,
+            fxControlMode: i.fxControlMode ?? 'ALLOW',
+            waers: i.currencyCode,
           })),
+          meta: { lastUpdatedAt, sodMode: sodData.mode },
           sodRules: sodData.rules.map((r) => ({
-            ruleKey: r.ruleKey,
-            title: r.title,
             description: r.description,
             enabled: r.isEnabled,
+            ruleKey: r.ruleKey,
+            severity: r.severity ?? 'WARN',
+            title: r.title,
           })),
-          meta: { sodMode: sodData.mode },
         }
       : undefined;
 

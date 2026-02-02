@@ -52,31 +52,36 @@ export type ProfileScopedCompanyCodeItem = {
 };
 
 export type ProfileScopedCompanyCodesResponse = {
+  lastUpdatedAt?: string | null;
   profileId?: number;
   items: ProfileScopedCompanyCodeItem[];
 };
 
 export type ProfileScopedCurrencyItem = {
   currencyCode: string;
+  fxControlMode?: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED';
   included: boolean;
   [key: string]: unknown;
 };
 
 export type ProfileScopedCurrenciesResponse = {
+  lastUpdatedAt?: string | null;
   profileId?: number;
   items: ProfileScopedCurrencyItem[];
 };
 
 export type ProfileScopedSodRuleItem = {
-  ruleKey: string;
-  title: string;
   description?: string;
   isEnabled: boolean;
+  ruleKey: string;
+  severity?: 'INFO' | 'WARN' | 'BLOCK';
+  title: string;
 };
 
 export type ProfileScopedSodRulesResponse = {
-  profileId?: number;
+  lastUpdatedAt?: string | null;
   mode?: 'PLANNED' | 'BASELINE' | 'ENFORCED';
+  profileId?: number;
   rules: ProfileScopedSodRuleItem[];
 };
 
@@ -140,7 +145,7 @@ export const getProfileScopedCurrencies = async (
 
 export const putProfileScopedCurrenciesBulk = async (
   profileId: string,
-  updates: { currencyCode: string; included: boolean }[]
+  updates: { currencyCode: string; fxControlMode?: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED'; included: boolean }[]
 ): Promise<ApiResponse<ProfileScopedCurrenciesResponse>> => {
   const res = await axiosInstance.put<
     ApiResponse<ProfileScopedCurrenciesResponse>
@@ -160,7 +165,7 @@ export const getProfileScopedSodRules = async (
 
 export const putProfileScopedSodRulesBulk = async (
   profileId: string,
-  updates: { ruleKey: string; isEnabled: boolean }[]
+  updates: { ruleKey: string; isEnabled: boolean; severity?: 'INFO' | 'WARN' | 'BLOCK' }[]
 ): Promise<ApiResponse<ProfileScopedSodRulesResponse>> => {
   const res = await axiosInstance.put<
     ApiResponse<ProfileScopedSodRulesResponse>

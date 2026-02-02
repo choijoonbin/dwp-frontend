@@ -7,14 +7,29 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
+import InputLabel from '@mui/material/InputLabel';
 import CardContent from '@mui/material/CardContent';
+import FormControl from '@mui/material/FormControl';
+
+const SEVERITY_OPTIONS: { value: 'INFO' | 'WARN' | 'BLOCK'; label: string }[] = [
+  { value: 'INFO', label: 'Info' },
+  { value: 'WARN', label: 'Warn' },
+  { value: 'BLOCK', label: 'Block' },
+];
 
 type PatchSodRuleMutation = UseMutationResult<
   unknown,
   Error,
-  { ruleKey: string; enabled: boolean; currentItems: { ruleKey: string; enabled: boolean }[] },
+  {
+    currentItems: { ruleKey: string; enabled: boolean; severity?: 'INFO' | 'WARN' | 'BLOCK' }[];
+    enabled?: boolean;
+    ruleKey: string;
+    severity?: 'INFO' | 'WARN' | 'BLOCK';
+  },
   unknown
 >;
 
@@ -27,13 +42,38 @@ type SodCardProps = {
 };
 
 export const SodCard = ({ items, isLoading, patchMutation, refetch, sodMode }: SodCardProps) => {
+  const toCurrentItems = () =>
+    items.map((i) => ({
+      enabled: i.enabled,
+      ruleKey: i.ruleKey,
+      severity: i.severity ?? 'WARN',
+    }));
 
   const handleToggle = async (ruleKey: string, enabled: boolean) => {
     patchMutation.mutate(
       {
-        ruleKey,
+        currentItems: toCurrentItems(),
         enabled,
-        currentItems: items.map((i) => ({ ruleKey: i.ruleKey, enabled: i.enabled })),
+        ruleKey,
+      },
+      {
+        onSuccess: () => {
+          showToast('Saved');
+          refetch();
+        },
+        onError: (err: Error) => {
+          showToast(err instanceof Error ? err.message : 'Failed to update', 'error');
+        },
+      }
+    );
+  };
+
+  const handleSeverityChange = (ruleKey: string, severity: 'INFO' | 'WARN' | 'BLOCK') => {
+    patchMutation.mutate(
+      {
+        currentItems: toCurrentItems(),
+        ruleKey,
+        severity,
       },
       {
         onSuccess: () => {
@@ -106,6 +146,23 @@ export const SodCard = ({ items, isLoading, patchMutation, refetch, sodMode }: S
                   </Typography>
                 </Box>
                 <Stack direction="row" alignItems="center" spacing={1}>
+                  <FormControl size="small" sx={{ minWidth: 100 }}>
+                    <InputLabel>Severity</InputLabel>
+                    <Select
+                      value={item.severity ?? 'WARN'}
+                      label="Severity"
+                      onChange={(e) =>
+                        handleSeverityChange(item.ruleKey, e.target.value as 'INFO' | 'WARN' | 'BLOCK')
+                      }
+                      disabled={patchMutation.isPending || !item.enabled}
+                    >
+                      {SEVERITY_OPTIONS.map((o) => (
+                        <MenuItem key={o.value} value={o.value}>
+                          {o.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                   <Switch
                     checked={item.enabled}
                     onChange={(_, checked) => handleToggle(item.ruleKey, checked)}

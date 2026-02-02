@@ -13,22 +13,40 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
+import InputLabel from '@mui/material/InputLabel';
 import CardContent from '@mui/material/CardContent';
+import FormControl from '@mui/material/FormControl';
 
 import { CatalogAddDialog } from './catalog-add-dialog';
+
+const FX_MODES: { value: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED'; label: string }[] = [
+  { value: 'ALLOW', label: 'Allow' },
+  { value: 'FX_REQUIRED', label: 'FX Required' },
+  { value: 'FX_LOCKED', label: 'FX Locked' },
+];
 
 type PatchCurrencyMutation = UseMutationResult<
   unknown,
   Error,
-  { waers: string; enabled: boolean; currentItems: { waers: string; enabled: boolean }[] },
+  {
+    currentItems: { waers: string; enabled: boolean; fxControlMode?: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED' }[];
+    enabled?: boolean;
+    fxControlMode?: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED';
+    waers: string;
+  },
   unknown
 >;
 type AddCurrenciesMutation = UseMutationResult<
   unknown,
   Error,
-  { waersList: string[]; currentItems: { waers: string; enabled: boolean }[] },
+  {
+    currentItems: { waers: string; enabled: boolean; fxControlMode?: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED' }[];
+    waersList: string[];
+  },
   unknown
 >;
 
@@ -56,12 +74,38 @@ export const CurrencyCard = ({
   const existingKeys = items.map((i) => i.waers);
   const catalogItems = catalogData ?? [];
 
+  const toCurrentItems = () =>
+    items.map((i) => ({
+      enabled: i.enabled,
+      fxControlMode: i.fxControlMode ?? 'ALLOW',
+      waers: i.waers,
+    }));
+
   const handleToggle = async (waers: string, enabled: boolean) => {
     patchMutation.mutate(
       {
-        waers,
+        currentItems: toCurrentItems(),
         enabled,
-        currentItems: items.map((i) => ({ waers: i.waers, enabled: i.enabled })),
+        waers,
+      },
+      {
+        onSuccess: () => {
+          showToast('Saved');
+          refetch();
+        },
+        onError: (err) => {
+          showToast(err instanceof Error ? err.message : 'Failed to update', 'error');
+        },
+      }
+    );
+  };
+
+  const handleFxModeChange = (waers: string, fxControlMode: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED') => {
+    patchMutation.mutate(
+      {
+        currentItems: toCurrentItems(),
+        fxControlMode,
+        waers,
       },
       {
         onSuccess: () => {
@@ -78,8 +122,8 @@ export const CurrencyCard = ({
   const handleAddConfirm = async (selectedKeys: string[]) => {
     try {
       await addMutation.mutateAsync({
+        currentItems: toCurrentItems(),
         waersList: selectedKeys,
-        currentItems: items.map((i) => ({ waers: i.waers, enabled: i.enabled })),
       });
       showToast('Saved');
       refetch();
@@ -153,6 +197,23 @@ export const CurrencyCard = ({
                     </Typography>
                   </Box>
                   <Stack direction="row" alignItems="center" spacing={1}>
+                    <FormControl size="small" sx={{ minWidth: 120 }}>
+                      <InputLabel>FX Mode</InputLabel>
+                      <Select
+                        value={item.fxControlMode ?? 'ALLOW'}
+                        label="FX Mode"
+                        onChange={(e) =>
+                          handleFxModeChange(item.waers, e.target.value as 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED')
+                        }
+                        disabled={patchMutation.isPending || !item.enabled}
+                      >
+                        {FX_MODES.map((m) => (
+                          <MenuItem key={m.value} value={m.value}>
+                            {m.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                     <Switch
                       checked={item.enabled}
                       onChange={(_, checked) => handleToggle(item.waers, checked)}
