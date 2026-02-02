@@ -43,12 +43,33 @@ import type {
 // ----------------------------------------------------------------------
 
 // ============================================================================
+// Tenants API (Admin Tenant Selector)
+// ============================================================================
+
+/**
+ * Admin Tenant 목록 (로그인 사용자 소속 Tenant만)
+ * GET /api/admin/tenants
+ * dwp-auth-server, menu.admin.users VIEW 권한 필요.
+ */
+export type AdminTenantItem = {
+  id: number;
+  name: string;
+  domain: string;
+};
+
+export const getAdminTenants = async (): Promise<ApiResponse<AdminTenantItem[]>> => {
+  const res = await axiosInstance.get<ApiResponse<AdminTenantItem[]>>('/api/admin/tenants');
+  return res.data;
+};
+
+// ============================================================================
 // Users API
 // ============================================================================
 
 /**
  * Get admin users list
  * GET /api/admin/users
+ * SynapseX Admin Users 탭: appCode=SYNAPSEX 필수.
  */
 export const getAdminUsers = async (
   params?: UserListParams
@@ -57,8 +78,13 @@ export const getAdminUsers = async (
   if (params?.page) queryParams.append('page', params.page.toString());
   if (params?.size) queryParams.append('size', params.size.toString());
   if (params?.keyword) queryParams.append('keyword', params.keyword);
+  if (params?.appCode) queryParams.append('appCode', params.appCode);
+  if (params?.roleIds?.length) params.roleIds.forEach((id) => queryParams.append('roleIds', id.toString()));
+  if (params?.roleId) queryParams.append('roleId', params.roleId.toString());
   if (params?.departmentId) queryParams.append('departmentId', params.departmentId);
   if (params?.status) queryParams.append('status', params.status);
+  if (params?.idpProviderType) queryParams.append('idpProviderType', params.idpProviderType);
+  if (params?.loginType) queryParams.append('loginType', params.loginType);
 
   const url = `/api/admin/users${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
   const res = await axiosInstance.get<ApiResponse<PageResponse<UserSummary>>>(url);
@@ -109,7 +135,7 @@ export const disableAdminUser = async (userId: string): Promise<ApiResponse<{ su
  * DELETE /api/admin/users/:userId
  */
 export const deleteAdminUser = async (userId: string): Promise<ApiResponse<{ success: boolean }>> => {
-  const res = await axiosInstance.post<ApiResponse<{ success: boolean }>>(`/api/admin/users/${userId}/delete`, {});
+  const res = await axiosInstance.delete<ApiResponse<{ success: boolean }>>(`/api/admin/users/${userId}`);
   return res.data;
 };
 
@@ -131,23 +157,38 @@ export const resetAdminUserPassword = async (
 /**
  * Get admin user roles
  * GET /api/admin/users/:userId/roles
+ * BE가 comRoleId(long)로 반환할 수 있음 → id 문자열로 정규화.
  */
+const normalizeRoleSummary = (r: RoleSummary & { comRoleId?: number }): RoleSummary => ({
+  ...r,
+  id: r.id ?? String(r.comRoleId ?? ''),
+});
+
 export const getAdminUserRoles = async (userId: string): Promise<ApiResponse<RoleSummary[]>> => {
   const res = await axiosInstance.get<ApiResponse<RoleSummary[]>>(`/api/admin/users/${userId}/roles`);
-  return res.data;
+  const raw = res.data;
+  if (raw?.data && Array.isArray(raw.data)) {
+    return { ...raw, data: raw.data.map(normalizeRoleSummary) };
+  }
+  if (Array.isArray(raw)) {
+    return { status: 'SUCCESS', message: '', data: raw.map(normalizeRoleSummary), timestamp: '' };
+  }
+  return raw;
 };
 
 /**
  * Update admin user roles
  * PUT /api/admin/users/:userId/roles
+ * BE 스펙: roleIds는 number[] (comRoleId), replace: boolean.
  */
 export const updateAdminUserRoles = async (
   userId: string,
   payload: { roleIds: string[]; replace?: boolean }
 ): Promise<ApiResponse<{ success: boolean }>> => {
+  const roleIdsAsNumbers = payload.roleIds.map((id) => Number(id)).filter((n) => !Number.isNaN(n));
   const res = await axiosInstance.put<ApiResponse<{ success: boolean }>>(`/api/admin/users/${userId}/roles`, {
-    roleIds: payload.roleIds,
-    replace: payload.replace ?? true, // Default to replace mode
+    roleIds: roleIdsAsNumbers,
+    replace: payload.replace ?? true,
   });
   return res.data;
 };
@@ -158,10 +199,11 @@ export const updateAdminUserRoles = async (
 
 /**
  * Backend role response structure
- * Backend returns: { id (string), roleCode, roleName, description, createdAt, status, memberCount, userCount, departmentCount }
+ * Backend may return: { comRoleId (long), roleCode, roleName, ... } or { id (string), ... }
  */
 type BackendRoleSummary = {
-  id: string; // 백엔드가 문자열로 반환
+  id?: string;
+  comRoleId?: number;
   roleCode: string;
   roleName: string;
   description?: string | null;
@@ -176,7 +218,8 @@ type BackendRoleSummary = {
  * Backend role detail response structure
  */
 type BackendRoleDetail = {
-  id: string; // 백엔드가 문자열로 반환
+  id?: string;
+  comRoleId?: number;
   roleCode: string;
   roleName: string;
   description?: string | null;
@@ -190,9 +233,10 @@ type BackendRoleDetail = {
 
 /**
  * Convert backend role response to frontend RoleSummary
+ * BE가 comRoleId(long)만 줄 수 있음 → id 문자열로 통일.
  */
 const toRoleSummary = (backend: BackendRoleSummary): RoleSummary => ({
-  id: backend.id,
+  id: backend.id ?? String(backend.comRoleId ?? ''),
   roleName: backend.roleName,
   roleCode: backend.roleCode,
   description: backend.description,
@@ -207,7 +251,7 @@ const toRoleSummary = (backend: BackendRoleSummary): RoleSummary => ({
  * Convert backend role detail response to frontend RoleDetail
  */
 const toRoleDetail = (backend: BackendRoleDetail): RoleDetail => ({
-  id: backend.id,
+  id: backend.id ?? String(backend.comRoleId ?? ''),
   roleName: backend.roleName,
   roleCode: backend.roleCode,
   description: backend.description,

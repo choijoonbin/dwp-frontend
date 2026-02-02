@@ -5,7 +5,16 @@ import { usePermissions } from '@dwp-frontend/shared-utils';
 
 type PermissionGateProps = {
   resource: string;
-  permission?: 'VIEW' | 'USE' | 'CREATE' | 'UPDATE' | 'DELETE' | 'MANAGE';
+  permission?:
+    | 'VIEW'
+    | 'USE'
+    | 'EDIT'
+    | 'APPROVE'
+    | 'EXECUTE'
+    | 'CREATE'
+    | 'UPDATE'
+    | 'DELETE'
+    | 'MANAGE';
   fallback?: React.ReactNode;
   mode?: 'hide' | 'disable';
   children: React.ReactNode;

@@ -22,8 +22,14 @@ function setDomColorScheme(mode: ThemeMode) {
 function getInitialMode(): ThemeMode {
   if (typeof window === 'undefined') return 'light';
 
+  // 기존에 dark 모드가 저장되어 있어도 light로 리셋
   const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === 'light' || stored === 'dark') return stored;
+  if (stored === 'dark') {
+    window.localStorage.setItem(STORAGE_KEY, 'light');
+    return 'light';
+  }
+
+  if (stored === 'light') return stored;
 
   return 'light';
 }

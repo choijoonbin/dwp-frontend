@@ -15,12 +15,21 @@ import type { ResetPasswordPayload } from '../admin/types';
 export const adminUserRolesQueryKey = (tenantId: string, userId: string) =>
   ['admin', 'users', 'roles', tenantId, userId] as const;
 
+export type UseAdminUserRolesQueryOptions = {
+  /** true면 인증/tenant 무시하고 호출. Drawer 등에서 호출 보장용 */
+  enabled?: boolean;
+};
+
 /**
  * Hook to fetch admin user roles
+ * GET /api/admin/users/:userId/roles
  */
-export const useAdminUserRolesQuery = (userId: string) => {
+export const useAdminUserRolesQuery = (userId: string, options?: UseAdminUserRolesQueryOptions) => {
   const { isAuthenticated } = useAuth();
   const tenantId = getTenantId();
+
+  const enabledDefault = isAuthenticated && Boolean(tenantId) && Boolean(userId);
+  const enabled = options?.enabled !== undefined ? options.enabled && Boolean(userId) : enabledDefault;
 
   const query = useQuery({
     queryKey: adminUserRolesQueryKey(tenantId, userId),
@@ -31,7 +40,7 @@ export const useAdminUserRolesQuery = (userId: string) => {
       }
       throw new Error(res.message || 'Failed to fetch user roles');
     },
-    enabled: isAuthenticated && Boolean(tenantId) && Boolean(userId),
+    enabled,
     staleTime: 1 * 60 * 1000, // 1 minute
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -54,8 +63,9 @@ export const useUpdateAdminUserRolesMutation = () => {
   return useMutation({
     mutationFn: async ({ userId, roleIds, replace = true }: { userId: string; roleIds: string[]; replace?: boolean }) => {
       const res = await updateAdminUserRoles(userId, { roleIds, replace });
-      if (res.data?.success) {
-        return res.data;
+      // BE가 status: 'SUCCESS' + message만 반환하고 data/success 없을 수 있음 → 성공으로 처리
+      if (res.status === 'SUCCESS' || res.data?.success === true) {
+        return res.data ?? { success: true };
       }
       throw new Error(res.message || 'Failed to update user roles');
     },

@@ -1,0 +1,219 @@
+import type { UseMutationResult } from '@tanstack/react-query';
+
+import { useMemo, useState } from 'react';
+import { Label, Iconify } from '@dwp-frontend/design-system';
+import { showToast, useCompanyCodeCatalogQuery, type TenantScopeCompanyCode } from '@dwp-frontend/shared-utils';
+
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import Switch from '@mui/material/Switch';
+import Button from '@mui/material/Button';
+import CardHeader from '@mui/material/CardHeader';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+
+import { CatalogAddDialog } from './catalog-add-dialog';
+
+type FilterType = 'all' | 'enabled' | 'disabled';
+
+type PatchCompanyCodeMutation = UseMutationResult<
+  unknown,
+  Error,
+  { bukrs: string; enabled: boolean; currentItems: { bukrs: string; enabled: boolean }[] },
+  unknown
+>;
+type AddCompanyCodesMutation = UseMutationResult<
+  unknown,
+  Error,
+  { bukrsList: string[]; currentItems: { bukrs: string; enabled: boolean }[] },
+  unknown
+>;
+
+type CompanyCodeCardProps = {
+  items: TenantScopeCompanyCode[];
+  isLoading?: boolean;
+  patchMutation: PatchCompanyCodeMutation;
+  addMutation: AddCompanyCodesMutation;
+  refetch: () => void;
+};
+
+const SOURCE_LABEL: Record<string, string> = {
+  MANUAL: '수동',
+  SEED: '시드',
+  SAP: 'SAP',
+};
+
+export const CompanyCodeCard = ({
+  items,
+  isLoading,
+  patchMutation,
+  addMutation,
+  refetch,
+}: CompanyCodeCardProps) => {
+  const [filter, setFilter] = useState<FilterType>('all');
+  const [addOpen, setAddOpen] = useState(false);
+
+  const { data: catalogData, isLoading: catalogLoading, error: catalogError } = useCompanyCodeCatalogQuery({
+    enabled: addOpen,
+  });
+
+  const filteredItems = useMemo(() => {
+    if (filter === 'enabled') return items.filter((i) => i.enabled);
+    if (filter === 'disabled') return items.filter((i) => !i.enabled);
+    return items;
+  }, [items, filter]);
+
+  const existingKeys = useMemo(() => items.map((i) => i.bukrs), [items]);
+  const catalogItems = catalogData ?? [];
+
+  const handleToggle = async (bukrs: string, enabled: boolean) => {
+    patchMutation.mutate(
+      {
+        bukrs,
+        enabled,
+        currentItems: items.map((i) => ({ bukrs: i.bukrs, enabled: i.enabled })),
+      },
+      {
+        onSuccess: () => {
+          showToast('Saved');
+          refetch();
+        },
+        onError: (err) => {
+          showToast(err instanceof Error ? err.message : 'Failed to update', 'error');
+        },
+      }
+    );
+  };
+
+  const handleAddConfirm = async (selectedKeys: string[]) => {
+    try {
+      await addMutation.mutateAsync({
+        bukrsList: selectedKeys,
+        currentItems: items.map((i) => ({ bukrs: i.bukrs, enabled: i.enabled })),
+      });
+      showToast('Saved');
+      refetch();
+      setAddOpen(false);
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Failed to add', 'error');
+      throw err;
+    }
+  };
+
+  return (
+    <>
+      <Card variant="outlined">
+        <CardHeader
+          title={
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Iconify icon="solar:buildings-bold-duotone" width={18} />
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                Company Codes
+              </Typography>
+            </Stack>
+          }
+          subheader="Multi-company support and access scope."
+          action={
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<Iconify icon="solar:add-circle-bold" width={16} />}
+              onClick={() => setAddOpen(true)}
+            >
+              Add
+            </Button>
+          }
+          sx={{ pb: 2 }}
+        />
+        <CardContent>
+          <Stack spacing={1.5}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              flexWrap="wrap"
+              gap={1}
+              sx={{ mb: 0.5 }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                Included: {items.filter((i) => i.enabled).length} / Total: {items.length}
+              </Typography>
+            </Stack>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={1}>
+              <ToggleButtonGroup
+                size="small"
+                value={filter}
+                exclusive
+                onChange={(_, v) => v != null && setFilter(v)}
+              >
+                <ToggleButton value="all">All</ToggleButton>
+                <ToggleButton value="enabled">Enabled</ToggleButton>
+                <ToggleButton value="disabled">Disabled</ToggleButton>
+              </ToggleButtonGroup>
+            </Stack>
+            {isLoading ? (
+              <Typography variant="body2" color="text.secondary">
+                Loading...
+              </Typography>
+            ) : filteredItems.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                {items.length === 0 ? 'No company codes configured.' : 'No items match filter.'}
+              </Typography>
+            ) : (
+              filteredItems.map((item) => (
+                <Box
+                  key={item.bukrs}
+                  sx={{
+                    p: 1.5,
+                    borderRadius: 1,
+                    border: 1,
+                    borderColor: 'divider',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Box>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        BUKRS {item.bukrs}
+                      </Typography>
+                      {item.source && (
+                        <Label color="default" variant="soft" sx={{ fontSize: 10 }}>
+                          {SOURCE_LABEL[item.source] ?? item.source}
+                        </Label>
+                      )}
+                    </Stack>
+                    <Typography variant="caption" color="text.secondary">
+                      {item.enabled ? 'Included in tenant scope' : 'Excluded'}
+                    </Typography>
+                  </Box>
+                  <Switch
+                    checked={item.enabled}
+                    onChange={(_, checked) => handleToggle(item.bukrs, checked)}
+                    disabled={patchMutation.isPending}
+                  />
+                </Box>
+              ))
+            )}
+          </Stack>
+        </CardContent>
+      </Card>
+
+      <CatalogAddDialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        title="Add Company Codes"
+        keyField="bukrs"
+        items={catalogItems}
+        existingKeys={existingKeys}
+        onConfirm={handleAddConfirm}
+        isLoading={catalogLoading}
+        catalogError={catalogError ?? undefined}
+      />
+    </>
+  );
+};

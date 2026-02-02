@@ -1,0 +1,1149 @@
+import { useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Label, Iconify } from '@dwp-frontend/design-system';
+
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
+import Tabs from '@mui/material/Tabs';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Drawer from '@mui/material/Drawer';
+import Slider from '@mui/material/Slider';
+import Divider from '@mui/material/Divider';
+import Tooltip from '@mui/material/Tooltip';
+import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import CardHeader from '@mui/material/CardHeader';
+import IconButton from '@mui/material/IconButton';
+import CardContent from '@mui/material/CardContent';
+
+import { SeverityBadge } from '../components/finance/severity-badge';
+import { RagCitationCard } from '../components/evidence/rag-citation-card';
+import { StatsEvidenceCard } from '../components/evidence/stats-evidence-card';
+
+// ----------------------------------------------------------------------
+
+// Type definitions for enhanced lineage data
+interface RagEvidenceItem {
+  policyCode?: string;
+  docTitle: string;
+  pageNumber: number;
+  relevanceScore?: number;
+  quote: string;
+  source: string;
+}
+
+interface StatsEvidence {
+  zScore: number;
+  mean: number;
+  std: number;
+  delta: number;
+}
+
+interface LineageStep {
+  id: string;
+  name: string;
+  timestamp: string;
+  status: 'complete' | 'running' | 'failed' | 'pending';
+  system: string;
+  details: Record<string, any>;
+  rawJson?: string;
+  ragEvidence?: RagEvidenceItem[];
+  statsEvidence?: StatsEvidence;
+}
+
+// Mock lineage data with enhanced evidence
+const mockLineageSteps: LineageStep[] = [
+  {
+    id: 'step-1',
+    name: 'SAP Raw Event',
+    timestamp: '2026-01-28T14:00:00Z',
+    status: 'complete',
+    system: 'SAP ECC',
+    details: {
+      eventType: 'FI_DOCUMENT_CREATED',
+      documentNumber: '1900001234',
+      transactionCode: 'FB01',
+    },
+    rawJson: JSON.stringify(
+      {
+        event_type: 'FI_DOCUMENT_CREATED',
+        bukrs: '1000',
+        belnr: '1900001234',
+        gjahr: '2026',
+        blart: 'KR',
+        bldat: '2026-01-28',
+        budat: '2026-01-28',
+        xblnr: 'INV-2026-001',
+        waers: 'USD',
+        kursf: 1.0,
+        bktxt: 'Vendor Invoice Posting',
+        user: 'SAP_USER01',
+        timestamp: '2026-01-28T14:00:00.123Z',
+        source_system: 'SAP_ECC_PRD',
+      },
+      null,
+      2
+    ),
+    ragEvidence: [
+      {
+        policyCode: 'FIN-POL-001',
+        docTitle: 'Financial Transaction Recording Policy',
+        pageNumber: 12,
+        relevanceScore: 95,
+        quote: 'All financial documents must be recorded in SAP within 24 hours of transaction date with proper authorization.',
+        source: '/policies/financial-recording-policy.pdf',
+      },
+      {
+        policyCode: 'FIN-POL-003',
+        docTitle: 'Vendor Invoice Processing Guidelines',
+        pageNumber: 8,
+        relevanceScore: 88,
+        quote: 'Vendor invoices require three-way matching: Purchase Order, Goods Receipt, and Invoice.',
+        source: '/policies/vendor-invoice-guidelines.pdf',
+      },
+    ],
+  },
+  {
+    id: 'step-2',
+    name: 'Data Ingestion',
+    timestamp: '2026-01-28T14:05:00Z',
+    status: 'complete',
+    system: 'ETL Pipeline',
+    details: {
+      batchId: 'BATCH-2026-001234',
+      recordsProcessed: 1,
+      validationStatus: 'Passed',
+    },
+    rawJson: JSON.stringify(
+      {
+        batch_id: 'BATCH-2026-001234',
+        pipeline_version: '3.2.1',
+        start_time: '2026-01-28T14:05:00.000Z',
+        end_time: '2026-01-28T14:05:15.432Z',
+        records_processed: 1,
+        records_failed: 0,
+        validation_status: 'PASSED',
+        validations: [
+          { name: 'schema_validation', status: 'PASSED' },
+          { name: 'data_quality_check', status: 'PASSED' },
+          { name: 'duplicate_check', status: 'PASSED' },
+        ],
+        destination_table: 'dwh.fi_documents',
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: 'step-3',
+    name: 'AI Risk Scoring',
+    timestamp: '2026-01-28T14:06:00Z',
+    status: 'complete',
+    system: 'Risk Engine',
+    details: {
+      modelVersion: 'v2.4.1',
+      confidenceScore: 94,
+      riskLevel: 'Critical',
+    },
+    rawJson: JSON.stringify(
+      {
+        model_version: 'v2.4.1',
+        model_type: 'ensemble_classifier',
+        inference_time_ms: 234,
+        confidence_score: 0.94,
+        risk_level: 'CRITICAL',
+        risk_factors: [
+          {
+            factor: 'bank_account_changed_before_payment',
+            weight: 0.35,
+            score: 0.98,
+            evidence: 'Bank account modified 1 day before payment',
+          },
+          {
+            factor: 'amount_exceeds_threshold',
+            weight: 0.25,
+            score: 0.92,
+            evidence: 'Amount $125,000 exceeds risk threshold $100,000',
+          },
+          {
+            factor: 'vendor_risk_category',
+            weight: 0.20,
+            score: 0.90,
+            evidence: 'Vendor risk category upgraded to HIGH',
+          },
+        ],
+        features_used: 247,
+        anomaly_types_detected: ['bank_change', 'high_value'],
+      },
+      null,
+      2
+    ),
+    statsEvidence: {
+      zScore: 3.5,
+      mean: 45000,
+      std: 22857,
+      delta: 80000,
+    },
+    ragEvidence: [
+      {
+        policyCode: 'RISK-POL-002',
+        docTitle: 'Automated Risk Scoring Framework',
+        pageNumber: 45,
+        relevanceScore: 92,
+        quote: 'Transactions with risk scores above 85% must be flagged for manual review and cannot be auto-approved.',
+        source: '/policies/risk-scoring-framework.pdf',
+      },
+      {
+        policyCode: 'FRAUD-POL-001',
+        docTitle: 'Fraud Detection Red Flags',
+        pageNumber: 23,
+        relevanceScore: 89,
+        quote: 'Bank account changes within 72 hours of payment execution are considered high-risk indicators.',
+        source: '/policies/fraud-detection-red-flags.pdf',
+      },
+      {
+        policyCode: 'STAT-STD-001',
+        docTitle: 'Statistical Anomaly Thresholds',
+        pageNumber: 15,
+        relevanceScore: 85,
+        quote: 'Values exceeding 3 standard deviations (3σ) from the mean require additional scrutiny and documentation.',
+        source: '/policies/statistical-thresholds.pdf',
+      },
+    ],
+  },
+  {
+    id: 'step-4',
+    name: 'Case Created',
+    timestamp: '2026-01-28T14:10:00Z',
+    status: 'complete',
+    system: 'Case Manager',
+    details: {
+      caseId: 'CS-2026-0001',
+      assignee: 'John Smith',
+      slaDeadline: '2026-01-30T14:00:00Z',
+    },
+    rawJson: JSON.stringify(
+      {
+        case_id: 'CS-2026-0001',
+        case_type: 'FRAUD_INVESTIGATION',
+        priority: 'HIGH',
+        assigned_to: 'john.smith@enterprise.com',
+        assigned_at: '2026-01-28T14:10:00Z',
+        sla_deadline: '2026-01-30T14:00:00Z',
+        sla_hours: 48,
+        status: 'OPEN',
+        tags: ['bank_change', 'high_value', 'vendor_risk'],
+        workflow_stage: 'INITIAL_REVIEW',
+        escalation_level: 'L2_SENIOR_ANALYST',
+        auto_actions_blocked: true,
+        requires_approval: true,
+      },
+      null,
+      2
+    ),
+    ragEvidence: [
+      {
+        policyCode: 'CASE-POL-001',
+        docTitle: 'Case Management SLA Policy',
+        pageNumber: 7,
+        relevanceScore: 91,
+        quote: 'High-priority fraud cases must be resolved within 48 hours with documented evidence and approval.',
+        source: '/policies/case-management-sla.pdf',
+      },
+    ],
+  },
+];
+
+// Mock vendor master data at different times
+const mockVendorMasterSnapshots = {
+  transaction: {
+    timestamp: '2026-01-28T14:00:00Z',
+    data: {
+      vendorId: 'V-10001',
+      vendorName: 'Vendor Alpha Inc',
+      bankAccount: 'DE89370400440532013000',
+      bankName: 'Deutsche Bank',
+      paymentTerms: 'NET30',
+      taxId: 'US123456789',
+      address: '123 Main St, New York, NY 10001',
+      contactEmail: 'ap@vendoralpha.com',
+      riskCategory: 'Medium',
+      creditLimit: 500000,
+      lastModified: '2026-01-25T10:30:00Z',
+      modifiedBy: 'SYSTEM_BATCH',
+    },
+  },
+  current: {
+    timestamp: '2026-01-30T09:00:00Z',
+    data: {
+      vendorId: 'V-10001',
+      vendorName: 'Vendor Alpha Inc',
+      bankAccount: 'GB82WEST12345698765432',
+      bankName: 'Barclays Bank',
+      paymentTerms: 'NET30',
+      taxId: 'US123456789',
+      address: '123 Main St, New York, NY 10001',
+      contactEmail: 'ap@vendoralpha.com',
+      riskCategory: 'High',
+      creditLimit: 500000,
+      lastModified: '2026-01-29T08:15:00Z',
+      modifiedBy: 'USER_AP001',
+    },
+  },
+};
+
+const getChangedFields = () => {
+  const changes: { field: string; oldValue: string; newValue: string }[] = [];
+  const txnData = mockVendorMasterSnapshots.transaction.data;
+  const currData = mockVendorMasterSnapshots.current.data;
+
+  Object.keys(txnData).forEach((key) => {
+    const k = key as keyof typeof txnData;
+    if (txnData[k] !== currData[k]) {
+      changes.push({
+        field: key,
+        oldValue: String(txnData[k]),
+        newValue: String(currData[k]),
+      });
+    }
+  });
+  return changes;
+};
+
+// ----------------------------------------------------------------------
+
+export const LineagePage = () => {
+  const theme = useTheme();
+  const [searchParams] = useSearchParams();
+  const caseId = searchParams.get('caseId') || 'case-001';
+
+  const [timeTravelValue, setTimeTravelValue] = useState([0]);
+  const [selectedStep, setSelectedStep] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerTab, setDrawerTab] = useState(0);
+  const [evidencePanelTab, setEvidencePanelTab] = useState(0);
+
+  // Time-travel: 0 = transaction time, 100 = current
+  const isTransactionTime = timeTravelValue[0] < 50;
+  const activeSnapshot = isTransactionTime ? mockVendorMasterSnapshots.transaction : mockVendorMasterSnapshots.current;
+
+  const changedFields = getChangedFields();
+
+  const stepIcons = [
+    'solar:server-bold',
+    'solar:database-bold',
+    'solar:brain-bold',
+    'solar:danger-triangle-bold',
+  ];
+
+  const selectedStepData = mockLineageSteps.find((s) => s.id === selectedStep);
+
+  const handleOpenDrawer = (stepId: string) => {
+    setSelectedStep(stepId);
+    setDrawerOpen(true);
+    setDrawerTab(0);
+  };
+
+  // Collect all RAG evidence and stats evidence from all steps
+  const allRagEvidence = mockLineageSteps.flatMap((step) => step.ragEvidence || []);
+  const allStatsEvidence = mockLineageSteps
+    .filter((step) => step.statsEvidence)
+    .map((step) => ({ step: step.name, stats: step.statsEvidence! }));
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.5rem)' }}>
+      {/* Page Header */}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 3, py: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Link to={`/cases/${caseId}`}>
+              <IconButton size="small" sx={{ bgcolor: 'transparent' }}>
+                <Iconify icon="solar:alt-arrow-left-linear" width={16} />
+              </IconButton>
+            </Link>
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                Data Lineage & Evidence
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+                Trace the complete data journey from source to case creation
+              </Typography>
+            </Box>
+          </Box>
+          <Chip label="Case: CS-2026-0001" icon={<Iconify icon="solar:document-text-bold" width={12} />} variant="outlined" size="small" />
+        </Box>
+      </Box>
+
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: { xs: 'column', xl: 'row' }, overflow: 'hidden' }}>
+        {/* Left: Lineage Flow */}
+        <Box
+          sx={{
+            width: { xl: '33%' },
+            borderBottom: { xs: 1, xl: 0 },
+            borderRight: { xl: 1 },
+            borderColor: 'divider',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+        >
+          <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'action.hover' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Iconify icon="solar:history-bold" width={16} sx={{ color: 'text.secondary' }} />
+              Data Lineage Pipeline
+            </Typography>
+          </Box>
+          <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
+            {/* Horizontal Step Indicator */}
+            <Box sx={{ position: 'relative', mb: 4 }}>
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 24,
+                  left: 0,
+                  right: 0,
+                  height: 2,
+                  bgcolor: 'divider',
+                }}
+              />
+              <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+                {mockLineageSteps.map((step, index) => (
+                  <Box key={step.id} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 10 }}>
+                    <Tooltip title={`${step.name}\n${new Date(step.timestamp).toLocaleTimeString()}`}>
+                      <IconButton
+                        onClick={() => setSelectedStep(selectedStep === step.id ? null : step.id)}
+                        sx={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: '50%',
+                          bgcolor: step.status === 'complete' ? 'success.main' : 'action.disabledBackground',
+                          color: step.status === 'complete' ? 'success.contrastText' : 'text.disabled',
+                          '&:hover': { bgcolor: step.status === 'complete' ? 'success.dark' : 'action.disabledBackground' },
+                          ...(selectedStep === step.id && {
+                            outline: `2px solid ${theme.palette.primary.main}`,
+                            outlineOffset: 2,
+                          }),
+                        }}
+                      >
+                        <Iconify icon={stepIcons[index]} width={20} />
+                      </IconButton>
+                    </Tooltip>
+                    <Typography variant="caption" sx={{ fontWeight: 500, mt: 1, textAlign: 'center', maxWidth: 80 }}>
+                      {step.name}
+                    </Typography>
+                    <Typography variant="caption" sx={{ fontSize: '0.625rem', color: 'text.secondary' }}>
+                      {new Date(step.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+
+            {/* Selected Step Details */}
+            {selectedStep && (
+              <Card sx={{ bgcolor: 'action.hover', mb: 3 }}>
+                <CardHeader
+                  title={
+                    <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Iconify icon="solar:eye-bold" width={16} />
+                      Step Details: {mockLineageSteps.find((s) => s.id === selectedStep)?.name}
+                    </Typography>
+                  }
+                  titleTypographyProps={{ variant: 'subtitle2' }}
+                />
+                <CardContent sx={{ pt: 0 }}>
+                  {(() => {
+                    const step = mockLineageSteps.find((s) => s.id === selectedStep);
+                    if (!step) return null;
+                    return (
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Chip label={step.system} variant="outlined" size="small" />
+                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                            |
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                            {new Date(step.timestamp).toLocaleString()}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
+                          {Object.entries(step.details).map(([key, value]) => (
+                            <Box key={key} sx={{ bgcolor: 'background.paper', borderRadius: 1, p: 1.5 }}>
+                              <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'capitalize', display: 'block' }}>
+                                {key.replace(/([A-Z])/g, ' $1')}
+                              </Typography>
+                              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 500 }}>
+                                {String(value)}
+                              </Typography>
+                            </Box>
+                          ))}
+                        </Box>
+                      </Box>
+                    );
+                  })()}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* All Steps List */}
+            <Stack spacing={1.5}>
+              {mockLineageSteps.map((step, index) => (
+                <Card
+                  key={step.id}
+                  sx={{
+                    bgcolor: 'background.paper',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    ...(selectedStep === step.id && {
+                      borderColor: 'primary.main',
+                      borderWidth: 2,
+                      borderStyle: 'solid',
+                    }),
+                  }}
+                  onClick={() => setSelectedStep(selectedStep === step.id ? null : step.id)}
+                >
+                  <CardContent sx={{ p: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          bgcolor: step.status === 'complete' ? 'success.lighter' : 'action.disabledBackground',
+                          color: step.status === 'complete' ? 'success.main' : 'text.disabled',
+                        }}
+                      >
+                        <Iconify icon={stepIcons[index]} width={20} />
+                      </Box>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {step.name}
+                          </Typography>
+                          <Iconify icon="solar:check-circle-bold" width={16} sx={{ color: 'success.main' }} />
+                        </Box>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          {step.system}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ textAlign: 'right', flexShrink: 0 }}>
+                        <Typography variant="caption" sx={{ fontFamily: 'monospace', display: 'block' }}>
+                          {new Date(step.timestamp).toLocaleTimeString()}
+                        </Typography>
+                        <Typography variant="caption" sx={{ fontSize: '0.625rem', color: 'text.secondary' }}>
+                          {new Date(step.timestamp).toLocaleDateString()}
+                        </Typography>
+                      </Box>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenDrawer(step.id);
+                        }}
+                        sx={{ flexShrink: 0 }}
+                      >
+                        <Iconify icon="solar:eye-bold" width={18} sx={{ color: 'primary.main' }} />
+                      </IconButton>
+                      <Iconify
+                        icon="solar:alt-arrow-right-linear"
+                        width={16}
+                        sx={{
+                          color: 'text.secondary',
+                          transform: selectedStep === step.id ? 'rotate(90deg)' : 'none',
+                          transition: 'transform 0.2s',
+                        }}
+                      />
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))}
+            </Stack>
+          </Box>
+        </Box>
+
+        {/* Center: Time-Travel Viewer */}
+        <Box
+          sx={{
+            width: { xl: '34%' },
+            borderRight: { xl: 1 },
+            borderColor: 'divider',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+        >
+          <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'action.hover' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Iconify icon="solar:refresh-bold" width={16} sx={{ color: 'text.secondary' }} />
+              Time-Travel: Vendor Master Data
+            </Typography>
+          </Box>
+          <Box sx={{ flex: 1, overflow: 'auto', p: 3, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            {/* Time-Travel Slider */}
+            <Card sx={{ bgcolor: 'primary.lighter', borderColor: 'primary.main', borderWidth: 1, borderStyle: 'solid' }}>
+              <CardContent sx={{ p: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                    View data at:
+                  </Typography>
+                  <Chip label={isTransactionTime ? 'Transaction Time' : 'Current State'} color={isTransactionTime ? 'primary' : 'default'} size="small" />
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Slider value={timeTravelValue[0]} onChange={(_, value) => setTimeTravelValue([value as number])} max={100} step={1} />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'text.secondary' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                        Transaction Time
+                      </Typography>
+                      <Typography variant="caption">{new Date(mockVendorMasterSnapshots.transaction.timestamp).toLocaleString()}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                      <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                        Current State
+                      </Typography>
+                      <Typography variant="caption">{new Date(mockVendorMasterSnapshots.current.timestamp).toLocaleString()}</Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+
+            {/* Changes Summary */}
+            {changedFields.length > 0 && (
+              <Card sx={{ bgcolor: 'warning.lighter', borderColor: 'warning.main', borderWidth: 1, borderStyle: 'solid' }}>
+                <CardContent sx={{ p: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                    <Iconify icon="solar:danger-triangle-bold" width={16} sx={{ color: 'warning.main' }} />
+                    <Typography variant="body2" sx={{ fontWeight: 500, color: 'warning.main' }}>
+                      {changedFields.length} field(s) changed since transaction
+                    </Typography>
+                  </Box>
+                  <Stack spacing={1}>
+                    {changedFields.map((change, i) => (
+                      <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.75rem' }}>
+                        <Typography variant="caption" sx={{ fontWeight: 500, textTransform: 'capitalize' }}>
+                          {change.field.replace(/([A-Z])/g, ' $1')}:
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', textDecoration: 'line-through' }}>
+                          {change.oldValue}
+                        </Typography>
+                        <Iconify icon="solar:alt-arrow-right-linear" width={12} />
+                        <Typography variant="caption" sx={{ color: 'warning.main', fontWeight: 500 }}>
+                          {change.newValue}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Stack>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Vendor Master Data */}
+            <Card>
+              <CardHeader
+                title={
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Iconify icon="solar:buildings-2-bold" width={16} sx={{ color: 'text.secondary' }} />
+                      Vendor Master Record
+                    </Box>
+                    <Typography variant="caption" sx={{ fontWeight: 400, color: 'text.secondary' }}>
+                      As of: {new Date(activeSnapshot.timestamp).toLocaleString()}
+                    </Typography>
+                  </Box>
+                }
+                titleTypographyProps={{ variant: 'subtitle2', fontWeight: 500 }}
+              />
+              <CardContent sx={{ pt: 0 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
+                  {Object.entries(activeSnapshot.data).map(([key, value]) => {
+                    const isChanged = changedFields.some((c) => c.field === key);
+                    return (
+                      <Box
+                        key={key}
+                        sx={{
+                          p: 1.5,
+                          borderRadius: 1,
+                          ...(isChanged && !isTransactionTime
+                            ? { bgcolor: 'warning.lighter', border: 1, borderColor: 'warning.main' }
+                            : { bgcolor: 'action.hover' }),
+                        }}
+                      >
+                        <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'capitalize', display: 'block' }}>
+                          {key.replace(/([A-Z])/g, ' $1')}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 500,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            mt: 0.5,
+                            ...(isChanged && !isTransactionTime && { color: 'warning.main' }),
+                          }}
+                        >
+                          {typeof value === 'number' ? value.toLocaleString() : value}
+                        </Typography>
+                        {isChanged && (
+                          <Typography variant="caption" sx={{ color: 'warning.main', fontSize: '0.625rem' }}>
+                            Changed
+                          </Typography>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </CardContent>
+            </Card>
+
+            {/* Modification Log */}
+            <Card>
+              <CardHeader
+                title={
+                  <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Iconify icon="solar:history-bold" width={16} sx={{ color: 'text.secondary' }} />
+                    Recent Modifications
+                  </Typography>
+                }
+                titleTypographyProps={{ variant: 'subtitle2' }}
+              />
+              <CardContent sx={{ pt: 0 }}>
+                <Stack spacing={1.5}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>
+                    <Box
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: '50%',
+                        bgcolor: 'warning.lighter',
+                        color: 'warning.main',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Iconify icon="solar:user-bold" width={16} />
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        Bank Account Changed
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        Modified by USER_AP001
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5, display: 'block' }}>
+                        2026-01-29 08:15:00
+                      </Typography>
+                    </Box>
+                    <SeverityBadge severity="high" size="sm" />
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>
+                    <Box
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: '50%',
+                        bgcolor: 'action.disabledBackground',
+                        color: 'text.disabled',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Iconify icon="solar:database-bold" width={16} />
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        Risk Category Updated
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        Auto-updated by Risk Engine
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5, display: 'block' }}>
+                        2026-01-29 08:16:00
+                      </Typography>
+                    </Box>
+                    <SeverityBadge severity="medium" size="sm" />
+                  </Box>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Box>
+        </Box>
+
+        {/* Right: Evidence Panel (Desktop Only) */}
+        <Box
+          sx={{
+            width: { xl: '33%' },
+            display: { xs: 'none', xl: 'flex' },
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+        >
+          <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'action.hover' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Iconify icon="solar:shield-check-bold" width={16} sx={{ color: 'text.secondary' }} />
+              Evidence Panel
+            </Typography>
+          </Box>
+          <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
+            <Stack spacing={3}>
+              {/* RAG Citations Section */}
+              {allRagEvidence.length > 0 && (
+                <Box>
+                  <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                    <Iconify icon="solar:book-bookmark-bold-duotone" width={20} sx={{ color: 'primary.main' }} />
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      Policy & Regulation Citations
+                    </Typography>
+                    <Chip label={allRagEvidence.length} size="small" />
+                  </Stack>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Referenced policies and regulations supporting the analysis
+                  </Typography>
+                  <Stack spacing={1.5}>
+                    {allRagEvidence.slice(0, 5).map((citation, i) => (
+                      <RagCitationCard
+                        key={i}
+                        citation={citation}
+                        onOpenSource={(source) => {
+                           
+                          console.log('Open source:', source);
+                        }}
+                      />
+                    ))}
+                  </Stack>
+                  {allRagEvidence.length > 5 && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Button size="small" variant="text">
+                        View All {allRagEvidence.length} Citations
+                      </Button>
+                    </Box>
+                  )}
+                </Box>
+              )}
+
+              {/* Statistical Evidence Section */}
+              {allStatsEvidence.length > 0 && (
+                <Box>
+                  <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                    <Iconify icon="solar:chart-2-bold" width={20} sx={{ color: 'warning.main' }} />
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      Statistical Analysis
+                    </Typography>
+                  </Stack>
+                  <Stack spacing={2}>
+                    {allStatsEvidence.map((item, i) => (
+                      <StatsEvidenceCard
+                        key={i}
+                        stats={item.stats}
+                        title={item.step}
+                        subtitle={`Amount is ${Math.abs(item.stats.zScore).toFixed(1)}σ away from 12-month mean`}
+                      />
+                    ))}
+                  </Stack>
+                </Box>
+              )}
+
+              {/* Empty State */}
+              {allRagEvidence.length === 0 && allStatsEvidence.length === 0 && (
+                <Box sx={{ py: 8, textAlign: 'center' }}>
+                  <Iconify
+                    icon="solar:shield-check-bold-duotone"
+                    width={48}
+                    sx={{ color: 'text.disabled', mb: 2 }}
+                  />
+                  <Typography variant="body2" color="text.secondary">
+                    No evidence data available
+                  </Typography>
+                </Box>
+              )}
+            </Stack>
+          </Box>
+        </Box>
+
+        {/* Mobile/Tablet: Evidence Panel as Bottom Sheet/Tabs */}
+        <Box
+          sx={{
+            display: { xs: 'block', xl: 'none' },
+            borderTop: 1,
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+          }}
+        >
+          <Tabs
+            value={evidencePanelTab}
+            onChange={(_, v) => setEvidencePanelTab(v)}
+            variant="fullWidth"
+            sx={{ borderBottom: 1, borderColor: 'divider' }}
+          >
+            <Tab
+              icon={<Iconify icon="solar:book-bookmark-bold" width={18} />}
+              iconPosition="start"
+              label={`Citations (${allRagEvidence.length})`}
+            />
+            <Tab
+              icon={<Iconify icon="solar:chart-2-bold" width={18} />}
+              iconPosition="start"
+              label={`Stats (${allStatsEvidence.length})`}
+            />
+          </Tabs>
+          <Box sx={{ maxHeight: 400, overflow: 'auto', p: 2 }}>
+            {evidencePanelTab === 0 && (
+              <Stack spacing={1.5}>
+                {allRagEvidence.length > 0 ? (
+                  allRagEvidence.map((citation, i) => (
+                    <RagCitationCard
+                      key={i}
+                      citation={citation}
+                      onOpenSource={(source) => {
+                         
+                        console.log('Open source:', source);
+                      }}
+                    />
+                  ))
+                ) : (
+                  <Box sx={{ py: 4, textAlign: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                      No policy citations available
+                    </Typography>
+                  </Box>
+                )}
+              </Stack>
+            )}
+            {evidencePanelTab === 1 && (
+              <Stack spacing={2}>
+                {allStatsEvidence.length > 0 ? (
+                  allStatsEvidence.map((item, i) => (
+                    <StatsEvidenceCard
+                      key={i}
+                      stats={item.stats}
+                      title={item.step}
+                      subtitle={`Amount is ${Math.abs(item.stats.zScore).toFixed(1)}σ away from 12-month mean`}
+                    />
+                  ))
+                ) : (
+                  <Box sx={{ py: 4, textAlign: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                      No statistical evidence available
+                    </Typography>
+                  </Box>
+                )}
+              </Stack>
+            )}
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Step Detail Drawer */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        PaperProps={{
+          sx: { width: { xs: '100%', sm: 600 }, bgcolor: 'background.default' },
+        }}
+      >
+        {selectedStepData && (
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            {/* Drawer Header */}
+            <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
+              <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={2}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                    {selectedStepData.name}
+                  </Typography>
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                    <Label color="success" variant="soft">
+                      {selectedStepData.status}
+                    </Label>
+                    <Chip label={selectedStepData.system} size="small" variant="outlined" />
+                    <Typography variant="caption" color="text.secondary">
+                      {new Date(selectedStepData.timestamp).toLocaleString()}
+                    </Typography>
+                  </Stack>
+                </Box>
+                <IconButton onClick={() => setDrawerOpen(false)} size="small">
+                  <Iconify icon="solar:close-circle-bold" width={24} />
+                </IconButton>
+              </Stack>
+            </Box>
+
+            {/* Tabs */}
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs value={drawerTab} onChange={(_, v) => setDrawerTab(v)} variant="fullWidth">
+                <Tab
+                  icon={<Iconify icon="solar:widget-bold" width={18} />}
+                  iconPosition="start"
+                  label="Metadata"
+                />
+                <Tab
+                  icon={<Iconify icon="solar:code-bold" width={18} />}
+                  iconPosition="start"
+                  label="Raw JSON"
+                />
+                <Tab
+                  icon={<Iconify icon="solar:shield-check-bold" width={18} />}
+                  iconPosition="start"
+                  label="Evidence"
+                />
+              </Tabs>
+            </Box>
+
+            {/* Drawer Content */}
+            <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
+              {/* Metadata Tab */}
+              {drawerTab === 0 && (
+                <Stack spacing={2}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                    Step Details
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+                      gap: 2,
+                    }}
+                  >
+                    {Object.entries(selectedStepData.details).map(([key, value]) => (
+                      <Box
+                        key={key}
+                        sx={{
+                          p: 1.5,
+                          borderRadius: 1,
+                          bgcolor: 'action.hover',
+                          border: 1,
+                          borderColor: 'divider',
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
+                          sx={{ color: 'text.secondary', textTransform: 'capitalize', display: 'block' }}
+                        >
+                          {key.replace(/([A-Z])/g, ' $1')}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontFamily: 'monospace', fontWeight: 500, mt: 0.5 }}
+                        >
+                          {String(value)}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                </Stack>
+              )}
+
+              {/* Raw JSON Tab */}
+              {drawerTab === 1 && (
+                <Stack spacing={2}>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      Raw Event Data
+                    </Typography>
+                    <Button
+                      size="small"
+                      startIcon={<Iconify icon="solar:copy-bold" width={14} />}
+                      onClick={() => {
+                        if (selectedStepData.rawJson) {
+                          navigator.clipboard.writeText(selectedStepData.rawJson);
+                        }
+                      }}
+                    >
+                      Copy
+                    </Button>
+                  </Stack>
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 1,
+                      bgcolor: 'grey.900',
+                      color: 'grey.100',
+                      fontFamily: 'monospace',
+                      fontSize: '0.75rem',
+                      overflow: 'auto',
+                      maxHeight: 600,
+                    }}
+                  >
+                    <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                      {selectedStepData.rawJson || 'No raw data available'}
+                    </pre>
+                  </Box>
+                </Stack>
+              )}
+
+              {/* Evidence Tab */}
+              {drawerTab === 2 && (
+                <Stack spacing={3}>
+                  {/* RAG Citations */}
+                  {selectedStepData.ragEvidence && selectedStepData.ragEvidence.length > 0 && (
+                    <Box>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2 }}>
+                        Policy & Regulation Citations
+                      </Typography>
+                      <Stack spacing={1.5}>
+                        {selectedStepData.ragEvidence.map((citation, i) => (
+                          <RagCitationCard
+                            key={i}
+                            citation={citation}
+                            onOpenSource={(source) => {
+                               
+                              console.log('Open source:', source);
+                            }}
+                          />
+                        ))}
+                      </Stack>
+                    </Box>
+                  )}
+
+                  {/* Statistical Evidence */}
+                  {selectedStepData.statsEvidence && (
+                    <Box>
+                      <StatsEvidenceCard
+                        stats={selectedStepData.statsEvidence}
+                        subtitle={`Amount is ${Math.abs(selectedStepData.statsEvidence.zScore).toFixed(1)}σ away from 12-month mean`}
+                      />
+                    </Box>
+                  )}
+
+                  {/* Empty State */}
+                  {!selectedStepData.ragEvidence &&
+                    !selectedStepData.statsEvidence && (
+                      <Box sx={{ py: 8, textAlign: 'center' }}>
+                        <Iconify
+                          icon="solar:document-text-bold-duotone"
+                          width={48}
+                          sx={{ color: 'text.disabled', mb: 2 }}
+                        />
+                        <Typography variant="body2" color="text.secondary">
+                          No evidence data available for this step
+                        </Typography>
+                      </Box>
+                    )}
+                </Stack>
+              )}
+            </Box>
+
+            {/* Drawer Footer */}
+            <Divider />
+            <Box sx={{ p: 2, bgcolor: 'action.hover' }}>
+              <Typography variant="caption" color="text.secondary">
+                Step ID: {selectedStepData.id} • System: {selectedStepData.system}
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      </Drawer>
+    </Box>
+  );
+};

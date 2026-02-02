@@ -1,8 +1,8 @@
 // ----------------------------------------------------------------------
 
-import { memo } from 'react';
-import { ApiErrorAlert } from '@dwp-frontend/shared-utils';
-import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
+import { memo, useMemo } from 'react';
+import { Iconify } from '@dwp-frontend/design-system';
+import { ApiErrorAlert, useCodesByResourceQuery, getSelectOptionsByGroup } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -73,6 +73,17 @@ export const UsersTable = memo(({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const selectedUser = users.find((u) => u.id === selectedUserId);
 
+  const { data: codeMap } = useCodesByResourceQuery('menu.admin.users');
+  const loginTypeOptions = useMemo(
+    () => getSelectOptionsByGroup(codeMap, 'IDP_PROVIDER_TYPE'),
+    [codeMap]
+  );
+  const getLoginTypeLabel = (code: string | null) => {
+    if (!code) return '-';
+    const opt = loginTypeOptions.find((o) => o.value === code);
+    return opt?.label ?? code;
+  };
+
   if (error) {
     return (
       <Card sx={{ p: 2 }}>
@@ -128,7 +139,7 @@ export const UsersTable = memo(({
                 </Stack>
                 <Stack direction="row" spacing={1} flexWrap="wrap">
                   <Chip label={user.departmentName || '부서 없음'} size="small" variant="outlined" />
-                  <Chip label={user.loginType || '-'} size="small" variant="outlined" />
+                  <Chip label={getLoginTypeLabel(user.loginType)} size="small" variant="outlined" />
                 </Stack>
                 <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
                   <Typography variant="caption" sx={{ color: 'text.secondary' }}>
@@ -159,30 +170,31 @@ export const UsersTable = memo(({
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={onMenuClose}
-          container={() => document.getElementById('root') as HTMLElement}
+          slotProps={{
+            paper: {
+              sx: { zIndex: 9999, bgcolor: 'background.paper', color: 'text.primary' },
+            },
+          }}
         >
-          <PermissionGate resource="menu.admin.users" permission="UPDATE">
-            <MenuItem onClick={() => selectedUser && onEdit(selectedUser)}>
-              <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
-              편집
-            </MenuItem>
-          </PermissionGate>
-          <PermissionGate resource="menu.admin.users" permission="MANAGE">
-            <MenuItem onClick={() => selectedUser && onRoles(selectedUser)}>
-              <Iconify icon="solar:users-group-rounded-bold" width={16} sx={{ mr: 1 }} />
-              역할 관리
-            </MenuItem>
-            <MenuItem onClick={() => selectedUser && onResetPassword(selectedUser)}>
-              <Iconify icon="solar:lock-password-bold" width={16} sx={{ mr: 1 }} />
-              비밀번호 초기화
-            </MenuItem>
-          </PermissionGate>
-          <PermissionGate resource="menu.admin.users" permission="DELETE">
-            <MenuItem onClick={() => selectedUser && onDelete(selectedUser)} sx={{ color: 'error.main' }}>
-              <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
-              삭제
-            </MenuItem>
-          </PermissionGate>
+          <MenuItem onClick={() => selectedUser && onEdit(selectedUser)}>
+            <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
+            편집
+          </MenuItem>
+          <MenuItem onClick={() => selectedUser && onRoles(selectedUser)}>
+            <Iconify icon="solar:users-group-rounded-bold" width={16} sx={{ mr: 1 }} />
+            역할 관리
+          </MenuItem>
+          <MenuItem onClick={() => selectedUser && onResetPassword(selectedUser)}>
+            <Iconify icon="solar:lock-password-bold" width={16} sx={{ mr: 1 }} />
+            비밀번호 초기화
+          </MenuItem>
+          <MenuItem
+            onClick={() => selectedUser && onDelete(selectedUser)}
+            sx={{ color: 'error.main', borderTop: 1, borderColor: 'divider', mt: 0.5, pt: 1 }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
+            삭제
+          </MenuItem>
         </Menu>
       </Stack>
     );
@@ -201,7 +213,9 @@ export const UsersTable = memo(({
               <TableCell sx={{ width: 140 }}>로그인 유형</TableCell>
               <TableCell sx={{ width: 140 }}>최근 로그인</TableCell>
               <TableCell sx={{ width: 140 }}>생성일</TableCell>
-              <TableCell align="right" sx={{ width: 72 }} />
+              <TableCell align="right" sx={{ width: 72, minWidth: 72 }}>
+                작업
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -257,21 +271,25 @@ export const UsersTable = memo(({
                   <TableCell>
                     <Chip label={user.statusLabel} color={user.statusColor} size="small" />
                   </TableCell>
-                  <TableCell>{user.loginType || '-'}</TableCell>
+                  <TableCell>{getLoginTypeLabel(user.loginType)}</TableCell>
                   <TableCell>
                     {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('ko-KR') : '-'}
                   </TableCell>
                   <TableCell>{new Date(user.createdAt).toLocaleDateString('ko-KR')}</TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onMenuOpen(e, user);
-                      }}
-                    >
-                      <Iconify icon="solar:menu-dots-bold" />
-                    </IconButton>
+                  <TableCell align="right" sx={{ minWidth: 72 }} onClick={(e) => e.stopPropagation()}>
+                    <Tooltip title="작업 메뉴">
+                      <IconButton
+                        size="small"
+                        aria-label="작업 메뉴"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onMenuOpen(e, user);
+                        }}
+                        sx={{ color: 'text.secondary' }}
+                      >
+                        <Iconify icon="solar:menu-dots-bold" />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}
@@ -292,35 +310,36 @@ export const UsersTable = memo(({
         />
       )}
 
-      {/* Action Menu */}
+      {/* Action Menu: 편집 / 역할관리 / 비밀번호초기화 / 삭제 (body 포탈 + 고 z-index로 Admin 로그인 시에도 항상 표시) */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={onMenuClose}
-        container={() => document.getElementById('root') as HTMLElement}
+        slotProps={{
+          paper: {
+            sx: { zIndex: 9999, bgcolor: 'background.paper', color: 'text.primary' },
+          },
+        }}
       >
-        <PermissionGate resource="menu.admin.users" permission="UPDATE">
-          <MenuItem onClick={() => selectedUser && onEdit(selectedUser)}>
-            <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
-            편집
-          </MenuItem>
-        </PermissionGate>
-        <PermissionGate resource="menu.admin.users" permission="MANAGE">
-          <MenuItem onClick={() => selectedUser && onRoles(selectedUser)}>
-            <Iconify icon="solar:users-group-rounded-bold" width={16} sx={{ mr: 1 }} />
-            역할 관리
-          </MenuItem>
-          <MenuItem onClick={() => selectedUser && onResetPassword(selectedUser)}>
-            <Iconify icon="solar:lock-password-bold" width={16} sx={{ mr: 1 }} />
-            비밀번호 초기화
-          </MenuItem>
-        </PermissionGate>
-        <PermissionGate resource="menu.admin.users" permission="DELETE">
-          <MenuItem onClick={() => selectedUser && onDelete(selectedUser)} sx={{ color: 'error.main' }}>
-            <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
-            삭제
-          </MenuItem>
-        </PermissionGate>
+        <MenuItem onClick={() => selectedUser && onEdit(selectedUser)}>
+          <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
+          편집
+        </MenuItem>
+        <MenuItem onClick={() => selectedUser && onRoles(selectedUser)}>
+          <Iconify icon="solar:users-group-rounded-bold" width={16} sx={{ mr: 1 }} />
+          역할 관리
+        </MenuItem>
+        <MenuItem onClick={() => selectedUser && onResetPassword(selectedUser)}>
+          <Iconify icon="solar:lock-password-bold" width={16} sx={{ mr: 1 }} />
+          비밀번호 초기화
+        </MenuItem>
+        <MenuItem
+          onClick={() => selectedUser && onDelete(selectedUser)}
+          sx={{ color: 'error.main', borderTop: 1, borderColor: 'divider', mt: 0.5, pt: 1 }}
+        >
+          <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
+          삭제
+        </MenuItem>
       </Menu>
     </Card>
   );

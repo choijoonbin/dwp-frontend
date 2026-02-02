@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
-import { memo } from 'react';
-import { PermissionGate } from '@dwp-frontend/design-system';
+import { memo, useState, useEffect } from 'react';
+import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { getEmailError, useCodesByResourceQuery, getSelectOptionsByGroup } from '@dwp-frontend/shared-utils';
 
 import Stack from '@mui/material/Stack';
@@ -10,9 +10,11 @@ import Dialog from '@mui/material/Dialog';
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import type { UserFormState } from '../types';
@@ -26,6 +28,8 @@ type UserEditorModalProps = {
   validationErrors: Record<string, string>;
   isLoading: boolean;
   onClose: () => void;
+  /** 취소 버튼 클릭 시 호출. 미전달 시 onClose 사용 (강제 닫기용으로 onCancel 전달 권장) */
+  onCancel?: () => void;
   onFormChange: <K extends keyof UserFormState>(field: K, value: UserFormState[K]) => void;
   onSubmit: () => void;
 };
@@ -37,6 +41,7 @@ export const UserEditorModal = memo(({
   validationErrors,
   isLoading,
   onClose,
+  onCancel,
   onFormChange,
   onSubmit,
 }: UserEditorModalProps) => {
@@ -45,6 +50,11 @@ export const UserEditorModal = memo(({
   const userStatusOptions = getSelectOptionsByGroup(codeMap, 'USER_STATUS');
 
   const isCreateMode = mode === 'create';
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (!open) setShowPassword(false);
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -85,20 +95,40 @@ export const UserEditorModal = memo(({
           {isCreateMode && formData.createLocalAccount && (
             <>
               <TextField
-                label="Principal"
+                label="사용자 ID *"
                 fullWidth
                 value={formData.principal}
                 onChange={(e) => onFormChange('principal', e.target.value)}
+                required
               />
               <TextField
                 label="비밀번호"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 fullWidth
                 value={formData.password}
                 onChange={(e) => onFormChange('password', e.target.value)}
                 error={!!validationErrors.password}
-                helperText={validationErrors.password}
+                helperText={
+                  validationErrors.password || '8자 이상, 영문·숫자·특수문자 포함을 권장합니다.'
+                }
                 required={formData.createLocalAccount}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        edge="end"
+                        size="small"
+                        aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                      >
+                        <Iconify
+                          icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                          width={20}
+                        />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </>
           )}
@@ -128,8 +158,9 @@ export const UserEditorModal = memo(({
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>취소</Button>
-        <PermissionGate resource="menu.admin.users" permission={isCreateMode ? 'CREATE' : 'UPDATE'}>
+        <Button onClick={onCancel ?? onClose}>취소</Button>
+        {/* 스펙: menu.admin.users 권한은 VIEW/EDIT. EDIT가 생성·수정 포함 → EDIT로 생성/저장 버튼 노출 */}
+        <PermissionGate resource="menu.admin.users" permission="EDIT">
           <Button variant="contained" onClick={onSubmit} disabled={!formData.userName || isLoading}>
             {isCreateMode ? '생성' : '저장'}
           </Button>

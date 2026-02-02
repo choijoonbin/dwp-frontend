@@ -1,11 +1,13 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect } from 'react';
+import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { trackEvent, type UserSummary, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 
@@ -237,11 +239,24 @@ const UsersPageContent = () => {
       }}
     >
       <Stack spacing={3} sx={{ flex: 1, minHeight: 0 }}>
-        <Stack spacing={1}>
-          <Typography variant="h4">사용자 관리</Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            시스템 사용자 목록 및 권한을 관리합니다.
-          </Typography>
+        {/* Header: 타이틀과 동일 행 우측에 사용자 추가 버튼 (참고: roles/page.tsx, role-list-panel) */}
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack spacing={1}>
+            <Typography variant="h4">사용자 관리</Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              시스템 사용자 목록 및 권한을 관리합니다.
+            </Typography>
+          </Stack>
+          <PermissionGate resource="menu.admin.users" permission="EDIT">
+            <Button
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={openCreateDialog}
+              sx={{ minHeight: 40 }}
+            >
+              사용자 추가
+            </Button>
+          </PermissionGate>
         </Stack>
 
         {/* Filter Bar */}
@@ -254,7 +269,6 @@ const UsersPageContent = () => {
           onStatusFilterChange={setStatusFilter}
           onLoginTypeFilterChange={setLoginTypeFilter}
           onDepartmentFilterChange={setDepartmentFilter}
-          onCreateClick={openCreateDialog}
         />
 
         {/* Table */}
@@ -288,23 +302,27 @@ const UsersPageContent = () => {
         validationErrors={validationErrors}
         isLoading={isCreating || isUpdating}
         onClose={() => closeDialog(false)}
+        onCancel={() => closeDialog(true)}
         onFormChange={updateFormField}
         onSubmit={handleFormSubmit}
       />
 
-      {/* Detail Drawer */}
-      <UserDetailDrawer open={detailDrawerOpen} userId={selectedUserId} onClose={() => setDetailDrawerOpen(false)} />
+      {/* Detail Drawer: 클릭 시 GET /api/admin/users/:userId, GET /api/admin/users/:userId/roles 호출. 목록 행 데이터는 로딩/실패 시 표시용으로 전달 */}
+      <UserDetailDrawer
+        open={detailDrawerOpen}
+        userId={selectedUserId}
+        selectedUserRow={selectedUserId ? userRowModels.find((u) => u.id === selectedUserId) ?? null : null}
+        onClose={() => setDetailDrawerOpen(false)}
+      />
 
-      {/* Roles Dialog */}
-      {selectedUserId && (
-        <UserRoleAssign
-          open={rolesDialogOpen}
-          userId={selectedUserId}
-          isLoading={isUpdatingRoles}
-          onClose={() => setRolesDialogOpen(false)}
-          onSubmit={handleRoleSubmit}
-        />
-      )}
+      {/* Roles Dialog: 항상 마운트하고 open/userId로 제어 (메뉴 클릭 직후에도 팝업 표시 보장) */}
+      <UserRoleAssign
+        open={rolesDialogOpen}
+        userId={selectedUserId ?? ''}
+        isLoading={isUpdatingRoles}
+        onClose={() => setRolesDialogOpen(false)}
+        onSubmit={handleRoleSubmit}
+      />
 
       {/* Reset Password Dialog */}
       {selectedUserForReset && (

@@ -13,7 +13,19 @@ import type { UserListParams, UserCreatePayload, UserUpdatePayload } from '../ad
  * Format: ["admin", "users", tenantId, params]
  */
 export const adminUsersQueryKey = (tenantId: string, params?: UserListParams) =>
-  ['admin', 'users', tenantId, params?.page, params?.size, params?.keyword, params?.departmentId, params?.status] as const;
+  [
+    'admin',
+    'users',
+    tenantId,
+    params?.page,
+    params?.size,
+    params?.keyword,
+    params?.appCode,
+    params?.departmentId,
+    params?.status,
+    params?.idpProviderType,
+    params?.loginType,
+  ] as const;
 
 /**
  * Hook to fetch admin users list
@@ -99,8 +111,9 @@ export const useDeleteAdminUserMutation = () => {
   return useMutation({
     mutationFn: async (userId: string) => {
       const res = await deleteAdminUser(userId);
-      if (res.data?.success) {
-        return res.data;
+      // BE가 status: 'SUCCESS' + message만 반환하고 data/success 없을 수 있음 → 성공으로 처리
+      if (res.status === 'SUCCESS' || res.data?.success === true) {
+        return res.data ?? { success: true };
       }
       throw new Error(res.message || 'Failed to delete user');
     },

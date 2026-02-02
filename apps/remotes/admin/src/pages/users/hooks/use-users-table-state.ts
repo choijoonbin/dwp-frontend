@@ -5,6 +5,22 @@ import { useAdminUsersQuery } from '@dwp-frontend/shared-utils';
 
 import { toUserRowModels } from '../adapters/user-adapter';
 
+// ----------------------------------------------------------------------
+
+/** API는 LOCAL, SAML, OIDC 등 코드값 기대. 코드 테이블 codeKey가 문구(로컬 인증 등)일 수 있으므로 매핑 */
+const LOGIN_TYPE_TO_API: Record<string, string> = {
+  LOCAL: 'LOCAL',
+  SAML: 'SAML',
+  OIDC: 'OIDC',
+  LDAP: 'LDAP',
+  '로컬 인증': 'LOCAL',
+  로컬: 'LOCAL',
+};
+
+const toIdpProviderTypeApi = (value: string): string | undefined => {
+  if (!value) return undefined;
+  return LOGIN_TYPE_TO_API[value] ?? value;
+};
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +37,10 @@ export const useUsersTableState = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
+  const idpProviderTypeApi = useMemo(
+    () => toIdpProviderTypeApi(loginTypeFilter),
+    [loginTypeFilter]
+  );
   const params = useMemo(
     () => ({
       page: page + 1,
@@ -28,26 +48,19 @@ export const useUsersTableState = () => {
       keyword: keyword || undefined,
       status: (statusFilter as 'ACTIVE' | 'INACTIVE' | undefined) || undefined,
       departmentId: departmentFilter || undefined,
-      // Note: loginType and roleFilter are client-side filters (not in API yet)
+      idpProviderType: idpProviderTypeApi,
+      loginType: idpProviderTypeApi,
     }),
-    [page, rowsPerPage, keyword, statusFilter, departmentFilter]
+    [page, rowsPerPage, keyword, statusFilter, departmentFilter, idpProviderTypeApi]
   );
 
   const { data, isLoading, error, refetch } = useAdminUsersQuery(params);
 
-  // Convert API response to UI Model (UserRowModel[])
+  // Convert API response to UI Model (UserRowModel[]) — 서버가 idpProviderType으로 필터링하므로 별도 클라이언트 필터 없음
   const userRowModels = useMemo(() => {
     if (!data?.items) return [];
-    const models = toUserRowModels(data.items);
-
-    // Apply client-side filters
-    if (loginTypeFilter) {
-      // Filter by loginType (would need accounts data, for now skip)
-      // models = models.filter((m) => m.loginType === loginTypeFilter);
-    }
-
-    return models;
-  }, [data, loginTypeFilter]);
+    return toUserRowModels(data.items);
+  }, [data]);
 
   // Stable callback for keyword change
   const handleKeywordChange = useCallback((newKeyword: string) => {

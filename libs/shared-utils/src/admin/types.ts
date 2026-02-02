@@ -2,27 +2,51 @@
 
 /**
  * Page Response (for paginated lists)
+ * Backend may return totalItems (Auth) or total (others).
  */
 export type PageResponse<T> = {
   items: T[];
   total: number;
+  totalItems?: number;
   page: number;
   size: number;
   totalPages: number;
 };
 
 /**
+ * User role info (for list view Role column)
+ * @see ADMIN_3TAB_API_BACKEND_RESPONSE.md Users API 상세
+ */
+export type UserRoleInfo = {
+  comRoleId: number;
+  roleCode: string;
+  roleName: string;
+  subjectType?: string;
+  isDepartmentBased?: boolean;
+  assignedAt?: string | null;
+};
+
+/**
  * User Summary (for list view)
+ * @see ADMIN_3TAB_API_BACKEND_RESPONSE.md — comUserId, loginId, mfaEnabled, roles, providerType
  */
 export type UserSummary = {
   id: string;
+  comUserId?: number;
+  tenantId?: number;
   userName: string;
+  loginId?: string | null;
   email?: string | null;
   departmentName?: string | null;
   departmentId?: string | null;
-  status: 'ACTIVE' | 'INACTIVE';
-  createdAt: string; // ISO 8601 date string
-  lastLoginAt?: string | null; // ISO 8601 date string
+  status: 'ACTIVE' | 'INACTIVE' | 'INVITED' | (string & {});
+  mfaEnabled?: boolean;
+  lastLoginAt?: string | null;
+  roles?: UserRoleInfo[];
+  createdAt: string;
+  updatedAt?: string | null;
+  /** 로그인 유형. BE 목록 items에 providerType (예: LOCAL, OIDC) 포함 시 그리드 "로그인 유형" 컬럼에 매핑 */
+  providerType?: string | null;
 };
 
 /**
@@ -72,13 +96,19 @@ export type UserUpdatePayload = {
 
 /**
  * User List Params
+ * @see ADMIN_3TAB_API_BACKEND_RESPONSE.md — SynapseX Admin: appCode=SYNAPSEX
  */
 export type UserListParams = {
   page?: number;
   size?: number;
   keyword?: string;
+  appCode?: string;
+  roleIds?: number[];
+  roleId?: number;
   departmentId?: string;
-  status?: 'ACTIVE' | 'INACTIVE';
+  status?: string;
+  idpProviderType?: string;
+  loginType?: string;
 };
 
 /**

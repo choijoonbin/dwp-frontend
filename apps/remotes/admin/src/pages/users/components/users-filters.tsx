@@ -1,13 +1,11 @@
 // ----------------------------------------------------------------------
 
 import { memo } from 'react';
-import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
+import { Iconify } from '@dwp-frontend/design-system';
 import { useCodesByResourceQuery, getSelectOptionsByGroup } from '@dwp-frontend/shared-utils';
 
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -23,7 +21,6 @@ type UsersFiltersProps = {
   onStatusFilterChange: (value: string) => void;
   onLoginTypeFilterChange: (value: string) => void;
   onDepartmentFilterChange: (value: string) => void;
-  onCreateClick: () => void;
 };
 
 export const UsersFilters = memo(({
@@ -35,7 +32,6 @@ export const UsersFilters = memo(({
   onStatusFilterChange,
   onLoginTypeFilterChange,
   onDepartmentFilterChange,
-  onCreateClick,
 }: UsersFiltersProps) => {
   // Get codes by resource key
   const { data: codeMap, isLoading: codesLoading } = useCodesByResourceQuery('menu.admin.users');
@@ -112,18 +108,6 @@ export const UsersFilters = memo(({
             </MenuItem>
           ))}
         </TextField>
-        <Box sx={{ ml: { md: 'auto' }, width: { xs: 1, md: 'auto' } }}>
-          <PermissionGate resource="menu.admin.users" permission="CREATE">
-            <Button
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-              onClick={onCreateClick}
-              sx={{ width: { xs: 1, md: 'auto' }, minHeight: 40 }}
-            >
-              사용자 추가
-            </Button>
-          </PermissionGate>
-        </Box>
       </Stack>
     </Card>
   );

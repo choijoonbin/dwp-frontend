@@ -13,6 +13,8 @@ import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 
+import { CONFIG } from 'src/config-global';
+
 // ----------------------------------------------------------------------
 
 /**
@@ -59,7 +61,7 @@ export default function OidcCallbackPage() {
           return;
         }
         await auth.loginWithToken(token);
-        navigate(returnUrl || '/', { replace: true });
+        navigate(returnUrl || CONFIG.defaultAfterLoginPath || '/', { replace: true });
       } catch (err) {
         const msg =
           err instanceof HttpError

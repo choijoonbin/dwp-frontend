@@ -17,7 +17,8 @@ export type UserRowModel = {
   statusColor: 'success' | 'default';
   createdAt: string;
   lastLoginAt: string | null;
-  loginType: string | null; // From accounts
+  /** 로그인 유형. API 목록 items[].providerType 매핑 (예: LOCAL, OIDC) */
+  loginType: string | null;
 };
 
 export type UserDetailModel = {

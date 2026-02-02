@@ -202,7 +202,7 @@ export const useUserActions = (
 
         await updateRolesMutation.mutateAsync({ userId, roleIds, replace });
         invalidateUsersQueries();
-        showSnackbar('역할이 할당되었습니다.');
+        showSnackbar('역할이 할당되었습니다.', 'success');
         trackEvent({
           resourceKey: 'menu.admin.users',
           action: 'EDIT',

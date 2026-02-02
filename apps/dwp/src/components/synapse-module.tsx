@@ -7,7 +7,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - Remote app import path
-const SynapseApp = lazy(() => import('../../../remotes/synapse/src/synapse-app'));
+const SynapseApp = lazy(() => import('../../../remotes/synapsex/src/synapse-app'));
 
 // ----------------------------------------------------------------------
 

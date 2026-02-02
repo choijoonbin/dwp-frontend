@@ -2,12 +2,13 @@ import type { RouteObject } from 'react-router';
 
 import { lazy, Suspense } from 'react';
 import { varAlpha } from '@dwp-frontend/design-system';
-import { AuthGuard } from '@dwp-frontend/shared-utils';
-import { Outlet, Navigate, useParams } from 'react-router-dom';
+import { Outlet, Navigate, useParams, useLocation } from 'react-router-dom';
+import { AuthGuard, useMenuTreePathnames } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
+import { CONFIG } from 'src/config-global';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 
@@ -33,6 +34,27 @@ const AppAdminRedirect = () => {
   const target = splat ? `/admin/${splat}` : '/admin';
 
   return <Navigate to={target} replace />;
+};
+
+/** 루트(/) 접속 시 CONFIG.defaultAfterLoginPath로 리다이렉트. '/'이면 대시보드 표시(무한 리다이렉트 방지). */
+const DefaultLanding = () => {
+  const path = CONFIG.defaultAfterLoginPath?.trim() || '/';
+  if (path === '/') return <DashboardPage />;
+  return <Navigate to={path} replace />;
+};
+
+/**
+ * pathname이 메뉴 트리 API에 등록된 경로이거나 /synapse/* 이면 Synapse, 아니면 404.
+ * 동적으로 등록된 URL만 사용 (Tree API GET /api/auth/menus/tree 기준).
+ */
+const PathnameDispatcher = () => {
+  const { pathname } = useLocation();
+  const menuPathnames = useMenuTreePathnames();
+  const isSynapse =
+    menuPathnames.has(pathname) || (pathname.startsWith('/synapse/') && pathname.length > 8);
+
+  if (isSynapse) return <SynapsePage />;
+  return <Page404 />;
 };
 
 const renderFallback = () => (
@@ -67,7 +89,7 @@ export const routesSection: RouteObject[] = [
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <DashboardPage /> },
+      { index: true, element: <DefaultLanding /> },
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'mail', element: <MailPage /> },
       { path: 'chat', element: <ChatPage /> },
@@ -77,7 +99,7 @@ export const routesSection: RouteObject[] = [
       { path: 'app/admin/aiworkspace', element: <Navigate to="/ai-workspace" replace /> },
       { path: 'app/admin/*', element: <AppAdminRedirect /> },
       { path: 'admin/*', element: <AdminPage /> },
-      { path: 'synapse/*', element: <SynapsePage /> },
+      { path: '*', element: <PathnameDispatcher /> },
     ],
   },
   {

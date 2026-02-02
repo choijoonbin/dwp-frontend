@@ -1,6 +1,8 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
 import { useState, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth, redirectToSignIn } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -29,8 +31,10 @@ export type AccountPopoverProps = IconButtonProps & {
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
   const router = useRouter();
-
   const pathname = usePathname();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const auth = useAuth();
 
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -49,6 +53,12 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     },
     [handleClosePopover, router]
   );
+
+  const handleLogout = useCallback(() => {
+    handleClosePopover();
+    auth.logout();
+    redirectToSignIn(navigate, location);
+  }, [auth, handleClosePopover, location, navigate]);
 
   return (
     <>
@@ -129,7 +139,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth color="error" size="medium" variant="text">
+          <Button fullWidth color="error" size="medium" variant="text" onClick={handleLogout}>
             Logout
           </Button>
         </Box>

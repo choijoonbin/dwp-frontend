@@ -21,6 +21,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { RouterLink } from 'src/routes/components';
 
+import { CONFIG } from 'src/config-global';
+
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -77,9 +79,8 @@ export const SignInView = () => {
     try {
       await auth.login({ username, password });
 
-      // Handle returnUrl: redirect to safe returnUrl or default to /
       const returnUrl = safeReturnUrl(searchParams.get('returnUrl'));
-      navigate(returnUrl || '/', { replace: true });
+      navigate(returnUrl || CONFIG.defaultAfterLoginPath || '/', { replace: true });
     } catch (err) {
       if (err instanceof HttpError && err.status === 404) {
         setErrorSeverity('warning');

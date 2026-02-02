@@ -7,7 +7,16 @@ import { usePermissions } from './use-permissions';
 
 type PermissionRouteGuardProps = {
   resource: string;
-  permission?: 'VIEW' | 'USE' | 'CREATE' | 'UPDATE' | 'DELETE' | 'MANAGE';
+  permission?:
+    | 'VIEW'
+    | 'USE'
+    | 'EDIT'
+    | 'APPROVE'
+    | 'EXECUTE'
+    | 'CREATE'
+    | 'UPDATE'
+    | 'DELETE'
+    | 'MANAGE';
   redirectTo?: string;
   children: React.ReactNode;
 };

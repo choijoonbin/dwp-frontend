@@ -25,8 +25,17 @@ export type LoginResponseData =
 
 export type PermissionDTO = {
   resourceKey: string;
-  resourceType: 'MENU' | 'BUTTON' | 'API' | 'RESOURCE';
-  permissionCode: 'VIEW' | 'USE' | 'CREATE' | 'UPDATE' | 'DELETE' | 'MANAGE';
+  resourceType: 'MENU' | 'BUTTON' | 'API' | 'RESOURCE' | 'UI_COMPONENT';
+  permissionCode:
+    | 'VIEW'
+    | 'USE'
+    | 'EDIT'
+    | 'APPROVE'
+    | 'EXECUTE'
+    | 'CREATE'
+    | 'UPDATE'
+    | 'DELETE'
+    | 'MANAGE';
   effect: 'ALLOW' | 'DENY';
 };
 

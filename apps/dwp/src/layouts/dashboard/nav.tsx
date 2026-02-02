@@ -514,8 +514,8 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
     {} as Record<string, typeof data>
   );
 
-  // Define group display order (MANAGEMENT first, then APPS)
-  const groupOrder = ['MANAGEMENT', 'APPS'];
+  // Define group display order (job.txt / Tree API: SynapseX → APPS → ADMIN)
+  const groupOrder = ['SynapseX', 'APPS', 'ADMIN', 'MANAGEMENT'];
   const sortedGroupEntries = Object.entries(groupedData).sort(([groupA], [groupB]) => {
     const indexA = groupOrder.indexOf(groupA);
     const indexB = groupOrder.indexOf(groupB);
@@ -536,7 +536,7 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
         className="nav-logo-wrapper"
         sx={{
           pt: 2.5,
-          pb: 1,
+          pb: 2,
           px: collapsed ? 0 : 2.5,
           display: 'flex',
           justifyContent: collapsed ? 'center' : 'flex-start',
@@ -599,7 +599,6 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
                     fontWeight: 700,
                     color: 'text.disabled',
                     bgcolor: 'transparent',
-                    textTransform: 'uppercase',
                     cursor: 'default',
                   }}
                 >

@@ -17,6 +17,16 @@ export type NavItem = {
   children?: NavItem[];
 };
 
+/** 그룹 표시 순서: 낮은 인덱스가 먼저. SynapseX를 APPS/ADMIN보다 앞에 표시 */
+const GROUP_ORDER: Record<string, number> = {
+  SynapseX: 0,
+  APPS: 1,
+  ADMIN: 2,
+};
+
+const getGroupOrder = (group: string | null | undefined): number =>
+  group != null && group in GROUP_ORDER ? GROUP_ORDER[group] : 99;
+
 /**
  * Sort menu nodes by sortOrder, fallback to menuName
  */
@@ -30,6 +40,18 @@ const sortMenuNodes = (nodes: MenuNode[]): MenuNode[] =>
     if (b.sortOrder != null) return 1;
     // Fallback to menuName alphabetical order
     return a.menuName.localeCompare(b.menuName);
+  });
+
+/**
+ * Sort root menu nodes: group order first (SynapseX → APPS → ADMIN), then sortOrder within group.
+ * Tree API가 menus 배열을 APPS/ADMIN 먼저 내려줘도, 통합 관제 센터(SynapseX)가 먼저 보이도록 함.
+ */
+const sortRootMenuNodes = (nodes: MenuNode[]): MenuNode[] =>
+  [...nodes].sort((a, b) => {
+    const groupA = getGroupOrder(a.group);
+    const groupB = getGroupOrder(b.group);
+    if (groupA !== groupB) return groupA - groupB;
+    return sortMenuNodes([a, b])[0] === a ? -1 : 1;
   });
 
 /**
@@ -75,8 +97,8 @@ export const useNavData = (): NavItem[] => {
       return [];
     }
 
-    // Sort root nodes by sortOrder (fallback to menuName)
-    const sortedTree = sortMenuNodes(menuTree);
+    // Sort root: group order (SynapseX first) then sortOrder; children by sortOrder only
+    const sortedTree = sortRootMenuNodes(menuTree);
 
     // Convert MenuNode[] to NavItem[]
     return sortedTree.map(convertMenuNodeToNavItem);
