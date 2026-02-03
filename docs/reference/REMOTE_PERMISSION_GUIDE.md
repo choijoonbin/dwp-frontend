@@ -1,7 +1,7 @@
 # Remote 앱 권한 제어 가이드
 
 - **목적**: 메뉴/탭/버튼별 권한을 **공통 설정 한 곳**에서 관리하고, 리모트 앱별로 권한 로직을 중복하지 않도록 함.
-- **참고**: `docs/api-spec/synapse-spec/LOGIN_AND_PERMISSION_API_FE_HANDOVER.md`
+- **참고**: `apps/remotes/synapsex/docs/20260203/[전달용]LOGIN_AND_PERMISSION_API_FE_HANDOVER.md`
 
 ---
 

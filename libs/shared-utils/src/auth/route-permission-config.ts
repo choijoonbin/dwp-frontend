@@ -5,7 +5,7 @@
  * - Host/Remote 앱 모두 path(또는 path segment)로 resourceKey를 조회해
  *   PermissionRouteGuard / PermissionGate에 전달.
  *
- * @see docs/api-spec/synapse-spec/LOGIN_AND_PERMISSION_API_FE_HANDOVER.md §5
+ * @see apps/remotes/synapsex/docs/20260203/[전달용]LOGIN_AND_PERMISSION_API_FE_HANDOVER.md §5
  */
 
 // ----------------------------------------------------------------------

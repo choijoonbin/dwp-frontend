@@ -222,12 +222,12 @@ apps/remotes/synapsex/
 
 ### 5.3 참조 문서
 
-- **API 스펙**: `docs/api-spec/synapse-spec/`
+- **API 스펙**: `docs/api-spec/synapse-spec/` (Phase 1~4 문서: `docs/20260203/`)
   - `ADMIN_3TAB_API_BACKEND_RESPONSE.md`
   - `SYNAPSE_ADMIN_AUDIT_API_result.md`
   - `SYNAPSE_PII_ENCRYPTION_ADMIN_TAB3_result.md`
   - `TENANT_SCOPE_AND_CATALOG_API_FE_HANDOVER.md`
-  - `ADMIN_SYSTEM_MANAGEMENT_FE_ADDITIONAL_REQUEST.md`
+  - `[전달용]ADMIN_SYSTEM_MANAGEMENT_FE_ADDITIONAL_REQUEST.md`
 
 ---
 
@@ -235,7 +235,7 @@ apps/remotes/synapsex/
 
 ### 6.1 백엔드 요청 사항 (FE 추가 API)
 
-**문서**: `docs/api-spec/synapse-spec/ADMIN_SYSTEM_MANAGEMENT_FE_ADDITIONAL_REQUEST.md`
+**문서**: `docs/20260203/` (Phase 1~4 관련 문서)
 
 | # | 항목 | 우선순위 |
 |---|------|----------|

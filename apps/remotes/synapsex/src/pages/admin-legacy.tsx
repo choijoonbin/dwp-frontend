@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Label, Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import {
-  getResourceKeyForPath,
+  useAdminUsersQuery,
   setTenantIdOverride,
   useAdminTenantsQuery,
-  useAdminUsersQuery,
+  getResourceKeyForPath,
   useGovernanceConfigQuery,
-  usePatchGovernanceConfigMutation,
   type GovernanceConfigItem,
+  usePatchGovernanceConfigMutation,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';

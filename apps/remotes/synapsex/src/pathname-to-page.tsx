@@ -12,6 +12,7 @@ import type { ReactNode } from 'react';
 import { PermissionRouteGuard, getResourceKeyForPath } from '@dwp-frontend/shared-utils';
 
 import { RagPage } from './pages/rag';
+import { RagDocumentDetailPage } from './pages/rag/rag-detail';
 import { CasesPage } from './pages/cases';
 import { ActionsPage } from './pages/actions';
 import { ArchivePage } from './pages/archive';
@@ -20,6 +21,7 @@ import { AutonomyPage } from './pages/autonomy';
 import { EntitiesPage } from './pages/entities';
 import { FeedbackPage } from './pages/feedback';
 import { PoliciesPage } from './pages/policies';
+import { PolicyProfileDetailPage } from './pages/policies/policy-detail';
 import { AuditPage } from './pages/audit-legacy';
 import { AnalyticsPage } from './pages/analytics';
 import { AnomaliesPage } from './pages/anomalies';
@@ -36,6 +38,7 @@ import { IntegrationsPage } from './pages/integrations';
 import { OptimizationPage } from './pages/optimization';
 import { EntityDetailPage } from './pages/entity-detail';
 import { ReconciliationPage } from './pages/reconciliation';
+import { ReconRunDetailPage } from './pages/reconciliation/recon-run-detail';
 import { DocumentDetailPage } from './pages/document-detail';
 import { ActionReconciliationPage } from './pages/action-recon';
 
@@ -104,13 +107,22 @@ export const getPageForPathname = (pathname: string): ReactNode => {
   const normalized = pathname.replace(/^\//, '').trim();
   if (!normalized) return wrapWithRouteGuard(<DashboardPage />, 'synapse');
 
-  // 0) 상세 페이지 패턴 먼저 체크 (cases/:id, documents/:id, entities/:id)
-  const detailMatch = normalized.match(/^(?:synapse\/)?(cases|documents|entities)\/(.+)$/);
+  // 0) 상세 페이지 패턴 먼저 체크 (cases/:id, documents/:id, entities/:id, rag/:docId, policies/:profileId)
+  const detailMatch = normalized.match(/^(?:synapse\/)?(cases|documents|entities|rag|policies|reconciliation)\/(.+)$/);
   if (detailMatch) {
-    const [, resource] = detailMatch;
+    const [, resource, idOrPath] = detailMatch;
     if (resource === 'cases') return wrapWithRouteGuard(<CaseDetailPage />, 'cases');
     if (resource === 'documents') return wrapWithRouteGuard(<DocumentDetailPage />, 'documents');
     if (resource === 'entities') return wrapWithRouteGuard(<EntityDetailPage />, 'entities');
+    if (resource === 'rag' && idOrPath && idOrPath !== 'search') {
+      return wrapWithRouteGuard(<RagDocumentDetailPage docId={idOrPath} />, 'rag');
+    }
+    if (resource === 'policies' && idOrPath) {
+      return wrapWithRouteGuard(<PolicyProfileDetailPage profileId={idOrPath} />, 'policies');
+    }
+    if (resource === 'reconciliation' && idOrPath) {
+      return wrapWithRouteGuard(<ReconRunDetailPage runId={idOrPath} />, 'reconciliation');
+    }
   }
 
   const segments = normalized.split('/');

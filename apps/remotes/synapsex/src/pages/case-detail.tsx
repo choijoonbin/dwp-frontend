@@ -23,17 +23,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { SYNAPSE_ROUTES } from '../routes';
 import { RagCitationList } from '../components/evidence';
+import { mockCases, mockPolicies } from '../data/mock-data';
+import { useCaseDetail } from './cases/hooks/use-case-detail';
 import { StatusPill } from '../components/finance/status-pill';
 import { SeverityBadge } from '../components/finance/severity-badge';
 import { ConfidenceRing } from '../components/finance/confidence-meter';
-import {
-  mockCases,
-  mockFiDocs,
-  mockActions,
-  mockPolicies,
-  mockFiDocItems,
-  mockAuditEvents,
-} from '../data/mock-data';
 
 import type { RagCitation } from '../components/evidence';
 
@@ -237,12 +231,9 @@ export const CaseDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
-  const caseData = mockCases.find((c) => c.id === id) || mockCases[0];
-  const fiDoc = mockFiDocs.find((d) => d.id === caseData.fiDocId) || mockFiDocs[0];
-  const fiDocItems = mockFiDocItems.filter((i) => i.docId === fiDoc?.id);
-  const relatedActions = mockActions.filter((a) => a.caseId === caseData.id);
+  const { caseData, fiDoc, fiDocItems, relatedActions, auditEvents } = useCaseDetail(id);
   const caseComments = extendedComments.filter((c) => c.caseId === caseData.id);
-  const caseAuditEvents = mockAuditEvents.filter((e) => e.caseId === caseData.id || !e.caseId);
+  const caseAuditEvents = auditEvents;
 
   const [newComment, setNewComment] = useState('');
   const [simulationMode, setSimulationMode] = useState(false);

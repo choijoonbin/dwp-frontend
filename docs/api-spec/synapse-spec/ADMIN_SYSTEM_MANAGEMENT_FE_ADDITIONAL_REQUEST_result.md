@@ -1,7 +1,7 @@
 # 시스템 관리(Admin) 메뉴 — FE 추가 API 요청 결과 문서
 
 > **작성일**: 2026-02-02  
-> **요청 문서**: `ADMIN_SYSTEM_MANAGEMENT_FE_ADDITIONAL_REQUEST.md`  
+> **요청 문서**: `apps/remotes/synapsex/docs/20260203/[전달용]ADMIN_SYSTEM_MANAGEMENT_FE_ADDITIONAL_REQUEST.md`  
 > **참조**: `TENANT_SCOPE_AND_CATALOG_API_FE_HANDOVER.md`, `SYNAPSE_PII_ENCRYPTION_ADMIN_TAB3_result.md`, `SYNAPSE_ADMIN_AUDIT_API_result.md`
 
 ---

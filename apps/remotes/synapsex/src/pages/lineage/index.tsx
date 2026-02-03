@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useLineageQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -20,18 +21,47 @@ import { TimeTravelSection } from './_components/time-travel-section';
 
 /**
  * Lineage Page - 데이터 계보 및 근거 뷰어
- * 
+ * API 시도 후 mock fallback
+ *
  * [구조]
  * - Desktop (≥1536px): 3-column 레이아웃
  *   - Left (33%): Lineage Flow
  *   - Center (34%): Time-Travel Viewer
  *   - Right (33%): Evidence Panel
- * 
+ *
  * - Mobile/Tablet (<1536px): 단일 column + Evidence Tabs
  */
 export const LineagePage = () => {
   const [searchParams] = useSearchParams();
-  const caseId = searchParams.get('caseId') || 'case-001';
+  const caseId = searchParams.get('caseId') ?? '';
+  const docKey = searchParams.get('docKey') ?? '';
+  const partyId = searchParams.get('partyId') ?? '';
+  const rawEventId = searchParams.get('rawEventId') ?? '';
+  const asOf = searchParams.get('asOf') ?? undefined;
+
+  const lineageParams = useMemo(
+    () =>
+      caseId || docKey || partyId || rawEventId
+        ? { caseId: caseId || undefined, docKey: docKey || undefined, partyId: partyId || undefined, rawEventId: rawEventId || undefined, asOf }
+        : undefined,
+    [caseId, docKey, partyId, rawEventId, asOf]
+  );
+
+  const { data: apiData } = useLineageQuery(lineageParams);
+  const steps = useMemo(() => {
+    if (apiData?.steps?.length) {
+      return apiData.steps.map((s) => ({
+        id: s.id,
+        name: (s as { name?: string }).name ?? (s as { label?: string }).label ?? s.id,
+        timestamp: s.timestamp ?? '',
+        status: (s.status as 'complete' | 'running' | 'failed' | 'pending') ?? 'pending',
+        system: (s as { system?: string }).system ?? (s as { type?: string }).type ?? '',
+        details: (s as { details?: Record<string, unknown> }).details ?? {},
+      }));
+    }
+    return mockLineageSteps;
+  }, [apiData?.steps]);
+  const displayCaseId = caseId || 'case-001';
 
   // State
   const [timeTravelValue, setTimeTravelValue] = useState(0);
@@ -44,7 +74,7 @@ export const LineagePage = () => {
     mockVendorMasterSnapshots.current.data
   );
 
-  const selectedStepData = mockLineageSteps.find((s) => s.id === selectedStepId);
+  const selectedStepData = steps.find((s) => s.id === selectedStepId);
 
   const handleStepClick = (stepId: string) => {
     setSelectedStep(selectedStepId === stepId ? null : stepId);
@@ -61,7 +91,7 @@ export const LineagePage = () => {
       <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 3, py: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Link to={`/synapse/cases/${caseId}`}>
+            <Link to={`/synapse/cases/${displayCaseId}`}>
               <IconButton size="small" sx={{ bgcolor: 'transparent' }}>
                 <Iconify icon="solar:alt-arrow-left-linear" width={16} />
               </IconButton>
@@ -106,7 +136,7 @@ export const LineagePage = () => {
           <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
             <Stack spacing={3}>
               <LineageFlow
-                steps={mockLineageSteps}
+                steps={steps}
                 selectedStepId={selectedStepId}
                 onStepClick={handleStepClick}
                 onStepDetail={handleOpenDrawer}
@@ -166,7 +196,7 @@ export const LineagePage = () => {
 
         {/* Mobile/Tablet: Evidence Panel as Bottom Tabs */}
         <Box sx={{ display: { xs: 'block', xl: 'none' } }}>
-          <EvidencePanel steps={mockLineageSteps} isMobile />
+          <EvidencePanel steps={steps} isMobile />
         </Box>
       </Box>
 

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -24,15 +24,9 @@ import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../routes';
 import { StatusPill } from '../components/finance/status-pill';
+import { mockFiDocs, type FiDocHeader } from '../data/mock-data';
 import { SeverityBadge } from '../components/finance/severity-badge';
-import {
-  mockCases,
-  mockFiDocs,
-  mockActions,
-  mockFiDocItems,
-  type FiDocHeader,
-  mockIntegrityChecks,
-} from '../data/mock-data';
+import { useDocumentDetail } from './documents/hooks/use-document-detail';
 
 // ----------------------------------------------------------------------
 
@@ -42,21 +36,40 @@ const integrityMeta: Record<'pass' | 'warn' | 'fail', { icon: string; label: str
   fail: { icon: 'solar:close-circle-bold', label: 'Failed', color: 'error' },
 };
 
+function parseDocumentKeyFromPathname(pathname: string): { bukrs: string; belnr: string; gjahr: string } | { id: string } | null {
+  const normalized = pathname.replace(/^\//, '').trim();
+  const match = normalized.match(/(?:synapse\/)?documents\/(.+)$/);
+  if (!match) return null;
+  const rest = match[1];
+  const segments = rest.split('/');
+  if (segments.length >= 3) {
+    return { bukrs: segments[0], belnr: segments[1], gjahr: segments[2] };
+  }
+  if (segments.length === 1 && segments[0]) {
+    return { id: segments[0] };
+  }
+  return null;
+}
+
+const buildDocDetailPath = (d: FiDocHeader) =>
+  `/synapse/documents/${d.bukrs}/${d.belnr}/${d.gjahr}`;
+
 // ----------------------------------------------------------------------
 
 /** 전표 상세 페이지 */
 export const DocumentDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState(0);
 
-  // Find the document
-  const doc = mockFiDocs.find((d) => d.id === id);
-  const lineItems = mockFiDocItems.filter((item) => item.docId === id);
-  const integrityChecks = mockIntegrityChecks.filter((chk) => chk.docId === id);
-  const relatedCases = mockCases.filter((c) => c.fiDocId === id);
-  const relatedActions = mockActions.filter((a) => relatedCases.some((c) => c.id === a.caseId));
+  const docKey = useMemo(
+    () => parseDocumentKeyFromPathname(location.pathname),
+    [location.pathname]
+  );
+
+  const { doc, lineItems, integrityChecks, relatedCases, relatedActions, isLoading } =
+    useDocumentDetail(docKey);
 
   // Build reversal chain
   const reversalChain = useMemo(() => {
@@ -132,6 +145,20 @@ export const DocumentDetailPage = () => {
       />
     );
   };
+
+  if (isLoading) {
+    return (
+      <Box sx={{ p: { xs: 2, sm: 3 } }}>
+        <Card variant="outlined">
+          <CardContent sx={{ p: 8, textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              Loading document...
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
+    );
+  }
 
   if (!doc) {
     return (
@@ -520,7 +547,7 @@ export const DocumentDetailPage = () => {
                         <Box key={chainDoc.id} sx={{ display: 'flex', alignItems: 'center' }}>
                           <Card
                             component={Link}
-                            to={`${SYNAPSE_ROUTES.DOCUMENTS}/${chainDoc.id}`}
+                            to={buildDocDetailPath(chainDoc)}
                             variant="outlined"
                             sx={{
                               p: 1.5,
@@ -599,7 +626,7 @@ export const DocumentDetailPage = () => {
                                 {chainDoc.id !== doc.id && (
                                   <Button
                                     component={Link}
-                                    to={`${SYNAPSE_ROUTES.DOCUMENTS}/${chainDoc.id}`}
+                                    to={buildDocDetailPath(chainDoc)}
                                     size="small"
                                     variant="text"
                                   >
@@ -828,7 +855,7 @@ export const DocumentDetailPage = () => {
                     <Stack direction="row" spacing={1} flexWrap="wrap">
                       <Button
                         component={Link}
-                        to={`${SYNAPSE_ROUTES.LINEAGE}?docId=${doc.id}`}
+                        to={`${SYNAPSE_ROUTES.LINEAGE}?docKey=${doc.bukrs}-${doc.belnr}-${doc.gjahr}`}
                         variant="outlined"
                         startIcon={<Iconify icon="solar:git-branch-bold" width={18} />}
                         sx={{ bgcolor: 'transparent' }}
