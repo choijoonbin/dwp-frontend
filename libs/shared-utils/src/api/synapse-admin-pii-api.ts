@@ -243,6 +243,10 @@ export type SynapseAuditEventsParams = {
   type?: string;
   resourceType?: string;
   resourceId?: string;
+  outcome?: string;
+  severity?: string;
+  actor?: string;
+  q?: string;
   from?: string;
   to?: string;
   page?: number;
@@ -264,6 +268,10 @@ export const getSynapseAuditEvents = async (
   if (params?.type) queryParams.append('type', params.type);
   if (params?.resourceType) queryParams.append('resourceType', params.resourceType);
   if (params?.resourceId) queryParams.append('resourceId', params.resourceId);
+  if (params?.outcome) queryParams.append('outcome', params.outcome);
+  if (params?.severity) queryParams.append('severity', params.severity);
+  if (params?.actor) queryParams.append('actor', params.actor);
+  if (params?.q) queryParams.append('q', params.q);
   if (params?.from) queryParams.append('from', params.from);
   if (params?.to) queryParams.append('to', params.to);
   if (params?.page !== undefined) queryParams.append('page', params.page.toString());

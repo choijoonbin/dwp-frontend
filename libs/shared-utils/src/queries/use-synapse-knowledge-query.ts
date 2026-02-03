@@ -2,37 +2,37 @@
  * Synapse Phase 3 — Knowledge/Policy TanStack Query hooks
  */
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { showToast } from '../toast/toast-store';
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
+import { showToast } from '../toast/toast-store';
 import {
-  createDictionaryTerm,
+  searchRag,
+  getFeedback,
+  getDictionary,
+  getGuardrails,
   createFeedback,
   createGuardrail,
-  deleteDictionaryTerm,
   deleteGuardrail,
-  evaluateGuardrail,
-  getDictionary,
-  getEffectivePolicy,
-  getFeedback,
-  getGuardrails,
-  getPolicyProfileDetail,
-  getPolicyProfiles,
-  getRagDocumentDetail,
   getRagDocuments,
-  registerRagDocument,
-  searchRag,
-  updateDictionaryTerm,
   updateGuardrail,
-  type DictionaryTermUpsertRequest,
+  evaluateGuardrail,
+  getPolicyProfiles,
+  getEffectivePolicy,
+  registerRagDocument,
+  createDictionaryTerm,
+  deleteDictionaryTerm,
+  getRagDocumentDetail,
+  updateDictionaryTerm,
+  type RagSearchParams,
+  getPolicyProfileDetail,
   type FeedbackCreateRequest,
-  type GuardrailEvaluateRequest,
   type GuardrailUpsertRequest,
   type RagDocumentsListParams,
-  type RagSearchParams,
+  type GuardrailEvaluateRequest,
   type RegisterRagDocumentRequest,
+  type DictionaryTermUpsertRequest,
 } from '../api/synapse-knowledge-api';
 
 // ----------------------------------------------------------------------
@@ -130,7 +130,6 @@ export const useRagSearchQuery = (params: RagSearchParams, enabledSearch: boolea
 
 export const useRegisterRagDocumentMutation = () => {
   const queryClient = useQueryClient();
-  const tenantId = getTenantId();
 
   return useMutation({
     mutationFn: async (body: RegisterRagDocumentRequest) => {
@@ -290,15 +289,13 @@ export const useDeleteGuardrailMutation = () => {
   });
 };
 
-export const useEvaluateGuardrailMutation = () => {
-  return useMutation({
+export const useEvaluateGuardrailMutation = () => useMutation({
     mutationFn: async (body: GuardrailEvaluateRequest) => {
       const res = await evaluateGuardrail(body);
       if (res.status !== 'SUCCESS' && res.status !== 'OK') throw new Error(res.message ?? 'Evaluate failed');
       return res.data;
     },
   });
-};
 
 // ----------------------------------------------------------------------
 // Dictionary

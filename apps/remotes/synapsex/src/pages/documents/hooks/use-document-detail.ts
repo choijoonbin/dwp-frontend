@@ -1,33 +1,26 @@
 /**
- * Document 상세 훅 — API 시도 후 mock fallback
+ * Document 상세 훅 — API 전용 (mock 제거)
  */
 
 import { useMemo } from 'react';
 import { useDocumentDetailQuery } from '@dwp-frontend/shared-utils';
 
 import {
-  mockCases,
-  mockFiDocs,
-  mockActions,
-  mockFiDocItems,
-  type FiDocItem,
-  type FiDocHeader,
-  type SynapseCase,
-  type SynapseAction,
-  mockIntegrityChecks,
-  type IntegrityCheck,
-} from '../../../data/mock-data';
+  toLineItemsUi,
+  type LineItemUi,
+  toRelatedCasesUi,
+  toReversalChainUi,
+  toDocumentDetailUi,
+  toRelatedActionsUi,
+  type RelatedCaseUi,
+  toIntegrityChecksUi,
+  type RelatedActionUi,
+  type DocumentDetailUi,
+  type IntegrityCheckUi,
+  type ReversalChainItemUi,
+} from '../adapters/document-detail-adapter';
 
 type DocumentKey = { bukrs: string; belnr: string; gjahr: string } | { id: string };
-
-const findMockDoc = (key: DocumentKey): FiDocHeader | undefined => {
-  if ('id' in key) {
-    return mockFiDocs.find((d: FiDocHeader) => d.id === key.id);
-  }
-  return mockFiDocs.find(
-    (d: FiDocHeader) => d.bukrs === key.bukrs && d.belnr === key.belnr && d.gjahr === key.gjahr
-  );
-};
 
 export const useDocumentDetail = (key: DocumentKey | null) => {
   const bukrs = key && 'bukrs' in key ? key.bukrs : undefined;
@@ -36,36 +29,39 @@ export const useDocumentDetail = (key: DocumentKey | null) => {
 
   const { data: apiData, isLoading, error } = useDocumentDetailQuery(bukrs, belnr, gjahr);
 
-  const doc = useMemo(() => {
-    if (apiData && typeof apiData === 'object' && 'belnr' in apiData) {
-      return apiData as unknown as FiDocHeader;
-    }
-    if (key) {
-      return findMockDoc(key);
-    }
-    return undefined;
-  }, [apiData, key]);
+  const doc = useMemo((): DocumentDetailUi | undefined => {
+    if (!apiData || typeof apiData !== 'object') return undefined;
+    const raw = apiData as Parameters<typeof toDocumentDetailUi>[0];
+    if (!raw.bukrs && !raw.belnr && !raw.gjahr) return undefined;
+    return toDocumentDetailUi(raw);
+  }, [apiData]);
 
-  const lineItems = useMemo((): FiDocItem[] => {
-    if (!doc) return [];
-    const docId = doc.id;
-    return mockFiDocItems.filter((item: FiDocItem) => item.docId === docId);
-  }, [doc]);
+  const docId = doc?.id ?? '';
 
-  const integrityChecks = useMemo((): IntegrityCheck[] => {
-    if (!doc) return [];
-    const docId = doc.id;
-    return mockIntegrityChecks.filter((chk: IntegrityCheck) => chk.docId === docId);
-  }, [doc]);
+  const lineItems = useMemo((): LineItemUi[] => {
+    if (!doc || !apiData) return [];
+    return toLineItemsUi(apiData as Parameters<typeof toLineItemsUi>[0], docId);
+  }, [apiData, doc, docId]);
 
-  const relatedCases = useMemo(() => {
-    if (!doc) return [];
-    return mockCases.filter((c: SynapseCase) => c.fiDocId === doc.id);
-  }, [doc]);
+  const integrityChecks = useMemo((): IntegrityCheckUi[] => {
+    if (!doc || !apiData) return [];
+    return toIntegrityChecksUi(apiData as Parameters<typeof toIntegrityChecksUi>[0], docId);
+  }, [apiData, doc, docId]);
 
-  const relatedActions = useMemo(() => mockActions.filter((a: SynapseAction) =>
-      relatedCases.some((c: SynapseCase) => c.id === a.caseId)
-    ), [relatedCases]);
+  const relatedCases = useMemo((): RelatedCaseUi[] => {
+    if (!apiData) return [];
+    return toRelatedCasesUi(apiData as Parameters<typeof toRelatedCasesUi>[0]);
+  }, [apiData]);
+
+  const relatedActions = useMemo((): RelatedActionUi[] => {
+    if (!apiData) return [];
+    return toRelatedActionsUi(apiData as Parameters<typeof toRelatedActionsUi>[0]);
+  }, [apiData]);
+
+  const reversalChain = useMemo((): ReversalChainItemUi[] => {
+    if (!doc || !apiData) return [];
+    return toReversalChainUi(apiData as Parameters<typeof toReversalChainUi>[0], docId);
+  }, [apiData, doc, docId]);
 
   return {
     doc,
@@ -73,8 +69,8 @@ export const useDocumentDetail = (key: DocumentKey | null) => {
     integrityChecks,
     relatedCases,
     relatedActions,
+    reversalChain,
     isLoading,
     error,
-    fromApi: Boolean(apiData),
   };
 };

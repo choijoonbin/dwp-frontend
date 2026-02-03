@@ -4,8 +4,66 @@ import { NX_API_URL } from './env';
 import { HttpError } from './http-error';
 import { getTenantId } from './tenant-util';
 import { getAccessToken } from './auth/token-storage';
+import { reportDevErrorToReporter } from './dev-error-reporter';
 
 const baseURL = NX_API_URL;
+
+type ErrorBody = { auditId?: string; traceId?: string; gatewayRequestId?: string; message?: string };
+
+function extractTraceFromResponse(res: Response): { traceId?: string; gatewayRequestId?: string } {
+  return {
+    traceId: res.headers.get('x-trace-id') ?? undefined,
+    gatewayRequestId: res.headers.get('x-gateway-request-id') ?? undefined,
+  };
+}
+
+async function parseErrorBody(res: Response): Promise<ErrorBody> {
+  try {
+    const json = await res.json();
+    return typeof json === 'object' && json !== null
+      ? {
+          auditId: json.auditId,
+          traceId: json.traceId,
+          gatewayRequestId: json.gatewayRequestId,
+          message: json.message,
+        }
+      : {};
+  } catch {
+    return {};
+  }
+}
+
+async function handleFailedResponse(
+  res: Response,
+  url: string,
+  method: string,
+  tenantId: string
+): Promise<never> {
+  const status = res.status;
+  const trace = extractTraceFromResponse(res);
+  const body = await parseErrorBody(res);
+  const auditId = body.auditId ?? undefined;
+
+  reportDevErrorToReporter({
+    endpoint: url,
+    method,
+    tenantId,
+    status,
+    message: `${status} ${res.statusText}`,
+    gatewayRequestId: trace.gatewayRequestId ?? body.gatewayRequestId,
+    traceId: trace.traceId ?? body.traceId,
+  });
+
+  if (status === 401 || status === 403) {
+    handleAuthError(status);
+  }
+
+  throw new HttpError(body.message ?? `Request failed: ${status} ${res.statusText}`, status, {
+    auditId,
+    traceId: trace.traceId ?? body.traceId,
+    gatewayRequestId: trace.gatewayRequestId ?? body.gatewayRequestId,
+  });
+}
 
 type AxiosLikeResponse<T> = { data: T };
 
@@ -99,12 +157,7 @@ export const axiosInstance = {
     });
 
     if (!res.ok) {
-      const status = res.status;
-      // Handle 401/403 globally
-      if (status === 401 || status === 403) {
-        handleAuthError(status);
-      }
-      throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
+      await handleFailedResponse(res, url, 'GET', tenantId);
     }
 
     // Handle different response types
@@ -192,12 +245,7 @@ export const axiosInstance = {
     });
 
     if (!res.ok) {
-      const status = res.status;
-      // Handle 401/403 globally
-      if (status === 401 || status === 403) {
-        handleAuthError(status);
-      }
-      throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
+      await handleFailedResponse(res, url, 'PUT', tenantId);
     }
 
     const data = (await res.json()) as T;
@@ -233,11 +281,7 @@ export const axiosInstance = {
     });
 
     if (!res.ok) {
-      const status = res.status;
-      if (status === 401 || status === 403) {
-        handleAuthError(status);
-      }
-      throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
+      await handleFailedResponse(res, url, 'PATCH', tenantId);
     }
 
     const data = (await res.json()) as T;
@@ -268,11 +312,7 @@ export const axiosInstance = {
     });
 
     if (!res.ok) {
-      const status = res.status;
-      if (status === 401 || status === 403) {
-        handleAuthError(status);
-      }
-      throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
+      await handleFailedResponse(res, url, 'DELETE', tenantId);
     }
 
     const data = res.status === 204 ? ({} as T) : ((await res.json()) as T);

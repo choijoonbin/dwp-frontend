@@ -7,16 +7,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
-import { showToast } from '../toast/toast-store';
+import { getAuditIdFromError } from '../http-error';
+import { showToast, showToastWithAuditLink } from '../toast/toast-store';
 import {
   getCases,
   getActions,
   getArchive,
   createAction,
   getAnomalies,
+  rejectAction,
   approveAction,
   executeAction,
   getCaseDetail,
+  simulateAction,
   updateCaseStatus,
   type CasesListParams,
   type CreateActionBody,
@@ -209,7 +212,9 @@ export const useApproveActionMutation = () => {
     mutationFn: async (actionId: string) => {
       const res = await approveAction(actionId);
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
-        throw new Error(res.message || 'Failed to approve action');
+        const err = new Error(res.message || 'Failed to approve action') as Error & { auditId?: string };
+        err.auditId = res.auditId;
+        throw err;
       }
       return res.data;
     },
@@ -219,7 +224,10 @@ export const useApproveActionMutation = () => {
       showToast('Action approved');
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to approve', 'error');
+      showToastWithAuditLink(
+        err instanceof Error ? err.message : 'Failed to approve',
+        getAuditIdFromError(err)
+      );
     },
   });
 };
@@ -231,7 +239,9 @@ export const useExecuteActionMutation = () => {
     mutationFn: async (actionId: string) => {
       const res = await executeAction(actionId);
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
-        throw new Error(res.message || 'Failed to execute action');
+        const err = new Error(res.message || 'Failed to execute action') as Error & { auditId?: string };
+        err.auditId = res.auditId;
+        throw err;
       }
       return res.data;
     },
@@ -241,7 +251,57 @@ export const useExecuteActionMutation = () => {
       showToast('Action executed');
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to execute', 'error');
+      showToastWithAuditLink(
+        err instanceof Error ? err.message : 'Failed to execute',
+        getAuditIdFromError(err)
+      );
+    },
+  });
+};
+
+export const useRejectActionMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (actionId: string) => {
+      const res = await rejectAction(actionId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to reject action');
+      }
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
+      showToast('Action rejected');
+    },
+    onError: (err) => {
+      showToast(err instanceof Error ? err.message : 'Failed to reject', 'error');
+    },
+  });
+};
+
+export const useSimulateActionMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (actionId: string) => {
+      const res = await simulateAction(actionId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        const err = new Error(res.message || 'Failed to simulate action') as Error & { auditId?: string };
+        err.auditId = res.auditId;
+        throw err;
+      }
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
+      showToast('Simulation completed');
+    },
+    onError: (err) => {
+      showToastWithAuditLink(
+        err instanceof Error ? err.message : 'Failed to simulate',
+        getAuditIdFromError(err)
+      );
     },
   });
 };

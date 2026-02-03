@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Label, Iconify } from '@dwp-frontend/design-system';
-import { useCompanyCodeCatalogQuery } from '@dwp-frontend/shared-utils';
+import { is403Error, useCompanyCodeCatalogQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import TableContainer from '@mui/material/TableContainer';
 
+import { ErrorStateWithRetry } from '../../components/ux';
 import { useDocumentsList } from './hooks/use-documents-list';
 import { DocumentsKpiStrip } from './components/documents-kpi-strip';
 import { DocumentsFilterBar } from './components/documents-filter-bar';
@@ -61,26 +62,12 @@ export const DocumentsPage = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: { xs: 2, sm: 3 } }}>
-        <Card variant="outlined">
-          <CardContent sx={{ p: 6, textAlign: 'center' }}>
-            <Iconify
-              icon="solar:danger-triangle-bold-duotone"
-              width={48}
-              sx={{ color: 'error.main', mb: 2 }}
-            />
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load documents
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {error instanceof Error ? error.message : 'Unknown error'}
-            </Typography>
-            <Button variant="outlined" onClick={() => refetch()} startIcon={<Iconify icon="solar:refresh-bold" width={18} />}>
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      </Box>
+      <ErrorStateWithRetry
+        title={is403Error(error) ? '권한 부족' : 'Failed to load documents'}
+        message={error instanceof Error ? error.message : 'Unknown error'}
+        onRetry={() => refetch()}
+        is403={is403Error(error)}
+      />
     );
   }
 

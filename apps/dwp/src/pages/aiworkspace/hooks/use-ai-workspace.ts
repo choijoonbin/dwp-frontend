@@ -293,15 +293,17 @@ export const useAiWorkspace = () => {
               continue;
             }
 
-            if (eventType === 'hitl_request') {
+            if (eventType === 'hitl_request' || eventType === 'hitl' || eventType === 'approval_required') {
+              const requestId = eventData.requestId ?? eventData.id ?? `hitl-${Date.now()}`;
               setPendingHitl({
-                id: `hitl-${eventData.id}`,
-                stepId: eventData.stepId,
-                message: eventData.message,
-                action: eventData.action,
-                params: eventData.params,
+                id: String(requestId).startsWith('hitl-') ? String(requestId) : requestId,
+                stepId: eventData.stepId ?? '',
+                message: eventData.message ?? '이 작업을 실행하시겠습니까?',
+                action: eventData.actionType ?? eventData.action ?? 'unknown',
+                params: { ...(eventData.params || {}), ...(eventData.context || {}) },
                 timestamp: new Date(),
                 confidence: eventData.confidence,
+                editableContent: eventData.editableContent ?? eventData.message,
               });
               setThinking(false);
               setStreaming(false);

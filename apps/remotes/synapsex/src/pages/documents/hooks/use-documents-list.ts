@@ -16,7 +16,13 @@ export const useDocumentsList = () => {
     limit: 500,
     page,
     size: pageSize,
-    ...filters,
+    dateFrom: filters.dateFrom,
+    dateTo: filters.dateTo,
+    bukrs: filters.bukrs,
+    status: filters.status,
+    xblnr: filters.xblnr,
+    amountMin: filters.amountMin,
+    amountMax: filters.amountMax,
   });
 
   const filteredItems = useMemo(() => {

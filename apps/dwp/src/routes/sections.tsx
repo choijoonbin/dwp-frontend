@@ -8,8 +8,10 @@ import { AuthGuard, useMenuTreePathnames } from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
+import Page403 from 'src/pages/page-403';
 import { CONFIG } from 'src/config-global';
 import { AuthLayout } from 'src/layouts/auth';
+import Page404 from 'src/pages/page-not-found';
 import { DashboardLayout } from 'src/layouts/dashboard';
 
 // ----------------------------------------------------------------------
@@ -25,8 +27,6 @@ export const SignInPage = lazy(() => import('../pages/sign-in'));
 export const SSOCallbackPage = lazy(() => import('../pages/sso-callback'));
 export const OidcCallbackPage = lazy(() => import('../pages/auth/oidc-callback'));
 export const ForgotPasswordPage = lazy(() => import('../pages/forgot-password'));
-export const Page403 = lazy(() => import('../pages/page-403'));
-export const Page404 = lazy(() => import('../pages/page-not-found'));
 
 const AppAdminRedirect = () => {
   const params = useParams();
@@ -51,7 +51,10 @@ const PathnameDispatcher = () => {
   const { pathname } = useLocation();
   const menuPathnames = useMenuTreePathnames();
   const isSynapse =
-    menuPathnames.has(pathname) || (pathname.startsWith('/synapse/') && pathname.length > 8);
+    menuPathnames.has(pathname) ||
+    pathname === '/synapse' ||
+    pathname === '/synapse/' ||
+    pathname.startsWith('/synapse/');
 
   if (isSynapse) return <SynapsePage />;
   return <Page404 />;

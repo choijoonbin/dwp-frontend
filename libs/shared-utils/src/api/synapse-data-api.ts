@@ -124,11 +124,13 @@ export type DocumentsListParams = {
   amountMax?: number;
   page?: number;
   size?: number;
+  /** sort=필드명,asc | sort=필드명,desc (예: budat,desc) */
+  sort?: string;
 };
 
 /**
  * GET /api/synapse/entities/fi-doc-headers
- * 현재: limit만 지원. 필터는 FE에서 적용 또는 BE 확장 후 사용
+ * BE가 지원하는 필터: limit, page, size. dateFrom, dateTo, bukrs, status 등은 BE 확장 시 자동 적용
  */
 export const getFiDocHeaders = async (
   params?: DocumentsListParams
@@ -137,6 +139,17 @@ export const getFiDocHeaders = async (
   query.set('limit', String(params?.limit ?? 500));
   if (params?.page != null) query.set('page', String(params.page));
   if (params?.size != null) query.set('size', String(params.size));
+  if (params?.dateFrom) query.set('dateFrom', params.dateFrom);
+  if (params?.dateTo) query.set('dateTo', params.dateTo);
+  if (params?.bukrs) query.set('bukrs', params.bukrs);
+  if (params?.status) query.set('status', params.status);
+  if (params?.hasReversal != null) query.set('hasReversal', String(params.hasReversal));
+  if (params?.usnam) query.set('usnam', params.usnam);
+  if (params?.tcode) query.set('tcode', params.tcode);
+  if (params?.xblnr) query.set('xblnr', params.xblnr);
+  if (params?.amountMin != null) query.set('amountMin', String(params.amountMin));
+  if (params?.amountMax != null) query.set('amountMax', String(params.amountMax));
+  if (params?.sort) query.set('sort', params.sort);
 
   const res = await axiosInstance.get<ApiResponse<FiDocHeaderRaw[]>>(
     `/api/synapse/entities/fi-doc-headers?${query.toString()}`
@@ -171,16 +184,65 @@ export const getFiDocHeaders = async (
   return { ...apiRes, data: mapped };
 };
 
+/** BE 전표 상세 응답 (확장 가능) */
+export type FiDocDetailRaw = {
+  bukrs?: string;
+  belnr?: string;
+  gjahr?: string;
+  budat?: string;
+  bldat?: string;
+  blart?: string;
+  tcode?: string;
+  usnam?: string;
+  counterparty?: string;
+  counterpartyId?: string;
+  wrbtr?: number;
+  waers?: string;
+  xblnr?: string;
+  bktxt?: string;
+  statusCode?: string;
+  integrityStatus?: 'pass' | 'warn' | 'fail';
+  reversalFlag?: boolean;
+  reversedByDoc?: string;
+  reversesDoc?: string;
+  linkedCasesCount?: number;
+  createdAt?: string;
+  lineItems?: Array<{
+    id?: string;
+    buzei?: number | string;
+    hkont?: string;
+    hkontName?: string;
+    shkzg?: 'S' | 'H';
+    wrbtr?: number;
+    mwskz?: string;
+    kostl?: string;
+    zuonr?: string;
+    sgtxt?: string;
+  }>;
+  integrityChecks?: Array<{
+    id?: string;
+    ruleName?: string;
+    severity?: 'info' | 'warn' | 'critical';
+    passed?: boolean;
+    evidence?: string;
+    recommendation?: string;
+    relatedCaseId?: string;
+  }>;
+  relatedCases?: Array<{ id?: string; caseNumber?: string; title?: string; severity?: string; status?: string }>;
+  relatedActions?: Array<{ id?: string; caseId?: string; description?: string; status?: string }>;
+  reversalChain?: Array<{ bukrs?: string; belnr?: string; gjahr?: string; budat?: string; blart?: string; wrbtr?: number; waers?: string }>;
+};
+
 /**
- * 전표 상세 — BE 미구현 시 404. FE에서 mock fallback 가능
- * 예상 경로: /api/synapse/entities/fi-doc-headers/{bukrs}/{belnr}/{gjahr}
+ * 전표 상세 — BE 404 시 mock fallback 없음 (Phase 1 mock 제거)
+ * GET /api/synapse/entities/fi-doc-headers/{bukrs}/{belnr}/{gjahr}
  */
 export const getFiDocDetail = async (
   bukrs: string,
   belnr: string,
   gjahr: string
-): Promise<ApiResponse<unknown>> => {
-  const res = await axiosInstance.get<ApiResponse<unknown>>(
+): Promise<ApiResponse<FiDocDetailRaw | null>> => {
+  const res = await axiosInstance.get<ApiResponse<FiDocDetailRaw | null>>(
     `/api/synapse/entities/fi-doc-headers/${encodeURIComponent(bukrs)}/${encodeURIComponent(belnr)}/${encodeURIComponent(gjahr)}`
   );
   return res.data;

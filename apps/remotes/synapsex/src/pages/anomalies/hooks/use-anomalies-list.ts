@@ -1,12 +1,15 @@
 /**
- * Anomalies list hook — API with mock fallback
+ * Anomalies list hook — API 전용 (mock 제거)
  */
 
 import { useMemo } from 'react';
-import { useAnomaliesListQuery, type AnomaliesListParams } from '@dwp-frontend/shared-utils';
+import {
+  useAnomaliesListQuery,
+  type AnomaliesListParams,
+  useCompanyCodeCatalogQuery,
+} from '@dwp-frontend/shared-utils';
 
-import { mockCases, mockCompanyCodes } from '../../../data/mock-data';
-import { anomalyListDtoToUi, type AnomalyListItem } from '../adapters/anomaly-list-adapter';
+import { anomalyListDtoToUi } from '../adapters/anomaly-list-adapter';
 
 export type AnomaliesListFilters = {
   searchQuery?: string;
@@ -18,89 +21,89 @@ export type AnomaliesListFilters = {
 export const useAnomaliesList = (
   params?: AnomaliesListParams & { filters?: AnomaliesListFilters }
 ) => {
-  const apiParams: AnomaliesListParams = {
-    page: params?.page ?? 0,
-    size: params?.size ?? 20,
-  };
-  if (params?.severity) apiParams.severity = params.severity;
-  if (params?.anomalyType) apiParams.anomalyType = params.anomalyType;
-
-  const query = useAnomaliesListQuery(apiParams);
+  const pageSize = params?.size ?? 20;
+  const page0 = params?.page ?? 0;
   const filters = params?.filters ?? {};
 
-  const items: AnomalyListItem[] = useMemo(() => {
-    if (query.data?.items && query.data.items.length > 0) {
-      return query.data.items.map(anomalyListDtoToUi);
-    }
-    if (query.isError || !query.data) {
-      return mockCases.map((c) => ({
-        id: c.id,
-        anomalyType: c.anomalyType,
-        severity: c.severity,
-        score: c.confidence,
-        detectedAt: c.detectedAt,
-        caseNumber: c.caseNumber,
-        counterparty: c.counterparty,
-        docNumber: c.docNumber,
-        amount: c.amount,
-        currency: c.currency,
-        confidence: c.confidence,
-        slaDue: c.slaDue,
-        assignee: c.assignee,
-        companyCode: c.companyCode,
-      }));
-    }
-    return [];
-  }, [query.data, query.isError]);
+  const apiParams: AnomaliesListParams = {
+    page: page0,
+    size: pageSize,
+  };
+  if (params?.severity ?? filters.severity) apiParams.severity = params?.severity ?? filters.severity;
+  if (params?.anomalyType ?? filters.anomalyType) apiParams.anomalyType = params?.anomalyType ?? filters.anomalyType;
+  if (params?.detectedFrom) apiParams.detectedFrom = params.detectedFrom;
+  if (params?.detectedTo) apiParams.detectedTo = params.detectedTo;
 
-  const filteredItems = useMemo(() => {
-    let list = items;
+  const query = useAnomaliesListQuery(apiParams);
+  const { data: catalogData } = useCompanyCodeCatalogQuery({ enabled: true });
+  const companyCodes = (catalogData ?? []).map((c) => ({ code: c.bukrs, name: c.bukrs }));
+
+  const { items, totalCount, totalPages, kpi } = useMemo(() => {
+    if (!query.data) {
+      return {
+        items: [],
+        totalCount: 0,
+        totalPages: 1,
+        kpi: {
+          bySev: { critical: 0, high: 0, medium: 0, low: 0 },
+          highRisk: 0,
+          avgConfidence: 0,
+          totalExposure: 0,
+          currency: 'USD',
+        },
+      };
+    }
+    let list = (query.data.items ?? []).map(anomalyListDtoToUi);
     if (filters.searchQuery) {
       const q = filters.searchQuery.toLowerCase();
       list = list.filter(
         (a) =>
           a.caseNumber.toLowerCase().includes(q) ||
-          a.counterparty.toLowerCase().includes(q) ||
-          a.docNumber.toLowerCase().includes(q) ||
-          a.anomalyType.toLowerCase().includes(q)
+          (a.anomalyType ?? '').toLowerCase().includes(q) ||
+          (a.docKey ?? '').toLowerCase().includes(q)
       );
     }
-    if (filters.severity && filters.severity !== 'all') {
-      list = list.filter((a) => a.severity === filters.severity);
-    }
-    if (filters.anomalyType && filters.anomalyType !== 'all') {
-      list = list.filter((a) => a.anomalyType === filters.anomalyType);
-    }
-    if (filters.companyCode && filters.companyCode !== 'all') {
+    if (filters.companyCode) {
       list = list.filter((a) => a.companyCode === filters.companyCode);
     }
-    return list;
-  }, [items, filters.searchQuery, filters.severity, filters.anomalyType, filters.companyCode]);
+    const total = query.data.total ?? query.data.items?.length ?? 0;
+    const totalPagesVal = query.data.totalPages ?? (Math.ceil(total / pageSize) || 1);
 
-  const kpi = useMemo(() => {
-    const bySev = filteredItems.reduce(
-      (acc, r) => {
-        acc[r.severity] = (acc[r.severity] || 0) + 1;
-        return acc;
+    const bySev = { critical: 0, high: 0, medium: 0, low: 0 };
+    list.forEach((a) => {
+      const s = a.severity as keyof typeof bySev;
+      if (bySev[s] !== undefined) bySev[s] += 1;
+    });
+    const highRisk = list.filter(
+      (a) => (a.severity === 'critical' || a.severity === 'high') && a.confidence > 70
+    ).length;
+    const avgConfidence = list.length ? list.reduce((s, a) => s + a.confidence, 0) / list.length / 100 : 0;
+    const totalExposure = list.reduce((s, a) => s + (a.amount ?? 0), 0);
+
+    return {
+      items: list,
+      totalCount: filters.searchQuery || filters.companyCode ? list.length : total,
+      totalPages: filters.searchQuery || filters.companyCode ? Math.ceil(list.length / pageSize) || 1 : totalPagesVal,
+      kpi: {
+        bySev,
+        highRisk,
+        avgConfidence,
+        totalExposure,
+        currency: 'USD',
       },
-      {} as Record<string, number>
-    );
-    const highRisk = (bySev.critical || 0) + (bySev.high || 0);
-    const avgConfidence =
-      filteredItems.length > 0
-        ? filteredItems.reduce((s, r) => s + r.confidence, 0) / filteredItems.length
-        : 0;
-    const totalExposure = filteredItems.reduce((s, r) => s + r.amount, 0);
-    const currency = filteredItems[0]?.currency || 'USD';
-    return { bySev, highRisk, avgConfidence, totalExposure, currency };
-  }, [filteredItems]);
+    };
+  }, [query.data, filters.searchQuery, filters.companyCode, pageSize]);
 
   return {
-    items: filteredItems,
-    kpi,
+    items,
     isLoading: query.isLoading,
     error: query.error,
     refetch: query.refetch,
-    companyCodes: mockCompanyCodes,
+    totalCount,
+    totalPages,
+    page: page0 + 1,
+    pageSize,
+    kpi,
+    companyCodes,
   };
 };

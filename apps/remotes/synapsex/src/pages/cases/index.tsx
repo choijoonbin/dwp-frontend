@@ -7,6 +7,7 @@ import type { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMemo, useState, useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { tableToCsv, is403Error, downloadCsv } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -39,8 +40,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 
 import { SYNAPSE_ROUTES } from '../../routes';
 import { useCasesList } from './hooks/use-cases-list';
+import { ErrorStateWithRetry } from '../../components/ux';
 import { StatusPill } from '../../components/finance/status-pill';
-import { mockSavedViews, type SavedView } from '../../data/mock-data';
 import { SeverityBadge } from '../../components/finance/severity-badge';
 import { ConfidenceMeter } from '../../components/finance/confidence-meter';
 
@@ -89,10 +90,10 @@ export const CasesPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const [savedViews] = useState<SavedView[]>(mockSavedViews);
-  const [currentView, setCurrentView] = useState<SavedView | null>(
-    mockSavedViews.find((v) => v.isDefault) ?? null
-  );
+  type SavedView = { id: string; name: string; filters: Record<string, unknown>; isDefault?: boolean };
+  const defaultView: SavedView = { id: 'all', name: 'All Cases', filters: {}, isDefault: true };
+  const [savedViews] = useState<SavedView[]>([defaultView]);
+  const [currentView, setCurrentView] = useState<SavedView | null>(defaultView);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSeverities, setSelectedSeverities] = useState<string[]>([]);
@@ -250,30 +251,12 @@ export const CasesPage = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: { xs: 2, sm: 3 } }}>
-        <Card variant="outlined">
-          <CardContent sx={{ p: 6, textAlign: 'center' }}>
-            <Iconify
-              icon="solar:danger-triangle-bold-duotone"
-              width={48}
-              sx={{ color: 'error.main', mb: 2 }}
-            />
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load cases
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {error instanceof Error ? error.message : 'Unknown error'}
-            </Typography>
-            <Button
-              variant="outlined"
-              onClick={() => refetch()}
-              startIcon={<Iconify icon="solar:refresh-bold" width={18} />}
-            >
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      </Box>
+      <ErrorStateWithRetry
+        title={is403Error(error) ? '권한 부족' : 'Failed to load cases'}
+        message={error instanceof Error ? error.message : 'Unknown error'}
+        onRetry={() => refetch()}
+        is403={is403Error(error)}
+      />
     );
   }
 
@@ -297,15 +280,40 @@ export const CasesPage = () => {
             Manage and review anomaly detection cases · Triage backlog: {triageBacklogCount}
           </Typography>
         </Box>
-        <Button
-          variant="outlined"
-          size="small"
-          startIcon={<Iconify icon="solar:bookmark-bold" width={16} />}
-          endIcon={<Iconify icon="solar:alt-arrow-down-linear" width={14} />}
-          onClick={(e) => setViewMenuAnchor(e.currentTarget)}
-        >
-          {currentView?.name ?? 'Select View'}
-        </Button>
+        <Stack direction="row" spacing={1}>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<Iconify icon="solar:file-export-bold" width={16} />}
+            onClick={() => {
+              const csv = tableToCsv(sortedItems, [
+                { id: 'caseNumber', label: 'Case ID' },
+                { id: 'severity', label: 'Severity' },
+                { id: 'status', label: 'Status' },
+                { id: 'anomalyType', label: 'Anomaly Type' },
+                { id: 'companyCode', label: 'Company' },
+                { id: 'counterparty', label: 'Counterparty' },
+                { id: 'amount', label: 'Amount', getValue: (r) => `${r.currency} ${r.amount.toLocaleString()}` },
+                { id: 'detectedAt', label: 'Detected' },
+                { id: 'slaDue', label: 'SLA Due' },
+                { id: 'assignee', label: 'Assignee' },
+                { id: 'confidence', label: 'Confidence' },
+              ]);
+              downloadCsv(csv, `cases-${new Date().toISOString().slice(0, 10)}.csv`);
+            }}
+          >
+            Export CSV
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<Iconify icon="solar:bookmark-bold" width={16} />}
+            endIcon={<Iconify icon="solar:alt-arrow-down-linear" width={14} />}
+            onClick={(e) => setViewMenuAnchor(e.currentTarget)}
+          >
+            {currentView?.name ?? 'Select View'}
+          </Button>
+        </Stack>
         <Menu
           anchorEl={viewMenuAnchor}
           open={Boolean(viewMenuAnchor)}

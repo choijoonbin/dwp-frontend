@@ -32,6 +32,7 @@ import DialogContent from '@mui/material/DialogContent';
 import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../routes';
+import { PiiFieldDisplay } from '../components/pii';
 import {
   mockCases,
   mockFiDocs,
@@ -43,44 +44,6 @@ import {
 } from '../data/mock-data';
 
 // ----------------------------------------------------------------------
-
-// Masked Field Component
-const MaskedField = ({
-  label,
-  value,
-  isMasked,
-  onRequestAccess,
-}: {
-  label: string;
-  value?: string;
-  isMasked: boolean;
-  onRequestAccess: () => void;
-}) => {
-  if (!value) return null;
-
-  return (
-    <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 1 }}>
-      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-        {label}
-      </Typography>
-      {isMasked ? (
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-            {'*'.repeat(10)}
-          </Typography>
-          <Button variant="text" size="small" onClick={onRequestAccess} sx={{ minWidth: 'auto', px: 1, height: 24 }}>
-            <Iconify icon="solar:lock-password-bold" width={14} sx={{ mr: 0.5 }} />
-            <Typography variant="caption">Request</Typography>
-          </Button>
-        </Stack>
-      ) : (
-        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-          {value}
-        </Typography>
-      )}
-    </Stack>
-  );
-};
 
 // Risk Score Badge
 const RiskScoreBadge = ({
@@ -1031,19 +994,54 @@ export const EntityDetailPage = () => {
 
                     <Divider />
 
-                    {/* Sensitive Fields Display */}
+                    {/* Sensitive Fields Display — PII handling=MASK/HASH_ONLY/ENCRYPT/FORBID */}
                     <Box>
                       <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
                         Sensitive Fields
                       </Typography>
                       <Stack spacing={0} divider={<Divider />}>
-                        <MaskedField label="Bank Account" value={entity.bankAccount} isMasked={piiMasked} onRequestAccess={handleRequestAccess} />
-                        <MaskedField label="Bank Name" value={entity.bankName} isMasked={piiMasked} onRequestAccess={handleRequestAccess} />
-                        <MaskedField label="Tax ID" value={entity.taxId} isMasked={piiMasked} onRequestAccess={handleRequestAccess} />
-                        <MaskedField label="Contact Name" value={entity.contactName} isMasked={piiMasked} onRequestAccess={handleRequestAccess} />
-                        <MaskedField label="Contact Email" value={entity.contactEmail} isMasked={piiMasked} onRequestAccess={handleRequestAccess} />
-                        <MaskedField label="Contact Phone" value={entity.contactPhone} isMasked={piiMasked} onRequestAccess={handleRequestAccess} />
-                        <MaskedField label="Address" value={entity.address} isMasked={piiMasked} onRequestAccess={handleRequestAccess} />
+                        <PiiFieldDisplay
+                          label="Bank Account"
+                          value={piiMasked ? undefined : entity.bankAccount}
+                          handling={piiMasked ? 'MASK' : 'ALLOW'}
+                          onRequestAccess={handleRequestAccess}
+                        />
+                        <PiiFieldDisplay
+                          label="Bank Name"
+                          value={piiMasked ? undefined : entity.bankName}
+                          handling={piiMasked ? 'MASK' : 'ALLOW'}
+                          onRequestAccess={handleRequestAccess}
+                        />
+                        <PiiFieldDisplay
+                          label="Tax ID"
+                          value={piiMasked ? undefined : entity.taxId}
+                          handling={piiMasked ? 'MASK' : 'ALLOW'}
+                          onRequestAccess={handleRequestAccess}
+                        />
+                        <PiiFieldDisplay
+                          label="Contact Name"
+                          value={piiMasked ? undefined : entity.contactName}
+                          handling={piiMasked ? 'MASK' : 'ALLOW'}
+                          onRequestAccess={handleRequestAccess}
+                        />
+                        <PiiFieldDisplay
+                          label="Contact Email"
+                          value={piiMasked ? undefined : entity.contactEmail}
+                          handling={piiMasked ? 'MASK' : 'ALLOW'}
+                          onRequestAccess={handleRequestAccess}
+                        />
+                        <PiiFieldDisplay
+                          label="Contact Phone"
+                          value={piiMasked ? undefined : entity.contactPhone}
+                          handling={piiMasked ? 'MASK' : 'ALLOW'}
+                          onRequestAccess={handleRequestAccess}
+                        />
+                        <PiiFieldDisplay
+                          label="Address"
+                          value={piiMasked ? undefined : entity.address}
+                          handling={piiMasked ? 'MASK' : 'ALLOW'}
+                          onRequestAccess={handleRequestAccess}
+                        />
                       </Stack>
                     </Box>
 

@@ -6,12 +6,15 @@
 import type { MouseEvent } from 'react';
 
 import { useState, useEffect } from 'react';
-import { Iconify } from '@dwp-frontend/design-system';
 import { Link, useSearchParams } from 'react-router-dom';
-import {
+import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
+import { is403Error ,
+  getResourceKeyForPath,
   useCreateActionMutation,
+  useRejectActionMutation,
   useApproveActionMutation,
   useExecuteActionMutation,
+  useSimulateActionMutation,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -44,7 +47,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import DialogContentText from '@mui/material/DialogContentText';
 
 import { SYNAPSE_ROUTES } from '../../routes';
-import { mockCases } from '../../data/mock-data';
+import { ErrorStateWithRetry } from '../../components/ux';
 import { useActionsList } from './hooks/use-actions-list';
 import { StatusPill } from '../../components/finance/status-pill';
 import { SeverityBadge } from '../../components/finance/severity-badge';
@@ -66,6 +69,8 @@ const actionTypes = [
 const statuses = ['pending', 'approved', 'rejected', 'executed', 'failed'];
 const riskLevels = ['critical', 'high', 'medium', 'low'];
 
+const ACTIONS_RESOURCE = getResourceKeyForPath('actions') ?? 'menu.autonomous-operations.actions';
+
 // ----------------------------------------------------------------------
 
 export const ActionsPage = () => {
@@ -82,11 +87,14 @@ export const ActionsPage = () => {
     pendingCount,
     approvedCount,
     executedCount,
+    casesForDropdown,
   } = useActionsList();
 
   const createMutation = useCreateActionMutation();
   const approveMutation = useApproveActionMutation();
   const executeMutation = useExecuteActionMutation();
+  const simulateMutation = useSimulateActionMutation();
+  const rejectMutation = useRejectActionMutation();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['pending']);
@@ -99,6 +107,12 @@ export const ActionsPage = () => {
   const [bulkAction, setBulkAction] = useState<'approve' | 'reject' | null>(null);
   const [isBulkProcessing, setIsBulkProcessing] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [drawerSimulationResult, setDrawerSimulationResult] = useState<{
+    predictedSuccess: boolean;
+    impactedObjects?: string[];
+    validations?: { name: string; passed: boolean; message: string }[];
+    riskNotes?: string[];
+  } | null>(null);
 
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
   const [riskMenuAnchor, setRiskMenuAnchor] = useState<null | HTMLElement>(null);
@@ -179,42 +193,63 @@ export const ActionsPage = () => {
     setBulkAction(null);
   };
 
+  const handleSimulate = (actionId: string) => {
+    simulateMutation.mutate(actionId, {
+      onSuccess: (data: unknown) => {
+        const d = data as { predictedSuccess?: boolean; impactedObjects?: string[]; validations?: { name: string; passed: boolean; message: string }[]; riskNotes?: string[] };
+        setDrawerSimulationResult({
+          predictedSuccess: d?.predictedSuccess ?? false,
+          impactedObjects: d?.impactedObjects ?? [],
+          validations: d?.validations ?? [],
+          riskNotes: d?.riskNotes ?? [],
+        });
+      },
+    });
+  };
+
   const handleApprove = (actionId: string) => {
-    approveMutation.mutate(actionId);
-    setSheetOpen(false);
-    setSelectedAction(null);
+    approveMutation.mutate(actionId, {
+      onSuccess: () => {
+        setSheetOpen(false);
+        setSelectedAction(null);
+        setDrawerSimulationResult(null);
+      },
+    });
+  };
+
+  const handleReject = (actionId: string) => {
+    rejectMutation.mutate(actionId, {
+      onSuccess: () => {
+        setSheetOpen(false);
+        setSelectedAction(null);
+        setDrawerSimulationResult(null);
+      },
+    });
   };
 
   const handleExecute = (actionId: string) => {
-    executeMutation.mutate(actionId);
-    setSheetOpen(false);
-    setSelectedAction(null);
+    executeMutation.mutate(actionId, {
+      onSuccess: () => {
+        setSheetOpen(false);
+        setSelectedAction(null);
+        setDrawerSimulationResult(null);
+      },
+    });
   };
+
+  const isDrawerActionPending =
+    approveMutation.isPending || executeMutation.isPending || simulateMutation.isPending || rejectMutation.isPending;
 
   const handleClearCaseFilter = () => setSearchParams({});
 
   if (error) {
     return (
-      <Box sx={{ p: { xs: 2, sm: 3 } }}>
-        <Card variant="outlined">
-          <CardContent sx={{ p: 6, textAlign: 'center' }}>
-            <Iconify
-              icon="solar:danger-triangle-bold-duotone"
-              width={48}
-              sx={{ color: 'error.main', mb: 2 }}
-            />
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load actions
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {error instanceof Error ? error.message : 'Unknown error'}
-            </Typography>
-            <Button variant="outlined" onClick={() => refetch()} startIcon={<Iconify icon="solar:refresh-bold" width={18} />}>
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      </Box>
+      <ErrorStateWithRetry
+        title={is403Error(error) ? '권한 부족' : 'Failed to load actions'}
+        message={error instanceof Error ? error.message : 'Unknown error'}
+        onRetry={() => refetch()}
+        is403={is403Error(error)}
+      />
     );
   }
 
@@ -508,7 +543,7 @@ export const ActionsPage = () => {
                     </TableRow>
                   ) : (
                     displayActions.map((action) => {
-                      const relatedCase = mockCases.find((c) => c.id === action.caseId);
+                      const relatedCase = casesForDropdown.find((c) => String(c.caseId) === action.caseId);
                       const isSelected = selectedActionIds.has(action.id);
                       const isCaseFiltered = caseIdFilter && action.caseId === caseIdFilter;
                       return (
@@ -543,7 +578,7 @@ export const ActionsPage = () => {
                               onClick={(e) => e.stopPropagation()}
                               style={{ color: theme.palette.primary.main, textDecoration: 'none' }}
                             >
-                              {relatedCase?.caseNumber ?? action.caseId}
+                              {relatedCase ? `CS-${relatedCase.caseId}` : action.caseId}
                             </Link>
                           </TableCell>
                           <TableCell>
@@ -640,7 +675,7 @@ export const ActionsPage = () => {
                       <CardContent>
                         <Stack direction="row" alignItems="center" justifyContent="space-between">
                           <Typography variant="body2" sx={{ color: 'primary.main' }}>
-                            {mockCases.find((c) => c.id === selectedAction.caseId)?.caseNumber ?? selectedAction.caseId}
+                            {casesForDropdown.find((c) => String(c.caseId) === selectedAction.caseId) ? `CS-${selectedAction.caseId}` : selectedAction.caseId}
                           </Typography>
                           <Iconify icon="solar:alt-arrow-right-linear" width={16} />
                         </Stack>
@@ -648,13 +683,25 @@ export const ActionsPage = () => {
                     </Card>
                   </Link>
                 </Box>
-                {selectedAction.simulation && (
+                {(drawerSimulationResult || selectedAction.simulation) && (
                   <SimulationResultCard
                     result={{
-                      predictedSuccess: selectedAction.simulation.predictedSuccess ?? false,
-                      impactedObjects: (selectedAction.simulation as { impactedObjects?: string[] }).impactedObjects ?? [],
-                      validations: (selectedAction.simulation as { validations?: { name: string; passed: boolean; message: string }[] }).validations ?? [],
-                      riskNotes: (selectedAction.simulation as { riskNotes?: string[] }).riskNotes ?? [],
+                      predictedSuccess:
+                        drawerSimulationResult?.predictedSuccess ??
+                        selectedAction.simulation?.predictedSuccess ??
+                        false,
+                      impactedObjects:
+                        drawerSimulationResult?.impactedObjects ??
+                        selectedAction.simulation?.impactedObjects ??
+                        [],
+                      validations:
+                        drawerSimulationResult?.validations ??
+                        selectedAction.simulation?.validations ??
+                        [],
+                      riskNotes:
+                        drawerSimulationResult?.riskNotes ??
+                        selectedAction.simulation?.riskNotes ??
+                        [],
                     }}
                   />
                 )}
@@ -662,32 +709,82 @@ export const ActionsPage = () => {
             </Box>
             {selectedAction.status === 'pending' && (
               <Box sx={{ p: 3, borderTop: 1, borderColor: 'divider', bgcolor: 'background.neutral' }}>
-                <Stack direction="row" spacing={1.5}>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    fullWidth
-                    startIcon={<Iconify icon="solar:close-circle-bold" />}
-                  >
-                    Reject
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    startIcon={<Iconify icon="solar:check-circle-bold" />}
-                    onClick={() => handleApprove(selectedAction.id)}
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    startIcon={<Iconify icon="solar:bolt-bold" />}
-                    onClick={() => handleExecute(selectedAction.id)}
-                  >
-                    Execute
-                  </Button>
+                <Stack spacing={2}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                    Step 1: Simulate (optional) → Step 2: Approve → Step 3: Execute
+                  </Typography>
+                  <Stack direction="row" spacing={1.5} flexWrap="wrap">
+                    <PermissionGate resource={ACTIONS_RESOURCE} permission="USE">
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        startIcon={
+                          simulateMutation.isPending ? (
+                            <CircularProgress size={16} />
+                          ) : (
+                            <Iconify icon="solar:play-circle-bold" />
+                          )
+                        }
+                        onClick={() => handleSimulate(selectedAction.id)}
+                        disabled={isDrawerActionPending}
+                      >
+                        Simulate
+                      </Button>
+                    </PermissionGate>
+                    <PermissionGate resource={ACTIONS_RESOURCE} permission="APPROVE">
+                      <Button
+                        variant="contained"
+                        color="error"
+                        fullWidth
+                        startIcon={
+                          rejectMutation.isPending ? (
+                            <CircularProgress size={16} />
+                          ) : (
+                            <Iconify icon="solar:close-circle-bold" />
+                          )
+                        }
+                        onClick={() => handleReject(selectedAction.id)}
+                        disabled={isDrawerActionPending}
+                      >
+                        Reject
+                      </Button>
+                    </PermissionGate>
+                    <PermissionGate resource={ACTIONS_RESOURCE} permission="APPROVE">
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        startIcon={
+                          approveMutation.isPending ? (
+                            <CircularProgress size={16} />
+                          ) : (
+                            <Iconify icon="solar:check-circle-bold" />
+                          )
+                        }
+                        onClick={() => handleApprove(selectedAction.id)}
+                        disabled={isDrawerActionPending}
+                      >
+                        Approve
+                      </Button>
+                    </PermissionGate>
+                    <PermissionGate resource={ACTIONS_RESOURCE} permission="EXECUTE">
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        startIcon={
+                          executeMutation.isPending ? (
+                            <CircularProgress size={16} />
+                          ) : (
+                            <Iconify icon="solar:bolt-bold" />
+                          )
+                        }
+                        onClick={() => handleExecute(selectedAction.id)}
+                        disabled={isDrawerActionPending}
+                      >
+                        Execute
+                      </Button>
+                    </PermissionGate>
+                  </Stack>
                 </Stack>
               </Box>
             )}
@@ -702,10 +799,10 @@ export const ActionsPage = () => {
           onSubmit={handleCreateAction}
           isLoading={createMutation.isPending}
           defaultCaseId={caseIdFilter ?? undefined}
-          availableCaseIds={mockCases.map((c, i) => ({
-            id: c.id,
-            caseNumber: c.caseNumber,
-            caseIdNum: parseInt(c.id.replace(/\D/g, ''), 10) || i + 1,
+          availableCaseIds={casesForDropdown.map((c) => ({
+            id: String(c.caseId),
+            caseNumber: `CS-${c.caseId}`,
+            caseIdNum: c.caseId,
           }))}
         />
       </Dialog>
@@ -735,15 +832,17 @@ export const ActionsPage = () => {
           <Button variant="outlined" onClick={() => setBulkApprovalOpen(false)} disabled={isBulkProcessing}>
             Cancel
           </Button>
-          <Button
-            variant="contained"
-            color={bulkAction === 'approve' ? 'primary' : 'error'}
-            onClick={executeBulkAction}
-            disabled={isBulkProcessing}
-            startIcon={isBulkProcessing ? <CircularProgress size={16} /> : undefined}
-          >
-            {isBulkProcessing ? 'Processing...' : `Confirm ${bulkAction === 'approve' ? 'Approval' : 'Rejection'}`}
-          </Button>
+          <PermissionGate resource={ACTIONS_RESOURCE} permission="APPROVE">
+            <Button
+              variant="contained"
+              color={bulkAction === 'approve' ? 'primary' : 'error'}
+              onClick={executeBulkAction}
+              disabled={isBulkProcessing}
+              startIcon={isBulkProcessing ? <CircularProgress size={16} /> : undefined}
+            >
+              {isBulkProcessing ? 'Processing...' : `Confirm ${bulkAction === 'approve' ? 'Approval' : 'Rejection'}`}
+            </Button>
+          </PermissionGate>
         </DialogActions>
       </Dialog>
     </Box>

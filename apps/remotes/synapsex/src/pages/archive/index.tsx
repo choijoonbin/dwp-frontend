@@ -6,6 +6,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 
 import { Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
+import { is403Error } from '@dwp-frontend/shared-utils';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -29,8 +30,8 @@ import CardContent from '@mui/material/CardContent';
 import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../../routes';
+import { ErrorStateWithRetry } from '../../components/ux';
 import { useArchiveList } from './hooks/use-archive-list';
-import { SeverityBadge } from '../../components/finance/severity-badge';
 
 import type { ArchiveListItem } from './adapters/archive-list-adapter';
 
@@ -94,30 +95,12 @@ export const ArchivePage = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: { xs: 2, sm: 3 } }}>
-        <Card variant="outlined">
-          <CardContent sx={{ p: 6, textAlign: 'center' }}>
-            <Iconify
-              icon="solar:danger-triangle-bold-duotone"
-              width={48}
-              sx={{ color: 'error.main', mb: 2 }}
-            />
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load archive
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {error instanceof Error ? error.message : 'Unknown error'}
-            </Typography>
-            <Button
-              variant="outlined"
-              onClick={() => refetch()}
-              startIcon={<Iconify icon="solar:refresh-bold" width={18} />}
-            >
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      </Box>
+      <ErrorStateWithRetry
+        title={is403Error(error) ? '권한 부족' : 'Failed to load archive'}
+        message={error instanceof Error ? error.message : 'Unknown error'}
+        onRetry={() => refetch()}
+        is403={is403Error(error)}
+      />
     );
   }
 
@@ -464,7 +447,6 @@ export const ArchivePage = () => {
                               <Typography variant="body2" sx={{ fontWeight: 600 }}>
                                 {linkedCase.caseNumber}
                               </Typography>
-                              <SeverityBadge severity={linkedCase.severity} size="sm" />
                             </Stack>
                             <Typography variant="caption" color="text.secondary">
                               {linkedCase.title}

@@ -1,6 +1,7 @@
 import { Route, Routes, Navigate, useLocation, BrowserRouter } from 'react-router-dom';
 
 import { SYNAPSE_ROUTES } from './routes';
+import { DevErrorPanel } from './components/ux';
 import { getPageForPathname } from './pathname-to-page';
 
 // ----------------------------------------------------------------------
@@ -8,7 +9,12 @@ import { getPageForPathname } from './pathname-to-page';
 /** pathname 기준으로 페이지 반환 (권한 가드 포함, 공통 route-permission-config 사용) */
 const SynapseAppByPathname = () => {
   const { pathname } = useLocation();
-  return <>{getPageForPathname(pathname)}</>;
+  return (
+    <>
+      {getPageForPathname(pathname)}
+      <DevErrorPanel />
+    </>
+  );
 };
 
 /**

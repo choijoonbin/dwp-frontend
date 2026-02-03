@@ -3,9 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   useAuth,
   HttpError,
+  safeReturnUrl,
   getOidcCallback,
   extractAccessTokenFromLoginResponse,
-  safeReturnUrl,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';

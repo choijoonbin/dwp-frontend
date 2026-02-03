@@ -4,7 +4,16 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuraStore, useAuraActions } from '@dwp-frontend/shared-utils/aura/use-aura-store';
-import { getUserId, NX_API_URL, getTenantId, getAccessToken, getAgentContext, getAgentSessionId } from '@dwp-frontend/shared-utils';
+import {
+  getUserId,
+  NX_API_URL,
+  getTenantId,
+  getAccessToken,
+  getAgentContext,
+  getAgentSessionId,
+  rejectHitlRequest,
+  approveHitlRequest,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -19,6 +28,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { usePageContext } from 'src/hooks/use-page-context';
 
+import { CheckpointApproval } from './checkpoint-approval';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
@@ -77,10 +87,12 @@ export const AuraMiniOverlay = () => {
     addTimelineStep,
     addActionExecution,
     setPendingHitl,
+    updateHitlEditableContent,
   } = useAuraActions();
 
   const [prompt, setPrompt] = useState('');
   const [streamingText, setStreamingText] = useState('');
+  const [isHitlSubmitting, setIsHitlSubmitting] = useState(false);
 
   const pageContext = usePageContext();
 
@@ -220,14 +232,14 @@ export const AuraMiniOverlay = () => {
                 stepId: timelineSteps[currentStepIndex]?.id || '',
                 message: eventData.message || '이 작업을 실행하시겠습니까?',
                 action: eventData.actionType || eventData.action || 'unknown',
-                params: eventData.params || {},
+                params: { ...(eventData.params || {}), ...(eventData.context || {}) },
                 timestamp: new Date(),
                 confidence: eventData.confidence,
                 editableContent: eventData.editableContent || eventData.message,
               });
               setStreaming(false);
               setThinking(false);
-              break; 
+              continue;
             } else if (eventType === 'content' || eventType === 'message') {
               setThinking(false);
               accumulatedText += eventData.content || eventData.message || '';
@@ -272,6 +284,58 @@ export const AuraMiniOverlay = () => {
       recommend: `현재 화면(${pageContext.title})에서 다음에 할 수 있는 행동을 추천해주세요.`,
     };
     handleSend(prompts[action]);
+  };
+
+  const handleApproveHitl = async (editedContent?: string) => {
+    if (!pendingHitl) return;
+    setIsHitlSubmitting(true);
+    try {
+      const requestId = pendingHitl.id.startsWith('hitl-')
+        ? pendingHitl.id.replace('hitl-', '')
+        : pendingHitl.id;
+      await approveHitlRequest(requestId);
+      setPendingHitl(null);
+      setStreaming(true);
+      setThinking(true);
+    } catch (err: unknown) {
+      addMessage({
+        role: 'assistant',
+        content: `승인 처리 중 오류가 발생했습니다: ${err instanceof Error ? err.message : 'Unknown error'}`,
+      });
+    } finally {
+      setIsHitlSubmitting(false);
+    }
+  };
+
+  const handleRejectHitl = async () => {
+    if (!pendingHitl) return;
+    setIsHitlSubmitting(true);
+    try {
+      const requestId = pendingHitl.id.startsWith('hitl-')
+        ? pendingHitl.id.replace('hitl-', '')
+        : pendingHitl.id;
+      await rejectHitlRequest(requestId, '사용자가 작업을 거부했습니다.');
+      setPendingHitl(null);
+      addMessage({
+        role: 'assistant',
+        content: '작업이 거부되었습니다.',
+      });
+      setStreaming(false);
+      setThinking(false);
+    } catch (err: unknown) {
+      addMessage({
+        role: 'assistant',
+        content: `거절 처리 중 오류가 발생했습니다: ${err instanceof Error ? err.message : 'Unknown error'}`,
+      });
+    } finally {
+      setIsHitlSubmitting(false);
+    }
+  };
+
+  const handleEditHitl = (content: string) => {
+    if (pendingHitl) {
+      updateHitlEditableContent(pendingHitl.id, content);
+    }
   };
 
   const handleExpand = () => {
@@ -324,9 +388,16 @@ export const AuraMiniOverlay = () => {
             zIndex: theme.zIndex.drawer + 150,
           }}
         >
-          
-
-<Paper
+          {pendingHitl && (
+            <CheckpointApproval
+              request={pendingHitl}
+              onApprove={handleApproveHitl}
+              onReject={handleRejectHitl}
+              onEdit={handleEditHitl}
+              isSubmitting={isHitlSubmitting}
+            />
+          )}
+          <Paper
   elevation={0}
   sx={{
     position: 'relative',

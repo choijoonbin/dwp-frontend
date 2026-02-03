@@ -23,10 +23,9 @@ import CardContent from '@mui/material/CardContent';
 import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../routes';
-import { StatusPill } from '../components/finance/status-pill';
-import { mockFiDocs, type FiDocHeader } from '../data/mock-data';
 import { SeverityBadge } from '../components/finance/severity-badge';
 import { useDocumentDetail } from './documents/hooks/use-document-detail';
+import { StatusPill, type Status } from '../components/finance/status-pill';
 
 // ----------------------------------------------------------------------
 
@@ -51,8 +50,8 @@ function parseDocumentKeyFromPathname(pathname: string): { bukrs: string; belnr:
   return null;
 }
 
-const buildDocDetailPath = (d: FiDocHeader) =>
-  `/synapse/documents/${d.bukrs}/${d.belnr}/${d.gjahr}`;
+const buildDocDetailPath = (bukrs: string, belnr: string, gjahr: string) =>
+  `/synapse/documents/${bukrs}/${belnr}/${gjahr}`;
 
 // ----------------------------------------------------------------------
 
@@ -68,44 +67,11 @@ export const DocumentDetailPage = () => {
     [location.pathname]
   );
 
-  const { doc, lineItems, integrityChecks, relatedCases, relatedActions, isLoading } =
+  const { doc, lineItems, integrityChecks, relatedCases, relatedActions, reversalChain, isLoading } =
     useDocumentDetail(docKey);
 
-  // Build reversal chain
-  const reversalChain = useMemo(() => {
-    if (!doc) return [];
-
-    const chain: FiDocHeader[] = [];
-
-    // Go backwards to find the original
-    let current = doc;
-    const visitedBack = new Set<string>();
-    while (current.reversesDoc && !visitedBack.has(current.reversesDoc)) {
-      visitedBack.add(current.reversesDoc);
-      const prev = mockFiDocs.find((d) => d.id === current.reversesDoc);
-      if (prev) {
-        chain.unshift(prev);
-        current = prev;
-      } else break;
-    }
-
-    // Add current doc
-    chain.push(doc);
-
-    // Go forward to find subsequent reversals
-    current = doc;
-    const visitedFwd = new Set<string>();
-    while (current.reversedByDoc && !visitedFwd.has(current.reversedByDoc)) {
-      visitedFwd.add(current.reversedByDoc);
-      const next = mockFiDocs.find((d) => d.id === current.reversedByDoc);
-      if (next) {
-        chain.push(next);
-        current = next;
-      } else break;
-    }
-
-    return chain;
-  }, [doc]);
+  // Reversal chain from API (empty when BE does not provide)
+  const displayReversalChain = reversalChain;
 
   const copyToClipboard = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
@@ -529,7 +495,7 @@ export const DocumentDetailPage = () => {
                 sx={{ pb: 1.5 }}
               />
               <CardContent>
-                {reversalChain.length <= 1 ? (
+                {displayReversalChain.length < 1 ? (
                   <Box sx={{ textAlign: 'center', py: 6 }}>
                     <Iconify icon="solar:git-branch-bold-duotone" width={48} sx={{ color: 'text.disabled', mb: 2 }} />
                     <Typography variant="body1" sx={{ color: 'text.secondary' }}>
@@ -543,17 +509,20 @@ export const DocumentDetailPage = () => {
                   <Stack spacing={3}>
                     {/* Visual chain */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, overflowX: 'auto', pb: 1 }}>
-                      {reversalChain.map((chainDoc, idx) => (
-                        <Box key={chainDoc.id} sx={{ display: 'flex', alignItems: 'center' }}>
+                      {displayReversalChain.map((chainDoc, idx) => {
+                        const chainKey = `${chainDoc.bukrs}-${chainDoc.belnr}-${chainDoc.gjahr}`;
+                        const isCurrent = chainKey === doc.id;
+                        return (
+                        <Box key={chainKey} sx={{ display: 'flex', alignItems: 'center' }}>
                           <Card
                             component={Link}
-                            to={buildDocDetailPath(chainDoc)}
+                            to={buildDocDetailPath(chainDoc.bukrs, chainDoc.belnr, chainDoc.gjahr)}
                             variant="outlined"
                             sx={{
                               p: 1.5,
                               minWidth: 120,
                               transition: 'all 0.2s',
-                              ...(chainDoc.id === doc.id
+                              ...(isCurrent
                                 ? { borderColor: 'primary.main', bgcolor: 'primary.lighter' }
                                 : { '&:hover': { borderColor: 'primary.main', bgcolor: 'background.neutral' } }),
                             }}
@@ -575,16 +544,17 @@ export const DocumentDetailPage = () => {
                               >
                                 {chainDoc.wrbtr.toLocaleString('en-US', { minimumFractionDigits: 2 })} {chainDoc.waers}
                               </Typography>
-                              {chainDoc.id === doc.id && (
+                              {isCurrent && (
                                 <Chip label="Current" size="small" color="primary" sx={{ mt: 1, fontSize: '0.625rem' }} />
                               )}
                             </Stack>
                           </Card>
-                          {idx < reversalChain.length - 1 && (
+                          {idx < displayReversalChain.length - 1 && (
                             <Iconify icon="solar:alt-arrow-right-linear" width={20} sx={{ color: 'text.secondary', mx: 0.5, flexShrink: 0 }} />
                           )}
                         </Box>
-                      ))}
+                        );
+                      })}
                     </Box>
 
                     {/* Chain table */}
@@ -601,10 +571,13 @@ export const DocumentDetailPage = () => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {reversalChain.map((chainDoc, idx) => (
+                          {displayReversalChain.map((chainDoc, idx) => {
+                            const chainKey = `${chainDoc.bukrs}-${chainDoc.belnr}-${chainDoc.gjahr}`;
+                            const isCurrent = chainKey === doc.id;
+                            return (
                             <TableRow
-                              key={chainDoc.id}
-                              sx={chainDoc.id === doc.id ? { bgcolor: 'primary.lighter' } : {}}
+                              key={chainKey}
+                              sx={isCurrent ? { bgcolor: 'primary.lighter' } : {}}
                             >
                               <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>
                                 {chainDoc.belnr}
@@ -620,13 +593,13 @@ export const DocumentDetailPage = () => {
                                 {chainDoc.wrbtr.toLocaleString('en-US', { minimumFractionDigits: 2 })} {chainDoc.waers}
                               </TableCell>
                               <TableCell sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>
-                                {idx === 0 ? 'Original' : `Reverses ${reversalChain[idx - 1].belnr}`}
+                                {idx === 0 ? 'Original' : `Reverses ${displayReversalChain[idx - 1].belnr}`}
                               </TableCell>
                               <TableCell>
-                                {chainDoc.id !== doc.id && (
+                                {!isCurrent && (
                                   <Button
                                     component={Link}
-                                    to={buildDocDetailPath(chainDoc)}
+                                    to={buildDocDetailPath(chainDoc.bukrs, chainDoc.belnr, chainDoc.gjahr)}
                                     size="small"
                                     variant="text"
                                   >
@@ -635,7 +608,8 @@ export const DocumentDetailPage = () => {
                                 )}
                               </TableCell>
                             </TableRow>
-                          ))}
+                            );
+                          })}
                         </TableBody>
                       </Table>
                     </TableContainer>
@@ -783,8 +757,8 @@ export const DocumentDetailPage = () => {
                                 </Typography>
                               </Box>
                               <Stack direction="row" spacing={1}>
-                                <SeverityBadge severity={c.severity} />
-                                <StatusPill status={c.status} />
+                                <SeverityBadge severity={c.severity as 'critical' | 'high' | 'medium' | 'low'} />
+                                <StatusPill status={c.status as import('../components/finance/status-pill').Status} />
                               </Stack>
                             </Stack>
                           </Card>
@@ -837,7 +811,7 @@ export const DocumentDetailPage = () => {
                                   {a.description}
                                 </Typography>
                               </Box>
-                              <StatusPill status={a.status} />
+                              <StatusPill status={a.status as Status} />
                             </Stack>
                           </Card>
                         ))}

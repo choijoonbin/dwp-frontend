@@ -33,7 +33,7 @@ export default function Page() {
         </Typography>
 
         <Typography sx={{ color: 'text.secondary', maxWidth: 480, textAlign: 'center' }}>
-          접근 권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.
+          접근 권한이 없거나 가드레일 위반으로 차단되었습니다. 필요한 권한이 있다면 관리자에게 문의하세요.
         </Typography>
 
         <Box

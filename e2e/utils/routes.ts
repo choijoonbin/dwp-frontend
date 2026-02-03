@@ -33,3 +33,33 @@ export const AUTH_ROUTES = {
   login: '/sign-in',
   signup: '/sign-up',
 } as const;
+
+/**
+ * Synapse routes (tenant=1 기준 E2E smoke)
+ * @see docs/reference/SYNAPSEX_CONTRACT_AND_VERIFICATION_SPEC.md
+ */
+export const SYNAPSE_ROUTES = {
+  root: '/synapse',
+  admin: '/synapse/admin',
+  cases: '/synapse/cases',
+  caseDetail: (id: string) => `/synapse/cases/${id}`,
+  anomalies: '/synapse/anomalies',
+  optimization: '/synapse/optimization',
+  actions: '/synapse/actions',
+  archive: '/synapse/archive',
+  documents: '/synapse/documents',
+  openItems: '/synapse/open-items',
+  entities: '/synapse/entities',
+  entityDetail: (id: string) => `/synapse/entities/${id}`,
+  lineage: '/synapse/lineage',
+  lineageWithCase: (caseId: string) => `/synapse/lineage?caseId=${caseId}`,
+  rag: '/synapse/rag',
+  policies: '/synapse/policies',
+  guardrails: '/synapse/guardrails',
+  dictionary: '/synapse/dictionary',
+  feedback: '/synapse/feedback',
+  reconciliation: '/synapse/reconciliation',
+  actionRecon: '/synapse/action-recon',
+  audit: '/synapse/audit',
+  analytics: '/synapse/analytics',
+} as const;

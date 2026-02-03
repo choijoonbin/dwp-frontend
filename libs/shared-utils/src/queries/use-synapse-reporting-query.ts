@@ -11,6 +11,7 @@ import {
   getReconRuns,
   startReconRun,
   getActionRecon,
+  retryActionRecon,
   getAnalyticsKpis,
   getReconRunDetail,
   type ReconRunType,
@@ -116,6 +117,25 @@ export const useActionReconQuery = () => {
     staleTime: 1 * 60 * 1000,
     gcTime: 5 * 60 * 1000,
     retry: false,
+  });
+};
+
+export const useRetryActionReconMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (actionId: string) => {
+      const res = await retryActionRecon(actionId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') throw new Error(res.message ?? 'Retry failed');
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'action-recon'] });
+      showToast('Retry requested');
+    },
+    onError: (err) => {
+      showToast(err instanceof Error ? err.message : 'Retry failed', 'error');
+    },
   });
 };
 

@@ -90,6 +90,8 @@ export type AnomaliesListParams = {
   detectedTo?: string;
   page?: number;
   size?: number;
+  /** sort=필드명,asc | sort=필드명,desc (예: detectedAt,desc) */
+  sort?: string;
 };
 
 // ----------------------------------------------------------------------
@@ -133,6 +135,8 @@ export type ActionsListParams = {
   createdTo?: string;
   page?: number;
   size?: number;
+  /** sort=필드명,asc | sort=필드명,desc (예: createdAt,desc) */
+  sort?: string;
 };
 
 // ----------------------------------------------------------------------
@@ -158,6 +162,8 @@ export type ArchiveListParams = {
   to?: string;
   page?: number;
   size?: number;
+  /** sort=필드명,asc | sort=필드명,desc (예: executedAt,desc) */
+  sort?: string;
 };
 
 // ----------------------------------------------------------------------
@@ -254,6 +260,7 @@ export const getAnomalies = async (
   if (params?.detectedTo) query.set('detectedTo', params.detectedTo);
   if (params?.page != null) query.set('page', String(params.page));
   if (params?.size != null) query.set('size', String(params.size));
+  if (params?.sort) query.set('sort', params.sort);
 
   const url = `/api/synapse/anomalies${query.toString() ? `?${query.toString()}` : ''}`;
   const res = await axiosInstance.get<ApiResponse<SpringPage<AnomalyListRowDto> | PageResponse<AnomalyListRowDto>>>(url);
@@ -319,6 +326,26 @@ export const executeAction = async (
   return res.data;
 };
 
+export const rejectAction = async (
+  actionId: string
+): Promise<ApiResponse<unknown>> => {
+  const res = await axiosInstance.post<ApiResponse<unknown>>(
+    `/api/synapse/actions/${encodeURIComponent(actionId)}/reject`,
+    {}
+  );
+  return res.data;
+};
+
+export const simulateAction = async (
+  actionId: string
+): Promise<ApiResponse<unknown>> => {
+  const res = await axiosInstance.post<ApiResponse<unknown>>(
+    `/api/synapse/actions/${encodeURIComponent(actionId)}/simulate`,
+    {}
+  );
+  return res.data;
+};
+
 // ----------------------------------------------------------------------
 // Archive API
 // ----------------------------------------------------------------------
@@ -333,6 +360,7 @@ export const getArchive = async (
   if (params?.to) query.set('to', params.to);
   if (params?.page != null) query.set('page', String(params.page));
   if (params?.size != null) query.set('size', String(params.size));
+  if (params?.sort) query.set('sort', params.sort);
 
   const url = `/api/synapse/archive${query.toString() ? `?${query.toString()}` : ''}`;
   const res = await axiosInstance.get<ApiResponse<SpringPage<ArchiveListRowDto> | PageResponse<ArchiveListRowDto>>>(url);

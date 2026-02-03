@@ -177,17 +177,31 @@ const getEventIcon = (eventType: string): string => {
 
 /** 감사 추적 로그 */
 export const AuditPage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get('category') ?? undefined;
   const eventTypeParam = searchParams.get('type') ?? undefined;
   const resourceType = searchParams.get('resourceType') ?? undefined;
+  const outcome = searchParams.get('outcome') ?? undefined;
+  const severity = searchParams.get('severity') ?? undefined;
+  const actor = searchParams.get('actor') ?? undefined;
+  const qParam = searchParams.get('q') ?? undefined;
 
   const apiParams = useMemo(
     () =>
-      category || eventTypeParam || resourceType
-        ? { category, type: eventTypeParam, resourceType, page: 0, size: 100 }
+      category || eventTypeParam || resourceType || outcome || severity || actor || qParam
+        ? {
+            category,
+            type: eventTypeParam,
+            resourceType,
+            outcome,
+            severity,
+            actor,
+            q: qParam,
+            page: 0,
+            size: 100,
+          }
         : undefined,
-    [category, eventTypeParam, resourceType]
+    [category, eventTypeParam, resourceType, outcome, severity, actor, qParam]
   );
 
   const { data: apiAuditData } = useSynapseAuditEventsQuery(apiParams ?? undefined, {
@@ -247,6 +261,36 @@ export const AuditPage = () => {
       prev.includes(value) ? prev.filter((t) => t !== value) : [...prev, value]
     );
   };
+
+  const updateUrlFilter = (key: string, value: string | undefined) => {
+    setSearchParams(
+      (prev: URLSearchParams) => {
+        const next = new URLSearchParams(prev);
+        if (value) next.set(key, value);
+        else next.delete(key);
+        return next;
+      },
+      { replace: true }
+    );
+  };
+
+  const categories = [
+    { value: 'CASE', label: 'Case' },
+    { value: 'ACTION', label: 'Action' },
+    { value: 'POLICY', label: 'Policy' },
+    { value: 'GUARDRAIL', label: 'Guardrail' },
+    { value: 'AUDIT', label: 'Audit' },
+  ];
+  const outcomes = [
+    { value: 'SUCCESS', label: 'Success' },
+    { value: 'FAILURE', label: 'Failure' },
+    { value: 'PENDING', label: 'Pending' },
+  ];
+  const severities = [
+    { value: 'info', label: 'Info' },
+    { value: 'warning', label: 'Warning' },
+    { value: 'critical', label: 'Critical' },
+  ];
 
   return (
     <Box sx={{ p: { xs: 2, sm: 3 }, width: '100%' }}>
@@ -373,21 +417,90 @@ export const AuditPage = () => {
         {/* Filters */}
         <Card variant="outlined">
           <CardContent sx={{ p: 2.5 }}>
-            <Stack direction="row" spacing={2} flexWrap="wrap">
+            <Stack direction="row" spacing={2} flexWrap="wrap" alignItems="center">
               <TextField
                 size="small"
-                placeholder="Search audit trail..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                sx={{ minWidth: 200, maxWidth: { xs: '100%', sm: 320 } }}
+                placeholder="Search (q)..."
+                value={qParam ?? ''}
+                onChange={(e) => updateUrlFilter('q', e.target.value || undefined)}
+                sx={{ minWidth: 180, maxWidth: { xs: '100%', sm: 280 } }}
                 InputProps={{
                   startAdornment: (
                     <Iconify icon="solar:magnifer-linear" width={20} sx={{ mr: 1, color: 'text.secondary' }} />
                   ),
                 }}
               />
-
-              {/* Event Type Filter */}
+              <Select
+                size="small"
+                value={eventTypeParam ?? ''}
+                onChange={(e) => updateUrlFilter('type', e.target.value || undefined)}
+                displayEmpty
+                sx={{ minWidth: 140 }}
+              >
+                <MenuItem value="">All Types</MenuItem>
+                {eventTypes.map((t) => (
+                  <MenuItem key={t.value} value={t.value}>
+                    {t.label}
+                  </MenuItem>
+                ))}
+              </Select>
+              <Select
+                size="small"
+                value={category ?? ''}
+                onChange={(e) => updateUrlFilter('category', e.target.value || undefined)}
+                displayEmpty
+                sx={{ minWidth: 120 }}
+              >
+                <MenuItem value="">All Categories</MenuItem>
+                {categories.map((c) => (
+                  <MenuItem key={c.value} value={c.value}>
+                    {c.label}
+                  </MenuItem>
+                ))}
+              </Select>
+              <Select
+                size="small"
+                value={outcome ?? ''}
+                onChange={(e) => updateUrlFilter('outcome', e.target.value || undefined)}
+                displayEmpty
+                sx={{ minWidth: 120 }}
+              >
+                <MenuItem value="">All Outcomes</MenuItem>
+                {outcomes.map((o) => (
+                  <MenuItem key={o.value} value={o.value}>
+                    {o.label}
+                  </MenuItem>
+                ))}
+              </Select>
+              <Select
+                size="small"
+                value={severity ?? ''}
+                onChange={(e) => updateUrlFilter('severity', e.target.value || undefined)}
+                displayEmpty
+                sx={{ minWidth: 110 }}
+              >
+                <MenuItem value="">All Severities</MenuItem>
+                {severities.map((s) => (
+                  <MenuItem key={s.value} value={s.value}>
+                    {s.label}
+                  </MenuItem>
+                ))}
+              </Select>
+              <TextField
+                size="small"
+                placeholder="Actor..."
+                value={actor ?? ''}
+                onChange={(e) => updateUrlFilter('actor', e.target.value || undefined)}
+                sx={{ minWidth: 120 }}
+              />
+              <TextField
+                size="small"
+                placeholder="Resource type..."
+                value={resourceType ?? ''}
+                onChange={(e) => updateUrlFilter('resourceType', e.target.value || undefined)}
+                sx={{ minWidth: 120 }}
+              />
+              {/* Event Type Filter (client-side when using mock) */}
               <Button
                 variant="outlined"
                 size="small"

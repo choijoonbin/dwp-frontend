@@ -5,7 +5,10 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Label, Iconify } from '@dwp-frontend/design-system';
-import { useActionReconQuery } from '@dwp-frontend/shared-utils';
+import { is403Error, 
+  useActionReconQuery,
+  useRetryActionReconMutation,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -24,6 +27,7 @@ import CardContent from '@mui/material/CardContent';
 import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../../routes';
+import { ErrorStateWithRetry } from '../../components/ux';
 
 function fmtMoney(amount: number, currency: string) {
   return new Intl.NumberFormat('en-US', {
@@ -44,7 +48,8 @@ export const ActionReconciliationPage = () => {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
 
-  const { data, isLoading, error } = useActionReconQuery();
+  const { data, isLoading, error, refetch } = useActionReconQuery();
+  const retryMutation = useRetryActionReconMutation();
 
   const filteredRows = useMemo(() => {
     const rows = data?.rows ?? [];
@@ -64,19 +69,12 @@ export const ActionReconciliationPage = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: { xs: 2, sm: 3 } }}>
-        <Card variant="outlined">
-          <CardContent sx={{ p: 6, textAlign: 'center' }}>
-            <Iconify icon="solar:danger-triangle-bold-duotone" width={48} sx={{ color: 'error.main', mb: 2 }} />
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load action reconciliation
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {error instanceof Error ? error.message : 'Unknown error'}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Box>
+      <ErrorStateWithRetry
+        title={is403Error(error) ? '권한 부족' : 'Failed to load action reconciliation'}
+        message={error instanceof Error ? error.message : 'Unknown error'}
+        onRetry={() => refetch()}
+        is403={is403Error(error)}
+      />
     );
   }
 
@@ -247,7 +245,7 @@ export const ActionReconciliationPage = () => {
                     <Iconify icon="solar:magnifer-linear" width={20} sx={{ mr: 1, color: 'text.secondary' }} />
                   ),
                 }}
-              />
+                />
             </Stack>
             <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               <Table size="small">
@@ -324,13 +322,33 @@ export const ActionReconciliationPage = () => {
                             </Typography>
                           </TableCell>
                           <TableCell align="right">
-                            <Button
-                              size="small"
-                              endIcon={<Iconify icon="solar:arrow-right-up-linear" width={14} />}
-                              onClick={() => navigate(`${SYNAPSE_ROUTES.ACTIONS}?q=${encodeURIComponent(r.actionId ?? '')}`)}
-                            >
-                              Action
-                            </Button>
+                            <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                              {r.status === 'failed' && (
+                                <Button
+                                  size="small"
+                                  color="error"
+                                  variant="outlined"
+                                  startIcon={<Iconify icon="solar:refresh-bold" width={14} />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    retryMutation.mutate(r.actionId);
+                                  }}
+                                  disabled={retryMutation.isPending}
+                                >
+                                  Retry
+                                </Button>
+                              )}
+                              <Button
+                                size="small"
+                                endIcon={<Iconify icon="solar:arrow-right-up-linear" width={14} />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`${SYNAPSE_ROUTES.ACTIONS}?q=${encodeURIComponent(r.actionId ?? '')}`);
+                                }}
+                              >
+                                Action
+                              </Button>
+                            </Stack>
                           </TableCell>
                         </TableRow>
                       );

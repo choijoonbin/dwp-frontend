@@ -4,6 +4,13 @@
 
 import type { ActionListRowDto } from '@dwp-frontend/shared-utils';
 
+export type SimulationResult = {
+  predictedSuccess?: boolean;
+  impactedObjects?: string[];
+  validations?: { name: string; passed: boolean; message: string }[];
+  riskNotes?: string[];
+};
+
 export type ActionListItem = {
   id: string;
   caseId: string;
@@ -20,7 +27,7 @@ export type ActionListItem = {
   requiredApproval: boolean;
   targetSystem: string;
   amount?: number;
-  simulation?: unknown;
+  simulation?: SimulationResult;
 };
 
 const mapStatus = (s: string): string => {

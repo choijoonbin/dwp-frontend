@@ -11,7 +11,9 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
+import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
@@ -38,6 +40,7 @@ const RUN_TYPE_LABELS: Record<string, string> = {
 
 export const ReconciliationPage = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'ingestion' | 'integrity'>('integrity');
   const [runTypeFilter, setRunTypeFilter] = useState<string>('all');
   const [startModalOpen, setStartModalOpen] = useState(false);
 
@@ -106,6 +109,55 @@ export const ReconciliationPage = () => {
           </Button>
         </Stack>
 
+        <Tabs
+          value={activeTab}
+          onChange={(_, v: 'ingestion' | 'integrity') => setActiveTab(v)}
+          sx={{ borderBottom: 1, borderColor: 'divider', mb: 0 }}
+        >
+          <Tab value="ingestion" label="Ingestion Health" />
+          <Tab value="integrity" label="Integrity Report" />
+        </Tabs>
+
+        {activeTab === 'ingestion' && (
+          <Card variant="outlined">
+            <CardContent sx={{ p: 2.5 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+                Ingestion Health
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Monitor document and open-item ingestion pipeline health. Drill down to documents, open items, and lineage.
+              </Typography>
+              <Stack direction="row" spacing={2} flexWrap="wrap">
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<Iconify icon="solar:document-bold" width={16} />}
+                  onClick={() => navigate(SYNAPSE_ROUTES.DOCUMENTS)}
+                >
+                  Documents
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<Iconify icon="solar:clipboard-list-bold" width={16} />}
+                  onClick={() => navigate(SYNAPSE_ROUTES.OPEN_ITEMS)}
+                >
+                  Open Items
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<Iconify icon="solar:link-circle-bold" width={16} />}
+                  onClick={() => navigate(SYNAPSE_ROUTES.LINEAGE)}
+                >
+                  Lineage
+                </Button>
+              </Stack>
+            </CardContent>
+          </Card>
+        )}
+
+        {activeTab === 'integrity' && (
         <Card variant="outlined">
           <CardContent sx={{ p: 2.5 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
@@ -217,6 +269,7 @@ export const ReconciliationPage = () => {
             </TableContainer>
           </CardContent>
         </Card>
+        )}
       </Stack>
 
       <Dialog open={startModalOpen} onClose={() => setStartModalOpen(false)} maxWidth="xs" fullWidth>

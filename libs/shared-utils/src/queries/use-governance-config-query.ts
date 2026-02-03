@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
-import { getGovernanceConfigList, patchGovernanceConfig } from '../api/synapse-admin-api';
+import { patchGovernanceConfig, getGovernanceConfigList } from '../api/synapse-admin-api';
 
 import type { GovernanceConfigPatchPayload } from '../api/synapse-admin-api';
 

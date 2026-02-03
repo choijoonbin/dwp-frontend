@@ -4,14 +4,17 @@ import { create } from 'zustand';
 
 export type ToastSeverity = 'success' | 'error';
 
+export type ToastAction = { label: string; href: string };
+
 export type ToastState = {
   open: boolean;
   message: string;
   severity: ToastSeverity;
+  action?: ToastAction;
 };
 
 export type ToastActions = {
-  show: (message: string, severity?: ToastSeverity) => void;
+  show: (message: string, severity?: ToastSeverity, action?: ToastAction) => void;
   hide: () => void;
 };
 
@@ -25,11 +28,11 @@ export const useToastStore = create<ToastState & { actions: ToastActions }>((set
   ...initialState,
 
   actions: {
-    show: (message: string, severity: ToastSeverity = 'success') => {
-      set({ open: true, message, severity });
+    show: (message: string, severity: ToastSeverity = 'success', action?: ToastAction) => {
+      set({ open: true, message, severity, action });
     },
     hide: () => {
-      set({ open: false });
+      set({ open: false, action: undefined });
     },
   },
 }));
@@ -39,6 +42,24 @@ export const useToastStore = create<ToastState & { actions: ToastActions }>((set
  * GlobalSnackbar가 Host에 한 번 마운트되어 있어야 UI에 노출됨.
  * 메뉴/Remote 구분 없이 어디서든 호출 가능.
  */
-export const showToast = (message: string, severity: ToastSeverity = 'success'): void => {
-  useToastStore.getState().actions.show(message, severity);
+export const showToast = (
+  message: string,
+  severity: ToastSeverity = 'success',
+  action?: ToastAction
+): void => {
+  useToastStore.getState().actions.show(message, severity, action);
+};
+
+/**
+ * Action 실패 시 auditId가 있으면 Audit 상세 링크와 함께 toast 표시
+ */
+export const showToastWithAuditLink = (
+  message: string,
+  auditId?: string
+): void => {
+  if (auditId) {
+    showToast(message, 'error', { label: 'Audit 상세 보기', href: `/synapse/audit?auditId=${auditId}` });
+  } else {
+    showToast(message, 'error');
+  }
 };

@@ -12,7 +12,6 @@ import type { ReactNode } from 'react';
 import { PermissionRouteGuard, getResourceKeyForPath } from '@dwp-frontend/shared-utils';
 
 import { RagPage } from './pages/rag';
-import { RagDocumentDetailPage } from './pages/rag/rag-detail';
 import { CasesPage } from './pages/cases';
 import { ActionsPage } from './pages/actions';
 import { ArchivePage } from './pages/archive';
@@ -21,7 +20,6 @@ import { AutonomyPage } from './pages/autonomy';
 import { EntitiesPage } from './pages/entities';
 import { FeedbackPage } from './pages/feedback';
 import { PoliciesPage } from './pages/policies';
-import { PolicyProfileDetailPage } from './pages/policies/policy-detail';
 import { AuditPage } from './pages/audit-legacy';
 import { AnalyticsPage } from './pages/analytics';
 import { AnomaliesPage } from './pages/anomalies';
@@ -38,9 +36,11 @@ import { IntegrationsPage } from './pages/integrations';
 import { OptimizationPage } from './pages/optimization';
 import { EntityDetailPage } from './pages/entity-detail';
 import { ReconciliationPage } from './pages/reconciliation';
-import { ReconRunDetailPage } from './pages/reconciliation/recon-run-detail';
 import { DocumentDetailPage } from './pages/document-detail';
+import { RagDocumentDetailPage } from './pages/rag/rag-detail';
 import { ActionReconciliationPage } from './pages/action-recon';
+import { PolicyProfileDetailPage } from './pages/policies/policy-detail';
+import { ReconRunDetailPage } from './pages/reconciliation/recon-run-detail';
 
 // ----------------------------------------------------------------------
 // API path (job.txt 기준) → 페이지

@@ -1,12 +1,15 @@
 /**
- * Actions list hook — API with mock fallback
+ * Actions list hook — API 전용 (mock 제거)
  */
 
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useActionsListQuery, type ActionsListParams } from '@dwp-frontend/shared-utils';
+import {
+  useCasesListQuery,
+  useActionsListQuery,
+  type ActionsListParams,
+} from '@dwp-frontend/shared-utils';
 
-import { mockCases, mockActions } from '../../../data/mock-data';
 import { actionListDtoToUi, type ActionListItem } from '../adapters/action-list-adapter';
 
 export const useActionsList = (params?: ActionsListParams) => {
@@ -22,34 +25,25 @@ export const useActionsList = (params?: ActionsListParams) => {
   if (caseIdFilter) apiParams.caseId = Number(caseIdFilter) || undefined;
 
   const query = useActionsListQuery(apiParams);
+  const casesQuery = useCasesListQuery({ size: 500 });
 
   const items: ActionListItem[] = useMemo(() => {
-    if (query.data?.items && query.data.items.length > 0) {
-      return query.data.items.map(actionListDtoToUi);
-    }
-    if (query.isError || !query.data) {
-      let list = mockActions.map((a) => ({
-        id: a.id,
-        caseId: a.caseId,
-        actionType: a.actionType,
-        type: a.type,
-        status: a.status,
-        createdAt: a.createdAt,
-        description: a.description,
-        riskLevel: a.riskLevel,
-        autonomyMode: a.autonomyMode,
-        requiredApproval: a.requiredApproval,
-        targetSystem: a.targetSystem,
-        amount: a.amount,
-        simulation: a.simulation,
-      }));
-      if (caseIdFilter) {
-        list = list.filter((a) => a.caseId === caseIdFilter);
-      }
-      return list;
-    }
-    return [];
-  }, [query.data, query.isError, caseIdFilter]);
+    if (!query.data?.items) return [];
+    return query.data.items.map(actionListDtoToUi);
+  }, [query.data?.items]);
+
+  const linkedCase = useMemo(() => {
+    if (!caseIdFilter || !casesQuery.data?.items) return undefined;
+    const cases = casesQuery.data.items;
+    const found = cases.find((item) => String(item.caseId) === caseIdFilter);
+    return found
+      ? {
+          id: String(found.caseId),
+          caseNumber: `CS-${found.caseId}`,
+          title: found.reasonTextShort ?? `Case ${found.caseId}`,
+        }
+      : undefined;
+  }, [caseIdFilter, casesQuery.data?.items]);
 
   const pendingCount = items.filter((a) => a.status === 'pending').length;
   const approvedCount = items.filter((a) => a.status === 'approved').length;
@@ -61,9 +55,10 @@ export const useActionsList = (params?: ActionsListParams) => {
     error: query.error,
     refetch: query.refetch,
     caseIdFilter,
-    linkedCase: caseIdFilter ? mockCases.find((c) => c.id === caseIdFilter) : undefined,
+    linkedCase,
     pendingCount,
     approvedCount,
     executedCount,
+    casesForDropdown: casesQuery.data?.items ?? [],
   };
 };

@@ -7,6 +7,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Label, Iconify } from '@dwp-frontend/design-system';
+import { tableToCsv, is403Error, downloadCsv } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -29,6 +30,7 @@ import CardContent from '@mui/material/CardContent';
 import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../../routes';
+import { ErrorStateWithRetry } from '../../components/ux';
 import { useAnomaliesList } from './hooks/use-anomalies-list';
 import { SeverityBadge } from '../../components/finance/severity-badge';
 
@@ -110,30 +112,12 @@ export const AnomaliesPage = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: { xs: 2, sm: 3 } }}>
-        <Card variant="outlined">
-          <CardContent sx={{ p: 6, textAlign: 'center' }}>
-            <Iconify
-              icon="solar:danger-triangle-bold-duotone"
-              width={48}
-              sx={{ color: 'error.main', mb: 2 }}
-            />
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load anomalies
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {error instanceof Error ? error.message : 'Unknown error'}
-            </Typography>
-            <Button
-              variant="outlined"
-              onClick={() => refetch()}
-              startIcon={<Iconify icon="solar:refresh-bold" width={18} />}
-            >
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      </Box>
+      <ErrorStateWithRetry
+        title={is403Error(error) ? '권한 부족' : 'Failed to load anomalies'}
+        message={error instanceof Error ? error.message : 'Unknown error'}
+        onRetry={() => refetch()}
+        is403={is403Error(error)}
+      />
     );
   }
 
@@ -159,6 +143,26 @@ export const AnomaliesPage = () => {
             </Typography>
           </Box>
           <Stack direction="row" spacing={1}>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<Iconify icon="solar:file-export-bold" width={16} />}
+              onClick={() => {
+                const csv = tableToCsv(sortedRows, [
+                  { id: 'caseNumber', label: 'Case' },
+                  { id: 'severity', label: 'Severity' },
+                  { id: 'anomalyType', label: 'Type' },
+                  { id: 'companyCode', label: 'Company' },
+                  { id: 'docNumber', label: 'Doc' },
+                  { id: 'amount', label: 'Amount', getValue: (r) => `${r.currency} ${r.amount.toLocaleString()}` },
+                  { id: 'detectedAt', label: 'Detected' },
+                  { id: 'confidence', label: 'Confidence', getValue: (r) => `${Math.round(r.confidence * 100)}%` },
+                ]);
+                downloadCsv(csv, `anomalies-${new Date().toISOString().slice(0, 10)}.csv`);
+              }}
+            >
+              Export CSV
+            </Button>
             <Button
               variant="outlined"
               size="small"

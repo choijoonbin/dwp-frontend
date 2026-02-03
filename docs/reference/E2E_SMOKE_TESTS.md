@@ -70,6 +70,7 @@ yarn test:e2e:auth-setup
 - `e2e/.auth/user.json`은 `.gitignore`에 포함되어 있어 Git에 커밋되지 않습니다
 - 각 개발자가 로컬에서 1회 생성해야 합니다
 - 로그인 credentials가 변경되면 재생성이 필요합니다
+- **Synapse E2E** (`synapse-verify.spec.ts`): tenant=1 기준 테스트. admin 사용자의 기본 tenant가 1이어야 합니다.
 
 ---
 

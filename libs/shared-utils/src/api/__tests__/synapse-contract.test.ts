@@ -10,11 +10,11 @@
  * Run: yarn nx test shared-utils -- synapse-contract
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { it, vi, expect, describe, beforeEach } from 'vitest';
 
 import { getCases } from '../synapse-operations-api';
-import { getAnalyticsKpis } from '../synapse-reporting-api';
 import { getFiDocHeaders } from '../synapse-data-api';
+import { getAnalyticsKpis } from '../synapse-reporting-api';
 
 // ----------------------------------------------------------------------
 // Mocks
@@ -175,6 +175,28 @@ describe('Synapse API Contract — Valid tenant_id=1', () => {
     expect(url).toContain('limit=20');
     expect(url).toContain('page=0');
     expect(url).toContain('size=20');
+  });
+
+  it('GET /api/synapse/entities/fi-doc-headers passes filter params when provided', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({ status: 'SUCCESS', data: [] }),
+    } as Response);
+
+    await getFiDocHeaders({
+      limit: 100,
+      dateFrom: '2025-01-01',
+      dateTo: '2025-01-31',
+      bukrs: '1000',
+      status: 'pass',
+    });
+
+    const url = mockFetch.mock.calls[0][0] as string;
+    expect(url).toContain('dateFrom=2025-01-01');
+    expect(url).toContain('dateTo=2025-01-31');
+    expect(url).toContain('bukrs=1000');
+    expect(url).toContain('status=pass');
   });
 });
 

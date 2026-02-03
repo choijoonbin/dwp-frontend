@@ -19,5 +19,9 @@ export interface ApiResponse<T> {
   success?: boolean;
   timestamp: string;
   errorCode?: string;
+  /** Action simulate/approve/execute 실패 시 BE가 포함 */
+  auditId?: string;
+  traceId?: string;
+  gatewayRequestId?: string;
 }
 

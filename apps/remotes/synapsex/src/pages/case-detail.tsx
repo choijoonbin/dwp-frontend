@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { is403Error , useSynapseAgentStream } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -22,14 +23,20 @@ import { alpha, useTheme } from '@mui/material/styles';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { SYNAPSE_ROUTES } from '../routes';
+import { ErrorStateWithRetry } from '../components/ux';
 import { RagCitationList } from '../components/evidence';
-import { mockCases, mockPolicies } from '../data/mock-data';
-import { useCaseDetail } from './cases/hooks/use-case-detail';
-import { StatusPill } from '../components/finance/status-pill';
+import { useCaseHitl } from './cases/hooks/use-case-hitl';
+import { CaseHitlDrawer } from './cases/components/case-hitl-drawer';
 import { SeverityBadge } from '../components/finance/severity-badge';
+import { useCaseSimulation } from './cases/hooks/use-case-simulation';
 import { ConfidenceRing } from '../components/finance/confidence-meter';
+import { StatusPill, type Status } from '../components/finance/status-pill';
+import { CaseSimulationDiff } from './cases/components/case-simulation-diff';
+import { useCaseDetail, type AuditEvent } from './cases/hooks/use-case-detail';
+import { CaseAgentStreamPanel } from './cases/components/case-agent-stream-panel';
 
 import type { RagCitation } from '../components/evidence';
+import type { HitlStatus } from './cases/hooks/use-case-hitl';
 
 // ----------------------------------------------------------------------
 
@@ -210,18 +217,8 @@ const mockDocumentRelationship: DocumentRelationship[] = [
   },
 ];
 
-// Mock RAG citations - 공용 RagCitation 타입 사용
-const mockRAGCitations: RagCitation[] = mockPolicies.map((p, i) => ({
-  id: p.id,
-  title: p.name,
-  docTitle: p.name,
-  policyCode: p.category,
-  relevanceScore: [92, 87, 78][i] || 70,
-  pageNumber: [12, 45, 8][i] || 1,
-  quote: p.content,
-  source: p.source,
-  tags: [p.category],
-}));
+// RAG citations from API reasoning.ragRefsJson or empty
+const emptyRagCitations: RagCitation[] = [];
 
 // ----------------------------------------------------------------------
 
@@ -231,31 +228,131 @@ export const CaseDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
-  const { caseData, fiDoc, fiDocItems, relatedActions, auditEvents } = useCaseDetail(id);
-  const caseComments = extendedComments.filter((c) => c.caseId === caseData.id);
+  const { caseData, evidence, fiDoc, fiDocItems, relatedActions, auditEvents, isLoading, error, refetch } = useCaseDetail(id);
+  const caseComments = extendedComments.filter((c) => c.caseId === (caseData?.id ?? ''));
   const caseAuditEvents = auditEvents;
+  const ragCitations = emptyRagCitations;
 
   const [newComment, setNewComment] = useState('');
   const [simulationMode, setSimulationMode] = useState(false);
   const [rightPanelTab, setRightPanelTab] = useState<'actions' | 'audit'>('actions');
   const [centerTab, setCenterTab] = useState('analysis');
 
-  // Mock similar cases with similarity scores
-  const similarCases = mockCases
-    .filter((c) => c.id !== caseData.id && c.anomalyType === caseData.anomalyType)
-    .slice(0, 3)
-    .map((c) => ({
-      ...c,
-      similarity: Math.floor(Math.random() * 20) + 75,
-    }));
+  // HITL state
+  const [hitlOpen, setHitlOpen] = useState(false);
+  const [hitlRequestId, setHitlRequestId] = useState<string | null>(null);
+  const [hitlDescription, setHitlDescription] = useState<string | undefined>();
+  const [hitlStatus, setHitlStatus] = useState<HitlStatus>('pending_approval');
 
-  // Mock simulation result
-  const simulationResult = {
+  // Agent Stream
+  const {
+    startStream,
+    cancel,
+    events: streamEvents,
+    streamingText,
+    isThinking,
+    isReconnecting,
+  } = useSynapseAgentStream();
+
+  const handleStartAnalysis = () => {
+    if (id) startStream(id, {
+      onHitlRequest: (requestId, payload) => {
+        setHitlRequestId(requestId);
+        setHitlDescription(payload?.message ?? (payload?.context ? JSON.stringify(payload.context) : undefined));
+        setHitlStatus('pending_approval');
+        setHitlOpen(true);
+      },
+    });
+  };
+
+  const handleRetryStream = () => handleStartAnalysis();
+
+  // HITL
+  const { approve, reject, isApproving, isRejecting } = useCaseHitl({
+    onApproved: () => {
+      setHitlStatus('approved');
+    },
+    onRejected: () => {
+      setHitlStatus('rejected');
+    },
+  });
+
+  const handleHitlApprove = (requestId: string) => {
+    approve(requestId);
+  };
+
+  const handleHitlReject = (requestId: string, reason?: string) => {
+    reject({ requestId, reason });
+  };
+
+  // Simulation
+  const { runSimulation, result: simulationResult, isLoading: simulationLoading } = useCaseSimulation(id);
+
+  const similarCases: Array<{
+    id: string;
+    caseNumber: string;
+    title: string;
+    similarity: number;
+    status: Status;
+    severity?: string;
+    counterparty?: string;
+    currency?: string;
+    amount?: number;
+  }> = [];
+
+  // Fallback mock simulation for UI when API not yet returns (backward compat)
+  const mockSimulationResult = {
     before: { vendorBalance: 125000, glBalance: 450000, openItems: 5 },
     after: { vendorBalance: 0, glBalance: 325000, openItems: 4 },
     outcome: 'success' as const,
     message: 'Reversal will successfully clear the duplicate payment and restore correct balances.',
   };
+
+  const displaySimulationAfter = (simulationResult ?? mockSimulationResult).after as {
+    vendorBalance?: number;
+    glBalance?: number;
+    openItems?: number;
+  };
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
+        <Typography variant="body2" color="text.secondary">
+          Loading case...
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorStateWithRetry
+        title={is403Error(error) ? '권한 부족' : 'Failed to load case'}
+        message={error instanceof Error ? error.message : 'Unknown error'}
+        onRetry={() => refetch()}
+        is403={is403Error(error)}
+      />
+    );
+  }
+  if (!caseData) {
+    return (
+      <Box sx={{ p: 3, textAlign: 'center' }}>
+        <Typography variant="h6" sx={{ mb: 1 }}>
+          Case Not Found
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          The case you are looking for does not exist or you do not have access.
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<Iconify icon="solar:arrow-left-linear" width={18} />}
+          onClick={() => navigate(SYNAPSE_ROUTES.CASES)}
+        >
+          Back to Cases
+        </Button>
+      </Box>
+    );
+  }
 
   // Helper to get icon for confidence factor
   const getConfidenceFactorIcon = (icon: ConfidenceFactor['icon']) => {
@@ -295,7 +392,7 @@ export const CaseDetailPage = () => {
                   {caseData.title}
                 </Typography>
                 <SeverityBadge severity={caseData.severity} />
-                <StatusPill status={caseData.status} />
+                <StatusPill status={caseData.status as Status} />
               </Stack>
               <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ gap: 1 }}>
                 <Stack direction="row" spacing={0.5} alignItems="center">
@@ -410,15 +507,29 @@ export const CaseDetailPage = () => {
             </CardContent>
           </Card>
 
-              {/* FI Document Card */}
-              <Card>
+              {/* FI Document Card — deep-link to document detail */}
+              <Card
+                {...(fiDoc &&
+                  fiDoc.bukrs &&
+                  fiDoc.belnr &&
+                  fiDoc.gjahr && {
+                    component: Link,
+                    to: `${SYNAPSE_ROUTES.DOCUMENTS}/${fiDoc.bukrs}/${fiDoc.belnr}/${fiDoc.gjahr}`,
+                    sx: {
+                      textDecoration: 'none',
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.04) },
+                      transition: 'background-color 0.2s',
+                    },
+                  })}
+              >
                 <CardHeader
                   title={
                     <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
                       <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
                         FI Document
                       </Typography>
-                      <Chip label={fiDoc?.blart || 'KR'} size="small" variant="outlined" />
+                      <Chip label="KR" size="small" variant="outlined" />
                     </Stack>
                   }
                   sx={{ pb: 1, px: 2, pt: 2 }}
@@ -454,9 +565,30 @@ export const CaseDetailPage = () => {
                         <Typography variant="caption" color="text.secondary">
                           Vendor
                         </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {fiDoc?.counterpartyId || 'N/A'}
-                        </Typography>
+                        {(() => {
+                          const doc = evidence?.documentOrOpenItem as { partyId?: string | number; counterpartyId?: string } | undefined;
+                          const partyId = doc?.partyId != null ? String(doc.partyId) : null;
+                          return partyId ? (
+                            <Typography
+                              component={Link}
+                              to={`${SYNAPSE_ROUTES.ENTITIES}/${partyId}`}
+                              variant="body2"
+                              sx={{
+                                fontWeight: 500,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                color: 'primary.main',
+                                '&:hover': { textDecoration: 'underline' },
+                              }}
+                            >
+                              {doc?.counterpartyId || 'View Entity'}
+                            </Typography>
+                          ) : (
+                            <Typography variant="body2" sx={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {(fiDoc as { counterpartyId?: string })?.counterpartyId || 'N/A'}
+                            </Typography>
+                          );
+                        })()}
                       </Box>
                     </Box>
                     <Divider />
@@ -478,7 +610,7 @@ export const CaseDetailPage = () => {
                             }}
                           >
                             <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
-                              {item.hkont}
+                              {item.hkont ?? '—'}
                             </Typography>
                             <Typography
                               variant="caption"
@@ -488,7 +620,7 @@ export const CaseDetailPage = () => {
                               }}
                             >
                               {item.shkzg === 'S' ? '-' : '+'}
-                              {item.wrbtr.toLocaleString()}
+                              {(item.wrbtr ?? 0).toLocaleString()}
                             </Typography>
                           </Box>
                         ))}
@@ -503,13 +635,25 @@ export const CaseDetailPage = () => {
                 </CardContent>
               </Card>
 
-              {/* Open Items Summary */}
-              <Card>
+              {/* Open Items Summary — deep-link to open-items filtered by case */}
+              <Card
+                component={Link}
+                to={`${SYNAPSE_ROUTES.OPEN_ITEMS}?caseId=${caseData.id}`}
+                sx={{
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.04) },
+                  transition: 'background-color 0.2s',
+                }}
+              >
                 <CardHeader
                   title={
-                    <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-                      Related Open Items
-                    </Typography>
+                    <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
+                      <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+                        Related Open Items
+                      </Typography>
+                      <Iconify icon="solar:alt-arrow-right-bold-duotone" width={16} />
+                    </Stack>
                   }
                   sx={{ pb: 1, px: 2, pt: 2 }}
                 />
@@ -576,6 +720,12 @@ export const CaseDetailPage = () => {
                 value="analysis"
               />
               <Tab
+                icon={<Iconify icon="solar:play-circle-bold-duotone" width={18} />}
+                iconPosition="start"
+                label="Agent Stream"
+                value="agent-stream"
+              />
+              <Tab
                 icon={<Iconify icon="solar:graph-up-bold-duotone" width={18} />}
                 iconPosition="start"
                 label="Confidence"
@@ -597,6 +747,19 @@ export const CaseDetailPage = () => {
           </Box>
 
           <Box sx={{ flex: 1, overflow: 'auto' }}>
+            {centerTab === 'agent-stream' && id && (
+              <CaseAgentStreamPanel
+                caseId={id}
+                events={streamEvents}
+                streamingText={streamingText}
+                isThinking={isThinking}
+                isReconnecting={isReconnecting}
+                onStartAnalysis={handleStartAnalysis}
+                onRetry={handleRetryStream}
+                onCancel={cancel}
+              />
+            )}
+
             {centerTab === 'analysis' && (
               <Box sx={{ p: 2 }}>
                 <Stack spacing={2}>
@@ -647,7 +810,7 @@ export const CaseDetailPage = () => {
                     />
                     <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
                       <Typography variant="body2" sx={{ mb: 2, lineHeight: 1.75 }}>
-                        {caseData.description}
+                        {caseData.title}
                       </Typography>
                       <Divider sx={{ my: 1.5 }} />
                       <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1, display: 'block' }}>
@@ -748,13 +911,20 @@ export const CaseDetailPage = () => {
                               <Typography variant="body2" sx={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {c.title}
                               </Typography>
-                              <SeverityBadge severity={c.severity} size="sm" />
+                              {c.severity && (
+                                <SeverityBadge
+                                  severity={c.severity as 'critical' | 'high' | 'medium' | 'low'}
+                                  size="sm"
+                                />
+                              )}
                             </Stack>
                             <Typography variant="caption" color="text.secondary">
                               {c.caseNumber}
                             </Typography>
                             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-                              {c.counterparty} | {c.currency} {c.amount.toLocaleString()}
+                              {[c.counterparty, c.currency, c.amount != null ? c.amount.toLocaleString() : null]
+                                .filter(Boolean)
+                                .join(' | ') || '—'}
                             </Typography>
                           </Box>
                           <Box sx={{ textAlign: 'right', flexShrink: 0 }}>
@@ -765,7 +935,7 @@ export const CaseDetailPage = () => {
                               similar
                             </Typography>
                             <Box sx={{ mt: 0.5 }}>
-                              <StatusPill status={c.status} size="sm" />
+                              <StatusPill status={c.status as Status} size="sm" />
                             </Box>
                           </Box>
                         </Stack>
@@ -790,7 +960,7 @@ export const CaseDetailPage = () => {
                   Click on a policy to view the original document excerpt
                 </Typography>
                 <RagCitationList
-                  citations={mockRAGCitations}
+                  citations={ragCitations}
                   title=""
                   maxItems={0}
                   onOpenSource={(source) => {
@@ -846,15 +1016,24 @@ export const CaseDetailPage = () => {
             </Stack>
           </Box>
 
-          {/* Simulation Preview */}
+          {/* Simulation Diff (API 연동) */}
           {simulationMode && (
+            <CaseSimulationDiff
+              result={simulationResult}
+              isLoading={simulationLoading}
+              onRunSimulation={runSimulation}
+            />
+          )}
+
+          {/* Simulation Preview (mock fallback - API 미연동 시) */}
+          {simulationMode && !simulationResult && (
             <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
               <Stack spacing={1.5}>
                 <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
                   <Card>
                     <CardContent sx={{ p: 1.5 }}>
                       <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                        BEFORE
+                        BEFORE (mock)
                       </Typography>
                       <Stack spacing={0.5}>
                         <Stack direction="row" justifyContent="space-between">
@@ -862,7 +1041,7 @@ export const CaseDetailPage = () => {
                             Vendor Bal:
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            ${simulationResult.before.vendorBalance.toLocaleString()}
+                            ${mockSimulationResult.before.vendorBalance.toLocaleString()}
                           </Typography>
                         </Stack>
                         <Stack direction="row" justifyContent="space-between">
@@ -870,7 +1049,7 @@ export const CaseDetailPage = () => {
                             GL Balance:
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            ${simulationResult.before.glBalance.toLocaleString()}
+                            ${mockSimulationResult.before.glBalance.toLocaleString()}
                           </Typography>
                         </Stack>
                         <Stack direction="row" justifyContent="space-between">
@@ -878,7 +1057,7 @@ export const CaseDetailPage = () => {
                             Open Items:
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            {simulationResult.before.openItems}
+                            {mockSimulationResult.before.openItems}
                           </Typography>
                         </Stack>
                       </Stack>
@@ -895,7 +1074,7 @@ export const CaseDetailPage = () => {
                             Vendor Bal:
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'success.main' }}>
-                            ${simulationResult.after.vendorBalance.toLocaleString()}
+                            ${(displaySimulationAfter.vendorBalance ?? 0).toLocaleString()}
                           </Typography>
                         </Stack>
                         <Stack direction="row" justifyContent="space-between">
@@ -903,7 +1082,7 @@ export const CaseDetailPage = () => {
                             GL Balance:
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            ${simulationResult.after.glBalance.toLocaleString()}
+                            ${(displaySimulationAfter.glBalance ?? 0).toLocaleString()}
                           </Typography>
                         </Stack>
                         <Stack direction="row" justifyContent="space-between">
@@ -911,7 +1090,7 @@ export const CaseDetailPage = () => {
                             Open Items:
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            {simulationResult.after.openItems}
+                            {displaySimulationAfter.openItems ?? 0}
                           </Typography>
                         </Stack>
                       </Stack>
@@ -974,7 +1153,7 @@ export const CaseDetailPage = () => {
                 >
                   <Stack direction="row" spacing={1} alignItems="center">
                     <Iconify icon="solar:check-circle-bold-duotone" width={18} />
-                    <Typography variant="caption">{simulationResult.message}</Typography>
+                    <Typography variant="caption">{mockSimulationResult.message}</Typography>
                   </Stack>
                 </Box>
               </Stack>
@@ -1073,13 +1252,21 @@ export const CaseDetailPage = () => {
                                   {action.description}
                                 </Typography>
                               </Box>
-                              <StatusPill status={action.status} size="sm" />
+                              <StatusPill status={(action as { status: string }).status as Status} size="sm" />
                             </Stack>
                             <Stack direction="row" spacing={1} alignItems="center">
-                              <SeverityBadge severity={action.riskLevel} size="sm" showIcon={false} />
-                              <Typography variant="caption" color="text.secondary">
-                                {action.targetSystem}
-                              </Typography>
+                              {action.riskLevel && (
+                                <SeverityBadge
+                                  severity={action.riskLevel as 'critical' | 'high' | 'medium' | 'low'}
+                                  size="sm"
+                                  showIcon={false}
+                                />
+                              )}
+                              {action.targetSystem && (
+                                <Typography variant="caption" color="text.secondary">
+                                  {action.targetSystem}
+                                </Typography>
+                              )}
                             </Stack>
                           </Stack>
                         </CardContent>
@@ -1102,14 +1289,14 @@ export const CaseDetailPage = () => {
               <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
                 <Stack spacing={2}>
                   {[...caseComments.map((c) => ({ ...c, type: 'comment' as const })),
-                    ...caseAuditEvents.slice(0, 5).map((e) => ({
+                    ...(caseAuditEvents as AuditEvent[]).slice(0, 5).map((e) => ({
                       ...e,
                       type: 'event' as const,
                       author: e.actor,
                       content: e.description,
                       createdAt: e.timestamp,
                     }))]
-                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                    .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime())
                     .map((item, i) => (
                       <Stack key={i} direction="row" spacing={1.5}>
                         <Avatar
@@ -1140,7 +1327,7 @@ export const CaseDetailPage = () => {
                             <Chip label={item.type === 'event' ? 'System' : 'Comment'} size="small" variant="outlined" />
                           </Stack>
                           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                            {new Date(item.createdAt).toLocaleString()}
+                            {new Date(item.createdAt ?? '').toLocaleString()}
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
                             {item.content}
@@ -1173,6 +1360,22 @@ export const CaseDetailPage = () => {
           )}
         </Box>
       </Box>
+
+      {/* HITL Approval Drawer */}
+      <CaseHitlDrawer
+        open={hitlOpen}
+        onClose={() => {
+          setHitlOpen(false);
+          setHitlRequestId(null);
+        }}
+        requestId={hitlRequestId}
+        description={hitlDescription}
+        status={hitlStatus}
+        onApprove={handleHitlApprove}
+        onReject={handleHitlReject}
+        isApproving={isApproving}
+        isRejecting={isRejecting}
+      />
     </Box>
   );
 };

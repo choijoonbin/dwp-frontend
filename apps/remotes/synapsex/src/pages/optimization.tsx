@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useOpenItemsListQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -24,8 +25,8 @@ import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import TableContainer from '@mui/material/TableContainer';
 
+import { SYNAPSE_ROUTES } from '../routes';
 import { SeverityBadge } from '../components/finance/severity-badge';
-import { mockEntities, mockOpenItems, type OpenItem } from '../data/mock-data';
 
 // ----------------------------------------------------------------------
 
@@ -40,8 +41,9 @@ function formatMoney(amount: number, currency: string) {
 
 type Mode = 'ar' | 'ap';
 
-function recommendationFor(item: OpenItem): { label: string; action: 'remind' | 'review' | 'hold'; color: 'error' | 'warning' | 'info' | 'success' } {
-  // Very lightweight mock heuristic for UI.
+type OpenItemLike = { id: string; docNumber: string; entityId: string; entityName: string; amount: number; currency: string; daysPastDue: number };
+
+function recommendationFor(item: OpenItemLike): { label: string; action: 'remind' | 'review' | 'hold'; color: 'error' | 'warning' | 'info' | 'success' } {
   if (item.daysPastDue > 60) return { label: 'Escalate & propose dunning', action: 'remind', color: 'error' };
   if (item.daysPastDue > 30) return { label: 'Send reminder + confirm promise date', action: 'remind', color: 'warning' };
   if (item.amount > 500000) return { label: 'High-value review + approval required', action: 'review', color: 'info' };
@@ -56,13 +58,19 @@ export const OptimizationPage = () => {
   const [risk, setRisk] = useState<string>('all');
   const [bucket, setBucket] = useState<string>('all');
 
+  const { data: openItemsData, isLoading, error } = useOpenItemsListQuery({
+    limit: 500,
+    itemType: mode === 'ar' ? 'AR' : 'AP',
+  });
+  const openItems = openItemsData ?? [];
+
   const rows = useMemo(() => {
-    const filtered = mockOpenItems
+    const filtered = openItems
       .filter((i) => (mode === 'ar' ? i.type === 'AR' : i.type === 'AP'))
       .filter((i) => {
         if (!search) return true;
         const q = search.toLowerCase();
-        return i.docNumber.toLowerCase().includes(q) || i.entityId.toLowerCase().includes(q) || i.entityName.toLowerCase().includes(q);
+        return (i.docNumber ?? '').toLowerCase().includes(q) || (i.entityId ?? '').toLowerCase().includes(q) || (i.entityName ?? '').toLowerCase().includes(q);
       })
       .filter((i) => {
         if (bucket === 'all') return true;
@@ -82,7 +90,7 @@ export const OptimizationPage = () => {
       });
 
     return filtered;
-  }, [mode, search, risk, bucket]);
+  }, [openItems, mode, search, risk, bucket]);
 
   const totals = useMemo(() => {
     const sum = rows.reduce((acc, r) => acc + r.amount, 0);
@@ -91,7 +99,20 @@ export const OptimizationPage = () => {
     return { sum, overdue, highValue };
   }, [rows]);
 
-  const getEntityName = (id: string) => mockEntities.find((e) => e.id === id)?.name || id;
+  const getEntityName = (id: string, entityName?: string) => entityName || id;
+
+  if (error) {
+    return (
+      <Box sx={{ p: 3, textAlign: 'center' }}>
+        <Typography variant="h6" color="error" sx={{ mb: 1 }}>
+          Failed to load open items
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {error instanceof Error ? error.message : 'Unknown error'}
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: { xs: 2, sm: 3 } }}>
@@ -255,12 +276,29 @@ export const OptimizationPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.slice(0, 200).map((item) => {
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Loading open items...
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : rows.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        No items match the current filters.
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                rows.slice(0, 200).map((item) => {
                   const rec = recommendationFor(item);
                   return (
                     <TableRow key={item.id} hover>
                       <TableCell>
-                        <Link to={`/open-items?openItemId=${encodeURIComponent(item.id)}`} style={{ textDecoration: 'none' }}>
+                        <Link to={`${SYNAPSE_ROUTES.OPEN_ITEMS}?openItemId=${encodeURIComponent(item.id)}`} style={{ textDecoration: 'none' }}>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'primary.main', '&:hover': { textDecoration: 'underline' } }}>
                             {item.docNumber}
                           </Typography>
@@ -270,13 +308,13 @@ export const OptimizationPage = () => {
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
                           <Box>
                             <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                              {getEntityName(item.entityId)}
+                              {getEntityName(item.entityId, item.entityName)}
                             </Typography>
                             <Typography variant="caption" sx={{ color: 'text.secondary', fontFamily: 'monospace' }}>
                               {item.entityId}
                             </Typography>
                           </Box>
-                          <Link to={`/entities/${encodeURIComponent(item.entityId)}`} style={{ color: 'inherit' }}>
+                          <Link to={`${SYNAPSE_ROUTES.ENTITIES}/${encodeURIComponent(item.entityId)}`} style={{ color: 'inherit' }}>
                             <Iconify icon="solar:arrow-right-up-linear" width={16} sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' } }} />
                           </Link>
                         </Box>
@@ -316,15 +354,7 @@ export const OptimizationPage = () => {
                       </TableCell>
                     </TableRow>
                   );
-                })}
-                {rows.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
-                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        No items match the current filters.
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
+                })
                 )}
               </TableBody>
             </Table>

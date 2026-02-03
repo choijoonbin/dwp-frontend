@@ -146,6 +146,20 @@ export const getActionRecon = async (): Promise<ApiResponse<ActionReconDto>> => 
   return res.data;
 };
 
+/**
+ * 실패한 action 재시도 요청 (프론트는 버튼만, 실행은 backend)
+ * POST /api/synapse/action-recon/retry
+ */
+export const retryActionRecon = async (
+  actionId: string
+): Promise<ApiResponse<{ actionId: string; status: string }>> => {
+  const res = await axiosInstance.post<ApiResponse<{ actionId: string; status: string }>>(
+    '/api/synapse/action-recon/retry',
+    { actionId }
+  );
+  return res.data;
+};
+
 // ----------------------------------------------------------------------
 // Analytics API
 // ----------------------------------------------------------------------
