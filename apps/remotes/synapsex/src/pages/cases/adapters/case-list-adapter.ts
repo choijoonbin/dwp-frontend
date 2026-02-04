@@ -47,18 +47,18 @@ const mapStatus = (s: string): string => {
 };
 
 export const caseListDtoToUi = (dto: CaseListRowDto): CaseListItem => {
-  const docKey = dto.docKeys?.[0] ?? '';
+  const docKey = (dto.docKeys?.[0] as string | undefined) ?? '';
   const parts = docKey ? docKey.split('-') : ['', '', ''];
   const bukrs = parts[0] ?? '';
   const belnr = parts[1] ?? '';
-  const party = dto.partySummary;
+  const party = dto.partySummary as { nameDisplay?: string; partyCode?: string; partyId?: string | number } | undefined;
 
   return {
     id: String(dto.caseId),
     caseNumber: `CS-${dto.caseId}`,
-    title: dto.reasonTextShort ?? party?.nameDisplay ?? `Case ${dto.caseId}`,
-    severity: mapSeverity(dto.severity),
-    status: mapStatus(dto.status),
+    title: (dto.reasonTextShort as string | undefined) ?? party?.nameDisplay ?? `Case ${dto.caseId}`,
+    severity: mapSeverity((dto.severity as string | undefined) ?? ''),
+    status: mapStatus((dto.status as string | undefined) ?? ''),
     anomalyType: dto.caseType ?? '',
     companyCode: bukrs || '',
     counterparty: party?.nameDisplay ?? '',
@@ -73,6 +73,6 @@ export const caseListDtoToUi = (dto: CaseListRowDto): CaseListItem => {
     fiDocId: docKey,
     docNumber: belnr || '',
     docType: '',
-    description: dto.reasonTextShort ?? '',
+    description: (dto.reasonTextShort as string | undefined) ?? '',
   };
 };

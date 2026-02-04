@@ -30,7 +30,9 @@ export const useAnomaliesList = (
     size: pageSize,
   };
   if (params?.severity ?? filters.severity) apiParams.severity = params?.severity ?? filters.severity;
-  if (params?.anomalyType ?? filters.anomalyType) apiParams.anomalyType = params?.anomalyType ?? filters.anomalyType;
+  if (params?.type ?? params?.anomalyType ?? filters.anomalyType) {
+    apiParams.type = params?.type ?? params?.anomalyType ?? filters.anomalyType;
+  }
   if (params?.detectedFrom) apiParams.detectedFrom = params.detectedFrom;
   if (params?.detectedTo) apiParams.detectedTo = params.detectedTo;
 
@@ -94,6 +96,8 @@ export const useAnomaliesList = (
     };
   }, [query.data, filters.searchQuery, filters.companyCode, pageSize]);
 
+  const filtersApplied = query.data?.filtersApplied;
+
   return {
     items,
     isLoading: query.isLoading,
@@ -105,5 +109,6 @@ export const useAnomaliesList = (
     pageSize,
     kpi,
     companyCodes,
+    filtersApplied,
   };
 };

@@ -123,6 +123,7 @@ export function extractAccessTokenFromLoginResponse(data: LoginResponseData | nu
   const obj = data as Record<string, unknown>;
   if (typeof obj.accessToken === 'string') return obj.accessToken;
   if (typeof obj.token === 'string') return obj.token;
+  if (typeof obj.access_token === 'string') return obj.access_token;
   return null;
 }
 

@@ -82,9 +82,18 @@ export default defineConfig(({ mode }) => {
           find: /^@dwp-frontend\/shared-utils(.*)$/,
           replacement: path.resolve(__dirname, 'libs/shared-utils/src$1'),
         },
+        // Synapse remote (Host가 apps/dwp root에서 remotes/synapsex 로드)
+        {
+          find: '@synapse-app',
+          replacement: path.resolve(__dirname, 'apps/remotes/synapsex/src/synapse-app'),
+        },
       ],
     },
-    server: { port: PORT, host: true },
+    server: {
+      port: PORT,
+      host: true,
+      fs: { allow: [__dirname] },
+    },
     preview: { port: PORT, host: true },
   };
 });

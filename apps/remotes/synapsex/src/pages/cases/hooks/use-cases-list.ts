@@ -25,9 +25,19 @@ export const useCasesList = (
     page: page0,
     size: pageSize,
   };
-  if (params?.severity) apiParams.severity = params.severity;
+  if (params?.severity)
+    apiParams.severity = String(params.severity)
+      .split(',')
+      .map((s) => s.trim().toUpperCase())
+      .filter(Boolean)
+      .join(',');
   if (params?.status) apiParams.status = params.status;
   if (params?.caseType) apiParams.caseType = params.caseType;
+  if (params?.assignee) apiParams.assignee = params.assignee;
+  if (params?.assigneeUserId) apiParams.assigneeUserId = params.assigneeUserId;
+  if (params?.slaRisk) apiParams.slaRisk = params.slaRisk;
+  if (params?.ids) apiParams.ids = params.ids;
+  if (params?.caseKey) apiParams.caseKey = params.caseKey;
   if (params?.detectedFrom) apiParams.detectedFrom = params.detectedFrom;
   if (params?.detectedTo) apiParams.detectedTo = params.detectedTo;
 
@@ -37,7 +47,8 @@ export const useCasesList = (
     if (!query.data) {
       return { items: [], totalCount: 0, totalPages: 1 };
     }
-    const list = (query.data.items ?? []).map(caseListDtoToUi);
+    const rawItems = query.data.items ?? query.data.content ?? query.data.data ?? [];
+    const list = rawItems.map(caseListDtoToUi);
     let filtered = list;
     if (filters.searchQuery) {
       const q = filters.searchQuery.toLowerCase();
@@ -57,7 +68,7 @@ export const useCasesList = (
     if (filters.anomalyTypes?.length) {
       filtered = filtered.filter((c) => filters.anomalyTypes!.includes(c.anomalyType));
     }
-    const total = query.data.total ?? query.data.items?.length ?? 0;
+    const total = query.data.total ?? query.data.totalElements ?? rawItems.length;
     const totalPagesVal = query.data.totalPages ?? (Math.ceil(total / pageSize) || 1);
     return {
       items: filtered,
@@ -69,6 +80,8 @@ export const useCasesList = (
         : totalPagesVal,
     };
   }, [query.data, filters.searchQuery, filters.severities, filters.statuses, filters.anomalyTypes, pageSize]);
+
+  const filtersApplied = query.data?.filtersApplied;
 
   const paginatedItems = useMemo(() => {
     const hasClientFilter = filters.searchQuery || filters.severities?.length || filters.statuses?.length || filters.anomalyTypes?.length;
@@ -99,5 +112,6 @@ export const useCasesList = (
     page: page0 + 1,
     pageSize,
     triageBacklogCount,
+    filtersApplied,
   };
 };

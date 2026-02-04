@@ -4,8 +4,8 @@
 
 import type { SelectChangeEvent } from '@mui/material/Select';
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import { tableToCsv, is403Error, downloadCsv } from '@dwp-frontend/shared-utils';
 
@@ -88,13 +88,33 @@ const formatMoney = (amount: number, currency: string) =>
 
 // ----------------------------------------------------------------------
 
+/** URL type (DUPLICATE_INVOICE) → UI type (duplicate_invoice) */
+const urlTypeToUi = (v: string) => v.toLowerCase();
+
 export const AnomaliesPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlType = searchParams.get('type');
+  const urlSeverity = searchParams.get('severity');
+  const urlRange = searchParams.get('range');
+  const urlCompany = searchParams.get('company');
+
   const [q, setQ] = useState('');
   const [severity, setSeverity] = useState<string>('all');
   const [atype, setAtype] = useState<string>('all');
   const [bukrs, setBukrs] = useState<string>('all');
 
-  const { items: rows, kpi, isLoading, error, refetch, companyCodes } = useAnomaliesList({
+  useEffect(() => {
+    if (urlType) setAtype(urlTypeToUi(urlType));
+    if (urlSeverity) setSeverity(urlSeverity.toLowerCase());
+    if (urlCompany) setBukrs(urlCompany);
+  }, [urlType, urlSeverity, urlCompany]);
+
+  const apiType = urlType ?? (atype !== 'all' ? atype.toUpperCase().replace(/-/g, '_') : undefined);
+  const apiSeverity = severity !== 'all' ? severity : urlSeverity ?? undefined;
+
+  const { items: rows, kpi, isLoading, error, refetch, companyCodes, filtersApplied } = useAnomaliesList({
+    type: apiType,
+    severity: apiSeverity,
     filters: {
       searchQuery: q || undefined,
       severity: severity !== 'all' ? severity : undefined,
@@ -102,6 +122,13 @@ export const AnomaliesPage = () => {
       companyCode: bukrs !== 'all' ? bukrs : undefined,
     },
   });
+
+  const hasActiveFilters =
+    (filtersApplied && Object.keys(filtersApplied).length > 0) ||
+    severity !== 'all' ||
+    atype !== 'all' ||
+    bukrs !== 'all' ||
+    Boolean(urlType || urlRange);
 
   const sortedRows = [...rows].sort((a, b) => {
     const sevRank: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -180,6 +207,72 @@ export const AnomaliesPage = () => {
             </Button>
           </Stack>
         </Stack>
+
+        {hasActiveFilters && (
+          <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center">
+            <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
+              적용된 필터:
+            </Typography>
+            {(filtersApplied?.range ?? urlRange) && (
+              <Chip
+                size="small"
+                label={`기간: ${filtersApplied?.range ?? urlRange}`}
+                onDelete={() => {
+                  const next = new URLSearchParams(searchParams);
+                  next.delete('range');
+                  next.delete('from');
+                  next.delete('to');
+                  setSearchParams(next);
+                }}
+              />
+            )}
+            {((filtersApplied?.type as string[] | undefined) ?? (atype !== 'all' ? [anomalyTypeMeta[atype]?.label ?? atype] : [])).map(
+              (s) => (
+                <Chip
+                  key={`type-${s}`}
+                  size="small"
+                  label={`유형: ${s}`}
+                  onDelete={() => {
+                    setAtype('all');
+                    const next = new URLSearchParams(searchParams);
+                    next.delete('type');
+                    setSearchParams(next);
+                  }}
+                />
+              )
+            )}
+            {((filtersApplied?.severity as string[] | undefined) ?? (severity !== 'all' ? [severity] : [])).map(
+              (s) => (
+                <Chip
+                  key={`severity-${s}`}
+                  size="small"
+                  label={`심각도: ${s}`}
+                  onDelete={() => {
+                    setSeverity('all');
+                    const next = new URLSearchParams(searchParams);
+                    next.delete('severity');
+                    setSearchParams(next);
+                  }}
+                />
+              )
+            )}
+            {((filtersApplied?.company as string[] | undefined) ?? (bukrs !== 'all' ? [bukrs] : [])).map(
+              (c) => (
+                <Chip
+                  key={`company-${c}`}
+                  size="small"
+                  label={`회사: ${c}`}
+                  onDelete={() => {
+                    setBukrs('all');
+                    const next = new URLSearchParams(searchParams);
+                    next.delete('company');
+                    setSearchParams(next);
+                  }}
+                />
+              )
+            )}
+          </Stack>
+        )}
 
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -279,7 +372,14 @@ export const AnomaliesPage = () => {
                   fullWidth
                   size="small"
                   value={severity}
-                  onChange={(e: SelectChangeEvent) => setSeverity(e.target.value)}
+                  onChange={(e: SelectChangeEvent) => {
+                    const v = e.target.value;
+                    setSeverity(v);
+                    const next = new URLSearchParams(searchParams);
+                    if (v !== 'all') next.set('severity', v);
+                    else next.delete('severity');
+                    setSearchParams(next);
+                  }}
                   displayEmpty
                 >
                   <MenuItem value="all">All severities</MenuItem>
@@ -294,7 +394,14 @@ export const AnomaliesPage = () => {
                   fullWidth
                   size="small"
                   value={atype}
-                  onChange={(e: SelectChangeEvent) => setAtype(e.target.value)}
+                  onChange={(e: SelectChangeEvent) => {
+                    const v = e.target.value;
+                    setAtype(v);
+                    const next = new URLSearchParams(searchParams);
+                    if (v !== 'all') next.set('type', v.toUpperCase().replace(/-/g, '_'));
+                    else next.delete('type');
+                    setSearchParams(next);
+                  }}
                   displayEmpty
                 >
                   <MenuItem value="all">All types</MenuItem>
@@ -310,7 +417,14 @@ export const AnomaliesPage = () => {
                   fullWidth
                   size="small"
                   value={bukrs}
-                  onChange={(e: SelectChangeEvent) => setBukrs(e.target.value)}
+                  onChange={(e: SelectChangeEvent) => {
+                    const v = e.target.value;
+                    setBukrs(v);
+                    const next = new URLSearchParams(searchParams);
+                    if (v !== 'all') next.set('company', v);
+                    else next.delete('company');
+                    setSearchParams(next);
+                  }}
                   displayEmpty
                 >
                   <MenuItem value="all">All companies</MenuItem>

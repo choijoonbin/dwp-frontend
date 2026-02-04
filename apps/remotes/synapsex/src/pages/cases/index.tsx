@@ -4,7 +4,7 @@
 
 import type { MouseEvent } from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMemo, useState, useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { tableToCsv, is403Error, downloadCsv } from '@dwp-frontend/shared-utils';
@@ -84,11 +84,31 @@ const uiStatusToApi: Record<string, string> = {
   dismissed: 'DISMISSED',
 };
 
+/** URL status (OPEN 등) → UI status (open 등) */
+const urlStatusToUi: Record<string, string> = {
+  OPEN: 'open',
+  TRIAGE: 'triage',
+  TRIAGED: 'triage',
+  IN_PROGRESS: 'in_progress',
+  PENDING_APPROVAL: 'pending_approval',
+  RESOLVED: 'resolved',
+  DISMISSED: 'dismissed',
+};
+
 // ----------------------------------------------------------------------
 
 export const CasesPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlStatus = searchParams.get('status');
+  const urlCaseType = searchParams.get('caseType');
+  const urlSeverity = searchParams.get('severity');
+  const urlAssignee = searchParams.get('assignee');
+  const urlAssigneeUserId = searchParams.get('assigneeUserId');
+  const urlSlaRisk = searchParams.get('slaRisk');
+  const urlIds = searchParams.get('ids');
+  const urlCaseKey = searchParams.get('caseKey');
 
   type SavedView = { id: string; name: string; filters: Record<string, unknown>; isDefault?: boolean };
   const defaultView: SavedView = { id: 'all', name: 'All Cases', filters: {}, isDefault: true };
@@ -125,10 +145,33 @@ export const CasesPage = () => {
     }
   }, [currentView]);
 
-  const apiStatus = selectedStatuses[0]
-    ? uiStatusToApi[selectedStatuses[0]] ?? selectedStatuses[0]
-    : undefined;
-  const apiSeverity = selectedSeverities[0];
+  useEffect(() => {
+    if (urlStatus) {
+      const parts = urlStatus.split(',').map((s) => s.trim());
+      const uiStatuses = parts
+        .map((s) => urlStatusToUi[s.toUpperCase()] ?? s.toLowerCase())
+        .filter(Boolean);
+      if (uiStatuses.length) setSelectedStatuses(uiStatuses);
+    }
+    if (urlCaseType) {
+      const normalized = urlCaseType.toLowerCase().replace(/\s/g, '_');
+      setSelectedAnomalyTypes([normalized]);
+    }
+    if (urlSeverity) {
+      const parts = urlSeverity.split(',').map((s) => s.trim().toLowerCase());
+      if (parts.length) setSelectedSeverities(parts);
+    }
+  }, [urlStatus, urlCaseType, urlSeverity]);
+
+  const apiStatus =
+    selectedStatuses.length > 0
+      ? selectedStatuses
+          .map((s) => uiStatusToApi[s] ?? s)
+          .filter(Boolean)
+          .join(',') || undefined
+      : undefined;
+  const apiSeverity =
+    selectedSeverities.length > 0 ? selectedSeverities.join(',') : undefined;
   const apiCaseType = selectedAnomalyTypes[0];
 
   const {
@@ -139,12 +182,18 @@ export const CasesPage = () => {
     totalCount,
     totalPages,
     triageBacklogCount,
+    filtersApplied,
   } = useCasesList({
     page: page - 1,
     size: pageSize,
     status: apiStatus,
     severity: apiSeverity,
     caseType: apiCaseType,
+    assignee: urlAssignee ?? undefined,
+    assigneeUserId: urlAssigneeUserId ?? undefined,
+    slaRisk: urlSlaRisk ?? undefined,
+    ids: urlIds ? urlIds.split(',').map((s) => s.trim()).filter(Boolean) : undefined,
+    caseKey: urlCaseKey ?? undefined,
     filters: {
       searchQuery,
       severities: selectedSeverities,
@@ -360,6 +409,88 @@ export const CasesPage = () => {
           </MenuItem>
         </Menu>
       </Box>
+
+      {((filtersApplied && Object.keys(filtersApplied).length > 0) || hasActiveFilters || urlCaseKey || urlIds) && (
+        <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center" sx={{ mb: 2 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
+            적용된 필터:
+          </Typography>
+          {filtersApplied?.range && (
+            <Chip
+              size="small"
+              label={`기간: ${filtersApplied.range}`}
+              onDelete={() => {
+                const next = new URLSearchParams(searchParams);
+                next.delete('range');
+                next.delete('from');
+                next.delete('to');
+                setSearchParams(next);
+              }}
+            />
+          )}
+          {((filtersApplied?.status as string[] | undefined) ?? (selectedStatuses.length ? selectedStatuses : [])).map(
+            (s) => (
+              <Chip
+                key={`status-${s}`}
+                size="small"
+                label={`상태: ${s}`}
+                onDelete={() => {
+                  setSelectedStatuses((prev) => prev.filter((x) => x !== s));
+                  const next = new URLSearchParams(searchParams);
+                  const uiKey = urlStatusToUi[s.toUpperCase()] ?? s.toLowerCase();
+                  const current = next
+                    .get('status')
+                    ?.split(',')
+                    .map((x) => x.trim())
+                    .filter((x) => urlStatusToUi[x.toUpperCase()] !== uiKey && x.toLowerCase() !== s) ?? [];
+                  if (current.length) next.set('status', current.join(','));
+                  else next.delete('status');
+                  setSearchParams(next);
+                }}
+              />
+            )
+          )}
+          {((filtersApplied?.severity as string[] | undefined) ?? (selectedSeverities.length ? selectedSeverities : [])).map(
+            (s) => (
+              <Chip
+                key={`severity-${s}`}
+                size="small"
+                label={`심각도: ${s}`}
+                onDelete={() => {
+                  const newSevs = selectedSeverities.filter((x) => x !== s);
+                  setSelectedSeverities(newSevs);
+                  const next = new URLSearchParams(searchParams);
+                  if (newSevs.length) next.set('severity', newSevs.join(','));
+                  else next.delete('severity');
+                  setSearchParams(next);
+                }}
+              />
+            )
+          )}
+          {urlCaseKey && (
+            <Chip
+              size="small"
+              label={`케이스: ${urlCaseKey}`}
+              onDelete={() => {
+                const next = new URLSearchParams(searchParams);
+                next.delete('caseKey');
+                setSearchParams(next);
+              }}
+            />
+          )}
+          {urlIds && (
+            <Chip
+              size="small"
+              label={`IDs: ${urlIds.split(',').length}건`}
+              onDelete={() => {
+                const next = new URLSearchParams(searchParams);
+                next.delete('ids');
+                setSearchParams(next);
+              }}
+            />
+          )}
+        </Stack>
+      )}
 
       <Card sx={{ mb: 3 }}>
         <CardContent>

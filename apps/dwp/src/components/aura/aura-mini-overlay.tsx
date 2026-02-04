@@ -28,9 +28,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { usePageContext } from 'src/hooks/use-page-context';
 
-import { CheckpointApproval } from './checkpoint-approval';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
+
+import { CheckpointApproval } from './checkpoint-approval';
 
 // ----------------------------------------------------------------------
 

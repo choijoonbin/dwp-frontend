@@ -75,7 +75,7 @@ const ACTIONS_RESOURCE = getResourceKeyForPath('actions') ?? 'menu.autonomous-op
 
 export const ActionsPage = () => {
   const theme = useTheme();
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const {
     items: filteredActions,
@@ -83,11 +83,17 @@ export const ActionsPage = () => {
     error,
     refetch,
     caseIdFilter,
+    assigneeFilter,
+    statusFilter,
+    actionStatusFilter,
+    requiresApprovalFilter,
+    focusActionId,
     linkedCase,
     pendingCount,
     approvedCount,
     executedCount,
     casesForDropdown,
+    filtersApplied,
   } = useActionsList();
 
   const createMutation = useCreateActionMutation();
@@ -97,7 +103,15 @@ export const ActionsPage = () => {
   const rejectMutation = useRejectActionMutation();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['pending']);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(() => {
+    const s = (statusFilter ?? actionStatusFilter ?? '').toUpperCase();
+    if (s === 'PENDING_APPROVAL' || s === 'PENDING') return ['pending'];
+    if (s === 'APPROVED') return ['approved'];
+    if (s === 'REJECTED') return ['rejected'];
+    if (s === 'EXECUTED' || s === 'COMPLETED') return ['executed'];
+    if (s === 'FAILED') return ['failed'];
+    return ['pending'];
+  });
   const [selectedRiskLevels, setSelectedRiskLevels] = useState<string[]>([]);
   const [selectedActionTypes, setSelectedActionTypes] = useState<string[]>([]);
   const [selectedAction, setSelectedAction] = useState<ActionListItem | null>(null);
@@ -123,6 +137,16 @@ export const ActionsPage = () => {
   useEffect(() => {
     if (caseIdFilter) setSelectedStatuses([]);
   }, [caseIdFilter]);
+
+  useEffect(() => {
+    if (focusActionId && filteredActions.length > 0) {
+      const action = filteredActions.find((a) => a.id === focusActionId);
+      if (action) {
+        setSelectedAction(action);
+        setSheetOpen(true);
+      }
+    }
+  }, [focusActionId, filteredActions]);
 
   const displayActions = filteredActions.filter((a) => {
     if (searchQuery) {
@@ -164,7 +188,7 @@ export const ActionsPage = () => {
 
   const handleCreateAction = (form: CreateActionForm) => {
     createMutation.mutate({
-      caseId: form.caseId,
+      caseId: String(form.caseId),
       actionType: form.actionType,
       payload: form.payload,
     });
@@ -242,6 +266,16 @@ export const ActionsPage = () => {
 
   const handleClearCaseFilter = () => setSearchParams({});
 
+  const hasActiveFilters =
+    Boolean(caseIdFilter) ||
+    Boolean(statusFilter) ||
+    Boolean(actionStatusFilter) ||
+    Boolean(requiresApprovalFilter) ||
+    Boolean(assigneeFilter) ||
+    Boolean(focusActionId) ||
+    Boolean(searchParams.get('range')) ||
+    Boolean(filtersApplied && Object.keys(filtersApplied).length > 0);
+
   if (error) {
     return (
       <ErrorStateWithRetry
@@ -297,6 +331,85 @@ export const ActionsPage = () => {
           </Stack>
         </Box>
       </Box>
+
+      {hasActiveFilters && (
+        <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center" sx={{ mb: 2 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
+            적용된 필터:
+          </Typography>
+          {(filtersApplied?.range ?? searchParams.get('range')) && (
+            <Chip
+              size="small"
+              label={`기간: ${filtersApplied?.range ?? searchParams.get('range')}`}
+              onDelete={() => {
+                const next = new URLSearchParams(searchParams);
+                next.delete('range');
+                next.delete('from');
+                next.delete('to');
+                setSearchParams(next);
+              }}
+            />
+          )}
+          {(
+            (filtersApplied?.status as string[] | undefined) ??
+            (filtersApplied?.actionStatus as string[] | undefined) ??
+            (statusFilter ? [statusFilter] : actionStatusFilter ? [actionStatusFilter] : [])
+          ).map((s) => (
+            <Chip
+              key={`status-${s}`}
+              size="small"
+              label={`상태: ${s}`}
+              onDelete={() => {
+                const next = new URLSearchParams(searchParams);
+                next.delete('status');
+                next.delete('actionStatus');
+                setSearchParams(next);
+              }}
+            />
+          ))}
+          {requiresApprovalFilter && (
+            <Chip
+              size="small"
+              label="승인 필요"
+              onDelete={() => {
+                const next = new URLSearchParams(searchParams);
+                next.delete('requiresApproval');
+                setSearchParams(next);
+              }}
+            />
+          )}
+          {(assigneeFilter ?? (filtersApplied?.assignee as string | undefined)) && (
+            <Chip
+              size="small"
+              label={`담당자: ${assigneeFilter ?? (filtersApplied?.assignee as string)}`}
+              onDelete={() => {
+                const next = new URLSearchParams(searchParams);
+                next.delete('assignee');
+                setSearchParams(next);
+                window.location.reload();
+              }}
+            />
+          )}
+          {caseIdFilter && (
+            <Chip
+              size="small"
+              label={`케이스: ${linkedCase?.caseNumber ?? caseIdFilter}`}
+              onDelete={handleClearCaseFilter}
+            />
+          )}
+          {focusActionId && (
+            <Chip
+              size="small"
+              label={`포커스: ${focusActionId}`}
+              onDelete={() => {
+                const next = new URLSearchParams(searchParams);
+                next.delete('focus');
+                setSearchParams(next);
+              }}
+            />
+          )}
+        </Stack>
+      )}
 
       {selectedPendingCount > 0 && (
         <Card sx={{ mb: 3, bgcolor: 'primary.lighter', border: '1px solid', borderColor: 'primary.light' }}>
@@ -802,7 +915,7 @@ export const ActionsPage = () => {
           availableCaseIds={casesForDropdown.map((c) => ({
             id: String(c.caseId),
             caseNumber: `CS-${c.caseId}`,
-            caseIdNum: c.caseId,
+            caseIdNum: Number(c.caseId) || undefined,
           }))}
         />
       </Dialog>

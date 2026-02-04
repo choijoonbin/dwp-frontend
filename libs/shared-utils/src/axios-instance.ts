@@ -3,6 +3,7 @@
 import { NX_API_URL } from './env';
 import { HttpError } from './http-error';
 import { getTenantId } from './tenant-util';
+import { getUserId } from './auth/user-id-storage';
 import { getAccessToken } from './auth/token-storage';
 import { reportDevErrorToReporter } from './dev-error-reporter';
 
@@ -93,6 +94,24 @@ export const setUnauthorizedHandler = (handler: UnauthorizedHandler | null) => {
   onUnauthorizedHandler = handler;
 };
 
+function buildHeaders(extra?: Record<string, string>): Record<string, string> {
+  const token = getAccessToken();
+  const tenantId = getTenantId();
+  const userId = getUserId();
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'X-Tenant-ID': tenantId,
+    ...(extra ?? {}),
+  };
+
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (userId) headers['X-User-ID'] = userId;
+  if (currentAgentId) headers['X-Agent-ID'] = currentAgentId;
+
+  return headers;
+}
+
 /**
  * Handle 401/403 errors globally
  * - 401: Calls onUnauthorizedHandler (logout + redirect)
@@ -133,22 +152,8 @@ const handleAuthError = (status: number): void => {
  */
 export const axiosInstance = {
   get: async <T>(url: string, config: AxiosLikeConfig = {}): Promise<AxiosLikeResponse<T>> => {
-    const token = getAccessToken();
     const tenantId = getTenantId();
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'X-Tenant-ID': tenantId,
-      ...(config.headers ?? {}),
-    };
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    if (currentAgentId) {
-      headers['X-Agent-ID'] = currentAgentId;
-    }
+    const headers = buildHeaders(config.headers);
 
     const res = await fetch(`${baseURL}${url}`, {
       method: 'GET',
@@ -220,22 +225,8 @@ export const axiosInstance = {
     body: B,
     config: AxiosLikeConfig = {}
   ): Promise<AxiosLikeResponse<T>> => {
-    const token = getAccessToken();
     const tenantId = getTenantId();
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'X-Tenant-ID': tenantId,
-      ...(config.headers ?? {}),
-    };
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    if (currentAgentId) {
-      headers['X-Agent-ID'] = currentAgentId;
-    }
+    const headers = buildHeaders(config.headers);
 
     const res = await fetch(`${baseURL}${url}`, {
       method: 'PUT',
@@ -288,22 +279,8 @@ export const axiosInstance = {
     return { data };
   },
   delete: async <T>(url: string, config: AxiosLikeConfig = {}): Promise<AxiosLikeResponse<T>> => {
-    const token = getAccessToken();
     const tenantId = getTenantId();
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'X-Tenant-ID': tenantId,
-      ...(config.headers ?? {}),
-    };
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    if (currentAgentId) {
-      headers['X-Agent-ID'] = currentAgentId;
-    }
+    const headers = buildHeaders(config.headers);
 
     const res = await fetch(`${baseURL}${url}`, {
       method: 'DELETE',

@@ -2,8 +2,8 @@ import type { RouteObject } from 'react-router';
 
 import { lazy, Suspense } from 'react';
 import { varAlpha } from '@dwp-frontend/design-system';
-import { Outlet, Navigate, useParams, useLocation } from 'react-router-dom';
-import { AuthGuard, useMenuTreePathnames } from '@dwp-frontend/shared-utils';
+import { AuthGuard } from '@dwp-frontend/shared-utils';
+import { Outlet, Navigate, useParams } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
@@ -44,21 +44,10 @@ const DefaultLanding = () => {
 };
 
 /**
- * pathname이 메뉴 트리 API에 등록된 경로이거나 /synapse/* 이면 Synapse, 아니면 404.
- * 동적으로 등록된 URL만 사용 (Tree API GET /api/auth/menus/tree 기준).
+ * dashboard, mail, admin 등 명시 라우트에 매칭되지 않은 경로 → Synapse 앱으로 디스패치.
+ * 메뉴 트리 로딩 전에도 /synapse/*, /menu.*, /cases 등 Synapse 경로는 정상 표시.
  */
-const PathnameDispatcher = () => {
-  const { pathname } = useLocation();
-  const menuPathnames = useMenuTreePathnames();
-  const isSynapse =
-    menuPathnames.has(pathname) ||
-    pathname === '/synapse' ||
-    pathname === '/synapse/' ||
-    pathname.startsWith('/synapse/');
-
-  if (isSynapse) return <SynapsePage />;
-  return <Page404 />;
-};
+const PathnameDispatcher = () => <SynapsePage />;
 
 const renderFallback = () => (
   <Box

@@ -23,21 +23,25 @@ export type AnomalyListItem = {
   companyCode: string;
 };
 
-export const anomalyListDtoToUi = (dto: AnomalyListRowDto): AnomalyListItem => ({
-  id: String(dto.anomalyId),
-  anomalyType: dto.anomalyType ?? '',
-  severity: (dto.severity ?? 'medium').toLowerCase(),
-  score: dto.score ?? 0,
-  detectedAt: dto.detectedAt ?? '',
-  docKey: dto.docKey,
-  partyId: dto.partyId,
-  caseNumber: `CS-${dto.anomalyId}`,
-  counterparty: '',
-  docNumber: dto.docKey ?? '',
-  amount: 0,
-  currency: 'USD',
-  confidence: dto.score ?? 0,
-  slaDue: dto.detectedAt ?? '',
-  assignee: null,
-  companyCode: '',
-});
+export const anomalyListDtoToUi = (dto: AnomalyListRowDto): AnomalyListItem => {
+  const score = Number(dto.score ?? 0);
+  const docKey = dto.docKey as string | undefined;
+  return {
+    id: String(dto.anomalyId),
+    anomalyType: String(dto.anomalyType ?? ''),
+    severity: String(dto.severity ?? 'medium').toLowerCase(),
+    score,
+    detectedAt: String(dto.detectedAt ?? ''),
+    docKey,
+    partyId: dto.partyId as number | undefined,
+    caseNumber: `CS-${dto.anomalyId}`,
+    counterparty: '',
+    docNumber: docKey ?? '',
+    amount: 0,
+    currency: 'USD',
+    confidence: score,
+    slaDue: String(dto.detectedAt ?? ''),
+    assignee: null,
+    companyCode: '',
+  };
+};

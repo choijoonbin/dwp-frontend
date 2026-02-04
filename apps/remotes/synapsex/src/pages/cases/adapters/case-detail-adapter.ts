@@ -42,7 +42,7 @@ const mapStatus = (s: string): string => {
 };
 
 export const caseDetailDtoToUi = (caseId: string, dto: CaseDetailDto | null): CaseDetailUi => {
-  const reasonText = dto?.reasoning?.reasonText ?? '';
+  const reasonText = (dto?.reasoning?.reasonText as string | undefined) ?? '';
   const evidence = dto?.evidence;
   const docOrItem = evidence?.documentOrOpenItem as Record<string, unknown> | undefined;
   const bukrs = (docOrItem?.bukrs as string) ?? '';

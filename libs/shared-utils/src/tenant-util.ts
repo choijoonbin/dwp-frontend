@@ -35,3 +35,9 @@ export const setTenantIdOverride = (id: string | null): void => {
  * - Subdomain 기반 tenant ID 추출
  */
 export const getTenantId = (): string => tenantIdOverride ?? '1';
+
+/**
+ * 대시보드 API용 Tenant ID (UI에서 선택된 tenant 없으면 임시 200000)
+ * @remarks Synapse/Aura: tenant_id 필터링 시 숫자형만 지원. "tenant1" 등 비숫자 → null (ingest 스킵)
+ */
+export const getDashboardTenantId = (): string => tenantIdOverride ?? '200000';

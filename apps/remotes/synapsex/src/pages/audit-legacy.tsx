@@ -181,27 +181,57 @@ export const AuditPage = () => {
   const category = searchParams.get('category') ?? undefined;
   const eventTypeParam = searchParams.get('type') ?? undefined;
   const resourceType = searchParams.get('resourceType') ?? undefined;
+  const resourceId = searchParams.get('resourceId') ?? undefined;
   const outcome = searchParams.get('outcome') ?? undefined;
   const severity = searchParams.get('severity') ?? undefined;
   const actor = searchParams.get('actor') ?? undefined;
   const qParam = searchParams.get('q') ?? undefined;
+  const fromParam = searchParams.get('from') ?? undefined;
+  const toParam = searchParams.get('to') ?? undefined;
+  const sortParam = searchParams.get('sort') ?? undefined;
 
   const apiParams = useMemo(
     () =>
-      category || eventTypeParam || resourceType || outcome || severity || actor || qParam
+      category ||
+      eventTypeParam ||
+      resourceType ||
+      resourceId ||
+      outcome ||
+      severity ||
+      actor ||
+      qParam ||
+      fromParam ||
+      toParam ||
+      sortParam
         ? {
             category,
             type: eventTypeParam,
             resourceType,
+            resourceId,
             outcome,
             severity,
             actor,
             q: qParam,
+            from: fromParam,
+            to: toParam,
+            sort: sortParam,
             page: 0,
             size: 100,
           }
         : undefined,
-    [category, eventTypeParam, resourceType, outcome, severity, actor, qParam]
+    [
+      category,
+      eventTypeParam,
+      resourceType,
+      resourceId,
+      outcome,
+      severity,
+      actor,
+      qParam,
+      fromParam,
+      toParam,
+      sortParam,
+    ]
   );
 
   const { data: apiAuditData } = useSynapseAuditEventsQuery(apiParams ?? undefined, {

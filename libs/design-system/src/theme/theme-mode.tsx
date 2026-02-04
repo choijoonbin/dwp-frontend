@@ -19,19 +19,16 @@ function setDomColorScheme(mode: ThemeMode) {
   document.documentElement.setAttribute(COLOR_SCHEME_ATTR, mode);
 }
 
+/** 기본값: light 모드 (프로젝트 정책) */
+const DEFAULT_MODE: ThemeMode = 'light';
+
 function getInitialMode(): ThemeMode {
-  if (typeof window === 'undefined') return 'light';
+  if (typeof window === 'undefined') return DEFAULT_MODE;
 
-  // 기존에 dark 모드가 저장되어 있어도 light로 리셋
   const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === 'dark') {
-    window.localStorage.setItem(STORAGE_KEY, 'light');
-    return 'light';
-  }
+  if (stored === 'light' || stored === 'dark') return stored;
 
-  if (stored === 'light') return stored;
-
-  return 'light';
+  return DEFAULT_MODE;
 }
 
 export function ThemeModeProvider({ children }: { children: React.ReactNode }) {

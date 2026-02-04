@@ -1,61 +1,27 @@
 /**
- * Synapse Phase 2 — Operational APIs
- * /cases, /anomalies, /actions, /archive
- * @see docs/api-spec/synapse-spec/PHASE2_OPERATIONAL_APIS_result.md
+ * Synapse Phase 2 — Operations APIs
+ * cases, anomalies, actions, archive
+ * @see apps/remotes/synapsex/docs/20260202/[전달용]SCREEN_TO_ENDPOINT_MATRIX.md
  */
 
 import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
-import type { PageResponse } from '../admin/types';
 
 // ----------------------------------------------------------------------
-// Types — Cases
+// Cases Types
 // ----------------------------------------------------------------------
-
-export type CaseListRowDto = {
-  caseId: number;
-  detectedAt: string;
-  caseType: string;
-  severity: string;
-  score: number;
-  status: string;
-  docKeys?: string[];
-  partySummary?: { partyId: number; partyCode: string; nameDisplay: string };
-  reasonTextShort?: string;
-  relatedActionsCount?: number;
-};
-
-export type CaseDetailEvidence = {
-  documentOrOpenItem?: unknown;
-  reversalChainSummary?: unknown;
-  relatedPartyIds?: number[];
-};
-
-export type CaseDetailReasoning = {
-  score?: number;
-  reasonText?: string;
-  evidenceJson?: unknown;
-  ragRefsJson?: unknown;
-  confidenceBreakdown?: unknown;
-};
-
-export type CaseDetailAction = {
-  availableActionTypes?: string[];
-  actions?: unknown[];
-  lineageLinkParams?: Record<string, string>;
-};
-
-export type CaseDetailDto = {
-  evidence?: CaseDetailEvidence;
-  reasoning?: CaseDetailReasoning;
-  action?: CaseDetailAction;
-};
 
 export type CasesListParams = {
   status?: string;
   severity?: string;
   caseType?: string;
+  driverType?: string;
+  assignee?: string;
+  assigneeUserId?: string;
+  slaRisk?: string;
+  ids?: string | string[];
+  caseKey?: string;
   detectedFrom?: string;
   detectedTo?: string;
   bukrs?: string;
@@ -68,92 +34,187 @@ export type CasesListParams = {
   sort?: string;
 };
 
-// ----------------------------------------------------------------------
-// Types — Anomalies
-// ----------------------------------------------------------------------
-
-export type AnomalyListRowDto = {
-  anomalyId: number;
-  anomalyType: string;
-  severity: string;
-  score: number;
-  detectedAt: string;
-  topEvidenceFields?: Record<string, unknown>;
-  docKey?: string;
-  partyId?: number;
+export type PartySummary = {
+  nameDisplay?: string;
+  partyCode?: string;
+  partyId?: string | number;
+  [key: string]: unknown;
 };
+
+export type CaseListRowDto = {
+  caseId: string;
+  status: string;
+  severity?: string;
+  caseType?: string;
+  detectedAt?: string;
+  reasonTextShort?: string;
+  docKeys?: string[];
+  partySummary?: PartySummary;
+  score?: number;
+  [key: string]: unknown;
+};
+
+export type FiltersApplied = {
+  range?: string;
+  status?: string[];
+  severity?: string[];
+  company?: string[];
+  type?: string[];
+  anomalyType?: string[];
+  assignee?: string;
+  caseId?: string;
+  [key: string]: unknown;
+};
+
+export type CaseListResponse = {
+  items?: CaseListRowDto[];
+  content?: CaseListRowDto[];
+  data?: CaseListRowDto[];
+  total?: number;
+  totalElements?: number;
+  page?: number;
+  number?: number;
+  size?: number;
+  totalPages?: number;
+  pageInfo?: { page?: number; size?: number; hasNext?: boolean };
+  filtersApplied?: FiltersApplied;
+};
+
+export type CaseDetailEvidence = {
+  documentOrOpenItem?: Record<string, unknown>;
+  reasonText?: string;
+  [key: string]: unknown;
+};
+
+export type CaseDetailReasoning = {
+  score?: number;
+  reasonText?: string;
+  [key: string]: unknown;
+};
+
+export type CaseDetailAction = {
+  actions?: Array<{
+    actionId?: string;
+    id?: string;
+    actionType?: string;
+    description?: string;
+    status?: string;
+    riskLevel?: string;
+    targetSystem?: string;
+    [key: string]: unknown;
+  }>;
+  [key: string]: unknown;
+};
+
+export type CaseDetailDto = {
+  caseId: string;
+  status: string;
+  severity?: string;
+  caseType?: string;
+  detectedAt?: string;
+  evidence?: CaseDetailEvidence;
+  reasoning?: CaseDetailReasoning;
+  action?: CaseDetailAction;
+  [key: string]: unknown;
+};
+
+// ----------------------------------------------------------------------
+// Anomalies Types
+// ----------------------------------------------------------------------
 
 export type AnomaliesListParams = {
   severity?: string;
   anomalyType?: string;
+  /** URL drill-down param (alias for anomalyType, e.g. DUPLICATE_INVOICE) */
+  type?: string;
   detectedFrom?: string;
   detectedTo?: string;
   page?: number;
   size?: number;
-  /** sort=필드명,asc | sort=필드명,desc (예: detectedAt,desc) */
-  sort?: string;
+};
+
+export type AnomalyRowDto = {
+  anomalyId: string;
+  severity?: string;
+  anomalyType?: string;
+  detectedAt?: string;
+  score?: number;
+  docKey?: string;
+  partyId?: number;
+  [key: string]: unknown;
+};
+
+/** Alias for list row compatibility */
+export type AnomalyListRowDto = AnomalyRowDto;
+
+export type AnomaliesListResponse = {
+  items?: AnomalyRowDto[];
+  content?: AnomalyRowDto[];
+  total?: number;
+  totalElements?: number;
+  page?: number;
+  size?: number;
+  totalPages?: number;
+  filtersApplied?: FiltersApplied;
 };
 
 // ----------------------------------------------------------------------
-// Types — Actions
+// Actions Types
 // ----------------------------------------------------------------------
-
-export type ActionListRowDto = {
-  actionId: number;
-  caseId: number;
-  actionType: string;
-  status: string;
-  createdAt: string;
-  executedAt?: string;
-  outcome?: string;
-  failureReason?: string;
-};
-
-export type ActionDetailDto = {
-  actionId: number;
-  caseId: number;
-  actionType: string;
-  status: string;
-  payload?: Record<string, unknown>;
-  simulationBefore?: unknown;
-  simulationAfter?: unknown;
-  diffJson?: unknown;
-  createdAt: string;
-};
-
-export type CreateActionBody = {
-  caseId: number;
-  actionType: string;
-  payload?: Record<string, unknown>;
-};
 
 export type ActionsListParams = {
   status?: string;
+  /** 표준: PENDING | APPROVED | REJECTED | EXECUTED | FAILED */
+  actionStatus?: string;
+  requiresApproval?: boolean;
   type?: string;
-  caseId?: number;
+  caseId?: string;
+  assignee?: string;
+  focus?: string;
   createdFrom?: string;
   createdTo?: string;
   page?: number;
   size?: number;
-  /** sort=필드명,asc | sort=필드명,desc (예: createdAt,desc) */
-  sort?: string;
 };
 
-// ----------------------------------------------------------------------
-// Types — Archive
-// ----------------------------------------------------------------------
+export type CreateActionBody = {
+  caseId: string;
+  actionType?: string;
+  [key: string]: unknown;
+};
 
-export type ArchiveListRowDto = {
-  actionId: number;
-  caseId: number;
-  actionType: string;
-  status: string;
-  outcome?: string;
+export type ActionRowDto = {
+  actionId: string;
+  caseId?: string;
+  status?: string;
+  actionType?: string;
+  createdAt?: string;
   executedAt?: string;
+  outcome?: string;
   failureReason?: string;
   docKey?: string;
   partyId?: number;
+  [key: string]: unknown;
 };
+
+/** Alias for list row compatibility */
+export type ActionListRowDto = ActionRowDto;
+
+export type ActionsListResponse = {
+  items?: ActionRowDto[];
+  content?: ActionRowDto[];
+  data?: ActionRowDto[];
+  total?: number;
+  totalElements?: number;
+  page?: number;
+  size?: number;
+  filtersApplied?: FiltersApplied;
+  totalPages?: number;
+};
+
+// ----------------------------------------------------------------------
+// Archive Types
+// ----------------------------------------------------------------------
 
 export type ArchiveListParams = {
   outcome?: string;
@@ -162,38 +223,36 @@ export type ArchiveListParams = {
   to?: string;
   page?: number;
   size?: number;
-  /** sort=필드명,asc | sort=필드명,desc (예: executedAt,desc) */
-  sort?: string;
 };
 
-// ----------------------------------------------------------------------
-// Spring Page format (BE may return content/totalElements)
-// ----------------------------------------------------------------------
+export type ArchiveRowDto = {
+  actionId?: string;
+  archiveId?: string;
+  caseId?: string;
+  actionType?: string;
+  status?: string;
+  outcome?: string;
+  type?: string;
+  executedAt?: string;
+  failureReason?: string;
+  docKey?: string;
+  partyId?: number;
+  createdAt?: string;
+  [key: string]: unknown;
+};
 
-type SpringPage<T> = {
-  content?: T[];
+/** Alias for list row compatibility */
+export type ArchiveListRowDto = ArchiveRowDto;
+
+export type ArchiveListResponse = {
+  items?: ArchiveRowDto[];
+  content?: ArchiveRowDto[];
+  total?: number;
   totalElements?: number;
-  totalPages?: number;
+  page?: number;
   size?: number;
-  number?: number;
+  totalPages?: number;
 };
-
-function toPageResponse<T>(spring: SpringPage<T> | PageResponse<T>): PageResponse<T> {
-  if ('items' in spring && Array.isArray(spring.items)) {
-    return spring as PageResponse<T>;
-  }
-  const content = (spring as SpringPage<T>).content ?? [];
-  const total = (spring as SpringPage<T>).totalElements ?? content.length;
-  const size = (spring as SpringPage<T>).size ?? 20;
-  const number = (spring as SpringPage<T>).number ?? 0;
-  return {
-    items: content,
-    total,
-    page: number,
-    size,
-    totalPages: (spring as SpringPage<T>).totalPages ?? (Math.ceil(total / size) || 1),
-  };
-}
 
 // ----------------------------------------------------------------------
 // Cases API
@@ -201,29 +260,21 @@ function toPageResponse<T>(spring: SpringPage<T> | PageResponse<T>): PageRespons
 
 export const getCases = async (
   params?: CasesListParams
-): Promise<ApiResponse<PageResponse<CaseListRowDto>>> => {
+): Promise<ApiResponse<CaseListResponse>> => {
   const query = new URLSearchParams();
-  if (params?.status) query.set('status', params.status);
-  if (params?.severity) query.set('severity', params.severity);
-  if (params?.caseType) query.set('caseType', params.caseType);
-  if (params?.detectedFrom) query.set('detectedFrom', params.detectedFrom);
-  if (params?.detectedTo) query.set('detectedTo', params.detectedTo);
-  if (params?.bukrs) query.set('bukrs', params.bukrs);
-  if (params?.belnr) query.set('belnr', params.belnr);
-  if (params?.gjahr) query.set('gjahr', params.gjahr);
-  if (params?.buzei) query.set('buzei', params.buzei);
-  if (params?.partyId != null) query.set('partyId', String(params.partyId));
-  if (params?.page != null) query.set('page', String(params.page));
-  if (params?.size != null) query.set('size', String(params.size));
-  if (params?.sort) query.set('sort', params.sort);
-
-  const url = `/api/synapse/cases${query.toString() ? `?${query.toString()}` : ''}`;
-  const res = await axiosInstance.get<ApiResponse<SpringPage<CaseListRowDto> | PageResponse<CaseListRowDto>>>(url);
-  const data = res.data?.data;
-  if (data) {
-    return { ...res.data, data: toPageResponse(data) };
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
+      if (Array.isArray(value)) {
+        if (value.length > 0) query.set(key, value.join(','));
+      } else if (value !== '') {
+        query.set(key, String(value));
+      }
+    });
   }
-  return res.data as ApiResponse<PageResponse<CaseListRowDto>>;
+  const url = `/api/synapse/cases${query.toString() ? `?${query.toString()}` : ''}`;
+  const res = await axiosInstance.get<ApiResponse<CaseListResponse>>(url);
+  return res.data;
 };
 
 export const getCaseDetail = async (
@@ -238,8 +289,8 @@ export const getCaseDetail = async (
 export const updateCaseStatus = async (
   caseId: string,
   status: 'TRIAGED' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED'
-): Promise<ApiResponse<unknown>> => {
-  const res = await axiosInstance.post<ApiResponse<unknown>>(
+): Promise<ApiResponse<CaseDetailDto>> => {
+  const res = await axiosInstance.post<ApiResponse<CaseDetailDto>>(
     `/api/synapse/cases/${encodeURIComponent(caseId)}/status`,
     { status }
   );
@@ -252,23 +303,18 @@ export const updateCaseStatus = async (
 
 export const getAnomalies = async (
   params?: AnomaliesListParams
-): Promise<ApiResponse<PageResponse<AnomalyListRowDto>>> => {
+): Promise<ApiResponse<AnomaliesListResponse>> => {
   const query = new URLSearchParams();
-  if (params?.severity) query.set('severity', params.severity);
-  if (params?.anomalyType) query.set('anomalyType', params.anomalyType);
-  if (params?.detectedFrom) query.set('detectedFrom', params.detectedFrom);
-  if (params?.detectedTo) query.set('detectedTo', params.detectedTo);
-  if (params?.page != null) query.set('page', String(params.page));
-  if (params?.size != null) query.set('size', String(params.size));
-  if (params?.sort) query.set('sort', params.sort);
-
-  const url = `/api/synapse/anomalies${query.toString() ? `?${query.toString()}` : ''}`;
-  const res = await axiosInstance.get<ApiResponse<SpringPage<AnomalyListRowDto> | PageResponse<AnomalyListRowDto>>>(url);
-  const data = res.data?.data;
-  if (data) {
-    return { ...res.data, data: toPageResponse(data) };
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        query.set(key, String(value));
+      }
+    });
   }
-  return res.data as ApiResponse<PageResponse<AnomalyListRowDto>>;
+  const url = `/api/synapse/anomalies${query.toString() ? `?${query.toString()}` : ''}`;
+  const res = await axiosInstance.get<ApiResponse<AnomaliesListResponse>>(url);
+  return res.data;
 };
 
 // ----------------------------------------------------------------------
@@ -277,29 +323,24 @@ export const getAnomalies = async (
 
 export const getActions = async (
   params?: ActionsListParams
-): Promise<ApiResponse<PageResponse<ActionListRowDto>>> => {
+): Promise<ApiResponse<ActionsListResponse>> => {
   const query = new URLSearchParams();
-  if (params?.status) query.set('status', params.status);
-  if (params?.type) query.set('type', params.type);
-  if (params?.caseId != null) query.set('caseId', String(params.caseId));
-  if (params?.createdFrom) query.set('createdFrom', params.createdFrom);
-  if (params?.createdTo) query.set('createdTo', params.createdTo);
-  if (params?.page != null) query.set('page', String(params.page));
-  if (params?.size != null) query.set('size', String(params.size));
-
-  const url = `/api/synapse/actions${query.toString() ? `?${query.toString()}` : ''}`;
-  const res = await axiosInstance.get<ApiResponse<SpringPage<ActionListRowDto> | PageResponse<ActionListRowDto>>>(url);
-  const data = res.data?.data;
-  if (data) {
-    return { ...res.data, data: toPageResponse(data) };
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        query.set(key, String(value));
+      }
+    });
   }
-  return res.data as ApiResponse<PageResponse<ActionListRowDto>>;
+  const url = `/api/synapse/actions${query.toString() ? `?${query.toString()}` : ''}`;
+  const res = await axiosInstance.get<ApiResponse<ActionsListResponse>>(url);
+  return res.data;
 };
 
 export const createAction = async (
   body: CreateActionBody
-): Promise<ApiResponse<ActionDetailDto>> => {
-  const res = await axiosInstance.post<ApiResponse<ActionDetailDto>>(
+): Promise<ApiResponse<ActionRowDto>> => {
+  const res = await axiosInstance.post<ApiResponse<ActionRowDto>>(
     '/api/synapse/actions',
     body
   );
@@ -308,8 +349,8 @@ export const createAction = async (
 
 export const approveAction = async (
   actionId: string
-): Promise<ApiResponse<unknown>> => {
-  const res = await axiosInstance.post<ApiResponse<unknown>>(
+): Promise<ApiResponse<ActionRowDto>> => {
+  const res = await axiosInstance.post<ApiResponse<ActionRowDto>>(
     `/api/synapse/actions/${encodeURIComponent(actionId)}/approve`,
     {}
   );
@@ -318,8 +359,8 @@ export const approveAction = async (
 
 export const executeAction = async (
   actionId: string
-): Promise<ApiResponse<unknown>> => {
-  const res = await axiosInstance.post<ApiResponse<unknown>>(
+): Promise<ApiResponse<ActionRowDto>> => {
+  const res = await axiosInstance.post<ApiResponse<ActionRowDto>>(
     `/api/synapse/actions/${encodeURIComponent(actionId)}/execute`,
     {}
   );
@@ -328,8 +369,8 @@ export const executeAction = async (
 
 export const rejectAction = async (
   actionId: string
-): Promise<ApiResponse<unknown>> => {
-  const res = await axiosInstance.post<ApiResponse<unknown>>(
+): Promise<ApiResponse<ActionRowDto>> => {
+  const res = await axiosInstance.post<ApiResponse<ActionRowDto>>(
     `/api/synapse/actions/${encodeURIComponent(actionId)}/reject`,
     {}
   );
@@ -338,8 +379,8 @@ export const rejectAction = async (
 
 export const simulateAction = async (
   actionId: string
-): Promise<ApiResponse<unknown>> => {
-  const res = await axiosInstance.post<ApiResponse<unknown>>(
+): Promise<ApiResponse<ActionRowDto>> => {
+  const res = await axiosInstance.post<ApiResponse<ActionRowDto>>(
     `/api/synapse/actions/${encodeURIComponent(actionId)}/simulate`,
     {}
   );
@@ -352,21 +393,16 @@ export const simulateAction = async (
 
 export const getArchive = async (
   params?: ArchiveListParams
-): Promise<ApiResponse<PageResponse<ArchiveListRowDto>>> => {
+): Promise<ApiResponse<ArchiveListResponse>> => {
   const query = new URLSearchParams();
-  if (params?.outcome) query.set('outcome', params.outcome);
-  if (params?.type) query.set('type', params.type);
-  if (params?.from) query.set('from', params.from);
-  if (params?.to) query.set('to', params.to);
-  if (params?.page != null) query.set('page', String(params.page));
-  if (params?.size != null) query.set('size', String(params.size));
-  if (params?.sort) query.set('sort', params.sort);
-
-  const url = `/api/synapse/archive${query.toString() ? `?${query.toString()}` : ''}`;
-  const res = await axiosInstance.get<ApiResponse<SpringPage<ArchiveListRowDto> | PageResponse<ArchiveListRowDto>>>(url);
-  const data = res.data?.data;
-  if (data) {
-    return { ...res.data, data: toPageResponse(data) };
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        query.set(key, String(value));
+      }
+    });
   }
-  return res.data as ApiResponse<PageResponse<ArchiveListRowDto>>;
+  const url = `/api/synapse/archive${query.toString() ? `?${query.toString()}` : ''}`;
+  const res = await axiosInstance.get<ApiResponse<ArchiveListResponse>>(url);
+  return res.data;
 };
