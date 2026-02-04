@@ -1,5 +1,7 @@
 /**
- * Documents 목록 훅 — API + FE 필터
+ * Documents 목록 훅 — BE 필터 신뢰 (이중 필터 제거)
+ * getFiDocHeaders가 dateFrom, dateTo, bukrs, status, xblnr, amountMin, amountMax를 querystring으로 전달.
+ * BE가 해당 필터를 지원한다고 가정. 미지원 시 클라이언트 필터 복원 필요.
  */
 
 import { useMemo, useState } from 'react';
@@ -25,53 +27,17 @@ export const useDocumentsList = () => {
     amountMax: filters.amountMax,
   });
 
-  const filteredItems = useMemo(() => {
-    const items = apiData ?? [];
-    let result = [...items];
-
-    if (filters.dateFrom) {
-      result = result.filter((d) => d.budat >= filters.dateFrom!);
-    }
-    if (filters.dateTo) {
-      result = result.filter((d) => d.budat <= filters.dateTo!);
-    }
-    if (filters.bukrs) {
-      result = result.filter((d) => d.bukrs === filters.bukrs);
-    }
-    if (filters.status) {
-      result = result.filter(
-        (d) =>
-          d.statusCode === filters.status ||
-          d.integrityStatus === filters.status
-      );
-    }
-    if (filters.xblnr) {
-      const q = filters.xblnr.toLowerCase();
-      result = result.filter(
-        (d) => d.xblnr?.toLowerCase().includes(q)
-      );
-    }
-    if (filters.amountMin != null) {
-      result = result.filter((d) => (d.wrbtr ?? 0) >= filters.amountMin!);
-    }
-    if (filters.amountMax != null) {
-      result = result.filter((d) => (d.wrbtr ?? 0) <= filters.amountMax!);
-    }
-
-    return result;
-  }, [apiData, filters]);
-
-  const totalCount = filteredItems.length;
+  const items = useMemo(() => apiData ?? [], [apiData]);
+  const totalCount = items.length;
   const totalPages = Math.ceil(totalCount / pageSize) || 1;
   const paginatedItems = useMemo(
-    () =>
-      filteredItems.slice(page * pageSize, page * pageSize + pageSize),
-    [filteredItems, page, pageSize]
+    () => items.slice(page * pageSize, page * pageSize + pageSize),
+    [items, page, pageSize]
   );
 
   const summary = useMemo(() => {
-    const totalAmount = filteredItems.reduce((s, d) => s + (d.wrbtr ?? 0), 0);
-    const flaggedCount = filteredItems.filter(
+    const totalAmount = items.reduce((s, d) => s + (d.wrbtr ?? 0), 0);
+    const flaggedCount = items.filter(
       (d) => d.integrityStatus && d.integrityStatus !== 'pass'
     ).length;
     return {
@@ -79,11 +45,11 @@ export const useDocumentsList = () => {
       totalAmount,
       flaggedCount,
     };
-  }, [filteredItems, totalCount]);
+  }, [items, totalCount]);
 
   return {
     items: paginatedItems,
-    allItems: filteredItems,
+    allItems: items,
     isLoading,
     error,
     refetch,

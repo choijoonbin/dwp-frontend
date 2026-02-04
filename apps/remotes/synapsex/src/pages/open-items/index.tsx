@@ -1,10 +1,12 @@
 /**
  * Open Items 페이지 — API 연동
- * 기존 mock 대신 useOpenItemsListQuery 사용
+ * URL params: ?bukrs=1000&itemType=AP&dueFrom=2025-01-01&dueTo=2025-12-31&status=open&partyId=xxx&lifnr=xxx&kunnr=xxx
+ * belnr, gjahr는 BE 미지원 — 숨김. docs/reference/OPEN_ITEMS_BELNR_GJAHR_BE_REQUEST.md
  */
 
-import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useOpenItemsListQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -26,7 +28,33 @@ const buildDocDetailPath = (bukrs: string, belnr: string, gjahr: string) =>
 
 export const OpenItemsPage = () => {
   const navigate = useNavigate();
-  const { data: items = [], isLoading, error, refetch } = useOpenItemsListQuery({ limit: 200 });
+  const [searchParams] = useSearchParams();
+
+  const queryParams = useMemo(() => {
+    const bukrs = searchParams.get('bukrs') ?? undefined;
+    const itemType = searchParams.get('itemType') as 'AP' | 'AR' | undefined;
+    const dueFrom = searchParams.get('dueFrom') ?? undefined;
+    const dueTo = searchParams.get('dueTo') ?? undefined;
+    const status = searchParams.get('status') ?? undefined;
+    const partyId = searchParams.get('partyId') ?? undefined;
+    const lifnr = searchParams.get('lifnr') ?? undefined;
+    const kunnr = searchParams.get('kunnr') ?? undefined;
+    const docKey = searchParams.get('docKey') ?? undefined;
+    return {
+      limit: 200,
+      bukrs: bukrs || undefined,
+      itemType: itemType === 'AP' || itemType === 'AR' ? itemType : undefined,
+      dueFrom: dueFrom || undefined,
+      dueTo: dueTo || undefined,
+      status: status || undefined,
+      partyId: partyId || undefined,
+      lifnr: lifnr || undefined,
+      kunnr: kunnr || undefined,
+      docKey: docKey || undefined,
+    };
+  }, [searchParams]);
+
+  const { data: items = [], isLoading, error, refetch } = useOpenItemsListQuery(queryParams);
 
   if (error) {
     return (

@@ -13,9 +13,10 @@ import { getChangedFields } from './utils';
 import { LineageFlow } from './_components/lineage-flow';
 import { EvidencePanel } from './_components/evidence-panel';
 import { StepDetailDrawer } from './_components/step-detail-drawer';
-import { mockLineageSteps, mockVendorMasterSnapshots } from './mock';
+import { mockVendorMasterSnapshots } from './mock';
 import { StepDetailsInline } from './_components/step-details-inline';
 import { TimeTravelSection } from './_components/time-travel-section';
+import { ErrorStateWithRetry } from '../../components/ux/error-state-with-retry';
 
 // ----------------------------------------------------------------------
 
@@ -47,7 +48,7 @@ export const LineagePage = () => {
     [caseId, docKey, partyId, rawEventId, asOf]
   );
 
-  const { data: apiData } = useLineageQuery(lineageParams);
+  const { data: apiData, error, refetch } = useLineageQuery(lineageParams);
   const steps = useMemo(() => {
     if (apiData?.steps?.length) {
       return apiData.steps.map((s) => ({
@@ -59,7 +60,7 @@ export const LineagePage = () => {
         details: (s as { details?: Record<string, unknown> }).details ?? {},
       }));
     }
-    return mockLineageSteps;
+    return [];
   }, [apiData?.steps]);
   const displayCaseId = caseId || 'case-001';
 
@@ -84,6 +85,47 @@ export const LineagePage = () => {
     setSelectedStep(stepId);
     setDrawerOpen(true);
   };
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.5rem)' }}>
+        <ErrorStateWithRetry
+          title="Failed to load lineage"
+          message={error.message}
+          onRetry={() => refetch()}
+        />
+      </Box>
+    );
+  }
+
+  if (!lineageParams) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.5rem)' }}>
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            py: 6,
+            px: 2,
+            textAlign: 'center',
+          }}
+        >
+          <Box>
+            <Iconify
+              icon="solar:link-circle-outline"
+              width={48}
+              sx={{ color: 'text.disabled', mb: 1 }}
+            />
+            <Typography variant="body2" color="text.secondary">
+              Provide caseId, docKey, or partyId in URL to view lineage
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.5rem)' }}>
@@ -191,7 +233,7 @@ export const LineagePage = () => {
               Evidence Panel
             </Typography>
           </Box>
-          <EvidencePanel steps={mockLineageSteps} isMobile={false} />
+          <EvidencePanel steps={steps} isMobile={false} />
         </Box>
 
         {/* Mobile/Tablet: Evidence Panel as Bottom Tabs */}

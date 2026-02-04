@@ -2,6 +2,12 @@
  * Synapse Case Detail용 Agent Stream (SSE)
  * POST /api/synapse/agent-tools/agents/finance/stream
  * caseId 기반, hitl 이벤트 시 onHitlRequest 콜백
+ *
+ * Last-Event-ID (P2-1, Aura 계약 정합):
+ * - 스트림 끊김 시 재연결 요청에 Last-Event-ID 헤더 전달.
+ * - 재연결 시 새 스트림. id는 last_id+1로 연속. replay 미지원.
+ * - HITL approve/reject 후 resume과 무관 — 동일 연결 유지.
+ * - 저장: id: 파싱 → lastEventIdRef. 전송: attemptReconnect 시 headers.
  */
 
 import { useRef, useState, useEffect, useCallback } from 'react';
@@ -10,6 +16,7 @@ import { NX_API_URL } from '../env';
 import { getTenantId } from '../tenant-util';
 import { useStreamStore } from './stream-store';
 import { getAgentSessionId } from './agent-session';
+import { getUserId } from '../auth/user-id-storage';
 import { getAccessToken } from '../auth/token-storage';
 
 // ----------------------------------------------------------------------
@@ -92,6 +99,7 @@ export const useSynapseAgentStream = () => {
       const token = getAccessToken();
       const tenantId = getTenantId();
       const agentId = getAgentSessionId();
+      const userId = getUserId();
       const endpoint = '/api/synapse/agent-tools/agents/finance/stream';
 
       setDebug({
@@ -107,6 +115,7 @@ export const useSynapseAgentStream = () => {
         'X-Tenant-ID': tenantId,
         'X-Agent-ID': agentId,
         ...(token && { Authorization: `Bearer ${token}` }),
+        ...(userId && { 'X-User-ID': userId }),
         ...(lastEventId && { 'Last-Event-ID': lastEventId }),
       };
 

@@ -254,21 +254,31 @@ export const getFiDocDetail = async (
 
 export type OpenItemsListParams = {
   limit?: number;
+  page?: number;
+  size?: number;
+  /** BE: fromDueDate. FE dueFrom → BE fromDueDate */
   dueFrom?: string;
+  /** BE: toDueDate. FE dueTo → BE toDueDate */
   dueTo?: string;
+  bukrs?: string;
+  /** BE: type. AP | AR */
+  itemType?: 'AP' | 'AR';
+  status?: string;
+  partyId?: string;
+  /** BE: lifnr (vendor ID) */
+  lifnr?: string;
+  /** BE: kunnr (customer ID) */
+  kunnr?: string;
+  docKey?: string;
   cleared?: boolean;
   paymentBlock?: boolean;
   disputeFlag?: boolean;
-  itemType?: 'AP' | 'AR';
-  bukrs?: string;
-  partyId?: string;
-  docKey?: string;
-  page?: number;
-  size?: number;
 };
 
 /**
  * GET /api/synapse/entities/fi-open-items
+ * BE 계약표: bukrs, type, status, fromDueDate, toDueDate, partyId, lifnr, kunnr
+ * belnr, gjahr는 BE 미지원 — P1-2a. docs/reference/OPEN_ITEMS_BELNR_GJAHR_BE_REQUEST.md
  */
 export const getFiOpenItems = async (
   params?: OpenItemsListParams
@@ -277,6 +287,18 @@ export const getFiOpenItems = async (
   query.set('limit', String(params?.limit ?? 500));
   if (params?.page != null) query.set('page', String(params.page));
   if (params?.size != null) query.set('size', String(params.size));
+  if (params?.bukrs) query.set('bukrs', params.bukrs);
+  if (params?.itemType) query.set('type', params.itemType);
+  if (params?.status) query.set('status', params.status);
+  if (params?.dueFrom) query.set('fromDueDate', params.dueFrom);
+  if (params?.dueTo) query.set('toDueDate', params.dueTo);
+  if (params?.partyId) query.set('partyId', params.partyId);
+  if (params?.lifnr) query.set('lifnr', params.lifnr);
+  if (params?.kunnr) query.set('kunnr', params.kunnr);
+  if (params?.docKey) query.set('docKey', params.docKey);
+  if (params?.cleared != null) query.set('cleared', String(params.cleared));
+  if (params?.paymentBlock != null) query.set('paymentBlock', String(params.paymentBlock));
+  if (params?.disputeFlag != null) query.set('disputeFlag', String(params.disputeFlag));
 
   const res = await axiosInstance.get<ApiResponse<FiOpenItemRaw[]>>(
     `/api/synapse/entities/fi-open-items?${query.toString()}`
