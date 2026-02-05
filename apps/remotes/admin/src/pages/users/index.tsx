@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { trackEvent, type UserSummary, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 
@@ -31,6 +32,7 @@ export const UsersPage = () => (
 );
 
 const UsersPageContent = () => {
+  const { t } = useTranslation('admin');
   const {
     keyword,
     statusFilter,
@@ -334,7 +336,7 @@ const UsersPageContent = () => {
           onSuccess={(temporaryPassword) => {
             setResetPasswordDialogOpen(false);
             showSnackbar(
-              temporaryPassword ? `비밀번호가 초기화되었습니다. 임시 비밀번호: ${temporaryPassword}` : '비밀번호가 초기화되었습니다.'
+              temporaryPassword ? t('toast.passwordResetWithTemp', { password: temporaryPassword }) : t('toast.passwordReset')
             );
           }}
         />
@@ -345,8 +347,8 @@ const UsersPageContent = () => {
         <DeleteConfirmDialog
           open={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}
-          title="사용자 삭제"
-          content={`정말 "${selectedUserForDelete.userName}" 사용자를 삭제하시겠습니까?`}
+          title={t('confirm.deleteUser')}
+          content={t('confirm.deleteUserContent', { userName: selectedUserForDelete.userName })}
           onConfirm={handleDeleteConfirm}
         />
       )}

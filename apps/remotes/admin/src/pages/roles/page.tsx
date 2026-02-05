@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -30,6 +31,7 @@ export const RolesPage = () => (
 );
 
 const RolesPageContent = () => {
+  const { t } = useTranslation('admin');
   const {
     selectedRoleId,
     setSelectedRoleId,
@@ -85,12 +87,12 @@ const RolesPageContent = () => {
   const handleCreateSuccess = () => {
     setCreateModalOpen(false);
     refetch();
-    showSnackbar('권한이 생성되었습니다.');
+    showSnackbar(t('toast.roleCreated'));
   };
 
   const handleDetailSuccess = () => {
     refetch();
-    showSnackbar('변경사항이 저장되었습니다.');
+    showSnackbar(t('toast.roleUpdated'));
   };
 
   const handleRoleSelect = useCallback(
@@ -217,8 +219,10 @@ const RolesPageContent = () => {
             setDeleteDialogOpen(false);
             setSelectedRoleIdForDelete(null);
           }}
-          title="권한 삭제"
-          content={`정말 "${roleRowModels.find((r) => r.id === selectedRoleIdForDelete)?.roleName || ''}" 권한을 삭제하시겠습니까?`}
+          title={t('confirm.deleteRole')}
+          content={t('confirm.deleteRoleContent', {
+            roleName: roleRowModels.find((r) => r.id === selectedRoleIdForDelete)?.roleName || '',
+          })}
           onConfirm={handleDeleteConfirm}
         />
       )}

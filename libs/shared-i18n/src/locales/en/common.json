@@ -1,0 +1,136 @@
+{
+  "app": { "name": "DWP" },
+  "language": {
+    "ko": "Korean",
+    "en": "English",
+    "switched": "Language switched to {{lang}}.",
+    "switched_en": "Language switched to English."
+  },
+  "theme": { "darkMode": "Dark mode", "lightMode": "Light mode" },
+  "error": {
+    "403": {
+      "title": "403 Forbidden",
+      "description": "You do not have permission to access this resource. Contact your administrator if you need access.",
+      "goHome": "Go to home"
+    },
+    "404": {
+      "title": "Page not found",
+      "description": "Sorry, we couldn't find the page you're looking for. Please check the URL.",
+      "goHome": "Go to home"
+    },
+    "500": {
+      "title": "Server error",
+      "description": "A temporary error occurred. Please try again later.",
+      "goHome": "Go to home"
+    },
+    "errorState": {
+      "forbidden": "Access denied",
+      "forbiddenMessage": "You do not have permission to access this resource or it was blocked by a guardrail.",
+      "failedToLoad": "Failed to load",
+      "failedToLoadCase": "Failed to load case",
+      "failedToLoadCases": "Failed to load cases",
+      "failedToLoadActions": "Failed to load actions",
+      "failedToLoadAnomalies": "Failed to load anomalies",
+      "failedToLoadArchive": "Failed to load archive",
+      "failedToLoadActionReconciliation": "Failed to load action reconciliation",
+      "failedToLoadDocuments": "Failed to load documents",
+      "failedToLoadLineage": "Failed to load lineage",
+      "failedToLoadKpi": "Failed to load KPI",
+      "failedToLoadActionsList": "Failed to load actions list",
+      "failedToLoadRiskDrivers": "Failed to load risk drivers",
+      "failedToLoadTeamSnapshot": "Failed to load team snapshot",
+      "failedToLoadAgentActivity": "Failed to load agent activity",
+      "unknownError": "Unknown error",
+      "retry": "Retry"
+    }
+  },
+  "confirm": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete"
+  },
+  "toast": {
+    "saved": "Saved",
+    "batchCompleted": "Batch run completed",
+    "batchLocked": "Batch is running on another instance",
+    "batchFailed": "Batch run failed",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "simulationCompleted": "Simulation completed",
+    "statusUpdated": "Status updated",
+    "actionCreated": "Action created",
+    "actionExecuted": "Action executed",
+    "actionRejected": "Action rejected",
+    "documentRegistered": "Document registered",
+    "guardrailCreated": "Guardrail created",
+    "guardrailUpdated": "Guardrail updated",
+    "guardrailDeleted": "Guardrail deleted",
+    "termAdded": "Term added",
+    "termUpdated": "Term updated",
+    "termDeleted": "Term deleted",
+    "feedbackSubmitted": "Feedback submitted",
+    "reconciliationStarted": "Reconciliation run started",
+    "retryRequested": "Retry requested",
+    "auditView": "View audit details",
+    "savedWithAudit": "Saved. Changes are recorded in Audit.",
+    "batchLockedExtra": "Batch is running on another instance (lock not acquired) {{extra}}",
+    "batchFailedAudit": "{{message}} — Check View Audit for details",
+    "approvalFailed": "Approval failed",
+    "rejectionFailed": "Rejection failed",
+    "simulationFailed": "Simulation failed",
+    "failedToUpdateStatus": "Failed to update status",
+    "failedToCreateAction": "Failed to create action",
+    "failedToReject": "Failed to reject",
+    "failedToApprove": "Failed to approve",
+    "failedToExecute": "Failed to execute",
+    "failedToRegister": "Failed to register",
+    "failedToCreate": "Failed to create",
+    "failedToUpdate": "Failed to update",
+    "failedToDelete": "Failed to delete",
+    "failedToAdd": "Failed to add",
+    "failedToSubmit": "Failed to submit",
+    "failedToStartRun": "Failed to start run",
+    "retryFailed": "Retry failed",
+    "failedToSave": "Failed to save"
+  },
+  "notFound": {
+    "case": "Case not found",
+    "entity": "Entity not found",
+    "document": "Document not found"
+  },
+  "validation": {
+    "dateRangeError": "Start date must be before end date. Please select again."
+  },
+  "cases": {
+    "title": "Cases",
+    "subtitle": "Autonomous case worklist with triage and escalation.",
+    "totalCases": "Total Cases",
+    "triageBacklog": "Triage Backlog",
+    "searchPlaceholder": "Search cases...",
+    "case": "Case",
+    "severity": "Severity",
+    "status": "Status",
+    "type": "Type",
+    "amount": "Amount",
+    "lastDetected": "Last Detected",
+    "loading": "Loading...",
+    "empty": "No cases detected yet",
+    "new": "New",
+    "updated": "Updated",
+    "refresh": "Refresh",
+    "exportCsv": "Export CSV",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{current}} of {{total}}"
+  },
+  "dashboard": {
+    "title": "Integrated Control Center",
+    "subtitle": "Real-time autonomous finance operations",
+    "refresh": "Refresh",
+    "viewCases": "View cases"
+  },
+  "errorBoundary": {
+    "unexpectedTitle": "Unexpected Application Error",
+    "unknownError": "Unknown error"
+  }
+}

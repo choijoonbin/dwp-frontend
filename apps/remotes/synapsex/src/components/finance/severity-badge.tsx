@@ -2,6 +2,7 @@ import type { Theme, SxProps } from '@mui/material/styles';
 import type { LabelColor } from '@dwp-frontend/design-system';
 
 import { Label, Iconify } from '@dwp-frontend/design-system';
+import { useCodes } from '@dwp-frontend/shared-utils';
 
 // ----------------------------------------------------------------------
 
@@ -47,8 +48,11 @@ const sizeMap = {
 };
 
 export const SeverityBadge = ({ severity, showIcon = true, size = 'md', sx }: SeverityBadgeProps) => {
+  const { getLabel } = useCodes('SEVERITY');
   const config = severityConfig[severity];
   const { fontSize, iconSize } = sizeMap[size];
+  const codeKey = severity.toUpperCase();
+  const label = getLabel(codeKey) || config.label;
 
   return (
     <Label
@@ -59,7 +63,7 @@ export const SeverityBadge = ({ severity, showIcon = true, size = 'md', sx }: Se
       }
       sx={{ fontWeight: 600, fontSize, ...sx }}
     >
-      {config.label}
+      {label}
     </Label>
   );
 };

@@ -3,6 +3,7 @@
 import type { AdminMenuNode, MenuCreatePayload, MenuUpdatePayload, MenuReorderPayload } from '@dwp-frontend/shared-utils';
 
 import { useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import {
   HttpError,
   trackEvent,
@@ -23,6 +24,7 @@ export const useMenuActions = (
   showSnackbar: (message: string, severity?: 'success' | 'error') => void,
   refetch: () => void
 ) => {
+  const { t } = useTranslation('admin');
   const createMutation = useCreateAdminMenuMutation();
   const updateMutation = useUpdateAdminMenuMutation();
   const deleteMutation = useDeleteAdminMenuMutation();
@@ -55,7 +57,7 @@ export const useMenuActions = (
 
         await createMutation.mutateAsync(payload);
         refetch();
-        showSnackbar('메뉴가 생성되었습니다.');
+        showSnackbar(t('toast.menuCreated'));
         trackEvent({
           resourceKey: 'menu.admin.menus',
           action: 'CREATE',
@@ -69,14 +71,14 @@ export const useMenuActions = (
       } catch (error) {
         // Handle 409 Conflict (duplicate menu key)
         if (error instanceof HttpError && error.status === 409) {
-          showSnackbar('메뉴 키가 중복됩니다. 다른 키를 사용해주세요.', 'error');
+          showSnackbar(t('error.duplicateMenuKey'), 'error');
         } else {
-          showSnackbar(error instanceof Error ? error.message : '생성에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.createFailed'), 'error');
         }
         return false;
       }
     },
-    [createMutation, refetch, showSnackbar]
+    [createMutation, refetch, showSnackbar, t]
   );
 
   // Update menu
@@ -105,7 +107,7 @@ export const useMenuActions = (
 
         await updateMutation.mutateAsync({ menuId, payload });
         refetch();
-        showSnackbar('메뉴가 수정되었습니다.');
+        showSnackbar(t('toast.menuUpdated'));
         trackEvent({
           resourceKey: 'menu.admin.menus',
           action: 'UPDATE',
@@ -118,11 +120,11 @@ export const useMenuActions = (
         });
         return true;
       } catch (error) {
-        showSnackbar(error instanceof Error ? error.message : '수정에 실패했습니다.', 'error');
+        showSnackbar(error instanceof Error ? error.message : t('error.updateFailed'), 'error');
         return false;
       }
     },
-    [updateMutation, refetch, showSnackbar]
+    [updateMutation, refetch, showSnackbar, t]
   );
 
   // Delete menu
@@ -141,7 +143,7 @@ export const useMenuActions = (
 
         await deleteMutation.mutateAsync(menu.id);
         refetch();
-        showSnackbar('메뉴가 삭제되었습니다.');
+        showSnackbar(t('toast.menuDeleted'));
         trackEvent({
           resourceKey: 'menu.admin.menus',
           action: 'DELETE',
@@ -157,17 +159,17 @@ export const useMenuActions = (
         if (error instanceof HttpError && error.status === 409) {
           const errorMessage = error.message || '';
           if (errorMessage.includes('하위') || errorMessage.includes('child')) {
-            showSnackbar('하위 메뉴가 존재합니다. 하위 메뉴를 삭제하거나 이동한 후 다시 시도해주세요.', 'error');
+            showSnackbar(t('error.hasChildrenMenu'), 'error');
           } else {
-            showSnackbar('메뉴 삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 'error');
+            showSnackbar(t('error.menuDeleteError'), 'error');
           }
         } else {
-          showSnackbar(error instanceof Error ? error.message : '삭제에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.deleteFailed'), 'error');
         }
         return false;
       }
     },
-    [deleteMutation, refetch, showSnackbar]
+    [deleteMutation, refetch, showSnackbar, t]
   );
 
   // Reorder menu
@@ -191,14 +193,14 @@ export const useMenuActions = (
 
         await reorderMutation.mutateAsync(payload);
         refetch();
-        showSnackbar('메뉴 순서가 변경되었습니다.');
+        showSnackbar(t('toast.menuOrderChanged'));
         return true;
       } catch (error) {
-        showSnackbar(error instanceof Error ? error.message : '정렬에 실패했습니다.', 'error');
+        showSnackbar(error instanceof Error ? error.message : t('error.sortFailed'), 'error');
         return false;
       }
     },
-    [reorderMutation, refetch, showSnackbar]
+    [reorderMutation, refetch, showSnackbar, t]
   );
 
   return {

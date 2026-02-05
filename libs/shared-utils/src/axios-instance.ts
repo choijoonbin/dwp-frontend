@@ -95,6 +95,12 @@ export const setUnauthorizedHandler = (handler: UnauthorizedHandler | null) => {
   onUnauthorizedHandler = handler;
 };
 
+/** i18n: Accept-Language 헤더용. Host 앱에서 setLanguageHeaderProvider(() => getCurrentLanguage()) 호출 */
+let getLanguageForRequest: (() => string) | null = null;
+export const setLanguageHeaderProvider = (fn: (() => string) | null) => {
+  getLanguageForRequest = fn;
+};
+
 function buildHeaders(extra?: Record<string, string>): Record<string, string> {
   const token = getAccessToken();
   const tenantId = getTenantId();
@@ -114,6 +120,8 @@ function buildHeaders(extra?: Record<string, string>): Record<string, string> {
   if (token) headers.Authorization = `Bearer ${token}`;
   if (userId) headers['X-User-ID'] = userId;
   if (currentAgentId) headers['X-Agent-ID'] = currentAgentId;
+  const lang = getLanguageForRequest?.();
+  if (lang) headers['Accept-Language'] = lang;
 
   return headers;
 }

@@ -1,3 +1,5 @@
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -25,13 +27,17 @@ export function ConfirmDialog({
   open,
   title,
   description,
-  confirmText = '확인',
-  cancelText = '취소',
+  confirmText,
+  cancelText,
   severity = 'default',
   loading = false,
   onConfirm,
   onClose,
 }: ConfirmDialogProps) {
+  const { t } = useTranslation('common');
+  const resolvedConfirmText = confirmText ?? t('confirm.confirm');
+  const resolvedCancelText = cancelText ?? t('confirm.cancel');
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle>{title}</DialogTitle>
@@ -45,7 +51,7 @@ export function ConfirmDialog({
       <DialogActions>
         <Stack direction="row" spacing={1} sx={{ width: { xs: '100%', sm: 'auto' } }}>
           <Button onClick={onClose} variant="outlined" fullWidth>
-            {cancelText}
+            {resolvedCancelText}
           </Button>
 
           <LoadingButton
@@ -55,7 +61,7 @@ export function ConfirmDialog({
             loading={loading}
             fullWidth
           >
-            {confirmText}
+            {resolvedConfirmText}
           </LoadingButton>
         </Stack>
       </DialogActions>

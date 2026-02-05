@@ -25,7 +25,9 @@ import {
   dashboardTopRiskDriversQueryKey,
   useDashboardActionRequiredQuery,
   useDashboardTopRiskDriversQuery,
+  useCodes,
 } from '@dwp-frontend/shared-utils';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -305,9 +307,11 @@ function formatRiskAmount(amount: number): string {
 const AGENT_STREAM_RANGE = '6h';
 
 export const DashboardPage = () => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const tenantId = getDashboardTenantId();
+  const { getLabel: getCaseTypeLabel } = useCodes('CASE_TYPE');
 
   const summaryQuery = useDashboardSummaryQuery();
   const riskDriversQuery = useDashboardTopRiskDriversQuery('24h');
@@ -333,7 +337,10 @@ export const DashboardPage = () => {
 
   const kpis: KpiUiModel = mapSummaryToKpis(summaryQuery.data ?? null);
   const pendingActions: ActionRequiredUiItem[] = mapActionRequired(actionRequiredQuery.data ?? []);
-  const riskDrivers: RiskDriverUiItem[] = mapRiskDrivers(riskDriversQuery.data ?? []);
+  const riskDrivers: RiskDriverUiItem[] = mapRiskDrivers(
+    riskDriversQuery.data ?? [],
+    getCaseTypeLabel
+  );
   const teamSnapshot: TeamSnapshotUiItem[] = mapTeamSnapshot(teamSnapshotQuery.data ?? []);
   const agentActivities: AgentActivityUiItem[] = mapAgentActivity(agentActivityQuery.data ?? []);
 
@@ -418,10 +425,10 @@ export const DashboardPage = () => {
         >
           <Box>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              통합 관제 센터
+              {t('dashboard.title')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-              자율 재무 운영 실시간 현황
+              {t('dashboard.subtitle')}
             </Typography>
           </Box>
           <Stack direction="row" alignItems="center" spacing={1}>
@@ -433,7 +440,7 @@ export const DashboardPage = () => {
               onClick={handleRefresh}
             >
               <Typography component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                새로고침
+                {t('dashboard.refresh')}
               </Typography>
             </Button>
             <Button
@@ -444,7 +451,7 @@ export const DashboardPage = () => {
               startIcon={<Iconify icon="solar:eye-bold" width={18} />}
             >
               <Typography component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                전체 케이스 보기
+                {t('dashboard.viewCases')}
               </Typography>
             </Button>
           </Stack>

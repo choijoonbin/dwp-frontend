@@ -3,6 +3,7 @@
 import type { RoleSummary, RoleCreatePayload, RoleUpdatePayload } from '@dwp-frontend/shared-utils';
 
 import { useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   HttpError,
@@ -32,6 +33,7 @@ export const useRoleActions = (
   refetch: () => void,
   setSelectedRoleId: (id: string | null) => void
 ) => {
+  const { t } = useTranslation('admin');
   const queryClient = useQueryClient();
   const tenantId = getTenantId();
 
@@ -73,19 +75,19 @@ export const useRoleActions = (
 
         await createMutation.mutateAsync(payload);
         invalidateRolesQueries();
-        showSnackbar('권한이 생성되었습니다.');
+        showSnackbar(t('toast.roleCreated'));
         return true;
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
         if (error instanceof HttpError && error.status === 403) {
-          showSnackbar('권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.', 'error');
+          showSnackbar(t('error.permissionDenied'), 'error');
         } else {
-          showSnackbar(error instanceof Error ? error.message : '생성에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.createFailed'), 'error');
         }
         return false;
       }
     },
-    [createMutation, invalidateRolesQueries, showSnackbar]
+    [createMutation, invalidateRolesQueries, showSnackbar, t]
   );
 
   // Update role
@@ -112,19 +114,19 @@ export const useRoleActions = (
 
         await updateMutation.mutateAsync({ roleId, payload });
         invalidateRolesQueries();
-        showSnackbar('권한이 수정되었습니다.');
+        showSnackbar(t('toast.roleUpdated'));
         return true;
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
         if (error instanceof HttpError && error.status === 403) {
-          showSnackbar('권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.', 'error');
+          showSnackbar(t('error.permissionDenied'), 'error');
         } else {
-          showSnackbar(error instanceof Error ? error.message : '수정에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.updateFailed'), 'error');
         }
         return false;
       }
     },
-    [updateMutation, invalidateRolesQueries, showSnackbar]
+    [updateMutation, invalidateRolesQueries, showSnackbar, t]
   );
 
   // Delete role
@@ -149,22 +151,22 @@ export const useRoleActions = (
           setSelectedRoleId(null);
         }
 
-        showSnackbar('권한이 삭제되었습니다.');
+        showSnackbar(t('toast.roleDeleted'));
         return true;
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
         if (error instanceof HttpError && error.status === 403) {
-          showSnackbar('권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.', 'error');
+          showSnackbar(t('error.permissionDenied'), 'error');
         } else if (error instanceof HttpError && error.status === 409) {
           // Handle 409 Conflict (ROLE_IN_USE)
-          showSnackbar('멤버 또는 권한 매핑이 있는 권한은 삭제할 수 없습니다. 매핑을 해제한 후 다시 시도해주세요.', 'error');
+          showSnackbar(t('error.roleHasMappings'), 'error');
         } else {
-          showSnackbar(error instanceof Error ? error.message : '삭제에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.deleteFailed'), 'error');
         }
         return false;
       }
     },
-    [deleteMutation, invalidateRolesQueries, setSelectedRoleId, showSnackbar]
+    [deleteMutation, invalidateRolesQueries, setSelectedRoleId, showSnackbar, t]
   );
 
   // UI Actions (open dialogs)

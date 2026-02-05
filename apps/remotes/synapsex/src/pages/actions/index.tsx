@@ -6,6 +6,7 @@
 import type { MouseEvent } from 'react';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { is403Error ,
@@ -74,6 +75,7 @@ const ACTIONS_RESOURCE = getResourceKeyForPath('actions') ?? 'menu.autonomous-op
 // ----------------------------------------------------------------------
 
 export const ActionsPage = () => {
+  const { t } = useTranslation('common');
   const theme = useTheme();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -279,8 +281,8 @@ export const ActionsPage = () => {
   if (error) {
     return (
       <ErrorStateWithRetry
-        title={is403Error(error) ? '권한 부족' : 'Failed to load actions'}
-        message={error instanceof Error ? error.message : 'Unknown error'}
+        title={is403Error(error) ? undefined : t('error.errorState.failedToLoadActions')}
+        message={error instanceof Error ? error.message : undefined}
         onRetry={() => refetch()}
         is403={is403Error(error)}
       />

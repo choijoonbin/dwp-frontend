@@ -3,6 +3,7 @@
 import type { Role } from "@admin/pages/roles/roles-screen-redesign/lib/types";
 
 import { useState, useCallback } from "react";
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { X, Menu, Shield, HelpCircle } from "lucide-react";
 import { cn } from "@dwp-frontend/design-system/shadcn/lib/utils";
 import { useToast } from "@dwp-frontend/design-system/shadcn/hooks/use-toast";
@@ -23,6 +24,7 @@ import {
 } from "@dwp-frontend/design-system/shadcn/components/ui/tooltip";
 
 export default function RolesPage() {
+  const { t } = useTranslation('admin');
   const [roles, setRoles] = useState<Role[]>(mockRoles);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -47,11 +49,11 @@ export default function RolesPage() {
       setSelectedRole(newRole);
 
       toast({
-        title: "역할이 생성되었습니다",
-        description: `${newRole.name} 역할이 성공적으로 생성되었습니다.`,
+        title: t('toast.roleCreated'),
+        description: t('toast.roleUpdated'),
       });
     },
-    [toast]
+    [toast, t]
   );
 
   const handleSaveRole = useCallback(
@@ -62,11 +64,11 @@ export default function RolesPage() {
       setSelectedRole(updatedRole);
 
       toast({
-        title: "저장되었습니다",
-        description: "변경사항이 성공적으로 저장되었습니다.",
+        title: t('toast.roleUpdated'),
+        description: t('toast.roleUpdated'),
       });
     },
-    [toast]
+    [toast, t]
   );
 
   const handleDeleteRole = useCallback(
@@ -75,12 +77,12 @@ export default function RolesPage() {
       setSelectedRole(null);
 
       toast({
-        title: "역할이 삭제되었습니다",
-        description: "역할이 성공적으로 삭제되었습니다.",
+        title: t('toast.roleDeleted'),
+        description: t('toast.roleDeleted'),
         variant: "destructive",
       });
     },
-    [toast]
+    [toast, t]
   );
 
   return (

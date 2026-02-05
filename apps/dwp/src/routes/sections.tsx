@@ -9,6 +9,7 @@ import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
 import Page403 from 'src/pages/page-403';
+import Page500 from 'src/pages/page-500';
 import { CONFIG } from 'src/config-global';
 import { AuthLayout } from 'src/layouts/auth';
 import Page404 from 'src/pages/page-not-found';
@@ -125,6 +126,10 @@ export const routesSection: RouteObject[] = [
   {
     path: '404',
     element: <Page404 />,
+  },
+  {
+    path: '500',
+    element: <Page500 />,
   },
   { path: '*', element: <Page404 /> },
 ];

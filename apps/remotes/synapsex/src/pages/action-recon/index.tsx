@@ -4,6 +4,7 @@
 
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import { is403Error, 
   useActionReconQuery,
@@ -45,6 +46,7 @@ const statusMeta: Record<string, { label: string; icon: string; color: 'success'
 };
 
 export const ActionReconciliationPage = () => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [q, setQ] = useState('');
 
@@ -70,8 +72,8 @@ export const ActionReconciliationPage = () => {
   if (error) {
     return (
       <ErrorStateWithRetry
-        title={is403Error(error) ? '권한 부족' : 'Failed to load action reconciliation'}
-        message={error instanceof Error ? error.message : 'Unknown error'}
+        title={is403Error(error) ? undefined : t('error.errorState.failedToLoadActionReconciliation')}
+        message={error instanceof Error ? error.message : undefined}
         onRetry={() => refetch()}
         is403={is403Error(error)}
       />

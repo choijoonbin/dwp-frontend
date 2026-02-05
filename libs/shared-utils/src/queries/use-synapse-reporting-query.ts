@@ -3,6 +3,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
@@ -79,6 +80,7 @@ export const useReconRunDetailQuery = (runId: string | undefined) => {
 };
 
 export const useStartReconRunMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -89,10 +91,10 @@ export const useStartReconRunMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'recon'] });
-      showToast('Reconciliation run started');
+      showToast(t('toast.reconciliationStarted'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to start run', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToStartRun'), 'error');
     },
   });
 };
@@ -121,6 +123,7 @@ export const useActionReconQuery = () => {
 };
 
 export const useRetryActionReconMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -131,10 +134,10 @@ export const useRetryActionReconMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'action-recon'] });
-      showToast('Retry requested');
+      showToast(t('toast.retryRequested'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Retry failed', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.retryFailed'), 'error');
     },
   });
 };

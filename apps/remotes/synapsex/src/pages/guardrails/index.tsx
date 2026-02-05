@@ -3,6 +3,7 @@
  */
 
 import { useMemo, useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
   useGuardrailsQuery,
@@ -33,6 +34,7 @@ import { GuardrailEditorModal } from './components/guardrail-editor-modal';
 // ----------------------------------------------------------------------
 
 export const GuardrailsPage = () => {
+  const { t } = useTranslation('synapse');
   const [query, setQuery] = useState('');
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<GuardrailListDto | null>(null);
@@ -106,7 +108,7 @@ export const GuardrailsPage = () => {
   };
 
   const handleDelete = (g: GuardrailListDto) => {
-    if (window.confirm(`Delete guardrail "${g.name}"?`)) {
+    if (window.confirm(t('confirm.deleteGuardrail', { name: g.name }))) {
       deleteMutation.mutate(g.guardrailId);
     }
   };

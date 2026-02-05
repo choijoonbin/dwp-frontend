@@ -3,6 +3,7 @@
 import type { AdminMenuNode } from '@dwp-frontend/shared-utils';
 
 import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 import { Iconify, ConfirmDialog, PermissionGate } from '@dwp-frontend/design-system';
 
@@ -37,6 +38,7 @@ export const MenusPage = () => (
 );
 
 const MenusPageContent = () => {
+  const { t } = useTranslation('admin');
   const {
     menusTree,
     expandedNodes,
@@ -157,9 +159,9 @@ const MenusPageContent = () => {
   const handleCopyKey = async (menuKey: string) => {
     try {
       await navigator.clipboard.writeText(menuKey);
-      showSnackbar('메뉴 키가 복사되었습니다.');
+      showSnackbar(t('toast.menuKeyCopied'));
     } catch {
-      showSnackbar('메뉴 키 복사에 실패했습니다.', 'error');
+      showSnackbar(t('toast.menuKeyCopyFailed'), 'error');
     }
     handleMenuClose();
   };
@@ -335,10 +337,10 @@ const MenusPageContent = () => {
             setDeleteDialogOpen(false);
             setMenuToDelete(null);
           }}
-          title="메뉴 삭제"
-          description={`정말 "${menuToDelete.menuName}" 메뉴를 삭제하시겠습니까?`}
-          confirmText="삭제"
-          cancelText="취소"
+          title={t('confirm.deleteMenu')}
+          description={t('confirm.deleteMenuContent', { menuName: menuToDelete.menuName })}
+          confirmText={t('confirm.delete')}
+          cancelText={t('confirm.cancel')}
           severity="danger"
           onConfirm={handleDeleteConfirm}
         />

@@ -25,9 +25,17 @@ const CASE_TYPE_LABEL_MAP: Record<string, string> = {
   default: '기타',
 };
 
-function getRiskDriverLabel(dto: TopRiskDriverDto): string {
+function getRiskDriverLabel(
+  dto: TopRiskDriverDto,
+  getCaseTypeLabel?: (code: string) => string
+): string {
   if (dto.label && String(dto.label).trim()) return String(dto.label);
   const typeKey = (dto.case_type ?? dto.type ?? '').toLowerCase().replace(/\s/g, '_');
+  const codeKey = (dto.case_type ?? dto.type ?? '').toUpperCase().replace(/\s/g, '_');
+  if (getCaseTypeLabel && codeKey) {
+    const fromCodes = getCaseTypeLabel(codeKey);
+    if (fromCodes && fromCodes !== codeKey) return fromCodes;
+  }
   return CASE_TYPE_LABEL_MAP[typeKey] ?? CASE_TYPE_LABEL_MAP.default;
 }
 
@@ -184,7 +192,10 @@ export type RiskDriverUiItem = {
   anomaliesPath?: string;
 };
 
-export function mapRiskDrivers(items: TopRiskDriverDto[] | undefined): RiskDriverUiItem[] {
+export function mapRiskDrivers(
+  items: TopRiskDriverDto[] | undefined,
+  getCaseTypeLabel?: (code: string) => string
+): RiskDriverUiItem[] {
   if (!Array.isArray(items) || items.length === 0) return [];
   return items.map((d, i) => {
     const amt = d.impactAmount ?? d.amount ?? 0;
@@ -193,7 +204,7 @@ export function mapRiskDrivers(items: TopRiskDriverDto[] | undefined): RiskDrive
       id: i + 1,
       type: String(d.case_type ?? d.type ?? ''),
       riskTypeKey: String(d.case_type ?? d.type ?? '').toLowerCase().replace(/\s/g, '_'),
-      label: getRiskDriverLabel(d),
+      label: getRiskDriverLabel(d, getCaseTypeLabel),
       count: Number(d.count ?? 0),
       amount: Number(amt),
       trend: (d.trend as 'up' | 'down' | 'stable') ?? 'stable',

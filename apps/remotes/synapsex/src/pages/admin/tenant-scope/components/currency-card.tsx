@@ -1,6 +1,8 @@
 import type { UseMutationResult } from '@tanstack/react-query';
 
 import { useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { Iconify } from '@dwp-frontend/design-system';
 import {
   showToast,
@@ -65,6 +67,7 @@ export const CurrencyCard = ({
   addMutation,
   refetch,
 }: CurrencyCardProps) => {
+  const { t } = useTranslation('common');
   const [addOpen, setAddOpen] = useState(false);
 
   const { data: catalogData, isLoading: catalogLoading, error: catalogError } = useCurrencyCatalogQuery({
@@ -90,11 +93,11 @@ export const CurrencyCard = ({
       },
       {
         onSuccess: () => {
-          showToast('Saved');
+          showToast(t('toast.saved'));
           refetch();
         },
         onError: (err) => {
-          showToast(err instanceof Error ? err.message : 'Failed to update', 'error');
+          showToast(err instanceof Error ? err.message : t('toast.failedToUpdate'), 'error');
         },
       }
     );
@@ -109,11 +112,11 @@ export const CurrencyCard = ({
       },
       {
         onSuccess: () => {
-          showToast('Saved');
+          showToast(t('toast.saved'));
           refetch();
         },
         onError: (err) => {
-          showToast(err instanceof Error ? err.message : 'Failed to update', 'error');
+          showToast(err instanceof Error ? err.message : t('toast.failedToUpdate'), 'error');
         },
       }
     );
@@ -125,11 +128,11 @@ export const CurrencyCard = ({
         currentItems: toCurrentItems(),
         waersList: selectedKeys,
       });
-      showToast('Saved');
+      showToast(t('toast.saved'));
       refetch();
       setAddOpen(false);
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Failed to add', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToAdd'), 'error');
       throw err;
     }
   };

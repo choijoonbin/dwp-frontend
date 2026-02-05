@@ -1,4 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { showToast, useMonitoringSummaryQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -187,6 +189,7 @@ const PAGE_VIEWS_TAB_INDEX = 0;
 const normalizeTimestamp = (s: string): string => s.replace(/\s+/, 'T').trim();
 
 export const MonitoringPage = () => {
+  const { t } = useTranslation('common');
   const [activeTab, setActiveTab] = useState(0);
   const [activeKpi, setActiveKpi] = useState<MonitoringKpiCardKey | null>(null);
   const [activeTimestamp, setActiveTimestamp] = useState<string | null>(null);
@@ -235,7 +238,7 @@ export const MonitoringPage = () => {
       const fromMs = new Date(updated.dateFrom.replace(/\s/g, 'T').trim()).getTime();
       const toMs = new Date(updated.dateTo.replace(/\s/g, 'T').trim()).getTime();
       if (!Number.isNaN(fromMs) && !Number.isNaN(toMs) && fromMs > toMs) {
-        showToast('시작일자는 종료일자보다 이전이어야 합니다. 다시 선택해 주세요.', 'error');
+        showToast(t('validation.dateRangeError'), 'error');
         return;
       }
     }

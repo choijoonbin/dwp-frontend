@@ -3,6 +3,7 @@
 import type { ResourceNode, ResourceCreatePayload, ResourceUpdatePayload } from '@dwp-frontend/shared-utils';
 
 import { useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   HttpError,
@@ -24,6 +25,7 @@ export const useResourceActions = (
   showSnackbar: (message: string, severity?: 'success' | 'error') => void,
   refetch: () => void
 ) => {
+  const { t } = useTranslation('admin');
   const queryClient = useQueryClient();
   const tenantId = getTenantId();
 
@@ -67,7 +69,7 @@ export const useResourceActions = (
 
         await createMutation.mutateAsync(payload);
         invalidateResourcesQueries();
-        showSnackbar('리소스가 생성되었습니다.');
+        showSnackbar(t('toast.resourceCreated'));
         trackEvent({
           resourceKey: 'menu.admin.resources',
           action: 'CREATE',
@@ -81,17 +83,17 @@ export const useResourceActions = (
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
         if (error instanceof HttpError && error.status === 403) {
-          showSnackbar('권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.', 'error');
+          showSnackbar(t('error.permissionDenied'), 'error');
         } else if (error instanceof HttpError && error.status === 409) {
           // Handle 409 Conflict (duplicate resource key)
-          showSnackbar('리소스 키가 중복됩니다. 다른 키를 사용해주세요.', 'error');
+          showSnackbar(t('error.duplicateResourceKey'), 'error');
         } else {
-          showSnackbar(error instanceof Error ? error.message : '생성에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.createFailed'), 'error');
         }
         return false;
       }
     },
-    [createMutation, invalidateResourcesQueries, showSnackbar]
+    [createMutation, invalidateResourcesQueries, showSnackbar, t]
   );
 
   // Update resource
@@ -124,7 +126,7 @@ export const useResourceActions = (
 
         await updateMutation.mutateAsync({ resourceId, payload });
         invalidateResourcesQueries();
-        showSnackbar('리소스가 수정되었습니다.');
+        showSnackbar(t('toast.resourceUpdated'));
         trackEvent({
           resourceKey: 'menu.admin.resources',
           action: 'UPDATE',
@@ -139,22 +141,22 @@ export const useResourceActions = (
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
         if (error instanceof HttpError && error.status === 403) {
-          showSnackbar('권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.', 'error');
+          showSnackbar(t('error.permissionDenied'), 'error');
         } else if (error instanceof HttpError && error.status === 409) {
           // Handle 409 Conflict (duplicate resource key or child resources exist)
           const errorMessage = error.message || '';
           if (errorMessage.includes('하위') || errorMessage.includes('child')) {
-            showSnackbar('하위 리소스가 존재합니다. 하위 리소스를 삭제하거나 이동한 후 다시 시도해주세요.', 'error');
+            showSnackbar(t('error.hasChildrenResource'), 'error');
           } else {
-            showSnackbar('리소스 키가 중복됩니다. 다른 키를 사용해주세요.', 'error');
+            showSnackbar(t('error.duplicateResourceKey'), 'error');
           }
         } else {
-          showSnackbar(error instanceof Error ? error.message : '수정에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.updateFailed'), 'error');
         }
         return false;
       }
     },
-    [updateMutation, invalidateResourcesQueries, showSnackbar]
+    [updateMutation, invalidateResourcesQueries, showSnackbar, t]
   );
 
   // Delete resource
@@ -173,7 +175,7 @@ export const useResourceActions = (
 
         await deleteMutation.mutateAsync(resource.id);
         invalidateResourcesQueries();
-        showSnackbar('리소스가 삭제되었습니다.');
+        showSnackbar(t('toast.resourceDeleted'));
         trackEvent({
           resourceKey: 'menu.admin.resources',
           action: 'DELETE',
@@ -187,22 +189,22 @@ export const useResourceActions = (
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
         if (error instanceof HttpError && error.status === 403) {
-          showSnackbar('권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.', 'error');
+          showSnackbar(t('error.permissionDenied'), 'error');
         } else if (error instanceof HttpError && error.status === 409) {
           // Handle 409 Conflict (child resources exist)
           const errorMessage = error.message || '';
           if (errorMessage.includes('하위') || errorMessage.includes('child')) {
-            showSnackbar('하위 리소스가 존재합니다. 하위 리소스를 삭제하거나 이동한 후 다시 시도해주세요.', 'error');
+            showSnackbar(t('error.hasChildrenResource'), 'error');
           } else {
-            showSnackbar('리소스 삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 'error');
+            showSnackbar(t('error.resourceDeleteError'), 'error');
           }
         } else {
-          showSnackbar(error instanceof Error ? error.message : '삭제에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.deleteFailed'), 'error');
         }
         return false;
       }
     },
-    [deleteMutation, invalidateResourcesQueries, showSnackbar]
+    [deleteMutation, invalidateResourcesQueries, showSnackbar, t]
   );
 
   return {

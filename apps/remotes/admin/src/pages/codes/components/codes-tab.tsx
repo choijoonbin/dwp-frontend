@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify , ConfirmDialog, PermissionGate } from '@dwp-frontend/design-system';
 import {
   type Code,
@@ -41,6 +42,7 @@ import { useCodesTableState } from '../hooks/use-codes-table-state';
 // ----------------------------------------------------------------------
 
 export const CodesTab = () => {
+  const { t } = useTranslation('admin');
   const [selectedGroupKey, setSelectedGroupKey] = useState<string>('');
   const [codeDialogOpen, setCodeDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -131,7 +133,7 @@ export const CodesTab = () => {
             enabled: formData.enabled,
           },
         });
-        showSnackbar('코드가 수정되었습니다.');
+        showSnackbar(t('toast.codeUpdated'));
       } else {
         await createMutation.mutateAsync({
           groupKey: selectedGroupKey,
@@ -143,15 +145,15 @@ export const CodesTab = () => {
           tenantScope: formData.tenantScope,
           enabled: formData.enabled,
         });
-        showSnackbar('코드가 생성되었습니다.');
+        showSnackbar(t('toast.codeCreated'));
       }
       setCodeDialogOpen(false);
       refetchCodes();
     } catch (error) {
       if (error instanceof HttpError && error.status === 409) {
-        showSnackbar('코드 키가 중복됩니다. 다른 키를 사용해주세요.', 'error');
+        showSnackbar(t('error.duplicateCodeKey'), 'error');
       } else {
-        showSnackbar(error instanceof Error ? error.message : '저장에 실패했습니다.', 'error');
+        showSnackbar(error instanceof Error ? error.message : t('error.saveFailed'), 'error');
       }
     }
   };
@@ -165,9 +167,9 @@ export const CodesTab = () => {
       });
       setDeleteDialogOpen(false);
       refetchCodes();
-      showSnackbar('코드가 삭제되었습니다.');
+      showSnackbar(t('toast.codeDeleted'));
     } catch (error) {
-      showSnackbar(error instanceof Error ? error.message : '삭제에 실패했습니다.', 'error');
+      showSnackbar(error instanceof Error ? error.message : t('error.deleteFailed'), 'error');
     }
   };
 
@@ -361,10 +363,10 @@ export const CodesTab = () => {
         <ConfirmDialog
           open={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}
-          title="코드 삭제"
-          description={`정말 "${selectedCode.codeName}" 코드를 삭제하시겠습니까?`}
-          confirmText="삭제"
-          cancelText="취소"
+          title={t('confirm.deleteCode')}
+          description={t('confirm.deleteCodeContentWithName', { codeName: selectedCode.codeName })}
+          confirmText={t('confirm.delete')}
+          cancelText={t('confirm.cancel')}
           severity="danger"
           onConfirm={handleDeleteConfirm}
         />

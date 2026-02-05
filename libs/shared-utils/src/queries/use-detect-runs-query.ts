@@ -5,6 +5,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import { is403Error } from '../http-error';
 import { getTenantId } from '../tenant-util';
@@ -114,6 +115,7 @@ export type RunDetectNowMutationOptions = {
 };
 
 export const useRunDetectNowMutation = (options?: RunDetectNowMutationOptions) => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
   const tenantId = getTenantId();
   const selectedRunId = options?.selectedRunId;
@@ -137,23 +139,28 @@ export const useRunDetectNowMutation = (options?: RunDetectNowMutationOptions) =
       }
       const status = data?.status ?? 'SUCCESS';
       if (status === 'SUCCESS' || status === 'COMPLETED') {
-        showToast('배치 실행이 완료되었습니다');
+        showToast(t('toast.batchCompleted'));
       } else if (status === 'SKIPPED') {
         const skipped = data as { runningRunId?: string; skipReason?: string };
         const extra =
           skipped.runningRunId || skipped.skipReason
             ? ` (${[skipped.runningRunId, skipped.skipReason].filter(Boolean).join(' · ')})`
             : '';
-        showToast(`다른 인스턴스에서 배치 실행 중(락 미획득)${extra}`, 'warning');
+        showToast(
+          extra ? t('toast.batchLockedExtra', { extra }) : t('toast.batchLocked'),
+          'warning'
+        );
       } else if (status === 'FAILED') {
         showToast(
-          `${data?.message ?? '배치 실행에 실패했습니다'} — View Audit에서 원인 확인`,
+          t('toast.batchFailedAudit', {
+            message: data?.message ?? t('toast.batchFailed'),
+          }),
           'error'
         );
       }
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : '배치 실행 실패', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.batchFailed'), 'error');
     },
   });
 };

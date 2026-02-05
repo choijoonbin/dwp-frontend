@@ -1,6 +1,8 @@
 import type { UseMutationResult } from '@tanstack/react-query';
 
 import { useMemo, useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import { showToast, useCompanyCodeCatalogQuery, type TenantScopeCompanyCode } from '@dwp-frontend/shared-utils';
 
@@ -53,6 +55,7 @@ export const CompanyCodeCard = ({
   addMutation,
   refetch,
 }: CompanyCodeCardProps) => {
+  const { t } = useTranslation('common');
   const [filter, setFilter] = useState<FilterType>('all');
   const [addOpen, setAddOpen] = useState(false);
 
@@ -78,11 +81,11 @@ export const CompanyCodeCard = ({
       },
       {
         onSuccess: () => {
-          showToast('Saved');
+          showToast(t('toast.saved'));
           refetch();
         },
         onError: (err) => {
-          showToast(err instanceof Error ? err.message : 'Failed to update', 'error');
+          showToast(err instanceof Error ? err.message : t('toast.failedToUpdate'), 'error');
         },
       }
     );
@@ -94,11 +97,11 @@ export const CompanyCodeCard = ({
         bukrsList: selectedKeys,
         currentItems: items.map((i) => ({ bukrs: i.bukrs, enabled: i.enabled })),
       });
-      showToast('Saved');
+      showToast(t('toast.saved'));
       refetch();
       setAddOpen(false);
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Failed to add', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToAdd'), 'error');
       throw err;
     }
   };

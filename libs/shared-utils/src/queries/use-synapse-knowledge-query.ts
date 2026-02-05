@@ -3,6 +3,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
@@ -129,6 +130,7 @@ export const useRagSearchQuery = (params: RagSearchParams, enabledSearch: boolea
 };
 
 export const useRegisterRagDocumentMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -139,10 +141,10 @@ export const useRegisterRagDocumentMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'rag'] });
-      showToast('Document registered');
+      showToast(t('toast.documentRegistered'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to register', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToRegister'), 'error');
     },
   });
 };
@@ -233,6 +235,7 @@ export const useGuardrailsQuery = (enabledOnly?: boolean) => {
 };
 
 export const useCreateGuardrailMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -243,15 +246,16 @@ export const useCreateGuardrailMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'guardrails'] });
-      showToast('Guardrail created');
+      showToast(t('toast.guardrailCreated'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to create', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToCreate'), 'error');
     },
   });
 };
 
 export const useUpdateGuardrailMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -262,15 +266,16 @@ export const useUpdateGuardrailMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'guardrails'] });
-      showToast('Guardrail updated');
+      showToast(t('toast.guardrailUpdated'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to update', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToUpdate'), 'error');
     },
   });
 };
 
 export const useDeleteGuardrailMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -281,10 +286,10 @@ export const useDeleteGuardrailMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'guardrails'] });
-      showToast('Guardrail deleted');
+      showToast(t('toast.guardrailDeleted'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to delete', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToDelete'), 'error');
     },
   });
 };
@@ -321,6 +326,7 @@ export const useDictionaryQuery = (category?: string) => {
 };
 
 export const useCreateDictionaryTermMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -331,15 +337,16 @@ export const useCreateDictionaryTermMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'dictionary'] });
-      showToast('Term added');
+      showToast(t('toast.termAdded'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to add', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToAdd'), 'error');
     },
   });
 };
 
 export const useUpdateDictionaryTermMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -350,15 +357,16 @@ export const useUpdateDictionaryTermMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'dictionary'] });
-      showToast('Term updated');
+      showToast(t('toast.termUpdated'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to update', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToUpdate'), 'error');
     },
   });
 };
 
 export const useDeleteDictionaryTermMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -369,10 +377,10 @@ export const useDeleteDictionaryTermMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'dictionary'] });
-      showToast('Term deleted');
+      showToast(t('toast.termDeleted'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to delete', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToDelete'), 'error');
     },
   });
 };
@@ -401,6 +409,7 @@ export const useFeedbackQuery = (targetType?: string, targetId?: string) => {
 };
 
 export const useCreateFeedbackMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -411,10 +420,10 @@ export const useCreateFeedbackMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'feedback'] });
-      showToast('Feedback submitted');
+      showToast(t('toast.feedbackSubmitted'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to submit', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToSubmit'), 'error');
     },
   });
 };

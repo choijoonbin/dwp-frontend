@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { Iconify } from '@dwp-frontend/design-system';
 import {
   showToast,
@@ -45,6 +47,7 @@ export const PiiPolicySheet = ({
   existingPolicies,
   onSaved,
 }: PiiPolicySheetProps) => {
+  const { t } = useTranslation('common');
   const [handling, setHandling] = useState<PiiPolicyItem['handling']>('MASK');
   const [showLastN, setShowLastN] = useState<string>('');
   const [pattern, setPattern] = useState<string>('');
@@ -88,12 +91,12 @@ export const PiiPolicySheet = ({
       { profileId, policies: newPolicies },
       {
         onSuccess: () => {
-          showToast('Saved. Changes are recorded in Audit.');
+          showToast(t('toast.savedWithAudit'));
           onSaved();
           onClose();
         },
         onError: (err) => {
-          showToast(err instanceof Error ? err.message : 'Failed to save', 'error');
+          showToast(err instanceof Error ? err.message : t('toast.failedToSave'), 'error');
           onSaved();
         },
       }

@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { Iconify } from '@dwp-frontend/design-system';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useLineageQuery } from '@dwp-frontend/shared-utils';
@@ -33,6 +35,7 @@ import { ErrorStateWithRetry } from '../../components/ux/error-state-with-retry'
  * - Mobile/Tablet (<1536px): 단일 column + Evidence Tabs
  */
 export const LineagePage = () => {
+  const { t } = useTranslation('common');
   const [searchParams] = useSearchParams();
   const caseId = searchParams.get('caseId') ?? '';
   const docKey = searchParams.get('docKey') ?? '';
@@ -90,7 +93,7 @@ export const LineagePage = () => {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.5rem)' }}>
         <ErrorStateWithRetry
-          title="Failed to load lineage"
+          title={t('error.errorState.failedToLoadLineage')}
           message={error.message}
           onRetry={() => refetch()}
         />

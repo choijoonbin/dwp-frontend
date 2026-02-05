@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify , ConfirmDialog, PermissionGate } from '@dwp-frontend/design-system';
 import {
   HttpError,
@@ -40,6 +41,7 @@ import { useCodeGroupsTableState } from '../hooks/use-code-groups-table-state';
 // ----------------------------------------------------------------------
 
 export const CodeGroupsTab = () => {
+  const { t } = useTranslation('admin');
   const {
     keyword,
     tenantScope,
@@ -116,7 +118,7 @@ export const CodeGroupsTab = () => {
             enabled: formData.enabled,
           },
         });
-        showSnackbar('코드 그룹이 수정되었습니다.');
+        showSnackbar(t('toast.codeGroupUpdated'));
       } else {
         await createMutation.mutateAsync({
           groupKey: formData.groupKey,
@@ -125,15 +127,15 @@ export const CodeGroupsTab = () => {
           tenantScope: formData.tenantScope,
           enabled: formData.enabled,
         });
-        showSnackbar('코드 그룹이 생성되었습니다.');
+        showSnackbar(t('toast.codeGroupAdded'));
       }
       setGroupDialogOpen(false);
       refetch();
     } catch (err) {
       if (err instanceof HttpError && err.status === 409) {
-        showSnackbar('코드 그룹 키가 중복됩니다. 다른 키를 사용해주세요.', 'error');
+        showSnackbar(t('error.duplicateCodeGroupKey'), 'error');
       } else {
-        showSnackbar(err instanceof Error ? err.message : '저장에 실패했습니다.', 'error');
+        showSnackbar(err instanceof Error ? err.message : t('error.saveFailed'), 'error');
       }
     }
   };
@@ -144,12 +146,12 @@ export const CodeGroupsTab = () => {
       await deleteMutation.mutateAsync(selectedGroup.id);
       setDeleteDialogOpen(false);
       refetch();
-      showSnackbar('코드 그룹이 삭제되었습니다.');
+      showSnackbar(t('toast.codeGroupDeleted'));
     } catch (err) {
       if (err instanceof HttpError && err.status === 409) {
-        showSnackbar('코드가 포함된 그룹은 삭제할 수 없습니다. 코드를 먼저 삭제해주세요.', 'error');
+        showSnackbar(t('error.codeGroupHasCodes'), 'error');
       } else {
-        showSnackbar(err instanceof Error ? err.message : '삭제에 실패했습니다.', 'error');
+        showSnackbar(err instanceof Error ? err.message : t('error.deleteFailed'), 'error');
       }
     }
   };
@@ -307,10 +309,10 @@ export const CodeGroupsTab = () => {
         <ConfirmDialog
           open={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}
-          title="코드 그룹 삭제"
-          description={`정말 "${selectedGroup.groupName}" 코드 그룹을 삭제하시겠습니까?`}
-          confirmText="삭제"
-          cancelText="취소"
+          title={t('confirm.deleteCodeGroup')}
+          description={t('confirm.deleteCodeGroupContentSimple', { groupName: selectedGroup.groupName })}
+          confirmText={t('confirm.delete')}
+          cancelText={t('confirm.cancel')}
           severity="danger"
           onConfirm={handleDeleteConfirm}
         />

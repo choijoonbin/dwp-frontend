@@ -3,13 +3,15 @@
  * @see SynapseX 운영형 UX 마감 - 전 화면 공통
  */
 
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { Iconify } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 
 type ErrorStateWithRetryProps = {
   title?: string;
@@ -24,12 +26,13 @@ export const ErrorStateWithRetry = ({
   onRetry,
   is403 = false,
 }: ErrorStateWithRetryProps) => {
-  const displayTitle = title ?? (is403 ? '권한 부족' : 'Failed to load');
+  const { t } = useTranslation('common');
+  const displayTitle =
+    title ??
+    (is403 ? t('error.errorState.forbidden') : t('error.errorState.failedToLoad'));
   const displayMessage =
     message ??
-    (is403
-      ? '이 리소스에 대한 접근 권한이 없거나 가드레일 위반으로 차단되었습니다.'
-      : 'Unknown error');
+    (is403 ? t('error.errorState.forbiddenMessage') : t('error.errorState.unknownError'));
 
   return (
     <Box sx={{ p: { xs: 2, sm: 3 } }}>
@@ -52,7 +55,7 @@ export const ErrorStateWithRetry = ({
               onClick={onRetry}
               startIcon={<Iconify icon="solar:refresh-bold" width={18} />}
             >
-              Retry
+              {t('error.errorState.retry')}
             </Button>
           )}
         </CardContent>

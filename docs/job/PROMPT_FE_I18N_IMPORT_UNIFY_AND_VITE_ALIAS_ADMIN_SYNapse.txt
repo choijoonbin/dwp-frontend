@@ -1,0 +1,109 @@
+[FRONTEND PROMPT] i18n 품질 보완(P0) — import 일관성 + Vite alias(단독 실행 안정화) + 하드코딩 문자열 후보 정리
+(대상: DWP Frontend / Nx MFE / Admin & SynapseX & Mail Remotes)
+
+## 0) 목적(이번 라운드에서 끝내는 것)
+- 단일 i18n 인스턴스 보장: `useTranslation` 등 i18n 훅 import를 **전부 shared-i18n로 통일**
+- Remote 단독 실행 안정화: **Admin/SynapseX Vite config에 shared-i18n alias 추가**
+- 하드코딩 문자열(타이틀/필터/라벨) i18n 후보를 “리스트업 + 우선순위”로 정리해 다음 라운드에서 전수 치환 가능하게 준비
+
+---
+
+## 1) P0-1. useTranslation import 통일(필수)
+### 현황
+- 여러 파일에서 `react-i18next`에서 직접 import
+- 위험: Remote마다 다른 i18n 인스턴스/의존성 꼬임/빌드 모듈 해석 이슈 가능
+
+### 목표
+- 아래 규칙으로 **전 프로젝트 일괄 통일**
+  - 금지: `import { useTranslation } from 'react-i18next'`
+  - 허용: `import { useTranslation } from '@dwp-frontend/shared-i18n'`
+  - (추가) `Trans`, `I18nextProvider`, `initReactI18next` 등을 직접 쓰는 파일이 있으면, shared-i18n에서 export 하도록 정리
+
+### 작업 지침
+1) `libs/shared-i18n/src/lib/index.ts` 에서 export 확장
+- 최소:
+  - `export { useTranslation, Trans } from 'react-i18next';`
+  - `export { I18nProvider } from './I18nProvider';`
+  - `export { getLanguage, setLanguage, useLanguage } ...` (현재 존재 기준 유지)
+
+2) 레포 전체 검색/치환
+- 검색: `"from 'react-i18next'"`, `"react-i18next"`
+- 치환: 가능하면 `@dwp-frontend/shared-i18n`로 변경
+- 예외: shared-i18n 내부 구현 파일은 그대로 유지 가능
+
+3) 타입/빌드 확인
+- `yarn tsc --noEmit`
+- `yarn lint` (있다면)
+- `yarn test` (있다면)
+
+### 완료 조건(DoD)
+- repo 전체에서 `react-i18next` 직접 import가 “0건” 또는 “shared-i18n 내부만” 남음
+- Shell↔Remote 언어 전파 정상, Remote 단독 실행에서도 정상
+
+---
+
+## 2) P0-2. Admin/SynapseX Vite에 shared-i18n alias 추가(필수)
+### 현황
+- Mail remote에는 Vite alias가 있으나 Admin/SynapseX에는 없음
+- 영향: 단독 실행 시 path 해석/번들링 실패 가능
+
+### 목표
+- Admin/SynapseX의 `vite.config.ts`에 Mail과 **동일한 alias**를 추가하여 단독 실행 안정화
+
+### 작업 지침(패턴)
+- Mail remote의 `vite.config.ts`에서 alias 설정 블록을 복사
+- Admin:
+  - 파일: `apps/remotes/admin/vite.config.ts` (또는 실제 경로)
+  - alias 추가: `@dwp-frontend/shared-i18n` → `libs/shared-i18n/src/index.ts` 또는 dist entry
+- SynapseX:
+  - 파일: `apps/remotes/synapse/vite.config.ts` (또는 실제 경로)
+  - 동일 alias 추가
+
+### 검증
+- Host 없이 단독 실행:
+  - `yarn dev:admin`, `yarn dev:synapse` (스크립트명은 실제 package.json 기준)
+  - ko/en 토글, 번역 리소스 로딩, Confirm/Error 문구 변경 확인
+
+### 완료 조건(DoD)
+- Admin/SynapseX 단독 실행에서 i18n 관련 “모듈 해석 에러 0건”
+- 언어 토글 + Accept-Language 헤더 주입 정상
+
+---
+
+## 3) P1. 하드코딩 문자열(i18n 후보) 정리 + 최소 적용(선택)
+### 후보(예시)
+- Admin: "권한 관리", "리소스 관리", "메뉴 관리", "코드 그룹", "검색", "스코프", "전체", "공통", "테넌트", "활성" 등
+
+### 이번 라운드 권장 정책
+- 이번 라운드는 “품질/안정화(P0)”가 목적이므로,
+  - P1은 **리스트업 + 파일 위치 매핑만** 우선
+  - 다음 라운드에서 전수 치환(페이지 타이틀/필터/버튼)
+
+### 산출물
+- `docs/i18n/hardcoded_strings_admin.md` (신규)
+  - 문자열, 파일 경로, 컴포넌트, 우선순위(P0/P1/P2)
+  - 번역 키 제안(예: admin.permissions.title)
+
+---
+
+## 4) 환경/빌드 이슈(F-4) 처리 가이드(필수: 코드 변경 X)
+증상: `Cannot find module 'react-i18next' or its corresponding type declarations`
+
+가능 원인:
+- yarn install 실패(인증서 오류)로 node_modules 미설치
+
+조치:
+1) 개발자 로컬: `yarn install` 성공 확인 후 `yarn tsc --noEmit`
+2) CI: 동일 오류 재현 여부 확인
+   - 재현되면 “빌드 서버 CA/프록시 설정” 문제로 분리하여 운영팀/인프라팀에 전달
+   - 코드로 우회(예: strict:false) 금지
+
+---
+
+## 5) 최종 완료 체크(필수)
+- [ ] react-i18next 직접 import 제거(또는 shared-i18n 내부만)
+- [ ] Admin/SynapseX Vite alias 추가
+- [ ] Admin/SynapseX 단독 실행에서 i18n 동작
+- [ ] CI에서 yarn install/tsc 정상(인증서 이슈는 별도 트랙)
+
+끝.

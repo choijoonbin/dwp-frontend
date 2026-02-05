@@ -3,6 +3,7 @@
 import type { AuditLogSummary } from '@dwp-frontend/shared-utils';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { trackEvent, PermissionRouteGuard , useAdminAuditLogDetailQuery, useExportAdminAuditLogsMutation } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -25,6 +26,7 @@ export const AuditPage = () => (
 );
 
 const AuditPageContent = () => {
+  const { t } = useTranslation('admin');
   const {
     page,
     rowsPerPage,
@@ -114,7 +116,7 @@ const AuditPageContent = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      showSnackbar('Excel 파일이 다운로드되었습니다.');
+      showSnackbar(t('toast.excelDownloaded'));
       trackEvent({
         resourceKey: 'menu.admin.audit',
         action: 'EXPORT',
@@ -125,7 +127,7 @@ const AuditPageContent = () => {
         },
       });
     } catch (err) {
-      showSnackbar(err instanceof Error ? err.message : '다운로드에 실패했습니다.', 'error');
+      showSnackbar(err instanceof Error ? err.message : t('error.downloadFailed'), 'error');
       trackEvent({
         resourceKey: 'menu.admin.audit',
         action: 'EXPORT_ERROR',
@@ -135,7 +137,7 @@ const AuditPageContent = () => {
         },
       });
     }
-  }, [params, exportMutation, showSnackbar]);
+  }, [params, exportMutation, showSnackbar, t]);
 
   return (
     <Box

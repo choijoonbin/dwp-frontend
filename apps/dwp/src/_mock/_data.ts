@@ -98,21 +98,17 @@ export const _products = [...Array(24)].map((_, index) => {
 
 // ----------------------------------------------------------------------
 
+/** ko(한국어) 기본, en(미국 영어) 2개만 지원 */
 export const _langs = [
+  {
+    value: 'ko',
+    label: '한국어',
+    icon: 'circle-flags:kr',
+  },
   {
     value: 'en',
     label: 'English',
-    icon: '/assets/icons/flags/ic-flag-en.svg',
-  },
-  {
-    value: 'de',
-    label: 'German',
-    icon: '/assets/icons/flags/ic-flag-de.svg',
-  },
-  {
-    value: 'fr',
-    label: 'French',
-    icon: '/assets/icons/flags/ic-flag-fr.svg',
+    icon: 'circle-flags:us',
   },
 ];
 

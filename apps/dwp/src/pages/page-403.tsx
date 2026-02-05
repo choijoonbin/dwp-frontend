@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import { RouterLink } from 'src/routes/components';
 
@@ -12,6 +13,7 @@ import { Logo } from 'src/components/logo';
 // ----------------------------------------------------------------------
 
 export default function Page() {
+  const { t } = useTranslation('common');
   return (
     <>
       <title>{`403 Forbidden - ${CONFIG.appName}`}</title>
@@ -29,11 +31,11 @@ export default function Page() {
         }}
       >
         <Typography variant="h3" sx={{ mb: 2 }}>
-          403 Forbidden
+          {t('error.403.title')}
         </Typography>
 
         <Typography sx={{ color: 'text.secondary', maxWidth: 480, textAlign: 'center' }}>
-          접근 권한이 없거나 가드레일 위반으로 차단되었습니다. 필요한 권한이 있다면 관리자에게 문의하세요.
+          {t('error.403.description')}
         </Typography>
 
         <Box
@@ -47,7 +49,7 @@ export default function Page() {
         />
 
         <Button component={RouterLink} href="/" size="large" variant="contained" color="inherit">
-          홈으로 돌아가기
+          {t('error.403.goHome')}
         </Button>
       </Container>
     </>

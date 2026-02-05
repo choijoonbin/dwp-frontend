@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Label, Iconify } from '@dwp-frontend/design-system';
 import { useRef, useState, useEffect, useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
+import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
   showToast,
   type DataProtectionDto,
@@ -50,6 +52,7 @@ export const DataProtectionCard = ({
   isLoading = false,
   onSaved,
 }: DataProtectionCardProps) => {
+  const { t } = useTranslation('common');
   const mutation = usePutDataProtectionMutation();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [localData, setLocalData] = useState<DataProtectionDto>(data);
@@ -70,11 +73,11 @@ export const DataProtectionCard = ({
           { profileId, payload },
           {
             onSuccess: () => {
-              showToast('Saved. Changes are recorded in Audit.');
+              showToast(t('toast.savedWithAudit'));
               onSaved();
             },
             onError: (err: Error) => {
-              showToast(err instanceof Error ? err.message : 'Failed to save', 'error');
+              showToast(err instanceof Error ? err.message : t('toast.failedToSave'), 'error');
               setLocalData(data);
               onSaved();
             },
@@ -82,7 +85,7 @@ export const DataProtectionCard = ({
         );
       }, DEBOUNCE_MS);
     },
-    [data, mutation, onSaved, profileId]
+    [data, mutation, onSaved, profileId, t]
   );
 
   const auditLink = `${SYNAPSE_ROUTES.AUDIT}?category=ADMIN&type=UPDATE&resourceType=DATA_PROTECTION`;

@@ -1,5 +1,7 @@
 import type { UseMutationResult } from '@tanstack/react-query';
 
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import { showToast, type TenantScopeSodRule } from '@dwp-frontend/shared-utils';
 
@@ -42,6 +44,8 @@ type SodCardProps = {
 };
 
 export const SodCard = ({ items, isLoading, patchMutation, refetch, sodMode }: SodCardProps) => {
+  const { t } = useTranslation('common');
+
   const toCurrentItems = () =>
     items.map((i) => ({
       enabled: i.enabled,
@@ -58,11 +62,11 @@ export const SodCard = ({ items, isLoading, patchMutation, refetch, sodMode }: S
       },
       {
         onSuccess: () => {
-          showToast('Saved');
+          showToast(t('toast.saved'));
           refetch();
         },
         onError: (err: Error) => {
-          showToast(err instanceof Error ? err.message : 'Failed to update', 'error');
+          showToast(err instanceof Error ? err.message : t('toast.failedToUpdate'), 'error');
         },
       }
     );
@@ -77,11 +81,11 @@ export const SodCard = ({ items, isLoading, patchMutation, refetch, sodMode }: S
       },
       {
         onSuccess: () => {
-          showToast('Saved');
+          showToast(t('toast.saved'));
           refetch();
         },
         onError: (err: Error) => {
-          showToast(err instanceof Error ? err.message : 'Failed to update', 'error');
+          showToast(err instanceof Error ? err.message : t('toast.failedToUpdate'), 'error');
         },
       }
     );

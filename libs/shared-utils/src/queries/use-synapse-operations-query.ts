@@ -4,6 +4,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
@@ -103,6 +104,7 @@ export const useCaseDetailQuery = (caseId: string | undefined) => {
 };
 
 export const useUpdateCaseStatusMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
   const tenantId = getTenantId();
 
@@ -125,10 +127,10 @@ export const useUpdateCaseStatusMutation = () => {
       queryClient.invalidateQueries({
         queryKey: caseDetailQueryKey(tenantId, variables.caseId),
       });
-      showToast('Case status updated');
+      showToast(t('toast.statusUpdated'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to update status', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToUpdateStatus'), 'error');
     },
   });
 };
@@ -184,6 +186,7 @@ export const useActionsListQuery = (params?: ActionsListParams) => {
 };
 
 export const useCreateActionMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -197,15 +200,16 @@ export const useCreateActionMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
       queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
-      showToast('Action created');
+      showToast(t('toast.actionCreated'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to create action', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToCreateAction'), 'error');
     },
   });
 };
 
 export const useApproveActionMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -221,11 +225,11 @@ export const useApproveActionMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
       queryClient.invalidateQueries({ queryKey: ['synapse', 'archive'] });
-      showToast('Action approved');
+      showToast(t('toast.approved'));
     },
     onError: (err) => {
       showToastWithAuditLink(
-        err instanceof Error ? err.message : 'Failed to approve',
+        err instanceof Error ? err.message : t('toast.failedToApprove'),
         getAuditIdFromError(err)
       );
     },
@@ -233,6 +237,7 @@ export const useApproveActionMutation = () => {
 };
 
 export const useExecuteActionMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -248,11 +253,11 @@ export const useExecuteActionMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
       queryClient.invalidateQueries({ queryKey: ['synapse', 'archive'] });
-      showToast('Action executed');
+      showToast(t('toast.actionExecuted'));
     },
     onError: (err) => {
       showToastWithAuditLink(
-        err instanceof Error ? err.message : 'Failed to execute',
+        err instanceof Error ? err.message : t('toast.failedToExecute'),
         getAuditIdFromError(err)
       );
     },
@@ -260,6 +265,7 @@ export const useExecuteActionMutation = () => {
 };
 
 export const useRejectActionMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -272,15 +278,16 @@ export const useRejectActionMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
-      showToast('Action rejected');
+      showToast(t('toast.actionRejected'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Failed to reject', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.failedToReject'), 'error');
     },
   });
 };
 
 export const useSimulateActionMutation = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -295,11 +302,11 @@ export const useSimulateActionMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
-      showToast('Simulation completed');
+      showToast(t('toast.simulationCompleted'));
     },
     onError: (err) => {
       showToastWithAuditLink(
-        err instanceof Error ? err.message : 'Failed to simulate',
+        err instanceof Error ? err.message : t('toast.simulationFailed'),
         getAuditIdFromError(err)
       );
     },

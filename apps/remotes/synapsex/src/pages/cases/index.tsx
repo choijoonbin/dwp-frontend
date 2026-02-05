@@ -4,9 +4,17 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useQueryClient } from '@tanstack/react-query';
 import { Label, Iconify } from '@dwp-frontend/design-system';
-import { is403Error, tableToCsv, downloadCsv, getTenantId } from '@dwp-frontend/shared-utils';
+import { formatCurrency, formatDate } from '@dwp-frontend/shared-i18n';
+import {
+  is403Error,
+  tableToCsv,
+  downloadCsv,
+  getTenantId,
+  useCodes,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -33,17 +41,10 @@ import type { CaseListItem } from './adapters/case-list-adapter';
 
 // ----------------------------------------------------------------------
 
-const formatMoney = (amount: number, currency: string) =>
-  new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-
-// ----------------------------------------------------------------------
-
 export const CasesPage = () => {
+  const { t } = useTranslation('common');
+  const { getLabel: getStatusLabel } = useCodes('CASE_STATUS');
+  const { getLabel: getTypeLabel } = useCodes('CASE_TYPE');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [q, setQ] = useState('');
@@ -81,13 +82,13 @@ export const CasesPage = () => {
 
   const handleExportCsv = () => {
     const csv = tableToCsv(rows, [
-      { id: 'caseNumber', label: 'Case' },
-      { id: 'severity', label: 'Severity' },
-      { id: 'status', label: 'Status' },
-      { id: 'anomalyType', label: 'Type' },
+      { id: 'caseNumber', label: t('cases.case') },
+      { id: 'severity', label: t('cases.severity') },
+      { id: 'status', label: t('cases.status'), getValue: (r) => getStatusLabel(r.status) || r.status },
+      { id: 'anomalyType', label: t('cases.type'), getValue: (r) => getTypeLabel(r.anomalyType) || r.anomalyType },
       { id: 'companyCode', label: 'Company' },
-      { id: 'amount', label: 'Amount', getValue: (r) => formatMoney(r.amount, r.currency) },
-      { id: 'detectedAt', label: 'Detected' },
+      { id: 'amount', label: t('cases.amount'), getValue: (r) => formatCurrency(r.amount, r.currency) },
+      { id: 'detectedAt', label: t('cases.lastDetected') },
     ]);
     downloadCsv(csv, `cases-${new Date().toISOString().slice(0, 10)}.csv`);
   };
@@ -95,8 +96,8 @@ export const CasesPage = () => {
   if (error) {
     return (
       <ErrorStateWithRetry
-        title={is403Error(error) ? '권한 부족' : 'Failed to load cases'}
-        message={error instanceof Error ? error.message : 'Unknown error'}
+        title={is403Error(error) ? undefined : t('error.errorState.failedToLoadCases')}
+        message={error instanceof Error ? error.message : undefined}
         onRetry={() => refetch()}
         is403={is403Error(error)}
       />
@@ -116,11 +117,11 @@ export const CasesPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:clipboard-list-bold" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Cases
+                {t('cases.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Autonomous case worklist with triage and escalation.
+              {t('cases.subtitle')}
             </Typography>
           </Box>
           <Stack direction="row" spacing={1}>
@@ -130,7 +131,7 @@ export const CasesPage = () => {
               startIcon={<Iconify icon="solar:refresh-bold" width={16} />}
               onClick={handleRefresh}
             >
-              Refresh
+              {t('cases.refresh')}
             </Button>
             <Button
               variant="outlined"
@@ -138,7 +139,7 @@ export const CasesPage = () => {
               startIcon={<Iconify icon="solar:file-export-bold" width={16} />}
               onClick={handleExportCsv}
             >
-              Export CSV
+              {t('cases.exportCsv')}
             </Button>
           </Stack>
         </Stack>
@@ -148,7 +149,7 @@ export const CasesPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2 }}>
                 <Typography variant="caption" color="text.secondary">
-                  Total Cases
+                  {t('cases.totalCases')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {totalCount}
@@ -160,7 +161,7 @@ export const CasesPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2 }}>
                 <Typography variant="caption" color="text.secondary">
-                  Triage Backlog
+                  {t('cases.triageBacklog')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, color: 'warning.main' }}>
                   {triageBacklogCount}
@@ -171,7 +172,7 @@ export const CasesPage = () => {
         </Grid>
 
         <TextField
-          placeholder="Search cases..."
+          placeholder={t('cases.searchPlaceholder')}
           value={q}
           onChange={(e) => setQ(e.target.value)}
           size="small"
@@ -189,25 +190,25 @@ export const CasesPage = () => {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>Case</TableCell>
-                <TableCell>Severity</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell>Last Detected</TableCell>
+                <TableCell>{t('cases.case')}</TableCell>
+                <TableCell>{t('cases.severity')}</TableCell>
+                <TableCell>{t('cases.status')}</TableCell>
+                <TableCell>{t('cases.type')}</TableCell>
+                <TableCell align="right">{t('cases.amount')}</TableCell>
+                <TableCell>{t('cases.lastDetected')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                    Loading...
+                    {t('cases.loading')}
                   </TableCell>
                 </TableRow>
               ) : rows.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 4 }} color="text.secondary">
-                    아직 탐지된 케이스가 없습니다
+                    {t('cases.empty')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -225,12 +226,12 @@ export const CasesPage = () => {
                         </Typography>
                         {row.isNew && (
                           <Label variant="soft" color="primary" sx={{ px: 0.75, py: 0.25 }}>
-                            New
+                            {t('cases.new')}
                           </Label>
                         )}
                         {row.isUpdated && !row.isNew && (
                           <Label variant="soft" color="info" sx={{ px: 0.75, py: 0.25 }}>
-                            Updated
+                            {t('cases.updated')}
                           </Label>
                         )}
                       </Stack>
@@ -240,14 +241,14 @@ export const CasesPage = () => {
                     </TableCell>
                     <TableCell>
                       <Label variant="soft" color="default">
-                        {row.status}
+                        {getStatusLabel(row.status) || row.status}
                       </Label>
                     </TableCell>
-                    <TableCell>{row.anomalyType || '-'}</TableCell>
-                    <TableCell align="right">{formatMoney(row.amount, row.currency)}</TableCell>
+                    <TableCell>{getTypeLabel(row.anomalyType) || row.anomalyType || '-'}</TableCell>
+                    <TableCell align="right">{formatCurrency(row.amount, row.currency)}</TableCell>
                     <TableCell>
                       {(row.lastDetectedAt ?? row.updatedAt ?? row.detectedAt)
-                        ? new Date(row.lastDetectedAt ?? row.updatedAt ?? row.detectedAt).toLocaleDateString()
+                        ? formatDate(row.lastDetectedAt ?? row.updatedAt ?? row.detectedAt)
                         : '-'}
                     </TableCell>
                   </TableRow>
@@ -260,7 +261,7 @@ export const CasesPage = () => {
         {totalPages > 1 && (
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography variant="caption" color="text.secondary">
-              Page {page + 1} of {totalPages}
+              {t('cases.pageOf', { current: page + 1, total: totalPages })}
             </Typography>
             <Stack direction="row" spacing={1}>
               <Button
@@ -268,14 +269,14 @@ export const CasesPage = () => {
                 disabled={page <= 0}
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
               >
-                Previous
+                {t('cases.previous')}
               </Button>
               <Button
                 size="small"
                 disabled={page >= totalPages - 1}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Next
+                {t('cases.next')}
               </Button>
             </Stack>
           </Stack>

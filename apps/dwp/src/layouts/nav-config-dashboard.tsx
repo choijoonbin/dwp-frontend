@@ -74,8 +74,11 @@ const convertMenuNodeToNavItem = (node: MenuNode): NavItem => {
     ? node.icon.trim() 
     : 'solar:circle-bold'; // Fallback icon only when backend icon is missing
 
+  // menuName 우선, 없으면 name fallback (BE menus/tree가 언어별 menuName 반환)
+  const displayName =
+    node.menuName ?? (node as MenuNode & { name?: string }).name ?? '';
   return {
-    title: node.menuName,
+    title: displayName,
     path,
     icon: <Iconify width={22} icon={iconString} />,
     group: node.group || undefined,

@@ -6,6 +6,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import { tableToCsv, is403Error, downloadCsv } from '@dwp-frontend/shared-utils';
 
@@ -92,6 +93,7 @@ const formatMoney = (amount: number, currency: string) =>
 const urlTypeToUi = (v: string) => v.toLowerCase();
 
 export const AnomaliesPage = () => {
+  const { t } = useTranslation('common');
   const [searchParams, setSearchParams] = useSearchParams();
   const urlType = searchParams.get('type');
   const urlSeverity = searchParams.get('severity');
@@ -140,8 +142,8 @@ export const AnomaliesPage = () => {
   if (error) {
     return (
       <ErrorStateWithRetry
-        title={is403Error(error) ? '권한 부족' : 'Failed to load anomalies'}
-        message={error instanceof Error ? error.message : 'Unknown error'}
+        title={is403Error(error) ? undefined : t('error.errorState.failedToLoadAnomalies')}
+        message={error instanceof Error ? error.message : undefined}
         onRetry={() => refetch()}
         is403={is403Error(error)}
       />

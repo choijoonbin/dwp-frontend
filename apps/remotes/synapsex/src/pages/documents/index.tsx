@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import { is403Error, useCompanyCodeCatalogQuery } from '@dwp-frontend/shared-utils';
 
@@ -35,6 +36,7 @@ const buildDocDetailPath = (bukrs: string, belnr: string, gjahr: string) =>
   `/synapse/documents/${bukrs}/${belnr}/${gjahr}`;
 
 export const DocumentsPage = () => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const { data: catalogData } = useCompanyCodeCatalogQuery({ enabled: true });
   const companyCodes = (catalogData ?? []).map((c) => ({
@@ -63,8 +65,8 @@ export const DocumentsPage = () => {
   if (error) {
     return (
       <ErrorStateWithRetry
-        title={is403Error(error) ? '권한 부족' : 'Failed to load documents'}
-        message={error instanceof Error ? error.message : 'Unknown error'}
+        title={is403Error(error) ? undefined : t('error.errorState.failedToLoadDocuments')}
+        message={error instanceof Error ? error.message : undefined}
         onRetry={() => refetch()}
         is403={is403Error(error)}
       />

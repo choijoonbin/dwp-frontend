@@ -2,6 +2,7 @@ import type { Theme, SxProps } from '@mui/material/styles';
 import type { LabelColor } from '@dwp-frontend/design-system';
 
 import { Label, Iconify } from '@dwp-frontend/design-system';
+import { useCodes } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 
@@ -54,10 +55,13 @@ const sizeMap = {
 const defaultConfig = { label: 'Unknown', icon: 'solar:info-circle-bold', color: 'default' as LabelColor };
 
 export const StatusPill = ({ status, size = 'md', sx }: StatusPillProps) => {
+  const { getLabel } = useCodes('CASE_STATUS');
   const normalized = (status ?? '').toLowerCase().replace(/-/g, '_');
   const config = statusConfig[normalized] ?? defaultConfig;
   const { fontSize, iconSize } = sizeMap[size];
   const isAnimated = normalized === 'in_progress';
+  const codeKey = (status ?? '').toUpperCase().replace(/-/g, '_');
+  const label = getLabel(codeKey) || config.label;
 
   return (
     <Label
@@ -82,7 +86,7 @@ export const StatusPill = ({ status, size = 'md', sx }: StatusPillProps) => {
         ...sx,
       }}
     >
-      {config.label}
+      {label}
     </Label>
   );
 };

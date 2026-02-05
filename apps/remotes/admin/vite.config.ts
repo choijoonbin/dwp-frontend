@@ -36,6 +36,10 @@ export default defineConfig(({ mode }) => {
           find: /^@dwp-frontend\/shared-utils(.*)$/,
           replacement: path.resolve(__dirname, '../../../libs/shared-utils/src$1'),
         },
+        {
+          find: /^@dwp-frontend\/shared-i18n(.*)$/,
+          replacement: path.resolve(__dirname, '../../../libs/shared-i18n/src$1'),
+        },
       ],
     },
     server: { port: PORT, host: true },

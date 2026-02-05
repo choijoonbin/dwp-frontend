@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+import { i18n } from '@dwp-frontend/shared-i18n';
+
 // ----------------------------------------------------------------------
 
 export type ToastSeverity = 'success' | 'error' | 'warning';
@@ -58,8 +60,21 @@ export const showToastWithAuditLink = (
   auditId?: string
 ): void => {
   if (auditId) {
-    showToast(message, 'error', { label: 'Audit 상세 보기', href: `/synapse/audit?auditId=${auditId}` });
+    showToast(message, 'error', {
+      label: i18n.t('toast.auditView', { ns: 'common' }),
+      href: `/synapse/audit?auditId=${auditId}`,
+    });
   } else {
     showToast(message, 'error');
   }
 };
+
+/**
+ * Toast 호출 훅 — showToast 래퍼
+ * LanguagePopover 등에서 사용
+ */
+export const useToast = () => ({
+  success: (message: string) => showToast(message, 'success'),
+  error: (message: string, action?: ToastAction) => showToast(message, 'error', action),
+  warning: (message: string) => showToast(message, 'warning'),
+});

@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { Iconify } from '@dwp-frontend/design-system';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -57,6 +59,7 @@ const buildDocDetailPath = (bukrs: string, belnr: string, gjahr: string) =>
 
 /** 전표 상세 페이지 */
 export const DocumentDetailPage = () => {
+  const { t } = useTranslation('common');
   const location = useLocation();
   const navigate = useNavigate();
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -133,7 +136,7 @@ export const DocumentDetailPage = () => {
           <CardContent sx={{ p: 12, textAlign: 'center' }}>
             <Iconify icon="solar:document-text-bold-duotone" width={48} sx={{ color: 'text.disabled', mb: 2 }} />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Document Not Found
+              {t('notFound.document')}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
               The document you are looking for does not exist or has been removed.

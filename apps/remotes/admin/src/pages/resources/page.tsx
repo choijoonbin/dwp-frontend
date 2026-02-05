@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { ConfirmDialog, TwoColumnLayout } from '@dwp-frontend/design-system';
 import { trackEvent, type ResourceNode, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 
@@ -28,6 +29,7 @@ export const ResourcesPage = () => (
 );
 
 const ResourcesPageContent = () => {
+  const { t } = useTranslation('admin');
   const {
     keyword,
     resourceTypeFilter,
@@ -230,10 +232,10 @@ const ResourcesPageContent = () => {
       {selectedResource && (
         <ConfirmDialog
           open={deleteDialogOpen}
-          title="리소스 삭제"
-          description={`정말 "${selectedResource.resourceName}" 리소스를 삭제하시겠습니까?`}
-          confirmText="삭제"
-          cancelText="취소"
+          title={t('confirm.deleteResource')}
+          description={t('confirm.deleteResourceContent', { resourceName: selectedResource.resourceName })}
+          confirmText={t('confirm.delete')}
+          cancelText={t('confirm.cancel')}
           severity="danger"
           onConfirm={handleDeleteConfirm}
           onClose={() => setDeleteDialogOpen(false)}

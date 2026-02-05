@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, ConfirmDialog, TwoColumnLayout } from '@dwp-frontend/design-system';
 import { HttpError, trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 import {
@@ -31,6 +32,7 @@ export const CodeUsagesPage = () => (
 );
 
 const CodeUsagesPageContent = () => {
+  const { t } = useTranslation('admin');
   const {
     keyword,
     selectedResourceKey,
@@ -144,7 +146,7 @@ const CodeUsagesPageContent = () => {
         },
       });
       refetch();
-      showSnackbar(`코드 그룹이 ${!usage.enabled ? '활성화' : '비활성화'}되었습니다.`);
+      showSnackbar(!usage.enabled ? t('toast.codeGroupEnabled') : t('toast.codeGroupDisabled'));
       trackEvent({
         resourceKey: 'menu.admin.code-usages',
         action: 'UPDATE_CODE_USAGE',
@@ -155,7 +157,7 @@ const CodeUsagesPageContent = () => {
         },
       });
     } catch (err) {
-      showSnackbar(err instanceof Error ? err.message : '상태 변경에 실패했습니다.', 'error');
+      showSnackbar(err instanceof Error ? err.message : t('error.statusChangeFailed'), 'error');
     }
   };
 
@@ -181,14 +183,14 @@ const CodeUsagesPageContent = () => {
             enabled: formData.enabled,
           },
         });
-        showSnackbar('코드 그룹이 수정되었습니다.');
+        showSnackbar(t('toast.codeGroupUpdated'));
       } else {
         await createMutation.mutateAsync({
           resourceKey: formData.resourceKey,
           codeGroupKey: formData.codeGroupKey,
           enabled: formData.enabled,
         });
-        showSnackbar('코드 그룹이 추가되었습니다.');
+        showSnackbar(t('toast.codeGroupAdded'));
       }
       setGroupDialogOpen(false);
       refetch();
@@ -203,9 +205,9 @@ const CodeUsagesPageContent = () => {
       });
     } catch (err) {
       if (err instanceof HttpError && err.status === 409) {
-        showSnackbar('이미 등록된 코드 그룹입니다.', 'error');
+        showSnackbar(t('error.duplicateCodeGroup'), 'error');
       } else {
-        showSnackbar(err instanceof Error ? err.message : '저장에 실패했습니다.', 'error');
+        showSnackbar(err instanceof Error ? err.message : t('error.saveFailed'), 'error');
       }
     }
   };
@@ -216,7 +218,7 @@ const CodeUsagesPageContent = () => {
       await deleteMutation.mutateAsync(selectedUsage.id);
       setDeleteDialogOpen(false);
       refetch();
-      showSnackbar('코드 그룹이 삭제되었습니다.');
+      showSnackbar(t('toast.codeGroupDeleted'));
       trackEvent({
         resourceKey: 'menu.admin.code-usages',
         action: 'DELETE_CODE_USAGE',
@@ -228,7 +230,7 @@ const CodeUsagesPageContent = () => {
         },
       });
     } catch (err) {
-      showSnackbar(err instanceof Error ? err.message : '삭제에 실패했습니다.', 'error');
+      showSnackbar(err instanceof Error ? err.message : t('error.deleteFailed'), 'error');
     }
   };
 
@@ -313,10 +315,13 @@ const CodeUsagesPageContent = () => {
         <ConfirmDialog
           open={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}
-          title="코드 그룹 삭제"
-          description={`정말 "${selectedUsage.codeGroupKey}" 코드 그룹을 "${selectedUsage.resourceKey}"에서 제거하시겠습니까?`}
-          confirmText="삭제"
-          cancelText="취소"
+          title={t('confirm.deleteCodeGroup')}
+          description={t('confirm.deleteCodeGroupContent', {
+            codeGroupKey: selectedUsage.codeGroupKey,
+            resourceKey: selectedUsage.resourceKey,
+          })}
+          confirmText={t('confirm.delete')}
+          cancelText={t('confirm.cancel')}
           severity="danger"
           onConfirm={handleDeleteConfirm}
         />

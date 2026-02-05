@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { Iconify } from '@dwp-frontend/design-system';
 import {
   showToast,
@@ -32,6 +34,7 @@ export const MaskingPolicyCard = ({
   isLoading = false,
   onSaved,
 }: MaskingPolicyCardProps) => {
+  const { t } = useTranslation('common');
   const [sheetOpen, setSheetOpen] = useState(false);
   const [selectedField, setSelectedField] = useState<PiiFieldCatalogItem | null>(null);
 
@@ -68,11 +71,11 @@ export const MaskingPolicyCard = ({
       { profileId, policies: newPolicies },
       {
         onSuccess: () => {
-          showToast('Saved. Changes are recorded in Audit.');
+          showToast(t('toast.savedWithAudit'));
           onSaved();
         },
         onError: (err) => {
-          showToast(err instanceof Error ? err.message : 'Failed to save', 'error');
+          showToast(err instanceof Error ? err.message : t('toast.failedToSave'), 'error');
           onSaved();
         },
       }

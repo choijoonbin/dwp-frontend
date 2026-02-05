@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { Iconify } from '@dwp-frontend/design-system';
 import { useEntityDetailQuery } from '@dwp-frontend/shared-utils';
 import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
@@ -31,6 +33,8 @@ import ListItemText from '@mui/material/ListItemText';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import TableContainer from '@mui/material/TableContainer';
+
+import { formatCurrency, formatDate } from '@dwp-frontend/shared-i18n';
 
 import { SYNAPSE_ROUTES } from '../routes';
 import { PiiFieldDisplay } from '../components/pii';
@@ -231,6 +235,7 @@ const ChangeLogItem = ({ log, showMasked }: { log: EntityChangeLog; showMasked: 
 
 /** 거래처 상세 페이지 (Entity Profile) */
 export const EntityDetailPage = () => {
+  const { t } = useTranslation('common');
   const { pathname } = useLocation();
   const idFromParams = useParams<{ id: string }>().id;
   // pathname-to-page 렌더 시 Route :id 없음 → pathname에서 추출 (synapse/entities/2501, entities/2501 등)
@@ -302,7 +307,7 @@ export const EntityDetailPage = () => {
           <CardContent sx={{ p: 12, textAlign: 'center' }}>
             <Iconify icon="solar:danger-triangle-bold-duotone" width={48} sx={{ color: 'warning.main', mb: 2 }} />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Entity Not Found
+              {t('notFound.entity')}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
               The entity with ID {id ?? '—'} could not be found.
@@ -315,19 +320,6 @@ export const EntityDetailPage = () => {
       </Box>
     );
   }
-
-  const formatCurrency = (amount: number, currency: string) => new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-
-  const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
 
   const handleRequestAccess = () => {
     setAccessRequestOpen(true);

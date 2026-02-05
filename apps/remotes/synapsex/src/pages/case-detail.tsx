@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { Iconify } from '@dwp-frontend/design-system';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { is403Error, buildAuditUrl, useSynapseAgentStream } from '@dwp-frontend/shared-utils';
@@ -224,6 +226,7 @@ const emptyRagCitations: RagCitation[] = [];
 
 /** 케이스 상세 페이지 */
 export const CaseDetailPage = () => {
+  const { t } = useTranslation('common');
   const theme = useTheme();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -331,8 +334,8 @@ export const CaseDetailPage = () => {
   if (error) {
     return (
       <ErrorStateWithRetry
-        title={is403Error(error) ? '권한 부족' : 'Failed to load case'}
-        message={error instanceof Error ? error.message : 'Unknown error'}
+        title={is403Error(error) ? undefined : t('error.errorState.failedToLoadCase')}
+        message={error instanceof Error ? error.message : undefined}
         onRetry={() => refetch()}
         is403={is403Error(error)}
       />
@@ -342,7 +345,7 @@ export const CaseDetailPage = () => {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
         <Typography variant="h6" sx={{ mb: 1 }}>
-          Case Not Found
+          {t('notFound.case')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           The case you are looking for does not exist or you do not have access.

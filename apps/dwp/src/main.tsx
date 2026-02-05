@@ -1,8 +1,9 @@
 import '@dwp-frontend/design-system/styles/global.css';
 
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AuthProvider } from '@dwp-frontend/shared-utils';
+import { AuthProvider, setLanguageHeaderProvider } from '@dwp-frontend/shared-utils';
+import { I18nProvider, getCurrentLanguage } from '@dwp-frontend/shared-i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router';
 
@@ -13,6 +14,15 @@ import { routesSection } from './routes/sections';
 import { ErrorBoundary } from './routes/components';
 
 // ----------------------------------------------------------------------
+
+/** API 요청 시 Accept-Language 헤더 주입 */
+const InitI18nAxios = () => {
+  useEffect(() => {
+    setLanguageHeaderProvider(() => getCurrentLanguage());
+    return () => setLanguageHeaderProvider(null);
+  }, []);
+  return null;
+};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,9 +51,12 @@ root.render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AuthProvider>
-          <RouterProvider router={router} />
-        </AuthProvider>
+        <I18nProvider>
+          <AuthProvider>
+            <InitI18nAxios />
+            <RouterProvider router={router} />
+          </AuthProvider>
+        </I18nProvider>
       </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>

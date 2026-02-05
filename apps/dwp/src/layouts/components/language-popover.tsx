@@ -1,13 +1,16 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
-import { useState, useCallback } from 'react';
-import { usePopover } from '@dwp-frontend/shared-utils';
+import { useCallback } from 'react';
+import { usePopover, useToast } from '@dwp-frontend/shared-utils';
+import { useLanguage, useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
 import MenuList from '@mui/material/MenuList';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
+
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -19,22 +22,13 @@ export type LanguagePopoverProps = IconButtonProps & {
   }[];
 };
 
-export function LanguagePopover({ data = [], sx, ...other }: LanguagePopoverProps) {
-  const { open, anchorEl, onClose, onOpen } = usePopover();
-
-  const [locale, setLocale] = useState(data[0].value);
-
-  const handleChangeLang = useCallback(
-    (newLang: string) => {
-      setLocale(newLang);
-      onClose();
-    },
-    [onClose]
-  );
-
-  const currentLang = data.find((lang) => lang.value === locale);
-
-  const renderFlag = (label?: string, icon?: string) => (
+/** Iconify 아이콘(예: circle-flags:kr) 또는 img 경로(예: /assets/...) 지원 */
+const renderFlag = (label?: string, icon?: string) => {
+  if (!icon) return null;
+  if (icon.includes(':')) {
+    return <Iconify icon={icon} width={26} height={20} sx={{ borderRadius: 0.5 }} />;
+  }
+  return (
     <Box
       component="img"
       alt={label}
@@ -42,6 +36,28 @@ export function LanguagePopover({ data = [], sx, ...other }: LanguagePopoverProp
       sx={{ width: 26, height: 20, borderRadius: 0.5, objectFit: 'cover' }}
     />
   );
+};
+
+export function LanguagePopover({ data = [], sx, ...other }: LanguagePopoverProps) {
+  const { open, anchorEl, onClose, onOpen } = usePopover();
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation('common');
+  const toast = useToast();
+
+  const handleChangeLang = useCallback(
+    (newLang: string) => {
+      if (newLang === 'ko' || newLang === 'en') {
+        setLanguage(newLang);
+        const msg = newLang === 'en' ? t('language.switched_en') : t('language.switched', { lang: t('language.ko') });
+        toast.success(msg);
+      }
+      onClose();
+    },
+    [onClose, setLanguage, t, toast]
+  );
+
+  const locale = language === 'ko' || language === 'en' ? language : 'ko';
+  const currentLang = data.find((lang) => lang.value === locale);
 
   const renderMenuList = () => (
     <Popover
@@ -73,7 +89,7 @@ export function LanguagePopover({ data = [], sx, ...other }: LanguagePopoverProp
         {data?.map((option) => (
           <MenuItem
             key={option.value}
-            selected={option.value === currentLang?.value}
+            selected={option.value === locale}
             onClick={() => handleChangeLang(option.value)}
           >
             {renderFlag(option.label, option.icon)}
@@ -100,7 +116,7 @@ export function LanguagePopover({ data = [], sx, ...other }: LanguagePopoverProp
         ]}
         {...other}
       >
-        {renderFlag(currentLang?.label, currentLang?.icon)}
+        {renderFlag(currentLang?.label ?? data[0]?.label, currentLang?.icon ?? data[0]?.icon)}
       </IconButton>
 
       {renderMenuList()}

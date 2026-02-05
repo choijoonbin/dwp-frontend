@@ -3,6 +3,7 @@
 import type { UserSummary, UserCreatePayload, UserUpdatePayload } from '@dwp-frontend/shared-utils';
 
 import { useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   HttpError,
@@ -28,6 +29,7 @@ export const useUserActions = (
   showSnackbar: (message: string, severity?: 'success' | 'error') => void,
   refetch: () => void
 ) => {
+  const { t } = useTranslation('admin');
   const queryClient = useQueryClient();
   const tenantId = getTenantId();
 
@@ -67,7 +69,7 @@ export const useUserActions = (
 
         await createMutation.mutateAsync(payload);
         invalidateUsersQueries();
-        showSnackbar('사용자가 생성되었습니다.');
+        showSnackbar(t('toast.userCreated'));
         trackEvent({
           resourceKey: 'menu.admin.users',
           action: 'SUBMIT',
@@ -80,17 +82,17 @@ export const useUserActions = (
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
         if (error instanceof HttpError && error.status === 403) {
-          showSnackbar('권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.', 'error');
+          showSnackbar(t('error.permissionDenied'), 'error');
         } else if (error instanceof HttpError && error.status === 409) {
           // Handle 409 Conflict (duplicate user/account)
-          showSnackbar('중복된 사용자 또는 계정입니다. 다른 이름이나 이메일을 사용해주세요.', 'error');
+          showSnackbar(t('error.duplicateUser'), 'error');
         } else {
-          showSnackbar(error instanceof Error ? error.message : '생성에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.createFailed'), 'error');
         }
         return false;
       }
     },
-    [createMutation, invalidateUsersQueries, showSnackbar]
+    [createMutation, invalidateUsersQueries, showSnackbar, t]
   );
 
   // Update user
@@ -117,7 +119,7 @@ export const useUserActions = (
 
         await updateMutation.mutateAsync({ userId, payload });
         invalidateUsersQueries();
-        showSnackbar('사용자가 수정되었습니다.');
+        showSnackbar(t('toast.userUpdated'));
         trackEvent({
           resourceKey: 'menu.admin.users',
           action: 'SUBMIT',
@@ -132,17 +134,17 @@ export const useUserActions = (
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
         if (error instanceof HttpError && error.status === 403) {
-          showSnackbar('권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.', 'error');
+          showSnackbar(t('error.permissionDenied'), 'error');
         } else if (error instanceof HttpError && error.status === 409) {
           // Handle 409 Conflict (duplicate user/account)
-          showSnackbar('중복된 사용자 또는 계정입니다. 다른 이름이나 이메일을 사용해주세요.', 'error');
+          showSnackbar(t('error.duplicateUser'), 'error');
         } else {
-          showSnackbar(error instanceof Error ? error.message : '수정에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.updateFailed'), 'error');
         }
         return false;
       }
     },
-    [updateMutation, invalidateUsersQueries, showSnackbar]
+    [updateMutation, invalidateUsersQueries, showSnackbar, t]
   );
 
   // Delete user
@@ -161,7 +163,7 @@ export const useUserActions = (
 
         await deleteMutation.mutateAsync(user.id);
         invalidateUsersQueries();
-        showSnackbar('사용자가 삭제되었습니다.');
+        showSnackbar(t('toast.userDeleted'));
         trackEvent({
           resourceKey: 'menu.admin.users',
           action: 'DELETE',
@@ -175,14 +177,14 @@ export const useUserActions = (
       } catch (error) {
         // Handle 403 Forbidden (permission denied)
         if (error instanceof HttpError && error.status === 403) {
-          showSnackbar('권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.', 'error');
+          showSnackbar(t('error.permissionDenied'), 'error');
         } else {
-          showSnackbar(error instanceof Error ? error.message : '삭제에 실패했습니다.', 'error');
+          showSnackbar(error instanceof Error ? error.message : t('error.deleteFailed'), 'error');
         }
         return false;
       }
     },
-    [deleteMutation, invalidateUsersQueries, showSnackbar]
+    [deleteMutation, invalidateUsersQueries, showSnackbar, t]
   );
 
   // Update user roles
@@ -202,7 +204,7 @@ export const useUserActions = (
 
         await updateRolesMutation.mutateAsync({ userId, roleIds, replace });
         invalidateUsersQueries();
-        showSnackbar('역할이 할당되었습니다.', 'success');
+        showSnackbar(t('toast.roleAssigned'), 'success');
         trackEvent({
           resourceKey: 'menu.admin.users',
           action: 'EDIT',
@@ -215,11 +217,11 @@ export const useUserActions = (
         });
         return true;
       } catch (error) {
-        showSnackbar(error instanceof Error ? error.message : '역할 할당에 실패했습니다.', 'error');
+        showSnackbar(error instanceof Error ? error.message : t('toast.roleAssignFailed'), 'error');
         return false;
       }
     },
-    [updateRolesMutation, invalidateUsersQueries, showSnackbar]
+    [updateRolesMutation, invalidateUsersQueries, showSnackbar, t]
   );
 
   return {

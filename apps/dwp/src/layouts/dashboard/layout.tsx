@@ -8,6 +8,7 @@ import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 
 import { usePathname } from 'src/routes/hooks';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import { _langs, _notifications } from 'src/_mock';
 import { useThemeMode } from 'src/theme/theme-mode';
@@ -60,6 +61,7 @@ export function DashboardLayout({
   const { mode, toggleMode } = useThemeMode();
 
   const pathname = usePathname();
+  const { t } = useTranslation('common');
   const sidebarOpen = useLayoutStore((state) => state.sidebarOpen);
   const sidebarCollapsed = useLayoutStore((state) => state.sidebarCollapsed);
   const { setSidebarOpen, toggleCollapse } = useLayoutActions();
@@ -108,7 +110,7 @@ export function DashboardLayout({
           {/** @slot Notifications popover */}
           <NotificationsPopover data={_notifications} />
 
-          <Tooltip title={mode === 'light' ? 'Dark mode' : 'Light mode'}>
+          <Tooltip title={mode === 'light' ? t('theme.darkMode') : t('theme.lightMode')}>
             <IconButton color="inherit" onClick={toggleMode}>
               <Iconify
                 width={22}

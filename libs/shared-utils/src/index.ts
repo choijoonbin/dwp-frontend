@@ -74,6 +74,7 @@ export * from './queries/use-tenant-scope-query';
 export * from './queries/use-admin-tenants-query';
 export * from './queries/use-synapse-audit-query';
 export * from './queries/use-codes-by-group-query';
+export * from './queries/use-codes-for-labels';
 export * from './hooks/use-mutation-error-handler';
 export * from './queries/use-admin-resources-query';
 export * from './admin/role-permission-matrix-utils';

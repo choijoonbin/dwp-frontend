@@ -6,6 +6,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 
 import { Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { is403Error } from '@dwp-frontend/shared-utils';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 
@@ -55,6 +56,7 @@ const formatMoney = (amount: number, currency = 'USD') =>
 // ----------------------------------------------------------------------
 
 export const ArchivePage = () => {
+  const { t } = useTranslation('common');
   const [q, setQ] = useState('');
   const [status, setStatus] = useState<string>('all');
   const [type, setType] = useState<string>('all');
@@ -96,8 +98,8 @@ export const ArchivePage = () => {
   if (error) {
     return (
       <ErrorStateWithRetry
-        title={is403Error(error) ? '권한 부족' : 'Failed to load archive'}
-        message={error instanceof Error ? error.message : 'Unknown error'}
+        title={is403Error(error) ? undefined : t('error.errorState.failedToLoadArchive')}
+        message={error instanceof Error ? error.message : undefined}
         onRetry={() => refetch()}
         is403={is403Error(error)}
       />

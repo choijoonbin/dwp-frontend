@@ -4,6 +4,8 @@
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { showToast, runCaseSimulation, type CaseSimulationResponse } from '@dwp-frontend/shared-utils';
 
 // ----------------------------------------------------------------------
@@ -11,6 +13,7 @@ import { showToast, runCaseSimulation, type CaseSimulationResponse } from '@dwp-
 export type CaseSimulationResult = CaseSimulationResponse;
 
 export const useCaseSimulation = (caseId: string | undefined, actionId?: string) => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -25,10 +28,10 @@ export const useCaseSimulation = (caseId: string | undefined, actionId?: string)
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
       queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
-      showToast('Simulation completed');
+      showToast(t('toast.simulationCompleted'));
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Simulation failed', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.simulationFailed'), 'error');
     },
   });
 

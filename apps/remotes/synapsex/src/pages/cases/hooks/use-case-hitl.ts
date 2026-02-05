@@ -4,6 +4,8 @@
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { showToast, rejectHitlRequest, approveHitlRequest } from '@dwp-frontend/shared-utils';
 
 // ----------------------------------------------------------------------
@@ -14,6 +16,7 @@ export const useCaseHitl = (options?: {
   onApproved?: (requestId: string) => void;
   onRejected?: (requestId: string) => void;
 }) => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   const approveMutation = useMutation({
@@ -23,11 +26,11 @@ export const useCaseHitl = (options?: {
     },
     onSuccess: (_, requestId) => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
-      showToast('Approved');
+      showToast(t('toast.approved'));
       options?.onApproved?.(requestId);
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Approval failed', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.approvalFailed'), 'error');
     },
   });
 
@@ -38,11 +41,11 @@ export const useCaseHitl = (options?: {
     },
     onSuccess: (_, { requestId }) => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
-      showToast('Rejected');
+      showToast(t('toast.rejected'));
       options?.onRejected?.(requestId);
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : 'Rejection failed', 'error');
+      showToast(err instanceof Error ? err.message : t('toast.rejectionFailed'), 'error');
     },
   });
 
