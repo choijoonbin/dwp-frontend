@@ -1,0 +1,46 @@
+[FOLLOW-UP / Front Prompt] Phase 0~B 완료 점검 후 후속조치 — ‘배치 생성 케이스’ 운영 UX 최소 보강 + 문서 정합
+(목표: Phase B로 자동 생성된 케이스가 FE에서 ‘자연스럽게’ 보이고, Phase A E2E로 끊김 없이 들어간다)
+
+## 0) 이번 점검에서 확인된 상태(요약)
+- FE 문서(contract-rules/route-map)는 표준 헤더/라우팅 구조를 잘 정리함.
+- Phase B가 실제로 케이스를 생성/업데이트하므로, FE는 “운영형 표시/리프레시/빈상태”만 최소 보강하면 됨.
+
+---
+
+## 1) P0 후속조치(필수)
+### 1.1 문서 정합성(라우트/호출 경로)
+- 현재 실제 API 경로가 `/api/synapse/cases/{caseId}`, `/api/synapse/actions...`, `/api/synapse/audit/events` 로 확정됨(backend 결과 문서 기준).
+- FE 문서에 “실제 호출 엔드포인트” 섹션을 추가/정리:
+  - Case 목록/상세
+  - HITL actions
+  - Audit events
+- 산출물:
+  - `frontend/contract-rules.md` (API 경로/헤더/trace 규칙 최신화)
+
+### 1.2 Command Center / Cases 리스트 리프레시 규칙 고정
+- Detect batch 실행 후 케이스가 생기므로:
+  - 케이스 목록 queryKey 기준 invalidate 전략 정리
+  - 수동 Refresh 버튼(있다면) → invalidate + refetch
+- 완료조건:
+  - 배치 실행 후 새 케이스가 “새로고침 1번”으로 노출
+
+---
+
+## 2) P1 후속조치(권장)
+### 2.1 “배치 주기”를 빈 상태 문구에 반영(하드코딩 금지)
+- 실제 cron 값을 FE에 하드코딩하지 말고,
+  - (권장) BE에서 `GET /api/synapse/admin/detect/config` 같은 설정 조회가 있으면 사용
+  - 없으면 단순히 “아직 탐지된 케이스가 없습니다”로만 유지
+- 완료조건:
+  - 사용자 오해 최소화(‘왜 케이스가 없지?’)
+
+### 2.2 배지/상태 표시(있는 데이터만)
+- case.updated_at 또는 last_detected_at(추가되면)으로 “최근 갱신” 표시
+- ‘New/Updated’ 배지는 데이터 필드가 있을 때만.
+
+---
+
+## 3) Definition of Done
+- 배치로 생성된 케이스가 FE에 노출되고, 클릭 → Case Detail로 진입
+- approve/reject 후 View Audit에서 이벤트 확인 가능
+- mock fallback 없음, 에러/빈상태 표준 컴포넌트 사용

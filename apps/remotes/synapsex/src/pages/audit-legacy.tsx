@@ -182,6 +182,7 @@ export const AuditPage = () => {
   const eventTypeParam = searchParams.get('type') ?? undefined;
   const resourceType = searchParams.get('resourceType') ?? undefined;
   const resourceId = searchParams.get('resourceId') ?? undefined;
+  const runId = searchParams.get('runId') ?? undefined;
   const outcome = searchParams.get('outcome') ?? undefined;
   const severity = searchParams.get('severity') ?? undefined;
   const actor = searchParams.get('actor') ?? undefined;
@@ -196,6 +197,7 @@ export const AuditPage = () => {
       eventTypeParam ||
       resourceType ||
       resourceId ||
+      runId ||
       outcome ||
       severity ||
       actor ||
@@ -208,6 +210,7 @@ export const AuditPage = () => {
             type: eventTypeParam,
             resourceType,
             resourceId,
+            runId,
             outcome,
             severity,
             actor,
@@ -224,6 +227,7 @@ export const AuditPage = () => {
       eventTypeParam,
       resourceType,
       resourceId,
+      runId,
       outcome,
       severity,
       actor,

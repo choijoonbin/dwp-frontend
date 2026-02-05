@@ -67,21 +67,28 @@ export const LabelRoot = styled('span', {
           border: `2px solid ${theme.vars.palette[color].main}`,
         }),
         /**
-         * @variant soft
+         * @variant soft — 다크모드에서 fg=main(밝음), bg=lighter(어두운 틴트)로 대비 확보
          */
         ...(variant === 'soft' && {
           color: theme.vars.palette[color].dark,
           backgroundColor: varAlpha(theme.vars.palette[color].mainChannel, 0.16),
           ...theme.applyStyles('dark', {
-            color: theme.vars.palette[color].light,
+            color: theme.vars.palette[color].main,
+            backgroundColor: theme.vars.palette[color].lighter,
+            border: `1px solid ${theme.vars.palette[color].light}`,
           }),
         }),
         /**
-         * @variant inverted
+         * @variant inverted — 다크모드에서 lighter(어두운 틴트) + main(밝은 fg)로 대비 확보
          */
         ...(variant === 'inverted' && {
           color: theme.vars.palette[color].darker,
           backgroundColor: theme.vars.palette[color].lighter,
+          ...theme.applyStyles('dark', {
+            color: theme.vars.palette[color].main,
+            backgroundColor: theme.vars.palette[color].lighter,
+            border: `1px solid ${theme.vars.palette[color].light}`,
+          }),
         }),
       }),
   };
@@ -104,7 +111,7 @@ export const LabelRoot = styled('span', {
     transition: theme.transitions.create(['all'], { duration: theme.transitions.duration.shorter }),
     ...defaultStyles,
     ...colorStyles,
-    ...(disabled && { opacity: 0.48, pointerEvents: 'none' }),
+    ...(disabled && { opacity: 0.72, pointerEvents: 'none' }),
   };
 });
 

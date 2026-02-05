@@ -1,6 +1,7 @@
 import { Route, Routes, Navigate, BrowserRouter } from 'react-router-dom';
 
 import { AuditPage } from './pages/audit/page';
+import { BatchPage } from './pages/batch/page';
 import { CodesPage } from './pages/codes/page';
 import { RolesPage } from './pages/roles/page';
 import { MenusPage } from './pages/menus/page';
@@ -20,6 +21,8 @@ export const AdminApp = ({ standalone = false }: { standalone?: boolean }) => {
   const routes = (
     <Routes>
       <Route path="monitoring" element={<MonitoringPage />} />
+      <Route path="batch" element={<BatchPage />} />
+      <Route path="batch-monitoring" element={<BatchPage />} />
       <Route path="audit-logs" element={<Navigate to="audit" replace />} />
       <Route path="users" element={<UsersPage />} />
       <Route path="roles" element={<RolesPage />} />

@@ -86,7 +86,7 @@ export const common = createPaletteChannel(themeConfig.palette.common);
 // Grey color
 export const grey = createPaletteChannel(themeConfig.palette.grey);
 
-// Text color
+// Text color (3-tier: default/muted/disabled for dark mode contrast)
 export const text = {
   light: createPaletteChannel({
     primary: grey[800],
@@ -95,7 +95,7 @@ export const text = {
   }),
   dark: createPaletteChannel({
     primary: grey[100],
-    secondary: grey[300],
+    secondary: grey[200],
     disabled: grey[600],
   }),
 };
@@ -148,6 +148,41 @@ export const basePalette = {
   divider: varAlpha(grey['500Channel'], 0.2),
 };
 
+// Dark mode: accent/status color overrides (avoid bright pastel bg + light text)
+// Autonomy panel, Alert cards, Chip badges 등에서 사용
+const darkStatusOverrides = {
+  primary: {
+    ...primary,
+    lighter: varAlpha(primary.darkerChannel, 0.28),
+    light: varAlpha(primary.darkerChannel, 0.45),
+  },
+  secondary: {
+    ...secondary,
+    lighter: varAlpha(secondary.darkerChannel, 0.28),
+    light: varAlpha(secondary.darkerChannel, 0.45),
+  },
+  error: {
+    ...error,
+    lighter: varAlpha(error.darkerChannel, 0.28),
+    light: varAlpha(error.darkerChannel, 0.45),
+  },
+  warning: {
+    ...warning,
+    lighter: varAlpha(warning.darkerChannel, 0.28),
+    light: varAlpha(warning.darkerChannel, 0.45),
+  },
+  info: {
+    ...info,
+    lighter: varAlpha(info.darkerChannel, 0.28),
+    light: varAlpha(info.darkerChannel, 0.45),
+  },
+  success: {
+    ...success,
+    lighter: varAlpha(success.darkerChannel, 0.28),
+    light: varAlpha(success.darkerChannel, 0.45),
+  },
+};
+
 export const palette: Partial<Record<ThemeColorScheme, ColorSystemOptions['palette']>> = {
   light: {
     ...basePalette,
@@ -157,6 +192,7 @@ export const palette: Partial<Record<ThemeColorScheme, ColorSystemOptions['palet
   },
   dark: {
     ...basePalette,
+    ...darkStatusOverrides,
     text: text.dark,
     background: background.dark,
     action: action.dark,

@@ -61,53 +61,42 @@ const normalizeMenuTreePaths = (nodes: MenuNode[]): MenuNode[] =>
   }));
 
 async function loadUserDataAfterLogin() {
-  console.log('[AUTH] 🔄 사용자 데이터 로딩 시작 (getMe/getPermissions/getMenuTree)');
-  
   const loadPermissions = async () => {
     try {
-      console.log('[AUTH] 📡 getPermissions 호출 중...');
       const res = await getPermissions();
-      console.log('[AUTH] ✅ getPermissions 성공:', res);
       if (res.data && Array.isArray(res.data)) {
         usePermissionsStore.getState().actions.setPermissions(res.data);
       } else {
         usePermissionsStore.getState().actions.setPermissions([]);
       }
-    } catch (err) {
-      console.error('[AUTH] ❌ getPermissions 실패:', err);
+    } catch {
       usePermissionsStore.getState().actions.setPermissions([]);
     }
   };
 
   const loadMenuTree = async () => {
     try {
-      console.log('[AUTH] 📡 getMenuTree 호출 중...');
       const res = await getMenuTree();
-      console.log('[AUTH] ✅ getMenuTree 성공:', res);
       if (res.data?.menus && Array.isArray(res.data.menus)) {
         const normalizedMenus = normalizeMenuTreePaths(res.data.menus);
         useMenuTreeStore.getState().actions.setMenuTree(normalizedMenus);
       } else {
         useMenuTreeStore.getState().actions.setMenuTree([]);
       }
-    } catch (err) {
-      console.error('[AUTH] ❌ getMenuTree 실패:', err);
+    } catch {
       useMenuTreeStore.getState().actions.setMenuTree([]);
     }
   };
 
   const loadMe = async () => {
     try {
-      console.log('[AUTH] 📡 getMe 호출 중...');
-      const res = await getMe();
-      console.log('[AUTH] ✅ getMe 성공:', res);
-    } catch (err) {
-      console.error('[AUTH] ❌ getMe 실패:', err);
+      await getMe();
+    } catch {
+      // ignore
     }
   };
 
   await Promise.all([loadMe(), loadPermissions(), loadMenuTree()]);
-  console.log('[AUTH] ✅ 사용자 데이터 로딩 완료');
 }
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -145,24 +134,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [accessToken]);
 
   const loginWithToken = useCallback(async (token: string) => {
-    console.log('[AUTH] 🔑 loginWithToken 시작, 토큰 저장 중...');
     setAccessToken(token);
     setAccessTokenState(token);
     const userId = extractUserIdFromToken(token);
     if (userId) setUserId(userId);
-    console.log('[AUTH] ✅ 토큰 저장 완료, userId:', userId);
 
     const { isLoaded: permissionsLoaded } = usePermissionsStore.getState();
     const { isLoaded: menuTreeLoaded } = useMenuTreeStore.getState();
-    if (permissionsLoaded && menuTreeLoaded) {
-      console.log('[AUTH] ℹ️ 권한/메뉴 이미 로드됨, API 호출 생략');
-      return;
-    }
+    if (permissionsLoaded && menuTreeLoaded) return;
 
-    if (authDataLoadInProgress) {
-      console.log('[AUTH] ℹ️ 다른 곳에서 이미 로딩 중, 중복 호출 방지');
-      return;
-    }
+    if (authDataLoadInProgress) return;
 
     authDataLoadInProgress = true;
     try {
@@ -174,17 +155,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = useCallback(
     async (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => {
-      console.log('[AUTH] 🚀 로그인 시작:', payload.username);
-      
       const res = await loginApi(payload);
-      console.log('[AUTH] ✅ 로그인 API 성공, 응답:', res);
-      
+
       const token = extractTokenFromLoginRes(res);
       if (!token) {
-        console.error('[AUTH] ❌ 토큰 추출 실패, 응답:', res);
         throw new Error('Login succeeded but access token was not found in response');
       }
-      console.log('[AUTH] ✅ 토큰 추출 성공');
 
       // [최적화] BE가 로그인 응답에 permissions/menus 포함 시 즉시 저장 (별도 API 호출 생략)
       const payloadData = (res as { data?: Record<string, unknown> }).data;
@@ -201,14 +177,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         // 유효한 permissions 배열이 있으면 저장 (빈 배열은 "없음"으로 간주)
         if (Array.isArray(perms) && perms.length > 0) {
-          console.log('[AUTH] ℹ️ 로그인 응답에 permissions 포함됨, 즉시 저장 (API 호출 생략)');
           usePermissionsStore.getState().actions.setPermissions(perms);
           hasPermissionsFromLogin = true;
         }
         
         // 유효한 menus 배열이 있으면 저장 (빈 배열은 "없음"으로 간주)
         if (Array.isArray(menus) && menus.length > 0) {
-          console.log('[AUTH] ℹ️ 로그인 응답에 menus 포함됨, 즉시 저장 (API 호출 생략)');
           const normalizedMenus = normalizeMenuTreePaths(menus as MenuNode[]);
           useMenuTreeStore.getState().actions.setMenuTree(normalizedMenus);
           hasMenusFromLogin = true;
@@ -216,31 +190,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // 토큰 저장 (API 호출 시 Authorization 헤더에 필요)
-      console.log('[AUTH] 💾 토큰 저장 중...');
       setAccessToken(token);
       setAccessTokenState(token);
       const userId = extractUserIdFromToken(token);
       if (userId) setUserId(userId);
-      console.log('[AUTH] ✅ 토큰 저장 완료, userId:', userId);
 
       // 로그인 응답에 유효한 permissions와 menus가 둘 다 있으면 API 호출 생략
       const hasFullDataFromLogin = hasPermissionsFromLogin && hasMenusFromLogin;
-      
-      if (hasFullDataFromLogin) {
-        console.log('[AUTH] 🎉 로그인 완료 (API 호출 생략, 로그인 응답 데이터 사용)');
-        return;
-      }
+
+      if (hasFullDataFromLogin) return;
 
       // 로그인 응답에 데이터가 없으면 API 호출
-      console.log('[AUTH] ℹ️ 로그인 응답에 permissions/menus 없음, API 호출 필요');
-      
-      // 스토어 초기화 (이전 세션 데이터 제거)
       if (!hasPermissionsFromLogin) {
-        console.log('[AUTH] 🗑️ permissions 스토어 초기화');
         usePermissionsStore.getState().actions.clearPermissions();
       }
       if (!hasMenusFromLogin) {
-        console.log('[AUTH] 🗑️ menuTree 스토어 초기화');
         useMenuTreeStore.getState().actions.clearMenuTree();
       }
 
@@ -250,14 +214,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } finally {
         authDataLoadInProgress = false;
       }
-
-      console.log('[AUTH] 🎉 로그인 완료');
     },
     []
   );
 
   const logout = useCallback(() => {
-    console.log('[AUTH] 👋 로그아웃');
     clearAccessToken();
     clearUserId();
     setAccessTokenState(null);

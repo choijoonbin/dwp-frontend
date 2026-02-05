@@ -36,10 +36,34 @@ const getEventIcon = (type: SynapseStreamEvent['type']): string => {
     case 'thought':
     case 'thinking':
       return 'solar:brain-bold-duotone';
+    case 'analysis':
+      return 'solar:magnifer-bold-duotone';
+    case 'plan':
+      return 'solar:list-bold-duotone';
+    case 'tool':
+      return 'solar:wrench-bold-duotone';
     case 'hitl':
       return 'solar:shield-check-bold-duotone';
     default:
       return 'solar:chat-round-dots-bold-duotone';
+  }
+};
+
+const getEventLabel = (type: SynapseStreamEvent['type']): string => {
+  switch (type) {
+    case 'thought':
+    case 'thinking':
+      return 'Thinking';
+    case 'analysis':
+      return 'Analysis';
+    case 'plan':
+      return 'Plan';
+    case 'tool':
+      return 'Tool';
+    case 'hitl':
+      return 'HITL';
+    default:
+      return 'Content';
   }
 };
 
@@ -173,9 +197,9 @@ export const CaseAgentStreamPanel = ({
                         <Iconify icon={getEventIcon(evt.type)} width={12} sx={{ color: evt.type === 'hitl' ? 'warning.main' : 'primary.main' }} />
                       </Box>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        {evt.type === 'hitl' && (
-                          <Typography variant="caption" sx={{ fontWeight: 600, color: 'warning.dark' }}>
-                            HITL approval required
+                        {(evt.type === 'analysis' || evt.type === 'plan' || evt.type === 'tool' || evt.type === 'hitl') && (
+                          <Typography variant="caption" sx={{ fontWeight: 600, color: evt.type === 'hitl' ? 'warning.dark' : 'text.secondary' }}>
+                            {evt.type === 'hitl' ? 'HITL approval required' : getEventLabel(evt.type)}
                           </Typography>
                         )}
                         {evt.content && (

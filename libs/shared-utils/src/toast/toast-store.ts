@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 // ----------------------------------------------------------------------
 
-export type ToastSeverity = 'success' | 'error';
+export type ToastSeverity = 'success' | 'error' | 'warning';
 
 export type ToastAction = { label: string; href: string };
 

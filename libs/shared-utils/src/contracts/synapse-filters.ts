@@ -5,17 +5,17 @@
  * @see docs/backend-src/docs/api-spec/COMMON_FILTER_DTO_STANDARD.md
  */
 
-import type { ActionStatus, AnomalyStatus, CaseStatus, Range, RiskType, Severity } from '../enums/synapse-enums';
+import type { Range, RiskType, Severity, CaseStatus, ActionStatus, AnomalyStatus } from '../enums/synapse-enums';
 
 export {
-  ActionStatusEnum,
-  AnomalyStatusEnum,
-  CaseStatusEnum,
   RangeEnum,
   RiskTypeEnum,
   SeverityEnum,
+  CaseStatusEnum,
+  ActionStatusEnum,
+  AnomalyStatusEnum,
 } from '../enums/synapse-enums';
-export type { ActionStatus, AnomalyStatus, CaseStatus, Range, RiskType, Severity } from '../enums/synapse-enums';
+export type { Range, RiskType, Severity, CaseStatus, ActionStatus, AnomalyStatus } from '../enums/synapse-enums';
 
 // ----------------------------------------------------------------------
 // 레거시 호환 alias
@@ -114,6 +114,8 @@ export type AuditFilters = {
   sort?: string;
   resourceId?: string;
   traceId?: string;
+  /** Detect run과 연관된 감사 이벤트 필터 (tags JSONB runId) */
+  runId?: string;
 };
 
 // ----------------------------------------------------------------------
@@ -284,5 +286,6 @@ export function buildAuditUrl(filters: AuditFilters): string {
   if (filters.sort) flat.sort = filters.sort;
   if (filters.resourceId) flat.resourceId = filters.resourceId;
   if (filters.traceId) flat.traceId = filters.traceId;
+  if (filters.runId) flat.runId = filters.runId;
   return buildSynapseUrl('/audit', flat);
 }

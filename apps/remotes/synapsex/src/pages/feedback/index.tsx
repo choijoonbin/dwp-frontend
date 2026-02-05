@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
   useFeedbackQuery,
+  type FeedbackLabelDto,
   useCreateFeedbackMutation,
   type FeedbackCreateRequest,
 } from '@dwp-frontend/shared-utils';
@@ -62,10 +63,18 @@ export const FeedbackPage = () => {
   const [appliedTargetType, setAppliedTargetType] = useState<string>('');
   const [appliedTargetId, setAppliedTargetId] = useState('');
 
-  const { data: feedbackList = [], isLoading, error } = useFeedbackQuery(
+  const { data, isLoading, error } = useFeedbackQuery(
     appliedTargetType || undefined,
     appliedTargetId || undefined
   );
+  const feedbackList: FeedbackLabelDto[] = (() => {
+    if (Array.isArray(data)) return data as FeedbackLabelDto[];
+    if (data && typeof data === 'object' && 'items' in data) {
+      const arr = (data as { items?: FeedbackLabelDto[] }).items;
+      return Array.isArray(arr) ? arr : [];
+    }
+    return [];
+  })();
 
   const createMutation = useCreateFeedbackMutation();
 

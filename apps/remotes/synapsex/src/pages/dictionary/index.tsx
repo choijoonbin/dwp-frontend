@@ -54,7 +54,15 @@ export const DictionaryPage = () => {
     category: '',
   });
 
-  const { data: items = [], isLoading, error } = useDictionaryQuery(categoryFilter || undefined);
+  const { data, isLoading, error } = useDictionaryQuery(categoryFilter || undefined);
+  const items: DictionaryTermDto[] = (() => {
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object' && 'items' in data) {
+      const arr = (data as { items?: unknown[] }).items;
+      return Array.isArray(arr) ? (arr as DictionaryTermDto[]) : [];
+    }
+    return [];
+  })();
   const createMutation = useCreateDictionaryTermMutation();
   const updateMutation = useUpdateDictionaryTermMutation();
   const deleteMutation = useDeleteDictionaryTermMutation();

@@ -42,7 +42,7 @@ export const getApiErrorMessage = (errorType: ApiErrorType, error?: unknown): st
     case 'UNAUTHORIZED':
       return '세션이 만료되었습니다. 다시 로그인해주세요.';
     case 'FORBIDDEN':
-      return '접근 권한이 없습니다. 필요한 권한이 있다면 관리자에게 문의하세요.';
+      return '권한이 없습니다(ADMIN_OPERATIONS 필요). 관리자에게 문의하세요.';
     case 'CONFLICT':
       // Try to extract message from error if available
       if (error instanceof HttpError && error.message) {

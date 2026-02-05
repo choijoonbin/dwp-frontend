@@ -8,52 +8,52 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
+  buildAuditUrl,
+  buildCasesUrl,
   buildActionsUrl,
   buildAnalyticsUrl,
   buildAnomaliesUrl,
-  buildAuditUrl,
-  buildCasesUrl,
-  buildReconciliationUrl,
-  dashboardActionRequiredQueryKey,
-  dashboardAgentActivityQueryKey,
-  dashboardSummaryQueryKey,
-  dashboardTeamSnapshotQueryKey,
-  dashboardTopRiskDriversQueryKey,
   getDashboardTenantId,
-  useDashboardActionRequiredQuery,
-  useDashboardAgentActivityQuery,
+  buildReconciliationUrl,
+  dashboardSummaryQueryKey,
   useDashboardSummaryQuery,
+  dashboardTeamSnapshotQueryKey,
   useDashboardTeamSnapshotQuery,
+  dashboardAgentActivityQueryKey,
+  useDashboardAgentActivityQuery,
+  dashboardActionRequiredQueryKey,
+  dashboardTopRiskDriversQueryKey,
+  useDashboardActionRequiredQuery,
   useDashboardTopRiskDriversQuery,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
+import Button from '@mui/material/Button';
+import Skeleton from '@mui/material/Skeleton';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
 
+import { SYNAPSE_ROUTES } from '../../routes';
 import { SeverityBadge } from '../../components/finance/severity-badge';
 import { ErrorStateWithRetry } from '../../components/ux/error-state-with-retry';
-import { SYNAPSE_ROUTES } from '../../routes';
 import {
-  mapActionRequired,
-  mapAgentActivity,
   mapRiskDrivers,
-  mapSummaryToKpis,
   mapTeamSnapshot,
-  type ActionRequiredUiItem,
-  type AgentActivityUiItem,
   type KpiUiModel,
+  mapAgentActivity,
+  mapSummaryToKpis,
+  mapActionRequired,
   type RiskDriverUiItem,
   type TeamSnapshotUiItem,
+  type AgentActivityUiItem,
+  type ActionRequiredUiItem,
 } from './adapters/dashboard-adapter';
 
 /** 백엔드 links 경로를 /synapse prefix가 있는 절대 경로로 변환 */

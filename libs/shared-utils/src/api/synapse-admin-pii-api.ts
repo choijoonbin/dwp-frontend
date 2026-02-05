@@ -243,6 +243,8 @@ export type SynapseAuditEventsParams = {
   type?: string;
   resourceType?: string;
   resourceId?: string;
+  /** Detect run과 연관된 감사 이벤트 (tags JSONB runId) */
+  runId?: string;
   outcome?: string;
   severity?: string;
   actor?: string;
@@ -268,6 +270,7 @@ export const getSynapseAuditEvents = async (
   if (params?.type) queryParams.append('type', params.type);
   if (params?.resourceType) queryParams.append('resourceType', params.resourceType);
   if (params?.resourceId) queryParams.append('resourceId', params.resourceId);
+  if (params?.runId) queryParams.append('runId', params.runId);
   if (params?.outcome) queryParams.append('outcome', params.outcome);
   if (params?.severity) queryParams.append('severity', params.severity);
   if (params?.actor) queryParams.append('actor', params.actor);

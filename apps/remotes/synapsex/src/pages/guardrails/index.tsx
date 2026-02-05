@@ -42,7 +42,15 @@ export const GuardrailsPage = () => {
     violatedRules?: string[];
   } | null>(null);
 
-  const { data: items = [], isLoading, error } = useGuardrailsQuery();
+  const { data, isLoading, error } = useGuardrailsQuery();
+  const items: GuardrailListDto[] = (() => {
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object' && 'items' in data) {
+      const arr = (data as { items?: unknown[] }).items;
+      return Array.isArray(arr) ? (arr as GuardrailListDto[]) : [];
+    }
+    return [];
+  })();
   const createMutation = useCreateGuardrailMutation();
   const updateMutation = useUpdateGuardrailMutation();
   const deleteMutation = useDeleteGuardrailMutation();
@@ -105,7 +113,7 @@ export const GuardrailsPage = () => {
 
   const handleEvaluate = (params: Parameters<typeof evaluateMutation.mutateAsync>[0]) => {
     evaluateMutation.mutate(params, {
-      onSuccess: (data) => setEvaluateResult(data),
+      onSuccess: (result) => setEvaluateResult(result),
     });
   };
 

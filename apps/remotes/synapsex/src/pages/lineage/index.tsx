@@ -10,10 +10,10 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import { getChangedFields } from './utils';
+import { mockVendorMasterSnapshots } from './mock';
 import { LineageFlow } from './_components/lineage-flow';
 import { EvidencePanel } from './_components/evidence-panel';
 import { StepDetailDrawer } from './_components/step-detail-drawer';
-import { mockVendorMasterSnapshots } from './mock';
 import { StepDetailsInline } from './_components/step-details-inline';
 import { TimeTravelSection } from './_components/time-travel-section';
 import { ErrorStateWithRetry } from '../../components/ux/error-state-with-retry';

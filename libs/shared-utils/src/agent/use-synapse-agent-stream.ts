@@ -15,6 +15,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { NX_API_URL } from '../env';
 import { getTenantId } from '../tenant-util';
 import { useStreamStore } from './stream-store';
+import { generateTraceId } from '../trace-util';
 import { getAgentSessionId } from './agent-session';
 import { getUserId } from '../auth/user-id-storage';
 import { getAccessToken } from '../auth/token-storage';
@@ -24,7 +25,7 @@ import { getAccessToken } from '../auth/token-storage';
 // ----------------------------------------------------------------------
 
 export type SynapseStreamEvent = {
-  type: 'thought' | 'thinking' | 'content' | 'message' | 'hitl';
+  type: 'thought' | 'thinking' | 'content' | 'message' | 'hitl' | 'analysis' | 'plan' | 'tool';
   content?: string;
   requestId?: string;
   description?: string;
@@ -114,6 +115,7 @@ export const useSynapseAgentStream = () => {
         Accept: 'text/event-stream',
         'X-Tenant-ID': tenantId,
         'X-Agent-ID': agentId,
+        'X-Trace-ID': generateTraceId(),
         ...(token && { Authorization: `Bearer ${token}` }),
         ...(userId && { 'X-User-ID': userId }),
         ...(lastEventId && { 'Last-Event-ID': lastEventId }),
@@ -315,6 +317,7 @@ export const useSynapseAgentStream = () => {
       abortControllerRef.current = null;
     }
     currentStreamIdRef.current = null;
+    setIsReconnecting(false);
     setStatus('ABORTED');
   }, [setStatus]);
 

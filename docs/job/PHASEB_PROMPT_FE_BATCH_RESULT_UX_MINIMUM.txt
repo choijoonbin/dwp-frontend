@@ -1,0 +1,21 @@
+[PHASE B / Front Prompt] Detection Batch 반영 UI(최소) — Case 목록/상태/갱신 표시
+(목표: Phase B에서 케이스가 자동 생성되면, FE는 ‘표준 운영 UX’로 자연스럽게 보여준다. (새 기능 금지, 최소 연결만))
+
+## 0) 원칙
+- Phase B는 “배치 구현”이 아니라, 배치 결과를 FE가 제대로 소비하도록 최소 UX만 보강.
+- 신규 집계/새 KPI 금지. 기존 훅/목록/필터를 활용.
+
+---
+
+## 1) 구현 범위(In)
+- Command Center 또는 Cases 리스트에:
+  - last_detected_at(또는 updated_at) 표기(있을 때)
+  - “New/Updated” 배지(토큰 기반) (데이터 필드가 있을 때만)
+- “Refresh” 동작이 detect batch 결과를 재조회하도록 query invalidate 정리
+- empty-state 문구: “아직 탐지된 케이스 없음(다음 배치 주기 …)”처럼 운영 친화적 문구(정책적으로 허용되는 범위)
+
+---
+
+## 2) Definition of Done
+- 배치 실행 후 새 케이스가 FE에 노출되고, 클릭하여 Phase A E2E로 진입 가능
+- 다크모드/배지 가시성 유지

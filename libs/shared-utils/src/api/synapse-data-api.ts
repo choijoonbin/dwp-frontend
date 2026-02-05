@@ -92,6 +92,48 @@ export type EntityListItem = {
   riskTrend?: 'up' | 'down' | 'stable';
 };
 
+/** BE /api/synapse/entities/parties 응답 항목 */
+export type PartyRaw = {
+  partyId: number;
+  type: 'VENDOR' | 'CUSTOMER';
+  name: string;
+  country: string | null;
+  riskScore: number;
+  riskTrend?: string;
+  openItemsCount: number;
+  openItemsTotal: number;
+  overdueCount?: number;
+  overdueTotal?: number;
+  recentAnomaliesCount?: number;
+  lastChangedAt?: string | null;
+};
+
+/** BE paginated 응답: data.items 또는 data.data */
+type PartiesListResponse = {
+  items?: PartyRaw[];
+  data?: PartyRaw[];
+  total?: number;
+  pageInfo?: { page?: number; size?: number; hasNext?: boolean };
+};
+
+function toEntityListItem(raw: PartyRaw): EntityListItem {
+  const typeLower = (raw.type ?? 'VENDOR').toLowerCase() as 'vendor' | 'customer';
+  const riskTrend = raw.riskTrend?.toLowerCase() as 'up' | 'down' | 'stable' | undefined;
+  return {
+    id: String(raw.partyId),
+    code: String(raw.partyId),
+    name: raw.name ?? '',
+    type: typeLower === 'customer' ? 'customer' : 'vendor',
+    country: raw.country ?? '',
+    riskScore: Number(raw.riskScore) ?? 0,
+    openItemsTotal: Number(raw.openItemsTotal) ?? 0,
+    openItemsCount: Number(raw.openItemsCount) ?? 0,
+    totalBalance: raw.openItemsTotal,
+    lastChange: raw.lastChangedAt ?? undefined,
+    riskTrend: riskTrend === 'up' || riskTrend === 'down' || riskTrend === 'stable' ? riskTrend : undefined,
+  };
+}
+
 export type LineageStep = {
   id: string;
   label: string;
@@ -346,28 +388,36 @@ export const getFiOpenItems = async (
 // ----------------------------------------------------------------------
 
 export type EntitiesListParams = {
-  type?: 'vendor' | 'customer';
-  riskLevel?: string;
-  highExposure?: boolean;
+  type?: 'VENDOR' | 'CUSTOMER';
+  country?: string;
+  q?: string;
   page?: number;
   size?: number;
 };
 
 /**
- * GET /api/synapse/entities/parties — BpParty 기반, Controller 미구현
- * (경로: /entities와 fi-doc-headers 등과 구분)
+ * GET /api/synapse/entities/parties — BpParty 기반
+ * BE 응답: { data: { items, data, total, pageInfo } }
  */
 export const getEntities = async (
   params?: EntitiesListParams
 ): Promise<ApiResponse<EntityListItem[]>> => {
   const query = new URLSearchParams();
   if (params?.type) query.set('type', params.type);
+  if (params?.country) query.set('country', params.country);
+  if (params?.q?.trim()) query.set('q', params.q.trim());
   if (params?.page != null) query.set('page', String(params.page));
   if (params?.size != null) query.set('size', String(params.size));
 
   const url = `/api/synapse/entities/parties${query.toString() ? `?${query.toString()}` : ''}`;
-  const res = await axiosInstance.get<ApiResponse<EntityListItem[]>>(url);
-  return res.data;
+  const res = await axiosInstance.get<ApiResponse<PartiesListResponse>>(url);
+  const apiRes = res.data;
+  const inner = apiRes?.data;
+  const rawList = inner?.items ?? inner?.data ?? [];
+  const mapped = Array.isArray(rawList)
+    ? rawList.map((r) => toEntityListItem(r as PartyRaw))
+    : [];
+  return { ...apiRes, data: mapped } as ApiResponse<EntityListItem[]>;
 };
 
 /**

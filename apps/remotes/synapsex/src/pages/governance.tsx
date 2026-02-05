@@ -243,8 +243,8 @@ export const GovernancePage = () => {
         >
           <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'background.neutral' }}>
             <Stack direction="row" alignItems="center" spacing={1}>
-              <Iconify icon="solar:settings-bold" width={16} sx={{ color: 'text.secondary' }} />
-              <Typography variant="subtitle2">Autonomy Level Configuration</Typography>
+              <Iconify icon="solar:settings-bold" width={16} sx={{ color: 'text.primary' }} />
+              <Typography variant="subtitle2" color="text.primary">Autonomy Level Configuration</Typography>
             </Stack>
           </Box>
           <Box sx={{ flexGrow: 1, overflow: 'auto', p: 3 }}>
@@ -254,8 +254,8 @@ export const GovernancePage = () => {
                 <CardContent>
                   <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
                     <Stack direction="row" alignItems="center" spacing={1}>
-                      <Iconify icon="solar:settings-bold" width={16} />
-                      <Typography variant="subtitle2">Global Default Autonomy Level</Typography>
+                      <Iconify icon="solar:settings-bold" width={16} sx={{ color: 'text.primary' }} />
+                      <Typography variant="subtitle2" color="text.primary">Global Default Autonomy Level</Typography>
                     </Stack>
                     <Chip
                       icon={<Iconify icon={currentLevelConfig.icon} width={14} />}
@@ -281,10 +281,10 @@ export const GovernancePage = () => {
                       valueLabelDisplay="auto"
                     />
                     <Stack direction="row" justifyContent="space-between" sx={{ mt: 1 }}>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="text.primary">
                         Human Only
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" color="text.primary">
                         Fully Auto
                       </Typography>
                     </Stack>
@@ -299,8 +299,8 @@ export const GovernancePage = () => {
                   >
                     <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.5 }}>
-                        <Iconify icon={currentLevelConfig.icon} width={16} />
-                        <Typography variant="body2" fontWeight={600}>
+                        <Iconify icon={currentLevelConfig.icon} width={16} sx={{ color: 'text.primary' }} />
+                        <Typography variant="body2" fontWeight={600} color="text.primary">
                           {currentLevelConfig.name}
                         </Typography>
                       </Stack>
@@ -316,8 +316,8 @@ export const GovernancePage = () => {
               <Card>
                 <CardContent>
                   <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                    <Iconify icon="solar:info-circle-bold" width={16} sx={{ color: 'text.secondary' }} />
-                    <Typography variant="subtitle2">Autonomy Level Reference</Typography>
+                    <Iconify icon="solar:info-circle-bold" width={16} sx={{ color: 'text.primary' }} />
+                    <Typography variant="subtitle2" color="text.primary">Autonomy Level Reference</Typography>
                   </Stack>
                   <Stack spacing={1}>
                     {autonomyLevels.map((level) => (
@@ -346,10 +346,10 @@ export const GovernancePage = () => {
                             flexShrink: 0,
                           }}
                         >
-                          <Iconify icon={level.icon} width={16} />
+                          <Iconify icon={level.icon} width={16} sx={{ color: 'inherit' }} />
                         </Box>
                         <Box sx={{ minWidth: 0, flexGrow: 1 }}>
-                          <Typography variant="body2" fontWeight={600}>
+                          <Typography variant="body2" fontWeight={600} color="text.primary">
                             Level {level.level}: {level.name}
                           </Typography>
                           <Typography variant="caption" color="text.secondary" noWrap>
@@ -366,8 +366,8 @@ export const GovernancePage = () => {
               <Card>
                 <CardContent>
                   <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
-                    <Iconify icon="solar:danger-triangle-bold" width={16} sx={{ color: 'text.secondary' }} />
-                    <Typography variant="subtitle2">Per-Anomaly Type Settings</Typography>
+                    <Iconify icon="solar:danger-triangle-bold" width={16} sx={{ color: 'text.primary' }} />
+                    <Typography variant="subtitle2" color="text.primary">Per-Anomaly Type Settings</Typography>
                   </Stack>
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
                     Override global autonomy level for specific anomaly types
@@ -441,8 +441,8 @@ export const GovernancePage = () => {
           <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'background.neutral' }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Stack direction="row" alignItems="center" spacing={1}>
-                <Iconify icon="solar:lock-bold" width={16} sx={{ color: 'text.secondary' }} />
-                <Typography variant="subtitle2">Guardrail Configuration</Typography>
+                <Iconify icon="solar:lock-bold" width={16} sx={{ color: 'text.primary' }} />
+                <Typography variant="subtitle2" color="text.primary">Guardrail Configuration</Typography>
               </Stack>
               <Button
                 variant="outlined"
@@ -516,11 +516,27 @@ export const GovernancePage = () => {
                           <Iconify icon="solar:lock-bold" width={20} />
                         </Box>
                         <Box sx={{ minWidth: 0, flexGrow: 1 }}>
-                          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.5 }}>
-                            <Typography variant="body2" fontWeight={600}>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={1}
+                            sx={{ mb: 0.5, minWidth: 0 }}
+                          >
+                            <Typography
+                              variant="body2"
+                              fontWeight={600}
+                              sx={{
+                                minWidth: 0,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
                               {guardrail.name}
                             </Typography>
-                            <SeverityBadge severity={guardrail.severity} size="sm" />
+                            <Box component="span" sx={{ flexShrink: 0 }}>
+                              <SeverityBadge severity={guardrail.severity} size="sm" />
+                            </Box>
                           </Stack>
                           <Typography variant="caption" color="text.secondary">
                             {guardrail.rule}

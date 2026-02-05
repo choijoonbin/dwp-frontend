@@ -4,11 +4,11 @@
  */
 
 import type {
-  ActionRequiredDto,
-  AgentActivityDto,
-  DashboardSummaryDto,
   TeamSnapshotDto,
+  AgentActivityDto,
   TopRiskDriverDto,
+  ActionRequiredDto,
+  DashboardSummaryDto,
 } from '@dwp-frontend/shared-utils';
 
 // ----------------------------------------------------------------------

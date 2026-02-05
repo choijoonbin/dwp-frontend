@@ -1,0 +1,32 @@
+[PHASE A / Front Prompt] Case E2E(P0) — Command Center → Case Detail(SSE) → Evidence → HITL → Audit
+(목표: “Agentic가 일하는 장면”이 케이스 상세에서 보이고, 승인/감사까지 닫힌다)
+
+## 0) 원칙(Phase 0 준수)
+- REST/SSE 헤더 표준 준수(X-User-ID 포함).
+- mock fallback 제거: 에러/빈상태로 표준 처리.
+- UI 확장은 ‘표현/연결’ 중심(새 기능/새 데이터 집계 금지).
+
+---
+
+## 1) 구현 범위(In)
+- Command Center에서 Case Detail 진입 동선 확정(1클릭)
+- Case Detail:
+  - SSE 이벤트를 단계형 UI로 표시(analysis/plan/tool/hitl)
+  - HITL drawer(approve/reject) + 상태 배지 업데이트
+  - Evidence 패널에서 3종 링크가 실제로 열림
+  - View Audit 링크(케이스 id로 필터된 Audit 화면)
+
+---
+
+## 2) 작업 순서
+1) 헤더/쿼리키/훅 계약 점검
+2) Case Detail SSE 단계형 렌더링(접기/펼치기 포함)
+3) Evidence 링크 연결(문서/오픈아이템/라인리지)
+4) HITL + Audit 연결(승인 후 audit 확인)
+
+---
+
+## 3) Definition of Done
+- 케이스 1개를 클릭해 승인/거절 후 감사에서 이벤트가 보임
+- SSE 끊김 UX 존재(재시도/Last-Event-ID)
+- 다크모드 포함 가독성 유지

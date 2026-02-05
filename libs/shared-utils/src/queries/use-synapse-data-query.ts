@@ -152,7 +152,7 @@ export const useEntitiesListQuery = (params?: EntitiesListParams) => {
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
         throw new Error(res.message || 'Failed to fetch entities');
       }
-      return res.data ?? [];
+      return Array.isArray(res.data) ? res.data : [];
     },
     enabled,
     staleTime: 1 * 60 * 1000,

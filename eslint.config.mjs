@@ -220,6 +220,10 @@ export default [
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
   { ignores: ['*', '!apps/', '!libs/', '!eslint.config.*', 'apps/**/dist/**', 'apps/**/build/**'] },
   {
+    files: ['apps/dwp/src/components/synapse-module.tsx'],
+    rules: { 'import/no-unresolved': 'off' },
+  },
+  {
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
     },

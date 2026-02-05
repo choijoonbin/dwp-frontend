@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
   useReconRunsQuery,
+  type ReconRunListDto,
   useStartReconRunMutation,
 } from '@dwp-frontend/shared-utils';
 
@@ -44,18 +45,30 @@ export const ReconciliationPage = () => {
   const [runTypeFilter, setRunTypeFilter] = useState<string>('all');
   const [startModalOpen, setStartModalOpen] = useState(false);
 
-  const { data: runs = [], isLoading, error } = useReconRunsQuery(
+  const { data, isLoading, error } = useReconRunsQuery(
     runTypeFilter === 'all' ? undefined : (runTypeFilter as 'DOC_OPENITEM_MATCH' | 'ACTION_EFFECT')
   );
+  const runs: ReconRunListDto[] = (() => {
+    if (Array.isArray(data)) return data as ReconRunListDto[];
+    if (data && typeof data === 'object' && 'items' in data) {
+      const arr = (data as { items?: ReconRunListDto[] }).items;
+      return Array.isArray(arr) ? arr : [];
+    }
+    if (data && typeof data === 'object' && 'runs' in data) {
+      const arr = (data as { runs?: ReconRunListDto[] }).runs;
+      return Array.isArray(arr) ? arr : [];
+    }
+    return [];
+  })();
   const startMutation = useStartReconRunMutation();
 
   const handleStartRun = (runType: Parameters<typeof startMutation.mutate>[0]['runType']) => {
     startMutation.mutate(
       { runType },
       {
-        onSuccess: (data) => {
+        onSuccess: (result) => {
           setStartModalOpen(false);
-          if (data?.runId) navigate(`${SYNAPSE_ROUTES.RECONCILIATION}/${data.runId}`);
+          if (result?.runId) navigate(`${SYNAPSE_ROUTES.RECONCILIATION}/${result.runId}`);
         },
       }
     );

@@ -23,12 +23,12 @@ export type Status =
   | 'review';
 
 export type StatusPillProps = {
-  status: Status;
+  status?: Status | string | null;
   size?: 'sm' | 'md' | 'lg';
   sx?: SxProps<Theme>;
 };
 
-const statusConfig: Record<Status, { label: string; icon: string; color: LabelColor }> = {
+const statusConfig: Record<string, { label: string; icon: string; color: LabelColor }> = {
   open: { label: 'Open', icon: 'solar:record-circle-bold', color: 'default' },
   in_progress: { label: 'In Progress', icon: 'solar:refresh-circle-bold-duotone', color: 'info' },
   pending_approval: { label: 'Pending Approval', icon: 'solar:clock-circle-bold', color: 'warning' },
@@ -41,6 +41,7 @@ const statusConfig: Record<Status, { label: string; icon: string; color: LabelCo
   failed: { label: 'Failed', icon: 'solar:close-circle-bold', color: 'error' },
   completed: { label: 'Completed', icon: 'solar:check-circle-bold-duotone', color: 'success' },
   triage: { label: 'Triage', icon: 'solar:document-medicine-bold', color: 'info' },
+  triaged: { label: 'Triaged', icon: 'solar:document-medicine-bold', color: 'info' },
   review: { label: 'Review', icon: 'solar:eye-bold', color: 'warning' },
 };
 
@@ -50,10 +51,13 @@ const sizeMap = {
   lg: { fontSize: '0.875rem', iconSize: 18 },
 };
 
+const defaultConfig = { label: 'Unknown', icon: 'solar:info-circle-bold', color: 'default' as LabelColor };
+
 export const StatusPill = ({ status, size = 'md', sx }: StatusPillProps) => {
-  const config = statusConfig[status];
+  const normalized = (status ?? '').toLowerCase().replace(/-/g, '_');
+  const config = statusConfig[normalized] ?? defaultConfig;
   const { fontSize, iconSize } = sizeMap[size];
-  const isAnimated = status === 'in_progress';
+  const isAnimated = normalized === 'in_progress';
 
   return (
     <Label

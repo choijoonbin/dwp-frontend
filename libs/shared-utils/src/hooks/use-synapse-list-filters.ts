@@ -5,10 +5,10 @@
  * @see docs/backend-src/docs/api-spec/COMMON_FILTER_DTO_STANDARD.md
  */
 
-import { useCallback, useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { parseQuery, serializeQuery } from '../contracts/synapse-filters';
+import { parseQuery } from '../contracts/synapse-filters';
 
 export type SynapseRouteKey = 'cases' | 'anomalies' | 'actions';
 

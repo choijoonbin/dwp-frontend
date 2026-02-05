@@ -49,12 +49,64 @@ const MuiCard: Components<Theme>['MuiCard'] = {
 
 const MuiCardHeader: Components<Theme>['MuiCardHeader'] = {
   defaultProps: {
-    titleTypographyProps: { variant: 'h6' },
-    subheaderTypographyProps: { variant: 'body2' },
+    titleTypographyProps: { variant: 'h6', color: 'text.primary' },
+    subheaderTypographyProps: { variant: 'body2', color: 'text.secondary' },
   },
   styleOverrides: {
     root: ({ theme }) => ({
       padding: theme.spacing(3, 3, 0),
+    }),
+  },
+};
+
+const MuiAlert: Components<Theme>['MuiAlert'] = {
+  styleOverrides: {
+    standardError: ({ theme }) => ({
+      '& .MuiAlert-message': { color: theme.vars.palette.text.primary },
+    }),
+    standardWarning: ({ theme }) => ({
+      '& .MuiAlert-message': { color: theme.vars.palette.text.primary },
+    }),
+    standardInfo: ({ theme }) => ({
+      '& .MuiAlert-message': { color: theme.vars.palette.text.primary },
+    }),
+    standardSuccess: ({ theme }) => ({
+      '& .MuiAlert-message': { color: theme.vars.palette.text.primary },
+    }),
+  },
+};
+
+const MuiSlider: Components<Theme>['MuiSlider'] = {
+  styleOverrides: {
+    root: ({ theme }) => ({
+      color: theme.vars.palette.primary.main,
+    }),
+    rail: {
+      opacity: 0.38,
+    },
+    track: ({ theme }) => ({
+      border: 'none',
+      backgroundColor: theme.vars.palette.primary.main,
+    }),
+    thumb: ({ theme }) => ({
+      '&:before': {
+        boxShadow: `0 2px 4px ${varAlpha(theme.vars.palette.common.blackChannel, 0.2)}`,
+      },
+    }),
+  },
+};
+
+const MuiChip: Components<Theme>['MuiChip'] = {
+  styleOverrides: {
+    root: ({ theme }) => ({
+      fontWeight: 600,
+    }),
+    colorDefault: ({ theme }) => ({
+      ...theme.applyStyles('dark', {
+        backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.2),
+        color: theme.vars.palette.text.primary,
+        border: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.4)}`,
+      }),
     }),
   },
 };
@@ -156,10 +208,13 @@ const MuiRadio: Components<Theme>['MuiRadio'] = {
 // ----------------------------------------------------------------------
 
 export const components = {
+  MuiAlert,
   MuiCard,
+  MuiChip,
   MuiLink,
   MuiPaper,
   MuiRadio,
+  MuiSlider,
   MuiButton,
   MuiBackdrop,
   MuiMenuItem,

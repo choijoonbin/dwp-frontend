@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import { is403Error , useSynapseAgentStream } from '@dwp-frontend/shared-utils';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { is403Error, buildAuditUrl, useSynapseAgentStream } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -226,7 +226,11 @@ const emptyRagCitations: RagCitation[] = [];
 export const CaseDetailPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { pathname } = useLocation();
+  const idFromParams = useParams<{ id: string }>().id;
+  // pathname-to-page 렌더 시 Route :id 없음 → pathname에서 추출
+  const idFromPath = pathname.match(/\/cases\/([^/]+)/)?.[1];
+  const id = idFromParams ?? idFromPath ?? undefined;
 
   const { caseData, evidence, fiDoc, fiDocItems, relatedActions, auditEvents, isLoading, error, refetch } = useCaseDetail(id);
   const caseComments = extendedComments.filter((c) => c.caseId === (caseData?.id ?? ''));
@@ -1286,6 +1290,17 @@ export const CaseDetailPage = () => {
           {/* Audit Stream Panel */}
           {rightPanelTab === 'audit' && (
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+              <Box sx={{ px: 2, py: 1, borderBottom: 1, borderColor: 'divider' }}>
+                <Button
+                  component={Link}
+                  to={id ? buildAuditUrl({ resourceId: id, range: '24h' }) : SYNAPSE_ROUTES.AUDIT}
+                  size="small"
+                  startIcon={<Iconify icon="solar:clipboard-list-bold-duotone" width={16} />}
+                  sx={{ textTransform: 'none' }}
+                >
+                  View Audit (케이스 필터)
+                </Button>
+              </Box>
               <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
                 <Stack spacing={2}>
                   {[...caseComments.map((c) => ({ ...c, type: 'comment' as const })),

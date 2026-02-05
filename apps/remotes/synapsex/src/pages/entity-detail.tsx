@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useEntityDetailQuery } from '@dwp-frontend/shared-utils';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -42,6 +43,68 @@ import {
   mockEntityChangeLogs,
   type EntityChangeLog,
 } from '../data/mock-data';
+import type { Entity } from '../data/mock-data';
+
+// ----------------------------------------------------------------------
+
+/** BE Entity 360 API 응답: { base, exposureSummary, riskTrend, tabs } */
+function toEntityFromApi(raw: Record<string, unknown> | null | undefined): Entity | null {
+  if (!raw || typeof raw !== 'object') return null;
+
+  const base = (raw.base as Record<string, unknown>) ?? raw;
+  const exposureSummary = (raw.exposureSummary as Record<string, unknown>) ?? {};
+  const tabs = (raw.tabs as Record<string, unknown>) ?? {};
+
+  const partyId = base.partyId ?? base.id ?? raw.partyId ?? raw.id;
+  if (partyId == null) return null;
+
+  const typeStr = String(base.partyType ?? base.type ?? raw.partyType ?? raw.type ?? 'VENDOR').toUpperCase();
+  const toNum = (v: unknown) => (Number.isFinite(Number(v)) ? Number(v) : 0);
+
+  const linkedDocs = (tabs.linkedDocuments as Array<{ docKey?: string }>) ?? [];
+  const linkedOis = (tabs.linkedOpenItems as Array<{ bukrs?: string; belnr?: string; gjahr?: string; buzei?: string }>) ?? [];
+  const linkedCases = (tabs.linkedCases as Array<{ caseId?: string; id?: string }>) ?? [];
+
+  const linkedDocIds = linkedDocs.map((d) => String(d.docKey ?? '')).filter(Boolean);
+  const linkedOpenItemIds = linkedOis.map(
+    (o) => `${o.bukrs ?? ''}-${o.belnr ?? ''}-${o.gjahr ?? ''}-${o.buzei ?? ''}`
+  ).filter((s) => s !== '---');
+  const linkedCaseIds = linkedCases.map((c) => String(c.caseId ?? c.id ?? '')).filter(Boolean);
+
+  const totalOpen = toNum(exposureSummary.totalOpenAmount);
+  const overdueTotal = toNum(exposureSummary.overdueAmount);
+
+  return {
+    address: base.address as string | undefined,
+    bankAccount: base.bankAccount as string | undefined,
+    bankName: base.bankName as string | undefined,
+    code: String(base.partyCode ?? partyId),
+    concentrationRisk: 'medium',
+    contactEmail: base.contactEmail as string | undefined,
+    contactName: base.contactName as string | undefined,
+    contactPhone: base.contactPhone as string | undefined,
+    country: String(base.country ?? ''),
+    currency: String(base.currency ?? 'USD'),
+    id: String(partyId),
+    lastUpdated: String(base.lastChangeTs ?? base.lastChangedAt ?? ''),
+    linkedCaseIds,
+    linkedDocIds,
+    linkedOpenItemIds,
+    name: String(base.nameDisplay ?? base.name ?? ''),
+    openItemsCount: linkedOis.length,
+    openItemsTotal: totalOpen,
+    overdueCount: 0,
+    overdueTotal,
+    paymentTerms: base.paymentTerms as string | undefined,
+    recentAnomaliesCount: 0,
+    riskScore: toNum(base.riskScore),
+    riskTrend: 'stable',
+    taxId: base.taxId as string | undefined,
+    tenantId: toNum(base.tenantId) || 0,
+    companyCode: String(base.companyCode ?? ''),
+    type: typeStr === 'CUSTOMER' ? 'customer' : 'vendor',
+  };
+}
 
 // ----------------------------------------------------------------------
 
@@ -168,7 +231,12 @@ const ChangeLogItem = ({ log, showMasked }: { log: EntityChangeLog; showMasked: 
 
 /** 거래처 상세 페이지 (Entity Profile) */
 export const EntityDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { pathname } = useLocation();
+  const idFromParams = useParams<{ id: string }>().id;
+  // pathname-to-page 렌더 시 Route :id 없음 → pathname에서 추출 (synapse/entities/2501, entities/2501 등)
+  const idFromPath = pathname.match(/\/entities\/([^/?#]+)/)?.[1];
+  const id = idFromParams ?? idFromPath ?? undefined;
+
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') || 'overview';
 
@@ -180,8 +248,13 @@ export const EntityDetailPage = () => {
   const [changeLogFilterAnchor, setChangeLogFilterAnchor] = useState<null | HTMLElement>(null);
   const [changeLogFilter, setChangeLogFilter] = useState<string[]>([]);
 
-  // Find entity
-  const entity = mockEntities.find((e) => e.id === id);
+  const { data: apiData, isLoading, error } = useEntityDetailQuery(id);
+  const entityFromApi = useMemo(
+    () => toEntityFromApi(apiData as Record<string, unknown> | undefined),
+    [apiData]
+  );
+  const entityFromMock = mockEntities.find((e) => e.id === id);
+  const entity = entityFromApi ?? entityFromMock ?? undefined;
 
   // Get related data
   const changeLogs = useMemo(() => {
@@ -212,6 +285,16 @@ export const EntityDetailPage = () => {
     return mockActions.filter((a) => caseIds.includes(a.caseId));
   }, [relatedCases]);
 
+  if (isLoading && !entity) {
+    return (
+      <Box sx={{ p: { xs: 2, sm: 3 }, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+        <Typography variant="body2" color="text.secondary">
+          Loading...
+        </Typography>
+      </Box>
+    );
+  }
+
   if (!entity) {
     return (
       <Box sx={{ p: { xs: 2, sm: 3 } }}>
@@ -222,7 +305,7 @@ export const EntityDetailPage = () => {
               Entity Not Found
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
-              The entity with ID {id} could not be found.
+              The entity with ID {id ?? '—'} could not be found.
             </Typography>
             <Button component={Link} to={SYNAPSE_ROUTES.ENTITIES}>
               Return to Entity Hub

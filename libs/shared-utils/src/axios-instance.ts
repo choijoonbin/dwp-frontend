@@ -3,6 +3,7 @@
 import { NX_API_URL } from './env';
 import { HttpError } from './http-error';
 import { getTenantId } from './tenant-util';
+import { generateTraceId } from './trace-util';
 import { getUserId } from './auth/user-id-storage';
 import { getAccessToken } from './auth/token-storage';
 import { reportDevErrorToReporter } from './dev-error-reporter';
@@ -99,9 +100,14 @@ function buildHeaders(extra?: Record<string, string>): Record<string, string> {
   const tenantId = getTenantId();
   const userId = getUserId();
 
+  if (!tenantId && typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+    console.warn('[axios-instance] X-Tenant-ID 누락: getTenantId()가 빈 값입니다.');
+  }
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    'X-Tenant-ID': tenantId,
+    'X-Tenant-ID': tenantId || '',
+    'X-Trace-ID': generateTraceId(),
     ...(extra ?? {}),
   };
 
@@ -184,22 +190,8 @@ export const axiosInstance = {
     body: B,
     config: AxiosLikeConfig = {}
   ): Promise<AxiosLikeResponse<T>> => {
-    const token = getAccessToken();
     const tenantId = getTenantId();
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'X-Tenant-ID': tenantId,
-      ...(config.headers ?? {}),
-    };
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    if (currentAgentId) {
-      headers['X-Agent-ID'] = currentAgentId;
-    }
+    const headers = buildHeaders(config.headers);
 
     const res = await fetch(`${baseURL}${url}`, {
       method: 'POST',
@@ -247,22 +239,8 @@ export const axiosInstance = {
     body: B,
     config: AxiosLikeConfig = {}
   ): Promise<AxiosLikeResponse<T>> => {
-    const token = getAccessToken();
     const tenantId = getTenantId();
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'X-Tenant-ID': tenantId,
-      ...(config.headers ?? {}),
-    };
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    if (currentAgentId) {
-      headers['X-Agent-ID'] = currentAgentId;
-    }
+    const headers = buildHeaders(config.headers);
 
     const res = await fetch(`${baseURL}${url}`, {
       method: 'PATCH',

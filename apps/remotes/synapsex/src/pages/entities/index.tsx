@@ -1,8 +1,9 @@
 /**
- * Entities (거래처) 목록 페이지 — API 연동 + mock fallback
+ * Entities (거래처) 목록 페이지 — API 연동 + 검색 필터 + mock fallback
  */
 
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useEntitiesListQuery } from '@dwp-frontend/shared-utils';
 
@@ -20,12 +21,38 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import TableContainer from '@mui/material/TableContainer';
 
+import { SYNAPSE_ROUTES } from '../../routes';
+import { EntitiesFilterBar } from './components/entities-filter-bar';
 import { mockEntities } from '../../data/mock-data';
+import type { EntityFilters } from './types';
+
+const DEFAULT_FILTERS: EntityFilters = {
+  type: '',
+  country: '',
+  q: '',
+};
 
 export const EntitiesPage = () => {
   const navigate = useNavigate();
-  const { data: apiData, isLoading, error, refetch } = useEntitiesListQuery();
-  const items = apiData && apiData.length > 0 ? apiData : mockEntities;
+  const [filters, setFilters] = useState<EntityFilters>(DEFAULT_FILTERS);
+
+  const params = useMemo(
+    () => ({
+      type: filters.type || undefined,
+      country: filters.country || undefined,
+      q: filters.q?.trim() || undefined,
+      page: 0,
+      size: 20,
+    }),
+    [filters]
+  );
+
+  const { data: apiData, isLoading, error, refetch } = useEntitiesListQuery(params);
+  const items = Array.isArray(apiData) ? apiData : mockEntities;
+
+  const handleResetFilters = useCallback(() => {
+    setFilters(DEFAULT_FILTERS);
+  }, []);
 
   if (error && (!apiData || apiData.length === 0)) {
     return (
@@ -82,6 +109,12 @@ export const EntitiesPage = () => {
           </Button>
         </Stack>
 
+        <EntitiesFilterBar
+          filters={filters}
+          onFiltersChange={setFilters}
+          onReset={handleResetFilters}
+        />
+
         <Card variant="outlined">
           <CardContent sx={{ p: 0 }}>
             <TableContainer>
@@ -127,7 +160,7 @@ export const EntitiesPage = () => {
                       <TableRow
                         key={entity.id}
                         hover
-                        onClick={() => navigate(`/synapse/entities/${entity.id}`)}
+                        onClick={() => navigate(`${SYNAPSE_ROUTES.ENTITIES}/${entity.id}`)}
                         sx={{
                           cursor: 'pointer',
                           '&:hover': { bgcolor: 'action.hover' },
@@ -184,14 +217,13 @@ export const EntitiesPage = () => {
                               '-'}
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell onClick={(e) => e.stopPropagation()}>
                           <Button
+                            component={Link}
+                            to={`${SYNAPSE_ROUTES.ENTITIES}/${entity.id}`}
                             size="small"
                             endIcon={<Iconify icon="solar:arrow-right-up-linear" width={16} />}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/synapse/entities/${entity.id}`);
-                            }}
+                            sx={{ textDecoration: 'none' }}
                           >
                             Open
                           </Button>

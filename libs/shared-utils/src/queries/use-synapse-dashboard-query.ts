@@ -10,15 +10,15 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../auth/auth-provider';
 import { getDashboardTenantId } from '../tenant-util';
 import {
-  type ActionRequiredDto,
-  type AgentActivityDto,
-  type DashboardSummaryDto,
-  type TeamSnapshotDto,
-  type TopRiskDriverDto,
-  getDashboardActionRequired,
-  getDashboardAgentActivity,
   getDashboardSummary,
+  type TeamSnapshotDto,
+  type AgentActivityDto,
+  type TopRiskDriverDto,
+  type ActionRequiredDto,
+  type DashboardSummaryDto,
   getDashboardTeamSnapshot,
+  getDashboardAgentActivity,
+  getDashboardActionRequired,
   getDashboardTopRiskDrivers,
 } from '../api/synapse-dashboard-api';
 

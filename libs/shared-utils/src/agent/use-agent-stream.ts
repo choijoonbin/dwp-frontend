@@ -6,7 +6,9 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { NX_API_URL } from '../env';
 import { getTenantId } from '../tenant-util';
 import { useStreamStore } from './stream-store';
+import { generateTraceId } from '../trace-util';
 import { getAgentContext } from './context-util';
+import { getUserId } from '../auth/user-id-storage';
 import { getAgentSessionId } from './agent-session';
 import { getAccessToken } from '../auth/token-storage';
 
@@ -85,6 +87,7 @@ export const useAgentStream = () => {
 
       const token = getAccessToken();
       const tenantId = getTenantId();
+      const userId = getUserId();
       const agentId = getAgentSessionId();
       const context = getAgentContext();
       const endpoint = '/api/agent/chat-stream';
@@ -99,10 +102,12 @@ export const useAgentStream = () => {
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        'Accept': 'text/event-stream',
+        Accept: 'text/event-stream',
         'X-Tenant-ID': tenantId,
         'X-Agent-ID': agentId,
+        'X-Trace-ID': generateTraceId(),
         ...(token && { Authorization: `Bearer ${token}` }),
+        ...(userId && { 'X-User-ID': userId }),
         ...(lastEventId && { 'Last-Event-ID': lastEventId }),
       };
 

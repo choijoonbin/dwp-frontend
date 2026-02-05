@@ -5,8 +5,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 // ----------------------------------------------------------------------
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment, import/no-unresolved -- Vite alias @synapse-app
-// @ts-ignore - Remote app import path (alias로 workspace 내 절대경로 해석)
+/* eslint-disable import/no-unresolved -- Vite alias @synapse-app (Host vite.config) */
+// @ts-expect-error - Remote app import path (alias로 workspace 내 절대경로 해석)
 const SynapseApp = lazy(() => import('@synapse-app'));
 
 // ----------------------------------------------------------------------
