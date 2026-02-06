@@ -1,4 +1,5 @@
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -18,13 +19,14 @@ interface StepDetailsInlineProps {
 }
 
 export function StepDetailsInline({ step }: StepDetailsInlineProps) {
+  const { t } = useTranslation('common');
   return (
     <Card sx={{ bgcolor: 'action.hover', mb: 3 }}>
       <CardHeader
         title={
           <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
             <Iconify icon="solar:eye-bold" width={16} />
-            Step Details: {step.name}
+            {t('lineage.stepDetails.title', { name: step.name })}
           </Typography>
         }
         titleTypographyProps={{ variant: 'subtitle2' }}

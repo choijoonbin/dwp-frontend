@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
@@ -25,202 +25,25 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { SYNAPSE_ROUTES } from '../routes';
 import { ErrorStateWithRetry } from '../components/ux';
-import { RagCitationList } from '../components/evidence';
 import { useCaseHitl } from './cases/hooks/use-case-hitl';
 import { CaseHitlDrawer } from './cases/components/case-hitl-drawer';
 import { SeverityBadge } from '../components/finance/severity-badge';
+import { CaseSimilarTab } from './cases/components/case-similar-tab';
 import { useCaseSimulation } from './cases/hooks/use-case-simulation';
+import { CaseAnalysisTab } from './cases/components/case-analysis-tab';
 import { ConfidenceRing } from '../components/finance/confidence-meter';
+import { CaseConfidenceTab } from './cases/components/case-confidence-tab';
 import { StatusPill, type Status } from '../components/finance/status-pill';
 import { CaseSimulationDiff } from './cases/components/case-simulation-diff';
+import { CaseRagEvidenceTab } from './cases/components/case-rag-evidence-tab';
 import { useCaseDetail, type AuditEvent } from './cases/hooks/use-case-detail';
 import { CaseAgentStreamPanel } from './cases/components/case-agent-stream-panel';
 
-import type { RagCitation } from '../components/evidence';
 import type { HitlStatus } from './cases/hooks/use-case-hitl';
 
 // ----------------------------------------------------------------------
-
-// Extended mock comments with types
-interface Comment {
-  id: string;
-  caseId: string;
-  author: string;
-  authorType: 'user' | 'system' | 'ai';
-  content: string;
-  createdAt: string;
-}
-
-const extendedComments: Comment[] = [
-  {
-    id: 'cmt-001',
-    caseId: 'case-001',
-    author: 'John Smith',
-    authorType: 'user',
-    content: 'Reviewing vendor history before approval',
-    createdAt: '2026-01-28T15:30:00Z',
-  },
-  {
-    id: 'cmt-sys-001',
-    caseId: 'case-001',
-    author: 'System',
-    authorType: 'system',
-    content: 'Case escalated to Senior Analyst level',
-    createdAt: '2026-01-28T16:00:00Z',
-  },
-  {
-    id: 'cmt-sys-002',
-    caseId: 'case-001',
-    author: 'AI Agent',
-    authorType: 'ai',
-    content: 'Simulation completed. Reversal action ready for approval.',
-    createdAt: '2026-01-28T16:15:00Z',
-  },
-];
-
-// Mock confidence factors
-interface ConfidenceFactor {
-  id: string;
-  label: string;
-  score: number;
-  weight: number;
-  description: string;
-  icon: 'amount' | 'history' | 'policy' | 'timing' | 'pattern';
-}
-
-const mockConfidenceFactors: ConfidenceFactor[] = [
-  {
-    id: 'cf-1',
-    label: 'Amount Match',
-    score: 95,
-    weight: 30,
-    description: 'Invoice amount matches previous payment within tolerance',
-    icon: 'amount',
-  },
-  {
-    id: 'cf-2',
-    label: 'Vendor History',
-    score: 20,
-    weight: 20,
-    description: 'Vendor has limited transaction history for pattern analysis',
-    icon: 'history',
-  },
-  {
-    id: 'cf-3',
-    label: 'Policy Violation',
-    score: 100,
-    weight: 25,
-    description: 'Clear violation of duplicate invoice policy detected',
-    icon: 'policy',
-  },
-  {
-    id: 'cf-4',
-    label: 'Timing Pattern',
-    score: 85,
-    weight: 15,
-    description: 'Invoice submitted within 30-day window of similar payment',
-    icon: 'timing',
-  },
-  {
-    id: 'cf-5',
-    label: 'Data Pattern',
-    score: 92,
-    weight: 10,
-    description: 'Reference number pattern matches previous invoice',
-    icon: 'pattern',
-  },
-];
-
-// Mock SAP field changes for simulation
-interface FieldChange {
-  id: string;
-  field: string;
-  table: string;
-  system: string;
-  currentValue: string;
-  newValue: string;
-  changeType: 'update' | 'create' | 'delete';
-  riskLevel: 'safe' | 'warning' | 'critical';
-}
-
-const mockFieldChanges: FieldChange[] = [
-  {
-    id: 'fc-1',
-    field: 'Payment Block',
-    table: 'BSEG',
-    system: 'SAP FI',
-    currentValue: 'None',
-    newValue: 'A - Locked for Payment',
-    changeType: 'update',
-    riskLevel: 'safe',
-  },
-  {
-    id: 'fc-2',
-    field: 'Document Status',
-    table: 'BKPF',
-    system: 'SAP FI',
-    currentValue: 'Posted',
-    newValue: 'Blocked',
-    changeType: 'update',
-    riskLevel: 'warning',
-  },
-  {
-    id: 'fc-3',
-    field: 'Clearing Document',
-    table: 'BSAK',
-    system: 'SAP FI',
-    currentValue: '',
-    newValue: '4900001234',
-    changeType: 'create',
-    riskLevel: 'safe',
-  },
-  {
-    id: 'fc-4',
-    field: 'Vendor Balance',
-    table: 'LFC1',
-    system: 'SAP FI',
-    currentValue: '$125,000.00',
-    newValue: '$0.00',
-    changeType: 'update',
-    riskLevel: 'warning',
-  },
-];
-
-// Mock document relationship
-interface DocumentRelationship {
-  id: string;
-  type: 'original' | 'reversal';
-  number: string;
-  date: string;
-  amount: number;
-  currency: string;
-  status: 'posted' | 'pending';
-}
-
-const mockDocumentRelationship: DocumentRelationship[] = [
-  {
-    id: 'DOC-1001',
-    type: 'original',
-    number: '1900001234',
-    date: '2026-01-10',
-    amount: 125000,
-    currency: 'USD',
-    status: 'posted',
-  },
-  {
-    id: 'DOC-2001',
-    type: 'reversal',
-    number: '1900001235',
-    date: '2026-01-28',
-    amount: 125000,
-    currency: 'USD',
-    status: 'pending',
-  },
-];
-
-// RAG citations from API reasoning.ragRefsJson or empty
-const emptyRagCitations: RagCitation[] = [];
-
+// @see docs/job/PROMPT_B_Frontend_MenuByMenu_Cases_First.txt
+// @see docs/job/PROMPT_B_Frontend_Cases_TabsBind_P1_v2.txt
 // ----------------------------------------------------------------------
 
 /** 케이스 상세 페이지 */
@@ -235,9 +58,23 @@ export const CaseDetailPage = () => {
   const id = idFromParams ?? idFromPath ?? undefined;
 
   const { caseData, evidence, fiDoc, fiDocItems, relatedActions, auditEvents, isLoading, error, refetch } = useCaseDetail(id);
-  const caseComments = extendedComments.filter((c) => c.caseId === (caseData?.id ?? ''));
+
   const caseAuditEvents = auditEvents;
-  const ragCitations = emptyRagCitations;
+
+  const documentRelationshipFromFiDoc = useMemo(() => {
+    if (!fiDoc) return [];
+    return [
+      {
+        id: fiDoc.id,
+        type: 'original' as const,
+        number: fiDoc.belnr,
+        date: fiDoc.budat ?? '',
+        amount: fiDoc.wrbtr ?? 0,
+        currency: fiDoc.waers ?? 'USD',
+        status: 'posted' as const,
+      },
+    ];
+  }, [fiDoc]);
 
   const [newComment, setNewComment] = useState('');
   const [simulationMode, setSimulationMode] = useState(false);
@@ -294,32 +131,6 @@ export const CaseDetailPage = () => {
   // Simulation
   const { runSimulation, result: simulationResult, isLoading: simulationLoading } = useCaseSimulation(id);
 
-  const similarCases: Array<{
-    id: string;
-    caseNumber: string;
-    title: string;
-    similarity: number;
-    status: Status;
-    severity?: string;
-    counterparty?: string;
-    currency?: string;
-    amount?: number;
-  }> = [];
-
-  // Fallback mock simulation for UI when API not yet returns (backward compat)
-  const mockSimulationResult = {
-    before: { vendorBalance: 125000, glBalance: 450000, openItems: 5 },
-    after: { vendorBalance: 0, glBalance: 325000, openItems: 4 },
-    outcome: 'success' as const,
-    message: 'Reversal will successfully clear the duplicate payment and restore correct balances.',
-  };
-
-  const displaySimulationAfter = (simulationResult ?? mockSimulationResult).after as {
-    vendorBalance?: number;
-    glBalance?: number;
-    openItems?: number;
-  };
-
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
@@ -359,18 +170,6 @@ export const CaseDetailPage = () => {
       </Box>
     );
   }
-
-  // Helper to get icon for confidence factor
-  const getConfidenceFactorIcon = (icon: ConfidenceFactor['icon']) => {
-    const iconMap: Record<ConfidenceFactor['icon'], string> = {
-      amount: 'solar:dollar-minimalistic-bold-duotone',
-      history: 'solar:history-bold-duotone',
-      policy: 'solar:shield-check-bold-duotone',
-      timing: 'solar:clock-circle-bold-duotone',
-      pattern: 'solar:graph-up-bold-duotone',
-    };
-    return iconMap[icon] || 'solar:info-circle-bold-duotone';
-  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.5rem)' }}>
@@ -483,7 +282,7 @@ export const CaseDetailPage = () => {
                     {t('caseDetail.documentRelationship')}
                   </Typography>
               <Stack spacing={1}>
-                {mockDocumentRelationship.map((doc) => (
+                {documentRelationshipFromFiDoc.map((doc) => (
                   <Box
                     key={doc.id}
                     sx={{
@@ -641,10 +440,18 @@ export const CaseDetailPage = () => {
                 </CardContent>
               </Card>
 
-              {/* Open Items Summary — deep-link to open-items filtered by case */}
+              {/* Open Items Summary — deep-link with related filter (caseId, bukrs/belnr/gjahr) */}
               <Card
                 component={Link}
-                to={`${SYNAPSE_ROUTES.OPEN_ITEMS}?caseId=${caseData.id}`}
+                to={(() => {
+                  const params = new URLSearchParams();
+                  params.set('related', 'true');
+                  params.set('caseId', caseData.id);
+                  if (fiDoc?.bukrs) params.set('bukrs', fiDoc.bukrs);
+                  if (fiDoc?.belnr) params.set('belnr', fiDoc.belnr);
+                  if (fiDoc?.gjahr) params.set('gjahr', fiDoc.gjahr);
+                  return `${SYNAPSE_ROUTES.OPEN_ITEMS}?${params.toString()}`;
+                })()}
                 sx={{
                   textDecoration: 'none',
                   cursor: 'pointer',
@@ -664,34 +471,23 @@ export const CaseDetailPage = () => {
                   sx={{ pb: 1, px: 2, pt: 2 }}
                 />
                 <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
-                  <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, mb: 1 }}>
-                    <Box sx={{ p: 1.5, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.04) }}>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('caseDetail.receivables')}
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                        3
-                      </Typography>
-                    </Box>
-                    <Box sx={{ p: 1.5, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.04) }}>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('caseDetail.payables')}
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                        2
-                      </Typography>
-                    </Box>
-                  </Box>
                   <Typography variant="caption" color="text.secondary">
-                    {t('caseDetail.totalOldest', { total: '$245,000', days: 45 })}
+                    {t('caseDetail.relatedOpenItemsDesc')}
                   </Typography>
                 </CardContent>
               </Card>
 
-              {/* Data Lineage Link */}
+              {/* Data Lineage Link — caseId + docKey 전달 */}
               <Card
                 component={Link}
-                to={`${SYNAPSE_ROUTES.LINEAGE}?caseId=${caseData.id}`}
+                to={(() => {
+                  const params = new URLSearchParams();
+                  params.set('caseId', caseData.id);
+                  if (fiDoc?.bukrs && fiDoc?.belnr && fiDoc?.gjahr) {
+                    params.set('docKey', `${fiDoc.bukrs}-${fiDoc.belnr}-${fiDoc.gjahr}`);
+                  }
+                  return `${SYNAPSE_ROUTES.LINEAGE}?${params.toString()}`;
+                })()}
                 sx={{
                   textDecoration: 'none',
                   cursor: 'pointer',
@@ -767,214 +563,35 @@ export const CaseDetailPage = () => {
             )}
 
             {centerTab === 'analysis' && (
-              <Box sx={{ p: 2 }}>
-                <Stack spacing={2}>
-                  {/* Anomaly Score */}
-                  <Card
-                    sx={{
-                      bgcolor: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
-                      border: 1,
-                      borderColor: alpha(theme.palette.primary.main, 0.2),
-                    }}
-                  >
-                    <CardContent sx={{ p: 2 }}>
-                      <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-                        <Box>
-                          <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                            {t('caseDetail.anomalyConfidenceScore')}
-                          </Typography>
-                          <Typography variant="h3" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                            {caseData.confidence}%
-                          </Typography>
-                        </Box>
-                        <ConfidenceRing value={caseData.confidence} size={80} />
-                      </Stack>
-                      <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                        <Chip
-                          label={caseData.anomalyType.replace(/_/g, ' ')}
-                          size="small"
-                          variant="outlined"
-                          sx={{ textTransform: 'capitalize' }}
-                        />
-                        <Chip label={t('caseDetail.severityLabel', { severity: caseData.severity })} size="small" variant="outlined" />
-                      </Stack>
-                    </CardContent>
-                  </Card>
-
-                  {/* AI Reasoning */}
-                  <Card sx={{ bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
-                    <CardHeader
-                      title={
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <Iconify icon="solar:brain-bold-duotone" width={18} />
-                          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-                            {t('caseDetail.aiReasoning')}
-                          </Typography>
-                        </Stack>
-                      }
-                      sx={{ pb: 1, px: 2, pt: 2 }}
-                    />
-                    <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
-                      <Typography variant="body2" sx={{ mb: 2, lineHeight: 1.75 }}>
-                        {caseData.title}
-                      </Typography>
-                      <Divider sx={{ my: 1.5 }} />
-                      <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1, display: 'block' }}>
-                        {t('caseDetail.keyFactors')}
-                      </Typography>
-                      <Stack spacing={1}>
-                        <Stack direction="row" spacing={1} alignItems="flex-start">
-                          <Iconify icon="solar:check-circle-bold-duotone" width={16} sx={{ color: 'primary.main', mt: 0.25 }} />
-                          <Typography variant="caption">
-                            Amount matches previous payment within 30-day window
-                          </Typography>
-                        </Stack>
-                        <Stack direction="row" spacing={1} alignItems="flex-start">
-                          <Iconify icon="solar:check-circle-bold-duotone" width={16} sx={{ color: 'primary.main', mt: 0.25 }} />
-                          <Typography variant="caption">
-                            Same vendor and invoice reference pattern detected
-                          </Typography>
-                        </Stack>
-                        <Stack direction="row" spacing={1} alignItems="flex-start">
-                          <Iconify icon="solar:danger-triangle-bold-duotone" width={16} sx={{ color: 'warning.main', mt: 0.25 }} />
-                          <Typography variant="caption">
-                            Vendor bank account changed 48 hours prior
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                </Stack>
-              </Box>
+              <CaseAnalysisTab
+                caseId={id}
+                enabled={centerTab === 'analysis'}
+                fallbackConfidence={caseData?.confidence}
+                fallbackTitle={caseData?.title}
+                fallbackAnomalyType={caseData?.anomalyType}
+                fallbackSeverity={caseData?.severity}
+              />
             )}
 
             {centerTab === 'confidence' && (
-              <Box sx={{ p: 2 }}>
-                <Stack spacing={2}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    {t('caseDetail.confidenceBreakdown')}
-                  </Typography>
-                  {mockConfidenceFactors.map((factor) => (
-                    <Card key={factor.id}>
-                      <CardContent sx={{ p: 2 }}>
-                        <Stack spacing={1.5}>
-                          <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
-                            <Stack direction="row" spacing={1} alignItems="center">
-                              <Iconify icon={getConfidenceFactorIcon(factor.icon)} width={20} />
-                              <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-                                {factor.label}
-                              </Typography>
-                            </Stack>
-                            <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                              {factor.score}%
-                            </Typography>
-                          </Stack>
-                          <Box sx={{ position: 'relative', height: 8, borderRadius: 1, bgcolor: 'action.hover', overflow: 'hidden' }}>
-                            <Box
-                              sx={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                height: '100%',
-                                width: `${factor.score}%`,
-                                bgcolor: factor.score >= 90 ? 'success.main' : factor.score >= 70 ? 'warning.main' : 'error.main',
-                              }}
-                            />
-                          </Box>
-                          <Typography variant="caption" color="text.secondary">
-                            {t('caseDetail.weight')}: {factor.weight}% • {factor.description}
-                          </Typography>
-                        </Stack>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </Stack>
-              </Box>
+              <CaseConfidenceTab
+                caseId={id}
+                enabled={centerTab === 'confidence'}
+              />
             )}
 
             {centerTab === 'similar' && (
-              <Box sx={{ p: 2 }}>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  {t('caseDetail.similarCasesDesc')}
-                </Typography>
-                <Stack spacing={1.5}>
-                  {similarCases.map((c) => (
-                    <Card
-                      key={c.id}
-                      component={Link}
-                      to={`/cases/${c.id}`}
-                      sx={{
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.04) },
-                        transition: 'background-color 0.2s',
-                      }}
-                    >
-                      <CardContent sx={{ p: 2 }}>
-                        <Stack direction="row" spacing={2} alignItems="flex-start" justifyContent="space-between">
-                          <Box sx={{ minWidth: 0, flex: 1 }}>
-                            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
-                              <Typography variant="body2" sx={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {c.title}
-                              </Typography>
-                              {c.severity && (
-                                <SeverityBadge
-                                  severity={c.severity as 'critical' | 'high' | 'medium' | 'low'}
-                                  size="sm"
-                                />
-                              )}
-                            </Stack>
-                            <Typography variant="caption" color="text.secondary">
-                              {c.caseNumber}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-                              {[c.counterparty, c.currency, c.amount != null ? c.amount.toLocaleString() : null]
-                                .filter(Boolean)
-                                .join(' | ') || '—'}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ textAlign: 'right', flexShrink: 0 }}>
-                            <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                              {c.similarity}%
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {t('caseDetail.similarLabel')}
-                            </Typography>
-                            <Box sx={{ mt: 0.5 }}>
-                              <StatusPill status={c.status as Status} size="sm" />
-                            </Box>
-                          </Box>
-                        </Stack>
-                      </CardContent>
-                    </Card>
-                  ))}
-                  {similarCases.length === 0 && (
-                    <Box sx={{ textAlign: 'center', py: 4 }}>
-                      <Iconify icon="solar:link-bold-duotone" width={32} sx={{ opacity: 0.5, mb: 1 }} />
-                      <Typography variant="body2" color="text.secondary">
-                        {t('caseDetail.noSimilarCases')}
-                      </Typography>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
+              <CaseSimilarTab
+                caseId={id}
+                enabled={centerTab === 'similar'}
+              />
             )}
 
             {centerTab === 'policies' && (
-              <Box sx={{ p: 2 }}>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  {t('caseDetail.policyClickHint')}
-                </Typography>
-                <RagCitationList
-                  citations={ragCitations}
-                  title=""
-                  maxItems={0}
-                  onOpenSource={(source) => {
-                     
-                    console.log('Open policy source:', source);
-                  }}
-                />
-              </Box>
+              <CaseRagEvidenceTab
+                caseId={id}
+                enabled={centerTab === 'policies'}
+              />
             )}
           </Box>
         </Box>
@@ -1022,148 +639,13 @@ export const CaseDetailPage = () => {
             </Stack>
           </Box>
 
-          {/* Simulation Diff (API 연동) */}
+          {/* Simulation Diff (API 연동, mock 제거) */}
           {simulationMode && (
             <CaseSimulationDiff
               result={simulationResult}
               isLoading={simulationLoading}
               onRunSimulation={runSimulation}
             />
-          )}
-
-          {/* Simulation Preview (mock fallback - API 미연동 시) */}
-          {simulationMode && !simulationResult && (
-            <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-              <Stack spacing={1.5}>
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
-                  <Card>
-                    <CardContent sx={{ p: 1.5 }}>
-                      <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                        {t('caseDetail.beforeMock')}
-                      </Typography>
-                      <Stack spacing={0.5}>
-                        <Stack direction="row" justifyContent="space-between">
-                          <Typography variant="caption" color="text.secondary">
-                            {t('caseDetail.vendorBal')}
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            ${mockSimulationResult.before.vendorBalance.toLocaleString()}
-                          </Typography>
-                        </Stack>
-                        <Stack direction="row" justifyContent="space-between">
-                          <Typography variant="caption" color="text.secondary">
-                            {t('caseDetail.glBalance')}
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            ${mockSimulationResult.before.glBalance.toLocaleString()}
-                          </Typography>
-                        </Stack>
-                        <Stack direction="row" justifyContent="space-between">
-                          <Typography variant="caption" color="text.secondary">
-                            {t('caseDetail.openItems')}
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            {mockSimulationResult.before.openItems}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardContent sx={{ p: 1.5 }}>
-                      <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                        {t('caseDetail.after')}
-                      </Typography>
-                      <Stack spacing={0.5}>
-                        <Stack direction="row" justifyContent="space-between">
-                          <Typography variant="caption" color="text.secondary">
-                            {t('caseDetail.vendorBal')}
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'success.main' }}>
-                            ${(displaySimulationAfter.vendorBalance ?? 0).toLocaleString()}
-                          </Typography>
-                        </Stack>
-                        <Stack direction="row" justifyContent="space-between">
-                          <Typography variant="caption" color="text.secondary">
-                            {t('caseDetail.glBalance')}
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            ${(displaySimulationAfter.glBalance ?? 0).toLocaleString()}
-                          </Typography>
-                        </Stack>
-                        <Stack direction="row" justifyContent="space-between">
-                          <Typography variant="caption" color="text.secondary">
-                            {t('caseDetail.openItems')}
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            {displaySimulationAfter.openItems ?? 0}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                </Box>
-
-                {/* Field Change Highlights */}
-                <Card>
-                  <CardContent sx={{ p: 1.5 }}>
-                    <Typography variant="caption" sx={{ fontWeight: 500, mb: 1, display: 'block' }}>
-                      {t('caseDetail.fieldChanges')}
-                    </Typography>
-                    <Stack spacing={1}>
-                      {mockFieldChanges.map((change) => (
-                        <Box
-                          key={change.id}
-                          sx={{
-                            p: 1,
-                            borderRadius: 0.5,
-                            bgcolor: alpha(
-                              change.riskLevel === 'safe'
-                                ? theme.palette.success.main
-                                : change.riskLevel === 'warning'
-                                  ? theme.palette.warning.main
-                                  : theme.palette.error.main,
-                              0.08,
-                            ),
-                            border: 1,
-                            borderColor: alpha(
-                              change.riskLevel === 'safe'
-                                ? theme.palette.success.main
-                                : change.riskLevel === 'warning'
-                                  ? theme.palette.warning.main
-                                  : theme.palette.error.main,
-                              0.2,
-                            ),
-                          }}
-                        >
-                          <Typography variant="caption" sx={{ fontWeight: 500 }}>
-                            {change.field}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                            {change.currentValue} → {change.newValue}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Stack>
-                  </CardContent>
-                </Card>
-
-                {/* Result */}
-                <Box
-                  sx={{
-                    p: 1,
-                    borderRadius: 1,
-                    bgcolor: alpha(theme.palette.success.main, 0.1),
-                    color: 'success.main',
-                  }}
-                >
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <Iconify icon="solar:check-circle-bold-duotone" width={18} />
-                    <Typography variant="caption">{mockSimulationResult.message}</Typography>
-                  </Stack>
-                </Box>
-              </Stack>
-            </Box>
           )}
 
           {/* Tab Switcher for Actions/Audit */}
@@ -1305,14 +787,15 @@ export const CaseDetailPage = () => {
               </Box>
               <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
                 <Stack spacing={2}>
-                  {[...caseComments.map((c) => ({ ...c, type: 'comment' as const })),
-                    ...(caseAuditEvents as AuditEvent[]).slice(0, 5).map((e) => ({
+                  {(caseAuditEvents as AuditEvent[])
+                    .slice(0, 5)
+                    .map((e) => ({
                       ...e,
                       type: 'event' as const,
                       author: e.actor,
                       content: e.description,
                       createdAt: e.timestamp,
-                    }))]
+                    }))
                     .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime())
                     .map((item, i) => (
                       <Stack key={i} direction="row" spacing={1.5}>

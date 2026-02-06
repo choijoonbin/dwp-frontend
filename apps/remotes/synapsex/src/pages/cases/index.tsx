@@ -1,20 +1,26 @@
 /**
- * Cases worklist — API with mock fallback
+ * Cases worklist — API 기반 (하드코딩 제거)
+ * @see docs/job/PROMPT_B_Frontend_MenuByMenu_Cases_First.txt
  */
 
 import type { SelectChangeEvent } from '@mui/material/Select';
 
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMemo, useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Label, Iconify } from '@dwp-frontend/design-system';
-import { formatDate, useTranslation, formatCurrency } from '@dwp-frontend/shared-i18n';
+import { formatDate, formatCurrency, useTranslation } from '@dwp-frontend/shared-i18n';
+import {
+  Label,
+  Iconify,
+  CodeSelectCombobox,
+  type CodeSelectOption,
+} from '@dwp-frontend/design-system';
 import {
   useCodes,
   is403Error,
   tableToCsv,
-  downloadCsv,
   getTenantId,
+  downloadCsv,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -30,10 +36,10 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
+import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
+import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import TableContainer from '@mui/material/TableContainer';
 
@@ -41,33 +47,21 @@ import { SYNAPSE_ROUTES } from '../../routes';
 import { useCasesList } from './hooks/use-cases-list';
 import { ErrorStateWithRetry } from '../../components/ux';
 import { SeverityBadge } from '../../components/finance/severity-badge';
+import { TableLoadingSkeleton } from '../../components/ux/table-loading-skeleton';
 
 import type { CaseListItem } from './adapters/case-list-adapter';
 
 // ----------------------------------------------------------------------
-
-const DEFAULT_STATUS_OPTIONS = [
-  { code: 'OPEN', labelKey: 'cases.filterStatusOpen' },
-  { code: 'TRIAGE', labelKey: 'cases.filterStatusTriage' },
-  { code: 'TRIAGED', labelKey: 'cases.filterStatusTriaged' },
-  { code: 'IN_PROGRESS', labelKey: 'cases.filterStatusInProgress' },
-  { code: 'RESOLVED', labelKey: 'cases.filterStatusResolved' },
-  { code: 'DISMISSED', labelKey: 'cases.filterStatusDismissed' },
-];
-const DEFAULT_SEVERITY_OPTIONS = [
-  { code: 'CRITICAL', labelKey: 'cases.filterSeverityCritical' },
-  { code: 'HIGH', labelKey: 'cases.filterSeverityHigh' },
-  { code: 'MEDIUM', labelKey: 'cases.filterSeverityMedium' },
-  { code: 'LOW', labelKey: 'cases.filterSeverityLow' },
-];
-const DEFAULT_CASE_TYPE_OPTIONS = [
-  { code: 'DUPLICATE_INVOICE', labelKey: 'cases.filterTypeDuplicateInvoice' },
-  { code: 'BANK_CHANGE', labelKey: 'cases.filterTypeBankChange' },
-  { code: 'POLICY_VIOLATION', labelKey: 'cases.filterTypePolicyViolation' },
-  { code: 'INTEGRITY_MISMATCH', labelKey: 'cases.filterTypeIntegrityMismatch' },
-  { code: 'AMOUNT_VARIANCE', labelKey: 'cases.filterTypeAmountVariance' },
-  { code: 'TIMING_ANOMALY', labelKey: 'cases.filterTypeTimingAnomaly' },
-];
+// Allowed status set for filter (pinned 5~7)
+// @see docs/job/CASE_STATUS_SELECT_UX_SPEC_AND_FE_PROMPT.txt
+const ALLOWED_CASE_STATUS_FOR_FILTER = [
+  'NEW',
+  'TRIAGE',
+  'IN_REVIEW',
+  'IN_PROGRESS',
+  'APPROVAL_PENDING',
+  'RESOLVED',
+] as const;
 
 export const CasesPage = () => {
   const { t } = useTranslation('common');
@@ -82,18 +76,42 @@ export const CasesPage = () => {
   const [severityFilter, setSeverityFilter] = useState<string>('');
   const [caseTypeFilter, setCaseTypeFilter] = useState<string>('');
 
-  const statusOptions =
-    statusCodeMap.size > 0
-      ? Array.from(statusCodeMap.entries()).map(([code, label]) => ({ code, label }))
-      : DEFAULT_STATUS_OPTIONS.map((o) => ({ code: o.code, label: t(o.labelKey) }));
-  const severityOptions =
-    severityCodeMap.size > 0
-      ? Array.from(severityCodeMap.entries()).map(([code, label]) => ({ code, label }))
-      : DEFAULT_SEVERITY_OPTIONS.map((o) => ({ code: o.code, label: t(o.labelKey) }));
-  const caseTypeOptions =
-    typeCodeMap.size > 0
-      ? Array.from(typeCodeMap.entries()).map(([code, label]) => ({ code, label }))
-      : DEFAULT_CASE_TYPE_OPTIONS.map((o) => ({ code: o.code, label: t(o.labelKey) }));
+  const statusOptions: CodeSelectOption[] = useMemo(() => {
+    const all = statusCodeMap.size > 0
+      ? Array.from(statusCodeMap.entries()).map(([code, label]) => ({
+          value: code,
+          label,
+          pinned: ALLOWED_CASE_STATUS_FOR_FILTER.includes(code as (typeof ALLOWED_CASE_STATUS_FOR_FILTER)[number]),
+        }))
+      : [];
+    return all;
+  }, [statusCodeMap]);
+
+  const severityOptions = useMemo(
+    () =>
+      severityCodeMap.size > 0
+        ? Array.from(severityCodeMap.entries()).map(([code, label]) => ({ code, label }))
+        : [],
+    [severityCodeMap]
+  );
+
+  const caseTypeOptions = useMemo(
+    () =>
+      typeCodeMap.size > 0
+        ? Array.from(typeCodeMap.entries()).map(([code, label]) => ({ code, label }))
+        : [],
+    [typeCodeMap]
+  );
+
+  const hasFilters = Boolean(q.trim() || statusFilter || severityFilter || caseTypeFilter);
+
+  const handleResetFilters = () => {
+    setQ('');
+    setStatusFilter('');
+    setSeverityFilter('');
+    setCaseTypeFilter('');
+    setPage(0);
+  };
 
   const {
     items: rows,
@@ -235,51 +253,52 @@ export const CasesPage = () => {
               ),
             }}
           />
-          <FormControl size="small" sx={{ minWidth: 140 }}>
-            <InputLabel>{t('cases.status')}</InputLabel>
-            <Select
-              value={statusFilter}
-              label={t('cases.status')}
-              onChange={(e: SelectChangeEvent) => setStatusFilter(e.target.value)}
-            >
-              <MenuItem value="">{t('cases.filterAll')}</MenuItem>
-              {statusOptions.map((opt) => (
-                <MenuItem key={opt.code} value={opt.code}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl size="small" sx={{ minWidth: 140 }}>
-            <InputLabel>{t('cases.severity')}</InputLabel>
-            <Select
-              value={severityFilter}
-              label={t('cases.severity')}
-              onChange={(e: SelectChangeEvent) => setSeverityFilter(e.target.value)}
-            >
-              <MenuItem value="">{t('cases.filterAll')}</MenuItem>
-              {severityOptions.map((opt) => (
-                <MenuItem key={opt.code} value={opt.code}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel>{t('cases.type')}</InputLabel>
-            <Select
-              value={caseTypeFilter}
-              label={t('cases.type')}
-              onChange={(e: SelectChangeEvent) => setCaseTypeFilter(e.target.value)}
-            >
-              <MenuItem value="">{t('cases.filterAll')}</MenuItem>
-              {caseTypeOptions.map((opt) => (
-                <MenuItem key={opt.code} value={opt.code}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <CodeSelectCombobox
+            options={statusOptions}
+            value={statusFilter}
+            onChange={setStatusFilter}
+            label={t('cases.status')}
+            placeholder={t('cases.statusSearchPlaceholder')}
+            emptyLabel={t('cases.filterAll')}
+            pinnedGroupLabel={t('cases.pinnedStatuses')}
+            allGroupLabel={t('cases.allStatuses')}
+            maxPinned={7}
+            maxListHeight={300}
+          />
+          {severityOptions.length > 0 && (
+            <FormControl size="small" sx={{ minWidth: 140 }}>
+              <InputLabel>{t('cases.severity')}</InputLabel>
+              <Select
+                value={severityFilter}
+                label={t('cases.severity')}
+                onChange={(e: SelectChangeEvent) => setSeverityFilter(e.target.value)}
+              >
+                <MenuItem value="">{t('cases.filterAll')}</MenuItem>
+                {severityOptions.map((opt) => (
+                  <MenuItem key={opt.code} value={opt.code}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          {caseTypeOptions.length > 0 && (
+            <FormControl size="small" sx={{ minWidth: 180 }}>
+              <InputLabel>{t('cases.type')}</InputLabel>
+              <Select
+                value={caseTypeFilter}
+                label={t('cases.type')}
+                onChange={(e: SelectChangeEvent) => setCaseTypeFilter(e.target.value)}
+              >
+                <MenuItem value="">{t('cases.filterAll')}</MenuItem>
+                {caseTypeOptions.map((opt) => (
+                  <MenuItem key={opt.code} value={opt.code}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </Stack>
 
         <TableContainer component={Card} variant="outlined">
@@ -297,14 +316,33 @@ export const CasesPage = () => {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                    {t('cases.loading')}
+                  <TableCell colSpan={6} sx={{ py: 0, px: 0, border: 0, verticalAlign: 'top' }}>
+                    <TableLoadingSkeleton rows={5} columns={6} />
                   </TableCell>
                 </TableRow>
               ) : rows.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 4 }} color="text.secondary">
-                    {t('cases.empty')}
+                  <TableCell colSpan={6} align="center" sx={{ py: 6 }}>
+                    <Stack alignItems="center" spacing={2}>
+                      <Iconify
+                        icon="solar:clipboard-list-bold-duotone"
+                        width={48}
+                        sx={{ color: 'text.disabled' }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {hasFilters ? t('cases.emptyData') : t('cases.empty')}
+                      </Typography>
+                      {hasFilters && (
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          startIcon={<Iconify icon="solar:refresh-bold" width={16} />}
+                          onClick={handleResetFilters}
+                        >
+                          {t('cases.filterResetCta')}
+                        </Button>
+                      )}
+                    </Stack>
                   </TableCell>
                 </TableRow>
               ) : (

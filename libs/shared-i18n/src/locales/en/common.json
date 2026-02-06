@@ -135,13 +135,60 @@
     "lastDetected": "Last Detected",
     "loading": "Loading...",
     "empty": "No cases detected yet",
+    "emptyData": "No data",
+    "filterResetCta": "Reset filters",
+    "statusSearchPlaceholder": "Search status...",
+    "pinnedStatuses": "Frequently used",
+    "allStatuses": "All statuses",
     "new": "New",
     "updated": "Updated",
     "refresh": "Refresh",
     "exportCsv": "Export CSV",
     "previous": "Previous",
     "next": "Next",
-    "pageOf": "Page {{current}} of {{total}}"
+    "pageOf": "Page {{current}} of {{total}}",
+    "tabs": {
+      "analysis": {
+        "empty": {
+          "title": "No analysis data",
+          "description": "AI analysis is not available for this case."
+        },
+        "error": {
+          "title": "Failed to load analysis"
+        }
+      },
+      "confidence": {
+        "empty": {
+          "title": "No confidence data",
+          "description": "Confidence breakdown is not available."
+        },
+        "error": {
+          "title": "Failed to load confidence"
+        }
+      },
+      "similar": {
+        "empty": {
+          "title": "No similar cases",
+          "description": "No similar cases found."
+        },
+        "error": {
+          "title": "Failed to load similar cases"
+        }
+      },
+      "ragEvidence": {
+        "empty": {
+          "title": "No RAG evidence",
+          "description": "Policy citations are not available."
+        },
+        "error": {
+          "title": "Failed to load RAG evidence"
+        }
+      }
+    }
+  },
+  "common": {
+    "retry": "Retry",
+    "noData": "No data"
   },
   "anomalies": {
     "title": "Anomaly Detection",
@@ -211,6 +258,7 @@
     "moreItems": "+{{count}} more items",
     "viewEntity": "View Entity",
     "relatedOpenItems": "Related Open Items",
+    "relatedOpenItemsDesc": "View related open items filtered by case.",
     "receivables": "Receivables",
     "payables": "Payables",
     "totalOldest": "Total: {{total}} | Oldest: {{days}} days",
@@ -226,6 +274,7 @@
     "aiReasoning": "AI Reasoning",
     "keyFactors": "Key Factors",
     "confidenceBreakdown": "Confidence breakdown by factors",
+    "noConfidenceData": "No confidence data available",
     "weight": "Weight",
     "similarCasesDesc": "Cases with similar patterns and characteristics",
     "similarLabel": "similar",
@@ -253,7 +302,49 @@
     "viewAudit": "View Audit (case filter)",
     "system": "System",
     "comment": "Comment",
-    "addAuditNote": "Add audit note..."
+    "addAuditNote": "Add audit note...",
+    "agentStreamPanel": {
+      "noStreamData": "No stream data",
+      "startAnalysisHint": "Start Agent analysis to see reasoning and recommendations in real time.",
+      "startAnalysis": "Start Analysis",
+      "streamError": "Stream error",
+      "connectionFailed": "Connection failed",
+      "retry": "Retry",
+      "reconnecting": "Reconnecting...",
+      "cancel": "Cancel",
+      "title": "Agent Stream",
+      "hitlApprovalRequired": "HITL approval required",
+      "eventLabels": {
+        "thinking": "Thinking",
+        "analysis": "Analysis",
+        "plan": "Plan",
+        "tool": "Tool",
+        "hitl": "HITL",
+        "content": "Content"
+      }
+    },
+    "confidenceFactors": {
+      "amountMatch": {
+        "label": "Amount Match",
+        "description": "Invoice amount matches previous payment within tolerance"
+      },
+      "vendorHistory": {
+        "label": "Vendor History",
+        "description": "Vendor has limited transaction history for pattern analysis"
+      },
+      "policyViolation": {
+        "label": "Policy Violation",
+        "description": "Clear violation of duplicate invoice policy detected"
+      },
+      "timingPattern": {
+        "label": "Timing Pattern",
+        "description": "Invoice submitted within 30-day window of similar payment"
+      },
+      "dataPattern": {
+        "label": "Data Pattern",
+        "description": "Reference number pattern matches previous invoice"
+      }
+    }
   },
   "dashboard": {
     "title": "Integrated Control Center",
@@ -596,7 +687,47 @@
     "pipeline": "Data Lineage Pipeline",
     "timeTravel": "Time-Travel: Vendor Master Data",
     "evidencePanel": "Evidence Panel",
-    "caseLabel": "Case"
+    "caseLabel": "Case",
+    "evidence": {
+      "citationsTab": "Citations ({{count}})",
+      "statsTab": "Stats ({{count}})",
+      "amountSigma": "Amount is {{value}}σ away from 12-month mean",
+      "noStats": "No statistical evidence available",
+      "noData": "No evidence data available",
+      "noDataForStep": "No evidence data available for this step",
+      "policyCitations": "Policy & Regulation Citations",
+      "policyCitationsDesc": "Referenced policies and regulations supporting the analysis",
+      "viewAllCitations": "View All {{count}} Citations",
+      "statisticalAnalysis": "Statistical Analysis"
+    },
+    "stepDrawer": {
+      "metadata": "Metadata",
+      "rawJson": "Raw JSON",
+      "evidence": "Evidence",
+      "stepDetails": "Step Details",
+      "rawEventData": "Raw Event Data",
+      "copy": "Copy",
+      "noRawData": "No raw data available",
+      "footer": "Step ID: {{stepId}} • System: {{system}}"
+    },
+    "stepDetails": {
+      "title": "Step Details: {{name}}"
+    },
+    "openInLineage": "Open in Lineage",
+    "timeTravel": {
+      "viewDataAt": "View data at:",
+      "transactionTime": "Transaction Time",
+      "currentState": "Current State",
+      "fieldsChanged": "{{count}} field(s) changed since transaction",
+      "vendorMasterRecord": "Vendor Master Record",
+      "asOf": "As of: {{timestamp}}",
+      "changed": "Changed",
+      "recentModifications": "Recent Modifications",
+      "bankAccountChanged": "Bank Account Changed",
+      "modifiedBy": "Modified by {{user}}",
+      "riskCategoryUpdated": "Risk Category Updated",
+      "autoUpdatedBy": "Auto-updated by Risk Engine"
+    }
   },
   "rag": {
     "title": "RAG Library",

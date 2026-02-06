@@ -287,6 +287,109 @@ export const getCaseDetail = async (
   return res.data;
 };
 
+// ----------------------------------------------------------------------
+// Case Detail Tabs API (P1)
+// @see docs/job/PROMPT_B_Frontend_Cases_TabsBind_P1_v2.txt
+// ----------------------------------------------------------------------
+
+export type CaseAnalysisDto = {
+  score?: number;
+  reasonText?: string;
+  keyFactors?: Array<{ label?: string; type?: string; description?: string }>;
+  anomalyType?: string;
+  severity?: string;
+  [key: string]: unknown;
+};
+
+export type CaseConfidenceFactorDto = {
+  id?: string;
+  label?: string;
+  i18nKey?: string;
+  score?: number;
+  weight?: number;
+  icon?: string;
+  description?: string;
+  [key: string]: unknown;
+};
+
+export type CaseConfidenceDto = {
+  overallScore?: number;
+  factors?: CaseConfidenceFactorDto[];
+  [key: string]: unknown;
+};
+
+export type CaseSimilarDto = {
+  id?: string;
+  caseId?: string;
+  caseNumber?: string;
+  title?: string;
+  similarity?: number;
+  status?: string;
+  severity?: string;
+  counterparty?: string;
+  currency?: string;
+  amount?: number;
+  [key: string]: unknown;
+};
+
+export type CaseSimilarResponseDto = {
+  items?: CaseSimilarDto[];
+  cases?: CaseSimilarDto[];
+  [key: string]: unknown;
+};
+
+export type RagEvidenceItemDto = {
+  id?: string;
+  sourceId?: string;
+  title?: string;
+  excerpt?: string;
+  score?: number;
+  metadata?: Record<string, unknown>;
+  [key: string]: unknown;
+};
+
+export type CaseRagEvidenceDto = {
+  items?: RagEvidenceItemDto[];
+  citations?: RagEvidenceItemDto[];
+  [key: string]: unknown;
+};
+
+export const getCaseAnalysis = async (
+  caseId: string
+): Promise<ApiResponse<CaseAnalysisDto>> => {
+  const res = await axiosInstance.get<ApiResponse<CaseAnalysisDto>>(
+    `/api/synapse/cases/${encodeURIComponent(caseId)}/analysis`
+  );
+  return res.data;
+};
+
+export const getCaseConfidence = async (
+  caseId: string
+): Promise<ApiResponse<CaseConfidenceDto>> => {
+  const res = await axiosInstance.get<ApiResponse<CaseConfidenceDto>>(
+    `/api/synapse/cases/${encodeURIComponent(caseId)}/confidence`
+  );
+  return res.data;
+};
+
+export const getCaseSimilar = async (
+  caseId: string
+): Promise<ApiResponse<CaseSimilarResponseDto>> => {
+  const res = await axiosInstance.get<ApiResponse<CaseSimilarResponseDto>>(
+    `/api/synapse/cases/${encodeURIComponent(caseId)}/similar`
+  );
+  return res.data;
+};
+
+export const getCaseRagEvidence = async (
+  caseId: string
+): Promise<ApiResponse<CaseRagEvidenceDto>> => {
+  const res = await axiosInstance.get<ApiResponse<CaseRagEvidenceDto>>(
+    `/api/synapse/cases/${encodeURIComponent(caseId)}/rag/evidence`
+  );
+  return res.data;
+};
+
 export const updateCaseStatus = async (
   caseId: string,
   status: 'TRIAGED' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED'

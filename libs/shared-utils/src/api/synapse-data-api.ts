@@ -303,6 +303,12 @@ export type OpenItemsListParams = {
   /** BE: toDueDate. FE dueTo → BE toDueDate */
   dueTo?: string;
   bukrs?: string;
+  belnr?: string;
+  gjahr?: string;
+  /** 케이스 상세에서 관련 미결재 링크 시 전달 */
+  caseId?: string;
+  /** related=true: 케이스 관련 필터 적용 */
+  related?: boolean;
   /** BE: type. AP | AR */
   itemType?: 'AP' | 'AR';
   status?: string;
@@ -330,6 +336,10 @@ export const getFiOpenItems = async (
   if (params?.page != null) query.set('page', String(params.page));
   if (params?.size != null) query.set('size', String(params.size));
   if (params?.bukrs) query.set('bukrs', params.bukrs);
+  if (params?.belnr) query.set('belnr', params.belnr);
+  if (params?.gjahr) query.set('gjahr', params.gjahr);
+  if (params?.caseId) query.set('caseId', params.caseId);
+  if (params?.related) query.set('related', String(params.related));
   if (params?.itemType) query.set('type', params.itemType);
   if (params?.status) query.set('status', params.status);
   if (params?.dueFrom) query.set('fromDueDate', params.dueFrom);

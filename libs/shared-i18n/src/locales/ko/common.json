@@ -135,13 +135,60 @@
     "lastDetected": "최근 탐지",
     "loading": "로딩 중...",
     "empty": "아직 탐지된 케이스가 없습니다",
+    "emptyData": "데이터 없음",
+    "filterResetCta": "필터 초기화",
+    "statusSearchPlaceholder": "상태 검색...",
+    "pinnedStatuses": "자주 쓰는 상태",
+    "allStatuses": "전체 상태",
     "new": "신규",
     "updated": "업데이트됨",
     "refresh": "새로고침",
     "exportCsv": "CSV 내보내기",
     "previous": "이전",
     "next": "다음",
-    "pageOf": "{{current}} / {{total}} 페이지"
+    "pageOf": "{{current}} / {{total}} 페이지",
+    "tabs": {
+      "analysis": {
+        "empty": {
+          "title": "분석 데이터 없음",
+          "description": "이 케이스에 대한 AI 분석을 사용할 수 없습니다."
+        },
+        "error": {
+          "title": "분석 로드 실패"
+        }
+      },
+      "confidence": {
+        "empty": {
+          "title": "신뢰도 데이터 없음",
+          "description": "신뢰도 분석을 사용할 수 없습니다."
+        },
+        "error": {
+          "title": "신뢰도 로드 실패"
+        }
+      },
+      "similar": {
+        "empty": {
+          "title": "유사 케이스 없음",
+          "description": "유사한 케이스를 찾을 수 없습니다."
+        },
+        "error": {
+          "title": "유사 케이스 로드 실패"
+        }
+      },
+      "ragEvidence": {
+        "empty": {
+          "title": "RAG 근거 없음",
+          "description": "정책 인용을 사용할 수 없습니다."
+        },
+        "error": {
+          "title": "RAG 근거 로드 실패"
+        }
+      }
+    }
+  },
+  "common": {
+    "retry": "재시도",
+    "noData": "데이터 없음"
   },
   "anomalies": {
     "title": "이상징후 탐지",
@@ -211,6 +258,7 @@
     "moreItems": "{{count}}개 더 보기",
     "viewEntity": "엔티티 보기",
     "relatedOpenItems": "관련 미결제 항목",
+    "relatedOpenItemsDesc": "케이스별 관련 미결제 항목을 조회합니다.",
     "receivables": "매출채권",
     "payables": "매입채무",
     "totalOldest": "합계: {{total}} | 최장: {{days}}일",
@@ -226,6 +274,7 @@
     "aiReasoning": "AI 추론",
     "keyFactors": "핵심 요인",
     "confidenceBreakdown": "요인별 신뢰도 분석",
+    "noConfidenceData": "신뢰도 데이터가 없습니다",
     "weight": "가중치",
     "similarCasesDesc": "유사한 패턴과 특성을 가진 케이스",
     "similarLabel": "유사",
@@ -253,7 +302,49 @@
     "viewAudit": "감사 보기 (케이스 필터)",
     "system": "시스템",
     "comment": "코멘트",
-    "addAuditNote": "감사 메모 추가..."
+    "addAuditNote": "감사 메모 추가...",
+    "agentStreamPanel": {
+      "noStreamData": "스트림 데이터 없음",
+      "startAnalysisHint": "에이전트 분석을 시작하면 추론과 권장사항을 실시간으로 확인할 수 있습니다.",
+      "startAnalysis": "분석 시작",
+      "streamError": "스트림 오류",
+      "connectionFailed": "연결 실패",
+      "retry": "재시도",
+      "reconnecting": "재연결 중...",
+      "cancel": "취소",
+      "title": "에이전트 스트림",
+      "hitlApprovalRequired": "HITL 승인 필요",
+      "eventLabels": {
+        "thinking": "추론 중",
+        "analysis": "분석",
+        "plan": "계획",
+        "tool": "도구",
+        "hitl": "HITL",
+        "content": "내용"
+      }
+    },
+    "confidenceFactors": {
+      "amountMatch": {
+        "label": "금액 일치",
+        "description": "송장 금액이 허용 오차 내 이전 결제와 일치함"
+      },
+      "vendorHistory": {
+        "label": "거래처 이력",
+        "description": "패턴 분석을 위한 거래처 거래 이력이 제한적임"
+      },
+      "policyViolation": {
+        "label": "정책 위반",
+        "description": "중복 송장 정책 위반이 명확히 감지됨"
+      },
+      "timingPattern": {
+        "label": "시점 패턴",
+        "description": "유사 결제 30일 이내에 송장 제출됨"
+      },
+      "dataPattern": {
+        "label": "데이터 패턴",
+        "description": "참조 번호 패턴이 이전 송장과 일치함"
+      }
+    }
   },
   "dashboard": {
     "title": "통합 관제 센터",
@@ -596,7 +687,47 @@
     "pipeline": "데이터 계보 파이프라인",
     "timeTravel": "타임트래블: 거래처 마스터 데이터",
     "evidencePanel": "근거 패널",
-    "caseLabel": "케이스"
+    "caseLabel": "케이스",
+    "evidence": {
+      "citationsTab": "인용 ({{count}})",
+      "statsTab": "통계 ({{count}})",
+      "amountSigma": "금액이 12개월 평균 대비 {{value}}σ 차이",
+      "noStats": "통계 근거가 없습니다",
+      "noData": "근거 데이터가 없습니다",
+      "noDataForStep": "이 단계에 대한 근거 데이터가 없습니다",
+      "policyCitations": "정책 및 규제 인용",
+      "policyCitationsDesc": "분석을 지원하는 참조 정책 및 규제",
+      "viewAllCitations": "전체 {{count}}개 인용 보기",
+      "statisticalAnalysis": "통계 분석"
+    },
+    "stepDrawer": {
+      "metadata": "메타데이터",
+      "rawJson": "원시 JSON",
+      "evidence": "근거",
+      "stepDetails": "단계 상세",
+      "rawEventData": "원시 이벤트 데이터",
+      "copy": "복사",
+      "noRawData": "원시 데이터 없음",
+      "footer": "단계 ID: {{stepId}} • 시스템: {{system}}"
+    },
+    "stepDetails": {
+      "title": "단계 상세: {{name}}"
+    },
+    "openInLineage": "계보에서 열기",
+    "timeTravel": {
+      "viewDataAt": "데이터 보기 시점:",
+      "transactionTime": "거래 시점",
+      "currentState": "현재 상태",
+      "fieldsChanged": "거래 이후 {{count}}개 필드 변경됨",
+      "vendorMasterRecord": "거래처 마스터 레코드",
+      "asOf": "기준: {{timestamp}}",
+      "changed": "변경됨",
+      "recentModifications": "최근 수정 내역",
+      "bankAccountChanged": "은행 계좌 변경",
+      "modifiedBy": "{{user}}에 의해 수정됨",
+      "riskCategoryUpdated": "리스크 카테고리 업데이트",
+      "autoUpdatedBy": "리스크 엔진 자동 업데이트"
+    }
   },
   "rag": {
     "title": "RAG 라이브러리",

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -26,6 +27,7 @@ interface StepDetailDrawerProps {
 }
 
 export function StepDetailDrawer({ step, open, onClose }: StepDetailDrawerProps) {
+  const { t } = useTranslation('common');
   const [tab, setTab] = useState(0);
 
   if (!step) return null;
@@ -66,9 +68,9 @@ export function StepDetailDrawer({ step, open, onClose }: StepDetailDrawerProps)
         {/* Tabs */}
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="fullWidth">
-            <Tab icon={<Iconify icon="solar:widget-bold" width={18} />} iconPosition="start" label="Metadata" />
-            <Tab icon={<Iconify icon="solar:code-bold" width={18} />} iconPosition="start" label="Raw JSON" />
-            <Tab icon={<Iconify icon="solar:shield-check-bold" width={18} />} iconPosition="start" label="Evidence" />
+            <Tab icon={<Iconify icon="solar:widget-bold" width={18} />} iconPosition="start" label={t('lineage.stepDrawer.metadata')} />
+            <Tab icon={<Iconify icon="solar:code-bold" width={18} />} iconPosition="start" label={t('lineage.stepDrawer.rawJson')} />
+            <Tab icon={<Iconify icon="solar:shield-check-bold" width={18} />} iconPosition="start" label={t('lineage.stepDrawer.evidence')} />
           </Tabs>
         </Box>
 
@@ -78,7 +80,7 @@ export function StepDetailDrawer({ step, open, onClose }: StepDetailDrawerProps)
           {tab === 0 && (
             <Stack spacing={2}>
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                Step Details
+                {t('lineage.stepDrawer.stepDetails')}
               </Typography>
               <Box
                 sx={{
@@ -118,7 +120,7 @@ export function StepDetailDrawer({ step, open, onClose }: StepDetailDrawerProps)
             <Stack spacing={2}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  Raw Event Data
+                  {t('lineage.stepDrawer.rawEventData')}
                 </Typography>
                 <Button
                   size="small"
@@ -129,7 +131,7 @@ export function StepDetailDrawer({ step, open, onClose }: StepDetailDrawerProps)
                     }
                   }}
                 >
-                  Copy
+                  {t('lineage.stepDrawer.copy')}
                 </Button>
               </Stack>
               <Box
@@ -145,7 +147,7 @@ export function StepDetailDrawer({ step, open, onClose }: StepDetailDrawerProps)
                 }}
               >
                 <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                  {step.rawJson || 'No raw data available'}
+                  {step.rawJson || t('lineage.stepDrawer.noRawData')}
                 </pre>
               </Box>
             </Stack>
@@ -159,7 +161,7 @@ export function StepDetailDrawer({ step, open, onClose }: StepDetailDrawerProps)
                 <Box>
                   <RagCitationList
                     citations={step.ragEvidence}
-                    title="Policy & Regulation Citations"
+                    title={t('lineage.evidence.policyCitations')}
                     maxItems={0}
                     onOpenSource={(source) => {
                        
@@ -174,7 +176,9 @@ export function StepDetailDrawer({ step, open, onClose }: StepDetailDrawerProps)
                 <Box>
                   <StatsEvidenceCard
                     stats={step.statsEvidence}
-                    subtitle={`Amount is ${Math.abs(step.statsEvidence.zScore).toFixed(1)}σ away from 12-month mean`}
+                    subtitle={t('lineage.evidence.amountSigma', {
+                      value: Math.abs(step.statsEvidence.zScore).toFixed(1),
+                    })}
                   />
                 </Box>
               )}
@@ -188,7 +192,7 @@ export function StepDetailDrawer({ step, open, onClose }: StepDetailDrawerProps)
                     sx={{ color: 'text.disabled', mb: 2 }}
                   />
                   <Typography variant="body2" color="text.secondary">
-                    No evidence data available for this step
+                    {t('lineage.evidence.noDataForStep')}
                   </Typography>
                 </Box>
               )}
@@ -200,7 +204,7 @@ export function StepDetailDrawer({ step, open, onClose }: StepDetailDrawerProps)
         <Divider />
         <Box sx={{ p: 2, bgcolor: 'action.hover' }}>
           <Typography variant="caption" color="text.secondary">
-            Step ID: {step.id} • System: {step.system}
+            {t('lineage.stepDrawer.footer', { stepId: step.id, system: step.system })}
           </Typography>
         </Box>
       </Box>

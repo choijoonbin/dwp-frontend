@@ -150,7 +150,7 @@ export const LineagePage = () => {
             </Box>
           </Box>
           <Chip
-            label={`${t('lineage.caseLabel')}: CS-2026-0001`}
+            label={`${t('lineage.caseLabel')}: ${displayCaseId.startsWith('CS-') ? displayCaseId : `CS-${displayCaseId}`}`}
             icon={<Iconify icon="solar:document-text-bold" width={12} />}
             variant="outlined"
             size="small"

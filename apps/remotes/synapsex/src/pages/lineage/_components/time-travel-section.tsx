@@ -1,4 +1,5 @@
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -31,6 +32,7 @@ export function TimeTravelSection({
   onChange,
   changedFields,
 }: TimeTravelSectionProps) {
+  const { t } = useTranslation('common');
   const isTransactionTime = value < 50;
   const activeSnapshot = isTransactionTime ? transaction : current;
 
@@ -41,22 +43,26 @@ export function TimeTravelSection({
         <CardContent sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
             <Typography variant="body2" sx={{ fontWeight: 500 }}>
-              View data at:
+              {t('lineage.timeTravel.viewDataAt')}
             </Typography>
-            <Chip label={isTransactionTime ? 'Transaction Time' : 'Current State'} color={isTransactionTime ? 'primary' : 'default'} size="small" />
+            <Chip
+              label={isTransactionTime ? t('lineage.timeTravel.transactionTime') : t('lineage.timeTravel.currentState')}
+              color={isTransactionTime ? 'primary' : 'default'}
+              size="small"
+            />
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Slider value={value} onChange={(_, v) => onChange(v as number)} max={100} step={1} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'text.secondary' }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                  Transaction Time
+                  {t('lineage.timeTravel.transactionTime')}
                 </Typography>
                 <Typography variant="caption">{formatDateTime(transaction.timestamp)}</Typography>
               </Box>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                 <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                  Current State
+                  {t('lineage.timeTravel.currentState')}
                 </Typography>
                 <Typography variant="caption">{formatDateTime(current.timestamp)}</Typography>
               </Box>
@@ -72,7 +78,7 @@ export function TimeTravelSection({
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
               <Iconify icon="solar:danger-triangle-bold" width={16} sx={{ color: 'warning.main' }} />
               <Typography variant="body2" sx={{ fontWeight: 500, color: 'warning.main' }}>
-                {changedFields.length} field(s) changed since transaction
+                {t('lineage.timeTravel.fieldsChanged', { count: changedFields.length })}
               </Typography>
             </Box>
             <Stack spacing={1}>
@@ -102,10 +108,10 @@ export function TimeTravelSection({
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Iconify icon="solar:buildings-2-bold" width={16} sx={{ color: 'text.secondary' }} />
-                Vendor Master Record
+                {t('lineage.timeTravel.vendorMasterRecord')}
               </Box>
               <Typography variant="caption" sx={{ fontWeight: 400, color: 'text.secondary' }}>
-                As of: {formatDateTime(activeSnapshot.timestamp)}
+                {t('lineage.timeTravel.asOf', { timestamp: formatDateTime(activeSnapshot.timestamp) })}
               </Typography>
             </Box>
           }
@@ -147,7 +153,7 @@ export function TimeTravelSection({
                   </Typography>
                   {isChanged && (
                     <Typography variant="caption" sx={{ color: 'warning.main', fontSize: '0.625rem' }}>
-                      Changed
+                      {t('lineage.timeTravel.changed')}
                     </Typography>
                   )}
                 </Box>
@@ -163,7 +169,7 @@ export function TimeTravelSection({
           title={
             <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Iconify icon="solar:history-bold" width={16} sx={{ color: 'text.secondary' }} />
-              Recent Modifications
+              {t('lineage.timeTravel.recentModifications')}
             </Typography>
           }
           titleTypographyProps={{ variant: 'subtitle2' }}
@@ -188,10 +194,10 @@ export function TimeTravelSection({
               </Box>
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  Bank Account Changed
+                  {t('lineage.timeTravel.bankAccountChanged')}
                 </Typography>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  Modified by USER_AP001
+                  {t('lineage.timeTravel.modifiedBy', { user: 'USER_AP001' })}
                 </Typography>
                 <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5, display: 'block' }}>
                   2026-01-29 08:15:00
@@ -217,10 +223,10 @@ export function TimeTravelSection({
               </Box>
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  Risk Category Updated
+                  {t('lineage.timeTravel.riskCategoryUpdated')}
                 </Typography>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  Auto-updated by Risk Engine
+                  {t('lineage.timeTravel.autoUpdatedBy')}
                 </Typography>
                 <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5, display: 'block' }}>
                   2026-01-29 08:16:00

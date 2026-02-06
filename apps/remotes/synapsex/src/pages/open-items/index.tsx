@@ -34,6 +34,10 @@ export const OpenItemsPage = () => {
 
   const queryParams = useMemo(() => {
     const bukrs = searchParams.get('bukrs') ?? undefined;
+    const belnr = searchParams.get('belnr') ?? undefined;
+    const gjahr = searchParams.get('gjahr') ?? undefined;
+    const caseId = searchParams.get('caseId') ?? undefined;
+    const related = searchParams.get('related') === 'true';
     const itemType = searchParams.get('itemType') as 'AP' | 'AR' | undefined;
     const dueFrom = searchParams.get('dueFrom') ?? undefined;
     const dueTo = searchParams.get('dueTo') ?? undefined;
@@ -41,10 +45,14 @@ export const OpenItemsPage = () => {
     const partyId = searchParams.get('partyId') ?? undefined;
     const lifnr = searchParams.get('lifnr') ?? undefined;
     const kunnr = searchParams.get('kunnr') ?? undefined;
-    const docKey = searchParams.get('docKey') ?? undefined;
+    const docKey = searchParams.get('docKey') ?? (bukrs && belnr && gjahr ? `${bukrs}-${belnr}-${gjahr}` : undefined);
     return {
       limit: 200,
       bukrs: bukrs || undefined,
+      belnr: belnr || undefined,
+      gjahr: gjahr || undefined,
+      caseId: caseId || undefined,
+      related: related ? true : undefined,
       itemType: itemType === 'AP' || itemType === 'AR' ? itemType : undefined,
       dueFrom: dueFrom || undefined,
       dueTo: dueTo || undefined,

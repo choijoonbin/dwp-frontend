@@ -836,7 +836,7 @@ export const DocumentDetailPage = () => {
                         startIcon={<Iconify icon="solar:git-branch-bold" width={18} />}
                         sx={{ bgcolor: 'transparent' }}
                       >
-                        Open in Lineage
+                        {t('lineage.openInLineage')}
                       </Button>
                       <Button
                         component={Link}

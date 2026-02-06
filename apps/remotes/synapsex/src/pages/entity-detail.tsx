@@ -35,6 +35,8 @@ import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../routes';
 import { PiiFieldDisplay } from '../components/pii';
+import type {
+ Entity } from '../data/mock-data';
 import {
   mockCases,
   mockFiDocs,
@@ -42,8 +44,10 @@ import {
   mockEntities,
   mockOpenItems,
   mockEntityChangeLogs,
-  type EntityChangeLog      ,
- Entity } from '../data/mock-data';
+  type EntityChangeLog          } from '../data/mock-data';
+
+
+
 
 
 

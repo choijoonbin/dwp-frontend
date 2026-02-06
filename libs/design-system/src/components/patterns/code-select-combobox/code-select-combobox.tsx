@@ -10,12 +10,12 @@
  */
 
 import type { SyntheticEvent } from 'react';
-
 import type { AutocompleteRenderGroupParams } from '@mui/material/Autocomplete';
-import Autocomplete from '@mui/material/Autocomplete';
-import ListSubheader from '@mui/material/ListSubheader';
+
 import TextField from '@mui/material/TextField';
 import { useTheme } from '@mui/material/styles';
+import Autocomplete from '@mui/material/Autocomplete';
+import ListSubheader from '@mui/material/ListSubheader';
 
 // ----------------------------------------------------------------------
 

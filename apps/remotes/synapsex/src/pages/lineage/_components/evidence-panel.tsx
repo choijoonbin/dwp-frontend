@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -21,6 +22,7 @@ interface EvidencePanelProps {
 }
 
 export function EvidencePanel({ steps, isMobile = false }: EvidencePanelProps) {
+  const { t } = useTranslation('common');
   const [tab, setTab] = useState(0);
 
   // Collect all RAG evidence and stats evidence from all steps
@@ -44,12 +46,12 @@ export function EvidencePanel({ steps, isMobile = false }: EvidencePanelProps) {
           <Tab
             icon={<Iconify icon="solar:book-bookmark-bold" width={18} />}
             iconPosition="start"
-            label={`Citations (${allRagEvidence.length})`}
+            label={t('lineage.evidence.citationsTab', { count: allRagEvidence.length })}
           />
           <Tab
             icon={<Iconify icon="solar:chart-2-bold" width={18} />}
             iconPosition="start"
-            label={`Stats (${allStatsEvidence.length})`}
+            label={t('lineage.evidence.statsTab', { count: allStatsEvidence.length })}
           />
         </Tabs>
         <Box sx={{ maxHeight: 400, overflow: 'auto', p: 2 }}>
@@ -72,13 +74,15 @@ export function EvidencePanel({ steps, isMobile = false }: EvidencePanelProps) {
                     key={i}
                     stats={item.stats}
                     title={item.step}
-                    subtitle={`Amount is ${Math.abs(item.stats.zScore).toFixed(1)}σ away from 12-month mean`}
+                    subtitle={t('lineage.evidence.amountSigma', {
+                      value: Math.abs(item.stats.zScore).toFixed(1),
+                    })}
                   />
                 ))
               ) : (
                 <Box sx={{ py: 4, textAlign: 'center' }}>
                   <Typography variant="body2" color="text.secondary">
-                    No statistical evidence available
+                    {t('lineage.evidence.noStats')}
                   </Typography>
                 </Box>
               )}
@@ -96,7 +100,7 @@ export function EvidencePanel({ steps, isMobile = false }: EvidencePanelProps) {
         <Box sx={{ py: 8, textAlign: 'center' }}>
           <Iconify icon="solar:shield-check-bold-duotone" width={48} sx={{ color: 'text.disabled', mb: 2 }} />
           <Typography variant="body2" color="text.secondary">
-            No evidence data available
+            {t('lineage.evidence.noData')}
           </Typography>
         </Box>
       ) : (
@@ -107,12 +111,12 @@ export function EvidencePanel({ steps, isMobile = false }: EvidencePanelProps) {
               <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                 <Iconify icon="solar:book-bookmark-bold-duotone" width={20} sx={{ color: 'primary.main' }} />
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  Policy & Regulation Citations
+                  {t('lineage.evidence.policyCitations')}
                 </Typography>
                 <Chip label={allRagEvidence.length} size="small" />
               </Stack>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Referenced policies and regulations supporting the analysis
+                {t('lineage.evidence.policyCitationsDesc')}
               </Typography>
               <RagCitationList
                 citations={allRagEvidence}
@@ -126,7 +130,7 @@ export function EvidencePanel({ steps, isMobile = false }: EvidencePanelProps) {
               {allRagEvidence.length > 5 && (
                 <Box sx={{ mt: 2, textAlign: 'center' }}>
                   <Button size="small" variant="text">
-                    View All {allRagEvidence.length} Citations
+                    {t('lineage.evidence.viewAllCitations', { count: allRagEvidence.length })}
                   </Button>
                 </Box>
               )}
@@ -139,7 +143,7 @@ export function EvidencePanel({ steps, isMobile = false }: EvidencePanelProps) {
               <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                 <Iconify icon="solar:chart-2-bold" width={20} sx={{ color: 'warning.main' }} />
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  Statistical Analysis
+                  {t('lineage.evidence.statisticalAnalysis')}
                 </Typography>
               </Stack>
               <Stack spacing={2}>
@@ -148,7 +152,9 @@ export function EvidencePanel({ steps, isMobile = false }: EvidencePanelProps) {
                     key={i}
                     stats={item.stats}
                     title={item.step}
-                    subtitle={`Amount is ${Math.abs(item.stats.zScore).toFixed(1)}σ away from 12-month mean`}
+                    subtitle={t('lineage.evidence.amountSigma', {
+                      value: Math.abs(item.stats.zScore).toFixed(1),
+                    })}
                   />
                 ))}
               </Stack>

@@ -20,8 +20,12 @@ import {
   approveAction,
   executeAction,
   getCaseDetail,
+  getCaseSimilar,
   simulateAction,
+  getCaseAnalysis,
   updateCaseStatus,
+  getCaseConfidence,
+  getCaseRagEvidence,
   type CasesListParams,
   type CreateActionBody,
   type ActionsListParams,
@@ -40,6 +44,18 @@ export const casesListQueryKey = (
 
 export const caseDetailQueryKey = (tenantId: string, caseId: string) =>
   ['synapse', 'cases', 'detail', tenantId, caseId] as const;
+
+export const caseAnalysisQueryKey = (tenantId: string, caseId: string) =>
+  ['synapse', 'cases', 'analysis', tenantId, caseId] as const;
+
+export const caseConfidenceQueryKey = (tenantId: string, caseId: string) =>
+  ['synapse', 'cases', 'confidence', tenantId, caseId] as const;
+
+export const caseSimilarQueryKey = (tenantId: string, caseId: string) =>
+  ['synapse', 'cases', 'similar', tenantId, caseId] as const;
+
+export const caseRagEvidenceQueryKey = (tenantId: string, caseId: string) =>
+  ['synapse', 'cases', 'ragEvidence', tenantId, caseId] as const;
 
 export const anomaliesListQueryKey = (
   tenantId: string,
@@ -93,6 +109,122 @@ export const useCaseDetailQuery = (caseId: string | undefined) => {
       const res = await getCaseDetail(caseId);
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
         throw new Error(res.message || 'Failed to fetch case detail');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+  });
+};
+
+export const useCaseAnalysisQuery = (
+  caseId: string | undefined,
+  options?: { enabled?: boolean }
+) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled =
+    (options?.enabled ?? true) &&
+    isAuthenticated &&
+    Boolean(tenantId) &&
+    Boolean(caseId);
+
+  return useQuery({
+    queryKey: caseAnalysisQueryKey(tenantId, caseId ?? ''),
+    queryFn: async () => {
+      if (!caseId) throw new Error('Missing case ID');
+      const res = await getCaseAnalysis(caseId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch case analysis');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+  });
+};
+
+export const useCaseConfidenceQuery = (
+  caseId: string | undefined,
+  options?: { enabled?: boolean }
+) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled =
+    (options?.enabled ?? true) &&
+    isAuthenticated &&
+    Boolean(tenantId) &&
+    Boolean(caseId);
+
+  return useQuery({
+    queryKey: caseConfidenceQueryKey(tenantId, caseId ?? ''),
+    queryFn: async () => {
+      if (!caseId) throw new Error('Missing case ID');
+      const res = await getCaseConfidence(caseId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch case confidence');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+  });
+};
+
+export const useCaseSimilarQuery = (
+  caseId: string | undefined,
+  options?: { enabled?: boolean }
+) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled =
+    (options?.enabled ?? true) &&
+    isAuthenticated &&
+    Boolean(tenantId) &&
+    Boolean(caseId);
+
+  return useQuery({
+    queryKey: caseSimilarQueryKey(tenantId, caseId ?? ''),
+    queryFn: async () => {
+      if (!caseId) throw new Error('Missing case ID');
+      const res = await getCaseSimilar(caseId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch similar cases');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+  });
+};
+
+export const useCaseRagEvidenceQuery = (
+  caseId: string | undefined,
+  options?: { enabled?: boolean }
+) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled =
+    (options?.enabled ?? true) &&
+    isAuthenticated &&
+    Boolean(tenantId) &&
+    Boolean(caseId);
+
+  return useQuery({
+    queryKey: caseRagEvidenceQueryKey(tenantId, caseId ?? ''),
+    queryFn: async () => {
+      if (!caseId) throw new Error('Missing case ID');
+      const res = await getCaseRagEvidence(caseId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch RAG evidence');
       }
       return res.data;
     },

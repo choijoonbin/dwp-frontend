@@ -1,0 +1,83 @@
+[B) Front Prompt (React/Next)] Menu-by-Menu Hardcoding Removal & E2E Enablement — START WITH /synapse/cases (Worklist → Detail → Tabs)
+(프로젝트: DWP Frontend Shell/Remote, FE/BE 계약 OpenAPI 기준)
+
+파일 경로/생성 파일명:
+- (수행 후 산출) docs/prompts/PHASE_Cases_Frontend_MenuHardening_P0-P2.md
+- (코드 변경) apps/remotes/synapsex/** 중심 + 공통 컴포넌트는 libs/*
+
+목표:
+- work.txt의 E2E 순서대로 “케이스 정리함 → 케이스 상세 → 탭(AI분석/스트림/신뢰도/유사케이스/RAG) → 시뮬레이션 → 관련 미결재 → 데이터 계보”를 하드코딩 없이 실데이터로 동작하게 한다. fileciteturn28file0
+- 메뉴 단위로 하드코딩 제거 작업을 반복 가능하도록 “점검 템플릿(체크리스트)”를 마련한다.
+
+0) 결론/결정안
+- P0: /synapse/cases(목록) + /synapse/cases/:id(상세) 화면에서 하드코딩 제거(표시 항목/필터/정렬 포함)
+- P1: Detail 탭 5개는 “실데이터 API 바인딩 + 로딩/에러/empty state”까지 완성
+- P2: 시뮬레이션 모드/링크 이동의 쿼리 파라미터 정확화(관련 미결재/계보)
+
+Assumptions: BE가 cases list/detail + 탭별 최소 API를 제공(또는 기존 API가 존재).
+Default: API가 일부 없다면, “요청 프롬프트(backend request)”를 메뉴 단위로 생성해 누락 API를 추가 요청한다(가정 금지).
+
+1) 구현 범위(In/Out)
+IN(P0)
+- CasesPage: status select UX 개선(검색형 combobox + pinned + maxHeight)
+- Cases list: 카드/테이블에 표시되는 값은 API 응답 기반으로만 렌더링(하드코딩 제거)
+- QueryKey/filters: q,status,severity,date range, sort, paging → 실제 API query로 전달
+
+IN(P1)
+- CaseDetailPage: Summary(좌측), 3-panel 구조 유지
+- Tabs:
+  - AI 분석: /cases/{id}/analysis
+  - 에이전트 스트림: aura SSE hook 연결(있다면) + fallback(메타 표시)
+  - 신뢰도: /confidence
+  - 유사케이스: /similar
+  - RAG: /rag/evidence
+- 모든 탭에 Skeleton/Empty/Error 표준 적용
+
+IN(P2)
+- 시뮬레이션 모드: 버튼/토글 UX + /simulation 호출 + 결과 렌더
+- “관련 미결재 항목”: 링크 클릭 시 open-items 화면으로 이동하면서 “관련 필터”를 전달(caseId 또는 bukrs/belnr/gjahr) fileciteturn28file0
+- “데이터 계보보기”: lineage 페이지로 이동 + 관련 키 전달
+
+OUT
+- 자동 번역/AI 분석 고도화(모델/RAG 품질)는 별도 phase
+
+2) 프론트 작업(라우트/컴포넌트/상태/쿼리키/필터바/스켈레톤/에러처리)
+2-1) Routes
+- /synapse/cases
+- /synapse/cases/:id
+- /synapse/open-items (관련 필터 수신)
+- /synapse/lineage (관련 필터 수신)
+
+2-2) Query Keys
+- ['synapse','cases','list', tenantId, filters]
+- ['synapse','cases','detail', tenantId, caseId]
+- ['synapse','cases','analysis', tenantId, caseId] etc.
+
+2-3) Hardcoding 제거 규칙
+- 문자열/숫자/배지/그래프의 “표시 값”은:
+  (A) API 응답 또는 (B) sys_codes(code->label) 매핑 결과만 사용
+- 임시 mock은 feature flag로 분리하고 default off
+
+2-4) UI/UX 표준
+- status select: searchable combobox + pinned 5~7 + scroll
+- 긴 옵션은 virtualization 고려
+- Empty state는 “데이터 없음” + “필터 초기화” CTA
+- Error state: 표준 에러 포맷 표시 + 재시도 버튼
+
+3) 스모크 플로우(클릭 경로 → API → 기대 audit_event_log)
+- Cases 진입 → list API 호출
+- 케이스 클릭 → detail API 호출
+- 탭 클릭 → 해당 탭 API 호출
+- 관련 미결재 클릭 → open-items route로 이동 + query 전달(related=true)
+- 데이터 계보보기 클릭 → lineage route로 이동 + query 전달
+
+4) 체크리스트(완료 조건/엣지)
+- [ ] 케이스 목록/상세/탭 모든 화면에서 “하드코딩 데이터” 0개(텍스트/숫자)
+- [ ] 로딩/에러/빈상태 UI 표준 적용
+- [ ] 관련 링크는 “전체 조회”를 유발하지 않음(필터 전달됨) fileciteturn28file0
+- [ ] 다국어(i18n) 적용된 UI 텍스트는 t()로만
+- [ ] Dark mode 대비 통과
+
+테스트 방법
+- 브라우저 Network 탭으로 탭 클릭 시 해당 API 호출 확인
+- 케이스 seed 5건 기준으로 목록=5, 상세/탭에 해당 값이 표시되는지 스크린샷 첨부
