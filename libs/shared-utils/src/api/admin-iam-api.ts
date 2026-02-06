@@ -643,15 +643,16 @@ export const getAdminCodes = async (params?: CodeListParams): Promise<ApiRespons
 
 /**
  * Get codes by group
- * GET /api/admin/codes/:groupKey
+ * GET /api/admin/codes?groupKey=CASE_TYPE
  */
 export const getCodesByGroup = async (groupKey: string, params?: CodeListParams): Promise<ApiResponse<Code[]>> => {
   const queryParams = new URLSearchParams();
+  queryParams.append('groupKey', groupKey);
   if (params?.keyword) queryParams.append('keyword', params.keyword);
   if (params?.tenantScope && params.tenantScope !== 'ALL') queryParams.append('tenantScope', params.tenantScope);
   if (params?.enabled !== undefined) queryParams.append('enabled', params.enabled.toString());
 
-  const url = `/api/admin/codes/${groupKey}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  const url = `/api/admin/codes?${queryParams.toString()}`;
   const res = await axiosInstance.get<ApiResponse<Code[]>>(url);
   return res.data;
 };

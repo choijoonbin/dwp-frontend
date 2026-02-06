@@ -11,6 +11,7 @@ import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Menu from '@mui/material/Menu';
 import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
 import MenuItem from '@mui/material/MenuItem';
 import Collapse from '@mui/material/Collapse';
@@ -30,6 +31,7 @@ type ResourcesTreeProps = {
   onMenuOpen: (event: React.MouseEvent<HTMLElement>, resource: ResourceNode) => void;
   onMenuClose: () => void;
   onEdit: (resource: ResourceNode) => void;
+  onToggleEnabled: (resource: ResourceNode) => void;
   onDelete: (resource: ResourceNode) => void;
 };
 
@@ -44,6 +46,7 @@ export const ResourcesTree = memo(({
   onMenuOpen,
   onMenuClose,
   onEdit,
+  onToggleEnabled,
   onDelete,
 }: ResourcesTreeProps) => {
   if (error) {
@@ -80,16 +83,41 @@ export const ResourcesTree = memo(({
         {renderResourceTree(tree, expandedNodes, onToggleNode, onMenuOpen)}
       </Box>
 
-      {/* Action Menu */}
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onMenuClose}>
-        <PermissionGate resource="menu.admin.resources" permission="UPDATE">
-          <MenuItem onClick={() => selectedResource && onEdit(selectedResource)}>
+      {/* Action Menu - 코드탭/코드그룹탭과 동일: 편집/비활성화/삭제 3개 메뉴 */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={onMenuClose}
+        PaperProps={{ sx: { minWidth: 160 } }}
+      >
+        <PermissionGate resource="menu.admin.resources" permission="UPDATE" mode="disable">
+          <MenuItem
+            onClick={() => selectedResource && onEdit(selectedResource)}
+            sx={{ typography: 'body2', fontSize: 14 }}
+          >
             <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
             편집
           </MenuItem>
         </PermissionGate>
-        <PermissionGate resource="menu.admin.resources" permission="DELETE">
-          <MenuItem onClick={() => selectedResource && onDelete(selectedResource)} sx={{ color: 'error.main' }}>
+        <PermissionGate resource="menu.admin.resources" permission="UPDATE" mode="disable">
+          <MenuItem
+            onClick={() => selectedResource && onToggleEnabled(selectedResource)}
+            sx={{ typography: 'body2', fontSize: 14 }}
+          >
+            <Iconify
+              icon={selectedResource?.enabled === false ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+              width={16}
+              sx={{ mr: 1 }}
+            />
+            {selectedResource?.enabled === false ? '활성화' : '비활성화'}
+          </MenuItem>
+        </PermissionGate>
+        <Divider sx={{ my: 0.5 }} />
+        <PermissionGate resource="menu.admin.resources" permission="DELETE" mode="disable">
+          <MenuItem
+            onClick={() => selectedResource && onDelete(selectedResource)}
+            sx={{ typography: 'body2', fontSize: 14, color: 'error.main' }}
+          >
             <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
             삭제
           </MenuItem>

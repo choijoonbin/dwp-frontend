@@ -6,6 +6,7 @@ import type { FormEvent } from 'react';
 import type { GuardrailEvaluateResponse } from '@dwp-frontend/shared-utils';
 
 import { useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -37,6 +38,7 @@ const CASE_TYPES = ['PAYMENT', 'REVERSAL', 'BLOCK', 'FLAG', 'CLEAR'];
 const ACTION_TYPES = ['EXECUTE', 'APPROVE', 'REJECT', 'REQUEST'];
 
 export const EvaluatePanel = ({ onEvaluate, result, isLoading }: EvaluatePanelProps) => {
+  const { t } = useTranslation('common');
   const [caseType, setCaseType] = useState('');
   const [actionType, setActionType] = useState('');
   const [amount, setAmount] = useState('');
@@ -62,41 +64,41 @@ export const EvaluatePanel = ({ onEvaluate, result, isLoading }: EvaluatePanelPr
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.5 }}>
           <Iconify icon="solar:test-tube-bold" width={20} sx={{ color: 'primary.main' }} />
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-            Evaluate
+            {t('guardrails.evaluate')}
           </Typography>
         </Stack>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-          Simulate whether an action would be allowed by the current guardrails.
+          {t('guardrails.evaluateHint')}
         </Typography>
         <Box component="form" onSubmit={handleSubmit}>
           <Stack spacing={2}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <FormControl size="small" sx={{ minWidth: 140 }}>
-                <InputLabel>Case Type</InputLabel>
+                <InputLabel>{t('guardrails.caseType')}</InputLabel>
                 <Select
-                  label="Case Type"
+                  label={t('guardrails.caseType')}
                   value={caseType}
                   onChange={(e) => setCaseType(e.target.value)}
                 >
                   <MenuItem value="">—</MenuItem>
-                  {CASE_TYPES.map((t) => (
-                    <MenuItem key={t} value={t}>
-                      {t}
+                  {CASE_TYPES.map((ct) => (
+                    <MenuItem key={ct} value={ct}>
+                      {ct}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
               <FormControl size="small" sx={{ minWidth: 140 }}>
-                <InputLabel>Action Type</InputLabel>
+                <InputLabel>{t('guardrails.actionType')}</InputLabel>
                 <Select
-                  label="Action Type"
+                  label={t('guardrails.actionType')}
                   value={actionType}
                   onChange={(e) => setActionType(e.target.value)}
                 >
                   <MenuItem value="">—</MenuItem>
-                  {ACTION_TYPES.map((t) => (
-                    <MenuItem key={t} value={t}>
-                      {t}
+                  {ACTION_TYPES.map((at) => (
+                    <MenuItem key={at} value={at}>
+                      {at}
                     </MenuItem>
                   ))}
                 </Select>
@@ -105,16 +107,16 @@ export const EvaluatePanel = ({ onEvaluate, result, isLoading }: EvaluatePanelPr
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <TextField
                 size="small"
-                label="Amount"
+                label={t('guardrails.amount')}
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                placeholder="e.g., 1500000"
+                placeholder={t('guardrails.amountPlaceholder')}
                 sx={{ minWidth: 140 }}
               />
               <TextField
                 size="small"
-                label="Currency"
+                label={t('guardrails.currency')}
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
                 placeholder="KRW"
@@ -122,18 +124,18 @@ export const EvaluatePanel = ({ onEvaluate, result, isLoading }: EvaluatePanelPr
               />
               <TextField
                 size="small"
-                label="Company (bukrs)"
+                label={t('guardrails.company')}
                 value={bukrs}
                 onChange={(e) => setBukrs(e.target.value)}
-                placeholder="1000"
+                placeholder={t('guardrails.companyPlaceholder')}
                 sx={{ minWidth: 100 }}
               />
               <TextField
                 size="small"
-                label="Party ID"
+                label={t('guardrails.partyId')}
                 value={partyId}
                 onChange={(e) => setPartyId(e.target.value)}
-                placeholder="Vendor/Customer ID"
+                placeholder={t('guardrails.partyIdPlaceholder')}
                 sx={{ flex: 1 }}
               />
             </Stack>
@@ -143,7 +145,7 @@ export const EvaluatePanel = ({ onEvaluate, result, isLoading }: EvaluatePanelPr
               disabled={isLoading}
               startIcon={<Iconify icon="solar:play-bold" width={18} />}
             >
-              {isLoading ? 'Evaluating…' : 'Evaluate'}
+              {isLoading ? t('guardrails.evaluating') : t('guardrails.evaluate')}
             </Button>
           </Stack>
         </Box>
@@ -161,22 +163,22 @@ export const EvaluatePanel = ({ onEvaluate, result, isLoading }: EvaluatePanelPr
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
               {result.allowed ? (
                 <Label color="success" startIcon={<Iconify icon="solar:check-circle-bold" width={18} />}>
-                  Allowed
+                  {t('guardrails.allowed')}
                 </Label>
               ) : (
                 <Label color="error" startIcon={<Iconify icon="solar:close-circle-bold" width={18} />}>
-                  Blocked
+                  {t('guardrails.blocked')}
                 </Label>
               )}
               {result.requiredApprovalLevel && (
                 <Typography variant="caption" color="text.secondary">
-                  Required: {result.requiredApprovalLevel}
+                  {t('guardrails.required')}: {result.requiredApprovalLevel}
                 </Typography>
               )}
             </Stack>
             {result.violatedRules && result.violatedRules.length > 0 && (
               <Typography variant="body2" color="text.secondary">
-                Violated: {result.violatedRules.join(', ')}
+                {t('guardrails.violated')}: {result.violatedRules.join(', ')}
               </Typography>
             )}
           </Box>

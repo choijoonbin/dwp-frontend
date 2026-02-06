@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
-
 import { Iconify } from '@dwp-frontend/design-system';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { is403Error, buildAuditUrl, useSynapseAgentStream } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -325,7 +324,7 @@ export const CaseDetailPage = () => {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
         <Typography variant="body2" color="text.secondary">
-          Loading case...
+          {t('caseDetail.loading')}
         </Typography>
       </Box>
     );
@@ -348,14 +347,14 @@ export const CaseDetailPage = () => {
           {t('notFound.case')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          The case you are looking for does not exist or you do not have access.
+          {t('caseDetail.notFoundDesc')}
         </Typography>
         <Button
           variant="outlined"
           startIcon={<Iconify icon="solar:arrow-left-linear" width={18} />}
           onClick={() => navigate(SYNAPSE_ROUTES.CASES)}
         >
-          Back to Cases
+          {t('caseDetail.backToCases')}
         </Button>
       </Box>
     );
@@ -431,12 +430,12 @@ export const CaseDetailPage = () => {
           </Stack>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
             <ConfidenceRing value={caseData.confidence} size={48} />
-            <Tooltip title="Copy case ID to clipboard">
+            <Tooltip title={t('caseDetail.copyCaseId')}>
               <IconButton size="small" sx={{ bgcolor: 'transparent' }}>
                 <Iconify icon="solar:copy-bold-duotone" width={16} />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Open in SAP">
+            <Tooltip title={t('caseDetail.openInSap')}>
               <IconButton size="small" sx={{ bgcolor: 'transparent' }}>
                 <Iconify icon="solar:external-link-bold-duotone" width={16} />
               </IconButton>
@@ -471,7 +470,7 @@ export const CaseDetailPage = () => {
             <Stack direction="row" spacing={1} alignItems="center">
               <Iconify icon="solar:document-text-bold-duotone" width={18} />
               <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-                Source Evidence
+                {t('caseDetail.sourceEvidence')}
               </Typography>
             </Stack>
           </Box>
@@ -481,7 +480,7 @@ export const CaseDetailPage = () => {
               <Card>
                 <CardContent>
                   <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                    Document Relationship
+                    {t('caseDetail.documentRelationship')}
                   </Typography>
               <Stack spacing={1}>
                 {mockDocumentRelationship.map((doc) => (
@@ -497,7 +496,7 @@ export const CaseDetailPage = () => {
                   >
                     <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
                       <Chip
-                        label={doc.type === 'original' ? 'Original' : 'Reversal'}
+                        label={doc.type === 'original' ? t('caseDetail.original') : t('caseDetail.reversal')}
                         size="small"
                         color={doc.type === 'original' ? 'primary' : 'default'}
                       />
@@ -534,7 +533,7 @@ export const CaseDetailPage = () => {
                   title={
                     <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
                       <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-                        FI Document
+                        {t('caseDetail.fiDocument')}
                       </Typography>
                       <Chip label="KR" size="small" variant="outlined" />
                     </Stack>
@@ -546,7 +545,7 @@ export const CaseDetailPage = () => {
                     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
                       <Box>
                         <Typography variant="caption" color="text.secondary">
-                          Doc #
+                          {t('caseDetail.docNumber')}
                         </Typography>
                         <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 500 }}>
                           {fiDoc?.belnr || 'N/A'}
@@ -554,7 +553,7 @@ export const CaseDetailPage = () => {
                       </Box>
                       <Box>
                         <Typography variant="caption" color="text.secondary">
-                          Date
+                          {t('caseDetail.date')}
                         </Typography>
                         <Typography variant="body2" sx={{ fontWeight: 500 }}>
                           {fiDoc?.budat || 'N/A'}
@@ -562,7 +561,7 @@ export const CaseDetailPage = () => {
                       </Box>
                       <Box>
                         <Typography variant="caption" color="text.secondary">
-                          Amount
+                          {t('caseDetail.amount')}
                         </Typography>
                         <Typography variant="body2" sx={{ fontWeight: 500 }}>
                           {fiDoc?.wrbtr?.toLocaleString() || '0'} {fiDoc?.waers || 'USD'}
@@ -570,7 +569,7 @@ export const CaseDetailPage = () => {
                       </Box>
                       <Box>
                         <Typography variant="caption" color="text.secondary">
-                          Vendor
+                          {t('caseDetail.vendor')}
                         </Typography>
                         {(() => {
                           const doc = evidence?.documentOrOpenItem as { partyId?: string | number; counterpartyId?: string } | undefined;
@@ -588,7 +587,7 @@ export const CaseDetailPage = () => {
                                 '&:hover': { textDecoration: 'underline' },
                               }}
                             >
-                              {doc?.counterpartyId || 'View Entity'}
+                              {doc?.counterpartyId || t('caseDetail.viewEntity')}
                             </Typography>
                           ) : (
                             <Typography variant="body2" sx={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -601,7 +600,7 @@ export const CaseDetailPage = () => {
                     <Divider />
                     <Box>
                       <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                        Line Items ({fiDocItems.length})
+                        {t('caseDetail.lineItems')} ({fiDocItems.length})
                       </Typography>
                       <Stack spacing={0.5}>
                         {fiDocItems.slice(0, 2).map((item) => (
@@ -633,7 +632,7 @@ export const CaseDetailPage = () => {
                         ))}
                         {fiDocItems.length > 2 && (
                           <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>
-                            +{fiDocItems.length - 2} more items
+                            {t('caseDetail.moreItems', { count: fiDocItems.length - 2 })}
                           </Typography>
                         )}
                       </Stack>
@@ -657,7 +656,7 @@ export const CaseDetailPage = () => {
                   title={
                     <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
                       <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-                        Related Open Items
+                        {t('caseDetail.relatedOpenItems')}
                       </Typography>
                       <Iconify icon="solar:alt-arrow-right-bold-duotone" width={16} />
                     </Stack>
@@ -668,7 +667,7 @@ export const CaseDetailPage = () => {
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, mb: 1 }}>
                     <Box sx={{ p: 1.5, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.04) }}>
                       <Typography variant="caption" color="text.secondary">
-                        Receivables
+                        {t('caseDetail.receivables')}
                       </Typography>
                       <Typography variant="h6" sx={{ fontWeight: 700 }}>
                         3
@@ -676,7 +675,7 @@ export const CaseDetailPage = () => {
                     </Box>
                     <Box sx={{ p: 1.5, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.04) }}>
                       <Typography variant="caption" color="text.secondary">
-                        Payables
+                        {t('caseDetail.payables')}
                       </Typography>
                       <Typography variant="h6" sx={{ fontWeight: 700 }}>
                         2
@@ -684,7 +683,7 @@ export const CaseDetailPage = () => {
                     </Box>
                   </Box>
                   <Typography variant="caption" color="text.secondary">
-                    Total: $245,000 | Oldest: 45 days
+                    {t('caseDetail.totalOldest', { total: '$245,000', days: 45 })}
                   </Typography>
                 </CardContent>
               </Card>
@@ -705,7 +704,7 @@ export const CaseDetailPage = () => {
                     <Stack direction="row" spacing={1} alignItems="center">
                       <Iconify icon="solar:history-bold-duotone" width={18} />
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        View Data Lineage
+                        {t('caseDetail.viewDataLineage')}
                       </Typography>
                     </Stack>
                     <Iconify icon="solar:alt-arrow-right-bold-duotone" width={18} />
@@ -723,31 +722,31 @@ export const CaseDetailPage = () => {
               <Tab
                 icon={<Iconify icon="solar:brain-bold-duotone" width={18} />}
                 iconPosition="start"
-                label="AI Analysis"
+                label={t('caseDetail.aiAnalysis')}
                 value="analysis"
               />
               <Tab
                 icon={<Iconify icon="solar:play-circle-bold-duotone" width={18} />}
                 iconPosition="start"
-                label="Agent Stream"
+                label={t('caseDetail.agentStream')}
                 value="agent-stream"
               />
               <Tab
                 icon={<Iconify icon="solar:graph-up-bold-duotone" width={18} />}
                 iconPosition="start"
-                label="Confidence"
+                label={t('caseDetail.confidence')}
                 value="confidence"
               />
               <Tab
                 icon={<Iconify icon="solar:link-bold-duotone" width={18} />}
                 iconPosition="start"
-                label="Similar"
+                label={t('caseDetail.similar')}
                 value="similar"
               />
               <Tab
                 icon={<Iconify icon="solar:shield-check-bold-duotone" width={18} />}
                 iconPosition="start"
-                label="RAG"
+                label={t('caseDetail.rag')}
                 value="policies"
               />
             </Tabs>
@@ -782,7 +781,7 @@ export const CaseDetailPage = () => {
                       <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
                         <Box>
                           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                            Anomaly Confidence Score
+                            {t('caseDetail.anomalyConfidenceScore')}
                           </Typography>
                           <Typography variant="h3" sx={{ fontWeight: 700, color: 'primary.main' }}>
                             {caseData.confidence}%
@@ -797,7 +796,7 @@ export const CaseDetailPage = () => {
                           variant="outlined"
                           sx={{ textTransform: 'capitalize' }}
                         />
-                        <Chip label={`${caseData.severity} severity`} size="small" variant="outlined" />
+                        <Chip label={t('caseDetail.severityLabel', { severity: caseData.severity })} size="small" variant="outlined" />
                       </Stack>
                     </CardContent>
                   </Card>
@@ -809,7 +808,7 @@ export const CaseDetailPage = () => {
                         <Stack direction="row" spacing={1} alignItems="center">
                           <Iconify icon="solar:brain-bold-duotone" width={18} />
                           <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-                            AI Reasoning
+                            {t('caseDetail.aiReasoning')}
                           </Typography>
                         </Stack>
                       }
@@ -821,7 +820,7 @@ export const CaseDetailPage = () => {
                       </Typography>
                       <Divider sx={{ my: 1.5 }} />
                       <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1, display: 'block' }}>
-                        Key Factors
+                        {t('caseDetail.keyFactors')}
                       </Typography>
                       <Stack spacing={1}>
                         <Stack direction="row" spacing={1} alignItems="flex-start">
@@ -853,7 +852,7 @@ export const CaseDetailPage = () => {
               <Box sx={{ p: 2 }}>
                 <Stack spacing={2}>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    Confidence breakdown by factors
+                    {t('caseDetail.confidenceBreakdown')}
                   </Typography>
                   {mockConfidenceFactors.map((factor) => (
                     <Card key={factor.id}>
@@ -883,7 +882,7 @@ export const CaseDetailPage = () => {
                             />
                           </Box>
                           <Typography variant="caption" color="text.secondary">
-                            Weight: {factor.weight}% • {factor.description}
+                            {t('caseDetail.weight')}: {factor.weight}% • {factor.description}
                           </Typography>
                         </Stack>
                       </CardContent>
@@ -896,7 +895,7 @@ export const CaseDetailPage = () => {
             {centerTab === 'similar' && (
               <Box sx={{ p: 2 }}>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Cases with similar patterns and characteristics
+                  {t('caseDetail.similarCasesDesc')}
                 </Typography>
                 <Stack spacing={1.5}>
                   {similarCases.map((c) => (
@@ -939,7 +938,7 @@ export const CaseDetailPage = () => {
                               {c.similarity}%
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
-                              similar
+                              {t('caseDetail.similarLabel')}
                             </Typography>
                             <Box sx={{ mt: 0.5 }}>
                               <StatusPill status={c.status as Status} size="sm" />
@@ -953,7 +952,7 @@ export const CaseDetailPage = () => {
                     <Box sx={{ textAlign: 'center', py: 4 }}>
                       <Iconify icon="solar:link-bold-duotone" width={32} sx={{ opacity: 0.5, mb: 1 }} />
                       <Typography variant="body2" color="text.secondary">
-                        No similar cases found
+                        {t('caseDetail.noSimilarCases')}
                       </Typography>
                     </Box>
                   )}
@@ -964,7 +963,7 @@ export const CaseDetailPage = () => {
             {centerTab === 'policies' && (
               <Box sx={{ p: 2 }}>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Click on a policy to view the original document excerpt
+                  {t('caseDetail.policyClickHint')}
                 </Typography>
                 <RagCitationList
                   citations={ragCitations}
@@ -1006,7 +1005,7 @@ export const CaseDetailPage = () => {
               <Stack direction="row" spacing={1} alignItems="center">
                 <Iconify icon="solar:play-bold-duotone" width={18} />
                 <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-                  Simulation Mode
+                  {t('caseDetail.simulationMode')}
                 </Typography>
               </Stack>
               <FormControlLabel
@@ -1017,7 +1016,7 @@ export const CaseDetailPage = () => {
                     size="small"
                   />
                 }
-                label={simulationMode ? 'ON' : 'OFF'}
+                label={simulationMode ? t('caseDetail.on') : t('caseDetail.off')}
                 sx={{ m: 0 }}
               />
             </Stack>
@@ -1040,12 +1039,12 @@ export const CaseDetailPage = () => {
                   <Card>
                     <CardContent sx={{ p: 1.5 }}>
                       <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                        BEFORE (mock)
+                        {t('caseDetail.beforeMock')}
                       </Typography>
                       <Stack spacing={0.5}>
                         <Stack direction="row" justifyContent="space-between">
                           <Typography variant="caption" color="text.secondary">
-                            Vendor Bal:
+                            {t('caseDetail.vendorBal')}
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
                             ${mockSimulationResult.before.vendorBalance.toLocaleString()}
@@ -1053,7 +1052,7 @@ export const CaseDetailPage = () => {
                         </Stack>
                         <Stack direction="row" justifyContent="space-between">
                           <Typography variant="caption" color="text.secondary">
-                            GL Balance:
+                            {t('caseDetail.glBalance')}
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
                             ${mockSimulationResult.before.glBalance.toLocaleString()}
@@ -1061,7 +1060,7 @@ export const CaseDetailPage = () => {
                         </Stack>
                         <Stack direction="row" justifyContent="space-between">
                           <Typography variant="caption" color="text.secondary">
-                            Open Items:
+                            {t('caseDetail.openItems')}
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
                             {mockSimulationResult.before.openItems}
@@ -1073,12 +1072,12 @@ export const CaseDetailPage = () => {
                   <Card>
                     <CardContent sx={{ p: 1.5 }}>
                       <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                        AFTER
+                        {t('caseDetail.after')}
                       </Typography>
                       <Stack spacing={0.5}>
                         <Stack direction="row" justifyContent="space-between">
                           <Typography variant="caption" color="text.secondary">
-                            Vendor Bal:
+                            {t('caseDetail.vendorBal')}
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'success.main' }}>
                             ${(displaySimulationAfter.vendorBalance ?? 0).toLocaleString()}
@@ -1086,7 +1085,7 @@ export const CaseDetailPage = () => {
                         </Stack>
                         <Stack direction="row" justifyContent="space-between">
                           <Typography variant="caption" color="text.secondary">
-                            GL Balance:
+                            {t('caseDetail.glBalance')}
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
                             ${(displaySimulationAfter.glBalance ?? 0).toLocaleString()}
@@ -1094,7 +1093,7 @@ export const CaseDetailPage = () => {
                         </Stack>
                         <Stack direction="row" justifyContent="space-between">
                           <Typography variant="caption" color="text.secondary">
-                            Open Items:
+                            {t('caseDetail.openItems')}
                           </Typography>
                           <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
                             {displaySimulationAfter.openItems ?? 0}
@@ -1109,7 +1108,7 @@ export const CaseDetailPage = () => {
                 <Card>
                   <CardContent sx={{ p: 1.5 }}>
                     <Typography variant="caption" sx={{ fontWeight: 500, mb: 1, display: 'block' }}>
-                      Field Changes
+                      {t('caseDetail.fieldChanges')}
                     </Typography>
                     <Stack spacing={1}>
                       {mockFieldChanges.map((change) => (
@@ -1185,14 +1184,14 @@ export const CaseDetailPage = () => {
               <Tab
                 icon={<Iconify icon="solar:bolt-bold-duotone" width={18} />}
                 iconPosition="start"
-                label="Actions"
+                label={t('caseDetail.actions')}
                 value="actions"
                 sx={{ minHeight: 'auto', py: 0.5 }}
               />
               <Tab
                 icon={<Iconify icon="solar:history-bold-duotone" width={18} />}
                 iconPosition="start"
-                label="Audit Stream"
+                label={t('caseDetail.auditStream')}
                 value="audit"
                 sx={{ minHeight: 'auto', py: 0.5 }}
               />
@@ -1206,19 +1205,19 @@ export const CaseDetailPage = () => {
                 {/* Primary CTA Stack */}
                 <Stack spacing={1}>
                   <Button variant="contained" fullWidth startIcon={<Iconify icon="solar:check-circle-bold-duotone" width={20} />}>
-                    Approve Action
+                    {t('caseDetail.approveAction')}
                   </Button>
                   <Button variant="outlined" fullWidth startIcon={<Iconify icon="solar:close-circle-bold-duotone" width={20} />}>
-                    Reject
+                    {t('caseDetail.reject')}
                   </Button>
                   <Button variant="outlined" fullWidth startIcon={<Iconify icon="solar:info-circle-bold-duotone" width={20} />}>
-                    Request Info
+                    {t('caseDetail.requestInfo')}
                   </Button>
                   <Button variant="outlined" fullWidth startIcon={<Iconify icon="solar:forbidden-circle-bold-duotone" width={20} />}>
-                    Set Payment Block
+                    {t('caseDetail.setPaymentBlock')}
                   </Button>
                   <Button variant="outlined" fullWidth startIcon={<Iconify icon="solar:refresh-bold-duotone" width={20} />}>
-                    Post Reversal
+                    {t('caseDetail.postReversal')}
                   </Button>
                 </Stack>
 
@@ -1234,7 +1233,7 @@ export const CaseDetailPage = () => {
                 >
                   <Stack direction="row" spacing={1} alignItems="center">
                     <Iconify icon="solar:bolt-bold-duotone" width={20} />
-                    <Typography>Go to Action Center</Typography>
+                    <Typography>{t('caseDetail.goToActionCenter')}</Typography>
                   </Stack>
                 </Button>
 
@@ -1243,7 +1242,7 @@ export const CaseDetailPage = () => {
                 {/* Pending Actions */}
                 <Box>
                   <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1.5 }}>
-                    Pending Actions ({relatedActions.filter((a) => a.status === 'pending').length})
+                    {t('caseDetail.pendingActions')} ({relatedActions.filter((a) => a.status === 'pending').length})
                   </Typography>
                   <Stack spacing={1}>
                     {relatedActions.map((action) => (
@@ -1281,7 +1280,7 @@ export const CaseDetailPage = () => {
                     ))}
                     {relatedActions.length === 0 && (
                       <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
-                        No actions yet
+                        {t('caseDetail.noActionsYet')}
                       </Typography>
                     )}
                   </Stack>
@@ -1301,7 +1300,7 @@ export const CaseDetailPage = () => {
                   startIcon={<Iconify icon="solar:clipboard-list-bold-duotone" width={16} />}
                   sx={{ textTransform: 'none' }}
                 >
-                  View Audit (케이스 필터)
+                  {t('caseDetail.viewAudit')}
                 </Button>
               </Box>
               <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
@@ -1342,7 +1341,7 @@ export const CaseDetailPage = () => {
                             <Typography variant="body2" sx={{ fontWeight: 500 }}>
                               {item.author}
                             </Typography>
-                            <Chip label={item.type === 'event' ? 'System' : 'Comment'} size="small" variant="outlined" />
+                            <Chip label={item.type === 'event' ? t('caseDetail.system') : t('caseDetail.comment')} size="small" variant="outlined" />
                           </Stack>
                           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
                             {new Date(item.createdAt ?? '').toLocaleString()}
@@ -1360,7 +1359,7 @@ export const CaseDetailPage = () => {
               <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
                 <Stack direction="row" spacing={1}>
                   <TextField
-                    placeholder="Add audit note..."
+                    placeholder={t('caseDetail.addAuditNote')}
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     size="small"

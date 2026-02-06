@@ -5,6 +5,7 @@
 
 import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useAnalyticsKpisQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -47,6 +48,7 @@ function isTrendArray(v: unknown): v is TrendPoint[] {
 }
 
 export const AnalyticsPage = () => {
+  const { t } = useTranslation('common');
   const [windowDays, setWindowDays] = useState(30);
   const [bukrs, setBukrs] = useState('');
   const [currency, setCurrency] = useState('USD');
@@ -70,7 +72,7 @@ export const AnalyticsPage = () => {
     if (data?.savingsEstimate != null) {
       list.push({
         key: 'savingsEstimate',
-        label: 'Savings Estimate',
+        label: t('analytics.kpi.savingsEstimate'),
         value: money(data.savingsEstimate, currency),
         icon: 'solar:wallet-money-bold',
       });
@@ -78,7 +80,7 @@ export const AnalyticsPage = () => {
     if (data?.preventedLossEstimate != null) {
       list.push({
         key: 'preventedLossEstimate',
-        label: 'Prevented Loss Estimate',
+        label: t('analytics.kpi.preventedLossEstimate'),
         value: money(data.preventedLossEstimate, currency),
         icon: 'solar:shield-check-bold',
       });
@@ -86,7 +88,7 @@ export const AnalyticsPage = () => {
     if (data?.medianTimeToTriageHours != null) {
       list.push({
         key: 'medianTimeToTriageHours',
-        label: 'Median Time to Triage (hrs)',
+        label: t('analytics.kpi.medianTimeToTriageHours'),
         value: data.medianTimeToTriageHours.toFixed(1),
         icon: 'solar:clock-circle-bold',
       });
@@ -94,13 +96,13 @@ export const AnalyticsPage = () => {
     if (data?.automationRate != null) {
       list.push({
         key: 'automationRate',
-        label: 'Automation Rate',
+        label: t('analytics.kpi.automationRate'),
         value: `${(data.automationRate * 100).toFixed(1)}%`,
         icon: 'solar:chart-2-bold',
       });
     }
     return list;
-  }, [data, currency]);
+  }, [data, currency, t]);
 
   const trendMetrics = useMemo(() => {
     const additionalMetrics = data?.additionalMetrics ?? {};
@@ -124,7 +126,7 @@ export const AnalyticsPage = () => {
           <CardContent sx={{ p: 6, textAlign: 'center' }}>
             <Iconify icon="solar:danger-triangle-bold-duotone" width={48} sx={{ color: 'error.main', mb: 2 }} />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load analytics
+              {t('analytics.error.failedToLoad')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {error instanceof Error ? error.message : 'Unknown error'}
@@ -148,16 +150,16 @@ export const AnalyticsPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:chart-2-bold" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Impact Analytics
+                {t('analytics.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Outcome and effectiveness metrics for enterprise adoption, audits, and executive reporting.
+              {t('analytics.subtitle')}
             </Typography>
           </Box>
           <Stack direction="row" spacing={1}>
             <Button variant="outlined" size="small" startIcon={<Iconify icon="solar:download-bold" width={18} />}>
-              Export
+              {t('analytics.export')}
             </Button>
           </Stack>
         </Stack>
@@ -166,35 +168,35 @@ export const AnalyticsPage = () => {
         <Card variant="outlined">
           <CardContent sx={{ p: 2.5 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2 }}>
-              Filters
+              {t('analytics.filters')}
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
               <FormControl size="small" sx={{ minWidth: 160 }}>
-                <InputLabel id="analytics-window">Date Range</InputLabel>
+                <InputLabel id="analytics-window">{t('analytics.dateRange')}</InputLabel>
                 <Select
                   labelId="analytics-window"
-                  label="Date Range"
+                  label={t('analytics.dateRange')}
                   value={windowDays}
                   onChange={(e) => setWindowDays(Number(e.target.value))}
                 >
-                  <MenuItem value={7}>Last 7 days</MenuItem>
-                  <MenuItem value={30}>Last 30 days</MenuItem>
-                  <MenuItem value={90}>Last 90 days</MenuItem>
+                  <MenuItem value={7}>{t('analytics.last7Days')}</MenuItem>
+                  <MenuItem value={30}>{t('analytics.last30Days')}</MenuItem>
+                  <MenuItem value={90}>{t('analytics.last90Days')}</MenuItem>
                 </Select>
               </FormControl>
               <TextField
                 size="small"
-                label="Company (bukrs)"
+                label={t('analytics.company')}
                 value={bukrs}
                 onChange={(e) => setBukrs(e.target.value)}
                 placeholder="e.g., 1000"
                 sx={{ minWidth: 140 }}
               />
               <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel id="analytics-currency">Currency</InputLabel>
+                <InputLabel id="analytics-currency">{t('analytics.currency')}</InputLabel>
                 <Select
                   labelId="analytics-currency"
-                  label="Currency"
+                  label={t('analytics.currency')}
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
                 >
@@ -220,7 +222,7 @@ export const AnalyticsPage = () => {
               <Card variant="outlined">
                 <CardContent sx={{ p: 8, textAlign: 'center' }}>
                   <Typography variant="body2" color="text.secondary">
-                    Loading…
+                    {t('analytics.loading')}
                   </Typography>
                 </CardContent>
               </Card>
@@ -231,7 +233,7 @@ export const AnalyticsPage = () => {
                 <CardContent sx={{ p: 8, textAlign: 'center' }}>
                   <Iconify icon="solar:chart-2-bold" width={48} sx={{ color: 'text.disabled', mb: 2 }} />
                   <Typography variant="body2" color="text.secondary">
-                    No KPI data for the selected filters
+                    {t('analytics.noKpiData')}
                   </Typography>
                 </CardContent>
               </Card>

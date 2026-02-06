@@ -27,16 +27,22 @@ DWP Frontend는 페이지의 성격에 따라 두 가지 레이아웃 모드를 
 | **Scrollable** | 브라우저 자체 스크롤 허용 (기본값) | 대시보드, 모니터링, 리포트 |
 
 ### 자동 감지 메커니즘
-레이아웃 모드는 **URL 경로**를 기반으로 자동으로 결정됩니다.
+레이아웃 모드는 **URL 경로**를 기반으로 결정됩니다. Fixed 적용 경로는 **한 곳에서 관리**합니다.
 
 ```typescript
-// apps/dwp/src/layouts/dashboard/layout.tsx
-const layoutMode = (() => {
-  if (pathname.includes('/ai-workspace')) return 'fixed';
-  if (pathname === '/admin/menus' || pathname.startsWith('/admin/menus/')) return 'fixed';
-  if (pathname === '/admin/roles' || pathname.startsWith('/admin/roles/')) return 'fixed';
-  return 'scrollable';  // 기본값
-})();
+// apps/dwp/src/config/layout-mode.ts
+export const FIXED_LAYOUT_PATHS = [
+  '/ai-workspace',
+  '/admin/menus',
+  '/admin/roles',
+  '/admin/code-usages',
+  '/admin/batch',
+  '/admin/batch-monitoring',
+  '/admin/audit',
+];
+
+// layout.tsx에서
+const layoutMode = isFixedLayoutPath(pathname) ? 'fixed' : 'scrollable';
 ```
 
 ---
@@ -340,20 +346,21 @@ export const MyPage = () => {
 ### 2. Fixed 모드 추가 (특수한 경우만)
 좌우 분할 CRUD 화면 등 특수한 경우에만 `fixed` 모드를 추가합니다.
 
-#### Step 1: `layout.tsx`에 경로 추가
+#### Step 1: `FIXED_LAYOUT_PATHS`에 경로 추가
 ```typescript
-// apps/dwp/src/layouts/dashboard/layout.tsx
+// apps/dwp/src/config/layout-mode.ts
 
-const layoutMode = (() => {
-  if (pathname.includes('/ai-workspace')) return 'fixed';
-  if (pathname === '/admin/menus' || pathname.startsWith('/admin/menus/')) return 'fixed';
-  if (pathname === '/admin/roles' || pathname.startsWith('/admin/roles/')) return 'fixed';
-  
-  // 새 페이지 추가
-  if (pathname === '/admin/my-page' || pathname.startsWith('/admin/my-page/')) return 'fixed';
-  
-  return 'scrollable';
-})();
+export const FIXED_LAYOUT_PATHS = [
+  '/ai-workspace',
+  '/admin/menus',
+  '/admin/roles',
+  '/admin/code-usages',
+  '/admin/codes',
+  '/admin/batch',
+  '/admin/batch-monitoring',
+  '/admin/audit',
+  '/admin/my-page',  // 새 페이지 추가
+] as const;
 ```
 
 #### Step 2: 페이지 레이아웃 작성

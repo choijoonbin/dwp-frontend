@@ -3,15 +3,14 @@
  * @see SynapseX 운영형 UX 마감 - 전 화면 공통
  */
 
+import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 
-import { Iconify } from '@dwp-frontend/design-system';
-
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
 
 type ErrorStateWithRetryProps = {
   title?: string;

@@ -6,6 +6,7 @@
 
 import { useMemo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useOpenItemsListQuery } from '@dwp-frontend/shared-utils';
 
@@ -27,6 +28,7 @@ const buildDocDetailPath = (bukrs: string, belnr: string, gjahr: string) =>
   `/synapse/documents/${bukrs}/${belnr}/${gjahr}`;
 
 export const OpenItemsPage = () => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -67,13 +69,13 @@ export const OpenItemsPage = () => {
               sx={{ color: 'error.main', mb: 2 }}
             />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load open items
+              {t('error.errorState.failedToLoadOpenItems')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {error instanceof Error ? error.message : 'Unknown error'}
+              {error instanceof Error ? error.message : t('error.errorState.unknownError')}
             </Typography>
             <Button variant="outlined" onClick={() => refetch()} startIcon={<Iconify icon="solar:refresh-bold" width={18} />}>
-              Retry
+              {t('error.errorState.retry')}
             </Button>
           </CardContent>
         </Card>
@@ -94,11 +96,11 @@ export const OpenItemsPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:wallet-bold-duotone" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Open Items
+                {t('openItems.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              AR/AP operational view for overdue risk and recommended actions
+              {t('openItems.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -107,7 +109,7 @@ export const OpenItemsPage = () => {
             startIcon={<Iconify icon="solar:download-minimalistic-bold" width={18} />}
             sx={{ bgcolor: 'transparent' }}
           >
-            Export
+            {t('openItems.export')}
           </Button>
         </Stack>
 
@@ -117,14 +119,14 @@ export const OpenItemsPage = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'action.hover' }}>
-                    <TableCell>Item</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Entity</TableCell>
-                    <TableCell>Document</TableCell>
-                    <TableCell>Due Date</TableCell>
-                    <TableCell>Overdue</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell>Status</TableCell>
+                    <TableCell>{t('openItems.table.item')}</TableCell>
+                    <TableCell>{t('openItems.table.type')}</TableCell>
+                    <TableCell>{t('openItems.table.entity')}</TableCell>
+                    <TableCell>{t('openItems.table.document')}</TableCell>
+                    <TableCell>{t('openItems.table.dueDate')}</TableCell>
+                    <TableCell>{t('openItems.table.overdue')}</TableCell>
+                    <TableCell align="right">{t('openItems.table.amount')}</TableCell>
+                    <TableCell>{t('openItems.table.status')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -132,7 +134,7 @@ export const OpenItemsPage = () => {
                     <TableRow>
                       <TableCell colSpan={8} align="center" sx={{ py: 8 }}>
                         <Typography variant="body2" color="text.secondary">
-                          Loading...
+                          {t('openItems.loading')}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -146,7 +148,7 @@ export const OpenItemsPage = () => {
                             sx={{ color: 'text.disabled' }}
                           />
                           <Typography variant="body2" color="text.secondary">
-                            No open items found
+                            {t('openItems.empty')}
                           </Typography>
                         </Stack>
                       </TableCell>
@@ -213,13 +215,13 @@ export const OpenItemsPage = () => {
                         <TableCell>
                           <Stack direction="row" spacing={0.5} flexWrap="wrap">
                             {item.paymentBlock && (
-                              <Chip label="Blocked" size="small" color="error" sx={{ fontSize: '0.65rem' }} />
+                              <Chip label={t('openItems.status.blocked')} size="small" color="error" sx={{ fontSize: '0.65rem' }} />
                             )}
                             {item.disputeFlag && (
-                              <Chip label="Dispute" size="small" color="warning" sx={{ fontSize: '0.65rem' }} />
+                              <Chip label={t('openItems.status.dispute')} size="small" color="warning" sx={{ fontSize: '0.65rem' }} />
                             )}
                             {item.daysPastDue > 0 && (
-                              <Chip label="Overdue" size="small" color="error" sx={{ fontSize: '0.65rem' }} />
+                              <Chip label={t('openItems.status.overdue')} size="small" color="error" sx={{ fontSize: '0.65rem' }} />
                             )}
                           </Stack>
                         </TableCell>

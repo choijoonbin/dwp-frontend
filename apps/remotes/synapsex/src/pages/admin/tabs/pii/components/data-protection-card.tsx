@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
-import { useRef, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-
 import { Label, Iconify } from '@dwp-frontend/design-system';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import {
   showToast,
   type DataProtectionDto,

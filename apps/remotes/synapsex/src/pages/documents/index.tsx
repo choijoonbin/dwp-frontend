@@ -22,15 +22,13 @@ import { useDocumentsList } from './hooks/use-documents-list';
 import { DocumentsKpiStrip } from './components/documents-kpi-strip';
 import { DocumentsFilterBar } from './components/documents-filter-bar';
 
-const integrityMeta: Record<
-  string,
-  { icon: string; label: string; color: 'success' | 'warning' | 'error' | 'default' }
-> = {
-  pass: { icon: 'solar:check-circle-bold', label: 'Pass', color: 'success' },
-  warn: { icon: 'solar:danger-triangle-bold', label: 'Warn', color: 'warning' },
-  fail: { icon: 'solar:close-circle-bold', label: 'Fail', color: 'error' },
-  default: { icon: 'solar:info-circle-bold', label: '-', color: 'default' },
-};
+const getIntegrityMeta = (t: (k: string) => string) =>
+  ({
+    pass: { icon: 'solar:check-circle-bold', label: t('documents.integrity.pass'), color: 'success' as const },
+    warn: { icon: 'solar:danger-triangle-bold', label: t('documents.integrity.warn'), color: 'warning' as const },
+    fail: { icon: 'solar:close-circle-bold', label: t('documents.integrity.fail'), color: 'error' as const },
+    default: { icon: 'solar:info-circle-bold', label: '-', color: 'default' as const },
+  }) as Record<string, { icon: string; label: string; color: 'success' | 'warning' | 'error' | 'default' }>;
 
 const buildDocDetailPath = (bukrs: string, belnr: string, gjahr: string) =>
   `/synapse/documents/${bukrs}/${belnr}/${gjahr}`;
@@ -86,11 +84,11 @@ export const DocumentsPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:document-text-bold" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                FI Documents
+                {t('documents.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              SAP source-of-truth view for audit-ready evidence
+              {t('documents.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -99,7 +97,7 @@ export const DocumentsPage = () => {
             startIcon={<Iconify icon="solar:download-minimalistic-bold" width={18} />}
             sx={{ bgcolor: 'transparent' }}
           >
-            Export
+            {t('documents.export')}
           </Button>
         </Stack>
 
@@ -125,13 +123,13 @@ export const DocumentsPage = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'action.hover' }}>
-                    <TableCell>Doc Number</TableCell>
-                    <TableCell>Company</TableCell>
-                    <TableCell>Posting Date</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Counterparty</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell>Integrity</TableCell>
+                    <TableCell>{t('documents.table.docNumber')}</TableCell>
+                    <TableCell>{t('documents.table.company')}</TableCell>
+                    <TableCell>{t('documents.table.postingDate')}</TableCell>
+                    <TableCell>{t('documents.table.type')}</TableCell>
+                    <TableCell>{t('documents.table.counterparty')}</TableCell>
+                    <TableCell align="right">{t('documents.table.amount')}</TableCell>
+                    <TableCell>{t('documents.table.integrity')}</TableCell>
                     <TableCell align="right" />
                   </TableRow>
                 </TableHead>
@@ -140,7 +138,7 @@ export const DocumentsPage = () => {
                     <TableRow>
                       <TableCell colSpan={8} align="center" sx={{ py: 8 }}>
                         <Typography variant="body2" color="text.secondary">
-                          Loading...
+                          {t('documents.loading')}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -154,16 +152,17 @@ export const DocumentsPage = () => {
                             sx={{ color: 'text.disabled' }}
                           />
                           <Typography variant="body2" color="text.secondary">
-                            No documents found
+                            {t('documents.empty')}
                           </Typography>
                           <Typography variant="caption" color="text.disabled">
-                            Try adjusting your filters
+                            {t('documents.emptyHint')}
                           </Typography>
                         </Stack>
                       </TableCell>
                     </TableRow>
                   ) : (
                     items.map((doc) => {
+                      const integrityMeta = getIntegrityMeta(t);
                       const meta = integrityMeta[doc.integrityStatus ?? ''] ?? integrityMeta.default;
                       return (
                         <TableRow
@@ -234,7 +233,7 @@ export const DocumentsPage = () => {
                               size="small"
                               endIcon={<Iconify icon="solar:arrow-right-up-linear" width={16} />}
                             >
-                              Open
+                              {t('documents.open')}
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -252,7 +251,11 @@ export const DocumentsPage = () => {
                 sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}
               >
                 <Typography variant="body2" color="text.secondary">
-                  Page {page + 1} of {totalPages} ({totalCount} total)
+                  {t('documents.pageOf', {
+                    current: String(page + 1),
+                    total: String(totalPages),
+                    count: totalCount,
+                  })}
                 </Typography>
                 <Stack direction="row" spacing={1}>
                   <Button
@@ -260,14 +263,14 @@ export const DocumentsPage = () => {
                     disabled={page === 0}
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
                   >
-                    Previous
+                    {t('documents.previous')}
                   </Button>
                   <Button
                     size="small"
                     disabled={page >= totalPages - 1}
                     onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                   >
-                    Next
+                    {t('documents.next')}
                   </Button>
                 </Stack>
               </Stack>

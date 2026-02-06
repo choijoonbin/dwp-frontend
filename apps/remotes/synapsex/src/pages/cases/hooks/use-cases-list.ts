@@ -25,6 +25,7 @@ export const useCasesList = (
     page: page0,
     size: pageSize,
   };
+  if (params?.q || filters.searchQuery) apiParams.q = (params?.q ?? filters.searchQuery)?.trim() || undefined;
   if (params?.severity)
     apiParams.severity = String(params.severity)
       .split(',')
@@ -49,48 +50,18 @@ export const useCasesList = (
     }
     const rawItems = query.data.items ?? query.data.content ?? query.data.data ?? [];
     const list = rawItems.map(caseListDtoToUi);
-    let filtered = list;
-    if (filters.searchQuery) {
-      const q = filters.searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (c) =>
-          c.caseNumber.toLowerCase().includes(q) ||
-          (c.counterparty ?? '').toLowerCase().includes(q) ||
-          (c.description ?? '').toLowerCase().includes(q)
-      );
-    }
-    if (filters.severities?.length) {
-      filtered = filtered.filter((c) => filters.severities!.includes(c.severity));
-    }
-    if (filters.statuses?.length) {
-      filtered = filtered.filter((c) => filters.statuses!.includes(c.status));
-    }
-    if (filters.anomalyTypes?.length) {
-      filtered = filtered.filter((c) => filters.anomalyTypes!.includes(c.anomalyType));
-    }
     const total = query.data.total ?? query.data.totalElements ?? rawItems.length;
     const totalPagesVal = query.data.totalPages ?? (Math.ceil(total / pageSize) || 1);
     return {
-      items: filtered,
-      totalCount: filters.searchQuery || filters.severities?.length || filters.statuses?.length || filters.anomalyTypes?.length
-        ? filtered.length
-        : total,
-      totalPages: filters.searchQuery || filters.severities?.length || filters.statuses?.length || filters.anomalyTypes?.length
-        ? Math.ceil(filtered.length / pageSize) || 1
-        : totalPagesVal,
+      items: list,
+      totalCount: total,
+      totalPages: totalPagesVal,
     };
-  }, [query.data, filters.searchQuery, filters.severities, filters.statuses, filters.anomalyTypes, pageSize]);
+  }, [query.data, pageSize]);
 
   const filtersApplied = query.data?.filtersApplied;
 
-  const paginatedItems = useMemo(() => {
-    const hasClientFilter = filters.searchQuery || filters.severities?.length || filters.statuses?.length || filters.anomalyTypes?.length;
-    if (hasClientFilter) {
-      const start = page0 * pageSize;
-      return items.slice(start, start + pageSize);
-    }
-    return items;
-  }, [items, page0, pageSize, filters.searchQuery, filters.severities, filters.statuses, filters.anomalyTypes]);
+  const paginatedItems = items;
 
   const triageBacklogCount = useMemo(
     () =>

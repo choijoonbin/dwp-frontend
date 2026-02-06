@@ -52,7 +52,7 @@ export function initI18n() {
       saveMissing: process.env.NODE_ENV === 'development',
       missingKeyHandler:
         process.env.NODE_ENV === 'development'
-          ? (lngs: string[], ns: string, key: string) => {
+          ? (lngs: readonly string[], ns: string, key: string) => {
               console.warn(`[i18n] Missing key: ${key} (ns: ${ns})`);
             }
           : undefined,

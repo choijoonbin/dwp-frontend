@@ -33,7 +33,7 @@ export const MenuDetailFooter = memo(({
     <Button variant="outlined" onClick={onReset} disabled={isLoading}>
       취소
     </Button>
-    <PermissionGate resource="menu.admin.menus" permission="UPDATE">
+    <PermissionGate resource="menu.admin.menus" permission="UPDATE" mode="disable">
       <Button
         variant="contained"
         onClick={onSave}

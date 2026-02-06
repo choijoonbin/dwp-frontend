@@ -11,11 +11,14 @@ import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
+import Select from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
 import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
 import Autocomplete from '@mui/material/Autocomplete';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -74,20 +77,22 @@ export const MenuDetailForm = memo(({
             />
           </Grid>
           <Grid size={{ xs: 12 }}>
-            <TextField
-              select
-              label="상위 메뉴"
-              fullWidth
-              value={formData.parentId}
-              onChange={(event) => onFormChange('parentId', event.target.value)}
-            >
-              <MenuItem value="">없음 (최상위)</MenuItem>
-              {flatMenus.map((item) => (
-                <MenuItem key={item.id} value={item.id}>
-                  {item.menuName} ({item.menuKey})
-                </MenuItem>
-              ))}
-            </TextField>
+            <FormControl fullWidth size="medium">
+              <InputLabel id="menu-detail-parent-label">상위 메뉴</InputLabel>
+              <Select
+                labelId="menu-detail-parent-label"
+                label="상위 메뉴"
+                value={formData.parentId || ''}
+                onChange={(event) => onFormChange('parentId', event.target.value)}
+              >
+                <MenuItem value="">없음 (최상위)</MenuItem>
+                {flatMenus.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.menuName} ({item.menuKey})
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
         </Grid>
       </Stack>
@@ -186,7 +191,7 @@ export const MenuDetailForm = memo(({
       <Stack spacing={2}>
         <SectionHeader title="작업" />
         <Stack direction="row" spacing={1} flexWrap="wrap">
-          <PermissionGate resource="menu.admin.menus" permission="CREATE">
+          <PermissionGate resource="menu.admin.menus" permission="CREATE" mode="disable">
             <Button
               variant="outlined"
               startIcon={<Iconify icon="solar:add-circle-bold" width={16} />}
@@ -195,7 +200,7 @@ export const MenuDetailForm = memo(({
               하위 메뉴 추가
             </Button>
           </PermissionGate>
-          <PermissionGate resource="menu.admin.menus" permission="DELETE">
+          <PermissionGate resource="menu.admin.menus" permission="DELETE" mode="disable">
             <Tooltip
               title={hasChildren ? '하위 메뉴가 있어 삭제할 수 없습니다.' : ''}
               disableHoverListener={!hasChildren}

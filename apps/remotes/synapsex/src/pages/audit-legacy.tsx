@@ -2,6 +2,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import { useSynapseAuditEventsQuery } from '@dwp-frontend/shared-utils';
 
@@ -133,19 +134,16 @@ const extendedAuditEvents: AuditEvent[] = [
   },
 ];
 
-const eventTypes = [
-  { value: 'action_approved', label: 'Action Approved' },
-  { value: 'action_rejected', label: 'Action Rejected' },
-  { value: 'action_executed', label: 'Action Executed' },
-  { value: 'case_created', label: 'Case Created' },
-  { value: 'simulation_run', label: 'Simulation Run' },
-  { value: 'comment_added', label: 'Comment Added' },
-];
+const EVENT_TYPE_KEYS = [
+  'action_approved',
+  'action_rejected',
+  'action_executed',
+  'case_created',
+  'simulation_run',
+  'comment_added',
+] as const;
 
-const actorTypes = [
-  { value: 'user', label: 'Human User' },
-  { value: 'system', label: 'AI/System' },
-];
+const ACTOR_TYPE_KEYS = ['user', 'system'] as const;
 
 const getEventIcon = (eventType: string): string => {
   switch (eventType) {
@@ -177,6 +175,7 @@ const getEventIcon = (eventType: string): string => {
 
 /** 감사 추적 로그 */
 export const AuditPage = () => {
+  const { t } = useTranslation('common');
   const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get('category') ?? undefined;
   const eventTypeParam = searchParams.get('type') ?? undefined;
@@ -286,13 +285,13 @@ export const AuditPage = () => {
 
   const toggleEventType = (value: string) => {
     setSelectedEventTypes((prev) =>
-      prev.includes(value) ? prev.filter((t) => t !== value) : [...prev, value]
+      prev.includes(value) ? prev.filter((el) => el !== value) : [...prev, value]
     );
   };
 
   const toggleActorType = (value: string) => {
     setSelectedActorTypes((prev) =>
-      prev.includes(value) ? prev.filter((t) => t !== value) : [...prev, value]
+      prev.includes(value) ? prev.filter((el) => el !== value) : [...prev, value]
     );
   };
 
@@ -309,21 +308,21 @@ export const AuditPage = () => {
   };
 
   const categories = [
-    { value: 'CASE', label: 'Case' },
-    { value: 'ACTION', label: 'Action' },
-    { value: 'POLICY', label: 'Policy' },
-    { value: 'GUARDRAIL', label: 'Guardrail' },
-    { value: 'AUDIT', label: 'Audit' },
+    { value: 'CASE' as const },
+    { value: 'ACTION' as const },
+    { value: 'POLICY' as const },
+    { value: 'GUARDRAIL' as const },
+    { value: 'AUDIT' as const },
   ];
   const outcomes = [
-    { value: 'SUCCESS', label: 'Success' },
-    { value: 'FAILURE', label: 'Failure' },
-    { value: 'PENDING', label: 'Pending' },
+    { value: 'SUCCESS' as const },
+    { value: 'FAILURE' as const },
+    { value: 'PENDING' as const },
   ];
   const severities = [
-    { value: 'info', label: 'Info' },
-    { value: 'warning', label: 'Warning' },
-    { value: 'critical', label: 'Critical' },
+    { value: 'info' as const },
+    { value: 'warning' as const },
+    { value: 'critical' as const },
   ];
 
   return (
@@ -340,11 +339,11 @@ export const AuditPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:history-bold" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Audit Trail
+                {t('audit.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Complete audit history of all system activities and decisions
+              {t('audit.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -353,7 +352,7 @@ export const AuditPage = () => {
             startIcon={<Iconify icon="solar:download-minimalistic-bold" width={18} />}
             sx={{ bgcolor: 'transparent' }}
           >
-            Export
+            {t('audit.export')}
           </Button>
         </Stack>
 
@@ -365,7 +364,7 @@ export const AuditPage = () => {
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                   <Box>
                     <Typography variant="body2" color="text.secondary">
-                      Total Events
+                      {t('audit.totalEvents')}
                     </Typography>
                     <Typography variant="h3" sx={{ fontWeight: 700 }}>
                       {baseEvents.length}
@@ -394,7 +393,7 @@ export const AuditPage = () => {
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                   <Box>
                     <Typography variant="body2" color="text.secondary">
-                      User Actions
+                      {t('audit.userActions')}
                     </Typography>
                     <Typography variant="h3" sx={{ fontWeight: 700, color: 'info.main' }}>
                       {userActionsCount}
@@ -423,7 +422,7 @@ export const AuditPage = () => {
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                   <Box>
                     <Typography variant="body2" color="text.secondary">
-                      System Actions
+                      {t('audit.systemActions')}
                     </Typography>
                     <Typography variant="h3" sx={{ fontWeight: 700, color: 'success.main' }}>
                       {systemActionsCount}
@@ -454,7 +453,7 @@ export const AuditPage = () => {
             <Stack direction="row" spacing={2} flexWrap="wrap" alignItems="center">
               <TextField
                 size="small"
-                placeholder="Search (q)..."
+                placeholder={t('audit.searchPlaceholder')}
                 value={qParam ?? ''}
                 onChange={(e) => updateUrlFilter('q', e.target.value || undefined)}
                 sx={{ minWidth: 180, maxWidth: { xs: '100%', sm: 280 } }}
@@ -471,10 +470,10 @@ export const AuditPage = () => {
                 displayEmpty
                 sx={{ minWidth: 140 }}
               >
-                <MenuItem value="">All Types</MenuItem>
-                {eventTypes.map((t) => (
-                  <MenuItem key={t.value} value={t.value}>
-                    {t.label}
+                <MenuItem value="">{t('audit.allTypes')}</MenuItem>
+                {EVENT_TYPE_KEYS.map((val) => (
+                  <MenuItem key={val} value={val}>
+                    {t(`audit.eventTypes.${val}`)}
                   </MenuItem>
                 ))}
               </Select>
@@ -485,10 +484,10 @@ export const AuditPage = () => {
                 displayEmpty
                 sx={{ minWidth: 120 }}
               >
-                <MenuItem value="">All Categories</MenuItem>
+                <MenuItem value="">{t('audit.allCategories')}</MenuItem>
                 {categories.map((c) => (
                   <MenuItem key={c.value} value={c.value}>
-                    {c.label}
+                    {t(`audit.categories.${c.value}`)}
                   </MenuItem>
                 ))}
               </Select>
@@ -499,10 +498,10 @@ export const AuditPage = () => {
                 displayEmpty
                 sx={{ minWidth: 120 }}
               >
-                <MenuItem value="">All Outcomes</MenuItem>
+                <MenuItem value="">{t('audit.allOutcomes')}</MenuItem>
                 {outcomes.map((o) => (
                   <MenuItem key={o.value} value={o.value}>
-                    {o.label}
+                    {t(`audit.outcomes.${o.value}`)}
                   </MenuItem>
                 ))}
               </Select>
@@ -513,23 +512,23 @@ export const AuditPage = () => {
                 displayEmpty
                 sx={{ minWidth: 110 }}
               >
-                <MenuItem value="">All Severities</MenuItem>
+                <MenuItem value="">{t('audit.allSeverities')}</MenuItem>
                 {severities.map((s) => (
                   <MenuItem key={s.value} value={s.value}>
-                    {s.label}
+                    {t(`audit.severities.${s.value}`)}
                   </MenuItem>
                 ))}
               </Select>
               <TextField
                 size="small"
-                placeholder="Actor..."
+                placeholder={t('audit.actorPlaceholder')}
                 value={actor ?? ''}
                 onChange={(e) => updateUrlFilter('actor', e.target.value || undefined)}
                 sx={{ minWidth: 120 }}
               />
               <TextField
                 size="small"
-                placeholder="Resource type..."
+                placeholder={t('audit.resourceTypePlaceholder')}
                 value={resourceType ?? ''}
                 onChange={(e) => updateUrlFilter('resourceType', e.target.value || undefined)}
                 sx={{ minWidth: 120 }}
@@ -547,18 +546,18 @@ export const AuditPage = () => {
                 }
                 sx={{ bgcolor: 'transparent' }}
               >
-                Event Type
+                {t('audit.eventType')}
               </Button>
               <Menu
                 anchorEl={eventTypeAnchor}
                 open={Boolean(eventTypeAnchor)}
                 onClose={() => setEventTypeAnchor(null)}
               >
-                {eventTypes.map((type) => (
-                  <MenuItem key={type.value} onClick={() => toggleEventType(type.value)} dense>
+                {EVENT_TYPE_KEYS.map((typeVal) => (
+                  <MenuItem key={typeVal} onClick={() => toggleEventType(typeVal)} dense>
                     <FormControlLabel
-                      control={<Checkbox checked={selectedEventTypes.includes(type.value)} size="small" />}
-                      label={type.label}
+                      control={<Checkbox checked={selectedEventTypes.includes(typeVal)} size="small" />}
+                      label={t(`audit.eventTypes.${typeVal}`)}
                       sx={{ width: '100%', ml: 0 }}
                     />
                   </MenuItem>
@@ -578,27 +577,27 @@ export const AuditPage = () => {
                 }
                 sx={{ bgcolor: 'transparent' }}
               >
-                Actor Type
+                {t('audit.actorType')}
               </Button>
               <Menu
                 anchorEl={actorTypeAnchor}
                 open={Boolean(actorTypeAnchor)}
                 onClose={() => setActorTypeAnchor(null)}
               >
-                {actorTypes.map((type) => (
-                  <MenuItem key={type.value} onClick={() => toggleActorType(type.value)} dense>
+                {ACTOR_TYPE_KEYS.map((typeVal) => (
+                  <MenuItem key={typeVal} onClick={() => toggleActorType(typeVal)} dense>
                     <FormControlLabel
                       control={
                         <>
-                          <Checkbox checked={selectedActorTypes.includes(type.value)} size="small" />
+                          <Checkbox checked={selectedActorTypes.includes(typeVal)} size="small" />
                           <Iconify
-                            icon={type.value === 'user' ? 'solar:user-bold' : 'solar:robot-bold'}
+                            icon={typeVal === 'user' ? 'solar:user-bold' : 'solar:robot-bold'}
                             width={14}
                             sx={{ ml: 1, mr: 0.5, color: 'text.secondary' }}
                           />
                         </>
                       }
-                      label={type.label}
+                      label={t(`audit.actorTypes.${typeVal}`)}
                       sx={{ width: '100%', ml: 0 }}
                     />
                   </MenuItem>
@@ -615,10 +614,10 @@ export const AuditPage = () => {
                 }
                 sx={{ minWidth: 150 }}
               >
-                <MenuItem value="all">All Time</MenuItem>
-                <MenuItem value="today">Today</MenuItem>
-                <MenuItem value="week">This Week</MenuItem>
-                <MenuItem value="month">This Month</MenuItem>
+                <MenuItem value="all">{t('audit.allTime')}</MenuItem>
+                <MenuItem value="today">{t('audit.today')}</MenuItem>
+                <MenuItem value="week">{t('audit.thisWeek')}</MenuItem>
+                <MenuItem value="month">{t('audit.thisMonth')}</MenuItem>
               </Select>
             </Stack>
           </CardContent>
@@ -629,10 +628,10 @@ export const AuditPage = () => {
           <CardContent sx={{ p: 0 }}>
             <Box sx={{ p: 2.5, pb: 1.5 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                Audit Events
+                {t('audit.auditEvents')}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {filteredEvents.length} events matching your filters
+                {t('audit.eventsMatching', { count: filteredEvents.length })}
               </Typography>
             </Box>
             <Divider />
@@ -691,12 +690,12 @@ export const AuditPage = () => {
                             </Typography>
                             {event.severity === 'critical' && (
                               <Label color="error" sx={{ fontSize: '0.625rem' }}>
-                                Critical
+                                {t('audit.severities.critical')}
                               </Label>
                             )}
                             {event.severity === 'warning' && (
                               <Label color="warning" sx={{ fontSize: '0.625rem' }}>
-                                Warning
+                                {t('audit.severities.warning')}
                               </Label>
                             )}
                           </Stack>
@@ -743,7 +742,7 @@ export const AuditPage = () => {
                                   variant="caption"
                                   sx={{ fontWeight: 600, color: 'text.secondary', mb: 1, display: 'block' }}
                                 >
-                                  Event Details
+                                  {t('audit.eventDetails')}
                                 </Typography>
                                 <Grid container spacing={1.5}>
                                   {Object.entries(event.details).map(([key, value]) => (
@@ -785,7 +784,7 @@ export const AuditPage = () => {
               {filteredEvents.length === 0 && (
                 <Box sx={{ p: 10, textAlign: 'center' }}>
                   <Typography variant="body2" color="text.secondary">
-                    No audit events match the current filters.
+                    {t('audit.empty')}
                   </Typography>
                 </Box>
               )}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -43,6 +44,7 @@ export const CatalogAddDialog = ({
   isLoading = false,
   catalogError,
 }: CatalogAddDialogProps) => {
+  const { t } = useTranslation('common');
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [submitting, setSubmitting] = useState(false);
 
@@ -104,11 +106,11 @@ export const CatalogAddDialog = ({
           </Box>
         ) : catalogError ? (
           <Typography variant="body2" color="error.main" sx={{ py: 3 }}>
-            Catalog를 불러올 수 없습니다. ({catalogError.message})
+            {t('tenantScope.catalogLoadFailed')} ({catalogError.message})
           </Typography>
         ) : availableItems.length === 0 ? (
           <Typography variant="body2" color="text.secondary" sx={{ py: 3 }}>
-            추가할 수 있는 항목이 없습니다. 모든 항목이 이미 스코프에 포함되어 있습니다.
+            {t('tenantScope.noItemsToAdd')}
           </Typography>
         ) : (
           <Card variant="outlined" sx={{ maxHeight: 320, overflow: 'auto' }}>
@@ -124,7 +126,7 @@ export const CatalogAddDialog = ({
                       disableRipple
                     />
                   </ListItemIcon>
-                  <ListItemText primary="전체 선택" primaryTypographyProps={{ fontWeight: 600 }} />
+                  <ListItemText primary={t('tenantScope.selectAll')} primaryTypographyProps={{ fontWeight: 600 }} />
                 </ListItemButton>
               </ListItem>
               {availableItems.map((item) => {
@@ -138,7 +140,7 @@ export const CatalogAddDialog = ({
                       </ListItemIcon>
                       <ListItemText
                         primary={key}
-                        secondary={item.docCount != null ? `문서 ${item.docCount}건` : undefined}
+                        secondary={item.docCount != null ? t('tenantScope.docCount', { count: item.docCount }) : undefined}
                       />
                     </ListItemButton>
                   </ListItem>
@@ -150,7 +152,7 @@ export const CatalogAddDialog = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} disabled={submitting}>
-          취소
+          {t('tenantScope.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -158,7 +160,7 @@ export const CatalogAddDialog = ({
           disabled={submitting || selected.size === 0}
           startIcon={submitting ? <CircularProgress size={16} color="inherit" /> : undefined}
         >
-          {submitting ? '추가 중...' : `추가 (${selected.size})`}
+          {submitting ? t('tenantScope.adding') : t('tenantScope.addWithCount', { count: selected.size })}
         </Button>
       </DialogActions>
     </Dialog>

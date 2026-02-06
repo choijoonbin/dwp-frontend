@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import {
   trackEvent,
@@ -31,6 +32,7 @@ export const BatchPage = () => (
 );
 
 const BatchPageContent = () => {
+  const { t } = useTranslation('admin');
   const {
     page,
     rowsPerPage,
@@ -99,32 +101,32 @@ const BatchPageContent = () => {
   }, [runNowMutation]);
 
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 }, width: '100%' }}>
-      <Stack spacing={3}>
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          alignItems={{ sm: 'center' }}
-          justifyContent="space-between"
-          spacing={2}
-        >
-          <Box>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Iconify icon="solar:history-bold-duotone" width={24} sx={{ color: 'primary.main' }} />
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Batch Monitoring
-              </Typography>
-            </Stack>
-            <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Detect 배치 실행 이력 및 수동 실행
+    <Box
+      data-testid="page-admin-batch-monitoring"
+      sx={{
+        p: 3,
+        height: '100%',
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      <Stack spacing={3} sx={{ flex: 1, minHeight: 0 }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack spacing={1}>
+            <Typography variant="h4">{t('batch.title')}</Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {t('batch.subtitle')}
             </Typography>
-          </Box>
+          </Stack>
           <PermissionGate resource="menu.admin.batch-monitoring" permission="EXECUTE">
             <Button
               variant="contained"
               startIcon={<Iconify icon="solar:play-bold" width={18} />}
               onClick={handleRunNowClick}
             >
-              Run Now
+              {t('batch.runNow')}
             </Button>
           </PermissionGate>
         </Stack>
@@ -146,7 +148,8 @@ const BatchPageContent = () => {
           onReset={resetFilters}
         />
 
-        <BatchRunsTable
+        <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
+          <BatchRunsTable
           items={items}
           isLoading={isLoading}
           error={error}
@@ -156,7 +159,8 @@ const BatchPageContent = () => {
           onPageChange={setPage}
           onRowsPerPageChange={setRowsPerPage}
           onRowClick={handleRowClick}
-        />
+          />
+        </Box>
       </Stack>
 
       <BatchRunDetailDrawer

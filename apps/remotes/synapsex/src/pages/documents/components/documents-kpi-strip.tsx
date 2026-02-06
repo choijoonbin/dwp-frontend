@@ -1,4 +1,5 @@
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -15,7 +16,9 @@ export const DocumentsKpiStrip = ({
   totalAmount,
   flaggedCount,
   currency = 'USD',
-}: DocumentsKpiStripProps) => (
+}: DocumentsKpiStripProps) => {
+  const { t } = useTranslation('common');
+  return (
   <Stack
     direction="row"
     spacing={3}
@@ -30,7 +33,7 @@ export const DocumentsKpiStrip = ({
     <Stack direction="row" alignItems="center" spacing={1}>
       <Iconify icon="solar:document-text-bold" width={18} sx={{ color: 'text.secondary' }} />
       <Typography variant="body2" color="text.secondary">
-        Total Docs
+        {t('documents.kpi.totalDocs')}
       </Typography>
       <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
         {totalDocs.toLocaleString()}
@@ -39,7 +42,7 @@ export const DocumentsKpiStrip = ({
     <Stack direction="row" alignItems="center" spacing={1}>
       <Iconify icon="solar:dollar-bold" width={18} sx={{ color: 'text.secondary' }} />
       <Typography variant="body2" color="text.secondary">
-        Total Amount
+        {t('documents.kpi.totalAmount')}
       </Typography>
       <Typography variant="subtitle2" sx={{ fontWeight: 600, fontFamily: 'monospace' }}>
         {totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })} {currency}
@@ -49,7 +52,7 @@ export const DocumentsKpiStrip = ({
       <Stack direction="row" alignItems="center" spacing={1}>
         <Iconify icon="solar:danger-triangle-bold" width={18} sx={{ color: 'warning.main' }} />
         <Typography variant="body2" color="text.secondary">
-          Flagged
+          {t('documents.kpi.flagged')}
         </Typography>
         <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'warning.main' }}>
           {flaggedCount}
@@ -57,4 +60,5 @@ export const DocumentsKpiStrip = ({
       </Stack>
     )}
   </Stack>
-);
+  );
+};

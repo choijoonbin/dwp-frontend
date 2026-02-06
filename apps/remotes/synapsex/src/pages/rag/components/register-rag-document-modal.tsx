@@ -7,6 +7,7 @@ import type { RegisterRagDocumentRequest } from '@dwp-frontend/shared-utils';
 
 import { useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -40,6 +41,7 @@ export const RegisterRagDocumentModal = ({
   onSubmit,
   isLoading,
 }: RegisterRagDocumentModalProps) => {
+  const { t } = useTranslation('common');
   const [title, setTitle] = useState('');
   const [sourceType, setSourceType] = useState<string>('PDF');
   const [s3Key, setS3Key] = useState('');
@@ -77,34 +79,34 @@ export const RegisterRagDocumentModal = ({
 
   return (
     <>
-      <DialogTitle>Register Document</DialogTitle>
+      <DialogTitle>{t('rag.registerDocument')}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <DialogContentText sx={{ mb: 3 }}>
-            Register a document for RAG indexing. The document will be processed and chunked for semantic search.
+            {t('rag.registerModal.hint')}
           </DialogContentText>
           <Stack spacing={2.5}>
             <TextField
               size="small"
-              label="Title"
+              label={t('rag.registerModal.titleLabel')}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., Internal Control Policy v2026"
+              placeholder={t('rag.registerModal.titlePlaceholder')}
               required
               fullWidth
             />
             <FormControl fullWidth>
-              <InputLabel id="rag-source-type-label">Source Type</InputLabel>
+              <InputLabel id="rag-source-type-label">{t('rag.registerModal.sourceType')}</InputLabel>
               <Select
                 size="small"
                 labelId="rag-source-type-label"
-                label="Source Type"
+                label={t('rag.registerModal.sourceType')}
                 value={sourceType}
                 onChange={(e) => setSourceType(e.target.value)}
               >
-                {SOURCE_TYPES.map((t) => (
-                  <MenuItem key={t.value} value={t.value}>
-                    {t.label}
+                {SOURCE_TYPES.map((st) => (
+                  <MenuItem key={st.value} value={st.value}>
+                    {st.label}
                   </MenuItem>
                 ))}
               </Select>
@@ -113,35 +115,35 @@ export const RegisterRagDocumentModal = ({
               <TextField
                 size="small"
                 fullWidth
-                label="S3 Key"
+                label={t('rag.registerModal.s3Key')}
                 value={s3Key}
                 onChange={(e) => setS3Key(e.target.value)}
-                placeholder="bucket/path/to/document.pdf"
+                placeholder={t('rag.registerModal.s3KeyPlaceholder')}
               />
             )}
             {sourceType === 'URL' && (
               <TextField
                 size="small"
                 fullWidth
-                label="URL"
+                label={t('rag.registerModal.url')}
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://..."
+                placeholder={t('rag.registerModal.urlPlaceholder')}
               />
             )}
             <TextField
               size="small"
               fullWidth
-              label="Checksum (optional)"
+              label={t('rag.registerModal.checksum')}
               value={checksum}
               onChange={(e) => setChecksum(e.target.value)}
-              placeholder="SHA256 hash for integrity"
+              placeholder={t('rag.registerModal.checksumPlaceholder')}
             />
           </Stack>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} disabled={isLoading} sx={{ color: 'text.secondary' }}>
-            Cancel
+            {t('rag.registerModal.cancel')}
           </Button>
           <Button
             type="submit"
@@ -149,7 +151,7 @@ export const RegisterRagDocumentModal = ({
             disabled={!title.trim() || isLoading}
             startIcon={<Iconify icon={isLoading ? 'solar:refresh-bold' : 'solar:upload-bold'} width={18} />}
           >
-            {isLoading ? 'Registering...' : 'Register'}
+            {isLoading ? t('rag.registerModal.registering') : t('rag.registerModal.register')}
           </Button>
         </DialogActions>
       </form>

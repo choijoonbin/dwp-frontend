@@ -1,11 +1,11 @@
 import '@dwp-frontend/design-system/styles/global.css';
 
-import { StrictMode, useEffect } from 'react';
+import { useEffect, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AuthProvider, setLanguageHeaderProvider } from '@dwp-frontend/shared-utils';
-import { I18nProvider, getCurrentLanguage } from '@dwp-frontend/shared-i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router';
+import { I18nProvider, getCurrentLanguage } from '@dwp-frontend/shared-i18n';
+import { AuthProvider, setLanguageHeaderProvider } from '@dwp-frontend/shared-utils';
 
 import { ThemeProvider } from 'src/theme/theme-provider';
 

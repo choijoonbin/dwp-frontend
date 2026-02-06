@@ -1,3 +1,4 @@
+import { i18n } from '@dwp-frontend/shared-i18n';
 import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
 
 import { useMenuTreeStore } from './menu-tree-store';
@@ -131,6 +132,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     loadUserData();
+  }, [accessToken]);
+
+  // Refetch menu tree when language changes (sidebar labels need Accept-Language header)
+  useEffect(() => {
+    if (!accessToken) return () => {};
+
+    const refetchMenuTree = async () => {
+      try {
+        const res = await getMenuTree();
+        if (res.data?.menus && Array.isArray(res.data.menus)) {
+          const normalizedMenus = normalizeMenuTreePaths(res.data.menus);
+          useMenuTreeStore.getState().actions.setMenuTree(normalizedMenus);
+        } else {
+          useMenuTreeStore.getState().actions.setMenuTree([]);
+        }
+      } catch {
+        useMenuTreeStore.getState().actions.setMenuTree([]);
+      }
+    };
+
+    const handler = () => void refetchMenuTree();
+    i18n.on('languageChanged', handler);
+    return () => i18n.off('languageChanged', handler);
   }, [accessToken]);
 
   const loginWithToken = useCallback(async (token: string) => {

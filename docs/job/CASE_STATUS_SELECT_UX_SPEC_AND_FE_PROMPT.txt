@@ -1,0 +1,136 @@
+# 케이스 상태값(Selectbox) 정리 + 트렌드형 Select UI/UX 설계(공통 적용)
+
+---
+
+## 1) 결론/결정안(1~3줄)
+- 현재 상태 목록은 “실제 워크플로우에서 쓰는 최소 상태”라기보다 **코드 테이블에 정의된 ‘상태 코드 전체(슈퍼셋)’가 그대로 노출**된 가능성이 큽니다.
+- 케이스 화면은 **허용 상태(Allowed Status Set)** 만 노출하도록 “워크플로우 기준 필터링”이 필요합니다.
+- Selectbox는 공통 컴포넌트로 **검색+가상스크롤+상위 고정(Top N) + 그룹핑** 형태로 표준화합니다.
+
+---
+
+## 2) Assumptions / Open Questions / Default
+- Assumption: 상태 목록은 FE가 `useCodes('CASE_STATUS')` 등으로 받은 코드를 그대로 렌더링한 것.
+- Open Question: “케이스 상태 워크플로우(실제 단계)”에서 허용되는 상태 전이/노출 범위가 확정되어 있는지(정책/운영 문서).
+- Default(권장): **SynapseX P0에서는 6개만 표준 노출**(NEW, TRIAGE, IN_REVIEW, IN_PROGRESS, APPROVAL_PENDING, RESOLVED) + 기타는 “More / 검색”으로만 접근.
+
+---
+
+## 3) 상태값이 왜 이렇게 많나? (설명)
+- “대기/검토/검토중/진행중/승인대기/승인됨/실행됨/거절됨/실패/해결됨/완료/종료/무시됨/보관 …” 같은 값은 보통
+  - (A) **전체 프로세스(탐지→트리아지→승인→실행→종결)** 를 모두 커버하는 ‘전체 상태 코드셋’
+  - (B) 혹은 여러 도메인(케이스/액션/워크플로우)에서 재사용하기 위한 통합 코드셋
+  인 경우가 많습니다.
+- 문제는 “화면에서 실제로 필요한 상태 필터”는 대개 5~7개 수준인데, 코드셋 전체를 UI에 그대로 뿌리면 UX가 무너집니다.
+- 따라서 **1) 코드셋(전체) 유지 + 2) 화면별 허용 노출셋(부분집합) 매핑**이 표준입니다.
+
+---
+
+## 4) 구현 범위(In / Out)
+### In (이번 개선에 포함)
+- 케이스 상태 Selectbox를 “트렌드형 searchable select”로 교체(공통 컴포넌트)
+- 케이스 화면에서 상태 옵션은 “허용 노출셋”으로 필터링
+- Top N(고정) + 기타는 검색/스크롤 접근
+- 키보드 네비게이션/접근성(ESC 닫기, 방향키 이동, Enter 선택)
+
+### Out (1차에서 제외)
+- 상태 전이 규칙(상태 변경 액션) 자체의 워크플로우 엔진화
+- 사용자별 “즐겨찾기 상태” 개인화(차후 가능)
+- 서버에서 옵션 노출셋을 완전 동적으로 내려주는 정책(Profile) 고도화(차후)
+
+---
+
+## 5) UI/UX 설계(트렌드 기준)
+### 5.1 기본 형태(권장)
+- **Combobox(검색형 Select)**:
+  - 입력창(placeholder: “상태 검색…”) + 드롭다운 리스트
+  - 타이핑하면 즉시 필터링
+  - 결과 없으면 “No results”
+- 드롭다운 높이 제한: `max-h: 280~320px`
+- 리스트는 **가상 스크롤(virtualized)** 적용(코드가 수백개까지 늘어날 수 있으므로)
+- 옵션 구성:
+  - (Pinned) “자주 쓰는 상태” 5~7개 상단 고정
+  - (Divider) “All statuses”
+  - (All) 검색 결과/전체 리스트(스크롤)
+
+### 5.2 라벨/칩/상태 뱃지 표시
+- 선택된 값은 Select 트리거에 “라벨 + (선택적) 상태 뱃지”로 표시
+- 상태가 많을수록 라벨은 짧게(번역키 기준), 뱃지는 severity처럼 컬러 토큰으로만 구분
+
+### 5.3 접근성/키보드
+- CmdK 스타일 Command 리스트(Shadcn Command 패턴) 추천
+- ↑↓ 이동, Enter 선택, Esc 닫기, Tab 포커스 이동
+
+---
+
+## 6) 공통 컴포넌트 제안(프론트)
+### 6.1 컴포넌트 이름/역할
+- `CodeSelectCombobox`
+  - props:
+    - `items: {value, label, group?, pinned?}[]`
+    - `value`, `onChange`
+    - `placeholder`
+    - `maxPinned?: number` (default 7)
+    - `enableSearch?: true`
+    - `virtualized?: true`
+- `useCodeOptions(menuKey, groupKey)` (있다면)
+  - 백엔드 usage API를 통해 “화면별 필요한 코드 그룹”만 로딩하는 흐름 유지
+
+### 6.2 케이스 상태 필터링(핵심)
+- `CASE_STATUS` 전체를 받더라도, 케이스 화면에서는:
+  - `ALLOWED_CASE_STATUS_FOR_FILTER = [...]` 로 부분집합만 노출
+  - 나머지는 “More(전체 보기)” 토글을 눌렀을 때만 노출(또는 검색 시만 노출)
+- 이 Allowed Set은 1차는 FE 상수로 고정, 2차는 BE에서 profile로 내려줄 수 있음.
+
+---
+
+## 7) 백엔드 옵션(선택) — 화면별 Allowed Status를 서버에서 내려주는 방식
+※ 1차는 FE 상수로도 충분합니다. 다만 “고객사별 정책”이 커지면 서버로 이동해야 합니다.
+- `GET /api/admin/codes/usage?menuKey=menu.autonomous-operations.cases`
+  - 확장 응답 예:
+    - groupKeys: ["CASE_STATUS", ...]
+    - allowedCodes: { "CASE_STATUS": ["NEW","TRIAGE",...]}
+- 또는 별도 `policy_profile` 기반으로 관리(2차)
+
+---
+
+## 8) 스모크 플로우(클릭 경로 → 기대 동작)
+1) /synapse/cases 진입
+2) 상태 Select 클릭
+3) 상단에 “고정 6개”만 먼저 보임 + 아래 “검색 입력”
+4) 스크롤 또는 검색으로 나머지 상태 찾기
+5) 선택 시 즉시 필터 적용(쿼리 파라미터로 status 전달) + 선택 라벨 표시
+
+---
+
+## 9) 체크리스트(완료 기준/엣지케이스)
+- [ ] 옵션 100개 이상이어도 드롭다운이 화면을 덮지 않고 max-height 유지
+- [ ] 검색 입력 시 200ms 이내 필터링(가상 스크롤 포함)
+- [ ] Pinned 영역이 항상 상단 유지
+- [ ] 다국어(ko/en)에서 label 길이 변화에도 레이아웃 깨짐 없음
+- [ ] 키보드로만 선택 가능(접근성)
+- [ ] 상태 코드가 서버에서 추가되어도 UI가 깨지지 않음(기본: 전체 숨김 + 검색 접근)
+
+---
+
+## 10) 프론트팀 전달용 프롬프트(바로 복붙)
+아래 텍스트를 Cursor/프론트팀에 그대로 전달하세요.
+
+---
+[FE PROMPT] Case Status Select UX 개선(공통 Code Select Combobox)
+목표:
+- CASE_STATUS 같은 코드 그룹 옵션이 많아도 UX가 무너지지 않도록 “검색형/가상스크롤/상위고정” select를 공통 컴포넌트로 구현한다.
+범위:
+- /synapse/cases 의 상태 필터 select를 신규 공통 컴포넌트로 교체
+- status 옵션은 Allowed Set(기본 6개)만 기본 노출, 전체는 검색/More로 접근
+기술:
+- shadcn/ui Command(or Combobox) 패턴 + Tailwind
+- virtualized list(react-virtual 등) 가능하면 적용
+DoD:
+- 옵션이 100개여도 드롭다운 높이 고정 + 검색 가능 + pinned 6개 상단 고정
+- ko/en 전환 시 라벨 정상
+- 키보드 네비게이션 동작
+테스트:
+- 케이스 화면에서 status 선택/검색/스크롤 동작 캡처
+- Playwright(있다면)로 “검색 후 선택” 1개 스모크 추가
+--- 

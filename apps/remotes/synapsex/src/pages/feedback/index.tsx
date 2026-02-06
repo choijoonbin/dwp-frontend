@@ -5,6 +5,7 @@
 import type { SelectChangeEvent } from '@mui/material/Select';
 
 import { useState } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
   useFeedbackQuery,
@@ -38,21 +39,11 @@ import DialogContentText from '@mui/material/DialogContentText';
 
 // ----------------------------------------------------------------------
 
-const TARGET_TYPES: { value: FeedbackCreateRequest['targetType']; label: string }[] = [
-  { value: 'CASE', label: 'Case' },
-  { value: 'DOC', label: 'Document' },
-  { value: 'ENTITY', label: 'Entity' },
-];
-
-const LABELS: { value: FeedbackCreateRequest['label']; label: string; color: 'success' | 'error' | 'default' }[] = [
-  { value: 'VALID', label: 'Valid', color: 'success' },
-  { value: 'INVALID', label: 'Invalid', color: 'error' },
-  { value: 'NEEDS_REVIEW', label: 'Needs Review', color: 'default' },
-];
 
 // ----------------------------------------------------------------------
 
 export const FeedbackPage = () => {
+  const { t } = useTranslation('common');
   const [targetType, setTargetType] = useState<FeedbackCreateRequest['targetType']>('CASE');
   const [targetId, setTargetId] = useState('');
   const [label, setLabel] = useState<FeedbackCreateRequest['label']>('NEEDS_REVIEW');
@@ -112,10 +103,10 @@ export const FeedbackPage = () => {
           <CardContent sx={{ p: 6, textAlign: 'center' }}>
             <Iconify icon="solar:danger-triangle-bold-duotone" width={48} sx={{ color: 'error.main', mb: 2 }} />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load feedback
+              {t('feedback.error.failedToLoad')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {error instanceof Error ? error.message : 'Unknown error'}
+              {error instanceof Error ? error.message : t('error.errorState.unknownError')}
             </Typography>
           </CardContent>
         </Card>
@@ -137,11 +128,11 @@ export const FeedbackPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:chat-round-like-bold" width={20} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Feedback & Labeling
+                {t('feedback.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Human-in-the-loop quality loop: label outcomes for cases, documents, or entities.
+              {t('feedback.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -150,7 +141,7 @@ export const FeedbackPage = () => {
             startIcon={<Iconify icon="solar:add-circle-bold" width={18} />}
             onClick={() => setSubmitOpen(true)}
           >
-            Submit Feedback
+            {t('feedback.submitFeedback')}
           </Button>
         </Stack>
 
@@ -158,38 +149,38 @@ export const FeedbackPage = () => {
         <Card variant="outlined">
           <CardContent sx={{ p: 2.5 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-              List feedback by target
+              {t('feedback.listByTarget')}
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-              Filter feedback by target type and ID (e.g., case-123, doc-456).
+              {t('feedback.filterHint')}
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <FormControl size="small" sx={{ minWidth: 140 }}>
-                <InputLabel id="filter-target-type-label">Target Type</InputLabel>
+                <InputLabel id="filter-target-type-label">{t('feedback.targetType')}</InputLabel>
                 <Select
                   labelId="filter-target-type-label"
-                  label="Target Type"
+                  label={t('feedback.targetType')}
                   value={filterTargetType}
                   onChange={(e: SelectChangeEvent) => setFilterTargetType(e.target.value)}
                 >
-                  <MenuItem value="">All</MenuItem>
-                  {TARGET_TYPES.map((t) => (
-                    <MenuItem key={t.value} value={t.value}>
-                      {t.label}
+                  <MenuItem value="">{t('feedback.all')}</MenuItem>
+                  {(['CASE', 'DOC', 'ENTITY'] as const).map((val) => (
+                    <MenuItem key={val} value={val}>
+                      {t(`feedback.targetTypes.${val}`)}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
               <TextField
                 size="small"
-                label="Target ID"
+                label={t('feedback.targetId')}
                 value={filterTargetId}
                 onChange={(e) => setFilterTargetId(e.target.value)}
                 placeholder="e.g., case-123"
                 sx={{ flex: 1, maxWidth: 240 }}
               />
               <Button variant="outlined" onClick={handleApplyFilter} startIcon={<Iconify icon="solar:magnifer-linear" width={18} />}>
-                Search
+                {t('feedback.search')}
               </Button>
             </Stack>
           </CardContent>
@@ -201,22 +192,25 @@ export const FeedbackPage = () => {
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
               <Iconify icon="solar:chat-round-dots-bold" width={18} sx={{ color: 'text.secondary' }} />
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                Feedback List
+                {t('feedback.feedbackList')}
               </Typography>
             </Stack>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
               {appliedTargetType || appliedTargetId
-                ? `Showing feedback for ${appliedTargetType || 'any type'} ${appliedTargetId ? `· ${appliedTargetId}` : ''}`
-                : 'Enter target type and ID above, then click Search.'}
+                ? t('feedback.showingFeedback', {
+                    type: appliedTargetType || t('feedback.anyType'),
+                    id: appliedTargetId ? ` · ${appliedTargetId}` : '',
+                  })
+                : t('feedback.enterTargetHint')}
             </Typography>
             <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'action.hover' }}>
-                    <TableCell>Target</TableCell>
-                    <TableCell sx={{ width: 120 }}>Label</TableCell>
-                    <TableCell>Comment</TableCell>
-                    <TableCell sx={{ width: 160 }}>Created</TableCell>
+                    <TableCell>{t('feedback.table.target')}</TableCell>
+                    <TableCell sx={{ width: 120 }}>{t('feedback.table.label')}</TableCell>
+                    <TableCell>{t('feedback.table.comment')}</TableCell>
+                    <TableCell sx={{ width: 160 }}>{t('feedback.table.created')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -224,7 +218,7 @@ export const FeedbackPage = () => {
                     <TableRow>
                       <TableCell colSpan={4} align="center" sx={{ py: 8 }}>
                         <Typography variant="body2" color="text.secondary">
-                          Loading…
+                          {t('feedback.loading')}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -234,19 +228,19 @@ export const FeedbackPage = () => {
                         <Stack alignItems="center" spacing={1}>
                           <Iconify icon="solar:chat-round-like-bold" width={48} sx={{ color: 'text.disabled' }} />
                           <Typography variant="body2" color="text.secondary">
-                            No feedback found
+                            {t('feedback.empty')}
                           </Typography>
                           <Typography variant="caption" color="text.disabled">
                             {appliedTargetType || appliedTargetId
-                              ? 'Try different filters'
-                              : 'Submit feedback or filter by target'}
+                              ? t('feedback.tryDifferent')
+                              : t('feedback.submitOrFilter')}
                           </Typography>
                         </Stack>
                       </TableCell>
                     </TableRow>
                   ) : (
                     feedbackList.map((f) => {
-                      const labelMeta = LABELS.find((l) => l.value === f.label);
+                      const labelColor = f.label === 'VALID' ? 'success' : f.label === 'INVALID' ? 'error' : 'default';
                       return (
                         <TableRow key={f.feedbackId} hover>
                           <TableCell>
@@ -255,8 +249,8 @@ export const FeedbackPage = () => {
                             </Typography>
                           </TableCell>
                           <TableCell>
-                            <Label color={labelMeta?.color ?? 'default'} sx={{ fontSize: '0.75rem' }}>
-                              {f.label}
+                            <Label color={labelColor} sx={{ fontSize: '0.75rem' }}>
+                              {t(`feedback.${f.label === 'VALID' ? 'valid' : f.label === 'INVALID' ? 'invalid' : 'needsReview'}`)}
                             </Label>
                           </TableCell>
                           <TableCell>
@@ -282,23 +276,23 @@ export const FeedbackPage = () => {
 
       {/* Submit Feedback Dialog */}
       <Dialog open={submitOpen} onClose={() => setSubmitOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Submit Feedback</DialogTitle>
+        <DialogTitle>{t('feedback.submitDialogTitle')}</DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ mb: 3 }}>
-            Submit feedback for a case, document, or entity. Labels help improve model quality.
+            {t('feedback.submitDialogHint')}
           </DialogContentText>
           <Stack spacing={2.5}>
             <FormControl fullWidth>
-              <InputLabel id="submit-target-type-label">Target Type</InputLabel>
+              <InputLabel id="submit-target-type-label">{t('feedback.targetType')}</InputLabel>
               <Select
                 labelId="submit-target-type-label"
-                label="Target Type"
+                label={t('feedback.targetType')}
                 value={targetType}
                 onChange={(e: SelectChangeEvent) => setTargetType(e.target.value as FeedbackCreateRequest['targetType'])}
               >
-                {TARGET_TYPES.map((t) => (
-                  <MenuItem key={t.value} value={t.value}>
-                    {t.label}
+                {(['CASE', 'DOC', 'ENTITY'] as const).map((val) => (
+                  <MenuItem key={val} value={val}>
+                    {t(`feedback.targetTypes.${val}`)}
                   </MenuItem>
                 ))}
               </Select>
@@ -306,25 +300,23 @@ export const FeedbackPage = () => {
             <TextField
               size="small"
               fullWidth
-              label="Target ID"
+              label={t('feedback.targetId')}
               value={targetId}
               onChange={(e) => setTargetId(e.target.value)}
               placeholder="e.g., case-123, doc-456"
               required
             />
             <FormControl fullWidth>
-              <InputLabel id="submit-label-label">Label</InputLabel>
+              <InputLabel id="submit-label-label">{t('feedback.table.label')}</InputLabel>
               <Select
                 labelId="submit-label-label"
-                label="Label"
+                label={t('feedback.table.label')}
                 value={label}
                 onChange={(e: SelectChangeEvent) => setLabel(e.target.value as FeedbackCreateRequest['label'])}
               >
-                {LABELS.map((l) => (
-                  <MenuItem key={l.value} value={l.value}>
-                    {l.label}
-                  </MenuItem>
-                ))}
+                <MenuItem value="VALID">{t('feedback.valid')}</MenuItem>
+                <MenuItem value="INVALID">{t('feedback.invalid')}</MenuItem>
+                <MenuItem value="NEEDS_REVIEW">{t('feedback.needsReview')}</MenuItem>
               </Select>
             </FormControl>
             <TextField
@@ -332,7 +324,7 @@ export const FeedbackPage = () => {
               fullWidth
               multiline
               rows={3}
-              label="Comment (optional)"
+              label={t('feedback.commentOptional')}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Additional context or rationale"
@@ -341,14 +333,14 @@ export const FeedbackPage = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setSubmitOpen(false)} sx={{ color: 'text.secondary' }}>
-            Cancel
+            {t('feedback.cancel')}
           </Button>
           <Button
             variant="contained"
             onClick={handleSubmitFeedback}
             disabled={!targetId.trim() || createMutation.isPending}
           >
-            {createMutation.isPending ? 'Submitting…' : 'Submit'}
+            {createMutation.isPending ? t('feedback.submitting') : t('feedback.submit')}
           </Button>
         </DialogActions>
       </Dialog>

@@ -2,8 +2,8 @@
  * Synapse Phase 3 — Knowledge/Policy TanStack Query hooks
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';

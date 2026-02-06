@@ -34,7 +34,7 @@ import { GuardrailEditorModal } from './components/guardrail-editor-modal';
 // ----------------------------------------------------------------------
 
 export const GuardrailsPage = () => {
-  const { t } = useTranslation('synapse');
+  const { t } = useTranslation('common');
   const [query, setQuery] = useState('');
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<GuardrailListDto | null>(null);
@@ -108,7 +108,7 @@ export const GuardrailsPage = () => {
   };
 
   const handleDelete = (g: GuardrailListDto) => {
-    if (window.confirm(t('confirm.deleteGuardrail', { name: g.name }))) {
+    if (window.confirm(t('guardrails.deleteConfirm', { name: g.name }))) {
       deleteMutation.mutate(g.guardrailId);
     }
   };
@@ -126,10 +126,10 @@ export const GuardrailsPage = () => {
           <CardContent sx={{ p: 6, textAlign: 'center' }}>
             <Iconify icon="solar:danger-triangle-bold-duotone" width={48} sx={{ color: 'error.main', mb: 2 }} />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load guardrails
+              {t('guardrails.error.failedToLoad')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {error instanceof Error ? error.message : 'Unknown error'}
+              {error instanceof Error ? error.message : t('error.errorState.unknownError')}
             </Typography>
           </CardContent>
         </Card>
@@ -151,11 +151,11 @@ export const GuardrailsPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:shield-check-bold" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Guardrails
+                {t('guardrails.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Define non-negotiable rules the agent must obey. These rules gate automated actions across all tenants.
+              {t('guardrails.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -164,7 +164,7 @@ export const GuardrailsPage = () => {
             startIcon={<Iconify icon="solar:add-circle-bold" width={18} />}
             onClick={handleCreate}
           >
-            New Guardrail
+            {t('guardrails.newGuardrail')}
           </Button>
         </Stack>
 
@@ -174,10 +174,10 @@ export const GuardrailsPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
                 <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
-                  Enabled guardrails
+                  {t('guardrails.enabledGuardrails')}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
-                  Active protections enforced by the agent
+                  {t('guardrails.enabledDesc')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {enabledCount}
@@ -189,10 +189,10 @@ export const GuardrailsPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
                 <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
-                  Total rules
+                  {t('guardrails.totalRules')}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
-                  All guardrails (enabled + disabled)
+                  {t('guardrails.totalRulesDesc')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {items.length}
@@ -204,15 +204,15 @@ export const GuardrailsPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
                 <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
-                  Common patterns
+                  {t('guardrails.commonPatterns')}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
-                  Amount caps, bank-change cooldown, SoD
+                  {t('guardrails.commonPatternsDesc')}
                 </Typography>
                 <Stack direction="row" spacing={0.5} flexWrap="wrap">
-                  <Chip label="Amount cap" size="small" variant="outlined" />
-                  <Chip label="Cooldown" size="small" variant="outlined" />
-                  <Chip label="Dual approval" size="small" variant="outlined" />
+                  <Chip label={t('guardrails.amountCap')} size="small" variant="outlined" />
+                  <Chip label={t('guardrails.cooldown')} size="small" variant="outlined" />
+                  <Chip label={t('guardrails.dualApproval')} size="small" variant="outlined" />
                 </Stack>
               </CardContent>
             </Card>
@@ -227,15 +227,15 @@ export const GuardrailsPage = () => {
                 <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                   <Iconify icon="solar:shield-warning-bold" width={20} sx={{ color: 'primary.main' }} />
                   <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                    Guardrail Ruleset
+                    {t('guardrails.ruleset')}
                   </Typography>
                 </Stack>
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-                  Toggle guardrails on/off, edit rules, and review the exact constraint enforced.
+                  {t('guardrails.rulesetHint')}
                 </Typography>
                 <TextField
                   size="small"
-                  placeholder="Search guardrails..."
+                  placeholder={t('guardrails.searchPlaceholder')}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   sx={{ mb: 2, width: '100%', maxWidth: 360 }}
@@ -249,13 +249,13 @@ export const GuardrailsPage = () => {
                   {isLoading ? (
                     <Box sx={{ p: 8, textAlign: 'center' }}>
                       <Typography variant="body2" color="text.secondary">
-                        Loading…
+                        {t('guardrails.loading')}
                       </Typography>
                     </Box>
                   ) : rows.length === 0 ? (
                     <Box sx={{ p: 10, textAlign: 'center' }}>
                       <Typography variant="body2" color="text.secondary">
-                        No guardrails match the current filters.
+                        {t('guardrails.empty')}
                       </Typography>
                     </Box>
                   ) : (
@@ -275,7 +275,7 @@ export const GuardrailsPage = () => {
                                 </Typography>
                                 <Chip label={g.scope} size="small" variant="outlined" sx={{ fontSize: '0.7rem' }} />
                                 {!g.isEnabled && (
-                                  <Chip label="disabled" size="small" variant="outlined" sx={{ fontSize: '0.75rem' }} />
+                                  <Chip label={t('guardrails.disabled')} size="small" variant="outlined" sx={{ fontSize: '0.75rem' }} />
                                 )}
                               </Stack>
                               <Typography variant="body2" color="text.secondary">
@@ -295,14 +295,14 @@ export const GuardrailsPage = () => {
                                 size="small"
                                 onClick={() => handleToggleEnabled(g)}
                                 disabled={updateMutation.isPending}
-                                title={g.isEnabled ? 'Disable' : 'Enable'}
+                                title={g.isEnabled ? t('guardrails.disable') : t('guardrails.enable')}
                               >
                                 <Iconify
                                   icon={g.isEnabled ? 'solar:shield-check-bold' : 'solar:shield-cross-bold'}
                                   width={18}
                                 />
                               </IconButton>
-                              <IconButton size="small" onClick={() => handleEdit(g)} title="Edit">
+                              <IconButton size="small" onClick={() => handleEdit(g)} title={t('guardrails.edit')}>
                                 <Iconify icon="solar:pen-bold" width={16} />
                               </IconButton>
                               <IconButton
@@ -310,7 +310,7 @@ export const GuardrailsPage = () => {
                                 color="error"
                                 onClick={() => handleDelete(g)}
                                 disabled={deleteMutation.isPending}
-                                title="Delete"
+                                title={t('guardrails.delete')}
                               >
                                 <Iconify icon="solar:trash-bin-trash-bold" width={16} />
                               </IconButton>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -9,6 +10,7 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import Snackbar from '@mui/material/Snackbar';
 import { useTheme } from '@mui/material/styles';
@@ -146,13 +148,22 @@ const RolesPageContent = () => {
     >
       <Stack spacing={3} sx={{ flex: 1, minHeight: 0 }}>
         {/* Header */}
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
           <Stack spacing={1}>
             <Typography variant="h4">권한 관리</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               권한 및 권한 그룹을 관리합니다.
             </Typography>
           </Stack>
+          <PermissionGate resource="menu.admin.roles" permission="CREATE" mode="disable">
+            <Button
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" width={20} />}
+              onClick={() => setCreateModalOpen(true)}
+            >
+              +새권한생성
+            </Button>
+          </PermissionGate>
         </Stack>
 
         {/* Main Content: Left List + Right Detail */}

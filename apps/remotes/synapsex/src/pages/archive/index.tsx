@@ -6,8 +6,8 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 
 import { Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { is403Error } from '@dwp-frontend/shared-utils';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -38,12 +38,13 @@ import type { ArchiveListItem } from './adapters/archive-list-adapter';
 
 // ----------------------------------------------------------------------
 
-const statusMeta: Record<string, { label: string; icon: string; color: 'success' | 'error' | 'warning' }> = {
-  completed: { label: 'Completed', icon: 'solar:check-circle-bold', color: 'success' },
-  executed: { label: 'Executed', icon: 'solar:check-circle-bold', color: 'success' },
-  failed: { label: 'Failed', icon: 'solar:close-circle-bold', color: 'error' },
-  pending: { label: 'Pending', icon: 'solar:clock-circle-bold', color: 'warning' },
-};
+const getStatusMeta = (t: (key: string) => string) =>
+  ({
+    completed: { label: t('archive.status.completed'), icon: 'solar:check-circle-bold', color: 'success' as const },
+    executed: { label: t('archive.status.executed'), icon: 'solar:check-circle-bold', color: 'success' as const },
+    failed: { label: t('archive.status.failed'), icon: 'solar:close-circle-bold', color: 'error' as const },
+    pending: { label: t('archive.status.pending'), icon: 'solar:clock-circle-bold', color: 'warning' as const },
+  }) as Record<string, { label: string; icon: string; color: 'success' | 'error' | 'warning' }>;
 
 const formatMoney = (amount: number, currency = 'USD') =>
   new Intl.NumberFormat('en-US', {
@@ -57,6 +58,7 @@ const formatMoney = (amount: number, currency = 'USD') =>
 
 export const ArchivePage = () => {
   const { t } = useTranslation('common');
+  const statusMeta = getStatusMeta(t);
   const [q, setQ] = useState('');
   const [status, setStatus] = useState<string>('all');
   const [type, setType] = useState<string>('all');
@@ -119,11 +121,11 @@ export const ArchivePage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:archive-bold" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Action Archive
+                {t('archive.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Review executed actions, outcomes, before/after deltas, and audit-ready artifacts.
+              {t('archive.subtitleDescription')}
             </Typography>
           </Box>
           <Stack direction="row" spacing={1}>
@@ -133,7 +135,7 @@ export const ArchivePage = () => {
               startIcon={<Iconify icon="solar:download-minimalistic-bold" width={18} />}
               sx={{ bgcolor: 'transparent' }}
             >
-              Export
+              {t('archive.export')}
             </Button>
           </Stack>
         </Stack>
@@ -145,13 +147,13 @@ export const ArchivePage = () => {
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                   <Box>
                     <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                      Completed
+                      {t('archive.completed')}
                     </Typography>
                     <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
                       {completedCount}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      Executed successfully
+                      {t('archive.executedSuccessfully')}
                     </Typography>
                   </Box>
                   <Iconify icon="solar:check-circle-bold" width={20} sx={{ color: 'success.main' }} />
@@ -165,13 +167,13 @@ export const ArchivePage = () => {
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                   <Box>
                     <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                      Pending
+                      {t('archive.pending')}
                     </Typography>
                     <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
                       {pendingCount}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      Awaiting execution/approval
+                      {t('archive.awaitingExecution')}
                     </Typography>
                   </Box>
                   <Iconify icon="solar:clock-circle-bold" width={20} sx={{ color: 'warning.main' }} />
@@ -185,13 +187,13 @@ export const ArchivePage = () => {
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                   <Box>
                     <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                      Failed
+                      {t('archive.failed')}
                     </Typography>
                     <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
                       {failedCount}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      Requires attention
+                      {t('archive.requiresAttention')}
                     </Typography>
                   </Box>
                   <Iconify icon="solar:close-circle-bold" width={20} sx={{ color: 'error.main' }} />
@@ -206,7 +208,7 @@ export const ArchivePage = () => {
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
               <Iconify icon="solar:filter-bold" width={18} sx={{ color: 'text.secondary' }} />
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                Search & Filters
+                {t('archive.filter.searchAndFilters')}
               </Typography>
             </Stack>
             <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -214,7 +216,7 @@ export const ArchivePage = () => {
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Search action id, case id, description…"
+                  placeholder={t('archive.filter.searchPlaceholder')}
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   slotProps={{
@@ -238,10 +240,10 @@ export const ArchivePage = () => {
                   onChange={(e: SelectChangeEvent) => setStatus(e.target.value)}
                   displayEmpty
                 >
-                  <MenuItem value="all">All statuses</MenuItem>
-                  <MenuItem value="completed">Completed</MenuItem>
-                  <MenuItem value="pending">Pending</MenuItem>
-                  <MenuItem value="failed">Failed</MenuItem>
+                  <MenuItem value="all">{t('archive.filter.allStatuses')}</MenuItem>
+                  <MenuItem value="completed">{t('archive.filter.completed')}</MenuItem>
+                  <MenuItem value="pending">{t('archive.filter.pending')}</MenuItem>
+                  <MenuItem value="failed">{t('archive.filter.failed')}</MenuItem>
                 </Select>
               </Grid>
               <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -252,10 +254,10 @@ export const ArchivePage = () => {
                   onChange={(e: SelectChangeEvent) => setType(e.target.value)}
                   displayEmpty
                 >
-                  <MenuItem value="all">All types</MenuItem>
-                  {uniqueTypes.map((t) => (
-                    <MenuItem key={t} value={t}>
-                      {t}
+                  <MenuItem value="all">{t('archive.filter.allTypes')}</MenuItem>
+                  {uniqueTypes.map((typeVal) => (
+                    <MenuItem key={typeVal} value={typeVal}>
+                      {typeVal}
                     </MenuItem>
                   ))}
                 </Select>
@@ -265,7 +267,7 @@ export const ArchivePage = () => {
             {isLoading ? (
               <Box sx={{ py: 8, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
-                  Loading archive...
+                  {t('archive.loading')}
                 </Typography>
               </Box>
             ) : (
@@ -273,12 +275,12 @@ export const ArchivePage = () => {
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Action</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Type</TableCell>
-                      <TableCell>Linked Case</TableCell>
-                      <TableCell align="right">Amount</TableCell>
-                      <TableCell>Executed</TableCell>
+                      <TableCell>{t('archive.table.action')}</TableCell>
+                      <TableCell>{t('archive.table.status')}</TableCell>
+                      <TableCell>{t('archive.table.type')}</TableCell>
+                      <TableCell>{t('archive.table.caseId')}</TableCell>
+                      <TableCell align="right">{t('archive.table.amount')}</TableCell>
+                      <TableCell>{t('archive.table.executed')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

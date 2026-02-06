@@ -8,7 +8,6 @@ import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
-import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 
 import { CodesTab } from './components/codes-tab';
@@ -65,19 +64,11 @@ const CodesPageContent = () => {
         <Stack spacing={1}>
           <Typography variant="h4">코드 관리</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            시스템 코드 그룹 및 코드를 관리합니다.
+            시스템 코드 그룹 및 코드를 관리합니다. 변경 시 드롭다운·검증에 즉시 반영됩니다.
           </Typography>
         </Stack>
 
-        <Alert
-          severity="warning"
-          icon={<Iconify icon="solar:danger-triangle-bold" width={18} />}
-          sx={{ alignItems: 'center' }}
-        >
-          코드 변경은 드롭다운 및 검증에 즉시 영향을 미칩니다. 운영 환경 변경 시 주의하세요.
-        </Alert>
-
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
           <Tabs value={tabValue} onChange={handleTabChange} sx={{ minHeight: 48 }}>
             <Tab
               label="코드 그룹"
@@ -94,8 +85,10 @@ const CodesPageContent = () => {
           </Tabs>
         </Box>
 
-        {tabValue === 0 && <CodeGroupsTab />}
-        {tabValue === 1 && <CodesTab />}
+        <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
+          {tabValue === 0 && <CodeGroupsTab />}
+          {tabValue === 1 && <CodesTab />}
+        </Box>
       </Stack>
     </Box>
   );

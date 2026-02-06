@@ -1,10 +1,10 @@
 import '@dwp-frontend/design-system/styles/global.css';
 
-import { StrictMode, useEffect } from 'react';
+import { useEffect, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from '@dwp-frontend/design-system';
 import { setLanguageHeaderProvider } from '@dwp-frontend/shared-utils';
-import { getCurrentLanguage, I18nProvider } from '@dwp-frontend/shared-i18n';
+import { I18nProvider, getCurrentLanguage } from '@dwp-frontend/shared-i18n';
 
 import { SynapseApp } from './synapse-app';
 

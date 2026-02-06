@@ -3,8 +3,8 @@
 import type { ResourceNode, ResourceCreatePayload, ResourceUpdatePayload } from '@dwp-frontend/shared-utils';
 
 import { useCallback } from 'react';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import {
   HttpError,
   trackEvent,
@@ -207,11 +207,46 @@ export const useResourceActions = (
     [deleteMutation, invalidateResourcesQueries, showSnackbar, t]
   );
 
+  // Toggle resource enabled (코드탭/코드그룹탭과 동일 패턴)
+  const toggleResourceEnabled = useCallback(
+    async (resource: ResourceNode) => {
+      try {
+        await updateMutation.mutateAsync({
+          resourceId: resource.id,
+          payload: { enabled: !resource.enabled },
+        });
+        invalidateResourcesQueries();
+        showSnackbar(
+          resource.enabled ? t('toast.resourceDisabled') : t('toast.resourceEnabled')
+        );
+        trackEvent({
+          resourceKey: 'menu.admin.resources',
+          action: 'UPDATE',
+          label: '리소스 활성화 토글',
+          metadata: {
+            resourceId: resource.id,
+            enabled: !resource.enabled,
+          },
+        });
+        return true;
+      } catch (error) {
+        if (error instanceof HttpError && error.status === 403) {
+          showSnackbar(t('error.permissionDenied'), 'error');
+        } else {
+          showSnackbar(error instanceof Error ? error.message : t('error.statusChangeFailed'), 'error');
+        }
+        return false;
+      }
+    },
+    [updateMutation, invalidateResourcesQueries, showSnackbar, t]
+  );
+
   return {
     // Mutations
     createResource,
     updateResource,
     deleteResource,
+    toggleResourceEnabled,
     // Mutation states
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,

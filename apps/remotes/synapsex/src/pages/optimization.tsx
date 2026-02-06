@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useOpenItemsListQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -43,16 +44,21 @@ type Mode = 'ar' | 'ap';
 
 type OpenItemLike = { id: string; docNumber: string; entityId: string; entityName: string; amount: number; currency: string; daysPastDue: number };
 
-function recommendationFor(item: OpenItemLike): { label: string; action: 'remind' | 'review' | 'hold'; color: 'error' | 'warning' | 'info' | 'success' } {
-  if (item.daysPastDue > 60) return { label: 'Escalate & propose dunning', action: 'remind', color: 'error' };
-  if (item.daysPastDue > 30) return { label: 'Send reminder + confirm promise date', action: 'remind', color: 'warning' };
-  if (item.amount > 500000) return { label: 'High-value review + approval required', action: 'review', color: 'info' };
-  return { label: 'Auto-follow-up eligible', action: 'remind', color: 'success' };
-}
+const getRecommendation = (
+  t: (key: string) => string
+): ((item: OpenItemLike) => { label: string; action: 'remind' | 'review' | 'hold'; color: 'error' | 'warning' | 'info' | 'success' }) =>
+  (item: OpenItemLike) => {
+    if (item.daysPastDue > 60) return { label: t('optimization.recommendation.escalateDunning'), action: 'remind', color: 'error' };
+    if (item.daysPastDue > 30) return { label: t('optimization.recommendation.sendReminder'), action: 'remind', color: 'warning' };
+    if (item.amount > 500000) return { label: t('optimization.recommendation.highValueReview'), action: 'review', color: 'info' };
+    return { label: t('optimization.recommendation.autoFollowUp'), action: 'remind', color: 'success' };
+  };
 
 // ----------------------------------------------------------------------
 
 export const OptimizationPage = () => {
+  const { t } = useTranslation('common');
+  const recommendationFor = getRecommendation(t);
   const [mode, setMode] = useState<Mode>('ar');
   const [search, setSearch] = useState('');
   const [risk, setRisk] = useState<string>('all');
@@ -105,7 +111,7 @@ export const OptimizationPage = () => {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
         <Typography variant="h6" color="error" sx={{ mb: 1 }}>
-          Failed to load open items
+          {t('optimization.error.failedToLoadOpenItems')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {error instanceof Error ? error.message : 'Unknown error'}
@@ -121,18 +127,18 @@ export const OptimizationPage = () => {
         <Box>
           <Typography variant="h4" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
             <Iconify icon="solar:chart-2-bold" width={24} sx={{ color: 'primary.main' }} />
-            AR/AP Optimization
+            {t('optimization.title')}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Prioritize open items, apply guardrails, and execute consistent follow-up at enterprise scale.
+            {t('optimization.subtitle')}
           </Typography>
         </Box>
         <Stack direction="row" spacing={1}>
           <Button variant="outlined" startIcon={<Iconify icon="solar:magic-stick-bold" />}>
-            Auto-recommend (mock)
+            {t('optimization.buttons.autoRecommend')}
           </Button>
           <Button variant="contained" startIcon={<Iconify icon="solar:plain-2-bold" />}>
-            Send Bulk Reminders
+            {t('optimization.buttons.sendBulkReminders')}
           </Button>
         </Stack>
       </Box>
@@ -144,10 +150,10 @@ export const OptimizationPage = () => {
             title={
               <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Iconify icon="solar:dollar-bold" width={16} sx={{ color: 'text.secondary' }} />
-                Total Exposure
+                {t('optimization.kpi.totalExposure')}
               </Typography>
             }
-            subheader="Current selection"
+            subheader={t('optimization.kpiDesc.currentSelection')}
             titleTypographyProps={{ variant: 'subtitle2' }}
             subheaderTypographyProps={{ variant: 'caption' }}
           />
@@ -162,10 +168,10 @@ export const OptimizationPage = () => {
             title={
               <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Iconify icon="solar:clock-circle-bold" width={16} sx={{ color: 'text.secondary' }} />
-                Overdue Amount
+                {t('optimization.kpi.overdueAmount')}
               </Typography>
             }
-            subheader="Only overdue items"
+            subheader={t('optimization.kpiDesc.onlyOverdue')}
             titleTypographyProps={{ variant: 'subtitle2' }}
             subheaderTypographyProps={{ variant: 'caption' }}
           />
@@ -180,10 +186,10 @@ export const OptimizationPage = () => {
             title={
               <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Iconify icon="solar:shield-warning-bold" width={16} sx={{ color: 'text.secondary' }} />
-                High-value Items
+                {t('optimization.kpi.highValueItems')}
               </Typography>
             }
-            subheader="> 500K requires approval"
+            subheader={t('optimization.kpiDesc.>500kApproval')}
             titleTypographyProps={{ variant: 'subtitle2' }}
             subheaderTypographyProps={{ variant: 'caption' }}
           />
@@ -201,7 +207,7 @@ export const OptimizationPage = () => {
           title={
             <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Iconify icon="solar:filter-bold" width={16} sx={{ color: 'text.secondary' }} />
-              Worklist Filters
+              {t('optimization.filters.worklistFilters')}
             </Typography>
           }
           titleTypographyProps={{ variant: 'subtitle2' }}
@@ -209,14 +215,14 @@ export const OptimizationPage = () => {
         <CardContent sx={{ pt: 0 }}>
           <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, alignItems: { lg: 'center' }, gap: 2 }}>
             <Tabs value={mode} onChange={(_, v) => setMode(v as Mode)}>
-              <Tab label="AR (Receivables)" value="ar" />
-              <Tab label="AP (Payables)" value="ap" />
+              <Tab label={t('optimization.filters.arReceivables')} value="ar" />
+              <Tab label={t('optimization.filters.apPayables')} value="ap" />
             </Tabs>
             <TextField
               size="small"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by document, entity, reference..."
+              placeholder={t('optimization.filters.searchPlaceholder')}
               sx={{ flex: 1 }}
               InputProps={{
                 startAdornment: (
@@ -229,7 +235,7 @@ export const OptimizationPage = () => {
             <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
               <FormControl size="small" sx={{ minWidth: 140 }}>
                 <Select value={bucket} onChange={(e) => setBucket(e.target.value)}>
-                  <MenuItem value="all">All</MenuItem>
+                  <MenuItem value="all">{t('optimization.filters.all')}</MenuItem>
                   <MenuItem value="0-30">0–30</MenuItem>
                   <MenuItem value="31-60">31–60</MenuItem>
                   <MenuItem value="60+">60+</MenuItem>
@@ -237,11 +243,11 @@ export const OptimizationPage = () => {
               </FormControl>
               <FormControl size="small" sx={{ minWidth: 160 }}>
                 <Select value={risk} onChange={(e) => setRisk(e.target.value)}>
-                  <MenuItem value="all">All risks</MenuItem>
-                  <MenuItem value="critical">Critical</MenuItem>
-                  <MenuItem value="high">High</MenuItem>
-                  <MenuItem value="medium">Medium</MenuItem>
-                  <MenuItem value="low">Low</MenuItem>
+                  <MenuItem value="all">{t('optimization.filters.allRisks')}</MenuItem>
+                  <MenuItem value="critical">{t('severityLabels.critical')}</MenuItem>
+                  <MenuItem value="high">{t('severityLabels.high')}</MenuItem>
+                  <MenuItem value="medium">{t('severityLabels.medium')}</MenuItem>
+                  <MenuItem value="low">{t('severityLabels.low')}</MenuItem>
                 </Select>
               </FormControl>
             </Stack>
@@ -255,10 +261,10 @@ export const OptimizationPage = () => {
           title={
             <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Iconify icon="solar:buildings-2-bold" width={16} sx={{ color: 'text.secondary' }} />
-              Optimization Worklist
+              {t('optimization.worklist.title')}
             </Typography>
           }
-          subheader="Recommendations are mocked; production will be driven by the Agent + policy profiles."
+          subheader={t('optimization.worklist.subtitle')}
           titleTypographyProps={{ variant: 'subtitle2' }}
           subheaderTypographyProps={{ variant: 'caption' }}
         />
@@ -267,12 +273,12 @@ export const OptimizationPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ width: 140 }}>Open Item</TableCell>
-                  <TableCell>Entity</TableCell>
-                  <TableCell sx={{ width: 140 }}>Amount</TableCell>
-                  <TableCell sx={{ width: 120 }}>Overdue</TableCell>
-                  <TableCell>Recommendation</TableCell>
-                  <TableCell sx={{ width: 160 }}>Next</TableCell>
+                  <TableCell sx={{ width: 140 }}>{t('optimization.table.openItem')}</TableCell>
+                  <TableCell>{t('optimization.table.entity')}</TableCell>
+                  <TableCell sx={{ width: 140 }}>{t('optimization.table.amount')}</TableCell>
+                  <TableCell sx={{ width: 120 }}>{t('optimization.table.overdue')}</TableCell>
+                  <TableCell>{t('optimization.table.recommendation')}</TableCell>
+                  <TableCell sx={{ width: 160 }}>{t('optimization.table.next')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -280,7 +286,7 @@ export const OptimizationPage = () => {
                   <TableRow>
                     <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
                       <Typography variant="body2" color="text.secondary">
-                        Loading open items...
+                        {t('optimization.table.loading')}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -288,7 +294,7 @@ export const OptimizationPage = () => {
                   <TableRow>
                     <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
                       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        No items match the current filters.
+                        {t('optimization.table.empty')}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -333,22 +339,26 @@ export const OptimizationPage = () => {
                             </Typography>
                           </>
                         ) : (
-                          <Chip label="Not due" variant="outlined" size="small" />
+                          <Chip label={t('optimization.table.notDue')} variant="outlined" size="small" />
                         )}
                       </TableCell>
                       <TableCell>
                         <Chip label={rec.label} color={rec.color} variant="outlined" size="small" />
                         <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5, display: 'block' }}>
-                          Ref: {item.docNumber}
+                          {t('optimization.table.ref', { docNumber: item.docNumber })}
                         </Typography>
                       </TableCell>
                       <TableCell>
                         <Stack direction="row" spacing={1}>
                           <Button size="small" variant="outlined">
-                            {rec.action === 'hold' ? 'Set Block' : rec.action === 'review' ? 'Request Approval' : 'Send'}
+                            {rec.action === 'hold'
+                              ? t('optimization.table.setBlock')
+                              : rec.action === 'review'
+                                ? t('optimization.table.requestApproval')
+                                : t('optimization.table.send')}
                           </Button>
                           <Button size="small" variant="text">
-                            Create case
+                            {t('optimization.table.createCase')}
                           </Button>
                         </Stack>
                       </TableCell>
@@ -362,11 +372,14 @@ export const OptimizationPage = () => {
 
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Showing {Math.min(200, rows.length)} of {rows.length.toLocaleString()} items
+              {t('optimization.table.showingItems', {
+                shown: Math.min(200, rows.length),
+                total: rows.length.toLocaleString(),
+              })}
             </Typography>
             <Stack direction="row" spacing={1}>
-              <Chip label="Guardrails applied" icon={<Iconify icon="solar:shield-warning-bold" width={14} />} variant="outlined" size="small" />
-              <Chip label="Agent suggestions" icon={<Iconify icon="solar:magic-stick-bold" width={14} />} variant="outlined" size="small" />
+              <Chip label={t('optimization.table.guardrailsApplied')} icon={<Iconify icon="solar:shield-warning-bold" width={14} />} variant="outlined" size="small" />
+              <Chip label={t('optimization.table.agentSuggestions')} icon={<Iconify icon="solar:magic-stick-bold" width={14} />} variant="outlined" size="small" />
             </Stack>
           </Box>
         </CardContent>

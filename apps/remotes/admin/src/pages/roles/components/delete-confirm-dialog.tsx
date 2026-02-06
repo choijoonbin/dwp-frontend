@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------
 
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Typography from '@mui/material/Typography';

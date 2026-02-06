@@ -9,6 +9,7 @@
 
 import type { ReactNode } from 'react';
 
+import { Navigate } from 'react-router-dom';
 import { PermissionRouteGuard, getResourceKeyForPath } from '@dwp-frontend/shared-utils';
 
 import { RagPage } from './pages/rag';
@@ -107,7 +108,14 @@ export const getPageForPathname = (pathname: string): ReactNode => {
   const normalized = pathname.replace(/^\//, '').trim();
   if (!normalized) return wrapWithRouteGuard(<DashboardPage />, 'synapse');
 
-  // 0) 상세 페이지 패턴 먼저 체크 (cases/:id, documents/:id, entities/:id, rag/:docId, policies/:profileId)
+  // 0) /synapse/admin/code-usages|menus|codes → Admin Remote로 리다이렉트 (동일 화면 버그 수정)
+  const synapseAdminRedirectMatch = normalized.match(/^synapse\/admin\/(code-usages|menus|codes)(?:\/|$)/);
+  if (synapseAdminRedirectMatch) {
+    const subPath = synapseAdminRedirectMatch[1];
+    return <Navigate to={`/admin/${subPath}`} replace />;
+  }
+
+  // 1) 상세 페이지 패턴 먼저 체크 (cases/:id, documents/:id, entities/:id, rag/:docId, policies/:profileId)
   const detailMatch = normalized.match(/^(?:synapse\/)?(cases|documents|entities|rag|policies|reconciliation)\/(.+)$/);
   if (detailMatch) {
     const [, resource, idOrPath] = detailMatch;

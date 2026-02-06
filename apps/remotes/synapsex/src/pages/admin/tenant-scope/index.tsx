@@ -1,3 +1,5 @@
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Select from '@mui/material/Select';
@@ -23,6 +25,7 @@ function formatLastUpdated(isoString: string | undefined): string {
 }
 
 export const TenantScopeTab = () => {
+  const { t } = useTranslation('common');
   const {
     companyCodes,
     currencies,
@@ -54,7 +57,7 @@ export const TenantScopeTab = () => {
     return (
       <Box sx={{ mt: 3 }}>
         <ErrorState
-          message="No profiles found. Configure a profile first in PII & Encryption tab."
+          message={`${t('tenantScope.noProfilesFound')} ${t('tenantScope.noProfilesHint')}`}
           onRetry={refetch}
         />
       </Box>
@@ -65,7 +68,7 @@ export const TenantScopeTab = () => {
     return (
       <Box sx={{ mt: 3 }}>
         <ErrorState
-          message={error instanceof Error ? error.message : 'Failed to load tenant scope.'}
+          message={error instanceof Error ? error.message : t('tenantScope.failedToLoad')}
           onRetry={() => refetch()}
         />
       </Box>
@@ -76,16 +79,16 @@ export const TenantScopeTab = () => {
     <Box sx={{ mt: 3 }}>
       <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
         <FormControl size="small" sx={{ minWidth: 200 }}>
-          <InputLabel>Profile</InputLabel>
+          <InputLabel>{t('tenantScope.profile')}</InputLabel>
           <Select
             value={profileId ?? ''}
-            label="Profile"
+            label={t('tenantScope.profile')}
             onChange={(e) => setProfileId(e.target.value || null)}
           >
             {profileOptions.map((p) => (
               <MenuItem key={p.id} value={p.id}>
                 {p.name}
-                {p.isDefault ? ' (default)' : ''}
+                {p.isDefault ? ` ${t('tenantScope.profileDefault')}` : ''}
               </MenuItem>
             ))}
           </Select>
@@ -124,7 +127,7 @@ export const TenantScopeTab = () => {
       {meta?.lastUpdatedAt && (
         <Stack direction="row" justifyContent="flex-end" sx={{ mt: 2 }}>
           <Typography variant="caption" color="text.secondary">
-            마지막 업데이트: {formatLastUpdated(meta.lastUpdatedAt)}
+            {t('tenantScope.lastUpdated')}: {formatLastUpdated(meta.lastUpdatedAt)}
           </Typography>
         </Stack>
       )}

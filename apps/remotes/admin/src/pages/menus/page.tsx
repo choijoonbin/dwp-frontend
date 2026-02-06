@@ -2,8 +2,8 @@
 
 import type { AdminMenuNode } from '@dwp-frontend/shared-utils';
 
-import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
 import { Iconify, ConfirmDialog, PermissionGate } from '@dwp-frontend/design-system';
 
@@ -12,11 +12,11 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import Snackbar from '@mui/material/Snackbar';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useMenuActions } from './hooks/use-menu-actions';
@@ -259,10 +259,14 @@ const MenusPageContent = () => {
               메뉴 트리 및 메뉴 정보를 관리합니다.
             </Typography>
           </Stack>
-          <PermissionGate resource="menu.admin.menus" permission="CREATE">
-            <IconButton onClick={handleOpenCreateRoot} color="primary" sx={{ width: 48, height: 48 }}>
-              <Iconify icon="mingcute:add-line" width={24} />
-            </IconButton>
+          <PermissionGate resource="menu.admin.menus" permission="CREATE" mode="disable">
+            <Button
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" width={20} />}
+              onClick={handleOpenCreateRoot}
+            >
+              새 메뉴
+            </Button>
           </PermissionGate>
         </Stack>
 

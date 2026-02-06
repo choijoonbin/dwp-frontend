@@ -1,9 +1,8 @@
 import type { UseMutationResult } from '@tanstack/react-query';
 
 import { useState } from 'react';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
-
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import {
   showToast,
   useCurrencyCatalogQuery,
@@ -25,11 +24,6 @@ import FormControl from '@mui/material/FormControl';
 
 import { CatalogAddDialog } from './catalog-add-dialog';
 
-const FX_MODES: { value: 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED'; label: string }[] = [
-  { value: 'ALLOW', label: 'Allow' },
-  { value: 'FX_REQUIRED', label: 'FX Required' },
-  { value: 'FX_LOCKED', label: 'FX Locked' },
-];
 
 type PatchCurrencyMutation = UseMutationResult<
   unknown,
@@ -145,11 +139,11 @@ export const CurrencyCard = ({
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:global-bold-duotone" width={18} />
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                Currencies
+                {t('tenantScope.currencies')}
               </Typography>
             </Stack>
           }
-          subheader="Multi-currency with FX controls."
+          subheader={t('tenantScope.currenciesSubheader')}
           action={
             <Button
               size="small"
@@ -157,7 +151,7 @@ export const CurrencyCard = ({
               startIcon={<Iconify icon="solar:add-circle-bold" width={16} />}
               onClick={() => setAddOpen(true)}
             >
-              Add
+              {t('tenantScope.add')}
             </Button>
           }
           sx={{ pb: 2 }}
@@ -165,15 +159,15 @@ export const CurrencyCard = ({
         <CardContent>
           <Stack spacing={1.5}>
             <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5 }}>
-              Included: {items.filter((i) => i.enabled).length} / Total: {items.length}
+              {t('tenantScope.included')}: {items.filter((i) => i.enabled).length} / {t('tenantScope.total')}: {items.length}
             </Typography>
             {isLoading ? (
               <Typography variant="body2" color="text.secondary">
-                Loading...
+                {t('tenantScope.loading')}
               </Typography>
             ) : items.length === 0 ? (
               <Typography variant="body2" color="text.secondary">
-                No currencies configured.
+                {t('tenantScope.noCurrencies')}
               </Typography>
             ) : (
               items.map((item) => (
@@ -196,23 +190,27 @@ export const CurrencyCard = ({
                       {item.waers}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {item.enabled ? 'Allowed postings and reports' : 'Disabled'}
+                      {item.enabled ? t('tenantScope.allowedPostings') : t('tenantScope.disabled')}
                     </Typography>
                   </Box>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <FormControl size="small" sx={{ minWidth: 120 }}>
-                      <InputLabel>FX Mode</InputLabel>
+                      <InputLabel>{t('tenantScope.fxMode')}</InputLabel>
                       <Select
                         value={item.fxControlMode ?? 'ALLOW'}
-                        label="FX Mode"
+                        label={t('tenantScope.fxMode')}
                         onChange={(e) =>
                           handleFxModeChange(item.waers, e.target.value as 'ALLOW' | 'FX_REQUIRED' | 'FX_LOCKED')
                         }
                         disabled={patchMutation.isPending || !item.enabled}
                       >
-                        {FX_MODES.map((m) => (
+                        {[
+                          { value: 'ALLOW' as const, key: 'fxAllow' },
+                          { value: 'FX_REQUIRED' as const, key: 'fxRequired' },
+                          { value: 'FX_LOCKED' as const, key: 'fxLocked' },
+                        ].map((m) => (
                           <MenuItem key={m.value} value={m.value}>
-                            {m.label}
+                            {t(`tenantScope.${m.key}`)}
                           </MenuItem>
                         ))}
                       </Select>
@@ -233,7 +231,7 @@ export const CurrencyCard = ({
       <CatalogAddDialog
         open={addOpen}
         onClose={() => setAddOpen(false)}
-        title="Add Currencies"
+        title={t('tenantScope.addCurrencies')}
         keyField="waers"
         items={catalogItems}
         existingKeys={existingKeys}

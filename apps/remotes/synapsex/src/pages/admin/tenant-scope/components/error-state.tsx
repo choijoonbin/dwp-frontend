@@ -1,4 +1,5 @@
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
@@ -10,10 +11,10 @@ type ErrorStateProps = {
   onRetry?: () => void;
 };
 
-export const ErrorState = ({
-  message = 'Failed to load tenant scope.',
-  onRetry,
-}: ErrorStateProps) => (
+export const ErrorState = ({ message, onRetry }: ErrorStateProps) => {
+  const { t } = useTranslation('common');
+  const displayMessage = message ?? t('tenantScope.failedToLoad');
+  return (
   <Box sx={{ py: 3 }}>
     <Alert
       severity="error"
@@ -21,12 +22,13 @@ export const ErrorState = ({
       action={
         onRetry && (
           <Button color="inherit" size="small" onClick={onRetry}>
-            Retry
+            {t('tenantScope.retry')}
           </Button>
         )
       }
     >
-      <Typography variant="body2">{message}</Typography>
+      <Typography variant="body2">{displayMessage}</Typography>
     </Alert>
   </Box>
-);
+  );
+};

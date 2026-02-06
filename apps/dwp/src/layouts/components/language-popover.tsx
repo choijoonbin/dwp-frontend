@@ -1,7 +1,7 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
 import { useCallback } from 'react';
-import { usePopover, useToast } from '@dwp-frontend/shared-utils';
+import { useToast, usePopover } from '@dwp-frontend/shared-utils';
 import { useLanguage, useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';

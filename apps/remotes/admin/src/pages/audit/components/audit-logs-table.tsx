@@ -6,6 +6,7 @@ import { memo } from 'react';
 import { ApiErrorAlert } from '@dwp-frontend/shared-utils';
 import { Iconify, EmptyState } from '@dwp-frontend/design-system';
 
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
@@ -33,6 +34,8 @@ type AuditLogsTableProps = {
   onPageChange: (newPage: number) => void;
   onRowsPerPageChange: (newRowsPerPage: number) => void;
   onRowClick: (log: AuditLogSummary) => void;
+  /** fixed 레이아웃 시 부모 Card 내부에 삽입할 때 true */
+  embedded?: boolean;
 };
 
 export const AuditLogsTable = memo(({
@@ -44,6 +47,7 @@ export const AuditLogsTable = memo(({
   onPageChange,
   onRowsPerPageChange,
   onRowClick,
+  embedded = false,
 }: AuditLogsTableProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -134,9 +138,14 @@ export const AuditLogsTable = memo(({
     );
   }
 
-  return (
-    <Card>
-      <TableContainer sx={{ maxHeight: { md: 640 }, overflowX: 'auto' }}>
+  const tableContent = (
+    <>
+      <TableContainer
+        sx={{
+          overflowX: 'auto',
+          ...(embedded ? { flex: 1, minHeight: 0, overflow: 'auto' } : { maxHeight: { md: 640 } }),
+        }}
+      >
         <Table stickyHeader sx={{ minWidth: 860, tableLayout: 'fixed' }}>
           <TableHead>
             <TableRow sx={{ height: 56 }}>
@@ -229,8 +238,18 @@ export const AuditLogsTable = memo(({
           labelRowsPerPage="페이지당 행 수:"
         />
       )}
-    </Card>
+    </>
   );
+
+  if (embedded) {
+    return (
+      <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        {tableContent}
+      </Box>
+    );
+  }
+
+  return <Card>{tableContent}</Card>;
 });
 
 AuditLogsTable.displayName = 'AuditLogsTable';

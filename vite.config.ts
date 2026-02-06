@@ -40,6 +40,9 @@ export default defineConfig(({ mode }) => {
       __APP_VERSION__: JSON.stringify(packageJson.version),
       'process.env.NX_API_URL': JSON.stringify(env.NX_API_URL ?? 'http://localhost:8080'),
     },
+    optimizeDeps: {
+      include: ['i18next', 'react-i18next', 'i18next-resources-to-backend'],
+    },
     test: {
       exclude: [
         '**/node_modules/**',
@@ -81,6 +84,10 @@ export default defineConfig(({ mode }) => {
         {
           find: /^@dwp-frontend\/shared-utils(.*)$/,
           replacement: path.resolve(__dirname, 'libs/shared-utils/src$1'),
+        },
+        {
+          find: /^@dwp-frontend\/shared-i18n(.*)$/,
+          replacement: path.resolve(__dirname, 'libs/shared-i18n/src$1'),
         },
         // Synapse remote (Host가 apps/dwp root에서 remotes/synapsex 로드)
         {

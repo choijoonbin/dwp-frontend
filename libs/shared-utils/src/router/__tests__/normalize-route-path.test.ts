@@ -38,4 +38,12 @@ describe('normalizeRoutePath', () => {
     expect(normalizeRoutePath('/app/admin/aiworkspace#section')).toBe('/ai-workspace#section');
     expect(normalizeRoutePath('/app//admin//users/?q=1')).toBe('/admin/users?q=1');
   });
+
+  it('redirects synapse/admin/code-usages|menus|codes to admin/*', () => {
+    expect(normalizeRoutePath('/synapse/admin/code-usages')).toBe('/admin/code-usages');
+    expect(normalizeRoutePath('/synapse/admin/menus')).toBe('/admin/menus');
+    expect(normalizeRoutePath('/synapse/admin/codes')).toBe('/admin/codes');
+    expect(normalizeRoutePath('synapse/admin/code-usages')).toBe('/admin/code-usages');
+    expect(normalizeRoutePath('synapse/admin/menus')).toBe('/admin/menus');
+  });
 });

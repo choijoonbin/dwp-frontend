@@ -55,6 +55,35 @@ const sortRootMenuNodes = (nodes: MenuNode[]): MenuNode[] =>
   });
 
 /**
+ * menuKey → default icon (BE에서 icon 미제공 시 사용)
+ * 이상징후, 채권채무, 조치이력보관함 등과 동일하게 조치실행센터에도 아이콘 통일
+ */
+const MENU_KEY_TO_ICON: Record<string, string> = {
+  'menu.autonomous-operations.cases': 'solar:clipboard-list-bold',
+  'menu.autonomous-operations.anomalies': 'solar:danger-triangle-bold',
+  'menu.autonomous-operations.optimization': 'solar:chart-2-bold',
+  'menu.autonomous-operations.actions': 'solar:play-circle-bold',
+  'menu.autonomous-operations.archive': 'solar:archive-bold',
+  'menu.master-data-history.documents': 'solar:document-text-bold',
+  'menu.master-data-history.open-items': 'solar:wallet-money-bold',
+  'menu.master-data-history.entities': 'solar:users-group-rounded-bold',
+  'menu.master-data-history.lineage': 'solar:git-branch-bold',
+  'menu.knowledge-policy.rag': 'solar:book-bold',
+  'menu.knowledge-policy.policies': 'solar:shield-check-bold',
+  'menu.knowledge-policy.guardrails': 'solar:fence-bold',
+  'menu.knowledge-policy.dictionary': 'solar:book-2-bold',
+  'menu.knowledge-policy.feedback': 'solar:chat-round-dots-bold',
+  'menu.reconciliation-audit.reconciliation': 'solar:document-add-bold',
+  'menu.reconciliation-audit.action-recon': 'solar:git-compare-bold',
+  'menu.reconciliation-audit.audit': 'solar:history-bold',
+  'menu.reconciliation-audit.analytics': 'solar:chart-square-bold',
+  'menu.governance-config.governance': 'solar:settings-bold',
+  'menu.governance-config.agent-config': 'solar:magic-stick-3-bold',
+  'menu.governance-config.integrations': 'solar:plug-circle-bold',
+  'menu.governance-config.admin': 'solar:settings-bold',
+};
+
+/**
  * Convert MenuNode to NavItem
  * - If path is missing, use first child's path as fallback
  * - Convert icon string to Iconify component
@@ -69,10 +98,11 @@ const convertMenuNodeToNavItem = (node: MenuNode): NavItem => {
   // If path is missing and has children, use first child's path as fallback
   const path = node.path || (sortedChildren && sortedChildren.length > 0 ? sortedChildren[0].path : '#');
 
-  // Use backend icon if available, otherwise fallback
-  const iconString = node.icon && typeof node.icon === 'string' && node.icon.trim() 
-    ? node.icon.trim() 
-    : 'solar:circle-bold'; // Fallback icon only when backend icon is missing
+  // Use backend icon if available, else menuKey fallback, else generic circle
+  const iconString =
+    node.icon && typeof node.icon === 'string' && node.icon.trim()
+      ? node.icon.trim()
+      : MENU_KEY_TO_ICON[node.menuKey] ?? 'solar:circle-bold';
 
   // menuName 우선, 없으면 name fallback (BE menus/tree가 언어별 menuName 반환)
   const displayName =

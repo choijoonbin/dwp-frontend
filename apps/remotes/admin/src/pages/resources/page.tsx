@@ -62,7 +62,7 @@ const ResourcesPageContent = () => {
     closeSnackbar,
   } = useResourceEditorState();
 
-  const { createResource, updateResource, deleteResource, isCreating, isUpdating } = useResourceActions(showSnackbar, refetch);
+  const { createResource, updateResource, deleteResource, toggleResourceEnabled, isCreating, isUpdating } = useResourceActions(showSnackbar, refetch);
 
   // Additional state for dialogs
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -116,6 +116,20 @@ const ResourcesPageContent = () => {
       },
     });
     openEditDialog(resource);
+    handleMenuClose();
+  };
+
+  const handleToggleEnabled = async (resource: ResourceNode) => {
+    trackEvent({
+      resourceKey: 'btn.admin.resources.toggle',
+      action: 'CLICK',
+      label: '리소스 활성화 토글',
+      metadata: {
+        resourceId: resource.id,
+        resourceName: resource.resourceName,
+      },
+    });
+    await toggleResourceEnabled(resource);
     handleMenuClose();
   };
 
@@ -207,6 +221,7 @@ const ResourcesPageContent = () => {
                 onMenuOpen={handleMenuOpen}
                 onMenuClose={handleMenuClose}
                 onEdit={handleEdit}
+                onToggleEnabled={handleToggleEnabled}
                 onDelete={handleDelete}
               />
             </Card>

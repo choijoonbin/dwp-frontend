@@ -2,18 +2,19 @@
  * Cases worklist — API with mock fallback
  */
 
+import type { SelectChangeEvent } from '@mui/material/Select';
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useQueryClient } from '@tanstack/react-query';
 import { Label, Iconify } from '@dwp-frontend/design-system';
-import { formatCurrency, formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useTranslation, formatCurrency } from '@dwp-frontend/shared-i18n';
 import {
+  useCodes,
   is403Error,
   tableToCsv,
   downloadCsv,
   getTenantId,
-  useCodes,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -22,12 +23,16 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 import CardContent from '@mui/material/CardContent';
 import InputAdornment from '@mui/material/InputAdornment';
 import TableContainer from '@mui/material/TableContainer';
@@ -41,14 +46,54 @@ import type { CaseListItem } from './adapters/case-list-adapter';
 
 // ----------------------------------------------------------------------
 
+const DEFAULT_STATUS_OPTIONS = [
+  { code: 'OPEN', labelKey: 'cases.filterStatusOpen' },
+  { code: 'TRIAGE', labelKey: 'cases.filterStatusTriage' },
+  { code: 'TRIAGED', labelKey: 'cases.filterStatusTriaged' },
+  { code: 'IN_PROGRESS', labelKey: 'cases.filterStatusInProgress' },
+  { code: 'RESOLVED', labelKey: 'cases.filterStatusResolved' },
+  { code: 'DISMISSED', labelKey: 'cases.filterStatusDismissed' },
+];
+const DEFAULT_SEVERITY_OPTIONS = [
+  { code: 'CRITICAL', labelKey: 'cases.filterSeverityCritical' },
+  { code: 'HIGH', labelKey: 'cases.filterSeverityHigh' },
+  { code: 'MEDIUM', labelKey: 'cases.filterSeverityMedium' },
+  { code: 'LOW', labelKey: 'cases.filterSeverityLow' },
+];
+const DEFAULT_CASE_TYPE_OPTIONS = [
+  { code: 'DUPLICATE_INVOICE', labelKey: 'cases.filterTypeDuplicateInvoice' },
+  { code: 'BANK_CHANGE', labelKey: 'cases.filterTypeBankChange' },
+  { code: 'POLICY_VIOLATION', labelKey: 'cases.filterTypePolicyViolation' },
+  { code: 'INTEGRITY_MISMATCH', labelKey: 'cases.filterTypeIntegrityMismatch' },
+  { code: 'AMOUNT_VARIANCE', labelKey: 'cases.filterTypeAmountVariance' },
+  { code: 'TIMING_ANOMALY', labelKey: 'cases.filterTypeTimingAnomaly' },
+];
+
 export const CasesPage = () => {
   const { t } = useTranslation('common');
-  const { getLabel: getStatusLabel } = useCodes('CASE_STATUS');
-  const { getLabel: getTypeLabel } = useCodes('CASE_TYPE');
+  const { getLabel: getStatusLabel, codeMap: statusCodeMap } = useCodes('CASE_STATUS');
+  const { getLabel: getTypeLabel, codeMap: typeCodeMap } = useCodes('CASE_TYPE');
+  const { codeMap: severityCodeMap } = useCodes('SEVERITY');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [q, setQ] = useState('');
   const [page, setPage] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [severityFilter, setSeverityFilter] = useState<string>('');
+  const [caseTypeFilter, setCaseTypeFilter] = useState<string>('');
+
+  const statusOptions =
+    statusCodeMap.size > 0
+      ? Array.from(statusCodeMap.entries()).map(([code, label]) => ({ code, label }))
+      : DEFAULT_STATUS_OPTIONS.map((o) => ({ code: o.code, label: t(o.labelKey) }));
+  const severityOptions =
+    severityCodeMap.size > 0
+      ? Array.from(severityCodeMap.entries()).map(([code, label]) => ({ code, label }))
+      : DEFAULT_SEVERITY_OPTIONS.map((o) => ({ code: o.code, label: t(o.labelKey) }));
+  const caseTypeOptions =
+    typeCodeMap.size > 0
+      ? Array.from(typeCodeMap.entries()).map(([code, label]) => ({ code, label }))
+      : DEFAULT_CASE_TYPE_OPTIONS.map((o) => ({ code: o.code, label: t(o.labelKey) }));
 
   const {
     items: rows,
@@ -61,14 +106,18 @@ export const CasesPage = () => {
   } = useCasesList({
     page,
     size: 20,
+    q: q.trim() || undefined,
+    status: statusFilter || undefined,
+    severity: severityFilter || undefined,
+    caseType: caseTypeFilter || undefined,
     filters: {
-      searchQuery: q || undefined,
+      searchQuery: q.trim() || undefined,
     },
   });
 
   useEffect(() => {
     setPage(0);
-  }, [q]);
+  }, [q, statusFilter, severityFilter, caseTypeFilter]);
 
   const handleRowClick = (row: CaseListItem) => {
     navigate(`${SYNAPSE_ROUTES.CASES}/${row.id}`);
@@ -86,7 +135,7 @@ export const CasesPage = () => {
       { id: 'severity', label: t('cases.severity') },
       { id: 'status', label: t('cases.status'), getValue: (r) => getStatusLabel(r.status) || r.status },
       { id: 'anomalyType', label: t('cases.type'), getValue: (r) => getTypeLabel(r.anomalyType) || r.anomalyType },
-      { id: 'companyCode', label: 'Company' },
+      { id: 'companyCode', label: t('commonLabels.company') },
       { id: 'amount', label: t('cases.amount'), getValue: (r) => formatCurrency(r.amount, r.currency) },
       { id: 'detectedAt', label: t('cases.lastDetected') },
     ]);
@@ -171,20 +220,67 @@ export const CasesPage = () => {
           </Grid>
         </Grid>
 
-        <TextField
-          placeholder={t('cases.searchPlaceholder')}
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          size="small"
-          sx={{ maxWidth: 320 }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Iconify icon="solar:magnifer-bold" width={18} />
-              </InputAdornment>
-            ),
-          }}
-        />
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }} flexWrap="wrap" useFlexGap>
+          <TextField
+            placeholder={t('cases.searchPlaceholder')}
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            size="small"
+            sx={{ minWidth: 200, maxWidth: 320 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Iconify icon="solar:magnifer-bold" width={18} />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <FormControl size="small" sx={{ minWidth: 140 }}>
+            <InputLabel>{t('cases.status')}</InputLabel>
+            <Select
+              value={statusFilter}
+              label={t('cases.status')}
+              onChange={(e: SelectChangeEvent) => setStatusFilter(e.target.value)}
+            >
+              <MenuItem value="">{t('cases.filterAll')}</MenuItem>
+              {statusOptions.map((opt) => (
+                <MenuItem key={opt.code} value={opt.code}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ minWidth: 140 }}>
+            <InputLabel>{t('cases.severity')}</InputLabel>
+            <Select
+              value={severityFilter}
+              label={t('cases.severity')}
+              onChange={(e: SelectChangeEvent) => setSeverityFilter(e.target.value)}
+            >
+              <MenuItem value="">{t('cases.filterAll')}</MenuItem>
+              {severityOptions.map((opt) => (
+                <MenuItem key={opt.code} value={opt.code}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>{t('cases.type')}</InputLabel>
+            <Select
+              value={caseTypeFilter}
+              label={t('cases.type')}
+              onChange={(e: SelectChangeEvent) => setCaseTypeFilter(e.target.value)}
+            >
+              <MenuItem value="">{t('cases.filterAll')}</MenuItem>
+              {caseTypeOptions.map((opt) => (
+                <MenuItem key={opt.code} value={opt.code}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
 
         <TableContainer component={Card} variant="outlined">
           <Table size="small">

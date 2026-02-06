@@ -13,6 +13,7 @@ import type { ApiResponse } from '../types';
 // ----------------------------------------------------------------------
 
 export type CasesListParams = {
+  q?: string;
   status?: string;
   severity?: string;
   caseType?: string;

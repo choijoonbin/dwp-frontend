@@ -1,6 +1,7 @@
 import type { Breakpoint } from '@mui/material/styles';
 
 import { merge } from 'es-toolkit';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
@@ -8,10 +9,10 @@ import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 
 import { usePathname } from 'src/routes/hooks';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import { _langs, _notifications } from 'src/_mock';
 import { useThemeMode } from 'src/theme/theme-mode';
+import { isFixedLayoutPath } from 'src/config/layout-mode';
 import { useLayoutStore, useLayoutActions } from 'src/store/use-layout-store';
 
 import { Iconify } from 'src/components/iconify';
@@ -145,21 +146,9 @@ export function DashboardLayout({
     </MainSection>
   );
 
-  // 레이아웃 모드 자동 감지: 특정 경로만 fixed 모드, 나머지는 scrollable (기본값)
-  // fixed 모드: Full-Height SPA 스타일 (브라우저 스크롤 차단, 내부 패널만 스크롤)
-  //   - /admin/menus: 메뉴 관리 (CRUD)
-  //   - /admin/roles: 권한 관리 (CRUD)
-  //   - /ai-workspace: AI 워크스페이스 (대화형 도구)
-  // scrollable 모드: 전통적인 브라우저 스크롤 (기본값)
-  //   - /admin/monitoring: 통합 모니터링 (차트/리스트가 길어서 스크롤 필요)
-  //   - /admin/users, /admin/codes 등: 기타 관리 페이지
-  //   - /dashboard: 대시보드
-  const layoutMode = (() => {
-    if (pathname.includes('/ai-workspace')) return 'fixed';
-    if (pathname === '/admin/menus' || pathname.startsWith('/admin/menus/')) return 'fixed';
-    if (pathname === '/admin/roles' || pathname.startsWith('/admin/roles/')) return 'fixed';
-    return 'scrollable';
-  })();
+  // 레이아웃 모드: FIXED_LAYOUT_PATHS에 등록된 경로만 fixed, 나머지는 scrollable
+  // @see src/config/layout-mode.ts
+  const layoutMode = isFixedLayoutPath(pathname) ? 'fixed' : 'scrollable';
 
   return (
     <LayoutSection
@@ -188,7 +177,7 @@ export function DashboardLayout({
        *************************************** */
       layoutMode={layoutMode}
       cssVars={{
-        ...dashboardLayoutVars(theme),
+        ...dashboardLayoutVars(theme, layoutMode),
         '--layout-nav-current-width': sidebarCollapsed
           ? 'var(--layout-nav-vertical-collapsed-width)'
           : 'var(--layout-nav-vertical-width)',

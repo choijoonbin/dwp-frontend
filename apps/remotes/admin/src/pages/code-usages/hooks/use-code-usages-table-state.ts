@@ -21,23 +21,40 @@ export const useCodeUsagesTableState = () => {
     keyword: keyword || undefined,
   });
 
-  // Extract unique resource keys from resources tree
-  const resourceKeyOptions = useMemo(() => {
+  // Extract resource options (key, name, type) from resources tree
+  const resourceOptions = useMemo(() => {
     if (!resourcesTree) return [];
-    const keys = new Set<string>();
-    const extractKeys = (nodes: typeof resourcesTree) => {
+    const seen = new Set<string>();
+    const items: Array<{ resourceKey: string; resourceName: string; resourceType: 'MENU' | 'UI' }> = [];
+    const extract = (nodes: typeof resourcesTree) => {
       nodes.forEach((node) => {
-        if (node.resourceKey) {
-          keys.add(node.resourceKey);
+        if (node.resourceKey && !seen.has(node.resourceKey)) {
+          seen.add(node.resourceKey);
+          const displayType: 'MENU' | 'UI' =
+            node.resourceType === 'MENU'
+              ? 'MENU'
+              : node.resourceKey.startsWith('ui.') ||
+                  node.resourceType === 'BUTTON' ||
+                  node.resourceType === 'API' ||
+                  node.resourceType === 'RESOURCE'
+                ? 'UI'
+                : 'MENU';
+          items.push({
+            resourceKey: node.resourceKey,
+            resourceName: node.resourceName || node.resourceKey,
+            resourceType: displayType,
+          });
         }
         if (node.children) {
-          extractKeys(node.children);
+          extract(node.children);
         }
       });
     };
-    extractKeys(resourcesTree);
-    return Array.from(keys).sort();
+    extract(resourcesTree);
+    return items.sort((a, b) => a.resourceKey.localeCompare(b.resourceKey));
   }, [resourcesTree]);
+
+  const resourceKeyOptions = useMemo(() => resourceOptions.map((r) => r.resourceKey), [resourceOptions]);
 
   // Filter usages by selected resource key
   const filteredUsages = useMemo(() => {
@@ -69,6 +86,7 @@ export const useCodeUsagesTableState = () => {
     setKeyword,
     setSelectedResourceKey,
     resourceKeyOptions,
+    resourceOptions,
     filteredUsages,
     usagesByResource,
     selectedResourceGroups,

@@ -1,6 +1,5 @@
-import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { showToast, useMonitoringSummaryQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -379,9 +378,9 @@ export const MonitoringPage = () => {
             const fromIso = payload.prevTimestamp
               ? normalizeTimestamp(payload.prevTimestamp)
               : (() => {
-                  const t = new Date(toIso).getTime();
-                  if (Number.isNaN(t)) return toIso;
-                  const d = new Date(t - 60 * 60 * 1000);
+                  const ts = new Date(toIso).getTime();
+                  if (Number.isNaN(ts)) return toIso;
+                  const d = new Date(ts - 60 * 60 * 1000);
                   return d.toISOString().slice(0, 19);
                 })();
             setDotTimeRangeOverride({ from: fromIso, to: toIso });

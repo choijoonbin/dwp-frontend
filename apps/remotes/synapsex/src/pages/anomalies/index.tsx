@@ -37,44 +37,44 @@ import { SeverityBadge } from '../../components/finance/severity-badge';
 
 // ----------------------------------------------------------------------
 
-const anomalyTypeMeta: Record<
+const ANOMALY_TYPE_KEYS: Record<
   string,
-  { label: string; icon: string; hint: string; color: 'error' | 'warning' | 'info' | 'default' }
+  { labelKey: string; hintKey: string; icon: string; color: 'error' | 'warning' | 'info' | 'default' }
 > = {
   duplicate_invoice: {
-    label: 'Duplicate Invoice',
+    labelKey: 'anomalies.typeDuplicateInvoice',
+    hintKey: 'anomalies.typeDuplicateInvoiceHint',
     icon: 'solar:copy-bold-duotone',
-    hint: 'Potential duplicate invoice or repeated posting pattern',
     color: 'warning',
   },
   bank_change: {
-    label: 'Bank Change Risk',
+    labelKey: 'anomalies.typeBankChange',
+    hintKey: 'anomalies.typeBankChangeHint',
     icon: 'solar:bank-bold-duotone',
-    hint: 'Payment risk after vendor bank account changes',
     color: 'error',
   },
   policy_violation: {
-    label: 'Policy Violation',
+    labelKey: 'anomalies.typePolicyViolation',
+    hintKey: 'anomalies.typePolicyViolationHint',
     icon: 'solar:shield-warning-bold-duotone',
-    hint: 'Violation of finance policy / approval matrix',
     color: 'info',
   },
   integrity_mismatch: {
-    label: 'Integrity Mismatch',
+    labelKey: 'anomalies.typeIntegrityMismatch',
+    hintKey: 'anomalies.typeIntegrityMismatchHint',
     icon: 'solar:danger-triangle-bold-duotone',
-    hint: 'Header/line mismatch, FX/tax inconsistency, or missing references',
     color: 'warning',
   },
   amount_variance: {
-    label: 'Amount Variance',
+    labelKey: 'anomalies.typeAmountVariance',
+    hintKey: 'anomalies.typeAmountVarianceHint',
     icon: 'solar:wallet-money-bold-duotone',
-    hint: 'Outlier amount compared to historical baseline',
     color: 'error',
   },
   timing_anomaly: {
-    label: 'Timing Anomaly',
+    labelKey: 'anomalies.typeTimingAnomaly',
+    hintKey: 'anomalies.typeTimingAnomalyHint',
     icon: 'solar:clock-circle-bold-duotone',
-    hint: 'Off-hours / holiday activity or suspicious timing',
     color: 'default',
   },
 };
@@ -91,6 +91,20 @@ const formatMoney = (amount: number, currency: string) =>
 
 /** URL type (DUPLICATE_INVOICE) → UI type (duplicate_invoice) */
 const urlTypeToUi = (v: string) => v.toLowerCase();
+
+const getAnomalyTypeMeta = (
+  t: (key: string) => string,
+  key: string
+): { label: string; hint: string; icon: string; color: 'error' | 'warning' | 'info' | 'default' } | undefined => {
+  const def = ANOMALY_TYPE_KEYS[key];
+  if (!def) return undefined;
+  return {
+    label: t(def.labelKey),
+    hint: t(def.hintKey),
+    icon: def.icon,
+    color: def.color,
+  };
+};
 
 export const AnomaliesPage = () => {
   const { t } = useTranslation('common');
@@ -163,12 +177,11 @@ export const AnomaliesPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:danger-triangle-bold" width={24} sx={{ color: 'warning.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Anomaly Detection
+                {t('anomalies.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              High-signal anomaly workbench across FI/AP/AR/GL transactions, optimized for review and
-              escalation.
+              {t('anomalies.subtitle')}
             </Typography>
           </Box>
           <Stack direction="row" spacing={1}>
@@ -178,19 +191,19 @@ export const AnomaliesPage = () => {
               startIcon={<Iconify icon="solar:file-export-bold" width={16} />}
               onClick={() => {
                 const csv = tableToCsv(sortedRows, [
-                  { id: 'caseNumber', label: 'Case' },
-                  { id: 'severity', label: 'Severity' },
-                  { id: 'anomalyType', label: 'Type' },
-                  { id: 'companyCode', label: 'Company' },
-                  { id: 'docNumber', label: 'Doc' },
-                  { id: 'amount', label: 'Amount', getValue: (r) => `${r.currency} ${r.amount.toLocaleString()}` },
-                  { id: 'detectedAt', label: 'Detected' },
-                  { id: 'confidence', label: 'Confidence', getValue: (r) => `${Math.round(r.confidence * 100)}%` },
+                  { id: 'caseNumber', label: t('cases.case') },
+                  { id: 'severity', label: t('cases.severity') },
+                  { id: 'anomalyType', label: t('cases.type') },
+                  { id: 'companyCode', label: t('commonLabels.company') },
+                  { id: 'docNumber', label: t('commonLabels.doc') },
+                  { id: 'amount', label: t('cases.amount'), getValue: (r) => `${r.currency} ${r.amount.toLocaleString()}` },
+                  { id: 'detectedAt', label: t('commonLabels.detected') },
+                  { id: 'confidence', label: t('caseDetail.confidence'), getValue: (r) => `${Math.round(r.confidence * 100)}%` },
                 ]);
                 downloadCsv(csv, `anomalies-${new Date().toISOString().slice(0, 10)}.csv`);
               }}
             >
-              Export CSV
+              {t('anomalies.exportCsv')}
             </Button>
             <Button
               variant="outlined"
@@ -198,14 +211,14 @@ export const AnomaliesPage = () => {
               startIcon={<Iconify icon="solar:tuning-square-2-bold" width={18} />}
               sx={{ bgcolor: 'transparent' }}
             >
-              Thresholds
+              {t('anomalies.thresholds')}
             </Button>
             <Button
               variant="contained"
               size="small"
               startIcon={<Iconify icon="solar:magic-stick-3-bold" width={18} />}
             >
-              Run Scan
+              {t('anomalies.runScan')}
             </Button>
           </Stack>
         </Stack>
@@ -213,12 +226,12 @@ export const AnomaliesPage = () => {
         {hasActiveFilters && (
           <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center">
             <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
-              적용된 필터:
+              {t('anomalies.filtersApplied')}:
             </Typography>
             {(filtersApplied?.range ?? urlRange) && (
               <Chip
                 size="small"
-                label={`기간: ${filtersApplied?.range ?? urlRange}`}
+                label={`${t('anomalies.filterRange')}: ${filtersApplied?.range ?? urlRange}`}
                 onDelete={() => {
                   const next = new URLSearchParams(searchParams);
                   next.delete('range');
@@ -228,12 +241,12 @@ export const AnomaliesPage = () => {
                 }}
               />
             )}
-            {((filtersApplied?.type as string[] | undefined) ?? (atype !== 'all' ? [anomalyTypeMeta[atype]?.label ?? atype] : [])).map(
+            {((filtersApplied?.type as string[] | undefined) ?? (atype !== 'all' ? [getAnomalyTypeMeta(t, atype)?.label ?? atype] : [])).map(
               (s) => (
                 <Chip
                   key={`type-${s}`}
                   size="small"
-                  label={`유형: ${s}`}
+                  label={`${t('anomalies.filterType')}: ${s}`}
                   onDelete={() => {
                     setAtype('all');
                     const next = new URLSearchParams(searchParams);
@@ -244,26 +257,38 @@ export const AnomaliesPage = () => {
               )
             )}
             {((filtersApplied?.severity as string[] | undefined) ?? (severity !== 'all' ? [severity] : [])).map(
-              (s) => (
-                <Chip
-                  key={`severity-${s}`}
-                  size="small"
-                  label={`심각도: ${s}`}
-                  onDelete={() => {
-                    setSeverity('all');
-                    const next = new URLSearchParams(searchParams);
-                    next.delete('severity');
-                    setSearchParams(next);
-                  }}
-                />
-              )
+              (s) => {
+                const sevLabel =
+                  s === 'critical'
+                    ? t('cases.filterSeverityCritical')
+                    : s === 'high'
+                      ? t('cases.filterSeverityHigh')
+                      : s === 'medium'
+                        ? t('cases.filterSeverityMedium')
+                        : s === 'low'
+                          ? t('cases.filterSeverityLow')
+                          : s;
+                return (
+                  <Chip
+                    key={`severity-${s}`}
+                    size="small"
+                    label={`${t('anomalies.filterSeverity')}: ${sevLabel}`}
+                    onDelete={() => {
+                      setSeverity('all');
+                      const next = new URLSearchParams(searchParams);
+                      next.delete('severity');
+                      setSearchParams(next);
+                    }}
+                  />
+                );
+              }
             )}
             {((filtersApplied?.company as string[] | undefined) ?? (bukrs !== 'all' ? [bukrs] : [])).map(
               (c) => (
                 <Chip
                   key={`company-${c}`}
                   size="small"
-                  label={`회사: ${c}`}
+                  label={`${t('anomalies.filterCompany')}: ${c}`}
                   onDelete={() => {
                     setBukrs('all');
                     const next = new URLSearchParams(searchParams);
@@ -281,13 +306,16 @@ export const AnomaliesPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2 }}>
                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                  Total anomalies
+                  {t('anomalies.totalAnomalies')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
                   {sortedRows.length.toLocaleString()}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                  Critical {kpi.bySev.critical || 0} · High {kpi.bySev.high || 0}
+                  {t('anomalies.criticalHigh', {
+                    critical: kpi.bySev.critical || 0,
+                    high: kpi.bySev.high || 0,
+                  })}
                 </Typography>
               </CardContent>
             </Card>
@@ -296,13 +324,13 @@ export const AnomaliesPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2 }}>
                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                  High-risk backlog
+                  {t('anomalies.highRiskBacklog')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
                   {kpi.highRisk.toLocaleString()}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                  Sorted by severity then recency
+                  {t('anomalies.sortedBySeverityRecency')}
                 </Typography>
               </CardContent>
             </Card>
@@ -311,13 +339,13 @@ export const AnomaliesPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2 }}>
                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                  Avg confidence
+                  {t('anomalies.avgConfidence')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
                   {Math.round(kpi.avgConfidence * 100)}%
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                  Explainable-by-default in case detail
+                  {t('anomalies.explainableInDetail')}
                 </Typography>
               </CardContent>
             </Card>
@@ -326,13 +354,13 @@ export const AnomaliesPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2 }}>
                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                  Exposure (sum)
+                  {t('anomalies.exposureSum')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
                   {formatMoney(kpi.totalExposure, kpi.currency)}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                  Currency displayed per record currency
+                  {t('anomalies.currencyPerRecord')}
                 </Typography>
               </CardContent>
             </Card>
@@ -344,7 +372,7 @@ export const AnomaliesPage = () => {
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2.5 }}>
               <Iconify icon="solar:filter-bold" width={18} sx={{ color: 'text.secondary' }} />
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                Review queue
+                {t('anomalies.reviewQueue')}
               </Typography>
             </Stack>
 
@@ -353,7 +381,7 @@ export const AnomaliesPage = () => {
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Search case #, vendor/customer, document #, type…"
+                  placeholder={t('anomalies.searchPlaceholder')}
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   slotProps={{
@@ -384,11 +412,11 @@ export const AnomaliesPage = () => {
                   }}
                   displayEmpty
                 >
-                  <MenuItem value="all">All severities</MenuItem>
-                  <MenuItem value="critical">Critical</MenuItem>
-                  <MenuItem value="high">High</MenuItem>
-                  <MenuItem value="medium">Medium</MenuItem>
-                  <MenuItem value="low">Low</MenuItem>
+                  <MenuItem value="all">{t('anomalies.allSeverities')}</MenuItem>
+                  <MenuItem value="critical">{t('cases.filterSeverityCritical')}</MenuItem>
+                  <MenuItem value="high">{t('cases.filterSeverityHigh')}</MenuItem>
+                  <MenuItem value="medium">{t('cases.filterSeverityMedium')}</MenuItem>
+                  <MenuItem value="low">{t('cases.filterSeverityLow')}</MenuItem>
                 </Select>
               </Grid>
               <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
@@ -406,12 +434,15 @@ export const AnomaliesPage = () => {
                   }}
                   displayEmpty
                 >
-                  <MenuItem value="all">All types</MenuItem>
-                  {Object.entries(anomalyTypeMeta).map(([k, v]) => (
-                    <MenuItem key={k} value={k}>
-                      {v.label}
-                    </MenuItem>
-                  ))}
+                  <MenuItem value="all">{t('anomalies.allTypes')}</MenuItem>
+                  {Object.keys(ANOMALY_TYPE_KEYS).map((k) => {
+                    const meta = getAnomalyTypeMeta(t, k);
+                    return (
+                      <MenuItem key={k} value={k}>
+                        {meta?.label ?? k}
+                      </MenuItem>
+                    );
+                  })}
                 </Select>
               </Grid>
               <Grid size={{ xs: 12, sm: 4, lg: 2 }}>
@@ -429,7 +460,7 @@ export const AnomaliesPage = () => {
                   }}
                   displayEmpty
                 >
-                  <MenuItem value="all">All companies</MenuItem>
+                  <MenuItem value="all">{t('anomalies.allCompanies')}</MenuItem>
                   {companyCodes.map((c) => (
                     <MenuItem key={c.code} value={c.code}>
                       {c.code} — {c.name}
@@ -442,7 +473,7 @@ export const AnomaliesPage = () => {
             {isLoading ? (
               <Box sx={{ py: 8, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
-                  Loading anomalies...
+                  {t('anomalies.loading')}
                 </Typography>
               </Box>
             ) : (
@@ -450,23 +481,23 @@ export const AnomaliesPage = () => {
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ width: 140 }}>Case</TableCell>
-                      <TableCell sx={{ width: 170 }}>Type</TableCell>
-                      <TableCell>Counterparty</TableCell>
-                      <TableCell sx={{ width: 160 }}>Document</TableCell>
+                      <TableCell sx={{ width: 140 }}>{t('cases.case')}</TableCell>
+                      <TableCell sx={{ width: 170 }}>{t('cases.type')}</TableCell>
+                      <TableCell>{t('anomalies.counterparty')}</TableCell>
+                      <TableCell sx={{ width: 160 }}>{t('anomalies.document')}</TableCell>
                       <TableCell sx={{ width: 140 }} align="right">
-                        Amount
+                        {t('cases.amount')}
                       </TableCell>
                       <TableCell sx={{ width: 120 }} align="right">
-                        Confidence
+                        {t('caseDetail.confidence')}
                       </TableCell>
-                      <TableCell sx={{ width: 160 }}>SLA</TableCell>
+                      <TableCell sx={{ width: 160 }}>{t('anomalies.sla')}</TableCell>
                       <TableCell sx={{ width: 90 }} align="right" />
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {sortedRows.slice(0, 200).map((c) => {
-                      const meta = anomalyTypeMeta[c.anomalyType];
+                      const meta = getAnomalyTypeMeta(t, c.anomalyType);
                       const slaHours = Math.max(
                         0,
                         Math.round(
@@ -535,7 +566,9 @@ export const AnomaliesPage = () => {
                               {c.counterparty}
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
-                              Assignee: {c.assignee ?? 'Unassigned'}
+                              {c.assignee
+                                ? t('anomalies.assignee', { name: c.assignee })
+                                : t('anomalies.unassigned')}
                             </Typography>
                           </TableCell>
                           <TableCell>
@@ -558,7 +591,9 @@ export const AnomaliesPage = () => {
                               {new Date(c.slaDue).toLocaleString()}
                             </Typography>
                             <Typography variant="caption" sx={{ color: slaColor }}>
-                              {slaHours <= 0 ? 'SLA breached' : `${slaHours}h remaining`}
+                              {slaHours <= 0
+                                ? t('anomalies.slaBreached')
+                                : t('anomalies.slaRemaining', { hours: slaHours })}
                             </Typography>
                           </TableCell>
                           <TableCell align="right">
@@ -579,7 +614,7 @@ export const AnomaliesPage = () => {
                       <TableRow>
                         <TableCell colSpan={8} align="center" sx={{ py: 10 }}>
                           <Typography variant="body2" color="text.secondary">
-                            No anomalies match the current filters.
+                            {t('anomalies.empty')}
                           </Typography>
                         </TableCell>
                       </TableRow>
@@ -597,19 +632,21 @@ export const AnomaliesPage = () => {
               sx={{ mt: 2 }}
             >
               <Typography variant="caption" color="text.secondary">
-                Showing {Math.min(200, sortedRows.length)} of {sortedRows.length.toLocaleString()}{' '}
-                records
+                {t('anomalies.showingRecords', {
+                  shown: Math.min(200, sortedRows.length),
+                  total: sortedRows.length.toLocaleString(),
+                })}
               </Typography>
               <Stack direction="row" spacing={1}>
                 <Chip
                   icon={<Iconify icon="solar:danger-triangle-bold" width={14} />}
-                  label="Explainable-by-default"
+                  label={t('anomalies.explainableByDefault')}
                   size="small"
                   variant="outlined"
                 />
                 <Chip
                   icon={<Iconify icon="solar:magic-stick-3-bold" width={14} />}
-                  label="RAG citations available"
+                  label={t('anomalies.ragCitationsAvailable')}
                   size="small"
                   variant="outlined"
                 />

@@ -7,6 +7,7 @@ import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { trackEvent, PermissionRouteGuard , useAdminAuditLogDetailQuery, useExportAdminAuditLogsMutation } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
@@ -151,7 +152,7 @@ const AuditPageContent = () => {
         overflow: 'hidden',
       }}
     >
-      <Stack spacing={3} sx={{ flex: 1, minHeight: 0 }}>
+      <Stack spacing={2} sx={{ flex: 1, minHeight: 0 }}>
         <Stack spacing={1}>
           <Typography variant="h4">감사 로그</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -159,26 +160,28 @@ const AuditPageContent = () => {
           </Typography>
         </Stack>
 
-        {/* Filter Bar */}
-        <AuditLogsFilterBar
-          filters={filters}
-          onFilterChange={updateFilter}
-          onReset={resetFilters}
-          onExport={handleExport}
-          isExporting={exportMutation.isPending}
-        />
-
-        {/* Table */}
-        <AuditLogsTable
-          data={data}
-          isLoading={isLoading}
-          error={error}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={setPage}
-          onRowsPerPageChange={setRowsPerPage}
-          onRowClick={handleRowClick}
-        />
+        {/* Filter Bar + Table (fixed 레이아웃용 통합 Card) */}
+        <Card sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <AuditLogsFilterBar
+            filters={filters}
+            onFilterChange={updateFilter}
+            onReset={resetFilters}
+            onExport={handleExport}
+            isExporting={exportMutation.isPending}
+            embedded
+          />
+          <AuditLogsTable
+            data={data}
+            isLoading={isLoading}
+            error={error}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onPageChange={setPage}
+            onRowsPerPageChange={setRowsPerPage}
+            onRowClick={handleRowClick}
+            embedded
+          />
+        </Card>
       </Stack>
 
       {/* Detail Drawer */}

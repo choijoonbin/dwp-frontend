@@ -47,14 +47,21 @@ export const normalizeRoutePath = (input: string | null | undefined): string | n
     return `${rest ? `/synapse/${rest}` : '/synapse'}${suffix}`;
   }
 
-  // Tree API path는 그대로 사용 (동적 디스패치에서 처리). 선행 슬래시만 보장
-  if (normalized.length > 0 && !normalized.startsWith('/')) {
-    return `/${normalized}${suffix}`;
+  // /synapse/admin/code-usages|menus|codes → /admin/* (동일 화면 버그 수정: Admin Remote로 라우팅)
+  const synapseAdminMatch =
+    normalized.match(/^(?:\/)?synapse\/admin\/(code-usages|menus|codes)(?:\/|$)/) ?? [];
+  if (synapseAdminMatch[1]) {
+    return `/admin/${synapseAdminMatch[1]}${suffix}`;
   }
 
   if (normalized.startsWith('/admin/')) {
     if (normalized === '/admin/audit-logs') return `/admin/audit${suffix}`;
     if (normalized === '/admin/code-usage') return `/admin/code-usages${suffix}`;
+  }
+
+  // Tree API path는 그대로 사용 (동적 디스패치에서 처리). 선행 슬래시만 보장
+  if (normalized.length > 0 && !normalized.startsWith('/')) {
+    return `/${normalized}${suffix}`;
   }
 
   return `${normalized}${suffix}`;

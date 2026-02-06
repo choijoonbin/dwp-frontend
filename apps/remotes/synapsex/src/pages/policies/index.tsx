@@ -4,6 +4,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import { usePolicyProfilesQuery } from '@dwp-frontend/shared-utils';
 
@@ -26,6 +27,7 @@ import { SYNAPSE_ROUTES } from '../../routes';
 // ----------------------------------------------------------------------
 
 export const PoliciesPage = () => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
 
@@ -49,10 +51,10 @@ export const PoliciesPage = () => {
           <CardContent sx={{ p: 6, textAlign: 'center' }}>
             <Iconify icon="solar:danger-triangle-bold-duotone" width={48} sx={{ color: 'error.main', mb: 2 }} />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load profiles
+              {t('policies.error.failedToLoad')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {error instanceof Error ? error.message : 'Unknown error'}
+              {error instanceof Error ? error.message : t('error.errorState.unknownError')}
             </Typography>
           </CardContent>
         </Card>
@@ -74,11 +76,11 @@ export const PoliciesPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:tuning-2-bold" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Policy Profiles
+                {t('policies.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Configure tenant/company/currency-aware detection rules and compliance thresholds.
+              {t('policies.subtitle')}
             </Typography>
           </Box>
         </Stack>
@@ -89,15 +91,15 @@ export const PoliciesPage = () => {
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
               <Box>
                 <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                  Profiles
+                  {t('policies.profiles')}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  Define &ldquo;what counts as duplicate&rdquo;, approval thresholds, and auto-block rules.
+                  {t('policies.profilesHint')}
                 </Typography>
               </Box>
               <TextField
                 size="small"
-                placeholder="Search profiles…"
+                placeholder={t('policies.searchPlaceholder')}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 sx={{ width: 240 }}
@@ -113,11 +115,11 @@ export const PoliciesPage = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Profile</TableCell>
-                    <TableCell>Scope</TableCell>
-                    <TableCell sx={{ width: 120 }}>Default</TableCell>
+                    <TableCell>{t('policies.table.profile')}</TableCell>
+                    <TableCell>{t('policies.table.scope')}</TableCell>
+                    <TableCell sx={{ width: 120 }}>{t('policies.table.default')}</TableCell>
                     <TableCell sx={{ width: 110 }} align="right">
-                      Actions
+                      {t('policies.table.actions')}
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -126,7 +128,7 @@ export const PoliciesPage = () => {
                     <TableRow>
                       <TableCell colSpan={4} align="center" sx={{ py: 8 }}>
                         <Typography variant="body2" color="text.secondary">
-                          Loading…
+                          {t('policies.loading')}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -134,7 +136,7 @@ export const PoliciesPage = () => {
                     <TableRow>
                       <TableCell colSpan={4} align="center" sx={{ py: 10 }}>
                         <Typography variant="body2" color="text.secondary">
-                          No profiles match the current search.
+                          {t('policies.empty')}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -164,7 +166,7 @@ export const PoliciesPage = () => {
                           <TableCell>
                             {isDefault ? (
                               <Label color="primary" startIcon={<Iconify icon="solar:star-bold" width={14} />} sx={{ fontSize: '0.75rem' }}>
-                                Default
+                                {t('policies.default')}
                               </Label>
                             ) : (
                               <Typography variant="caption" color="text.secondary">
@@ -178,7 +180,7 @@ export const PoliciesPage = () => {
                               endIcon={<Iconify icon="solar:arrow-right-up-linear" width={14} />}
                               onClick={() => navigate(`${SYNAPSE_ROUTES.POLICIES}/${p.profileId}`)}
                             >
-                              Open
+                              {t('policies.open')}
                             </Button>
                           </TableCell>
                         </TableRow>

@@ -6,8 +6,10 @@
 
 import { Link, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
+  useCodes,
   buildAuditUrl,
   buildCasesUrl,
   buildActionsUrl,
@@ -25,9 +27,7 @@ import {
   dashboardTopRiskDriversQueryKey,
   useDashboardActionRequiredQuery,
   useDashboardTopRiskDriversQuery,
-  useCodes,
 } from '@dwp-frontend/shared-utils';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -470,29 +470,29 @@ export const DashboardPage = () => {
           ) : summaryQuery.isError ? (
             <Box sx={{ width: '100%' }}>
               <ErrorStateWithRetry
-                title="KPI 로드 실패"
-                message={summaryQuery.error?.message ?? '요약 데이터를 불러올 수 없습니다.'}
+                title={t('error.errorState.failedToLoadKpi')}
+                message={summaryQuery.error?.message ?? t('dashboard.summaryLoadFailed')}
                 onRetry={() => void summaryQuery.refetch()}
               />
             </Box>
           ) : (
             <>
               <KPICard
-                title="재무 건전성 지수"
+                title={t('dashboard.kpi.financialHealthIndex')}
                 value={kpis.financialHealthIndex}
                 suffix="/100"
                 trend={kpis.financialHealthTrend}
-                trendLabel="전월 대비"
+                trendLabel={t('dashboard.trendLabels.vsPreviousMonth')}
                 icon="solar:heart-bold-duotone"
                 iconColor="success.main"
                 iconBg="success.lighter"
                 to={buildReconciliationUrl({ range: '24h' })}
               />
               <KPICard
-                title="심각도별 미해결 케이스"
+                title={t('dashboard.kpi.openCasesBySeverity')}
                 value={kpis.openCasesBySeverity.critical + kpis.openCasesBySeverity.high}
-                suffix="건 긴급/높음"
-                subValue={`${kpis.openCasesBySeverity.medium + kpis.openCasesBySeverity.low}건 중간/낮음`}
+                suffix={t('dashboard.severitySuffix.urgentHigh')}
+                subValue={`${kpis.openCasesBySeverity.medium + kpis.openCasesBySeverity.low}${t('dashboard.severitySuffix.mediumLow')}`}
                 icon="solar:danger-triangle-bold-duotone"
                 iconColor="warning.main"
                 iconBg="warning.lighter"
@@ -502,11 +502,11 @@ export const DashboardPage = () => {
                 }
               />
               <KPICard
-                title="AI 조치 성공률"
+                title={t('dashboard.kpi.aiActionSuccessRate')}
                 value={kpis.aiActionSuccessRate ?? '—'}
                 suffix={kpis.aiActionSuccessRate != null ? '%' : ''}
                 trend={kpis.aiActionSuccessTrend}
-                trendLabel="전주 대비"
+                trendLabel={t('dashboard.trendLabels.vsPreviousWeek')}
                 icon="solar:bolt-bold-duotone"
                 iconColor="primary.main"
                 iconBg="primary.lighter"
@@ -516,10 +516,10 @@ export const DashboardPage = () => {
                 }
               />
               <KPICard
-                title="예상 손실 방지액"
+                title={t('dashboard.kpi.expectedLossPrevention')}
                 value={formatPreventedLoss(kpis.estimatedPreventedLoss, kpis.preventedLossCurrency)}
                 trend={kpis.preventedLossTrend}
-                trendLabel="이번 분기"
+                trendLabel={t('dashboard.trendLabels.thisQuarter')}
                 icon="solar:wallet-money-bold-duotone"
                 iconColor="success.main"
                 iconBg="success.lighter"
@@ -549,16 +549,16 @@ export const DashboardPage = () => {
                     />
                     <Box>
                       <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        조치 필요
+                        {t('dashboard.actionsRequired.title')}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        검토 대기 중인 승인 건
+                        {t('dashboard.actionsRequired.subtitle')}
                       </Typography>
                     </Box>
                   </Stack>
                   {!actionRequiredQuery.isLoading && !actionRequiredQuery.isError && (
                     <Label color="warning" variant="soft">
-                      {pendingActions.length}건 대기
+                      {t('dashboard.actionsRequired.pendingCount', { count: pendingActions.length })}
                     </Label>
                   )}
                 </Stack>
@@ -570,8 +570,8 @@ export const DashboardPage = () => {
                   </Stack>
                 ) : actionRequiredQuery.isError ? (
                   <ErrorStateWithRetry
-                    title="조치 목록 로드 실패"
-                    message={actionRequiredQuery.error?.message ?? '데이터를 불러올 수 없습니다.'}
+                    title={t('error.errorState.failedToLoadActionsList')}
+                    message={actionRequiredQuery.error?.message ?? t('error.errorState.failedToLoadData')}
                     onRetry={() => void actionRequiredQuery.refetch()}
                   />
                 ) : pendingActions.length === 0 ? (
@@ -582,7 +582,7 @@ export const DashboardPage = () => {
                       sx={{ color: 'success.main', mb: 1 }}
                     />
                     <Typography variant="body2" color="text.secondary">
-                      검토 대기 중인 조치가 없습니다.
+                      {t('dashboard.actionsRequired.empty')}
                     </Typography>
                   </Box>
                 ) : (
@@ -663,7 +663,7 @@ export const DashboardPage = () => {
                             endIcon={<Iconify icon="solar:arrow-right-bold" width={16} />}
                             onClick={() => handleReviewClick(action)}
                           >
-                            검토
+                            {t('dashboard.actionsRequired.review')}
                           </Button>
                         </Stack>
                       ))}
@@ -676,7 +676,7 @@ export const DashboardPage = () => {
                       sx={{ mt: 1.5, color: 'text.secondary' }}
                       startIcon={<Iconify icon="solar:arrow-right-bold" width={16} />}
                     >
-                      전체 대기 조치 보기
+                      {t('dashboard.actionsRequired.viewAll')}
                     </Button>
                   </>
                 )}
@@ -700,10 +700,10 @@ export const DashboardPage = () => {
                     />
                     <Box>
                       <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        주요 리스크 요인
+                        {t('dashboard.riskDrivers.title')}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        주의가 필요한 주요 이상 유형
+                        {t('dashboard.riskDrivers.subtitle')}
                       </Typography>
                     </Box>
                   </Stack>
@@ -713,7 +713,7 @@ export const DashboardPage = () => {
                     variant="outlined"
                     size="small"
                   >
-                    분석 보기
+                    {t('dashboard.riskDrivers.viewAnalysis')}
                   </Button>
                 </Stack>
                 {riskDriversQuery.isLoading ? (
@@ -727,8 +727,8 @@ export const DashboardPage = () => {
                   </Stack>
                 ) : riskDriversQuery.isError ? (
                   <ErrorStateWithRetry
-                    title="리스크 요인 로드 실패"
-                    message={riskDriversQuery.error?.message ?? '데이터를 불러올 수 없습니다.'}
+                    title={t('error.errorState.failedToLoadRiskDrivers')}
+                    message={riskDriversQuery.error?.message ?? t('error.errorState.failedToLoadData')}
                     onRetry={() => void riskDriversQuery.refetch()}
                   />
                 ) : riskDrivers.length === 0 ? (
@@ -739,7 +739,7 @@ export const DashboardPage = () => {
                       sx={{ color: 'text.disabled', mb: 1 }}
                     />
                     <Typography variant="body2" color="text.secondary">
-                      표시할 리스크 요인이 없습니다.
+                      {t('dashboard.riskDrivers.empty')}
                     </Typography>
                   </Box>
                 ) : (
@@ -775,7 +775,7 @@ export const DashboardPage = () => {
                               {driver.label}
                             </Typography>
                             <Label color="default" variant="soft" sx={{ fontSize: '0.75rem' }}>
-                              {driver.count}건
+                              {driver.count}{t('dashboard.countUnit')}
                             </Label>
                             {driver.trend === 'up' && (
                               <Iconify
@@ -838,10 +838,10 @@ export const DashboardPage = () => {
                   />
                   <Box>
                     <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                      팀 현황
+                      {t('dashboard.teamSnapshot.title')}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      업무량 및 성과 지표
+                      {t('dashboard.teamSnapshot.subtitle')}
                     </Typography>
                   </Box>
                 </Stack>
@@ -853,8 +853,8 @@ export const DashboardPage = () => {
                   </Stack>
                 ) : teamSnapshotQuery.isError ? (
                   <ErrorStateWithRetry
-                    title="팀 현황 로드 실패"
-                    message={teamSnapshotQuery.error?.message ?? '데이터를 불러올 수 없습니다.'}
+                    title={t('error.errorState.failedToLoadTeamSnapshot')}
+                    message={teamSnapshotQuery.error?.message ?? t('error.errorState.failedToLoadData')}
                     onRetry={() => void teamSnapshotQuery.refetch()}
                   />
                 ) : teamSnapshot.length === 0 ? (
@@ -865,7 +865,7 @@ export const DashboardPage = () => {
                       sx={{ color: 'text.disabled', mb: 1 }}
                     />
                     <Typography variant="body2" color="text.secondary">
-                      표시할 팀 현황이 없습니다.
+                      {t('dashboard.teamSnapshot.empty')}
                     </Typography>
                   </Box>
                 ) : (
@@ -873,19 +873,19 @@ export const DashboardPage = () => {
                     <TableHead>
                       <TableRow>
                         <TableCell sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                          분석가
+                          {t('dashboard.teamSnapshot.analyst')}
                         </TableCell>
                         <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                          미해결 케이스
+                          {t('dashboard.teamSnapshot.openCases')}
                         </TableCell>
                         <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                          대기 승인
+                          {t('dashboard.teamSnapshot.pendingApproval')}
                         </TableCell>
                         <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                          SLA 위험
+                          {t('dashboard.teamSnapshot.slaRisk')}
                         </TableCell>
                         <TableCell align="right" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                          평균 리드타임
+                          {t('dashboard.teamSnapshot.avgLeadTime')}
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -932,11 +932,13 @@ export const DashboardPage = () => {
                           <TableCell align="center">
                             {member.slaRisk === 'AT_RISK' ? (
                               <Label color="error" variant="soft" sx={{ fontSize: '0.75rem' }}>
-                                {member.slaRiskCount > 0 ? `${member.slaRiskCount}건 위험` : '위험'}
+                                {member.slaRiskCount > 0
+                                  ? t('dashboard.teamSnapshot.riskCount', { count: member.slaRiskCount })
+                                  : t('dashboard.teamSnapshot.risk')}
                               </Label>
                             ) : (
                               <Label color="success" variant="soft" sx={{ fontSize: '0.75rem' }}>
-                                정상
+                                {t('dashboard.teamSnapshot.normal')}
                               </Label>
                             )}
                           </TableCell>
@@ -973,10 +975,10 @@ export const DashboardPage = () => {
                     />
                     <Box>
                       <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        에이전트 실행 스트림
+                        {t('dashboard.agentStream.title')}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        실시간 AI 에이전트 활동
+                        {t('dashboard.agentStream.subtitle')}
                       </Typography>
                     </Box>
                   </Stack>
@@ -994,7 +996,7 @@ export const DashboardPage = () => {
                       }}
                     />
                     <Typography variant="caption" sx={{ color: 'success.main', fontWeight: 600 }}>
-                      실시간
+                      {t('dashboard.agentStream.realtime')}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -1037,8 +1039,8 @@ export const DashboardPage = () => {
                   ) : agentActivityQuery.isError ? (
                     <Box sx={{ p: 2 }}>
                       <ErrorStateWithRetry
-                        title="에이전트 활동 로드 실패"
-                        message={agentActivityQuery.error?.message ?? '데이터를 불러올 수 없습니다.'}
+                        title={t('error.errorState.failedToLoadAgentActivity')}
+                        message={agentActivityQuery.error?.message ?? t('error.errorState.failedToLoadData')}
                         onRetry={() => void agentActivityQuery.refetch()}
                       />
                     </Box>
@@ -1050,7 +1052,7 @@ export const DashboardPage = () => {
                         sx={{ color: 'text.disabled', mb: 1 }}
                       />
                       <Typography variant="body2" color="text.secondary">
-                        표시할 에이전트 활동이 없습니다.
+                        {t('dashboard.agentStream.empty')}
                       </Typography>
                     </Box>
                   ) : (
@@ -1074,7 +1076,7 @@ export const DashboardPage = () => {
                   sx={{ mt: 1.5, color: 'text.secondary' }}
                   startIcon={<Iconify icon="solar:arrow-right-bold" width={14} />}
                 >
-                  전체 감사 로그 보기
+                  {t('dashboard.agentStream.viewFullAudit')}
                 </Button>
               </CardContent>
             </Card>
@@ -1089,7 +1091,7 @@ export const DashboardPage = () => {
                     sx={{ color: 'primary.main' }}
                   />
                   <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                    주요 지표
+                    {t('dashboard.quickStats.title')}
                   </Typography>
                 </Stack>
                 {summaryQuery.isLoading ? (
@@ -1103,7 +1105,7 @@ export const DashboardPage = () => {
                   </Stack>
                 ) : summaryQuery.isError ? (
                   <Typography variant="body2" color="text.secondary">
-                    요약 데이터 로드 실패
+                    {t('dashboard.summaryLoadFailed')}
                   </Typography>
                 ) : (
                   <Stack spacing={2}>
@@ -1127,7 +1129,7 @@ export const DashboardPage = () => {
                       }}
                     >
                       <Typography variant="body2" color="text.secondary">
-                        대기 승인
+                        {t('dashboard.quickStats.pendingApproval')}
                       </Typography>
                       <Typography variant="h6" sx={{ fontWeight: 700 }}>
                         {kpis.pendingApprovals}
@@ -1156,7 +1158,7 @@ export const DashboardPage = () => {
                       }}
                     >
                       <Typography variant="body2" color="text.secondary">
-                        SLA 위험
+                        {t('dashboard.quickStats.slaRisk')}
                       </Typography>
                       <Typography variant="h6" sx={{ fontWeight: 700, color: 'warning.main' }}>
                         {kpis.slaAtRisk}
@@ -1164,7 +1166,7 @@ export const DashboardPage = () => {
                     </Stack>
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                       <Typography variant="body2" color="text.secondary">
-                        평균 리드타임
+                        {t('dashboard.quickStats.avgLeadTime')}
                       </Typography>
                       <Typography variant="h6" sx={{ fontWeight: 700 }}>
                         {kpis.avgLeadTime}h
@@ -1190,7 +1192,7 @@ export const DashboardPage = () => {
                       }}
                     >
                       <Typography variant="body2" color="text.secondary">
-                        미처리 건
+                        {t('dashboard.quickStats.unprocessed')}
                       </Typography>
                       <Typography variant="h6" sx={{ fontWeight: 700 }}>
                         {kpis.backlogCount}

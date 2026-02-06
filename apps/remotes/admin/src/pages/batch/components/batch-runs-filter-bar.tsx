@@ -4,6 +4,7 @@ import type { DetectRunStatus } from '@dwp-frontend/shared-utils';
 
 import { memo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -23,23 +24,25 @@ type BatchRunsFilterBarProps = {
   onReset: () => void;
 };
 
-const STATUS_OPTIONS: { value: DetectRunStatus | ''; label: string }[] = [
-  { value: '', label: '전체' },
-  { value: 'RUNNING', label: '실행 중' },
-  { value: 'SUCCESS', label: '성공' },
-  { value: 'FAILED', label: '실패' },
-  { value: 'SKIPPED', label: '건너뜀' },
+const STATUS_OPTIONS: { value: DetectRunStatus | ''; labelKey: string }[] = [
+  { value: '', labelKey: 'batch.filter.all' },
+  { value: 'RUNNING', labelKey: 'batch.table.statusRunning' },
+  { value: 'SUCCESS', labelKey: 'batch.table.statusSuccess' },
+  { value: 'FAILED', labelKey: 'batch.table.statusFailed' },
+  { value: 'SKIPPED', labelKey: 'batch.table.statusSkipped' },
 ];
 
 export const BatchRunsFilterBar = memo(({
   filters,
   onUpdateFilter,
   onReset,
-}: BatchRunsFilterBarProps) => (
+}: BatchRunsFilterBarProps) => {
+  const { t } = useTranslation('admin');
+  return (
   <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }}>
     <TextField
       size="small"
-      label="From"
+      label={t('batch.filter.from')}
       type="datetime-local"
       value={filters.from}
       onChange={(e) => onUpdateFilter('from', e.target.value)}
@@ -48,7 +51,7 @@ export const BatchRunsFilterBar = memo(({
     />
     <TextField
       size="small"
-      label="To"
+      label={t('batch.filter.to')}
       type="datetime-local"
       value={filters.to}
       onChange={(e) => onUpdateFilter('to', e.target.value)}
@@ -56,15 +59,15 @@ export const BatchRunsFilterBar = memo(({
       sx={{ minWidth: 200 }}
     />
     <FormControl size="small" sx={{ minWidth: 140 }}>
-      <InputLabel>Status</InputLabel>
+      <InputLabel>{t('batch.filter.status')}</InputLabel>
       <Select
         value={filters.status}
-        label="Status"
+        label={t('batch.filter.status')}
         onChange={(e) => onUpdateFilter('status', e.target.value as BatchFilters['status'])}
       >
         {STATUS_OPTIONS.map((opt) => (
           <MenuItem key={opt.value || 'all'} value={opt.value}>
-            {opt.label}
+            {t(opt.labelKey)}
           </MenuItem>
         ))}
       </Select>
@@ -89,7 +92,8 @@ export const BatchRunsFilterBar = memo(({
       }}
     >
       <Iconify icon="solar:refresh-bold" width={16} />
-      초기화
+      {t('batch.filter.reset')}
     </Box>
   </Stack>
-));
+  );
+});

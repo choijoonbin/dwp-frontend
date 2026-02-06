@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -156,6 +157,7 @@ const initialGuardrails = [
 // ----------------------------------------------------------------------
 
 export const GovernancePage = () => {
+  const { t } = useTranslation('common');
   const [globalAutonomyLevel, setGlobalAutonomyLevel] = useState(3);
   const [anomalySettings, setAnomalySettings] = useState(initialAnomalySettings);
   const [guardrails, setGuardrails] = useState(initialGuardrails);
@@ -200,11 +202,11 @@ export const GovernancePage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:shield-check-bold" width={20} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" fontWeight={600}>
-                Governance & Autonomy Controls
+                {t('governance.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Configure AI autonomy levels and define strict guardrails for automated actions
+              {t('governance.subtitle')}
             </Typography>
           </Box>
           {hasChanges && (
@@ -215,14 +217,14 @@ export const GovernancePage = () => {
                 startIcon={<Iconify icon="solar:refresh-bold" />}
                 onClick={handleReset}
               >
-                Reset
+                {t('governance.reset')}
               </Button>
               <Button
                 variant="contained"
                 size="small"
                 startIcon={<Iconify icon="solar:check-circle-bold" />}
               >
-                Save Changes
+                {t('governance.saveChanges')}
               </Button>
             </Stack>
           )}
@@ -244,7 +246,7 @@ export const GovernancePage = () => {
           <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'background.neutral' }}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:settings-bold" width={16} sx={{ color: 'text.primary' }} />
-              <Typography variant="subtitle2" color="text.primary">Autonomy Level Configuration</Typography>
+              <Typography variant="subtitle2" color="text.primary">{t('governance.autonomyConfig')}</Typography>
             </Stack>
           </Box>
           <Box sx={{ flexGrow: 1, overflow: 'auto', p: 3 }}>
@@ -255,17 +257,17 @@ export const GovernancePage = () => {
                   <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <Iconify icon="solar:settings-bold" width={16} sx={{ color: 'text.primary' }} />
-                      <Typography variant="subtitle2" color="text.primary">Global Default Autonomy Level</Typography>
+                      <Typography variant="subtitle2" color="text.primary">{t('governance.globalDefaultLabel')}</Typography>
                     </Stack>
                     <Chip
                       icon={<Iconify icon={currentLevelConfig.icon} width={14} />}
-                      label={`Level ${globalAutonomyLevel}`}
+                      label={`${t('governance.level')} ${globalAutonomyLevel}`}
                       size="small"
                       color={currentLevelConfig.color as any}
                     />
                   </Stack>
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-                    Default autonomy level applied to all anomaly types unless overridden
+                    {t('governance.globalDefaultSliderHint')}
                   </Typography>
                   <Box sx={{ px: 1 }}>
                     <Slider
@@ -282,10 +284,10 @@ export const GovernancePage = () => {
                     />
                     <Stack direction="row" justifyContent="space-between" sx={{ mt: 1 }}>
                       <Typography variant="caption" color="text.primary">
-                        Human Only
+                        {t('governance.humanOnly')}
                       </Typography>
                       <Typography variant="caption" color="text.primary">
-                        Fully Auto
+                        {t('governance.fullyAuto')}
                       </Typography>
                     </Stack>
                   </Box>
@@ -301,11 +303,11 @@ export const GovernancePage = () => {
                       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.5 }}>
                         <Iconify icon={currentLevelConfig.icon} width={16} sx={{ color: 'text.primary' }} />
                         <Typography variant="body2" fontWeight={600} color="text.primary">
-                          {currentLevelConfig.name}
+                          {t(`governance.autonomyLevels.level${currentLevelConfig.level}.name`)}
                         </Typography>
                       </Stack>
                       <Typography variant="caption" color="text.secondary">
-                        {currentLevelConfig.description}
+                        {t(`governance.autonomyLevels.level${currentLevelConfig.level}.description`)}
                       </Typography>
                     </CardContent>
                   </Card>
@@ -317,7 +319,7 @@ export const GovernancePage = () => {
                 <CardContent>
                   <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                     <Iconify icon="solar:info-circle-bold" width={16} sx={{ color: 'text.primary' }} />
-                    <Typography variant="subtitle2" color="text.primary">Autonomy Level Reference</Typography>
+                    <Typography variant="subtitle2" color="text.primary">{t('governance.autonomyReference')}</Typography>
                   </Stack>
                   <Stack spacing={1}>
                     {autonomyLevels.map((level) => (
@@ -350,10 +352,10 @@ export const GovernancePage = () => {
                         </Box>
                         <Box sx={{ minWidth: 0, flexGrow: 1 }}>
                           <Typography variant="body2" fontWeight={600} color="text.primary">
-                            Level {level.level}: {level.name}
+                            {t('governance.level')} {level.level}: {t(`governance.autonomyLevels.level${level.level}.name`)}
                           </Typography>
                           <Typography variant="caption" color="text.secondary" noWrap>
-                            {level.description}
+                            {t(`governance.autonomyLevels.level${level.level}.description`)}
                           </Typography>
                         </Box>
                       </Box>
@@ -367,10 +369,10 @@ export const GovernancePage = () => {
                 <CardContent>
                   <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
                     <Iconify icon="solar:danger-triangle-bold" width={16} sx={{ color: 'text.primary' }} />
-                    <Typography variant="subtitle2" color="text.primary">Per-Anomaly Type Settings</Typography>
+                    <Typography variant="subtitle2" color="text.primary">{t('governance.perAnomalySettings')}</Typography>
                   </Stack>
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-                    Override global autonomy level for specific anomaly types
+                    {t('governance.perAnomalyDesc')}
                   </Typography>
                   <Stack spacing={1.5}>
                     {anomalySettings.map((setting) => (
@@ -392,7 +394,7 @@ export const GovernancePage = () => {
                                 size="small"
                               />
                               <Typography variant="body2" fontWeight={600}>
-                                {setting.label}
+                                {t(`governance.anomalyTypes.${setting.type}`)}
                               </Typography>
                             </Stack>
                             <SeverityBadge
@@ -403,7 +405,7 @@ export const GovernancePage = () => {
                           {setting.enabled && (
                             <Stack direction="row" alignItems="center" spacing={1.5}>
                               <Typography variant="caption" color="text.secondary" sx={{ minWidth: 60 }}>
-                                Level:
+                                {t('governance.level')}:
                               </Typography>
                               <Box sx={{ flexGrow: 1 }}>
                                 <Slider
@@ -416,7 +418,7 @@ export const GovernancePage = () => {
                                   size="small"
                                 />
                               </Box>
-                              <Chip label={`Level ${setting.autonomyLevel}`} size="small" sx={{ minWidth: 80 }} />
+                              <Chip label={`${t('governance.level')} ${setting.autonomyLevel}`} size="small" sx={{ minWidth: 80 }} />
                             </Stack>
                           )}
                         </CardContent>
@@ -442,7 +444,7 @@ export const GovernancePage = () => {
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Iconify icon="solar:lock-bold" width={16} sx={{ color: 'text.primary' }} />
-                <Typography variant="subtitle2" color="text.primary">Guardrail Configuration</Typography>
+                <Typography variant="subtitle2" color="text.primary">{t('governance.guardrailConfig')}</Typography>
               </Stack>
               <Button
                 variant="outlined"
@@ -450,7 +452,7 @@ export const GovernancePage = () => {
                 startIcon={<Iconify icon="solar:add-circle-bold" />}
                 onClick={() => setNewGuardrailOpen(true)}
               >
-                Add Guardrail
+                {t('governance.addGuardrailButton')}
               </Button>
             </Stack>
           </Box>
@@ -463,11 +465,10 @@ export const GovernancePage = () => {
                     <Iconify icon="solar:shield-warning-bold" width={20} sx={{ color: 'error.main', flexShrink: 0 }} />
                     <Box>
                       <Typography variant="body2" fontWeight={600} color="error.main">
-                        Strict Guardrails
+                        {t('governance.strictGuardrails')}
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                        These rules are absolute boundaries that the AI system can NEVER bypass, regardless of
-                        autonomy level. They ensure compliance and prevent catastrophic errors.
+                        {t('governance.strictGuardrailsDesc')}
                       </Typography>
                     </Box>
                   </Stack>

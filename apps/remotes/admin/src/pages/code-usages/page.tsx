@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { Iconify, ConfirmDialog, TwoColumnLayout } from '@dwp-frontend/design-system';
 import { HttpError, trackEvent, PermissionRouteGuard } from '@dwp-frontend/shared-utils';
+import { Iconify, ConfirmDialog, PermissionGate, TwoColumnLayout } from '@dwp-frontend/design-system';
 import {
   useCodeGroupsQuery,
   type CodeUsageSummary,
@@ -15,6 +15,7 @@ import {
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 
@@ -39,6 +40,7 @@ const CodeUsagesPageContent = () => {
     setKeyword,
     setSelectedResourceKey,
     resourceKeyOptions,
+    resourceOptions,
     filteredUsages,
     usagesByResource,
     isLoading,
@@ -54,15 +56,14 @@ const CodeUsagesPageContent = () => {
   const [groupDialogOpen, setGroupDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUsage, setSelectedUsage] = useState<CodeUsageSummary | null>(null);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false,
     message: '',
     severity: 'success',
   });
 
-  // Extract unique code group keys
-  const codeGroupKeyOptions = codeGroups?.map((g) => g.groupKey).sort() || [];
+  // Code groups for modal (with groupName for display)
+  const codeGroupsForModal = codeGroups || [];
 
   // Get groups for selected resource
   const selectedResourceGroups = selectedResourceKey
@@ -94,22 +95,6 @@ const CodeUsagesPageContent = () => {
     setGroupDialogOpen(true);
   };
 
-  const handleEdit = (usage: CodeUsageSummary) => {
-    trackEvent({
-      resourceKey: 'btn.admin.code-usages.edit',
-      action: 'CLICK',
-      label: '코드 그룹 편집',
-      metadata: {
-        usageId: usage.id,
-        resourceKey: usage.resourceKey,
-        codeGroupKey: usage.codeGroupKey,
-      },
-    });
-    setSelectedUsage(usage);
-    setGroupDialogOpen(true);
-    setAnchorEl(null);
-  };
-
   const handleDelete = (usage: CodeUsageSummary) => {
     trackEvent({
       resourceKey: 'btn.admin.code-usages.delete',
@@ -123,7 +108,6 @@ const CodeUsagesPageContent = () => {
     });
     setSelectedUsage(usage);
     setDeleteDialogOpen(true);
-    setAnchorEl(null);
   };
 
   const handleToggleEnabled = async (usage: CodeUsageSummary) => {
@@ -159,15 +143,6 @@ const CodeUsagesPageContent = () => {
     } catch (err) {
       showSnackbar(err instanceof Error ? err.message : t('error.statusChangeFailed'), 'error');
     }
-  };
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, usage: CodeUsageSummary) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedUsage(usage);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
   };
 
   const showSnackbar = (message: string, severity: 'success' | 'error' = 'success') => {
@@ -247,29 +222,32 @@ const CodeUsagesPageContent = () => {
       }}
     >
       <Stack spacing={3} sx={{ flex: 1, minHeight: 0 }}>
-        <Stack spacing={1}>
-          <Typography variant="h4">코드 사용 매핑 관리</Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            메뉴별로 사용할 코드 그룹을 정의합니다. 매핑된 코드 그룹의 코드는 해당 메뉴의 드롭다운에서 사용할 수 있습니다.
-          </Typography>
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
+          <Stack spacing={1}>
+            <Typography variant="h4">코드 사용 매핑 관리</Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              메뉴별로 드롭다운에 사용할 코드 그룹을 매핑합니다. 매핑이 없으면 해당 화면의 selectbox가 비활성화됩니다.
+            </Typography>
+          </Stack>
+          <PermissionGate resource="menu.admin.code-usages" permission="CREATE" mode="disable">
+            <Button
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" width={20} />}
+              onClick={handleAddGroup}
+            >
+              그룹추가
+            </Button>
+          </PermissionGate>
         </Stack>
 
-        <Alert
-          severity="info"
-          icon={<Iconify icon="solar:info-circle-bold" width={18} />}
-          sx={{ alignItems: 'center' }}
-        >
-          <strong>코드 사용 정의(CodeUsage)</strong>는 메뉴별로 사용 가능한 드롭다운 코드 그룹을 매핑합니다.
-          매핑이 없으면 해당 화면의 selectbox가 비활성화됩니다.
-        </Alert>
-
         {/* Main Content: Left Menu List + Right Groups Panel */}
-        <TwoColumnLayout
-          mode="fixed"
-          leftWidth={360}
-          left={
+        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+          <TwoColumnLayout
+            mode="fixed"
+            leftWidth={360}
+            left={
             <ResourceMenuList
-              resourceKeyOptions={resourceKeyOptions}
+              resourceOptions={resourceOptions}
               selectedResourceKey={selectedResourceKey}
               keyword={keyword}
               isLoading={isLoading}
@@ -285,17 +263,13 @@ const CodeUsagesPageContent = () => {
               groups={selectedResourceGroups}
               isLoading={isLoading}
               error={error}
-              anchorEl={anchorEl}
-              selectedUsage={selectedUsage}
-              onMenuOpen={handleMenuOpen}
-              onMenuClose={handleMenuClose}
               onAddGroup={handleAddGroup}
-              onEdit={handleEdit}
               onDelete={handleDelete}
               onToggleEnabled={handleToggleEnabled}
             />
           }
-        />
+          />
+        </Box>
       </Stack>
 
       {/* Group Editor Modal */}
@@ -305,7 +279,10 @@ const CodeUsagesPageContent = () => {
         usage={selectedUsage}
         resourceKey={selectedResourceKey}
         resourceKeyOptions={resourceKeyOptions}
-        codeGroupKeyOptions={codeGroupKeyOptions}
+        resourceOptions={resourceOptions}
+        resourceName={resourceOptions.find((r) => r.resourceKey === selectedResourceKey)?.resourceName}
+        codeGroups={codeGroupsForModal}
+        usagesByResource={usagesByResource}
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
       />
@@ -315,10 +292,10 @@ const CodeUsagesPageContent = () => {
         <ConfirmDialog
           open={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}
-          title={t('confirm.deleteCodeGroup')}
-          description={t('confirm.deleteCodeGroupContent', {
+          title={t('confirm.deleteCodeUsageMapping')}
+          description={t('confirm.deleteCodeUsageMappingContent', {
+            groupName: codeGroups?.find((g) => g.groupKey === selectedUsage.codeGroupKey)?.groupName ?? selectedUsage.codeGroupKey,
             codeGroupKey: selectedUsage.codeGroupKey,
-            resourceKey: selectedUsage.resourceKey,
           })}
           confirmText={t('confirm.delete')}
           cancelText={t('confirm.cancel')}

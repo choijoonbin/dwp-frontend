@@ -39,10 +39,10 @@ function fmtMoney(amount: number, currency: string) {
   }).format(amount);
 }
 
-const statusMeta: Record<string, { label: string; icon: string; color: 'success' | 'warning' | 'error' }> = {
-  success: { label: 'Success', icon: 'solar:check-circle-bold', color: 'success' },
-  pending: { label: 'Pending', icon: 'solar:clock-circle-bold', color: 'warning' },
-  failed: { label: 'Failed', icon: 'solar:close-circle-bold', color: 'error' },
+const statusMeta: Record<string, { labelKey: string; icon: string; color: 'success' | 'warning' | 'error' }> = {
+  success: { labelKey: 'actionRecon.statusMeta.success', icon: 'solar:check-circle-bold', color: 'success' },
+  pending: { labelKey: 'actionRecon.statusMeta.pending', icon: 'solar:clock-circle-bold', color: 'warning' },
+  failed: { labelKey: 'actionRecon.statusMeta.failed', icon: 'solar:close-circle-bold', color: 'error' },
 };
 
 export const ActionReconciliationPage = () => {
@@ -93,11 +93,11 @@ export const ActionReconciliationPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:link-circle-bold" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Action Reconciliation
+                {t('actionRecon.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Verify whether autonomous actions were applied in SAP, and manage retries for partial or failed executions.
+              {t('actionRecon.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -106,7 +106,7 @@ export const ActionReconciliationPage = () => {
             startIcon={<Iconify icon="solar:refresh-bold" width={18} />}
             onClick={() => navigate(SYNAPSE_ROUTES.RECONCILIATION)}
           >
-            Reconciliation Runs
+            {t('actionRecon.reconciliationRuns')}
           </Button>
         </Stack>
 
@@ -116,7 +116,7 @@ export const ActionReconciliationPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
                 <Typography variant="caption" color="text.secondary">
-                  Success Rate
+                  {t('actionRecon.successRate')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {data ? `${Math.round((data.successRate ?? 0) * 100)}%` : '-'}
@@ -128,7 +128,7 @@ export const ActionReconciliationPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
                 <Typography variant="caption" color="text.secondary">
-                  Success
+                  {t('actionRecon.success')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, color: 'success.main' }}>
                   {(data?.successCount ?? 0).toLocaleString()}
@@ -140,7 +140,7 @@ export const ActionReconciliationPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
                 <Typography variant="caption" color="text.secondary">
-                  Failed
+                  {t('actionRecon.failed')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, color: 'error.main' }}>
                   {(data?.failedCount ?? 0).toLocaleString()}
@@ -155,7 +155,7 @@ export const ActionReconciliationPage = () => {
           <Card variant="outlined">
             <CardContent sx={{ p: 2.5 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                Failure Breakdown
+                {t('actionRecon.failureBreakdown')}
               </Typography>
               <Stack spacing={2}>
                 {failureReasons.map((fr, i) => (
@@ -173,7 +173,7 @@ export const ActionReconciliationPage = () => {
                       <Typography variant="body2" sx={{ fontWeight: 600 }}>
                         {fr.reason}
                       </Typography>
-                      <Chip label={`${fr.count} failed`} size="small" color="error" variant="outlined" />
+                      <Chip label={t('actionRecon.failedCount', { count: fr.count })} size="small" color="error" variant="outlined" />
                     </Stack>
                     {fr.actionIds && fr.actionIds.length > 0 && (
                       <Stack direction="row" spacing={0.5} flexWrap="wrap" sx={{ mt: 1 }}>
@@ -190,7 +190,7 @@ export const ActionReconciliationPage = () => {
                         ))}
                         {fr.actionIds.length > 5 && (
                           <Typography variant="caption" color="text.secondary">
-                            +{fr.actionIds.length - 5} more
+                            {t('actionRecon.more', { count: fr.actionIds.length - 5 })}
                           </Typography>
                         )}
                       </Stack>
@@ -207,7 +207,7 @@ export const ActionReconciliationPage = () => {
           <Card variant="outlined">
             <CardContent sx={{ p: 2.5 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                Impact Summary
+                {t('actionRecon.impactSummary')}
               </Typography>
               <Stack direction="row" spacing={2} flexWrap="wrap">
                 {impactSummary.byActionType &&
@@ -221,7 +221,7 @@ export const ActionReconciliationPage = () => {
                   ))}
                 {impactSummary.totalAmount != null && (
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    Total: {fmtMoney(impactSummary.totalAmount, 'USD')}
+                    {t('actionRecon.total')}: {fmtMoney(impactSummary.totalAmount, 'USD')}
                   </Typography>
                 )}
               </Stack>
@@ -234,11 +234,11 @@ export const ActionReconciliationPage = () => {
           <CardContent sx={{ p: 2.5 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                Action Outcomes
+                {t('actionRecon.actionOutcomes')}
               </Typography>
               <TextField
                 size="small"
-                placeholder="Search by action, case, type..."
+                placeholder={t('actionRecon.searchPlaceholder')}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 sx={{ width: 280 }}
@@ -253,12 +253,12 @@ export const ActionReconciliationPage = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Action</TableCell>
-                    <TableCell>Case</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell>Failure Reason</TableCell>
+                    <TableCell>{t('actionRecon.table.action')}</TableCell>
+                    <TableCell>{t('actionRecon.table.case')}</TableCell>
+                    <TableCell>{t('actionRecon.table.type')}</TableCell>
+                    <TableCell>{t('actionRecon.table.status')}</TableCell>
+                    <TableCell align="right">{t('actionRecon.table.amount')}</TableCell>
+                    <TableCell>{t('actionRecon.table.failureReason')}</TableCell>
                     <TableCell align="right" />
                   </TableRow>
                 </TableHead>
@@ -266,17 +266,17 @@ export const ActionReconciliationPage = () => {
                   {isLoading ? (
                     <TableRow>
                       <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Loading…
-                        </Typography>
+<Typography variant="body2" color="text.secondary">
+                        {t('actionRecon.loading')}
+                      </Typography>
                       </TableCell>
                     </TableRow>
                   ) : filteredRows.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={7} align="center" sx={{ py: 10 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          No actions match
-                        </Typography>
+<Typography variant="body2" color="text.secondary">
+                        {t('actionRecon.empty')}
+                      </Typography>
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -312,7 +312,7 @@ export const ActionReconciliationPage = () => {
                           </TableCell>
                           <TableCell>
                             <Label color={meta.color} startIcon={<Iconify icon={meta.icon} width={14} />} sx={{ fontSize: '0.75rem' }}>
-                              {meta.label}
+                              {t(meta.labelKey)}
                             </Label>
                           </TableCell>
                           <TableCell align="right">
@@ -337,7 +337,7 @@ export const ActionReconciliationPage = () => {
                                   }}
                                   disabled={retryMutation.isPending}
                                 >
-                                  Retry
+                                  {t('actionRecon.retry')}
                                 </Button>
                               )}
                               <Button
@@ -348,7 +348,7 @@ export const ActionReconciliationPage = () => {
                                   navigate(`${SYNAPSE_ROUTES.ACTIONS}?q=${encodeURIComponent(r.actionId ?? '')}`);
                                 }}
                               >
-                                Action
+                                {t('actionRecon.action')}
                               </Button>
                             </Stack>
                           </TableCell>

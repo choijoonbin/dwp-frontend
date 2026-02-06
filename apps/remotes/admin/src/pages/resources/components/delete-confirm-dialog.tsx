@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import Dialog from '@mui/material/Dialog';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';

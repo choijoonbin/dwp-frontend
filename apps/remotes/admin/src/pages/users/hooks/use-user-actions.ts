@@ -3,8 +3,8 @@
 import type { UserSummary, UserCreatePayload, UserUpdatePayload } from '@dwp-frontend/shared-utils';
 
 import { useCallback } from 'react';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import {
   HttpError,
   trackEvent,

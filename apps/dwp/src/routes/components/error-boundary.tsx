@@ -1,7 +1,8 @@
 import type { Theme, CSSObject } from '@mui/material/styles';
 
-import { useRouteError, isRouteErrorResponse } from 'react-router';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { useRouteError, isRouteErrorResponse } from 'react-router';
+
 import GlobalStyles from '@mui/material/GlobalStyles';
 
 // ----------------------------------------------------------------------

@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
-
 import { Iconify } from '@dwp-frontend/design-system';
 import { useEntityDetailQuery } from '@dwp-frontend/shared-utils';
-import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useLocation, useSearchParams } from 'react-router-dom';
+import { formatDate , useTranslation, formatCurrency } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -34,8 +33,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import TableContainer from '@mui/material/TableContainer';
 
-import { formatCurrency, formatDate } from '@dwp-frontend/shared-i18n';
-
 import { SYNAPSE_ROUTES } from '../routes';
 import { PiiFieldDisplay } from '../components/pii';
 import {
@@ -45,9 +42,15 @@ import {
   mockEntities,
   mockOpenItems,
   mockEntityChangeLogs,
-  type EntityChangeLog,
-} from '../data/mock-data';
-import type { Entity } from '../data/mock-data';
+  type EntityChangeLog      ,
+ Entity } from '../data/mock-data';
+
+
+
+
+
+
+
 
 // ----------------------------------------------------------------------
 

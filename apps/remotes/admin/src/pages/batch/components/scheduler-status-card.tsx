@@ -7,6 +7,7 @@ import type { DetectSchedulerStatus } from '@dwp-frontend/shared-utils';
 
 import { memo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -34,12 +35,13 @@ export const SchedulerStatusCard = memo(({
   onViewLastRun,
   lastRunId,
 }: SchedulerStatusCardProps) => {
+  const { t } = useTranslation('admin');
   if (error) {
     return (
       <Card variant="outlined" sx={{ borderColor: 'error.light' }}>
         <CardContent sx={{ p: 2 }}>
           <Typography variant="body2" color="error">
-            {error instanceof Error ? error.message : '스케줄러 상태를 불러올 수 없습니다'}
+            {error instanceof Error ? error.message : t('batch.scheduler.loadError')}
           </Typography>
         </CardContent>
       </Card>
@@ -60,7 +62,7 @@ export const SchedulerStatusCard = memo(({
     status.scheduleType === 'cron' && status.cronExpression
       ? status.cronExpression
       : status.intervalMinutes != null
-        ? `${status.intervalMinutes}분 간격`
+        ? t('batch.scheduler.intervalMinutes', { count: status.intervalMinutes })
         : '-';
 
   const lastSuccessLabel = status.lastSuccessAt
@@ -101,14 +103,14 @@ export const SchedulerStatusCard = memo(({
               }}
             >
               <Typography variant="caption" sx={{ fontWeight: 600, color: status.enabled ? 'success.dark' : 'text.secondary' }}>
-                {status.enabled ? 'AUTO' : 'OFF'}
+                {status.enabled ? t('batch.scheduler.auto') : t('batch.scheduler.off')}
               </Typography>
             </Box>
             {status.running && (
               <Stack direction="row" spacing={0.5} alignItems="center">
                 <CircularProgress size={14} />
                 <Typography variant="caption" sx={{ fontWeight: 600, color: 'info.main' }}>
-                  RUNNING
+                  {t('batch.scheduler.running')}
                 </Typography>
               </Stack>
             )}
@@ -124,7 +126,7 @@ export const SchedulerStatusCard = memo(({
                 }}
               >
                 <Typography variant="caption" sx={{ fontWeight: 600, color: 'warning.dark' }}>
-                  DEGRADED
+                  {t('batch.scheduler.degraded')}
                 </Typography>
               </Box>
             )}
@@ -132,7 +134,7 @@ export const SchedulerStatusCard = memo(({
           <Stack direction="row" spacing={3} flexWrap="wrap" sx={{ flex: 1 }}>
             <Box>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Interval/Cron
+                {t('batch.scheduler.intervalCron')}
               </Typography>
               <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
                 {scheduleLabel}
@@ -141,7 +143,7 @@ export const SchedulerStatusCard = memo(({
             {status.runningRunId && (
               <Box>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  Running Run
+                  {t('batch.scheduler.runningRun')}
                 </Typography>
                 <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
                   {status.runningRunId}
@@ -150,13 +152,13 @@ export const SchedulerStatusCard = memo(({
             )}
             <Box>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Last Success
+                {t('batch.scheduler.lastSuccess')}
               </Typography>
               <Typography variant="body2">{lastSuccessLabel}</Typography>
             </Box>
             <Box>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Last Fail
+                {t('batch.scheduler.lastFail')}
               </Typography>
               <Typography variant="body2" sx={{ color: status.lastFailAt ? 'error.main' : undefined }}>
                 {lastFailLabel}
@@ -165,7 +167,7 @@ export const SchedulerStatusCard = memo(({
             {status.nextPlannedAt && (
               <Box>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  Next Planned
+                  {t('batch.scheduler.nextPlanned')}
                 </Typography>
                 <Typography variant="body2">
                   {new Date(status.nextPlannedAt).toLocaleString('ko-KR')}
@@ -180,7 +182,7 @@ export const SchedulerStatusCard = memo(({
               startIcon={<Iconify icon="solar:eye-bold" width={16} />}
               onClick={() => onViewLastRun(String(lastRunId))}
             >
-              View last run
+              {t('batch.scheduler.viewLastRun')}
             </Button>
           )}
         </Stack>

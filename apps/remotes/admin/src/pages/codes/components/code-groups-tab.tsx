@@ -21,6 +21,7 @@ import Table from '@mui/material/Table';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
+import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Skeleton from '@mui/material/Skeleton';
@@ -95,6 +96,22 @@ export const CodeGroupsTab = () => {
     setAnchorEl(null);
   };
 
+  const handleToggleEnabled = async (group: CodeGroup) => {
+    try {
+      await updateMutation.mutateAsync({
+        groupId: group.id,
+        payload: { enabled: !group.enabled },
+      });
+      showSnackbar(
+        group.enabled ? t('toast.codeGroupDisabled') : t('toast.codeGroupEnabled')
+      );
+      refetch();
+      handleMenuClose();
+    } catch (err) {
+      showSnackbar(err instanceof Error ? err.message : t('error.saveFailed'), 'error');
+    }
+  };
+
   const showSnackbar = (message: string, severity: 'success' | 'error' = 'success') => {
     setSnackbar({ open: true, message, severity });
   };
@@ -158,7 +175,7 @@ export const CodeGroupsTab = () => {
 
   return (
     <>
-      <Card>
+      <Card sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Filter Bar */}
         <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }}>
@@ -168,7 +185,7 @@ export const CodeGroupsTab = () => {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               sx={{ minWidth: { xs: 1, md: 240 }, flex: 1 }}
-              placeholder="그룹 키, 그룹명, 설명"
+              placeholder="그룹 키 또는 이름 검색"
             />
             <TextField
               select
@@ -192,14 +209,14 @@ export const CodeGroupsTab = () => {
               label="활성화만"
             />
             <Box sx={{ ml: { md: 'auto' }, width: { xs: 1, md: 'auto' } }}>
-              <PermissionGate resource="menu.admin.codes" permission="CREATE">
+              <PermissionGate resource="menu.admin.codes" permission="CREATE" mode="disable">
                 <Button
                   variant="contained"
-                  startIcon={<Iconify icon="mingcute:add-line" />}
+                  startIcon={<Iconify icon="mingcute:add-line" width={20} />}
                   onClick={handleCreateGroup}
                   sx={{ width: { xs: 1, md: 'auto' }, minHeight: 40 }}
                 >
-                  그룹 추가
+                  새 그룹
                 </Button>
               </PermissionGate>
             </Box>
@@ -224,7 +241,7 @@ export const CodeGroupsTab = () => {
             </Typography>
           </Box>
         ) : (
-          <TableContainer sx={{ maxHeight: { md: 640 }, overflowX: 'auto' }}>
+          <TableContainer sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
             <Table stickyHeader sx={{ minWidth: 760, tableLayout: 'fixed' }}>
               <TableHead>
                 <TableRow sx={{ height: 56 }}>
@@ -279,16 +296,41 @@ export const CodeGroupsTab = () => {
         )}
       </Card>
 
-      {/* Group Menu */}
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl) && Boolean(selectedGroup)} onClose={handleMenuClose}>
-        <PermissionGate resource="menu.admin.codes" permission="UPDATE">
-          <MenuItem onClick={() => selectedGroup && handleEditGroup(selectedGroup)}>
+      {/* Group Menu - 참고소스: 편집/비활성화/삭제 3개 메뉴 */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl) && Boolean(selectedGroup)}
+        onClose={handleMenuClose}
+        PaperProps={{ sx: { minWidth: 160 } }}
+      >
+        <PermissionGate resource="menu.admin.codes" permission="UPDATE" mode="disable">
+          <MenuItem
+            onClick={() => selectedGroup && handleEditGroup(selectedGroup)}
+            sx={{ typography: 'body2', fontSize: 14 }}
+          >
             <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
             편집
           </MenuItem>
         </PermissionGate>
-        <PermissionGate resource="menu.admin.codes" permission="DELETE">
-          <MenuItem onClick={() => selectedGroup && handleDeleteGroup(selectedGroup)} sx={{ color: 'error.main' }}>
+        <PermissionGate resource="menu.admin.codes" permission="UPDATE" mode="disable">
+          <MenuItem
+            onClick={() => selectedGroup && handleToggleEnabled(selectedGroup)}
+            sx={{ typography: 'body2', fontSize: 14 }}
+          >
+            <Iconify
+              icon={selectedGroup?.enabled === false ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+              width={16}
+              sx={{ mr: 1 }}
+            />
+            {selectedGroup?.enabled === false ? '활성화' : '비활성화'}
+          </MenuItem>
+        </PermissionGate>
+        <Divider sx={{ my: 0.5 }} />
+        <PermissionGate resource="menu.admin.codes" permission="DELETE" mode="disable">
+          <MenuItem
+            onClick={() => selectedGroup && handleDeleteGroup(selectedGroup)}
+            sx={{ typography: 'body2', fontSize: 14, color: 'error.main' }}
+          >
             <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
             삭제
           </MenuItem>

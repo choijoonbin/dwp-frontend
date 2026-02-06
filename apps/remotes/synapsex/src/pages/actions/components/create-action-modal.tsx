@@ -6,6 +6,7 @@ import type { FormEvent } from 'react';
 
 import { useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -20,13 +21,8 @@ import FormControl from '@mui/material/FormControl';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-const actionTypes = [
-  { value: 'POST_REVERSAL', label: 'Post Reversal' },
-  { value: 'BLOCK_PAYMENT', label: 'Block Payment' },
-  { value: 'FLAG_REVIEW', label: 'Flag for Review' },
-  { value: 'CLEAR_ITEM', label: 'Clear Item' },
-  { value: 'UPDATE_MASTER', label: 'Update Master Data' },
-];
+const ACTION_TYPE_VALUES = ['POST_REVERSAL', 'BLOCK_PAYMENT', 'FLAG_REVIEW', 'CLEAR_ITEM', 'UPDATE_MASTER'] as const;
+const ACTION_TYPE_KEYS = ['post_reversal', 'block_payment', 'flag_review', 'clear_item', 'update_master'] as const;
 
 export type CreateActionForm = {
   caseId: number;
@@ -51,6 +47,11 @@ export const CreateActionModal = ({
   defaultCaseId,
   availableCaseIds,
 }: CreateActionModalProps) => {
+  const { t } = useTranslation('common');
+  const actionTypes = ACTION_TYPE_VALUES.map((value, i) => ({
+    value,
+    label: t(`actions.actionTypes.${ACTION_TYPE_KEYS[i]}`),
+  }));
   const [caseId, setCaseId] = useState(defaultCaseId ?? '');
   const [actionType, setActionType] = useState('POST_REVERSAL');
   const [payloadJson, setPayloadJson] = useState('{}');
@@ -81,7 +82,7 @@ export const CreateActionModal = ({
       <DialogTitle>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Iconify icon="solar:add-circle-bold" width={20} sx={{ color: 'primary.main' }} />
-          Create Action
+          {t('actions.buttons.createAction')}
         </Stack>
       </DialogTitle>
       <form onSubmit={handleSubmit}>
@@ -108,9 +109,9 @@ export const CreateActionModal = ({
                 onChange={(e) => setActionType(e.target.value)}
                 label="Action Type"
               >
-                {actionTypes.map((t) => (
-                  <MenuItem key={t.value} value={t.value}>
-                    {t.label}
+                {actionTypes.map((typeItem) => (
+                  <MenuItem key={typeItem.value} value={typeItem.value}>
+                    {typeItem.label}
                   </MenuItem>
                 ))}
               </Select>
@@ -134,7 +135,7 @@ export const CreateActionModal = ({
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
           <Button variant="outlined" onClick={onClose} disabled={isLoading}>
-            Cancel
+            {t('confirm.cancel')}
           </Button>
           <Button
             type="submit"
@@ -142,7 +143,7 @@ export const CreateActionModal = ({
             disabled={isLoading || !caseId}
             startIcon={isLoading ? null : <Iconify icon="solar:add-circle-bold" width={18} />}
           >
-            {isLoading ? 'Creating...' : 'Create'}
+            {isLoading ? t('commonLabels.saving') : t('actions.buttons.create')}
           </Button>
         </DialogActions>
       </form>

@@ -175,36 +175,51 @@ export const MenuTreePanel = memo(({
         </Stack>
       </Box>
 
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onMenuClose}>
-        <PermissionGate resource="menu.admin.menus" permission="CREATE">
-          <MenuItem onClick={() => selectedMenu && onCreateChild(selectedMenu)}>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={onMenuClose}
+        PaperProps={{ sx: { minWidth: 160 } }}
+      >
+        <PermissionGate resource="menu.admin.menus" permission="CREATE" mode="disable">
+          <MenuItem
+            onClick={() => selectedMenu && onCreateChild(selectedMenu)}
+            sx={{ typography: 'body2', fontSize: 14 }}
+          >
             <Iconify icon="solar:add-circle-bold" width={16} sx={{ mr: 1 }} />
             하위 메뉴 추가
           </MenuItem>
         </PermissionGate>
-        <PermissionGate resource="menu.admin.menus" permission="UPDATE">
+        <PermissionGate resource="menu.admin.menus" permission="UPDATE" mode="disable">
           <MenuItem
             disabled={actionMeta?.isFirst}
             onClick={() => selectedMenu && onReorder(selectedMenu.id, 'UP')}
+            sx={{ typography: 'body2', fontSize: 14 }}
           >
             <Iconify icon="solar:alt-arrow-up-bold" width={16} sx={{ mr: 1 }} />
             위로 이동
           </MenuItem>
+        </PermissionGate>
+        <PermissionGate resource="menu.admin.menus" permission="UPDATE" mode="disable">
           <MenuItem
             disabled={actionMeta?.isLast}
             onClick={() => selectedMenu && onReorder(selectedMenu.id, 'DOWN')}
+            sx={{ typography: 'body2', fontSize: 14 }}
           >
             <Iconify icon="solar:alt-arrow-down-bold" width={16} sx={{ mr: 1 }} />
             아래로 이동
           </MenuItem>
         </PermissionGate>
         <Divider sx={{ my: 0.5 }} />
-        <MenuItem onClick={() => selectedMenu && onCopyKey(selectedMenu.menuKey)}>
+        <MenuItem onClick={() => selectedMenu && onCopyKey(selectedMenu.menuKey)} sx={{ typography: 'body2', fontSize: 14 }}>
           <Iconify icon="solar:copy-bold" width={16} sx={{ mr: 1 }} />
           키 복사
         </MenuItem>
-        <PermissionGate resource="menu.admin.menus" permission="UPDATE">
-          <MenuItem onClick={() => selectedMenu && onToggleEnabled(selectedMenu)}>
+        <PermissionGate resource="menu.admin.menus" permission="UPDATE" mode="disable">
+          <MenuItem
+            onClick={() => selectedMenu && onToggleEnabled(selectedMenu)}
+            sx={{ typography: 'body2', fontSize: 14 }}
+          >
             <Iconify
               icon={selectedMenu?.enabled === false ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
               width={16}
@@ -214,8 +229,11 @@ export const MenuTreePanel = memo(({
           </MenuItem>
         </PermissionGate>
         <Divider sx={{ my: 0.5 }} />
-        <PermissionGate resource="menu.admin.menus" permission="DELETE">
-          <MenuItem onClick={() => selectedMenu && onDelete(selectedMenu)} sx={{ color: 'error.main' }}>
+        <PermissionGate resource="menu.admin.menus" permission="DELETE" mode="disable">
+          <MenuItem
+            onClick={() => selectedMenu && onDelete(selectedMenu)}
+            sx={{ typography: 'body2', fontSize: 14, color: 'error.main' }}
+          >
             <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
             삭제
           </MenuItem>

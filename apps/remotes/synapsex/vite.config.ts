@@ -21,6 +21,9 @@ export default defineConfig(({ mode }) => {
       __APP_VERSION__: JSON.stringify(packageJson.version),
       'process.env.NX_API_URL': JSON.stringify(env.NX_API_URL ?? 'http://localhost:8080'),
     },
+    optimizeDeps: {
+      include: ['i18next', 'react-i18next', 'i18next-resources-to-backend'],
+    },
     resolve: {
       alias: [
         {

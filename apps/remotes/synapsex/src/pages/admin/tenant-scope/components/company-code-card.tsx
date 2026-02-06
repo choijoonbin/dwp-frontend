@@ -2,7 +2,6 @@ import type { UseMutationResult } from '@tanstack/react-query';
 
 import { useMemo, useState } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import { showToast, useCompanyCodeCatalogQuery, type TenantScopeCompanyCode } from '@dwp-frontend/shared-utils';
 
@@ -42,11 +41,6 @@ type CompanyCodeCardProps = {
   refetch: () => void;
 };
 
-const SOURCE_LABEL: Record<string, string> = {
-  MANUAL: '수동',
-  SEED: '시드',
-  SAP: 'SAP',
-};
 
 export const CompanyCodeCard = ({
   items,
@@ -114,11 +108,11 @@ export const CompanyCodeCard = ({
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:buildings-bold-duotone" width={18} />
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                Company Codes
+                {t('tenantScope.companyCodes')}
               </Typography>
             </Stack>
           }
-          subheader="Multi-company support and access scope."
+          subheader={t('tenantScope.companyCodesSubheader')}
           action={
             <Button
               size="small"
@@ -126,7 +120,7 @@ export const CompanyCodeCard = ({
               startIcon={<Iconify icon="solar:add-circle-bold" width={16} />}
               onClick={() => setAddOpen(true)}
             >
-              Add
+              {t('tenantScope.add')}
             </Button>
           }
           sx={{ pb: 2 }}
@@ -142,7 +136,7 @@ export const CompanyCodeCard = ({
               sx={{ mb: 0.5 }}
             >
               <Typography variant="caption" color="text.secondary">
-                Included: {items.filter((i) => i.enabled).length} / Total: {items.length}
+                {t('tenantScope.included')}: {items.filter((i) => i.enabled).length} / {t('tenantScope.total')}: {items.length}
               </Typography>
             </Stack>
             <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={1}>
@@ -152,18 +146,18 @@ export const CompanyCodeCard = ({
                 exclusive
                 onChange={(_, v) => v != null && setFilter(v)}
               >
-                <ToggleButton value="all">All</ToggleButton>
-                <ToggleButton value="enabled">Enabled</ToggleButton>
-                <ToggleButton value="disabled">Disabled</ToggleButton>
+                <ToggleButton value="all">{t('tenantScope.all')}</ToggleButton>
+                <ToggleButton value="enabled">{t('tenantScope.enabled')}</ToggleButton>
+                <ToggleButton value="disabled">{t('tenantScope.disabled')}</ToggleButton>
               </ToggleButtonGroup>
             </Stack>
             {isLoading ? (
               <Typography variant="body2" color="text.secondary">
-                Loading...
+                {t('tenantScope.loading')}
               </Typography>
             ) : filteredItems.length === 0 ? (
               <Typography variant="body2" color="text.secondary">
-                {items.length === 0 ? 'No company codes configured.' : 'No items match filter.'}
+                {items.length === 0 ? t('tenantScope.noCompanyCodes') : t('tenantScope.noMatchFilter')}
               </Typography>
             ) : (
               filteredItems.map((item) => (
@@ -186,12 +180,18 @@ export const CompanyCodeCard = ({
                       </Typography>
                       {item.source && (
                         <Label color="default" variant="soft" sx={{ fontSize: 10 }}>
-                          {SOURCE_LABEL[item.source] ?? item.source}
+                          {item.source === 'MANUAL'
+                            ? t('tenantScope.sourceManual')
+                            : item.source === 'SEED'
+                              ? t('tenantScope.sourceSeed')
+                              : item.source === 'SAP'
+                                ? t('tenantScope.sourceSap')
+                                : item.source}
                         </Label>
                       )}
                     </Stack>
                     <Typography variant="caption" color="text.secondary">
-                      {item.enabled ? 'Included in tenant scope' : 'Excluded'}
+                      {item.enabled ? t('tenantScope.includedInScope') : t('tenantScope.excluded')}
                     </Typography>
                   </Box>
                   <Switch
@@ -209,7 +209,7 @@ export const CompanyCodeCard = ({
       <CatalogAddDialog
         open={addOpen}
         onClose={() => setAddOpen(false)}
-        title="Add Company Codes"
+        title={t('tenantScope.addCompanyCodes')}
         keyField="bukrs"
         items={catalogItems}
         existingKeys={existingKeys}

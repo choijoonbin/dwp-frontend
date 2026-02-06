@@ -5,6 +5,7 @@ import type { DetectRunDetail } from '@dwp-frontend/shared-utils';
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { ApiErrorAlert, buildAuditUrl } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -35,6 +36,7 @@ export const BatchRunDetailDrawer = memo(({
   isLoading,
   error,
 }: BatchRunDetailDrawerProps) => {
+  const { t } = useTranslation('admin');
   const formatJson = (obj: Record<string, unknown> | null | undefined): string => {
     if (!obj) return '-';
     try {
@@ -66,7 +68,7 @@ export const BatchRunDetailDrawer = memo(({
     >
       <Box sx={{ p: 3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-          <Typography variant="h6">Run 상세</Typography>
+          <Typography variant="h6">{t('batch.runDetail.title')}</Typography>
           <IconButton onClick={onClose}>
             <Iconify icon="solar:close-circle-bold" />
           </IconButton>
@@ -81,18 +83,18 @@ export const BatchRunDetailDrawer = memo(({
           </Stack>
         ) : !runDetail ? (
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Run 정보를 불러올 수 없습니다.
+            {t('batch.runDetail.loadError')}
           </Typography>
         ) : (
           <Stack spacing={3}>
             <Stack spacing={2}>
               <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-                기본 정보
+                {t('batch.runDetail.basicInfo')}
               </Typography>
               <Stack spacing={1}>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    Run ID
+                    {t('batch.table.runId')}
                   </Typography>
                   <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
                     {runDetail.runId}
@@ -100,7 +102,7 @@ export const BatchRunDetailDrawer = memo(({
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    Started
+                    {t('batch.table.started')}
                   </Typography>
                   <Typography variant="body2">
                     {runDetail.startedAt
@@ -110,7 +112,7 @@ export const BatchRunDetailDrawer = memo(({
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    Status
+                    {t('batch.table.status')}
                   </Typography>
                   <Typography variant="body2">{runDetail.status}</Typography>
                 </Box>
@@ -119,18 +121,18 @@ export const BatchRunDetailDrawer = memo(({
                   runDetail.suppressedCount != null) && (
                   <Box>
                     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                      Counts
+                      {t('batch.runDetail.counts')}
                     </Typography>
                     <Typography variant="body2">
-                      Created: {runDetail.createdCount ?? 0} · Updated: {runDetail.updatedCount ?? 0}{' '}
-                      · Suppressed: {runDetail.suppressedCount ?? 0}
+                      {t('batch.runDetail.created')}: {runDetail.createdCount ?? 0} · {t('batch.runDetail.updated')}: {runDetail.updatedCount ?? 0}{' '}
+                      · {t('batch.runDetail.suppressed')}: {runDetail.suppressedCount ?? 0}
                     </Typography>
                   </Box>
                 )}
                 {(runDetail.message || runDetail.skipReason) && (
                   <Box>
                     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                      {runDetail.status === 'SKIPPED' ? 'Skip Reason' : 'Message'}
+                      {runDetail.status === 'SKIPPED' ? t('batch.runDetail.skipReason') : t('batch.runDetail.message')}
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'warning.main' }}>
                       {runDetail.skipReason ?? runDetail.message}
@@ -140,7 +142,7 @@ export const BatchRunDetailDrawer = memo(({
                 {runDetail.status === 'SKIPPED' && runDetail.runningRunId && (
                   <Box>
                     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                      Running Run ID
+                      {t('batch.runDetail.runningRunId')}
                     </Typography>
                     <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
                       {runDetail.runningRunId}
@@ -155,7 +157,7 @@ export const BatchRunDetailDrawer = memo(({
                 <Divider />
                 <Stack spacing={2}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-                    Counts (Rule breakdown)
+                    {t('batch.runDetail.countsBreakdown')}
                   </Typography>
                   <Box
                     component="pre"
@@ -185,7 +187,7 @@ export const BatchRunDetailDrawer = memo(({
                 }}
               >
                 <Typography variant="caption" sx={{ color: 'error.dark', fontWeight: 500 }}>
-                  실패 시 View Audit에서 상세 원인을 확인할 수 있습니다.
+                  {t('batch.runDetail.failedAuditHint')}
                 </Typography>
               </Box>
             )}
@@ -201,7 +203,7 @@ export const BatchRunDetailDrawer = memo(({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                View Audit
+                {t('batch.runDetail.viewAudit')}
               </Button>
               <Button
                 component={Link}
@@ -210,7 +212,7 @@ export const BatchRunDetailDrawer = memo(({
                 size="small"
                 startIcon={<Iconify icon="solar:clipboard-list-bold-duotone" width={18} />}
               >
-                Affected Cases
+                {t('batch.runDetail.affectedCases')}
               </Button>
             </Stack>
           </Stack>

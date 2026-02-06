@@ -1,6 +1,7 @@
 import type { SelectChangeEvent } from '@mui/material/Select';
 
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -18,18 +19,18 @@ type DocumentsFilterBarProps = {
   companyCodes: { code: string; name: string }[];
 };
 
-const integrityOptions = [
-  { value: '', label: 'All Status' },
-  { value: 'pass', label: 'Pass' },
-  { value: 'warn', label: 'Warn' },
-  { value: 'fail', label: 'Fail' },
-];
-
 export const DocumentsFilterBar = ({
   filters,
   onFiltersChange,
   companyCodes,
 }: DocumentsFilterBarProps) => {
+  const { t } = useTranslation('common');
+  const integrityOptions = [
+    { value: '', label: t('documents.filter.allStatus') },
+    { value: 'pass', label: t('documents.integrity.pass') },
+    { value: 'warn', label: t('documents.integrity.warn') },
+    { value: 'fail', label: t('documents.integrity.fail') },
+  ];
   const handleChange = (key: keyof DocumentFilters, value: unknown) => {
     onFiltersChange({ ...filters, [key]: value || undefined });
   };
@@ -41,7 +42,7 @@ export const DocumentsFilterBar = ({
           <TextField
             fullWidth
             size="small"
-            placeholder="Search doc number, vendor, reference..."
+            placeholder={t('documents.filter.searchPlaceholder')}
             value={filters.xblnr ?? ''}
             onChange={(e) => handleChange('xblnr', e.target.value || undefined)}
             InputProps={{
@@ -57,15 +58,15 @@ export const DocumentsFilterBar = ({
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 2 }}>
           <FormControl fullWidth size="small">
-            <InputLabel>Company</InputLabel>
+            <InputLabel>{t('documents.filter.company')}</InputLabel>
             <Select
               value={filters.bukrs ?? 'all'}
-              label="Company"
+              label={t('documents.filter.company')}
               onChange={(e: SelectChangeEvent) =>
                 handleChange('bukrs', e.target.value === 'all' ? undefined : e.target.value)
               }
             >
-              <MenuItem value="all">All Companies</MenuItem>
+              <MenuItem value="all">{t('documents.filter.allCompanies')}</MenuItem>
               {companyCodes.map((cc) => (
                 <MenuItem key={cc.code} value={cc.code}>
                   {cc.code} - {cc.name}
@@ -76,10 +77,10 @@ export const DocumentsFilterBar = ({
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 2 }}>
           <FormControl fullWidth size="small">
-            <InputLabel>Integrity</InputLabel>
+            <InputLabel>{t('documents.filter.integrity')}</InputLabel>
             <Select
               value={filters.status ?? 'all'}
-              label="Integrity"
+              label={t('documents.filter.integrity')}
               onChange={(e: SelectChangeEvent) =>
                 handleChange('status', e.target.value === 'all' ? undefined : e.target.value)
               }
@@ -97,7 +98,7 @@ export const DocumentsFilterBar = ({
             fullWidth
             size="small"
             type="date"
-            label="Date From"
+            label={t('documents.filter.dateFrom')}
             value={filters.dateFrom ?? ''}
             onChange={(e) => handleChange('dateFrom', e.target.value || undefined)}
             InputLabelProps={{ shrink: true }}
@@ -108,7 +109,7 @@ export const DocumentsFilterBar = ({
             fullWidth
             size="small"
             type="date"
-            label="Date To"
+            label={t('documents.filter.dateTo')}
             value={filters.dateTo ?? ''}
             onChange={(e) => handleChange('dateTo', e.target.value || undefined)}
             InputLabelProps={{ shrink: true }}

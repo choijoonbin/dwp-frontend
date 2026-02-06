@@ -4,6 +4,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
   useReconRunsQuery,
@@ -34,12 +35,8 @@ import TableContainer from '@mui/material/TableContainer';
 import { SYNAPSE_ROUTES } from '../../routes';
 import { StartReconModal } from './components/start-recon-modal';
 
-const RUN_TYPE_LABELS: Record<string, string> = {
-  DOC_OPENITEM_MATCH: 'Doc vs Open Item',
-  ACTION_EFFECT: 'Action Effect',
-};
-
 export const ReconciliationPage = () => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'ingestion' | 'integrity'>('integrity');
   const [runTypeFilter, setRunTypeFilter] = useState<string>('all');
@@ -81,7 +78,7 @@ export const ReconciliationPage = () => {
           <CardContent sx={{ p: 6, textAlign: 'center' }}>
             <Iconify icon="solar:danger-triangle-bold-duotone" width={48} sx={{ color: 'error.main', mb: 2 }} />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load runs
+              {t('reconciliation.error.failedToLoad')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {error instanceof Error ? error.message : 'Unknown error'}
@@ -105,11 +102,11 @@ export const ReconciliationPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:git-pull-request-bold" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Reconciliation
+                {t('reconciliation.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Validate ingestion integrity between SAP source events and normalized finance tables.
+              {t('reconciliation.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -118,7 +115,7 @@ export const ReconciliationPage = () => {
             startIcon={<Iconify icon="solar:play-bold" width={18} />}
             onClick={() => setStartModalOpen(true)}
           >
-            Start Run
+            {t('reconciliation.startRun')}
           </Button>
         </Stack>
 
@@ -127,18 +124,18 @@ export const ReconciliationPage = () => {
           onChange={(_, v: 'ingestion' | 'integrity') => setActiveTab(v)}
           sx={{ borderBottom: 1, borderColor: 'divider', mb: 0 }}
         >
-          <Tab value="ingestion" label="Ingestion Health" />
-          <Tab value="integrity" label="Integrity Report" />
+          <Tab value="ingestion" label={t('reconciliation.ingestionHealth')} />
+          <Tab value="integrity" label={t('reconciliation.integrityReport')} />
         </Tabs>
 
         {activeTab === 'ingestion' && (
           <Card variant="outlined">
             <CardContent sx={{ p: 2.5 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                Ingestion Health
+                {t('reconciliation.ingestionTitle')}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Monitor document and open-item ingestion pipeline health. Drill down to documents, open items, and lineage.
+                {t('reconciliation.ingestionDesc')}
               </Typography>
               <Stack direction="row" spacing={2} flexWrap="wrap">
                 <Button
@@ -147,7 +144,7 @@ export const ReconciliationPage = () => {
                   startIcon={<Iconify icon="solar:document-bold" width={16} />}
                   onClick={() => navigate(SYNAPSE_ROUTES.DOCUMENTS)}
                 >
-                  Documents
+                  {t('reconciliation.documents')}
                 </Button>
                 <Button
                   variant="outlined"
@@ -155,7 +152,7 @@ export const ReconciliationPage = () => {
                   startIcon={<Iconify icon="solar:clipboard-list-bold" width={16} />}
                   onClick={() => navigate(SYNAPSE_ROUTES.OPEN_ITEMS)}
                 >
-                  Open Items
+                  {t('reconciliation.openItems')}
                 </Button>
                 <Button
                   variant="outlined"
@@ -163,7 +160,7 @@ export const ReconciliationPage = () => {
                   startIcon={<Iconify icon="solar:link-circle-bold" width={16} />}
                   onClick={() => navigate(SYNAPSE_ROUTES.LINEAGE)}
                 >
-                  Lineage
+                  {t('reconciliation.lineage')}
                 </Button>
               </Stack>
             </CardContent>
@@ -175,19 +172,19 @@ export const ReconciliationPage = () => {
           <CardContent sx={{ p: 2.5 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                Runs
+                {t('reconciliation.runs')}
               </Typography>
               <FormControl size="small" sx={{ minWidth: 200 }}>
-                <InputLabel id="recon-run-type-filter">Run Type</InputLabel>
+                <InputLabel id="recon-run-type-filter">{t('reconciliation.runType')}</InputLabel>
                 <Select
                   labelId="recon-run-type-filter"
-                  label="Run Type"
+                  label={t('reconciliation.runType')}
                   value={runTypeFilter}
                   onChange={(e) => setRunTypeFilter(e.target.value)}
                 >
-                  <MenuItem value="all">All</MenuItem>
-                  <MenuItem value="DOC_OPENITEM_MATCH">Doc vs Open Item</MenuItem>
-                  <MenuItem value="ACTION_EFFECT">Action Effect</MenuItem>
+                  <MenuItem value="all">{t('reconciliation.all')}</MenuItem>
+                  <MenuItem value="DOC_OPENITEM_MATCH">{t('reconciliation.runTypes.DOC_OPENITEM_MATCH')}</MenuItem>
+                  <MenuItem value="ACTION_EFFECT">{t('reconciliation.runTypes.ACTION_EFFECT')}</MenuItem>
                 </Select>
               </FormControl>
             </Stack>
@@ -195,12 +192,12 @@ export const ReconciliationPage = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Run ID</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell align="right">Pass</TableCell>
-                    <TableCell align="right">Fail</TableCell>
-                    <TableCell>Started</TableCell>
+                    <TableCell>{t('reconciliation.table.runId')}</TableCell>
+                    <TableCell>{t('reconciliation.table.type')}</TableCell>
+                    <TableCell>{t('reconciliation.table.status')}</TableCell>
+                    <TableCell align="right">{t('reconciliation.table.pass')}</TableCell>
+                    <TableCell align="right">{t('reconciliation.table.fail')}</TableCell>
+                    <TableCell>{t('reconciliation.table.started')}</TableCell>
                     <TableCell align="right" />
                   </TableRow>
                 </TableHead>
@@ -209,7 +206,7 @@ export const ReconciliationPage = () => {
                     <TableRow>
                       <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
                         <Typography variant="body2" color="text.secondary">
-                          Loading…
+                          {t('reconciliation.loading')}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -219,7 +216,7 @@ export const ReconciliationPage = () => {
                         <Stack alignItems="center" spacing={1}>
                           <Iconify icon="solar:git-pull-request-bold" width={48} sx={{ color: 'text.disabled' }} />
                           <Typography variant="body2" color="text.secondary">
-                            No runs yet
+                            {t('reconciliation.empty')}
                           </Typography>
                           <Button
                             variant="outlined"
@@ -227,7 +224,7 @@ export const ReconciliationPage = () => {
                             startIcon={<Iconify icon="solar:play-bold" width={18} />}
                             onClick={() => setStartModalOpen(true)}
                           >
-                            Start first run
+                            {t('reconciliation.startFirst')}
                           </Button>
                         </Stack>
                       </TableCell>
@@ -247,7 +244,9 @@ export const ReconciliationPage = () => {
                         </TableCell>
                         <TableCell>
                           <Typography variant="body2">
-                            {RUN_TYPE_LABELS[r.runType] ?? r.runType}
+                            {r.runType === 'DOC_OPENITEM_MATCH' || r.runType === 'ACTION_EFFECT'
+                              ? t(`reconciliation.runTypes.${r.runType}`)
+                              : r.runType}
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -271,8 +270,8 @@ export const ReconciliationPage = () => {
                             endIcon={<Iconify icon="solar:arrow-right-up-linear" width={14} />}
                             onClick={() => navigate(`${SYNAPSE_ROUTES.RECONCILIATION}/${r.runId}`)}
                           >
-                            Open
-                          </Button>
+{t('reconciliation.open')}
+                            </Button>
                         </TableCell>
                       </TableRow>
                     ))

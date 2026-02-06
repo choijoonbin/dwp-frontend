@@ -9,13 +9,11 @@ import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
-import Menu from '@mui/material/Menu';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
 import Skeleton from '@mui/material/Skeleton';
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
@@ -33,12 +31,7 @@ type CodeGroupsPanelProps = {
   groups: CodeUsageSummary[];
   isLoading: boolean;
   error: Error | null;
-  anchorEl: HTMLElement | null;
-  selectedUsage: CodeUsageSummary | null;
-  onMenuOpen: (event: React.MouseEvent<HTMLElement>, usage: CodeUsageSummary) => void;
-  onMenuClose: () => void;
   onAddGroup: () => void;
-  onEdit: (usage: CodeUsageSummary) => void;
   onDelete: (usage: CodeUsageSummary) => void;
   onToggleEnabled: (usage: CodeUsageSummary) => void;
 };
@@ -48,12 +41,7 @@ export const CodeGroupsPanel = memo(({
   groups,
   isLoading,
   error,
-  anchorEl,
-  selectedUsage,
-  onMenuOpen,
-  onMenuClose,
   onAddGroup,
-  onEdit,
   onDelete,
   onToggleEnabled,
 }: CodeGroupsPanelProps) => {
@@ -66,8 +54,7 @@ export const CodeGroupsPanel = memo(({
   }
 
   return (
-    <>
-      <Card>
+    <Card>
         <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Stack spacing={0.5}>
@@ -79,9 +66,13 @@ export const CodeGroupsPanel = memo(({
               </Typography>
             </Stack>
             {resourceKey && (
-              <PermissionGate resource="menu.admin.code-usages" permission="CREATE">
-                <Button variant="contained" startIcon={<Iconify icon="mingcute:add-line" />} onClick={onAddGroup}>
-                  그룹 추가
+              <PermissionGate resource="menu.admin.code-usages" permission="CREATE" mode="disable">
+                <Button
+                  variant="contained"
+                  startIcon={<Iconify icon="mingcute:add-line" width={20} />}
+                  onClick={onAddGroup}
+                >
+                  그룹추가
                 </Button>
               </PermissionGate>
             )}
@@ -139,9 +130,17 @@ export const CodeGroupsPanel = memo(({
                       />
                     </TableCell>
                     <TableCell align="right">
-                      <IconButton size="small" onClick={(e) => onMenuOpen(e, usage)}>
-                        <Iconify icon="solar:menu-dots-bold" />
-                      </IconButton>
+                      <PermissionGate resource="menu.admin.code-usages" permission="DELETE" mode="disable">
+                        <Tooltip title="매핑 삭제">
+                          <IconButton
+                            size="small"
+                            onClick={() => onDelete(usage)}
+                            sx={{ color: 'error.main' }}
+                          >
+                            <Iconify icon="solar:trash-bin-trash-bold" width={18} />
+                          </IconButton>
+                        </Tooltip>
+                      </PermissionGate>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -150,23 +149,6 @@ export const CodeGroupsPanel = memo(({
           </TableContainer>
         )}
       </Card>
-
-      {/* Action Menu */}
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl) && Boolean(selectedUsage)} onClose={onMenuClose}>
-        <PermissionGate resource="menu.admin.code-usages" permission="UPDATE">
-          <MenuItem onClick={() => selectedUsage && onEdit(selectedUsage)}>
-            <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
-            편집
-          </MenuItem>
-        </PermissionGate>
-        <PermissionGate resource="menu.admin.code-usages" permission="DELETE">
-          <MenuItem onClick={() => selectedUsage && onDelete(selectedUsage)} sx={{ color: 'error.main' }}>
-            <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
-            삭제
-          </MenuItem>
-        </PermissionGate>
-      </Menu>
-    </>
   );
 });
 

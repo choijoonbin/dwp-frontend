@@ -2,10 +2,11 @@
  * Entities (거래처) 목록 페이지 — API 연동 + 검색 필터 + mock fallback
  */
 
-import { useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Iconify } from '@dwp-frontend/design-system';
-import { useEntitiesListQuery } from '@dwp-frontend/shared-utils';
+import { useMemo, useState, useCallback } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { useCodes, useEntitiesListQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -22,8 +23,9 @@ import CardContent from '@mui/material/CardContent';
 import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../../routes';
-import { EntitiesFilterBar } from './components/entities-filter-bar';
 import { mockEntities } from '../../data/mock-data';
+import { EntitiesFilterBar } from './components/entities-filter-bar';
+
 import type { EntityFilters } from './types';
 
 const DEFAULT_FILTERS: EntityFilters = {
@@ -33,6 +35,8 @@ const DEFAULT_FILTERS: EntityFilters = {
 };
 
 export const EntitiesPage = () => {
+  const { t } = useTranslation('common');
+  const { getLabel: getTypeLabel } = useCodes('ENTITY_TYPE');
   const navigate = useNavigate();
   const [filters, setFilters] = useState<EntityFilters>(DEFAULT_FILTERS);
 
@@ -65,13 +69,13 @@ export const EntitiesPage = () => {
               sx={{ color: 'error.main', mb: 2 }}
             />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load entities
+              {t('error.errorState.failedToLoadEntities')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {error instanceof Error ? error.message : 'Unknown error'}
+              {error instanceof Error ? error.message : t('error.errorState.unknownError')}
             </Typography>
             <Button variant="outlined" onClick={() => refetch()} startIcon={<Iconify icon="solar:refresh-bold" width={18} />}>
-              Retry
+              {t('error.errorState.retry')}
             </Button>
           </CardContent>
         </Card>
@@ -92,11 +96,11 @@ export const EntitiesPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:users-group-rounded-bold-duotone" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Entities
+                {t('entities.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Vendor and customer hub
+              {t('entities.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -105,7 +109,7 @@ export const EntitiesPage = () => {
             startIcon={<Iconify icon="solar:download-minimalistic-bold" width={18} />}
             sx={{ bgcolor: 'transparent' }}
           >
-            Export
+            {t('entities.export')}
           </Button>
         </Stack>
 
@@ -121,13 +125,13 @@ export const EntitiesPage = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'action.hover' }}>
-                    <TableCell>Code</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Country</TableCell>
-                    <TableCell>Risk</TableCell>
-                    <TableCell align="right">Open Items</TableCell>
-                    <TableCell align="right">Balance</TableCell>
+                    <TableCell>{t('entities.table.code')}</TableCell>
+                    <TableCell>{t('entities.table.name')}</TableCell>
+                    <TableCell>{t('entities.table.type')}</TableCell>
+                    <TableCell>{t('entities.table.country')}</TableCell>
+                    <TableCell>{t('entities.table.risk')}</TableCell>
+                    <TableCell align="right">{t('entities.table.openItems')}</TableCell>
+                    <TableCell align="right">{t('entities.table.balance')}</TableCell>
                     <TableCell />
                   </TableRow>
                 </TableHead>
@@ -136,7 +140,7 @@ export const EntitiesPage = () => {
                     <TableRow>
                       <TableCell colSpan={8} align="center" sx={{ py: 8 }}>
                         <Typography variant="body2" color="text.secondary">
-                          Loading...
+                          {t('entities.loading')}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -150,7 +154,7 @@ export const EntitiesPage = () => {
                             sx={{ color: 'text.disabled' }}
                           />
                           <Typography variant="body2" color="text.secondary">
-                            No entities found
+                            {t('entities.empty')}
                           </Typography>
                         </Stack>
                       </TableCell>
@@ -178,7 +182,7 @@ export const EntitiesPage = () => {
                         </TableCell>
                         <TableCell>
                           <Chip
-                            label={entity.type}
+                            label={getTypeLabel(entity.type) || entity.type}
                             size="small"
                             variant="outlined"
                             sx={{ fontSize: '0.75rem', textTransform: 'capitalize' }}
@@ -225,7 +229,7 @@ export const EntitiesPage = () => {
                             endIcon={<Iconify icon="solar:arrow-right-up-linear" width={16} />}
                             sx={{ textDecoration: 'none' }}
                           >
-                            Open
+                            {t('entities.open')}
                           </Button>
                         </TableCell>
                       </TableRow>

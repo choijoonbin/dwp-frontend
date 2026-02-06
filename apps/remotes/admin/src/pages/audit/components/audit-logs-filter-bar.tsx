@@ -21,6 +21,8 @@ type AuditLogsFilterBarProps = {
   onReset: () => void;
   onExport: () => void;
   isExporting: boolean;
+  /** fixed 레이아웃 시 부모 Card 내부에 삽입할 때 true */
+  embedded?: boolean;
 };
 
 export const AuditLogsFilterBar = memo(({
@@ -29,8 +31,9 @@ export const AuditLogsFilterBar = memo(({
   onReset,
   onExport,
   isExporting,
-}: AuditLogsFilterBarProps) => (
-  <Card sx={{ p: 2 }}>
+  embedded = false,
+}: AuditLogsFilterBarProps) => {
+  const content = (
     <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }}>
       <TextField
         id="audit-filter-from"
@@ -104,27 +107,39 @@ export const AuditLogsFilterBar = memo(({
           ),
         }}
       />
-      <Box sx={{ ml: { md: 'auto' }, display: 'flex', gap: 1, width: { xs: 1, md: 'auto' } }}>
+      <Box sx={{ ml: { md: 'auto' }, display: 'flex', gap: 1, flexShrink: 0, width: { xs: 1, md: 'auto' } }}>
         <Button
           variant="outlined"
+          size="small"
           onClick={onReset}
-          startIcon={<Iconify icon="solar:refresh-bold" />}
-          sx={{ flex: { xs: 1, md: 'none' }, minHeight: 40 }}
+          startIcon={<Iconify icon="solar:refresh-bold" width={18} />}
+          sx={{ width: { xs: 1, md: 'auto' } }}
         >
           초기화
         </Button>
         <Button
           variant="contained"
+          size="small"
           onClick={onExport}
           disabled={isExporting}
-          startIcon={<Iconify icon={isExporting ? 'svg-spinners:ring-resize' : 'solar:download-bold'} />}
-          sx={{ flex: { xs: 1, md: 'none' }, minHeight: 40 }}
+          startIcon={<Iconify icon={isExporting ? 'svg-spinners:ring-resize' : 'solar:download-bold'} width={18} />}
+          sx={{ width: { xs: 1, md: 'auto' } }}
         >
           {isExporting ? '다운로드 중...' : 'Excel 다운로드'}
         </Button>
       </Box>
     </Stack>
-  </Card>
-));
+  );
+
+  if (embedded) {
+    return (
+      <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+        {content}
+      </Box>
+    );
+  }
+
+  return <Card sx={{ p: 2 }}>{content}</Card>;
+});
 
 AuditLogsFilterBar.displayName = 'AuditLogsFilterBar';

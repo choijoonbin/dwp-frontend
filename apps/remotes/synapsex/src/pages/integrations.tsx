@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -120,23 +121,27 @@ const issues: IngestionIssue[] = [
   },
 ];
 
-function statusMeta(status: Channel['status']) {
+
+function getStatusMeta(
+  status: Channel['status'],
+  t: (key: string) => string
+): { label: string; icon: string; color: 'success' | 'warning' | 'error' } {
   if (status === 'healthy')
     return {
-      label: 'Healthy',
+      label: t('integrations.healthy'),
       icon: 'solar:check-circle-bold',
-      color: 'success' as const,
+      color: 'success',
     };
   if (status === 'degraded')
     return {
-      label: 'Degraded',
+      label: t('integrations.degraded'),
       icon: 'solar:danger-triangle-bold',
-      color: 'warning' as const,
+      color: 'warning',
     };
   return {
-    label: 'Down',
+    label: t('integrations.down'),
     icon: 'solar:danger-triangle-bold',
-    color: 'error' as const,
+    color: 'error',
   };
 }
 
@@ -162,6 +167,7 @@ function iconByType(type: Channel['type']) {
 // ----------------------------------------------------------------------
 
 export const IntegrationsPage = () => {
+  const { t } = useTranslation('common');
   const [q, setQ] = useState('');
   const [channel, setChannel] = useState<string>('all');
 
@@ -194,18 +200,18 @@ export const IntegrationsPage = () => {
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2 }}>
         <Box>
           <Typography variant="h4" sx={{ fontWeight: 600, mb: 0.5 }}>
-            Integrations & Data Ops
+            {t('integrations.title')}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Monitor ingestion channels (S3/JCo/IDoc/API) and data pipeline health for audit-grade operations.
+            {t('integrations.subtitle')}
           </Typography>
         </Box>
         <Stack direction="row" spacing={1}>
           <Button variant="outlined" startIcon={<Iconify icon="solar:refresh-bold" />}>
-            Reprocess Queue
+            {t('integrations.reprocessQueue')}
           </Button>
           <Button variant="contained" startIcon={<Iconify icon="solar:plug-circle-bold" />}>
-            Add Integration
+            {t('integrations.addIntegration')}
           </Button>
         </Stack>
       </Box>
@@ -214,8 +220,8 @@ export const IntegrationsPage = () => {
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, gap: 2 }}>
         <Card>
           <CardHeader
-            title="Channel health"
-            subheader="Aggregated from heartbeats"
+            title={t('integrations.channelHealth')}
+            subheader={t('integrations.aggregatedFromHeartbeats')}
             titleTypographyProps={{ variant: 'subtitle2', fontWeight: 500 }}
             subheaderTypographyProps={{ variant: 'caption' }}
           />
@@ -225,17 +231,17 @@ export const IntegrationsPage = () => {
             </Typography>
             <LinearProgress variant="determinate" value={channelStats.healthPct} sx={{ mb: 1.5, height: 8, borderRadius: 1 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'text.secondary' }}>
-              <span>{channelStats.healthy} healthy</span>
-              <span>{channelStats.degraded} degraded</span>
-              <span>{channelStats.down} down</span>
+              <span>{channelStats.healthy} {t('integrations.healthy')}</span>
+              <span>{channelStats.degraded} {t('integrations.degraded')}</span>
+              <span>{channelStats.down} {t('integrations.down')}</span>
             </Box>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader
-            title="Throughput"
-            subheader="Records per minute"
+            title={t('integrations.throughput')}
+            subheader={t('integrations.recordsPerMin')}
             titleTypographyProps={{ variant: 'subtitle2', fontWeight: 500 }}
             subheaderTypographyProps={{ variant: 'caption' }}
           />
@@ -244,15 +250,15 @@ export const IntegrationsPage = () => {
               {channels.reduce((s, c) => s + c.throughputPerMin, 0).toLocaleString()}
             </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Includes batch + realtime channels
+              {t('integrations.includesBatchRealtime')}
             </Typography>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader
-            title="Max lag"
-            subheader="Worst channel delay"
+            title={t('integrations.maxLag')}
+            subheader={t('integrations.worstChannelDelay')}
             titleTypographyProps={{ variant: 'subtitle2', fontWeight: 500 }}
             subheaderTypographyProps={{ variant: 'caption' }}
           />
@@ -261,7 +267,7 @@ export const IntegrationsPage = () => {
               {Math.max(...channels.map((c) => c.lagSeconds))}s
             </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Auto-escalate if lag exceeds policy thresholds
+              {t('integrations.autoEscalateHint')}
             </Typography>
           </CardContent>
         </Card>
@@ -270,15 +276,15 @@ export const IntegrationsPage = () => {
       {/* Integration Channels */}
       <Card>
         <CardHeader
-          title="Integration Channels"
-          subheader="Realtime heartbeat, lag and readiness indicators."
+          title={t('integrations.integrationChannels')}
+          subheader={t('integrations.integrationChannelsDesc')}
           titleTypographyProps={{ variant: 'h6', fontWeight: 600 }}
           subheaderTypographyProps={{ variant: 'body2' }}
         />
         <CardContent>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2 }}>
             {channels.map((c) => {
-              const meta = statusMeta(c.status);
+              const meta = getStatusMeta(c.status, t);
               return (
                 <Box
                   key={c.id}
@@ -310,7 +316,7 @@ export const IntegrationsPage = () => {
                           {c.name}
                         </Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          Last heartbeat: {new Date(c.lastHeartbeat).toLocaleString()}
+                          {t('integrations.lastHeartbeat')}: {new Date(c.lastHeartbeat).toLocaleString()}
                         </Typography>
                       </Box>
                     </Box>
@@ -326,7 +332,7 @@ export const IntegrationsPage = () => {
                   <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 2, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
                     <Box>
                       <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
-                        Lag
+                        {t('integrations.lag')}
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
                         {c.lagSeconds}s
@@ -334,7 +340,7 @@ export const IntegrationsPage = () => {
                     </Box>
                     <Box>
                       <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
-                        Throughput
+                        {t('integrations.throughput')}
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
                         {c.throughputPerMin.toLocaleString()}/min
@@ -342,7 +348,7 @@ export const IntegrationsPage = () => {
                     </Box>
                     <Box>
                       <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
-                        Type
+                        {t('integrations.type')}
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 500, textTransform: 'uppercase' }}>
                         {c.type}
@@ -359,8 +365,8 @@ export const IntegrationsPage = () => {
       {/* Ingestion Issues */}
       <Card>
         <CardHeader
-          title="Ingestion Issues"
-          subheader="Operational incidents that impact traceability and reconciliation."
+          title={t('integrations.ingestionIssues')}
+          subheader={t('integrations.ingestionIssuesDesc')}
           titleTypographyProps={{ variant: 'h6', fontWeight: 600 }}
           subheaderTypographyProps={{ variant: 'body2' }}
         />
@@ -368,7 +374,7 @@ export const IntegrationsPage = () => {
           <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, mb: 3 }}>
             <TextField
               size="small"
-              placeholder="Search issues…"
+              placeholder={t('integrations.searchPlaceholder')}
               value={q}
               onChange={(e) => setQ(e.target.value)}
               sx={{ flex: 1, maxWidth: { md: 260 } }}
@@ -382,7 +388,7 @@ export const IntegrationsPage = () => {
             />
             <FormControl size="small" sx={{ minWidth: 200 }}>
               <Select value={channel} onChange={(e) => setChannel(e.target.value)}>
-                <MenuItem value="all">All channels</MenuItem>
+                <MenuItem value="all">{t('integrations.allChannels')}</MenuItem>
                 {channels.map((c) => (
                   <MenuItem key={c.id} value={c.id}>
                     {c.name}
@@ -391,7 +397,7 @@ export const IntegrationsPage = () => {
               </Select>
             </FormControl>
             <Button variant="outlined" startIcon={<Iconify icon="solar:filter-bold" />}>
-              Advanced filters
+              {t('integrations.advancedFilters')}
             </Button>
           </Box>
 
@@ -399,11 +405,11 @@ export const IntegrationsPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Time</TableCell>
-                  <TableCell>Channel</TableCell>
-                  <TableCell>Severity</TableCell>
-                  <TableCell>Issue</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell>{t('integrations.time')}</TableCell>
+                  <TableCell>{t('integrations.channel')}</TableCell>
+                  <TableCell>{t('integrations.severity')}</TableCell>
+                  <TableCell>{t('integrations.issue')}</TableCell>
+                  <TableCell align="right">{t('integrations.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -430,7 +436,7 @@ export const IntegrationsPage = () => {
                       </TableCell>
                       <TableCell align="right">
                         <Button size="small" variant="outlined" startIcon={<Iconify icon="solar:refresh-bold" />}>
-                          Retry
+                          {t('integrations.retry')}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -440,7 +446,7 @@ export const IntegrationsPage = () => {
                   <TableRow>
                     <TableCell colSpan={5} align="center" sx={{ py: 5 }}>
                       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        No issues match the current filters.
+                        {t('integrations.noIssuesMatch')}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -451,10 +457,10 @@ export const IntegrationsPage = () => {
 
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Showing {Math.min(200, filtered.length)} of {filtered.length.toLocaleString()} issues
+              {t('integrations.showingCount', { shown: Math.min(200, filtered.length), total: filtered.length.toLocaleString() })}
             </Typography>
             <Chip
-              label="ingestion-observable"
+              label={t('integrations.ingestionObservable')}
               icon={<Iconify icon="solar:database-bold" width={14} />}
               variant="outlined"
               size="small"

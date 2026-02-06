@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
-
 import { Iconify } from '@dwp-frontend/design-system';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useLineageQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -122,7 +121,7 @@ export const LineagePage = () => {
               sx={{ color: 'text.disabled', mb: 1 }}
             />
             <Typography variant="body2" color="text.secondary">
-              Provide caseId, docKey, or partyId in URL to view lineage
+              {t('lineage.emptyHint')}
             </Typography>
           </Box>
         </Box>
@@ -143,15 +142,15 @@ export const LineagePage = () => {
             </Link>
             <Box>
               <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                Data Lineage & Evidence
+                {t('lineage.title')}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-                Trace the complete data journey from source to case creation
+                {t('lineage.subtitle')}
               </Typography>
             </Box>
           </Box>
           <Chip
-            label="Case: CS-2026-0001"
+            label={`${t('lineage.caseLabel')}: CS-2026-0001`}
             icon={<Iconify icon="solar:document-text-bold" width={12} />}
             variant="outlined"
             size="small"
@@ -175,7 +174,7 @@ export const LineagePage = () => {
           <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'action.hover' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Iconify icon="solar:history-bold" width={16} sx={{ color: 'text.secondary' }} />
-              Data Lineage Pipeline
+              {t('lineage.pipeline')}
             </Typography>
           </Box>
           <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
@@ -207,7 +206,7 @@ export const LineagePage = () => {
           <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'action.hover' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Iconify icon="solar:refresh-bold" width={16} sx={{ color: 'text.secondary' }} />
-              Time-Travel: Vendor Master Data
+              {t('lineage.timeTravel')}
             </Typography>
           </Box>
           <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
@@ -233,7 +232,7 @@ export const LineagePage = () => {
           <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'action.hover' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Iconify icon="solar:shield-check-bold" width={16} sx={{ color: 'text.secondary' }} />
-              Evidence Panel
+              {t('lineage.evidencePanel')}
             </Typography>
           </Box>
           <EvidencePanel steps={steps} isMobile={false} />

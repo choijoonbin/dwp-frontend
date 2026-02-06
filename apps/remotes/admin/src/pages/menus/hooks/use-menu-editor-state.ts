@@ -68,12 +68,14 @@ export const useMenuEditorState = () => {
   const openCreateDialog = useCallback((parentId?: string) => {
     setMode('create');
     setSelectedMenu(null);
-    initializeForm(null);
-    if (parentId) {
-      setDraftForm((prev) => ({ ...prev, parentId }));
-    }
+    setDraftForm({
+      ...initialFormState,
+      ...(parentId && { parentId }),
+    });
+    setValidationErrors({});
+    setDirty(false);
     setOpen(true);
-  }, [initializeForm]);
+  }, []);
 
   // Open edit dialog
   const openEditDialog = useCallback(

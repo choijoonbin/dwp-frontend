@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
-
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';

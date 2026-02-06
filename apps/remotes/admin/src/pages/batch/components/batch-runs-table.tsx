@@ -3,6 +3,7 @@
 import type { DetectRunSummary } from '@dwp-frontend/shared-utils';
 
 import { memo } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { ApiErrorAlert } from '@dwp-frontend/shared-utils';
 import { Iconify, EmptyState } from '@dwp-frontend/design-system';
 
@@ -28,12 +29,13 @@ type StatusBadgeProps = {
 };
 
 const StatusBadge = memo(({ status }: StatusBadgeProps) => {
-  const config: Record<string, { color: 'info' | 'success' | 'error' | 'warning'; icon: string; label: string }> = {
-    RUNNING: { color: 'info', icon: 'solar:refresh-bold', label: '실행 중' },
-    SUCCESS: { color: 'success', icon: 'solar:check-circle-bold', label: '성공' },
-    COMPLETED: { color: 'success', icon: 'solar:check-circle-bold', label: '성공' },
-    FAILED: { color: 'error', icon: 'solar:close-circle-bold', label: '실패' },
-    SKIPPED: { color: 'warning', icon: 'solar:danger-triangle-bold', label: '건너뜀' },
+  const { t } = useTranslation('admin');
+  const config: Record<string, { color: 'info' | 'success' | 'error' | 'warning'; icon: string; labelKey: string }> = {
+    RUNNING: { color: 'info', icon: 'solar:refresh-bold', labelKey: 'batch.table.statusRunning' },
+    SUCCESS: { color: 'success', icon: 'solar:check-circle-bold', labelKey: 'batch.table.statusSuccess' },
+    COMPLETED: { color: 'success', icon: 'solar:check-circle-bold', labelKey: 'batch.table.statusSuccess' },
+    FAILED: { color: 'error', icon: 'solar:close-circle-bold', labelKey: 'batch.table.statusFailed' },
+    SKIPPED: { color: 'warning', icon: 'solar:danger-triangle-bold', labelKey: 'batch.table.statusSkipped' },
   };
   const c = config[status] ?? config.SUCCESS;
   return (
@@ -41,7 +43,7 @@ const StatusBadge = memo(({ status }: StatusBadgeProps) => {
       {status === 'RUNNING' && <CircularProgress size={14} />}
       <Iconify icon={c.icon} width={16} sx={{ color: `${c.color}.main` }} />
       <Typography variant="caption" sx={{ color: `${c.color}.main`, fontWeight: 600 }}>
-        {c.label}
+        {t(c.labelKey)}
       </Typography>
     </Stack>
   );
@@ -70,6 +72,7 @@ export const BatchRunsTable = memo(({
   onRowsPerPageChange,
   onRowClick,
 }: BatchRunsTableProps) => {
+  const { t } = useTranslation('admin');
   if (error) {
     return (
       <Card sx={{ p: 2 }}>
@@ -84,14 +87,14 @@ export const BatchRunsTable = memo(({
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Started</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Window</TableCell>
-              <TableCell align="right">Duration</TableCell>
-              <TableCell align="right">Created</TableCell>
-              <TableCell align="right">Updated</TableCell>
-              <TableCell align="right">Suppressed</TableCell>
-              <TableCell>Run ID</TableCell>
+              <TableCell>{t('batch.table.started')}</TableCell>
+              <TableCell>{t('batch.table.status')}</TableCell>
+              <TableCell>{t('batch.table.window')}</TableCell>
+              <TableCell align="right">{t('batch.table.duration')}</TableCell>
+              <TableCell align="right">{t('batch.table.created')}</TableCell>
+              <TableCell align="right">{t('batch.table.updated')}</TableCell>
+              <TableCell align="right">{t('batch.table.suppressed')}</TableCell>
+              <TableCell>{t('batch.table.runId')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -108,8 +111,8 @@ export const BatchRunsTable = memo(({
                 <TableCell colSpan={8} sx={{ py: 6 }}>
                   <EmptyState
                     icon="solar:history-bold-duotone"
-                    title="실행 이력이 없습니다"
-                    description="수동 실행 또는 배치 스케줄 실행 후 이력이 표시됩니다."
+                    title={t('batch.table.emptyTitle')}
+                    description={t('batch.table.emptyDesc')}
                   />
                 </TableCell>
               </TableRow>
@@ -142,9 +145,9 @@ export const BatchRunsTable = memo(({
                       <Tooltip
                         title={
                           run.status === 'SKIPPED'
-                            ? run.message ?? '다른 인스턴스가 실행 중(락 미획득)'
+                            ? run.message ?? t('batch.table.skippedTooltip')
                             : run.status === 'FAILED'
-                              ? `${run.message ?? '실패'} — Run 상세에서 View Audit로 원인 확인`
+                              ? `${run.message ?? t('batch.table.statusFailed')} — ${t('batch.table.failedAuditHint')}`
                               : ''
                         }
                         arrow
@@ -190,7 +193,7 @@ export const BatchRunsTable = memo(({
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={(e) => onRowsPerPageChange(Number(e.target.value))}
           rowsPerPageOptions={[10, 20, 50]}
-          labelRowsPerPage="페이지당:"
+          labelRowsPerPage={t('batch.table.rowsPerPage')}
         />
       )}
     </Card>

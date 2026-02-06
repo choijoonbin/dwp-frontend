@@ -22,6 +22,7 @@ import Table from '@mui/material/Table';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
+import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Skeleton from '@mui/material/Skeleton';
@@ -106,6 +107,22 @@ export const CodesTab = () => {
     setAnchorEl(null);
   };
 
+  const handleToggleEnabled = async (code: Code) => {
+    try {
+      await updateMutation.mutateAsync({
+        codeId: code.id,
+        payload: { enabled: !code.enabled },
+      });
+      showSnackbar(
+        code.enabled ? t('toast.codeDisabled') : t('toast.codeEnabled')
+      );
+      refetchCodes();
+      handleMenuClose();
+    } catch (err) {
+      showSnackbar(err instanceof Error ? err.message : t('error.saveFailed'), 'error');
+    }
+  };
+
   const showSnackbar = (message: string, severity: 'success' | 'error' = 'success') => {
     setSnackbar({ open: true, message, severity });
   };
@@ -175,7 +192,7 @@ export const CodesTab = () => {
 
   return (
     <>
-      <Card>
+      <Card sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Group Selection & Filter Bar */}
         <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
           <Stack spacing={2}>
@@ -200,7 +217,7 @@ export const CodesTab = () => {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 sx={{ minWidth: { xs: 1, md: 240 }, flex: 1 }}
-                placeholder="코드 키, 코드명, 코드 값, 설명"
+                placeholder="코드 또는 이름 검색"
                 disabled={!selectedGroupKey}
               />
               <TextField
@@ -227,17 +244,17 @@ export const CodesTab = () => {
                 label="활성화만"
               />
               <Box sx={{ ml: { md: 'auto' }, width: { xs: 1, md: 'auto' } }}>
-                <PermissionGate resource="menu.admin.codes" permission="CREATE">
-                  <Button
-                    variant="contained"
-                    startIcon={<Iconify icon="mingcute:add-line" />}
-                    onClick={handleCreateCode}
-                    disabled={!selectedGroupKey}
-                    sx={{ width: { xs: 1, md: 'auto' }, minHeight: 40 }}
-                  >
-                    코드 추가
-                  </Button>
-                </PermissionGate>
+              <PermissionGate resource="menu.admin.codes" permission="CREATE" mode="disable">
+                <Button
+                  variant="contained"
+                  startIcon={<Iconify icon="mingcute:add-line" width={20} />}
+                  onClick={handleCreateCode}
+                  disabled={!selectedGroupKey}
+                  sx={{ width: { xs: 1, md: 'auto' }, minHeight: 40 }}
+                >
+                  새 코드
+                </Button>
+              </PermissionGate>
               </Box>
             </Stack>
           </Stack>
@@ -267,7 +284,7 @@ export const CodesTab = () => {
             </Typography>
           </Box>
         ) : (
-          <TableContainer sx={{ maxHeight: { md: 640 }, overflowX: 'auto' }}>
+          <TableContainer sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
             <Table stickyHeader sx={{ minWidth: 820, tableLayout: 'fixed' }}>
               <TableHead>
                 <TableRow sx={{ height: 56 }}>
@@ -332,16 +349,41 @@ export const CodesTab = () => {
         )}
       </Card>
 
-      {/* Code Menu */}
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl) && Boolean(selectedCode)} onClose={handleMenuClose}>
-        <PermissionGate resource="menu.admin.codes" permission="UPDATE">
-          <MenuItem onClick={() => selectedCode && handleEditCode(selectedCode)}>
+      {/* Code Menu - 참고소스: 편집/비활성화/삭제 3개 메뉴 */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl) && Boolean(selectedCode)}
+        onClose={handleMenuClose}
+        PaperProps={{ sx: { minWidth: 160 } }}
+      >
+        <PermissionGate resource="menu.admin.codes" permission="UPDATE" mode="disable">
+          <MenuItem
+            onClick={() => selectedCode && handleEditCode(selectedCode)}
+            sx={{ typography: 'body2', fontSize: 14 }}
+          >
             <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
             편집
           </MenuItem>
         </PermissionGate>
-        <PermissionGate resource="menu.admin.codes" permission="DELETE">
-          <MenuItem onClick={() => selectedCode && handleDeleteCode(selectedCode)} sx={{ color: 'error.main' }}>
+        <PermissionGate resource="menu.admin.codes" permission="UPDATE" mode="disable">
+          <MenuItem
+            onClick={() => selectedCode && handleToggleEnabled(selectedCode)}
+            sx={{ typography: 'body2', fontSize: 14 }}
+          >
+            <Iconify
+              icon={selectedCode?.enabled === false ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+              width={16}
+              sx={{ mr: 1 }}
+            />
+            {selectedCode?.enabled === false ? '활성화' : '비활성화'}
+          </MenuItem>
+        </PermissionGate>
+        <Divider sx={{ my: 0.5 }} />
+        <PermissionGate resource="menu.admin.codes" permission="DELETE" mode="disable">
+          <MenuItem
+            onClick={() => selectedCode && handleDeleteCode(selectedCode)}
+            sx={{ typography: 'body2', fontSize: 14, color: 'error.main' }}
+          >
             <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
             삭제
           </MenuItem>

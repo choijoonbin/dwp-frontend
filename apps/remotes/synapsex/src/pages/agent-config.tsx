@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -58,11 +59,12 @@ const promptTemplates = [
 // ----------------------------------------------------------------------
 
 export const AgentConfigPage = () => {
+  const { t } = useTranslation('common');
   const [model, setModel] = useState(models[0].key);
   const [temperature, setTemperature] = useState('0.2');
   const [maxTokens, setMaxTokens] = useState('2048');
   const [tools, setTools] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(toolToggles.map((t) => [t.key, t.key !== 'sap_reverse_doc']))
+    Object.fromEntries(toolToggles.map((item) => [item.key, item.key !== 'sap_reverse_doc']))
   );
 
   const [selectedTemplate, setSelectedTemplate] = useState(promptTemplates[0].name);
@@ -87,15 +89,15 @@ export const AgentConfigPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:robot-bold-duotone" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Agent Configuration
+                {t('agentConfig.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Model, prompts, and tool permissions. Changes should be versioned and auditable.
+              {t('agentConfig.subtitle')}
             </Typography>
           </Box>
           <Button variant="contained" startIcon={<Iconify icon="solar:diskette-bold" width={18} />}>
-            Save Draft
+            {t('agentConfig.saveDraft')}
           </Button>
         </Stack>
 
@@ -105,19 +107,19 @@ export const AgentConfigPage = () => {
             <Tab
               icon={<Iconify icon="solar:magic-stick-bold-duotone" width={18} />}
               iconPosition="start"
-              label="Model"
+              label={t('agentConfig.model')}
               sx={{ minHeight: 64 }}
             />
             <Tab
               icon={<Iconify icon="solar:document-text-bold-duotone" width={18} />}
               iconPosition="start"
-              label="Prompts"
+              label={t('agentConfig.prompts')}
               sx={{ minHeight: 64 }}
             />
             <Tab
               icon={<Iconify icon="solar:wrench-bold-duotone" width={18} />}
               iconPosition="start"
-              label="Tools"
+              label={t('agentConfig.tools')}
               sx={{ minHeight: 64 }}
             />
           </Tabs>
@@ -128,15 +130,15 @@ export const AgentConfigPage = () => {
               <Stack spacing={3} direction={{ xs: 'column', lg: 'row' }} sx={{ alignItems: 'stretch' }}>
                 <Card variant="outlined" sx={{ flex: { lg: '2 1 0%' } }}>
                   <CardHeader
-                    title="Model Settings"
-                    subheader="Safe defaults for enterprise runtime."
+                    title={t('agentConfig.modelSettings')}
+                    subheader={t('agentConfig.modelSettingsDesc')}
                   />
                   <CardContent>
                     <Stack spacing={3}>
                       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                         <FormControl fullWidth>
-                          <InputLabel>Provider / Model</InputLabel>
-                          <Select value={model} onChange={(e) => setModel(e.target.value)} label="Provider / Model">
+                          <InputLabel>{t('agentConfig.providerModel')}</InputLabel>
+                          <Select value={model} onChange={(e) => setModel(e.target.value)} label={t('agentConfig.providerModel')}>
                             {models.map((m) => (
                               <MenuItem key={m.key} value={m.key}>
                                 {m.label}
@@ -145,13 +147,13 @@ export const AgentConfigPage = () => {
                           </Select>
                         </FormControl>
                         <TextField
-                          label="Temperature"
+                          label={t('agentConfig.temperature')}
                           value={temperature}
                           onChange={(e) => setTemperature(e.target.value)}
                           fullWidth
                         />
                         <TextField
-                          label="Max tokens"
+                          label={t('agentConfig.maxTokens')}
                           value={maxTokens}
                           onChange={(e) => setMaxTokens(e.target.value)}
                           fullWidth
@@ -163,24 +165,24 @@ export const AgentConfigPage = () => {
                       <Box>
                         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            Runtime Guardrails
+                            {t('agentConfig.runtimeGuardrails')}
                           </Typography>
                           <Chip
                             icon={<Iconify icon="solar:git-branch-bold" width={16} />}
-                            label="versioned"
+                            label={t('agentConfig.versioned')}
                             variant="outlined"
                             size="small"
                           />
                         </Stack>
                         <Box component="ul" sx={{ m: 0, pl: 3, '& li': { mb: 0.5 } }}>
                           <Typography component="li" variant="body2" color="text.secondary">
-                            All actions must reference a policy citation or numeric evidence.
+                            {t('agentConfig.runtimeGuardrail1')}
                           </Typography>
                           <Typography component="li" variant="body2" color="text.secondary">
-                            High/Critical cases require explicit approval unless autonomy allows.
+                            {t('agentConfig.runtimeGuardrail2')}
                           </Typography>
                           <Typography component="li" variant="body2" color="text.secondary">
-                            Every tool call must be recorded to audit trail with before/after.
+                            {t('agentConfig.runtimeGuardrail3')}
                           </Typography>
                         </Box>
                       </Box>
@@ -189,7 +191,7 @@ export const AgentConfigPage = () => {
                 </Card>
 
                 <Card variant="outlined" sx={{ flex: { lg: '1 1 0%' } }}>
-                  <CardHeader title="Deploy History" subheader="Recent config snapshots." />
+                  <CardHeader title={t('agentConfig.deployHistory')} subheader={t('agentConfig.deployHistoryDesc')} />
                   <CardContent>
                     <Stack spacing={2}>
                       {['v1.0.0', 'v1.0.1', 'v1.1.0'].map((v, idx) => (
@@ -208,7 +210,7 @@ export const AgentConfigPage = () => {
                               {v}
                             </Typography>
                             <Chip
-                              label={idx === 0 ? 'Active' : 'Archived'}
+                              label={idx === 0 ? t('agentConfig.active') : t('agentConfig.archived')}
                               color={idx === 0 ? 'success' : 'default'}
                               variant="outlined"
                               size="small"
@@ -217,7 +219,7 @@ export const AgentConfigPage = () => {
                           <Stack direction="row" alignItems="center" spacing={0.5}>
                             <Iconify icon="solar:history-bold" width={14} sx={{ color: 'text.secondary' }} />
                             <Typography variant="caption" color="text.secondary">
-                              {idx === 0 ? 'Deployed 2 hours ago' : 'Deployed last week'}
+                              {idx === 0 ? t('agentConfig.deployedAgo') : t('agentConfig.deployedLastWeek')}
                             </Typography>
                           </Stack>
                         </Box>
@@ -234,7 +236,7 @@ export const AgentConfigPage = () => {
             <Box sx={{ p: 3 }}>
               <Stack spacing={3} direction={{ xs: 'column', lg: 'row' }} sx={{ alignItems: 'stretch' }}>
                 <Card variant="outlined" sx={{ flex: { lg: '1 1 0%' } }}>
-                  <CardHeader title="Prompt Templates" subheader="Select a template to edit." />
+                  <CardHeader title={t('agentConfig.promptTemplates')} subheader={t('agentConfig.promptTemplatesDesc')} />
                   <CardContent>
                     <Stack spacing={1.5}>
                       {promptTemplates.map((p) => (
@@ -260,7 +262,7 @@ export const AgentConfigPage = () => {
                               {p.name}
                             </Typography>
                             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-                              {p.purpose}
+                              {t(`agentConfig.promptPurposes.${p.name}`)}
                             </Typography>
                             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, fontSize: '0.7rem' }}>
                               Updated {new Date(p.updatedAt).toLocaleString()}
@@ -274,13 +276,13 @@ export const AgentConfigPage = () => {
 
                 <Card variant="outlined" sx={{ flex: { lg: '2 1 0%' } }}>
                   <CardHeader
-                    title={`Edit: ${template.name}`}
-                    subheader={template.purpose}
+                    title={t('agentConfig.editTemplate', { name: template.name })}
+                    subheader={t(`agentConfig.promptPurposes.${template.name}`)}
                   />
                   <CardContent>
                     <Stack spacing={2}>
                       <Typography variant="caption" color="text.secondary">
-                        Template (mock)
+                        {t('agentConfig.template')}
                       </Typography>
                       <TextField
                         multiline
@@ -296,13 +298,13 @@ export const AgentConfigPage = () => {
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Chip
                           icon={<Iconify icon="solar:document-text-bold" width={14} />}
-                          label="explainable"
+                          label={t('agentConfig.explainable')}
                           variant="outlined"
                           size="small"
                         />
                         <Stack direction="row" spacing={1}>
-                          <Button variant="outlined">Run Dry Test</Button>
-                          <Button variant="contained">Save Template</Button>
+                          <Button variant="outlined">{t('agentConfig.runDryTest')}</Button>
+                          <Button variant="contained">{t('agentConfig.saveTemplate')}</Button>
                         </Stack>
                       </Stack>
                     </Stack>
@@ -317,8 +319,8 @@ export const AgentConfigPage = () => {
             <Box sx={{ p: 3 }}>
               <Card variant="outlined">
                 <CardHeader
-                  title="Tool Permissions"
-                  subheader="Control what the agent is allowed to do."
+                  title={t('agentConfig.toolPermissions')}
+                  subheader={t('agentConfig.toolPermissionsDesc')}
                 />
                 <CardContent>
                   <Stack spacing={2}>
@@ -329,30 +331,30 @@ export const AgentConfigPage = () => {
                         gap: 2,
                       }}
                     >
-                      {toolToggles.map((t) => (
-                        <Box
-                          key={t.key}
-                          sx={{
-                            p: 1.5,
-                            borderRadius: 1,
-                            border: 1,
-                            borderColor: 'divider',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                          }}
-                        >
+                      {toolToggles.map((tool) => (
+<Box
+                        key={tool.key}
+                        sx={{
+                          p: 1.5,
+                          borderRadius: 1,
+                          border: 1,
+                          borderColor: 'divider',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
                           <Box>
                             <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                              {t.label}
+                              {t(`agentConfig.toolLabels.${tool.key}`)}
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
-                              Logged & reconcilable
+                              {t('agentConfig.loggedReconcilable')}
                             </Typography>
                           </Box>
                           <Switch
-                            checked={!!tools[t.key]}
-                            onChange={(e) => setTools((prev) => ({ ...prev, [t.key]: e.target.checked }))}
+                            checked={!!tools[tool.key]}
+                            onChange={(e) => setTools((prev) => ({ ...prev, [tool.key]: e.target.checked }))}
                           />
                         </Box>
                       ))}
@@ -362,11 +364,11 @@ export const AgentConfigPage = () => {
 
                     <Stack direction="row" alignItems="center" justifyContent="space-between">
                       <Typography variant="body2" color="text.secondary">
-                        Tip: connect this screen to your SoD roles in the Admin module.
+                        {t('agentConfig.sodTip')}
                       </Typography>
                       <Chip
                         icon={<Iconify icon="solar:wrench-bold" width={14} />}
-                        label="guardrail-aware"
+                        label={t('agentConfig.guardrailAware')}
                         variant="outlined"
                         size="small"
                       />

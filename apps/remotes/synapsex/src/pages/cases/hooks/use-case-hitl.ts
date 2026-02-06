@@ -3,9 +3,8 @@
  * approveHitlRequest, rejectHitlRequest 래핑
  */
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { showToast, rejectHitlRequest, approveHitlRequest } from '@dwp-frontend/shared-utils';
 
 // ----------------------------------------------------------------------

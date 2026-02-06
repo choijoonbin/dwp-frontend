@@ -6,8 +6,8 @@
 import type { MouseEvent } from 'react';
 
 import { useState, useEffect } from 'react';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import { is403Error ,
   getResourceKeyForPath,
@@ -59,13 +59,13 @@ import type { ActionListItem } from './adapters/action-list-adapter';
 
 // ----------------------------------------------------------------------
 
-const actionTypes = [
-  { value: 'post_reversal', label: 'Post Reversal' },
-  { value: 'block_payment', label: 'Block Payment' },
-  { value: 'flag_review', label: 'Flag for Review' },
-  { value: 'clear_item', label: 'Clear Item' },
-  { value: 'update_master', label: 'Update Master Data' },
-];
+const ACTION_TYPE_KEYS = [
+  'post_reversal',
+  'block_payment',
+  'flag_review',
+  'clear_item',
+  'update_master',
+] as const;
 
 const statuses = ['pending', 'approved', 'rejected', 'executed', 'failed'];
 const riskLevels = ['critical', 'high', 'medium', 'low'];
@@ -74,9 +74,13 @@ const ACTIONS_RESOURCE = getResourceKeyForPath('actions') ?? 'menu.autonomous-op
 
 // ----------------------------------------------------------------------
 
+const getActionTypes = (t: (key: string) => string) =>
+  ACTION_TYPE_KEYS.map((key) => ({ value: key, label: t(`actions.actionTypes.${key}`) }));
+
 export const ActionsPage = () => {
   const { t } = useTranslation('common');
   const theme = useTheme();
+  const actionTypes = getActionTypes(t);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const {
@@ -294,12 +298,12 @@ export const ActionsPage = () => {
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
           <Typography variant="h4" sx={{ fontWeight: 700 }}>
-            Action Center
+            {t('actions.title')}
           </Typography>
           {caseIdFilter && (
             <Chip
               icon={<Iconify icon="solar:document-text-bold" width={16} />}
-              label="Filtered by Case"
+              label={t('actions.filteredByCaseLabel')}
               size="small"
               color="secondary"
             />
@@ -308,8 +312,8 @@ export const ActionsPage = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
           <Typography variant="body2" color="text.secondary">
             {caseIdFilter
-              ? `Showing actions for case: ${linkedCase?.caseNumber ?? caseIdFilter}`
-              : 'Manage autonomous actions and approvals'}
+              ? t('actions.filteredByCase', { caseNumber: linkedCase?.caseNumber ?? caseIdFilter })
+              : t('actions.subtitleDescription')}
           </Typography>
           <Stack direction="row" spacing={1}>
             <Button
@@ -318,7 +322,7 @@ export const ActionsPage = () => {
               startIcon={<Iconify icon="solar:add-circle-bold" width={18} />}
               onClick={() => setCreateModalOpen(true)}
             >
-              Create Action
+              {t('actions.buttons.createAction')}
             </Button>
             {caseIdFilter && (
               <Button
@@ -327,7 +331,7 @@ export const ActionsPage = () => {
                 startIcon={<Iconify icon="solar:close-circle-bold" />}
                 onClick={handleClearCaseFilter}
               >
-                Clear Filter
+                {t('actions.clearFilter')}
               </Button>
             )}
           </Stack>
@@ -434,16 +438,16 @@ export const ActionsPage = () => {
                 </Box>
                 <Box>
                   <Typography variant="body2" fontWeight={600}>
-                    {selectedPendingCount} action(s) selected
+                    {t('actions.bulk.selected', { count: selectedPendingCount })}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Ready for bulk approval or rejection
+                    {t('actions.bulk.readyForBulk')}
                   </Typography>
                 </Box>
               </Stack>
               <Stack direction="row" spacing={1}>
                 <Button variant="outlined" size="small" onClick={() => setSelectedActionIds(new Set())}>
-                  Clear Selection
+                  {t('actions.bulk.clearSelection')}
                 </Button>
                 <Button
                   variant="contained"
@@ -455,7 +459,7 @@ export const ActionsPage = () => {
                     setBulkApprovalOpen(true);
                   }}
                 >
-                  Reject All
+                  {t('actions.bulk.rejectAll')}
                 </Button>
                 <Button
                   variant="contained"
@@ -467,7 +471,7 @@ export const ActionsPage = () => {
                     setBulkApprovalOpen(true);
                   }}
                 >
-                  Approve All
+                  {t('actions.bulk.approveAll')}
                 </Button>
               </Stack>
             </Stack>
@@ -481,7 +485,7 @@ export const ActionsPage = () => {
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Box>
                 <Typography variant="body2" color="text.secondary">
-                  Pending Approval
+                  {t('actions.cards.pendingApproval')}
                 </Typography>
                 <Typography variant="h3" sx={{ color: 'warning.main', fontWeight: 700 }}>
                   {pendingCount}
@@ -498,7 +502,7 @@ export const ActionsPage = () => {
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Box>
                 <Typography variant="body2" color="text.secondary">
-                  Approved Today
+                  {t('actions.cards.approvedToday')}
                 </Typography>
                 <Typography variant="h3" sx={{ color: 'success.main', fontWeight: 700 }}>
                   {approvedCount}
@@ -515,7 +519,7 @@ export const ActionsPage = () => {
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Box>
                 <Typography variant="body2" color="text.secondary">
-                  Executed Today
+                  {t('actions.cards.executedToday')}
                 </Typography>
                 <Typography variant="h3" sx={{ color: 'primary.main', fontWeight: 700 }}>
                   {executedCount}
@@ -534,7 +538,7 @@ export const ActionsPage = () => {
           <Stack direction="row" flexWrap="wrap" gap={1.5} alignItems="center">
             <TextField
               size="small"
-              placeholder="Search actions..."
+              placeholder={t('actions.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               sx={{ flexGrow: 1, minWidth: 200, maxWidth: 400 }}
@@ -590,21 +594,23 @@ export const ActionsPage = () => {
             </Menu>
             <Badge badgeContent={selectedActionTypes.length} color="primary">
               <Button variant="outlined" size="small" startIcon={<Iconify icon="solar:filter-bold" width={16} />} onClick={(e) => setActionTypeMenuAnchor(e.currentTarget)}>
-                Action Type
+                {t('actions.actionType')}
               </Button>
             </Badge>
             <Menu anchorEl={actionTypeMenuAnchor} open={Boolean(actionTypeMenuAnchor)} onClose={() => setActionTypeMenuAnchor(null)}>
-              {actionTypes.map((t) => (
+              {actionTypes.map((actionType) => (
                 <MenuItem
-                  key={t.value}
+                  key={actionType.value}
                   onClick={() =>
                     setSelectedActionTypes((prev) =>
-                      prev.includes(t.value) ? prev.filter((x) => x !== t.value) : [...prev, t.value]
+                      prev.includes(actionType.value)
+                        ? prev.filter((x) => x !== actionType.value)
+                        : [...prev, actionType.value]
                     )
                   }
                 >
-                  <Checkbox checked={selectedActionTypes.includes(t.value)} sx={{ mr: 1 }} />
-                  {t.label}
+                  <Checkbox checked={selectedActionTypes.includes(actionType.value)} sx={{ mr: 1 }} />
+                  {actionType.label}
                 </MenuItem>
               ))}
             </Menu>
@@ -615,15 +621,15 @@ export const ActionsPage = () => {
       <Card>
         <CardContent>
           <Box sx={{ mb: 2 }}>
-            <Typography variant="h6">Action Queue</Typography>
+            <Typography variant="h6">{t('actions.queue.title')}</Typography>
             <Typography variant="body2" color="text.secondary">
-              {displayActions.length} actions matching your filters
+              {t('actions.queue.matchingFilters', { count: displayActions.length })}
             </Typography>
           </Box>
           {isLoading ? (
             <Box sx={{ py: 8, textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">
-                Loading actions...
+                {t('actions.queue.loading')}
               </Typography>
             </Box>
           ) : (
@@ -638,12 +644,12 @@ export const ActionsPage = () => {
                         onChange={toggleAllPendingSelection}
                       />
                     </TableCell>
-                    <TableCell>Action ID</TableCell>
-                    <TableCell>Linked Case</TableCell>
-                    <TableCell>Action Type</TableCell>
-                    <TableCell>Risk</TableCell>
-                    <TableCell>Created</TableCell>
-                    <TableCell>Status</TableCell>
+                    <TableCell>{t('actions.table.actionId')}</TableCell>
+                    <TableCell>{t('actions.table.linkedCase')}</TableCell>
+                    <TableCell>{t('actions.table.actionType')}</TableCell>
+                    <TableCell>{t('actions.table.risk')}</TableCell>
+                    <TableCell>{t('actions.table.created')}</TableCell>
+                    <TableCell>{t('actions.table.status')}</TableCell>
                     <TableCell align="right" />
                   </TableRow>
                 </TableHead>
@@ -652,7 +658,7 @@ export const ActionsPage = () => {
                     <TableRow>
                       <TableCell colSpan={8} align="center" sx={{ py: 6 }}>
                         <Typography variant="body2" color="text.secondary">
-                          No actions found matching your filters
+                          {t('actions.queue.noActionsFound')}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -928,24 +934,27 @@ export const ActionsPage = () => {
             {bulkAction === 'approve' ? (
               <>
                 <Iconify icon="solar:check-circle-bold" width={20} sx={{ color: 'success.main' }} />
-                <span>Bulk Approve Actions</span>
+                <span>{t('actions.bulk.approveTitle')}</span>
               </>
             ) : (
               <>
                 <Iconify icon="solar:close-circle-bold" width={20} sx={{ color: 'error.main' }} />
-                <span>Bulk Reject Actions</span>
+                <span>{t('actions.bulk.rejectTitle')}</span>
               </>
             )}
           </Stack>
         </DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>
-            You are about to {bulkAction} {selectedPendingCount} action(s). This action cannot be undone.
+            {t('actions.bulk.confirmBulk', {
+              count: selectedPendingCount,
+              action: bulkAction === 'approve' ? t('actions.buttons.approve') : t('actions.buttons.reject'),
+            })}
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
           <Button variant="outlined" onClick={() => setBulkApprovalOpen(false)} disabled={isBulkProcessing}>
-            Cancel
+            {t('actions.bulk.cancel')}
           </Button>
           <PermissionGate resource={ACTIONS_RESOURCE} permission="APPROVE">
             <Button
@@ -955,7 +964,7 @@ export const ActionsPage = () => {
               disabled={isBulkProcessing}
               startIcon={isBulkProcessing ? <CircularProgress size={16} /> : undefined}
             >
-              {isBulkProcessing ? 'Processing...' : `Confirm ${bulkAction === 'approve' ? 'Approval' : 'Rejection'}`}
+              {isBulkProcessing ? t('actions.bulk.processing') : bulkAction === 'approve' ? t('actions.bulk.confirmApproval') : t('actions.bulk.confirmRejection')}
             </Button>
           </PermissionGate>
         </DialogActions>

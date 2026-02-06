@@ -1,13 +1,16 @@
 /**
  * 거래처 허브 검색 필터
- * - type: Select (전체, 공급업체, 고객)
- * - country: Select (ISO 3166-1 alpha-3)
+ * - type: useCodes('ENTITY_TYPE') — VENDOR, CUSTOMER
+ * - country: useCodes('COUNTRY') — KOR, USA, JPN, CHN 등
  * - q: 텍스트 검색 (이름/코드)
  */
 
 import type { SelectChangeEvent } from '@mui/material/Select';
 
+import { useMemo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useCodes } from '@dwp-frontend/shared-utils';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -20,35 +23,16 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import type { EntityFilters } from '../types';
 
-const TYPE_OPTIONS: { value: '' | 'VENDOR' | 'CUSTOMER'; label: string }[] = [
-  { value: '', label: '전체' },
-  { value: 'VENDOR', label: '공급업체' },
-  { value: 'CUSTOMER', label: '고객' },
-];
-
-/** ISO 3166-1 alpha-3 국가코드 (일반적 사용 국가) */
-const COUNTRY_OPTIONS: { value: string; label: string }[] = [
-  { value: '', label: '전체' },
-  { value: 'KOR', label: '대한민국 (KOR)' },
-  { value: 'USA', label: '미국 (USA)' },
-  { value: 'JPN', label: '일본 (JPN)' },
-  { value: 'CHN', label: '중국 (CHN)' },
-  { value: 'DEU', label: '독일 (DEU)' },
-  { value: 'GBR', label: '영국 (GBR)' },
-  { value: 'FRA', label: '프랑스 (FRA)' },
-  { value: 'SGP', label: '싱가포르 (SGP)' },
-  { value: 'HKG', label: '홍콩 (HKG)' },
-  { value: 'TWN', label: '대만 (TWN)' },
-  { value: 'VNM', label: '베트남 (VNM)' },
-  { value: 'THA', label: '태국 (THA)' },
-  { value: 'IND', label: '인도 (IND)' },
-  { value: 'NLD', label: '네덜란드 (NLD)' },
-  { value: 'CHE', label: '스위스 (CHE)' },
-  { value: 'AUS', label: '호주 (AUS)' },
-  { value: 'CAN', label: '캐나다 (CAN)' },
-  { value: 'ITA', label: '이탈리아 (ITA)' },
-  { value: 'ESP', label: '스페인 (ESP)' },
-];
+/** useCodes 결과로 Select 옵션 생성 (전체 + BE codes) */
+function buildOptionsFromCodes(
+  codeMap: Map<string, string>,
+  allLabel: string
+): { value: string; label: string }[] {
+  const items = Array.from(codeMap.entries())
+    .filter(([k]) => k.trim())
+    .map(([value, label]) => ({ value, label }));
+  return [{ value: '', label: allLabel }, ...items];
+}
 
 type EntitiesFilterBarProps = {
   filters: EntityFilters;
@@ -61,6 +45,19 @@ export const EntitiesFilterBar = ({
   onFiltersChange,
   onReset,
 }: EntitiesFilterBarProps) => {
+  const { t } = useTranslation('common');
+  const { codeMap: entityTypeMap } = useCodes('ENTITY_TYPE');
+  const { codeMap: countryMap } = useCodes('COUNTRY');
+
+  const typeOptions = useMemo(
+    () => buildOptionsFromCodes(entityTypeMap, t('commonLabels.all')),
+    [entityTypeMap, t]
+  );
+  const countryOptions = useMemo(
+    () => buildOptionsFromCodes(countryMap, t('commonLabels.all')),
+    [countryMap, t]
+  );
+
   const handleChange = (key: keyof EntityFilters, value: string | undefined) => {
     onFiltersChange({ ...filters, [key]: value || undefined });
   };
@@ -69,7 +66,7 @@ export const EntitiesFilterBar = ({
     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }}>
       <TextField
         size="small"
-        placeholder="검색 (이름/코드)"
+        placeholder={t('entities.filter.searchPlaceholder')}
         value={filters.q ?? ''}
         onChange={(e) => handleChange('q', e.target.value)}
         sx={{ minWidth: { xs: 1, md: 220 } }}
@@ -82,15 +79,15 @@ export const EntitiesFilterBar = ({
         }}
       />
       <FormControl size="small" sx={{ minWidth: { xs: 1, md: 140 } }}>
-        <InputLabel>유형</InputLabel>
+        <InputLabel>{t('entities.filter.type')}</InputLabel>
         <Select
           value={filters.type ?? ''}
-          label="유형"
+          label={t('entities.filter.type')}
           onChange={(e: SelectChangeEvent) =>
             handleChange('type', (e.target.value as '' | 'VENDOR' | 'CUSTOMER') || undefined)
           }
         >
-          {TYPE_OPTIONS.map((opt) => (
+          {typeOptions.map((opt) => (
             <MenuItem key={opt.value || 'all'} value={opt.value}>
               {opt.label}
             </MenuItem>
@@ -98,15 +95,15 @@ export const EntitiesFilterBar = ({
         </Select>
       </FormControl>
       <FormControl size="small" sx={{ minWidth: { xs: 1, md: 180 } }}>
-        <InputLabel>국가</InputLabel>
+        <InputLabel>{t('entities.filter.country')}</InputLabel>
         <Select
           value={filters.country ?? ''}
-          label="국가"
+          label={t('entities.filter.country')}
           onChange={(e: SelectChangeEvent) =>
             handleChange('country', e.target.value || undefined)
           }
         >
-          {COUNTRY_OPTIONS.map((opt) => (
+          {countryOptions.map((opt) => (
             <MenuItem key={opt.value || 'all'} value={opt.value}>
               {opt.label}
             </MenuItem>
@@ -133,7 +130,7 @@ export const EntitiesFilterBar = ({
         }}
       >
         <Iconify icon="solar:refresh-bold" width={16} />
-        초기화
+        {t('entities.filter.reset')}
       </Box>
     </Stack>
   );

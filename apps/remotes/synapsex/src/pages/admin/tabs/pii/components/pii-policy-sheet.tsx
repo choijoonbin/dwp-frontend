@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
-
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import {
   showToast,
   type PiiPolicyItem,

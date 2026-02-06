@@ -1,7 +1,6 @@
 import type { UseMutationResult } from '@tanstack/react-query';
 
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import { showToast, type TenantScopeSodRule } from '@dwp-frontend/shared-utils';
 
@@ -16,12 +15,6 @@ import Typography from '@mui/material/Typography';
 import InputLabel from '@mui/material/InputLabel';
 import CardContent from '@mui/material/CardContent';
 import FormControl from '@mui/material/FormControl';
-
-const SEVERITY_OPTIONS: { value: 'INFO' | 'WARN' | 'BLOCK'; label: string }[] = [
-  { value: 'INFO', label: 'Info' },
-  { value: 'WARN', label: 'Warn' },
-  { value: 'BLOCK', label: 'Block' },
-];
 
 type PatchSodRuleMutation = UseMutationResult<
   unknown,
@@ -98,11 +91,11 @@ export const SodCard = ({ items, isLoading, patchMutation, refetch, sodMode }: S
           <Stack direction="row" alignItems="center" spacing={1}>
             <Iconify icon="solar:shield-check-bold-duotone" width={18} />
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              Segregation of Duties
+              {t('tenantScope.segregationOfDuties')}
             </Typography>
           </Stack>
         }
-        subheader="Prevent risky combinations for approvals and execution."
+        subheader={t('tenantScope.sodSubheader')}
         action={
           sodMode && (
             <Label
@@ -119,11 +112,11 @@ export const SodCard = ({ items, isLoading, patchMutation, refetch, sodMode }: S
         <Stack spacing={1.5}>
           {isLoading ? (
             <Typography variant="body2" color="text.secondary">
-              Loading...
+              {t('tenantScope.loading')}
             </Typography>
           ) : items.length === 0 ? (
             <Typography variant="body2" color="text.secondary">
-              No SoD rules configured.
+              {t('tenantScope.noSodRules')}
             </Typography>
           ) : (
             items.map((item) => (
@@ -151,18 +144,22 @@ export const SodCard = ({ items, isLoading, patchMutation, refetch, sodMode }: S
                 </Box>
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <FormControl size="small" sx={{ minWidth: 100 }}>
-                    <InputLabel>Severity</InputLabel>
+                    <InputLabel>{t('tenantScope.severity')}</InputLabel>
                     <Select
                       value={item.severity ?? 'WARN'}
-                      label="Severity"
+                      label={t('tenantScope.severity')}
                       onChange={(e) =>
                         handleSeverityChange(item.ruleKey, e.target.value as 'INFO' | 'WARN' | 'BLOCK')
                       }
                       disabled={patchMutation.isPending || !item.enabled}
                     >
-                      {SEVERITY_OPTIONS.map((o) => (
+                      {[
+                        { value: 'INFO' as const, key: 'severityInfo' },
+                        { value: 'WARN' as const, key: 'severityWarn' },
+                        { value: 'BLOCK' as const, key: 'severityBlock' },
+                      ].map((o) => (
                         <MenuItem key={o.value} value={o.value}>
-                          {o.label}
+                          {t(`tenantScope.${o.key}`)}
                         </MenuItem>
                       ))}
                     </Select>

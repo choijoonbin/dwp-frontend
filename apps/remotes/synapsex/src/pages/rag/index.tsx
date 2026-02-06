@@ -6,6 +6,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
   useRagSearchQuery,
@@ -37,16 +38,18 @@ import { RegisterRagDocumentModal } from './components/register-rag-document-mod
 
 // ----------------------------------------------------------------------
 
-const statusMeta: Record<string, { icon: string; label: string; color: 'success' | 'warning' | 'error' | 'default' }> = {
-  indexed: { icon: 'solar:check-circle-bold', label: 'Indexed', color: 'success' },
-  indexing: { icon: 'solar:clock-circle-bold', label: 'Indexing', color: 'warning' },
-  error: { icon: 'solar:danger-triangle-bold', label: 'Error', color: 'error' },
-  default: { icon: 'solar:info-circle-bold', label: '-', color: 'default' },
+
+const statusMeta: Record<string, { icon: string; color: 'success' | 'warning' | 'error' | 'default' }> = {
+  indexed: { icon: 'solar:check-circle-bold', color: 'success' },
+  indexing: { icon: 'solar:clock-circle-bold', color: 'warning' },
+  error: { icon: 'solar:danger-triangle-bold', color: 'error' },
+  default: { icon: 'solar:info-circle-bold', color: 'default' },
 };
 
 // ----------------------------------------------------------------------
 
 export const RagPage = () => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [registerOpen, setRegisterOpen] = useState(false);
@@ -102,10 +105,10 @@ export const RagPage = () => {
           <CardContent sx={{ p: 6, textAlign: 'center' }}>
             <Iconify icon="solar:danger-triangle-bold-duotone" width={48} sx={{ color: 'error.main', mb: 2 }} />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Failed to load documents
+              {t('rag.error.failedToLoad')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {docsError instanceof Error ? docsError.message : 'Unknown error'}
+              {docsError instanceof Error ? docsError.message : t('error.errorState.unknownError')}
             </Typography>
           </CardContent>
         </Card>
@@ -127,11 +130,11 @@ export const RagPage = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <Iconify icon="solar:book-2-bold" width={24} sx={{ color: 'primary.main' }} />
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                RAG Library
+                {t('rag.title')}
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Manage compliance documents and track indexing health for explainable AI decisions.
+              {t('rag.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -140,7 +143,7 @@ export const RagPage = () => {
             startIcon={<Iconify icon="solar:upload-bold" width={18} />}
             onClick={() => setRegisterOpen(true)}
           >
-            Register Document
+            {t('rag.registerDocument')}
           </Button>
         </Stack>
 
@@ -150,13 +153,13 @@ export const RagPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
                 <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                  Documents
+                  {t('rag.documents')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {totalDocs}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  Total registered
+                  {t('rag.totalRegistered')}
                 </Typography>
               </CardContent>
             </Card>
@@ -165,13 +168,13 @@ export const RagPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
                 <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                  Indexed
+                  {t('rag.indexed')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {indexedCount}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  Ready for citations
+                  {t('rag.readyForCitations')}
                 </Typography>
               </CardContent>
             </Card>
@@ -180,13 +183,13 @@ export const RagPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
                 <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                  Attention needed
+                  {t('rag.attentionNeeded')}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {attentionCount}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  Indexing / errors
+                  {t('rag.indexingErrors')}
                 </Typography>
               </CardContent>
             </Card>
@@ -199,16 +202,16 @@ export const RagPage = () => {
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.5 }}>
               <Iconify icon="solar:magnifer-linear" width={20} sx={{ color: 'primary.main' }} />
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                Search RAG
+                {t('rag.searchRag')}
               </Typography>
             </Stack>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-              Search across all indexed documents. Results are grouped by document with chunk snippets.
+              {t('rag.searchHint')}
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
               <TextField
                 size="small"
-                placeholder="Search documents…"
+                placeholder={t('rag.searchDocuments')}
                 value={searchQ}
                 onChange={(e) => setSearchQ(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -220,18 +223,18 @@ export const RagPage = () => {
                 }}
               />
               <Button variant="contained" onClick={handleSearch} disabled={!searchQ.trim()}>
-                Search
+                {t('rag.search')}
               </Button>
             </Stack>
             {searchSubmitted && (
               <Box sx={{ mt: 2 }}>
                 {searchLoading ? (
                   <Typography variant="body2" color="text.secondary">
-                    Searching…
+                    {t('rag.searching')}
                   </Typography>
                 ) : searchGroupedByDoc.length === 0 ? (
                   <Typography variant="body2" color="text.secondary">
-                    No results for &ldquo;{searchSubmitted}&rdquo;
+                    {t('rag.noResults', { query: searchSubmitted })}
                   </Typography>
                 ) : (
                   <Stack spacing={2}>
@@ -260,7 +263,7 @@ export const RagPage = () => {
                             endIcon={<Iconify icon="solar:arrow-right-up-linear" width={14} />}
                             onClick={() => navigate(`${SYNAPSE_ROUTES.RAG}/${docId}`)}
                           >
-                            Open
+                            {t('rag.open')}
                           </Button>
                         </Stack>
                         <Stack spacing={1}>
@@ -276,7 +279,7 @@ export const RagPage = () => {
                               }}
                             >
                               <Typography variant="caption" color="text.secondary">
-                                Chunk {c.pageNo != null ? `· Page ${c.pageNo}` : ''} · Score: {c.score?.toFixed(2) ?? '-'}
+                                {t('rag.chunk')} {c.pageNo != null ? `· ${t('rag.page')} ${c.pageNo}` : ''} · {t('rag.score')}: {c.score?.toFixed(2) ?? '-'}
                               </Typography>
                               <Typography variant="body2" sx={{ mt: 0.5 }}>
                                 {c.chunkText.length > 200 ? `${c.chunkText.slice(0, 200)}…` : c.chunkText}
@@ -299,11 +302,11 @@ export const RagPage = () => {
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.5 }}>
               <Iconify icon="solar:document-text-bold" width={18} sx={{ color: 'text.secondary' }} />
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                Document Library
+                {t('rag.documentLibrary')}
               </Typography>
             </Stack>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-              Search, filter, and inspect documents. Click a row to view chunks.
+              {t('rag.libraryHint')}
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
               <Select
@@ -312,20 +315,20 @@ export const RagPage = () => {
                 onChange={(e: SelectChangeEvent) => setStatusFilter(e.target.value)}
                 sx={{ minWidth: 160 }}
               >
-                <MenuItem value="all">All status</MenuItem>
-                <MenuItem value="indexed">Indexed</MenuItem>
-                <MenuItem value="indexing">Indexing</MenuItem>
-                <MenuItem value="error">Error</MenuItem>
+                <MenuItem value="all">{t('rag.allStatus')}</MenuItem>
+                <MenuItem value="indexed">{t('rag.status.indexed')}</MenuItem>
+                <MenuItem value="indexing">{t('rag.status.indexing')}</MenuItem>
+                <MenuItem value="error">{t('rag.status.error')}</MenuItem>
               </Select>
             </Stack>
             <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Document</TableCell>
-                    <TableCell>Source</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell align="right">Created</TableCell>
+                    <TableCell>{t('rag.table.document')}</TableCell>
+                    <TableCell>{t('rag.table.source')}</TableCell>
+                    <TableCell>{t('rag.table.status')}</TableCell>
+                    <TableCell align="right">{t('rag.table.created')}</TableCell>
                     <TableCell align="right" />
                   </TableRow>
                 </TableHead>
@@ -334,7 +337,7 @@ export const RagPage = () => {
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
                         <Typography variant="body2" color="text.secondary">
-                          Loading…
+                          {t('rag.loading')}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -344,7 +347,7 @@ export const RagPage = () => {
                         <Stack alignItems="center" spacing={1}>
                           <Iconify icon="solar:document-text-bold" width={48} sx={{ color: 'text.disabled' }} />
                           <Typography variant="body2" color="text.secondary">
-                            No documents yet
+                            {t('rag.empty')}
                           </Typography>
                           <Button
                             variant="outlined"
@@ -352,7 +355,7 @@ export const RagPage = () => {
                             startIcon={<Iconify icon="solar:upload-bold" width={18} />}
                             onClick={() => setRegisterOpen(true)}
                           >
-                            Register first document
+                            {t('rag.registerFirst')}
                           </Button>
                         </Stack>
                       </TableCell>
@@ -387,7 +390,7 @@ export const RagPage = () => {
                               startIcon={<Iconify icon={meta.icon} width={14} />}
                               sx={{ fontSize: '0.75rem' }}
                             >
-                              {meta.label}
+                              {t(`rag.status.${d.status === 'indexed' || d.status === 'indexing' || d.status === 'error' ? d.status : 'default'}`)}
                             </Label>
                           </TableCell>
                           <TableCell align="right">
@@ -401,7 +404,7 @@ export const RagPage = () => {
                               endIcon={<Iconify icon="solar:arrow-right-up-linear" width={14} />}
                               onClick={() => navigate(`${SYNAPSE_ROUTES.RAG}/${d.docId}`)}
                             >
-                              Open
+                              {t('rag.open')}
                             </Button>
                           </TableCell>
                         </TableRow>

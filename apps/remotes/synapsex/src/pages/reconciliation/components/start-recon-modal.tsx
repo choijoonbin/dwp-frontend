@@ -7,6 +7,7 @@ import type { ReconRunType } from '@dwp-frontend/shared-utils';
 
 import { useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
@@ -17,11 +18,6 @@ import FormControl from '@mui/material/FormControl';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-
-const RUN_TYPES: { value: ReconRunType; label: string }[] = [
-  { value: 'DOC_OPENITEM_MATCH', label: 'Doc vs Open Item Match' },
-  { value: 'ACTION_EFFECT', label: 'Action Effect' },
-];
 
 type StartReconModalProps = {
   open: boolean;
@@ -36,6 +32,7 @@ export const StartReconModal = ({
   onSubmit,
   isLoading,
 }: StartReconModalProps) => {
+  const { t } = useTranslation('common');
   const [runType, setRunType] = useState<ReconRunType>('DOC_OPENITEM_MATCH');
 
   const handleSubmit = (e: FormEvent) => {
@@ -46,31 +43,28 @@ export const StartReconModal = ({
 
   return (
     <>
-      <DialogTitle>Start Reconciliation Run</DialogTitle>
+      <DialogTitle>{t('reconciliation.startModalTitle')}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <DialogContentText sx={{ mb: 3 }}>
-            Run a reconciliation job to validate data integrity between SAP source and normalized tables.
+            {t('reconciliation.startModalHint')}
           </DialogContentText>
           <FormControl fullWidth>
-            <InputLabel id="recon-run-type-label">Run Type</InputLabel>
+            <InputLabel id="recon-run-type-label">{t('reconciliation.runType')}</InputLabel>
             <Select
               labelId="recon-run-type-label"
-              label="Run Type"
+              label={t('reconciliation.runType')}
               value={runType}
               onChange={(e) => setRunType(e.target.value as ReconRunType)}
             >
-              {RUN_TYPES.map((t) => (
-                <MenuItem key={t.value} value={t.value}>
-                  {t.label}
-                </MenuItem>
-              ))}
+              <MenuItem value="DOC_OPENITEM_MATCH">{t('reconciliation.runTypes.DOC_OPENITEM_MATCH')}</MenuItem>
+              <MenuItem value="ACTION_EFFECT">{t('reconciliation.runTypes.ACTION_EFFECT')}</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} disabled={isLoading} sx={{ color: 'text.secondary' }}>
-            Cancel
+            {t('confirm.cancel')}
           </Button>
           <Button
             type="submit"
@@ -78,7 +72,7 @@ export const StartReconModal = ({
             disabled={isLoading}
             startIcon={<Iconify icon="solar:play-bold" width={18} />}
           >
-            {isLoading ? 'Starting…' : 'Start Run'}
+            {isLoading ? t('reconciliation.starting') : t('reconciliation.startRun')}
           </Button>
         </DialogActions>
       </form>

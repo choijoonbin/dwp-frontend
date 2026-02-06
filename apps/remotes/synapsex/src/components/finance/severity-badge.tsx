@@ -1,8 +1,8 @@
 import type { Theme, SxProps } from '@mui/material/styles';
 import type { LabelColor } from '@dwp-frontend/design-system';
 
-import { Label, Iconify } from '@dwp-frontend/design-system';
 import { useCodes } from '@dwp-frontend/shared-utils';
+import { Label, Iconify } from '@dwp-frontend/design-system';
 
 // ----------------------------------------------------------------------
 
