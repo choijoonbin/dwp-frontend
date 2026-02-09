@@ -467,16 +467,24 @@ export const CaseDetailPage = () => {
             </CardContent>
           </Card>
 
-              {/* FI Document Card — deep-link to document detail */}
+              {/* FI Document Card — deep-link to document detail (div + onClick to avoid nested <a> with vendor Link) */}
               <Card
                 {...(fiDoc &&
                   fiDoc.bukrs &&
                   fiDoc.belnr &&
                   fiDoc.gjahr && {
-                    component: Link,
-                    to: `${SYNAPSE_ROUTES.DOCUMENTS}/${fiDoc.bukrs}/${fiDoc.belnr}/${fiDoc.gjahr}`,
+                    component: 'div',
+                    role: 'button',
+                    tabIndex: 0,
+                    onClick: () =>
+                      navigate(`${SYNAPSE_ROUTES.DOCUMENTS}/${fiDoc.bukrs}/${fiDoc.belnr}/${fiDoc.gjahr}`),
+                    onKeyDown: (e: React.KeyboardEvent) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        navigate(`${SYNAPSE_ROUTES.DOCUMENTS}/${fiDoc.bukrs}/${fiDoc.belnr}/${fiDoc.gjahr}`);
+                      }
+                    },
                     sx: {
-                      textDecoration: 'none',
                       cursor: 'pointer',
                       '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.04) },
                       transition: 'background-color 0.2s',
@@ -541,6 +549,7 @@ export const CaseDetailPage = () => {
                               component={Link}
                               to={`${SYNAPSE_ROUTES.ENTITIES}/${entityId}`}
                               variant="body2"
+                              onClick={(e) => e.stopPropagation()}
                               sx={{
                                 fontWeight: 500,
                                 overflow: 'hidden',

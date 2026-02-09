@@ -1,6 +1,7 @@
 import type { MenuNode } from '@dwp-frontend/shared-utils';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
+
 import { useMemo } from 'react';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useMenuTreeStore } from '@dwp-frontend/shared-utils';
 
 import { Iconify } from 'src/components/iconify';

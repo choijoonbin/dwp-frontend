@@ -213,6 +213,15 @@
         "error": {
           "title": "Failed to load RAG evidence"
         }
+      },
+      "actionProposals": {
+        "empty": {
+          "title": "No action proposals",
+          "description": "Run analysis to get AI-generated action recommendations."
+        },
+        "error": {
+          "title": "Failed to load action proposals"
+        }
       }
     }
   },
