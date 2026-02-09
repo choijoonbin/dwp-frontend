@@ -1,14 +1,19 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const IS_DEV = import.meta.env.DEV;
 import { Iconify } from '@dwp-frontend/design-system';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import {
   buildAuditUrl,
   is403Error,
+  useAnalysisRunStream,
+  useCaseAnalysisRunsQuery,
+  useCaseAuditEventsQuery,
   useCodesByGroupQuery,
-  useSynapseAgentStream,
+  useApproveActionMutation,
+  useRejectActionMutation,
   useUpdateCaseStatusMutation,
 } from '@dwp-frontend/shared-utils';
 
@@ -21,24 +26,24 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import Switch from '@mui/material/Switch';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import CircularProgress from '@mui/material/CircularProgress';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
-import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
 import Typography from '@mui/material/Typography';
 import CardHeader from '@mui/material/CardHeader';
 import IconButton from '@mui/material/IconButton';
+import FormControl from '@mui/material/FormControl';
 import CardContent from '@mui/material/CardContent';
 import { alpha, useTheme } from '@mui/material/styles';
+import CircularProgress from '@mui/material/CircularProgress';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { SYNAPSE_ROUTES } from '../routes';
 import { ErrorStateWithRetry } from '../components/ux';
 import { useCaseHitl } from './cases/hooks/use-case-hitl';
+import { useCaseDetail } from './cases/hooks/use-case-detail';
 import { CaseHitlDrawer } from './cases/components/case-hitl-drawer';
 import { SeverityBadge } from '../components/finance/severity-badge';
 import { CaseSimilarTab } from './cases/components/case-similar-tab';
@@ -47,12 +52,13 @@ import { CaseAnalysisTab } from './cases/components/case-analysis-tab';
 import { ConfidenceRing } from '../components/finance/confidence-meter';
 import { CaseConfidenceTab } from './cases/components/case-confidence-tab';
 import { StatusPill, type Status } from '../components/finance/status-pill';
+import { CaseLineItemsCard } from './cases/components/case-line-items-card';
 import { CaseSimulationDiff } from './cases/components/case-simulation-diff';
 import { CaseRagEvidenceTab } from './cases/components/case-rag-evidence-tab';
-import { useCaseDetail, type AuditEvent } from './cases/hooks/use-case-detail';
 import { CaseTabsDebugDrawer } from './cases/components/case-tabs-debug-drawer';
 import { CaseTabsDebugProvider } from './cases/context/case-tabs-debug-context';
 import { CaseAgentStreamPanel } from './cases/components/case-agent-stream-panel';
+import { CaseActionProposalsTab } from './cases/components/case-action-proposals-tab';
 
 import type { HitlStatus } from './cases/hooks/use-case-hitl';
 
@@ -86,25 +92,33 @@ export const CaseDetailPage = () => {
   const idFromPath = pathname.match(/\/cases\/([^/]+)/)?.[1];
   const id = idFromParams ?? idFromPath ?? undefined;
 
-  const { caseData, evidence, fiDoc, fiDocItems, relatedActions, auditEvents, isLoading, error, refetch } = useCaseDetail(id);
+  const { caseData, evidence, fiDoc, fiDocItems, targetBuzei, lineCount, relatedActions, isLoading, error, refetch } =
+    useCaseDetail(id);
+  const queryClient = useQueryClient();
   const updateStatusMutation = useUpdateCaseStatusMutation();
+  const approveActionMutation = useApproveActionMutation();
+  const rejectActionMutation = useRejectActionMutation();
   const { data: caseStatusCodes } = useCodesByGroupQuery('CASE_STATUS');
 
-  const caseAuditEvents = auditEvents;
   const currentStatusApi = displayStatusToApi(caseData?.status ?? '');
   const isStatusMutating = updateStatusMutation.isPending;
 
+  /** TRIAGED는 검색/필터 옵션에서 제외 (현재 상태가 TRIAGED일 때는 표시용으로만 포함) */
   const statusOptions = useMemo(() => {
     if (!caseStatusCodes) return [];
     const allowed = new Set(ALLOWED_CASE_STATUSES);
+    const excludeTriaged = currentStatusApi !== 'TRIAGED';
     return caseStatusCodes
-      .filter((c) => allowed.has((c.codeKey ?? (c as { code?: string }).code ?? '').toUpperCase() as CaseStatusApi))
+      .filter((c) => {
+        const code = (c.codeKey ?? (c as { code?: string }).code ?? '').toUpperCase() as CaseStatusApi;
+        return allowed.has(code) && (!excludeTriaged || code !== 'TRIAGED');
+      })
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
       .map((c) => ({
         value: (c.codeKey ?? (c as { code?: string }).code ?? '').toUpperCase() as CaseStatusApi,
         label: (c.codeName ?? (c as { name?: string }).name ?? '').trim() || c.codeKey,
       }));
-  }, [caseStatusCodes]);
+  }, [caseStatusCodes, currentStatusApi]);
 
   const handleStatusChange = (newStatus: CaseStatusApi) => {
     if (!id || newStatus === currentStatusApi) return;
@@ -126,37 +140,70 @@ export const CaseDetailPage = () => {
     ];
   }, [fiDoc]);
 
-  const [newComment, setNewComment] = useState('');
   const [simulationMode, setSimulationMode] = useState(false);
   const [rightPanelTab, setRightPanelTab] = useState<'actions' | 'audit'>('actions');
   const [centerTab, setCenterTab] = useState('analysis');
+  const { data: caseAuditApiData } = useCaseAuditEventsQuery(
+    id,
+    { page: 0, size: 10 },
+    { enabled: rightPanelTab === 'audit' && Boolean(id) }
+  );
+  const caseAuditEvents = useMemo(() => {
+    if (!caseAuditApiData?.items?.length) return [];
+    return caseAuditApiData.items.map((item) => ({
+      actor: item.actorDisplayName ?? 'System',
+      description: [item.eventCategory, item.eventType, item.resourceType].filter(Boolean).join(' · ') || 'Audit event',
+      timestamp: item.createdAt,
+    }));
+  }, [caseAuditApiData]);
   const [debugDrawerOpen, setDebugDrawerOpen] = useState(false);
 
   // HITL state
   const [hitlOpen, setHitlOpen] = useState(false);
   const [hitlRequestId, setHitlRequestId] = useState<string | null>(null);
-  const [hitlDescription, setHitlDescription] = useState<string | undefined>();
+  const [hitlDescription] = useState<string | undefined>();
   const [hitlStatus, setHitlStatus] = useState<HitlStatus>('pending_approval');
 
-  // Agent Stream
+  // Phase2 Analysis Run Stream — latestRunId 기반, 재시도 시 replace(누적 X)
+  const [latestRunId, setLatestRunId] = useState<string | null>(null);
   const {
     startStream,
     cancel,
-    events: streamEvents,
-    streamingText,
-    isThinking,
-    isReconnecting,
-  } = useSynapseAgentStream();
+    status: streamStatus,
+    stepProgress,
+  } = useAnalysisRunStream();
+
+  const { data: analysisRunsData } = useCaseAnalysisRunsQuery(id, {
+    enabled: Boolean(id),
+    latest: true,
+  });
+
+  useEffect(() => {
+    if (!id) return;
+    setLatestRunId(null);
+  }, [id]);
+
+  useEffect(() => {
+    if (analysisRunsData?.runId) {
+      setLatestRunId(analysisRunsData.runId);
+    }
+  }, [analysisRunsData?.runId]);
 
   const handleStartAnalysis = () => {
-    if (id) startStream(id, {
-      onHitlRequest: (requestId, payload) => {
-        setHitlRequestId(requestId);
-        setHitlDescription(payload?.message ?? (payload?.context ? JSON.stringify(payload.context) : undefined));
-        setHitlStatus('pending_approval');
-        setHitlOpen(true);
-      },
-    });
+    if (id) {
+      startStream(id, {
+        onSuccess: (runId) => {
+          setLatestRunId(runId);
+          queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
+          queryClient.invalidateQueries({ queryKey: ['synapse', 'cases', 'analysis'] });
+          queryClient.invalidateQueries({ queryKey: ['synapse', 'cases', 'action-proposals'] });
+          queryClient.invalidateQueries({ queryKey: ['synapse', 'cases', 'analysis-runs'] });
+        },
+        payload: evidence
+          ? { evidenceSnapshot: evidence as Record<string, unknown> }
+          : undefined,
+      });
+    }
   };
 
   const handleRetryStream = () => handleStartAnalysis();
@@ -225,105 +272,138 @@ export const CaseDetailPage = () => {
   return (
     <CaseTabsDebugProvider activeTab={centerTab} onActiveTabChange={setCenterTab}>
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.5rem)' }}>
-      {/* Case Header */}
-      <Box
+      {/* Case Header — 모바일: Card 형태로 통합, 데스크톱: 기존 레이아웃 */}
+      <Card
+        variant="outlined"
         sx={{
-          borderBottom: 1,
+          mx: { xs: 1.5, sm: 0 },
+          mt: { xs: 1, sm: 0 },
+          mb: 0,
+          borderRadius: { xs: 1.5, sm: 0 },
+          borderWidth: { xs: 1, sm: 0 },
+          borderBottom: { sm: 1 },
           borderColor: 'divider',
           bgcolor: 'background.paper',
-          px: { xs: 2, sm: 3 },
-          py: 2,
+          boxShadow: 'none',
+          overflow: 'visible',
         }}
       >
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between">
-          <Stack direction="row" spacing={2} alignItems="flex-start" sx={{ minWidth: 0, flex: 1 }}>
-            <IconButton
-              onClick={() => navigate(SYNAPSE_ROUTES.CASES)}
-              sx={{ flexShrink: 0, bgcolor: 'transparent' }}
-            >
-              <Iconify icon="solar:arrow-left-bold-duotone" width={20} />
-            </IconButton>
-            <Box sx={{ minWidth: 0, flex: 1 }}>
-              <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ mb: 1 }}>
-                <Typography variant="h6" sx={{ fontWeight: 600, flex: 1, minWidth: 0 }}>
-                  {caseData.title}
-                </Typography>
-                <SeverityBadge severity={caseData.severity} />
-                <StatusPill status={caseData.status as Status} />
-                <FormControl size="small" sx={{ minWidth: 140 }}>
-                  <InputLabel id="case-status-select-label">{t('caseDetail.status')}</InputLabel>
-                  <Select
-                    labelId="case-status-select-label"
-                    label={t('caseDetail.status')}
-                    value={currentStatusApi}
-                    onChange={(e) => handleStatusChange(e.target.value as CaseStatusApi)}
-                    disabled={isStatusMutating}
-                  >
-                    {statusOptions.map((opt) => (
-                      <MenuItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Stack>
-              <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ gap: 1 }}>
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <Iconify icon="solar:hash-bold-duotone" width={14} />
-                  <Typography variant="caption" color="text.secondary">
-                    {caseData.caseNumber}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <Iconify icon="solar:calendar-bold-duotone" width={14} />
-                  <Typography variant="caption" color="text.secondary">
-                    {new Date(caseData.detectedAt).toLocaleDateString()}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <Iconify icon="solar:buildings-bold-duotone" width={14} />
-                  <Typography variant="caption" color="text.secondary">
-                    {caseData.companyCode}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <Iconify icon="solar:dollar-minimalistic-bold-duotone" width={14} />
-                  <Typography variant="caption" color="text.secondary">
-                    {caseData.amount.toLocaleString()} {caseData.currency}
-                  </Typography>
-                </Stack>
-              </Stack>
-            </Box>
-          </Stack>
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
-            <ConfidenceRing value={caseData.confidence} size={48} />
-            {IS_DEV && (
-              <Tooltip title="Tab Debug (DEV)">
-                <IconButton size="small" sx={{ bgcolor: 'transparent' }} onClick={() => setDebugDrawerOpen(true)}>
-                  <Iconify icon="solar:code-square-bold-duotone" width={16} />
-                </IconButton>
-              </Tooltip>
-            )}
-            <Tooltip title={t('caseDetail.copyCaseId')}>
-              <IconButton size="small" sx={{ bgcolor: 'transparent' }}>
-                <Iconify icon="solar:copy-bold-duotone" width={16} />
+        <CardContent sx={{ px: { xs: 1.5, sm: 3 }, pt: { xs: 1.5, sm: 2 }, pb: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between">
+            <Stack direction="row" spacing={2} alignItems="flex-start" sx={{ minWidth: 0, flex: 1 }}>
+              <IconButton
+                onClick={() => navigate(SYNAPSE_ROUTES.CASES)}
+                sx={{ flexShrink: 0, bgcolor: 'transparent' }}
+              >
+                <Iconify icon="solar:arrow-left-bold-duotone" width={20} />
               </IconButton>
-            </Tooltip>
-            <Tooltip title={t('caseDetail.openInSap')}>
-              <IconButton size="small" sx={{ bgcolor: 'transparent' }}>
-                <Iconify icon="solar:external-link-bold-duotone" width={16} />
-              </IconButton>
-            </Tooltip>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  spacing={1}
+                  alignItems={{ xs: 'flex-start', sm: 'center' }}
+                  flexWrap="wrap"
+                  sx={{ mb: 1, gap: 1 }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 600, flex: 1, minWidth: 0 }}>
+                    {caseData.title}
+                  </Typography>
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ gap: 1 }}>
+                    <SeverityBadge severity={caseData.severity} />
+                    <StatusPill status={caseData.status as Status} />
+                    <FormControl size="small" sx={{ minWidth: { xs: 120, sm: 140 } }}>
+                      <InputLabel id="case-status-select-label">{t('caseDetail.status')}</InputLabel>
+                      <Select
+                        labelId="case-status-select-label"
+                        label={t('caseDetail.status')}
+                        value={currentStatusApi}
+                        onChange={(e) => handleStatusChange(e.target.value as CaseStatusApi)}
+                        disabled={isStatusMutating}
+                      >
+                        {statusOptions.map((opt) => (
+                          <MenuItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Stack>
+                </Stack>
+                <Stack
+                  direction="row"
+                  spacing={{ xs: 1.5, sm: 2 }}
+                  flexWrap="wrap"
+                  alignItems="center"
+                  sx={{ gap: 1 }}
+                >
+                  <Stack direction="row" spacing={0.5} alignItems="center">
+                    <Iconify icon="solar:hash-bold-duotone" width={14} />
+                    <Typography variant="caption" color="text.secondary">
+                      {caseData.caseNumber}
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" spacing={0.5} alignItems="center">
+                    <Iconify icon="solar:calendar-bold-duotone" width={14} />
+                    <Typography variant="caption" color="text.secondary">
+                      {new Date(caseData.detectedAt).toLocaleDateString()}
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" spacing={0.5} alignItems="center">
+                    <Iconify icon="solar:buildings-bold-duotone" width={14} />
+                    <Typography variant="caption" color="text.secondary">
+                      {caseData.companyCode}
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" spacing={0.5} alignItems="center">
+                    <Iconify icon="solar:dollar-minimalistic-bold-duotone" width={14} />
+                    <Typography variant="caption" color="text.secondary">
+                      {caseData.amount.toLocaleString()} {caseData.currency}
+                    </Typography>
+                  </Stack>
+                  <Box sx={{ flex: 1, minWidth: 0 }} />
+                  <Stack direction="row" spacing={0.5} alignItems="center" sx={{ flexShrink: 0 }}>
+                    <ConfidenceRing value={caseData.confidence} size={48} />
+                    {IS_DEV && (
+                      <Tooltip title="Tab Debug (DEV)">
+                        <IconButton size="small" sx={{ bgcolor: 'transparent', p: 0.5 }} onClick={() => setDebugDrawerOpen(true)}>
+                          <Iconify icon="solar:code-square-bold-duotone" width={16} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                    <Tooltip title={t('caseDetail.copyCaseId')}>
+                      <IconButton size="small" sx={{ bgcolor: 'transparent', p: 0.5 }}>
+                        <Iconify icon="solar:copy-bold-duotone" width={16} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={t('caseDetail.openInSap')}>
+                      <IconButton size="small" sx={{ bgcolor: 'transparent', p: 0.5 }}>
+                        <Iconify icon="solar:external-link-bold-duotone" width={16} />
+                      </IconButton>
+                    </Tooltip>
+                  </Stack>
+                </Stack>
+              </Box>
+            </Stack>
           </Stack>
-        </Stack>
-      </Box>
+        </CardContent>
+      </Card>
 
       {/* 3-Panel Layout */}
-      <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden', flexDirection: { xs: 'column', lg: 'row' } }}>
-        {/* Left Panel - Source Evidence */}
+      <Box
+        sx={{
+          display: 'flex',
+          flex: 1,
+          overflow: { xs: 'auto', lg: 'hidden' },
+          flexDirection: { xs: 'column', lg: 'row' },
+          minHeight: 0,
+        }}
+      >
+        {/* Left Panel - Source Evidence — 모바일: 폭 최대화 */}
         <Box
           sx={{
             width: { xs: '100%', lg: 360 },
+            minWidth: 0,
+            flexShrink: 0,
             borderRight: { lg: 1 },
             borderBottom: { xs: 1, lg: 0 },
             borderColor: 'divider',
@@ -334,7 +414,7 @@ export const CaseDetailPage = () => {
         >
           <Box
             sx={{
-              px: 2,
+              px: { xs: 1, sm: 2 },
               py: 1.5,
               borderBottom: 1,
               borderColor: 'divider',
@@ -348,11 +428,11 @@ export const CaseDetailPage = () => {
               </Typography>
             </Stack>
           </Box>
-          <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
+          <Box sx={{ flex: 1, overflow: 'auto', p: { xs: 1, sm: 2 }, minWidth: 0 }}>
             <Stack spacing={2}>
               {/* Document Relationship Graph - Placeholder */}
-              <Card>
-                <CardContent>
+              <Card sx={{ width: '100%' }}>
+                <CardContent sx={{ px: { xs: 1.5, sm: 2 }, py: { xs: 1.5, sm: 2 } }}>
                   <Typography variant="subtitle2" sx={{ mb: 1 }}>
                     {t('caseDetail.documentRelationship')}
                   </Typography>
@@ -416,7 +496,13 @@ export const CaseDetailPage = () => {
                 />
                 <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
                   <Stack spacing={1.5}>
-                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
+                    <Box
+                      sx={{
+                        display: 'grid',
+                        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                        gap: 1,
+                      }}
+                    >
                       <Box>
                         <Typography variant="caption" color="text.secondary">
                           {t('caseDetail.docNumber')}
@@ -474,45 +560,7 @@ export const CaseDetailPage = () => {
                       </Box>
                     </Box>
                     <Divider />
-                    <Box>
-                      <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                        {t('caseDetail.lineItems')} ({fiDocItems.length})
-                      </Typography>
-                      <Stack spacing={0.5}>
-                        {fiDocItems.slice(0, 2).map((item) => (
-                          <Box
-                            key={item.id}
-                            sx={{
-                              p: 0.75,
-                              borderRadius: 0.5,
-                              bgcolor: alpha(theme.palette.primary.main, 0.04),
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
-                              {item.hkont ?? '—'}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                fontWeight: 500,
-                                color: item.shkzg === 'S' ? 'error.main' : 'success.main',
-                              }}
-                            >
-                              {item.shkzg === 'S' ? '-' : '+'}
-                              {(item.wrbtr ?? 0).toLocaleString()}
-                            </Typography>
-                          </Box>
-                        ))}
-                        {fiDocItems.length > 2 && (
-                          <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>
-                            {t('caseDetail.moreItems', { count: fiDocItems.length - 2 })}
-                          </Typography>
-                        )}
-                      </Stack>
-                    </Box>
+                    <CaseLineItemsCard items={fiDocItems} lineCount={lineCount} targetBuzei={targetBuzei} />
                   </Stack>
                 </CardContent>
               </Card>
@@ -589,9 +637,25 @@ export const CaseDetailPage = () => {
         </Box>
 
         {/* Center Panel - AI Analysis */}
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <Box
+          sx={{
+            flex: 1,
+            flexShrink: { xs: 0, lg: 1 },
+            minHeight: { xs: 320, lg: 0 },
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+        >
           <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: alpha(theme.palette.primary.main, 0.04) }}>
-            <Tabs value={centerTab} onChange={(_, v) => setCenterTab(v)}>
+            <Tabs
+              value={centerTab}
+              onChange={(_, v) => setCenterTab(v)}
+              variant="scrollable"
+              scrollButtons="auto"
+              allowScrollButtonsMobile
+              sx={{ minHeight: { xs: 40, lg: 48 } }}
+            >
               <Tab
                 icon={<Iconify icon="solar:brain-bold-duotone" width={18} />}
                 iconPosition="start"
@@ -622,6 +686,12 @@ export const CaseDetailPage = () => {
                 label={t('caseDetail.rag')}
                 value="policies"
               />
+              <Tab
+                icon={<Iconify icon="solar:shield-user-bold-duotone" width={18} />}
+                iconPosition="start"
+                label={t('caseDetail.actionProposals')}
+                value="action-proposals"
+              />
             </Tabs>
           </Box>
 
@@ -629,10 +699,11 @@ export const CaseDetailPage = () => {
             {centerTab === 'agent-stream' && id && (
               <CaseAgentStreamPanel
                 caseId={id}
-                events={streamEvents}
-                streamingText={streamingText}
-                isThinking={isThinking}
-                isReconnecting={isReconnecting}
+                events={[]}
+                streamingText={stepProgress?.detail ?? ''}
+                isThinking={streamStatus === 'connecting' || streamStatus === 'streaming'}
+                isReconnecting={false}
+                stepProgress={stepProgress}
                 onStartAnalysis={handleStartAnalysis}
                 onRetry={handleRetryStream}
                 onCancel={cancel}
@@ -642,6 +713,7 @@ export const CaseDetailPage = () => {
             {centerTab === 'analysis' && (
               <CaseAnalysisTab
                 caseId={id}
+                runId={latestRunId}
                 enabled={centerTab === 'analysis'}
                 tabKey="analysis"
                 fallbackConfidence={caseData?.confidence}
@@ -674,13 +746,24 @@ export const CaseDetailPage = () => {
                 tabKey="policies"
               />
             )}
+
+            {centerTab === 'action-proposals' && (
+              <CaseActionProposalsTab
+                caseId={id}
+                runId={latestRunId}
+                enabled={centerTab === 'action-proposals'}
+                tabKey="action-proposals"
+              />
+            )}
           </Box>
         </Box>
 
-        {/* Right Panel - Actions & Audit */}
+        {/* Right Panel - Actions & Audit — 모바일: flexShrink 방지로 시뮬레이션 모드 가시성 확보 */}
         <Box
           sx={{
             width: { xs: '100%', lg: 400 },
+            flexShrink: 0,
+            minHeight: { xs: 200, lg: 0 },
             borderLeft: { lg: 1 },
             borderTop: { xs: 1, lg: 0 },
             borderColor: 'divider',
@@ -692,7 +775,7 @@ export const CaseDetailPage = () => {
           {/* Simulation Mode Toggle */}
           <Box
             sx={{
-              px: 2,
+              px: { xs: 1.5, sm: 2 },
               py: 1.5,
               borderBottom: 1,
               borderColor: 'divider',
@@ -732,7 +815,7 @@ export const CaseDetailPage = () => {
           {/* Tab Switcher for Actions/Audit */}
           <Box
             sx={{
-              px: 2,
+              px: { xs: 1.5, sm: 2 },
               py: 1,
               borderBottom: 1,
               borderColor: 'divider',
@@ -763,7 +846,7 @@ export const CaseDetailPage = () => {
 
           {/* Actions Panel */}
           {rightPanelTab === 'actions' && (
-            <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
+            <Box sx={{ flex: 1, overflow: 'auto', p: { xs: 1.5, sm: 2 } }}>
               <Stack spacing={2}>
                 {/* Primary CTA Stack */}
                 <Stack spacing={1}>
@@ -838,48 +921,75 @@ export const CaseDetailPage = () => {
 
                 <Divider />
 
-                {/* Pending Actions */}
+                {/* Action Proposals (권고 조치) — proposal 단위 승인/거절 */}
                 <Box>
                   <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1.5 }}>
                     {t('caseDetail.pendingActions')} ({relatedActions.filter((a) => a.status === 'pending').length})
                   </Typography>
                   <Stack spacing={1}>
-                    {relatedActions.map((action) => (
-                      <Card key={action.id} sx={{ bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
-                        <CardContent sx={{ p: 1.5 }}>
-                          <Stack spacing={1}>
-                            <Stack direction="row" spacing={1} alignItems="flex-start" justifyContent="space-between">
-                              <Box sx={{ minWidth: 0, flex: 1 }}>
-                                <Typography variant="body2" sx={{ fontWeight: 500, textTransform: 'capitalize' }}>
-                                  {action.actionType.replace(/_/g, ' ')}
-                                </Typography>
-                                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25, display: 'block' }}>
-                                  {action.description}
-                                </Typography>
-                              </Box>
-                              <StatusPill status={(action as { status: string }).status as Status} size="sm" />
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                              {action.riskLevel && (
-                                <SeverityBadge
-                                  severity={action.riskLevel as 'critical' | 'high' | 'medium' | 'low'}
-                                  size="sm"
-                                  showIcon={false}
-                                />
+                    {relatedActions.map((action) => {
+                      const isPending = (action as { status: string }).status === 'pending';
+                      const isActionApproving = approveActionMutation.isPending && approveActionMutation.variables === action.id;
+                      const isActionRejecting = rejectActionMutation.isPending && rejectActionMutation.variables === action.id;
+                      return (
+                        <Card key={action.id} sx={{ bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
+                          <CardContent sx={{ p: 1.5 }}>
+                            <Stack spacing={1}>
+                              <Stack direction="row" spacing={1} alignItems="flex-start" justifyContent="space-between">
+                                <Box sx={{ minWidth: 0, flex: 1 }}>
+                                  <Typography variant="body2" sx={{ fontWeight: 500, textTransform: 'capitalize' }}>
+                                    {action.actionType.replace(/_/g, ' ')}
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25, display: 'block' }}>
+                                    {action.description}
+                                  </Typography>
+                                </Box>
+                                <StatusPill status={(action as { status: string }).status as Status} size="sm" />
+                              </Stack>
+                              <Stack direction="row" spacing={1} alignItems="center">
+                                {action.riskLevel && (
+                                  <SeverityBadge
+                                    severity={action.riskLevel as 'critical' | 'high' | 'medium' | 'low'}
+                                    size="sm"
+                                    showIcon={false}
+                                  />
+                                )}
+                                {action.targetSystem && (
+                                  <Typography variant="caption" color="text.secondary">
+                                    {action.targetSystem}
+                                  </Typography>
+                                )}
+                              </Stack>
+                              {isPending && (
+                                <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                                  <Button
+                                    variant="contained"
+                                    size="small"
+                                    disabled={approveActionMutation.isPending || rejectActionMutation.isPending}
+                                    startIcon={isActionApproving ? <CircularProgress size={12} color="inherit" /> : <Iconify icon="solar:check-circle-bold-duotone" width={14} />}
+                                    onClick={() => approveActionMutation.mutate(action.id)}
+                                  >
+                                    {t('actions.buttons.approve')}
+                                  </Button>
+                                  <Button
+                                    variant="outlined"
+                                    size="small"
+                                    disabled={approveActionMutation.isPending || rejectActionMutation.isPending}
+                                    startIcon={isActionRejecting ? <CircularProgress size={12} color="inherit" /> : <Iconify icon="solar:close-circle-bold-duotone" width={14} />}
+                                    onClick={() => rejectActionMutation.mutate(action.id)}
+                                  >
+                                    {t('actions.buttons.reject')}
+                                  </Button>
+                                </Stack>
                               )}
-                              {action.targetSystem && (
-                                <Typography variant="caption" color="text.secondary">
-                                  {action.targetSystem}
-                                </Typography>
-                              )}
                             </Stack>
-                          </Stack>
-                        </CardContent>
-                      </Card>
-                    ))}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
                     {relatedActions.length === 0 && (
                       <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
-                        {t('caseDetail.noActionsYet')}
+                        {t('caseDetail.noActionsPhaseB')}
                       </Typography>
                     )}
                   </Stack>
@@ -888,60 +998,31 @@ export const CaseDetailPage = () => {
             </Box>
           )}
 
-          {/* Audit Stream Panel */}
+          {/* Audit Stream Panel — Option 2: Timeline (최근 N건) + 전체 감사 로그 보기 링크 */}
           {rightPanelTab === 'audit' && (
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-              <Box sx={{ px: 2, py: 1, borderBottom: 1, borderColor: 'divider' }}>
-                <Button
-                  component={Link}
-                  to={id ? buildAuditUrl({ resourceId: id, range: '24h' }) : SYNAPSE_ROUTES.AUDIT}
-                  size="small"
-                  startIcon={<Iconify icon="solar:clipboard-list-bold-duotone" width={16} />}
-                  sx={{ textTransform: 'none' }}
-                >
-                  {t('caseDetail.viewAudit')}
-                </Button>
-              </Box>
-              <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
+              <Box sx={{ flex: 1, overflow: 'auto', p: { xs: 1.5, sm: 2 } }}>
                 <Stack spacing={2}>
-                  {(caseAuditEvents as AuditEvent[])
-                    .slice(0, 5)
-                    .map((e) => ({
-                      ...e,
+                  {caseAuditEvents
+                    .map((e, i) => ({
                       type: 'event' as const,
                       author: e.actor,
                       content: e.description,
                       createdAt: e.timestamp,
+                      key: i,
                     }))
                     .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime())
-                    .map((item, i) => (
-                      <Stack key={i} direction="row" spacing={1.5}>
-                        <Avatar
-                          sx={{
-                            width: 32,
-                            height: 32,
-                            bgcolor:
-                              item.type === 'event'
-                                ? 'action.hover'
-                                : 'authorType' in item && item.authorType === 'ai'
-                                  ? alpha(theme.palette.primary.main, 0.2)
-                                  : 'action.hover',
-                          }}
-                        >
-                          {item.type === 'event' ? (
-                            <Iconify icon="solar:clock-circle-bold-duotone" width={16} />
-                          ) : 'authorType' in item && item.authorType === 'ai' ? (
-                            <Iconify icon="solar:robot-bold-duotone" width={16} sx={{ color: 'primary.main' }} />
-                          ) : (
-                            <Iconify icon="solar:user-bold-duotone" width={16} />
-                          )}
+                    .map((item) => (
+                      <Stack key={item.key} direction="row" spacing={1.5}>
+                        <Avatar sx={{ width: 32, height: 32, bgcolor: 'action.hover' }}>
+                          <Iconify icon="solar:clock-circle-bold-duotone" width={16} />
                         </Avatar>
                         <Box sx={{ flex: 1, minWidth: 0 }}>
                           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.25 }}>
                             <Typography variant="body2" sx={{ fontWeight: 500 }}>
                               {item.author}
                             </Typography>
-                            <Chip label={item.type === 'event' ? t('caseDetail.system') : t('caseDetail.comment')} size="small" variant="outlined" />
+                            <Chip label={t('caseDetail.system')} size="small" variant="outlined" />
                           </Stack>
                           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
                             {new Date(item.createdAt ?? '').toLocaleString()}
@@ -955,23 +1036,27 @@ export const CaseDetailPage = () => {
                 </Stack>
               </Box>
 
-              {/* Comment Input */}
-              <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
-                <Stack direction="row" spacing={1}>
-                  <TextField
-                    placeholder={t('caseDetail.addAuditNote')}
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    size="small"
-                    fullWidth
-                  />
-                  <IconButton size="small">
-                    <Iconify icon="solar:paperclip-bold-duotone" width={20} />
-                  </IconButton>
-                  <IconButton size="small" color="primary">
-                    <Iconify icon="solar:plain-2-bold-duotone" width={20} />
-                  </IconButton>
-                </Stack>
+              {/* 전체 감사 로그 보기 링크 */}
+              <Box sx={{ p: { xs: 1.5, sm: 2 }, borderTop: 1, borderColor: 'divider' }}>
+                <Button
+                  component={Link}
+                  to={
+                    id
+                      ? buildAuditUrl({
+                          resourceId: id,
+                          range: '24h',
+                          eventCategory: 'CASE',
+                          resourceType: 'AGENT_CASE',
+                        })
+                      : SYNAPSE_ROUTES.AUDIT
+                  }
+                  size="small"
+                  fullWidth
+                  endIcon={<Iconify icon="solar:alt-arrow-right-bold-duotone" width={16} />}
+                  sx={{ textTransform: 'none' }}
+                >
+                  {t('caseDetail.viewFullAuditLog')}
+                </Button>
               </Box>
             </Box>
           )}

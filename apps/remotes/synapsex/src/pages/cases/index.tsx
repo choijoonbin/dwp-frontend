@@ -118,10 +118,13 @@ export const CasesPage = () => {
     });
   }, [q, statusFilter, severityFilter, caseTypeFilter, periodFilter, dateFrom, dateTo, page]);
 
+  /** 케이스 상세페이지와 동일하게 TRIAGED 제외, 4개 값만 표시 */
   const statusOptions = useMemo(
     () =>
       statusCodeMap.size > 0
-        ? Array.from(statusCodeMap.entries()).map(([code, label]) => ({ code, label }))
+        ? Array.from(statusCodeMap.entries())
+            .filter(([code]) => code.toUpperCase() !== 'TRIAGED')
+            .map(([code, label]) => ({ code, label }))
         : [],
     [statusCodeMap]
   );

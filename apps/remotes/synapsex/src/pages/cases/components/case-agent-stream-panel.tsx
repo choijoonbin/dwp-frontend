@@ -16,9 +16,12 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
+import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from '@mui/material/CircularProgress';
 
 // ----------------------------------------------------------------------
+
+export type StepProgress = { label?: string; detail?: string; percent?: number };
 
 export type CaseAgentStreamPanelProps = {
   caseId: string;
@@ -26,6 +29,7 @@ export type CaseAgentStreamPanelProps = {
   streamingText: string;
   isThinking: boolean;
   isReconnecting: boolean;
+  stepProgress?: StepProgress | null;
   onStartAnalysis: () => void;
   onRetry: () => void;
   onCancel: () => void;
@@ -74,6 +78,7 @@ export const CaseAgentStreamPanel = ({
   streamingText,
   isThinking,
   isReconnecting,
+  stepProgress,
   onStartAnalysis,
   onRetry,
   onCancel,
@@ -83,15 +88,42 @@ export const CaseAgentStreamPanel = ({
   const status = useStreamStore((state) => state.status);
   const errorMessage = useStreamStore((state) => state.errorMessage);
 
-  const hasContent = events.length > 0 || streamingText.length > 0;
+  const hasContent = events.length > 0 || streamingText.length > 0 || (stepProgress?.label != null && stepProgress.label.length > 0);
   const isActive = status === 'CONNECTING' || status === 'STREAMING' || status === 'RECONNECTING';
   const hasError = status === 'ERROR';
+  const hasCompletedWithoutContent = status === 'COMPLETED' && !hasContent;
 
   return (
     <Box sx={{ p: 2, ...sx }}>
       <Stack spacing={2}>
+        {/* Phase2: Completed without event content */}
+        {hasCompletedWithoutContent && (
+          <Card variant="outlined" sx={{ bgcolor: 'success.lighter', borderColor: 'success.main' }}>
+            <CardContent sx={{ p: 4, textAlign: 'center' }}>
+              <Iconify
+                icon="solar:check-circle-bold-duotone"
+                width={48}
+                sx={{ color: 'success.main', mb: 2, opacity: 0.9 }}
+              />
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+                {t('caseDetail.agentStreamPanel.analysisComplete')}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                {t('caseDetail.agentStreamPanel.analysisCompleteHint')}
+              </Typography>
+              <Button
+                variant="outlined"
+                startIcon={<Iconify icon="solar:refresh-bold" width={18} />}
+                onClick={onRetry}
+              >
+                {t('caseDetail.agentStreamPanel.retry')}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* CTA / Empty state */}
-        {!hasContent && !isActive && !hasError && (
+        {!hasContent && !isActive && !hasError && !hasCompletedWithoutContent && (
           <Card variant="outlined" sx={{ bgcolor: 'action.hover' }}>
             <CardContent sx={{ p: 4, textAlign: 'center' }}>
               <Iconify
@@ -148,11 +180,29 @@ export const CaseAgentStreamPanel = ({
           </Stack>
         )}
 
-        {/* Active: Cancel button */}
+        {/* Active: Step progress + Cancel */}
         {isActive && (
-          <Button variant="outlined" color="error" size="small" startIcon={<Iconify icon="solar:close-circle-bold" width={16} />} onClick={onCancel}>
-            {t('caseDetail.agentStreamPanel.cancel')}
-          </Button>
+          <Stack spacing={1}>
+            {stepProgress != null && (stepProgress.label != null || stepProgress.percent != null) && (
+              <Box>
+                {stepProgress.label && (
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                    {stepProgress.label}
+                  </Typography>
+                )}
+                {stepProgress.percent != null && (
+                  <LinearProgress
+                    variant="determinate"
+                    value={Math.min(100, Math.max(0, stepProgress.percent))}
+                    sx={{ height: 6, borderRadius: 1 }}
+                  />
+                )}
+              </Box>
+            )}
+            <Button variant="outlined" color="error" size="small" startIcon={<Iconify icon="solar:close-circle-bold" width={16} />} onClick={onCancel}>
+              {t('caseDetail.agentStreamPanel.cancel')}
+            </Button>
+          </Stack>
         )}
 
         {/* Event timeline */}

@@ -61,6 +61,8 @@
     "rejected": "Rejected",
     "simulationCompleted": "Simulation completed",
     "statusUpdated": "Status updated",
+    "statusUpdatedWithAudit": "Status changed to '{{status}}'. Check audit log for details.",
+    "auditViewInLog": "View audit log",
     "actionCreated": "Action created",
     "actionExecuted": "Action executed",
     "actionRejected": "Action rejected",
@@ -169,7 +171,7 @@
           "title": "No analysis data",
           "description": "AI analysis is not available for this case.",
           "reason": {
-            "summaryRecommendationsZero": "No analysis (summary empty & recommendations=0)"
+            "summaryRecommendationsZero": "Start analysis to see AI reasoning and evidence. Click 'Start Analysis' in the Agent Stream tab."
           }
         },
         "error": {
@@ -181,7 +183,7 @@
           "title": "No confidence data",
           "description": "Confidence breakdown is not available.",
           "reason": {
-            "factorsZeroOrScoreNull": "No confidence (factors=0 or score null)"
+            "factorsZeroOrScoreNull": "Confidence factors will appear after analysis completes."
           }
         },
         "error": {
@@ -193,7 +195,7 @@
           "title": "No similar cases",
           "description": "No similar cases found.",
           "reason": {
-            "itemsZero": "No similar cases (items=0)"
+            "itemsZero": "No similar cases found. Similar history will appear after analysis completes."
           }
         },
         "error": {
@@ -205,7 +207,7 @@
           "title": "No RAG evidence",
           "description": "Policy citations are not available.",
           "reason": {
-            "itemsZero": "No RAG evidence (items=0)"
+            "itemsZero": "Evidence not configured. Citations will appear when policy/regulation documents are registered in the RAG library."
           }
         },
         "error": {
@@ -289,7 +291,20 @@
     "amount": "Amount",
     "vendor": "Vendor",
     "lineItems": "Line Items",
+    "noLineItems": "No line items in evidence",
     "moreItems": "+{{count}} more items",
+    "lineItem": {
+      "bschl": "Posting Key",
+      "shkzg": "D/C",
+      "mwskz": "Tax Code",
+      "kostl": "Cost Center",
+      "prctr": "Profit Center",
+      "aufnr": "Order",
+      "zterm": "Terms",
+      "zfbdt": "Baseline Date",
+      "zuonr": "Assignment",
+      "sgtxt": "Item Text"
+    },
     "viewEntity": "View Entity",
     "relatedOpenItems": "Related Open Items",
     "relatedOpenItemsDesc": "View related open items filtered by case.",
@@ -307,6 +322,7 @@
     "severityLabel": "{{severity}} severity",
     "aiReasoning": "AI Reasoning",
     "keyFactors": "Key Factors",
+    "evidence": "Evidence",
     "confidenceBreakdown": "Confidence breakdown by factors",
     "noConfidenceData": "No confidence data available",
     "weight": "Weight",
@@ -326,16 +342,20 @@
     "actions": "Actions",
     "auditStream": "Audit Stream",
     "status": "Status",
-    "approveAction": "Approve Action",
-    "reject": "Reject",
-    "requestInfo": "Request Info",
+    "actionProposals": "Action Proposals",
+    "approveAction": "Resolve",
+    "reject": "Dismiss",
+    "requiresApproval": "Requires approval",
+    "requestInfo": "Request Additional Info (status)",
     "setPaymentBlock": "Set Payment Block",
     "postReversal": "Post Reversal",
     "goToActionCenter": "Go to Action Center",
     "comingInPhaseB": "Coming in Phase B",
     "pendingActions": "Pending Actions",
     "noActionsYet": "No actions yet",
+    "noActionsPhaseB": "No actions created yet. (Action recommendation/creation will be integrated in Phase B)",
     "viewAudit": "View Audit (case filter)",
+    "viewFullAuditLog": "View full audit log",
     "system": "System",
     "comment": "Comment",
     "addAuditNote": "Add audit note...",
@@ -343,6 +363,8 @@
       "noStreamData": "No stream data",
       "startAnalysisHint": "Start Agent analysis to see reasoning and recommendations in real time.",
       "startAnalysis": "Start Analysis",
+      "analysisComplete": "Analysis complete",
+      "analysisCompleteHint": "Check the Analysis and Action Proposals tabs for results.",
       "streamError": "Stream error",
       "connectionFailed": "Connection failed",
       "retry": "Retry",
@@ -1265,13 +1287,25 @@
     "totalEvents": "Total Events",
     "userActions": "User Actions",
     "systemActions": "System Actions",
-    "searchPlaceholder": "Search (q)...",
+    "searchPlaceholder": "Unified search (resourceId, traceId, etc.)",
+    "filterTitle": "Filters",
+    "advanced": "Advanced",
+    "addFilter": "Add Filter",
+    "filterReset": "Reset",
     "allTypes": "All Types",
     "allCategories": "All Categories",
     "allOutcomes": "All Outcomes",
     "allSeverities": "All Severities",
     "actorPlaceholder": "Actor...",
-    "resourceTypePlaceholder": "Resource type...",
+    "resourceTypePlaceholder": "Resource Type",
+    "resourceId": "Resource ID",
+    "actorAgentId": "Agent ID",
+    "traceId": "Trace ID",
+    "spanId": "Span ID",
+    "gatewayRequestId": "Gateway Request ID",
+    "ipAddress": "IP Address",
+    "userAgent": "User Agent",
+    "tags": "Tags",
     "eventType": "Event Type",
     "actorType": "Actor Type",
     "allTime": "All Time",
@@ -1291,15 +1325,23 @@
       "comment_added": "Comment Added"
     },
     "categories": {
+      "": "All",
       "CASE": "Case",
       "ACTION": "Action",
+      "ADMIN": "Admin",
+      "INTEGRATION": "Integration",
       "POLICY": "Policy",
       "GUARDRAIL": "Guardrail",
-      "AUDIT": "Audit"
+      "AUDIT": "Audit",
+      "RUN": "Run"
     },
     "outcomes": {
+      "": "All",
       "SUCCESS": "Success",
+      "FAILED": "Failed",
       "FAILURE": "Failure",
+      "DENIED": "Denied",
+      "NOOP": "No-op",
       "PENDING": "Pending"
     },
     "severities": {
@@ -1309,7 +1351,24 @@
     },
     "actorTypes": {
       "user": "Human User",
-      "system": "AI/System"
+      "system": "AI/System",
+      "": "All",
+      "HUMAN": "Human",
+      "AGENT": "Agent",
+      "SYSTEM": "System"
+    },
+    "dateRange": "Date Range",
+    "dateFrom": "From",
+    "dateTo": "To",
+    "datePresets": {
+      "today": "Today",
+      "1h": "Last 1h",
+      "6h": "Last 6h",
+      "24h": "Last 24h",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "90d": "Last 90 days",
+      "custom": "Custom"
     }
   },
   "integrations": {
@@ -1410,5 +1469,14 @@
     "all": "All",
     "saving": "Saving...",
     "save": "Save"
+  },
+  "menu": {
+    "governance-config": {
+      "_label": "Governance & Config",
+      "admin": "System Admin",
+      "governance": "Governance",
+      "agent-config": "Agent Config",
+      "integrations": "Integrations & Data Ops"
+    }
   }
 }

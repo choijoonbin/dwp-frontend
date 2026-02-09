@@ -27,6 +27,7 @@ import { TabContentSkeleton } from '../../../components/ux/tab-content-skeleton'
 
 type CaseAnalysisTabProps = {
   caseId: string | undefined;
+  runId?: string | null;
   enabled: boolean;
   tabKey?: string;
   fallbackConfidence?: number;
@@ -37,6 +38,7 @@ type CaseAnalysisTabProps = {
 
 export const CaseAnalysisTab = ({
   caseId,
+  runId,
   enabled,
   tabKey = 'analysis',
   fallbackConfidence = 0,
@@ -47,7 +49,7 @@ export const CaseAnalysisTab = ({
   const { t } = useTranslation('common');
   const theme = useTheme();
   const debugCtx = useCaseTabsDebug();
-  const { data, isLoading, isError, error, refetch } = useCaseAnalysisQuery(caseId, { enabled });
+  const { data, isLoading, isError, error, refetch } = useCaseAnalysisQuery(caseId, { enabled, runId });
 
   const setPayload = debugCtx?.setPayload;
   useEffect(() => {
@@ -79,13 +81,17 @@ export const CaseAnalysisTab = ({
     );
   }
 
-  const score = data?.score ?? fallbackConfidence;
+  const score =
+    data?.score ??
+    (data?.confidenceBreakdown?.overall != null ? Number(data.confidenceBreakdown.overall) * 100 : undefined) ??
+    fallbackConfidence;
   const reasonText = data?.reasonText ?? fallbackTitle;
   const anomalyType = data?.anomalyType ?? fallbackAnomalyType;
   const severity = data?.severity ?? fallbackSeverity;
   const keyFactors = data?.keyFactors ?? [];
+  const evidence = (data?.evidence ?? []) as Array<{ key?: string }>;
 
-  const isEmpty = !reasonText && keyFactors.length === 0;
+  const isEmpty = !reasonText && keyFactors.length === 0 && evidence.length === 0;
   if (!data || isEmpty) {
     const reason = t('cases.tabs.analysis.empty.reason.summaryRecommendationsZero');
     return (
@@ -187,6 +193,29 @@ export const CaseAnalysisTab = ({
                       <Typography variant="caption">
                         {f.description ?? f.label ?? ''}
                       </Typography>
+                    </Stack>
+                  ))}
+                </Stack>
+              </>
+            )}
+            {evidence.length > 0 && (
+              <>
+                <Divider sx={{ my: 1.5 }} />
+                <Typography
+                  variant="caption"
+                  sx={{ fontWeight: 500, color: 'text.secondary', mb: 1, display: 'block' }}
+                >
+                  {t('caseDetail.evidence')}
+                </Typography>
+                <Stack spacing={1}>
+                  {evidence.map((e, i) => (
+                    <Stack key={i} direction="row" spacing={1} alignItems="flex-start">
+                      <Iconify
+                        icon="solar:document-text-bold-duotone"
+                        width={16}
+                        sx={{ color: 'primary.main', mt: 0.25 }}
+                      />
+                      <Typography variant="caption">{e.key ?? ''}</Typography>
                     </Stack>
                   ))}
                 </Stack>

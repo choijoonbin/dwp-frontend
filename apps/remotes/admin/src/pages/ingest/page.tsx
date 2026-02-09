@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { trackEvent } from '@dwp-frontend/shared-utils';
+import { trackEvent , useIngestRunDetailQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -12,7 +12,6 @@ import { IngestRunsTable } from './components/ingest-runs-table';
 import { useIngestTableState } from './hooks/use-ingest-table-state';
 import { IngestRunsFilterBar } from './components/ingest-runs-filter-bar';
 import { IngestRunDetailDrawer } from './components/ingest-run-detail-drawer';
-import { useIngestRunDetailQuery } from '@dwp-frontend/shared-utils';
 
 // ----------------------------------------------------------------------
 

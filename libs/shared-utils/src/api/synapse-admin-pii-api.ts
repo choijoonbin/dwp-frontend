@@ -243,14 +243,28 @@ export type SynapseAuditEventsParams = {
   type?: string;
   resourceType?: string;
   resourceId?: string;
+  /** 케이스 관련 이벤트만 (BE Phase A 신규) */
+  caseId?: string | number;
   /** Detect run과 연관된 감사 이벤트 (tags JSONB runId) */
   runId?: string;
   outcome?: string;
   severity?: string;
   actor?: string;
+  /** HUMAN | AGENT | SYSTEM */
+  actorType?: string;
+  actorUserId?: string;
+  actorAgentId?: string;
+  traceId?: string;
+  spanId?: string;
+  gatewayRequestId?: string;
   q?: string;
+  /** BE: dateFrom/dateTo 또는 from/to */
+  dateFrom?: string;
+  dateTo?: string;
   from?: string;
   to?: string;
+  /** BE: from/to 미입력 시. 1h|6h|24h|7d|30d|90d */
+  range?: string;
   page?: number;
   size?: number;
   sort?: string;
@@ -270,13 +284,24 @@ export const getSynapseAuditEvents = async (
   if (params?.type) queryParams.append('type', params.type);
   if (params?.resourceType) queryParams.append('resourceType', params.resourceType);
   if (params?.resourceId) queryParams.append('resourceId', params.resourceId);
+  if (params?.caseId !== undefined && params?.caseId !== null && params?.caseId !== '')
+    queryParams.append('caseId', String(params.caseId));
   if (params?.runId) queryParams.append('runId', params.runId);
   if (params?.outcome) queryParams.append('outcome', params.outcome);
   if (params?.severity) queryParams.append('severity', params.severity);
   if (params?.actor) queryParams.append('actor', params.actor);
+  if (params?.actorType) queryParams.append('actorType', params.actorType);
+  if (params?.actorUserId) queryParams.append('actorUserId', params.actorUserId);
+  if (params?.actorAgentId) queryParams.append('actorAgentId', params.actorAgentId);
+  if (params?.traceId) queryParams.append('traceId', params.traceId);
+  if (params?.spanId) queryParams.append('spanId', params.spanId);
+  if (params?.gatewayRequestId) queryParams.append('gatewayRequestId', params.gatewayRequestId);
   if (params?.q) queryParams.append('q', params.q);
+  if (params?.dateFrom) queryParams.append('dateFrom', params.dateFrom);
+  if (params?.dateTo) queryParams.append('dateTo', params.dateTo);
   if (params?.from) queryParams.append('from', params.from);
   if (params?.to) queryParams.append('to', params.to);
+  if (params?.range) queryParams.append('range', params.range);
   if (params?.page !== undefined) queryParams.append('page', params.page.toString());
   if (params?.size !== undefined) queryParams.append('size', params.size.toString());
   if (params?.sort) queryParams.append('sort', params.sort);

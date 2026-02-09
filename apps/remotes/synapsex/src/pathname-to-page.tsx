@@ -14,6 +14,7 @@ import { PermissionRouteGuard, getResourceKeyForPath } from '@dwp-frontend/share
 
 import { RagPage } from './pages/rag';
 import { CasesPage } from './pages/cases';
+import { AuditPage } from './pages/audit';
 import { ActionsPage } from './pages/actions';
 import { ArchivePage } from './pages/archive';
 import { LineagePage } from './pages/lineage';
@@ -21,7 +22,6 @@ import { AutonomyPage } from './pages/autonomy';
 import { EntitiesPage } from './pages/entities';
 import { FeedbackPage } from './pages/feedback';
 import { PoliciesPage } from './pages/policies';
-import { AuditPage } from './pages/audit-legacy';
 import { AnalyticsPage } from './pages/analytics';
 import { AnomaliesPage } from './pages/anomalies';
 import { DashboardPage } from './pages/dashboard';

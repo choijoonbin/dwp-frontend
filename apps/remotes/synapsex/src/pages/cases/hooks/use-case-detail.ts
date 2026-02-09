@@ -12,11 +12,49 @@ import {
 
 import { caseDetailDtoToUi, type CaseDetailUi } from '../adapters/case-detail-adapter';
 
+/** 라인 항목 UI 모델 — evidence.documentOrOpenItem.items[] (DocumentLineItemDto) 기반 */
 export type FiDocItem = {
   id: string;
+  /** 라인 번호 (buzei) */
+  buzei?: string;
+  /** 거래처: lifnr(매입) 또는 kunnr(매출) */
+  partner?: string;
+  /** 손익계정 */
   hkont?: string;
-  shkzg?: string;
+  /** 금액 (transaction currency) */
   wrbtr?: number;
+  /** 금액 (document currency, BE dmbtr) */
+  dmbtr?: number;
+  /** 통화 (전표 레벨 fallback 가능) */
+  waers?: string;
+  /** 만기일 */
+  dueDate?: string;
+  /** 결제 차단 플래그 */
+  paymentBlock?: boolean;
+  /** 분쟁 플래그 */
+  disputeFlag?: boolean;
+  /** 케이스 buzei와 일치 시 true (BE DocumentLineItemDto.isTarget) */
+  isTarget?: boolean;
+  /** 차대 구분 (S/H) */
+  shkzg?: string;
+  /** 전기 유형 */
+  bschl?: string;
+  /** 세금 코드 */
+  mwskz?: string;
+  /** 손익센터 */
+  kostl?: string;
+  /** profit center */
+  prctr?: string;
+  /** 주문 번호 */
+  aufnr?: string;
+  /** 결제 조건 */
+  zterm?: string;
+  /** 기준일 */
+  zfbdt?: string;
+  /** 배정 번호 */
+  zuonr?: string;
+  /** 항목 텍스트 */
+  sgtxt?: string;
 };
 
 export type RelatedAction = {
@@ -52,6 +90,12 @@ export type CaseDetailResult = {
     counterpartyDisplay?: string;
   } | null;
   fiDocItems: FiDocItem[];
+  /** 케이스가 특정 라인을 가리킬 때 해당 buzei (isTarget 미제공 시 fallback) */
+  targetBuzei?: string;
+  /** 라인 수 (BE lineCount, "라인 항목(n)" 표시용) */
+  lineCount?: number;
+  /** 라인 항목 표시용 통화 (전표 레벨 fallback) */
+  itemsCurrency?: string;
   relatedActions: RelatedAction[];
   auditEvents: AuditEvent[];
   isLoading: boolean;
@@ -71,6 +115,9 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
         action: undefined,
         fiDoc: null,
         fiDocItems: [],
+        targetBuzei: undefined,
+        lineCount: undefined,
+        itemsCurrency: undefined,
         relatedActions: [],
         auditEvents: [],
         isLoading: false,
@@ -127,13 +174,39 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
           }
         : null;
 
+    const itemsCurrency = (docOrItem?.waers as string) ?? (docOrItem?.currency as string) ?? 'USD';
+    const lineCount = docOrItem?.lineCount as number | undefined;
+    const targetBuzeiRaw = docOrItem?.buzei ?? (header?.buzei as string | number | undefined);
+    const targetBuzei =
+      targetBuzeiRaw != null ? String(targetBuzeiRaw).padStart(3, '0') : undefined;
+
     const fiDocItems: FiDocItem[] = items.map((item, idx) => {
       const r = item as Record<string, unknown>;
+      const buzeiVal = r.buzei;
+      const buzeiStr =
+        buzeiVal != null ? String(buzeiVal).padStart(3, '0') : String(idx + 1).padStart(3, '0');
       return {
         id: String(r.id ?? r.buzei ?? idx),
+        buzei: buzeiStr,
+        partner: (r.lifnr as string) ?? (r.kunnr as string),
         hkont: r.hkont as string | undefined,
-        shkzg: r.shkzg as string | undefined,
         wrbtr: r.wrbtr as number | undefined,
+        dmbtr: r.dmbtr as number | undefined,
+        waers: (r.waers as string) ?? itemsCurrency,
+        dueDate: (r.dueDate as string) ?? (r.zfbdt as string) ?? (r.due_date as string),
+        paymentBlock: Boolean(r.paymentBlock ?? r.payment_block),
+        disputeFlag: Boolean(r.disputeFlag ?? r.dispute_flag),
+        isTarget: Boolean(r.isTarget),
+        shkzg: r.shkzg as string | undefined,
+        bschl: r.bschl as string | undefined,
+        mwskz: r.mwskz as string | undefined,
+        kostl: r.kostl as string | undefined,
+        prctr: r.prctr as string | undefined,
+        aufnr: r.aufnr as string | undefined,
+        zterm: r.zterm as string | undefined,
+        zfbdt: r.zfbdt as string | undefined,
+        zuonr: r.zuonr as string | undefined,
+        sgtxt: r.sgtxt as string | undefined,
       };
     });
 
@@ -154,6 +227,9 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
       action: dto?.action,
       fiDoc,
       fiDocItems,
+      targetBuzei,
+      lineCount,
+      itemsCurrency,
       relatedActions: actions,
       auditEvents: [] as AuditEvent[],
       isLoading: query.isLoading,

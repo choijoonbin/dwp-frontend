@@ -113,6 +113,8 @@ export type AuditFilters = {
   to?: string;
   sort?: string;
   resourceId?: string;
+  /** BE: AGENT_CASE, DETECT_RUN 등 */
+  resourceType?: string | string[];
   traceId?: string;
   /** Detect run과 연관된 감사 이벤트 필터 (tags JSONB runId) */
   runId?: string;
@@ -285,6 +287,8 @@ export function buildAuditUrl(filters: AuditFilters): string {
   if (filters.to) flat.to = filters.to;
   if (filters.sort) flat.sort = filters.sort;
   if (filters.resourceId) flat.resourceId = filters.resourceId;
+  if (filters.resourceType)
+    flat.resourceType = Array.isArray(filters.resourceType) ? joinArray(filters.resourceType) : filters.resourceType;
   if (filters.traceId) flat.traceId = filters.traceId;
   if (filters.runId) flat.runId = filters.runId;
   return buildSynapseUrl('/audit', flat);

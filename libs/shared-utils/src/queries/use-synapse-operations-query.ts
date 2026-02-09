@@ -9,30 +9,39 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { getAuditIdFromError } from '../http-error';
+import { buildAuditUrl } from '../contracts/synapse-filters';
 import { showToast, showToastWithAuditLink } from '../toast/toast-store';
 import {
-  getActions,
-  getActionDetail,
-  getAnomalies,
-  getArchive,
-  getCaseAnalysis,
-  getCaseConfidence,
-  getCaseDetail,
-  getCaseRagEvidence,
-  getCaseSimilar,
+  approveActionProposal,
+  getAnalysisRuns,
+  getCaseActionProposals,
+  rejectActionProposal,
+} from '../api/synapse-analysis-api';
+import {
   getCases,
-  approveAction,
+  getActions,
+  getArchive,
+  getAnomalies,
   createAction,
-  executeAction,
   rejectAction,
   resumeAction,
+  getCaseDetail,
+  approveAction,
+  executeAction,
+  getCaseSimilar,
   simulateAction,
+  getActionDetail,
+  getCaseAnalysis,
   updateCaseStatus,
-  type ActionsListParams,
-  type AnomaliesListParams,
-  type ArchiveListParams,
+  getCaseConfidence,
+  getCaseAuditEvents,
+  getCaseRagEvidence,
   type CasesListParams,
   type CreateActionBody,
+  type ActionsListParams,
+  type ArchiveListParams,
+  type AnomaliesListParams,
+  type CaseAuditEventsParams,
 } from '../api/synapse-operations-api';
 
 // ----------------------------------------------------------------------
@@ -47,8 +56,14 @@ export const casesListQueryKey = (
 export const caseDetailQueryKey = (tenantId: string, caseId: string) =>
   ['synapse', 'cases', 'detail', tenantId, caseId] as const;
 
-export const caseAnalysisQueryKey = (tenantId: string, caseId: string) =>
-  ['synapse', 'cases', 'analysis', tenantId, caseId] as const;
+export const caseAuditEventsQueryKey = (
+  tenantId: string,
+  caseId: string,
+  params?: CaseAuditEventsParams
+) => ['synapse', 'cases', 'audit-events', tenantId, caseId, params] as const;
+
+export const caseAnalysisQueryKey = (tenantId: string, caseId: string, runId?: string | null) =>
+  ['synapse', 'cases', 'analysis', tenantId, caseId, runId ?? ''] as const;
 
 export const caseConfidenceQueryKey = (tenantId: string, caseId: string) =>
   ['synapse', 'cases', 'confidence', tenantId, caseId] as const;
@@ -58,6 +73,12 @@ export const caseSimilarQueryKey = (tenantId: string, caseId: string) =>
 
 export const caseRagEvidenceQueryKey = (tenantId: string, caseId: string) =>
   ['synapse', 'cases', 'ragEvidence', tenantId, caseId] as const;
+
+export const caseActionProposalsQueryKey = (tenantId: string, caseId: string, runId?: string | null) =>
+  ['synapse', 'cases', 'action-proposals', tenantId, caseId, runId ?? ''] as const;
+
+export const caseAnalysisRunsQueryKey = (tenantId: string, caseId: string, latest?: boolean) =>
+  ['synapse', 'cases', 'analysis-runs', tenantId, caseId, latest ?? false] as const;
 
 export const anomaliesListQueryKey = (
   tenantId: string,
@@ -124,8 +145,13 @@ export const useCaseDetailQuery = (caseId: string | undefined) => {
   });
 };
 
-export const useCaseAnalysisQuery = (
+/**
+ * 케이스 단위 감사 로그 조회 (감사 스트림 탭용)
+ * GET /api/synapse/cases/{caseId}/audit-events
+ */
+export const useCaseAuditEventsQuery = (
   caseId: string | undefined,
+  params?: CaseAuditEventsParams,
   options?: { enabled?: boolean }
 ) => {
   const { isAuthenticated } = useAuth();
@@ -137,12 +163,72 @@ export const useCaseAnalysisQuery = (
     Boolean(caseId);
 
   return useQuery({
-    queryKey: caseAnalysisQueryKey(tenantId, caseId ?? ''),
+    queryKey: caseAuditEventsQueryKey(tenantId, caseId ?? '', params),
     queryFn: async () => {
       if (!caseId) throw new Error('Missing case ID');
-      const res = await getCaseAnalysis(caseId);
+      const res = await getCaseAuditEvents(caseId, params ?? { page: 0, size: 20 });
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch case audit events');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 30 * 1000,
+    gcTime: 2 * 60 * 1000,
+    retry: false,
+  });
+};
+
+export const useCaseAnalysisQuery = (
+  caseId: string | undefined,
+  options?: { enabled?: boolean; runId?: string | null }
+) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const runId = options?.runId ?? null;
+  const enabled =
+    (options?.enabled ?? true) &&
+    isAuthenticated &&
+    Boolean(tenantId) &&
+    Boolean(caseId);
+
+  return useQuery({
+    queryKey: caseAnalysisQueryKey(tenantId, caseId ?? '', runId),
+    queryFn: async () => {
+      if (!caseId) throw new Error('Missing case ID');
+      const res = await getCaseAnalysis(caseId, runId ? { runId } : undefined);
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
         throw new Error(res.message || 'Failed to fetch case analysis');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+  });
+};
+
+export const useCaseAnalysisRunsQuery = (
+  caseId: string | undefined,
+  options?: { enabled?: boolean; latest?: boolean }
+) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const latest = options?.latest ?? true;
+  const enabled =
+    (options?.enabled ?? true) &&
+    isAuthenticated &&
+    Boolean(tenantId) &&
+    Boolean(caseId);
+
+  return useQuery({
+    queryKey: caseAnalysisRunsQueryKey(tenantId, caseId ?? '', latest),
+    queryFn: async () => {
+      if (!caseId) throw new Error('Missing case ID');
+      const res = await getAnalysisRuns(caseId, { latest });
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch analysis runs');
       }
       return res.data;
     },
@@ -236,6 +322,39 @@ export const useCaseRagEvidenceQuery = (
     enabled,
     staleTime: 1 * 60 * 1000,
     gcTime: 5 * 60 * 1000,
+      retry: false,
+  });
+};
+
+export const useCaseActionProposalsQuery = (
+  caseId: string | undefined,
+  options?: { enabled?: boolean; runId?: string | null }
+) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const runId = options?.runId ?? null;
+  const enabled =
+    (options?.enabled ?? true) &&
+    isAuthenticated &&
+    Boolean(tenantId) &&
+    Boolean(caseId);
+
+  return useQuery({
+    queryKey: caseActionProposalsQueryKey(tenantId, caseId ?? '', runId),
+    queryFn: async () => {
+      if (!caseId) throw new Error('Missing case ID');
+      const res = await getCaseActionProposals(caseId, runId ? { runId } : undefined);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch action proposals');
+      }
+      const data = res.data;
+      if (Array.isArray(data)) return data;
+      const obj = data as { items?: unknown[]; content?: unknown[]; data?: unknown[] } | undefined;
+      return obj?.items ?? obj?.content ?? obj?.data ?? [];
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
     retry: false,
   });
 };
@@ -264,7 +383,14 @@ export const useUpdateCaseStatusMutation = () => {
       queryClient.invalidateQueries({
         queryKey: caseDetailQueryKey(tenantId, variables.caseId),
       });
-      showToast(t('toast.statusUpdated'));
+      const statusLabel = t(`statusLabels.${variables.status.toLowerCase()}`, {
+        defaultValue: variables.status,
+      });
+      const message = t('toast.statusUpdatedWithAudit', { status: statusLabel });
+      showToast(message, 'success', {
+        label: t('toast.auditViewInLog'),
+        href: buildAuditUrl({ resourceId: variables.caseId, range: '24h' }),
+      });
     },
     onError: (err) => {
       showToast(err instanceof Error ? err.message : t('toast.failedToUpdateStatus'), 'error');
@@ -359,10 +485,14 @@ export const useApproveActionMutation = () => {
       }
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: (_, actionId) => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
       queryClient.invalidateQueries({ queryKey: ['synapse', 'archive'] });
-      showToast(t('toast.approved'));
+      showToast(t('toast.approved'), 'success', {
+        label: t('toast.auditViewInLog'),
+        href: buildAuditUrl({ resourceId: actionId, range: '24h' }),
+      });
     },
     onError: (err) => {
       showToastWithAuditLink(
@@ -413,9 +543,71 @@ export const useRejectActionMutation = () => {
       }
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: (_, actionId) => {
       queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
-      showToast(t('toast.actionRejected'));
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
+      showToast(t('toast.actionRejected'), 'success', {
+        label: t('toast.auditViewInLog'),
+        href: buildAuditUrl({ resourceId: actionId, range: '24h' }),
+      });
+    },
+    onError: (err) => {
+      showToast(err instanceof Error ? err.message : t('toast.failedToReject'), 'error');
+    },
+  });
+};
+
+export const useApproveProposalMutation = () => {
+  const { t } = useTranslation('common');
+  const queryClient = useQueryClient();
+  const tenantId = getTenantId();
+
+  return useMutation({
+    mutationFn: async ({ caseId, proposalId }: { caseId: string; proposalId: string }) => {
+      const res = await approveActionProposal(caseId, proposalId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to approve proposal');
+      }
+      return res.data;
+    },
+    onSuccess: (_, { caseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
+      queryClient.invalidateQueries({
+        queryKey: caseActionProposalsQueryKey(tenantId, caseId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: caseAnalysisQueryKey(tenantId, caseId),
+      });
+      showToast(t('toast.approved'), 'success');
+    },
+    onError: (err) => {
+      showToast(err instanceof Error ? err.message : t('toast.failedToApprove'), 'error');
+    },
+  });
+};
+
+export const useRejectProposalMutation = () => {
+  const { t } = useTranslation('common');
+  const queryClient = useQueryClient();
+  const tenantId = getTenantId();
+
+  return useMutation({
+    mutationFn: async ({ caseId, proposalId }: { caseId: string; proposalId: string }) => {
+      const res = await rejectActionProposal(caseId, proposalId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to reject proposal');
+      }
+      return res.data;
+    },
+    onSuccess: (_, { caseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
+      queryClient.invalidateQueries({
+        queryKey: caseActionProposalsQueryKey(tenantId, caseId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: caseAnalysisQueryKey(tenantId, caseId),
+      });
+      showToast(t('toast.actionRejected'), 'success');
     },
     onError: (err) => {
       showToast(err instanceof Error ? err.message : t('toast.failedToReject'), 'error');

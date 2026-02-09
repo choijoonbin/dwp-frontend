@@ -1,5 +1,5 @@
 import type { MenuNode } from '@dwp-frontend/shared-utils';
-
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useMemo } from 'react';
 import { useMenuTreeStore } from '@dwp-frontend/shared-utils';
 
@@ -88,11 +88,15 @@ const MENU_KEY_TO_ICON: Record<string, string> = {
  * - If path is missing, use first child's path as fallback
  * - Convert icon string to Iconify component
  * - Sort children by sortOrder (fallback to menuName)
+ * - 거버넌스·설정 하위 메뉴는 FE i18n 적용 (BE menus/tree 미지원 시 fallback)
  */
-const convertMenuNodeToNavItem = (node: MenuNode): NavItem => {
+const convertMenuNodeToNavItem = (
+  node: MenuNode,
+  t: (key: string) => string
+): NavItem => {
   // Sort children by sortOrder (fallback to menuName)
   const sortedChildren = node.children
-    ? sortMenuNodes(node.children).map(convertMenuNodeToNavItem)
+    ? sortMenuNodes(node.children).map((c) => convertMenuNodeToNavItem(c, t))
     : undefined;
 
   // If path is missing and has children, use first child's path as fallback
@@ -104,9 +108,18 @@ const convertMenuNodeToNavItem = (node: MenuNode): NavItem => {
       ? node.icon.trim()
       : MENU_KEY_TO_ICON[node.menuKey] ?? 'solar:circle-bold';
 
-  // menuName 우선, 없으면 name fallback (BE menus/tree가 언어별 menuName 반환)
-  const displayName =
-    node.menuName ?? (node as MenuNode & { name?: string }).name ?? '';
+  // menuName 우선, 거버넌스·설정 하위는 FE i18n fallback (BE가 Accept-Language 미지원 시)
+  const apiName = node.menuName ?? (node as MenuNode & { name?: string }).name ?? '';
+  let displayName = apiName;
+  if (node.menuKey === 'menu.governance-config') {
+    const translated = t('menu.governance-config._label');
+    displayName = translated || apiName;
+  } else if (node.menuKey.startsWith('menu.governance-config.')) {
+    const subKey = node.menuKey.replace('menu.governance-config.', '');
+    const translated = t(`menu.governance-config.${subKey}`);
+    displayName = translated !== `menu.governance-config.${subKey}` ? translated : apiName;
+  }
+
   return {
     title: displayName,
     path,
@@ -123,6 +136,7 @@ const convertMenuNodeToNavItem = (node: MenuNode): NavItem => {
  * Menu tree is already filtered by permissions on backend
  */
 export const useNavData = (): NavItem[] => {
+  const { t } = useTranslation('common');
   const { menuTree, isLoaded } = useMenuTreeStore();
 
   return useMemo(() => {
@@ -134,8 +148,8 @@ export const useNavData = (): NavItem[] => {
     const sortedTree = sortRootMenuNodes(menuTree);
 
     // Convert MenuNode[] to NavItem[]
-    return sortedTree.map(convertMenuNodeToNavItem);
-  }, [menuTree, isLoaded]);
+    return sortedTree.map((node) => convertMenuNodeToNavItem(node, t));
+  }, [menuTree, isLoaded, t]);
 };
 
 // Backward compatibility: export as navData (empty array since we use menuTree now)

@@ -304,12 +304,21 @@ export const getCaseDetail = async (
 // @see docs/job/PROMPT_B_Frontend_Cases_TabsBind_P1_v2.txt
 // ----------------------------------------------------------------------
 
+export type CaseAnalysisEvidenceDto = {
+  key?: string;
+  [key: string]: unknown;
+};
+
 export type CaseAnalysisDto = {
   score?: number;
   reasonText?: string;
   keyFactors?: Array<{ label?: string; type?: string; description?: string }>;
   anomalyType?: string;
   severity?: string;
+  /** Phase2: evidence items { key: string } */
+  evidence?: CaseAnalysisEvidenceDto[];
+  /** Phase2: confidence breakdown */
+  confidenceBreakdown?: { overall?: number; [key: string]: unknown };
   [key: string]: unknown;
 };
 
@@ -367,10 +376,12 @@ export type CaseRagEvidenceDto = {
 };
 
 export const getCaseAnalysis = async (
-  caseId: string
+  caseId: string,
+  params?: { runId?: string }
 ): Promise<ApiResponse<CaseAnalysisDto>> => {
+  const search = params?.runId ? `?runId=${encodeURIComponent(params.runId)}` : '';
   const res = await axiosInstance.get<ApiResponse<CaseAnalysisDto>>(
-    `/api/synapse/cases/${encodeURIComponent(caseId)}/analysis`
+    `/api/synapse/cases/${encodeURIComponent(caseId)}/analysis${search}`
   );
   return res.data;
 };
@@ -410,6 +421,48 @@ export const updateCaseStatus = async (
     `/api/synapse/cases/${encodeURIComponent(caseId)}/status`,
     { status }
   );
+  return res.data;
+};
+
+/**
+ * GET /api/synapse/cases/{caseId}/audit-events — 케이스 단위 감사 로그 (감사 스트림 탭용)
+ * @see back.txt — BE Phase A 케이스 단위 감사 API
+ */
+export type CaseAuditEventsParams = {
+  page?: number;
+  size?: number;
+};
+
+export type CaseAuditEventDto = {
+  auditId: string;
+  createdAt: string;
+  eventCategory?: string;
+  eventType?: string;
+  outcome?: string;
+  severity?: string;
+  actorType?: string;
+  actorDisplayName?: string;
+  resourceType?: string;
+  resourceId?: string;
+  [key: string]: unknown;
+};
+
+export type CaseAuditEventsResponse = {
+  items: CaseAuditEventDto[];
+  total: number;
+  pageInfo?: { page: number; size: number; totalPages: number; total: number };
+};
+
+export const getCaseAuditEvents = async (
+  caseId: string,
+  params?: CaseAuditEventsParams
+): Promise<ApiResponse<CaseAuditEventsResponse>> => {
+  const query = new URLSearchParams();
+  if (params?.page !== undefined) query.set('page', String(params.page));
+  if (params?.size !== undefined) query.set('size', String(params.size));
+  const qs = query.toString();
+  const url = `/api/synapse/cases/${encodeURIComponent(caseId)}/audit-events${qs ? `?${qs}` : ''}`;
+  const res = await axiosInstance.get<ApiResponse<CaseAuditEventsResponse>>(url);
   return res.data;
 };
 

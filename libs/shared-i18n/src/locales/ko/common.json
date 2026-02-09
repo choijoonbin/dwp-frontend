@@ -61,6 +61,8 @@
     "rejected": "거절되었습니다",
     "simulationCompleted": "시뮬레이션이 완료되었습니다",
     "statusUpdated": "상태가 업데이트되었습니다",
+    "statusUpdatedWithAudit": "상태가 '{{status}}'으로 변경되었습니다. (감사로그에서 확인)",
+    "auditViewInLog": "감사 로그 보기",
     "actionCreated": "액션이 생성되었습니다",
     "actionExecuted": "액션이 실행되었습니다",
     "actionRejected": "액션이 거절되었습니다",
@@ -169,7 +171,7 @@
           "title": "분석 데이터 없음",
           "description": "이 케이스에 대한 AI 분석을 사용할 수 없습니다.",
           "reason": {
-            "summaryRecommendationsZero": "분석 결과 없음(summary/recommendations=0)"
+            "summaryRecommendationsZero": "분석을 시작하면 AI 추론과 근거가 표시됩니다. '에이전트 스트림' 탭에서 분석 시작 버튼을 클릭하세요."
           }
         },
         "error": {
@@ -181,7 +183,7 @@
           "title": "신뢰도 데이터 없음",
           "description": "신뢰도 분석을 사용할 수 없습니다.",
           "reason": {
-            "factorsZeroOrScoreNull": "신뢰도 데이터 없음(factors=0 or score null)"
+            "factorsZeroOrScoreNull": "분석 완료 후 신뢰도 요인이 표시됩니다."
           }
         },
         "error": {
@@ -193,7 +195,7 @@
           "title": "유사 케이스 없음",
           "description": "유사한 케이스를 찾을 수 없습니다.",
           "reason": {
-            "itemsZero": "유사 케이스 없음(items=0)"
+            "itemsZero": "유사 케이스가 검색되지 않았습니다. 분석 완료 후 유사 이력이 표시됩니다."
           }
         },
         "error": {
@@ -205,7 +207,7 @@
           "title": "RAG 근거 없음",
           "description": "정책 인용을 사용할 수 없습니다.",
           "reason": {
-            "itemsZero": "RAG 근거 없음(items=0)"
+            "itemsZero": "근거 미구성. RAG 라이브러리에 정책/규정 문서가 등록되면 인용이 표시됩니다."
           }
         },
         "error": {
@@ -289,7 +291,20 @@
     "amount": "금액",
     "vendor": "거래처",
     "lineItems": "라인 항목",
+    "noLineItems": "증거에 라인 항목이 없습니다",
     "moreItems": "{{count}}개 더 보기",
+    "lineItem": {
+      "bschl": "전기 유형",
+      "shkzg": "차대",
+      "mwskz": "세금 코드",
+      "kostl": "손익센터",
+      "prctr": "Profit Center",
+      "aufnr": "주문",
+      "zterm": "결제 조건",
+      "zfbdt": "기준일",
+      "zuonr": "배정",
+      "sgtxt": "항목 텍스트"
+    },
     "viewEntity": "엔티티 보기",
     "relatedOpenItems": "관련 미결제 항목",
     "relatedOpenItemsDesc": "케이스별 관련 미결제 항목을 조회합니다.",
@@ -307,6 +322,7 @@
     "severityLabel": "{{severity}} 심각도",
     "aiReasoning": "AI 추론",
     "keyFactors": "핵심 요인",
+    "evidence": "근거",
     "confidenceBreakdown": "요인별 신뢰도 분석",
     "noConfidenceData": "신뢰도 데이터가 없습니다",
     "weight": "가중치",
@@ -326,16 +342,20 @@
     "actions": "액션",
     "auditStream": "감사 스트림",
     "status": "상태",
-    "approveAction": "액션 승인",
-    "reject": "거절",
-    "requestInfo": "정보 요청",
+    "actionProposals": "액션 제안",
+    "approveAction": "해결 처리",
+    "reject": "무시 처리",
+    "requiresApproval": "승인 필요",
+    "requestInfo": "추가정보 요청(상태 표시)",
     "setPaymentBlock": "결제 차단 설정",
     "postReversal": "역분개 전기",
     "goToActionCenter": "액션 센터로 이동",
     "comingInPhaseB": "Phase B에서 지원 예정",
     "pendingActions": "대기 중인 액션",
     "noActionsYet": "아직 액션이 없습니다",
+    "noActionsPhaseB": "아직 생성된 조치가 없습니다. (Phase B에서 조치 추천/생성 연동 예정)",
     "viewAudit": "감사 보기 (케이스 필터)",
+    "viewFullAuditLog": "전체 감사 로그 보기",
     "system": "시스템",
     "comment": "코멘트",
     "addAuditNote": "감사 메모 추가...",
@@ -343,6 +363,8 @@
       "noStreamData": "스트림 데이터 없음",
       "startAnalysisHint": "에이전트 분석을 시작하면 추론과 권장사항을 실시간으로 확인할 수 있습니다.",
       "startAnalysis": "분석 시작",
+      "analysisComplete": "분석 완료",
+      "analysisCompleteHint": "분석 탭과 액션 제안 탭에서 결과를 확인하세요.",
       "streamError": "스트림 오류",
       "connectionFailed": "연결 실패",
       "retry": "재시도",
@@ -1265,13 +1287,25 @@
     "totalEvents": "전체 이벤트",
     "userActions": "사용자 활동",
     "systemActions": "시스템 활동",
-    "searchPlaceholder": "검색 (q)...",
+    "searchPlaceholder": "통합 검색 (resourceId, traceId 등)",
+    "filterTitle": "필터",
+    "advanced": "Advanced",
+    "addFilter": "필터 추가",
+    "filterReset": "초기화",
     "allTypes": "전체 유형",
     "allCategories": "전체 카테고리",
     "allOutcomes": "전체 결과",
     "allSeverities": "전체 심각도",
     "actorPlaceholder": "행위자...",
-    "resourceTypePlaceholder": "리소스 유형...",
+    "resourceTypePlaceholder": "리소스 유형",
+    "resourceId": "리소스 ID",
+    "actorAgentId": "에이전트 ID",
+    "traceId": "Trace ID",
+    "spanId": "Span ID",
+    "gatewayRequestId": "Gateway Request ID",
+    "ipAddress": "IP 주소",
+    "userAgent": "User Agent",
+    "tags": "태그",
     "eventType": "이벤트 유형",
     "actorType": "행위자 유형",
     "allTime": "전체 기간",
@@ -1291,15 +1325,23 @@
       "comment_added": "코멘트 추가"
     },
     "categories": {
+      "": "전체",
       "CASE": "케이스",
       "ACTION": "액션",
+      "ADMIN": "관리",
+      "INTEGRATION": "연동",
       "POLICY": "정책",
       "GUARDRAIL": "가드레일",
-      "AUDIT": "감사"
+      "AUDIT": "감사",
+      "RUN": "실행"
     },
     "outcomes": {
+      "": "전체",
       "SUCCESS": "성공",
+      "FAILED": "실패",
       "FAILURE": "실패",
+      "DENIED": "거부",
+      "NOOP": "없음",
       "PENDING": "대기"
     },
     "severities": {
@@ -1309,7 +1351,24 @@
     },
     "actorTypes": {
       "user": "사용자",
-      "system": "AI/시스템"
+      "system": "AI/시스템",
+      "": "전체",
+      "HUMAN": "사용자",
+      "AGENT": "에이전트",
+      "SYSTEM": "시스템"
+    },
+    "dateRange": "기간",
+    "dateFrom": "시작",
+    "dateTo": "종료",
+    "datePresets": {
+      "today": "오늘",
+      "1h": "최근 1시간",
+      "6h": "최근 6시간",
+      "24h": "최근 24시간",
+      "7d": "최근 7일",
+      "30d": "최근 30일",
+      "90d": "최근 90일",
+      "custom": "직접 입력"
     }
   },
   "integrations": {
@@ -1410,5 +1469,14 @@
     "all": "전체",
     "saving": "저장 중...",
     "save": "저장"
+  },
+  "menu": {
+    "governance-config": {
+      "_label": "거버넌스·설정",
+      "admin": "시스템 관리",
+      "governance": "자율성·통제 설정",
+      "agent-config": "에이전트 구성 관리",
+      "integrations": "연동·데이터 운영"
+    }
   }
 }
