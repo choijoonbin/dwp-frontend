@@ -45,8 +45,10 @@ export * from './auth/permissions-store';
 export * from './auth/auth-policy-types';
 export * from './agent/use-agent-stream';
 export * from './api/synapse-detect-api';
+export * from './api/synapse-ingest-api';
 export * from './api/api-response-unwrap';
 
+export * from './hooks/filter-persistence';
 export * from './api/synapse-knowledge-api';
 export * from './api/synapse-reporting-api';
 export * from './monitoring/event-tracking';
@@ -68,6 +70,7 @@ export * from './queries/use-admin-menus-query';
 export * from './queries/use-code-groups-query';
 export * from './queries/use-code-usages-query';
 export * from './queries/use-detect-runs-query';
+export * from './queries/use-synapse-ingest-query';
 export * from './hooks/use-synapse-list-filters';
 export * from './agent/use-synapse-agent-stream';
 export * from './queries/use-synapse-data-query';

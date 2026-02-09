@@ -23,6 +23,12 @@ export type CasesListParams = {
   slaRisk?: string;
   ids?: string | string[];
   caseKey?: string;
+  /** 조회 기간 단축 (1h/6h/24h/7d/30d/90d) — dateFrom/dateTo 계산용 */
+  range?: string;
+  /** 조회 기간 (시작/종료) — from/to와 동일 */
+  dateFrom?: string;
+  dateTo?: string;
+  /** 케이스 검출 시각(detected_at) 기준 필터 */
   detectedFrom?: string;
   detectedTo?: string;
   bukrs?: string;
@@ -128,6 +134,12 @@ export type AnomaliesListParams = {
   anomalyType?: string;
   /** URL drill-down param (alias for anomalyType, e.g. DUPLICATE_INVOICE) */
   type?: string;
+  /** 1h, 6h, 24h, 7d, 30d, 90d — 기간 단축 */
+  range?: string;
+  /** 조회 시작 시각 (ISO 8601) */
+  from?: string;
+  /** 조회 종료 시각 (ISO 8601) */
+  to?: string;
   detectedFrom?: string;
   detectedTo?: string;
   page?: number;
@@ -392,7 +404,7 @@ export const getCaseRagEvidence = async (
 
 export const updateCaseStatus = async (
   caseId: string,
-  status: 'TRIAGED' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED'
+  status: 'OPEN' | 'TRIAGED' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED'
 ): Promise<ApiResponse<CaseDetailDto>> => {
   const res = await axiosInstance.post<ApiResponse<CaseDetailDto>>(
     `/api/synapse/cases/${encodeURIComponent(caseId)}/status`,
@@ -441,6 +453,18 @@ export const getActions = async (
   return res.data;
 };
 
+/**
+ * GET /api/synapse/actions/{actionId} — 조치 상세 조회
+ */
+export const getActionDetail = async (
+  actionId: string
+): Promise<ApiResponse<ActionRowDto>> => {
+  const res = await axiosInstance.get<ApiResponse<ActionRowDto>>(
+    `/api/synapse/actions/${encodeURIComponent(actionId)}`
+  );
+  return res.data;
+};
+
 export const createAction = async (
   body: CreateActionBody
 ): Promise<ApiResponse<ActionRowDto>> => {
@@ -476,6 +500,19 @@ export const rejectAction = async (
 ): Promise<ApiResponse<ActionRowDto>> => {
   const res = await axiosInstance.post<ApiResponse<ActionRowDto>>(
     `/api/synapse/actions/${encodeURIComponent(actionId)}/reject`,
+    {}
+  );
+  return res.data;
+};
+
+/**
+ * POST /api/synapse/actions/{actionId}/resume — HITL 재개 (승인 후 실행)
+ */
+export const resumeAction = async (
+  actionId: string
+): Promise<ApiResponse<ActionRowDto>> => {
+  const res = await axiosInstance.post<ApiResponse<ActionRowDto>>(
+    `/api/synapse/actions/${encodeURIComponent(actionId)}/resume`,
     {}
   );
   return res.data;

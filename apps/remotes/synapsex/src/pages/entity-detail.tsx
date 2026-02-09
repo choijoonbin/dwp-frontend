@@ -44,7 +44,17 @@ import {
   mockEntities,
   mockOpenItems,
   mockEntityChangeLogs,
-  type EntityChangeLog          } from '../data/mock-data';
+  type EntityChangeLog                    } from '../data/mock-data';
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -301,7 +311,7 @@ export const EntityDetailPage = () => {
     return (
       <Box sx={{ p: { xs: 2, sm: 3 }, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
         <Typography variant="body2" color="text.secondary">
-          Loading...
+          {t('entityDetail.loading')}
         </Typography>
       </Box>
     );
@@ -317,10 +327,10 @@ export const EntityDetailPage = () => {
               {t('notFound.entity')}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
-              The entity with ID {id ?? '—'} could not be found.
+              {t('entityDetail.entityNotFoundDesc', { id: id ?? '—' })}
             </Typography>
             <Button component={Link} to={SYNAPSE_ROUTES.ENTITIES}>
-              Return to Entity Hub
+              {t('entityDetail.returnToEntityHub')}
             </Button>
           </CardContent>
         </Card>
@@ -383,7 +393,12 @@ export const EntityDetailPage = () => {
                   <Typography variant="h4" sx={{ fontWeight: 700 }}>
                     {entity.name}
                   </Typography>
-                  <Chip label={entity.type} variant="outlined" size="small" sx={{ fontSize: '0.75rem' }} />
+                  <Chip
+                    label={entity.type === 'vendor' ? t('entityDetail.typeVendor') : t('entityDetail.typeCustomer')}
+                    variant="outlined"
+                    size="small"
+                    sx={{ fontSize: '0.75rem' }}
+                  />
                 </Stack>
                 <Typography variant="body2" sx={{ color: 'text.secondary', fontFamily: 'monospace' }}>
                   {entity.code}
@@ -391,7 +406,9 @@ export const EntityDetailPage = () => {
                 <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mt: 1 }}>
                   <RiskScoreBadge score={entity.riskScore} trend={entity.riskTrend} size="large" />
                   <Chip
-                    label={`${entity.concentrationRisk.charAt(0).toUpperCase() + entity.concentrationRisk.slice(1)} Concentration`}
+                    label={t('entityDetail.concentrationRisk', {
+                      level: entity.concentrationRisk.charAt(0).toUpperCase() + entity.concentrationRisk.slice(1),
+                    })}
                     color={
                       entity.concentrationRisk === 'high'
                         ? 'error'
@@ -414,7 +431,7 @@ export const EntityDetailPage = () => {
               startIcon={<Iconify icon="solar:external-link-bold" width={18} />}
               sx={{ bgcolor: 'transparent' }}
             >
-              Open in SAP
+              {t('entityDetail.openInSap')}
             </Button>
             <Button
               variant="outlined"
@@ -422,7 +439,7 @@ export const EntityDetailPage = () => {
               startIcon={<Iconify icon="solar:download-minimalistic-bold" width={18} />}
               sx={{ bgcolor: 'transparent' }}
             >
-              Export
+              {t('entityDetail.export')}
             </Button>
           </Stack>
         </Stack>
@@ -433,25 +450,25 @@ export const EntityDetailPage = () => {
             <Tab
               icon={<Iconify icon="solar:graph-up-bold" width={18} />}
               iconPosition="start"
-              label="Overview"
+              label={t('entityDetail.tabs.overview')}
               sx={{ minHeight: 48 }}
             />
             <Tab
               icon={<Iconify icon="solar:clock-circle-bold" width={18} />}
               iconPosition="start"
-              label="Change Log"
+              label={t('entityDetail.tabs.changeLog')}
               sx={{ minHeight: 48 }}
             />
             <Tab
               icon={<Iconify icon="solar:document-text-bold" width={18} />}
               iconPosition="start"
-              label="Related"
+              label={t('entityDetail.tabs.related')}
               sx={{ minHeight: 48 }}
             />
             <Tab
               icon={<Iconify icon="solar:shield-check-bold" width={18} />}
               iconPosition="start"
-              label="Access Control"
+              label={t('entityDetail.tabs.accessControl')}
               sx={{ minHeight: 48 }}
             />
           </Tabs>
@@ -480,13 +497,13 @@ export const EntityDetailPage = () => {
                         </Box>
                         <Box>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            Open Items
+                            {t('entityDetail.kpis.openItems')}
                           </Typography>
                           <Typography variant="h5" sx={{ fontWeight: 700 }}>
                             {formatCurrency(entity.openItemsTotal, entity.currency)}
                           </Typography>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            {entity.openItemsCount} items
+                            {t('entityDetail.kpis.itemsCount', { count: entity.openItemsCount })}
                           </Typography>
                         </Box>
                       </Stack>
@@ -512,13 +529,13 @@ export const EntityDetailPage = () => {
                         </Box>
                         <Box>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            Overdue
+                            {t('entityDetail.kpis.overdue')}
                           </Typography>
                           <Typography variant="h5" sx={{ fontWeight: 700, color: entity.overdueTotal > 0 ? 'error.main' : undefined }}>
                             {formatCurrency(entity.overdueTotal, entity.currency)}
                           </Typography>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            {entity.overdueCount} items
+                            {t('entityDetail.kpis.itemsCount', { count: entity.overdueCount })}
                           </Typography>
                         </Box>
                       </Stack>
@@ -544,13 +561,13 @@ export const EntityDetailPage = () => {
                         </Box>
                         <Box>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            Recent Anomalies
+                            {t('entityDetail.kpis.recentAnomalies')}
                           </Typography>
                           <Typography variant="h5" sx={{ fontWeight: 700 }}>
                             {entity.recentAnomaliesCount}
                           </Typography>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            Last 30 days
+                            {t('entityDetail.kpis.last30Days')}
                           </Typography>
                         </Box>
                       </Stack>
@@ -576,13 +593,13 @@ export const EntityDetailPage = () => {
                         </Box>
                         <Box>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            Action Success
+                            {t('entityDetail.kpis.actionSuccess')}
                           </Typography>
                           <Typography variant="h5" sx={{ fontWeight: 700 }}>
                             {entityKPIs.actionSuccessRate}%
                           </Typography>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            Resolution rate
+                            {t('entityDetail.kpis.resolutionRate')}
                           </Typography>
                         </Box>
                       </Stack>
@@ -599,7 +616,7 @@ export const EntityDetailPage = () => {
                       title={
                         <Stack direction="row" alignItems="center" spacing={1}>
                           <Iconify icon="solar:document-text-bold" width={18} />
-                          <Typography variant="subtitle2">FI Documents</Typography>
+                          <Typography variant="subtitle2">{t('entityDetail.snapshot.fiDocuments')}</Typography>
                         </Stack>
                       }
                       sx={{ pb: 1 }}
@@ -609,7 +626,7 @@ export const EntityDetailPage = () => {
                         {relatedDocs.length}
                       </Typography>
                       <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1.5, display: 'block' }}>
-                        Linked documents
+                        {t('entityDetail.snapshot.linkedDocuments')}
                       </Typography>
                       <Button
                         component={Link}
@@ -620,7 +637,7 @@ export const EntityDetailPage = () => {
                         endIcon={<Iconify icon="solar:alt-arrow-right-linear" width={18} />}
                         sx={{ bgcolor: 'transparent' }}
                       >
-                        View Documents
+                        {t('entityDetail.snapshot.viewDocuments')}
                       </Button>
                     </CardContent>
                   </Card>
@@ -631,7 +648,7 @@ export const EntityDetailPage = () => {
                       title={
                         <Stack direction="row" alignItems="center" spacing={1}>
                           <Iconify icon="solar:wallet-money-bold" width={18} />
-                          <Typography variant="subtitle2">Open Items</Typography>
+                          <Typography variant="subtitle2">{t('entityDetail.snapshot.openItems')}</Typography>
                         </Stack>
                       }
                       sx={{ pb: 1 }}
@@ -641,7 +658,7 @@ export const EntityDetailPage = () => {
                         {relatedOpenItems.length}
                       </Typography>
                       <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1.5, display: 'block' }}>
-                        Outstanding items
+                        {t('entityDetail.snapshot.outstandingItems')}
                       </Typography>
                       <Button
                         component={Link}
@@ -652,7 +669,7 @@ export const EntityDetailPage = () => {
                         endIcon={<Iconify icon="solar:alt-arrow-right-linear" width={18} />}
                         sx={{ bgcolor: 'transparent' }}
                       >
-                        View Open Items
+                        {t('entityDetail.snapshot.viewOpenItems')}
                       </Button>
                     </CardContent>
                   </Card>
@@ -663,7 +680,7 @@ export const EntityDetailPage = () => {
                       title={
                         <Stack direction="row" alignItems="center" spacing={1}>
                           <Iconify icon="solar:danger-triangle-bold" width={18} />
-                          <Typography variant="subtitle2">Cases</Typography>
+                          <Typography variant="subtitle2">{t('entityDetail.snapshot.cases')}</Typography>
                         </Stack>
                       }
                       sx={{ pb: 1 }}
@@ -673,7 +690,7 @@ export const EntityDetailPage = () => {
                         {relatedCases.length}
                       </Typography>
                       <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1.5, display: 'block' }}>
-                        Active cases
+                        {t('entityDetail.snapshot.activeCases')}
                       </Typography>
                       <Button
                         component={Link}
@@ -684,7 +701,7 @@ export const EntityDetailPage = () => {
                         endIcon={<Iconify icon="solar:alt-arrow-right-linear" width={18} />}
                         sx={{ bgcolor: 'transparent' }}
                       >
-                        View Cases
+                        {t('entityDetail.snapshot.viewCases')}
                       </Button>
                     </CardContent>
                   </Card>
@@ -695,7 +712,7 @@ export const EntityDetailPage = () => {
                       title={
                         <Stack direction="row" alignItems="center" spacing={1}>
                           <Iconify icon="solar:graph-up-bold" width={18} />
-                          <Typography variant="subtitle2">Actions</Typography>
+                          <Typography variant="subtitle2">{t('entityDetail.snapshot.actions')}</Typography>
                         </Stack>
                       }
                       sx={{ pb: 1 }}
@@ -705,7 +722,7 @@ export const EntityDetailPage = () => {
                         {relatedActions.length}
                       </Typography>
                       <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1.5, display: 'block' }}>
-                        Related actions
+                        {t('entityDetail.snapshot.relatedActions')}
                       </Typography>
                       <Button
                         component={Link}
@@ -716,7 +733,7 @@ export const EntityDetailPage = () => {
                         endIcon={<Iconify icon="solar:alt-arrow-right-linear" width={18} />}
                         sx={{ bgcolor: 'transparent' }}
                       >
-                        View Actions
+                        {t('entityDetail.snapshot.viewActions')}
                       </Button>
                     </CardContent>
                   </Card>
@@ -729,7 +746,7 @@ export const EntityDetailPage = () => {
           {activeTab === 1 && (
             <Stack spacing={2} sx={{ mt: 3 }}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="h6">Audit Change Log</Typography>
+                <Typography variant="h6">{t('entityDetail.auditChangeLog')}</Typography>
                 <Stack direction="row" spacing={1}>
                   <Button
                     variant="outlined"
@@ -738,7 +755,7 @@ export const EntityDetailPage = () => {
                     onClick={(e) => setChangeLogFilterAnchor(e.currentTarget)}
                     sx={{ bgcolor: 'transparent' }}
                   >
-                    Filter
+                    {t('entityDetail.filter')}
                     {changeLogFilter.length > 0 && (
                       <Chip label={changeLogFilter.length} size="small" color="secondary" sx={{ ml: 1, height: 20, fontSize: '0.75rem' }} />
                     )}
@@ -770,7 +787,7 @@ export const EntityDetailPage = () => {
                     startIcon={<Iconify icon="solar:download-minimalistic-bold" width={18} />}
                     sx={{ bgcolor: 'transparent' }}
                   >
-                    Export
+                    {t('entityDetail.export')}
                   </Button>
                 </Stack>
               </Stack>
@@ -780,7 +797,7 @@ export const EntityDetailPage = () => {
                   {changeLogs.length === 0 ? (
                     <Box sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
                       <Iconify icon="solar:clock-circle-bold-duotone" width={48} sx={{ opacity: 0.5, mb: 2 }} />
-                      <Typography variant="body2">No change history found for this entity.</Typography>
+                      <Typography variant="body2">{t('entityDetail.noChangeHistory')}</Typography>
                     </Box>
                   ) : (
                     <Stack spacing={0}>
@@ -802,9 +819,9 @@ export const EntityDetailPage = () => {
                 <CardHeader
                   title={
                     <Stack direction="row" alignItems="center" justifyContent="space-between">
-                      <Typography variant="subtitle1">Related FI Documents</Typography>
+                      <Typography variant="subtitle1">{t('entityDetail.related.fiDocuments')}</Typography>
                       <Button component={Link} to={`${SYNAPSE_ROUTES.DOCUMENTS}?entityId=${entity.id}`} variant="text" size="small">
-                        View All
+                        {t('entityDetail.related.viewAll')}
                       </Button>
                     </Stack>
                   }
@@ -812,18 +829,18 @@ export const EntityDetailPage = () => {
                 <CardContent>
                   {relatedDocs.length === 0 ? (
                     <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center', py: 2 }}>
-                      No related documents
+                      {t('entityDetail.related.noRelatedDocuments')}
                     </Typography>
                   ) : (
                     <TableContainer>
                       <Table size="small">
                         <TableHead>
                           <TableRow>
-                            <TableCell>Doc Number</TableCell>
-                            <TableCell>Type</TableCell>
-                            <TableCell>Date</TableCell>
-                            <TableCell align="right">Amount</TableCell>
-                            <TableCell>Status</TableCell>
+                            <TableCell>{t('entityDetail.table.docNumber')}</TableCell>
+                            <TableCell>{t('entityDetail.table.type')}</TableCell>
+                            <TableCell>{t('entityDetail.table.date')}</TableCell>
+                            <TableCell align="right">{t('entityDetail.table.amount')}</TableCell>
+                            <TableCell>{t('entityDetail.table.status')}</TableCell>
                             <TableCell />
                           </TableRow>
                         </TableHead>
@@ -868,9 +885,9 @@ export const EntityDetailPage = () => {
                 <CardHeader
                   title={
                     <Stack direction="row" alignItems="center" justifyContent="space-between">
-                      <Typography variant="subtitle1">Related Open Items</Typography>
+                      <Typography variant="subtitle1">{t('entityDetail.related.openItems')}</Typography>
                       <Button component={Link} to={`${SYNAPSE_ROUTES.OPEN_ITEMS}?entityId=${entity.id}`} variant="text" size="small">
-                        View All
+                        {t('entityDetail.related.viewAll')}
                       </Button>
                     </Stack>
                   }
@@ -878,18 +895,18 @@ export const EntityDetailPage = () => {
                 <CardContent>
                   {relatedOpenItems.length === 0 ? (
                     <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center', py: 2 }}>
-                      No open items
+                      {t('entityDetail.related.noOpenItems')}
                     </Typography>
                   ) : (
                     <TableContainer>
                       <Table size="small">
                         <TableHead>
                           <TableRow>
-                            <TableCell>Item</TableCell>
-                            <TableCell>Type</TableCell>
-                            <TableCell>Due</TableCell>
-                            <TableCell align="right">Amount</TableCell>
-                            <TableCell>Status</TableCell>
+                            <TableCell>{t('entityDetail.table.item')}</TableCell>
+                            <TableCell>{t('entityDetail.table.type')}</TableCell>
+                            <TableCell>{t('entityDetail.table.due')}</TableCell>
+                            <TableCell align="right">{t('entityDetail.table.amount')}</TableCell>
+                            <TableCell>{t('entityDetail.table.status')}</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -915,10 +932,10 @@ export const EntityDetailPage = () => {
                               <TableCell>
                                 <Stack direction="row" spacing={0.5}>
                                   {oi.disputeFlag && (
-                                    <Chip label="Dispute" color="warning" variant="outlined" size="small" sx={{ fontSize: '0.75rem' }} />
+                                    <Chip label={t('entityDetail.dispute')} color="warning" variant="outlined" size="small" sx={{ fontSize: '0.75rem' }} />
                                   )}
                                   {oi.paymentBlock && (
-                                    <Chip label="Blocked" color="error" variant="outlined" size="small" sx={{ fontSize: '0.75rem' }} />
+                                    <Chip label={t('entityDetail.blocked')} color="error" variant="outlined" size="small" sx={{ fontSize: '0.75rem' }} />
                                   )}
                                   {!oi.disputeFlag && !oi.paymentBlock && (
                                     <Chip label={oi.status} variant="outlined" size="small" sx={{ fontSize: '0.75rem' }} />
@@ -939,9 +956,9 @@ export const EntityDetailPage = () => {
                 <CardHeader
                   title={
                     <Stack direction="row" alignItems="center" justifyContent="space-between">
-                      <Typography variant="subtitle1">Related Cases</Typography>
+                      <Typography variant="subtitle1">{t('entityDetail.related.cases')}</Typography>
                       <Button component={Link} to={`${SYNAPSE_ROUTES.CASES}?entityId=${entity.id}`} variant="text" size="small">
-                        View All
+                        {t('entityDetail.related.viewAll')}
                       </Button>
                     </Stack>
                   }
@@ -949,17 +966,17 @@ export const EntityDetailPage = () => {
                 <CardContent>
                   {relatedCases.length === 0 ? (
                     <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center', py: 2 }}>
-                      No related cases
+                      {t('entityDetail.related.noRelatedCases')}
                     </Typography>
                   ) : (
                     <TableContainer>
                       <Table size="small">
                         <TableHead>
                           <TableRow>
-                            <TableCell>Case</TableCell>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Severity</TableCell>
-                            <TableCell>Status</TableCell>
+                            <TableCell>{t('entityDetail.table.case')}</TableCell>
+                            <TableCell>{t('entityDetail.table.title')}</TableCell>
+                            <TableCell>{t('entityDetail.table.severity')}</TableCell>
+                            <TableCell>{t('entityDetail.table.status')}</TableCell>
                             <TableCell />
                           </TableRow>
                         </TableHead>
@@ -1007,8 +1024,8 @@ export const EntityDetailPage = () => {
             <Stack spacing={3} sx={{ mt: 3 }}>
               <Card variant="outlined">
                 <CardHeader
-                  title="PII Access Control"
-                  subheader="Sensitive entity data is protected. Request access or use demo mode to view masked fields."
+                  title={t('entityDetail.piiAccessControl')}
+                  subheader={t('entityDetail.piiAccessSubheader')}
                 />
                 <CardContent>
                   <Stack spacing={2}>
@@ -1022,19 +1039,19 @@ export const EntityDetailPage = () => {
                           )}
                           <Box>
                             <Typography variant="subtitle2">
-                              {piiMasked ? 'Sensitive Fields Masked' : 'Full Access Granted'}
+                              {piiMasked ? t('entityDetail.sensitiveFieldsMasked') : t('entityDetail.fullAccessGranted')}
                             </Typography>
                             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                               {piiMasked
-                                ? 'Bank account, contact info, and tax ID are hidden'
-                                : 'All sensitive fields are visible'}
+                                ? t('entityDetail.sensitiveFieldsMaskedDesc')
+                                : t('entityDetail.allSensitiveVisible')}
                             </Typography>
                           </Box>
                         </Stack>
                         {accessPending ? (
                           <Chip
                             icon={<Iconify icon="solar:clock-circle-bold" width={14} />}
-                            label="Pending Approval"
+                            label={t('entityDetail.pendingApproval')}
                             color="warning"
                             variant="outlined"
                           />
@@ -1046,7 +1063,7 @@ export const EntityDetailPage = () => {
                             startIcon={<Iconify icon={piiMasked ? 'solar:lock-password-bold' : 'solar:unlock-bold'} width={18} />}
                             sx={!piiMasked ? { bgcolor: 'transparent' } : {}}
                           >
-                            {piiMasked ? 'Request Access' : 'Revoke Access'}
+                            {piiMasked ? t('entityDetail.requestAccess') : t('entityDetail.revokeAccess')}
                           </Button>
                         )}
                       </Stack>
@@ -1056,9 +1073,9 @@ export const EntityDetailPage = () => {
                     <Box sx={{ p: 2, border: '1px dashed', borderColor: 'divider', borderRadius: 1.5 }}>
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Box>
-                          <Typography variant="subtitle2">Demo Mode (Admin Simulation)</Typography>
+                          <Typography variant="subtitle2">{t('entityDetail.demoMode')}</Typography>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            Bypass access controls for demonstration purposes
+                            {t('entityDetail.demoModeDesc')}
                           </Typography>
                         </Box>
                         <Button
@@ -1069,7 +1086,7 @@ export const EntityDetailPage = () => {
                           startIcon={<Iconify icon="solar:unlock-bold" width={18} />}
                           sx={{ bgcolor: 'transparent' }}
                         >
-                          Grant Access
+                          {t('entityDetail.grantAccess')}
                         </Button>
                       </Stack>
                     </Box>
@@ -1079,47 +1096,47 @@ export const EntityDetailPage = () => {
                     {/* Sensitive Fields Display — PII handling=MASK/HASH_ONLY/ENCRYPT/FORBID */}
                     <Box>
                       <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
-                        Sensitive Fields
+                        {t('entityDetail.sensitiveFields')}
                       </Typography>
                       <Stack spacing={0} divider={<Divider />}>
                         <PiiFieldDisplay
-                          label="Bank Account"
+                          label={t('entityDetail.bankAccount')}
                           value={piiMasked ? undefined : entity.bankAccount}
                           handling={piiMasked ? 'MASK' : 'ALLOW'}
                           onRequestAccess={handleRequestAccess}
                         />
                         <PiiFieldDisplay
-                          label="Bank Name"
+                          label={t('entityDetail.bankName')}
                           value={piiMasked ? undefined : entity.bankName}
                           handling={piiMasked ? 'MASK' : 'ALLOW'}
                           onRequestAccess={handleRequestAccess}
                         />
                         <PiiFieldDisplay
-                          label="Tax ID"
+                          label={t('entityDetail.taxId')}
                           value={piiMasked ? undefined : entity.taxId}
                           handling={piiMasked ? 'MASK' : 'ALLOW'}
                           onRequestAccess={handleRequestAccess}
                         />
                         <PiiFieldDisplay
-                          label="Contact Name"
+                          label={t('entityDetail.contactName')}
                           value={piiMasked ? undefined : entity.contactName}
                           handling={piiMasked ? 'MASK' : 'ALLOW'}
                           onRequestAccess={handleRequestAccess}
                         />
                         <PiiFieldDisplay
-                          label="Contact Email"
+                          label={t('entityDetail.contactEmail')}
                           value={piiMasked ? undefined : entity.contactEmail}
                           handling={piiMasked ? 'MASK' : 'ALLOW'}
                           onRequestAccess={handleRequestAccess}
                         />
                         <PiiFieldDisplay
-                          label="Contact Phone"
+                          label={t('entityDetail.contactPhone')}
                           value={piiMasked ? undefined : entity.contactPhone}
                           handling={piiMasked ? 'MASK' : 'ALLOW'}
                           onRequestAccess={handleRequestAccess}
                         />
                         <PiiFieldDisplay
-                          label="Address"
+                          label={t('entityDetail.address')}
                           value={piiMasked ? undefined : entity.address}
                           handling={piiMasked ? 'MASK' : 'ALLOW'}
                           onRequestAccess={handleRequestAccess}
@@ -1130,12 +1147,12 @@ export const EntityDetailPage = () => {
                     {/* Non-sensitive fields always visible */}
                     <Box>
                       <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
-                        General Information
+                        {t('entityDetail.generalInformation')}
                       </Typography>
                       <Stack spacing={0} divider={<Divider />}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 1 }}>
                           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            Company Code
+                            {t('entityDetail.companyCode')}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 500 }}>
                             {entity.companyCode}
@@ -1143,7 +1160,7 @@ export const EntityDetailPage = () => {
                         </Stack>
                         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 1 }}>
                           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            Currency
+                            {t('entityDetail.currency')}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 500 }}>
                             {entity.currency}
@@ -1151,7 +1168,7 @@ export const EntityDetailPage = () => {
                         </Stack>
                         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 1 }}>
                           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            Payment Terms
+                            {t('entityDetail.paymentTerms')}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 500 }}>
                             {entity.paymentTerms}
@@ -1159,7 +1176,7 @@ export const EntityDetailPage = () => {
                         </Stack>
                         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 1 }}>
                           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            Last Updated
+                            {t('entityDetail.lastUpdated')}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 500 }}>
                             {formatDate(entity.lastUpdated)}
@@ -1177,27 +1194,27 @@ export const EntityDetailPage = () => {
 
       {/* Access Request Dialog */}
       <Dialog open={accessRequestOpen} onClose={() => setAccessRequestOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Request PII Access</DialogTitle>
+        <DialogTitle>{t('entityDetail.requestPiiAccess')}</DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-            Explain why you need access to sensitive data for {entity.name}. This request will be logged and requires approval.
+            {t('entityDetail.requestPiiAccessDesc', { name: entity.name })}
           </Typography>
           <TextField
             fullWidth
             multiline
             rows={4}
-            label="Reason for Access"
-            placeholder="e.g., Investigating bank account change anomaly for case CS-2026-0001"
+            label={t('entityDetail.reasonForAccess')}
+            placeholder={t('entityDetail.reasonPlaceholder')}
             value={accessReason}
             onChange={(e) => setAccessReason(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setAccessRequestOpen(false)} variant="outlined" sx={{ bgcolor: 'transparent' }}>
-            Cancel
+            {t('entityDetail.cancel')}
           </Button>
           <Button onClick={handleSubmitAccessRequest} variant="contained" disabled={!accessReason.trim()}>
-            Submit Request
+            {t('entityDetail.submitRequest')}
           </Button>
         </DialogActions>
       </Dialog>

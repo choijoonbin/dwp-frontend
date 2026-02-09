@@ -471,3 +471,50 @@ export const getLineage = async (
   const res = await axiosInstance.get<ApiResponse<LineageResponse>>(url);
   return res.data;
 };
+
+// ----------------------------------------------------------------------
+// Optimization API (AR/AP 채권·채무 최적화)
+// ----------------------------------------------------------------------
+
+export type OptimizationBucket = {
+  bucketKey: string;
+  itemCount: number;
+  totalAmount: number;
+  currency: string;
+};
+
+export type OptimizationOverdueSummary = {
+  overdueCount: number;
+  overdueAmount: number;
+  currency: string;
+  avgDaysPastDue: number;
+};
+
+export type OptimizationAlertRecommendation = {
+  recommendationType: string;
+  affectedCount: number;
+  reason: string;
+};
+
+export type OptimizationArApDto = {
+  type: 'AR' | 'AP';
+  buckets: OptimizationBucket[];
+  overdueSummary: OptimizationOverdueSummary;
+  alertRecommendations: OptimizationAlertRecommendation[];
+};
+
+/**
+ * GET /api/synapse/optimization/ar — 매출채권(AR) 최적화
+ */
+export const getOptimizationAr = async (): Promise<ApiResponse<OptimizationArApDto>> => {
+  const res = await axiosInstance.get<ApiResponse<OptimizationArApDto>>('/api/synapse/optimization/ar');
+  return res.data;
+};
+
+/**
+ * GET /api/synapse/optimization/ap — 매입채무(AP) 최적화
+ */
+export const getOptimizationAp = async (): Promise<ApiResponse<OptimizationArApDto>> => {
+  const res = await axiosInstance.get<ApiResponse<OptimizationArApDto>>('/api/synapse/optimization/ap');
+  return res.data;
+};

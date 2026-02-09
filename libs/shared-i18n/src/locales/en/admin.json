@@ -143,5 +143,43 @@
       "viewAudit": "View Audit",
       "affectedCases": "Affected Cases"
     }
+  },
+  "ingest": {
+    "title": "Ingest Run",
+    "subtitle": "Ingest (source load) run history",
+    "table": {
+      "started": "Started",
+      "status": "Status",
+      "window": "Window",
+      "duration": "Duration",
+      "ingested": "Ingested",
+      "failed": "Failed",
+      "runId": "Run ID",
+      "emptyTitle": "No run history",
+      "emptyDesc": "History will appear after Ingest execution.",
+      "rowsPerPage": "Rows per page:",
+      "statusRunning": "Running",
+      "statusSuccess": "Success",
+      "statusFailed": "Failed",
+      "statusSkipped": "Skipped"
+    },
+    "filter": {
+      "from": "From",
+      "to": "To",
+      "status": "Status",
+      "all": "All",
+      "reset": "Reset"
+    },
+    "runDetail": {
+      "title": "Run Detail",
+      "loadError": "Failed to load run info.",
+      "basicInfo": "Basic Info",
+      "ingested": "Ingested",
+      "failed": "Failed",
+      "skipReason": "Skip Reason",
+      "message": "Message",
+      "runningRunId": "Running Run ID",
+      "viewAudit": "View Audit"
+    }
   }
 }

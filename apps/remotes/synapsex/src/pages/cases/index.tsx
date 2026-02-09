@@ -6,25 +6,23 @@
 import type { SelectChangeEvent } from '@mui/material/Select';
 
 import { useNavigate } from 'react-router-dom';
-import { useMemo, useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRef, useMemo, useState, useEffect } from 'react';
+import { Label, Iconify, FilterCard } from '@dwp-frontend/design-system';
 import { formatDate, formatCurrency, useTranslation } from '@dwp-frontend/shared-i18n';
-import {
-  Label,
-  Iconify,
-  CodeSelectCombobox,
-  type CodeSelectOption,
-} from '@dwp-frontend/design-system';
 import {
   useCodes,
   is403Error,
   tableToCsv,
-  getTenantId,
   downloadCsv,
+  getTenantId,
+  saveFiltersToStorage,
+  getFiltersFromStorage,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -40,52 +38,93 @@ import InputLabel from '@mui/material/InputLabel';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import FormControl from '@mui/material/FormControl';
+import ToggleButton from '@mui/material/ToggleButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TableContainer from '@mui/material/TableContainer';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { SYNAPSE_ROUTES } from '../../routes';
 import { useCasesList } from './hooks/use-cases-list';
 import { ErrorStateWithRetry } from '../../components/ux';
 import { SeverityBadge } from '../../components/finance/severity-badge';
 import { TableLoadingSkeleton } from '../../components/ux/table-loading-skeleton';
+import {
+  type CasesPeriod,
+  datetimeLocalToIso,
+  isoToDatetimeLocal,
+  getDateRangeFromPeriod,
+} from './utils/cases-date-utils';
 
 import type { CaseListItem } from './adapters/case-list-adapter';
 
-// ----------------------------------------------------------------------
-// Allowed status set for filter (pinned 5~7)
-// @see docs/job/CASE_STATUS_SELECT_UX_SPEC_AND_FE_PROMPT.txt
-const ALLOWED_CASE_STATUS_FOR_FILTER = [
-  'NEW',
-  'TRIAGE',
-  'IN_REVIEW',
-  'IN_PROGRESS',
-  'APPROVAL_PENDING',
-  'RESOLVED',
-] as const;
+type CasesFiltersStorage = {
+  q: string;
+  statusFilter: string;
+  severityFilter: string;
+  caseTypeFilter: string;
+  periodFilter: CasesPeriod;
+  dateFrom: string;
+  dateTo: string;
+  page: number;
+};
+
+const CASES_FILTERS_KEY = 'cases';
 
 export const CasesPage = () => {
   const { t } = useTranslation('common');
   const { getLabel: getStatusLabel, codeMap: statusCodeMap } = useCodes('CASE_STATUS');
   const { getLabel: getTypeLabel, codeMap: typeCodeMap } = useCodes('CASE_TYPE');
-  const { codeMap: severityCodeMap } = useCodes('SEVERITY');
+  const { getLabel: getSeverityLabel, codeMap: severityCodeMap } = useCodes('SEVERITY');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [q, setQ] = useState('');
-  const [page, setPage] = useState(0);
-  const [statusFilter, setStatusFilter] = useState<string>('');
-  const [severityFilter, setSeverityFilter] = useState<string>('');
-  const [caseTypeFilter, setCaseTypeFilter] = useState<string>('');
+  const stored = getFiltersFromStorage<CasesFiltersStorage>(CASES_FILTERS_KEY);
+  const skipPeriodSyncRef = useRef(!!stored);
+  const defaultRange = useMemo(() => getDateRangeFromPeriod(stored?.periodFilter ?? '24h'), []);
 
-  const statusOptions: CodeSelectOption[] = useMemo(() => {
-    const all = statusCodeMap.size > 0
-      ? Array.from(statusCodeMap.entries()).map(([code, label]) => ({
-          value: code,
-          label,
-          pinned: ALLOWED_CASE_STATUS_FOR_FILTER.includes(code as (typeof ALLOWED_CASE_STATUS_FOR_FILTER)[number]),
-        }))
-      : [];
-    return all;
-  }, [statusCodeMap]);
+  const [q, setQ] = useState(stored?.q ?? '');
+  const [page, setPage] = useState(stored?.page ?? 0);
+  const [statusFilter, setStatusFilter] = useState<string>(stored?.statusFilter ?? '');
+  const [severityFilter, setSeverityFilter] = useState<string>(stored?.severityFilter ?? '');
+  const [caseTypeFilter, setCaseTypeFilter] = useState<string>(stored?.caseTypeFilter ?? '');
+  const [periodFilter, setPeriodFilter] = useState<CasesPeriod>(stored?.periodFilter ?? '24h');
+  const [dateFrom, setDateFrom] = useState(
+    stored?.dateFrom ?? isoToDatetimeLocal(defaultRange.from)
+  );
+  const [dateTo, setDateTo] = useState(stored?.dateTo ?? isoToDatetimeLocal(defaultRange.to));
+  // 케이스 검출시간 필터 - 현재 미사용
+  // const [detectedFrom, setDetectedFrom] = useState('');
+  // const [detectedTo, setDetectedTo] = useState('');
+
+  useEffect(() => {
+    if (skipPeriodSyncRef.current) {
+      skipPeriodSyncRef.current = false;
+      return;
+    }
+    const range = getDateRangeFromPeriod(periodFilter);
+    setDateFrom(isoToDatetimeLocal(range.from));
+    setDateTo(isoToDatetimeLocal(range.to));
+  }, [periodFilter]);
+
+  useEffect(() => {
+    saveFiltersToStorage<CasesFiltersStorage>(CASES_FILTERS_KEY, {
+      q,
+      statusFilter,
+      severityFilter,
+      caseTypeFilter,
+      periodFilter,
+      dateFrom,
+      dateTo,
+      page,
+    });
+  }, [q, statusFilter, severityFilter, caseTypeFilter, periodFilter, dateFrom, dateTo, page]);
+
+  const statusOptions = useMemo(
+    () =>
+      statusCodeMap.size > 0
+        ? Array.from(statusCodeMap.entries()).map(([code, label]) => ({ code, label }))
+        : [],
+    [statusCodeMap]
+  );
 
   const severityOptions = useMemo(
     () =>
@@ -103,13 +142,25 @@ export const CasesPage = () => {
     [typeCodeMap]
   );
 
-  const hasFilters = Boolean(q.trim() || statusFilter || severityFilter || caseTypeFilter);
+  // dateFrom/dateTo는 항상 값이 있으므로 칩 섹션을 표시하고, 개별 칩은 각 조건에 따라 렌더
+  const hasFilters = Boolean(
+    q.trim() ||
+      statusFilter ||
+      severityFilter ||
+      caseTypeFilter ||
+      periodFilter !== '24h' ||
+      dateFrom ||
+      dateTo
+  );
 
   const handleResetFilters = () => {
     setQ('');
     setStatusFilter('');
     setSeverityFilter('');
     setCaseTypeFilter('');
+    setPeriodFilter('24h');
+    // setDetectedFrom('');
+    // setDetectedTo('');
     setPage(0);
   };
 
@@ -128,6 +179,11 @@ export const CasesPage = () => {
     status: statusFilter || undefined,
     severity: severityFilter || undefined,
     caseType: caseTypeFilter || undefined,
+    dateFrom: dateFrom ? datetimeLocalToIso(dateFrom) : undefined,
+    dateTo: dateTo ? datetimeLocalToIso(dateTo) : undefined,
+    // 케이스 검출시간 필터 - 현재 미사용
+    // detectedFrom: detectedFrom ? datetimeLocalToIso(detectedFrom) : undefined,
+    // detectedTo: detectedTo ? datetimeLocalToIso(detectedTo) : undefined,
     filters: {
       searchQuery: q.trim() || undefined,
     },
@@ -135,7 +191,7 @@ export const CasesPage = () => {
 
   useEffect(() => {
     setPage(0);
-  }, [q, statusFilter, severityFilter, caseTypeFilter]);
+  }, [q, statusFilter, severityFilter, caseTypeFilter, dateFrom, dateTo]);
 
   const handleRowClick = (row: CaseListItem) => {
     navigate(`${SYNAPSE_ROUTES.CASES}/${row.id}`);
@@ -238,33 +294,192 @@ export const CasesPage = () => {
           </Grid>
         </Grid>
 
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }} flexWrap="wrap" useFlexGap>
-          <TextField
-            placeholder={t('cases.searchPlaceholder')}
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            size="small"
-            sx={{ minWidth: 200, maxWidth: 320 }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Iconify icon="solar:magnifer-bold" width={18} />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <CodeSelectCombobox
-            options={statusOptions}
-            value={statusFilter}
-            onChange={setStatusFilter}
-            label={t('cases.status')}
-            placeholder={t('cases.statusSearchPlaceholder')}
-            emptyLabel={t('cases.filterAll')}
-            pinnedGroupLabel={t('cases.pinnedStatuses')}
-            allGroupLabel={t('cases.allStatuses')}
-            maxPinned={7}
-            maxListHeight={300}
-          />
+        <FilterCard
+          title={t('cases.filterTitle')}
+          chips={
+            hasFilters ? (
+              <>
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={`${t('cases.filterPeriod')}: ${periodFilter}`}
+                  onDelete={() => {
+                    setPeriodFilter('24h');
+                    const range = getDateRangeFromPeriod('24h');
+                    setDateFrom(isoToDatetimeLocal(range.from));
+                    setDateTo(isoToDatetimeLocal(range.to));
+                  }}
+                />
+                {statusFilter && (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={`${t('cases.status')}: ${getStatusLabel(statusFilter) ?? statusFilter}`}
+                    onDelete={() => setStatusFilter('')}
+                  />
+                )}
+                {severityFilter && (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={`${t('cases.severity')}: ${getSeverityLabel(severityFilter) ?? severityFilter}`}
+                    onDelete={() => setSeverityFilter('')}
+                  />
+                )}
+                {caseTypeFilter && (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={`${t('cases.type')}: ${getTypeLabel(caseTypeFilter) ?? caseTypeFilter}`}
+                    onDelete={() => setCaseTypeFilter('')}
+                  />
+                )}
+                {q.trim() && (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={`${t('cases.filterSearch')}: ${q.trim().slice(0, 20)}${q.trim().length > 20 ? '...' : ''}`}
+                    onDelete={() => setQ('')}
+                  />
+                )}
+              </>
+            ) : undefined
+          }
+          resetLabel={t('cases.filterReset')}
+          onReset={handleResetFilters}
+          searchLabel={t('cases.filterSearch')}
+          onSearch={handleRefresh}
+        >
+          <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              spacing={2}
+              alignItems={{ xs: 'stretch', md: 'flex-start' }}
+              justifyContent="space-between"
+            >
+              <Stack spacing={1} sx={{ flex: 1, minWidth: 0 }}>
+                <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                  <Iconify icon="solar:calendar-bold" width={18} />
+                  <Typography variant="subtitle2">{t('cases.filterPeriod')}</Typography>
+                  <ToggleButtonGroup
+                    value={periodFilter}
+                    exclusive
+                    onChange={(_e, val: CasesPeriod | null) => val !== null && setPeriodFilter(val)}
+                    aria-label={t('cases.filterPeriod')}
+                    size="small"
+                    sx={{
+                      '& .MuiToggleButton-root': {
+                        px: 1,
+                        py: 0,
+                        minWidth: 36,
+                        height: 22,
+                        fontSize: '0.75rem',
+                        lineHeight: 1,
+                      },
+                    }}
+                  >
+                    <ToggleButton value="1h" aria-label="1h">1h</ToggleButton>
+                    <ToggleButton value="6h" aria-label="6h">6h</ToggleButton>
+                    <ToggleButton value="24h" aria-label="24h">24h</ToggleButton>
+                    <ToggleButton value="7d" aria-label="7d">7d</ToggleButton>
+                    <ToggleButton value="30d" aria-label="30d">30d</ToggleButton>
+                  </ToggleButtonGroup>
+                </Stack>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems={{ sm: 'center' }}>
+                  <TextField
+                    label={t('cases.filterDateFrom')}
+                    type="datetime-local"
+                    size="small"
+                    value={dateFrom}
+                    onChange={(e) => setDateFrom(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ flex: 1, minWidth: 160 }}
+                  />
+                  <Typography
+                    variant="body2"
+                    sx={{ px: 0.5, color: 'text.secondary', display: { xs: 'none', sm: 'inline' } }}
+                  >
+                    ~
+                  </Typography>
+                  <TextField
+                    label={t('cases.filterDateTo')}
+                    type="datetime-local"
+                    size="small"
+                    value={dateTo}
+                    onChange={(e) => setDateTo(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ flex: 1, minWidth: 160 }}
+                  />
+                </Stack>
+              </Stack>
+
+              {/* 케이스 검출시간 필터 - 현재 미사용
+              <Stack spacing={1} sx={{ flex: 1, minWidth: 0 }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Iconify icon="solar:clock-circle-bold" width={18} />
+                  <Typography variant="subtitle2">{t('cases.filterDetectionPeriod')}</Typography>
+                </Stack>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems={{ sm: 'center' }}>
+                  <TextField
+                    label={t('cases.filterDetectionFrom')}
+                    type="datetime-local"
+                    size="small"
+                    value={detectedFrom}
+                    onChange={(e) => setDetectedFrom(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ flex: 1, minWidth: 160 }}
+                  />
+                  <Typography
+                    variant="body2"
+                    sx={{ px: 0.5, color: 'text.secondary', display: { xs: 'none', sm: 'inline' } }}
+                  >
+                    ~
+                  </Typography>
+                  <TextField
+                    label={t('cases.filterDetectionTo')}
+                    type="datetime-local"
+                    size="small"
+                    value={detectedTo}
+                    onChange={(e) => setDetectedTo(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ flex: 1, minWidth: 160 }}
+                  />
+                </Stack>
+              </Stack>
+              */}
+            </Stack>
+
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }} flexWrap="wrap" useFlexGap>
+              <TextField
+                placeholder={t('cases.searchPlaceholder')}
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                size="small"
+                sx={{ minWidth: 200, maxWidth: 320 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Iconify icon="solar:magnifer-bold" width={18} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+          {statusOptions.length > 0 && (
+            <FormControl size="small" sx={{ minWidth: 140 }}>
+              <InputLabel>{t('cases.status')}</InputLabel>
+              <Select
+                value={statusFilter}
+                label={t('cases.status')}
+                onChange={(e: SelectChangeEvent) => setStatusFilter(e.target.value)}
+              >
+                <MenuItem value="">{t('cases.filterAll')}</MenuItem>
+                {statusOptions.map((opt) => (
+                  <MenuItem key={opt.code} value={opt.code}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
           {severityOptions.length > 0 && (
             <FormControl size="small" sx={{ minWidth: 140 }}>
               <InputLabel>{t('cases.severity')}</InputLabel>
@@ -299,7 +514,8 @@ export const CasesPage = () => {
               </Select>
             </FormControl>
           )}
-        </Stack>
+            </Stack>
+        </FilterCard>
 
         <TableContainer component={Card} variant="outlined">
           <Table size="small">

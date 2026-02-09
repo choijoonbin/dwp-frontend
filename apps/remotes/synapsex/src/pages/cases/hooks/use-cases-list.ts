@@ -39,6 +39,9 @@ export const useCasesList = (
   if (params?.slaRisk) apiParams.slaRisk = params.slaRisk;
   if (params?.ids) apiParams.ids = params.ids;
   if (params?.caseKey) apiParams.caseKey = params.caseKey;
+  if (params?.range) apiParams.range = params.range;
+  if (params?.dateFrom) apiParams.dateFrom = params.dateFrom;
+  if (params?.dateTo) apiParams.dateTo = params.dateTo;
   if (params?.detectedFrom) apiParams.detectedFrom = params.detectedFrom;
   if (params?.detectedTo) apiParams.detectedTo = params.detectedTo;
 

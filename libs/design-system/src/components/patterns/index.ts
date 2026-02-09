@@ -1,5 +1,6 @@
 export * from './data-table';
 export * from './filter-bar';
+export * from './filter-card';
 export * from './empty-state';
 export * from './editor-modal';
 export * from './confirm-dialog';

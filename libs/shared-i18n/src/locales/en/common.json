@@ -137,6 +137,22 @@
     "empty": "No cases detected yet",
     "emptyData": "No data",
     "filterResetCta": "Reset filters",
+    "filterRange": "Detection period",
+    "filterRangeAll": "All",
+    "filterRange1h": "1 hour",
+    "filterRange6h": "6 hours",
+    "filterRange24h": "24 hours",
+    "filterRange7d": "7 days",
+    "filterRange30d": "30 days",
+    "filterTitle": "Filter",
+    "filterPeriod": "Period",
+    "filterDateFrom": "From",
+    "filterDateTo": "To",
+    "filterDetectionPeriod": "Case detection time",
+    "filterDetectionFrom": "Case detection start",
+    "filterDetectionTo": "Case detection end",
+    "filterReset": "Reset search",
+    "filterSearch": "Search",
     "statusSearchPlaceholder": "Search status...",
     "pinnedStatuses": "Frequently used",
     "allStatuses": "All statuses",
@@ -151,7 +167,10 @@
       "analysis": {
         "empty": {
           "title": "No analysis data",
-          "description": "AI analysis is not available for this case."
+          "description": "AI analysis is not available for this case.",
+          "reason": {
+            "summaryRecommendationsZero": "No analysis (summary empty & recommendations=0)"
+          }
         },
         "error": {
           "title": "Failed to load analysis"
@@ -160,7 +179,10 @@
       "confidence": {
         "empty": {
           "title": "No confidence data",
-          "description": "Confidence breakdown is not available."
+          "description": "Confidence breakdown is not available.",
+          "reason": {
+            "factorsZeroOrScoreNull": "No confidence (factors=0 or score null)"
+          }
         },
         "error": {
           "title": "Failed to load confidence"
@@ -169,7 +191,10 @@
       "similar": {
         "empty": {
           "title": "No similar cases",
-          "description": "No similar cases found."
+          "description": "No similar cases found.",
+          "reason": {
+            "itemsZero": "No similar cases (items=0)"
+          }
         },
         "error": {
           "title": "Failed to load similar cases"
@@ -178,7 +203,10 @@
       "ragEvidence": {
         "empty": {
           "title": "No RAG evidence",
-          "description": "Policy citations are not available."
+          "description": "Policy citations are not available.",
+          "reason": {
+            "itemsZero": "No RAG evidence (items=0)"
+          }
         },
         "error": {
           "title": "Failed to load RAG evidence"
@@ -198,6 +226,12 @@
     "runScan": "Run Scan",
     "filtersApplied": "Applied filters",
     "filterRange": "Range",
+    "filterTitle": "Filter",
+    "filterPeriod": "Period",
+    "filterDateFrom": "From",
+    "filterDateTo": "To",
+    "filterReset": "Reset search",
+    "filterSearch": "Search",
     "filterType": "Type",
     "filterSeverity": "Severity",
     "filterCompany": "Company",
@@ -250,7 +284,7 @@
     "original": "Original",
     "reversal": "Reversal",
     "fiDocument": "FI Document",
-    "docNumber": "Doc #",
+    "docNumber": "Voucher #",
     "date": "Date",
     "amount": "Amount",
     "vendor": "Vendor",
@@ -291,12 +325,14 @@
     "fieldChanges": "Field Changes",
     "actions": "Actions",
     "auditStream": "Audit Stream",
+    "status": "Status",
     "approveAction": "Approve Action",
     "reject": "Reject",
     "requestInfo": "Request Info",
     "setPaymentBlock": "Set Payment Block",
     "postReversal": "Post Reversal",
     "goToActionCenter": "Go to Action Center",
+    "comingInPhaseB": "Coming in Phase B",
     "pendingActions": "Pending Actions",
     "noActionsYet": "No actions yet",
     "viewAudit": "View Audit (case filter)",
@@ -552,6 +588,12 @@
       "allRisks": "All risks",
       "bucket": "Overdue bucket"
     },
+    "bucket": {
+      "current": "Current",
+      "1-30": "1-30 days",
+      "31-90": "31-90 days",
+      "90+": "90+ days"
+    },
     "recommendation": {
       "escalateDunning": "Escalate & propose dunning",
       "sendReminder": "Send reminder + confirm promise date",
@@ -656,6 +698,102 @@
     "status": { "blocked": "Blocked", "dispute": "Dispute", "overdue": "Overdue" },
     "loading": "Loading...",
     "empty": "No open items found."
+  },
+  "entityDetail": {
+    "loading": "Loading...",
+    "entityNotFoundDesc": "The entity with ID {{id}} could not be found.",
+    "returnToEntityHub": "Return to Entity Hub",
+    "openInSap": "Open in SAP",
+    "export": "Export",
+    "tabs": {
+      "overview": "Overview",
+      "changeLog": "Change Log",
+      "related": "Related",
+      "accessControl": "Access Control"
+    },
+    "kpis": {
+      "openItems": "Open Items",
+      "itemsCount": "{{count}} items",
+      "overdue": "Overdue",
+      "recentAnomalies": "Recent Anomalies",
+      "last30Days": "Last 30 days",
+      "actionSuccess": "Action Success",
+      "resolutionRate": "Resolution rate"
+    },
+    "snapshot": {
+      "fiDocuments": "FI Documents",
+      "openItems": "Open Items",
+      "cases": "Cases",
+      "actions": "Actions",
+      "linkedDocuments": "Linked documents",
+      "outstandingItems": "Outstanding items",
+      "activeCases": "Active cases",
+      "relatedActions": "Related actions",
+      "viewDocuments": "View Documents",
+      "viewOpenItems": "View Open Items",
+      "viewCases": "View Cases",
+      "viewActions": "View Actions"
+    },
+    "auditChangeLog": "Audit Change Log",
+    "filter": "Filter",
+    "noChangeHistory": "No change history found for this entity.",
+    "related": {
+      "fiDocuments": "Related FI Documents",
+      "openItems": "Related Open Items",
+      "cases": "Related Cases",
+      "viewAll": "View All",
+      "noRelatedDocuments": "No related documents",
+      "noOpenItems": "No open items",
+      "noRelatedCases": "No related cases"
+    },
+    "table": {
+      "docNumber": "Doc Number",
+      "type": "Type",
+      "date": "Date",
+      "amount": "Amount",
+      "status": "Status",
+      "item": "Item",
+      "due": "Due",
+      "case": "Case",
+      "title": "Title",
+      "severity": "Severity"
+    },
+    "dispute": "Dispute",
+    "blocked": "Blocked",
+    "piiAccessControl": "PII Access Control",
+    "piiAccessSubheader": "Sensitive entity data is protected. Request access or use demo mode to view masked fields.",
+    "sensitiveFieldsMasked": "Sensitive Fields Masked",
+    "fullAccessGranted": "Full Access Granted",
+    "sensitiveFieldsMaskedDesc": "Bank account, contact info, and tax ID are hidden",
+    "allSensitiveVisible": "All sensitive fields are visible",
+    "pendingApproval": "Pending Approval",
+    "requestAccess": "Request Access",
+    "revokeAccess": "Revoke Access",
+    "demoMode": "Demo Mode (Admin Simulation)",
+    "demoModeDesc": "Bypass access controls for demonstration purposes",
+    "grantAccess": "Grant Access",
+    "sensitiveFields": "Sensitive Fields",
+    "generalInformation": "General Information",
+    "bankAccount": "Bank Account",
+    "bankName": "Bank Name",
+    "taxId": "Tax ID",
+    "contactName": "Contact Name",
+    "contactEmail": "Contact Email",
+    "contactPhone": "Contact Phone",
+    "address": "Address",
+    "companyCode": "Company Code",
+    "currency": "Currency",
+    "paymentTerms": "Payment Terms",
+    "lastUpdated": "Last Updated",
+    "concentrationRisk": "{{level}} Concentration",
+    "requestPiiAccess": "Request PII Access",
+    "requestPiiAccessDesc": "Explain why you need access to sensitive data for {{name}}. This request will be logged and requires approval.",
+    "reasonForAccess": "Reason for Access",
+    "reasonPlaceholder": "e.g., Investigating bank account change anomaly for case CS-2026-0001",
+    "cancel": "Cancel",
+    "submitRequest": "Submit Request",
+    "typeVendor": "Vendor",
+    "typeCustomer": "Customer"
   },
   "entities": {
     "title": "Entities",

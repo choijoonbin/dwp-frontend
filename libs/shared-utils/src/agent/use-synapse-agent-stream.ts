@@ -123,10 +123,15 @@ export const useSynapseAgentStream = () => {
 
       setStatus('CONNECTING');
 
+      const requestBody = {
+        prompt: '이 케이스를 분석하고 조치를 제안해 주세요',
+        context: caseId ? { caseId } : {},
+      };
+
       const response = await fetch(`${NX_API_URL}${endpoint}`, {
         method: 'POST',
         headers,
-        body: JSON.stringify({ caseId }),
+        body: JSON.stringify(requestBody),
         signal: abortController?.signal,
       });
 

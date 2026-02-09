@@ -143,5 +143,43 @@
       "viewAudit": "View Audit",
       "affectedCases": "영향받은 케이스"
     }
+  },
+  "ingest": {
+    "title": "원천 적재 실행",
+    "subtitle": "Ingest Run (원천 적재) 실행 이력",
+    "table": {
+      "started": "시작일시",
+      "status": "상태",
+      "window": "기간",
+      "duration": "소요시간",
+      "ingested": "적재",
+      "failed": "실패",
+      "runId": "Run ID",
+      "emptyTitle": "실행 이력이 없습니다",
+      "emptyDesc": "Ingest 실행 후 이력이 표시됩니다.",
+      "rowsPerPage": "페이지당:",
+      "statusRunning": "실행 중",
+      "statusSuccess": "성공",
+      "statusFailed": "실패",
+      "statusSkipped": "건너뜀"
+    },
+    "filter": {
+      "from": "시작일",
+      "to": "종료일",
+      "status": "상태",
+      "all": "전체",
+      "reset": "초기화"
+    },
+    "runDetail": {
+      "title": "Run 상세",
+      "loadError": "Run 정보를 불러올 수 없습니다.",
+      "basicInfo": "기본 정보",
+      "ingested": "적재",
+      "failed": "실패",
+      "skipReason": "건너뜀 사유",
+      "message": "메시지",
+      "runningRunId": "실행 중 Run ID",
+      "viewAudit": "View Audit"
+    }
   }
 }

@@ -48,6 +48,8 @@ export type CaseDetailResult = {
     wrbtr?: number;
     waers?: string;
     counterpartyId?: string;
+    /** lifnr/kunnr 또는 counterpartyId 표시용 */
+    counterpartyDisplay?: string;
   } | null;
   fiDocItems: FiDocItem[];
   relatedActions: RelatedAction[];
@@ -81,23 +83,59 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
     const caseData = caseDetailDtoToUi(caseId, dto ?? null);
     const evidence = dto?.evidence;
     const docOrItem = evidence?.documentOrOpenItem as Record<string, unknown> | undefined;
-    const bukrs = (docOrItem?.bukrs as string) ?? '';
-    const belnr = (docOrItem?.belnr as string) ?? '';
-    const gjahr = (docOrItem?.gjahr as string) ?? '';
+    const header = docOrItem?.headerSummary as Record<string, unknown> | undefined;
+    const items = (docOrItem?.items as Array<Record<string, unknown>>) ?? [];
+
+    // PROMPT P0: evidence.documentOrOpenItem 바인딩 — flat 또는 headerSummary 구조 지원
+    const bukrs =
+      (header?.bukrs as string) ?? (docOrItem?.bukrs as string) ?? '';
+    const belnr =
+      (header?.belnr as string) ?? (docOrItem?.belnr as string) ?? '';
+    const gjahr =
+      (header?.gjahr as string) ?? (docOrItem?.gjahr as string) ?? '';
+    const docKey = docOrItem?.docKey as string | undefined;
+    const hasDocKey = Boolean(docKey || bukrs || belnr || gjahr);
+
+    // 금액: amount+currency 또는 wrbtr+waers
+    const amount = (docOrItem?.amount as number) ?? (docOrItem?.wrbtr as number);
+    const currency = (docOrItem?.currency as string) ?? (docOrItem?.waers as string) ?? 'USD';
+    const budat = (header?.budat as string) ?? (docOrItem?.budat as string);
+
+    // 거래처: items[0].lifnr 또는 items[0].kunnr 우선, 그 다음 counterpartyId/partyId (PROMPT 3-2)
+    const firstItem = items[0] as Record<string, unknown> | undefined;
+    const lifnr = firstItem?.lifnr as string | undefined;
+    const kunnr = firstItem?.kunnr as string | undefined;
+    const counterpartyId = docOrItem?.counterpartyId as string | undefined;
+    const partyId = docOrItem?.partyId;
+    const counterpartyDisplay =
+      lifnr ?? kunnr ?? counterpartyId ?? (partyId != null ? String(partyId) : undefined);
+    const counterpartyIdForLink =
+      counterpartyId ?? (partyId != null ? String(partyId) : undefined) ?? lifnr ?? kunnr;
 
     const fiDoc =
-      bukrs || belnr || gjahr
+      hasDocKey
         ? {
-            id: `${bukrs}-${belnr}-${gjahr}`,
+            id: docKey ?? `${bukrs}-${belnr}-${gjahr}`,
             bukrs,
             belnr,
             gjahr,
-            budat: docOrItem?.budat as string | undefined,
-            wrbtr: docOrItem?.wrbtr as number | undefined,
-            waers: (docOrItem?.waers as string) ?? 'USD',
-            counterpartyId: docOrItem?.counterpartyId as string | undefined,
+            budat: budat || undefined,
+            wrbtr: amount,
+            waers: currency,
+            counterpartyId: counterpartyIdForLink,
+            counterpartyDisplay,
           }
         : null;
+
+    const fiDocItems: FiDocItem[] = items.map((item, idx) => {
+      const r = item as Record<string, unknown>;
+      return {
+        id: String(r.id ?? r.buzei ?? idx),
+        hkont: r.hkont as string | undefined,
+        shkzg: r.shkzg as string | undefined,
+        wrbtr: r.wrbtr as number | undefined,
+      };
+    });
 
     const rawActions = (dto?.action?.actions ?? []) as Array<Record<string, unknown>>;
     const actions: RelatedAction[] = rawActions.map((a) => ({
@@ -115,7 +153,7 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
       reasoning: dto?.reasoning,
       action: dto?.action,
       fiDoc,
-      fiDocItems: [] as FiDocItem[],
+      fiDocItems,
       relatedActions: actions,
       auditEvents: [] as AuditEvent[],
       isLoading: query.isLoading,

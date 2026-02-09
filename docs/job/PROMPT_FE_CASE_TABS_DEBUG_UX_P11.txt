@@ -1,0 +1,69 @@
+[B) Front Prompt (React/Next)] CASE 상세 탭 바인딩 검증용 Debug UX(P1.1) + DEMO ON/OFF 검증 시나리오
+
+파일 경로 / 생성 파일명
+- docs/prompts/CASE_TABS_DEBUG_UX_P11.md
+- (코드) synapsex remote: case detail 탭 컴포넌트/공통 EmptyState 컴포넌트
+
+결론/결정안(1~3줄)
+- 200 OK인데 Empty만 보이면 “바인딩 여부”를 검증할 수 없다.
+- DEV/QA 모드에서만 노출되는 **Debug Drawer(원본 payload + empty reason)** 를 추가한다.
+- BE DEMO 모드 ON/OFF 두 케이스를 모두 검증하여 “원복 시 정상”을 증빙한다.
+
+Assumptions / Open Questions / Default
+- Assumption: 탭 데이터는 TanStack Query로 가져오며 queryKey가 분리되어 있음.
+- Open Question: 운영환경에서는 Debug UI가 절대 노출되면 안 된다.
+- Default: import.meta.env.DEV 또는 FEATURE_FLAG로 차단.
+
+구현 범위(In/Out)
+IN
+- 탭 공통 Empty 화면에 “왜 Empty인지” 사유(reason) 표시
+- DEV/QA 전용 Debug Drawer
+  - 마지막 응답 payload raw JSON 표시
+  - copy 버튼
+  - 마지막 호출 URL/상태코드 표시(가능하면)
+- DEMO ON(Non-Empty)에서 Success 화면 4개 탭 스크린샷
+- DEMO OFF에서 Empty + reason 화면 4개 탭 스크린샷
+
+OUT
+- SSE 실시간 스트림(별도)
+- 운영용 텔레메트리(ui_event_log 등) 수집(별도)
+
+프론트 작업(상세)
+1) Empty reason 계산 함수 추가(탭별)
+- analysis: summary empty && recommendations length==0 → “분석 결과 없음(summary/recommendations=0)”
+- confidence: score null OR factors length==0 → “신뢰도 데이터 없음(factors=0 or score null)”
+- similar: items length==0 → “유사 케이스 없음(items=0)”
+- rag: items length==0 → “RAG 근거 없음(items=0)”
+
+2) EmptyState 컴포넌트 확장
+- props: title, description, reason(optional)
+- reason이 있으면 작은 텍스트(secondary)로 표시
+
+3) Debug Drawer(DEV only)
+- 케이스 상세 화면 우측 상단에 </> 아이콘(DEV only)
+- 내용:
+  - 현재 탭(activeTab)
+  - lastResponse.status, lastResponse.url(가능 시)
+  - payload JSON pretty print
+  - Copy JSON 버튼
+
+4) i18n 키 추가
+- cases.tabs.*.empty.reason.* 형태로 키 확장(ko/en)
+
+완료 기준(Definition of Done)
+- DEMO ON: 탭 4개 모두 “Success 렌더” 스크린샷 확보
+- DEMO OFF: 탭 4개 모두 “Empty + reason” 스크린샷 확보
+- DEV에서 Debug Drawer 열면 payload를 복사/확인 가능
+- PROD 빌드에서는 Debug UI 미노출 보장(빌드 플래그로 제거/차단)
+
+검증 방법(시나리오)
+1) (BE) SYNAPSE_DEMO_MODE=true 로 실행
+2) (FE) 케이스 상세 진입 → 탭 4개 클릭 → Success 캡처
+3) (BE) SYNAPSE_DEMO_MODE=false 로 재기동
+4) (FE) 동일 케이스/탭 → Empty + reason 캡처
+5) Debug Drawer에서 payload 확인 캡처 1장
+
+체크리스트(엣지케이스)
+- [ ] 탭 이동 시 이전 탭 payload가 섞이지 않는지(activeTab별로 저장)
+- [ ] tenant 변경 시 queryKey 분리 유지
+- [ ] 다크모드 대비(secondary text 가독성)

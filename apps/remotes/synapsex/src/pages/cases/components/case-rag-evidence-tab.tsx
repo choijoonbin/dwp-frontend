@@ -1,14 +1,17 @@
 /**
  * Case RAG Evidence Tab — API 바인딩
  * @see docs/job/PROMPT_B_Frontend_Cases_TabsBind_P1_v2.txt
+ * @see docs/job/PROMPT_FE_CASE_TABS_DEBUG_UX_P11.txt — Debug payload
  */
 
+import { useEffect } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useCaseRagEvidenceQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 
 import { RagCitationList } from '../../../components/evidence';
+import { useCaseTabsDebug } from '../context/case-tabs-debug-context';
 import { TabEmptyState } from '../../../components/ux/tab-empty-state';
 import { TabErrorState } from '../../../components/ux/tab-error-state';
 import { TabContentSkeleton } from '../../../components/ux/tab-content-skeleton';
@@ -18,6 +21,7 @@ import type { RagCitation } from '../../../components/evidence';
 type CaseRagEvidenceTabProps = {
   caseId: string | undefined;
   enabled: boolean;
+  tabKey?: string;
 };
 
 const mapApiItemToCitation = (item: {
@@ -36,9 +40,24 @@ const mapApiItemToCitation = (item: {
   source: item.sourceId as string | undefined,
 });
 
-export const CaseRagEvidenceTab = ({ caseId, enabled }: CaseRagEvidenceTabProps) => {
+export const CaseRagEvidenceTab = ({ caseId, enabled, tabKey = 'policies' }: CaseRagEvidenceTabProps) => {
   const { t } = useTranslation('common');
+  const debugCtx = useCaseTabsDebug();
   const { data, isLoading, isError, error, refetch } = useCaseRagEvidenceQuery(caseId, { enabled });
+
+  const setPayload = debugCtx?.setPayload;
+  useEffect(() => {
+    if (!enabled || !setPayload) return;
+    if (isError && error) {
+      setPayload(tabKey, {
+        status: 'error',
+        payload: { message: error instanceof Error ? error.message : String(error) },
+        error: error instanceof Error ? error.message : String(error),
+      });
+    } else if (!isLoading && data !== undefined) {
+      setPayload(tabKey, { status: 'success', payload: data });
+    }
+  }, [enabled, setPayload, isLoading, isError, error, data, tabKey]);
 
   if (isLoading) {
     return <TabContentSkeleton cards={3} />;
@@ -58,14 +77,17 @@ export const CaseRagEvidenceTab = ({ caseId, enabled }: CaseRagEvidenceTabProps)
 
   const rawItems = data?.items ?? data?.citations ?? [];
   const citations: RagCitation[] = rawItems.map(mapApiItemToCitation).filter((c) => c.title);
+  const isEmpty = rawItems.length === 0;
 
-  if (citations.length === 0) {
+  if (isEmpty) {
+    const reason = t('cases.tabs.ragEvidence.empty.reason.itemsZero');
     return (
       <Box sx={{ p: 2 }}>
         <TabEmptyState
           icon="solar:shield-check-bold-duotone"
           title={t('cases.tabs.ragEvidence.empty.title')}
           description={t('cases.tabs.ragEvidence.empty.description')}
+          reason={reason}
         />
       </Box>
     );

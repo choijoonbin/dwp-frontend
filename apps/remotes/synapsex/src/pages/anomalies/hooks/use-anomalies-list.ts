@@ -33,6 +33,11 @@ export const useAnomaliesList = (
   if (params?.type ?? params?.anomalyType ?? filters.anomalyType) {
     apiParams.type = params?.type ?? params?.anomalyType ?? filters.anomalyType;
   }
+  if (params?.range) apiParams.range = params.range;
+  else if (params?.from && params?.to) {
+    apiParams.from = params.from;
+    apiParams.to = params.to;
+  }
   if (params?.detectedFrom) apiParams.detectedFrom = params.detectedFrom;
   if (params?.detectedTo) apiParams.detectedTo = params.detectedTo;
 

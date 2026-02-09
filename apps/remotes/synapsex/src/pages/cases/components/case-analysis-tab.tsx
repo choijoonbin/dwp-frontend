@@ -1,8 +1,10 @@
 /**
  * Case Analysis Tab — API 바인딩
  * @see docs/job/PROMPT_B_Frontend_Cases_TabsBind_P1_v2.txt
+ * @see docs/job/PROMPT_FE_CASE_TABS_DEBUG_UX_P11.txt — Debug payload
  */
 
+import { useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useCaseAnalysisQuery } from '@dwp-frontend/shared-utils';
@@ -17,6 +19,7 @@ import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import { alpha, useTheme } from '@mui/material/styles';
 
+import { useCaseTabsDebug } from '../context/case-tabs-debug-context';
 import { TabEmptyState } from '../../../components/ux/tab-empty-state';
 import { TabErrorState } from '../../../components/ux/tab-error-state';
 import { ConfidenceRing } from '../../../components/finance/confidence-meter';
@@ -25,6 +28,7 @@ import { TabContentSkeleton } from '../../../components/ux/tab-content-skeleton'
 type CaseAnalysisTabProps = {
   caseId: string | undefined;
   enabled: boolean;
+  tabKey?: string;
   fallbackConfidence?: number;
   fallbackTitle?: string;
   fallbackAnomalyType?: string;
@@ -34,6 +38,7 @@ type CaseAnalysisTabProps = {
 export const CaseAnalysisTab = ({
   caseId,
   enabled,
+  tabKey = 'analysis',
   fallbackConfidence = 0,
   fallbackTitle = '',
   fallbackAnomalyType = '',
@@ -41,7 +46,22 @@ export const CaseAnalysisTab = ({
 }: CaseAnalysisTabProps) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
+  const debugCtx = useCaseTabsDebug();
   const { data, isLoading, isError, error, refetch } = useCaseAnalysisQuery(caseId, { enabled });
+
+  const setPayload = debugCtx?.setPayload;
+  useEffect(() => {
+    if (!enabled || !setPayload) return;
+    if (isError && error) {
+      setPayload(tabKey, {
+        status: 'error',
+        payload: { message: error instanceof Error ? error.message : String(error) },
+        error: error instanceof Error ? error.message : String(error),
+      });
+    } else if (!isLoading && data !== undefined) {
+      setPayload(tabKey, { status: 'success', payload: data });
+    }
+  }, [enabled, setPayload, isLoading, isError, error, data, tabKey]);
 
   if (isLoading) {
     return <TabContentSkeleton cards={2} />;
@@ -65,13 +85,16 @@ export const CaseAnalysisTab = ({
   const severity = data?.severity ?? fallbackSeverity;
   const keyFactors = data?.keyFactors ?? [];
 
-  if (!data && !reasonText && keyFactors.length === 0) {
+  const isEmpty = !reasonText && keyFactors.length === 0;
+  if (!data || isEmpty) {
+    const reason = t('cases.tabs.analysis.empty.reason.summaryRecommendationsZero');
     return (
       <Box sx={{ p: 2 }}>
         <TabEmptyState
           icon="solar:brain-bold-duotone"
           title={t('cases.tabs.analysis.empty.title')}
           description={t('cases.tabs.analysis.empty.description')}
+          reason={reason}
         />
       </Box>
     );

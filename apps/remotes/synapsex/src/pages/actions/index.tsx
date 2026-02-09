@@ -5,16 +5,20 @@
 
 import type { MouseEvent } from 'react';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, PermissionGate } from '@dwp-frontend/design-system';
-import { is403Error ,
+import {
+  getFiltersFromStorage,
   getResourceKeyForPath,
-  useCreateActionMutation,
-  useRejectActionMutation,
+  is403Error,
+  saveFiltersToStorage,
   useApproveActionMutation,
+  useCreateActionMutation,
   useExecuteActionMutation,
+  useResumeActionMutation,
+  useRejectActionMutation,
   useSimulateActionMutation,
 } from '@dwp-frontend/shared-utils';
 
@@ -72,6 +76,8 @@ const riskLevels = ['critical', 'high', 'medium', 'low'];
 
 const ACTIONS_RESOURCE = getResourceKeyForPath('actions') ?? 'menu.autonomous-operations.actions';
 
+const ACTIONS_FILTERS_KEY = 'actions';
+
 // ----------------------------------------------------------------------
 
 const getActionTypes = (t: (key: string) => string) =>
@@ -82,6 +88,27 @@ export const ActionsPage = () => {
   const theme = useTheme();
   const actionTypes = getActionTypes(t);
   const [searchParams, setSearchParams] = useSearchParams();
+  const hasRestoredRef = useRef(false);
+
+  useEffect(() => {
+    const params = Object.fromEntries(searchParams.entries());
+    const filterKeys = ['caseId', 'assignee', 'status', 'actionStatus', 'requiresApproval', 'focus', 'range'];
+    const hasFilterParams = filterKeys.some((k) => params[k]);
+    if (hasFilterParams) {
+      saveFiltersToStorage<Record<string, string>>(ACTIONS_FILTERS_KEY, params);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (hasRestoredRef.current) return;
+    const filterKeys = ['caseId', 'assignee', 'status', 'actionStatus', 'requiresApproval', 'focus', 'range'];
+    const hasUrlParams = filterKeys.some((k) => searchParams.get(k));
+    if (hasUrlParams) return;
+    const stored = getFiltersFromStorage<Record<string, string>>(ACTIONS_FILTERS_KEY);
+    if (!stored || Object.keys(stored).length === 0) return;
+    hasRestoredRef.current = true;
+    setSearchParams(new URLSearchParams(stored), { replace: true });
+  }, [searchParams, setSearchParams]);
 
   const {
     items: filteredActions,
@@ -105,6 +132,7 @@ export const ActionsPage = () => {
   const createMutation = useCreateActionMutation();
   const approveMutation = useApproveActionMutation();
   const executeMutation = useExecuteActionMutation();
+  const resumeMutation = useResumeActionMutation();
   const simulateMutation = useSimulateActionMutation();
   const rejectMutation = useRejectActionMutation();
 
@@ -267,8 +295,22 @@ export const ActionsPage = () => {
     });
   };
 
+  const handleResume = (actionId: string) => {
+    resumeMutation.mutate(actionId, {
+      onSuccess: () => {
+        setSheetOpen(false);
+        setSelectedAction(null);
+        setDrawerSimulationResult(null);
+      },
+    });
+  };
+
   const isDrawerActionPending =
-    approveMutation.isPending || executeMutation.isPending || simulateMutation.isPending || rejectMutation.isPending;
+    approveMutation.isPending ||
+    executeMutation.isPending ||
+    resumeMutation.isPending ||
+    simulateMutation.isPending ||
+    rejectMutation.isPending;
 
   const handleClearCaseFilter = () => setSearchParams({});
 
@@ -832,7 +874,7 @@ export const ActionsPage = () => {
               <Box sx={{ p: 3, borderTop: 1, borderColor: 'divider', bgcolor: 'background.neutral' }}>
                 <Stack spacing={2}>
                   <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                    Step 1: Simulate (optional) → Step 2: Approve → Step 3: Execute
+                    Step 1: Simulate (optional) → Step 2: Approve → Step 3: Execute / Resume
                   </Typography>
                   <Stack direction="row" spacing={1.5} flexWrap="wrap">
                     <PermissionGate resource={ACTIONS_RESOURCE} permission="USE">
@@ -891,6 +933,51 @@ export const ActionsPage = () => {
                     <PermissionGate resource={ACTIONS_RESOURCE} permission="EXECUTE">
                       <Button
                         variant="contained"
+                        fullWidth
+                        startIcon={
+                          executeMutation.isPending ? (
+                            <CircularProgress size={16} />
+                          ) : (
+                            <Iconify icon="solar:bolt-bold" />
+                          )
+                        }
+                        onClick={() => handleExecute(selectedAction.id)}
+                        disabled={isDrawerActionPending}
+                      >
+                        Execute
+                      </Button>
+                    </PermissionGate>
+                  </Stack>
+                </Stack>
+              </Box>
+            )}
+            {selectedAction.status === 'approved' && (
+              <Box sx={{ p: 3, borderTop: 1, borderColor: 'divider', bgcolor: 'background.neutral' }}>
+                <Stack spacing={2}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                    HITL 재개 — 승인 후 실행
+                  </Typography>
+                  <Stack direction="row" spacing={1.5}>
+                    <PermissionGate resource={ACTIONS_RESOURCE} permission="EXECUTE">
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        startIcon={
+                          resumeMutation.isPending ? (
+                            <CircularProgress size={16} />
+                          ) : (
+                            <Iconify icon="solar:play-circle-bold" />
+                          )
+                        }
+                        onClick={() => handleResume(selectedAction.id)}
+                        disabled={isDrawerActionPending}
+                      >
+                        Resume
+                      </Button>
+                    </PermissionGate>
+                    <PermissionGate resource={ACTIONS_RESOURCE} permission="EXECUTE">
+                      <Button
+                        variant="outlined"
                         fullWidth
                         startIcon={
                           executeMutation.isPending ? (

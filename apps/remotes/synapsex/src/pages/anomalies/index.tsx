@@ -4,11 +4,19 @@
 
 import type { SelectChangeEvent } from '@mui/material/Select';
 
-import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { Label, Iconify } from '@dwp-frontend/design-system';
-import { tableToCsv, is403Error, downloadCsv } from '@dwp-frontend/shared-utils';
+import { useRef, useMemo, useState, useEffect } from 'react';
+import { Label, Iconify, FilterCard } from '@dwp-frontend/design-system';
+import {
+  is403Error,
+  tableToCsv,
+  downloadCsv,
+  getTenantId,
+  saveFiltersToStorage,
+  getFiltersFromStorage,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -28,12 +36,35 @@ import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
+import ToggleButton from '@mui/material/ToggleButton';
 import TableContainer from '@mui/material/TableContainer';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { SYNAPSE_ROUTES } from '../../routes';
 import { ErrorStateWithRetry } from '../../components/ux';
 import { useAnomaliesList } from './hooks/use-anomalies-list';
 import { SeverityBadge } from '../../components/finance/severity-badge';
+import {
+  datetimeLocalToIso,
+  isoToDatetimeLocal,
+  type AnomaliesPeriod,
+  getDateRangeFromPeriod,
+} from './utils/anomalies-date-utils';
+
+// ----------------------------------------------------------------------
+
+type AnomaliesFiltersStorage = {
+  q: string;
+  severity: string;
+  atype: string;
+  bukrs: string;
+  periodFilter: AnomaliesPeriod;
+  useDateRangePreset: boolean;
+  dateFrom: string;
+  dateTo: string;
+};
+
+const ANOMALIES_FILTERS_KEY = 'anomalies';
 
 // ----------------------------------------------------------------------
 
@@ -108,22 +139,93 @@ const getAnomalyTypeMeta = (
 
 export const AnomaliesPage = () => {
   const { t } = useTranslation('common');
+  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const urlType = searchParams.get('type');
   const urlSeverity = searchParams.get('severity');
   const urlRange = searchParams.get('range');
   const urlCompany = searchParams.get('company');
 
-  const [q, setQ] = useState('');
-  const [severity, setSeverity] = useState<string>('all');
-  const [atype, setAtype] = useState<string>('all');
-  const [bukrs, setBukrs] = useState<string>('all');
+  const hasUrlParams = Boolean(urlType || urlSeverity || urlRange || urlCompany);
+  const stored = getFiltersFromStorage<AnomaliesFiltersStorage>(ANOMALIES_FILTERS_KEY);
+
+  const initial = useMemo(() => {
+    if (hasUrlParams) {
+      return {
+        q: '',
+        severity: urlSeverity?.toLowerCase() ?? 'all',
+        atype: urlType ? urlTypeToUi(urlType) : 'all',
+        bukrs: urlCompany ?? 'all',
+        periodFilter: (urlRange as AnomaliesPeriod) ?? '24h',
+        useDateRangePreset: true,
+        dateFrom: isoToDatetimeLocal(getDateRangeFromPeriod((urlRange as AnomaliesPeriod) ?? '24h').from),
+        dateTo: isoToDatetimeLocal(getDateRangeFromPeriod((urlRange as AnomaliesPeriod) ?? '24h').to),
+      };
+    }
+    if (stored) return stored;
+    const range = getDateRangeFromPeriod('24h');
+    return {
+      q: '',
+      severity: 'all',
+      atype: 'all',
+      bukrs: 'all',
+      periodFilter: '24h' as AnomaliesPeriod,
+      useDateRangePreset: true,
+      dateFrom: isoToDatetimeLocal(range.from),
+      dateTo: isoToDatetimeLocal(range.to),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- initial state only
+  }, []);
+
+  const [q, setQ] = useState(initial.q);
+  const [severity, setSeverity] = useState<string>(initial.severity);
+  const [atype, setAtype] = useState<string>(initial.atype);
+  const [bukrs, setBukrs] = useState<string>(initial.bukrs);
+  const [periodFilter, setPeriodFilter] = useState<AnomaliesPeriod>(initial.periodFilter);
+  const [useDateRangePreset, setUseDateRangePreset] = useState(initial.useDateRangePreset);
+  const [dateFrom, setDateFrom] = useState(initial.dateFrom);
+  const [dateTo, setDateTo] = useState(initial.dateTo);
 
   useEffect(() => {
-    if (urlType) setAtype(urlTypeToUi(urlType));
-    if (urlSeverity) setSeverity(urlSeverity.toLowerCase());
-    if (urlCompany) setBukrs(urlCompany);
-  }, [urlType, urlSeverity, urlCompany]);
+    if (hasUrlParams && !stored) {
+      if (urlType) setAtype(urlTypeToUi(urlType));
+      if (urlSeverity) setSeverity(urlSeverity.toLowerCase());
+      if (urlCompany) setBukrs(urlCompany);
+    }
+  }, [urlType, urlSeverity, urlCompany, hasUrlParams, stored]);
+
+  const hasRestoredUrlRef = useRef(false);
+  useEffect(() => {
+    if (hasRestoredUrlRef.current || hasUrlParams || !stored) return;
+    hasRestoredUrlRef.current = true;
+    const next = new URLSearchParams();
+    if (stored.atype !== 'all') next.set('type', stored.atype.toUpperCase().replace(/-/g, '_'));
+    if (stored.severity !== 'all') next.set('severity', stored.severity);
+    if (stored.periodFilter !== '24h') next.set('range', stored.periodFilter);
+    if (stored.bukrs !== 'all') next.set('company', stored.bukrs);
+    if (next.toString()) setSearchParams(next, { replace: true });
+  }, [hasUrlParams, stored, setSearchParams]);
+
+  useEffect(() => {
+    if (useDateRangePreset) {
+      const range = getDateRangeFromPeriod(periodFilter);
+      setDateFrom(isoToDatetimeLocal(range.from));
+      setDateTo(isoToDatetimeLocal(range.to));
+    }
+  }, [periodFilter, useDateRangePreset]);
+
+  useEffect(() => {
+    saveFiltersToStorage<AnomaliesFiltersStorage>(ANOMALIES_FILTERS_KEY, {
+      q,
+      severity,
+      atype,
+      bukrs,
+      periodFilter,
+      useDateRangePreset,
+      dateFrom,
+      dateTo,
+    });
+  }, [q, severity, atype, bukrs, periodFilter, useDateRangePreset, dateFrom, dateTo]);
 
   const apiType = urlType ?? (atype !== 'all' ? atype.toUpperCase().replace(/-/g, '_') : undefined);
   const apiSeverity = severity !== 'all' ? severity : urlSeverity ?? undefined;
@@ -131,6 +233,9 @@ export const AnomaliesPage = () => {
   const { items: rows, kpi, isLoading, error, refetch, companyCodes, filtersApplied } = useAnomaliesList({
     type: apiType,
     severity: apiSeverity,
+    range: useDateRangePreset ? periodFilter : undefined,
+    from: !useDateRangePreset && dateFrom ? datetimeLocalToIso(dateFrom) : undefined,
+    to: !useDateRangePreset && dateTo ? datetimeLocalToIso(dateTo) : undefined,
     filters: {
       searchQuery: q || undefined,
       severity: severity !== 'all' ? severity : undefined,
@@ -139,11 +244,30 @@ export const AnomaliesPage = () => {
     },
   });
 
+  const handleRefresh = () => {
+    const tenantId = getTenantId();
+    queryClient.invalidateQueries({ queryKey: ['synapse', 'anomalies', 'list', tenantId] });
+    refetch();
+  };
+
+  const handleResetFilters = () => {
+    setQ('');
+    setSeverity('all');
+    setAtype('all');
+    setBukrs('all');
+    setPeriodFilter('24h');
+    setUseDateRangePreset(true);
+    const range = getDateRangeFromPeriod('24h');
+    setDateFrom(isoToDatetimeLocal(range.from));
+    setDateTo(isoToDatetimeLocal(range.to));
+    setSearchParams(new URLSearchParams());
+  };
+
   const hasActiveFilters =
     (filtersApplied && Object.keys(filtersApplied).length > 0) ||
     severity !== 'all' ||
     atype !== 'all' ||
-    bukrs !== 'all' ||
+    periodFilter !== '24h' ||
     Boolean(urlType || urlRange);
 
   const sortedRows = [...rows].sort((a, b) => {
@@ -223,84 +347,6 @@ export const AnomaliesPage = () => {
           </Stack>
         </Stack>
 
-        {hasActiveFilters && (
-          <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center">
-            <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
-              {t('anomalies.filtersApplied')}:
-            </Typography>
-            {(filtersApplied?.range ?? urlRange) && (
-              <Chip
-                size="small"
-                label={`${t('anomalies.filterRange')}: ${filtersApplied?.range ?? urlRange}`}
-                onDelete={() => {
-                  const next = new URLSearchParams(searchParams);
-                  next.delete('range');
-                  next.delete('from');
-                  next.delete('to');
-                  setSearchParams(next);
-                }}
-              />
-            )}
-            {((filtersApplied?.type as string[] | undefined) ?? (atype !== 'all' ? [getAnomalyTypeMeta(t, atype)?.label ?? atype] : [])).map(
-              (s) => (
-                <Chip
-                  key={`type-${s}`}
-                  size="small"
-                  label={`${t('anomalies.filterType')}: ${s}`}
-                  onDelete={() => {
-                    setAtype('all');
-                    const next = new URLSearchParams(searchParams);
-                    next.delete('type');
-                    setSearchParams(next);
-                  }}
-                />
-              )
-            )}
-            {((filtersApplied?.severity as string[] | undefined) ?? (severity !== 'all' ? [severity] : [])).map(
-              (s) => {
-                const sevLabel =
-                  s === 'critical'
-                    ? t('cases.filterSeverityCritical')
-                    : s === 'high'
-                      ? t('cases.filterSeverityHigh')
-                      : s === 'medium'
-                        ? t('cases.filterSeverityMedium')
-                        : s === 'low'
-                          ? t('cases.filterSeverityLow')
-                          : s;
-                return (
-                  <Chip
-                    key={`severity-${s}`}
-                    size="small"
-                    label={`${t('anomalies.filterSeverity')}: ${sevLabel}`}
-                    onDelete={() => {
-                      setSeverity('all');
-                      const next = new URLSearchParams(searchParams);
-                      next.delete('severity');
-                      setSearchParams(next);
-                    }}
-                  />
-                );
-              }
-            )}
-            {((filtersApplied?.company as string[] | undefined) ?? (bukrs !== 'all' ? [bukrs] : [])).map(
-              (c) => (
-                <Chip
-                  key={`company-${c}`}
-                  size="small"
-                  label={`${t('anomalies.filterCompany')}: ${c}`}
-                  onDelete={() => {
-                    setBukrs('all');
-                    const next = new URLSearchParams(searchParams);
-                    next.delete('company');
-                    setSearchParams(next);
-                  }}
-                />
-              )
-            )}
-          </Stack>
-        )}
-
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <Card variant="outlined">
@@ -376,99 +422,235 @@ export const AnomaliesPage = () => {
               </Typography>
             </Stack>
 
-            <Grid container spacing={2} sx={{ mb: 2.5 }}>
-              <Grid size={{ xs: 12, lg: 5 }}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder={t('anomalies.searchPlaceholder')}
-                  value={q}
-                  onChange={(e) => setQ(e.target.value)}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <Iconify
-                          icon="solar:magnifer-linear"
-                          width={20}
-                          sx={{ mr: 1, color: 'text.secondary' }}
+            <FilterCard
+              title={t('anomalies.filterTitle')}
+              chips={
+                hasActiveFilters ? (
+                  <>
+                    {(filtersApplied?.range ?? urlRange ?? periodFilter !== '24h') && (
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={`${t('anomalies.filterRange')}: ${filtersApplied?.range ?? urlRange ?? periodFilter}`}
+                        onDelete={() => {
+                          setPeriodFilter('24h');
+                          setUseDateRangePreset(true);
+                          const range = getDateRangeFromPeriod('24h');
+                          setDateFrom(isoToDatetimeLocal(range.from));
+                          setDateTo(isoToDatetimeLocal(range.to));
+                          const next = new URLSearchParams(searchParams);
+                          next.delete('range');
+                          next.delete('from');
+                          next.delete('to');
+                          setSearchParams(next);
+                        }}
+                      />
+                    )}
+                    {((filtersApplied?.type as string[] | undefined) ?? (atype !== 'all' ? [getAnomalyTypeMeta(t, atype)?.label ?? atype] : [])).map(
+                      (s) => (
+                        <Chip
+                          key={`type-${s}`}
+                          size="small"
+                          variant="outlined"
+                          label={`${t('anomalies.filterType')}: ${s}`}
+                          onDelete={() => {
+                            setAtype('all');
+                            const next = new URLSearchParams(searchParams);
+                            next.delete('type');
+                            setSearchParams(next);
+                          }}
                         />
-                      ),
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 4, lg: 2 }}>
-                <Select
-                  fullWidth
-                  size="small"
-                  value={severity}
-                  onChange={(e: SelectChangeEvent) => {
-                    const v = e.target.value;
-                    setSeverity(v);
-                    const next = new URLSearchParams(searchParams);
-                    if (v !== 'all') next.set('severity', v);
-                    else next.delete('severity');
-                    setSearchParams(next);
-                  }}
-                  displayEmpty
-                >
-                  <MenuItem value="all">{t('anomalies.allSeverities')}</MenuItem>
-                  <MenuItem value="critical">{t('cases.filterSeverityCritical')}</MenuItem>
-                  <MenuItem value="high">{t('cases.filterSeverityHigh')}</MenuItem>
-                  <MenuItem value="medium">{t('cases.filterSeverityMedium')}</MenuItem>
-                  <MenuItem value="low">{t('cases.filterSeverityLow')}</MenuItem>
-                </Select>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
-                <Select
-                  fullWidth
-                  size="small"
-                  value={atype}
-                  onChange={(e: SelectChangeEvent) => {
-                    const v = e.target.value;
-                    setAtype(v);
-                    const next = new URLSearchParams(searchParams);
-                    if (v !== 'all') next.set('type', v.toUpperCase().replace(/-/g, '_'));
-                    else next.delete('type');
-                    setSearchParams(next);
-                  }}
-                  displayEmpty
-                >
-                  <MenuItem value="all">{t('anomalies.allTypes')}</MenuItem>
-                  {Object.keys(ANOMALY_TYPE_KEYS).map((k) => {
-                    const meta = getAnomalyTypeMeta(t, k);
-                    return (
-                      <MenuItem key={k} value={k}>
-                        {meta?.label ?? k}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 4, lg: 2 }}>
-                <Select
-                  fullWidth
-                  size="small"
-                  value={bukrs}
-                  onChange={(e: SelectChangeEvent) => {
-                    const v = e.target.value;
-                    setBukrs(v);
-                    const next = new URLSearchParams(searchParams);
-                    if (v !== 'all') next.set('company', v);
-                    else next.delete('company');
-                    setSearchParams(next);
-                  }}
-                  displayEmpty
-                >
-                  <MenuItem value="all">{t('anomalies.allCompanies')}</MenuItem>
-                  {companyCodes.map((c) => (
-                    <MenuItem key={c.code} value={c.code}>
-                      {c.code} — {c.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid>
-            </Grid>
+                      )
+                    )}
+                    {((filtersApplied?.severity as string[] | undefined) ?? (severity !== 'all' ? [severity] : [])).map(
+                      (s) => {
+                        const sevLabel =
+                          s === 'critical'
+                            ? t('cases.filterSeverityCritical')
+                            : s === 'high'
+                              ? t('cases.filterSeverityHigh')
+                              : s === 'medium'
+                                ? t('cases.filterSeverityMedium')
+                                : s === 'low'
+                                  ? t('cases.filterSeverityLow')
+                                  : s;
+                        return (
+                          <Chip
+                            key={`severity-${s}`}
+                            size="small"
+                            variant="outlined"
+                            label={`${t('anomalies.filterSeverity')}: ${sevLabel}`}
+                            onDelete={() => {
+                              setSeverity('all');
+                              const next = new URLSearchParams(searchParams);
+                              next.delete('severity');
+                              setSearchParams(next);
+                            }}
+                          />
+                        );
+                      }
+                    )}
+                  </>
+                ) : undefined
+              }
+              resetLabel={t('anomalies.filterReset')}
+              onReset={handleResetFilters}
+              searchLabel={t('anomalies.filterSearch')}
+              onSearch={handleRefresh}
+              sx={{ mb: 2.5 }}
+            >
+              <Stack spacing={1}>
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                    <Iconify icon="solar:calendar-bold" width={18} />
+                    <Typography variant="subtitle2">{t('anomalies.filterPeriod')}</Typography>
+                    <ToggleButtonGroup
+                      value={periodFilter}
+                      exclusive
+                      onChange={(_e, val: AnomaliesPeriod | null) => {
+                        if (val !== null) {
+                          setPeriodFilter(val);
+                          setUseDateRangePreset(true);
+                        }
+                      }}
+                      aria-label={t('anomalies.filterPeriod')}
+                      size="small"
+                      sx={{
+                        '& .MuiToggleButton-root': {
+                          px: 1,
+                          py: 0,
+                          minWidth: 36,
+                          height: 22,
+                          fontSize: '0.75rem',
+                          lineHeight: 1,
+                        },
+                      }}
+                    >
+                      <ToggleButton value="1h" aria-label="1h">1h</ToggleButton>
+                      <ToggleButton value="6h" aria-label="6h">6h</ToggleButton>
+                      <ToggleButton value="24h" aria-label="24h">24h</ToggleButton>
+                      <ToggleButton value="7d" aria-label="7d">7d</ToggleButton>
+                      <ToggleButton value="30d" aria-label="30d">30d</ToggleButton>
+                      <ToggleButton value="90d" aria-label="90d">90d</ToggleButton>
+                    </ToggleButtonGroup>
+                  </Stack>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems={{ sm: 'center' }}>
+                    <TextField
+                      label={t('anomalies.filterDateFrom')}
+                      type="datetime-local"
+                      size="small"
+                      value={dateFrom}
+                      onChange={(e) => {
+                        setDateFrom(e.target.value);
+                        setUseDateRangePreset(false);
+                      }}
+                      InputLabelProps={{ shrink: true }}
+                      sx={{ flex: 1, minWidth: 160 }}
+                    />
+                    <Typography
+                      variant="body2"
+                      sx={{ px: 0.5, color: 'text.secondary', display: { xs: 'none', sm: 'inline' } }}
+                    >
+                      ~
+                    </Typography>
+                    <TextField
+                      label={t('anomalies.filterDateTo')}
+                      type="datetime-local"
+                      size="small"
+                      value={dateTo}
+                      onChange={(e) => {
+                        setDateTo(e.target.value);
+                        setUseDateRangePreset(false);
+                      }}
+                      InputLabelProps={{ shrink: true }}
+                      sx={{ flex: 1, minWidth: 160 }}
+                    />
+                  </Stack>
+                </Stack>
+                <Stack spacing={1}>
+                  <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, lg: 5 }}>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        placeholder={t('anomalies.searchPlaceholder')}
+                        value={q}
+                        onChange={(e) => setQ(e.target.value)}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 4, lg: 2 }}>
+                      <Select
+                        fullWidth
+                        size="small"
+                        value={severity}
+                        onChange={(e: SelectChangeEvent) => {
+                          const v = e.target.value;
+                          setSeverity(v);
+                          const next = new URLSearchParams(searchParams);
+                          if (v !== 'all') next.set('severity', v);
+                          else next.delete('severity');
+                          setSearchParams(next);
+                        }}
+                        displayEmpty
+                      >
+                        <MenuItem value="all">{t('anomalies.allSeverities')}</MenuItem>
+                        <MenuItem value="critical">{t('cases.filterSeverityCritical')}</MenuItem>
+                        <MenuItem value="high">{t('cases.filterSeverityHigh')}</MenuItem>
+                        <MenuItem value="medium">{t('cases.filterSeverityMedium')}</MenuItem>
+                        <MenuItem value="low">{t('cases.filterSeverityLow')}</MenuItem>
+                      </Select>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
+                      <Select
+                        fullWidth
+                        size="small"
+                        value={atype}
+                        onChange={(e: SelectChangeEvent) => {
+                          const v = e.target.value;
+                          setAtype(v);
+                          const next = new URLSearchParams(searchParams);
+                          if (v !== 'all') next.set('type', v.toUpperCase().replace(/-/g, '_'));
+                          else next.delete('type');
+                          setSearchParams(next);
+                        }}
+                        displayEmpty
+                      >
+                        <MenuItem value="all">{t('anomalies.allTypes')}</MenuItem>
+                        {Object.keys(ANOMALY_TYPE_KEYS).map((k) => {
+                          const meta = getAnomalyTypeMeta(t, k);
+                          return (
+                            <MenuItem key={k} value={k}>
+                              {meta?.label ?? k}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 4, lg: 2 }}>
+                      <Select
+                        fullWidth
+                        size="small"
+                        value={bukrs}
+                        onChange={(e: SelectChangeEvent) => {
+                          const v = e.target.value;
+                          setBukrs(v);
+                          const next = new URLSearchParams(searchParams);
+                          if (v !== 'all') next.set('company', v);
+                          else next.delete('company');
+                          setSearchParams(next);
+                        }}
+                        displayEmpty
+                      >
+                        <MenuItem value="all">{t('anomalies.allCompanies')}</MenuItem>
+                        {companyCodes.map((c) => (
+                          <MenuItem key={c.code} value={c.code}>
+                            {c.code} — {c.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Grid>
+                  </Grid>
+                </Stack>
+            </FilterCard>
 
             {isLoading ? (
               <Box sx={{ py: 8, textAlign: 'center' }}>

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { useOpenItemsListQuery } from '@dwp-frontend/shared-utils';
+import { useOpenItemsListQuery, useOptimizationQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -56,6 +56,13 @@ const getRecommendation = (
 
 // ----------------------------------------------------------------------
 
+const BUCKET_LABELS: Record<string, string> = {
+  current: 'optimization.bucket.current',
+  '1-30': 'optimization.bucket.1-30',
+  '31-90': 'optimization.bucket.31-90',
+  '90+': 'optimization.bucket.90+',
+};
+
 export const OptimizationPage = () => {
   const { t } = useTranslation('common');
   const recommendationFor = getRecommendation(t);
@@ -64,11 +71,34 @@ export const OptimizationPage = () => {
   const [risk, setRisk] = useState<string>('all');
   const [bucket, setBucket] = useState<string>('all');
 
-  const { data: openItemsData, isLoading, error } = useOpenItemsListQuery({
-    limit: 500,
-    itemType: mode === 'ar' ? 'AR' : 'AP',
-  });
+  const { data: optimizationData, isLoading: optimizationLoading, error: optimizationError } =
+    useOptimizationQuery(mode);
+
+  const { data: openItemsData, isLoading: openItemsLoading, error: openItemsError } =
+    useOpenItemsListQuery({
+      limit: 500,
+      itemType: mode === 'ar' ? 'AR' : 'AP',
+    });
   const openItems = openItemsData ?? [];
+
+  const totals = useMemo(() => {
+    if (optimizationData) {
+      const currency = optimizationData.buckets[0]?.currency ?? optimizationData.overdueSummary?.currency ?? 'KRW';
+      const totalAmount = optimizationData.buckets.reduce((acc, b) => acc + b.totalAmount, 0);
+      const overdueAmount = optimizationData.overdueSummary?.overdueAmount ?? 0;
+      const recommendationsCount = optimizationData.alertRecommendations?.length ?? 0;
+      return {
+        sum: totalAmount,
+        overdue: overdueAmount,
+        currency,
+        recommendationsCount,
+        buckets: optimizationData.buckets,
+        overdueSummary: optimizationData.overdueSummary,
+        alertRecommendations: optimizationData.alertRecommendations ?? [],
+      };
+    }
+    return null;
+  }, [optimizationData]);
 
   const rows = useMemo(() => {
     const filtered = openItems
@@ -98,7 +128,7 @@ export const OptimizationPage = () => {
     return filtered;
   }, [openItems, mode, search, risk, bucket]);
 
-  const totals = useMemo(() => {
+  const tableTotals = useMemo(() => {
     const sum = rows.reduce((acc, r) => acc + r.amount, 0);
     const overdue = rows.filter((r) => r.daysPastDue > 0).reduce((acc, r) => acc + r.amount, 0);
     const highValue = rows.filter((r) => r.amount > 500000).length;
@@ -106,6 +136,9 @@ export const OptimizationPage = () => {
   }, [rows]);
 
   const getEntityName = (id: string, entityName?: string) => entityName || id;
+
+  const isLoading = optimizationLoading || openItemsLoading;
+  const error = optimizationError ?? openItemsError;
 
   if (error) {
     return (
@@ -143,7 +176,7 @@ export const OptimizationPage = () => {
         </Stack>
       </Box>
 
-      {/* KPIs */}
+      {/* KPIs - optimization API */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 2 }}>
         <Card>
           <CardHeader
@@ -159,7 +192,9 @@ export const OptimizationPage = () => {
           />
           <CardContent sx={{ pt: 0 }}>
             <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              {formatMoney(totals.sum, 'USD')}
+              {totals
+                ? formatMoney(totals.sum, totals.currency)
+                : formatMoney(tableTotals.sum, 'USD')}
             </Typography>
           </CardContent>
         </Card>
@@ -177,7 +212,9 @@ export const OptimizationPage = () => {
           />
           <CardContent sx={{ pt: 0 }}>
             <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              {formatMoney(totals.overdue, 'USD')}
+              {totals
+                ? formatMoney(totals.overdue, totals.currency)
+                : formatMoney(tableTotals.overdue, 'USD')}
             </Typography>
           </CardContent>
         </Card>
@@ -195,11 +232,94 @@ export const OptimizationPage = () => {
           />
           <CardContent sx={{ pt: 0 }}>
             <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              {totals.highValue.toLocaleString()}
+              {totals
+                ? totals.recommendationsCount.toLocaleString()
+                : tableTotals.highValue.toLocaleString()}
             </Typography>
           </CardContent>
         </Card>
       </Box>
+
+      {/* Buckets - optimization API */}
+      {totals?.buckets && totals.buckets.length > 0 && (
+        <Card>
+          <CardHeader
+            title={
+              <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Iconify icon="solar:pie-chart-2-bold" width={16} sx={{ color: 'text.secondary' }} />
+                {t('optimization.filters.bucket')}
+              </Typography>
+            }
+            titleTypographyProps={{ variant: 'subtitle2' }}
+          />
+          <CardContent sx={{ pt: 0 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(4, 1fr)' }, gap: 2 }}>
+              {totals.buckets.map((b) => (
+                <Box
+                  key={b.bucketKey}
+                  sx={{
+                    p: 1.5,
+                    borderRadius: 1,
+                    border: 1,
+                    borderColor: 'divider',
+                    bgcolor: 'background.neutral',
+                  }}
+                >
+                  <Typography variant="caption" color="text.secondary">
+                    {t(BUCKET_LABELS[b.bucketKey] ?? b.bucketKey)}
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mt: 0.5 }}>
+                    {formatMoney(b.totalAmount, b.currency)}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {b.itemCount}건
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Alert Recommendations - optimization API */}
+      {totals?.alertRecommendations && totals.alertRecommendations.length > 0 && (
+        <Card>
+          <CardHeader
+            title={
+              <Typography variant="subtitle2" sx={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Iconify icon="solar:magic-stick-3-bold" width={16} sx={{ color: 'text.secondary' }} />
+                {t('optimization.buttons.autoRecommend')}
+              </Typography>
+            }
+            titleTypographyProps={{ variant: 'subtitle2' }}
+          />
+          <CardContent sx={{ pt: 0 }}>
+            <Stack spacing={1}>
+              {totals.alertRecommendations.map((rec, idx) => (
+                <Box
+                  key={idx}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    p: 1.5,
+                    borderRadius: 1,
+                    border: 1,
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Typography variant="body2">{rec.reason}</Typography>
+                  <Chip
+                    label={`${rec.recommendationType} · ${rec.affectedCount}건`}
+                    size="small"
+                    variant="outlined"
+                  />
+                </Box>
+              ))}
+            </Stack>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Controls */}
       <Card>

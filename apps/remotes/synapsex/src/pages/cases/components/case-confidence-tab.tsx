@@ -1,8 +1,10 @@
 /**
  * Case Confidence Tab — API 바인딩
  * @see docs/job/PROMPT_B_Frontend_Cases_TabsBind_P1_v2.txt
+ * @see docs/job/PROMPT_FE_CASE_TABS_DEBUG_UX_P11.txt — Debug payload
  */
 
+import { useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useCaseConfidenceQuery } from '@dwp-frontend/shared-utils';
@@ -13,6 +15,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
+import { useCaseTabsDebug } from '../context/case-tabs-debug-context';
 import { TabEmptyState } from '../../../components/ux/tab-empty-state';
 import { TabErrorState } from '../../../components/ux/tab-error-state';
 import { TabContentSkeleton } from '../../../components/ux/tab-content-skeleton';
@@ -28,11 +31,27 @@ const ICON_MAP: Record<string, string> = {
 type CaseConfidenceTabProps = {
   caseId: string | undefined;
   enabled: boolean;
+  tabKey?: string;
 };
 
-export const CaseConfidenceTab = ({ caseId, enabled }: CaseConfidenceTabProps) => {
+export const CaseConfidenceTab = ({ caseId, enabled, tabKey = 'confidence' }: CaseConfidenceTabProps) => {
   const { t } = useTranslation('common');
+  const debugCtx = useCaseTabsDebug();
   const { data, isLoading, isError, error, refetch } = useCaseConfidenceQuery(caseId, { enabled });
+
+  const setPayload = debugCtx?.setPayload;
+  useEffect(() => {
+    if (!enabled || !setPayload) return;
+    if (isError && error) {
+      setPayload(tabKey, {
+        status: 'error',
+        payload: { message: error instanceof Error ? error.message : String(error) },
+        error: error instanceof Error ? error.message : String(error),
+      });
+    } else if (!isLoading && data !== undefined) {
+      setPayload(tabKey, { status: 'success', payload: data });
+    }
+  }, [enabled, setPayload, isLoading, isError, error, data, tabKey]);
 
   if (isLoading) {
     return <TabContentSkeleton cards={4} />;
@@ -51,14 +70,18 @@ export const CaseConfidenceTab = ({ caseId, enabled }: CaseConfidenceTabProps) =
   }
 
   const factors = data?.factors ?? [];
+  const overallScore = data?.overallScore ?? data?.score;
+  const isEmpty = factors.length === 0 || overallScore == null;
 
-  if (factors.length === 0) {
+  if (isEmpty) {
+    const reason = t('cases.tabs.confidence.empty.reason.factorsZeroOrScoreNull');
     return (
       <Box sx={{ p: 2 }}>
         <TabEmptyState
           icon="solar:graph-up-bold-duotone"
           title={t('cases.tabs.confidence.empty.title')}
           description={t('cases.tabs.confidence.empty.description')}
+          reason={reason}
         />
       </Box>
     );

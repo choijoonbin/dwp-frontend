@@ -14,6 +14,8 @@ import {
   getFiOpenItems,
   getFiDocHeaders,
   getEntityDetail,
+  getOptimizationAr,
+  getOptimizationAp,
   type LineageParams,
   type EntitiesListParams,
   type DocumentsListParams,
@@ -51,6 +53,9 @@ export const entityDetailQueryKey = (tenantId: string, partyId: string) =>
 
 export const lineageQueryKey = (tenantId: string, params?: LineageParams) =>
   ['synapse', 'lineage', tenantId, params] as const;
+
+export const optimizationQueryKey = (tenantId: string, type: 'ar' | 'ap') =>
+  ['synapse', 'optimization', tenantId, type] as const;
 
 // ----------------------------------------------------------------------
 // Documents
@@ -209,4 +214,55 @@ export const useLineageQuery = (params?: LineageParams) => {
     gcTime: 10 * 60 * 1000,
     retry: false,
   });
+};
+
+// ----------------------------------------------------------------------
+// Optimization (AR/AP 채권·채무 최적화)
+// ----------------------------------------------------------------------
+
+export const useOptimizationArQuery = () => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled = isAuthenticated && Boolean(tenantId);
+
+  return useQuery({
+    queryKey: optimizationQueryKey(tenantId, 'ar'),
+    queryFn: async () => {
+      const res = await getOptimizationAr();
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch AR optimization');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
+};
+
+export const useOptimizationApQuery = () => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled = isAuthenticated && Boolean(tenantId);
+
+  return useQuery({
+    queryKey: optimizationQueryKey(tenantId, 'ap'),
+    queryFn: async () => {
+      const res = await getOptimizationAp();
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch AP optimization');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
+};
+
+/** 탭별 최적화 데이터 — mode에 따라 AR 또는 AP만 Fetch */
+export const useOptimizationQuery = (mode: 'ar' | 'ap') => {
+  const arQuery = useOptimizationArQuery();
+  const apQuery = useOptimizationApQuery();
+  return mode === 'ar' ? arQuery : apQuery;
 };

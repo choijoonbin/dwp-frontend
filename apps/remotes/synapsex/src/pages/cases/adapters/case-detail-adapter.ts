@@ -33,6 +33,7 @@ const mapSeverity = (s: string): CaseDetailUi['severity'] => {
 const mapStatus = (s: string): string => {
   const lower = (s ?? '').toLowerCase();
   const statusMap: Record<string, string> = {
+    OPEN: 'open',
     TRIAGED: 'triage',
     IN_PROGRESS: 'in_progress',
     RESOLVED: 'resolved',
@@ -54,7 +55,7 @@ export const caseDetailDtoToUi = (caseId: string, dto: CaseDetailDto | null): Ca
     caseNumber: `CS-${caseId}`,
     title: reasonText || `Case ${caseId}`,
     severity: mapSeverity((docOrItem?.severity as string) ?? 'medium'),
-    status: mapStatus((docOrItem?.status as string) ?? 'triage'),
+    status: mapStatus((dto?.status as string) ?? (docOrItem?.status as string) ?? 'triage'),
     anomalyType: (docOrItem?.caseType as string) ?? '',
     companyCode: bukrs,
     counterparty: (docOrItem?.counterparty as string) ?? '',

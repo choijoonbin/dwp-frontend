@@ -143,6 +143,7 @@ import {
   SelectableCard,
   TwoColumnLayout,
   FilterBar,
+  FilterCard,
   ToolbarActions,
   DataTable,
   EditorModal,
@@ -564,7 +565,55 @@ import Button from '@mui/material/Button';
 
 ---
 
-#### 6. ToolbarActions ✅
+#### 6. FilterCard ✅
+**상태**: ✅ 사용 가능  
+**위치**: `libs/design-system/src/components/patterns/filter-card`  
+**용도**: 검색조건(필터) 영역 공통화 — 제목, 선택된 필터 칩, 초기화/검색 버튼, 메뉴별 커스텀 필터 컨트롤
+
+**Props**:
+```typescript
+type FilterCardProps = {
+  title: string;              // 필터 제목
+  chips?: ReactNode;          // 선택된 필터 칩들 (메뉴별 커스텀)
+  resetLabel?: string;        // 초기화 버튼 라벨
+  onReset?: () => void;      // 초기화 핸들러
+  searchLabel?: string;       // 검색 버튼 라벨
+  onSearch?: () => void;      // 검색 핸들러
+  children: ReactNode;        // 커스텀 필터 컨트롤 (기간, 검색, Select 등)
+  sx?: SxProps<Theme>;       // Card 여백 등
+};
+```
+
+**사용 예시**:
+```typescript
+import { FilterCard } from '@dwp-frontend/design-system';
+import Chip from '@mui/material/Chip';
+
+<FilterCard
+  title={t('cases.filterTitle')}
+  chips={hasFilters ? (
+    <>
+      <Chip size="small" variant="outlined" label="기간: 24h" onDelete={...} />
+      <Chip size="small" variant="outlined" label="상태: OPEN" onDelete={...} />
+    </>
+  ) : undefined}
+  resetLabel={t('cases.filterReset')}
+  onReset={handleResetFilters}
+  searchLabel={t('cases.filterSearch')}
+  onSearch={handleRefresh}
+>
+  {/* 메뉴별 커스텀: 기간 토글, 날짜 범위, 검색, Select 등 */}
+  <Stack spacing={1}>...</Stack>
+</FilterCard>
+```
+
+**참고 구현**:
+- 케이스 작업함: `apps/remotes/synapsex/src/pages/cases/index.tsx`
+- 이상징후탐지: `apps/remotes/synapsex/src/pages/anomalies/index.tsx`
+
+---
+
+#### 7. ToolbarActions ✅
 **상태**: ✅ 사용 가능  
 **위치**: `libs/design-system/src/components/patterns/toolbar-actions`  
 **용도**: 버튼 그룹 정렬 표준화
@@ -605,7 +654,7 @@ import Button from '@mui/material/Button';
 
 ---
 
-#### 7. DataTable ✅
+#### 8. DataTable ✅
 **상태**: ✅ 사용 가능  
 **위치**: `libs/design-system/src/components/patterns/data-table`  
 **용도**: 테이블 컨테이너 (로딩/빈 상태/스크롤 통일)
@@ -650,7 +699,7 @@ import Table from '@mui/material/Table';
 
 ---
 
-#### 8. EditorModal ✅
+#### 9. EditorModal ✅
 **상태**: ✅ 사용 가능  
 **위치**: `libs/design-system/src/components/patterns/editor-modal`  
 **용도**: 생성/편집/보기 모달 표준화

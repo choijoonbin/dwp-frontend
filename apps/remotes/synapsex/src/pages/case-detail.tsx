@@ -1,8 +1,16 @@
 import { useMemo, useState } from 'react';
+
+const IS_DEV = import.meta.env.DEV;
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
-import { is403Error, buildAuditUrl, useSynapseAgentStream } from '@dwp-frontend/shared-utils';
+import {
+  buildAuditUrl,
+  is403Error,
+  useCodesByGroupQuery,
+  useSynapseAgentStream,
+  useUpdateCaseStatusMutation,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -11,7 +19,12 @@ import Chip from '@mui/material/Chip';
 import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Select from '@mui/material/Select';
 import Switch from '@mui/material/Switch';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import CircularProgress from '@mui/material/CircularProgress';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
@@ -37,6 +50,8 @@ import { StatusPill, type Status } from '../components/finance/status-pill';
 import { CaseSimulationDiff } from './cases/components/case-simulation-diff';
 import { CaseRagEvidenceTab } from './cases/components/case-rag-evidence-tab';
 import { useCaseDetail, type AuditEvent } from './cases/hooks/use-case-detail';
+import { CaseTabsDebugDrawer } from './cases/components/case-tabs-debug-drawer';
+import { CaseTabsDebugProvider } from './cases/context/case-tabs-debug-context';
 import { CaseAgentStreamPanel } from './cases/components/case-agent-stream-panel';
 
 import type { HitlStatus } from './cases/hooks/use-case-hitl';
@@ -44,7 +59,21 @@ import type { HitlStatus } from './cases/hooks/use-case-hitl';
 // ----------------------------------------------------------------------
 // @see docs/job/PROMPT_B_Frontend_MenuByMenu_Cases_First.txt
 // @see docs/job/PROMPT_B_Frontend_Cases_TabsBind_P1_v2.txt
+// @see docs/job/PROMPT_FE_CaseDetail_StatusAndActionButtons_WireUp_P0.txt
 // ----------------------------------------------------------------------
+
+const ALLOWED_CASE_STATUSES = ['OPEN', 'TRIAGED', 'IN_PROGRESS', 'RESOLVED', 'DISMISSED'] as const;
+type CaseStatusApi = (typeof ALLOWED_CASE_STATUSES)[number];
+
+const displayStatusToApi = (s: string): CaseStatusApi => {
+  const lower = (s ?? '').toLowerCase();
+  if (lower === 'open') return 'OPEN';
+  if (lower === 'triage' || lower === 'triaged') return 'TRIAGED';
+  if (lower === 'in_progress') return 'IN_PROGRESS';
+  if (lower === 'resolved') return 'RESOLVED';
+  if (lower === 'dismissed') return 'DISMISSED';
+  return 'TRIAGED';
+};
 
 /** 케이스 상세 페이지 */
 export const CaseDetailPage = () => {
@@ -58,8 +87,29 @@ export const CaseDetailPage = () => {
   const id = idFromParams ?? idFromPath ?? undefined;
 
   const { caseData, evidence, fiDoc, fiDocItems, relatedActions, auditEvents, isLoading, error, refetch } = useCaseDetail(id);
+  const updateStatusMutation = useUpdateCaseStatusMutation();
+  const { data: caseStatusCodes } = useCodesByGroupQuery('CASE_STATUS');
 
   const caseAuditEvents = auditEvents;
+  const currentStatusApi = displayStatusToApi(caseData?.status ?? '');
+  const isStatusMutating = updateStatusMutation.isPending;
+
+  const statusOptions = useMemo(() => {
+    if (!caseStatusCodes) return [];
+    const allowed = new Set(ALLOWED_CASE_STATUSES);
+    return caseStatusCodes
+      .filter((c) => allowed.has((c.codeKey ?? (c as { code?: string }).code ?? '').toUpperCase() as CaseStatusApi))
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+      .map((c) => ({
+        value: (c.codeKey ?? (c as { code?: string }).code ?? '').toUpperCase() as CaseStatusApi,
+        label: (c.codeName ?? (c as { name?: string }).name ?? '').trim() || c.codeKey,
+      }));
+  }, [caseStatusCodes]);
+
+  const handleStatusChange = (newStatus: CaseStatusApi) => {
+    if (!id || newStatus === currentStatusApi) return;
+    updateStatusMutation.mutate({ caseId: id, status: newStatus });
+  };
 
   const documentRelationshipFromFiDoc = useMemo(() => {
     if (!fiDoc) return [];
@@ -80,6 +130,7 @@ export const CaseDetailPage = () => {
   const [simulationMode, setSimulationMode] = useState(false);
   const [rightPanelTab, setRightPanelTab] = useState<'actions' | 'audit'>('actions');
   const [centerTab, setCenterTab] = useState('analysis');
+  const [debugDrawerOpen, setDebugDrawerOpen] = useState(false);
 
   // HITL state
   const [hitlOpen, setHitlOpen] = useState(false);
@@ -172,6 +223,7 @@ export const CaseDetailPage = () => {
   }
 
   return (
+    <CaseTabsDebugProvider activeTab={centerTab} onActiveTabChange={setCenterTab}>
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.5rem)' }}>
       {/* Case Header */}
       <Box
@@ -198,6 +250,22 @@ export const CaseDetailPage = () => {
                 </Typography>
                 <SeverityBadge severity={caseData.severity} />
                 <StatusPill status={caseData.status as Status} />
+                <FormControl size="small" sx={{ minWidth: 140 }}>
+                  <InputLabel id="case-status-select-label">{t('caseDetail.status')}</InputLabel>
+                  <Select
+                    labelId="case-status-select-label"
+                    label={t('caseDetail.status')}
+                    value={currentStatusApi}
+                    onChange={(e) => handleStatusChange(e.target.value as CaseStatusApi)}
+                    disabled={isStatusMutating}
+                  >
+                    {statusOptions.map((opt) => (
+                      <MenuItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Stack>
               <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ gap: 1 }}>
                 <Stack direction="row" spacing={0.5} alignItems="center">
@@ -229,6 +297,13 @@ export const CaseDetailPage = () => {
           </Stack>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
             <ConfidenceRing value={caseData.confidence} size={48} />
+            {IS_DEV && (
+              <Tooltip title="Tab Debug (DEV)">
+                <IconButton size="small" sx={{ bgcolor: 'transparent' }} onClick={() => setDebugDrawerOpen(true)}>
+                  <Iconify icon="solar:code-square-bold-duotone" width={16} />
+                </IconButton>
+              </Tooltip>
+            )}
             <Tooltip title={t('caseDetail.copyCaseId')}>
               <IconButton size="small" sx={{ bgcolor: 'transparent' }}>
                 <Iconify icon="solar:copy-bold-duotone" width={16} />
@@ -371,12 +446,14 @@ export const CaseDetailPage = () => {
                           {t('caseDetail.vendor')}
                         </Typography>
                         {(() => {
-                          const doc = evidence?.documentOrOpenItem as { partyId?: string | number; counterpartyId?: string } | undefined;
-                          const partyId = doc?.partyId != null ? String(doc.partyId) : null;
-                          return partyId ? (
+                          const display =
+                            fiDoc?.counterpartyDisplay ??
+                            (fiDoc as { counterpartyId?: string })?.counterpartyId;
+                          const entityId = fiDoc?.counterpartyId;
+                          return entityId ? (
                             <Typography
                               component={Link}
-                              to={`${SYNAPSE_ROUTES.ENTITIES}/${partyId}`}
+                              to={`${SYNAPSE_ROUTES.ENTITIES}/${entityId}`}
                               variant="body2"
                               sx={{
                                 fontWeight: 500,
@@ -386,11 +463,11 @@ export const CaseDetailPage = () => {
                                 '&:hover': { textDecoration: 'underline' },
                               }}
                             >
-                              {doc?.counterpartyId || t('caseDetail.viewEntity')}
+                              {display || t('caseDetail.viewEntity')}
                             </Typography>
                           ) : (
                             <Typography variant="body2" sx={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                              {(fiDoc as { counterpartyId?: string })?.counterpartyId || 'N/A'}
+                              {display || 'N/A'}
                             </Typography>
                           );
                         })()}
@@ -566,6 +643,7 @@ export const CaseDetailPage = () => {
               <CaseAnalysisTab
                 caseId={id}
                 enabled={centerTab === 'analysis'}
+                tabKey="analysis"
                 fallbackConfidence={caseData?.confidence}
                 fallbackTitle={caseData?.title}
                 fallbackAnomalyType={caseData?.anomalyType}
@@ -577,6 +655,7 @@ export const CaseDetailPage = () => {
               <CaseConfidenceTab
                 caseId={id}
                 enabled={centerTab === 'confidence'}
+                tabKey="confidence"
               />
             )}
 
@@ -584,6 +663,7 @@ export const CaseDetailPage = () => {
               <CaseSimilarTab
                 caseId={id}
                 enabled={centerTab === 'similar'}
+                tabKey="similar"
               />
             )}
 
@@ -591,6 +671,7 @@ export const CaseDetailPage = () => {
               <CaseRagEvidenceTab
                 caseId={id}
                 enabled={centerTab === 'policies'}
+                tabKey="policies"
               />
             )}
           </Box>
@@ -686,21 +767,57 @@ export const CaseDetailPage = () => {
               <Stack spacing={2}>
                 {/* Primary CTA Stack */}
                 <Stack spacing={1}>
-                  <Button variant="contained" fullWidth startIcon={<Iconify icon="solar:check-circle-bold-duotone" width={20} />}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    disabled={isStatusMutating}
+                    startIcon={isStatusMutating ? <CircularProgress size={16} color="inherit" /> : <Iconify icon="solar:check-circle-bold-duotone" width={20} />}
+                    onClick={() => handleStatusChange('RESOLVED')}
+                  >
                     {t('caseDetail.approveAction')}
                   </Button>
-                  <Button variant="outlined" fullWidth startIcon={<Iconify icon="solar:close-circle-bold-duotone" width={20} />}>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    disabled={isStatusMutating}
+                    startIcon={<Iconify icon="solar:close-circle-bold-duotone" width={20} />}
+                    onClick={() => handleStatusChange('DISMISSED')}
+                  >
                     {t('caseDetail.reject')}
                   </Button>
-                  <Button variant="outlined" fullWidth startIcon={<Iconify icon="solar:info-circle-bold-duotone" width={20} />}>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    disabled={isStatusMutating}
+                    startIcon={<Iconify icon="solar:info-circle-bold-duotone" width={20} />}
+                    onClick={() => handleStatusChange('TRIAGED')}
+                  >
                     {t('caseDetail.requestInfo')}
                   </Button>
-                  <Button variant="outlined" fullWidth startIcon={<Iconify icon="solar:forbidden-circle-bold-duotone" width={20} />}>
-                    {t('caseDetail.setPaymentBlock')}
-                  </Button>
-                  <Button variant="outlined" fullWidth startIcon={<Iconify icon="solar:refresh-bold-duotone" width={20} />}>
-                    {t('caseDetail.postReversal')}
-                  </Button>
+                  <Tooltip title={t('caseDetail.comingInPhaseB')}>
+                    <span>
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        disabled
+                        startIcon={<Iconify icon="solar:forbidden-circle-bold-duotone" width={20} />}
+                      >
+                        {t('caseDetail.setPaymentBlock')}
+                      </Button>
+                    </span>
+                  </Tooltip>
+                  <Tooltip title={t('caseDetail.comingInPhaseB')}>
+                    <span>
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        disabled
+                        startIcon={<Iconify icon="solar:refresh-bold-duotone" width={20} />}
+                      >
+                        {t('caseDetail.postReversal')}
+                      </Button>
+                    </span>
+                  </Tooltip>
                 </Stack>
 
                 <Divider />
@@ -861,6 +978,15 @@ export const CaseDetailPage = () => {
         </Box>
       </Box>
 
+      {/* Debug Drawer (DEV only) */}
+      {IS_DEV && (
+        <CaseTabsDebugDrawer
+          open={debugDrawerOpen}
+          onClose={() => setDebugDrawerOpen(false)}
+          caseId={id}
+        />
+      )}
+
       {/* HITL Approval Drawer */}
       <CaseHitlDrawer
         open={hitlOpen}
@@ -877,5 +1003,6 @@ export const CaseDetailPage = () => {
         isRejecting={isRejecting}
       />
     </Box>
+    </CaseTabsDebugProvider>
   );
 };

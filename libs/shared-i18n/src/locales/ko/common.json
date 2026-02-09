@@ -137,6 +137,22 @@
     "empty": "아직 탐지된 케이스가 없습니다",
     "emptyData": "데이터 없음",
     "filterResetCta": "필터 초기화",
+    "filterRange": "검출 기간",
+    "filterRangeAll": "전체",
+    "filterRange1h": "1시간",
+    "filterRange6h": "6시간",
+    "filterRange24h": "24시간",
+    "filterRange7d": "7일",
+    "filterRange30d": "30일",
+    "filterTitle": "필터",
+    "filterPeriod": "기간",
+    "filterDateFrom": "시작",
+    "filterDateTo": "종료",
+    "filterDetectionPeriod": "케이스 검출시간",
+    "filterDetectionFrom": "검출 시작",
+    "filterDetectionTo": "검출 종료",
+    "filterReset": "검색 초기화",
+    "filterSearch": "검색",
     "statusSearchPlaceholder": "상태 검색...",
     "pinnedStatuses": "자주 쓰는 상태",
     "allStatuses": "전체 상태",
@@ -151,7 +167,10 @@
       "analysis": {
         "empty": {
           "title": "분석 데이터 없음",
-          "description": "이 케이스에 대한 AI 분석을 사용할 수 없습니다."
+          "description": "이 케이스에 대한 AI 분석을 사용할 수 없습니다.",
+          "reason": {
+            "summaryRecommendationsZero": "분석 결과 없음(summary/recommendations=0)"
+          }
         },
         "error": {
           "title": "분석 로드 실패"
@@ -160,7 +179,10 @@
       "confidence": {
         "empty": {
           "title": "신뢰도 데이터 없음",
-          "description": "신뢰도 분석을 사용할 수 없습니다."
+          "description": "신뢰도 분석을 사용할 수 없습니다.",
+          "reason": {
+            "factorsZeroOrScoreNull": "신뢰도 데이터 없음(factors=0 or score null)"
+          }
         },
         "error": {
           "title": "신뢰도 로드 실패"
@@ -169,7 +191,10 @@
       "similar": {
         "empty": {
           "title": "유사 케이스 없음",
-          "description": "유사한 케이스를 찾을 수 없습니다."
+          "description": "유사한 케이스를 찾을 수 없습니다.",
+          "reason": {
+            "itemsZero": "유사 케이스 없음(items=0)"
+          }
         },
         "error": {
           "title": "유사 케이스 로드 실패"
@@ -178,7 +203,10 @@
       "ragEvidence": {
         "empty": {
           "title": "RAG 근거 없음",
-          "description": "정책 인용을 사용할 수 없습니다."
+          "description": "정책 인용을 사용할 수 없습니다.",
+          "reason": {
+            "itemsZero": "RAG 근거 없음(items=0)"
+          }
         },
         "error": {
           "title": "RAG 근거 로드 실패"
@@ -198,6 +226,12 @@
     "runScan": "스캔 실행",
     "filtersApplied": "적용된 필터",
     "filterRange": "기간",
+    "filterTitle": "필터",
+    "filterPeriod": "기간",
+    "filterDateFrom": "시작",
+    "filterDateTo": "종료",
+    "filterReset": "검색 초기화",
+    "filterSearch": "검색",
     "filterType": "유형",
     "filterSeverity": "심각도",
     "filterCompany": "회사",
@@ -250,7 +284,7 @@
     "original": "원본",
     "reversal": "역분개",
     "fiDocument": "FI 문서",
-    "docNumber": "문서 번호",
+    "docNumber": "전표 번호",
     "date": "일자",
     "amount": "금액",
     "vendor": "거래처",
@@ -291,12 +325,14 @@
     "fieldChanges": "필드 변경",
     "actions": "액션",
     "auditStream": "감사 스트림",
+    "status": "상태",
     "approveAction": "액션 승인",
     "reject": "거절",
     "requestInfo": "정보 요청",
     "setPaymentBlock": "결제 차단 설정",
     "postReversal": "역분개 전기",
     "goToActionCenter": "액션 센터로 이동",
+    "comingInPhaseB": "Phase B에서 지원 예정",
     "pendingActions": "대기 중인 액션",
     "noActionsYet": "아직 액션이 없습니다",
     "viewAudit": "감사 보기 (케이스 필터)",
@@ -552,6 +588,12 @@
       "allRisks": "전체 리스크",
       "bucket": "연체 구간"
     },
+    "bucket": {
+      "current": "현재",
+      "1-30": "1~30일",
+      "31-90": "31~90일",
+      "90+": "90일+"
+    },
     "recommendation": {
       "escalateDunning": "에스컬레이션 및 독촉 제안",
       "sendReminder": "알림 발송 및 약속일 확인",
@@ -656,6 +698,102 @@
     "status": { "blocked": "차단", "dispute": "분쟁", "overdue": "연체" },
     "loading": "로딩 중...",
     "empty": "미결제 항목이 없습니다."
+  },
+  "entityDetail": {
+    "loading": "로딩 중...",
+    "entityNotFoundDesc": "ID {{id}}인 엔티티를 찾을 수 없습니다.",
+    "returnToEntityHub": "거래처 허브로 돌아가기",
+    "openInSap": "SAP에서 열기",
+    "export": "내보내기",
+    "tabs": {
+      "overview": "개요",
+      "changeLog": "변경 이력",
+      "related": "관련 항목",
+      "accessControl": "접근 제어"
+    },
+    "kpis": {
+      "openItems": "미결제 항목",
+      "itemsCount": "{{count}}건",
+      "overdue": "연체",
+      "recentAnomalies": "최근 이상",
+      "last30Days": "최근 30일",
+      "actionSuccess": "액션 성공률",
+      "resolutionRate": "해결률"
+    },
+    "snapshot": {
+      "fiDocuments": "FI 문서",
+      "openItems": "미결제 항목",
+      "cases": "케이스",
+      "actions": "액션",
+      "linkedDocuments": "연결된 문서",
+      "outstandingItems": "미결제 항목",
+      "activeCases": "활성 케이스",
+      "relatedActions": "관련 액션",
+      "viewDocuments": "문서 보기",
+      "viewOpenItems": "미결제 항목 보기",
+      "viewCases": "케이스 보기",
+      "viewActions": "액션 보기"
+    },
+    "auditChangeLog": "감사 변경 이력",
+    "filter": "필터",
+    "noChangeHistory": "이 엔티티에 대한 변경 이력이 없습니다.",
+    "related": {
+      "fiDocuments": "관련 FI 문서",
+      "openItems": "관련 미결제 항목",
+      "cases": "관련 케이스",
+      "viewAll": "전체 보기",
+      "noRelatedDocuments": "관련 문서 없음",
+      "noOpenItems": "미결제 항목 없음",
+      "noRelatedCases": "관련 케이스 없음"
+    },
+    "table": {
+      "docNumber": "문서 번호",
+      "type": "유형",
+      "date": "날짜",
+      "amount": "금액",
+      "status": "상태",
+      "item": "항목",
+      "due": "만기",
+      "case": "케이스",
+      "title": "제목",
+      "severity": "심각도"
+    },
+    "dispute": "분쟁",
+    "blocked": "차단됨",
+    "piiAccessControl": "PII 접근 제어",
+    "piiAccessSubheader": "민감한 엔티티 데이터는 보호됩니다. 접근 요청 또는 데모 모드를 사용하여 마스킹된 필드를 확인하세요.",
+    "sensitiveFieldsMasked": "민감 필드 마스킹됨",
+    "fullAccessGranted": "전체 접근 허용됨",
+    "sensitiveFieldsMaskedDesc": "은행 계좌, 연락처, 세금 ID가 숨겨져 있습니다",
+    "allSensitiveVisible": "모든 민감 필드가 표시됩니다",
+    "pendingApproval": "승인 대기",
+    "requestAccess": "접근 요청",
+    "revokeAccess": "접근 취소",
+    "demoMode": "데모 모드 (관리자 시뮬레이션)",
+    "demoModeDesc": "시연 목적으로 접근 제어를 우회합니다",
+    "grantAccess": "접근 허용",
+    "sensitiveFields": "민감 필드",
+    "generalInformation": "일반 정보",
+    "bankAccount": "은행 계좌",
+    "bankName": "은행명",
+    "taxId": "세금 ID",
+    "contactName": "연락처 이름",
+    "contactEmail": "연락처 이메일",
+    "contactPhone": "연락처 전화",
+    "address": "주소",
+    "companyCode": "회사 코드",
+    "currency": "통화",
+    "paymentTerms": "결제 조건",
+    "lastUpdated": "최종 업데이트",
+    "concentrationRisk": "{{level}} 집중도",
+    "requestPiiAccess": "PII 접근 요청",
+    "requestPiiAccessDesc": "{{name}}의 민감 데이터에 대한 접근이 필요한 이유를 설명하세요. 이 요청은 기록되며 승인이 필요합니다.",
+    "reasonForAccess": "접근 사유",
+    "reasonPlaceholder": "예: 케이스 CS-2026-0001의 은행 계좌 변경 이상 조사",
+    "cancel": "취소",
+    "submitRequest": "요청 제출",
+    "typeVendor": "공급업체",
+    "typeCustomer": "고객"
   },
   "entities": {
     "title": "거래처 허브",

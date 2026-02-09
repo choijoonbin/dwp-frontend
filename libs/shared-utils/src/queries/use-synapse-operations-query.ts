@@ -11,26 +11,28 @@ import { useAuth } from '../auth/auth-provider';
 import { getAuditIdFromError } from '../http-error';
 import { showToast, showToastWithAuditLink } from '../toast/toast-store';
 import {
-  getCases,
   getActions,
-  getArchive,
-  createAction,
+  getActionDetail,
   getAnomalies,
-  rejectAction,
-  approveAction,
-  executeAction,
-  getCaseDetail,
-  getCaseSimilar,
-  simulateAction,
+  getArchive,
   getCaseAnalysis,
-  updateCaseStatus,
   getCaseConfidence,
+  getCaseDetail,
   getCaseRagEvidence,
+  getCaseSimilar,
+  getCases,
+  approveAction,
+  createAction,
+  executeAction,
+  rejectAction,
+  resumeAction,
+  simulateAction,
+  updateCaseStatus,
+  type ActionsListParams,
+  type AnomaliesListParams,
+  type ArchiveListParams,
   type CasesListParams,
   type CreateActionBody,
-  type ActionsListParams,
-  type ArchiveListParams,
-  type AnomaliesListParams,
 } from '../api/synapse-operations-api';
 
 // ----------------------------------------------------------------------
@@ -66,6 +68,9 @@ export const actionsListQueryKey = (
   tenantId: string,
   params?: ActionsListParams
 ) => ['synapse', 'actions', 'list', tenantId, params] as const;
+
+export const actionDetailQueryKey = (tenantId: string, actionId: string) =>
+  ['synapse', 'actions', 'detail', tenantId, actionId] as const;
 
 export const archiveListQueryKey = (
   tenantId: string,
@@ -246,7 +251,7 @@ export const useUpdateCaseStatusMutation = () => {
       status,
     }: {
       caseId: string;
-      status: 'TRIAGED' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED';
+      status: 'OPEN' | 'TRIAGED' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED';
     }) => {
       const res = await updateCaseStatus(caseId, status);
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
@@ -439,6 +444,56 @@ export const useSimulateActionMutation = () => {
     onError: (err) => {
       showToastWithAuditLink(
         err instanceof Error ? err.message : t('toast.simulationFailed'),
+        getAuditIdFromError(err)
+      );
+    },
+  });
+};
+
+export const useActionDetailQuery = (actionId: string | null) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled = isAuthenticated && Boolean(tenantId) && Boolean(actionId);
+
+  return useQuery({
+    queryKey: actionDetailQueryKey(tenantId, actionId ?? ''),
+    queryFn: async () => {
+      if (!actionId) throw new Error('actionId required');
+      const res = await getActionDetail(actionId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch action detail');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+  });
+};
+
+export const useResumeActionMutation = () => {
+  const { t } = useTranslation('common');
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (actionId: string) => {
+      const res = await resumeAction(actionId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        const err = new Error(res.message || 'Failed to resume action') as Error & { auditId?: string };
+        err.auditId = res.auditId;
+        throw err;
+      }
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'actions'] });
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'archive'] });
+      showToast(t('toast.actionExecuted'));
+    },
+    onError: (err) => {
+      showToastWithAuditLink(
+        err instanceof Error ? err.message : t('toast.failedToExecute'),
         getAuditIdFromError(err)
       );
     },

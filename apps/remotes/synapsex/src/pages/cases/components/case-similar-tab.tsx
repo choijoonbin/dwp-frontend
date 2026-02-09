@@ -1,8 +1,10 @@
 /**
  * Case Similar Tab — API 바인딩
  * @see docs/job/PROMPT_B_Frontend_Cases_TabsBind_P1_v2.txt
+ * @see docs/job/PROMPT_FE_CASE_TABS_DEBUG_UX_P11.txt — Debug payload
  */
 
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useCaseSimilarQuery } from '@dwp-frontend/shared-utils';
@@ -15,6 +17,7 @@ import CardContent from '@mui/material/CardContent';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { SYNAPSE_ROUTES } from '../../../routes';
+import { useCaseTabsDebug } from '../context/case-tabs-debug-context';
 import { TabEmptyState } from '../../../components/ux/tab-empty-state';
 import { TabErrorState } from '../../../components/ux/tab-error-state';
 import { SeverityBadge } from '../../../components/finance/severity-badge';
@@ -24,12 +27,28 @@ import { StatusPill, type Status } from '../../../components/finance/status-pill
 type CaseSimilarTabProps = {
   caseId: string | undefined;
   enabled: boolean;
+  tabKey?: string;
 };
 
-export const CaseSimilarTab = ({ caseId, enabled }: CaseSimilarTabProps) => {
+export const CaseSimilarTab = ({ caseId, enabled, tabKey = 'similar' }: CaseSimilarTabProps) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
+  const debugCtx = useCaseTabsDebug();
   const { data, isLoading, isError, error, refetch } = useCaseSimilarQuery(caseId, { enabled });
+
+  const setPayload = debugCtx?.setPayload;
+  useEffect(() => {
+    if (!enabled || !setPayload) return;
+    if (isError && error) {
+      setPayload(tabKey, {
+        status: 'error',
+        payload: { message: error instanceof Error ? error.message : String(error) },
+        error: error instanceof Error ? error.message : String(error),
+      });
+    } else if (!isLoading && data !== undefined) {
+      setPayload(tabKey, { status: 'success', payload: data });
+    }
+  }, [enabled, setPayload, isLoading, isError, error, data, tabKey]);
 
   if (isLoading) {
     return <TabContentSkeleton cards={3} />;
@@ -50,12 +69,14 @@ export const CaseSimilarTab = ({ caseId, enabled }: CaseSimilarTabProps) => {
   const items = data?.items ?? data?.cases ?? [];
 
   if (items.length === 0) {
+    const reason = t('cases.tabs.similar.empty.reason.itemsZero');
     return (
       <Box sx={{ p: 2 }}>
         <TabEmptyState
           icon="solar:link-bold-duotone"
           title={t('cases.tabs.similar.empty.title')}
           description={t('cases.tabs.similar.empty.description')}
+          reason={reason}
         />
       </Box>
     );
