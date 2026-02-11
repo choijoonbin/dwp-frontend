@@ -134,6 +134,7 @@ function toEntityListItem(raw: PartyRaw): EntityListItem {
   };
 }
 
+/** @deprecated Prefer LineageNodeDto[] from LineageGraphDto; adapter may map graph → steps for legacy UI */
 export type LineageStep = {
   id: string;
   label: string;
@@ -142,8 +143,37 @@ export type LineageStep = {
   timestamp?: string;
 };
 
+/**
+ * BE lineage 패키지 DTO (Graph 형식)
+ * GET /api/synapse/lineage 응답은 이 구조를 따름.
+ */
+export type LineageNodeDto = {
+  id: string;
+  type: 'SOURCE' | 'AGENT' | 'CASE' | 'ACTION';
+  label: string;
+  refId?: string;
+  occurredAt: string;
+  payload?: Record<string, unknown>;
+};
+
+export type LineageEdgeDto = {
+  fromId: string;
+  toId: string;
+};
+
+export type LineageGraphDto = {
+  resourceKey: string;
+  nodes: LineageNodeDto[];
+  edges: LineageEdgeDto[];
+};
+
 export type LineageResponse = {
-  steps: LineageStep[];
+  /** Legacy: linear steps (if BE still returns). Prefer graph.nodes + graph.edges. */
+  steps?: LineageStep[];
+  /** Graph DTO from BE lineage package */
+  resourceKey?: string;
+  nodes?: LineageNodeDto[];
+  edges?: LineageEdgeDto[];
   evidence?: unknown;
   timeTravelSnapshots?: unknown;
 };

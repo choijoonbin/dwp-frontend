@@ -52,6 +52,8 @@ export type RegisterRagDocumentRequest = {
   s3Key?: string;
   url?: string;
   checksum?: string;
+  /** 문서 유형. REGULATION | MANUAL | POLICY | GENERAL. URL/S3 등록 시 사용 */
+  docType?: string;
 };
 
 export type RagDocumentsListParams = {
@@ -236,10 +238,25 @@ export const getRagDocuments = async (
   return res.data as ApiResponse<PageResponse<RagDocumentListDto>>;
 };
 
+/** RAG 문서 등록 (URL/S3 전용): JSON body, POST .../register */
 export const registerRagDocument = async (
   body: RegisterRagDocumentRequest
 ): Promise<ApiResponse<RagDocumentDetailDto>> => {
-  const res = await axiosInstance.post<ApiResponse<RagDocumentDetailDto>>('/api/synapse/rag/documents', body);
+  const res = await axiosInstance.post<ApiResponse<RagDocumentDetailDto>>(
+    '/api/synapse/rag/documents/register',
+    body
+  );
+  return res.data;
+};
+
+/** RAG 문서 등록 (로컬 파일 업로드): multipart/form-data. form 필드: file(필수), title, docType. metadata part 미사용 */
+export const registerRagDocumentMultipart = async (
+  formData: FormData
+): Promise<ApiResponse<RagDocumentDetailDto>> => {
+  const res = await axiosInstance.postFormData<ApiResponse<RagDocumentDetailDto>>(
+    '/api/synapse/rag/documents',
+    formData
+  );
   return res.data;
 };
 

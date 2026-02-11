@@ -1,4 +1,5 @@
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -9,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import type { RagCitation } from './types';
+import { type RagCitation, isScenarioCitation } from './types';
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +22,8 @@ interface RagCitationCardProps {
 
 export function RagCitationCard({ citation, onOpenSource, compact = false }: RagCitationCardProps) {
   const theme = useTheme();
+  const { t } = useTranslation('common');
+  const isScenario = isScenarioCitation(citation);
 
   const scoreColor =
     (citation.relevanceScore ?? 0) >= 90
@@ -72,8 +75,17 @@ export function RagCitationCard({ citation, onOpenSource, compact = false }: Rag
             )}
           </Stack>
 
-          {/* Policy Code + Page */}
+          {/* Policy Code + Page + Scenario Data label */}
           <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+            {isScenario && (
+              <Chip
+                label={t('workbench.thought.scenarioDataLabel')}
+                size="small"
+                color="warning"
+                variant="filled"
+                sx={{ fontWeight: 600 }}
+              />
+            )}
             {citation.policyCode && (
               <Chip label={citation.policyCode} size="small" variant="outlined" />
             )}

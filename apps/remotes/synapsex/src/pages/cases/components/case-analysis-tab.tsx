@@ -20,7 +20,7 @@ import CardContent from '@mui/material/CardContent';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { useCaseTabsDebug } from '../context/case-tabs-debug-context';
-import { CaseTabQueryBoundary, TabEmptyState } from '../../../components/ux';
+import { TabEmptyState, CaseTabQueryBoundary } from '../../../components/ux';
 import { ConfidenceRing } from '../../../components/finance/confidence-meter';
 
 type CaseAnalysisTabProps = {

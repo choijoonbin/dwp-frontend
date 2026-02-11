@@ -82,7 +82,11 @@ export const CaseDetailPage = () => {
   const caseAuditEvents = useMemo(() => {
     if (!caseAuditApiData?.items?.length) return [];
     return caseAuditApiData.items.map((item) => ({
-      actor: item.actorDisplayName ?? 'System',
+      actor:
+        item.actorDisplayName ??
+        item.actorName ??
+        (item.actor_id != null ? String(item.actor_id) : undefined) ??
+        'System',
       description: [item.eventCategory, item.eventType, item.resourceType].filter(Boolean).join(' · ') || 'Audit event',
       timestamp: item.createdAt,
     }));
@@ -98,7 +102,8 @@ export const CaseDetailPage = () => {
     onApproved: () => setHitlStatus('approved'),
     onRejected: () => setHitlStatus('rejected'),
   });
-  const handleHitlApprove = (requestId: string) => approve(requestId);
+  const handleHitlApprove = (requestId: string, comment?: string) =>
+    approve({ requestId, caseId: id, comment });
   const handleHitlReject = (requestId: string, reason?: string) => reject({ requestId, reason });
 
   const simulationActionType = useMemo(() => {

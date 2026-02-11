@@ -26,7 +26,8 @@ export type CaseHitlDrawerProps = {
   requestId: string | null;
   description?: string;
   status: HitlStatus;
-  onApprove: (requestId: string) => void;
+  /** 승인 시 사용자 입력 comment(승인 사유)를 백엔드 Payload에 포함 */
+  onApprove: (requestId: string, comment?: string) => void;
   onReject: (requestId: string, reason?: string) => void;
   isApproving: boolean;
   isRejecting: boolean;
@@ -55,11 +56,12 @@ export const CaseHitlDrawer = ({
   sx,
 }: CaseHitlDrawerProps) => {
   const [rejectReason, setRejectReason] = useState('');
+  const [approveComment, setApproveComment] = useState('');
   const isPending = status === 'pending_approval';
   const isDone = status === 'approved' || status === 'rejected' || status === 'succeeded' || status === 'failed';
 
   const handleApprove = () => {
-    if (requestId) onApprove(requestId);
+    if (requestId) onApprove(requestId, approveComment.trim() || undefined);
   };
 
   const handleReject = () => {
@@ -100,6 +102,16 @@ export const CaseHitlDrawer = ({
             <Typography variant="body2">
               The Agent is requesting your approval to proceed. Approve or reject below.
             </Typography>
+            <TextField
+              label="Approval comment (optional)"
+              placeholder="승인 사유"
+              multiline
+              rows={2}
+              value={approveComment}
+              onChange={(e) => setApproveComment(e.target.value)}
+              size="small"
+              fullWidth
+            />
             <TextField
               label="Rejection reason (optional)"
               multiline

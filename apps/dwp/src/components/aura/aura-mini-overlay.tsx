@@ -11,9 +11,9 @@ import {
   getAccessToken,
   getAgentContext,
   getAgentSessionId,
-  buildStreamRequestHeaders,
   rejectHitlRequest,
   approveHitlRequest,
+  buildStreamRequestHeaders,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';

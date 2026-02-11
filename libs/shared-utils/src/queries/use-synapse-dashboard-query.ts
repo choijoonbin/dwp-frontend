@@ -15,11 +15,13 @@ import {
   type AgentActivityDto,
   type TopRiskDriverDto,
   type ActionRequiredDto,
-  type DashboardSummaryDto,
   getDashboardTeamSnapshot,
+  type DashboardSummaryDto,
   getDashboardAgentActivity,
   getDashboardActionRequired,
   getDashboardTopRiskDrivers,
+  getSynapseDashboardSummary,
+  type SynapseDashboardSummaryDto,
 } from '../api/synapse-dashboard-api';
 
 // ----------------------------------------------------------------------
@@ -41,9 +43,34 @@ export const dashboardTeamSnapshotQueryKey = (tenantId: string, range?: string, 
 export const dashboardAgentActivityQueryKey = (tenantId: string, range?: string) =>
   ['synapse', 'dashboard', 'agent-stream', tenantId, range] as const;
 
+export const synapseDashboardSummaryQueryKey = (tenantId: string) =>
+  ['synapse', 'dashboard', 'summary', 'aggregator', tenantId] as const;
+
 // ----------------------------------------------------------------------
 // Hooks
 // ----------------------------------------------------------------------
+
+/** Aggregator: kpiDaily(오늘 4건) + recentActivity + reconFail. 수치·펄스용. */
+export const useSynapseDashboardSummaryQuery = () => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getDashboardTenantId();
+  const enabled = isAuthenticated && Boolean(tenantId);
+
+  return useQuery({
+    queryKey: synapseDashboardSummaryQueryKey(tenantId),
+    queryFn: async (): Promise<SynapseDashboardSummaryDto> => {
+      const res = await getSynapseDashboardSummary();
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch dashboard summary');
+      }
+      return (res.data ?? {}) as SynapseDashboardSummaryDto;
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+  });
+};
 
 export const useDashboardSummaryQuery = () => {
   const { isAuthenticated } = useAuth();

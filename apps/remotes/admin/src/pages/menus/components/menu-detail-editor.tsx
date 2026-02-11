@@ -22,6 +22,8 @@ type MenuDetailEditorProps = {
   formData: MenuFormState;
   validationErrors: Record<string, string>;
   isLoading: boolean;
+  /** 변경 내역이 없으면 true → 저장 버튼 비활성화 */
+  saveDisabled?: boolean;
   onFormChange: <K extends keyof MenuFormState>(field: K, value: MenuFormState[K]) => void;
   onReset: () => void;
   onCreateChild: (menu: AdminMenuNode) => void;
@@ -37,6 +39,7 @@ export const MenuDetailEditor = memo(({
   formData,
   validationErrors,
   isLoading,
+  saveDisabled = true,
   onFormChange,
   onReset,
   onCreateChild,
@@ -75,7 +78,12 @@ export const MenuDetailEditor = memo(({
           onDelete={onDelete}
         />
       </Box>
-      <MenuDetailFooter isLoading={isLoading} onReset={onReset} onSave={onSave} />
+      <MenuDetailFooter
+        isLoading={isLoading}
+        saveDisabled={saveDisabled}
+        onReset={onReset}
+        onSave={onSave}
+      />
     </Card>
   );
 });

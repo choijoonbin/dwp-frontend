@@ -12,6 +12,8 @@ export interface RagCitation {
   relevanceScore?: number; // 0~100
   pageNumber?: number;
   quote?: string; // 1~2문장 인용
+  /** 규정집 본문 전체(선택). 있으면 모달에서 인용 문장(quote) 하이라이트 표시 */
+  bodyText?: string;
   source?: string; // URL 또는 식별자
   tags?: string[]; // 선택적 태그
 }
@@ -35,6 +37,35 @@ export interface LineageStep {
   rawJson?: string;
   ragEvidence?: RagCitation[];
   statsEvidence?: StatsEvidence;
+}
+
+/** 시연/테스트용 시나리오 데이터 여부 (DEMO_NORM_01 등) — 라벨 [Scenario Data] 표시용 */
+const SCENARIO_INDICATORS = [
+  'DEMO_NORM',
+  'DEMO_',
+  'Scenario',
+  '시나리오',
+  '테스트 데이터',
+  '테스트규정',
+] as const;
+
+export function isScenarioCitation(
+  citation: Pick<RagCitation, 'id' | 'policyCode' | 'title' | 'docTitle' | 'source'>
+): boolean {
+  const haystack = [
+    citation.id,
+    citation.policyCode,
+    citation.title,
+    citation.docTitle,
+    citation.source,
+  ]
+    .filter(Boolean)
+    .map(String)
+    .join(' ')
+    .toLowerCase();
+  return SCENARIO_INDICATORS.some(
+    (ind) => haystack.includes(ind.toLowerCase())
+  );
 }
 
 // Time Travel 관련

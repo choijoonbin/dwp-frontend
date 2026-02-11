@@ -2,7 +2,7 @@
  * Case analysis run state — latestRunId 동기화, 스트림 시작/재시도
  */
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   useAnalysisRunStream,

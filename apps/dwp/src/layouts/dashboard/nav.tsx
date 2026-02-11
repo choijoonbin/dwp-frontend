@@ -368,7 +368,16 @@ const NavItemComponent = ({
                         {child.icon}
                       </Box>
                     )}
-                    <Box component="span" sx={{ flexGrow: 1 }}>
+                    <Box
+                      component="span"
+                      sx={{
+                        flexGrow: 1,
+                        minWidth: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {child.title}
                     </Box>
                   </MenuItem>
@@ -422,6 +431,9 @@ const NavItemComponent = ({
             component="span"
             sx={{
               flexGrow: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}
           >
@@ -436,7 +448,11 @@ const NavItemComponent = ({
             />
           )}
 
-          {!hasChildren && item.info && item.info}
+          {!hasChildren && item.info && (
+            <Box component="span" sx={{ flexShrink: 0, ml: 0.5 }}>
+              {item.info}
+            </Box>
+          )}
         </ListItemButton>
       </ListItem>
 

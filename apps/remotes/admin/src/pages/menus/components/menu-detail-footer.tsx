@@ -10,12 +10,15 @@ import Button from '@mui/material/Button';
 
 type MenuDetailFooterProps = {
   isLoading: boolean;
+  /** 변경 내역이 있을 때만 저장 버튼 활성화 */
+  saveDisabled?: boolean;
   onReset: () => void;
   onSave: () => void;
 };
 
 export const MenuDetailFooter = memo(({
   isLoading,
+  saveDisabled = false,
   onReset,
   onSave,
 }: MenuDetailFooterProps) => (
@@ -37,7 +40,7 @@ export const MenuDetailFooter = memo(({
       <Button
         variant="contained"
         onClick={onSave}
-        disabled={isLoading}
+        disabled={isLoading || saveDisabled}
         startIcon={<Iconify icon="solar:diskette-bold" width={16} />}
       >
         저장

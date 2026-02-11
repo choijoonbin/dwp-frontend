@@ -1,10 +1,13 @@
 /**
- * RAG Document Detail — Chunks + search within doc
+ * RAG Document Detail — 문서 메타정보 + 청크 목록 + 문서 내 검색
+ * 열기 버튼으로 진입하는 화면: 등록된 문서의 상세(제목·상태·소스유형·docId)와
+ * RAG 인덱싱된 청크(본문 조각) 목록을 보여주며, 문서 내 검색으로 청크를 필터링할 수 있음.
  */
 
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Label, Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useRagDocumentDetailQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -30,18 +33,54 @@ type RagDocumentDetailPageProps = {
   docId: string;
 };
 
+const renderBackCard = (
+  navigate: () => void,
+  title: string,
+  hint: string,
+  t: (key: string) => string
+) => (
+  <Box sx={{ p: { xs: 2, sm: 3 } }}>
+    <Card variant="outlined">
+      <CardContent sx={{ p: 8, textAlign: 'center' }}>
+        <Iconify icon="solar:danger-triangle-bold-duotone" width={48} sx={{ color: 'error.main', mb: 2 }} />
+        <Typography variant="h6" sx={{ mb: 1 }}>
+          {title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {hint}
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<Iconify icon="solar:arrow-left-linear" width={18} />}
+          onClick={navigate}
+        >
+          {t('rag.detail.backToLibrary')}
+        </Button>
+      </CardContent>
+    </Card>
+  </Box>
+);
+
 export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [searchWithin, setSearchWithin] = useState('');
 
-  const { data: doc, isLoading, error } = useRagDocumentDetailQuery(docId);
+  const effectiveDocId = docId?.trim() || undefined;
+  const { data: doc, isLoading, error } = useRagDocumentDetailQuery(effectiveDocId);
 
   const chunks = doc?.chunks ?? [];
   const filteredChunks = useMemo(() => {
     if (!searchWithin.trim()) return chunks;
     const q = searchWithin.toLowerCase();
     return chunks.filter((c) => c.chunkText.toLowerCase().includes(q));
-  }, [doc?.chunks, searchWithin]);
+  }, [chunks, searchWithin]);
+
+  const goToLibrary = () => navigate(SYNAPSE_ROUTES.RAG);
+
+  if (!effectiveDocId) {
+    return renderBackCard(goToLibrary, t('rag.detail.missingDocId'), '', t);
+  }
 
   if (isLoading) {
     return (
@@ -49,7 +88,7 @@ export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => 
         <Card variant="outlined">
           <CardContent sx={{ p: 8, textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary">
-              Loading document…
+              {t('rag.detail.loading')}
             </Typography>
           </CardContent>
         </Card>
@@ -58,27 +97,11 @@ export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => 
   }
 
   if (error || !doc) {
-    return (
-      <Box sx={{ p: { xs: 2, sm: 3 } }}>
-        <Card variant="outlined">
-          <CardContent sx={{ p: 8, textAlign: 'center' }}>
-            <Iconify icon="solar:danger-triangle-bold-duotone" width={48} sx={{ color: 'error.main', mb: 2 }} />
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Document not found
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {error instanceof Error ? error.message : 'The document may have been removed.'}
-            </Typography>
-            <Button
-              variant="outlined"
-              startIcon={<Iconify icon="solar:arrow-left-linear" width={18} />}
-              onClick={() => navigate(SYNAPSE_ROUTES.RAG)}
-            >
-              Back to RAG Library
-            </Button>
-          </CardContent>
-        </Card>
-      </Box>
+    return renderBackCard(
+      goToLibrary,
+      t('rag.detail.notFound'),
+      error instanceof Error ? error.message : t('rag.detail.notFoundHint'),
+      t
     );
   }
 
@@ -90,7 +113,7 @@ export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => 
         {/* Header */}
         <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ sm: 'flex-start' }} justifyContent="space-between" spacing={2}>
           <Stack direction="row" alignItems="flex-start" spacing={2}>
-            <IconButton onClick={() => navigate(SYNAPSE_ROUTES.RAG)} sx={{ mt: 0.5 }}>
+            <IconButton onClick={goToLibrary} sx={{ mt: 0.5 }}>
               <Iconify icon="solar:arrow-left-linear" width={20} />
             </IconButton>
             <Box>
@@ -106,6 +129,9 @@ export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => 
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                 {doc.docId} · {doc.createdAt ? new Date(doc.createdAt).toLocaleDateString() : '-'}
               </Typography>
+              <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mt: 1 }}>
+                {t('rag.detail.description')}
+              </Typography>
             </Box>
           </Stack>
         </Stack>
@@ -114,12 +140,12 @@ export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => 
         <Card variant="outlined">
           <CardContent sx={{ p: 2.5 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-              Search within this document
+              {t('rag.detail.searchWithin')}
             </Typography>
             <TextField
               size="small"
               fullWidth
-              placeholder="Search in chunks…"
+              placeholder={t('rag.detail.searchPlaceholder')}
               value={searchWithin}
               onChange={(e) => setSearchWithin(e.target.value)}
               InputProps={{
@@ -136,11 +162,11 @@ export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => 
           <CardContent sx={{ p: 2.5 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                Chunks ({filteredChunks.length} of {chunks.length})
+                {t('rag.detail.chunksTitle')} ({filteredChunks.length} / {chunks.length})
               </Typography>
               {searchWithin.trim() && (
                 <Typography variant="caption" color="text.secondary">
-                  Filtered by &ldquo;{searchWithin}&rdquo;
+                  {t('rag.detail.filteredBy', { q: searchWithin })}
                 </Typography>
               )}
             </Stack>
@@ -148,8 +174,8 @@ export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => 
               <Box sx={{ py: 8, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
                   {chunks.length === 0
-                    ? 'No chunks indexed yet.'
-                    : `No chunks match "${searchWithin}". Try a different search.`}
+                    ? t('rag.detail.chunksEmpty')
+                    : t('rag.detail.chunksNoMatch', { q: searchWithin })}
                 </Typography>
               </Box>
             ) : (

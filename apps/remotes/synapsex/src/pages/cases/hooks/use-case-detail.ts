@@ -12,7 +12,48 @@ import {
 
 import { caseDetailDtoToUi, type CaseDetailUi } from '../adapters/case-detail-adapter';
 
-/** 라인 항목 UI 모델 — evidence.documentOrOpenItem.items[] (DocumentLineItemDto) 기반 */
+/** BE fi_doc_items / DocumentLineItemDto → FiDocItem (필드명 snake_case/camelCase 모두 수용) */
+function mapRawLineItemToFiDoc(
+  r: Record<string, unknown>,
+  idx: number,
+  itemsCurrency: string
+): FiDocItem {
+  const buzeiVal = r.buzei ?? r.line_item_no ?? r.lineItemNo;
+  const buzeiStr =
+    buzeiVal != null ? String(buzeiVal).padStart(3, '0') : String(idx + 1).padStart(3, '0');
+  const hkont = (r.hkont ?? r.gl_account ?? r.glAccount) as string | undefined;
+  const wrbtr = (r.wrbtr ?? r.amount_in_doc_currency ?? r.amountInDocCurrency ?? r.amount) as number | undefined;
+  const dmbtr = (r.dmbtr ?? r.amount_in_local ?? r.amountInLocal) as number | undefined;
+  const sgtxt = (r.sgtxt ?? r.item_text ?? r.itemText) as string | undefined;
+  const partner = (r.lifnr ?? r.kunnr ?? r.partner_id ?? r.partnerId ?? r.partner) as string | undefined;
+  const waers = (r.waers ?? r.currency ?? r.doc_currency ?? r.docCurrency) as string | undefined;
+  const isTarget = Boolean(r.isTarget ?? r.is_target);
+  return {
+    id: String(r.id ?? r.buzei ?? r.line_item_no ?? idx),
+    buzei: buzeiStr,
+    partner: partner ?? undefined,
+    hkont,
+    wrbtr,
+    dmbtr,
+    waers: waers ?? itemsCurrency,
+    dueDate: (r.dueDate ?? r.zfbdt ?? r.due_date) as string | undefined,
+    paymentBlock: Boolean(r.paymentBlock ?? r.payment_block),
+    disputeFlag: Boolean(r.disputeFlag ?? r.dispute_flag),
+    isTarget,
+    shkzg: (r.shkzg ?? r.debit_credit) as string | undefined,
+    bschl: (r.bschl ?? r.posting_key) as string | undefined,
+    mwskz: r.mwskz as string | undefined,
+    kostl: r.kostl as string | undefined,
+    prctr: r.prctr as string | undefined,
+    aufnr: r.aufnr as string | undefined,
+    zterm: r.zterm as string | undefined,
+    zfbdt: r.zfbdt as string | undefined,
+    zuonr: r.zuonr as string | undefined,
+    sgtxt,
+  };
+}
+
+/** 라인 항목 UI 모델 — evidence.documentOrOpenItem.items[] 또는 evidence.fi_doc_items[] (BE 규격) 기반 */
 export type FiDocItem = {
   id: string;
   /** 라인 번호 (buzei) */
@@ -72,6 +113,24 @@ export type AuditEvent = {
   timestamp?: string;
 };
 
+/** 조치 이력 UI 모델 (WorkbenchActionHistoryTimeline) */
+export type ActionHistoryItem = {
+  id: string;
+  actorName: string;
+  actionAt: string;
+  comment?: string;
+};
+
+/** AI 추론 과정 UI 모델 (WorkbenchThoughtChain) */
+export type AiThought = {
+  id: string;
+  step: number;
+  type: string;
+  content: string;
+  confidence?: number;
+  timestamp?: string;
+};
+
 export type CaseDetailResult = {
   caseData: CaseDetailUi | null;
   evidence: CaseDetailEvidence | undefined;
@@ -96,6 +155,10 @@ export type CaseDetailResult = {
   lineCount?: number;
   /** 라인 항목 표시용 통화 (전표 레벨 fallback) */
   itemsCurrency?: string;
+  /** 조치 이력 (BE: actionHistory[] 또는 agent_case_action_history[]) */
+  actionHistory: ActionHistoryItem[];
+  /** AI 추론 과정 (BE: aiThoughts[] 또는 reasoning.thoughts[]) */
+  aiThoughts: AiThought[];
   relatedActions: RelatedAction[];
   auditEvents: AuditEvent[];
   isLoading: boolean;
@@ -118,6 +181,8 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
         targetBuzei: undefined,
         lineCount: undefined,
         itemsCurrency: undefined,
+        actionHistory: [],
+        aiThoughts: [],
         relatedActions: [],
         auditEvents: [],
         isLoading: false,
@@ -128,10 +193,14 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
 
     const dto = query.data;
     const caseData = caseDetailDtoToUi(caseId, dto ?? null);
-    const evidence = dto?.evidence;
+    const evidence = dto?.evidence as Record<string, unknown> | undefined;
     const docOrItem = evidence?.documentOrOpenItem as Record<string, unknown> | undefined;
     const header = docOrItem?.headerSummary as Record<string, unknown> | undefined;
-    const items = (docOrItem?.items as Array<Record<string, unknown>>) ?? [];
+    // BE Single Source of Truth: fiDocItems(camelCase) 또는 fi_doc_items(snake_case) 우선, 없으면 evidence 내부 items
+    const rawItems = (dto?.fiDocItems ?? dto?.fi_doc_items ?? evidence?.fi_doc_items ?? docOrItem?.items) as
+      | Array<Record<string, unknown>>
+      | undefined;
+    const items = Array.isArray(rawItems) ? rawItems : [];
 
     // PROMPT P0: evidence.documentOrOpenItem 바인딩 — flat 또는 headerSummary 구조 지원
     const bukrs =
@@ -176,39 +245,17 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
 
     const itemsCurrency = (docOrItem?.waers as string) ?? (docOrItem?.currency as string) ?? 'USD';
     const lineCount = docOrItem?.lineCount as number | undefined;
-    const targetBuzeiRaw = docOrItem?.buzei ?? (header?.buzei as string | number | undefined);
+    // BE keys.buzei (back.txt) 또는 evidence 내 buzei
+    const targetBuzeiRaw =
+      (dto?.keys as Record<string, unknown> | undefined)?.buzei ??
+      docOrItem?.buzei ??
+      (header?.buzei as string | number | undefined);
     const targetBuzei =
       targetBuzeiRaw != null ? String(targetBuzeiRaw).padStart(3, '0') : undefined;
 
-    const fiDocItems: FiDocItem[] = items.map((item, idx) => {
-      const r = item as Record<string, unknown>;
-      const buzeiVal = r.buzei;
-      const buzeiStr =
-        buzeiVal != null ? String(buzeiVal).padStart(3, '0') : String(idx + 1).padStart(3, '0');
-      return {
-        id: String(r.id ?? r.buzei ?? idx),
-        buzei: buzeiStr,
-        partner: (r.lifnr as string) ?? (r.kunnr as string),
-        hkont: r.hkont as string | undefined,
-        wrbtr: r.wrbtr as number | undefined,
-        dmbtr: r.dmbtr as number | undefined,
-        waers: (r.waers as string) ?? itemsCurrency,
-        dueDate: (r.dueDate as string) ?? (r.zfbdt as string) ?? (r.due_date as string),
-        paymentBlock: Boolean(r.paymentBlock ?? r.payment_block),
-        disputeFlag: Boolean(r.disputeFlag ?? r.dispute_flag),
-        isTarget: Boolean(r.isTarget),
-        shkzg: r.shkzg as string | undefined,
-        bschl: r.bschl as string | undefined,
-        mwskz: r.mwskz as string | undefined,
-        kostl: r.kostl as string | undefined,
-        prctr: r.prctr as string | undefined,
-        aufnr: r.aufnr as string | undefined,
-        zterm: r.zterm as string | undefined,
-        zfbdt: r.zfbdt as string | undefined,
-        zuonr: r.zuonr as string | undefined,
-        sgtxt: r.sgtxt as string | undefined,
-      };
-    });
+    const fiDocItems: FiDocItem[] = items.map((item, idx) =>
+      mapRawLineItemToFiDoc(item as Record<string, unknown>, idx, itemsCurrency)
+    );
 
     const rawActions = (dto?.action?.actions ?? []) as Array<Record<string, unknown>>;
     const actions: RelatedAction[] = rawActions.map((a) => ({
@@ -218,6 +265,26 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
       status: String(a.status ?? ''),
       riskLevel: a.riskLevel as string | undefined,
       targetSystem: a.targetSystem as string | undefined,
+    }));
+
+    // 조치 이력: BE actionHistory[] (CaseActionHistoryItemRefDto), JSON camelCase (actionAt, createdAt)
+    const rawActionHistory = (dto?.actionHistory ?? dto?.agent_case_action_history ?? []) as Array<Record<string, unknown>>;
+    const actionHistory: ActionHistoryItem[] = rawActionHistory.map((item, idx) => ({
+      id: String(item.id ?? idx),
+      actorName: (item.actorId ?? item.actor_id ?? item.actorName ?? 'System') as string,
+      actionAt: (item.actionAt ?? item.action_at ?? item.createdAt ?? '') as string,
+      comment: (item.commentText ?? item.comment_text ?? item.comment) as string | undefined,
+    }));
+
+    // AI 추론 과정: BE aiThoughts[] (AiThoughtItemDto) — stage, eventType, message, occurredAt (camelCase)
+    const rawThoughts = (dto?.aiThoughts ?? (dto?.reasoning as Record<string, unknown> | undefined)?.thoughts ?? []) as Array<Record<string, unknown>>;
+    const aiThoughts: AiThought[] = rawThoughts.map((thought, idx) => ({
+      id: String(thought.id ?? idx),
+      step: (thought.step ?? idx + 1) as number,
+      type: (thought.eventType ?? thought.stage ?? thought.type ?? 'reasoning') as string,
+      content: (thought.message ?? thought.content ?? thought.text ?? '') as string,
+      confidence: thought.confidence as number | undefined,
+      timestamp: (thought.occurredAt ?? thought.occurred_at ?? thought.timestamp) as string | undefined,
     }));
 
     return {
@@ -230,6 +297,8 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
       targetBuzei,
       lineCount,
       itemsCurrency,
+      actionHistory,
+      aiThoughts,
       relatedActions: actions,
       auditEvents: [] as AuditEvent[],
       isLoading: query.isLoading,

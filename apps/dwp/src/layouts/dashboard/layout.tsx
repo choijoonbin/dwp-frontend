@@ -2,6 +2,7 @@ import type { Breakpoint } from '@mui/material/styles';
 
 import { merge } from 'es-toolkit';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { useNotificationWebSocket } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
@@ -68,6 +69,8 @@ export function DashboardLayout({
   const { setSidebarOpen, toggleCollapse } = useLayoutActions();
   const navData = useNavData(); // 권한 기반 필터링된 메뉴 데이터
 
+  useNotificationWebSocket({ enabled: true, showToastOnReceive: true });
+
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = {
       container: {
@@ -111,7 +114,9 @@ export function DashboardLayout({
           {/** @slot Notifications popover */}
           <NotificationsPopover data={_notifications} />
 
-          <Tooltip title={mode === 'light' ? t('theme.darkMode') : t('theme.lightMode')}>
+          <Tooltip
+            title={`${t('theme.currentMode', { mode: t(mode === 'light' ? 'theme.lightMode' : 'theme.darkMode') })} · ${t('theme.switchTo', { mode: t(mode === 'light' ? 'theme.darkMode' : 'theme.lightMode') })}`}
+          >
             <IconButton color="inherit" onClick={toggleMode}>
               <Iconify
                 width={22}

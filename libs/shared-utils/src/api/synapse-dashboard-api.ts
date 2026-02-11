@@ -14,6 +14,43 @@ import type { ApiResponse } from '../types';
 // DTO Types
 // ----------------------------------------------------------------------
 
+/** BE aggregator: GET /api/synapse/dashboard/summary → analytics_kpi_daily + agent_activity_log + recon_result */
+export type KpiDailyItemDto = {
+  metricKey: string;
+  metricValue: number | string;
+  ymd?: string;
+};
+
+export type DashboardActivitySummaryDto = {
+  activityId?: string;
+  occurredAt: string;
+  stage?: string;
+  message?: string;
+  reasoning?: string;
+  resourceType?: string;
+  resourceId?: string;
+};
+
+export type ReconFailItemDto = {
+  resultId: string;
+  resourceType: string;
+  resourceKey: string;
+  status: string;
+  detailJson?: Record<string, unknown>;
+};
+
+export type ReconFailSummaryDto = {
+  failCount: number;
+  latest: ReconFailItemDto[];
+};
+
+export type SynapseDashboardSummaryDto = {
+  asOf?: string;
+  kpiDaily?: KpiDailyItemDto[];
+  recentActivity?: DashboardActivitySummaryDto[];
+  reconFail?: ReconFailSummaryDto;
+};
+
 export type DashboardLinksDto = {
   casesPath?: string;
   actionsPath?: string;
@@ -124,7 +161,20 @@ export type AgentActivityDto = {
 
 /**
  * GET /api/synapse/dashboard/summary
- * Agent Live Status, Financial Health Index 등 대시보드 요약
+ * Aggregator: kpiDaily(analytics_kpi_daily 오늘 4건), recentActivity(agent_activity_log 10건), reconFail(FAIL 5건).
+ * BE 응답이 SynapseDashboardSummaryDto 이면 이 함수 사용.
+ */
+export const getSynapseDashboardSummary = async (): Promise<ApiResponse<SynapseDashboardSummaryDto>> => {
+  const res = await axiosInstance.get<ApiResponse<SynapseDashboardSummaryDto>>(
+    '/api/synapse/dashboard/summary',
+    { headers: { 'X-Tenant-ID': getDashboardTenantId() } }
+  );
+  return res.data;
+};
+
+/**
+ * @deprecated BE가 SynapseDashboardSummaryDto 로 변경 시 getSynapseDashboardSummary 사용
+ * Agent Live Status, Financial Health Index 등 대시보드 요약 (레거시)
  */
 export const getDashboardSummary = async (): Promise<ApiResponse<DashboardSummaryDto>> => {
   const res = await axiosInstance.get<ApiResponse<DashboardSummaryDto>>(

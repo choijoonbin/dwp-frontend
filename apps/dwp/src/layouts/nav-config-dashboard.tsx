@@ -28,6 +28,13 @@ const GROUP_ORDER: Record<string, number> = {
 const getGroupOrder = (group: string | null | undefined): number =>
   group != null && group in GROUP_ORDER ? GROUP_ORDER[group] : 99;
 
+/** BE가 Depth 1로 내려주는 '통합 워크벤치' 노드 식별 (최상단 고정용) */
+const WORKBENCH_ROOT_KEYS = ['menu.command-center', 'menu.workbench'];
+
+const isWorkbenchRootNode = (node: MenuNode): boolean =>
+  (node.depth === 1 || node.depth == null) &&
+  (WORKBENCH_ROOT_KEYS.includes(node.menuKey) || node.path === '/synapse/workbench');
+
 /**
  * Sort menu nodes by sortOrder, fallback to menuName
  */
@@ -44,14 +51,18 @@ const sortMenuNodes = (nodes: MenuNode[]): MenuNode[] =>
   });
 
 /**
- * Sort root menu nodes: group order first (SynapseX → APPS → ADMIN), then sortOrder within group.
- * Tree API가 menus 배열을 APPS/ADMIN 먼저 내려줘도, 통합 관제 센터(SynapseX)가 먼저 보이도록 함.
+ * Sort root menu nodes: group order first (SynapseX → APPS → ADMIN), then within group
+ * Depth 1 '통합 워크벤치'를 항상 가장 상단에, 나머지는 sortOrder 순.
  */
 const sortRootMenuNodes = (nodes: MenuNode[]): MenuNode[] =>
   [...nodes].sort((a, b) => {
     const groupA = getGroupOrder(a.group);
     const groupB = getGroupOrder(b.group);
     if (groupA !== groupB) return groupA - groupB;
+    const aIsWorkbench = isWorkbenchRootNode(a);
+    const bIsWorkbench = isWorkbenchRootNode(b);
+    if (aIsWorkbench && !bIsWorkbench) return -1;
+    if (!aIsWorkbench && bIsWorkbench) return 1;
     return sortMenuNodes([a, b])[0] === a ? -1 : 1;
   });
 
@@ -60,6 +71,9 @@ const sortRootMenuNodes = (nodes: MenuNode[]): MenuNode[] =>
  * 이상징후, 채권채무, 조치이력보관함 등과 동일하게 조치실행센터에도 아이콘 통일
  */
 const MENU_KEY_TO_ICON: Record<string, string> = {
+  'menu.command-center': 'solar:monitor-bold',
+  'menu.workbench': 'solar:monitor-bold',
+  'menu.autonomous-operations.workbench': 'solar:widget-bold',
   'menu.autonomous-operations.cases': 'solar:clipboard-list-bold',
   'menu.autonomous-operations.anomalies': 'solar:danger-triangle-bold',
   'menu.autonomous-operations.optimization': 'solar:chart-2-bold',
@@ -91,17 +105,43 @@ const MENU_KEY_TO_ICON: Record<string, string> = {
  * - Sort children by sortOrder (fallback to menuName)
  * - 거버넌스·설정 하위 메뉴는 FE i18n 적용 (BE menus/tree 미지원 시 fallback)
  */
+/** 동일 화면(워크벤치) 중복 노출 방지: 자율 운영 센터 하위 "자율 작업대"는 상단 "통합 워크벤치"(menu.command-center)와 동일하므로 사이드바에서 제외 */
+const WORKBENCH_CHILD_MENU_KEY = 'menu.autonomous-operations.workbench';
+
+/** 케이스 상세·추론 등: 사이드바 제외, 워크벤치 내부 탭으로만 존재 */
+const CASE_DETAIL_PATH_PATTERN = /^\/?(?:synapse\/)?cases\/[^/]+$/;
+const SIDEBAR_EXCLUDED_MENU_KEY_SUBSTRINGS = ['case-detail', 'inference'];
+const SIDEBAR_EXCLUDED_MENU_NAME_SUBSTRINGS = ['케이스 상세', '추론'];
+
+const isExcludedFromSidebar = (n: MenuNode): boolean => {
+  const path = (n.path ?? '').trim();
+  if (path && CASE_DETAIL_PATH_PATTERN.test(path.replace(/^\//, ''))) return true;
+  const key = (n.menuKey ?? '').toLowerCase();
+  if (SIDEBAR_EXCLUDED_MENU_KEY_SUBSTRINGS.some((s) => key.includes(s))) return true;
+  const name = (n.menuName ?? '').trim();
+  if (SIDEBAR_EXCLUDED_MENU_NAME_SUBSTRINGS.some((s) => name.includes(s))) return true;
+  return false;
+};
+
 const convertMenuNodeToNavItem = (
   node: MenuNode,
   t: (key: string) => string
 ): NavItem => {
-  // Sort children by sortOrder (fallback to menuName)
-  const sortedChildren = node.children
-    ? sortMenuNodes(node.children).map((c) => convertMenuNodeToNavItem(c, t))
+  let rawChildren = node.children;
+  if (node.menuKey === 'menu.autonomous-operations') {
+    rawChildren = rawChildren?.filter((c) => c.menuKey !== WORKBENCH_CHILD_MENU_KEY);
+  }
+  rawChildren = rawChildren?.filter((c) => !isExcludedFromSidebar(c));
+  const sortedChildren = rawChildren
+    ? sortMenuNodes(rawChildren).map((c) => convertMenuNodeToNavItem(c, t))
     : undefined;
 
   // If path is missing and has children, use first child's path as fallback
-  const path = node.path || (sortedChildren && sortedChildren.length > 0 ? sortedChildren[0].path : '#');
+  let path = node.path || (sortedChildren && sortedChildren.length > 0 ? sortedChildren[0].path : '#');
+  // 통합 워크벤치 정규화: 레거시/다양한 키 모두 /synapse/workbench로 통일
+  if (WORKBENCH_ROOT_KEYS.includes(node.menuKey) || path === '/synapse/command-center') {
+    path = '/synapse/workbench';
+  }
 
   // Use backend icon if available, else menuKey fallback, else generic circle
   const iconString =
@@ -109,10 +149,15 @@ const convertMenuNodeToNavItem = (
       ? node.icon.trim()
       : MENU_KEY_TO_ICON[node.menuKey] ?? 'solar:circle-bold';
 
-  // menuName 우선, 거버넌스·설정 하위는 FE i18n fallback (BE가 Accept-Language 미지원 시)
+  // menuName 우선. 통합 워크벤치 명칭 통일(자율작업대 제거), 거버넌스·설정은 FE i18n
   const apiName = node.menuName ?? (node as MenuNode & { name?: string }).name ?? '';
   let displayName = apiName;
-  if (node.menuKey === 'menu.governance-config') {
+  if (
+    WORKBENCH_ROOT_KEYS.includes(node.menuKey) ||
+    node.menuKey === 'menu.autonomous-operations.workbench'
+  ) {
+    displayName = t('menu.workbench');
+  } else if (node.menuKey === 'menu.governance-config') {
     const translated = t('menu.governance-config._label');
     displayName = translated || apiName;
   } else if (node.menuKey.startsWith('menu.governance-config.')) {
@@ -134,7 +179,8 @@ const convertMenuNodeToNavItem = (
 
 /**
  * Get nav items from menu tree
- * Menu tree is already filtered by permissions on backend
+ * Menu tree is already filtered by permissions on backend.
+ * GNB Restoration: 모든 메뉴 그룹 노출 (SynapseX 포함 전체 트리 변환).
  */
 export const useNavData = (): NavItem[] => {
   const { t } = useTranslation('common');
@@ -148,8 +194,26 @@ export const useNavData = (): NavItem[] => {
     // Sort root: group order (SynapseX first) then sortOrder; children by sortOrder only
     const sortedTree = sortRootMenuNodes(menuTree);
 
-    // Convert MenuNode[] to NavItem[]
-    return sortedTree.map((node) => convertMenuNodeToNavItem(node, t));
+    // 케이스 상세·추론 등 사이드바 제외 후 변환 (워크벤치 내부 탭으로만 존재)
+    const result: NavItem[] = sortedTree
+      .filter((node) => !isExcludedFromSidebar(node))
+      .map((node) => convertMenuNodeToNavItem(node, t));
+
+    // Phase 4: '용어·코드 사전'을 Knowledge & Policy에서 Governance & Config로 이동
+    const knowledgePolicyItem = result.find((r) => r.resourceKey === 'menu.knowledge-policy');
+    const governanceConfigItem = result.find((r) => r.resourceKey === 'menu.governance-config');
+    if (knowledgePolicyItem?.children && governanceConfigItem) {
+      const dictIndex = knowledgePolicyItem.children.findIndex((c) => c.resourceKey === 'menu.knowledge-policy.dictionary');
+      if (dictIndex >= 0) {
+        const dictItem = knowledgePolicyItem.children[dictIndex];
+        knowledgePolicyItem.children = knowledgePolicyItem.children.filter((_, i) => i !== dictIndex);
+        governanceConfigItem.children = [...(governanceConfigItem.children ?? []), dictItem].sort((a, b) =>
+          (a.title || '').localeCompare(b.title || '')
+        );
+      }
+    }
+
+    return result;
   }, [menuTree, isLoaded, t]);
 };
 

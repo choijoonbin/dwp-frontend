@@ -22,6 +22,7 @@ import {
   getPolicyProfiles,
   getEffectivePolicy,
   registerRagDocument,
+  registerRagDocumentMultipart,
   createDictionaryTerm,
   deleteDictionaryTerm,
   getRagDocumentDetail,
@@ -32,8 +33,8 @@ import {
   type GuardrailUpsertRequest,
   type RagDocumentsListParams,
   type GuardrailEvaluateRequest,
-  type RegisterRagDocumentRequest,
   type DictionaryTermUpsertRequest,
+  type RegisterRagDocumentRequest,
 } from '../api/synapse-knowledge-api';
 
 // ----------------------------------------------------------------------
@@ -129,13 +130,18 @@ export const useRagSearchQuery = (params: RagSearchParams, enabledSearch: boolea
   });
 };
 
+export type RegisterRagDocumentPayload = FormData | RegisterRagDocumentRequest;
+
 export const useRegisterRagDocumentMutation = () => {
   const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (body: RegisterRagDocumentRequest) => {
-      const res = await registerRagDocument(body);
+    mutationFn: async (payload: RegisterRagDocumentPayload) => {
+      const res =
+        payload instanceof FormData
+          ? await registerRagDocumentMultipart(payload)
+          : await registerRagDocument(payload);
       if (res.status !== 'SUCCESS' && res.status !== 'OK') throw new Error(res.message ?? 'Failed to register');
       return res.data;
     },

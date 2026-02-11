@@ -1,9 +1,9 @@
-// ----------------------------------------------------------------------
+/**
+ * HITL 승인/거절 — 백엔드(Spring Boot) API 경유 전용
+ * Aura API 직접 호출 제거. case_action_history 기록 및 데이터 무결성은 백엔드에서 담당.
+ */
 
-import { NX_API_URL } from '../env';
-import { getTenantId } from '../tenant-util';
-import { getUserId } from '../auth/user-id-storage';
-import { getAccessToken } from '../auth/token-storage';
+import { rejectHitlAction, approveHitlAction } from '../api/synapse-operations-api';
 
 // ----------------------------------------------------------------------
 
@@ -14,125 +14,62 @@ export type HitlApprovalResponse = {
   reason?: string;
 };
 
+export type ApproveHitlOptions = {
+  userId?: string;
+  /** 승인 사유 — 백엔드 Payload에 포함 (case_action_history 등 기록용) */
+  comment?: string;
+};
+
 /**
- * Approve a HITL request
+ * HITL 승인 — 백엔드 POST /api/synapse/actions/hitl/{requestId}/approve
+ * 사용자 입력 comment(승인 사유)를 Payload에 포함해 전송.
  */
 export async function approveHitlRequest(
   requestId: string,
-  userId?: string
+  options?: ApproveHitlOptions
 ): Promise<HitlApprovalResponse> {
-  const token = getAccessToken();
-  const tenantId = getTenantId();
-  const finalUserId = userId || getUserId();
-
-  if (!finalUserId) {
-    throw new Error('User ID is required for HITL approval');
-  }
-
-  const response = await fetch(`${NX_API_URL}/api/aura/hitl/approve/${requestId}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'X-Tenant-ID': tenantId,
-      'X-User-ID': finalUserId,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      userId: finalUserId,
-    }),
+  const res = await approveHitlAction(requestId, {
+    comment: options?.comment,
   });
-
-  if (response.status === 409) {
-    // Idempotent: already approved/rejected — treat as success so FE can clear UI
-    const body = await response.json().catch(() => ({}));
-    return (body.data ?? body) as HitlApprovalResponse;
-  }
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `HITL approval failed: ${response.status}`);
-  }
-
-  const result = await response.json();
-  
-  // Backend returns ApiResponse<HitlApprovalResponse>
-  if (result.status === 'SUCCESS' || result.success) {
-    return result.data;
-  }
-  
-  throw new Error(result.message || 'HITL approval failed');
+  const data = res.data as Record<string, unknown> | undefined;
+  return {
+    requestId,
+    sessionId: (data?.sessionId as string) ?? '',
+    status: 'approved',
+    ...(data?.reason != null && { reason: data.reason as string }),
+  };
 }
 
 /**
- * Reject a HITL request
+ * HITL 거절 — 백엔드 POST /api/synapse/actions/hitl/{requestId}/reject
+ * reason(거절 사유)을 comment로 Payload에 포함.
  */
 export async function rejectHitlRequest(
   requestId: string,
   reason?: string,
-  userId?: string
+  _userId?: string
 ): Promise<HitlApprovalResponse> {
-  const token = getAccessToken();
-  const tenantId = getTenantId();
-  const finalUserId = userId || getUserId();
-
-  if (!finalUserId) {
-    throw new Error('User ID is required for HITL rejection');
-  }
-
-  const response = await fetch(`${NX_API_URL}/api/aura/hitl/reject/${requestId}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'X-Tenant-ID': tenantId,
-      'X-User-ID': finalUserId,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      userId: finalUserId,
-      ...(reason && { reason }),
-    }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `HITL rejection failed: ${response.status}`);
-  }
-
-  const result = await response.json();
-  
-  // Backend returns ApiResponse<HitlApprovalResponse>
-  if (result.status === 'SUCCESS' || result.success) {
-    return result.data;
-  }
-  
-  throw new Error(result.message || 'HITL rejection failed');
+  const res = await rejectHitlAction(requestId, { comment: reason });
+  const data = res.data as Record<string, unknown> | undefined;
+  return {
+    requestId,
+    sessionId: (data?.sessionId as string) ?? '',
+    status: 'rejected',
+    ...(reason != null && { reason }),
+  };
 }
 
 /**
- * Get HITL request details
+ * Get HITL request details — 백엔드 GET /api/synapse/actions/hitl/{requestId} 전용 (Aura 제거)
  */
-export async function getHitlRequest(requestId: string): Promise<any> {
-  const token = getAccessToken();
-  const tenantId = getTenantId();
-
-  const response = await fetch(`${NX_API_URL}/api/aura/hitl/requests/${requestId}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'X-Tenant-ID': tenantId,
-    },
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `Failed to get HITL request: ${response.status}`);
+export async function getHitlRequest(requestId: string): Promise<unknown> {
+  const { getHitlRequestDetail } = await import('../api/synapse-operations-api');
+  const res = await getHitlRequestDetail(requestId);
+  if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+    throw new Error(
+      (res as { message?: string }).message || 'Failed to get HITL request'
+    );
   }
-
-  const result = await response.json();
-  
-  // Backend returns ApiResponse with data as JSON string, parse it
-  if (result.status === 'SUCCESS' || result.success) {
-    return typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
-  }
-  
-  throw new Error(result.message || 'Failed to get HITL request');
+  const data = res.data;
+  return typeof data === 'string' ? JSON.parse(data) : data;
 }

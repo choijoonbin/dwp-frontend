@@ -40,6 +40,7 @@ import {
   type CreateActionBody,
   type ActionsListParams,
   type ArchiveListParams,
+  getWorkbenchCaseHistory,
   type AnomaliesListParams,
   type CaseAuditEventsParams,
 } from '../api/synapse-operations-api';
@@ -61,6 +62,9 @@ export const caseAuditEventsQueryKey = (
   caseId: string,
   params?: CaseAuditEventsParams
 ) => ['synapse', 'cases', 'audit-events', tenantId, caseId, params] as const;
+
+export const workbenchCaseHistoryQueryKey = (tenantId: string, caseId: string) =>
+  ['synapse', 'workbench', 'cases', 'history', tenantId, caseId] as const;
 
 export const caseAnalysisQueryKey = (tenantId: string, caseId: string, runId?: string | null) =>
   ['synapse', 'cases', 'analysis', tenantId, caseId, runId ?? ''] as const;
@@ -171,6 +175,41 @@ export const useCaseAuditEventsQuery = (
         throw new Error(res.message || 'Failed to fetch case audit events');
       }
       return res.data;
+    },
+    enabled,
+    staleTime: 30 * 1000,
+    gcTime: 2 * 60 * 1000,
+    retry: false,
+  });
+};
+
+/**
+ * 워크벤치 조치 이력 (back.txt B.3)
+ * GET /api/synapse/workbench/cases/{caseId}/history → data[] (action_at DESC)
+ */
+export const useWorkbenchCaseHistoryQuery = (
+  caseId: string | undefined,
+  options?: { enabled?: boolean }
+) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled =
+    (options?.enabled ?? true) &&
+    isAuthenticated &&
+    Boolean(tenantId) &&
+    Boolean(caseId);
+
+  return useQuery({
+    queryKey: workbenchCaseHistoryQueryKey(tenantId, caseId ?? ''),
+    queryFn: async () => {
+      if (!caseId) throw new Error('Missing case ID');
+      const res = await getWorkbenchCaseHistory(caseId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch workbench history');
+      }
+      const raw = res.data as unknown;
+      const list = Array.isArray(raw) ? raw : (raw as { data?: unknown[] })?.data ?? [];
+      return list;
     },
     enabled,
     staleTime: 30 * 1000,

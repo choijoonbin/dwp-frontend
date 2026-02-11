@@ -6,7 +6,12 @@
     "switched": "언어가 {{lang}}로 변경되었습니다.",
     "switched_en": "Language switched to English."
   },
-  "theme": { "darkMode": "다크 모드", "lightMode": "라이트 모드" },
+  "theme": {
+    "currentMode": "현재: {{mode}}",
+    "darkMode": "다크 모드",
+    "lightMode": "라이트 모드",
+    "switchTo": "{{mode}}로 전환"
+  },
   "error": {
     "403": {
       "title": "403 Forbidden",
@@ -74,6 +79,7 @@
     "termUpdated": "용어가 수정되었습니다",
     "termDeleted": "용어가 삭제되었습니다",
     "feedbackSubmitted": "피드백이 제출되었습니다",
+    "ragLearned": "신규 규정집이 학습되었습니다. 이제부터 최신 규정 기반으로 분석합니다.",
     "reconciliationStarted": "조정 실행이 시작되었습니다",
     "retryRequested": "재시도가 요청되었습니다",
     "auditView": "감사 상세 보기",
@@ -452,9 +458,10 @@
     }
   },
   "dashboard": {
-    "title": "통합 관제 센터",
+    "title": "통합 워크벤치",
     "subtitle": "자율 재무 운영 실시간 현황",
     "refresh": "새로고침",
+    "vectorizingBanner": "규정 문서 벡터화가 진행 중입니다. 완료되면 워크벤치에서 참조할 수 있습니다.",
     "viewCases": "케이스 보기",
     "kpi": {
       "financialHealthIndex": "재무 건전성 지수",
@@ -519,6 +526,17 @@
     },
     "summaryLoadFailed": "요약 데이터를 불러올 수 없습니다.",
     "countUnit": "건",
+    "icc": {
+      "liveScan": "라이브 스캔",
+      "liveFeedTitle": "라이브 인텔리전스 피드",
+      "liveFeedSubtitle": "최근 에이전트 활동 (제목, 추론, 상태)",
+      "hitlSummaryTitle": "긴급 HITL 요약",
+      "hitlSummarySubtitle": "최신 대사 실패 항목 — 즉시 조치",
+      "hitlEmpty": "대사 실패 없음",
+      "hitlResource": "리소스",
+      "hitlStatus": "상태",
+      "viewRecon": "대사 조회"
+    },
     "autoRefreshBadge": "자동 갱신: 10초",
     "lastUpdated": "마지막 업데이트: {{time}}",
     "loadFailedRetrying": "일시적으로 데이터를 불러오지 못했습니다. (자동 재시도 중)",
@@ -553,6 +571,59 @@
         "execute": "실행",
         "match": "매칭"
       }
+    }
+  },
+  "workbench": {
+    "queueTitle": "케이스 큐",
+    "filterAll": "전체",
+    "filterOpen": "미조치",
+    "filterInProgress": "진행중",
+    "queueHint": "케이스를 선택하면 추론 및 스트림을 볼 수 있습니다.",
+    "openCases": "케이스 목록 열기",
+    "detailTitle": "추론 및 근거",
+    "detailSelectCase": "분석할 케이스를 왼쪽 목록에서 선택해 주세요.",
+    "detailHint": "큐에서 케이스를 선택하면 분석과 근거가 여기에 표시됩니다.",
+    "detailLoading": "해당 케이스의 사고 과정을 불러오는 중...",
+    "streamTitle": "에이전트 스트림",
+    "streamHint": "케이스 분석 중 실시간 에이전트 활동이 여기에 표시됩니다.",
+    "streamLoading": "에이전트 활동 불러오는 중...",
+    "tabQueue": "큐",
+    "tabDetail": "상세",
+    "tabStream": "스트림",
+    "detailTabInference": "추론",
+    "detailTabHistory": "이력",
+    "detailTabItemDetail": "상세 내역",
+    "historyEmpty": "조치 이력이 없습니다.",
+    "historyComment": "조치 사유",
+    "itemDetailEmpty": "라인 항목이 없습니다.",
+    "itemDetail": {
+      "buzei": "라인",
+      "account": "계정",
+      "amount": "금액",
+      "partner": "거래처",
+      "description": "적요"
+    },
+    "tools": {
+      "knowledgePolicy": "지식/정책 관리",
+      "rag": "규정 관리",
+      "policies": "정책 설정",
+      "guardrails": "가드레일"
+    },
+    "thought": {
+      "analysis": "분석 중",
+      "planning": "계획 수립",
+      "execution": "실행 중",
+      "verification": "검증 중",
+      "thinking": "사고 중",
+      "sources": "참고 자료",
+      "ragCitations": "규정 인용",
+      "citation": "인용",
+      "relevance": "관련도",
+      "page": "페이지",
+      "excerpt": "발췌문",
+      "citedExcerpt": "규정집 본문 내 인용 구절",
+      "citationNoExcerpt": "발췌문 없음.",
+      "scenarioDataLabel": "[시나리오 데이터]"
     }
   },
   "errorBoundary": {
@@ -1005,8 +1076,10 @@
       "document": "문서",
       "source": "소스",
       "status": "상태",
+      "referenceCount": "참조 횟수",
       "created": "생성일"
     },
+    "referenceCountBadge": "참조 {{count}}회",
     "status": {
       "indexed": "인덱싱됨",
       "indexing": "인덱싱 중",
@@ -1016,17 +1089,36 @@
     "error": {
       "failedToLoad": "문서 로드 실패"
     },
+    "detail": {
+      "description": "등록된 문서의 메타정보와 RAG 인덱싱된 청크(본문 조각) 목록입니다. 문서 내 검색으로 청크를 필터링할 수 있습니다.",
+      "searchWithin": "이 문서 내 검색",
+      "searchPlaceholder": "청크에서 검색…",
+      "chunksTitle": "청크",
+      "chunksEmpty": "아직 인덱싱된 청크가 없습니다. 인덱싱이 완료되면 여기에 표시됩니다.",
+      "filteredBy": "검색: \"{{q}}\"",
+      "chunksNoMatch": "검색어 \"{{q}}\"에 맞는 청크가 없습니다.",
+      "loading": "문서 로딩 중…",
+      "notFound": "문서를 찾을 수 없습니다",
+      "notFoundHint": "삭제되었거나 문서 ID가 올바르지 않을 수 있습니다.",
+      "missingDocId": "문서 ID가 없습니다. 목록에서 문서를 선택해 주세요.",
+      "backToLibrary": "문서 라이브러리로"
+    },
     "registerModal": {
       "hint": "RAG 인덱싱을 위해 문서를 등록합니다. 문서는 시맨틱 검색을 위해 처리되고 청크로 분할됩니다.",
+      "allowedExtensionsHint": "허용 확장자: .pdf, .txt, .doc, .docx, .hwp",
+      "selectFile": "파일 선택",
       "titleLabel": "제목",
       "titlePlaceholder": "예: 내부 통제 정책 v2026",
+      "docType": "문서 유형",
+      "sourceMode": "입력 방식",
+      "sourceModeFile": "파일 업로드",
+      "sourceModeUrl": "URL",
+      "sourceModeS3": "S3",
       "sourceType": "소스 유형",
       "s3Key": "S3 키",
       "s3KeyPlaceholder": "bucket/path/to/document.pdf",
       "url": "URL",
       "urlPlaceholder": "https://...",
-      "checksum": "체크섬 (선택)",
-      "checksumPlaceholder": "무결성을 위한 SHA256 해시",
       "cancel": "취소",
       "register": "등록",
       "registering": "등록 중..."
@@ -1041,12 +1133,14 @@
     "table": {
       "profile": "프로필",
       "scope": "범위",
+      "autonomyLevel": "자율성 수준",
       "default": "기본",
       "actions": "작업"
     },
     "loading": "로딩 중...",
     "empty": "현재 검색과 일치하는 프로필이 없습니다.",
     "default": "기본",
+    "edit": "수정",
     "open": "열기",
     "error": {
       "failedToLoad": "프로필 로드 실패"
@@ -1557,6 +1651,7 @@
     "save": "저장"
   },
   "menu": {
+    "workbench": "통합 워크벤치",
     "governance-config": {
       "_label": "거버넌스·설정",
       "admin": "시스템 관리",

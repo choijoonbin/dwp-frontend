@@ -113,12 +113,54 @@ export type CaseDetailAction = {
   [key: string]: unknown;
 };
 
+/** BE GET /api/synapse/cases/{id} — Single Source of Truth: fiDocItems, actionHistory, aiThoughts 일괄 반환 */
+/** 조치 이력 항목 (BE: CaseActionHistoryItemRefDto) — JSON 키 camelCase */
+export type CaseActionHistoryItemDto = {
+  id?: number | string;
+  caseId?: string;
+  actionType?: string;
+  actorId?: string;
+  commentText?: string | null;
+  /** BE JSON: actionAt (camelCase), ISO8601 Instant */
+  actionAt?: string;
+  createdAt?: string;
+  metadataJson?: string;
+};
+
+/** AI 추론 항목 (BE: AiThoughtItemDto, agent_activity_log) — JSON 키 camelCase */
+export type AiThoughtDto = {
+  id?: string;
+  /** BE: stage (예: THOUGHT) */
+  stage?: string;
+  /** BE: eventType (예: RAG_SEARCH) */
+  eventType?: string;
+  /** BE: message (본문) */
+  message?: string;
+  /** BE JSON: occurredAt (camelCase), ISO8601 Instant */
+  occurredAt?: string;
+  /** 레거시/폴백 */
+  step?: number;
+  type?: string;
+  content?: string;
+  confidence?: number;
+  timestamp?: string;
+};
+
 export type CaseDetailDto = {
   caseId: string;
   status: string;
   severity?: string;
   caseType?: string;
   detectedAt?: string;
+  keys?: Record<string, unknown>;
+  links?: Record<string, unknown>;
+  /** BE: 전표 라인 (fi_doc_item) — buzei, hkont, wrbtr(BigDecimal→숫자), sgtxt. snake_case 또는 camelCase */
+  fi_doc_items?: Array<Record<string, unknown>>;
+  fiDocItems?: Array<Record<string, unknown>>;
+  /** BE: 조치 이력 (CaseActionHistoryItemRefDto[], 최근 50건) */
+  actionHistory?: CaseActionHistoryItemDto[];
+  /** BE: AI 추론 (AiThoughtItemDto[], agent_activity_log, 최근 50건) */
+  aiThoughts?: AiThoughtDto[];
   evidence?: CaseDetailEvidence;
   reasoning?: CaseDetailReasoning;
   action?: CaseDetailAction;
@@ -446,6 +488,7 @@ export type CaseAuditEventsParams = {
   size?: number;
 };
 
+/** BE case_action_history / audit-events 응답 — actor 표시는 actorDisplayName | actorName | actor_id 순으로 fallback */
 export type CaseAuditEventDto = {
   auditId: string;
   createdAt: string;
@@ -454,7 +497,12 @@ export type CaseAuditEventDto = {
   outcome?: string;
   severity?: string;
   actorType?: string;
+  /** 조치자 표시명 (BE 권장) */
   actorDisplayName?: string;
+  /** BE가 actorName으로 내려주는 경우 */
+  actorName?: string;
+  /** BE가 actor_id만 내려주는 경우 — UI에서 그대로 표시 또는 해석 */
+  actor_id?: string;
   resourceType?: string;
   resourceId?: string;
   [key: string]: unknown;
@@ -476,6 +524,36 @@ export const getCaseAuditEvents = async (
   const qs = query.toString();
   const url = `/api/synapse/cases/${encodeURIComponent(caseId)}/audit-events${qs ? `?${qs}` : ''}`;
   const res = await axiosInstance.get<ApiResponse<CaseAuditEventsResponse>>(url);
+  return res.data;
+};
+
+/**
+ * GET /api/synapse/workbench/cases/{caseId}/history — 워크벤치 조치 이력 (back.txt B.3)
+ * action_at DESC, ApiResponse<List<CaseActionHistoryItemDto>>
+ */
+export type CaseActionHistoryItemDto = {
+  id: number;
+  caseId: number;
+  actionType: string;
+  /** 조치자 ID (예: USER:user-uuid) — UI 표시용 그대로 사용 또는 해석 */
+  actorId: string;
+  /** 조치 사유(Comment) */
+  commentText: string;
+  /** 조치 시각 ISO-8601 */
+  actionAt: string;
+  metadataJson?: string | null;
+  createdAt: string;
+  [key: string]: unknown;
+};
+
+export type CaseActionHistoryResponse = CaseActionHistoryItemDto[];
+
+export const getWorkbenchCaseHistory = async (
+  caseId: string
+): Promise<ApiResponse<CaseActionHistoryResponse>> => {
+  const res = await axiosInstance.get<ApiResponse<CaseActionHistoryResponse>>(
+    `/api/synapse/workbench/cases/${encodeURIComponent(caseId)}/history`
+  );
   return res.data;
 };
 
@@ -547,6 +625,42 @@ export const approveAction = async (
   const res = await axiosInstance.post<ApiResponse<ActionRowDto>>(
     `/api/synapse/actions/${encodeURIComponent(actionId)}/approve`,
     {}
+  );
+  return res.data;
+};
+
+/**
+ * GET /api/synapse/actions/hitl/{requestId} — HITL 요청 상세 조회 (Aura 직접 호출 제거, BE 단일 소스)
+ */
+export const getHitlRequestDetail = async (
+  requestId: string
+): Promise<ApiResponse<unknown>> => {
+  const res = await axiosInstance.get<ApiResponse<unknown>>(
+    `/api/synapse/actions/hitl/${encodeURIComponent(requestId)}`
+  );
+  return res.data;
+};
+
+/** HITL 승인 — 백엔드 경유 (case_action_history 기록). comment(승인 사유) 필수 전달 권장 */
+export const approveHitlAction = async (
+  requestId: string,
+  body?: { comment?: string }
+): Promise<ApiResponse<ActionRowDto>> => {
+  const res = await axiosInstance.post<ApiResponse<ActionRowDto>>(
+    `/api/synapse/actions/hitl/${encodeURIComponent(requestId)}/approve`,
+    body ?? {}
+  );
+  return res.data;
+};
+
+/** HITL 거절 — 백엔드 경유 (case_action_history 기록). comment(거절 사유) 포함 */
+export const rejectHitlAction = async (
+  requestId: string,
+  body?: { comment?: string }
+): Promise<ApiResponse<ActionRowDto>> => {
+  const res = await axiosInstance.post<ApiResponse<ActionRowDto>>(
+    `/api/synapse/actions/hitl/${encodeURIComponent(requestId)}/reject`,
+    body ?? {}
   );
   return res.data;
 };

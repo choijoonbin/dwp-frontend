@@ -1,7 +1,7 @@
 /**
  * Tree API path(pathname) → Synapse 페이지 매핑
- * API에서 오는 path를 그대로 사용 (menu.command-center, /cases 등)
- * /synapse, /synapse/* 는 하위 호환용
+ * 메인 진입점: /synapse/workbench (통합 워크벤치). /command-center 흔적 제거.
+ * API에서 오는 path를 그대로 사용 (/cases, /rag 등).
  *
  * 권한: 공통 route-permission-config 기반으로 PermissionRouteGuard 적용.
  * path key → resourceKey 매핑은 libs/shared-utils에서 Single Source of Truth.
@@ -24,8 +24,8 @@ import { FeedbackPage } from './pages/feedback';
 import { PoliciesPage } from './pages/policies';
 import { AnalyticsPage } from './pages/analytics';
 import { AnomaliesPage } from './pages/anomalies';
-import { DashboardPage } from './pages/dashboard';
 import { DocumentsPage } from './pages/documents';
+import { WorkbenchPage } from './pages/workbench';
 import { OpenItemsPage } from './pages/open-items';
 import { DictionaryPage } from './pages/dictionary';
 import { GovernancePage } from './pages/governance';
@@ -49,9 +49,9 @@ import { ReconRunDetailPage } from './pages/reconciliation/recon-run-detail';
 // ----------------------------------------------------------------------
 
 const PATH_TO_PAGE: Record<string, () => ReactNode> = {
-  // 통합 관제 센터
-  'menu.command-center': () => <DashboardPage />,
-  synapse: () => <DashboardPage />,
+  // 통합 워크벤치 (메인: /synapse/workbench만 사용, command-center는 위에서 redirect)
+  workbench: () => <WorkbenchPage />,
+  synapse: () => <WorkbenchPage />,
 
   // 자율 운영 센터 (부모 메뉴)
   'menu.autonomous-operations': () => <AutonomyPage />,
@@ -92,7 +92,7 @@ const PATH_TO_PAGE: Record<string, () => ReactNode> = {
   admin: () => <SynapseAdminPage />,
 };
 
-/** path key에 대해 권한 가드로 감싼 페이지 반환 (공통 권한 설정 사용) */
+/** path key에 대해 권한 가드로 감싼 페이지 반환 (공통 권한 설정 사용). 레이아웃 HOC 없음 — Host DashboardLayout만 적용. */
 function wrapWithRouteGuard(page: ReactNode, pathKey: string): ReactNode {
   const resourceKey = getResourceKeyForPath(pathKey);
   if (!resourceKey) return page;
@@ -103,12 +103,17 @@ function wrapWithRouteGuard(page: ReactNode, pathKey: string): ReactNode {
   );
 }
 
-/** pathname(예: /menu.command-center, /cases, /synapse/cases) → 해당 Synapse 페이지 컴포넌트 */
+/** pathname(예: /synapse/workbench, /cases) → 해당 Synapse 페이지 컴포넌트 */
 export const getPageForPathname = (pathname: string): ReactNode => {
   const normalized = pathname.replace(/^\//, '').trim();
-  if (!normalized) return wrapWithRouteGuard(<DashboardPage />, 'synapse');
+  if (!normalized) return wrapWithRouteGuard(<WorkbenchPage />, 'workbench');
 
-  // 0) /synapse/admin/code-usages|menus|codes → Admin Remote로 리다이렉트 (동일 화면 버그 수정)
+  // 0) 레거시 /command-center → /synapse/workbench 즉시 리다이렉트 (최종 경로 고정)
+  if (normalized === 'synapse/command-center' || normalized === 'command-center') {
+    return <Navigate to="/synapse/workbench" replace />;
+  }
+
+  // 1) /synapse/admin/code-usages|menus|codes → Admin Remote로 리다이렉트 (동일 화면 버그 수정)
   const synapseAdminRedirectMatch = normalized.match(/^synapse\/admin\/(code-usages|menus|codes)(?:\/|$)/);
   if (synapseAdminRedirectMatch) {
     const subPath = synapseAdminRedirectMatch[1];
@@ -151,5 +156,5 @@ export const getPageForPathname = (pathname: string): ReactNode => {
   const firstPage = PATH_TO_PAGE[first];
   if (firstPage) return wrapWithRouteGuard(firstPage(), first);
 
-  return wrapWithRouteGuard(<DashboardPage />, 'synapse');
+  return wrapWithRouteGuard(<WorkbenchPage />, 'workbench');
 };

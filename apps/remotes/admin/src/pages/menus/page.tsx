@@ -51,6 +51,7 @@ const MenusPageContent = () => {
   const {
     open: editorOpen,
     draftForm,
+    dirty,
     validationErrors,
     isCreateMode,
     selectedMenu,
@@ -309,6 +310,7 @@ const MenusPageContent = () => {
                 formData={draftForm}
                 validationErrors={validationErrors}
                 isLoading={isUpdating || isDeleting}
+                saveDisabled={!dirty}
                 onFormChange={updateFormField}
                 onReset={resetForm}
                 onCreateChild={handleCreateChild}
@@ -380,6 +382,7 @@ const MenusPageContent = () => {
             formData={draftForm}
             validationErrors={validationErrors}
             isLoading={isUpdating || isDeleting}
+            saveDisabled={!dirty}
             onFormChange={updateFormField}
             onReset={resetForm}
             onCreateChild={handleCreateChild}

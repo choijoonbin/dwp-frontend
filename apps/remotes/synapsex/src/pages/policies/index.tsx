@@ -20,9 +20,14 @@ import TableHead from '@mui/material/TableHead';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
+import LinearProgress from '@mui/material/LinearProgress';
 import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../../routes';
+
+/** Mock autonomy level 0–100 from profile id/name (stable per profile). Replace with API when available. */
+const getAutonomyLevel = (profileId: string, profileName?: string): number =>
+  (profileId.length * 7 + (profileName?.length ?? 0)) % 101;
 
 // ----------------------------------------------------------------------
 
@@ -117,6 +122,7 @@ export const PoliciesPage = () => {
                   <TableRow>
                     <TableCell>{t('policies.table.profile')}</TableCell>
                     <TableCell>{t('policies.table.scope')}</TableCell>
+                    <TableCell sx={{ width: 160, minWidth: 140 }}>{t('policies.table.autonomyLevel')}</TableCell>
                     <TableCell sx={{ width: 120 }}>{t('policies.table.default')}</TableCell>
                     <TableCell sx={{ width: 110 }} align="right">
                       {t('policies.table.actions')}
@@ -126,7 +132,7 @@ export const PoliciesPage = () => {
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={4} align="center" sx={{ py: 8 }}>
+                      <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
                         <Typography variant="body2" color="text.secondary">
                           {t('policies.loading')}
                         </Typography>
@@ -134,7 +140,7 @@ export const PoliciesPage = () => {
                     </TableRow>
                   ) : rows.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} align="center" sx={{ py: 10 }}>
+                      <TableCell colSpan={5} align="center" sx={{ py: 10 }}>
                         <Typography variant="body2" color="text.secondary">
                           {t('policies.empty')}
                         </Typography>
@@ -143,6 +149,7 @@ export const PoliciesPage = () => {
                   ) : (
                     rows.map((p) => {
                       const isDefault = p.profileId === defaultProfileId || p.isDefault;
+                      const autonomyLevel = getAutonomyLevel(p.profileId, p.profileName);
                       return (
                         <TableRow
                           key={p.profileId}
@@ -162,6 +169,24 @@ export const PoliciesPage = () => {
                             <Typography variant="caption" color="text.secondary">
                               {p.scope ?? '-'}
                             </Typography>
+                          </TableCell>
+                          <TableCell sx={{ verticalAlign: 'middle' }}>
+                            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ minWidth: 0 }}>
+                              <LinearProgress
+                                variant="determinate"
+                                value={autonomyLevel}
+                                sx={{
+                                  flex: 1,
+                                  height: 8,
+                                  borderRadius: 1,
+                                  bgcolor: 'action.selected',
+                                  '& .MuiLinearProgress-bar': { borderRadius: 1 },
+                                }}
+                              />
+                              <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
+                                {autonomyLevel}%
+                              </Typography>
+                            </Stack>
                           </TableCell>
                           <TableCell>
                             {isDefault ? (

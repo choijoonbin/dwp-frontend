@@ -1,6 +1,14 @@
 <!doctype html>
-<html lang="en" data-color-scheme="light">
+<html lang="en">
   <head>
+    <script>
+      (function () {
+        var key = 'dwp-theme-mode';
+        var stored = typeof localStorage !== 'undefined' && localStorage.getItem(key);
+        var scheme = (stored === 'dark' || stored === 'light') ? stored : 'light';
+        document.documentElement.setAttribute('data-color-scheme', scheme);
+      })();
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="theme-color" content="#000000" />

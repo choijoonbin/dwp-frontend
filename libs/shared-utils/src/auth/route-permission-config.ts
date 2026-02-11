@@ -13,12 +13,16 @@
 // ----------------------------------------------------------------------
 
 export const ROUTE_RESOURCE_MAP: Record<string, string> = {
-  // 통합 관제 센터
+  // 통합 워크벤치 (메인: /synapse/workbench, 권한은 menu.command-center로 통일)
+  workbench: 'menu.command-center',
+  'command-center': 'menu.command-center',
+  'menu.workbench': 'menu.command-center',
   'menu.command-center': 'menu.command-center',
   synapse: 'menu.command-center',
 
   // 자율 운영 센터
   'menu.autonomous-operations': 'menu.autonomous-operations',
+  'menu.autonomous-operations.workbench': 'menu.command-center',
   autonomy: 'menu.autonomous-operations',
   cases: 'menu.autonomous-operations.cases',
   anomalies: 'menu.autonomous-operations.anomalies',

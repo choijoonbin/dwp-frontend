@@ -4,6 +4,7 @@
  */
 
 import type {
+  KpiDailyItemDto,
   TeamSnapshotDto,
   AgentActivityDto,
   TopRiskDriverDto,
@@ -37,6 +38,80 @@ function getRiskDriverLabel(
     if (fromCodes && fromCodes !== codeKey) return fromCodes;
   }
   return CASE_TYPE_LABEL_MAP[typeKey] ?? CASE_TYPE_LABEL_MAP.default;
+}
+
+// ----------------------------------------------------------------------
+// kpiDaily (analytics_kpi_daily) → 메트릭 카드 4건
+// ----------------------------------------------------------------------
+
+const KPI_DAILY_SLOT: Array<{
+  titleKey: string;
+  suffix: string;
+  icon: string;
+  iconColor: string;
+  iconBg: string;
+}> = [
+  {
+    titleKey: 'dashboard.kpi.financialHealthIndex',
+    suffix: '/100',
+    icon: 'solar:heart-bold-duotone',
+    iconColor: 'success.main',
+    iconBg: 'success.lighter',
+  },
+  {
+    titleKey: 'dashboard.kpi.openCasesBySeverity',
+    suffix: '',
+    icon: 'solar:danger-triangle-bold-duotone',
+    iconColor: 'warning.main',
+    iconBg: 'warning.lighter',
+  },
+  {
+    titleKey: 'dashboard.kpi.aiActionSuccessRate',
+    suffix: '%',
+    icon: 'solar:bolt-bold-duotone',
+    iconColor: 'primary.main',
+    iconBg: 'primary.lighter',
+  },
+  {
+    titleKey: 'dashboard.kpi.expectedLossPrevention',
+    suffix: '',
+    icon: 'solar:wallet-money-bold-duotone',
+    iconColor: 'success.main',
+    iconBg: 'success.lighter',
+  },
+];
+
+export type KpiDailyCardItem = {
+  titleKey: string;
+  value: string | number;
+  suffix: string;
+  icon: string;
+  iconColor: string;
+  iconBg: string;
+};
+
+/** analytics_kpi_daily 오늘 최대 4건 → 수치 카드용. 인덱스 순서로 4슬롯 매핑. */
+export function mapKpiDailyToCards(kpiDaily: KpiDailyItemDto[] | undefined): KpiDailyCardItem[] {
+  if (!Array.isArray(kpiDaily) || kpiDaily.length === 0) return [];
+  return kpiDaily.slice(0, 4).map((item, i) => {
+    const slot = KPI_DAILY_SLOT[i] ?? KPI_DAILY_SLOT[0];
+    const raw = item.metricValue;
+    const value =
+      typeof raw === 'number'
+        ? raw
+        : typeof raw === 'string' && /^\d+(\.\d+)?$/.test(raw)
+          ? Number(raw)
+          : raw;
+    const suffix = slot.suffix || '';
+    return {
+      titleKey: slot.titleKey,
+      value,
+      suffix,
+      icon: slot.icon,
+      iconColor: slot.iconColor,
+      iconBg: slot.iconBg,
+    };
+  });
 }
 
 // ----------------------------------------------------------------------

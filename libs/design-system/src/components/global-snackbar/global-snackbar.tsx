@@ -17,6 +17,7 @@ export const GlobalSnackbar = () => {
   const message = useToastStore((s) => s.message);
   const severity = useToastStore((s) => s.severity);
   const action = useToastStore((s) => s.action);
+  const anchorOrigin = useToastStore((s) => s.anchorOrigin);
   const hide = useToastStore((s) => s.actions.hide);
 
   return (
@@ -24,7 +25,7 @@ export const GlobalSnackbar = () => {
       open={open}
       autoHideDuration={6000}
       onClose={hide}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      anchorOrigin={anchorOrigin}
     >
       <Alert
         onClose={hide}

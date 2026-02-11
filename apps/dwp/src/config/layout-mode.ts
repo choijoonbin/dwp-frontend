@@ -7,6 +7,7 @@
  * @see docs/essentials/LAYOUT_GUIDE.md
  */
 export const FIXED_LAYOUT_PATHS = [
+  '/synapse/workbench',
   '/ai-workspace',
   '/admin/menus',
   '/admin/roles',

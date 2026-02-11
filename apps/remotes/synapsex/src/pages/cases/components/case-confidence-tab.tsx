@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
 import { useCaseTabsDebug } from '../context/case-tabs-debug-context';
-import { CaseTabQueryBoundary, TabEmptyState } from '../../../components/ux';
+import { TabEmptyState, CaseTabQueryBoundary } from '../../../components/ux';
 
 const ICON_MAP: Record<string, string> = {
   amount: 'solar:dollar-minimalistic-bold-duotone',

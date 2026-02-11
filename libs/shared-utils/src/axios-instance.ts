@@ -126,6 +126,24 @@ function buildHeaders(extra?: Record<string, string>): Record<string, string> {
   return headers;
 }
 
+/** multipart/form-data 전송 시 사용. Content-Type 미설정 → 브라우저가 boundary 자동 설정 */
+function buildHeadersForFormData(extra?: Record<string, string>): Record<string, string> {
+  const token = getAccessToken();
+  const tenantId = getTenantId();
+  const userId = getUserId();
+  const headers: Record<string, string> = {
+    'X-Tenant-ID': tenantId || '',
+    'X-Trace-ID': generateTraceId(),
+    ...(extra ?? {}),
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (userId) headers['X-User-ID'] = userId;
+  if (currentAgentId) headers['X-Agent-ID'] = currentAgentId;
+  const lang = getLanguageForRequest?.();
+  if (lang) headers['Accept-Language'] = lang;
+  return headers;
+}
+
 /**
  * Handle 401/403 errors globally
  * - 401: Calls onUnauthorizedHandler (logout + redirect)
@@ -215,6 +233,26 @@ export const axiosInstance = {
         handleAuthError(status);
       }
       throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
+    }
+
+    const data = (await res.json()) as T;
+    return { data };
+  },
+
+  /** POST multipart/form-data. body에 FormData 전달 시 Content-Type은 브라우저가 boundary와 함께 설정 */
+  postFormData: async <T>(url: string, formData: FormData): Promise<AxiosLikeResponse<T>> => {
+    const tenantId = getTenantId();
+    const headers = buildHeadersForFormData();
+
+    const res = await fetch(`${baseURL}${url}`, {
+      method: 'POST',
+      headers,
+      credentials: 'same-origin',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      await handleFailedResponse(res, url, 'POST', tenantId);
     }
 
     const data = (await res.json()) as T;

@@ -10,7 +10,7 @@ import type {
   ProposalExecuteResponseDto,
 } from '@dwp-frontend/shared-utils';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { formatDateTime, useTranslation } from '@dwp-frontend/shared-i18n';
 import {
@@ -24,14 +24,14 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import CardContent from '@mui/material/CardContent';
-import Collapse from '@mui/material/Collapse';
 import Table from '@mui/material/Table';
+import Button from '@mui/material/Button';
+import Collapse from '@mui/material/Collapse';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
 
 import { TabEmptyState, CaseTabQueryBoundary } from '../../../components/ux';
 import { dedupeProposalsByFingerprint } from '../adapters/case-action-proposals-adapter';

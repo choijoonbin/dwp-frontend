@@ -1,64 +1,214 @@
 /**
- * 통합 관제 센터 (대시보드)
- * API: summary, top-risk-drivers, action-required, team-snapshot, agent-activity
- * mock 제거 + 클릭 동선/라우팅 완성
+ * Integrated Control Center (ICC) — Phase 5
+ * Metrics (analytics_kpi_daily/summary), Autonomous Pulse (radar), Live Intelligence Feed (agent_activity_log),
+ * Critical HITL Summary (recon_result FAIL). Glassmorphism + responsive 375px.
  */
 
+import type { Theme } from '@mui/material/styles';
+
+import { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
+import { animate, useMotionValue } from 'framer-motion';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
-  useCodes,
   buildAuditUrl,
   buildCasesUrl,
   buildActionsUrl,
   buildAnalyticsUrl,
-  buildAnomaliesUrl,
+  useReconRunsQuery,
   getDashboardTenantId,
+  useRagDocumentsQuery,
   buildReconciliationUrl,
-  dashboardSummaryQueryKey,
-  useDashboardSummaryQuery,
+  useReconRunDetailQuery,
   dashboardTeamSnapshotQueryKey,
   useDashboardTeamSnapshotQuery,
   dashboardAgentActivityQueryKey,
   useDashboardAgentActivityQuery,
   dashboardActionRequiredQueryKey,
   dashboardTopRiskDriversQueryKey,
+  synapseDashboardSummaryQueryKey,
   useDashboardActionRequiredQuery,
   useDashboardTopRiskDriversQuery,
+  useSynapseDashboardSummaryQuery,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid';
+import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
-import TableRow from '@mui/material/TableRow';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
 import { SYNAPSE_ROUTES } from '../../routes';
-import { SeverityBadge } from '../../components/finance/severity-badge';
+import { RadarPulse } from './components/radar-pulse';
 import { DashboardEmptyState } from './components/dashboard-empty-state';
 import { ErrorStateWithRetry } from '../../components/ux/error-state-with-retry';
 import {
-  mapRiskDrivers,
-  mapTeamSnapshot,
-  type KpiUiModel,
   mapAgentActivity,
-  mapSummaryToKpis,
-  mapActionRequired,
-  type RiskDriverUiItem,
-  type TeamSnapshotUiItem,
+  mapKpiDailyToCards,
   type AgentActivityUiItem,
-  getAgentEventTypeLabelKey,
-  type ActionRequiredUiItem,
 } from './adapters/dashboard-adapter';
+
+// ----------------------------------------------------------------------
+// Glassmorphism — Dark: surface rgba(30,41,59,0.4), blur 16px, sharp border, subtle SK Red glow
+// Light: blur 20px, rgba(255,255,255,0.7)
+// ----------------------------------------------------------------------
+
+const getGlassCardSx = (theme: Theme): Record<string, unknown> => {
+  const isDark = theme.palette.mode === 'dark';
+  return {
+    backdropFilter: isDark ? 'blur(16px)' : 'blur(20px)',
+    WebkitBackdropFilter: isDark ? 'blur(16px)' : 'blur(20px)',
+    ...(isDark
+      ? {
+          backgroundColor: 'rgba(30, 41, 59, 0.4)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 0 15px rgba(225, 33, 39, 0.2)',
+        }
+      : {
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        }),
+  };
+};
+
+/** KPI cards only: same as getGlassCardSx + subtle gradient for depth (dark mode) */
+const getKpiGlassCardSx = (theme: Theme): Record<string, unknown> => {
+  const base = getGlassCardSx(theme) as Record<string, unknown>;
+  if (theme.palette.mode !== 'dark') return base;
+  return {
+    ...base,
+    backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 50%)',
+  };
+};
+
+/** 숫자 KPI 값 카운터 애니메이션 — 오도미터(굴러가는 숫자) 효과 */
+const ODOMETER_DURATION_MS = 500;
+
+function getDigits(n: number): number[] {
+  if (!Number.isFinite(n) || n < 0) return [0];
+  if (n === 0) return [0];
+  const out: number[] = [];
+  let x = Math.floor(n);
+  while (x > 0) {
+    out.unshift(x % 10);
+    x = Math.floor(x / 10);
+  }
+  return out;
+}
+
+/** Single digit column: 0–9 strip, translateY로 해당 숫자만 보이게 하고 애니메이션 */
+const OdometerDigit = ({
+  digit,
+  prevDigit,
+  sx,
+}: {
+  digit: number;
+  prevDigit: number;
+  sx?: Record<string, unknown>;
+}) => {
+  const [displayVal, setDisplayVal] = useState(prevDigit);
+  const prevRef = useRef(prevDigit);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef(0);
+
+  useEffect(() => {
+    if (digit === prevRef.current) return () => {};
+    const start = prevRef.current;
+    prevRef.current = digit;
+    const startTime = performance.now();
+    startRef.current = startTime;
+
+    const tick = (now: number) => {
+      const elapsed = now - startRef.current;
+      const t = Math.min(elapsed / ODOMETER_DURATION_MS, 1);
+      const easeOut = 1 - (1 - t) * (1 - t);
+      setDisplayVal(start + (digit - start) * easeOut);
+      if (t < 1) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+    };
+  }, [digit]);
+
+  const digitHeight = 28;
+  const translateY = -displayVal * digitHeight;
+
+  return (
+    <Box
+      sx={{
+        height: digitHeight,
+        overflow: 'hidden',
+        display: 'inline-flex',
+        flexDirection: 'column',
+        ...sx,
+      }}
+    >
+      <Box
+    sx={{
+      transform: `translateY(${translateY}px)`,
+      transition: 'none',
+      willChange: 'transform',
+    }}
+      >
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => (
+          <Typography
+            key={d}
+            variant="h5"
+            sx={{
+              height: digitHeight,
+              display: 'flex',
+              alignItems: 'center',
+              fontWeight: 700,
+              color: 'text.primary',
+              letterSpacing: -0.5,
+            }}
+          >
+            {d}
+          </Typography>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
+/** 오도미터 스타일 숫자 (자릿수별 굴러가는 애니메이션) */
+const OdometerValue = ({ value, sx }: { value: number; sx?: Record<string, unknown> }) => {
+  const digits = getDigits(value);
+  const prevDigitsRef = useRef<number[]>(digits);
+
+  const alignedPrev = (() => {
+    const prev = prevDigitsRef.current;
+    if (prev.length === digits.length) return prev;
+    if (digits.length > prev.length) {
+      return [...Array(digits.length - prev.length).fill(0), ...prev];
+    }
+    return prev.slice(prev.length - digits.length);
+  })();
+
+  useEffect(() => {
+    prevDigitsRef.current = [...digits];
+  }, [value]);
+
+  return (
+    <Stack direction="row" alignItems="center" spacing={0.25} sx={{ ...sx }}>
+      {digits.map((d, i) => (
+        <OdometerDigit
+          key={`${i}-${digits.length}`}
+          digit={d}
+          prevDigit={alignedPrev[i] ?? 0}
+          sx={{ minWidth: 18 }}
+        />
+      ))}
+    </Stack>
+  );
+};
 
 /** 백엔드 links 경로를 /synapse prefix가 있는 절대 경로로 변환 */
 function normalizePath(path: string | null | undefined): string | null {
@@ -68,6 +218,43 @@ function normalizePath(path: string | null | undefined): string | null {
   if (p.startsWith('/')) return `/synapse${p}`;
   return `/synapse/${p}`;
 }
+
+/** KPI 숫자 부드럽게 카운팅 — framer-motion */
+const KPI_COUNT_DURATION = 0.5;
+
+const AnimatedKpiNumber = ({ value, sx }: { value: number; sx?: Record<string, unknown> }) => {
+  const motionValue = useMotionValue(value);
+  const [display, setDisplay] = useState(value);
+
+  useEffect(() => {
+    const stop = motionValue.on('change', (latest) => setDisplay(Math.round(latest)));
+    return () => stop();
+  }, [motionValue]);
+
+  useEffect(() => {
+    const controls = animate(motionValue.get(), value, {
+      duration: KPI_COUNT_DURATION,
+      ease: 'easeOut',
+      onUpdate: (latest) => motionValue.set(latest),
+    });
+    return () => controls.stop();
+  }, [value, motionValue]);
+
+  return (
+    <Typography
+      variant="h5"
+      component="span"
+      sx={{
+        fontWeight: 700,
+        color: 'text.primary',
+        letterSpacing: -0.5,
+        ...sx,
+      }}
+    >
+      {display}
+    </Typography>
+  );
+};
 
 // ----------------------------------------------------------------------
 // KPI 카드
@@ -84,6 +271,7 @@ const KPICard = ({
   iconColor,
   iconBg,
   to,
+  cardSx,
 }: {
   title: string;
   value: string | number;
@@ -95,7 +283,11 @@ const KPICard = ({
   iconColor: string;
   iconBg: string;
   to?: string;
+  cardSx?: Record<string, unknown>;
 }) => {
+  const isNumeric = typeof value === 'number' && Number.isFinite(value);
+  const numericValue = isNumeric ? (value as number) : 0;
+
   const content = (
     <CardContent sx={{ p: 2 }}>
       <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1}>
@@ -104,9 +296,20 @@ const KPICard = ({
             {title}
           </Typography>
           <Stack direction="row" alignItems="baseline" spacing={0.5}>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              {value}
-            </Typography>
+            {isNumeric ? (
+              <AnimatedKpiNumber value={numericValue} />
+            ) : (
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 700,
+                  color: 'text.primary',
+                  letterSpacing: -0.5,
+                }}
+              >
+                {value}
+              </Typography>
+            )}
             {suffix && (
               <Typography variant="body2" color="text.secondary">
                 {suffix}
@@ -172,6 +375,7 @@ const KPICard = ({
       sx={{
         height: '100%',
         ...(to && { cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }),
+        ...cardSx,
       }}
     >
       {content}
@@ -201,127 +405,14 @@ const KPICardSkeleton = () => (
 );
 
 // ----------------------------------------------------------------------
-// 에이전트 활동 로그
-// ----------------------------------------------------------------------
-
-const ActivityLogItem = ({
-  activity,
-  actionLabel,
-  onClick,
-}: {
-  activity: AgentActivityUiItem;
-  /** eventType 읽기 쉬운 라벨 (매핑된 경우) */
-  actionLabel?: string;
-  onClick?: () => void;
-}) => {
-  const isClickable = Boolean(
-    activity.caseId ||
-      activity.caseKey ||
-      activity.actionId ||
-      activity.traceId ||
-      activity.resourceId ||
-      activity.resourceType === 'INTEGRATION'
-  );
-  const time = new Date(activity.timestamp).toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-  const actionColors: Record<string, string> = {
-    SCAN: 'info.main',
-    DETECT: 'warning.main',
-    EXECUTE: 'success.main',
-    SIMULATE: 'primary.main',
-    ANALYZE: 'info.main',
-    MATCH: 'primary.main',
-  };
-  const statusColors: Record<string, string> = {
-    complete: 'text.secondary',
-    success: 'success.main',
-    alert: 'warning.main',
-    error: 'error.main',
-  };
-  const actionColor = actionColors[activity.action] ?? 'text.primary';
-  const statusColor = statusColors[activity.status] ?? 'text.primary';
-
-  return (
-    <Stack
-      direction="row"
-      alignItems="flex-start"
-      spacing={1}
-      sx={{
-        flexWrap: 'wrap',
-        gap: 0.5,
-        ...(isClickable && {
-          cursor: 'pointer',
-          '&:hover': { bgcolor: 'action.hover' },
-        }),
-        borderRadius: 0.5,
-        px: 0.5,
-        py: 0.25,
-      }}
-      onClick={isClickable ? onClick : undefined}
-      role={isClickable ? 'button' : undefined}
-      tabIndex={isClickable ? 0 : undefined}
-      onKeyDown={
-        isClickable && onClick
-          ? (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onClick();
-              }
-            }
-          : undefined
-      }
-    >
-      <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
-        {time}
-      </Typography>
-      <Typography variant="caption" sx={{ color: actionColor, flexShrink: 0 }}>
-        [{actionLabel ?? activity.action}]
-      </Typography>
-      {activity.caseId && (
-        <Typography
-          component={Link}
-          to={SYNAPSE_ROUTES.CASE_DETAIL.replace(':id', activity.caseId)}
-          variant="caption"
-          onClick={(e) => e.stopPropagation()}
-          sx={{ color: 'primary.main', flexShrink: 0, '&:hover': { textDecoration: 'underline' } }}
-        >
-          {activity.caseKey ?? activity.caseId}
-        </Typography>
-      )}
-      <Typography variant="caption" sx={{ color: statusColor, flex: 1 }}>
-        {activity.message}
-      </Typography>
-    </Stack>
-  );
-};
-
-// ----------------------------------------------------------------------
 // 포맷 유틸
 // ----------------------------------------------------------------------
-
-function formatPreventedLoss(amount: number, currency: string): string {
-  if (amount === 0) return `$0`;
-  const sym = currency === 'USD' ? '$' : currency;
-  if (amount >= 1_000_000) return `${sym}${(amount / 1_000_000).toFixed(2)}M`;
-  if (amount >= 1_000) return `${sym}${(amount / 1_000).toFixed(0)}K`;
-  return `${sym}${amount.toFixed(0)}`;
-}
-
-function formatRiskAmount(amount: number): string {
-  if (amount === 0) return '—';
-  if (amount >= 1_000) return `$${(amount / 1_000).toFixed(0)}K`;
-  return `$${amount.toFixed(0)}`;
-}
 
 // ----------------------------------------------------------------------
 // 대시보드 페이지
 // ----------------------------------------------------------------------
 
 const AGENT_STREAM_RANGE = '6h';
-const AGENT_STREAM_PREVIEW_COUNT = 5;
 
 /** 마지막 성공 시각 포맷 HH:mm:ss */
 function formatLastUpdated(ms: number): string {
@@ -333,21 +424,35 @@ function formatLastUpdated(ms: number): string {
   });
 }
 
+const LIVE_FEED_COUNT = 10;
+const HITL_FAIL_LIMIT = 5;
+
 export const DashboardPage = () => {
   const { t } = useTranslation('common');
+  const theme = useTheme();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const tenantId = getDashboardTenantId();
-  const { getLabel: getCaseTypeLabel } = useCodes('CASE_TYPE');
 
-  const summaryQuery = useDashboardSummaryQuery();
-  const riskDriversQuery = useDashboardTopRiskDriversQuery('24h');
-  const actionRequiredQuery = useDashboardActionRequiredQuery('HIGH,CRITICAL');
-  const teamSnapshotQuery = useDashboardTeamSnapshotQuery('7d');
+  const summaryQuery = useSynapseDashboardSummaryQuery();
+  useDashboardTopRiskDriversQuery('24h');
+  useDashboardActionRequiredQuery('HIGH,CRITICAL');
+  useDashboardTeamSnapshotQuery('7d');
   const agentActivityQuery = useDashboardAgentActivityQuery(AGENT_STREAM_RANGE, 50);
 
+  const reconRunsQuery = useReconRunsQuery();
+  const latestRunId = reconRunsQuery.data?.[0]?.runId;
+  const reconDetailQuery = useReconRunDetailQuery(latestRunId);
+  const reconFailItems = (reconDetailQuery.data?.results ?? []).filter((r) => r.status === 'FAIL').slice(0, HITL_FAIL_LIMIT);
+
+  const ragDocsQuery = useRagDocumentsQuery();
+  const ragItems = ragDocsQuery.data?.items ?? [];
+  const hasVectorizing = ragItems.some((d) => d.status === 'indexing');
+
+  const kpiCards = mapKpiDailyToCards(summaryQuery.data?.kpiDaily);
+
   const handleRefresh = () => {
-    void queryClient.invalidateQueries({ queryKey: dashboardSummaryQueryKey(tenantId) });
+    void queryClient.invalidateQueries({ queryKey: synapseDashboardSummaryQueryKey(tenantId) });
     void queryClient.invalidateQueries({
       queryKey: dashboardTopRiskDriversQueryKey(tenantId, '24h'),
     });
@@ -362,58 +467,7 @@ export const DashboardPage = () => {
     });
   };
 
-  const kpis: KpiUiModel = mapSummaryToKpis(summaryQuery.data ?? null);
-  const pendingActions: ActionRequiredUiItem[] = mapActionRequired(actionRequiredQuery.data ?? []);
-  const riskDrivers: RiskDriverUiItem[] = mapRiskDrivers(
-    riskDriversQuery.data ?? [],
-    getCaseTypeLabel
-  );
-  const teamSnapshot: TeamSnapshotUiItem[] = mapTeamSnapshot(teamSnapshotQuery.data ?? []);
   const agentActivities: AgentActivityUiItem[] = mapAgentActivity(agentActivityQuery.data ?? []);
-
-  const handleReviewClick = (action: ActionRequiredUiItem) => {
-    const path = normalizePath(action.reviewPath);
-    if (path) {
-      navigate(path);
-    } else if (action.caseId && action.caseId.trim()) {
-      navigate(SYNAPSE_ROUTES.CASE_DETAIL.replace(':id', action.caseId));
-    } else if (action.caseNumber && /^CS-\d{4}-\d+$/i.test(action.caseNumber)) {
-      navigate(buildCasesUrl({ caseKey: action.caseNumber }));
-    } else {
-      navigate(buildCasesUrl({ ids: action.caseId }));
-    }
-  };
-
-  /** 표준: caseId 우선 → /cases/{caseId} */
-  const handleActionRequiredRowClick = (action: ActionRequiredUiItem) => {
-    if (action.caseId && action.caseId.trim()) {
-      navigate(SYNAPSE_ROUTES.CASE_DETAIL.replace(':id', action.caseId));
-    } else if (action.caseNumber && /^CS-\d{4}-\d+$/i.test(action.caseNumber)) {
-      navigate(buildCasesUrl({ caseKey: action.caseNumber }));
-    } else {
-      navigate(buildCasesUrl({ ids: action.caseId }));
-    }
-  };
-
-  const handleTeamSnapshotRowClick = (member: TeamSnapshotUiItem, cell: 'analyst' | 'openCases' | 'pendingApprovals') => {
-    if (cell === 'pendingApprovals') {
-      const path = normalizePath(member.actionsPath);
-      if (path) {
-        navigate(path);
-      } else {
-        const userId = member.analystUserId || member.id;
-        navigate(buildActionsUrl({ assignee: userId, status: 'PENDING_APPROVAL' }));
-      }
-      return;
-    }
-    const path = normalizePath(member.casesPath);
-    if (path) {
-      navigate(path);
-      return;
-    }
-    const userId = member.analystUserId || member.id;
-    navigate(buildCasesUrl({ assigneeUserId: userId, status: ['OPEN', 'TRIAGE'], range: '7d' }));
-  };
 
   const handleAgentActivityClick = (item: AgentActivityUiItem) => {
     if (item.casePath) {
@@ -443,6 +497,13 @@ export const DashboardPage = () => {
   return (
     <Box sx={{ p: { xs: 2, sm: 3 }, width: '100%' }}>
       <Stack spacing={3}>
+        {/* E2E: RAG 벡터화 진행 중일 때 상단 알림 배너 */}
+        {hasVectorizing && (
+          <Alert severity="info" icon={<Iconify icon="solar:clock-circle-bold" width={22} />}>
+            {t('dashboard.vectorizingBanner')}
+          </Alert>
+        )}
+
         {/* Page Header */}
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
@@ -532,816 +593,281 @@ export const DashboardPage = () => {
           )}
         </Stack>
 
-        {/* KPI Cards */}
-        <Stack
-          direction="row"
-          flexWrap="wrap"
-          useFlexGap
-          spacing={2}
-          sx={{ '& > *': { minWidth: 240, flex: '1 1 200px' } }}
-        >
+        {/* Metrics Layer (Top): analytics_kpi_daily → 수치 4카드 + glass. 펄스는 아래 Autonomous Pulse. */}
+        <Grid container spacing={2} sx={{ width: '100%' }}>
           {summaryQuery.isLoading ? (
-            Array.from({ length: 4 }).map((_, i) => <KPICardSkeleton key={i} />)
+            Array.from({ length: 4 }).map((_, i) => (
+              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={i}>
+                <KPICardSkeleton />
+              </Grid>
+            ))
           ) : summaryQuery.isError ? (
-            <Box sx={{ width: '100%' }}>
+            <Grid size={12}>
               <ErrorStateWithRetry
                 title={t('error.errorState.failedToLoadKpi')}
                 message={summaryQuery.error?.message ?? t('dashboard.summaryLoadFailed')}
                 onRetry={() => void summaryQuery.refetch()}
               />
-            </Box>
+            </Grid>
+          ) : kpiCards.length > 0 ? (
+            kpiCards.map((card, i) => (
+              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={card.titleKey + i}>
+                <KPICard
+                  cardSx={getKpiGlassCardSx(theme)}
+                  icon={card.icon}
+                  iconBg={card.iconBg}
+                  iconColor={card.iconColor}
+                  title={t(card.titleKey)}
+                  value={card.value}
+                  suffix={card.suffix}
+                  to={
+                    [buildReconciliationUrl({ range: '24h' }), buildCasesUrl({ status: ['OPEN', 'TRIAGE'], range: '24h' }), buildActionsUrl({ range: '7d' }), buildAnalyticsUrl({ range: '30d' })][i]
+                  }
+                />
+              </Grid>
+            ))
           ) : (
-            <>
-              <KPICard
-                title={t('dashboard.kpi.financialHealthIndex')}
-                value={kpis.financialHealthIndex}
-                suffix="/100"
-                trend={kpis.financialHealthTrend}
-                trendLabel={t('dashboard.trendLabels.vsPreviousMonth')}
-                icon="solar:heart-bold-duotone"
-                iconColor="success.main"
-                iconBg="success.lighter"
-                to={buildReconciliationUrl({ range: '24h' })}
-              />
-              <KPICard
-                title={t('dashboard.kpi.openCasesBySeverity')}
-                value={kpis.openCasesBySeverity.critical + kpis.openCasesBySeverity.high}
-                suffix={t('dashboard.severitySuffix.urgentHigh')}
-                subValue={`${kpis.openCasesBySeverity.medium + kpis.openCasesBySeverity.low}${t('dashboard.severitySuffix.mediumLow')}`}
-                icon="solar:danger-triangle-bold-duotone"
-                iconColor="warning.main"
-                iconBg="warning.lighter"
-                to={
-                  normalizePath(kpis.links?.casesPath) ??
-                  buildCasesUrl({ status: ['OPEN', 'TRIAGE'], severity: ['CRITICAL', 'HIGH'], range: '24h' })
-                }
-              />
-              <KPICard
-                title={t('dashboard.kpi.aiActionSuccessRate')}
-                value={kpis.aiActionSuccessRate ?? '—'}
-                suffix={kpis.aiActionSuccessRate != null ? '%' : ''}
-                trend={kpis.aiActionSuccessTrend}
-                trendLabel={t('dashboard.trendLabels.vsPreviousWeek')}
-                icon="solar:bolt-bold-duotone"
-                iconColor="primary.main"
-                iconBg="primary.lighter"
-                to={
-                  normalizePath(kpis.links?.actionsPath) ??
-                  buildActionsUrl({ status: ['EXECUTED', 'FAILED'], range: '7d' })
-                }
-              />
-              <KPICard
-                title={t('dashboard.kpi.expectedLossPrevention')}
-                value={formatPreventedLoss(kpis.estimatedPreventedLoss, kpis.preventedLossCurrency)}
-                trend={kpis.preventedLossTrend}
-                trendLabel={t('dashboard.trendLabels.thisQuarter')}
-                icon="solar:wallet-money-bold-duotone"
-                iconColor="success.main"
-                iconBg="success.lighter"
-                to={buildAnalyticsUrl({ range: '30d' })}
-              />
-            </>
+            [
+              { titleKey: 'dashboard.kpi.financialHealthIndex', to: buildReconciliationUrl({ range: '24h' }) },
+              { titleKey: 'dashboard.kpi.openCasesBySeverity', to: buildCasesUrl({ status: ['OPEN', 'TRIAGE'], range: '24h' }) },
+              { titleKey: 'dashboard.kpi.aiActionSuccessRate', to: buildActionsUrl({ range: '7d' }) },
+              { titleKey: 'dashboard.kpi.expectedLossPrevention', to: buildAnalyticsUrl({ range: '30d' }) },
+            ].map((slot, i) => (
+              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={slot.titleKey}>
+                <KPICard
+                  cardSx={getKpiGlassCardSx(theme)}
+                  icon="solar:chart-2-bold-duotone"
+                  iconBg="action.hover"
+                  iconColor="text.secondary"
+                  title={t(slot.titleKey)}
+                  value="—"
+                  to={slot.to}
+                />
+              </Grid>
+            ))
           )}
-        </Stack>
+        </Grid>
 
-        {/* Main Content: 2열 그리드. 좌측 row1+2 = 조치필요+리스크, row3 = 팀현황. 우측 row1-2 = 에이전트스트림(동일 높이), row3 = 주요지표(팀현황과 수평) */}
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' },
-            gridTemplateRows: { xs: 'auto', lg: 'auto auto auto' },
-            gap: 3,
-            alignItems: 'stretch',
-            width: '100%',
-          }}
+        {/* Middle: Autonomous Pulse (Left) | Live Intelligence Feed (Right) — 375px: 1-col stack */}
+        <Stack
+          direction={{ xs: 'column', lg: 'row' }}
+          spacing={3}
+          sx={{ width: '100%', minWidth: 0 }}
         >
-            {/* Action Required — 좌측 1행 */}
-            <Card variant="outlined" sx={{ gridColumn: { xs: 1, lg: 1 }, gridRow: { xs: 'auto', lg: 1 }, minWidth: 0 }}>
-              <CardContent sx={{ pb: 2 }}>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  sx={{ mb: 2 }}
-                >
-                  <Stack direction="row" alignItems="flex-start" spacing={1}>
-                    <Iconify
-                      icon="solar:clock-circle-bold-duotone"
-                      width={20}
-                      sx={{ color: 'warning.main', mt: 0.25, flexShrink: 0 }}
-                    />
-                    <Box>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        {t('dashboard.actionsRequired.title')}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('dashboard.actionsRequired.subtitle')}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                  {!actionRequiredQuery.isLoading && !actionRequiredQuery.isError && (
-                    <Label color="warning" variant="soft">
-                      {t('dashboard.actionsRequired.pendingCount', { count: pendingActions.length })}
-                    </Label>
-                  )}
-                </Stack>
-                {actionRequiredQuery.isLoading ? (
-                  <Stack spacing={1.5}>
-                    {[1, 2, 3].map((i) => (
-                      <Skeleton key={i} variant="rounded" height={72} />
+          {/* Autonomous Pulse Center (Middle-Left) */}
+          <Card
+            variant="outlined"
+            sx={{
+              minWidth: 0,
+              flex: { xs: 'none', lg: '0 0 320px' },
+              ...getGlassCardSx(theme),
+            }}
+          >
+            <CardContent sx={{ pb: 2 }}>
+              <RadarPulse />
+            </CardContent>
+          </Card>
+          {/* Live Intelligence Feed (Right) — agent_activity_log last 10, title/reasoning/status */}
+          <Card
+            variant="outlined"
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              ...getGlassCardSx(theme),
+            }}
+          >
+            <CardContent sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', pb: 2 }}>
+              <Stack direction="row" alignItems="flex-start" spacing={1} sx={{ mb: 2 }}>
+                <Iconify icon="solar:chat-round-dots-bold-duotone" width={20} sx={{ color: 'primary.main', mt: 0.25, flexShrink: 0 }} />
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    {t('dashboard.icc.liveFeedTitle')}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('dashboard.icc.liveFeedSubtitle')}
+                  </Typography>
+                </Box>
+              </Stack>
+              <Box
+                sx={{
+                  flex: 1,
+                  minHeight: 0,
+                  overflow: 'auto',
+                  ...(theme.palette.mode === 'dark' && {
+                    '& .MuiTypography-body2': { fontSize: '0.8125rem', lineHeight: 1.65 },
+                    '& .MuiTypography-caption': { fontSize: '0.75rem', lineHeight: 1.55 },
+                  }),
+                }}
+              >
+                {agentActivityQuery.isLoading ? (
+                  <Stack spacing={1}>
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Skeleton key={i} variant="rounded" height={48} />
                     ))}
                   </Stack>
-                ) : actionRequiredQuery.isError ? (
-                  <ErrorStateWithRetry
-                    title={t('error.errorState.failedToLoadActionsList')}
-                    message={actionRequiredQuery.error?.message ?? t('error.errorState.failedToLoadData')}
-                    onRetry={() => void actionRequiredQuery.refetch()}
-                  />
-                ) : pendingActions.length === 0 ? (
+                ) : agentActivities.length === 0 ? (
                   <DashboardEmptyState
-                    icon="solar:check-circle-bold-duotone"
-                    title={t('dashboard.actionsRequired.emptyTitle')}
-                    description={t('dashboard.actionsRequired.emptyDesc')}
-                    actions={[
-                      {
-                        label: t('dashboard.actionsRequired.ctaActionCenter'),
-                        to: SYNAPSE_ROUTES.ACTIONS,
-                        variant: 'primary',
-                      },
-                    ]}
+                    icon="solar:bot-bold-duotone"
+                    title={t('dashboard.agentStream.emptyTitle')}
+                    description={t('dashboard.agentStream.emptyDesc')}
                     compact
                   />
                 ) : (
-                  <>
-                    <Stack spacing={1.5}>
-                      {pendingActions.slice(0, 3).map((action) => (
-                        <Stack
-                          key={action.id}
-                          direction="row"
-                          alignItems="center"
-                          justifyContent="space-between"
-                          spacing={2}
-                          sx={{
-                            p: 1.5,
-                            borderRadius: 1,
-                            border: 1,
-                            borderColor: 'divider',
-                            bgcolor: 'background.neutral',
+                  <Stack spacing={1.5} component="ul" sx={{ listStyle: 'none', pl: 0, m: 0 }}>
+                    {agentActivities.slice(0, LIVE_FEED_COUNT).map((activity) => (
+                      <Stack
+                        key={activity.id}
+                        component="li"
+                        direction="row"
+                        alignItems="flex-start"
+                        spacing={1}
+                        sx={{
+                          py: 1,
+                          borderBottom: 1,
+                          borderColor: 'divider',
+                          '&:last-of-type': { borderBottom: 0 },
+                          ...(activity.caseId && {
                             cursor: 'pointer',
                             '&:hover': { bgcolor: 'action.hover' },
-                          }}
-                          onClick={() => handleActionRequiredRowClick(action)}
-                          role="button"
-                          tabIndex={0}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              handleActionRequiredRowClick(action);
-                            }
-                          }}
-                        >
-                          <Stack direction="row" alignItems="center" spacing={1.5} sx={{ minWidth: 0 }}>
-                            <Box
-                              sx={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: 1,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0,
-                                bgcolor:
-                                  action.riskLevel === 'critical'
-                                    ? 'error.lighter'
-                                    : action.riskLevel === 'high'
-                                      ? 'warning.lighter'
-                                      : 'info.lighter',
-                              }}
-                            >
-                              <Iconify
-                                icon="solar:bolt-bold-duotone"
-                                width={20}
-                                sx={{
-                                  color:
-                                    action.riskLevel === 'critical'
-                                      ? 'error.main'
-                                      : action.riskLevel === 'high'
-                                        ? 'warning.main'
-                                        : 'info.main',
-                                }}
-                              />
-                            </Box>
-                            <Box sx={{ minWidth: 0 }}>
-                              <Typography variant="body2" sx={{ fontWeight: 500 }} noWrap>
-                                {action.description}
-                              </Typography>
-                              <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 0.25 }}>
-                                <Typography variant="caption" color="text.secondary">
-                                  {action.caseNumber ?? action.caseId}
-                                </Typography>
-                                <SeverityBadge severity={action.riskLevel} size="sm" showIcon={false} />
-                              </Stack>
-                            </Box>
-                          </Stack>
-                          <Button
-                            variant="contained"
-                            size="small"
-                            endIcon={<Iconify icon="solar:arrow-right-bold" width={16} />}
-                            onClick={() => handleReviewClick(action)}
-                          >
-                            {t('dashboard.actionsRequired.review')}
-                          </Button>
-                        </Stack>
-                      ))}
-                    </Stack>
-                    <Button
-                      component={Link}
-                      to={buildActionsUrl({ status: 'PENDING', requiresApproval: true, range: '24h' })}
-                      variant="text"
-                      fullWidth
-                      sx={{ mt: 1.5, color: 'text.secondary' }}
-                      startIcon={<Iconify icon="solar:arrow-right-bold" width={16} />}
-                    >
-                      {t('dashboard.actionsRequired.viewAll')}
-                    </Button>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Top Risk Drivers — 좌측 2행 */}
-            <Card variant="outlined" sx={{ gridColumn: { xs: 1, lg: 1 }, gridRow: { xs: 'auto', lg: 2 }, minWidth: 0 }}>
-              <CardContent sx={{ pb: 2 }}>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  sx={{ mb: 2 }}
-                >
-                  <Stack direction="row" alignItems="flex-start" spacing={1}>
-                    <Iconify
-                      icon="solar:chart-2-bold-duotone"
-                      width={20}
-                      sx={{ color: 'primary.main', mt: 0.25, flexShrink: 0 }}
-                    />
-                    <Box>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        {t('dashboard.riskDrivers.title')}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('dashboard.riskDrivers.subtitle')}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                  <Button
-                    component={Link}
-                    to={buildAnalyticsUrl({ range: '30d', breakdown: 'driverType' })}
-                    variant="outlined"
-                    size="small"
-                  >
-                    {t('dashboard.riskDrivers.viewAnalysis')}
-                  </Button>
-                </Stack>
-                {riskDriversQuery.isLoading ? (
-                  <Stack spacing={2}>
-                    {[1, 2, 3, 4].map((i) => (
-                      <Box key={i}>
-                        <Skeleton width="80%" height={20} />
-                        <Skeleton variant="rounded" height={8} sx={{ mt: 0.5 }} />
-                      </Box>
-                    ))}
-                  </Stack>
-                ) : riskDriversQuery.isError ? (
-                  <ErrorStateWithRetry
-                    title={t('error.errorState.failedToLoadRiskDrivers')}
-                    message={riskDriversQuery.error?.message ?? t('error.errorState.failedToLoadData')}
-                    onRetry={() => void riskDriversQuery.refetch()}
-                  />
-                ) : riskDrivers.length === 0 ? (
-                  <DashboardEmptyState
-                    icon="solar:chart-2-bold-duotone"
-                    title={t('dashboard.riskDrivers.emptyTitle')}
-                    description={t('dashboard.riskDrivers.emptyDesc')}
-                    actions={[
-                      {
-                        label: t('dashboard.riskDrivers.ctaRiskEvents'),
-                        to: buildAuditUrl({ range: '24h', category: ['RISK', 'EVENT'] }),
-                        variant: 'primary',
-                      },
-                      {
-                        label: t('dashboard.riskDrivers.ctaDetectionCriteria'),
-                        to: SYNAPSE_ROUTES.POLICIES,
-                        variant: 'secondary',
-                      },
-                    ]}
-                    compact
-                  />
-                ) : (
-                  <Stack spacing={2}>
-                    {riskDrivers.map((driver) => (
-                      <Box
-                        key={driver.id}
-                        onClick={() => {
-                          const path = normalizePath(driver.anomaliesPath) ?? normalizePath(driver.casesPath);
-                          if (path) {
-                            navigate(path);
-                          } else {
-                            const typeKey = driver.riskTypeKey.toUpperCase().replace(/-/g, '_');
-                            navigate(buildAnomaliesUrl({ type: typeKey, range: '24h' }));
-                          }
+                          }),
                         }}
-                        sx={{
-                          cursor: 'pointer',
-                          '&:hover': { bgcolor: 'action.hover' },
-                          borderRadius: 1,
-                          p: 0.5,
-                          mx: -0.5,
-                        }}
+                        onClick={
+                          activity.caseId
+                            ? () => handleAgentActivityClick(activity)
+                            : undefined
+                        }
+                        role={activity.caseId ? 'button' : undefined}
                       >
-                        <Stack
-                          direction="row"
-                          alignItems="center"
-                          justifyContent="space-between"
-                          sx={{ mb: 0.5 }}
-                        >
-                          <Stack direction="row" alignItems="center" spacing={1}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                              {driver.label}
-                            </Typography>
-                            <Label color="default" variant="soft" sx={{ fontSize: '0.75rem' }}>
-                              {driver.count}{t('dashboard.countUnit')}
-                            </Label>
-                            {driver.trend === 'up' && (
-                              <Iconify
-                                icon="solar:arrow-up-bold"
-                                width={14}
-                                sx={{ color: 'error.main' }}
-                              />
-                            )}
-                            {driver.trend === 'down' && (
-                              <Iconify
-                                icon="solar:arrow-down-bold"
-                                width={14}
-                                sx={{ color: 'success.main' }}
-                              />
-                            )}
-                          </Stack>
+                        <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
+                          {new Date(activity.timestamp).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                          })}
+                        </Typography>
+                        <Stack spacing={0.25} sx={{ minWidth: 0 }}>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {formatRiskAmount(driver.amount)}
+                            {activity.action || t('dashboard.agentStream.eventType.analyze')}
                           </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {activity.message}
+                          </Typography>
+                          <Label
+                            color={
+                              activity.status === 'success' || activity.status === 'complete'
+                                ? 'success'
+                                : activity.status === 'error'
+                                  ? 'error'
+                                  : 'warning'
+                            }
+                            variant="soft"
+                            sx={{ fontSize: '0.7rem', alignSelf: 'flex-start' }}
+                          >
+                            {activity.status}
+                          </Label>
                         </Stack>
-                        <Box
-                          sx={{
-                            height: 8,
-                            borderRadius: 1,
-                            bgcolor: 'action.hover',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              height: '100%',
-                              width: `${Math.min(100, (driver.amount / 500_000) * 100)}%`,
-                              borderRadius: 1,
-                              bgcolor:
-                                driver.type === 'duplicate_invoice'
-                                  ? 'error.main'
-                                  : driver.type === 'bank_change'
-                                    ? 'warning.main'
-                                    : driver.type === 'policy_violation'
-                                      ? 'info.main'
-                                      : 'primary.main',
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                    ))}
-                  </Stack>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Team Snapshot — 좌측 3행 (우측 주요지표와 동일 행/높이) */}
-            <Card variant="outlined" sx={{ gridColumn: { xs: 1, lg: 1 }, gridRow: { xs: 'auto', lg: 3 }, minWidth: 0 }}>
-              <CardContent sx={{ pb: 2 }}>
-                <Stack direction="row" alignItems="flex-start" spacing={1} sx={{ mb: 2 }}>
-                  <Iconify
-                    icon="solar:users-group-rounded-bold-duotone"
-                    width={20}
-                    sx={{ color: 'primary.main', mt: 0.25, flexShrink: 0 }}
-                  />
-                  <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                      {t('dashboard.teamSnapshot.title')}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {t('dashboard.teamSnapshot.subtitle')}
-                    </Typography>
-                  </Box>
-                </Stack>
-                {teamSnapshotQuery.isLoading ? (
-                  <Stack spacing={1}>
-                    {[1, 2, 3, 4].map((i) => (
-                      <Skeleton key={i} variant="rounded" height={40} />
-                    ))}
-                  </Stack>
-                ) : teamSnapshotQuery.isError ? (
-                  <ErrorStateWithRetry
-                    title={t('error.errorState.failedToLoadTeamSnapshot')}
-                    message={teamSnapshotQuery.error?.message ?? t('error.errorState.failedToLoadData')}
-                    onRetry={() => void teamSnapshotQuery.refetch()}
-                  />
-                ) : teamSnapshot.length === 0 ? (
-                  <DashboardEmptyState
-                    icon="solar:users-group-rounded-bold-duotone"
-                    title={t('dashboard.teamSnapshot.emptyTitle')}
-                    description={t('dashboard.teamSnapshot.emptyDesc')}
-                    actions={[
-                      {
-                        label: t('dashboard.teamSnapshot.ctaTeamSettings'),
-                        to: SYNAPSE_ROUTES.ADMIN,
-                        variant: 'primary',
-                      },
-                      {
-                        label: t('dashboard.teamSnapshot.ctaChangeRange'),
-                        to: buildAuditUrl({ range: '24h' }),
-                        variant: 'secondary',
-                      },
-                    ]}
-                    compact
-                  />
-                ) : (
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                          {t('dashboard.teamSnapshot.analyst')}
-                        </TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                          {t('dashboard.teamSnapshot.openCases')}
-                        </TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                          {t('dashboard.teamSnapshot.pendingApproval')}
-                        </TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                          {t('dashboard.teamSnapshot.slaRisk')}
-                        </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                          {t('dashboard.teamSnapshot.avgLeadTime')}
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {teamSnapshot.map((member) => (
-                        <TableRow
-                          key={member.id}
-                          hover
-                          sx={{ cursor: 'pointer' }}
-                          onClick={() => handleTeamSnapshotRowClick(member, 'analyst')}
-                        >
-                          <TableCell>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                              {member.name}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {member.role}
-                            </Typography>
-                          </TableCell>
-                          <TableCell
-                            align="center"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleTeamSnapshotRowClick(member, 'openCases');
-                            }}
-                            sx={{ cursor: 'pointer' }}
-                          >
-                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                              {member.openCases}
-                            </Typography>
-                          </TableCell>
-                          <TableCell
-                            align="center"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleTeamSnapshotRowClick(member, 'pendingApprovals');
-                            }}
-                            sx={{ cursor: 'pointer' }}
-                          >
-                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                              {member.pendingApprovals}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align="center">
-                            {member.slaRisk === 'AT_RISK' ? (
-                              <Label color="error" variant="soft" sx={{ fontSize: '0.75rem' }}>
-                                {member.slaRiskCount > 0
-                                  ? t('dashboard.teamSnapshot.riskCount', { count: member.slaRiskCount })
-                                  : t('dashboard.teamSnapshot.risk')}
-                              </Label>
-                            ) : (
-                              <Label color="success" variant="soft" sx={{ fontSize: '0.75rem' }}>
-                                {t('dashboard.teamSnapshot.normal')}
-                              </Label>
-                            )}
-                          </TableCell>
-                          <TableCell align="right">
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                              {member.avgLeadTime}h
-                            </Typography>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
-
-          {/* 에이전트 실행 스트림 — 우측 1~2행 (조치필요+주요리스크 합친 높이), 내부 스크롤 */}
-            <Card
-              variant="outlined"
-              sx={{
-                gridColumn: { xs: 1, lg: 2 },
-                gridRow: { xs: 'auto', lg: '1 / 3' },
-                minWidth: 0,
-                minHeight: 0,
-                height: { lg: '100%' },
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-              }}
-            >
-              <CardContent sx={{ pb: 2, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  sx={{ mb: 2 }}
-                >
-                  <Stack direction="row" alignItems="flex-start" spacing={1}>
-                    <Iconify
-                      icon="solar:bot-bold-duotone"
-                      width={20}
-                      sx={{ color: 'primary.main', mt: 0.25, flexShrink: 0 }}
-                    />
-                    <Box>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        {t('dashboard.agentStream.title')}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('dashboard.agentStream.subtitle')}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                  <Stack direction="row" alignItems="center" spacing={0.75}>
-                    <Box
-                      sx={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        bgcolor: 'success.main',
-                        animation: 'ping 1.5s ease-in-out infinite',
-                        '@keyframes ping': {
-                          '75%, 100%': { transform: 'scale(1.5)', opacity: 0 },
-                        },
-                      }}
-                    />
-                    <Typography variant="caption" sx={{ color: 'success.main', fontWeight: 600 }}>
-                      {t('dashboard.agentStream.realtime')}
-                    </Typography>
-                  </Stack>
-                </Stack>
-                <Box
-                  sx={{
-                    flex: 1,
-                    minHeight: 0,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    borderRadius: 1,
-                    border: 1,
-                    borderColor: 'divider',
-                    bgcolor: 'background.neutral',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={1}
-                    sx={{
-                      flexShrink: 0,
-                      px: 1,
-                      py: 0.75,
-                      borderBottom: 1,
-                      borderColor: 'divider',
-                      bgcolor: 'action.hover',
-                    }}
-                  >
-                    <Stack direction="row" spacing={0.25}>
-                      <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'error.main', opacity: 0.6 }} />
-                      <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'warning.main', opacity: 0.6 }} />
-                      <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'success.main', opacity: 0.6 }} />
-                    </Stack>
-                    <Typography variant="caption" fontFamily="monospace" color="text.secondary">
-                      agent-stream.log
-                    </Typography>
-                  </Stack>
-                  {agentActivityQuery.isLoading ? (
-                    <Stack spacing={1} sx={{ p: 1.5 }}>
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <Skeleton key={i} variant="rounded" height={24} />
-                      ))}
-                    </Stack>
-                  ) : agentActivityQuery.isError ? (
-                    <Box sx={{ p: 2 }}>
-                      <ErrorStateWithRetry
-                        title={t('error.errorState.failedToLoadAgentActivity')}
-                        message={agentActivityQuery.error?.message ?? t('error.errorState.failedToLoadData')}
-                        onRetry={() => void agentActivityQuery.refetch()}
-                      />
-                    </Box>
-                  ) : agentActivities.length === 0 ? (
-                    <DashboardEmptyState
-                      icon="solar:bot-bold-duotone"
-                      title={t('dashboard.agentStream.emptyTitle')}
-                      description={t('dashboard.agentStream.emptyDesc')}
-                      actions={[
-                        {
-                          label: t('dashboard.agentStream.ctaAuditLog'),
-                          to: buildAuditUrl({ range: AGENT_STREAM_RANGE, category: ['CASE'] }),
-                          variant: 'primary',
-                        },
-                        {
-                          label: t('dashboard.agentStream.ctaExtendRange'),
-                          to: buildAuditUrl({ range: '24h', category: ['CASE'] }),
-                          variant: 'secondary',
-                        },
-                      ]}
-                      compact
-                    />
-                  ) : (
-                    <Stack spacing={1} sx={{ p: 1.5, flex: 1, minHeight: 0, overflow: 'auto', overflowY: 'auto' }}>
-                      {agentActivities.slice(0, AGENT_STREAM_PREVIEW_COUNT).map((activity) => (
-                        <ActivityLogItem
-                          key={activity.id}
-                          activity={activity}
-                          actionLabel={
-                            (() => {
-                              const key = getAgentEventTypeLabelKey(activity.action);
-                              const translated = t(`dashboard.agentStream.eventType.${key}`);
-                              return translated !== `dashboard.agentStream.eventType.${key}` ? translated : activity.action;
-                            })()
-                          }
-                          onClick={() => handleAgentActivityClick(activity)}
-                        />
-                      ))}
-                    </Stack>
-                  )}
-                </Box>
-                <Button
-                  component={Link}
-                  to={buildAuditUrl({ range: AGENT_STREAM_RANGE, category: ['CASE'] })}
-                  variant="text"
-                  fullWidth
-                  size="small"
-                  sx={{ flexShrink: 0, mt: 1.5, color: 'text.secondary' }}
-                  startIcon={<Iconify icon="solar:arrow-right-bold" width={14} />}
-                >
-                  {t('dashboard.agentStream.viewFullAudit')}
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* 주요 지표 — 우측 3행 (팀 현황과 동일 행/높이) */}
-            <Card
-              variant="outlined"
-              sx={{
-                gridColumn: { xs: 1, lg: 2 },
-                gridRow: { xs: 'auto', lg: 3 },
-                minWidth: 0,
-                overflow: 'hidden',
-              }}
-            >
-              <CardContent sx={{ pb: 2 }}>
-                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                  <Iconify
-                    icon="solar:shield-check-bold-duotone"
-                    width={20}
-                    sx={{ color: 'primary.main' }}
-                  />
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                    {t('dashboard.quickStats.title')}
-                  </Typography>
-                </Stack>
-                {summaryQuery.isLoading ? (
-                  <Stack spacing={2}>
-                    {[1, 2, 3, 4].map((i) => (
-                      <Stack key={i} direction="row" justifyContent="space-between" alignItems="center">
-                        <Skeleton width={80} height={20} />
-                        <Skeleton width={40} height={24} />
                       </Stack>
                     ))}
                   </Stack>
-                ) : summaryQuery.isError ? (
-                  <Typography variant="body2" color="text.secondary">
-                    {t('dashboard.summaryLoadFailed')}
-                  </Typography>
-                ) : (
-                  <Stack spacing={2}>
-                    <Stack
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      component={Link}
-                      to={
-                        normalizePath(kpis.links?.actionsPath) ??
-                        buildActionsUrl({ status: 'PENDING', requiresApproval: true, range: '24h' })
-                      }
-                      sx={{
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        cursor: 'pointer',
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                        '&:hover': { bgcolor: 'action.hover' },
-                      }}
-                    >
-                      <Typography variant="body2" color="text.secondary">
-                        {t('dashboard.quickStats.pendingApproval')}
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                        {kpis.pendingApprovals}
-                      </Typography>
-                    </Stack>
-                    <Stack
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      component={Link}
-                      to={(() => {
-                        const base = normalizePath(kpis.links?.casesPath);
-                        if (base) {
-                          return base.includes('?') ? `${base}&slaRisk=AT_RISK` : `${base}?slaRisk=AT_RISK`;
-                        }
-                        return buildCasesUrl({ status: ['OPEN', 'TRIAGE'], slaRisk: 'AT_RISK', range: '24h' });
-                      })()}
-                      sx={{
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        cursor: 'pointer',
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                        '&:hover': { bgcolor: 'action.hover' },
-                      }}
-                    >
-                      <Typography variant="body2" color="text.secondary">
-                        {t('dashboard.quickStats.slaRisk')}
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 700, color: 'warning.main' }}>
-                        {kpis.slaAtRisk}
-                      </Typography>
-                    </Stack>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
-                      <Typography variant="body2" color="text.secondary">
-                        {t('dashboard.quickStats.avgLeadTime')}
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                        {kpis.avgLeadTime}h
-                      </Typography>
-                    </Stack>
-                    <Stack
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      component={Link}
-                      to={
-                        normalizePath(kpis.links?.casesPath) ??
-                        buildCasesUrl({ status: ['OPEN', 'TRIAGE'], range: '24h' })
-                      }
-                      sx={{
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        cursor: 'pointer',
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                        '&:hover': { bgcolor: 'action.hover' },
-                      }}
-                    >
-                      <Typography variant="body2" color="text.secondary">
-                        {t('dashboard.quickStats.unprocessed')}
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                        {kpis.backlogCount}
-                      </Typography>
-                    </Stack>
-                  </Stack>
                 )}
-              </CardContent>
-            </Card>
-        </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Stack>
+
+        {/* Critical HITL Summary (Bottom) — recon_result FAIL latest 5 */}
+        <Card
+          variant="outlined"
+          sx={{ width: '100%', minWidth: 0, ...getGlassCardSx(theme) }}
+        >
+          <CardContent sx={{ pb: 2 }}>
+            <Stack direction="row" alignItems="flex-start" spacing={1} sx={{ mb: 2 }}>
+              <Iconify icon="solar:danger-triangle-bold-duotone" width={20} sx={{ color: 'error.main', mt: 0.25, flexShrink: 0 }} />
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                  {t('dashboard.icc.hitlSummaryTitle')}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {t('dashboard.icc.hitlSummarySubtitle')}
+                </Typography>
+              </Box>
+            </Stack>
+            {reconDetailQuery.isLoading || reconRunsQuery.isLoading ? (
+              <Stack spacing={1}>
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} variant="rounded" height={40} />
+                ))}
+              </Stack>
+            ) : reconFailItems.length === 0 ? (
+              <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={1}>
+                <Typography variant="body2" color="text.secondary">
+                  {t('dashboard.icc.hitlEmpty')}
+                </Typography>
+                <Button
+                  component={Link}
+                  to={SYNAPSE_ROUTES.RECONCILIATION}
+                  size="small"
+                  variant="outlined"
+                  endIcon={<Iconify icon="solar:arrow-right-up-linear" width={14} />}
+                >
+                  {t('dashboard.icc.viewRecon')}
+                </Button>
+              </Stack>
+            ) : (
+              <Stack spacing={1.5}>
+                {reconFailItems.map((r) => (
+                  <Stack
+                    key={r.resultId}
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    spacing={2}
+                    sx={{
+                      p: 1.5,
+                      borderRadius: 1,
+                      border: 1,
+                      borderColor: 'divider',
+                      bgcolor: 'error.lighter',
+                    }}
+                  >
+                    <Stack direction="row" alignItems="center" spacing={1} sx={{ minWidth: 0 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }} noWrap>
+                        {r.resourceKey || r.resourceType}
+                      </Typography>
+                      <Label color="error" variant="soft" sx={{ fontSize: '0.75rem' }}>
+                        {r.status}
+                      </Label>
+                    </Stack>
+                    <Button
+                      component={Link}
+                      to={SYNAPSE_ROUTES.RECONCILIATION}
+                      size="small"
+                      variant="outlined"
+                      endIcon={<Iconify icon="solar:arrow-right-up-linear" width={14} />}
+                    >
+                      {t('dashboard.icc.viewRecon')}
+                    </Button>
+                  </Stack>
+                ))}
+                <Button
+                  component={Link}
+                  to={SYNAPSE_ROUTES.RECONCILIATION}
+                  variant="text"
+                  size="small"
+                  fullWidth
+                  sx={{ color: 'text.secondary' }}
+                  startIcon={<Iconify icon="solar:arrow-right-bold" width={14} />}
+                >
+                  {t('dashboard.icc.viewRecon')}
+                </Button>
+              </Stack>
+            )}
+          </CardContent>
+        </Card>
+
       </Stack>
     </Box>
   );

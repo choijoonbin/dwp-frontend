@@ -6,7 +6,12 @@
     "switched": "Language switched to {{lang}}.",
     "switched_en": "Language switched to English."
   },
-  "theme": { "darkMode": "Dark mode", "lightMode": "Light mode" },
+  "theme": {
+    "currentMode": "Current: {{mode}}",
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode",
+    "switchTo": "Switch to {{mode}}"
+  },
   "error": {
     "403": {
       "title": "403 Forbidden",
@@ -74,6 +79,7 @@
     "termUpdated": "Term updated",
     "termDeleted": "Term deleted",
     "feedbackSubmitted": "Feedback submitted",
+    "ragLearned": "A new regulation set has been learned. Analysis will now use the latest regulations.",
     "reconciliationStarted": "Reconciliation run started",
     "retryRequested": "Retry requested",
     "auditView": "View audit details",
@@ -452,9 +458,10 @@
     }
   },
   "dashboard": {
-    "title": "Integrated Control Center",
+    "title": "Integrated Workbench",
     "subtitle": "Real-time autonomous finance operations",
     "refresh": "Refresh",
+    "vectorizingBanner": "RAG documents are being vectorized. They will be available in the workbench when complete.",
     "viewCases": "View cases",
     "kpi": {
       "financialHealthIndex": "Financial Health Index",
@@ -553,7 +560,71 @@
       "unprocessed": "Unprocessed"
     },
     "summaryLoadFailed": "Failed to load summary data.",
-    "countUnit": ""
+    "countUnit": "",
+    "icc": {
+      "liveScan": "Live SCAN",
+      "liveFeedTitle": "Live Intelligence Feed",
+      "liveFeedSubtitle": "Latest agent activity (title, reasoning, status)",
+      "hitlSummaryTitle": "Critical HITL Summary",
+      "hitlSummarySubtitle": "Latest reconciliation FAIL items — immediate action",
+      "hitlEmpty": "No reconciliation failures",
+      "hitlResource": "Resource",
+      "hitlStatus": "Status",
+      "viewRecon": "View Reconciliation"
+    }
+  },
+  "workbench": {
+    "queueTitle": "Case queue",
+    "filterAll": "All",
+    "filterOpen": "Open",
+    "filterInProgress": "In progress",
+    "queueHint": "Select a case to view inference and stream.",
+    "openCases": "Open Cases list",
+    "detailTitle": "Inference & evidence",
+    "detailSelectCase": "Select a case from the list on the left to analyze.",
+    "detailHint": "Select a case from the queue to see analysis and evidence here.",
+    "detailLoading": "Loading thought chain for this case...",
+    "streamTitle": "Agent stream",
+    "streamHint": "Real-time agent activity will appear here when a case is in analysis.",
+    "streamLoading": "Loading agent activity...",
+    "tabQueue": "Queue",
+    "tabDetail": "Detail",
+    "tabStream": "Stream",
+    "detailTabInference": "Inference",
+    "detailTabHistory": "History",
+    "detailTabItemDetail": "Item detail",
+    "historyEmpty": "No action history yet.",
+    "historyComment": "Comment",
+    "itemDetailEmpty": "No line items.",
+    "itemDetail": {
+      "buzei": "Line",
+      "account": "Account",
+      "amount": "Amount",
+      "partner": "Partner",
+      "description": "Description"
+    },
+    "tools": {
+      "knowledgePolicy": "Knowledge & Policy",
+      "rag": "Knowledge (RAG)",
+      "policies": "Policies",
+      "guardrails": "Guardrails"
+    },
+    "thought": {
+      "analysis": "Analysis",
+      "planning": "Planning",
+      "execution": "Execution",
+      "verification": "Verification",
+      "thinking": "Thinking",
+      "sources": "Sources",
+      "ragCitations": "Regulation citations",
+      "citation": "Citation",
+      "relevance": "Relevance",
+      "page": "Page",
+      "excerpt": "Excerpt",
+      "citedExcerpt": "Cited excerpt in regulation",
+      "citationNoExcerpt": "No excerpt available.",
+      "scenarioDataLabel": "[Scenario Data]"
+    }
   },
   "errorBoundary": {
     "unexpectedTitle": "Unexpected Application Error",
@@ -1005,8 +1076,10 @@
       "document": "Document",
       "source": "Source",
       "status": "Status",
+      "referenceCount": "Ref. count",
       "created": "Created"
     },
+    "referenceCountBadge": "Ref. {{count}}",
     "status": {
       "indexed": "Indexed",
       "indexing": "Indexing",
@@ -1016,17 +1089,36 @@
     "error": {
       "failedToLoad": "Failed to load documents"
     },
+    "detail": {
+      "description": "Metadata and RAG-indexed chunks (text segments) for this document. Use search to filter chunks.",
+      "searchWithin": "Search within this document",
+      "searchPlaceholder": "Search in chunks…",
+      "chunksTitle": "Chunks",
+      "chunksEmpty": "No chunks indexed yet. They will appear here when indexing completes.",
+      "filteredBy": "Filtered by \"{{q}}\"",
+      "chunksNoMatch": "No chunks match \"{{q}}\".",
+      "loading": "Loading document…",
+      "notFound": "Document not found",
+      "notFoundHint": "It may have been removed or the document ID is invalid.",
+      "missingDocId": "No document ID. Please select a document from the list.",
+      "backToLibrary": "Back to document library"
+    },
     "registerModal": {
       "hint": "Register a document for RAG indexing. The document will be processed and chunked for semantic search.",
+      "allowedExtensionsHint": "Allowed extensions: .pdf, .txt, .doc, .docx, .hwp",
+      "selectFile": "Select file",
       "titleLabel": "Title",
       "titlePlaceholder": "e.g., Internal Control Policy v2026",
-      "sourceType": "Source Type",
+      "docType": "Document Type",
+      "sourceMode": "Input method",
+      "sourceModeFile": "File upload",
+      "sourceModeUrl": "URL",
+      "sourceModeS3": "S3",
+      "sourceType": "Source type",
       "s3Key": "S3 Key",
       "s3KeyPlaceholder": "bucket/path/to/document.pdf",
       "url": "URL",
       "urlPlaceholder": "https://...",
-      "checksum": "Checksum (optional)",
-      "checksumPlaceholder": "SHA256 hash for integrity",
       "cancel": "Cancel",
       "register": "Register",
       "registering": "Registering..."
@@ -1041,12 +1133,14 @@
     "table": {
       "profile": "Profile",
       "scope": "Scope",
+      "autonomyLevel": "Autonomy level",
       "default": "Default",
       "actions": "Actions"
     },
     "loading": "Loading…",
     "empty": "No profiles match the current search.",
     "default": "Default",
+    "edit": "Edit",
     "open": "Open",
     "error": {
       "failedToLoad": "Failed to load profiles"
@@ -1557,6 +1651,7 @@
     "save": "Save"
   },
   "menu": {
+    "workbench": "Integrated Workbench",
     "governance-config": {
       "_label": "Governance & Config",
       "admin": "System Admin",

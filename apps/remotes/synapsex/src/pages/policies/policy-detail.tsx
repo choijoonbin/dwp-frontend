@@ -3,8 +3,10 @@
  */
 
 import { useNavigate } from 'react-router-dom';
-import { Label, Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { Label, Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import {
+  getResourceKeyForPath,
   useEffectivePolicyQuery,
   usePolicyProfileDetailQuery,
 } from '@dwp-frontend/shared-utils';
@@ -28,6 +30,8 @@ import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../../routes';
 
+const POLICIES_RESOURCE = getResourceKeyForPath('policies') ?? 'menu.knowledge-policy.policies';
+
 type PolicyProfileDetailPageProps = {
   profileId: string;
 };
@@ -39,6 +43,7 @@ function renderUnknownAsJson(value: unknown): string {
 }
 
 export const PolicyProfileDetailPage = ({ profileId }: PolicyProfileDetailPageProps) => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
 
   const { data: profile, isLoading: profileLoading, error: profileError } = usePolicyProfileDetailQuery(profileId);
@@ -91,15 +96,28 @@ export const PolicyProfileDetailPage = ({ profileId }: PolicyProfileDetailPagePr
       : [];
 
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 }, width: '100%' }}>
-      <Stack spacing={3}>
+    <Box
+      sx={{
+        p: { xs: 2, sm: 3 },
+        width: '100%',
+        maxWidth: '100%',
+        overflow: 'auto',
+        boxSizing: 'border-box',
+      }}
+    >
+      <Stack spacing={3} sx={{ minWidth: 0 }}>
         {/* Header */}
-        <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ sm: 'flex-start' }} justifyContent="space-between" spacing={2}>
-          <Stack direction="row" alignItems="flex-start" spacing={2}>
-            <IconButton onClick={() => navigate(SYNAPSE_ROUTES.POLICIES)} sx={{ mt: 0.5 }}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems={{ xs: 'stretch', sm: 'flex-start' }}
+          justifyContent="space-between"
+          spacing={2}
+        >
+          <Stack direction="row" alignItems="flex-start" spacing={2} sx={{ minWidth: 0 }}>
+            <IconButton onClick={() => navigate(SYNAPSE_ROUTES.POLICIES)} sx={{ mt: 0.5, flexShrink: 0 }}>
               <Iconify icon="solar:arrow-left-linear" width={20} />
             </IconButton>
-            <Box>
+            <Box sx={{ minWidth: 0 }}>
               <Stack direction="row" alignItems="center" spacing={1.5} flexWrap="wrap">
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
                   {profile.profileName}
@@ -115,6 +133,17 @@ export const PolicyProfileDetailPage = ({ profileId }: PolicyProfileDetailPagePr
               </Typography>
             </Box>
           </Stack>
+          <PermissionGate resource={POLICIES_RESOURCE} permission="EDIT">
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<Iconify icon="solar:pen-bold" width={18} />}
+              onClick={() => navigate(`${SYNAPSE_ROUTES.POLICIES}/${profile.profileId}/edit`)}
+              sx={{ flexShrink: 0, alignSelf: { xs: 'stretch', sm: 'center' } }}
+            >
+              {t('policies.edit')}
+            </Button>
+          </PermissionGate>
         </Stack>
 
         {/* Thresholds Table */}
@@ -248,9 +277,9 @@ export const PolicyProfileDetailPage = ({ profileId }: PolicyProfileDetailPagePr
                 Loading effective policy…
               </Typography>
             ) : effective ? (
-              <Grid container spacing={2}>
+              <Grid container spacing={2} sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
                 {effective.enabledBukrs && effective.enabledBukrs.length > 0 && (
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, sm: 6 }} sx={{ minWidth: 0 }}>
                     <Typography variant="caption" color="text.secondary">
                       Enabled Company Codes
                     </Typography>

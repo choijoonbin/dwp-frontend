@@ -15,6 +15,7 @@ import { NX_API_URL } from '../env';
 import { getTenantId } from '../tenant-util';
 import { useStreamStore } from './stream-store';
 import { getAccessToken } from '../auth/token-storage';
+import { showRagLearnedToast } from '../toast/toast-store';
 import { buildStreamRequestHeaders } from './stream-request-headers';
 import { createAnalysisRun, type CreateAnalysisRunBody } from '../api/synapse-analysis-api';
 
@@ -262,6 +263,15 @@ export const useAnalysisRunStream = () => {
               setDebug({ completedAt: new Date() });
               options?.onSuccess?.(runId);
               return;
+            } else if (currentEventType === 'rag_learned' || currentEventType === 'rag_status') {
+              try {
+                const parsed = dataStr ? (JSON.parse(dataStr) as Record<string, unknown>) : {};
+                if (parsed.learned === true || parsed.status === 'learned' || currentEventType === 'rag_learned') {
+                  showRagLearnedToast();
+                }
+              } catch {
+                showRagLearnedToast();
+              }
             } else if (currentEventType === 'failed') {
               clearStreamTimeout();
               let msg = '분석이 실패했습니다.';

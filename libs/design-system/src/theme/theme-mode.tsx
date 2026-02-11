@@ -1,4 +1,11 @@
-import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
+import {
+  useMemo,
+  useState,
+  useContext,
+  useCallback,
+  createContext,
+  useLayoutEffect,
+} from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -16,6 +23,7 @@ const STORAGE_KEY = 'dwp-theme-mode';
 const COLOR_SCHEME_ATTR = 'data-color-scheme';
 
 function setDomColorScheme(mode: ThemeMode) {
+  if (typeof document === 'undefined') return;
   document.documentElement.setAttribute(COLOR_SCHEME_ATTR, mode);
 }
 
@@ -31,6 +39,14 @@ function getInitialMode(): ThemeMode {
   return DEFAULT_MODE;
 }
 
+/** 첫 페인트 전에 data-color-scheme 적용 — 헤더/사이드바 등 테마 불일치 방지 */
+function initDomColorScheme() {
+  if (typeof document === 'undefined' || typeof window === 'undefined') return;
+  const initial = getInitialMode();
+  document.documentElement.setAttribute(COLOR_SCHEME_ATTR, initial);
+}
+initDomColorScheme();
+
 export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setModeState] = useState<ThemeMode>(getInitialMode);
 
@@ -44,7 +60,7 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
     setMode(mode === 'light' ? 'dark' : 'light');
   }, [mode, setMode]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setDomColorScheme(mode);
   }, [mode]);
 

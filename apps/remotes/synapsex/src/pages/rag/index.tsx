@@ -12,6 +12,7 @@ import {
   useRagSearchQuery,
   useRagDocumentsQuery,
   useRegisterRagDocumentMutation,
+  type RegisterRagDocumentPayload,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -45,6 +46,10 @@ const statusMeta: Record<string, { icon: string; color: 'success' | 'warning' | 
   error: { icon: 'solar:danger-triangle-bold', color: 'error' },
   default: { icon: 'solar:info-circle-bold', color: 'default' },
 };
+
+/** Mock: how often this doc was referenced in recent AI inference. Replace with API when available. */
+const getMockReferenceCount = (docId: string, index: number): number =>
+  (docId.length * 5 + index) % 21;
 
 // ----------------------------------------------------------------------
 
@@ -86,8 +91,8 @@ export const RagPage = () => {
     });
   }, [searchData?.items]);
 
-  const handleRegisterSubmit = (body: Parameters<typeof registerMutation.mutateAsync>[0]) => {
-    registerMutation.mutate(body, {
+  const handleRegisterSubmit = (payload: RegisterRagDocumentPayload) => {
+    registerMutation.mutate(payload, {
       onSuccess: () => {
         setRegisterOpen(false);
       },
@@ -328,6 +333,9 @@ export const RagPage = () => {
                     <TableCell>{t('rag.table.document')}</TableCell>
                     <TableCell>{t('rag.table.source')}</TableCell>
                     <TableCell>{t('rag.table.status')}</TableCell>
+                    <TableCell sx={{ width: 100 }} align="center">
+                      {t('rag.table.referenceCount')}
+                    </TableCell>
                     <TableCell align="right">{t('rag.table.created')}</TableCell>
                     <TableCell align="right" />
                   </TableRow>
@@ -335,7 +343,7 @@ export const RagPage = () => {
                 <TableBody>
                   {docsLoading ? (
                     <TableRow>
-                      <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
+                      <TableCell colSpan={6} align="center" sx={{ py: 8 }}>
                         <Typography variant="body2" color="text.secondary">
                           {t('rag.loading')}
                         </Typography>
@@ -343,7 +351,7 @@ export const RagPage = () => {
                     </TableRow>
                   ) : items.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} align="center" sx={{ py: 10 }}>
+                      <TableCell colSpan={6} align="center" sx={{ py: 10 }}>
                         <Stack alignItems="center" spacing={1}>
                           <Iconify icon="solar:document-text-bold" width={48} sx={{ color: 'text.disabled' }} />
                           <Typography variant="body2" color="text.secondary">
@@ -361,8 +369,9 @@ export const RagPage = () => {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    items.map((d) => {
+                    items.map((d, idx) => {
                       const meta = statusMeta[d.status] ?? statusMeta.default;
+                      const referenceCount = getMockReferenceCount(d.docId, idx);
                       return (
                         <TableRow
                           key={d.docId}
@@ -392,6 +401,17 @@ export const RagPage = () => {
                             >
                               {t(`rag.status.${d.status === 'indexed' || d.status === 'indexing' || d.status === 'error' ? d.status : 'default'}`)}
                             </Label>
+                          </TableCell>
+                          <TableCell align="center">
+                            <Chip
+                              size="small"
+                              label={t('rag.referenceCountBadge', { count: referenceCount })}
+                              sx={{
+                                fontSize: '0.7rem',
+                                bgcolor: 'primary.lighter',
+                                color: 'primary.darker',
+                              }}
+                            />
                           </TableCell>
                           <TableCell align="right">
                             <Typography variant="caption">

@@ -1,20 +1,29 @@
+/**
+ * 실시간 알림 센터 — 우측 상단 종 아이콘 + 배지 + 드롭다운
+ * useNotificationStore 연동, 카테고리별 아이콘(학습 완료/승인 완료/이상 징후 등)
+ * 드롭다운은 최근 10건만 표시. 알림 클릭 시 link로 딥링크.
+ */
+
 import type { IconButtonProps } from '@mui/material/IconButton';
 
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  useNotificationStore,
+  type NotificationItem,
+  type NotificationCategory,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 
 import { fToNow } from 'src/utils/format-time';
@@ -22,26 +31,73 @@ import { fToNow } from 'src/utils/format-time';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
+/** 드롭다운에 표시할 최대 알림 개수 (5~10) */
+const NOTIFICATION_LIST_MAX = 10;
+
 // ----------------------------------------------------------------------
 
-type NotificationItemProps = {
-  id: string;
-  type: string;
-  title: string;
-  isUnRead: boolean;
-  description: string;
-  avatarUrl: string | null;
-  postedAt: string | number | null;
+const CATEGORY_ICON: Record<NotificationCategory, string> = {
+  training_complete: 'solar:graduation-bold-duotone',
+  approval_complete: 'solar:check-circle-bold-duotone',
+  anomaly_detected: 'solar:danger-triangle-bold-duotone',
+  info: 'solar:info-circle-bold-duotone',
+  warning: 'solar:bell-bing-bold-duotone',
+  error: 'solar:close-circle-bold-duotone',
+};
+
+/** type 분기별 아이콘 색상 — BE WebSocket type(AI_DETECT 등)에 맞춰 매칭 */
+const CATEGORY_COLOR: Record<NotificationCategory, 'error' | 'warning' | 'success' | 'info' | 'default'> = {
+  anomaly_detected: 'error',
+  training_complete: 'success',
+  approval_complete: 'success',
+  warning: 'warning',
+  error: 'error',
+  info: 'info',
+};
+
+const CATEGORY_LABEL: Record<NotificationCategory, string> = {
+  training_complete: '학습 완료',
+  approval_complete: '승인 완료',
+  anomaly_detected: '이상 징후 발견',
+  info: '알림',
+  warning: '주의',
+  error: '오류',
 };
 
 export type NotificationsPopoverProps = IconButtonProps & {
-  data?: NotificationItemProps[];
+  /** 초기 데이터(선택) — 스토어가 비어 있을 때 표시. 실시간 수신 시 스토어가 우선 */
+  data?: Array<{
+    id: string;
+    type: string;
+    title: string;
+    isUnRead: boolean;
+    description: string;
+    avatarUrl: string | null;
+    postedAt: string | number | null;
+  }>;
 };
 
 export function NotificationsPopover({ data = [], sx, ...other }: NotificationsPopoverProps) {
-  const [notifications, setNotifications] = useState(data);
+  const navigate = useNavigate();
+  const items = useNotificationStore((s) => s.items);
+  const getUnreadCount = useNotificationStore((s) => s.getUnreadCount);
+  const markAllAsRead = useNotificationStore((s) => s.markAllAsRead);
+  const markAsRead = useNotificationStore((s) => s.markAsRead);
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+  const totalUnRead = getUnreadCount();
+  const displayList: NotificationItem[] =
+    items.length > 0
+      ? items
+      : data.map((d) => ({
+          id: d.id,
+          category: 'info' as NotificationCategory,
+          title: d.title,
+          message: d.description,
+          createdAt: typeof d.postedAt === 'number' ? d.postedAt : Date.now(),
+          isUnRead: d.isUnRead,
+        }));
+  const unreadFromData = items.length === 0 ? data.filter((d) => d.isUnRead).length : totalUnRead;
+  const listToShow = displayList.slice(0, NOTIFICATION_LIST_MAX);
 
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -54,13 +110,21 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
   }, []);
 
   const handleMarkAllAsRead = useCallback(() => {
-    const updatedNotifications = notifications.map((notification) => ({
-      ...notification,
-      isUnRead: false,
-    }));
+    if (items.length > 0) markAllAsRead();
+  }, [items.length, markAllAsRead]);
 
-    setNotifications(updatedNotifications);
-  }, [notifications]);
+  const handleNotificationClick = useCallback(
+    (notification: NotificationItem) => {
+      if (items.length > 0) markAsRead(notification.id);
+      if (notification.link) {
+        navigate(notification.link);
+        handleClosePopover();
+      }
+    },
+    [items.length, markAsRead, navigate, handleClosePopover]
+  );
+
+  const badgeCount = items.length > 0 ? totalUnRead : unreadFromData;
 
   return (
     <>
@@ -70,8 +134,8 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
         sx={sx}
         {...other}
       >
-        <Badge badgeContent={totalUnRead} color="error">
-          <Iconify width={24} icon="solar:bell-bing-bold-duotone" />
+        <Badge badgeContent={badgeCount} color="error">
+          <Iconify width={24} icon="solar:bell-bing-bold" />
         </Badge>
       </IconButton>
 
@@ -104,12 +168,12 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1">Notifications</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
+              You have {badgeCount} unread message{badgeCount !== 1 ? 's' : ''}
             </Typography>
           </Box>
 
-          {totalUnRead > 0 && (
-            <Tooltip title=" Mark all as read">
+          {badgeCount > 0 && (
+            <Tooltip title="Mark all as read">
               <IconButton color="primary" onClick={handleMarkAllAsRead}>
                 <Iconify icon="eva:done-all-fill" />
               </IconButton>
@@ -120,30 +184,22 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Scrollbar fillContent sx={{ minHeight: 240, maxHeight: { xs: 360, sm: 'none' } }}>
-          <List
-            disablePadding
-            subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                New
-              </ListSubheader>
-            }
-          >
-            {notifications.slice(0, 2).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
-            ))}
-          </List>
-
-          <List
-            disablePadding
-            subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                Before that
-              </ListSubheader>
-            }
-          >
-            {notifications.slice(2, 5).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
-            ))}
+          <List disablePadding>
+            {displayList.length === 0 ? (
+              <Box sx={{ py: 4, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  No notifications yet
+                </Typography>
+              </Box>
+            ) : (
+              listToShow.map((notification) => (
+                <NotificationRow
+                  key={notification.id}
+                  notification={notification}
+                  onNavigate={handleNotificationClick}
+                />
+              ))
+            )}
           </List>
         </Scrollbar>
 
@@ -161,11 +217,25 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
 
 // ----------------------------------------------------------------------
 
-function NotificationItem({ notification }: { notification: NotificationItemProps }) {
-  const { avatarUrl, title } = renderContent(notification);
+function NotificationRow({
+  notification,
+  onNavigate,
+}: {
+  notification: NotificationItem;
+  onNavigate?: (notification: NotificationItem) => void;
+}) {
+  const category = notification.category ?? 'info';
+  const icon = CATEGORY_ICON[category] ?? CATEGORY_ICON.info;
+  const label = CATEGORY_LABEL[category] ?? category;
+  const colorKey = CATEGORY_COLOR[category] ?? 'info';
+
+  const handleClick = useCallback(() => {
+    onNavigate?.(notification);
+  }, [notification, onNavigate]);
 
   return (
     <ListItemButton
+      onClick={handleClick}
       sx={{
         py: 1.5,
         px: 2.5,
@@ -175,11 +245,34 @@ function NotificationItem({ notification }: { notification: NotificationItemProp
         }),
       }}
     >
-      <ListItemAvatar>
-        <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatarUrl}</Avatar>
-      </ListItemAvatar>
+      <Box
+        sx={{
+          width: 40,
+          height: 40,
+          borderRadius: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: `${colorKey}.lighter`,
+          color: `${colorKey}.main`,
+          flexShrink: 0,
+          mr: 1.5,
+        }}
+      >
+        <Iconify width={22} icon={icon} />
+      </Box>
       <ListItemText
-        primary={title}
+        primary={
+          <Typography variant="subtitle2">
+            {notification.title}
+            {notification.message && (
+              <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
+                {' '}
+                — {notification.message}
+              </Typography>
+            )}
+          </Typography>
+        }
         secondary={
           <Typography
             variant="caption"
@@ -192,68 +285,13 @@ function NotificationItem({ notification }: { notification: NotificationItemProp
             }}
           >
             <Iconify width={14} icon="solar:clock-circle-outline" />
-            {fToNow(notification.postedAt)}
+            {fToNow(notification.createdAt)}
+            <Box component="span" sx={{ ml: 0.5 }}>
+              · {label}
+            </Box>
           </Typography>
         }
       />
     </ListItemButton>
   );
-}
-
-// ----------------------------------------------------------------------
-
-function renderContent(notification: NotificationItemProps) {
-  const title = (
-    <Typography variant="subtitle2">
-      {notification.title}
-      <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {notification.description}
-      </Typography>
-    </Typography>
-  );
-
-  if (notification.type === 'order-placed') {
-    return {
-      avatarUrl: (
-        <img
-          alt={notification.title}
-          src="/assets/icons/notification/ic-notification-package.svg"
-        />
-      ),
-      title,
-    };
-  }
-  if (notification.type === 'order-shipped') {
-    return {
-      avatarUrl: (
-        <img
-          alt={notification.title}
-          src="/assets/icons/notification/ic-notification-shipping.svg"
-        />
-      ),
-      title,
-    };
-  }
-  if (notification.type === 'mail') {
-    return {
-      avatarUrl: (
-        <img alt={notification.title} src="/assets/icons/notification/ic-notification-mail.svg" />
-      ),
-      title,
-    };
-  }
-  if (notification.type === 'chat-message') {
-    return {
-      avatarUrl: (
-        <img alt={notification.title} src="/assets/icons/notification/ic-notification-chat.svg" />
-      ),
-      title,
-    };
-  }
-  return {
-    avatarUrl: notification.avatarUrl ? (
-      <img alt={notification.title} src={notification.avatarUrl} />
-    ) : null,
-    title,
-  };
 }

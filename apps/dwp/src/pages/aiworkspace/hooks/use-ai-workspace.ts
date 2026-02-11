@@ -12,9 +12,9 @@ import {
   useStreamStore,
   getAgentContext,
   getAgentSessionId,
-  buildStreamRequestHeaders,
   rejectHitlRequest,
   approveHitlRequest,
+  buildStreamRequestHeaders,
 } from '@dwp-frontend/shared-utils';
 
 import { createAiWorkspaceMockData } from '../data/mock';

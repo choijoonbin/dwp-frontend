@@ -38,6 +38,8 @@ const mapApiEventToAuditEvent = (
     resourceType?: string;
     actorType?: string;
     actorDisplayName?: string;
+    actorName?: string;
+    actor_id?: string;
     severity?: string;
     evidenceJson?: unknown;
   }
@@ -47,7 +49,11 @@ const mapApiEventToAuditEvent = (
   return {
     id: item.auditId,
     timestamp: item.createdAt,
-    actor: item.actorDisplayName ?? 'System',
+    actor:
+      item.actorDisplayName ??
+      item.actorName ??
+      (item.actor_id != null ? String(item.actor_id) : undefined) ??
+      'System',
     actorType: actorTypeMap as 'user' | 'system' | 'agent',
     eventType: (item.eventType ?? item.eventCategory ?? 'comment_added') as AuditEvent['eventType'],
     description: [item.eventCategory, item.eventType, item.resourceType]
