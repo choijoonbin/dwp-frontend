@@ -7,6 +7,7 @@ import type { Theme, SxProps } from '@mui/material/styles';
 import type { CaseSimulationResponse } from '@dwp-frontend/shared-utils';
 
 import { Iconify } from '@dwp-frontend/design-system';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -39,6 +40,8 @@ function renderDiffRows(before: Record<string, unknown>, after: Record<string, u
 }
 
 export const CaseSimulationDiff = ({ result, isLoading, onRunSimulation, sx }: CaseSimulationDiffProps) => {
+  const { t } = useTranslation('common');
+
   if (!result) {
     return (
       <Box sx={{ p: 2, ...sx }}>
@@ -49,11 +52,18 @@ export const CaseSimulationDiff = ({ result, isLoading, onRunSimulation, sx }: C
               width={40}
               sx={{ color: 'primary.main', mb: 2, opacity: 0.8 }}
             />
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-              Run simulation to see before/after diff
+            <Typography
+              variant="subtitle2"
+              sx={{ fontWeight: 600, mb: 1, wordBreak: 'keep-all', overflowWrap: 'break-word' }}
+            >
+              {t('caseDetail.simulationDiff.runHint')}
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
-              Simulate the proposed action to preview impact
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ mb: 2, display: 'block', wordBreak: 'keep-all', overflowWrap: 'break-word' }}
+            >
+              {t('caseDetail.simulationDiff.runDesc')}
             </Typography>
             <Button
               variant="contained"
@@ -62,7 +72,7 @@ export const CaseSimulationDiff = ({ result, isLoading, onRunSimulation, sx }: C
               onClick={onRunSimulation}
               disabled={isLoading}
             >
-              {isLoading ? 'Running...' : 'Run Simulation'}
+              {isLoading ? t('caseDetail.simulationDiff.running') : t('caseDetail.simulationDiff.runButton')}
             </Button>
           </CardContent>
         </Card>
@@ -78,7 +88,7 @@ export const CaseSimulationDiff = ({ result, isLoading, onRunSimulation, sx }: C
       <Stack spacing={2}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-            Simulation Result
+            {t('caseDetail.simulationDiff.resultTitle')}
           </Typography>
           <Box
             sx={{
@@ -91,7 +101,7 @@ export const CaseSimulationDiff = ({ result, isLoading, onRunSimulation, sx }: C
               fontWeight: 600,
             }}
           >
-            {outcome === 'success' ? 'Passed' : 'Failed'}
+            {outcome === 'success' ? t('caseDetail.simulationDiff.passed') : t('caseDetail.simulationDiff.failed')}
           </Box>
         </Stack>
 
@@ -156,7 +166,7 @@ export const CaseSimulationDiff = ({ result, isLoading, onRunSimulation, sx }: C
           onClick={onRunSimulation}
           disabled={isLoading}
         >
-          {isLoading ? 'Running...' : 'Run Again'}
+          {isLoading ? t('caseDetail.simulationDiff.running') : t('caseDetail.simulationDiff.runAgain')}
         </Button>
       </Stack>
     </Box>

@@ -11,14 +11,21 @@ import { showToast, runCaseSimulation, type CaseSimulationResponse } from '@dwp-
 
 export type CaseSimulationResult = CaseSimulationResponse;
 
-export const useCaseSimulation = (caseId: string | undefined, actionId?: string) => {
+/** BE 필수: actionType (PAYMENT_BLOCK, REQUEST_INFO, DISMISS, RELEASE_BLOCK 등). 미지정 시 PAYMENT_BLOCK 사용 */
+const DEFAULT_SIMULATION_ACTION_TYPE = 'PAYMENT_BLOCK';
+
+export const useCaseSimulation = (
+  caseId: string | undefined,
+  options?: { actionType?: string; actionId?: string }
+) => {
   const { t } = useTranslation('common');
   const queryClient = useQueryClient();
+  const actionType = options?.actionType ?? DEFAULT_SIMULATION_ACTION_TYPE;
 
   const mutation = useMutation({
     mutationFn: async () => {
       if (!caseId) throw new Error('Case ID required');
-      const res = await runCaseSimulation({ caseId, actionId });
+      const res = await runCaseSimulation({ caseId, actionType, actionId: options?.actionId });
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
         throw new Error(res.message || 'Simulation failed');
       }

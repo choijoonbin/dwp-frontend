@@ -32,6 +32,10 @@ export type StreamDebugInfo = {
   startedAt?: Date;          // Stream start timestamp
   completedAt?: Date;        // Stream completion timestamp
   errorMessage?: string;     // Error message (if status is ERROR)
+  /** Aura failed event: true면 재시도 가능 표시, false면 생략 가능 (Aura §13) */
+  retryable?: boolean;
+  /** Aura failed event: error 객체의 stage (rag/llm 등), 재시도 안내 문구 차별화용 (선택) */
+  failedStage?: string;
 };
 
 /**

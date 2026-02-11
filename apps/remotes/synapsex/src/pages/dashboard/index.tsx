@@ -44,6 +44,7 @@ import CardContent from '@mui/material/CardContent';
 
 import { SYNAPSE_ROUTES } from '../../routes';
 import { SeverityBadge } from '../../components/finance/severity-badge';
+import { DashboardEmptyState } from './components/dashboard-empty-state';
 import { ErrorStateWithRetry } from '../../components/ux/error-state-with-retry';
 import {
   mapRiskDrivers,
@@ -55,6 +56,7 @@ import {
   type RiskDriverUiItem,
   type TeamSnapshotUiItem,
   type AgentActivityUiItem,
+  getAgentEventTypeLabelKey,
   type ActionRequiredUiItem,
 } from './adapters/dashboard-adapter';
 
@@ -204,9 +206,12 @@ const KPICardSkeleton = () => (
 
 const ActivityLogItem = ({
   activity,
+  actionLabel,
   onClick,
 }: {
   activity: AgentActivityUiItem;
+  /** eventType 읽기 쉬운 라벨 (매핑된 경우) */
+  actionLabel?: string;
   onClick?: () => void;
 }) => {
   const isClickable = Boolean(
@@ -273,8 +278,19 @@ const ActivityLogItem = ({
         {time}
       </Typography>
       <Typography variant="caption" sx={{ color: actionColor, flexShrink: 0 }}>
-        [{activity.action}]
+        [{actionLabel ?? activity.action}]
       </Typography>
+      {activity.caseId && (
+        <Typography
+          component={Link}
+          to={SYNAPSE_ROUTES.CASE_DETAIL.replace(':id', activity.caseId)}
+          variant="caption"
+          onClick={(e) => e.stopPropagation()}
+          sx={{ color: 'primary.main', flexShrink: 0, '&:hover': { textDecoration: 'underline' } }}
+        >
+          {activity.caseKey ?? activity.caseId}
+        </Typography>
+      )}
       <Typography variant="caption" sx={{ color: statusColor, flex: 1 }}>
         {activity.message}
       </Typography>
@@ -305,6 +321,17 @@ function formatRiskAmount(amount: number): string {
 // ----------------------------------------------------------------------
 
 const AGENT_STREAM_RANGE = '6h';
+const AGENT_STREAM_PREVIEW_COUNT = 5;
+
+/** 마지막 성공 시각 포맷 HH:mm:ss */
+function formatLastUpdated(ms: number): string {
+  return new Date(ms).toLocaleTimeString('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+}
 
 export const DashboardPage = () => {
   const { t } = useTranslation('common');
@@ -457,6 +484,54 @@ export const DashboardPage = () => {
           </Stack>
         </Stack>
 
+        {/* P0-1: 자동 갱신 상태 + 마지막 업데이트 / 실패 시 경고 */}
+        {agentActivityQuery.isError && (
+          <Box
+            sx={{
+              py: 1,
+              px: 2,
+              borderRadius: 1,
+              bgcolor: 'warning.lighter',
+              border: 1,
+              borderColor: 'warning.light',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 1,
+            }}
+          >
+            <Typography variant="body2" color="warning.dark">
+              {t('dashboard.loadFailedRetrying')}
+            </Typography>
+            <Button
+              size="small"
+              variant="outlined"
+              color="warning"
+              startIcon={<Iconify icon="solar:refresh-bold" width={16} />}
+              onClick={() => void agentActivityQuery.refetch()}
+            >
+              {t('dashboard.refresh')}
+            </Button>
+          </Box>
+        )}
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={1.5}
+          sx={{ mt: agentActivityQuery.isError ? 0 : -1, mb: 0.5 }}
+          flexWrap="wrap"
+        >
+          <Label color="info" variant="soft" sx={{ fontSize: '0.75rem' }}>
+            {t('dashboard.autoRefreshBadge')}
+          </Label>
+          {!agentActivityQuery.isError && agentActivityQuery.dataUpdatedAt > 0 && (
+            <Typography variant="caption" color="text.secondary">
+              {t('dashboard.lastUpdated', { time: formatLastUpdated(agentActivityQuery.dataUpdatedAt) })}
+            </Typography>
+          )}
+        </Stack>
+
         {/* KPI Cards */}
         <Stack
           direction="row"
@@ -529,11 +604,19 @@ export const DashboardPage = () => {
           )}
         </Stack>
 
-        {/* Main Content Grid */}
-        <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3} sx={{ alignItems: 'stretch' }}>
-          <Stack spacing={3} sx={{ flex: { lg: '2 1 0%' }, minWidth: 0 }}>
-            {/* Action Required */}
-            <Card variant="outlined">
+        {/* Main Content: 2열 그리드. 좌측 row1+2 = 조치필요+리스크, row3 = 팀현황. 우측 row1-2 = 에이전트스트림(동일 높이), row3 = 주요지표(팀현황과 수평) */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' },
+            gridTemplateRows: { xs: 'auto', lg: 'auto auto auto' },
+            gap: 3,
+            alignItems: 'stretch',
+            width: '100%',
+          }}
+        >
+            {/* Action Required — 좌측 1행 */}
+            <Card variant="outlined" sx={{ gridColumn: { xs: 1, lg: 1 }, gridRow: { xs: 'auto', lg: 1 }, minWidth: 0 }}>
               <CardContent sx={{ pb: 2 }}>
                 <Stack
                   direction="row"
@@ -575,16 +658,19 @@ export const DashboardPage = () => {
                     onRetry={() => void actionRequiredQuery.refetch()}
                   />
                 ) : pendingActions.length === 0 ? (
-                  <Box sx={{ py: 4, textAlign: 'center' }}>
-                    <Iconify
-                      icon="solar:check-circle-bold-duotone"
-                      width={40}
-                      sx={{ color: 'success.main', mb: 1 }}
-                    />
-                    <Typography variant="body2" color="text.secondary">
-                      {t('dashboard.actionsRequired.empty')}
-                    </Typography>
-                  </Box>
+                  <DashboardEmptyState
+                    icon="solar:check-circle-bold-duotone"
+                    title={t('dashboard.actionsRequired.emptyTitle')}
+                    description={t('dashboard.actionsRequired.emptyDesc')}
+                    actions={[
+                      {
+                        label: t('dashboard.actionsRequired.ctaActionCenter'),
+                        to: SYNAPSE_ROUTES.ACTIONS,
+                        variant: 'primary',
+                      },
+                    ]}
+                    compact
+                  />
                 ) : (
                   <>
                     <Stack spacing={1.5}>
@@ -683,8 +769,8 @@ export const DashboardPage = () => {
               </CardContent>
             </Card>
 
-            {/* Top Risk Drivers */}
-            <Card variant="outlined">
+            {/* Top Risk Drivers — 좌측 2행 */}
+            <Card variant="outlined" sx={{ gridColumn: { xs: 1, lg: 1 }, gridRow: { xs: 'auto', lg: 2 }, minWidth: 0 }}>
               <CardContent sx={{ pb: 2 }}>
                 <Stack
                   direction="row"
@@ -732,16 +818,24 @@ export const DashboardPage = () => {
                     onRetry={() => void riskDriversQuery.refetch()}
                   />
                 ) : riskDrivers.length === 0 ? (
-                  <Box sx={{ py: 4, textAlign: 'center' }}>
-                    <Iconify
-                      icon="solar:chart-2-bold-duotone"
-                      width={40}
-                      sx={{ color: 'text.disabled', mb: 1 }}
-                    />
-                    <Typography variant="body2" color="text.secondary">
-                      {t('dashboard.riskDrivers.empty')}
-                    </Typography>
-                  </Box>
+                  <DashboardEmptyState
+                    icon="solar:chart-2-bold-duotone"
+                    title={t('dashboard.riskDrivers.emptyTitle')}
+                    description={t('dashboard.riskDrivers.emptyDesc')}
+                    actions={[
+                      {
+                        label: t('dashboard.riskDrivers.ctaRiskEvents'),
+                        to: buildAuditUrl({ range: '24h', category: ['RISK', 'EVENT'] }),
+                        variant: 'primary',
+                      },
+                      {
+                        label: t('dashboard.riskDrivers.ctaDetectionCriteria'),
+                        to: SYNAPSE_ROUTES.POLICIES,
+                        variant: 'secondary',
+                      },
+                    ]}
+                    compact
+                  />
                 ) : (
                   <Stack spacing={2}>
                     {riskDrivers.map((driver) => (
@@ -827,8 +921,8 @@ export const DashboardPage = () => {
               </CardContent>
             </Card>
 
-            {/* Team Snapshot */}
-            <Card variant="outlined">
+            {/* Team Snapshot — 좌측 3행 (우측 주요지표와 동일 행/높이) */}
+            <Card variant="outlined" sx={{ gridColumn: { xs: 1, lg: 1 }, gridRow: { xs: 'auto', lg: 3 }, minWidth: 0 }}>
               <CardContent sx={{ pb: 2 }}>
                 <Stack direction="row" alignItems="flex-start" spacing={1} sx={{ mb: 2 }}>
                   <Iconify
@@ -858,16 +952,24 @@ export const DashboardPage = () => {
                     onRetry={() => void teamSnapshotQuery.refetch()}
                   />
                 ) : teamSnapshot.length === 0 ? (
-                  <Box sx={{ py: 4, textAlign: 'center' }}>
-                    <Iconify
-                      icon="solar:users-group-rounded-bold-duotone"
-                      width={40}
-                      sx={{ color: 'text.disabled', mb: 1 }}
-                    />
-                    <Typography variant="body2" color="text.secondary">
-                      {t('dashboard.teamSnapshot.empty')}
-                    </Typography>
-                  </Box>
+                  <DashboardEmptyState
+                    icon="solar:users-group-rounded-bold-duotone"
+                    title={t('dashboard.teamSnapshot.emptyTitle')}
+                    description={t('dashboard.teamSnapshot.emptyDesc')}
+                    actions={[
+                      {
+                        label: t('dashboard.teamSnapshot.ctaTeamSettings'),
+                        to: SYNAPSE_ROUTES.ADMIN,
+                        variant: 'primary',
+                      },
+                      {
+                        label: t('dashboard.teamSnapshot.ctaChangeRange'),
+                        to: buildAuditUrl({ range: '24h' }),
+                        variant: 'secondary',
+                      },
+                    ]}
+                    compact
+                  />
                 ) : (
                   <Table size="small">
                     <TableHead>
@@ -954,13 +1056,22 @@ export const DashboardPage = () => {
                 )}
               </CardContent>
             </Card>
-          </Stack>
 
-          {/* Right Column */}
-          <Stack spacing={3} sx={{ flex: { lg: '1 1 0%' }, minWidth: 0 }}>
-            {/* Agent Execution Stream (mock - API 미제공) */}
-            <Card variant="outlined" sx={{ alignSelf: { lg: 'flex-start' } }}>
-              <CardContent sx={{ pb: 2 }}>
+          {/* 에이전트 실행 스트림 — 우측 1~2행 (조치필요+주요리스크 합친 높이), 내부 스크롤 */}
+            <Card
+              variant="outlined"
+              sx={{
+                gridColumn: { xs: 1, lg: 2 },
+                gridRow: { xs: 'auto', lg: '1 / 3' },
+                minWidth: 0,
+                minHeight: 0,
+                height: { lg: '100%' },
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+              }}
+            >
+              <CardContent sx={{ pb: 2, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
                 <Stack
                   direction="row"
                   alignItems="center"
@@ -1002,6 +1113,10 @@ export const DashboardPage = () => {
                 </Stack>
                 <Box
                   sx={{
+                    flex: 1,
+                    minHeight: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
                     borderRadius: 1,
                     border: 1,
                     borderColor: 'divider',
@@ -1014,6 +1129,7 @@ export const DashboardPage = () => {
                     alignItems="center"
                     spacing={1}
                     sx={{
+                      flexShrink: 0,
                       px: 1,
                       py: 0.75,
                       borderBottom: 1,
@@ -1045,22 +1161,37 @@ export const DashboardPage = () => {
                       />
                     </Box>
                   ) : agentActivities.length === 0 ? (
-                    <Box sx={{ py: 4, textAlign: 'center' }}>
-                      <Iconify
-                        icon="solar:bot-bold-duotone"
-                        width={40}
-                        sx={{ color: 'text.disabled', mb: 1 }}
-                      />
-                      <Typography variant="body2" color="text.secondary">
-                        {t('dashboard.agentStream.empty')}
-                      </Typography>
-                    </Box>
+                    <DashboardEmptyState
+                      icon="solar:bot-bold-duotone"
+                      title={t('dashboard.agentStream.emptyTitle')}
+                      description={t('dashboard.agentStream.emptyDesc')}
+                      actions={[
+                        {
+                          label: t('dashboard.agentStream.ctaAuditLog'),
+                          to: buildAuditUrl({ range: AGENT_STREAM_RANGE, category: ['CASE'] }),
+                          variant: 'primary',
+                        },
+                        {
+                          label: t('dashboard.agentStream.ctaExtendRange'),
+                          to: buildAuditUrl({ range: '24h', category: ['CASE'] }),
+                          variant: 'secondary',
+                        },
+                      ]}
+                      compact
+                    />
                   ) : (
-                    <Stack spacing={1} sx={{ p: 1.5, maxHeight: 400, overflow: 'auto' }}>
-                      {agentActivities.map((activity) => (
+                    <Stack spacing={1} sx={{ p: 1.5, flex: 1, minHeight: 0, overflow: 'auto', overflowY: 'auto' }}>
+                      {agentActivities.slice(0, AGENT_STREAM_PREVIEW_COUNT).map((activity) => (
                         <ActivityLogItem
                           key={activity.id}
                           activity={activity}
+                          actionLabel={
+                            (() => {
+                              const key = getAgentEventTypeLabelKey(activity.action);
+                              const translated = t(`dashboard.agentStream.eventType.${key}`);
+                              return translated !== `dashboard.agentStream.eventType.${key}` ? translated : activity.action;
+                            })()
+                          }
                           onClick={() => handleAgentActivityClick(activity)}
                         />
                       ))}
@@ -1069,11 +1200,11 @@ export const DashboardPage = () => {
                 </Box>
                 <Button
                   component={Link}
-                  to={buildAuditUrl({ range: '24h', category: ['UI', 'ADMIN', 'ACTION', 'AGENT'] })}
+                  to={buildAuditUrl({ range: AGENT_STREAM_RANGE, category: ['CASE'] })}
                   variant="text"
                   fullWidth
                   size="small"
-                  sx={{ mt: 1.5, color: 'text.secondary' }}
+                  sx={{ flexShrink: 0, mt: 1.5, color: 'text.secondary' }}
                   startIcon={<Iconify icon="solar:arrow-right-bold" width={14} />}
                 >
                   {t('dashboard.agentStream.viewFullAudit')}
@@ -1081,8 +1212,16 @@ export const DashboardPage = () => {
               </CardContent>
             </Card>
 
-            {/* Quick Stats (from summary) */}
-            <Card variant="outlined" sx={{ alignSelf: { lg: 'flex-start' } }}>
+            {/* 주요 지표 — 우측 3행 (팀 현황과 동일 행/높이) */}
+            <Card
+              variant="outlined"
+              sx={{
+                gridColumn: { xs: 1, lg: 2 },
+                gridRow: { xs: 'auto', lg: 3 },
+                minWidth: 0,
+                overflow: 'hidden',
+              }}
+            >
               <CardContent sx={{ pb: 2 }}>
                 <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                   <Iconify
@@ -1202,8 +1341,7 @@ export const DashboardPage = () => {
                 )}
               </CardContent>
             </Card>
-          </Stack>
-        </Stack>
+        </Box>
       </Stack>
     </Box>
   );

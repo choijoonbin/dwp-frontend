@@ -19,6 +19,13 @@ function getColor(value: number): 'success' | 'warning' | 'error' {
   return 'error';
 }
 
+/** 게이지 내부 라벨용: 점수 구간 → HIGH/MEDIUM/LOW (리스크 관점, 점수 낮을수록 HIGH) */
+export function getSeverityBand(value: number): 'HIGH' | 'MEDIUM' | 'LOW' {
+  if (value >= 90) return 'LOW';
+  if (value >= 70) return 'MEDIUM';
+  return 'HIGH';
+}
+
 const sizeMap = {
   sm: { height: 4, width: 64, fontSize: '0.75rem' },
   md: { height: 6, width: 80, fontSize: '0.8125rem' },
@@ -69,6 +76,10 @@ export type ConfidenceRingProps = {
   value: number;
   size?: number;
   strokeWidth?: number;
+  /** false면 게이지 중앙에 숫자 대신 심각도 라벨(HIGH/MEDIUM/LOW)만 표시 — 중복 Score 제거용 */
+  showScore?: boolean;
+  /** showScore false일 때 표시할 텍스트. 없으면 getSeverityBand(value) 사용 */
+  centerLabel?: string;
   sx?: SxProps<Theme>;
 };
 
@@ -76,6 +87,8 @@ export const ConfidenceRing = ({
   value: rawValue,
   size = 60,
   strokeWidth = 4,
+  showScore = true,
+  centerLabel,
   sx,
 }: ConfidenceRingProps) => {
   const value = Math.min(100, Math.max(0, rawValue));
@@ -83,6 +96,7 @@ export const ConfidenceRing = ({
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (value / 100) * circumference;
   const color = getColor(value);
+  const centerText = showScore ? `${value}%` : (centerLabel ?? getSeverityBand(value));
 
   return (
     <Box
@@ -124,13 +138,15 @@ export const ConfidenceRing = ({
         component="span"
         sx={{
           position: 'absolute',
-          fontSize: '0.875rem',
+          fontSize: showScore ? '0.875rem' : '0.625rem',
           fontWeight: 700,
           fontVariantNumeric: 'tabular-nums',
           color: `${color}.main`,
+          textAlign: 'center',
+          lineHeight: 1.2,
         }}
       >
-        {value}%
+        {centerText}
       </Typography>
     </Box>
   );

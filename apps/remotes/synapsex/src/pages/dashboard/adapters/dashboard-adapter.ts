@@ -265,6 +265,34 @@ export function mapTeamSnapshot(items: TeamSnapshotDto[] | undefined): TeamSnaps
 }
 
 // ----------------------------------------------------------------------
+// Agent Activity → eventType 라벨 키 (FE 가독성 매핑, i18n key)
+// ----------------------------------------------------------------------
+
+/** BE stage/eventType → i18n 키 (dashboard.agentStream.eventType.xxx). BE는 stage로 SCAN, DETECT, ANALYZE 등 전달. */
+const EVENT_TYPE_TO_KEY: Record<string, string> = {
+  analysis_started: 'analysis_started',
+  analysis_step: 'analysis_step',
+  analysis_completed: 'analysis_completed',
+  proposal_created: 'proposal_created',
+  execute_started: 'execute_started',
+  execute_success: 'execute_success',
+  execute_failed: 'execute_failed',
+  scan: 'scan',
+  detect: 'detect',
+  analyze: 'analyze',
+  simulate: 'simulate',
+  execute: 'execute',
+  match: 'match',
+};
+
+/** BE stage/action 문자열 → dashboard.agentStream.eventType.xxx 키. 그 외는 원문 반환. */
+export function getAgentEventTypeLabelKey(raw: string): string {
+  if (!raw || typeof raw !== 'string') return raw ?? '';
+  const normalized = raw.toLowerCase().replace(/\s+/g, '_');
+  return EVENT_TYPE_TO_KEY[normalized] ?? raw;
+}
+
+// ----------------------------------------------------------------------
 // Agent Activity → UI 모델
 // ----------------------------------------------------------------------
 

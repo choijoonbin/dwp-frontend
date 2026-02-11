@@ -7,7 +7,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { useCaseSimilarQuery } from '@dwp-frontend/shared-utils';
+import { getErrorMessage, useCaseSimilarQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -18,10 +18,8 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import { SYNAPSE_ROUTES } from '../../../routes';
 import { useCaseTabsDebug } from '../context/case-tabs-debug-context';
-import { TabEmptyState } from '../../../components/ux/tab-empty-state';
-import { TabErrorState } from '../../../components/ux/tab-error-state';
 import { SeverityBadge } from '../../../components/finance/severity-badge';
-import { TabContentSkeleton } from '../../../components/ux/tab-content-skeleton';
+import { TabEmptyState, CaseTabQueryBoundary } from '../../../components/ux';
 import { StatusPill, type Status } from '../../../components/finance/status-pill';
 
 type CaseSimilarTabProps = {
@@ -42,47 +40,37 @@ export const CaseSimilarTab = ({ caseId, enabled, tabKey = 'similar' }: CaseSimi
     if (isError && error) {
       setPayload(tabKey, {
         status: 'error',
-        payload: { message: error instanceof Error ? error.message : String(error) },
-        error: error instanceof Error ? error.message : String(error),
+        payload: { message: getErrorMessage(error) ?? String(error) },
+        error: getErrorMessage(error) ?? String(error),
       });
     } else if (!isLoading && data !== undefined) {
       setPayload(tabKey, { status: 'success', payload: data });
     }
   }, [enabled, setPayload, isLoading, isError, error, data, tabKey]);
 
-  if (isLoading) {
-    return <TabContentSkeleton cards={3} />;
-  }
-
-  if (isError) {
-    return (
-      <Box sx={{ p: 2 }}>
-        <TabErrorState
-          title={t('cases.tabs.similar.error.title')}
-          message={error instanceof Error ? error.message : undefined}
-          onRetry={() => refetch()}
-        />
-      </Box>
-    );
-  }
-
   const items = data?.items ?? data?.cases ?? [];
-
-  if (items.length === 0) {
-    const reason = t('cases.tabs.similar.empty.reason.itemsZero');
-    return (
-      <Box sx={{ p: 2 }}>
-        <TabEmptyState
-          icon="solar:link-bold-duotone"
-          title={t('cases.tabs.similar.empty.title')}
-          description={t('cases.tabs.similar.empty.description')}
-          reason={reason}
-        />
-      </Box>
-    );
-  }
+  const isEmpty = items.length === 0;
 
   return (
+    <CaseTabQueryBoundary
+      isLoading={isLoading}
+      isError={isError}
+      error={error}
+      onRetry={() => refetch()}
+      errorTitle={t('cases.tabs.similar.error.title')}
+      skeletonCards={3}
+      empty={isEmpty}
+      emptyContent={
+        <Box sx={{ p: 2 }}>
+          <TabEmptyState
+            icon="solar:link-bold-duotone"
+            title={t('cases.tabs.similar.empty.title')}
+            description={t('cases.tabs.similar.empty.description')}
+            reason={t('cases.tabs.similar.empty.reason.itemsZero')}
+          />
+        </Box>
+      }
+    >
     <Box sx={{ p: 2 }}>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         {t('caseDetail.similarCasesDesc')}
@@ -153,5 +141,6 @@ export const CaseSimilarTab = ({ caseId, enabled, tabKey = 'similar' }: CaseSimi
         })}
       </Stack>
     </Box>
+    </CaseTabQueryBoundary>
   );
 };

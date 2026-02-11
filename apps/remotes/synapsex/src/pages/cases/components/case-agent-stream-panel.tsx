@@ -87,8 +87,14 @@ export const CaseAgentStreamPanel = ({
   const { t } = useTranslation('common');
   const status = useStreamStore((state) => state.status);
   const errorMessage = useStreamStore((state) => state.errorMessage);
+  const eventLog = useStreamStore((state) => state.eventLog);
+  const retryable = useStreamStore((state) => state.debug?.retryable);
 
-  const hasContent = events.length > 0 || streamingText.length > 0 || (stepProgress?.label != null && stepProgress.label.length > 0);
+  const hasContent =
+    events.length > 0 ||
+    streamingText.length > 0 ||
+    (stepProgress?.label != null && stepProgress.label.length > 0) ||
+    eventLog.length > 0;
   const isActive = status === 'CONNECTING' || status === 'STREAMING' || status === 'RECONNECTING';
   const hasError = status === 'ERROR';
   const hasCompletedWithoutContent = status === 'COMPLETED' && !hasContent;
@@ -161,6 +167,11 @@ export const CaseAgentStreamPanel = ({
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                     {errorMessage || t('caseDetail.agentStreamPanel.connectionFailed')}
                   </Typography>
+                  {retryable === true && (
+                    <Typography variant="caption" color="info.main" sx={{ display: 'block', mb: 1 }}>
+                      {t('caseDetail.agentStreamPanel.retryable')}
+                    </Typography>
+                  )}
                   <Stack direction="row" spacing={1}>
                     <Button variant="outlined" size="small" startIcon={<Iconify icon="solar:refresh-bold" width={16} />} onClick={onRetry}>
                       {t('caseDetail.agentStreamPanel.retry')}
@@ -218,6 +229,39 @@ export const CaseAgentStreamPanel = ({
                   <CircularProgress size={14} sx={{ ml: 0.5 }} />
                 )}
               </Stack>
+              {/* Phase3: Event log (max 200 lines) when available */}
+              {eventLog.length > 0 && (
+                <Box
+                  sx={{
+                    mb: 2,
+                    maxHeight: 280,
+                    overflow: 'auto',
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'grey.900' : 'grey.100'),
+                    borderRadius: 1,
+                    border: 1,
+                    borderColor: 'divider',
+                    p: 1.5,
+                  }}
+                >
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                    {t('caseDetail.agentStreamPanel.eventLog', { count: eventLog.length, defaultValue: 'Event log ({{count}} lines)' })}
+                  </Typography>
+                  <Box
+                    component="pre"
+                    sx={{
+                      fontFamily: 'monospace',
+                      fontSize: '0.75rem',
+                      lineHeight: 1.5,
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-all',
+                      m: 0,
+                      color: (theme) => (theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800'),
+                    }}
+                  >
+                    {eventLog.join('\n')}
+                  </Box>
+                </Box>
+              )}
               <Box sx={{ position: 'relative', pl: 3 }}>
                 <Box
                   sx={{

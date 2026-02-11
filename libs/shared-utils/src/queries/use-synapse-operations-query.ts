@@ -12,10 +12,10 @@ import { getAuditIdFromError } from '../http-error';
 import { buildAuditUrl } from '../contracts/synapse-filters';
 import { showToast, showToastWithAuditLink } from '../toast/toast-store';
 import {
-  approveActionProposal,
+  executeProposal,
   getAnalysisRuns,
   getCaseActionProposals,
-  rejectActionProposal,
+  submitActionProposalDecision,
 } from '../api/synapse-analysis-api';
 import {
   getCases,
@@ -563,8 +563,19 @@ export const useApproveProposalMutation = () => {
   const tenantId = getTenantId();
 
   return useMutation({
-    mutationFn: async ({ caseId, proposalId }: { caseId: string; proposalId: string }) => {
-      const res = await approveActionProposal(caseId, proposalId);
+    mutationFn: async ({
+      caseId,
+      proposalId,
+      comment,
+    }: {
+      caseId: string;
+      proposalId: string;
+      comment?: string;
+    }) => {
+      const res = await submitActionProposalDecision(caseId, proposalId, {
+        decision: 'APPROVE',
+        ...(comment ? { comment } : {}),
+      });
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
         throw new Error(res.message || 'Failed to approve proposal');
       }
@@ -592,8 +603,19 @@ export const useRejectProposalMutation = () => {
   const tenantId = getTenantId();
 
   return useMutation({
-    mutationFn: async ({ caseId, proposalId }: { caseId: string; proposalId: string }) => {
-      const res = await rejectActionProposal(caseId, proposalId);
+    mutationFn: async ({
+      caseId,
+      proposalId,
+      comment,
+    }: {
+      caseId: string;
+      proposalId: string;
+      comment?: string;
+    }) => {
+      const res = await submitActionProposalDecision(caseId, proposalId, {
+        decision: 'REJECT',
+        ...(comment ? { comment } : {}),
+      });
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
         throw new Error(res.message || 'Failed to reject proposal');
       }
@@ -611,6 +633,36 @@ export const useRejectProposalMutation = () => {
     },
     onError: (err) => {
       showToast(err instanceof Error ? err.message : t('toast.failedToReject'), 'error');
+    },
+  });
+};
+
+/** BE(back.txt): POST .../action-proposals/{proposalId}/execute — APPROVED 제안만 호출 가능 */
+export const useExecuteProposalMutation = () => {
+  const { t } = useTranslation('common');
+  const queryClient = useQueryClient();
+  const tenantId = getTenantId();
+
+  return useMutation({
+    mutationFn: async ({ caseId, proposalId }: { caseId: string; proposalId: string }) => {
+      const res = await executeProposal(caseId, proposalId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to execute proposal');
+      }
+      return res.data;
+    },
+    onSuccess: (_, { caseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
+      queryClient.invalidateQueries({
+        queryKey: caseActionProposalsQueryKey(tenantId, caseId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: caseAnalysisQueryKey(tenantId, caseId),
+      });
+      showToast(t('toast.actionExecuted'), 'success');
+    },
+    onError: (err) => {
+      showToast(err instanceof Error ? err.message : t('toast.failedToExecute'), 'error');
     },
   });
 };

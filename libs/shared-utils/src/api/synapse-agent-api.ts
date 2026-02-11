@@ -14,6 +14,8 @@ import type { ApiResponse } from '../types';
 
 export type CaseSimulationRequest = {
   caseId: string;
+  /** BE 필수: 시뮬레이션할 액션 타입 (PAYMENT_BLOCK, REQUEST_INFO, DISMISS, RELEASE_BLOCK 등) */
+  actionType: string;
   actionId?: string;
 };
 
@@ -39,9 +41,14 @@ export type CaseSimulationResponse = {
 export const runCaseSimulation = async (
   params: CaseSimulationRequest
 ): Promise<ApiResponse<CaseSimulationResponse>> => {
+  const body = {
+    caseId: params.caseId,
+    actionType: params.actionType,
+    ...(params.actionId != null && { actionId: params.actionId }),
+  };
   const { data } = await axiosInstance.post<ApiResponse<CaseSimulationResponse>>(
     '/api/synapse/agent-tools/actions/simulate',
-    params
+    body
   );
   return data;
 };

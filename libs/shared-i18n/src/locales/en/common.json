@@ -165,6 +165,20 @@
     "previous": "Previous",
     "next": "Next",
     "pageOf": "Page {{current}} of {{total}}",
+    "resultSummary": "Total {{count}} cases",
+    "viewDetail": "View detail",
+    "priority": {
+      "P0": "P0(Urgent)",
+      "P1": "P1(High)",
+      "P2": "P2(Normal)",
+      "tooltip": "Priority from severity({{severity}}), amount({{amount}}), recency({{recency}})",
+      "recencyDays": "{{count}} days ago",
+      "recencyHours": "{{count}} hours ago",
+      "recencyWithinHour": "Within 1 hour"
+    },
+    "topFocusTitle": "Cases to review now (Top 3)",
+    "topFocusTooltip": "Cases prioritized by severity, recent detection, and amount",
+    "topFocusEmpty": "No cases to review right now.",
     "tabs": {
       "analysis": {
         "empty": {
@@ -332,6 +346,8 @@
     "aiReasoning": "AI Reasoning",
     "keyFactors": "Key Factors",
     "evidence": "Evidence",
+    "ragRefs": "RAG references",
+    "scoreShort": "score {{value}}",
     "confidenceBreakdown": "Confidence breakdown by factors",
     "noConfidenceData": "No confidence data available",
     "weight": "Weight",
@@ -354,7 +370,20 @@
     "actionProposals": "Action Proposals",
     "approveAction": "Resolve",
     "reject": "Dismiss",
+    "decidedByAt": "{{user}} · {{at}}",
+    "executeSimulation": "Execute (simulation)",
+    "simulationDiff": {
+      "runHint": "Run simulation to see before/after diff",
+      "runDesc": "Simulate the proposed action to preview impact",
+      "runButton": "Run Simulation",
+      "running": "Running...",
+      "resultTitle": "Simulation Result",
+      "passed": "Passed",
+      "failed": "Failed",
+      "runAgain": "Run Again"
+    },
     "requiresApproval": "Requires approval",
+    "checklist": "Additional checks",
     "requestInfo": "Request Additional Info (status)",
     "setPaymentBlock": "Set Payment Block",
     "postReversal": "Post Reversal",
@@ -377,9 +406,11 @@
       "streamError": "Stream error",
       "connectionFailed": "Connection failed",
       "retry": "Retry",
+      "retryable": "You can retry.",
       "reconnecting": "Reconnecting...",
       "cancel": "Cancel",
       "title": "Agent Stream",
+      "eventLog": "Event log ({{count}} lines)",
       "hitlApprovalRequired": "HITL approval required",
       "eventLabels": {
         "thinking": "Thinking",
@@ -437,6 +468,9 @@
       "title": "Actions Required",
       "subtitle": "Approvals awaiting review",
       "empty": "No actions awaiting review.",
+      "emptyTitle": "No actions awaiting review",
+      "emptyDesc": "There are no actions currently awaiting review or approval.",
+      "ctaActionCenter": "Go to Action Center",
       "viewAll": "View all pending actions",
       "review": "Review",
       "pendingCount": "{{count}} pending"
@@ -445,12 +479,20 @@
       "title": "Key Risk Factors",
       "subtitle": "Major abnormal types requiring attention",
       "viewAnalysis": "View Analysis",
-      "empty": "No risk factors to display."
+      "empty": "No risk factors to display.",
+      "emptyTitle": "No risk signals",
+      "emptyDesc": "No risk factors have been aggregated for the selected period.",
+      "ctaRiskEvents": "View risk events",
+      "ctaDetectionCriteria": "View detection criteria"
     },
     "teamSnapshot": {
       "title": "Team Status",
       "subtitle": "Workload and performance metrics",
       "empty": "No team status to display.",
+      "emptyTitle": "Team metrics not aggregated",
+      "emptyDesc": "Team/assignee activity metrics have not been aggregated yet.",
+      "ctaTeamSettings": "Check team/permission settings",
+      "ctaChangeRange": "Change period",
       "analyst": "Analyst",
       "openCases": "Open Cases",
       "pendingApproval": "Pending Approval",
@@ -466,7 +508,35 @@
       "subtitle": "Real-time AI agent activity",
       "realtime": "Real-time",
       "empty": "No agent activity to display.",
-      "viewFullAudit": "View full audit log"
+      "emptyTitle": "No real-time execution history",
+      "emptyDesc": "No agent execution events in the selected period.",
+      "ctaAuditLog": "View audit log",
+      "ctaExtendRange": "Extend period (6h → 24h)",
+      "viewFullAudit": "View full audit log",
+      "eventType": {
+        "analysis_started": "Analysis started",
+        "analysis_step": "Analysis in progress",
+        "analysis_completed": "Analysis completed",
+        "proposal_created": "Action proposal created",
+        "execute_started": "Execution started",
+        "execute_success": "Execution success",
+        "execute_failed": "Execution failed",
+        "scan": "Scan",
+        "detect": "Detect",
+        "analyze": "Analyze",
+        "simulate": "Simulate",
+        "execute": "Execute",
+        "match": "Match"
+      }
+    },
+    "autoRefreshBadge": "Auto refresh: 10s",
+    "lastUpdated": "Last updated: {{time}}",
+    "loadFailedRetrying": "Temporarily unable to load data. (Retrying automatically)",
+    "emptyState": {
+      "title": "No data to display",
+      "description": "No events collected in the last 6 hours. Extend the range or create/analyze cases.",
+      "viewCases": "View cases",
+      "viewAudit": "View audit log"
     },
     "quickStats": {
       "title": "Key Metrics",

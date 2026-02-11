@@ -7,7 +7,7 @@
 import { useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { useCaseAnalysisQuery } from '@dwp-frontend/shared-utils';
+import { getErrorMessage, useCaseAnalysisQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -20,10 +20,8 @@ import CardContent from '@mui/material/CardContent';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { useCaseTabsDebug } from '../context/case-tabs-debug-context';
-import { TabEmptyState } from '../../../components/ux/tab-empty-state';
-import { TabErrorState } from '../../../components/ux/tab-error-state';
+import { CaseTabQueryBoundary, TabEmptyState } from '../../../components/ux';
 import { ConfidenceRing } from '../../../components/finance/confidence-meter';
-import { TabContentSkeleton } from '../../../components/ux/tab-content-skeleton';
 
 type CaseAnalysisTabProps = {
   caseId: string | undefined;
@@ -57,56 +55,50 @@ export const CaseAnalysisTab = ({
     if (isError && error) {
       setPayload(tabKey, {
         status: 'error',
-        payload: { message: error instanceof Error ? error.message : String(error) },
-        error: error instanceof Error ? error.message : String(error),
+        payload: { message: getErrorMessage(error) ?? String(error) },
+        error: getErrorMessage(error) ?? String(error),
       });
     } else if (!isLoading && data !== undefined) {
       setPayload(tabKey, { status: 'success', payload: data });
     }
   }, [enabled, setPayload, isLoading, isError, error, data, tabKey]);
 
-  if (isLoading) {
-    return <TabContentSkeleton cards={2} />;
-  }
-
-  if (isError) {
-    return (
-      <Box sx={{ p: 2 }}>
-        <TabErrorState
-          title={t('cases.tabs.analysis.error.title')}
-          message={error instanceof Error ? error.message : undefined}
-          onRetry={() => refetch()}
-        />
-      </Box>
-    );
-  }
-
-  const score =
+  const scoreRaw =
     data?.score ??
     (data?.confidenceBreakdown?.overall != null ? Number(data.confidenceBreakdown.overall) * 100 : undefined) ??
     fallbackConfidence;
+  const score = typeof scoreRaw === 'number' ? scoreRaw : Number(scoreRaw) || 0;
+  /** 대표 Score 표기: % 통일, 소수 2자리 고정 */
+  const scoreDisplay = `${Number(score.toFixed(2))}%`;
   const reasonText = data?.reasonText ?? fallbackTitle;
   const anomalyType = data?.anomalyType ?? fallbackAnomalyType;
   const severity = data?.severity ?? fallbackSeverity;
   const keyFactors = data?.keyFactors ?? [];
   const evidence = (data?.evidence ?? []) as Array<{ key?: string }>;
-
-  const isEmpty = !reasonText && keyFactors.length === 0 && evidence.length === 0;
-  if (!data || isEmpty) {
-    const reason = t('cases.tabs.analysis.empty.reason.summaryRecommendationsZero');
-    return (
-      <Box sx={{ p: 2 }}>
-        <TabEmptyState
-          icon="solar:brain-bold-duotone"
-          title={t('cases.tabs.analysis.empty.title')}
-          description={t('cases.tabs.analysis.empty.description')}
-          reason={reason}
-        />
-      </Box>
-    );
-  }
+  const ragRefs = (data?.ragRefs ?? []) as Array<{ refId?: string; sourceType?: string; sourceKey?: string; excerpt?: string; score?: number }>;
+  const isEmpty =
+    !data || (!reasonText && keyFactors.length === 0 && evidence.length === 0 && ragRefs.length === 0);
 
   return (
+    <CaseTabQueryBoundary
+      isLoading={isLoading}
+      isError={isError}
+      error={error}
+      onRetry={() => refetch()}
+      errorTitle={t('cases.tabs.analysis.error.title')}
+      skeletonCards={2}
+      empty={isEmpty}
+      emptyContent={
+        <Box sx={{ p: 2 }}>
+          <TabEmptyState
+            icon="solar:brain-bold-duotone"
+            title={t('cases.tabs.analysis.empty.title')}
+            description={t('cases.tabs.analysis.empty.description')}
+            reason={t('cases.tabs.analysis.empty.reason.summaryRecommendationsZero')}
+          />
+        </Box>
+      }
+    >
     <Box sx={{ p: 2 }}>
       <Stack spacing={2}>
         <Card
@@ -123,10 +115,10 @@ export const CaseAnalysisTab = ({
                   {t('caseDetail.anomalyConfidenceScore')}
                 </Typography>
                 <Typography variant="h3" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                  {typeof score === 'number' ? score : Number(score) || 0}%
+                  {scoreDisplay}
                 </Typography>
               </Box>
-              <ConfidenceRing value={typeof score === 'number' ? score : Number(score) || 0} size={80} />
+              <ConfidenceRing value={score} size={80} showScore={false} />
             </Stack>
             <Stack direction="row" spacing={1} sx={{ mt: 2 }} flexWrap="wrap">
               {anomalyType && (
@@ -221,9 +213,56 @@ export const CaseAnalysisTab = ({
                 </Stack>
               </>
             )}
+            {ragRefs.length > 0 && (
+              <>
+                <Divider sx={{ my: 1.5 }} />
+                <Typography
+                  variant="caption"
+                  sx={{ fontWeight: 500, color: 'text.secondary', mb: 1, display: 'block' }}
+                >
+                  {t('caseDetail.ragRefs')}
+                </Typography>
+                <Stack spacing={1.5}>
+                  {ragRefs.map((r, i) => (
+                    <Box
+                      key={r.refId ?? i}
+                      sx={{
+                        p: 1,
+                        borderRadius: 1,
+                        bgcolor: alpha(theme.palette.primary.main, 0.04),
+                        border: 1,
+                        borderColor: alpha(theme.palette.primary.main, 0.12),
+                      }}
+                    >
+                      <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 0.5 }}>
+                        {r.sourceType != null && r.sourceType !== '' && (
+                          <Chip label={String(r.sourceType)} size="small" variant="outlined" />
+                        )}
+                        {r.sourceKey != null && r.sourceKey !== '' && (
+                          <Typography variant="caption" sx={{ fontFamily: 'monospace', alignSelf: 'center' }}>
+                            {r.sourceKey}
+                          </Typography>
+                        )}
+                        {typeof r.score === 'number' && (
+                          <Typography variant="caption" color="text.secondary">
+                            {t('caseDetail.scoreShort', { value: Number((r.score as number).toFixed(2)) })}
+                          </Typography>
+                        )}
+                      </Stack>
+                      {r.excerpt != null && r.excerpt !== '' && (
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.5 }}>
+                          {r.excerpt}
+                        </Typography>
+                      )}
+                    </Box>
+                  ))}
+                </Stack>
+              </>
+            )}
           </CardContent>
         </Card>
-      </Stack>
+                </Stack>
     </Box>
+    </CaseTabQueryBoundary>
   );
 };

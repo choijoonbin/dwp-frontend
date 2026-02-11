@@ -6,23 +6,27 @@ import type { StreamStatus, StreamDebugInfo } from './stream-status';
 
 // ----------------------------------------------------------------------
 
+const MAX_EVENT_LOG_LINES = 200;
+
 /**
  * SSE Stream Store (Zustand)
- * 
+ *
  * Centralized state for SSE stream connection status.
- * Read-only access from Host/Remote apps.
- * Updates only through use-agent-stream hook.
+ * Phase3: eventLog (max 200 lines) for agent stream tab.
  */
 type StreamStore = {
   status: StreamStatus;
   errorMessage?: string;
   debug: StreamDebugInfo;
-  
-  // Actions (internal use only - called by use-agent-stream)
+  /** Phase3: recent SSE event log lines (max 200) for display */
+  eventLog: string[];
+
   setStatus: (status: StreamStatus) => void;
   setError: (message: string) => void;
   setDebug: (updates: Partial<StreamDebugInfo>) => void;
   addEventType: (eventType: string) => void;
+  /** Append a raw log line (e.g. "event: step" or "data: {...}"); keeps last MAX_EVENT_LOG_LINES */
+  addEventLogLine: (line: string) => void;
   reset: () => void;
 };
 
@@ -35,6 +39,7 @@ const initialDebug: StreamDebugInfo = {
 const initialState = {
   status: 'IDLE' as StreamStatus,
   debug: initialDebug,
+  eventLog: [] as string[],
 };
 
 export const useStreamStore = create<StreamStore>((set) => ({
@@ -61,7 +66,7 @@ export const useStreamStore = create<StreamStore>((set) => ({
   
   addEventType: (eventType) =>
     set((state) => {
-      const recent = [...state.debug.recentEventTypes, eventType].slice(-10); // Keep last 10
+      const recent = [...state.debug.recentEventTypes, eventType].slice(-10);
       return {
         debug: {
           ...state.debug,
@@ -70,6 +75,11 @@ export const useStreamStore = create<StreamStore>((set) => ({
         },
       };
     }),
-  
+
+  addEventLogLine: (line) =>
+    set((state) => ({
+      eventLog: [...state.eventLog, line].slice(-MAX_EVENT_LOG_LINES),
+    })),
+
   reset: () => set({ ...initialState }),
 }));

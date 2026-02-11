@@ -7,7 +7,7 @@
 import { useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { useCaseConfidenceQuery } from '@dwp-frontend/shared-utils';
+import { getErrorMessage, useCaseConfidenceQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -16,9 +16,7 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
 import { useCaseTabsDebug } from '../context/case-tabs-debug-context';
-import { TabEmptyState } from '../../../components/ux/tab-empty-state';
-import { TabErrorState } from '../../../components/ux/tab-error-state';
-import { TabContentSkeleton } from '../../../components/ux/tab-content-skeleton';
+import { CaseTabQueryBoundary, TabEmptyState } from '../../../components/ux';
 
 const ICON_MAP: Record<string, string> = {
   amount: 'solar:dollar-minimalistic-bold-duotone',
@@ -45,49 +43,38 @@ export const CaseConfidenceTab = ({ caseId, enabled, tabKey = 'confidence' }: Ca
     if (isError && error) {
       setPayload(tabKey, {
         status: 'error',
-        payload: { message: error instanceof Error ? error.message : String(error) },
-        error: error instanceof Error ? error.message : String(error),
+        payload: { message: getErrorMessage(error) ?? String(error) },
+        error: getErrorMessage(error) ?? String(error),
       });
     } else if (!isLoading && data !== undefined) {
       setPayload(tabKey, { status: 'success', payload: data });
     }
   }, [enabled, setPayload, isLoading, isError, error, data, tabKey]);
 
-  if (isLoading) {
-    return <TabContentSkeleton cards={4} />;
-  }
-
-  if (isError) {
-    return (
-      <Box sx={{ p: 2 }}>
-        <TabErrorState
-          title={t('cases.tabs.confidence.error.title')}
-          message={error instanceof Error ? error.message : undefined}
-          onRetry={() => refetch()}
-        />
-      </Box>
-    );
-  }
-
   const factors = data?.factors ?? [];
   const overallScore = data?.overallScore ?? data?.score;
   const isEmpty = factors.length === 0 || overallScore == null;
 
-  if (isEmpty) {
-    const reason = t('cases.tabs.confidence.empty.reason.factorsZeroOrScoreNull');
-    return (
-      <Box sx={{ p: 2 }}>
-        <TabEmptyState
-          icon="solar:graph-up-bold-duotone"
-          title={t('cases.tabs.confidence.empty.title')}
-          description={t('cases.tabs.confidence.empty.description')}
-          reason={reason}
-        />
-      </Box>
-    );
-  }
-
   return (
+    <CaseTabQueryBoundary
+      isLoading={isLoading}
+      isError={isError}
+      error={error}
+      onRetry={() => refetch()}
+      errorTitle={t('cases.tabs.confidence.error.title')}
+      skeletonCards={4}
+      empty={isEmpty}
+      emptyContent={
+        <Box sx={{ p: 2 }}>
+          <TabEmptyState
+            icon="solar:graph-up-bold-duotone"
+            title={t('cases.tabs.confidence.empty.title')}
+            description={t('cases.tabs.confidence.empty.description')}
+            reason={t('cases.tabs.confidence.empty.reason.factorsZeroOrScoreNull')}
+          />
+        </Box>
+      }
+    >
     <Box sx={{ p: 2 }}>
       <Stack spacing={2}>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
@@ -148,5 +135,6 @@ export const CaseConfidenceTab = ({ caseId, enabled, tabKey = 'confidence' }: Ca
         })}
       </Stack>
     </Box>
+    </CaseTabQueryBoundary>
   );
 };

@@ -1,14 +1,21 @@
 /**
- * Case Action Proposals Tab — Phase2 AI 분석 기반 권고
- * GET /api/synapse/cases/{caseId}/action-proposals
- * @see docs/job/BE_FOLLOWUP_QUESTIONS_PHASE2.md
+ * Case Action Proposals Tab — Phase3
+ * GET /api/synapse/cases/{caseId}/action-proposals?runId=
+ * Phase3: fingerprint dedup — groupBy fingerprint, latest createdAt per group.
+ * @see docs/job/PROMPT_FE_Phase3_SynapseX_MVP_SPEC.md
  */
 
 import type { CaseActionProposalDto } from '@dwp-frontend/shared-utils';
 
+import { useMemo } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { formatDateTime, useTranslation } from '@dwp-frontend/shared-i18n';
-import { useCaseActionProposalsQuery, useApproveProposalMutation, useRejectProposalMutation } from '@dwp-frontend/shared-utils';
+import {
+  useRejectProposalMutation,
+  useApproveProposalMutation,
+  useExecuteProposalMutation,
+  useCaseActionProposalsQuery,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -18,9 +25,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
-import { TabEmptyState } from '../../../components/ux/tab-empty-state';
-import { TabErrorState } from '../../../components/ux/tab-error-state';
-import { TabContentSkeleton } from '../../../components/ux/tab-content-skeleton';
+import { TabEmptyState, CaseTabQueryBoundary } from '../../../components/ux';
+import { dedupeProposalsByFingerprint } from '../adapters/case-action-proposals-adapter';
 
 type CaseActionProposalsTabProps = {
   caseId: string | undefined;
@@ -42,49 +48,49 @@ export const CaseActionProposalsTab = ({
   });
   const approveMutation = useApproveProposalMutation();
   const rejectMutation = useRejectProposalMutation();
+  const executeMutation = useExecuteProposalMutation();
 
-  if (isLoading) {
-    return <TabContentSkeleton cards={2} />;
-  }
-
-  if (isError) {
-    return (
-      <Box sx={{ p: 2 }}>
-        <TabErrorState
-          title={t('cases.tabs.actionProposals.error.title', { defaultValue: 'Failed to load action proposals' })}
-          message={error instanceof Error ? error.message : undefined}
-          onRetry={() => refetch()}
-        />
-      </Box>
-    );
-  }
-
-  const items: CaseActionProposalDto[] = Array.isArray(proposals)
-    ? (proposals as CaseActionProposalDto[])
-    : (proposals as { items?: CaseActionProposalDto[] } | undefined)?.items ?? [];
-
-  if (items.length === 0) {
-    return (
-      <Box sx={{ p: 2 }}>
-        <TabEmptyState
-          icon="solar:shield-check-bold-duotone"
-          title={t('cases.tabs.actionProposals.empty.title', { defaultValue: 'No action proposals' })}
-          description={t('cases.tabs.actionProposals.empty.description', {
-            defaultValue: 'Run analysis to get AI-generated action recommendations.',
-          })}
-        />
-      </Box>
-    );
-  }
+  const rawItems: CaseActionProposalDto[] = useMemo(
+    () =>
+      Array.isArray(proposals)
+        ? (proposals as CaseActionProposalDto[])
+        : (proposals as { items?: CaseActionProposalDto[] } | undefined)?.items ?? [],
+    [proposals]
+  );
+  const items = useMemo(() => dedupeProposalsByFingerprint(rawItems), [rawItems]);
 
   return (
+    <CaseTabQueryBoundary
+      isLoading={isLoading}
+      isError={isError}
+      error={error}
+      onRetry={() => refetch()}
+      errorTitle={t('cases.tabs.actionProposals.error.title', { defaultValue: 'Failed to load action proposals' })}
+      skeletonCards={2}
+      empty={items.length === 0}
+      emptyContent={
+        <Box sx={{ p: 2 }}>
+          <TabEmptyState
+            icon="solar:shield-check-bold-duotone"
+            title={t('cases.tabs.actionProposals.empty.title', { defaultValue: 'No action proposals' })}
+            description={t('cases.tabs.actionProposals.empty.description', {
+              defaultValue: 'Run analysis to get AI-generated action recommendations.',
+            })}
+          />
+        </Box>
+      }
+    >
     <Box sx={{ p: 2 }}>
       <Stack spacing={2}>
         {items.map((item: CaseActionProposalDto) => {
           const proposalId = item.proposalId ?? (item as { id?: string }).id;
-          const isPending = (item.status ?? '').toUpperCase() === 'PROPOSED' || (item.status ?? '').toUpperCase() === 'DRAFT';
+          const statusUpper = (item.status ?? '').toUpperCase();
+          const isPending = statusUpper === 'PROPOSED' || statusUpper === 'DRAFT';
+          const isApproved = statusUpper === 'APPROVED';
           const isApproving = approveMutation.isPending && approveMutation.variables?.proposalId === proposalId;
           const isRejecting = rejectMutation.isPending && rejectMutation.variables?.proposalId === proposalId;
+          const isExecuting = executeMutation.isPending && executeMutation.variables?.proposalId === proposalId;
+          const hasDecided = item.decidedBy != null || item.decidedAt != null || (item.decisionComment != null && item.decisionComment !== '');
 
           return (
             <Card key={proposalId} variant="outlined">
@@ -116,6 +122,43 @@ export const CaseActionProposalsTab = ({
                     <Typography variant="body2" color="text.secondary">
                       {item.rationale}
                     </Typography>
+                  )}
+                  {Array.isArray(item.checklist) && item.checklist.length > 0 && (
+                    <Stack spacing={0.5}>
+                      <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary' }}>
+                        {t('caseDetail.checklist', { defaultValue: '추가 확인사항' })}
+                      </Typography>
+                      <Stack component="ul" sx={{ m: 0, pl: 2 }}>
+                        {item.checklist.map((entry, idx) => (
+                          <Typography key={idx} component="li" variant="caption" color="text.secondary">
+                            {typeof entry === 'string' ? entry : String(entry)}
+                          </Typography>
+                        ))}
+                      </Stack>
+                    </Stack>
+                  )}
+                  {hasDecided && (
+                    <Stack spacing={0.5} sx={{ py: 0.5 }}>
+                      {item.decidedAt && (
+                        <Stack direction="row" spacing={0.5} alignItems="center">
+                          <Iconify icon="solar:user-check-bold-duotone" width={14} sx={{ color: 'text.disabled' }} />
+                          <Typography variant="caption" color="text.secondary">
+                            {item.decidedBy != null && item.decidedBy !== ''
+                              ? t('caseDetail.decidedByAt', {
+                                  user: item.decidedBy,
+                                  at: formatDateTime(item.decidedAt),
+                                  defaultValue: '{{user}} · {{at}}',
+                                })
+                              : formatDateTime(item.decidedAt)}
+                          </Typography>
+                        </Stack>
+                      )}
+                      {item.decisionComment != null && item.decisionComment !== '' && (
+                        <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                          {item.decisionComment}
+                        </Typography>
+                      )}
+                    </Stack>
                   )}
                   <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 0.5 }}>
                     {item.runId && (
@@ -155,6 +198,19 @@ export const CaseActionProposalsTab = ({
                       </Button>
                     </Stack>
                   )}
+                  {isApproved && caseId && (
+                    <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<Iconify icon="solar:play-bold" width={16} />}
+                        disabled={isExecuting}
+                        onClick={() => executeMutation.mutate({ caseId, proposalId: proposalId! })}
+                      >
+                        {t('caseDetail.executeSimulation')}
+                      </Button>
+                    </Stack>
+                  )}
                 </Stack>
               </CardContent>
             </Card>
@@ -162,5 +218,6 @@ export const CaseActionProposalsTab = ({
         })}
       </Stack>
     </Box>
+    </CaseTabQueryBoundary>
   );
 };

@@ -532,12 +532,17 @@ while (true) {
 **현재 프론트엔드 구현**: POST 방식을 사용하며, body에 `prompt`와 `context`를 포함합니다.
 백엔드가 GET 방식을 요구하는 경우, 쿼리 파라미터로 메시지를 전달하도록 수정 가능합니다.
 
-**필수 헤더**:
-- `Content-Type: text/event-stream`
-- `Cache-Control: no-cache`
-- `Connection: keep-alive`
+**클라이언트(프론트엔드) 요청 헤더**:
+- `Accept: text/event-stream`
+- `Content-Type: application/json` (POST body 사용 시)
 - `Authorization: Bearer {JWT_TOKEN}`
 - `X-Tenant-ID: {TENANT_ID}`
+- **`Connection` 헤더는 보내지 않음** — HTTP/1.1에서 keep-alive는 기본이며, 브라우저·게이트웨이가 자동 처리
+
+**서버 응답 헤더** (참고):
+- `Content-Type: text/event-stream`
+- `Cache-Control: no-cache`
+- `Connection: keep-alive` (서버 응답 시)
 
 **응답 형식**:
 ```

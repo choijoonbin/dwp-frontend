@@ -23,11 +23,12 @@ import {
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
-import Grid from '@mui/material/Grid';
+import Menu from '@mui/material/Menu';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
+import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
@@ -36,7 +37,7 @@ import TableHead from '@mui/material/TableHead';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import Typography from '@mui/material/Typography';
-import CardContent from '@mui/material/CardContent';
+import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 import ToggleButton from '@mui/material/ToggleButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -47,6 +48,7 @@ import { SYNAPSE_ROUTES } from '../../routes';
 import { useCasesList } from './hooks/use-cases-list';
 import { ErrorStateWithRetry } from '../../components/ux';
 import { SeverityBadge } from '../../components/finance/severity-badge';
+import { getPriorityInfo, sortByPriorityScore } from './utils/case-priority';
 import { TableLoadingSkeleton } from '../../components/ux/table-loading-skeleton';
 import {
   type CasesPeriod,
@@ -91,6 +93,8 @@ export const CasesPage = () => {
     stored?.dateFrom ?? isoToDatetimeLocal(defaultRange.from)
   );
   const [dateTo, setDateTo] = useState(stored?.dateTo ?? isoToDatetimeLocal(defaultRange.to));
+  const [rowMenuAnchor, setRowMenuAnchor] = useState<null | HTMLElement>(null);
+  const [rowMenuCase, setRowMenuCase] = useState<CaseListItem | null>(null);
   // 케이스 검출시간 필터 - 현재 미사용
   // const [detectedFrom, setDetectedFrom] = useState('');
   // const [detectedTo, setDetectedTo] = useState('');
@@ -196,6 +200,20 @@ export const CasesPage = () => {
     setPage(0);
   }, [q, statusFilter, severityFilter, caseTypeFilter, dateFrom, dateTo]);
 
+  /** 우선순위 정렬(priorityScore desc) — 필터 적용 후에도 유지 */
+  const sortedRows = useMemo(() => sortByPriorityScore(rows), [rows]);
+
+  /** 툴팁용 recency 문자열 (i18n) */
+  const getRecencyTooltipStr = (lastAt: string | undefined): string => {
+    if (!lastAt) return '';
+    const diffMs = Date.now() - new Date(lastAt).getTime();
+    const days = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+    const hours = Math.floor((diffMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+    if (days > 0) return t('cases.priority.recencyDays', { count: days });
+    if (hours > 0) return t('cases.priority.recencyHours', { count: hours });
+    return t('cases.priority.recencyWithinHour');
+  };
+
   const handleRowClick = (row: CaseListItem) => {
     navigate(`${SYNAPSE_ROUTES.CASES}/${row.id}`);
   };
@@ -207,7 +225,7 @@ export const CasesPage = () => {
   };
 
   const handleExportCsv = () => {
-    const csv = tableToCsv(rows, [
+    const csv = tableToCsv(sortedRows, [
       { id: 'caseNumber', label: t('cases.case') },
       { id: 'severity', label: t('cases.severity') },
       { id: 'status', label: t('cases.status'), getValue: (r) => getStatusLabel(r.status) || r.status },
@@ -250,15 +268,7 @@ export const CasesPage = () => {
               {t('cases.subtitle')}
             </Typography>
           </Box>
-          <Stack direction="row" spacing={1}>
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<Iconify icon="solar:refresh-bold" width={16} />}
-              onClick={handleRefresh}
-            >
-              {t('cases.refresh')}
-            </Button>
+          <Stack direction="row" spacing={1.5} alignItems="center">
             <Button
               variant="outlined"
               size="small"
@@ -270,32 +280,45 @@ export const CasesPage = () => {
           </Stack>
         </Stack>
 
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <Card variant="outlined">
-              <CardContent sx={{ p: 2 }}>
-                <Typography variant="caption" color="text.secondary">
-                  {t('cases.totalCases')}
-                </Typography>
-                <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                  {totalCount}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <Card variant="outlined">
-              <CardContent sx={{ p: 2 }}>
-                <Typography variant="caption" color="text.secondary">
-                  {t('cases.triageBacklog')}
-                </Typography>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: 'warning.main' }}>
-                  {triageBacklogCount}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        {/* KPI Stat row — 정보 전용, 클릭/호버 비활성 */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            py: 0.5,
+            cursor: 'default',
+            '& .MuiChip-root': { cursor: 'default', pointerEvents: 'none' },
+          }}
+        >
+          <Chip
+            size="small"
+            variant="outlined"
+            label={`${t('cases.totalCases')} ${totalCount}`}
+            sx={{
+              fontWeight: 600,
+              fontSize: '0.8125rem',
+              borderColor: 'divider',
+              bgcolor: 'transparent',
+              '&:hover': { bgcolor: 'transparent' },
+            }}
+          />
+          <Typography variant="body2" color="text.secondary">
+            |
+          </Typography>
+          <Chip
+            size="small"
+            variant="outlined"
+            label={`${t('cases.triageBacklog')} ${triageBacklogCount}`}
+            sx={{
+              fontWeight: 600,
+              fontSize: '0.8125rem',
+              borderColor: 'divider',
+              bgcolor: 'transparent',
+              '&:hover': { bgcolor: 'transparent' },
+            }}
+          />
+        </Box>
 
         <FilterCard
           title={t('cases.filterTitle')}
@@ -520,6 +543,115 @@ export const CasesPage = () => {
             </Stack>
         </FilterCard>
 
+        {/* 지금 확인할 케이스 (Top 3) — 카드 그리드, 클릭 시 상세 이동 */}
+        <Box>
+          <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 1 }}>
+            <Typography variant="subtitle2" color="text.primary">
+              {t('cases.topFocusTitle')}
+            </Typography>
+            <Tooltip title={t('cases.topFocusTooltip')} placement="top">
+              <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
+                <Iconify icon="solar:info-circle-bold" width={16} sx={{ color: 'text.secondary' }} />
+              </Box>
+            </Tooltip>
+          </Stack>
+          {sortedRows.length > 0 ? (
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: 'repeat(2, 1fr)',
+                  md: 'repeat(3, 1fr)',
+                },
+                gap: 1.5,
+              }}
+            >
+              {sortedRows.slice(0, 3).map((row) => {
+                const priorityInfo = getPriorityInfo(row);
+                return (
+                  <Card
+                    key={row.id}
+                    variant="outlined"
+                    component="button"
+                    type="button"
+                    onClick={() => handleRowClick(row)}
+                    sx={{
+                      p: 1.5,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      borderColor: 'divider',
+                      '&:hover': { bgcolor: 'action.hover', borderColor: 'primary.light' },
+                      transition: 'background-color 0.2s, border-color 0.2s',
+                    }}
+                  >
+                    <Stack spacing={0.75}>
+                      <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                          {row.caseNumber}
+                        </Typography>
+                        <Label
+                          variant="soft"
+                          color={
+                            priorityInfo.priorityLabel === 'P0'
+                              ? 'error'
+                              : priorityInfo.priorityLabel === 'P1'
+                                ? 'warning'
+                                : 'default'
+                          }
+                          sx={{ px: 0.5, py: 0.25, fontSize: '0.6875rem', fontWeight: 600 }}
+                        >
+                          {t(`cases.priority.${priorityInfo.priorityLabel}`)}
+                        </Label>
+                      </Stack>
+                      <Typography variant="body2" color="text.secondary">
+                        {formatCurrency(row.amount, row.currency)}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {t('cases.lastDetected')}:{' '}
+                        {(row.lastDetectedAt ?? row.detectedAt)
+                          ? formatDate(row.lastDetectedAt ?? row.detectedAt ?? '')
+                          : '-'}
+                      </Typography>
+                    </Stack>
+                  </Card>
+                );
+              })}
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                py: 2,
+                px: 2,
+                borderRadius: 1,
+                border: 1,
+                borderColor: 'divider',
+                bgcolor: 'action.hover',
+              }}
+            >
+              <Stack alignItems="center" spacing={1.5}>
+                <Typography variant="body2" color="text.secondary">
+                  {t('cases.topFocusEmpty')}
+                </Typography>
+                {hasFilters && (
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<Iconify icon="solar:refresh-bold" width={16} />}
+                    onClick={handleResetFilters}
+                  >
+                    {t('cases.filterResetCta')}
+                  </Button>
+                )}
+              </Stack>
+            </Box>
+          )}
+        </Box>
+
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          {t('cases.resultSummary', { count: totalCount })}
+        </Typography>
+
         <TableContainer component={Card} variant="outlined">
           <Table size="small">
             <TableHead>
@@ -530,18 +662,19 @@ export const CasesPage = () => {
                 <TableCell>{t('cases.type')}</TableCell>
                 <TableCell align="right">{t('cases.amount')}</TableCell>
                 <TableCell>{t('cases.lastDetected')}</TableCell>
+                <TableCell width={48} sx={{ p: 0 }} />
               </TableRow>
             </TableHead>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={6} sx={{ py: 0, px: 0, border: 0, verticalAlign: 'top' }}>
+                  <TableCell colSpan={7} sx={{ py: 0, px: 0, border: 0, verticalAlign: 'top' }}>
                     <TableLoadingSkeleton rows={5} columns={6} />
                   </TableCell>
                 </TableRow>
-              ) : rows.length === 0 ? (
+              ) : sortedRows.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 6 }}>
+                  <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
                     <Stack alignItems="center" spacing={2}>
                       <Iconify
                         icon="solar:clipboard-list-bold-duotone"
@@ -565,7 +698,17 @@ export const CasesPage = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                rows.map((row) => (
+                sortedRows.map((row) => {
+                  const priorityInfo = getPriorityInfo(row);
+                  const tooltipRecency = getRecencyTooltipStr(
+                    row.lastDetectedAt ?? row.updatedAt ?? row.detectedAt
+                  );
+                  const priorityTooltip = t('cases.priority.tooltip', {
+                    severity: getSeverityLabel(row.severity.toUpperCase()) ?? row.severity,
+                    amount: formatCurrency(row.amount, row.currency),
+                    recency: tooltipRecency || '-',
+                  });
+                  return (
                   <TableRow
                     key={row.id}
                     hover
@@ -574,6 +717,21 @@ export const CasesPage = () => {
                   >
                     <TableCell>
                       <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                        <Tooltip title={priorityTooltip}>
+                          <Label
+                            variant="soft"
+                            color={
+                              priorityInfo.priorityLabel === 'P0'
+                                ? 'error'
+                                : priorityInfo.priorityLabel === 'P1'
+                                  ? 'warning'
+                                  : 'default'
+                            }
+                            sx={{ px: 0.5, py: 0.25, fontSize: '0.6875rem', fontWeight: 600 }}
+                          >
+                            {t(`cases.priority.${priorityInfo.priorityLabel}`)}
+                          </Label>
+                        </Tooltip>
                         <Typography variant="body2" sx={{ fontWeight: 600 }}>
                           {row.caseNumber}
                         </Typography>
@@ -604,8 +762,25 @@ export const CasesPage = () => {
                         ? formatDate(row.lastDetectedAt ?? row.updatedAt ?? row.detectedAt)
                         : '-'}
                     </TableCell>
+                    <TableCell
+                      sx={{ p: 0, width: 48 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <IconButton
+                        size="small"
+                        aria-label={t('cases.viewDetail')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setRowMenuAnchor(e.currentTarget);
+                          setRowMenuCase(row);
+                        }}
+                      >
+                        <Iconify icon="solar:menu-dots-bold" width={18} />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
-                ))
+                  );
+                })
               )}
             </TableBody>
           </Table>
@@ -634,6 +809,27 @@ export const CasesPage = () => {
             </Stack>
           </Stack>
         )}
+
+        <Menu
+          anchorEl={rowMenuAnchor}
+          open={Boolean(rowMenuAnchor)}
+          onClose={() => {
+            setRowMenuAnchor(null);
+            setRowMenuCase(null);
+          }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <MenuItem
+            onClick={() => {
+              if (rowMenuCase) handleRowClick(rowMenuCase);
+              setRowMenuAnchor(null);
+              setRowMenuCase(null);
+            }}
+          >
+            {t('cases.viewDetail')}
+          </MenuItem>
+        </Menu>
       </Stack>
     </Box>
   );

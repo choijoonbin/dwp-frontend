@@ -41,3 +41,10 @@ export function isHttpError(err: unknown): err is HttpError {
 export function is403Error(err: unknown): boolean {
   return isHttpError(err) && err.is403;
 }
+
+/** 공통: unknown 에러에서 사용자 표시용 메시지 추출 */
+export function getErrorMessage(err: unknown): string | undefined {
+  if (err instanceof Error && err.message) return err.message;
+  if (typeof err === 'string') return err;
+  return undefined;
+}

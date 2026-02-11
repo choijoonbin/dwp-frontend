@@ -309,7 +309,18 @@ export type CaseAnalysisEvidenceDto = {
   [key: string]: unknown;
 };
 
+/** Phase3: RAG reference in analysis result */
+export type CaseAnalysisRagRefDto = {
+  refId?: string;
+  sourceType?: string;
+  sourceKey?: string;
+  excerpt?: string;
+  score?: number;
+  [key: string]: unknown;
+};
+
 export type CaseAnalysisDto = {
+  runId?: string;
   score?: number;
   reasonText?: string;
   keyFactors?: Array<{ label?: string; type?: string; description?: string }>;
@@ -317,6 +328,8 @@ export type CaseAnalysisDto = {
   severity?: string;
   /** Phase2: evidence items { key: string } */
   evidence?: CaseAnalysisEvidenceDto[];
+  /** Phase3: RAG citations (policy/regulation refs) */
+  ragRefs?: CaseAnalysisRagRefDto[];
   /** Phase2: confidence breakdown */
   confidenceBreakdown?: { overall?: number; [key: string]: unknown };
   [key: string]: unknown;

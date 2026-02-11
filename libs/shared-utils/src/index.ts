@@ -28,6 +28,7 @@ export * from './api/auth-policy-api';
 export * from './agent/agent-session';
 export * from './admin/event-actions';
 export * from './agent/stream-status';
+export * from './agent/stream-request-headers';
 export * from './hooks/use-is-client';
 export * from './export/table-to-csv';
 export * from './enums/synapse-enums';

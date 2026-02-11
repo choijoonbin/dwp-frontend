@@ -11,6 +11,7 @@ import {
   getAccessToken,
   getAgentContext,
   getAgentSessionId,
+  buildStreamRequestHeaders,
   rejectHitlRequest,
   approveHitlRequest,
 } from '@dwp-frontend/shared-utils';
@@ -161,16 +162,16 @@ export const AuraMiniOverlay = () => {
       }
 
       try {
+        const headers = buildStreamRequestHeaders({
+          tenantId,
+          token,
+          contentType: 'application/json',
+          agentId,
+          userId: userId ?? undefined,
+        });
         const response = await fetch(`${NX_API_URL}/api/aura/test/stream`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'text/event-stream', 
-            'X-Tenant-ID': tenantId,
-            'X-Agent-ID': agentId, // Agent session ID for Aura requests
-            ...(token && { Authorization: `Bearer ${token}` }),
-            ...(userId && { 'X-User-ID': userId }),
-          },
+          headers,
           body: JSON.stringify(requestPayload),
           signal: abortControllerRef.current.signal,
         });
