@@ -6,8 +6,8 @@
 
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Label, Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { Label, Iconify } from '@dwp-frontend/design-system';
 import { useRagDocumentDetailQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -69,7 +69,7 @@ export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => 
   const effectiveDocId = docId?.trim() || undefined;
   const { data: doc, isLoading, error } = useRagDocumentDetailQuery(effectiveDocId);
 
-  const chunks = doc?.chunks ?? [];
+  const chunks = useMemo(() => doc?.chunks ?? [], [doc?.chunks]);
   const filteredChunks = useMemo(() => {
     if (!searchWithin.trim()) return chunks;
     const q = searchWithin.toLowerCase();

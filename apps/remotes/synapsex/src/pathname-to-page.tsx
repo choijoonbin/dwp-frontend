@@ -42,6 +42,7 @@ import { RagDocumentDetailPage } from './pages/rag/rag-detail';
 import { ActionReconciliationPage } from './pages/action-recon';
 import { PolicyProfileDetailPage } from './pages/policies/policy-detail';
 import { ReconRunDetailPage } from './pages/reconciliation/recon-run-detail';
+import { DemoControlPage } from './pages/demo-control';
 
 // ----------------------------------------------------------------------
 // API path (job.txt 기준) → 페이지
@@ -88,6 +89,8 @@ const PATH_TO_PAGE: Record<string, () => ReactNode> = {
   'menu.governance-config': () => <GovernancePage />,
   governance: () => <GovernancePage />,
   'agent-config': () => <AgentConfigPage />,
+  'demo-control': () => <DemoControlPage />,
+  'menu.demo-control': () => <DemoControlPage />,
   integrations: () => <IntegrationsPage />,
   admin: () => <SynapseAdminPage />,
 };

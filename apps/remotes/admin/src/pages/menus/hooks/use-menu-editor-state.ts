@@ -57,12 +57,14 @@ export const useMenuEditorState = () => {
     }
   }, []);
 
-  // Update form when menu changes (for detail editor)
+  // Re-initialize form only when user selects a different menu (by id). Using selectedMenu ref in deps would reset dirty on every parent re-render.
+  const selectedMenuId = selectedMenu?.id ?? null;
   useEffect(() => {
     if (selectedMenu) {
       initializeForm(selectedMenu);
     }
-  }, [selectedMenu, initializeForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: depend on id only so dirty is not reset when selectedMenu object reference changes
+  }, [selectedMenuId, initializeForm]);
 
   // Open create dialog
   const openCreateDialog = useCallback((parentId?: string) => {

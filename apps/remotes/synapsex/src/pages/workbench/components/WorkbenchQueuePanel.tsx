@@ -21,9 +21,9 @@ import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
 
 import { SYNAPSE_ROUTES } from '../../../routes';
+import { StatusBadge } from '../../../components/finance/status-badge';
 import { caseListDtoToUi } from '../../cases/adapters/case-list-adapter';
 import { SeverityBadge } from '../../../components/finance/severity-badge';
-import { StatusBadge } from '../../../components/finance/status-badge';
 import { ErrorStateWithRetry } from '../../../components/ux/error-state-with-retry';
 import { TableLoadingSkeleton } from '../../../components/ux/table-loading-skeleton';
 

@@ -1655,9 +1655,31 @@
     "governance-config": {
       "_label": "Governance & Config",
       "admin": "System Admin",
-      "governance": "Governance",
       "agent-config": "Agent Config",
+      "demo-control": "Demo Data Control",
+      "governance": "Governance",
       "integrations": "Integrations & Data Ops"
     }
+  },
+  "demoControl": {
+    "title": "Demo Data Control",
+    "subtitle": "Generate violation scenario data for demo Q&A. After generation, check the Integrated Workbench.",
+    "scenarioWeekendMeal": {
+      "name": "Article 11 Weekend Meal Violation",
+      "description": "Weekend meal policy violation scenario",
+      "button": "Create 5 weekend records"
+    },
+    "scenarioPerCapita": {
+      "name": "Article 14 Per-capita Limit Exceeded",
+      "description": "Per-capita limit exceeded scenario",
+      "button": "Create 3 over-limit records"
+    },
+    "scenarioLateNight": {
+      "name": "Article 11 Late-night / Category Violation",
+      "description": "Late-night or category policy violation scenario",
+      "button": "Create late-night bar payment"
+    },
+    "toastSuccess": "Scenario data has been created. Check the Integrated Workbench!",
+    "generating": "Generating..."
   }
 }

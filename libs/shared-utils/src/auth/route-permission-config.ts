@@ -56,6 +56,8 @@ export const ROUTE_RESOURCE_MAP: Record<string, string> = {
   'menu.governance-config': 'menu.governance-config',
   governance: 'menu.governance-config.governance',
   'agent-config': 'menu.governance-config.agent-config',
+  'demo-control': 'menu.demo-control',
+  'menu.demo-control': 'menu.demo-control',
   integrations: 'menu.governance-config.integrations',
   admin: 'menu.governance-config.admin',
 };

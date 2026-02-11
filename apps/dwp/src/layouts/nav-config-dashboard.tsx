@@ -94,6 +94,7 @@ const MENU_KEY_TO_ICON: Record<string, string> = {
   'menu.reconciliation-audit.analytics': 'solar:chart-square-bold',
   'menu.governance-config.governance': 'solar:settings-bold',
   'menu.governance-config.agent-config': 'solar:magic-stick-3-bold',
+  'menu.demo-control': 'solar:database-bold',
   'menu.governance-config.integrations': 'solar:plug-circle-bold',
   'menu.governance-config.admin': 'solar:settings-bold',
 };
@@ -160,6 +161,8 @@ const convertMenuNodeToNavItem = (
   } else if (node.menuKey === 'menu.governance-config') {
     const translated = t('menu.governance-config._label');
     displayName = translated || apiName;
+  } else if (node.menuKey === 'menu.demo-control') {
+    displayName = t('menu.governance-config.demo-control') || apiName;
   } else if (node.menuKey.startsWith('menu.governance-config.')) {
     const subKey = node.menuKey.replace('menu.governance-config.', '');
     const translated = t(`menu.governance-config.${subKey}`);

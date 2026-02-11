@@ -55,6 +55,7 @@ export * from './api/synapse-reporting-api';
 export * from './monitoring/event-tracking';
 export * from './api/synapse-dashboard-api';
 export * from './contracts/synapse-filters';
+export * from './api/synapse-demo-api';
 export * from './api/synapse-operations-api';
 export * from './auth/permission-route-guard';
 export * from './queries/use-menu-tree-query';

@@ -531,21 +531,6 @@ export const getCaseAuditEvents = async (
  * GET /api/synapse/workbench/cases/{caseId}/history — 워크벤치 조치 이력 (back.txt B.3)
  * action_at DESC, ApiResponse<List<CaseActionHistoryItemDto>>
  */
-export type CaseActionHistoryItemDto = {
-  id: number;
-  caseId: number;
-  actionType: string;
-  /** 조치자 ID (예: USER:user-uuid) — UI 표시용 그대로 사용 또는 해석 */
-  actorId: string;
-  /** 조치 사유(Comment) */
-  commentText: string;
-  /** 조치 시각 ISO-8601 */
-  actionAt: string;
-  metadataJson?: string | null;
-  createdAt: string;
-  [key: string]: unknown;
-};
-
 export type CaseActionHistoryResponse = CaseActionHistoryItemDto[];
 
 export const getWorkbenchCaseHistory = async (

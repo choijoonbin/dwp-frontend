@@ -5,23 +5,23 @@
 
 import type { Theme, SxProps } from '@mui/material/styles';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Skeleton from '@mui/material/Skeleton';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import Stack from '@mui/material/Stack';
+import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { WorkbenchActionHistoryTimeline } from './WorkbenchActionHistoryTimeline';
 import { WorkbenchThoughtChain } from './WorkbenchThoughtChain';
 import { WorkbenchItemDetailGrid } from './WorkbenchItemDetailGrid';
+import { WorkbenchActionHistoryTimeline } from './WorkbenchActionHistoryTimeline';
 
-import type { FiDocItem, ActionHistoryItem, AiThought } from '../../cases/hooks/use-case-detail';
+import type { FiDocItem, AiThought, ActionHistoryItem } from '../../cases/hooks/use-case-detail';
 
 export type WorkbenchDetailPanelProps = {
   selectedCaseId?: string | null;

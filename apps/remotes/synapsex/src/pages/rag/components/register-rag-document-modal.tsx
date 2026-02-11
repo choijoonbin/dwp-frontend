@@ -5,24 +5,24 @@
  * - 업로드 허용 확장자: .pdf, .txt, .doc, .docx, .hwp
  */
 
-import type { ChangeEvent, FormEvent } from 'react';
+import type { FormEvent, ChangeEvent } from 'react';
 import type { RegisterRagDocumentRequest } from '@dwp-frontend/shared-utils';
 
 import { useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 
-import Button from '@mui/material/Button';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContentText from '@mui/material/DialogContentText';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControl from '@mui/material/FormControl';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 
 const DOC_TYPES = [
   { value: 'GENERAL', label: 'GENERAL' },

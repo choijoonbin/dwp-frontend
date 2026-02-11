@@ -1655,9 +1655,31 @@
     "governance-config": {
       "_label": "거버넌스·설정",
       "admin": "시스템 관리",
-      "governance": "자율성·통제 설정",
       "agent-config": "에이전트 구성 관리",
+      "demo-control": "시연 데이터 제어",
+      "governance": "자율성·통제 설정",
       "integrations": "연동·데이터 운영"
     }
+  },
+  "demoControl": {
+    "title": "시연 데이터 제어",
+    "subtitle": "시연 시 질문자 요청에 맞춰 위반 시나리오 데이터를 생성합니다. 생성 후 통합 워크벤치에서 확인하세요.",
+    "scenarioWeekendMeal": {
+      "name": "제11조 주말 식대 위반",
+      "description": "주말 식대 규정 위반 시나리오",
+      "button": "주말 데이터 5건 생성"
+    },
+    "scenarioPerCapita": {
+      "name": "제14조 인당 한도 초과",
+      "description": "인당 한도 초과 위반 시나리오",
+      "button": "한도 초과 3건 생성"
+    },
+    "scenarioLateNight": {
+      "name": "제11조 심야/업종 위반",
+      "description": "심야·업종 규정 위반 시나리오",
+      "button": "심야 주점 결제 생성"
+    },
+    "toastSuccess": "시나리오 데이터가 생성되었습니다. 통합 워크벤치를 확인하세요!",
+    "generating": "생성 중..."
   }
 }
