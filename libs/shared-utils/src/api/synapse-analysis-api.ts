@@ -168,23 +168,34 @@ export const rejectActionProposal = async (
   return res.data;
 };
 
-/** BE(back.txt): POST .../action-proposals/{proposalId}/execute — APPROVED 제안만 호출 가능 */
+/** BE(back.txt): POST .../action-proposals/{proposalId}/execute — APPROVED 제안만 호출 가능. Phase3: simulate 모드 지원. */
+export type ProposalExecuteRequestBody = {
+  runId?: string;
+  simulate?: boolean;
+  gatewayRequestId?: string;
+};
+
 export type ProposalExecuteResponseDto = {
+  actionId?: string;
   executionId?: string;
   proposalId?: string;
   status?: string;
   mode?: string;
   executedAt?: string;
+  /** 시뮬레이션 결과 요약 (key/value 또는 중첩 객체) */
+  simulation?: Record<string, unknown>;
+  message?: string;
   [key: string]: unknown;
 };
 
 export const executeProposal = async (
   caseId: string,
-  proposalId: string
+  proposalId: string,
+  body?: ProposalExecuteRequestBody
 ): Promise<ApiResponse<ProposalExecuteResponseDto>> => {
   const res = await axiosInstance.post<ApiResponse<ProposalExecuteResponseDto>>(
     `/api/synapse/cases/${encodeURIComponent(caseId)}/action-proposals/${encodeURIComponent(proposalId)}/execute`,
-    {}
+    body ?? {}
   );
   return res.data;
 };

@@ -372,6 +372,9 @@
     "reject": "Dismiss",
     "decidedByAt": "{{user}} · {{at}}",
     "executeSimulation": "Execute (simulation)",
+    "executing": "Executing…",
+    "lastExecutedAt": "Last executed: {{at}}",
+    "simulationResult": "Simulation result",
     "simulationDiff": {
       "runHint": "Run simulation to see before/after diff",
       "runDesc": "Simulate the proposed action to preview impact",
@@ -410,6 +413,10 @@
       "reconnecting": "Reconnecting...",
       "cancel": "Cancel",
       "title": "Agent Stream",
+      "timelineStarted": "Started",
+      "timelineCompleted": "Completed",
+      "timelineFailed": "Failed",
+      "failedStage": "Stage: {{stage}}",
       "eventLog": "Event log ({{count}} lines)",
       "hitlApprovalRequired": "HITL approval required",
       "eventLabels": {

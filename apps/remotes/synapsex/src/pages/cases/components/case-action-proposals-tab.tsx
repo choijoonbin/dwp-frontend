@@ -5,9 +5,12 @@
  * @see docs/job/PROMPT_FE_Phase3_SynapseX_MVP_SPEC.md
  */
 
-import type { CaseActionProposalDto } from '@dwp-frontend/shared-utils';
+import type {
+  CaseActionProposalDto,
+  ProposalExecuteResponseDto,
+} from '@dwp-frontend/shared-utils';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { formatDateTime, useTranslation } from '@dwp-frontend/shared-i18n';
 import {
@@ -24,9 +27,19 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
+import Collapse from '@mui/material/Collapse';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
 
 import { TabEmptyState, CaseTabQueryBoundary } from '../../../components/ux';
 import { dedupeProposalsByFingerprint } from '../adapters/case-action-proposals-adapter';
+
+/** 카드별 실행 결과: 성공 시 data, 실패 시 message(+stage) */
+type ExecuteResult =
+  | { kind: 'success'; data: ProposalExecuteResponseDto }
+  | { kind: 'error'; message: string; stage?: string };
 
 type CaseActionProposalsTabProps = {
   caseId: string | undefined;
@@ -49,6 +62,12 @@ export const CaseActionProposalsTab = ({
   const approveMutation = useApproveProposalMutation();
   const rejectMutation = useRejectProposalMutation();
   const executeMutation = useExecuteProposalMutation();
+
+  /** runId 변경 시 카드별 실행 결과 초기화 (DoD: run 간 결과가 섞이지 않음) */
+  const [executeResults, setExecuteResults] = useState<Record<string, ExecuteResult>>({});
+  useEffect(() => {
+    setExecuteResults({});
+  }, [runId]);
 
   const rawItems: CaseActionProposalDto[] = useMemo(
     () =>
@@ -199,17 +218,107 @@ export const CaseActionProposalsTab = ({
                     </Stack>
                   )}
                   {isApproved && caseId && (
-                    <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                    <Stack direction="row" spacing={1} sx={{ mt: 1 }} alignItems="center" flexWrap="wrap">
                       <Button
                         variant="outlined"
                         size="small"
-                        startIcon={<Iconify icon="solar:play-bold" width={16} />}
+                        startIcon={<Iconify icon={isExecuting ? 'solar:refresh-bold' : 'solar:play-bold'} width={16} />}
                         disabled={isExecuting}
-                        onClick={() => executeMutation.mutate({ caseId, proposalId: proposalId! })}
+                        onClick={() =>
+                          executeMutation.mutate(
+                            {
+                              caseId,
+                              proposalId: proposalId!,
+                              runId: runId ?? item.runId ?? undefined,
+                            },
+                            {
+                              onSuccess: (data) => {
+                                setExecuteResults((prev) => ({ ...prev, [proposalId!]: { kind: 'success', data } }));
+                              },
+                              onError: (err) => {
+                                setExecuteResults((prev) => ({
+                                  ...prev,
+                                  [proposalId!]: {
+                                    kind: 'error',
+                                    message: err instanceof Error ? err.message : String(err),
+                                    stage: (err as Error & { stage?: string }).stage,
+                                  },
+                                }));
+                              },
+                            }
+                          )
+                        }
                       >
-                        {t('caseDetail.executeSimulation')}
+                        {isExecuting ? t('caseDetail.executing', { defaultValue: '실행 중…' }) : t('caseDetail.executeSimulation')}
                       </Button>
                     </Stack>
+                  )}
+                  {/* 실행 결과 패널 (P0): actionId, simulation 요약, 실패 시 메시지 */}
+                  {executeResults[proposalId!] && (
+                    <Collapse in>
+                      <Box
+                        sx={{
+                          mt: 1.5,
+                          p: 1.5,
+                          borderRadius: 1,
+                          border: 1,
+                          borderColor: 'divider',
+                          bgcolor: executeResults[proposalId!].kind === 'error' ? 'error.lighter' : 'success.lighter',
+                        }}
+                      >
+                        {executeResults[proposalId!].kind === 'success' ? (
+                          <Stack spacing={1}>
+                            {(executeResults[proposalId!] as { kind: 'success'; data: ProposalExecuteResponseDto }).data.actionId && (
+                              <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
+                                actionId: {(executeResults[proposalId!] as { kind: 'success'; data: ProposalExecuteResponseDto }).data.actionId}
+                              </Typography>
+                            )}
+                            {(executeResults[proposalId!] as { kind: 'success'; data: ProposalExecuteResponseDto }).data.executedAt && (
+                              <Typography variant="caption" color="text.secondary">
+                                {t('caseDetail.lastExecutedAt', {
+                                  at: formatDateTime((executeResults[proposalId!] as { kind: 'success'; data: ProposalExecuteResponseDto }).data.executedAt!),
+                                  defaultValue: '최근 실행: {{at}}',
+                                })}
+                              </Typography>
+                            )}
+                            {(executeResults[proposalId!] as { kind: 'success'; data: ProposalExecuteResponseDto }).data.simulation &&
+                              Object.keys((executeResults[proposalId!] as { kind: 'success'; data: ProposalExecuteResponseDto }).data.simulation!).length > 0 && (
+                                <Box>
+                                  <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', display: 'block', mb: 0.5 }}>
+                                    {t('caseDetail.simulationResult', { defaultValue: '시뮬레이션 결과' })}
+                                  </Typography>
+                                  <Table size="small" sx={{ '& td': { py: 0.25, borderColor: 'divider', fontSize: '0.75rem' } }}>
+                                    <TableBody>
+                                      {Object.entries((executeResults[proposalId!] as { kind: 'success'; data: ProposalExecuteResponseDto }).data.simulation!).map(([k, v]) => (
+                                        <TableRow key={k}>
+                                          <TableCell sx={{ color: 'text.secondary' }}>{k}</TableCell>
+                                          <TableCell>{typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v)}</TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                </Box>
+                              )}
+                            {(executeResults[proposalId!] as { kind: 'success'; data: ProposalExecuteResponseDto }).data.message && (
+                              <Typography variant="caption" color="text.secondary">
+                                {(executeResults[proposalId!] as { kind: 'success'; data: ProposalExecuteResponseDto }).data.message}
+                              </Typography>
+                            )}
+                          </Stack>
+                        ) : (
+                          <Stack spacing={0.5}>
+                            <Typography variant="body2" color="error.dark" sx={{ fontWeight: 500 }}>
+                              {(executeResults[proposalId!] as { kind: 'error'; message: string; stage?: string }).message}
+                            </Typography>
+                            {(executeResults[proposalId!] as { kind: 'error'; message: string; stage?: string }).stage && (
+                              <Typography variant="caption" color="text.secondary">
+                                stage: {(executeResults[proposalId!] as { kind: 'error'; message: string; stage?: string }).stage}
+                              </Typography>
+                            )}
+                          </Stack>
+                        )}
+                      </Box>
+                    </Collapse>
                   )}
                 </Stack>
               </CardContent>

@@ -372,6 +372,9 @@
     "reject": "무시 처리",
     "decidedByAt": "{{user}} · {{at}}",
     "executeSimulation": "실행(시뮬)",
+    "executing": "실행 중…",
+    "lastExecutedAt": "최근 실행: {{at}}",
+    "simulationResult": "시뮬레이션 결과",
     "simulationDiff": {
       "runHint": "시뮬레이션을 실행하면 변경 전/후 차이를 볼 수 있습니다",
       "runDesc": "제안된 액션을 시뮬레이션하여 영향도를 미리 확인합니다",
@@ -410,6 +413,10 @@
       "reconnecting": "재연결 중...",
       "cancel": "취소",
       "title": "에이전트 스트림",
+      "timelineStarted": "시작됨",
+      "timelineCompleted": "완료",
+      "timelineFailed": "실패",
+      "failedStage": "Stage: {{stage}}",
       "eventLog": "이벤트 로그 ({{count}}줄)",
       "hitlApprovalRequired": "HITL 승인 필요",
       "eventLabels": {

@@ -70,6 +70,7 @@ export const useAnalysisRunStream = () => {
   const setDebug = useStreamStore((state) => state.setDebug);
   const addEventType = useStreamStore((state) => state.addEventType);
   const addEventLogLine = useStreamStore((state) => state.addEventLogLine);
+  const addTimelineStep = useStreamStore((state) => state.addTimelineStep);
   const resetStore = useStreamStore((state) => state.reset);
 
   const clearStreamTimeout = useCallback(() => {
@@ -215,11 +216,18 @@ export const useAnalysisRunStream = () => {
 
             if (currentEventType === 'started') {
               addEventType('started');
+              addTimelineStep({ type: 'started' });
             } else if (currentEventType === 'step') {
               addEventType('step');
               try {
                 const parsed = dataStr ? (JSON.parse(dataStr) as AnalysisStepEvent) : {};
                 setStepProgress({
+                  label: parsed.label,
+                  detail: parsed.detail,
+                  percent: parsed.percent,
+                });
+                addTimelineStep({
+                  type: 'step',
                   label: parsed.label,
                   detail: parsed.detail,
                   percent: parsed.percent,
@@ -236,10 +244,17 @@ export const useAnalysisRunStream = () => {
                   detail: parsed.message,
                   percent: parsed.percent,
                 });
+                addTimelineStep({
+                  type: 'step',
+                  label: parsed.agent ?? parsed.message,
+                  detail: parsed.message,
+                  percent: parsed.percent,
+                });
               } catch {
                 // ignore parse error
               }
             } else if (currentEventType === 'completed') {
+              addTimelineStep({ type: 'completed' });
               clearStreamTimeout();
               setLocalStatus('completed');
               setStatus('COMPLETED');
@@ -271,6 +286,7 @@ export const useAnalysisRunStream = () => {
                   msg = dataStr;
                 }
               }
+              addTimelineStep({ type: 'failed', message: msg, stage: failedStage });
               setLocalStatus('failed');
               setStatus('ERROR');
               setError(msg);
@@ -303,7 +319,7 @@ export const useAnalysisRunStream = () => {
         options?.onError?.(err instanceof Error ? err : new Error(message));
       }
     },
-    [setStatus, setError, setDebug, addEventType, addEventLogLine, resetStore, clearStreamTimeout]
+    [setStatus, setError, setDebug, addEventType, addEventLogLine, addTimelineStep, resetStore, clearStreamTimeout]
   );
 
   const cancel = useCallback(() => {

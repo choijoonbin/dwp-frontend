@@ -637,17 +637,35 @@ export const useRejectProposalMutation = () => {
   });
 };
 
-/** BE(back.txt): POST .../action-proposals/{proposalId}/execute — APPROVED 제안만 호출 가능 */
+/** BE(back.txt): POST .../action-proposals/{proposalId}/execute — APPROVED 제안만 호출 가능. Phase3: runId+simulate. */
+export type ExecuteProposalVariables = {
+  caseId: string;
+  proposalId: string;
+  runId?: string | null;
+};
+
 export const useExecuteProposalMutation = () => {
   const { t } = useTranslation('common');
   const queryClient = useQueryClient();
   const tenantId = getTenantId();
 
   return useMutation({
-    mutationFn: async ({ caseId, proposalId }: { caseId: string; proposalId: string }) => {
-      const res = await executeProposal(caseId, proposalId);
+    mutationFn: async ({ caseId, proposalId, runId }: ExecuteProposalVariables) => {
+      const res = await executeProposal(caseId, proposalId, {
+        runId: runId ?? undefined,
+        simulate: true,
+      });
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
-        throw new Error(res.message || 'Failed to execute proposal');
+        const msg =
+          typeof res.message === 'string'
+            ? res.message
+            : res.data && typeof (res.data as { message?: string }).message === 'string'
+              ? (res.data as { message?: string }).message
+              : 'Failed to execute proposal';
+        const stage = res.data && typeof (res.data as { stage?: string }).stage === 'string' ? (res.data as { stage?: string }).stage : undefined;
+        const err = new Error(stage ? `${msg} (${stage})` : msg) as Error & { stage?: string };
+        err.stage = stage;
+        throw err;
       }
       return res.data;
     },
@@ -662,7 +680,8 @@ export const useExecuteProposalMutation = () => {
       showToast(t('toast.actionExecuted'), 'success');
     },
     onError: (err) => {
-      showToast(err instanceof Error ? err.message : t('toast.failedToExecute'), 'error');
+      const message = err instanceof Error ? err.message : t('toast.failedToExecute');
+      showToast(message, 'error');
     },
   });
 };
