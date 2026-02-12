@@ -32,6 +32,7 @@ export const ROUTE_RESOURCE_MAP: Record<string, string> = {
 
   // 원천 데이터·이력 허브
   'menu.master-data-history': 'menu.master-data-history',
+  'master-data-history': 'menu.master-data-history',
   documents: 'menu.master-data-history.documents',
   'open-items': 'menu.master-data-history.open-items',
   entities: 'menu.master-data-history.entities',
@@ -39,6 +40,7 @@ export const ROUTE_RESOURCE_MAP: Record<string, string> = {
 
   // 지식·정책 허브
   'menu.knowledge-policy': 'menu.knowledge-policy',
+  'knowledge-policy': 'menu.knowledge-policy',
   rag: 'menu.knowledge-policy.rag',
   policies: 'menu.knowledge-policy.policies',
   guardrails: 'menu.knowledge-policy.guardrails',
@@ -47,6 +49,7 @@ export const ROUTE_RESOURCE_MAP: Record<string, string> = {
 
   // 대사·감사 센터
   'menu.reconciliation-audit': 'menu.reconciliation-audit',
+  'reconciliation-audit': 'menu.reconciliation-audit',
   reconciliation: 'menu.reconciliation-audit.reconciliation',
   'action-recon': 'menu.reconciliation-audit.action-recon',
   audit: 'menu.reconciliation-audit.audit',
@@ -54,6 +57,7 @@ export const ROUTE_RESOURCE_MAP: Record<string, string> = {
 
   // 거버넌스·설정 (시스템 관리, Admin 3탭 포함)
   'menu.governance-config': 'menu.governance-config',
+  'governance-config': 'menu.governance-config',
   governance: 'menu.governance-config.governance',
   'agent-config': 'menu.governance-config.agent-config',
   'demo-control': 'menu.demo-control',

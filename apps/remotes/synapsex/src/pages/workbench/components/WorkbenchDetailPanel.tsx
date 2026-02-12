@@ -5,9 +5,11 @@
 
 import type { Theme, SxProps } from '@mui/material/styles';
 
-import { useRef, useState, useEffect } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
+import { useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
+import { useAuraStore } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -56,10 +58,28 @@ export const WorkbenchDetailPanel = ({
   const theme = useTheme();
   const [detailTab, setDetailTab] = useState<DetailTab>('inference');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const currentThoughtStreamCaseId = useWorkbenchReactiveStore((s) => s.currentThoughtStreamCaseId);
+  const thoughtChains = useAuraStore((s) => s.thoughtChains);
 
   useEffect(() => {
     scrollContainerRef.current?.scrollTo(0, 0);
   }, [selectedCaseId]);
+
+  /** THOUGHT_STREAM WebSocket으로 수신한 라이브 thought가 현재 상세 케이스와 일치하면 우선 표시 */
+  const { displayThoughts, isStreamingThoughts } = useMemo(() => {
+    const match = selectedCaseId != null && currentThoughtStreamCaseId === selectedCaseId && thoughtChains.length > 0;
+    if (match) {
+      const thoughts: AiThought[] = thoughtChains.map((chain, i) => ({
+        id: chain.id,
+        step: i + 1,
+        type: chain.type,
+        content: chain.content,
+        timestamp: chain.timestamp?.toISOString?.(),
+      }));
+      return { displayThoughts: thoughts, isStreamingThoughts: true };
+    }
+    return { displayThoughts: aiThoughts, isStreamingThoughts: false };
+  }, [aiThoughts, currentThoughtStreamCaseId, selectedCaseId, thoughtChains]);
 
   const showEmptyState = selectedCaseId == null;
   const showLoadingSkeleton = Boolean(selectedCaseId && isLoading);
@@ -175,12 +195,15 @@ export const WorkbenchDetailPanel = ({
               <>
                 {detailTab === 'inference' && (
                   <>
-                    {aiThoughts.length === 0 ? (
+                    {displayThoughts.length === 0 ? (
                       <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
                         {t('workbench.detailLoading', 'Loading AI thought chain for this case...')}
                       </Typography>
                     ) : (
-                      <WorkbenchThoughtChain thoughts={aiThoughts} />
+                      <WorkbenchThoughtChain
+                        thoughts={displayThoughts}
+                        isStreamingLast={isStreamingThoughts}
+                      />
                     )}
                   </>
                 )}

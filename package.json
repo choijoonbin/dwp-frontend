@@ -50,7 +50,8 @@
     "test:e2e:report": "playwright show-report",
     "test:e2e:auth-setup": "playwright test e2e/setup/auth-setup.spec.ts --headed",
     "test:e2e:synapse": "playwright test e2e/synapse/synapse-verify.spec.ts",
-    "test:e2e:synapse:headed": "playwright test e2e/synapse/synapse-verify.spec.ts --headed"
+    "test:e2e:synapse:headed": "playwright test e2e/synapse/synapse-verify.spec.ts --headed",
+    "postinstall": "patch-package"
   },
   "engines": {
     "node": ">=20"
@@ -92,6 +93,7 @@
     "@radix-ui/react-toggle": "1.1.1",
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "1.1.6",
+    "@stomp/stompjs": "^7.0.0",
     "@tanstack/react-query": "^5.66.6",
     "@types/react-syntax-highlighter": "^15.5.13",
     "apexcharts": "^4.5.0",
@@ -119,6 +121,7 @@
     "react-syntax-highlighter": "^16.1.0",
     "recharts": "2.15.4",
     "simplebar-react": "^3.3.0",
+    "sockjs-client": "^1.6.1",
     "sonner": "^1.7.4",
     "tailwind-merge": "^3.3.1",
     "vaul": "^1.1.2",
@@ -144,8 +147,9 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^16.0.0",
-    "nx": "^22.3.3",
-    "prettier": "^3.5.3",
+"nx": "^22.3.3",
+"patch-package": "^8.0.0",
+"prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0",

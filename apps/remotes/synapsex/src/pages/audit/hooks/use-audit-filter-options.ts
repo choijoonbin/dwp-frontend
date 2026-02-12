@@ -39,7 +39,7 @@ const FALLBACK_OUTCOME: { value: string; labelKey: string }[] = [
 ];
 
 const FALLBACK_ACTOR_TYPE: { value: string; labelKey: string }[] = [
-  { value: '', labelKey: 'audit.actorTypes.""' },
+  { value: '', labelKey: 'audit.actorTypes.all' },
   { value: 'HUMAN', labelKey: 'audit.actorTypes.HUMAN' },
   { value: 'AGENT', labelKey: 'audit.actorTypes.AGENT' },
   { value: 'SYSTEM', labelKey: 'audit.actorTypes.SYSTEM' },
@@ -95,7 +95,7 @@ export const useAuditFilterOptions = (): AuditFilterOptions => {
   const actorTypeOptions = useMemo(() => {
     const fromApi = codeMapToOptions(
       actorTypeCodes.codeMap,
-      t('audit.actorTypes.""')
+      t('audit.actorTypes.all')
     );
     return fromApi.length > 0 ? fromApi : FALLBACK_ACTOR_TYPE.map((o) => ({ value: o.value, label: t(o.labelKey) }));
   }, [actorTypeCodes.codeMap, t]);

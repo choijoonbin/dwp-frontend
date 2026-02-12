@@ -1,0 +1,15 @@
+diff --git a/node_modules/sockjs-client/lib/utils/event.js b/node_modules/sockjs-client/lib/utils/event.js
+index 0000000..1111111 100644
+--- a/node_modules/sockjs-client/lib/utils/event.js
++++ b/node_modules/sockjs-client/lib/utils/event.js
+@@ -66,8 +66,7 @@ var unloadTriggered = function() {
+   module.exports.triggerUnloadCallbacks();
+ };
+ 
+-// 'unload' alone is not reliable in opera within an iframe, but we
+-// can't use `beforeunload` as IE fires it on javascript: links.
++// Use 'pagehide' instead of deprecated 'unload' (Chrome deprecation; pagehide is the recommended replacement for cleanup).
+ if (!isChromePackagedApp) {
+-  module.exports.attachEvent('unload', unloadTriggered);
++  module.exports.attachEvent('pagehide', unloadTriggered);
+ }

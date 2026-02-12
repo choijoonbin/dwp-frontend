@@ -287,6 +287,7 @@ export default function Page() {
                   onApprovePlanStep={handleApprovePlanStep}
                   onSkipPlanStep={handleSkipPlanStep}
                   isCompact={!isMdUp}
+                  isStreaming={isStreaming}
                 />
               </Box>
             )}

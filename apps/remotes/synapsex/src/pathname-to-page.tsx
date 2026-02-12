@@ -34,6 +34,7 @@ import { CaseDetailPage } from './pages/case-detail';
 import { AgentConfigPage } from './pages/agent-config';
 import { SynapseAdminPage } from './pages/admin-legacy';
 import { IntegrationsPage } from './pages/integrations';
+import { DemoControlPage } from './pages/demo-control';
 import { OptimizationPage } from './pages/optimization';
 import { EntityDetailPage } from './pages/entity-detail';
 import { ReconciliationPage } from './pages/reconciliation';
@@ -42,7 +43,6 @@ import { RagDocumentDetailPage } from './pages/rag/rag-detail';
 import { ActionReconciliationPage } from './pages/action-recon';
 import { PolicyProfileDetailPage } from './pages/policies/policy-detail';
 import { ReconRunDetailPage } from './pages/reconciliation/recon-run-detail';
-import { DemoControlPage } from './pages/demo-control';
 
 // ----------------------------------------------------------------------
 // API path (job.txt 기준) → 페이지
@@ -63,30 +63,34 @@ const PATH_TO_PAGE: Record<string, () => ReactNode> = {
   actions: () => <ActionsPage />,
   archive: () => <ArchivePage />,
 
-  // 원천 데이터·이력 허브
+  // 원천 데이터·이력 허브 (부모 path: /synapse/master-data-history)
   'menu.master-data-history': () => <DocumentsPage />,
+  'master-data-history': () => <DocumentsPage />,
   documents: () => <DocumentsPage />,
   'open-items': () => <OpenItemsPage />,
   entities: () => <EntitiesPage />,
   lineage: () => <LineagePage />,
 
-  // 지식·정책 허브
+  // 지식·정책 허브 (부모 path: /synapse/knowledge-policy)
   'menu.knowledge-policy': () => <RagPage />,
+  'knowledge-policy': () => <RagPage />,
   rag: () => <RagPage />,
   policies: () => <PoliciesPage />,
   guardrails: () => <GuardrailsPage />,
   dictionary: () => <DictionaryPage />,
   feedback: () => <FeedbackPage />,
 
-  // 대사·감사 센터
+  // 대사·감사 센터 (부모 path: /synapse/reconciliation-audit)
   'menu.reconciliation-audit': () => <ReconciliationPage />,
+  'reconciliation-audit': () => <ReconciliationPage />,
   reconciliation: () => <ReconciliationPage />,
   'action-recon': () => <ActionReconciliationPage />,
   audit: () => <AuditPage />,
   analytics: () => <AnalyticsPage />,
 
-  // 거버넌스·설정
+  // 거버넌스·설정 (부모 path: /synapse/governance-config)
   'menu.governance-config': () => <GovernancePage />,
+  'governance-config': () => <GovernancePage />,
   governance: () => <GovernancePage />,
   'agent-config': () => <AgentConfigPage />,
   'demo-control': () => <DemoControlPage />,

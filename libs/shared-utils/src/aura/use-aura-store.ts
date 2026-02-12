@@ -118,7 +118,9 @@ export type AuraState = {
     approveHitl: (requestId: string) => void;
     rejectHitl: (requestId: string) => void;
     setCurrentStepIndex: (index: number) => void;
-    addThoughtChain: (thought: Omit<ThoughtChain, 'id' | 'timestamp'>) => void;
+    addThoughtChain: (thought: Omit<ThoughtChain, 'id' | 'timestamp'>) => string;
+    updateThoughtChain: (id: string, updates: Partial<Pick<ThoughtChain, 'content' | 'type' | 'sources'>>) => void;
+    clearThoughtChains: () => void;
     addPlanStep: (step: Omit<PlanStep, 'id'>) => void;
     updatePlanStep: (id: string, updates: Partial<PlanStep>) => void;
     reorderPlanSteps: (stepIds: string[]) => void;
@@ -215,17 +217,25 @@ export const useAuraStore = create<AuraState>((set) => ({
         return {};
       }),
     setCurrentStepIndex: (index) => set({ currentStepIndex: index }),
-    addThoughtChain: (thought) =>
+    addThoughtChain: (thought) => {
+      const id = `thought-${Date.now()}-${Math.random()}`;
       set((state) => ({
         thoughtChains: [
           ...state.thoughtChains,
           {
             ...thought,
-            id: `thought-${Date.now()}-${Math.random()}`,
+            id,
             timestamp: new Date(),
           },
         ],
+      }));
+      return id;
+    },
+    updateThoughtChain: (id, updates) =>
+      set((state) => ({
+        thoughtChains: state.thoughtChains.map((t) => (t.id === id ? { ...t, ...updates } : t)),
       })),
+    clearThoughtChains: () => set({ thoughtChains: [] }),
     addPlanStep: (step) =>
       set((state) => ({
         planSteps: [

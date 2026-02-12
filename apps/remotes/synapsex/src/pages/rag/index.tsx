@@ -35,6 +35,7 @@ import CardContent from '@mui/material/CardContent';
 import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../../routes';
+import { useAgentCatalog } from '../../hooks/use-agent-catalog';
 import { RegisterRagDocumentModal } from './components/register-rag-document-modal';
 
 // ----------------------------------------------------------------------
@@ -71,6 +72,7 @@ export const RagPage = () => {
   );
 
   const registerMutation = useRegisterRagDocumentMutation();
+  const { docTypes } = useAgentCatalog();
 
   const items = docsData?.items ?? [];
   const totalDocs = docsData?.total ?? 0;
@@ -440,10 +442,10 @@ export const RagPage = () => {
 
       <Dialog open={registerOpen} onClose={() => setRegisterOpen(false)} maxWidth="sm" fullWidth>
         <RegisterRagDocumentModal
-          open={registerOpen}
           onClose={() => setRegisterOpen(false)}
           onSubmit={handleRegisterSubmit}
           isLoading={registerMutation.isPending}
+          docTypes={docTypes}
         />
       </Dialog>
     </Box>

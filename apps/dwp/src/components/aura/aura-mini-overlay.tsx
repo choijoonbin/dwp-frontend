@@ -204,11 +204,14 @@ export const AuraMiniOverlay = () => {
           
           if (!trimmedLine.startsWith('data: ')) continue;
 
-          const dataStr = trimmedLine.slice(6);
+          const dataStr = trimmedLine.slice(6).trim();
           if (dataStr === '[DONE]') break;
+          if (!dataStr) continue;
 
           try {
-            const data = JSON.parse(dataStr);
+            // SSE data는 유효한 JSON이어야 함. 일부 백엔드가 trailing comma 등으로 깨질 수 있음
+            const sanitized = dataStr.replace(/,\s*([}\]])/g, '$1');
+            const data = JSON.parse(sanitized);
 
             const eventType = data.type;
             const eventData = data.data || data;
@@ -251,8 +254,8 @@ export const AuraMiniOverlay = () => {
               accumulatedText += data.content || data.message || '';
               setStreamingText(accumulatedText);
             }
-          } catch (e) {
-            console.error('Parse error:', e);
+          } catch {
+            // SSE 라인 파싱 실패 시 해당 라인만 스킵 (불완전/비표준 JSON 등)
           }
         }
       }

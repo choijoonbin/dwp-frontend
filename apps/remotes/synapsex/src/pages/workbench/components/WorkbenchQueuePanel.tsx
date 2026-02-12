@@ -6,10 +6,10 @@
 import type { Theme, SxProps } from '@mui/material/styles';
 
 import { Link } from 'react-router-dom';
-import { useMemo, useState } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { useCasesListQuery } from '@dwp-frontend/shared-utils';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
+import { useCasesListQuery, useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -73,6 +73,30 @@ export const WorkbenchQueuePanel = ({
       totalPages: query.data.totalPages ?? (Math.ceil(total / PAGE_SIZE) || 1),
     };
   }, [query.data]);
+
+  const isAnalyzing = useWorkbenchReactiveStore((s) => s.isAnalyzing);
+  const removeAnalyzing = useWorkbenchReactiveStore((s) => s.removeAnalyzing);
+  const emptyRefetchDoneRef = useRef(false);
+
+  useEffect(() => {
+    items.forEach((item) => {
+      if (item.status && item.status !== 'IN_PROGRESS') {
+        removeAnalyzing(item.id);
+      }
+    });
+  }, [items, removeAnalyzing]);
+
+  /** 테스트 데이터 생성 직후 워크벤치 진입 시 Detect가 비동기면 케이스가 아직 없을 수 있음 → 목록이 비었을 때 한 번만 지연 재요청 */
+  useEffect(() => {
+    if (items.length > 0 || query.isLoading || query.isFetching) return undefined;
+    if (emptyRefetchDoneRef.current) return undefined;
+    const timerId = window.setTimeout(() => {
+      emptyRefetchDoneRef.current = true;
+      query.refetch();
+    }, 2500);
+    return () => window.clearTimeout(timerId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- refetch only when empty; query in deps would cause unnecessary effect runs
+  }, [items.length, query.isLoading, query.isFetching, query.refetch]);
 
   return (
     <Box
@@ -172,36 +196,57 @@ export const WorkbenchQueuePanel = ({
         {!query.isLoading && !query.error && items.length > 0 && (
           <>
             <List disablePadding sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
-              {items.map((item) => (
-                <ListItemButton
-                  key={item.id}
-                  selected={selectedCaseId === item.id}
-                  onClick={() => onSelectCase?.(item.id)}
-                  sx={{
-                    py: 1.25,
-                    px: 2,
-                    borderBottom: 1,
-                    borderColor: 'divider',
-                    '&.Mui-selected': {
-                      bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
-                    },
-                  }}
-                >
-                  <Box sx={{ width: 1, minWidth: 0 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25, flexWrap: 'wrap' }}>
-                      <SeverityBadge severity={item.severity} size="sm" />
-                      <StatusBadge status={item.status} size="sm" />
-                      <Typography variant="caption" color="text.secondary" noWrap>
-                        {item.caseNumber}
+              {items.map((item) => {
+                const analyzing = isAnalyzing(item.id);
+                return (
+                  <ListItemButton
+                    key={item.id}
+                    selected={selectedCaseId === item.id}
+                    onClick={() => onSelectCase?.(item.id)}
+                    sx={{
+                      py: 1.25,
+                      px: 2,
+                      borderBottom: 1,
+                      borderColor: 'divider',
+                      '&.Mui-selected': {
+                        bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+                      },
+                    }}
+                  >
+                    <Box sx={{ width: 1, minWidth: 0 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25, flexWrap: 'wrap' }}>
+                        {analyzing ? (
+                          <Chip
+                            size="small"
+                            label={t('workbench.analyzingLabel')}
+                            sx={{
+                              height: 22,
+                              fontSize: '0.7rem',
+                              animation: 'workbench-analyzing-pulse 1.5s ease-in-out infinite',
+                              '@keyframes workbench-analyzing-pulse': {
+                                '0%, 100%': { opacity: 1 },
+                                '50%': { opacity: 0.7 },
+                              },
+                            }}
+                          />
+                        ) : (
+                          <>
+                            <SeverityBadge severity={item.severity} size="sm" />
+                            <StatusBadge status={item.status} size="sm" />
+                          </>
+                        )}
+                        <Typography variant="caption" color="text.secondary" noWrap>
+                          {item.caseNumber}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" noWrap sx={{ color: 'text.primary' }}>
+                        {item.title || item.description || item.id}
                       </Typography>
                     </Box>
-                    <Typography variant="body2" noWrap sx={{ color: 'text.primary' }}>
-                      {item.title || item.description || item.id}
-                    </Typography>
-                  </Box>
-                  <Iconify icon="solar:alt-arrow-right-linear" width={16} sx={{ color: 'text.disabled', ml: 0.5 }} />
-                </ListItemButton>
-              ))}
+                    <Iconify icon="solar:alt-arrow-right-linear" width={16} sx={{ color: 'text.disabled', ml: 0.5 }} />
+                  </ListItemButton>
+                );
+              })}
             </List>
 
             {totalPages > 1 && (

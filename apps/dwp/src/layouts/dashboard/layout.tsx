@@ -1,8 +1,10 @@
 import type { Breakpoint } from '@mui/material/styles';
 
 import { merge } from 'es-toolkit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { useNotificationWebSocket } from '@dwp-frontend/shared-utils';
+import { useAuraStore } from '@dwp-frontend/shared-utils/aura/use-aura-store';
+import { useNotificationWebSocket, useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
@@ -68,8 +70,95 @@ export function DashboardLayout({
   const sidebarCollapsed = useLayoutStore((state) => state.sidebarCollapsed);
   const { setSidebarOpen, toggleCollapse } = useLayoutActions();
   const navData = useNavData(); // 권한 기반 필터링된 메뉴 데이터
+  const queryClient = useQueryClient();
 
-  useNotificationWebSocket({ enabled: true, showToastOnReceive: true });
+  // 개발 시 백엔드가 없으면 WebSocket 연결 실패 에러가 반복되므로, 프로덕션 또는 명시적 활성화 시에만 연결
+  const notificationWsEnabled =
+    import.meta.env.PROD || (import.meta.env as { VITE_NOTIFICATION_WS_ENABLED?: string }).VITE_NOTIFICATION_WS_ENABLED === 'true';
+
+  useNotificationWebSocket({
+    enabled: notificationWsEnabled,
+    showToastOnReceive: true,
+    onReceive: (payload) => {
+      const cat = (payload.category ?? '').toString().toUpperCase();
+      const typ = (payload.type ?? '').toString().toUpperCase();
+      const pl = payload.payload as {
+        case_id?: string | number;
+        caseId?: string | number;
+        run_id?: string;
+        runId?: string;
+        content?: string;
+        delta?: string;
+        event?: string;
+      } | undefined;
+      const raw = payload as unknown as { case_id?: string | number; caseId?: string | number };
+      const caseId =
+        (pl?.case_id != null ? String(pl.case_id) : null) ??
+        (pl?.caseId != null ? String(pl.caseId) : null) ??
+        (raw?.case_id != null ? String(raw.case_id) : null) ??
+        (raw?.caseId != null ? String(raw.caseId) : null) ??
+        undefined;
+      const runId =
+        pl?.run_id != null ? String(pl.run_id) : pl?.runId != null ? String(pl.runId) : undefined;
+
+      if (import.meta.env?.DEV) {
+        console.log('[Workbench onReceive]', { category: cat, type: typ, caseId, runId, hasPayload: !!pl });
+      }
+
+      if (cat === 'THOUGHT_STREAM' || typ === 'THOUGHT_STREAM') {
+        const wb = useWorkbenchReactiveStore.getState();
+        if (import.meta.env?.DEV) {
+          console.log('[Workbench onReceive] THOUGHT_STREAM', {
+            caseId,
+            currentThoughtStreamCaseId: wb.currentThoughtStreamCaseId,
+            match: caseId != null && wb.currentThoughtStreamCaseId === caseId,
+          });
+        }
+        if (caseId && wb.currentThoughtStreamCaseId === caseId) {
+          const delta = (pl?.content ?? pl?.delta ?? '').toString();
+          if (!delta) return;
+          const aura = useAuraStore.getState();
+          const { addThoughtChain, updateThoughtChain } = aura.actions;
+          const existingId = runId ? wb.getStreamingThoughtId(runId) : undefined;
+          if (existingId) {
+            const current = aura.thoughtChains.find((chain) => chain.id === existingId);
+            if (current) {
+              updateThoughtChain(existingId, { content: current.content + delta });
+            } else {
+              const id = addThoughtChain({ type: 'analysis', content: delta });
+              if (runId) wb.setStreamingThoughtId(runId, id);
+            }
+          } else {
+            const id = addThoughtChain({ type: 'analysis', content: delta });
+            if (runId) wb.setStreamingThoughtId(runId, id);
+          }
+        }
+        return;
+      }
+
+      if (cat === 'CASE_ACTION' || typ === 'CASE_ACTION' || pl?.event === 'case_created') {
+        queryClient.invalidateQueries({ queryKey: ['synapse', 'dashboard', 'agent-stream'] });
+        queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
+        if (caseId) {
+          useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(caseId);
+          if (import.meta.env?.DEV) console.log('[Workbench onReceive] CASE_ACTION/case_created → setSuggestedSelectCaseId', caseId);
+        } else if (import.meta.env?.DEV) {
+          console.log('[Workbench onReceive] CASE_ACTION/case_created but no caseId in payload', { pl, raw: !!raw });
+        }
+      }
+      if (typ === 'ANALYSIS_STARTED' || cat === 'ANALYSIS_STARTED') {
+        if (caseId) {
+          useWorkbenchReactiveStore.getState().addAnalyzing(caseId);
+          useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(caseId);
+          if (import.meta.env?.DEV) console.log('[Workbench onReceive] ANALYSIS_STARTED → addAnalyzing + setSuggestedSelectCaseId', caseId);
+        } else if (import.meta.env?.DEV) {
+          console.log('[Workbench onReceive] ANALYSIS_STARTED but no caseId in payload', { pl });
+        }
+        queryClient.invalidateQueries({ queryKey: ['synapse', 'dashboard', 'agent-stream'] });
+        queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
+      }
+    },
+  });
 
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = {

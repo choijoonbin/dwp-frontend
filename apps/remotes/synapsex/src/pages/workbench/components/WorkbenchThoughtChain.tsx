@@ -5,6 +5,7 @@
 
 import type { Theme, SxProps } from '@mui/material/styles';
 
+import { useEffect, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 
@@ -23,7 +24,27 @@ import type { AiThought } from '../../cases/hooks/use-case-detail';
 
 export type WorkbenchThoughtChainProps = {
   thoughts: AiThought[];
+  /** THOUGHT_STREAM 수신 중일 때 마지막 thought를 타자 효과로 표시 */
+  isStreamingLast?: boolean;
   sx?: SxProps<Theme>;
+};
+
+const TYPEWRITER_MS = 20;
+
+const TypewriterText = ({ text, active }: { text: string; active: boolean }) => {
+  const [visibleLength, setVisibleLength] = useState(0);
+  useEffect(() => {
+    if (!active) {
+      setVisibleLength(text.length);
+      return undefined;
+    }
+    const id = setInterval(() => {
+      setVisibleLength((prev) => Math.min(prev + 1, text.length));
+    }, TYPEWRITER_MS);
+    return () => clearInterval(id);
+  }, [active, text.length]);
+  const len = active ? Math.min(visibleLength, text.length) : text.length;
+  return <>{text.slice(0, len)}{active && len < text.length ? '\u200b' : ''}</>;
 };
 
 const getTypeIcon = (type: string): string => {
@@ -77,7 +98,7 @@ const getChipColor = (type: string): 'info' | 'primary' | 'warning' | 'success' 
   return color === 'grey' ? 'default' : color;
 };
 
-export const WorkbenchThoughtChain = ({ thoughts, sx }: WorkbenchThoughtChainProps) => {
+export const WorkbenchThoughtChain = ({ thoughts, isStreamingLast = false, sx }: WorkbenchThoughtChainProps) => {
   const { t } = useTranslation('common');
 
   if (thoughts.length === 0) {
@@ -145,7 +166,11 @@ export const WorkbenchThoughtChain = ({ thoughts, sx }: WorkbenchThoughtChainPro
                   )}
                 </Stack>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                  {thought.content}
+                  {isStreamingLast && index === thoughts.length - 1 ? (
+                    <TypewriterText text={thought.content} active />
+                  ) : (
+                    thought.content
+                  )}
                 </Typography>
               </Stack>
             </Paper>

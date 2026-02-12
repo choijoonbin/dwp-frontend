@@ -10,9 +10,11 @@
 
 import type { Theme } from '@mui/material/styles';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
+import { useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
+import { useAuraStore } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -70,6 +72,23 @@ export const WorkbenchPage = () => {
   /** 통합 데이터 바인딩: useCaseDetail 하나로 모든 데이터 관리 */
   const { fiDocItems, targetBuzei, itemsCurrency, actionHistory, aiThoughts, isLoading: detailLoading } =
     useCaseDetail(selectedCaseId ?? undefined);
+
+  /** THOUGHT_STREAM WebSocket: 현재 상세 case와 일치할 때만 ThoughtChainUI에 스트리밍; 케이스 전환 시 컨텍스트·thought 초기화 */
+  useEffect(() => {
+    useWorkbenchReactiveStore.getState().setThoughtStreamContext(selectedCaseId ?? null, null);
+    useAuraStore.getState().actions.clearThoughtChains();
+  }, [selectedCaseId]);
+
+  /** 테스트 데이터 생성 후 워크벤치 진입 시: CASE_ACTION/ANALYSIS_STARTED로 제안된 케이스가 있으면 자동 선택 */
+  const suggestedSelectCaseId = useWorkbenchReactiveStore((s) => s.suggestedSelectCaseId);
+  useEffect(() => {
+    if (suggestedSelectCaseId == null) return;
+    if (import.meta.env?.DEV) {
+      console.log('[Workbench] auto-select from suggestedSelectCaseId', suggestedSelectCaseId);
+    }
+    setSelectedCaseId(suggestedSelectCaseId);
+    useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(null);
+  }, [suggestedSelectCaseId]);
 
   return (
     <Box

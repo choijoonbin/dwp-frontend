@@ -51,6 +51,7 @@ export const useAiWorkspace = () => {
     setPendingHitl,
     setCurrentStepIndex,
     addThoughtChain,
+    updateThoughtChain,
     addPlanStep,
     updatePlanStep,
     reorderPlanSteps,
@@ -249,6 +250,7 @@ export const useAiWorkspace = () => {
       const decoder = new TextDecoder('utf-8');
       let accumulatedText = '';
       let buffer = '';
+      let streamingThoughtId: string | null = null;
 
       resetStore();
       setStatus('STREAMING');
@@ -312,11 +314,36 @@ export const useAiWorkspace = () => {
             }
 
             if (eventType === 'thought_chain') {
+              streamingThoughtId = null;
               addThoughtChain({
-                type: eventData.type,
-                content: eventData.content,
+                type: eventData.type ?? 'analysis',
+                content: eventData.content ?? '',
                 sources: eventData.sources,
               });
+              continue;
+            }
+
+            if (eventType === 'thought_stream') {
+              const delta = eventData.content ?? eventData.delta ?? eventData.text ?? '';
+              const thoughtId = eventData.thoughtId ?? eventData.id ?? streamingThoughtId;
+              if (thoughtId && delta) {
+                const current = useAuraStore.getState().thoughtChains.find((t) => t.id === thoughtId);
+                if (current) {
+                  updateThoughtChain(thoughtId, { content: current.content + delta });
+                } else {
+                  streamingThoughtId = addThoughtChain({
+                    type: (eventData.type as 'analysis' | 'planning' | 'execution' | 'verification') ?? 'analysis',
+                    content: delta,
+                    sources: eventData.sources,
+                  });
+                }
+              } else if (!thoughtId && delta) {
+                streamingThoughtId = addThoughtChain({
+                  type: (eventData.type as 'analysis' | 'planning' | 'execution' | 'verification') ?? 'analysis',
+                  content: delta,
+                  sources: eventData.sources,
+                });
+              }
               continue;
             }
 

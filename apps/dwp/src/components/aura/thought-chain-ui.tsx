@@ -2,6 +2,7 @@
 
 import type { ThoughtChain } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Box from '@mui/material/Box';
@@ -22,9 +23,30 @@ import { Iconify } from 'src/components/iconify';
 
 type ThoughtChainUIProps = {
   thoughts: ThoughtChain[];
+  /** 스트리밍 중일 때 마지막 thought를 타자 효과로 표시 */
+  isStreaming?: boolean;
 };
 
-export const ThoughtChainUI = ({ thoughts }: ThoughtChainUIProps) => {
+const TYPEWRITER_MS = 20;
+
+/** 타자 효과로 텍스트를 한 글자씩 표시 (스트리밍 시 content 증가해도 이어서 표시) */
+const TypewriterText = ({ text, active }: { text: string; active: boolean }) => {
+  const [visibleLength, setVisibleLength] = useState(0);
+  useEffect(() => {
+    if (!active) {
+      setVisibleLength(text.length);
+      return undefined;
+    }
+    const id = setInterval(() => {
+      setVisibleLength((prev) => Math.min(prev + 1, text.length));
+    }, TYPEWRITER_MS);
+    return () => clearInterval(id);
+  }, [active, text.length]);
+  const len = active ? Math.min(visibleLength, text.length) : text.length;
+  return <>{text.slice(0, len)}{active && len < text.length ? '\u200b' : ''}</>;
+};
+
+export const ThoughtChainUI = ({ thoughts, isStreaming = false }: ThoughtChainUIProps) => {
   const getTypeIcon = (type: ThoughtChain['type']) => {
     switch (type) {
       case 'analysis':
@@ -146,7 +168,10 @@ export const ThoughtChainUI = ({ thoughts }: ThoughtChainUIProps) => {
                       </Typography>
                     </Stack>
                     <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                      {thought.content}
+                      <TypewriterText
+                        text={thought.content}
+                        active={isStreaming && index === thoughts.length - 1}
+                      />
                     </Typography>
                     {thought.sources && thought.sources.length > 0 && (
                       <Box sx={{ pt: 1, borderTop: '1px dashed', borderColor: 'divider' }}>

@@ -8,7 +8,7 @@
 import type { FormEvent, ChangeEvent } from 'react';
 import type { RegisterRagDocumentRequest } from '@dwp-frontend/shared-utils';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 
@@ -19,17 +19,11 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import DialogTitle from '@mui/material/DialogTitle';
+import Tooltip from '@mui/material/Tooltip';
 import FormControl from '@mui/material/FormControl';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-
-const DOC_TYPES = [
-  { value: 'GENERAL', label: 'GENERAL' },
-  { value: 'REGULATION', label: 'REGULATION' },
-  { value: 'MANUAL', label: 'MANUAL' },
-  { value: 'POLICY', label: 'POLICY' },
-];
 
 /** 업로드 허용 확장자: pdf, txt, doc, docx, hwp */
 const ALLOWED_EXTENSIONS = ['.pdf', '.txt', '.doc', '.docx', '.hwp'];
@@ -43,26 +37,32 @@ const getFileExtensionLabel = (f: File): string => {
   return i >= 0 ? name.slice(i + 1).toUpperCase() : '';
 };
 
+/** key=서버 전송값(docType), value=UI 노출값. BE catalog API 동기화 */
 type RegisterRagDocumentModalProps = {
-  open: boolean;
+  open?: boolean;
   onClose: () => void;
   onSubmit: (payload: FormData | RegisterRagDocumentRequest) => void;
   isLoading?: boolean;
+  docTypes?: { key: string; value: string }[];
 };
 
 export const RegisterRagDocumentModal = ({
-  open,
   onClose,
   onSubmit,
   isLoading,
+  docTypes = [],
 }: RegisterRagDocumentModalProps) => {
   const { t } = useTranslation('common');
   const [title, setTitle] = useState('');
   const [sourceMode, setSourceMode] = useState<string>('FILE');
-  const [docType, setDocType] = useState<string>('GENERAL');
+  const [docType, setDocType] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const [s3Key, setS3Key] = useState('');
   const [url, setUrl] = useState('');
+
+  useEffect(() => {
+    if (docTypes.length > 0 && !docType) setDocType(docTypes[0].key);
+  }, [docTypes, docType]);
 
   const requiresFile = sourceMode === 'FILE';
   const fileValid = file != null && file.size > 0 && hasAllowedExtension(file);
@@ -85,7 +85,7 @@ export const RegisterRagDocumentModal = ({
   const resetForm = () => {
     setTitle('');
     setSourceMode('FILE');
-    setDocType('GENERAL');
+    setDocType(docTypes[0]?.key ?? '');
     setFile(null);
     setS3Key('');
     setUrl('');
@@ -100,6 +100,9 @@ export const RegisterRagDocumentModal = ({
       formData.append('file', file);
       if (trimmedTitle) formData.append('title', trimmedTitle);
       if (docType.trim()) formData.append('docType', docType.trim());
+      if (docType.trim() === 'HIERARCHICAL' && process.env.NODE_ENV === 'development') {
+        console.log('[RAG] HIERARCHICAL upload submitted; verify Aura chunk structure (조/항) in BE/Aura logs for at least one document.');
+      }
       onSubmit(formData);
     } else {
       const body: RegisterRagDocumentRequest = {
@@ -157,22 +160,24 @@ export const RegisterRagDocumentModal = ({
                 <MenuItem value="S3">{t('rag.registerModal.sourceModeS3')}</MenuItem>
               </Select>
             </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="rag-doc-type-label">{t('rag.registerModal.docType')}</InputLabel>
-              <Select
-                size="small"
-                labelId="rag-doc-type-label"
-                label={t('rag.registerModal.docType')}
-                value={docType}
-                onChange={(e) => setDocType(e.target.value)}
-              >
-                {DOC_TYPES.map((dt) => (
-                  <MenuItem key={dt.value} value={dt.value}>
-                    {dt.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Tooltip title={docType === 'HIERARCHICAL' ? '조/항 인식 검증 필요' : ''} placement="top">
+              <FormControl fullWidth>
+                <InputLabel id="rag-doc-type-label">{t('rag.registerModal.docType')}</InputLabel>
+                <Select
+                  size="small"
+                  labelId="rag-doc-type-label"
+                  label={t('rag.registerModal.docType')}
+                  value={docType}
+                  onChange={(e) => setDocType(e.target.value)}
+                >
+                  {docTypes.map((dt) => (
+                    <MenuItem key={dt.key} value={dt.key}>
+                      {dt.value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Tooltip>
             {sourceMode === 'FILE' && (
               <Stack spacing={0.5}>
                 <Stack direction="row" alignItems="center" spacing={1}>

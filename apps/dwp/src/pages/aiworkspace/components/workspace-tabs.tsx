@@ -34,6 +34,7 @@ type WorkspaceTabsProps = {
   onApprovePlanStep: (id: string) => void;
   onSkipPlanStep: (id: string) => void;
   isCompact?: boolean;
+  isStreaming?: boolean;
 };
 
 const TAB_ITEMS = [
@@ -57,6 +58,7 @@ export const WorkspaceTabs = ({
   onApprovePlanStep,
   onSkipPlanStep,
   isCompact = false,
+  isStreaming = false,
 }: WorkspaceTabsProps) => {
   const resultMessages = messages.filter((msg) => msg.role === 'assistant' && msg.metadata?.result);
 
@@ -99,7 +101,7 @@ export const WorkspaceTabs = ({
                   <Typography variant="h6" sx={{ mb: 2 }}>
                     사고 체인
                   </Typography>
-                  <ThoughtChainUI thoughts={thoughtChains} />
+                  <ThoughtChainUI thoughts={thoughtChains} isStreaming={isStreaming} />
                 </Box>
               ) : (
                 <Paper sx={{ p: 3, textAlign: 'center' }}>
