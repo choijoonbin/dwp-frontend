@@ -46,6 +46,74 @@ export type RagSearchResultDto = {
   score?: number;
 };
 
+// ----------------------------------------------------------------------
+// Hybrid RAG Search Types (Context-Aware)
+// ----------------------------------------------------------------------
+
+/** 계층 레벨 타입 */
+export type HierarchyLevel = 'CHAPTER' | 'ARTICLE' | 'CLAUSE' | 'PARAGRAPH';
+
+/** 계층 경로 아이템 */
+export type HierarchyPathItem = {
+  level: HierarchyLevel;
+  number?: string;
+  title?: string;
+  /** chunkId를 anchorId로 사용 */
+  anchorId?: string;
+};
+
+/** Child chunk (하위 청크) */
+export type RagChildChunkDto = {
+  chunkId: string;
+  /** anchorId는 chunkId와 동일 */
+  anchorId?: string;
+  hierarchyPath?: HierarchyPathItem[];
+  snippet: string;
+  score: number;
+  clause?: string;
+};
+
+/** Parent result (상위 조문) */
+export type RagParentResultDto = {
+  parentId: string;
+  articleNo?: string;
+  title?: string;
+  docId?: string;
+  docTitle?: string;
+  version?: string;
+  maxScore?: number;
+  children: RagChildChunkDto[];
+};
+
+/** Hybrid RAG Search 전략 */
+export type RagSearchStrategy = 'HYBRID' | 'VECTOR_ONLY' | 'BM25_ONLY';
+
+/** Hybrid RAG Search 요청 */
+export type HybridRagSearchRequest = {
+  query: string;
+  strategy?: RagSearchStrategy;
+  topK?: number;
+  rerank?: boolean;
+  minScore?: number;
+  docIds?: string[];
+};
+
+/** Hybrid RAG Search 응답 */
+export type HybridRagSearchResponse = {
+  parents: RagParentResultDto[];
+  totalHits: number;
+  strategy: RagSearchStrategy;
+  queryHash?: string;
+};
+
+/** Hybrid Search 기본값 */
+export const HYBRID_RAG_DEFAULTS = {
+  strategy: 'HYBRID' as RagSearchStrategy,
+  topK: 10,
+  rerank: true,
+  minScore: 0.3,
+};
+
 export type RegisterRagDocumentRequest = {
   title: string;
   sourceType: string;
@@ -54,6 +122,59 @@ export type RegisterRagDocumentRequest = {
   checksum?: string;
   /** 문서 유형. REGULATION | MANUAL | POLICY | GENERAL. URL/S3 등록 시 사용 */
   docType?: string;
+};
+
+// ----------------------------------------------------------------------
+// Chunking Strategy Types (Re-Chunking Control)
+// ----------------------------------------------------------------------
+
+/** 청킹 전략 타입 */
+export type ChunkingStrategy =
+  | 'REGULATION' // 규정 문서: 장/조/항 기반 계층 청킹
+  | 'MANUAL' // 매뉴얼: 섹션 기반 청킹
+  | 'POLICY' // 정책 문서: 항목 기반 청킹
+  | 'GENERAL' // 일반 문서: 고정 크기 청킹
+  | 'SEMANTIC'; // 의미 기반 동적 청킹
+
+/** 청킹 전략 설명 */
+export const CHUNKING_STRATEGY_INFO: Record<ChunkingStrategy, { label: string; description: string }> = {
+  REGULATION: {
+    label: '규정 문서',
+    description: '장 > 조 > 항 계층 구조 기반 청킹. 법률/규정 문서에 최적화.',
+  },
+  MANUAL: {
+    label: '매뉴얼',
+    description: '섹션/챕터 기반 청킹. 사용자 매뉴얼에 적합.',
+  },
+  POLICY: {
+    label: '정책 문서',
+    description: '정책 항목 단위 청킹. 내부 정책 문서에 적합.',
+  },
+  GENERAL: {
+    label: '일반 문서',
+    description: '고정 크기(512토큰) 청킹. 구조가 불명확한 문서에 사용.',
+  },
+  SEMANTIC: {
+    label: '의미 기반',
+    description: '의미 단위로 동적 청킹. 다양한 문서에 범용 적용.',
+  },
+};
+
+/** 재청킹 요청 */
+export type ReChunkRequest = {
+  strategy: ChunkingStrategy;
+  /** 청크 크기 (GENERAL 전략에서 사용) */
+  chunkSize?: number;
+  /** 청크 오버랩 (GENERAL 전략에서 사용) */
+  chunkOverlap?: number;
+};
+
+/** 재청킹 응답 */
+export type ReChunkResponse = {
+  docId: string;
+  status: 'PROCESSING' | 'COMPLETED' | 'FAILED';
+  message?: string;
+  chunkCount?: number;
 };
 
 export type RagDocumentsListParams = {
@@ -281,6 +402,39 @@ export const searchRag = async (
   const data = res.data?.data;
   if (data) return { ...res.data, data: toPageResponse(data) };
   return res.data as ApiResponse<PageResponse<RagSearchResultDto>>;
+};
+
+/** Hybrid RAG Search (POST /api/synapse/rag/search) */
+export const searchRagHybrid = async (
+  body: HybridRagSearchRequest
+): Promise<ApiResponse<HybridRagSearchResponse>> => {
+  const res = await axiosInstance.post<ApiResponse<HybridRagSearchResponse>>(
+    '/api/synapse/rag/search',
+    body
+  );
+  return res.data;
+};
+
+/** RAG 문서 재청킹 (청킹 전략 변경 후 재벡터화) */
+export const reChunkRagDocument = async (
+  docId: string,
+  body: ReChunkRequest
+): Promise<ApiResponse<ReChunkResponse>> => {
+  const res = await axiosInstance.post<ApiResponse<ReChunkResponse>>(
+    `/api/synapse/rag/documents/${encodeURIComponent(docId)}/rechunk`,
+    body
+  );
+  return res.data;
+};
+
+/** RAG 문서 청킹 상태 조회 */
+export const getRagDocumentChunkingStatus = async (
+  docId: string
+): Promise<ApiResponse<{ status: string; chunkCount?: number; strategy?: ChunkingStrategy }>> => {
+  const res = await axiosInstance.get<ApiResponse<{ status: string; chunkCount?: number; strategy?: ChunkingStrategy }>>(
+    `/api/synapse/rag/documents/${encodeURIComponent(docId)}/chunking-status`
+  );
+  return res.data;
 };
 
 // ----------------------------------------------------------------------

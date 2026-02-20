@@ -3,9 +3,9 @@
  * BE AgentDetailDto 로부터 hydrate 가능.
  */
 
-import { useState, useCallback } from 'react';
-
 import type { AgentDetailDto } from '@dwp-frontend/shared-utils';
+
+import { useState, useCallback } from 'react';
 
 /** Aura 런타임 치환: {context}, {code} 만 사용. {case_json} 등은 치환되지 않음. */
 const DEFAULT_SYSTEM_PROMPT = `SYSTEM: You are a safe enterprise finance agent.
@@ -59,17 +59,39 @@ export const useAgentConfigState = (_selectedAgentId: string | null) => {
       setBoundKnowledgeIds(new Set());
       return;
     }
-    setEngineKey(detail.engineKey ?? detail.modelName ?? 'gpt-4o');
-    setTemperature(typeof detail.temperature === 'number' ? detail.temperature : 0.2);
-    setMaxTokens(typeof detail.maxTokens === 'number' ? detail.maxTokens : 4096);
+    const model = detail.model;
+    setEngineKey(
+      model?.modelName ?? detail.engineKey ?? detail.modelName ?? 'gpt-4o'
+    );
+    setTemperature(
+      typeof model?.temperature === 'number'
+        ? model.temperature
+        : typeof detail.temperature === 'number'
+          ? detail.temperature
+          : 0.2
+    );
+    setMaxTokens(
+      typeof model?.maxTokens === 'number'
+        ? model.maxTokens
+        : typeof detail.maxTokens === 'number'
+          ? detail.maxTokens
+          : 4096
+    );
     setDomainKey(detail.domainKey ?? detail.domain ?? '');
     setSystemPrompt(detail.systemInstruction ?? detail.systemPrompt ?? DEFAULT_SYSTEM_PROMPT);
     const toolMap: Record<string, boolean> = {};
-    (detail.toolKeys ?? []).forEach((k) => {
-      toolMap[k] = true;
-    });
+    if (detail.tools && Array.isArray(detail.tools)) {
+      detail.tools.forEach((t) => {
+        if (t?.toolName) toolMap[t.toolName] = true;
+      });
+    } else {
+      (detail.toolKeys ?? []).forEach((k) => {
+        toolMap[k] = true;
+      });
+    }
     setTools(toolMap);
-    setBoundKnowledgeIds(new Set(detail.knowledgeIds ?? []));
+    const ids = detail.docIds ?? detail.knowledgeIds ?? [];
+    setBoundKnowledgeIds(new Set((Array.isArray(ids) ? ids : []).map(String)));
   }, []);
 
   return {

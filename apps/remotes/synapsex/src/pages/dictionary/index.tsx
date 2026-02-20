@@ -68,6 +68,11 @@ export const DictionaryPage = () => {
   const createMutation = useCreateDictionaryTermMutation();
   const updateMutation = useUpdateDictionaryTermMutation();
   const deleteMutation = useDeleteDictionaryTermMutation();
+  const openDialogSafely = () => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement) active.blur();
+    setDialogOpen(true);
+  };
 
   const categories = useMemo(() => {
     const set = new Set<string>();
@@ -88,7 +93,7 @@ export const DictionaryPage = () => {
   const handleOpenCreate = () => {
     setEditing(null);
     setDraft({ termKey: '', labelKo: '', description: '', category: '' });
-    setDialogOpen(true);
+    openDialogSafely();
   };
 
   const handleOpenEdit = (term: DictionaryTermDto) => {
@@ -99,7 +104,7 @@ export const DictionaryPage = () => {
       description: term.description ?? '',
       category: term.category ?? '',
     });
-    setDialogOpen(true);
+    openDialogSafely();
   };
 
   const handleSave = () => {

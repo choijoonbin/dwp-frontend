@@ -1123,7 +1123,27 @@
       "cancel": "취소",
       "register": "등록",
       "registering": "등록 중..."
+    },
+    "rechunk": {
+      "title": "청킹 전략 설정",
+      "currentDoc": "문서",
+      "chunks": "청크",
+      "strategyLabel": "청킹 전략",
+      "chunkSize": "청크 크기 (토큰)",
+      "chunkOverlap": "청크 오버랩 (토큰)",
+      "processing": "재청킹 중... 잠시만 기다려 주세요.",
+      "apply": "재청킹 실행",
+      "success": "재청킹이 시작되었습니다. 완료까지 몇 분이 소요될 수 있습니다.",
+      "failed": "재청킹에 실패했습니다.",
+      "warning": "청킹 전략을 변경하면 기존 청크가 삭제되고 새로운 전략으로 재생성됩니다. 진행 중인 검색에 일시적으로 영향을 줄 수 있습니다."
     }
+  },
+  "evidence": {
+    "clickToNavigate": "클릭하여 원문 위치로 이동",
+    "hierarchyChapter": "장",
+    "hierarchyArticle": "조",
+    "hierarchyClause": "항",
+    "hierarchyParagraph": "목"
   },
   "policies": {
     "title": "정책 프로필",
@@ -1413,7 +1433,7 @@
     "addGuardrailButton": "가드레일 추가"
   },
   "agentConfig": {
-    "title": "에이전트 구성",
+    "title": "에이전트 스튜디오",
     "subtitle": "모델, 프롬프트 및 도구 권한. 변경 사항은 버전 관리 및 감사 가능해야 합니다.",
     "saveDraft": "초안 저장",
     "saveAndDeploy": "변경 사항 저장 및 배포",
@@ -1444,9 +1464,12 @@
     "deleteSubmitting": "삭제 중...",
     "deleteSuccess": "에이전트가 삭제되었습니다.",
     "deleteError": "삭제에 실패했습니다.",
+    "tenantId": "테넌트 ID: {{id}}",
+    "systemAgentBadge": "시스템 공통 에이전트",
     "model": "모델",
     "prompts": "프롬프트",
     "tools": "도구",
+    "knowledgeTab": "지식",
     "modelSettings": "모델 설정",
     "modelSettingsDesc": "엔터프라이즈 런타임을 위한 안전한 기본값",
     "providerModel": "제공자/모델",
@@ -1485,6 +1508,48 @@
       "notify_email": "알림: 이메일",
       "notify_slack": "알림: Slack / Teams",
       "create_case": "운영: 케이스 생성"
+    },
+    "openAgentList": "에이전트 목록 열기",
+    "selectAgentPrompt": "설정할 에이전트를 선택해주세요",
+    "modelSpecTitle": "에이전트 제원",
+    "modelSpecSubheader": "현재 설정 요약",
+    "creativeLevel": "Creative Level",
+    "maxResponse": "Max Response",
+    "contextWindowRatio": "문맥 윈도우 대비 {{percent}}%",
+    "knowledge": {
+      "title": "지식 베이스 (RAG)",
+      "subheader": "에이전트에 바인딩할 RAG 문서를 선택하세요. 업로드 시 즉시 바인딩됩니다.",
+      "upload": "새 지식 업로드",
+      "loading": "로딩 중...",
+      "empty": "등록된 지식 베이스가 없습니다.",
+      "summaryTitle": "지식 요약",
+      "summarySubheader": "바인딩 현황 및 문서 통계",
+      "bound": "바인딩된 지식",
+      "byType": "문서 타입별",
+      "keywords": "주요 키워드",
+      "none": "없음",
+      "noKeywords": "키워드 없음",
+      "boundStatus": "바인딩됨",
+      "unboundStatus": "미바인딩",
+      "status": {
+        "ready": "준비됨 (READY)",
+        "processing": "처리 중 (PROCESSING)",
+        "error": "오류",
+        "pending": "대기"
+      },
+      "toasts": {
+        "registeredAndBound": "문서가 등록되어 에이전트에 바인딩되었습니다.",
+        "bound": "문서가 바인딩되었습니다.",
+        "unbound": "바인딩이 해제되었습니다."
+      },
+      "errors": {
+        "registerFailed": "문서 등록 실패",
+        "missingDocId": "등록 후 docId를 받지 못했습니다.",
+        "invalidDocId": "docId 형식 오류",
+        "bindFailed": "바인딩 실패",
+        "unbindFailed": "바인딩 해제에 실패했습니다.",
+        "registerBindFailed": "등록 또는 바인딩에 실패했습니다."
+      }
     },
     "promptPurposes": {
       "case_triage_v1": "원시 신호를 인용이 포함된 설명 가능한 케이스 요약으로 변환",
@@ -1685,10 +1750,40 @@
   },
   "menu": {
     "workbench": "통합 워크벤치",
+    "autonomous-operations": {
+      "_label": "자율 운영 센터",
+      "cases": "케이스 관리",
+      "anomalies": "이상 징후 탐지",
+      "optimization": "최적화 제안",
+      "actions": "조치 실행·추적",
+      "archive": "조치 이력 보관함"
+    },
+    "master-data-history": {
+      "_label": "원천 데이터·이력 허브",
+      "documents": "전자문서",
+      "open-items": "채권·채무",
+      "entities": "거래처·원장",
+      "lineage": "데이터 계보"
+    },
+    "knowledge-policy": {
+      "_label": "지식·정책 허브",
+      "rag": "RAG 문서 관리",
+      "policies": "판단 정책·임계값",
+      "guardrails": "가드레일",
+      "dictionary": "용어·코드 사전",
+      "feedback": "피드백 루프"
+    },
+    "reconciliation-audit": {
+      "_label": "대사·감사 센터",
+      "reconciliation": "대사 실행",
+      "action-recon": "조치 대사",
+      "audit": "감사 증적",
+      "analytics": "분석·리포트"
+    },
     "governance-config": {
       "_label": "거버넌스·설정",
       "admin": "시스템 관리",
-      "agent-config": "에이전트 구성 관리",
+      "agent-config": "에이전트 스튜디오",
       "demo-control": "시연 데이터 제어",
       "governance": "자율성·통제 설정",
       "integrations": "연동·데이터 운영"
@@ -1750,5 +1845,47 @@
     "intensityTooltipWarning": "규정 한도 경계 근처 금액이 생성됩니다.",
     "intensityTooltipViolation": "규정을 초과하는 금액이 생성됩니다 (예: 식대 3만원 초과, 접대비 5만원 초과).",
     "loadingWallet": "Aura가 시나리오 데이터를 가상 월렛에 적재 중..."
+  },
+  "adminPage": {
+    "title": "시스템 관리",
+    "description": "테넌트 설정, 접근 제어 및 데이터 보호 정책을 관리합니다.",
+    "selectTenant": "테넌트 선택",
+    "inviteUser": "사용자 초대",
+    "adminConsole": "관리 콘솔",
+    "adminConsoleDesc": "RBAC + SoD, 테넌트/회사/통화 범위 및 PII 마스킹 설정",
+    "searchUsers": "사용자 검색...",
+    "tabs": {
+      "users": "사용자",
+      "tenantScope": "테넌트 범위",
+      "piiEncryption": "PII 및 암호화"
+    },
+    "table": {
+      "user": "사용자",
+      "role": "역할",
+      "status": "상태",
+      "mfa": "MFA",
+      "lastLogin": "마지막 로그인"
+    },
+    "mfa": {
+      "enabled": "활성화",
+      "off": "비활성화"
+    },
+    "noUsers": "사용자가 없습니다.",
+    "loadError": "사용자 목록을 불러오지 못했습니다. 권한(menu.admin.users VIEW) 및 API 연결을 확인하세요.",
+    "miniStats": {
+      "rbac": "RBAC",
+      "sod": "SoD",
+      "savedViews": "저장된 뷰",
+      "active": "활성화됨"
+    },
+    "governance": {
+      "title": "API (ADMIN 전용) — 거버넌스 설정",
+      "noConfig": "거버넌스 설정이 없습니다.",
+      "current": "현재"
+    },
+    "footer": {
+      "adminConsole": "관리 콘솔",
+      "auditReady": "감사 준비됨"
+    }
   }
 }

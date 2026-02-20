@@ -36,18 +36,16 @@ const isWorkbenchRootNode = (node: MenuNode): boolean =>
   (WORKBENCH_ROOT_KEYS.includes(node.menuKey) || node.path === '/synapse/workbench');
 
 /**
- * Sort menu nodes by sortOrder, fallback to menuName
+ * Sort menu nodes by sortOrder, fallback to menuKey (언어 변경 시 순서 유지)
  */
 const sortMenuNodes = (nodes: MenuNode[]): MenuNode[] =>
   [...nodes].sort((a, b) => {
-    // First try sortOrder
     if (a.sortOrder != null && b.sortOrder != null) {
       return a.sortOrder - b.sortOrder;
     }
     if (a.sortOrder != null) return -1;
     if (b.sortOrder != null) return 1;
-    // Fallback to menuName alphabetical order
-    return a.menuName.localeCompare(b.menuName);
+    return (a.menuKey ?? '').localeCompare(b.menuKey ?? '');
   });
 
 /**
@@ -150,23 +148,46 @@ const convertMenuNodeToNavItem = (
       ? node.icon.trim()
       : MENU_KEY_TO_ICON[node.menuKey] ?? 'solar:circle-bold';
 
-  // menuName 우선. 통합 워크벤치 명칭 통일(자율작업대 제거), 거버넌스·설정은 FE i18n
-  const apiName = node.menuName ?? (node as MenuNode & { name?: string }).name ?? '';
+  // BE menuName 우선, 없을 때만 FE i18n fallback
+  const apiName = (node.menuName ?? (node as MenuNode & { name?: string }).name ?? '').trim();
   let displayName = apiName;
+
+  // 통합 워크벤치 명칭 통일 (예외: FE에서 고정)
   if (
     WORKBENCH_ROOT_KEYS.includes(node.menuKey) ||
     node.menuKey === 'menu.autonomous-operations.workbench'
   ) {
-    displayName = t('menu.workbench');
-  } else if (node.menuKey === 'menu.governance-config') {
-    const translated = t('menu.governance-config._label');
-    displayName = translated || apiName;
+    displayName = apiName || t('menu.workbench');
   } else if (node.menuKey === 'menu.demo-control') {
-    displayName = t('menu.governance-config.demo-control') || apiName;
-  } else if (node.menuKey.startsWith('menu.governance-config.')) {
-    const subKey = node.menuKey.replace('menu.governance-config.', '');
-    const translated = t(`menu.governance-config.${subKey}`);
-    displayName = translated !== `menu.governance-config.${subKey}` ? translated : apiName;
+    displayName = apiName || t('menu.governance-config.demo-control');
+  } else if (!apiName) {
+    // BE에서 menuName이 없을 때만 FE i18n fallback
+    const menuGroups = [
+      'menu.autonomous-operations',
+      'menu.master-data-history',
+      'menu.knowledge-policy',
+      'menu.reconciliation-audit',
+      'menu.governance-config',
+    ];
+
+    for (const groupPrefix of menuGroups) {
+      if (node.menuKey === groupPrefix) {
+        const groupKey = groupPrefix.replace('menu.', '');
+        const translated = t(`menu.${groupKey}._label`);
+        if (translated && translated !== `menu.${groupKey}._label`) {
+          displayName = translated;
+        }
+        break;
+      } else if (node.menuKey.startsWith(`${groupPrefix}.`)) {
+        const groupKey = groupPrefix.replace('menu.', '');
+        const subKey = node.menuKey.replace(`${groupPrefix}.`, '');
+        const translated = t(`menu.${groupKey}.${subKey}`);
+        if (translated && translated !== `menu.${groupKey}.${subKey}`) {
+          displayName = translated;
+        }
+        break;
+      }
+    }
   }
 
   return {
@@ -211,7 +232,7 @@ export const useNavData = (): NavItem[] => {
         const dictItem = knowledgePolicyItem.children[dictIndex];
         knowledgePolicyItem.children = knowledgePolicyItem.children.filter((_, i) => i !== dictIndex);
         governanceConfigItem.children = [...(governanceConfigItem.children ?? []), dictItem].sort((a, b) =>
-          (a.title || '').localeCompare(b.title || '')
+          (a.resourceKey ?? '').localeCompare(b.resourceKey ?? '')
         );
       }
     }

@@ -15,11 +15,11 @@ import { useTranslation } from '@dwp-frontend/shared-i18n';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
+import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import DialogTitle from '@mui/material/DialogTitle';
-import Tooltip from '@mui/material/Tooltip';
 import FormControl from '@mui/material/FormControl';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -41,8 +41,10 @@ const getFileExtensionLabel = (f: File): string => {
 type RegisterRagDocumentModalProps = {
   open?: boolean;
   onClose: () => void;
-  onSubmit: (payload: FormData | RegisterRagDocumentRequest) => void;
+  onSubmit: (payload: FormData | RegisterRagDocumentRequest) => void | Promise<void>;
   isLoading?: boolean;
+  /** false면 onSubmit 완료 후에만 부모가 닫음 (비동기 업로드 시 사용) */
+  closeOnSubmit?: boolean;
   docTypes?: { key: string; value: string }[];
 };
 
@@ -50,6 +52,7 @@ export const RegisterRagDocumentModal = ({
   onClose,
   onSubmit,
   isLoading,
+  closeOnSubmit = true,
   docTypes = [],
 }: RegisterRagDocumentModalProps) => {
   const { t } = useTranslation('common');
@@ -91,10 +94,11 @@ export const RegisterRagDocumentModal = ({
     setUrl('');
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const trimmedTitle = title.trim();
 
+    let payload: FormData | RegisterRagDocumentRequest;
     if (sourceMode === 'FILE' && file != null && file.size > 0 && hasAllowedExtension(file)) {
       const formData = new FormData();
       formData.append('file', file);
@@ -103,7 +107,7 @@ export const RegisterRagDocumentModal = ({
       if (docType.trim() === 'HIERARCHICAL' && process.env.NODE_ENV === 'development') {
         console.log('[RAG] HIERARCHICAL upload submitted; verify Aura chunk structure (조/항) in BE/Aura logs for at least one document.');
       }
-      onSubmit(formData);
+      payload = formData;
     } else {
       const body: RegisterRagDocumentRequest = {
         title: trimmedTitle,
@@ -112,10 +116,16 @@ export const RegisterRagDocumentModal = ({
       if (docType.trim()) body.docType = docType.trim();
       if (s3Key.trim()) body.s3Key = s3Key.trim();
       if (url.trim()) body.url = url.trim();
-      onSubmit(body);
+      payload = body;
     }
-    onClose();
-    resetForm();
+    const result = onSubmit(payload);
+    if (result && typeof (result as Promise<unknown>).then === 'function') {
+      await (result as Promise<unknown>);
+    }
+    if (closeOnSubmit) {
+      onClose();
+      resetForm();
+    }
   };
 
   const handleClose = () => {

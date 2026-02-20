@@ -27,7 +27,7 @@ const severityConfig: Record<
   high: {
     label: 'High',
     icon: 'solar:info-circle-bold-duotone',
-    color: 'warning',
+    color: 'error',
   },
   medium: {
     label: 'Medium',

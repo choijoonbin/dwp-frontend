@@ -30,8 +30,7 @@ import { TableLoadingSkeleton } from '../../../components/ux/table-loading-skele
 import type { CaseListItem } from '../../cases/adapters/case-list-adapter';
 
 const PAGE_SIZE = 20;
-
-export type WorkbenchStatusFilter = 'all' | 'OPEN' | 'IN_PROGRESS';
+type QueueBadgeFilter = 'all' | `status:${string}` | `severity:${string}`;
 
 export type WorkbenchQueuePanelProps = {
   selectedCaseId?: string | null;
@@ -49,15 +48,14 @@ export const WorkbenchQueuePanel = ({
   const { t } = useTranslation('common');
   const theme = useTheme();
   const [page, setPage] = useState(0);
-  const [statusFilter, setStatusFilter] = useState<WorkbenchStatusFilter>('all');
+  const [badgeFilter, setBadgeFilter] = useState<QueueBadgeFilter>('all');
 
   const queryParams = useMemo(
     () => ({
       page,
       size: PAGE_SIZE,
-      ...(statusFilter !== 'all' ? { status: statusFilter } : {}),
     }),
-    [page, statusFilter]
+    [page]
   );
   const query = useCasesListQuery(queryParams);
   const { items, totalPages } = useMemo(() => {
@@ -73,6 +71,26 @@ export const WorkbenchQueuePanel = ({
       totalPages: query.data.totalPages ?? (Math.ceil(total / PAGE_SIZE) || 1),
     };
   }, [query.data]);
+  const statusOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => String(item.status)).filter(Boolean))),
+    [items]
+  );
+  const severityOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => String(item.severity)).filter(Boolean))),
+    [items]
+  );
+  const visibleItems = useMemo(() => {
+    if (badgeFilter === 'all') return items;
+    if (badgeFilter.startsWith('status:')) {
+      const status = badgeFilter.slice('status:'.length);
+      return items.filter((item) => item.status === status);
+    }
+    if (badgeFilter.startsWith('severity:')) {
+      const severity = badgeFilter.slice('severity:'.length);
+      return items.filter((item) => item.severity === severity);
+    }
+    return items;
+  }, [badgeFilter, items]);
 
   const isAnalyzing = useWorkbenchReactiveStore((s) => s.isAnalyzing);
   const removeAnalyzing = useWorkbenchReactiveStore((s) => s.removeAnalyzing);
@@ -122,47 +140,78 @@ export const WorkbenchQueuePanel = ({
           borderColor: 'divider',
           flexShrink: 0,
           display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 1,
+          overflowX: 'auto',
         }}
       >
-        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 0.75 }}>
+        <Typography variant="subtitle2" color="text.secondary" sx={{ flexShrink: 0 }}>
           {t('workbench.queueTitle')}
         </Typography>
-        <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" spacing={0.75} useFlexGap sx={{ flexShrink: 0 }}>
           <Chip
             size="small"
             label={t('workbench.filterAll')}
-            color={statusFilter === 'all' ? 'primary' : 'default'}
-            variant={statusFilter === 'all' ? 'filled' : 'outlined'}
+            color={badgeFilter === 'all' ? 'primary' : 'default'}
+            variant={badgeFilter === 'all' ? 'filled' : 'outlined'}
             onClick={() => {
-              setStatusFilter('all');
+              setBadgeFilter('all');
               setPage(0);
             }}
-            sx={{ height: 24, fontSize: '0.75rem' }}
+            sx={{ height: 20, fontSize: '0.68rem' }}
           />
-          <Chip
-            size="small"
-            label={t('workbench.filterOpen')}
-            color={statusFilter === 'OPEN' ? 'primary' : 'default'}
-            variant={statusFilter === 'OPEN' ? 'filled' : 'outlined'}
-            onClick={() => {
-              setStatusFilter('OPEN');
-              setPage(0);
-            }}
-            sx={{ height: 24, fontSize: '0.75rem' }}
-          />
-          <Chip
-            size="small"
-            label={t('workbench.filterInProgress')}
-            color={statusFilter === 'IN_PROGRESS' ? 'primary' : 'default'}
-            variant={statusFilter === 'IN_PROGRESS' ? 'filled' : 'outlined'}
-            onClick={() => {
-              setStatusFilter('IN_PROGRESS');
-              setPage(0);
-            }}
-            sx={{ height: 24, fontSize: '0.75rem' }}
-          />
+          {statusOptions.map((status) => {
+            const key = `status:${status}` as const;
+            const selected = badgeFilter === key;
+            return (
+              <Box
+                key={key}
+                onClick={() => {
+                  setBadgeFilter(key);
+                  setPage(0);
+                }}
+                sx={{
+                  cursor: 'pointer',
+                  borderRadius: 1,
+                  px: 0.25,
+                  py: 0.125,
+                  ...(selected && {
+                    outline: `1px solid ${theme.palette.primary.main}`,
+                    outlineOffset: 0,
+                  }),
+                }}
+              >
+                <StatusBadge status={status} size="sm" sx={{ height: 20, fontSize: '0.68rem' }} />
+              </Box>
+            );
+          })}
+          {severityOptions.map((severity) => {
+            const key = `severity:${severity}` as const;
+            const selected = badgeFilter === key;
+            return (
+              <Box
+                key={key}
+                onClick={() => {
+                  setBadgeFilter(key);
+                  setPage(0);
+                }}
+                sx={{
+                  cursor: 'pointer',
+                  borderRadius: 1,
+                  px: 0.25,
+                  py: 0.125,
+                  ...(selected && {
+                    outline: `1px solid ${theme.palette.primary.main}`,
+                    outlineOffset: 0,
+                  }),
+                }}
+              >
+                <SeverityBadge severity={severity as CaseListItem['severity']} size="sm" sx={{ height: 20, fontSize: '0.68rem' }} />
+              </Box>
+            );
+          })}
         </Stack>
       </Box>
 
@@ -180,23 +229,27 @@ export const WorkbenchQueuePanel = ({
           />
         )}
 
-        {!query.isLoading && !query.error && items.length === 0 && (
+        {!query.isLoading && !query.error && visibleItems.length === 0 && (
           <Box sx={{ p: 2, textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary">
-              {t('workbench.queueHint')}
+              {badgeFilter === 'all'
+                ? t('workbench.queueHint')
+                : t('workbench.noMatchingCases', '선택한 배지와 일치하는 케이스가 없습니다.')}
             </Typography>
-            <Link to={SYNAPSE_ROUTES.CASES} style={{ textDecoration: 'none' }}>
-              <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600, mt: 1 }}>
-                {t('workbench.openCases')} →
-              </Typography>
-            </Link>
+            {badgeFilter === 'all' && (
+              <Link to={SYNAPSE_ROUTES.CASES} style={{ textDecoration: 'none' }}>
+                <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600, mt: 1 }}>
+                  {t('workbench.openCases')} →
+                </Typography>
+              </Link>
+            )}
           </Box>
         )}
 
-        {!query.isLoading && !query.error && items.length > 0 && (
+        {!query.isLoading && !query.error && visibleItems.length > 0 && (
           <>
             <List disablePadding sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
-              {items.map((item) => {
+              {visibleItems.map((item) => {
                 const analyzing = isAnalyzing(item.id);
                 return (
                   <ListItemButton
@@ -231,8 +284,8 @@ export const WorkbenchQueuePanel = ({
                           />
                         ) : (
                           <>
-                            <SeverityBadge severity={item.severity} size="sm" />
-                            <StatusBadge status={item.status} size="sm" />
+                            <SeverityBadge severity={item.severity} size="sm" sx={{ fontSize: '0.68rem' }} />
+                            <StatusBadge status={item.status} size="sm" sx={{ fontSize: '0.68rem' }} />
                           </>
                         )}
                         <Typography variant="caption" color="text.secondary" noWrap>

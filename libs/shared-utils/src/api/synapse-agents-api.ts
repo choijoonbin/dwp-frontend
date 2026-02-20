@@ -46,6 +46,8 @@ export type AgentListItemDto = {
   description?: string;
   isActive: boolean;
   updatedAt?: string;
+  /** 테넌트 식별자. 0이면 전역(시스템 공통) 에이전트 */
+  tenantId?: number;
   /** 삭제 버튼 비활성화용 (기본 에이전트 등). BE 협의 */
   isDeletable?: boolean;
   /** 도구 탭 필터링용 (BE: toolIds) */
@@ -53,15 +55,33 @@ export type AgentListItemDto = {
   maxTokens?: number;
 };
 
+/** Config API tools[] 항목 (GET /config 응답) */
+export type ConfigToolDto = {
+  toolName: string;
+  description?: string;
+  schemaJson?: ToolSchemaJson;
+};
+
+/** Config API model 객체 (GET /config 응답) */
+export type ConfigModelDto = {
+  modelName?: string;
+  temperature?: number;
+  maxTokens?: number;
+};
+
 export type AgentDetailDto = {
   /** BE가 agentId(Long)만 줄 수 있음. FE는 id ?? String(agentId) 사용 */
-  id: string;
+  id?: string;
   agentId?: number;
-  name: string;
+  agentKey?: string;
+  name?: string;
+  /** 테넌트 식별자. 0이면 전역(시스템 공통) 에이전트 */
+  tenantId?: number;
   description?: string;
-  isActive: boolean;
+  isActive?: boolean;
   updatedAt?: string;
-  /** 모델 탭 */
+  /** 모델 탭 — Config API는 model 중첩 객체 사용 */
+  model?: ConfigModelDto;
   engineKey?: string;
   modelName?: string;
   temperature?: number;
@@ -72,9 +92,13 @@ export type AgentDetailDto = {
   systemPrompt?: string;
   /** BE 확장: 배포된 시스템 지침 (테스트 채팅 세션 초기화용) */
   systemInstruction?: string;
-  /** 도구 탭: 활성화된 도구 키 목록 */
+  /** 도구 탭: Config API는 tools[] 배열 (toolName, description, schemaJson) */
+  tools?: ConfigToolDto[];
+  /** @deprecated 구 API: 활성화된 도구 키 목록 */
   toolKeys?: string[];
-  /** 지식 탭: 바인딩된 지식( RAG ) ID 목록 */
+  /** 지식 탭: 바인딩된 RAG docId 목록 (docId 기반) */
+  docIds?: string[] | number[];
+  /** @deprecated BE 마이그레이션 전 호환용. docIds 우선 사용 */
   knowledgeIds?: string[];
 };
 
@@ -85,7 +109,24 @@ export type AgentConfigPayload = {
   domain?: string;
   systemInstruction: string;
   toolIds?: number[];
-  knowledgeIds?: string[];
+  /** Config API: toolNames로 도구 지정 (toolIds 대체) */
+  toolNames?: string[];
+  /** RAG 문서 docId 배열 (저장 시 docIds로 전송) */
+  docIds?: string[] | number[];
+};
+
+/** 도구 파라미터 스키마 (schema_json 내 properties 항목) */
+export type ToolParamSchema = {
+  type?: string;
+  description?: string;
+  enum?: string[];
+};
+
+/** schema_json 구조 (JSON Schema 형식) */
+export type ToolSchemaJson = {
+  type?: string;
+  properties?: Record<string, ToolParamSchema>;
+  required?: string[];
 };
 
 /**
@@ -99,6 +140,10 @@ export type AgentToolCatalogItemDto = {
   key: string;
   label: string;
   description?: string;
+  /** BE: agent_tool_inventory.schema_json — 파라미터 상세 */
+  schemaJson?: string | ToolSchemaJson;
+  /** BE: 카테고리 (금융감사/DevOps/Common 등). 없으면 key 패턴으로 추론 */
+  category?: string;
 };
 
 // ----------------------------------------------------------------------
@@ -112,9 +157,13 @@ export type AgentKnowledgeItemDto = {
   docType?: string;
   status: string;
   createdAt: string;
+  /** BE: agent_id 파라미터로 조회 시 바인딩 여부 */
+  isBound?: boolean;
 };
 
 export type AgentKnowledgeListParams = {
+  /** 필수: agent_id 없으면 isBound 플래그 미제공 */
+  agentId: string;
   page?: number;
   size?: number;
 };
@@ -133,6 +182,14 @@ export const getAgents = async (): Promise<ApiResponse<AgentListItemDto[]>> => {
 export const getAgentById = async (id: string): Promise<ApiResponse<AgentDetailDto>> => {
   const res = await axiosInstance.get<ApiResponse<AgentDetailDto>>(
     `/api/synapse/agents/${encodeURIComponent(id)}`
+  );
+  return res.data;
+};
+
+/** GET /api/synapse/agents/{id}/config — 모델 설정 로드 (maxTokens, temperature, docIds) */
+export const getAgentConfig = async (id: string): Promise<ApiResponse<AgentDetailDto>> => {
+  const res = await axiosInstance.get<ApiResponse<AgentDetailDto>>(
+    `/api/synapse/agents/${encodeURIComponent(id)}/config`
   );
   return res.data;
 };
@@ -198,15 +255,16 @@ export const getAgentToolsCatalog = async (): Promise<
 
 /**
  * GET /api/synapse/agents/knowledge — 지식 베이스 카탈로그
- * Query: page, size
+ * Query: agent_id (필수), page, size. agent_id 전달 시 응답에 isBound 플래그 포함.
  */
 export const getAgentKnowledgeCatalog = async (
-  params?: AgentKnowledgeListParams
+  params: AgentKnowledgeListParams
 ): Promise<ApiResponse<PageResponse<AgentKnowledgeItemDto>>> => {
   const query = new URLSearchParams();
-  if (params?.page != null) query.set('page', String(params.page));
-  if (params?.size != null) query.set('size', String(params.size));
-  const url = `/api/synapse/agents/knowledge${query.toString() ? `?${query.toString()}` : ''}`;
+  query.set('agent_id', params.agentId);
+  if (params.page != null) query.set('page', String(params.page));
+  if (params.size != null) query.set('size', String(params.size));
+  const url = `/api/synapse/agents/knowledge?${query.toString()}`;
   const res = await axiosInstance.get<ApiResponse<
     SpringPage<AgentKnowledgeItemDto> | PageResponse<AgentKnowledgeItemDto> | AgentKnowledgeItemDto[]
   >>(url);
@@ -216,6 +274,34 @@ export const getAgentKnowledgeCatalog = async (
   }
   if (data) return { ...res.data, data: toPageResponse(data) };
   return res.data as ApiResponse<PageResponse<AgentKnowledgeItemDto>>;
+};
+
+/**
+ * POST /api/synapse/agents/{id}/knowledge/bind — 문서 바인딩
+ * Body: { docId: number }
+ */
+export const bindAgentKnowledge = async (
+  agentId: string,
+  docId: number
+): Promise<ApiResponse<unknown>> => {
+  const res = await axiosInstance.post<ApiResponse<unknown>>(
+    `/api/synapse/agents/${encodeURIComponent(agentId)}/knowledge/bind`,
+    { docId }
+  );
+  return res.data;
+};
+
+/**
+ * DELETE /api/synapse/agents/{id}/knowledge/unbind — 문서 바인딩 해제
+ * Query: docId
+ */
+export const unbindAgentKnowledge = async (
+  agentId: string,
+  docId: number
+): Promise<ApiResponse<unknown>> => {
+  const url = `/api/synapse/agents/${encodeURIComponent(agentId)}/knowledge/unbind?docId=${encodeURIComponent(String(docId))}`;
+  const res = await axiosInstance.delete<ApiResponse<unknown>>(url);
+  return res.data;
 };
 
 // ----------------------------------------------------------------------

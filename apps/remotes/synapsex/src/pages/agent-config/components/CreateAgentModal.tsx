@@ -3,23 +3,22 @@
  * domain/modelName = app_codes (catalog.domains, catalog.models key)
  */
 
+import type { CreateAgentRequest } from '@dwp-frontend/shared-utils';
+
 import { useState, useCallback } from 'react';
-
-import Dialog from '@mui/material/Dialog';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import DialogTitle from '@mui/material/DialogTitle';
-import InputLabel from '@mui/material/InputLabel';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import FormControl from '@mui/material/FormControl';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 
-import type { CreateAgentRequest } from '@dwp-frontend/shared-utils';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControl from '@mui/material/FormControl';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
 
 const AGENT_KEY_PATTERN = /^[a-z][a-z0-9_]*$/;
 
@@ -75,7 +74,7 @@ export const CreateAgentModal = ({
     }
     setSubmitting(true);
     try {
-      const result = await onSubmit({
+      await onSubmit({
         agentKey: trimmedKey,
         name: trimmedName,
         ...(domainKey && { domain: domainKey }),
@@ -83,7 +82,6 @@ export const CreateAgentModal = ({
         temperature: 0,
       });
       handleClose();
-      return result;
     } catch (err) {
       setError(err instanceof Error ? err.message : t('agentConfig.createError'));
     } finally {

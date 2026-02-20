@@ -4,26 +4,24 @@
  * @see docs/reference/AGENT_STUDIO_CONTRACT_AND_BE_COLLABORATION.md
  */
 
-import { useRef, useState, useCallback } from 'react';
-
 import { useQuery } from '@tanstack/react-query';
-
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-
+import { useRef, useState, useCallback } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import {
+  getUserId,
   NX_API_URL,
   getTenantId,
-  getAccessToken,
   getAgentById,
+  getAccessToken,
   getAgentContext,
   getAgentSessionId,
-  getUserId,
   buildStreamRequestHeaders,
 } from '@dwp-frontend/shared-utils';
+
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 
 type SandboxChatProps = {
   selectedAgentId: string | null;
@@ -132,12 +130,13 @@ export const SandboxChat = ({ selectedAgentId, fallbackSystemPrompt, engineKey, 
     <Box
       sx={{
         position: 'fixed',
-        bottom: 24,
-        right: 24,
-        width: 380,
-        maxHeight: 420,
+        bottom: { xs: 0, sm: 24 },
+        right: { xs: 0, sm: 24 },
+        left: { xs: 0, sm: 'auto' },
+        width: { xs: '100%', sm: 380 },
+        maxHeight: { xs: '80vh', sm: 420 },
         bgcolor: 'background.paper',
-        borderRadius: 2,
+        borderRadius: { xs: '16px 16px 0 0', sm: 2 },
         boxShadow: 4,
         border: 1,
         borderColor: 'divider',
@@ -150,7 +149,7 @@ export const SandboxChat = ({ selectedAgentId, fallbackSystemPrompt, engineKey, 
       <Box sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="subtitle2">테스트 채팅 (미리보기)</Typography>
         {onClose && (
-          <IconButton size="small" onClick={onClose} aria-label="Close">
+          <IconButton size="medium" onClick={onClose} aria-label="Close" sx={{ minWidth: 44, minHeight: 44 }}>
             <Iconify icon="solar:close-circle-bold" width={20} />
           </IconButton>
         )}
@@ -174,7 +173,7 @@ export const SandboxChat = ({ selectedAgentId, fallbackSystemPrompt, engineKey, 
           disabled={loading}
           InputProps={{
             endAdornment: (
-              <IconButton size="small" onClick={send} disabled={loading || !input.trim()} sx={{ ml: 0.5 }}>
+              <IconButton size="medium" onClick={send} disabled={loading || !input.trim()} sx={{ ml: 0.5, minWidth: 44, minHeight: 44 }}>
                 <Iconify icon="solar:plain-2-bold" width={20} />
               </IconButton>
             ),

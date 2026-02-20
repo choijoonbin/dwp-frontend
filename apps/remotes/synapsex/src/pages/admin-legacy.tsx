@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify, PermissionGate } from '@dwp-frontend/design-system';
 import {
   useAdminUsersQuery,
@@ -47,6 +48,7 @@ const ADMIN_RESOURCE_KEY = getResourceKeyForPath('admin') ?? 'menu.governance-co
 // ----------------------------------------------------------------------
 
 export const SynapseAdminPage = () => {
+  const { t } = useTranslation('common');
   const queryClient = useQueryClient();
   const [tab, setTab] = useState(0);
   const [q, setQ] = useState('');
@@ -126,10 +128,10 @@ export const SynapseAdminPage = () => {
         >
           <Box>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              Admin
+              {t('adminPage.title')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Tenant setup, access control, and data protection policies.
+              {t('adminPage.description')}
             </Typography>
           </Box>
 
@@ -141,7 +143,7 @@ export const SynapseAdminPage = () => {
                 displayEmpty
               >
                 <MenuItem value="" disabled>
-                  Tenant 선택
+                  {t('adminPage.selectTenant')}
                 </MenuItem>
                 {tenants.map((t) => (
                   <MenuItem key={t.id} value={String(t.id)}>
@@ -152,7 +154,7 @@ export const SynapseAdminPage = () => {
             </FormControl>
             <PermissionGate resource={ADMIN_RESOURCE_KEY} permission="USE">
               <Button variant="contained" startIcon={<Iconify icon="solar:user-plus-bold" width={18} />}>
-                Invite User
+                {t('adminPage.inviteUser')}
               </Button>
             </PermissionGate>
           </Stack>
@@ -165,15 +167,15 @@ export const SynapseAdminPage = () => {
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Iconify icon="solar:settings-bold-duotone" width={20} sx={{ color: 'primary.main' }} />
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Administration Console
+                  {t('adminPage.adminConsole')}
                 </Typography>
               </Stack>
             }
-            subheader="RBAC + SoD, tenant/company/currency scope, and PII masking."
+            subheader={t('adminPage.adminConsoleDesc')}
             action={
               <TextField
                 size="small"
-                placeholder="Search users..."
+                placeholder={t('adminPage.searchUsers')}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 sx={{ width: 280 }}
@@ -193,19 +195,19 @@ export const SynapseAdminPage = () => {
               <Tab
                 icon={<Iconify icon="solar:users-group-rounded-bold-duotone" width={18} />}
                 iconPosition="start"
-                label="Users"
+                label={t('adminPage.tabs.users')}
                 sx={{ minHeight: 64 }}
               />
               <Tab
                 icon={<Iconify icon="solar:global-bold-duotone" width={18} />}
                 iconPosition="start"
-                label="Tenant Scope"
+                label={t('adminPage.tabs.tenantScope')}
                 sx={{ minHeight: 64 }}
               />
               <Tab
                 icon={<Iconify icon="solar:lock-password-bold-duotone" width={18} />}
                 iconPosition="start"
-                label="PII & Encryption"
+                label={t('adminPage.tabs.piiEncryption')}
                 sx={{ minHeight: 64 }}
               />
             </Tabs>
@@ -215,7 +217,7 @@ export const SynapseAdminPage = () => {
               <Box sx={{ mt: 3 }}>
                 {usersError && (
                   <Alert severity="error" sx={{ mb: 2 }}>
-                    사용자 목록을 불러오지 못했습니다. 권한(menu.admin.users VIEW) 및 API 연결을 확인하세요.
+                    {t('adminPage.loadError')}
                   </Alert>
                 )}
                 {usersLoading ? (
@@ -228,11 +230,11 @@ export const SynapseAdminPage = () => {
                       <Table>
                         <TableHead>
                           <TableRow>
-                            <TableCell sx={{ fontWeight: 600 }}>User</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Role</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>MFA</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Last login</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>{t('adminPage.table.user')}</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>{t('adminPage.table.role')}</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>{t('adminPage.table.status')}</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>{t('adminPage.table.mfa')}</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>{t('adminPage.table.lastLogin')}</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -269,7 +271,7 @@ export const SynapseAdminPage = () => {
                                   color={u.mfaEnabled ? 'success' : 'warning'}
                                   variant="soft"
                                 >
-                                  {u.mfaEnabled ? 'Enabled' : 'Off'}
+                                  {u.mfaEnabled ? t('adminPage.mfa.enabled') : t('adminPage.mfa.off')}
                                 </Label>
                               </TableCell>
                               <TableCell>
@@ -283,7 +285,7 @@ export const SynapseAdminPage = () => {
                             <TableRow>
                               <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
                                 <Typography variant="body2" color="text.secondary">
-                                  사용자가 없습니다.
+                                  {t('adminPage.noUsers')}
                                 </Typography>
                               </TableCell>
                             </TableRow>
@@ -318,28 +320,31 @@ export const SynapseAdminPage = () => {
                 >
                   <MiniStat
                     icon="solar:shield-check-bold-duotone"
-                    label="RBAC"
+                    label={t('adminPage.miniStats.rbac')}
                     value={governanceLoading ? '…' : miniStatValues.rbac}
                     isConfigured={miniStatValues.configured?.rbac}
+                    activeLabel={t('adminPage.miniStats.active')}
                   />
                   <MiniStat
                     icon="solar:key-bold-duotone"
-                    label="SoD"
+                    label={t('adminPage.miniStats.sod')}
                     value={governanceLoading ? '…' : miniStatValues.sod}
                     isConfigured={miniStatValues.configured?.sod}
+                    activeLabel={t('adminPage.miniStats.active')}
                   />
                   <MiniStat
                     icon="solar:filter-bold-duotone"
-                    label="Saved Views"
+                    label={t('adminPage.miniStats.savedViews')}
                     value={governanceLoading ? '…' : miniStatValues.savedViews}
                     isConfigured={miniStatValues.configured?.savedViews}
+                    activeLabel={t('adminPage.miniStats.active')}
                   />
                 </Box>
 
                 {/* API (ADMIN 전용): GET /api/synapse/admin/governance-config, PATCH .../governance-config/{configKey} */}
                 <Divider sx={{ my: 3 }} />
                 <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2 }}>
-                  API (ADMIN 전용) — 거버넌스 설정
+                  {t('adminPage.governance.title')}
                 </Typography>
                 {governanceLoading ? (
                   <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
@@ -352,6 +357,7 @@ export const SynapseAdminPage = () => {
                         key={item.configKey}
                         item={item}
                         isUpdating={patchGovernanceMutation.isPending}
+                        currentLabel={t('adminPage.governance.current')}
                         onValueChange={(value) => {
                           patchGovernanceMutation.mutate({
                             configKey: item.configKey,
@@ -363,7 +369,7 @@ export const SynapseAdminPage = () => {
                   </Stack>
                 ) : (
                   <Typography variant="body2" color="text.secondary">
-                    거버넌스 설정이 없습니다.
+                    {t('adminPage.governance.noConfig')}
                   </Typography>
                 )}
               </Box>
@@ -384,13 +390,13 @@ export const SynapseAdminPage = () => {
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Typography variant="caption" color="text.secondary">
                 {tenantId
-                  ? `${tenants.find((t) => String(t.id) === tenantId)?.name ?? tenantId} • `
+                  ? `${tenants.find((tn) => String(tn.id) === tenantId)?.name ?? tenantId} • `
                   : ''}
-                Admin console
+                {t('adminPage.footer.adminConsole')}
               </Typography>
               <Chip
                 icon={<Iconify icon="solar:lock-password-bold" width={14} />}
-                label="audit-ready"
+                label={t('adminPage.footer.auditReady')}
                 variant="outlined"
                 size="small"
               />
@@ -418,11 +424,13 @@ function MiniStat({
   label,
   value,
   isConfigured,
+  activeLabel,
 }: {
   icon: string;
   label: string;
   value: string;
   isConfigured?: boolean;
+  activeLabel?: string;
 }) {
   return (
     <Box
@@ -450,7 +458,7 @@ function MiniStat({
       </Stack>
       {isConfigured && (
         <Label color="success" variant="soft" sx={{ fontSize: 10 }}>
-          활성화됨
+          {activeLabel}
         </Label>
       )}
     </Box>
@@ -462,10 +470,12 @@ function GovernanceConfigRow({
   item,
   isUpdating,
   onValueChange,
+  currentLabel,
 }: {
   item: GovernanceConfigItem;
   isUpdating: boolean;
   onValueChange: (value: string) => void;
+  currentLabel: string;
 }) {
   return (
     <Box
@@ -486,7 +496,7 @@ function GovernanceConfigRow({
           {item.groupName}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {item.configKey} · 현재: {item.currentValue}
+          {item.configKey} · {currentLabel}: {item.currentValue}
         </Typography>
       </Box>
       <FormControl size="small" sx={{ minWidth: 160 }} disabled={isUpdating || !item.options?.length}>

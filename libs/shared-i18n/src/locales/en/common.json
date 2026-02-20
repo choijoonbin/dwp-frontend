@@ -1123,7 +1123,27 @@
       "cancel": "Cancel",
       "register": "Register",
       "registering": "Registering..."
+    },
+    "rechunk": {
+      "title": "Chunking Strategy Settings",
+      "currentDoc": "Document",
+      "chunks": "chunks",
+      "strategyLabel": "Chunking Strategy",
+      "chunkSize": "Chunk Size (tokens)",
+      "chunkOverlap": "Chunk Overlap (tokens)",
+      "processing": "Re-chunking in progress... Please wait.",
+      "apply": "Apply Re-chunking",
+      "success": "Re-chunking has started. It may take a few minutes to complete.",
+      "failed": "Re-chunking failed.",
+      "warning": "Changing the chunking strategy will delete existing chunks and regenerate with the new strategy. This may temporarily affect ongoing searches."
     }
+  },
+  "evidence": {
+    "clickToNavigate": "Click to navigate to source location",
+    "hierarchyChapter": "Chapter",
+    "hierarchyArticle": "Article",
+    "hierarchyClause": "Clause",
+    "hierarchyParagraph": "Paragraph"
   },
   "policies": {
     "title": "Policy Profiles",
@@ -1444,9 +1464,12 @@
     "deleteSubmitting": "Deleting...",
     "deleteSuccess": "Agent has been deleted.",
     "deleteError": "Delete failed.",
+    "tenantId": "Tenant ID: {{id}}",
+    "systemAgentBadge": "System Agent",
     "model": "Model",
     "prompts": "Prompts",
     "tools": "Tools",
+    "knowledgeTab": "Knowledge",
     "modelSettings": "Model Settings",
     "modelSettingsDesc": "Safe defaults for enterprise runtime.",
     "providerModel": "Provider / Model",
@@ -1485,6 +1508,48 @@
       "notify_email": "Notify: Email",
       "notify_slack": "Notify: Slack / Teams",
       "create_case": "Ops: Create Case"
+    },
+    "openAgentList": "Open agent list",
+    "selectAgentPrompt": "Select an agent to configure",
+    "modelSpecTitle": "Agent Spec",
+    "modelSpecSubheader": "Current configuration summary",
+    "creativeLevel": "Creative Level",
+    "maxResponse": "Max Response",
+    "contextWindowRatio": "{{percent}}% of context window",
+    "knowledge": {
+      "title": "Knowledge Base (RAG)",
+      "subheader": "Select RAG documents to bind to the agent. Uploaded docs are bound immediately.",
+      "upload": "Upload knowledge",
+      "loading": "Loading...",
+      "empty": "No knowledge base documents yet.",
+      "summaryTitle": "Knowledge Summary",
+      "summarySubheader": "Binding status and document stats",
+      "bound": "Bound knowledge",
+      "byType": "By document type",
+      "keywords": "Top keywords",
+      "none": "None",
+      "noKeywords": "No keywords",
+      "boundStatus": "Bound",
+      "unboundStatus": "Unbound",
+      "status": {
+        "ready": "Ready",
+        "processing": "Processing",
+        "error": "Error",
+        "pending": "Pending"
+      },
+      "toasts": {
+        "registeredAndBound": "Document registered and bound to the agent.",
+        "bound": "Document bound.",
+        "unbound": "Binding removed."
+      },
+      "errors": {
+        "registerFailed": "Document registration failed.",
+        "missingDocId": "Missing docId after registration.",
+        "invalidDocId": "Invalid docId format.",
+        "bindFailed": "Binding failed.",
+        "unbindFailed": "Failed to unbind.",
+        "registerBindFailed": "Registration or binding failed."
+      }
     },
     "promptPurposes": {
       "case_triage_v1": "Convert raw signals into an explainable case summary with citations",
@@ -1685,10 +1750,40 @@
   },
   "menu": {
     "workbench": "Integrated Workbench",
+    "autonomous-operations": {
+      "_label": "Autonomous Operations",
+      "cases": "Case Management",
+      "anomalies": "Anomaly Detection",
+      "optimization": "Optimization",
+      "actions": "Action Execution",
+      "archive": "Action Archive"
+    },
+    "master-data-history": {
+      "_label": "Master Data & History",
+      "documents": "Documents",
+      "open-items": "Open Items",
+      "entities": "Entities",
+      "lineage": "Data Lineage"
+    },
+    "knowledge-policy": {
+      "_label": "Knowledge & Policy",
+      "rag": "RAG Documents",
+      "policies": "Policies & Thresholds",
+      "guardrails": "Guardrails",
+      "dictionary": "Dictionary",
+      "feedback": "Feedback Loop"
+    },
+    "reconciliation-audit": {
+      "_label": "Reconciliation & Audit",
+      "reconciliation": "Reconciliation",
+      "action-recon": "Action Reconciliation",
+      "audit": "Audit Trail",
+      "analytics": "Analytics & Reports"
+    },
     "governance-config": {
       "_label": "Governance & Config",
       "admin": "System Admin",
-      "agent-config": "Agent Config",
+      "agent-config": "Agent Studio",
       "demo-control": "Demo Data Control",
       "governance": "Governance",
       "integrations": "Integrations & Data Ops"
@@ -1750,5 +1845,47 @@
     "intensityTooltipWarning": "Amounts near policy limits will be generated.",
     "intensityTooltipViolation": "Amounts exceeding policy limits will be generated (e.g. meal over 30,000 KRW, entertainment over 50,000 KRW).",
     "loadingWallet": "Aura is loading scenario data into the virtual wallet..."
+  },
+  "adminPage": {
+    "title": "System Admin",
+    "description": "Tenant setup, access control, and data protection policies.",
+    "selectTenant": "Select Tenant",
+    "inviteUser": "Invite User",
+    "adminConsole": "Administration Console",
+    "adminConsoleDesc": "RBAC + SoD, tenant/company/currency scope, and PII masking.",
+    "searchUsers": "Search users...",
+    "tabs": {
+      "users": "Users",
+      "tenantScope": "Tenant Scope",
+      "piiEncryption": "PII & Encryption"
+    },
+    "table": {
+      "user": "User",
+      "role": "Role",
+      "status": "Status",
+      "mfa": "MFA",
+      "lastLogin": "Last login"
+    },
+    "mfa": {
+      "enabled": "Enabled",
+      "off": "Off"
+    },
+    "noUsers": "No users found.",
+    "loadError": "Failed to load user list. Please check permissions (menu.admin.users VIEW) and API connection.",
+    "miniStats": {
+      "rbac": "RBAC",
+      "sod": "SoD",
+      "savedViews": "Saved Views",
+      "active": "Active"
+    },
+    "governance": {
+      "title": "API (Admin Only) — Governance Config",
+      "noConfig": "No governance configuration.",
+      "current": "Current"
+    },
+    "footer": {
+      "adminConsole": "Admin console",
+      "auditReady": "audit-ready"
+    }
   }
 }

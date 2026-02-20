@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-
 import { getAgentCatalog } from '@dwp-frontend/shared-utils';
 
 const CATALOG_QUERY_KEY = ['synapse', 'agents', 'catalog'];

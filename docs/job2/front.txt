@@ -1,0 +1,279 @@
+[TypeScript] No overload matches this call. Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error. Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'. Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error. Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'. Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentModelTab.tsx:115:10
+    113 |       <Grid container spacing={3}>
+    114 |         {/* 좌측: Configuration (7) */}
+  > 115 |         <Grid item xs={12} md={7}>
+        |          ^^^^
+    116 |           <Stack spacing={3}>
+    117 |             {/* 모델 & 도메인 섹션 */}
+    118 |             <Card
+[TypeScript] No overload matches this call. Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error. Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'. Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error. Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'. Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentModelTab.tsx:313:10
+    311 |
+    312 |         {/* 우측: Configuration Spec Card (5) */}
+  > 313 |         <Grid item xs={12} md={5}>
+        |          ^^^^
+    314 |           <Card
+    315 |             variant="outlined"
+    316 |             sx={{
+[ESLint] Extra spacing between "@tanstack/react-query" and "@dwp-frontend/shared-utils" objects. (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/hooks/use-agent-catalog.ts:3:1
+    1 | import { useQuery } from '@tanstack/react-query';
+    2 |
+  > 3 | import { getAgentCatalog } from '@dwp-frontend/shared-utils';
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4 |
+    5 | const CATALOG_QUERY_KEY = ['synapse', 'agents', 'catalog'];
+    6 |
+[ESLint] Expected "@dwp-frontend/design-system" (external) to come before "@mui/material/CardContent" (custom-mui). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentKnowledgeTab.tsx:17:1
+    15 | import CardContent from '@mui/material/CardContent';
+    16 |
+  > 17 | import { Iconify } from '@dwp-frontend/design-system';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    18 | import { getRagDocuments, type RagDocumentListDto } from '@dwp-frontend/shared-utils';
+    19 |
+    20 | import type { CatalogCodeItemDto } from '@dwp-frontend/shared-utils';
+[ESLint] Expected "@dwp-frontend/shared-utils" (type) to come before "@dwp-frontend/shared-utils" (external). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentKnowledgeTab.tsx:20:1
+    18 | import { getRagDocuments, type RagDocumentListDto } from '@dwp-frontend/shared-utils';
+    19 |
+  > 20 | import type { CatalogCodeItemDto } from '@dwp-frontend/shared-utils';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    21 |
+    22 | type AgentKnowledgeTabProps = {
+    23 |   /** key=서버값, value=UI 노출값. 문서 타입 표기에 사용 */
+[ESLint] Expected "@mui/material/Stack" to come before "@mui/material/Slider". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentModelTab.tsx:4:1
+    2 | import Card from '@mui/material/Card';
+    3 | import Slider from '@mui/material/Slider';
+  > 4 | import Stack from '@mui/material/Stack';
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5 | import Radio from '@mui/material/Radio';
+    6 | import Select from '@mui/material/Select';
+    7 | import MenuItem from '@mui/material/MenuItem';
+[ESLint] Expected "@mui/material/RadioGroup" to come before "@mui/material/FormControl". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentModelTab.tsx:13:1
+    11 | import CardContent from '@mui/material/CardContent';
+    12 | import FormControl from '@mui/material/FormControl';
+  > 13 | import RadioGroup from '@mui/material/RadioGroup';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    14 | import FormControlLabel from '@mui/material/FormControlLabel';
+    15 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+    16 |
+[ESLint] Expected "@dwp-frontend/shared-i18n" (external) to come before "@mui/material/FormControlLabel" (custom-mui). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentModelTab.tsx:15:1
+    13 | import RadioGroup from '@mui/material/RadioGroup';
+    14 | import FormControlLabel from '@mui/material/FormControlLabel';
+  > 15 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    16 |
+    17 | type AgentModelTabProps = {
+    18 |   engines: { key: string; label: string }[];
+[ESLint] Expected "@mui/material/TextField" to come before "@mui/material/Typography". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentPromptTab.tsx:11:1
+     9 | import Stack from '@mui/material/Stack';
+    10 | import Typography from '@mui/material/Typography';
+  > 11 | import TextField from '@mui/material/TextField';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    12 | import CardHeader from '@mui/material/CardHeader';
+    13 | import CardContent from '@mui/material/CardContent';
+    14 |
+[ESLint] Expected "@dwp-frontend/shared-i18n" (external) to come before "@mui/material/CardContent" (custom-mui). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentPromptTab.tsx:15:1
+    13 | import CardContent from '@mui/material/CardContent';
+    14 |
+  > 15 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    16 |
+    17 | /** Aura 엔진에서 실제 치환하는 변수 (front.txt Aura 답변 기준) */
+    18 | const RUNTIME_VARIABLE_GUIDE = [
+[ESLint] Expected "@dwp-frontend/design-system" (external) to come before "@mui/material/IconButton" (custom-mui). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentSidebar.tsx:9:1
+     7 | import IconButton from '@mui/material/IconButton';
+     8 |
+  >  9 | import { Iconify } from '@dwp-frontend/design-system';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    10 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+    11 |
+    12 | import type { AgentListItemDto } from '@dwp-frontend/shared-utils';
+[ESLint] Expected "@dwp-frontend/shared-utils" (type) to come before "@dwp-frontend/shared-i18n" (external). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentSidebar.tsx:12:1
+    10 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+    11 |
+  > 12 | import type { AgentListItemDto } from '@dwp-frontend/shared-utils';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    13 |
+    14 | type AgentSidebarProps = {
+    15 |   agents: AgentListItemDto[];
+[ESLint] Expected "@dwp-frontend/shared-i18n" (external) to come before "@mui/material/FormControlLabel" (custom-mui). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentToolsTab.tsx:14:1
+    12 | import FormControlLabel from '@mui/material/FormControlLabel';
+    13 |
+  > 14 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    15 |
+    16 | import type { AgentToolCatalogItemDto } from '@dwp-frontend/shared-utils';
+    17 |
+[ESLint] Expected "@dwp-frontend/shared-utils" (type) to come before "@dwp-frontend/shared-i18n" (external). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/AgentToolsTab.tsx:16:1
+    14 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+    15 |
+  > 16 | import type { AgentToolCatalogItemDto } from '@dwp-frontend/shared-utils';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    17 |
+    18 | type AgentToolsTabProps = {
+    19 |   toolList: AgentToolCatalogItemDto[];
+[ESLint] Expected "@mui/material/Stack" to come before "@mui/material/Dialog". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/CreateAgentModal.tsx:9:1
+     7 |
+     8 | import Dialog from '@mui/material/Dialog';
+  >  9 | import Stack from '@mui/material/Stack';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    10 | import Button from '@mui/material/Button';
+    11 | import TextField from '@mui/material/TextField';
+    12 | import DialogTitle from '@mui/material/DialogTitle';
+[ESLint] Expected "@mui/material/InputLabel" to come before "@mui/material/DialogTitle". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/CreateAgentModal.tsx:13:1
+    11 | import TextField from '@mui/material/TextField';
+    12 | import DialogTitle from '@mui/material/DialogTitle';
+  > 13 | import InputLabel from '@mui/material/InputLabel';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    14 | import DialogActions from '@mui/material/DialogActions';
+    15 | import DialogContent from '@mui/material/DialogContent';
+    16 | import FormControl from '@mui/material/FormControl';
+[ESLint] Expected "@mui/material/FormControl" to come before "@mui/material/DialogContent". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/CreateAgentModal.tsx:16:1
+    14 | import DialogActions from '@mui/material/DialogActions';
+    15 | import DialogContent from '@mui/material/DialogContent';
+  > 16 | import FormControl from '@mui/material/FormControl';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    17 | import MenuItem from '@mui/material/MenuItem';
+    18 | import Select from '@mui/material/Select';
+    19 |
+[ESLint] Expected "@mui/material/MenuItem" to come before "@mui/material/FormControl". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/CreateAgentModal.tsx:17:1
+    15 | import DialogContent from '@mui/material/DialogContent';
+    16 | import FormControl from '@mui/material/FormControl';
+  > 17 | import MenuItem from '@mui/material/MenuItem';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    18 | import Select from '@mui/material/Select';
+    19 |
+    20 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+[ESLint] Expected "@mui/material/Select" to come before "@mui/material/MenuItem". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/CreateAgentModal.tsx:18:1
+    16 | import FormControl from '@mui/material/FormControl';
+    17 | import MenuItem from '@mui/material/MenuItem';
+  > 18 | import Select from '@mui/material/Select';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    19 |
+    20 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+    21 |
+[ESLint] Expected "@dwp-frontend/shared-i18n" (external) to come before "@mui/material/Select" (custom-mui). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/CreateAgentModal.tsx:20:1
+    18 | import Select from '@mui/material/Select';
+    19 |
+  > 20 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    21 |
+    22 | import type { CreateAgentRequest } from '@dwp-frontend/shared-utils';
+    23 |
+[ESLint] Expected "@dwp-frontend/shared-utils" (type) to come before "@dwp-frontend/shared-i18n" (external). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/CreateAgentModal.tsx:22:1
+    20 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+    21 |
+  > 22 | import type { CreateAgentRequest } from '@dwp-frontend/shared-utils';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    23 |
+    24 | const AGENT_KEY_PATTERN = /^[a-z][a-z0-9_]*$/;
+    25 |
+[ESLint] Async arrow function expected no return value. (consistent-return)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/CreateAgentModal.tsx:86:7
+    84 |       });
+    85 |       handleClose();
+  > 86 |       return result;
+       |       ^^^^^^^^^^^^^^
+    87 |     } catch (err) {
+    88 |       setError(err instanceof Error ? err.message : t('agentConfig.createError'));
+    89 |     } finally {
+[ESLint] Expected "@tanstack/react-query" to come before "react". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/SandboxChat.tsx:9:1
+     7 | import { useRef, useState, useCallback } from 'react';
+     8 |
+  >  9 | import { useQuery } from '@tanstack/react-query';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    10 |
+    11 | import Box from '@mui/material/Box';
+    12 | import IconButton from '@mui/material/IconButton';
+[ESLint] Extra spacing between "react" and "@tanstack/react-query" objects. (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/SandboxChat.tsx:9:1
+     7 | import { useRef, useState, useCallback } from 'react';
+     8 |
+  >  9 | import { useQuery } from '@tanstack/react-query';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    10 |
+    11 | import Box from '@mui/material/Box';
+    12 | import IconButton from '@mui/material/IconButton';
+[ESLint] Expected "@mui/material/TextField" to come before "@mui/material/IconButton". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/SandboxChat.tsx:13:1
+    11 | import Box from '@mui/material/Box';
+    12 | import IconButton from '@mui/material/IconButton';
+  > 13 | import TextField from '@mui/material/TextField';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    14 | import Typography from '@mui/material/Typography';
+    15 |
+    16 | import { Iconify } from '@dwp-frontend/design-system';
+[ESLint] Expected "@dwp-frontend/design-system" (external) to come before "@mui/material/Typography" (custom-mui). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/components/SandboxChat.tsx:16:1
+    14 | import Typography from '@mui/material/Typography';
+    15 |
+  > 16 | import { Iconify } from '@dwp-frontend/design-system';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    17 | import {
+    18 |   NX_API_URL,
+    19 |   getTenantId,
+[ESLint] Expected "@dwp-frontend/shared-utils" (type) to come before "react" (external). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/hooks/use-agent-config-state.ts:8:1
+     6 | import { useState, useCallback } from 'react';
+     7 |
+  >  8 | import type { AgentDetailDto } from '@dwp-frontend/shared-utils';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     9 |
+    10 | /** Aura 런타임 치환: {context}, {code} 만 사용. {case_json} 등은 치환되지 않음. */
+    11 | const DEFAULT_SYSTEM_PROMPT = `SYSTEM: You are a safe enterprise finance agent.
+[ESLint] Extra spacing between "react" and "@tanstack/react-query" objects. (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/index.tsx:9:1
+     7 | import { useState, useEffect, useCallback } from 'react';
+     8 |
+  >  9 | import { useQuery, useQueryClient } from '@tanstack/react-query';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    10 |
+    11 | import Box from '@mui/material/Box';
+    12 | import Tab from '@mui/material/Tab';
+[ESLint] Expected "@dwp-frontend/design-system" (external) to come before "@mui/material/CircularProgress" (custom-mui). (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/agent-config/index.tsx:25:1
+    23 | import CircularProgress from '@mui/material/CircularProgress';
+    24 |
+  > 25 | import { Iconify } from '@dwp-frontend/design-system';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    26 | import { useTranslation } from '@dwp-frontend/shared-i18n';
+    27 | import {
+    28 |   showToast,
+[ESLint] Expected "@mui/material/Tooltip" to come before "@mui/material/DialogTitle". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pages/rag/components/register-rag-document-modal.tsx:22:1
+    20 | import InputLabel from '@mui/material/InputLabel';
+    21 | import DialogTitle from '@mui/material/DialogTitle';
+  > 22 | import Tooltip from '@mui/material/Tooltip';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    23 | import FormControl from '@mui/material/FormControl';
+    24 | import DialogActions from '@mui/material/DialogActions';
+    25 | import DialogContent from '@mui/material/DialogContent';
+[ESLint] Expected "./pages/demo-control" to come before "./pages/integrations". (perfectionist/sort-imports)
+/Users/joonbinchoi/Work/dwp/dwp-frontend/apps/remotes/synapsex/src/pathname-to-page.tsx:37:1
+    35 | import { SynapseAdminPage } from './pages/admin-legacy';
+    36 | import { IntegrationsPage } from './pages/integrations';
+  > 37 | import { DemoControlPage } from './pages/demo-control';
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    38 | import { OptimizationPage } from './pages/optimization';
+    39 | import { EntityDetailPage } from './pages/entity-detail';
+    40 | import { ReconciliationPage } from './pages/reconciliation';
