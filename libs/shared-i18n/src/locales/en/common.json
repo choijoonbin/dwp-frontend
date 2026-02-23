@@ -353,6 +353,32 @@
     "keyFactors": "Key Factors",
     "evidence": "Evidence",
     "ragRefs": "RAG references",
+    "reasoningPathEmpty": "No reasoning path yet. Run analysis to see step-by-step thinking.",
+    "reasoningAnalyzing": "Aura is analyzing...",
+    "stepShort": "Step {{n}}",
+    "reasoningStep": {
+      "hypothesis": "Hypothesis",
+      "investigation": "Investigation",
+      "analysis": "Analysis",
+      "conclusion": "Conclusion",
+      "planning": "Planning",
+      "execution": "Execution",
+      "verification": "Verification",
+      "reasoning": "Reasoning"
+    },
+    "insight": {
+      "riskGauge": "Violation probability",
+      "financialImpact": "Financial impact",
+      "recommendAction": "Action required: Request explanation",
+      "recommendReview": "Review recommended",
+      "recommendMonitor": "Monitor"
+    },
+    "evidenceGallery": {
+      "title": "Evidence Gallery",
+      "fact": "Fact (Voucher)",
+      "rule": "Rule",
+      "link": "Link"
+    },
     "scoreShort": "score {{value}}",
     "confidenceBreakdown": "Confidence breakdown by factors",
     "noConfidenceData": "No confidence data available",
@@ -587,7 +613,9 @@
     "detailLoading": "Loading thought chain for this case...",
     "streamTitle": "Agent stream",
     "streamHint": "Real-time agent activity will appear here when a case is in analysis.",
+    "streamConnecting": "Connecting to live stream...",
     "streamLoading": "Loading agent activity...",
+    "autoStartedBanner": "Agent has started an automatic review.",
     "tabQueue": "Queue",
     "tabDetail": "Detail",
     "tabStream": "Stream",
@@ -1134,6 +1162,7 @@
       "processing": "Re-chunking in progress... Please wait.",
       "apply": "Apply Re-chunking",
       "success": "Re-chunking has started. It may take a few minutes to complete.",
+      "successComplete": "Re-chunking completed.",
       "failed": "Re-chunking failed.",
       "warning": "Changing the chunking strategy will delete existing chunks and regenerate with the new strategy. This may temporarily affect ongoing searches."
     }

@@ -1,7 +1,7 @@
 /**
- * RAG Document Detail — 문서 메타정보 + 청크 목록 + 문서 내 검색
+ * RAG Document Detail — 문서 메타정보 + 청크 목록 + 문서 내 검색 + 재청킹
  * 열기 버튼으로 진입하는 화면: 등록된 문서의 상세(제목·상태·소스유형·docId)와
- * RAG 인덱싱된 청크(본문 조각) 목록을 보여주며, 문서 내 검색으로 청크를 필터링할 수 있음.
+ * RAG 인덱싱된 청크(본문 조각) 목록을 보여주며, 재청킹 실행 시 상세 데이터를 refetch하여 새 청크를 반영함.
  */
 
 import { useMemo, useState } from 'react';
@@ -21,6 +21,8 @@ import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
 
 import { SYNAPSE_ROUTES } from '../../routes';
+import { ReChunkControl } from './components/rechunk-control';
+import { useAgentCatalog } from '../../hooks/use-agent-catalog';
 
 const statusMeta: Record<string, { icon: string; label: string; color: 'success' | 'warning' | 'error' | 'default' }> = {
   indexed: { icon: 'solar:check-circle-bold', label: 'Indexed', color: 'success' },
@@ -67,7 +69,16 @@ export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => 
   const [searchWithin, setSearchWithin] = useState('');
 
   const effectiveDocId = docId?.trim() || undefined;
-  const { data: doc, isLoading, error } = useRagDocumentDetailQuery(effectiveDocId);
+  const { data: doc, isLoading, error, refetch } = useRagDocumentDetailQuery(effectiveDocId);
+  const { docTypes: catalogDocTypes } = useAgentCatalog();
+  const chunkingStrategies = useMemo(
+    () => catalogDocTypes.map((d) => ({ key: d.key, value: d.value })),
+    [catalogDocTypes]
+  );
+  const currentChunkingStrategy = useMemo(() => {
+    if (!doc?.chunkingStrategy) return undefined;
+    return chunkingStrategies.some((s) => s.key === doc.chunkingStrategy) ? doc.chunkingStrategy : undefined;
+  }, [doc?.chunkingStrategy, chunkingStrategies]);
 
   const chunks = useMemo(() => doc?.chunks ?? [], [doc?.chunks]);
   const filteredChunks = useMemo(() => {
@@ -135,6 +146,16 @@ export const RagDocumentDetailPage = ({ docId }: RagDocumentDetailPageProps) => 
             </Box>
           </Stack>
         </Stack>
+
+        {/* Re-chunking: catalog docTypes(key/value)로 청킹 전략 Select 표시, 하드코딩 없음 */}
+        <ReChunkControl
+          docId={doc.docId}
+          docTitle={doc.title}
+          chunkingStrategies={chunkingStrategies}
+          currentStrategy={currentChunkingStrategy}
+          currentChunkCount={doc.chunks?.length}
+          onReChunkComplete={() => refetch()}
+        />
 
         {/* Search within doc */}
         <Card variant="outlined">

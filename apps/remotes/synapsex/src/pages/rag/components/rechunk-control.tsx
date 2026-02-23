@@ -1,18 +1,12 @@
 /**
  * Re-Chunking Control
- * 관리자가 문서별로 청킹 전략을 변경하고 재벡터화할 수 있는 컨트롤러
+ * 청킹 전략 옵션은 GET /api/synapse/agents/catalog docTypes (key/value/description) 사용.
  */
-
-import { useState, useCallback } from 'react';
 
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import {
-  reChunkRagDocument,
-  CHUNKING_STRATEGY_INFO,
-  type ChunkingStrategy,
-  type ReChunkRequest,
-} from '@dwp-frontend/shared-utils';
+import { useRef, useState, useEffect, useCallback } from 'react';
+import { reChunkRagDocument, type ReChunkRequest, getRagDocumentChunkingStatus } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -28,36 +22,67 @@ import Typography from '@mui/material/Typography';
 import InputLabel from '@mui/material/InputLabel';
 import CardContent from '@mui/material/CardContent';
 import FormControl from '@mui/material/FormControl';
-import LinearProgress from '@mui/material/LinearProgress';
 import { alpha, useTheme } from '@mui/material/styles';
+import LinearProgress from '@mui/material/LinearProgress';
 
 // ----------------------------------------------------------------------
+
+export type ChunkingStrategyOption = { key: string; value: string; description?: string };
 
 interface ReChunkControlProps {
   docId: string;
   docTitle: string;
-  currentStrategy?: ChunkingStrategy;
+  /** catalog docTypes (key=전략 키, value=표시명, description=선택 시 설명) */
+  chunkingStrategies: ChunkingStrategyOption[];
+  /** 현재 적용된 전략 키 (문서 상세 API에서 오는 값) */
+  currentStrategy?: string;
   currentChunkCount?: number;
   onReChunkComplete?: () => void;
 }
 
-const STRATEGIES: ChunkingStrategy[] = ['REGULATION', 'MANUAL', 'POLICY', 'GENERAL', 'SEMANTIC'];
+const strategyLabel = (strategies: ChunkingStrategyOption[], key: string | undefined): string =>
+  key ? (strategies.find((s) => s.key === key)?.value ?? key) : '—';
+
+/** 청킹 상태가 "진행 중"이면 true. 그 외(COMPLETED, indexed 등)는 완료로 간주 */
+const isChunkingInProgress = (status: string | undefined): boolean => {
+  const u = (status ?? '').toUpperCase();
+  return ['PROCESSING', 'PENDING', 'RUNNING'].includes(u) || u === 'INDEXING';
+};
 
 export function ReChunkControl({
   docId,
   docTitle,
-  currentStrategy = 'GENERAL',
+  chunkingStrategies,
+  currentStrategy,
   currentChunkCount,
   onReChunkComplete,
 }: ReChunkControlProps) {
   const theme = useTheme();
   const { t } = useTranslation('common');
 
-  const [selectedStrategy, setSelectedStrategy] = useState<ChunkingStrategy>(currentStrategy);
+  const firstKey = chunkingStrategies[0]?.key ?? '';
+  const [selectedStrategy, setSelectedStrategy] = useState<string>(currentStrategy ?? firstKey);
   const [chunkSize, setChunkSize] = useState(512);
   const [chunkOverlap, setChunkOverlap] = useState(50);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<{ status: 'success' | 'error'; message: string } | null>(null);
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (chunkingStrategies.length > 0 && !chunkingStrategies.some((s) => s.key === selectedStrategy)) {
+      setSelectedStrategy(chunkingStrategies[0].key);
+    }
+  }, [chunkingStrategies, selectedStrategy]);
 
   const handleReChunk = useCallback(async () => {
     setIsProcessing(true);
@@ -82,6 +107,41 @@ export function ReChunkControl({
           }),
         });
         onReChunkComplete?.();
+
+        // 완료 감지: chunking-status 폴링 후 완료 시 메시지를 "재청킹이 완료되었습니다"로 변경
+        if (pollIntervalRef.current) {
+          clearInterval(pollIntervalRef.current);
+          pollIntervalRef.current = null;
+        }
+        const POLL_MS = 3000;
+        const MAX_POLL_MS = 10 * 60 * 1000;
+        const startedAt = Date.now();
+        pollIntervalRef.current = setInterval(async () => {
+          if (Date.now() - startedAt > MAX_POLL_MS) {
+            if (pollIntervalRef.current) {
+              clearInterval(pollIntervalRef.current);
+              pollIntervalRef.current = null;
+            }
+            return;
+          }
+          try {
+            const statusRes = await getRagDocumentChunkingStatus(docId);
+            const status = statusRes?.data?.status ?? statusRes?.status;
+            if (!isChunkingInProgress(status)) {
+              if (pollIntervalRef.current) {
+                clearInterval(pollIntervalRef.current);
+                pollIntervalRef.current = null;
+              }
+              setResult({
+                status: 'success',
+                message: t('rag.rechunk.successComplete', { defaultValue: '재청킹이 완료되었습니다.' }),
+              });
+              onReChunkComplete?.();
+            }
+          } catch {
+            // 폴링 중 오류는 무시, 다음 주기에 재시도
+          }
+        }, POLL_MS);
       } else {
         setResult({
           status: 'error',
@@ -98,14 +158,12 @@ export function ReChunkControl({
     }
   }, [docId, selectedStrategy, chunkSize, chunkOverlap, onReChunkComplete, t]);
 
-  const strategyInfo = CHUNKING_STRATEGY_INFO[selectedStrategy];
-  const isChanged = selectedStrategy !== currentStrategy;
+  const isChanged = currentStrategy === undefined || selectedStrategy !== currentStrategy;
 
   return (
     <Card variant="outlined">
       <CardContent>
         <Stack spacing={2.5}>
-          {/* Header */}
           <Stack direction="row" spacing={1} alignItems="center">
             <Iconify icon="solar:settings-bold-duotone" width={20} sx={{ color: 'primary.main' }} />
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
@@ -113,7 +171,6 @@ export function ReChunkControl({
             </Typography>
           </Stack>
 
-          {/* Current Status */}
           <Box
             sx={{
               p: 1.5,
@@ -130,7 +187,7 @@ export function ReChunkControl({
                 {docTitle}
               </Typography>
               <Chip
-                label={CHUNKING_STRATEGY_INFO[currentStrategy]?.label || currentStrategy}
+                label={strategyLabel(chunkingStrategies, currentStrategy)}
                 size="small"
                 color="info"
                 variant="filled"
@@ -143,38 +200,30 @@ export function ReChunkControl({
             </Stack>
           </Box>
 
-          {/* Strategy Selector */}
           <FormControl fullWidth size="small">
             <InputLabel>{t('rag.rechunk.strategyLabel', { defaultValue: '청킹 전략' })}</InputLabel>
             <Select
               value={selectedStrategy}
               label={t('rag.rechunk.strategyLabel', { defaultValue: '청킹 전략' })}
-              onChange={(e) => setSelectedStrategy(e.target.value as ChunkingStrategy)}
+              onChange={(e) => setSelectedStrategy(e.target.value)}
               disabled={isProcessing}
             >
-              {STRATEGIES.map((strategy) => (
-                <MenuItem key={strategy} value={strategy}>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {CHUNKING_STRATEGY_INFO[strategy].label}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      — {CHUNKING_STRATEGY_INFO[strategy].description}
-                    </Typography>
-                  </Stack>
+              {chunkingStrategies.map((s) => (
+                <MenuItem key={s.key} value={s.key}>
+                  {s.value}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+          {(() => {
+            const selected = chunkingStrategies.find((s) => s.key === selectedStrategy);
+            return selected?.description ? (
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: -1 }}>
+                {selected.description}
+              </Typography>
+            ) : null;
+          })()}
 
-          {/* Strategy Description */}
-          {strategyInfo && (
-            <Alert severity="info" icon={<Iconify icon="solar:info-circle-bold" width={20} />}>
-              <Typography variant="body2">{strategyInfo.description}</Typography>
-            </Alert>
-          )}
-
-          {/* GENERAL 전략 추가 옵션 */}
           {selectedStrategy === 'GENERAL' && (
             <Box sx={{ px: 1 }}>
               <Stack spacing={2}>
@@ -210,7 +259,6 @@ export function ReChunkControl({
             </Box>
           )}
 
-          {/* Processing Indicator */}
           {isProcessing && (
             <Box>
               <LinearProgress />
@@ -220,27 +268,24 @@ export function ReChunkControl({
             </Box>
           )}
 
-          {/* Result */}
           {result && (
             <Alert severity={result.status === 'success' ? 'success' : 'error'}>
               {result.message}
             </Alert>
           )}
 
-          {/* Actions */}
           <Stack direction="row" spacing={1} justifyContent="flex-end">
             <Button
               variant="contained"
               color="primary"
               startIcon={<Iconify icon="solar:refresh-bold" width={18} />}
               onClick={handleReChunk}
-              disabled={isProcessing || !isChanged}
+              disabled={isProcessing || !isChanged || chunkingStrategies.length === 0}
             >
               {t('rag.rechunk.apply', { defaultValue: '재청킹 실행' })}
             </Button>
           </Stack>
 
-          {/* Warning */}
           {isChanged && (
             <Alert severity="warning" icon={<Iconify icon="solar:danger-triangle-bold" width={20} />}>
               <Typography variant="caption">

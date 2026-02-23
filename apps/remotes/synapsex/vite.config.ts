@@ -15,6 +15,8 @@ export default defineConfig(({ mode }) => {
 
   return {
     root: path.resolve(__dirname),
+    // Keep each remote on its own pre-bundle cache to prevent "Outdated Optimize Dep".
+    cacheDir: path.resolve(workspaceRoot, 'node_modules/.vite/remote-synapsex'),
     publicDir: path.resolve(__dirname, '../../../public'),
     plugins: [react()],
     define: {

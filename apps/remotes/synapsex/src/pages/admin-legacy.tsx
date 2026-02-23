@@ -145,9 +145,9 @@ export const SynapseAdminPage = () => {
                 <MenuItem value="" disabled>
                   {t('adminPage.selectTenant')}
                 </MenuItem>
-                {tenants.map((t) => (
-                  <MenuItem key={t.id} value={String(t.id)}>
-                    {t.name} {t.domain ? `(${t.domain})` : `(${t.id})`}
+                {tenants.map((tenant) => (
+                  <MenuItem key={tenant.id} value={String(tenant.id)}>
+                    {tenant.name} {tenant.domain ? `(${tenant.domain})` : `(${tenant.id})`}
                   </MenuItem>
                 ))}
               </Select>

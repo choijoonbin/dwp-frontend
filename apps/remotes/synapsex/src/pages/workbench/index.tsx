@@ -11,10 +11,11 @@
 import type { Theme } from '@mui/material/styles';
 
 import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
-import { useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
 import { useAuraStore } from '@dwp-frontend/shared-utils/aura/use-aura-store';
+import { useAnalysisRunStream, useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -69,6 +70,29 @@ export const WorkbenchPage = () => {
   const [knowledgePolicyModalOpen, setKnowledgePolicyModalOpen] = useState(false);
   const [knowledgePolicyTab, setKnowledgePolicyTab] = useState<'rag' | 'policies'>('rag');
 
+  const queryClient = useQueryClient();
+  const { startStream } = useAnalysisRunStream();
+  const pendingAutoStream = useWorkbenchReactiveStore((s) => s.pendingAutoStream);
+  const setPendingAutoStream = useWorkbenchReactiveStore((s) => s.setPendingAutoStream);
+
+  useEffect(() => {
+    // 로컬·프로덕션 모두 기본 활성화. 비활성화 시에만 VITE_NOTIFICATION_WS_ENABLED=false
+    const wsEnabled =
+      typeof import.meta === 'undefined' ||
+      (import.meta.env as { VITE_NOTIFICATION_WS_ENABLED?: string }).VITE_NOTIFICATION_WS_ENABLED !== 'false';
+    console.log('[Workbench SSE] Workbench 페이지 마운트/경로 진입', {
+      selectedCaseId,
+      hasPendingAutoStream: pendingAutoStream != null,
+      pendingCaseId: pendingAutoStream?.caseId,
+    });
+    console.log('[Workbench SSE] WebSocket 알림(ANALYSIS_STARTED 수신용)', {
+      enabled: wsEnabled,
+      hint: !wsEnabled
+        ? '비활성화됨. 활성화하려면 VITE_NOTIFICATION_WS_ENABLED를 제거하거나 true로 설정하세요.'
+        : undefined,
+    });
+  }, []);
+
   /** 통합 데이터 바인딩: useCaseDetail 하나로 모든 데이터 관리 */
   const { fiDocItems, targetBuzei, itemsCurrency, actionHistory, aiThoughts, isLoading: detailLoading } =
     useCaseDetail(selectedCaseId ?? undefined);
@@ -83,12 +107,45 @@ export const WorkbenchPage = () => {
   const suggestedSelectCaseId = useWorkbenchReactiveStore((s) => s.suggestedSelectCaseId);
   useEffect(() => {
     if (suggestedSelectCaseId == null) return;
-    if (import.meta.env?.DEV) {
-      console.log('[Workbench] auto-select from suggestedSelectCaseId', suggestedSelectCaseId);
-    }
+    console.log('[Workbench SSE] suggestedSelectCaseId로 케이스 자동 선택', suggestedSelectCaseId);
     setSelectedCaseId(suggestedSelectCaseId);
     useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(null);
   }, [suggestedSelectCaseId]);
+
+  /** ANALYSIS_STARTED 수신 시 stream_url 저장됨. 선택 케이스와 일치하면 지연 없이 SSE 자동 구독 (Aura 2초 대기 내 연결) */
+  useEffect(() => {
+    if (pendingAutoStream != null) {
+      console.log('[Workbench SSE] 상태 (pendingAutoStream 있음)', {
+        selectedCaseId,
+        pendingCaseId: pendingAutoStream.caseId,
+        match: pendingAutoStream.caseId === selectedCaseId,
+      });
+    }
+    if (!selectedCaseId || !pendingAutoStream || pendingAutoStream.caseId !== selectedCaseId) {
+      if (pendingAutoStream) {
+        console.log('[Workbench SSE] pendingAutoStream 미소비', {
+          reason: !selectedCaseId ? 'selectedCaseId 없음' : 'caseId 불일치',
+          selectedCaseId,
+          pendingCaseId: pendingAutoStream.caseId,
+        });
+      }
+      return;
+    }
+    const { caseId, streamUrl, runId } = pendingAutoStream;
+    setPendingAutoStream(null);
+    console.log('[Workbench SSE] 자동 SSE 구독 시작', { caseId, runId, streamUrl: streamUrl.slice(0, 80) });
+    startStream(caseId, {
+      streamUrl,
+      runId,
+      isAutoStarted: true,
+      onSuccess: (id) => {
+        queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
+        queryClient.invalidateQueries({ queryKey: ['synapse', 'cases', 'analysis'] });
+        queryClient.invalidateQueries({ queryKey: ['synapse', 'cases', 'action-proposals'] });
+        queryClient.invalidateQueries({ queryKey: ['synapse', 'cases', 'analysis-runs'] });
+      },
+    });
+  }, [selectedCaseId, pendingAutoStream, setPendingAutoStream, startStream, queryClient]);
 
   return (
     <Box
@@ -225,7 +282,11 @@ export const WorkbenchPage = () => {
             flexDirection: 'column',
           }}
         >
-          <WorkbenchStreamPanel getGlassPanelSx={getGlassPanelSx} sx={{ flex: 1, minHeight: 0 }} />
+          <WorkbenchStreamPanel
+            getGlassPanelSx={getGlassPanelSx}
+            selectedCaseId={selectedCaseId}
+            sx={{ flex: 1, minHeight: 0 }}
+          />
         </Box>
       </Box>
 

@@ -16,6 +16,8 @@ export default defineConfig(({ mode }) => {
 
   return {
     root: path.resolve(__dirname),
+    // Keep each remote on its own pre-bundle cache to prevent "Outdated Optimize Dep".
+    cacheDir: path.resolve(workspaceRoot, 'node_modules/.vite/remote-mail'),
     publicDir: path.resolve(__dirname, '../../../public'),
     plugins: [react()],
     define: {
@@ -45,4 +47,3 @@ export default defineConfig(({ mode }) => {
     preview: { port: PORT, host: true },
   };
 });
-

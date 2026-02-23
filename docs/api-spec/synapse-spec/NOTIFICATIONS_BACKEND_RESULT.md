@@ -58,3 +58,23 @@ FE 확인 요청(§8)에 대한 백엔드 스펙 확인 결과입니다.
 - **페이로드**: camelCase, **link** 는 BE에서 채움. **type** 은 CASE_ACTION, ANALYSIS_STARTED, RAG_STATUS, AI_DETECT, GENERIC, UNKNOWN 등.
 - **브로드캐스트**: 전역 `/topic/notifications` 이므로 FE에서 tenantId(·userId) 필터 필요.
 - **REST**: GET은 Page 구조(content, totalElements, size, number 등), PATCH 읽음은 바디 없음, read-all은 `markedCount` 반환.
+
+---
+
+## 8.5 SockJS 경로 (게이트웨이/프록시 점검)
+
+FE는 `sockjs-client`로 `/ws/notifications`에 연결합니다. SockJS 프로토콜상 아래 경로들이 **반드시** 백엔드 또는 게이트웨이에서 처리·프록시되어야 합니다. 일부가 404이면 콘솔에 `WebSocket connection ... failed`, `GET .../iframe.html 404` 등이 반복될 수 있습니다.
+
+| 경로 패턴 | 용도 | 비고 |
+|-----------|------|------|
+| **GET /ws/notifications/info** | SockJS 서버 정보(entropy, 지원 transport 목록) | 쿼리 `?t=타임스탬프` 포함. **200 + JSON** 응답 필수. |
+| **GET/WS /ws/notifications/{session}/{server}/websocket** | WebSocket 전송 | WebSocket 업그레이드. 연결 실패 시 SockJS가 다른 transport로 fallback. |
+| **GET /ws/notifications/iframe.html** | iframe transport용 정적 리소스 | Spring SockJS는 `withSockJS()` 시 기본 제공. **404 시** SockJS가 iframe fallback에서 실패하며 콘솔 경고 발생. |
+| **GET /ws/notifications/{session}/{server}/xhr_streaming** | XHR streaming 전송 | WebSocket 실패 시 fallback. |
+| **GET /ws/notifications/{session}/{server}/eventsource** | EventSource 전송 | WebSocket 실패 시 fallback. |
+
+**점검 요약**
+
+- **엔드포인트**: `StompEndpointRegistry.addEndpoint("/ws/notifications").setAllowedOriginPatterns(...).withSockJS()` 로 등록되어 있어야 하며, **context-path**가 있으면 프론트의 `NX_WS_URL`/`NX_API_URL`에 동일 prefix가 포함되어야 합니다.
+- **게이트웨이/리버스 프록시**: `/ws/notifications`, `/ws/notifications/**` 가 백엔드 SockJS 엔드포인트로 프록시되고, **iframe.html** 포함 정적 리소스가 404가 나지 않도록 해야 합니다.
+- 위가 보장되면 WebSocket 또는 xhr_streaming/eventsource 중 하나로 연결이 수립되고, 콘솔 경고가 줄어듭니다.

@@ -15,8 +15,8 @@ import { NX_API_URL } from '../env';
 import { getTenantId } from '../tenant-util';
 import { useStreamStore } from './stream-store';
 import { getAccessToken } from '../auth/token-storage';
-import { showRagLearnedToast } from '../toast/toast-store';
 import { buildStreamRequestHeaders } from './stream-request-headers';
+import { showToast, showRagLearnedToast } from '../toast/toast-store';
 import { createAnalysisRun, type CreateAnalysisRunBody } from '../api/synapse-analysis-api';
 
 // ----------------------------------------------------------------------
@@ -31,6 +31,12 @@ export type AnalysisStreamOptions = {
   onError?: (error: Error) => void;
   /** BE 요청 body: evidenceSnapshot, options(model, policyVersion) — Aura Phase2 */
   payload?: Omit<CreateAnalysisRunBody, 'caseId'>;
+  /** ANALYSIS_STARTED 푸시로 받은 stream_url — 지정 시 POST 생략, 즉시 fetch로 SSE 구독 (Aura 2초 대기 내 연결) */
+  streamUrl?: string;
+  /** 자동 구독 시 runId (푸시 payload에서 전달) */
+  runId?: string;
+  /** 자동 검토 시작 시 타임라인 상단 안내 문구 노출 */
+  isAutoStarted?: boolean;
 };
 
 export type AnalysisStepEvent = {
@@ -65,6 +71,7 @@ export const useAnalysisRunStream = () => {
   const [stepProgress, setStepProgress] = useState<{ label?: string; detail?: string; percent?: number } | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoStartedBannerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const setStatus = useStreamStore((state) => state.setStatus);
   const setError = useStreamStore((state) => state.setError);
@@ -72,12 +79,25 @@ export const useAnalysisRunStream = () => {
   const addEventType = useStreamStore((state) => state.addEventType);
   const addEventLogLine = useStreamStore((state) => state.addEventLogLine);
   const addTimelineStep = useStreamStore((state) => state.addTimelineStep);
+  const setStreamingThought = useStreamStore((state) => state.setStreamingThought);
+  const setLiveTargetBuzei = useStreamStore((state) => state.setLiveTargetBuzei);
+  const addLiveViolationBuzei = useStreamStore((state) => state.addLiveViolationBuzei);
   const resetStore = useStreamStore((state) => state.reset);
+  const setAutoStartedBanner = useStreamStore((state) => state.setAutoStartedBanner);
+
+  const normalizeBuzei = useCallback((v: string | number | undefined): string | null => {
+    if (v == null || String(v).trim() === '') return null;
+    return String(v).trim().padStart(3, '0');
+  }, []);
 
   const clearStreamTimeout = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
+    }
+    if (autoStartedBannerTimeoutRef.current) {
+      clearTimeout(autoStartedBannerTimeoutRef.current);
+      autoStartedBannerTimeoutRef.current = null;
     }
   }, []);
 
@@ -99,6 +119,13 @@ export const useAnalysisRunStream = () => {
 
   const startStream = useCallback(
     async (caseId: string, options?: AnalysisStreamOptions) => {
+      const isAutoConnect = !!(options?.streamUrl != null && options.streamUrl.trim() !== '');
+      console.log('[Workbench SSE] startStream 호출', {
+        caseId,
+        isAutoConnect,
+        isAutoStarted: options?.isAutoStarted,
+        runId: options?.runId,
+      });
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -108,33 +135,56 @@ export const useAnalysisRunStream = () => {
       resetStore();
       setStepProgress(null);
 
+      let runId: string;
+      let url: string;
+      const isAutoStarted = options?.isAutoStarted === true;
+
+      if (isAutoStarted) {
+        setAutoStartedBanner(true);
+        if (autoStartedBannerTimeoutRef.current) clearTimeout(autoStartedBannerTimeoutRef.current);
+        autoStartedBannerTimeoutRef.current = setTimeout(() => {
+          autoStartedBannerTimeoutRef.current = null;
+          setAutoStartedBanner(false);
+        }, 5000);
+      }
+
       try {
         const tenantId = getTenantId();
         const token = getAccessToken();
-        const res = await createAnalysisRun(caseId, options?.payload);
-        if (res.status !== 'SUCCESS' && res.status !== 'OK') {
-          throw new Error(res.message ?? 'Failed to start analysis');
+
+        if (options?.streamUrl != null && options.streamUrl.trim() !== '') {
+          runId = options.runId?.trim() ?? '';
+          const streamUrlOrPath = options.streamUrl.trim();
+          url =
+            streamUrlOrPath.startsWith('http://') || streamUrlOrPath.startsWith('https://')
+              ? streamUrlOrPath
+              : `${NX_API_URL}${streamUrlOrPath}`;
+        } else {
+          const res = await createAnalysisRun(caseId, options?.payload);
+          if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+            throw new Error(res.message ?? 'Failed to start analysis');
+          }
+          const dataRunId = res.data?.runId;
+          if (!dataRunId) {
+            throw new Error('runId not received from analysis-runs');
+          }
+          runId = dataRunId;
+          const streamUrlOrPath =
+            res.data?.streamUrl ??
+            res.data?.streamPath ??
+            `/api/synapse/analysis-runs/${runId}/stream`;
+          url =
+            streamUrlOrPath.startsWith('http://') || streamUrlOrPath.startsWith('https://')
+              ? streamUrlOrPath
+              : `${NX_API_URL}${streamUrlOrPath}`;
         }
-        const runId = res.data?.runId;
-        if (!runId) {
-          throw new Error('runId not received from analysis-runs');
-        }
-        // 옵션 B(운영): BE가 프록시 경로(상대)만 내려주면 → NX_API_URL 접두 → 항상 BE 프록시로 연결.
-        // 옵션 A(dev/로컬): BE가 절대 URL을 내려주면 그대로 사용. fallback = BE 프록시 경로.
-        const streamUrlOrPath =
-          res.data?.streamUrl ??
-          res.data?.streamPath ??
-          `/api/synapse/analysis-runs/${runId}/stream`;
-        const url =
-          streamUrlOrPath.startsWith('http://') || streamUrlOrPath.startsWith('https://')
-            ? streamUrlOrPath
-            : `${NX_API_URL}${streamUrlOrPath}`;
 
         setDebug({ endpoint: url, startedAt: new Date() });
         setStatus('CONNECTING');
 
         const headers = buildStreamRequestHeaders({ tenantId, token });
 
+        console.log('[Workbench SSE] SSE fetch 시작', { url: url.slice(0, 100) });
         const response = await fetch(url, {
           method: 'GET',
           headers,
@@ -142,12 +192,26 @@ export const useAnalysisRunStream = () => {
         });
 
         if (!response.ok) {
-          throw new Error(`Stream failed: ${response.status}`);
+          console.log('[Workbench SSE] SSE 연결 실패 (HTTP)', { status: response.status, url: url.slice(0, 80) });
+          let errMessage = `Stream failed: ${response.status}`;
+          if (response.status === 400) {
+            try {
+              const body = (await response.json().catch(() => null)) as { message?: string } | null;
+              errMessage = (body?.message && typeof body.message === 'string') ? body.message : errMessage;
+              showToast(errMessage, 'error');
+              console.error('[SSE] 400 Bad Request:', errMessage);
+            } catch {
+              showToast(errMessage, 'error');
+              console.error('[SSE] 400 Bad Request:', errMessage);
+            }
+          }
+          throw new Error(errMessage);
         }
 
         setLocalStatus('streaming');
         setStatus('STREAMING');
 
+        console.log('[Workbench SSE] SSE 연결 성공, 스트리밍 시작', { caseId, runId });
         timeoutRef.current = setTimeout(() => {
           setLocalStatus('failed');
           setStatus('ERROR');
@@ -210,6 +274,7 @@ export const useAnalysisRunStream = () => {
               setLocalStatus('completed');
               setStatus('COMPLETED');
               setStepProgress(null);
+              setStreamingThought(null);
               setDebug({ completedAt: new Date() });
               options?.onSuccess?.(runId);
               return;
@@ -222,6 +287,12 @@ export const useAnalysisRunStream = () => {
               addEventType('step');
               try {
                 const parsed = dataStr ? (JSON.parse(dataStr) as AnalysisStepEvent) : {};
+                const targetBuzeiVal = (parsed.target_buzei ?? parsed.targetBuzei) as string | number | undefined;
+                const buzeiNorm = normalizeBuzei(targetBuzeiVal);
+                if (buzeiNorm) {
+                  setLiveTargetBuzei(buzeiNorm);
+                  addLiveViolationBuzei(buzeiNorm);
+                }
                 setStepProgress({
                   label: parsed.label,
                   detail: parsed.detail,
@@ -236,21 +307,45 @@ export const useAnalysisRunStream = () => {
               } catch {
                 // ignore parse error
               }
-            } else if (currentEventType === 'agent') {
-              addEventType('agent');
+            } else if (currentEventType === 'thought_pending') {
+              addEventType('thought_pending');
               try {
-                const parsed = dataStr ? (JSON.parse(dataStr) as AnalysisAgentEvent) : {};
+                const parsed = dataStr ? (JSON.parse(dataStr) as { type?: string; step?: number }) : {};
+                setStreamingThought({
+                  type: parsed.type ?? 'reasoning',
+                  step: parsed.step,
+                  pending: true,
+                });
+              } catch {
+                setStreamingThought({ type: 'reasoning', pending: true });
+              }
+            } else if (currentEventType === 'agent' || currentEventType === 'AGENT_STREAM' || currentEventType === 'thought') {
+              addEventType(currentEventType);
+              try {
+                const parsed = dataStr ? (JSON.parse(dataStr) as AnalysisAgentEvent & { message?: string; content?: string; target_buzei?: string | number; targetBuzei?: string | number }) : {};
+                const targetBuzeiVal = parsed.target_buzei ?? parsed.targetBuzei;
+                const buzeiNorm = normalizeBuzei(targetBuzeiVal);
+                if (buzeiNorm) {
+                  setLiveTargetBuzei(buzeiNorm);
+                  addLiveViolationBuzei(buzeiNorm);
+                }
+                const message = parsed.message ?? parsed.content ?? (parsed as { text?: string }).text ?? '';
                 setStepProgress({
                   label: parsed.agent ?? parsed.message,
-                  detail: parsed.message,
+                  detail: message || parsed.message,
                   percent: parsed.percent,
                 });
                 addTimelineStep({
                   type: 'step',
                   label: parsed.agent ?? parsed.message,
-                  detail: parsed.message,
+                  detail: message || parsed.message,
                   percent: parsed.percent,
                 });
+                setStreamingThought(
+                  message
+                    ? { type: (parsed as { type?: string }).type ?? 'reasoning', step: (parsed as { step?: number }).step, content: message, pending: false }
+                    : null
+                );
               } catch {
                 // ignore parse error
               }
@@ -260,6 +355,7 @@ export const useAnalysisRunStream = () => {
               setLocalStatus('completed');
               setStatus('COMPLETED');
               setStepProgress(null);
+              setStreamingThought(null);
               setDebug({ completedAt: new Date() });
               options?.onSuccess?.(runId);
               return;
@@ -319,9 +415,11 @@ export const useAnalysisRunStream = () => {
         if (err instanceof Error && err.name === 'AbortError') {
           setLocalStatus('aborted');
           setStatus('ABORTED');
+          console.log('[Workbench SSE] SSE 중단됨 (Abort)');
           return;
         }
         const message = err instanceof Error ? err.message : String(err);
+        console.log('[Workbench SSE] SSE 오류', { message, caseId });
         setLocalStatus('failed');
         setStatus('ERROR');
         setError(message);
@@ -329,7 +427,7 @@ export const useAnalysisRunStream = () => {
         options?.onError?.(err instanceof Error ? err : new Error(message));
       }
     },
-    [setStatus, setError, setDebug, addEventType, addEventLogLine, addTimelineStep, resetStore, clearStreamTimeout]
+    [setStatus, setError, setDebug, setAutoStartedBanner, addEventType, addEventLogLine, addTimelineStep, setStreamingThought, setLiveTargetBuzei, addLiveViolationBuzei, normalizeBuzei, resetStore, clearStreamTimeout]
   );
 
   const cancel = useCallback(() => {

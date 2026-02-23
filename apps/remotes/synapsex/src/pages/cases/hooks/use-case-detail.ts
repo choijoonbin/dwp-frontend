@@ -121,10 +121,135 @@ export type ActionHistoryItem = {
   comment?: string;
 };
 
-/** AI 추론 과정 UI 모델 (WorkbenchThoughtChain) */
+/**
+ * Aura가 뱉는 단계 명칭(eventType/stage) → 타임라인 표시용 canonical type
+ * BE AiThoughtDto: eventType (예: RAG_SEARCH), stage (예: THOUGHT) — 대소문자 무관 매칭
+ */
+const AURA_STAGE_TO_CANONICAL: Record<string, string> = {
+  hypothesis: 'hypothesis',
+  Hypothesis: 'hypothesis',
+  HYPOTHESIS: 'hypothesis',
+  investigation: 'investigation',
+  Investigation: 'investigation',
+  INVESTIGATION: 'investigation',
+  rag_search: 'investigation',
+  RAG_SEARCH: 'investigation',
+  analysis: 'analysis',
+  Analysis: 'analysis',
+  ANALYSIS: 'analysis',
+  scoring: 'analysis',
+  SCORING: 'analysis',
+  conclusion: 'conclusion',
+  Conclusion: 'conclusion',
+  CONCLUSION: 'conclusion',
+  thought: 'reasoning',
+  THOUGHT: 'reasoning',
+  reasoning: 'reasoning',
+  Reasoning: 'reasoning',
+  REASONING: 'reasoning',
+  planning: 'planning',
+  Planning: 'planning',
+  PLANNING: 'planning',
+  execution: 'execution',
+  Execution: 'execution',
+  EXECUTION: 'execution',
+  verification: 'verification',
+  Verification: 'verification',
+  VERIFICATION: 'verification',
+};
+
+/** Aura eventType/stage → canonical type (타임라인 아이콘·i18n 키와 일치) */
+function toCanonicalThoughtType(raw: string | undefined): string {
+  if (!raw || !raw.trim()) return 'reasoning';
+  const trimmed = raw.trim();
+  return AURA_STAGE_TO_CANONICAL[trimmed] ?? AURA_STAGE_TO_CANONICAL[trimmed.toLowerCase()] ?? trimmed;
+}
+
+/** buzei 값을 3자리 문자열로 통일 */
+function normalizeBuzei(v: string | number | undefined): string {
+  if (v == null) return '';
+  return String(v).trim().padStart(3, '0');
+}
+
+/**
+ * evidenceMapJson 파싱 — 위반/이상 행 buzei 목록 추출
+ * 지원 형태: { buzei: string[] } | { lineItems: { buzei: string }[] } | { highlightedBuzei: string[] } | string (JSON)
+ */
+function parseEvidenceMapJson(dto: Record<string, unknown> | null | undefined): string[] {
+  const raw =
+    (dto?.evidenceMapJson as string | Record<string, unknown> | undefined) ??
+    (dto?.evidence_map_json as string | Record<string, unknown> | undefined) ??
+    (dto?.reasoning as Record<string, unknown> | undefined)?.evidenceMapJson ??
+    (dto?.reasoning as Record<string, unknown> | undefined)?.evidence_map_json;
+  if (raw == null) return [];
+
+  let obj: Record<string, unknown>;
+  if (typeof raw === 'string') {
+    try {
+      obj = JSON.parse(raw) as Record<string, unknown>;
+    } catch {
+      return [];
+    }
+  } else {
+    obj = raw as Record<string, unknown>;
+  }
+
+  const buzeiArr = obj.buzei as string[] | undefined;
+  if (Array.isArray(buzeiArr)) {
+    return buzeiArr.map(normalizeBuzei).filter(Boolean);
+  }
+
+  const lineItems = obj.lineItems as Array<{ buzei?: string }> | undefined;
+  if (Array.isArray(lineItems)) {
+    return lineItems.map((item) => normalizeBuzei(item.buzei)).filter(Boolean);
+  }
+
+  const highlighted = obj.highlightedBuzei as string[] | undefined;
+  if (Array.isArray(highlighted)) {
+    return highlighted.map(normalizeBuzei).filter(Boolean);
+  }
+
+  return [];
+}
+
+/** evidenceMapJson에서 chunkId 목록 추출 — 우측 규정집 근거 문구 하이라이트용 */
+function parseEvidenceMapChunkIds(dto: Record<string, unknown> | null | undefined): string[] {
+  const raw =
+    (dto?.evidenceMapJson as string | Record<string, unknown> | undefined) ??
+    (dto?.evidence_map_json as string | Record<string, unknown> | undefined) ??
+    (dto?.reasoning as Record<string, unknown> | undefined)?.evidenceMapJson ??
+    (dto?.reasoning as Record<string, unknown> | undefined)?.evidence_map_json;
+  if (raw == null) return [];
+
+  let obj: Record<string, unknown>;
+  if (typeof raw === 'string') {
+    try {
+      obj = JSON.parse(raw) as Record<string, unknown>;
+    } catch {
+      return [];
+    }
+  } else {
+    obj = raw as Record<string, unknown>;
+  }
+
+  const chunkIds = obj.chunkIds as string[] | undefined;
+  if (Array.isArray(chunkIds)) {
+    return chunkIds.map((id) => String(id).trim()).filter(Boolean);
+  }
+
+  const lineItems = obj.lineItems as Array<{ chunkId?: string }> | undefined;
+  if (Array.isArray(lineItems)) {
+    return lineItems.map((item) => String(item.chunkId ?? '').trim()).filter(Boolean);
+  }
+
+  return [];
+}
+
+/** AI 추론 과정 UI 모델 (WorkbenchThoughtChain) — type은 canonical (hypothesis, investigation 등) */
 export type AiThought = {
   id: string;
   step: number;
+  /** Aura eventType/stage와 매핑된 canonical 단계 (Hypothesis, Investigation 등 표시용) */
   type: string;
   content: string;
   confidence?: number;
@@ -151,6 +276,10 @@ export type CaseDetailResult = {
   fiDocItems: FiDocItem[];
   /** 케이스가 특정 라인을 가리킬 때 해당 buzei (isTarget 미제공 시 fallback) */
   targetBuzei?: string;
+  /** evidenceMapJson 기반 위반/이상 행 buzei 목록 (3자리 패딩) — 좌측 전표 테이블 강조용 */
+  violationBuzeiList: string[];
+  /** evidenceMapJson 기반 chunkId 목록 — 우측 규정집 근거 문구 하이라이트용 */
+  highlightChunkIds: string[];
   /** 라인 수 (BE lineCount, "라인 항목(n)" 표시용) */
   lineCount?: number;
   /** 라인 항목 표시용 통화 (전표 레벨 fallback) */
@@ -179,6 +308,8 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
         fiDoc: null,
         fiDocItems: [],
         targetBuzei: undefined,
+        violationBuzeiList: [],
+        highlightChunkIds: [],
         lineCount: undefined,
         itemsCurrency: undefined,
         actionHistory: [],
@@ -253,6 +384,12 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
     const targetBuzei =
       targetBuzeiRaw != null ? String(targetBuzeiRaw).padStart(3, '0') : undefined;
 
+    const evidenceMapBuzei = parseEvidenceMapJson(dto as Record<string, unknown>);
+    const violationBuzeiList = Array.from(
+      new Set([...(targetBuzei ? [targetBuzei] : []), ...evidenceMapBuzei])
+    ).filter(Boolean);
+    const highlightChunkIds = parseEvidenceMapChunkIds(dto as Record<string, unknown>);
+
     const fiDocItems: FiDocItem[] = items.map((item, idx) =>
       mapRawLineItemToFiDoc(item as Record<string, unknown>, idx, itemsCurrency)
     );
@@ -278,14 +415,17 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
 
     // AI 추론 과정: BE aiThoughts[] (AiThoughtItemDto) — stage, eventType, message, occurredAt (camelCase)
     const rawThoughts = (dto?.aiThoughts ?? (dto?.reasoning as Record<string, unknown> | undefined)?.thoughts ?? []) as Array<Record<string, unknown>>;
-    const aiThoughts: AiThought[] = rawThoughts.map((thought, idx) => ({
-      id: String(thought.id ?? idx),
-      step: (thought.step ?? idx + 1) as number,
-      type: (thought.eventType ?? thought.stage ?? thought.type ?? 'reasoning') as string,
-      content: (thought.message ?? thought.content ?? thought.text ?? '') as string,
-      confidence: thought.confidence as number | undefined,
-      timestamp: (thought.occurredAt ?? thought.occurred_at ?? thought.timestamp) as string | undefined,
-    }));
+    const aiThoughts: AiThought[] = rawThoughts.map((thought, idx) => {
+      const rawType = (thought.eventType ?? thought.stage ?? thought.type ?? 'reasoning') as string;
+      return {
+        id: String(thought.id ?? idx),
+        step: (thought.step ?? idx + 1) as number,
+        type: toCanonicalThoughtType(rawType),
+        content: (thought.message ?? thought.content ?? thought.text ?? '') as string,
+        confidence: thought.confidence as number | undefined,
+        timestamp: (thought.occurredAt ?? thought.occurred_at ?? thought.timestamp) as string | undefined,
+      };
+    });
 
     return {
       caseData,
@@ -295,6 +435,8 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
       fiDoc,
       fiDocItems,
       targetBuzei,
+      violationBuzeiList,
+      highlightChunkIds,
       lineCount,
       itemsCurrency,
       actionHistory,

@@ -34,6 +34,8 @@ export type RagDocumentDetailDto = {
   sourceType: string;
   status: string;
   createdAt: string;
+  /** 청킹 전략 키 (catalog docTypes와 동일). 없으면 sourceType 등으로 대체 */
+  chunkingStrategy?: string;
   chunks?: RagChunkDto[];
 };
 
@@ -125,47 +127,16 @@ export type RegisterRagDocumentRequest = {
 };
 
 // ----------------------------------------------------------------------
-// Chunking Strategy Types (Re-Chunking Control)
+// Chunking Strategy (Re-Chunking) — 옵션은 GET /api/synapse/agents/catalog docTypes 사용 (key/value)
 // ----------------------------------------------------------------------
-
-/** 청킹 전략 타입 */
-export type ChunkingStrategy =
-  | 'REGULATION' // 규정 문서: 장/조/항 기반 계층 청킹
-  | 'MANUAL' // 매뉴얼: 섹션 기반 청킹
-  | 'POLICY' // 정책 문서: 항목 기반 청킹
-  | 'GENERAL' // 일반 문서: 고정 크기 청킹
-  | 'SEMANTIC'; // 의미 기반 동적 청킹
-
-/** 청킹 전략 설명 */
-export const CHUNKING_STRATEGY_INFO: Record<ChunkingStrategy, { label: string; description: string }> = {
-  REGULATION: {
-    label: '규정 문서',
-    description: '장 > 조 > 항 계층 구조 기반 청킹. 법률/규정 문서에 최적화.',
-  },
-  MANUAL: {
-    label: '매뉴얼',
-    description: '섹션/챕터 기반 청킹. 사용자 매뉴얼에 적합.',
-  },
-  POLICY: {
-    label: '정책 문서',
-    description: '정책 항목 단위 청킹. 내부 정책 문서에 적합.',
-  },
-  GENERAL: {
-    label: '일반 문서',
-    description: '고정 크기(512토큰) 청킹. 구조가 불명확한 문서에 사용.',
-  },
-  SEMANTIC: {
-    label: '의미 기반',
-    description: '의미 단위로 동적 청킹. 다양한 문서에 범용 적용.',
-  },
-};
 
 /** 재청킹 요청 */
 export type ReChunkRequest = {
-  strategy: ChunkingStrategy;
-  /** 청크 크기 (GENERAL 전략에서 사용) */
+  /** 청킹 전략 키. catalog docTypes의 key와 동일 (예: REGULATION, GENERAL) */
+  strategy: string;
+  /** 청크 크기 (GENERAL 등 특정 전략에서 사용) */
   chunkSize?: number;
-  /** 청크 오버랩 (GENERAL 전략에서 사용) */
+  /** 청크 오버랩 (GENERAL 등 특정 전략에서 사용) */
   chunkOverlap?: number;
 };
 
@@ -430,8 +401,8 @@ export const reChunkRagDocument = async (
 /** RAG 문서 청킹 상태 조회 */
 export const getRagDocumentChunkingStatus = async (
   docId: string
-): Promise<ApiResponse<{ status: string; chunkCount?: number; strategy?: ChunkingStrategy }>> => {
-  const res = await axiosInstance.get<ApiResponse<{ status: string; chunkCount?: number; strategy?: ChunkingStrategy }>>(
+): Promise<ApiResponse<{ status: string; chunkCount?: number; strategy?: string }>> => {
+  const res = await axiosInstance.get<ApiResponse<{ status: string; chunkCount?: number; strategy?: string }>>(
     `/api/synapse/rag/documents/${encodeURIComponent(docId)}/chunking-status`
   );
   return res.data;

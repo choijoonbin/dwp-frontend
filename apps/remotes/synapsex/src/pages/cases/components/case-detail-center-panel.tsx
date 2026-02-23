@@ -4,6 +4,7 @@
 
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { useStreamStore } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -18,6 +19,7 @@ import { CaseAgentStreamPanel } from './case-agent-stream-panel';
 import { CaseActionProposalsTab } from './case-action-proposals-tab';
 
 import type { CaseDetailUi } from '../adapters/case-detail-adapter';
+import type { FiDocItem, AiThought } from '../hooks/use-case-detail';
 
 export type CaseDetailCenterPanelProps = {
   caseId: string | undefined;
@@ -30,6 +32,13 @@ export type CaseDetailCenterPanelProps = {
   onStartAnalysis: () => void;
   onRetryStream: () => void;
   onCancel: () => void;
+  fiDocItems?: FiDocItem[];
+  targetBuzei?: string;
+  /** evidenceMapJson 기반 위반 행 buzei 목록 — 좌측 전표 강조 */
+  violationBuzeiList?: string[];
+  /** evidenceMapJson 기반 chunkId — 우측 규정집 근거 하이라이트 */
+  highlightChunkIds?: string[];
+  aiThoughts?: AiThought[];
 };
 
 export const CaseDetailCenterPanel = ({
@@ -43,9 +52,15 @@ export const CaseDetailCenterPanel = ({
   onStartAnalysis,
   onRetryStream,
   onCancel,
+  fiDocItems = [],
+  targetBuzei,
+  violationBuzeiList = [],
+  highlightChunkIds = [],
+  aiThoughts = [],
 }: CaseDetailCenterPanelProps) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
+  const streamingThought = useStreamStore((state) => state.streamingThought);
 
   return (
     <Box
@@ -131,6 +146,12 @@ export const CaseDetailCenterPanel = ({
             fallbackTitle={caseData?.title}
             fallbackAnomalyType={caseData?.anomalyType}
             fallbackSeverity={caseData?.severity}
+            fiDocItems={fiDocItems}
+            targetBuzei={targetBuzei}
+            violationBuzeiList={violationBuzeiList}
+            highlightChunkIds={highlightChunkIds}
+            aiThoughts={aiThoughts}
+            pendingThought={streamingThought}
           />
         )}
 

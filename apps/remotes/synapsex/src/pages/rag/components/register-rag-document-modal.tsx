@@ -6,7 +6,7 @@
  */
 
 import type { FormEvent, ChangeEvent } from 'react';
-import type { RegisterRagDocumentRequest } from '@dwp-frontend/shared-utils';
+import type { CatalogCodeItemDto, RegisterRagDocumentRequest } from '@dwp-frontend/shared-utils';
 
 import { useState, useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
@@ -19,6 +19,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
+import Typography from '@mui/material/Typography';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import DialogActions from '@mui/material/DialogActions';
@@ -37,15 +38,13 @@ const getFileExtensionLabel = (f: File): string => {
   return i >= 0 ? name.slice(i + 1).toUpperCase() : '';
 };
 
-/** key=서버 전송값(docType), value=UI 노출값. BE catalog API 동기화 */
+/** BE catalog API docTypes와 동기화 (key/value/description) */
 type RegisterRagDocumentModalProps = {
-  open?: boolean;
   onClose: () => void;
   onSubmit: (payload: FormData | RegisterRagDocumentRequest) => void | Promise<void>;
   isLoading?: boolean;
-  /** false면 onSubmit 완료 후에만 부모가 닫음 (비동기 업로드 시 사용) */
   closeOnSubmit?: boolean;
-  docTypes?: { key: string; value: string }[];
+  docTypes?: CatalogCodeItemDto[];
 };
 
 export const RegisterRagDocumentModal = ({
@@ -188,6 +187,14 @@ export const RegisterRagDocumentModal = ({
                 </Select>
               </FormControl>
             </Tooltip>
+            {(() => {
+              const selected = docTypes.find((d) => d.key === docType);
+              return selected?.description ? (
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: -1.5 }}>
+                  {selected.description}
+                </Typography>
+              ) : null;
+            })()}
             {sourceMode === 'FILE' && (
               <Stack spacing={0.5}>
                 <Stack direction="row" alignItems="center" spacing={1}>

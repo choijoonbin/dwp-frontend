@@ -16,6 +16,8 @@ export default defineConfig(({ mode }) => {
 
   return {
     root: path.resolve(__dirname),
+    // Keep each remote on its own pre-bundle cache to prevent "Outdated Optimize Dep".
+    cacheDir: path.resolve(workspaceRoot, 'node_modules/.vite/remote-admin'),
     publicDir: path.resolve(__dirname, '../../../public'),
     plugins: [react()],
     define: {

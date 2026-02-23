@@ -156,11 +156,19 @@ export const useDashboardTeamSnapshotQuery = (range = '24h', teamId?: string) =>
   });
 };
 
-export const useDashboardAgentActivityQuery = (range = '6h', limit = 50) => {
+export const useDashboardAgentActivityQuery = (
+  range = '6h',
+  limit = 50,
+  options?: { refetchInterval?: number | false }
+) => {
   const { isAuthenticated } = useAuth();
   const tenantId = getDashboardTenantId();
   const enabled = isAuthenticated && Boolean(tenantId);
 
+  const refetchInterval =
+    options?.refetchInterval !== undefined ? options.refetchInterval : 10 * 1000;
+
+  // Query key는 (tenantId, range)만 사용 → refetchInterval 변경 시에도 동일 캐시 유지, 목록 깜빡임 없음
   return useQuery({
     queryKey: dashboardAgentActivityQueryKey(tenantId, range),
     queryFn: async (): Promise<AgentActivityDto[]> => {
@@ -177,7 +185,7 @@ export const useDashboardAgentActivityQuery = (range = '6h', limit = 50) => {
     enabled,
     staleTime: 30 * 1000,
     gcTime: 2 * 60 * 1000,
-    refetchInterval: 10 * 1000,
+    refetchInterval: refetchInterval === false ? false : refetchInterval,
     retry: false,
   });
 };

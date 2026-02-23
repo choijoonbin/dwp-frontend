@@ -96,6 +96,8 @@ export type CaseDetailEvidence = {
 export type CaseDetailReasoning = {
   score?: number;
   reasonText?: string;
+  /** 위반/이상 행 buzei 목록 — JSON 문자열 또는 객체 (evidenceMapJson) */
+  evidenceMapJson?: string | Record<string, unknown>;
   [key: string]: unknown;
 };
 
@@ -146,6 +148,9 @@ export type AiThoughtDto = {
   timestamp?: string;
 };
 
+/** evidenceMapJson 구조 예: { buzei: string[] } | { lineItems: { buzei: string }[] } | { highlightedBuzei: string[] } */
+export type CaseDetailEvidenceMapJson = Record<string, unknown>;
+
 export type CaseDetailDto = {
   caseId: string;
   status: string;
@@ -154,6 +159,9 @@ export type CaseDetailDto = {
   detectedAt?: string;
   keys?: Record<string, unknown>;
   links?: Record<string, unknown>;
+  /** 위반/이상 행 매핑 — 좌측 전표 테이블 강조용 (reasoning.evidenceMapJson 또는 루트) */
+  evidenceMapJson?: string | CaseDetailEvidenceMapJson;
+  evidence_map_json?: string | CaseDetailEvidenceMapJson;
   /** BE: 전표 라인 (fi_doc_item) — buzei, hkont, wrbtr(BigDecimal→숫자), sgtxt. snake_case 또는 camelCase */
   fi_doc_items?: Array<Record<string, unknown>>;
   fiDocItems?: Array<Record<string, unknown>>;

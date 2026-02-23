@@ -16,6 +16,8 @@ export default defineConfig(({ mode }) => {
 
   return {
     root: path.resolve(__dirname, 'apps/dwp'),
+    // Avoid dep optimization cache collisions with other Vite apps in this monorepo.
+    cacheDir: path.resolve(__dirname, 'node_modules/.vite/apps-dwp'),
     publicDir: path.resolve(__dirname, 'public'),
     plugins: [
       react(),

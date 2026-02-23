@@ -308,7 +308,7 @@ export const unbindAgentKnowledge = async (
 // Catalog (모델/도메인/문서타입) — key=서버 전송값, value=UI 노출값
 // ----------------------------------------------------------------------
 
-export type CatalogCodeItemDto = { key: string; value: string };
+export type CatalogCodeItemDto = { key: string; value: string; description?: string };
 
 export type AgentCatalogDto = {
   models: CatalogCodeItemDto[];

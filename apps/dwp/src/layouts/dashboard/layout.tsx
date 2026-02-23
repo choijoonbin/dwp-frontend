@@ -1,5 +1,6 @@
 import type { Breakpoint } from '@mui/material/styles';
 
+import { useCallback, useEffect } from 'react';
 import { merge } from 'es-toolkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
@@ -72,14 +73,22 @@ export function DashboardLayout({
   const navData = useNavData(); // 권한 기반 필터링된 메뉴 데이터
   const queryClient = useQueryClient();
 
-  // 개발 시 백엔드가 없으면 WebSocket 연결 실패 에러가 반복되므로, 프로덕션 또는 명시적 활성화 시에만 연결
+  // 로컬·프로덕션 모두 기본 활성화. 비활성화 시에만 VITE_NOTIFICATION_WS_ENABLED=false
   const notificationWsEnabled =
-    import.meta.env.PROD || (import.meta.env as { VITE_NOTIFICATION_WS_ENABLED?: string }).VITE_NOTIFICATION_WS_ENABLED === 'true';
+    (import.meta.env as { VITE_NOTIFICATION_WS_ENABLED?: string }).VITE_NOTIFICATION_WS_ENABLED !== 'false';
 
-  useNotificationWebSocket({
-    enabled: notificationWsEnabled,
-    showToastOnReceive: true,
-    onReceive: (payload) => {
+  useEffect(() => {
+    console.log('[Workbench SSE] WebSocket 알림 연결 여부', {
+      enabled: notificationWsEnabled,
+      isProd: !!import.meta.env.PROD,
+      hint: !notificationWsEnabled
+        ? '비활성화됨. 활성화하려면 VITE_NOTIFICATION_WS_ENABLED를 제거하거나 true로 설정하세요.'
+        : undefined,
+    });
+  }, [notificationWsEnabled]);
+
+  const onNotificationReceive = useCallback(
+    (payload: Parameters<NonNullable<NonNullable<Parameters<typeof useNotificationWebSocket>[0]>['onReceive']>>[0]) => {
       const cat = (payload.category ?? '').toString().toUpperCase();
       const typ = (payload.type ?? '').toString().toUpperCase();
       const pl = payload.payload as {
@@ -87,6 +96,8 @@ export function DashboardLayout({
         caseId?: string | number;
         run_id?: string;
         runId?: string;
+        stream_url?: string;
+        streamUrl?: string;
         content?: string;
         delta?: string;
         event?: string;
@@ -147,17 +158,53 @@ export function DashboardLayout({
         }
       }
       if (typ === 'ANALYSIS_STARTED' || cat === 'ANALYSIS_STARTED') {
+        console.log('[Workbench SSE] ANALYSIS_STARTED 수신', {
+          caseId,
+          runId,
+          payloadKeys: pl ? Object.keys(pl) : [],
+          hasStreamUrl: !!(pl?.stream_url ?? pl?.streamUrl),
+        });
         if (caseId) {
           useWorkbenchReactiveStore.getState().addAnalyzing(caseId);
           useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(caseId);
-          if (import.meta.env?.DEV) console.log('[Workbench onReceive] ANALYSIS_STARTED → addAnalyzing + setSuggestedSelectCaseId', caseId);
-        } else if (import.meta.env?.DEV) {
-          console.log('[Workbench onReceive] ANALYSIS_STARTED but no caseId in payload', { pl });
+          const streamUrlFromPayload =
+            (pl?.stream_url != null && String(pl.stream_url).trim() !== ''
+              ? String(pl.stream_url)
+              : (pl?.streamUrl != null && String(pl.streamUrl).trim() !== '' ? String(pl.streamUrl) : undefined)) as
+            | string
+            | undefined;
+          const streamUrl =
+            streamUrlFromPayload ??
+            (runId ? `/api/synapse/analysis-runs/${runId}/stream` : undefined);
+          if (streamUrl) {
+            useWorkbenchReactiveStore.getState().setPendingAutoStream({
+              caseId,
+              streamUrl,
+              runId,
+            });
+            console.log('[Workbench SSE] pendingAutoStream 설정됨', {
+              caseId,
+              runId,
+              fromPayload: Boolean(streamUrlFromPayload),
+              streamUrl: streamUrl.slice(0, 80),
+            });
+          } else {
+            console.log('[Workbench SSE] ANALYSIS_STARTED: stream_url·run_id 없음 → 자동 구독 불가', { pl });
+          }
+        } else {
+          console.log('[Workbench SSE] ANALYSIS_STARTED: case_id 없음', { pl });
         }
         queryClient.invalidateQueries({ queryKey: ['synapse', 'dashboard', 'agent-stream'] });
         queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
       }
     },
+    [queryClient],
+  );
+
+  useNotificationWebSocket({
+    enabled: notificationWsEnabled,
+    showToastOnReceive: true,
+    onReceive: onNotificationReceive,
   });
 
   const renderHeader = () => {

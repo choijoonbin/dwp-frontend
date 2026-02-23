@@ -1,5 +1,5 @@
 /**
- * Case Detail Header — 제목, 상태 셀렉트, 메타, Confidence, 디버그 버튼
+ * Case Detail Header — Insight Dashboard, 제목, 상태 셀렉트, 메타
  */
 
 import { Iconify } from '@dwp-frontend/design-system';
@@ -7,6 +7,7 @@ import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Select from '@mui/material/Select';
 import Tooltip from '@mui/material/Tooltip';
@@ -16,6 +17,8 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 import CardContent from '@mui/material/CardContent';
+import { alpha, useTheme } from '@mui/material/styles';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import { SeverityBadge } from '../../../components/finance/severity-badge';
 import { StatusPill, type Status } from '../../../components/finance/status-pill';
@@ -32,6 +35,15 @@ export type CaseDetailHeaderProps = {
   onBack: () => void;
   onOpenDebug?: () => void;
   isDev?: boolean;
+  /** AI 최종 권고 (없으면 severity 기반 기본 문구) */
+  recommendationLabel?: string;
+};
+
+const getDefaultRecommendation = (severity: string, t: (k: string) => string): string => {
+  const s = severity?.toLowerCase() ?? '';
+  if (s === 'critical' || s === 'high') return t('caseDetail.insight.recommendAction');
+  if (s === 'medium') return t('caseDetail.insight.recommendReview');
+  return t('caseDetail.insight.recommendMonitor');
 };
 
 export const CaseDetailHeader = ({
@@ -43,8 +55,12 @@ export const CaseDetailHeader = ({
   onBack,
   onOpenDebug,
   isDev = false,
+  recommendationLabel,
 }: CaseDetailHeaderProps) => {
   const { t } = useTranslation('common');
+  const theme = useTheme();
+  const riskPct = Math.round(Number(caseData.confidence ?? 0) || 0);
+  const recommendation = recommendationLabel ?? getDefaultRecommendation(caseData.severity, t);
 
   return (
     <Card
@@ -63,6 +79,78 @@ export const CaseDetailHeader = ({
       }}
     >
       <CardContent sx={{ px: { xs: 1.5, sm: 3 }, pt: { xs: 1.5, sm: 2 }, pb: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }}>
+        {/* Insight Dashboard — 임원용 요약 */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'auto 1fr auto auto' },
+            gap: 2,
+            alignItems: 'center',
+            mb: 2,
+            p: 2,
+            borderRadius: 2,
+            bgcolor: alpha(theme.palette.primary.main, 0.06),
+            border: 1,
+            borderColor: alpha(theme.palette.primary.main, 0.12),
+          }}
+        >
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <Box sx={{ width: 56, height: 56, position: 'relative' }}>
+              <Box
+                component="span"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '50%',
+                  border: 2,
+                  borderColor: riskPct >= 70 ? 'error.main' : riskPct >= 40 ? 'warning.main' : 'success.main',
+                  opacity: 0.4,
+                }}
+              />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  {riskPct}%
+                </Typography>
+              </Box>
+            </Box>
+            <Box>
+              <Typography variant="caption" color="text.secondary">
+                {t('caseDetail.insight.riskGauge')}
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={Math.min(riskPct, 100)}
+                color={riskPct >= 70 ? 'error' : riskPct >= 40 ? 'warning' : 'success'}
+                sx={{ mt: 0.5, width: 80, height: 6, borderRadius: 1 }}
+              />
+            </Box>
+          </Stack>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="caption" color="text.secondary">
+              {t('caseDetail.insight.financialImpact')}
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary' }}>
+              {caseData.amount.toLocaleString()} {caseData.currency}
+            </Typography>
+          </Box>
+          <Chip
+            icon={<Iconify icon="solar:shield-check-bold" width={16} />}
+            label={recommendation}
+            color={caseData.severity === 'critical' || caseData.severity === 'high' ? 'error' : 'default'}
+            variant="filled"
+            size="medium"
+            sx={{ fontWeight: 600, justifySelf: { sm: 'end' } }}
+          />
+        </Box>
+
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between">
           <Stack direction="row" spacing={2} alignItems="flex-start" sx={{ minWidth: 0, flex: 1 }}>
             <IconButton onClick={onBack} sx={{ flexShrink: 0, bgcolor: 'transparent' }}>

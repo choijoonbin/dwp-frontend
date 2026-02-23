@@ -20,12 +20,21 @@ export type StreamTimelineStep = {
   at?: number;
 };
 
+/** thought_pending 시 로딩 표시, AGENT_STREAM/agent 도착 시 실제 텍스트로 전환 */
+export type StreamingThought = {
+  type: string;
+  step?: number;
+  content?: string;
+  pending: boolean;
+};
+
 /**
  * SSE Stream Store (Zustand)
  *
  * Centralized state for SSE stream connection status.
  * Phase3: eventLog (max 200 lines) for agent stream tab.
  * P1: timelineSteps for step-based UI (started/step/completed/failed).
+ * thought_pending: ReasoningTimeline 로딩/실제 텍스트 표시용.
  */
 type StreamStore = {
   status: StreamStatus;
@@ -35,15 +44,25 @@ type StreamStore = {
   eventLog: string[];
   /** P1: step-based timeline for UI (started → steps → completed/failed) */
   timelineSteps: StreamTimelineStep[];
+  /** thought_pending → 스켈레톤, agent/AGENT_STREAM → 실제 문장 */
+  streamingThought: StreamingThought | null;
+  /** 스트림 이벤트에서 수신한 target_buzei — 분석 완료 전 실시간 Red Glow용 */
+  liveTargetBuzei: string | null;
+  /** 스트림 이벤트에서 수신한 위반 행 buzei 목록 (실시간 강조) */
+  liveViolationBuzeiList: string[];
+  /** 자동 검토 시작 시 타임라인 상단 안내 문구 노출 여부 */
+  autoStartedBanner: boolean;
 
   setStatus: (status: StreamStatus) => void;
   setError: (message: string) => void;
   setDebug: (updates: Partial<StreamDebugInfo>) => void;
+  setAutoStartedBanner: (visible: boolean) => void;
   addEventType: (eventType: string) => void;
-  /** Append a raw log line (e.g. "event: step" or "data: {...}"); keeps last MAX_EVENT_LOG_LINES */
   addEventLogLine: (line: string) => void;
-  /** P1: Append a timeline step (started/step/completed/failed) */
   addTimelineStep: (step: StreamTimelineStep) => void;
+  setStreamingThought: (thought: StreamingThought | null) => void;
+  setLiveTargetBuzei: (buzei: string | null) => void;
+  addLiveViolationBuzei: (buzei: string) => void;
   reset: () => void;
 };
 
@@ -58,6 +77,10 @@ const initialState = {
   debug: initialDebug,
   eventLog: [] as string[],
   timelineSteps: [] as StreamTimelineStep[],
+  streamingThought: null as StreamingThought | null,
+  liveTargetBuzei: null as string | null,
+  liveViolationBuzeiList: [] as string[],
+  autoStartedBanner: false,
 };
 
 export const useStreamStore = create<StreamStore>((set) => ({
@@ -81,7 +104,9 @@ export const useStreamStore = create<StreamStore>((set) => ({
         ...updates,
       },
     })),
-  
+
+  setAutoStartedBanner: (autoStartedBanner) => set({ autoStartedBanner }),
+
   addEventType: (eventType) =>
     set((state) => {
       const recent = [...state.debug.recentEventTypes, eventType].slice(-10);
@@ -103,6 +128,19 @@ export const useStreamStore = create<StreamStore>((set) => ({
     set((state) => ({
       timelineSteps: [...state.timelineSteps, { ...step, at: step.at ?? Date.now() }].slice(-MAX_TIMELINE_STEPS),
     })),
+
+  setStreamingThought: (streamingThought) => set({ streamingThought }),
+
+  setLiveTargetBuzei: (buzei) => set({ liveTargetBuzei: buzei }),
+
+  addLiveViolationBuzei: (buzei) =>
+    set((state) => {
+      const normalized = String(buzei).trim().padStart(3, '0');
+      if (!normalized || state.liveViolationBuzeiList.includes(normalized)) return state;
+      return {
+        liveViolationBuzeiList: [...state.liveViolationBuzeiList, normalized].slice(-50),
+      };
+    }),
 
   reset: () => set({ ...initialState }),
 }));

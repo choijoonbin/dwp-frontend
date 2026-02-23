@@ -353,6 +353,32 @@
     "keyFactors": "핵심 요인",
     "evidence": "근거",
     "ragRefs": "RAG 참조",
+    "reasoningPathEmpty": "추론 경로가 없습니다. 분석을 실행하면 단계별 사고 과정이 표시됩니다.",
+    "reasoningAnalyzing": "Aura가 분석 중입니다...",
+    "stepShort": "{{n}}단계",
+    "reasoningStep": {
+      "hypothesis": "가설",
+      "investigation": "조사",
+      "analysis": "분석",
+      "conclusion": "결론",
+      "planning": "계획",
+      "execution": "실행",
+      "verification": "검증",
+      "reasoning": "추론"
+    },
+    "insight": {
+      "riskGauge": "위반 확률",
+      "financialImpact": "금액 영향",
+      "recommendAction": "조치 필요: 소명 요청",
+      "recommendReview": "검토 권고",
+      "recommendMonitor": "모니터링"
+    },
+    "evidenceGallery": {
+      "title": "근거 갤러리",
+      "fact": "사실 (전표)",
+      "rule": "규정",
+      "link": "연결"
+    },
     "scoreShort": "점수 {{value}}",
     "confidenceBreakdown": "요인별 신뢰도 분석",
     "noConfidenceData": "신뢰도 데이터가 없습니다",
@@ -587,7 +613,9 @@
     "detailLoading": "해당 케이스의 사고 과정을 불러오는 중...",
     "streamTitle": "에이전트 스트림",
     "streamHint": "케이스 분석 중 실시간 에이전트 활동이 여기에 표시됩니다.",
+    "streamConnecting": "실시간 스트림에 연결 중...",
     "streamLoading": "에이전트 활동 불러오는 중...",
+    "autoStartedBanner": "에이전트가 자동 검토를 시작했습니다.",
     "tabQueue": "큐",
     "tabDetail": "상세",
     "tabStream": "스트림",
@@ -1134,6 +1162,7 @@
       "processing": "재청킹 중... 잠시만 기다려 주세요.",
       "apply": "재청킹 실행",
       "success": "재청킹이 시작되었습니다. 완료까지 몇 분이 소요될 수 있습니다.",
+      "successComplete": "재청킹이 완료되었습니다.",
       "failed": "재청킹에 실패했습니다.",
       "warning": "청킹 전략을 변경하면 기존 청크가 삭제되고 새로운 전략으로 재생성됩니다. 진행 중인 검색에 일시적으로 영향을 줄 수 있습니다."
     }

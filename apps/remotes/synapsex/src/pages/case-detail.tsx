@@ -5,17 +5,24 @@
  * @see docs/job/PROMPT_FE_CaseDetail_StatusAndActionButtons_WireUp_P0.txt
  */
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 const IS_DEV = import.meta.env.DEV;
 
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { is403Error, useCaseAuditEventsQuery, useRejectActionMutation, useApproveActionMutation } from '@dwp-frontend/shared-utils';
+import {
+  is403Error,
+  useStreamStore,
+  useCaseAuditEventsQuery,
+  useRejectActionMutation,
+  useApproveActionMutation,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { SYNAPSE_ROUTES } from '../routes';
@@ -44,7 +51,7 @@ export const CaseDetailPage = () => {
   const idFromPath = pathname.match(/\/cases\/([^/]+)/)?.[1];
   const id = idFromParams ?? idFromPath ?? undefined;
 
-  const { caseData, evidence, fiDoc, fiDocItems, targetBuzei, lineCount, relatedActions, isLoading, error, refetch } =
+  const { caseData, evidence, fiDoc, fiDocItems, targetBuzei, violationBuzeiList, highlightChunkIds, lineCount, relatedActions, aiThoughts, isLoading, error, refetch } =
     useCaseDetail(id);
   const approveActionMutation = useApproveActionMutation();
   const rejectActionMutation = useRejectActionMutation();
@@ -59,6 +66,21 @@ export const CaseDetailPage = () => {
     stepProgress,
     cancel,
   } = useCaseAnalysisRunState(id, evidence);
+
+  const liveTargetBuzei = useStreamStore((s) => s.liveTargetBuzei);
+  const liveViolationBuzeiList = useStreamStore((s) => s.liveViolationBuzeiList);
+
+  const effectiveTargetBuzei = liveTargetBuzei ?? targetBuzei;
+  const effectiveViolationBuzeiList = useMemo(
+    () => Array.from(new Set([...(violationBuzeiList ?? []), ...(liveViolationBuzeiList ?? [])])),
+    [violationBuzeiList, liveViolationBuzeiList]
+  );
+
+  useEffect(() => {
+    if (streamStatus === 'completed') {
+      setCenterTab('analysis');
+    }
+  }, [streamStatus]);
 
   const documentRelationshipFromFiDoc = useMemo(() => {
     if (!fiDoc) return [];
@@ -156,9 +178,32 @@ export const CaseDetailPage = () => {
     );
   }
 
+  const isAgentWorking = streamStatus === 'connecting' || streamStatus === 'streaming';
+
   return (
     <CaseTabsDebugProvider activeTab={centerTab} onActiveTabChange={setCenterTab}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.5rem)' }}>
+      <Box
+        sx={(theme) => ({
+          display: 'flex',
+          flexDirection: 'column',
+          height: 'calc(100vh - 3.5rem)',
+          position: 'relative',
+          ...(isAgentWorking && {
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              background: `radial-gradient(ellipse 80% 50% at 50% 50%, ${alpha(theme.palette.primary.main, 0.06)} 0%, transparent 70%)`,
+              animation: 'caseDetailWave 3s ease-in-out infinite',
+            },
+            '@keyframes caseDetailWave': {
+              '0%, 100%': { opacity: 0.5 },
+              '50%': { opacity: 1 },
+            },
+          }),
+        })}
+      >
         <CaseDetailHeader
           caseData={caseData}
           statusOptions={statusOptions}
@@ -184,7 +229,7 @@ export const CaseDetailPage = () => {
             fiDoc={fiDoc}
             fiDocItems={fiDocItems}
             lineCount={lineCount}
-            targetBuzei={targetBuzei}
+            targetBuzei={effectiveTargetBuzei}
             documentRelationship={documentRelationshipFromFiDoc}
           />
 
@@ -199,6 +244,11 @@ export const CaseDetailPage = () => {
             onStartAnalysis={handleStartAnalysis}
             onRetryStream={handleRetryStream}
             onCancel={cancel}
+            fiDocItems={fiDocItems}
+            targetBuzei={effectiveTargetBuzei}
+            violationBuzeiList={effectiveViolationBuzeiList}
+            highlightChunkIds={highlightChunkIds}
+            aiThoughts={aiThoughts}
           />
 
           <CaseDetailRightPanel
