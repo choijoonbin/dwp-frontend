@@ -62,11 +62,31 @@ export const WorkbenchItemDetailGrid = ({
     if (item.isTarget === true) return true;
     if (!targetBuzei) return false;
     const buzei = item.buzei ?? '';
-    return String(buzei).trim() === String(targetBuzei).trim();
+    return String(buzei).trim().padStart(3, '0') === String(targetBuzei).trim().padStart(3, '0');
   };
 
+  const rowId = (item: FiDocItem) =>
+    (item.buzei != null ? String(item.buzei).trim().padStart(3, '0') : null) ?? item.id;
+
   return (
-    <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, overflow: 'auto' }}>
+    <TableContainer
+      component={Paper}
+      variant="outlined"
+      sx={{
+        borderRadius: 2,
+        overflow: 'auto',
+        '& [data-row-id].workbench-red-glow': {
+          backgroundColor: alpha(theme.palette.error.main, 0.08),
+          borderLeft: '3px solid',
+          borderLeftColor: 'error.main',
+          animation: 'workbench-red-pulse 1.5s ease-in-out infinite',
+          '@keyframes workbench-red-pulse': {
+            '0%, 100%': { boxShadow: `inset 0 0 0 1px ${alpha(theme.palette.error.main, 0.4)}` },
+            '50%': { boxShadow: `inset 0 0 0 2px ${alpha(theme.palette.error.main, 0.8)}` },
+          },
+        },
+      }}
+    >
       <Table size="small" stickyHeader>
         <TableHead>
           <TableRow>
@@ -85,9 +105,12 @@ export const WorkbenchItemDetailGrid = ({
             return (
               <TableRow
                 key={item.id}
+                data-row-id={rowId(item)}
+                className={target ? 'workbench-red-glow' : undefined}
                 sx={{
-                  bgcolor: target ? alpha(theme.palette.primary.main, 0.06) : undefined,
-                  '&:hover': { bgcolor: target ? alpha(theme.palette.primary.main, 0.1) : 'action.hover' },
+                  '&:hover': {
+                    bgcolor: target ? alpha(theme.palette.error.main, 0.12) : 'action.hover',
+                  },
                 }}
               >
                 <TableCell sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>

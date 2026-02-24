@@ -141,37 +141,46 @@ export const WorkbenchThoughtChain = ({ thoughts, isStreamingLast = false, sx }:
               }}
             >
               <Stack spacing={1.5}>
-                <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                  <Chip
-                    label={t(getTypeLabelKey(thought.type))}
-                    size="small"
-                    color={getChipColor(thought.type)}
-                    icon={<Iconify icon={getTypeIcon(thought.type)} width={14} />}
-                  />
-                  {thought.step && (
-                    <Chip label={`Step ${thought.step}`} size="small" variant="outlined" />
-                  )}
-                  {thought.confidence != null && (
-                    <Chip
-                      label={`${Math.round(thought.confidence * 100)}%`}
-                      size="small"
-                      variant="outlined"
-                      color={thought.confidence > 0.8 ? 'success' : thought.confidence > 0.5 ? 'primary' : 'warning'}
-                    />
-                  )}
-                  {thought.timestamp && (
-                    <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>
-                      {new Date(thought.timestamp).toLocaleTimeString()}
+                {/* API aiThoughts.message(Aura 문장)를 카드 제목·본문으로 사용. "사고 중 Step X" 하드코딩 제거 */}
+                {thought.content.length > 120 ? (
+                  <>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600, lineHeight: 1.4 }}>
+                      {thought.content.slice(0, 80)}…
                     </Typography>
-                  )}
-                </Stack>
-                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                  {isStreamingLast && index === thoughts.length - 1 ? (
-                    <TypewriterText text={thought.content} active />
-                  ) : (
-                    thought.content
-                  )}
-                </Typography>
+                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                      {isStreamingLast && index === thoughts.length - 1 ? (
+                        <TypewriterText text={thought.content} active />
+                      ) : (
+                        thought.content
+                      )}
+                    </Typography>
+                  </>
+                ) : (
+                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                    {isStreamingLast && index === thoughts.length - 1 ? (
+                      <TypewriterText text={thought.content} active />
+                    ) : (
+                      thought.content
+                    )}
+                  </Typography>
+                )}
+                {(thought.confidence != null || thought.timestamp) && (
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                    {thought.confidence != null && (
+                      <Chip
+                        label={`${Math.round(thought.confidence * 100)}%`}
+                        size="small"
+                        variant="outlined"
+                        color={thought.confidence > 0.8 ? 'success' : thought.confidence > 0.5 ? 'primary' : 'warning'}
+                      />
+                    )}
+                    {thought.timestamp && (
+                      <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>
+                        {new Date(thought.timestamp).toLocaleTimeString()}
+                      </Typography>
+                    )}
+                  </Stack>
+                )}
               </Stack>
             </Paper>
           </TimelineContent>

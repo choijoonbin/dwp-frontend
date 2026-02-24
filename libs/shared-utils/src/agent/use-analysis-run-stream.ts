@@ -80,6 +80,7 @@ export const useAnalysisRunStream = () => {
   const setDebug = useStreamStore((state) => state.setDebug);
   const addEventType = useStreamStore((state) => state.addEventType);
   const addEventLogLine = useStreamStore((state) => state.addEventLogLine);
+  const addCleanStreamLine = useStreamStore((state) => state.addCleanStreamLine);
   const addTimelineStep = useStreamStore((state) => state.addTimelineStep);
   const setStreamingThought = useStreamStore((state) => state.setStreamingThought);
   const setLiveTargetBuzei = useStreamStore((state) => state.setLiveTargetBuzei);
@@ -363,13 +364,15 @@ export const useAnalysisRunStream = () => {
             } else if (currentEventType === 'step') {
               addEventType('step');
               try {
-                const parsed = dataStr ? (JSON.parse(dataStr) as AnalysisStepEvent) : {};
+                const parsed = dataStr ? (JSON.parse(dataStr) as AnalysisStepEvent & { thought_stream?: string }) : {};
                 const targetBuzeiVal = (parsed.target_buzei ?? parsed.targetBuzei) as string | number | undefined;
                 const buzeiNorm = normalizeBuzei(targetBuzeiVal);
                 if (buzeiNorm) {
                   setLiveTargetBuzei(buzeiNorm);
                   addLiveViolationBuzei(buzeiNorm);
                 }
+                const thoughtStream = parsed.thought_stream ?? (parsed as { thoughtStream?: string }).thoughtStream;
+                if (typeof thoughtStream === 'string' && thoughtStream.trim()) addCleanStreamLine(thoughtStream);
                 setStepProgress({
                   label: parsed.label,
                   detail: parsed.detail,
@@ -407,6 +410,7 @@ export const useAnalysisRunStream = () => {
                   addLiveViolationBuzei(buzeiNorm);
                 }
                 const message = parsed.message ?? parsed.content ?? (parsed as { text?: string }).text ?? '';
+                if (message.trim()) addCleanStreamLine(message);
                 setStepProgress({
                   label: parsed.agent ?? parsed.message,
                   detail: message || parsed.message,
@@ -534,7 +538,7 @@ export const useAnalysisRunStream = () => {
         options?.onError?.(err instanceof Error ? err : new Error(message));
       }
     },
-    [setStatus, setError, setDebug, setAutoStartedBanner, addEventType, addEventLogLine, addTimelineStep, setStreamingThought, setLiveTargetBuzei, addLiveViolationBuzei, normalizeBuzei, resetStore, clearStreamTimeout]
+    [setStatus, setError, setDebug, setAutoStartedBanner, addEventType, addEventLogLine, addCleanStreamLine, addTimelineStep, setStreamingThought, setLiveTargetBuzei, addLiveViolationBuzei, normalizeBuzei, resetStore, clearStreamTimeout]
   );
 
   const cancel = useCallback(() => {

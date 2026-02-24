@@ -51,7 +51,7 @@ export const CaseDetailPage = () => {
   const idFromPath = pathname.match(/\/cases\/([^/]+)/)?.[1];
   const id = idFromParams ?? idFromPath ?? undefined;
 
-  const { caseData, evidence, fiDoc, fiDocItems, targetBuzei, violationBuzeiList, highlightChunkIds, lineCount, relatedActions, aiThoughts, isLoading, error, refetch } =
+  const { caseData, evidence, fiDoc, fiDocItems, targetBuzei, violationBuzeiList, highlightChunkIds, summaryVerdict, keyGrounds, lineCount, relatedActions, aiThoughts, isLoading, error, refetch } =
     useCaseDetail(id);
   const approveActionMutation = useApproveActionMutation();
   const rejectActionMutation = useRejectActionMutation();
@@ -248,6 +248,8 @@ export const CaseDetailPage = () => {
             targetBuzei={effectiveTargetBuzei}
             violationBuzeiList={effectiveViolationBuzeiList}
             highlightChunkIds={highlightChunkIds}
+            summaryVerdict={summaryVerdict}
+            keyGrounds={keyGrounds}
             aiThoughts={aiThoughts}
           />
 

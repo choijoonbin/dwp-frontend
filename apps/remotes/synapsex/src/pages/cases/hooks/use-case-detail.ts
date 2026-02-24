@@ -212,6 +212,24 @@ function parseEvidenceMapJson(dto: Record<string, unknown> | null | undefined): 
   return [];
 }
 
+/** evidenceMapJson 파싱 — 동일 raw 소스에서 객체 반환 (summary_verdict, key_grounds 등) */
+function getEvidenceMapJsonObj(dto: Record<string, unknown> | null | undefined): Record<string, unknown> | null {
+  const raw =
+    (dto?.evidenceMapJson as string | Record<string, unknown> | undefined) ??
+    (dto?.evidence_map_json as string | Record<string, unknown> | undefined) ??
+    (dto?.reasoning as Record<string, unknown> | undefined)?.evidenceMapJson ??
+    (dto?.reasoning as Record<string, unknown> | undefined)?.evidence_map_json;
+  if (raw == null) return null;
+  if (typeof raw === 'string') {
+    try {
+      return JSON.parse(raw) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }
+  return raw as Record<string, unknown>;
+}
+
 /** evidenceMapJson에서 chunkId 목록 추출 — 우측 규정집 근거 문구 하이라이트용 */
 function parseEvidenceMapChunkIds(dto: Record<string, unknown> | null | undefined): string[] {
   const raw =
@@ -254,6 +272,8 @@ export type AiThought = {
   content: string;
   confidence?: number;
   timestamp?: string;
+  /** 규정집 청크와 연동 — 클릭 시 해당 chunk scrollIntoView + 하이라이트 */
+  chunkId?: string;
 };
 
 export type CaseDetailResult = {
@@ -280,6 +300,10 @@ export type CaseDetailResult = {
   violationBuzeiList: string[];
   /** evidenceMapJson 기반 chunkId 목록 — 우측 규정집 근거 문구 하이라이트용 */
   highlightChunkIds: string[];
+  /** evidenceMapJson.summary_verdict — 종합 판정 (보고서 탭) */
+  summaryVerdict?: string;
+  /** evidenceMapJson.key_grounds — 핵심 근거 (보고서 탭) */
+  keyGrounds?: string[];
   /** 라인 수 (BE lineCount, "라인 항목(n)" 표시용) */
   lineCount?: number;
   /** 라인 항목 표시용 통화 (전표 레벨 fallback) */
@@ -310,6 +334,8 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
         targetBuzei: undefined,
         violationBuzeiList: [],
         highlightChunkIds: [],
+        summaryVerdict: undefined,
+        keyGrounds: undefined,
         lineCount: undefined,
         itemsCurrency: undefined,
         actionHistory: [],
@@ -389,6 +415,13 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
       new Set([...(targetBuzei ? [targetBuzei] : []), ...evidenceMapBuzei])
     ).filter(Boolean);
     const highlightChunkIds = parseEvidenceMapChunkIds(dto as Record<string, unknown>);
+    const evidenceMapObj = getEvidenceMapJsonObj(dto as Record<string, unknown>);
+    const summaryVerdict =
+      (evidenceMapObj?.summary_verdict as string) ?? (evidenceMapObj?.summaryVerdict as string) ?? undefined;
+    const keyGroundsRaw = evidenceMapObj?.key_grounds ?? evidenceMapObj?.keyGrounds;
+    const keyGrounds = Array.isArray(keyGroundsRaw)
+      ? keyGroundsRaw.map((x) => (typeof x === 'string' ? x : (x as { text?: string; description?: string })?.text ?? (x as { description?: string })?.description ?? String(x)))
+      : undefined;
 
     const fiDocItems: FiDocItem[] = items.map((item, idx) =>
       mapRawLineItemToFiDoc(item as Record<string, unknown>, idx, itemsCurrency)
@@ -424,6 +457,7 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
         content: (thought.message ?? thought.content ?? thought.text ?? '') as string,
         confidence: thought.confidence as number | undefined,
         timestamp: (thought.occurredAt ?? thought.occurred_at ?? thought.timestamp) as string | undefined,
+        chunkId: (thought.chunkId ?? thought.chunk_id) as string | undefined,
       };
     });
 
@@ -437,6 +471,8 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
       targetBuzei,
       violationBuzeiList,
       highlightChunkIds,
+      summaryVerdict,
+      keyGrounds,
       lineCount,
       itemsCurrency,
       actionHistory,

@@ -8,6 +8,7 @@ import type { StreamStatus, StreamDebugInfo } from './stream-status';
 
 const MAX_EVENT_LOG_LINES = 200;
 const MAX_TIMELINE_STEPS = 50;
+const MAX_CLEAN_STREAM_LINES = 100;
 
 /** P1: Step-based timeline entry (started/step/completed/failed) */
 export type StreamTimelineStep = {
@@ -42,6 +43,8 @@ type StreamStore = {
   debug: StreamDebugInfo;
   /** Phase3: recent SSE event log lines (max 200) for display */
   eventLog: string[];
+  /** Clean stream: content/thought_stream만 추출한 텍스트 (TypingMarkdown 렌더용) */
+  cleanStreamLines: string[];
   /** P1: step-based timeline for UI (started → steps → completed/failed) */
   timelineSteps: StreamTimelineStep[];
   /** thought_pending → 스켈레톤, agent/AGENT_STREAM → 실제 문장 */
@@ -59,6 +62,7 @@ type StreamStore = {
   setAutoStartedBanner: (visible: boolean) => void;
   addEventType: (eventType: string) => void;
   addEventLogLine: (line: string) => void;
+  addCleanStreamLine: (text: string) => void;
   addTimelineStep: (step: StreamTimelineStep) => void;
   setStreamingThought: (thought: StreamingThought | null) => void;
   setLiveTargetBuzei: (buzei: string | null) => void;
@@ -76,6 +80,7 @@ const initialState = {
   status: 'IDLE' as StreamStatus,
   debug: initialDebug,
   eventLog: [] as string[],
+  cleanStreamLines: [] as string[],
   timelineSteps: [] as StreamTimelineStep[],
   streamingThought: null as StreamingThought | null,
   liveTargetBuzei: null as string | null,
@@ -123,6 +128,15 @@ export const useStreamStore = create<StreamStore>((set) => ({
     set((state) => ({
       eventLog: [...state.eventLog, line].slice(-MAX_EVENT_LOG_LINES),
     })),
+
+  addCleanStreamLine: (text) =>
+    set((state) => {
+      const trimmed = typeof text === 'string' ? text.trim() : '';
+      if (!trimmed) return state;
+      return {
+        cleanStreamLines: [...state.cleanStreamLines, trimmed].slice(-MAX_CLEAN_STREAM_LINES),
+      };
+    }),
 
   addTimelineStep: (step) =>
     set((state) => ({

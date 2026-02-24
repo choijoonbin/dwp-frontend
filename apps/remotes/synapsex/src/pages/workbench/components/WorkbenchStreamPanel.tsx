@@ -20,6 +20,7 @@ import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { ErrorStateWithRetry } from '../../../components/ux/error-state-with-retry';
+import { StreamMarkdownBlock, TypingMarkdownContent } from '../../../components/stream-markdown';
 import {
   mapAgentActivity,
   getAgentEventTypeLabelKey,
@@ -59,6 +60,7 @@ export const WorkbenchStreamPanel = ({
 
   const streamStatus = useStreamStore((s) => s.status);
   const eventLog = useStreamStore((s) => s.eventLog);
+  const cleanStreamLines = useStreamStore((s) => s.cleanStreamLines);
   const streamingThought = useStreamStore((s) => s.streamingThought);
   const streamError = useStreamStore((s) => s.errorMessage);
   const autoStartedBanner = useStreamStore((s) => s.autoStartedBanner);
@@ -76,7 +78,10 @@ export const WorkbenchStreamPanel = ({
   const activities = mapAgentActivity(rawItems);
 
   const isLive = streamStatus === 'CONNECTING' || streamStatus === 'STREAMING';
-  const showLive = isLive;
+  const hasCleanContent = cleanStreamLines.length > 0;
+  /** 스트림 완료 직후에도 방금 보이던 라이브 내용 유지. Clean Stream 우선: content/thought_stream만 표시 */
+  const showLive =
+    isLive || (streamStatus === 'COMPLETED' && (eventLog.length > 0 || hasCleanContent));
 
   const prevStreamStatusRef = useRef(streamStatus);
   useEffect(() => {
@@ -85,9 +90,10 @@ export const WorkbenchStreamPanel = ({
     const isNowCompleted =
       streamStatus === 'COMPLETED' || streamStatus === 'IDLE' || streamStatus === 'ABORTED';
     prevStreamStatusRef.current = streamStatus;
-    if (wasLive && isNowCompleted) {
-      refetchHistory();
-    }
+    // SSE 완료 후 agent-stream API 1회 호출 — 향후 사용 여부 결정 후 주석 해제
+    // if (wasLive && isNowCompleted) {
+    //   refetchHistory();
+    // }
   }, [streamStatus, refetchHistory]);
 
   const contentBg = varAlpha(
@@ -143,14 +149,41 @@ export const WorkbenchStreamPanel = ({
         )}
 
         {!(streamStatus === 'ERROR' && streamError) && !historyError && (
-          <Box
-            component="pre"
-            sx={{
-              ...preSx,
-              bgcolor: contentBg,
-              color: 'text.secondary',
-            }}
-          >
+          <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+            {showLive && (
+              <Box
+                sx={{
+                  flexShrink: 0,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  py: 1.5,
+                  px: 2,
+                  borderBottom: 1,
+                  borderColor: 'divider',
+                  bgcolor: contentBg,
+                }}
+              >
+                <img
+                  src="/assets/images/arua.gif"
+                  alt="Aura"
+                  style={{ width: 64, height: 64, objectFit: 'contain' }}
+                />
+              </Box>
+            )}
+            <Box
+              component="pre"
+              sx={{
+                ...preSx,
+                flex: 1,
+                bgcolor: contentBg,
+                color: 'text.secondary',
+                p: 2,
+                pt: showLive ? 2 : 1.5,
+                mx: 1,
+                mb: 1.5,
+              }}
+            >
             {showLive && autoStartedBanner && (
               <Typography
                 component="span"
@@ -167,36 +200,58 @@ export const WorkbenchStreamPanel = ({
             )}
             {showLive ? (
               <>
-                {streamStatus === 'CONNECTING' && eventLog.length === 0 && (
+                {streamStatus === 'CONNECTING' && !hasCleanContent && (
                   <Typography component="span" variant="caption" color="text.secondary">
                     {t('workbench.streamConnecting', 'Connecting to live stream...')}
                   </Typography>
                 )}
-                {eventLog.map((line, i) => (
-                  <Box
-                    component="span"
-                    key={`log-${i}`}
-                    sx={{ display: 'block', color: 'text.secondary' }}
-                  >
-                    {line}
-                  </Box>
-                ))}
-                {streamingThought != null && (
-                  <Box
-                    component="span"
-                    sx={{
-                      display: 'block',
-                      mt: 0.5,
-                      color: 'primary.main',
-                      fontWeight: streamingThought.pending ? 400 : 500,
-                    }}
-                  >
-                    {streamingThought.pending ? (
-                      <Skeleton variant="text" width="80%" sx={{ fontSize: '0.75rem' }} />
-                    ) : (
-                      streamingThought.content
+                {hasCleanContent ? (
+                  <>
+                    {cleanStreamLines.slice(0, -1).map((line, i) => (
+                      <StreamMarkdownBlock key={`clean-${i}`} text={line} />
+                    ))}
+                    {cleanStreamLines.length > 0 && (
+                      <Box sx={{ color: 'text.primary' }}>
+                        {streamingThought?.pending ? (
+                          <Skeleton variant="text" width="85%" sx={{ fontSize: '0.875rem' }} />
+                        ) : (
+                          <TypingMarkdownContent
+                            text={cleanStreamLines[cleanStreamLines.length - 1] ?? ''}
+                            active={isLive && !streamingThought?.content}
+                          />
+                        )}
+                      </Box>
                     )}
-                  </Box>
+                  </>
+                ) : (
+                  <>
+                    {eventLog.map((line, i) => (
+                      <Box
+                        component="span"
+                        key={`log-${i}`}
+                        sx={{ display: 'block', color: 'text.secondary' }}
+                      >
+                        {line}
+                      </Box>
+                    ))}
+                    {streamingThought != null && (
+                      <Box
+                        component="span"
+                        sx={{
+                          display: 'block',
+                          mt: 0.5,
+                          color: 'primary.main',
+                          fontWeight: streamingThought.pending ? 400 : 500,
+                        }}
+                      >
+                        {streamingThought.pending ? (
+                          <Skeleton variant="text" width="80%" sx={{ fontSize: '0.75rem' }} />
+                        ) : (
+                          streamingThought.content
+                        )}
+                      </Box>
+                    )}
+                  </>
                 )}
               </>
             ) : (
@@ -234,6 +289,7 @@ export const WorkbenchStreamPanel = ({
                   })}
               </>
             )}
+            </Box>
           </Box>
         )}
       </Box>

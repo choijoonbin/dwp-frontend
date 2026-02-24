@@ -347,6 +347,7 @@
     "similar": "Similar",
     "rag": "RAG",
     "policies": "Policies",
+    "aiFinalReport": "AI Final Assessment Report",
     "anomalyConfidenceScore": "Anomaly Confidence Score",
     "severityLabel": "{{severity}} severity",
     "aiReasoning": "AI Reasoning",
@@ -379,6 +380,10 @@
       "rule": "Rule",
       "link": "Link"
     },
+    "requestExplanation": "Request explanation",
+    "explanationRequestSending": "Sending...",
+    "explanationRequestSent": "Explanation request email has been sent.",
+    "explanationRequestFailed": "Failed to send explanation request.",
     "scoreShort": "score {{value}}",
     "confidenceBreakdown": "Confidence breakdown by factors",
     "noConfidenceData": "No confidence data available",

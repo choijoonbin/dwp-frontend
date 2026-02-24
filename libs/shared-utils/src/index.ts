@@ -51,6 +51,7 @@ export * from './api/api-response-unwrap';
 export * from './hooks/filter-persistence';
 export * from './api/synapse-analysis-api';
 export * from './api/synapse-knowledge-api';
+export * from './api/mail-api';
 
 export * from './api/synapse-reporting-api';
 export * from './monitoring/event-tracking';

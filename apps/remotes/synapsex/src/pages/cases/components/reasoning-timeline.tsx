@@ -29,6 +29,8 @@ export type ReasoningTimelineProps = {
   thoughts: AiThought[];
   /** thought_pending 시 스켈레톤, AGENT_STREAM 도착 시 실제 텍스트로 전환 */
   pendingThought?: StreamingThought | null;
+  /** 추론 카드 클릭 시 chunk_id가 있으면 규정집 영역 scrollIntoView + 하이라이트 */
+  onThoughtClick?: (thought: AiThought) => void;
   sx?: SxProps<Theme>;
 };
 
@@ -353,21 +355,7 @@ const ThoughtItemContent = ({
 }) => (
   <>
     <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-      <Chip
-        label={
-          (() => {
-            const key = `caseDetail.reasoningStep.${thought.type.toLowerCase()}`;
-            const translated = t(key);
-            return translated !== key ? translated : thought.type;
-          })()
-        }
-        size="small"
-        color={getChipColor(thought.type)}
-        icon={<Iconify icon={getTypeIcon(thought.type)} width={14} />}
-      />
-      {thought.step != null && (
-        <Chip label={t('caseDetail.stepShort', { n: thought.step })} size="small" variant="outlined" />
-      )}
+      {/* "사고 중 Step X" 제거 — aiThoughts.message를 카드 제목·본문으로 사용 */}
       {thought.confidence != null && (
         <Chip
           label={`${Math.round(thought.confidence * 100)}%`}
@@ -386,7 +374,7 @@ const ThoughtItemContent = ({
   </>
 );
 
-export const ReasoningTimeline = ({ thoughts, pendingThought, sx }: ReasoningTimelineProps) => {
+export const ReasoningTimeline = ({ thoughts, pendingThought, onThoughtClick, sx }: ReasoningTimelineProps) => {
   const { t } = useTranslation('common');
   const hasPending = pendingThought != null;
   const showEmpty = thoughts.length === 0 && !hasPending;
@@ -423,12 +411,23 @@ export const ReasoningTimeline = ({ thoughts, pendingThought, sx }: ReasoningTim
           </TimelineSeparator>
           <TimelineContent sx={{ pr: 0, pb: 2 }}>
             <Paper
+              component={thought.chunkId && onThoughtClick ? 'button' : 'div'}
+              type={thought.chunkId && onThoughtClick ? 'button' : undefined}
+              onClick={
+                thought.chunkId && onThoughtClick
+                  ? () => onThoughtClick(thought)
+                  : undefined
+              }
               sx={{
                 p: 2,
+                width: '100%',
+                textAlign: 'left',
                 bgcolor: 'background.paper',
                 border: 1,
                 borderColor: 'divider',
                 borderRadius: 2,
+                cursor: thought.chunkId && onThoughtClick ? 'pointer' : undefined,
+                '&:hover': thought.chunkId && onThoughtClick ? { bgcolor: 'action.hover' } : undefined,
               }}
             >
               <Stack spacing={1.5}>
@@ -456,28 +455,9 @@ export const ReasoningTimeline = ({ thoughts, pendingThought, sx }: ReasoningTim
               }}
             >
               <Stack spacing={1.5}>
-                <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                  <Chip
-                    label={
-                      (() => {
-                        const key = `caseDetail.reasoningStep.${pendingThought.type.toLowerCase()}`;
-                        const translated = t(key);
-                        return translated !== key ? translated : pendingThought.type;
-                      })()
-                    }
-                    size="small"
-                    color={getChipColor(pendingThought.type)}
-                    icon={<Iconify icon={getTypeIcon(pendingThought.type)} width={14} />}
-                  />
-                  {pendingThought.step != null && (
-                    <Chip label={t('caseDetail.stepShort', { n: pendingThought.step })} size="small" variant="outlined" />
-                  )}
-                </Stack>
+                {/* "사고 중 Step X" 하드코딩 제거 — API message(Aura 문장)를 제목·본문으로 사용 */}
                 {pendingThought.pending ? (
                   <Stack spacing={1}>
-                    <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                      {t('caseDetail.reasoningAnalyzing')}
-                    </Typography>
                     <Skeleton variant="text" sx={{ fontSize: '0.875rem' }} width="90%" />
                     <Skeleton variant="text" sx={{ fontSize: '0.875rem' }} width="70%" />
                     <Skeleton variant="text" sx={{ fontSize: '0.875rem' }} width="60%" />

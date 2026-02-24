@@ -38,6 +38,10 @@ export type CaseDetailCenterPanelProps = {
   violationBuzeiList?: string[];
   /** evidenceMapJson 기반 chunkId — 우측 규정집 근거 하이라이트 */
   highlightChunkIds?: string[];
+  /** evidenceMapJson.summary_verdict — 종합 판정 */
+  summaryVerdict?: string;
+  /** evidenceMapJson.key_grounds — 핵심 근거 */
+  keyGrounds?: string[];
   aiThoughts?: AiThought[];
 };
 
@@ -56,6 +60,8 @@ export const CaseDetailCenterPanel = ({
   targetBuzei,
   violationBuzeiList = [],
   highlightChunkIds = [],
+  summaryVerdict,
+  keyGrounds,
   aiThoughts = [],
 }: CaseDetailCenterPanelProps) => {
   const { t } = useTranslation('common');
@@ -150,6 +156,8 @@ export const CaseDetailCenterPanel = ({
             targetBuzei={targetBuzei}
             violationBuzeiList={violationBuzeiList}
             highlightChunkIds={highlightChunkIds}
+            summaryVerdict={summaryVerdict}
+            keyGrounds={keyGrounds}
             aiThoughts={aiThoughts}
             pendingThought={streamingThought}
           />

@@ -347,6 +347,7 @@
     "similar": "유사 케이스",
     "rag": "RAG",
     "policies": "정책",
+    "aiFinalReport": "AI 최종 판정 보고서",
     "anomalyConfidenceScore": "이상 신뢰도 점수",
     "severityLabel": "{{severity}} 심각도",
     "aiReasoning": "AI 추론",
@@ -379,6 +380,10 @@
       "rule": "규정",
       "link": "연결"
     },
+    "requestExplanation": "소명 요청",
+    "explanationRequestSending": "처리 중...",
+    "explanationRequestSent": "소명 요청 메일이 발송되었습니다.",
+    "explanationRequestFailed": "소명 요청 발송에 실패했습니다.",
     "scoreShort": "점수 {{value}}",
     "confidenceBreakdown": "요인별 신뢰도 분석",
     "noConfidenceData": "신뢰도 데이터가 없습니다",
