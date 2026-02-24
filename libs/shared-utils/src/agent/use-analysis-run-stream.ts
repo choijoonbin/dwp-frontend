@@ -85,6 +85,7 @@ export const useAnalysisRunStream = () => {
   const setStreamingThought = useStreamStore((state) => state.setStreamingThought);
   const setLiveTargetBuzei = useStreamStore((state) => state.setLiveTargetBuzei);
   const addLiveViolationBuzei = useStreamStore((state) => state.addLiveViolationBuzei);
+  const setLiveRiskScore = useStreamStore((state) => state.setLiveRiskScore);
   const resetStore = useStreamStore((state) => state.reset);
   const setAutoStartedBanner = useStreamStore((state) => state.setAutoStartedBanner);
 
@@ -378,6 +379,9 @@ export const useAnalysisRunStream = () => {
                   detail: parsed.detail,
                   percent: parsed.percent,
                 });
+                if (typeof parsed.percent === 'number' && !Number.isNaN(parsed.percent)) {
+                  setLiveRiskScore(parsed.percent);
+                }
                 addTimelineStep({
                   type: 'step',
                   label: parsed.label,
@@ -416,6 +420,9 @@ export const useAnalysisRunStream = () => {
                   detail: message || parsed.message,
                   percent: parsed.percent,
                 });
+                if (typeof parsed.percent === 'number' && !Number.isNaN(parsed.percent)) {
+                  setLiveRiskScore(parsed.percent);
+                }
                 addTimelineStep({
                   type: 'step',
                   label: parsed.agent ?? parsed.message,

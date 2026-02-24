@@ -14,7 +14,7 @@ import IconButton from '@mui/material/IconButton';
 
 import { usePathname } from 'src/routes/hooks';
 
-import { _langs, _notifications } from 'src/_mock';
+import { _langs } from 'src/_mock';
 import { useThemeMode } from 'src/theme/theme-mode';
 import { isFixedLayoutPath } from 'src/config/layout-mode';
 import { useLayoutStore, useLayoutActions } from 'src/store/use-layout-store';
@@ -253,8 +253,8 @@ export function DashboardLayout({
           {/** @slot Language popover */}
           <LanguagePopover data={_langs} />
 
-          {/** @slot Notifications popover */}
-          <NotificationsPopover data={_notifications} />
+          {/** @slot Notifications popover — 실시간 알림만 표시, 없으면 빈 상태 */}
+          <NotificationsPopover />
 
           <Tooltip
             title={`${t('theme.currentMode', { mode: t(mode === 'light' ? 'theme.lightMode' : 'theme.darkMode') })} · ${t('theme.switchTo', { mode: t(mode === 'light' ? 'theme.darkMode' : 'theme.lightMode') })}`}

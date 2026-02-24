@@ -5,11 +5,13 @@
  *   워크벤치는 동일 stream store를 구독하여 실시간 eventLog/streamingThought 표시. (고정 URL 호출 없음)
  * - 과거 로그: GET /api/synapse/dashboard/agent-stream (JSON) 10초 폴링만 사용.
  * - 최종 싱크: SSE completed/[DONE] 시 agent-stream API 1회 refetch 후 10초 주기 재개.
+ * - 지금 AI가 하는 생각(Process) 전용 — 확정 결과는 추론 탭에서 표시.
  */
 
 import type { Theme, SxProps } from '@mui/material/styles';
 
 import { useRef, useEffect } from 'react';
+import { keyframes } from '@emotion/react';
 import { varAlpha } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useStreamStore, useDashboardAgentActivityQuery } from '@dwp-frontend/shared-utils';
@@ -18,6 +20,26 @@ import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+
+/** Gemini 스타일 Pulsing AI Orb — 파란/보라 그라데이션 박동 원형 */
+const orbPulse = keyframes`
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
+  50% { opacity: 0.9; transform: scale(1.08); box-shadow: 0 0 20px 4px rgba(155, 114, 207, 0.35); }
+`;
+
+const PulsingOrb = ({ size = 32 }: { size?: number }) => (
+  <Box
+    sx={{
+      width: size,
+      height: size,
+      flexShrink: 0,
+      borderRadius: '50%',
+      background: 'linear-gradient(135deg, #4285f4 0%, #9b72cf 50%, #5e35b1 100%)',
+      animation: `${orbPulse} 2.2s ease-in-out infinite`,
+      boxShadow: '0 0 12px 2px rgba(66, 133, 244, 0.25)',
+    }}
+  />
+);
 
 import { ErrorStateWithRetry } from '../../../components/ux/error-state-with-retry';
 import { StreamMarkdownBlock, TypingMarkdownContent } from '../../../components/stream-markdown';
@@ -150,27 +172,6 @@ export const WorkbenchStreamPanel = ({
 
         {!(streamStatus === 'ERROR' && streamError) && !historyError && (
           <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-            {showLive && (
-              <Box
-                sx={{
-                  flexShrink: 0,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  py: 1.5,
-                  px: 2,
-                  borderBottom: 1,
-                  borderColor: 'divider',
-                  bgcolor: contentBg,
-                }}
-              >
-                <img
-                  src="/assets/images/arua.gif"
-                  alt="Aura"
-                  style={{ width: 64, height: 64, objectFit: 'contain' }}
-                />
-              </Box>
-            )}
             <Box
               component="pre"
               sx={{
@@ -179,11 +180,21 @@ export const WorkbenchStreamPanel = ({
                 bgcolor: contentBg,
                 color: 'text.secondary',
                 p: 2,
-                pt: showLive ? 2 : 1.5,
+                pt: 1.5,
                 mx: 1,
                 mb: 1.5,
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: { xs: 'flex-start', sm: 'flex-start' },
+                gap: 1.5,
               }}
             >
+            {showLive && (
+              <Box sx={{ flexShrink: 0, pt: { xs: 0, sm: 0.25 } }}>
+                <PulsingOrb size={28} />
+              </Box>
+            )}
+            <Box component="span" sx={{ flex: 1, minWidth: 0, display: 'block' }}>
             {showLive && autoStartedBanner && (
               <Typography
                 component="span"
@@ -289,6 +300,7 @@ export const WorkbenchStreamPanel = ({
                   })}
               </>
             )}
+            </Box>
             </Box>
           </Box>
         )}

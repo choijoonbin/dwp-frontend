@@ -10,12 +10,12 @@
 
 import type { Theme } from '@mui/material/styles';
 
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
 import { useAuraStore } from '@dwp-frontend/shared-utils/aura/use-aura-store';
-import { useAnalysisRunStream, useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
+import { useStreamStore, useAnalysisRunStream, useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -55,6 +55,47 @@ const getGlassPanelSx = (theme: Theme): Record<string, unknown> => {
   };
 };
 
+const COUNT_UP_DURATION_MS = 350;
+const COUNT_UP_TICK_MS = 40;
+
+/** 목표 값으로 부드럽게 카운팅 업 (스트림 라이브 시에만 애니메이션) */
+const useCountUp = (target: number, active: boolean): number => {
+  const [display, setDisplay] = useState(0);
+  const currentRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!active) {
+      currentRef.current = target;
+      setDisplay(target);
+      return () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+      };
+    }
+    const start = currentRef.current;
+    const diff = target - start;
+    if (diff === 0) return () => {};
+
+    const startTime = Date.now();
+    const tick = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(1, elapsed / COUNT_UP_DURATION_MS);
+      const eased = 1 - (1 - progress) * (1 - progress);
+      const next = Math.round(start + diff * eased);
+      const clamped = diff > 0 ? Math.min(next, target) : Math.max(next, target);
+      currentRef.current = clamped;
+      setDisplay(clamped);
+      if (progress < 1) timerRef.current = setTimeout(tick, COUNT_UP_TICK_MS);
+    };
+    timerRef.current = setTimeout(tick, COUNT_UP_TICK_MS);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [target, active]);
+
+  return active ? display : target;
+};
+
 // ----------------------------------------------------------------------
 // Workbench page
 // ----------------------------------------------------------------------
@@ -92,6 +133,13 @@ export const WorkbenchPage = () => {
         : undefined,
     });
   }, []);
+
+  const streamStatus = useStreamStore((s) => s.status);
+  const liveViolationCount = useStreamStore((s) => s.liveViolationBuzeiList.length);
+  const liveRiskScore = useStreamStore((s) => s.liveRiskScore);
+  const isStreamLive = streamStatus === 'CONNECTING' || streamStatus === 'STREAMING';
+  const displayViolations = useCountUp(liveViolationCount, isStreamLive);
+  const displayScore = useCountUp(liveRiskScore, isStreamLive);
 
   /** 통합 데이터 바인딩: useCaseDetail 하나로 모든 데이터 관리 */
   const { fiDocItems, targetBuzei, itemsCurrency, actionHistory, aiThoughts, isLoading: detailLoading } =
@@ -194,6 +242,42 @@ export const WorkbenchPage = () => {
           {t('workbench.tools.knowledgePolicy')}
         </Button>
       </Stack>
+
+      {/* 스트림 라이브 시: 동적 요약 바 — 위반 건수·리스크 점수 실시간 카운팅 업 */}
+      {isStreamLive && (
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={3}
+          sx={{
+            flexShrink: 0,
+            px: 2,
+            py: 1.25,
+            borderBottom: 1,
+            borderColor: 'divider',
+            bgcolor: (muiTheme) => varAlpha(muiTheme.vars.palette.primary.mainChannel, 0.06),
+          }}
+        >
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Iconify icon="solar:danger-triangle-bold-duotone" width={20} sx={{ color: 'error.main' }} />
+            <Typography variant="caption" color="text.secondary">
+              {t('workbench.liveSummaryViolations')}
+            </Typography>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: 'error.main', minWidth: 28 }}>
+              {displayViolations}
+            </Typography>
+          </Stack>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Iconify icon="solar:graph-up-bold-duotone" width={20} sx={{ color: 'primary.main' }} />
+            <Typography variant="caption" color="text.secondary">
+              {t('workbench.liveSummaryRiskScore')}
+            </Typography>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main', minWidth: 36 }}>
+              {displayScore}%
+            </Typography>
+          </Stack>
+        </Stack>
+      )}
 
       {/* Tablet/Mobile: Tabs (375px 검증 — sx only) */}
       <Tabs

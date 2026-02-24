@@ -1,14 +1,21 @@
 /**
- * Case Analysis Tab — Evidence Gallery (Fact | Link | Rule) + Reasoning Path
+ * Case Analysis Tab — 디지털 감사 보고서(Digital Audit Report)
+ * 확정된 분석 결과(Result) 전용. 스트림 패널은 '지금 AI가 하는 생각(Process)' 전용.
  * @see docs/job/PROMPT_B_Frontend_Cases_TabsBind_P1_v2.txt
  */
 
 import type { StreamingThought } from '@dwp-frontend/shared-utils';
 
+import { keyframes } from '@emotion/react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { showToast, getErrorMessage, useCaseAnalysisQuery, sendExplanationRequest } from '@dwp-frontend/shared-utils';
+import {
+  showToast,
+  getErrorMessage,
+  useCaseAnalysisQuery,
+  sendExplanationRequest,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -20,11 +27,14 @@ import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import Typography from '@mui/material/Typography';
+import Accordion from '@mui/material/Accordion';
 import CardHeader from '@mui/material/CardHeader';
+import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import { alpha, useTheme } from '@mui/material/styles';
 import TableContainer from '@mui/material/TableContainer';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 
 import { ReasoningTimeline } from './reasoning-timeline';
 import { useCaseTabsDebug } from '../context/case-tabs-debug-context';
@@ -56,6 +66,13 @@ type CaseAnalysisTabProps = {
   /** thought_pending 시 스켈레톤, AGENT_STREAM 도착 시 실제 텍스트 */
   pendingThought?: StreamingThought | null;
 };
+
+/** 좌측 보더 흐르는 Glow — AI 스캔 중임을 시각화 */
+const flowGlow = keyframes`
+  0% { transform: translateY(-100%); opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0.6; }
+`;
 
 /** 위반/이상 행 여부: evidenceMapJson(violationBuzeiList) 또는 targetBuzei, isTarget 기반 */
 const isViolationRow = (
@@ -187,54 +204,64 @@ export const CaseAnalysisTab = ({
     >
     <Box sx={{ p: 2 }}>
       <Stack spacing={2}>
-        {/* AI 최종 판정 보고서 — evidenceMapJson.summary_verdict 또는 reasonText 바인딩 */}
-        {reportSummary && (
-          <Card sx={{ bgcolor: alpha(theme.palette.primary.main, 0.06), border: 1, borderColor: alpha(theme.palette.primary.main, 0.25) }}>
-            <CardHeader
-              title={
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                    {t('caseDetail.aiFinalReport', 'AI 최종 판정 보고서')}
-                  </Typography>
-                </Stack>
-              }
-              sx={{ pb: 0, px: 2, pt: 2 }}
-            />
-            <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
-              <Typography variant="body1" sx={{ lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
-                {reportSummary}
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  disabled={explanationRequestLoading || !caseId}
-                  onClick={handleRequestExplanation}
-                  startIcon={<Iconify icon="solar:letter-bold-duotone" width={18} />}
-                >
-                  {explanationRequestLoading ? t('caseDetail.explanationRequestSending') : t('caseDetail.requestExplanation')}
-                </Button>
-              </Box>
-            </CardContent>
-          </Card>
-        )}
-        {/* 위험도(score) 게이지 — 엔터프라이즈급 Confidence Meter */}
-        <Card sx={{ bgcolor: alpha(theme.palette.primary.main, 0.08), border: 1, borderColor: alpha(theme.palette.primary.main, 0.2) }}>
-          <CardContent sx={{ py: 1.5, px: 2 }}>
-            <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" flexWrap="wrap">
-              <Stack direction="row" spacing={2} alignItems="center">
-                <ConfidenceRing value={score} size={56} showScore={false} />
+        {/* 디지털 감사 보고서 — 상단: 종합 결론 (summary_verdict + 게이지) 대형 카드 */}
+        <Card
+          sx={{
+            bgcolor: alpha(theme.palette.primary.main, 0.06),
+            border: 1,
+            borderColor: alpha(theme.palette.primary.main, 0.25),
+          }}
+        >
+          <CardHeader
+            title={
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Iconify icon="solar:document-text-bold-duotone" width={22} />
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  {t('caseDetail.auditReportConclusion')}
+                </Typography>
+              </Stack>
+            }
+            sx={{ pb: 0, px: 2, pt: 2 }}
+          />
+          <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }}>
+              <Stack direction="row" spacing={2} alignItems="center" flexShrink={0}>
+                <ConfidenceRing value={score} size={64} showScore={false} />
                 <Box>
-                  <Typography variant="body2" color="text.secondary">{t('caseDetail.anomalyConfidenceScore')}</Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>{scoreDisplay}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('caseDetail.anomalyConfidenceScore')}
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                    {scoreDisplay}
+                  </Typography>
+                  <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 0.5 }}>
+                    {anomalyType && (
+                      <Chip
+                        label={String(anomalyType).replace(/_/g, ' ')}
+                        size="small"
+                        variant="outlined"
+                        sx={{ textTransform: 'capitalize' }}
+                      />
+                    )}
+                    {severity && (
+                      <Chip
+                        label={t('caseDetail.severityLabel', { severity })}
+                        size="small"
+                        variant="outlined"
+                      />
+                    )}
+                  </Stack>
                 </Box>
               </Stack>
-              <Stack direction="row" spacing={1} flexWrap="wrap">
-                {anomalyType && <Chip label={String(anomalyType).replace(/_/g, ' ')} size="small" variant="outlined" sx={{ textTransform: 'capitalize' }} />}
-                {severity && <Chip label={t('caseDetail.severityLabel', { severity })} size="small" variant="outlined" />}
-              </Stack>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                {reportSummary && (
+                  <Typography variant="body1" sx={{ lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
+                    {reportSummary}
+                  </Typography>
+                )}
+              </Box>
             </Stack>
-            <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 1.5, mt: 1, px: 0 }}>
+            <Box sx={{ mt: 2 }}>
               <Button
                 variant="outlined"
                 size="small"
@@ -242,11 +269,50 @@ export const CaseAnalysisTab = ({
                 onClick={handleRequestExplanation}
                 startIcon={<Iconify icon="solar:letter-bold-duotone" width={18} />}
               >
-                {explanationRequestLoading ? t('caseDetail.explanationRequestSending') : t('caseDetail.requestExplanation')}
+                {explanationRequestLoading
+                  ? t('caseDetail.explanationRequestSending')
+                  : t('caseDetail.requestExplanation')}
               </Button>
             </Box>
           </CardContent>
         </Card>
+
+        {/* 인사이트 카드 — 발견된 리스크 테마별 (단순 로그 나열 금지) */}
+        {reportKeyGrounds.length > 0 && (
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, px: 0.5 }}>
+              {t('caseDetail.keyFactors')}
+            </Typography>
+            <Stack spacing={1.5} direction="row" flexWrap="wrap" useFlexGap>
+              {reportKeyGrounds.map((text, i) => (
+                <Card
+                  key={i}
+                  sx={{
+                    minWidth: { xs: '100%', sm: 280 },
+                    maxWidth: 400,
+                    bgcolor: alpha(theme.palette.primary.main, 0.04),
+                    border: 1,
+                    borderColor: alpha(theme.palette.primary.main, 0.15),
+                    borderRadius: 2,
+                  }}
+                >
+                  <CardContent sx={{ py: 1.5, px: 2 }}>
+                    <Stack direction="row" spacing={1} alignItems="flex-start">
+                      <Iconify
+                        icon="solar:check-circle-bold-duotone"
+                        width={18}
+                        sx={{ color: 'primary.main', mt: 0.25, flexShrink: 0 }}
+                      />
+                      <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
+                        {text}
+                      </Typography>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              ))}
+            </Stack>
+          </Box>
+        )}
 
         {/* Evidence Gallery — Fact | Link | Rule */}
         {(fiDocItems.length > 0 || ragRefs.length > 0) && (
@@ -301,8 +367,23 @@ export const CaseAnalysisTab = ({
                             <TableRow
                               key={item.id}
                               sx={{
+                                position: 'relative',
+                                overflow: 'hidden',
                                 bgcolor: target ? alpha(theme.palette.error.main, 0.12) : undefined,
                                 boxShadow: target ? `inset 0 0 0 2px ${alpha(theme.palette.error.main, 0.5)}` : undefined,
+                                ...(target && {
+                                  '&::before': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 0,
+                                    bottom: 0,
+                                    width: 4,
+                                    background: `linear-gradient(to bottom, transparent 0%, ${theme.palette.error.main} 35%, ${theme.palette.error.main} 65%, transparent 100%)`,
+                                    animation: `${flowGlow} 1.8s linear infinite`,
+                                    boxShadow: `0 0 12px ${alpha(theme.palette.error.main, 0.8)}`,
+                                  },
+                                }),
                               }}
                             >
                               <TableCell>{item.buzei ?? item.id}</TableCell>
@@ -414,54 +495,51 @@ export const CaseAnalysisTab = ({
           </Card>
         )}
 
-        {/* Reasoning Path (사고 경로 타임라인) */}
-        {(aiThoughts.length > 0 || pendingThought != null) && (
-          <Card>
-            <CardHeader
-              title={
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Iconify icon="solar:route-bold-duotone" width={20} />
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                    {t('caseDetail.aiReasoning')}
-                  </Typography>
-                </Stack>
-              }
-              sx={{ pb: 0, px: 2, pt: 2 }}
-            />
-            <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
+        {/* 상세 분석 로그 — 스트림 추론 과정은 아코디언 안에, 필요 시 펼쳐서 확인 */}
+        <Accordion
+          defaultExpanded={false}
+          sx={{
+            bgcolor: alpha(theme.palette.grey[500], 0.06),
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 1,
+            '&:before': { display: 'none' },
+            boxShadow: 'none',
+          }}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="solar:alt-arrow-down-bold" width={20} />}
+            sx={{ px: 2, py: 0 }}
+          >
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Iconify icon="solar:route-bold-duotone" width={20} />
+              <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                {t('caseDetail.detailedAnalysisLog')}
+              </Typography>
+              {(aiThoughts.length > 0 || pendingThought != null) && (
+                <Chip
+                  label={aiThoughts.length + (pendingThought != null ? 1 : 0)}
+                  size="small"
+                  variant="outlined"
+                  sx={{ height: 20 }}
+                />
+              )}
+            </Stack>
+          </AccordionSummary>
+          <AccordionDetails sx={{ px: 2, pt: 0, pb: 2 }}>
+            {(aiThoughts.length > 0 || pendingThought != null) ? (
               <ReasoningTimeline
                 thoughts={aiThoughts}
                 pendingThought={pendingThought}
                 onThoughtClick={handleThoughtClick}
               />
-            </CardContent>
-          </Card>
-        )}
-
-        {/* 핵심 근거 — evidenceMapJson.key_grounds 또는 keyFactors 바인딩 */}
-        {reportKeyGrounds.length > 0 && (
-          <Card sx={{ bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
-            <CardHeader
-              title={
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Iconify icon="solar:brain-bold-duotone" width={18} />
-                  <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>{t('caseDetail.keyFactors')}</Typography>
-                </Stack>
-              }
-              sx={{ pb: 1, px: 2, pt: 2 }}
-            />
-            <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
-              <Stack spacing={1}>
-                {reportKeyGrounds.map((text, i) => (
-                  <Stack key={i} direction="row" spacing={1} alignItems="flex-start">
-                    <Iconify icon="solar:check-circle-bold-duotone" width={16} sx={{ color: 'primary.main', mt: 0.25 }} />
-                    <Typography variant="caption">{text}</Typography>
-                  </Stack>
-                ))}
-              </Stack>
-            </CardContent>
-          </Card>
-        )}
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                {t('caseDetail.reasoningPathEmpty')}
+              </Typography>
+            )}
+          </AccordionDetails>
+        </Accordion>
       </Stack>
     </Box>
     </CaseTabQueryBoundary>

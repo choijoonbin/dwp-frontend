@@ -1,8 +1,10 @@
 /**
  * 상세 내역 그리드 — fi_doc_item (계정, 금액, 거래처, 적요)
  * 무엇이 결제되었는지 한눈에 표시
+ * 위반 행: 좌측 보더 흐르는 Glow로 'AI 스캔 중' 시각화
  */
 
+import { keyframes } from '@emotion/react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Table from '@mui/material/Table';
@@ -17,6 +19,13 @@ import TableContainer from '@mui/material/TableContainer';
 
 import type { FiDocItem } from '../../cases/hooks/use-case-detail';
 
+/** 좌측 보더 흐르는 Glow — AI에 의해 스캔 중임을 표시 */
+const flowGlow = keyframes`
+  0% { transform: translateY(-100%); opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0.6; }
+`;
+
 export type WorkbenchItemDetailGridProps = {
   items: FiDocItem[];
   /** 통화 (전표 fallback) */
@@ -27,17 +36,25 @@ export type WorkbenchItemDetailGridProps = {
 
 const emptyValue = '—';
 
+/**
+ * 금액 표시 부호 기준: SAP FI shkzg (Soll/Haben)
+ * - S (Soll, 차변) → 음수(−)로 표시
+ * - H (Haben, 대변) → 양수로 표시
+ * wrbtr/dmbtr은 보통 절대값으로 전달되고, 부호는 shkzg로 결정합니다.
+ * (백엔드가 이미 부호를 포함한 금액을 보낼 경우를 위해 절대값으로 통일 후 shkzg 적용)
+ */
 function formatAmount(
   wrbtr: number | undefined,
   dmbtr: number | undefined,
   waers: string | undefined,
   shkzg?: string
 ): string {
-  const amt = wrbtr ?? dmbtr;
-  if (amt == null) return emptyValue;
+  const raw = wrbtr ?? dmbtr;
+  if (raw == null) return emptyValue;
+  const amt = Math.abs(Number(raw));
   const curr = waers ?? 'USD';
   const sign = shkzg === 'S' ? '−' : '';
-  return `${sign}${Number(amt).toLocaleString()} ${curr}`;
+  return `${sign}${amt.toLocaleString()} ${curr}`;
 }
 
 export const WorkbenchItemDetailGrid = ({
@@ -76,13 +93,22 @@ export const WorkbenchItemDetailGrid = ({
         borderRadius: 2,
         overflow: 'auto',
         '& [data-row-id].workbench-red-glow': {
+          position: 'relative',
+          overflow: 'hidden',
           backgroundColor: alpha(theme.palette.error.main, 0.08),
           borderLeft: '3px solid',
           borderLeftColor: 'error.main',
-          animation: 'workbench-red-pulse 1.5s ease-in-out infinite',
-          '@keyframes workbench-red-pulse': {
-            '0%, 100%': { boxShadow: `inset 0 0 0 1px ${alpha(theme.palette.error.main, 0.4)}` },
-            '50%': { boxShadow: `inset 0 0 0 2px ${alpha(theme.palette.error.main, 0.8)}` },
+          boxShadow: `inset 0 0 0 1px ${alpha(theme.palette.error.main, 0.35)}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 4,
+            background: `linear-gradient(to bottom, transparent 0%, ${theme.palette.error.main} 35%, ${theme.palette.error.main} 65%, transparent 100%)`,
+            animation: `${flowGlow} 1.8s linear infinite`,
+            boxShadow: `0 0 12px ${alpha(theme.palette.error.main, 0.8)}`,
           },
         },
       }}

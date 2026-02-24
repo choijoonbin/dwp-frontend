@@ -65,7 +65,7 @@ const CATEGORY_LABEL: Record<NotificationCategory, string> = {
 };
 
 export type NotificationsPopoverProps = IconButtonProps & {
-  /** 초기 데이터(선택) — 스토어가 비어 있을 때 표시. 실시간 수신 시 스토어가 우선 */
+  /** @deprecated 실시간 알림만 사용. 스토어가 비어 있으면 빈 상태만 표시. 하드코딩 데이터 미사용 */
   data?: Array<{
     id: string;
     type: string;
@@ -77,7 +77,7 @@ export type NotificationsPopoverProps = IconButtonProps & {
   }>;
 };
 
-export function NotificationsPopover({ data = [], sx, ...other }: NotificationsPopoverProps) {
+export function NotificationsPopover({ data: _data = [], sx, ...other }: NotificationsPopoverProps) {
   const navigate = useNavigate();
   const items = useNotificationStore((s) => s.items);
   const getUnreadCount = useNotificationStore((s) => s.getUnreadCount);
@@ -85,20 +85,9 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
   const markAsRead = useNotificationStore((s) => s.markAsRead);
 
   const totalUnRead = getUnreadCount();
-  const displayList: NotificationItem[] =
-    items.length > 0
-      ? items
-      : data.map((d) => ({
-          id: d.id,
-          category: 'info' as NotificationCategory,
-          title: d.title,
-          message: d.description,
-          createdAt: typeof d.postedAt === 'number' ? d.postedAt : Date.now(),
-          isUnRead: d.isUnRead,
-        }));
-  const unreadFromData = items.length === 0 ? data.filter((d) => d.isUnRead).length : totalUnRead;
+  const displayList = items;
   const listToShow = displayList.slice(0, NOTIFICATION_LIST_MAX);
-
+  const badgeCount = totalUnRead;
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -110,21 +99,19 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
   }, []);
 
   const handleMarkAllAsRead = useCallback(() => {
-    if (items.length > 0) markAllAsRead();
-  }, [items.length, markAllAsRead]);
+    markAllAsRead();
+  }, [markAllAsRead]);
 
   const handleNotificationClick = useCallback(
     (notification: NotificationItem) => {
-      if (items.length > 0) markAsRead(notification.id);
+      markAsRead(notification.id);
       if (notification.link) {
         navigate(notification.link);
         handleClosePopover();
       }
     },
-    [items.length, markAsRead, navigate, handleClosePopover]
+    [markAsRead, navigate, handleClosePopover]
   );
-
-  const badgeCount = items.length > 0 ? totalUnRead : unreadFromData;
 
   return (
     <>
@@ -185,7 +172,7 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
 
         <Scrollbar fillContent sx={{ minHeight: 240, maxHeight: { xs: 360, sm: 'none' } }}>
           <List disablePadding>
-            {displayList.length === 0 ? (
+            {listToShow.length === 0 ? (
               <Box sx={{ py: 4, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
                   No notifications yet

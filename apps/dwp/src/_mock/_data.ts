@@ -157,50 +157,16 @@ export const _tasks = Array.from({ length: 5 }, (_, index) => ({
 
 // ----------------------------------------------------------------------
 
-export const _notifications = [
-  {
-    id: _id(1),
-    title: 'Your order is placed',
-    description: 'waiting for shipping',
-    avatarUrl: null,
-    type: 'order-placed',
-    postedAt: _times(1),
-    isUnRead: true,
-  },
-  {
-    id: _id(2),
-    title: _fullName(2),
-    description: 'answered to your comment on the post',
-    avatarUrl: '/assets/images/avatar/avatar-2.webp',
-    type: 'friend-interactive',
-    postedAt: _times(2),
-    isUnRead: true,
-  },
-  {
-    id: _id(3),
-    title: 'You have new message',
-    description: '5 unread messages',
-    avatarUrl: null,
-    type: 'chat-message',
-    postedAt: _times(3),
-    isUnRead: false,
-  },
-  {
-    id: _id(4),
-    title: 'You have new mail',
-    description: 'sent from Guido Padberg',
-    avatarUrl: null,
-    type: 'mail',
-    postedAt: _times(4),
-    isUnRead: false,
-  },
-  {
-    id: _id(5),
-    title: 'Delivery processing',
-    description: 'Your order is being shipped',
-    avatarUrl: null,
-    type: 'order-shipped',
-    postedAt: _times(5),
-    isUnRead: false,
-  },
-];
+// ----------------------------------------------------------------------
+// 알림: 상단 알림은 useNotificationStore + WebSocket 실시간 수신만 사용. 하드코딩 목업 제거.
+// ----------------------------------------------------------------------
+
+export const _notifications: Array<{
+  id: string;
+  title: string;
+  description: string;
+  avatarUrl: string | null;
+  type: string;
+  postedAt: number;
+  isUnRead: boolean;
+}> = [];

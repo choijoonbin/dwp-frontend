@@ -53,6 +53,8 @@ type StreamStore = {
   liveTargetBuzei: string | null;
   /** 스트림 이벤트에서 수신한 위반 행 buzei 목록 (실시간 강조) */
   liveViolationBuzeiList: string[];
+  /** 스트림 step/agent 이벤트의 percent — 동적 요약 바 리스크 점수 카운팅 업용 (0–100) */
+  liveRiskScore: number;
   /** 자동 검토 시작 시 타임라인 상단 안내 문구 노출 여부 */
   autoStartedBanner: boolean;
 
@@ -67,6 +69,7 @@ type StreamStore = {
   setStreamingThought: (thought: StreamingThought | null) => void;
   setLiveTargetBuzei: (buzei: string | null) => void;
   addLiveViolationBuzei: (buzei: string) => void;
+  setLiveRiskScore: (score: number) => void;
   reset: () => void;
 };
 
@@ -85,6 +88,7 @@ const initialState = {
   streamingThought: null as StreamingThought | null,
   liveTargetBuzei: null as string | null,
   liveViolationBuzeiList: [] as string[],
+  liveRiskScore: 0,
   autoStartedBanner: false,
 };
 
@@ -155,6 +159,9 @@ export const useStreamStore = create<StreamStore>((set) => ({
         liveViolationBuzeiList: [...state.liveViolationBuzeiList, normalized].slice(-50),
       };
     }),
+
+  setLiveRiskScore: (score) =>
+    set({ liveRiskScore: Math.min(100, Math.max(0, Math.round(score))) }),
 
   reset: () => set({ ...initialState }),
 }));
