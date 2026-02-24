@@ -121,10 +121,17 @@ export const WorkbenchPage = () => {
         match: pendingAutoStream.caseId === selectedCaseId,
       });
     }
-    if (!selectedCaseId || !pendingAutoStream || pendingAutoStream.caseId !== selectedCaseId) {
-      if (pendingAutoStream) {
+    if (!pendingAutoStream) return;
+    // 선택된 케이스가 없으면 pending 케이스로 먼저 선택 → 다음 렌더에서 startStream
+    if (!selectedCaseId || selectedCaseId !== pendingAutoStream.caseId) {
+      if (!selectedCaseId) {
+        console.log('[Workbench SSE] pendingAutoStream으로 케이스 자동 선택 후 SSE 구독 예정', {
+          pendingCaseId: pendingAutoStream.caseId,
+        });
+        setSelectedCaseId(pendingAutoStream.caseId);
+      } else {
         console.log('[Workbench SSE] pendingAutoStream 미소비', {
-          reason: !selectedCaseId ? 'selectedCaseId 없음' : 'caseId 불일치',
+          reason: 'caseId 불일치',
           selectedCaseId,
           pendingCaseId: pendingAutoStream.caseId,
         });
@@ -133,7 +140,7 @@ export const WorkbenchPage = () => {
     }
     const { caseId, streamUrl, runId } = pendingAutoStream;
     setPendingAutoStream(null);
-    console.log('[Workbench SSE] 자동 SSE 구독 시작', { caseId, runId, streamUrl: streamUrl.slice(0, 80) });
+    console.log('[Workbench SSE] ANALYSIS_STARTED → startStream() 호출됨', { caseId, runId, streamUrl: streamUrl.slice(0, 80) });
     startStream(caseId, {
       streamUrl,
       runId,

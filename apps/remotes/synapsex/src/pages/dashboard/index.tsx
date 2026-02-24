@@ -438,7 +438,9 @@ export const DashboardPage = () => {
   useDashboardTopRiskDriversQuery('24h');
   useDashboardActionRequiredQuery('HIGH,CRITICAL');
   useDashboardTeamSnapshotQuery('7d');
-  const agentActivityQuery = useDashboardAgentActivityQuery(AGENT_STREAM_RANGE, 50);
+  const agentActivityQuery = useDashboardAgentActivityQuery(AGENT_STREAM_RANGE, 50, {
+    refetchInterval: false,
+  });
 
   const reconRunsQuery = useReconRunsQuery();
   const latestRunId = reconRunsQuery.data?.[0]?.runId;

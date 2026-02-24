@@ -4,6 +4,16 @@ FE 확인 요청(§8)에 대한 백엔드 스펙 확인 결과입니다.
 
 ---
 
+## 8.0 연결 URL 및 구독 경로 (FE·Gateway·BE 동기화)
+
+| 항목 | FE 기본값 | 비고 |
+|------|-----------|------|
+| **엔드포인트 URL** | `{NX_WS_URL 또는 NX_API_URL}/ws/notifications` | Gateway 프록시가 `/api/synapse/ws-notifications` 인 경우 **VITE_WS_NOTIFICATIONS_PATH**=`/api/synapse/ws-notifications` (또는 NX_WS_NOTIFICATIONS_PATH) 로 설정. |
+| **구독 경로 (STOMP)** | `subscribeByTenant: true` 시 `/topic/notifications/{tenantId}` | BE가 SimpMessagingTemplate으로 `/topic/notifications/{tenantId}` 에 브로드캐스트할 때 FE는 **subscribeByTenant: true** 로 동일 경로 구독. 단일 토픽 `/topic/notifications` 이면 subscribeByTenant: false. |
+| **인증** | STOMP connectHeaders에 **Authorization: Bearer {token}** | FE는 getAccessToken()으로 토큰을 넣어 CONNECT 프레임에 실어 보냄. 재연결 시에도 토큰 갱신 후 재연결. |
+
+---
+
 ## 8.1 WebSocket 연결 방식
 
 | 확인 항목 | 백엔드 상태 | 비고 |

@@ -69,8 +69,9 @@ export const WorkbenchStreamPanel = ({
     error: historyError,
     refetch: refetchHistory,
   } = useDashboardAgentActivityQuery('6h', 50, {
-    refetchInterval:
-      streamStatus === 'CONNECTING' || streamStatus === 'STREAMING' ? false : 10 * 1000,
+    // 잠시 폴링 정지 (복구 시 아래 주석 해제 후 원래대로)
+    refetchInterval: false,
+    // refetchInterval: streamStatus === 'CONNECTING' || streamStatus === 'STREAMING' ? false : 10 * 1000,
   });
   const activities = mapAgentActivity(rawItems);
 

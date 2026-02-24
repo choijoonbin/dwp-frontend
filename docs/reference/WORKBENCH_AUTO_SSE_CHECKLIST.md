@@ -8,8 +8,28 @@
 
 - **Layout**에서 알림 WebSocket은 **로컬·프로덕션 모두 기본 활성화**됩니다.
 - 비활성화하려면 `VITE_NOTIFICATION_WS_ENABLED=false` 로 실행하거나 `.env.local`에 추가하세요.
-- 콘솔에 `[Workbench SSE] WebSocket 알림 연결 여부` 로그가 나오며, `enabled: false`이면 위 설정으로 비활성화된 상태입니다. `enabled: true`여야 ANALYSIS_STARTED를 받을 수 있습니다.
+- 콘솔에 `[Workbench SSE] WebSocket 알림 연결 여부` 로그가 나오며, **connectionStatus** 로 연결 상태(connecting / connected / disconnected / error)를 확인할 수 있습니다. `enabled: true`, `connectionStatus: 'connected'` 여야 ANALYSIS_STARTED를 받을 수 있습니다.
 - **iframe.html 404** 또는 **WebSocket connection ... failed** 반복 시: 백엔드/게이트웨이에서 SockJS 경로(`/ws/notifications/info`, `**/websocket`, `**/iframe.html` 등) 제공·프록시 여부를 점검하세요. 상세는 `docs/api-spec/synapse-spec/NOTIFICATIONS_BACKEND_RESULT.md` §8.5 참고.
+- BE가 `/topic/notifications/{tenantId}` 로 브로드캐스트할 때는 layout에서 **subscribeByTenant: true** 로 구독 경로를 맞춰 두었는지 확인하세요.
+
+---
+
+## 0.1 웹소켓 연결 프로토콜 및 수신 상태 최종 확인
+
+**Native WebSocket 연결 확인**
+
+- 브라우저 개발자 도구(F12) → **Network** 탭 → **WS(WebSockets)** 필터 선택.
+- **/websocket** 으로 끝나는 요청의 **Status**가 **101 Switching Protocols** 인지 확인.
+- xhr_streaming만 보이고 `/websocket` 요청이 없다면, Gateway가 아직 Native WebSocket 업그레이드를 지원하지 않는 것이므로 백엔드/Gateway 담당자에게 보고하세요.
+
+**메시지 수신 로그 확인**
+
+- 콘솔에 **`[Notification WS] connected`** 문구 확인 후, 시연 데이터를 생성했을 때  
+  **`[Notification WS] Received: { ... type: "ANALYSIS_STARTED" ... }`** 로그가 찍히는지 확인하세요.
+
+**자동 반응 UX 검증**
+
+- 알림 수신 시 **"에이전트가 자동 검토를 시작했습니다"** 배너가 정상적으로 표시되는지, SSE 스트림 패널로 제어권이 넘어가는지 최종 확인하세요.
 
 ---
 

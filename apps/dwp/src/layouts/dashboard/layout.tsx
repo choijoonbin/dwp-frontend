@@ -77,16 +77,6 @@ export function DashboardLayout({
   const notificationWsEnabled =
     (import.meta.env as { VITE_NOTIFICATION_WS_ENABLED?: string }).VITE_NOTIFICATION_WS_ENABLED !== 'false';
 
-  useEffect(() => {
-    console.log('[Workbench SSE] WebSocket 알림 연결 여부', {
-      enabled: notificationWsEnabled,
-      isProd: !!import.meta.env.PROD,
-      hint: !notificationWsEnabled
-        ? '비활성화됨. 활성화하려면 VITE_NOTIFICATION_WS_ENABLED를 제거하거나 true로 설정하세요.'
-        : undefined,
-    });
-  }, [notificationWsEnabled]);
-
   const onNotificationReceive = useCallback(
     (payload: Parameters<NonNullable<NonNullable<Parameters<typeof useNotificationWebSocket>[0]>['onReceive']>>[0]) => {
       const cat = (payload.category ?? '').toString().toUpperCase();
@@ -112,9 +102,8 @@ export function DashboardLayout({
       const runId =
         pl?.run_id != null ? String(pl.run_id) : pl?.runId != null ? String(pl.runId) : undefined;
 
-      if (import.meta.env?.DEV) {
-        console.log('[Workbench onReceive]', { category: cat, type: typ, caseId, runId, hasPayload: !!pl });
-      }
+      // 추적: 알림이 한 번이라도 오는지 확인 (WebSocket 수신 여부)
+      console.log('[Workbench SSE] 알림 수신', { category: cat, type: typ, caseId, runId, hasPayload: !!pl });
 
       if (cat === 'THOUGHT_STREAM' || typ === 'THOUGHT_STREAM') {
         const wb = useWorkbenchReactiveStore.getState();
@@ -201,11 +190,28 @@ export function DashboardLayout({
     [queryClient],
   );
 
-  useNotificationWebSocket({
+  const { connectionStatus, url: notificationWsUrl } = useNotificationWebSocket({
     enabled: notificationWsEnabled,
     showToastOnReceive: true,
+    /** BE가 단일 경로 /topic/notifications 로 브로드캐스트하므로 false. 테넌트별 경로일 때만 true */
+    subscribeByTenant: false,
     onReceive: onNotificationReceive,
   });
+
+  useEffect(() => {
+    console.log('[Workbench SSE] WebSocket 알림 연결 여부', {
+      enabled: notificationWsEnabled,
+      isProd: !!import.meta.env.PROD,
+      connectionStatus,
+      url: notificationWsUrl,
+      hint: !notificationWsEnabled
+        ? '비활성화됨. 활성화하려면 VITE_NOTIFICATION_WS_ENABLED를 제거하거나 true로 설정하세요.'
+        : undefined,
+    });
+    if (connectionStatus === 'connected') {
+      console.log('[Workbench SSE] WebSocket 알림 연결 여부: connected');
+    }
+  }, [notificationWsEnabled, connectionStatus, notificationWsUrl]);
 
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = {
