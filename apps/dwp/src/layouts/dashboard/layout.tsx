@@ -1,7 +1,7 @@
 import type { Breakpoint } from '@mui/material/styles';
 
-import { useCallback, useEffect } from 'react';
 import { merge } from 'es-toolkit';
+import { useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useAuraStore } from '@dwp-frontend/shared-utils/aura/use-aura-store';

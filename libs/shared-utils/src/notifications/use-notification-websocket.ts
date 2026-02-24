@@ -7,13 +7,13 @@
  */
 
 import SockJS from 'sockjs-client';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Client, type IMessage } from '@stomp/stompjs';
 
 import { NX_API_URL } from '../env';
 import { getTenantId } from '../tenant-util';
-import { getAccessToken } from '../auth/token-storage';
 import { showToast } from '../toast/toast-store';
+import { getAccessToken } from '../auth/token-storage';
 import { useNotificationStore, type NotificationCategory } from './notification-store';
 
 // ----------------------------------------------------------------------
