@@ -5,16 +5,17 @@
 
 import type { StreamingThought } from '@dwp-frontend/shared-utils';
 
-import { useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { getErrorMessage, useCaseAnalysisQuery } from '@dwp-frontend/shared-utils';
+import { showToast, getErrorMessage, useCaseAnalysisQuery, sendExplanationRequest } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
+import Button from '@mui/material/Button';
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -47,6 +48,10 @@ type CaseAnalysisTabProps = {
   violationBuzeiList?: string[];
   /** evidenceMapJson 기반 chunkId — 우측 규정집에서 해당 근거 문구 하이라이트 */
   highlightChunkIds?: string[];
+  /** evidenceMapJson.summary_verdict — 종합 판정 (보고서 탭) */
+  summaryVerdict?: string;
+  /** evidenceMapJson.key_grounds — 핵심 근거 (보고서 탭) */
+  keyGrounds?: string[];
   aiThoughts?: AiThought[];
   /** thought_pending 시 스켈레톤, AGENT_STREAM 도착 시 실제 텍스트 */
   pendingThought?: StreamingThought | null;
@@ -80,13 +85,25 @@ export const CaseAnalysisTab = ({
   targetBuzei,
   violationBuzeiList = [],
   highlightChunkIds = [],
+  summaryVerdict,
+  keyGrounds,
   aiThoughts = [],
   pendingThought,
 }: CaseAnalysisTabProps) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
   const debugCtx = useCaseTabsDebug();
+  const [highlightedChunkId, setHighlightedChunkId] = useState<string | null>(null);
+  const [explanationRequestLoading, setExplanationRequestLoading] = useState(false);
   const { data, isLoading, isError, error, refetch } = useCaseAnalysisQuery(caseId, { enabled, runId });
+
+  const handleThoughtClick = useCallback((thought: { chunkId?: string }) => {
+    const id = thought.chunkId;
+    if (!id) return;
+    setHighlightedChunkId(id);
+    const el = document.getElementById(`chunk-${id}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, []);
 
   const setPayload = debugCtx?.setPayload;
   useEffect(() => {
@@ -109,13 +126,44 @@ export const CaseAnalysisTab = ({
   const score = typeof scoreRaw === 'number' ? scoreRaw : Number(scoreRaw) || 0;
   const scoreDisplay = `${Number(score.toFixed(2))}%`;
   const reasonText = data?.reasonText ?? fallbackTitle;
+  /** 종합 판정: evidenceMapJson.summary_verdict 우선, 없으면 analysis reasonText */
+  const reportSummary = summaryVerdict ?? reasonText;
   const anomalyType = data?.anomalyType ?? fallbackAnomalyType;
   const severity = data?.severity ?? fallbackSeverity;
   const keyFactors = data?.keyFactors ?? [];
+  /** 핵심 근거: evidenceMapJson.key_grounds 우선, 없으면 analysis keyFactors(description) */
+  const reportKeyGrounds =
+    keyGrounds && keyGrounds.length > 0
+      ? keyGrounds
+      : keyFactors.map((f) => (f.description ?? f.label ?? '') as string).filter(Boolean);
+
+  const handleRequestExplanation = useCallback(async () => {
+    if (!caseId) return;
+    setExplanationRequestLoading(true);
+    try {
+      await sendExplanationRequest({
+        caseId,
+        summary: reportSummary ?? undefined,
+        violationSummary: reportKeyGrounds?.slice(0, 3).join(' / ') ?? undefined,
+      });
+      showToast(t('caseDetail.explanationRequestSent'), 'success');
+    } catch (err) {
+      showToast(getErrorMessage(err) ?? t('caseDetail.explanationRequestFailed'), 'error');
+    } finally {
+      setExplanationRequestLoading(false);
+    }
+  }, [caseId, reportSummary, reportKeyGrounds, t]);
+
   const evidence = (data?.evidence ?? []) as Array<{ key?: string }>;
   const ragRefs = (data?.ragRefs ?? []) as Array<{ refId?: string; sourceType?: string; sourceKey?: string; excerpt?: string; score?: number }>;
   const isEmpty =
-    !data || (!reasonText && keyFactors.length === 0 && evidence.length === 0 && ragRefs.length === 0 && fiDocItems.length === 0 && aiThoughts.length === 0);
+    !data ||
+    (!reportSummary &&
+      reportKeyGrounds.length === 0 &&
+      evidence.length === 0 &&
+      ragRefs.length === 0 &&
+      fiDocItems.length === 0 &&
+      aiThoughts.length === 0);
 
   return (
     <CaseTabQueryBoundary
@@ -139,7 +187,38 @@ export const CaseAnalysisTab = ({
     >
     <Box sx={{ p: 2 }}>
       <Stack spacing={2}>
-        {/* Score + 타입/심각도 요약 */}
+        {/* AI 최종 판정 보고서 — evidenceMapJson.summary_verdict 또는 reasonText 바인딩 */}
+        {reportSummary && (
+          <Card sx={{ bgcolor: alpha(theme.palette.primary.main, 0.06), border: 1, borderColor: alpha(theme.palette.primary.main, 0.25) }}>
+            <CardHeader
+              title={
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    {t('caseDetail.aiFinalReport', 'AI 최종 판정 보고서')}
+                  </Typography>
+                </Stack>
+              }
+              sx={{ pb: 0, px: 2, pt: 2 }}
+            />
+            <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
+              <Typography variant="body1" sx={{ lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
+                {reportSummary}
+              </Typography>
+              <Box sx={{ mt: 2 }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  disabled={explanationRequestLoading || !caseId}
+                  onClick={handleRequestExplanation}
+                  startIcon={<Iconify icon="solar:letter-bold-duotone" width={18} />}
+                >
+                  {explanationRequestLoading ? t('caseDetail.explanationRequestSending') : t('caseDetail.requestExplanation')}
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        )}
+        {/* 위험도(score) 게이지 — 엔터프라이즈급 Confidence Meter */}
         <Card sx={{ bgcolor: alpha(theme.palette.primary.main, 0.08), border: 1, borderColor: alpha(theme.palette.primary.main, 0.2) }}>
           <CardContent sx={{ py: 1.5, px: 2 }}>
             <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" flexWrap="wrap">
@@ -155,6 +234,17 @@ export const CaseAnalysisTab = ({
                 {severity && <Chip label={t('caseDetail.severityLabel', { severity })} size="small" variant="outlined" />}
               </Stack>
             </Stack>
+            <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 1.5, mt: 1, px: 0 }}>
+              <Button
+                variant="outlined"
+                size="small"
+                disabled={explanationRequestLoading || !caseId}
+                onClick={handleRequestExplanation}
+                startIcon={<Iconify icon="solar:letter-bold-duotone" width={18} />}
+              >
+                {explanationRequestLoading ? t('caseDetail.explanationRequestSending') : t('caseDetail.requestExplanation')}
+              </Button>
+            </Box>
           </CardContent>
         </Card>
 
@@ -278,12 +368,15 @@ export const CaseAnalysisTab = ({
                       ragRefs.map((r, i) => {
                         const refId = r.refId != null ? String(r.refId) : '';
                         const sourceKey = r.sourceKey != null ? String(r.sourceKey) : '';
+                        const chunkId = refId || sourceKey || `fallback-${i}`;
                         const isHighlight =
-                          highlightChunkIds.length > 0 &&
-                          (highlightChunkIds.includes(refId) || highlightChunkIds.includes(sourceKey));
+                          highlightedChunkId === chunkId ||
+                          (highlightChunkIds.length > 0 &&
+                            (highlightChunkIds.includes(refId) || highlightChunkIds.includes(sourceKey)));
                         return (
                         <Box
                           key={r.refId ?? i}
+                          id={`chunk-${chunkId}`}
                           sx={{
                             p: 1.5,
                             borderRadius: 1,
@@ -336,13 +429,17 @@ export const CaseAnalysisTab = ({
               sx={{ pb: 0, px: 2, pt: 2 }}
             />
             <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
-              <ReasoningTimeline thoughts={aiThoughts} pendingThought={pendingThought} />
+              <ReasoningTimeline
+                thoughts={aiThoughts}
+                pendingThought={pendingThought}
+                onThoughtClick={handleThoughtClick}
+              />
             </CardContent>
           </Card>
         )}
 
-        {/* 요약: reasonText + keyFactors (기존 카드 유지) */}
-        {(reasonText || keyFactors.length > 0) && (
+        {/* 핵심 근거 — evidenceMapJson.key_grounds 또는 keyFactors 바인딩 */}
+        {reportKeyGrounds.length > 0 && (
           <Card sx={{ bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
             <CardHeader
               title={
@@ -354,21 +451,14 @@ export const CaseAnalysisTab = ({
               sx={{ pb: 1, px: 2, pt: 2 }}
             />
             <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
-              {reasonText && <Typography variant="body2" sx={{ mb: 1.5, lineHeight: 1.75 }}>{reasonText}</Typography>}
-              {keyFactors.length > 0 && (
-                <Stack spacing={1}>
-                  {keyFactors.map((f, i) => (
-                    <Stack key={i} direction="row" spacing={1} alignItems="flex-start">
-                      <Iconify
-                        icon={f.type === 'warning' ? 'solar:danger-triangle-bold-duotone' : 'solar:check-circle-bold-duotone'}
-                        width={16}
-                        sx={{ color: f.type === 'warning' ? 'warning.main' : 'primary.main', mt: 0.25 }}
-                      />
-                      <Typography variant="caption">{f.description ?? f.label ?? ''}</Typography>
-                    </Stack>
-                  ))}
-                </Stack>
-              )}
+              <Stack spacing={1}>
+                {reportKeyGrounds.map((text, i) => (
+                  <Stack key={i} direction="row" spacing={1} alignItems="flex-start">
+                    <Iconify icon="solar:check-circle-bold-duotone" width={16} sx={{ color: 'primary.main', mt: 0.25 }} />
+                    <Typography variant="caption">{text}</Typography>
+                  </Stack>
+                ))}
+              </Stack>
             </CardContent>
           </Card>
         )}
