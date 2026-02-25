@@ -21,28 +21,41 @@ import Skeleton from '@mui/material/Skeleton';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-/** Gemini 스타일 Pulsing AI Orb — 파란/보라 그라데이션 박동 원형 */
-const orbPulse = keyframes`
+/** Gemini 스타일 Pulsing AI Orb — 상태에 따라 색상: thinking(파랑/보라) | risk(노랑/빨강) */
+const orbPulseThinking = keyframes`
   0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
   50% { opacity: 0.9; transform: scale(1.08); box-shadow: 0 0 20px 4px rgba(155, 114, 207, 0.35); }
 `;
+const orbPulseRisk = keyframes`
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+  50% { opacity: 0.9; transform: scale(1.08); box-shadow: 0 0 20px 4px rgba(239, 68, 68, 0.35); }
+`;
 
-const PulsingOrb = ({ size = 32 }: { size?: number }) => (
+type OrbVariant = 'thinking' | 'risk';
+
+const PulsingOrb = ({ size = 32, variant = 'thinking' }: { size?: number; variant?: OrbVariant }) => (
   <Box
     sx={{
       width: size,
       height: size,
       flexShrink: 0,
       borderRadius: '50%',
-      background: 'linear-gradient(135deg, #4285f4 0%, #9b72cf 50%, #5e35b1 100%)',
-      animation: `${orbPulse} 2.2s ease-in-out infinite`,
-      boxShadow: '0 0 12px 2px rgba(66, 133, 244, 0.25)',
+      background:
+        variant === 'risk'
+          ? 'linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #dc2626 100%)'
+          : 'linear-gradient(135deg, #4285f4 0%, #9b72cf 50%, #5e35b1 100%)',
+      animation: `${variant === 'risk' ? orbPulseRisk : orbPulseThinking} 2.2s ease-in-out infinite`,
+      boxShadow:
+        variant === 'risk'
+          ? '0 0 12px 2px rgba(245, 158, 11, 0.25)'
+          : '0 0 12px 2px rgba(66, 133, 244, 0.25)',
     }}
   />
 );
 
 import { ErrorStateWithRetry } from '../../../components/ux/error-state-with-retry';
 import { StreamMarkdownBlock, TypingMarkdownContent } from '../../../components/stream-markdown';
+import { PanelHeader } from './PanelHeader';
 import {
   mapAgentActivity,
   getAgentEventTypeLabelKey,
@@ -69,12 +82,15 @@ export type WorkbenchStreamPanelProps = {
   getGlassPanelSx: (theme: Theme) => Record<string, unknown>;
   /** 선택된 케이스 ID — 있으면 해당 케이스 스트림, 없으면 대시보드 라이브 스트림 */
   selectedCaseId?: string | null;
+  /** Orb 색상: thinking(파랑/보라) | risk(노랑/빨강) — 고위험/위반 탐지 시 risk */
+  orbVariant?: OrbVariant;
   sx?: SxProps<Theme>;
 };
 
 export const WorkbenchStreamPanel = ({
   getGlassPanelSx,
   selectedCaseId = null,
+  orbVariant = 'thinking',
   sx,
 }: WorkbenchStreamPanelProps) => {
   const { t } = useTranslation('common');
@@ -101,6 +117,13 @@ export const WorkbenchStreamPanel = ({
 
   const isLive = streamStatus === 'CONNECTING' || streamStatus === 'STREAMING';
   const hasCleanContent = cleanStreamLines.length > 0;
+  /** 마지막 라인 (타이핑 중인 문장) */
+  const lastLine = cleanStreamLines.length > 0 ? cleanStreamLines[cleanStreamLines.length - 1] : null;
+
+  const formatTimestamp = (ms: number) => {
+    const d = new Date(ms);
+    return d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  };
   /** 스트림 완료 직후에도 방금 보이던 라이브 내용 유지. Clean Stream 우선: content/thought_stream만 표시 */
   const showLive =
     isLive || (streamStatus === 'COMPLETED' && (eventLog.length > 0 || hasCleanContent));
@@ -136,27 +159,20 @@ export const WorkbenchStreamPanel = ({
         ...sx,
       }}
     >
+      <PanelHeader title={t('workbench.streamTitle')} />
+
       <Box
         sx={{
-          height: 'var(--workbench-panel-header-height, 56px)',
-          minHeight: 'var(--workbench-panel-header-height, 56px)',
-          pt: 0,
-          px: 2,
-          pb: 1.5,
-          borderBottom: 1,
-          borderColor: 'divider',
-          flexShrink: 0,
+          flex: 1,
+          overflow: 'auto',
+          minHeight: 0,
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
+          backgroundImage: `radial-gradient(circle at 1px 1px, ${theme.palette.divider} 1px, transparent 0)`,
+          backgroundSize: '12px 12px',
+          backgroundPosition: '0 0',
         }}
       >
-        <Typography variant="subtitle2" color="text.secondary">
-          {t('workbench.streamTitle')}
-        </Typography>
-      </Box>
-
-      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         {streamStatus === 'ERROR' && streamError && (
           <ErrorStateWithRetry
             message={streamError}
@@ -191,7 +207,7 @@ export const WorkbenchStreamPanel = ({
             >
             {showLive && (
               <Box sx={{ flexShrink: 0, pt: { xs: 0, sm: 0.25 } }}>
-                <PulsingOrb size={28} />
+                <PulsingOrb size={28} variant={orbVariant} />
               </Box>
             )}
             <Box component="span" sx={{ flex: 1, minWidth: 0, display: 'block' }}>
@@ -219,15 +235,23 @@ export const WorkbenchStreamPanel = ({
                 {hasCleanContent ? (
                   <>
                     {cleanStreamLines.slice(0, -1).map((line, i) => (
-                      <StreamMarkdownBlock key={`clean-${i}`} text={line} />
+                      <Box key={`clean-${i}`} component="span" sx={{ display: 'block', mb: 1 }}>
+                        <Typography component="span" variant="caption" sx={{ color: 'text.disabled', mr: 1 }}>
+                          {formatTimestamp(line.at)}
+                        </Typography>
+                        <StreamMarkdownBlock text={line.text} />
+                      </Box>
                     ))}
-                    {cleanStreamLines.length > 0 && (
+                    {lastLine && (
                       <Box sx={{ color: 'text.primary' }}>
+                        <Typography component="span" variant="caption" sx={{ color: 'text.disabled', mr: 1 }}>
+                          {formatTimestamp(lastLine.at)}
+                        </Typography>
                         {streamingThought?.pending ? (
                           <Skeleton variant="text" width="85%" sx={{ fontSize: '0.875rem' }} />
                         ) : (
                           <TypingMarkdownContent
-                            text={cleanStreamLines[cleanStreamLines.length - 1] ?? ''}
+                            text={lastLine.text}
                             active={isLive && !streamingThought?.content}
                           />
                         )}

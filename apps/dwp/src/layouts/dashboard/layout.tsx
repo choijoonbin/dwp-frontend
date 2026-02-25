@@ -192,7 +192,7 @@ export function DashboardLayout({
 
   const { connectionStatus, url: notificationWsUrl } = useNotificationWebSocket({
     enabled: notificationWsEnabled,
-    showToastOnReceive: true,
+    showToastOnReceive: false,
     /** BE가 단일 경로 /topic/notifications 로 브로드캐스트하므로 false. 테넌트별 경로일 때만 true */
     subscribeByTenant: false,
     onReceive: onNotificationReceive,

@@ -43,8 +43,8 @@ type StreamStore = {
   debug: StreamDebugInfo;
   /** Phase3: recent SSE event log lines (max 200) for display */
   eventLog: string[];
-  /** Clean stream: content/thought_stream만 추출한 텍스트 (TypingMarkdown 렌더용) */
-  cleanStreamLines: string[];
+  /** Clean stream: content/thought_stream만 추출한 텍스트 (TypingMarkdown 렌더용). at: 수신 시각(ms) — HH:mm:ss 표시용 */
+  cleanStreamLines: Array<{ text: string; at: number }>;
   /** P1: step-based timeline for UI (started → steps → completed/failed) */
   timelineSteps: StreamTimelineStep[];
   /** thought_pending → 스켈레톤, agent/AGENT_STREAM → 실제 문장 */
@@ -70,6 +70,8 @@ type StreamStore = {
   setLiveTargetBuzei: (buzei: string | null) => void;
   addLiveViolationBuzei: (buzei: string) => void;
   setLiveRiskScore: (score: number) => void;
+  /** 케이스 전환 시 실시간 KPI만 초기화 (liveRiskScore 0, liveViolationBuzeiList 비움) — 분석 완료 케이스는 BE score만 표시 */
+  resetLiveKpi: () => void;
   reset: () => void;
 };
 
@@ -83,7 +85,7 @@ const initialState = {
   status: 'IDLE' as StreamStatus,
   debug: initialDebug,
   eventLog: [] as string[],
-  cleanStreamLines: [] as string[],
+  cleanStreamLines: [] as Array<{ text: string; at: number }>,
   timelineSteps: [] as StreamTimelineStep[],
   streamingThought: null as StreamingThought | null,
   liveTargetBuzei: null as string | null,
@@ -138,7 +140,7 @@ export const useStreamStore = create<StreamStore>((set) => ({
       const trimmed = typeof text === 'string' ? text.trim() : '';
       if (!trimmed) return state;
       return {
-        cleanStreamLines: [...state.cleanStreamLines, trimmed].slice(-MAX_CLEAN_STREAM_LINES),
+        cleanStreamLines: [...state.cleanStreamLines, { text: trimmed, at: Date.now() }].slice(-MAX_CLEAN_STREAM_LINES),
       };
     }),
 
@@ -162,6 +164,9 @@ export const useStreamStore = create<StreamStore>((set) => ({
 
   setLiveRiskScore: (score) =>
     set({ liveRiskScore: Math.min(100, Math.max(0, Math.round(score))) }),
+
+  resetLiveKpi: () =>
+    set({ liveRiskScore: 0, liveViolationBuzeiList: [] }),
 
   reset: () => set({ ...initialState }),
 }));

@@ -3,7 +3,7 @@
  * **굵게** · *기울임* 인라인만 지원, TypingMarkdownContent로 타이핑 효과
  */
 
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -55,12 +55,23 @@ export const StreamMarkdownBlock = ({ text }: { text: string }) => {
   );
 };
 
-/** 타이핑 효과가 있는 마크다운 블록 (스트림 마지막 문장용) */
+/** 타이핑 효과가 있는 마크다운 블록 (스트림 마지막 문장용). 이전 문장과 동일하면 타이핑 스킵·최신 데이터로만 갱신(멱등 렌더링). */
 export const TypingMarkdownContent = ({ text, active = true }: { text: string; active?: boolean }) => {
   const [visibleLength, setVisibleLength] = useState(0);
+  const prevTextRef = useRef(text);
+
   useEffect(() => {
+    if (!text.length) {
+      prevTextRef.current = '';
+      setVisibleLength(0);
+      return () => {};
+    }
+    if (text === prevTextRef.current) {
+      setVisibleLength(text.length);
+      return () => {};
+    }
+    prevTextRef.current = text;
     setVisibleLength(0);
-    if (!text.length) return () => {};
     let mounted = true;
     const timer = setInterval(() => {
       if (!mounted) return;
@@ -71,6 +82,7 @@ export const TypingMarkdownContent = ({ text, active = true }: { text: string; a
       clearInterval(timer);
     };
   }, [text]);
+
   const visible = active ? text.slice(0, visibleLength) : text;
   if (!visible) return null;
   return (

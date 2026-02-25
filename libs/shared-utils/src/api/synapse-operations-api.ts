@@ -151,6 +151,28 @@ export type AiThoughtDto = {
 /** evidenceMapJson 구조 예: { buzei: string[] } | { lineItems: { buzei: string }[] } | { highlightedBuzei: string[] } */
 export type CaseDetailEvidenceMapJson = Record<string, unknown>;
 
+/** [검토 로직] BE logicCheckpoints — 규정 조항·준수 여부 */
+export type CaseDetailLogicCheckpoint = {
+  clause?: string;
+  status?: string;
+  description?: string;
+};
+
+/** [증거 맵] BE evidenceLinks — 그리드 행(itemIdx)과 연결된 증거 카드 */
+export type CaseDetailEvidenceLink = {
+  itemIdx?: number;
+  reason?: string;
+  severity?: string;
+};
+
+/** [분석 리포트] BE finalReport */
+export type CaseDetailFinalReport = {
+  summary?: string;
+  verdict?: string;
+  requestClarificationEnabled?: boolean;
+  closeCaseEnabled?: boolean;
+};
+
 export type CaseDetailDto = {
   caseId: string;
   status: string;
@@ -159,9 +181,21 @@ export type CaseDetailDto = {
   detectedAt?: string;
   keys?: Record<string, unknown>;
   links?: Record<string, unknown>;
-  /** 위반/이상 행 매핑 — 좌측 전표 테이블 강조용 (reasoning.evidenceMapJson 또는 루트) */
+  /** @deprecated 우측 4탭은 reasoningProcess, logicCheckpoints, evidenceLinks, finalReport 사용 */
   evidenceMapJson?: string | CaseDetailEvidenceMapJson;
   evidence_map_json?: string | CaseDetailEvidenceMapJson;
+  /** [사고 과정] 정제된 추론 문장 배열 */
+  reasoningProcess?: string[];
+  reasoning_process?: string[];
+  /** [검토 로직] 규정 준수 여부 리스트 */
+  logicCheckpoints?: CaseDetailLogicCheckpoint[];
+  logic_checkpoints?: CaseDetailLogicCheckpoint[];
+  /** [증거 맵] 그리드 행(itemIdx) 연동 증거 카드 */
+  evidenceLinks?: CaseDetailEvidenceLink[];
+  evidence_links?: CaseDetailEvidenceLink[];
+  /** [분석 리포트] 최종 판정·소명 요청/케이스 종료 플래그 */
+  finalReport?: CaseDetailFinalReport;
+  final_report?: CaseDetailFinalReport;
   /** BE: 전표 라인 (fi_doc_item) — buzei, hkont, wrbtr(BigDecimal→숫자), sgtxt. snake_case 또는 camelCase */
   fi_doc_items?: Array<Record<string, unknown>>;
   fiDocItems?: Array<Record<string, unknown>>;
@@ -169,6 +203,9 @@ export type CaseDetailDto = {
   actionHistory?: CaseActionHistoryItemDto[];
   /** BE: AI 추론 (AiThoughtItemDto[], agent_activity_log, 최근 50건) */
   aiThoughts?: AiThoughtDto[];
+  /** Aura 브리핑 인사이트 — [사고 과정] 탭 상단 '에이전트 총평' 섹션용 */
+  briefingInsight?: string;
+  briefing_insight?: string;
   evidence?: CaseDetailEvidence;
   reasoning?: CaseDetailReasoning;
   action?: CaseDetailAction;

@@ -2,8 +2,10 @@
  * 상세 내역 그리드 — fi_doc_item (계정, 금액, 거래처, 적요)
  * 무엇이 결제되었는지 한눈에 표시
  * 위반 행: 좌측 보더 흐르는 Glow로 'AI 스캔 중' 시각화
+ * 증거 맵 카드 클릭 시 scrollToBuzei로 해당 행 스크롤 + Red Glow
  */
 
+import { useRef, useEffect } from 'react';
 import { keyframes } from '@emotion/react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 
@@ -30,40 +32,64 @@ export type WorkbenchItemDetailGridProps = {
   items: FiDocItem[];
   /** 통화 (전표 fallback) */
   currency?: string;
-  /** 타겟 buzei 강조 */
+  /** 타겟 buzei 강조 (케이스 타겟 또는 증거 맵 클릭) */
   targetBuzei?: string;
+  /** 증거 맵 카드 클릭 시 이 buzei로 스크롤·강조 후 onClearScrollToBuzei 호출 */
+  scrollToBuzei?: string | null;
+  onClearScrollToBuzei?: () => void;
 };
 
 const emptyValue = '—';
 
 /**
- * 금액 표시 부호 기준: SAP FI shkzg (Soll/Haben)
- * - S (Soll, 차변) → 음수(−)로 표시
- * - H (Haben, 대변) → 양수로 표시
- * wrbtr/dmbtr은 보통 절대값으로 전달되고, 부호는 shkzg로 결정합니다.
- * (백엔드가 이미 부호를 포함한 금액을 보낼 경우를 위해 절대값으로 통일 후 shkzg 적용)
+ * 금액 표시: 시각적 일관성을 위해 항상 절대값으로 표시 (shkzg 무관).
+ * BE는 금액을 양수로 생성하며, 상세내역에서는 절대값만 노출합니다.
  */
 function formatAmount(
   wrbtr: number | undefined,
   dmbtr: number | undefined,
-  waers: string | undefined,
-  shkzg?: string
+  waers: string | undefined
 ): string {
   const raw = wrbtr ?? dmbtr;
   if (raw == null) return emptyValue;
   const amt = Math.abs(Number(raw));
   const curr = waers ?? 'USD';
-  const sign = shkzg === 'S' ? '−' : '';
-  return `${sign}${amt.toLocaleString()} ${curr}`;
+  return `${amt.toLocaleString()} ${curr}`;
 }
 
 export const WorkbenchItemDetailGrid = ({
   items,
   currency = 'USD',
   targetBuzei,
+  scrollToBuzei,
+  onClearScrollToBuzei,
 }: WorkbenchItemDetailGridProps) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const highlightBuzei = scrollToBuzei ?? targetBuzei;
+
+  useEffect(() => {
+    if (!scrollToBuzei || !onClearScrollToBuzei) return;
+    const normalized = String(scrollToBuzei).trim().padStart(3, '0');
+    const el = containerRef.current?.querySelector(`[data-row-id="${normalized}"]`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      const tId = window.setTimeout(onClearScrollToBuzei, 800);
+      return () => window.clearTimeout(tId);
+    }
+    onClearScrollToBuzei();
+  }, [scrollToBuzei, onClearScrollToBuzei]);
+
+  const isTarget = (item: FiDocItem) => {
+    if (item.isTarget === true) return true;
+    if (!highlightBuzei) return false;
+    const buzei = item.buzei ?? '';
+    return String(buzei).trim().padStart(3, '0') === String(highlightBuzei).trim().padStart(3, '0');
+  };
+
+  const rowId = (item: FiDocItem) =>
+    (item.buzei != null ? String(item.buzei).trim().padStart(3, '0') : null) ?? item.id;
 
   if (items.length === 0) {
     return (
@@ -75,18 +101,9 @@ export const WorkbenchItemDetailGrid = ({
     );
   }
 
-  const isTarget = (item: FiDocItem) => {
-    if (item.isTarget === true) return true;
-    if (!targetBuzei) return false;
-    const buzei = item.buzei ?? '';
-    return String(buzei).trim().padStart(3, '0') === String(targetBuzei).trim().padStart(3, '0');
-  };
-
-  const rowId = (item: FiDocItem) =>
-    (item.buzei != null ? String(item.buzei).trim().padStart(3, '0') : null) ?? item.id;
-
   return (
     <TableContainer
+      ref={containerRef}
       component={Paper}
       variant="outlined"
       sx={{
@@ -147,10 +164,9 @@ export const WorkbenchItemDetailGrid = ({
                   align="right"
                   sx={{
                     fontWeight: 500,
-                    color: item.shkzg === 'S' ? 'error.main' : 'text.primary',
                   }}
                 >
-                  {formatAmount(item.wrbtr, item.dmbtr, item.waers ?? currency, item.shkzg)}
+                  {formatAmount(item.wrbtr, item.dmbtr, item.waers ?? currency)}
                 </TableCell>
                 <TableCell>{item.partner ?? emptyValue}</TableCell>
                 <TableCell sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>

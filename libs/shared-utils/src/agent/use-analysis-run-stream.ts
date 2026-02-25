@@ -63,6 +63,17 @@ const CLEANUP_ABORT_DELAY_MS = 500;
 
 let pendingCleanupAbortId: ReturnType<typeof setTimeout> | null = null;
 
+/** 화면에 노출하지 않을 기술/하드코딩 로그 문구 — eventLog 및 cleanStream 공통 필터 */
+const TECHNICAL_LOG_BLACKLIST = [
+  '데이터 분석 중',
+  'Data analysis in progress',
+  'Analyzing data',
+  'Processing',
+];
+
+const shouldFilterLogLine = (line: string): boolean =>
+  TECHNICAL_LOG_BLACKLIST.some((phrase) => line.includes(phrase));
+
 // ----------------------------------------------------------------------
 // Hook
 // ----------------------------------------------------------------------
@@ -259,7 +270,7 @@ export const useAnalysisRunStream = () => {
           let lineIndex = 0;
           for (const line of lines) {
             const trimmed = line.trim();
-            if (trimmed.length > 0) {
+            if (trimmed.length > 0 && !shouldFilterLogLine(trimmed)) {
               addEventLogLine(trimmed);
               lineIndex += 1;
               // 청크 내에서도 화면이 실시간으로 갱신되도록 N줄마다 yield (한 번에 보이지 않게)
@@ -373,7 +384,7 @@ export const useAnalysisRunStream = () => {
                   addLiveViolationBuzei(buzeiNorm);
                 }
                 const thoughtStream = parsed.thought_stream ?? (parsed as { thoughtStream?: string }).thoughtStream;
-                if (typeof thoughtStream === 'string' && thoughtStream.trim()) addCleanStreamLine(thoughtStream);
+                if (typeof thoughtStream === 'string' && thoughtStream.trim() && !shouldFilterLogLine(thoughtStream)) addCleanStreamLine(thoughtStream);
                 setStepProgress({
                   label: parsed.label,
                   detail: parsed.detail,
@@ -414,7 +425,7 @@ export const useAnalysisRunStream = () => {
                   addLiveViolationBuzei(buzeiNorm);
                 }
                 const message = parsed.message ?? parsed.content ?? (parsed as { text?: string }).text ?? '';
-                if (message.trim()) addCleanStreamLine(message);
+                if (message.trim() && !shouldFilterLogLine(message)) addCleanStreamLine(message);
                 setStepProgress({
                   label: parsed.agent ?? parsed.message,
                   detail: message || parsed.message,

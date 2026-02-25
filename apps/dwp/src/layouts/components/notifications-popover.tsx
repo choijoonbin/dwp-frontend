@@ -6,7 +6,7 @@
 
 import type { IconButtonProps } from '@mui/material/IconButton';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   useNotificationStore,
@@ -90,13 +90,46 @@ export function NotificationsPopover({ data: _data = [], sx, ...other }: Notific
   const badgeCount = totalUnRead;
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const prevItemsLengthRef = useRef(0);
+  const autoCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 신규 알람 수신 시 Popover 자동 열기, 2초 후 닫기. 추가 알람 시 2초씩 연장
+  useEffect(() => {
+    const currentLength = items.length;
+    if (currentLength <= prevItemsLengthRef.current) return;
+    prevItemsLengthRef.current = currentLength;
+
+    if (buttonRef.current) setOpenPopover(buttonRef.current);
+    if (autoCloseTimeoutRef.current) clearTimeout(autoCloseTimeoutRef.current);
+    autoCloseTimeoutRef.current = setTimeout(() => {
+      setOpenPopover(null);
+      autoCloseTimeoutRef.current = null;
+    }, 2000);
+  }, [items.length]);
+
+  useEffect(() => {
+    return () => {
+      if (autoCloseTimeoutRef.current) clearTimeout(autoCloseTimeoutRef.current);
+    };
+  }, []);
+
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
   }, []);
 
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
+    if (autoCloseTimeoutRef.current) {
+      clearTimeout(autoCloseTimeoutRef.current);
+      autoCloseTimeoutRef.current = null;
+    }
   }, []);
+
+  const handleViewAll = useCallback(() => {
+    markAllAsRead();
+    handleClosePopover();
+  }, [markAllAsRead, handleClosePopover]);
 
   const handleMarkAllAsRead = useCallback(() => {
     markAllAsRead();
@@ -116,6 +149,7 @@ export function NotificationsPopover({ data: _data = [], sx, ...other }: Notific
   return (
     <>
       <IconButton
+        ref={buttonRef}
         color={openPopover ? 'primary' : 'default'}
         onClick={handleOpenPopover}
         sx={sx}
@@ -145,16 +179,16 @@ export function NotificationsPopover({ data: _data = [], sx, ...other }: Notific
       >
         <Box
           sx={{
-            py: 2,
-            pl: 2.5,
-            pr: 1.5,
+            py: 1.5,
+            pl: 2,
+            pr: 1,
             display: 'flex',
             alignItems: 'center',
           }}
         >
           <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="subtitle1">Notifications</Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            <Typography variant="subtitle2">Notifications</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               You have {badgeCount} unread message{badgeCount !== 1 ? 's' : ''}
             </Typography>
           </Box>
@@ -170,10 +204,10 @@ export function NotificationsPopover({ data: _data = [], sx, ...other }: Notific
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <Scrollbar fillContent sx={{ minHeight: 240, maxHeight: { xs: 360, sm: 'none' } }}>
+        <Scrollbar fillContent sx={{ minHeight: 200, maxHeight: { xs: 320, sm: 'none' } }}>
           <List disablePadding>
             {listToShow.length === 0 ? (
-              <Box sx={{ py: 4, textAlign: 'center' }}>
+              <Box sx={{ py: 3, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
                   No notifications yet
                 </Typography>
@@ -193,7 +227,7 @@ export function NotificationsPopover({ data: _data = [], sx, ...other }: Notific
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple color="inherit">
+          <Button fullWidth disableRipple color="inherit" onClick={handleViewAll}>
             View all
           </Button>
         </Box>
@@ -224,8 +258,8 @@ function NotificationRow({
     <ListItemButton
       onClick={handleClick}
       sx={{
-        py: 1.5,
-        px: 2.5,
+        py: 1,
+        px: 2,
         mt: '1px',
         ...(notification.isUnRead && {
           bgcolor: 'action.selected',
@@ -234,8 +268,8 @@ function NotificationRow({
     >
       <Box
         sx={{
-          width: 40,
-          height: 40,
+          width: 32,
+          height: 32,
           borderRadius: 1,
           display: 'flex',
           alignItems: 'center',
@@ -243,17 +277,17 @@ function NotificationRow({
           bgcolor: `${colorKey}.lighter`,
           color: `${colorKey}.main`,
           flexShrink: 0,
-          mr: 1.5,
+          mr: 1.25,
         }}
       >
-        <Iconify width={22} icon={icon} />
+        <Iconify width={18} icon={icon} />
       </Box>
       <ListItemText
         primary={
-          <Typography variant="subtitle2">
+          <Typography variant="body2">
             {notification.title}
             {notification.message && (
-              <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
+              <Typography component="span" variant="caption" sx={{ color: 'text.secondary' }}>
                 {' '}
                 — {notification.message}
               </Typography>
@@ -264,14 +298,14 @@ function NotificationRow({
           <Typography
             variant="caption"
             sx={{
-              mt: 0.5,
+              mt: 0.25,
               gap: 0.5,
               display: 'flex',
               alignItems: 'center',
               color: 'text.disabled',
             }}
           >
-            <Iconify width={14} icon="solar:clock-circle-outline" />
+            <Iconify width={12} icon="solar:clock-circle-outline" />
             {fToNow(notification.createdAt)}
             <Box component="span" sx={{ ml: 0.5 }}>
               · {label}

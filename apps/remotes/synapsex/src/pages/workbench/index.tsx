@@ -10,12 +10,13 @@
 
 import type { Theme } from '@mui/material/styles';
 
-import { useRef, useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
+import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 import { useAuraStore } from '@dwp-frontend/shared-utils/aura/use-aura-store';
-import { useStreamStore, useAnalysisRunStream, useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { showToast, useStreamStore, getErrorMessage, useAnalysisRunStream, useCaseAnalysisQuery, sendExplanationRequest, useWorkbenchReactiveStore, useCasesListQuery } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -32,10 +33,12 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { RagPage } from '../rag';
 import { PoliciesPage } from '../policies';
+import { caseListDtoToUi } from '../cases/adapters/case-list-adapter';
 import { useCaseDetail } from '../cases/hooks/use-case-detail';
+import { WorkbenchKpiStrip } from './components/WorkbenchKpiStrip';
 import { WorkbenchQueuePanel } from './components/WorkbenchQueuePanel';
+import { WorkbenchRightPanel } from './components/WorkbenchRightPanel';
 import { WorkbenchDetailPanel } from './components/WorkbenchDetailPanel';
-import { WorkbenchStreamPanel } from './components/WorkbenchStreamPanel';
 
 // ----------------------------------------------------------------------
 // Glass panel (Light: 0.7, Dark: 0.8 + SK Red Glow)
@@ -141,24 +144,96 @@ export const WorkbenchPage = () => {
   const displayViolations = useCountUp(liveViolationCount, isStreamLive);
   const displayScore = useCountUp(liveRiskScore, isStreamLive);
 
-  /** 통합 데이터 바인딩: useCaseDetail 하나로 모든 데이터 관리 */
-  const { fiDocItems, targetBuzei, itemsCurrency, actionHistory, aiThoughts, isLoading: detailLoading } =
-    useCaseDetail(selectedCaseId ?? undefined);
+  /** 통합 데이터 바인딩: useCaseDetail — BE 4개 필드(reasoningProcess, logicCheckpoints, evidenceLinks, finalReport) + briefingInsight 직접 사용 */
+  const {
+    caseData,
+    briefingInsight,
+    fiDocItems,
+    targetBuzei,
+    itemsCurrency,
+    actionHistory,
+    aiThoughts,
+    isLoading: detailLoading,
+    violationBuzeiList,
+    reasoningProcess,
+    logicCheckpoints,
+    evidenceLinks,
+    finalReport,
+    summaryVerdict,
+  } = useCaseDetail(selectedCaseId ?? undefined);
 
-  /** THOUGHT_STREAM WebSocket: 현재 상세 case와 일치할 때만 ThoughtChainUI에 스트리밍; 케이스 전환 시 컨텍스트·thought 초기화 */
+  const { data: analysisData } = useCaseAnalysisQuery(selectedCaseId ?? undefined, { enabled: Boolean(selectedCaseId) });
+  const ragRefs = (analysisData?.ragRefs ?? []) as Array<{ refId?: string; sourceType?: string; sourceKey?: string; excerpt?: string; score?: number }>;
+  const confidenceOverall = analysisData?.confidenceBreakdown?.overall;
+  const analysisScore =
+    analysisData?.score ?? (confidenceOverall != null ? Number(confidenceOverall) * 100 : undefined);
+
+  /** 배치 모드 KPI: 케이스 미선택 시 오늘/전체 케이스 수 + 진입 시 최고 score 케이스 자동 선택용 */
+  const casesListQuery = useCasesListQuery({ page: 0, size: 20 });
+  const caseListItems = useMemo(() => {
+    const raw = casesListQuery.data?.items ?? casesListQuery.data?.content ?? casesListQuery.data?.data ?? [];
+    return Array.isArray(raw) ? raw.map(caseListDtoToUi) : [];
+  }, [casesListQuery.data]);
+  const batchTotalCases = casesListQuery.data?.total ?? casesListQuery.data?.totalElements ?? 0;
+
+  /** 지능형 포커싱: 백엔드 알림(suggestedSelectCaseId / briefing_priority_case_id)이 있으면 로컬 score 정렬보다 최우선 적용 */
+  const suggestedSelectCaseId = useWorkbenchReactiveStore((s) => s.suggestedSelectCaseId);
   useEffect(() => {
-    useWorkbenchReactiveStore.getState().setThoughtStreamContext(selectedCaseId ?? null, null);
-    useAuraStore.getState().actions.clearThoughtChains();
-  }, [selectedCaseId]);
+    if (suggestedSelectCaseId == null) return;
+    setSelectedCaseId(suggestedSelectCaseId);
+    useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(null);
+  }, [suggestedSelectCaseId]);
+
+  /** 워크벤치 진입 시 케이스 목록 로드 후, suggestedSelectCaseId가 없을 때만 score(confidence) 최고 케이스 자동 선택 */
+  const didAutoSelectRef = useRef(false);
+  useEffect(() => {
+    if (suggestedSelectCaseId != null) return;
+    if (selectedCaseId != null || caseListItems.length === 0 || casesListQuery.isLoading) return;
+    if (didAutoSelectRef.current) return;
+    const top = [...caseListItems].sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0))[0];
+    if (top?.id) {
+      didAutoSelectRef.current = true;
+      setSelectedCaseId(top.id);
+    }
+  }, [caseListItems, selectedCaseId, casesListQuery.isLoading, suggestedSelectCaseId]);
+
+  const [explanationLoading, setExplanationLoading] = useState(false);
+  const [scrollToBuzei, setScrollToBuzei] = useState<string | null>(null);
+  const handleEvidenceCardClick = useCallback((itemIdx: number) => {
+    const buzei = fiDocItems[itemIdx]?.buzei ?? String(itemIdx + 1).padStart(3, '0');
+    setScrollToBuzei(buzei);
+  }, [fiDocItems]);
+  const handleRequestExplanation = useCallback(async () => {
+    if (!selectedCaseId) return;
+    setExplanationLoading(true);
+    try {
+      await sendExplanationRequest({
+        caseId: selectedCaseId,
+        summary: finalReport?.summary ?? finalReport?.verdict ?? summaryVerdict ?? undefined,
+        violationSummary: finalReport?.verdict ?? undefined,
+      });
+      showToast(t('caseDetail.explanationRequestSent'), 'success');
+    } catch (err) {
+      showToast(getErrorMessage(err) ?? t('caseDetail.explanationRequestFailed'), 'error');
+    } finally {
+      setExplanationLoading(false);
+    }
+  }, [selectedCaseId, finalReport, summaryVerdict, t]);
 
   /** 테스트 데이터 생성 후 워크벤치 진입 시: CASE_ACTION/ANALYSIS_STARTED로 제안된 케이스가 있으면 자동 선택 */
-  const suggestedSelectCaseId = useWorkbenchReactiveStore((s) => s.suggestedSelectCaseId);
   useEffect(() => {
     if (suggestedSelectCaseId == null) return;
     console.log('[Workbench SSE] suggestedSelectCaseId로 케이스 자동 선택', suggestedSelectCaseId);
     setSelectedCaseId(suggestedSelectCaseId);
     useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(null);
   }, [suggestedSelectCaseId]);
+
+  /** THOUGHT_STREAM WebSocket: 현재 상세 case와 일치할 때만 ThoughtChainUI에 스트리밍; 케이스 전환 시 컨텍스트·thought 초기화 */
+  useEffect(() => {
+    useWorkbenchReactiveStore.getState().setThoughtStreamContext(selectedCaseId ?? null, null);
+    useAuraStore.getState().actions.clearThoughtChains();
+    useStreamStore.getState().resetLiveKpi();
+  }, [selectedCaseId]);
 
   /** ANALYSIS_STARTED 수신 시 stream_url 저장됨. 선택 케이스와 일치하면 지연 없이 SSE 자동 구독 (Aura 2초 대기 내 연결) */
   useEffect(() => {
@@ -316,12 +391,47 @@ export const WorkbenchPage = () => {
         sx={{
           flex: 1,
           display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
+          flexDirection: { xs: 'column', md: 'column' },
           minHeight: 0,
           overflow: 'hidden',
           '--workbench-panel-header-height': '56px',
         }}
       >
+        {/* Global Row: KPI Strip — 좌/중/우 전체를 가로지르는 최상단 행. 케이스 자동 선택 시 batchMode→caseMode 전환(opacity/transform) 애니메이션 */}
+        <Box
+          sx={{
+            flexShrink: 0,
+            px: 2,
+            py: 1.5,
+            borderBottom: 1,
+            borderColor: 'divider',
+            bgcolor: 'action.hover',
+            transition: 'opacity 0.35s ease, transform 0.35s ease',
+            opacity: selectedCaseId ? 1 : 0.92,
+            transform: selectedCaseId ? 'scale(1)' : 'scale(0.98)',
+          }}
+        >
+          <WorkbenchKpiStrip
+            batchMode={!selectedCaseId}
+            totalVouchers={selectedCaseId ? fiDocItems.length : batchTotalCases}
+            highRiskCount={selectedCaseId ? (liveViolationCount || violationBuzeiList.length) : 0}
+            progressPercent={selectedCaseId ? (isStreamLive ? liveRiskScore : (analysisScore ?? 0)) : 0}
+            savingsEstimate={null}
+            currency={itemsCurrency ?? 'KRW'}
+            animateCountUp={!!selectedCaseId}
+          />
+        </Box>
+
+        {/* 좌측 패널 | PanelGroup(중앙+우측) */}
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            minHeight: 0,
+            overflow: 'hidden',
+          }}
+        >
         {/* Left: 300px — Queue */}
         <Box
           sx={{
@@ -340,44 +450,89 @@ export const WorkbenchPage = () => {
           />
         </Box>
 
-        {/* Center: flex:1 — Detail + ThoughtChain */}
-        <Box
-          sx={{
-            flex: 1,
-            minWidth: 0,
-            minHeight: 0,
-            display: { xs: mobileTab === 'detail' ? 'flex' : 'none', md: 'flex' },
-            flexDirection: 'column',
-          }}
+        {/* Center + Right: Resizable — Detail | 4탭 우측 패널 */}
+        <PanelGroup
+          direction="horizontal"
+          style={{ flex: 1, minWidth: 0, minHeight: 0 }}
+          autoSaveId="workbench-right-panel"
         >
-          <WorkbenchDetailPanel
-            actionHistory={actionHistory}
-            aiThoughts={aiThoughts}
-            fiDocItems={fiDocItems}
-            getGlassPanelSx={getGlassPanelSx}
-            isLoading={detailLoading}
-            itemsCurrency={itemsCurrency}
-            selectedCaseId={selectedCaseId}
-            targetBuzei={targetBuzei}
-            sx={{ flex: 1, minHeight: 0 }}
-          />
-        </Box>
-
-        {/* Right: 350px — Stream */}
-        <Box
-          sx={{
-            width: 350,
-            flexShrink: 0,
-            minHeight: 0,
-            display: { xs: mobileTab === 'stream' ? 'flex' : 'none', md: 'block' },
-            flexDirection: 'column',
-          }}
-        >
-          <WorkbenchStreamPanel
-            getGlassPanelSx={getGlassPanelSx}
-            selectedCaseId={selectedCaseId}
-            sx={{ flex: 1, minHeight: 0 }}
-          />
+          <Panel defaultSize={70} minSize={30} order={1}>
+            <Box
+              sx={{
+                height: '100%',
+                display: { xs: mobileTab === 'detail' ? 'flex' : 'none', md: 'flex' },
+                flexDirection: 'column',
+                minHeight: 0,
+                minWidth: 0,
+              }}
+            >
+              <WorkbenchDetailPanel
+                actionHistory={actionHistory}
+                aiThoughts={aiThoughts}
+                caseStatus={caseData?.status}
+                fiDocItems={fiDocItems}
+                getGlassPanelSx={getGlassPanelSx}
+                isLoading={detailLoading}
+                itemsCurrency={itemsCurrency}
+                scrollToBuzei={scrollToBuzei}
+                selectedCaseId={selectedCaseId}
+                targetBuzei={targetBuzei}
+                sx={{ flex: 1, minHeight: 0 }}
+                onClearScrollToBuzei={() => setScrollToBuzei(null)}
+              />
+            </Box>
+          </Panel>
+          <Box
+            sx={{
+              width: 8,
+              minWidth: 8,
+              cursor: 'col-resize',
+              position: 'relative',
+              flexShrink: 0,
+              bgcolor: 'action.hover',
+              '&:hover .workbench-handle-bar': { bgcolor: 'primary.main' },
+            }}
+          >
+            <Box
+              className="workbench-handle-bar"
+              sx={{
+                position: 'absolute',
+                left: 3,
+                top: 56,
+                bottom: 0,
+                width: 2,
+                bgcolor: 'transparent',
+                transition: 'background-color 0.15s ease',
+              }}
+            />
+            <PanelResizeHandle style={{ width: '100%', minWidth: 8, background: 'transparent', cursor: 'col-resize' }} />
+          </Box>
+          <Panel defaultSize={30} minSize={20} maxSize={50} order={2} collapsible>
+            <Box
+              sx={{
+                height: '100%',
+                minWidth: 0,
+                display: { xs: mobileTab === 'stream' ? 'flex' : 'none', md: 'block' },
+              }}
+            >
+              <WorkbenchRightPanel
+                briefingInsight={briefingInsight}
+                evidenceLinks={evidenceLinks}
+                explanationLoading={explanationLoading}
+                finalReport={finalReport}
+                fiDocItems={fiDocItems}
+                getGlassPanelSx={getGlassPanelSx}
+                logicCheckpoints={logicCheckpoints}
+                onEvidenceCardClickByItemIdx={handleEvidenceCardClick}
+                onRequestExplanation={handleRequestExplanation}
+                reasoningProcess={reasoningProcess}
+                selectedCaseId={selectedCaseId}
+                orbVariant={liveViolationCount > 0 || (liveRiskScore ?? 0) >= 70 ? 'risk' : 'thinking'}
+                sx={{ height: '100%' }}
+              />
+            </Box>
+          </Panel>
+        </PanelGroup>
         </Box>
       </Box>
 

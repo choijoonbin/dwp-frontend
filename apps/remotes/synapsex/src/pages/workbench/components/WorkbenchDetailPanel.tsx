@@ -21,12 +21,16 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import { WorkbenchThoughtChain } from './WorkbenchThoughtChain';
 import { WorkbenchItemDetailGrid } from './WorkbenchItemDetailGrid';
+import { PanelHeader } from './PanelHeader';
 import { WorkbenchActionHistoryTimeline } from './WorkbenchActionHistoryTimeline';
+import { StatusBadge } from '../../../components/finance/status-badge';
 
 import type { FiDocItem, AiThought, ActionHistoryItem } from '../../cases/hooks/use-case-detail';
 
 export type WorkbenchDetailPanelProps = {
   selectedCaseId?: string | null;
+  /** 현재 분석 중인 전표의 상태 — 헤더 우측 Status Badge 표시 */
+  caseStatus?: string;
   /** AI 추론 과정 (BE: aiThoughts[] 또는 reasoning.thoughts[]) */
   aiThoughts?: AiThought[];
   /** 조치 이력 (BE: actionHistory[] 또는 agent_case_action_history[]) */
@@ -35,6 +39,9 @@ export type WorkbenchDetailPanelProps = {
   fiDocItems?: FiDocItem[];
   targetBuzei?: string;
   itemsCurrency?: string;
+  /** 증거 맵 카드 클릭 시 해당 buzei 행으로 스크롤·Red Glow (우측 패널 → 중앙 그리드) */
+  scrollToBuzei?: string | null;
+  onClearScrollToBuzei?: () => void;
   /** useCaseDetail 로딩 중 여부 */
   isLoading?: boolean;
   getGlassPanelSx: (theme: Theme) => Record<string, unknown>;
@@ -45,11 +52,14 @@ type DetailTab = 'inference' | 'history' | 'item-detail';
 
 export const WorkbenchDetailPanel = ({
   selectedCaseId,
+  caseStatus,
   aiThoughts = [],
   actionHistory = [],
   fiDocItems = [],
   targetBuzei,
   itemsCurrency,
+  scrollToBuzei,
+  onClearScrollToBuzei,
   isLoading = false,
   getGlassPanelSx,
   sx,
@@ -64,6 +74,10 @@ export const WorkbenchDetailPanel = ({
   useEffect(() => {
     scrollContainerRef.current?.scrollTo(0, 0);
   }, [selectedCaseId]);
+
+  useEffect(() => {
+    if (scrollToBuzei) setDetailTab('item-detail');
+  }, [scrollToBuzei]);
 
   /** THOUGHT_STREAM WebSocket으로 수신한 라이브 thought가 현재 상세 케이스와 일치하면 우선 표시 */
   const { displayThoughts, isStreamingThoughts } = useMemo(() => {
@@ -98,25 +112,11 @@ export const WorkbenchDetailPanel = ({
         ...sx,
       }}
     >
-      <Box
-        sx={{
-          height: 'var(--workbench-panel-header-height, 56px)',
-          minHeight: 'var(--workbench-panel-header-height, 56px)',
-          pt: 0,
-          px: 2,
-          pb: 1.5,
-          borderBottom: 1,
-          borderColor: 'divider',
-          flexShrink: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}
-      >
-        <Typography variant="subtitle2" color="text.secondary">
-          {t('workbench.detailTitle')}
-        </Typography>
-      </Box>
+      <PanelHeader title={t('workbench.detailTitle')}>
+        {caseStatus != null && caseStatus !== '' ? (
+          <StatusBadge status={caseStatus} size="sm" showIcon />
+        ) : null}
+      </PanelHeader>
 
       {showEmptyState ? (
         <Stack
@@ -215,6 +215,8 @@ export const WorkbenchDetailPanel = ({
                     items={fiDocItems}
                     currency={itemsCurrency}
                     targetBuzei={targetBuzei}
+                    scrollToBuzei={scrollToBuzei}
+                    onClearScrollToBuzei={onClearScrollToBuzei}
                   />
                 )}
               </>

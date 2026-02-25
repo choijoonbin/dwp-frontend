@@ -15,6 +15,8 @@ export type StatusBadgeStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED
 
 export type StatusBadgeProps = {
   status: StatusBadgeStatus;
+  /** API 코드명이 있으면 우선 표시 (예: useCodes('CASE_STATUS').getLabel(code)) */
+  label?: string;
   size?: 'sm' | 'md' | 'lg';
   showIcon?: boolean;
   sx?: SxProps<Theme>;
@@ -26,10 +28,12 @@ const sizeMap = {
   lg: { fontSize: '0.875rem', iconSize: 18 },
 };
 
-/** OPEN: Info(파란색), IN_PROGRESS: Warning(노란색/Processing) */
+/** OPEN: Info(파란색), IN_PROGRESS: Warning(노란색/Processing), new: 신규 */
 const statusConfig: Record<string, { icon: string; color: LabelColor }> = {
   open: { icon: 'solar:record-circle-bold', color: 'info' },
   OPEN: { icon: 'solar:record-circle-bold', color: 'info' },
+  new: { icon: 'solar:star-bold', color: 'info' },
+  NEW: { icon: 'solar:star-bold', color: 'info' },
   in_progress: { icon: 'solar:refresh-circle-bold-duotone', color: 'warning' },
   IN_PROGRESS: { icon: 'solar:refresh-circle-bold-duotone', color: 'warning' },
   resolved: { icon: 'solar:check-circle-bold-duotone', color: 'success' },
@@ -43,13 +47,13 @@ const statusConfig: Record<string, { icon: string; color: LabelColor }> = {
 
 const defaultConfig = { icon: 'solar:info-circle-bold', color: 'default' as LabelColor };
 
-export const StatusBadge = ({ status, size = 'md', showIcon = true, sx }: StatusBadgeProps) => {
+export const StatusBadge = ({ status, label: labelOverride, size = 'md', showIcon = true, sx }: StatusBadgeProps) => {
   const { t } = useTranslation('common');
   const normalized = (status ?? '').trim();
   const key = normalized.toLowerCase().replace(/-/g, '_');
   const config = statusConfig[normalized] ?? statusConfig[key] ?? defaultConfig;
   const { fontSize, iconSize } = sizeMap[size];
-  const label = t(`statusLabels.${key || 'unknown'}`);
+  const label = labelOverride ?? t(`statusLabels.${key || 'unknown'}`);
 
   return (
     <Label

@@ -1,5 +1,6 @@
 /**
  * Synapse 시연 데이터 제어 API
+ * - GET /api/synapse/demo/scenario-types — 시나리오 유형 목록 (드롭다운용)
  * - POST /api/demo/generate — 시연 시나리오 생성 (BE: camelCase/snake_case 둘 다 수용)
  * - POST /api/synapse/demo/generate-violation — 위반 시나리오 생성
  *
@@ -9,6 +10,24 @@
 import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
+
+// ----------------------------------------------------------------------
+// GET /api/synapse/demo/scenario-types
+// ----------------------------------------------------------------------
+
+export type ScenarioTypeOptionDto = {
+  code: string;
+  label: string;
+};
+
+export const getScenarioTypes = async (): Promise<
+  ApiResponse<ScenarioTypeOptionDto[]>
+> => {
+  const res = await axiosInstance.get<
+    ApiResponse<ScenarioTypeOptionDto[]>
+  >('/api/synapse/demo/scenario-types');
+  return res.data;
+};
 
 // ----------------------------------------------------------------------
 // POST /api/demo/generate
@@ -63,25 +82,23 @@ export const generateDemo = async (
 // Dynamic random: intensity + limitAmountKrw 또는 amountRangeMin/Max 사용.
 // VIOLATION → 규정 150%~500% 구간 랜덤, NORMAL → 50%~90% 구간 랜덤.
 // amountRangeMin/Max 있으면 해당 구간으로 랜덤(비율 무시). 전표 저장 후 Detect 비동기.
-
-/** BE scenarioType (예: WEEKEND_MEAL, OVER_LIMIT, LATE_NIGHT, PER_CAPITA_LIMIT) */
-export type ScenarioType = 'WEEKEND_MEAL' | 'PER_CAPITA_LIMIT' | 'LATE_NIGHT' | 'OVER_LIMIT';
+// scenarioType: GET /scenario-types 응답의 code 7개 (SPLIT_PAYMENT, HOLIDAY_USAGE 등) 사용.
 
 /** 금액 랜덤 강도: 미지정 시 시나리오로 유추 */
-export type ViolationIntensity = 'NORMAL' | 'VIOLATION';
+export type ViolationIntensity = 'NORMAL' | 'WARNING' | 'VIOLATION';
 
 export type GenerateViolationRequestBody = {
-  /** 시나리오 유형 (BE enum) */
-  scenarioType: ScenarioType;
-  /** 생성 건수 (1~10 등) */
+  /** 시나리오 유형 — GET /scenario-types 응답의 code (SPLIT_PAYMENT, HOLIDAY_USAGE 등 7개) */
+  scenarioType: string;
+  /** 생성 건수 (1~10). SPLIT_PAYMENT일 때는 무시·2~3건 쌍 자동 생성 */
   count: number;
-  /** VIOLATION: 규정 150%~500% 랜덤, NORMAL: 50%~90% 랜덤. 미지정 시 시나리오 유추 */
+  /** VIOLATION / WARNING / NORMAL. 미지정 시 시나리오 유추 */
   intensity?: ViolationIntensity;
   /** 규정 한도(원). 미지정 시 30,000 */
   limitAmountKrw?: number;
-  /** 금액 범위 최소(원, 선택). 있으면 amountRangeMax와 함께 사용 시 비율 무시 */
+  /** 금액 범위 최소(원, 선택). max와 함께 지정 시 해당 구간 랜덤 */
   amountRangeMin?: number;
-  /** 금액 범위 최대(원, 선택). amountRangeMin <= amountRangeMax */
+  /** 금액 범위 최대(원, 선택). 모든 금액은 양수로 생성됨 */
   amountRangeMax?: number;
 };
 

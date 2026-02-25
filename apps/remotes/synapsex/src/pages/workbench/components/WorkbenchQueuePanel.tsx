@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useRef, useMemo, useState, useEffect } from 'react';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
-import { useCasesListQuery, useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
+import { useCasesListQuery, useWorkbenchReactiveStore, useCodes } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -22,6 +22,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 
 import { SYNAPSE_ROUTES } from '../../../routes';
 import { StatusBadge } from '../../../components/finance/status-badge';
+import { PanelHeader } from './PanelHeader';
 import { caseListDtoToUi } from '../../cases/adapters/case-list-adapter';
 import { SeverityBadge } from '../../../components/finance/severity-badge';
 import { ErrorStateWithRetry } from '../../../components/ux/error-state-with-retry';
@@ -58,6 +59,7 @@ export const WorkbenchQueuePanel = ({
     [page]
   );
   const query = useCasesListQuery(queryParams);
+  const { getLabel: getStatusLabel } = useCodes('CASE_STATUS');
   const { items, totalPages } = useMemo(() => {
     if (!query.data) {
       return { items: [] as CaseListItem[], totalCount: 0, totalPages: 1 };
@@ -129,27 +131,7 @@ export const WorkbenchQueuePanel = ({
         ...sx,
       }}
     >
-      <Box
-        sx={{
-          height: 'var(--workbench-panel-header-height, 56px)',
-          minHeight: 'var(--workbench-panel-header-height, 56px)',
-          pt: 0,
-          px: 2,
-          pb: 1.5,
-          borderBottom: 1,
-          borderColor: 'divider',
-          flexShrink: 0,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 1,
-          overflowX: 'auto',
-        }}
-      >
-        <Typography variant="subtitle2" color="text.secondary" sx={{ flexShrink: 0 }}>
-          {t('workbench.queueTitle')}
-        </Typography>
+      <PanelHeader title={t('workbench.queueTitle')}>
         <Stack direction="row" spacing={0.75} useFlexGap sx={{ flexShrink: 0 }}>
           <Chip
             size="small"
@@ -183,7 +165,7 @@ export const WorkbenchQueuePanel = ({
                   }),
                 }}
               >
-                <StatusBadge status={status} size="sm" sx={{ height: 20, fontSize: '0.68rem' }} />
+                <StatusBadge status={status} label={getStatusLabel(status)} size="sm" sx={{ height: 20, fontSize: '0.68rem' }} />
               </Box>
             );
           })}
@@ -213,7 +195,7 @@ export const WorkbenchQueuePanel = ({
             );
           })}
         </Stack>
-      </Box>
+      </PanelHeader>
 
       <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         {query.isLoading && (
@@ -285,7 +267,7 @@ export const WorkbenchQueuePanel = ({
                         ) : (
                           <>
                             <SeverityBadge severity={item.severity} size="sm" sx={{ fontSize: '0.68rem' }} />
-                            <StatusBadge status={item.status} size="sm" sx={{ fontSize: '0.68rem' }} />
+                            <StatusBadge status={item.status} label={getStatusLabel(item.status)} size="sm" sx={{ fontSize: '0.68rem' }} />
                           </>
                         )}
                         <Typography variant="caption" color="text.secondary" noWrap>
