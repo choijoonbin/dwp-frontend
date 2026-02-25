@@ -41,7 +41,10 @@ import { ReconciliationPage } from './pages/reconciliation';
 import { DocumentDetailPage } from './pages/document-detail';
 import { RagDocumentDetailPage } from './pages/rag/rag-detail';
 import { ActionReconciliationPage } from './pages/action-recon';
+import { MyAuditExpensesPage } from './pages/my-audit/expenses';
+import { UserCaseDetailPage } from './pages/my-audit/user-case-detail';
 import { PolicyProfileDetailPage } from './pages/policies/policy-detail';
+import { MyAuditClarificationPage } from './pages/my-audit/clarification';
 import { ReconRunDetailPage } from './pages/reconciliation/recon-run-detail';
 
 // ----------------------------------------------------------------------
@@ -53,6 +56,9 @@ const PATH_TO_PAGE: Record<string, () => ReactNode> = {
   // 통합 워크벤치 (메인: /synapse/workbench만 사용, command-center는 위에서 redirect)
   workbench: () => <WorkbenchPage />,
   synapse: () => <WorkbenchPage />,
+  'my-audit/expenses': () => <MyAuditExpensesPage />,
+  'my-audit/clarification': () => <MyAuditClarificationPage />,
+  'my-audit': () => <MyAuditExpensesPage />,
 
   // 자율 운영 센터 (부모 메뉴)
   'menu.autonomous-operations': () => <AutonomyPage />,
@@ -128,6 +134,12 @@ export const getPageForPathname = (pathname: string): ReactNode => {
   }
 
   // 1) 상세 페이지 패턴 먼저 체크 (cases/:id, documents/:id, entities/:id, rag/:docId, policies/:profileId)
+  const myAuditCaseDetailMatch = normalized.match(/^my-audit\/cases\/([^/]+)$/);
+  if (myAuditCaseDetailMatch) {
+    return wrapWithRouteGuard(<UserCaseDetailPage />, 'my-audit/cases');
+  }
+
+  // 2) 상세 페이지 패턴 먼저 체크 (cases/:id, documents/:id, entities/:id, rag/:docId, policies/:profileId)
   const detailMatch = normalized.match(/^(?:synapse\/)?(cases|documents|entities|rag|policies|reconciliation)\/(.+)$/);
   if (detailMatch) {
     const [, resource, idOrPath] = detailMatch;

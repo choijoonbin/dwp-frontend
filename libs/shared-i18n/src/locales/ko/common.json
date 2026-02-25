@@ -1800,11 +1800,38 @@
     "warn": "경고",
     "fail": "실패",
     "all": "전체",
+    "actions": "작업",
+    "view": "보기",
+    "previous": "이전",
+    "next": "다음",
     "saving": "저장 중...",
     "save": "저장"
   },
+  "myAudit": {
+    "expenses": {
+      "title": "나의 전표 현황",
+      "subtitle": "내 전표와 Aura 스크리닝 결과를 확인하고 필요한 소명을 진행합니다.",
+      "allVouchers": "나의 모든 전표",
+      "inbox": "소명 대기함",
+      "voucherNo": "전표번호",
+      "merchant": "가맹점",
+      "amount": "금액",
+      "evidenceStatus": "증빙상태",
+      "auraResult": "Aura 스크리닝 결과",
+      "inboxEmpty": "소명 대기 전표가 없습니다.",
+      "empty": "표시할 전표가 없습니다."
+    },
+    "caseDetail": {
+      "title": "소명 상세"
+    }
+  },
   "menu": {
     "workbench": "통합 워크벤치",
+    "my-audit": {
+      "_label": "나의 감사 포털",
+      "expenses": "나의 전표 현황",
+      "clarification": "소명 요청 내역"
+    },
     "autonomous-operations": {
       "_label": "자율 운영 센터",
       "cases": "케이스 관리",

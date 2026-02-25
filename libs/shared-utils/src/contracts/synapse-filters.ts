@@ -126,11 +126,6 @@ export type AuditFilters = {
 
 const SYNAPSE_PREFIX = '/synapse';
 
-function toArray<T>(v: T | T[] | undefined): T[] | undefined {
-  if (v === undefined || v === null) return undefined;
-  return Array.isArray(v) ? v : [v];
-}
-
 function joinArray(arr: string[]): string {
   return arr.join(',');
 }

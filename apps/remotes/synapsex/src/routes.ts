@@ -6,6 +6,9 @@
 export const SYNAPSE_ROUTES = {
   ROOT: '/synapse',
   DASHBOARD: '/synapse',
+  MY_AUDIT_EXPENSES: '/my-audit/expenses',
+  MY_AUDIT_CLARIFICATION: '/my-audit/clarification',
+  MY_AUDIT_CASE_DETAIL: '/my-audit/cases/:id',
   AUTONOMY: '/synapse/autonomy',
   CASES: '/synapse/cases',
   CASE_DETAIL: '/synapse/cases/:id',
@@ -41,6 +44,9 @@ export const SYNAPSE_ROUTES = {
 export const SYNAPSE_ROUTE_PATHS = {
   ROOT: 'synapse',
   DASHBOARD: 'synapse',
+  MY_AUDIT_EXPENSES: 'my-audit/expenses',
+  MY_AUDIT_CLARIFICATION: 'my-audit/clarification',
+  MY_AUDIT_CASE_DETAIL: 'my-audit/cases/:id',
   AUTONOMY: 'synapse/autonomy',
   CASES: 'synapse/cases',
   CASE_DETAIL: 'synapse/cases/:id',

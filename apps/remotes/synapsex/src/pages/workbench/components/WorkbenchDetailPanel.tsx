@@ -19,11 +19,11 @@ import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
+import { PanelHeader } from './PanelHeader';
 import { WorkbenchThoughtChain } from './WorkbenchThoughtChain';
 import { WorkbenchItemDetailGrid } from './WorkbenchItemDetailGrid';
-import { PanelHeader } from './PanelHeader';
-import { WorkbenchActionHistoryTimeline } from './WorkbenchActionHistoryTimeline';
 import { StatusBadge } from '../../../components/finance/status-badge';
+import { WorkbenchActionHistoryTimeline } from './WorkbenchActionHistoryTimeline';
 
 import type { FiDocItem, AiThought, ActionHistoryItem } from '../../cases/hooks/use-case-detail';
 

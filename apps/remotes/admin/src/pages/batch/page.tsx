@@ -43,10 +43,8 @@ const BatchPageContent = () => {
     resetFilters,
     items,
     total,
-    totalPages,
     isLoading,
     error,
-    refetch,
   } = useBatchTableState();
 
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);

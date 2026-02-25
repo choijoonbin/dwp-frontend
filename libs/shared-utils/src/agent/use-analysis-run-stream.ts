@@ -134,15 +134,7 @@ export const useAnalysisRunStream = () => {
 
   const startStream = useCallback(
     async (caseId: string, options?: AnalysisStreamOptions) => {
-      const isAutoConnect = !!(options?.streamUrl != null && options.streamUrl.trim() !== '');
       const isAutoStarted = options?.isAutoStarted === true;
-      console.log('[Workbench SSE] startStream 호출', {
-        caseId,
-        isAutoConnect,
-        isAutoStarted,
-        fromAnalysisStarted: isAutoStarted,
-        runId: options?.runId,
-      });
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -200,7 +192,6 @@ export const useAnalysisRunStream = () => {
 
         const headers = buildStreamRequestHeaders({ tenantId, token });
 
-        console.log('[Workbench SSE] SSE fetch 시작', { url: url.slice(0, 100) });
         const response = await fetch(url, {
           method: 'GET',
           headers,
@@ -208,7 +199,6 @@ export const useAnalysisRunStream = () => {
         });
 
         if (!response.ok) {
-          console.log('[Workbench SSE] SSE 연결 실패 (HTTP)', { status: response.status, url: url.slice(0, 80) });
           let errMessage = `Stream failed: ${response.status}`;
           if (response.status === 400) {
             try {
@@ -227,9 +217,7 @@ export const useAnalysisRunStream = () => {
         setLocalStatus('streaming');
         setStatus('STREAMING');
 
-        console.log('[Workbench SSE] 스트림 읽기 루프 진입', { caseId, runId, url: url.slice(0, 80) });
         timeoutRef.current = setTimeout(() => {
-          console.warn('[Workbench SSE] 실패 원인: 스트림 타임아웃(65초). [DONE]/completed/failed 미수신.', { caseId, runId });
           setLocalStatus('failed');
           setStatus('ERROR');
           setError('분석이 완료되지 않았습니다. 잠시 후 다시 시도해 주세요.');
@@ -250,19 +238,12 @@ export const useAnalysisRunStream = () => {
         while (true) {
           const { done, value } = await reader.read();
           if (done) {
-            console.warn('[Workbench SSE] 실패 원인: 스트림이 [DONE]/completed/failed 없이 종료됨(연결 끊김 또는 서버 종료).', {
-              caseId,
-              runId,
-              lastEventType: currentEventType,
-              bufferTail: buffer.slice(-200),
-            });
             break;
           }
 
           buffer += decoder.decode(value, { stream: true });
           if (!firstChunkLogged && buffer.length > 0) {
             firstChunkLogged = true;
-            console.log('[Workbench SSE] 첫 청크 수신', { caseId, runId, length: buffer.length, preview: buffer.slice(0, 300) });
           }
           const lines = buffer.split('\n');
           buffer = lines.pop() ?? '';
@@ -300,17 +281,11 @@ export const useAnalysisRunStream = () => {
                 setError(msg);
                 setErrorMessage(msg);
                 setDebug({ errorMessage: msg, failedStage });
-                console.warn('[Workbench SSE] 실패 원인: event:failed 다음 JSON 라인에서 payload 수신.', {
-                  caseId,
-                  runId,
-                  message: msg,
-                  rawPayload: trimmed.slice(0, 300),
-                });
                 clearStreamTimeout();
                 options?.onError?.(new Error(msg));
                 return;
               } catch {
-                console.warn('[Workbench SSE] failedPayloadPending 상태에서 JSON 파싱 실패', { line: trimmed.slice(0, 200) });
+                void 0;
               }
             }
             if (trimmed.startsWith('data:')) {
@@ -332,17 +307,11 @@ export const useAnalysisRunStream = () => {
                   setError(msg);
                   setErrorMessage(msg);
                   setDebug({ errorMessage: msg, failedStage });
-                  console.warn('[Workbench SSE] 실패 원인: SSE event:failed 직후 다음 data 라인에서 payload 수신.', {
-                    caseId,
-                    runId,
-                    message: msg,
-                    rawPayload: dataStr.slice(0, 300),
-                  });
                   clearStreamTimeout();
                   options?.onError?.(new Error(msg));
                   return;
                 } catch {
-                  console.warn('[Workbench SSE] failedPayloadPending 상태에서 다음 data 파싱 실패', { dataStr: dataStr.slice(0, 200) });
+                  void 0;
                 }
               }
 
@@ -474,10 +443,6 @@ export const useAnalysisRunStream = () => {
               let failedStage: string | undefined;
               try {
                 if (!dataStr || typeof dataStr !== 'string' || dataStr.trim() === '') {
-                  console.warn('[Workbench SSE] event:failed 수신 시 data가 비어 있음. 다음 data 라인에서 payload 대기.', {
-                    caseId,
-                    runId,
-                  });
                   failedPayloadPending = true;
                   continue;
                 } else {
@@ -494,14 +459,6 @@ export const useAnalysisRunStream = () => {
                   }
                   retryable = parsed.retryable === true;
                   setDebug({ errorMessage: msg, retryable, failedStage });
-                  console.warn('[Workbench SSE] 실패 원인: SSE event:failed 수신.', {
-                    caseId,
-                    runId,
-                    message: msg,
-                    failedStage,
-                    retryable,
-                    rawPayload: dataStr.slice(0, 500),
-                  });
                 }
               } catch {
                 if (typeof dataStr === 'string' && dataStr.length > 0) {
@@ -509,11 +466,6 @@ export const useAnalysisRunStream = () => {
                 } else {
                   msg = '분석이 실패했습니다. (서버에서 상세 사유 미전달)';
                 }
-                console.warn('[Workbench SSE] event:failed 수신(JSON 파싱 실패). data가 비어있거나 유효한 JSON이 아님. 백엔드에서 data: {"error":"..."} 형태 전송 권장.', {
-                  caseId,
-                  runId,
-                  dataStr: dataStr?.slice(0, 300) ?? '',
-                });
               }
               addTimelineStep({ type: 'failed', message: msg, stage: failedStage });
               setLocalStatus('failed');
@@ -531,7 +483,6 @@ export const useAnalysisRunStream = () => {
         setLocalStatus('failed');
         setStatus('ERROR');
         const msg = '분석이 완료되지 않았습니다. 잠시 후 다시 시도해 주세요.';
-        console.warn('[Workbench SSE] 실패 원인: 루프 종료 후 [DONE]/completed/failed 미수신 → 이 메시지 표시.', { caseId, runId, lastEventType: currentEventType });
         setError(msg);
         setErrorMessage(msg);
         options?.onError?.(new Error(msg));
@@ -540,15 +491,9 @@ export const useAnalysisRunStream = () => {
         if (err instanceof Error && err.name === 'AbortError') {
           setLocalStatus('aborted');
           setStatus('ABORTED');
-          console.log('[Workbench SSE] SSE 중단됨 (Abort)', { caseId });
           return;
         }
         const message = err instanceof Error ? err.message : String(err);
-        console.warn('[Workbench SSE] 실패 원인: 예외 발생.', {
-          message,
-          caseId,
-          errorName: err instanceof Error ? err.name : undefined,
-        });
         setLocalStatus('failed');
         setStatus('ERROR');
         setError(message);
@@ -556,7 +501,7 @@ export const useAnalysisRunStream = () => {
         options?.onError?.(err instanceof Error ? err : new Error(message));
       }
     },
-    [setStatus, setError, setDebug, setAutoStartedBanner, addEventType, addEventLogLine, addCleanStreamLine, addTimelineStep, setStreamingThought, setLiveTargetBuzei, addLiveViolationBuzei, normalizeBuzei, resetStore, clearStreamTimeout]
+    [setStatus, setError, setDebug, setAutoStartedBanner, addEventType, addEventLogLine, addCleanStreamLine, addTimelineStep, setStreamingThought, setLiveTargetBuzei, addLiveViolationBuzei, setLiveRiskScore, normalizeBuzei, resetStore, clearStreamTimeout]
   );
 
   const cancel = useCallback(() => {

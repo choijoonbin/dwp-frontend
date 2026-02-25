@@ -145,7 +145,6 @@ export interface VendorMasterChange {
 
 import type {
   RagParentResultDto,
-  RagChildChunkDto,
   HierarchyPathItem as ApiHierarchyPathItem,
 } from '@dwp-frontend/shared-utils';
 

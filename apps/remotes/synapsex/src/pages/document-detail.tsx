@@ -760,7 +760,7 @@ export const DocumentDetailPage = () => {
                               </Box>
                               <Stack direction="row" spacing={1}>
                                 <SeverityBadge severity={c.severity as 'critical' | 'high' | 'medium' | 'low'} />
-                                <StatusPill status={c.status as import('../components/finance/status-pill').Status} />
+                                <StatusPill status={c.status as Status} />
                               </Stack>
                             </Stack>
                           </Card>

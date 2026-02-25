@@ -555,11 +555,11 @@ export function NavContent({ data, slots, workspaces, sx, collapsed }: NavConten
           pb: 2,
           px: collapsed ? 0 : 2.5,
           display: 'flex',
-          justifyContent: collapsed ? 'center' : 'flex-start',
+          justifyContent: 'center',
           transition: (theme) => theme.transitions.create(['padding', 'justify-content']),
         }}
       >
-        <Logo sx={{ ml: 0 }} />
+        <Logo isSingle={false} collapsed={collapsed} sx={{ ml: 0 }} />
       </Box>
 
       {slots?.topArea}

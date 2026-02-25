@@ -12,7 +12,7 @@ import CardContent from '@mui/material/CardContent';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { ContextBreadcrumb } from './context-breadcrumb';
-import { type RagCitation, type HierarchyPathItem, isScenarioCitation } from './types';
+import { type RagCitation, isScenarioCitation, type HierarchyPathItem } from './types';
 
 // ----------------------------------------------------------------------
 

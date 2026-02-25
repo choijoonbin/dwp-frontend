@@ -5,7 +5,8 @@
 
 import type { Theme, SxProps } from '@mui/material/styles';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -14,15 +15,17 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { Iconify } from '@dwp-frontend/design-system';
-
 const COUNT_UP_MS = 400;
-const COUNT_UP_TICK_MS = 32;
 
 function useCountUp(value: number, active: boolean): number {
   const [display, setDisplay] = useState(value);
   const prevRef = useRef(value);
+  const frameRef = useRef<number | null>(null);
   useEffect(() => {
+    if (frameRef.current != null) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
     if (!active) {
       prevRef.current = value;
       setDisplay(value);
@@ -38,12 +41,22 @@ function useCountUp(value: number, active: boolean): number {
       const eased = 1 - (1 - progress) ** 2;
       const next = Math.round(start + diff * eased);
       setDisplay(diff > 0 ? Math.min(next, value) : Math.max(next, value));
-      if (progress < 1) requestAnimationFrame(tick);
-      else prevRef.current = value;
+      if (progress < 1) frameRef.current = requestAnimationFrame(tick);
+      else {
+        prevRef.current = value;
+        frameRef.current = null;
+      }
     };
-    const id = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(id);
+    frameRef.current = requestAnimationFrame(tick);
   }, [value, active]);
+
+  useEffect(() => () => {
+    if (frameRef.current != null) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+  }, []);
+
   return active ? display : value;
 }
 

@@ -20,6 +20,16 @@ export const ROUTE_RESOURCE_MAP: Record<string, string> = {
   'menu.command-center': 'menu.command-center',
   synapse: 'menu.command-center',
 
+  // 나의 감사 포털 (일반 사용자)
+  'my-audit/expenses': 'menu.my-audit.expenses',
+  'my-audit/clarification': 'menu.my-audit.clarification',
+  'my-audit/cases': 'menu.my-audit.expenses',
+  'my-audit/cases/:id': 'menu.my-audit.expenses',
+  'menu.my-audit': 'menu.my-audit',
+  'menu.my-audit.expenses': 'menu.my-audit.expenses',
+  'menu.my-audit.clarification': 'menu.my-audit.clarification',
+  'my-audit': 'menu.my-audit',
+
   // 자율 운영 센터
   'menu.autonomous-operations': 'menu.autonomous-operations',
   'menu.autonomous-operations.workbench': 'menu.command-center',

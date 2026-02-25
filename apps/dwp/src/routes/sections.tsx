@@ -1,9 +1,10 @@
 import type { RouteObject } from 'react-router';
+import type { MenuNode } from '@dwp-frontend/shared-utils';
 
 import { lazy, Suspense } from 'react';
 import { varAlpha } from '@dwp-frontend/design-system';
-import { AuthGuard } from '@dwp-frontend/shared-utils';
 import { Outlet, Navigate, useParams } from 'react-router-dom';
+import { AuthGuard, useMenuTreeStore } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
@@ -39,6 +40,37 @@ const AppAdminRedirect = () => {
 
 /** 루트(/) 접속 시 CONFIG.defaultAfterLoginPath로 리다이렉트. '/'이면 대시보드 표시(무한 리다이렉트 방지). */
 const DefaultLanding = () => {
+  const { menuTree, isLoaded } = useMenuTreeStore();
+
+  const hasMenu = (predicate: (menuKey: string, path: string | undefined) => boolean): boolean => {
+    const visit = (nodes: MenuNode[]): boolean => {
+      for (const node of nodes) {
+        const path = node.path ?? undefined;
+        if (predicate(node.menuKey, path)) return true;
+        if (node.children && node.children.length > 0) {
+          if (visit(node.children)) return true;
+        }
+      }
+      return false;
+    };
+    return visit(menuTree);
+  };
+
+  const hasMyAuditExpenses = hasMenu(
+    (menuKey, path) => menuKey === 'menu.my-audit.expenses' || path === '/my-audit/expenses'
+  );
+  const hasAdminMenu = hasMenu(
+    (menuKey, path) =>
+      menuKey === 'menu.governance-config.admin' ||
+      menuKey.includes('.admin') ||
+      path === '/admin' ||
+      path?.startsWith('/admin/') === true
+  );
+
+  if (isLoaded && hasMyAuditExpenses && !hasAdminMenu) {
+    return <Navigate to="/my-audit/expenses" replace />;
+  }
+
   const path = CONFIG.defaultAfterLoginPath?.trim() || '/';
   if (path === '/') return <DashboardPage />;
   return <Navigate to={path} replace />;

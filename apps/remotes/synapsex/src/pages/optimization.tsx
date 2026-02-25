@@ -79,7 +79,7 @@ export const OptimizationPage = () => {
       limit: 500,
       itemType: mode === 'ar' ? 'AR' : 'AP',
     });
-  const openItems = openItemsData ?? [];
+  const openItems = useMemo(() => openItemsData ?? [], [openItemsData]);
 
   const totals = useMemo(() => {
     if (optimizationData) {
@@ -126,7 +126,7 @@ export const OptimizationPage = () => {
       });
 
     return filtered;
-  }, [openItems, mode, search, risk, bucket]);
+  }, [openItems, mode, search, risk, bucket, recommendationFor]);
 
   const tableTotals = useMemo(() => {
     const sum = rows.reduce((acc, r) => acc + r.amount, 0);

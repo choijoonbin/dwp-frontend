@@ -6,7 +6,7 @@
 
 import type { Theme } from '@mui/material/styles';
 
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { animate, useMotionValue } from 'framer-motion';
@@ -85,129 +85,6 @@ const getKpiGlassCardSx = (theme: Theme): Record<string, unknown> => {
     ...base,
     backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 50%)',
   };
-};
-
-/** 숫자 KPI 값 카운터 애니메이션 — 오도미터(굴러가는 숫자) 효과 */
-const ODOMETER_DURATION_MS = 500;
-
-function getDigits(n: number): number[] {
-  if (!Number.isFinite(n) || n < 0) return [0];
-  if (n === 0) return [0];
-  const out: number[] = [];
-  let x = Math.floor(n);
-  while (x > 0) {
-    out.unshift(x % 10);
-    x = Math.floor(x / 10);
-  }
-  return out;
-}
-
-/** Single digit column: 0–9 strip, translateY로 해당 숫자만 보이게 하고 애니메이션 */
-const OdometerDigit = ({
-  digit,
-  prevDigit,
-  sx,
-}: {
-  digit: number;
-  prevDigit: number;
-  sx?: Record<string, unknown>;
-}) => {
-  const [displayVal, setDisplayVal] = useState(prevDigit);
-  const prevRef = useRef(prevDigit);
-  const rafRef = useRef<number | null>(null);
-  const startRef = useRef(0);
-
-  useEffect(() => {
-    if (digit === prevRef.current) return () => {};
-    const start = prevRef.current;
-    prevRef.current = digit;
-    const startTime = performance.now();
-    startRef.current = startTime;
-
-    const tick = (now: number) => {
-      const elapsed = now - startRef.current;
-      const t = Math.min(elapsed / ODOMETER_DURATION_MS, 1);
-      const easeOut = 1 - (1 - t) * (1 - t);
-      setDisplayVal(start + (digit - start) * easeOut);
-      if (t < 1) rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-    };
-  }, [digit]);
-
-  const digitHeight = 28;
-  const translateY = -displayVal * digitHeight;
-
-  return (
-    <Box
-      sx={{
-        height: digitHeight,
-        overflow: 'hidden',
-        display: 'inline-flex',
-        flexDirection: 'column',
-        ...sx,
-      }}
-    >
-      <Box
-    sx={{
-      transform: `translateY(${translateY}px)`,
-      transition: 'none',
-      willChange: 'transform',
-    }}
-      >
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => (
-          <Typography
-            key={d}
-            variant="h5"
-            sx={{
-              height: digitHeight,
-              display: 'flex',
-              alignItems: 'center',
-              fontWeight: 700,
-              color: 'text.primary',
-              letterSpacing: -0.5,
-            }}
-          >
-            {d}
-          </Typography>
-        ))}
-      </Box>
-    </Box>
-  );
-};
-
-/** 오도미터 스타일 숫자 (자릿수별 굴러가는 애니메이션) */
-const OdometerValue = ({ value, sx }: { value: number; sx?: Record<string, unknown> }) => {
-  const digits = getDigits(value);
-  const prevDigitsRef = useRef<number[]>(digits);
-
-  const alignedPrev = (() => {
-    const prev = prevDigitsRef.current;
-    if (prev.length === digits.length) return prev;
-    if (digits.length > prev.length) {
-      return [...Array(digits.length - prev.length).fill(0), ...prev];
-    }
-    return prev.slice(prev.length - digits.length);
-  })();
-
-  useEffect(() => {
-    prevDigitsRef.current = [...digits];
-  }, [value]);
-
-  return (
-    <Stack direction="row" alignItems="center" spacing={0.25} sx={{ ...sx }}>
-      {digits.map((d, i) => (
-        <OdometerDigit
-          key={`${i}-${digits.length}`}
-          digit={d}
-          prevDigit={alignedPrev[i] ?? 0}
-          sx={{ minWidth: 18 }}
-        />
-      ))}
-    </Stack>
-  );
 };
 
 /** 백엔드 links 경로를 /synapse prefix가 있는 절대 경로로 변환 */

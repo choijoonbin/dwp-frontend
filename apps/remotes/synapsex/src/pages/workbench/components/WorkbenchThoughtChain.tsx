@@ -5,7 +5,7 @@
 
 import type { Theme, SxProps } from '@mui/material/styles';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 
@@ -62,21 +62,6 @@ const getTypeIcon = (type: string): string => {
   }
 };
 
-const getTypeLabelKey = (type: string): string => {
-  switch (type.toLowerCase()) {
-    case 'analysis':
-      return 'workbench.thought.analysis';
-    case 'planning':
-      return 'workbench.thought.planning';
-    case 'execution':
-      return 'workbench.thought.execution';
-    case 'verification':
-      return 'workbench.thought.verification';
-    default:
-      return 'workbench.thought.thinking';
-  }
-};
-
 const getTypeColor = (type: string): 'info' | 'primary' | 'warning' | 'success' | 'grey' => {
   switch (type.toLowerCase()) {
     case 'analysis':
@@ -90,12 +75,6 @@ const getTypeColor = (type: string): 'info' | 'primary' | 'warning' | 'success' 
     default:
       return 'grey';
   }
-};
-
-/** Chip color: MUI Chip does not accept 'grey', use 'default'. */
-const getChipColor = (type: string): 'info' | 'primary' | 'warning' | 'success' | 'default' => {
-  const color = getTypeColor(type);
-  return color === 'grey' ? 'default' : color;
 };
 
 export const WorkbenchThoughtChain = ({ thoughts, isStreamingLast = false, sx }: WorkbenchThoughtChainProps) => {
@@ -112,7 +91,6 @@ export const WorkbenchThoughtChain = ({ thoughts, isStreamingLast = false, sx }:
   }
 
   return (
-    <>
     <Timeline
       position="right"
       sx={{
@@ -187,6 +165,5 @@ export const WorkbenchThoughtChain = ({ thoughts, isStreamingLast = false, sx }:
         </TimelineItem>
       ))}
     </Timeline>
-    </>
   );
 };

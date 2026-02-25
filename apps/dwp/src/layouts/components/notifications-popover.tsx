@@ -6,8 +6,8 @@
 
 import type { IconButtonProps } from '@mui/material/IconButton';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import {
   useNotificationStore,
   type NotificationItem,
@@ -108,11 +108,9 @@ export function NotificationsPopover({ data: _data = [], sx, ...other }: Notific
     }, 2000);
   }, [items.length]);
 
-  useEffect(() => {
-    return () => {
+  useEffect(() => () => {
       if (autoCloseTimeoutRef.current) clearTimeout(autoCloseTimeoutRef.current);
-    };
-  }, []);
+    }, []);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);

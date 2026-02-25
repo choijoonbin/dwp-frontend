@@ -216,7 +216,6 @@ export const axiosInstance = {
     body: B,
     config: AxiosLikeConfig = {}
   ): Promise<AxiosLikeResponse<T>> => {
-    const tenantId = getTenantId();
     const headers = buildHeaders(config.headers);
 
     const res = await fetch(`${baseURL}${url}`, {
@@ -320,4 +319,3 @@ export const axiosInstance = {
     return { data };
   },
 };
-

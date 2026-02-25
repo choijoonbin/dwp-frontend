@@ -254,7 +254,7 @@ export const AuditPage = () => {
     return extendedAuditEvents;
   }, [apiParams, apiAuditData]);
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery] = useState('');
   const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>([]);
   const [selectedActorTypes, setSelectedActorTypes] = useState<string[]>([]);
   const [timeRange, setTimeRange] = useState('all');

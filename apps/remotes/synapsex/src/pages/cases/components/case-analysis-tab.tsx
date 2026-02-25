@@ -11,10 +11,9 @@ import { Iconify } from '@dwp-frontend/design-system';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import {
-  showToast,
   getErrorMessage,
   useCaseAnalysisQuery,
-  sendExplanationRequest,
+  useRequestCaseExplanationMutation,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -111,7 +110,7 @@ export const CaseAnalysisTab = ({
   const theme = useTheme();
   const debugCtx = useCaseTabsDebug();
   const [highlightedChunkId, setHighlightedChunkId] = useState<string | null>(null);
-  const [explanationRequestLoading, setExplanationRequestLoading] = useState(false);
+  const requestExplanationMutation = useRequestCaseExplanationMutation();
   const { data, isLoading, isError, error, refetch } = useCaseAnalysisQuery(caseId, { enabled, runId });
 
   const handleThoughtClick = useCallback((thought: { chunkId?: string }) => {
@@ -156,20 +155,8 @@ export const CaseAnalysisTab = ({
 
   const handleRequestExplanation = useCallback(async () => {
     if (!caseId) return;
-    setExplanationRequestLoading(true);
-    try {
-      await sendExplanationRequest({
-        caseId,
-        summary: reportSummary ?? undefined,
-        violationSummary: reportKeyGrounds?.slice(0, 3).join(' / ') ?? undefined,
-      });
-      showToast(t('caseDetail.explanationRequestSent'), 'success');
-    } catch (err) {
-      showToast(getErrorMessage(err) ?? t('caseDetail.explanationRequestFailed'), 'error');
-    } finally {
-      setExplanationRequestLoading(false);
-    }
-  }, [caseId, reportSummary, reportKeyGrounds, t]);
+    await requestExplanationMutation.mutateAsync({ caseId });
+  }, [caseId, requestExplanationMutation]);
 
   const evidence = (data?.evidence ?? []) as Array<{ key?: string }>;
   const ragRefs = (data?.ragRefs ?? []) as Array<{ refId?: string; sourceType?: string; sourceKey?: string; excerpt?: string; score?: number }>;
@@ -265,11 +252,11 @@ export const CaseAnalysisTab = ({
               <Button
                 variant="outlined"
                 size="small"
-                disabled={explanationRequestLoading || !caseId}
+                disabled={requestExplanationMutation.isPending || !caseId}
                 onClick={handleRequestExplanation}
                 startIcon={<Iconify icon="solar:letter-bold-duotone" width={18} />}
               >
-                {explanationRequestLoading
+                {requestExplanationMutation.isPending
                   ? t('caseDetail.explanationRequestSending')
                   : t('caseDetail.requestExplanation')}
               </Button>

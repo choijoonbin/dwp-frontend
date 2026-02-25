@@ -67,19 +67,29 @@ export const WorkbenchItemDetailGrid = ({
   const { t } = useTranslation('common');
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollTimerRef = useRef<number | null>(null);
   const highlightBuzei = scrollToBuzei ?? targetBuzei;
 
   useEffect(() => {
+    if (scrollTimerRef.current != null) {
+      window.clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = null;
+    }
     if (!scrollToBuzei || !onClearScrollToBuzei) return;
     const normalized = String(scrollToBuzei).trim().padStart(3, '0');
     const el = containerRef.current?.querySelector(`[data-row-id="${normalized}"]`);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      const tId = window.setTimeout(onClearScrollToBuzei, 800);
-      return () => window.clearTimeout(tId);
-    }
-    onClearScrollToBuzei();
+      scrollTimerRef.current = window.setTimeout(onClearScrollToBuzei, 800);
+    } else onClearScrollToBuzei();
   }, [scrollToBuzei, onClearScrollToBuzei]);
+
+  useEffect(() => () => {
+    if (scrollTimerRef.current != null) {
+      window.clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = null;
+    }
+  }, []);
 
   const isTarget = (item: FiDocItem) => {
     if (item.isTarget === true) return true;

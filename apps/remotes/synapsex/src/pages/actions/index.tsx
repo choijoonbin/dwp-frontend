@@ -54,8 +54,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import { SYNAPSE_ROUTES } from '../../routes';
 import { ErrorStateWithRetry } from '../../components/ux';
 import { useActionsList } from './hooks/use-actions-list';
-import { StatusPill } from '../../components/finance/status-pill';
 import { SeverityBadge } from '../../components/finance/severity-badge';
+import { StatusPill, type Status } from '../../components/finance/status-pill';
 import { SimulationResultCard } from '../../components/finance/simulation-result-card';
 import { CreateActionModal, type CreateActionForm } from './components/create-action-modal';
 
@@ -610,7 +610,7 @@ export const ActionsPage = () => {
                   }
                 >
                   <Checkbox checked={selectedStatuses.includes(s)} sx={{ mr: 1 }} />
-                  <StatusPill status={s as import('../../components/finance/status-pill').Status} size="sm" />
+                  <StatusPill status={s as Status} size="sm" />
                 </MenuItem>
               ))}
             </Menu>
@@ -758,7 +758,7 @@ export const ActionsPage = () => {
                             </Typography>
                           </TableCell>
                           <TableCell>
-                            <StatusPill status={action.status as import('../../components/finance/status-pill').Status} size="sm" />
+                            <StatusPill status={action.status as Status} size="sm" />
                           </TableCell>
                           <TableCell align="right" onClick={(e) => e.stopPropagation()}>
                             <IconButton
@@ -816,7 +816,7 @@ export const ActionsPage = () => {
                     {selectedAction.id}
                   </Typography>
                 </Box>
-                <StatusPill status={selectedAction.status as import('../../components/finance/status-pill').Status} />
+                <StatusPill status={selectedAction.status as Status} />
               </Stack>
             </Box>
             <Box sx={{ flexGrow: 1, overflow: 'auto', p: 3 }}>

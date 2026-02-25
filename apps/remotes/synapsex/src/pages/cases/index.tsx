@@ -81,7 +81,10 @@ export const CasesPage = () => {
   const queryClient = useQueryClient();
   const stored = getFiltersFromStorage<CasesFiltersStorage>(CASES_FILTERS_KEY);
   const skipPeriodSyncRef = useRef(!!stored);
-  const defaultRange = useMemo(() => getDateRangeFromPeriod(stored?.periodFilter ?? '24h'), []);
+  const defaultRange = useMemo(
+    () => getDateRangeFromPeriod(stored?.periodFilter ?? '24h'),
+    [stored?.periodFilter]
+  );
 
   const [q, setQ] = useState(stored?.q ?? '');
   const [page, setPage] = useState(stored?.page ?? 0);

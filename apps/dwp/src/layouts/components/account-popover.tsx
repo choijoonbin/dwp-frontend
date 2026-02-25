@@ -1,8 +1,10 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
 import { useState, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth, redirectToSignIn } from '@dwp-frontend/shared-utils';
+import { getMe, useAuth, redirectToSignIn } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -16,7 +18,9 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { useRouter, usePathname } from 'src/routes/hooks';
 
-import { _myAccount } from 'src/_mock';
+import { useThemeMode } from 'src/theme/theme-mode';
+
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -30,11 +34,43 @@ export type AccountPopoverProps = IconButtonProps & {
 };
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
+  const { t } = useTranslation('common');
+  const { mode, toggleMode } = useThemeMode();
   const router = useRouter();
   const pathname = usePathname();
   const navigate = useNavigate();
   const location = useLocation();
   const auth = useAuth();
+
+  const meQuery = useQuery({
+    queryKey: ['auth', 'me', 'account-popover'],
+    queryFn: async () => {
+      const res = await getMe();
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch me');
+      }
+      return res.data as Record<string, unknown>;
+    },
+    enabled: auth.isAuthenticated,
+    retry: false,
+  });
+
+  const me = meQuery.data;
+  const displayName =
+    (typeof me?.displayName === 'string' && me.displayName.trim()) ||
+    (typeof me?.name === 'string' && me.name.trim()) ||
+    (typeof me?.username === 'string' && me.username.trim()) ||
+    (typeof me?.loginId === 'string' && me.loginId.trim()) ||
+    'User';
+  const email =
+    (typeof me?.email === 'string' && me.email.trim()) ||
+    (typeof me?.loginId === 'string' && me.loginId.trim()) ||
+    '';
+  const photoUrl =
+    (typeof me?.photoURL === 'string' && me.photoURL.trim()) ||
+    (typeof me?.photoUrl === 'string' && me.photoUrl.trim()) ||
+    undefined;
+  const initial = displayName.charAt(0).toUpperCase();
 
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -60,6 +96,11 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     redirectToSignIn(navigate, location);
   }, [auth, handleClosePopover, location, navigate]);
 
+  const handleToggleTheme = useCallback(() => {
+    toggleMode();
+    handleClosePopover();
+  }, [handleClosePopover, toggleMode]);
+
   return (
     <>
       <IconButton
@@ -74,8 +115,8 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         }}
         {...other}
       >
-        <Avatar src={_myAccount.photoURL} alt={_myAccount.displayName} sx={{ width: 1, height: 1 }}>
-          {_myAccount.displayName.charAt(0).toUpperCase()}
+        <Avatar src={photoUrl} alt={displayName} sx={{ width: 1, height: 1 }}>
+          {initial}
         </Avatar>
       </IconButton>
 
@@ -93,11 +134,11 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
       >
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {_myAccount?.displayName}
+            {displayName}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {_myAccount?.email}
+            {email}
           </Typography>
         </Box>
 
@@ -134,6 +175,10 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
               {option.label}
             </MenuItem>
           ))}
+          <MenuItem onClick={handleToggleTheme}>
+            <Iconify width={22} icon={mode === 'light' ? 'solar:eye-closed-bold' : 'solar:eye-bold'} />
+            {t('theme.switchTo', { mode: t(mode === 'light' ? 'theme.darkMode' : 'theme.lightMode') })}
+          </MenuItem>
         </MenuList>
 
         <Divider sx={{ borderStyle: 'dashed' }} />

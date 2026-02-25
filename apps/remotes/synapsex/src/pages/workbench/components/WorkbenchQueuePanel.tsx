@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useRef, useMemo, useState, useEffect } from 'react';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
-import { useCasesListQuery, useWorkbenchReactiveStore, useCodes } from '@dwp-frontend/shared-utils';
+import { useCodes, useCasesListQuery, useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -20,9 +20,9 @@ import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
 
+import { PanelHeader } from './PanelHeader';
 import { SYNAPSE_ROUTES } from '../../../routes';
 import { StatusBadge } from '../../../components/finance/status-badge';
-import { PanelHeader } from './PanelHeader';
 import { caseListDtoToUi } from '../../cases/adapters/case-list-adapter';
 import { SeverityBadge } from '../../../components/finance/severity-badge';
 import { ErrorStateWithRetry } from '../../../components/ux/error-state-with-retry';

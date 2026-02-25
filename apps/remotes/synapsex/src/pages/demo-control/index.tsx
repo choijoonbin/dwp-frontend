@@ -6,16 +6,15 @@
 
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { Iconify } from '@dwp-frontend/design-system';
-import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { useQuery , useQueryClient } from '@tanstack/react-query';
 import {
+  useToastStore,
   getScenarioTypes,
   generateViolation,
-  useToastStore,
-  type ScenarioTypeOptionDto,
   type ViolationIntensity,
+  type ScenarioTypeOptionDto,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -23,14 +22,14 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Radio from '@mui/material/Radio';
 import Slider from '@mui/material/Slider';
-import InputAdornment from '@mui/material/InputAdornment';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import RadioGroup from '@mui/material/RadioGroup';
 import CardContent from '@mui/material/CardContent';
 import FormControl from '@mui/material/FormControl';
+import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 

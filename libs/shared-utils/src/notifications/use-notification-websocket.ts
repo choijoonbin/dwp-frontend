@@ -150,10 +150,6 @@ export function useNotificationWebSocket(options: UseNotificationWebSocketOption
       subscribeByTenant && currentTenantId
         ? `/topic/notifications/${currentTenantId}`
         : topicSubscriptionPath;
-    const isDev =
-      (typeof import.meta !== 'undefined' && (import.meta as { env?: { DEV?: boolean } }).env?.DEV) ||
-      process.env.NODE_ENV === 'development';
-
     const getConnectHeaders = () => {
       const token = getAccessToken();
       const headers: Record<string, string> = {};
@@ -162,23 +158,13 @@ export function useNotificationWebSocket(options: UseNotificationWebSocketOption
     };
 
     setConnectionStatus('connecting');
-    if (isDev) {
-      console.log('[Notification WS] activating', {
-        endpointUrl,
-        topic: effectiveTopic,
-        subscribeByTenant,
-        tenantId: currentTenantId ?? undefined,
-      });
-    }
 
     const client = new Client({
-      webSocketFactory: () => {
-        if (isDev) console.log('[Notification WS] creating SockJS transport', { endpointUrl });
-        return new SockJS(endpointUrl, undefined, {
+      webSocketFactory: () =>
+        new SockJS(endpointUrl, undefined, {
           /** iframe 등 구식 transport 제외 → iframe.html 404 시도 방지 */
           transports: ['websocket', 'xhr-streaming'],
-        }) as unknown as WebSocket;
-      },
+        }) as unknown as WebSocket,
       connectHeaders: getConnectHeaders(),
       reconnectDelay: 2147483647,
       heartbeatIncoming: 10000,
@@ -187,44 +173,21 @@ export function useNotificationWebSocket(options: UseNotificationWebSocketOption
       onConnect: () => {
         reconnectCountRef.current = 0;
         setConnectionStatus('connected');
-        if (isDev) console.log('[Notification WS] connected', { endpointUrl, topic: effectiveTopic });
         onOpen?.();
         const sub = client.subscribe(effectiveTopic, (message: IMessage) => {
           try {
             const body = message.body;
             if (!body || typeof body !== 'string') return;
             const raw = JSON.parse(body) as IncomingNotificationPayload;
-            const logPayload =
-              isDev ||
-              (typeof import.meta !== 'undefined' &&
-                (import.meta.env as { VITE_NOTIFICATION_WS_LOG_PAYLOAD?: string }).VITE_NOTIFICATION_WS_LOG_PAYLOAD === 'true');
-            if (logPayload) {
-              console.log('[Notification WS] received payload', raw);
-            }
             const cat = (raw.category ?? '').toString().toUpperCase();
             const typ = (raw.type ?? '').toString().toUpperCase();
-            const pl = raw.payload as Record<string, unknown> | undefined;
-            const caseIdFromPl =
-              pl?.case_id != null ? String(pl.case_id) : pl?.caseId != null ? String(pl.caseId) : undefined;
-            if (isDev) {
-              console.log('[Notification WS] Received:', { type: typ, category: cat, caseId: caseIdFromPl, tenantId: raw.tenantId });
-              console.log('[Notification WS] received', {
-                category: cat,
-                type: typ,
-                caseId: caseIdFromPl,
-                tenantId: raw.tenantId,
-                payloadKeys: pl ? Object.keys(pl) : [],
-              });
-            }
             if (currentTenantId && raw.tenantId != null && String(raw.tenantId) !== currentTenantId) {
-              if (isDev) console.log('[Notification WS] skipped (tenant mismatch)');
               return;
             }
 
             const isThoughtStream = cat === 'THOUGHT_STREAM' || typ === 'THOUGHT_STREAM';
 
             if (isThoughtStream) {
-              if (isDev) console.log('[Notification WS] THOUGHT_STREAM → onReceive only (no toast)');
               onReceive?.(raw);
               return;
             }
@@ -264,15 +227,6 @@ export function useNotificationWebSocket(options: UseNotificationWebSocketOption
       },
       onWebSocketClose: (ev) => {
         setConnectionStatus('disconnected');
-        if (isDev) {
-          console.log('[Notification WS] websocket closed', {
-            code: ev.code,
-            reason: ev.reason,
-            wasClean: ev.wasClean,
-            reconnectCount: reconnectCountRef.current,
-            maxReconnectAttempts: MAX_RECONNECT_ATTEMPTS,
-          });
-        }
         subscriptionRef.current?.unsubscribe();
         subscriptionRef.current = null;
         onClose?.();
@@ -290,28 +244,19 @@ export function useNotificationWebSocket(options: UseNotificationWebSocketOption
           reconnectTimeoutRef.current = null;
           setConnectionStatus('connecting');
           Object.assign(client.connectHeaders, getConnectHeaders());
-          if (isDev) console.log('[Notification WS] exponential backoff reconnect', { attempt: reconnectCountRef.current, delayMs });
           client.activate();
         }, delayMs);
       },
       onWebSocketError: (ev) => {
         setConnectionStatus('error');
-        if (isDev) console.log('[Notification WS] websocket error', ev);
       },
       onStompError: (frame) => {
         setConnectionStatus('error');
-        if (isDev) {
-          console.log('[Notification WS] STOMP error', {
-            headers: frame.headers,
-            body: frame.body?.slice(0, 500),
-          });
-        }
         // broker error; connection may close and trigger reconnect
       },
     });
 
     client.activate();
-    if (isDev) console.log('[Notification WS] client.activate() called');
     clientRef.current = client;
 
     return () => {
@@ -320,7 +265,6 @@ export function useNotificationWebSocket(options: UseNotificationWebSocketOption
         reconnectTimeoutRef.current = null;
       }
       setConnectionStatus('idle');
-      if (isDev) console.log('[Notification WS] cleanup: unsubscribe + deactivate');
       subscriptionRef.current?.unsubscribe();
       subscriptionRef.current = null;
       clientRef.current = null;

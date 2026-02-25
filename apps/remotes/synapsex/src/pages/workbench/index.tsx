@@ -16,7 +16,7 @@ import { Iconify, varAlpha } from '@dwp-frontend/design-system';
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 import { useAuraStore } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import { showToast, useStreamStore, getErrorMessage, useAnalysisRunStream, useCaseAnalysisQuery, sendExplanationRequest, useWorkbenchReactiveStore, useCasesListQuery } from '@dwp-frontend/shared-utils';
+import { useStreamStore, useCasesListQuery, useAnalysisRunStream, useCaseAnalysisQuery, useWorkbenchReactiveStore, useRequestCaseExplanationMutation } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -33,9 +33,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { RagPage } from '../rag';
 import { PoliciesPage } from '../policies';
-import { caseListDtoToUi } from '../cases/adapters/case-list-adapter';
 import { useCaseDetail } from '../cases/hooks/use-case-detail';
 import { WorkbenchKpiStrip } from './components/WorkbenchKpiStrip';
+import { caseListDtoToUi } from '../cases/adapters/case-list-adapter';
 import { WorkbenchQueuePanel } from './components/WorkbenchQueuePanel';
 import { WorkbenchRightPanel } from './components/WorkbenchRightPanel';
 import { WorkbenchDetailPanel } from './components/WorkbenchDetailPanel';
@@ -119,24 +119,6 @@ export const WorkbenchPage = () => {
   const pendingAutoStream = useWorkbenchReactiveStore((s) => s.pendingAutoStream);
   const setPendingAutoStream = useWorkbenchReactiveStore((s) => s.setPendingAutoStream);
 
-  useEffect(() => {
-    // 로컬·프로덕션 모두 기본 활성화. 비활성화 시에만 VITE_NOTIFICATION_WS_ENABLED=false
-    const wsEnabled =
-      typeof import.meta === 'undefined' ||
-      (import.meta.env as { VITE_NOTIFICATION_WS_ENABLED?: string }).VITE_NOTIFICATION_WS_ENABLED !== 'false';
-    console.log('[Workbench SSE] Workbench 페이지 마운트/경로 진입', {
-      selectedCaseId,
-      hasPendingAutoStream: pendingAutoStream != null,
-      pendingCaseId: pendingAutoStream?.caseId,
-    });
-    console.log('[Workbench SSE] WebSocket 알림(ANALYSIS_STARTED 수신용)', {
-      enabled: wsEnabled,
-      hint: !wsEnabled
-        ? '비활성화됨. 활성화하려면 VITE_NOTIFICATION_WS_ENABLED를 제거하거나 true로 설정하세요.'
-        : undefined,
-    });
-  }, []);
-
   const streamStatus = useStreamStore((s) => s.status);
   const liveViolationCount = useStreamStore((s) => s.liveViolationBuzeiList.length);
   const liveRiskScore = useStreamStore((s) => s.liveRiskScore);
@@ -159,11 +141,9 @@ export const WorkbenchPage = () => {
     logicCheckpoints,
     evidenceLinks,
     finalReport,
-    summaryVerdict,
   } = useCaseDetail(selectedCaseId ?? undefined);
 
   const { data: analysisData } = useCaseAnalysisQuery(selectedCaseId ?? undefined, { enabled: Boolean(selectedCaseId) });
-  const ragRefs = (analysisData?.ragRefs ?? []) as Array<{ refId?: string; sourceType?: string; sourceKey?: string; excerpt?: string; score?: number }>;
   const confidenceOverall = analysisData?.confidenceBreakdown?.overall;
   const analysisScore =
     analysisData?.score ?? (confidenceOverall != null ? Number(confidenceOverall) * 100 : undefined);
@@ -197,7 +177,7 @@ export const WorkbenchPage = () => {
     }
   }, [caseListItems, selectedCaseId, casesListQuery.isLoading, suggestedSelectCaseId]);
 
-  const [explanationLoading, setExplanationLoading] = useState(false);
+  const requestExplanationMutation = useRequestCaseExplanationMutation();
   const [scrollToBuzei, setScrollToBuzei] = useState<string | null>(null);
   const handleEvidenceCardClick = useCallback((itemIdx: number) => {
     const buzei = fiDocItems[itemIdx]?.buzei ?? String(itemIdx + 1).padStart(3, '0');
@@ -205,25 +185,12 @@ export const WorkbenchPage = () => {
   }, [fiDocItems]);
   const handleRequestExplanation = useCallback(async () => {
     if (!selectedCaseId) return;
-    setExplanationLoading(true);
-    try {
-      await sendExplanationRequest({
-        caseId: selectedCaseId,
-        summary: finalReport?.summary ?? finalReport?.verdict ?? summaryVerdict ?? undefined,
-        violationSummary: finalReport?.verdict ?? undefined,
-      });
-      showToast(t('caseDetail.explanationRequestSent'), 'success');
-    } catch (err) {
-      showToast(getErrorMessage(err) ?? t('caseDetail.explanationRequestFailed'), 'error');
-    } finally {
-      setExplanationLoading(false);
-    }
-  }, [selectedCaseId, finalReport, summaryVerdict, t]);
+    await requestExplanationMutation.mutateAsync({ caseId: selectedCaseId });
+  }, [selectedCaseId, requestExplanationMutation]);
 
   /** 테스트 데이터 생성 후 워크벤치 진입 시: CASE_ACTION/ANALYSIS_STARTED로 제안된 케이스가 있으면 자동 선택 */
   useEffect(() => {
     if (suggestedSelectCaseId == null) return;
-    console.log('[Workbench SSE] suggestedSelectCaseId로 케이스 자동 선택', suggestedSelectCaseId);
     setSelectedCaseId(suggestedSelectCaseId);
     useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(null);
   }, [suggestedSelectCaseId]);
@@ -237,33 +204,16 @@ export const WorkbenchPage = () => {
 
   /** ANALYSIS_STARTED 수신 시 stream_url 저장됨. 선택 케이스와 일치하면 지연 없이 SSE 자동 구독 (Aura 2초 대기 내 연결) */
   useEffect(() => {
-    if (pendingAutoStream != null) {
-      console.log('[Workbench SSE] 상태 (pendingAutoStream 있음)', {
-        selectedCaseId,
-        pendingCaseId: pendingAutoStream.caseId,
-        match: pendingAutoStream.caseId === selectedCaseId,
-      });
-    }
     if (!pendingAutoStream) return;
     // 선택된 케이스가 없으면 pending 케이스로 먼저 선택 → 다음 렌더에서 startStream
     if (!selectedCaseId || selectedCaseId !== pendingAutoStream.caseId) {
       if (!selectedCaseId) {
-        console.log('[Workbench SSE] pendingAutoStream으로 케이스 자동 선택 후 SSE 구독 예정', {
-          pendingCaseId: pendingAutoStream.caseId,
-        });
         setSelectedCaseId(pendingAutoStream.caseId);
-      } else {
-        console.log('[Workbench SSE] pendingAutoStream 미소비', {
-          reason: 'caseId 불일치',
-          selectedCaseId,
-          pendingCaseId: pendingAutoStream.caseId,
-        });
       }
       return;
     }
     const { caseId, streamUrl, runId } = pendingAutoStream;
     setPendingAutoStream(null);
-    console.log('[Workbench SSE] ANALYSIS_STARTED → startStream() 호출됨', { caseId, runId, streamUrl: streamUrl.slice(0, 80) });
     startStream(caseId, {
       streamUrl,
       runId,
@@ -518,7 +468,7 @@ export const WorkbenchPage = () => {
               <WorkbenchRightPanel
                 briefingInsight={briefingInsight}
                 evidenceLinks={evidenceLinks}
-                explanationLoading={explanationLoading}
+                explanationLoading={requestExplanationMutation.isPending}
                 finalReport={finalReport}
                 fiDocItems={fiDocItems}
                 getGlassPanelSx={getGlassPanelSx}

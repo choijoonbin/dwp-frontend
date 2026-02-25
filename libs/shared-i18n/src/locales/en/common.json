@@ -1800,11 +1800,38 @@
     "warn": "Warn",
     "fail": "Fail",
     "all": "All",
+    "actions": "Actions",
+    "view": "View",
+    "previous": "Previous",
+    "next": "Next",
     "saving": "Saving...",
     "save": "Save"
   },
+  "myAudit": {
+    "expenses": {
+      "title": "My Voucher Status",
+      "subtitle": "Review my vouchers, Aura screening results, and submit explanations when needed.",
+      "allVouchers": "All My Vouchers",
+      "inbox": "Explanation Inbox",
+      "voucherNo": "Voucher No.",
+      "merchant": "Merchant",
+      "amount": "Amount",
+      "evidenceStatus": "Evidence Status",
+      "auraResult": "Aura Screening Result",
+      "inboxEmpty": "No vouchers waiting for explanation.",
+      "empty": "No vouchers to display."
+    },
+    "caseDetail": {
+      "title": "Explanation Detail"
+    }
+  },
   "menu": {
     "workbench": "Integrated Workbench",
+    "my-audit": {
+      "_label": "My Audit Portal",
+      "expenses": "My Voucher Status",
+      "clarification": "Explanation Requests"
+    },
     "autonomous-operations": {
       "_label": "Autonomous Operations",
       "cases": "Case Management",

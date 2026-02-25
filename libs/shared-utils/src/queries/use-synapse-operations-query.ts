@@ -25,6 +25,7 @@ import {
   createAction,
   rejectAction,
   resumeAction,
+  getMyVouchers,
   getCaseDetail,
   approveAction,
   executeAction,
@@ -37,11 +38,14 @@ import {
   getCaseAuditEvents,
   getCaseRagEvidence,
   type CasesListParams,
+  submitCaseExplanation,
   type CreateActionBody,
+  requestCaseExplanation,
   type ActionsListParams,
   type ArchiveListParams,
   getWorkbenchCaseHistory,
   type AnomaliesListParams,
+  type MyVouchersListParams,
   type CaseAuditEventsParams,
 } from '../api/synapse-operations-api';
 
@@ -53,6 +57,11 @@ export const casesListQueryKey = (
   tenantId: string,
   params?: CasesListParams
 ) => ['synapse', 'cases', 'list', tenantId, params] as const;
+
+export const myVouchersListQueryKey = (
+  tenantId: string,
+  params?: MyVouchersListParams
+) => ['synapse', 'vouchers', 'my', 'list', tenantId, params] as const;
 
 export const caseDetailQueryKey = (tenantId: string, caseId: string) =>
   ['synapse', 'cases', 'detail', tenantId, caseId] as const;
@@ -117,6 +126,27 @@ export const useCasesListQuery = (params?: CasesListParams) => {
       const res = await getCases(params);
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
         throw new Error(res.message || 'Failed to fetch cases');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 1 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+  });
+};
+
+export const useMyVouchersListQuery = (params?: MyVouchersListParams) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled = isAuthenticated && Boolean(tenantId);
+
+  return useQuery({
+    queryKey: myVouchersListQueryKey(tenantId, params),
+    queryFn: async () => {
+      const res = await getMyVouchers(params);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch my vouchers');
       }
       return res.data;
     },
@@ -433,6 +463,76 @@ export const useUpdateCaseStatusMutation = () => {
     },
     onError: (err) => {
       showToast(err instanceof Error ? err.message : t('toast.failedToUpdateStatus'), 'error');
+    },
+  });
+};
+
+export const useSubmitCaseExplanationMutation = () => {
+  const { t } = useTranslation('common');
+  const queryClient = useQueryClient();
+  const tenantId = getTenantId();
+
+  return useMutation({
+    mutationFn: async ({
+      caseId,
+      explanation,
+      evidenceAttachmentId,
+    }: {
+      caseId: string;
+      explanation: string;
+      evidenceAttachmentId?: string;
+    }) => {
+      const res = await submitCaseExplanation(caseId, { explanation, evidenceAttachmentId });
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to submit case explanation');
+      }
+      return res.data;
+    },
+    onSuccess: (_, { caseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
+      queryClient.invalidateQueries({
+        queryKey: caseDetailQueryKey(tenantId, caseId),
+      });
+      showToast(t('caseDetail.explanationRequestSent', '소명이 완료되었습니다.'), 'success');
+    },
+    onError: (err) => {
+      showToast(
+        err instanceof Error
+          ? err.message
+          : t('caseDetail.explanationRequestFailed', 'Failed to submit explanation.'),
+        'error'
+      );
+    },
+  });
+};
+
+export const useRequestCaseExplanationMutation = () => {
+  const { t } = useTranslation('common');
+  const queryClient = useQueryClient();
+  const tenantId = getTenantId();
+
+  return useMutation({
+    mutationFn: async ({ caseId }: { caseId: string }) => {
+      const res = await requestCaseExplanation(caseId);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to request explanation');
+      }
+      return res.data;
+    },
+    onSuccess: (_, { caseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
+      queryClient.invalidateQueries({
+        queryKey: caseDetailQueryKey(tenantId, caseId),
+      });
+      showToast(t('caseDetail.explanationRequestSent', '소명 요청이 전송되었습니다.'), 'success');
+    },
+    onError: (err) => {
+      showToast(
+        err instanceof Error
+          ? err.message
+          : t('caseDetail.explanationRequestFailed', 'Failed to request explanation.'),
+        'error'
+      );
     },
   });
 };

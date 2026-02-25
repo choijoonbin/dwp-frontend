@@ -22,7 +22,6 @@ import {
   getPolicyProfiles,
   getEffectivePolicy,
   registerRagDocument,
-  registerRagDocumentMultipart,
   createDictionaryTerm,
   deleteDictionaryTerm,
   getRagDocumentDetail,
@@ -32,9 +31,10 @@ import {
   type FeedbackCreateRequest,
   type GuardrailUpsertRequest,
   type RagDocumentsListParams,
+  registerRagDocumentMultipart,
   type GuardrailEvaluateRequest,
-  type DictionaryTermUpsertRequest,
   type RegisterRagDocumentRequest,
+  type DictionaryTermUpsertRequest,
 } from '../api/synapse-knowledge-api';
 
 // ----------------------------------------------------------------------

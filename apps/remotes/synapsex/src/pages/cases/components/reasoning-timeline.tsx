@@ -78,11 +78,6 @@ const getTypeColor = (type: string): 'info' | 'primary' | 'warning' | 'success' 
   }
 };
 
-const getChipColor = (type: string): 'info' | 'primary' | 'warning' | 'success' | 'default' => {
-  const color = getTypeColor(type);
-  return color === 'grey' ? 'default' : color;
-};
-
 /** AGENT_STREAM 도착 시 타이핑 효과: visibleLength를 점진 증가시켜 마크다운 렌더링 */
 const TYPING_INTERVAL_MS = 24;
 const TYPING_CHUNK = 2;
@@ -169,8 +164,6 @@ const renderInlineMarkdown = (raw: string, keyPrefix: string): React.ReactNode[]
   }
   return parts;
 };
-
-const INLINE_KEY = 'inline';
 
 /** 마크다운 표 한 줄 파싱: | cell | cell | → ['cell','cell'] */
 const parseTableRow = (line: string): string[] | null => {

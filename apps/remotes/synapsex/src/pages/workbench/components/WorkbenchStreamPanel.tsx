@@ -10,7 +10,6 @@
 
 import type { Theme, SxProps } from '@mui/material/styles';
 
-import { useRef, useEffect } from 'react';
 import { keyframes } from '@emotion/react';
 import { varAlpha } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
@@ -53,9 +52,9 @@ const PulsingOrb = ({ size = 32, variant = 'thinking' }: { size?: number; varian
   />
 );
 
+import { PanelHeader } from './PanelHeader';
 import { ErrorStateWithRetry } from '../../../components/ux/error-state-with-retry';
 import { StreamMarkdownBlock, TypingMarkdownContent } from '../../../components/stream-markdown';
-import { PanelHeader } from './PanelHeader';
 import {
   mapAgentActivity,
   getAgentEventTypeLabelKey,
@@ -127,19 +126,6 @@ export const WorkbenchStreamPanel = ({
   /** 스트림 완료 직후에도 방금 보이던 라이브 내용 유지. Clean Stream 우선: content/thought_stream만 표시 */
   const showLive =
     isLive || (streamStatus === 'COMPLETED' && (eventLog.length > 0 || hasCleanContent));
-
-  const prevStreamStatusRef = useRef(streamStatus);
-  useEffect(() => {
-    const wasLive =
-      prevStreamStatusRef.current === 'CONNECTING' || prevStreamStatusRef.current === 'STREAMING';
-    const isNowCompleted =
-      streamStatus === 'COMPLETED' || streamStatus === 'IDLE' || streamStatus === 'ABORTED';
-    prevStreamStatusRef.current = streamStatus;
-    // SSE 완료 후 agent-stream API 1회 호출 — 향후 사용 여부 결정 후 주석 해제
-    // if (wasLive && isNowCompleted) {
-    //   refetchHistory();
-    // }
-  }, [streamStatus, refetchHistory]);
 
   const contentBg = varAlpha(
     theme.vars.palette.grey['900Channel'],

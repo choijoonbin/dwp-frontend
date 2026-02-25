@@ -71,6 +71,9 @@ const sortRootMenuNodes = (nodes: MenuNode[]): MenuNode[] =>
 const MENU_KEY_TO_ICON: Record<string, string> = {
   'menu.command-center': 'solar:monitor-bold',
   'menu.workbench': 'solar:monitor-bold',
+  'menu.my-audit': 'solar:user-id-bold',
+  'menu.my-audit.expenses': 'solar:document-text-bold',
+  'menu.my-audit.clarification': 'solar:chat-round-line-bold',
   'menu.autonomous-operations.workbench': 'solar:widget-bold',
   'menu.autonomous-operations.cases': 'solar:clipboard-list-bold',
   'menu.autonomous-operations.anomalies': 'solar:danger-triangle-bold',

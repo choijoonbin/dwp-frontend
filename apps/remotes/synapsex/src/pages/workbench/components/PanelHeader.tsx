@@ -3,9 +3,8 @@
  * 규격: 높이 56px, 통일 배경(action.hover), 하단 보더 1px, 제목 폰트 subtitle2 + fontWeight 600
  */
 
-import type { Theme, SxProps } from '@mui/material/styles';
-
 import type { ReactNode } from 'react';
+import type { Theme, SxProps } from '@mui/material/styles';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';

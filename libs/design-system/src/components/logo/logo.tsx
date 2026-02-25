@@ -12,6 +12,9 @@ import { mergeClasses } from '../../utils';
 export type LogoProps = LinkProps & {
   isSingle?: boolean;
   disabled?: boolean;
+  collapsed?: boolean;
+  expandedText?: string;
+  collapsedText?: string;
 };
 
 export function Logo({
@@ -20,6 +23,9 @@ export function Logo({
   className,
   href = '/',
   isSingle = true,
+  collapsed = false,
+  expandedText = 'DitalWorkPlace',
+  collapsedText = 'DWP',
   ...other
 }: LogoProps) {
   const singleLogo = (
@@ -47,34 +53,28 @@ export function Logo({
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: 1,
       }}
     >
       <Box
         sx={{
-          width: 32,
-          height: 32,
-          borderRadius: 1,
+          width: collapsed ? 52 : 170,
+          height: 36,
+          borderRadius: 1.5,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          bgcolor: 'primary.main',
-          color: 'primary.contrastText',
+          px: collapsed ? 1 : 1.5,
+          background: 'linear-gradient(135deg, rgba(234, 0, 44, 0.92) 0%, rgba(255, 122, 0, 0.86) 100%)',
+          color: '#fff',
           fontWeight: 'bold',
-          fontSize: '1rem',
+          fontSize: collapsed ? '0.85rem' : '0.95rem',
+          letterSpacing: 0.2,
+          boxShadow: '0 4px 10px rgba(234, 0, 44, 0.18)',
+          transition: 'all 0.2s ease',
+          whiteSpace: 'nowrap',
         }}
       >
-        D
-      </Box>
-      <Box
-        component="span"
-        sx={{
-          fontWeight: 'bold',
-          fontSize: '1.25rem',
-          color: 'text.primary',
-        }}
-      >
-        DWP
+        {collapsed ? collapsedText : expandedText}
       </Box>
     </Box>
   );
@@ -95,7 +95,7 @@ export function Logo({
           justifyContent: 'stretch',
           padding: 0,
           margin: 0,
-          ...(!isSingle && { width: 102, height: 36 }),
+          ...(!isSingle && { width: collapsed ? 52 : 170, height: 36 }),
           ...(disabled && { pointerEvents: 'none' }),
         },
         ...(Array.isArray(sx) ? sx : [sx]),

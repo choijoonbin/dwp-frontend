@@ -21,8 +21,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { PanelHeader } from './PanelHeader';
 import { WorkbenchStreamPanel } from './WorkbenchStreamPanel';
 
-import type { FiDocItem } from '../../cases/hooks/use-case-detail';
-import type { LogicCheckpointItem, EvidenceLinkItem, FinalReportItem } from '../../cases/hooks/use-case-detail';
+import type { FiDocItem , FinalReportItem, EvidenceLinkItem, LogicCheckpointItem } from '../../cases/hooks/use-case-detail';
 
 export type WorkbenchRightPanelProps = {
   getGlassPanelSx: (theme: Theme) => Record<string, unknown>;

@@ -41,6 +41,39 @@ export type CasesListParams = {
   sort?: string;
 };
 
+export type MyVouchersListParams = {
+  statusFilter?: 'ALL' | 'PENDING_EXPLANATION';
+  page?: number;
+  size?: number;
+  sort?: 'postingDate,desc' | 'postingDate,asc';
+};
+
+export type MyVoucherRowDto = {
+  bukrs?: string;
+  belnr?: string;
+  gjahr?: string;
+  postingDate?: string;
+  wrbtr?: number;
+  waers?: string;
+  bktxt?: string;
+  caseId?: string;
+  caseStatus?: string;
+  score?: number;
+  detectedAt?: string;
+  [key: string]: unknown;
+};
+
+export type MyVouchersListResponse = {
+  content?: MyVoucherRowDto[];
+  page?: number;
+  size?: number;
+  totalElements?: number;
+  totalPages?: number;
+  hasNext?: boolean;
+  sort?: string;
+  [key: string]: unknown;
+};
+
 export type PartySummary = {
   nameDisplay?: string;
   partyCode?: string;
@@ -203,12 +236,32 @@ export type CaseDetailDto = {
   actionHistory?: CaseActionHistoryItemDto[];
   /** BE: AI 추론 (AiThoughtItemDto[], agent_activity_log, 최근 50건) */
   aiThoughts?: AiThoughtDto[];
+  /** BE: 소명 이력 */
+  explanationHistory?: Array<{
+    explanationId?: string | number;
+    userId?: string | number;
+    explanationText?: string;
+    evidenceAttachmentId?: string;
+    createdAt?: string;
+    [key: string]: unknown;
+  }>;
   /** Aura 브리핑 인사이트 — [사고 과정] 탭 상단 '에이전트 총평' 섹션용 */
   briefingInsight?: string;
   briefing_insight?: string;
   evidence?: CaseDetailEvidence;
   reasoning?: CaseDetailReasoning;
   action?: CaseDetailAction;
+  [key: string]: unknown;
+};
+
+export type SubmitCaseExplanationBody = {
+  explanation: string;
+  evidenceAttachmentId?: string;
+};
+
+export type SubmitCaseExplanationResponse = {
+  caseId?: string;
+  status?: string;
   [key: string]: unknown;
 };
 
@@ -377,11 +430,92 @@ export const getCases = async (
   return res.data;
 };
 
+export const getMyVouchers = async (
+  params?: MyVouchersListParams
+): Promise<ApiResponse<MyVouchersListResponse>> => {
+  const query = new URLSearchParams();
+  query.set('statusFilter', params?.statusFilter ?? 'ALL');
+  query.set('page', String(params?.page ?? 0));
+  query.set('size', String(params?.size ?? 20));
+  query.set('sort', params?.sort ?? 'postingDate,desc');
+
+  const res = await axiosInstance.get<ApiResponse<MyVouchersListResponse>>(
+    `/api/synapse/vouchers/my?${query.toString()}`
+  );
+  return res.data;
+};
+
 export const getCaseDetail = async (
   caseId: string
 ): Promise<ApiResponse<CaseDetailDto>> => {
-  const res = await axiosInstance.get<ApiResponse<CaseDetailDto>>(
-    `/api/synapse/cases/${encodeURIComponent(caseId)}`
+  const candidatePaths = [
+    `/api/synapse/cases/${encodeURIComponent(caseId)}`,
+  ] as const;
+
+  for (const path of candidatePaths) {
+    try {
+      const res = await axiosInstance.get<ApiResponse<CaseDetailDto>>(path);
+      return res.data;
+    } catch (error) {
+      const status = (error as { status?: number } | null)?.status;
+      if (status !== 404) throw error;
+    }
+  }
+
+  throw new Error('Failed to fetch case detail');
+};
+
+/**
+ * 소명 제출 (일반 사용자)
+ * 우선 케이스 단위 endpoint를 시도하고, 404인 경우 레거시 snake_case endpoint로 fallback.
+ */
+export const submitCaseExplanation = async (
+  caseId: string,
+  body: SubmitCaseExplanationBody
+): Promise<ApiResponse<SubmitCaseExplanationResponse>> => {
+  const payload = {
+    explanationText: body.explanation,
+    evidenceAttachmentId: body.evidenceAttachmentId,
+    explanation: body.explanation,
+    explanation_text: body.explanation,
+    content: body.explanation,
+    evidence_attachment_id: body.evidenceAttachmentId,
+  };
+
+  const candidatePaths = [
+    `/api/synapse/cases/${encodeURIComponent(caseId)}/explanations`,
+    `/aura/cases/${encodeURIComponent(caseId)}/explanations`,
+    `/api/synapse/cases/${encodeURIComponent(caseId)}/case-explanation`,
+    `/api/synapse/cases/${encodeURIComponent(caseId)}/explanation`,
+  ] as const;
+
+  for (const path of candidatePaths) {
+    try {
+      const res = await axiosInstance.post<ApiResponse<SubmitCaseExplanationResponse>>(path, payload);
+      return res.data;
+    } catch (error) {
+      const status = (error as { status?: number } | null)?.status;
+      if (status !== 404) throw error;
+    }
+  }
+
+  const res = await axiosInstance.post<ApiResponse<SubmitCaseExplanationResponse>>(
+    '/api/synapse/case_explanation',
+    { caseId, ...payload }
+  );
+  return res.data;
+};
+
+/**
+ * 관리자(감사자) 소명 요청
+ * PATCH /api/synapse/cases/{caseId}/request-explanation
+ */
+export const requestCaseExplanation = async (
+  caseId: string
+): Promise<ApiResponse<CaseDetailDto>> => {
+  const res = await axiosInstance.patch<ApiResponse<CaseDetailDto>>(
+    `/api/synapse/cases/${encodeURIComponent(caseId)}/request-explanation`,
+    {}
   );
   return res.data;
 };

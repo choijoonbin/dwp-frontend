@@ -3,23 +3,17 @@ import type { Breakpoint } from '@mui/material/styles';
 import { merge } from 'es-toolkit';
 import { useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useAuraStore } from '@dwp-frontend/shared-utils/aura/use-aura-store';
 import { useNotificationWebSocket, useWorkbenchReactiveStore } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
-import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
 
 import { usePathname } from 'src/routes/hooks';
 
 import { _langs } from 'src/_mock';
-import { useThemeMode } from 'src/theme/theme-mode';
 import { isFixedLayoutPath } from 'src/config/layout-mode';
 import { useLayoutStore, useLayoutActions } from 'src/store/use-layout-store';
-
-import { Iconify } from 'src/components/iconify';
 
 import { NavMobile, NavDesktop } from './nav';
 import { layoutClasses } from '../core/classes';
@@ -63,10 +57,8 @@ export function DashboardLayout({
   layoutQuery = 'lg',
 }: DashboardLayoutProps) {
   const theme = useTheme();
-  const { mode, toggleMode } = useThemeMode();
 
   const pathname = usePathname();
-  const { t } = useTranslation('common');
   const sidebarOpen = useLayoutStore((state) => state.sidebarOpen);
   const sidebarCollapsed = useLayoutStore((state) => state.sidebarCollapsed);
   const { setSidebarOpen, toggleCollapse } = useLayoutActions();
@@ -103,7 +95,6 @@ export function DashboardLayout({
         pl?.run_id != null ? String(pl.run_id) : pl?.runId != null ? String(pl.runId) : undefined;
 
       // 추적: 알림이 한 번이라도 오는지 확인 (WebSocket 수신 여부)
-      console.log('[Workbench SSE] 알림 수신', { category: cat, type: typ, caseId, runId, hasPayload: !!pl });
 
       if (cat === 'THOUGHT_STREAM' || typ === 'THOUGHT_STREAM') {
         const wb = useWorkbenchReactiveStore.getState();
@@ -147,12 +138,6 @@ export function DashboardLayout({
         }
       }
       if (typ === 'ANALYSIS_STARTED' || cat === 'ANALYSIS_STARTED') {
-        console.log('[Workbench SSE] ANALYSIS_STARTED 수신', {
-          caseId,
-          runId,
-          payloadKeys: pl ? Object.keys(pl) : [],
-          hasStreamUrl: !!(pl?.stream_url ?? pl?.streamUrl),
-        });
         if (caseId) {
           useWorkbenchReactiveStore.getState().addAnalyzing(caseId);
           useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(caseId);
@@ -171,17 +156,7 @@ export function DashboardLayout({
               streamUrl,
               runId,
             });
-            console.log('[Workbench SSE] pendingAutoStream 설정됨', {
-              caseId,
-              runId,
-              fromPayload: Boolean(streamUrlFromPayload),
-              streamUrl: streamUrl.slice(0, 80),
-            });
-          } else {
-            console.log('[Workbench SSE] ANALYSIS_STARTED: stream_url·run_id 없음 → 자동 구독 불가', { pl });
           }
-        } else {
-          console.log('[Workbench SSE] ANALYSIS_STARTED: case_id 없음', { pl });
         }
         queryClient.invalidateQueries({ queryKey: ['synapse', 'dashboard', 'agent-stream'] });
         queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
@@ -199,18 +174,7 @@ export function DashboardLayout({
   });
 
   useEffect(() => {
-    console.log('[Workbench SSE] WebSocket 알림 연결 여부', {
-      enabled: notificationWsEnabled,
-      isProd: !!import.meta.env.PROD,
-      connectionStatus,
-      url: notificationWsUrl,
-      hint: !notificationWsEnabled
-        ? '비활성화됨. 활성화하려면 VITE_NOTIFICATION_WS_ENABLED를 제거하거나 true로 설정하세요.'
-        : undefined,
-    });
-    if (connectionStatus === 'connected') {
-      console.log('[Workbench SSE] WebSocket 알림 연결 여부: connected');
-    }
+    if (connectionStatus !== 'connected') return;
   }, [notificationWsEnabled, connectionStatus, notificationWsUrl]);
 
   const renderHeader = () => {
@@ -255,17 +219,6 @@ export function DashboardLayout({
 
           {/** @slot Notifications popover — 실시간 알림만 표시, 없으면 빈 상태 */}
           <NotificationsPopover />
-
-          <Tooltip
-            title={`${t('theme.currentMode', { mode: t(mode === 'light' ? 'theme.lightMode' : 'theme.darkMode') })} · ${t('theme.switchTo', { mode: t(mode === 'light' ? 'theme.darkMode' : 'theme.lightMode') })}`}
-          >
-            <IconButton color="inherit" onClick={toggleMode}>
-              <Iconify
-                width={22}
-                icon={mode === 'light' ? 'solar:eye-closed-bold' : 'solar:eye-bold'}
-              />
-            </IconButton>
-          </Tooltip>
 
           {/** @slot Account drawer */}
           <AccountPopover data={_account} />

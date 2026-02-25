@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Iconify } from '@dwp-frontend/design-system';
 import { useEntityDetailQuery } from '@dwp-frontend/shared-utils';
 import { Link, useParams, useLocation, useSearchParams } from 'react-router-dom';
-import { formatDate , useTranslation, formatCurrency } from '@dwp-frontend/shared-i18n';
+import { formatDate, formatCurrency, useTranslation } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -38,40 +38,13 @@ import { PiiFieldDisplay } from '../components/pii';
 import {
   mockCases,
   mockFiDocs,
+  type Entity,
   mockActions,
   mockEntities,
   mockOpenItems,
+  type EntityChangeLog,
   mockEntityChangeLogs,
-  type EntityChangeLog                          ,
- Entity } from '../data/mock-data';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+} from '../data/mock-data';
 // ----------------------------------------------------------------------
 
 /** BE Entity 360 API 응답: { base, exposureSummary, riskTrend, tabs } */
@@ -276,7 +249,7 @@ export const EntityDetailPage = () => {
   const [changeLogFilterAnchor, setChangeLogFilterAnchor] = useState<null | HTMLElement>(null);
   const [changeLogFilter, setChangeLogFilter] = useState<string[]>([]);
 
-  const { data: apiData, isLoading, error } = useEntityDetailQuery(id);
+  const { data: apiData, isLoading } = useEntityDetailQuery(id);
   const entityFromApi = useMemo(
     () => toEntityFromApi(apiData as Record<string, unknown> | undefined),
     [apiData]
