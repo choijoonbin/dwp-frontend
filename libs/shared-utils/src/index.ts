@@ -22,6 +22,7 @@ export * from './auth/token-storage';
 export * from './api/monitoring-api';
 export * from './api/code-usage-api';
 export * from './agent/context-util';
+export * from './agent/agent-events-adapter';
 export * from './agent/stream-store';
 export * from './dev-error-reporter';
 export * from './api/api-error-alert';

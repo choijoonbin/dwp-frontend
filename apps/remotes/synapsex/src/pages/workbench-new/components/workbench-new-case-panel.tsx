@@ -5,11 +5,17 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import { getMe, useAuth, useStreamStore } from '@dwp-frontend/shared-utils';
+import {
+  agentEventsToTimelineSteps,
+  dedupeAgentEvents,
+  getMe,
+  useAgentEventsQuery,
+  useStreamStore,
+  useAuth,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
-import Tooltip from '@mui/material/Tooltip';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
@@ -17,14 +23,15 @@ import Tabs from '@mui/material/Tabs';
 import Alert from '@mui/material/Alert';
 import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
-import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import Accordion from '@mui/material/Accordion';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -35,16 +42,17 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 
 import { PanelHeader } from '../../workbench/components/PanelHeader';
 import { StatusBadge } from '../../../components/finance/status-badge';
-import { WorkbenchThoughtChain } from '../../workbench/components/WorkbenchThoughtChain';
+import { EventStreamTimeline } from '../../workbench/components/EventStreamTimeline';
 import { WorkbenchItemDetailGrid } from '../../workbench/components/WorkbenchItemDetailGrid';
 import { WorkbenchActionHistoryTimeline } from '../../workbench/components/WorkbenchActionHistoryTimeline';
 
 import type {
-  FiDocItem,
   AiThought,
+  FiDocItem,
   FinalReportItem,
   EvidenceLinkItem,
   ActionHistoryItem,
+  EvidenceUsageStatus,
   LogicCheckpointItem,
 } from '../../cases/hooks/use-case-detail';
 
@@ -69,6 +77,8 @@ export type WorkbenchNewCasePanelProps = {
   explanationLoading?: boolean;
   onRequestExplanation?: () => void;
   analysisData?: CaseAnalysisDto | null;
+  /** case detail API의 reasoning (analysis API 실패 시 fallback) */
+  caseDetailReasoning?: Record<string, unknown> | null;
   getGlassPanelSx: (theme: Theme) => Record<string, unknown>;
   sx?: SxProps<Theme>;
 };
@@ -83,9 +93,11 @@ type SentenceCitationItem = {
 
 type CitationItem = {
   citation_id?: string;
+  chunk_id?: string;
+  excerpt?: string;
   sourceKey?: string;
   source_key?: string;
-  excerpt?: string;
+  target_buzei?: string | number;
   [key: string]: unknown;
 };
 
@@ -177,9 +189,13 @@ const toFriendlyQualityGateLabel = (rawCode: string): string => {
 
 const getRegulationStatusMeta = (
   statusCode: LogicCheckpointItem['statusCode'],
-  legacyStatus: LogicCheckpointItem['status']
+  legacyStatus: LogicCheckpointItem['status'],
+  isHoldStateOverride?: boolean
 ): { label: string; color: 'success' | 'error' | 'warning' | 'default' } => {
-  const code = statusCode ?? (legacyStatus === 'violation' ? 'VIOLATION' : 'COMPLIANT');
+  let code = statusCode ?? (legacyStatus === 'violation' ? 'VIOLATION' : 'COMPLIANT');
+  if (isHoldStateOverride && code === 'COMPLIANT') {
+    code = 'NEEDS_REVIEW';
+  }
   switch (code) {
     case 'VIOLATION':
       return { label: '위반', color: 'error' };
@@ -188,7 +204,7 @@ const getRegulationStatusMeta = (
     case 'CONFLICT':
       return { label: '충돌', color: 'warning' };
     case 'NEEDS_REVIEW':
-      return { label: '추가 검토', color: 'default' };
+      return { label: '재검토 필요', color: 'default' };
     default:
       return { label: '준수', color: 'success' };
   }
@@ -220,6 +236,7 @@ export function WorkbenchNewCasePanel({
   explanationLoading = false,
   onRequestExplanation,
   analysisData = null,
+  caseDetailReasoning = null,
   getGlassPanelSx,
   sx,
 }: WorkbenchNewCasePanelProps) {
@@ -229,12 +246,65 @@ export function WorkbenchNewCasePanel({
   const [tab, setTab] = useState<NewCaseTab>('thought');
   const [scrollToBuzei, setScrollToBuzei] = useState<string | null>(null);
   const [highlightedCitationId, setHighlightedCitationId] = useState<string | null>(null);
+  const [highlightedCitationIds, setHighlightedCitationIds] = useState<string[]>([]);
+  const [highlightedSentenceIndices, setHighlightedSentenceIndices] = useState<number[]>([]);
+  const runId = analysisData?.runId ?? (analysisData as { runId?: string } | undefined)?.runId;
+  const agentEventsQuery = useAgentEventsQuery(selectedCaseId ?? undefined, runId ?? null, {
+    enabled: Boolean(selectedCaseId),
+  });
+  const agentEventsSteps = useMemo(
+    () => agentEventsToTimelineSteps(agentEventsQuery.data),
+    [agentEventsQuery.data]
+  );
+  /** analysis 응답의 aiThoughts/activityHistory → StreamTimelineStep 변환 (eventType, message, occurredAt) */
+  const analysisTimelineSteps = useMemo(() => {
+    const raw =
+      (analysisData?.aiThoughts ?? analysisData?.activityHistory ?? []) as Array<{
+        eventType?: string;
+        stage?: string;
+        message?: string;
+        occurredAt?: string;
+        occurred_at?: string;
+      }>;
+    return raw.map((item) => ({
+      type: 'step' as const,
+      label: item.eventType ?? item.stage ?? 'step',
+      detail: item.message ?? '',
+      message: item.message ?? '',
+      at: (item.occurredAt ?? item.occurred_at)
+        ? new Date(item.occurredAt ?? item.occurred_at!).getTime()
+        : undefined,
+    }));
+  }, [analysisData?.aiThoughts, analysisData?.activityHistory]);
+  /** detail.aiThoughts → StreamTimelineStep 변환 */
+  const detailThoughtsSteps = useMemo(
+    () =>
+      aiThoughts.map((thought) => ({
+        type: 'step' as const,
+        label: thought.type,
+        detail: thought.content,
+        message: thought.content,
+        at: thought.timestamp ? new Date(thought.timestamp).getTime() : undefined,
+      })),
+    [aiThoughts]
+  );
+  /** 1순위: agent-events(데이터 있을 때만), 2순위: analysis aiThoughts/activityHistory, 3순위: detail.aiThoughts */
+  const effectiveTimelineSteps = useMemo(() => {
+    if (agentEventsSteps.length > 0) return agentEventsSteps;
+    if (analysisTimelineSteps.length > 0) return analysisTimelineSteps;
+    return detailThoughtsSteps;
+  }, [agentEventsSteps, analysisTimelineSteps, detailThoughtsSteps]);
   const liveSentenceCitationMap = useStreamStore((s) => s.liveSentenceCitationMap);
   const pendingCitationJumpId = useStreamStore((s) => s.pendingCitationJumpId);
   const clearCitationJumpRequest = useStreamStore((s) => s.clearCitationJumpRequest);
   const firstClause = logicCheckpoints[0]?.clause?.trim();
   const contextSummary = firstClause || briefingInsight || title || t('workbench.detailHint');
   const decisionReason = (analysisData?.decisionReason ?? analysisData?.decision_reason ?? {}) as Record<string, unknown>;
+  const caseDetailEvidenceMap = (caseDetailReasoning?.evidenceJson ?? caseDetailReasoning?.evidence_json) as
+    | Record<string, unknown>
+    | undefined;
+  const caseDetailEvidenceMapJson = (caseDetailEvidenceMap?.evidenceMapJson ??
+    caseDetailEvidenceMap?.evidence_map_json) as Record<string, unknown> | undefined;
   const qualityGateCodesRaw = useMemo(
     () =>
       [
@@ -244,12 +314,20 @@ export function WorkbenchNewCasePanel({
         ...(Array.isArray(decisionReason.quality_gate_codes)
           ? (decisionReason.quality_gate_codes as string[])
           : []),
+        ...(Array.isArray(caseDetailEvidenceMapJson?.qualityGateCodes)
+          ? (caseDetailEvidenceMapJson.qualityGateCodes as string[])
+          : []),
+        ...(Array.isArray(caseDetailEvidenceMapJson?.quality_gate_codes)
+          ? (caseDetailEvidenceMapJson.quality_gate_codes as string[])
+          : []),
       ].filter((code): code is string => typeof code === 'string' && code.trim().length > 0),
     [
       analysisData?.qualityGateCodes,
       analysisData?.quality_gate_codes,
       decisionReason.qualityGateCodes,
       decisionReason.quality_gate_codes,
+      caseDetailEvidenceMapJson?.qualityGateCodes,
+      caseDetailEvidenceMapJson?.quality_gate_codes,
     ]
   );
   const qualityGateCodes = useMemo(() => normalizeAndSortSignals(qualityGateCodesRaw), [qualityGateCodesRaw]);
@@ -264,12 +342,20 @@ export function WorkbenchNewCasePanel({
         ...(Array.isArray(decisionReason.analysis_quality_signals)
           ? (decisionReason.analysis_quality_signals as string[])
           : []),
+        ...(Array.isArray(caseDetailEvidenceMapJson?.analysisQualitySignals)
+          ? (caseDetailEvidenceMapJson.analysisQualitySignals as string[])
+          : []),
+        ...(Array.isArray(caseDetailEvidenceMapJson?.analysis_quality_signals)
+          ? (caseDetailEvidenceMapJson.analysis_quality_signals as string[])
+          : []),
       ].filter((code): code is string => typeof code === 'string' && code.trim().length > 0),
     [
       analysisData?.analysisQualitySignals,
       analysisData?.analysis_quality_signals,
       decisionReason.analysisQualitySignals,
       decisionReason.analysis_quality_signals,
+      caseDetailEvidenceMapJson?.analysisQualitySignals,
+      caseDetailEvidenceMapJson?.analysis_quality_signals,
     ]
   );
   const analysisQualitySignals = useMemo(
@@ -277,6 +363,13 @@ export function WorkbenchNewCasePanel({
     [analysisQualitySignalsRaw]
   );
   const displayedSignals = analysisQualitySignals.length > 0 ? analysisQualitySignals : qualityGateCodes;
+  const evidenceUsageByRowIndex = useMemo((): Record<number, EvidenceUsageStatus> => {
+    const map: Record<number, EvidenceUsageStatus> = {};
+    evidenceLinks.forEach((link) => {
+      if (link.usage) map[link.itemIdx] = link.usage;
+    });
+    return map;
+  }, [evidenceLinks]);
   const sentenceCitationMap = useMemo(() => {
     const mapFromApi = [
       ...(Array.isArray(analysisData?.sentenceCitationMap) ? analysisData.sentenceCitationMap : []),
@@ -287,6 +380,12 @@ export function WorkbenchNewCasePanel({
       ...(Array.isArray(decisionReason.sentence_citation_map)
         ? (decisionReason.sentence_citation_map as SentenceCitationItem[])
         : []),
+      ...(Array.isArray(caseDetailEvidenceMapJson?.sentenceCitationMap)
+        ? (caseDetailEvidenceMapJson.sentenceCitationMap as SentenceCitationItem[])
+        : []),
+      ...(Array.isArray(caseDetailEvidenceMapJson?.sentence_citation_map)
+        ? (caseDetailEvidenceMapJson.sentence_citation_map as SentenceCitationItem[])
+        : []),
     ];
     if (mapFromApi.length > 0) return mapFromApi as SentenceCitationItem[];
     return liveSentenceCitationMap as SentenceCitationItem[];
@@ -295,26 +394,35 @@ export function WorkbenchNewCasePanel({
     analysisData?.sentence_citation_map,
     decisionReason.sentenceCitationMap,
     decisionReason.sentence_citation_map,
+    caseDetailEvidenceMapJson?.sentenceCitationMap,
+    caseDetailEvidenceMapJson?.sentence_citation_map,
     liveSentenceCitationMap,
   ]);
-  const citations = useMemo(
-    () =>
-      (Array.isArray(analysisData?.citations)
-        ? analysisData.citations.filter((item): item is CitationItem => !!item && typeof item === 'object')
-        : []) as CitationItem[],
-    [analysisData?.citations]
-  );
+  const citations = useMemo(() => {
+    const fromAnalysis = Array.isArray(analysisData?.citations)
+      ? analysisData.citations.filter((item): item is CitationItem => !!item && typeof item === 'object')
+      : [];
+    if (fromAnalysis.length > 0) return fromAnalysis as CitationItem[];
+    const fromCaseDetail = caseDetailEvidenceMapJson?.citations as CitationItem[] | undefined;
+    return Array.isArray(fromCaseDetail)
+      ? fromCaseDetail.filter((item): item is CitationItem => !!item && typeof item === 'object')
+      : [];
+  }, [analysisData?.citations, caseDetailEvidenceMapJson?.citations]);
   const analysisScoreBreakdown = useMemo(
     () =>
       (analysisData?.analysisScoreBreakdown ??
         analysisData?.analysis_score_breakdown ??
         decisionReason.analysisScoreBreakdown ??
-        decisionReason.analysis_score_breakdown) as Record<string, unknown> | undefined,
+        decisionReason.analysis_score_breakdown ??
+        caseDetailEvidenceMapJson?.analysisScoreBreakdown ??
+        caseDetailEvidenceMapJson?.analysis_score_breakdown) as Record<string, unknown> | undefined,
     [
       analysisData?.analysisScoreBreakdown,
       analysisData?.analysis_score_breakdown,
       decisionReason.analysisScoreBreakdown,
       decisionReason.analysis_score_breakdown,
+      caseDetailEvidenceMapJson?.analysisScoreBreakdown,
+      caseDetailEvidenceMapJson?.analysis_score_breakdown,
     ]
   );
   const policyScore = Number(analysisScoreBreakdown?.policyScore ?? analysisScoreBreakdown?.policy_score);
@@ -350,11 +458,33 @@ export function WorkbenchNewCasePanel({
     : [];
   const canDebugPanel =
     roles.includes('ADMIN') || roles.includes('SYNAPSEX_ADMIN') || roles.includes('SYNAPSEX_OPERATOR');
-  const handleCitationClick = useCallback((citationId: string) => {
-    setHighlightedCitationId(citationId);
-    const citationEl = document.getElementById(`workbench-citation-${citationId}`);
-    if (citationEl) citationEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, []);
+  const handleCitationClick = useCallback(
+    (citationId: string) => {
+      setHighlightedCitationId(citationId);
+      setHighlightedCitationIds([citationId]);
+      const indices = sentenceCitationMap
+        .map((item, idx) => (item.citation_ids ?? []).includes(citationId) ? idx : -1)
+        .filter((i) => i >= 0);
+      setHighlightedSentenceIndices(indices);
+      const citationEl = document.getElementById(`workbench-citation-${citationId}`);
+      if (citationEl) citationEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    },
+    [sentenceCitationMap]
+  );
+  const handleSentenceClick = useCallback(
+    (sentenceIndex: number, citationIds: string[]) => {
+      setHighlightedSentenceIndices([sentenceIndex]);
+      setHighlightedCitationIds(citationIds);
+      if (citationIds.length > 0) {
+        setHighlightedCitationId(citationIds[0]);
+        const citationEl = document.getElementById(`workbench-citation-${citationIds[0]}`);
+        if (citationEl) citationEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        setHighlightedCitationId(null);
+      }
+    },
+    []
+  );
   const handleEvidenceRefClick = useCallback(
     (citationId: string) => {
       setTab('evidence');
@@ -507,8 +637,8 @@ export function WorkbenchNewCasePanel({
         }}
       >
         <Tab value="thought" label={t('workbench.rightTabThoughtProcess')} />
-        <Tab value="review" label="판단 규정" />
         <Tab value="evidence" label={t('workbench.rightTabEvidenceMap')} />
+        <Tab value="review" label="판단 규정" />
         <Tab value="report" label={t('workbench.rightTabAnalysisReport')} />
       </Tabs>
 
@@ -658,18 +788,19 @@ export function WorkbenchNewCasePanel({
                 sx={{ pb: 1, px: 2, pt: 1.5 }}
               />
               <CardContent sx={{ px: 2, pt: 0, pb: 1.5 }}>
-                {aiThoughts.length > 0 ? (
-                  <WorkbenchThoughtChain thoughts={aiThoughts} />
-                ) : reasoningProcess.length > 0 ? (
-                  reasoningProcess.map((line, idx) => (
-                    <Typography key={`${idx}-${line}`} variant="body2" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
-                      {line}
-                    </Typography>
-                  ))
+                {effectiveTimelineSteps.length > 0 ? (
+                  <EventStreamTimeline steps={effectiveTimelineSteps} />
                 ) : (
                   <Typography variant="body2" color="text.secondary">
-                    {t('workbench.detailHint')}
+                    {t('workbench.eventStreamEmpty', { defaultValue: '이벤트 데이터 없음' })}
                   </Typography>
+                )}
+                {canDebugPanel && (
+                  <Box sx={{ mt: 1.5, pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
+                    <Typography variant="caption" component="div" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
+                      [디버그] runId: {runId ?? '-'} · API응답: {agentEventsQuery.data?.length ?? 0}건 · dedupe후: {agentEventsSteps.length}건 · 최종렌더: {dedupeAgentEvents(effectiveTimelineSteps).length}건
+                    </Typography>
+                  </Box>
                 )}
               </CardContent>
             </Card>
@@ -703,8 +834,8 @@ export function WorkbenchNewCasePanel({
                     </Typography>
                     <Chip
                       size="small"
-                      color={getRegulationStatusMeta(item.statusCode, item.status).color}
-                      label={getRegulationStatusMeta(item.statusCode, item.status).label}
+                      color={getRegulationStatusMeta(item.statusCode, item.status, isHoldState).color}
+                      label={getRegulationStatusMeta(item.statusCode, item.status, isHoldState).label}
                     />
                   </Stack>
                   {item.title ? (
@@ -713,7 +844,7 @@ export function WorkbenchNewCasePanel({
                     </Typography>
                   ) : null}
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-                    {item.statusReason || item.description || '-'}
+                    {item.statusReason || item.description || t('workbench.noData')}
                   </Typography>
                   <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
                     {item.applied === false && <Chip size="small" variant="outlined" label="참고 규정" />}
@@ -738,7 +869,11 @@ export function WorkbenchNewCasePanel({
                           size="small"
                           clickable
                           variant="outlined"
-                          color={highlightedCitationId === ref ? 'primary' : 'default'}
+                          color={
+                          highlightedCitationIds.includes(ref) || highlightedCitationId === ref
+                            ? 'primary'
+                            : 'default'
+                        }
                           label={ref}
                           onClick={() => handleEvidenceRefClick(ref)}
                         />
@@ -809,6 +944,9 @@ export function WorkbenchNewCasePanel({
                   targetBuzei={targetBuzei}
                   scrollToBuzei={scrollToBuzei}
                   onClearScrollToBuzei={() => setScrollToBuzei(null)}
+                  evidenceUsageByRowIndex={
+                    Object.keys(evidenceUsageByRowIndex).length > 0 ? evidenceUsageByRowIndex : undefined
+                  }
                 />
               </CardContent>
             </Card>
@@ -842,15 +980,30 @@ export function WorkbenchNewCasePanel({
                             ? item.citation_ids.filter((id): id is string => typeof id === 'string' && id.length > 0)
                             : [];
                           const grounded = typeof item.grounded === 'boolean' ? item.grounded : ids.length > 0;
+                          const isSentenceHighlighted =
+                            highlightedSentenceIndices.includes(idx) ||
+                            (highlightedCitationId != null && ids.includes(highlightedCitationId));
+                          const isChipHighlighted = (id: string) =>
+                            highlightedCitationIds.includes(id) || highlightedCitationId === id;
                           return (
                             <TableRow
                               key={`scm-${idx}-${item.sentence_index ?? idx}`}
-                              sx={!grounded ? { bgcolor: alpha(theme.palette.warning.main, 0.08) } : undefined}
+                              onClick={() => handleSentenceClick(idx, ids)}
+                              sx={{
+                                cursor: 'pointer',
+                                bgcolor: !grounded
+                                  ? alpha(theme.palette.warning.main, 0.08)
+                                  : isSentenceHighlighted
+                                    ? alpha(theme.palette.primary.main, 0.08)
+                                    : undefined,
+                                borderLeft: isSentenceHighlighted ? 3 : 0,
+                                borderLeftColor: 'primary.main',
+                              }}
                             >
                               <TableCell>{item.sentence_index ?? idx + 1}</TableCell>
                               <TableCell>
                                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                                  {item.sentence ?? '-'}
+                                  {item.sentence ?? '데이터 없음'}
                                 </Typography>
                               </TableCell>
                               <TableCell>
@@ -862,9 +1015,12 @@ export function WorkbenchNewCasePanel({
                                         size="small"
                                         clickable
                                         variant="outlined"
-                                        color={highlightedCitationId === id ? 'primary' : 'default'}
+                                        color={isChipHighlighted(id) ? 'primary' : 'default'}
                                         label={id}
-                                        onClick={() => handleCitationClick(id)}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleCitationClick(id);
+                                        }}
                                       />
                                     ))}
                                   </Stack>
@@ -887,59 +1043,67 @@ export function WorkbenchNewCasePanel({
               </Card>
             )}
 
-            {citations.length > 0 && (
-              <Card variant="outlined">
-                <CardHeader
-                  title={
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Iconify icon="solar:document-text-bold-duotone" width={18} />
-                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                        Citation 근거 목록
-                      </Typography>
-                    </Stack>
-                  }
-                  sx={{ pb: 1, px: 2, pt: 1.5 }}
-                />
-                <CardContent sx={{ px: 2, pt: 0, pb: 1.5 }}>
+            <Card variant="outlined">
+              <CardHeader
+                title={
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Iconify icon="solar:document-text-bold-duotone" width={18} />
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                      Citation 근거 목록
+                    </Typography>
+                  </Stack>
+                }
+                sx={{ pb: 1, px: 2, pt: 1.5 }}
+              />
+              <CardContent sx={{ px: 2, pt: 0, pb: 1.5 }}>
+                {citations.length > 0 ? (
                   <Stack spacing={1}>
                     {citations.map((item, idx) => {
                       const citationId = item.citation_id ?? `C${idx + 1}`;
+                      const isHighlighted =
+                        highlightedCitationIds.includes(citationId) || highlightedCitationId === citationId;
+                      const sourceKey = item.sourceKey ?? item.source_key;
+                      const chunkId = item.chunk_id;
+                      const citationTargetBuzei = item.target_buzei;
+                      const metaParts = [sourceKey, chunkId, citationTargetBuzei != null ? `장=${citationTargetBuzei}` : null]
+                        .filter(Boolean)
+                        .map(String);
                       return (
                         <Box
                           key={`${citationId}-${idx}`}
                           id={`workbench-citation-${citationId}`}
+                          onClick={() => handleCitationClick(citationId)}
                           sx={{
                             p: 1.25,
                             borderRadius: 1,
                             border: 1,
-                            borderColor:
-                              highlightedCitationId === citationId
-                                ? theme.palette.primary.main
-                                : 'divider',
-                            bgcolor:
-                              highlightedCitationId === citationId
-                                ? alpha(theme.palette.primary.main, 0.12)
-                                : 'background.paper',
+                            cursor: 'pointer',
+                            borderColor: isHighlighted ? theme.palette.primary.main : 'divider',
+                            bgcolor: isHighlighted ? alpha(theme.palette.primary.main, 0.12) : 'background.paper',
                           }}
                         >
-                          <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mb: 0.5 }}>
+                          <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" sx={{ mb: 0.5 }}>
                             <Chip size="small" label={citationId} />
-                            {(item.sourceKey ?? item.source_key) && (
+                            {metaParts.length > 0 && (
                               <Typography variant="caption" color="text.secondary">
-                                {String(item.sourceKey ?? item.source_key)}
+                                {metaParts.join(' · ')}
                               </Typography>
                             )}
                           </Stack>
                           <Typography variant="body2" color="text.secondary">
-                            {item.excerpt || '-'}
+                            {item.excerpt || '데이터 없음'}
                           </Typography>
                         </Box>
                       );
                     })}
                   </Stack>
-                </CardContent>
-              </Card>
-            )}
+                ) : (
+                  <Typography variant="body2" color="text.secondary">
+                    {t('workbench.noData')}
+                  </Typography>
+                )}
+              </CardContent>
+            </Card>
 
             {canDebugPanel && (
               <Accordion

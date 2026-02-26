@@ -283,10 +283,14 @@ export type LogicCheckpointItem = {
 };
 
 /** [증거 맵] UI — itemIdx는 그리드 행 인덱스(0-based), reason, severity */
+export type EvidenceUsageStatus = 'USED' | 'REFERENCED' | 'NOT_USED';
+
 export type EvidenceLinkItem = {
   itemIdx: number;
   reason?: string;
   severity?: string;
+  /** 근거 사용 여부 (BE 제공 시) */
+  usage?: EvidenceUsageStatus;
 };
 
 /** [분석 리포트] UI */
@@ -538,12 +542,18 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
     const logicCheckpoints =
       regulationCheckpoints.length > 0 ? regulationCheckpoints : fallbackLogicCheckpoints;
 
-    const rawEvidenceLinks = (dto?.evidenceLinks ?? dto?.evidence_links) as Array<{ itemIdx?: number; reason?: string; severity?: string }> | undefined;
+    const rawEvidenceLinks = (dto?.evidenceLinks ?? dto?.evidence_links) as Array<{
+      itemIdx?: number;
+      reason?: string;
+      severity?: string;
+      usage?: EvidenceUsageStatus;
+    }> | undefined;
     const evidenceLinks: EvidenceLinkItem[] = Array.isArray(rawEvidenceLinks)
       ? rawEvidenceLinks.map((x) => ({
           itemIdx: typeof x.itemIdx === 'number' ? x.itemIdx : 0,
           reason: x.reason,
           severity: x.severity,
+          usage: x.usage && ['USED', 'REFERENCED', 'NOT_USED'].includes(x.usage) ? x.usage : undefined,
         }))
       : [];
 

@@ -643,6 +643,7 @@
     "reviewCompliant": "Compliant",
     "reviewViolation": "Violation",
     "evidenceMapEmpty": "No evidence or RAG docs found.",
+    "eventStreamEmpty": "No event data",
     "autoStartedBanner": "Agent has started an automatic review.",
     "tabQueue": "Queue",
     "tabDetail": "Detail",
@@ -668,7 +669,8 @@
       "account": "Account",
       "amount": "Amount",
       "partner": "Partner",
-      "description": "Description"
+      "description": "Description",
+      "evidenceUsage": "Evidence usage"
     },
     "tools": {
       "knowledgePolicy": "Knowledge & Policy",

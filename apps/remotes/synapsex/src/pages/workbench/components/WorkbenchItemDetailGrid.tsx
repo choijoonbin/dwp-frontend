@@ -28,6 +28,9 @@ const flowGlow = keyframes`
   100% { transform: translateY(100%); opacity: 0.6; }
 `;
 
+/** BE 제공 시 evidenceLinks[].usage 또는 fiDocItems[].evidenceUsage */
+export type EvidenceUsageStatus = 'USED' | 'REFERENCED' | 'NOT_USED';
+
 export type WorkbenchItemDetailGridProps = {
   items: FiDocItem[];
   /** 통화 (전표 fallback) */
@@ -37,6 +40,8 @@ export type WorkbenchItemDetailGridProps = {
   /** 증거 맵 카드 클릭 시 이 buzei로 스크롤·강조 후 onClearScrollToBuzei 호출 */
   scrollToBuzei?: string | null;
   onClearScrollToBuzei?: () => void;
+  /** rowIndex → 근거 사용 여부 (BE evidenceLinks[].usage 또는 fiDocItems[].evidenceUsage) */
+  evidenceUsageByRowIndex?: Record<number, EvidenceUsageStatus>;
 };
 
 const emptyValue = '—';
@@ -63,12 +68,19 @@ function formatAmount(
   return `${amt.toLocaleString()} ${curr}`;
 }
 
+const USAGE_LABEL: Record<EvidenceUsageStatus, string> = {
+  USED: '사용',
+  REFERENCED: '참조',
+  NOT_USED: '미사용',
+};
+
 export const WorkbenchItemDetailGrid = ({
   items,
   currency = 'USD',
   targetBuzei,
   scrollToBuzei,
   onClearScrollToBuzei,
+  evidenceUsageByRowIndex,
 }: WorkbenchItemDetailGridProps) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
@@ -158,6 +170,9 @@ export const WorkbenchItemDetailGrid = ({
             </TableCell>
             <TableCell sx={{ fontWeight: 600 }}>{t('workbench.itemDetail.partner')}</TableCell>
             <TableCell sx={{ fontWeight: 600 }}>{t('workbench.itemDetail.description')}</TableCell>
+            <TableCell sx={{ fontWeight: 600, width: 80 }}>
+              {t('workbench.itemDetail.evidenceUsage', { defaultValue: '근거 사용' })}
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -190,6 +205,11 @@ export const WorkbenchItemDetailGrid = ({
                 <TableCell>{item.partner ?? emptyValue}</TableCell>
                 <TableCell sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {item.sgtxt ?? emptyValue}
+                </TableCell>
+                <TableCell>
+                  {evidenceUsageByRowIndex?.[rowIndex]
+                    ? USAGE_LABEL[evidenceUsageByRowIndex[rowIndex]]
+                    : t('workbench.noData')}
                 </TableCell>
               </TableRow>
             );

@@ -688,6 +688,47 @@ export const getCaseAnalysis = async (
   return res.data;
 };
 
+/** AGENT_EVENT 표준 — 영속 이벤트 로그. 정렬: occurred_at ASC. BE 응답: data가 배열 직접 반환 */
+export type AgentEventItemDto = {
+  event_type?: string;
+  node?: string;
+  tool?: string | null;
+  decision_code?: string | null;
+  input_hash?: string | null;
+  output_ref?: string | null;
+  evidence_ids?: string[];
+  run_id?: string;
+  case_id?: string;
+  timestamp?: string;
+  occurred_at?: string;
+  summary_message?: string | null;
+  error_code?: string | null;
+  error_message?: string | null;
+  latency_ms?: number | null;
+  [key: string]: unknown;
+};
+
+/**
+ * AGENT_EVENT 조회 API.
+ * 응답: data = AgentEventItemDto[] (배열 직접 반환, events 래핑 없음)
+ * runId 미지정 시 latestIfMissing=true로 최신 run 자동 조회.
+ */
+export const getAgentEvents = async (
+  caseId: string,
+  params?: { runId?: string; latestIfMissing?: boolean }
+): Promise<ApiResponse<AgentEventItemDto[]>> => {
+  const sp = new URLSearchParams();
+  if (params?.runId) sp.set('runId', params.runId);
+  if (params?.runId === undefined && (params?.latestIfMissing ?? true)) {
+    sp.set('latestIfMissing', 'true');
+  }
+  const search = sp.toString() ? `?${sp.toString()}` : '';
+  const res = await axiosInstance.get<ApiResponse<AgentEventItemDto[]>>(
+    `/api/synapse/cases/${encodeURIComponent(caseId)}/agent-events${search}`
+  );
+  return res.data;
+};
+
 export const getCaseConfidence = async (
   caseId: string
 ): Promise<ApiResponse<CaseConfidenceDto>> => {

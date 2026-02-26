@@ -10,15 +10,37 @@ const MAX_EVENT_LOG_LINES = 200;
 const MAX_TIMELINE_STEPS = 50;
 const MAX_CLEAN_STREAM_LINES = 100;
 
-/** P1: Step-based timeline entry (started/step/completed/failed) */
+/** AGENT_EVENT 표준 이벤트 타입 */
+export type AgentEventType =
+  | 'NODE_START'
+  | 'NODE_END'
+  | 'TOOL_CALL'
+  | 'TOOL_RESULT'
+  | 'EVIDENCE_ADDED'
+  | 'EVIDENCE_REJECTED'
+  | 'GATE_APPLIED'
+  | 'COMPLETED'
+  | 'FAILED';
+
+/** 레거시 agent stream 타입 */
+export type LegacyTimelineStepType = 'started' | 'step' | 'completed' | 'failed';
+
+/** P1: Step-based timeline entry. 표준 이벤트 + 레거시 호환 */
 export type StreamTimelineStep = {
-  type: 'started' | 'step' | 'completed' | 'failed';
+  type: AgentEventType | LegacyTimelineStepType;
   label?: string;
   detail?: string;
   percent?: number;
   stage?: string;
   message?: string;
   at?: number;
+  /** 표준: node, decision_code, tool, latency_ms, evidence_ids, input_hash */
+  node?: string;
+  decision_code?: string;
+  tool?: string;
+  latency_ms?: number;
+  evidence_ids?: string[];
+  input_hash?: string;
 };
 
 /** thought_pending 시 로딩 표시, AGENT_STREAM/agent 도착 시 실제 텍스트로 전환 */

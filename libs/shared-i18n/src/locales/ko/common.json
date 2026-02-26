@@ -643,6 +643,7 @@
     "reviewCompliant": "준수",
     "reviewViolation": "위반",
     "evidenceMapEmpty": "발견된 위반 정황·RAG 문서가 없습니다.",
+    "eventStreamEmpty": "이벤트 데이터 없음",
     "autoStartedBanner": "에이전트가 자동 검토를 시작했습니다.",
     "tabQueue": "큐",
     "tabDetail": "상세",
@@ -668,7 +669,8 @@
       "account": "계정",
       "amount": "금액",
       "partner": "거래처",
-      "description": "적요"
+      "description": "적요",
+      "evidenceUsage": "근거 사용"
     },
     "tools": {
       "knowledgePolicy": "지식/정책 관리",

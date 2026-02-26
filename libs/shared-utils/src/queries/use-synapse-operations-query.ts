@@ -32,6 +32,7 @@ import {
   getCaseSimilar,
   simulateAction,
   getActionDetail,
+  getAgentEvents,
   getCaseAnalysis,
   updateCaseStatus,
   getCaseConfidence,
@@ -77,6 +78,9 @@ export const workbenchCaseHistoryQueryKey = (tenantId: string, caseId: string) =
 
 export const caseAnalysisQueryKey = (tenantId: string, caseId: string, runId?: string | null) =>
   ['synapse', 'cases', 'analysis', tenantId, caseId, runId ?? ''] as const;
+
+export const agentEventsQueryKey = (tenantId: string, caseId: string, runId?: string | null) =>
+  ['synapse', 'cases', 'agent-events', tenantId, caseId, runId ?? ''] as const;
 
 export const caseConfidenceQueryKey = (tenantId: string, caseId: string) =>
   ['synapse', 'cases', 'confidence', tenantId, caseId] as const;
@@ -274,6 +278,41 @@ export const useCaseAnalysisQuery = (
     enabled,
     staleTime: 1 * 60 * 1000,
     gcTime: 5 * 60 * 1000,
+    retry: false,
+  });
+};
+
+/**
+ * agent-events API — 타임라인 기본 소스.
+ * runId 미지정 시 BE가 최신 run 자동 조회(latestIfMissing).
+ */
+export const useAgentEventsQuery = (
+  caseId: string | undefined,
+  runId: string | undefined | null,
+  options?: { enabled?: boolean }
+) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled =
+    (options?.enabled ?? true) &&
+    isAuthenticated &&
+    Boolean(tenantId) &&
+    Boolean(caseId);
+
+  return useQuery({
+    queryKey: agentEventsQueryKey(tenantId, caseId ?? '', runId ?? null),
+    queryFn: async () => {
+      if (!caseId) throw new Error('Missing caseId');
+      const res = await getAgentEvents(caseId, runId ? { runId } : undefined);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch agent events');
+      }
+      /* BE 응답: data가 이벤트 배열 직접 반환 (events 래핑 없음) */
+      return Array.isArray(res.data) ? res.data : [];
+    },
+    enabled,
+    staleTime: 30 * 1000,
+    gcTime: 2 * 60 * 1000,
     retry: false,
   });
 };

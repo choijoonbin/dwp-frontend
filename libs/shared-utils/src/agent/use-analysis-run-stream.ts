@@ -343,6 +343,77 @@ export const useAnalysisRunStream = () => {
             if (currentEventType === 'started') {
               addEventType('started');
               addTimelineStep({ type: 'started' });
+            } else if (
+              currentEventType === 'AGENT_EVENT' ||
+              ['NODE_START', 'NODE_END', 'TOOL_CALL', 'TOOL_RESULT', 'EVIDENCE_ADDED', 'EVIDENCE_REJECTED', 'GATE_APPLIED', 'COMPLETED', 'FAILED'].includes(
+                currentEventType ?? ''
+              )
+            ) {
+              addEventType(currentEventType ?? 'AGENT_EVENT');
+              try {
+                const parsed = dataStr ? (JSON.parse(dataStr) as Record<string, unknown>) : {};
+                const eventType =
+                  (parsed.event_type ?? parsed.eventType ?? currentEventType) as string;
+                const upperType = String(eventType).toUpperCase();
+                if (upperType === 'COMPLETED') {
+                  addTimelineStep({
+                    type: 'COMPLETED',
+                    message: (parsed.summary_message ?? parsed.message) as string | undefined,
+                    at: Date.now(),
+                  });
+                  clearStreamTimeout();
+                  setLocalStatus('completed');
+                  setStatus('COMPLETED');
+                  setStepProgress(null);
+                  setStreamingThought(null);
+                  setDebug({ completedAt: new Date() });
+                  options?.onSuccess?.(runId);
+                  return;
+                }
+                if (upperType === 'FAILED') {
+                  const msg =
+                    (typeof parsed.message === 'string' ? parsed.message : null) ||
+                    (typeof parsed.error === 'string' ? parsed.error : null) ||
+                    '분석이 실패했습니다.';
+                  const failedStage = typeof parsed.stage === 'string' ? parsed.stage : undefined;
+                  addTimelineStep({ type: 'FAILED', message: msg, stage: failedStage });
+                  clearStreamTimeout();
+                  setLocalStatus('failed');
+                  setStatus('ERROR');
+                  setError(msg);
+                  setErrorMessage(msg);
+                  setDebug({ errorMessage: msg, failedStage });
+                  options?.onError?.(new Error(msg));
+                  return;
+                }
+                const occurredAt = parsed.occurred_at ?? parsed.occurredAt;
+                const node = parsed.node as string | undefined;
+                const decisionCode = parsed.decision_code ?? parsed.decisionCode;
+                const tool = parsed.tool as string | undefined;
+                const latencyMs = parsed.latency_ms ?? parsed.latencyMs;
+                const evidenceIds = parsed.evidence_ids ?? parsed.evidenceIds;
+                const inputHash = parsed.input_hash ?? parsed.inputHash;
+                const summaryMsg =
+                  parsed.summary_message ?? parsed.summaryMessage ?? parsed.message;
+                addTimelineStep({
+                  type: eventType as 'NODE_START' | 'NODE_END' | 'TOOL_CALL' | 'TOOL_RESULT' | 'EVIDENCE_ADDED' | 'EVIDENCE_REJECTED' | 'GATE_APPLIED',
+                  label: eventType,
+                  node,
+                  decision_code: decisionCode as string | undefined,
+                  tool,
+                  latency_ms: typeof latencyMs === 'number' ? latencyMs : undefined,
+                  evidence_ids: Array.isArray(evidenceIds) ? evidenceIds : undefined,
+                  input_hash: inputHash as string | undefined,
+                  message: summaryMsg as string | undefined,
+                  detail: summaryMsg as string | undefined,
+                  at: occurredAt ? new Date(String(occurredAt)).getTime() : Date.now(),
+                });
+              } catch {
+                addTimelineStep({
+                  type: (currentEventType as 'NODE_START' | 'TOOL_CALL' | 'GATE_APPLIED') ?? 'step',
+                  at: Date.now(),
+                });
+              }
             } else if (currentEventType === 'step') {
               addEventType('step');
               try {

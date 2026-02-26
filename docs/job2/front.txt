@@ -1,175 +1,905 @@
-```md
-# [FE 전달용] 판단 규정 탭 UI 개편 요청
 
-## 배경
-현재 탭은 `logicCheckpoints`의 `clause/status/description` 카드만 표시되어  
-“왜 보류/충돌인지”를 사용자에게 충분히 설명하지 못합니다.
+http://localhost:8080/api/synapse/cases/168 응답
 
----
-
-## 목표
-탭명을 `판단 규정`으로 정리하고,  
-규정 적용 상태 + 근거 참조 + 신뢰 신호를 한 카드에서 읽히게 개편합니다.
-
----
-
-## 데이터 소스 우선순위
-1. `regulationCheckpoints` (또는 `regulation_checkpoints`) 사용
-2. 없으면 기존 `logicCheckpoints` fallback
-
----
-
-## 상태 UI 매핑
-- `COMPLIANT` → 초록 배지 `준수`
-- `VIOLATION` → 빨강 배지 `위반`
-- `HOLD` → 노랑 배지 `판단 보류`
-- `CONFLICT` → 주황 배지 `충돌`
-- `NEEDS_REVIEW` → 회색 배지 `추가 검토`
-
-(레거시)
-- 기존 `status == 'violation'|'위반'` → `VIOLATION`
-- 그 외 → `COMPLIANT`
-
----
-
-## 카드 표시 규칙
-각 항목 카드:
-- 제목: `version > chapter > article > clause` 조합
-- 부제: `title` (없으면 숨김)
-- 본문: `statusReason` 우선, 없으면 `description`, 둘 다 없으면 `-`
-- 배지: 상태 배지
-- 보조 영역:
-  - `evidenceRefs` 있으면 `근거: C1, C2` 표시
-  - `qualitySignals` 있으면 `분석 신뢰 신호` 태그 표시
-  - `applied=false`면 `참고 규정` 라벨 표시
-
----
-
-## UX 규칙
-- 정렬: `priority asc`, 없으면 원본 순서
-- 비어있을 때:
-  - `판단 규정 정보가 없습니다.`
-  - (fallback 데이터도 없으면) `분석 결과를 생성한 뒤 확인할 수 있습니다.`
-
----
-
-## 구현 메모
-- 기존 `logicCheckpoints` 렌더 컴포넌트는 유지
-- 신규 `regulationCheckpoints` 어댑터 추가 후 점진 전환
-- citation 점프(`evidenceRefs`)는 증거 맵 탭의 Cn 항목과 연결
-
-
-##백앤드 작업
-
-# [BE 완료] 판단 규정 탭 개편 API — 구현 결과
-
-> **요청 문서**: BE 전달용 판단 규정 탭 개편 API 요청  
-> **완료일**: 2026-02-26
-
----
-
-## 1. 구현 요약
-
-`GET /api/synapse/cases/{caseId}` (및 `GET /api/v1/synapse/workbench/cases/{caseId}`) 응답에  
-**`regulationCheckpoints`** (camelCase) / **`regulation_checkpoints`** (snake_case) 필드를 추가했습니다.
-
----
-
-## 2. API 변경 사항
-
-### 2.1 응답 스키마
-
-| 필드 | 타입 | 설명 |
-|------|------|------|
-| `regulationCheckpoints` | `RegulationCheckpointDto[]` | 규정 적용 결과 배열. 있으면 FE 우선 사용. |
-| `regulation_checkpoints` | (snake_case alias) | `@JsonAlias`로 동일 데이터 반환. |
-| `logicCheckpoints` | (기존 유지) | 없으면 fallback. |
-
-### 2.2 RegulationCheckpointDto 스키마
-
-| 필드 | 타입 | 설명 |
-|------|------|------|
-| `ruleId` | string | 규정 식별자 (예: v2.0:ch13:art2:p1) |
-| `version` | string | 규정 버전 |
-| `chapter` | string | 장 정보 |
-| `article` | string | 조 정보 |
-| `clause` | string | 항 정보 |
-| `title` | string | 규정 제목 |
-| `status` | string | **COMPLIANT \| VIOLATION \| HOLD \| CONFLICT \| NEEDS_REVIEW** |
-| `statusReason` | string | 상태 판정 사유 |
-| `description` | string | 상세 설명 |
-| `evidenceRefs` | string[] | citation_id 목록 (예: ["C1","C2"]) |
-| `qualitySignals` | string[] | 분석 신뢰 신호(표시용 문구) |
-| `applied` | boolean | 최종 판단에 반영 여부 |
-| `priority` | number | 표시 우선순위 (낮을수록 상단) |
-
----
-
-## 3. 동작 규칙
-
-1. **Aura가 `regulation_checkpoints`를 전달할 때**
-   - `decision_reason.regulation_checkpoints` 또는 `finalResult.regulation_checkpoints` (top-level)
-   - BE는 `evidence_map_json`에 병합 저장 후 API 응답 시 파싱하여 반환
-
-2. **Aura가 전달하지 않을 때 (Fallback)**
-   - 기존 `logicCheckpoints`를 `RegulationCheckpointDto` 형식으로 변환
-   - `clause`, `status`, `description` 매핑
-   - `status` 매핑: `VIOLATED`→`VIOLATION`, `COMPLETED`→`COMPLIANT`, 기타→`NEEDS_REVIEW`
-
----
-
-## 4. Aura 콜백 연동
-
-Aura 분석 콜백에서 다음 형태로 전달 시 BE가 저장·반환합니다.
-
-**방법 1**: `decision_reason` 내부
-```json
 {
-  "finalResult": {
-    "decision_reason": {
-      "regulation_checkpoints": [
-        {
-          "ruleId": "v2.0:ch13:art2:p1",
-          "version": "v2.0",
-          "chapter": "제13장 감사, 보관 및 보고",
-          "article": "제2조",
-          "clause": "제1항",
-          "title": "경과조치",
-          "status": "HOLD",
-          "statusReason": "위험유형-조항 정합성 부족",
-          "evidenceRefs": ["C1"],
-          "qualitySignals": ["위험유형-조항 불일치"],
-          "applied": true,
-          "priority": 1
+    "status": "SUCCESS",
+    "message": "요청이 성공적으로 처리되었습니다.",
+    "data": {
+        "caseId": 168,
+        "status": "IN_REVIEW",
+        "userId": 1,
+        "keys": {
+            "sourceType": "WINDOW_DOC_ENTRY",
+            "bukrs": "1000",
+            "belnr": "DAAA538",
+            "gjahr": "2026",
+            "buzei": "001",
+            "dedupKey": "1:HOLIDAY_USAGE:DOC:1000-DAAA538-2026-_"
+        },
+        "links": {
+            "openItems": "/api/synapse/open-items?caseId=168",
+            "lineage": "/api/synapse/lineage?caseId=168"
+        },
+        "evidence": {
+            "documentOrOpenItem": {
+                "type": "DOCUMENT",
+                "docKey": "1000-DAAA538-2026",
+                "headerSummary": {
+                    "budat": "2026-03-01",
+                    "xblnr": "",
+                    "bukrs": "1000",
+                    "belnr": "DAAA538",
+                    "gjahr": "2026"
+                },
+                "items": [
+                    {
+                        "id": "1000-DAAA538-2026-001",
+                        "buzei": "001",
+                        "lifnr": "V00004",
+                        "kunnr": null,
+                        "wrbtr": 99389.00,
+                        "hkont": "0000601000",
+                        "bschl": "40",
+                        "shkzg": "H",
+                        "dmbtr": 99389.00,
+                        "waers": "KRW",
+                        "mwskz": null,
+                        "kostl": null,
+                        "prctr": null,
+                        "aufnr": null,
+                        "zterm": null,
+                        "zfbdt": null,
+                        "dueDate": null,
+                        "paymentBlock": false,
+                        "disputeFlag": false,
+                        "zuonr": null,
+                        "sgtxt": "펍909 주점",
+                        "isTarget": true
+                    }
+                ],
+                "lineCount": 1,
+                "amount": 99389.00,
+                "currency": "KRW"
+            },
+            "reversalChainSummary": {
+                "nodeDocKeys": [
+                    "1000-DAAA538-2026"
+                ],
+                "edgeCount": 0
+            },
+            "relatedPartyIds": [
+                4
+            ],
+            "amount": 99389.00,
+            "currency": "KRW"
+        },
+        "reasoning": {
+            "score": 0.4500,
+            "reasonText": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다. 위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+            "evidenceJson": {
+                "keys": {
+                    "belnr": "DAAA538",
+                    "bukrs": "1000",
+                    "buzei": "001",
+                    "gjahr": "2026"
+                },
+                "amount": "99389.00",
+                "source": "fi_doc_header",
+                "window": "WINDOW_DOC_ENTRY",
+                "currency": "KRW",
+                "mcc_code": "5814",
+                "hr_status": "OFF",
+                "budget_exceeded": false,
+                "intended_risk_type": "HOLIDAY_USAGE",
+                "budget_exceeded_flag": "N"
+            },
+            "ragRefsJson": [
+                {
+                    "keys": {
+                        "belnr": "DAAA538",
+                        "bukrs": "1000",
+                        "gjahr": "2026",
+                        "amount": 99389.0
+                    },
+                    "type": "CASE",
+                    "docId": "1000-DAAA538-2026",
+                    "caseId": "168",
+                    "doc_id": "1000-DAAA538-2026",
+                    "itemId": "001",
+                    "source": "get_case",
+                    "item_id": "001",
+                    "item_no": "001",
+                    "target_buzei": "001"
+                },
+                {
+                    "keys": {
+                        "caseId": "168"
+                    },
+                    "type": "RAG_CHUNK",
+                    "docId": 26,
+                    "score": 0.57,
+                    "doc_id": 26,
+                    "source": "hybrid_retrieve",
+                    "chunkId": "chunk_26_63",
+                    "excerpt": "[ v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)] 제2조 (경과조치)\n① 시행일 이전 발생한 지출이라도 시행일 이후 전표 확정되는 건에 대하여는 본 규정을 준용할 수 있다.\n② 시스템 미구현 항목은 재무부서 수동 검토로 대체할 수 있으며, 단계적으로 Agent AI 자동 통제로 전환한다.\n\n \n별표1. 계정별 통제 기준표(초안)\n \n※ 실제 운영 시 회사 규모/업종/법인카드 정책/출장규정에 맞게 수치 조정 필요\n※ 아래 기준은 예시이며, 계정코드 체계는 SAP 계정과목표에 맞춰 확정\n\n(별표는 별도 CSV 파일",
+                    "chunk_id": "chunk_26_63",
+                    "location": "v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)",
+                    "regulation_clause": null,
+                    "regulation_article": "제2조"
+                },
+                {
+                    "keys": {
+                        "caseId": "168"
+                    },
+                    "type": "RAG_CHUNK",
+                    "docId": 26,
+                    "score": 0.54,
+                    "doc_id": 26,
+                    "source": "hybrid_retrieve",
+                    "chunkId": "chunk_26_0",
+                    "excerpt": "[ v2.0 ] [샘플]사내_경비_지출_관리_규정_v2.0 (확장판)\n(Agent AI 기반 SAP 전표 검증 및 재무 리스크 통제 규정)\n\n문서버전: v2.0\n시행예정일: 2026-02-24\n소관부서: 재무부(회계팀/자금팀), 준법감시, 내부감사\n적용시스템: SAP(FI/AP/AR/CO 연계), 전표검증 Agent AI, 규정 RAG 검색시스템(pgvector)\n문서성격: 샘플(실무형 확장판, 실제 운영 규정 템플릿)",
+                    "chunk_id": "chunk_26_0",
+                    "location": "v2.0",
+                    "regulation_clause": null,
+                    "regulation_article": "일반문서"
+                },
+                {
+                    "keys": {
+                        "caseId": "168"
+                    },
+                    "type": "RAG_CHUNK",
+                    "docId": 26,
+                    "score": 0.54,
+                    "doc_id": 26,
+                    "source": "hybrid_retrieve",
+                    "chunkId": "chunk_26_1",
+                    "excerpt": "[ v2.0 > 제1장 총칙 > 제1조 (목적)] 제1조 (목적)\n① 본 규정은 회사의 경비 지출, 지급 전표, 정산 전표 및 관련 증빙의 적정성을 확보하고, 예산 통제·내부통제·세무 준수 및 재무 리스크 예방을 목적으로 한다.\n② 회사는 SAP 전표 데이터와 증빙 데이터를 기반으로 Agent AI를 활용한 사전/사후 검증 체계를 운영할 수 있으며, 본 규정은 해당 검증의 판단 기준이 된다.\n③ 본 규정은 임직원의 정상적 업무 수행을 지원함과 동시에, 부정·오류·과실·통제 회피 행위의 예방 및 조기 탐지를 목적으로 한다.",
+                    "chunk_id": "chunk_26_1",
+                    "location": "v2.0 > 제1장 총칙 > 제1조 (목적)",
+                    "regulation_clause": null,
+                    "regulation_article": "제1조"
+                },
+                {
+                    "keys": {
+                        "caseId": "168"
+                    },
+                    "type": "RAG_CHUNK",
+                    "docId": 26,
+                    "score": 0.54,
+                    "doc_id": 26,
+                    "source": "hybrid_retrieve",
+                    "chunkId": "chunk_26_2",
+                    "excerpt": "[ v2.0 > 제1장 총칙 > 제2조 (적용범위)] 제2조 (적용범위)\n① 본 규정은 회사 및 회사가 지정한 계열사/사업부의 임직원, 파견/계약직, 협력사 인력이 회사 비용으로 집행하는 모든 경비 지출에 적용한다.\n② 법인카드, 개인 선지출 후 정산, 계좌이체, 전자결제수단, 선급금/선급비용, 외화 결제, 정기 구독료, 지급수수료 등 모든 지급 방식과 전표 입력에 적용한다.\n③ SAP FI 전표(BKPF/BSEG 등 전표 헤더/라인), CO 배부/정산 연계, AP 지급, 법인카드 매입 데이터, 증빙파일(세금계산서/영수증/계약서/검",
+                    "chunk_id": "chunk_26_2",
+                    "location": "v2.0 > 제1장 총칙 > 제2조 (적용범위)",
+                    "regulation_clause": null,
+                    "regulation_article": "제2조"
+                }
+            ],
+            "summaryVerdict": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다. 위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+            "keyGrounds": [
+                "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다",
+                "위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다."
+            ],
+            "confidenceBreakdown": {
+                "anomalyScore": 0.45,
+                "patternMatch": 0.8,
+                "ruleCompliance": 0.9
+            },
+            "evidenceMapJson": {
+                "reason": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다. 위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+                "evidence": {
+                    "doc_id": "1000-DAAA538-2026",
+                    "case_data": {
+                        "field": "amount",
+                        "value": 99389.0
+                    },
+                    "chunk_index": null,
+                    "conflict_point": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다. 위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+                    "hierarchy_path": "v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)",
+                    "source_chunk_id": "chunk_26_63"
+                },
+                "citations": [
+                    {
+                        "score": null,
+                        "doc_id": null,
+                        "source": "rag",
+                        "excerpt": "[ v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)] 제2조 (경과조치)\n① 시행일 이전 발생한 지출이라도 시행일 이후 전표 확정되는 건에 대하여는 본 규정을 준용할 수 있다.\n② 시스템 미구현 항목은 재무부서 수동 검토로 대체할 수 있으며, 단계적으로 Agent AI 자동 통제로 전환한다.\n\n \n별표1. 계정별 통제 기준표(초안)\n \n※ 실제 운영 시 회사 규모/업종/법인",
+                        "chunk_id": null,
+                        "reference": "71f26a83-c82e-40a4-9cb7-a4abe6bd5a61________________________",
+                        "citation_id": "C1",
+                        "evidence_hash": "4c80af15ac298325f9b0252e9b140132c7f89cae115e04dfdb1b331ee2b7e914"
+                    }
+                ],
+                "key_grounds": [
+                    "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다",
+                    "위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다."
+                ],
+                "recommendations": "거래처 확인 요청",
+                "score_breakdown": {
+                    "components": [
+                        {
+                            "raw": 0.3199,
+                            "name": "anomaly_score",
+                            "weight": 0.4,
+                            "weighted": 0.128
+                        },
+                        {
+                            "raw": 0.7,
+                            "name": "pattern_match",
+                            "weight": 0.3,
+                            "weighted": 0.21
+                        },
+                        {
+                            "raw": 0.85,
+                            "name": "rule_compliance",
+                            "weight": 0.3,
+                            "weighted": 0.255
+                        }
+                    ],
+                    "adjustments": [
+                        {
+                            "code": "EVIDENCE_COVERAGE_LOW",
+                            "effect": "downward_cap_or_hold"
+                        },
+                        {
+                            "code": "EVIDENCE_COVERAGE",
+                            "value": 0.0
+                        }
+                    ],
+                    "final_score": 45,
+                    "policy_score": 85,
+                    "final_overall": 0.45,
+                    "evidence_score": 0,
+                    "final_risk_score": 45
+                },
+                "summary_verdict": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다. 위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+                "violation_clause": "v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)",
+                "evidence_map_json": [
+                    {
+                        "doc_id": "1000-DAAA538-2026",
+                        "excerpt": "[ v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)] 제2조 (경과조치)\n① 시행일 이전 발생한 지출이라도 시행일 이후 전표 확정되는 건에 대하여는 본 규정을 준용할 수 있다.\n② 시스템 미구현 항목은 재무부서 수동 검토로 대체할 수 있으며, 단계적으로 Agent AI 자동 통제로 전환한다.\n\n \n별표1. 계정별 통제 기준표(초안)\n \n※ 실제 운영 시 회사 규모/업종/법인카드 정책/출장규정에 맞게 수치 조정 필요\n※ 아래 기준은 예시이며, 계정코드 체계는 SAP 계정과목표에 맞춰 확정\n\n(별표는 별도 CSV 파일",
+                        "chunk_id": "chunk_26_63",
+                        "item_idx": "1",
+                        "target_buzei": "001"
+                    },
+                    {
+                        "doc_id": "1000-DAAA538-2026",
+                        "excerpt": "[ v2.0 ] [샘플]사내_경비_지출_관리_규정_v2.0 (확장판)\n(Agent AI 기반 SAP 전표 검증 및 재무 리스크 통제 규정)\n\n문서버전: v2.0\n시행예정일: 2026-02-24\n소관부서: 재무부(회계팀/자금팀), 준법감시, 내부감사\n적용시스템: SAP(FI/AP/AR/CO 연계), 전표검증 Agent AI, 규정 RAG 검색시스템(pgvector)\n문서성격: 샘플(실무형 확장판, 실제 운영 규정 템플릿)",
+                        "chunk_id": "chunk_26_0",
+                        "item_idx": "2",
+                        "target_buzei": "001"
+                    },
+                    {
+                        "doc_id": "1000-DAAA538-2026",
+                        "excerpt": "[ v2.0 > 제1장 총칙 > 제1조 (목적)] 제1조 (목적)\n① 본 규정은 회사의 경비 지출, 지급 전표, 정산 전표 및 관련 증빙의 적정성을 확보하고, 예산 통제·내부통제·세무 준수 및 재무 리스크 예방을 목적으로 한다.\n② 회사는 SAP 전표 데이터와 증빙 데이터를 기반으로 Agent AI를 활용한 사전/사후 검증 체계를 운영할 수 있으며, 본 규정은 해당 검증의 판단 기준이 된다.\n③ 본 규정은 임직원의 정상적 업무 수행을 지원함과 동시에, 부정·오류·과실·통제 회피 행위의 예방 및 조기 탐지를 목적으로 한다.",
+                        "chunk_id": "chunk_26_1",
+                        "item_idx": "3",
+                        "target_buzei": "001"
+                    },
+                    {
+                        "doc_id": "1000-DAAA538-2026",
+                        "excerpt": "[ v2.0 > 제1장 총칙 > 제2조 (적용범위)] 제2조 (적용범위)\n① 본 규정은 회사 및 회사가 지정한 계열사/사업부의 임직원, 파견/계약직, 협력사 인력이 회사 비용으로 집행하는 모든 경비 지출에 적용한다.\n② 법인카드, 개인 선지출 후 정산, 계좌이체, 전자결제수단, 선급금/선급비용, 외화 결제, 정기 구독료, 지급수수료 등 모든 지급 방식과 전표 입력에 적용한다.\n③ SAP FI 전표(BKPF/BSEG 등 전표 헤더/라인), CO 배부/정산 연계, AP 지급, 법인카드 매입 데이터, 증빙파일(세금계산서/영수증/계약서/검",
+                        "chunk_id": "chunk_26_2",
+                        "item_idx": "4",
+                        "target_buzei": "001"
+                    },
+                    {
+                        "doc_id": "1000-DAAA538-2026",
+                        "excerpt": "[ v2.0 > 제2장 역할과 책임 > 제8조 (재무부서의 책임)] 제8조 (재무부서의 책임)\n① 재무부서는 계정과목별 기준, 증빙 기준, 예산 연계 기준, 마감/수정전표 기준을 수립·운영한다.\n② 재무부서는 AI 검토대기 전표를 검토하고, 오탐/미탐 사례를 분류하여 룰 개선에 반영한다.\n③ 재무부서는 본 규정의 개정 이력, 예외 승인 이력, 감사 대응 자료를 관리한다.",
+                        "chunk_id": "chunk_26_8",
+                        "item_idx": "5",
+                        "target_buzei": "001"
+                    }
+                ],
+                "self_verification": {
+                    "issues": [],
+                    "status": "pass"
+                },
+                "violation_clauses": [
+                    "v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)",
+                    "v2.0",
+                    "v2.0 > 제1장 총칙 > 제1조 (목적)",
+                    "v2.0 > 제1장 총칙 > 제2조 (적용범위)",
+                    "v2.0 > 제2장 역할과 책임 > 제8조 (재무부서의 책임)"
+                ],
+                "quality_gate_codes": [
+                    "RISK_ARTICLE_MISMATCH",
+                    "EVIDENCE_COVERAGE_LOW"
+                ],
+                "sentence_citation_map": [
+                    {
+                        "grounded": true,
+                        "sentence": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다.",
+                        "citation_ids": [
+                            "C1"
+                        ],
+                        "sentence_index": 1
+                    },
+                    {
+                        "grounded": true,
+                        "sentence": "위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+                        "citation_ids": [
+                            "C1"
+                        ],
+                        "sentence_index": 2
+                    }
+                ],
+                "analysis_quality_signals": [
+                    "위험유형-조항 불일치",
+                    "근거 커버리지 낮음"
+                ],
+                "analysis_score_breakdown": {
+                    "components": [
+                        {
+                            "raw": 0.3199,
+                            "name": "anomaly_score",
+                            "weight": 0.4,
+                            "weighted": 0.128
+                        },
+                        {
+                            "raw": 0.7,
+                            "name": "pattern_match",
+                            "weight": 0.3,
+                            "weighted": 0.21
+                        },
+                        {
+                            "raw": 0.85,
+                            "name": "rule_compliance",
+                            "weight": 0.3,
+                            "weighted": 0.255
+                        }
+                    ],
+                    "adjustments": [
+                        {
+                            "code": "EVIDENCE_COVERAGE_LOW",
+                            "effect": "downward_cap_or_hold"
+                        },
+                        {
+                            "code": "EVIDENCE_COVERAGE",
+                            "value": 0.0
+                        }
+                    ],
+                    "final_score": 45,
+                    "policy_score": 85,
+                    "final_overall": 0.45,
+                    "evidence_score": 0,
+                    "final_risk_score": 45
+                }
+            }
+        },
+        "action": {
+            "availableActionTypes": [
+                "PAYMENT_BLOCK",
+                "REQUEST_INFO",
+                "DISMISS",
+                "RELEASE_BLOCK"
+            ],
+            "actions": [],
+            "lineageLinkParams": {
+                "caseId": 168,
+                "docKey": "1000-DAAA538-2026",
+                "rawEventId": null,
+                "partyId": 4
+            }
+        },
+        "caseType": "HOLIDAY_USAGE",
+        "reasonText": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다. 위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+        "fiDocItems": [
+            {
+                "id": "1000-DAAA538-2026-001",
+                "buzei": "001",
+                "lifnr": "V00004",
+                "kunnr": null,
+                "wrbtr": 99389.00,
+                "hkont": "0000601000",
+                "bschl": "40",
+                "shkzg": "H",
+                "dmbtr": 99389.00,
+                "waers": "KRW",
+                "mwskz": null,
+                "kostl": null,
+                "prctr": null,
+                "aufnr": null,
+                "zterm": null,
+                "zfbdt": null,
+                "dueDate": null,
+                "paymentBlock": false,
+                "disputeFlag": false,
+                "zuonr": null,
+                "sgtxt": "펍909 주점",
+                "isTarget": true
+            }
+        ],
+        "actionHistory": [],
+        "aiThoughts": [
+            {
+                "stage": "ANALYZE",
+                "eventType": "AGENT_STREAM",
+                "message": "[결론] 문장별 인용 근거 매핑을 완료했습니다.",
+                "occurredAt": "2026-02-26T18:32:17.218985Z"
+            },
+            {
+                "stage": "ANALYZE",
+                "eventType": "AGENT_STREAM",
+                "message": "본 건에 대한 분석을 마쳤습니다. 판정 요약은 추론 탭에서 확인하실 수 있습니다.",
+                "occurredAt": "2026-02-26T18:32:17.218903Z"
+            },
+            {
+                "stage": "ANALYZE",
+                "eventType": "AGENT_STREAM",
+                "message": "**99,389원** 2026년 03월 01일 근태 휴무/휴가 관련 규정 조항 매칭을 진행 중이며, 조항 근거가 확인되면 상세 판단을 제시하겠습니다.",
+                "occurredAt": "2026-02-26T18:32:07.082101Z"
+            },
+            {
+                "stage": "ANALYZE",
+                "eventType": "AGENT_STREAM",
+                "message": "**99,389원** 2026년 03월 01일 근태 휴무/휴가 기준으로 규정 근거가 충분하지 않아 사실 확인 범위를 확정할 수 없습니다. 근거 확보 후 판단을 업데이트하겠습니다.",
+                "occurredAt": "2026-02-26T18:32:00.951481Z"
+            }
+        ],
+        "reasoningProcess": [
+            "**99,389원** 2026년 03월 01일 근태 휴무/휴가 기준으로 규정 근거가 충분하지 않아 사실 확인 범위를 확정할 수 없습니다. 근거 확보 후 판단을 업데이트하겠습니다.",
+            "**99,389원** 2026년 03월 01일 근태 휴무/휴가 관련 규정 조항 매칭을 진행 중이며, 조항 근거가 확인되면 상세 판단을 제시하겠습니다.",
+            "본 건에 대한 분석을 마쳤습니다. 판정 요약은 추론 탭에서 확인하실 수 있습니다.",
+            "[결론] 문장별 인용 근거 매핑을 완료했습니다."
+        ],
+        "logicCheckpoints": [
+            {
+                "clause": "v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)",
+                "status": "COMPLETED",
+                "description": ""
+            }
+        ],
+        "regulationCheckpoints": [
+            {
+                "ruleId": null,
+                "version": null,
+                "chapter": null,
+                "article": null,
+                "clause": "v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)",
+                "title": null,
+                "status": "NEEDS_REVIEW",
+                "statusReason": "최종 판단이 보류/재검토 상태여서 규정 상태를 재검토로 정렬",
+                "description": "",
+                "evidenceRefs": [],
+                "qualitySignals": [],
+                "applied": true,
+                "priority": 1
+            }
+        ],
+        "evidenceLinks": [],
+        "finalReport": {
+            "summary": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다. 위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+            "verdict": "LOW (score: 0.4500)",
+            "requestClarificationEnabled": true,
+            "closeCaseEnabled": true
+        },
+        "activityHistory": [
+            {
+                "stage": "ANALYZE",
+                "eventType": "AGENT_STREAM",
+                "message": "**99,389원** 2026년 03월 01일 근태 휴무/휴가 기준으로 규정 근거가 충분하지 않아 사실 확인 범위를 확정할 수 없습니다. 근거 확보 후 판단을 업데이트하겠습니다.",
+                "occurredAt": "2026-02-26T18:32:00.951481Z"
+            },
+            {
+                "stage": "ANALYZE",
+                "eventType": "AGENT_STREAM",
+                "message": "**99,389원** 2026년 03월 01일 근태 휴무/휴가 관련 규정 조항 매칭을 진행 중이며, 조항 근거가 확인되면 상세 판단을 제시하겠습니다.",
+                "occurredAt": "2026-02-26T18:32:07.082101Z"
+            },
+            {
+                "stage": "ANALYZE",
+                "eventType": "AGENT_STREAM",
+                "message": "본 건에 대한 분석을 마쳤습니다. 판정 요약은 추론 탭에서 확인하실 수 있습니다.",
+                "occurredAt": "2026-02-26T18:32:17.218903Z"
+            },
+            {
+                "stage": "ANALYZE",
+                "eventType": "AGENT_STREAM",
+                "message": "[결론] 문장별 인용 근거 매핑을 완료했습니다.",
+                "occurredAt": "2026-02-26T18:32:17.218985Z"
+            }
+        ],
+        "explanationHistory": [],
+        "analysisScore": 0.4500,
+        "context": {
+            "hrStatus": "OFF",
+            "mccCode": "5814",
+            "budgetExceeded": false,
+            "budgetExceededFlag": "N"
         }
-      ]
-    }
-  }
+    },
+    "timestamp": "2026-02-27T03:43:53.791753",
+    "success": true
 }
-```
 
-**방법 2**: `finalResult` top-level
-```json
+
+
+
+http://localhost:8080/api/synapse/cases/168/analysis 응답
 {
-  "finalResult": {
-    "regulation_checkpoints": [ ... ]
-  }
+    "status": "SUCCESS",
+    "message": "요청이 성공적으로 처리되었습니다.",
+    "data": {
+        "runId": "dcc70d00-4bd8-47c1-825c-4461d2cdcbab",
+        "score": 0.45,
+        "severity": "LOW",
+        "reasonText": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다. 위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+        "riskScore": 45,
+        "violationClause": "v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)",
+        "reasoningSummary": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다. 위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+        "recommendedAction": "거래처 확인 요청",
+        "sentenceCitationMap": [
+            {
+                "grounded": true,
+                "sentence": "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다.",
+                "citation_ids": [
+                    "C1"
+                ],
+                "sentence_index": 1
+            },
+            {
+                "grounded": true,
+                "sentence": "위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다.",
+                "citation_ids": [
+                    "C1"
+                ],
+                "sentence_index": 2
+            }
+        ],
+        "qualityGateCodes": [
+            "RISK_ARTICLE_MISMATCH",
+            "EVIDENCE_COVERAGE_LOW"
+        ],
+        "analysisQualitySignals": [
+            "근거 커버리지 낮음",
+            "위험유형-조항 불일치"
+        ],
+        "analysisScoreBreakdown": {
+            "components": [
+                {
+                    "raw": 0.3199,
+                    "name": "anomaly_score",
+                    "weight": 0.4,
+                    "weighted": 0.128
+                },
+                {
+                    "raw": 0.7,
+                    "name": "pattern_match",
+                    "weight": 0.3,
+                    "weighted": 0.21
+                },
+                {
+                    "raw": 0.85,
+                    "name": "rule_compliance",
+                    "weight": 0.3,
+                    "weighted": 0.255
+                }
+            ],
+            "adjustments": [
+                {
+                    "code": "EVIDENCE_COVERAGE_LOW",
+                    "effect": "downward_cap_or_hold"
+                },
+                {
+                    "code": "EVIDENCE_COVERAGE",
+                    "value": 0.0
+                }
+            ],
+            "final_score": 45,
+            "policy_score": 85,
+            "final_overall": 0.45,
+            "evidence_score": 0,
+            "final_risk_score": 45
+        },
+        "citations": [
+            {
+                "score": null,
+                "doc_id": null,
+                "source": "rag",
+                "excerpt": "[ v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)] 제2조 (경과조치)\n① 시행일 이전 발생한 지출이라도 시행일 이후 전표 확정되는 건에 대하여는 본 규정을 준용할 수 있다.\n② 시스템 미구현 항목은 재무부서 수동 검토로 대체할 수 있으며, 단계적으로 Agent AI 자동 통제로 전환한다.\n\n \n별표1. 계정별 통제 기준표(초안)\n \n※ 실제 운영 시 회사 규모/업종/법인",
+                "chunk_id": null,
+                "reference": "71f26a83-c82e-40a4-9cb7-a4abe6bd5a61________________________",
+                "citation_id": "C1",
+                "evidence_hash": "4c80af15ac298325f9b0252e9b140132c7f89cae115e04dfdb1b331ee2b7e914"
+            }
+        ],
+        "grounded": true,
+        "confidenceBreakdown": {
+            "overall": 0.45,
+            "anomalyScore": 0.3198778,
+            "patternMatch": 0.7,
+            "ruleCompliance": 0.85
+        },
+        "evidence": [
+            {
+                "keys": {
+                    "belnr": "DAAA538",
+                    "bukrs": "1000",
+                    "gjahr": "2026",
+                    "amount": 99389.0
+                },
+                "type": "CASE",
+                "docId": "1000-DAAA538-2026",
+                "caseId": "168",
+                "doc_id": "1000-DAAA538-2026",
+                "itemId": "001",
+                "source": "get_case",
+                "item_id": "001",
+                "item_no": "001",
+                "target_buzei": "001"
+            },
+            {
+                "keys": {
+                    "caseId": "168"
+                },
+                "type": "RAG_CHUNK",
+                "docId": 26,
+                "score": 0.57,
+                "doc_id": 26,
+                "source": "hybrid_retrieve",
+                "chunkId": "chunk_26_63",
+                "excerpt": "[ v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)] 제2조 (경과조치)\n① 시행일 이전 발생한 지출이라도 시행일 이후 전표 확정되는 건에 대하여는 본 규정을 준용할 수 있다.\n② 시스템 미구현 항목은 재무부서 수동 검토로 대체할 수 있으며, 단계적으로 Agent AI 자동 통제로 전환한다.\n\n \n별표1. 계정별 통제 기준표(초안)\n \n※ 실제 운영 시 회사 규모/업종/법인카드 정책/출장규정에 맞게 수치 조정 필요\n※ 아래 기준은 예시이며, 계정코드 체계는 SAP 계정과목표에 맞춰 확정\n\n(별표는 별도 CSV 파일",
+                "chunk_id": "chunk_26_63",
+                "location": "v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)",
+                "regulation_clause": null,
+                "regulation_article": "제2조"
+            },
+            {
+                "keys": {
+                    "caseId": "168"
+                },
+                "type": "RAG_CHUNK",
+                "docId": 26,
+                "score": 0.54,
+                "doc_id": 26,
+                "source": "hybrid_retrieve",
+                "chunkId": "chunk_26_0",
+                "excerpt": "[ v2.0 ] [샘플]사내_경비_지출_관리_규정_v2.0 (확장판)\n(Agent AI 기반 SAP 전표 검증 및 재무 리스크 통제 규정)\n\n문서버전: v2.0\n시행예정일: 2026-02-24\n소관부서: 재무부(회계팀/자금팀), 준법감시, 내부감사\n적용시스템: SAP(FI/AP/AR/CO 연계), 전표검증 Agent AI, 규정 RAG 검색시스템(pgvector)\n문서성격: 샘플(실무형 확장판, 실제 운영 규정 템플릿)",
+                "chunk_id": "chunk_26_0",
+                "location": "v2.0",
+                "regulation_clause": null,
+                "regulation_article": "일반문서"
+            },
+            {
+                "keys": {
+                    "caseId": "168"
+                },
+                "type": "RAG_CHUNK",
+                "docId": 26,
+                "score": 0.54,
+                "doc_id": 26,
+                "source": "hybrid_retrieve",
+                "chunkId": "chunk_26_1",
+                "excerpt": "[ v2.0 > 제1장 총칙 > 제1조 (목적)] 제1조 (목적)\n① 본 규정은 회사의 경비 지출, 지급 전표, 정산 전표 및 관련 증빙의 적정성을 확보하고, 예산 통제·내부통제·세무 준수 및 재무 리스크 예방을 목적으로 한다.\n② 회사는 SAP 전표 데이터와 증빙 데이터를 기반으로 Agent AI를 활용한 사전/사후 검증 체계를 운영할 수 있으며, 본 규정은 해당 검증의 판단 기준이 된다.\n③ 본 규정은 임직원의 정상적 업무 수행을 지원함과 동시에, 부정·오류·과실·통제 회피 행위의 예방 및 조기 탐지를 목적으로 한다.",
+                "chunk_id": "chunk_26_1",
+                "location": "v2.0 > 제1장 총칙 > 제1조 (목적)",
+                "regulation_clause": null,
+                "regulation_article": "제1조"
+            },
+            {
+                "keys": {
+                    "caseId": "168"
+                },
+                "type": "RAG_CHUNK",
+                "docId": 26,
+                "score": 0.54,
+                "doc_id": 26,
+                "source": "hybrid_retrieve",
+                "chunkId": "chunk_26_2",
+                "excerpt": "[ v2.0 > 제1장 총칙 > 제2조 (적용범위)] 제2조 (적용범위)\n① 본 규정은 회사 및 회사가 지정한 계열사/사업부의 임직원, 파견/계약직, 협력사 인력이 회사 비용으로 집행하는 모든 경비 지출에 적용한다.\n② 법인카드, 개인 선지출 후 정산, 계좌이체, 전자결제수단, 선급금/선급비용, 외화 결제, 정기 구독료, 지급수수료 등 모든 지급 방식과 전표 입력에 적용한다.\n③ SAP FI 전표(BKPF/BSEG 등 전표 헤더/라인), CO 배부/정산 연계, AP 지급, 법인카드 매입 데이터, 증빙파일(세금계산서/영수증/계약서/검",
+                "chunk_id": "chunk_26_2",
+                "location": "v2.0 > 제1장 총칙 > 제2조 (적용범위)",
+                "regulation_clause": null,
+                "regulation_article": "제2조"
+            },
+            {
+                "keys": {
+                    "caseId": "168"
+                },
+                "type": "RAG_CHUNK",
+                "docId": 26,
+                "score": 0.54,
+                "doc_id": 26,
+                "source": "hybrid_retrieve",
+                "chunkId": "chunk_26_8",
+                "excerpt": "[ v2.0 > 제2장 역할과 책임 > 제8조 (재무부서의 책임)] 제8조 (재무부서의 책임)\n① 재무부서는 계정과목별 기준, 증빙 기준, 예산 연계 기준, 마감/수정전표 기준을 수립·운영한다.\n② 재무부서는 AI 검토대기 전표를 검토하고, 오탐/미탐 사례를 분류하여 룰 개선에 반영한다.\n③ 재무부서는 본 규정의 개정 이력, 예외 승인 이력, 감사 대응 자료를 관리한다.",
+                "chunk_id": "chunk_26_8",
+                "location": "v2.0 > 제2장 역할과 책임 > 제8조 (재무부서의 책임)",
+                "regulation_clause": null,
+                "regulation_article": "제8조"
+            },
+            {
+                "type": "POLICY_GATE",
+                "source": "deterministic_policy_engine",
+                "signals": [
+                    "holiday_usage",
+                    "leave_status",
+                    "leave_general"
+                ],
+                "quality_gate_codes": [
+                    "OK",
+                    "RISK_ARTICLE_MISMATCH",
+                    "EVIDENCE_COVERAGE_LOW"
+                ],
+                "needs_manual_review": false,
+                "recommended_case_type": "HOLIDAY_USAGE",
+                "allow_strong_conclusion": true
+            },
+            {
+                "mode": "hybrid",
+                "type": "MCP_FACT_CONTEXT",
+                "facts": {
+                    "stage": "analysis",
+                    "caseId": "168",
+                    "mccCode": "5814",
+                    "hrStatus": "LEAVE",
+                    "isHoliday": true,
+                    "weekdayKo": "일",
+                    "mccCodeRaw": "5814",
+                    "occurredAt": "2026-03-01T01:28:12+09:00",
+                    "expenseType": "SA",
+                    "holidayType": "WEEKEND",
+                    "hrStatusRaw": "LEAVE",
+                    "sourceSystem": null,
+                    "budgetExceeded": false,
+                    "expenseTypeName": "G/L Account Document",
+                    "mccRiskCategory": null,
+                    "sourceTimestamp": null,
+                    "isWeekendAllowed": null,
+                    "relatedArticleHint": null,
+                    "holidayDecisionSource": "input_is_holiday"
+                },
+                "source": "mcp_adapter",
+                "quality": {
+                    "mcp_skipped": true,
+                    "mcp_calls_ok": 0,
+                    "mcp_enriched": false,
+                    "input_partial": true,
+                    "missing_fields": [
+                        "X-User-ID"
+                    ],
+                    "mcp_skip_reason": "MCP_HEADERS_MISSING",
+                    "mcp_missing_headers": [
+                        "X-User-ID"
+                    ]
+                }
+            },
+            {
+                "type": "GROUNDING_COVERAGE",
+                "source": "reason_grounding_gate",
+                "coverage_ratio": 0.0,
+                "total_sentences": 2,
+                "grounded_sentences": 0,
+                "ungrounded_sentences": [
+                    "본 건은 **휴일 사용 의심** 신호로 분류되었으나, 발생 시각 **2026년 03월 01일 01:28:12 (일)**, 금액 **99,389원**, 근태 **휴무/휴가** 기준으로 현재 인용된 조항의 의미가 위험유형과 충분히 정합하지 않아 확정 판단을 보류합니다.",
+                    "위험유형에 맞는 규정 조항을 재매칭한 뒤 재평가가 필요합니다."
+                ],
+                "ungrounded_claim_sentences": 0
+            }
+        ],
+        "similarCases": [
+            {
+                "amount": 89450.1,
+                "caseId": "168-sim-1",
+                "vendorId": "V-001",
+                "similarity": "amount_range"
+            },
+            {
+                "amount": 99389.0,
+                "caseId": "168-sim-2",
+                "vendorId": "V-001",
+                "similarity": "amount_range"
+            }
+        ],
+        "ragRefs": [
+            {
+                "keys": {
+                    "belnr": "DAAA538",
+                    "bukrs": "1000",
+                    "gjahr": "2026",
+                    "amount": 99389.0
+                },
+                "type": "CASE",
+                "docId": "1000-DAAA538-2026",
+                "caseId": "168",
+                "doc_id": "1000-DAAA538-2026",
+                "itemId": "001",
+                "source": "get_case",
+                "item_id": "001",
+                "item_no": "001",
+                "target_buzei": "001"
+            },
+            {
+                "keys": {
+                    "caseId": "168"
+                },
+                "type": "RAG_CHUNK",
+                "docId": 26,
+                "score": 0.57,
+                "doc_id": 26,
+                "source": "hybrid_retrieve",
+                "chunkId": "chunk_26_63",
+                "excerpt": "[ v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)] 제2조 (경과조치)\n① 시행일 이전 발생한 지출이라도 시행일 이후 전표 확정되는 건에 대하여는 본 규정을 준용할 수 있다.\n② 시스템 미구현 항목은 재무부서 수동 검토로 대체할 수 있으며, 단계적으로 Agent AI 자동 통제로 전환한다.\n\n \n별표1. 계정별 통제 기준표(초안)\n \n※ 실제 운영 시 회사 규모/업종/법인카드 정책/출장규정에 맞게 수치 조정 필요\n※ 아래 기준은 예시이며, 계정코드 체계는 SAP 계정과목표에 맞춰 확정\n\n(별표는 별도 CSV 파일",
+                "chunk_id": "chunk_26_63",
+                "location": "v2.0 > 제13장 감사, 보관 및 보고 > 제2조 (경과조치)",
+                "regulation_clause": null,
+                "regulation_article": "제2조"
+            },
+            {
+                "keys": {
+                    "caseId": "168"
+                },
+                "type": "RAG_CHUNK",
+                "docId": 26,
+                "score": 0.54,
+                "doc_id": 26,
+                "source": "hybrid_retrieve",
+                "chunkId": "chunk_26_0",
+                "excerpt": "[ v2.0 ] [샘플]사내_경비_지출_관리_규정_v2.0 (확장판)\n(Agent AI 기반 SAP 전표 검증 및 재무 리스크 통제 규정)\n\n문서버전: v2.0\n시행예정일: 2026-02-24\n소관부서: 재무부(회계팀/자금팀), 준법감시, 내부감사\n적용시스템: SAP(FI/AP/AR/CO 연계), 전표검증 Agent AI, 규정 RAG 검색시스템(pgvector)\n문서성격: 샘플(실무형 확장판, 실제 운영 규정 템플릿)",
+                "chunk_id": "chunk_26_0",
+                "location": "v2.0",
+                "regulation_clause": null,
+                "regulation_article": "일반문서"
+            },
+            {
+                "keys": {
+                    "caseId": "168"
+                },
+                "type": "RAG_CHUNK",
+                "docId": 26,
+                "score": 0.54,
+                "doc_id": 26,
+                "source": "hybrid_retrieve",
+                "chunkId": "chunk_26_1",
+                "excerpt": "[ v2.0 > 제1장 총칙 > 제1조 (목적)] 제1조 (목적)\n① 본 규정은 회사의 경비 지출, 지급 전표, 정산 전표 및 관련 증빙의 적정성을 확보하고, 예산 통제·내부통제·세무 준수 및 재무 리스크 예방을 목적으로 한다.\n② 회사는 SAP 전표 데이터와 증빙 데이터를 기반으로 Agent AI를 활용한 사전/사후 검증 체계를 운영할 수 있으며, 본 규정은 해당 검증의 판단 기준이 된다.\n③ 본 규정은 임직원의 정상적 업무 수행을 지원함과 동시에, 부정·오류·과실·통제 회피 행위의 예방 및 조기 탐지를 목적으로 한다.",
+                "chunk_id": "chunk_26_1",
+                "location": "v2.0 > 제1장 총칙 > 제1조 (목적)",
+                "regulation_clause": null,
+                "regulation_article": "제1조"
+            },
+            {
+                "keys": {
+                    "caseId": "168"
+                },
+                "type": "RAG_CHUNK",
+                "docId": 26,
+                "score": 0.54,
+                "doc_id": 26,
+                "source": "hybrid_retrieve",
+                "chunkId": "chunk_26_2",
+                "excerpt": "[ v2.0 > 제1장 총칙 > 제2조 (적용범위)] 제2조 (적용범위)\n① 본 규정은 회사 및 회사가 지정한 계열사/사업부의 임직원, 파견/계약직, 협력사 인력이 회사 비용으로 집행하는 모든 경비 지출에 적용한다.\n② 법인카드, 개인 선지출 후 정산, 계좌이체, 전자결제수단, 선급금/선급비용, 외화 결제, 정기 구독료, 지급수수료 등 모든 지급 방식과 전표 입력에 적용한다.\n③ SAP FI 전표(BKPF/BSEG 등 전표 헤더/라인), CO 배부/정산 연계, AP 지급, 법인카드 매입 데이터, 증빙파일(세금계산서/영수증/계약서/검",
+                "chunk_id": "chunk_26_2",
+                "location": "v2.0 > 제1장 총칙 > 제2조 (적용범위)",
+                "regulation_clause": null,
+                "regulation_article": "제2조"
+            }
+        ],
+        "proposals": [
+            {
+                "proposalId": "fb1f96e1-2616-4600-ab63-af9c4e12913d",
+                "runId": "dcc70d00-4bd8-47c1-825c-4461d2cdcbab",
+                "type": "REQUEST_INFO",
+                "typeName": "REQUEST_INFO",
+                "status": "PROPOSED",
+                "riskLevel": "MEDIUM",
+                "rationale": "거래처 확인 요청",
+                "payload": {
+                    "caseId": "168"
+                },
+                "createdAt": "2026-02-26T18:32:17.057549Z",
+                "updatedAt": "2026-02-26T18:32:17.218833Z",
+                "requiresApproval": false,
+                "fingerprint": "4caead8e567561d2f19bec620a4f1d2cf0a7cd4770aca65e994e11605a2a95ce",
+                "decidedBy": null,
+                "decidedAt": null,
+                "decisionComment": null
+            }
+        ],
+        "empty": null,
+        "reason": null
+    },
+    "timestamp": "2026-02-27T03:43:53.725686",
+    "success": true
 }
-```
-
----
-
-## 5. FE 사용 가이드
-
-- `regulationCheckpoints`가 있고 길이 > 0이면 해당 배열 사용
-- 없거나 빈 배열이면 `logicCheckpoints` fallback
-- `status`는 **COMPLIANT \| VIOLATION \| HOLD \| CONFLICT \| NEEDS_REVIEW** 5가지 표준값
-
----
-
-## 6. 수정 파일
-
-- `CaseDetailDto.java`: `RegulationCheckpointDto` 내부 클래스, `regulationCheckpoints` 필드 추가
-- `CaseQueryService.java`: `buildRegulationCheckpoints()` 구현, `parseRegulationCheckpointsFromJson()`, `convertLogicCheckpointsToRegulationCheckpoints()` 추가
-- `AuraCallbackPayload.java`: `FinalResult.regulationCheckpoints` 필드 추가
-- `CaseAnalysisService.java`: `regulation_checkpoints` top-level 수신 시 `evidence_map_json` 병합 로직 추가

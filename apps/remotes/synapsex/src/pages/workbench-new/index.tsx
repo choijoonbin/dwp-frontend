@@ -2,8 +2,8 @@ import type { Theme } from '@mui/material/styles';
 
 import { keyframes } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useStreamStore,
   useCasesListQuery,
@@ -24,13 +24,13 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useCaseDetail } from '../cases/hooks/use-case-detail';
-import { caseListDtoToUi } from '../cases/adapters/case-list-adapter';
 import { WorkbenchKpiStrip } from '../workbench/components/WorkbenchKpiStrip';
 import { WorkbenchNewCasePanel } from './components/workbench-new-case-panel';
 import { WorkbenchNewQueuePanel } from './components/workbench-new-queue-panel';
 import { WorkbenchStreamPanel } from '../workbench/components/WorkbenchStreamPanel';
 
 type MobileTab = 'queue' | 'workspace' | 'stream';
+const SELECTED_CASE_STORAGE_KEY = 'synapse.workbenchNew.selectedCaseId';
 
 const getGlassPanelSx = (theme: Theme): Record<string, unknown> => ({
   backgroundColor: theme.vars.palette.background.paper,
@@ -50,7 +50,10 @@ export const WorkbenchNewPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileTab, setMobileTab] = useState<MobileTab>('workspace');
-  const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
+  const [selectedCaseId, setSelectedCaseId] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return window.sessionStorage.getItem(SELECTED_CASE_STORAGE_KEY);
+  });
   const [isStreamPanelOpen, setIsStreamPanelOpen] = useState(true);
 
   const queryClient = useQueryClient();
@@ -68,10 +71,6 @@ export const WorkbenchNewPage = () => {
   const requestExplanationMutation = useRequestCaseExplanationMutation();
 
   const casesListQuery = useCasesListQuery({ page: 0, size: 20 });
-  const caseListItems = useMemo(() => {
-    const raw = casesListQuery.data?.items ?? casesListQuery.data?.content ?? casesListQuery.data?.data ?? [];
-    return Array.isArray(raw) ? raw.map(caseListDtoToUi) : [];
-  }, [casesListQuery.data]);
   const batchTotalCases = casesListQuery.data?.total ?? casesListQuery.data?.totalElements ?? 0;
 
   /** 테스트 데이터 생성 후: suggestedSelectCaseId(새 케이스)가 있으면 해당 케이스 선택. 일반 진입: 자동 선택 없음(사용자가 직접 선택) */
@@ -81,6 +80,15 @@ export const WorkbenchNewPage = () => {
       useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(null);
     }
   }, [suggestedSelectCaseId]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (selectedCaseId) {
+      window.sessionStorage.setItem(SELECTED_CASE_STORAGE_KEY, selectedCaseId);
+      return;
+    }
+    window.sessionStorage.removeItem(SELECTED_CASE_STORAGE_KEY);
+  }, [selectedCaseId]);
 
   useEffect(() => {
     useWorkbenchReactiveStore.getState().setThoughtStreamContext(selectedCaseId ?? null, null);
@@ -262,6 +270,7 @@ export const WorkbenchNewPage = () => {
             explanationLoading={requestExplanationMutation.isPending}
             onRequestExplanation={handleRequestExplanation}
             analysisData={analysisQuery.data ?? null}
+            caseDetailReasoning={detail.reasoning}
             getGlassPanelSx={getGlassPanelSx}
             sx={{ flex: 1, minHeight: 0 }}
           />
