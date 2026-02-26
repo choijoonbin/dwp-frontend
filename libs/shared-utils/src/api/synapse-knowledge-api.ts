@@ -28,8 +28,12 @@ export type RagDocumentListDto = {
   effective_to?: string;
   isActive?: boolean;
   is_active?: boolean;
+  qualityGatePassed?: boolean;
+  quality_gate_passed?: boolean;
   qualityReport?: RagQualityReport;
   quality_report?: RagQualityReport;
+  refCount?: number;
+  ref_count?: number;
 };
 
 export type RagChunkDto = {
@@ -414,10 +418,59 @@ type SpringPage<T> = {
   number?: number;
 };
 
-function toPageResponse<T>(spring: SpringPage<T> | PageResponse<T>): PageResponse<T> {
+/** BE 응답: items + total + pageInfo { page, size, hasNext } + sort, order, filtersApplied, summary */
+type PageInfoResponse<T> = {
+  items: T[];
+  total: number;
+  pageInfo?: { page?: number; size?: number; hasNext?: boolean };
+  sort?: string;
+  order?: string;
+  filtersApplied?: unknown;
+  summary?: unknown;
+};
+
+function toPageResponse<T>(
+  spring: SpringPage<T> | PageResponse<T> | PageInfoResponse<T>
+): PageResponse<T> {
   if ('items' in spring && Array.isArray(spring.items)) {
-    return spring as PageResponse<T>;
+    const raw = spring as PageInfoResponse<T> | PageResponse<T>;
+    const total = (raw as { total?: number }).total ?? raw.items.length;
+
+    // 신규 형식: pageInfo { page, size, hasNext }
+    const pi = (raw as PageInfoResponse<T>).pageInfo;
+    if (pi != null) {
+      const page = pi.page ?? 1;
+      const size = pi.size ?? 20;
+      return {
+        items: raw.items,
+        total,
+        page: Math.max(0, page - 1),
+        size,
+        totalPages: Math.ceil(total / size) || 1,
+      };
+    }
+
+    // 기존 PageResponse (page, size, totalPages 이미 있음)
+    const pr = raw as PageResponse<T>;
+    if (
+      typeof pr.page === 'number' &&
+      typeof pr.size === 'number' &&
+      typeof pr.totalPages === 'number'
+    ) {
+      return pr;
+    }
+
+    // items/total만 있는 경우 (pageInfo 없음)
+    const size = 20;
+    return {
+      items: raw.items,
+      total,
+      page: 0,
+      size,
+      totalPages: Math.ceil(total / size) || 1,
+    };
   }
+  // Spring Page (content, totalElements, number, size)
   const content = (spring as SpringPage<T>).content ?? [];
   const total = (spring as SpringPage<T>).totalElements ?? content.length;
   const size = (spring as SpringPage<T>).size ?? 20;
@@ -443,7 +496,9 @@ export const getRagDocuments = async (
   if (params?.page != null) query.set('page', String(params.page));
   if (params?.size != null) query.set('size', String(params.size));
   const url = `/api/synapse/rag/documents${query.toString() ? `?${query.toString()}` : ''}`;
-  const res = await axiosInstance.get<ApiResponse<SpringPage<RagDocumentListDto> | PageResponse<RagDocumentListDto>>>(url);
+  const res = await axiosInstance.get<
+    ApiResponse<SpringPage<RagDocumentListDto> | PageResponse<RagDocumentListDto> | PageInfoResponse<RagDocumentListDto>>
+  >(url);
   const data = res.data?.data;
   if (data) return { ...res.data, data: toPageResponse(data) };
   return res.data as ApiResponse<PageResponse<RagDocumentListDto>>;

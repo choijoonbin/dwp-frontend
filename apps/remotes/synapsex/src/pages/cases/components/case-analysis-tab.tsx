@@ -131,6 +131,10 @@ type DecisionReasonPayload = {
   analysisScoreBreakdown?: Record<string, unknown>;
   quality_gate_codes?: string[];
   qualityGateCodes?: string[];
+  quality_report?: Record<string, unknown>;
+  qualityReport?: Record<string, unknown>;
+  mismatch_reasons?: unknown[];
+  mismatchReasons?: unknown[];
 };
 
 const normalizeBuzei = (value: string | number | undefined): string | undefined => {
@@ -293,6 +297,12 @@ export const CaseAnalysisTab = ({
       data?.analysis_score_breakdown ??
       decisionReason.analysisScoreBreakdown ??
       decisionReason.analysis_score_breakdown) as Record<string, unknown> | undefined;
+  const qualityReportRaw =
+    (decisionReason.quality_report ?? decisionReason.qualityReport) ??
+    (data as Record<string, unknown> | undefined)?.quality_report;
+  const mismatchReasonsRaw =
+    (decisionReason.mismatch_reasons ?? decisionReason.mismatchReasons) ??
+    (data as Record<string, unknown> | undefined)?.mismatch_reasons;
   const grounded =
     typeof data?.grounded === 'boolean'
       ? data.grounded
@@ -857,10 +867,26 @@ export const CaseAnalysisTab = ({
               <Stack spacing={1.5}>
                 <Box>
                   <Typography variant="caption" color="text.secondary">
+                    quality_report
+                  </Typography>
+                  <Box component="pre" sx={{ m: 0, mt: 0.5, p: 1.25, borderRadius: 1, bgcolor: alpha(theme.palette.common.black, 0.06), overflowX: 'auto' }}>
+                    {JSON.stringify(qualityReportRaw ?? {}, null, 2)}
+                  </Box>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
                     quality_gate_codes
                   </Typography>
                   <Box component="pre" sx={{ m: 0, mt: 0.5, p: 1.25, borderRadius: 1, bgcolor: alpha(theme.palette.common.black, 0.06), overflowX: 'auto' }}>
                     {JSON.stringify(qualityGateCodes, null, 2)}
+                  </Box>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    mismatch_reasons
+                  </Typography>
+                  <Box component="pre" sx={{ m: 0, mt: 0.5, p: 1.25, borderRadius: 1, bgcolor: alpha(theme.palette.common.black, 0.06), overflowX: 'auto' }}>
+                    {JSON.stringify(mismatchReasonsRaw ?? [], null, 2)}
                   </Box>
                 </Box>
                 <Box>

@@ -191,6 +191,27 @@ export type CaseDetailLogicCheckpoint = {
   description?: string;
 };
 
+export type CaseDetailRegulationCheckpoint = {
+  ruleId?: string;
+  rule_id?: string;
+  version?: string;
+  chapter?: string;
+  article?: string;
+  clause?: string;
+  title?: string;
+  status?: string;
+  statusReason?: string;
+  status_reason?: string;
+  description?: string;
+  evidenceRefs?: string[];
+  evidence_refs?: string[];
+  qualitySignals?: string[];
+  quality_signals?: string[];
+  applied?: boolean;
+  priority?: number;
+  [key: string]: unknown;
+};
+
 /** [증거 맵] BE evidenceLinks — 그리드 행(itemIdx)과 연결된 증거 카드 */
 export type CaseDetailEvidenceLink = {
   itemIdx?: number;
@@ -223,6 +244,9 @@ export type CaseDetailDto = {
   /** [검토 로직] 규정 준수 여부 리스트 */
   logicCheckpoints?: CaseDetailLogicCheckpoint[];
   logic_checkpoints?: CaseDetailLogicCheckpoint[];
+  /** [판단 규정] regulation checkpoint 리스트 (있으면 UI 우선 사용) */
+  regulationCheckpoints?: CaseDetailRegulationCheckpoint[];
+  regulation_checkpoints?: CaseDetailRegulationCheckpoint[];
   /** [증거 맵] 그리드 행(itemIdx) 연동 증거 카드 */
   evidenceLinks?: CaseDetailEvidenceLink[];
   evidence_links?: CaseDetailEvidenceLink[];
@@ -569,6 +593,9 @@ export type CaseAnalysisDto = {
   /** 품질 게이트 코드 */
   qualityGateCodes?: string[];
   quality_gate_codes?: string[];
+  /** 사용자 노출용 분석 신뢰 신호 (있으면 UI 우선 사용) */
+  analysisQualitySignals?: string[];
+  analysis_quality_signals?: string[];
   /** 분석 점수 분해(디버그) */
   analysisScoreBreakdown?: Record<string, unknown>;
   analysis_score_breakdown?: Record<string, unknown>;

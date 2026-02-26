@@ -240,17 +240,46 @@ function toCanonicalThoughtType(raw: string | undefined): string {
   return AURA_STAGE_TO_CANONICAL[trimmed] ?? AURA_STAGE_TO_CANONICAL[trimmed.toLowerCase()] ?? trimmed;
 }
 
+function normalizeRegulationStatus(
+  raw: unknown
+): 'COMPLIANT' | 'VIOLATION' | 'HOLD' | 'CONFLICT' | 'NEEDS_REVIEW' {
+  const normalized = String(raw ?? '').trim().toUpperCase();
+  if (normalized === 'VIOLATION' || normalized === 'VIOLATED' || normalized === '위반') return 'VIOLATION';
+  if (normalized === 'COMPLETED') return 'COMPLIANT';
+  if (normalized === 'HOLD') return 'HOLD';
+  if (normalized === 'CONFLICT') return 'CONFLICT';
+  if (normalized === 'NEEDS_REVIEW') return 'NEEDS_REVIEW';
+  return 'COMPLIANT';
+}
+
+function toStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((v) => String(v ?? '').trim()).filter((v) => v.length > 0);
+}
+
 /** buzei 값을 3자리 문자열로 통일 */
 function normalizeBuzei(v: string | number | undefined): string {
   if (v == null) return '';
   return String(v).trim().padStart(3, '0');
 }
 
-/** [검토 로직] UI — clause, status, description */
+/** [판단 규정] UI — regulationCheckpoints 또는 logicCheckpoints fallback */
 export type LogicCheckpointItem = {
   clause: string;
   status: 'compliant' | 'violation';
+  ruleId?: string;
   description?: string;
+  statusCode?: 'COMPLIANT' | 'VIOLATION' | 'HOLD' | 'CONFLICT' | 'NEEDS_REVIEW';
+  version?: string;
+  chapter?: string;
+  article?: string;
+  title?: string;
+  statusReason?: string;
+  applied?: boolean;
+  evidenceRefs?: string[];
+  qualitySignals?: string[];
+  priority?: number;
+  source?: 'regulation' | 'logic';
 };
 
 /** [증거 맵] UI — itemIdx는 그리드 행 인덱스(0-based), reason, severity */
@@ -439,15 +468,75 @@ export const useCaseDetail = (caseId: string | undefined): CaseDetailResult => {
     const briefingInsightRaw = (dto?.briefingInsight ?? dto?.briefing_insight) as string | undefined;
     const briefingInsight = typeof briefingInsightRaw === 'string' && briefingInsightRaw.trim().length > 0 ? briefingInsightRaw.trim() : undefined;
 
-    const rawLogicCheckpoints = (dto?.logicCheckpoints ?? dto?.logic_checkpoints) as Array<{ clause?: string; status?: string; description?: string }> | undefined;
-    const logicCheckpoints: LogicCheckpointItem[] = Array.isArray(rawLogicCheckpoints)
-      ? rawLogicCheckpoints.map((x) => {
-          const clause = (x.clause ?? '').trim();
-          const s = (x.status ?? '').toString().toLowerCase();
-          const status: 'compliant' | 'violation' = s === 'violation' || s === '위반' ? 'violation' : 'compliant';
-          return { clause, status, description: x.description };
-        }).filter((x) => x.clause.length > 0)
+    const rawRegulationCheckpoints = (dto?.regulationCheckpoints ?? dto?.regulation_checkpoints) as
+      | Array<Record<string, unknown>>
+      | undefined;
+    const regulationCheckpoints: LogicCheckpointItem[] = Array.isArray(rawRegulationCheckpoints)
+      ? rawRegulationCheckpoints
+          .map((item, idx) => {
+            const statusCode = normalizeRegulationStatus(item.status ?? item.statusCode ?? item.status_code);
+            const status: 'compliant' | 'violation' = statusCode === 'VIOLATION' ? 'violation' : 'compliant';
+            const clause = String(
+              item.clause ?? item.regulationClause ?? item.regulation_clause ?? item.article ?? ''
+            ).trim();
+            return {
+              clause,
+              status,
+              statusCode,
+              ruleId: (item.ruleId ?? item.rule_id) as string | undefined,
+              description: (item.description as string | undefined) ?? undefined,
+              version: (item.version as string | undefined) ?? undefined,
+              chapter: (item.chapter as string | undefined) ?? undefined,
+              article: (item.article as string | undefined) ?? undefined,
+              title: (item.title as string | undefined) ?? undefined,
+              statusReason:
+                (item.statusReason as string | undefined) ??
+                (item.status_reason as string | undefined) ??
+                undefined,
+              applied:
+                typeof item.applied === 'boolean'
+                  ? item.applied
+                  : typeof item.isApplied === 'boolean'
+                    ? (item.isApplied as boolean)
+                    : typeof item.is_applied === 'boolean'
+                      ? (item.is_applied as boolean)
+                      : true,
+              evidenceRefs: toStringArray(item.evidenceRefs ?? item.evidence_refs),
+              qualitySignals: toStringArray(item.qualitySignals ?? item.quality_signals),
+              priority:
+                typeof item.priority === 'number' && Number.isFinite(item.priority)
+                  ? (item.priority as number)
+                  : undefined,
+              source: 'regulation',
+              _idx: idx,
+            } as LogicCheckpointItem & { _idx: number };
+          })
+          .filter((x) => x.clause.length > 0 || Boolean(x.title) || Boolean(x.statusReason) || Boolean(x.description))
+          .sort((a, b) => {
+            const ap = a.priority ?? Number.MAX_SAFE_INTEGER;
+            const bp = b.priority ?? Number.MAX_SAFE_INTEGER;
+            if (ap !== bp) return ap - bp;
+            return a._idx - b._idx;
+          })
+          .map(({ _idx, ...rest }) => rest)
       : [];
+
+    const rawLogicCheckpoints = (dto?.logicCheckpoints ?? dto?.logic_checkpoints) as
+      | Array<{ clause?: string; status?: string; description?: string }>
+      | undefined;
+    const fallbackLogicCheckpoints: LogicCheckpointItem[] = Array.isArray(rawLogicCheckpoints)
+      ? rawLogicCheckpoints
+          .map((x) => {
+            const clause = (x.clause ?? '').trim();
+            const statusCode = normalizeRegulationStatus(x.status);
+            const status: 'compliant' | 'violation' = statusCode === 'VIOLATION' ? 'violation' : 'compliant';
+            return { clause, status, statusCode, description: x.description, source: 'logic' as const };
+          })
+          .filter((x) => x.clause.length > 0)
+      : [];
+
+    const logicCheckpoints =
+      regulationCheckpoints.length > 0 ? regulationCheckpoints : fallbackLogicCheckpoints;
 
     const rawEvidenceLinks = (dto?.evidenceLinks ?? dto?.evidence_links) as Array<{ itemIdx?: number; reason?: string; severity?: string }> | undefined;
     const evidenceLinks: EvidenceLinkItem[] = Array.isArray(rawEvidenceLinks)

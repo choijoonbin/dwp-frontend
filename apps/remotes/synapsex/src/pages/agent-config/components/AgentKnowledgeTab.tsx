@@ -1,16 +1,22 @@
 /**
- * Agent Studio — 지식 탭: 2단 그리드 + 업로드-바인딩 자동화
- * 좌: RAG 라이브러리 리스트 + 새 지식 업로드 | 우: Knowledge Summary Card
- * 업로드 → POST rag/documents → POST knowledge/bind (즉시 바인딩)
+ * Agent Studio — 지식 탭: 2단 그리드
+ * 좌: 등록(맵핑)된 RAG 목록 + 지식추가 | 우: Knowledge Summary Card
+ * 지식추가 → RAG 라이브러리 목록 선택 → POST knowledge/bind?doc_id=...
  */
 
-import type { CatalogCodeItemDto, AgentKnowledgeItemDto, RegisterRagDocumentRequest } from '@dwp-frontend/shared-utils';
+import type { CatalogCodeItemDto, AgentKnowledgeItemDto } from '@dwp-frontend/shared-utils';
 
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { Label, Iconify } from '@dwp-frontend/design-system';
+import { ConfirmDialog, Iconify, Label } from '@dwp-frontend/design-system';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { showToast, getRagDocuments, bindAgentKnowledge, registerRagDocument, unbindAgentKnowledge, getAgentKnowledgeCatalog, registerRagDocumentMultipart } from '@dwp-frontend/shared-utils';
+import {
+  showToast,
+  getRagDocuments,
+  bindAgentKnowledge,
+  unbindAgentKnowledge,
+  getAgentKnowledgeCatalog,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -27,8 +33,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import FormControlLabel from '@mui/material/FormControlLabel';
-
-import { RegisterRagDocumentModal } from '../../rag/components/register-rag-document-modal';
+import Skeleton from '@mui/material/Skeleton';
 
 const KNOWLEDGE_QUERY_KEY = (agentId: string) => ['synapse', 'agents', 'knowledge', agentId];
 const AGENT_DETAIL_QUERY_KEY = (id: string) => ['synapse', 'agents', 'detail', id];
@@ -61,9 +66,12 @@ export const AgentKnowledgeTab = ({
 }: AgentKnowledgeTabProps) => {
   const { t } = useTranslation('common');
   const queryClient = useQueryClient();
-  const [uploadOpen, setUploadOpen] = useState(false);
+  const [addKnowledgeOpen, setAddKnowledgeOpen] = useState(false);
   const [mappingOpen, setMappingOpen] = useState(false);
   const [selectedDocIds, setSelectedDocIds] = useState<Set<string>>(new Set());
+  const [unbindConfirmOpen, setUnbindConfirmOpen] = useState(false);
+  const [unbindTargetDocId, setUnbindTargetDocId] = useState<number | null>(null);
+  const [addKnowledgeSelectedIds, setAddKnowledgeSelectedIds] = useState<Set<string>>(new Set());
 
   const { data: res, isLoading } = useQuery({
     queryKey: KNOWLEDGE_QUERY_KEY(selectedAgentId ?? ''),
@@ -78,45 +86,34 @@ export const AgentKnowledgeTab = ({
   const { data: ragDocsRes, isLoading: ragDocsLoading } = useQuery({
     queryKey: ['synapse', 'rag', 'documents', 'all'],
     queryFn: () => getRagDocuments({ size: 200 }),
-    enabled: mappingOpen,
+    enabled: mappingOpen || addKnowledgeOpen,
   });
 
-  const registerAndBindMutation = useMutation({
-    mutationFn: async (payload: FormData | RegisterRagDocumentRequest) => {
-      const registerRes =
-        payload instanceof FormData
-          ? await registerRagDocumentMultipart(payload)
-          : await registerRagDocument(payload);
-      if (registerRes.status !== 'SUCCESS' && registerRes.status !== 'OK') {
-        throw new Error(registerRes.message ?? t('agentConfig.knowledge.errors.registerFailed'));
+  const bindMultipleMutation = useMutation({
+    mutationFn: async (docIds: string[]) => {
+      if (!selectedAgentId) throw new Error(t('agentConfig.knowledge.errors.bindFailed'));
+      for (const idStr of docIds) {
+        const numId = Number(idStr);
+        if (Number.isNaN(numId)) continue;
+        const bindRes = await bindAgentKnowledge(selectedAgentId, numId);
+        if (bindRes.status !== 'SUCCESS' && bindRes.status !== 'OK') {
+          throw new Error(bindRes.message ?? t('agentConfig.knowledge.errors.bindFailed'));
+        }
       }
-      const docId = registerRes.data?.docId;
-      if (!docId || !selectedAgentId) {
-        throw new Error(t('agentConfig.knowledge.errors.missingDocId'));
-      }
-      const numId = typeof docId === 'string' ? Number(docId) : docId;
-      if (Number.isNaN(numId)) throw new Error(t('agentConfig.knowledge.errors.invalidDocId'));
-      const bindRes = await bindAgentKnowledge(selectedAgentId, numId);
-      if (bindRes.status !== 'SUCCESS' && bindRes.status !== 'OK') {
-        throw new Error(bindRes.message ?? t('agentConfig.knowledge.errors.bindFailed'));
-      }
-      return { docId: numId };
     },
     onSuccess: () => {
-      setUploadOpen(false);
+      setAddKnowledgeOpen(false);
+      setAddKnowledgeSelectedIds(new Set());
       if (selectedAgentId) {
         queryClient.invalidateQueries({ queryKey: KNOWLEDGE_QUERY_KEY(selectedAgentId) });
         queryClient.invalidateQueries({ queryKey: AGENT_DETAIL_QUERY_KEY(selectedAgentId) });
         queryClient.invalidateQueries({ queryKey: AGENTS_QUERY_KEY });
         queryClient.invalidateQueries({ queryKey: RAG_QUERY_KEY });
       }
-      showToast(t('agentConfig.knowledge.toasts.registeredAndBound'), 'success');
+      showToast(t('agentConfig.knowledge.toasts.bound'), 'success');
     },
     onError: (err) => {
-      showToast(
-        err instanceof Error ? err.message : t('agentConfig.knowledge.errors.registerBindFailed'),
-        'error'
-      );
+      showToast(err instanceof Error ? err.message : t('agentConfig.knowledge.errors.bindFailed'), 'error');
     },
   });
 
@@ -174,12 +171,45 @@ export const AgentKnowledgeTab = ({
     if (!selectedAgentId) return;
     const numId = typeof docId === 'string' ? Number(docId) : docId;
     if (Number.isNaN(numId)) return;
-    if (bound) bindMutation.mutate({ docId: numId });
-    else unbindMutation.mutate({ docId: numId });
+    if (bound) {
+      bindMutation.mutate({ docId: numId });
+    } else {
+      setUnbindTargetDocId(numId);
+      setUnbindConfirmOpen(true);
+    }
   };
 
-  const handleUploadSubmit = (payload: FormData | RegisterRagDocumentRequest): Promise<void> =>
-    registerAndBindMutation.mutateAsync(payload).then(() => {});
+  const handleUnbindConfirm = () => {
+    if (unbindTargetDocId == null) return;
+    unbindMutation.mutate(
+      { docId: unbindTargetDocId },
+      {
+        onSettled: () => {
+          setUnbindConfirmOpen(false);
+          setUnbindTargetDocId(null);
+        },
+      }
+    );
+  };
+
+  const handleAddKnowledgeToggle = (docId: string, checked: boolean) => {
+    setAddKnowledgeSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(docId);
+      else next.delete(docId);
+      return next;
+    });
+  };
+
+  const handleAddKnowledgeSubmit = () => {
+    const ids = Array.from(addKnowledgeSelectedIds);
+    const toBind = ids.filter((id) => !boundDocIdSet.has(id));
+    if (toBind.length === 0) {
+      showToast('추가할 지식을 선택해 주세요.', 'warning');
+      return;
+    }
+    bindMultipleMutation.mutate(toBind);
+  };
 
   const pending = bindMutation.isPending || unbindMutation.isPending;
   const updateMappingMutation = useMutation({
@@ -218,6 +248,12 @@ export const AgentKnowledgeTab = ({
     }
   }, [mappingOpen, boundDocIdSet]);
 
+  useEffect(() => {
+    if (addKnowledgeOpen) {
+      setAddKnowledgeSelectedIds(new Set());
+    }
+  }, [addKnowledgeOpen]);
+
   if (!selectedAgentId) {
     return (
       <Box sx={{ p: { xs: 2, md: 4 } }}>
@@ -255,17 +291,17 @@ export const AgentKnowledgeTab = ({
             <CardHeader
               title={t('agentConfig.knowledge.title')}
               subheader={t('agentConfig.knowledge.subheader')}
-              action={items.length > 0 ? (
+              action={
                 <Button
                   variant="contained"
                   size="small"
-                  startIcon={<Iconify icon="solar:upload-bold" width={18} />}
-                  onClick={() => setUploadOpen(true)}
-                  disabled={registerAndBindMutation.isPending}
+                  startIcon={<Iconify icon="solar:add-circle-bold" width={18} />}
+                  onClick={() => setAddKnowledgeOpen(true)}
+                  disabled={bindMultipleMutation.isPending}
                 >
-                  {t('agentConfig.knowledge.upload')}
+                  {t('agentConfig.knowledge.addKnowledge')}
                 </Button>
-              ) : null}
+              }
               sx={{ pb: 0 }}
             />
             <CardContent sx={{ flex: 1, overflow: 'auto', pt: 1 }}>
@@ -287,10 +323,10 @@ export const AgentKnowledgeTab = ({
                   <Button
                     variant="outlined"
                     size="small"
-                    startIcon={<Iconify icon="solar:upload-bold" width={18} />}
-                    onClick={() => setUploadOpen(true)}
+                    startIcon={<Iconify icon="solar:add-circle-bold" width={18} />}
+                    onClick={() => setAddKnowledgeOpen(true)}
                   >
-                    {t('agentConfig.knowledge.upload')}
+                    {t('agentConfig.knowledge.addKnowledge')}
                   </Button>
                 </Box>
               )}
@@ -457,72 +493,88 @@ export const AgentKnowledgeTab = ({
         </Box>
       </Box>
 
-      <Dialog open={uploadOpen} onClose={() => !registerAndBindMutation.isPending && setUploadOpen(false)} maxWidth="sm" fullWidth>
-        <RegisterRagDocumentModal
-          key={uploadOpen ? 'open' : 'closed'}
-          onClose={() => setUploadOpen(false)}
-          onSubmit={handleUploadSubmit}
-          isLoading={registerAndBindMutation.isPending}
-          closeOnSubmit={false}
-          docTypes={docTypes}
-        />
-      </Dialog>
-
+      {/* 지식추가: RAG 라이브러리 목록에서 선택 후 바인딩 */}
       <Dialog
-        open={mappingOpen}
-        onClose={() => !updateMappingMutation.isPending && setMappingOpen(false)}
-        maxWidth="md"
+        open={addKnowledgeOpen}
+        onClose={() => !bindMultipleMutation.isPending && setAddKnowledgeOpen(false)}
+        maxWidth="sm"
         fullWidth
         PaperProps={{
           sx: {
-            width: { xs: '100%', sm: '70%' },
+            borderRadius: 2,
+            boxShadow: 24,
           },
         }}
       >
-        <DialogTitle>RAG 문서 맵핑</DialogTitle>
-        <DialogContent sx={{ pt: 1 }}>
+        <DialogTitle
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            pb: 2,
+            borderBottom: 1,
+            borderColor: 'divider',
+          }}
+        >
+          <Iconify icon="solar:document-add-bold-duotone" width={24} sx={{ color: 'primary.main' }} />
+          {t('agentConfig.knowledge.addKnowledge')}
+        </DialogTitle>
+        <DialogContent sx={{ py: 3, minHeight: 280 }}>
           {ragDocsLoading && (
-            <Typography variant="body2" color="text.secondary">
-              문서 목록을 불러오는 중...
-            </Typography>
+            <Stack spacing={1.5}>
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} variant="rounded" height={56} animation="wave" />
+              ))}
+            </Stack>
           )}
           {!ragDocsLoading && ragDocs.length === 0 && (
-            <Typography variant="body2" color="text.secondary">
-              등록된 문서가 없습니다.
-            </Typography>
+            <Stack alignItems="center" justifyContent="center" sx={{ py: 6 }}>
+              <Iconify icon="solar:folder-open-bold-duotone" width={48} sx={{ color: 'text.disabled', mb: 1 }} />
+              <Typography variant="body2" color="text.secondary">
+                RAG 라이브러리에 등록된 문서가 없습니다.
+              </Typography>
+            </Stack>
           )}
-          <Stack spacing={1.5} sx={{ mt: 1 }}>
-            {ragDocs.map((doc) => {
-              const docId = String(doc.docId);
-              const checked = selectedDocIds.has(docId);
-              return (
-                <Box
-                  key={docId}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: 2,
-                    px: 1,
-                    py: 0.5,
-                    borderRadius: 1,
-                    border: 1,
-                    borderColor: checked ? 'primary.main' : 'divider',
-                    bgcolor: checked ? 'primary.lighter' : 'transparent',
-                  }}
-                >
-                  <FormControlLabel
-                    control={
+          {!ragDocsLoading && ragDocs.length > 0 && (
+            <Stack spacing={1} sx={{ maxHeight: 320, overflowY: 'auto', pr: 0.5 }}>
+              {ragDocs
+                .filter((doc) => !boundDocIdSet.has(String(doc.docId)))
+                .map((doc) => {
+                  const docId = String(doc.docId);
+                  const checked = addKnowledgeSelectedIds.has(docId);
+                  return (
+                    <Box
+                      key={docId}
+                      onClick={() => handleAddKnowledgeToggle(docId, !checked)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddKnowledgeToggle(docId, !checked)}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 2,
+                        px: 2,
+                        py: 1.5,
+                        borderRadius: 1.5,
+                        border: 1,
+                        cursor: 'pointer',
+                        borderColor: checked ? 'primary.main' : 'divider',
+                        bgcolor: checked ? 'primary.lighter' : 'background.neutral',
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          borderColor: checked ? 'primary.dark' : 'action.hover',
+                          bgcolor: checked ? 'primary.lighter' : 'action.hover',
+                        },
+                      }}
+                    >
                       <Checkbox
-                        id={`knowledge-map-${docId}`}
-                        name={`knowledge-map-${docId}`}
                         checked={checked}
-                        onChange={(e) => handleToggleMapping(docId, e.target.checked)}
+                        onChange={(e) => handleAddKnowledgeToggle(docId, e.target.checked)}
+                        onClick={(e) => e.stopPropagation()}
+                        sx={{ p: 0, mr: 0.5 }}
                       />
-                    }
-                    label={
-                      <Stack spacing={0.5}>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      <Stack spacing={0.25} sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="subtitle2" noWrap>
                           {doc.title}
                         </Typography>
                         <Stack direction="row" spacing={1} alignItems="center">
@@ -533,24 +585,179 @@ export const AgentKnowledgeTab = ({
                             label={getStatusMeta(doc.status ?? '').label}
                             size="small"
                             variant="outlined"
+                            color={getStatusMeta(doc.status ?? '').color}
                             sx={{ height: 20, fontSize: '0.7rem' }}
                           />
                         </Stack>
                       </Stack>
-                    }
-                    sx={{ flex: 1, m: 0 }}
-                  />
-                </Box>
-              );
-            })}
-          </Stack>
+                    </Box>
+                  );
+                })}
+              {ragDocs.filter((d) => !boundDocIdSet.has(String(d.docId))).length === 0 && (
+                <Stack alignItems="center" justifyContent="center" sx={{ py: 6 }}>
+                  <Iconify icon="solar:check-circle-bold-duotone" width={48} sx={{ color: 'success.main', mb: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    추가할 수 있는 미바인딩 문서가 없습니다.
+                  </Typography>
+                </Stack>
+              )}
+            </Stack>
+          )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setMappingOpen(false)} disabled={updateMappingMutation.isPending}>
+        <DialogActions
+          sx={{
+            px: 3,
+            py: 2,
+            gap: 1,
+            borderTop: 1,
+            borderColor: 'divider',
+          }}
+        >
+          <Button variant="outlined" onClick={() => setAddKnowledgeOpen(false)} disabled={bindMultipleMutation.isPending}>
             취소
           </Button>
           <Button
             variant="contained"
+            startIcon={<Iconify icon="solar:add-circle-bold" width={18} />}
+            onClick={handleAddKnowledgeSubmit}
+            disabled={bindMultipleMutation.isPending || ragDocsLoading || addKnowledgeSelectedIds.size === 0}
+          >
+            {bindMultipleMutation.isPending ? '등록 중...' : `등록 (${addKnowledgeSelectedIds.size})`}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* 바인딩 해제 확인 팝업 */}
+      <ConfirmDialog
+        open={unbindConfirmOpen}
+        title={t('agentConfig.knowledge.unbindConfirmTitle')}
+        description={t('agentConfig.knowledge.unbindConfirmMessage')}
+        confirmText="해제"
+        cancelText="취소"
+        severity="danger"
+        loading={unbindMutation.isPending}
+        onConfirm={handleUnbindConfirm}
+        onClose={() => !unbindMutation.isPending && setUnbindConfirmOpen(false)}
+      />
+
+      {/* RAG 문서 맵핑 */}
+      <Dialog
+        open={mappingOpen}
+        onClose={() => !updateMappingMutation.isPending && setMappingOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            boxShadow: 24,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            pb: 2,
+            borderBottom: 1,
+            borderColor: 'divider',
+          }}
+        >
+          <Iconify icon="solar:document-text-bold-duotone" width={24} sx={{ color: 'primary.main' }} />
+          RAG 문서 맵핑
+        </DialogTitle>
+        <DialogContent sx={{ py: 3, minHeight: 280 }}>
+          {ragDocsLoading && (
+            <Stack spacing={1.5}>
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} variant="rounded" height={56} animation="wave" />
+              ))}
+            </Stack>
+          )}
+          {!ragDocsLoading && ragDocs.length === 0 && (
+            <Stack alignItems="center" justifyContent="center" sx={{ py: 6 }}>
+              <Iconify icon="solar:folder-open-bold-duotone" width={48} sx={{ color: 'text.disabled', mb: 1 }} />
+              <Typography variant="body2" color="text.secondary">
+                등록된 문서가 없습니다.
+              </Typography>
+            </Stack>
+          )}
+          {!ragDocsLoading && ragDocs.length > 0 && (
+            <Stack spacing={1} sx={{ maxHeight: 320, overflowY: 'auto', pr: 0.5 }}>
+              {ragDocs.map((doc) => {
+                const docId = String(doc.docId);
+                const checked = selectedDocIds.has(docId);
+                return (
+                  <Box
+                    key={docId}
+                    onClick={() => handleToggleMapping(docId, !checked)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && handleToggleMapping(docId, !checked)}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                      px: 2,
+                      py: 1.5,
+                      borderRadius: 1.5,
+                      border: 1,
+                      cursor: 'pointer',
+                      borderColor: checked ? 'primary.main' : 'divider',
+                      bgcolor: checked ? 'primary.lighter' : 'background.neutral',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        borderColor: checked ? 'primary.dark' : 'action.hover',
+                        bgcolor: checked ? 'primary.lighter' : 'action.hover',
+                      },
+                    }}
+                  >
+                    <Checkbox
+                      id={`knowledge-map-${docId}`}
+                      name={`knowledge-map-${docId}`}
+                      checked={checked}
+                      onChange={(e) => handleToggleMapping(docId, e.target.checked)}
+                      onClick={(e) => e.stopPropagation()}
+                      sx={{ p: 0, mr: 0.5 }}
+                    />
+                    <Stack spacing={0.25} sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography variant="subtitle2" noWrap>
+                        {doc.title}
+                      </Typography>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Typography variant="caption" color="text.secondary">
+                          {doc.sourceType}
+                        </Typography>
+                        <Chip
+                          label={getStatusMeta(doc.status ?? '').label}
+                          size="small"
+                          variant="outlined"
+                          color={getStatusMeta(doc.status ?? '').color}
+                          sx={{ height: 20, fontSize: '0.7rem' }}
+                        />
+                      </Stack>
+                    </Stack>
+                  </Box>
+                );
+              })}
+            </Stack>
+          )}
+        </DialogContent>
+        <DialogActions
+          sx={{
+            px: 3,
+            py: 2,
+            gap: 1,
+            borderTop: 1,
+            borderColor: 'divider',
+          }}
+        >
+          <Button variant="outlined" onClick={() => setMappingOpen(false)} disabled={updateMappingMutation.isPending}>
+            취소
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<Iconify icon="solar:diskette-bold" width={18} />}
             onClick={() => updateMappingMutation.mutate(Array.from(selectedDocIds))}
             disabled={updateMappingMutation.isPending || ragDocsLoading}
           >

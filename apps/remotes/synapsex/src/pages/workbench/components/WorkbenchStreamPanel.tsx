@@ -299,7 +299,7 @@ export const WorkbenchStreamPanel = ({
                 )}
                 {!historyLoading &&
                   activities.length > 0 &&
-                  activities.map((a) => {
+                  activities.map((a, idx) => {
                     const time = new Date(a.timestamp).toLocaleTimeString('en-US', {
                       hour: '2-digit',
                       minute: '2-digit',
@@ -311,7 +311,7 @@ export const WorkbenchStreamPanel = ({
                     return (
                       <Box
                         component="span"
-                        key={a.id}
+                        key={`${a.id ?? 'activity'}-${a.timestamp ?? 'no-ts'}-${a.action ?? 'no-action'}-${idx}`}
                         sx={{ display: 'block', color: 'text.secondary' }}
                       >
                         {line}

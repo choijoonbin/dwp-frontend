@@ -4,8 +4,8 @@
 
 import type { SelectChangeEvent } from '@mui/material/Select';
 
-import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMemo, useState, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Label, Iconify } from '@dwp-frontend/design-system';
 import {
@@ -52,20 +52,24 @@ const formatDateInput = (date: Date): string => {
 const toStartOfDayIso = (dateText: string): string => `${dateText}T00:00:00.000Z`;
 const toEndOfDayIso = (dateText: string): string => `${dateText}T23:59:59.999Z`;
 
-const statusMeta: Record<string, { icon: string; color: 'success' | 'warning' | 'error' | 'default' }> = {
-  completed: { icon: 'solar:check-circle-bold', color: 'success' },
-  processing: { icon: 'solar:clock-circle-bold', color: 'warning' },
-  vectorizing: { icon: 'solar:clock-circle-bold', color: 'warning' },
-  failed: { icon: 'solar:danger-triangle-bold', color: 'error' },
-  indexed: { icon: 'solar:check-circle-bold', color: 'success' },
-  indexing: { icon: 'solar:clock-circle-bold', color: 'warning' },
-  error: { icon: 'solar:danger-triangle-bold', color: 'error' },
-  default: { icon: 'solar:info-circle-bold', color: 'default' },
+/** RAG 문서 상태: READY, PROCESSING, COMPLETED, FAILED, PENDING + 레거시 indexed/indexing/error */
+const STATUS_META: Record<string, { icon: string; color: 'success' | 'warning' | 'error' | 'default'; labelKey: string }> = {
+  ready: { icon: 'solar:check-circle-bold', color: 'success', labelKey: 'rag.status.ready' },
+  processing: { icon: 'solar:clock-circle-bold', color: 'warning', labelKey: 'rag.status.processing' },
+  completed: { icon: 'solar:check-circle-bold', color: 'success', labelKey: 'rag.status.completed' },
+  failed: { icon: 'solar:danger-triangle-bold', color: 'error', labelKey: 'rag.status.failed' },
+  pending: { icon: 'solar:clock-circle-bold', color: 'default', labelKey: 'rag.status.pending' },
+  indexed: { icon: 'solar:check-circle-bold', color: 'success', labelKey: 'rag.status.indexed' },
+  indexing: { icon: 'solar:clock-circle-bold', color: 'warning', labelKey: 'rag.status.indexing' },
+  vectorizing: { icon: 'solar:clock-circle-bold', color: 'warning', labelKey: 'rag.status.processing' },
+  error: { icon: 'solar:danger-triangle-bold', color: 'error', labelKey: 'rag.status.error' },
+  default: { icon: 'solar:info-circle-bold', color: 'default', labelKey: 'rag.status.default' },
 };
 
-/** Mock: how often this doc was referenced in recent AI inference. Replace with API when available. */
-const getMockReferenceCount = (docId: string, index: number): number =>
-  (docId.length * 5 + index) % 21;
+const getRagStatusMeta = (status: string | undefined) => {
+  const key = String(status ?? '').toLowerCase().trim() || 'default';
+  return STATUS_META[key] ?? STATUS_META.default;
+};
 
 const toPercentText = (value: number | null): string => {
   if (value == null || !Number.isFinite(value)) return '-';
@@ -118,38 +122,93 @@ export const RagPage = () => {
   const items = useMemo(() => docsData?.items ?? [], [docsData?.items]);
   const totalDocs = docsData?.total ?? 0;
   const indexedCount = items.filter((d) => String(d.status).toUpperCase() === 'COMPLETED').length;
-  const attentionCount = items.filter((d) => String(d.status).toUpperCase() !== 'COMPLETED').length;
+  const ATTENTION_STATUSES = ['PROCESSING', 'VECTORIZING', 'FAILED'];
+  const attentionCount = items.filter((d) =>
+    ATTENTION_STATUSES.includes(String(d.status).toUpperCase())
+  ).length;
   const qualityPassRate = useMemo(() => {
-    const reports = items
-      .map((item) => normalizeQualityReport(item.quality_report ?? item.qualityReport))
-      .filter((report): report is NonNullable<typeof report> => report !== null);
-    if (reports.length === 0) return null;
-    const passCount = reports.filter((report) => report.pass === true).length;
-    return passCount / reports.length;
+    const withPassStatus = items
+      .map((item) => {
+        const qgPass = item.qualityGatePassed ?? item.quality_gate_passed;
+        const report = normalizeQualityReport(item.quality_report ?? item.qualityReport);
+        const pass = qgPass ?? report?.pass;
+        return pass;
+      })
+      .filter((p): p is boolean => typeof p === 'boolean');
+    if (withPassStatus.length === 0) return null;
+    const passCount = withPassStatus.filter((p) => p === true).length;
+    return passCount / withPassStatus.length;
   }, [items]);
   const evalHitAtK = latestEval?.hitAtK ?? null;
   const evalStrictHitTop1 = latestEval?.strictHitTop1 ?? null;
-  const evalNoData = latestEval === null;
+  const isEvalEmpty =
+    !latestEval ||
+    !latestEval.runKey ||
+    (evalHitAtK == null && evalStrictHitTop1 == null);
   const evalPassed = latestEval?.gatePassed === true;
   const evalGateText = latestEvalIsError
-    ? '평가 결과 조회 실패'
-    : evalNoData
-      ? t('rag.metrics.noEvalData')
+    ? t('rag.metrics.evalFetchFailed')
+    : isEvalEmpty
+      ? '평가 데이터 없음'
       : evalPassed
         ? t('rag.metrics.evalPass')
         : t('rag.metrics.evalFail');
   const evalGateLabelColor: 'success' | 'error' | 'default' = latestEvalIsError
     ? 'error'
-    : evalNoData
+    : isEvalEmpty
       ? 'default'
       : evalPassed
         ? 'success'
         : 'error';
-  const auraRagZeroRatio =
-    auraQualityMetrics?.ragZeroRatio ?? auraQualityMetrics?.ragZeroRate ?? auraQualityMetrics?.rag_0_rate ?? null;
-  const auraEvidenceCoverageLowRatio = auraQualityMetrics?.evidenceCoverageLowRatio ?? null;
-  const auraSentenceCitationMissingRatio = auraQualityMetrics?.sentenceCitationMissingRatio ?? null;
-  const auraPolicyReevalAppliedRatio = auraQualityMetrics?.policyReevalAppliedRatio ?? null;
+  const completedAnalysisCount = useMemo(() => {
+    const candidates = [
+      auraQualityMetrics?.completedAnalysisCount,
+      auraQualityMetrics?.completed_analysis_count,
+      auraQualityMetrics?.completedCount,
+      auraQualityMetrics?.completed_count,
+      auraQualityMetrics?.analysisCompletedCount,
+      auraQualityMetrics?.analysis_completed_count,
+      auraQualityMetrics?.totalCount,
+    ];
+    const found = candidates.find((v) => typeof v === 'number' && Number.isFinite(v)) as number | undefined;
+    return found && found > 0 ? found : null;
+  }, [auraQualityMetrics]);
+  const resolveRate = useCallback(
+    (ratioKeys: string[], countKeys: string[]): number | null => {
+      if (!auraQualityMetrics) return null;
+      for (const key of ratioKeys) {
+        const value = (auraQualityMetrics as Record<string, unknown>)[key];
+        if (typeof value === 'number' && Number.isFinite(value)) {
+          return value;
+        }
+      }
+      if (!completedAnalysisCount) return null;
+      for (const key of countKeys) {
+        const count = (auraQualityMetrics as Record<string, unknown>)[key];
+        if (typeof count === 'number' && Number.isFinite(count)) {
+          return count / completedAnalysisCount;
+        }
+      }
+      return null;
+    },
+    [auraQualityMetrics, completedAnalysisCount]
+  );
+  const auraRagZeroRatio = resolveRate(
+    ['ragZeroRatio', 'ragZeroRate', 'rag_0_rate', 'rag_zero_ratio', 'rag_zero_rate'],
+    ['ragZeroCount', 'rag_zero_count']
+  );
+  const auraEvidenceCoverageLowRatio = resolveRate(
+    ['evidenceCoverageLowRatio', 'evidence_coverage_low_ratio'],
+    ['evidenceCoverageLowCount', 'evidence_coverage_low_count']
+  );
+  const auraSentenceCitationMissingRatio = resolveRate(
+    ['sentenceCitationMissingRatio', 'sentence_citation_missing_ratio'],
+    ['sentenceCitationMissingCount', 'sentence_citation_missing_count']
+  );
+  const auraPolicyReevalAppliedRatio = resolveRate(
+    ['policyReevalAppliedRatio', 'policy_reeval_applied_ratio'],
+    ['policyReevalAppliedCount', 'policy_reeval_applied_count']
+  );
 
   const searchGroupedByDoc = useMemo(() => {
     const searchResults = searchData?.items ?? [];
@@ -286,7 +345,7 @@ export const RagPage = () => {
                   {attentionCount}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {t('rag.indexingErrors')}
+                  {t('rag.attentionNeededHint')}
                 </Typography>
               </CardContent>
             </Card>
@@ -319,14 +378,11 @@ export const RagPage = () => {
                   {latestEvalIsError
                     ? latestEvalError instanceof Error
                       ? latestEvalError.message
-                      : '평가 결과 조회 중 오류가 발생했습니다.'
-                    : latestEval?.runKey ?? t('rag.metrics.noEvalRunKey')}
+                      : t('rag.metrics.evalFetchFailed')
+                    : isEvalEmpty
+                      ? '아직 평가 실행 결과가 없습니다.'
+                      : latestEval?.runKey}
                 </Typography>
-                {evalNoData && !latestEvalIsError && (
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.75 }}>
-                    아직 평가 결과가 없습니다.
-                  </Typography>
-                )}
               </CardContent>
             </Card>
           </Grid>
@@ -334,7 +390,7 @@ export const RagPage = () => {
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
                 <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                  평가 품질 (latest eval-run)
+                  {t('rag.metrics.evalQualityTitle')}
                 </Typography>
                 <Stack spacing={0.5}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -342,7 +398,7 @@ export const RagPage = () => {
                       {t('rag.metrics.hitAtK')}
                     </Typography>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                      {toPercentText(evalHitAtK)}
+                      {isEvalEmpty ? t('rag.metrics.evalDataEmpty') : toPercentText(evalHitAtK)}
                     </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -350,12 +406,12 @@ export const RagPage = () => {
                       {t('rag.metrics.strictHitTop1')}
                     </Typography>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                      {toPercentText(evalStrictHitTop1)}
+                      {isEvalEmpty ? t('rag.metrics.evalDataEmpty') : toPercentText(evalStrictHitTop1)}
                     </Typography>
                   </Stack>
                 </Stack>
                 <Typography variant="caption" color="text.secondary">
-                  {t('rag.metrics.fromLatestEvalRun')}
+                  {isEvalEmpty ? t('rag.metrics.evalDataEmptyHintQuality') : t('rag.metrics.fromLatestEvalRun')}
                 </Typography>
               </CardContent>
             </Card>
@@ -374,7 +430,7 @@ export const RagPage = () => {
               <Stack direction="row" spacing={1} alignItems="center">
                 <Iconify icon="solar:chart-square-bold-duotone" width={20} sx={{ color: 'primary.main' }} />
                 <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                  Aura 품질 게이트 KPI
+                  {t('rag.metrics.auraQualityGateKpiTitle')}
                 </Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
@@ -401,9 +457,9 @@ export const RagPage = () => {
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <Card variant="outlined">
-                  <CardContent sx={{ p: 2 }}>
+                  <CardContent sx={{ p: 2.5 }}>
                     <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                      RAG_ZERO 비율
+                      {t('rag.metrics.auraRagZeroRatio')}
                     </Typography>
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
                       {toPercentText(auraRagZeroRatio)}
@@ -413,9 +469,9 @@ export const RagPage = () => {
               </Grid>
               <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <Card variant="outlined">
-                  <CardContent sx={{ p: 2 }}>
+                  <CardContent sx={{ p: 2.5 }}>
                     <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                      EVIDENCE_COVERAGE_LOW 비율
+                      {t('rag.metrics.auraEvidenceCoverageLowRatio')}
                     </Typography>
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
                       {toPercentText(auraEvidenceCoverageLowRatio)}
@@ -425,9 +481,9 @@ export const RagPage = () => {
               </Grid>
               <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <Card variant="outlined">
-                  <CardContent sx={{ p: 2 }}>
+                  <CardContent sx={{ p: 2.5 }}>
                     <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                      SENTENCE_CITATION_MISSING 비율
+                      {t('rag.metrics.auraSentenceCitationMissingRatio')}
                     </Typography>
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
                       {toPercentText(auraSentenceCitationMissingRatio)}
@@ -437,9 +493,9 @@ export const RagPage = () => {
               </Grid>
               <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <Card variant="outlined">
-                  <CardContent sx={{ p: 2 }}>
+                  <CardContent sx={{ p: 2.5 }}>
                     <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                      POLICY_REEVAL_APPLIED 비율
+                      {t('rag.metrics.auraPolicyReevalAppliedRatio')}
                     </Typography>
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
                       {toPercentText(auraPolicyReevalAppliedRatio)}
@@ -620,11 +676,18 @@ export const RagPage = () => {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    items.map((d, idx) => {
-                      const meta = statusMeta[d.status] ?? statusMeta.default;
-                      const referenceCount = getMockReferenceCount(d.docId, idx);
+                    items.map((d) => {
+                      const meta = getRagStatusMeta(d.status);
+                      const referenceCount = d.refCount ?? d.ref_count ?? 0;
                       const report = normalizeQualityReport(d.quality_report ?? d.qualityReport);
-                      const qualityLabel = report ? (report.pass ? t('rag.quality.pass') : t('rag.quality.fail')) : t('rag.table.noQualityReport');
+                      const qualityGatePassRaw = d.qualityGatePassed ?? d.quality_gate_passed;
+                      const qualityPass = qualityGatePassRaw ?? report?.pass;
+                      const qualityLabel =
+                        qualityPass == null
+                          ? t('rag.table.noQualityReport')
+                          : qualityPass
+                            ? t('rag.quality.pass')
+                            : t('rag.quality.fail');
                       return (
                         <TableRow
                           key={d.docId}
@@ -652,16 +715,16 @@ export const RagPage = () => {
                               startIcon={<Iconify icon={meta.icon} width={14} />}
                               sx={{ fontSize: '0.75rem' }}
                             >
-                              {t(`rag.status.${d.status === 'indexed' || d.status === 'indexing' || d.status === 'error' ? d.status : 'default'}`)}
+                              {t(meta.labelKey)}
                             </Label>
                           </TableCell>
                           <TableCell>
                             <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
                               <Chip
                                 size="small"
-                                color={report ? (report.pass ? 'success' : 'error') : 'default'}
+                                color={qualityPass == null ? 'default' : qualityPass ? 'success' : 'error'}
                                 label={qualityLabel}
-                                variant={report ? 'filled' : 'outlined'}
+                                variant={qualityPass == null ? 'outlined' : 'filled'}
                                 sx={{ fontSize: '0.7rem' }}
                               />
                               {report && (

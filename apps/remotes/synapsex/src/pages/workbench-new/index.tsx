@@ -3,7 +3,7 @@ import type { Theme } from '@mui/material/styles';
 import { keyframes } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useStreamStore,
   useCasesListQuery,
@@ -74,22 +74,13 @@ export const WorkbenchNewPage = () => {
   }, [casesListQuery.data]);
   const batchTotalCases = casesListQuery.data?.total ?? casesListQuery.data?.totalElements ?? 0;
 
-  const didAutoSelectRef = useRef(false);
+  /** 테스트 데이터 생성 후: suggestedSelectCaseId(새 케이스)가 있으면 해당 케이스 선택. 일반 진입: 자동 선택 없음(사용자가 직접 선택) */
   useEffect(() => {
     if (suggestedSelectCaseId != null) {
       setSelectedCaseId(suggestedSelectCaseId);
       useWorkbenchReactiveStore.getState().setSuggestedSelectCaseId(null);
-      return;
     }
-    if (selectedCaseId != null || caseListItems.length === 0 || casesListQuery.isLoading || didAutoSelectRef.current) {
-      return;
-    }
-    const top = [...caseListItems].sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0))[0];
-    if (top?.id) {
-      didAutoSelectRef.current = true;
-      setSelectedCaseId(top.id);
-    }
-  }, [caseListItems, selectedCaseId, casesListQuery.isLoading, suggestedSelectCaseId]);
+  }, [suggestedSelectCaseId]);
 
   useEffect(() => {
     useWorkbenchReactiveStore.getState().setThoughtStreamContext(selectedCaseId ?? null, null);
@@ -121,6 +112,11 @@ export const WorkbenchNewPage = () => {
     await requestExplanationMutation.mutateAsync({ caseId: selectedCaseId });
   }, [selectedCaseId, requestExplanationMutation]);
 
+  /** 통합워크벤치 New 타이틀 영역 클릭 시 선택 해제 → 배치 모드 전환 */
+  const handleDeselectCase = useCallback(() => {
+    if (selectedCaseId) setSelectedCaseId(null);
+  }, [selectedCaseId]);
+
   return (
     <Box
       sx={{
@@ -138,7 +134,10 @@ export const WorkbenchNewPage = () => {
         alignItems="center"
         sx={{ px: 1.5, py: 1, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}
       >
-        <Box>
+        <Box
+          onClick={handleDeselectCase}
+          sx={{ cursor: selectedCaseId ? 'pointer' : 'default' }}
+        >
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
             {t('menu.workbench')} New
           </Typography>
@@ -262,6 +261,7 @@ export const WorkbenchNewPage = () => {
             isLoading={detail.isLoading}
             explanationLoading={requestExplanationMutation.isPending}
             onRequestExplanation={handleRequestExplanation}
+            analysisData={analysisQuery.data ?? null}
             getGlassPanelSx={getGlassPanelSx}
             sx={{ flex: 1, minHeight: 0 }}
           />

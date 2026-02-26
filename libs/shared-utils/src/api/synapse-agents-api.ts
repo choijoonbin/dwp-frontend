@@ -278,28 +278,26 @@ export const getAgentKnowledgeCatalog = async (
 
 /**
  * POST /api/synapse/agents/{id}/knowledge/bind — 문서 바인딩
- * Body: { docId: number }
+ * Query: doc_id
  */
 export const bindAgentKnowledge = async (
   agentId: string,
   docId: number
 ): Promise<ApiResponse<unknown>> => {
-  const res = await axiosInstance.post<ApiResponse<unknown>>(
-    `/api/synapse/agents/${encodeURIComponent(agentId)}/knowledge/bind`,
-    { docId }
-  );
+  const url = `/api/synapse/agents/${encodeURIComponent(agentId)}/knowledge/bind?doc_id=${encodeURIComponent(String(docId))}`;
+  const res = await axiosInstance.post<ApiResponse<unknown>>(url, {});
   return res.data;
 };
 
 /**
  * DELETE /api/synapse/agents/{id}/knowledge/unbind — 문서 바인딩 해제
- * Query: docId
+ * Query: doc_id
  */
 export const unbindAgentKnowledge = async (
   agentId: string,
   docId: number
 ): Promise<ApiResponse<unknown>> => {
-  const url = `/api/synapse/agents/${encodeURIComponent(agentId)}/knowledge/unbind?docId=${encodeURIComponent(String(docId))}`;
+  const url = `/api/synapse/agents/${encodeURIComponent(agentId)}/knowledge/unbind?doc_id=${encodeURIComponent(String(docId))}`;
   const res = await axiosInstance.delete<ApiResponse<unknown>>(url);
   return res.data;
 };
