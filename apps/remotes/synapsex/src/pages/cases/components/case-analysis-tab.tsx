@@ -93,7 +93,7 @@ const QUALITY_GATE_META: Record<
   },
   POLICY_REEVAL_APPLIED: {
     label: '정책 재평가 적용',
-    description: '정책 신호 충돌로 보수적 재평가가 적용되었습니다.',
+    description: '판단 근거 상충으로 보수적 재평가가 적용되었습니다.',
     color: 'info',
   },
   RAG_ZERO: {

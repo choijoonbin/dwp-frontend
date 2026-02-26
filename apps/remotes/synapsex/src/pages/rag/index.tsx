@@ -31,7 +31,9 @@ import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
+import Tooltip from '@mui/material/Tooltip';
 import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import TableContainer from '@mui/material/TableContainer';
@@ -76,6 +78,34 @@ const toPercentText = (value: number | null): string => {
   const normalized = value <= 1 ? value * 100 : value;
   return `${normalized.toFixed(1)}%`;
 };
+
+/** KPI 영역 빈값 표기: null/undefined → "데이터 없음" */
+const toPercentOrNoData = (value: number | null, noDataLabel: string): string => {
+  if (value == null || !Number.isFinite(value)) return noDataLabel;
+  const normalized = value <= 1 ? value * 100 : value;
+  return `${normalized.toFixed(1)}%`;
+};
+
+const KpiCardTitle = ({
+  label,
+  tooltipKey,
+  t,
+}: {
+  label: string;
+  tooltipKey: string;
+  t: (key: string) => string;
+}) => (
+  <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 1 }}>
+    <Typography variant="caption" sx={{ fontWeight: 600 }}>
+      {label}
+    </Typography>
+    <Tooltip title={t(tooltipKey)} arrow placement="top">
+      <IconButton size="small" sx={{ p: 0.25, color: 'text.secondary' }} aria-label="계산 기준">
+        <Iconify icon="solar:info-circle-bold" width={16} />
+      </IconButton>
+    </Tooltip>
+  </Stack>
+);
 
 // ----------------------------------------------------------------------
 
@@ -308,9 +338,7 @@ export const RagPage = () => {
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                  {t('rag.documents')}
-                </Typography>
+                <KpiCardTitle label={t('rag.documents')} tooltipKey="rag.metrics.tooltip.documents" t={t} />
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {totalDocs}
                 </Typography>
@@ -323,9 +351,7 @@ export const RagPage = () => {
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                  {t('rag.indexed')}
-                </Typography>
+                <KpiCardTitle label={t('rag.indexed')} tooltipKey="rag.metrics.tooltip.indexed" t={t} />
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {indexedCount}
                 </Typography>
@@ -338,9 +364,7 @@ export const RagPage = () => {
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                  {t('rag.attentionNeeded')}
-                </Typography>
+                <KpiCardTitle label={t('rag.attentionNeeded')} tooltipKey="rag.metrics.tooltip.attentionNeeded" t={t} />
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {attentionCount}
                 </Typography>
@@ -353,11 +377,9 @@ export const RagPage = () => {
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                  {t('rag.metrics.chunkPassRate')}
-                </Typography>
+                <KpiCardTitle label={t('rag.metrics.chunkPassRate')} tooltipKey="rag.metrics.tooltip.chunkPassRate" t={t} />
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                  {toPercentText(qualityPassRate)}
+                  {toPercentOrNoData(qualityPassRate, t('rag.metrics.noData'))}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                   {t('rag.metrics.fromQualityReport')}
@@ -368,9 +390,7 @@ export const RagPage = () => {
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                  {t('rag.metrics.evalGate')}
-                </Typography>
+                <KpiCardTitle label={t('rag.metrics.evalGate')} tooltipKey="rag.metrics.tooltip.evalGate" t={t} />
                 <Label color={evalGateLabelColor} variant="soft" sx={{ fontSize: '0.85rem', fontWeight: 700 }}>
                   {evalGateText}
                 </Label>
@@ -380,7 +400,7 @@ export const RagPage = () => {
                       ? latestEvalError.message
                       : t('rag.metrics.evalFetchFailed')
                     : isEvalEmpty
-                      ? '아직 평가 실행 결과가 없습니다.'
+                      ? t('rag.metrics.evalDataEmptyHint')
                       : latestEval?.runKey}
                 </Typography>
               </CardContent>
@@ -389,16 +409,14 @@ export const RagPage = () => {
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card variant="outlined">
               <CardContent sx={{ p: 2.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                  {t('rag.metrics.evalQualityTitle')}
-                </Typography>
+                <KpiCardTitle label={t('rag.metrics.evalQualityTitle')} tooltipKey="rag.metrics.tooltip.evalQuality" t={t} />
                 <Stack spacing={0.5}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="body2" color="text.secondary">
                       {t('rag.metrics.hitAtK')}
                     </Typography>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                      {isEvalEmpty ? t('rag.metrics.evalDataEmpty') : toPercentText(evalHitAtK)}
+                      {isEvalEmpty ? t('rag.metrics.evalDataEmpty') : toPercentOrNoData(evalHitAtK, t('rag.metrics.noData'))}
                     </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -406,7 +424,7 @@ export const RagPage = () => {
                       {t('rag.metrics.strictHitTop1')}
                     </Typography>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                      {isEvalEmpty ? t('rag.metrics.evalDataEmpty') : toPercentText(evalStrictHitTop1)}
+                      {isEvalEmpty ? t('rag.metrics.evalDataEmpty') : toPercentOrNoData(evalStrictHitTop1, t('rag.metrics.noData'))}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -458,11 +476,9 @@ export const RagPage = () => {
               <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <Card variant="outlined">
                   <CardContent sx={{ p: 2.5 }}>
-                    <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                      {t('rag.metrics.auraRagZeroRatio')}
-                    </Typography>
+                    <KpiCardTitle label={t('rag.metrics.auraRagZeroRatio')} tooltipKey="rag.metrics.tooltip.auraRagZeroRatio" t={t} />
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                      {toPercentText(auraRagZeroRatio)}
+                      {toPercentOrNoData(auraRagZeroRatio, t('rag.metrics.noData'))}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -470,11 +486,9 @@ export const RagPage = () => {
               <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <Card variant="outlined">
                   <CardContent sx={{ p: 2.5 }}>
-                    <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                      {t('rag.metrics.auraEvidenceCoverageLowRatio')}
-                    </Typography>
+                    <KpiCardTitle label={t('rag.metrics.auraEvidenceCoverageLowRatio')} tooltipKey="rag.metrics.tooltip.auraEvidenceCoverageLowRatio" t={t} />
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                      {toPercentText(auraEvidenceCoverageLowRatio)}
+                      {toPercentOrNoData(auraEvidenceCoverageLowRatio, t('rag.metrics.noData'))}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -482,11 +496,9 @@ export const RagPage = () => {
               <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <Card variant="outlined">
                   <CardContent sx={{ p: 2.5 }}>
-                    <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                      {t('rag.metrics.auraSentenceCitationMissingRatio')}
-                    </Typography>
+                    <KpiCardTitle label={t('rag.metrics.auraSentenceCitationMissingRatio')} tooltipKey="rag.metrics.tooltip.auraSentenceCitationMissingRatio" t={t} />
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                      {toPercentText(auraSentenceCitationMissingRatio)}
+                      {toPercentOrNoData(auraSentenceCitationMissingRatio, t('rag.metrics.noData'))}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -494,11 +506,9 @@ export const RagPage = () => {
               <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <Card variant="outlined">
                   <CardContent sx={{ p: 2.5 }}>
-                    <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-                      {t('rag.metrics.auraPolicyReevalAppliedRatio')}
-                    </Typography>
+                    <KpiCardTitle label={t('rag.metrics.auraPolicyReevalAppliedRatio')} tooltipKey="rag.metrics.tooltip.auraPolicyReevalAppliedRatio" t={t} />
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                      {toPercentText(auraPolicyReevalAppliedRatio)}
+                      {toPercentOrNoData(auraPolicyReevalAppliedRatio, t('rag.metrics.noData'))}
                     </Typography>
                   </CardContent>
                 </Card>

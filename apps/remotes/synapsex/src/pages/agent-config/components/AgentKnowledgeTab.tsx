@@ -8,7 +8,7 @@ import type { CatalogCodeItemDto, AgentKnowledgeItemDto } from '@dwp-frontend/sh
 
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
-import { ConfirmDialog, Iconify, Label } from '@dwp-frontend/design-system';
+import { Label, Iconify, ConfirmDialog } from '@dwp-frontend/design-system';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   showToast,
@@ -26,6 +26,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Switch from '@mui/material/Switch';
 import Checkbox from '@mui/material/Checkbox';
+import Skeleton from '@mui/material/Skeleton';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
@@ -33,7 +34,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Skeleton from '@mui/material/Skeleton';
 
 const KNOWLEDGE_QUERY_KEY = (agentId: string) => ['synapse', 'agents', 'knowledge', agentId];
 const AGENT_DETAIL_QUERY_KEY = (id: string) => ['synapse', 'agents', 'detail', id];

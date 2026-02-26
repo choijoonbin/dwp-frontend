@@ -9,6 +9,7 @@ import { getMe, useAuth, useStreamStore } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
+import Tooltip from '@mui/material/Tooltip';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
@@ -16,6 +17,7 @@ import Tabs from '@mui/material/Tabs';
 import Alert from '@mui/material/Alert';
 import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import TableRow from '@mui/material/TableRow';
@@ -104,11 +106,11 @@ const QUALITY_GATE_META: Record<
     description: '핵심 문장에 citation 연결이 부족합니다.',
     color: 'warning',
   },
-  POLICY_CONFLICT: { label: '정책 신호 충돌', description: '정책 신호 충돌이 감지되었습니다.', color: 'info' },
-  POLICY_CONFLICT_DETECTED: { label: '정책 신호 충돌', description: '정책 신호 충돌이 감지되었습니다.', color: 'info' },
+  POLICY_CONFLICT: { label: '판단 근거 상충', description: '판단 근거 상충이 감지되었습니다.', color: 'info' },
+  POLICY_CONFLICT_DETECTED: { label: '판단 근거 상충', description: '판단 근거 상충이 감지되었습니다.', color: 'info' },
   POLICY_REEVAL_APPLIED: {
     label: '정책 재검토 적용',
-    description: '정책 신호 충돌로 보수적 재평가가 적용되었습니다.',
+    description: '판단 근거 상충으로 보수적 재평가가 적용되었습니다.',
     color: 'info',
   },
   INPUT_PARTIAL: { label: '입력 데이터 일부 누락', description: '입력 데이터가 부분 누락되었습니다.', color: 'warning' },
@@ -556,20 +558,37 @@ export function WorkbenchNewCasePanel({
                     })}
                   </Stack>
                   <Grid container spacing={1} sx={{ mt: 1.5 }}>
-                    {trustKpis.map((kpi) => (
-                      <Grid key={kpi.key} size={{ xs: 12, sm: 6, md: 3 }}>
-                        <Card variant="outlined" sx={{ height: '100%' }}>
-                          <CardContent sx={{ p: 1.25 }}>
-                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                              {kpi.label}
-                            </Typography>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 700, mt: 0.25 }}>
-                              {kpi.value == null || !Number.isFinite(kpi.value) ? '-' : `${kpi.value.toFixed(1)}%`}
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                    ))}
+                    {trustKpis.map((kpi) => {
+                      const tooltipKeyMap: Record<string, string> = {
+                        rag_zero: 'workbench.metricsTooltip.ragZero',
+                        coverage_low: 'workbench.metricsTooltip.evidenceCoverageLow',
+                        sentence_missing: 'workbench.metricsTooltip.sentenceCitationMissing',
+                        policy_reeval: 'workbench.metricsTooltip.policyReevalApplied',
+                      };
+                      return (
+                        <Grid key={kpi.key} size={{ xs: 12, sm: 6, md: 3 }}>
+                          <Card variant="outlined" sx={{ height: '100%' }}>
+                            <CardContent sx={{ p: 1.25 }}>
+                              <Stack direction="row" alignItems="center" spacing={0.25}>
+                                <Typography variant="caption" color="text.secondary">
+                                  {kpi.label}
+                                </Typography>
+                                <Tooltip title={t(tooltipKeyMap[kpi.key] ?? '')} arrow placement="top">
+                                  <IconButton size="small" sx={{ p: 0.25, color: 'text.secondary' }} aria-label="계산 기준">
+                                    <Iconify icon="solar:info-circle-bold" width={14} />
+                                  </IconButton>
+                                </Tooltip>
+                              </Stack>
+                              <Typography variant="subtitle1" sx={{ fontWeight: 700, mt: 0.25 }}>
+                                {kpi.value == null || !Number.isFinite(kpi.value)
+                                  ? t('workbench.noData')
+                                  : `${kpi.value.toFixed(1)}%`}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      );
+                    })}
                   </Grid>
                   {isHoldState && (
                     <Alert severity="warning" sx={{ mt: 1.25 }}>
@@ -595,14 +614,28 @@ export function WorkbenchNewCasePanel({
                 />
                 <CardContent sx={{ px: 2, pt: 0, pb: 1.5 }}>
                   <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} useFlexGap>
-                    <Chip size="small" variant="outlined" label={`정책점수 ${Number.isFinite(policyScore) ? policyScore : '-'}`} />
-                    <Chip size="small" variant="outlined" label={`근거점수 ${Number.isFinite(evidenceScore) ? evidenceScore : '-'}`} />
-                    <Chip
-                      size="small"
-                      color={Number.isFinite(finalScore) && finalScore >= 70 ? 'error' : 'default'}
-                      variant="outlined"
-                      label={`최종점수 ${Number.isFinite(finalScore) ? finalScore : '-'}`}
-                    />
+                    <Tooltip title={t('workbench.metricsTooltip.policyScore')} arrow>
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={`정책점수 ${Number.isFinite(policyScore) ? policyScore : t('workbench.noData')}`}
+                      />
+                    </Tooltip>
+                    <Tooltip title={t('workbench.metricsTooltip.evidenceScore')} arrow>
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={`근거점수 ${Number.isFinite(evidenceScore) ? evidenceScore : t('workbench.noData')}`}
+                      />
+                    </Tooltip>
+                    <Tooltip title={t('workbench.metricsTooltip.finalScore')} arrow>
+                      <Chip
+                        size="small"
+                        color={Number.isFinite(finalScore) && finalScore >= 70 ? 'error' : 'default'}
+                        variant="outlined"
+                        label={`최종점수 ${Number.isFinite(finalScore) ? finalScore : t('workbench.noData')}`}
+                      />
+                    </Tooltip>
                   </Stack>
                   {(holdReason || isHoldState) && (
                     <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>

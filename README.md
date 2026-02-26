@@ -22,8 +22,8 @@ Nx Monorepo 구조를 기반으로 구축된 DWP 프론트엔드 워크스페이
 - **UI**: MUI v5 기반 (design-system)
 - **Icons**: `@iconify/react` (Iconify 표준 아이콘 시스템)
 - **State Management**: 
-  - **Global/Layout**: `Zustand` (Sidebar, Auth 상태 통합 관리)
-  - **Server Data**: `TanStack Query` (사용 준비 완료)
+- **Global/Layout**: `Zustand` (Sidebar, Auth 상태 통합 관리)
+- **Server Data**: `TanStack Query` (사용 준비 완료)
 - **Build/Dev**: Vite
 - **Monorepo**: Nx (apps/libs 구조 및 Path Aliases 적용)
 
@@ -34,8 +34,8 @@ Nx Monorepo 구조를 기반으로 구축된 DWP 프론트엔드 워크스페이
 - **Host 앱 (`apps/dwp`)**: 메인 쉘(Shell). 전체 레이아웃 소유, 인증 관리, 글로벌 네비게이션 제공.
 - **Remote 앱들 (`apps/remotes/*`)**: 독립적인 비즈니스 모듈 (예: `mail`, `admin`, `chat`, `approval`).
 - **공통 라이브러리**
-  - `libs/design-system`: 공통 테마(ThemeProvider), 전역 스타일, 재사용 컴포넌트, 공유 훅.
-  - `libs/shared-utils`: API 클라이언트(axiosInstance), 인증 처리(Auth), 공통 타입 및 유틸.
+- `libs/design-system`: 공통 테마(ThemeProvider), 전역 스타일, 재사용 컴포넌트, 공유 훅.
+- `libs/shared-utils`: API 클라이언트(axiosInstance), 인증 처리(Auth), 공통 타입 및 유틸.
 
 ## 📁 프로젝트 구조
 

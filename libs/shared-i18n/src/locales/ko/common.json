@@ -653,6 +653,16 @@
     "historyEmpty": "조치 이력이 없습니다.",
     "historyComment": "조치 사유",
     "itemDetailEmpty": "라인 항목이 없습니다.",
+    "noData": "데이터 없음",
+    "metricsTooltip": {
+      "ragZero": "분자: ragZeroRate / 분모: 100 | 규정 검색 실패 건수 비율",
+      "evidenceCoverageLow": "분자: evidenceCoverageLowRate / 분모: 100 | 근거 부족 건수 비율",
+      "sentenceCitationMissing": "분자: sentenceCitationMissingRate / 분모: 100 | 문장 근거 미연결 건수 비율",
+      "policyReevalApplied": "분자: policyReevalAppliedRate / 분모: 100 | 정책 재검토 적용 건수 비율",
+      "policyScore": "analysisScoreBreakdown.policyScore | 정책 기반 점수",
+      "evidenceScore": "analysisScoreBreakdown.evidenceScore | 근거 기반 점수",
+      "finalScore": "analysisScoreBreakdown.finalScore | 최종 리스크 점수"
+    },
     "itemDetail": {
       "buzei": "라인",
       "account": "계정",
@@ -1212,7 +1222,20 @@
       "auraEvidenceCoverageLowRatio": "근거 부족률",
       "auraSentenceCitationMissingRatio": "문장 근거 미연결률",
       "auraPolicyReevalAppliedRatio": "정책 재검토 적용률",
-      "auraQualityGateKpiTitle": "AI 분석 신뢰도 지표"
+      "auraQualityGateKpiTitle": "AI 분석 신뢰도 지표",
+      "noData": "데이터 없음",
+      "tooltip": {
+        "documents": "분자: - / 분모: - | GET /api/synapse/rag/documents → total (등록된 전체 문서 수)",
+        "indexed": "분자: status=COMPLETED 개수 / 분모: items.length | 인덱싱 완료된 문서 수",
+        "attentionNeeded": "분자: status ∈ (PROCESSING, VECTORIZING, FAILED) 개수 / 분모: items.length | 보완 권장 대상",
+        "chunkPassRate": "분자: qualityGatePassed 또는 quality_report.pass=true 개수 / 분모: 품질 데이터 있는 문서 수 | 청킹 품질 통과율",
+        "evalGate": "GET /api/synapse/rag/eval-runs/latest → gatePassed, runKey",
+        "evalQuality": "분자: hitAtK, strictHitTop1 / 분모: totalCases | latest eval-run 기준",
+        "auraRagZeroRatio": "분자: ragZeroCount / 분모: totalCount | 규정 검색 실패 건수 비율",
+        "auraEvidenceCoverageLowRatio": "분자: evidenceCoverageLowCount / 분모: totalCount | 근거 부족 건수 비율",
+        "auraSentenceCitationMissingRatio": "분자: sentenceCitationMissingCount / 분모: totalCount | 문장 근거 미연결 건수 비율",
+        "auraPolicyReevalAppliedRatio": "분자: policyReevalAppliedCount / 분모: totalCount | 정책 재검토 적용 건수 비율"
+      }
     },
     "quality": {
       "title": "품질 리포트",

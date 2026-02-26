@@ -653,6 +653,16 @@
     "historyEmpty": "No action history yet.",
     "historyComment": "Comment",
     "itemDetailEmpty": "No line items.",
+    "noData": "No data",
+    "metricsTooltip": {
+      "ragZero": "Numerator: ragZeroRate / Denominator: 100",
+      "evidenceCoverageLow": "Numerator: evidenceCoverageLowRate / Denominator: 100",
+      "sentenceCitationMissing": "Numerator: sentenceCitationMissingRate / Denominator: 100",
+      "policyReevalApplied": "Numerator: policyReevalAppliedRate / Denominator: 100",
+      "policyScore": "analysisScoreBreakdown.policyScore",
+      "evidenceScore": "analysisScoreBreakdown.evidenceScore",
+      "finalScore": "analysisScoreBreakdown.finalScore"
+    },
     "itemDetail": {
       "buzei": "Line",
       "account": "Account",
@@ -1212,7 +1222,20 @@
       "auraEvidenceCoverageLowRatio": "Evidence insufficiency rate",
       "auraSentenceCitationMissingRatio": "Sentence citation missing rate",
       "auraPolicyReevalAppliedRatio": "Policy re-evaluation applied rate",
-      "auraQualityGateKpiTitle": "AI analysis reliability metrics"
+      "auraQualityGateKpiTitle": "AI analysis reliability metrics",
+      "noData": "No data",
+      "tooltip": {
+        "documents": "Numerator: - / Denominator: - | GET /api/synapse/rag/documents → total",
+        "indexed": "Numerator: status=COMPLETED count / Denominator: items.length",
+        "attentionNeeded": "Numerator: status ∈ (PROCESSING, VECTORIZING, FAILED) count / Denominator: items.length",
+        "chunkPassRate": "Numerator: qualityGatePassed or quality_report.pass=true count / Denominator: docs with quality data",
+        "evalGate": "GET /api/synapse/rag/eval-runs/latest → gatePassed, runKey",
+        "evalQuality": "Numerator: hitAtK, strictHitTop1 / Denominator: totalCases",
+        "auraRagZeroRatio": "Numerator: ragZeroCount / Denominator: totalCount",
+        "auraEvidenceCoverageLowRatio": "Numerator: evidenceCoverageLowCount / Denominator: totalCount",
+        "auraSentenceCitationMissingRatio": "Numerator: sentenceCitationMissingCount / Denominator: totalCount",
+        "auraPolicyReevalAppliedRatio": "Numerator: policyReevalAppliedCount / Denominator: totalCount"
+      }
     },
     "quality": {
       "title": "Quality report",
