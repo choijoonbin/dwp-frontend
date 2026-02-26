@@ -132,7 +132,16 @@ export const WorkbenchQueuePanel = ({
       }}
     >
       <PanelHeader title={t('workbench.queueTitle')}>
-        <Stack direction="row" spacing={0.75} useFlexGap sx={{ flexShrink: 0 }}>
+        <Box
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            '&::-webkit-scrollbar': { height: 6 },
+          }}
+        >
+          <Stack direction="row" spacing={0.75} useFlexGap sx={{ width: 'max-content', pr: 0.5 }}>
           <Chip
             size="small"
             label={t('workbench.filterAll')}
@@ -194,7 +203,8 @@ export const WorkbenchQueuePanel = ({
               </Box>
             );
           })}
-        </Stack>
+          </Stack>
+        </Box>
       </PanelHeader>
 
       <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>

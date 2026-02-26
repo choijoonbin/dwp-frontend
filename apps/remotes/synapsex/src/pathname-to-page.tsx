@@ -36,6 +36,7 @@ import { DemoControlPage } from './pages/demo-control';
 import { SynapseAdminPage } from './pages/admin-legacy';
 import { IntegrationsPage } from './pages/integrations';
 import { OptimizationPage } from './pages/optimization';
+import { WorkbenchNewPage } from './pages/workbench-new';
 import { EntityDetailPage } from './pages/entity-detail';
 import { ReconciliationPage } from './pages/reconciliation';
 import { DocumentDetailPage } from './pages/document-detail';
@@ -53,9 +54,11 @@ import { ReconRunDetailPage } from './pages/reconciliation/recon-run-detail';
 // ----------------------------------------------------------------------
 
 const PATH_TO_PAGE: Record<string, () => ReactNode> = {
-  // 통합 워크벤치 (메인: /synapse/workbench만 사용, command-center는 위에서 redirect)
-  workbench: () => <WorkbenchPage />,
-  synapse: () => <WorkbenchPage />,
+  // 통합 워크벤치 New를 기본으로 사용. 기존 화면은 /synapse/workbench-legacy로 비교 가능.
+  workbench: () => <WorkbenchNewPage />,
+  workbenchnew: () => <WorkbenchNewPage />,
+  'workbench-legacy': () => <WorkbenchPage />,
+  synapse: () => <WorkbenchNewPage />,
   'my-audit/expenses': () => <MyAuditExpensesPage />,
   'my-audit/clarification': () => <MyAuditClarificationPage />,
   'my-audit': () => <MyAuditExpensesPage />,
@@ -119,7 +122,7 @@ function wrapWithRouteGuard(page: ReactNode, pathKey: string): ReactNode {
 /** pathname(예: /synapse/workbench, /cases) → 해당 Synapse 페이지 컴포넌트 */
 export const getPageForPathname = (pathname: string): ReactNode => {
   const normalized = pathname.replace(/^\//, '').trim();
-  if (!normalized) return wrapWithRouteGuard(<WorkbenchPage />, 'workbench');
+  if (!normalized) return wrapWithRouteGuard(<WorkbenchNewPage />, 'workbench');
 
   // 0) 레거시 /command-center → /synapse/workbench 즉시 리다이렉트 (최종 경로 고정)
   if (normalized === 'synapse/command-center' || normalized === 'command-center') {
@@ -175,5 +178,5 @@ export const getPageForPathname = (pathname: string): ReactNode => {
   const firstPage = PATH_TO_PAGE[first];
   if (firstPage) return wrapWithRouteGuard(firstPage(), first);
 
-  return wrapWithRouteGuard(<WorkbenchPage />, 'workbench');
+  return wrapWithRouteGuard(<WorkbenchNewPage />, 'workbench');
 };

@@ -609,9 +609,13 @@
   "workbench": {
     "queueTitle": "케이스 큐",
     "filterAll": "전체",
+    "filterMore": "더보기",
     "filterOpen": "미조치",
     "filterInProgress": "진행중",
+    "queueFilterStatus": "상태",
+    "queueFilterSeverity": "심각도",
     "queueHint": "케이스를 선택하면 추론 및 스트림을 볼 수 있습니다.",
+    "noMatchingCases": "선택한 조건과 일치하는 케이스가 없습니다.",
     "analyzingLabel": "분석 중 (Analyzing...)",
     "openCases": "케이스 목록 열기",
     "detailTitle": "추론 및 근거",
@@ -862,9 +866,12 @@
   "statusLabels": {
     "open": "오픈",
     "in_progress": "진행 중",
+    "analyzing": "분석 중",
     "new": "신규",
+    "pending_explanation": "소명 필요",
     "pending_approval": "승인 대기",
     "resolved": "해결됨",
+    "ignored": "제외됨",
     "approved": "승인됨",
     "dismissed": "기각됨",
     "rejected": "거절됨",
@@ -1131,8 +1138,10 @@
       "document": "문서",
       "source": "소스",
       "status": "상태",
+      "quality": "품질",
       "referenceCount": "참조 횟수",
-      "created": "생성일"
+      "created": "생성일",
+      "noQualityReport": "리포트 없음"
     },
     "referenceCountBadge": "참조 {{count}}회",
     "status": {
@@ -1156,7 +1165,130 @@
       "notFound": "문서를 찾을 수 없습니다",
       "notFoundHint": "삭제되었거나 문서 ID가 올바르지 않을 수 있습니다.",
       "missingDocId": "문서 ID가 없습니다. 목록에서 문서를 선택해 주세요.",
-      "backToLibrary": "문서 라이브러리로"
+      "backToLibrary": "문서 라이브러리로",
+      "version": "버전",
+      "effectivePeriod": "효력일",
+      "activeVersion": "활성 버전",
+      "inactiveVersion": "비활성 버전",
+      "activateVersionLabel": "활성 전환 버전",
+      "activateVersion": "버전 활성 전환",
+      "activatingVersion": "전환 중...",
+      "activateSuccess": "버전이 활성화되었습니다.",
+      "activateFailed": "버전 활성화에 실패했습니다.",
+      "replaceChunksTitle": "활성 청크 교체",
+      "replaceChunksHint": "POST /api/synapse/rag/documents/{docId}/chunks/replace payload를 JSON으로 입력하세요.",
+      "replaceChunks": "청크 교체 실행",
+      "replacingChunks": "교체 중...",
+      "replaceChunksSuccess": "청크 교체가 완료되었습니다.",
+      "replaceChunksFailed": "청크 교체에 실패했습니다."
+    },
+    "metrics": {
+      "chunkPassRate": "청킹 합격률",
+      "evalGate": "평가 게이트",
+      "evalPass": "통과",
+      "evalFail": "실패",
+      "noEvalData": "데이터 없음",
+      "noEvalRunKey": "runKey 없음",
+      "ragZeroRate": "RAG 0건률",
+      "hitAtK": "hit@k",
+      "strictHitTop1": "strict hit@1",
+      "defaultInflowRate": "DEFAULT 유입률",
+      "citationErrorRate": "인용 오류율",
+      "fromQualityReport": "quality_report 기준",
+      "fromLatestEvalRun": "latest eval-run 기준",
+      "pendingBackendMetric": "백엔드 지표 연동 대기"
+    },
+    "quality": {
+      "title": "품질 리포트",
+      "detailTitle": "문서 품질 리포트",
+      "rechunkResultTitle": "재청킹 결과 품질 리포트",
+      "pass": "PASS",
+      "fail": "FAIL",
+      "bannerPass": "품질게이트 통과. 저장 완료.",
+      "bannerFail": "품질게이트 실패로 저장되지 않았습니다.",
+      "articleCoverage": "조문 커버리지",
+      "noiseRate": "노이즈 비율",
+      "duplicateRate": "중복 비율",
+      "shortChunkRate": "짧은 청크 비율",
+      "chunkSummary": "최종/입력 청크",
+      "failReasons": "실패 원인",
+      "failed422": "품질 게이트 실패",
+      "reason": {
+        "missingRequired": "필수 메타 누락",
+        "noiseOrDuplicate": "노이즈/중복 비율 기준 초과",
+        "validationFailed": "품질 검증 실패"
+      },
+      "errorMap": {
+        "MISSING_REQUIRED_METADATA": {
+          "title": "필수 메타데이터가 누락되었습니다",
+          "description": "문서 인용에 필요한 필드(doc_id/tenant_id/location/조항)가 일부 비어 있어 저장할 수 없습니다.",
+          "actions": [
+            "문서 타입(doc_type)을 확인하세요",
+            "원본 문서의 조항/본문 구조를 점검하세요",
+            "수정 후 재청킹을 다시 시도하세요"
+          ]
+        },
+        "ARTICLE_COVERAGE_LOW": {
+          "title": "조항 인식률이 기준보다 낮습니다",
+          "description": "규정형 문서에서 조항 매핑 비율이 기준치보다 낮아 품질게이트를 통과하지 못했습니다.",
+          "actions": [
+            "계층형(HIERARCHICAL) 타입 사용을 권장합니다",
+            "원문 조항 표기(제n조) 형식을 확인하세요",
+            "전처리 후 재업로드/재청킹을 수행하세요"
+          ]
+        },
+        "NOISE_RATE_HIGH": {
+          "title": "문서 노이즈가 과도합니다",
+          "description": "정제 후에도 비정상 문자열이 많이 남아 정확한 검색 근거를 만들기 어렵습니다.",
+          "actions": [
+            "원문 파일명/헤더를 정리하세요",
+            "OCR/텍스트 추출 품질을 확인하세요",
+            "재청킹을 다시 시도하세요"
+          ]
+        },
+        "DUPLICATE_RATE_HIGH": {
+          "title": "중복 청크가 기준치를 초과했습니다",
+          "description": "유사한 내용이 과도하게 반복되어 검색 정확도를 저하시킬 수 있습니다.",
+          "actions": [
+            "문서 내 반복 섹션을 정리하세요",
+            "동일 문서 중복 업로드 여부를 확인하세요",
+            "재청킹을 다시 시도하세요"
+          ]
+        },
+        "SHORT_CHUNK_RATE_HIGH": {
+          "title": "정보량이 부족한 청크가 많습니다",
+          "description": "제목만 있는 짧은 청크 비율이 높아 근거 인용 품질이 떨어집니다.",
+          "actions": [
+            "본문 포함 원문 업로드 여부를 확인하세요",
+            "장/조 제목만 있는 문서 구조를 개선하세요",
+            "재청킹을 다시 시도하세요"
+          ]
+        },
+        "NO_VALID_CHUNKS_AFTER_QUALITY_GATE": {
+          "title": "유효한 청크를 생성하지 못했습니다",
+          "description": "정제/검증 후 남은 청크가 없어 저장을 중단했습니다.",
+          "actions": [
+            "문서 인코딩/텍스트 추출 결과를 점검하세요",
+            "PDF 스캔본이면 OCR 적용 후 다시 시도하세요",
+            "문서 타입을 변경해 재청킹을 시도하세요"
+          ]
+        },
+        "UNKNOWN": {
+          "title": "품질 검증 실패",
+          "description": "품질게이트 검증 중 오류가 발생했습니다.",
+          "actions": [
+            "문서 구조를 점검하세요",
+            "잠시 후 재시도하세요",
+            "반복되면 운영자에게 문의하세요"
+          ]
+        }
+      },
+      "debug": {
+        "show": "디버그 보기",
+        "hide": "디버그 숨기기",
+        "errorCodes": "원본 에러 코드",
+        "rawReport": "원본 quality_report"
+      }
     },
     "registerModal": {
       "hint": "RAG 인덱싱을 위해 문서를 등록합니다. 문서는 시맨틱 검색을 위해 처리되고 청크로 분할됩니다.",
@@ -1818,6 +1950,7 @@
       "amount": "금액",
       "evidenceStatus": "증빙상태",
       "auraResult": "Aura 스크리닝 결과",
+      "postingDate": "전표발생일자",
       "inboxEmpty": "소명 대기 전표가 없습니다.",
       "empty": "표시할 전표가 없습니다."
     },

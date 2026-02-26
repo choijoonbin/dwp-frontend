@@ -45,7 +45,19 @@ export function WorkspacesPopover({ data = [], sx, ...other }: WorkspacesPopover
   );
 
   const renderAvatar = (alt: string, src: string) => (
-    <Box component="img" alt={alt} src={src} sx={{ width: 24, height: 24, borderRadius: '50%' }} />
+    <Box
+      component="img"
+      alt={alt}
+      src={src}
+      sx={{
+        width: 24,
+        height: 24,
+        p: 0.25,
+        borderRadius: '50%',
+        objectFit: 'contain',
+        bgcolor: 'background.paper',
+      }}
+    />
   );
 
   const renderLabel = (plan: string) => (

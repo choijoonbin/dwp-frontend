@@ -139,6 +139,7 @@ export const CaseDetailCenterPanel = ({
             onStartAnalysis={onStartAnalysis}
             onRetry={onRetryStream}
             onCancel={onCancel}
+            onOpenAnalysisTab={() => onCenterTabChange('analysis')}
           />
         )}
 

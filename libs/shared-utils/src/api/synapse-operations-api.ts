@@ -547,6 +547,47 @@ export type CaseAnalysisDto = {
   keyFactors?: Array<{ label?: string; type?: string; description?: string }>;
   anomalyType?: string;
   severity?: string;
+  /** 문장별 근거 연결 맵 (Aura) */
+  sentenceCitationMap?: Array<{
+    sentence_index?: number;
+    sentence?: string;
+    citation_ids?: string[];
+    chunk_id?: string;
+    target_buzei?: string | number;
+    grounded?: boolean;
+    [key: string]: unknown;
+  }>;
+  sentence_citation_map?: Array<{
+    sentence_index?: number;
+    sentence?: string;
+    citation_ids?: string[];
+    chunk_id?: string;
+    target_buzei?: string | number;
+    grounded?: boolean;
+    [key: string]: unknown;
+  }>;
+  /** 품질 게이트 코드 */
+  qualityGateCodes?: string[];
+  quality_gate_codes?: string[];
+  /** 분석 점수 분해(디버그) */
+  analysisScoreBreakdown?: Record<string, unknown>;
+  analysis_score_breakdown?: Record<string, unknown>;
+  /** 근거 인용 목록 */
+  citations?: Array<{
+    citation_id?: string;
+    chunk_id?: string;
+    target_buzei?: string | number;
+    sourceKey?: string;
+    source_key?: string;
+    excerpt?: string;
+    title?: string;
+    [key: string]: unknown;
+  }>;
+  /** 문장별 근거 존재 여부(서버 계산) */
+  grounded?: boolean;
+  /** 최종 판단 사유 블록(일부 BE는 하위로 제공) */
+  decisionReason?: Record<string, unknown>;
+  decision_reason?: Record<string, unknown>;
   /** Phase2: evidence items { key: string } */
   evidence?: CaseAnalysisEvidenceDto[];
   /** Phase3: RAG citations (policy/regulation refs) */

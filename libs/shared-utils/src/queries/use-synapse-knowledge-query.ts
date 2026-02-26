@@ -5,6 +5,7 @@
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { isHttpError } from '../http-error';
 import { getTenantId } from '../tenant-util';
 import { useAuth } from '../auth/auth-provider';
 import { showToast } from '../toast/toast-store';
@@ -21,17 +22,22 @@ import {
   evaluateGuardrail,
   getPolicyProfiles,
   getEffectivePolicy,
+  getLatestRagEvalRun,
   registerRagDocument,
   createDictionaryTerm,
   deleteDictionaryTerm,
   getRagDocumentDetail,
   updateDictionaryTerm,
   type RagSearchParams,
+  getAuraQualityMetrics,
   getPolicyProfileDetail,
+  replaceRagDocumentChunks,
+  activateRagDocumentVersion,
   type FeedbackCreateRequest,
   type GuardrailUpsertRequest,
   type RagDocumentsListParams,
   registerRagDocumentMultipart,
+  type AuraQualityMetricsParams,
   type GuardrailEvaluateRequest,
   type RegisterRagDocumentRequest,
   type DictionaryTermUpsertRequest,
@@ -49,6 +55,10 @@ export const ragDocumentDetailQueryKey = (tenantId: string, docId: string) =>
 
 export const ragSearchQueryKey = (tenantId: string, params: RagSearchParams) =>
   ['synapse', 'rag', 'search', tenantId, params] as const;
+export const ragLatestEvalRunQueryKey = (tenantId: string) =>
+  ['synapse', 'rag', 'eval-runs', 'latest', tenantId] as const;
+export const auraQualityMetricsQueryKey = (tenantId: string, params?: AuraQualityMetricsParams) =>
+  ['synapse', 'aura', 'quality-metrics', tenantId, params] as const;
 
 export const policyProfilesQueryKey = (tenantId: string) =>
   ['synapse', 'policies', 'profiles', tenantId] as const;
@@ -130,6 +140,59 @@ export const useRagSearchQuery = (params: RagSearchParams, enabledSearch: boolea
   });
 };
 
+export const useLatestRagEvalRunQuery = () => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled = isAuthenticated && Boolean(tenantId);
+
+  return useQuery({
+    queryKey: ragLatestEvalRunQueryKey(tenantId),
+    queryFn: async () => {
+      try {
+        const res = await getLatestRagEvalRun();
+        if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+          throw new Error(res.message ?? 'Failed to fetch latest eval run');
+        }
+        // React Query v5에서는 undefined 반환이 에러로 취급되므로 no-data는 null로 통일
+        return res.data ?? null;
+      } catch (err) {
+        if (isHttpError(err) && err.status === 404) {
+          const body = (err.responseBody ?? null) as { errorCode?: unknown } | null;
+          if (body?.errorCode === 'E3000') {
+            return null;
+          }
+        }
+        throw err;
+      }
+    },
+    enabled,
+    staleTime: 30 * 1000,
+    gcTime: 2 * 60 * 1000,
+    retry: false,
+  });
+};
+
+export const useAuraQualityMetricsQuery = (params?: AuraQualityMetricsParams) => {
+  const { isAuthenticated } = useAuth();
+  const tenantId = getTenantId();
+  const enabled = isAuthenticated && Boolean(tenantId);
+
+  return useQuery({
+    queryKey: auraQualityMetricsQueryKey(tenantId, params),
+    queryFn: async () => {
+      const res = await getAuraQualityMetrics(params);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message ?? 'Failed to fetch Aura quality metrics');
+      }
+      return res.data;
+    },
+    enabled,
+    staleTime: 30 * 1000,
+    gcTime: 2 * 60 * 1000,
+    retry: false,
+  });
+};
+
 export type RegisterRagDocumentPayload = FormData | RegisterRagDocumentRequest;
 
 export const useRegisterRagDocumentMutation = () => {
@@ -151,6 +214,56 @@ export const useRegisterRagDocumentMutation = () => {
     },
     onError: (err) => {
       showToast(err instanceof Error ? err.message : t('toast.failedToRegister'), 'error');
+    },
+  });
+};
+
+export const useActivateRagDocumentVersionMutation = () => {
+  const { t } = useTranslation('common');
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ docId, version }: { docId: string; version: string }) => {
+      const res = await activateRagDocumentVersion(docId, version);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message ?? 'Failed to activate version');
+      }
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'rag'] });
+      showToast(t('rag.detail.activateSuccess', '버전이 활성화되었습니다.'));
+    },
+    onError: (err) => {
+      showToast(err instanceof Error ? err.message : t('rag.detail.activateFailed', '버전 활성화에 실패했습니다.'), 'error');
+    },
+  });
+};
+
+export const useReplaceRagDocumentChunksMutation = () => {
+  const { t } = useTranslation('common');
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      docId,
+      body,
+    }: {
+      docId: string;
+      body: Record<string, unknown>;
+    }) => {
+      const res = await replaceRagDocumentChunks(docId, body);
+      if (res.status !== 'SUCCESS' && res.status !== 'OK' && res.success !== true) {
+        throw new Error(res.message ?? 'Failed to replace chunks');
+      }
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['synapse', 'rag'] });
+      showToast(t('rag.detail.replaceChunksSuccess', '청크 교체가 완료되었습니다.'));
+    },
+    onError: (err) => {
+      showToast(err instanceof Error ? err.message : t('rag.detail.replaceChunksFailed', '청크 교체에 실패했습니다.'), 'error');
     },
   });
 };

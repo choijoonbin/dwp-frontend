@@ -7,10 +7,14 @@
 import type { StreamingThought } from '@dwp-frontend/shared-utils';
 
 import { keyframes } from '@emotion/react';
+import { useQuery } from '@tanstack/react-query';
 import { Iconify } from '@dwp-frontend/design-system';
-import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import {
+  getMe,
+  useAuth,
+  useStreamStore,
   getErrorMessage,
   useCaseAnalysisQuery,
   useRequestCaseExplanationMutation,
@@ -73,15 +77,80 @@ const flowGlow = keyframes`
   100% { transform: translateY(100%); opacity: 0.6; }
 `;
 
+const QUALITY_GATE_META: Record<
+  string,
+  { label: string; description: string; color: 'error' | 'warning' | 'info' | 'default' }
+> = {
+  SENTENCE_CITATION_MISSING: {
+    label: '문장 근거 누락',
+    description: '핵심 결론 문장에 인용 근거 연결이 부족합니다.',
+    color: 'warning',
+  },
+  EVIDENCE_COVERAGE_LOW: {
+    label: '근거 커버리지 낮음',
+    description: '문장별 근거 커버리지가 낮아 판단 신뢰도가 제한됩니다.',
+    color: 'warning',
+  },
+  POLICY_REEVAL_APPLIED: {
+    label: '정책 재평가 적용',
+    description: '정책 신호 충돌로 보수적 재평가가 적용되었습니다.',
+    color: 'info',
+  },
+  RAG_ZERO: {
+    label: 'RAG 0건',
+    description: '관련 근거 검색 결과가 없습니다.',
+    color: 'error',
+  },
+};
+
+type SentenceCitationItem = {
+  sentence_index?: number;
+  sentence?: string;
+  citation_ids?: string[];
+  chunk_id?: string;
+  target_buzei?: string | number;
+  grounded?: boolean;
+  [key: string]: unknown;
+};
+
+type CitationItem = {
+  citation_id?: string;
+  chunk_id?: string;
+  target_buzei?: string | number;
+  sourceKey?: string;
+  source_key?: string;
+  excerpt?: string;
+  title?: string;
+  [key: string]: unknown;
+};
+
+type DecisionReasonPayload = {
+  sentence_citation_map?: SentenceCitationItem[];
+  sentenceCitationMap?: SentenceCitationItem[];
+  analysis_score_breakdown?: Record<string, unknown>;
+  analysisScoreBreakdown?: Record<string, unknown>;
+  quality_gate_codes?: string[];
+  qualityGateCodes?: string[];
+};
+
+const normalizeBuzei = (value: string | number | undefined): string | undefined => {
+  if (value == null) return undefined;
+  const digits = String(value).replace(/\D/g, '');
+  if (!digits) return undefined;
+  return digits.padStart(3, '0');
+};
+
 /** 위반/이상 행 여부: evidenceMapJson(violationBuzeiList) 또는 targetBuzei, isTarget 기반 */
 const isViolationRow = (
   item: FiDocItem,
   targetBuzei?: string,
-  violationBuzeiList?: string[]
+  violationBuzeiList?: string[],
+  citationTargetBuzei?: string
 ): boolean => {
   if (item.isTarget) return true;
   const buzeiNorm = item.buzei ? String(item.buzei).padStart(3, '0') : '';
   if (targetBuzei && buzeiNorm === targetBuzei) return true;
+  if (citationTargetBuzei && buzeiNorm === citationTargetBuzei) return true;
   if (Array.isArray(violationBuzeiList) && violationBuzeiList.length > 0 && buzeiNorm) {
     return violationBuzeiList.some((b) => String(b).padStart(3, '0') === buzeiNorm);
   }
@@ -108,10 +177,33 @@ export const CaseAnalysisTab = ({
 }: CaseAnalysisTabProps) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
+  const { isAuthenticated } = useAuth();
   const debugCtx = useCaseTabsDebug();
   const [highlightedChunkId, setHighlightedChunkId] = useState<string | null>(null);
+  const [highlightedCitationId, setHighlightedCitationId] = useState<string | null>(null);
+  const [citationTargetBuzei, setCitationTargetBuzei] = useState<string | undefined>(undefined);
   const requestExplanationMutation = useRequestCaseExplanationMutation();
+  const pendingCitationJumpId = useStreamStore((state) => state.pendingCitationJumpId);
+  const clearCitationJumpRequest = useStreamStore((state) => state.clearCitationJumpRequest);
   const { data, isLoading, isError, error, refetch } = useCaseAnalysisQuery(caseId, { enabled, runId });
+  const meQuery = useQuery({
+    queryKey: ['auth', 'me', 'case-analysis-tab'],
+    queryFn: async () => {
+      const res = await getMe();
+      if (res.status !== 'SUCCESS' && res.status !== 'OK') {
+        throw new Error(res.message || 'Failed to fetch me');
+      }
+      return res.data as { roles?: unknown };
+    },
+    enabled: isAuthenticated,
+    retry: false,
+  });
+
+  const roles = Array.isArray(meQuery.data?.roles)
+    ? meQuery.data.roles.filter((role): role is string => typeof role === 'string')
+    : [];
+  const canDebugPanel =
+    roles.includes('ADMIN') || roles.includes('SYNAPSEX_ADMIN') || roles.includes('SYNAPSEX_OPERATOR');
 
   const handleThoughtClick = useCallback((thought: { chunkId?: string }) => {
     const id = thought.chunkId;
@@ -160,12 +252,96 @@ export const CaseAnalysisTab = ({
 
   const evidence = (data?.evidence ?? []) as Array<{ key?: string }>;
   const ragRefs = (data?.ragRefs ?? []) as Array<{ refId?: string; sourceType?: string; sourceKey?: string; excerpt?: string; score?: number }>;
+  const decisionReason = (data?.decision_reason ?? data?.decisionReason ?? {}) as DecisionReasonPayload;
+  const sentenceCitationMap = useMemo(
+    () =>
+      (data?.sentenceCitationMap ??
+        data?.sentence_citation_map ??
+        decisionReason.sentenceCitationMap ??
+        decisionReason.sentence_citation_map ??
+        []) as SentenceCitationItem[],
+    [
+      data?.sentenceCitationMap,
+      data?.sentence_citation_map,
+      decisionReason.sentenceCitationMap,
+      decisionReason.sentence_citation_map,
+    ]
+  );
+  const citations = useMemo(() => (data?.citations ?? []) as CitationItem[], [data?.citations]);
+  const citationById = useMemo(
+    () =>
+      new Map(
+        citations
+          .filter((item) => typeof item.citation_id === 'string' && item.citation_id.length > 0)
+          .map((item) => [item.citation_id as string, item])
+      ),
+    [citations]
+  );
+  const qualityGateCodes = Array.from(
+    new Set(
+      (data?.qualityGateCodes ??
+        data?.quality_gate_codes ??
+        decisionReason.qualityGateCodes ??
+        decisionReason.quality_gate_codes ??
+        []).filter(
+        (code): code is string => typeof code === 'string' && code.trim().length > 0
+      )
+    )
+  );
+  const analysisScoreBreakdown =
+    (data?.analysisScoreBreakdown ??
+      data?.analysis_score_breakdown ??
+      decisionReason.analysisScoreBreakdown ??
+      decisionReason.analysis_score_breakdown) as Record<string, unknown> | undefined;
+  const grounded =
+    typeof data?.grounded === 'boolean'
+      ? data.grounded
+      : sentenceCitationMap.some(
+          (item) => Array.isArray(item.citation_ids) && item.citation_ids.filter((id) => typeof id === 'string').length > 0
+        );
+
+  const handleCitationClick = useCallback(
+    (citationId: string) => {
+      setHighlightedCitationId(citationId);
+      const sentenceMatch = sentenceCitationMap.find((item) =>
+        Array.isArray(item.citation_ids) ? item.citation_ids.includes(citationId) : false
+      );
+      const citation = citationById.get(citationId);
+      const chunkId =
+        (sentenceMatch?.chunk_id as string | undefined) ??
+        (citation?.chunk_id as string | undefined);
+      const targetBuzeiFromCitation = normalizeBuzei(
+        (sentenceMatch?.target_buzei as string | number | undefined) ??
+          (citation?.target_buzei as string | number | undefined)
+      );
+      setCitationTargetBuzei(targetBuzeiFromCitation);
+
+      if (chunkId) {
+        setHighlightedChunkId(chunkId);
+        const chunkEl = document.getElementById(`chunk-${chunkId}`);
+        if (chunkEl) chunkEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      const citationEl = document.getElementById(`citation-${citationId}`);
+      if (citationEl) citationEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    },
+    [sentenceCitationMap, citationById]
+  );
+
+  useEffect(() => {
+    if (!pendingCitationJumpId) return;
+    handleCitationClick(pendingCitationJumpId);
+    clearCitationJumpRequest();
+  }, [pendingCitationJumpId, handleCitationClick, clearCitationJumpRequest]);
+
   const isEmpty =
     !data ||
     (!reportSummary &&
       reportKeyGrounds.length === 0 &&
       evidence.length === 0 &&
       ragRefs.length === 0 &&
+      sentenceCitationMap.length === 0 &&
+      citations.length === 0 &&
       fiDocItems.length === 0 &&
       aiThoughts.length === 0);
 
@@ -237,6 +413,12 @@ export const CaseAnalysisTab = ({
                         variant="outlined"
                       />
                     )}
+                    <Chip
+                      label={grounded ? '근거 연결 완료' : '근거 연결 미흡'}
+                      size="small"
+                      color={grounded ? 'success' : 'warning'}
+                      variant="outlined"
+                    />
                   </Stack>
                 </Box>
               </Stack>
@@ -301,8 +483,126 @@ export const CaseAnalysisTab = ({
           </Box>
         )}
 
+        {/* 품질 게이트 코드 */}
+        {qualityGateCodes.length > 0 && (
+          <Card variant="outlined">
+            <CardHeader
+              title={
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Iconify icon="solar:shield-warning-bold-duotone" width={20} />
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    품질 게이트
+                  </Typography>
+                </Stack>
+              }
+              sx={{ pb: 1, px: 2, pt: 2 }}
+            />
+            <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
+              <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                {qualityGateCodes.map((code) => {
+                  const meta = QUALITY_GATE_META[code];
+                  return (
+                    <Chip
+                      key={code}
+                      color={meta?.color ?? 'default'}
+                      variant="outlined"
+                      label={meta?.label ?? code}
+                      title={meta?.description ?? code}
+                    />
+                  );
+                })}
+              </Stack>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* 문장별 근거 연결 맵 */}
+        {sentenceCitationMap.length > 0 && (
+          <Card variant="outlined">
+            <CardHeader
+              title={
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Iconify icon="solar:list-check-bold-duotone" width={20} />
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    문장별 근거 연결
+                  </Typography>
+                </Stack>
+              }
+              sx={{ pb: 1, px: 2, pt: 2 }}
+            />
+            <CardContent sx={{ px: 2, pt: 0, pb: 2 }}>
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 600, width: 72 }}>Index</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Sentence</TableCell>
+                      <TableCell sx={{ fontWeight: 600, width: 240 }}>Citations</TableCell>
+                      <TableCell sx={{ fontWeight: 600, width: 120 }}>Grounded</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {sentenceCitationMap.map((item, idx) => {
+                      const ids = Array.isArray(item.citation_ids)
+                        ? item.citation_ids.filter((id): id is string => typeof id === 'string' && id.length > 0)
+                        : [];
+                      const rowGrounded =
+                        typeof item.grounded === 'boolean' ? item.grounded : ids.length > 0;
+                      return (
+                        <TableRow
+                          key={`${idx}-${item.sentence_index ?? idx}`}
+                          sx={
+                            !rowGrounded
+                              ? { bgcolor: alpha(theme.palette.warning.main, 0.08) }
+                              : undefined
+                          }
+                        >
+                          <TableCell>{item.sentence_index ?? idx}</TableCell>
+                          <TableCell>
+                            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                              {item.sentence ?? '-'}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap">
+                              {ids.length === 0 ? (
+                                <Typography variant="caption" color="text.secondary">
+                                  -
+                                </Typography>
+                              ) : (
+                                ids.map((id) => (
+                                  <Chip
+                                    key={`${idx}-${id}`}
+                                    size="small"
+                                    variant="outlined"
+                                    clickable
+                                    color={highlightedCitationId === id ? 'primary' : 'default'}
+                                    label={id}
+                                    onClick={() => handleCitationClick(id)}
+                                  />
+                                ))
+                              )}
+                            </Stack>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              size="small"
+                              color={rowGrounded ? 'success' : 'warning'}
+                              label={rowGrounded ? 'true' : 'false'}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Evidence Gallery — Fact | Link | Rule */}
-        {(fiDocItems.length > 0 || ragRefs.length > 0) && (
+        {(fiDocItems.length > 0 || ragRefs.length > 0 || citations.length > 0) && (
           <Card sx={{ overflow: 'hidden' }}>
             <CardHeader
               title={
@@ -349,7 +649,7 @@ export const CaseAnalysisTab = ({
                       </TableHead>
                       <TableBody>
                         {fiDocItems.slice(0, 10).map((item) => {
-                          const target = isViolationRow(item, targetBuzei, violationBuzeiList);
+                          const target = isViolationRow(item, targetBuzei, violationBuzeiList, citationTargetBuzei);
                           return (
                             <TableRow
                               key={item.id}
@@ -432,7 +732,55 @@ export const CaseAnalysisTab = ({
                     <Typography variant="caption" sx={{ fontWeight: 600 }}>{t('caseDetail.evidenceGallery.rule')}</Typography>
                   </Box>
                   <Stack spacing={1} sx={{ p: 1.5 }}>
-                    {ragRefs.length > 0 ? (
+                    {citations.length > 0 ? (
+                        citations.map((citation, i) => {
+                          const citationId = citation.citation_id ?? `C${i + 1}`;
+                          const sourceKey = citation.sourceKey ?? citation.source_key;
+                          const chunkId = citation.chunk_id;
+                          const isHighlight =
+                            highlightedCitationId === citationId ||
+                            (chunkId != null &&
+                              (highlightedChunkId === chunkId || highlightChunkIds.includes(chunkId)));
+                          return (
+                            <Box
+                              key={`${citationId}-${i}`}
+                              id={`citation-${citationId}`}
+                              sx={{
+                                p: 1.5,
+                                borderRadius: 1,
+                                bgcolor: isHighlight
+                                  ? alpha(theme.palette.primary.main, 0.14)
+                                  : alpha(theme.palette.primary.main, 0.06),
+                                border: 1,
+                                borderColor: isHighlight
+                                  ? theme.palette.primary.main
+                                  : alpha(theme.palette.primary.main, 0.15),
+                                boxShadow: isHighlight
+                                  ? `0 0 12px ${alpha(theme.palette.primary.main, 0.35)}`
+                                  : undefined,
+                              }}
+                            >
+                              <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mb: 0.5 }}>
+                                <Chip size="small" label={citationId} color={isHighlight ? 'primary' : 'default'} />
+                                {chunkId && <Chip size="small" variant="outlined" label={`chunk: ${chunkId}`} />}
+                              </Stack>
+                              {(sourceKey ?? citation.title) && (
+                                <Typography
+                                  variant="caption"
+                                  sx={{ fontFamily: 'monospace', fontWeight: 600, display: 'block', mb: 0.5 }}
+                                >
+                                  {sourceKey ?? citation.title}
+                                </Typography>
+                              )}
+                              {citation.excerpt && (
+                                <Typography variant="body2" sx={{ lineHeight: 1.6 }} color="text.secondary">
+                                  {citation.excerpt}
+                                </Typography>
+                              )}
+                            </Box>
+                          );
+                        })
+                      ) : ragRefs.length > 0 ? (
                       ragRefs.map((r, i) => {
                         const refId = r.refId != null ? String(r.refId) : '';
                         const sourceKey = r.sourceKey != null ? String(r.sourceKey) : '';
@@ -480,6 +828,60 @@ export const CaseAnalysisTab = ({
               </Box>
             </CardContent>
           </Card>
+        )}
+
+        {/* 운영자 디버그 패널 */}
+        {canDebugPanel && (
+          <Accordion
+            sx={{
+              bgcolor: alpha(theme.palette.info.main, 0.04),
+              border: 1,
+              borderColor: alpha(theme.palette.info.main, 0.25),
+              borderRadius: 1,
+              '&:before': { display: 'none' },
+              boxShadow: 'none',
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<Iconify icon="solar:alt-arrow-down-bold" width={20} />}
+              sx={{ px: 2, py: 0 }}
+            >
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Iconify icon="solar:bug-bold-duotone" width={18} />
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                  운영자 디버그
+                </Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails sx={{ px: 2, pt: 0, pb: 2 }}>
+              <Stack spacing={1.5}>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    quality_gate_codes
+                  </Typography>
+                  <Box component="pre" sx={{ m: 0, mt: 0.5, p: 1.25, borderRadius: 1, bgcolor: alpha(theme.palette.common.black, 0.06), overflowX: 'auto' }}>
+                    {JSON.stringify(qualityGateCodes, null, 2)}
+                  </Box>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    sentence_citation_map
+                  </Typography>
+                  <Box component="pre" sx={{ m: 0, mt: 0.5, p: 1.25, borderRadius: 1, bgcolor: alpha(theme.palette.common.black, 0.06), overflowX: 'auto' }}>
+                    {JSON.stringify(sentenceCitationMap, null, 2)}
+                  </Box>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    analysis_score_breakdown
+                  </Typography>
+                  <Box component="pre" sx={{ m: 0, mt: 0.5, p: 1.25, borderRadius: 1, bgcolor: alpha(theme.palette.common.black, 0.06), overflowX: 'auto' }}>
+                    {JSON.stringify(analysisScoreBreakdown ?? {}, null, 2)}
+                  </Box>
+                </Box>
+              </Stack>
+            </AccordionDetails>
+          </Accordion>
         )}
 
         {/* 상세 분석 로그 — 스트림 추론 과정은 아코디언 안에, 필요 시 펼쳐서 확인 */}

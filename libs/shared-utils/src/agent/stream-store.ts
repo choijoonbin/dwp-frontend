@@ -29,6 +29,13 @@ export type StreamingThought = {
   pending: boolean;
 };
 
+export type StreamSentenceCitationItem = {
+  sentence_index?: number;
+  sentence?: string;
+  citation_ids?: string[];
+  grounded?: boolean;
+};
+
 /**
  * SSE Stream Store (Zustand)
  *
@@ -55,6 +62,10 @@ type StreamStore = {
   liveViolationBuzeiList: string[];
   /** 스트림 step/agent 이벤트의 percent — 동적 요약 바 리스크 점수 카운팅 업용 (0–100) */
   liveRiskScore: number;
+  /** SSE evidence(type=SENTENCE_CITATION_MAP) 실시간 문장-근거 매핑 */
+  liveSentenceCitationMap: StreamSentenceCitationItem[];
+  /** citation jump 요청 (스트림 패널 → 최종결과 탭) */
+  pendingCitationJumpId: string | null;
   /** 자동 검토 시작 시 타임라인 상단 안내 문구 노출 여부 */
   autoStartedBanner: boolean;
 
@@ -70,6 +81,9 @@ type StreamStore = {
   setLiveTargetBuzei: (buzei: string | null) => void;
   addLiveViolationBuzei: (buzei: string) => void;
   setLiveRiskScore: (score: number) => void;
+  setLiveSentenceCitationMap: (items: StreamSentenceCitationItem[]) => void;
+  requestCitationJump: (citationId: string) => void;
+  clearCitationJumpRequest: () => void;
   /** 케이스 전환 시 실시간 KPI만 초기화 (liveRiskScore 0, liveViolationBuzeiList 비움) — 분석 완료 케이스는 BE score만 표시 */
   resetLiveKpi: () => void;
   reset: () => void;
@@ -91,6 +105,8 @@ const initialState = {
   liveTargetBuzei: null as string | null,
   liveViolationBuzeiList: [] as string[],
   liveRiskScore: 0,
+  liveSentenceCitationMap: [] as StreamSentenceCitationItem[],
+  pendingCitationJumpId: null as string | null,
   autoStartedBanner: false,
 };
 
@@ -164,6 +180,30 @@ export const useStreamStore = create<StreamStore>((set) => ({
 
   setLiveRiskScore: (score) =>
     set({ liveRiskScore: Math.min(100, Math.max(0, Math.round(score))) }),
+
+  setLiveSentenceCitationMap: (items) =>
+    set({
+      liveSentenceCitationMap: Array.isArray(items)
+        ? items.map((item) => ({
+            sentence_index: item.sentence_index,
+            sentence: item.sentence,
+            citation_ids: Array.isArray(item.citation_ids)
+              ? item.citation_ids.filter((id): id is string => typeof id === 'string' && id.length > 0)
+              : [],
+            grounded: item.grounded,
+          }))
+        : [],
+    }),
+
+  requestCitationJump: (citationId) =>
+    set({
+      pendingCitationJumpId: citationId,
+    }),
+
+  clearCitationJumpRequest: () =>
+    set({
+      pendingCitationJumpId: null,
+    }),
 
   resetLiveKpi: () =>
     set({ liveRiskScore: 0, liveViolationBuzeiList: [] }),

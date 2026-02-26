@@ -31,11 +31,8 @@ function setDomColorScheme(mode: ThemeMode) {
 const DEFAULT_MODE: ThemeMode = 'light';
 
 function getInitialMode(): ThemeMode {
-  if (typeof window === 'undefined') return DEFAULT_MODE;
-
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === 'light' || stored === 'dark') return stored;
-
+  // Current policy: always start in light mode on reload/login.
+  // We keep localStorage writes for future personalization rollout.
   return DEFAULT_MODE;
 }
 
@@ -74,4 +71,3 @@ export function useThemeMode() {
   if (!ctx) throw new Error('useThemeMode must be used within ThemeModeProvider');
   return ctx;
 }
-

@@ -33,6 +33,7 @@ export type CaseAgentStreamPanelProps = {
   onStartAnalysis: () => void;
   onRetry: () => void;
   onCancel: () => void;
+  onOpenAnalysisTab?: () => void;
   sx?: SxProps<Theme>;
 };
 
@@ -82,6 +83,7 @@ export const CaseAgentStreamPanel = ({
   onStartAnalysis,
   onRetry,
   onCancel,
+  onOpenAnalysisTab,
   sx,
 }: CaseAgentStreamPanelProps) => {
   const { t } = useTranslation('common');
@@ -89,6 +91,8 @@ export const CaseAgentStreamPanel = ({
   const errorMessage = useStreamStore((state) => state.errorMessage);
   const eventLog = useStreamStore((state) => state.eventLog);
   const timelineSteps = useStreamStore((state) => state.timelineSteps);
+  const liveSentenceCitationMap = useStreamStore((state) => state.liveSentenceCitationMap);
+  const requestCitationJump = useStreamStore((state) => state.requestCitationJump);
   const retryable = useStreamStore((state) => state.debug?.retryable);
   const failedStage = useStreamStore((state) => state.debug?.failedStage);
 
@@ -433,6 +437,71 @@ export const CaseAgentStreamPanel = ({
                   )}
                 </Stack>
               </Box>
+            </CardContent>
+          </Card>
+        )}
+
+        {liveSentenceCitationMap.length > 0 && (
+          <Card variant="outlined" sx={{ borderColor: 'warning.main' }}>
+            <CardContent sx={{ p: 2 }}>
+              <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+                <Iconify icon="solar:link-round-angle-bold-duotone" width={18} />
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                  문장별 근거 매핑
+                </Typography>
+              </Stack>
+              <Stack spacing={1}>
+                {liveSentenceCitationMap.map((item, idx) => {
+                  const ids = Array.isArray(item.citation_ids) ? item.citation_ids : [];
+                  const rowGrounded = typeof item.grounded === 'boolean' ? item.grounded : ids.length > 0;
+                  return (
+                    <Box
+                      key={`${idx}-${item.sentence_index ?? idx}`}
+                      sx={{
+                        p: 1,
+                        borderRadius: 1,
+                        border: 1,
+                        borderColor: rowGrounded ? 'divider' : 'warning.main',
+                        bgcolor: rowGrounded ? 'background.paper' : 'warning.lighter',
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ display: 'block', fontWeight: 700 }}>
+                        #{item.sentence_index ?? idx}
+                      </Typography>
+                      <Typography variant="body2" sx={{ lineHeight: 1.5, mb: 0.75 }}>
+                        {item.sentence ?? '-'}
+                      </Typography>
+                      <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mb: 0.5 }}>
+                        {ids.length === 0 ? (
+                          <Typography variant="caption" color="warning.dark">
+                            인용 근거 없음
+                          </Typography>
+                        ) : (
+                          ids.map((citationId) => (
+                            <Button
+                              key={`${idx}-${citationId}`}
+                              size="small"
+                              variant="outlined"
+                              sx={{ minWidth: 0, px: 0.75, py: 0, lineHeight: 1.8 }}
+                              onClick={() => {
+                                requestCitationJump(citationId);
+                                onOpenAnalysisTab?.();
+                              }}
+                            >
+                              {citationId}
+                            </Button>
+                          ))
+                        )}
+                      </Stack>
+                      {!rowGrounded && (
+                        <Typography variant="caption" color="warning.dark">
+                          grounded=false
+                        </Typography>
+                      )}
+                    </Box>
+                  );
+                })}
+              </Stack>
             </CardContent>
           </Card>
         )}

@@ -97,6 +97,7 @@ export const useAnalysisRunStream = () => {
   const setLiveTargetBuzei = useStreamStore((state) => state.setLiveTargetBuzei);
   const addLiveViolationBuzei = useStreamStore((state) => state.addLiveViolationBuzei);
   const setLiveRiskScore = useStreamStore((state) => state.setLiveRiskScore);
+  const setLiveSentenceCitationMap = useStreamStore((state) => state.setLiveSentenceCitationMap);
   const resetStore = useStreamStore((state) => state.reset);
   const setAutoStartedBanner = useStreamStore((state) => state.setAutoStartedBanner);
 
@@ -417,6 +418,34 @@ export const useAnalysisRunStream = () => {
               } catch {
                 // ignore parse error
               }
+            } else if (currentEventType === 'evidence') {
+              addEventType('evidence');
+              try {
+                const parsed = dataStr
+                  ? (JSON.parse(dataStr) as {
+                      type?: string;
+                      items?: Array<{
+                        sentence_index?: number;
+                        sentence?: string;
+                        citation_ids?: string[];
+                        grounded?: boolean;
+                      }>;
+                      thought_stream?: string;
+                    })
+                  : {};
+                if (parsed.type === 'SENTENCE_CITATION_MAP' && Array.isArray(parsed.items)) {
+                  setLiveSentenceCitationMap(parsed.items);
+                }
+                if (
+                  typeof parsed.thought_stream === 'string' &&
+                  parsed.thought_stream.trim() &&
+                  !shouldFilterLogLine(parsed.thought_stream)
+                ) {
+                  addCleanStreamLine(parsed.thought_stream);
+                }
+              } catch {
+                // ignore parse error
+              }
             } else if (currentEventType === 'completed') {
               addTimelineStep({ type: 'completed' });
               clearStreamTimeout();
@@ -501,7 +530,7 @@ export const useAnalysisRunStream = () => {
         options?.onError?.(err instanceof Error ? err : new Error(message));
       }
     },
-    [setStatus, setError, setDebug, setAutoStartedBanner, addEventType, addEventLogLine, addCleanStreamLine, addTimelineStep, setStreamingThought, setLiveTargetBuzei, addLiveViolationBuzei, setLiveRiskScore, normalizeBuzei, resetStore, clearStreamTimeout]
+    [setStatus, setError, setDebug, setAutoStartedBanner, addEventType, addEventLogLine, addCleanStreamLine, addTimelineStep, setStreamingThought, setLiveTargetBuzei, addLiveViolationBuzei, setLiveRiskScore, setLiveSentenceCitationMap, normalizeBuzei, resetStore, clearStreamTimeout]
   );
 
   const cancel = useCallback(() => {

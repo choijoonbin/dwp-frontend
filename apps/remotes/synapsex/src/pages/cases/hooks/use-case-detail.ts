@@ -13,23 +13,98 @@ import {
 import { caseDetailDtoToUi, type CaseDetailUi } from '../adapters/case-detail-adapter';
 
 /** BE fi_doc_items / DocumentLineItemDto → FiDocItem (필드명 snake_case/camelCase 모두 수용) */
+function toNumberOrUndefined(value: unknown): number | undefined {
+  if (value == null) return undefined;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : undefined;
+  if (typeof value === 'string') {
+    const normalized = value.replace(/,/g, '').trim();
+    if (!normalized) return undefined;
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }
+  return undefined;
+}
+
+function toStringOrUndefined(value: unknown): string | undefined {
+  if (value == null) return undefined;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed ? trimmed : undefined;
+  }
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  return undefined;
+}
+
+function extractPartner(value: unknown): string | undefined {
+  if (value == null) return undefined;
+  if (typeof value === 'string' || typeof value === 'number') return toStringOrUndefined(value);
+  if (typeof value === 'object') {
+    const v = value as Record<string, unknown>;
+    return (
+      toStringOrUndefined(v.name) ??
+      toStringOrUndefined(v.displayName) ??
+      toStringOrUndefined(v.partnerName) ??
+      toStringOrUndefined(v.vendorName) ??
+      toStringOrUndefined(v.customerName) ??
+      toStringOrUndefined(v.id) ??
+      toStringOrUndefined(v.code)
+    );
+  }
+  return undefined;
+}
+
+function normalizeBuzeiCandidate(value: unknown): string | undefined {
+  const raw = toStringOrUndefined(value);
+  if (!raw) return undefined;
+  const digitsOnly = raw.replace(/\D/g, '');
+  if (!digitsOnly) return undefined;
+  // SAP BUZEI is typically 1-3 digits.
+  if (digitsOnly.length > 3) return undefined;
+  return digitsOnly.padStart(3, '0');
+}
+
+function looksLikeGlAccount(value: unknown): boolean {
+  const raw = toStringOrUndefined(value);
+  if (!raw) return false;
+  const digitsOnly = raw.replace(/\D/g, '');
+  // Typical G/L account length heuristic.
+  return digitsOnly.length >= 4;
+}
+
 function mapRawLineItemToFiDoc(
   r: Record<string, unknown>,
   idx: number,
   itemsCurrency: string
 ): FiDocItem {
-  const buzeiVal = r.buzei ?? r.line_item_no ?? r.lineItemNo;
-  const buzeiStr =
-    buzeiVal != null ? String(buzeiVal).padStart(3, '0') : String(idx + 1).padStart(3, '0');
-  const hkont = (r.hkont ?? r.gl_account ?? r.glAccount) as string | undefined;
-  const wrbtr = (r.wrbtr ?? r.amount_in_doc_currency ?? r.amountInDocCurrency ?? r.amount) as number | undefined;
-  const dmbtr = (r.dmbtr ?? r.amount_in_local ?? r.amountInLocal) as number | undefined;
-  const sgtxt = (r.sgtxt ?? r.item_text ?? r.itemText) as string | undefined;
-  const partner = (r.lifnr ?? r.kunnr ?? r.partner_id ?? r.partnerId ?? r.partner) as string | undefined;
-  const waers = (r.waers ?? r.currency ?? r.doc_currency ?? r.docCurrency) as string | undefined;
+  const buzeiRaw = r.buzei ?? r.line_item_no ?? r.lineItemNo ?? r.line_no ?? r.lineNo ?? r.itemNo;
+  const buzeiStr = normalizeBuzeiCandidate(buzeiRaw) ?? String(idx + 1).padStart(3, '0');
+  const inferredAccountFromBuzei = looksLikeGlAccount(buzeiRaw) ? toStringOrUndefined(buzeiRaw) : undefined;
+  const hkont = toStringOrUndefined(
+    r.hkont ?? r.gl_account ?? r.glAccount ?? r.account ?? r.accountNo ?? r.account_code ?? r.saknr ?? inferredAccountFromBuzei
+  );
+  const wrbtr = toNumberOrUndefined(
+    r.wrbtr ?? r.amount_in_doc_currency ?? r.amountInDocCurrency ?? r.amount ?? r.docAmount
+  );
+  const dmbtr = toNumberOrUndefined(r.dmbtr ?? r.amount_in_local ?? r.amountInLocal ?? r.localAmount);
+  const sgtxt = toStringOrUndefined(
+    r.sgtxt ?? r.item_text ?? r.itemText ?? r.description ?? r.itemDescription ?? r.text
+  );
+  const partner =
+    extractPartner(r.partner) ??
+    toStringOrUndefined(
+      r.lifnr ??
+        r.kunnr ??
+        r.partner_id ??
+        r.partnerId ??
+        r.counterpartyId ??
+        r.counterparty ??
+        r.vendorName ??
+        r.customerName
+    );
+  const waers = toStringOrUndefined(r.waers ?? r.currency ?? r.doc_currency ?? r.docCurrency);
   const isTarget = Boolean(r.isTarget ?? r.is_target);
   return {
-    id: String(r.id ?? r.buzei ?? r.line_item_no ?? idx),
+    id: String(r.id ?? buzeiRaw ?? idx),
     buzei: buzeiStr,
     partner: partner ?? undefined,
     hkont,

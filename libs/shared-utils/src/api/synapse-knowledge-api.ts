@@ -19,6 +19,17 @@ export type RagDocumentListDto = {
   sourceType: string;
   status: string;
   createdAt: string;
+  updatedAt?: string;
+  updated_at?: string;
+  version?: string;
+  effectiveFrom?: string;
+  effective_from?: string;
+  effectiveTo?: string;
+  effective_to?: string;
+  isActive?: boolean;
+  is_active?: boolean;
+  qualityReport?: RagQualityReport;
+  quality_report?: RagQualityReport;
 };
 
 export type RagChunkDto = {
@@ -34,9 +45,45 @@ export type RagDocumentDetailDto = {
   sourceType: string;
   status: string;
   createdAt: string;
+  updatedAt?: string;
+  updated_at?: string;
+  timestamp?: string;
+  version?: string;
+  effectiveFrom?: string;
+  effective_from?: string;
+  effectiveTo?: string;
+  effective_to?: string;
+  isActive?: boolean;
+  is_active?: boolean;
   /** 청킹 전략 키 (catalog docTypes와 동일). 없으면 sourceType 등으로 대체 */
   chunkingStrategy?: string;
   chunks?: RagChunkDto[];
+  qualityReport?: RagQualityReport;
+  quality_report?: RagQualityReport;
+  qualityGatePassed?: boolean;
+  quality_gate_passed?: boolean;
+};
+
+export type RagQualityReport = {
+  pass?: boolean;
+  runId?: string;
+  run_id?: string;
+  articleCoverage?: number;
+  article_coverage?: number;
+  noiseRate?: number;
+  noise_rate?: number;
+  duplicateRate?: number;
+  duplicate_rate?: number;
+  shortChunkRate?: number;
+  short_chunk_rate?: number;
+  inputChunks?: number;
+  input_chunks?: number;
+  finalChunks?: number;
+  final_chunks?: number;
+  errors?: string[];
+  missingRequired?: string[];
+  missing_required?: string[];
+  [key: string]: unknown;
 };
 
 export type RagSearchResultDto = {
@@ -146,6 +193,8 @@ export type ReChunkResponse = {
   status: 'PROCESSING' | 'COMPLETED' | 'FAILED';
   message?: string;
   chunkCount?: number;
+  qualityReport?: RagQualityReport;
+  quality_report?: RagQualityReport;
 };
 
 export type RagDocumentsListParams = {
@@ -154,10 +203,80 @@ export type RagDocumentsListParams = {
   size?: number;
 };
 
+export type RagQualityMetricsDto = {
+  from?: string;
+  to?: string;
+  totalCount?: number;
+  sentenceCitationMissingCount?: number;
+  evidenceCoverageLowCount?: number;
+  policyReevalAppliedCount?: number;
+  ragZeroCount?: number;
+  sentenceCitationMissingRatio?: number;
+  evidenceCoverageLowRatio?: number;
+  policyReevalAppliedRatio?: number;
+  ragZeroRatio?: number;
+  chunkPassRate?: number;
+  chunk_pass_rate?: number;
+  ragZeroRate?: number;
+  rag_0_rate?: number;
+  ragZeroCountRate?: number;
+  defaultInflowRate?: number;
+  default_inflow_rate?: number;
+  citationErrorRate?: number;
+  citation_error_rate?: number;
+  [key: string]: unknown;
+};
+
+export type AuraQualityMetricsParams = {
+  from?: string;
+  to?: string;
+};
+
 export type RagSearchParams = {
   q: string;
   page?: number;
   size?: number;
+};
+
+export type RagEvalRunResultJson = {
+  total_cases?: number;
+  zero_results?: number;
+  zero_rate?: number;
+  hit_at_k?: number;
+  strict_hit_top1?: number;
+  [key: string]: unknown;
+};
+
+export type RagEvalRunDto = {
+  id: number;
+  tenantId: number;
+  runKey: string;
+  zeroRate: number;
+  hitAtK: number;
+  strictHitTop1?: number;
+  totalCases?: number;
+  gatePassed: boolean;
+  resultJson?: RagEvalRunResultJson;
+  createdAt: string;
+};
+
+export type RagEvalRunCreateRequest = {
+  runKey: string;
+  zeroRate: number;
+  hitAtK: number;
+  strictHitTop1?: number;
+  totalCases?: number;
+  gatePassed: boolean;
+  resultJson?: RagEvalRunResultJson;
+};
+
+export type RagActivateVersionResponse = {
+  docId?: string;
+  version?: string;
+  lifecycleStatus?: string;
+  lifecycle_status?: string;
+  status?: string;
+  [key: string]: unknown;
 };
 
 // ----------------------------------------------------------------------
@@ -405,6 +524,53 @@ export const getRagDocumentChunkingStatus = async (
   const res = await axiosInstance.get<ApiResponse<{ status: string; chunkCount?: number; strategy?: string }>>(
     `/api/synapse/rag/documents/${encodeURIComponent(docId)}/chunking-status`
   );
+  return res.data;
+};
+
+export const createRagEvalRun = async (
+  body: RagEvalRunCreateRequest
+): Promise<ApiResponse<RagEvalRunDto>> => {
+  const res = await axiosInstance.post<ApiResponse<RagEvalRunDto>>('/api/synapse/rag/eval-runs', body);
+  return res.data;
+};
+
+export const getLatestRagEvalRun = async (): Promise<ApiResponse<RagEvalRunDto | null>> => {
+  const res = await axiosInstance.get<ApiResponse<RagEvalRunDto | null>>('/api/synapse/rag/eval-runs/latest');
+  return res.data;
+};
+
+export const activateRagDocumentVersion = async (
+  docId: string,
+  version: string
+): Promise<ApiResponse<RagActivateVersionResponse>> => {
+  const query = new URLSearchParams();
+  query.set('version', version);
+  const res = await axiosInstance.post<ApiResponse<RagActivateVersionResponse>>(
+    `/api/synapse/rag/documents/${encodeURIComponent(docId)}/versions/activate?${query.toString()}`,
+    {}
+  );
+  return res.data;
+};
+
+export const replaceRagDocumentChunks = async (
+  docId: string,
+  body: Record<string, unknown>
+): Promise<ApiResponse<Record<string, unknown>>> => {
+  const res = await axiosInstance.post<ApiResponse<Record<string, unknown>>>(
+    `/api/synapse/rag/documents/${encodeURIComponent(docId)}/chunks/replace`,
+    body
+  );
+  return res.data;
+};
+
+export const getAuraQualityMetrics = async (
+  params?: AuraQualityMetricsParams
+): Promise<ApiResponse<RagQualityMetricsDto>> => {
+  const query = new URLSearchParams();
+  if (params?.from) query.set('from', params.from);
+  if (params?.to) query.set('to', params.to);
+  const url = `/api/synapse/aura/quality-metrics${query.toString() ? `?${query.toString()}` : ''}`;
+  const res = await axiosInstance.get<ApiResponse<RagQualityMetricsDto>>(url);
   return res.data;
 };
 

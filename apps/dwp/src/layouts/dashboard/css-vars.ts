@@ -6,7 +6,7 @@ export function dashboardLayoutVars(theme: Theme, layoutMode?: 'fixed' | 'scroll
   return {
     '--layout-transition-easing': 'linear',
     '--layout-transition-duration': '120ms',
-    '--layout-nav-vertical-width': '300px',
+    '--layout-nav-vertical-width': '260px',
     '--layout-nav-vertical-collapsed-width': '88px',
     '--layout-nav-current-width': 'var(--layout-nav-vertical-width)',
     '--layout-dashboard-content-pt': theme.spacing(1),

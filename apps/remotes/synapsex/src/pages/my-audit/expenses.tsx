@@ -22,6 +22,13 @@ import TableContainer from '@mui/material/TableContainer';
 
 import { SYNAPSE_ROUTES } from '../../routes';
 import { TableLoadingSkeleton } from '../../components/ux/table-loading-skeleton';
+import {
+  toUpperStatus,
+  type VoucherRow,
+  auraResultFromRow,
+  evidenceStatusFromRow,
+  mapMyVoucherListItems,
+} from './my-audit-voucher.utils';
 
 type MyAuditTab = 'all' | 'inbox';
 
@@ -30,48 +37,6 @@ type MyAuditExpensesPageProps = {
 };
 
 const PAGE_SIZE = 20;
-
-const toUpperStatus = (status: string | null | undefined) => (status ?? '').trim().toUpperCase();
-const normalizeScore = (score: number | undefined) => {
-  if (score == null || Number.isNaN(score)) return 0;
-  if (score <= 1) return Math.round(score * 100);
-  return Math.round(score);
-};
-
-type VoucherRow = {
-  id: string;
-  bukrs: string;
-  belnr: string;
-  gjahr: string;
-  postingDate: string;
-  wrbtr: number;
-  waers: string;
-  bktxt: string;
-  caseStatus?: string;
-  score?: number;
-  detectedAt?: string;
-};
-
-const auraResultFromRow = (row: VoucherRow) => {
-  const s = toUpperStatus(row.caseStatus);
-  if (s === 'NORMAL') return { label: '정상', color: 'success' as const };
-  if (s === 'PENDING_EXPLANATION') return { label: '위험', color: 'error' as const };
-  if (s === 'IN_REVIEW') return { label: '주의', color: 'warning' as const };
-  if (s === 'RESOLVED' || s === 'IGNORED') return { label: '정상', color: 'success' as const };
-  const normalizedScore = normalizeScore(row.score);
-  if (normalizedScore >= 80) return { label: '위험', color: 'error' as const };
-  if (normalizedScore >= 60) return { label: '주의', color: 'warning' as const };
-  return { label: '정상', color: 'success' as const };
-};
-
-const evidenceStatusFromRow = (row: VoucherRow) => {
-  const s = toUpperStatus(row.caseStatus);
-  if (s === 'NORMAL') return '정상';
-  if (s === 'PENDING_EXPLANATION') return '소명 필요';
-  if (s === 'IN_REVIEW') return '검토 중';
-  if (s === 'RESOLVED' || s === 'IGNORED') return '완료';
-  return '정상';
-};
 
 export const MyAuditExpensesPage = ({ initialTab = 'all' }: MyAuditExpensesPageProps) => {
   const { t } = useTranslation('common');
@@ -88,19 +53,7 @@ export const MyAuditExpensesPage = ({ initialTab = 'all' }: MyAuditExpensesPageP
 
   const { allRows, inboxRows, totalPages } = useMemo(() => {
     const raw = query.data?.content ?? [];
-    const mapped: VoucherRow[] = raw.map((item) => ({
-      id: typeof item.caseId === 'string' || typeof item.caseId === 'number' ? String(item.caseId) : '',
-      bukrs: String(item.bukrs ?? ''),
-      belnr: String(item.belnr ?? ''),
-      gjahr: String(item.gjahr ?? ''),
-      postingDate: String(item.postingDate ?? ''),
-      wrbtr: Number(item.wrbtr ?? 0),
-      waers: String(item.waers ?? ''),
-      bktxt: String(item.bktxt ?? ''),
-      caseStatus: typeof item.caseStatus === 'string' ? item.caseStatus : undefined,
-      score: typeof item.score === 'number' ? item.score : undefined,
-      detectedAt: typeof item.detectedAt === 'string' ? item.detectedAt : undefined,
-    }));
+    const mapped: VoucherRow[] = mapMyVoucherListItems(raw);
     const inbox = mapped.filter((row) => toUpperStatus(row.caseStatus) === 'PENDING_EXPLANATION');
     return {
       allRows: mapped,
@@ -146,7 +99,7 @@ export const MyAuditExpensesPage = ({ initialTab = 'all' }: MyAuditExpensesPageP
             )}
 
             {query.isLoading ? (
-              <TableLoadingSkeleton rows={6} columns={6} />
+              <TableLoadingSkeleton rows={6} columns={8} />
             ) : (
               <TableContainer>
                 <Table size="small">
@@ -157,6 +110,7 @@ export const MyAuditExpensesPage = ({ initialTab = 'all' }: MyAuditExpensesPageP
                       <TableCell>{t('myAudit.expenses.amount', '금액')}</TableCell>
                       <TableCell>{t('myAudit.expenses.evidenceStatus', '증빙상태')}</TableCell>
                       <TableCell>{t('myAudit.expenses.auraResult', 'Aura 스크리닝 결과')}</TableCell>
+                      <TableCell>{t('myAudit.expenses.postingDate', '전표발생일자')}</TableCell>
                       <TableCell>{t('cases.lastDetected', 'Detected')}</TableCell>
                       <TableCell align="right">{t('commonLabels.actions', 'Actions')}</TableCell>
                     </TableRow>
@@ -164,7 +118,7 @@ export const MyAuditExpensesPage = ({ initialTab = 'all' }: MyAuditExpensesPageP
                   <TableBody>
                     {rows.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                        <TableCell colSpan={8} align="center" sx={{ py: 6 }}>
                           <Typography variant="body2" color="text.secondary">
                             {activeTab === 'inbox'
                               ? t('myAudit.expenses.inboxEmpty', '소명 대기 전표가 없습니다.')
@@ -187,7 +141,8 @@ export const MyAuditExpensesPage = ({ initialTab = 'all' }: MyAuditExpensesPageP
                             <TableCell>
                               <Chip size="small" color={aura.color} label={aura.label} />
                             </TableCell>
-                            <TableCell>{row.postingDate ? new Date(row.postingDate).toLocaleString() : '-'}</TableCell>
+                            <TableCell>{row.postingDate ? new Date(row.postingDate).toLocaleDateString() : '-'}</TableCell>
+                            <TableCell>{row.detectedAt ? new Date(row.detectedAt).toLocaleString() : '-'}</TableCell>
                             <TableCell align="right">
                               <Button
                                 size="small"

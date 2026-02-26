@@ -609,9 +609,13 @@
   "workbench": {
     "queueTitle": "Case queue",
     "filterAll": "All",
+    "filterMore": "More",
     "filterOpen": "Open",
     "filterInProgress": "In progress",
+    "queueFilterStatus": "Status",
+    "queueFilterSeverity": "Severity",
     "queueHint": "Select a case to view inference and stream.",
+    "noMatchingCases": "No cases match the selected filters.",
     "analyzingLabel": "Analyzing...",
     "openCases": "Open Cases list",
     "detailTitle": "Inference & evidence",
@@ -862,9 +866,12 @@
   "statusLabels": {
     "open": "Open",
     "in_progress": "In Progress",
+    "analyzing": "Analyzing",
     "new": "New",
+    "pending_explanation": "Explanation Required",
     "pending_approval": "Pending Approval",
     "resolved": "Resolved",
+    "ignored": "Ignored",
     "approved": "Approved",
     "dismissed": "Dismissed",
     "rejected": "Rejected",
@@ -1131,8 +1138,10 @@
       "document": "Document",
       "source": "Source",
       "status": "Status",
+      "quality": "Quality",
       "referenceCount": "Ref. count",
-      "created": "Created"
+      "created": "Created",
+      "noQualityReport": "No report"
     },
     "referenceCountBadge": "Ref. {{count}}",
     "status": {
@@ -1156,7 +1165,130 @@
       "notFound": "Document not found",
       "notFoundHint": "It may have been removed or the document ID is invalid.",
       "missingDocId": "No document ID. Please select a document from the list.",
-      "backToLibrary": "Back to document library"
+      "backToLibrary": "Back to document library",
+      "version": "Version",
+      "effectivePeriod": "Effective period",
+      "activeVersion": "Active version",
+      "inactiveVersion": "Inactive version",
+      "activateVersionLabel": "Version to activate",
+      "activateVersion": "Activate version",
+      "activatingVersion": "Activating...",
+      "activateSuccess": "Version activated.",
+      "activateFailed": "Failed to activate version.",
+      "replaceChunksTitle": "Replace active chunks",
+      "replaceChunksHint": "Paste JSON payload for POST /api/synapse/rag/documents/{docId}/chunks/replace.",
+      "replaceChunks": "Run chunk replace",
+      "replacingChunks": "Replacing...",
+      "replaceChunksSuccess": "Chunk replacement completed.",
+      "replaceChunksFailed": "Failed to replace chunks."
+    },
+    "metrics": {
+      "chunkPassRate": "Chunk pass rate",
+      "evalGate": "Evaluation gate",
+      "evalPass": "Passed",
+      "evalFail": "Failed",
+      "noEvalData": "No data",
+      "noEvalRunKey": "No runKey",
+      "ragZeroRate": "RAG zero-result rate",
+      "hitAtK": "hit@k",
+      "strictHitTop1": "strict hit@1",
+      "defaultInflowRate": "DEFAULT inflow rate",
+      "citationErrorRate": "Citation error rate",
+      "fromQualityReport": "From quality_report",
+      "fromLatestEvalRun": "From latest eval-run",
+      "pendingBackendMetric": "Awaiting backend metrics"
+    },
+    "quality": {
+      "title": "Quality report",
+      "detailTitle": "Document quality report",
+      "rechunkResultTitle": "Re-chunking quality report",
+      "pass": "PASS",
+      "fail": "FAIL",
+      "bannerPass": "Quality gate passed. Saved successfully.",
+      "bannerFail": "Quality gate failed. Nothing was saved.",
+      "articleCoverage": "Article coverage",
+      "noiseRate": "Noise rate",
+      "duplicateRate": "Duplicate rate",
+      "shortChunkRate": "Short chunk rate",
+      "chunkSummary": "Final/Input chunks",
+      "failReasons": "Fail reasons",
+      "failed422": "Quality gate failed",
+      "reason": {
+        "missingRequired": "Missing required metadata",
+        "noiseOrDuplicate": "Noise/duplicate threshold exceeded",
+        "validationFailed": "Quality validation failed"
+      },
+      "errorMap": {
+        "MISSING_REQUIRED_METADATA": {
+          "title": "Required metadata is missing",
+          "description": "Some required citation fields (doc_id/tenant_id/location/article) are empty, so the document cannot be saved.",
+          "actions": [
+            "Check document type (doc_type)",
+            "Review article/body structure in source document",
+            "Retry re-chunking after correction"
+          ]
+        },
+        "ARTICLE_COVERAGE_LOW": {
+          "title": "Article coverage is below threshold",
+          "description": "Mapping ratio for regulation articles is below threshold and failed quality gate.",
+          "actions": [
+            "Use HIERARCHICAL type when possible",
+            "Verify article notation format (e.g. Article n)",
+            "Preprocess document and retry upload/rechunk"
+          ]
+        },
+        "NOISE_RATE_HIGH": {
+          "title": "Document noise is too high",
+          "description": "Too many noisy tokens remain after normalization, reducing citation quality.",
+          "actions": [
+            "Clean filename/header noise in source",
+            "Check OCR/text extraction quality",
+            "Retry re-chunking"
+          ]
+        },
+        "DUPLICATE_RATE_HIGH": {
+          "title": "Duplicate chunk ratio exceeded threshold",
+          "description": "Repeated content is too high and may reduce retrieval quality.",
+          "actions": [
+            "Remove repeated sections in document",
+            "Check duplicate uploads for same file",
+            "Retry re-chunking"
+          ]
+        },
+        "SHORT_CHUNK_RATE_HIGH": {
+          "title": "Too many short chunks",
+          "description": "High ratio of short/title-only chunks lowers citation quality.",
+          "actions": [
+            "Confirm source includes body content",
+            "Improve title-only document structure",
+            "Retry re-chunking"
+          ]
+        },
+        "NO_VALID_CHUNKS_AFTER_QUALITY_GATE": {
+          "title": "No valid chunks were generated",
+          "description": "No chunks remained after cleanup/validation, so save was stopped.",
+          "actions": [
+            "Check encoding and text extraction output",
+            "Apply OCR for scanned PDF and retry",
+            "Try another document type and rechunk"
+          ]
+        },
+        "UNKNOWN": {
+          "title": "Quality validation failed",
+          "description": "An unknown error occurred during quality gate validation.",
+          "actions": [
+            "Review source document structure",
+            "Retry after a moment",
+            "Contact operator if issue persists"
+          ]
+        }
+      },
+      "debug": {
+        "show": "Show debug",
+        "hide": "Hide debug",
+        "errorCodes": "Raw error codes",
+        "rawReport": "Raw quality_report"
+      }
     },
     "registerModal": {
       "hint": "Register a document for RAG indexing. The document will be processed and chunked for semantic search.",
@@ -1818,6 +1950,7 @@
       "amount": "Amount",
       "evidenceStatus": "Evidence Status",
       "auraResult": "Aura Screening Result",
+      "postingDate": "Voucher Date",
       "inboxEmpty": "No vouchers waiting for explanation.",
       "empty": "No vouchers to display."
     },

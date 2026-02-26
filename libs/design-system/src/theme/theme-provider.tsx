@@ -21,7 +21,14 @@ export function ThemeProvider({ themeOverrides, children, ...other }: ThemeProvi
   });
 
   return (
-    <ThemeVarsProvider disableTransitionOnChange theme={theme} {...other}>
+    <ThemeVarsProvider
+      disableTransitionOnChange
+      defaultMode="light"
+      modeStorageKey="dwp-mui-mode"
+      colorSchemeStorageKey="dwp-mui-color-scheme"
+      theme={theme}
+      {...other}
+    >
       <CssBaseline />
       <ThemeModeProvider>{children}</ThemeModeProvider>
     </ThemeVarsProvider>

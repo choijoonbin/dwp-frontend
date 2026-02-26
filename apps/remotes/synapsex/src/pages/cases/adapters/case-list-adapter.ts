@@ -44,10 +44,10 @@ const mapSeverity = (s: string): CaseListItem['severity'] => {
 const mapStatus = (s: string): string => {
   const lower = (s ?? '').toLowerCase();
   const statusMap: Record<string, string> = {
-    TRIAGED: 'triage',
-    IN_PROGRESS: 'in_progress',
-    RESOLVED: 'resolved',
-    DISMISSED: 'dismissed',
+    triaged: 'triage',
+    in_progress: 'in_progress',
+    resolved: 'resolved',
+    dismissed: 'dismissed',
   };
   return statusMap[lower] ?? lower;
 };

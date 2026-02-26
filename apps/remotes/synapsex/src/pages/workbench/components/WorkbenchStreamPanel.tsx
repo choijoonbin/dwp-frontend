@@ -32,9 +32,10 @@ const orbPulseRisk = keyframes`
 
 type OrbVariant = 'thinking' | 'risk';
 
-const PulsingOrb = ({ size = 32, variant = 'thinking' }: { size?: number; variant?: OrbVariant }) => (
+const PulsingOrb = ({ size = 22, variant = 'thinking' }: { size?: number; variant?: OrbVariant }) => (
   <Box
     sx={{
+      position: 'relative',
       width: size,
       height: size,
       flexShrink: 0,
@@ -48,6 +49,13 @@ const PulsingOrb = ({ size = 32, variant = 'thinking' }: { size?: number; varian
         variant === 'risk'
           ? '0 0 12px 2px rgba(245, 158, 11, 0.25)'
           : '0 0 12px 2px rgba(66, 133, 244, 0.25)',
+      '&::after': {
+        content: '""',
+        position: 'absolute',
+        inset: -4,
+        borderRadius: '50%',
+        border: variant === 'risk' ? '1px solid rgba(245, 158, 11, 0.28)' : '1px solid rgba(66, 133, 244, 0.28)',
+      },
     }}
   />
 );
@@ -115,6 +123,7 @@ export const WorkbenchStreamPanel = ({
   const activities = mapAgentActivity(rawItems);
 
   const isLive = streamStatus === 'CONNECTING' || streamStatus === 'STREAMING';
+  const isStreaming = streamStatus === 'STREAMING';
   const hasCleanContent = cleanStreamLines.length > 0;
   /** 마지막 라인 (타이핑 중인 문장) */
   const lastLine = cleanStreamLines.length > 0 ? cleanStreamLines[cleanStreamLines.length - 1] : null;
@@ -182,7 +191,8 @@ export const WorkbenchStreamPanel = ({
                 bgcolor: contentBg,
                 color: 'text.secondary',
                 p: 2,
-                pt: 1.5,
+                pt: 2.25,
+                mt: 1,
                 mx: 1,
                 mb: 1.5,
                 display: 'flex',
@@ -191,9 +201,9 @@ export const WorkbenchStreamPanel = ({
                 gap: 1.5,
               }}
             >
-            {showLive && (
+            {isStreaming && (
               <Box sx={{ flexShrink: 0, pt: { xs: 0, sm: 0.25 } }}>
-                <PulsingOrb size={28} variant={orbVariant} />
+                <PulsingOrb size={20} variant={orbVariant} />
               </Box>
             )}
             <Box component="span" sx={{ flex: 1, minWidth: 0, display: 'block' }}>

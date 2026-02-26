@@ -8,11 +8,12 @@ export class HttpError extends Error {
   public readonly traceId?: string;
 
   public readonly gatewayRequestId?: string;
+  public readonly responseBody?: unknown;
 
   public constructor(
     message: string,
     status: number,
-    extras?: { auditId?: string; traceId?: string; gatewayRequestId?: string }
+    extras?: { auditId?: string; traceId?: string; gatewayRequestId?: string; responseBody?: unknown }
   ) {
     super(message);
     this.status = status;
@@ -20,6 +21,7 @@ export class HttpError extends Error {
     this.auditId = extras?.auditId;
     this.traceId = extras?.traceId;
     this.gatewayRequestId = extras?.gatewayRequestId;
+    this.responseBody = extras?.responseBody;
   }
 
   get is403(): boolean {

@@ -6,7 +6,12 @@
 import { Iconify } from '@dwp-frontend/design-system';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { reChunkRagDocument, type ReChunkRequest, getRagDocumentChunkingStatus } from '@dwp-frontend/shared-utils';
+import {
+  HttpError,
+  reChunkRagDocument,
+  type ReChunkRequest,
+  getRagDocumentChunkingStatus,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -25,6 +30,8 @@ import FormControl from '@mui/material/FormControl';
 import { alpha, useTheme } from '@mui/material/styles';
 import LinearProgress from '@mui/material/LinearProgress';
 
+import { RagQualityReportCard, extractQualityReport, type QualityReportView } from './rag-quality-report-card';
+
 // ----------------------------------------------------------------------
 
 export type ChunkingStrategyOption = { key: string; value: string; description?: string };
@@ -37,6 +44,7 @@ interface ReChunkControlProps {
   /** 현재 적용된 전략 키 (문서 상세 API에서 오는 값) */
   currentStrategy?: string;
   currentChunkCount?: number;
+  enableDebug?: boolean;
   onReChunkComplete?: () => void;
 }
 
@@ -55,6 +63,7 @@ export function ReChunkControl({
   chunkingStrategies,
   currentStrategy,
   currentChunkCount,
+  enableDebug = false,
   onReChunkComplete,
 }: ReChunkControlProps) {
   const theme = useTheme();
@@ -66,6 +75,7 @@ export function ReChunkControl({
   const [chunkOverlap, setChunkOverlap] = useState(50);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<{ status: 'success' | 'error'; message: string } | null>(null);
+  const [qualityReport, setQualityReport] = useState<QualityReportView | null>(null);
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(
@@ -87,6 +97,7 @@ export function ReChunkControl({
   const handleReChunk = useCallback(async () => {
     setIsProcessing(true);
     setResult(null);
+    setQualityReport(null);
 
     const body: ReChunkRequest = {
       strategy: selectedStrategy,
@@ -99,6 +110,8 @@ export function ReChunkControl({
 
     try {
       const res = await reChunkRagDocument(docId, body);
+      const report = extractQualityReport(res.data);
+      if (report) setQualityReport(report);
       if (res.status === 'SUCCESS' || res.status === 'OK') {
         setResult({
           status: 'success',
@@ -149,10 +162,27 @@ export function ReChunkControl({
         });
       }
     } catch (err) {
+      const report =
+        err instanceof HttpError
+          ? extractQualityReport(err.responseBody)
+          : extractQualityReport(err);
+      if (report) setQualityReport(report);
+      if (err instanceof HttpError && err.status === 422) {
+        const fallbackReason = report?.missingRequired.length
+          ? t('rag.quality.reason.missingRequired')
+          : report?.errors.length
+            ? t('rag.quality.reason.noiseOrDuplicate')
+            : t('rag.quality.reason.validationFailed');
+        setResult({
+          status: 'error',
+          message: `${t('rag.quality.failed422')}: ${fallbackReason}`,
+        });
+      } else {
       setResult({
         status: 'error',
         message: err instanceof Error ? err.message : t('rag.rechunk.failed', { defaultValue: '재청킹에 실패했습니다.' }),
       });
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -273,6 +303,13 @@ export function ReChunkControl({
               {result.message}
             </Alert>
           )}
+          {qualityReport && (
+            <RagQualityReportCard
+              report={qualityReport}
+              title={t('rag.quality.rechunkResultTitle')}
+              enableDebug={enableDebug}
+            />
+          )}
 
           <Stack direction="row" spacing={1} justifyContent="flex-end">
             <Button
@@ -280,7 +317,7 @@ export function ReChunkControl({
               color="primary"
               startIcon={<Iconify icon="solar:refresh-bold" width={18} />}
               onClick={handleReChunk}
-              disabled={isProcessing || !isChanged || chunkingStrategies.length === 0}
+              disabled={isProcessing || chunkingStrategies.length === 0}
             >
               {t('rag.rechunk.apply', { defaultValue: '재청킹 실행' })}
             </Button>

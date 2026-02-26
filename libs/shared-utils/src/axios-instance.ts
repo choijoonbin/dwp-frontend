@@ -10,7 +10,13 @@ import { reportDevErrorToReporter } from './dev-error-reporter';
 
 const baseURL = NX_API_URL;
 
-type ErrorBody = { auditId?: string; traceId?: string; gatewayRequestId?: string; message?: string };
+type ErrorBody = {
+  auditId?: string;
+  traceId?: string;
+  gatewayRequestId?: string;
+  message?: string;
+  raw?: unknown;
+};
 
 function extractTraceFromResponse(res: Response): { traceId?: string; gatewayRequestId?: string } {
   return {
@@ -22,12 +28,23 @@ function extractTraceFromResponse(res: Response): { traceId?: string; gatewayReq
 async function parseErrorBody(res: Response): Promise<ErrorBody> {
   try {
     const json = await res.json();
+    const obj = typeof json === 'object' && json !== null ? (json as Record<string, unknown>) : null;
+    const nestedData =
+      obj && typeof obj.data === 'object' && obj.data !== null
+        ? (obj.data as Record<string, unknown>)
+        : undefined;
+    const messageFromData =
+      typeof nestedData?.message === 'string' ? nestedData.message : undefined;
     return typeof json === 'object' && json !== null
       ? {
-          auditId: json.auditId,
-          traceId: json.traceId,
-          gatewayRequestId: json.gatewayRequestId,
-          message: json.message,
+          auditId: typeof obj?.auditId === 'string' ? obj.auditId : undefined,
+          traceId: typeof obj?.traceId === 'string' ? obj.traceId : undefined,
+          gatewayRequestId: typeof obj?.gatewayRequestId === 'string' ? obj.gatewayRequestId : undefined,
+          message:
+            (typeof obj?.message === 'string' ? obj.message : undefined) ??
+            (typeof obj?.error === 'string' ? obj.error : undefined) ??
+            messageFromData,
+          raw: json,
         }
       : {};
   } catch {
@@ -64,6 +81,7 @@ async function handleFailedResponse(
     auditId,
     traceId: trace.traceId ?? body.traceId,
     gatewayRequestId: trace.gatewayRequestId ?? body.gatewayRequestId,
+    responseBody: body.raw,
   });
 }
 

@@ -41,6 +41,12 @@ export type WorkbenchItemDetailGridProps = {
 
 const emptyValue = '—';
 
+function normalizeDisplayBuzei(value: string | undefined, fallbackIndex: number): string {
+  const raw = String(value ?? '').trim();
+  if (/^\d{1,3}$/.test(raw)) return raw.padStart(3, '0');
+  return String(fallbackIndex + 1).padStart(3, '0');
+}
+
 /**
  * 금액 표시: 시각적 일관성을 위해 항상 절대값으로 표시 (shkzg 무관).
  * BE는 금액을 양수로 생성하며, 상세내역에서는 절대값만 노출합니다.
@@ -91,15 +97,14 @@ export const WorkbenchItemDetailGrid = ({
     }
   }, []);
 
-  const isTarget = (item: FiDocItem) => {
+  const isTarget = (item: FiDocItem, rowIndex: number) => {
     if (item.isTarget === true) return true;
     if (!highlightBuzei) return false;
-    const buzei = item.buzei ?? '';
+    const buzei = normalizeDisplayBuzei(item.buzei, rowIndex);
     return String(buzei).trim().padStart(3, '0') === String(highlightBuzei).trim().padStart(3, '0');
   };
 
-  const rowId = (item: FiDocItem) =>
-    (item.buzei != null ? String(item.buzei).trim().padStart(3, '0') : null) ?? item.id;
+  const rowId = (item: FiDocItem, rowIndex: number) => normalizeDisplayBuzei(item.buzei, rowIndex);
 
   if (items.length === 0) {
     return (
@@ -120,12 +125,14 @@ export const WorkbenchItemDetailGrid = ({
         borderRadius: 2,
         overflow: 'auto',
         '& [data-row-id].workbench-red-glow': {
+          backgroundColor: alpha(theme.palette.error.main, 0.08),
+          boxShadow: `inset 0 0 0 1px ${alpha(theme.palette.error.main, 0.35)}`,
+        },
+        '& [data-row-id].workbench-red-glow > td:first-of-type': {
           position: 'relative',
           overflow: 'hidden',
-          backgroundColor: alpha(theme.palette.error.main, 0.08),
           borderLeft: '3px solid',
           borderLeftColor: 'error.main',
-          boxShadow: `inset 0 0 0 1px ${alpha(theme.palette.error.main, 0.35)}`,
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -136,6 +143,7 @@ export const WorkbenchItemDetailGrid = ({
             background: `linear-gradient(to bottom, transparent 0%, ${theme.palette.error.main} 35%, ${theme.palette.error.main} 65%, transparent 100%)`,
             animation: `${flowGlow} 1.8s linear infinite`,
             boxShadow: `0 0 12px ${alpha(theme.palette.error.main, 0.8)}`,
+            pointerEvents: 'none',
           },
         },
       }}
@@ -153,12 +161,13 @@ export const WorkbenchItemDetailGrid = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {items.map((item) => {
-            const target = isTarget(item);
+          {items.map((item, rowIndex) => {
+            const target = isTarget(item, rowIndex);
+            const buzei = normalizeDisplayBuzei(item.buzei, rowIndex);
             return (
               <TableRow
-                key={item.id}
-                data-row-id={rowId(item)}
+                key={`${item.id}-${buzei}-${rowIndex}`}
+                data-row-id={rowId(item, rowIndex)}
                 className={target ? 'workbench-red-glow' : undefined}
                 sx={{
                   '&:hover': {
@@ -167,7 +176,7 @@ export const WorkbenchItemDetailGrid = ({
                 }}
               >
                 <TableCell sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
-                  {item.buzei ?? emptyValue}
+                  {buzei}
                 </TableCell>
                 <TableCell sx={{ fontFamily: 'monospace' }}>{item.hkont ?? emptyValue}</TableCell>
                 <TableCell
