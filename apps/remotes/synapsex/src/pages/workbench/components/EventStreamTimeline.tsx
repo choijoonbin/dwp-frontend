@@ -19,6 +19,8 @@ import Typography from '@mui/material/Typography';
 
 export type EventStreamTimelineProps = {
   steps: StreamTimelineStep[];
+  /** default: 배지 중심 간결 표시. debug: 전체 이벤트 상세 표시 */
+  view?: 'default' | 'debug';
   sx?: SxProps<Theme>;
 };
 
@@ -91,7 +93,11 @@ const getEventColor = (
   }
 };
 
-const getEventLabel = (type: StreamTimelineStep['type'], t: (k: string, o?: { defaultValue?: string }) => string): string => {
+const getEventLabel = (
+  step: StreamTimelineStep,
+  t: (k: string, o?: { defaultValue?: string }) => string
+): string => {
+  const { type, node } = step;
   switch (type) {
     case 'started':
       return t('workbench.eventStarted', { defaultValue: '시작' });
@@ -102,31 +108,32 @@ const getEventLabel = (type: StreamTimelineStep['type'], t: (k: string, o?: { de
     case 'failed':
       return t('workbench.eventFailed', { defaultValue: '실패' });
     case 'NODE_START':
-      return '노드 시작';
+      return node ? `${node} 시작` : t('workbench.timeline.nodeStart', { defaultValue: '노드 시작' });
     case 'NODE_END':
-      return '노드 종료';
+      return node ? `${node} 완료` : t('workbench.timeline.nodeEnd', { defaultValue: '노드 완료' });
     case 'TOOL_CALL':
-      return '도구 호출';
+      return t('workbench.timeline.toolCall', { defaultValue: '도구 호출' });
     case 'TOOL_RESULT':
-      return '도구 결과';
+      return t('workbench.timeline.toolResult', { defaultValue: '도구 결과' });
     case 'EVIDENCE_ADDED':
-      return '근거 추가';
+      return t('workbench.timeline.evidenceAdded', { defaultValue: '근거 추가' });
     case 'EVIDENCE_REJECTED':
-      return '근거 제외';
+      return t('workbench.timeline.evidenceRejected', { defaultValue: '근거 제외' });
     case 'GATE_APPLIED':
-      return '게이트 적용';
+      return t('workbench.timeline.gateApplied', { defaultValue: '품질 게이트 적용' });
     case 'COMPLETED':
-      return '완료';
+      return t('workbench.timeline.completed', { defaultValue: '분석 완료' });
     case 'FAILED':
-      return '실패';
+      return t('workbench.timeline.failed', { defaultValue: '분석 실패' });
     default:
       return type;
   }
 };
 
-export const EventStreamTimeline = ({ steps, sx }: EventStreamTimelineProps) => {
+export const EventStreamTimeline = ({ steps, view = 'default', sx }: EventStreamTimelineProps) => {
   const { t } = useTranslation('common');
   const deduped = useMemo(() => dedupeSteps(steps), [steps]);
+  const isCompact = view === 'default';
 
   if (deduped.length === 0) {
     return (
@@ -145,7 +152,8 @@ export const EventStreamTimeline = ({ steps, sx }: EventStreamTimelineProps) => 
         const timeStr = step.at
           ? new Date(step.at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
           : null;
-        const summaryMessage = step.message ?? step.detail ?? step.label ?? getEventLabel(step.type, t);
+        const displayLabel = getEventLabel(step, t);
+        const summaryMessage = step.message ?? step.detail ?? step.label ?? displayLabel;
 
         return (
           <Paper
@@ -163,7 +171,7 @@ export const EventStreamTimeline = ({ steps, sx }: EventStreamTimelineProps) => 
                 <Iconify icon={getEventIcon(step.type)} width={18} sx={{ color: `${color}.main` }} />
                 <Chip
                   size="small"
-                  label={step.label ?? getEventLabel(step.type, t)}
+                  label={step.label ?? displayLabel}
                   color={color}
                   variant="outlined"
                   sx={{ fontWeight: 600, fontSize: '0.7rem' }}
@@ -175,7 +183,7 @@ export const EventStreamTimeline = ({ steps, sx }: EventStreamTimelineProps) => 
                 )}
               </Box>
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                {(step.node || step.decision_code) && (
+                {!isCompact && (step.node || step.decision_code) && (
                   <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mb: 0.5 }}>
                     {step.node && (
                       <Typography variant="caption" color="text.secondary">
@@ -192,40 +200,42 @@ export const EventStreamTimeline = ({ steps, sx }: EventStreamTimelineProps) => 
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
                   {summaryMessage}
                 </Typography>
-                <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mt: 0.5 }}>
-                  {step.tool && (
-                    <Chip size="small" label={`tool: ${step.tool}`} variant="outlined" sx={{ fontSize: '0.65rem' }} />
-                  )}
-                  {step.latency_ms != null && Number.isFinite(step.latency_ms) && (
-                    <Chip
-                      size="small"
-                      label={`${step.latency_ms}ms`}
-                      variant="outlined"
-                      sx={{ fontSize: '0.65rem' }}
-                    />
-                  )}
-                  {Array.isArray(step.evidence_ids) && step.evidence_ids.length > 0 && (
-                    <Chip
-                      size="small"
-                      label={`근거 ${step.evidence_ids.length}건`}
-                      variant="outlined"
-                      sx={{ fontSize: '0.65rem' }}
-                    />
-                  )}
-                  {step.type === 'failed' && step.stage && (
-                    <Typography variant="caption" color="error.main">
-                      stage: {step.stage}
-                    </Typography>
-                  )}
-                  {step.percent != null && Number.isFinite(step.percent) && step.type === 'step' && (
-                    <Chip
-                      size="small"
-                      label={`${step.percent}%`}
-                      variant="outlined"
-                      sx={{ fontSize: '0.65rem' }}
-                    />
-                  )}
-                </Stack>
+                {!isCompact && (
+                  <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mt: 0.5 }}>
+                    {step.tool && (
+                      <Chip size="small" label={`tool: ${step.tool}`} variant="outlined" sx={{ fontSize: '0.65rem' }} />
+                    )}
+                    {step.latency_ms != null && Number.isFinite(step.latency_ms) && (
+                      <Chip
+                        size="small"
+                        label={`${step.latency_ms}ms`}
+                        variant="outlined"
+                        sx={{ fontSize: '0.65rem' }}
+                      />
+                    )}
+                    {Array.isArray(step.evidence_ids) && step.evidence_ids.length > 0 && (
+                      <Chip
+                        size="small"
+                        label={`근거 ${step.evidence_ids.length}건`}
+                        variant="outlined"
+                        sx={{ fontSize: '0.65rem' }}
+                      />
+                    )}
+                    {step.type === 'failed' && step.stage && (
+                      <Typography variant="caption" color="error.main">
+                        stage: {step.stage}
+                      </Typography>
+                    )}
+                    {step.percent != null && Number.isFinite(step.percent) && step.type === 'step' && (
+                      <Chip
+                        size="small"
+                        label={`${step.percent}%`}
+                        variant="outlined"
+                        sx={{ fontSize: '0.65rem' }}
+                      />
+                    )}
+                  </Stack>
+                )}
               </Box>
             </Stack>
           </Paper>

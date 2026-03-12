@@ -6,12 +6,12 @@ import { useTranslation } from '@dwp-frontend/shared-i18n';
 import { Iconify, varAlpha } from '@dwp-frontend/design-system';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import {
-  agentEventsToTimelineSteps,
-  dedupeAgentEvents,
   getMe,
-  useAgentEventsQuery,
-  useStreamStore,
   useAuth,
+  useStreamStore,
+  useAgentEventsQuery,
+  filterStepsForDefaultView,
+  agentEventsToTimelineSteps,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -23,6 +23,7 @@ import Tabs from '@mui/material/Tabs';
 import Alert from '@mui/material/Alert';
 import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
+import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
@@ -37,6 +38,7 @@ import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import { alpha, useTheme } from '@mui/material/styles';
 import TableContainer from '@mui/material/TableContainer';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 
@@ -244,6 +246,7 @@ export function WorkbenchNewCasePanel({
   const theme = useTheme();
   const { isAuthenticated } = useAuth();
   const [tab, setTab] = useState<NewCaseTab>('thought');
+  const [debugTimelineView, setDebugTimelineView] = useState(false);
   const [scrollToBuzei, setScrollToBuzei] = useState<string | null>(null);
   const [highlightedCitationId, setHighlightedCitationId] = useState<string | null>(null);
   const [highlightedCitationIds, setHighlightedCitationIds] = useState<string[]>([]);
@@ -251,11 +254,16 @@ export function WorkbenchNewCasePanel({
   const runId = analysisData?.runId ?? (analysisData as { runId?: string } | undefined)?.runId;
   const agentEventsQuery = useAgentEventsQuery(selectedCaseId ?? undefined, runId ?? null, {
     enabled: Boolean(selectedCaseId),
+    view: debugTimelineView ? 'debug' : 'default',
   });
-  const agentEventsSteps = useMemo(
+  const agentEventsStepsRaw = useMemo(
     () => agentEventsToTimelineSteps(agentEventsQuery.data),
     [agentEventsQuery.data]
   );
+  const agentEventsSteps = useMemo(() => {
+    if (debugTimelineView) return agentEventsStepsRaw;
+    return filterStepsForDefaultView(agentEventsStepsRaw);
+  }, [agentEventsStepsRaw, debugTimelineView]);
   /** analysis 응답의 aiThoughts/activityHistory → StreamTimelineStep 변환 (eventType, message, occurredAt) */
   const analysisTimelineSteps = useMemo(() => {
     const raw =
@@ -288,12 +296,16 @@ export function WorkbenchNewCasePanel({
       })),
     [aiThoughts]
   );
-  /** 1순위: agent-events(데이터 있을 때만), 2순위: analysis aiThoughts/activityHistory, 3순위: detail.aiThoughts */
+  /** 1순위: agent-events(데이터 있을 때만), 2순위: analysis aiThoughts/activityHistory, 3순위: detail.aiThoughts.
+   * agent-events 로딩 중에는 fallback 사용 보류 → agent_stream이 먼저 보이는 현상 방지 */
   const effectiveTimelineSteps = useMemo(() => {
     if (agentEventsSteps.length > 0) return agentEventsSteps;
+    if (agentEventsQuery.isFetching && !agentEventsQuery.data) {
+      return [];
+    }
     if (analysisTimelineSteps.length > 0) return analysisTimelineSteps;
     return detailThoughtsSteps;
-  }, [agentEventsSteps, analysisTimelineSteps, detailThoughtsSteps]);
+  }, [agentEventsSteps, agentEventsQuery.isFetching, agentEventsQuery.data, analysisTimelineSteps, detailThoughtsSteps]);
   const liveSentenceCitationMap = useStreamStore((s) => s.liveSentenceCitationMap);
   const pendingCitationJumpId = useStreamStore((s) => s.pendingCitationJumpId);
   const clearCitationJumpRequest = useStreamStore((s) => s.clearCitationJumpRequest);
@@ -777,6 +789,21 @@ export function WorkbenchNewCasePanel({
             )}
             <Card variant="outlined">
               <CardHeader
+                action={
+                  canDebugPanel ? (
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          size="small"
+                          checked={debugTimelineView}
+                          onChange={(_, checked) => setDebugTimelineView(checked)}
+                        />
+                      }
+                      label={t('workbench.timeline.debugToggle', { defaultValue: '디버그 보기' })}
+                      sx={{ mr: 0 }}
+                    />
+                  ) : null
+                }
                 title={
                   <Stack direction="row" spacing={1} alignItems="center">
                     <Iconify icon="solar:clock-circle-bold-duotone" width={18} />
@@ -789,7 +816,16 @@ export function WorkbenchNewCasePanel({
               />
               <CardContent sx={{ px: 2, pt: 0, pb: 1.5 }}>
                 {effectiveTimelineSteps.length > 0 ? (
-                  <EventStreamTimeline steps={effectiveTimelineSteps} />
+                  <EventStreamTimeline
+                    steps={effectiveTimelineSteps}
+                    view={debugTimelineView ? 'debug' : 'default'}
+                  />
+                ) : agentEventsStepsRaw.length > 0 && !debugTimelineView ? (
+                  <Typography variant="body2" color="text.secondary">
+                    {t('workbench.timeline.defaultEmpty', {
+                      defaultValue: '표시할 핵심 이벤트가 없습니다. (디버그 보기에서 전체 이벤트 확인 가능)',
+                    })}
+                  </Typography>
                 ) : (
                   <Typography variant="body2" color="text.secondary">
                     {t('workbench.eventStreamEmpty', { defaultValue: '이벤트 데이터 없음' })}
@@ -798,7 +834,7 @@ export function WorkbenchNewCasePanel({
                 {canDebugPanel && (
                   <Box sx={{ mt: 1.5, pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
                     <Typography variant="caption" component="div" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
-                      [디버그] runId: {runId ?? '-'} · API응답: {agentEventsQuery.data?.length ?? 0}건 · dedupe후: {agentEventsSteps.length}건 · 최종렌더: {dedupeAgentEvents(effectiveTimelineSteps).length}건
+                      [디버그] runId: {runId ?? '-'} · API응답: {agentEventsQuery.data?.length ?? 0}건 · raw: {agentEventsStepsRaw.length}건 · default필터: {agentEventsSteps.length}건 · view: {debugTimelineView ? 'debug' : 'default'}
                     </Typography>
                   </Box>
                 )}

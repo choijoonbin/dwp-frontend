@@ -5,12 +5,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@dwp-frontend/shared-i18n';
 import {
-  useStreamStore,
-  useCasesListQuery,
+  caseDetailQueryKey,
+  getTenantId,
   useAnalysisRunStream,
+  useCasesListQuery,
   useCaseAnalysisQuery,
-  useWorkbenchReactiveStore,
   useRequestCaseExplanationMutation,
+  useStreamStore,
+  useWorkbenchReactiveStore,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -107,8 +109,14 @@ export const WorkbenchNewPage = () => {
       runId,
       isAutoStarted: true,
       onSuccess: () => {
+        const tenantId = getTenantId();
         queryClient.invalidateQueries({ queryKey: ['synapse', 'cases'] });
         queryClient.invalidateQueries({ queryKey: ['synapse', 'cases', 'analysis'] });
+        queryClient.invalidateQueries({ queryKey: caseDetailQueryKey(tenantId, caseId) });
+        // BE가 case status를 IN_REVIEW로 비동기 갱신할 수 있어, 지연 후 재조회로 race 방지
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: caseDetailQueryKey(tenantId, caseId) });
+        }, 500);
       },
     });
   }, [selectedCaseId, pendingAutoStream, setPendingAutoStream, startStream, queryClient]);

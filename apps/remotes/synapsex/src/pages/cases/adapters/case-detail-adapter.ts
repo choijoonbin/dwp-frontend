@@ -36,6 +36,8 @@ const mapStatus = (s: string): string => {
     OPEN: 'open',
     TRIAGED: 'triage',
     IN_PROGRESS: 'in_progress',
+    ANALYZING: 'analyzing',
+    IN_REVIEW: 'in_review',
     RESOLVED: 'resolved',
     DISMISSED: 'dismissed',
   };

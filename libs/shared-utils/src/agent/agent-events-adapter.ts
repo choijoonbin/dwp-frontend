@@ -82,6 +82,13 @@ export function dedupeAgentEvents(steps: StreamTimelineStep[]): StreamTimelineSt
   });
 }
 
+/** default 뷰용 핵심 이벤트만 필터. NODE_END(단계 완료)+GATE+COMPLETED+FAILED. NODE_START/TOOL/EVIDENCE 제외해 8~12개 수준 유지 */
+const DEFAULT_VIEW_TYPES = ['NODE_END', 'GATE_APPLIED', 'COMPLETED', 'FAILED'] as const;
+
+export function filterStepsForDefaultView(steps: StreamTimelineStep[]): StreamTimelineStep[] {
+  return steps.filter((s) => DEFAULT_VIEW_TYPES.includes(s.type as (typeof DEFAULT_VIEW_TYPES)[number]));
+}
+
 /** API events 배열 → StreamTimelineStep[] (정렬: occurred_at 기준) */
 export function agentEventsToTimelineSteps(
   events: AgentEventItemDto[] | undefined

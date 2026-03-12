@@ -28,7 +28,7 @@ const sizeMap = {
   lg: { fontSize: '0.875rem', iconSize: 18 },
 };
 
-/** OPEN: Info(파란색), IN_PROGRESS: Warning(노란색/Processing), new: 신규 */
+/** OPEN: Info(파란색), IN_PROGRESS: Warning(노란색/Processing), IN_REVIEW: 분석 완료·검토 대기 */
 const statusConfig: Record<string, { icon: string; color: LabelColor }> = {
   open: { icon: 'solar:record-circle-bold', color: 'info' },
   OPEN: { icon: 'solar:record-circle-bold', color: 'info' },
@@ -36,6 +36,10 @@ const statusConfig: Record<string, { icon: string; color: LabelColor }> = {
   NEW: { icon: 'solar:star-bold', color: 'info' },
   in_progress: { icon: 'solar:refresh-circle-bold-duotone', color: 'warning' },
   IN_PROGRESS: { icon: 'solar:refresh-circle-bold-duotone', color: 'warning' },
+  analyzing: { icon: 'solar:refresh-circle-bold-duotone', color: 'warning' },
+  ANALYZING: { icon: 'solar:refresh-circle-bold-duotone', color: 'warning' },
+  in_review: { icon: 'solar:clipboard-list-bold-duotone', color: 'info' },
+  IN_REVIEW: { icon: 'solar:clipboard-list-bold-duotone', color: 'info' },
   resolved: { icon: 'solar:check-circle-bold-duotone', color: 'success' },
   RESOLVED: { icon: 'solar:check-circle-bold-duotone', color: 'success' },
   dismissed: { icon: 'solar:close-circle-bold', color: 'default' },

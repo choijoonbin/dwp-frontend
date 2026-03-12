@@ -712,16 +712,18 @@ export type AgentEventItemDto = {
  * AGENT_EVENT 조회 API.
  * 응답: data = AgentEventItemDto[] (배열 직접 반환, events 래핑 없음)
  * runId 미지정 시 latestIfMissing=true로 최신 run 자동 조회.
+ * view=default: 핵심 이벤트만(8~12개 수준). view=debug: 전체 이벤트.
  */
 export const getAgentEvents = async (
   caseId: string,
-  params?: { runId?: string; latestIfMissing?: boolean }
+  params?: { runId?: string; latestIfMissing?: boolean; view?: 'default' | 'debug' }
 ): Promise<ApiResponse<AgentEventItemDto[]>> => {
   const sp = new URLSearchParams();
   if (params?.runId) sp.set('runId', params.runId);
   if (params?.runId === undefined && (params?.latestIfMissing ?? true)) {
     sp.set('latestIfMissing', 'true');
   }
+  if (params?.view) sp.set('view', params.view);
   const search = sp.toString() ? `?${sp.toString()}` : '';
   const res = await axiosInstance.get<ApiResponse<AgentEventItemDto[]>>(
     `/api/synapse/cases/${encodeURIComponent(caseId)}/agent-events${search}`

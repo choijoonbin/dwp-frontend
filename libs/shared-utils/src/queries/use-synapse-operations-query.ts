@@ -79,8 +79,12 @@ export const workbenchCaseHistoryQueryKey = (tenantId: string, caseId: string) =
 export const caseAnalysisQueryKey = (tenantId: string, caseId: string, runId?: string | null) =>
   ['synapse', 'cases', 'analysis', tenantId, caseId, runId ?? ''] as const;
 
-export const agentEventsQueryKey = (tenantId: string, caseId: string, runId?: string | null) =>
-  ['synapse', 'cases', 'agent-events', tenantId, caseId, runId ?? ''] as const;
+export const agentEventsQueryKey = (
+  tenantId: string,
+  caseId: string,
+  runId?: string | null,
+  view?: 'default' | 'debug'
+) => ['synapse', 'cases', 'agent-events', tenantId, caseId, runId ?? '', view ?? 'default'] as const;
 
 export const caseConfidenceQueryKey = (tenantId: string, caseId: string) =>
   ['synapse', 'cases', 'confidence', tenantId, caseId] as const;
@@ -285,14 +289,16 @@ export const useCaseAnalysisQuery = (
 /**
  * agent-events API — 타임라인 기본 소스.
  * runId 미지정 시 BE가 최신 run 자동 조회(latestIfMissing).
+ * view=default: 핵심 이벤트만. view=debug: 전체 이벤트.
  */
 export const useAgentEventsQuery = (
   caseId: string | undefined,
   runId: string | undefined | null,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean; view?: 'default' | 'debug' }
 ) => {
   const { isAuthenticated } = useAuth();
   const tenantId = getTenantId();
+  const view = options?.view ?? 'default';
   const enabled =
     (options?.enabled ?? true) &&
     isAuthenticated &&
@@ -300,10 +306,13 @@ export const useAgentEventsQuery = (
     Boolean(caseId);
 
   return useQuery({
-    queryKey: agentEventsQueryKey(tenantId, caseId ?? '', runId ?? null),
+    queryKey: agentEventsQueryKey(tenantId, caseId ?? '', runId ?? null, view),
     queryFn: async () => {
       if (!caseId) throw new Error('Missing caseId');
-      const res = await getAgentEvents(caseId, runId ? { runId } : undefined);
+      const res = await getAgentEvents(caseId, {
+        runId: runId ?? undefined,
+        view,
+      });
       if (res.status !== 'SUCCESS' && res.status !== 'OK') {
         throw new Error(res.message || 'Failed to fetch agent events');
       }
