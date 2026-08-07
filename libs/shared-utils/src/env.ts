@@ -1,4 +1,3 @@
-// ----------------------------------------------------------------------
+const configuredApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
-export const NX_API_URL = (process.env.NX_API_URL ?? 'http://localhost:8080') as string;
-
+export const API_URL = String(configuredApiUrl).replace(/\/$/, '');

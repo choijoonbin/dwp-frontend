@@ -55,18 +55,19 @@ const commonRules = () => ({
         {
           name: 'class-variance-authority',
           message:
-            '❌ Use MUI sx prop instead of class-variance-authority. See docs/essentials/THEME_TOKENS.md',
+            '❌ Use MUI sx prop instead of class-variance-authority. See docs/essentials/DESIGN_SYSTEM.md',
         },
         {
           name: 'tailwind-merge',
           message:
-            '❌ Use MUI sx prop instead of tailwind-merge. See docs/essentials/THEME_TOKENS.md',
+            '❌ Use MUI sx prop instead of tailwind-merge. See docs/essentials/DESIGN_SYSTEM.md',
         },
       ],
       patterns: [
         {
           group: ['@radix-ui/*'],
-          message: '❌ Use MUI v5 components instead of Radix UI. See docs/essentials/DESIGN_SYSTEM.md',
+          message:
+            '❌ Use MUI components instead of Radix UI. See docs/essentials/DESIGN_SYSTEM.md',
         },
         {
           group: ['**/components/ui/**'],
@@ -198,11 +199,7 @@ export const customConfig = {
     'import/resolver': {
       ...importPlugin.configs.typescript.settings['import/resolver'],
       typescript: {
-        project: [
-          'tsconfig.base.json',
-          'apps/remotes/admin/tsconfig.json',
-          'apps/remotes/admin/tsconfig.app.json',
-        ],
+        project: ['tsconfig.base.json'],
       },
     },
   },
@@ -219,10 +216,6 @@ export const customConfig = {
 export default [
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
   { ignores: ['*', '!apps/', '!libs/', '!eslint.config.*', 'apps/**/dist/**', 'apps/**/build/**'] },
-  {
-    files: ['apps/dwp/src/components/synapse-module.tsx'],
-    rules: { 'import/no-unresolved': 'off' },
-  },
   {
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },

@@ -1,7 +1,3 @@
-/**
- * 언어 get/set 훅 — Shell↔Remote 공통
- */
-
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 

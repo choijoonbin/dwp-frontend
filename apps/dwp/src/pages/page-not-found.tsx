@@ -1,15 +1,5 @@
-import { CONFIG } from 'src/config-global';
+import { StatusPage } from './status-page';
 
-import { NotFoundView } from 'src/sections/error';
-
-// ----------------------------------------------------------------------
-
-export default function Page() {
-  return (
-    <>
-      <title>{`404 page not found! | Error - ${CONFIG.appName}`}</title>
-
-      <NotFoundView />
-    </>
-  );
+export default function PageNotFound() {
+  return <StatusPage code="404" title="Page not found" />;
 }

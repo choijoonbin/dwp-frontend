@@ -13,7 +13,7 @@ import type { ThemeOptions } from './types';
 
 // ----------------------------------------------------------------------
 
-export const baseTheme: ThemeOptions = {
+const baseTheme: ThemeOptions = {
   defaultColorScheme: 'light',
   colorSchemes: {
     light: {

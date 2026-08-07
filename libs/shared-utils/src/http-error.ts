@@ -1,52 +1,10 @@
-// ----------------------------------------------------------------------
-
 export class HttpError extends Error {
-  public readonly status: number;
-
-  public readonly auditId?: string;
-
-  public readonly traceId?: string;
-
-  public readonly gatewayRequestId?: string;
-  public readonly responseBody?: unknown;
-
-  public constructor(
+  constructor(
     message: string,
-    status: number,
-    extras?: { auditId?: string; traceId?: string; gatewayRequestId?: string; responseBody?: unknown }
+    public readonly status: number,
+    public readonly details?: unknown
   ) {
     super(message);
-    this.status = status;
     this.name = 'HttpError';
-    this.auditId = extras?.auditId;
-    this.traceId = extras?.traceId;
-    this.gatewayRequestId = extras?.gatewayRequestId;
-    this.responseBody = extras?.responseBody;
   }
-
-  get is403(): boolean {
-    return this.status === 403;
-  }
-}
-
-/** Error with auditId (from 200 + status:ERROR or 4xx/5xx body) */
-export function getAuditIdFromError(err: unknown): string | undefined {
-  if (err instanceof HttpError && err.auditId) return err.auditId;
-  const e = err as Error & { auditId?: string };
-  return e?.auditId;
-}
-
-export function isHttpError(err: unknown): err is HttpError {
-  return err instanceof HttpError;
-}
-
-export function is403Error(err: unknown): boolean {
-  return isHttpError(err) && err.is403;
-}
-
-/** 공통: unknown 에러에서 사용자 표시용 메시지 추출 */
-export function getErrorMessage(err: unknown): string | undefined {
-  if (err instanceof Error && err.message) return err.message;
-  if (typeof err === 'string') return err;
-  return undefined;
 }

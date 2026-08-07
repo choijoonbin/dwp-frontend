@@ -1,4 +1,3 @@
-import type {} from '@mui/lab/themeAugmentation';
 import type {} from '@mui/material/themeCssVarsAugmentation';
 
 import type { FontStyleExtend } from './core/typography';

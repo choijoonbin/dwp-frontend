@@ -1,22 +1,34 @@
 import path from 'path';
 import checker from 'vite-plugin-checker';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-
-import packageJson from './package.json';
 
 // ----------------------------------------------------------------------
 
-// Host (apps/dwp) default port
 const PORT = 4200;
 
+const getVendorChunk = (id: string): string | undefined => {
+  if (!id.includes('/node_modules/')) return undefined;
+  if (
+    id.includes('/react/') ||
+    id.includes('/react-dom/') ||
+    id.includes('/react-router') ||
+    id.includes('/scheduler/')
+  ) {
+    return 'vendor-react';
+  }
+  if (id.includes('/@emotion/')) return 'vendor-emotion';
+  if (id.includes('/@iconify/')) return 'vendor-icons';
+  if (id.includes('/i18next') || id.includes('/react-i18next/')) return 'vendor-i18n';
+  if (id.includes('/@tanstack/') || id.includes('/zustand/')) return 'vendor-state';
+  return undefined;
+};
+
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, __dirname, '');
   const isTest = Boolean(process.env.VITEST) || mode === 'test';
 
   return {
     root: path.resolve(__dirname, 'apps/dwp'),
-    // Avoid dep optimization cache collisions with other Vite apps in this monorepo.
     cacheDir: path.resolve(__dirname, 'node_modules/.vite/apps-dwp'),
     publicDir: path.resolve(__dirname, 'public'),
     plugins: [
@@ -26,8 +38,6 @@ export default defineConfig(({ mode }) => {
           typescript: true,
           eslint: {
             useFlatConfig: true,
-            // NOTE: Vite root is `apps/dwp`, so lint paths must be workspace-root relative.
-            // Also avoid crashing dev server if a glob doesn't match.
             lintCommand:
               'eslint --no-error-on-unmatched-pattern "../../apps/**/*.{js,jsx,ts,tsx}" "../../libs/**/*.{js,jsx,ts,tsx}"',
             dev: { logLevel: ['error'] },
@@ -38,49 +48,28 @@ export default defineConfig(({ mode }) => {
           },
         }),
     ].filter(Boolean),
-    define: {
-      __APP_VERSION__: JSON.stringify(packageJson.version),
-      'process.env.NX_API_URL': JSON.stringify(env.NX_API_URL ?? 'http://localhost:8080'),
-      // sockjs-client (Node-style) expects `global`; browser has `window` instead
-      global: 'window',
-    },
     optimizeDeps: {
       include: ['i18next', 'react-i18next', 'i18next-resources-to-backend'],
+    },
+    build: {
+      chunkSizeWarningLimit: 600,
+      rollupOptions: {
+        output: {
+          manualChunks: getVendorChunk,
+        },
+      },
     },
     test: {
       exclude: [
         '**/node_modules/**',
         '**/dist/**',
-        '**/cypress/**',
         '**/.{idea,git,cache,output,temp}/**',
-        '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*',
+        '**/{vite,vitest,eslint,prettier}.config.*',
         'docs/**',
-        'docs/_wip/**',
-        '**/docs/backend-src/**',
-        '**/docs/frontend-src/**',
       ],
     },
     resolve: {
       alias: [
-        // Resolve src/theme, src/components to design-system (no external template dependency).
-        {
-          find: /^src\/theme(.*)$/,
-          replacement: path.resolve(__dirname, 'libs/design-system/src/theme$1'),
-        },
-        {
-          find: /^src\/components(.*)$/,
-          replacement: path.resolve(__dirname, 'libs/design-system/src/components$1'),
-        },
-        {
-          find: /^src\/routes\/hooks(.*)$/,
-          replacement: path.resolve(__dirname, 'libs/design-system/src/hooks/router$1'),
-        },
-        // Default src alias -> apps/dwp
-        {
-          find: /^src(.*)$/,
-          replacement: path.resolve(__dirname, 'apps/dwp/src$1'),
-        },
-        // Preferred workspace imports
         {
           find: /^@dwp-frontend\/design-system(.*)$/,
           replacement: path.resolve(__dirname, 'libs/design-system/src$1'),
@@ -92,11 +81,6 @@ export default defineConfig(({ mode }) => {
         {
           find: /^@dwp-frontend\/shared-i18n(.*)$/,
           replacement: path.resolve(__dirname, 'libs/shared-i18n/src$1'),
-        },
-        // Synapse remote (Host가 apps/dwp root에서 remotes/synapsex 로드)
-        {
-          find: '@synapse-app',
-          replacement: path.resolve(__dirname, 'apps/remotes/synapsex/src/synapse-app'),
         },
       ],
     },

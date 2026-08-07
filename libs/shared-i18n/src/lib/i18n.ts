@@ -1,8 +1,3 @@
-/**
- * i18next 초기화 — Shell이 단일 인스턴스 제공, Remote 공유
- * ko/en 2개 언어, 기본 ko
- */
-
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import resourcesToBackend from 'i18next-resources-to-backend';
@@ -29,7 +24,7 @@ export function initI18n() {
             const m = await import(`../locales/${lang}/${ns}.json`);
             return m.default;
           } catch (err) {
-            if (process.env.NODE_ENV === 'development') {
+            if (import.meta.env.DEV) {
               console.warn(`[i18n] Failed to load ns=${ns} lang=${lang}`, err);
             }
             return {};
@@ -49,9 +44,9 @@ export function initI18n() {
       react: {
         useSuspense: true,
       },
-      saveMissing: process.env.NODE_ENV === 'development',
+      saveMissing: import.meta.env.DEV,
       missingKeyHandler:
-        process.env.NODE_ENV === 'development'
+        import.meta.env.DEV
           ? (lngs: readonly string[], ns: string, key: string) => {
               console.warn(`[i18n] Missing key: ${key} (ns: ${ns})`);
             }
@@ -80,5 +75,3 @@ export function getCurrentLanguage(): string {
 export function setLanguage(lng: 'ko' | 'en'): void {
   i18n.changeLanguage(lng);
 }
-
-export { i18n };

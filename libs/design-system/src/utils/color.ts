@@ -1,7 +1,7 @@
 /**
  * Converts hex color to RGB channels string (e.g. "#00B8D9" -> "0 184 217").
  */
-export const hexToRgbChannel = (hexColor: string): string => {
+const hexToRgbChannel = (hexColor: string): string => {
   if (!hexColor) throw new Error('Hex color is undefined!');
   if (!/^#[0-9A-F]{6}$/i.test(hexColor)) {
     throw new Error(`Invalid hex color: ${hexColor}`);
@@ -12,9 +12,9 @@ export const hexToRgbChannel = (hexColor: string): string => {
   return `${r} ${g} ${b}`;
 };
 
-export type InputPalette = Record<string, string | undefined>;
+type InputPalette = Record<string, string | undefined>;
 
-export type ChannelPalette<T extends InputPalette> = T & {
+type ChannelPalette<T extends InputPalette> = T & {
   [K in keyof T as `${string & K}Channel`]: string;
 };
 

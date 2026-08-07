@@ -31,7 +31,7 @@ export interface CustomShadows {
 
 // ----------------------------------------------------------------------
 
-export function createShadowColor(colorChannel: string): string {
+function createShadowColor(colorChannel: string): string {
   return `0 8px 16px 0 ${varAlpha(colorChannel, 0.24)}`;
 }
 

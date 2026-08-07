@@ -1,11 +1,8 @@
-# Build directories
-build/*
-dist/*
-public/*
-**/out/*
-**/.next/*
-**/node_modules/*
-
+node_modules/
+dist/
+build/
+coverage/
+test-results/
+playwright-report/
+public/
 yarn.lock
-package-lock.json
-jsconfig.json

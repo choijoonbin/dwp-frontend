@@ -2,7 +2,7 @@
  * State-based class names.
  * [boolean, string] => use string when boolean is true; string key => use key when value is true.
  */
-export type StateProps = {
+type StateProps = {
   [key: string]: boolean | undefined | [boolean, string];
 };
 

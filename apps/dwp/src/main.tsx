@@ -1,28 +1,16 @@
 import '@dwp-frontend/design-system/styles/global.css';
 
-import { useEffect, StrictMode } from 'react';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { I18nProvider } from '@dwp-frontend/shared-i18n';
+import { AuthProvider } from '@dwp-frontend/shared-utils';
+import { ThemeProvider } from '@dwp-frontend/design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Outlet, RouterProvider, createBrowserRouter } from 'react-router';
-import { I18nProvider, getCurrentLanguage } from '@dwp-frontend/shared-i18n';
-import { AuthProvider, setLanguageHeaderProvider } from '@dwp-frontend/shared-utils';
-
-import { ThemeProvider } from 'src/theme/theme-provider';
+import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import App from './app';
 import { routesSection } from './routes/sections';
-import { ErrorBoundary } from './routes/components';
-
-// ----------------------------------------------------------------------
-
-/** API 요청 시 Accept-Language 헤더 주입 */
-const InitI18nAxios = () => {
-  useEffect(() => {
-    setLanguageHeaderProvider(() => getCurrentLanguage());
-    return () => setLanguageHeaderProvider(null);
-  }, []);
-  return null;
-};
+import { ErrorBoundary } from './routes/components/error-boundary';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,7 +23,7 @@ const queryClient = new QueryClient({
 
 const router = createBrowserRouter([
   {
-    Component: () => (
+    element: (
       <App>
         <Outlet />
       </App>
@@ -45,15 +33,12 @@ const router = createBrowserRouter([
   },
 ]);
 
-const root = createRoot(document.getElementById('root')!);
-
-root.render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <I18nProvider>
           <AuthProvider>
-            <InitI18nAxios />
             <RouterProvider router={router} />
           </AuthProvider>
         </I18nProvider>

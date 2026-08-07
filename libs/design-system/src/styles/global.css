@@ -1,26 +1,11 @@
-/** **************************************
-* Fonts: workspace
-*************************************** */
 @import '@fontsource-variable/dm-sans';
 
-@import '@fontsource/barlow/400.css';
-@import '@fontsource/barlow/500.css';
-@import '@fontsource/barlow/600.css';
-@import '@fontsource/barlow/700.css';
-@import '@fontsource/barlow/800.css';
+@import '@fontsource/barlow/latin-400.css';
+@import '@fontsource/barlow/latin-500.css';
+@import '@fontsource/barlow/latin-600.css';
+@import '@fontsource/barlow/latin-700.css';
+@import '@fontsource/barlow/latin-800.css';
 
-/** **************************************
-* Plugins (from design-system)
-*************************************** */
-/* scrollbar */
-@import '../components/scrollbar/styles.css';
-
-/* chart */
-@import '../components/chart/styles.css';
-
-/** **************************************
-* Baseline
-*************************************** */
 html {
   height: 100%;
   -webkit-overflow-scrolling: touch;
@@ -54,4 +39,3 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0;
   -webkit-appearance: none;
 }
-

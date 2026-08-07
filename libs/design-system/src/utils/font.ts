@@ -8,14 +8,6 @@ export const setFont = (fontName?: string): string =>
   fontName ? `"${fontName}", ${SYSTEM_FONT_STACK}` : SYSTEM_FONT_STACK;
 
 /**
- * Converts rem string to px (e.g. "1.5rem" -> 24).
- */
-export const remToPx = (value: string): number => {
-  const num = parseFloat(value);
-  return Math.round(num * 16);
-};
-
-/**
  * Converts px to rem string (e.g. 24 -> "1.5rem").
  */
 export const pxToRem = (value: number): string => {

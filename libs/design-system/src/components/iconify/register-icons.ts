@@ -6,7 +6,7 @@ import allIcons from './icon-sets';
 
 // ----------------------------------------------------------------------
 
-export const iconSets = Object.entries(allIcons).reduce((acc, [key, value]) => {
+const iconSets = Object.entries(allIcons).reduce((acc, [key, value]) => {
   const [prefix, iconName] = key.split(':');
   const existingPrefix = acc.find((item) => item.prefix === prefix);
 
@@ -23,8 +23,6 @@ export const iconSets = Object.entries(allIcons).reduce((acc, [key, value]) => {
 
   return acc;
 }, [] as IconifyJSON[]);
-
-export const allIconNames = Object.keys(allIcons) as IconifyName[];
 
 export type IconifyName = keyof typeof allIcons;
 

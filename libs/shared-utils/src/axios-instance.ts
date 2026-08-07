@@ -1,339 +1,87 @@
-// ----------------------------------------------------------------------
-
-import { NX_API_URL } from './env';
+import { API_URL } from './env';
 import { HttpError } from './http-error';
 import { getTenantId } from './tenant-util';
-import { generateTraceId } from './trace-util';
-import { getUserId } from './auth/user-id-storage';
 import { getAccessToken } from './auth/token-storage';
-import { reportDevErrorToReporter } from './dev-error-reporter';
-
-const baseURL = NX_API_URL;
-
-type ErrorBody = {
-  auditId?: string;
-  traceId?: string;
-  gatewayRequestId?: string;
-  message?: string;
-  raw?: unknown;
-};
-
-function extractTraceFromResponse(res: Response): { traceId?: string; gatewayRequestId?: string } {
-  return {
-    traceId: res.headers.get('x-trace-id') ?? undefined,
-    gatewayRequestId: res.headers.get('x-gateway-request-id') ?? undefined,
-  };
-}
-
-async function parseErrorBody(res: Response): Promise<ErrorBody> {
-  try {
-    const json = await res.json();
-    const obj = typeof json === 'object' && json !== null ? (json as Record<string, unknown>) : null;
-    const nestedData =
-      obj && typeof obj.data === 'object' && obj.data !== null
-        ? (obj.data as Record<string, unknown>)
-        : undefined;
-    const messageFromData =
-      typeof nestedData?.message === 'string' ? nestedData.message : undefined;
-    return typeof json === 'object' && json !== null
-      ? {
-          auditId: typeof obj?.auditId === 'string' ? obj.auditId : undefined,
-          traceId: typeof obj?.traceId === 'string' ? obj.traceId : undefined,
-          gatewayRequestId: typeof obj?.gatewayRequestId === 'string' ? obj.gatewayRequestId : undefined,
-          message:
-            (typeof obj?.message === 'string' ? obj.message : undefined) ??
-            (typeof obj?.error === 'string' ? obj.error : undefined) ??
-            messageFromData,
-          raw: json,
-        }
-      : {};
-  } catch {
-    return {};
-  }
-}
-
-async function handleFailedResponse(
-  res: Response,
-  url: string,
-  method: string,
-  tenantId: string
-): Promise<never> {
-  const status = res.status;
-  const trace = extractTraceFromResponse(res);
-  const body = await parseErrorBody(res);
-  const auditId = body.auditId ?? undefined;
-
-  reportDevErrorToReporter({
-    endpoint: url,
-    method,
-    tenantId,
-    status,
-    message: `${status} ${res.statusText}`,
-    gatewayRequestId: trace.gatewayRequestId ?? body.gatewayRequestId,
-    traceId: trace.traceId ?? body.traceId,
-  });
-
-  if (status === 401 || status === 403) {
-    handleAuthError(status);
-  }
-
-  throw new HttpError(body.message ?? `Request failed: ${status} ${res.statusText}`, status, {
-    auditId,
-    traceId: trace.traceId ?? body.traceId,
-    gatewayRequestId: trace.gatewayRequestId ?? body.gatewayRequestId,
-    responseBody: body.raw,
-  });
-}
 
 type AxiosLikeResponse<T> = { data: T };
-
-type AxiosLikeConfig = {
+type RequestConfig = {
   headers?: Record<string, string>;
   withCredentials?: boolean;
-  responseType?: 'json' | 'blob' | 'text' | 'arraybuffer';
 };
 
-// Global state for agent ID (if needed across apps)
-let currentAgentId: string | null = null;
-
-export const setAgentId = (id: string | null) => {
-  currentAgentId = id;
-};
-
-// Global error handlers (injected by Host app)
 type UnauthorizedHandler = (status: number) => void;
-let onUnauthorizedHandler: UnauthorizedHandler | null = null;
-let isHandlingUnauthorized = false; // Prevent infinite loop
+let unauthorizedHandler: UnauthorizedHandler | null = null;
 
-/**
- * Set global unauthorized handler (401/403)
- * Should be called once by Host app during initialization
- */
-export const setUnauthorizedHandler = (handler: UnauthorizedHandler | null) => {
-  onUnauthorizedHandler = handler;
-};
+export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): void {
+  unauthorizedHandler = handler;
+}
 
-/** i18n: Accept-Language 헤더용. Host 앱에서 setLanguageHeaderProvider(() => getCurrentLanguage()) 호출 */
-let getLanguageForRequest: (() => string) | null = null;
-export const setLanguageHeaderProvider = (fn: (() => string) | null) => {
-  getLanguageForRequest = fn;
-};
-
-function buildHeaders(extra?: Record<string, string>): Record<string, string> {
-  const token = getAccessToken();
-  const tenantId = getTenantId();
-  const userId = getUserId();
-
-  if (!tenantId && typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
-    console.warn('[axios-instance] X-Tenant-ID 누락: getTenantId()가 빈 값입니다.');
-  }
-
+function buildHeaders(body: unknown, extra?: Record<string, string>): Record<string, string> {
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    'X-Tenant-ID': tenantId || '',
-    'X-Trace-ID': generateTraceId(),
-    ...(extra ?? {}),
+    Accept: 'application/json',
+    'X-Tenant-ID': getTenantId(),
+    ...extra,
   };
+  if (body !== undefined) headers['Content-Type'] = 'application/json';
 
-  if (token) headers.Authorization = `Bearer ${token}`;
-  if (userId) headers['X-User-ID'] = userId;
-  if (currentAgentId) headers['X-Agent-ID'] = currentAgentId;
-  const lang = getLanguageForRequest?.();
-  if (lang) headers['Accept-Language'] = lang;
-
+  const token = getAccessToken();
+  if (token) headers.Authorization = 'Bearer ' + token;
+  if (typeof navigator !== 'undefined' && navigator.language) {
+    headers['Accept-Language'] = navigator.language;
+  }
   return headers;
 }
 
-/** multipart/form-data 전송 시 사용. Content-Type 미설정 → 브라우저가 boundary 자동 설정 */
-function buildHeadersForFormData(extra?: Record<string, string>): Record<string, string> {
-  const token = getAccessToken();
-  const tenantId = getTenantId();
-  const userId = getUserId();
-  const headers: Record<string, string> = {
-    'X-Tenant-ID': tenantId || '',
-    'X-Trace-ID': generateTraceId(),
-    ...(extra ?? {}),
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
-  if (userId) headers['X-User-ID'] = userId;
-  if (currentAgentId) headers['X-Agent-ID'] = currentAgentId;
-  const lang = getLanguageForRequest?.();
-  if (lang) headers['Accept-Language'] = lang;
-  return headers;
+async function parseBody(response: Response): Promise<unknown> {
+  if (response.status === 204) return undefined;
+  const text = await response.text();
+  if (!text) return undefined;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
 }
 
-/**
- * Handle 401/403 errors globally
- * - 401: Calls onUnauthorizedHandler (logout + redirect)
- * - 403: Calls onUnauthorizedHandler (no logout, just redirect to /403)
- */
-const handleAuthError = (status: number): void => {
-  // Prevent infinite loop: if already handling, don't handle again
-  if (isHandlingUnauthorized) {
-    return;
-  }
+async function request<T>(
+  method: string,
+  url: string,
+  body?: unknown,
+  config: RequestConfig = {}
+): Promise<AxiosLikeResponse<T>> {
+  const response = await fetch(API_URL + url, {
+    method,
+    headers: buildHeaders(body, config.headers),
+    credentials: config.withCredentials ? 'include' : 'same-origin',
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const payload = await parseBody(response);
 
-  // Prevent redirect if already on sign-in or 403 page
-  if (typeof window !== 'undefined') {
-    const currentPath = window.location.pathname;
-    if (currentPath === '/sign-in' || currentPath === '/403') {
-      return;
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      unauthorizedHandler?.(response.status);
     }
+    const record = typeof payload === 'object' && payload !== null
+      ? payload as Record<string, unknown>
+      : null;
+    const message =
+      (typeof record?.message === 'string' && record.message) ||
+      (typeof record?.error === 'string' && record.error) ||
+      'Request failed: ' + response.status;
+    throw new HttpError(message, response.status, payload);
   }
 
-  if (onUnauthorizedHandler) {
-    isHandlingUnauthorized = true;
-    try {
-      onUnauthorizedHandler(status);
-    } finally {
-      // Reset flag after a short delay to allow redirect
-      setTimeout(() => {
-        isHandlingUnauthorized = false;
-      }, 100);
-    }
-  }
-};
+  return { data: payload as T };
+}
 
-/**
- * NOTE:
- * - Workspace에서 axios/@tanstack/react-query 설치가 불가한 환경에서도 앱을 실행할 수 있도록
- *   최소 기능(get)만 제공하는 "axios-like" wrapper 입니다.
- * - 실제 백엔드 연동 표준은 이 파일을 axios 기반으로 교체하는 것입니다.
- */
 export const axiosInstance = {
-  get: async <T>(url: string, config: AxiosLikeConfig = {}): Promise<AxiosLikeResponse<T>> => {
-    const tenantId = getTenantId();
-    const headers = buildHeaders(config.headers);
-
-    const res = await fetch(`${baseURL}${url}`, {
-      method: 'GET',
-      headers,
-      credentials: config.withCredentials ? 'include' : 'same-origin',
-    });
-
-    if (!res.ok) {
-      await handleFailedResponse(res, url, 'GET', tenantId);
-    }
-
-    // Handle different response types
-    let data: T;
-    if (config.responseType === 'blob') {
-      data = (await res.blob()) as T;
-    } else if (config.responseType === 'text') {
-      data = (await res.text()) as T;
-    } else if (config.responseType === 'arraybuffer') {
-      data = (await res.arrayBuffer()) as T;
-    } else {
-      // Default: json
-      data = (await res.json()) as T;
-    }
-    return { data };
-  },
-  post: async <T, B = unknown>(
-    url: string,
-    body: B,
-    config: AxiosLikeConfig = {}
-  ): Promise<AxiosLikeResponse<T>> => {
-    const headers = buildHeaders(config.headers);
-
-    const res = await fetch(`${baseURL}${url}`, {
-      method: 'POST',
-      headers,
-      credentials: config.withCredentials ? 'include' : 'same-origin',
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const status = res.status;
-      // Handle 401/403 globally
-      if (status === 401 || status === 403) {
-        handleAuthError(status);
-      }
-      throw new HttpError(`Request failed: ${status} ${res.statusText}`, status);
-    }
-
-    const data = (await res.json()) as T;
-    return { data };
-  },
-
-  /** POST multipart/form-data. body에 FormData 전달 시 Content-Type은 브라우저가 boundary와 함께 설정 */
-  postFormData: async <T>(url: string, formData: FormData): Promise<AxiosLikeResponse<T>> => {
-    const tenantId = getTenantId();
-    const headers = buildHeadersForFormData();
-
-    const res = await fetch(`${baseURL}${url}`, {
-      method: 'POST',
-      headers,
-      credentials: 'same-origin',
-      body: formData,
-    });
-
-    if (!res.ok) {
-      await handleFailedResponse(res, url, 'POST', tenantId);
-    }
-
-    const data = (await res.json()) as T;
-    return { data };
-  },
-  put: async <T, B = unknown>(
-    url: string,
-    body: B,
-    config: AxiosLikeConfig = {}
-  ): Promise<AxiosLikeResponse<T>> => {
-    const tenantId = getTenantId();
-    const headers = buildHeaders(config.headers);
-
-    const res = await fetch(`${baseURL}${url}`, {
-      method: 'PUT',
-      headers,
-      credentials: config.withCredentials ? 'include' : 'same-origin',
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      await handleFailedResponse(res, url, 'PUT', tenantId);
-    }
-
-    const data = (await res.json()) as T;
-    return { data };
-  },
-  patch: async <T, B = unknown>(
-    url: string,
-    body: B,
-    config: AxiosLikeConfig = {}
-  ): Promise<AxiosLikeResponse<T>> => {
-    const tenantId = getTenantId();
-    const headers = buildHeaders(config.headers);
-
-    const res = await fetch(`${baseURL}${url}`, {
-      method: 'PATCH',
-      headers,
-      credentials: config.withCredentials ? 'include' : 'same-origin',
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      await handleFailedResponse(res, url, 'PATCH', tenantId);
-    }
-
-    const data = (await res.json()) as T;
-    return { data };
-  },
-  delete: async <T>(url: string, config: AxiosLikeConfig = {}): Promise<AxiosLikeResponse<T>> => {
-    const tenantId = getTenantId();
-    const headers = buildHeaders(config.headers);
-
-    const res = await fetch(`${baseURL}${url}`, {
-      method: 'DELETE',
-      headers,
-      credentials: config.withCredentials ? 'include' : 'same-origin',
-    });
-
-    if (!res.ok) {
-      await handleFailedResponse(res, url, 'DELETE', tenantId);
-    }
-
-    const data = res.status === 204 ? ({} as T) : ((await res.json()) as T);
-    return { data };
-  },
+  get: <T>(url: string, config?: RequestConfig) => request<T>('GET', url, undefined, config),
+  post: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
+    request<T>('POST', url, body, config),
+  put: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
+    request<T>('PUT', url, body, config),
+  patch: <T, B = unknown>(url: string, body: B, config?: RequestConfig) =>
+    request<T>('PATCH', url, body, config),
+  delete: <T>(url: string, config?: RequestConfig) =>
+    request<T>('DELETE', url, undefined, config),
 };

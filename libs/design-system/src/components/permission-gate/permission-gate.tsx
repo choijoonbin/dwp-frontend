@@ -24,13 +24,13 @@ type PermissionGateProps = {
  * PermissionGate: 권한 기반으로 children을 표시하거나 비활성화합니다.
  *
  * @example
- * <PermissionGate resource="btn.mail.send" permission="USE">
- *   <Button>Send</Button>
+ * <PermissionGate resource="project.item.create" permission="USE">
+ *   <Button>Create</Button>
  * </PermissionGate>
  *
  * @example
- * <PermissionGate resource="menu.admin" mode="disable" fallback={<Button disabled>No Access</Button>}>
- *   <Button>Admin</Button>
+ * <PermissionGate resource="project.settings" mode="disable" fallback={<Button disabled>No Access</Button>}>
+ *   <Button>Settings</Button>
  * </PermissionGate>
  */
 export const PermissionGate = ({

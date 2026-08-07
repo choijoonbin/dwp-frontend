@@ -1,4 +1,4 @@
-import type { PaletteColor, ColorSystemOptions, PaletteColorChannel } from '@mui/material/styles';
+import type { PaletteColor, ColorSystemOptions } from '@mui/material/styles';
 
 import { themeConfig } from '../theme-config';
 import { varAlpha, createPaletteChannel } from '../../utils';
@@ -12,14 +12,8 @@ import type { ThemeColorScheme } from '../types';
  * @to {@link file://./../extend-theme-types.d.ts}
  */
 
-// Keys for the palette colors
-export type PaletteColorKey = 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
-
 // Palette color without additional channels
 export type PaletteColorNoChannels = Omit<PaletteColor, 'lighterChannel' | 'darkerChannel'>;
-
-// Palette color with additional channels
-export type PaletteColorWithChannels = PaletteColor & PaletteColorChannel;
 
 // Extended common colors
 export type CommonColorsExtend = {
@@ -87,7 +81,7 @@ export const common = createPaletteChannel(themeConfig.palette.common);
 export const grey = createPaletteChannel(themeConfig.palette.grey);
 
 // Text color (3-tier: default/muted/disabled for dark mode contrast)
-export const text = {
+const text = {
   light: createPaletteChannel({
     primary: grey[800],
     secondary: grey[600],
@@ -101,7 +95,7 @@ export const text = {
 };
 
 // Background color
-export const background = {
+const background = {
   light: createPaletteChannel({
     paper: '#FFFFFF',
     default: grey[100],
@@ -117,7 +111,7 @@ export const background = {
 };
 
 // Base action color
-export const baseAction = {
+const baseAction = {
   hover: varAlpha(grey['500Channel'], 0.08),
   selected: varAlpha(grey['500Channel'], 0.16),
   focus: varAlpha(grey['500Channel'], 0.24),
@@ -128,7 +122,7 @@ export const baseAction = {
 };
 
 // Action color
-export const action = {
+const action = {
   light: { ...baseAction, active: grey[600] },
   dark: { ...baseAction, active: grey[500] },
 };
@@ -136,7 +130,7 @@ export const action = {
 // ----------------------------------------------------------------------
 
 // Base palette
-export const basePalette = {
+const basePalette = {
   primary,
   secondary,
   info,

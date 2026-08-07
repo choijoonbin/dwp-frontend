@@ -17,16 +17,8 @@
     "esModuleInterop": true,
     "isolatedModules": true,
 
-    /* Paths (Nx-style workspace + backwards-compatible 'src/*') */
+    /* Workspace paths */
     "paths": {
-      "src/theme": ["libs/design-system/src/theme/index.ts"],
-      "src/theme/*": ["libs/design-system/src/theme/*"],
-      "src/components/*": ["libs/design-system/src/components/*"],
-      "src/routes/hooks": ["libs/design-system/src/hooks/router/index.ts"],
-      "src/routes/hooks/*": ["libs/design-system/src/hooks/router/*"],
-      "src/*": ["apps/dwp/src/*"],
-      "@admin/*": ["apps/remotes/admin/src/*"],
-
       "@dwp-frontend/design-system": ["libs/design-system/src/index.ts"],
       "@dwp-frontend/design-system/*": ["libs/design-system/src/*"],
       "@dwp-frontend/shared-utils": ["libs/shared-utils/src/index.ts"],

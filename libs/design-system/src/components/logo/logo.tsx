@@ -44,7 +44,7 @@ export function Logo({
         transition: 'all 0.3s ease',
       }}
     >
-      M
+      D
     </Box>
   );
 
@@ -64,11 +64,12 @@ export function Logo({
           alignItems: 'center',
           justifyContent: 'center',
           px: collapsed ? 1 : 1.5,
-          background: 'linear-gradient(135deg, rgba(234, 0, 44, 0.92) 0%, rgba(255, 122, 0, 0.86) 100%)',
+          background:
+            'linear-gradient(135deg, rgba(234, 0, 44, 0.92) 0%, rgba(255, 122, 0, 0.86) 100%)',
           color: '#fff',
           fontWeight: 'bold',
           fontSize: collapsed ? '0.85rem' : '0.95rem',
-          letterSpacing: 0.2,
+          letterSpacing: 0,
           boxShadow: '0 4px 10px rgba(234, 0, 44, 0.18)',
           transition: 'all 0.2s ease',
           whiteSpace: 'nowrap',

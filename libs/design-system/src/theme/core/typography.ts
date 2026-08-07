@@ -16,8 +16,8 @@ export type FontStyleExtend = {
   fontSecondaryFamily: CSSObject['fontFamily'];
 };
 
-export type ResponsiveFontSizesInput = Partial<Record<Breakpoint, number>>;
-export type ResponsiveFontSizesResult = Record<string, { fontSize: string }>;
+type ResponsiveFontSizesInput = Partial<Record<Breakpoint, number>>;
+type ResponsiveFontSizesResult = Record<string, { fontSize: string }>;
 
 const defaultMuiTheme = getTheme();
 

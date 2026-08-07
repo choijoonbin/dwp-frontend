@@ -3,22 +3,12 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 import type { AuthPolicyResponse, IdentityProviderResponse } from '../auth/auth-policy-types';
 
-// ----------------------------------------------------------------------
+export async function getAuthPolicy(): Promise<ApiResponse<AuthPolicyResponse>> {
+  return (await axiosInstance.get<ApiResponse<AuthPolicyResponse>>('/api/auth/policy')).data;
+}
 
-/**
- * Get auth policy for tenant
- * GET /api/auth/policy
- */
-export const getAuthPolicy = async (): Promise<ApiResponse<AuthPolicyResponse>> => {
-  const res = await axiosInstance.get<ApiResponse<AuthPolicyResponse>>('/api/auth/policy');
-  return res.data;
-};
-
-/**
- * Get identity provider configuration
- * GET /api/auth/idp
- */
-export const getIdentityProvider = async (): Promise<ApiResponse<IdentityProviderResponse>> => {
-  const res = await axiosInstance.get<ApiResponse<IdentityProviderResponse>>('/api/auth/idp');
-  return res.data;
-};
+export async function getIdentityProviders(): Promise<ApiResponse<IdentityProviderResponse[]>> {
+  return (
+    await axiosInstance.get<ApiResponse<IdentityProviderResponse[]>>('/api/auth/idp')
+  ).data;
+}

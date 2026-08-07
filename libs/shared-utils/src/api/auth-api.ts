@@ -1,10 +1,8 @@
+import { API_URL } from '../env';
 import { getTenantId } from '../tenant-util';
 import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
-import type { MenuNode } from '../auth/types';
-
-// ----------------------------------------------------------------------
 
 export type LoginRequest = {
   username: string;
@@ -12,103 +10,64 @@ export type LoginRequest = {
   tenantId: string;
 };
 
-export type LoginResponseData =
-  | {
-      accessToken: string;
-      refreshToken?: string;
-      tokenType?: 'Bearer';
-    }
-  | {
-      token: string;
-    }
-  | string;
-
 export type PermissionDTO = {
+  resourceType: string;
   resourceKey: string;
-  resourceType: 'MENU' | 'BUTTON' | 'API' | 'RESOURCE' | 'UI_COMPONENT';
-  permissionCode:
-    | 'VIEW'
-    | 'USE'
-    | 'EDIT'
-    | 'APPROVE'
-    | 'EXECUTE'
-    | 'CREATE'
-    | 'UPDATE'
-    | 'DELETE'
-    | 'MANAGE';
+  permissionCode: string;
   effect: 'ALLOW' | 'DENY';
 };
 
-export type UserInfo = {
-  id: string;
-  username: string;
-  email?: string;
-  [key: string]: unknown;
+export type LoginResponseData = {
+  accessToken: string;
+  tokenType?: string;
+  expiresIn?: number;
+  userId?: string;
+  tenantId?: string;
+  permissions?: PermissionDTO[];
 };
 
-/**
- * NOTE: dwp-auth-server의 실제 로그인 엔드포인트에 맞춰 path를 조정해야 합니다.
- * 기본값은 Gateway 기준 `/api/auth/login` 입니다.
- */
-const DEFAULT_LOGIN_PATH = '/api/auth/login';
+export type MeResponse = {
+  userId: number;
+  displayName: string;
+  email?: string | null;
+  tenantId: number;
+  tenantCode: string;
+  roles: string[];
+};
 
-export const login = async (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => {
-  // tenantId가 제공되지 않으면 자동으로 가져옴
-  const tenantId = payload.tenantId || getTenantId();
-  
-  const requestBody: LoginRequest = {
-    username: payload.username,
-    password: payload.password,
-    tenantId,
-  };
-
-  const res = await axiosInstance.post<ApiResponse<LoginResponseData>, LoginRequest>(
-    DEFAULT_LOGIN_PATH,
-    requestBody,
+export async function login(
+  payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }
+): Promise<ApiResponse<LoginResponseData>> {
+  const response = await axiosInstance.post<ApiResponse<LoginResponseData>, LoginRequest>(
+    '/api/auth/login',
+    {
+      username: payload.username,
+      password: payload.password,
+      tenantId: payload.tenantId || getTenantId(),
+    },
     { withCredentials: true }
   );
-  return res.data;
-};
+  return response.data;
+}
 
-/**
- * Get current user information
- */
-export const getMe = async (): Promise<ApiResponse<UserInfo>> => {
-  const res = await axiosInstance.get<ApiResponse<UserInfo>>('/api/auth/me');
-  return res.data;
-};/**
- * Get user permissions
- */
-export const getPermissions = async (): Promise<ApiResponse<PermissionDTO[]>> => {
-  const res = await axiosInstance.get<ApiResponse<PermissionDTO[]>>('/api/auth/permissions');
-  return res.data;
-};
+export async function getMe(): Promise<ApiResponse<MeResponse>> {
+  return (await axiosInstance.get<ApiResponse<MeResponse>>('/api/auth/me')).data;
+}
 
-/**
- * Menu tree API response structure
- */
-export type MenuTreeResponse = {
-  menus: MenuNode[];
-  groups?: Array<{
-    groupCode: string;
-    groupName: string;
-    menus: MenuNode[];
-  }>;
-};
+export async function getPermissions(): Promise<ApiResponse<PermissionDTO[]>> {
+  return (await axiosInstance.get<ApiResponse<PermissionDTO[]>>('/api/auth/permissions')).data;
+}
 
-/**
- * Get menu tree (with permissions applied)
- */
-export const getMenuTree = async (): Promise<ApiResponse<MenuTreeResponse>> => {
-  const res = await axiosInstance.get<ApiResponse<MenuTreeResponse>>('/api/auth/menus/tree');
-  return res.data;
-};
+export function extractAccessTokenFromLoginResponse(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  if (!value || typeof value !== 'object') return null;
+  const object = value as Record<string, unknown>;
+  for (const key of ['accessToken', 'token', 'access_token']) {
+    if (typeof object[key] === 'string') return object[key] as string;
+  }
+  return extractAccessTokenFromLoginResponse(object.data);
+}
 
-/**
- * OIDC callback: exchange authorization code for JWT
- * GET /api/auth/oidc/callback?code=...&state=...&providerKey=...
- * tenantId: sent via X-Tenant-ID header (axiosInstance); optional query param if BE supports it
- */
 export type OidcCallbackParams = {
   code: string;
   state: string;
@@ -116,27 +75,23 @@ export type OidcCallbackParams = {
   tenantId?: string;
 };
 
-/** Extract access token from login/OIDC response for storage */
-export function extractAccessTokenFromLoginResponse(data: LoginResponseData | null | undefined): string | null {
-  if (!data) return null;
-  if (typeof data === 'string') return data;
-  const obj = data as Record<string, unknown>;
-  if (typeof obj.accessToken === 'string') return obj.accessToken;
-  if (typeof obj.token === 'string') return obj.token;
-  if (typeof obj.access_token === 'string') return obj.access_token;
-  return null;
-}
-
-export const getOidcCallback = async (
+export async function getOidcCallback(
   params: OidcCallbackParams
-): Promise<ApiResponse<LoginResponseData>> => {
-  const search = new URLSearchParams();
-  search.set('code', params.code);
-  search.set('state', params.state);
+): Promise<ApiResponse<LoginResponseData>> {
+  const search = new URLSearchParams({ code: params.code, state: params.state });
   if (params.providerKey) search.set('providerKey', params.providerKey);
   if (params.tenantId) search.set('tenantId', params.tenantId);
-  const res = await axiosInstance.get<ApiResponse<LoginResponseData>>(
-    `/api/auth/oidc/callback?${search.toString()}`
-  );
-  return res.data;
-};
+  return (
+    await axiosInstance.get<ApiResponse<LoginResponseData>>(
+      '/api/auth/oidc/callback?' + search.toString()
+    )
+  ).data;
+}
+
+export function buildOidcLoginUrl(providerKey: string): string {
+  const search = new URLSearchParams({
+    providerKey,
+    tenantId: getTenantId(),
+  });
+  return API_URL + '/api/auth/oidc/login?' + search.toString();
+}

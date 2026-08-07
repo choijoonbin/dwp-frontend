@@ -1,9 +1,3 @@
-export { pxToRem, remToPx, setFont } from './font';
-export { mergeClasses, type StateProps } from './merge-classes';
-export {
-  varAlpha,
-  hexToRgbChannel,
-  type InputPalette,
-  type ChannelPalette,
-  createPaletteChannel,
-} from './color';
+export { pxToRem, setFont } from './font';
+export { mergeClasses } from './merge-classes';
+export { varAlpha, createPaletteChannel } from './color';
