@@ -21,8 +21,7 @@ export const useToastStore = create<ToastState>((set) => ({
   message: '',
   severity: 'success',
   anchorOrigin: { vertical: 'bottom', horizontal: 'center' },
-  show: (message, severity = 'success', action) =>
-    set({ open: true, message, severity, action }),
+  show: (message, severity = 'success', action) => set({ open: true, message, severity, action }),
   hide: () => set({ open: false, action: undefined }),
 }));
 

@@ -1,41 +1,63 @@
-@import '@fontsource-variable/dm-sans';
-
-@import '@fontsource/barlow/latin-400.css';
-@import '@fontsource/barlow/latin-500.css';
-@import '@fontsource/barlow/latin-600.css';
-@import '@fontsource/barlow/latin-700.css';
-@import '@fontsource/barlow/latin-800.css';
-
 html {
+  min-width: 320px;
   height: 100%;
-  -webkit-overflow-scrolling: touch;
 }
+
+html[data-color-scheme='light'] {
+  color-scheme: light;
+}
+
+html[data-color-scheme='dark'] {
+  color-scheme: dark;
+}
+
 body,
-#root,
-#root__layout {
-  display: flex;
-  flex: 1 1 auto;
-  min-height: 100%;
-  flex-direction: column;
-}
-img {
-  max-width: 100%;
-  vertical-align: middle;
-}
-ul {
+#root {
   margin: 0;
-  padding: 0;
-  list-style-type: none;
+  min-height: 100%;
 }
+
+body {
+  min-width: 320px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  height: auto;
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
 input[type='number'] {
-  -moz-appearance: textfield;
   appearance: none;
 }
+
 input[type='number']::-webkit-outer-spin-button {
   margin: 0;
   -webkit-appearance: none;
 }
+
 input[type='number']::-webkit-inner-spin-button {
   margin: 0;
   -webkit-appearance: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

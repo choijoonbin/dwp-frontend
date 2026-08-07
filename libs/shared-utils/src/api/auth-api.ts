@@ -1,6 +1,6 @@
 import { API_URL } from '../env';
 import { getTenantId } from '../tenant-util';
-import { axiosInstance } from '../axios-instance';
+import { axiosInstance, resetCsrfToken } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 
@@ -18,8 +18,6 @@ export type PermissionDTO = {
 };
 
 export type LoginResponseData = {
-  accessToken: string;
-  tokenType?: string;
   expiresIn?: number;
   userId?: string;
   tenantId?: string;
@@ -44,8 +42,7 @@ export async function login(
       username: payload.username,
       password: payload.password,
       tenantId: payload.tenantId || getTenantId(),
-    },
-    { withCredentials: true }
+    }
   );
   return response.data;
 }
@@ -58,14 +55,12 @@ export async function getPermissions(): Promise<ApiResponse<PermissionDTO[]>> {
   return (await axiosInstance.get<ApiResponse<PermissionDTO[]>>('/api/auth/permissions')).data;
 }
 
-export function extractAccessTokenFromLoginResponse(value: unknown): string | null {
-  if (typeof value === 'string') return value;
-  if (!value || typeof value !== 'object') return null;
-  const object = value as Record<string, unknown>;
-  for (const key of ['accessToken', 'token', 'access_token']) {
-    if (typeof object[key] === 'string') return object[key] as string;
+export async function logout(): Promise<void> {
+  try {
+    await axiosInstance.post<ApiResponse<void>, undefined>('/api/auth/logout', undefined);
+  } finally {
+    resetCsrfToken();
   }
-  return extractAccessTokenFromLoginResponse(object.data);
 }
 
 export type OidcCallbackParams = {

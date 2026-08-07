@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { GlobalSnackbar } from '@dwp-frontend/design-system';
+import { ToastViewport } from '@dwp-frontend/design-system';
 
 import { AuthUnauthorizedHandler } from './components/auth-unauthorized-handler';
 
@@ -19,7 +19,7 @@ export default function App({ children }: AppProps) {
     <>
       <AuthUnauthorizedHandler />
       {children}
-      <GlobalSnackbar />
+      <ToastViewport />
     </>
   );
 }

@@ -1,17 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <script>
-      (function () {
-        var key = 'dwp-theme-mode';
-        var stored = typeof localStorage !== 'undefined' && localStorage.getItem(key);
-        var scheme = (stored === 'dark' || stored === 'light') ? stored : 'light';
-        document.documentElement.setAttribute('data-color-scheme', scheme);
+      (() => {
+        const key = 'dwp.appearance.v1';
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        let requestedMode = 'system';
+
+        try {
+          const preference = JSON.parse(window.localStorage.getItem(key) || '{}');
+          if (['system', 'light', 'dark'].includes(preference.mode)) {
+            requestedMode = preference.mode;
+          }
+        } catch {
+          requestedMode = 'system';
+        }
+
+        const resolvedMode =
+          requestedMode === 'system' ? (systemDark ? 'dark' : 'light') : requestedMode;
+        document.documentElement.dataset.colorScheme = resolvedMode;
       })();
     </script>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#F3F5F7" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DWP</title>
   </head>

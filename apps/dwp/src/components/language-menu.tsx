@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Iconify } from '@dwp-frontend/design-system';
+import { Languages } from 'lucide-react';
 import { useLanguage } from '@dwp-frontend/shared-i18n';
 
 import Menu from '@mui/material/Menu';
@@ -9,25 +9,25 @@ import IconButton from '@mui/material/IconButton';
 
 export function LanguageMenu() {
   const { language, setLanguage } = useLanguage();
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
 
-  const selectLanguage = (nextLanguage: 'ko' | 'en') => {
-    setLanguage(nextLanguage);
-    setAnchorEl(null);
+  const select = (next: 'ko' | 'en') => {
+    setLanguage(next);
+    setAnchor(null);
   };
 
   return (
     <>
       <Tooltip title="Language">
-        <IconButton aria-label="Language" onClick={(event) => setAnchorEl(event.currentTarget)}>
-          <Iconify icon="solar:global-bold-duotone" width={22} />
+        <IconButton aria-label="Language" onClick={(event) => setAnchor(event.currentTarget)}>
+          <Languages size={20} strokeWidth={1.8} />
         </IconButton>
       </Tooltip>
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-        <MenuItem selected={language === 'ko'} onClick={() => selectLanguage('ko')}>
+      <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)}>
+        <MenuItem selected={language === 'ko'} onClick={() => select('ko')}>
           한국어
         </MenuItem>
-        <MenuItem selected={language === 'en'} onClick={() => selectLanguage('en')}>
+        <MenuItem selected={language === 'en'} onClick={() => select('en')}>
           English
         </MenuItem>
       </Menu>

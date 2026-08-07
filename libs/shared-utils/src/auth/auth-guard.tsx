@@ -1,17 +1,17 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { getAccessToken } from './token-storage';
+import { useAuth } from './auth-provider';
 import { redirectToSignIn } from './auth-redirect';
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const token = getAccessToken();
+  const { isLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (!token) redirectToSignIn(navigate, location);
-  }, [location, navigate, token]);
+    if (!isLoading && !isAuthenticated) redirectToSignIn(navigate, location);
+  }, [isAuthenticated, isLoading, location, navigate]);
 
-  return token ? <>{children}</> : null;
+  return isAuthenticated ? <>{children}</> : null;
 }

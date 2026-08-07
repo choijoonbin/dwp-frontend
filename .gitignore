@@ -1,23 +1,30 @@
-# Dependencies and caches
+# Package manager and dependencies
 node_modules/
-.nx/
+.yarn/
+!.yarn/patches/
+!.yarn/plugins/
+!.yarn/releases/
+!.yarn/sdks/
+!.yarn/versions/
 
-# Build and test output
+# Build, test, and tool output
 dist/
 build/
 coverage/
-test-results/
+.nx/
+storybook-static/
 playwright-report/
+test-results/
 blob-report/
+*.tsbuildinfo
 
-# Local environment files
+# Local environment
 .env
 .env.local
 .env.*.local
 
-# Editor and operating-system files
+# Editors and operating systems
 .idea/
 .vscode/
 .DS_Store
 *.log
-tsconfig.tsbuildinfo

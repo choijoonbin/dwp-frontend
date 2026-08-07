@@ -31,8 +31,7 @@ export default function SignInPage() {
   const allowLocal = useMemo(
     () =>
       Boolean(
-        policyQuery.data?.localLoginEnabled &&
-          policyQuery.data.allowedLoginTypes.includes('LOCAL')
+        policyQuery.data?.localLoginEnabled && policyQuery.data.allowedLoginTypes.includes('LOCAL')
       ),
     [policyQuery.data]
   );

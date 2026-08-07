@@ -1,0 +1,225 @@
+{
+  "$extensions": {
+    "org.dwp.metadata": {
+      "format": "DTCG 2025.10",
+      "status": "draft",
+      "owner": "DWP Design System"
+    }
+  },
+  "color": {
+    "neutral": {
+      "0": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 1, 1],
+          "alpha": 1,
+          "hex": "#FFFFFF"
+        }
+      },
+      "25": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.98, 0.984, 0.988],
+          "alpha": 1,
+          "hex": "#FAFBFC"
+        }
+      },
+      "50": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.953, 0.961, 0.969],
+          "alpha": 1,
+          "hex": "#F3F5F7"
+        }
+      },
+      "100": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.886, 0.902, 0.918],
+          "alpha": 1,
+          "hex": "#E2E6EA"
+        }
+      },
+      "200": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.796, 0.824, 0.851],
+          "alpha": 1,
+          "hex": "#CBD2D9"
+        }
+      },
+      "300": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.604, 0.647, 0.694],
+          "alpha": 1,
+          "hex": "#9AA5B1"
+        }
+      },
+      "400": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.42, 0.467, 0.522],
+          "alpha": 1,
+          "hex": "#6B7785"
+        }
+      },
+      "500": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.294, 0.337, 0.388],
+          "alpha": 1,
+          "hex": "#4B5663"
+        }
+      },
+      "700": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.188, 0.227, 0.275],
+          "alpha": 1,
+          "hex": "#303A46"
+        }
+      },
+      "800": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.114, 0.145, 0.188],
+          "alpha": 1,
+          "hex": "#1D2530"
+        }
+      },
+      "900": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.059, 0.082, 0.114],
+          "alpha": 1,
+          "hex": "#0F151D"
+        }
+      }
+    },
+    "product": {
+      "primary": {
+        "$type": "color",
+        "$description": "Default product action color. Tenant policy may replace it.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.141, 0.341, 0.839],
+          "alpha": 1,
+          "hex": "#2457D6"
+        }
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.498, 0.451],
+          "alpha": 1,
+          "hex": "#007F73"
+        }
+      }
+    },
+    "status": {
+      "info": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.047, 0.431, 0.651],
+          "alpha": 1,
+          "hex": "#0C6EA6"
+        }
+      },
+      "success": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.086, 0.475, 0.294],
+          "alpha": 1,
+          "hex": "#16794B"
+        }
+      },
+      "warning": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.604, 0.357, 0],
+          "alpha": 1,
+          "hex": "#9A5B00"
+        }
+      },
+      "error": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.706, 0.137, 0.094],
+          "alpha": 1,
+          "hex": "#B42318"
+        }
+      }
+    }
+  },
+  "dimension": {
+    "radius": {
+      "control": { "$type": "dimension", "$value": { "value": 6, "unit": "px" } },
+      "surface": { "$type": "dimension", "$value": { "value": 8, "unit": "px" } },
+      "compact": { "$type": "dimension", "$value": { "value": 4, "unit": "px" } }
+    },
+    "space": {
+      "1": { "$type": "dimension", "$value": { "value": 4, "unit": "px" } },
+      "2": { "$type": "dimension", "$value": { "value": 8, "unit": "px" } },
+      "3": { "$type": "dimension", "$value": { "value": 12, "unit": "px" } },
+      "4": { "$type": "dimension", "$value": { "value": 16, "unit": "px" } },
+      "6": { "$type": "dimension", "$value": { "value": 24, "unit": "px" } },
+      "8": { "$type": "dimension", "$value": { "value": 32, "unit": "px" } }
+    },
+    "density": {
+      "compact": {
+        "control": { "$type": "dimension", "$value": { "value": 32, "unit": "px" } },
+        "item": { "$type": "dimension", "$value": { "value": 34, "unit": "px" } },
+        "cellPadding": { "$type": "dimension", "$value": { "value": 8, "unit": "px" } }
+      },
+      "standard": {
+        "control": { "$type": "dimension", "$value": { "value": 38, "unit": "px" } },
+        "item": { "$type": "dimension", "$value": { "value": 40, "unit": "px" } },
+        "cellPadding": { "$type": "dimension", "$value": { "value": 12, "unit": "px" } }
+      },
+      "comfortable": {
+        "control": { "$type": "dimension", "$value": { "value": 44, "unit": "px" } },
+        "item": { "$type": "dimension", "$value": { "value": 48, "unit": "px" } },
+        "cellPadding": { "$type": "dimension", "$value": { "value": 16, "unit": "px" } }
+      }
+    }
+  },
+  "duration": {
+    "instant": { "$type": "duration", "$value": { "value": 0, "unit": "ms" } },
+    "fast": { "$type": "duration", "$value": { "value": 120, "unit": "ms" } },
+    "standard": { "$type": "duration", "$value": { "value": 180, "unit": "ms" } }
+  },
+  "font": {
+    "ui": {
+      "$type": "fontFamily",
+      "$value": [
+        "Noto Sans KR",
+        "Apple SD Gothic Neo",
+        "Malgun Gothic",
+        "Segoe UI",
+        "Arial",
+        "sans-serif"
+      ]
+    },
+    "mono": {
+      "$type": "fontFamily",
+      "$value": ["SFMono-Regular", "Consolas", "Liberation Mono", "monospace"]
+    }
+  }
+}

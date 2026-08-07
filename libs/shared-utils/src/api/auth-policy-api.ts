@@ -8,7 +8,5 @@ export async function getAuthPolicy(): Promise<ApiResponse<AuthPolicyResponse>> 
 }
 
 export async function getIdentityProviders(): Promise<ApiResponse<IdentityProviderResponse[]>> {
-  return (
-    await axiosInstance.get<ApiResponse<IdentityProviderResponse[]>>('/api/auth/idp')
-  ).data;
+  return (await axiosInstance.get<ApiResponse<IdentityProviderResponse[]>>('/api/auth/idp')).data;
 }

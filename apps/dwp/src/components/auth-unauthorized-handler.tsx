@@ -10,11 +10,11 @@ export function AuthUnauthorizedHandler() {
   useEffect(() => {
     setUnauthorizedHandler((status) => {
       if (status === 401) {
-        auth.logout();
+        auth.invalidateSession();
         redirectToSignIn(navigate, location);
         return;
       }
-      navigate('/403', { replace: true });
+      if (auth.isAuthenticated) navigate('/403', { replace: true });
     });
 
     return () => setUnauthorizedHandler(null);

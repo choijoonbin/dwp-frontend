@@ -1,8 +1,11 @@
 node_modules/
+.yarn/
 dist/
 build/
 coverage/
-test-results/
+.nx/
+storybook-static/
 playwright-report/
-public/
+test-results/
+blob-report/
 yarn.lock

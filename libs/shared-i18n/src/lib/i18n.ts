@@ -18,19 +18,17 @@ export function initI18n() {
 
   i18n
     .use(
-      resourcesToBackend(
-        async (lang: string, ns: string) => {
-          try {
-            const m = await import(`../locales/${lang}/${ns}.json`);
-            return m.default;
-          } catch (err) {
-            if (import.meta.env.DEV) {
-              console.warn(`[i18n] Failed to load ns=${ns} lang=${lang}`, err);
-            }
-            return {};
+      resourcesToBackend(async (lang: string, ns: string) => {
+        try {
+          const m = await import(`../locales/${lang}/${ns}.json`);
+          return m.default;
+        } catch (err) {
+          if (import.meta.env.DEV) {
+            console.warn(`[i18n] Failed to load ns=${ns} lang=${lang}`, err);
           }
+          return {};
         }
-      )
+      })
     )
     .use(initReactI18next)
     .init({
@@ -45,12 +43,11 @@ export function initI18n() {
         useSuspense: true,
       },
       saveMissing: import.meta.env.DEV,
-      missingKeyHandler:
-        import.meta.env.DEV
-          ? (lngs: readonly string[], ns: string, key: string) => {
-              console.warn(`[i18n] Missing key: ${key} (ns: ${ns})`);
-            }
-          : undefined,
+      missingKeyHandler: import.meta.env.DEV
+        ? (lngs: readonly string[], ns: string, key: string) => {
+            console.warn(`[i18n] Missing key: ${key} (ns: ${ns})`);
+          }
+        : undefined,
     });
 
   const lang = i18n.language;

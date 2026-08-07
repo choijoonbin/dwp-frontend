@@ -1,63 +1,68 @@
-import path from 'path';
-import checker from 'vite-plugin-checker';
-import { defineConfig } from 'vite';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import react from '@vitejs/plugin-react-swc';
+import checker from 'vite-plugin-checker';
+import { defineConfig, loadEnv } from 'vite';
 
-// ----------------------------------------------------------------------
+const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
+const appRoot = path.join(workspaceRoot, 'apps/dwp');
+const developmentPort = 4200;
 
-const PORT = 4200;
-
-const getVendorChunk = (id: string): string | undefined => {
-  if (!id.includes('/node_modules/')) return undefined;
-  if (
-    id.includes('/react/') ||
-    id.includes('/react-dom/') ||
-    id.includes('/react-router') ||
-    id.includes('/scheduler/')
-  ) {
-    return 'vendor-react';
-  }
-  if (id.includes('/@emotion/')) return 'vendor-emotion';
-  if (id.includes('/@iconify/')) return 'vendor-icons';
-  if (id.includes('/i18next') || id.includes('/react-i18next/')) return 'vendor-i18n';
-  if (id.includes('/@tanstack/') || id.includes('/zustand/')) return 'vendor-state';
+function vendorGroup(moduleId: string): string | undefined {
+  if (!moduleId.includes('/node_modules/')) return undefined;
+  if (/\/(react|react-dom|react-router|scheduler)\//.test(moduleId)) return 'vendor-react';
+  if (moduleId.includes('/@emotion/')) return 'vendor-emotion';
+  if (moduleId.includes('/lucide-react/')) return 'vendor-icons';
+  if (/\/(i18next|react-i18next)\//.test(moduleId)) return 'vendor-i18n';
+  if (/\/(@tanstack|zustand)\//.test(moduleId)) return 'vendor-state';
   return undefined;
-};
+}
 
 export default defineConfig(({ mode }) => {
-  const isTest = Boolean(process.env.VITEST) || mode === 'test';
+  const env = loadEnv(mode, workspaceRoot, '');
+  const proxyTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:8080';
+  const runningTests = mode === 'test' || Boolean(process.env.VITEST);
 
   return {
-    root: path.resolve(__dirname, 'apps/dwp'),
-    cacheDir: path.resolve(__dirname, 'node_modules/.vite/apps-dwp'),
-    publicDir: path.resolve(__dirname, 'public'),
+    root: appRoot,
+    publicDir: path.join(workspaceRoot, 'public'),
+    cacheDir: path.join(workspaceRoot, 'node_modules/.vite/dwp'),
     plugins: [
       react(),
-      !isTest &&
+      !runningTests &&
         checker({
           typescript: true,
           eslint: {
             useFlatConfig: true,
-            lintCommand:
-              'eslint --no-error-on-unmatched-pattern "../../apps/**/*.{js,jsx,ts,tsx}" "../../libs/**/*.{js,jsx,ts,tsx}"',
+            lintCommand: `eslint --no-error-on-unmatched-pattern "${path.join(workspaceRoot, 'apps')}/**/*.{js,jsx,ts,tsx}" "${path.join(workspaceRoot, 'libs')}/**/*.{js,jsx,ts,tsx}"`,
             dev: { logLevel: ['error'] },
           },
-          overlay: {
-            position: 'tl',
-            initialIsOpen: false,
-          },
+          overlay: { position: 'tl', initialIsOpen: false },
         }),
     ].filter(Boolean),
-    optimizeDeps: {
-      include: ['i18next', 'react-i18next', 'i18next-resources-to-backend'],
+    resolve: {
+      alias: {
+        '@dwp-frontend/design-system': path.join(workspaceRoot, 'libs/design-system/src'),
+        '@dwp-frontend/shared-utils': path.join(workspaceRoot, 'libs/shared-utils/src'),
+        '@dwp-frontend/shared-i18n': path.join(workspaceRoot, 'libs/shared-i18n/src'),
+      },
+    },
+    optimizeDeps: { include: ['i18next', 'react-i18next', 'i18next-resources-to-backend'] },
+    server: {
+      host: true,
+      port: developmentPort,
+      fs: { allow: [workspaceRoot] },
+      proxy: { '/api': { target: proxyTarget, changeOrigin: true } },
+    },
+    preview: {
+      host: true,
+      port: developmentPort,
+      proxy: { '/api': { target: proxyTarget, changeOrigin: true } },
     },
     build: {
       chunkSizeWarningLimit: 600,
-      rollupOptions: {
-        output: {
-          manualChunks: getVendorChunk,
-        },
-      },
+      rollupOptions: { output: { manualChunks: vendorGroup } },
     },
     test: {
       exclude: [
@@ -68,27 +73,5 @@ export default defineConfig(({ mode }) => {
         'docs/**',
       ],
     },
-    resolve: {
-      alias: [
-        {
-          find: /^@dwp-frontend\/design-system(.*)$/,
-          replacement: path.resolve(__dirname, 'libs/design-system/src$1'),
-        },
-        {
-          find: /^@dwp-frontend\/shared-utils(.*)$/,
-          replacement: path.resolve(__dirname, 'libs/shared-utils/src$1'),
-        },
-        {
-          find: /^@dwp-frontend\/shared-i18n(.*)$/,
-          replacement: path.resolve(__dirname, 'libs/shared-i18n/src$1'),
-        },
-      ],
-    },
-    server: {
-      port: PORT,
-      host: true,
-      fs: { allow: [__dirname] },
-    },
-    preview: { port: PORT, host: true },
   };
 });

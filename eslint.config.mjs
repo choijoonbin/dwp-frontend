@@ -1,229 +1,74 @@
 import globals from 'globals';
-import eslintJs from '@eslint/js';
-import eslintTs from 'typescript-eslint';
-import reactPlugin from 'eslint-plugin-react';
-import importPlugin from 'eslint-plugin-import';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
-import perfectionistPlugin from 'eslint-plugin-perfectionist';
-import unusedImportsPlugin from 'eslint-plugin-unused-imports';
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import unusedImports from 'eslint-plugin-unused-imports';
 
-// ----------------------------------------------------------------------
-
-/**
- * @rules common
- * from 'react', 'eslint-plugin-react-hooks'...
- */
-const commonRules = () => ({
-  ...reactHooksPlugin.configs.recommended.rules,
-  'func-names': 1,
-  'no-bitwise': 2,
-  'no-unused-vars': 0,
-  'object-shorthand': 1,
-  'no-useless-rename': 1,
-  'default-case-last': 2,
-  'consistent-return': 2,
-  'no-constant-condition': 1,
-  'default-case': [2, { commentPattern: '^no default$' }],
-  'lines-around-directive': [2, { before: 'always', after: 'always' }],
-  'arrow-body-style': [2, 'as-needed', { requireReturnForObjectLiteral: false }],
-  // react
-  'react/jsx-key': 0,
-  'react/prop-types': 0,
-  'react/display-name': 0,
-  'react/no-children-prop': 0,
-  'react/jsx-boolean-value': 2,
-  'react/self-closing-comp': 2,
-  'react/react-in-jsx-scope': 0,
-  'react/jsx-no-useless-fragment': [1, { allowExpressions: true }],
-  'react/jsx-curly-brace-presence': [2, { props: 'never', children: 'never' }],
-  // typescript
-  '@typescript-eslint/no-shadow': 2,
-  '@typescript-eslint/no-explicit-any': 0,
-  '@typescript-eslint/no-empty-object-type': 0,
-  '@typescript-eslint/consistent-type-imports': 1,
-  '@typescript-eslint/no-unused-vars': [1, { args: 'none' }],
-  // design system enforcement (start with warning to prevent breaking existing code)
-  'no-restricted-imports': [
-    1, // warning level (1) instead of error (2) for soft introduction
-    {
-      paths: [
-        {
-          name: 'lucide-react',
-          message:
-            '❌ Use @iconify/react instead of lucide-react. See docs/essentials/DESIGN_SYSTEM.md',
-        },
-        {
-          name: 'class-variance-authority',
-          message:
-            '❌ Use MUI sx prop instead of class-variance-authority. See docs/essentials/DESIGN_SYSTEM.md',
-        },
-        {
-          name: 'tailwind-merge',
-          message:
-            '❌ Use MUI sx prop instead of tailwind-merge. See docs/essentials/DESIGN_SYSTEM.md',
-        },
-      ],
-      patterns: [
-        {
-          group: ['@radix-ui/*'],
-          message:
-            '❌ Use MUI components instead of Radix UI. See docs/essentials/DESIGN_SYSTEM.md',
-        },
-        {
-          group: ['**/components/ui/**'],
-          message:
-            '❌ Use @dwp-frontend/design-system patterns instead of local components/ui. See docs/essentials/DESIGN_SYSTEM.md',
-        },
-      ],
-    },
-  ],
-});
-
-/**
- * @rules import
- * from 'eslint-plugin-import'.
- */
-const importRules = () => ({
-  ...importPlugin.configs.recommended.rules,
-  'import/named': 0,
-  'import/export': 0,
-  'import/default': 0,
-  'import/namespace': 0,
-  'import/no-named-as-default': 0,
-  'import/newline-after-import': 2,
-  'import/no-named-as-default-member': 0,
-  'import/no-cycle': [
-    0, // disabled if slow
-    { maxDepth: '∞', ignoreExternal: false, allowUnsafeDynamicCyclicDependency: false },
-  ],
-});
-
-/**
- * @rules unused imports
- * from 'eslint-plugin-unused-imports'.
- */
-const unusedImportsRules = () => ({
-  'unused-imports/no-unused-imports': 1,
-  'unused-imports/no-unused-vars': [
-    0,
-    { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
-  ],
-});
-
-/**
- * @rules sort or imports/exports
- * from 'eslint-plugin-perfectionist'.
- */
-const sortImportsRules = () => {
-  const customGroups = {
-    mui: ['custom-mui'],
-    auth: ['custom-auth'],
-    hooks: ['custom-hooks'],
-    utils: ['custom-utils'],
-    types: ['custom-types'],
-    routes: ['custom-routes'],
-    sections: ['custom-sections'],
-    components: ['custom-components'],
-  };
-
-  return {
-    'perfectionist/sort-named-imports': [1, { type: 'line-length', order: 'asc' }],
-    'perfectionist/sort-named-exports': [1, { type: 'line-length', order: 'asc' }],
-    'perfectionist/sort-exports': [
-      1,
-      {
-        order: 'asc',
-        type: 'line-length',
-        groupKind: 'values-first',
-      },
-    ],
-    'perfectionist/sort-imports': [
-      2,
-      {
-        order: 'asc',
-        ignoreCase: true,
-        type: 'line-length',
-        environment: 'node',
-        maxLineLength: undefined,
-        newlinesBetween: 'always',
-        internalPattern: ['^src/.+'],
-        groups: [
-          'style',
-          'side-effect',
-          'type',
-          ['builtin', 'external'],
-          customGroups.mui,
-          customGroups.routes,
-          customGroups.hooks,
-          customGroups.utils,
-          'internal',
-          customGroups.components,
-          customGroups.sections,
-          customGroups.auth,
-          customGroups.types,
-          ['parent', 'sibling', 'index'],
-          ['parent-type', 'sibling-type', 'index-type'],
-          'object',
-          'unknown',
-        ],
-        customGroups: {
-          value: {
-            [customGroups.mui]: ['^@mui/.+'],
-            [customGroups.auth]: ['^src/auth/.+'],
-            [customGroups.hooks]: ['^src/hooks/.+'],
-            [customGroups.utils]: ['^src/utils/.+'],
-            [customGroups.types]: ['^src/types/.+'],
-            [customGroups.routes]: ['^src/routes/.+'],
-            [customGroups.sections]: ['^src/sections/.+'],
-            [customGroups.components]: ['^src/components/.+'],
-          },
-        },
-      },
-    ],
-  };
-};
-
-/**
- * Custom ESLint configuration.
- */
-export const customConfig = {
-  plugins: {
-    'react-hooks': reactHooksPlugin,
-    'unused-imports': unusedImportsPlugin,
-    perfectionist: perfectionistPlugin,
-    import: importPlugin,
-  },
-  settings: {
-    // https://www.npmjs.com/package/eslint-import-resolver-typescript
-    ...importPlugin.configs.typescript.settings,
-    'import/resolver': {
-      ...importPlugin.configs.typescript.settings['import/resolver'],
-      typescript: {
-        project: ['tsconfig.base.json'],
-      },
-    },
-  },
-  rules: {
-    ...commonRules(),
-    ...importRules(),
-    ...unusedImportsRules(),
-    ...sortImportsRules(),
-  },
-};
-
-// ----------------------------------------------------------------------
+const sourceFiles = ['**/*.{js,jsx,mjs,cjs,ts,tsx}'];
 
 export default [
-  { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
-  { ignores: ['*', '!apps/', '!libs/', '!eslint.config.*', 'apps/**/dist/**', 'apps/**/build/**'] },
   {
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/coverage/**',
+      '**/storybook-static/**',
+      '**/playwright-report/**',
+      '**/test-results/**',
+    ],
+  },
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+  react.configs.flat.recommended,
+  {
+    files: sourceFiles,
+    plugins: {
+      'react-hooks': reactHooks,
+      'unused-imports': unusedImports,
+    },
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
+      parserOptions: { ecmaFeatures: { jsx: true } },
     },
     settings: { react: { version: 'detect' } },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/consistent-type-imports': 'warn',
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
+      'react/jsx-key': 'error',
+      'react/self-closing-comp': 'error',
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'class-variance-authority',
+              message: 'Use MUI variants and the DWP token contract.',
+            },
+            {
+              name: 'tailwind-merge',
+              message: 'Use MUI style APIs and the DWP token contract.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@radix-ui/*', '**/components/ui/**'],
+              message: 'Use approved DWP design-system components.',
+            },
+          ],
+        },
+      ],
+    },
   },
-  eslintJs.configs.recommended,
-  ...eslintTs.configs.recommended,
-  reactPlugin.configs.flat.recommended,
-  customConfig,
 ];

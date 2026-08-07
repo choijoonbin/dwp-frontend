@@ -1,42 +1,43 @@
 import { useState } from 'react';
+import { Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
-import { Logo, Iconify } from '@dwp-frontend/design-system';
+import { ProductMark, useAppearance } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 
 import { AccountMenu } from '../components/account-menu';
 import { LanguageMenu } from '../components/language-menu';
-import {
-  SearchControl,
-  WorkspaceMenu,
-  NotificationMenu,
-} from '../components/shell-controls';
+import { SearchControl, WorkspaceMenu, NotificationMenu } from '../components/shell-controls';
 
-const NAV_WIDTH = 254;
-const NAV_COLLAPSED_WIDTH = 80;
+const SIDEBAR_WIDTH = 248;
+const RAIL_WIDTH = 72;
 const HEADER_HEIGHT = 64;
 
 export function AppLayout() {
-  const [collapsed, setCollapsed] = useState(false);
+  const appearance = useAppearance();
+  const [collapsed, setCollapsed] = useState(appearance.navigationPattern === 'rail');
   const [mobileOpen, setMobileOpen] = useState(false);
-  const navWidth = collapsed ? NAV_COLLAPSED_WIDTH : NAV_WIDTH;
+  const topNavigation = appearance.navigationPattern === 'top';
+  const compactSidebar = appearance.navigationPattern === 'rail' || collapsed;
+  const sidebarWidth = compactSidebar ? RAIL_WIDTH : SIDEBAR_WIDTH;
+  const desktopOffset = topNavigation ? 0 : sidebarWidth;
 
-  const renderNavContent = (isCollapsed: boolean) => (
+  const navigationContent = (compact: boolean) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
           height: HEADER_HEIGHT,
-          px: isCollapsed ? 1.75 : 4,
+          px: compact ? 2.5 : 2,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: isCollapsed ? 'center' : 'flex-start',
         }}
       >
-        <Logo isSingle={false} collapsed={isCollapsed} />
+        <ProductMark compact={compact} />
       </Box>
       <Box component="nav" aria-label="Application navigation" sx={{ flex: 1 }} />
     </Box>
@@ -44,54 +45,63 @@ export function AppLayout() {
 
   return (
     <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}>
-      <Box
-        component="aside"
-        data-testid="desktop-sidebar"
-        sx={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          width: navWidth,
-          zIndex: (theme) => theme.zIndex.drawer,
-          display: { xs: 'none', lg: 'block' },
-          position: 'fixed',
-          bgcolor: 'background.paper',
-          borderRight: 1,
-          borderColor: 'divider',
-          transition: (theme) => theme.transitions.create('width'),
-        }}
-      >
-        {renderNavContent(collapsed)}
-        <IconButton
-          size="small"
-          aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
-          onClick={() => setCollapsed((value) => !value)}
+      {!topNavigation && (
+        <Box
+          component="aside"
+          data-testid="desktop-sidebar"
           sx={{
-            top: 32,
-            right: -13,
-            width: 26,
-            height: 26,
-            position: 'absolute',
+            position: 'fixed',
+            inset: '0 auto 0 0',
+            width: sidebarWidth,
+            zIndex: (theme) => theme.zIndex.drawer,
+            display: { xs: 'none', lg: 'block' },
             bgcolor: 'background.paper',
-            border: 1,
+            borderRight: 1,
             borderColor: 'divider',
-            '&:hover': { bgcolor: 'background.neutral' },
+            transition: (theme) => theme.transitions.create('width'),
           }}
         >
-          <Iconify
-            width={15}
-            icon={collapsed ? 'solar:alt-arrow-right-bold' : 'solar:alt-arrow-left-bold'}
-          />
-        </IconButton>
-      </Box>
+          {navigationContent(compactSidebar)}
+          {appearance.policy.navigation.allowCollapse &&
+            appearance.navigationPattern !== 'rail' && (
+              <Tooltip
+                title={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+                placement="right"
+              >
+                <IconButton
+                  size="small"
+                  aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+                  onClick={() => setCollapsed((current) => !current)}
+                  sx={{
+                    position: 'absolute',
+                    top: 19,
+                    right: -17,
+                    width: 34,
+                    height: 34,
+                    bgcolor: 'background.paper',
+                    border: 1,
+                    borderColor: 'divider',
+                    '&:hover': { bgcolor: 'action.hover' },
+                  }}
+                >
+                  {collapsed ? (
+                    <PanelLeftOpen size={17} strokeWidth={1.8} />
+                  ) : (
+                    <PanelLeftClose size={17} strokeWidth={1.8} />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
+        </Box>
+      )}
 
       <Drawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
-        slotProps={{ paper: { sx: { width: NAV_WIDTH } } }}
+        slotProps={{ paper: { sx: { width: SIDEBAR_WIDTH } } }}
       >
         <Box data-testid="mobile-sidebar" sx={{ height: 1 }}>
-          {renderNavContent(false)}
+          {navigationContent(false)}
         </Box>
       </Drawer>
 
@@ -100,25 +110,33 @@ export function AppLayout() {
         color="default"
         elevation={0}
         sx={{
-          width: { xs: 1, lg: `calc(100% - ${navWidth}px)` },
-          ml: { xs: 0, lg: `${navWidth}px` },
+          width: { xs: 1, lg: `calc(100% - ${desktopOffset}px)` },
+          ml: { xs: 0, lg: `${desktopOffset}px` },
           borderBottom: 1,
           borderColor: 'divider',
           transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >
-        <Toolbar sx={{ minHeight: `${HEADER_HEIGHT}px !important`, px: { xs: 1.5, md: 2.5 } }}>
+        <Toolbar
+          disableGutters
+          sx={{ minHeight: `${HEADER_HEIGHT}px !important`, px: { xs: 1, md: 2 } }}
+        >
           <IconButton
             aria-label="Open navigation"
             onClick={() => setMobileOpen(true)}
-            sx={{ mr: 1, display: { lg: 'none' } }}
+            sx={{ mr: 0.5, display: { lg: 'none' } }}
           >
-            <Iconify icon="solar:hamburger-menu-linear" width={22} />
+            <Menu size={21} strokeWidth={1.8} />
           </IconButton>
+          {topNavigation && (
+            <ProductMark compact sx={{ mr: 1, display: { xs: 'none', lg: 'inline-flex' } }} />
+          )}
           <WorkspaceMenu />
           <Box sx={{ flexGrow: 1 }} />
           <SearchControl />
-          <LanguageMenu />
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <LanguageMenu />
+          </Box>
           <NotificationMenu />
           <AccountMenu />
         </Toolbar>
@@ -128,7 +146,7 @@ export function AppLayout() {
         component="main"
         sx={{
           pt: `${HEADER_HEIGHT}px`,
-          ml: { xs: 0, lg: `${navWidth}px` },
+          ml: { xs: 0, lg: `${desktopOffset}px` },
           minHeight: '100dvh',
           transition: (theme) => theme.transitions.create('margin-left'),
         }}

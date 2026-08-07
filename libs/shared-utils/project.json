@@ -7,12 +7,12 @@
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx vitest run --config vitest.config.ts",
+        "command": "../../node_modules/.bin/vitest run --config vitest.config.ts",
         "cwd": "libs/shared-utils"
       },
       "configurations": {
         "watch": {
-          "command": "npx vitest watch --config vitest.config.ts",
+          "command": "../../node_modules/.bin/vitest watch --config vitest.config.ts",
           "cwd": "libs/shared-utils"
         }
       },
@@ -20,4 +20,3 @@
     }
   }
 }
-

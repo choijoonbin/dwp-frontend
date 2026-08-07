@@ -10,7 +10,6 @@ export * from './auth/auth-guard';
 export * from './toast/toast-store';
 export * from './auth/auth-provider';
 export * from './auth/auth-redirect';
-export * from './auth/token-storage';
 export * from './api/auth-policy-api';
 export * from './auth/use-permissions';
 
