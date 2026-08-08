@@ -20,6 +20,8 @@ const agentPlan = {
   data: {
     runId: 'run-ref-1042',
     auditId: 'AUD-REF-1042',
+    planHash: 'a'.repeat(64),
+    correlationId: 'correlation-ref-1042',
     state: 'REVIEW',
     riskTier: 'L2',
     approvalRequired: true,

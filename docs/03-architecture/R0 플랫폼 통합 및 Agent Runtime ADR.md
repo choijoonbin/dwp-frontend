@@ -1,6 +1,6 @@
 # DWP R0 플랫폼 통합 및 Agent Runtime ADR
 
-> 문서 상태: Accepted Architecture Contract v1.1
+> 문서 상태: Accepted Architecture Contract v1.2
 >
 > 기준일: 2026-08-08
 >
@@ -26,6 +26,7 @@ Workflow와 Agent Runtime의 책임을 먼저 고정한다. 이 문서는 제품
 | ADR-013 | Model Gateway·Agent/Tool Registry·Risk Tier 중앙 통제   | Accepted | 첫 Model Provider와 L0·L1 Agent 구현             |
 | ADR-014 | OpenTelemetry 기반 Trace와 별도 불변 Audit Event        | Accepted | 관측 Backend·보존·민감정보 정책 확정             |
 | ADR-015 | MCP는 Agent-to-Tool, A2A는 외부 Agent 상호운용 경계에서 | Accepted | 실제 다중 Agent·외부 Agent 요구 전 도입하지 않음 |
+| ADR-016 | Browser·사용자·Service Identity 분리와 내부 Zero Trust  | Accepted | Spike 2 Token, 운영 Workload Identity·mTLS Gate  |
 
 ## 3. 논리 구조와 소유권
 
@@ -50,6 +51,8 @@ Browser
 - `dwp_agent`는 계획, 검색 조합, Model 호출과 Agent 실행을 담당하지만 업무 원장과
   최종 권한 판정의 원본이 되지 않는다.
 - Browser는 Model Provider나 MCP Server를 직접 호출하지 않는다.
+- 내부 Network 위치만으로 Agent 요청을 신뢰하지 않는다. Gateway가 외부 Service Header를
+  제거하고 별도 Service Identity를 주입하며 Agent는 사용자 Identity보다 먼저 검증한다.
 - Connector Credential은 Vault 또는 동등한 Secret Store에 두며 Prompt, Trace와
   DB 평문에 넣지 않는다.
 
@@ -206,6 +209,12 @@ Tool 없이 Audit·Human Gate를 검증했으며 상세 증적은
 `R0 Contract Spike 1 - Governed Plan Preview.md`에 기록한다. C1·S1·W1·A1의 실제
 Exit Evidence는 아직 충족하지 않았으므로 완료 처리하지 않는다.
 
+Contract Spike 2에서는 Gateway→Agent Service Identity, 승인 Binding용 SHA-256 Plan
+Hash, Correlation 연결과 원문을 제외한 구조화 Audit Event를 구현했다. 로컬 Shared
+Secret은 계약 검증용이며 운영 배포 전 Workload Identity 또는 mTLS, Network Policy와
+Secret Rotation으로 교체한다. 상세 증적은
+`R0 Contract Spike 2 - Service Trust and Plan Integrity.md`에 기록한다.
+
 R0에서는 위 계약을 검증하기 위한 최소 Fixture만 만든다. 디자인 파트너와 첫 Journey가
 정해지기 전에 제품 메뉴, 업무 Table, Connector SDK와 Multi-agent Framework를 대량으로
 생성하지 않는다.
@@ -221,3 +230,5 @@ R0에서는 위 계약을 검증하기 위한 최소 Fixture만 만든다. 디�
 - [OpenTelemetry Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/)
 - [OpenID Shared Signals and CAEP](https://openid.net/wg/sharedsignals/)
 - [OWASP Agentic Security Initiative](https://genai.owasp.org/)
+- [NIST SP 800-207 Zero Trust Architecture](https://csrc.nist.gov/pubs/sp/800/207/final)
+- [RFC 8705 OAuth Mutual TLS](https://datatracker.ietf.org/doc/html/rfc8705)

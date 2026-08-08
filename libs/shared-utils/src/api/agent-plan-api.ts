@@ -23,6 +23,8 @@ export type AgentPlanStep = {
 export type AgentPlanPreview = {
   runId: string;
   auditId: string;
+  planHash: string;
+  correlationId: string;
   state: 'REVIEW';
   riskTier: AgentRiskTier;
   approvalRequired: boolean;
@@ -59,6 +61,9 @@ function isGovernedPlanPreview(value: unknown): value is AgentPlanPreview {
   return (
     isNonEmptyString(plan.runId) &&
     isNonEmptyString(plan.auditId) &&
+    typeof plan.planHash === 'string' &&
+    /^[a-f0-9]{64}$/.test(plan.planHash) &&
+    isNonEmptyString(plan.correlationId) &&
     plan.state === 'REVIEW' &&
     typeof riskTier === 'string' &&
     RISK_TIERS.has(riskTier as AgentRiskTier) &&

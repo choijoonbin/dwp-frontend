@@ -24,9 +24,12 @@ Audit ID와 Mutation 금지 상태를 표시한다.
 - 권한 없음과 근거 부족을 서로 다른 상태로 표현
 - Action Target, Risk Tier, Approval과 취소 가능성
 - Activity의 Human·System·Agent 구분과 Running·Needs input·Completed·Blocked 상태
-- Reference의 Audit ID는 합성 식별자임을 명시하고 실제 Run에서는 불변 Trace와 연결
+- Reference의 Audit ID는 합성 식별자임을 명시하고 실제 Run에서는 Plan Hash·Correlation과
+  불변 Trace로 연결
 - 내부 Chain-of-thought 대신 입력 Reference, 정책, 선택한 Tool, 결과와 다음 Action 표시
 - Contract Preview 응답이 `mutationAllowed=true`이면 Gateway 이후 Client에서도 거부
+- L2·L3 승인은 Canonical Input의 SHA-256 Plan Hash에 묶고 입력·권한 변경 시 재승인
+- Audit Event는 질문·Source 원문, Credential과 Chain-of-thought를 기본 기록하지 않음
 
 ## 4. 금지
 

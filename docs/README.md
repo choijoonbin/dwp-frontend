@@ -28,6 +28,7 @@
 - `03-architecture/R0 기반 의사결정.md`
 - `03-architecture/R0 플랫폼 통합 및 Agent Runtime ADR.md`
 - `03-architecture/R0 Contract Spike 1 - Governed Plan Preview.md`
+- `03-architecture/R0 Contract Spike 2 - Service Trust and Plan Integrity.md`
 - `04-design-system/DWP UI Foundation 전략.md`
 - `04-design-system/DWP Premium Experience Direction.md`
 - `04-design-system/프론트엔드 UI UX 기술검토.md`
@@ -36,6 +37,7 @@
 - `05-features/DWP-R0-SEC-001-session-lifecycle/`
 - `05-features/DWP-R1-CORE-001-reference-work-hub/`
 - `06-delivery/디자인 파트너 선정 및 Pilot Charter.md`
+- `06-delivery/R0 C1 Productivity Connector 준비 체크리스트.md`
 
 ## Feature 문서 규칙
 

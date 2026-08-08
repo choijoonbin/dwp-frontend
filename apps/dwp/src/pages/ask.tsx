@@ -432,8 +432,9 @@ export default function AskPage() {
                     variant="caption"
                     color="text.secondary"
                     sx={{ fontFamily: 'monospace' }}
+                    aria-label={`Audit ${runtimePlan.auditId}, plan hash ${runtimePlan.planHash}`}
                   >
-                    {runtimePlan.auditId} / {runtimePlan.sourceReferences.length} verified sources
+                    Audit {runtimePlan.auditId} / Plan {runtimePlan.planHash.slice(0, 12)}
                   </Typography>
                 </Box>
               )}

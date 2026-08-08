@@ -5,6 +5,8 @@
 > 기준일: 2026-08-08
 >
 > 적용 저장소: `dwp-frontend`, `dwp-backend`, `dwp_agent`
+>
+> 후속 보강: `R0 Contract Spike 2 - Service Trust and Plan Integrity.md`
 
 ## 1. 목적
 
@@ -94,8 +96,8 @@ Envelope 안에 반환한다.
 - S1: 실제 Knowledge 500~5,000건 ACL·삭제·검색 품질 Evaluation
 - W1: Temporal·BPMN 후보의 Timer·재시작·Version·TCO 비교
 - A1: 승인된 Model Route의 L0·L1 Citation·Budget·Evaluation
-- Gateway Session Verification의 Cache, Circuit Breaker, mTLS 또는 Service Identity
-- Agent Port의 외부 Network 차단과 내부 Service Authentication
+- Gateway Session Verification의 Cache·Circuit Breaker 운영 정책
+- Agent Port의 외부 Network 차단과 Production Workload Identity 또는 mTLS
 
 이 항목이 통과하기 전에는 실제 Connector Credential, Vector Table, Workflow Engine과
 Model Provider를 Production Dependency로 추가하지 않는다.

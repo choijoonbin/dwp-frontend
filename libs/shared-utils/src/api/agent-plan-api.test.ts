@@ -21,6 +21,8 @@ describe('agent plan preview API', () => {
     const plan = {
       runId: 'run-ref-1',
       auditId: 'AUD-REF-1',
+      planHash: 'a'.repeat(64),
+      correlationId: 'correlation-1',
       state: 'REVIEW',
       riskTier: 'L2',
       approvalRequired: true,
@@ -71,6 +73,7 @@ describe('agent plan preview API', () => {
     ['mutation is allowed', { mutationAllowed: true }],
     ['elevated risk skips approval', { riskTier: 'L2', approvalRequired: false }],
     ['reference mode is disabled', { referenceMode: false }],
+    ['plan hash is malformed', { planHash: 'mutable-plan-id' }],
   ])('fails closed when %s', async (_case, unsafePlan) => {
     const fetchMock = vi
       .fn()
@@ -86,6 +89,8 @@ describe('agent plan preview API', () => {
           data: {
             runId: 'run-ref-1',
             auditId: 'AUD-REF-1',
+            planHash: 'a'.repeat(64),
+            correlationId: 'correlation-1',
             state: 'REVIEW',
             riskTier: 'L2',
             approvalRequired: true,

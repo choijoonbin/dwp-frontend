@@ -26,10 +26,14 @@ Mutation은 호출하지 않는다. 나머지 경로와 Response는 R1 Backend·
 - Browser Authentication은 HttpOnly Session Cookie와 CSRF 계약을 사용한다.
 - Gateway는 보호 API마다 Session Registry를 재검증하고 외부 `X-DWP-*` Identity Header를
   제거한 뒤 검증된 User·Tenant·Role만 내부 Service에 전달한다.
+- Agent 경로는 외부 `X-DWP-Service-Token`도 제거한 뒤 Gateway 전용 Service Identity를
+  주입하며 Agent는 누락·불일치를 거부한다. Frontend에는 이 Token을 전달하지 않는다.
 - `X-Tenant-ID`는 JWT Tenant와 일치해야 하며 Header만으로 Scope를 넓히지 않는다.
 - Pagination은 안정된 Cursor를 우선하고 Sort·Filter를 명시한다.
 - Response에는 `correlationId`, Source Freshness와 Permission Decision Reference를
   포함할 수 있어야 한다.
+- Agent Preview Response는 승인 대상을 고정하는 64자리 SHA-256 `planHash`와
+  `correlationId`를 필수로 포함한다.
 - Source of Record 원문 권한을 DWP Role만으로 대체하지 않는다.
 - Activity 응답은 내부 Chain-of-thought를 포함하지 않고 입력 Reference, 정책 판정, Tool,
   결과와 Audit Reference만 제공한다.
