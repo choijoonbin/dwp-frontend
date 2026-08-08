@@ -81,6 +81,7 @@ export default function AskPage() {
         action: 'flexible work request',
         target: 'employee-services/flexible-work',
         sourceReferences: askSources.map((source) => source.id),
+        agentKey: 'REFERENCE_PLANNER',
       });
       if (requestSequence.current !== nextSequence) return;
       setRuntimePlan(plan);
@@ -425,16 +426,19 @@ export default function AskPage() {
                       aria-hidden="true"
                     />
                     <Typography component="p" variant="subtitle2">
-                      Governed Agent contract verified
+                      {runtimePlan.agentRegistry.resolution === 'ACTIVE'
+                        ? 'Governed Agent contract verified'
+                        : 'Reference Agent contract verified'}
                     </Typography>
                   </Box>
                   <Typography
                     variant="caption"
                     color="text.secondary"
                     sx={{ fontFamily: 'monospace' }}
-                    aria-label={`Audit ${runtimePlan.auditId}, plan hash ${runtimePlan.planHash}`}
+                    aria-label={`Agent ${runtimePlan.agentRegistry.entryKey} revision ${runtimePlan.agentRegistry.revision}, audit ${runtimePlan.auditId}, plan hash ${runtimePlan.planHash}`}
                   >
-                    Audit {runtimePlan.auditId} / Plan {runtimePlan.planHash.slice(0, 12)}
+                    Agent {runtimePlan.agentRegistry.entryKey} r{runtimePlan.agentRegistry.revision}{' '}
+                    / Audit {runtimePlan.auditId} / Plan {runtimePlan.planHash.slice(0, 12)}
                   </Typography>
                 </Box>
               )}

@@ -21,6 +21,7 @@
 - `00-governance/기능 개발 산출물 및 Gate.md`
 - `01-product/프로젝트 개요.md`
 - `01-product/프로젝트로드맵.md`
+- `01-product/핵심기술 실행계획.md`
 - `01-product/R0 핵심 사용자 Journey 및 KPI.md`
 - `01-product/R1 AI Employee Work Hub MVP PRD.md`
 - `01-product/개인화 홈 및 앱 경험 기획.md`
@@ -29,12 +30,16 @@
 - `03-architecture/R0 플랫폼 통합 및 Agent Runtime ADR.md`
 - `03-architecture/R0 Contract Spike 1 - Governed Plan Preview.md`
 - `03-architecture/R0 Contract Spike 2 - Service Trust and Plan Integrity.md`
+- `03-architecture/R0 Platform Control Plane 및 Admin Governance ADR.md`
 - `04-design-system/DWP UI Foundation 전략.md`
 - `04-design-system/DWP Premium Experience Direction.md`
 - `04-design-system/프론트엔드 UI UX 기술검토.md`
 - `04-design-system/DESIGN_SYSTEM.md`
 - `04-design-system/Figma 운영 가이드.md`
 - `05-features/DWP-R0-SEC-001-session-lifecycle/`
+- `05-features/DWP-R0-ADM-001-platform-control-plane/`
+- `05-features/DWP-R0-ADM-002-product-registry/`
+- `05-features/DWP-R0-ADM-003-identity-access-governance/`
 - `05-features/DWP-R1-CORE-001-reference-work-hub/`
 - `06-delivery/디자인 파트너 선정 및 Pilot Charter.md`
 - `06-delivery/R0 C1 Productivity Connector 준비 체크리스트.md`

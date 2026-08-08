@@ -11,6 +11,15 @@ export type AgentPlanPreviewRequest = {
   action: string;
   target: string;
   sourceReferences: string[];
+  agentKey: string;
+};
+
+export type AgentRegistryResolution = {
+  entryKey: string;
+  revision: number;
+  artifactVersion: string;
+  riskTier: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  resolution: 'ACTIVE' | 'REFERENCE_FALLBACK';
 };
 
 export type AgentPlanStep = {
@@ -33,6 +42,7 @@ export type AgentPlanPreview = {
   steps: AgentPlanStep[];
   sourceReferences: string[];
   referenceMode: boolean;
+  agentRegistry: AgentRegistryResolution;
 };
 
 const RISK_TIERS: ReadonlySet<AgentRiskTier> = new Set(['L0', 'L1', 'L2', 'L3']);
@@ -49,6 +59,22 @@ function isPlanStep(value: unknown): value is AgentPlanStep {
     isNonEmptyString(step.title) &&
     isNonEmptyString(step.tool) &&
     isNonEmptyString(step.description)
+  );
+}
+
+function isAgentRegistryResolution(value: unknown): value is AgentRegistryResolution {
+  if (typeof value !== 'object' || value === null) return false;
+  const registry = value as Record<string, unknown>;
+  return (
+    typeof registry.entryKey === 'string' &&
+    /^[A-Z][A-Z0-9_.-]{0,99}$/.test(registry.entryKey) &&
+    typeof registry.revision === 'number' &&
+    Number.isInteger(registry.revision) &&
+    registry.revision >= 0 &&
+    isNonEmptyString(registry.artifactVersion) &&
+    ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(String(registry.riskTier)) &&
+    (registry.resolution === 'ACTIVE' || registry.resolution === 'REFERENCE_FALLBACK') &&
+    (registry.resolution !== 'ACTIVE' || registry.revision > 0)
   );
 }
 
@@ -76,7 +102,8 @@ function isGovernedPlanPreview(value: unknown): value is AgentPlanPreview {
     plan.steps.every(isPlanStep) &&
     Array.isArray(plan.sourceReferences) &&
     plan.sourceReferences.every(isNonEmptyString) &&
-    plan.referenceMode === true
+    plan.referenceMode === true &&
+    isAgentRegistryResolution(plan.agentRegistry)
   );
 }
 

@@ -1,8 +1,8 @@
 # DWP Frontend Starter
 
-새 DWP 프로젝트를 시작하기 위한 React 애플리케이션 셸입니다. 로그인과
-공통 헤더, 빈 사이드바, 테마·다국어 기반만 유지하며 기존 업무 메뉴와 기능
-모듈은 포함하지 않습니다.
+새 DWP 프로젝트를 시작하기 위한 React 애플리케이션 셸입니다. 안전한 로그인,
+Global Shell, DWP Work Hub Reference와 Tenant Admin Control Plane을 포함하며 기존
+업무 시스템의 메뉴와 기능 모듈은 포함하지 않습니다.
 
 ## Structure
 
@@ -10,7 +10,7 @@
 apps/dwp                 애플리케이션 셸, 인증 화면, 라우팅
 libs/design-system       공통 UI 컴포넌트와 테마
 libs/shared-i18n         공통 번역 기반
-libs/shared-utils        인증 API, 세션, 권한과 HTTP 기반
+libs/shared-utils        인증·Platform API, 세션, 권한과 HTTP 기반
 docs                     제품·설계·아키텍처·기능·Delivery 계약
 e2e                      앱 Journey·접근성·시각 회귀 테스트
 e2e-storybook            공통 Component 상호작용·접근성·시각 회귀 테스트
@@ -56,6 +56,11 @@ corepack yarn license:check
 브라우저 인증은 JavaScript Token Storage가 아니라 Backend의 `HttpOnly` Session
 Cookie를 사용합니다. 상태 변경 API는 `/api/auth/csrf`에서 받은 Token을
 `X-XSRF-TOKEN` Header로 자동 전송합니다.
+
+Tenant Admin은 계정 메뉴의 `Administration`에서 사용자 Role, 기준정보, 제품 Registry와
+통합 감사 이벤트를 관리합니다. Role 변경은 자기 변경·마지막 Admin 제거를 차단하고 대상
+Session을 폐기합니다. 앱·Connector·Agent·Tool·Policy의 실행 상세와 Secret은 Registry
+Envelope에 저장하지 않고 후속 전용 계약으로 분리합니다.
 
 Design System Workbench는 `corepack yarn storybook`으로 실행하며 기본 주소는
 `http://localhost:6006`입니다.

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, LogOut, Moon, Settings2, ShieldCheck, Sun, UserRound } from 'lucide-react';
+import { Cog, Home, LogOut, Moon, Settings2, ShieldCheck, Sun, UserRound } from 'lucide-react';
 import { useAppearance } from '@dwp-frontend/design-system';
 import { useAuth, redirectToSignIn } from '@dwp-frontend/shared-utils';
 
@@ -22,6 +22,9 @@ export function AccountMenu() {
   const location = useLocation();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const displayName = auth.user?.displayName || 'User';
+  const isAdmin = auth.user?.roles.some((role) =>
+    ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'].includes(role)
+  );
 
   const close = () => setAnchor(null);
   const goTo = (path: string) => {
@@ -85,6 +88,12 @@ export function AccountMenu() {
           <ShieldCheck {...menuIconProps} />
           Security & sessions
         </MenuItem>
+        {isAdmin && (
+          <MenuItem onClick={() => goTo('/admin')} sx={{ gap: 1.5 }}>
+            <Cog {...menuIconProps} />
+            Administration
+          </MenuItem>
+        )}
         <Divider sx={{ my: 0.5 }} />
         <MenuItem onClick={switchMode} sx={{ gap: 1.5 }}>
           {appearance.resolvedMode === 'dark' ? (

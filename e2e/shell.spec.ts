@@ -55,6 +55,13 @@ async function mockAgentPlanContract(page: Page) {
           ],
           sourceReferences: ['src-policy-flex', 'src-remote-guide'],
           referenceMode: true,
+          agentRegistry: {
+            entryKey: 'REFERENCE_PLANNER',
+            revision: 2,
+            artifactVersion: '1.1.0',
+            riskTier: 'MEDIUM',
+            resolution: 'ACTIVE',
+          },
         },
       }),
     })
@@ -141,6 +148,7 @@ test('authenticated users keep the common shell without business navigation', as
   await expect(page.getByRole('menuitem', { name: 'Profile' })).toBeVisible();
   await expect(page.getByRole('menuitem', { name: 'Preferences' })).toBeVisible();
   await expect(page.getByRole('menuitem', { name: 'Security & sessions' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Administration' })).toBeVisible();
   await page.getByRole('menuitem', { name: 'Dark mode' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-color-scheme', 'dark');
   await expect(page.locator('[role="menuitem"]')).toHaveCount(0);

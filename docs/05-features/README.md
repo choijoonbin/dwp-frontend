@@ -13,3 +13,12 @@
 
 `discovery`, `definition`, `design`, `build-ready`, `in-development`, `pilot`,
 `released`, `retired`만 사용한다.
+
+## 현재 Package
+
+- `DWP-R0-SEC-001-session-lifecycle`: Session·CSRF·기기 관리 Foundation
+- `DWP-R0-UI-001-enterprise-ai-foundation`: DWP UI·AI Trust Foundation
+- `DWP-R0-ADM-001-platform-control-plane`: Tenant 기준정보·감사 Control Plane
+- `DWP-R0-ADM-002-product-registry`: App·Connector·Agent·Tool·Policy Registry
+- `DWP-R0-ADM-003-identity-access-governance`: Tenant 사용자·Role·Session 통제
+- `DWP-R1-CORE-001-reference-work-hub`: R1 Reference Work Hub

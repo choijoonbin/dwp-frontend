@@ -38,6 +38,13 @@ describe('agent plan preview API', () => {
       ],
       sourceReferences: ['source-1'],
       referenceMode: true,
+      agentRegistry: {
+        entryKey: 'REFERENCE_PLANNER',
+        revision: 2,
+        artifactVersion: '1.1.0',
+        riskTier: 'MEDIUM',
+        resolution: 'ACTIVE',
+      },
     };
     const fetchMock = vi
       .fn()
@@ -55,6 +62,7 @@ describe('agent plan preview API', () => {
       action: 'flexible work request',
       target: 'employee-services/flexible-work',
       sourceReferences: ['source-1'],
+      agentKey: 'REFERENCE_PLANNER',
     });
 
     expect(result).toEqual(plan);
@@ -74,6 +82,18 @@ describe('agent plan preview API', () => {
     ['elevated risk skips approval', { riskTier: 'L2', approvalRequired: false }],
     ['reference mode is disabled', { referenceMode: false }],
     ['plan hash is malformed', { planHash: 'mutable-plan-id' }],
+    [
+      'active registry has no revision',
+      {
+        agentRegistry: {
+          entryKey: 'REFERENCE_PLANNER',
+          revision: 0,
+          artifactVersion: '1.0.0',
+          riskTier: 'MEDIUM',
+          resolution: 'ACTIVE',
+        },
+      },
+    ],
   ])('fails closed when %s', async (_case, unsafePlan) => {
     const fetchMock = vi
       .fn()
@@ -106,6 +126,13 @@ describe('agent plan preview API', () => {
             ],
             sourceReferences: [],
             referenceMode: true,
+            agentRegistry: {
+              entryKey: 'REFERENCE_PLANNER',
+              revision: 2,
+              artifactVersion: '1.1.0',
+              riskTier: 'MEDIUM',
+              resolution: 'ACTIVE',
+            },
             ...unsafePlan,
           },
         })
@@ -119,6 +146,7 @@ describe('agent plan preview API', () => {
         action: 'flexible work request',
         target: 'employee-services/flexible-work',
         sourceReferences: [],
+        agentKey: 'REFERENCE_PLANNER',
       })
     ).rejects.toMatchObject({ status: 502 });
   });

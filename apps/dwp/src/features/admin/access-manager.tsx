@@ -1,0 +1,459 @@
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { KeyRound, Pencil, RefreshCw, Search, ShieldAlert, UsersRound } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useAuth,
+  useToast,
+  listIdentityRoles,
+  listIdentityUsers,
+  replaceIdentityUserRoles,
+} from '@dwp-frontend/shared-utils';
+import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import Tooltip from '@mui/material/Tooltip';
+import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import FormGroup from '@mui/material/FormGroup';
+import { useTheme } from '@mui/material/styles';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
+import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+
+import type { GridColDef } from '@mui/x-data-grid';
+import type { IdentityRole, IdentityUserAccess } from '@dwp-frontend/shared-utils';
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'The operation could not be completed.';
+}
+
+function sorted(values: Iterable<string>): string[] {
+  return [...values].sort((left, right) => left.localeCompare(right));
+}
+
+function equalRoles(left: string[], right: string[]): boolean {
+  const normalizedLeft = sorted(left);
+  const normalizedRight = sorted(right);
+  return (
+    normalizedLeft.length === normalizedRight.length &&
+    normalizedLeft.every((value, index) => value === normalizedRight[index])
+  );
+}
+
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part.charAt(0))
+    .join('')
+    .toUpperCase();
+}
+
+function RoleChips({ roles }: { roles: string[] }) {
+  if (!roles.length) {
+    return (
+      <Typography variant="body2" color="text.secondary">
+        No role
+      </Typography>
+    );
+  }
+  return (
+    <Stack direction="row" gap={0.5} flexWrap="wrap">
+      {roles.map((role) => (
+        <Chip key={role} label={role} size="small" variant="outlined" />
+      ))}
+    </Stack>
+  );
+}
+
+type RoleDialogProps = {
+  user: IdentityUserAccess | null;
+  roles: IdentityRole[];
+  busy: boolean;
+  onClose: () => void;
+  onSave: (roles: string[]) => Promise<void>;
+};
+
+function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    setSelected(new Set(user?.roles ?? []));
+  }, [user]);
+
+  const toggle = (code: string) => {
+    setSelected((current) => {
+      const next = new Set(current);
+      if (next.has(code)) next.delete(code);
+      else next.add(code);
+      return next;
+    });
+  };
+
+  return (
+    <Dialog open={Boolean(user)} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Edit access</DialogTitle>
+      <DialogContent sx={{ pt: '8px !important' }}>
+        {user && (
+          <>
+            <Stack direction="row" alignItems="center" gap={1.5} sx={{ mb: 2.5 }}>
+              <Avatar sx={{ width: 40, height: 40, bgcolor: 'primary.main', fontSize: 14 }}>
+                {initials(user.displayName)}
+              </Avatar>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="subtitle2" noWrap>
+                  {user.displayName}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" noWrap>
+                  {user.email || `User ${user.userId}`}
+                </Typography>
+              </Box>
+            </Stack>
+            <FormGroup aria-label="Assigned roles" sx={{ gap: 0.75 }}>
+              {roles.map((role) => (
+                <Box key={role.code} sx={{ borderTop: 1, borderColor: 'divider', pt: 0.75 }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={selected.has(role.code)}
+                        onChange={() => toggle(role.code)}
+                      />
+                    }
+                    label={
+                      <Box>
+                        <Typography variant="body2" fontWeight={700}>
+                          {role.name}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {role.code}
+                          {role.description ? ` / ${role.description}` : ''}
+                        </Typography>
+                      </Box>
+                    }
+                    sx={{ alignItems: 'flex-start', m: 0, width: 1 }}
+                  />
+                </Box>
+              ))}
+            </FormGroup>
+            <Stack
+              direction="row"
+              alignItems="flex-start"
+              gap={1}
+              sx={{ mt: 2.5, p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}
+            >
+              <ShieldAlert size={18} strokeWidth={1.8} aria-hidden="true" />
+              <Typography variant="body2" color="text.secondary">
+                Saving role changes signs this user out of all active sessions.
+              </Typography>
+            </Stack>
+          </>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} disabled={busy}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          disabled={busy || !user || equalRoles(user.roles, [...selected])}
+          onClick={() => void onSave(sorted(selected))}
+        >
+          Save access
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+export function AccessManager() {
+  const auth = useAuth();
+  const toast = useToast();
+  const queryClient = useQueryClient();
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('sm'));
+  const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query);
+  const [selectedUser, setSelectedUser] = useState<IdentityUserAccess | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const usersQuery = useQuery({
+    queryKey: ['admin', 'identity-users', deferredQuery],
+    queryFn: () => listIdentityUsers(deferredQuery),
+  });
+  const rolesQuery = useQuery({
+    queryKey: ['admin', 'identity-roles'],
+    queryFn: listIdentityRoles,
+  });
+  const users = useMemo(() => usersQuery.data?.content ?? [], [usersQuery.data]);
+  const roles = rolesQuery.data ?? [];
+
+  const saveRoles = async (roleCodes: string[]) => {
+    if (!selectedUser) return;
+    setBusy(true);
+    try {
+      await replaceIdentityUserRoles(selectedUser, roleCodes);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'identity-users'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] }),
+      ]);
+      setSelectedUser(null);
+      toast.success('User access updated and active sessions revoked.');
+    } catch (error) {
+      toast.error(errorMessage(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const editButton = useCallback(
+    (user: IdentityUserAccess) => {
+      const currentUser = user.userId === auth.user?.userId;
+      return (
+        <Tooltip title={currentUser ? 'You cannot change your own roles' : 'Edit roles'}>
+          <span>
+            <IconButton
+              size="small"
+              aria-label={`Edit roles for ${user.displayName}`}
+              disabled={currentUser}
+              onClick={() => setSelectedUser(user)}
+            >
+              <Pencil size={17} strokeWidth={1.8} />
+            </IconButton>
+          </span>
+        </Tooltip>
+      );
+    },
+    [auth.user?.userId]
+  );
+
+  const columns = useMemo<GridColDef<IdentityUserAccess>[]>(
+    () => [
+      {
+        field: 'displayName',
+        headerName: 'User',
+        minWidth: 240,
+        flex: 1.2,
+        renderCell: ({ row }) => (
+          <Stack direction="row" alignItems="center" gap={1.25} sx={{ minWidth: 0 }}>
+            <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: 12 }}>
+              {initials(row.displayName)}
+            </Avatar>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="body2" fontWeight={700} noWrap>
+                {row.displayName}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" noWrap display="block">
+                {row.email || `User ${row.userId}`}
+              </Typography>
+            </Box>
+          </Stack>
+        ),
+      },
+      {
+        field: 'roles',
+        headerName: 'Roles',
+        minWidth: 220,
+        flex: 1,
+        sortable: false,
+        renderCell: ({ row }) => <RoleChips roles={row.roles} />,
+      },
+      {
+        field: 'status',
+        headerName: 'Status',
+        width: 104,
+        renderCell: ({ row }) => (
+          <Chip
+            label={row.status}
+            size="small"
+            color={row.status === 'ACTIVE' ? 'success' : 'default'}
+            variant="outlined"
+          />
+        ),
+      },
+      {
+        field: 'mfaEnabled',
+        headerName: 'MFA',
+        width: 82,
+        renderCell: ({ row }) => (row.mfaEnabled ? 'On' : 'Off'),
+      },
+      {
+        field: 'accessRevision',
+        headerName: 'Revision',
+        width: 92,
+        align: 'right',
+        headerAlign: 'right',
+      },
+      {
+        field: 'actions',
+        headerName: '',
+        width: 64,
+        align: 'right',
+        sortable: false,
+        filterable: false,
+        renderCell: ({ row }) => editButton(row),
+      },
+    ],
+    [editButton]
+  );
+
+  if (usersQuery.isLoading || rolesQuery.isLoading) {
+    return <AdminPanelLoading label="Loading identity access" />;
+  }
+  if (usersQuery.isError || rolesQuery.isError) {
+    return <AdminPanelError message={errorMessage(usersQuery.error ?? rolesQuery.error)} />;
+  }
+
+  return (
+    <>
+      <Box sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          alignItems={{ xs: 'stretch', md: 'center' }}
+          justifyContent="space-between"
+          gap={1.5}
+          sx={{ p: 2 }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <UsersRound size={18} strokeWidth={1.8} aria-hidden="true" />
+            <Typography component="h2" variant="subtitle1">
+              Identity access
+            </Typography>
+            <Chip
+              label={usersQuery.data?.totalElements ?? users.length}
+              size="small"
+              variant="outlined"
+            />
+          </Box>
+          <Stack direction="row" alignItems="center" gap={0.5}>
+            <TextField
+              size="small"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              label="Search users"
+              sx={{ width: { xs: 1, sm: 280 } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search size={17} strokeWidth={1.8} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Tooltip title="Refresh users and roles">
+              <IconButton
+                aria-label="Refresh users and roles"
+                onClick={() => void Promise.all([usersQuery.refetch(), rolesQuery.refetch()])}
+              >
+                <RefreshCw size={18} strokeWidth={1.8} />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        </Stack>
+
+        {desktop && (
+          <Box>
+            <EnterpriseDataGrid
+              ariaLabel="Tenant users"
+              rows={users}
+              columns={columns}
+              getRowId={(row) => row.userId}
+              height={536}
+              rowHeight={64}
+              columnHeaderHeight={44}
+              hideFooter={users.length <= 25}
+              initialState={{ pagination: { paginationModel: { pageSize: 25, page: 0 } } }}
+              slots={{
+                noRowsOverlay: () => (
+                  <Box sx={{ height: 1, display: 'grid', placeItems: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                      No users found
+                    </Typography>
+                  </Box>
+                ),
+              }}
+              sx={{ border: 0, borderRadius: 0 }}
+            />
+          </Box>
+        )}
+
+        {!desktop && (
+          <Box
+            component="ul"
+            aria-label="Tenant users"
+            sx={{ display: 'grid', listStyle: 'none', p: 0, m: 0 }}
+          >
+            {users.length ? (
+              users.map((user) => (
+                <Box
+                  component="li"
+                  key={user.userId}
+                  sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}
+                >
+                  <Stack
+                    direction="row"
+                    alignItems="flex-start"
+                    justifyContent="space-between"
+                    gap={1}
+                  >
+                    <Stack direction="row" alignItems="center" gap={1.25} sx={{ minWidth: 0 }}>
+                      <Avatar sx={{ width: 36, height: 36, bgcolor: 'primary.main', fontSize: 12 }}>
+                        {initials(user.displayName)}
+                      </Avatar>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography component="h3" variant="subtitle2" noWrap>
+                          {user.displayName}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" noWrap display="block">
+                          {user.email || `User ${user.userId}`}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                    {editButton(user)}
+                  </Stack>
+                  <Box sx={{ mt: 1.25 }}>
+                    <RoleChips roles={user.roles} />
+                  </Box>
+                  <Stack direction="row" gap={1} sx={{ mt: 1.25 }}>
+                    <Chip label={user.status} size="small" variant="outlined" />
+                    <Chip
+                      icon={<KeyRound size={14} strokeWidth={1.8} />}
+                      label={user.mfaEnabled ? 'MFA on' : 'MFA off'}
+                      size="small"
+                      variant="outlined"
+                    />
+                  </Stack>
+                </Box>
+              ))
+            ) : (
+              <Box component="li" sx={{ py: 6, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  No users found
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        )}
+      </Box>
+
+      <RoleDialog
+        user={selectedUser}
+        roles={roles}
+        busy={busy}
+        onClose={() => setSelectedUser(null)}
+        onSave={saveRoles}
+      />
+    </>
+  );
+}

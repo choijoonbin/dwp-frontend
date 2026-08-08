@@ -3,6 +3,7 @@ import type { RouteObject } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthGuard } from '@dwp-frontend/shared-utils';
+import { useAuth } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -15,6 +16,7 @@ const WorkPage = lazy(() => import('../pages/work'));
 const AskPage = lazy(() => import('../pages/ask'));
 const ActivityPage = lazy(() => import('../pages/activity'));
 const AppsPage = lazy(() => import('../pages/apps'));
+const AdminPage = lazy(() => import('../pages/admin'));
 const ProfilePage = lazy(() => import('../pages/account/profile'));
 const SettingsPage = lazy(() => import('../pages/account/settings'));
 const SecurityPage = lazy(() => import('../pages/account/security'));
@@ -28,6 +30,14 @@ const fallback = (
     <CircularProgress size={28} aria-label="Loading page" />
   </Box>
 );
+
+function AdminRouteGuard({ children }: { children: React.ReactNode }) {
+  const auth = useAuth();
+  const permitted = auth.user?.roles.some((role) =>
+    ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'].includes(role)
+  );
+  return permitted ? children : <Navigate to="/403" replace />;
+}
 
 export const routesSection: RouteObject[] = [
   {
@@ -75,6 +85,16 @@ export const routesSection: RouteObject[] = [
           <Suspense fallback={fallback}>
             <AppsPage />
           </Suspense>
+        ),
+      },
+      {
+        path: 'admin',
+        element: (
+          <AdminRouteGuard>
+            <Suspense fallback={fallback}>
+              <AdminPage />
+            </Suspense>
+          </AdminRouteGuard>
         ),
       },
       {

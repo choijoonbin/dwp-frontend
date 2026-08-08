@@ -16,9 +16,10 @@ Contract Spike 1은 Browser Session과 Agent Plan Preview를 연결했지만 내
 ```text
 Browser
   -> Gateway: Session + CSRF + verified user identity
-    -> Gateway: remove spoofed service header + inject service identity
+    -> Gateway: sanitize spoofed service header once + inject route service identity
       -> Agent: verify service identity before user headers
-        -> deterministic plan hash + privacy-minimized audit event
+        -> resolve active Agent Registry revision
+          -> deterministic plan hash + privacy-minimized audit event
 ```
 
 외부 Model, Connector, Retrieval, Workflow Engine과 업무 Mutation은 여전히 호출하지 않는다.
@@ -63,7 +64,8 @@ Embedding 차원을 고정하지 않는다.
 ### 3.1 Service Identity
 
 - Browser가 보낸 `X-DWP-Service-Token`은 Gateway에서 항상 제거한다.
-- Agent Route에만 Gateway 설정값을 새 Header로 주입한다.
+- 공통 Sanitizer가 외부 Header를 한 번 제거하고 Agent·Platform Route Filter가 각자
+  독립 Token을 새 Header로 주입한다.
 - Gateway 또는 Agent에 Token이 없으면 `503`, 누락·불일치는 Agent가 `401`로 거부한다.
 - Token 비교는 Constant-time으로 수행하고 Log·Response·Frontend에 노출하지 않는다.
 - 로컬 Shared Secret은 Contract 검증 수단일 뿐 운영 종착점이 아니다.
@@ -72,11 +74,13 @@ Embedding 차원을 고정하지 않는다.
 
 ### 3.2 Plan Integrity
 
-`planHash`는 Tenant, 사용자, 정규화 Role, Request ID, Intent, Action, Target과 Source
-Reference를 Canonical JSON으로 만든 뒤 SHA-256으로 계산한다.
+`planHash`는 Tenant, 사용자, 정규화 Role, Request ID, Intent, Action, Target, Source
+Reference와 해석된 Agent Registry Key·Revision·Artifact Version을 Canonical JSON으로
+만든 뒤 SHA-256으로 계산한다.
 
 - 같은 Identity·권한·입력의 재시도는 같은 Hash를 만든다.
 - 질문, 대상, Source 또는 Role이 바뀌면 Hash가 바뀐다.
+- 활성 Agent Revision이 바뀌면 Hash가 바뀐다.
 - L2·L3 승인 Token은 이후 이 Hash, Tool Version, Target과 만료 시각에 묶는다.
 - Frontend는 64자리 소문자 SHA-256이 아니면 응답을 Fail-closed 처리한다.
 
@@ -96,12 +100,14 @@ SIEM 전달은 관측 Backend와 규제 범위를 정한 뒤 구현한다.
 ## 4. 검증 증적
 
 - Gateway: 외부 Service Header 교체, 미설정 `503`, 비-Agent 경로 Header 제거
+- Gateway: Agent·Platform Filter 연쇄 뒤에도 올바른 Route Token이 유지됨
 - Agent: Service Token 누락·불일치 `401`, 서버 미설정 `503`
 - Local Supervisor: Agent가 `127.0.0.1:8010`에만 Listen
 - Agent: 동일 요청 Hash 안정성, 입력 변경 시 Hash 변경, Mutation 금지
 - Audit: 원문 Intent·Source ID·Service Token 미기록 자동 검증
 - Frontend: Plan Hash·Correlation 필수, 변조 Hash Fail-closed
 - 실제 Browser 경로: Session·CSRF·User Identity·Service Identity를 모두 통과해야 `200`
+- 실제 Agent 경로: Active Registry Revision을 해석하고 응답·Hash·Audit에 포함
 - 새 DB Table·Migration, Connector SDK, Workflow·Model·Vector Dependency 0개
 
 ## 5. 남은 Gate
@@ -109,7 +115,7 @@ SIEM 전달은 관측 Backend와 규제 범위를 정한 뒤 구현한다.
 - C1: 디자인 파트너 Microsoft 365 위임 Tenant 또는 Google Workspace 대체 결정
 - S1: Data Owner가 승인한 실제 Knowledge·ACL·삭제 Event Dataset
 - W1: 동일 승인·Timer Journey의 Temporal·Camunda 실행·복구·Version·TCO 비교
-- A1: 승인 Model Route, L0·L1 Citation·Budget·Evaluation
+- A1: Registry Resolution 완료, 승인 Model Route·Tool Grant·L0·L1 Citation·Budget·Evaluation
 - Production Workload Identity 또는 mTLS, Token Rotation과 Agent Network Policy
 - Append-only Audit Store, 보존기간, SIEM·Incident 운영 승인
 

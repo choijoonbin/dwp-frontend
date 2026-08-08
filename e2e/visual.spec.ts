@@ -49,6 +49,13 @@ const agentPlan = {
     ],
     sourceReferences: ['src-policy-flex', 'src-remote-guide'],
     referenceMode: true,
+    agentRegistry: {
+      entryKey: 'REFERENCE_PLANNER',
+      revision: 2,
+      artifactVersion: '1.1.0',
+      riskTier: 'MEDIUM',
+      resolution: 'ACTIVE',
+    },
   },
 };
 
