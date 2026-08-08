@@ -2,8 +2,9 @@
 
 ## 1. Reference 범위
 
-Today Daily Brief와 Ask Answer는 합성된 Preview다. 실제 Model, Retrieval, Tool과 Agent를
-호출하지 않으며 UI에서 `AI generated preview`와 `Reference data`를 표시한다.
+Today Daily Brief, Ask Answer와 Activity Event는 합성된 Preview다. 실제 Model, Retrieval,
+Tool과 Agent를 호출하지 않으며 UI에서 `AI generated preview`와 `Reference data`를
+표시한다.
 
 ## 2. 미래 Ask Pipeline
 
@@ -21,7 +22,9 @@ Today Daily Brief와 Ask Answer는 합성된 Preview다. 실제 Model, Retrieval
 - Confidence 숫자만 표시하지 않고 불확실성·적용 범위 Text 제공
 - 권한 없음과 근거 부족을 서로 다른 상태로 표현
 - Action Target, Risk Tier, Approval과 취소 가능성
-- Run·Audit ID는 실제 실행이 있을 때만 표시
+- Activity의 Human·System·Agent 구분과 Running·Needs input·Completed·Blocked 상태
+- Reference의 Audit ID는 합성 식별자임을 명시하고 실제 Run에서는 불변 Trace와 연결
+- 내부 Chain-of-thought 대신 입력 Reference, 정책, 선택한 Tool, 결과와 다음 Action 표시
 
 ## 4. 금지
 

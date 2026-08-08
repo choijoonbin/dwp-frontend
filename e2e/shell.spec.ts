@@ -113,21 +113,25 @@ test('authenticated users keep the common shell without business navigation', as
     await expect(sidebar.getByRole('link', { name: 'Today', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Ask', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: 'Activity', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Apps', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link')).toHaveCount(5);
+    await expect(sidebar.getByRole('link')).toHaveCount(6);
   } else {
     const sidebar = page.getByTestId('desktop-sidebar');
     await expect(sidebar.getByRole('link', { name: 'Digital Workplace home' })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Today', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Ask', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: 'Activity', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Apps', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link')).toHaveCount(5);
+    await expect(sidebar.getByRole('link')).toHaveCount(6);
     await expect(page.getByRole('button', { name: 'Collapse navigation' })).toBeVisible();
   }
 });
 
-test('reference work hub connects Today, Work, Ask, and Apps', async ({ page }, testInfo) => {
+test('reference work hub connects Today, Work, Ask, Activity, and Apps', async ({
+  page,
+}, testInfo) => {
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -152,7 +156,7 @@ test('reference work hub connects Today, Work, Ask, and Apps', async ({ page }, 
     })
   );
 
-  const navigateTo = async (label: 'Work' | 'Ask' | 'Apps') => {
+  const navigateTo = async (label: 'Work' | 'Ask' | 'Activity' | 'Apps') => {
     if (testInfo.project.name === 'mobile') {
       await page.getByRole('button', { name: 'Open navigation' }).click();
       await page
@@ -181,6 +185,15 @@ test('reference work hub connects Today, Work, Ask, and Apps', async ({ page }, 
   await expect(page.getByRole('heading', { name: 'Answer' })).toBeVisible();
   await expect(page.getByRole('list', { name: 'Answer sources' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Flexible work request preview' })).toBeVisible();
+
+  await navigateTo('Activity');
+  await expect(page.getByRole('heading', { name: 'Activity', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Agents' }).click();
+  await expect(
+    page.getByRole('list', { name: 'Workspace activity' }).getByRole('listitem')
+  ).toHaveCount(2);
+  await page.getByRole('button', { name: /Restricted payroll query stopped by policy/ }).click();
+  await expect(page.getByText('AUD-20260808-2051')).toBeVisible();
 
   await navigateTo('Apps');
   await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();

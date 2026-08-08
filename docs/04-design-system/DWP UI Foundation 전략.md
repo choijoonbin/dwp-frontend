@@ -140,6 +140,7 @@ Theme는 Mode, Contrast, Density, Reduced Motion, Tenant Accent와 Font를 입�
 - Work: Task·Approval·Request Queue와 List·Detail Split View
 - Apps: Entitlement 기반 App, 최근 사용과 즐겨찾기
 - Ask: 권한 기반 검색, 출처와 후속 Action
+- Activity: Human·System·Agent 실행 상태, Policy, Tool, 결과와 Audit Reference
 - Services: HR·IT·Workplace Request와 SLA
 - Admin: Tenant, App, Connector, Agent Policy와 Audit
 
@@ -165,18 +166,22 @@ Theme는 Mode, Contrast, Density, Reduced Motion, Tenant Accent와 Font를 입�
 - [x] Light·Dark·High Contrast, Density와 Reduced Motion Engine 구현
 - [x] Sidebar·Rail·Top Navigation Policy Engine 구현
 - [x] Shell, Account, Preference, Security 화면 독립 구현
+- [x] Premium Global Shell·Work Pulse와 Today·Work·Ask·Activity·Apps Reference 구현
+- [x] Human·System·Agent Unified Activity와 AI Trust Surface 구현
 - [x] Desktop·Mobile Login·Shell E2E와 Axe 통과
 - [x] Typecheck, Lint와 Production Build 통과
 
 ### 남은 R0.5 Gate
 
 - [ ] DWP Product Brand와 최종 Font 승인
-- [ ] DTCG Token을 Figma Variable과 동기화
-- [ ] Enterprise Reference Component와 AI Trust Pattern Storybook 구현
-- [ ] Desktop 1440·1280, Tablet, Mobile Visual Baseline 승인
+- [ ] DTCG Token을 Figma Variable과 동기화 (라이선스 준비 시까지 보류)
+- [x] Enterprise Reference Component와 AI Trust Pattern Storybook 구현
+- [x] Desktop·Mobile 자동 Visual Baseline 구축
+- [ ] Desktop 1440·1280, Tablet, Mobile 수동 Visual 승인
 - [ ] Screen Reader, Keyboard, 200% Zoom과 Manual High Contrast Review
-- [ ] 디자인 파트너와 Shell·Today·Work·Apps·Ask Flow 검증
-- [ ] Dependency License Report와 SBOM 자동화
+- [ ] 디자인 파트너와 Shell·Today·Work·Ask·Activity·Apps Flow 검증
+- [x] Dependency License Report 자동화
+- [ ] SBOM 자동화
 - [ ] 외부 Delivery용 Git History 정책 승인
 
 ## 6. License와 Git History
@@ -188,6 +193,9 @@ Library의 License를 따르며 자동 Report와 SBOM을 Release Gate에 둔다.
 과거 Commit을 포함한 Git History는 별도 문제다. 전체 History를 전달하면 삭제 전
 Source가 조회될 수 있다. 완전한 Clean Delivery가 필요하면 최종 R0.5 검증 후 다음 중
 하나를 선택한다.
+
+현재는 사용자 결정에 따라 `dwp-dev`의 로컬 커밋 이력만 갱신하고 Remote Push는 별도
+지시가 있을 때까지 보류한다. Figma 쓰기 작업도 라이선스 준비 확인 전까지 보류한다.
 
 1. `dwp-dev`를 단일 Clean Root Commit으로 다시 생성하고 Remote를 명시적으로 갱신
 2. 외부 Delivery용 신규 Repository를 Clean Export로 생성

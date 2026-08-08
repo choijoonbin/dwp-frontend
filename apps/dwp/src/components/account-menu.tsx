@@ -61,7 +61,7 @@ export function AccountMenu() {
         slotProps={{ paper: { sx: { width: 264, mt: 1, p: 0.5 } } }}
       >
         <Box sx={{ px: 1.5, py: 1.25 }}>
-          <Typography variant="subtitle2" noWrap>
+          <Typography component="p" variant="subtitle2" noWrap>
             {displayName}
           </Typography>
           <Typography variant="body2" color="text.secondary" noWrap>

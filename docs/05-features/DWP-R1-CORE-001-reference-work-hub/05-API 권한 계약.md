@@ -8,14 +8,16 @@ R1 Backend·Connector Spike의 후보 계약으로, Build 전에 OpenAPI와 권�
 
 ## 2. 후보 API
 
-| Method | Path                   | 목적                   | 권한·Risk                |
-| ------ | ---------------------- | ---------------------- | ------------------------ |
-| GET    | `/api/home/today`      | 개인 우선 업무와 일정  | 본인 Projection          |
-| GET    | `/api/work`            | 권한 범위 Work Query   | Work ACL·Field Masking   |
-| GET    | `/api/apps`            | 부여된 App Registry    | Entitlement Filter       |
-| POST   | `/api/ask/query`       | 권한 기반 검색·답변    | Source ACL, Rate·Budget  |
-| GET    | `/api/ask/runs/{id}`   | 답변·Source·Trace 상태 | Run Owner·Support Scope  |
-| POST   | `/api/actions/preview` | 후속 Action Plan 생성  | Tool Policy, no mutation |
+| Method | Path                   | 목적                   | 권한·Risk                 |
+| ------ | ---------------------- | ---------------------- | ------------------------- |
+| GET    | `/api/home/today`      | 개인 우선 업무와 일정  | 본인 Projection           |
+| GET    | `/api/work`            | 권한 범위 Work Query   | Work ACL·Field Masking    |
+| GET    | `/api/activity`        | 통합 실행 Timeline     | Actor·Work Object ACL     |
+| GET    | `/api/activity/{id}`   | Event·Audit Detail     | Event Scope·Trace Masking |
+| GET    | `/api/apps`            | 부여된 App Registry    | Entitlement Filter        |
+| POST   | `/api/ask/query`       | 권한 기반 검색·답변    | Source ACL, Rate·Budget   |
+| GET    | `/api/ask/runs/{id}`   | 답변·Source·Trace 상태 | Run Owner·Support Scope   |
+| POST   | `/api/actions/preview` | 후속 Action Plan 생성  | Tool Policy, no mutation  |
 
 ## 3. 공통 계약
 
@@ -25,6 +27,8 @@ R1 Backend·Connector Spike의 후보 계약으로, Build 전에 OpenAPI와 권�
 - Response에는 `correlationId`, Source Freshness와 Permission Decision Reference를
   포함할 수 있어야 한다.
 - Source of Record 원문 권한을 DWP Role만으로 대체하지 않는다.
+- Activity 응답은 내부 Chain-of-thought를 포함하지 않고 입력 Reference, 정책 판정, Tool,
+  결과와 Audit Reference만 제공한다.
 
 ## 4. Error와 상태
 

@@ -259,6 +259,26 @@ test('Ask reference visual baseline', async ({ page }) => {
   });
 });
 
+test('Activity reference visual baseline', async ({ page }) => {
+  await mockAuthenticated(page);
+  await setAppearance(page, {
+    mode: 'light',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/activity');
+  await expect(page.getByRole('heading', { name: 'Activity', exact: true })).toBeVisible();
+  await expect(page.getByRole('list', { name: 'Workspace activity' })).toBeVisible();
+  await expect(page).toHaveScreenshot('activity-reference.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
 test('Apps reference visual baseline', async ({ page }) => {
   await mockAuthenticated(page);
   await setAppearance(page, {

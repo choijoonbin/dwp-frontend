@@ -149,7 +149,7 @@ export function AgentPlanPreview({
         {state === 'rejected' && <Alert severity="info">Plan rejected</Alert>}
         {!settled && (
           <Stack
-            direction={{ xs: 'column-reverse', sm: 'row' }}
+            direction={{ xs: 'column', sm: 'row' }}
             justifyContent="space-between"
             alignItems={{ sm: 'center' }}
             gap={1.5}

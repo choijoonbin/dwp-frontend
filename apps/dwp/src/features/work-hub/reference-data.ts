@@ -40,6 +40,26 @@ export type ReferenceApp = {
   type: 'productivity' | 'service' | 'people' | 'knowledge' | 'business' | 'legacy';
   launchMode: 'Native' | 'SSO' | 'Deep link';
   pinned: boolean;
+  health: 'healthy' | 'managed' | 'attention';
+  lastUsed: string;
+};
+
+export type ActivityActor = 'agent' | 'person' | 'system';
+export type ActivityState = 'running' | 'needs-input' | 'completed' | 'policy-blocked';
+
+export type ActivityEvent = {
+  id: string;
+  time: string;
+  actor: ActivityActor;
+  actorName: string;
+  state: ActivityState;
+  title: string;
+  summary: string;
+  objectLabel: string;
+  source: string;
+  tool?: string;
+  auditId: string;
+  progress?: number;
 };
 
 export const todayItems: TodayItem[] = [
@@ -192,6 +212,8 @@ export const referenceApps: ReferenceApp[] = [
     type: 'productivity',
     launchMode: 'SSO',
     pinned: true,
+    health: 'healthy',
+    lastUsed: '8 min ago',
   },
   {
     id: 'ref-app-collaboration',
@@ -201,6 +223,8 @@ export const referenceApps: ReferenceApp[] = [
     type: 'productivity',
     launchMode: 'SSO',
     pinned: true,
+    health: 'healthy',
+    lastUsed: '22 min ago',
   },
   {
     id: 'ref-app-service',
@@ -210,6 +234,8 @@ export const referenceApps: ReferenceApp[] = [
     type: 'service',
     launchMode: 'Native',
     pinned: true,
+    health: 'healthy',
+    lastUsed: 'Yesterday',
   },
   {
     id: 'ref-app-people',
@@ -219,6 +245,8 @@ export const referenceApps: ReferenceApp[] = [
     type: 'people',
     launchMode: 'Native',
     pinned: false,
+    health: 'managed',
+    lastUsed: 'Aug 5',
   },
   {
     id: 'ref-app-knowledge',
@@ -228,6 +256,8 @@ export const referenceApps: ReferenceApp[] = [
     type: 'knowledge',
     launchMode: 'Native',
     pinned: false,
+    health: 'healthy',
+    lastUsed: '2 hours ago',
   },
   {
     id: 'ref-app-erp',
@@ -237,6 +267,8 @@ export const referenceApps: ReferenceApp[] = [
     type: 'business',
     launchMode: 'Deep link',
     pinned: false,
+    health: 'managed',
+    lastUsed: 'Jul 31',
   },
   {
     id: 'ref-app-legacy',
@@ -246,6 +278,76 @@ export const referenceApps: ReferenceApp[] = [
     type: 'legacy',
     launchMode: 'SSO',
     pinned: false,
+    health: 'attention',
+    lastUsed: 'Jul 28',
+  },
+];
+
+export const activityEvents: ActivityEvent[] = [
+  {
+    id: 'ACT-2081',
+    time: '09:12',
+    actor: 'agent',
+    actorName: 'Briefing agent',
+    state: 'running',
+    title: 'Building customer discovery context',
+    summary: 'Comparing the meeting brief with six permitted workspace sources.',
+    objectLabel: 'Customer discovery / 11:00',
+    source: 'DWP Knowledge',
+    tool: 'Enterprise search',
+    auditId: 'AUD-20260808-2081',
+    progress: 72,
+  },
+  {
+    id: 'ACT-2079',
+    time: '09:08',
+    actor: 'system',
+    actorName: 'Policy engine',
+    state: 'needs-input',
+    title: 'Software access request needs your approval',
+    summary: 'Role and license checks passed. Manager approval is the remaining gate.',
+    objectLabel: 'WK-1042 / Software access',
+    source: 'IT Service',
+    tool: 'Access policy',
+    auditId: 'AUD-20260808-2079',
+  },
+  {
+    id: 'ACT-2074',
+    time: '08:54',
+    actor: 'person',
+    actorName: 'Mina Kim',
+    state: 'completed',
+    title: 'Added three questions to the customer brief',
+    summary: 'The questions were linked to the discovery agenda and assigned to you.',
+    objectLabel: 'Customer briefing notes',
+    source: 'Microsoft 365',
+    auditId: 'AUD-20260808-2074',
+  },
+  {
+    id: 'ACT-2068',
+    time: '08:41',
+    actor: 'system',
+    actorName: 'People connector',
+    state: 'completed',
+    title: 'Benefits enrollment deadline synchronized',
+    summary: 'The 17:00 deadline was verified against the employee service calendar.',
+    objectLabel: 'Benefits enrollment',
+    source: 'People Service',
+    tool: 'Calendar sync',
+    auditId: 'AUD-20260808-2068',
+  },
+  {
+    id: 'ACT-2051',
+    time: '08:15',
+    actor: 'agent',
+    actorName: 'Service agent',
+    state: 'policy-blocked',
+    title: 'Restricted payroll query stopped by policy',
+    summary: 'No payroll content was retrieved or sent to a model.',
+    objectLabel: 'Private knowledge request',
+    source: 'DWP Policy',
+    tool: 'Retrieval guard',
+    auditId: 'AUD-20260808-2051',
   },
 ];
 

@@ -140,6 +140,10 @@ export function buildDwpTheme({
             minHeight: metrics.controlHeight,
             borderRadius: tokens.radius.control,
             textTransform: 'none',
+            transition: reduceMotion
+              ? 'none'
+              : `background-color ${tokens.duration.fast}ms ease-out, border-color ${tokens.duration.fast}ms ease-out, transform ${tokens.duration.fast}ms ease-out`,
+            '&:not(.Mui-disabled):active': { transform: 'translateY(1px)' },
           },
         },
       },
@@ -152,6 +156,16 @@ export function buildDwpTheme({
         styleOverrides: {
           root: { backgroundImage: 'none' },
           rounded: { borderRadius: tokens.radius.surface },
+        },
+      },
+      MuiPopover: {
+        styleOverrides: {
+          paper: {
+            border: `1px solid ${divider}`,
+            boxShadow: dark
+              ? '0 18px 48px rgba(0, 0, 0, 0.36)'
+              : '0 18px 48px rgba(15, 21, 29, 0.14)',
+          },
         },
       },
       MuiCard: {
@@ -208,6 +222,18 @@ export function buildDwpTheme({
       },
       MuiAlert: {
         styleOverrides: { root: { borderRadius: tokens.radius.control } },
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: { borderRadius: tokens.radius.compact, fontWeight: 600 },
+          icon: { marginLeft: 7 },
+        },
+      },
+      MuiLinearProgress: {
+        styleOverrides: {
+          root: { backgroundColor: alpha(primary, 0.12) },
+          bar: { borderRadius: tokens.radius.compact },
+        },
       },
       MuiDataGrid: {
         styleOverrides: {

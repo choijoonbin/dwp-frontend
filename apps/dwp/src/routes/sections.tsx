@@ -13,6 +13,7 @@ import { AuthLayout } from '../layouts/auth-layout';
 const HomePage = lazy(() => import('../pages/home'));
 const WorkPage = lazy(() => import('../pages/work'));
 const AskPage = lazy(() => import('../pages/ask'));
+const ActivityPage = lazy(() => import('../pages/activity'));
 const AppsPage = lazy(() => import('../pages/apps'));
 const ProfilePage = lazy(() => import('../pages/account/profile'));
 const SettingsPage = lazy(() => import('../pages/account/settings'));
@@ -57,6 +58,14 @@ export const routesSection: RouteObject[] = [
         element: (
           <Suspense fallback={fallback}>
             <AskPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'activity',
+        element: (
+          <Suspense fallback={fallback}>
+            <ActivityPage />
           </Suspense>
         ),
       },

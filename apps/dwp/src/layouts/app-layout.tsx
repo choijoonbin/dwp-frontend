@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Activity as ActivityIcon,
   AppWindow,
   BriefcaseBusiness,
   House,
@@ -36,6 +37,7 @@ const navigationItems = [
   { label: 'Today', path: '/', icon: House },
   { label: 'Work', path: '/work', icon: BriefcaseBusiness },
   { label: 'Ask', path: '/ask', icon: Sparkles },
+  { label: 'Activity', path: '/activity', icon: ActivityIcon },
   { label: 'Apps', path: '/apps', icon: AppWindow },
 ] as const;
 
@@ -90,6 +92,26 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
                     justifyContent: compact ? 'center' : 'flex-start',
                     px: compact ? 1 : 1.5,
                     whiteSpace: 'nowrap',
+                    position: 'relative',
+                    borderRadius: 1,
+                    color: selected ? 'text.primary' : 'text.secondary',
+                    '& .MuiListItemText-primary': {
+                      fontWeight: selected ? 700 : 600,
+                    },
+                    '&.Mui-selected': {
+                      bgcolor: 'action.selected',
+                      color: 'primary.main',
+                    },
+                    '&.Mui-selected::before': {
+                      content: '""',
+                      position: 'absolute',
+                      left: compact ? 3 : 0,
+                      width: 3,
+                      height: 22,
+                      borderRadius: 1,
+                      bgcolor: 'primary.main',
+                    },
+                    '&.Mui-selected:hover': { bgcolor: 'action.selected' },
                   }}
                 >
                   <ListItemIcon
@@ -135,6 +157,34 @@ export function AppLayout() {
       </Box>
       <Box sx={{ flex: 1 }}>
         <AppNavigation compact={compact} onNavigate={onNavigate} />
+      </Box>
+      <Box
+        sx={{
+          mx: compact ? 1 : 1.5,
+          mb: 1.5,
+          pt: 1.5,
+          borderTop: 1,
+          borderColor: 'divider',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: compact ? 'center' : 'flex-start',
+          gap: 1,
+        }}
+      >
+        <Box
+          aria-hidden="true"
+          sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main' }}
+        />
+        {!compact && (
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="caption" fontWeight={700}>
+              Workspace connected
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              4 sources / policy healthy
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Box>
   );
@@ -210,6 +260,7 @@ export function AppLayout() {
           ml: { xs: 0, lg: `${desktopOffset}px` },
           borderBottom: 1,
           borderColor: 'divider',
+          bgcolor: 'background.paper',
           transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >

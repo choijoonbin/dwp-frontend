@@ -36,26 +36,44 @@ export function ProductMark({
       <Box
         aria-hidden="true"
         sx={{
-          width: 32,
-          height: 32,
-          flex: '0 0 32px',
+          width: 34,
+          height: 34,
+          flex: '0 0 34px',
           display: 'grid',
           placeItems: 'center',
           borderRadius: 1,
           color: 'primary.contrastText',
           bgcolor: 'primary.main',
-          fontSize: 14,
+          fontSize: 12,
           fontWeight: 800,
           lineHeight: 1,
+          position: 'relative',
+          overflow: 'hidden',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            right: 5,
+            bottom: 5,
+            width: 6,
+            height: 6,
+            bgcolor: 'secondary.main',
+            border: '1px solid currentColor',
+            borderRadius: 0.5,
+          },
         }}
       >
-        D
+        DWP
       </Box>
       {!compact && (
         <Typography
           component="span"
           variant="subtitle1"
-          sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+          sx={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            fontWeight: 750,
+          }}
         >
           {label}
         </Typography>

@@ -1,16 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, ChevronDown, Search } from 'lucide-react';
+import { Bell, ChevronDown, Clock3, Search, ShieldCheck, Sparkles } from 'lucide-react';
 import { WORKSPACE_NAME } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
 import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -71,7 +73,9 @@ export function WorkspaceMenu() {
         <MenuItem selected onClick={() => setAnchor(null)} sx={{ minWidth: 260, gap: 1.25 }}>
           <WorkspaceBadge />
           <Box>
-            <Typography variant="subtitle2">{WORKSPACE_NAME}</Typography>
+            <Typography component="p" variant="subtitle2">
+              {WORKSPACE_NAME}
+            </Typography>
             <Typography variant="caption" color="text.secondary">
               Current workspace
             </Typography>
@@ -86,6 +90,18 @@ export function SearchControl() {
   const navigate = useNavigate();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [query, setQuery] = useState('');
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    const openCommand = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        if (triggerRef.current) setAnchor(triggerRef.current);
+      }
+    };
+    window.addEventListener('keydown', openCommand);
+    return () => window.removeEventListener('keydown', openCommand);
+  }, []);
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -98,8 +114,39 @@ export function SearchControl() {
 
   return (
     <>
+      <ButtonBase
+        ref={triggerRef}
+        aria-label="Search"
+        onClick={(event) => setAnchor(event.currentTarget)}
+        sx={{
+          width: { md: 300, xl: 380 },
+          height: 38,
+          px: 1.25,
+          display: { xs: 'none', md: 'flex' },
+          alignItems: 'center',
+          gap: 1,
+          color: 'text.secondary',
+          bgcolor: 'background.default',
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: 1,
+          textAlign: 'left',
+          transition: (theme) => theme.transitions.create(['border-color', 'background-color']),
+          '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' },
+        }}
+      >
+        <Search size={18} strokeWidth={1.8} aria-hidden="true" />
+        <Typography variant="body2" sx={{ flex: 1 }}>
+          Search or ask DWP
+        </Typography>
+        <Sparkles size={15} strokeWidth={1.8} aria-hidden="true" />
+      </ButtonBase>
       <Tooltip title="Search">
-        <IconButton aria-label="Search" onClick={(event) => setAnchor(event.currentTarget)}>
+        <IconButton
+          aria-label="Search"
+          onClick={(event) => setAnchor(event.currentTarget)}
+          sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+        >
           <Search size={20} strokeWidth={1.8} />
         </IconButton>
       </Tooltip>
@@ -109,7 +156,11 @@ export function SearchControl() {
         onClose={() => setAnchor(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        slotProps={{ paper: { sx: { width: { xs: 'calc(100vw - 24px)', sm: 420 }, p: 2 } } }}
+        slotProps={{
+          paper: {
+            sx: { width: { xs: 'calc(100vw - 24px)', sm: 540 }, p: 2, mt: 1 },
+          },
+        }}
       >
         <Box component="form" onSubmit={submit}>
           <TextField
@@ -130,6 +181,22 @@ export function SearchControl() {
             }}
           />
         </Box>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1.5 }}>
+          {['What needs my attention?', 'Find the remote work policy'].map((prompt) => (
+            <Button
+              key={prompt}
+              size="small"
+              variant="text"
+              startIcon={<Sparkles size={15} aria-hidden="true" />}
+              onClick={() => {
+                setAnchor(null);
+                navigate('/ask?q=' + encodeURIComponent(prompt));
+              }}
+            >
+              {prompt}
+            </Button>
+          ))}
+        </Box>
       </Popover>
     </>
   );
@@ -142,7 +209,7 @@ export function NotificationMenu() {
     <>
       <Tooltip title="Notifications">
         <IconButton aria-label="Notifications" onClick={(event) => setAnchor(event.currentTarget)}>
-          <Badge color="error" variant="dot" invisible>
+          <Badge color="error" badgeContent={2} max={9}>
             <Bell size={20} strokeWidth={1.8} />
           </Badge>
         </IconButton>
@@ -153,12 +220,50 @@ export function NotificationMenu() {
         onClose={() => setAnchor(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        slotProps={{ paper: { sx: { width: { xs: 300, sm: 360 }, p: 2 } } }}
+        slotProps={{ paper: { sx: { width: { xs: 320, sm: 380 }, mt: 1 } } }}
       >
-        <Typography variant="subtitle1">Notifications</Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          No notifications
-        </Typography>
+        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography component="h2" variant="subtitle1">
+            Notifications
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            2 new
+          </Typography>
+        </Box>
+        <Divider />
+        <ButtonBase
+          onClick={() => setAnchor(null)}
+          sx={{ width: 1, p: 2, alignItems: 'flex-start', gap: 1.5, textAlign: 'left' }}
+        >
+          <Box sx={{ color: 'warning.main', mt: 0.25 }}>
+            <Clock3 size={18} aria-hidden="true" />
+          </Box>
+          <Box>
+            <Typography component="p" variant="subtitle2">
+              Approval due in 45 minutes
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Software access request / IT Service
+            </Typography>
+          </Box>
+        </ButtonBase>
+        <Divider />
+        <ButtonBase
+          onClick={() => setAnchor(null)}
+          sx={{ width: 1, p: 2, alignItems: 'flex-start', gap: 1.5, textAlign: 'left' }}
+        >
+          <Box sx={{ color: 'success.main', mt: 0.25 }}>
+            <ShieldCheck size={18} aria-hidden="true" />
+          </Box>
+          <Box>
+            <Typography component="p" variant="subtitle2">
+              Connector policy check completed
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              4 sources are healthy
+            </Typography>
+          </Box>
+        </ButtonBase>
       </Popover>
     </>
   );
