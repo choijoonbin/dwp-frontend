@@ -1,6 +1,6 @@
 # DWP R0 플랫폼 통합 및 Agent Runtime ADR
 
-> 문서 상태: Accepted Architecture Contract v1.0
+> 문서 상태: Accepted Architecture Contract v1.1
 >
 > 기준일: 2026-08-08
 >
@@ -199,6 +199,12 @@ Output은 민감할 수 있으므로 기본 Trace에서 원문을 제외하고 �
 | S1    | 실제 Knowledge 500~5,000건        | ACL 0건 누출, 검색 품질·지연·삭제 전파 Report                |
 | W1    | 승인과 Timer가 있는 장기 Journey  | 재시작 복구, 중복 0건, Version 배포와 운영 TCO 비교          |
 | A1    | L0·L1 Agent                       | Registry, Model Route, Citation, Trace, Budget와 Eval Report |
+
+Contract Spike 1에서는 위 제품 Spike의 선행 조건인 Provider 중립 Java Port, Gateway의
+Session·CSRF·Identity Relay와 deterministic L2 Plan Preview를 구현했다. 외부 Model과
+Tool 없이 Audit·Human Gate를 검증했으며 상세 증적은
+`R0 Contract Spike 1 - Governed Plan Preview.md`에 기록한다. C1·S1·W1·A1의 실제
+Exit Evidence는 아직 충족하지 않았으므로 완료 처리하지 않는다.
 
 R0에서는 위 계약을 검증하기 위한 최소 Fixture만 만든다. 디자인 파트너와 첫 Journey가
 정해지기 전에 제품 메뉴, 업무 Table, Connector SDK와 Multi-agent Framework를 대량으로

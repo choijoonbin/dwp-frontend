@@ -2,9 +2,10 @@
 
 ## 1. Reference 범위
 
-Today Daily Brief, Ask Answer와 Activity Event는 합성된 Preview다. 실제 Model, Retrieval,
-Tool과 Agent를 호출하지 않으며 UI에서 `AI generated preview`와 `Reference data`를
-표시한다.
+Today Daily Brief, Ask Answer와 Activity Event는 합성된 Preview다. Ask Action Plan은
+내부 deterministic Agent Contract Runtime을 호출하지만 실제 Model, Retrieval,
+Connector와 Tool을 호출하지 않는다. UI에서 `AI generated preview`, `Reference data`,
+Audit ID와 Mutation 금지 상태를 표시한다.
 
 ## 2. 미래 Ask Pipeline
 
@@ -25,6 +26,7 @@ Tool과 Agent를 호출하지 않으며 UI에서 `AI generated preview`와 `Refe
 - Activity의 Human·System·Agent 구분과 Running·Needs input·Completed·Blocked 상태
 - Reference의 Audit ID는 합성 식별자임을 명시하고 실제 Run에서는 불변 Trace와 연결
 - 내부 Chain-of-thought 대신 입력 Reference, 정책, 선택한 Tool, 결과와 다음 Action 표시
+- Contract Preview 응답이 `mutationAllowed=true`이면 Gateway 이후 Client에서도 거부
 
 ## 4. 금지
 

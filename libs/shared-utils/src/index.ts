@@ -3,6 +3,7 @@ export * from './types';
 export * from './http-error';
 export * from './tenant-util';
 export * from './api/auth-api';
+export * from './api/agent-plan-api';
 
 export * from './axios-instance';
 export * from './auth/auth-guard';

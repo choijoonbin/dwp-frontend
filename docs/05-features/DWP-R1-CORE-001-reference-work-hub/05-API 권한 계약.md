@@ -2,26 +2,30 @@
 
 ## 1. Reference 상태
 
-현재 화면은 Frontend Fixture를 사용하며 아래 API를 호출하지 않는다. 경로와 Response는
-R1 Backend·Connector Spike의 후보 계약으로, Build 전에 OpenAPI와 권한 판정을 별도
-승인한다.
+현재 화면의 업무·검색 데이터는 Frontend Fixture를 사용한다. Ask의 Plan Preview만
+`/api/agent/v1/plans/preview` Contract Spike를 호출하며 외부 Model·Connector·Tool과
+Mutation은 호출하지 않는다. 나머지 경로와 Response는 R1 Backend·Connector Spike의
+후보 계약으로, Build 전에 OpenAPI와 권한 판정을 별도 승인한다.
 
 ## 2. 후보 API
 
-| Method | Path                   | 목적                   | 권한·Risk                 |
-| ------ | ---------------------- | ---------------------- | ------------------------- |
-| GET    | `/api/home/today`      | 개인 우선 업무와 일정  | 본인 Projection           |
-| GET    | `/api/work`            | 권한 범위 Work Query   | Work ACL·Field Masking    |
-| GET    | `/api/activity`        | 통합 실행 Timeline     | Actor·Work Object ACL     |
-| GET    | `/api/activity/{id}`   | Event·Audit Detail     | Event Scope·Trace Masking |
-| GET    | `/api/apps`            | 부여된 App Registry    | Entitlement Filter        |
-| POST   | `/api/ask/query`       | 권한 기반 검색·답변    | Source ACL, Rate·Budget   |
-| GET    | `/api/ask/runs/{id}`   | 답변·Source·Trace 상태 | Run Owner·Support Scope   |
-| POST   | `/api/actions/preview` | 후속 Action Plan 생성  | Tool Policy, no mutation  |
+| Method | Path                          | 목적                   | 권한·Risk                              |
+| ------ | ----------------------------- | ---------------------- | -------------------------------------- |
+| GET    | `/api/home/today`             | 개인 우선 업무와 일정  | 본인 Projection                        |
+| GET    | `/api/work`                   | 권한 범위 Work Query   | Work ACL·Field Masking                 |
+| GET    | `/api/activity`               | 통합 실행 Timeline     | Actor·Work Object ACL                  |
+| GET    | `/api/activity/{id}`          | Event·Audit Detail     | Event Scope·Trace Masking              |
+| GET    | `/api/apps`                   | 부여된 App Registry    | Entitlement Filter                     |
+| POST   | `/api/ask/query`              | 권한 기반 검색·답변    | Source ACL, Rate·Budget                |
+| GET    | `/api/ask/runs/{id}`          | 답변·Source·Trace 상태 | Run Owner·Support Scope                |
+| POST   | `/api/actions/preview`        | 후속 Action Plan 생성  | Tool Policy, no mutation               |
+| POST   | `/api/agent/v1/plans/preview` | 결정적 Agent Plan 계약 | Session·CSRF, L2 Approval, no mutation |
 
 ## 3. 공통 계약
 
 - Browser Authentication은 HttpOnly Session Cookie와 CSRF 계약을 사용한다.
+- Gateway는 보호 API마다 Session Registry를 재검증하고 외부 `X-DWP-*` Identity Header를
+  제거한 뒤 검증된 User·Tenant·Role만 내부 Service에 전달한다.
 - `X-Tenant-ID`는 JWT Tenant와 일치해야 하며 Header만으로 Scope를 넓히지 않는다.
 - Pagination은 안정된 Cursor를 우선하고 Sort·Filter를 명시한다.
 - Response에는 `correlationId`, Source Freshness와 Permission Decision Reference를

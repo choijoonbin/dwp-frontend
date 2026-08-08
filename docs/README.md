@@ -27,6 +27,7 @@
 - `02-research/참고 자료 평가 원칙.md`
 - `03-architecture/R0 기반 의사결정.md`
 - `03-architecture/R0 플랫폼 통합 및 Agent Runtime ADR.md`
+- `03-architecture/R0 Contract Spike 1 - Governed Plan Preview.md`
 - `04-design-system/DWP UI Foundation 전략.md`
 - `04-design-system/DWP Premium Experience Direction.md`
 - `04-design-system/프론트엔드 UI UX 기술검토.md`

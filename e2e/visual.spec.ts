@@ -13,6 +13,43 @@ const authPolicy = {
   },
 };
 
+const agentPlan = {
+  status: 'SUCCESS',
+  message: 'Plan preview prepared.',
+  success: true,
+  data: {
+    runId: 'run-ref-1042',
+    auditId: 'AUD-REF-1042',
+    state: 'REVIEW',
+    riskTier: 'L2',
+    approvalRequired: true,
+    mutationAllowed: false,
+    summary: 'Prepare a governed flexible work request preview.',
+    steps: [
+      {
+        id: 'verify-sources',
+        title: 'Verify source permissions and freshness',
+        tool: 'policy.check',
+        description: 'Stop if a source is missing, stale, or outside the user scope.',
+      },
+      {
+        id: 'prepare-preview',
+        title: 'Prepare the flexible work request preview',
+        tool: 'tool.preview',
+        description: 'Build a reversible preview without changing the source system.',
+      },
+      {
+        id: 'human-gate',
+        title: 'Wait for explicit user approval',
+        tool: 'workflow.human-approval',
+        description: 'A separate approved command is required before any mutation.',
+      },
+    ],
+    sourceReferences: ['src-policy-flex', 'src-remote-guide'],
+    referenceMode: true,
+  },
+};
+
 async function mockUnauthenticated(page: Page) {
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
@@ -55,6 +92,19 @@ async function mockAuthenticated(page: Page) {
       contentType: 'application/json',
       body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
     })
+  );
+  await page.route('**/api/auth/csrf', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
+      }),
+    })
+  );
+  await page.route('**/api/agent/v1/plans/preview', (route) =>
+    route.fulfill({ contentType: 'application/json', body: JSON.stringify(agentPlan) })
   );
 }
 
@@ -251,6 +301,7 @@ test('Ask reference visual baseline', async ({ page }) => {
   await page.goto('/ask');
   await page.getByRole('button', { name: 'Can I work remotely next Friday?' }).click();
   await expect(page.getByRole('heading', { name: 'Answer' })).toBeVisible();
+  await expect(page.getByText('AUD-REF-1042')).toBeVisible();
   await expect(page).toHaveScreenshot('ask-reference.png', {
     animations: 'disabled',
     caret: 'hide',

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ArrowRight,
@@ -10,7 +10,11 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { AgentPlanPreview, SourceCitationList } from '@dwp-frontend/design-system';
-import { useToast } from '@dwp-frontend/shared-utils';
+import {
+  useToast,
+  previewAgentPlan,
+  type AgentPlanPreview as AgentPlanContract,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -21,6 +25,7 @@ import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import { PageHeader, ReferenceModeChip, SectionHeading } from '../features/work-hub/workspace-ui';
 import { askPlanSteps, askSources } from '../features/work-hub/reference-data';
@@ -37,24 +42,68 @@ const contextItems = [
   ['Benefits enrollment', 'Window closes at 17:00'],
 ] as const;
 
+type PlanLoadState = 'idle' | 'loading' | 'ready' | 'fallback';
+
+function toVisualRisk(riskTier: AgentPlanContract['riskTier']) {
+  if (riskTier === 'L3') return 'critical' as const;
+  if (riskTier === 'L2') return 'medium' as const;
+  return 'low' as const;
+}
+
 export default function AskPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const [query, setQuery] = useState(initialQuery);
-  const [submittedQuery, setSubmittedQuery] = useState<string | null>(initialQuery || null);
+  const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
+  const [runtimePlan, setRuntimePlan] = useState<AgentPlanContract | null>(null);
+  const [planLoadState, setPlanLoadState] = useState<PlanLoadState>('idle');
+  const requestSequence = useRef(0);
   const restricted = Boolean(submittedQuery && /salary|confidential/i.test(submittedQuery));
+
+  const prepareAnswer = useCallback(async (value: string) => {
+    const nextSequence = requestSequence.current + 1;
+    requestSequence.current = nextSequence;
+    setSubmittedQuery(value);
+    setRuntimePlan(null);
+
+    if (/salary|confidential/i.test(value)) {
+      setPlanLoadState('idle');
+      return;
+    }
+
+    setPlanLoadState('loading');
+    try {
+      const plan = await previewAgentPlan({
+        requestId: globalThis.crypto.randomUUID(),
+        intent: value,
+        action: 'flexible work request',
+        target: 'employee-services/flexible-work',
+        sourceReferences: askSources.map((source) => source.id),
+      });
+      if (requestSequence.current !== nextSequence) return;
+      setRuntimePlan(plan);
+      setPlanLoadState('ready');
+    } catch {
+      if (requestSequence.current !== nextSequence) return;
+      setPlanLoadState('fallback');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (initialQuery) void prepareAnswer(initialQuery);
+  }, [initialQuery, prepareAnswer]);
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
     const value = query.trim();
-    if (value) setSubmittedQuery(value);
+    if (value) void prepareAnswer(value);
   };
 
   const choosePrompt = (value: string) => {
     setQuery(value);
-    setSubmittedQuery(value);
+    void prepareAnswer(value);
   };
 
   return (
@@ -201,8 +250,18 @@ export default function AskPage() {
               ],
               [
                 CheckCircle2,
-                restricted ? 'No answer generated' : 'Action preview ready',
-                restricted ? 'Human handoff' : 'No mutation',
+                restricted
+                  ? 'No answer generated'
+                  : planLoadState === 'loading'
+                    ? 'Preparing action contract'
+                    : planLoadState === 'ready'
+                      ? 'Agent contract verified'
+                      : 'Reference preview ready',
+                restricted
+                  ? 'Human handoff'
+                  : planLoadState === 'ready'
+                    ? 'No model / no mutation'
+                    : 'No external mutation',
               ],
             ].map(([Icon, label, detail], index) => {
               const StatusIcon = Icon as typeof ShieldCheck;
@@ -318,21 +377,95 @@ export default function AskPage() {
 
           {!restricted && (
             <Box sx={{ mt: 4 }}>
-              <AgentPlanPreview
-                title="Flexible work request preview"
-                summary="No external system will be changed from this reference flow."
-                riskLevel="medium"
-                riskLabel="Approval required"
-                steps={askPlanSteps}
-                sources={askSources}
-                approveLabel="Open service preview"
-                rejectLabel="Dismiss"
-                onApprove={() => {
-                  toast.success('Employee services preview opened.');
-                  navigate('/apps?app=service');
-                }}
-                onReject={() => setSubmittedQuery(null)}
-              />
+              {planLoadState === 'loading' && (
+                <Box
+                  role="status"
+                  aria-live="polite"
+                  sx={{ py: 2.5, borderTop: 1, borderBottom: 1, borderColor: 'divider' }}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mb: 1.25 }}>
+                    <Typography component="p" variant="subtitle2">
+                      Preparing governed action preview
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      No mutation
+                    </Typography>
+                  </Box>
+                  <LinearProgress aria-label="Preparing agent plan preview" />
+                </Box>
+              )}
+
+              {planLoadState === 'fallback' && (
+                <Alert severity="warning" variant="outlined" sx={{ mb: 2 }}>
+                  The Agent contract is temporarily unavailable. A read-only reference preview is
+                  shown instead.
+                </Alert>
+              )}
+
+              {runtimePlan && (
+                <Box
+                  sx={{
+                    mb: 2,
+                    py: 1.5,
+                    display: 'flex',
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    justifyContent: 'space-between',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: 0.75,
+                    borderTop: 1,
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <CheckCircle2
+                      size={18}
+                      strokeWidth={1.8}
+                      color="currentColor"
+                      aria-hidden="true"
+                    />
+                    <Typography component="p" variant="subtitle2">
+                      Governed Agent contract verified
+                    </Typography>
+                  </Box>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ fontFamily: 'monospace' }}
+                  >
+                    {runtimePlan.auditId} / {runtimePlan.sourceReferences.length} verified sources
+                  </Typography>
+                </Box>
+              )}
+
+              {planLoadState !== 'loading' && (
+                <AgentPlanPreview
+                  title="Flexible work request preview"
+                  summary={
+                    runtimePlan?.summary ||
+                    'No external system will be changed from this reference flow.'
+                  }
+                  riskLevel={runtimePlan ? toVisualRisk(runtimePlan.riskTier) : 'medium'}
+                  riskLabel={
+                    runtimePlan ? `${runtimePlan.riskTier} / Approval required` : undefined
+                  }
+                  steps={runtimePlan?.steps || askPlanSteps}
+                  sources={runtimePlan ? [] : askSources}
+                  approvalRequired={runtimePlan?.approvalRequired ?? true}
+                  approveLabel="Open service preview"
+                  rejectLabel="Dismiss"
+                  onApprove={() => {
+                    toast.success('Employee services preview opened.');
+                    navigate('/apps?app=service');
+                  }}
+                  onReject={() => {
+                    requestSequence.current += 1;
+                    setSubmittedQuery(null);
+                    setRuntimePlan(null);
+                    setPlanLoadState('idle');
+                  }}
+                />
+              )}
             </Box>
           )}
         </Box>

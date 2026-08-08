@@ -11,6 +11,54 @@ async function expectNoAutomaticAccessibilityViolations(page: Page) {
   expect(summary).toEqual([]);
 }
 
+async function mockAgentPlanContract(page: Page) {
+  await page.route('**/api/auth/csrf', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
+      }),
+    })
+  );
+  await page.route('**/api/agent/v1/plans/preview', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'Plan preview prepared.',
+        success: true,
+        data: {
+          runId: 'run-ref-1042',
+          auditId: 'AUD-REF-1042',
+          state: 'REVIEW',
+          riskTier: 'L2',
+          approvalRequired: true,
+          mutationAllowed: false,
+          summary: 'Prepare a governed flexible work request preview.',
+          steps: [
+            {
+              id: 'verify-sources',
+              title: 'Verify source permissions and freshness',
+              tool: 'policy.check',
+              description: 'Stop if a source is outside the user scope.',
+            },
+            {
+              id: 'human-gate',
+              title: 'Wait for explicit user approval',
+              tool: 'workflow.human-approval',
+              description: 'A separate approved command is required before mutation.',
+            },
+          ],
+          sourceReferences: ['src-policy-flex', 'src-remote-guide'],
+          referenceMode: true,
+        },
+      }),
+    })
+  );
+}
+
 test('unauthenticated users see the login shell without business navigation', async ({ page }) => {
   await page.route('**/api/auth/me', async (route) => {
     await route.fulfill({
@@ -155,6 +203,7 @@ test('reference work hub connects Today, Work, Ask, Activity, and Apps', async (
       body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
     })
   );
+  await mockAgentPlanContract(page);
 
   const navigateTo = async (label: 'Work' | 'Ask' | 'Activity' | 'Apps') => {
     if (testInfo.project.name === 'mobile') {
@@ -185,6 +234,7 @@ test('reference work hub connects Today, Work, Ask, Activity, and Apps', async (
   await expect(page.getByRole('heading', { name: 'Answer' })).toBeVisible();
   await expect(page.getByRole('list', { name: 'Answer sources' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Flexible work request preview' })).toBeVisible();
+  await expect(page.getByText('AUD-REF-1042')).toBeVisible();
 
   await navigateTo('Activity');
   await expect(page.getByRole('heading', { name: 'Activity', exact: true })).toBeVisible();
