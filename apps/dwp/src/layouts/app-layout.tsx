@@ -1,14 +1,28 @@
 import { useState } from 'react';
-import { Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { Outlet } from 'react-router-dom';
+import {
+  AppWindow,
+  BriefcaseBusiness,
+  House,
+  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Sparkles,
+} from 'lucide-react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ProductMark, useAppearance } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
+import List from '@mui/material/List';
 import Drawer from '@mui/material/Drawer';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import ListItem from '@mui/material/ListItem';
+import Typography from '@mui/material/Typography';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemButton from '@mui/material/ListItemButton';
 
 import { AccountMenu } from '../components/account-menu';
 import { LanguageMenu } from '../components/language-menu';
@@ -17,6 +31,86 @@ import { SearchControl, WorkspaceMenu, NotificationMenu } from '../components/sh
 const SIDEBAR_WIDTH = 248;
 const RAIL_WIDTH = 72;
 const HEADER_HEIGHT = 64;
+
+const navigationItems = [
+  { label: 'Today', path: '/', icon: House },
+  { label: 'Work', path: '/work', icon: BriefcaseBusiness },
+  { label: 'Ask', path: '/ask', icon: Sparkles },
+  { label: 'Apps', path: '/apps', icon: AppWindow },
+] as const;
+
+type AppNavigationProps = {
+  compact?: boolean;
+  horizontal?: boolean;
+  onNavigate?: () => void;
+};
+
+function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppNavigationProps) {
+  const { pathname } = useLocation();
+
+  return (
+    <Box component="nav" aria-label="Application navigation" sx={{ minWidth: 0 }}>
+      {!compact && !horizontal && (
+        <Typography
+          component="p"
+          variant="overline"
+          color="text.secondary"
+          sx={{ px: 1.5, pt: 1.5, pb: 0.5 }}
+        >
+          Workspace
+        </Typography>
+      )}
+      <List
+        disablePadding
+        sx={{
+          display: horizontal ? 'flex' : 'grid',
+          gap: 0.5,
+          px: horizontal ? 0 : 1,
+        }}
+      >
+        {navigationItems.map((item) => {
+          const selected = item.path === '/' ? pathname === '/' : pathname.startsWith(item.path);
+          const Icon = item.icon;
+          return (
+            <Tooltip
+              key={item.path}
+              title={compact ? item.label : ''}
+              placement="right"
+              disableInteractive={!compact}
+            >
+              <ListItem disablePadding sx={{ width: horizontal ? 'auto' : 1 }}>
+                <ListItemButton
+                  component={NavLink}
+                  to={item.path}
+                  selected={selected}
+                  aria-current={selected ? 'page' : undefined}
+                  onClick={onNavigate}
+                  sx={{
+                    minHeight: 44,
+                    justifyContent: compact ? 'center' : 'flex-start',
+                    px: compact ? 1 : 1.5,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: compact ? 0 : 36,
+                      justifyContent: 'center',
+                      color: 'inherit',
+                    }}
+                  >
+                    <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
+                  </ListItemIcon>
+                  {!compact && <ListItemText primary={item.label} />}
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
+          );
+        })}
+      </List>
+    </Box>
+  );
+}
 
 export function AppLayout() {
   const appearance = useAppearance();
@@ -27,7 +121,7 @@ export function AppLayout() {
   const sidebarWidth = compactSidebar ? RAIL_WIDTH : SIDEBAR_WIDTH;
   const desktopOffset = topNavigation ? 0 : sidebarWidth;
 
-  const navigationContent = (compact: boolean) => (
+  const navigationContent = (compact: boolean, onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
@@ -39,7 +133,9 @@ export function AppLayout() {
       >
         <ProductMark compact={compact} />
       </Box>
-      <Box component="nav" aria-label="Application navigation" sx={{ flex: 1 }} />
+      <Box sx={{ flex: 1 }}>
+        <AppNavigation compact={compact} onNavigate={onNavigate} />
+      </Box>
     </Box>
   );
 
@@ -101,7 +197,7 @@ export function AppLayout() {
         slotProps={{ paper: { sx: { width: SIDEBAR_WIDTH } } }}
       >
         <Box data-testid="mobile-sidebar" sx={{ height: 1 }}>
-          {navigationContent(false)}
+          {navigationContent(false, () => setMobileOpen(false))}
         </Box>
       </Drawer>
 
@@ -132,6 +228,11 @@ export function AppLayout() {
             <ProductMark compact sx={{ mr: 1, display: { xs: 'none', lg: 'inline-flex' } }} />
           )}
           <WorkspaceMenu />
+          {topNavigation && (
+            <Box sx={{ ml: 1.5, display: { xs: 'none', lg: 'block' } }}>
+              <AppNavigation horizontal />
+            </Box>
+          )}
           <Box sx={{ flexGrow: 1 }} />
           <SearchControl />
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>

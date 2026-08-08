@@ -1,7 +1,13 @@
 import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
 
 import { usePermissionsStore } from './permissions-store';
-import { getMe, getPermissions, login as loginApi, logout as logoutApi } from '../api/auth-api';
+import {
+  getMe,
+  getPermissions,
+  rotateBrowserSession,
+  login as loginApi,
+  logout as logoutApi,
+} from '../api/auth-api';
 
 import type { MeResponse, LoginRequest } from '../api/auth-api';
 
@@ -16,6 +22,7 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+const SESSION_ROTATION_INTERVAL_MS = 10 * 60 * 1000;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<MeResponse | null>(null);
@@ -47,6 +54,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     void refreshSession();
   }, [refreshSession]);
+
+  useEffect(() => {
+    if (!user) return undefined;
+
+    const rotate = async () => {
+      try {
+        await rotateBrowserSession();
+      } catch {
+        // The global unauthorized handler owns redirects; transient failures retry next interval.
+      }
+    };
+    const interval = window.setInterval(() => void rotate(), SESSION_ROTATION_INTERVAL_MS);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') void rotate();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [user]);
 
   const login = useCallback(
     async (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => {

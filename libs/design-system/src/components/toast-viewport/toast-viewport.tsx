@@ -18,6 +18,11 @@ export function ToastViewport() {
         variant="filled"
         severity={toast.severity}
         onClose={toast.hide}
+        sx={{
+          bgcolor: `${toast.severity}.dark`,
+          color: 'common.white',
+          '& .MuiAlert-icon, & .MuiAlert-action': { color: 'inherit' },
+        }}
         action={
           toast.action ? (
             <Button color="inherit" href={toast.action.href} size="small" onClick={toast.hide}>

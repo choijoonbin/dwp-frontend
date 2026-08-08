@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, ChevronDown, Search } from 'lucide-react';
 import { WORKSPACE_NAME } from '@dwp-frontend/shared-utils';
 
@@ -82,7 +83,18 @@ export function WorkspaceMenu() {
 }
 
 export function SearchControl() {
+  const navigate = useNavigate();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const [query, setQuery] = useState('');
+
+  const submit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const value = query.trim();
+    if (!value) return;
+    setAnchor(null);
+    navigate('/ask?q=' + encodeURIComponent(value));
+    setQuery('');
+  };
 
   return (
     <>
@@ -99,21 +111,25 @@ export function SearchControl() {
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         slotProps={{ paper: { sx: { width: { xs: 'calc(100vw - 24px)', sm: 420 }, p: 2 } } }}
       >
-        <TextField
-          fullWidth
-          autoFocus
-          label="Search"
-          placeholder="Search people, work, services, and knowledge"
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search size={18} strokeWidth={1.8} />
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
+        <Box component="form" onSubmit={submit}>
+          <TextField
+            fullWidth
+            autoFocus
+            label="Ask or search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search work, apps, services, and knowledge"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search size={18} strokeWidth={1.8} aria-hidden="true" />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        </Box>
       </Popover>
     </>
   );

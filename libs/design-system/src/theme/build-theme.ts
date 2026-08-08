@@ -169,6 +169,13 @@ export function buildDwpTheme({
       MuiToggleButton: {
         styleOverrides: {
           root: {
+            color: highContrast
+              ? dark
+                ? '#FFFFFF'
+                : '#000000'
+              : dark
+                ? tokens.color.neutral[25]
+                : tokens.color.neutral[700],
             '&.Mui-selected': {
               color: highContrast ? contrastText(primary) : primary,
               backgroundColor: highContrast ? primary : alpha(primary, 0.12),

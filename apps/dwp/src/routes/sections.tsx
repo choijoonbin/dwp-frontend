@@ -11,6 +11,9 @@ import { AppLayout } from '../layouts/app-layout';
 import { AuthLayout } from '../layouts/auth-layout';
 
 const HomePage = lazy(() => import('../pages/home'));
+const WorkPage = lazy(() => import('../pages/work'));
+const AskPage = lazy(() => import('../pages/ask'));
+const AppsPage = lazy(() => import('../pages/apps'));
 const ProfilePage = lazy(() => import('../pages/account/profile'));
 const SettingsPage = lazy(() => import('../pages/account/settings'));
 const SecurityPage = lazy(() => import('../pages/account/security'));
@@ -38,6 +41,30 @@ export const routesSection: RouteObject[] = [
         element: (
           <Suspense fallback={fallback}>
             <HomePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'work',
+        element: (
+          <Suspense fallback={fallback}>
+            <WorkPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'ask',
+        element: (
+          <Suspense fallback={fallback}>
+            <AskPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'apps',
+        element: (
+          <Suspense fallback={fallback}>
+            <AppsPage />
           </Suspense>
         ),
       },

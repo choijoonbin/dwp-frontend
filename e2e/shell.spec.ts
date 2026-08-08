@@ -83,7 +83,7 @@ test('authenticated users keep the common shell without business navigation', as
   await expect(page.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Notifications' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Account' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'DWP', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Today', level: 1 })).toBeVisible();
   await expectNoAutomaticAccessibilityViolations(page);
 
   await page.getByRole('button', { name: 'Account' }).click();
@@ -110,11 +110,177 @@ test('authenticated users keep the common shell without business navigation', as
     await page.getByRole('button', { name: 'Open navigation' }).click();
     const sidebar = page.getByTestId('mobile-sidebar');
     await expect(sidebar.getByRole('link', { name: 'Digital Workplace home' })).toBeVisible();
-    await expect(sidebar.getByRole('link')).toHaveCount(1);
+    await expect(sidebar.getByRole('link', { name: 'Today', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: 'Ask', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: 'Apps', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link')).toHaveCount(5);
   } else {
     const sidebar = page.getByTestId('desktop-sidebar');
     await expect(sidebar.getByRole('link', { name: 'Digital Workplace home' })).toBeVisible();
-    await expect(sidebar.getByRole('link')).toHaveCount(1);
+    await expect(sidebar.getByRole('link', { name: 'Today', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: 'Ask', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: 'Apps', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link')).toHaveCount(5);
     await expect(page.getByRole('button', { name: 'Collapse navigation' })).toBeVisible();
   }
+});
+
+test('reference work hub connects Today, Work, Ask, and Apps', async ({ page }, testInfo) => {
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          userId: 1,
+          displayName: 'Admin User',
+          email: 'admin@dwp.local',
+          tenantId: 1,
+          tenantCode: 'default',
+          roles: ['ADMIN'],
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/permissions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
+
+  const navigateTo = async (label: 'Work' | 'Ask' | 'Apps') => {
+    if (testInfo.project.name === 'mobile') {
+      await page.getByRole('button', { name: 'Open navigation' }).click();
+      await page
+        .getByTestId('mobile-sidebar')
+        .getByRole('link', { name: label, exact: true })
+        .click();
+      return;
+    }
+    await page
+      .getByTestId('desktop-sidebar')
+      .getByRole('link', { name: label, exact: true })
+      .click();
+  };
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await page.getByRole('button', { name: /Approve software access request/ }).click();
+  await expect(page).toHaveURL(/\/work\?item=WK-1042/);
+  await expect(page.getByRole('heading', { name: 'Work', exact: true })).toBeVisible();
+  await expect(page.getByRole('grid', { name: 'Work queue' })).toBeVisible();
+  await expect(page.getByText('WK-1042 / Approval / Owner: You')).toBeVisible();
+
+  await navigateTo('Ask');
+  await expect(page.getByRole('heading', { name: 'Ask DWP' })).toBeVisible();
+  await page.getByRole('button', { name: 'Can I work remotely next Friday?' }).click();
+  await expect(page.getByRole('heading', { name: 'Answer' })).toBeVisible();
+  await expect(page.getByRole('list', { name: 'Answer sources' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Flexible work request preview' })).toBeVisible();
+
+  await navigateTo('Apps');
+  await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Search apps' }).fill('legacy');
+  await expect(page.getByText('1 apps')).toBeVisible();
+  await page.getByRole('button', { name: /Legacy operations/ }).click();
+  await expect(page.getByRole('alert')).toContainText('Legacy operations launch preview opened.');
+  await expect(page.locator('.MuiAlert-root')).toHaveCSS('opacity', '1');
+  await expectNoAutomaticAccessibilityViolations(page);
+});
+
+test('users can review and revoke another browser session', async ({ page }) => {
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          userId: 1,
+          displayName: 'Admin',
+          email: 'admin@dwp.local',
+          tenantId: 1,
+          tenantCode: 'default',
+          roles: ['ADMIN'],
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/permissions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
+  await page.route('**/api/auth/csrf', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
+      }),
+    })
+  );
+
+  let sessions = [
+    {
+      sessionId: '11111111-1111-4111-8111-111111111111',
+      current: true,
+      ipAddress: '10.20.30.40',
+      userAgent:
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/126.0 Safari/537.36',
+      startedAt: '2026-08-08T00:00:00Z',
+      lastSeenAt: '2026-08-08T00:10:00Z',
+      idleExpiresAt: '2026-08-08T00:40:00Z',
+      expiresAt: '2026-08-08T08:00:00Z',
+    },
+    {
+      sessionId: '22222222-2222-4222-8222-222222222222',
+      current: false,
+      ipAddress: '203.0.113.24',
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126.0 Safari/537.36 Edg/126.0',
+      startedAt: '2026-08-07T23:00:00Z',
+      lastSeenAt: '2026-08-08T00:05:00Z',
+      idleExpiresAt: '2026-08-08T00:35:00Z',
+      expiresAt: '2026-08-08T07:00:00Z',
+    },
+  ];
+
+  await page.route('**/api/auth/sessions/**', async (route) => {
+    const sessionId = route.request().url().split('/').pop();
+    sessions = sessions.filter((session) => session.sessionId !== sessionId);
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: null }),
+    });
+  });
+  await page.route('**/api/auth/sessions', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: sessions }),
+    });
+  });
+
+  await page.goto('/account/security');
+  await expect(page.getByRole('heading', { name: 'Security & sessions' })).toBeVisible();
+  const sessionList = page.getByRole('list', { name: 'Active browser sessions' });
+  await expect(sessionList.getByRole('listitem')).toHaveCount(2);
+  await expect(page.getByText('Chrome on macOS')).toBeVisible();
+  const otherSession = sessionList
+    .getByRole('listitem')
+    .filter({ hasText: 'Microsoft Edge on Windows' });
+  await otherSession.getByRole('button', { name: 'End session' }).click();
+
+  const dialog = page.getByRole('dialog', { name: 'End this session?' });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Sign out' }).click();
+  await expect(sessionList.getByRole('listitem')).toHaveCount(1);
+  await expect(page.getByText('Microsoft Edge on Windows')).toHaveCount(0);
+  await expectNoAutomaticAccessibilityViolations(page);
 });

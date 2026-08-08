@@ -33,6 +33,23 @@ export type MeResponse = {
   roles: string[];
 };
 
+export type AuthSessionData = {
+  sessionId: string;
+  current: boolean;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  startedAt: string;
+  lastSeenAt: string;
+  idleExpiresAt: string;
+  expiresAt: string;
+};
+
+export type SessionRotationData = {
+  rotated: boolean;
+  idleExpiresAt: string;
+  expiresAt: string;
+};
+
 export async function login(
   payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }
 ): Promise<ApiResponse<LoginResponseData>> {
@@ -53,6 +70,30 @@ export async function getMe(): Promise<ApiResponse<MeResponse>> {
 
 export async function getPermissions(): Promise<ApiResponse<PermissionDTO[]>> {
   return (await axiosInstance.get<ApiResponse<PermissionDTO[]>>('/api/auth/permissions')).data;
+}
+
+export async function getAuthSessions(): Promise<ApiResponse<AuthSessionData[]>> {
+  return (await axiosInstance.get<ApiResponse<AuthSessionData[]>>('/api/auth/sessions')).data;
+}
+
+export async function rotateBrowserSession(): Promise<ApiResponse<SessionRotationData>> {
+  return (
+    await axiosInstance.post<ApiResponse<SessionRotationData>, undefined>(
+      '/api/auth/session/refresh',
+      undefined
+    )
+  ).data;
+}
+
+export async function revokeAuthSession(sessionId: string): Promise<void> {
+  await axiosInstance.delete<ApiResponse<void>>('/api/auth/sessions/' + sessionId);
+}
+
+export async function logoutOtherSessions(): Promise<void> {
+  await axiosInstance.post<ApiResponse<void>, undefined>(
+    '/api/auth/sessions/logout-others',
+    undefined
+  );
 }
 
 export async function logout(): Promise<void> {
