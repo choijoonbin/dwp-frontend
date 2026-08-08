@@ -76,7 +76,7 @@ System invariant를 편집 가능한 공통코드로 만들지 않는다. Secret
 | 영역                  | Tenant Admin Capability                              | 목표 단계 |
 | --------------------- | ---------------------------------------------------- | --------- |
 | Overview              | 구성 상태, 보안 경고, 동기화·실행 Health             | R2        |
-| Organization & Access | 사용자, 조직, 그룹, Role, SCIM, 위임                 | R1~R2     |
+| Organization & Access | 사용자·Role·조직·직접 Group Baseline, SCIM·위임      | R0~R2     |
 | Standards             | 기준정보, 분류, 다국어 Label, 유효기간               | R0 완료   |
 | Catalogs              | App, Service, Widget, Template, Entitlement          | R1        |
 | Integrations          | Connector, Data Source, Credential Ref, Sync Health  | R1~R2     |
@@ -92,7 +92,8 @@ Empty·Error 상태가 완성된 영역만 Navigation에 추가한다.
 1. **P0 Trust Foundation:** Session, CSRF, Gateway Service Identity, Tenant Context
 2. **P1 Standards:** Tenant 기준정보, Locale Label, Lifecycle, Audit
 3. **P2 Catalog:** App·Connector·Agent·Tool·Policy Registry 공통 Envelope
-4. **P3 Identity Governance:** Organization, SCIM, RBAC·ABAC, 위임과 SoD
+4. **P3 Identity Governance:** User·Role·Organization·직접 Group Baseline 뒤 SCIM,
+   Group Role, RBAC·ABAC, 위임과 SoD
 5. **P4 Integration Operations:** Credential Reference, Sync, Health, Retry, Quota
 6. **P5 Agent Governance:** Model Route, Risk Tier, Tool Grant, Approval, Evaluation
 7. **P6 Platform Operations:** Feature Rollout, SLO, 비용, 보존, Export와 Support
@@ -104,8 +105,8 @@ Empty·Error 상태가 완성된 영역만 Navigation에 추가한다.
 - 장점: 제품 운영 기능이 업무 기능과 분리되고, 새 Domain Pack이 공통 통제를 재사용한다.
 - 장점: Tenant 관리자와 Provider 운영자의 권한 혼합을 예방한다.
 - 비용: 초기부터 Lifecycle, Audit, Schema와 권한 계약을 유지해야 한다.
-- 제한: 현재 구현은 Tenant Admin의 기준정보·감사 최소 범위이며 Provider Admin,
-  승인 Workflow와 DB RLS는 후속 Gate다.
+- 제한: 현재 구현은 Tenant Admin의 기준정보·Registry·User Role·조직·직접 Group
+  Baseline이며 SCIM, Provider Admin, 승인 Workflow와 DB RLS는 후속 Gate다.
 
 ## 6. 근거
 

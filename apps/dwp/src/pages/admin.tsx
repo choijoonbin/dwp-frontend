@@ -1,4 +1,4 @@
-import { Boxes, Database, ScrollText, Settings2, UsersRound } from 'lucide-react';
+import { Boxes, Database, Network, ScrollText, Settings2, UsersRound } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@dwp-frontend/shared-utils';
 
@@ -12,16 +12,17 @@ import Typography from '@mui/material/Typography';
 
 import { AuditLog } from '../features/admin/audit-log';
 import { AccessManager } from '../features/admin/access-manager';
+import { DirectoryManager } from '../features/admin/directory-manager';
 import { RegistryManager } from '../features/admin/registry-manager';
 import { ReferenceDataManager } from '../features/admin/reference-data-manager';
 
-type AdminView = 'access' | 'reference-data' | 'registry' | 'audit';
+type AdminView = 'access' | 'directory' | 'reference-data' | 'registry' | 'audit';
 
 export default function AdminPage() {
   const auth = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedView = searchParams.get('view');
-  const view: AdminView = ['access', 'reference-data', 'registry', 'audit'].includes(
+  const view: AdminView = ['access', 'directory', 'reference-data', 'registry', 'audit'].includes(
     requestedView ?? ''
   )
     ? (requestedView as AdminView)
@@ -83,6 +84,13 @@ export default function AdminPage() {
             sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
           />
           <Tab
+            value="directory"
+            icon={<Network size={17} strokeWidth={1.8} />}
+            iconPosition="start"
+            label="Directory"
+            sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
+          />
+          <Tab
             value="reference-data"
             icon={<Database size={17} strokeWidth={1.8} />}
             iconPosition="start"
@@ -116,6 +124,7 @@ export default function AdminPage() {
         </Tabs>
 
         {view === 'access' && <AccessManager />}
+        {view === 'directory' && <DirectoryManager />}
         {view === 'reference-data' && <ReferenceDataManager />}
         {view === 'registry' && <RegistryManager />}
         {view === 'audit' && <AuditLog />}

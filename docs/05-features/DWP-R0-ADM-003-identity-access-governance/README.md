@@ -20,8 +20,9 @@ Tenant 관리자가 사용자 Directory와 Role을 확인하고 다른 사용자
 
 ## 후속 범위
 
-Organization Unit, Group, Group Role, SCIM 2.0, 위임 범위, SoD Rule, Access Review와
-Joiner·Mover·Leaver Workflow는 같은 Identity Plane의 다음 Revision에서 구현한다.
+Organization Unit과 직접 User Group은 `DWP-R0-ADM-004`에서 구현했다. Group Role,
+SCIM 2.0, 위임 범위, SoD Rule, Access Review와 Joiner·Mover·Leaver Workflow는 같은
+Identity Plane의 다음 Revision에서 구현한다.
 
 ## 구현 증거
 
