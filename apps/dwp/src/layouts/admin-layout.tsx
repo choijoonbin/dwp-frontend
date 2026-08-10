@@ -176,15 +176,12 @@ export function AdminLayout() {
           gap: 1.25,
         }}
       >
-        <BrandLockup variant="product-only" sx={{ flexShrink: 0 }} />
-        <Box sx={{ minWidth: 0 }}>
-          <Typography component="p" variant="subtitle2" noWrap>
-            Control Center
-          </Typography>
-          <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
-            Digital Workplace
-          </Typography>
-        </Box>
+        <BrandLockup
+          variant="product-full"
+          label="Control Center"
+          description="Digital Workplace"
+          sx={{ flexShrink: 0 }}
+        />
       </Box>
 
       <Divider />

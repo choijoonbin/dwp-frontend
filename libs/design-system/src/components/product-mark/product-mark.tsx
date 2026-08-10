@@ -7,12 +7,14 @@ import type { BoxProps } from '@mui/material/Box';
 export type ProductMarkProps = Omit<BoxProps<'a'>, 'component' | 'prefix'> & {
   compact?: boolean;
   label?: string;
+  description?: ReactNode;
   prefix?: ReactNode;
 };
 
 export function ProductMark({
   compact = false,
   label = 'Digital Workplace',
+  description,
   prefix,
   href = '/',
   sx,
@@ -69,18 +71,32 @@ export function ProductMark({
         DWP
       </Box>
       {!compact && (
-        <Typography
-          component="span"
-          variant="subtitle1"
-          sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            fontWeight: 750,
-          }}
-        >
-          {label}
-        </Typography>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography
+            component="span"
+            variant={description ? 'subtitle2' : 'subtitle1'}
+            sx={{
+              display: 'block',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontWeight: 750,
+            }}
+          >
+            {label}
+          </Typography>
+          {description && (
+            <Typography
+              component="span"
+              variant="caption"
+              color="text.secondary"
+              noWrap
+              sx={{ display: 'block' }}
+            >
+              {description}
+            </Typography>
+          )}
+        </Box>
       )}
     </Box>
   );

@@ -10,10 +10,12 @@ type BrandLockupVariant = 'full' | 'condensed' | 'product-full' | 'product-only'
 
 type BrandLockupProps = {
   variant?: BrandLockupVariant;
+  label?: string;
+  description?: string;
   sx?: SxProps<Theme>;
 };
 
-export function BrandLockup({ variant = 'full', sx }: BrandLockupProps) {
+export function BrandLockup({ variant = 'full', label, description, sx }: BrandLockupProps) {
   const tenantBranded = variant === 'full' || variant === 'condensed';
   const brandingQuery = useQuery({
     queryKey: ['tenant-branding'],
@@ -34,6 +36,8 @@ export function BrandLockup({ variant = 'full', sx }: BrandLockupProps) {
   return (
     <ProductMark
       compact={compact}
+      label={label}
+      description={description}
       aria-label={accessibleName}
       prefix={
         showTenantLogo ? (

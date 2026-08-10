@@ -612,18 +612,21 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
   await page.goto('/admin');
   await expect(page.getByTestId('admin-shell')).toBeVisible();
   await expect(page.getByTestId('desktop-sidebar')).toHaveCount(0);
+  const adminSidebar =
+    testInfo.project.name === 'mobile'
+      ? page.getByTestId('admin-mobile-sidebar')
+      : page.getByTestId('admin-sidebar');
   if (testInfo.project.name === 'mobile') {
     await page.getByRole('button', { name: 'Open administration navigation' }).click();
     await expect(
-      page.getByTestId('admin-mobile-sidebar').getByRole('navigation', {
+      adminSidebar.getByRole('navigation', {
         name: 'Administration navigation',
       })
     ).toBeVisible();
-    await page.keyboard.press('Escape');
   } else {
-    const adminNavigation = page
-      .getByTestId('admin-sidebar')
-      .getByRole('navigation', { name: 'Administration navigation' });
+    const adminNavigation = adminSidebar.getByRole('navigation', {
+      name: 'Administration navigation',
+    });
     await expect(adminNavigation).toBeVisible();
     await expect(adminNavigation.getByRole('button', { name: 'People & access' })).toHaveAttribute(
       'aria-expanded',
@@ -633,6 +636,12 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
       'aria-current',
       'page'
     );
+  }
+  const adminBrandLink = adminSidebar.getByRole('link', { name: 'Digital Workplace home' });
+  await expect(adminBrandLink).toContainText('Control Center');
+  await expect(adminBrandLink).toContainText('Digital Workplace');
+  if (testInfo.project.name === 'mobile') {
+    await page.keyboard.press('Escape');
   }
   await expect(page.getByRole('heading', { name: 'Identity access', level: 1 })).toBeVisible();
   const tenantUsers =
