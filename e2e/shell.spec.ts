@@ -109,6 +109,7 @@ test('unauthenticated users see the login shell without business navigation', as
   await expect(password).toHaveAttribute('type', 'text');
   await page.getByRole('button', { name: 'Hide password' }).click();
   await expect(password).toHaveAttribute('type', 'password');
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   await page.mouse.move(0, 0);
   await page.keyboard.press('Escape');
   await expect(page.getByRole('tooltip')).toHaveCount(0);
@@ -222,6 +223,72 @@ test('authenticated users keep the common shell without business navigation', as
     await expandNavigation.click();
     await expect(sidebar).toHaveCSS('width', '248px');
   }
+});
+
+test('compact navigation reflows the desktop workspace canvas', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'Desktop inline navigation is not used on mobile.');
+
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          userId: 1,
+          displayName: 'Admin',
+          email: 'admin@dwp.local',
+          tenantId: 1,
+          tenantCode: 'default',
+          roles: ['ADMIN'],
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/permissions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Today', level: 1 })).toBeVisible();
+
+  const readGeometry = () =>
+    page.evaluate(() => {
+      const header = document.querySelector('[data-testid="app-header"]');
+      const main = document.querySelector('[data-testid="app-main"]');
+      const canvas = document.querySelector('[data-dwp-page-canvas="workspace"]');
+      const rectangle = (element: Element | null) => {
+        const rect = element?.getBoundingClientRect();
+        return rect
+          ? {
+              left: Math.round(rect.left),
+              right: Math.round(rect.right),
+              width: Math.round(rect.width),
+            }
+          : null;
+      };
+      return { header: rectangle(header), main: rectangle(main), canvas: rectangle(canvas) };
+    });
+
+  const expanded = await readGeometry();
+  expect(expanded.header).toEqual({ left: 248, right: 1920, width: 1672 });
+  expect(expanded.main).toEqual({ left: 248, right: 1920, width: 1672 });
+  expect(expanded.canvas).toEqual({ left: 248, right: 1920, width: 1672 });
+
+  await page.getByRole('button', { name: 'Collapse navigation' }).click();
+  await expect(page.getByTestId('desktop-sidebar')).toHaveCSS('width', '72px');
+  await expect(page.locator('[data-dwp-navigation-state="compact"]')).toBeVisible();
+  await expect.poll(async () => (await readGeometry()).canvas?.width).toBe(1848);
+
+  const compact = await readGeometry();
+  expect(compact.header).toEqual({ left: 72, right: 1920, width: 1848 });
+  expect(compact.main).toEqual({ left: 72, right: 1920, width: 1848 });
+  expect(compact.canvas).toEqual({ left: 72, right: 1920, width: 1848 });
+  expect((compact.canvas?.width ?? 0) - (expanded.canvas?.width ?? 0)).toBe(176);
 });
 
 test('reference work hub connects Today, Work, Ask, Activity, and Apps', async ({

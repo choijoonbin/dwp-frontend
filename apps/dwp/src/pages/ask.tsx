@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
-import { AgentPlanPreview, SourceCitationList } from '@dwp-frontend/design-system';
+import { AgentPlanPreview, PageCanvas, SourceCitationList } from '@dwp-frontend/design-system';
 import {
   useToast,
   previewAgentPlan,
@@ -22,7 +22,6 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -108,7 +107,7 @@ export default function AskPage() {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 } }}>
+    <PageCanvas>
       <PageHeader
         eyebrow="Enterprise intelligence"
         title="Ask DWP"
@@ -475,6 +474,6 @@ export default function AskPage() {
           )}
         </Box>
       )}
-    </Container>
+    </PageCanvas>
   );
 }

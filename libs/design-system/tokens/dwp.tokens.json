@@ -182,6 +182,28 @@
       "6": { "$type": "dimension", "$value": { "value": 24, "unit": "px" } },
       "8": { "$type": "dimension", "$value": { "value": 32, "unit": "px" } }
     },
+    "layout": {
+      "navigationExpanded": {
+        "$type": "dimension",
+        "$description": "Desktop inline navigation width.",
+        "$value": { "value": 248, "unit": "px" }
+      },
+      "navigationCompact": {
+        "$type": "dimension",
+        "$description": "Desktop compact navigation rail width.",
+        "$value": { "value": 72, "unit": "px" }
+      },
+      "headerHeight": {
+        "$type": "dimension",
+        "$description": "Global command header height.",
+        "$value": { "value": 64, "unit": "px" }
+      },
+      "focusCanvasMaxWidth": {
+        "$type": "dimension",
+        "$description": "Maximum width for focused reading and form pages.",
+        "$value": { "value": 1200, "unit": "px" }
+      }
+    },
     "density": {
       "compact": {
         "control": { "$type": "dimension", "$value": { "value": 32, "unit": "px" } },

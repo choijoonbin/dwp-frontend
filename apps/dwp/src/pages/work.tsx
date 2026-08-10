@@ -10,14 +10,13 @@ import {
   Sparkles,
   UserRound,
 } from 'lucide-react';
-import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import { EnterpriseDataGrid, PageCanvas } from '@dwp-frontend/design-system';
 import { useToast } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import Container from '@mui/material/Container';
 import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -136,7 +135,7 @@ export default function WorkPage() {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 } }}>
+    <PageCanvas>
       <PageHeader
         eyebrow="Unified queue"
         title="Work"
@@ -366,6 +365,6 @@ export default function WorkPage() {
           </Box>
         )}
       </Box>
-    </Container>
+    </PageCanvas>
   );
 }

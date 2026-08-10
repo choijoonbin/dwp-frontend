@@ -10,7 +10,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { ProductMark, useAppearance } from '@dwp-frontend/design-system';
+import { ProductMark, foundationTokens, useAppearance } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -29,9 +29,9 @@ import { AccountMenu } from '../components/account-menu';
 import { LanguageMenu } from '../components/language-menu';
 import { SearchControl, WorkspaceMenu, NotificationMenu } from '../components/shell-controls';
 
-const SIDEBAR_WIDTH = 248;
-const RAIL_WIDTH = 72;
-const HEADER_HEIGHT = 64;
+const SIDEBAR_WIDTH = foundationTokens.layout.navigationExpanded;
+const RAIL_WIDTH = foundationTokens.layout.navigationCompact;
+const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
 
 const navigationItems = [
   { label: 'Today', path: '/', icon: House },
@@ -193,7 +193,10 @@ export function AppLayout() {
   );
 
   return (
-    <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}>
+    <Box
+      data-dwp-navigation-state={topNavigation ? 'top' : compactSidebar ? 'compact' : 'expanded'}
+      sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}
+    >
       {!topNavigation && (
         <Box
           component="aside"
@@ -226,6 +229,7 @@ export function AppLayout() {
       </Drawer>
 
       <AppBar
+        data-testid="app-header"
         position="fixed"
         color="default"
         elevation={0}
@@ -298,11 +302,15 @@ export function AppLayout() {
 
       <Box
         component="main"
+        data-testid="app-main"
         sx={{
           pt: `${HEADER_HEIGHT}px`,
+          width: { xs: 1, lg: `calc(100% - ${desktopOffset}px)` },
           ml: { xs: 0, lg: `${desktopOffset}px` },
+          minWidth: 0,
           minHeight: '100dvh',
-          transition: (theme) => theme.transitions.create('margin-left'),
+          overflowX: 'clip',
+          transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >
         <Outlet />

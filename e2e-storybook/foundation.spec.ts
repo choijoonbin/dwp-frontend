@@ -30,6 +30,23 @@ test('foundation play interaction and accessibility', async ({ page }) => {
   await expectNoAutomaticAccessibilityViolations(page);
 });
 
+test('page canvas exposes workspace and focus width contracts', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openStory(page, 'dwp-foundation-page-canvas--layout-modes');
+
+  const workspace = page.locator('[data-dwp-page-canvas="workspace"]');
+  const focus = page.locator('[data-dwp-page-canvas="focus"]');
+  await expect(workspace).toBeVisible();
+  await expect(focus).toBeVisible();
+  await expect
+    .poll(() => workspace.evaluate((element) => element.getBoundingClientRect().width))
+    .toBe(1440);
+  await expect
+    .poll(() => focus.evaluate((element) => element.getBoundingClientRect().width))
+    .toBe(1200);
+  await expectNoAutomaticAccessibilityViolations(page);
+});
+
 test('enterprise grid visual and accessibility', async ({ page }) => {
   await openStory(page, 'dwp-enterprise-data-grid--work-queue');
 

@@ -12,11 +12,11 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { useAuth } from '@dwp-frontend/shared-utils';
+import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 
@@ -44,7 +44,7 @@ export default function HomePage() {
   const recentActivity = activityEvents.slice(0, 3);
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 } }}>
+    <PageCanvas>
       <PageHeader
         eyebrow="Saturday, August 8"
         title="Today"
@@ -465,6 +465,6 @@ export default function HomePage() {
           Last refreshed 09:10 / Reference data only
         </Typography>
       </Box>
-    </Container>
+    </PageCanvas>
   );
 }

@@ -1,8 +1,8 @@
 # DWP Premium Experience Direction
 
-> 상태: R0.6 Experience Decision v1.1
+> 상태: R0.6 Experience Decision v1.2
 >
-> 기준일: 2026-08-08
+> 기준일: 2026-08-10
 >
 > 대상: `dwp-frontend`
 
@@ -67,6 +67,10 @@ Context Envelope 계약으로 전환한다.
 ### 4.1 Composition
 
 - Desktop Shell은 248px Sidebar와 64px Command Bar를 기준으로 한다.
+- Sidebar가 72px Rail로 축소되면 확보된 176px를 Header와 운영형 Page Canvas가 함께
+  회수한다. Right Edge는 고정하고 Split Pane과 Data Surface를 유동 확장한다.
+- Today·Work·Ask·Activity·Apps·Administration은 최대폭 없는 `workspace` Canvas를,
+  Profile·Preferences·Security는 1200px `focus` Canvas를 사용한다.
 - Page Heading은 Compact하게 유지하고 첫 Viewport에 실제 업무가 보이게 한다.
 - Section은 Full-width Band나 Unframed Layout을 우선한다.
 - Card는 반복 Item, AI Plan, 실제로 경계가 필요한 Tool에만 사용한다.
@@ -150,6 +154,9 @@ Motion은 기능을 설명하고 공간 관계를 보존할 때만 사용한다.
   Logo나 Rail 경계 위에 띄우지 않고 Global Header의 첫 번째 40px Action으로 제공한다.
 - Collapse 제어는 `aria-controls`, `aria-expanded`, 상태별 Tooltip을 제공하며 Logo와
   최소 24px의 시각 간격을 유지한다.
+- Collapse·Expand 시 Sidebar, Header와 Main Width를 같은 180ms Motion으로 전환한다.
+  Reduced Motion에서는 즉시 전환하며 Overlay, Horizontal Scroll이나 빈 Max-width 여백을
+  만들지 않는다.
 
 ### Today
 
@@ -198,6 +205,8 @@ Motion은 기능을 설명하고 공간 관계를 보존할 때만 사용한다.
 - [Fluent 2 Motion](https://fluent2.microsoft.design/motion)
 - [Fluent 2 Nav](https://fluent2.microsoft.design/components/web/react/core/nav/usage)
 - [Carbon UI Shell left panel](https://carbondesignsystem.com/components/UI-shell-left-panel/usage/)
+- [Carbon 2x Grid](https://carbondesignsystem.com/elements/2x-grid/overview/)
+- [Material canonical layouts](https://m3.material.io/foundations/layout/canonical-examples/overview)
 - [Atlassian Motion](https://atlassian.design/foundations/motion)
 - [Carbon for AI](https://carbondesignsystem.com/guidelines/carbon-for-ai/)
 - [SAP Fiori Generative AI Design](https://experience.sap.com/fiori-design-web/generative-ai-design/)

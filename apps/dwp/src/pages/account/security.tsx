@@ -20,12 +20,12 @@ import {
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
+import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-import Container from '@mui/material/Container';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -119,7 +119,7 @@ export default function SecurityPage() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
+    <PageCanvas mode="focus">
       <Box
         sx={{
           display: 'flex',
@@ -309,6 +309,6 @@ export default function SecurityPage() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </PageCanvas>
   );
 }

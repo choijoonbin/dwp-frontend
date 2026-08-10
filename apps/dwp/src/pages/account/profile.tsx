@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { getMe } from '@dwp-frontend/shared-utils';
+import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -15,7 +15,7 @@ export default function ProfilePage() {
   });
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
+    <PageCanvas mode="focus">
       <Typography component="h1" variant="h4">
         Profile
       </Typography>
@@ -43,6 +43,6 @@ export default function ProfilePage() {
           <Typography>{meQuery.data?.roles?.join(', ') || '-'}</Typography>
         </Box>
       )}
-    </Container>
+    </PageCanvas>
   );
 }

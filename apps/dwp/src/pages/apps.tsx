@@ -17,12 +17,12 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { useToast } from '@dwp-frontend/shared-utils';
+import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Container from '@mui/material/Container';
 import ButtonBase from '@mui/material/ButtonBase';
 import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
@@ -120,7 +120,7 @@ export default function AppsPage() {
   const launch = (app: ReferenceApp) => toast.success(`${app.name} launch preview opened.`);
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 } }}>
+    <PageCanvas>
       <PageHeader
         eyebrow="Entitled workspace"
         title="Apps"
@@ -379,6 +379,6 @@ export default function AppsPage() {
           </Button>
         </Box>
       )}
-    </Container>
+    </PageCanvas>
   );
 }

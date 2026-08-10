@@ -12,12 +12,12 @@ import {
   Wrench,
 } from 'lucide-react';
 import { useToast } from '@dwp-frontend/shared-utils';
+import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import Container from '@mui/material/Container';
 import ButtonBase from '@mui/material/ButtonBase';
 import LinearProgress from '@mui/material/LinearProgress';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -76,7 +76,7 @@ export default function ActivityPage() {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 } }}>
+    <PageCanvas>
       <PageHeader
         eyebrow="Workspace signal"
         title="Activity"
@@ -347,6 +347,6 @@ export default function ActivityPage() {
           </Box>
         )}
       </Box>
-    </Container>
+    </PageCanvas>
   );
 }

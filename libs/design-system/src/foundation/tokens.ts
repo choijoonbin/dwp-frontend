@@ -45,6 +45,12 @@ export const foundationTokens = {
     6: pixels(tokenFile.dimension.space['6']),
     8: pixels(tokenFile.dimension.space['8']),
   },
+  layout: {
+    navigationExpanded: pixels(tokenFile.dimension.layout.navigationExpanded),
+    navigationCompact: pixels(tokenFile.dimension.layout.navigationCompact),
+    headerHeight: pixels(tokenFile.dimension.layout.headerHeight),
+    focusCanvasMaxWidth: pixels(tokenFile.dimension.layout.focusCanvasMaxWidth),
+  },
   density: {
     compact: {
       controlHeight: pixels(tokenFile.dimension.density.compact.control),

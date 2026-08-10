@@ -41,6 +41,28 @@ MUI Component를 기계적으로 전부 감싸지 않는다. 제품 의미, 반�
 사용자 설정에서 숨긴 기능도 Tenant Policy Engine에서 제거하지 않는다. 정책 우선순위와
 허용 범위를 `AppearancePolicy`로 통제한다.
 
+## Shell Reflow와 Page Width
+
+Desktop Navigation은 본문 옆에 놓이는 Inline 영역이다. Expanded `248px`와 Compact
+`72px`의 차이 `176px`는 Sidebar를 접는 즉시 Global Header와 Main Canvas가 함께
+회수한다. Header와 Main은 동일한 Motion Duration을 사용하고 오른쪽 Viewport 경계를
+유지한다. Mobile Navigation은 본문 폭을 바꾸지 않는 Overlay Drawer를 사용한다.
+
+페이지 루트는 MUI `Container`나 임의 `maxWidth` 대신 Public `PageCanvas`를 사용한다.
+
+- `workspace`: Today, Work, Ask, Activity, Apps, Administration처럼 비교·탐색·운영하는
+  화면이다. 최대폭을 두지 않고 고정 Gutter 안에서 가용 폭 전체를 사용한다.
+- `focus`: Profile, Preferences, Security처럼 읽기·입력에 집중하는 화면이다. Canvas를
+  `1200px`로 제한하되 Shell 자체는 계속 Reflow한다.
+- 본문 내부의 설명 Text, Form Field와 Detail Pane에는 목적에 맞는 국소 최대폭을 둘 수
+  있다. 페이지 전체를 임의로 고정하는 것은 허용하지 않는다.
+- Split View는 `minmax(0, ...)`와 `minWidth: 0`을 사용해 Compact 전환 중 Overflow와
+  Layout Shift를 만들지 않는다.
+
+공통 수치는 `dwp.tokens.json`의 `dimension.layout`이 Source of Truth다. `1920px`
+Viewport에서 Expanded Canvas `1672px`, Compact Canvas `1848px`와 `176px` 증가량을 E2E
+Gate로 검증한다.
+
 ## Public Component Gate
 
 공통 Component는 다음 항목이 준비된 뒤 Export한다.
@@ -56,6 +78,7 @@ MUI Component를 기계적으로 전부 감싸지 않는다. 제품 의미, 반�
 
 ## 현재 Reference API
 
+- `PageCanvas`: 운영형 Fluid Canvas와 집중형 Bounded Canvas의 공통 폭 계약
 - `EnterpriseDataGrid`: MUI X Community를 DWP Density·상태·접근성 계약에 연결
 - `SourceCitationList`: 근거 이름, 유형, Version·시각과 원본 Link
 - `AgentPlanPreview`: 변경 계획, Tool, Risk, 근거와 승인·반려

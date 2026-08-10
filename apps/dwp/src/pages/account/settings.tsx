@@ -1,6 +1,11 @@
 import { RotateCcw } from 'lucide-react';
 import { useLanguage } from '@dwp-frontend/shared-i18n';
-import { colorModeOptions, densityOptions, useAppearance } from '@dwp-frontend/design-system';
+import {
+  PageCanvas,
+  colorModeOptions,
+  densityOptions,
+  useAppearance,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -8,7 +13,6 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -51,7 +55,7 @@ export default function SettingsPage() {
   const managedFontName = appearance.tenant.fontFamily ?? 'System UI';
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
+    <PageCanvas mode="focus">
       <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2}>
         <Box>
           <Typography component="h1" variant="h4">
@@ -183,6 +187,6 @@ export default function SettingsPage() {
           <Chip size="small" label="Managed" variant="outlined" />
         </Stack>
       </PreferenceRow>
-    </Container>
+    </PageCanvas>
   );
 }
