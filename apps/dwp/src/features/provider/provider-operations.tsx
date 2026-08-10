@@ -150,6 +150,14 @@ export function ProviderOperations() {
   const pendingApprovals = (approvals.data ?? []).filter(
     (approval) => approval.lifecycleState === 'PENDING'
   );
+  const selectedApprovals = (approvals.data ?? []).filter(
+    (approval) => approval.operationId === selected?.operationId
+  );
+  const selectedApprovalPending =
+    selected?.lifecycleState === 'PREVIEWED' &&
+    selected?.riskTier === 'L3' &&
+    (selectedApprovals.length === 0 ||
+      selectedApprovals.some((approval) => approval.lifecycleState !== 'APPROVED'));
 
   const columns = useMemo<GridColDef<ProviderOperation>[]>(
     () => [
@@ -360,25 +368,38 @@ export function ProviderOperations() {
                 <Typography variant="caption" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
                   {t('approvals.expires', { value: formatProviderDate(approval.expiresAt) })}
                 </Typography>
-                {canApprove && (
-                  <Stack direction="row" gap={0.5}>
-                    <Button
+                {canApprove &&
+                  approval.separationOfDuties &&
+                  approval.requestedBy === operator.data?.operatorId && (
+                    <Chip
                       size="small"
-                      startIcon={<Check size={16} />}
-                      onClick={() => setDecision({ approval, value: 'APPROVED' })}
-                    >
-                      {t('approvals.actions.APPROVED')}
-                    </Button>
-                    <Button
-                      size="small"
-                      color="error"
-                      startIcon={<X size={16} />}
-                      onClick={() => setDecision({ approval, value: 'REJECTED' })}
-                    >
-                      {t('approvals.actions.REJECTED')}
-                    </Button>
-                  </Stack>
-                )}
+                      variant="outlined"
+                      color="warning"
+                      icon={<ShieldCheck size={15} />}
+                      label={t('approvals.independentReviewerRequired')}
+                    />
+                  )}
+                {canApprove &&
+                  (!approval.separationOfDuties ||
+                    approval.requestedBy !== operator.data?.operatorId) && (
+                    <Stack direction="row" gap={0.5}>
+                      <Button
+                        size="small"
+                        startIcon={<Check size={16} />}
+                        onClick={() => setDecision({ approval, value: 'APPROVED' })}
+                      >
+                        {t('approvals.actions.APPROVED')}
+                      </Button>
+                      <Button
+                        size="small"
+                        color="error"
+                        startIcon={<X size={16} />}
+                        onClick={() => setDecision({ approval, value: 'REJECTED' })}
+                      >
+                        {t('approvals.actions.REJECTED')}
+                      </Button>
+                    </Stack>
+                  )}
               </Stack>
             ))
           )}
@@ -428,8 +449,9 @@ export function ProviderOperations() {
         <ProviderOperationDialog
           operation={selected}
           busy={busy}
+          approvalPending={selectedApprovalPending}
           onClose={() => setSelected(null)}
-          onExecute={canExecute ? execute : undefined}
+          onExecute={canExecute && !selectedApprovalPending ? execute : undefined}
           onRetry={canExecute ? retry : undefined}
         />
       )}

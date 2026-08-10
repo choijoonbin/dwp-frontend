@@ -1,8 +1,8 @@
 # R0 Provider Control Plane 및 Tenant Estate ADR
 
-> 상태: Accepted v1.1
+> 상태: Accepted and Implemented Local Baseline v1.2
 >
-> 기준일: 2026-08-10
+> 기준일: 2026-08-11
 >
 > 적용 저장소: `dwp-frontend`, `dwp-backend`
 
@@ -191,7 +191,22 @@ Provider Control Plane은 테이블 중심 메뉴가 아니라 운영 의사결�
 - 대량 시간순 감사 조회에는 BRIN, Tenant·Operator별 조회에는 B-tree 인덱스를 사용한다.
 - 외래키는 기본적으로 삭제를 제한한다. 감사·계약·개통 이력을 Cascade 삭제하지 않는다.
 
-### 7.1 데이터 수명과 확장
+### 7.1 신뢰성 의사결정과 예정 유지보수
+
+- `prv_service_level_objectives`는 목표·범위·측정 창을, Append-only
+  `prv_service_level_snapshots`는 달성률·오류 예산·Burn rate를 보존한다. 상태 숫자만
+  표시하지 않고 배포 중단이나 조치 판단의 입력으로 사용한다.
+- `prv_governance_controls`와 시간순 `prv_governance_evaluations`는 기대 상태와 관측 상태를
+  분리한다. 최신 비준수 결과만 운영 화면에 노출하되 원 평가 이력은 덮어쓰지 않는다.
+- 예정 유지보수는 `prv_maintenance_windows`와 `prv_operations`가 1:1로 연결된다. 요청 시
+  창은 `DRAFT`, 작업은 `PREVIEWED / L3`이며 요청자와 다른 Provider Admin의 승인을 받은
+  뒤 `SCHEDULE_MAINTENANCE` 단계가 성공해야만 `SCHEDULED`가 된다.
+- 고객 통지 시각, 최소 통지 시간, 실제 영향 초, 범위 대상은 검색 가능한 정규 컬럼과 DB
+  제약으로 검증한다. 설명과 공급자별 확장 정보만 JSONB에 둔다.
+- 승인 거절은 작업과 유지보수 창을 함께 취소하고, 실행 실패는 Tenant 온보딩 상태를
+  변경하지 않는다. 모든 전이는 동일 Operation ID와 Correlation ID로 감사된다.
+
+### 7.2 데이터 수명과 확장
 
 - 자주 변경되는 현재 상태는 Aggregate Table, 재생과 조사가 필요한 변경은 Append-only
   Timeline Table에 저장한다.
@@ -228,6 +243,12 @@ Provider Control Plane은 테이블 중심 메뉴가 아니라 운영 의사결�
 11. 운영 지휘의 조치 큐는 Incident, 승인 대기, 실패 작업, 만료·용량 위험을 하나의 우선순위로
     통합한다.
 12. Provider 전 화면은 Desktop과 390px Mobile에서 핵심 명령과 상태가 겹치지 않는다.
+13. SLO는 목표와 관측 Snapshot을 분리하고 오류 예산과 Burn rate를 같은 평가 시점으로
+    재구성할 수 있다.
+14. 정책 Drift는 기대·관측 Snapshot과 교정 작업 유형을 보존하며 최신 위반에서 원 평가
+    이력으로 추적할 수 있다.
+15. 예정 유지보수는 Operation 없는 행을 허용하지 않고, L3 승인 전에는 `SCHEDULED`로
+    전이할 수 없으며 요청자는 자신의 작업을 승인할 수 없다.
 
 ## 10. 근거
 
@@ -238,5 +259,10 @@ Provider Control Plane은 테이블 중심 메뉴가 아니라 운영 의사결�
 - [AWS SaaS Lens - Operations](https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/operate.html)
 - [Microsoft Entra PIM - Approval workflow](https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-approval-workflow)
 - [Microsoft 365 - Service health](https://learn.microsoft.com/en-gb/microsoft-365/enterprise/view-service-health?view=o365-worldwide)
+- [Microsoft 365 - Message center](https://learn.microsoft.com/en-us/microsoft-365/admin/manage/message-center?view=o365-worldwide)
+- [Azure Service Health - Planned maintenance](https://learn.microsoft.com/en-us/azure/service-health/service-health-planned-maintenance)
+- [Google SRE Workbook - Error budget policy](https://sre.google/workbook/error-budget-policy/)
+- [Google Cloud - SLO monitoring](https://docs.cloud.google.com/stackdriver/docs/solutions/slo-monitoring)
+- [Google Cloud Resource Manager - Audit logging](https://docs.cloud.google.com/resource-manager/docs/audit-logging)
 - [PostgreSQL - JSON Types](https://www.postgresql.org/docs/current/datatype-json.html)
 - [PostgreSQL - Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)

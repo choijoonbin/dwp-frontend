@@ -288,6 +288,76 @@ export type ProviderServiceHealthOverview = {
   incidents: ProviderServiceIncident[];
 };
 
+export type ProviderServiceLevelObjective = {
+  objectiveId: string;
+  objectiveKey: string;
+  displayName: string;
+  serviceKey: string;
+  serviceName: string;
+  criticality: string;
+  indicatorType: string;
+  scopeType: string;
+  scopeLabel: string;
+  targetPct: number;
+  complianceWindowDays: number;
+  achievedPct?: number | null;
+  errorBudgetRemainingPct?: number | null;
+  burnRate?: number | null;
+  complianceState: 'HEALTHY' | 'AT_RISK' | 'EXHAUSTED' | 'NO_DATA';
+  measurementSource?: string | null;
+  observedAt?: string | null;
+};
+
+export type ProviderGovernanceDrift = {
+  evaluationId: string;
+  controlKey: string;
+  controlName: string;
+  controlCategory: string;
+  controlBehavior: string;
+  guidanceLevel: string;
+  riskTier: string;
+  targetType: string;
+  targetId: string;
+  tenantId?: string | null;
+  tenantName?: string | null;
+  evaluationResult: string;
+  expectedSnapshot: string;
+  observedSnapshot: string;
+  remediationOperationType?: string | null;
+  evaluatedAt: string;
+};
+
+export type ProviderMaintenanceWindow = {
+  maintenanceWindowId: string;
+  operationId: string;
+  trackingKey: string;
+  title: string;
+  summary: string;
+  scopeType: string;
+  scopeLabel: string;
+  impactType: string;
+  expectedImpactSeconds: number;
+  lifecycleState: string;
+  startsAt: string;
+  endsAt: string;
+  customerNoticeAt?: string | null;
+  minimumNoticeHours: number;
+  noticeCompliant: boolean;
+  version: number;
+};
+
+export type ProviderReliabilityControl = {
+  generatedAt: string;
+  healthyObjectives: number;
+  atRiskObjectives: number;
+  exhaustedObjectives: number;
+  openDriftFindings: number;
+  upcomingMaintenance: number;
+  objectives: ProviderServiceLevelObjective[];
+  driftFindings: ProviderGovernanceDrift[];
+  maintenanceWindows: ProviderMaintenanceWindow[];
+};
+
 export type ProviderServicePlanPortfolio = {
   planKey: string;
   planVersion: number;
@@ -457,6 +527,13 @@ export async function getProviderServiceHealth(): Promise<ProviderServiceHealthO
   return response.data.data;
 }
 
+export async function getProviderReliabilityControl(): Promise<ProviderReliabilityControl> {
+  const response = await axiosInstance.get<ApiResponse<ProviderReliabilityControl>>(
+    `${BASE}/reliability-control`
+  );
+  return response.data.data;
+}
+
 export async function getProviderCommercialOverview(): Promise<ProviderCommercialOverview> {
   const response = await axiosInstance.get<ApiResponse<ProviderCommercialOverview>>(
     `${BASE}/commercial`
@@ -610,6 +687,35 @@ export async function updateProviderIncident(
     visibility,
     version: incident.version,
   });
+  return response.data.data;
+}
+
+export async function createProviderMaintenanceWindow(request: {
+  trackingKey: string;
+  title: string;
+  summary: string;
+  scopeType: 'GLOBAL' | 'SERVICE' | 'REGION' | 'CELL' | 'TENANT';
+  serviceKey?: string | null;
+  regionKey?: string | null;
+  deploymentCellId?: string | null;
+  tenantId?: string | null;
+  impactType:
+    | 'NO_IMPACT'
+    | 'BRIEF_INTERRUPTION'
+    | 'DEGRADED_PERFORMANCE'
+    | 'SERVICE_UNAVAILABLE'
+    | 'FAILOVER'
+    | 'OTHER';
+  expectedImpactSeconds: number;
+  startsAt: string;
+  endsAt: string;
+  customerNoticeAt: string;
+  minimumNoticeHours: number;
+}): Promise<ProviderMaintenanceWindow> {
+  const response = await axiosInstance.post<ApiResponse<ProviderMaintenanceWindow>, typeof request>(
+    `${BASE}/maintenance-windows`,
+    request
+  );
   return response.data.data;
 }
 

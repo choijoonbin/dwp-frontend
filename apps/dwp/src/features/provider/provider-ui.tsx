@@ -43,14 +43,26 @@ export function ProviderStatusChip({ state }: { state: string }) {
     'VERIFIED',
     'HEALTHY',
     'APPROVED',
+    'COMPLIANT',
+    'COMPLETED',
     'RESOLVED',
     'CLOSED',
   ].includes(state)
     ? 'success'
-    : ['FAILED', 'DEGRADED', 'REVOKED', 'CRITICAL', 'REJECTED'].includes(state)
+    : [
+          'FAILED',
+          'DEGRADED',
+          'REVOKED',
+          'CRITICAL',
+          'REJECTED',
+          'NON_COMPLIANT',
+          'EXHAUSTED',
+          'ERROR',
+        ].includes(state)
       ? 'error'
       : [
             'PREVIEWED',
+            'DRAFT',
             'PARTIAL',
             'PENDING_EXTERNAL',
             'PENDING',
@@ -60,6 +72,9 @@ export function ProviderStatusChip({ state }: { state: string }) {
             'IDENTIFIED',
             'MONITORING',
             'TRIAL',
+            'AT_RISK',
+            'NO_DATA',
+            'IN_PROGRESS',
           ].includes(state)
         ? 'warning'
         : 'default';

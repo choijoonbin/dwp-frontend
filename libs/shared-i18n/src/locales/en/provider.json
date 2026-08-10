@@ -113,6 +113,7 @@
     "SUSPENDED": "Suspended",
     "RETIRED": "Retired",
     "PREVIEWED": "Awaiting review",
+    "DRAFT": "Draft awaiting approval",
     "CONTROL_PLANE_READY": "Control record ready",
     "PENDING_EXTERNAL": "External integration pending",
     "READY": "Ready",
@@ -139,14 +140,24 @@
     "CLOSED": "Closed",
     "APPROVED": "Approved",
     "REJECTED": "Rejected",
-    "TRIAL": "Trial"
+    "TRIAL": "Trial",
+    "COMPLIANT": "Compliant",
+    "NON_COMPLIANT": "Non-compliant",
+    "AT_RISK": "Error budget at risk",
+    "EXHAUSTED": "Error budget exhausted",
+    "NO_DATA": "No measurement data",
+    "ERROR": "Evaluation error",
+    "SCHEDULED": "Scheduled",
+    "IN_PROGRESS": "In progress",
+    "COMPLETED": "Completed"
   },
   "domainTypes": { "LOGIN": "Sign-in", "EMAIL": "Email", "CUSTOM": "Custom" },
   "operationTypes": {
     "TENANT_ONBOARD": "Tenant onboarding",
     "TENANT_SUSPEND": "Tenant suspension",
     "TENANT_ACTIVATE": "Tenant activation",
-    "ENTITLEMENT_CHANGE": "Entitlement change"
+    "ENTITLEMENT_CHANGE": "Entitlement change",
+    "MAINTENANCE_SCHEDULE": "Planned maintenance scheduling"
   },
   "overview": {
     "health": "Provider operating metrics",
@@ -272,6 +283,7 @@
     "retryReason": "Retry justification",
     "executed": "Plan execution completed.",
     "retried": "Operation retried from the failed step.",
+    "approvalRequired": "This L3 change can run only after approval by an independent reviewer.",
     "notCreated": "Not created",
     "columns": {
       "operation": "Operation",
@@ -287,6 +299,7 @@
     "description": "High-risk operations require a role-qualified approver who is separate from the requester.",
     "empty": "No changes are awaiting approval.",
     "expires": "Expires {{value}}",
+    "independentReviewerRequired": "Independent reviewer required",
     "fields": {
       "reason": "Approval or rejection reason"
     },
@@ -309,7 +322,8 @@
     "PLATFORM_TENANT": "Platform tenant",
     "PEOPLE_TENANT": "People tenant",
     "ASSET_STORAGE": "Tenant asset storage",
-    "ACTIVATE_TENANT": "Tenant activation"
+    "ACTIVATE_TENANT": "Tenant activation",
+    "SCHEDULE_MAINTENANCE": "Schedule planned maintenance"
   },
   "health": {
     "lastUpdated": "Last evaluated {{value}}",
@@ -378,6 +392,68 @@
       "visibility": {
         "INTERNAL": "Internal operations only",
         "CUSTOMER": "Customer shareable"
+      }
+    }
+  },
+  "reliability": {
+    "title": "Reliability and operating controls",
+    "description": "Manage SLOs, error budgets, policy drift, and planned maintenance as one operating decision flow.",
+    "viewLabel": "Reliability operating view",
+    "views": {
+      "SLO": "SLO and error budget",
+      "DRIFT": "Policy drift",
+      "MAINTENANCE": "Planned maintenance"
+    },
+    "metrics": {
+      "healthyObjectives": "Healthy SLOs",
+      "atRiskObjectives": "At-risk SLOs",
+      "drift": "Open drift",
+      "maintenance": "Upcoming work"
+    },
+    "slo": {
+      "target": "Target {{target}}% · {{days}} days · {{scope}}",
+      "errorBudget": "Error budget remaining",
+      "achieved": "Achieved {{value}}",
+      "noData": "No measurement"
+    },
+    "drift": {
+      "empty": "No operating targets currently diverge from their baseline.",
+      "manualReview": "Manual review"
+    },
+    "maintenance": {
+      "empty": "There is no recent or upcoming maintenance.",
+      "reviewRequested": "The notice policy was validated and independent change approval was requested.",
+      "noticeCompliant": "Notice met",
+      "noticeRisk": "Notice risk",
+      "actions": {
+        "create": "Request maintenance review",
+        "schedule": "Validate and request review",
+        "reviewChange": "Review in change control"
+      },
+      "dialog": {
+        "title": "Request planned maintenance review",
+        "notice": "Validate customer notice, actual impact, and scope to create an L3 change. A different provider administrator must approve and execute it before scheduling."
+      },
+      "fields": {
+        "trackingKey": "Tracking ID",
+        "title": "Work title",
+        "summary": "Work and customer impact summary",
+        "scope": "Impact scope",
+        "target": "Affected target",
+        "impactType": "Expected impact type",
+        "impactSeconds": "Expected actual impact (seconds)",
+        "startsAt": "Work starts",
+        "endsAt": "Work ends",
+        "noticeAt": "Customer notice sent",
+        "minimumNotice": "Minimum notice (hours)"
+      },
+      "impact": {
+        "NO_IMPACT": "No customer impact",
+        "BRIEF_INTERRUPTION": "Brief interruption",
+        "DEGRADED_PERFORMANCE": "Temporary degradation",
+        "SERVICE_UNAVAILABLE": "Service unavailable",
+        "FAILOVER": "Service failover",
+        "OTHER": "Other impact"
       }
     }
   },

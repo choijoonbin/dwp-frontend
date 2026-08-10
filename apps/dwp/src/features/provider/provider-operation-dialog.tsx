@@ -22,12 +22,20 @@ import { formatProviderDate, parseProviderJson, ProviderStatusChip } from './pro
 type Props = {
   operation: ProviderOperation;
   busy: boolean;
+  approvalPending?: boolean;
   onClose: () => void;
   onExecute?: (operation: ProviderOperation) => Promise<void>;
   onRetry?: (operation: ProviderOperation, justification: string) => Promise<void>;
 };
 
-export function ProviderOperationDialog({ operation, busy, onClose, onExecute, onRetry }: Props) {
+export function ProviderOperationDialog({
+  operation,
+  busy,
+  approvalPending = false,
+  onClose,
+  onExecute,
+  onRetry,
+}: Props) {
   const { t } = useTranslation('provider');
   const [retryReason, setRetryReason] = useState('');
   const plan = parseProviderJson(operation.plan);
@@ -60,6 +68,7 @@ export function ProviderOperationDialog({ operation, busy, onClose, onExecute, o
           </Stack>
 
           {operation.failureMessage && <Alert severity="error">{operation.failureMessage}</Alert>}
+          {approvalPending && <Alert severity="info">{t('operations.approvalRequired')}</Alert>}
 
           <Box
             sx={{

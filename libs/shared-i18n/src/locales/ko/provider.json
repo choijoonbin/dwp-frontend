@@ -117,6 +117,7 @@
     "SUSPENDED": "일시중지",
     "RETIRED": "종료",
     "PREVIEWED": "검토 대기",
+    "DRAFT": "승인 대기 초안",
     "CONTROL_PLANE_READY": "제어 정보 준비",
     "PENDING_EXTERNAL": "외부 연동 대기",
     "READY": "준비 완료",
@@ -143,14 +144,24 @@
     "CLOSED": "종료됨",
     "APPROVED": "승인됨",
     "REJECTED": "거절됨",
-    "TRIAL": "평가판"
+    "TRIAL": "평가판",
+    "COMPLIANT": "준수",
+    "NON_COMPLIANT": "미준수",
+    "AT_RISK": "예산 소진 주의",
+    "EXHAUSTED": "오류 예산 소진",
+    "NO_DATA": "측정 데이터 없음",
+    "ERROR": "평가 오류",
+    "SCHEDULED": "예약됨",
+    "IN_PROGRESS": "진행 중",
+    "COMPLETED": "완료"
   },
   "domainTypes": { "LOGIN": "로그인", "EMAIL": "이메일", "CUSTOM": "사용자 지정" },
   "operationTypes": {
     "TENANT_ONBOARD": "테넌트 온보딩",
     "TENANT_SUSPEND": "테넌트 일시중지",
     "TENANT_ACTIVATE": "테넌트 활성화",
-    "ENTITLEMENT_CHANGE": "사용 권한 변경"
+    "ENTITLEMENT_CHANGE": "사용 권한 변경",
+    "MAINTENANCE_SCHEDULE": "예정 유지보수 예약"
   },
   "overview": {
     "health": "프로바이더 운영 지표",
@@ -276,6 +287,7 @@
     "retryReason": "재시도 사유",
     "executed": "계획 실행을 완료했습니다.",
     "retried": "실패 지점부터 작업을 재시도했습니다.",
+    "approvalRequired": "이 L3 변경은 독립 검토자의 승인이 완료된 뒤 실행할 수 있습니다.",
     "notCreated": "생성 전",
     "columns": {
       "operation": "작업",
@@ -291,6 +303,7 @@
     "description": "고위험 작업은 요청자와 분리된 승인자가 업무 사유를 검토해야 합니다.",
     "empty": "승인 대기 중인 변경이 없습니다.",
     "expires": "만료 {{value}}",
+    "independentReviewerRequired": "독립 검토자 필요",
     "fields": {
       "reason": "승인 또는 거절 사유"
     },
@@ -313,7 +326,8 @@
     "PLATFORM_TENANT": "플랫폼 테넌트",
     "PEOPLE_TENANT": "구성원 테넌트",
     "ASSET_STORAGE": "테넌트 에셋 스토리지",
-    "ACTIVATE_TENANT": "테넌트 활성화"
+    "ACTIVATE_TENANT": "테넌트 활성화",
+    "SCHEDULE_MAINTENANCE": "예정 유지보수 예약"
   },
   "health": {
     "lastUpdated": "최근 평가 {{value}}",
@@ -382,6 +396,68 @@
       "visibility": {
         "INTERNAL": "내부 운영 전용",
         "CUSTOMER": "고객 공유 가능"
+      }
+    }
+  },
+  "reliability": {
+    "title": "신뢰성 및 운영 통제",
+    "description": "SLO와 오류 예산, 정책 드리프트, 예정 유지보수를 하나의 운영 판단 흐름으로 관리합니다.",
+    "viewLabel": "신뢰성 운영 보기",
+    "views": {
+      "SLO": "SLO 및 오류 예산",
+      "DRIFT": "정책 드리프트",
+      "MAINTENANCE": "예정 유지보수"
+    },
+    "metrics": {
+      "healthyObjectives": "정상 SLO",
+      "atRiskObjectives": "위험 SLO",
+      "drift": "미해결 드리프트",
+      "maintenance": "예정 작업"
+    },
+    "slo": {
+      "target": "목표 {{target}}% · {{days}}일 · {{scope}}",
+      "errorBudget": "남은 오류 예산",
+      "achieved": "달성 {{value}}",
+      "noData": "측정 없음"
+    },
+    "drift": {
+      "empty": "현재 기준선에서 벗어난 운영 대상이 없습니다.",
+      "manualReview": "수동 검토"
+    },
+    "maintenance": {
+      "empty": "최근 또는 예정된 유지보수 작업이 없습니다.",
+      "reviewRequested": "통지 정책 검증을 마쳤으며 독립 변경 승인을 요청했습니다.",
+      "noticeCompliant": "통지 충족",
+      "noticeRisk": "통지 위험",
+      "actions": {
+        "create": "유지보수 검토 요청",
+        "schedule": "검증 후 검토 요청",
+        "reviewChange": "변경 통제에서 검토"
+      },
+      "dialog": {
+        "title": "예정 유지보수 검토 요청",
+        "notice": "고객 통지, 실제 영향 시간과 범위를 검증한 뒤 L3 변경 작업을 생성합니다. 요청자와 다른 프로바이더 관리자가 승인하고 실행해야 예약됩니다."
+      },
+      "fields": {
+        "trackingKey": "추적 ID",
+        "title": "작업 제목",
+        "summary": "작업 및 고객 영향 설명",
+        "scope": "영향 범위",
+        "target": "영향 대상",
+        "impactType": "예상 영향 유형",
+        "impactSeconds": "예상 실제 영향(초)",
+        "startsAt": "작업 시작",
+        "endsAt": "작업 종료",
+        "noticeAt": "고객 통지 발송 시각",
+        "minimumNotice": "최소 사전 통지(시간)"
+      },
+      "impact": {
+        "NO_IMPACT": "고객 영향 없음",
+        "BRIEF_INTERRUPTION": "짧은 연결 중단",
+        "DEGRADED_PERFORMANCE": "일시적 성능 저하",
+        "SERVICE_UNAVAILABLE": "서비스 이용 불가",
+        "FAILOVER": "서비스 전환",
+        "OTHER": "기타 영향"
       }
     }
   },

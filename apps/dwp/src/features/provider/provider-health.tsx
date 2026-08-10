@@ -44,6 +44,7 @@ import {
   ProviderStatusChip,
   providerError,
 } from './provider-ui';
+import { ProviderReliability } from './provider-reliability';
 
 type IncidentDraft = {
   title: string;
@@ -326,6 +327,7 @@ export function ProviderHealth() {
     queryFn: () => listProviderTenants({ page: 0, size: 100 }),
   });
   const canManageIncidents = operator.data?.permissions.includes('INCIDENT_WRITE') ?? false;
+  const canScheduleMaintenance = operator.data?.permissions.includes('MAINTENANCE_WRITE') ?? false;
   const visibleIncidents = useMemo(
     () =>
       (health.data?.incidents ?? []).filter((incident) => {
@@ -526,6 +528,13 @@ export function ProviderHealth() {
           </Stack>
         </Box>
       </Box>
+
+      <ProviderReliability
+        services={health.data.services}
+        cells={health.data.cells}
+        tenants={tenants.data?.content ?? []}
+        canSchedule={canScheduleMaintenance}
+      />
 
       <Box component="section">
         <ProviderSectionHeading
