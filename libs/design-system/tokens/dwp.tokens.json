@@ -188,6 +188,11 @@
         "$description": "Desktop inline navigation width.",
         "$value": { "value": 248, "unit": "px" }
       },
+      "adminNavigationExpanded": {
+        "$type": "dimension",
+        "$description": "Desktop administration tree navigation width.",
+        "$value": { "value": 272, "unit": "px" }
+      },
       "navigationCompact": {
         "$type": "dimension",
         "$description": "Desktop compact navigation rail width.",

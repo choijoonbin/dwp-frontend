@@ -47,6 +47,7 @@ export const foundationTokens = {
   },
   layout: {
     navigationExpanded: pixels(tokenFile.dimension.layout.navigationExpanded),
+    adminNavigationExpanded: pixels(tokenFile.dimension.layout.adminNavigationExpanded),
     navigationCompact: pixels(tokenFile.dimension.layout.navigationCompact),
     headerHeight: pixels(tokenFile.dimension.layout.headerHeight),
     focusCanvasMaxWidth: pixels(tokenFile.dimension.layout.focusCanvasMaxWidth),

@@ -230,8 +230,8 @@ test('tenant administrators govern organizations and direct groups', async ({ pa
     await route.fulfill({ status: 404, contentType: 'application/json', body: '{}' });
   });
 
-  await page.goto('/admin?view=directory');
-  await expect(page.getByRole('heading', { name: 'Directory' })).toBeVisible();
+  await page.goto('/admin/people/directory');
+  await expect(page.getByRole('heading', { name: 'Directory', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'New organization' }).click();
   const organizationDialog = page.getByRole('dialog', { name: 'New organization' });
   await organizationDialog.getByLabel('Organization key').fill('OPERATIONS');

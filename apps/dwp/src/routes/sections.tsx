@@ -1,7 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 
 import { lazy, Suspense } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { AuthGuard } from '@dwp-frontend/shared-utils';
 import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
 
@@ -9,8 +9,10 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { AppLayout } from '../layouts/app-layout';
+import { AdminLayout } from '../layouts/admin-layout';
 import { AuthLayout } from '../layouts/auth-layout';
 import { HomeLayout } from '../layouts/home-layout';
+import { getLegacyAdminPath } from '../features/admin/admin-navigation';
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
 
 const HomePage = lazy(() => import('../pages/home'));
@@ -41,6 +43,11 @@ function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   );
   const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
   return rolePermitted && appPermitted ? children : <Navigate to="/403" replace />;
+}
+
+function AdminLegacyRedirect() {
+  const [searchParams] = useSearchParams();
+  return <Navigate to={getLegacyAdminPath(searchParams.get('view'))} replace />;
 }
 
 function AppRouteGuard({
@@ -122,16 +129,6 @@ export const routesSection: RouteObject[] = [
         ),
       },
       {
-        path: 'admin',
-        element: (
-          <AdminRouteGuard>
-            <Suspense fallback={fallback}>
-              <AdminPage />
-            </Suspense>
-          </AdminRouteGuard>
-        ),
-      },
-      {
         path: 'account/profile',
         element: (
           <Suspense fallback={fallback}>
@@ -152,6 +149,27 @@ export const routesSection: RouteObject[] = [
         element: (
           <Suspense fallback={fallback}>
             <SecurityPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: 'admin',
+    element: (
+      <AuthGuard>
+        <AdminRouteGuard>
+          <AdminLayout />
+        </AdminRouteGuard>
+      </AuthGuard>
+    ),
+    children: [
+      { index: true, element: <AdminLegacyRedirect /> },
+      {
+        path: ':section/:view',
+        element: (
+          <Suspense fallback={fallback}>
+            <AdminPage />
           </Suspense>
         ),
       },

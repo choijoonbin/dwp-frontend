@@ -1,23 +1,10 @@
-import {
-  Boxes,
-  Building2,
-  Database,
-  Image,
-  Megaphone,
-  Network,
-  ScrollText,
-  Settings2,
-  UsersRound,
-} from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { useAuth } from '@dwp-frontend/shared-utils';
 import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
-import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 
 import { AuditLog } from '../features/admin/audit-log';
@@ -28,37 +15,43 @@ import { HomeExperienceManager } from '../features/admin/home-experience-manager
 import { RegistryManager } from '../features/admin/registry-manager';
 import { ReferenceDataManager } from '../features/admin/reference-data-manager';
 import { TenantBrandingManager } from '../features/admin/tenant-branding-manager';
+import {
+  ADMIN_NAVIGATION,
+  findAdminNavigationItem,
+  type AdminView,
+} from '../features/admin/admin-navigation';
 
-type AdminView =
-  | 'access'
-  | 'announcements'
-  | 'branding'
-  | 'directory'
-  | 'home-experience'
-  | 'reference-data'
-  | 'registry'
-  | 'audit';
+function AdminContent({ view }: { view: AdminView }) {
+  switch (view) {
+    case 'access':
+      return <AccessManager />;
+    case 'announcements':
+      return <AnnouncementManager />;
+    case 'branding':
+      return <TenantBrandingManager />;
+    case 'directory':
+      return <DirectoryManager />;
+    case 'home-experience':
+      return <HomeExperienceManager />;
+    case 'reference-data':
+      return <ReferenceDataManager />;
+    case 'registry':
+      return <RegistryManager />;
+    case 'audit':
+      return <AuditLog />;
+  }
+}
 
 export default function AdminPage() {
   const auth = useAuth();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const requestedView = searchParams.get('view');
-  const view: AdminView = [
-    'access',
-    'announcements',
-    'branding',
-    'directory',
-    'home-experience',
-    'reference-data',
-    'registry',
-    'audit',
-  ].includes(requestedView ?? '')
-    ? (requestedView as AdminView)
-    : 'access';
+  const { section, view } = useParams();
+  const page = findAdminNavigationItem(section, view);
 
-  const changeView = (_event: React.SyntheticEvent, value: AdminView) => {
-    setSearchParams(value === 'access' ? {} : { view: value });
-  };
+  if (!page) return <Navigate to="/404" replace />;
+
+  const PageIcon = page.icon;
+  const groupLabel =
+    ADMIN_NAVIGATION.find((group) => group.id === page.section)?.label ?? 'Administration';
 
   return (
     <PageCanvas>
@@ -67,118 +60,47 @@ export default function AdminPage() {
         alignItems={{ xs: 'flex-start', sm: 'center' }}
         justifyContent="space-between"
         gap={2}
+        sx={{ mb: 3 }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-          <Box
-            aria-hidden="true"
-            sx={{
-              width: 38,
-              height: 38,
-              display: 'grid',
-              placeItems: 'center',
-              bgcolor: 'text.primary',
-              color: 'background.paper',
-              borderRadius: 1,
-            }}
-          >
-            <Settings2 size={20} strokeWidth={1.8} />
-          </Box>
-          <Box>
-            <Typography component="h1" variant="h4">
-              Administration
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-              {auth.user?.tenantCode || 'Tenant'} control plane
-            </Typography>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography component="p" variant="overline" color="primary.main">
+            Control Center / {groupLabel}
+          </Typography>
+          <Box sx={{ mt: 0.25, display: 'flex', alignItems: 'flex-start', gap: 1.25 }}>
+            <Box
+              aria-hidden="true"
+              sx={{
+                width: 36,
+                height: 36,
+                display: 'grid',
+                flex: '0 0 36px',
+                placeItems: 'center',
+                color: 'primary.main',
+                bgcolor: 'action.selected',
+                borderRadius: 1,
+              }}
+            >
+              <PageIcon size={19} strokeWidth={1.8} />
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography component="h1" variant="h4">
+                {page.title}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                {page.description}
+              </Typography>
+            </Box>
           </Box>
         </Box>
-        <Chip label="Tenant scoped" color="info" variant="outlined" />
+        <Chip
+          label={`${auth.user?.tenantCode || 'Tenant'} scope`}
+          color="info"
+          variant="outlined"
+          size="small"
+        />
       </Stack>
 
-      <Tabs
-        value={view}
-        onChange={changeView}
-        aria-label="Administration views"
-        variant="scrollable"
-        scrollButtons="auto"
-        sx={{ mt: 3, mb: 2, minHeight: 44 }}
-      >
-        <Tab
-          value="branding"
-          icon={<Building2 size={17} strokeWidth={1.8} />}
-          iconPosition="start"
-          label="Branding"
-          sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
-        />
-        <Tab
-          value="home-experience"
-          icon={<Image size={17} strokeWidth={1.8} />}
-          iconPosition="start"
-          label="Home"
-          sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
-        />
-        <Tab
-          value="announcements"
-          icon={<Megaphone size={17} strokeWidth={1.8} />}
-          iconPosition="start"
-          label="Announcements"
-          sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
-        />
-        <Tab
-          value="access"
-          icon={<UsersRound size={17} strokeWidth={1.8} />}
-          iconPosition="start"
-          label="Access"
-          sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
-        />
-        <Tab
-          value="directory"
-          icon={<Network size={17} strokeWidth={1.8} />}
-          iconPosition="start"
-          label="Directory"
-          sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
-        />
-        <Tab
-          value="reference-data"
-          icon={<Database size={17} strokeWidth={1.8} />}
-          iconPosition="start"
-          aria-label="Reference data"
-          label={
-            <>
-              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                Reference data
-              </Box>
-              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
-                Data
-              </Box>
-            </>
-          }
-          sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
-        />
-        <Tab
-          value="registry"
-          icon={<Boxes size={17} strokeWidth={1.8} />}
-          iconPosition="start"
-          label="Registry"
-          sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
-        />
-        <Tab
-          value="audit"
-          icon={<ScrollText size={17} strokeWidth={1.8} />}
-          iconPosition="start"
-          label="Audit"
-          sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
-        />
-      </Tabs>
-
-      {view === 'access' && <AccessManager />}
-      {view === 'announcements' && <AnnouncementManager />}
-      {view === 'branding' && <TenantBrandingManager />}
-      {view === 'directory' && <DirectoryManager />}
-      {view === 'home-experience' && <HomeExperienceManager />}
-      {view === 'reference-data' && <ReferenceDataManager />}
-      {view === 'registry' && <RegistryManager />}
-      {view === 'audit' && <AuditLog />}
+      <AdminContent view={page.view} />
     </PageCanvas>
   );
 }

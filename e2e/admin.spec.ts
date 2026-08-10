@@ -150,8 +150,8 @@ test('tenant administrators configure and reset the personal home presentation',
     })
   );
 
-  await page.goto('/admin?view=home-experience');
-  await expect(page.getByRole('heading', { name: 'Home experience' })).toBeVisible();
+  await page.goto('/admin/experience/home-experience');
+  await expect(page.getByRole('heading', { name: 'Home experience', level: 1 })).toBeVisible();
   await expect(page.getByText('Default background', { exact: true })).toBeVisible();
   await page.getByLabel('Headline').fill('One workspace, ready for action');
   await page
@@ -296,7 +296,7 @@ test('tenant administrators manage co-branding and publish home announcements', 
     await route.fulfill({ contentType: 'application/json', body: envelope(announcements[0]) });
   });
 
-  await page.goto('/admin?view=branding');
+  await page.goto('/admin/experience/branding');
   await page.getByLabel('Organization name').fill('Northstar Semiconductor');
   await page.getByRole('button', { name: 'Save branding' }).click();
   await expect(page.getByText('Tenant branding saved.', { exact: true })).toBeVisible();
@@ -305,7 +305,7 @@ test('tenant administrators manage co-branding and publish home announcements', 
   await expect(page.getByText('Tenant logo uploaded.', { exact: true })).toBeVisible();
   await expect(page.getByText('Custom logo', { exact: true })).toBeVisible();
 
-  await page.getByRole('tab', { name: 'Announcements' }).click();
+  await page.goto('/admin/experience/announcements');
   await expect(page.getByText('No announcements')).toBeVisible();
   await page.getByRole('button', { name: 'New announcement' }).click();
   await page.getByLabel('Title').fill('Planned maintenance');
@@ -610,7 +610,31 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
   );
 
   await page.goto('/admin');
-  await expect(page.getByRole('heading', { name: 'Administration' })).toBeVisible();
+  await expect(page.getByTestId('admin-shell')).toBeVisible();
+  await expect(page.getByTestId('desktop-sidebar')).toHaveCount(0);
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: 'Open administration navigation' }).click();
+    await expect(
+      page.getByTestId('admin-mobile-sidebar').getByRole('navigation', {
+        name: 'Administration navigation',
+      })
+    ).toBeVisible();
+    await page.keyboard.press('Escape');
+  } else {
+    const adminNavigation = page
+      .getByTestId('admin-sidebar')
+      .getByRole('navigation', { name: 'Administration navigation' });
+    await expect(adminNavigation).toBeVisible();
+    await expect(adminNavigation.getByRole('button', { name: 'People & access' })).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    );
+    await expect(adminNavigation.getByRole('link', { name: 'Access control' })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+  }
+  await expect(page.getByRole('heading', { name: 'Identity access', level: 1 })).toBeVisible();
   const tenantUsers =
     testInfo.project.name === 'mobile'
       ? page.getByRole('list', { name: 'Tenant users' })
@@ -623,7 +647,7 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
   await accessDialog.getByRole('button', { name: 'Save access' }).click();
   await expect(tenantUsers).toContainText('ADMIN');
 
-  await page.getByRole('tab', { name: 'Reference data' }).click();
+  await page.goto('/admin/platform/reference-data');
   await expect(page.getByText('No reference sets')).toBeVisible();
 
   await page.getByRole('button', { name: 'New reference set' }).click();
@@ -655,7 +679,7 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
     .click();
   await expect(page.getByText('Active').first()).toBeVisible();
 
-  await page.getByRole('tab', { name: 'Registry' }).click();
+  await page.goto('/admin/platform/registry');
   const registryEntries =
     testInfo.project.name === 'mobile'
       ? page.getByRole('list', { name: 'Product registry entries' })
@@ -677,7 +701,7 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
     .click();
   await expect(registryEntries).toContainText('Active');
 
-  await page.getByRole('tab', { name: 'Audit' }).click();
+  await page.goto('/admin/governance/audit');
   const auditList =
     testInfo.project.name === 'mobile'
       ? page.getByRole('list', { name: 'Administration audit events' })
