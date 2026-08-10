@@ -300,6 +300,84 @@ test('unauthenticated users see the login shell without business navigation', as
   await expectNoAutomaticAccessibilityViolations(page);
 });
 
+test('tenant policy promotes the configured SSO provider without hiding local access', async ({
+  page,
+}) => {
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill({
+      status: 401,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ERROR', errorCode: 'UNAUTHORIZED' }),
+    })
+  );
+  await page.route('**/api/auth/policy', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          tenantId: 1,
+          defaultLoginType: 'SSO',
+          allowedLoginTypes: ['LOCAL', 'SSO'],
+          localLoginEnabled: true,
+          ssoLoginEnabled: true,
+          ssoProviderKey: 'entra-workforce',
+          requireMfa: false,
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/idp', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: [
+          {
+            tenantId: 1,
+            enabled: true,
+            providerType: 'OIDC',
+            providerKey: 'unrelated-provider',
+          },
+          {
+            tenantId: 1,
+            enabled: true,
+            providerType: 'OIDC',
+            providerKey: 'entra-workforce',
+          },
+        ],
+      }),
+    })
+  );
+
+  let requestedProvider = '';
+  await page.route('**/api/auth/oidc/login?**', async (route) => {
+    requestedProvider = new URL(route.request().url()).searchParams.get('providerKey') || '';
+    await route.fulfill({ status: 204 });
+  });
+
+  await page.goto('/');
+  const ssoButton = page.getByRole('button', { name: 'Sign in with organization SSO' });
+  const localButton = page.getByRole('button', { name: 'Sign in', exact: true });
+
+  await expect(ssoButton).toBeVisible();
+  await expect(ssoButton).toHaveClass(/MuiButton-contained/);
+  await expect(localButton).toHaveClass(/MuiButton-outlined/);
+  expect(
+    await ssoButton.evaluate((button) =>
+      Boolean(
+        button.compareDocumentPosition(document.querySelector('form')) &
+          Node.DOCUMENT_POSITION_FOLLOWING
+      )
+    )
+  ).toBe(true);
+
+  await ssoButton.click();
+  await expect.poll(() => requestedProvider).toBe('entra-workforce');
+});
+
 test('authenticated users enter a personal home before the business shell', async ({
   page,
 }, testInfo) => {

@@ -24,18 +24,40 @@ import InputAdornment from '@mui/material/InputAdornment';
 import CircularProgress from '@mui/material/CircularProgress';
 import { alpha, type Theme } from '@mui/material/styles';
 
-const fieldSx = {
+const fieldSx = (theme: Theme) => ({
   '& .MuiOutlinedInput-root': {
     minHeight: 50,
-    bgcolor: 'background.paper',
+    overflow: 'hidden',
+    backgroundColor: theme.palette.background.paper,
     transition: 'border-color 120ms ease-out, box-shadow 120ms ease-out',
-    '& fieldset': { borderColor: 'divider' },
-    '&:hover fieldset': { borderColor: 'text.secondary' },
+    '& fieldset': { borderColor: theme.palette.divider },
+    '&:hover fieldset': { borderColor: theme.palette.text.secondary },
     '&.Mui-focused': {
-      boxShadow: (theme: Theme) => `0 0 0 4px ${alpha(theme.palette.primary.main, 0.12)}`,
+      boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.12)}`,
     },
   },
   '& .MuiOutlinedInput-input': { py: 1.5 },
+  '& .MuiOutlinedInput-input:-webkit-autofill, & .MuiOutlinedInput-input:-webkit-autofill:hover, & .MuiOutlinedInput-input:-webkit-autofill:focus, & .MuiOutlinedInput-input:-webkit-autofill:active':
+    {
+      WebkitBoxShadow: `0 0 0 100px ${theme.palette.background.paper} inset !important`,
+      WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+      caretColor: theme.palette.text.primary,
+      transition: 'background-color 9999s ease-out 0s',
+    },
+});
+
+const primaryActionSx = {
+  minHeight: 50,
+  '& .MuiButton-endIcon': {
+    transition: 'transform 160ms cubic-bezier(0.2, 0, 0, 1)',
+  },
+  '&:hover .MuiButton-endIcon': {
+    transform: 'translateX(3px)',
+  },
+  '@media (prefers-reduced-motion: reduce)': {
+    '& .MuiButton-endIcon': { transition: 'none' },
+    '&:hover .MuiButton-endIcon': { transform: 'none' },
+  },
 } as const;
 
 const labelSx = {
@@ -54,7 +76,13 @@ export default function SignInPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const policyQuery = useAuthPolicyQuery();
-  const idpQuery = useIdpQuery();
+  const ssoConfigured = Boolean(
+    policyQuery.data?.ssoLoginEnabled && policyQuery.data.allowedLoginTypes.includes('SSO')
+  );
+  const idpQuery = useIdpQuery({
+    enabled: ssoConfigured,
+    providerKey: policyQuery.data?.ssoProviderKey,
+  });
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -68,10 +96,10 @@ export default function SignInPage() {
       ),
     [policyQuery.data]
   );
-  const allowSso = Boolean(
-    policyQuery.data?.ssoLoginEnabled &&
-      policyQuery.data.allowedLoginTypes.includes('SSO') &&
-      idpQuery.data?.providerKey
+  const ssoProviderKey = idpQuery.data?.providerKey || null;
+  const allowSso = Boolean(ssoConfigured && ssoProviderKey);
+  const preferSso = Boolean(
+    allowSso && (!allowLocal || policyQuery.data?.defaultLoginType === 'SSO')
   );
 
   const submit = async (event: React.FormEvent) => {
@@ -88,7 +116,7 @@ export default function SignInPage() {
     }
   };
 
-  if (policyQuery.isLoading || idpQuery.isLoading) {
+  if (policyQuery.isLoading || (ssoConfigured && idpQuery.isLoading)) {
     return (
       <Box
         role="status"
@@ -103,6 +131,103 @@ export default function SignInPage() {
   if (policyQuery.error || !policyQuery.data) {
     return <Alert severity="error">{t('errors.policyLoadFailed')}</Alert>;
   }
+
+  const localForm = allowLocal ? (
+    <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2.5 }}>
+      <FormControl required fullWidth>
+        <FormLabel htmlFor="dwp-username" sx={labelSx}>
+          {t('signIn.username')}
+        </FormLabel>
+        <TextField
+          id="dwp-username"
+          name="username"
+          required
+          fullWidth
+          hiddenLabel
+          autoFocus={!preferSso}
+          autoComplete="username"
+          placeholder={t('signIn.usernamePlaceholder')}
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+          sx={fieldSx}
+        />
+      </FormControl>
+
+      <FormControl required fullWidth>
+        <FormLabel htmlFor="dwp-password" sx={labelSx}>
+          {t('signIn.password')}
+        </FormLabel>
+        <TextField
+          id="dwp-password"
+          name="password"
+          required
+          fullWidth
+          hiddenLabel
+          type={showPassword ? 'text' : 'password'}
+          autoComplete="current-password"
+          placeholder={t('signIn.passwordPlaceholder')}
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          sx={fieldSx}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Tooltip
+                    title={showPassword ? t('signIn.hidePassword') : t('signIn.showPassword')}
+                  >
+                    <IconButton
+                      edge="end"
+                      aria-label={
+                        showPassword ? t('signIn.hidePassword') : t('signIn.showPassword')
+                      }
+                      onClick={() => setShowPassword((visible) => !visible)}
+                      onMouseDown={(event) => event.preventDefault()}
+                      sx={{ width: 36, height: 36 }}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </IconButton>
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      </FormControl>
+
+      <Button
+        type="submit"
+        size="large"
+        variant={preferSso ? 'outlined' : 'contained'}
+        disabled={submitting}
+        endIcon={!submitting ? <ArrowRight size={18} /> : undefined}
+        sx={{ ...primaryActionSx, mt: 0.5 }}
+      >
+        {submitting ? (
+          <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+            <CircularProgress size={17} color="inherit" />
+            {t('signIn.submitting')}
+          </Box>
+        ) : (
+          t('signIn.submit')
+        )}
+      </Button>
+    </Box>
+  ) : null;
+
+  const ssoButton =
+    allowSso && ssoProviderKey ? (
+      <Button
+        fullWidth
+        size="large"
+        variant={preferSso ? 'contained' : 'outlined'}
+        startIcon={<ShieldCheck size={18} />}
+        onClick={() => window.location.assign(buildOidcLoginUrl(ssoProviderKey))}
+        sx={{ minHeight: 50 }}
+      >
+        {t('signIn.sso')}
+      </Button>
+    ) : null;
 
   return (
     <Box>
@@ -138,103 +263,13 @@ export default function SignInPage() {
         </Alert>
       )}
 
-      {allowLocal && (
-        <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2.5 }}>
-          <FormControl required fullWidth>
-            <FormLabel htmlFor="dwp-username" sx={labelSx}>
-              {t('signIn.username')}
-            </FormLabel>
-            <TextField
-              id="dwp-username"
-              name="username"
-              required
-              fullWidth
-              hiddenLabel
-              autoFocus
-              autoComplete="username"
-              placeholder={t('signIn.usernamePlaceholder')}
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              sx={fieldSx}
-            />
-          </FormControl>
-
-          <FormControl required fullWidth>
-            <FormLabel htmlFor="dwp-password" sx={labelSx}>
-              {t('signIn.password')}
-            </FormLabel>
-            <TextField
-              id="dwp-password"
-              name="password"
-              required
-              fullWidth
-              hiddenLabel
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              placeholder={t('signIn.passwordPlaceholder')}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              sx={fieldSx}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Tooltip
-                        title={showPassword ? t('signIn.hidePassword') : t('signIn.showPassword')}
-                      >
-                        <IconButton
-                          edge="end"
-                          aria-label={
-                            showPassword ? t('signIn.hidePassword') : t('signIn.showPassword')
-                          }
-                          onClick={() => setShowPassword((visible) => !visible)}
-                          onMouseDown={(event) => event.preventDefault()}
-                          sx={{ width: 36, height: 36 }}
-                        >
-                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </IconButton>
-                      </Tooltip>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </FormControl>
-
-          <Button
-            type="submit"
-            size="large"
-            variant="contained"
-            disabled={submitting}
-            endIcon={!submitting ? <ArrowRight size={18} /> : undefined}
-            sx={{ minHeight: 50, mt: 0.5 }}
-          >
-            {submitting ? (
-              <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
-                <CircularProgress size={17} color="inherit" />
-                {t('signIn.submitting')}
-              </Box>
-            ) : (
-              t('signIn.submit')
-            )}
-          </Button>
-        </Box>
+      {preferSso && ssoButton}
+      {preferSso && allowLocal && <Divider sx={{ my: 3 }}>{t('signIn.separator')}</Divider>}
+      {localForm}
+      {!preferSso && allowLocal && allowSso && (
+        <Divider sx={{ my: 3 }}>{t('signIn.separator')}</Divider>
       )}
-
-      {allowLocal && allowSso && <Divider sx={{ my: 3 }}>{t('signIn.separator')}</Divider>}
-
-      {allowSso && idpQuery.data && (
-        <Button
-          fullWidth
-          size="large"
-          variant={allowLocal ? 'outlined' : 'contained'}
-          startIcon={<ShieldCheck size={18} />}
-          onClick={() => window.location.assign(buildOidcLoginUrl(idpQuery.data!.providerKey))}
-          sx={{ minHeight: 50 }}
-        >
-          {t('signIn.sso')}
-        </Button>
-      )}
+      {!preferSso && ssoButton}
 
       {!allowLocal && !allowSso && <Alert severity="warning">{t('errors.noMethods')}</Alert>}
 

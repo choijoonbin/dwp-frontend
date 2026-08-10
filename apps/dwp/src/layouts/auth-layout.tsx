@@ -4,7 +4,6 @@ import { ProductMark } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
 
 import { LanguageMenu } from '../components/language-menu';
 
@@ -32,23 +31,6 @@ export function AuthLayout() {
       }}
     >
       <Box
-        component="img"
-        src={AUTH_WORLD_ASSET}
-        alt=""
-        aria-hidden="true"
-        data-testid="auth-world-visual"
-        sx={{
-          position: 'absolute',
-          inset: 0,
-          width: 1,
-          height: { xs: 230, sm: 260, md: '100%' },
-          objectFit: 'cover',
-          objectPosition: { xs: '34% 52%', sm: '38% 54%', md: 'center center' },
-          userSelect: 'none',
-        }}
-      />
-
-      <Box
         component="section"
         aria-labelledby="dwp-auth-title"
         sx={{
@@ -57,6 +39,7 @@ export function AuthLayout() {
           minWidth: 0,
           minHeight: { xs: 230, sm: 260, md: '100dvh' },
           position: 'relative',
+          overflow: 'hidden',
           zIndex: 1,
           display: 'flex',
           flexDirection: 'column',
@@ -75,6 +58,25 @@ export function AuthLayout() {
           },
         }}
       >
+        <Box
+          component="img"
+          src={AUTH_WORLD_ASSET}
+          alt=""
+          aria-hidden="true"
+          data-testid="auth-world-visual"
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            width: 1,
+            height: 1,
+            objectFit: 'cover',
+            objectPosition: 'left center',
+            transform: 'scale(1.55)',
+            transformOrigin: 'left center',
+            userSelect: 'none',
+          }}
+        />
+
         <ProductMark
           aria-label={tShell('brand.productName')}
           sx={{
@@ -167,17 +169,10 @@ export function AuthLayout() {
           px: { xs: 3, sm: 6, md: 6 },
           py: { xs: 3.5, sm: 6, md: 8 },
           color: 'text.primary',
-          backgroundColor: (theme) =>
-            alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.96 : 0.91),
-          backdropFilter: 'blur(26px) saturate(112%)',
-          WebkitBackdropFilter: 'blur(26px) saturate(112%)',
+          bgcolor: 'background.paper',
           borderTop: { xs: '1px solid', md: 0 },
           borderLeft: { xs: 0, md: '1px solid' },
           borderColor: 'divider',
-          boxShadow: {
-            xs: '0 -16px 40px rgba(15, 21, 29, 0.08)',
-            md: '-20px 0 56px rgba(15, 21, 29, 0.08)',
-          },
           animation: 'dwp-auth-panel-enter 420ms cubic-bezier(0.2, 0, 0, 1) both',
           '@keyframes dwp-auth-panel-enter': {
             from: { opacity: 0, transform: 'translateX(8px)' },
