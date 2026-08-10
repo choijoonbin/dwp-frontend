@@ -314,8 +314,20 @@ test('authenticated users enter a personal home before the business shell', asyn
   } else {
     await expect(page.getByText('Platform administrator', { exact: true })).toBeVisible();
   }
+  await page.evaluate(() => {
+    (window as typeof window & { __dwpSpaNavigationMarker?: string }).__dwpSpaNavigationMarker =
+      'preserved';
+  });
   await businessSidebar.getByRole('link', { name: 'Digital Workplace home' }).click();
   await expect(page).toHaveURL(/\/$/);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as typeof window & { __dwpSpaNavigationMarker?: string }).__dwpSpaNavigationMarker
+      )
+    )
+    .toBe('preserved');
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();
   await expect(page.getByTestId('desktop-sidebar')).toHaveCount(0);
 
@@ -389,6 +401,87 @@ test('authenticated users enter a personal home before the business shell', asyn
     await expandNavigation.click();
     await expect(sidebar).toHaveCSS('width', '248px');
   }
+});
+
+test('tenant branding does not shift the home header while the logo loads', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'Desktop header geometry is verified here.');
+
+  let signalBrandingRequest = () => undefined;
+  let releaseBranding = () => undefined;
+  const brandingRequested = new Promise<void>((resolve) => {
+    signalBrandingRequest = resolve;
+  });
+  const brandingGate = new Promise<void>((resolve) => {
+    releaseBranding = resolve;
+  });
+
+  await page.unroute('**/api/platform/v1/tenant-branding');
+  await page.route('**/api/platform/v1/tenant-branding', async (route) => {
+    signalBrandingRequest();
+    await brandingGate;
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          organizationName: 'SK AX',
+          logoUrl: '/assets/brand/dwp-mark.svg',
+          logoWidth: 34,
+          logoHeight: 34,
+          version: 1,
+        },
+      }),
+    });
+  });
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          userId: 1,
+          displayName: 'Admin',
+          jobTitle: 'Platform administrator',
+          email: 'admin@dwp.local',
+          tenantId: 1,
+          tenantCode: 'default',
+          roles: ['ADMIN'],
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/permissions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
+
+  await page.goto('/');
+  await brandingRequested;
+  const header = page.getByTestId('home-header');
+  const productLabel = header.getByText('Digital Workplace', { exact: true });
+  const workspaceMenu = header.getByRole('button', { name: 'Select workspace' });
+  await expect(productLabel).toBeVisible();
+  await expect(workspaceMenu).toBeVisible();
+  const before = {
+    product: await productLabel.boundingBox(),
+    workspace: await workspaceMenu.boundingBox(),
+  };
+
+  releaseBranding();
+  await expect(header.getByRole('link', { name: 'SK AX Digital Workplace home' })).toBeVisible();
+  const after = {
+    product: await productLabel.boundingBox(),
+    workspace: await workspaceMenu.boundingBox(),
+  };
+
+  expect(after.product?.x).toBeCloseTo(before.product?.x ?? 0, 1);
+  expect(after.workspace?.x).toBeCloseTo(before.workspace?.x ?? 0, 1);
 });
 
 test('compact navigation reflows the desktop workspace canvas', async ({ page }, testInfo) => {
