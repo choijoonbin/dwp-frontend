@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { layoutChart, visibleOrganizationIds, visiblePersonIds } from './org-chart-layout';
+import {
+  layoutChart,
+  visibleOrganizationIds,
+  visiblePersonIds,
+  visiblePositionIds,
+} from './org-chart-layout';
 
 import type { Edge } from '@xyflow/react';
 import type {
   OrganizationChartOrganization,
   OrganizationChartPerson,
+  OrganizationChartPosition,
 } from '@dwp-frontend/shared-utils';
 import type { OrgChartFlowNode } from './org-chart-nodes';
 
@@ -18,6 +24,7 @@ function organization(
     organizationKey: organizationId,
     name: organizationId,
     organizationType: parentOrganizationId ? 'DEPARTMENT' : 'COMPANY',
+    organizationTypeName: parentOrganizationId ? 'Department' : 'Company',
     parentOrganizationId,
     directHeadcount: 1,
     totalHeadcount: 1,
@@ -25,6 +32,11 @@ function organization(
     openPositionCount: 0,
     childOrganizationCount: 0,
     directMemberIds: [],
+    layerDepth: parentOrganizationId ? 1 : 0,
+    averageManagerSpan: 0,
+    contingentHeadcount: 0,
+    healthStatus: 'HEALTHY',
+    healthSignals: [],
   };
 }
 
@@ -35,10 +47,28 @@ function person(personId: string, managerPersonId?: string): OrganizationChartPe
     displayName: personId,
     organizationId: 'root',
     managerPersonId,
+    managerReferenceMissing: false,
     jobGradeOrder: 1,
     workerType: 'EMPLOYEE',
     workerStatus: 'ACTIVE',
     directReportCount: 0,
+    fullTimeEquivalent: 1,
+  };
+}
+
+function position(positionId: string, reportsToPositionId?: string): OrganizationChartPosition {
+  return {
+    positionId,
+    positionKey: `position-${positionId}`,
+    title: positionId,
+    organizationId: 'root',
+    reportsToPositionId,
+    status: 'FILLED',
+    positionType: 'REGULAR',
+    criticality: 'STANDARD',
+    budgetedFte: 1,
+    incumbentPersonIds: [],
+    subordinatePositionCount: 0,
   };
 }
 
@@ -68,28 +98,35 @@ describe('organization chart visibility', () => {
       new Set(['ceo', 'lead', 'independent'])
     );
   });
+
+  it('hides subordinate positions below a collapsed position', () => {
+    const positions = [position('chief'), position('lead', 'chief'), position('engineer', 'lead')];
+
+    expect(visiblePositionIds(positions, new Set(['lead']))).toEqual(new Set(['chief', 'lead']));
+  });
 });
 
 describe('organization chart layout', () => {
   it('lays a hierarchy top-to-bottom without overlapping the rank', () => {
-    const nodes = ['root', 'child'].map(
-      (id): OrgChartFlowNode => ({
-        id,
-        type: 'organization',
-        position: { x: 0, y: 0 },
-        data: {
-          organization: organization(id, id === 'child' ? 'root' : undefined),
-          collapsed: false,
-          matched: false,
-          headcountLabel: '1',
-          openPositionLabel: '0',
-          collapseLabel: 'collapse',
-          expandLabel: 'expand',
-          onToggle: () => undefined,
-          direction: 'TB',
-        },
-      })
-    );
+    const nodes = ['root', 'child'].map((id): OrgChartFlowNode => ({
+      id,
+      type: 'organization',
+      position: { x: 0, y: 0 },
+      data: {
+        organization: organization(id, id === 'child' ? 'root' : undefined),
+        collapsed: false,
+        matched: false,
+        headcountLabel: '1',
+        openPositionLabel: '0',
+        collapseLabel: 'collapse',
+        expandLabel: 'expand',
+        onToggle: () => undefined,
+        direction: 'TB',
+        accentColor: '',
+        surfaceColor: '',
+        scenarioChanged: false,
+      },
+    }));
     const edges: Edge[] = [{ id: 'edge', source: 'root', target: 'child' }];
     const result = layoutChart(nodes, edges, 'TB');
 

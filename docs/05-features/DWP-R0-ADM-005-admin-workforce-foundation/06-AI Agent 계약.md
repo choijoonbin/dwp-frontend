@@ -19,3 +19,12 @@ Agent는 자연어 요청을 직접 Database Mutation으로 실행하지 않는�
 
 Agent는 `mutationAllowed=false`인 Reference Plan만 제공한다. 실제 Mutation Endpoint는
 Policy Evaluator, Approval Store와 Command Executor가 구현된 뒤 별도 Gate로 연다.
+
+## Organization Design Tool Boundary
+
+- Read Tool: 조직 Health, Data Quality, Span·Layer·Cost 분포, 시나리오 Decision Pack 조회
+- Plan Tool: 조직 이동, 직위 이동·신설·종료를 Typed Change로 제안하고 영향 Preview 생성
+- Validate Tool: 동일 Baseline Fingerprint와 Policy Check로 재현 가능한 근거 생성
+- Execute Tool: 직접 SQL이 아니라 승인된 Scenario Publish Command만 호출
+- AI 추천은 `evidence`, `assumption`, `confidence`, `affectedScope`를 포함하고 사람의 최종 승인을 대체하지 않는다.
+- Skills·Collaboration Graph 기반 추천은 개인정보·목적 제한과 데이터 계약 승인 전에는 활성화하지 않는다.

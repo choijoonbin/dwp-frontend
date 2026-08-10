@@ -1,4 +1,11 @@
-import { Building2, ChevronDown, ChevronUp, MapPin, UsersRound } from 'lucide-react';
+import {
+  BriefcaseBusiness,
+  Building2,
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  UsersRound,
+} from 'lucide-react';
 import { Handle, Position } from '@xyflow/react';
 
 import Box from '@mui/material/Box';
@@ -13,12 +20,15 @@ import type { Node, NodeProps } from '@xyflow/react';
 import type {
   OrganizationChartOrganization,
   OrganizationChartPerson,
+  OrganizationChartPosition,
 } from '@dwp-frontend/shared-utils';
 
 export const ORGANIZATION_NODE_WIDTH = 276;
 export const ORGANIZATION_NODE_HEIGHT = 156;
 export const PERSON_NODE_WIDTH = 252;
 export const PERSON_NODE_HEIGHT = 116;
+export const POSITION_NODE_WIDTH = 264;
+export const POSITION_NODE_HEIGHT = 132;
 
 const accentColors: Record<string, string> = {
   SK_RED: '#D71920',
@@ -44,6 +54,10 @@ export type OrganizationNodeData = Record<string, unknown> & {
   expandLabel: string;
   onToggle: (organizationId: string) => void;
   direction: 'TB' | 'LR';
+  accentColor: string;
+  surfaceColor: string;
+  lensLabel?: string;
+  scenarioChanged: boolean;
 };
 
 export type PersonNodeData = Record<string, unknown> & {
@@ -58,9 +72,27 @@ export type PersonNodeData = Record<string, unknown> & {
   direction: 'TB' | 'LR';
 };
 
+export type PositionNodeData = Record<string, unknown> & {
+  position: OrganizationChartPosition;
+  incumbent?: OrganizationChartPerson;
+  organizationName: string;
+  collapsed: boolean;
+  matched: boolean;
+  statusLabel: string;
+  criticalityLabel: string;
+  subordinateLabel: string;
+  collapseLabel: string;
+  expandLabel: string;
+  onToggle: (positionId: string) => void;
+  direction: 'TB' | 'LR';
+  scenarioChanged: boolean;
+  scenarioChangeLabel: string;
+};
+
 export type OrganizationFlowNode = Node<OrganizationNodeData, 'organization'>;
 export type PersonFlowNode = Node<PersonNodeData, 'person'>;
-export type OrgChartFlowNode = OrganizationFlowNode | PersonFlowNode;
+export type PositionFlowNode = Node<PositionNodeData, 'position'>;
+export type OrgChartFlowNode = OrganizationFlowNode | PersonFlowNode | PositionFlowNode;
 
 const handleStyle = {
   width: 7,
@@ -71,7 +103,7 @@ const handleStyle = {
 
 export function OrganizationNode({ data, selected }: NodeProps<OrganizationFlowNode>) {
   const { organization, leader } = data;
-  const accent = accentColors[organization.colorToken ?? ''] ?? '#526577';
+  const accent = data.accentColor || accentColors[organization.colorToken ?? ''] || '#526577';
   const expandable = organization.childOrganizationCount > 0;
   const targetPosition = data.direction === 'LR' ? Position.Left : Position.Top;
   const sourcePosition = data.direction === 'LR' ? Position.Right : Position.Bottom;
@@ -81,9 +113,15 @@ export function OrganizationNode({ data, selected }: NodeProps<OrganizationFlowN
       sx={{
         width: ORGANIZATION_NODE_WIDTH,
         height: ORGANIZATION_NODE_HEIGHT,
-        bgcolor: 'background.paper',
+        bgcolor: data.surfaceColor || 'background.paper',
         border: '1px solid',
-        borderColor: selected ? 'primary.main' : data.matched ? '#D71920' : 'divider',
+        borderColor: selected
+          ? 'primary.main'
+          : data.scenarioChanged
+            ? '#7C3AED'
+            : data.matched
+              ? '#D71920'
+              : 'divider',
         borderTop: `4px solid ${accent}`,
         borderRadius: 1,
         boxShadow: selected
@@ -103,7 +141,8 @@ export function OrganizationNode({ data, selected }: NodeProps<OrganizationFlowN
               sx={{ textTransform: 'uppercase' }}
               noWrap
             >
-              {organization.organizationType.replace(/_/gu, ' ')}
+              {organization.organizationTypeName ||
+                organization.organizationType.replace(/_/gu, ' ')}
             </Typography>
           </Stack>
           <Typography component="p" variant="subtitle2" sx={{ mt: 0.35, fontWeight: 750 }} noWrap>
@@ -132,6 +171,17 @@ export function OrganizationNode({ data, selected }: NodeProps<OrganizationFlowN
             <Typography variant="caption" color="warning.dark">
               {data.openPositionLabel}
             </Typography>
+          )}
+          {data.lensLabel && (
+            <Typography variant="caption" fontWeight={700} sx={{ color: accent }} noWrap>
+              {data.lensLabel}
+            </Typography>
+          )}
+          {data.scenarioChanged && (
+            <Box
+              component="span"
+              sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#7C3AED', flex: '0 0 7px' }}
+            />
           )}
           {expandable && (
             <Tooltip title={data.collapsed ? data.expandLabel : data.collapseLabel}>
@@ -231,6 +281,114 @@ export function PersonNode({ data, selected }: NodeProps<PersonFlowNode>) {
             <Typography variant="caption" color="primary.main">
               {data.reportLabel}
             </Typography>
+          )}
+        </Stack>
+      </Stack>
+      <Handle type="source" position={sourcePosition} style={handleStyle} />
+    </Box>
+  );
+}
+
+export function PositionNode({ data, selected }: NodeProps<PositionFlowNode>) {
+  const { position, incumbent } = data;
+  const hasSubordinates = position.subordinatePositionCount > 0;
+  const targetPosition = data.direction === 'LR' ? Position.Left : Position.Top;
+  const sourcePosition = data.direction === 'LR' ? Position.Right : Position.Bottom;
+  const critical = position.criticality === 'CRITICAL' || position.criticality === 'HIGH';
+  const accent = position.status === 'OPEN' ? '#B7791F' : critical ? '#C2412D' : '#0F8A7B';
+
+  return (
+    <Box
+      sx={{
+        width: POSITION_NODE_WIDTH,
+        height: POSITION_NODE_HEIGHT,
+        bgcolor: position.status === 'OPEN' ? '#FFFCF5' : 'background.paper',
+        border: '1px solid',
+        borderColor: selected ? 'primary.main' : data.matched ? '#D71920' : 'divider',
+        borderTop: `4px solid ${accent}`,
+        borderRadius: 1,
+        boxShadow: selected
+          ? '0 0 0 2px rgba(37, 99, 235, 0.14), 0 7px 18px rgba(15, 23, 42, 0.11)'
+          : '0 3px 12px rgba(15, 23, 42, 0.07)',
+        px: 1.4,
+        py: 1.15,
+      }}
+    >
+      <Handle type="target" position={targetPosition} style={handleStyle} />
+      <Stack sx={{ height: 1 }} justifyContent="space-between">
+        <Box sx={{ minWidth: 0 }}>
+          <Stack direction="row" alignItems="center" gap={0.65}>
+            <BriefcaseBusiness size={14} color={accent} />
+            <Typography variant="caption" color="text.secondary" noWrap sx={{ flex: 1 }}>
+              {position.positionKey}
+            </Typography>
+            {data.scenarioChanged && (
+              <Box
+                component="span"
+                title={data.scenarioChangeLabel}
+                sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#7C3AED' }}
+              />
+            )}
+            <Typography variant="caption" fontWeight={750} sx={{ color: accent }}>
+              {data.statusLabel}
+            </Typography>
+          </Stack>
+          <Typography component="p" variant="subtitle2" fontWeight={750} noWrap sx={{ mt: 0.35 }}>
+            {position.title}
+          </Typography>
+        </Box>
+
+        <Stack direction="row" alignItems="center" gap={0.9} sx={{ minWidth: 0 }}>
+          {incumbent ? (
+            <PersonAvatar name={incumbent.displayName} size={30} />
+          ) : (
+            <Box
+              sx={{
+                width: 30,
+                height: 30,
+                display: 'grid',
+                placeItems: 'center',
+                borderRadius: '50%',
+                bgcolor: 'action.hover',
+                color: 'text.secondary',
+              }}
+            >
+              <BriefcaseBusiness size={15} />
+            </Box>
+          )}
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Typography variant="body2" fontWeight={650} noWrap>
+              {incumbent?.displayName ?? data.statusLabel}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" display="block" noWrap>
+              {data.organizationName}
+            </Typography>
+          </Box>
+          {critical && (
+            <Typography variant="caption" color="error.main" fontWeight={700}>
+              {data.criticalityLabel}
+            </Typography>
+          )}
+        </Stack>
+
+        <Stack direction="row" alignItems="center" sx={{ minHeight: 25 }}>
+          <Typography variant="caption" color="text.secondary">
+            {data.subordinateLabel}
+          </Typography>
+          {hasSubordinates && (
+            <Tooltip title={data.collapsed ? data.expandLabel : data.collapseLabel}>
+              <IconButton
+                size="small"
+                aria-label={data.collapsed ? data.expandLabel : data.collapseLabel}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  data.onToggle(position.positionId);
+                }}
+                sx={{ ml: 'auto', width: 25, height: 25 }}
+              >
+                {data.collapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+              </IconButton>
+            </Tooltip>
           )}
         </Stack>
       </Stack>

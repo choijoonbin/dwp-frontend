@@ -1,8 +1,8 @@
 # R1 Effective Organization Graph 및 People Directory ADR
 
-> 상태: Accepted and Implemented Local Baseline v1.0
+> 상태: Accepted and Implemented Local Baseline v2.0
 >
-> 기준일: 2026-08-10
+> 기준일: 2026-08-11
 >
 > 적용 저장소: `dwp-backend`, `dwp-frontend`
 
@@ -18,6 +18,11 @@ context가 소유하는 유효일 기준 Workforce Projection을 원본으로 �
 - 기본 조직은 단일 상위의 `SUPERVISORY`, 겸임·협업 관계는 `MATRIX` 또는
   `FUNCTIONAL`로 분리한다.
 - 사람의 보고 관계는 유효한 `ppl_assignments.manager_assignment_key`를 해석한다.
+- Position 보고 관계는 `ppl_position_relationships`의 유효기간과 Source를 사용한다.
+  같은 시점에는 `SCENARIO > HRIS > POSITION > INFERRED` 우선순위를 적용하고 주 관계의
+  기간 중첩과 자기 참조를 DB에서 차단한다.
+- 조직 개편은 운영 Graph를 직접 수정하지 않고 Scenario에서 설계·검증·승인·게시한다.
+  Baseline Fingerprint가 달라지면 게시를 거부해 오래된 조직안이 현재 구조를 덮지 못한다.
 - React Flow가 상호작용·Viewport·접근성 기반을, Dagre가 계층 자동 배치를 담당한다.
   레이아웃 알고리즘을 업무 코드에서 직접 구현하지 않는다.
 - `dwp_auth`의 역할은 이메일 정규화 키로 화면에서 읽기 결합한다. People DB에 RBAC
@@ -29,13 +34,18 @@ Workday의 Supervisory Organization, ChartHop의 사람·그룹 전환과 상세
 Workleap의 자동 갱신·공석·매트릭스 표현을 공통 기준으로 채택했다. 화면은 감상용
 다이어그램이 아니라 반복 탐색을 위한 운영 도구다.
 
-1. `조직 구조`와 `보고 체계`를 Segmented Control로 즉시 전환한다.
+1. `조직 구조`, `보고 체계`, `Position`, `인사이트`를 Segmented Control로 즉시 전환한다.
 2. 기준일을 변경해 현재·미래 발령을 같은 화면에서 조회한다.
 3. 조직과 사람 노드를 접고 펼치며, 전체 회사 또는 선택 조직으로 Scope를 좁힌다.
 4. 조직·사람·이메일·직책 검색 결과로 Canvas가 이동한다.
 5. 주 보고선과 매트릭스 관계는 색·선형·범례를 함께 달리해 색만으로 구분하지 않는다.
 6. 선택 상세는 Desktop Side Inspector, Mobile Bottom Drawer로 제공한다.
 7. 구성원 디렉터리는 조직·직급·근무지·재직상태·시스템 역할을 교차 필터링한다.
+8. Span, Layer, 공석, FTE, 인건비, 외부인력과 데이터 품질을 분석 Lens로 제공한다.
+9. Scenario는 Drag-to-draft, 직위 이동·신설·종료, 전후 Preview, 독립 승인, 게시와 CSV
+   Evidence Export를 제공한다.
+10. 하나의 변경안을 계보가 보존된 독립 Draft로 복제하고, 동일한 기준 지문일 때만 두
+    대안의 준비도·인원·FTE·비용·Span·Layer·품질 차이를 의사결정 비교값으로 제시한다.
 
 ## 3. 데이터 모델
 
@@ -50,16 +60,26 @@ erDiagram
     JOB_PROFILE ||--o{ ASSIGNMENT : classifies
     JOB_GRADE ||--o{ ASSIGNMENT : grades
     POSITION ||--o{ ASSIGNMENT : filled_by
+    POSITION ||--o{ POSITION_RELATIONSHIP : child
+    POSITION ||--o{ POSITION_RELATIONSHIP : parent
     LOCATION ||--o{ ASSIGNMENT : locates
+    ORG_SCENARIO ||--o{ SCENARIO_CHANGE : proposes
+    ORG_SCENARIO ||--o{ SCENARIO_APPROVAL : gates
+    ORG_SCENARIO ||--o{ VALIDATION_RUN : evidences
 ```
 
-| 객체                             | 핵심 필드                                                           | 규칙                                    |
-| -------------------------------- | ------------------------------------------------------------------- | --------------------------------------- |
-| `ppl_organizations`              | key, type, short name, description, cost center, color, valid range | 조직 Master와 표시 Metadata             |
-| `ppl_organization_relationships` | child, parent, type, primary, effective range                       | 같은 조직의 시간·관계 유형별 Graph Edge |
-| `ppl_job_grades`                 | grade key, level order, career track, lifecycle                     | 고객별 직급 체계와 정렬 순서            |
-| `ppl_assignments`                | effective range, org, position, job, grade, manager                 | 사람의 시점별 배치와 보고 관계          |
-| `ppl_positions`                  | status, availability date, org, job, location                       | `OPEN`이면 조직별 공석으로 집계         |
+| 객체                                        | 핵심 필드                                                               | 규칙                                    |
+| ------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------- |
+| `ppl_organizations`                         | key, type, short name, description, cost center, color, valid range     | 조직 Master와 표시 Metadata             |
+| `ppl_organization_relationships`            | child, parent, type, primary, effective range                           | 같은 조직의 시간·관계 유형별 Graph Edge |
+| `ppl_job_grades`                            | grade key, level order, career track, lifecycle                         | 고객별 직급 체계와 정렬 순서            |
+| `ppl_assignments`                           | effective range, org, position, job, grade, manager                     | 사람의 시점별 배치와 보고 관계          |
+| `ppl_positions`                             | key, status, type, criticality, FTE, annual cost, currency, valid range | 직위·공석·예산의 유효일 원장            |
+| `ppl_position_relationships`                | child, parent, type, source, effective range                            | 시점·Source별 Position 보고 Graph       |
+| `ppl_organization_scenarios`                | baseline/effective date, fingerprint, source scenario, owner, lifecycle | 개편안 Aggregate·계보·낙관적 Version    |
+| `ppl_organization_scenario_changes`         | payload schema, before/after snapshot, delta, validation                | 버전이 명시된 변경 명령과 영향          |
+| `ppl_organization_scenario_approvals`       | role, requester/decider, expiry, validation evidence UUID               | 독립 승인·만료·판단 근거 결속           |
+| `ppl_organization_scenario_validation_runs` | fingerprint, metric delta, checks, readiness                            | 수정 불가 의사결정 Evidence             |
 
 모든 Key·Unique·FK는 `tenant_id`를 포함한다. 조직 관계는 Self-reference를 금지하고,
 서비스 계층에서 순환을 방어한다. 유효일 조회는 시작일 포함·종료일 포함이며 같은 날짜의
@@ -73,11 +93,17 @@ erDiagram
 | -------------------- | ------------ | ------------------------------- |
 | `asOf`               | 오늘         | 조직·발령 관계 기준일           |
 | `rootOrganizationId` | Company Root | 선택 조직을 Root로 하는 Subtree |
-| `depth`              | 10           | 1~10 범위의 최대 탐색 깊이      |
+| `depth`              | 6            | 1~12 범위의 최대 탐색 깊이      |
 
-응답은 `company`, `metrics`, `organizations`, `people`, `relationships`,
-`openPositions`로 구성한다. Worker Number는 HR Admin 계열 역할 외 사용자에게 마스킹한다.
+응답은 `company`, `metrics`, `organizations`, `people`, `relationships`, `positions`,
+`positionRelationships`, `openPositions`로 구성한다. Worker Number는 HR Admin 계열 역할 외
+사용자에게 마스킹한다.
 People Directory API도 조직·직급·관리자·근무지·직속 인원 필드를 같은 기준일로 반환한다.
+
+Scenario API는 생성·계보 기반 복제·변경 추가/삭제·검증·제출·승인/거절·게시를 별도 명령으로 제공한다.
+제출, 승인, 게시 시마다 Cycle, Root, Version, Baseline Fingerprint와 Blocking Issue를 다시
+검증하며 게시만 유효일 관계를 생성한다. 제출·승인/반려·게시 Row는 그 판단에 사용한 불변
+Validation Run UUID를 FK로 참조한다.
 
 ## 5. 화면 구조
 
@@ -97,18 +123,32 @@ Interactive organization/reporting canvas              | Selection detail
 
 ## 6. SKAX 합성 Baseline
 
-- 회사 `SKAX`, 20개 활성 조직, 43명, 5개 근무지
+- 회사 `SKAX`, 회사 Root 포함 21개 Master 조직(조직도 활성 집계 20개), 43명, 5개 근무지
 - Company, 부문, 본부, 부서, 팀의 4단계 계층
 - 생성형 AI, 데이터, 클라우드, ERP, 컨설팅, Corporate, 반도체 AX 조직
 - 정규 구성원·외부 전문인력·휴직·미래 이동 발령
 - G1~G7과 계약직 C1, 관리자·임원·전문가 직책
-- 주 보고관계 19개, 매트릭스 관계 3개, 공석 6개
+- 주 보고관계 19개, 매트릭스 관계 3개, 직위 53개(충원 43·공석 10), 계획 FTE 53
 - Auth의 현재 제공 역할을 합성 계정에 결정적으로 분배하며 계정은 `INVITED` 상태로 유지
 
 `@skax.example` 주소와 모든 이름·발령은 개발용 합성 데이터다. 운영 Delivery에서는
 고객별 Source Mapping 승인을 거친 HRIS/SCIM Interface가 동일 Projection을 갱신한다.
 
-## 7. Delivery Gate
+## 7. 경쟁 제품 기준과 DWP 차별화
+
+| 검증 기준 | 상용 제품에서 확인한 기준                               | DWP 구현 기준                                                      |
+| --------- | ------------------------------------------------------- | ------------------------------------------------------------------ |
+| 탐색      | Microsoft Org Explorer의 관리자 Chain, 동료·직속 탐색   | 조직·보고·Position 네트워크와 검색·접기·Inspector                  |
+| Position  | SAP의 Position 중심 조직도와 공석 표시                  | 유효일 Position Graph, Source 우선순위, 공석·FTE·비용 Lens         |
+| What-if   | Oracle Workforce Modeling의 Scenario와 동기화           | 불변 Baseline Fingerprint, 전후 Graph, 독립 승인과 유효일 게시     |
+| 의사결정  | Workday Org Design의 시나리오 모델링                    | Readiness Score, Cycle/Root/Span/Layer 검사와 Append-only Evidence |
+| 대안 탐색 | Workleap의 Planning Chart 복제, Workday의 복수 Scenario | 계보 보존 Clone과 기준 지문 일치 시에만 허용하는 Side-by-side 비교 |
+
+우월성은 화면 기능 수로 주장하지 않는다. `동일 시점 재현 가능성`, `승인 우회 불가`,
+`게시 전 구조 무결성`, `10k 규모 탐색 성능`, `접근성`을 측정 Gate로 두고 경쟁 제품과 같은
+시나리오를 반복 검증한다.
+
+## 8. Delivery Gate
 
 1. 고객 HRIS 조직 유형·직급·공석·겸임 Mapping 승인
 2. 조직 순환, 고아 조직, 겹치는 유효기간, 관리자 부재 Reconciliation
@@ -117,14 +157,23 @@ Interactive organization/reporting canvas              | Selection detail
 5. 1만 명 이상 조직의 Layout Worker 또는 ELK 전환 성능 검증
 6. Tablet·Mobile 탐색, Keyboard, Screen Reader와 Reduced Motion 회귀 검증
 
-현재 Baseline은 Local 개발 규모에서 API, 유효일, 자동 배치, 상호작용, 반응형 상세와
-합성 데이터를 구현한다. 대규모 Graph의 전체 Rendering은 Delivery 성능 Gate로 남긴다.
+현재 Baseline은 유효일 조직·Position Graph, 네 가지 View, 조직 건강·데이터 품질·기간
+비교, Scenario Preview·대안 복제/비교·독립 승인·게시와 반응형 탐색을 구현한다. 10k 이상 Graph의 가상화,
+HRIS 충돌 해소 Workbench와 고객별 정책 임계값은 Delivery 성능·통합 Gate로 남긴다.
 
-## 8. 근거
+## 9. 근거
 
 - [Workday Organization Management](https://www.workday.com/content/dam/web/en-us/documents/datasheets/organization-management-in-workday-datasheet-en-us.pdf)
 - [Workday Superior and Subordinate Organizations](https://doc.workday.com/admin-guide/en-us/manage-workday/organizations/manage-organization-concepts/concept--superior-and-subordinate-organizations.html)
+- [Workday Org Design and Scenario Modeling](https://doc.workday.com/adaptive-planning/en-us/what-s-new/releases/2026r1-release-notes/2026r1-planning-for-hcm-and-financials/org-design-and-scenario-modeling.html)
+- [Microsoft Org Explorer](https://support.microsoft.com/en-US/People-Skills/org-explorer)
+- [SAP Latest Org Chart](https://help.sap.com/docs/successfactors-platform/managing-sap-successfactors-user-experience/latest-org-chart?locale=en-US)
+- [SAP Position Organization Chart](https://help.sap.com/docs/SAP_SUCCESSFACTORS_RELEASE_INFORMATION/8e0d540f96474717bbf18df51e54e522/6b91cd3f8e3f494591f32089c12f1d11.html)
+- [Oracle Workforce Modeling](https://docs.oracle.com/en/cloud/saas/human-resources/fawhr/workforce-modeling.html)
+- [Oracle Workforce Modeling Synchronization](https://docs.oracle.com/en/cloud/saas/human-resources/fawhr/how-synchronization-works-in-workforce-modeling.html)
 - [ChartHop Org Chart](https://www.charthop.com/categories/org-chart)
 - [Workleap Org Chart Software](https://workleap.com/org-chart-software)
+- [Workleap Planning Org Charts](https://help.workleap.com/en/articles/10281399-create-planning-org-charts)
+- [Workleap Planning Comments](https://help.workleap.com/en/articles/10281403-collaborate-with-comments-on-planning-charts)
 - [React Flow Examples](https://reactflow.dev/examples)
 - [React Flow Layouting](https://reactflow.dev/learn/layouting/layouting)

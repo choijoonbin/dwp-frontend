@@ -1100,6 +1100,7 @@
     },
     "filters": { "asOf": "기준일", "compareTo": "비교 기준일" },
     "metrics": {
+      "summaryLabel": "조직 핵심 지표",
       "headcount": "전체 구성원",
       "organizations": "활성 조직",
       "managers": "리더",
@@ -1194,12 +1195,52 @@
         "quality": "데이터 품질"
       },
       "metrics": {
+        "health": "조직 건전성",
         "quality": "데이터 품질 점수",
         "atRisk": "주의 조직",
+        "critical": "위험 조직",
         "layers": "최대 조직 계층",
         "managerSpan": "평균 관리 범위",
         "headcountDelta": "인원 증감",
+        "fteDelta": "계획 FTE 증감",
+        "costDelta": "연간 비용 증감",
+        "layersDelta": "계층 증감",
+        "healthDelta": "건전성 증감",
         "totalChanges": "감지된 변경"
+      },
+      "decision": {
+        "healthMapTitle": "조직 포트폴리오 위험 지도",
+        "healthMapHelp": "관리 범위, 조직 규모, 건전성 점수를 한 화면에서 비교합니다.",
+        "higherRisk": "위험 증가",
+        "largerSpan": "관리 범위 증가",
+        "mapTooltip": "{{organization}} · 건전성 {{score}} · 관리 범위 {{span}} · 인원 {{headcount}}",
+        "priorityTitle": "우선 조치 큐",
+        "priorityHelp": "영향 규모와 위험 점수 기준으로 먼저 검토할 조직입니다.",
+        "portfolioDistribution": "포트폴리오 분포",
+        "portfolioHelp": "분석 조직 {{count}}개",
+        "precisionTitle": "조직별 정밀 지표",
+        "precisionHelp": "조직을 선택하면 조직도와 상세 근거가 함께 포커스됩니다.",
+        "changesTitle": "시점·시나리오 변경 영향",
+        "changesHelp": "기준 구조와 제안 구조의 변화를 비용과 운영 영향으로 검토합니다.",
+        "qualityTitle": "데이터 신뢰 정비 큐",
+        "qualityHelp": "조직 설계 결과의 신뢰도를 떨어뜨리는 원천 데이터 문제를 우선순위화합니다."
+      },
+      "recommendations": {
+        "NARROW_SPAN": "관리 계층 통합 또는 역할 범위 재검토",
+        "WIDE_SPAN": "관리 부하 분산과 리더 보강 검토",
+        "EXCESS_LAYERS": "의사결정 계층 단축 시나리오 검토",
+        "HIGH_CONTINGENT": "핵심 역량 내재화와 인력 구성 검토",
+        "HIGH_VACANCY": "핵심 공석의 충원·재배치 우선순위 검토",
+        "NO_SIGNAL": "현재 정책 임계치 내에서 지속 관찰"
+      },
+      "qualityActions": {
+        "BROKEN_MANAGER_REFERENCE": "유효한 관리자 또는 보고 직위 연결",
+        "MISSING_JOB_GRADE": "HRIS 직급 매핑 보완",
+        "DISCONNECTED_ORGANIZATION": "주 상위 조직 연결 복구",
+        "MULTIPLE_PRIMARY_PARENTS": "주 보고 관계를 하나로 정규화",
+        "ORGANIZATION_CYCLE": "순환 관계 차단 후 원천 데이터 재동기화",
+        "DISCONNECTED_POSITION": "상위 직위 또는 루트 예외 지정",
+        "DEFAULT": "원천 시스템에서 정정 후 재검증"
       },
       "columns": {
         "organization": "조직",
@@ -1260,14 +1301,45 @@
       "live": "실시간 조직",
       "previewSummary": "{{date}} 시행 예정 · 변경 {{count}}건",
       "returnLive": "실시간 조직으로 돌아가기",
-      "dragHint": "드래그로 조직 이동 계획 추가",
+      "dragHint": "드래그로 조직·직위 이동 계획 추가",
       "removeChange": "변경 계획 제거",
       "createHelp": "기준일의 조직 구조를 고정하고 미래 시행일을 지정합니다.",
+      "clone": {
+        "action": "대안으로 복제",
+        "title": "시나리오 대안 만들기",
+        "help": "변경 집합과 기준선은 그대로 계승하고 독립된 초안으로 분기합니다.",
+        "source": "{{name}}에서 분기",
+        "defaultName": "{{name}} 대안"
+      },
+      "compare": {
+        "title": "시나리오 대안 비교",
+        "help": "실행 준비도와 핵심 인력·비용 지표를 동일 기준으로 비교합니다.",
+        "select": "비교할 대안",
+        "none": "비교 안 함",
+        "loading": "대안의 의사결정 근거를 계산하는 중",
+        "empty": "다른 시나리오를 선택하면 두 미래 구조의 결과를 나란히 볼 수 있습니다.",
+        "noAlternatives": "비교할 다른 시나리오가 없습니다. 현재 안을 복제해 대안을 만드세요.",
+        "baselineMismatch": "두 시나리오의 기준 근거가 다릅니다. 값은 확인할 수 있지만 차이는 의사결정 비교값으로 사용할 수 없습니다.",
+        "notComparable": "비교 불가",
+        "metric": "지표",
+        "difference": "대안 간 차이",
+        "metrics": {
+          "headcount": "예상 인원",
+          "fte": "계획 FTE",
+          "cost": "연간 인력 비용",
+          "span": "평균 관리 범위",
+          "layers": "최대 계층",
+          "health": "조직 건전성",
+          "quality": "데이터 품질"
+        }
+      },
       "empty": "아직 조직 변경 시나리오가 없습니다.",
       "noDescription": "설명 없음",
       "noChanges": "등록된 변경이 없습니다.",
       "changes": "계획된 변경 {{count}}건",
       "governanceNotice": "기준 조직의 변경 여부를 다시 확인하며, 작성자와 승인자는 분리됩니다. 승인된 변경만 지정 시행일에 게시할 수 있습니다.",
+      "evidenceBound": "의사결정 근거 연결됨",
+      "legacyEvidence": "연결된 근거가 없는 기존 워크플로",
       "fields": {
         "name": "시나리오 이름",
         "description": "목적 및 영향",
@@ -1275,12 +1347,114 @@
         "effectiveDate": "시행일",
         "reason": "업무 사유"
       },
+      "decision": {
+        "eyebrow": "DECISION PACK",
+        "loading": "시나리오의 실행 준비도를 검증하는 중",
+        "validate": "근거 다시 검증",
+        "summary": "차단 {{blockers}}건 · 검토 {{warnings}}건",
+        "states": {
+          "READY": "실행 준비 완료",
+          "REVIEW_REQUIRED": "사람의 판단 필요",
+          "BLOCKED": "실행 차단"
+        },
+        "outcomes": { "PASS": "통과", "WARN": "검토", "BLOCK": "차단" },
+        "metrics": {
+          "headcount": "인원 영향",
+          "fte": "FTE 영향",
+          "cost": "연간 비용 영향",
+          "layers": "계층 영향",
+          "health": "건전성 영향"
+        },
+        "checks": {
+          "BASELINE_CURRENT": {
+            "title": "기준선 신뢰",
+            "description": "{{baselineDate}} 기준 원장의 변경 여부를 지문으로 확인합니다."
+          },
+          "CHANGE_SET_VALID": {
+            "title": "변경 집합 검증",
+            "description": "변경 {{changeCount}}건 · 차단 {{blockedCount}}건 · 주의 {{warningCount}}건"
+          },
+          "CHANGE_IMPACT": {
+            "title": "변경 영향 범위",
+            "description": "영향 인원 {{impactedHeadcount}}명 · 조직 {{impactedOrganizationCount}}개 · 직위 {{impactedPositionCount}}개 · 중요 직위 {{criticalPositionCount}}개"
+          },
+          "HIERARCHY_INTEGRITY": {
+            "title": "계층 무결성",
+            "description": "미연결 조직 {{orphanOrganizationCount}}개 · 직위 루트 {{positionRootCount}}개"
+          },
+          "DATA_QUALITY": {
+            "title": "인력 데이터 품질",
+            "description": "점수 {{score}} · 관리자 누락 {{missingManagerCount}}건 · 직급 누락 {{missingGradeCount}}건"
+          },
+          "DESIGN_POLICY": {
+            "title": "조직 설계 원칙",
+            "description": "건전성 {{healthScore}} · 최대 {{maximumLayers}}계층 · 과대 관리 범위 {{wideSpanManagerCount}}건"
+          },
+          "CRITICAL_VACANCY": {
+            "title": "중요 직위 공석 노출",
+            "description": "중요 공석 {{baselineCriticalVacancies}} → {{proposedCriticalVacancies}}개 · 증감 {{delta}}"
+          },
+          "FINANCIAL_COVERAGE": {
+            "title": "비용 데이터 커버리지",
+            "description": "전체 커버리지 {{costCoveragePercent}}% · 비용 누락 {{unpricedPositionCount}}개 · 변경 직위 {{pricedPositionCount}}/{{changedPositionCount}}개 · {{currency}}"
+          },
+          "APPROVAL_GATE": {
+            "title": "독립 승인 게이트",
+            "description": "현재 승인 상태: {{approvalState}}"
+          },
+          "EFFECTIVE_DATE": {
+            "title": "시행일 유효성",
+            "description": "변경 시행일: {{effectiveDate}}"
+          }
+        },
+        "triggers": {
+          "MANUAL": "수동 검증",
+          "SUBMIT": "검토 요청",
+          "APPROVE": "승인",
+          "REJECT": "반려",
+          "PUBLISH": "게시"
+        },
+        "history": {
+          "title": "검증 근거 이력",
+          "empty": "저장된 검증 이력이 없습니다. 근거 다시 검증을 실행하면 불변 이력이 생성됩니다."
+        },
+        "messages": { "validated": "의사결정 근거와 실행 준비도 이력을 저장했습니다." }
+      },
       "move": {
-        "title": "조직 이동 계획",
+        "title": "구조 변경 계획",
+        "kindLabel": "변경 대상 종류",
+        "organizationKind": "조직",
+        "positionKind": "직위 이동",
         "organization": "이동할 조직",
         "newParent": "새 상위 조직",
+        "position": "이동할 직위",
+        "newParentPosition": "새 상위 직위",
         "add": "변경 추가",
-        "summary": "새 상위 조직: {{parent}}"
+        "summary": "새 상위 조직: {{parent}}",
+        "positionSummary": "새 상위 직위: {{parent}}",
+        "positionCreateSummary": "포지션 신설 · {{fte}} FTE",
+        "positionCloseSummary": "포지션 폐쇄 · {{fte}} FTE"
+      },
+      "positionPlan": {
+        "actionLabel": "포지션 계획 작업",
+        "move": "이동",
+        "create": "신설",
+        "close": "폐쇄",
+        "positionKey": "포지션 코드",
+        "title": "포지션명",
+        "organization": "소속 조직",
+        "reportsTo": "상위 포지션",
+        "positionType": "포지션 유형",
+        "criticality": "중요도",
+        "fte": "예산 FTE",
+        "annualCost": "연간 비용",
+        "currency": "통화",
+        "availabilityDate": "충원 가능일",
+        "addCreate": "신설 계획 추가",
+        "positionToClose": "폐쇄할 공석 포지션",
+        "addClose": "폐쇄 계획 추가",
+        "closeGuard": "재직자나 하위 포지션이 없는 자리만 폐쇄할 수 있습니다. 인력 및 보고 관계를 먼저 정리해야 합니다.",
+        "noClosablePositions": "현재 안전하게 폐쇄할 수 있는 공석 포지션이 없습니다."
       },
       "submit": {
         "title": "승인 요청",
@@ -1308,15 +1482,20 @@
         "STALE": "재검토 필요",
         "CANCELLED": "취소됨"
       },
-      "validation": { "VALID": "검증 완료", "BLOCKED": "차단됨" },
+      "validation": { "VALID": "검증 완료", "WARNING": "검토 필요", "BLOCKED": "차단됨" },
       "dragConfirm": {
-        "title": "조직 이동 계획 확인",
+        "title": "구조 이동 계획 확인",
         "message": "{{organization}} 조직을 {{parent}} 하위로 이동하는 변경을 시나리오에 추가합니다.",
+        "positionMessage": "{{position}} 직위를 {{parent}} 하위로 이동하는 변경을 시나리오에 추가합니다.",
         "action": "이동 계획 추가"
       },
       "messages": {
         "created": "조직 변경 시나리오를 만들었습니다.",
+        "cloned": "변경 집합과 계보를 보존한 새 시나리오 대안을 만들었습니다.",
         "moveAdded": "조직 이동 계획을 추가했습니다.",
+        "positionMoveAdded": "직위 이동 계획을 추가했습니다.",
+        "positionCreated": "신규 직위 계획을 추가했습니다.",
+        "positionClosed": "직위 종료 계획을 추가했습니다.",
         "changeRemoved": "변경 계획을 제거했습니다.",
         "submitted": "독립 검토를 요청했습니다.",
         "approved": "시나리오를 승인했습니다.",
@@ -1337,6 +1516,12 @@
       "FROZEN": "동결",
       "CLOSED": "종료",
       "PLANNED": "계획"
+    },
+    "positionTypes": {
+      "REGULAR": "일반",
+      "SHARED": "공유",
+      "ASSISTANT": "지원",
+      "TEMPORARY": "한시"
     },
     "criticality": {
       "LOW": "낮음",

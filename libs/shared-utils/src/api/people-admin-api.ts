@@ -77,6 +77,9 @@ export type OrganizationChartMetrics = {
   managerCount: number;
   openPositionCount: number;
   locationCount: number;
+  plannedFte: number;
+  workforceCostAmount: number;
+  costCurrency?: string | null;
 };
 
 export type OrganizationChartOrganization = {
@@ -85,6 +88,7 @@ export type OrganizationChartOrganization = {
   name: string;
   shortName?: string | null;
   organizationType: string;
+  organizationTypeName: string;
   parentOrganizationId?: string | null;
   description?: string | null;
   costCenterKey?: string | null;
@@ -96,6 +100,11 @@ export type OrganizationChartOrganization = {
   childOrganizationCount: number;
   leaderPersonId?: string | null;
   directMemberIds: string[];
+  layerDepth: number;
+  averageManagerSpan: number;
+  contingentHeadcount: number;
+  healthStatus: 'HEALTHY' | 'ATTENTION' | 'CRITICAL';
+  healthSignals: string[];
 };
 
 export type OrganizationChartPerson = {
@@ -111,12 +120,35 @@ export type OrganizationChartPerson = {
   managementLevel?: string | null;
   organizationId: string;
   managerPersonId?: string | null;
+  managerReferenceMissing: boolean;
+  positionId?: string | null;
+  positionKey?: string | null;
   workerNumber?: string | null;
   workerType: string;
   workerStatus: string;
   locationKey?: string | null;
   locationName?: string | null;
   directReportCount: number;
+  fullTimeEquivalent: number;
+};
+
+export type OrganizationChartPosition = {
+  positionId: string;
+  positionKey: string;
+  title: string;
+  organizationId: string;
+  reportsToPositionId?: string | null;
+  status: 'FILLED' | 'OPEN' | 'PLANNED' | string;
+  positionType: string;
+  criticality: 'STANDARD' | 'HIGH' | 'CRITICAL' | string;
+  budgetedFte: number;
+  annualCostAmount?: number | null;
+  costCurrency?: string | null;
+  jobProfileName?: string | null;
+  locationName?: string | null;
+  availabilityDate?: string | null;
+  incumbentPersonIds: string[];
+  subordinatePositionCount: number;
 };
 
 export type OrganizationChartRelationship = {
@@ -127,12 +159,57 @@ export type OrganizationChartRelationship = {
 };
 
 export type OrganizationChartOpenPosition = {
+  positionId: string;
   positionKey: string;
   title: string;
   organizationId: string;
   jobProfileName?: string | null;
   locationName?: string | null;
   availabilityDate?: string | null;
+  budgetedFte: number;
+  annualCostAmount?: number | null;
+  costCurrency?: string | null;
+  criticality: string;
+};
+
+export type OrganizationChartScenarioProjection = {
+  scenarioId: string;
+  name: string;
+  lifecycleState: string;
+  baseAsOf: string;
+  effectiveDate: string;
+  activeChangeCount: number;
+  version: number;
+};
+
+export type OrganizationDesignPolicy = {
+  minimumManagerSpan: number;
+  maximumManagerSpan: number;
+  maximumLayers: number;
+  maximumContingentPercent: number;
+  maximumVacancyPercent: number;
+};
+
+export type OrganizationAnalysis = {
+  healthScore: number;
+  dataQualityScore: number;
+  averageManagerSpan: number;
+  maximumLayers: number;
+  managerRatioPercent: number;
+  contingentRatioPercent: number;
+  narrowSpanManagerCount: number;
+  wideSpanManagerCount: number;
+  singleReportManagerCount: number;
+  missingManagerCount: number;
+  missingGradeCount: number;
+  orphanOrganizationCount: number;
+  policy: OrganizationDesignPolicy;
+  signals: Array<{
+    code: string;
+    severity: string;
+    count: number;
+    organizationId?: string | null;
+  }>;
 };
 
 export type OrganizationChart = {
@@ -143,11 +220,207 @@ export type OrganizationChart = {
     name: string;
     description?: string | null;
   };
+  scenario?: OrganizationChartScenarioProjection | null;
   metrics: OrganizationChartMetrics;
+  analysis: OrganizationAnalysis;
   organizations: OrganizationChartOrganization[];
   people: OrganizationChartPerson[];
+  positions: OrganizationChartPosition[];
   relationships: OrganizationChartRelationship[];
   openPositions: OrganizationChartOpenPosition[];
+};
+
+export type OrganizationHealthInsight = {
+  organizationId: string;
+  organizationName: string;
+  organizationType: string;
+  layer: number;
+  directHeadcount: number;
+  totalHeadcount: number;
+  managerCount: number;
+  averageManagerSpan: number;
+  overloadedManagerCount: number;
+  openPositionCount: number;
+  contingentRatioPct: number;
+  healthScore: number;
+  riskState: 'HEALTHY' | 'ATTENTION' | 'CRITICAL';
+  signals: string[];
+};
+
+export type OrganizationChangeInsight = {
+  changeType: string;
+  entityType: string;
+  entityId: string;
+  entityName: string;
+  fromValue?: string | null;
+  toValue?: string | null;
+  riskState: 'HEALTHY' | 'ATTENTION' | 'CRITICAL';
+};
+
+export type OrganizationDataQualityIssue = {
+  issueCode: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  entityType: string;
+  entityId: string;
+  entityName: string;
+  message: string;
+};
+
+export type OrganizationIntelligence = {
+  asOf: string;
+  compareTo: string;
+  health: {
+    maximumLayers: number;
+    averageManagerSpan: number;
+    medianManagerSpan: number;
+    overloadedManagers: number;
+    singleReportManagers: number;
+    managerReferenceIssues: number;
+    disconnectedOrganizations: number;
+    openPositions: number;
+    contingentRatioPct: number;
+    organizationHealthScore: number;
+    dataQualityScore: number;
+    organizationsAtRisk: number;
+    criticalOrganizations: number;
+    attentionOrganizations: number;
+  };
+  comparison: {
+    headcountDelta: number;
+    organizationDelta: number;
+    managerDelta: number;
+    openPositionDelta: number;
+    peopleMoved: number;
+    managerChanges: number;
+    organizationMoves: number;
+    totalChanges: number;
+    plannedFteDelta: number;
+    workforceCostDelta: number;
+    costCurrency?: string | null;
+    averageManagerSpanDelta: number;
+    maximumLayersDelta: number;
+    organizationHealthScoreDelta: number;
+    dataQualityScoreDelta: number;
+  };
+  organizations: OrganizationHealthInsight[];
+  changes: OrganizationChangeInsight[];
+  dataQualityIssues: OrganizationDataQualityIssue[];
+};
+
+export type OrganizationScenarioChange = {
+  changeId: string;
+  sequence: number;
+  changeType: string;
+  payloadSchemaVersion: number;
+  targetKind: string;
+  targetReference: string;
+  relatedReference?: string | null;
+  effectiveDate: string;
+  beforeSnapshot: string;
+  afterSnapshot: string;
+  estimatedHeadcountDelta: number;
+  estimatedFteDelta: number;
+  estimatedCostDelta?: number | null;
+  costCurrency?: string | null;
+  validationState: string;
+  validationMessage?: string | null;
+  version: number;
+};
+
+export type OrganizationScenarioApproval = {
+  approvalId: string;
+  gateKey: string;
+  requiredRoleCode: string;
+  separationOfDuties: boolean;
+  lifecycleState: string;
+  requestedBy: number;
+  decidedBy?: number | null;
+  requestReason: string;
+  decisionReason?: string | null;
+  requestedAt: string;
+  decidedAt?: string | null;
+  expiresAt: string;
+  requestValidationRunId?: string | null;
+  decisionValidationRunId?: string | null;
+  evidenceBindingState: 'BOUND' | 'LEGACY_UNBOUND';
+  version: number;
+};
+
+export type OrganizationScenario = {
+  scenarioId: string;
+  scenarioKey: string;
+  name: string;
+  description?: string | null;
+  sourceScenarioId?: string | null;
+  baselineDate: string;
+  effectiveDate: string;
+  lifecycleState: string;
+  ownerUserId: number;
+  submittedAt?: string | null;
+  publishedAt?: string | null;
+  publicationValidationRunId?: string | null;
+  publicationEvidenceState: 'BOUND' | 'LEGACY_UNBOUND';
+  version: number;
+  changes: OrganizationScenarioChange[];
+  approval?: OrganizationScenarioApproval | null;
+};
+
+export type OrganizationScenarioDecisionMetrics = {
+  headcount: number;
+  organizationCount: number;
+  managerCount: number;
+  openPositionCount: number;
+  plannedFte: number;
+  workforceCost: number;
+  costCurrency?: string | null;
+  averageManagerSpan: number;
+  maximumLayers: number;
+  organizationHealthScore: number;
+  dataQualityScore: number;
+};
+
+export type OrganizationScenarioDecisionCheck = {
+  checkCode: string;
+  outcome: 'PASS' | 'WARN' | 'BLOCK';
+  severity: 'INFO' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  entityType: string;
+  entityReference?: string | null;
+  evidence: Record<string, string | number | boolean>;
+};
+
+export type OrganizationScenarioDecisionPack = {
+  scenarioId: string;
+  scenarioVersion: number;
+  lifecycleState: string;
+  baselineDate: string;
+  effectiveDate: string;
+  decisionState: 'READY' | 'REVIEW_REQUIRED' | 'BLOCKED';
+  readinessScore: number;
+  baselineCurrent: boolean;
+  baselineFingerprint: string;
+  observedFingerprint: string;
+  blockingIssueCount: number;
+  warningCount: number;
+  baseline: OrganizationScenarioDecisionMetrics;
+  proposed: OrganizationScenarioDecisionMetrics;
+  delta: OrganizationScenarioDecisionMetrics;
+  checks: OrganizationScenarioDecisionCheck[];
+  validationRunId?: string | null;
+  evaluatedAt: string;
+};
+
+export type OrganizationScenarioValidationRun = {
+  validationRunId: string;
+  scenarioVersion: number;
+  triggerType: 'MANUAL' | 'SUBMIT' | 'APPROVE' | 'REJECT' | 'PUBLISH';
+  decisionState: 'READY' | 'REVIEW_REQUIRED' | 'BLOCKED';
+  readinessScore: number;
+  baselineCurrent: boolean;
+  blockingIssueCount: number;
+  warningCount: number;
+  evaluatedAt: string;
+  evaluatedBy: number;
+  correlationId?: string | null;
 };
 
 export type HrisSourceSystem = {
@@ -271,15 +544,226 @@ export async function getPerson(personId: string, asOf?: string): Promise<Person
 }
 
 export async function getOrganizationChart(
-  params: { asOf?: string; rootOrganizationId?: string; depth?: number } = {}
+  params: {
+    asOf?: string;
+    rootOrganizationId?: string;
+    scenarioId?: string;
+    depth?: number;
+  } = {}
 ): Promise<OrganizationChart> {
   const search = new URLSearchParams({ depth: String(params.depth ?? 10) });
   if (params.asOf) search.set('asOf', params.asOf);
   if (params.rootOrganizationId) {
     search.set('rootOrganizationId', params.rootOrganizationId);
   }
+  if (params.scenarioId) search.set('scenarioId', params.scenarioId);
   const response = await axiosInstance.get<ApiResponse<OrganizationChart>>(
     `/api/people/v1/org-chart?${search.toString()}`
+  );
+  return response.data.data;
+}
+
+export async function getOrganizationIntelligence(
+  params: {
+    asOf?: string;
+    compareTo?: string;
+    rootOrganizationId?: string;
+    scenarioId?: string;
+    depth?: number;
+  } = {}
+): Promise<OrganizationIntelligence> {
+  const search = new URLSearchParams({ depth: String(params.depth ?? 10) });
+  if (params.asOf) search.set('asOf', params.asOf);
+  if (params.compareTo) search.set('compareTo', params.compareTo);
+  if (params.rootOrganizationId) search.set('rootOrganizationId', params.rootOrganizationId);
+  if (params.scenarioId) search.set('scenarioId', params.scenarioId);
+  const response = await axiosInstance.get<ApiResponse<OrganizationIntelligence>>(
+    `/api/people/v1/org-chart/intelligence?${search.toString()}`
+  );
+  return response.data.data;
+}
+
+const ORG_SCENARIO_BASE = '/api/people/v1/org-chart/scenarios';
+
+export async function listOrganizationScenarios(): Promise<OrganizationScenario[]> {
+  const response = await axiosInstance.get<ApiResponse<OrganizationScenario[]>>(ORG_SCENARIO_BASE);
+  return response.data.data;
+}
+
+export async function createOrganizationScenario(request: {
+  scenarioKey: string;
+  name: string;
+  description?: string;
+  baselineDate: string;
+  effectiveDate: string;
+}): Promise<OrganizationScenario> {
+  const response = await axiosInstance.post<ApiResponse<OrganizationScenario>, typeof request>(
+    ORG_SCENARIO_BASE,
+    request
+  );
+  return response.data.data;
+}
+
+export async function cloneOrganizationScenario(
+  sourceScenarioId: string,
+  request: {
+    scenarioKey: string;
+    name: string;
+    description?: string;
+    effectiveDate: string;
+  }
+): Promise<OrganizationScenario> {
+  const response = await axiosInstance.post<ApiResponse<OrganizationScenario>, typeof request>(
+    `${ORG_SCENARIO_BASE}/${sourceScenarioId}/clone`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function addOrganizationScenarioMove(
+  scenario: OrganizationScenario,
+  organizationId: string,
+  newParentOrganizationId: string
+): Promise<OrganizationScenario> {
+  const response = await axiosInstance.post<
+    ApiResponse<OrganizationScenario>,
+    { organizationId: string; newParentOrganizationId: string; version: number }
+  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/moves`, {
+    organizationId,
+    newParentOrganizationId,
+    version: scenario.version,
+  });
+  return response.data.data;
+}
+
+export async function addOrganizationScenarioPositionMove(
+  scenario: OrganizationScenario,
+  positionId: string,
+  newParentPositionId: string
+): Promise<OrganizationScenario> {
+  const response = await axiosInstance.post<
+    ApiResponse<OrganizationScenario>,
+    { positionId: string; newParentPositionId: string; version: number }
+  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/position-moves`, {
+    positionId,
+    newParentPositionId,
+    version: scenario.version,
+  });
+  return response.data.data;
+}
+
+export async function createOrganizationScenarioPosition(
+  scenario: OrganizationScenario,
+  request: {
+    positionKey: string;
+    title: string;
+    organizationId: string;
+    reportsToPositionId: string;
+    positionType: 'REGULAR' | 'SHARED' | 'ASSISTANT' | 'TEMPORARY';
+    criticality: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    budgetedFte: number;
+    annualCostAmount?: number;
+    costCurrency?: string;
+    availabilityDate: string;
+  }
+): Promise<OrganizationScenario> {
+  const payload = { ...request, version: scenario.version };
+  const response = await axiosInstance.post<ApiResponse<OrganizationScenario>, typeof payload>(
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/positions`,
+    payload
+  );
+  return response.data.data;
+}
+
+export async function closeOrganizationScenarioPosition(
+  scenario: OrganizationScenario,
+  positionId: string
+): Promise<OrganizationScenario> {
+  const response = await axiosInstance.post<ApiResponse<OrganizationScenario>, { version: number }>(
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/positions/${positionId}/close`,
+    { version: scenario.version }
+  );
+  return response.data.data;
+}
+
+export async function getOrganizationScenarioDecisionPack(
+  scenarioId: string
+): Promise<OrganizationScenarioDecisionPack> {
+  const response = await axiosInstance.get<ApiResponse<OrganizationScenarioDecisionPack>>(
+    `${ORG_SCENARIO_BASE}/${scenarioId}/decision-pack`
+  );
+  return response.data.data;
+}
+
+export async function getOrganizationScenarioDecisionHistory(
+  scenarioId: string
+): Promise<OrganizationScenarioValidationRun[]> {
+  const response = await axiosInstance.get<ApiResponse<OrganizationScenarioValidationRun[]>>(
+    `${ORG_SCENARIO_BASE}/${scenarioId}/decision-pack/history`
+  );
+  return response.data.data;
+}
+
+export async function validateOrganizationScenarioDecisionPack(
+  scenario: OrganizationScenario
+): Promise<OrganizationScenarioDecisionPack> {
+  const response = await axiosInstance.post<
+    ApiResponse<OrganizationScenarioDecisionPack>,
+    { version: number }
+  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/decision-pack/validate`, {
+    version: scenario.version,
+  });
+  return response.data.data;
+}
+
+export async function removeOrganizationScenarioChange(
+  scenario: OrganizationScenario,
+  changeId: string
+): Promise<OrganizationScenario> {
+  const search = new URLSearchParams({ version: String(scenario.version) });
+  const response = await axiosInstance.delete<ApiResponse<OrganizationScenario>>(
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/changes/${changeId}?${search.toString()}`
+  );
+  return response.data.data;
+}
+
+export async function submitOrganizationScenario(
+  scenario: OrganizationScenario,
+  reason: string
+): Promise<OrganizationScenario> {
+  const response = await axiosInstance.post<
+    ApiResponse<OrganizationScenario>,
+    { reason: string; version: number }
+  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/submit`, {
+    reason,
+    version: scenario.version,
+  });
+  return response.data.data;
+}
+
+export async function decideOrganizationScenario(
+  scenario: OrganizationScenario,
+  decision: 'APPROVED' | 'REJECTED',
+  reason: string
+): Promise<OrganizationScenario> {
+  if (!scenario.approval) throw new Error('The scenario has no approval gate.');
+  const response = await axiosInstance.post<
+    ApiResponse<OrganizationScenario>,
+    { decision: string; reason: string; version: number }
+  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/approval`, {
+    decision,
+    reason,
+    version: scenario.approval.version,
+  });
+  return response.data.data;
+}
+
+export async function publishOrganizationScenario(
+  scenario: OrganizationScenario
+): Promise<OrganizationScenario> {
+  const response = await axiosInstance.post<ApiResponse<OrganizationScenario>, { version: number }>(
+    `${ORG_SCENARIO_BASE}/${scenario.scenarioId}/publish`,
+    { version: scenario.version }
   );
   return response.data.data;
 }

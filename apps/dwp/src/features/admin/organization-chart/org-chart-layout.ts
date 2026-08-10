@@ -5,12 +5,15 @@ import {
   ORGANIZATION_NODE_WIDTH,
   PERSON_NODE_HEIGHT,
   PERSON_NODE_WIDTH,
+  POSITION_NODE_HEIGHT,
+  POSITION_NODE_WIDTH,
 } from './org-chart-nodes';
 
 import type { Edge } from '@xyflow/react';
 import type {
   OrganizationChartOrganization,
   OrganizationChartPerson,
+  OrganizationChartPosition,
 } from '@dwp-frontend/shared-utils';
 import type { OrgChartFlowNode } from './org-chart-nodes';
 
@@ -52,6 +55,24 @@ export function visiblePersonIds(
   return traverseVisible(roots, children, collapsed);
 }
 
+export function visiblePositionIds(
+  positions: OrganizationChartPosition[],
+  collapsed: ReadonlySet<string>
+): Set<string> {
+  const known = new Set(positions.map((position) => position.positionId));
+  const children = new Map<string, string[]>();
+  const roots: string[] = [];
+  for (const position of positions) {
+    const parentId = position.reportsToPositionId;
+    if (!parentId || !known.has(parentId)) {
+      roots.push(position.positionId);
+      continue;
+    }
+    children.set(parentId, [...(children.get(parentId) ?? []), position.positionId]);
+  }
+  return traverseVisible(roots, children, collapsed);
+}
+
 function traverseVisible(
   roots: string[],
   children: ReadonlyMap<string, string[]>,
@@ -86,9 +107,18 @@ export function layoutChart(
 
   for (const node of nodes) {
     const organizationNode = node.type === 'organization';
+    const positionNode = node.type === 'position';
     graph.setNode(node.id, {
-      width: organizationNode ? ORGANIZATION_NODE_WIDTH : PERSON_NODE_WIDTH,
-      height: organizationNode ? ORGANIZATION_NODE_HEIGHT : PERSON_NODE_HEIGHT,
+      width: organizationNode
+        ? ORGANIZATION_NODE_WIDTH
+        : positionNode
+          ? POSITION_NODE_WIDTH
+          : PERSON_NODE_WIDTH,
+      height: organizationNode
+        ? ORGANIZATION_NODE_HEIGHT
+        : positionNode
+          ? POSITION_NODE_HEIGHT
+          : PERSON_NODE_HEIGHT,
     });
   }
   for (const edge of edges) graph.setEdge(edge.source, edge.target);
@@ -97,8 +127,17 @@ export function layoutChart(
   return nodes.map((node) => {
     const position = graph.node(node.id) as { x: number; y: number };
     const organizationNode = node.type === 'organization';
-    const width = organizationNode ? ORGANIZATION_NODE_WIDTH : PERSON_NODE_WIDTH;
-    const height = organizationNode ? ORGANIZATION_NODE_HEIGHT : PERSON_NODE_HEIGHT;
+    const positionNode = node.type === 'position';
+    const width = organizationNode
+      ? ORGANIZATION_NODE_WIDTH
+      : positionNode
+        ? POSITION_NODE_WIDTH
+        : PERSON_NODE_WIDTH;
+    const height = organizationNode
+      ? ORGANIZATION_NODE_HEIGHT
+      : positionNode
+        ? POSITION_NODE_HEIGHT
+        : PERSON_NODE_HEIGHT;
     return {
       ...node,
       position: { x: position.x - width / 2, y: position.y - height / 2 },

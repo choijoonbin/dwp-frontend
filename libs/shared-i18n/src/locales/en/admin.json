@@ -1109,6 +1109,7 @@
     },
     "filters": { "asOf": "Effective date", "compareTo": "Compare with" },
     "metrics": {
+      "summaryLabel": "Organization key metrics",
       "headcount": "Headcount",
       "organizations": "Active organizations",
       "managers": "Leaders",
@@ -1203,12 +1204,52 @@
         "quality": "Data quality"
       },
       "metrics": {
+        "health": "Organization health",
         "quality": "Data quality score",
         "atRisk": "Organizations at risk",
+        "critical": "Critical organizations",
         "layers": "Maximum layers",
         "managerSpan": "Average manager span",
         "headcountDelta": "Headcount delta",
+        "fteDelta": "Planned FTE delta",
+        "costDelta": "Annual cost delta",
+        "layersDelta": "Layer delta",
+        "healthDelta": "Health delta",
         "totalChanges": "Detected changes"
+      },
+      "decision": {
+        "healthMapTitle": "Organization portfolio risk map",
+        "healthMapHelp": "Compare manager span, organization scale, and health in one decision surface.",
+        "higherRisk": "Higher risk",
+        "largerSpan": "Larger manager span",
+        "mapTooltip": "{{organization}} · health {{score}} · span {{span}} · people {{headcount}}",
+        "priorityTitle": "Priority action queue",
+        "priorityHelp": "Organizations to review first, ranked by risk and impact scale.",
+        "portfolioDistribution": "Portfolio distribution",
+        "portfolioHelp": "{{count}} organizations analyzed",
+        "precisionTitle": "Organization precision metrics",
+        "precisionHelp": "Select an organization to focus the graph and its supporting evidence.",
+        "changesTitle": "Period and scenario impact",
+        "changesHelp": "Review changes between baseline and proposed structures with operating impact.",
+        "qualityTitle": "Data trust remediation queue",
+        "qualityHelp": "Prioritize source data issues that reduce confidence in organization decisions."
+      },
+      "recommendations": {
+        "NARROW_SPAN": "Review layer consolidation or role scope",
+        "WIDE_SPAN": "Review management load balancing and leader capacity",
+        "EXCESS_LAYERS": "Model a shorter decision hierarchy",
+        "HIGH_CONTINGENT": "Review capability ownership and workforce mix",
+        "HIGH_VACANCY": "Prioritize critical vacancy fill or redeployment",
+        "NO_SIGNAL": "Continue monitoring within policy thresholds"
+      },
+      "qualityActions": {
+        "BROKEN_MANAGER_REFERENCE": "Connect a valid manager or reporting position",
+        "MISSING_JOB_GRADE": "Complete the HRIS grade mapping",
+        "DISCONNECTED_ORGANIZATION": "Restore the primary parent relationship",
+        "MULTIPLE_PRIMARY_PARENTS": "Normalize to one primary reporting line",
+        "ORGANIZATION_CYCLE": "Break the cycle and resynchronize source data",
+        "DISCONNECTED_POSITION": "Assign a parent position or approved root exception",
+        "DEFAULT": "Correct the source system and validate again"
       },
       "columns": {
         "organization": "Organization",
@@ -1269,14 +1310,45 @@
       "live": "Live organization",
       "previewSummary": "Effective {{date}} · {{count}} changes",
       "returnLive": "Return to live organization",
-      "dragHint": "Drag an organization to plan a move",
+      "dragHint": "Drag an organization or position to plan a move",
       "removeChange": "Remove planned change",
       "createHelp": "Freeze an organization baseline and choose a future effective date.",
+      "clone": {
+        "action": "Clone as alternative",
+        "title": "Create a scenario alternative",
+        "help": "Branch the same change set and baseline into an independent draft.",
+        "source": "Branched from {{name}}",
+        "defaultName": "{{name}} alternative"
+      },
+      "compare": {
+        "title": "Compare scenario alternatives",
+        "help": "Compare execution readiness and workforce and cost outcomes on one basis.",
+        "select": "Alternative to compare",
+        "none": "No comparison",
+        "loading": "Calculating the alternative decision evidence",
+        "empty": "Select another scenario to compare two future-state outcomes side by side.",
+        "noAlternatives": "No other scenario is available. Clone this option to create an alternative.",
+        "baselineMismatch": "These scenarios use different baseline evidence. Values remain visible, but differences are not decision-comparable.",
+        "notComparable": "Not comparable",
+        "metric": "Metric",
+        "difference": "Alternative difference",
+        "metrics": {
+          "headcount": "Projected headcount",
+          "fte": "Planned FTE",
+          "cost": "Annual workforce cost",
+          "span": "Average manager span",
+          "layers": "Maximum layers",
+          "health": "Organization health",
+          "quality": "Data quality"
+        }
+      },
       "empty": "No organization change scenario exists yet.",
       "noDescription": "No description",
       "noChanges": "No planned change has been added.",
       "changes": "{{count}} planned changes",
       "governanceNotice": "The baseline is checked for drift and authors cannot approve their own work. Only approved changes can be published for the effective date.",
+      "evidenceBound": "Decision evidence bound",
+      "legacyEvidence": "Legacy workflow without linked evidence",
       "fields": {
         "name": "Scenario name",
         "description": "Purpose and impact",
@@ -1284,12 +1356,114 @@
         "effectiveDate": "Effective date",
         "reason": "Business reason"
       },
+      "decision": {
+        "eyebrow": "DECISION PACK",
+        "loading": "Validating scenario execution readiness",
+        "validate": "Revalidate evidence",
+        "summary": "{{blockers}} blockers · {{warnings}} review items",
+        "states": {
+          "READY": "Ready to execute",
+          "REVIEW_REQUIRED": "Human review required",
+          "BLOCKED": "Execution blocked"
+        },
+        "outcomes": { "PASS": "Pass", "WARN": "Review", "BLOCK": "Block" },
+        "metrics": {
+          "headcount": "Headcount impact",
+          "fte": "FTE impact",
+          "cost": "Annual cost impact",
+          "layers": "Layer impact",
+          "health": "Health impact"
+        },
+        "checks": {
+          "BASELINE_CURRENT": {
+            "title": "Baseline trust",
+            "description": "Fingerprint the system of record at {{baselineDate}} for drift."
+          },
+          "CHANGE_SET_VALID": {
+            "title": "Change-set validation",
+            "description": "{{changeCount}} changes · {{blockedCount}} blocked · {{warningCount}} warnings"
+          },
+          "CHANGE_IMPACT": {
+            "title": "Change blast radius",
+            "description": "{{impactedHeadcount}} people · {{impactedOrganizationCount}} organizations · {{impactedPositionCount}} positions · {{criticalPositionCount}} critical positions"
+          },
+          "HIERARCHY_INTEGRITY": {
+            "title": "Hierarchy integrity",
+            "description": "{{orphanOrganizationCount}} orphan organizations · {{positionRootCount}} position roots"
+          },
+          "DATA_QUALITY": {
+            "title": "Workforce data quality",
+            "description": "Score {{score}} · {{missingManagerCount}} manager gaps · {{missingGradeCount}} grade gaps"
+          },
+          "DESIGN_POLICY": {
+            "title": "Organization design principles",
+            "description": "Health {{healthScore}} · {{maximumLayers}} layers · {{wideSpanManagerCount}} wide spans"
+          },
+          "CRITICAL_VACANCY": {
+            "title": "Critical vacancy exposure",
+            "description": "Critical vacancies {{baselineCriticalVacancies}} → {{proposedCriticalVacancies}} · delta {{delta}}"
+          },
+          "FINANCIAL_COVERAGE": {
+            "title": "Cost data coverage",
+            "description": "Portfolio coverage {{costCoveragePercent}}% · {{unpricedPositionCount}} unpriced · changed positions {{pricedPositionCount}}/{{changedPositionCount}} · {{currency}}"
+          },
+          "APPROVAL_GATE": {
+            "title": "Independent approval gate",
+            "description": "Current approval state: {{approvalState}}"
+          },
+          "EFFECTIVE_DATE": {
+            "title": "Effective-date validity",
+            "description": "Planned effective date: {{effectiveDate}}"
+          }
+        },
+        "triggers": {
+          "MANUAL": "Manual check",
+          "SUBMIT": "Review request",
+          "APPROVE": "Approval",
+          "REJECT": "Rejection",
+          "PUBLISH": "Publication"
+        },
+        "history": {
+          "title": "Validation evidence history",
+          "empty": "No saved validation evidence yet. Run validation to create an immutable record."
+        },
+        "messages": { "validated": "Decision evidence and readiness history were recorded." }
+      },
       "move": {
-        "title": "Plan an organization move",
+        "title": "Plan a structural change",
+        "kindLabel": "Change target type",
+        "organizationKind": "Organization",
+        "positionKind": "Move position",
         "organization": "Organization to move",
         "newParent": "New parent organization",
+        "position": "Position to move",
+        "newParentPosition": "New parent position",
         "add": "Add change",
-        "summary": "New parent: {{parent}}"
+        "summary": "New parent organization: {{parent}}",
+        "positionSummary": "New parent position: {{parent}}",
+        "positionCreateSummary": "Create position · {{fte}} FTE",
+        "positionCloseSummary": "Close position · {{fte}} FTE"
+      },
+      "positionPlan": {
+        "actionLabel": "Position planning action",
+        "move": "Move",
+        "create": "Create",
+        "close": "Close",
+        "positionKey": "Position code",
+        "title": "Position title",
+        "organization": "Organization",
+        "reportsTo": "Reports to position",
+        "positionType": "Position type",
+        "criticality": "Criticality",
+        "fte": "Budgeted FTE",
+        "annualCost": "Annual cost",
+        "currency": "Currency",
+        "availabilityDate": "Available from",
+        "addCreate": "Add position plan",
+        "positionToClose": "Vacant position to close",
+        "addClose": "Add closure plan",
+        "closeGuard": "Only positions without incumbents or subordinate positions can be closed. Resolve workforce and reporting relationships first.",
+        "noClosablePositions": "No vacant position can be closed safely right now."
       },
       "submit": {
         "title": "Request approval",
@@ -1317,15 +1491,20 @@
         "STALE": "Rebase required",
         "CANCELLED": "Cancelled"
       },
-      "validation": { "VALID": "Validated", "BLOCKED": "Blocked" },
+      "validation": { "VALID": "Validated", "WARNING": "Review", "BLOCKED": "Blocked" },
       "dragConfirm": {
-        "title": "Confirm organization move",
+        "title": "Confirm structural move",
         "message": "Add a planned move of {{organization}} under {{parent}} to this scenario.",
+        "positionMessage": "Add a planned move of position {{position}} under {{parent}} to this scenario.",
         "action": "Add planned move"
       },
       "messages": {
         "created": "Organization change scenario created.",
+        "cloned": "A new scenario alternative was created with its change set and lineage intact.",
         "moveAdded": "Organization move added.",
+        "positionMoveAdded": "Position move added.",
+        "positionCreated": "New position plan added.",
+        "positionClosed": "Position closure plan added.",
         "changeRemoved": "Planned change removed.",
         "submitted": "Independent review requested.",
         "approved": "Scenario approved.",
@@ -1346,6 +1525,12 @@
       "FROZEN": "Frozen",
       "CLOSED": "Closed",
       "PLANNED": "Planned"
+    },
+    "positionTypes": {
+      "REGULAR": "Regular",
+      "SHARED": "Shared",
+      "ASSISTANT": "Assistant",
+      "TEMPORARY": "Temporary"
     },
     "criticality": {
       "LOW": "Low",

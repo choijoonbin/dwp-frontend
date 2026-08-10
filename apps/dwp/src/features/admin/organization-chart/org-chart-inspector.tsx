@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { formatNumber } from '@dwp-frontend/shared-i18n';
 import {
+  BadgeDollarSign,
   BriefcaseBusiness,
   Building2,
   CalendarDays,
@@ -8,6 +10,7 @@ import {
   Mail,
   MapPin,
   Network,
+  Route,
   ShieldCheck,
   UserRoundCheck,
   UsersRound,
@@ -31,7 +34,17 @@ import type { OrganizationChart } from '@dwp-frontend/shared-utils';
 
 export type OrgChartSelection =
   | { kind: 'organization'; id: string }
-  | { kind: 'person'; id: string };
+  | { kind: 'person'; id: string }
+  | { kind: 'position'; id: string };
+
+function formatMoney(value?: number | null, currency?: string | null): string {
+  if (value == null) return '-';
+  return formatNumber(value, {
+    style: currency && currency !== 'MIXED' ? 'currency' : 'decimal',
+    currency: currency && currency !== 'MIXED' ? currency : undefined,
+    maximumFractionDigits: 0,
+  });
+}
 
 function DetailRow({
   icon: Icon,
@@ -122,15 +135,25 @@ export function OrgChartInspector({
     selection.kind === 'person'
       ? chart.people.find((candidate) => candidate.personId === selection.id)
       : undefined;
+  const position =
+    selection.kind === 'position'
+      ? chart.positions.find((candidate) => candidate.positionId === selection.id)
+      : undefined;
 
-  if (!organization && !person) return null;
+  if (!organization && !person && !position) return null;
 
-  const title = organization?.name ?? person?.displayName ?? '';
+  const title = organization?.name ?? person?.displayName ?? position?.title ?? '';
   const subtitle = organization
     ? t(`orgChart.organizationTypes.${organization.organizationType}`, {
-        defaultValue: organization.organizationType,
+        defaultValue: organization.organizationTypeName || organization.organizationType,
       })
-    : person?.businessTitle || person?.jobProfileName || t('people.notAvailable');
+    : person
+      ? person.businessTitle || person.jobProfileName || t('people.notAvailable')
+      : position
+        ? `${position.positionKey} · ${t(`orgChart.positionStatus.${position.status}`, {
+            defaultValue: position.status,
+          })}`
+        : '';
 
   return (
     <Stack sx={{ height: 1, minHeight: 0, bgcolor: 'background.paper' }}>
@@ -149,7 +172,7 @@ export function OrgChartInspector({
               color: 'primary.main',
             }}
           >
-            <Building2 size={21} />
+            {position ? <BriefcaseBusiness size={21} /> : <Building2 size={21} />}
           </Box>
         )}
         <Box sx={{ minWidth: 0, flex: 1 }}>
@@ -188,6 +211,9 @@ export function OrgChartInspector({
             rolesByEmail={rolesByEmail}
             onSelect={onSelect}
           />
+        )}
+        {position && (
+          <PositionDetails chart={chart} positionId={position.positionId} onSelect={onSelect} />
         )}
       </Box>
     </Stack>
@@ -255,6 +281,33 @@ function OrganizationDetails({
           label={t('orgChart.details.openPositions')}
           value={String(organization.openPositionCount)}
         />
+        <DetailRow
+          icon={Route}
+          label={t('orgChart.details.layerAndSpan')}
+          value={t('orgChart.details.layerAndSpanValue', {
+            layer: organization.layerDepth,
+            span: organization.averageManagerSpan.toFixed(1),
+          })}
+        />
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 0.8 }}>
+          <Typography variant="caption" color="text.secondary">
+            {t('orgChart.details.health')}
+          </Typography>
+          <Chip
+            size="small"
+            variant="outlined"
+            color={
+              organization.healthStatus === 'HEALTHY'
+                ? 'success'
+                : organization.healthStatus === 'CRITICAL'
+                  ? 'error'
+                  : 'warning'
+            }
+            label={t(`orgChart.health.${organization.healthStatus}`, {
+              defaultValue: organization.healthStatus,
+            })}
+          />
+        </Stack>
       </Box>
 
       {leader && (
@@ -361,6 +414,11 @@ function PersonDetails({
             defaultValue: person.workerStatus,
           })}
         />
+        <DetailRow
+          icon={BriefcaseBusiness}
+          label={t('orgChart.details.position')}
+          value={person.positionKey}
+        />
       </Box>
 
       <Box>
@@ -408,5 +466,173 @@ function PersonDetails({
         </Box>
       )}
     </Stack>
+  );
+}
+
+function PositionDetails({
+  chart,
+  positionId,
+  onSelect,
+}: {
+  chart: OrganizationChart;
+  positionId: string;
+  onSelect: (selection: OrgChartSelection) => void;
+}) {
+  const { t } = useTranslation('admin');
+  const position = chart.positions.find((candidate) => candidate.positionId === positionId);
+  if (!position) return null;
+  const organization = chart.organizations.find(
+    (candidate) => candidate.organizationId === position.organizationId
+  );
+  const parent = position.reportsToPositionId
+    ? chart.positions.find((candidate) => candidate.positionId === position.reportsToPositionId)
+    : undefined;
+  const subordinates = chart.positions.filter(
+    (candidate) => candidate.reportsToPositionId === position.positionId
+  );
+
+  return (
+    <Stack gap={2}>
+      <Box>
+        <Typography variant="overline" color="text.secondary">
+          {t('orgChart.details.positionProfile')}
+        </Typography>
+        <Stack direction="row" gap={0.6} sx={{ mb: 1 }}>
+          <Chip
+            size="small"
+            color={position.status === 'OPEN' ? 'warning' : 'success'}
+            variant="outlined"
+            label={t(`orgChart.positionStatus.${position.status}`, {
+              defaultValue: position.status,
+            })}
+          />
+          <Chip
+            size="small"
+            color={position.criticality === 'CRITICAL' ? 'error' : 'default'}
+            variant="outlined"
+            label={t(`orgChart.criticality.${position.criticality}`, {
+              defaultValue: position.criticality,
+            })}
+          />
+        </Stack>
+        <DetailRow
+          icon={BriefcaseBusiness}
+          label={t('orgChart.details.positionKey')}
+          value={position.positionKey}
+        />
+        <DetailRow
+          icon={Building2}
+          label={t('orgChart.details.organization')}
+          value={organization?.name}
+        />
+        <DetailRow
+          icon={CircleUserRound}
+          label={t('orgChart.details.positionType')}
+          value={position.positionType}
+        />
+        <DetailRow
+          icon={UserRoundCheck}
+          label={t('orgChart.details.jobProfile')}
+          value={position.jobProfileName}
+        />
+        <DetailRow
+          icon={MapPin}
+          label={t('orgChart.details.location')}
+          value={position.locationName}
+        />
+        <DetailRow
+          icon={UsersRound}
+          label={t('orgChart.details.budgetedFte')}
+          value={position.budgetedFte.toFixed(2)}
+        />
+        <DetailRow
+          icon={BadgeDollarSign}
+          label={t('orgChart.details.annualCost')}
+          value={formatMoney(position.annualCostAmount, position.costCurrency)}
+        />
+        <DetailRow
+          icon={CalendarDays}
+          label={t('orgChart.details.availabilityDate')}
+          value={position.availabilityDate}
+        />
+      </Box>
+
+      {position.incumbentPersonIds.length > 0 && (
+        <Box>
+          <Typography variant="overline" color="text.secondary">
+            {t('orgChart.details.incumbents', { count: position.incumbentPersonIds.length })}
+          </Typography>
+          {position.incumbentPersonIds.map((personId) => (
+            <PersonLink key={personId} personId={personId} chart={chart} onSelect={onSelect} />
+          ))}
+        </Box>
+      )}
+
+      {parent && (
+        <Box>
+          <Typography variant="overline" color="text.secondary">
+            {t('orgChart.details.reportsToPosition')}
+          </Typography>
+          <PositionLink positionId={parent.positionId} chart={chart} onSelect={onSelect} />
+        </Box>
+      )}
+
+      {subordinates.length > 0 && (
+        <Box>
+          <Typography variant="overline" color="text.secondary">
+            {t('orgChart.details.subordinatePositions', { count: subordinates.length })}
+          </Typography>
+          {subordinates.map((subordinate) => (
+            <PositionLink
+              key={subordinate.positionId}
+              positionId={subordinate.positionId}
+              chart={chart}
+              onSelect={onSelect}
+            />
+          ))}
+        </Box>
+      )}
+    </Stack>
+  );
+}
+
+function PositionLink({
+  positionId,
+  chart,
+  onSelect,
+}: {
+  positionId: string;
+  chart: OrganizationChart;
+  onSelect: (selection: OrgChartSelection) => void;
+}) {
+  const { t } = useTranslation('admin');
+  const position = chart.positions.find((candidate) => candidate.positionId === positionId);
+  if (!position) return null;
+  return (
+    <ButtonBase
+      onClick={() => onSelect({ kind: 'position', id: position.positionId })}
+      sx={{
+        width: 1,
+        minHeight: 50,
+        px: 1,
+        py: 0.75,
+        justifyContent: 'flex-start',
+        borderRadius: 1,
+        textAlign: 'left',
+        '&:hover': { bgcolor: 'action.hover' },
+      }}
+    >
+      <BriefcaseBusiness size={17} />
+      <Box sx={{ ml: 1, minWidth: 0, flex: 1 }}>
+        <Typography variant="body2" fontWeight={650} noWrap>
+          {position.title}
+        </Typography>
+        <Typography variant="caption" color="text.secondary" display="block" noWrap>
+          {position.positionKey} ·{' '}
+          {t(`orgChart.positionStatus.${position.status}`, { defaultValue: position.status })}
+        </Typography>
+      </Box>
+      <ExternalLink size={14} />
+    </ButtonBase>
   );
 }
