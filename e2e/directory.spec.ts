@@ -60,6 +60,12 @@ async function mockAdminSession(page: Page) {
 
 async function closeDetails(page: Page) {
   const closeButton = page.getByRole('button', { name: 'Close details' });
+  const mobileDrawer = closeButton.locator(
+    'xpath=ancestor::*[contains(@class, "MuiDrawer-paper")]'
+  );
+  if (await mobileDrawer.count()) {
+    await expect(mobileDrawer).toHaveCSS('transform', 'none');
+  }
   await closeButton.click();
   await expect(closeButton).toBeHidden();
 }

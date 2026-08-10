@@ -123,15 +123,20 @@ Interactive organization/reporting canvas              | Selection detail
 
 ## 6. SKAX 합성 Baseline
 
-- 회사 `SKAX`, 회사 Root 포함 21개 Master 조직(조직도 활성 집계 20개), 43명, 5개 근무지
-- Company, 부문, 본부, 부서, 팀의 4단계 계층
+- 회사 `SKAX`, 회사 Root 포함 66개 활성 조직, 177명(활성 176·휴직 1), 6개 근무지
+- Company, 부문, 본부, 센터, 제품 그룹, 지역, 팀·스쿼드·챕터·딜리버리 포드가 혼합된 4~6단계 계층
 - 생성형 AI, 데이터, 클라우드, ERP, 컨설팅, Corporate, 반도체 AX 조직
 - 정규 구성원·외부 전문인력·휴직·미래 이동 발령
 - G1~G7과 계약직 C1, 관리자·임원·전문가 직책
-- 주 보고관계 19개, 매트릭스 관계 3개, 직위 53개(충원 43·공석 10), 계획 FTE 53
-- Auth의 현재 제공 역할을 합성 계정에 결정적으로 분배하며 계정은 `INVITED` 상태로 유지
+- 주 보고관계 65개, 매트릭스 관계 3개, 직위 187개(충원 177·공석 10), 계획 FTE 187
+- Auth의 현재 제공 역할을 177개 합성 구성원 계정에 결정적으로 분배하며 비밀번호 없이 `INVITED` 상태로 유지
 
-`@skax.example` 주소와 모든 이름·발령은 개발용 합성 데이터다. 운영 Delivery에서는
+위 단계 수와 유형 조합은 화면·성능·시나리오 기능을 검증하기 위한 현재 합성 데이터일 뿐
+제품 Schema나 부모·자식 검증 규칙이 아니다. Tenant는 `ppl_organization_type_catalog`에
+자체 유형을 추가하고 임의 순서로 연결할 수 있으며, `hierarchy_rank`는 정렬 힌트로만
+사용한다. API의 `depth`도 조회 범위 제한이지 조직 골격 제한이 아니다.
+
+`@skax.example`, `@dwp-reference.example` 주소와 모든 이름·발령은 개발용 합성 데이터다. 운영 Delivery에서는
 고객별 Source Mapping 승인을 거친 HRIS/SCIM Interface가 동일 Projection을 갱신한다.
 
 ## 7. 경쟁 제품 기준과 DWP 차별화
