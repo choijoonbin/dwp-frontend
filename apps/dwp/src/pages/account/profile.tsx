@@ -40,7 +40,7 @@ export default function ProfilePage() {
           <Typography color="text.secondary">{t('profile.fields.email')}</Typography>
           <Typography>{meQuery.data?.email || '-'}</Typography>
           <Typography color="text.secondary">{t('profile.fields.tenant')}</Typography>
-          <Typography>{meQuery.data?.tenantCode || '-'}</Typography>
+          <Typography>{meQuery.data?.tenantName || meQuery.data?.tenantCode || '-'}</Typography>
           <Typography color="text.secondary">{t('profile.fields.roles')}</Typography>
           <Typography>{meQuery.data?.roles?.join(', ') || '-'}</Typography>
         </Box>

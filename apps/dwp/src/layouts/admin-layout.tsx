@@ -178,7 +178,7 @@ export function AdminLayout() {
   const { t } = useTranslation('admin');
   const auth = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const tenantName = auth.user?.tenantCode || t('shell.tenantFallback');
+  const tenantName = auth.user?.tenantName || auth.user?.tenantCode || t('shell.tenantFallback');
 
   const navigationContent = (onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>

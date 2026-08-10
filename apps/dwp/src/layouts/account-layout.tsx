@@ -108,7 +108,11 @@ export function AccountLayout() {
   const auth = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const accountName = auth.user?.displayName || t('shell.accountFallback');
-  const accountContext = auth.user?.email || auth.user?.tenantCode || t('shell.personalSettings');
+  const accountContext =
+    auth.user?.email ||
+    auth.user?.tenantName ||
+    auth.user?.tenantCode ||
+    t('shell.personalSettings');
 
   const navigationContent = (onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>

@@ -138,7 +138,7 @@ export default function SecurityPage() {
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 0.5 }}>
             {auth.user?.displayName || t('shell.accountFallback')} /{' '}
-            {auth.user?.tenantCode || t('security.workspaceFallback')}
+            {auth.user?.tenantName || auth.user?.tenantCode || t('security.workspaceFallback')}
           </Typography>
         </Box>
         <Button

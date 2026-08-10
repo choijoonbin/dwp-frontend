@@ -33,6 +33,7 @@ export type MeResponse = {
   email?: string | null;
   tenantId: number;
   tenantCode: string;
+  tenantName?: string | null;
   roles: string[];
 };
 

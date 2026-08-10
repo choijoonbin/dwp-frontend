@@ -55,7 +55,7 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
           : t('account.roles.member'));
   const isAdmin = Boolean(
     auth.user?.roles.some((role) => ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'].includes(role)) &&
-      isAppResourceEntitled('APP.ADMINISTRATION', permissions)
+    isAppResourceEntitled('APP.ADMINISTRATION', permissions)
   );
   const isProviderAdmin = Boolean(auth.user?.roles.includes('PROVIDER_ADMIN'));
 
@@ -245,11 +245,13 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
                 </Typography>
               </Box>
             )}
-            {auth.user?.tenantCode && (
+            {(auth.user?.tenantName || auth.user?.tenantCode) && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                 <Building2 size={15} strokeWidth={1.8} aria-hidden="true" />
                 <Typography variant="caption" color="text.secondary" noWrap>
-                  {t('account.workspace', { workspace: auth.user.tenantCode })}
+                  {t('account.workspace', {
+                    workspace: auth.user.tenantName || auth.user.tenantCode,
+                  })}
                 </Typography>
               </Box>
             )}
