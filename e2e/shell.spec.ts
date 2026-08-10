@@ -11,6 +11,26 @@ async function expectNoAutomaticAccessibilityViolations(page: Page) {
   expect(summary).toEqual([]);
 }
 
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/platform/v1/home-experience', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          headline: null,
+          subheadline: null,
+          backgroundPosition: 'CENTER',
+          overlayOpacity: 18,
+          backgroundUrl: null,
+          version: 0,
+        },
+      }),
+    })
+  );
+});
+
 async function mockAgentPlanContract(page: Page) {
   await page.route('**/api/auth/csrf', (route) =>
     route.fulfill({
@@ -129,7 +149,7 @@ test('unauthenticated users see the login shell without business navigation', as
   await expectNoAutomaticAccessibilityViolations(page);
 });
 
-test('authenticated users keep the common shell without business navigation', async ({
+test('authenticated users enter a personal home before the business shell', async ({
   page,
 }, testInfo) => {
   await page.route('**/api/auth/me', async (route) => {
@@ -141,6 +161,7 @@ test('authenticated users keep the common shell without business navigation', as
         data: {
           userId: 1,
           displayName: 'Admin',
+          jobTitle: 'Platform administrator',
           email: 'admin@dwp.local',
           tenantId: 1,
           tenantCode: 'default',
@@ -158,13 +179,39 @@ test('authenticated users keep the common shell without business navigation', as
 
   await page.goto('/');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('dwp.accessToken'))).toBeNull();
-  await expect(page.getByRole('button', { name: 'Select workspace' })).toBeVisible();
+  if (testInfo.project.name === 'mobile') {
+    await expect(page.getByRole('button', { name: 'Select workspace' })).toHaveCount(0);
+  } else {
+    await expect(page.getByRole('button', { name: 'Select workspace' })).toBeVisible();
+  }
   await expect(page.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Notifications' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Account' })).toBeVisible();
+  if (testInfo.project.name === 'mobile') {
+    await expect(page.getByText('Platform administrator', { exact: true })).toBeHidden();
+  } else {
+    await expect(page.getByText('Platform administrator', { exact: true })).toBeVisible();
+  }
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin', level: 1 })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Your apps', level: 2 })).toBeVisible();
+  await expect(page.getByTestId('personal-home-shell')).toBeVisible();
+  await expect(page.getByTestId('desktop-sidebar')).toHaveCount(0);
+  await expect(page.getByTestId('mobile-sidebar')).toHaveCount(0);
   await expectNoAutomaticAccessibilityViolations(page);
+
+  await page.getByRole('button', { name: 'Open Work' }).click();
+  await expect(page).toHaveURL(/\/work/);
+  const businessSidebar =
+    testInfo.project.name === 'mobile'
+      ? page.getByTestId('mobile-sidebar')
+      : page.getByTestId('desktop-sidebar');
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: 'Open navigation' }).click();
+  }
+  await expect(businessSidebar.getByRole('link', { name: 'Digital Workplace home' })).toBeVisible();
+  await businessSidebar.getByRole('link', { name: 'Digital Workplace home' }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByTestId('personal-home-shell')).toBeVisible();
+  await expect(page.getByTestId('desktop-sidebar')).toHaveCount(0);
 
   await page.getByRole('button', { name: 'Account' }).click();
   await expect(page.getByRole('menuitem', { name: 'Home' })).toBeVisible();
@@ -266,8 +313,8 @@ test('compact navigation reflows the desktop workspace canvas', async ({ page },
     })
   );
 
-  await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Welcome back, Admin', level: 1 })).toBeVisible();
+  await page.goto('/work');
+  await expect(page.getByRole('heading', { name: 'Work', level: 1 })).toBeVisible();
 
   const readGeometry = () =>
     page.evaluate(() => {

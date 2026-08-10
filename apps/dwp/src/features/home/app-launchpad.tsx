@@ -101,6 +101,9 @@ type AppLaunchpadProps = {
   storageKey: string;
   onLaunch: (app: HomeAppDefinition) => void;
   onBrowseAll: () => void;
+  immersive?: boolean;
+  title?: string;
+  description?: string;
 };
 
 type ItemMenuState = {
@@ -536,7 +539,15 @@ function FolderTile({
   );
 }
 
-export function AppLaunchpad({ apps, storageKey, onLaunch, onBrowseAll }: AppLaunchpadProps) {
+export function AppLaunchpad({
+  apps,
+  storageKey,
+  onLaunch,
+  onBrowseAll,
+  immersive = false,
+  title = 'Your apps',
+  description = 'Assigned to your role and workspace',
+}: AppLaunchpadProps) {
   const [layout, setLayout] = useState(() => readStoredLayout(storageKey, apps));
   const [customizing, setCustomizing] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -690,42 +701,73 @@ export function AppLaunchpad({ apps, storageKey, onLaunch, onBrowseAll }: AppLau
     <Box
       component="section"
       aria-labelledby="assigned-apps-heading"
-      sx={{
-        mt: 3,
-        mx: { xs: -2, md: -3, xl: -4 },
-        borderTop: 1,
-        borderBottom: 1,
-        borderColor: 'divider',
-        bgcolor: 'background.paper',
-      }}
+      data-launchpad-surface={immersive ? 'immersive' : 'page'}
+      sx={
+        immersive
+          ? {
+              width: 1,
+              color: '#FFFFFF',
+              '& [data-launchpad-item] > .MuiButtonBase-root:hover': {
+                bgcolor: 'rgba(255,255,255,0.12)',
+              },
+              '& [data-launchpad-item] > .MuiButtonBase-root:focus-visible': {
+                outlineColor: '#8DB8FF',
+              },
+            }
+          : {
+              mt: 3,
+              mx: { xs: -2, md: -3, xl: -4 },
+              borderTop: 1,
+              borderBottom: 1,
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+            }
+      }
     >
       <Box
         sx={{
-          minHeight: 64,
+          width: immersive ? 'calc(100% - 32px)' : 1,
+          maxWidth: immersive ? 1540 : 'none',
+          minHeight: immersive ? 76 : 64,
+          mx: immersive ? 'auto' : 0,
+          mb: immersive ? 2 : 0,
           px: { xs: 2, md: 3, xl: 4 },
-          py: 1.25,
+          py: immersive ? 1.5 : 1.25,
           display: 'flex',
           alignItems: 'center',
           gap: 1,
           flexWrap: 'wrap',
+          border: immersive ? '1px solid rgba(255,255,255,0.16)' : 0,
           borderBottom: 1,
-          borderColor: 'divider',
+          borderColor: immersive ? 'rgba(255,255,255,0.16)' : 'divider',
+          borderRadius: immersive ? 1 : 0,
+          bgcolor: immersive ? 'rgba(5,17,47,0.68)' : 'transparent',
+          backdropFilter: immersive ? 'blur(16px)' : 'none',
         }}
       >
         <Box sx={{ minWidth: 0, mr: 'auto' }}>
-          <Typography id="assigned-apps-heading" component="h2" variant="h6">
-            Your apps
+          <Typography id="assigned-apps-heading" component={immersive ? 'h1' : 'h2'} variant="h6">
+            {title}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            Assigned to your role and workspace
+          <Typography
+            variant="caption"
+            color={immersive ? 'rgba(255,255,255,0.72)' : 'text.secondary'}
+          >
+            {description}
           </Typography>
         </Box>
-        <Chip label={`${apps.length} assigned`} size="small" variant="outlined" />
+        <Chip
+          label={`${apps.length} assigned`}
+          size="small"
+          variant="outlined"
+          sx={immersive ? { color: '#FFFFFF', borderColor: 'rgba(255,255,255,0.34)' } : undefined}
+        />
         {customizing && (
           <Tooltip title="Restore the assigned app layout">
             <IconButton
               aria-label="Reset app layout"
               onClick={() => setLayout(reconcileLaunchpadLayout(null, apps))}
+              sx={immersive ? { color: '#FFFFFF' } : undefined}
             >
               <RotateCcw size={18} strokeWidth={1.8} />
             </IconButton>
@@ -735,6 +777,7 @@ export function AppLaunchpad({ apps, storageKey, onLaunch, onBrowseAll }: AppLau
           variant="text"
           startIcon={<AppWindow size={17} strokeWidth={1.8} />}
           onClick={onBrowseAll}
+          sx={immersive ? { color: '#FFFFFF' } : undefined}
         >
           All apps
         </Button>
@@ -742,6 +785,15 @@ export function AppLaunchpad({ apps, storageKey, onLaunch, onBrowseAll }: AppLau
           variant={customizing ? 'contained' : 'outlined'}
           startIcon={customizing ? <Check size={17} strokeWidth={1.9} /> : <Settings2 size={17} />}
           onClick={() => setCustomizing((current) => !current)}
+          sx={
+            immersive && !customizing
+              ? {
+                  color: '#FFFFFF',
+                  borderColor: 'rgba(255,255,255,0.48)',
+                  '&:hover': { borderColor: '#FFFFFF', bgcolor: 'rgba(255,255,255,0.10)' },
+                }
+              : undefined
+          }
         >
           {customizing ? 'Done' : 'Customize'}
         </Button>
@@ -776,13 +828,21 @@ export function AppLaunchpad({ apps, storageKey, onLaunch, onBrowseAll }: AppLau
       >
         <Box
           sx={{
+            width: 1,
+            maxWidth: immersive ? 1540 : 'none',
+            mx: 'auto',
             px: { xs: 2, md: 3, xl: 4 },
             display: 'grid',
             gridTemplateColumns: {
-              xs: 'minmax(0, 1fr)',
+              xs: immersive ? 'repeat(4, minmax(270px, 82vw))' : 'minmax(0, 1fr)',
               md: 'repeat(2, minmax(0, 1fr))',
               lg: 'repeat(4, minmax(0, 1fr))',
             },
+            gap: immersive ? 1.5 : 0,
+            pb: immersive ? 4 : 0,
+            overflowX: immersive ? { xs: 'auto', md: 'visible' } : 'visible',
+            scrollSnapType: immersive ? { xs: 'x mandatory', md: 'none' } : 'none',
+            scrollbarWidth: 'thin',
           }}
         >
           {HOME_APP_GROUPS.map((group, groupIndex) => {
@@ -795,27 +855,38 @@ export function AppLaunchpad({ apps, storageKey, onLaunch, onBrowseAll }: AppLau
                 key={group.id}
                 sx={{
                   minWidth: 0,
-                  px: { xs: 0, md: 2 },
-                  py: 2.5,
+                  minHeight: immersive ? 238 : 'auto',
+                  px: immersive ? 2 : { xs: 0, md: 2 },
+                  py: immersive ? 2 : 2.5,
                   borderLeft: {
                     xs: 0,
-                    md: groupIndex % 2 === 0 ? 0 : 1,
-                    lg: groupIndex === 0 ? 0 : 1,
+                    md: immersive ? 0 : groupIndex % 2 === 0 ? 0 : 1,
+                    lg: immersive ? 0 : groupIndex === 0 ? 0 : 1,
                   },
                   borderTop: {
                     xs: groupIndex === 0 ? 0 : 1,
-                    md: groupIndex < 2 ? 0 : 1,
+                    md: immersive ? 0 : groupIndex < 2 ? 0 : 1,
                     lg: 0,
                   },
-                  borderColor: 'divider',
+                  border: immersive ? '1px solid rgba(255,255,255,0.16)' : undefined,
+                  borderColor: immersive ? 'rgba(255,255,255,0.16)' : 'divider',
+                  borderRadius: immersive ? 1 : 0,
+                  bgcolor: immersive ? 'rgba(5,17,47,0.68)' : 'transparent',
+                  backdropFilter: immersive ? 'blur(16px)' : 'none',
+                  boxShadow: immersive ? '0 18px 42px rgba(0,8,28,0.22)' : 'none',
+                  scrollSnapAlign: immersive ? 'center' : 'none',
                 }}
               >
-                <Typography id={`app-group-${group.id}`} component="h3" variant="subtitle2">
+                <Typography
+                  id={`app-group-${group.id}`}
+                  component={immersive ? 'h2' : 'h3'}
+                  variant="subtitle2"
+                >
                   {group.name}
                 </Typography>
                 <Typography
                   variant="caption"
-                  color="text.secondary"
+                  color={immersive ? 'rgba(255,255,255,0.68)' : 'text.secondary'}
                   sx={{ display: 'block', minHeight: 32, mt: 0.25 }}
                 >
                   {group.description}

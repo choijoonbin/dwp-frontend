@@ -10,6 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { AppLayout } from '../layouts/app-layout';
 import { AuthLayout } from '../layouts/auth-layout';
+import { HomeLayout } from '../layouts/home-layout';
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
 
 const HomePage = lazy(() => import('../pages/home'));
@@ -61,7 +62,7 @@ export const routesSection: RouteObject[] = [
   {
     element: (
       <AuthGuard>
-        <AppLayout />
+        <HomeLayout />
       </AuthGuard>
     ),
     children: [
@@ -73,6 +74,15 @@ export const routesSection: RouteObject[] = [
           </Suspense>
         ),
       },
+    ],
+  },
+  {
+    element: (
+      <AuthGuard>
+        <AppLayout />
+      </AuthGuard>
+    ),
+    children: [
       {
         path: 'work',
         element: (

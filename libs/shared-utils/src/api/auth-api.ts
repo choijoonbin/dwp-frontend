@@ -27,6 +27,7 @@ export type LoginResponseData = {
 export type MeResponse = {
   userId: number;
   displayName: string;
+  jobTitle?: string | null;
   email?: string | null;
   tenantId: number;
   tenantCode: string;

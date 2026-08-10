@@ -11,13 +11,12 @@ import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
 
 const menuIconProps = { size: 19, strokeWidth: 1.8, 'aria-hidden': true } as const;
 
-export function AccountMenu() {
+export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }) {
   const auth = useAuth();
   const { permissions } = usePermissions();
   const appearance = useAppearance();
@@ -25,6 +24,13 @@ export function AccountMenu() {
   const location = useLocation();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const displayName = auth.user?.displayName || 'User';
+  const positionTitle =
+    auth.user?.jobTitle ||
+    (auth.user?.roles.includes('PLATFORM_ADMIN')
+      ? 'Platform administrator'
+      : auth.user?.roles.includes('TENANT_ADMIN') || auth.user?.roles.includes('ADMIN')
+        ? 'Tenant administrator'
+        : 'Workspace member');
   const isAdmin = Boolean(
     auth.user?.roles.some((role) => ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'].includes(role)) &&
       isAppResourceEntitled('APP.ADMINISTRATION', permissions)
@@ -47,16 +53,59 @@ export function AccountMenu() {
 
   return (
     <>
-      <Tooltip title={displayName}>
-        <IconButton
-          aria-label="Account"
+      <Tooltip title={showIdentity ? '' : displayName}>
+        <Box
+          component="button"
+          type="button"
+          aria-label={`Account: ${displayName}, ${positionTitle}`}
           onClick={(event) => setAnchor(event.currentTarget)}
-          sx={{ p: 0.25, border: 1, borderColor: 'divider' }}
+          sx={{
+            p: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            color: 'text.primary',
+            bgcolor: 'transparent',
+            border: 0,
+            cursor: 'pointer',
+            font: 'inherit',
+            textAlign: 'right',
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: 3,
+            },
+          }}
         >
-          <Avatar sx={{ width: 32, height: 32, fontSize: 14, bgcolor: 'primary.main' }}>
+          {showIdentity && (
+            <Box sx={{ minWidth: 0, maxWidth: 190, display: { xs: 'none', md: 'block' } }}>
+              <Typography component="span" variant="subtitle2" noWrap sx={{ display: 'block' }}>
+                {displayName}
+              </Typography>
+              <Typography
+                component="span"
+                variant="caption"
+                color="text.secondary"
+                noWrap
+                sx={{ display: 'block' }}
+              >
+                {positionTitle}
+              </Typography>
+            </Box>
+          )}
+          <Avatar
+            sx={{
+              width: 36,
+              height: 36,
+              fontSize: 14,
+              bgcolor: 'primary.main',
+              border: 1,
+              borderColor: 'divider',
+            }}
+          >
             {displayName.charAt(0).toUpperCase()}
           </Avatar>
-        </IconButton>
+        </Box>
       </Tooltip>
 
       <Menu
@@ -72,6 +121,9 @@ export function AccountMenu() {
             {displayName}
           </Typography>
           <Typography variant="body2" color="text.secondary" noWrap>
+            {positionTitle}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
             {auth.user?.email || auth.user?.tenantCode || ''}
           </Typography>
         </Box>

@@ -77,4 +77,25 @@ describe('axiosInstance browser session contract', () => {
       expect.objectContaining({ 'X-XSRF-TOKEN': 'second-token' })
     );
   });
+
+  it('lets the browser set the multipart boundary for FormData mutations', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse(200, {
+          data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
+        })
+      )
+      .mockResolvedValueOnce(jsonResponse(200, { data: {} }));
+    vi.stubGlobal('fetch', fetchMock);
+    const form = new FormData();
+    form.set('file', new Blob(['image-bytes'], { type: 'image/png' }), 'home.png');
+
+    await axiosInstance.post('/api/upload', form);
+
+    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(request.body).toBe(form);
+    expect(request.headers).not.toHaveProperty('Content-Type');
+    expect(request.headers).toEqual(expect.objectContaining({ 'X-XSRF-TOKEN': 'csrf-token' }));
+  });
 });

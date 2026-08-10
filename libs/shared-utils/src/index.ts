@@ -8,6 +8,7 @@ export * from './api/identity-admin-api';
 export * from './api/directory-admin-api';
 export * from './api/platform-admin-api';
 export * from './api/platform-registry-api';
+export * from './api/home-experience-api';
 
 export * from './axios-instance';
 export * from './auth/auth-guard';

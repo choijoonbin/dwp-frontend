@@ -32,11 +32,15 @@ function buildHeaders(body: unknown, extra?: Record<string, string>): Record<str
     'X-Tenant-ID': getTenantId(),
     ...extra,
   };
-  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  if (body !== undefined && !isFormData(body)) headers['Content-Type'] = 'application/json';
   if (typeof navigator !== 'undefined' && navigator.language) {
     headers['Accept-Language'] = navigator.language;
   }
   return headers;
+}
+
+function isFormData(value: unknown): value is FormData {
+  return typeof FormData !== 'undefined' && value instanceof FormData;
 }
 
 function isMutation(method: string): boolean {
@@ -102,7 +106,7 @@ async function request<T>(
     method,
     headers,
     credentials: 'include',
-    body: body === undefined ? undefined : JSON.stringify(body),
+    body: body === undefined ? undefined : isFormData(body) ? body : JSON.stringify(body),
   });
   const payload = await parseBody(response);
 

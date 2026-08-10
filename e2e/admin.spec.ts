@@ -57,6 +57,7 @@ async function mockAdminSession(page: Page) {
       body: envelope({
         userId: 1,
         displayName: 'Admin User',
+        jobTitle: 'Platform administrator',
         email: 'admin@dwp.local',
         tenantId: 1,
         tenantCode: 'default',
@@ -74,6 +75,104 @@ async function mockAdminSession(page: Page) {
     })
   );
 }
+
+test('tenant administrators configure and reset the personal home presentation', async ({
+  page,
+}) => {
+  await mockAdminSession(page);
+  let homeExperience = {
+    headline: null as string | null,
+    subheadline: null as string | null,
+    backgroundPosition: 'CENTER',
+    overlayOpacity: 18,
+    backgroundUrl: null as string | null,
+    backgroundOriginalName: null as string | null,
+    backgroundContentType: null as string | null,
+    backgroundSizeBytes: null as number | null,
+    backgroundWidth: null as number | null,
+    backgroundHeight: null as number | null,
+    version: 0,
+  };
+
+  await page.route('**/api/platform/v1/admin/home-experience**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET') {
+      await route.fulfill({ contentType: 'application/json', body: envelope(homeExperience) });
+      return;
+    }
+    if (request.method() === 'PUT') {
+      const body = request.postDataJSON() as typeof homeExperience;
+      homeExperience = { ...homeExperience, ...body, version: homeExperience.version + 1 };
+      await route.fulfill({ contentType: 'application/json', body: envelope(homeExperience) });
+      return;
+    }
+    if (path.endsWith('/background/reset')) {
+      homeExperience = {
+        ...homeExperience,
+        backgroundUrl: null,
+        backgroundOriginalName: null,
+        backgroundContentType: null,
+        backgroundSizeBytes: null,
+        backgroundWidth: null,
+        backgroundHeight: null,
+        version: homeExperience.version + 1,
+      };
+      await route.fulfill({ contentType: 'application/json', body: envelope(homeExperience) });
+      return;
+    }
+    if (path.endsWith('/background')) {
+      homeExperience = {
+        ...homeExperience,
+        backgroundUrl: `/api/platform/v1/home-experience/background?v=${homeExperience.version + 1}`,
+        backgroundOriginalName: 'agentic-workspace-hero.png',
+        backgroundContentType: 'image/png',
+        backgroundSizeBytes: 1_314_998,
+        backgroundWidth: 1909,
+        backgroundHeight: 494,
+        version: homeExperience.version + 1,
+      };
+      await route.fulfill({ contentType: 'application/json', body: envelope(homeExperience) });
+      return;
+    }
+    await route.fulfill({ status: 404 });
+  });
+  await page.route('**/api/platform/v1/home-experience/background**', (route) =>
+    route.fulfill({
+      contentType: 'image/png',
+      path: 'public/assets/home/default/agentic-workspace-hero.png',
+    })
+  );
+
+  await page.goto('/admin?view=home-experience');
+  await expect(page.getByRole('heading', { name: 'Home experience' })).toBeVisible();
+  await expect(page.getByText('Default background', { exact: true })).toBeVisible();
+  await page.getByLabel('Headline').fill('One workspace, ready for action');
+  await page
+    .getByLabel('Supporting message')
+    .fill('Your governed apps and priorities in one place.');
+  await page.getByRole('button', { name: 'Right' }).click();
+  await page.getByRole('button', { name: 'Save presentation' }).click();
+  await expect(page.getByText('Home experience settings saved.', { exact: true })).toBeVisible();
+
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles('public/assets/home/default/agentic-workspace-hero.png');
+  await page.getByRole('button', { name: 'Upload background' }).click();
+  await expect(page.getByText('Home background uploaded.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Custom background', { exact: true })).toBeVisible();
+  await expect(page.getByText('1909 x 494 / 1.3 MB')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Restore default' }).click();
+  await expect(
+    page.getByText('The default home background was restored.', { exact: true })
+  ).toBeVisible();
+  await expect(page.getByText('Default background', { exact: true })).toBeVisible();
+
+  await expect(page.getByRole('alert')).toBeHidden({ timeout: 10_000 });
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
+});
 
 test('tenant administrators manage standards, registry, and audit', async ({ page }, testInfo) => {
   await mockAdminSession(page);

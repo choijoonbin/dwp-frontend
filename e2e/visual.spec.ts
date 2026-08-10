@@ -88,6 +88,7 @@ async function mockAuthenticated(page: Page) {
         data: {
           userId: 1,
           displayName: 'Admin',
+          jobTitle: 'Platform administrator',
           email: 'admin@dwp.local',
           tenantId: 1,
           tenantCode: 'default',
@@ -100,6 +101,23 @@ async function mockAuthenticated(page: Page) {
     route.fulfill({
       contentType: 'application/json',
       body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
+  await page.route('**/api/platform/v1/home-experience', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          headline: null,
+          subheadline: null,
+          backgroundPosition: 'CENTER',
+          overlayOpacity: 18,
+          backgroundUrl: null,
+          version: 0,
+        },
+      }),
     })
   );
   await page.route('**/api/auth/csrf', (route) =>
@@ -302,7 +320,7 @@ test('personal home reference visual baseline', async ({ page }) => {
 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Your apps' })).toBeVisible();
+  await expect(page.getByTestId('personal-home-shell')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Daily brief' })).toBeVisible();
   await expect(page).toHaveScreenshot('personal-home-reference.png', {
     animations: 'disabled',
@@ -323,7 +341,7 @@ test('personal home dark reference visual baseline', async ({ page }) => {
 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Your apps' })).toBeVisible();
+  await expect(page.getByTestId('personal-home-shell')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Daily brief' })).toBeVisible();
   await expect(page).toHaveScreenshot('personal-home-reference-dark.png', {
     animations: 'disabled',
