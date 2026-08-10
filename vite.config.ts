@@ -11,11 +11,15 @@ const developmentPort = 4200;
 
 function vendorGroup(moduleId: string): string | undefined {
   if (!moduleId.includes('/node_modules/')) return undefined;
-  if (/\/(react|react-dom|react-router|scheduler)\//.test(moduleId)) return 'vendor-react';
-  if (moduleId.includes('/@emotion/')) return 'vendor-emotion';
+  if (
+    /\/(react|react-dom|react-router|scheduler|react-i18next)\//.test(moduleId) ||
+    moduleId.includes('/@emotion/') ||
+    /\/(@tanstack|zustand)\//.test(moduleId)
+  ) {
+    return 'vendor-react';
+  }
   if (moduleId.includes('/lucide-react/')) return 'vendor-icons';
-  if (/\/(i18next|react-i18next)\//.test(moduleId)) return 'vendor-i18n';
-  if (/\/(@tanstack|zustand)\//.test(moduleId)) return 'vendor-state';
+  if (/\/i18next\//.test(moduleId)) return 'vendor-i18n';
   return undefined;
 }
 

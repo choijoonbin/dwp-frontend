@@ -9,14 +9,14 @@
 ## Admin API
 
 | Method    | Path                                                          | 계약                   |
-| --------- | ------------------------------------------------------------- | ---------------------- | ------------------- |
+| --------- | ------------------------------------------------------------- | ---------------------- |
 | GET·POST  | `/api/platform/v1/admin/reference-sets`                       | 목록·생성              |
 | GET·PATCH | `/api/platform/v1/admin/reference-sets/{setKey}`              | 상세·수정              |
 | POST      | `/api/platform/v1/admin/reference-sets/{setKey}/activate`     | Version 검증 후 활성화 |
 | POST      | `/api/platform/v1/admin/reference-sets/{setKey}/retire`       | Version 검증 후 폐기   |
 | POST      | `/api/platform/v1/admin/reference-sets/{setKey}/items`        | Item 생성              |
 | PATCH     | `/api/platform/v1/admin/reference-sets/{setKey}/items/{code}` | Item 수정              |
-| POST      | `.../items/{code}/activate                                    | retire`                | Item Lifecycle 변경 |
+| POST      | `.../items/{code}/activate` / `.../items/{code}/retire`       | Item Lifecycle 변경    |
 | GET       | `/api/platform/v1/admin/audit-events`                         | Tenant Audit Page      |
 
 ## Security

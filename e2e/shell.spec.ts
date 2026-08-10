@@ -369,7 +369,7 @@ test('tenant policy promotes the configured SSO provider without hiding local ac
     await ssoButton.evaluate((button) =>
       Boolean(
         button.compareDocumentPosition(document.querySelector('form')) &
-          Node.DOCUMENT_POSITION_FOLLOWING
+        Node.DOCUMENT_POSITION_FOLLOWING
       )
     )
   ).toBe(true);

@@ -104,7 +104,7 @@ Link한다. 근거가 없으면 0점 또는 `미검증`으로 기록한다.
 ### Stage 3. Pilot Design
 
 - 우선 후보 1곳과 예비 후보 1곳
-- J1~J3 중 2~3개 P0 Journey, 사용자와 System 확정
+- J1-J3 중 2-3개 P0 Journey, 사용자와 System 확정
 - Baseline, Target, Guardrail, 운영·지원과 중단 조건 합의
 - 유료 Pilot 계약과 Data Processing 문서 체결
 
@@ -121,7 +121,7 @@ Link한다. 근거가 없으면 0점 또는 `미검증`으로 기록한다.
 | Day | 활동                          | 참여자                          | 산출물                   |
 | --- | ----------------------------- | ------------------------------- | ------------------------ |
 | 1   | Sponsor·목표·사업성과         | 경제적·업무 Sponsor             | Outcome·예산·결정 구조   |
-| 2~3 | J1·J2 Contextual Inquiry      | P1 직원 6~8명, P2 2~3명         | As-is Map·시간·우회      |
+| 2-3 | J1·J2 Contextual Inquiry      | P1 직원 6-8명, P2 2-3명         | As-is Map·시간·우회      |
 | 4   | J3 Service Walkthrough        | P1 3명, P3 담당자 3명           | 요청량·재분류·SLA        |
 | 5   | J5 Legacy·System Inventory    | P1·P3·Platform                  | App·SSO·API·Action 목록  |
 | 6   | Identity·ACL·Data Lifecycle   | IAM·Security·Privacy·Data Owner | Trust Boundary·Data Map  |
@@ -197,7 +197,7 @@ Link한다. 근거가 없으면 0점 또는 `미검증`으로 기록한다.
 ### 8.3 In Scope
 
 - 승인된 Persona·조직·사용자 Group
-- J1~J3 중 승인된 Journey와 상위 서비스 5~10개
+- J1-J3 중 승인된 Journey와 상위 서비스 5-10개
 - Productivity, Knowledge, System of Record와 Legacy Connector 각 1개
 - L0·L1 AI, 승인된 L2 Action 최대 1개
 - KPI Dashboard, Audit, Incident와 Support 운영

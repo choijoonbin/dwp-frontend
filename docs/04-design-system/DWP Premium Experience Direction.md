@@ -98,7 +98,7 @@ Context Envelope 계약으로 전환한다.
 
 ### Icon
 
-- Lucide를 기본으로 하며 일반 Navigation 19px, Inline 16~18px, App Mark 22~24px를 쓴다.
+- Lucide를 기본으로 하며 일반 Navigation 19px, Inline 16-18px, App Mark 22-24px를 쓴다.
 - Stroke는 1.8을 기본으로 하고 상태를 Icon만으로 전달하지 않는다.
 - Icon Button은 Tooltip과 Accessible Name을 반드시 제공한다.
 - App Icon은 Domain별 Color와 Shape를 사용하되 Brand Logo를 허가 없이 모사하지 않는다.
