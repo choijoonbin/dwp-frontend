@@ -2,6 +2,7 @@ export * from './env';
 export * from './types';
 export * from './http-error';
 export * from './tenant-util';
+export * from './locale-preference';
 export * from './api/auth-api';
 export * from './api/agent-plan-api';
 export * from './api/identity-admin-api';
@@ -11,6 +12,7 @@ export * from './api/platform-registry-api';
 export * from './api/home-experience-api';
 export * from './api/tenant-branding-api';
 export * from './api/home-preference-api';
+export * from './api/personal-preference-api';
 export * from './api/announcement-api';
 
 export * from './axios-instance';

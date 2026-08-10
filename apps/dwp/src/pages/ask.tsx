@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ArrowRight,
@@ -27,19 +28,14 @@ import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import { PageHeader, ReferenceModeChip, SectionHeading } from '../features/work-hub/workspace-ui';
-import { askPlanSteps, askSources } from '../features/work-hub/reference-data';
+import {
+  askSources,
+  localizeAskPlanSteps,
+  localizeAskSources,
+} from '../features/work-hub/reference-data';
 
-const promptExamples = [
-  'Can I work remotely next Friday?',
-  'What is blocking my urgent work?',
-  'Where do I request software access?',
-] as const;
-
-const contextItems = [
-  ['Customer discovery', 'Meeting at 11:00 / 6 sources'],
-  ['Software access', 'Approval due at 10:30'],
-  ['Benefits enrollment', 'Window closes at 17:00'],
-] as const;
+const promptKeys = ['remote', 'blocking', 'software'] as const;
+const contextKeys = ['customer', 'software', 'benefits'] as const;
 
 type PlanLoadState = 'idle' | 'loading' | 'ready' | 'fallback';
 
@@ -50,6 +46,7 @@ function toVisualRisk(riskTier: AgentPlanContract['riskTier']) {
 }
 
 export default function AskPage() {
+  const { t } = useTranslation('work');
   const navigate = useNavigate();
   const toast = useToast();
   const [searchParams] = useSearchParams();
@@ -59,7 +56,11 @@ export default function AskPage() {
   const [runtimePlan, setRuntimePlan] = useState<AgentPlanContract | null>(null);
   const [planLoadState, setPlanLoadState] = useState<PlanLoadState>('idle');
   const requestSequence = useRef(0);
-  const restricted = Boolean(submittedQuery && /salary|confidential/i.test(submittedQuery));
+  const restricted = Boolean(
+    submittedQuery && /salary|confidential|payroll|급여|기밀|비밀/i.test(submittedQuery)
+  );
+  const localizedSources = useMemo(() => localizeAskSources(t), [t]);
+  const localizedPlanSteps = useMemo(() => localizeAskPlanSteps(t), [t]);
 
   const prepareAnswer = useCallback(async (value: string) => {
     const nextSequence = requestSequence.current + 1;
@@ -67,7 +68,7 @@ export default function AskPage() {
     setSubmittedQuery(value);
     setRuntimePlan(null);
 
-    if (/salary|confidential/i.test(value)) {
+    if (/salary|confidential|payroll|급여|기밀|비밀/i.test(value)) {
       setPlanLoadState('idle');
       return;
     }
@@ -109,9 +110,9 @@ export default function AskPage() {
   return (
     <PageCanvas>
       <PageHeader
-        eyebrow="Enterprise intelligence"
-        title="Ask DWP"
-        description="Find trusted context and prepare governed actions"
+        eyebrow={t('askPage.header.eyebrow')}
+        title={t('askPage.header.title')}
+        description={t('askPage.header.description')}
         action={<ReferenceModeChip />}
       />
 
@@ -139,10 +140,10 @@ export default function AskPage() {
       >
         <TextField
           fullWidth
-          label="Ask a work question"
+          label={t('askPage.questionLabel')}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Ask about a policy, task, service, or application"
+          placeholder={t('askPage.questionPlaceholder')}
           slotProps={{
             input: {
               startAdornment: (
@@ -159,7 +160,7 @@ export default function AskPage() {
           endIcon={<ArrowRight size={16} />}
           sx={{ minWidth: 112 }}
         >
-          Ask DWP
+          {t('askPage.submit')}
         </Button>
       </Box>
 
@@ -173,13 +174,16 @@ export default function AskPage() {
         }}
       >
         <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
-          Suggested
+          {t('askPage.suggested')}
         </Typography>
-        {promptExamples.map((prompt) => (
-          <Button key={prompt} size="small" variant="text" onClick={() => choosePrompt(prompt)}>
-            {prompt}
-          </Button>
-        ))}
+        {promptKeys.map((key) => {
+          const prompt = t(`askPage.prompts.${key}`);
+          return (
+            <Button key={prompt} size="small" variant="text" onClick={() => choosePrompt(prompt)}>
+              {prompt}
+            </Button>
+          );
+        })}
       </Box>
 
       {!submittedQuery && (
@@ -192,7 +196,7 @@ export default function AskPage() {
             <SectionHeading
               id="recent-context-heading"
               icon={Sparkles}
-              title="Recent work context"
+              title={t('askPage.recentContext')}
             />
           </Box>
           <Box
@@ -205,10 +209,10 @@ export default function AskPage() {
               gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
             }}
           >
-            {contextItems.map(([title, detail], index) => (
+            {contextKeys.map((key, index) => (
               <Box
                 component="li"
-                key={title}
+                key={key}
                 sx={{
                   py: 2.5,
                   px: { xs: 0, md: 2.5 },
@@ -218,10 +222,10 @@ export default function AskPage() {
                 }}
               >
                 <Typography component="h3" variant="subtitle2">
-                  {title}
+                  {t(`askPage.context.${key}.title`)}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-                  {detail}
+                  {t(`askPage.context.${key}.detail`)}
                 </Typography>
               </Box>
             ))}
@@ -232,7 +236,7 @@ export default function AskPage() {
       {submittedQuery && (
         <Box sx={{ mt: 4 }}>
           <Box
-            aria-label="AI response status"
+            aria-label={t('askPage.responseStatus')}
             sx={{
               display: 'grid',
               gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
@@ -242,26 +246,36 @@ export default function AskPage() {
             }}
           >
             {[
-              [ShieldCheck, 'Permission checked', 'Employee scope'],
+              [
+                ShieldCheck,
+                t('askPage.status.permission.label'),
+                t('askPage.status.permission.detail'),
+              ],
               [
                 BookOpenCheck,
-                restricted ? 'Retrieval stopped' : 'Sources verified',
-                restricted ? 'Policy protected' : '2 current records',
+                restricted
+                  ? t('askPage.status.retrievalStopped.label')
+                  : t('askPage.status.sourcesVerified.label'),
+                restricted
+                  ? t('askPage.status.retrievalStopped.detail')
+                  : t('askPage.status.sourcesVerified.detail'),
               ],
               [
                 CheckCircle2,
                 restricted
-                  ? 'No answer generated'
+                  ? t('askPage.status.noAnswer.label')
                   : planLoadState === 'loading'
-                    ? 'Preparing action contract'
+                    ? t('askPage.status.preparing.label')
                     : planLoadState === 'ready'
-                      ? 'Agent contract verified'
-                      : 'Reference preview ready',
+                      ? t('askPage.status.verified.label')
+                      : t('askPage.status.preview.label'),
                 restricted
-                  ? 'Human handoff'
+                  ? t('askPage.status.noAnswer.detail')
                   : planLoadState === 'ready'
-                    ? 'No model / no mutation'
-                    : 'No external mutation',
+                    ? t('askPage.status.verified.detail')
+                    : planLoadState === 'loading'
+                      ? t('askPage.status.preparing.detail')
+                      : t('askPage.status.preview.detail'),
               ],
             ].map(([Icon, label, detail], index) => {
               const StatusIcon = Icon as typeof ShieldCheck;
@@ -306,9 +320,9 @@ export default function AskPage() {
                 gap: 1,
               }}
             >
-              <SectionHeading id="answer-heading" icon={Sparkles} title="Answer" />
+              <SectionHeading id="answer-heading" icon={Sparkles} title={t('askPage.answer')} />
               <Chip
-                label="AI generated / review required"
+                label={t('askPage.reviewRequired')}
                 color="info"
                 variant="outlined"
                 size="small"
@@ -318,8 +332,7 @@ export default function AskPage() {
 
             {restricted ? (
               <Alert severity="warning" icon={<LockKeyhole size={20} />} sx={{ mt: 3 }}>
-                This question includes restricted information. No source content was retrieved and
-                no answer was sent to an AI model in this reference session.
+                {t('askPage.restricted')}
               </Alert>
             ) : (
               <Box
@@ -335,22 +348,18 @@ export default function AskPage() {
               >
                 <Box sx={{ minWidth: 0 }}>
                   <Typography variant="caption" color="text.secondary">
-                    Your question
+                    {t('askPage.yourQuestion')}
                   </Typography>
                   <Typography component="h3" variant="subtitle1" sx={{ mt: 0.4 }}>
                     {submittedQuery}
                   </Typography>
                   <Box sx={{ mt: 2.5, pl: 2.5, borderLeft: 3, borderColor: 'primary.main' }}>
                     <Typography sx={{ fontSize: '1rem', lineHeight: 1.75 }}>
-                      The flexible work policy allows eligible employees to request up to two remote
-                      workdays per week. A manager must approve the dates before the request becomes
-                      active. Submit the request before Thursday at 15:00 so the team calendar can
-                      be updated.
+                      {t('askPage.answerText')}
                     </Typography>
                   </Box>
                   <Alert severity="info" variant="outlined" sx={{ mt: 2.5 }}>
-                    Eligibility and local workplace rules can change the result. Confirm the request
-                    preview before submission.
+                    {t('askPage.answerCaution')}
                   </Alert>
                 </Box>
                 <Box component="aside" aria-labelledby="sources-heading" sx={{ minWidth: 0 }}>
@@ -363,13 +372,20 @@ export default function AskPage() {
                     }}
                   >
                     <Typography id="sources-heading" component="h3" variant="subtitle2">
-                      Verified sources
+                      {t('askPage.verifiedSources')}
                     </Typography>
                     <Typography variant="caption" color="success.main" fontWeight={700}>
-                      2 current
+                      {t('askPage.currentCount', { count: 2 })}
                     </Typography>
                   </Box>
-                  <SourceCitationList sources={askSources} ariaLabel="Answer sources" />
+                  <SourceCitationList
+                    sources={localizedSources}
+                    ariaLabel={t('askPage.answerSources')}
+                    stateLabels={{
+                      restricted: t('ai.citationStates.restricted'),
+                      stale: t('ai.citationStates.stale'),
+                    }}
+                  />
                 </Box>
               </Box>
             )}
@@ -385,20 +401,19 @@ export default function AskPage() {
                 >
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mb: 1.25 }}>
                     <Typography component="p" variant="subtitle2">
-                      Preparing governed action preview
+                      {t('askPage.preparingPreview')}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      No mutation
+                      {t('askPage.noMutation')}
                     </Typography>
                   </Box>
-                  <LinearProgress aria-label="Preparing agent plan preview" />
+                  <LinearProgress aria-label={t('askPage.preparingPlanLabel')} />
                 </Box>
               )}
 
               {planLoadState === 'fallback' && (
                 <Alert severity="warning" variant="outlined" sx={{ mb: 2 }}>
-                  The Agent contract is temporarily unavailable. A read-only reference preview is
-                  shown instead.
+                  {t('askPage.fallback')}
                 </Alert>
               )}
 
@@ -426,40 +441,67 @@ export default function AskPage() {
                     />
                     <Typography component="p" variant="subtitle2">
                       {runtimePlan.agentRegistry.resolution === 'ACTIVE'
-                        ? 'Governed Agent contract verified'
-                        : 'Reference Agent contract verified'}
+                        ? t('askPage.governedContract')
+                        : t('askPage.referenceContract')}
                     </Typography>
                   </Box>
                   <Typography
                     variant="caption"
                     color="text.secondary"
                     sx={{ fontFamily: 'monospace' }}
-                    aria-label={`Agent ${runtimePlan.agentRegistry.entryKey} revision ${runtimePlan.agentRegistry.revision}, audit ${runtimePlan.auditId}, plan hash ${runtimePlan.planHash}`}
+                    aria-label={t('askPage.contractAria', {
+                      agent: runtimePlan.agentRegistry.entryKey,
+                      revision: runtimePlan.agentRegistry.revision,
+                      audit: runtimePlan.auditId,
+                      hash: runtimePlan.planHash,
+                    })}
                   >
-                    Agent {runtimePlan.agentRegistry.entryKey} r{runtimePlan.agentRegistry.revision}{' '}
-                    / Audit {runtimePlan.auditId} / Plan {runtimePlan.planHash.slice(0, 12)}
+                    {t('askPage.contractMeta', {
+                      agent: runtimePlan.agentRegistry.entryKey,
+                      revision: runtimePlan.agentRegistry.revision,
+                      audit: runtimePlan.auditId,
+                      hash: runtimePlan.planHash.slice(0, 12),
+                    })}
                   </Typography>
                 </Box>
               )}
 
               {planLoadState !== 'loading' && (
                 <AgentPlanPreview
-                  title="Flexible work request preview"
-                  summary={
-                    runtimePlan?.summary ||
-                    'No external system will be changed from this reference flow.'
-                  }
+                  title={t('askPage.planTitle')}
+                  summary={runtimePlan?.summary || t('askPage.planSummary')}
                   riskLevel={runtimePlan ? toVisualRisk(runtimePlan.riskTier) : 'medium'}
                   riskLabel={
-                    runtimePlan ? `${runtimePlan.riskTier} / Approval required` : undefined
+                    runtimePlan
+                      ? t('askPage.riskApproval', { tier: runtimePlan.riskTier })
+                      : undefined
                   }
-                  steps={runtimePlan?.steps || askPlanSteps}
-                  sources={runtimePlan ? [] : askSources}
+                  steps={runtimePlan?.steps || localizedPlanSteps}
+                  sources={runtimePlan ? [] : localizedSources}
                   approvalRequired={runtimePlan?.approvalRequired ?? true}
-                  approveLabel="Open service preview"
-                  rejectLabel="Dismiss"
+                  approveLabel={t('askPage.openService')}
+                  rejectLabel={t('askPage.dismiss')}
+                  labels={{
+                    risk: {
+                      low: t('ai.risk.low'),
+                      medium: t('ai.risk.medium'),
+                      high: t('ai.risk.high'),
+                      critical: t('ai.risk.critical'),
+                    },
+                    planSteps: t('ai.planSteps'),
+                    sources: t('ai.sources'),
+                    planSources: t('ai.planSources'),
+                    planApproved: t('ai.planApproved'),
+                    planRejected: t('ai.planRejected'),
+                    reviewBeforeExecution: t('ai.reviewBeforeExecution'),
+                    noApprovalRequired: t('ai.noApprovalRequired'),
+                    citationStates: {
+                      restricted: t('ai.citationStates.restricted'),
+                      stale: t('ai.citationStates.stale'),
+                    },
+                  }}
                   onApprove={() => {
-                    toast.success('Employee services preview opened.');
+                    toast.success(t('askPage.serviceOpened'));
                     navigate('/apps?app=service');
                   }}
                   onReject={() => {

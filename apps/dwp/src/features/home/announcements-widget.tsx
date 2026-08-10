@@ -1,7 +1,9 @@
 import { ArrowUpRight, Megaphone, Pin } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { listAnnouncements } from '@dwp-frontend/shared-utils';
+import { formatNumber } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -17,6 +19,7 @@ const severityTone: Record<AnnouncementSeverity, { accent: string; surface: stri
 };
 
 export function AnnouncementsWidget() {
+  const { t } = useTranslation('home');
   const navigate = useNavigate();
   const announcementsQuery = useQuery({
     queryKey: ['announcements'],
@@ -46,10 +49,10 @@ export function AnnouncementsWidget() {
       >
         <Megaphone size={18} strokeWidth={1.8} aria-hidden="true" />
         <Typography id="announcements-heading" component="h2" variant="subtitle1">
-          Announcements
+          {t('widgets.announcements.title')}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {announcements.length}
+          {formatNumber(announcements.length)}
         </Typography>
       </Box>
 
@@ -76,7 +79,13 @@ export function AnnouncementsWidget() {
               <Box sx={{ width: 4, height: 38, borderRadius: 0.5, bgcolor: tone.accent }} />
               <Box sx={{ minWidth: 0 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
-                  {announcement.pinned && <Pin size={14} strokeWidth={1.9} aria-label="Pinned" />}
+                  {announcement.pinned && (
+                    <Pin
+                      size={14}
+                      strokeWidth={1.9}
+                      aria-label={t('widgets.announcements.pinned')}
+                    />
+                  )}
                   <Typography component="h3" variant="subtitle2">
                     {announcement.title}
                   </Typography>

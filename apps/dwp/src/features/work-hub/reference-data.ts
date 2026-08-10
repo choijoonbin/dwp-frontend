@@ -62,6 +62,18 @@ export type ActivityEvent = {
   progress?: number;
 };
 
+export type ReferenceTranslate = (key: string, options?: Record<string, string | number>) => string;
+
+function localizeField(
+  translate: ReferenceTranslate,
+  collection: string,
+  id: string,
+  field: string,
+  fallback: string
+): string {
+  return translate(`reference.${collection}.${id}.${field}`, { defaultValue: fallback });
+}
+
 export const todayItems: TodayItem[] = [
   {
     id: 'ref-today-approval',
@@ -382,3 +394,74 @@ export const askPlanSteps = [
     tool: 'Employee services',
   },
 ];
+
+export function localizeTodayItems(translate: ReferenceTranslate): TodayItem[] {
+  return todayItems.map((item) => ({
+    ...item,
+    title: localizeField(translate, 'today', item.id, 'title', item.title),
+    reason: localizeField(translate, 'today', item.id, 'reason', item.reason),
+    dueLabel: localizeField(translate, 'today', item.id, 'dueLabel', item.dueLabel),
+    duration: localizeField(translate, 'today', item.id, 'duration', item.duration),
+    source: localizeField(translate, 'today', item.id, 'source', item.source),
+  }));
+}
+
+export function localizeScheduleItems(translate: ReferenceTranslate): ScheduleItem[] {
+  return scheduleItems.map((item) => ({
+    ...item,
+    title: localizeField(translate, 'schedule', item.id, 'title', item.title),
+    detail: localizeField(translate, 'schedule', item.id, 'detail', item.detail),
+  }));
+}
+
+export function localizeWorkItems(translate: ReferenceTranslate): ReferenceWorkItem[] {
+  return workItems.map((item) => ({
+    ...item,
+    title: localizeField(translate, 'work', item.id, 'title', item.title),
+    due: localizeField(translate, 'work', item.id, 'due', item.due),
+    sourceSystem: localizeField(translate, 'work', item.id, 'sourceSystem', item.sourceSystem),
+    owner: localizeField(translate, 'work', item.id, 'owner', item.owner),
+  }));
+}
+
+export function localizeReferenceApps(translate: ReferenceTranslate): ReferenceApp[] {
+  return referenceApps.map((app) => ({
+    ...app,
+    name: localizeField(translate, 'apps', app.id, 'name', app.name),
+    description: localizeField(translate, 'apps', app.id, 'description', app.description),
+    owner: localizeField(translate, 'apps', app.id, 'owner', app.owner),
+    lastUsed: localizeField(translate, 'apps', app.id, 'lastUsed', app.lastUsed),
+  }));
+}
+
+export function localizeActivityEvents(translate: ReferenceTranslate): ActivityEvent[] {
+  return activityEvents.map((event) => ({
+    ...event,
+    actorName: localizeField(translate, 'activity', event.id, 'actorName', event.actorName),
+    title: localizeField(translate, 'activity', event.id, 'title', event.title),
+    summary: localizeField(translate, 'activity', event.id, 'summary', event.summary),
+    objectLabel: localizeField(translate, 'activity', event.id, 'objectLabel', event.objectLabel),
+    source: localizeField(translate, 'activity', event.id, 'source', event.source),
+    tool: event.tool
+      ? localizeField(translate, 'activity', event.id, 'tool', event.tool)
+      : undefined,
+  }));
+}
+
+export function localizeAskSources(translate: ReferenceTranslate): typeof askSources {
+  return askSources.map((source) => ({
+    ...source,
+    title: localizeField(translate, 'askSources', source.id, 'title', source.title),
+    sourceType: localizeField(translate, 'askSources', source.id, 'sourceType', source.sourceType),
+    detail: localizeField(translate, 'askSources', source.id, 'detail', source.detail),
+  }));
+}
+
+export function localizeAskPlanSteps(translate: ReferenceTranslate): typeof askPlanSteps {
+  return askPlanSteps.map((step) => ({
+    ...step,
+    title: localizeField(translate, 'askSteps', step.id, 'title', step.title),
+    description: localizeField(translate, 'askSteps', step.id, 'description', step.description),
+    tool: localizeField(translate, 'askSteps', step.id, 'tool', step.tool),
+  }));
+}

@@ -1,0 +1,191 @@
+{
+  "page": {
+    "personalWorkspace": "개인 앱 워크스페이스",
+    "welcome": "다시 오신 것을 환영합니다",
+    "welcomeName": "{{name}}님, 다시 오신 것을 환영합니다",
+    "assignedDescription": "할당된 앱과 서비스를 바로 시작할 수 있습니다.",
+    "today": "오늘",
+    "updatedAt": "{{time}} 업데이트",
+    "dateUpdated": "{{date}} / {{time}} 업데이트",
+    "lastRefreshed": "{{time}} 마지막 새로고침 / 참조 데이터 전용",
+    "saveError": "홈 환경 설정을 저장하지 못했습니다.",
+    "homeSaved": "홈 화면을 저장했습니다.",
+    "appLayoutSaved": "앱 배치를 저장했습니다.",
+    "defaultRestored": "기본 홈 화면으로 복원했습니다."
+  },
+  "apps": {
+    "groups": {
+      "work": {
+        "name": "업무 시작",
+        "description": "우선순위와 AI 지원 실행"
+      },
+      "connect": {
+        "name": "소통과 협업",
+        "description": "커뮤니케이션 및 공동 작업"
+      },
+      "services": {
+        "name": "구성원과 서비스",
+        "description": "임직원 지원 및 인물 정보"
+      },
+      "systems": {
+        "name": "시스템과 통제",
+        "description": "지식, 업무 도구 및 거버넌스"
+      }
+    },
+    "items": {
+      "dwp-work": {
+        "name": "업무",
+        "description": "우선순위, 승인 및 할 일"
+      },
+      "dwp-ask": {
+        "name": "DWP에게 묻기",
+        "description": "근거 기반 답변과 통제된 실행"
+      },
+      "dwp-activity": {
+        "name": "활동",
+        "description": "사람, 시스템 및 에이전트 이벤트"
+      },
+      "ref-app-mail": {
+        "name": "메일과 일정",
+        "description": "메시지, 회의 및 후속 조치"
+      },
+      "ref-app-collaboration": {
+        "name": "협업",
+        "description": "채팅, 채널 및 회의"
+      },
+      "ref-app-service": {
+        "name": "임직원 서비스",
+        "description": "HR, IT 및 업무 환경 요청"
+      },
+      "ref-app-people": {
+        "name": "구성원 디렉터리",
+        "description": "구성원, 팀 및 연락처 정보"
+      },
+      "ref-app-knowledge": {
+        "name": "지식",
+        "description": "정책, 가이드 및 검증된 답변"
+      },
+      "ref-app-erp": {
+        "name": "비즈니스 ERP",
+        "description": "재무 및 구매 워크스페이스"
+      },
+      "ref-app-legacy": {
+        "name": "레거시 업무",
+        "description": "기존 운영 시스템"
+      },
+      "dwp-admin": {
+        "name": "관리",
+        "description": "접근 권한, 레지스트리, 정책 및 코드"
+      }
+    }
+  },
+  "launchpad": {
+    "defaultTitle": "내 앱",
+    "defaultDescription": "역할과 워크스페이스에 할당된 앱",
+    "assignedCount": "{{count}}개 할당됨",
+    "allApps": "모든 앱",
+    "editHome": "홈 편집",
+    "customize": "앱 배치 편집",
+    "done": "완료",
+    "resetTooltip": "할당된 기본 앱 배치로 복원",
+    "resetLabel": "앱 배치 초기화",
+    "fallbackApp": "앱",
+    "defaultFolder": "앱 폴더",
+    "groupFolder": "{{group}} 폴더",
+    "groupApps": "{{group}} 앱",
+    "openApp": "{{app}} 열기",
+    "arrangeApp": "{{app}} 배치",
+    "openFolder": "{{folder}} 폴더 열기",
+    "arrangeFolder": "{{folder}} 폴더 배치",
+    "drag": {
+      "instructions": "스페이스 키로 앱을 선택하고 방향키로 이동한 다음 스페이스 키를 눌러 놓으세요. 드래그하지 않을 때는 배치 메뉴를 사용할 수 있습니다.",
+      "pickedUp": "{{item}} 항목을 선택했습니다.",
+      "over": "{{item}} 위에 있습니다.",
+      "notOver": "놓을 수 있는 대상 위가 아닙니다.",
+      "placed": "{{item}} 항목을 {{target}} 위치에 놓았습니다.",
+      "returned": "{{item}} 항목을 원래 위치로 되돌렸습니다.",
+      "cancelled": "{{item}} 항목 이동을 취소했습니다."
+    },
+    "menu": {
+      "moveEarlier": "앞으로 이동",
+      "moveLater": "뒤로 이동",
+      "createFolder": "폴더 만들기",
+      "withApp": "{{app}} 앱과 함께",
+      "createSelectedFolder": "선택한 앱으로 폴더 만들기",
+      "addToFolder": "{{folder}}에 추가",
+      "renameFolder": "폴더 이름 변경",
+      "ungroup": "폴더 해제"
+    },
+    "folder": {
+      "rename": "폴더 이름 변경",
+      "renameLabel": "{{folder}} 이름 변경",
+      "name": "폴더 이름",
+      "moveOut": "폴더 밖으로 이동",
+      "moveOutLabel": "{{app}} 앱을 {{folder}} 밖으로 이동"
+    }
+  },
+  "editor": {
+    "title": "홈 편집",
+    "subtitle": "개인 화면",
+    "closeLabel": "홈 편집기 닫기",
+    "widgetsLabel": "홈 위젯",
+    "moveUp": "위로 이동",
+    "moveDown": "아래로 이동",
+    "moveUpLabel": "{{widget}} 위로 이동",
+    "moveDownLabel": "{{widget}} 아래로 이동",
+    "showLabel": "{{widget}} 표시",
+    "governed": "관리자가 지정한 콘텐츠"
+  },
+  "widgets": {
+    "registry": {
+      "announcements": {
+        "label": "공지사항",
+        "description": "조직의 공식 공지 및 긴급 업데이트"
+      },
+      "daily-brief": {
+        "label": "일일 브리핑",
+        "description": "AI 근거 기반 우선순위와 하루 흐름"
+      },
+      "focus": {
+        "label": "지금 집중할 일",
+        "description": "우선 업무 및 승인"
+      },
+      "schedule": {
+        "label": "일정",
+        "description": "회의, 집중 시간 및 마감"
+      },
+      "activity": {
+        "label": "실시간 활동",
+        "description": "사람, 시스템 및 에이전트 이벤트"
+      }
+    },
+    "announcements": {
+      "title": "공지사항",
+      "pinned": "상단 고정"
+    },
+    "brief": {
+      "sourceSummary": "AI 생성 / 검증된 소스 {{count}}개",
+      "title": "일일 브리핑",
+      "summary": "11시 고객 회의 전에 두 가지 결정을 내려야 합니다. 소프트웨어 접근을 지금 승인하면 새 팀원이 업무를 시작할 수 있으며, 고객 브리핑에는 아직 답변이 필요한 질문 세 개가 있습니다.",
+      "signals": {
+        "deadline": { "label": "다음 마감", "value": "10:30", "detail": "소프트웨어 접근" },
+        "focus": { "label": "집중 시간", "value": "90분", "detail": "14:00-15:30" },
+        "meeting": { "label": "회의 준비도", "value": "72%", "detail": "소스 6개 확인" }
+      },
+      "reviewPriority": "우선순위 검토",
+      "askToday": "오늘 일정 질문",
+      "askPrompt": "11시 회의 전에 무엇을 준비해야 하나요?",
+      "rhythmTitle": "하루 흐름",
+      "rhythmDescription": "회의가 점심시간 전에 집중되어 있습니다.",
+      "rhythmLabel": "오전 9시부터 오후 5시까지 회의, 집중 시간 및 마감이 표시된 하루 흐름",
+      "meetings": "회의",
+      "focus": "집중",
+      "deadline": "마감",
+      "meetingDuration": "2시간 5분",
+      "focusDuration": "1시간 30분"
+    },
+    "focus": { "title": "지금 집중할 일" },
+    "schedule": { "title": "일정" },
+    "activity": { "title": "실시간 활동", "view": "활동 보기" }
+  }
+}

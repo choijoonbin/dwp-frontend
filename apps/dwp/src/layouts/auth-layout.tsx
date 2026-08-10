@@ -1,13 +1,19 @@
 import { Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ProductMark } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
+import { LanguageMenu } from '../components/language-menu';
+
 const AUTH_WORLD_ASSET = '/assets/auth/dwp-auth-world-v1.jpg';
 
 export function AuthLayout() {
+  const { t } = useTranslation('auth');
+  const { t: tShell } = useTranslation('shell');
+
   return (
     <Box
       component="main"
@@ -66,6 +72,7 @@ export function AuthLayout() {
         }}
       >
         <ProductMark
+          aria-label={tShell('brand.productName')}
           sx={{
             position: 'relative',
             zIndex: 1,
@@ -92,7 +99,7 @@ export function AuthLayout() {
             variant="overline"
             sx={{ color: '#BDEFE7', display: { xs: 'none', sm: 'block' }, mb: 1.5 }}
           >
-            Work, reimagined
+            {t('layout.eyebrow')}
           </Typography>
           <Typography
             id="dwp-auth-title"
@@ -107,7 +114,7 @@ export function AuthLayout() {
               textShadow: '0 2px 24px rgba(0, 0, 0, 0.28)',
             }}
           >
-            Digital Workplace
+            {t('layout.title')}
           </Typography>
           <Typography
             sx={{
@@ -119,7 +126,7 @@ export function AuthLayout() {
               textShadow: '0 1px 16px rgba(0, 0, 0, 0.36)',
             }}
           >
-            Where people, knowledge, services, and governed AI move work forward together.
+            {t('layout.description')}
           </Typography>
         </Box>
 
@@ -132,13 +139,13 @@ export function AuthLayout() {
             color: '#E6ECEE',
           }}
         >
-          DWP Enterprise Platform
+          {t('layout.platform')}
         </Typography>
       </Box>
 
       <Box
         component="section"
-        aria-label="Account access"
+        aria-label={t('layout.accessRegion')}
         sx={{
           gridColumn: { xs: 1, md: 2 },
           gridRow: { xs: 2, md: 1 },
@@ -171,6 +178,9 @@ export function AuthLayout() {
           '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
         }}
       >
+        <Box sx={{ position: 'absolute', top: { xs: 12, sm: 20 }, right: { xs: 12, sm: 20 } }}>
+          <LanguageMenu />
+        </Box>
         <Box sx={{ width: 1, maxWidth: 380 }}>
           <Outlet />
         </Box>

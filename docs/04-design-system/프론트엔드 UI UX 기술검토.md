@@ -1,6 +1,6 @@
 # DWP 프론트엔드 UI/UX 기술검토
 
-> 문서 상태: R0 Technical Review v2.1
+> 문서 상태: R0 Technical Review v2.2
 >
 > 기준일: 2026-08-08
 >
@@ -29,21 +29,21 @@ Baseline과 Architecture Gate가 승인된 뒤 시작한다.
 
 ### 1.1 현재 상태
 
-| 평가 영역                | 상태      | 현재 근거와 남은 Gate                                                     |
-| ------------------------ | --------- | ------------------------------------------------------------------------- |
-| Core 기술 Stack          | 충족      | React 19, TypeScript, Vite, MUI 7과 Yarn 4 Build 통과                     |
-| Source 독립성            | 1차 충족  | 식별된 파생 Theme·Component·Asset·Tooling을 삭제 또는 독립 구현           |
-| Design Token             | 부분 충족 | DTCG Draft와 Code Adapter 구현, Figma 승인·배포 자동화 남음               |
-| Appearance Policy        | 충족      | Product·Tenant·User·OS 우선순위와 Light·Dark·Contrast·Density 구현        |
-| Global Shell             | 부분 충족 | 반응형 Header·Navigation·Account 구현, 실제 업무 Floorplan 검증 남음      |
-| 공통 Component           | 부분 충족 | ProductMark·ToastViewport·AccessBoundary, 업무 Primitive 확장 필요        |
-| Enterprise Component     | 부분 충족 | MUI X Community Grid Reference 통과, 나머지 업무 Component 필요           |
-| DWP 업무 Pattern         | 미충족    | Today·Work·Approval·Service·Knowledge Pattern 구현 필요                   |
-| AI UX Pattern            | 부분 충족 | Citation·Plan·Execution·Retry·Handoff Reference, Streaming·Feedback 필요  |
-| 접근성                   | 부분 충족 | Desktop·Mobile Axe 자동검사 통과, Keyboard·Reader·Zoom 수동 Gate 남음     |
-| 다국어·한국어            | 부분 충족 | `ko` 초기 언어와 System CJK Stack 적용, 번역 Coverage·제품 Font 결정 필요 |
-| UI Test·Governance       | 부분 충족 | Storybook Play·Axe·Visual 통과, CI와 수동 접근성 Gate 남음                |
-| Browser Session Security | 부분 충족 | HttpOnly Session·CSRF·Logout 구현, Rotation·Idle·운영 검증 남음           |
+| 평가 영역                | 상태      | 현재 근거와 남은 Gate                                                                                             |
+| ------------------------ | --------- | ----------------------------------------------------------------------------------------------------------------- |
+| Core 기술 Stack          | 충족      | React 19, TypeScript, Vite, MUI 7과 Yarn 4 Build 통과                                                             |
+| Source 독립성            | 1차 충족  | 식별된 파생 Theme·Component·Asset·Tooling을 삭제 또는 독립 구현                                                   |
+| Design Token             | 부분 충족 | DTCG Draft와 Code Adapter 구현, Figma 승인·배포 자동화 남음                                                       |
+| Appearance Policy        | 충족      | Product·Tenant·User·OS 우선순위와 Light·Dark·Contrast·Density 구현                                                |
+| Global Shell             | 부분 충족 | 반응형 Header·Navigation·Account 구현, 실제 업무 Floorplan 검증 남음                                              |
+| 공통 Component           | 부분 충족 | ProductMark·ToastViewport·AccessBoundary, 업무 Primitive 확장 필요                                                |
+| Enterprise Component     | 부분 충족 | MUI X Community Grid Reference 통과, 나머지 업무 Component 필요                                                   |
+| DWP 업무 Pattern         | 미충족    | Today·Work·Approval·Service·Knowledge Pattern 구현 필요                                                           |
+| AI UX Pattern            | 부분 충족 | Citation·Plan·Execution·Retry·Handoff Reference, Streaming·Feedback 필요                                          |
+| 접근성                   | 부분 충족 | Desktop·Mobile Axe 자동검사 통과, Keyboard·Reader·Zoom 수동 Gate 남음                                             |
+| 다국어·한국어            | 1차 충족  | `ko`·`en` 전 제품 Namespace, 사용자·Tenant Fallback, API 오류와 Coverage Gate 구현. Native QA·제품 Font 승인 남음 |
+| UI Test·Governance       | 부분 충족 | Storybook Play·Axe·Visual 통과, CI와 수동 접근성 Gate 남음                                                        |
+| Browser Session Security | 부분 충족 | HttpOnly Session·CSRF·Logout 구현, Rotation·Idle·운영 검증 남음                                                   |
 
 ## 2. Foundation Architecture
 

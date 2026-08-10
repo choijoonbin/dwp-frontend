@@ -1,4 +1,5 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Archive, CheckCircle2, Database, Pencil, Plus, RefreshCw, Search } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -50,13 +51,16 @@ type PendingAction =
   | { kind: 'retire-item'; item: ReferenceItem }
   | null;
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'The operation could not be completed.';
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
 }
 
-function preferredLabel(item: ReferenceItem): string {
+function preferredLabel(item: ReferenceItem, locale: string): string {
+  const normalizedLocale = locale.toLowerCase();
+  const baseLocale = normalizedLocale.split('-')[0];
   return (
-    item.labels.find((label) => label.locale.toLowerCase().startsWith('ko'))?.label ??
+    item.labels.find((label) => label.locale.toLowerCase() === normalizedLocale)?.label ??
+    item.labels.find((label) => label.locale.toLowerCase().split('-')[0] === baseLocale)?.label ??
     item.labels.find((label) => label.locale.toLowerCase().startsWith('en'))?.label ??
     item.labels[0]?.label ??
     item.code
@@ -64,6 +68,8 @@ function preferredLabel(item: ReferenceItem): string {
 }
 
 export function ReferenceDataManager() {
+  const { t, i18n } = useTranslation('admin');
+  const locale = i18n.resolvedLanguage ?? i18n.language;
   const toast = useToast();
   const queryClient = useQueryClient();
   const theme = useTheme();
@@ -115,7 +121,7 @@ export function ReferenceDataManager() {
       await acceptDetail(await operation(), successMessage);
       return true;
     } catch (error) {
-      toast.error(errorMessage(error));
+      toast.error(errorMessage(error, t('common.operationError')));
       return false;
     } finally {
       setBusy(false);
@@ -123,7 +129,10 @@ export function ReferenceDataManager() {
   };
 
   const saveSet = async (request: CreateReferenceSetRequest) => {
-    const completed = await run(() => createReferenceSet(request), 'Reference set created.');
+    const completed = await run(
+      () => createReferenceSet(request),
+      t('referenceData.toasts.setCreated')
+    );
     if (completed) setSetDialogMode(null);
   };
 
@@ -131,7 +140,7 @@ export function ReferenceDataManager() {
     if (!detail) return;
     const completed = await run(
       () => updateReferenceSet(detail.setKey, request),
-      'Reference set updated.'
+      t('referenceData.toasts.setUpdated')
     );
     if (completed) setSetDialogMode(null);
   };
@@ -140,7 +149,7 @@ export function ReferenceDataManager() {
     if (!detail) return;
     const completed = await run(
       () => createReferenceItem(detail.setKey, request),
-      'Reference item created as draft.'
+      t('referenceData.toasts.itemCreated')
     );
     if (completed) setItemDialog(null);
   };
@@ -149,7 +158,7 @@ export function ReferenceDataManager() {
     if (!detail || itemDialog?.mode !== 'edit') return;
     const completed = await run(
       () => updateReferenceItem(detail.setKey, itemDialog.item.code, request),
-      'Reference item updated.'
+      t('referenceData.toasts.itemUpdated')
     );
     if (completed) setItemDialog(null);
   };
@@ -160,24 +169,24 @@ export function ReferenceDataManager() {
     if (pendingAction.kind === 'activate-set') {
       completed = await run(
         () => activateReferenceSet(detail.setKey, detail.version),
-        'Reference set activated.'
+        t('referenceData.toasts.setActivated')
       );
     } else if (pendingAction.kind === 'retire-set') {
       completed = await run(
         () => retireReferenceSet(detail.setKey, detail.version),
-        'Reference set retired.'
+        t('referenceData.toasts.setRetired')
       );
     } else if (pendingAction.kind === 'activate-item') {
       completed = await run(
         () =>
           activateReferenceItem(detail.setKey, pendingAction.item.code, pendingAction.item.version),
-        'Reference item activated.'
+        t('referenceData.toasts.itemActivated')
       );
     } else {
       completed = await run(
         () =>
           retireReferenceItem(detail.setKey, pendingAction.item.code, pendingAction.item.version),
-        'Reference item retired.'
+        t('referenceData.toasts.itemRetired')
       );
     }
     if (completed) setPendingAction(null);
@@ -187,7 +196,7 @@ export function ReferenceDataManager() {
     () => [
       {
         field: 'code',
-        headerName: 'Code',
+        headerName: t('referenceData.columns.code'),
         minWidth: 150,
         flex: 1,
         renderCell: ({ row }) => (
@@ -196,28 +205,33 @@ export function ReferenceDataManager() {
               {row.code}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
-              {preferredLabel(row)}
+              {preferredLabel(row, locale)}
             </Typography>
           </Box>
         ),
       },
       {
         field: 'lifecycleState',
-        headerName: 'State',
+        headerName: t('referenceData.columns.state'),
         width: 98,
         renderCell: ({ row }) => <LifecycleChip state={row.lifecycleState} />,
       },
       {
         field: 'labels',
-        headerName: 'Locales',
+        headerName: t('referenceData.columns.locales'),
         width: 84,
         sortable: false,
         renderCell: ({ row }) => <Chip label={row.labels.length} size="small" variant="outlined" />,
       },
-      { field: 'sortOrder', headerName: 'Order', width: 72, type: 'number' },
+      {
+        field: 'sortOrder',
+        headerName: t('referenceData.columns.order'),
+        width: 72,
+        type: 'number',
+      },
       {
         field: 'parentCode',
-        headerName: 'Parent',
+        headerName: t('referenceData.columns.parent'),
         minWidth: 100,
         flex: 0.45,
         renderCell: ({ row }) => row.parentCode || '—',
@@ -231,11 +245,11 @@ export function ReferenceDataManager() {
         align: 'right',
         renderCell: ({ row }) => (
           <Stack direction="row" justifyContent="flex-end" sx={{ width: 1 }}>
-            <Tooltip title="Edit item">
+            <Tooltip title={t('referenceData.actions.editItem')}>
               <span>
                 <IconButton
                   size="small"
-                  aria-label={`Edit ${row.code}`}
+                  aria-label={t('referenceData.actions.editNamed', { code: row.code })}
                   disabled={
                     detail?.lifecycleState === 'RETIRED' || row.lifecycleState === 'RETIRED'
                   }
@@ -246,12 +260,12 @@ export function ReferenceDataManager() {
               </span>
             </Tooltip>
             {row.lifecycleState === 'DRAFT' ? (
-              <Tooltip title="Activate item">
+              <Tooltip title={t('referenceData.actions.activateItem')}>
                 <span>
                   <IconButton
                     size="small"
                     color="success"
-                    aria-label={`Activate ${row.code}`}
+                    aria-label={t('referenceData.actions.activateNamed', { code: row.code })}
                     disabled={detail?.lifecycleState !== 'ACTIVE'}
                     onClick={() => setPendingAction({ kind: 'activate-item', item: row })}
                   >
@@ -260,11 +274,11 @@ export function ReferenceDataManager() {
                 </span>
               </Tooltip>
             ) : (
-              <Tooltip title="Retire item">
+              <Tooltip title={t('referenceData.actions.retireItem')}>
                 <span>
                   <IconButton
                     size="small"
-                    aria-label={`Retire ${row.code}`}
+                    aria-label={t('referenceData.actions.retireNamed', { code: row.code })}
                     disabled={
                       row.lifecycleState === 'RETIRED' || detail?.lifecycleState === 'RETIRED'
                     }
@@ -279,39 +293,46 @@ export function ReferenceDataManager() {
         ),
       },
     ],
-    [detail?.lifecycleState]
+    [detail?.lifecycleState, locale, t]
   );
 
-  if (setsQuery.isLoading) return <AdminPanelLoading label="Loading reference data" />;
-  if (setsQuery.isError) return <AdminPanelError message={errorMessage(setsQuery.error)} />;
+  if (setsQuery.isLoading) {
+    return <AdminPanelLoading label={t('referenceData.loading')} />;
+  }
+  if (setsQuery.isError) {
+    return <AdminPanelError message={errorMessage(setsQuery.error, t('common.operationError'))} />;
+  }
 
   const confirmCopy = pendingAction
     ? pendingAction.kind === 'activate-set'
       ? {
-          title: 'Activate reference set?',
-          message: 'All non-retired draft items will become available to tenant applications.',
-          confirmLabel: 'Activate',
+          title: t('referenceData.confirm.activateSetTitle'),
+          message: t('referenceData.confirm.activateSetMessage'),
+          confirmLabel: t('referenceData.actions.activate'),
           destructive: false,
         }
       : pendingAction.kind === 'retire-set'
         ? {
-            title: 'Retire reference set?',
-            message: 'Tenant applications will no longer receive this set from the runtime API.',
-            confirmLabel: 'Retire',
+            title: t('referenceData.confirm.retireSetTitle'),
+            message: t('referenceData.confirm.retireSetMessage'),
+            confirmLabel: t('referenceData.actions.retire'),
             destructive: true,
           }
         : pendingAction.kind === 'activate-item'
           ? {
-              title: `Activate ${pendingAction.item.code}?`,
-              message: 'This item will become available to tenant applications.',
-              confirmLabel: 'Activate',
+              title: t('referenceData.confirm.activateItemTitle', {
+                code: pendingAction.item.code,
+              }),
+              message: t('referenceData.confirm.activateItemMessage'),
+              confirmLabel: t('referenceData.actions.activate'),
               destructive: false,
             }
           : {
-              title: `Retire ${pendingAction.item.code}?`,
-              message:
-                'This item will be removed from runtime responses without deleting its history.',
-              confirmLabel: 'Retire',
+              title: t('referenceData.confirm.retireItemTitle', {
+                code: pendingAction.item.code,
+              }),
+              message: t('referenceData.confirm.retireItemMessage'),
+              confirmLabel: t('referenceData.actions.retire'),
               destructive: true,
             }
     : null;
@@ -330,7 +351,7 @@ export function ReferenceDataManager() {
       >
         <Box
           component="aside"
-          aria-label="Reference sets"
+          aria-label={t('referenceData.referenceSets')}
           sx={{
             minWidth: 0,
             borderRight: { xs: 0, md: 1 },
@@ -342,13 +363,13 @@ export function ReferenceDataManager() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Database size={18} strokeWidth={1.8} aria-hidden="true" />
               <Typography component="h2" variant="subtitle1">
-                Reference sets
+                {t('referenceData.referenceSets')}
               </Typography>
             </Box>
-            <Tooltip title="New reference set">
+            <Tooltip title={t('referenceData.actions.newSet')}>
               <IconButton
                 size="small"
-                aria-label="New reference set"
+                aria-label={t('referenceData.actions.newSet')}
                 onClick={() => setSetDialogMode('create')}
               >
                 <Plus size={18} strokeWidth={1.8} />
@@ -359,7 +380,7 @@ export function ReferenceDataManager() {
             <TextField
               fullWidth
               size="small"
-              label="Search sets"
+              label={t('referenceData.searchSets')}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               slotProps={{
@@ -400,7 +421,7 @@ export function ReferenceDataManager() {
                       noWrap
                       sx={{ display: 'block', mt: 0.25 }}
                     >
-                      {set.setKey} / {set.itemCount} items
+                      {set.setKey} / {t('referenceData.itemCount', { count: set.itemCount })}
                     </Typography>
                   </Box>
                 </ListItemButton>
@@ -408,18 +429,20 @@ export function ReferenceDataManager() {
             ) : (
               <Box sx={{ py: 6, px: 2, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
-                  No reference sets
+                  {t('referenceData.noSets')}
                 </Typography>
               </Box>
             )}
           </Box>
         </Box>
 
-        <Box component="section" aria-label="Reference set detail" sx={{ minWidth: 0 }}>
+        <Box component="section" aria-label={t('referenceData.setDetail')} sx={{ minWidth: 0 }}>
           {detailQuery.isLoading ? (
-            <AdminPanelLoading label="Loading reference set" />
+            <AdminPanelLoading label={t('referenceData.loadingSet')} />
           ) : detailQuery.isError ? (
-            <AdminPanelError message={errorMessage(detailQuery.error)} />
+            <AdminPanelError
+              message={errorMessage(detailQuery.error, t('common.operationError'))}
+            />
           ) : detail ? (
             <>
               <Box
@@ -444,22 +467,25 @@ export function ReferenceDataManager() {
                     <LifecycleChip state={detail.lifecycleState} />
                   </Stack>
                   <Typography variant="body2" color="text.secondary" noWrap>
-                    {detail.setKey} / revision {detail.revision}
+                    {t('referenceData.revision', {
+                      key: detail.setKey,
+                      revision: detail.revision,
+                    })}
                   </Typography>
                 </Box>
                 <Stack direction="row" alignItems="center">
-                  <Tooltip title="Refresh">
+                  <Tooltip title={t('common.actions.refresh')}>
                     <IconButton
-                      aria-label="Refresh reference set"
+                      aria-label={t('referenceData.actions.refreshSet')}
                       onClick={() => void detailQuery.refetch()}
                     >
                       <RefreshCw size={18} strokeWidth={1.8} />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Edit reference set">
+                  <Tooltip title={t('referenceData.actions.editSet')}>
                     <span>
                       <IconButton
-                        aria-label="Edit reference set"
+                        aria-label={t('referenceData.actions.editSet')}
                         disabled={detail.lifecycleState === 'RETIRED'}
                         onClick={() => setSetDialogMode('edit')}
                       >
@@ -467,10 +493,10 @@ export function ReferenceDataManager() {
                       </IconButton>
                     </span>
                   </Tooltip>
-                  <Tooltip title="New reference item">
+                  <Tooltip title={t('referenceData.actions.newItem')}>
                     <span>
                       <IconButton
-                        aria-label="New reference item"
+                        aria-label={t('referenceData.actions.newItem')}
                         disabled={detail.lifecycleState === 'RETIRED'}
                         onClick={() => setItemDialog({ mode: 'create' })}
                       >
@@ -479,11 +505,11 @@ export function ReferenceDataManager() {
                     </span>
                   </Tooltip>
                   {detail.lifecycleState === 'DRAFT' ? (
-                    <Tooltip title="Activate reference set">
+                    <Tooltip title={t('referenceData.actions.activateSet')}>
                       <span>
                         <IconButton
                           color="success"
-                          aria-label="Activate reference set"
+                          aria-label={t('referenceData.actions.activateSet')}
                           disabled={detail.items.length === 0}
                           onClick={() => setPendingAction({ kind: 'activate-set' })}
                         >
@@ -492,10 +518,10 @@ export function ReferenceDataManager() {
                       </span>
                     </Tooltip>
                   ) : (
-                    <Tooltip title="Retire reference set">
+                    <Tooltip title={t('referenceData.actions.retireSet')}>
                       <span>
                         <IconButton
-                          aria-label="Retire reference set"
+                          aria-label={t('referenceData.actions.retireSet')}
                           disabled={detail.lifecycleState === 'RETIRED'}
                           onClick={() => setPendingAction({ kind: 'retire-set' })}
                         >
@@ -509,7 +535,7 @@ export function ReferenceDataManager() {
               {desktop && (
                 <Box>
                   <EnterpriseDataGrid
-                    ariaLabel="Reference items"
+                    ariaLabel={t('referenceData.referenceItems')}
                     rows={detail.items}
                     columns={columns}
                     getRowId={(row) => row.code}
@@ -522,7 +548,7 @@ export function ReferenceDataManager() {
                       noRowsOverlay: () => (
                         <Box sx={{ height: 1, display: 'grid', placeItems: 'center' }}>
                           <Typography variant="body2" color="text.secondary">
-                            No reference items
+                            {t('referenceData.noItems')}
                           </Typography>
                         </Box>
                       ),
@@ -534,7 +560,7 @@ export function ReferenceDataManager() {
               {!desktop && (
                 <Box
                   component="ul"
-                  aria-label="Reference items"
+                  aria-label={t('referenceData.referenceItems')}
                   sx={{ display: 'grid', listStyle: 'none', p: 0, m: 0 }}
                 >
                   {detail.items.length ? (
@@ -555,7 +581,7 @@ export function ReferenceDataManager() {
                               {item.code}
                             </Typography>
                             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-                              {preferredLabel(item)}
+                              {preferredLabel(item, locale)}
                             </Typography>
                           </Box>
                           <LifecycleChip state={item.lifecycleState} />
@@ -565,15 +591,22 @@ export function ReferenceDataManager() {
                           color="text.secondary"
                           sx={{ display: 'block', mt: 1 }}
                         >
-                          Order {item.sortOrder} / {item.labels.length} locales
-                          {item.parentCode ? ` / Parent ${item.parentCode}` : ''}
+                          {t('referenceData.itemSummary', {
+                            order: item.sortOrder,
+                            count: item.labels.length,
+                          })}
+                          {item.parentCode
+                            ? ` / ${t('referenceData.parentSummary', { code: item.parentCode })}`
+                            : ''}
                         </Typography>
                         <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1 }}>
-                          <Tooltip title="Edit item">
+                          <Tooltip title={t('referenceData.actions.editItem')}>
                             <span>
                               <IconButton
                                 size="small"
-                                aria-label={`Edit ${item.code}`}
+                                aria-label={t('referenceData.actions.editNamed', {
+                                  code: item.code,
+                                })}
                                 disabled={
                                   detail.lifecycleState === 'RETIRED' ||
                                   item.lifecycleState === 'RETIRED'
@@ -585,12 +618,14 @@ export function ReferenceDataManager() {
                             </span>
                           </Tooltip>
                           {item.lifecycleState === 'DRAFT' ? (
-                            <Tooltip title="Activate item">
+                            <Tooltip title={t('referenceData.actions.activateItem')}>
                               <span>
                                 <IconButton
                                   size="small"
                                   color="success"
-                                  aria-label={`Activate ${item.code}`}
+                                  aria-label={t('referenceData.actions.activateNamed', {
+                                    code: item.code,
+                                  })}
                                   disabled={detail.lifecycleState !== 'ACTIVE'}
                                   onClick={() => setPendingAction({ kind: 'activate-item', item })}
                                 >
@@ -599,11 +634,13 @@ export function ReferenceDataManager() {
                               </span>
                             </Tooltip>
                           ) : (
-                            <Tooltip title="Retire item">
+                            <Tooltip title={t('referenceData.actions.retireItem')}>
                               <span>
                                 <IconButton
                                   size="small"
-                                  aria-label={`Retire ${item.code}`}
+                                  aria-label={t('referenceData.actions.retireNamed', {
+                                    code: item.code,
+                                  })}
                                   disabled={
                                     item.lifecycleState === 'RETIRED' ||
                                     detail.lifecycleState === 'RETIRED'
@@ -621,7 +658,7 @@ export function ReferenceDataManager() {
                   ) : (
                     <Box component="li" sx={{ py: 6, textAlign: 'center' }}>
                       <Typography variant="body2" color="text.secondary">
-                        No reference items
+                        {t('referenceData.noItems')}
                       </Typography>
                     </Box>
                   )}
@@ -631,7 +668,7 @@ export function ReferenceDataManager() {
           ) : (
             <Box sx={{ minHeight: 420, display: 'grid', placeItems: 'center' }}>
               <Typography variant="body2" color="text.secondary">
-                Select a reference set
+                {t('referenceData.selectSet')}
               </Typography>
             </Box>
           )}

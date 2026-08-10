@@ -5,6 +5,7 @@ import {
   getMe,
   getPermissions,
   rotateBrowserSession,
+  updateMyPreferredLocale,
   login as loginApi,
   logout as logoutApi,
 } from '../api/auth-api';
@@ -18,6 +19,7 @@ type AuthContextValue = {
   login: (payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }) => Promise<void>;
   logout: () => Promise<void>;
   refreshSession: () => Promise<boolean>;
+  setPreferredLocale: (locale: string) => Promise<void>;
   invalidateSession: () => void;
 };
 
@@ -93,6 +95,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [invalidateSession]);
 
+  const setPreferredLocale = useCallback(async (locale: string) => {
+    const response = await updateMyPreferredLocale(locale);
+    setUser(response.data);
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -101,9 +108,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login,
       logout,
       refreshSession,
+      setPreferredLocale,
       invalidateSession,
     }),
-    [user, isLoading, login, logout, refreshSession, invalidateSession]
+    [user, isLoading, login, logout, refreshSession, setPreferredLocale, invalidateSession]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

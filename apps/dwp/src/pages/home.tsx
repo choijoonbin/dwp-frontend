@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Clock3 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +14,7 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { PageCanvas } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -28,9 +30,9 @@ import {
   ScheduleWidget,
 } from '../features/home/home-widgets';
 import {
-  HOME_APPS,
   isAppEntitled,
   launchpadStorageKey,
+  localizeHomeApps,
 } from '../features/home/app-launchpad-model';
 
 import type {
@@ -41,12 +43,8 @@ import type {
 import type { LaunchpadLayout } from '../features/home/app-launchpad-model';
 
 type PreferenceMutation =
-  | { kind: 'save'; layout: HomePreferenceLayout; message: string }
-  | { kind: 'reset'; message: string };
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'The home preference could not be saved.';
-}
+  | { kind: 'save'; layout: HomePreferenceLayout; messageKey: 'homeSaved' | 'appLayoutSaved' }
+  | { kind: 'reset'; messageKey: 'defaultRestored' };
 
 function HomeWidget({ widgetKey }: { widgetKey: HomeWidgetKey }) {
   switch (widgetKey) {
@@ -64,6 +62,7 @@ function HomeWidget({ widgetKey }: { widgetKey: HomeWidgetKey }) {
 }
 
 export default function HomePage() {
+  const { t } = useTranslation('home');
   const auth = useAuth();
   const toast = useToast();
   const { permissions } = usePermissions();
@@ -79,10 +78,11 @@ export default function HomePage() {
       setSearchParams(next, { replace: true });
     }
   };
-  const firstName = auth.user?.displayName?.split(' ')[0] || 'there';
+  const firstName = auth.user?.displayName?.split(' ')[0];
   const entitledApps = useMemo(
-    () => HOME_APPS.filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
-    [auth.user?.roles, permissions]
+    () =>
+      localizeHomeApps(t).filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
+    [auth.user?.roles, permissions, t]
   );
   const personalLayoutKey = launchpadStorageKey(auth.user?.tenantId ?? 0, auth.user?.userId ?? 0);
   const homeExperienceQuery = useQuery({
@@ -115,16 +115,16 @@ export default function HomePage() {
       queryClient.setQueryData(['home-preference', auth.user?.tenantId, auth.user?.userId], next);
       await queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] });
       closeEditor();
-      toast.success(request.message);
+      toast.success(t(`page.${request.messageKey}`));
     },
-    onError: (error) => toast.error(errorMessage(error)),
+    onError: () => toast.error(t('page.saveError')),
   });
 
   const saveWidgets = (widgets: HomeWidgetPreference[]) => {
     preferenceMutation.mutate({
       kind: 'save',
       layout: { appLayout: homePreference?.layout.appLayout ?? null, widgets },
-      message: 'Home view saved.',
+      messageKey: 'homeSaved',
     });
   };
 
@@ -132,7 +132,7 @@ export default function HomePage() {
     preferenceMutation.mutate({
       kind: 'save',
       layout: { appLayout, widgets: widgetPreferences },
-      message: 'App layout saved.',
+      messageKey: 'appLayoutSaved',
     });
   };
 
@@ -141,7 +141,7 @@ export default function HomePage() {
       closeEditor();
       return;
     }
-    preferenceMutation.mutate({ kind: 'reset', message: 'Default home view restored.' });
+    preferenceMutation.mutate({ kind: 'reset', messageKey: 'defaultRestored' });
   };
 
   const backgroundUrl = resolveHomeBackgroundUrl(homeExperience);
@@ -150,13 +150,13 @@ export default function HomePage() {
     : 'right center';
   const backgroundSize = homeExperience?.backgroundUrl ? 'cover' : { xs: 'cover', md: '195% auto' };
   const overlayOpacity = (homeExperience?.overlayOpacity ?? 18) / 100;
-  const currentDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(new Date());
+  const currentDate = formatDate(new Date(), { dateStyle: 'full' });
 
   return (
     <Box>
       <Box
         component="section"
-        aria-label="Personal app workspace"
+        aria-label={t('page.personalWorkspace')}
         sx={{
           position: 'relative',
           minHeight: { xs: 560, md: 510 },
@@ -191,10 +191,11 @@ export default function HomePage() {
             apps={entitledApps}
             storageKey={personalLayoutKey}
             initialLayout={homePreference ? homePreference.layout.appLayout : undefined}
-            title={homeExperience?.headline || `Welcome back, ${firstName}`}
-            description={
-              homeExperience?.subheadline || 'Your assigned apps and services, ready to launch.'
+            title={
+              homeExperience?.headline ||
+              (firstName ? t('page.welcomeName', { name: firstName }) : t('page.welcome'))
             }
+            description={homeExperience?.subheadline || t('page.assignedDescription')}
             immersive
             customizationBusy={preferenceMutation.isPending}
             onEditHome={() => setEditorOpen(true)}
@@ -217,10 +218,10 @@ export default function HomePage() {
           }}
         >
           <Typography component="p" variant="overline" color="primary.main">
-            Today
+            {t('page.today')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {currentDate} / Updated 09:10
+            {t('page.dateUpdated', { date: currentDate, time: '09:10' })}
           </Typography>
         </Box>
 
@@ -247,7 +248,7 @@ export default function HomePage() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mt: 2 }}>
           <Clock3 size={15} aria-hidden="true" />
           <Typography variant="caption" color="text.secondary">
-            Last refreshed 09:10 / Reference data only
+            {t('page.lastRefreshed', { time: '09:10' })}
           </Typography>
         </Box>
       </PageCanvas>

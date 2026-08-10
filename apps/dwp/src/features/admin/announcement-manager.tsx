@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Archive, Edit3, Megaphone, Plus, Send, X } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -9,6 +10,7 @@ import {
   updateAnnouncement,
   useToast,
 } from '@dwp-frontend/shared-utils';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -73,8 +75,8 @@ const lifecycleColor = {
   ARCHIVED: 'warning',
 } as const;
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'The operation could not be completed.';
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
 }
 
 function localDateTime(value?: string | null): string {
@@ -86,6 +88,10 @@ function localDateTime(value?: string | null): string {
 
 function isoDateTime(value: string): string | null {
   return value ? new Date(value).toISOString() : null;
+}
+
+function displayDateTime(value: string): string {
+  return formatDate(value, { dateStyle: 'medium', timeStyle: 'short' });
 }
 
 function formFrom(announcement: Announcement): AnnouncementForm {
@@ -131,6 +137,7 @@ function AnnouncementDialog({
   onClose: () => void;
   onSubmit: (form: AnnouncementForm) => void;
 }) {
+  const { t } = useTranslation('admin');
   const [form, setForm] = useState<AnnouncementForm>(emptyForm);
 
   const reset = () => setForm(announcement ? formFrom(announcement) : emptyForm);
@@ -145,8 +152,10 @@ function AnnouncementDialog({
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Megaphone size={19} strokeWidth={1.8} />
-        <Box sx={{ flex: 1 }}>{announcement ? 'Edit announcement' : 'New announcement'}</Box>
-        <IconButton aria-label="Close announcement dialog" onClick={onClose} disabled={busy}>
+        <Box sx={{ flex: 1 }}>
+          {announcement ? t('announcements.dialog.editTitle') : t('announcements.dialog.newTitle')}
+        </Box>
+        <IconButton aria-label={t('announcements.dialog.close')} onClick={onClose} disabled={busy}>
           <X size={18} />
         </IconButton>
       </DialogTitle>
@@ -155,7 +164,7 @@ function AnnouncementDialog({
           <TextField
             autoFocus
             required
-            label="Title"
+            label={t('announcements.fields.title')}
             value={form.title}
             onChange={(event) =>
               setForm((current) => ({ ...current, title: event.target.value.slice(0, 160) }))
@@ -166,7 +175,7 @@ function AnnouncementDialog({
             required
             multiline
             minRows={4}
-            label="Message"
+            label={t('announcements.fields.message')}
             value={form.message}
             onChange={(event) =>
               setForm((current) => ({ ...current, message: event.target.value.slice(0, 1000) }))
@@ -182,7 +191,7 @@ function AnnouncementDialog({
           >
             <TextField
               select
-              label="Severity"
+              label={t('announcements.fields.severity')}
               value={form.severity}
               onChange={(event) =>
                 setForm((current) => ({
@@ -193,13 +202,13 @@ function AnnouncementDialog({
             >
               {['INFO', 'SUCCESS', 'WARNING', 'CRITICAL'].map((severity) => (
                 <MenuItem key={severity} value={severity}>
-                  {severity}
+                  {t(`announcements.severity.${severity}`)}
                 </MenuItem>
               ))}
             </TextField>
             <TextField
               select
-              label="Audience"
+              label={t('announcements.fields.audience')}
               value={form.audienceType}
               onChange={(event) =>
                 setForm((current) => ({
@@ -208,13 +217,13 @@ function AnnouncementDialog({
                 }))
               }
             >
-              <MenuItem value="ALL">All employees</MenuItem>
-              <MenuItem value="ROLE">Role</MenuItem>
+              <MenuItem value="ALL">{t('announcements.audience.ALL')}</MenuItem>
+              <MenuItem value="ROLE">{t('announcements.audience.ROLE')}</MenuItem>
             </TextField>
             {form.audienceType === 'ROLE' && (
               <TextField
                 required
-                label="Role key"
+                label={t('announcements.fields.roleKey')}
                 value={form.audienceValue}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -233,11 +242,11 @@ function AnnouncementDialog({
                   }
                 />
               }
-              label="Pinned"
+              label={t('announcements.fields.pinned')}
             />
             <TextField
               type="datetime-local"
-              label="Starts"
+              label={t('announcements.fields.starts')}
               value={form.startsAt}
               onChange={(event) =>
                 setForm((current) => ({ ...current, startsAt: event.target.value }))
@@ -246,7 +255,7 @@ function AnnouncementDialog({
             />
             <TextField
               type="datetime-local"
-              label="Ends"
+              label={t('announcements.fields.ends')}
               value={form.endsAt}
               onChange={(event) =>
                 setForm((current) => ({ ...current, endsAt: event.target.value }))
@@ -254,7 +263,7 @@ function AnnouncementDialog({
               slotProps={{ inputLabel: { shrink: true } }}
             />
             <TextField
-              label="Action label"
+              label={t('announcements.fields.actionLabel')}
               value={form.actionLabel}
               onChange={(event) =>
                 setForm((current) => ({
@@ -264,7 +273,7 @@ function AnnouncementDialog({
               }
             />
             <TextField
-              label="Action URL"
+              label={t('announcements.fields.actionUrl')}
               value={form.actionUrl}
               onChange={(event) =>
                 setForm((current) => ({
@@ -278,14 +287,16 @@ function AnnouncementDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={busy}>
-          Cancel
+          {t('common.actions.cancel')}
         </Button>
         <Button
           variant="contained"
           onClick={() => onSubmit(form)}
           disabled={busy || !form.title.trim() || !form.message.trim()}
         >
-          {announcement ? 'Save changes' : 'Create draft'}
+          {announcement
+            ? t('announcements.actions.saveChanges')
+            : t('announcements.actions.createDraft')}
         </Button>
       </DialogActions>
     </Dialog>
@@ -293,6 +304,7 @@ function AnnouncementDialog({
 }
 
 export function AnnouncementManager() {
+  const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -322,7 +334,7 @@ export function AnnouncementManager() {
       setSelected(null);
       toast.success(successMessage);
     } catch (error) {
-      const message = errorMessage(error);
+      const message = errorMessage(error, t('common.operationError'));
       setOperationError(message);
       toast.error(message);
     } finally {
@@ -330,9 +342,15 @@ export function AnnouncementManager() {
     }
   };
 
-  if (announcementsQuery.isLoading) return <AdminPanelLoading label="Loading announcements" />;
+  if (announcementsQuery.isLoading) {
+    return <AdminPanelLoading label={t('announcements.loading')} />;
+  }
   if (announcementsQuery.isError) {
-    return <AdminPanelError message={errorMessage(announcementsQuery.error)} />;
+    return (
+      <AdminPanelError
+        message={errorMessage(announcementsQuery.error, t('common.operationError'))}
+      />
+    );
   }
 
   const announcements = announcementsQuery.data ?? [];
@@ -348,10 +366,10 @@ export function AnnouncementManager() {
       >
         <Box>
           <Typography id="announcements-admin-heading" component="h2" variant="h5">
-            Announcements
+            {t('announcements.title')}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-            Governed, audience-aware employee communications.
+            {t('announcements.description')}
           </Typography>
         </Box>
         <Button
@@ -362,7 +380,7 @@ export function AnnouncementManager() {
             setDialogOpen(true);
           }}
         >
-          New announcement
+          {t('announcements.actions.new')}
         </Button>
       </Stack>
 
@@ -373,14 +391,14 @@ export function AnnouncementManager() {
       )}
 
       <Box sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-        <Table aria-label="Announcements">
+        <Table aria-label={t('announcements.table.label')}>
           <TableHead>
             <TableRow>
-              <TableCell>Announcement</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Audience</TableCell>
-              <TableCell>Window</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell>{t('announcements.table.announcement')}</TableCell>
+              <TableCell>{t('announcements.table.status')}</TableCell>
+              <TableCell>{t('announcements.table.audience')}</TableCell>
+              <TableCell>{t('announcements.table.window')}</TableCell>
+              <TableCell align="right">{t('announcements.table.actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -389,36 +407,42 @@ export function AnnouncementManager() {
                 <TableCell sx={{ minWidth: 280 }}>
                   <Typography variant="subtitle2">{announcement.title}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {announcement.severity}
-                    {announcement.pinned ? ' / Pinned' : ''}
+                    {t(`announcements.severity.${announcement.severity}`)}
+                    {announcement.pinned ? ` / ${t('announcements.pinned')}` : ''}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Chip
                     size="small"
-                    label={announcement.lifecycleState}
+                    label={t(`common.status.${announcement.lifecycleState}`)}
                     color={lifecycleColor[announcement.lifecycleState]}
                     variant="outlined"
                   />
                 </TableCell>
                 <TableCell>
                   {announcement.audienceType === 'ALL'
-                    ? 'All employees'
+                    ? t('announcements.audience.ALL')
                     : announcement.audienceValue}
                 </TableCell>
                 <TableCell sx={{ minWidth: 180 }}>
                   <Typography variant="caption" color="text.secondary">
-                    {announcement.startsAt ? localDateTime(announcement.startsAt) : 'Immediate'}
+                    {announcement.startsAt
+                      ? displayDateTime(announcement.startsAt)
+                      : t('announcements.immediate')}
                     {' - '}
-                    {announcement.endsAt ? localDateTime(announcement.endsAt) : 'Open ended'}
+                    {announcement.endsAt
+                      ? displayDateTime(announcement.endsAt)
+                      : t('announcements.openEnded')}
                   </Typography>
                 </TableCell>
                 <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-                  <Tooltip title="Edit">
+                  <Tooltip title={t('common.actions.edit')}>
                     <span>
                       <IconButton
                         size="small"
-                        aria-label={`Edit ${announcement.title}`}
+                        aria-label={t('announcements.actions.editNamed', {
+                          title: announcement.title,
+                        })}
                         disabled={busy || announcement.lifecycleState === 'ARCHIVED'}
                         onClick={() => {
                           setSelected(announcement);
@@ -430,12 +454,14 @@ export function AnnouncementManager() {
                     </span>
                   </Tooltip>
                   {announcement.lifecycleState === 'DRAFT' && (
-                    <Tooltip title="Publish">
+                    <Tooltip title={t('announcements.actions.publish')}>
                       <span>
                         <IconButton
                           size="small"
                           color="primary"
-                          aria-label={`Publish ${announcement.title}`}
+                          aria-label={t('announcements.actions.publishNamed', {
+                            title: announcement.title,
+                          })}
                           disabled={busy}
                           onClick={() =>
                             void run(
@@ -444,7 +470,7 @@ export function AnnouncementManager() {
                                   announcement.announcementId,
                                   announcement.version
                                 ),
-                              'Announcement published.'
+                              t('announcements.toasts.published')
                             )
                           }
                         >
@@ -454,11 +480,13 @@ export function AnnouncementManager() {
                     </Tooltip>
                   )}
                   {announcement.lifecycleState !== 'ARCHIVED' && (
-                    <Tooltip title="Archive">
+                    <Tooltip title={t('announcements.actions.archive')}>
                       <span>
                         <IconButton
                           size="small"
-                          aria-label={`Archive ${announcement.title}`}
+                          aria-label={t('announcements.actions.archiveNamed', {
+                            title: announcement.title,
+                          })}
                           disabled={busy}
                           onClick={() =>
                             void run(
@@ -467,7 +495,7 @@ export function AnnouncementManager() {
                                   announcement.announcementId,
                                   announcement.version
                                 ),
-                              'Announcement archived.'
+                              t('announcements.toasts.archived')
                             )
                           }
                         >
@@ -482,7 +510,7 @@ export function AnnouncementManager() {
             {announcements.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} sx={{ py: 6, textAlign: 'center', color: 'text.secondary' }}>
-                  No announcements
+                  {t('announcements.noAnnouncements')}
                 </TableCell>
               </TableRow>
             )}
@@ -506,7 +534,7 @@ export function AnnouncementManager() {
                     selected.version
                   )
                 : createAnnouncement(definitionFrom(form)),
-            selected ? 'Announcement updated.' : 'Announcement draft created.'
+            selected ? t('announcements.toasts.updated') : t('announcements.toasts.created')
           )
         }
       />

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Activity as ActivityIcon,
   AppWindow,
@@ -27,8 +28,12 @@ import ListItemButton from '@mui/material/ListItemButton';
 
 import { AccountMenu } from '../components/account-menu';
 import { BrandLockup } from '../components/brand-lockup';
-import { LanguageMenu } from '../components/language-menu';
-import { SearchControl, WorkspaceMenu, NotificationMenu } from '../components/shell-controls';
+import {
+  FullscreenControl,
+  NotificationMenu,
+  SearchControl,
+  WorkspaceMenu,
+} from '../components/shell-controls';
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
 
 const SIDEBAR_WIDTH = foundationTokens.layout.navigationExpanded;
@@ -36,10 +41,10 @@ const RAIL_WIDTH = foundationTokens.layout.navigationCompact;
 const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
 
 const navigationItems = [
-  { label: 'Work', path: '/work', icon: BriefcaseBusiness, resourceKey: 'APP.WORK' },
-  { label: 'Ask', path: '/ask', icon: Sparkles, resourceKey: 'APP.ASK' },
-  { label: 'Activity', path: '/activity', icon: ActivityIcon, resourceKey: 'APP.ACTIVITY' },
-  { label: 'Apps', path: '/apps', icon: AppWindow },
+  { key: 'work', path: '/work', icon: BriefcaseBusiness, resourceKey: 'APP.WORK' },
+  { key: 'ask', path: '/ask', icon: Sparkles, resourceKey: 'APP.ASK' },
+  { key: 'activity', path: '/activity', icon: ActivityIcon, resourceKey: 'APP.ACTIVITY' },
+  { key: 'apps', path: '/apps', icon: AppWindow },
 ] as const;
 
 type AppNavigationProps = {
@@ -49,6 +54,7 @@ type AppNavigationProps = {
 };
 
 function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppNavigationProps) {
+  const { t } = useTranslation('shell');
   const { pathname } = useLocation();
   const { permissions } = usePermissions();
   const visibleNavigationItems = navigationItems.filter(
@@ -56,7 +62,7 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
   );
 
   return (
-    <Box component="nav" aria-label="Application navigation" sx={{ minWidth: 0 }}>
+    <Box component="nav" aria-label={t('navigation.label')} sx={{ minWidth: 0 }}>
       {!compact && !horizontal && (
         <Typography
           component="p"
@@ -64,7 +70,7 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
           color="text.secondary"
           sx={{ px: 1.5, pt: 1.5, pb: 0.5 }}
         >
-          Workspace
+          {t('navigation.section')}
         </Typography>
       )}
       <List
@@ -81,7 +87,7 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
           return (
             <Tooltip
               key={item.path}
-              title={compact ? item.label : ''}
+              title={compact ? t(`navigation.items.${item.key}`) : ''}
               placement="right"
               disableInteractive={!compact}
             >
@@ -128,7 +134,7 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
                   >
                     <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
                   </ListItemIcon>
-                  {!compact && <ListItemText primary={item.label} />}
+                  {!compact && <ListItemText primary={t(`navigation.items.${item.key}`)} />}
                 </ListItemButton>
               </ListItem>
             </Tooltip>
@@ -140,6 +146,7 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
 }
 
 export function AppLayout() {
+  const { t } = useTranslation('shell');
   const appearance = useAppearance();
   const [collapsed, setCollapsed] = useState(appearance.navigationPattern === 'rail');
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -186,10 +193,10 @@ export function AppLayout() {
         {!compact && (
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="caption" fontWeight={700}>
-              Workspace connected
+              {t('workspace.connected')}
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-              4 sources / policy healthy
+              {t('workspace.healthSummary', { count: 4 })}
             </Typography>
           </Box>
         )}
@@ -252,7 +259,7 @@ export function AppLayout() {
           sx={{ minHeight: `${HEADER_HEIGHT}px !important`, px: { xs: 1, md: 2 } }}
         >
           <IconButton
-            aria-label="Open navigation"
+            aria-label={t('navigation.open')}
             onClick={() => setMobileOpen(true)}
             sx={{ mr: 0.5, display: { lg: 'none' } }}
           >
@@ -260,12 +267,12 @@ export function AppLayout() {
           </IconButton>
           {!topNavigation && desktopNavigationCollapsible && (
             <Tooltip
-              title={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+              title={collapsed ? t('navigation.expand') : t('navigation.collapse')}
               placement="bottom"
             >
               <IconButton
                 size="small"
-                aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+                aria-label={collapsed ? t('navigation.expand') : t('navigation.collapse')}
                 aria-controls="desktop-navigation"
                 aria-expanded={!collapsed}
                 onClick={() => setCollapsed((current) => !current)}
@@ -309,9 +316,7 @@ export function AppLayout() {
               gap: { xs: 0.25, sm: 0.5 },
             }}
           >
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <LanguageMenu />
-            </Box>
+            <FullscreenControl />
             <NotificationMenu />
           </Box>
           <Box

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { ToastViewport } from '@dwp-frontend/design-system';
 
 import { AuthUnauthorizedHandler } from './components/auth-unauthorized-handler';
+import { UserLocaleSync } from './components/user-locale-sync';
 
 type AppProps = {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export default function App({ children }: AppProps) {
   return (
     <>
       <AuthUnauthorizedHandler />
+      <UserLocaleSync />
       {children}
       <ToastViewport />
     </>

@@ -43,16 +43,44 @@ export type AgentExecutionTimelineProps = {
   onStop?: () => void;
   onRetry?: () => void;
   onHandoff?: () => void;
+  labels?: Partial<AgentExecutionTimelineLabels>;
+};
+
+export type AgentExecutionTimelineLabels = {
+  auditId: (id: string) => string;
+  retry: string;
+  handoff: string;
+  stop: string;
+  progress: string;
+  steps: string;
+  states: Record<AgentExecutionStatus, string>;
 };
 
 const statusPresentation = {
-  queued: { label: 'Queued', color: 'default', icon: Circle },
-  running: { label: 'Running', color: 'info', icon: Clock3 },
-  'waiting-approval': { label: 'Waiting approval', color: 'warning', icon: Clock3 },
-  succeeded: { label: 'Succeeded', color: 'success', icon: CircleCheck },
-  failed: { label: 'Failed', color: 'error', icon: TriangleAlert },
-  stopped: { label: 'Stopped', color: 'default', icon: CircleStop },
+  queued: { color: 'default', icon: Circle },
+  running: { color: 'info', icon: Clock3 },
+  'waiting-approval': { color: 'warning', icon: Clock3 },
+  succeeded: { color: 'success', icon: CircleCheck },
+  failed: { color: 'error', icon: TriangleAlert },
+  stopped: { color: 'default', icon: CircleStop },
 } as const;
+
+const defaultLabels: AgentExecutionTimelineLabels = {
+  auditId: (id) => `Audit ID: ${id}`,
+  retry: 'Retry',
+  handoff: 'Handoff',
+  stop: 'Stop',
+  progress: 'Execution progress',
+  steps: 'Execution steps',
+  states: {
+    queued: 'Queued',
+    running: 'Running',
+    'waiting-approval': 'Waiting approval',
+    succeeded: 'Succeeded',
+    failed: 'Failed',
+    stopped: 'Stopped',
+  },
+};
 
 export function AgentExecutionTimeline({
   title,
@@ -62,10 +90,16 @@ export function AgentExecutionTimeline({
   onStop,
   onRetry,
   onHandoff,
+  labels,
 }: AgentExecutionTimelineProps) {
   const running = steps.some((step) => step.status === 'running');
   const failed = steps.some((step) => step.status === 'failed');
   const titleId = useId();
+  const copy: AgentExecutionTimelineLabels = {
+    ...defaultLabels,
+    ...labels,
+    states: { ...defaultLabels.states, ...labels?.states },
+  };
 
   return (
     <Box
@@ -86,19 +120,19 @@ export function AgentExecutionTimeline({
           </Typography>
           {auditId && (
             <Typography variant="caption" color="text.secondary">
-              Audit ID: {auditId}
+              {copy.auditId(auditId)}
             </Typography>
           )}
         </Box>
         <Stack direction="row" gap={1}>
           {failed && onRetry && (
             <Button variant="outlined" startIcon={<RotateCcw size={16} />} onClick={onRetry}>
-              Retry
+              {copy.retry}
             </Button>
           )}
           {onHandoff && (
             <Button variant="outlined" startIcon={<UserRoundCheck size={16} />} onClick={onHandoff}>
-              Handoff
+              {copy.handoff}
             </Button>
           )}
           {running && onStop && (
@@ -108,13 +142,13 @@ export function AgentExecutionTimeline({
               startIcon={<CircleStop size={16} />}
               onClick={onStop}
             >
-              Stop
+              {copy.stop}
             </Button>
           )}
         </Stack>
       </Stack>
 
-      {running && <LinearProgress aria-label="Execution progress" />}
+      {running && <LinearProgress aria-label={copy.progress} />}
       <Box
         aria-live="polite"
         sx={{
@@ -128,7 +162,7 @@ export function AgentExecutionTimeline({
         {liveMessage}
       </Box>
 
-      <List disablePadding aria-label="Execution steps" sx={{ px: 2.5, py: 1 }}>
+      <List disablePadding aria-label={copy.steps} sx={{ px: 2.5, py: 1 }}>
         {steps.map((step) => {
           const presentation = statusPresentation[step.status];
           const StatusIcon = presentation.icon;
@@ -141,7 +175,7 @@ export function AgentExecutionTimeline({
                   <Typography variant="body2" fontWeight={600}>
                     {step.title}
                   </Typography>
-                  <Chip size="small" color={presentation.color} label={presentation.label} />
+                  <Chip size="small" color={presentation.color} label={copy.states[step.status]} />
                   {step.tool && <Chip size="small" variant="outlined" label={step.tool} />}
                 </Stack>
                 {(step.detail || step.timestamp) && (

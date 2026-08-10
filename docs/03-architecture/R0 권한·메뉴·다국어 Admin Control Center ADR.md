@@ -1,6 +1,6 @@
 # R0 권한·메뉴·다국어 Admin Control Center ADR
 
-> 상태: Accepted Baseline v1.0
+> 상태: Accepted Baseline v1.1
 >
 > 기준일: 2026-08-10
 >
@@ -125,6 +125,10 @@ Submenu는 클릭 시 아래로 확장하며 3단계를 지원하지 않는다.
 
 모든 제품 문구를 DB로 옮기면 배포 버전과 번역 버전이 분리되어 Rollback과 정적 분석이
 깨지므로 채택하지 않는다.
+
+제품 구현·언어 추가·검증·운영 절차는 `R0 제품 다국어 운영 및 확장 가이드.md`를
+따른다. 공통 Shell, 인증, Home, Work, Account와 Tenant Admin의 `ko`, `en` 제품
+번들은 2026-08-10 기준 Baseline에 반영되었다.
 
 ## 8. 기준정보 정책
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowDown, ArrowUp, LockKeyhole, RotateCcw, Save, X } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -35,6 +36,7 @@ export function HomeWidgetEditor({
   onSave,
   onReset,
 }: HomeWidgetEditorProps) {
+  const { t } = useTranslation(['home', 'common']);
   const [widgets, setWidgets] = useState(() => reconcileHomeWidgets(value));
   const definitionByKey = useMemo(
     () => new Map(HOME_WIDGET_REGISTRY.map((definition) => [definition.key, definition])),
@@ -73,26 +75,29 @@ export function HomeWidgetEditor({
         >
           <Box sx={{ minWidth: 0, flex: 1 }}>
             <Typography component="h2" variant="h6">
-              Edit home
+              {t('editor.title')}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              Personal view
+              {t('editor.subtitle')}
             </Typography>
           </Box>
-          <Tooltip title="Close">
+          <Tooltip title={t('actions.close', { ns: 'common' })}>
             <span>
-              <IconButton aria-label="Close home editor" onClick={onClose} disabled={busy}>
+              <IconButton aria-label={t('editor.closeLabel')} onClick={onClose} disabled={busy}>
                 <X size={19} strokeWidth={1.8} />
               </IconButton>
             </span>
           </Tooltip>
         </Box>
 
-        <List disablePadding sx={{ flex: 1 }} aria-label="Home widgets">
+        <List disablePadding sx={{ flex: 1 }} aria-label={t('editor.widgetsLabel')}>
           {widgets.map((widget, index) => {
             const definition = definitionByKey.get(widget.widgetKey);
             if (!definition) return null;
             const Icon = definition.icon;
+            const widgetLabel = t(`widgets.registry.${definition.key}.label`, {
+              defaultValue: definition.label,
+            });
             return (
               <ListItem
                 key={widget.widgetKey}
@@ -103,17 +108,19 @@ export function HomeWidgetEditor({
                   <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
                 </ListItemIcon>
                 <Box sx={{ minWidth: 0, flex: 1 }}>
-                  <Typography variant="subtitle2">{definition.label}</Typography>
+                  <Typography variant="subtitle2">{widgetLabel}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {definition.description}
+                    {t(`widgets.registry.${definition.key}.description`, {
+                      defaultValue: definition.description,
+                    })}
                   </Typography>
                 </Box>
                 <Stack direction="row" alignItems="center" gap={0.25}>
-                  <Tooltip title="Move up">
+                  <Tooltip title={t('editor.moveUp')}>
                     <span>
                       <IconButton
                         size="small"
-                        aria-label={`Move ${definition.label} up`}
+                        aria-label={t('editor.moveUpLabel', { widget: widgetLabel })}
                         disabled={busy || index === 0}
                         onClick={() => setWidgets((current) => moveHomeWidget(current, index, -1))}
                       >
@@ -121,11 +128,11 @@ export function HomeWidgetEditor({
                       </IconButton>
                     </span>
                   </Tooltip>
-                  <Tooltip title="Move down">
+                  <Tooltip title={t('editor.moveDown')}>
                     <span>
                       <IconButton
                         size="small"
-                        aria-label={`Move ${definition.label} down`}
+                        aria-label={t('editor.moveDownLabel', { widget: widgetLabel })}
                         disabled={busy || index === widgets.length - 1}
                         onClick={() => setWidgets((current) => moveHomeWidget(current, index, 1))}
                       >
@@ -138,7 +145,9 @@ export function HomeWidgetEditor({
                       size="small"
                       checked={widget.visible}
                       disabled={busy}
-                      slotProps={{ input: { 'aria-label': `Show ${definition.label}` } }}
+                      slotProps={{
+                        input: { 'aria-label': t('editor.showLabel', { widget: widgetLabel }) },
+                      }}
                       onChange={(event) =>
                         setWidgets((current) =>
                           current.map((item) =>
@@ -150,8 +159,8 @@ export function HomeWidgetEditor({
                       }
                     />
                   ) : (
-                    <Tooltip title="Governed content">
-                      <LockKeyhole size={17} strokeWidth={1.8} aria-label="Governed content" />
+                    <Tooltip title={t('editor.governed')}>
+                      <LockKeyhole size={17} strokeWidth={1.8} aria-label={t('editor.governed')} />
                     </Tooltip>
                   )}
                 </Stack>
@@ -168,11 +177,11 @@ export function HomeWidgetEditor({
             onClick={onReset}
             disabled={busy}
           >
-            Reset
+            {t('actions.reset', { ns: 'common' })}
           </Button>
           <Box sx={{ flex: 1 }} />
           <Button variant="outlined" onClick={onClose} disabled={busy}>
-            Cancel
+            {t('actions.cancel', { ns: 'common' })}
           </Button>
           <Button
             variant="contained"
@@ -180,7 +189,7 @@ export function HomeWidgetEditor({
             onClick={() => onSave(widgets)}
             disabled={busy}
           >
-            Save
+            {t('actions.save', { ns: 'common' })}
           </Button>
         </Stack>
       </Box>

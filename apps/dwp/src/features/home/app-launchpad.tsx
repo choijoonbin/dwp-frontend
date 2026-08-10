@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   DndContext,
   DragOverlay,
@@ -19,27 +20,16 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  Activity,
   AppWindow,
   ArrowLeft,
   ArrowRight,
-  BookOpen,
-  BriefcaseBusiness,
-  Building2,
   Check,
   Folder,
   FolderPlus,
-  LifeBuoy,
-  Mail,
-  MessagesSquare,
-  MonitorCog,
   MoreVertical,
   Pencil,
   RotateCcw,
   Settings2,
-  ShieldCheck,
-  Sparkles,
-  UsersRound,
 } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -64,37 +54,23 @@ import {
   createLaunchpadFolder,
   moveLaunchpadItem,
   moveLaunchpadItemByOffset,
+  localizeHomeAppGroups,
   reconcileLaunchpadLayout,
   removeAppFromLaunchpadFolder,
   renameLaunchpadFolder,
   ungroupLaunchpadFolder,
 } from './app-launchpad-model';
+import { AppGlyph } from './app-glyph';
 
 import type { DragEndEvent, DragStartEvent, CollisionDetection } from '@dnd-kit/core';
-import type { LucideIcon } from 'lucide-react';
 import type {
   HomeAppDefinition,
   HomeAppGroupId,
-  HomeAppIconKey,
   LaunchpadFolder,
   LaunchpadLayout,
 } from './app-launchpad-model';
 
 const FOLDER_TARGET_PREFIX = 'folder-target::';
-
-const iconByKey: Record<HomeAppIconKey, LucideIcon> = {
-  activity: Activity,
-  admin: ShieldCheck,
-  ask: Sparkles,
-  collaboration: MessagesSquare,
-  erp: Building2,
-  knowledge: BookOpen,
-  legacy: MonitorCog,
-  mail: Mail,
-  people: UsersRound,
-  services: LifeBuoy,
-  work: BriefcaseBusiness,
-};
 
 type AppLaunchpadProps = {
   apps: readonly HomeAppDefinition[];
@@ -142,28 +118,6 @@ const launchpadCollisionDetection: CollisionDetection = (args) => {
   );
   return folderTarget ? [folderTarget] : closestCenter(args);
 };
-
-function AppGlyph({ app, size = 52 }: { app: HomeAppDefinition; size?: number }) {
-  const Icon = iconByKey[app.iconKey];
-  return (
-    <Box
-      aria-hidden="true"
-      sx={{
-        width: size,
-        height: size,
-        flex: `0 0 ${size}px`,
-        display: 'grid',
-        placeItems: 'center',
-        borderRadius: 1,
-        color: '#FFFFFF',
-        bgcolor: app.tone,
-        boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.22), 0 7px 18px rgba(15,23,42,0.14)',
-      }}
-    >
-      <Icon size={Math.round(size * 0.46)} strokeWidth={1.8} />
-    </Box>
-  );
-}
 
 type SortableItemShellProps = {
   itemId: string;
@@ -268,6 +222,8 @@ function AppTile({
   onLaunch,
   onMenu,
 }: AppTileProps) {
+  const { t } = useTranslation('home');
+
   return (
     <SortableItemShell
       itemId={app.id}
@@ -283,7 +239,7 @@ function AppTile({
             ref={activatorRef}
             {...activatorAttributes}
             {...activatorListeners}
-            aria-label={`Open ${app.name}`}
+            aria-label={t('launchpad.openApp', { app: app.name })}
             onClick={() => {
               if (!suppressLaunch.current) onLaunch(app);
             }}
@@ -368,11 +324,11 @@ function AppTile({
               {app.name}
             </Typography>
           </ButtonBase>
-          <Tooltip title={`Arrange ${app.name}`}>
+          <Tooltip title={t('launchpad.arrangeApp', { app: app.name })}>
             <IconButton
               data-item-menu
               size="small"
-              aria-label={`Arrange ${app.name}`}
+              aria-label={t('launchpad.arrangeApp', { app: app.name })}
               onPointerDown={(event) => event.stopPropagation()}
               onClick={(event) => onMenu(event, app.id, groupId)}
               sx={{
@@ -420,6 +376,7 @@ function FolderTile({
   onOpen,
   onMenu,
 }: FolderTileProps) {
+  const { t } = useTranslation('home');
   const folderApps = folder.appIds
     .map((appId) => apps.find((app) => app.id === appId))
     .filter((app): app is HomeAppDefinition => Boolean(app));
@@ -439,7 +396,7 @@ function FolderTile({
             ref={activatorRef}
             {...activatorAttributes}
             {...activatorListeners}
-            aria-label={`Open folder ${folder.name}`}
+            aria-label={t('launchpad.openFolder', { folder: folder.name })}
             onClick={() => {
               if (!suppressLaunch.current) onOpen(folder.id);
             }}
@@ -478,22 +435,9 @@ function FolderTile({
                 boxShadow: '0 7px 18px rgba(15,23,42,0.10)',
               }}
             >
-              {folderApps.slice(0, 4).map((app) => {
-                const Icon = iconByKey[app.iconKey];
-                return (
-                  <Box
-                    key={app.id}
-                    sx={{
-                      display: 'grid',
-                      placeItems: 'center',
-                      color: '#FFFFFF',
-                      bgcolor: app.tone,
-                    }}
-                  >
-                    <Icon size={13} strokeWidth={1.9} />
-                  </Box>
-                );
-              })}
+              {folderApps.slice(0, 4).map((app) => (
+                <AppGlyph key={app.id} app={app} size={20} />
+              ))}
             </Box>
             <Typography
               component="span"
@@ -512,11 +456,11 @@ function FolderTile({
               {folder.name}
             </Typography>
           </ButtonBase>
-          <Tooltip title={`Arrange ${folder.name}`}>
+          <Tooltip title={t('launchpad.arrangeFolder', { folder: folder.name })}>
             <IconButton
               data-item-menu
               size="small"
-              aria-label={`Arrange folder ${folder.name}`}
+              aria-label={t('launchpad.arrangeFolder', { folder: folder.name })}
               onPointerDown={(event) => event.stopPropagation()}
               onClick={(event) => onMenu(event, folder.id, folder.groupId)}
               sx={{
@@ -553,9 +497,10 @@ export function AppLaunchpad({
   onLayoutCommit,
   customizationBusy = false,
   immersive = false,
-  title = 'Your apps',
-  description = 'Assigned to your role and workspace',
+  title,
+  description,
 }: AppLaunchpadProps) {
+  const { t } = useTranslation('home');
   const [layout, setLayout] = useState(() =>
     reconcileLaunchpadLayout(
       initialLayout !== undefined ? initialLayout : readStoredLayout(storageKey, apps),
@@ -574,7 +519,13 @@ export function AppLaunchpad({
   const appSignature = apps.map((app) => app.id).join('|');
 
   const appById = useMemo(() => new Map(apps.map((app) => [app.id, app])), [apps]);
-  const groupById = useMemo(() => new Map(HOME_APP_GROUPS.map((group) => [group.id, group])), []);
+  const localizedGroups = useMemo(() => localizeHomeAppGroups(t), [t]);
+  const groupById = useMemo(
+    () => new Map(localizedGroups.map((group) => [group.id, group])),
+    [localizedGroups]
+  );
+  const resolvedTitle = title ?? t('launchpad.defaultTitle');
+  const resolvedDescription = description ?? t('launchpad.defaultDescription');
   const activeIsApp = Boolean(activeId && appById.has(activeId));
   const openFolder = openFolderId ? layout.folders[openFolderId] : undefined;
   const menuFolder = itemMenu ? layout.folders[itemMenu.itemId] : undefined;
@@ -615,7 +566,7 @@ export function AppLaunchpad({
   };
 
   const itemName = (itemId: string): string =>
-    appById.get(itemId)?.name ?? layout.folders[itemId]?.name ?? 'app';
+    appById.get(itemId)?.name ?? layout.folders[itemId]?.name ?? t('launchpad.fallbackApp');
 
   const dropTargetName = (droppableId: string): string => {
     const folderTarget = targetItemId(droppableId);
@@ -659,7 +610,7 @@ export function AppLaunchpad({
 
       const targetApp = appById.get(folderTarget);
       if (appById.has(draggedId) && targetApp?.groupId === sourceGroupId) {
-        const groupName = groupById.get(sourceGroupId)?.name ?? 'App';
+        const groupName = groupById.get(sourceGroupId)?.name ?? t('launchpad.fallbackApp');
         setLayout((current) =>
           createLaunchpadFolder(
             current,
@@ -667,7 +618,7 @@ export function AppLaunchpad({
             draggedId,
             folderTarget,
             `folder-${crypto.randomUUID()}`,
-            `${groupName} folder`
+            t('launchpad.groupFolder', { group: groupName })
           )
         );
         return;
@@ -687,7 +638,7 @@ export function AppLaunchpad({
 
   const handleCreateFolder = () => {
     if (!itemMenu || !menuApp || !folderPartnerAppId) return;
-    const groupName = groupById.get(itemMenu.groupId)?.name ?? 'App';
+    const groupName = groupById.get(itemMenu.groupId)?.name ?? t('launchpad.fallbackApp');
     setLayout((current) =>
       createLaunchpadFolder(
         current,
@@ -695,7 +646,7 @@ export function AppLaunchpad({
         menuApp.id,
         folderPartnerAppId,
         `folder-${crypto.randomUUID()}`,
-        `${groupName} folder`
+        t('launchpad.groupFolder', { group: groupName })
       )
     );
     setFolderPartnerAppId(null);
@@ -782,25 +733,25 @@ export function AppLaunchpad({
       >
         <Box sx={{ minWidth: 0, mr: 'auto' }}>
           <Typography id="assigned-apps-heading" component={immersive ? 'h1' : 'h2'} variant="h6">
-            {title}
+            {resolvedTitle}
           </Typography>
           <Typography
             variant="caption"
             color={immersive ? 'rgba(255,255,255,0.72)' : 'text.secondary'}
           >
-            {description}
+            {resolvedDescription}
           </Typography>
         </Box>
         <Chip
-          label={`${apps.length} assigned`}
+          label={t('launchpad.assignedCount', { count: apps.length })}
           size="small"
           variant="outlined"
           sx={immersive ? { color: '#FFFFFF', borderColor: 'rgba(255,255,255,0.34)' } : undefined}
         />
         {customizing && (
-          <Tooltip title="Restore the assigned app layout">
+          <Tooltip title={t('launchpad.resetTooltip')}>
             <IconButton
-              aria-label="Reset app layout"
+              aria-label={t('launchpad.resetLabel')}
               onClick={() => setLayout(reconcileLaunchpadLayout(null, apps))}
               sx={immersive ? { color: '#FFFFFF' } : undefined}
             >
@@ -814,7 +765,7 @@ export function AppLaunchpad({
           onClick={onBrowseAll}
           sx={immersive ? { color: '#FFFFFF' } : undefined}
         >
-          All apps
+          {t('launchpad.allApps')}
         </Button>
         {onEditHome && (
           <Button
@@ -823,7 +774,7 @@ export function AppLaunchpad({
             onClick={onEditHome}
             sx={immersive ? { color: '#FFFFFF' } : undefined}
           >
-            Edit home
+            {t('launchpad.editHome')}
           </Button>
         )}
         <Button
@@ -841,7 +792,7 @@ export function AppLaunchpad({
               : undefined
           }
         >
-          {customizing ? 'Done' : 'Customize'}
+          {customizing ? t('launchpad.done') : t('launchpad.customize')}
         </Button>
       </Box>
 
@@ -857,18 +808,24 @@ export function AppLaunchpad({
         onDragEnd={handleDragEnd}
         accessibility={{
           screenReaderInstructions: {
-            draggable:
-              'Press space to pick up an app. Use arrow keys to move it, then press space to drop. Use the arrange menu for non-drag controls.',
+            draggable: t('launchpad.drag.instructions'),
           },
           announcements: {
-            onDragStart: ({ active }) => `Picked up ${itemName(String(active.id))}.`,
+            onDragStart: ({ active }) =>
+              t('launchpad.drag.pickedUp', { item: itemName(String(active.id)) }),
             onDragOver: ({ over }) =>
-              over ? `Over ${dropTargetName(String(over.id))}.` : 'Not over a drop target.',
+              over
+                ? t('launchpad.drag.over', { item: dropTargetName(String(over.id)) })
+                : t('launchpad.drag.notOver'),
             onDragEnd: ({ active, over }) =>
               over
-                ? `${itemName(String(active.id))} was placed with ${dropTargetName(String(over.id))}.`
-                : `${itemName(String(active.id))} was returned to its original position.`,
-            onDragCancel: ({ active }) => `Moving ${itemName(String(active.id))} was cancelled.`,
+                ? t('launchpad.drag.placed', {
+                    item: itemName(String(active.id)),
+                    target: dropTargetName(String(over.id)),
+                  })
+                : t('launchpad.drag.returned', { item: itemName(String(active.id)) }),
+            onDragCancel: ({ active }) =>
+              t('launchpad.drag.cancelled', { item: itemName(String(active.id)) }),
           },
         }}
       >
@@ -891,7 +848,7 @@ export function AppLaunchpad({
             scrollbarWidth: 'thin',
           }}
         >
-          {HOME_APP_GROUPS.map((group, groupIndex) => {
+          {localizedGroups.map((group, groupIndex) => {
             const itemIds = layout.groups[group.id];
             if (itemIds.length === 0) return null;
             return (
@@ -970,7 +927,7 @@ export function AppLaunchpad({
                 <SortableContext items={itemIds} strategy={rectSortingStrategy}>
                   <Box
                     component="ul"
-                    aria-label={`${group.name} apps`}
+                    aria-label={t('launchpad.groupApps', { group: group.name })}
                     sx={{
                       p: 0,
                       mt: 1.25,
@@ -1082,7 +1039,7 @@ export function AppLaunchpad({
           <ListItemIcon>
             <ArrowLeft size={17} />
           </ListItemIcon>
-          Move earlier
+          {t('launchpad.menu.moveEarlier')}
         </MenuItem>
         <MenuItem
           disabled={menuItemIndex < 0 || menuItemIndex >= menuItems.length - 1}
@@ -1098,7 +1055,7 @@ export function AppLaunchpad({
           <ListItemIcon>
             <ArrowRight size={17} />
           </ListItemIcon>
-          Move later
+          {t('launchpad.menu.moveLater')}
         </MenuItem>
         {menuApp && siblingApps.length > 0 && (
           <MenuItem
@@ -1108,7 +1065,7 @@ export function AppLaunchpad({
             <ListItemIcon>
               <FolderPlus size={17} />
             </ListItemIcon>
-            Create folder
+            {t('launchpad.menu.createFolder')}
           </MenuItem>
         )}
         {folderPartnerAppId &&
@@ -1119,7 +1076,7 @@ export function AppLaunchpad({
               onClick={() => setFolderPartnerAppId(app.id)}
               sx={{ pl: 4.5 }}
             >
-              With {app.name}
+              {t('launchpad.menu.withApp', { app: app.name })}
             </MenuItem>
           ))}
         {folderPartnerAppId && (
@@ -1127,7 +1084,7 @@ export function AppLaunchpad({
             <ListItemIcon>
               <Check size={17} />
             </ListItemIcon>
-            Create selected folder
+            {t('launchpad.menu.createSelectedFolder')}
           </MenuItem>
         )}
         {menuApp &&
@@ -1142,7 +1099,7 @@ export function AppLaunchpad({
               <ListItemIcon>
                 <Folder size={17} />
               </ListItemIcon>
-              Add to {folder.name}
+              {t('launchpad.menu.addToFolder', { folder: folder.name })}
             </MenuItem>
           ))}
         {menuFolder && (
@@ -1150,7 +1107,7 @@ export function AppLaunchpad({
             <ListItemIcon>
               <Pencil size={17} />
             </ListItemIcon>
-            Rename folder
+            {t('launchpad.menu.renameFolder')}
           </MenuItem>
         )}
         {menuFolder && (
@@ -1163,7 +1120,7 @@ export function AppLaunchpad({
             <ListItemIcon>
               <Folder size={17} />
             </ListItemIcon>
-            Ungroup apps
+            {t('launchpad.menu.ungroup')}
           </MenuItem>
         )}
       </Menu>
@@ -1182,9 +1139,9 @@ export function AppLaunchpad({
                 {openFolder.name}
               </Box>
               {customizing && (
-                <Tooltip title="Rename folder">
+                <Tooltip title={t('launchpad.folder.rename')}>
                   <IconButton
-                    aria-label={`Rename ${openFolder.name}`}
+                    aria-label={t('launchpad.folder.renameLabel', { folder: openFolder.name })}
                     onClick={() => openRenameDialog(openFolder)}
                   >
                     <Pencil size={17} />
@@ -1212,7 +1169,7 @@ export function AppLaunchpad({
                       }}
                     >
                       <ButtonBase
-                        aria-label={`Open ${app.name}`}
+                        aria-label={t('launchpad.openApp', { app: app.name })}
                         onClick={() => onLaunch(app)}
                         sx={{
                           minWidth: 0,
@@ -1240,9 +1197,12 @@ export function AppLaunchpad({
                         </Box>
                       </ButtonBase>
                       {customizing && (
-                        <Tooltip title="Move out of folder">
+                        <Tooltip title={t('launchpad.folder.moveOut')}>
                           <IconButton
-                            aria-label={`Move ${app.name} out of ${openFolder.name}`}
+                            aria-label={t('launchpad.folder.moveOutLabel', {
+                              app: app.name,
+                              folder: openFolder.name,
+                            })}
                             onClick={() => {
                               setLayout((current) =>
                                 removeAppFromLaunchpadFolder(current, openFolder.id, app.id)
@@ -1260,7 +1220,9 @@ export function AppLaunchpad({
               </Box>
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setOpenFolderId(null)}>Close</Button>
+              <Button onClick={() => setOpenFolderId(null)}>
+                {t('actions.close', { ns: 'common' })}
+              </Button>
             </DialogActions>
           </>
         )}
@@ -1272,12 +1234,12 @@ export function AppLaunchpad({
         fullWidth
         maxWidth="xs"
       >
-        <DialogTitle>Rename folder</DialogTitle>
+        <DialogTitle>{t('launchpad.folder.rename')}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             fullWidth
-            label="Folder name"
+            label={t('launchpad.folder.name')}
             value={folderName}
             onChange={(event) => setFolderName(event.target.value.slice(0, 42))}
             onKeyDown={(event) => {
@@ -1287,9 +1249,11 @@ export function AppLaunchpad({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setRenameFolderId(null)}>Cancel</Button>
+          <Button onClick={() => setRenameFolderId(null)}>
+            {t('actions.cancel', { ns: 'common' })}
+          </Button>
           <Button variant="contained" disabled={!folderName.trim()} onClick={handleRenameFolder}>
-            Save
+            {t('actions.save', { ns: 'common' })}
           </Button>
         </DialogActions>
       </Dialog>

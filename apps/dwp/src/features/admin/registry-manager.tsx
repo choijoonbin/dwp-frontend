@@ -1,4 +1,5 @@
 import { useCallback, useDeferredValue, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Archive,
   Boxes,
@@ -73,22 +74,27 @@ const riskColor = {
   CRITICAL: 'error',
 } as const;
 
-function titleCase(value: string): string {
-  return value.charAt(0) + value.slice(1).toLowerCase();
-}
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'The operation could not be completed.';
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
 }
 
 function RegistryTypeChip({ type }: { type: RegistryType }) {
-  return <Chip label={titleCase(type)} color={typeColor[type]} variant="outlined" size="small" />;
+  const { t } = useTranslation('admin');
+  return (
+    <Chip
+      label={t(`registry.types.${type}`)}
+      color={typeColor[type]}
+      variant="outlined"
+      size="small"
+    />
+  );
 }
 
 function RiskChip({ entry }: { entry: RegistryEntry }) {
+  const { t } = useTranslation('admin');
   return (
     <Chip
-      label={titleCase(entry.riskTier)}
+      label={t(`registry.risk.${entry.riskTier}`)}
       color={riskColor[entry.riskTier]}
       variant="outlined"
       size="small"
@@ -97,6 +103,7 @@ function RiskChip({ entry }: { entry: RegistryEntry }) {
 }
 
 export function RegistryManager() {
+  const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
   const theme = useTheme();
@@ -130,7 +137,7 @@ export function RegistryManager() {
       toast.success(message);
       return true;
     } catch (error) {
-      toast.error(errorMessage(error));
+      toast.error(errorMessage(error, t('common.operationError')));
       return false;
     } finally {
       setBusy(false);
@@ -155,18 +162,18 @@ export function RegistryManager() {
             registryType: value.registryType,
             entryKey: value.entryKey,
           }),
-        'Registry draft created.'
+        t('registry.toasts.draftCreated')
       );
     } else if (dialog.mode === 'edit') {
       completed = await run(
         () =>
           updateRegistryRevision(dialog.entry, { ...definition, version: dialog.entry.version }),
-        'Registry draft updated.'
+        t('registry.toasts.draftUpdated')
       );
     } else {
       completed = await run(
         () => createRegistryRevision(dialog.entry, definition),
-        'Registry revision created.'
+        t('registry.toasts.revisionCreated')
       );
     }
     if (completed) setDialog(null);
@@ -178,13 +185,13 @@ export function RegistryManager() {
       pendingAction.kind === 'activate'
         ? await run(
             () => activateRegistryRevision(pendingAction.entry),
-            'Registry revision activated.'
+            t('registry.toasts.revisionActivated')
           )
         : await run(
             () => retireRegistryRevision(pendingAction.entry),
             pendingAction.entry.lifecycleState === 'DRAFT'
-              ? 'Draft revision retired.'
-              : 'Registry revision retired.'
+              ? t('registry.toasts.draftRetired')
+              : t('registry.toasts.revisionRetired')
           );
     if (completed) setPendingAction(null);
   };
@@ -194,20 +201,20 @@ export function RegistryManager() {
       <Stack direction="row" justifyContent="flex-end" sx={{ width: 1 }}>
         {entry.lifecycleState === 'DRAFT' ? (
           <>
-            <Tooltip title="Edit draft">
+            <Tooltip title={t('registry.actions.editDraft')}>
               <IconButton
                 size="small"
-                aria-label={`Edit ${entry.entryKey}`}
+                aria-label={t('registry.actions.editNamed', { key: entry.entryKey })}
                 onClick={() => setDialog({ mode: 'edit', entry })}
               >
                 <Pencil size={17} strokeWidth={1.8} />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Activate revision">
+            <Tooltip title={t('registry.actions.activateRevision')}>
               <IconButton
                 size="small"
                 color="success"
-                aria-label={`Activate ${entry.entryKey}`}
+                aria-label={t('registry.actions.activateNamed', { key: entry.entryKey })}
                 onClick={() => setPendingAction({ kind: 'activate', entry })}
               >
                 <CheckCircle2 size={17} strokeWidth={1.8} />
@@ -215,21 +222,27 @@ export function RegistryManager() {
             </Tooltip>
           </>
         ) : (
-          <Tooltip title="Create revision">
+          <Tooltip title={t('registry.actions.createRevision')}>
             <IconButton
               size="small"
-              aria-label={`Create revision for ${entry.entryKey}`}
+              aria-label={t('registry.actions.createRevisionFor', { key: entry.entryKey })}
               onClick={() => setDialog({ mode: 'revision', entry })}
             >
               <CopyPlus size={17} strokeWidth={1.8} />
             </IconButton>
           </Tooltip>
         )}
-        <Tooltip title={entry.lifecycleState === 'DRAFT' ? 'Discard draft' : 'Retire revision'}>
+        <Tooltip
+          title={
+            entry.lifecycleState === 'DRAFT'
+              ? t('registry.actions.discardDraft')
+              : t('registry.actions.retireRevision')
+          }
+        >
           <span>
             <IconButton
               size="small"
-              aria-label={`Retire ${entry.entryKey}`}
+              aria-label={t('registry.actions.retireNamed', { key: entry.entryKey })}
               disabled={entry.lifecycleState === 'RETIRED'}
               onClick={() => setPendingAction({ kind: 'retire', entry })}
             >
@@ -239,20 +252,20 @@ export function RegistryManager() {
         </Tooltip>
       </Stack>
     ),
-    []
+    [t]
   );
 
   const columns = useMemo<GridColDef<RegistryEntry>[]>(
     () => [
       {
         field: 'registryType',
-        headerName: 'Type',
+        headerName: t('registry.columns.type'),
         width: 116,
         renderCell: ({ row }) => <RegistryTypeChip type={row.registryType} />,
       },
       {
         field: 'name',
-        headerName: 'Entry',
+        headerName: t('registry.columns.entry'),
         minWidth: 200,
         flex: 1,
         renderCell: ({ row }) => (
@@ -266,22 +279,27 @@ export function RegistryManager() {
           </Box>
         ),
       },
-      { field: 'ownerRef', headerName: 'Owner', minWidth: 170, flex: 0.8 },
+      {
+        field: 'ownerRef',
+        headerName: t('registry.columns.owner'),
+        minWidth: 170,
+        flex: 0.8,
+      },
       {
         field: 'artifactVersion',
-        headerName: 'Version',
+        headerName: t('registry.columns.version'),
         width: 106,
         renderCell: ({ row }) => `${row.artifactVersion} / r${row.revision}`,
       },
       {
         field: 'riskTier',
-        headerName: 'Risk',
+        headerName: t('registry.columns.risk'),
         width: 102,
         renderCell: ({ row }) => <RiskChip entry={row} />,
       },
       {
         field: 'lifecycleState',
-        headerName: 'State',
+        headerName: t('registry.columns.state'),
         width: 102,
         renderCell: ({ row }) => <LifecycleChip state={row.lifecycleState} />,
       },
@@ -295,30 +313,36 @@ export function RegistryManager() {
         renderCell: ({ row }) => renderActions(row),
       },
     ],
-    [renderActions]
+    [renderActions, t]
   );
 
-  if (registryQuery.isLoading) return <AdminPanelLoading label="Loading product registry" />;
-  if (registryQuery.isError) return <AdminPanelError message={errorMessage(registryQuery.error)} />;
+  if (registryQuery.isLoading) {
+    return <AdminPanelLoading label={t('registry.loading')} />;
+  }
+  if (registryQuery.isError) {
+    return (
+      <AdminPanelError message={errorMessage(registryQuery.error, t('common.operationError'))} />
+    );
+  }
 
   const confirmCopy = pendingAction
     ? pendingAction.kind === 'activate'
       ? {
-          title: `Activate ${pendingAction.entry.entryKey}?`,
-          message: 'This revision will replace the active revision in the tenant runtime catalog.',
-          confirmLabel: 'Activate',
+          title: t('registry.confirm.activateTitle', { key: pendingAction.entry.entryKey }),
+          message: t('registry.confirm.activateMessage'),
+          confirmLabel: t('referenceData.actions.activate'),
           destructive: false,
         }
       : {
           title:
             pendingAction.entry.lifecycleState === 'DRAFT'
-              ? `Discard revision ${pendingAction.entry.revision}?`
-              : `Retire ${pendingAction.entry.entryKey}?`,
+              ? t('registry.confirm.discardTitle', { revision: pendingAction.entry.revision })
+              : t('registry.confirm.retireTitle', { key: pendingAction.entry.entryKey }),
           message:
             pendingAction.entry.lifecycleState === 'DRAFT'
-              ? 'The draft will remain in version history but cannot be edited or activated.'
-              : 'This entry will be removed from the tenant runtime catalog.',
-          confirmLabel: 'Retire',
+              ? t('registry.confirm.discardMessage')
+              : t('registry.confirm.retireMessage'),
+          confirmLabel: t('referenceData.actions.retire'),
           destructive: true,
         }
     : null;
@@ -336,22 +360,22 @@ export function RegistryManager() {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Boxes size={18} strokeWidth={1.8} aria-hidden="true" />
             <Typography component="h2" variant="subtitle1">
-              Product registry
+              {t('registry.title')}
             </Typography>
             <Chip label={entries.length} size="small" variant="outlined" />
           </Box>
           <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={0.5}>
-            <Tooltip title="Refresh registry">
+            <Tooltip title={t('registry.actions.refresh')}>
               <IconButton
-                aria-label="Refresh registry"
+                aria-label={t('registry.actions.refresh')}
                 onClick={() => void registryQuery.refetch()}
               >
                 <RefreshCw size={18} strokeWidth={1.8} />
               </IconButton>
             </Tooltip>
-            <Tooltip title="New registry entry">
+            <Tooltip title={t('registry.actions.newEntry')}>
               <IconButton
-                aria-label="New registry entry"
+                aria-label={t('registry.actions.newEntry')}
                 onClick={() => setDialog({ mode: 'create' })}
               >
                 <Plus size={19} strokeWidth={1.8} />
@@ -370,7 +394,7 @@ export function RegistryManager() {
         >
           <TextField
             size="small"
-            label="Search registry"
+            label={t('registry.search')}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             slotProps={{
@@ -386,26 +410,26 @@ export function RegistryManager() {
           <TextField
             select
             size="small"
-            label="Type"
+            label={t('registry.fields.type')}
             value={registryType}
             onChange={(event) => setRegistryType(event.target.value as RegistryType | 'ALL')}
           >
             {registryTypes.map((type) => (
               <MenuItem key={type} value={type}>
-                {titleCase(type)}
+                {type === 'ALL' ? t('registry.allTypes') : t(`registry.types.${type}`)}
               </MenuItem>
             ))}
           </TextField>
           <TextField
             select
             size="small"
-            label="State"
+            label={t('registry.fields.state')}
             value={lifecycle}
             onChange={(event) => setLifecycle(event.target.value as ReferenceLifecycle | 'ALL')}
           >
             {lifecycleStates.map((state) => (
               <MenuItem key={state} value={state}>
-                {titleCase(state)}
+                {state === 'ALL' ? t('registry.allStates') : t(`common.lifecycle.${state}`)}
               </MenuItem>
             ))}
           </TextField>
@@ -414,7 +438,7 @@ export function RegistryManager() {
         {desktop && (
           <Box>
             <EnterpriseDataGrid
-              ariaLabel="Product registry entries"
+              ariaLabel={t('registry.entries')}
               rows={entries}
               columns={columns}
               getRowId={(row) => `${row.registryType}/${row.entryKey}/${row.revision}`}
@@ -427,7 +451,7 @@ export function RegistryManager() {
                 noRowsOverlay: () => (
                   <Box sx={{ height: 1, display: 'grid', placeItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary">
-                      No registry entries
+                      {t('registry.noEntries')}
                     </Typography>
                   </Box>
                 ),
@@ -440,7 +464,7 @@ export function RegistryManager() {
         {!desktop && (
           <Box
             component="ol"
-            aria-label="Product registry entries"
+            aria-label={t('registry.entries')}
             sx={{ display: 'grid', listStyle: 'none', p: 0, m: 0 }}
           >
             {entries.length ? (
@@ -483,7 +507,11 @@ export function RegistryManager() {
                   >
                     <RiskChip entry={entry} />
                     <Typography variant="caption" color="text.secondary">
-                      {entry.artifactVersion} / r{entry.revision} / {entry.ownerRef}
+                      {t('registry.versionSummary', {
+                        version: entry.artifactVersion,
+                        revision: entry.revision,
+                        owner: entry.ownerRef,
+                      })}
                     </Typography>
                   </Stack>
                 </Box>
@@ -491,7 +519,7 @@ export function RegistryManager() {
             ) : (
               <Box component="li" sx={{ py: 6, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
-                  No registry entries
+                  {t('registry.noEntries')}
                 </Typography>
               </Box>
             )}

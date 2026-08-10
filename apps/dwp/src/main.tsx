@@ -11,6 +11,7 @@ import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './app';
 import { routesSection } from './routes/sections';
 import { ErrorBoundary } from './routes/components/error-boundary';
+import { PersonalPreferenceProvider } from './features/account/personal-preference-provider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,7 +46,9 @@ createRoot(document.getElementById('root')!).render(
       <DwpThemeProvider tenant={tenantAppearance}>
         <I18nProvider>
           <AuthProvider>
-            <RouterProvider router={router} />
+            <PersonalPreferenceProvider>
+              <RouterProvider router={router} />
+            </PersonalPreferenceProvider>
           </AuthProvider>
         </I18nProvider>
       </DwpThemeProvider>

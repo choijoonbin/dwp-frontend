@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Activity,
   ArrowUpRight,
@@ -25,18 +26,11 @@ import Typography from '@mui/material/Typography';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { LiveSignal, PageHeader, SectionHeading } from '../features/work-hub/workspace-ui';
-import { activityEvents } from '../features/work-hub/reference-data';
+import { localizeActivityEvents } from '../features/work-hub/reference-data';
 
 import type { ActivityActor, ActivityState } from '../features/work-hub/reference-data';
 
 type ActorFilter = 'all' | ActivityActor;
-
-const stateLabel: Record<ActivityState, string> = {
-  running: 'Running',
-  'needs-input': 'Needs input',
-  completed: 'Completed',
-  'policy-blocked': 'Policy blocked',
-};
 
 const stateColor: Record<ActivityState, 'info' | 'warning' | 'success' | 'error'> = {
   running: 'info',
@@ -59,17 +53,16 @@ function StateIcon({ state }: { state: ActivityState }) {
 }
 
 export default function ActivityPage() {
+  const { t } = useTranslation('work');
   const toast = useToast();
   const [actorFilter, setActorFilter] = useState<ActorFilter>('all');
-  const [selectedId, setSelectedId] = useState(activityEvents[0]?.id || '');
+  const events = useMemo(() => localizeActivityEvents(t), [t]);
+  const [selectedId, setSelectedId] = useState(events[0]?.id || '');
   const visibleEvents = useMemo(
-    () =>
-      actorFilter === 'all'
-        ? activityEvents
-        : activityEvents.filter((event) => event.actor === actorFilter),
-    [actorFilter]
+    () => (actorFilter === 'all' ? events : events.filter((event) => event.actor === actorFilter)),
+    [actorFilter, events]
   );
-  const selected = activityEvents.find((event) => event.id === selectedId) || visibleEvents[0];
+  const selected = events.find((event) => event.id === selectedId) || visibleEvents[0];
 
   const changeActor = (_event: React.MouseEvent<HTMLElement>, value: ActorFilter | null) => {
     if (value) setActorFilter(value);
@@ -78,14 +71,14 @@ export default function ActivityPage() {
   return (
     <PageCanvas>
       <PageHeader
-        eyebrow="Workspace signal"
-        title="Activity"
-        description="Human, system, and agent work in one accountable timeline"
-        action={<LiveSignal label="Listening for workspace events" />}
+        eyebrow={t('activityPage.header.eyebrow')}
+        title={t('activityPage.header.title')}
+        description={t('activityPage.header.description')}
+        action={<LiveSignal label={t('activityPage.header.live')} />}
       />
 
       <Box
-        aria-label="Activity summary"
+        aria-label={t('activityPage.summaryLabel')}
         sx={{
           mt: 3,
           display: 'grid',
@@ -95,13 +88,9 @@ export default function ActivityPage() {
           borderColor: 'divider',
         }}
       >
-        {[
-          ['6', 'Signals this morning', 'Across 4 connected sources'],
-          ['1', 'Agent running', 'Customer context / 72%'],
-          ['1', 'Needs your input', 'Software access approval'],
-        ].map(([value, label, detail], index) => (
+        {(['signals', 'agent', 'input'] as const).map((key, index) => (
           <Box
-            key={label}
+            key={key}
             sx={{
               py: 2,
               px: { xs: 0, sm: 2.5 },
@@ -112,14 +101,14 @@ export default function ActivityPage() {
           >
             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
               <Typography component="p" variant="h5">
-                {value}
+                {t(`activityPage.summary.${key}.value`)}
               </Typography>
               <Typography component="p" variant="subtitle2">
-                {label}
+                {t(`activityPage.summary.${key}.label`)}
               </Typography>
             </Box>
             <Typography variant="caption" color="text.secondary">
-              {detail}
+              {t(`activityPage.summary.${key}.detail`)}
             </Typography>
           </Box>
         ))}
@@ -140,16 +129,16 @@ export default function ActivityPage() {
           size="small"
           value={actorFilter}
           onChange={changeActor}
-          aria-label="Activity actor"
+          aria-label={t('activityPage.actorFilter')}
           sx={{ maxWidth: 1, overflowX: 'auto' }}
         >
-          <ToggleButton value="all">All activity</ToggleButton>
-          <ToggleButton value="agent">Agents</ToggleButton>
-          <ToggleButton value="person">People</ToggleButton>
-          <ToggleButton value="system">Systems</ToggleButton>
+          <ToggleButton value="all">{t('activityPage.filters.all')}</ToggleButton>
+          <ToggleButton value="agent">{t('activityPage.filters.agent')}</ToggleButton>
+          <ToggleButton value="person">{t('activityPage.filters.person')}</ToggleButton>
+          <ToggleButton value="system">{t('activityPage.filters.system')}</ToggleButton>
         </ToggleButtonGroup>
         <Typography variant="body2" color="text.secondary">
-          {visibleEvents.length} visible events
+          {t('activityPage.visibleCount', { count: visibleEvents.length })}
         </Typography>
       </Box>
 
@@ -168,14 +157,14 @@ export default function ActivityPage() {
             <SectionHeading
               id="activity-timeline-heading"
               icon={Activity}
-              title="Workspace timeline"
+              title={t('activityPage.timeline')}
               meta={<LiveSignal />}
             />
           </Box>
           <Divider />
           <Box
             component="ol"
-            aria-label="Workspace activity"
+            aria-label={t('activityPage.timelineLabel')}
             sx={{ p: 0, m: 0, listStyle: 'none' }}
           >
             {visibleEvents.map((event) => {
@@ -208,7 +197,9 @@ export default function ActivityPage() {
                       {event.time}
                     </Typography>
                     <Box
-                      aria-label={`${event.actor} actor`}
+                      aria-label={t('activityPage.actorLabel', {
+                        actor: t(`labels.actor.${event.actor}`),
+                      })}
                       sx={{
                         width: 36,
                         height: 36,
@@ -238,7 +229,7 @@ export default function ActivityPage() {
                           <LinearProgress
                             variant="determinate"
                             value={event.progress}
-                            aria-label={`${event.title} progress`}
+                            aria-label={t('activityPage.progressLabel', { title: event.title })}
                             sx={{ width: { xs: 150, sm: 220 }, height: 5, borderRadius: 1 }}
                           />
                           <Typography variant="caption" fontWeight={700}>
@@ -249,7 +240,7 @@ export default function ActivityPage() {
                     </Box>
                     <Chip
                       icon={<StateIcon state={event.state} />}
-                      label={stateLabel[event.state]}
+                      label={t(`activityPage.states.${event.state}`)}
                       color={stateColor[event.state]}
                       size="small"
                       variant="outlined"
@@ -284,10 +275,10 @@ export default function ActivityPage() {
               }}
             >
               <Typography id="activity-detail-heading" component="h2" variant="h6">
-                Signal detail
+                {t('activityPage.detailTitle')}
               </Typography>
               <Chip
-                label={stateLabel[selected.state]}
+                label={t(`activityPage.states.${selected.state}`)}
                 color={stateColor[selected.state]}
                 size="small"
               />
@@ -301,15 +292,15 @@ export default function ActivityPage() {
 
             <Box sx={{ display: 'grid', gap: 2, mt: 3 }}>
               {[
-                ['Actor', selected.actorName],
-                ['Work object', selected.objectLabel],
-                ['Source', selected.source],
-                ['Tool', selected.tool || 'No tool invoked'],
-                ['Audit ID', selected.auditId],
-              ].map(([label, value]) => (
-                <Box key={label}>
+                ['actor', selected.actorName],
+                ['object', selected.objectLabel],
+                ['source', selected.source],
+                ['tool', selected.tool || t('activityPage.noTool')],
+                ['auditId', selected.auditId],
+              ].map(([key, value]) => (
+                <Box key={key}>
                   <Typography variant="caption" color="text.secondary">
-                    {label}
+                    {t(`activityPage.fields.${key}`)}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -328,21 +319,23 @@ export default function ActivityPage() {
                 <Button
                   variant="contained"
                   startIcon={<FileClock size={17} aria-hidden="true" />}
-                  onClick={() => toast.success('Review preview opened.')}
+                  onClick={() => toast.success(t('activityPage.reviewOpened'))}
                 >
-                  Review now
+                  {t('activityPage.reviewNow')}
                 </Button>
               )}
               <Button
                 variant="outlined"
                 endIcon={<ArrowUpRight size={16} aria-hidden="true" />}
-                onClick={() => toast.success(`${selected.source} preview opened.`)}
+                onClick={() =>
+                  toast.success(t('activityPage.sourceOpened', { source: selected.source }))
+                }
               >
-                Open source
+                {t('activityPage.openSource')}
               </Button>
             </Box>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
-              Reference activity only. No external action is executed.
+              {t('activityPage.referenceNotice')}
             </Typography>
           </Box>
         )}

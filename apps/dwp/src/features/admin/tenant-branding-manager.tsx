@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Building2, ImageUp, RotateCcw, Save, Upload, X } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ProductMark } from '@dwp-frontend/design-system';
+import { formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   getAdminTenantBranding,
   resetTenantLogo,
@@ -24,17 +26,21 @@ import { AdminPanelError, AdminPanelLoading } from './admin-ui';
 
 import type { TenantBranding } from '@dwp-frontend/shared-utils';
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'The operation could not be completed.';
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
 }
 
 function formatBytes(bytes?: number | null): string {
   if (!bytes) return '';
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${formatNumber(bytes / (1024 * 1024), {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  })} MB`;
 }
 
 export function TenantBrandingManager() {
+  const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -82,7 +88,7 @@ export function TenantBrandingManager() {
       await refresh(next);
       toast.success(successMessage);
     } catch (error) {
-      const message = errorMessage(error);
+      const message = errorMessage(error, t('common.operationError'));
       setOperationError(message);
       toast.error(message);
     } finally {
@@ -102,9 +108,13 @@ export function TenantBrandingManager() {
     setPreviewUrl(URL.createObjectURL(file));
   };
 
-  if (brandingQuery.isLoading) return <AdminPanelLoading label="Loading tenant branding" />;
+  if (brandingQuery.isLoading) {
+    return <AdminPanelLoading label={t('branding.loading')} />;
+  }
   if (brandingQuery.isError || !branding) {
-    return <AdminPanelError message={errorMessage(brandingQuery.error)} />;
+    return (
+      <AdminPanelError message={errorMessage(brandingQuery.error, t('common.operationError'))} />
+    );
   }
 
   return (
@@ -118,14 +128,14 @@ export function TenantBrandingManager() {
       >
         <Box>
           <Typography id="tenant-branding-heading" component="h2" variant="h5">
-            Tenant branding
+            {t('branding.title')}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-            Organization identity in the DWP co-brand lockup.
+            {t('branding.description')}
           </Typography>
         </Box>
         <Chip
-          label={branding.logoUrl ? 'Custom logo' : 'Product brand only'}
+          label={branding.logoUrl ? t('branding.customLogo') : t('branding.productOnly')}
           color={branding.logoUrl ? 'info' : 'default'}
           variant="outlined"
         />
@@ -138,7 +148,7 @@ export function TenantBrandingManager() {
       )}
 
       <Box
-        aria-label="Header brand preview"
+        aria-label={t('branding.headerPreview')}
         sx={{
           minHeight: 120,
           px: { xs: 2, md: 3 },
@@ -151,7 +161,7 @@ export function TenantBrandingManager() {
         }}
       >
         <ProductMark
-          aria-label="Brand lockup preview"
+          aria-label={t('branding.lockupPreview')}
           prefix={
             activeLogoUrl ? (
               <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
@@ -187,7 +197,7 @@ export function TenantBrandingManager() {
           onClick={() => inputRef.current?.click()}
           disabled={busy}
         >
-          Choose logo
+          {t('branding.actions.chooseLogo')}
         </Button>
         {selectedFile && (
           <Button
@@ -198,11 +208,11 @@ export function TenantBrandingManager() {
                 const next = await uploadTenantLogo(selectedFile, branding.version);
                 selectFile();
                 return next;
-              }, 'Tenant logo uploaded.')
+              }, t('branding.toasts.logoUploaded'))
             }
             disabled={busy}
           >
-            Upload logo
+            {t('branding.actions.uploadLogo')}
           </Button>
         )}
         <Button
@@ -211,22 +221,27 @@ export function TenantBrandingManager() {
           startIcon={selectedFile ? <X size={17} /> : <RotateCcw size={17} />}
           onClick={() => {
             if (selectedFile) selectFile();
-            else void run(() => resetTenantLogo(branding.version), 'Tenant logo removed.');
+            else
+              void run(() => resetTenantLogo(branding.version), t('branding.toasts.logoRemoved'));
           }}
           disabled={busy || (!selectedFile && !branding.logoUrl)}
         >
-          {selectedFile ? 'Discard selection' : 'Remove logo'}
+          {selectedFile ? t('common.actions.discardSelection') : t('branding.actions.removeLogo')}
         </Button>
         <Box sx={{ minWidth: 0, ml: { md: 'auto' }, textAlign: { md: 'right' } }}>
           <Typography variant="body2" noWrap>
-            {selectedFile?.name || branding.logoOriginalName || 'No tenant logo'}
+            {selectedFile?.name || branding.logoOriginalName || t('branding.noLogo')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             {selectedFile
-              ? `${formatBytes(selectedFile.size)} / pending upload`
+              ? t('common.file.pendingUpload', { size: formatBytes(selectedFile.size) })
               : branding.logoSizeBytes
-                ? `${branding.logoWidth} x ${branding.logoHeight} / ${formatBytes(branding.logoSizeBytes)}`
-                : 'SVG, PNG, or JPEG / up to 2 MB'}
+                ? t('common.file.metadata', {
+                    width: branding.logoWidth,
+                    height: branding.logoHeight,
+                    size: formatBytes(branding.logoSizeBytes),
+                  })
+                : t('branding.fileRequirements')}
           </Typography>
         </Box>
       </Stack>
@@ -235,7 +250,7 @@ export function TenantBrandingManager() {
       <Stack direction={{ xs: 'column', sm: 'row' }} gap={2} sx={{ py: 3 }}>
         <TextField
           fullWidth
-          label="Organization name"
+          label={t('branding.organizationName')}
           value={organizationName}
           onChange={(event) => setOrganizationName(event.target.value.slice(0, 160))}
           helperText={`${organizationName.length}/160`}
@@ -248,12 +263,12 @@ export function TenantBrandingManager() {
           onClick={() =>
             void run(
               () => updateTenantBranding(organizationName.trim() || null, branding.version),
-              'Tenant branding saved.'
+              t('branding.toasts.saved')
             )
           }
           sx={{ alignSelf: { sm: 'flex-start' }, minWidth: 160, minHeight: 56 }}
         >
-          Save branding
+          {t('branding.actions.save')}
         </Button>
       </Stack>
     </Box>

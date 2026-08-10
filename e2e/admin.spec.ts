@@ -80,6 +80,21 @@ async function mockAdminSession(page: Page) {
       body: envelope({ organizationName: null, logoUrl: null, version: 0 }),
     })
   );
+  await page.route('**/api/platform/v1/personal-preferences**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope({
+        schemaVersion: 1,
+        customized: false,
+        preferences: {
+          appearance: { mode: 'system', density: 'standard' },
+          accessibility: { highContrast: false, reduceMotion: false },
+        },
+        version: 0,
+        updatedAt: null,
+      }),
+    })
+  );
 }
 
 test('tenant administrators configure and reset the personal home presentation', async ({
@@ -313,10 +328,10 @@ test('tenant administrators manage co-branding and publish home announcements', 
   await page.getByRole('switch', { name: 'Pinned' }).check();
   await page.getByRole('button', { name: 'Create draft' }).click();
   await expect(page.getByText('Announcement draft created.', { exact: true })).toBeVisible();
-  await expect(page.getByText('DRAFT', { exact: true })).toBeVisible();
+  await expect(page.getByText('Draft', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Publish Planned maintenance' }).click();
   await expect(page.getByText('Announcement published.', { exact: true })).toBeVisible();
-  await expect(page.getByText('PUBLISHED', { exact: true })).toBeVisible();
+  await expect(page.getByText('Published', { exact: true })).toBeVisible();
 });
 
 test('tenant administrators manage standards, registry, and audit', async ({ page }, testInfo) => {

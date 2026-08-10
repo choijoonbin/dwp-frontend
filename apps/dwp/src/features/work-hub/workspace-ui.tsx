@@ -2,7 +2,8 @@ import type { ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
 
 import { FlaskConical } from 'lucide-react';
-import { useAppearance } from '@dwp-frontend/design-system';
+import { useTranslation } from 'react-i18next';
+import { GlyphSurface, useAppearance } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -29,10 +30,12 @@ type SectionHeadingProps = {
 };
 
 export function ReferenceModeChip() {
+  const { t } = useTranslation('work');
+
   return (
     <Chip
       icon={<FlaskConical size={14} strokeWidth={1.8} aria-hidden="true" />}
-      label="Reference mode"
+      label={t('shared.referenceMode')}
       size="small"
       variant="outlined"
       sx={{ bgcolor: 'background.paper' }}
@@ -73,20 +76,9 @@ export function SectionHeading({ id, icon: Icon, title, meta }: SectionHeadingPr
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Box
-          aria-hidden="true"
-          sx={{
-            width: 30,
-            height: 30,
-            display: 'grid',
-            placeItems: 'center',
-            color: 'primary.main',
-            bgcolor: 'action.selected',
-            borderRadius: 1,
-          }}
-        >
+        <GlyphSurface size={30} variant="soft">
           <Icon size={17} strokeWidth={1.8} />
-        </Box>
+        </GlyphSurface>
         <Typography id={id} component="h2" variant="h6">
           {title}
         </Typography>
@@ -96,7 +88,8 @@ export function SectionHeading({ id, icon: Icon, title, meta }: SectionHeadingPr
   );
 }
 
-export function LiveSignal({ label = 'Live' }: { label?: string }) {
+export function LiveSignal({ label }: { label?: string }) {
+  const { t } = useTranslation('work');
   const { effectiveReduceMotion } = useAppearance();
 
   return (
@@ -113,7 +106,7 @@ export function LiveSignal({ label = 'Live' }: { label?: string }) {
         }}
       />
       <Typography variant="caption" color="text.secondary" fontWeight={700}>
-        {label}
+        {label ?? t('shared.live')}
       </Typography>
     </Box>
   );

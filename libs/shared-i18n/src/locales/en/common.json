@@ -1,9 +1,73 @@
 {
   "language": {
+    "label": "Language",
     "ko": "Korean",
-    "en": "English"
+    "en": "English",
+    "preferenceSaveError": "The language preference could not be saved. Your previous language remains active."
+  },
+  "actions": {
+    "activate": "Activate",
+    "add": "Add",
+    "archive": "Archive",
+    "back": "Back",
+    "cancel": "Cancel",
+    "close": "Close",
+    "continue": "Continue",
+    "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
+    "next": "Next",
+    "open": "Open",
+    "previous": "Previous",
+    "publish": "Publish",
+    "refresh": "Refresh",
+    "reset": "Reset",
+    "retire": "Retire",
+    "retry": "Retry",
+    "review": "Review",
+    "save": "Save",
+    "search": "Search",
+    "select": "Select",
+    "upload": "Upload"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "draft": "Draft",
+    "retired": "Retired",
+    "published": "Published",
+    "archived": "Archived",
+    "completed": "Completed",
+    "failed": "Failed",
+    "pending": "Pending",
+    "all": "All"
+  },
+  "labels": {
+    "actions": "Actions",
+    "description": "Description",
+    "name": "Name",
+    "status": "Status",
+    "type": "Type",
+    "managed": "Managed",
+    "loading": "Loading",
+    "loadingPage": "Loading page"
+  },
+  "pagination": {
+    "pageOf": "Page {{page}} of {{total}}",
+    "previousPage": "Previous page",
+    "nextPage": "Next page"
+  },
+  "units": {
+    "item_one": "{{count}} item",
+    "item_other": "{{count}} items",
+    "result_one": "{{count}} result",
+    "result_other": "{{count}} results",
+    "locale_one": "{{count}} locale",
+    "locale_other": "{{count}} locales"
   },
   "error": {
-    "unexpected": "An unexpected error occurred."
+    "unexpected": "An unexpected error occurred.",
+    "loadFailed": "The requested data could not be loaded.",
+    "operationFailed": "The operation could not be completed."
   }
 }

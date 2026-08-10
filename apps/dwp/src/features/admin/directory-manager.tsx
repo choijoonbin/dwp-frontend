@@ -1,4 +1,5 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Pencil,
   Network,
@@ -78,18 +79,15 @@ type LifecycleTarget =
 
 const PAGE_SIZE = 50;
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'The operation could not be completed.';
-}
-
-function displayStatus(status: DirectoryStatus) {
-  return status.charAt(0) + status.slice(1).toLowerCase();
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
 }
 
 function StatusChip({ status }: { status: DirectoryStatus }) {
+  const { t } = useTranslation('admin');
   return (
     <Chip
-      label={displayStatus(status)}
+      label={t(`common.status.${status}`)}
       size="small"
       color={status === 'ACTIVE' ? 'success' : 'default'}
       variant={status === 'ACTIVE' ? 'filled' : 'outlined'}
@@ -98,9 +96,10 @@ function StatusChip({ status }: { status: DirectoryStatus }) {
 }
 
 function SourceChip({ source }: { source: string }) {
+  const { t } = useTranslation('admin');
   return (
     <Chip
-      label={source === 'SCIM' ? 'SCIM managed' : 'Local'}
+      label={source === 'SCIM' ? t('directory.sources.SCIM') : t('directory.sources.LOCAL')}
       size="small"
       color={source === 'SCIM' ? 'info' : 'default'}
       variant="outlined"
@@ -109,6 +108,7 @@ function SourceChip({ source }: { source: string }) {
 }
 
 export function DirectoryManager() {
+  const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
   const theme = useTheme();
@@ -156,7 +156,7 @@ export function DirectoryManager() {
         : memberTarget?.value.groupId,
     ],
     queryFn: () => {
-      if (!memberTarget) throw new Error('Member target is required.');
+      if (!memberTarget) throw new Error('DIRECTORY_MEMBER_TARGET_REQUIRED');
       return memberTarget.kind === 'organization'
         ? getOrganizationUnit(memberTarget.value.orgUnitId)
         : getDirectoryGroup(memberTarget.value.groupId);
@@ -201,7 +201,7 @@ export function DirectoryManager() {
       toast.success(successMessage);
       return true;
     } catch (error) {
-      toast.error(errorMessage(error));
+      toast.error(errorMessage(error, t('common.operationError')));
       return false;
     } finally {
       setBusy(false);
@@ -209,7 +209,9 @@ export function DirectoryManager() {
   };
 
   const createOrganization = async (request: CreateOrganizationUnitRequest) => {
-    if (await run(() => createOrganizationUnit(request), 'Organization created.')) {
+    if (
+      await run(() => createOrganizationUnit(request), t('directory.toasts.organizationCreated'))
+    ) {
       setOrganizationDialog(null);
     }
   };
@@ -219,7 +221,7 @@ export function DirectoryManager() {
     if (
       await run(
         () => updateOrganizationUnit(organizationDialog.orgUnitId, request),
-        'Organization updated.'
+        t('directory.toasts.organizationUpdated')
       )
     ) {
       setOrganizationDialog(null);
@@ -227,14 +229,19 @@ export function DirectoryManager() {
   };
 
   const createGroup = async (request: CreateDirectoryGroupRequest) => {
-    if (await run(() => createDirectoryGroup(request), 'Group created.')) {
+    if (await run(() => createDirectoryGroup(request), t('directory.toasts.groupCreated'))) {
       setGroupDialog(null);
     }
   };
 
   const updateGroup = async (request: UpdateDirectoryGroupRequest) => {
     if (typeof groupDialog !== 'object' || !groupDialog) return;
-    if (await run(() => updateDirectoryGroup(groupDialog.groupId, request), 'Group updated.')) {
+    if (
+      await run(
+        () => updateDirectoryGroup(groupDialog.groupId, request),
+        t('directory.toasts.groupUpdated')
+      )
+    ) {
       setGroupDialog(null);
     }
   };
@@ -245,12 +252,12 @@ export function DirectoryManager() {
       memberTarget.kind === 'organization' && 'organization' in memberDetail
         ? await run(
             () => replaceOrganizationUnitMembers(memberDetail.organization, userIds),
-            'Organization members updated and affected sessions revoked.'
+            t('directory.toasts.organizationMembersUpdated')
           )
         : memberTarget.kind === 'group' && 'group' in memberDetail
           ? await run(
               () => replaceDirectoryGroupMembers(memberDetail.group, userIds),
-              'Group members updated and affected sessions revoked.'
+              t('directory.toasts.groupMembersUpdated')
             )
           : false;
     if (completed) {
@@ -266,141 +273,189 @@ export function DirectoryManager() {
       lifecycleTarget.kind === 'organization'
         ? await run(
             () => changeOrganizationUnitStatus(lifecycleTarget.value, lifecycleTarget.nextStatus),
-            activating ? 'Organization activated.' : 'Organization deactivated.'
+            activating
+              ? t('directory.toasts.organizationActivated')
+              : t('directory.toasts.organizationDeactivated')
           )
         : await run(
             () => changeDirectoryGroupStatus(lifecycleTarget.value, lifecycleTarget.nextStatus),
-            activating ? 'Group activated.' : 'Group deactivated.'
+            activating
+              ? t('directory.toasts.groupActivated')
+              : t('directory.toasts.groupDeactivated')
           );
     if (completed) setLifecycleTarget(null);
   };
 
-  const organizationActions = useCallback((organization: OrganizationUnit) => {
-    const readOnly = organization.sourceType !== 'LOCAL';
-    const active = organization.status === 'ACTIVE';
-    return (
-      <Stack direction="row" justifyContent="flex-end" sx={{ width: 1 }}>
-        <Tooltip title={readOnly ? 'Managed by SCIM' : 'Edit organization'}>
-          <span>
-            <IconButton
-              size="small"
-              aria-label={`Edit ${organization.name}`}
-              disabled={readOnly}
-              onClick={() => {
-                setParentSearch('');
-                setOrganizationDialog(organization);
-              }}
-            >
-              <Pencil size={17} strokeWidth={1.8} />
-            </IconButton>
-          </span>
-        </Tooltip>
-        <Tooltip title={readOnly ? 'Managed by SCIM' : 'Manage members'}>
-          <span>
-            <IconButton
-              size="small"
-              aria-label={`Manage members for ${organization.name}`}
-              disabled={readOnly || !active}
-              onClick={() => {
-                setMemberSearch('');
-                setMemberTarget({ kind: 'organization', value: organization });
-              }}
-            >
-              <UsersRound size={17} strokeWidth={1.8} />
-            </IconButton>
-          </span>
-        </Tooltip>
-        <Tooltip title={readOnly ? 'Managed by SCIM' : active ? 'Deactivate' : 'Activate'}>
-          <span>
-            <IconButton
-              size="small"
-              color={active ? 'default' : 'success'}
-              aria-label={`${active ? 'Deactivate' : 'Activate'} ${organization.name}`}
-              disabled={readOnly}
-              onClick={() =>
-                setLifecycleTarget({
-                  kind: 'organization',
-                  value: organization,
-                  nextStatus: active ? 'INACTIVE' : 'ACTIVE',
-                })
-              }
-            >
-              {active ? (
-                <PowerOff size={17} strokeWidth={1.8} />
-              ) : (
-                <Power size={17} strokeWidth={1.8} />
-              )}
-            </IconButton>
-          </span>
-        </Tooltip>
-      </Stack>
-    );
-  }, []);
+  const organizationActions = useCallback(
+    (organization: OrganizationUnit) => {
+      const readOnly = organization.sourceType !== 'LOCAL';
+      const active = organization.status === 'ACTIVE';
+      return (
+        <Stack direction="row" justifyContent="flex-end" sx={{ width: 1 }}>
+          <Tooltip
+            title={
+              readOnly ? t('directory.managedByScim') : t('directory.actions.editOrganization')
+            }
+          >
+            <span>
+              <IconButton
+                size="small"
+                aria-label={t('directory.actions.editNamed', { name: organization.name })}
+                disabled={readOnly}
+                onClick={() => {
+                  setParentSearch('');
+                  setOrganizationDialog(organization);
+                }}
+              >
+                <Pencil size={17} strokeWidth={1.8} />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <Tooltip
+            title={readOnly ? t('directory.managedByScim') : t('directory.actions.manageMembers')}
+          >
+            <span>
+              <IconButton
+                size="small"
+                aria-label={t('directory.actions.manageMembersFor', {
+                  name: organization.name,
+                })}
+                disabled={readOnly || !active}
+                onClick={() => {
+                  setMemberSearch('');
+                  setMemberTarget({ kind: 'organization', value: organization });
+                }}
+              >
+                <UsersRound size={17} strokeWidth={1.8} />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <Tooltip
+            title={
+              readOnly
+                ? t('directory.managedByScim')
+                : active
+                  ? t('directory.actions.deactivate')
+                  : t('directory.actions.activate')
+            }
+          >
+            <span>
+              <IconButton
+                size="small"
+                color={active ? 'default' : 'success'}
+                aria-label={
+                  active
+                    ? t('directory.actions.deactivateNamed', { name: organization.name })
+                    : t('directory.actions.activateNamed', { name: organization.name })
+                }
+                disabled={readOnly}
+                onClick={() =>
+                  setLifecycleTarget({
+                    kind: 'organization',
+                    value: organization,
+                    nextStatus: active ? 'INACTIVE' : 'ACTIVE',
+                  })
+                }
+              >
+                {active ? (
+                  <PowerOff size={17} strokeWidth={1.8} />
+                ) : (
+                  <Power size={17} strokeWidth={1.8} />
+                )}
+              </IconButton>
+            </span>
+          </Tooltip>
+        </Stack>
+      );
+    },
+    [t]
+  );
 
-  const groupActions = useCallback((group: DirectoryGroup) => {
-    const readOnly = group.sourceType !== 'LOCAL';
-    const active = group.status === 'ACTIVE';
-    return (
-      <Stack direction="row" justifyContent="flex-end" sx={{ width: 1 }}>
-        <Tooltip title={readOnly ? 'Managed by SCIM' : 'Edit group'}>
-          <span>
-            <IconButton
-              size="small"
-              aria-label={`Edit ${group.displayName}`}
-              disabled={readOnly}
-              onClick={() => setGroupDialog(group)}
-            >
-              <Pencil size={17} strokeWidth={1.8} />
-            </IconButton>
-          </span>
-        </Tooltip>
-        <Tooltip title={readOnly ? 'Managed by SCIM' : 'Manage members'}>
-          <span>
-            <IconButton
-              size="small"
-              aria-label={`Manage members for ${group.displayName}`}
-              disabled={readOnly || !active}
-              onClick={() => {
-                setMemberSearch('');
-                setMemberTarget({ kind: 'group', value: group });
-              }}
-            >
-              <UsersRound size={17} strokeWidth={1.8} />
-            </IconButton>
-          </span>
-        </Tooltip>
-        <Tooltip title={readOnly ? 'Managed by SCIM' : active ? 'Deactivate' : 'Activate'}>
-          <span>
-            <IconButton
-              size="small"
-              color={active ? 'default' : 'success'}
-              aria-label={`${active ? 'Deactivate' : 'Activate'} ${group.displayName}`}
-              disabled={readOnly}
-              onClick={() =>
-                setLifecycleTarget({
-                  kind: 'group',
-                  value: group,
-                  nextStatus: active ? 'INACTIVE' : 'ACTIVE',
-                })
-              }
-            >
-              {active ? (
-                <PowerOff size={17} strokeWidth={1.8} />
-              ) : (
-                <Power size={17} strokeWidth={1.8} />
-              )}
-            </IconButton>
-          </span>
-        </Tooltip>
-      </Stack>
-    );
-  }, []);
+  const groupActions = useCallback(
+    (group: DirectoryGroup) => {
+      const readOnly = group.sourceType !== 'LOCAL';
+      const active = group.status === 'ACTIVE';
+      return (
+        <Stack direction="row" justifyContent="flex-end" sx={{ width: 1 }}>
+          <Tooltip
+            title={readOnly ? t('directory.managedByScim') : t('directory.actions.editGroup')}
+          >
+            <span>
+              <IconButton
+                size="small"
+                aria-label={t('directory.actions.editNamed', { name: group.displayName })}
+                disabled={readOnly}
+                onClick={() => setGroupDialog(group)}
+              >
+                <Pencil size={17} strokeWidth={1.8} />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <Tooltip
+            title={readOnly ? t('directory.managedByScim') : t('directory.actions.manageMembers')}
+          >
+            <span>
+              <IconButton
+                size="small"
+                aria-label={t('directory.actions.manageMembersFor', {
+                  name: group.displayName,
+                })}
+                disabled={readOnly || !active}
+                onClick={() => {
+                  setMemberSearch('');
+                  setMemberTarget({ kind: 'group', value: group });
+                }}
+              >
+                <UsersRound size={17} strokeWidth={1.8} />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <Tooltip
+            title={
+              readOnly
+                ? t('directory.managedByScim')
+                : active
+                  ? t('directory.actions.deactivate')
+                  : t('directory.actions.activate')
+            }
+          >
+            <span>
+              <IconButton
+                size="small"
+                color={active ? 'default' : 'success'}
+                aria-label={
+                  active
+                    ? t('directory.actions.deactivateNamed', { name: group.displayName })
+                    : t('directory.actions.activateNamed', { name: group.displayName })
+                }
+                disabled={readOnly}
+                onClick={() =>
+                  setLifecycleTarget({
+                    kind: 'group',
+                    value: group,
+                    nextStatus: active ? 'INACTIVE' : 'ACTIVE',
+                  })
+                }
+              >
+                {active ? (
+                  <PowerOff size={17} strokeWidth={1.8} />
+                ) : (
+                  <Power size={17} strokeWidth={1.8} />
+                )}
+              </IconButton>
+            </span>
+          </Tooltip>
+        </Stack>
+      );
+    },
+    [t]
+  );
 
   const organizationColumns = useMemo<GridColDef<OrganizationUnit>[]>(
     () => [
       {
         field: 'name',
-        headerName: 'Organization',
+        headerName: t('directory.columns.organization'),
         minWidth: 240,
         flex: 1.2,
         renderCell: ({ row }) => (
@@ -431,28 +486,38 @@ export function DirectoryManager() {
       },
       {
         field: 'parentName',
-        headerName: 'Parent',
+        headerName: t('directory.columns.parent'),
         minWidth: 150,
         flex: 0.7,
-        renderCell: ({ row }) => row.parentName || 'Top level',
+        renderCell: ({ row }) => row.parentName || t('directory.topLevel'),
       },
-      { field: 'memberCount', headerName: 'Members', width: 94, type: 'number' },
+      {
+        field: 'memberCount',
+        headerName: t('directory.columns.members'),
+        width: 94,
+        type: 'number',
+      },
       {
         field: 'sourceType',
-        headerName: 'Source',
+        headerName: t('directory.columns.source'),
         width: 126,
         renderCell: ({ row }) => <SourceChip source={row.sourceType} />,
       },
       {
         field: 'status',
-        headerName: 'Status',
+        headerName: t('directory.columns.status'),
         width: 104,
         renderCell: ({ row }) => <StatusChip status={row.status} />,
       },
-      { field: 'revision', headerName: 'Revision', width: 88, type: 'number' },
+      {
+        field: 'revision',
+        headerName: t('directory.columns.revision'),
+        width: 88,
+        type: 'number',
+      },
       {
         field: 'actions',
-        headerName: 'Actions',
+        headerName: t('directory.columns.actions'),
         width: 124,
         sortable: false,
         filterable: false,
@@ -460,14 +525,14 @@ export function DirectoryManager() {
         renderCell: ({ row }) => organizationActions(row),
       },
     ],
-    [organizationActions]
+    [organizationActions, t]
   );
 
   const groupColumns = useMemo<GridColDef<DirectoryGroup>[]>(
     () => [
       {
         field: 'displayName',
-        headerName: 'Group',
+        headerName: t('directory.columns.group'),
         minWidth: 260,
         flex: 1.3,
         renderCell: ({ row }) => (
@@ -496,23 +561,33 @@ export function DirectoryManager() {
           </Stack>
         ),
       },
-      { field: 'memberCount', headerName: 'Members', width: 104, type: 'number' },
+      {
+        field: 'memberCount',
+        headerName: t('directory.columns.members'),
+        width: 104,
+        type: 'number',
+      },
       {
         field: 'sourceType',
-        headerName: 'Source',
+        headerName: t('directory.columns.source'),
         width: 126,
         renderCell: ({ row }) => <SourceChip source={row.sourceType} />,
       },
       {
         field: 'status',
-        headerName: 'Status',
+        headerName: t('directory.columns.status'),
         width: 104,
         renderCell: ({ row }) => <StatusChip status={row.status} />,
       },
-      { field: 'revision', headerName: 'Revision', width: 88, type: 'number' },
+      {
+        field: 'revision',
+        headerName: t('directory.columns.revision'),
+        width: 88,
+        type: 'number',
+      },
       {
         field: 'actions',
-        headerName: 'Actions',
+        headerName: t('directory.columns.actions'),
         width: 124,
         sortable: false,
         filterable: false,
@@ -520,11 +595,15 @@ export function DirectoryManager() {
         renderCell: ({ row }) => groupActions(row),
       },
     ],
-    [groupActions]
+    [groupActions, t]
   );
 
-  if (activeQuery.isLoading) return <AdminPanelLoading label="Loading directory" />;
-  if (activeQuery.isError) return <AdminPanelError message={errorMessage(activeQuery.error)} />;
+  if (activeQuery.isLoading) return <AdminPanelLoading label={t('directory.loading')} />;
+  if (activeQuery.isError) {
+    return (
+      <AdminPanelError message={errorMessage(activeQuery.error, t('common.operationError'))} />
+    );
+  }
 
   const lifecycleCopy = lifecycleTarget
     ? {
@@ -567,7 +646,7 @@ export function DirectoryManager() {
           <Stack direction="row" alignItems="center" gap={1.25}>
             <Network size={18} strokeWidth={1.8} aria-hidden="true" />
             <Typography component="h2" variant="subtitle1">
-              Directory
+              {t('directory.title')}
             </Typography>
             <Chip label={totalElements} size="small" variant="outlined" />
             <ToggleButtonGroup
@@ -575,10 +654,10 @@ export function DirectoryManager() {
               size="small"
               value={mode}
               onChange={changeMode}
-              aria-label="Directory type"
+              aria-label={t('directory.type')}
             >
-              <ToggleButton value="organizations">Organizations</ToggleButton>
-              <ToggleButton value="groups">Groups</ToggleButton>
+              <ToggleButton value="organizations">{t('directory.organizations')}</ToggleButton>
+              <ToggleButton value="groups">{t('directory.groups')}</ToggleButton>
             </ToggleButtonGroup>
           </Stack>
 
@@ -587,7 +666,11 @@ export function DirectoryManager() {
               size="small"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              label={mode === 'organizations' ? 'Search organizations' : 'Search groups'}
+              label={
+                mode === 'organizations'
+                  ? t('directory.searchOrganizations')
+                  : t('directory.searchGroups')
+              }
               sx={{ width: { xs: 1, sm: 260 } }}
               InputProps={{
                 startAdornment: (
@@ -600,14 +683,14 @@ export function DirectoryManager() {
             <TextField
               select
               size="small"
-              label="Status"
+              label={t('directory.columns.status')}
               value={status}
               onChange={(event) => setStatus(event.target.value as DirectoryStatus | 'ALL')}
               sx={{ minWidth: 120 }}
             >
-              <MenuItem value="ALL">All</MenuItem>
-              <MenuItem value="ACTIVE">Active</MenuItem>
-              <MenuItem value="INACTIVE">Inactive</MenuItem>
+              <MenuItem value="ALL">{t('directory.allStatuses')}</MenuItem>
+              <MenuItem value="ACTIVE">{t('common.status.ACTIVE')}</MenuItem>
+              <MenuItem value="INACTIVE">{t('common.status.INACTIVE')}</MenuItem>
             </TextField>
             <Stack direction="row" alignItems="center" gap={0.5}>
               <Button
@@ -616,11 +699,13 @@ export function DirectoryManager() {
                 onClick={newEntry}
                 sx={{ flex: { xs: 1, sm: '0 0 auto' } }}
               >
-                {mode === 'organizations' ? 'New organization' : 'New group'}
+                {mode === 'organizations'
+                  ? t('directory.actions.newOrganization')
+                  : t('directory.actions.newGroup')}
               </Button>
-              <Tooltip title="Refresh directory">
+              <Tooltip title={t('directory.actions.refresh')}>
                 <IconButton
-                  aria-label="Refresh directory"
+                  aria-label={t('directory.actions.refresh')}
                   onClick={() => void activeQuery.refetch()}
                 >
                   <RefreshCw size={18} strokeWidth={1.8} />
@@ -632,7 +717,7 @@ export function DirectoryManager() {
 
         {desktop && mode === 'organizations' && (
           <EnterpriseDataGrid
-            ariaLabel="Organizations"
+            ariaLabel={t('directory.organizations')}
             rows={organizations}
             columns={organizationColumns}
             getRowId={(row) => row.orgUnitId}
@@ -648,7 +733,7 @@ export function DirectoryManager() {
               noRowsOverlay: () => (
                 <Box sx={{ height: 1, display: 'grid', placeItems: 'center' }}>
                   <Typography variant="body2" color="text.secondary">
-                    No organizations found
+                    {t('directory.noOrganizations')}
                   </Typography>
                 </Box>
               ),
@@ -659,7 +744,7 @@ export function DirectoryManager() {
 
         {desktop && mode === 'groups' && (
           <EnterpriseDataGrid
-            ariaLabel="Directory groups"
+            ariaLabel={t('directory.directoryGroups')}
             rows={groups}
             columns={groupColumns}
             getRowId={(row) => row.groupId}
@@ -675,7 +760,7 @@ export function DirectoryManager() {
               noRowsOverlay: () => (
                 <Box sx={{ height: 1, display: 'grid', placeItems: 'center' }}>
                   <Typography variant="body2" color="text.secondary">
-                    No groups found
+                    {t('directory.noGroups')}
                   </Typography>
                 </Box>
               ),
@@ -687,7 +772,11 @@ export function DirectoryManager() {
         {!desktop && (
           <Box
             component="ul"
-            aria-label={mode === 'organizations' ? 'Organizations' : 'Directory groups'}
+            aria-label={
+              mode === 'organizations'
+                ? t('directory.organizations')
+                : t('directory.directoryGroups')
+            }
             sx={{ display: 'grid', listStyle: 'none', p: 0, m: 0 }}
           >
             {rows.length ? (
@@ -715,7 +804,9 @@ export function DirectoryManager() {
                         </Typography>
                         <Typography variant="caption" color="text.secondary" noWrap display="block">
                           {key}
-                          {organization ? ` / ${organization.parentName || 'Top level'}` : ''}
+                          {organization
+                            ? ` / ${organization.parentName || t('directory.topLevel')}`
+                            : ''}
                         </Typography>
                       </Box>
                       {organization ? organizationActions(organization) : groupActions(group!)}
@@ -723,9 +814,15 @@ export function DirectoryManager() {
                     <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1.25 }}>
                       <StatusChip status={(organization ?? group!).status} />
                       <SourceChip source={(organization ?? group!).sourceType} />
-                      <Chip label={`${memberCount} members`} size="small" variant="outlined" />
                       <Chip
-                        label={`Rev ${(organization ?? group!).revision}`}
+                        label={t('directory.memberCount', { count: memberCount })}
+                        size="small"
+                        variant="outlined"
+                      />
+                      <Chip
+                        label={t('directory.revisionShort', {
+                          revision: (organization ?? group!).revision,
+                        })}
                         size="small"
                         variant="outlined"
                       />
@@ -736,7 +833,9 @@ export function DirectoryManager() {
             ) : (
               <Box component="li" sx={{ py: 6, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
-                  {mode === 'organizations' ? 'No organizations found' : 'No groups found'}
+                  {mode === 'organizations'
+                    ? t('directory.noOrganizations')
+                    : t('directory.noGroups')}
                 </Typography>
               </Box>
             )}
@@ -751,17 +850,17 @@ export function DirectoryManager() {
             sx={{ px: 2, py: 1.25, borderTop: 1, borderColor: 'divider' }}
           >
             <IconButton
-              aria-label="Previous page"
+              aria-label={t('directory.previousPage')}
               disabled={page === 0}
               onClick={() => setPage((current) => Math.max(0, current - 1))}
             >
               <ChevronLeft size={18} />
             </IconButton>
             <Typography variant="caption" color="text.secondary">
-              Page {page + 1} of {totalPages}
+              {t('directory.pageOf', { page: page + 1, total: totalPages })}
             </Typography>
             <IconButton
-              aria-label="Next page"
+              aria-label={t('directory.nextPage')}
               disabled={page + 1 >= totalPages}
               onClick={() => setPage((current) => current + 1)}
             >
@@ -811,15 +910,25 @@ export function DirectoryManager() {
         open={Boolean(lifecycleTarget)}
         title={
           lifecycleCopy
-            ? `${lifecycleCopy.activating ? 'Activate' : 'Deactivate'} ${lifecycleCopy.subject}?`
+            ? lifecycleCopy.activating
+              ? t('directory.confirm.activateTitle', { subject: lifecycleCopy.subject })
+              : t('directory.confirm.deactivateTitle', { subject: lifecycleCopy.subject })
             : ''
         }
         message={
           lifecycleCopy?.activating
-            ? `This ${lifecycleCopy.kind} will become available for assignments.`
-            : `This ${lifecycleCopy?.kind ?? 'entry'} must have no active dependants or members.`
+            ? t('directory.confirm.activateMessage', {
+                kind: t(`directory.kinds.${lifecycleCopy.kind}`),
+              })
+            : t('directory.confirm.deactivateMessage', {
+                kind: t(`directory.kinds.${lifecycleCopy?.kind ?? 'entry'}`),
+              })
         }
-        confirmLabel={lifecycleCopy?.activating ? 'Activate' : 'Deactivate'}
+        confirmLabel={
+          lifecycleCopy?.activating
+            ? t('directory.actions.activate')
+            : t('directory.actions.deactivate')
+        }
         destructive={!lifecycleCopy?.activating}
         busy={busy}
         onClose={() => setLifecycleTarget(null)}

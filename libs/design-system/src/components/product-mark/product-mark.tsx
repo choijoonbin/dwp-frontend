@@ -1,6 +1,8 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+import { GlyphSurface } from '../glyph-surface';
+
 import type { ReactNode } from 'react';
 import type { BoxProps } from '@mui/material/Box';
 
@@ -39,37 +41,35 @@ export function ProductMark({
       {...props}
     >
       {prefix}
-      <Box
-        aria-hidden="true"
-        sx={{
-          width: 34,
-          height: 34,
-          flex: '0 0 34px',
-          display: 'grid',
-          placeItems: 'center',
-          borderRadius: 1,
-          color: 'primary.contrastText',
-          bgcolor: 'primary.main',
-          fontSize: 12,
-          fontWeight: 800,
-          lineHeight: 1,
-          position: 'relative',
-          overflow: 'hidden',
-          '&::after': {
-            content: '""',
+      <GlyphSurface size={36} tone="#2457D6">
+        <Box
+          component="span"
+          sx={{
+            color: '#FFFFFF',
+            fontSize: 11,
+            fontWeight: 800,
+            lineHeight: 1,
+            letterSpacing: 0,
+            transform: 'translateY(-0.5px)',
+          }}
+        >
+          DWP
+        </Box>
+        <Box
+          component="span"
+          sx={{
             position: 'absolute',
-            right: 5,
-            bottom: 5,
+            right: 4,
+            bottom: 4,
             width: 6,
             height: 6,
             bgcolor: 'secondary.main',
-            border: '1px solid currentColor',
-            borderRadius: 0.5,
-          },
-        }}
-      >
-        DWP
-      </Box>
+            border: '1px solid rgba(255,255,255,0.92)',
+            borderRadius: '2px',
+            boxShadow: '0 1px 3px rgba(7,20,41,0.22)',
+          }}
+        />
+      </GlyphSurface>
       {!compact && (
         <Box sx={{ minWidth: 0 }}>
           <Typography

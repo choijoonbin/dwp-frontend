@@ -32,6 +32,8 @@
 - `03-architecture/R0 Contract Spike 2 - Service Trust and Plan Integrity.md`
 - `03-architecture/R0 Platform Control Plane 및 Admin Governance ADR.md`
 - `03-architecture/R0 Organization Directory 및 Provisioning Boundary ADR.md`
+- `03-architecture/R0 권한·메뉴·다국어 Admin Control Center ADR.md`
+- `03-architecture/R0 제품 다국어 운영 및 확장 가이드.md`
 - `04-design-system/DWP UI Foundation 전략.md`
 - `04-design-system/DWP Premium Experience Direction.md`
 - `04-design-system/프론트엔드 UI UX 기술검토.md`

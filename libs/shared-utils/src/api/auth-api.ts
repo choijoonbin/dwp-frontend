@@ -28,6 +28,8 @@ export type MeResponse = {
   userId: number;
   displayName: string;
   jobTitle?: string | null;
+  preferredLocale?: string | null;
+  tenantDefaultLocale?: string | null;
   email?: string | null;
   tenantId: number;
   tenantCode: string;
@@ -67,6 +69,14 @@ export async function login(
 
 export async function getMe(): Promise<ApiResponse<MeResponse>> {
   return (await axiosInstance.get<ApiResponse<MeResponse>>('/api/auth/me')).data;
+}
+
+export async function updateMyPreferredLocale(locale: string): Promise<ApiResponse<MeResponse>> {
+  return (
+    await axiosInstance.patch<ApiResponse<MeResponse>, { locale: string }>('/api/auth/me/locale', {
+      locale,
+    })
+  ).data;
 }
 
 export async function getPermissions(): Promise<ApiResponse<PermissionDTO[]>> {

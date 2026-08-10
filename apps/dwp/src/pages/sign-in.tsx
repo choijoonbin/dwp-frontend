@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowRight, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   useAuth,
-  HttpError,
   useIdpQuery,
   safeReturnUrl,
   buildOidcLoginUrl,
@@ -49,6 +49,7 @@ const labelSx = {
 } as const;
 
 export default function SignInPage() {
+  const { t } = useTranslation('auth');
   const auth = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -58,7 +59,7 @@ export default function SignInPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState<'loginFailed' | null>(null);
 
   const allowLocal = useMemo(
     () =>
@@ -75,15 +76,13 @@ export default function SignInPage() {
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setError(null);
+    setErrorKey(null);
     setSubmitting(true);
     try {
       await auth.login({ username, password });
       navigate(safeReturnUrl(searchParams.get('returnUrl')) || '/', { replace: true });
-    } catch (caught) {
-      setError(
-        caught instanceof HttpError || caught instanceof Error ? caught.message : 'Login failed'
-      );
+    } catch {
+      setErrorKey('loginFailed');
     } finally {
       setSubmitting(false);
     }
@@ -93,7 +92,7 @@ export default function SignInPage() {
     return (
       <Box
         role="status"
-        aria-label="Loading sign-in options"
+        aria-label={t('signIn.loadingOptions')}
         sx={{ minHeight: 300, display: 'grid', placeItems: 'center' }}
       >
         <CircularProgress size={28} />
@@ -102,7 +101,7 @@ export default function SignInPage() {
   }
 
   if (policyQuery.error || !policyQuery.data) {
-    return <Alert severity="error">로그인 정책을 불러올 수 없습니다.</Alert>;
+    return <Alert severity="error">{t('errors.policyLoadFailed')}</Alert>;
   }
 
   return (
@@ -123,19 +122,19 @@ export default function SignInPage() {
             },
           }}
         >
-          Secure access
+          {t('signIn.eyebrow')}
         </Typography>
         <Typography component="h2" variant="h2" sx={{ mt: 1.25 }}>
-          Sign in
+          {t('signIn.title')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Use your organization account to continue to DWP.
+          {t('signIn.description')}
         </Typography>
       </Box>
 
-      {error && (
+      {errorKey && (
         <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
+          {t(`errors.${errorKey}`)}
         </Alert>
       )}
 
@@ -143,7 +142,7 @@ export default function SignInPage() {
         <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2.5 }}>
           <FormControl required fullWidth>
             <FormLabel htmlFor="dwp-username" sx={labelSx}>
-              Username
+              {t('signIn.username')}
             </FormLabel>
             <TextField
               id="dwp-username"
@@ -153,7 +152,7 @@ export default function SignInPage() {
               hiddenLabel
               autoFocus
               autoComplete="username"
-              placeholder="Enter your username"
+              placeholder={t('signIn.usernamePlaceholder')}
               value={username}
               onChange={(event) => setUsername(event.target.value)}
               sx={fieldSx}
@@ -162,7 +161,7 @@ export default function SignInPage() {
 
           <FormControl required fullWidth>
             <FormLabel htmlFor="dwp-password" sx={labelSx}>
-              Password
+              {t('signIn.password')}
             </FormLabel>
             <TextField
               id="dwp-password"
@@ -172,7 +171,7 @@ export default function SignInPage() {
               hiddenLabel
               type={showPassword ? 'text' : 'password'}
               autoComplete="current-password"
-              placeholder="Enter your password"
+              placeholder={t('signIn.passwordPlaceholder')}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               sx={fieldSx}
@@ -180,10 +179,14 @@ export default function SignInPage() {
                 input: {
                   endAdornment: (
                     <InputAdornment position="end">
-                      <Tooltip title={showPassword ? 'Hide password' : 'Show password'}>
+                      <Tooltip
+                        title={showPassword ? t('signIn.hidePassword') : t('signIn.showPassword')}
+                      >
                         <IconButton
                           edge="end"
-                          aria-label={showPassword ? 'Hide password' : 'Show password'}
+                          aria-label={
+                            showPassword ? t('signIn.hidePassword') : t('signIn.showPassword')
+                          }
                           onClick={() => setShowPassword((visible) => !visible)}
                           onMouseDown={(event) => event.preventDefault()}
                           sx={{ width: 36, height: 36 }}
@@ -209,16 +212,16 @@ export default function SignInPage() {
             {submitting ? (
               <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
                 <CircularProgress size={17} color="inherit" />
-                Signing in...
+                {t('signIn.submitting')}
               </Box>
             ) : (
-              'Sign in'
+              t('signIn.submit')
             )}
           </Button>
         </Box>
       )}
 
-      {allowLocal && allowSso && <Divider sx={{ my: 3 }}>OR</Divider>}
+      {allowLocal && allowSso && <Divider sx={{ my: 3 }}>{t('signIn.separator')}</Divider>}
 
       {allowSso && idpQuery.data && (
         <Button
@@ -229,13 +232,11 @@ export default function SignInPage() {
           onClick={() => window.location.assign(buildOidcLoginUrl(idpQuery.data!.providerKey))}
           sx={{ minHeight: 50 }}
         >
-          SSO로 로그인
+          {t('signIn.sso')}
         </Button>
       )}
 
-      {!allowLocal && !allowSso && (
-        <Alert severity="warning">사용 가능한 로그인 방법이 없습니다.</Alert>
-      )}
+      {!allowLocal && !allowSso && <Alert severity="warning">{t('errors.noMethods')}</Alert>}
 
       <Box
         sx={{
@@ -250,9 +251,7 @@ export default function SignInPage() {
         }}
       >
         <ShieldCheck size={16} aria-hidden="true" />
-        <Typography variant="caption">
-          Protected by your organization&apos;s access policies.
-        </Typography>
+        <Typography variant="caption">{t('signIn.policyNotice')}</Typography>
       </Box>
     </Box>
   );

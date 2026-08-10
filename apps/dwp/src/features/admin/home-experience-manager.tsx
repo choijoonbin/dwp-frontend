@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ImageUp, RotateCcw, Save, Upload, X } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -9,6 +10,7 @@ import {
   updateHomeExperience,
   uploadHomeBackground,
 } from '@dwp-frontend/shared-utils';
+import { formatNumber } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -49,17 +51,21 @@ function formFrom(experience: HomeExperience): FormState {
   };
 }
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'The operation could not be completed.';
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
 }
 
 function formatBytes(bytes?: number | null): string {
   if (!bytes) return '';
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${formatNumber(bytes / (1024 * 1024), {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  })} MB`;
 }
 
 export function HomeExperienceManager() {
+  const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -112,7 +118,7 @@ export function HomeExperienceManager() {
       await refresh(next);
       toast.success(successMessage);
     } catch (error) {
-      const message = errorMessage(error);
+      const message = errorMessage(error, t('common.operationError'));
       setOperationError(message);
       toast.error(message);
     } finally {
@@ -143,7 +149,7 @@ export function HomeExperienceManager() {
           overlayOpacity: form.overlayOpacity,
           version: experience.version,
         }),
-      'Home experience settings saved.'
+      t('homeExperience.toasts.saved')
     );
   };
 
@@ -153,7 +159,7 @@ export function HomeExperienceManager() {
       const next = await uploadHomeBackground(selectedFile, experience.version);
       selectFile();
       return next;
-    }, 'Home background uploaded.');
+    }, t('homeExperience.toasts.uploaded'));
   };
 
   const resetBackground = () => {
@@ -162,15 +168,16 @@ export function HomeExperienceManager() {
       selectFile();
       return;
     }
-    void run(
-      () => resetHomeBackground(experience.version),
-      'The default home background was restored.'
-    );
+    void run(() => resetHomeBackground(experience.version), t('homeExperience.toasts.restored'));
   };
 
-  if (experienceQuery.isLoading) return <AdminPanelLoading label="Loading home experience" />;
+  if (experienceQuery.isLoading) {
+    return <AdminPanelLoading label={t('homeExperience.loading')} />;
+  }
   if (experienceQuery.isError || !experience) {
-    return <AdminPanelError message={errorMessage(experienceQuery.error)} />;
+    return (
+      <AdminPanelError message={errorMessage(experienceQuery.error, t('common.operationError'))} />
+    );
   }
 
   return (
@@ -184,14 +191,18 @@ export function HomeExperienceManager() {
       >
         <Box>
           <Typography id="home-experience-heading" component="h2" variant="h5">
-            Home experience
+            {t('homeExperience.title')}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-            Tenant presentation for the personal app workspace.
+            {t('homeExperience.description')}
           </Typography>
         </Box>
         <Chip
-          label={experience.backgroundUrl ? 'Custom background' : 'Default background'}
+          label={
+            experience.backgroundUrl
+              ? t('homeExperience.customBackground')
+              : t('homeExperience.defaultBackground')
+          }
           color={experience.backgroundUrl ? 'info' : 'default'}
           variant="outlined"
         />
@@ -204,7 +215,7 @@ export function HomeExperienceManager() {
       )}
 
       <Box
-        aria-label="Home hero preview"
+        aria-label={t('homeExperience.preview')}
         sx={{
           position: 'relative',
           minHeight: { xs: 260, md: 360 },
@@ -239,10 +250,10 @@ export function HomeExperienceManager() {
           }}
         >
           <Typography component="p" variant="h5" color="inherit">
-            {form.headline.trim() || 'Welcome back, Administrator'}
+            {form.headline.trim() || t('homeExperience.previewHeadline')}
           </Typography>
           <Typography variant="body2" sx={{ mt: 0.75, color: 'rgba(255,255,255,0.76)' }}>
-            {form.subheadline.trim() || 'Your assigned apps and services, ready to launch.'}
+            {form.subheadline.trim() || t('homeExperience.previewMessage')}
           </Typography>
         </Box>
       </Box>
@@ -266,7 +277,7 @@ export function HomeExperienceManager() {
           onClick={() => inputRef.current?.click()}
           disabled={busy}
         >
-          Choose image
+          {t('homeExperience.actions.chooseImage')}
         </Button>
         {selectedFile && (
           <Button
@@ -275,7 +286,7 @@ export function HomeExperienceManager() {
             onClick={upload}
             disabled={busy}
           >
-            Upload background
+            {t('homeExperience.actions.upload')}
           </Button>
         )}
         <Button
@@ -285,18 +296,26 @@ export function HomeExperienceManager() {
           onClick={resetBackground}
           disabled={busy || (!selectedFile && !experience.backgroundUrl)}
         >
-          {selectedFile ? 'Discard selection' : 'Restore default'}
+          {selectedFile
+            ? t('common.actions.discardSelection')
+            : t('homeExperience.actions.restore')}
         </Button>
         <Box sx={{ minWidth: 0, ml: { md: 'auto' }, textAlign: { md: 'right' } }}>
           <Typography variant="body2" noWrap>
-            {selectedFile?.name || experience.backgroundOriginalName || 'Built-in DWP background'}
+            {selectedFile?.name ||
+              experience.backgroundOriginalName ||
+              t('homeExperience.builtInBackground')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             {selectedFile
-              ? `${formatBytes(selectedFile.size)} / pending upload`
+              ? t('common.file.pendingUpload', { size: formatBytes(selectedFile.size) })
               : experience.backgroundSizeBytes
-                ? `${experience.backgroundWidth} x ${experience.backgroundHeight} / ${formatBytes(experience.backgroundSizeBytes)}`
-                : 'PNG or JPEG / up to 10 MB'}
+                ? t('common.file.metadata', {
+                    width: experience.backgroundWidth,
+                    height: experience.backgroundHeight,
+                    size: formatBytes(experience.backgroundSizeBytes),
+                  })
+                : t('homeExperience.fileRequirements')}
           </Typography>
         </Box>
       </Stack>
@@ -313,7 +332,7 @@ export function HomeExperienceManager() {
       >
         <Stack gap={2}>
           <TextField
-            label="Headline"
+            label={t('homeExperience.fields.headline')}
             value={form.headline}
             onChange={(event) =>
               setForm((current) => ({ ...current, headline: event.target.value.slice(0, 160) }))
@@ -321,7 +340,7 @@ export function HomeExperienceManager() {
             helperText={`${form.headline.length}/160`}
           />
           <TextField
-            label="Supporting message"
+            label={t('homeExperience.fields.message')}
             value={form.subheadline}
             onChange={(event) =>
               setForm((current) => ({ ...current, subheadline: event.target.value.slice(0, 500) }))
@@ -335,7 +354,7 @@ export function HomeExperienceManager() {
         <Stack gap={3}>
           <Box>
             <Typography component="h3" variant="subtitle2">
-              Image position
+              {t('homeExperience.fields.imagePosition')}
             </Typography>
             <ToggleButtonGroup
               exclusive
@@ -345,19 +364,19 @@ export function HomeExperienceManager() {
               onChange={(_event, value: HomeBackgroundPosition | null) => {
                 if (value) setForm((current) => ({ ...current, backgroundPosition: value }));
               }}
-              aria-label="Image position"
+              aria-label={t('homeExperience.fields.imagePosition')}
               sx={{ mt: 1 }}
             >
-              <ToggleButton value="LEFT">Left</ToggleButton>
-              <ToggleButton value="CENTER">Center</ToggleButton>
-              <ToggleButton value="RIGHT">Right</ToggleButton>
+              <ToggleButton value="LEFT">{t('homeExperience.positions.LEFT')}</ToggleButton>
+              <ToggleButton value="CENTER">{t('homeExperience.positions.CENTER')}</ToggleButton>
+              <ToggleButton value="RIGHT">{t('homeExperience.positions.RIGHT')}</ToggleButton>
             </ToggleButtonGroup>
           </Box>
 
           <Box>
             <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
               <Typography component="h3" variant="subtitle2">
-                Readability overlay
+                {t('homeExperience.fields.overlay')}
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 {form.overlayOpacity}%
@@ -372,7 +391,7 @@ export function HomeExperienceManager() {
                 setForm((current) => ({ ...current, overlayOpacity: value as number }))
               }
               valueLabelDisplay="auto"
-              aria-label="Readability overlay"
+              aria-label={t('homeExperience.fields.overlay')}
               sx={{ mt: 1 }}
             />
           </Box>
@@ -384,7 +403,7 @@ export function HomeExperienceManager() {
             disabled={busy || !changed}
             sx={{ alignSelf: { sm: 'flex-start' } }}
           >
-            Save presentation
+            {t('homeExperience.actions.save')}
           </Button>
         </Stack>
       </Box>

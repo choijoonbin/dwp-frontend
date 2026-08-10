@@ -1,0 +1,110 @@
+{
+  "brand": {
+    "productName": "Digital Workplace",
+    "homeLabel": "Digital Workplace 홈",
+    "tenantHomeLabel": "{{organization}} Digital Workplace 홈"
+  },
+  "workspace": {
+    "select": "워크스페이스 선택",
+    "current": "현재 워크스페이스",
+    "connected": "워크스페이스 연결됨",
+    "healthSummary": "소스 {{count}}개 / 정책 정상"
+  },
+  "navigation": {
+    "label": "애플리케이션 탐색",
+    "section": "워크스페이스",
+    "open": "탐색 메뉴 열기",
+    "expand": "탐색 메뉴 펼치기",
+    "collapse": "탐색 메뉴 접기",
+    "items": {
+      "work": "업무",
+      "ask": "AI에게 묻기",
+      "activity": "활동",
+      "apps": "앱"
+    }
+  },
+  "search": {
+    "label": "DWP 검색",
+    "shortPlaceholder": "DWP 검색",
+    "placeholder": "업무, 앱, 서비스 및 지식 검색",
+    "close": "검색 닫기",
+    "bestMatches": "가장 일치하는 결과",
+    "suggested": "추천",
+    "resultsLabel": "검색 결과",
+    "noResults": "검색 결과가 없습니다",
+    "types": {
+      "app": "앱",
+      "work": "업무",
+      "knowledge": "지식",
+      "ask": "AI 질문"
+    },
+    "workTypes": {
+      "Approval": "승인",
+      "Task": "업무",
+      "Service": "서비스",
+      "Required": "필수"
+    },
+    "browseApps": {
+      "title": "모든 앱 둘러보기",
+      "description": "할당된 애플리케이션 카탈로그 열기",
+      "keywords": "애플리케이션 앱 카탈로그 서비스 시스템"
+    },
+    "prompts": {
+      "attention": {
+        "title": "지금 확인해야 할 일은 무엇인가요?",
+        "description": "권한이 있는 업무의 우선순위를 검토합니다",
+        "keywords": "우선순위 오늘 확인 승인 업무"
+      },
+      "remotePolicy": {
+        "title": "원격 근무 정책 찾기",
+        "description": "관리되는 업무 지식을 검색합니다",
+        "keywords": "원격 근무 정책 지식 가이드"
+      }
+    },
+    "askQuery": {
+      "title": "DWP에 질문: {{query}}",
+      "description": "권한이 있는 업무 및 지식 소스를 사용합니다"
+    }
+  },
+  "notifications": {
+    "label": "알림",
+    "newCount": "새 알림 {{count}}개",
+    "approval": {
+      "title": "45분 후 승인 기한",
+      "description": "소프트웨어 접근 요청 / IT 서비스"
+    },
+    "policy": {
+      "title": "커넥터 정책 확인 완료",
+      "description": "소스 {{count}}개가 정상입니다"
+    }
+  },
+  "fullscreen": {
+    "enter": "전체 화면",
+    "exit": "전체 화면 종료"
+  },
+  "account": {
+    "buttonLabel": "계정: {{name}}, {{position}}",
+    "panelLabel": "계정 및 세션",
+    "actionsLabel": "계정 작업",
+    "fallbackName": "사용자",
+    "workspace": "워크스페이스 · {{workspace}}",
+    "roles": {
+      "platformAdmin": "플랫폼 관리자",
+      "tenantAdmin": "테넌트 관리자",
+      "member": "워크스페이스 구성원"
+    },
+    "menu": {
+      "settings": "계정 설정",
+      "settingsDescription": "프로필, 환경설정 및 보안",
+      "administration": "관리 콘솔",
+      "administrationDescription": "사용자, 정책 및 시스템 관리",
+      "logout": "로그아웃"
+    }
+  },
+  "statusPages": {
+    "home": "홈",
+    "accessDenied": "접근 권한이 없습니다",
+    "notFound": "페이지를 찾을 수 없습니다",
+    "unexpectedError": "예기치 않은 오류"
+  }
+}

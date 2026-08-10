@@ -12,6 +12,16 @@ async function expectNoAutomaticAccessibilityViolations(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
+  let personalPreference = {
+    schemaVersion: 1 as const,
+    customized: false,
+    preferences: {
+      appearance: { mode: 'system', density: 'standard' },
+      accessibility: { highContrast: false, reduceMotion: false },
+    },
+    version: 0,
+    updatedAt: null as string | null,
+  };
   let homePreference = {
     schemaVersion: 1,
     customized: false,
@@ -96,6 +106,56 @@ test.beforeEach(async ({ page }) => {
     await route.fulfill({
       contentType: 'application/json',
       body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: homePreference }),
+    });
+  });
+  await page.route('**/api/platform/v1/personal-preferences**', async (route) => {
+    const request = route.request();
+    if (request.method() === 'GET') {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: personalPreference }),
+      });
+      return;
+    }
+    if (new URL(request.url()).pathname.endsWith('/reset')) {
+      personalPreference = {
+        schemaVersion: 1,
+        customized: false,
+        preferences: {
+          appearance: { mode: 'system', density: 'standard' },
+          accessibility: { highContrast: false, reduceMotion: false },
+        },
+        version: 0,
+        updatedAt: null,
+      };
+    } else {
+      const body = request.postDataJSON() as {
+        patch: {
+          appearance?: Partial<typeof personalPreference.preferences.appearance>;
+          accessibility?: Partial<typeof personalPreference.preferences.accessibility>;
+        };
+      };
+      const nextVersion = personalPreference.customized ? personalPreference.version + 1 : 0;
+      personalPreference = {
+        ...personalPreference,
+        customized: true,
+        preferences: {
+          appearance: {
+            ...personalPreference.preferences.appearance,
+            ...body.patch.appearance,
+          },
+          accessibility: {
+            ...personalPreference.preferences.accessibility,
+            ...body.patch.accessibility,
+          },
+        },
+        version: nextVersion,
+        updatedAt: '2026-08-10T04:00:00Z',
+      };
+    }
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: personalPreference }),
     });
   });
   await page.route('**/api/auth/csrf', (route) =>
@@ -213,6 +273,14 @@ test('unauthenticated users see the login shell without business navigation', as
   expect(faviconResponse.ok()).toBe(true);
   expect(faviconResponse.headers()['content-type']).toContain('image/svg+xml');
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+  await page.getByRole('button', { name: 'Language' }).click();
+  await page.getByRole('menuitem', { name: /^한국어/ }).click();
+  await expect(page.getByRole('heading', { name: '로그인' })).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('dwp.locale'))).toBe('ko');
+  await page.getByRole('button', { name: '언어' }).click();
+  await page.getByRole('menuitem', { name: 'English' }).click();
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
   const password = page.getByRole('textbox', { name: /^Password/ });
   await password.fill('access-policy-test');
   await page.getByRole('button', { name: 'Show password' }).click();
@@ -231,22 +299,34 @@ test('unauthenticated users see the login shell without business navigation', as
 test('authenticated users enter a personal home before the business shell', async ({
   page,
 }, testInfo) => {
+  let preferredLocale = 'en';
+  const currentUser = () => ({
+    userId: 1,
+    displayName: 'Admin',
+    jobTitle: 'Platform administrator',
+    email: 'admin@dwp.local',
+    preferredLocale,
+    tenantDefaultLocale: 'en',
+    tenantId: 1,
+    tenantCode: 'default',
+    roles: ['ADMIN'],
+  });
   await page.route('**/api/auth/me', async (route) => {
     await route.fulfill({
       contentType: 'application/json',
       body: JSON.stringify({
         status: 'SUCCESS',
         message: 'OK',
-        data: {
-          userId: 1,
-          displayName: 'Admin',
-          jobTitle: 'Platform administrator',
-          email: 'admin@dwp.local',
-          tenantId: 1,
-          tenantCode: 'default',
-          roles: ['ADMIN'],
-        },
+        data: currentUser(),
       }),
+    });
+  });
+  await page.route('**/api/auth/me/locale', async (route) => {
+    const body = route.request().postDataJSON() as { locale: string };
+    preferredLocale = body.locale;
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: currentUser() }),
     });
   });
   await page.route('**/api/auth/permissions', async (route) => {
@@ -255,6 +335,22 @@ test('authenticated users enter a personal home before the business shell', asyn
       body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
     });
   });
+  await page.route('**/api/auth/admin/identity/users**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: { content: [], page: 0, size: 100, totalElements: 0, totalPages: 0 },
+      }),
+    })
+  );
+  await page.route('**/api/auth/admin/identity/roles', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
 
   await page.goto('/');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('dwp.accessToken'))).toBeNull();
@@ -266,9 +362,42 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(page.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Notifications' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Account' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Language' })).toHaveCount(0);
+  const fullscreenControl = page.getByTestId('fullscreen-control');
   if (testInfo.project.name === 'mobile') {
+    await expect(fullscreenControl).toBeHidden();
     await expect(page.getByText('Platform administrator', { exact: true })).toBeHidden();
   } else {
+    await page.evaluate(() => {
+      let fullscreenElement: Element | null = null;
+
+      Object.defineProperty(document, 'fullscreenElement', {
+        configurable: true,
+        get: () => fullscreenElement,
+      });
+      Object.defineProperty(document.documentElement, 'requestFullscreen', {
+        configurable: true,
+        value: async () => {
+          fullscreenElement = document.documentElement;
+          document.dispatchEvent(new Event('fullscreenchange'));
+        },
+      });
+      Object.defineProperty(document, 'exitFullscreen', {
+        configurable: true,
+        value: async () => {
+          fullscreenElement = null;
+          document.dispatchEvent(new Event('fullscreenchange'));
+        },
+      });
+    });
+    await expect(fullscreenControl).toBeVisible();
+    await expect(fullscreenControl).toHaveAttribute('aria-label', 'Enter full screen');
+    await fullscreenControl.click();
+    await expect(fullscreenControl).toHaveAttribute('aria-label', 'Exit full screen');
+    await expect(fullscreenControl).toHaveAttribute('aria-pressed', 'true');
+    await fullscreenControl.click();
+    await expect(fullscreenControl).toHaveAttribute('aria-label', 'Enter full screen');
+    await expect(fullscreenControl).toHaveAttribute('aria-pressed', 'false');
     await expect(page.getByText('Platform administrator', { exact: true })).toBeVisible();
   }
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin', level: 1 })).toBeVisible();
@@ -331,76 +460,147 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();
   await expect(page.getByTestId('desktop-sidebar')).toHaveCount(0);
 
-  await page.getByRole('button', { name: 'Account' }).click();
-  await expect(page.getByRole('menuitem', { name: 'Home' })).toBeVisible();
-  await expect(page.getByRole('menuitem', { name: 'Profile' })).toBeVisible();
-  await expect(page.getByRole('menuitem', { name: 'Preferences' })).toBeVisible();
-  await expect(page.getByRole('menuitem', { name: 'Security & sessions' })).toBeVisible();
-  await expect(page.getByRole('menuitem', { name: 'Administration' })).toBeVisible();
-  await page.getByRole('menuitem', { name: 'Dark mode' }).click();
-  await expect(page.locator('html')).toHaveAttribute('data-color-scheme', 'dark');
-  await expect(page.locator('[role="menuitem"]')).toHaveCount(0);
+  const accountButton = page.getByRole('button', { name: 'Account' });
+  await accountButton.click();
+  await expect(page.getByText('admin@dwp.local', { exact: true })).toBeVisible();
+  await expect(page.getByText('Workspace · default', { exact: true })).toBeVisible();
+  const accountSettingsItem = page.getByRole('menuitem', { name: 'Account settings' });
+  const administrationItem = page.getByRole('menuitem', { name: 'Administration console' });
+  await expect(accountSettingsItem).toBeVisible();
+  await expect(accountSettingsItem).toBeFocused();
+  await expect(page.getByText('Profile, preferences, and security', { exact: true })).toBeVisible();
+  await expect(administrationItem).toBeVisible();
+  await expect(page.getByText('Users, policy, and system controls', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
+  await expect(page.locator('[role="menuitem"]')).toHaveCount(2);
   await expectNoAutomaticAccessibilityViolations(page);
 
-  await page.getByRole('button', { name: 'Account' }).click();
-  await page.getByRole('menuitem', { name: 'Preferences' }).click();
-  await expect(page).toHaveURL(/\/account\/settings/);
+  await page.keyboard.press('ArrowDown');
+  await expect(administrationItem).toBeFocused();
+  await page.keyboard.press('Escape');
   await expect(page.locator('[role="menuitem"]')).toHaveCount(0);
+  await expect(accountButton).toBeFocused();
+  await accountButton.press('Enter');
+  await expect(accountSettingsItem).toBeFocused();
+
+  await accountSettingsItem.click();
+  await expect(page).toHaveURL(/\/account\/profile/);
+  await expect(page.locator('[role="menuitem"]')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Profile' })).toBeVisible();
+  await expect(page.getByTestId('account-shell')).toBeVisible();
+
+  const settingsNavigation =
+    testInfo.project.name === 'mobile'
+      ? page.getByTestId('account-mobile-sidebar')
+      : page.getByTestId('account-sidebar');
+
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: 'Open settings navigation' }).click();
+  }
+
+  await expect(settingsNavigation.getByRole('link', { name: 'Profile' })).toHaveAttribute(
+    'aria-current',
+    'page'
+  );
+  await settingsNavigation.getByRole('link', { name: 'Appearance' }).click();
+  await expect(page).toHaveURL(/\/account\/settings\/appearance/);
   await expect(page.getByRole('group', { name: 'Color mode' })).toBeVisible();
-  await expect(page.getByRole('switch', { name: 'High contrast' })).toBeVisible();
   await expect(page.getByRole('group', { name: 'Interface density' })).toBeVisible();
-  await expect(page.getByText('Managed')).toHaveCount(3);
+  await page
+    .getByRole('group', { name: 'Color mode' })
+    .getByRole('button', { name: 'Dark' })
+    .click();
+  await expect(page.locator('html')).toHaveAttribute('data-color-scheme', 'dark');
+  await expect(
+    page.getByRole('group', { name: 'Color mode' }).getByRole('button', { name: 'Dark' })
+  ).toBeEnabled();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Appearance' })).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('data-color-scheme', 'dark');
+  await expect(
+    page.getByRole('group', { name: 'Color mode' }).getByRole('button', {
+      name: 'Dark',
+      pressed: true,
+    })
+  ).toBeVisible();
+
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: 'Open settings navigation' }).click();
+  }
+
+  await expect(settingsNavigation.getByRole('link', { name: 'Appearance' })).toHaveAttribute(
+    'aria-current',
+    'page'
+  );
+  await settingsNavigation.getByRole('link', { name: 'Accessibility' }).click();
+  await expect(page.getByRole('switch', { name: 'High contrast' })).toBeVisible();
+
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: 'Open settings navigation' }).click();
+  }
+
+  await settingsNavigation.getByRole('link', { name: 'Managed settings' }).click();
+  await expect(page.getByText('Managed', { exact: true })).toHaveCount(3);
   await expectNoAutomaticAccessibilityViolations(page);
 
   if (testInfo.project.name === 'mobile') {
-    await page.getByRole('button', { name: 'Open navigation' }).click();
-    const sidebar = page.getByTestId('mobile-sidebar');
-    await expect(sidebar.getByRole('link', { name: 'Digital Workplace home' })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Today', exact: true })).toHaveCount(0);
-    await expect(sidebar.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Ask', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Activity', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Apps', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link')).toHaveCount(5);
+    await page.getByRole('button', { name: 'Open settings navigation' }).click();
+    await expect(settingsNavigation.getByRole('link', { name: 'Profile' })).toBeVisible();
+    await expect(
+      settingsNavigation.getByRole('link', { name: 'Security & sessions' })
+    ).toBeVisible();
+    await expect(settingsNavigation.getByRole('link', { name: 'Home workspace' })).toBeVisible();
+    await expect(settingsNavigation.getByRole('link', { name: 'Back to workspace' })).toBeVisible();
   } else {
-    const sidebar = page.getByTestId('desktop-sidebar');
-    await expect(sidebar.getByRole('link', { name: 'Digital Workplace home' })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Today', exact: true })).toHaveCount(0);
-    await expect(sidebar.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Ask', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Activity', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Apps', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link')).toHaveCount(5);
-    const collapseNavigation = page.getByRole('button', { name: 'Collapse navigation' });
-    await expect(collapseNavigation).toBeVisible();
-    await expect(collapseNavigation).toHaveAttribute('aria-controls', 'desktop-navigation');
-    await expect(collapseNavigation).toHaveAttribute('aria-expanded', 'true');
-    await collapseNavigation.click();
-    await expect(sidebar).toHaveCSS('width', '72px');
-
-    const expandNavigation = page.getByRole('button', { name: 'Expand navigation' });
-    await expect(expandNavigation).toHaveAttribute('aria-expanded', 'false');
-    const compactGeometry = await page.evaluate(() => {
-      const sidebarElement = document.querySelector('[data-testid="desktop-sidebar"]');
-      const logo = sidebarElement?.querySelector('a[aria-label="Digital Workplace home"]');
-      const logoMark = logo?.querySelector('[aria-hidden="true"]');
-      const toggle = document.querySelector('button[aria-label="Expand navigation"]');
-      const sidebarRect = sidebarElement?.getBoundingClientRect();
-      const logoRect = logoMark?.getBoundingClientRect();
-      const toggleRect = toggle?.getBoundingClientRect();
-      return {
-        logoCenter: logoRect ? logoRect.left + logoRect.width / 2 : null,
-        railCenter:
-          sidebarRect && sidebarElement ? sidebarRect.left + sidebarElement.clientWidth / 2 : null,
-        controlGap: logoRect && toggleRect ? toggleRect.left - logoRect.right : null,
-      };
-    });
-    expect(compactGeometry.logoCenter).toBeCloseTo(compactGeometry.railCenter ?? 0, 0);
-    expect(compactGeometry.controlGap).toBeGreaterThanOrEqual(24);
-
-    await expandNavigation.click();
-    await expect(sidebar).toHaveCSS('width', '248px');
+    await expect(page.getByTestId('desktop-sidebar')).toHaveCount(0);
+    await expect(settingsNavigation.getByRole('link', { name: 'Profile' })).toBeVisible();
+    await expect(
+      settingsNavigation.getByRole('link', { name: 'Security & sessions' })
+    ).toBeVisible();
+    await expect(settingsNavigation.getByRole('link', { name: 'Home workspace' })).toBeVisible();
+    await expect(settingsNavigation.getByRole('link', { name: 'Back to workspace' })).toBeVisible();
+    await expect(settingsNavigation.getByRole('link')).toHaveCount(9);
   }
+
+  await settingsNavigation.getByRole('link', { name: 'Language & region' }).click();
+  await page
+    .getByRole('group', { name: 'Product language' })
+    .getByRole('button', { name: '한국어' })
+    .click();
+  await expect(page.getByRole('heading', { name: '언어 및 지역' })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: '언어 및 지역' })).toBeVisible();
+  await expect(
+    page.getByRole('group', { name: '제품 언어' }).getByRole('button', {
+      name: '한국어',
+      pressed: true,
+    })
+  ).toBeVisible();
+
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: '설정 탐색 열기' }).click();
+  }
+  await settingsNavigation.getByRole('link', { name: '워크스페이스로 돌아가기' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Admin님, 다시 오신 것을 환영합니다' })
+  ).toBeVisible();
+  await page.getByRole('button', { name: '업무 열기', exact: true }).click();
+  await expect(page.getByRole('heading', { name: '업무', level: 1 })).toBeVisible();
+  await page.goto('/admin/people/access');
+  await expect(page.getByRole('heading', { name: '사용자 접근 권한', level: 1 })).toBeVisible();
+
+  let logoutRequested = false;
+  await page.route('**/api/auth/logout', async (route) => {
+    logoutRequested = true;
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: null }),
+    });
+  });
+  await page.getByRole('button', { name: '계정' }).click();
+  await page.getByRole('button', { name: '로그아웃', exact: true }).click();
+  await expect.poll(() => logoutRequested).toBe(true);
+  await expect(page).toHaveURL(/\/sign-in/);
 });
 
 test('tenant branding does not shift the home header while the logo loads', async ({
@@ -600,12 +800,11 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   await renameDialog.getByRole('textbox', { name: 'Folder name' }).fill('Priority tools');
   await renameDialog.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toBeVisible();
+  await page.getByRole('button', { name: 'Done' }).click();
+  await expect(page.getByText('App layout saved.')).toBeVisible();
 
   await page.reload();
   await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toBeVisible();
-  await expect
-    .poll(() => page.evaluate(() => Boolean(localStorage.getItem('dwp.home.launchpad.v1:1:1'))))
-    .toBe(true);
 
   await page.getByRole('button', { name: 'Customize' }).click();
   await page.getByRole('button', { name: 'Reset app layout' }).click();
@@ -752,7 +951,7 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
   await expectNoAutomaticAccessibilityViolations(page);
 
   await page.getByRole('button', { name: 'Account' }).click();
-  await expect(page.getByRole('menuitem', { name: 'Administration' })).toHaveCount(0);
+  await expect(page.getByRole('menuitem', { name: 'Administration console' })).toHaveCount(0);
   await page.keyboard.press('Escape');
 
   await page.goto('/apps');

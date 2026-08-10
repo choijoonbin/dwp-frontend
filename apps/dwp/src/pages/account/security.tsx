@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   CircleHelp,
@@ -21,6 +22,7 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { PageCanvas } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
@@ -48,16 +50,17 @@ function DeviceIcon({ kind }: { kind: SessionDevice['kind'] }) {
   return <CircleHelp {...iconProps} />;
 }
 
-function formatDate(value: string): string {
+function formatSessionDate(value: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '-';
-  return new Intl.DateTimeFormat(undefined, {
+  return formatDate(date, {
     dateStyle: 'medium',
     timeStyle: 'short',
-  }).format(date);
+  });
 }
 
 export default function SecurityPage() {
+  const { t } = useTranslation('account');
   const auth = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
@@ -65,7 +68,7 @@ export default function SecurityPage() {
   const [sessions, setSessions] = useState<AuthSessionData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const otherSessionCount = useMemo(
     () => sessions.filter((session) => !session.current).length,
@@ -74,12 +77,12 @@ export default function SecurityPage() {
 
   const loadSessions = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
+    setHasError(false);
     try {
       const response = await getAuthSessions();
       setSessions(Array.isArray(response.data) ? response.data : []);
     } catch {
-      setError('Active sessions could not be loaded.');
+      setHasError(true);
     } finally {
       setIsLoading(false);
     }
@@ -95,7 +98,7 @@ export default function SecurityPage() {
     try {
       if (pendingAction.kind === 'others') {
         await logoutOtherSessions();
-        toast.success('Other sessions have been signed out.');
+        toast.success(t('security.toasts.otherSessionsSignedOut'));
         setPendingAction(null);
         await loadSessions();
         return;
@@ -107,11 +110,11 @@ export default function SecurityPage() {
         redirectToSignIn(navigate, location);
         return;
       }
-      toast.success('The session has been signed out.');
+      toast.success(t('security.toasts.sessionSignedOut'));
       setPendingAction(null);
       await loadSessions();
     } catch {
-      toast.error('The session could not be signed out.');
+      toast.error(t('security.toasts.signOutError'));
       setPendingAction(null);
     } finally {
       setIsSubmitting(false);
@@ -131,10 +134,11 @@ export default function SecurityPage() {
       >
         <Box>
           <Typography component="h1" variant="h4">
-            Security & sessions
+            {t('security.title')}
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-            {auth.user?.displayName || 'Account'} / {auth.user?.tenantCode || 'Workspace'}
+            {auth.user?.displayName || t('shell.accountFallback')} /{' '}
+            {auth.user?.tenantCode || t('security.workspaceFallback')}
           </Typography>
         </Box>
         <Button
@@ -144,20 +148,20 @@ export default function SecurityPage() {
           disabled={isLoading || otherSessionCount === 0}
           onClick={() => setPendingAction({ kind: 'others' })}
         >
-          Sign out other sessions
+          {t('security.actions.signOutOthers')}
         </Button>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 5 }}>
         <ShieldCheck size={20} strokeWidth={1.8} aria-hidden="true" />
         <Typography component="h2" variant="h6">
-          Active browser sessions
+          {t('security.activeSessions')}
         </Typography>
         {!isLoading && <Chip label={sessions.length} size="small" variant="outlined" />}
       </Box>
       <Divider sx={{ mt: 1, mb: 0 }} />
 
-      {error && (
+      {hasError && (
         <Alert
           severity="error"
           sx={{ mt: 3 }}
@@ -168,26 +172,34 @@ export default function SecurityPage() {
               startIcon={<RefreshCw size={16} aria-hidden="true" />}
               onClick={() => void loadSessions()}
             >
-              Retry
+              {t('security.actions.retry')}
             </Button>
           }
         >
-          {error}
+          {t('security.errors.load')}
         </Alert>
       )}
 
       {isLoading ? (
         <Box sx={{ minHeight: 180, display: 'grid', placeItems: 'center' }}>
-          <CircularProgress size={28} aria-label="Loading active sessions" />
+          <CircularProgress size={28} aria-label={t('security.loading')} />
         </Box>
       ) : (
         <Box
           component="ul"
-          aria-label="Active browser sessions"
+          aria-label={t('security.activeSessions')}
           sx={{ p: 0, m: 0, listStyle: 'none' }}
         >
           {sessions.map((session) => {
             const device = describeSessionDevice(session.userAgent);
+            const browser =
+              device.browser === 'Unknown browser' ? t('security.unknownBrowser') : device.browser;
+            const platform =
+              device.platform === 'Unknown device' ? t('security.unknownDevice') : device.platform;
+            const deviceLabel =
+              device.browser === 'Unknown browser'
+                ? platform
+                : t('security.deviceLabel', { browser, platform });
             return (
               <Box
                 component="li"
@@ -223,9 +235,11 @@ export default function SecurityPage() {
                 <Box sx={{ minWidth: 0 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                     <Typography component="p" variant="subtitle2">
-                      {device.label}
+                      {deviceLabel}
                     </Typography>
-                    {session.current && <Chip label="Current" color="success" size="small" />}
+                    {session.current && (
+                      <Chip label={t('security.current')} color="success" size="small" />
+                    )}
                   </Box>
                   <Typography
                     variant="body2"
@@ -233,7 +247,7 @@ export default function SecurityPage() {
                     title={session.userAgent || undefined}
                     noWrap
                   >
-                    {session.userAgent || 'User agent unavailable'}
+                    {session.userAgent || t('security.userAgentUnavailable')}
                   </Typography>
                 </Box>
 
@@ -248,13 +262,15 @@ export default function SecurityPage() {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minWidth: 0 }}>
                     <MapPin size={15} aria-hidden="true" />
                     <Typography variant="body2" color="text.secondary" noWrap>
-                      {session.ipAddress || 'IP unavailable'}
+                      {session.ipAddress || t('security.ipUnavailable')}
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minWidth: 0 }}>
                     <Clock3 size={15} aria-hidden="true" />
                     <Typography variant="body2" color="text.secondary" noWrap>
-                      Last active {formatDate(session.lastSeenAt)}
+                      {t('security.lastActive', {
+                        date: formatSessionDate(session.lastSeenAt),
+                      })}
                     </Typography>
                   </Box>
                 </Box>
@@ -269,7 +285,9 @@ export default function SecurityPage() {
                   }}
                   onClick={() => setPendingAction({ kind: 'session', session })}
                 >
-                  {session.current ? 'Sign out' : 'End session'}
+                  {session.current
+                    ? t('security.actions.signOut')
+                    : t('security.actions.endSession')}
                 </Button>
               </Box>
             );
@@ -284,20 +302,22 @@ export default function SecurityPage() {
         fullWidth
       >
         <DialogTitle>
-          {pendingAction?.kind === 'others' ? 'Sign out other sessions?' : 'End this session?'}
+          {pendingAction?.kind === 'others'
+            ? t('security.dialog.othersTitle')
+            : t('security.dialog.sessionTitle')}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
             {pendingAction?.kind === 'others'
-              ? `This will sign out ${otherSessionCount} other active ${otherSessionCount === 1 ? 'session' : 'sessions'}.`
+              ? t('security.dialog.othersDescription', { count: otherSessionCount })
               : pendingAction?.session.current
-                ? 'You will be returned to the sign-in screen.'
-                : 'This browser will need to sign in again.'}
+                ? t('security.dialog.currentDescription')
+                : t('security.dialog.sessionDescription')}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button disabled={isSubmitting} onClick={() => setPendingAction(null)}>
-            Cancel
+            {t('security.actions.cancel')}
           </Button>
           <Button
             variant="contained"
@@ -305,7 +325,7 @@ export default function SecurityPage() {
             disabled={isSubmitting}
             onClick={() => void confirmAction()}
           >
-            {isSubmitting ? 'Signing out...' : 'Sign out'}
+            {isSubmitting ? t('security.actions.signingOut') : t('security.actions.signOut')}
           </Button>
         </DialogActions>
       </Dialog>

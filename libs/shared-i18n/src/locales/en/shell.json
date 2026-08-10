@@ -1,0 +1,110 @@
+{
+  "brand": {
+    "productName": "Digital Workplace",
+    "homeLabel": "Digital Workplace home",
+    "tenantHomeLabel": "{{organization}} Digital Workplace home"
+  },
+  "workspace": {
+    "select": "Select workspace",
+    "current": "Current workspace",
+    "connected": "Workspace connected",
+    "healthSummary": "{{count}} sources / policy healthy"
+  },
+  "navigation": {
+    "label": "Application navigation",
+    "section": "Workspace",
+    "open": "Open navigation",
+    "expand": "Expand navigation",
+    "collapse": "Collapse navigation",
+    "items": {
+      "work": "Work",
+      "ask": "Ask",
+      "activity": "Activity",
+      "apps": "Apps"
+    }
+  },
+  "search": {
+    "label": "Search DWP",
+    "shortPlaceholder": "Search DWP",
+    "placeholder": "Search work, apps, services, and knowledge",
+    "close": "Close search",
+    "bestMatches": "Best matches",
+    "suggested": "Suggested",
+    "resultsLabel": "Search results",
+    "noResults": "No results",
+    "types": {
+      "app": "App",
+      "work": "Work",
+      "knowledge": "Knowledge",
+      "ask": "Ask"
+    },
+    "workTypes": {
+      "Approval": "Approval",
+      "Task": "Task",
+      "Service": "Service",
+      "Required": "Required"
+    },
+    "browseApps": {
+      "title": "Browse all apps",
+      "description": "Open the assigned application catalog",
+      "keywords": "application catalog service system"
+    },
+    "prompts": {
+      "attention": {
+        "title": "What needs my attention?",
+        "description": "Review priorities across your permitted work",
+        "keywords": "priority today attention approval task"
+      },
+      "remotePolicy": {
+        "title": "Find the remote work policy",
+        "description": "Search governed workplace knowledge",
+        "keywords": "remote work policy knowledge guide"
+      }
+    },
+    "askQuery": {
+      "title": "Ask DWP: {{query}}",
+      "description": "Use permitted work and knowledge sources"
+    }
+  },
+  "notifications": {
+    "label": "Notifications",
+    "newCount": "{{count}} new",
+    "approval": {
+      "title": "Approval due in 45 minutes",
+      "description": "Software access request / IT Service"
+    },
+    "policy": {
+      "title": "Connector policy check completed",
+      "description": "{{count}} sources are healthy"
+    }
+  },
+  "fullscreen": {
+    "enter": "Enter full screen",
+    "exit": "Exit full screen"
+  },
+  "account": {
+    "buttonLabel": "Account: {{name}}, {{position}}",
+    "panelLabel": "Account and session",
+    "actionsLabel": "Account actions",
+    "fallbackName": "User",
+    "workspace": "Workspace · {{workspace}}",
+    "roles": {
+      "platformAdmin": "Platform administrator",
+      "tenantAdmin": "Tenant administrator",
+      "member": "Workspace member"
+    },
+    "menu": {
+      "settings": "Account settings",
+      "settingsDescription": "Profile, preferences, and security",
+      "administration": "Administration console",
+      "administrationDescription": "Users, policy, and system controls",
+      "logout": "Log out"
+    }
+  },
+  "statusPages": {
+    "home": "Home",
+    "accessDenied": "Access denied",
+    "notFound": "Page not found",
+    "unexpectedError": "Unexpected error"
+  }
+}

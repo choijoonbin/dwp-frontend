@@ -20,19 +20,31 @@ export type SourceCitation = {
 export type SourceCitationListProps = {
   sources: readonly SourceCitation[];
   ariaLabel?: string;
+  stateLabels?: Partial<Record<'restricted' | 'stale', string>>;
 };
 
-function citationState(state: SourceCitation['state']) {
-  if (state === 'restricted') return { label: 'Restricted', icon: <LockKeyhole size={13} /> };
-  if (state === 'stale') return { label: 'Refresh needed', icon: <RefreshCw size={13} /> };
+function citationState(
+  state: SourceCitation['state'],
+  stateLabels: SourceCitationListProps['stateLabels']
+) {
+  if (state === 'restricted') {
+    return { label: stateLabels?.restricted ?? 'Restricted', icon: <LockKeyhole size={13} /> };
+  }
+  if (state === 'stale') {
+    return { label: stateLabels?.stale ?? 'Refresh needed', icon: <RefreshCw size={13} /> };
+  }
   return null;
 }
 
-export function SourceCitationList({ sources, ariaLabel = 'Sources' }: SourceCitationListProps) {
+export function SourceCitationList({
+  sources,
+  ariaLabel = 'Sources',
+  stateLabels,
+}: SourceCitationListProps) {
   return (
     <List disablePadding aria-label={ariaLabel}>
       {sources.map((source) => {
-        const state = citationState(source.state);
+        const state = citationState(source.state, stateLabels);
         const restricted = source.state === 'restricted';
 
         return (

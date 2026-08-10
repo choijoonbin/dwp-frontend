@@ -73,6 +73,21 @@ async function mockAdminSession(page: Page) {
       body: envelope({ organizationName: null, logoUrl: null, version: 0 }),
     })
   );
+  await page.route('**/api/platform/v1/personal-preferences**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope({
+        schemaVersion: 1,
+        customized: false,
+        preferences: {
+          appearance: { mode: 'system', density: 'standard' },
+          accessibility: { highContrast: false, reduceMotion: false },
+        },
+        version: 0,
+        updatedAt: null,
+      }),
+    })
+  );
 }
 
 test('tenant administrators govern organizations and direct groups', async ({ page }, testInfo) => {

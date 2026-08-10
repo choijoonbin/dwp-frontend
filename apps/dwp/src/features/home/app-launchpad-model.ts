@@ -52,6 +52,8 @@ export type AppEntitlementPermission = {
   effect: string;
 };
 
+export type HomeTranslate = (key: string, options?: Record<string, string | number>) => string;
+
 export const HOME_APP_GROUPS: readonly HomeAppGroup[] = [
   {
     id: 'work',
@@ -194,6 +196,26 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     requiredRoles: ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'],
   },
 ];
+
+export function localizeHomeAppGroups(translate: HomeTranslate): HomeAppGroup[] {
+  return HOME_APP_GROUPS.map((group) => ({
+    ...group,
+    name: translate(`apps.groups.${group.id}.name`, { defaultValue: group.name }),
+    description: translate(`apps.groups.${group.id}.description`, {
+      defaultValue: group.description,
+    }),
+  }));
+}
+
+export function localizeHomeApps(translate: HomeTranslate): HomeAppDefinition[] {
+  return HOME_APPS.map((app) => ({
+    ...app,
+    name: translate(`apps.items.${app.id}.name`, { defaultValue: app.name }),
+    description: translate(`apps.items.${app.id}.description`, {
+      defaultValue: app.description,
+    }),
+  }));
+}
 
 const GROUP_IDS = HOME_APP_GROUPS.map((group) => group.id);
 

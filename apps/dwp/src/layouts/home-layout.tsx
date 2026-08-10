@@ -8,8 +8,12 @@ import { alpha } from '@mui/material/styles';
 
 import { AccountMenu } from '../components/account-menu';
 import { BrandLockup } from '../components/brand-lockup';
-import { LanguageMenu } from '../components/language-menu';
-import { NotificationMenu, SearchControl, WorkspaceMenu } from '../components/shell-controls';
+import {
+  FullscreenControl,
+  NotificationMenu,
+  SearchControl,
+  WorkspaceMenu,
+} from '../components/shell-controls';
 
 const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
 
@@ -63,9 +67,7 @@ export function HomeLayout() {
               gap: { xs: 0.25, sm: 0.5 },
             }}
           >
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <LanguageMenu />
-            </Box>
+            <FullscreenControl />
             <NotificationMenu />
           </Box>
           <Box

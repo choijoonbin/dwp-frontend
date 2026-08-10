@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 
 import { lazy, Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { AuthGuard } from '@dwp-frontend/shared-utils';
 import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
@@ -9,6 +10,7 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { AppLayout } from '../layouts/app-layout';
+import { AccountLayout } from '../layouts/account-layout';
 import { AdminLayout } from '../layouts/admin-layout';
 import { AuthLayout } from '../layouts/auth-layout';
 import { HomeLayout } from '../layouts/home-layout';
@@ -29,11 +31,16 @@ const OidcCallbackPage = lazy(() => import('../pages/auth/oidc-callback'));
 const Page403 = lazy(() => import('../pages/page-403'));
 const PageNotFound = lazy(() => import('../pages/page-not-found'));
 
-const fallback = (
-  <Box sx={{ minHeight: 240, display: 'grid', placeItems: 'center' }}>
-    <CircularProgress size={28} aria-label="Loading page" />
-  </Box>
-);
+function RouteFallback() {
+  const { t } = useTranslation('common');
+  return (
+    <Box sx={{ minHeight: 240, display: 'grid', placeItems: 'center' }}>
+      <CircularProgress size={28} aria-label={t('labels.loadingPage')} />
+    </Box>
+  );
+}
+
+const fallback = <RouteFallback />;
 
 function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
@@ -128,16 +135,28 @@ export const routesSection: RouteObject[] = [
           </Suspense>
         ),
       },
+    ],
+  },
+  {
+    path: 'account',
+    element: (
+      <AuthGuard>
+        <AccountLayout />
+      </AuthGuard>
+    ),
+    children: [
+      { index: true, element: <Navigate to="settings/appearance" replace /> },
       {
-        path: 'account/profile',
+        path: 'profile',
         element: (
           <Suspense fallback={fallback}>
             <ProfilePage />
           </Suspense>
         ),
       },
+      { path: 'settings', element: <Navigate to="appearance" replace /> },
       {
-        path: 'account/settings',
+        path: 'settings/:section',
         element: (
           <Suspense fallback={fallback}>
             <SettingsPage />
@@ -145,7 +164,7 @@ export const routesSection: RouteObject[] = [
         ),
       },
       {
-        path: 'account/security',
+        path: 'security',
         element: (
           <Suspense fallback={fallback}>
             <SecurityPage />

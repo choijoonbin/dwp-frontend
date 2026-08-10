@@ -1,9 +1,73 @@
 {
   "language": {
+    "label": "언어",
     "ko": "한국어",
-    "en": "영어"
+    "en": "영어",
+    "preferenceSaveError": "언어 환경 설정을 저장하지 못해 이전 언어를 유지합니다."
+  },
+  "actions": {
+    "activate": "활성화",
+    "add": "추가",
+    "archive": "보관",
+    "back": "뒤로",
+    "cancel": "취소",
+    "close": "닫기",
+    "continue": "계속",
+    "create": "생성",
+    "delete": "삭제",
+    "edit": "편집",
+    "next": "다음",
+    "open": "열기",
+    "previous": "이전",
+    "publish": "게시",
+    "refresh": "새로고침",
+    "reset": "초기화",
+    "retire": "폐기",
+    "retry": "다시 시도",
+    "review": "검토",
+    "save": "저장",
+    "search": "검색",
+    "select": "선택",
+    "upload": "업로드"
+  },
+  "status": {
+    "active": "활성",
+    "inactive": "비활성",
+    "draft": "초안",
+    "retired": "폐기됨",
+    "published": "게시됨",
+    "archived": "보관됨",
+    "completed": "완료",
+    "failed": "실패",
+    "pending": "대기",
+    "all": "전체"
+  },
+  "labels": {
+    "actions": "작업",
+    "description": "설명",
+    "name": "이름",
+    "status": "상태",
+    "type": "유형",
+    "managed": "관리됨",
+    "loading": "불러오는 중",
+    "loadingPage": "페이지 불러오는 중"
+  },
+  "pagination": {
+    "pageOf": "{{total}}페이지 중 {{page}}페이지",
+    "previousPage": "이전 페이지",
+    "nextPage": "다음 페이지"
+  },
+  "units": {
+    "item_one": "항목 {{count}}개",
+    "item_other": "항목 {{count}}개",
+    "result_one": "결과 {{count}}개",
+    "result_other": "결과 {{count}}개",
+    "locale_one": "언어 {{count}}개",
+    "locale_other": "언어 {{count}}개"
   },
   "error": {
-    "unexpected": "예기치 않은 오류가 발생했습니다."
+    "unexpected": "예기치 않은 오류가 발생했습니다.",
+    "loadFailed": "요청한 데이터를 불러오지 못했습니다.",
+    "operationFailed": "작업을 완료하지 못했습니다."
   }
 }

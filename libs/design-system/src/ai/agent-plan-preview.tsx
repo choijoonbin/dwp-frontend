@@ -37,6 +37,36 @@ export type AgentPlanPreviewProps = {
   onReject?: () => void;
   approveLabel?: string;
   rejectLabel?: string;
+  labels?: Partial<AgentPlanPreviewLabels>;
+};
+
+export type AgentPlanPreviewLabels = {
+  risk: Record<AgentRiskLevel, string>;
+  planSteps: string;
+  sources: string;
+  planSources: string;
+  planApproved: string;
+  planRejected: string;
+  reviewBeforeExecution: string;
+  noApprovalRequired: string;
+  citationStates: Record<'restricted' | 'stale', string>;
+};
+
+const defaultLabels: AgentPlanPreviewLabels = {
+  risk: {
+    low: 'Low risk',
+    medium: 'Medium risk',
+    high: 'High risk',
+    critical: 'Critical risk',
+  },
+  planSteps: 'Plan steps',
+  sources: 'Sources',
+  planSources: 'Plan sources',
+  planApproved: 'Plan approved',
+  planRejected: 'Plan rejected',
+  reviewBeforeExecution: 'Review the sources and changes before execution.',
+  noApprovalRequired: 'This plan can run without approval under the current policy.',
+  citationStates: { restricted: 'Restricted', stale: 'Refresh needed' },
 };
 
 const riskColor = {
@@ -50,7 +80,7 @@ export function AgentPlanPreview({
   title,
   summary,
   riskLevel,
-  riskLabel = `${riskLevel[0].toUpperCase()}${riskLevel.slice(1)} risk`,
+  riskLabel,
   steps,
   sources = [],
   approvalRequired = true,
@@ -59,9 +89,16 @@ export function AgentPlanPreview({
   onReject,
   approveLabel = 'Approve plan',
   rejectLabel = 'Reject',
+  labels,
 }: AgentPlanPreviewProps) {
   const settled = state !== 'review';
   const titleId = useId();
+  const copy: AgentPlanPreviewLabels = {
+    ...defaultLabels,
+    ...labels,
+    risk: { ...defaultLabels.risk, ...labels?.risk },
+    citationStates: { ...defaultLabels.citationStates, ...labels?.citationStates },
+  };
 
   return (
     <Box
@@ -90,13 +127,13 @@ export function AgentPlanPreview({
           color={riskColor[riskLevel]}
           variant="outlined"
           icon={riskLevel === 'low' ? <ShieldCheck size={15} /> : <ShieldAlert size={15} />}
-          label={riskLabel}
+          label={riskLabel ?? copy.risk[riskLevel]}
         />
       </Stack>
 
       <Divider />
 
-      <List disablePadding aria-label="Plan steps" sx={{ px: 2.5, py: 1 }}>
+      <List disablePadding aria-label={copy.planSteps} sx={{ px: 2.5, py: 1 }}>
         {steps.map((step, index) => (
           <ListItem key={step.id} disableGutters sx={{ py: 1.25, alignItems: 'flex-start' }}>
             <Box
@@ -136,17 +173,21 @@ export function AgentPlanPreview({
       {sources.length > 0 && (
         <Box sx={{ px: 2.5, pb: 2 }}>
           <Typography component="h3" variant="subtitle2" sx={{ mb: 0.5 }}>
-            Sources
+            {copy.sources}
           </Typography>
-          <SourceCitationList sources={sources} ariaLabel="Plan sources" />
+          <SourceCitationList
+            sources={sources}
+            ariaLabel={copy.planSources}
+            stateLabels={copy.citationStates}
+          />
         </Box>
       )}
 
       <Divider />
 
       <Box sx={{ px: 2.5, py: 2 }}>
-        {state === 'approved' && <Alert severity="success">Plan approved</Alert>}
-        {state === 'rejected' && <Alert severity="info">Plan rejected</Alert>}
+        {state === 'approved' && <Alert severity="success">{copy.planApproved}</Alert>}
+        {state === 'rejected' && <Alert severity="info">{copy.planRejected}</Alert>}
         {!settled && (
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
@@ -155,9 +196,7 @@ export function AgentPlanPreview({
             gap={1.5}
           >
             <Typography variant="body2" color="text.secondary">
-              {approvalRequired
-                ? 'Review the sources and changes before execution.'
-                : 'This plan can run without approval under the current policy.'}
+              {approvalRequired ? copy.reviewBeforeExecution : copy.noApprovalRequired}
             </Typography>
             {approvalRequired && (
               <Stack direction="row" gap={1} justifyContent={{ xs: 'stretch', sm: 'flex-end' }}>

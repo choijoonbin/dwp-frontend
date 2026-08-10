@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProductMark } from '@dwp-frontend/design-system';
 import { getTenantBranding, resolveTenantLogoUrl } from '@dwp-frontend/shared-utils';
@@ -18,6 +19,7 @@ type BrandLockupProps = {
 };
 
 export function BrandLockup({ variant = 'full', label, description, sx }: BrandLockupProps) {
+  const { t } = useTranslation('shell');
   const navigate = useNavigate();
   const tenantBranded = variant === 'full' || variant === 'condensed';
   const brandingQuery = useQuery({
@@ -34,8 +36,8 @@ export function BrandLockup({ variant = 'full', label, description, sx }: BrandL
   const compact = variant === 'condensed' || variant === 'product-only';
   const accessibleName =
     tenantBranded && branding?.organizationName
-      ? `${branding.organizationName} Digital Workplace home`
-      : 'Digital Workplace home';
+      ? t('brand.tenantHomeLabel', { organization: branding.organizationName })
+      : t('brand.homeLabel');
 
   return (
     <ProductMark

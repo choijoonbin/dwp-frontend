@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -36,9 +37,9 @@ const registryTypes: RegistryType[] = ['APP', 'CONNECTOR', 'AGENT', 'TOOL', 'POL
 const riskTiers: RiskTier[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
 const dialogCopy = {
-  create: { title: 'New registry entry', submit: 'Create draft' },
-  edit: { title: 'Edit draft revision', submit: 'Save changes' },
-  revision: { title: 'New registry revision', submit: 'Create revision' },
+  create: { title: 'registry.dialog.createTitle', submit: 'registry.actions.createDraft' },
+  edit: { title: 'registry.dialog.editTitle', submit: 'registry.actions.saveChanges' },
+  revision: { title: 'registry.dialog.revisionTitle', submit: 'registry.actions.createRevision' },
 } as const;
 
 export function RegistryDialog({
@@ -49,6 +50,7 @@ export function RegistryDialog({
   onClose,
   onSubmit,
 }: RegistryDialogProps) {
+  const { t } = useTranslation('admin');
   const [registryType, setRegistryType] = useState<RegistryType>('APP');
   const [entryKey, setEntryKey] = useState('');
   const [name, setName] = useState('');
@@ -90,7 +92,7 @@ export function RegistryDialog({
   return (
     <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
       <Box component="form" onSubmit={(event) => void submit(event)}>
-        <DialogTitle>{dialogCopy[mode].title}</DialogTitle>
+        <DialogTitle>{t(dialogCopy[mode].title)}</DialogTitle>
         <DialogContent
           sx={{
             display: 'grid',
@@ -101,20 +103,20 @@ export function RegistryDialog({
         >
           <TextField
             select
-            label="Registry type"
+            label={t('registry.fields.type')}
             value={registryType}
             onChange={(event) => setRegistryType(event.target.value as RegistryType)}
             disabled={mode !== 'create'}
           >
             {registryTypes.map((type) => (
               <MenuItem key={type} value={type}>
-                {type.charAt(0) + type.slice(1).toLowerCase()}
+                {t(`registry.types.${type}`)}
               </MenuItem>
             ))}
           </TextField>
           <TextField
             autoFocus={mode === 'create'}
-            label="Registry key"
+            label={t('registry.fields.key')}
             value={entryKey}
             onChange={(event) => setEntryKey(event.target.value.toUpperCase())}
             disabled={mode !== 'create'}
@@ -123,7 +125,7 @@ export function RegistryDialog({
           />
           <TextField
             autoFocus={mode !== 'create'}
-            label="Name"
+            label={t('registry.fields.name')}
             value={name}
             onChange={(event) => setName(event.target.value)}
             required
@@ -131,14 +133,14 @@ export function RegistryDialog({
             sx={{ gridColumn: { sm: '1 / -1' } }}
           />
           <TextField
-            label="Owner reference"
+            label={t('registry.fields.owner')}
             value={ownerRef}
             onChange={(event) => setOwnerRef(event.target.value)}
             required
             inputProps={{ maxLength: 160 }}
           />
           <TextField
-            label="Artifact version"
+            label={t('registry.fields.version')}
             value={artifactVersion}
             onChange={(event) => setArtifactVersion(event.target.value)}
             required
@@ -146,18 +148,18 @@ export function RegistryDialog({
           />
           <TextField
             select
-            label="Risk tier"
+            label={t('registry.fields.risk')}
             value={riskTier}
             onChange={(event) => setRiskTier(event.target.value as RiskTier)}
           >
             {riskTiers.map((tier) => (
               <MenuItem key={tier} value={tier}>
-                {tier.charAt(0) + tier.slice(1).toLowerCase()}
+                {t(`registry.risk.${tier}`)}
               </MenuItem>
             ))}
           </TextField>
           <TextField
-            label="Description"
+            label={t('registry.fields.description')}
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             multiline
@@ -168,10 +170,10 @@ export function RegistryDialog({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} disabled={busy}>
-            Cancel
+            {t('common.actions.cancel')}
           </Button>
           <Button type="submit" variant="contained" disabled={busy || !valid}>
-            {dialogCopy[mode].submit}
+            {t(dialogCopy[mode].submit)}
           </Button>
         </DialogActions>
       </Box>

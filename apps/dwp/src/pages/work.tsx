@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
   ArrowUpRight,
@@ -19,22 +20,16 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { PageHeader, ReferenceModeChip, SectionHeading } from '../features/work-hub/workspace-ui';
-import { workItems } from '../features/work-hub/reference-data';
+import { localizeWorkItems } from '../features/work-hub/reference-data';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { Priority, ReferenceWorkItem, WorkStatus } from '../features/work-hub/reference-data';
 
 type WorkFilter = 'all' | WorkStatus;
-
-const statusLabel: Record<WorkStatus, string> = {
-  'due-soon': 'Due soon',
-  'in-progress': 'In progress',
-  waiting: 'Waiting',
-  completed: 'Completed',
-};
 
 const statusColor: Record<WorkStatus, 'error' | 'info' | 'warning' | 'success'> = {
   'due-soon': 'error',
@@ -82,53 +77,78 @@ const insightByWork: Record<string, { reason: string; next: string; activity: st
   },
 };
 
-const columns: GridColDef<ReferenceWorkItem>[] = [
-  { field: 'id', headerName: 'Work ID', width: 108 },
-  { field: 'title', headerName: 'Work', minWidth: 250, flex: 1 },
-  {
-    field: 'priority',
-    headerName: 'Priority',
-    width: 104,
-    renderCell: ({ value }) => {
-      const priority = value as Priority;
-      return (
-        <Chip label={priority} color={priorityColor[priority]} size="small" variant="outlined" />
-      );
-    },
-  },
-  {
-    field: 'status',
-    headerName: 'Status',
-    width: 122,
-    renderCell: ({ value }) => {
-      const status = value as WorkStatus;
-      return (
-        <Chip
-          label={statusLabel[status]}
-          color={statusColor[status]}
-          size="small"
-          variant="outlined"
-        />
-      );
-    },
-  },
-  { field: 'due', headerName: 'Due', width: 126 },
-  { field: 'sourceSystem', headerName: 'Source', width: 140 },
-];
-
 export default function WorkPage() {
+  const { t } = useTranslation(['work', 'common']);
   const toast = useToast();
   const [searchParams] = useSearchParams();
   const [filter, setFilter] = useState<WorkFilter>('all');
+  const showSourceColumn = useMediaQuery('(min-width:1600px)');
+  const localizedItems = useMemo(() => localizeWorkItems(t), [t]);
   const [selectedId, setSelectedId] = useState(
-    () => searchParams.get('item') || workItems[0]?.id || ''
+    () => searchParams.get('item') || localizedItems[0]?.id || ''
   );
   const filteredItems = useMemo(
-    () => (filter === 'all' ? workItems : workItems.filter((item) => item.status === filter)),
-    [filter]
+    () =>
+      filter === 'all' ? localizedItems : localizedItems.filter((item) => item.status === filter),
+    [filter, localizedItems]
   );
-  const selected = workItems.find((item) => item.id === selectedId) || filteredItems[0];
-  const selectedInsight = selected ? insightByWork[selected.id] : undefined;
+  const selected = localizedItems.find((item) => item.id === selectedId) || filteredItems[0];
+  const selectedInsightDefaults = selected ? insightByWork[selected.id] : undefined;
+  const selectedInsight =
+    selected && selectedInsightDefaults
+      ? {
+          reason: t(`workPage.insights.${selected.id}.reason`, {
+            defaultValue: selectedInsightDefaults.reason,
+          }),
+          next: t(`workPage.insights.${selected.id}.next`, {
+            defaultValue: selectedInsightDefaults.next,
+          }),
+          activity: t(`workPage.insights.${selected.id}.activity`, {
+            defaultValue: selectedInsightDefaults.activity,
+          }),
+        }
+      : undefined;
+  const columns = useMemo<GridColDef<ReferenceWorkItem>[]>(
+    () => [
+      { field: 'id', headerName: t('workPage.columns.id'), width: 96 },
+      { field: 'title', headerName: t('workPage.columns.work'), minWidth: 200, flex: 1 },
+      {
+        field: 'priority',
+        headerName: t('workPage.columns.priority'),
+        width: 92,
+        renderCell: ({ value }) => {
+          const priority = value as Priority;
+          return (
+            <Chip
+              label={t(`labels.priority.${priority}`)}
+              color={priorityColor[priority]}
+              size="small"
+              variant="outlined"
+            />
+          );
+        },
+      },
+      {
+        field: 'status',
+        headerName: t('workPage.columns.status'),
+        width: 108,
+        renderCell: ({ value }) => {
+          const status = value as WorkStatus;
+          return (
+            <Chip
+              label={t(`labels.status.${status}`)}
+              color={statusColor[status]}
+              size="small"
+              variant="outlined"
+            />
+          );
+        },
+      },
+      { field: 'due', headerName: t('workPage.columns.due'), width: 112 },
+      { field: 'sourceSystem', headerName: t('workPage.columns.source'), width: 120 },
+    ],
+    [t]
+  );
 
   const changeFilter = (_event: React.MouseEvent<HTMLElement>, value: WorkFilter | null) => {
     if (value) setFilter(value);
@@ -137,14 +157,14 @@ export default function WorkPage() {
   return (
     <PageCanvas>
       <PageHeader
-        eyebrow="Unified queue"
-        title="Work"
-        description="Decisions, tasks, and service requests ordered by impact"
+        eyebrow={t('workPage.header.eyebrow')}
+        title={t('workPage.header.title')}
+        description={t('workPage.header.description')}
         action={<ReferenceModeChip />}
       />
 
       <Box
-        aria-label="Work summary"
+        aria-label={t('workPage.summaryLabel')}
         sx={{
           mt: 3,
           display: 'grid',
@@ -155,13 +175,13 @@ export default function WorkPage() {
         }}
       >
         {[
-          ['06', 'All work', 'Across 5 sources', 'text.primary'],
-          ['02', 'Due soon', 'First due at 10:30', 'error.main'],
-          ['02', 'In progress', '24 min estimated', 'info.main'],
-          ['01', 'Waiting', 'Employee confirmation', 'warning.main'],
-        ].map(([value, label, detail, color], index) => (
+          ['all', 'text.primary'],
+          ['due', 'error.main'],
+          ['progress', 'info.main'],
+          ['waiting', 'warning.main'],
+        ].map(([key, color], index) => (
           <Box
-            key={label}
+            key={key}
             sx={{
               py: 2,
               px: { xs: 1.5, md: 2.5 },
@@ -176,13 +196,13 @@ export default function WorkPage() {
               variant="h5"
               sx={{ color, fontVariantNumeric: 'tabular-nums' }}
             >
-              {value}
+              {t(`workPage.summary.${key}.value`)}
             </Typography>
             <Typography component="p" variant="subtitle2" sx={{ mt: 0.25 }}>
-              {label}
+              {t(`workPage.summary.${key}.label`)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {detail}
+              {t(`workPage.summary.${key}.detail`)}
             </Typography>
           </Box>
         ))}
@@ -203,19 +223,19 @@ export default function WorkPage() {
           size="small"
           value={filter}
           onChange={changeFilter}
-          aria-label="Work status"
+          aria-label={t('workPage.filterLabel')}
           sx={{ overflowX: 'auto', maxWidth: 1 }}
         >
-          <ToggleButton value="all">All</ToggleButton>
-          <ToggleButton value="due-soon">Due soon</ToggleButton>
-          <ToggleButton value="in-progress">In progress</ToggleButton>
-          <ToggleButton value="waiting">Waiting</ToggleButton>
-          <ToggleButton value="completed">Completed</ToggleButton>
+          <ToggleButton value="all">{t('workPage.filters.all')}</ToggleButton>
+          <ToggleButton value="due-soon">{t('workPage.filters.due-soon')}</ToggleButton>
+          <ToggleButton value="in-progress">{t('workPage.filters.in-progress')}</ToggleButton>
+          <ToggleButton value="waiting">{t('workPage.filters.waiting')}</ToggleButton>
+          <ToggleButton value="completed">{t('workPage.filters.completed')}</ToggleButton>
         </ToggleButtonGroup>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
           <ListFilter size={15} aria-hidden="true" />
           <Typography variant="body2" color="text.secondary">
-            {filteredItems.length} results / impact order
+            {t('workPage.resultSummary', { count: filteredItems.length })}
           </Typography>
         </Box>
       </Box>
@@ -233,11 +253,12 @@ export default function WorkPage() {
       >
         <Box sx={{ minWidth: 0, pr: { lg: 3 } }}>
           <EnterpriseDataGrid
-            ariaLabel="Work queue"
+            ariaLabel={t('workPage.queueLabel')}
             rows={filteredItems}
             columns={columns}
             getRowId={(row) => row.id}
             onRowClick={({ row }) => setSelectedId(row.id)}
+            columnVisibilityModel={{ sourceSystem: showSourceColumn }}
             rowSelectionModel={
               selected ? { type: 'include', ids: new Set([selected.id]) } : undefined
             }
@@ -263,10 +284,10 @@ export default function WorkPage() {
             <SectionHeading
               id="selected-work-heading"
               icon={BriefcaseBusiness}
-              title="Decision context"
+              title={t('workPage.decisionContext')}
               meta={
                 <Chip
-                  label={statusLabel[selected.status]}
+                  label={t(`labels.status.${selected.status}`)}
                   color={statusColor[selected.status]}
                   size="small"
                 />
@@ -277,12 +298,16 @@ export default function WorkPage() {
               {selected.title}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-              {selected.id} / {selected.type} / Owner: {selected.owner}
+              {t('workPage.itemMeta', {
+                id: selected.id,
+                type: t(`labels.type.${selected.type}`),
+                owner: selected.owner,
+              })}
             </Typography>
 
             <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mt: 2 }}>
               <Chip
-                label={selected.priority}
+                label={t(`labels.priority.${selected.priority}`)}
                 color={priorityColor[selected.priority]}
                 size="small"
                 variant="outlined"
@@ -308,7 +333,7 @@ export default function WorkPage() {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                 <Sparkles size={17} strokeWidth={1.8} aria-hidden="true" />
                 <Typography component="h3" variant="subtitle2">
-                  Why this is next
+                  {t('workPage.whyNext')}
                 </Typography>
               </Box>
               <Typography variant="body2" sx={{ mt: 0.75 }}>
@@ -319,7 +344,7 @@ export default function WorkPage() {
             <Box sx={{ display: 'grid', gap: 2.5, mt: 3 }}>
               <Box>
                 <Typography variant="caption" color="text.secondary">
-                  Recommended next step
+                  {t('workPage.recommendedNext')}
                 </Typography>
                 <Typography variant="body2" sx={{ mt: 0.35 }}>
                   {selectedInsight.next}
@@ -327,7 +352,7 @@ export default function WorkPage() {
               </Box>
               <Box>
                 <Typography variant="caption" color="text.secondary">
-                  Latest activity
+                  {t('workPage.latestActivity')}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
                   <UserRound size={16} strokeWidth={1.8} aria-hidden="true" />
@@ -347,20 +372,24 @@ export default function WorkPage() {
                     <CircleAlert size={17} aria-hidden="true" />
                   )
                 }
-                onClick={() => toast.success(`${selected.title} action preview opened.`)}
+                onClick={() => toast.success(t('workPage.actionOpened', { title: selected.title }))}
               >
-                {selected.status === 'completed' ? 'View record' : 'Continue work'}
+                {selected.status === 'completed'
+                  ? t('workPage.viewRecord')
+                  : t('workPage.continueWork')}
               </Button>
               <Button
                 variant="outlined"
                 endIcon={<ArrowUpRight size={16} aria-hidden="true" />}
-                onClick={() => toast.success(`${selected.sourceSystem} source preview opened.`)}
+                onClick={() =>
+                  toast.success(t('workPage.sourceOpened', { source: selected.sourceSystem }))
+                }
               >
-                Open source
+                {t('workPage.openSource')}
               </Button>
             </Box>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
-              Reference action only. No external system is changed.
+              {t('workPage.referenceNotice')}
             </Typography>
           </Box>
         )}

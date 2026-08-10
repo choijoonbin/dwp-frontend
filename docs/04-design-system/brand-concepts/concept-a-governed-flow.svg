@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">DWP Governed Flow symbol</title>
+  <desc id="desc">Three work streams pass through a mint governance gate and become one controlled action.</desc>
+  <g fill="none" stroke="#2457D6" stroke-linecap="round" stroke-width="8">
+    <path d="M8 13h10c11 0 12 12 25 15" />
+    <path d="M8 32h35" />
+    <path d="M8 51h10c11 0 12-12 25-15" />
+    <path d="M52 32h4" />
+  </g>
+  <rect width="11" height="18" x="42" y="23" fill="#2BC7B5" rx="3.5" />
+</svg>

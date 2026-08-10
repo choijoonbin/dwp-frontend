@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Building2, Search, ShieldAlert, UsersRound } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -82,6 +83,7 @@ export function OrganizationDialog({
   onCreate,
   onUpdate,
 }: OrganizationDialogProps) {
+  const { t } = useTranslation('admin');
   const [orgKey, setOrgKey] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -120,11 +122,11 @@ export function OrganizationDialog({
         ? {
             orgUnitId: id,
             orgKey: '',
-            name: value.parentName || `Organization ${id}`,
+            name: value.parentName || t('directory.organizationFallback', { id }),
           }
         : null)
     );
-  }, [parentId, parentOptions, value]);
+  }, [parentId, parentOptions, t, value]);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -149,11 +151,15 @@ export function OrganizationDialog({
   return (
     <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
       <Box component="form" onSubmit={(event) => void submit(event)}>
-        <DialogTitle>{value ? 'Edit organization' : 'New organization'}</DialogTitle>
+        <DialogTitle>
+          {value
+            ? t('directory.dialogs.organization.editTitle')
+            : t('directory.dialogs.organization.newTitle')}
+        </DialogTitle>
         <DialogContent sx={{ display: 'grid', gap: 2, pt: '8px !important' }}>
           <TextField
             autoFocus={!value}
-            label="Organization key"
+            label={t('directory.fields.organizationKey')}
             value={orgKey}
             onChange={(event) => setOrgKey(event.target.value.toUpperCase())}
             disabled={Boolean(value)}
@@ -162,7 +168,7 @@ export function OrganizationDialog({
           />
           <TextField
             autoFocus={Boolean(value)}
-            label="Name"
+            label={t('directory.fields.name')}
             value={name}
             onChange={(event) => setName(event.target.value)}
             required
@@ -186,11 +192,15 @@ export function OrganizationDialog({
               setParentId(organization ? String(organization.orgUnitId) : '')
             }
             renderInput={(params) => (
-              <TextField {...params} label="Parent organization" placeholder="No parent" />
+              <TextField
+                {...params}
+                label={t('directory.fields.parentOrganization')}
+                placeholder={t('directory.noParent')}
+              />
             )}
           />
           <TextField
-            label="Description"
+            label={t('directory.fields.description')}
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             multiline
@@ -200,14 +210,14 @@ export function OrganizationDialog({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} disabled={busy}>
-            Cancel
+            {t('common.actions.cancel')}
           </Button>
           <Button
             type="submit"
             variant="contained"
             disabled={busy || !orgKey.trim() || !name.trim()}
           >
-            {value ? 'Save changes' : 'Create organization'}
+            {value ? t('directory.actions.saveChanges') : t('directory.actions.createOrganization')}
           </Button>
         </DialogActions>
       </Box>
@@ -225,6 +235,7 @@ type GroupDialogProps = {
 };
 
 export function GroupDialog({ open, value, busy, onClose, onCreate, onUpdate }: GroupDialogProps) {
+  const { t } = useTranslation('admin');
   const [groupKey, setGroupKey] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [description, setDescription] = useState('');
@@ -256,11 +267,13 @@ export function GroupDialog({ open, value, busy, onClose, onCreate, onUpdate }: 
   return (
     <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
       <Box component="form" onSubmit={(event) => void submit(event)}>
-        <DialogTitle>{value ? 'Edit group' : 'New group'}</DialogTitle>
+        <DialogTitle>
+          {value ? t('directory.dialogs.group.editTitle') : t('directory.dialogs.group.newTitle')}
+        </DialogTitle>
         <DialogContent sx={{ display: 'grid', gap: 2, pt: '8px !important' }}>
           <TextField
             autoFocus={!value}
-            label="Group key"
+            label={t('directory.fields.groupKey')}
             value={groupKey}
             onChange={(event) => setGroupKey(event.target.value.toUpperCase())}
             disabled={Boolean(value)}
@@ -269,14 +282,14 @@ export function GroupDialog({ open, value, busy, onClose, onCreate, onUpdate }: 
           />
           <TextField
             autoFocus={Boolean(value)}
-            label="Display name"
+            label={t('directory.fields.displayName')}
             value={displayName}
             onChange={(event) => setDisplayName(event.target.value)}
             required
             inputProps={{ maxLength: 200 }}
           />
           <TextField
-            label="Description"
+            label={t('directory.fields.description')}
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             multiline
@@ -286,14 +299,14 @@ export function GroupDialog({ open, value, busy, onClose, onCreate, onUpdate }: 
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} disabled={busy}>
-            Cancel
+            {t('common.actions.cancel')}
           </Button>
           <Button
             type="submit"
             variant="contained"
             disabled={busy || !groupKey.trim() || !displayName.trim()}
           >
-            {value ? 'Save changes' : 'Create group'}
+            {value ? t('directory.actions.saveChanges') : t('directory.actions.createGroup')}
           </Button>
         </DialogActions>
       </Box>
@@ -328,6 +341,7 @@ export function DirectoryMemberDialog({
   onClose,
   onSave,
 }: MemberDialogProps) {
+  const { t } = useTranslation('admin');
   const [selected, setSelected] = useState<Set<number>>(new Set());
 
   useEffect(() => {
@@ -358,7 +372,7 @@ export function DirectoryMemberDialog({
 
   return (
     <Dialog open={Boolean(target)} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Manage members</DialogTitle>
+      <DialogTitle>{t('directory.dialogs.members.title')}</DialogTitle>
       <DialogContent sx={{ pt: '8px !important', px: { xs: 2, sm: 3 } }}>
         {target && (
           <>
@@ -384,7 +398,7 @@ export function DirectoryMemberDialog({
                   {targetName}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {targetKey} / {selected.size} selected
+                  {targetKey} / {t('directory.selectedCount', { count: selected.size })}
                 </Typography>
               </Box>
             </Stack>
@@ -392,7 +406,7 @@ export function DirectoryMemberDialog({
             <TextField
               fullWidth
               size="small"
-              label="Find users"
+              label={t('directory.fields.findUsers')}
               value={search}
               onChange={(event) => onSearch(event.target.value)}
               InputProps={{
@@ -405,7 +419,7 @@ export function DirectoryMemberDialog({
             />
 
             <Box
-              aria-label="Directory users"
+              aria-label={t('directory.directoryUsers')}
               sx={{
                 mt: 1.5,
                 maxHeight: 380,
@@ -420,7 +434,7 @@ export function DirectoryMemberDialog({
                   color="text.secondary"
                   sx={{ py: 5, textAlign: 'center' }}
                 >
-                  Loading users
+                  {t('directory.loadingUsers')}
                 </Typography>
               ) : mergedCandidates.length ? (
                 mergedCandidates.map((member) => {
@@ -455,14 +469,14 @@ export function DirectoryMemberDialog({
                               noWrap
                               display="block"
                             >
-                              {member.email || `User ${member.userId}`}
+                              {member.email || t('access.userFallback', { id: member.userId })}
                             </Typography>
                           </Box>
                           {member.primaryOrgName && (
                             <Chip
                               label={
                                 assignedElsewhere
-                                  ? `Move from ${member.primaryOrgName}`
+                                  ? t('directory.moveFrom', { organization: member.primaryOrgName })
                                   : member.primaryOrgName
                               }
                               size="small"
@@ -491,7 +505,7 @@ export function DirectoryMemberDialog({
                   color="text.secondary"
                   sx={{ py: 5, textAlign: 'center' }}
                 >
-                  No users found
+                  {t('access.noUsers')}
                 </Typography>
               )}
             </Box>
@@ -505,8 +519,8 @@ export function DirectoryMemberDialog({
               <ShieldAlert size={18} strokeWidth={1.8} aria-hidden="true" />
               <Typography variant="body2" color="text.secondary">
                 {target.kind === 'organization'
-                  ? 'Changing primary organization moves users from their previous organization and revokes affected sessions.'
-                  : 'Changing group membership revokes affected user sessions.'}
+                  ? t('directory.dialogs.members.organizationNotice')
+                  : t('directory.dialogs.members.groupNotice')}
               </Typography>
             </Stack>
           </>
@@ -514,14 +528,14 @@ export function DirectoryMemberDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={busy}>
-          Cancel
+          {t('common.actions.cancel')}
         </Button>
         <Button
           variant="contained"
           disabled={busy || loading || equalIds(currentIds, [...selected])}
           onClick={() => void onSave(sortedIds(selected))}
         >
-          Save members
+          {t('directory.actions.saveMembers')}
         </Button>
       </DialogActions>
     </Dialog>

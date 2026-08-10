@@ -40,6 +40,7 @@ type AppearanceContextValue = {
   setDensity: (density: DensityPreference) => void;
   setHighContrast: (enabled: boolean) => void;
   setReduceMotion: (enabled: boolean) => void;
+  replacePreference: (preference: UserAppearancePreference) => void;
   resetPreferences: () => void;
 };
 
@@ -184,6 +185,22 @@ export function DwpThemeProvider({
     [policy.userControls.reduceMotion]
   );
 
+  const replacePreference = useCallback(
+    (next: UserAppearancePreference) => {
+      setPreference({
+        mode: includesValue(colorModeOptions, next.mode) ? next.mode : policy.defaults.mode,
+        density: includesValue(densityOptions, next.density)
+          ? next.density
+          : policy.defaults.density,
+        highContrast:
+          typeof next.highContrast === 'boolean' ? next.highContrast : policy.defaults.highContrast,
+        reduceMotion:
+          typeof next.reduceMotion === 'boolean' ? next.reduceMotion : policy.defaults.reduceMotion,
+      });
+    },
+    [policy.defaults]
+  );
+
   const resetPreferences = useCallback(() => setPreference(policy.defaults), [policy.defaults]);
 
   const value = useMemo<AppearanceContextValue>(
@@ -200,6 +217,7 @@ export function DwpThemeProvider({
       setDensity,
       setHighContrast,
       setReduceMotion,
+      replacePreference,
       resetPreferences,
     }),
     [
@@ -209,6 +227,7 @@ export function DwpThemeProvider({
       navigationPattern,
       policy,
       preference,
+      replacePreference,
       resetPreferences,
       resolvedMode,
       setDensity,

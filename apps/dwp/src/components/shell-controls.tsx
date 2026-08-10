@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Bell, ChevronDown, Clock3, Search, ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Bell, ChevronDown, Clock3, Maximize2, Minimize2, Search, ShieldCheck } from 'lucide-react';
+import { GlyphSurface } from '@dwp-frontend/design-system';
 import { useAuth, usePermissions, WORKSPACE_NAME } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -13,40 +15,33 @@ import MenuItem from '@mui/material/MenuItem';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import { alpha } from '@mui/material/styles';
 
 import { GlobalSearchDialog } from '../features/search/global-search-dialog';
-import { HOME_APPS, isAppEntitled } from '../features/home/app-launchpad-model';
+import { isAppEntitled, localizeHomeApps } from '../features/home/app-launchpad-model';
 
 function WorkspaceBadge() {
   return (
-    <Box
-      aria-hidden="true"
-      sx={{
-        width: 26,
-        height: 26,
-        display: 'grid',
-        flex: '0 0 26px',
-        placeItems: 'center',
-        borderRadius: 1,
-        color: 'primary.contrastText',
-        bgcolor: 'primary.main',
-        fontSize: 12,
-        fontWeight: 800,
-      }}
-    >
-      D
-    </Box>
+    <GlyphSurface size={26}>
+      <Box
+        component="span"
+        sx={{ color: '#FFFFFF', fontSize: 11, fontWeight: 800, lineHeight: 1, letterSpacing: 0 }}
+      >
+        D
+      </Box>
+    </GlyphSurface>
   );
 }
 
 export function WorkspaceMenu() {
+  const { t } = useTranslation('shell');
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
 
   return (
     <>
       <Button
         color="inherit"
-        aria-label="Select workspace"
+        aria-label={t('workspace.select')}
         aria-controls={anchor ? 'workspace-menu' : undefined}
         onClick={(event) => setAnchor(event.currentTarget)}
         sx={{ minWidth: 0, maxWidth: { xs: 148, md: 280 }, gap: 1, px: 1 }}
@@ -77,7 +72,7 @@ export function WorkspaceMenu() {
               {WORKSPACE_NAME}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              Current workspace
+              {t('workspace.current')}
             </Typography>
           </Box>
         </MenuItem>
@@ -87,12 +82,17 @@ export function WorkspaceMenu() {
 }
 
 export function SearchControl() {
+  const { t } = useTranslation('shell');
+  const { t: tHome } = useTranslation('home');
   const auth = useAuth();
   const { permissions } = usePermissions();
   const [open, setOpen] = useState(false);
   const apps = useMemo(
-    () => HOME_APPS.filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
-    [auth.user?.roles, permissions]
+    () =>
+      localizeHomeApps(tHome).filter((app) =>
+        isAppEntitled(app, auth.user?.roles ?? [], permissions)
+      ),
+    [auth.user?.roles, permissions, tHome]
   );
   const includeWork = apps.some((app) => app.id === 'dwp-work');
   const includeAsk = apps.some((app) => app.id === 'dwp-ask');
@@ -119,7 +119,7 @@ export function SearchControl() {
   return (
     <>
       <ButtonBase
-        aria-label="Search"
+        aria-label={t('search.label')}
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen(true)}
@@ -142,7 +142,7 @@ export function SearchControl() {
       >
         <Search size={18} strokeWidth={1.8} aria-hidden="true" />
         <Typography variant="body2" sx={{ flex: 1 }}>
-          Search DWP
+          {t('search.shortPlaceholder')}
         </Typography>
         <Box
           component="kbd"
@@ -162,9 +162,9 @@ export function SearchControl() {
           {shortcut}
         </Box>
       </ButtonBase>
-      <Tooltip title="Search">
+      <Tooltip title={t('search.label')}>
         <IconButton
-          aria-label="Search"
+          aria-label={t('search.label')}
           aria-haspopup="dialog"
           aria-expanded={open}
           onClick={() => setOpen(true)}
@@ -184,13 +184,89 @@ export function SearchControl() {
   );
 }
 
+export function FullscreenControl() {
+  const { t } = useTranslation('shell');
+  const [supported, setSupported] = useState(
+    () =>
+      typeof document !== 'undefined' &&
+      document.fullscreenEnabled === true &&
+      typeof document.documentElement.requestFullscreen === 'function' &&
+      typeof document.exitFullscreen === 'function'
+  );
+  const [fullscreen, setFullscreen] = useState(
+    () => typeof document !== 'undefined' && Boolean(document.fullscreenElement)
+  );
+
+  useEffect(() => {
+    if (!supported) return;
+
+    const syncFullscreenState = () => setFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener('fullscreenchange', syncFullscreenState);
+    syncFullscreenState();
+
+    return () => document.removeEventListener('fullscreenchange', syncFullscreenState);
+  }, [supported]);
+
+  if (!supported) return null;
+
+  const label = fullscreen ? t('fullscreen.exit') : t('fullscreen.enter');
+  const toggleFullscreen = async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch {
+      setSupported(false);
+    }
+  };
+
+  return (
+    <Tooltip title={label} enterDelay={500}>
+      <IconButton
+        data-testid="fullscreen-control"
+        aria-label={label}
+        aria-pressed={fullscreen}
+        onClick={() => void toggleFullscreen()}
+        sx={{
+          display: { xs: 'none', md: 'inline-flex' },
+          width: 36,
+          height: 36,
+          borderRadius: 1,
+          color: fullscreen ? 'primary.main' : 'text.secondary',
+          bgcolor: fullscreen ? 'action.selected' : 'transparent',
+          boxShadow: (theme) =>
+            fullscreen ? `inset 0 0 0 1px ${alpha(theme.palette.primary.main, 0.28)}` : 'none',
+          transition: (theme) =>
+            theme.transitions.create(['color', 'background-color', 'box-shadow']),
+          '&:hover': {
+            color: 'text.primary',
+            bgcolor: 'action.hover',
+          },
+        }}
+      >
+        {fullscreen ? (
+          <Minimize2 size={20} strokeWidth={1.8} aria-hidden="true" />
+        ) : (
+          <Maximize2 size={20} strokeWidth={1.8} aria-hidden="true" />
+        )}
+      </IconButton>
+    </Tooltip>
+  );
+}
+
 export function NotificationMenu() {
+  const { t } = useTranslation('shell');
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
 
   return (
     <>
-      <Tooltip title="Notifications">
-        <IconButton aria-label="Notifications" onClick={(event) => setAnchor(event.currentTarget)}>
+      <Tooltip title={t('notifications.label')}>
+        <IconButton
+          aria-label={t('notifications.label')}
+          onClick={(event) => setAnchor(event.currentTarget)}
+        >
           <Badge color="error" badgeContent={2} max={9}>
             <Bell size={20} strokeWidth={1.8} />
           </Badge>
@@ -206,10 +282,10 @@ export function NotificationMenu() {
       >
         <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography component="h2" variant="subtitle1">
-            Notifications
+            {t('notifications.label')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            2 new
+            {t('notifications.newCount', { count: 2 })}
           </Typography>
         </Box>
         <Divider />
@@ -222,10 +298,10 @@ export function NotificationMenu() {
           </Box>
           <Box>
             <Typography component="p" variant="subtitle2">
-              Approval due in 45 minutes
+              {t('notifications.approval.title')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Software access request / IT Service
+              {t('notifications.approval.description')}
             </Typography>
           </Box>
         </ButtonBase>
@@ -239,10 +315,10 @@ export function NotificationMenu() {
           </Box>
           <Box>
             <Typography component="p" variant="subtitle2">
-              Connector policy check completed
+              {t('notifications.policy.title')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              4 sources are healthy
+              {t('notifications.policy.description', { count: 4 })}
             </Typography>
           </Box>
         </ButtonBase>

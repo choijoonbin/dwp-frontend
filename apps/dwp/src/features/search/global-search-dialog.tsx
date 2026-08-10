@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { AppWindow, BookOpenText, BriefcaseBusiness, Search, Sparkles, X } from 'lucide-react';
 
@@ -13,7 +14,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { workItems } from '../work-hub/reference-data';
+import { localizeWorkItems } from '../work-hub/reference-data';
 import {
   createAskSearchItem,
   createGlobalSearchItems,
@@ -28,13 +29,6 @@ const resultIcon: Record<GlobalSearchKind, typeof Search> = {
   work: BriefcaseBusiness,
   knowledge: BookOpenText,
   ask: Sparkles,
-};
-
-const resultLabel: Record<GlobalSearchKind, string> = {
-  app: 'App',
-  work: 'Work',
-  knowledge: 'Knowledge',
-  ask: 'Ask',
 };
 
 type GlobalSearchDialogProps = {
@@ -52,6 +46,8 @@ export function GlobalSearchDialog({
   includeAsk,
   onClose,
 }: GlobalSearchDialogProps) {
+  const { t } = useTranslation('shell');
+  const { t: tWork } = useTranslation('work');
   const navigate = useNavigate();
   const theme = useTheme();
   const compactSearchLabel = useMediaQuery(theme.breakpoints.down('sm'));
@@ -59,14 +55,14 @@ export function GlobalSearchDialog({
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const catalog = useMemo(
-    () => createGlobalSearchItems(apps, includeWork ? workItems : [], includeAsk),
-    [apps, includeAsk, includeWork]
+    () => createGlobalSearchItems(apps, includeWork ? localizeWorkItems(tWork) : [], includeAsk, t),
+    [apps, includeAsk, includeWork, t, tWork]
   );
   const results = useMemo(() => {
     const matches = filterGlobalSearchItems(catalog, query);
     if (!query.trim() || !includeAsk) return matches;
-    return [...matches, createAskSearchItem(query)].slice(0, 8);
-  }, [catalog, includeAsk, query]);
+    return [...matches, createAskSearchItem(query, t)].slice(0, 8);
+  }, [catalog, includeAsk, query, t]);
 
   useEffect(() => setActiveIndex(0), [query]);
   useEffect(() => {
@@ -159,7 +155,7 @@ export function GlobalSearchDialog({
           border: 0,
         }}
       >
-        Search DWP
+        {t('search.label')}
       </Typography>
       <Box sx={{ minHeight: 70, px: { xs: 1, sm: 1.5 }, display: 'flex', alignItems: 'center' }}>
         <Search size={22} strokeWidth={1.8} aria-hidden="true" />
@@ -170,11 +166,9 @@ export function GlobalSearchDialog({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={
-            compactSearchLabel ? 'Search DWP' : 'Search work, apps, services, and knowledge'
-          }
+          placeholder={compactSearchLabel ? t('search.shortPlaceholder') : t('search.placeholder')}
           inputProps={{
-            'aria-label': 'Search DWP',
+            'aria-label': t('search.label'),
             'aria-autocomplete': 'list',
             'aria-controls': 'global-search-results',
             'aria-expanded': true,
@@ -185,8 +179,8 @@ export function GlobalSearchDialog({
           }}
           sx={{ mx: 1.25, '& input': { py: 1.5, fontSize: { xs: 16, sm: 18 } } }}
         />
-        <Tooltip title="Close search">
-          <IconButton aria-label="Close search" onClick={close} size="small">
+        <Tooltip title={t('search.close')}>
+          <IconButton aria-label={t('search.close')} onClick={close} size="small">
             <X size={19} strokeWidth={1.8} />
           </IconButton>
         </Tooltip>
@@ -200,14 +194,14 @@ export function GlobalSearchDialog({
           color="text.secondary"
           sx={{ px: 1.25, py: 0.5 }}
         >
-          {query.trim() ? 'Best matches' : 'Suggested'}
+          {query.trim() ? t('search.bestMatches') : t('search.suggested')}
         </Typography>
         {results.length > 0 ? (
           <Box
             component="ul"
             id="global-search-results"
             role="listbox"
-            aria-label="Search results"
+            aria-label={t('search.resultsLabel')}
             sx={{ p: 0, m: 0, listStyle: 'none' }}
           >
             {results.map((item, index) => {
@@ -273,7 +267,7 @@ export function GlobalSearchDialog({
                       color="text.secondary"
                       sx={{ px: 0.5, display: { xs: 'none', sm: 'block' } }}
                     >
-                      {resultLabel[item.kind]}
+                      {t(`search.types.${item.kind}`)}
                     </Typography>
                   </ButtonBase>
                 </Box>
@@ -282,7 +276,7 @@ export function GlobalSearchDialog({
           </Box>
         ) : (
           <Box sx={{ minHeight: 96, display: 'grid', placeItems: 'center' }}>
-            <Typography color="text.secondary">No results</Typography>
+            <Typography color="text.secondary">{t('search.noResults')}</Typography>
           </Box>
         )}
       </Box>

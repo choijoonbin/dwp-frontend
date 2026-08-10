@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plus, Trash2 } from 'lucide-react';
+import { productLocales } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -39,6 +41,7 @@ export function ReferenceSetDialog({
   onCreate,
   onUpdate,
 }: ReferenceSetDialogProps) {
+  const { t } = useTranslation('admin');
   const [setKey, setSetKey] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -70,11 +73,15 @@ export function ReferenceSetDialog({
   return (
     <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
       <Box component="form" onSubmit={(event) => void submit(event)}>
-        <DialogTitle>{value ? 'Edit reference set' : 'New reference set'}</DialogTitle>
+        <DialogTitle>
+          {value
+            ? t('referenceData.dialogs.set.editTitle')
+            : t('referenceData.dialogs.set.newTitle')}
+        </DialogTitle>
         <DialogContent sx={{ display: 'grid', gap: 2, pt: '8px !important' }}>
           <TextField
             autoFocus={!value}
-            label="Set key"
+            label={t('referenceData.fields.setKey')}
             value={setKey}
             onChange={(event) => setSetKey(event.target.value.toUpperCase())}
             disabled={Boolean(value)}
@@ -83,14 +90,14 @@ export function ReferenceSetDialog({
           />
           <TextField
             autoFocus={Boolean(value)}
-            label="Name"
+            label={t('referenceData.fields.name')}
             value={name}
             onChange={(event) => setName(event.target.value)}
             required
             inputProps={{ maxLength: 160 }}
           />
           <TextField
-            label="Description"
+            label={t('referenceData.fields.description')}
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             multiline
@@ -100,14 +107,14 @@ export function ReferenceSetDialog({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} disabled={busy}>
-            Cancel
+            {t('common.actions.cancel')}
           </Button>
           <Button
             type="submit"
             variant="contained"
             disabled={busy || !setKey.trim() || !name.trim()}
           >
-            {value ? 'Save changes' : 'Create set'}
+            {value ? t('referenceData.actions.saveChanges') : t('referenceData.actions.createSet')}
           </Button>
         </DialogActions>
       </Box>
@@ -124,10 +131,9 @@ type ReferenceItemDialogProps = {
   onUpdate: (request: UpdateReferenceItemRequest) => Promise<void>;
 };
 
-const emptyLabels: ReferenceLabel[] = [
-  { locale: 'ko', label: '', description: '' },
-  { locale: 'en', label: '', description: '' },
-];
+function emptyLabels(): ReferenceLabel[] {
+  return productLocales.map(({ code }) => ({ locale: code, label: '', description: '' }));
+}
 
 function toLocalDateTime(value?: string | null): string {
   if (!value) return '';
@@ -148,6 +154,7 @@ export function ReferenceItemDialog({
   onCreate,
   onUpdate,
 }: ReferenceItemDialogProps) {
+  const { t } = useTranslation('admin');
   const [code, setCode] = useState('');
   const [sortOrder, setSortOrder] = useState('0');
   const [parentCode, setParentCode] = useState('');
@@ -162,7 +169,7 @@ export function ReferenceItemDialog({
     setParentCode(value?.parentCode ?? '');
     setValidFrom(toLocalDateTime(value?.validFrom));
     setValidTo(toLocalDateTime(value?.validTo));
-    setLabels(value?.labels.length ? value.labels.map((label) => ({ ...label })) : emptyLabels);
+    setLabels(value?.labels.length ? value.labels.map((label) => ({ ...label })) : emptyLabels());
   }, [open, value]);
 
   const updateLabel = (index: number, next: Partial<ReferenceLabel>) => {
@@ -202,7 +209,11 @@ export function ReferenceItemDialog({
   return (
     <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="md">
       <Box component="form" onSubmit={(event) => void submit(event)}>
-        <DialogTitle>{value ? 'Edit reference item' : 'New reference item'}</DialogTitle>
+        <DialogTitle>
+          {value
+            ? t('referenceData.dialogs.item.editTitle')
+            : t('referenceData.dialogs.item.newTitle')}
+        </DialogTitle>
         <DialogContent sx={{ pt: '8px !important' }}>
           <Box
             sx={{
@@ -213,7 +224,7 @@ export function ReferenceItemDialog({
           >
             <TextField
               autoFocus={!value}
-              label="Code"
+              label={t('referenceData.fields.code')}
               value={code}
               onChange={(event) => setCode(event.target.value.toUpperCase())}
               disabled={Boolean(value)}
@@ -221,7 +232,7 @@ export function ReferenceItemDialog({
               inputProps={{ pattern: '[A-Za-z0-9][A-Za-z0-9_.-]{0,79}', maxLength: 80 }}
             />
             <TextField
-              label="Sort order"
+              label={t('referenceData.fields.sortOrder')}
               type="number"
               value={sortOrder}
               onChange={(event) => setSortOrder(event.target.value)}
@@ -229,21 +240,21 @@ export function ReferenceItemDialog({
               inputProps={{ min: -1000000, max: 1000000 }}
             />
             <TextField
-              label="Parent code"
+              label={t('referenceData.fields.parentCode')}
               value={parentCode}
               onChange={(event) => setParentCode(event.target.value.toUpperCase())}
               inputProps={{ maxLength: 80 }}
             />
             <Box />
             <TextField
-              label="Valid from"
+              label={t('referenceData.fields.validFrom')}
               type="datetime-local"
               value={validFrom}
               onChange={(event) => setValidFrom(event.target.value)}
               slotProps={{ inputLabel: { shrink: true } }}
             />
             <TextField
-              label="Valid to"
+              label={t('referenceData.fields.validTo')}
               type="datetime-local"
               value={validTo}
               onChange={(event) => setValidTo(event.target.value)}
@@ -253,12 +264,12 @@ export function ReferenceItemDialog({
 
           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 3 }}>
             <Box component="h3" sx={{ m: 0, typography: 'subtitle2' }}>
-              Localized labels
+              {t('referenceData.localizedLabels')}
             </Box>
-            <Tooltip title="Add locale">
+            <Tooltip title={t('referenceData.actions.addLocale')}>
               <IconButton
                 size="small"
-                aria-label="Add locale"
+                aria-label={t('referenceData.actions.addLocale')}
                 onClick={() => setLabels((current) => [...current, { locale: '', label: '' }])}
               >
                 <Plus size={18} strokeWidth={1.8} />
@@ -280,24 +291,26 @@ export function ReferenceItemDialog({
                 }}
               >
                 <TextField
-                  label="Locale"
+                  label={t('referenceData.fields.locale')}
                   size="small"
                   value={label.locale}
                   onChange={(event) => updateLabel(index, { locale: event.target.value })}
                   inputProps={{ maxLength: 20 }}
                 />
                 <TextField
-                  label="Label"
+                  label={t('referenceData.fields.label')}
                   size="small"
                   value={label.label}
                   onChange={(event) => updateLabel(index, { label: event.target.value })}
                   inputProps={{ maxLength: 200 }}
                 />
-                <Tooltip title="Remove locale">
+                <Tooltip title={t('referenceData.actions.removeLocale')}>
                   <span>
                     <IconButton
                       size="small"
-                      aria-label={`Remove locale ${index + 1}`}
+                      aria-label={t('referenceData.actions.removeLocaleAt', {
+                        index: index + 1,
+                      })}
                       disabled={labels.length === 1}
                       onClick={() =>
                         setLabels((current) =>
@@ -315,10 +328,10 @@ export function ReferenceItemDialog({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} disabled={busy}>
-            Cancel
+            {t('common.actions.cancel')}
           </Button>
           <Button type="submit" variant="contained" disabled={busy || !valid}>
-            {value ? 'Save changes' : 'Create item'}
+            {value ? t('referenceData.actions.saveChanges') : t('referenceData.actions.createItem')}
           </Button>
         </DialogActions>
       </Box>
@@ -347,13 +360,14 @@ export function ConfirmActionDialog({
   onClose,
   onConfirm,
 }: ConfirmActionDialogProps) {
+  const { t } = useTranslation('admin');
   return (
     <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="xs">
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{message}</DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={busy}>
-          Cancel
+          {t('common.actions.cancel')}
         </Button>
         <Button
           variant="contained"

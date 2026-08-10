@@ -1,0 +1,625 @@
+{
+  "shell": {
+    "controlCenter": "Control Center",
+    "productName": "Digital Workplace",
+    "administration": "Administration",
+    "tenantAdministration": "Tenant administration",
+    "tenantFallback": "Tenant",
+    "navigationLabel": "Administration navigation",
+    "openNavigation": "Open administration navigation",
+    "backToWorkspace": "Back to workspace"
+  },
+  "navigation": {
+    "groups": {
+      "experience": "Experience",
+      "people": "People & access",
+      "platform": "Platform setup",
+      "governance": "Governance"
+    },
+    "items": {
+      "branding": {
+        "label": "Branding",
+        "title": "Tenant branding",
+        "description": "Manage the organization identity shown across the employee experience."
+      },
+      "home-experience": {
+        "label": "Home experience",
+        "title": "Home experience",
+        "description": "Configure the tenant home artwork and personalized launchpad experience."
+      },
+      "announcements": {
+        "label": "Announcements",
+        "title": "Announcements",
+        "description": "Publish time-bound notices to the appropriate tenant audience."
+      },
+      "access": {
+        "label": "Access control",
+        "title": "Identity access",
+        "description": "Assign tenant roles and review effective access for workforce accounts."
+      },
+      "directory": {
+        "label": "Directory",
+        "title": "Organization directory",
+        "description": "Manage organizations and groups used for scoped access and experiences."
+      },
+      "reference-data": {
+        "label": "Reference data",
+        "title": "Reference data",
+        "description": "Govern tenant code sets, localized labels, hierarchy, and effective dates."
+      },
+      "registry": {
+        "label": "App registry",
+        "title": "Application registry",
+        "description": "Control registered applications, tenant availability, and launch metadata."
+      },
+      "audit": {
+        "label": "Audit log",
+        "title": "Audit log",
+        "description": "Trace privileged changes, actor identity, outcome, and correlation context."
+      }
+    }
+  },
+  "page": {
+    "breadcrumb": "Control Center / {{group}}",
+    "tenantScope": "{{tenant}} scope"
+  },
+  "common": {
+    "loadError": "Unable to load administration data",
+    "operationError": "The operation could not be completed.",
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "close": "Close",
+      "refresh": "Refresh",
+      "edit": "Edit",
+      "create": "Create",
+      "delete": "Delete",
+      "discardSelection": "Discard selection"
+    },
+    "file": {
+      "pendingUpload": "{{size}} / pending upload",
+      "metadata": "{{width}} x {{height}} / {{size}}"
+    },
+    "states": {
+      "on": "On",
+      "off": "Off",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "DRAFT": "Draft",
+      "PUBLISHED": "Published",
+      "ARCHIVED": "Archived",
+      "SUCCESS": "Success",
+      "FAILED": "Failed"
+    },
+    "lifecycle": {
+      "DRAFT": "Draft",
+      "ACTIVE": "Active",
+      "RETIRED": "Retired"
+    }
+  },
+  "access": {
+    "title": "Identity access",
+    "loading": "Loading identity access",
+    "tenantUsers": "Tenant users",
+    "searchUsers": "Search users",
+    "noUsers": "No users found",
+    "noRole": "No role",
+    "userFallback": "User {{id}}",
+    "mfaEnabled": "MFA on",
+    "mfaDisabled": "MFA off",
+    "ownRolesUnavailable": "You cannot change your own roles",
+    "columns": {
+      "user": "User",
+      "roles": "Roles",
+      "status": "Status",
+      "mfa": "MFA",
+      "revision": "Revision"
+    },
+    "actions": {
+      "refresh": "Refresh users and roles",
+      "editRoles": "Edit roles",
+      "editRolesFor": "Edit roles for {{name}}",
+      "save": "Save access"
+    },
+    "dialog": {
+      "title": "Edit access",
+      "assignedRoles": "Assigned roles",
+      "sessionNotice": "Saving role changes signs this user out of all active sessions."
+    },
+    "toasts": {
+      "updated": "User access updated and active sessions revoked."
+    }
+  },
+  "branding": {
+    "title": "Tenant branding",
+    "description": "Organization identity in the DWP co-brand lockup.",
+    "loading": "Loading tenant branding",
+    "customLogo": "Custom logo",
+    "productOnly": "Product brand only",
+    "headerPreview": "Header brand preview",
+    "lockupPreview": "Brand lockup preview",
+    "organizationName": "Organization name",
+    "noLogo": "No tenant logo",
+    "fileRequirements": "SVG, PNG, or JPEG / up to 2 MB",
+    "actions": {
+      "chooseLogo": "Choose logo",
+      "uploadLogo": "Upload logo",
+      "removeLogo": "Remove logo",
+      "save": "Save branding"
+    },
+    "toasts": {
+      "logoUploaded": "Tenant logo uploaded.",
+      "logoRemoved": "Tenant logo removed.",
+      "saved": "Tenant branding saved."
+    }
+  },
+  "homeExperience": {
+    "title": "Home experience",
+    "description": "Tenant presentation for the personal app workspace.",
+    "loading": "Loading home experience",
+    "customBackground": "Custom background",
+    "defaultBackground": "Default background",
+    "preview": "Home hero preview",
+    "previewHeadline": "Welcome back, Administrator",
+    "previewMessage": "Your assigned apps and services, ready to launch.",
+    "builtInBackground": "Built-in DWP background",
+    "fileRequirements": "PNG or JPEG / up to 10 MB",
+    "fields": {
+      "headline": "Headline",
+      "message": "Supporting message",
+      "imagePosition": "Image position",
+      "overlay": "Readability overlay"
+    },
+    "positions": {
+      "LEFT": "Left",
+      "CENTER": "Center",
+      "RIGHT": "Right"
+    },
+    "actions": {
+      "chooseImage": "Choose image",
+      "upload": "Upload background",
+      "restore": "Restore default",
+      "save": "Save presentation"
+    },
+    "toasts": {
+      "saved": "Home experience settings saved.",
+      "uploaded": "Home background uploaded.",
+      "restored": "The default home background was restored."
+    }
+  },
+  "announcements": {
+    "title": "Announcements",
+    "description": "Governed, audience-aware employee communications.",
+    "loading": "Loading announcements",
+    "pinned": "Pinned",
+    "immediate": "Immediate",
+    "openEnded": "Open ended",
+    "noAnnouncements": "No announcements",
+    "fields": {
+      "title": "Title",
+      "message": "Message",
+      "severity": "Severity",
+      "audience": "Audience",
+      "roleKey": "Role key",
+      "pinned": "Pinned",
+      "starts": "Starts",
+      "ends": "Ends",
+      "actionLabel": "Action label",
+      "actionUrl": "Action URL"
+    },
+    "severity": {
+      "INFO": "Information",
+      "SUCCESS": "Success",
+      "WARNING": "Warning",
+      "CRITICAL": "Critical"
+    },
+    "audience": {
+      "ALL": "All employees",
+      "ROLE": "Role"
+    },
+    "table": {
+      "label": "Announcements",
+      "announcement": "Announcement",
+      "status": "Status",
+      "audience": "Audience",
+      "window": "Window",
+      "actions": "Actions"
+    },
+    "dialog": {
+      "editTitle": "Edit announcement",
+      "newTitle": "New announcement",
+      "close": "Close announcement dialog"
+    },
+    "actions": {
+      "new": "New announcement",
+      "saveChanges": "Save changes",
+      "createDraft": "Create draft",
+      "editNamed": "Edit {{title}}",
+      "publish": "Publish",
+      "publishNamed": "Publish {{title}}",
+      "archive": "Archive",
+      "archiveNamed": "Archive {{title}}"
+    },
+    "toasts": {
+      "published": "Announcement published.",
+      "archived": "Announcement archived.",
+      "updated": "Announcement updated.",
+      "created": "Announcement draft created."
+    }
+  },
+  "referenceData": {
+    "loading": "Loading reference data",
+    "loadingSet": "Loading reference set",
+    "referenceSets": "Reference sets",
+    "referenceItems": "Reference items",
+    "setDetail": "Reference set detail",
+    "searchSets": "Search sets",
+    "noSets": "No reference sets",
+    "noItems": "No reference items",
+    "selectSet": "Select a reference set",
+    "localizedLabels": "Localized labels",
+    "itemCount_one": "{{count}} item",
+    "itemCount_other": "{{count}} items",
+    "revision": "{{key}} / revision {{revision}}",
+    "itemSummary_one": "Order {{order}} / {{count}} locale",
+    "itemSummary_other": "Order {{order}} / {{count}} locales",
+    "parentSummary": "Parent {{code}}",
+    "columns": {
+      "code": "Code",
+      "state": "State",
+      "locales": "Locales",
+      "order": "Order",
+      "parent": "Parent"
+    },
+    "fields": {
+      "setKey": "Set key",
+      "name": "Name",
+      "description": "Description",
+      "code": "Code",
+      "sortOrder": "Sort order",
+      "parentCode": "Parent code",
+      "validFrom": "Valid from",
+      "validTo": "Valid to",
+      "locale": "Locale",
+      "label": "Label"
+    },
+    "dialogs": {
+      "set": {
+        "editTitle": "Edit reference set",
+        "newTitle": "New reference set"
+      },
+      "item": {
+        "editTitle": "Edit reference item",
+        "newTitle": "New reference item"
+      }
+    },
+    "actions": {
+      "saveChanges": "Save changes",
+      "createSet": "Create set",
+      "createItem": "Create item",
+      "addLocale": "Add locale",
+      "removeLocale": "Remove locale",
+      "removeLocaleAt": "Remove locale {{index}}",
+      "newSet": "New reference set",
+      "newItem": "New reference item",
+      "editSet": "Edit reference set",
+      "editItem": "Edit item",
+      "refreshSet": "Refresh reference set",
+      "activate": "Activate",
+      "retire": "Retire",
+      "activateSet": "Activate reference set",
+      "retireSet": "Retire reference set",
+      "activateItem": "Activate item",
+      "retireItem": "Retire item",
+      "editNamed": "Edit {{code}}",
+      "activateNamed": "Activate {{code}}",
+      "retireNamed": "Retire {{code}}"
+    },
+    "confirm": {
+      "activateSetTitle": "Activate reference set?",
+      "activateSetMessage": "All non-retired draft items will become available to tenant applications.",
+      "retireSetTitle": "Retire reference set?",
+      "retireSetMessage": "Tenant applications will no longer receive this set from the runtime API.",
+      "activateItemTitle": "Activate {{code}}?",
+      "activateItemMessage": "This item will become available to tenant applications.",
+      "retireItemTitle": "Retire {{code}}?",
+      "retireItemMessage": "This item will be removed from runtime responses without deleting its history."
+    },
+    "toasts": {
+      "setCreated": "Reference set created.",
+      "setUpdated": "Reference set updated.",
+      "setActivated": "Reference set activated.",
+      "setRetired": "Reference set retired.",
+      "itemCreated": "Reference item created as draft.",
+      "itemUpdated": "Reference item updated.",
+      "itemActivated": "Reference item activated.",
+      "itemRetired": "Reference item retired."
+    }
+  },
+  "registry": {
+    "title": "Product registry",
+    "loading": "Loading product registry",
+    "search": "Search registry",
+    "entries": "Product registry entries",
+    "noEntries": "No registry entries",
+    "allTypes": "All types",
+    "allStates": "All states",
+    "versionSummary": "{{version}} / r{{revision}} / {{owner}}",
+    "types": {
+      "APP": "App",
+      "CONNECTOR": "Connector",
+      "AGENT": "Agent",
+      "TOOL": "Tool",
+      "POLICY": "Policy"
+    },
+    "risk": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
+      "CRITICAL": "Critical"
+    },
+    "fields": {
+      "type": "Registry type",
+      "key": "Registry key",
+      "name": "Name",
+      "owner": "Owner reference",
+      "version": "Artifact version",
+      "risk": "Risk tier",
+      "state": "State",
+      "description": "Description"
+    },
+    "columns": {
+      "type": "Type",
+      "entry": "Entry",
+      "owner": "Owner",
+      "version": "Version",
+      "risk": "Risk",
+      "state": "State"
+    },
+    "dialog": {
+      "createTitle": "New registry entry",
+      "editTitle": "Edit draft revision",
+      "revisionTitle": "New registry revision"
+    },
+    "actions": {
+      "createDraft": "Create draft",
+      "saveChanges": "Save changes",
+      "createRevision": "Create revision",
+      "createRevisionFor": "Create revision for {{key}}",
+      "editDraft": "Edit draft",
+      "editNamed": "Edit {{key}}",
+      "activateRevision": "Activate revision",
+      "activateNamed": "Activate {{key}}",
+      "discardDraft": "Discard draft",
+      "retireRevision": "Retire revision",
+      "retireNamed": "Retire {{key}}",
+      "refresh": "Refresh registry",
+      "newEntry": "New registry entry"
+    },
+    "confirm": {
+      "activateTitle": "Activate {{key}}?",
+      "activateMessage": "This revision will replace the active revision in the tenant runtime catalog.",
+      "discardTitle": "Discard revision {{revision}}?",
+      "discardMessage": "The draft will remain in version history but cannot be edited or activated.",
+      "retireTitle": "Retire {{key}}?",
+      "retireMessage": "This entry will be removed from the tenant runtime catalog."
+    },
+    "toasts": {
+      "draftCreated": "Registry draft created.",
+      "draftUpdated": "Registry draft updated.",
+      "revisionCreated": "Registry revision created.",
+      "revisionActivated": "Registry revision activated.",
+      "draftRetired": "Draft revision retired.",
+      "revisionRetired": "Registry revision retired."
+    }
+  },
+  "audit": {
+    "title": "Administration audit",
+    "loading": "Loading audit events",
+    "loadError": "Audit events could not be loaded.",
+    "refresh": "Refresh audit events",
+    "events": "Administration audit events",
+    "noEvents": "No configuration changes recorded",
+    "columns": {
+      "time": "Time",
+      "source": "Source",
+      "action": "Action",
+      "target": "Target",
+      "actor": "Actor",
+      "outcome": "Outcome",
+      "correlation": "Correlation"
+    },
+    "sources": {
+      "IDENTITY": "Identity",
+      "PLATFORM": "Platform"
+    },
+    "actorTypes": {
+      "USER": "User",
+      "AGENT": "Agent",
+      "SYSTEM": "System"
+    },
+    "actions": {
+      "announcement": {
+        "archived": "Announcement Archived",
+        "created": "Announcement Created",
+        "published": "Announcement Published",
+        "updated": "Announcement Updated"
+      },
+      "directory": {
+        "group": {
+          "activated": "Directory Group Activated",
+          "created": "Directory Group Created",
+          "deactivated": "Directory Group Deactivated",
+          "members": {
+            "replaced": "Directory Group Members Replaced"
+          },
+          "updated": "Directory Group Updated"
+        },
+        "organization": {
+          "activated": "Organization Activated",
+          "created": "Organization Created",
+          "deactivated": "Organization Deactivated",
+          "members": {
+            "moved-out": "Organization Members Moved Out",
+            "replaced": "Organization Members Replaced"
+          },
+          "updated": "Organization Updated"
+        }
+      },
+      "home-experience": {
+        "background-reset": "Home Background Reset",
+        "background-uploaded": "Home Background Uploaded",
+        "updated": "Home Experience Updated"
+      },
+      "home-preference": {
+        "reset": "Home Preference Reset",
+        "updated": "Home Preference Updated"
+      },
+      "identity": {
+        "user-roles": {
+          "replaced": "Identity User Roles Replaced"
+        }
+      },
+      "personal-preference": {
+        "reset": "Personal Preference Reset",
+        "updated": "Personal Preference Updated"
+      },
+      "reference-item": {
+        "activated": "Reference Item Activated",
+        "created": "Reference Item Created",
+        "retired": "Reference Item Retired",
+        "updated": "Reference Item Updated"
+      },
+      "reference-set": {
+        "activated": "Reference Set Activated",
+        "created": "Reference Set Created",
+        "retired": "Reference Set Retired",
+        "updated": "Reference Set Updated"
+      },
+      "registry-entry": {
+        "activated": "Registry Entry Activated",
+        "created": "Registry Entry Created",
+        "retired": "Registry Entry Retired",
+        "revision-created": "Registry Entry Revision Created",
+        "superseded": "Registry Entry Superseded",
+        "updated": "Registry Entry Updated"
+      },
+      "tenant-branding": {
+        "logo-reset": "Tenant Logo Reset",
+        "logo-uploaded": "Tenant Logo Uploaded",
+        "updated": "Tenant Branding Updated"
+      }
+    }
+  },
+  "directory": {
+    "title": "Directory",
+    "loading": "Loading directory",
+    "type": "Directory type",
+    "organizations": "Organizations",
+    "groups": "Groups",
+    "directoryGroups": "Directory groups",
+    "directoryUsers": "Directory users",
+    "searchOrganizations": "Search organizations",
+    "searchGroups": "Search groups",
+    "allStatuses": "All statuses",
+    "noOrganizations": "No organizations found",
+    "noGroups": "No groups found",
+    "noParent": "No parent",
+    "topLevel": "Top level",
+    "loadingUsers": "Loading users",
+    "managedByScim": "Managed by SCIM",
+    "organizationFallback": "Organization {{id}}",
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "memberCount_one": "{{count}} member",
+    "memberCount_other": "{{count}} members",
+    "moveFrom": "Move from {{organization}}",
+    "revisionShort": "Rev {{revision}}",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "pageOf": "Page {{page}} of {{total}}",
+    "sources": {
+      "SCIM": "SCIM managed",
+      "LOCAL": "Local"
+    },
+    "kinds": {
+      "organization": "organization",
+      "group": "group",
+      "entry": "entry"
+    },
+    "columns": {
+      "organization": "Organization",
+      "group": "Group",
+      "parent": "Parent",
+      "members": "Members",
+      "source": "Source",
+      "status": "Status",
+      "revision": "Revision",
+      "actions": "Actions"
+    },
+    "fields": {
+      "organizationKey": "Organization key",
+      "groupKey": "Group key",
+      "name": "Name",
+      "displayName": "Display name",
+      "parentOrganization": "Parent organization",
+      "description": "Description",
+      "findUsers": "Find users"
+    },
+    "dialogs": {
+      "organization": {
+        "editTitle": "Edit organization",
+        "newTitle": "New organization"
+      },
+      "group": {
+        "editTitle": "Edit group",
+        "newTitle": "New group"
+      },
+      "members": {
+        "title": "Manage members",
+        "organizationNotice": "Changing primary organization moves users from their previous organization and revokes affected sessions.",
+        "groupNotice": "Changing group membership revokes affected user sessions."
+      }
+    },
+    "actions": {
+      "saveChanges": "Save changes",
+      "createOrganization": "Create organization",
+      "createGroup": "Create group",
+      "saveMembers": "Save members",
+      "newOrganization": "New organization",
+      "newGroup": "New group",
+      "editOrganization": "Edit organization",
+      "editGroup": "Edit group",
+      "editNamed": "Edit {{name}}",
+      "manageMembers": "Manage members",
+      "manageMembersFor": "Manage members for {{name}}",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "activateNamed": "Activate {{name}}",
+      "deactivateNamed": "Deactivate {{name}}",
+      "refresh": "Refresh directory"
+    },
+    "confirm": {
+      "activateTitle": "Activate {{subject}}?",
+      "deactivateTitle": "Deactivate {{subject}}?",
+      "activateMessage": "This {{kind}} will become available for assignments.",
+      "deactivateMessage": "This {{kind}} must have no active dependants or members."
+    },
+    "toasts": {
+      "organizationCreated": "Organization created.",
+      "organizationUpdated": "Organization updated.",
+      "groupCreated": "Group created.",
+      "groupUpdated": "Group updated.",
+      "organizationMembersUpdated": "Organization members updated and affected sessions revoked.",
+      "groupMembersUpdated": "Group members updated and affected sessions revoked.",
+      "organizationActivated": "Organization activated.",
+      "organizationDeactivated": "Organization deactivated.",
+      "groupActivated": "Group activated.",
+      "groupDeactivated": "Group deactivated."
+    }
+  }
+}

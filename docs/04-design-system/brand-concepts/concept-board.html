@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DWP Brand Mark Exploration</title>
+    <style>
+      :root {
+        color: #172033;
+        background: #eef2f7;
+        font-family: Inter, "SF Pro Display", "Noto Sans KR", Arial, sans-serif;
+        font-synthesis: none;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 1600px;
+        min-height: 1100px;
+        margin: 0;
+        background: #eef2f7;
+      }
+
+      .page-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        min-height: 164px;
+        padding: 38px 44px 32px;
+        color: #fff;
+        background: #111f46;
+      }
+
+      .eyebrow {
+        margin: 0 0 9px;
+        color: #7fe1d4;
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 34px;
+        font-weight: 760;
+        line-height: 1.12;
+      }
+
+      .header-copy {
+        width: 600px;
+        margin: 0;
+        color: #c7d1e8;
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      main {
+        padding: 28px 32px 40px;
+      }
+
+      .criteria {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        min-height: 54px;
+        margin-bottom: 22px;
+        padding: 0 12px;
+        color: #526078;
+        font-size: 13px;
+      }
+
+      .criteria strong {
+        color: #172033;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .candidate {
+        position: relative;
+        min-width: 0;
+        min-height: 790px;
+        overflow: hidden;
+        border: 1px solid #ccd4e1;
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .candidate.recommended {
+        border: 2px solid #2457d6;
+      }
+
+      .recommendation {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 8px 12px;
+        color: #fff;
+        background: #2457d6;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .candidate-head {
+        min-height: 154px;
+        padding: 25px 24px 20px;
+      }
+
+      .candidate-code {
+        display: block;
+        margin-bottom: 10px;
+        color: #68758c;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        margin: 0 0 9px;
+        color: #172033;
+        font-size: 21px;
+        font-weight: 760;
+        line-height: 1.2;
+      }
+
+      .candidate-head p {
+        margin: 0;
+        color: #5b687e;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .hero-stage {
+        display: grid;
+        min-height: 205px;
+        place-items: center;
+        background: #f5f7fb;
+        border-block: 1px solid #e2e7ef;
+      }
+
+      .app-icon {
+        position: relative;
+        display: grid;
+        width: 112px;
+        height: 112px;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 26px;
+        background: linear-gradient(145deg, #3c72ea 0%, #2457d6 45%, #163c9c 100%);
+        box-shadow: 0 18px 34px rgba(23, 50, 113, 0.22), 0 3px 8px rgba(23, 50, 113, 0.2);
+      }
+
+      .app-icon::after {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 45%);
+        content: "";
+        pointer-events: none;
+      }
+
+      .app-icon svg {
+        position: relative;
+        z-index: 1;
+        width: 64px;
+        height: 64px;
+        overflow: visible;
+      }
+
+      .current-word {
+        position: relative;
+        z-index: 1;
+        color: #fff;
+        font-size: 30px;
+        font-weight: 850;
+      }
+
+      .current-terminal {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        z-index: 2;
+        width: 13px;
+        height: 13px;
+        border: 2px solid rgba(255, 255, 255, 0.92);
+        border-radius: 4px;
+        background: #2bc7b5;
+      }
+
+      .section {
+        padding: 20px 22px;
+        border-bottom: 1px solid #e2e7ef;
+      }
+
+      .section:last-child {
+        border-bottom: 0;
+      }
+
+      .section-label {
+        display: block;
+        margin-bottom: 14px;
+        color: #7a869a;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .surface-row {
+        display: flex;
+        gap: 12px;
+      }
+
+      .surface {
+        display: grid;
+        width: 72px;
+        height: 72px;
+        place-items: center;
+        border: 1px solid #dbe1ea;
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .surface.dark {
+        border-color: #1d315e;
+        background: #111f46;
+      }
+
+      .surface svg {
+        width: 42px;
+        height: 42px;
+        overflow: visible;
+      }
+
+      .surface.wide svg {
+        width: 48px;
+      }
+
+      .current-master {
+        color: #2457d6;
+        font-size: 14px;
+        font-weight: 850;
+      }
+
+      .dark .current-master {
+        color: #fff;
+      }
+
+      .lockup {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-height: 42px;
+      }
+
+      .lockup svg {
+        width: 32px;
+        height: 32px;
+        flex: 0 0 auto;
+        overflow: visible;
+      }
+
+      .lockup .wide-mark {
+        width: 38px;
+      }
+
+      .lockup-name {
+        color: #141d2d;
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .lockup-subtitle {
+        display: block;
+        margin-top: 2px;
+        color: #7a869a;
+        font-size: 10px;
+        font-weight: 600;
+      }
+
+      .size-tests {
+        display: flex;
+        min-height: 70px;
+        align-items: flex-end;
+        gap: 20px;
+      }
+
+      .size-test {
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        color: #8792a5;
+        font-size: 9px;
+      }
+
+      .mini-icon {
+        display: grid;
+        place-items: center;
+        border-radius: 22%;
+        background: #2457d6;
+      }
+
+      .mini-icon svg {
+        width: 58%;
+        height: 58%;
+        overflow: visible;
+      }
+
+      .mini-current {
+        color: #fff;
+        font-weight: 850;
+        line-height: 1;
+      }
+
+      .note {
+        margin: 0;
+        color: #5b687e;
+        font-size: 12px;
+        line-height: 1.48;
+      }
+
+      .note strong {
+        color: #172033;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">DWP Identity Study · 01</p>
+        <h1>Brand mark directions</h1>
+      </div>
+      <p class="header-copy">
+        Master marks stay flat, simple, and reproducible. Platform material is applied only to the app-icon container,
+        keeping the identity stable from favicon to enterprise navigation.
+      </p>
+    </header>
+
+    <main>
+      <div class="criteria">
+        <strong>Evaluation criteria</strong>
+        <span>Product-story fit</span>
+        <span>16 px recognition</span>
+        <span>Light / dark resilience</span>
+        <span>Ownable silhouette</span>
+        <span>Enterprise longevity</span>
+      </div>
+
+      <div class="grid">
+        <article class="candidate">
+          <header class="candidate-head">
+            <span class="candidate-code">Current · Baseline</span>
+            <h2>DWP Letter Tile</h2>
+            <p>명확하고 익숙하지만, 글자와 UI 재질에 정체성을 크게 의존합니다.</p>
+          </header>
+          <div class="hero-stage">
+            <div class="app-icon">
+              <span class="current-word">DWP</span>
+              <span class="current-terminal"></span>
+            </div>
+          </div>
+          <section class="section">
+            <span class="section-label">Master mark · Light / dark</span>
+            <div class="surface-row">
+              <div class="surface"><span class="current-master">DWP</span></div>
+              <div class="surface dark"><span class="current-master">DWP</span></div>
+            </div>
+          </section>
+          <section class="section">
+            <span class="section-label">Product lockup</span>
+            <div class="lockup">
+              <strong class="current-master">DWP</strong>
+              <div>
+                <span class="lockup-name">Digital Workplace</span>
+                <span class="lockup-subtitle">Governed Agentic Work Platform</span>
+              </div>
+            </div>
+          </section>
+          <section class="section">
+            <span class="section-label">App icon scale</span>
+            <div class="size-tests">
+              <div class="size-test">
+                <div class="mini-icon" style="width: 64px; height: 64px"><span class="mini-current" style="font-size: 15px">DWP</span></div>
+                <span>64</span>
+              </div>
+              <div class="size-test">
+                <div class="mini-icon" style="width: 32px; height: 32px"><span class="mini-current" style="font-size: 8px">DWP</span></div>
+                <span>32</span>
+              </div>
+              <div class="size-test">
+                <div class="mini-icon" style="width: 16px; height: 16px"><span class="mini-current" style="font-size: 4px">DWP</span></div>
+                <span>16</span>
+              </div>
+            </div>
+          </section>
+          <section class="section">
+            <p class="note"><strong>Assessment:</strong> 안전한 현행안이지만, 작은 크기와 독자성에서 한계가 있습니다.</p>
+          </section>
+        </article>
+
+        <article class="candidate recommended">
+          <span class="recommendation">RECOMMENDED</span>
+          <header class="candidate-head">
+            <span class="candidate-code">Concept A · Product essence</span>
+            <h2>Governed Flow</h2>
+            <p>사람·지식·시스템의 세 흐름이 통제 게이트를 지나 하나의 실행으로 수렴합니다.</p>
+          </header>
+          <div class="hero-stage">
+            <div class="app-icon">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="8"><path d="M8 13h10c11 0 12 12 25 15"/><path d="M8 32h35"/><path d="M8 51h10c11 0 12-12 25-15"/><path d="M52 32h4"/></g>
+                <rect width="11" height="18" x="42" y="23" fill="#5be2d1" rx="3.5" />
+              </svg>
+            </div>
+          </div>
+          <section class="section">
+            <span class="section-label">Master mark · Light / dark</span>
+            <div class="surface-row">
+              <div class="surface">
+                <svg viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#2457d6" stroke-linecap="round" stroke-width="8"><path d="M8 13h10c11 0 12 12 25 15"/><path d="M8 32h35"/><path d="M8 51h10c11 0 12-12 25-15"/><path d="M52 32h4"/></g><rect width="11" height="18" x="42" y="23" fill="#2bc7b5" rx="3.5"/></svg>
+              </div>
+              <div class="surface dark">
+                <svg viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="8"><path d="M8 13h10c11 0 12 12 25 15"/><path d="M8 32h35"/><path d="M8 51h10c11 0 12-12 25-15"/><path d="M52 32h4"/></g><rect width="11" height="18" x="42" y="23" fill="#5be2d1" rx="3.5"/></svg>
+              </div>
+            </div>
+          </section>
+          <section class="section">
+            <span class="section-label">Product lockup</span>
+            <div class="lockup">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#2457d6" stroke-linecap="round" stroke-width="8"><path d="M8 13h10c11 0 12 12 25 15"/><path d="M8 32h35"/><path d="M8 51h10c11 0 12-12 25-15"/><path d="M52 32h4"/></g><rect width="11" height="18" x="42" y="23" fill="#2bc7b5" rx="3.5"/></svg>
+              <div><span class="lockup-name">Digital Workplace</span><span class="lockup-subtitle">Governed Agentic Work Platform</span></div>
+            </div>
+          </section>
+          <section class="section">
+            <span class="section-label">App icon scale</span>
+            <div class="size-tests">
+              <div class="size-test"><div class="mini-icon" style="width:64px;height:64px"><svg viewBox="0 0 64 64"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="8"><path d="M8 13h10c11 0 12 12 25 15"/><path d="M8 32h35"/><path d="M8 51h10c11 0 12-12 25-15"/><path d="M52 32h4"/></g><rect width="11" height="18" x="42" y="23" fill="#5be2d1" rx="3.5"/></svg></div><span>64</span></div>
+              <div class="size-test"><div class="mini-icon" style="width:32px;height:32px"><svg viewBox="0 0 64 64"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="8"><path d="M8 13h10c11 0 12 12 25 15"/><path d="M8 32h35"/><path d="M8 51h10c11 0 12-12 25-15"/><path d="M52 32h4"/></g><rect width="11" height="18" x="42" y="23" fill="#5be2d1" rx="3.5"/></svg></div><span>32</span></div>
+              <div class="size-test"><div class="mini-icon" style="width:16px;height:16px"><svg viewBox="0 0 64 64"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="8"><path d="M8 13h10c11 0 12 12 25 15"/><path d="M8 32h35"/><path d="M8 51h10c11 0 12-12 25-15"/><path d="M52 32h4"/></g><rect width="11" height="18" x="42" y="23" fill="#5be2d1" rx="3.5"/></svg></div><span>16</span></div>
+            </div>
+          </section>
+          <section class="section"><p class="note"><strong>Assessment:</strong> 제품 서사와 축소 인지성이 가장 균형 잡힌 방향입니다.</p></section>
+        </article>
+
+        <article class="candidate">
+          <header class="candidate-head">
+            <span class="candidate-code">Concept B · Human + AI</span>
+            <h2>Work Weave</h2>
+            <p>두 실행 경로가 협업 지점에서 만나는 연속 W 리본입니다.</p>
+          </header>
+          <div class="hero-stage">
+            <div class="app-icon">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10" d="m11 15 11.5 34L32 27l9.5 22L53 15"/><circle cx="32" cy="27" r="5.5" fill="#5be2d1"/></svg>
+            </div>
+          </div>
+          <section class="section">
+            <span class="section-label">Master mark · Light / dark</span>
+            <div class="surface-row">
+              <div class="surface"><svg viewBox="0 0 64 64"><path fill="none" stroke="#2457d6" stroke-linecap="round" stroke-linejoin="round" stroke-width="10" d="m11 15 11.5 34L32 27l9.5 22L53 15"/><circle cx="32" cy="27" r="5.5" fill="#2bc7b5"/></svg></div>
+              <div class="surface dark"><svg viewBox="0 0 64 64"><path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10" d="m11 15 11.5 34L32 27l9.5 22L53 15"/><circle cx="32" cy="27" r="5.5" fill="#5be2d1"/></svg></div>
+            </div>
+          </section>
+          <section class="section">
+            <span class="section-label">Product lockup</span>
+            <div class="lockup">
+              <svg viewBox="0 0 64 64"><path fill="none" stroke="#2457d6" stroke-linecap="round" stroke-linejoin="round" stroke-width="10" d="m11 15 11.5 34L32 27l9.5 22L53 15"/><circle cx="32" cy="27" r="5.5" fill="#2bc7b5"/></svg>
+              <div><span class="lockup-name">Digital Workplace</span><span class="lockup-subtitle">Governed Agentic Work Platform</span></div>
+            </div>
+          </section>
+          <section class="section">
+            <span class="section-label">App icon scale</span>
+            <div class="size-tests">
+              <div class="size-test"><div class="mini-icon" style="width:64px;height:64px"><svg viewBox="0 0 64 64"><path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10" d="m11 15 11.5 34L32 27l9.5 22L53 15"/><circle cx="32" cy="27" r="5.5" fill="#5be2d1"/></svg></div><span>64</span></div>
+              <div class="size-test"><div class="mini-icon" style="width:32px;height:32px"><svg viewBox="0 0 64 64"><path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10" d="m11 15 11.5 34L32 27l9.5 22L53 15"/><circle cx="32" cy="27" r="5.5" fill="#5be2d1"/></svg></div><span>32</span></div>
+              <div class="size-test"><div class="mini-icon" style="width:16px;height:16px"><svg viewBox="0 0 64 64"><path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10" d="m11 15 11.5 34L32 27l9.5 22L53 15"/><circle cx="32" cy="27" r="5.5" fill="#5be2d1"/></svg></div><span>16</span></div>
+            </div>
+          </section>
+          <section class="section"><p class="note"><strong>Assessment:</strong> 친근하고 기억하기 쉽지만 거버넌스 의미는 상대적으로 약합니다.</p></section>
+        </article>
+
+        <article class="candidate">
+          <header class="candidate-head">
+            <span class="candidate-code">Concept C · Evolution</span>
+            <h2>DWP Monogram</h2>
+            <p>현행 약어를 유지하면서 전용 기하학 글자와 실행 터미널을 적용합니다.</p>
+          </header>
+          <div class="hero-stage">
+            <div class="app-icon">
+              <svg viewBox="0 0 72 64" aria-hidden="true">
+                <path fill="#fff" fill-rule="evenodd" d="M2 10h8c8.3 0 12 4.7 12 14v16c0 9.3-3.7 14-12 14H2V10Zm8 10v24h1c2.7 0 4-1.8 4-6V26c0-4.2-1.3-6-4-6h-1Z"/>
+                <path fill="#fff" d="M21 10h7l2.8 27L34 18h6l3.2 19L46 10h7l-5 44h-8l-3-18-3 18h-8l-5-44Z"/>
+                <path fill="#fff" fill-rule="evenodd" d="M51 10h9c7.9 0 11 4.3 11 12.5S67.9 35 60 35h-1v19h-8V10Zm8 9v7h1c2.7 0 4-1 4-3.5S62.7 19 60 19h-1Z"/>
+                <rect width="5" height="7" x="59" y="19" fill="#5be2d1" rx="2"/>
+              </svg>
+            </div>
+          </div>
+          <section class="section">
+            <span class="section-label">Master mark · Light / dark</span>
+            <div class="surface-row">
+              <div class="surface wide"><svg viewBox="0 0 72 64"><path fill="#2457d6" fill-rule="evenodd" d="M2 10h8c8.3 0 12 4.7 12 14v16c0 9.3-3.7 14-12 14H2V10Zm8 10v24h1c2.7 0 4-1.8 4-6V26c0-4.2-1.3-6-4-6h-1Z"/><path fill="#2457d6" d="M21 10h7l2.8 27L34 18h6l3.2 19L46 10h7l-5 44h-8l-3-18-3 18h-8l-5-44Z"/><path fill="#2457d6" fill-rule="evenodd" d="M51 10h9c7.9 0 11 4.3 11 12.5S67.9 35 60 35h-1v19h-8V10Zm8 9v7h1c2.7 0 4-1 4-3.5S62.7 19 60 19h-1Z"/><rect width="5" height="7" x="59" y="19" fill="#2bc7b5" rx="2"/></svg></div>
+              <div class="surface dark wide"><svg viewBox="0 0 72 64"><path fill="#fff" fill-rule="evenodd" d="M2 10h8c8.3 0 12 4.7 12 14v16c0 9.3-3.7 14-12 14H2V10Zm8 10v24h1c2.7 0 4-1.8 4-6V26c0-4.2-1.3-6-4-6h-1Z"/><path fill="#fff" d="M21 10h7l2.8 27L34 18h6l3.2 19L46 10h7l-5 44h-8l-3-18-3 18h-8l-5-44Z"/><path fill="#fff" fill-rule="evenodd" d="M51 10h9c7.9 0 11 4.3 11 12.5S67.9 35 60 35h-1v19h-8V10Zm8 9v7h1c2.7 0 4-1 4-3.5S62.7 19 60 19h-1Z"/><rect width="5" height="7" x="59" y="19" fill="#5be2d1" rx="2"/></svg></div>
+            </div>
+          </section>
+          <section class="section">
+            <span class="section-label">Product lockup</span>
+            <div class="lockup">
+              <svg class="wide-mark" viewBox="0 0 72 64"><path fill="#2457d6" fill-rule="evenodd" d="M2 10h8c8.3 0 12 4.7 12 14v16c0 9.3-3.7 14-12 14H2V10Zm8 10v24h1c2.7 0 4-1.8 4-6V26c0-4.2-1.3-6-4-6h-1Z"/><path fill="#2457d6" d="M21 10h7l2.8 27L34 18h6l3.2 19L46 10h7l-5 44h-8l-3-18-3 18h-8l-5-44Z"/><path fill="#2457d6" fill-rule="evenodd" d="M51 10h9c7.9 0 11 4.3 11 12.5S67.9 35 60 35h-1v19h-8V10Zm8 9v7h1c2.7 0 4-1 4-3.5S62.7 19 60 19h-1Z"/><rect width="5" height="7" x="59" y="19" fill="#2bc7b5" rx="2"/></svg>
+              <div><span class="lockup-name">Digital Workplace</span><span class="lockup-subtitle">Governed Agentic Work Platform</span></div>
+            </div>
+          </section>
+          <section class="section">
+            <span class="section-label">App icon scale</span>
+            <div class="size-tests">
+              <div class="size-test"><div class="mini-icon" style="width:64px;height:64px"><svg viewBox="0 0 72 64"><path fill="#fff" fill-rule="evenodd" d="M2 10h8c8.3 0 12 4.7 12 14v16c0 9.3-3.7 14-12 14H2V10Zm8 10v24h1c2.7 0 4-1.8 4-6V26c0-4.2-1.3-6-4-6h-1Z"/><path fill="#fff" d="M21 10h7l2.8 27L34 18h6l3.2 19L46 10h7l-5 44h-8l-3-18-3 18h-8l-5-44Z"/><path fill="#fff" d="M51 10h8v44h-8zM59 10h2c7 0 10 4 10 12s-3 12-10 12h-2v-9h1c3 0 4-1 4-3s-1-3-4-3h-1z"/><rect width="5" height="7" x="59" y="19" fill="#5be2d1" rx="2"/></svg></div><span>64</span></div>
+              <div class="size-test"><div class="mini-icon" style="width:32px;height:32px"><svg viewBox="0 0 72 64"><path fill="#fff" fill-rule="evenodd" d="M2 10h8c8.3 0 12 4.7 12 14v16c0 9.3-3.7 14-12 14H2V10Zm8 10v24h1c2.7 0 4-1.8 4-6V26c0-4.2-1.3-6-4-6h-1Z"/><path fill="#fff" d="M21 10h7l2.8 27L34 18h6l3.2 19L46 10h7l-5 44h-8l-3-18-3 18h-8l-5-44Z"/><path fill="#fff" d="M51 10h8v44h-8zM59 10h2c7 0 10 4 10 12s-3 12-10 12h-2v-9h1c3 0 4-1 4-3s-1-3-4-3h-1z"/><rect width="5" height="7" x="59" y="19" fill="#5be2d1" rx="2"/></svg></div><span>32</span></div>
+              <div class="size-test"><div class="mini-icon" style="width:16px;height:16px"><svg viewBox="0 0 72 64"><path fill="#fff" fill-rule="evenodd" d="M2 10h8c8.3 0 12 4.7 12 14v16c0 9.3-3.7 14-12 14H2V10Zm8 10v24h1c2.7 0 4-1.8 4-6V26c0-4.2-1.3-6-4-6h-1Z"/><path fill="#fff" d="M21 10h7l2.8 27L34 18h6l3.2 19L46 10h7l-5 44h-8l-3-18-3 18h-8l-5-44Z"/><path fill="#fff" d="M51 10h8v44h-8zM59 10h2c7 0 10 4 10 12s-3 12-10 12h-2v-9h1c3 0 4-1 4-3s-1-3-4-3h-1z"/></svg></div><span>16</span></div>
+            </div>
+          </section>
+          <section class="section"><p class="note"><strong>Assessment:</strong> 전환 위험은 낮지만 16 px에서 가장 먼저 의미를 잃습니다.</p></section>
+        </article>
+      </div>
+    </main>
+  </body>
+</html>

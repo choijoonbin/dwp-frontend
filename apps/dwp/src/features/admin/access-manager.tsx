@@ -1,4 +1,5 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { KeyRound, Pencil, RefreshCw, Search, ShieldAlert, UsersRound } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -35,8 +36,8 @@ import { AdminPanelError, AdminPanelLoading } from './admin-ui';
 import type { GridColDef } from '@mui/x-data-grid';
 import type { IdentityRole, IdentityUserAccess } from '@dwp-frontend/shared-utils';
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'The operation could not be completed.';
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
 }
 
 function sorted(values: Iterable<string>): string[] {
@@ -62,10 +63,11 @@ function initials(name: string): string {
 }
 
 function RoleChips({ roles }: { roles: string[] }) {
+  const { t } = useTranslation('admin');
   if (!roles.length) {
     return (
       <Typography variant="body2" color="text.secondary">
-        No role
+        {t('access.noRole')}
       </Typography>
     );
   }
@@ -87,6 +89,7 @@ type RoleDialogProps = {
 };
 
 function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
+  const { t } = useTranslation('admin');
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -104,7 +107,7 @@ function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
 
   return (
     <Dialog open={Boolean(user)} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Edit access</DialogTitle>
+      <DialogTitle>{t('access.dialog.title')}</DialogTitle>
       <DialogContent sx={{ pt: '8px !important' }}>
         {user && (
           <>
@@ -117,11 +120,11 @@ function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
                   {user.displayName}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" noWrap>
-                  {user.email || `User ${user.userId}`}
+                  {user.email || t('access.userFallback', { id: user.userId })}
                 </Typography>
               </Box>
             </Stack>
-            <FormGroup aria-label="Assigned roles" sx={{ gap: 0.75 }}>
+            <FormGroup aria-label={t('access.dialog.assignedRoles')} sx={{ gap: 0.75 }}>
               {roles.map((role) => (
                 <Box key={role.code} sx={{ borderTop: 1, borderColor: 'divider', pt: 0.75 }}>
                   <FormControlLabel
@@ -155,7 +158,7 @@ function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
             >
               <ShieldAlert size={18} strokeWidth={1.8} aria-hidden="true" />
               <Typography variant="body2" color="text.secondary">
-                Saving role changes signs this user out of all active sessions.
+                {t('access.dialog.sessionNotice')}
               </Typography>
             </Stack>
           </>
@@ -163,14 +166,14 @@ function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={busy}>
-          Cancel
+          {t('common.actions.cancel')}
         </Button>
         <Button
           variant="contained"
           disabled={busy || !user || equalRoles(user.roles, [...selected])}
           onClick={() => void onSave(sorted(selected))}
         >
-          Save access
+          {t('access.actions.save')}
         </Button>
       </DialogActions>
     </Dialog>
@@ -178,6 +181,7 @@ function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
 }
 
 export function AccessManager() {
+  const { t } = useTranslation('admin');
   const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -209,9 +213,9 @@ export function AccessManager() {
         queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] }),
       ]);
       setSelectedUser(null);
-      toast.success('User access updated and active sessions revoked.');
+      toast.success(t('access.toasts.updated'));
     } catch (error) {
-      toast.error(errorMessage(error));
+      toast.error(errorMessage(error, t('common.operationError')));
     } finally {
       setBusy(false);
     }
@@ -221,11 +225,13 @@ export function AccessManager() {
     (user: IdentityUserAccess) => {
       const currentUser = user.userId === auth.user?.userId;
       return (
-        <Tooltip title={currentUser ? 'You cannot change your own roles' : 'Edit roles'}>
+        <Tooltip
+          title={currentUser ? t('access.ownRolesUnavailable') : t('access.actions.editRoles')}
+        >
           <span>
             <IconButton
               size="small"
-              aria-label={`Edit roles for ${user.displayName}`}
+              aria-label={t('access.actions.editRolesFor', { name: user.displayName })}
               disabled={currentUser}
               onClick={() => setSelectedUser(user)}
             >
@@ -235,14 +241,14 @@ export function AccessManager() {
         </Tooltip>
       );
     },
-    [auth.user?.userId]
+    [auth.user?.userId, t]
   );
 
   const columns = useMemo<GridColDef<IdentityUserAccess>[]>(
     () => [
       {
         field: 'displayName',
-        headerName: 'User',
+        headerName: t('access.columns.user'),
         minWidth: 240,
         flex: 1.2,
         renderCell: ({ row }) => (
@@ -255,7 +261,7 @@ export function AccessManager() {
                 {row.displayName}
               </Typography>
               <Typography variant="caption" color="text.secondary" noWrap display="block">
-                {row.email || `User ${row.userId}`}
+                {row.email || t('access.userFallback', { id: row.userId })}
               </Typography>
             </Box>
           </Stack>
@@ -263,7 +269,7 @@ export function AccessManager() {
       },
       {
         field: 'roles',
-        headerName: 'Roles',
+        headerName: t('access.columns.roles'),
         minWidth: 220,
         flex: 1,
         sortable: false,
@@ -271,11 +277,11 @@ export function AccessManager() {
       },
       {
         field: 'status',
-        headerName: 'Status',
+        headerName: t('access.columns.status'),
         width: 104,
         renderCell: ({ row }) => (
           <Chip
-            label={row.status}
+            label={t(`common.status.${row.status}`, { defaultValue: row.status })}
             size="small"
             color={row.status === 'ACTIVE' ? 'success' : 'default'}
             variant="outlined"
@@ -284,13 +290,13 @@ export function AccessManager() {
       },
       {
         field: 'mfaEnabled',
-        headerName: 'MFA',
+        headerName: t('access.columns.mfa'),
         width: 82,
-        renderCell: ({ row }) => (row.mfaEnabled ? 'On' : 'Off'),
+        renderCell: ({ row }) => (row.mfaEnabled ? t('common.states.on') : t('common.states.off')),
       },
       {
         field: 'accessRevision',
-        headerName: 'Revision',
+        headerName: t('access.columns.revision'),
         width: 92,
         align: 'right',
         headerAlign: 'right',
@@ -305,14 +311,18 @@ export function AccessManager() {
         renderCell: ({ row }) => editButton(row),
       },
     ],
-    [editButton]
+    [editButton, t]
   );
 
   if (usersQuery.isLoading || rolesQuery.isLoading) {
-    return <AdminPanelLoading label="Loading identity access" />;
+    return <AdminPanelLoading label={t('access.loading')} />;
   }
   if (usersQuery.isError || rolesQuery.isError) {
-    return <AdminPanelError message={errorMessage(usersQuery.error ?? rolesQuery.error)} />;
+    return (
+      <AdminPanelError
+        message={errorMessage(usersQuery.error ?? rolesQuery.error, t('common.operationError'))}
+      />
+    );
   }
 
   return (
@@ -328,7 +338,7 @@ export function AccessManager() {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <UsersRound size={18} strokeWidth={1.8} aria-hidden="true" />
             <Typography component="h2" variant="subtitle1">
-              Identity access
+              {t('access.title')}
             </Typography>
             <Chip
               label={usersQuery.data?.totalElements ?? users.length}
@@ -341,7 +351,7 @@ export function AccessManager() {
               size="small"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              label="Search users"
+              label={t('access.searchUsers')}
               sx={{ width: { xs: 1, sm: 280 } }}
               InputProps={{
                 startAdornment: (
@@ -351,9 +361,9 @@ export function AccessManager() {
                 ),
               }}
             />
-            <Tooltip title="Refresh users and roles">
+            <Tooltip title={t('access.actions.refresh')}>
               <IconButton
-                aria-label="Refresh users and roles"
+                aria-label={t('access.actions.refresh')}
                 onClick={() => void Promise.all([usersQuery.refetch(), rolesQuery.refetch()])}
               >
                 <RefreshCw size={18} strokeWidth={1.8} />
@@ -365,7 +375,7 @@ export function AccessManager() {
         {desktop && (
           <Box>
             <EnterpriseDataGrid
-              ariaLabel="Tenant users"
+              ariaLabel={t('access.tenantUsers')}
               rows={users}
               columns={columns}
               getRowId={(row) => row.userId}
@@ -378,7 +388,7 @@ export function AccessManager() {
                 noRowsOverlay: () => (
                   <Box sx={{ height: 1, display: 'grid', placeItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary">
-                      No users found
+                      {t('access.noUsers')}
                     </Typography>
                   </Box>
                 ),
@@ -391,7 +401,7 @@ export function AccessManager() {
         {!desktop && (
           <Box
             component="ul"
-            aria-label="Tenant users"
+            aria-label={t('access.tenantUsers')}
             sx={{ display: 'grid', listStyle: 'none', p: 0, m: 0 }}
           >
             {users.length ? (
@@ -416,7 +426,7 @@ export function AccessManager() {
                           {user.displayName}
                         </Typography>
                         <Typography variant="caption" color="text.secondary" noWrap display="block">
-                          {user.email || `User ${user.userId}`}
+                          {user.email || t('access.userFallback', { id: user.userId })}
                         </Typography>
                       </Box>
                     </Stack>
@@ -426,10 +436,14 @@ export function AccessManager() {
                     <RoleChips roles={user.roles} />
                   </Box>
                   <Stack direction="row" gap={1} sx={{ mt: 1.25 }}>
-                    <Chip label={user.status} size="small" variant="outlined" />
+                    <Chip
+                      label={t(`common.status.${user.status}`, { defaultValue: user.status })}
+                      size="small"
+                      variant="outlined"
+                    />
                     <Chip
                       icon={<KeyRound size={14} strokeWidth={1.8} />}
-                      label={user.mfaEnabled ? 'MFA on' : 'MFA off'}
+                      label={user.mfaEnabled ? t('access.mfaEnabled') : t('access.mfaDisabled')}
                       size="small"
                       variant="outlined"
                     />
@@ -439,7 +453,7 @@ export function AccessManager() {
             ) : (
               <Box component="li" sx={{ py: 6, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
-                  No users found
+                  {t('access.noUsers')}
                 </Typography>
               </Box>
             )}

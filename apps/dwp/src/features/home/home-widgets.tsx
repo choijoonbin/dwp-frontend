@@ -9,6 +9,8 @@ import {
   TimerReset,
   UsersRound,
 } from 'lucide-react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -18,7 +20,11 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 
 import { SectionHeading } from '../work-hub/workspace-ui';
-import { activityEvents, scheduleItems, todayItems } from '../work-hub/reference-data';
+import {
+  localizeActivityEvents,
+  localizeScheduleItems,
+  localizeTodayItems,
+} from '../work-hub/reference-data';
 
 import type { Priority } from '../work-hub/reference-data';
 
@@ -35,7 +41,14 @@ const scheduleTone = {
 } as const;
 
 export function DailyBriefWidget() {
+  const { t } = useTranslation('home');
   const navigate = useNavigate();
+  const signals = [
+    { key: 'deadline', icon: TimerReset },
+    { key: 'focus', icon: Focus },
+    { key: 'meeting', icon: UsersRound },
+  ] as const;
+
   return (
     <Box
       component="section"
@@ -59,7 +72,7 @@ export function DailyBriefWidget() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
           <Chip
             icon={<Sparkles size={14} aria-hidden="true" />}
-            label="AI generated / 6 verified sources"
+            label={t('widgets.brief.sourceSummary', { count: 6 })}
             size="small"
             sx={{
               color: '#DCE8FF',
@@ -70,18 +83,17 @@ export function DailyBriefWidget() {
             variant="outlined"
           />
           <Typography variant="caption" sx={{ color: '#AEBACC' }}>
-            Updated 09:10
+            {t('page.updatedAt', { time: '09:10' })}
           </Typography>
         </Box>
         <Typography id="brief-heading" component="h2" variant="h5" sx={{ mt: 2.25 }}>
-          Daily brief
+          {t('widgets.brief.title')}
         </Typography>
         <Typography
           component="p"
           sx={{ mt: 1, maxWidth: 720, fontSize: '1.125rem', lineHeight: 1.55, color: '#F8FAFC' }}
         >
-          Two decisions before the 11:00 customer meeting. Approving software access now unblocks a
-          new team member; the customer brief still has three unanswered questions.
+          {t('widgets.brief.summary')}
         </Typography>
 
         <Box
@@ -92,12 +104,8 @@ export function DailyBriefWidget() {
             gap: 1,
           }}
         >
-          {[
-            [TimerReset, 'Next deadline', '10:30', 'Software access'],
-            [Focus, 'Protected focus', '90 min', '14:00-15:30'],
-            [UsersRound, 'Meeting ready', '72%', '6 sources checked'],
-          ].map(([Icon, label, value, detail]) => {
-            const SignalIcon = Icon as typeof TimerReset;
+          {signals.map(({ key, icon: SignalIcon }) => {
+            const label = t(`widgets.brief.signals.${key}.label`);
             return (
               <Box
                 key={label as string}
@@ -117,13 +125,13 @@ export function DailyBriefWidget() {
                 </Box>
                 <Box sx={{ minWidth: 0 }}>
                   <Typography variant="caption" sx={{ color: '#AEBACC' }}>
-                    {label as string}
+                    {label}
                   </Typography>
                   <Typography component="p" variant="subtitle2" sx={{ color: '#FFFFFF' }}>
-                    {value as string}
+                    {t(`widgets.brief.signals.${key}.value`)}
                   </Typography>
                   <Typography variant="caption" sx={{ color: '#AEBACC' }}>
-                    {detail as string}
+                    {t(`widgets.brief.signals.${key}.detail`)}
                   </Typography>
                 </Box>
               </Box>
@@ -137,21 +145,19 @@ export function DailyBriefWidget() {
             startIcon={<BriefcaseBusiness size={17} aria-hidden="true" />}
             onClick={() => navigate('/work?item=WK-1042')}
           >
-            Review priority
+            {t('widgets.brief.reviewPriority')}
           </Button>
           <Button
             variant="outlined"
             startIcon={<Sparkles size={17} aria-hidden="true" />}
-            onClick={() =>
-              navigate('/ask?q=What%20should%20I%20prepare%20before%20the%2011%3A00%20meeting%3F')
-            }
+            onClick={() => navigate(`/ask?q=${encodeURIComponent(t('widgets.brief.askPrompt'))}`)}
             sx={{
               color: '#F8FAFC',
               borderColor: '#66778F',
               '&:hover': { borderColor: '#AFC8F2' },
             }}
           >
-            Ask about today
+            {t('widgets.brief.askToday')}
           </Button>
         </Box>
       </Box>
@@ -165,16 +171,12 @@ export function DailyBriefWidget() {
         }}
       >
         <Typography component="h3" variant="subtitle1" sx={{ color: '#FFFFFF' }}>
-          Day rhythm
+          {t('widgets.brief.rhythmTitle')}
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.25, color: '#AEBACC' }}>
-          Meetings are concentrated before lunch.
+          {t('widgets.brief.rhythmDescription')}
         </Typography>
-        <Box
-          role="img"
-          aria-label="Day rhythm from 9 AM to 5 PM with meetings, focus time, and one deadline"
-          sx={{ mt: 3 }}
-        >
+        <Box role="img" aria-label={t('widgets.brief.rhythmLabel')} sx={{ mt: 3 }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: 0.5 }}>
             {['09', '10', '11', '12', '13', '14', '15', '16', '17'].map((hour) => (
               <Typography
@@ -221,17 +223,17 @@ export function DailyBriefWidget() {
         </Box>
         <Box sx={{ display: 'grid', gap: 1.25, mt: 3 }}>
           {[
-            ['#5B8DEF', 'Meetings', '2h 05m'],
-            ['#39B98A', 'Focus', '1h 30m'],
-            ['#E6A23C', 'Deadline', '17:00'],
-          ].map(([color, label, value]) => (
-            <Box key={label} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            ['#5B8DEF', 'meetings', 'meetingDuration'],
+            ['#39B98A', 'focus', 'focusDuration'],
+            ['#E6A23C', 'deadline', null],
+          ].map(([color, labelKey, valueKey]) => (
+            <Box key={labelKey} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Box sx={{ width: 8, height: 8, borderRadius: 0.5, bgcolor: color }} />
               <Typography variant="body2" sx={{ flex: 1, color: '#CBD5E1' }}>
-                {label}
+                {t(`widgets.brief.${labelKey}`)}
               </Typography>
               <Typography variant="body2" fontWeight={700} sx={{ color: '#FFFFFF' }}>
-                {value}
+                {valueKey ? t(`widgets.brief.${valueKey}`) : '17:00'}
               </Typography>
             </Box>
           ))}
@@ -242,7 +244,12 @@ export function DailyBriefWidget() {
 }
 
 export function FocusWidget() {
+  const { t } = useTranslation(['home', 'work', 'common']);
   const navigate = useNavigate();
+  const items = useMemo(
+    () => localizeTodayItems((key, options) => t(key, { ns: 'work', ...options })),
+    [t]
+  );
   return (
     <Box
       component="section"
@@ -252,15 +259,15 @@ export function FocusWidget() {
       <SectionHeading
         id="priority-heading"
         icon={CheckCircle2}
-        title="Focus now"
+        title={t('widgets.focus.title')}
         meta={
           <Typography variant="body2" color="text.secondary">
-            {todayItems.length} items
+            {t('units.item', { ns: 'common', count: items.length })}
           </Typography>
         }
       />
       <Box component="ol" sx={{ p: 0, mt: 2, mb: 0, listStyle: 'none' }}>
-        {todayItems.map((item, index) => (
+        {items.map((item, index) => (
           <Box component="li" key={item.id} sx={{ borderTop: 1, borderColor: 'divider' }}>
             <ButtonBase
               onClick={() => navigate(item.actionRoute)}
@@ -288,7 +295,7 @@ export function FocusWidget() {
                     {item.title}
                   </Typography>
                   <Chip
-                    label={item.priority}
+                    label={t(`labels.priority.${item.priority}`, { ns: 'work' })}
                     color={priorityColor[item.priority]}
                     variant="outlined"
                     size="small"
@@ -311,15 +318,25 @@ export function FocusWidget() {
 }
 
 export function ScheduleWidget() {
+  const { t } = useTranslation(['home', 'work']);
+  const items = useMemo(
+    () => localizeScheduleItems((key, options) => t(key, { ns: 'work', ...options })),
+    [t]
+  );
+
   return (
     <Box
       component="section"
       aria-labelledby="schedule-heading"
       sx={{ gridColumn: { xs: '1 / -1', lg: 'span 3' }, minWidth: 0, py: 2.5 }}
     >
-      <SectionHeading id="schedule-heading" icon={CalendarDays} title="Schedule" />
+      <SectionHeading
+        id="schedule-heading"
+        icon={CalendarDays}
+        title={t('widgets.schedule.title')}
+      />
       <Box component="ol" sx={{ p: 0, mt: 2, mb: 0, listStyle: 'none' }}>
-        {scheduleItems.map((item, index) => (
+        {items.map((item, index) => (
           <Box
             component="li"
             key={item.id}
@@ -334,7 +351,7 @@ export function ScheduleWidget() {
               {item.time}
             </Typography>
             <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
-              {index < scheduleItems.length - 1 && (
+              {index < items.length - 1 && (
                 <Box
                   sx={{ position: 'absolute', top: 10, bottom: -4, width: 1, bgcolor: 'divider' }}
                 />
@@ -366,8 +383,12 @@ export function ScheduleWidget() {
 }
 
 export function ActivityWidget() {
+  const { t } = useTranslation(['home', 'work']);
   const navigate = useNavigate();
-  const events = activityEvents.slice(0, 3);
+  const events = useMemo(
+    () => localizeActivityEvents((key, options) => t(key, { ns: 'work', ...options })).slice(0, 3),
+    [t]
+  );
   return (
     <Box
       component="section"
@@ -377,7 +398,7 @@ export function ActivityWidget() {
       <SectionHeading
         id="activity-heading"
         icon={Activity}
-        title="Live activity"
+        title={t('widgets.activity.title')}
         meta={<Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: 'success.main' }} />}
       />
       <Box component="ul" sx={{ p: 0, mt: 2, mb: 0, listStyle: 'none' }}>
@@ -388,7 +409,7 @@ export function ActivityWidget() {
                 {event.time}
               </Typography>
               <Chip
-                label={event.actor}
+                label={t(`labels.actor.${event.actor}`, { ns: 'work' })}
                 size="small"
                 color={event.actor === 'agent' ? 'info' : 'default'}
                 variant="outlined"
@@ -409,7 +430,7 @@ export function ActivityWidget() {
         onClick={() => navigate('/activity')}
         sx={{ mt: 1, px: 0 }}
       >
-        View activity
+        {t('widgets.activity.view')}
       </Button>
     </Box>
   );

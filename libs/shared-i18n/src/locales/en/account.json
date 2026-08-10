@@ -1,0 +1,173 @@
+{
+  "shell": {
+    "title": "Settings",
+    "personalSettings": "Personal workspace",
+    "accountFallback": "Account",
+    "navigationLabel": "Settings navigation",
+    "openNavigation": "Open settings navigation",
+    "backToWorkspace": "Back to workspace",
+    "groups": {
+      "account": "Account",
+      "preferences": "Preferences",
+      "organization": "Organization"
+    }
+  },
+  "navigation": {
+    "profile": "Profile",
+    "security": "Security & sessions",
+    "appearance": "Appearance",
+    "accessibility": "Accessibility",
+    "language": "Language & region",
+    "home": "Home workspace",
+    "managed": "Managed settings"
+  },
+  "sections": {
+    "appearance": {
+      "title": "Appearance",
+      "description": "Choose how Digital Workplace looks and fits your workflow.",
+      "groupTitle": "Display and layout",
+      "groupDescription": "These preferences are saved to your account and follow you across devices."
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "description": "Adjust visual clarity and motion for a more comfortable experience.",
+      "groupTitle": "Visual and motion preferences",
+      "groupDescription": "Changes take effect immediately across Digital Workplace."
+    },
+    "language": {
+      "title": "Language & region",
+      "description": "Choose the language used for navigation, actions, and messages.",
+      "groupTitle": "Display language",
+      "groupDescription": "Your choice is saved to your account and follows you across sessions."
+    },
+    "home": {
+      "title": "Home workspace",
+      "description": "Organize the apps and information shown on your personal home.",
+      "groupTitle": "Personal home",
+      "groupDescription": "Open the home editor to arrange apps and widgets."
+    },
+    "managed": {
+      "title": "Managed settings",
+      "description": "Review experience defaults controlled by your organization.",
+      "notice": "These values are set by your organization and cannot be changed from personal settings.",
+      "groupTitle": "Organization defaults",
+      "groupDescription": "Managed values keep the experience consistent across your workspace."
+    }
+  },
+  "settings": {
+    "colorMode": {
+      "title": "Color mode",
+      "description": "Follow your system or choose a fixed light or dark appearance."
+    },
+    "density": {
+      "title": "Interface density",
+      "description": "Adjust spacing in operational controls and information lists.",
+      "ariaLabel": "Interface density"
+    },
+    "highContrast": {
+      "title": "High contrast",
+      "description": "Increase boundaries and text contrast throughout the interface."
+    },
+    "reduceMotion": {
+      "title": "Reduce motion",
+      "description": "Minimize nonessential transitions and interface movement."
+    },
+    "language": {
+      "title": "Product language",
+      "description": "Change the language used by Digital Workplace."
+    },
+    "homeWorkspace": {
+      "title": "Apps and widgets",
+      "description": "Choose what appears on your home workspace and how it is arranged."
+    },
+    "productFont": {
+      "title": "Product font"
+    },
+    "brandAccent": {
+      "title": "Brand accent",
+      "ariaLabel": "Brand color {{color}}"
+    },
+    "navigationPattern": {
+      "title": "Navigation pattern"
+    }
+  },
+  "options": {
+    "colorMode": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "density": {
+      "compact": "Compact",
+      "standard": "Standard",
+      "comfortable": "Comfortable"
+    },
+    "navigationPattern": {
+      "sidebar": "Sidebar",
+      "rail": "Compact rail",
+      "top": "Top navigation"
+    }
+  },
+  "actions": {
+    "resetPreferences": "Reset preferences",
+    "editHome": "Edit home"
+  },
+  "personalPreferences": {
+    "loading": "Loading your personal preferences",
+    "loadError": "Your account preferences could not be loaded. Cached settings remain active, and changes are disabled until the service is available.",
+    "saveError": "Your personal preference could not be saved. The previous setting has been restored."
+  },
+  "labels": {
+    "managed": "Managed"
+  },
+  "managed": {
+    "systemFont": "System UI"
+  },
+  "profile": {
+    "title": "Profile",
+    "loading": "Loading profile",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "tenant": "Organization",
+      "roles": "Roles"
+    }
+  },
+  "security": {
+    "title": "Security & sessions",
+    "workspaceFallback": "Workspace",
+    "activeSessions": "Active browser sessions",
+    "loading": "Loading active sessions",
+    "current": "Current",
+    "deviceLabel": "{{browser}} on {{platform}}",
+    "unknownBrowser": "Unknown browser",
+    "unknownDevice": "Unknown device",
+    "userAgentUnavailable": "Browser details unavailable",
+    "ipUnavailable": "IP unavailable",
+    "lastActive": "Last active {{date}}",
+    "actions": {
+      "signOutOthers": "Sign out other sessions",
+      "retry": "Retry",
+      "signOut": "Sign out",
+      "endSession": "End session",
+      "cancel": "Cancel",
+      "signingOut": "Signing out..."
+    },
+    "errors": {
+      "load": "Active sessions could not be loaded."
+    },
+    "toasts": {
+      "otherSessionsSignedOut": "Other sessions have been signed out.",
+      "sessionSignedOut": "The session has been signed out.",
+      "signOutError": "The session could not be signed out."
+    },
+    "dialog": {
+      "othersTitle": "Sign out other sessions?",
+      "sessionTitle": "End this session?",
+      "othersDescription_one": "This will sign out {{count}} other active session.",
+      "othersDescription_other": "This will sign out {{count}} other active sessions.",
+      "currentDescription": "You will be returned to the sign-in screen.",
+      "sessionDescription": "This browser will need to sign in again."
+    }
+  }
+}

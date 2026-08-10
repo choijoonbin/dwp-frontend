@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RefreshCw, ScrollText } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { listIdentityAuditEvents, listPlatformAuditEvents } from '@dwp-frontend/shared-utils';
 import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -22,25 +24,27 @@ type UnifiedAuditEvent = PlatformAuditEvent & {
   source: 'IDENTITY' | 'PLATFORM';
 };
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'Audit events could not be loaded.';
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
 }
 
 function formatTimestamp(value: string): string {
-  return new Intl.DateTimeFormat(undefined, {
+  return formatDate(value, {
     dateStyle: 'medium',
     timeStyle: 'medium',
-  }).format(new Date(value));
+  });
 }
 
-function formatAction(value: string): string {
-  return value
-    .split(/[.-]/)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+function fallbackAuditAction(action: string): string {
+  return action
+    .split(/[.-]/u)
+    .filter(Boolean)
+    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
     .join(' ');
 }
 
 export function AuditLog() {
+  const { t } = useTranslation('admin');
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('sm'));
   const auditQuery = useQuery({
@@ -61,47 +65,52 @@ export function AuditLog() {
     () => [
       {
         field: 'occurredAt',
-        headerName: 'Time',
+        headerName: t('audit.columns.time'),
         minWidth: 190,
         flex: 0.9,
         renderCell: ({ row }) => formatTimestamp(row.occurredAt),
       },
       {
         field: 'source',
-        headerName: 'Source',
+        headerName: t('audit.columns.source'),
         width: 104,
-        renderCell: ({ row }) => <Chip label={row.source} size="small" variant="outlined" />,
+        renderCell: ({ row }) => (
+          <Chip label={t(`audit.sources.${row.source}`)} size="small" variant="outlined" />
+        ),
       },
       {
         field: 'action',
-        headerName: 'Action',
+        headerName: t('audit.columns.action'),
         minWidth: 200,
         flex: 1,
         renderCell: ({ row }) => (
           <Typography variant="body2" fontWeight={700}>
-            {formatAction(row.action)}
+            {t(`audit.actions.${row.action}`, { defaultValue: fallbackAuditAction(row.action) })}
           </Typography>
         ),
       },
       {
         field: 'targetId',
-        headerName: 'Target',
+        headerName: t('audit.columns.target'),
         minWidth: 180,
         flex: 1,
       },
       {
         field: 'actorId',
-        headerName: 'Actor',
+        headerName: t('audit.columns.actor'),
         width: 116,
-        renderCell: ({ row }) => `${row.actorType} ${row.actorId ?? '—'}`,
+        renderCell: ({ row }) =>
+          `${t(`audit.actorTypes.${row.actorType}`, { defaultValue: row.actorType })} ${
+            row.actorId ?? '—'
+          }`,
       },
       {
         field: 'outcome',
-        headerName: 'Outcome',
+        headerName: t('audit.columns.outcome'),
         width: 112,
         renderCell: ({ row }) => (
           <Chip
-            label={row.outcome}
+            label={t(`common.status.${row.outcome}`, { defaultValue: row.outcome })}
             size="small"
             color={row.outcome === 'SUCCESS' ? 'success' : 'error'}
             variant="outlined"
@@ -110,17 +119,19 @@ export function AuditLog() {
       },
       {
         field: 'correlationId',
-        headerName: 'Correlation',
+        headerName: t('audit.columns.correlation'),
         minWidth: 180,
         flex: 0.8,
         renderCell: ({ row }) => row.correlationId || '—',
       },
     ],
-    []
+    [t]
   );
 
-  if (auditQuery.isLoading) return <AdminPanelLoading label="Loading audit events" />;
-  if (auditQuery.isError) return <AdminPanelError message={errorMessage(auditQuery.error)} />;
+  if (auditQuery.isLoading) return <AdminPanelLoading label={t('audit.loading')} />;
+  if (auditQuery.isError) {
+    return <AdminPanelError message={errorMessage(auditQuery.error, t('audit.loadError'))} />;
+  }
 
   const events = auditQuery.data ?? [];
   return (
@@ -134,12 +145,12 @@ export function AuditLog() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <ScrollText size={18} strokeWidth={1.8} aria-hidden="true" />
           <Typography component="h2" variant="subtitle1">
-            Administration audit
+            {t('audit.title')}
           </Typography>
           <Chip label={events.length} size="small" variant="outlined" />
         </Box>
-        <Tooltip title="Refresh audit events">
-          <IconButton aria-label="Refresh audit events" onClick={() => void auditQuery.refetch()}>
+        <Tooltip title={t('audit.refresh')}>
+          <IconButton aria-label={t('audit.refresh')} onClick={() => void auditQuery.refetch()}>
             <RefreshCw size={18} strokeWidth={1.8} />
           </IconButton>
         </Tooltip>
@@ -147,7 +158,7 @@ export function AuditLog() {
       {desktop && (
         <Box>
           <EnterpriseDataGrid
-            ariaLabel="Administration audit events"
+            ariaLabel={t('audit.events')}
             rows={events}
             columns={columns}
             getRowId={(row) => row.auditEventId}
@@ -160,7 +171,7 @@ export function AuditLog() {
               noRowsOverlay: () => (
                 <Box sx={{ height: 1, display: 'grid', placeItems: 'center' }}>
                   <Typography variant="body2" color="text.secondary">
-                    No configuration changes recorded
+                    {t('audit.noEvents')}
                   </Typography>
                 </Box>
               ),
@@ -172,7 +183,7 @@ export function AuditLog() {
       {!desktop && (
         <Box
           component="ol"
-          aria-label="Administration audit events"
+          aria-label={t('audit.events')}
           sx={{ display: 'grid', listStyle: 'none', p: 0, m: 0 }}
         >
           {events.length ? (
@@ -190,7 +201,9 @@ export function AuditLog() {
                 >
                   <Box sx={{ minWidth: 0 }}>
                     <Typography component="h3" variant="subtitle2">
-                      {formatAction(event.action)}
+                      {t(`audit.actions.${event.action}`, {
+                        defaultValue: fallbackAuditAction(event.action),
+                      })}
                     </Typography>
                     <Typography
                       variant="body2"
@@ -201,7 +214,9 @@ export function AuditLog() {
                     </Typography>
                   </Box>
                   <Chip
-                    label={event.outcome}
+                    label={t(`common.status.${event.outcome}`, {
+                      defaultValue: event.outcome,
+                    })}
                     size="small"
                     color={event.outcome === 'SUCCESS' ? 'success' : 'error'}
                     variant="outlined"
@@ -212,7 +227,8 @@ export function AuditLog() {
                   color="text.secondary"
                   sx={{ display: 'block', mt: 1 }}
                 >
-                  {formatTimestamp(event.occurredAt)} / {event.source} / {event.actorType}{' '}
+                  {formatTimestamp(event.occurredAt)} / {t(`audit.sources.${event.source}`)} /{' '}
+                  {t(`audit.actorTypes.${event.actorType}`, { defaultValue: event.actorType })}{' '}
                   {event.actorId ?? '—'}
                 </Typography>
                 {event.correlationId && (
@@ -229,7 +245,7 @@ export function AuditLog() {
           ) : (
             <Box component="li" sx={{ py: 6, textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">
-                No configuration changes recorded
+                {t('audit.noEvents')}
               </Typography>
             </Box>
           )}

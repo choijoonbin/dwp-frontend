@@ -1,0 +1,625 @@
+{
+  "shell": {
+    "controlCenter": "관리 센터",
+    "productName": "Digital Workplace",
+    "administration": "관리",
+    "tenantAdministration": "테넌트 관리",
+    "tenantFallback": "테넌트",
+    "navigationLabel": "관리 메뉴 탐색",
+    "openNavigation": "관리 메뉴 열기",
+    "backToWorkspace": "워크스페이스로 돌아가기"
+  },
+  "navigation": {
+    "groups": {
+      "experience": "사용자 경험",
+      "people": "사용자 및 접근 권한",
+      "platform": "플랫폼 설정",
+      "governance": "거버넌스"
+    },
+    "items": {
+      "branding": {
+        "label": "브랜딩",
+        "title": "테넌트 브랜딩",
+        "description": "구성원 경험 전반에 표시할 조직 아이덴티티를 관리합니다."
+      },
+      "home-experience": {
+        "label": "홈 경험",
+        "title": "홈 경험",
+        "description": "테넌트 홈 이미지와 개인화 런치패드 경험을 설정합니다."
+      },
+      "announcements": {
+        "label": "공지사항",
+        "title": "공지사항",
+        "description": "적절한 테넌트 대상에게 기간이 정해진 공지를 게시합니다."
+      },
+      "access": {
+        "label": "접근 제어",
+        "title": "사용자 접근 권한",
+        "description": "구성원 계정에 테넌트 역할을 할당하고 유효 권한을 검토합니다."
+      },
+      "directory": {
+        "label": "조직 디렉터리",
+        "title": "조직 디렉터리",
+        "description": "범위별 권한과 사용자 경험에 사용할 조직 및 그룹을 관리합니다."
+      },
+      "reference-data": {
+        "label": "기준정보",
+        "title": "기준정보",
+        "description": "테넌트 코드 세트, 다국어 표시명, 계층 및 유효 기간을 관리합니다."
+      },
+      "registry": {
+        "label": "앱 레지스트리",
+        "title": "애플리케이션 레지스트리",
+        "description": "등록된 애플리케이션, 테넌트 제공 여부 및 실행 메타데이터를 관리합니다."
+      },
+      "audit": {
+        "label": "감사 로그",
+        "title": "감사 로그",
+        "description": "관리 권한 변경, 수행자, 결과 및 상관관계 컨텍스트를 추적합니다."
+      }
+    }
+  },
+  "page": {
+    "breadcrumb": "관리 센터 / {{group}}",
+    "tenantScope": "{{tenant}} 범위"
+  },
+  "common": {
+    "loadError": "관리 데이터를 불러오지 못했습니다.",
+    "operationError": "작업을 완료하지 못했습니다.",
+    "actions": {
+      "cancel": "취소",
+      "save": "저장",
+      "close": "닫기",
+      "refresh": "새로고침",
+      "edit": "수정",
+      "create": "생성",
+      "delete": "삭제",
+      "discardSelection": "선택 취소"
+    },
+    "file": {
+      "pendingUpload": "{{size}} / 업로드 대기",
+      "metadata": "{{width}} x {{height}} / {{size}}"
+    },
+    "states": {
+      "on": "켜짐",
+      "off": "꺼짐",
+      "yes": "예",
+      "no": "아니요"
+    },
+    "status": {
+      "ACTIVE": "활성",
+      "INACTIVE": "비활성",
+      "DRAFT": "초안",
+      "PUBLISHED": "게시됨",
+      "ARCHIVED": "보관됨",
+      "SUCCESS": "성공",
+      "FAILED": "실패"
+    },
+    "lifecycle": {
+      "DRAFT": "초안",
+      "ACTIVE": "활성",
+      "RETIRED": "종료"
+    }
+  },
+  "access": {
+    "title": "사용자 접근 권한",
+    "loading": "사용자 접근 권한 불러오는 중",
+    "tenantUsers": "테넌트 사용자",
+    "searchUsers": "사용자 검색",
+    "noUsers": "사용자가 없습니다.",
+    "noRole": "할당된 역할 없음",
+    "userFallback": "사용자 {{id}}",
+    "mfaEnabled": "MFA 켜짐",
+    "mfaDisabled": "MFA 꺼짐",
+    "ownRolesUnavailable": "자신의 역할은 변경할 수 없습니다.",
+    "columns": {
+      "user": "사용자",
+      "roles": "역할",
+      "status": "상태",
+      "mfa": "MFA",
+      "revision": "리비전"
+    },
+    "actions": {
+      "refresh": "사용자 및 역할 새로고침",
+      "editRoles": "역할 수정",
+      "editRolesFor": "{{name}} 역할 수정",
+      "save": "접근 권한 저장"
+    },
+    "dialog": {
+      "title": "접근 권한 수정",
+      "assignedRoles": "할당된 역할",
+      "sessionNotice": "역할을 저장하면 이 사용자의 모든 활성 세션이 종료됩니다."
+    },
+    "toasts": {
+      "updated": "사용자 접근 권한을 변경하고 활성 세션을 종료했습니다."
+    }
+  },
+  "branding": {
+    "title": "테넌트 브랜딩",
+    "description": "DWP 공동 브랜드 영역에 표시할 조직 아이덴티티입니다.",
+    "loading": "테넌트 브랜딩 불러오는 중",
+    "customLogo": "사용자 지정 로고",
+    "productOnly": "제품 브랜드만 사용",
+    "headerPreview": "헤더 브랜드 미리보기",
+    "lockupPreview": "브랜드 조합 미리보기",
+    "organizationName": "조직명",
+    "noLogo": "테넌트 로고 없음",
+    "fileRequirements": "SVG, PNG 또는 JPEG / 최대 2 MB",
+    "actions": {
+      "chooseLogo": "로고 선택",
+      "uploadLogo": "로고 업로드",
+      "removeLogo": "로고 제거",
+      "save": "브랜딩 저장"
+    },
+    "toasts": {
+      "logoUploaded": "테넌트 로고를 업로드했습니다.",
+      "logoRemoved": "테넌트 로고를 제거했습니다.",
+      "saved": "테넌트 브랜딩을 저장했습니다."
+    }
+  },
+  "homeExperience": {
+    "title": "홈 경험",
+    "description": "개인 앱 워크스페이스에 적용할 테넌트 화면입니다.",
+    "loading": "홈 경험 불러오는 중",
+    "customBackground": "사용자 지정 배경",
+    "defaultBackground": "기본 배경",
+    "preview": "홈 히어로 미리보기",
+    "previewHeadline": "Administrator님, 환영합니다",
+    "previewMessage": "할당된 앱과 서비스를 바로 시작할 수 있습니다.",
+    "builtInBackground": "DWP 기본 배경",
+    "fileRequirements": "PNG 또는 JPEG / 최대 10 MB",
+    "fields": {
+      "headline": "헤드라인",
+      "message": "보조 메시지",
+      "imagePosition": "이미지 위치",
+      "overlay": "가독성 오버레이"
+    },
+    "positions": {
+      "LEFT": "왼쪽",
+      "CENTER": "가운데",
+      "RIGHT": "오른쪽"
+    },
+    "actions": {
+      "chooseImage": "이미지 선택",
+      "upload": "배경 업로드",
+      "restore": "기본값 복원",
+      "save": "화면 설정 저장"
+    },
+    "toasts": {
+      "saved": "홈 경험 설정을 저장했습니다.",
+      "uploaded": "홈 배경을 업로드했습니다.",
+      "restored": "기본 홈 배경을 복원했습니다."
+    }
+  },
+  "announcements": {
+    "title": "공지사항",
+    "description": "대상별로 통제되는 구성원 커뮤니케이션을 관리합니다.",
+    "loading": "공지사항 불러오는 중",
+    "pinned": "상단 고정",
+    "immediate": "즉시",
+    "openEnded": "종료일 없음",
+    "noAnnouncements": "공지사항이 없습니다.",
+    "fields": {
+      "title": "제목",
+      "message": "내용",
+      "severity": "중요도",
+      "audience": "대상",
+      "roleKey": "역할 키",
+      "pinned": "상단 고정",
+      "starts": "시작 일시",
+      "ends": "종료 일시",
+      "actionLabel": "작업 이름",
+      "actionUrl": "작업 URL"
+    },
+    "severity": {
+      "INFO": "안내",
+      "SUCCESS": "성공",
+      "WARNING": "주의",
+      "CRITICAL": "긴급"
+    },
+    "audience": {
+      "ALL": "전체 구성원",
+      "ROLE": "역할"
+    },
+    "table": {
+      "label": "공지사항",
+      "announcement": "공지",
+      "status": "상태",
+      "audience": "대상",
+      "window": "게시 기간",
+      "actions": "작업"
+    },
+    "dialog": {
+      "editTitle": "공지사항 수정",
+      "newTitle": "새 공지사항",
+      "close": "공지사항 창 닫기"
+    },
+    "actions": {
+      "new": "새 공지사항",
+      "saveChanges": "변경사항 저장",
+      "createDraft": "초안 생성",
+      "editNamed": "{{title}} 수정",
+      "publish": "게시",
+      "publishNamed": "{{title}} 게시",
+      "archive": "보관",
+      "archiveNamed": "{{title}} 보관"
+    },
+    "toasts": {
+      "published": "공지사항을 게시했습니다.",
+      "archived": "공지사항을 보관했습니다.",
+      "updated": "공지사항을 수정했습니다.",
+      "created": "공지사항 초안을 생성했습니다."
+    }
+  },
+  "referenceData": {
+    "loading": "기준정보 불러오는 중",
+    "loadingSet": "기준정보 세트 불러오는 중",
+    "referenceSets": "기준정보 세트",
+    "referenceItems": "기준정보 항목",
+    "setDetail": "기준정보 세트 상세",
+    "searchSets": "세트 검색",
+    "noSets": "기준정보 세트가 없습니다.",
+    "noItems": "기준정보 항목이 없습니다.",
+    "selectSet": "기준정보 세트를 선택하세요.",
+    "localizedLabels": "다국어 표시명",
+    "itemCount_one": "항목 {{count}}개",
+    "itemCount_other": "항목 {{count}}개",
+    "revision": "{{key}} / 리비전 {{revision}}",
+    "itemSummary_one": "정렬 {{order}} / 언어 {{count}}개",
+    "itemSummary_other": "정렬 {{order}} / 언어 {{count}}개",
+    "parentSummary": "상위 {{code}}",
+    "columns": {
+      "code": "코드",
+      "state": "상태",
+      "locales": "언어",
+      "order": "정렬",
+      "parent": "상위 코드"
+    },
+    "fields": {
+      "setKey": "세트 키",
+      "name": "이름",
+      "description": "설명",
+      "code": "코드",
+      "sortOrder": "정렬 순서",
+      "parentCode": "상위 코드",
+      "validFrom": "유효 시작",
+      "validTo": "유효 종료",
+      "locale": "로케일",
+      "label": "표시명"
+    },
+    "dialogs": {
+      "set": {
+        "editTitle": "기준정보 세트 수정",
+        "newTitle": "새 기준정보 세트"
+      },
+      "item": {
+        "editTitle": "기준정보 항목 수정",
+        "newTitle": "새 기준정보 항목"
+      }
+    },
+    "actions": {
+      "saveChanges": "변경사항 저장",
+      "createSet": "세트 생성",
+      "createItem": "항목 생성",
+      "addLocale": "언어 추가",
+      "removeLocale": "언어 제거",
+      "removeLocaleAt": "{{index}}번째 언어 제거",
+      "newSet": "새 기준정보 세트",
+      "newItem": "새 기준정보 항목",
+      "editSet": "기준정보 세트 수정",
+      "editItem": "항목 수정",
+      "refreshSet": "기준정보 세트 새로고침",
+      "activate": "활성화",
+      "retire": "종료",
+      "activateSet": "기준정보 세트 활성화",
+      "retireSet": "기준정보 세트 종료",
+      "activateItem": "항목 활성화",
+      "retireItem": "항목 종료",
+      "editNamed": "{{code}} 수정",
+      "activateNamed": "{{code}} 활성화",
+      "retireNamed": "{{code}} 종료"
+    },
+    "confirm": {
+      "activateSetTitle": "기준정보 세트를 활성화할까요?",
+      "activateSetMessage": "종료되지 않은 모든 초안 항목이 테넌트 애플리케이션에 제공됩니다.",
+      "retireSetTitle": "기준정보 세트를 종료할까요?",
+      "retireSetMessage": "테넌트 애플리케이션이 런타임 API에서 이 세트를 더 이상 받지 못합니다.",
+      "activateItemTitle": "{{code}} 항목을 활성화할까요?",
+      "activateItemMessage": "이 항목이 테넌트 애플리케이션에 제공됩니다.",
+      "retireItemTitle": "{{code}} 항목을 종료할까요?",
+      "retireItemMessage": "이력은 유지되며 런타임 응답에서 항목만 제외됩니다."
+    },
+    "toasts": {
+      "setCreated": "기준정보 세트를 생성했습니다.",
+      "setUpdated": "기준정보 세트를 수정했습니다.",
+      "setActivated": "기준정보 세트를 활성화했습니다.",
+      "setRetired": "기준정보 세트를 종료했습니다.",
+      "itemCreated": "기준정보 항목을 초안으로 생성했습니다.",
+      "itemUpdated": "기준정보 항목을 수정했습니다.",
+      "itemActivated": "기준정보 항목을 활성화했습니다.",
+      "itemRetired": "기준정보 항목을 종료했습니다."
+    }
+  },
+  "registry": {
+    "title": "제품 레지스트리",
+    "loading": "제품 레지스트리 불러오는 중",
+    "search": "레지스트리 검색",
+    "entries": "제품 레지스트리 항목",
+    "noEntries": "레지스트리 항목이 없습니다.",
+    "allTypes": "전체 유형",
+    "allStates": "전체 상태",
+    "versionSummary": "{{version}} / 리비전 {{revision}} / {{owner}}",
+    "types": {
+      "APP": "앱",
+      "CONNECTOR": "커넥터",
+      "AGENT": "에이전트",
+      "TOOL": "도구",
+      "POLICY": "정책"
+    },
+    "risk": {
+      "LOW": "낮음",
+      "MEDIUM": "보통",
+      "HIGH": "높음",
+      "CRITICAL": "매우 높음"
+    },
+    "fields": {
+      "type": "레지스트리 유형",
+      "key": "레지스트리 키",
+      "name": "이름",
+      "owner": "소유자 참조",
+      "version": "아티팩트 버전",
+      "risk": "위험 등급",
+      "state": "상태",
+      "description": "설명"
+    },
+    "columns": {
+      "type": "유형",
+      "entry": "항목",
+      "owner": "소유자",
+      "version": "버전",
+      "risk": "위험도",
+      "state": "상태"
+    },
+    "dialog": {
+      "createTitle": "새 레지스트리 항목",
+      "editTitle": "초안 리비전 수정",
+      "revisionTitle": "새 레지스트리 리비전"
+    },
+    "actions": {
+      "createDraft": "초안 생성",
+      "saveChanges": "변경사항 저장",
+      "createRevision": "리비전 생성",
+      "createRevisionFor": "{{key}} 리비전 생성",
+      "editDraft": "초안 수정",
+      "editNamed": "{{key}} 수정",
+      "activateRevision": "리비전 활성화",
+      "activateNamed": "{{key}} 활성화",
+      "discardDraft": "초안 폐기",
+      "retireRevision": "리비전 종료",
+      "retireNamed": "{{key}} 종료",
+      "refresh": "레지스트리 새로고침",
+      "newEntry": "새 레지스트리 항목"
+    },
+    "confirm": {
+      "activateTitle": "{{key}} 항목을 활성화할까요?",
+      "activateMessage": "이 리비전이 테넌트 런타임 카탈로그의 활성 리비전을 대체합니다.",
+      "discardTitle": "리비전 {{revision}}을 폐기할까요?",
+      "discardMessage": "초안은 버전 이력에 남지만 더 이상 수정하거나 활성화할 수 없습니다.",
+      "retireTitle": "{{key}} 항목을 종료할까요?",
+      "retireMessage": "이 항목이 테넌트 런타임 카탈로그에서 제거됩니다."
+    },
+    "toasts": {
+      "draftCreated": "레지스트리 초안을 생성했습니다.",
+      "draftUpdated": "레지스트리 초안을 수정했습니다.",
+      "revisionCreated": "레지스트리 리비전을 생성했습니다.",
+      "revisionActivated": "레지스트리 리비전을 활성화했습니다.",
+      "draftRetired": "초안 리비전을 종료했습니다.",
+      "revisionRetired": "레지스트리 리비전을 종료했습니다."
+    }
+  },
+  "audit": {
+    "title": "관리 감사 로그",
+    "loading": "감사 이벤트 불러오는 중",
+    "loadError": "감사 이벤트를 불러오지 못했습니다.",
+    "refresh": "감사 이벤트 새로고침",
+    "events": "관리 감사 이벤트",
+    "noEvents": "기록된 설정 변경이 없습니다.",
+    "columns": {
+      "time": "일시",
+      "source": "출처",
+      "action": "작업",
+      "target": "대상",
+      "actor": "수행자",
+      "outcome": "결과",
+      "correlation": "상관관계 ID"
+    },
+    "sources": {
+      "IDENTITY": "인증 및 권한",
+      "PLATFORM": "플랫폼"
+    },
+    "actorTypes": {
+      "USER": "사용자",
+      "AGENT": "에이전트",
+      "SYSTEM": "시스템"
+    },
+    "actions": {
+      "announcement": {
+        "archived": "공지사항 보관",
+        "created": "공지사항 생성",
+        "published": "공지사항 게시",
+        "updated": "공지사항 수정"
+      },
+      "directory": {
+        "group": {
+          "activated": "사용자 그룹 활성화",
+          "created": "사용자 그룹 생성",
+          "deactivated": "사용자 그룹 비활성화",
+          "members": {
+            "replaced": "사용자 그룹 구성원 변경"
+          },
+          "updated": "사용자 그룹 수정"
+        },
+        "organization": {
+          "activated": "조직 활성화",
+          "created": "조직 생성",
+          "deactivated": "조직 비활성화",
+          "members": {
+            "moved-out": "조직 구성원 이동",
+            "replaced": "조직 구성원 변경"
+          },
+          "updated": "조직 수정"
+        }
+      },
+      "home-experience": {
+        "background-reset": "홈 배경 초기화",
+        "background-uploaded": "홈 배경 업로드",
+        "updated": "홈 경험 설정 수정"
+      },
+      "home-preference": {
+        "reset": "홈 개인 설정 초기화",
+        "updated": "홈 개인 설정 수정"
+      },
+      "identity": {
+        "user-roles": {
+          "replaced": "사용자 역할 변경"
+        }
+      },
+      "personal-preference": {
+        "reset": "개인 설정 초기화",
+        "updated": "개인 설정 수정"
+      },
+      "reference-item": {
+        "activated": "기준 항목 활성화",
+        "created": "기준 항목 생성",
+        "retired": "기준 항목 종료",
+        "updated": "기준 항목 수정"
+      },
+      "reference-set": {
+        "activated": "기준 세트 활성화",
+        "created": "기준 세트 생성",
+        "retired": "기준 세트 종료",
+        "updated": "기준 세트 수정"
+      },
+      "registry-entry": {
+        "activated": "레지스트리 항목 활성화",
+        "created": "레지스트리 항목 생성",
+        "retired": "레지스트리 항목 종료",
+        "revision-created": "레지스트리 항목 리비전 생성",
+        "superseded": "레지스트리 항목 대체",
+        "updated": "레지스트리 항목 수정"
+      },
+      "tenant-branding": {
+        "logo-reset": "테넌트 로고 초기화",
+        "logo-uploaded": "테넌트 로고 업로드",
+        "updated": "테넌트 브랜딩 수정"
+      }
+    }
+  },
+  "directory": {
+    "title": "조직 디렉터리",
+    "loading": "조직 디렉터리 불러오는 중",
+    "type": "디렉터리 유형",
+    "organizations": "조직",
+    "groups": "그룹",
+    "directoryGroups": "디렉터리 그룹",
+    "directoryUsers": "디렉터리 사용자",
+    "searchOrganizations": "조직 검색",
+    "searchGroups": "그룹 검색",
+    "allStatuses": "전체 상태",
+    "noOrganizations": "조직이 없습니다.",
+    "noGroups": "그룹이 없습니다.",
+    "noParent": "상위 조직 없음",
+    "topLevel": "최상위",
+    "loadingUsers": "사용자 불러오는 중",
+    "managedByScim": "SCIM에서 관리",
+    "organizationFallback": "조직 {{id}}",
+    "selectedCount_one": "{{count}}명 선택",
+    "selectedCount_other": "{{count}}명 선택",
+    "memberCount_one": "구성원 {{count}}명",
+    "memberCount_other": "구성원 {{count}}명",
+    "moveFrom": "{{organization}}에서 이동",
+    "revisionShort": "리비전 {{revision}}",
+    "previousPage": "이전 페이지",
+    "nextPage": "다음 페이지",
+    "pageOf": "{{total}}페이지 중 {{page}}페이지",
+    "sources": {
+      "SCIM": "SCIM 관리",
+      "LOCAL": "로컬"
+    },
+    "kinds": {
+      "organization": "조직",
+      "group": "그룹",
+      "entry": "항목"
+    },
+    "columns": {
+      "organization": "조직",
+      "group": "그룹",
+      "parent": "상위 조직",
+      "members": "구성원",
+      "source": "출처",
+      "status": "상태",
+      "revision": "리비전",
+      "actions": "작업"
+    },
+    "fields": {
+      "organizationKey": "조직 키",
+      "groupKey": "그룹 키",
+      "name": "이름",
+      "displayName": "표시명",
+      "parentOrganization": "상위 조직",
+      "description": "설명",
+      "findUsers": "사용자 찾기"
+    },
+    "dialogs": {
+      "organization": {
+        "editTitle": "조직 수정",
+        "newTitle": "새 조직"
+      },
+      "group": {
+        "editTitle": "그룹 수정",
+        "newTitle": "새 그룹"
+      },
+      "members": {
+        "title": "구성원 관리",
+        "organizationNotice": "기본 조직을 변경하면 사용자가 이전 조직에서 이동하며 관련 세션이 종료됩니다.",
+        "groupNotice": "그룹 구성원을 변경하면 관련 사용자 세션이 종료됩니다."
+      }
+    },
+    "actions": {
+      "saveChanges": "변경사항 저장",
+      "createOrganization": "조직 생성",
+      "createGroup": "그룹 생성",
+      "saveMembers": "구성원 저장",
+      "newOrganization": "새 조직",
+      "newGroup": "새 그룹",
+      "editOrganization": "조직 수정",
+      "editGroup": "그룹 수정",
+      "editNamed": "{{name}} 수정",
+      "manageMembers": "구성원 관리",
+      "manageMembersFor": "{{name}} 구성원 관리",
+      "activate": "활성화",
+      "deactivate": "비활성화",
+      "activateNamed": "{{name}} 활성화",
+      "deactivateNamed": "{{name}} 비활성화",
+      "refresh": "디렉터리 새로고침"
+    },
+    "confirm": {
+      "activateTitle": "{{subject}} 항목을 활성화할까요?",
+      "deactivateTitle": "{{subject}} 항목을 비활성화할까요?",
+      "activateMessage": "이 {{kind}}을 할당에 사용할 수 있게 됩니다.",
+      "deactivateMessage": "이 {{kind}}에 활성 하위 항목이나 구성원이 없어야 합니다."
+    },
+    "toasts": {
+      "organizationCreated": "조직을 생성했습니다.",
+      "organizationUpdated": "조직을 수정했습니다.",
+      "groupCreated": "그룹을 생성했습니다.",
+      "groupUpdated": "그룹을 수정했습니다.",
+      "organizationMembersUpdated": "조직 구성원을 변경하고 관련 세션을 종료했습니다.",
+      "groupMembersUpdated": "그룹 구성원을 변경하고 관련 세션을 종료했습니다.",
+      "organizationActivated": "조직을 활성화했습니다.",
+      "organizationDeactivated": "조직을 비활성화했습니다.",
+      "groupActivated": "그룹을 활성화했습니다.",
+      "groupDeactivated": "그룹을 비활성화했습니다."
+    }
+  }
+}

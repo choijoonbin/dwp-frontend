@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, Home, Menu, ShieldCheck } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { foundationTokens } from '@dwp-frontend/design-system';
@@ -20,8 +21,12 @@ import ListItemButton from '@mui/material/ListItemButton';
 
 import { AccountMenu } from '../components/account-menu';
 import { BrandLockup } from '../components/brand-lockup';
-import { LanguageMenu } from '../components/language-menu';
-import { NotificationMenu, SearchControl, WorkspaceMenu } from '../components/shell-controls';
+import {
+  FullscreenControl,
+  NotificationMenu,
+  SearchControl,
+  WorkspaceMenu,
+} from '../components/shell-controls';
 import {
   ADMIN_NAVIGATION,
   type AdminNavigationGroup,
@@ -43,6 +48,7 @@ function initialExpandedGroups(): Record<AdminSection, boolean> {
 }
 
 function AdminNavigation({ onNavigate }: AdminNavigationProps) {
+  const { t } = useTranslation('admin');
   const { pathname } = useLocation();
   const [expanded, setExpanded] = useState(initialExpandedGroups);
   const activeGroup = useMemo(
@@ -60,7 +66,7 @@ function AdminNavigation({ onNavigate }: AdminNavigationProps) {
   };
 
   return (
-    <Box component="nav" aria-label="Administration navigation" sx={{ py: 1.5 }}>
+    <Box component="nav" aria-label={t('shell.navigationLabel')} sx={{ py: 1.5 }}>
       <List disablePadding sx={{ display: 'grid', gap: 0.5, px: 1.25 }}>
         {ADMIN_NAVIGATION.map((group) => {
           const GroupIcon = group.icon;
@@ -86,7 +92,7 @@ function AdminNavigation({ onNavigate }: AdminNavigationProps) {
                   <GroupIcon size={18} strokeWidth={1.8} aria-hidden="true" />
                 </ListItemIcon>
                 <ListItemText
-                  primary={group.label}
+                  primary={t(`navigation.groups.${group.id}`)}
                   primaryTypographyProps={{
                     variant: 'subtitle2',
                     fontWeight: groupActive ? 750 : 650,
@@ -140,7 +146,7 @@ function AdminNavigation({ onNavigate }: AdminNavigationProps) {
                             <ItemIcon size={16} strokeWidth={1.8} aria-hidden="true" />
                           </ListItemIcon>
                           <ListItemText
-                            primary={item.label}
+                            primary={t(`navigation.items.${item.view}.label`)}
                             primaryTypographyProps={{
                               variant: 'body2',
                               fontWeight: selected ? 750 : 550,
@@ -161,9 +167,10 @@ function AdminNavigation({ onNavigate }: AdminNavigationProps) {
 }
 
 export function AdminLayout() {
+  const { t } = useTranslation('admin');
   const auth = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const tenantName = auth.user?.tenantCode || 'Tenant';
+  const tenantName = auth.user?.tenantCode || t('shell.tenantFallback');
 
   const navigationContent = (onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
@@ -178,8 +185,8 @@ export function AdminLayout() {
       >
         <BrandLockup
           variant="product-full"
-          label="Control Center"
-          description="Digital Workplace"
+          label={t('shell.controlCenter')}
+          description={t('shell.productName')}
           sx={{ flexShrink: 0 }}
         />
       </Box>
@@ -187,7 +194,7 @@ export function AdminLayout() {
       <Divider />
       <Box sx={{ px: 2.5, pt: 2.25, pb: 0.75 }}>
         <Typography component="p" variant="overline" color="text.secondary">
-          Tenant administration
+          {t('shell.tenantAdministration')}
         </Typography>
         <Typography variant="body2" fontWeight={700} noWrap>
           {tenantName}
@@ -208,7 +215,7 @@ export function AdminLayout() {
           onClick={onNavigate}
           sx={{ justifyContent: 'flex-start' }}
         >
-          Back to workspace
+          {t('shell.backToWorkspace')}
         </Button>
       </Box>
     </Box>
@@ -261,7 +268,7 @@ export function AdminLayout() {
           sx={{ minHeight: `${HEADER_HEIGHT}px !important`, px: { xs: 1, md: 2 } }}
         >
           <IconButton
-            aria-label="Open administration navigation"
+            aria-label={t('shell.openNavigation')}
             onClick={() => setMobileOpen(true)}
             sx={{ mr: 0.5, display: { lg: 'none' } }}
           >
@@ -269,17 +276,25 @@ export function AdminLayout() {
           </IconButton>
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
             <ShieldCheck size={18} strokeWidth={1.8} aria-hidden="true" />
-            <Typography variant="subtitle2">Administration</Typography>
+            <Typography variant="subtitle2">{t('shell.administration')}</Typography>
           </Box>
           <Box sx={{ ml: { xs: 0, sm: 1.5 } }}>
             <WorkspaceMenu />
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           <SearchControl />
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <LanguageMenu />
+          <Box
+            sx={{
+              ml: { xs: 0, md: 1.5 },
+              pl: { xs: 0, md: 1 },
+              display: 'flex',
+              alignItems: 'center',
+              gap: { xs: 0.25, sm: 0.5 },
+            }}
+          >
+            <FullscreenControl />
+            <NotificationMenu />
           </Box>
-          <NotificationMenu />
           <Box
             sx={{
               ml: { xs: 0.25, md: 1 },

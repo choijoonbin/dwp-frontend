@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     projects: [
       'apps/dwp/vitest.config.ts',
+      'libs/shared-i18n/vitest.config.ts',
       'libs/shared-utils/vitest.config.ts',
       'libs/design-system/vitest.config.ts',
     ],

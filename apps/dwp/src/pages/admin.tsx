@@ -1,4 +1,5 @@
 import { Navigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@dwp-frontend/shared-utils';
 import { PageCanvas } from '@dwp-frontend/design-system';
 
@@ -43,6 +44,7 @@ function AdminContent({ view }: { view: AdminView }) {
 }
 
 export default function AdminPage() {
+  const { t } = useTranslation('admin');
   const auth = useAuth();
   const { section, view } = useParams();
   const page = findAdminNavigationItem(section, view);
@@ -51,7 +53,7 @@ export default function AdminPage() {
 
   const PageIcon = page.icon;
   const groupLabel =
-    ADMIN_NAVIGATION.find((group) => group.id === page.section)?.label ?? 'Administration';
+    ADMIN_NAVIGATION.find((group) => group.id === page.section)?.id ?? 'governance';
 
   return (
     <PageCanvas>
@@ -64,7 +66,9 @@ export default function AdminPage() {
       >
         <Box sx={{ minWidth: 0 }}>
           <Typography component="p" variant="overline" color="primary.main">
-            Control Center / {groupLabel}
+            {t('page.breadcrumb', {
+              group: t(`navigation.groups.${groupLabel}`),
+            })}
           </Typography>
           <Box sx={{ mt: 0.25, display: 'flex', alignItems: 'flex-start', gap: 1.25 }}>
             <Box
@@ -84,16 +88,18 @@ export default function AdminPage() {
             </Box>
             <Box sx={{ minWidth: 0 }}>
               <Typography component="h1" variant="h4">
-                {page.title}
+                {t(`navigation.items.${page.view}.title`)}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                {page.description}
+                {t(`navigation.items.${page.view}.description`)}
               </Typography>
             </Box>
           </Box>
         </Box>
         <Chip
-          label={`${auth.user?.tenantCode || 'Tenant'} scope`}
+          label={t('page.tenantScope', {
+            tenant: auth.user?.tenantCode || t('shell.tenantFallback'),
+          })}
           color="info"
           variant="outlined"
           size="small"

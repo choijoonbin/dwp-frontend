@@ -78,7 +78,7 @@ async function mockUnauthenticated(page: Page) {
   );
 }
 
-async function mockAuthenticated(page: Page) {
+async function mockAuthenticated(page: Page, locale = 'en') {
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -90,6 +90,8 @@ async function mockAuthenticated(page: Page) {
           displayName: 'Admin',
           jobTitle: 'Platform administrator',
           email: 'admin@dwp.local',
+          preferredLocale: locale,
+          tenantDefaultLocale: 'en',
           tenantId: 1,
           tenantCode: 'default',
           roles: ['ADMIN'],
@@ -155,6 +157,43 @@ async function mockAuthenticated(page: Page) {
       }),
     })
   );
+  await page.route('**/api/platform/v1/personal-preferences**', async (route) => {
+    const cached = await page.evaluate(() => {
+      try {
+        return JSON.parse(window.localStorage.getItem('dwp.appearance.v1') ?? 'null') as {
+          mode?: 'system' | 'light' | 'dark';
+          density?: 'compact' | 'standard' | 'comfortable';
+          highContrast?: boolean;
+          reduceMotion?: boolean;
+        } | null;
+      } catch {
+        return null;
+      }
+    });
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          schemaVersion: 1,
+          customized: Boolean(cached),
+          preferences: {
+            appearance: {
+              mode: cached?.mode ?? 'system',
+              density: cached?.density ?? 'standard',
+            },
+            accessibility: {
+              highContrast: cached?.highContrast ?? false,
+              reduceMotion: cached?.reduceMotion ?? false,
+            },
+          },
+          version: 0,
+          updatedAt: null,
+        },
+      }),
+    });
+  });
   await page.route('**/api/platform/v1/announcements', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -226,6 +265,12 @@ async function setAppearance(
   }, preference);
 }
 
+async function setLocale(page: Page, locale: string) {
+  await page.addInitScript((value) => {
+    window.localStorage.setItem('dwp.locale', value);
+  }, locale);
+}
+
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
@@ -292,8 +337,9 @@ test('preferences light visual baseline', async ({ page }) => {
   });
 
   await page.goto('/account/settings');
-  await expect(page.getByRole('heading', { name: 'Preferences' })).toBeVisible();
-  await expect(page.getByText('System UI')).toBeVisible();
+  await expect(page).toHaveURL(/\/account\/settings\/appearance/);
+  await expect(page.getByRole('heading', { name: 'Appearance' })).toBeVisible();
+  await expect(page.getByTestId('account-shell')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Light', pressed: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Standard', pressed: true })).toBeVisible();
   await expect(page).toHaveScreenshot('preferences-light.png', {
@@ -314,9 +360,9 @@ test('preferences dark high-contrast visual baseline', async ({ page }) => {
   });
 
   await page.goto('/account/settings');
-  await expect(page.getByRole('heading', { name: 'Preferences' })).toBeVisible();
+  await expect(page).toHaveURL(/\/account\/settings\/appearance/);
+  await expect(page.getByRole('heading', { name: 'Appearance' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-contrast', 'high');
-  await expect(page.getByText('System UI')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Dark', pressed: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Compact', pressed: true })).toBeVisible();
   await expect(page).toHaveScreenshot('preferences-dark-high-contrast.png', {
@@ -364,6 +410,74 @@ test('personal home reference visual baseline', async ({ page }) => {
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Daily brief' })).toBeVisible();
   await expect(page).toHaveScreenshot('personal-home-reference.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
+test('personal home Korean visual baseline', async ({ page }) => {
+  await mockAuthenticated(page, 'ko');
+  await setLocale(page, 'ko');
+  await setAppearance(page, {
+    mode: 'light',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/');
+  await expect(
+    page.getByRole('heading', { name: 'Admin님, 다시 오신 것을 환영합니다' })
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: '일일 브리핑' })).toBeVisible();
+  await expect(page).toHaveScreenshot('personal-home-reference-ko.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
+test('account command panel visual baseline', async ({ page }) => {
+  await mockAuthenticated(page);
+  await setAppearance(page, {
+    mode: 'light',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
+  await page.getByRole('button', { name: 'Account' }).click();
+  await expect(page.getByRole('menuitem', { name: 'Account settings' })).toBeVisible();
+  await expect(page.getByText('admin@dwp.local', { exact: true })).toBeVisible();
+  await expect(page).toHaveScreenshot('account-command-panel.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
+test('account command panel dark high-contrast visual baseline', async ({ page }) => {
+  await mockAuthenticated(page);
+  await setAppearance(page, {
+    mode: 'dark',
+    density: 'standard',
+    highContrast: true,
+    reduceMotion: true,
+  });
+
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-color-scheme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-contrast', 'high');
+  await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
+  await page.getByRole('button', { name: 'Account' }).click();
+  await expect(page.getByRole('menuitem', { name: 'Account settings' })).toBeVisible();
+  await expect(page).toHaveScreenshot('account-command-panel-dark-high-contrast.png', {
     animations: 'disabled',
     caret: 'hide',
     fullPage: true,
@@ -423,8 +537,10 @@ test('collapsed navigation visual baseline', async ({ page }, testInfo) => {
     reduceMotion: true,
   });
 
-  await page.goto('/account/settings');
-  await expect(page.getByRole('heading', { name: 'Preferences' })).toBeVisible();
+  await page.goto('/apps');
+  await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();
+  await expect(page.getByText('Legacy operations', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('desktop-sidebar')).toBeVisible();
   await page.getByRole('button', { name: 'Collapse navigation' }).click();
   await expect(page.getByTestId('desktop-sidebar')).toHaveCSS('width', '72px');
   await expect(page).toHaveScreenshot('navigation-collapsed.png', {
@@ -448,6 +564,27 @@ test('Work reference visual baseline', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Work', exact: true })).toBeVisible();
   await expect(page.getByRole('grid', { name: 'Work queue' })).toBeVisible();
   await expect(page).toHaveScreenshot('work-reference.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
+test('Work Korean visual baseline', async ({ page }) => {
+  await mockAuthenticated(page, 'ko');
+  await setLocale(page, 'ko');
+  await setAppearance(page, {
+    mode: 'light',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/work?item=WK-1042');
+  await expect(page.getByRole('heading', { name: '업무', exact: true })).toBeVisible();
+  await expect(page.getByRole('grid', { name: '업무 목록' })).toBeVisible();
+  await expect(page).toHaveScreenshot('work-reference-ko.png', {
     animations: 'disabled',
     caret: 'hide',
     fullPage: true,

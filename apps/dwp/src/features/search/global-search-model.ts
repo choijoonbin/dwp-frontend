@@ -13,9 +13,15 @@ export type GlobalSearchItem = {
   recommended?: boolean;
 };
 
+export type GlobalSearchTranslate = (
+  key: string,
+  options?: Record<string, string | number>
+) => string;
+
 const ASK_PROMPTS = [
   {
     id: 'ask-attention',
+    translationKey: 'search.prompts.attention',
     kind: 'ask' as const,
     title: 'What needs my attention?',
     description: 'Review priorities across your permitted work',
@@ -23,6 +29,7 @@ const ASK_PROMPTS = [
   },
   {
     id: 'knowledge-remote-policy',
+    translationKey: 'search.prompts.remotePolicy',
     kind: 'knowledge' as const,
     title: 'Find the remote work policy',
     description: 'Search governed workplace knowledge',
@@ -38,10 +45,28 @@ function normalize(value: string): string {
   return value.normalize('NFKC').trim().toLocaleLowerCase();
 }
 
+function translated(
+  translate: GlobalSearchTranslate | undefined,
+  key: string,
+  fallback: string,
+  options?: Record<string, string | number>
+): string {
+  return translate?.(key, { defaultValue: fallback, ...options }) ?? fallback;
+}
+
+function translatedKeywords(
+  translate: GlobalSearchTranslate | undefined,
+  key: string,
+  fallback: readonly string[]
+): string[] {
+  return translated(translate, key, fallback.join(' ')).split(/\s+/).filter(Boolean);
+}
+
 export function createGlobalSearchItems(
   apps: readonly HomeAppDefinition[],
   work: readonly ReferenceWorkItem[],
-  includeAsk: boolean
+  includeAsk: boolean,
+  translate?: GlobalSearchTranslate
 ): GlobalSearchItem[] {
   const appItems = apps.map<GlobalSearchItem>((app) => ({
     id: `app-${app.id}`,
@@ -56,25 +81,49 @@ export function createGlobalSearchItems(
     id: `work-${item.id}`,
     kind: 'work',
     title: item.title,
-    description: `${item.type} / ${item.due} / ${item.sourceSystem}`,
+    description: `${translated(translate, `search.workTypes.${item.type}`, item.type)} / ${item.due} / ${item.sourceSystem}`,
     route: `/work?item=${encodeURIComponent(item.id)}`,
     keywords: [item.id, item.type, item.priority, item.status, item.sourceSystem, item.owner],
   }));
   const browseApps: GlobalSearchItem = {
     id: 'app-catalog',
     kind: 'app',
-    title: 'Browse all apps',
-    description: 'Open the assigned application catalog',
+    title: translated(translate, 'search.browseApps.title', 'Browse all apps'),
+    description: translated(
+      translate,
+      'search.browseApps.description',
+      'Open the assigned application catalog'
+    ),
     route: '/apps',
-    keywords: ['application', 'catalog', 'service', 'system'],
+    keywords: translatedKeywords(translate, 'search.browseApps.keywords', [
+      'application',
+      'catalog',
+      'service',
+      'system',
+    ]),
     recommended: true,
   };
   const prompts = includeAsk
-    ? ASK_PROMPTS.map<GlobalSearchItem>((prompt) => ({
-        ...prompt,
-        route: askRoute(prompt.title),
-        recommended: true,
-      }))
+    ? ASK_PROMPTS.map<GlobalSearchItem>((prompt) => {
+        const title = translated(translate, `${prompt.translationKey}.title`, prompt.title);
+        return {
+          id: prompt.id,
+          kind: prompt.kind,
+          title,
+          description: translated(
+            translate,
+            `${prompt.translationKey}.description`,
+            prompt.description
+          ),
+          keywords: translatedKeywords(
+            translate,
+            `${prompt.translationKey}.keywords`,
+            prompt.keywords
+          ),
+          route: askRoute(title),
+          recommended: true,
+        };
+      })
     : [];
 
   return [...appItems, browseApps, ...workItems, ...prompts];
@@ -114,13 +163,20 @@ export function filterGlobalSearchItems(
     .map(({ item }) => item);
 }
 
-export function createAskSearchItem(query: string): GlobalSearchItem {
+export function createAskSearchItem(
+  query: string,
+  translate?: GlobalSearchTranslate
+): GlobalSearchItem {
   const value = query.trim();
   return {
     id: 'ask-current-query',
     kind: 'ask',
-    title: `Ask DWP: ${value}`,
-    description: 'Use permitted work and knowledge sources',
+    title: translated(translate, 'search.askQuery.title', `Ask DWP: ${value}`, { query: value }),
+    description: translated(
+      translate,
+      'search.askQuery.description',
+      'Use permitted work and knowledge sources'
+    ),
     route: askRoute(value),
     keywords: [],
   };

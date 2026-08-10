@@ -1,0 +1,191 @@
+{
+  "page": {
+    "personalWorkspace": "Personal app workspace",
+    "welcome": "Welcome back",
+    "welcomeName": "Welcome back, {{name}}",
+    "assignedDescription": "Your assigned apps and services, ready to launch.",
+    "today": "Today",
+    "updatedAt": "Updated {{time}}",
+    "dateUpdated": "{{date}} / Updated {{time}}",
+    "lastRefreshed": "Last refreshed {{time}} / Reference data only",
+    "saveError": "The home preference could not be saved.",
+    "homeSaved": "Home view saved.",
+    "appLayoutSaved": "App layout saved.",
+    "defaultRestored": "Default home view restored."
+  },
+  "apps": {
+    "groups": {
+      "work": {
+        "name": "Start work",
+        "description": "Priorities and AI-assisted action"
+      },
+      "connect": {
+        "name": "Connect",
+        "description": "Communication and collaboration"
+      },
+      "services": {
+        "name": "People & services",
+        "description": "Employee support and directory"
+      },
+      "systems": {
+        "name": "Systems & control",
+        "description": "Knowledge, business tools, and governance"
+      }
+    },
+    "items": {
+      "dwp-work": {
+        "name": "Work",
+        "description": "Priorities, approvals, and tasks"
+      },
+      "dwp-ask": {
+        "name": "Ask DWP",
+        "description": "Grounded answers and governed actions"
+      },
+      "dwp-activity": {
+        "name": "Activity",
+        "description": "Human, system, and agent events"
+      },
+      "ref-app-mail": {
+        "name": "Mail & calendar",
+        "description": "Messages, meetings, and follow-ups"
+      },
+      "ref-app-collaboration": {
+        "name": "Collaboration",
+        "description": "Chat, channels, and meetings"
+      },
+      "ref-app-service": {
+        "name": "Employee services",
+        "description": "HR, IT, and workplace requests"
+      },
+      "ref-app-people": {
+        "name": "People directory",
+        "description": "People, teams, and contact details"
+      },
+      "ref-app-knowledge": {
+        "name": "Knowledge",
+        "description": "Policies, guides, and verified answers"
+      },
+      "ref-app-erp": {
+        "name": "Business ERP",
+        "description": "Finance and purchasing workspace"
+      },
+      "ref-app-legacy": {
+        "name": "Legacy operations",
+        "description": "Existing operational systems"
+      },
+      "dwp-admin": {
+        "name": "Administration",
+        "description": "Access, registry, policies, and codes"
+      }
+    }
+  },
+  "launchpad": {
+    "defaultTitle": "Your apps",
+    "defaultDescription": "Assigned to your role and workspace",
+    "assignedCount": "{{count}} assigned",
+    "allApps": "All apps",
+    "editHome": "Edit home",
+    "customize": "Customize",
+    "done": "Done",
+    "resetTooltip": "Restore the assigned app layout",
+    "resetLabel": "Reset app layout",
+    "fallbackApp": "app",
+    "defaultFolder": "App folder",
+    "groupFolder": "{{group}} folder",
+    "groupApps": "{{group}} apps",
+    "openApp": "Open {{app}}",
+    "arrangeApp": "Arrange {{app}}",
+    "openFolder": "Open folder {{folder}}",
+    "arrangeFolder": "Arrange folder {{folder}}",
+    "drag": {
+      "instructions": "Press space to pick up an app. Use arrow keys to move it, then press space to drop. Use the arrange menu for non-drag controls.",
+      "pickedUp": "Picked up {{item}}.",
+      "over": "Over {{item}}.",
+      "notOver": "Not over a drop target.",
+      "placed": "{{item}} was placed with {{target}}.",
+      "returned": "{{item}} was returned to its original position.",
+      "cancelled": "Moving {{item}} was cancelled."
+    },
+    "menu": {
+      "moveEarlier": "Move earlier",
+      "moveLater": "Move later",
+      "createFolder": "Create folder",
+      "withApp": "With {{app}}",
+      "createSelectedFolder": "Create selected folder",
+      "addToFolder": "Add to {{folder}}",
+      "renameFolder": "Rename folder",
+      "ungroup": "Ungroup apps"
+    },
+    "folder": {
+      "rename": "Rename folder",
+      "renameLabel": "Rename {{folder}}",
+      "name": "Folder name",
+      "moveOut": "Move out of folder",
+      "moveOutLabel": "Move {{app}} out of {{folder}}"
+    }
+  },
+  "editor": {
+    "title": "Edit home",
+    "subtitle": "Personal view",
+    "closeLabel": "Close home editor",
+    "widgetsLabel": "Home widgets",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "moveUpLabel": "Move {{widget}} up",
+    "moveDownLabel": "Move {{widget}} down",
+    "showLabel": "Show {{widget}}",
+    "governed": "Governed content"
+  },
+  "widgets": {
+    "registry": {
+      "announcements": {
+        "label": "Announcements",
+        "description": "Official and time-sensitive organization updates"
+      },
+      "daily-brief": {
+        "label": "Daily brief",
+        "description": "AI-grounded priorities and day rhythm"
+      },
+      "focus": {
+        "label": "Focus now",
+        "description": "Priority work and approvals"
+      },
+      "schedule": {
+        "label": "Schedule",
+        "description": "Meetings, focus time, and deadlines"
+      },
+      "activity": {
+        "label": "Live activity",
+        "description": "Human, system, and agent events"
+      }
+    },
+    "announcements": {
+      "title": "Announcements",
+      "pinned": "Pinned"
+    },
+    "brief": {
+      "sourceSummary": "AI generated / {{count}} verified sources",
+      "title": "Daily brief",
+      "summary": "Two decisions before the 11:00 customer meeting. Approving software access now unblocks a new team member; the customer brief still has three unanswered questions.",
+      "signals": {
+        "deadline": { "label": "Next deadline", "value": "10:30", "detail": "Software access" },
+        "focus": { "label": "Protected focus", "value": "90 min", "detail": "14:00-15:30" },
+        "meeting": { "label": "Meeting ready", "value": "72%", "detail": "6 sources checked" }
+      },
+      "reviewPriority": "Review priority",
+      "askToday": "Ask about today",
+      "askPrompt": "What should I prepare before the 11:00 meeting?",
+      "rhythmTitle": "Day rhythm",
+      "rhythmDescription": "Meetings are concentrated before lunch.",
+      "rhythmLabel": "Day rhythm from 9 AM to 5 PM with meetings, focus time, and one deadline",
+      "meetings": "Meetings",
+      "focus": "Focus",
+      "deadline": "Deadline",
+      "meetingDuration": "2h 05m",
+      "focusDuration": "1h 30m"
+    },
+    "focus": { "title": "Focus now" },
+    "schedule": { "title": "Schedule" },
+    "activity": { "title": "Live activity", "view": "View activity" }
+  }
+}

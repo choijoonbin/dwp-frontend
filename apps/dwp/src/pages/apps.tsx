@@ -1,20 +1,14 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
   ArrowRight,
   ArrowUpRight,
-  BookOpen,
-  Building2,
   CheckCircle2,
   Grid3X3,
-  LifeBuoy,
-  Mail,
-  MessagesSquare,
-  MonitorCog,
   Search,
   ShieldCheck,
   TriangleAlert,
-  UsersRound,
 } from 'lucide-react';
 import { useAuth, usePermissions, useToast } from '@dwp-frontend/shared-utils';
 import { PageCanvas } from '@dwp-frontend/design-system';
@@ -30,36 +24,20 @@ import InputAdornment from '@mui/material/InputAdornment';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { PageHeader, ReferenceModeChip, SectionHeading } from '../features/work-hub/workspace-ui';
-import { referenceApps } from '../features/work-hub/reference-data';
+import { localizeReferenceApps } from '../features/work-hub/reference-data';
 import { HOME_APPS, isAppEntitled } from '../features/home/app-launchpad-model';
+import { AppGlyph } from '../features/home/app-glyph';
 
 import type { ReferenceApp } from '../features/work-hub/reference-data';
 
 type AppFilter = 'all' | 'pinned' | 'native' | 'connected';
 
-const iconByType = {
-  productivity: Mail,
-  service: LifeBuoy,
-  people: UsersRound,
-  knowledge: BookOpen,
-  business: Building2,
-  legacy: MonitorCog,
-} as const;
+const homeAppById = new Map(HOME_APPS.map((app) => [app.id, app]));
+const fallbackAppVisual = { iconKey: 'legacy', tone: '#4B5663' } as const;
 
-const colorByType = {
-  productivity: '#315FD5',
-  service: '#15805A',
-  people: '#007F73',
-  knowledge: '#1678A8',
-  business: '#A66300',
-  legacy: '#4B5663',
-} as const;
-
-const healthLabel = {
-  healthy: 'Healthy',
-  managed: 'Managed',
-  attention: 'Needs attention',
-} as const;
+function appVisual(app: ReferenceApp) {
+  return homeAppById.get(app.id) ?? fallbackAppVisual;
+}
 
 function HealthIcon({ health }: { health: ReferenceApp['health'] }) {
   if (health === 'healthy') return <CheckCircle2 size={15} strokeWidth={1.8} />;
@@ -68,28 +46,11 @@ function HealthIcon({ health }: { health: ReferenceApp['health'] }) {
 }
 
 function AppIcon({ app, size = 46 }: { app: ReferenceApp; size?: number }) {
-  const Icon = app.id === 'ref-app-collaboration' ? MessagesSquare : iconByType[app.type];
-  return (
-    <Box
-      aria-hidden="true"
-      sx={{
-        width: size,
-        height: size,
-        flex: `0 0 ${size}px`,
-        display: 'grid',
-        placeItems: 'center',
-        borderRadius: 1,
-        color: '#FFFFFF',
-        bgcolor: colorByType[app.type],
-        boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.18)`,
-      }}
-    >
-      <Icon size={Math.round(size * 0.48)} strokeWidth={1.8} />
-    </Box>
-  );
+  return <AppGlyph app={appVisual(app)} size={size} />;
 }
 
 export default function AppsPage() {
+  const { t } = useTranslation('work');
   const auth = useAuth();
   const { permissions } = usePermissions();
   const toast = useToast();
@@ -103,8 +64,8 @@ export default function AppsPage() {
         (app) => app.id
       )
     );
-    return referenceApps.filter((app) => entitledIds.has(app.id));
-  }, [auth.user?.roles, permissions]);
+    return localizeReferenceApps(t).filter((app) => entitledIds.has(app.id));
+  }, [auth.user?.roles, permissions, t]);
   const pinnedApps = entitledReferenceApps.filter((app) => app.pinned);
 
   const visibleApps = useMemo(() => {
@@ -128,14 +89,15 @@ export default function AppsPage() {
     if (value) setFilter(value);
   };
 
-  const launch = (app: ReferenceApp) => toast.success(`${app.name} launch preview opened.`);
+  const launch = (app: ReferenceApp) =>
+    toast.success(t('appsPage.launchOpened', { app: app.name }));
 
   return (
     <PageCanvas>
       <PageHeader
-        eyebrow="Entitled workspace"
-        title="Apps"
-        description="Launch approved tools without losing your DWP context"
+        eyebrow={t('appsPage.header.eyebrow')}
+        title={t('appsPage.header.title')}
+        description={t('appsPage.header.description')}
         action={<ReferenceModeChip />}
       />
 
@@ -143,10 +105,10 @@ export default function AppsPage() {
         <SectionHeading
           id="launchpad-heading"
           icon={Grid3X3}
-          title="Your launchpad"
+          title={t('appsPage.launchpad')}
           meta={
             <Typography variant="body2" color="text.secondary">
-              {pinnedApps.length} pinned
+              {t('appsPage.pinnedCount', { count: pinnedApps.length })}
             </Typography>
           }
         />
@@ -185,12 +147,12 @@ export default function AppsPage() {
                   border: 1,
                   borderColor: 'divider',
                   borderTop: 3,
-                  borderTopColor: colorByType[app.type],
+                  borderTopColor: appVisual(app).tone,
                   borderRadius: 1,
                   transition: (theme) =>
                     theme.transitions.create(['border-color', 'box-shadow', 'transform']),
                   '&:hover': {
-                    borderColor: colorByType[app.type],
+                    borderColor: appVisual(app).tone,
                     transform: 'translateY(-2px)',
                     boxShadow: '0 12px 28px rgba(15, 21, 29, 0.09)',
                   },
@@ -219,7 +181,7 @@ export default function AppsPage() {
                     color="text.secondary"
                     sx={{ display: 'block', mt: 1 }}
                   >
-                    Last used {app.lastUsed}
+                    {t('appsPage.lastUsed', { value: app.lastUsed })}
                   </Typography>
                 </Box>
               </ButtonBase>
@@ -238,10 +200,10 @@ export default function AppsPage() {
         }}
       >
         <TextField
-          label="Search apps"
+          label={t('appsPage.searchLabel')}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Name, purpose, or owner"
+          placeholder={t('appsPage.searchPlaceholder')}
           slotProps={{
             input: {
               startAdornment: (
@@ -257,22 +219,22 @@ export default function AppsPage() {
           size="small"
           value={filter}
           onChange={changeFilter}
-          aria-label="App filter"
+          aria-label={t('appsPage.filterLabel')}
           sx={{ overflowX: 'auto', maxWidth: 1 }}
         >
-          <ToggleButton value="all">All</ToggleButton>
-          <ToggleButton value="pinned">Pinned</ToggleButton>
-          <ToggleButton value="native">DWP native</ToggleButton>
-          <ToggleButton value="connected">Connected</ToggleButton>
+          <ToggleButton value="all">{t('appsPage.filters.all')}</ToggleButton>
+          <ToggleButton value="pinned">{t('appsPage.filters.pinned')}</ToggleButton>
+          <ToggleButton value="native">{t('appsPage.filters.native')}</ToggleButton>
+          <ToggleButton value="connected">{t('appsPage.filters.connected')}</ToggleButton>
         </ToggleButtonGroup>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mt: 3 }}>
         <Typography component="h2" variant="h6">
-          Available apps
+          {t('appsPage.available')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {visibleApps.length} apps
+          {t('appsPage.appCount', { count: visibleApps.length })}
         </Typography>
       </Box>
 
@@ -332,7 +294,9 @@ export default function AppsPage() {
                       <Typography component="h3" variant="subtitle2">
                         {app.name}
                       </Typography>
-                      {app.pinned && <Chip label="Pinned" size="small" color="info" />}
+                      {app.pinned && (
+                        <Chip label={t('appsPage.pinned')} size="small" color="info" />
+                      )}
                     </Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.2 }}>
                       {app.description}
@@ -346,7 +310,11 @@ export default function AppsPage() {
                         mt: 1,
                       }}
                     >
-                      <Chip label={app.launchMode} size="small" variant="outlined" />
+                      <Chip
+                        label={t(`appsPage.launchMode.${app.launchMode}`)}
+                        size="small"
+                        variant="outlined"
+                      />
                       <Box
                         sx={{
                           display: 'inline-flex',
@@ -357,7 +325,7 @@ export default function AppsPage() {
                       >
                         <HealthIcon health={app.health} />
                         <Typography variant="caption" color="inherit" fontWeight={700}>
-                          {healthLabel[app.health]}
+                          {t(`appsPage.health.${app.health}`)}
                         </Typography>
                       </Box>
                       <Typography variant="caption" color="text.secondary">
@@ -377,7 +345,7 @@ export default function AppsPage() {
         >
           <Search size={28} strokeWidth={1.6} aria-hidden="true" />
           <Typography component="p" variant="subtitle1" sx={{ mt: 1.5 }}>
-            No matching apps
+            {t('appsPage.noMatches')}
           </Typography>
           <Button
             sx={{ mt: 1.5 }}
@@ -386,7 +354,7 @@ export default function AppsPage() {
               setFilter('all');
             }}
           >
-            Reset filters
+            {t('appsPage.resetFilters')}
           </Button>
         </Box>
       )}

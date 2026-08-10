@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">DWP Work Weave symbol</title>
+  <desc id="desc">A continuous W-shaped ribbon with a mint collaboration point.</desc>
+  <path
+    fill="none"
+    stroke="#2457D6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="10"
+    d="m11 15 11.5 34L32 27l9.5 22L53 15"
+  />
+  <circle cx="32" cy="27" r="5.5" fill="#2BC7B5" />
+</svg>

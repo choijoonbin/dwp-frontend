@@ -1,6 +1,7 @@
 import { API_URL } from './env';
 import { HttpError } from './http-error';
 import { getTenantId } from './tenant-util';
+import { resolveRequestLocale } from './locale-preference';
 
 type AxiosLikeResponse<T> = { data: T };
 type RequestConfig = {
@@ -33,9 +34,7 @@ function buildHeaders(body: unknown, extra?: Record<string, string>): Record<str
     ...extra,
   };
   if (body !== undefined && !isFormData(body)) headers['Content-Type'] = 'application/json';
-  if (typeof navigator !== 'undefined' && navigator.language) {
-    headers['Accept-Language'] = navigator.language;
-  }
+  headers['Accept-Language'] = resolveRequestLocale();
   return headers;
 }
 
