@@ -127,7 +127,8 @@ function AdminNavigation({ onNavigate }: AdminNavigationProps) {
                     .filter(
                       (item) =>
                         !item.requiredResourceKey ||
-                        (isLoaded && hasPermission(item.requiredResourceKey))
+                        (isLoaded &&
+                          hasPermission(item.requiredResourceKey, item.requiredPermissionCode))
                     )
                     .map((item) => {
                       const ItemIcon = item.icon;

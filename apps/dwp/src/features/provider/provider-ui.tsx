@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -15,10 +16,10 @@ export function formatProviderDate(value?: string | null): string {
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime())
     ? '-'
-    : new Intl.DateTimeFormat(undefined, {
+    : formatDate(parsed, {
         dateStyle: 'medium',
         timeStyle: 'short',
-      }).format(parsed);
+      });
 }
 
 export function parseProviderJson(value?: string | null): Record<string, unknown> {
@@ -35,16 +36,33 @@ export function parseProviderJson(value?: string | null): Record<string, unknown
 
 export function ProviderStatusChip({ state }: { state: string }) {
   const { t } = useTranslation('provider');
-  const color =
-    ['ACTIVE', 'READY', 'SUCCEEDED', 'VERIFIED'].includes(state)
-      ? 'success'
-      : ['FAILED', 'DEGRADED', 'REVOKED'].includes(state)
-        ? 'error'
-        : ['PREVIEWED', 'PARTIAL', 'PENDING_EXTERNAL', 'PENDING', 'PROVISIONING'].includes(
-              state
-            )
-          ? 'warning'
-          : 'default';
+  const color = [
+    'ACTIVE',
+    'READY',
+    'SUCCEEDED',
+    'VERIFIED',
+    'HEALTHY',
+    'APPROVED',
+    'RESOLVED',
+    'CLOSED',
+  ].includes(state)
+    ? 'success'
+    : ['FAILED', 'DEGRADED', 'REVOKED', 'CRITICAL', 'REJECTED'].includes(state)
+      ? 'error'
+      : [
+            'PREVIEWED',
+            'PARTIAL',
+            'PENDING_EXTERNAL',
+            'PENDING',
+            'PROVISIONING',
+            'ATTENTION',
+            'INVESTIGATING',
+            'IDENTIFIED',
+            'MONITORING',
+            'TRIAL',
+          ].includes(state)
+        ? 'warning'
+        : 'default';
 
   return (
     <Chip

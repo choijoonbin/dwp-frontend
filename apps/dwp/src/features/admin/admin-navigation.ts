@@ -4,16 +4,19 @@ import {
   ChartNoAxesCombined,
   Database,
   FolderTree,
+  Fingerprint,
   Image,
   KeyRound,
   Megaphone,
   Network,
   PlugZap,
   ScrollText,
+  SearchCheck,
   Settings2,
   ShieldCheck,
   UserRoundSearch,
   UsersRound,
+  ShieldAlert,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
@@ -33,7 +36,11 @@ export type AdminView =
   | 'reference-data'
   | 'registry'
   | 'api-monitoring'
-  | 'audit';
+  | 'audit'
+  | 'audit-overview'
+  | 'audit-events'
+  | 'audit-investigations'
+  | 'audit-governance';
 
 export type AdminNavigationItem = {
   section: AdminSection;
@@ -41,6 +48,7 @@ export type AdminNavigationItem = {
   path: string;
   icon: LucideIcon;
   requiredResourceKey?: string;
+  requiredPermissionCode?: string;
 };
 
 export type AdminNavigationGroup = {
@@ -147,9 +155,33 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
       },
       {
         section: 'governance',
-        view: 'audit',
-        path: '/admin/governance/audit',
+        view: 'audit-overview',
+        path: '/admin/governance/audit-overview',
         icon: ScrollText,
+        requiredResourceKey: 'ADMIN.AUDIT_VIEW',
+      },
+      {
+        section: 'governance',
+        view: 'audit-events',
+        path: '/admin/governance/audit-events',
+        icon: SearchCheck,
+        requiredResourceKey: 'ADMIN.AUDIT_VIEW',
+      },
+      {
+        section: 'governance',
+        view: 'audit-investigations',
+        path: '/admin/governance/audit-investigations',
+        icon: ShieldAlert,
+        requiredResourceKey: 'ADMIN.AUDIT_INVESTIGATE',
+        requiredPermissionCode: 'UPDATE',
+      },
+      {
+        section: 'governance',
+        view: 'audit-governance',
+        path: '/admin/governance/audit-governance',
+        icon: Fingerprint,
+        requiredResourceKey: 'ADMIN.AUDIT_CONFIGURE',
+        requiredPermissionCode: 'MANAGE',
       },
     ],
   },
@@ -159,11 +191,23 @@ export const ADMIN_DEFAULT_PATH = '/admin/people/access';
 
 const ADMIN_ITEMS = ADMIN_NAVIGATION.flatMap((group) => group.items);
 
+const LEGACY_ADMIN_ITEMS: AdminNavigationItem[] = [
+  {
+    section: 'governance',
+    view: 'audit',
+    path: '/admin/governance/audit',
+    icon: ScrollText,
+    requiredResourceKey: 'ADMIN.AUDIT_VIEW',
+  },
+];
+
 export function findAdminNavigationItem(
   section: string | undefined,
   view: string | undefined
 ): AdminNavigationItem | undefined {
-  return ADMIN_ITEMS.find((item) => item.section === section && item.view === view);
+  return [...ADMIN_ITEMS, ...LEGACY_ADMIN_ITEMS].find(
+    (item) => item.section === section && item.view === view
+  );
 }
 
 export function getLegacyAdminPath(view: string | null): string {

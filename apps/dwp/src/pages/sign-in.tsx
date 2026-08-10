@@ -83,7 +83,7 @@ export default function SignInPage() {
     enabled: ssoConfigured,
     providerKey: policyQuery.data?.ssoProviderKey,
   });
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState(searchParams.get('email') ?? '');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -107,7 +107,7 @@ export default function SignInPage() {
     setErrorKey(null);
     setSubmitting(true);
     try {
-      await auth.login({ username, password });
+      await auth.login({ email, password });
       navigate(safeReturnUrl(searchParams.get('returnUrl')) || '/', { replace: true });
     } catch {
       setErrorKey('loginFailed');
@@ -135,20 +135,24 @@ export default function SignInPage() {
   const localForm = allowLocal ? (
     <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2.5 }}>
       <FormControl required fullWidth>
-        <FormLabel htmlFor="dwp-username" sx={labelSx}>
-          {t('signIn.username')}
+        <FormLabel htmlFor="dwp-email" sx={labelSx}>
+          {t('signIn.email')}
         </FormLabel>
         <TextField
-          id="dwp-username"
-          name="username"
+          id="dwp-email"
+          name="email"
           required
           fullWidth
           hiddenLabel
+          type="email"
+          inputMode="email"
           autoFocus={!preferSso}
           autoComplete="username"
-          placeholder={t('signIn.usernamePlaceholder')}
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
+          autoCapitalize="none"
+          spellCheck={false}
+          placeholder={t('signIn.emailPlaceholder')}
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
           sx={fieldSx}
         />
       </FormControl>

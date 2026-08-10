@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { calculateAdaptiveGridHeight } from './enterprise-data-grid';
+import { calculateAdaptiveGridHeight, resolveDataGridLocaleText } from './enterprise-data-grid';
 
 const standardGrid = {
   rowHeight: 52,
@@ -41,5 +41,13 @@ describe('calculateAdaptiveGridHeight', () => {
         loading: false,
       })
     ).toBe(522);
+  });
+});
+
+describe('resolveDataGridLocaleText', () => {
+  it('uses the active product language and falls back to English for future locales', () => {
+    expect(resolveDataGridLocaleText('ko-KR').paginationRowsPerPage).toBe('페이지 당 행:');
+    expect(resolveDataGridLocaleText('en-US').paginationRowsPerPage).toBe('Rows per page:');
+    expect(resolveDataGridLocaleText('fr-FR').paginationRowsPerPage).toBe('Rows per page:');
   });
 });

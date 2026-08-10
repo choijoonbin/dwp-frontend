@@ -81,6 +81,12 @@ async function mockAdminSession(page: Page) {
           permissionCode: 'VIEW',
           effect: 'ALLOW',
         },
+        {
+          resourceType: 'ADMIN',
+          resourceKey: 'ADMIN.AUDIT_VIEW',
+          permissionCode: 'VIEW',
+          effect: 'ALLOW',
+        },
       ]),
     })
   );

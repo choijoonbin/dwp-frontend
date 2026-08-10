@@ -9,16 +9,20 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { AuditLog } from '../features/admin/audit-log';
+import { AuditOverview } from '../features/admin/audit-overview';
+import { AuditExplorer } from '../features/admin/audit-explorer';
+import { AuditInvestigations } from '../features/admin/audit-investigations';
+import { AuditGovernance } from '../features/admin/audit-governance';
 import { ApiMonitoring } from '../features/admin/api-monitoring';
 import { AccessManager } from '../features/admin/access-manager';
 import { AnnouncementManager } from '../features/admin/announcement-manager';
-import { DirectoryManager } from '../features/admin/directory-manager';
 import { HomeExperienceManager } from '../features/admin/home-experience-manager';
 import { RegistryManager } from '../features/admin/registry-manager';
 import { ReferenceDataManager } from '../features/admin/reference-data-manager';
 import { TenantBrandingManager } from '../features/admin/tenant-branding-manager';
 import { NavigationManager } from '../features/admin/navigation-manager';
 import { PeopleManager } from '../features/admin/people-manager';
+import { OrganizationChartManager } from '../features/admin/organization-chart/organization-chart-manager';
 import { ProvisioningManager } from '../features/admin/provisioning-manager';
 import { RoleGovernanceManager } from '../features/admin/role-governance-manager';
 import {
@@ -42,7 +46,7 @@ function AdminContent({ view }: { view: AdminView }) {
     case 'branding':
       return <TenantBrandingManager />;
     case 'directory':
-      return <DirectoryManager />;
+      return <OrganizationChartManager />;
     case 'home-experience':
       return <HomeExperienceManager />;
     case 'reference-data':
@@ -53,6 +57,14 @@ function AdminContent({ view }: { view: AdminView }) {
       return <NavigationManager />;
     case 'audit':
       return <AuditLog />;
+    case 'audit-overview':
+      return <AuditOverview />;
+    case 'audit-events':
+      return <AuditExplorer />;
+    case 'audit-investigations':
+      return <AuditInvestigations />;
+    case 'audit-governance':
+      return <AuditGovernance />;
     case 'api-monitoring':
       return <ApiMonitoring />;
   }
@@ -66,7 +78,11 @@ export default function AdminPage() {
   const page = findAdminNavigationItem(section, view);
 
   if (!page) return <Navigate to="/404" replace />;
-  if (page.requiredResourceKey && permissionsLoaded && !hasPermission(page.requiredResourceKey)) {
+  if (
+    page.requiredResourceKey &&
+    permissionsLoaded &&
+    !hasPermission(page.requiredResourceKey, page.requiredPermissionCode)
+  ) {
     return <Navigate to="/403" replace />;
   }
 

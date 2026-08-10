@@ -1,8 +1,21 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Building2, Home, ListChecks, Menu, ShieldCheck } from 'lucide-react';
+import {
+  Building2,
+  BadgeDollarSign,
+  ClipboardList,
+  Gauge,
+  HeartPulse,
+  Home,
+  LifeBuoy,
+  ListChecks,
+  Menu,
+  ShieldCheck,
+} from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { foundationTokens } from '@dwp-frontend/design-system';
+import { getProviderOperatorProfile } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -29,10 +42,68 @@ export function ProviderLayout() {
   const { t } = useTranslation('provider');
   const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const links = [
-    { path: '/provider/tenants', label: t('navigation.tenants'), icon: Building2 },
-    { path: '/provider/operations', label: t('navigation.operations'), icon: ListChecks },
-  ];
+  const operator = useQuery({
+    queryKey: ['provider', 'operator'],
+    queryFn: getProviderOperatorProfile,
+  });
+  const permissions = operator.data?.permissions ?? [];
+  const navigationGroups = [
+    {
+      key: 'operate',
+      items: [
+        {
+          path: '/provider/overview',
+          label: t('navigation.overview'),
+          icon: Gauge,
+          permission: 'ESTATE_READ',
+        },
+        {
+          path: '/provider/tenants',
+          label: t('navigation.tenants'),
+          icon: Building2,
+          permission: 'ESTATE_READ',
+        },
+        {
+          path: '/provider/operations',
+          label: t('navigation.operations'),
+          icon: ListChecks,
+          permission: 'ESTATE_READ',
+        },
+        {
+          path: '/provider/health',
+          label: t('navigation.health'),
+          icon: HeartPulse,
+          permission: 'HEALTH_READ',
+        },
+      ],
+    },
+    {
+      key: 'govern',
+      items: [
+        {
+          path: '/provider/support',
+          label: t('navigation.support'),
+          icon: LifeBuoy,
+          permission: 'ESTATE_READ',
+        },
+        {
+          path: '/provider/commercial',
+          label: t('navigation.commercial'),
+          icon: BadgeDollarSign,
+          permission: 'COMMERCIAL_READ',
+        },
+        {
+          path: '/provider/audit',
+          label: t('navigation.audit'),
+          icon: ClipboardList,
+          permission: 'AUDIT_READ',
+        },
+      ],
+    },
+  ].map((group) => ({
+    ...group,
+    items: group.items.filter((item) => permissions.includes(item.permission)),
+  }));
   const navigation = (onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ minHeight: HEADER_HEIGHT, px: 2, display: 'flex', alignItems: 'center' }}>
@@ -48,7 +119,7 @@ export function ProviderLayout() {
           {t('shell.operatorWorkspace')}
         </Typography>
         <Typography variant="body2" fontWeight={700}>
-          {t('shell.globalScope')}
+          {operator.data?.displayName ?? t('shell.globalScope')}
         </Typography>
       </Box>
       <List
@@ -57,34 +128,52 @@ export function ProviderLayout() {
         disablePadding
         sx={{ flex: 1, px: 1.25, py: 1 }}
       >
-        {links.map((item) => {
-          const Icon = item.icon;
-          const selected = pathname === item.path;
-          return (
-            <ListItemButton
-              key={item.path}
-              component={NavLink}
-              to={item.path}
-              selected={selected}
-              onClick={onNavigate}
-              sx={{
-                minHeight: 42,
-                px: 1.25,
-                borderRadius: 1,
-                color: selected ? 'primary.main' : 'text.secondary',
-                '&.Mui-selected': { bgcolor: 'action.selected' },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 34, color: 'inherit' }}>
-                <Icon size={18} />
-              </ListItemIcon>
-              <ListItemText
-                primary={item.label}
-                primaryTypographyProps={{ variant: 'subtitle2', fontWeight: selected ? 750 : 600 }}
-              />
-            </ListItemButton>
-          );
-        })}
+        {navigationGroups.map((group) =>
+          group.items.length ? (
+            <Fragment key={group.key}>
+              <Typography
+                variant="overline"
+                color="text.secondary"
+                sx={{ display: 'block', px: 1.25, pt: 1.25, pb: 0.5 }}
+              >
+                {t(`navigation.groups.${group.key}`)}
+              </Typography>
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const selected =
+                  pathname === item.path ||
+                  (item.path === '/provider/tenants' && pathname.startsWith('/provider/tenants/'));
+                return (
+                  <ListItemButton
+                    key={item.path}
+                    component={NavLink}
+                    to={item.path}
+                    selected={selected}
+                    onClick={onNavigate}
+                    sx={{
+                      minHeight: 42,
+                      px: 1.25,
+                      borderRadius: 1,
+                      color: selected ? 'primary.main' : 'text.secondary',
+                      '&.Mui-selected': { bgcolor: 'action.selected' },
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 34, color: 'inherit' }}>
+                      <Icon size={18} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.label}
+                      primaryTypographyProps={{
+                        variant: 'subtitle2',
+                        fontWeight: selected ? 750 : 600,
+                      }}
+                    />
+                  </ListItemButton>
+                );
+              })}
+            </Fragment>
+          ) : null
+        )}
       </List>
       <Box sx={{ p: 1.5, borderTop: 1, borderColor: 'divider' }}>
         <Button

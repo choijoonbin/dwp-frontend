@@ -6,6 +6,7 @@ import { resolveRequestLocale } from './locale-preference';
 type AxiosLikeResponse<T> = { data: T };
 type RequestConfig = {
   headers?: Record<string, string>;
+  responseType?: 'json' | 'blob';
 };
 
 type CsrfTokenData = {
@@ -46,8 +47,9 @@ function isMutation(method: string): boolean {
   return !['GET', 'HEAD', 'OPTIONS'].includes(method);
 }
 
-async function parseBody(response: Response): Promise<unknown> {
+async function parseBody(response: Response, responseType: 'json' | 'blob' = 'json') {
   if (response.status === 204) return undefined;
+  if (responseType === 'blob') return response.blob();
   const text = await response.text();
   if (!text) return undefined;
   try {
@@ -93,7 +95,8 @@ async function request<T>(
   method: string,
   url: string,
   body?: unknown,
-  config: RequestConfig = {}
+  config: RequestConfig = {},
+  allowCsrfRetry = true
 ): Promise<AxiosLikeResponse<T>> {
   const headers = buildHeaders(body, config.headers);
   if (isMutation(method)) {
@@ -107,11 +110,15 @@ async function request<T>(
     credentials: 'include',
     body: body === undefined ? undefined : isFormData(body) ? body : JSON.stringify(body),
   });
-  const payload = await parseBody(response);
+  const payload = await parseBody(response, response.ok ? config.responseType : 'json');
 
   if (!response.ok) {
-    if (response.status === 403 && isMutation(method)) resetCsrfToken();
-    if (response.status === 401 || response.status === 403) {
+    const csrfRejected = response.status === 403 && isMutation(method) && payload === undefined;
+    if (csrfRejected) {
+      resetCsrfToken();
+      if (allowCsrfRetry) return request<T>(method, url, body, config, false);
+    }
+    if (response.status === 401 || (response.status === 403 && !isMutation(method))) {
       unauthorizedHandler?.(response.status);
     }
     const record =

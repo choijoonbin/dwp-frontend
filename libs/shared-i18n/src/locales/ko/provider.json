@@ -8,16 +8,48 @@
     "openNavigation": "프로바이더 메뉴 열기",
     "backToWorkspace": "워크스페이스로 돌아가기"
   },
-  "navigation": { "tenants": "테넌트 자산", "operations": "변경 작업" },
+  "navigation": {
+    "overview": "운영 지휘",
+    "tenants": "고객 및 테넌트",
+    "operations": "변경 통제",
+    "health": "서비스 운영",
+    "support": "권한 있는 지원",
+    "commercial": "구독 및 권한",
+    "audit": "거버넌스 및 감사",
+    "groups": {
+      "operate": "운영",
+      "govern": "통제"
+    }
+  },
   "page": {
     "breadcrumb": "Provider Control Plane",
+    "overview": {
+      "title": "운영 지휘 센터",
+      "description": "전체 고객 환경의 상태, 위험 및 우선 조치를 통합 통제합니다."
+    },
     "tenants": {
       "title": "테넌트 자산",
-      "description": "테넌트 수명주기, 격리, 리전 및 제품 사용 권한을 통제합니다."
+      "description": "회사, 실행 환경, 리전, 격리 및 제품 권한을 관리합니다."
     },
     "operations": {
-      "title": "변경 작업",
-      "description": "불변 계획, 실행 단계 및 외부 인프라 Gate를 검토합니다."
+      "title": "변경 통제",
+      "description": "계획, 승인 게이트, 단계별 실행과 복구 이력을 통제합니다."
+    },
+    "health": {
+      "title": "서비스 운영",
+      "description": "서비스·리전·배치 셀 상태와 고객 영향 인시던트를 관리합니다."
+    },
+    "support": {
+      "title": "권한 있는 지원",
+      "description": "승인·사유·범위·시간이 제한된 고객 지원 접근을 통제합니다."
+    },
+    "commercial": {
+      "title": "구독 및 권한",
+      "description": "서비스 플랜, 고객 계약, 갱신 위험과 제품 권한 도입을 관리합니다."
+    },
+    "audit": {
+      "title": "거버넌스 및 감사",
+      "description": "고권한 작업, 변경, 접근 및 결과를 상관관계 단위로 조사합니다."
     }
   },
   "loading": "Provider Control Plane 불러오는 중",
@@ -28,41 +60,65 @@
     "save": "저장",
     "refresh": "새로고침",
     "preview": "계획 미리보기",
-    "execute": "승인한 계획 실행"
+    "execute": "승인한 계획 실행",
+    "retry": "실패 단계 재시도",
+    "back": "이전",
+    "next": "다음",
+    "viewAll": "전체 보기",
+    "copy": "복사",
+    "copied": "클립보드에 복사했습니다.",
+    "create": "등록"
   },
   "errors": {
     "load": "프로바이더 데이터를 불러오지 못했습니다.",
     "operation": "프로바이더 작업을 완료하지 못했습니다."
   },
   "fields": {
-    "organizationKey": "조직 키",
-    "organizationName": "조직명",
-    "legalName": "법인명 (선택)",
-    "customerReference": "고객 참조번호 (선택)",
+    "organizationKey": "회사 키",
+    "organizationName": "회사명",
+    "legalName": "법인명",
+    "customerReference": "고객 참조 번호",
     "tenantKey": "테넌트 키",
     "displayName": "표시명",
-    "environmentKey": "환경 키",
+    "environmentKey": "환경",
+    "defaultLocale": "기본 언어",
+    "timeZone": "시간대",
+    "primaryDomain": "기본 도메인",
+    "initialAdminDisplayName": "관리자 이름",
+    "initialAdminEmail": "관리자 회사 이메일",
     "serviceTier": "서비스 등급",
     "dataRegion": "데이터 리전",
     "isolation": "격리 모델",
-    "defaultLocale": "기본 언어",
-    "timeZone": "시간대",
-    "primaryDomain": "기본 도메인 (선택)",
-    "initialAdminDisplayName": "관리자 이름",
-    "initialAdminEmail": "관리자 이메일",
-    "initialAdminPrincipal": "로그인 계정",
-    "justification": "업무 사유"
+    "justification": "업무 사유",
+    "keyHelp": "영문 소문자로 시작하며 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
+    "lifecycle": "수명주기",
+    "tenant": "테넌트",
+    "scopes": "허용 범위",
+    "duration": "유효 시간",
+    "domain": "도메인",
+    "domainType": "도메인 용도",
+    "createdAt": "등록 시각",
+    "updatedAt": "최근 변경",
+    "schemaVersion": "설정 스키마",
+    "servicePlan": "계약 서비스 플랜",
+    "subscriptionState": "구독 상태",
+    "contractReference": "계약 참조 번호"
   },
-  "tiers": { "STANDARD": "스탠다드", "ENTERPRISE": "엔터프라이즈", "REGULATED": "규제 산업" },
+  "tiers": {
+    "STANDARD": "스탠다드",
+    "ENTERPRISE": "엔터프라이즈",
+    "REGULATED": "규제 산업"
+  },
   "isolation": { "POOL": "공유 풀", "BRIDGE": "브리지", "SILO": "완전 격리" },
   "states": {
+    "ALL": "전체",
     "PROVISIONING": "구성 중",
     "ACTIVE": "활성",
     "SUSPENDED": "일시중지",
     "RETIRED": "종료",
     "PREVIEWED": "검토 대기",
     "CONTROL_PLANE_READY": "제어 정보 준비",
-    "PENDING_EXTERNAL": "외부 Gate 대기",
+    "PENDING_EXTERNAL": "외부 연동 대기",
     "READY": "준비 완료",
     "FAILED": "실패",
     "CANCELLED": "취소",
@@ -71,55 +127,184 @@
     "SUCCEEDED": "성공",
     "PENDING": "대기",
     "RUNNING": "실행 중",
-    "SKIPPED": "건너뜀"
+    "SKIPPED": "건너뜀",
+    "VERIFIED": "검증 완료",
+    "DEGRADED": "성능 저하",
+    "REVOKED": "회수됨",
+    "INVITED": "초대됨",
+    "EXPIRED": "만료됨",
+    "HEALTHY": "정상",
+    "ATTENTION": "주의 필요",
+    "CRITICAL": "심각",
+    "INVESTIGATING": "조사 중",
+    "IDENTIFIED": "원인 식별",
+    "MONITORING": "모니터링",
+    "RESOLVED": "해결됨",
+    "CLOSED": "종료됨",
+    "APPROVED": "승인됨",
+    "REJECTED": "거절됨",
+    "TRIAL": "평가판"
+  },
+  "domainTypes": { "LOGIN": "로그인", "EMAIL": "이메일", "CUSTOM": "사용자 지정" },
+  "operationTypes": {
+    "TENANT_ONBOARD": "테넌트 온보딩",
+    "TENANT_SUSPEND": "테넌트 일시중지",
+    "TENANT_ACTIVATE": "테넌트 활성화",
+    "ENTITLEMENT_CHANGE": "사용 권한 변경"
+  },
+  "overview": {
+    "health": "프로바이더 운영 지표",
+    "metrics": {
+      "organizations": "고객 회사",
+      "tenants": "실행 테넌트",
+      "openOperations": "열린 작업",
+      "supportSessions": "활성 지원 세션"
+    },
+    "attention": { "title": "조치 필요", "empty": "조치가 필요한 작업이 없습니다." },
+    "regions": { "title": "리전 분포" },
+    "recentTenants": { "title": "최근 테넌트" }
+  },
+  "command": {
+    "state": {
+      "HEALTHY": "전체 운영 상태 정상",
+      "ATTENTION": "운영 검토가 필요합니다",
+      "CRITICAL": "즉시 대응이 필요합니다"
+    },
+    "lastEvaluated": "최근 평가 {{value}}",
+    "expiringContracts_one": "90일 이내 갱신 1건",
+    "expiringContracts_other": "90일 이내 갱신 {{count}}건",
+    "metrics": {
+      "label": "전역 운영 지표",
+      "customers": "고객 회사",
+      "activeTenants": "활성 테넌트",
+      "serviceExceptions": "서비스 예외",
+      "openChanges": "열린 변경",
+      "incidents": "활성 인시던트",
+      "support": "활성 지원 접근"
+    },
+    "queue": {
+      "title": "우선 조치 큐",
+      "description": "서비스 영향과 위험도 기준으로 정렬된 운영 조치입니다.",
+      "empty": "현재 조치가 필요한 운영 항목이 없습니다."
+    },
+    "categories": {
+      "CHANGE": "변경 통제",
+      "SERVICE_HEALTH": "서비스 상태",
+      "IDENTITY": "도메인 및 ID",
+      "COMMERCIAL": "계약 및 갱신"
+    },
+    "services": {
+      "title": "서비스 포트폴리오 상태",
+      "description": "모든 테넌트의 서비스 인스턴스 준비 상태입니다.",
+      "open": "서비스 운영",
+      "instances": "정상 {{healthy}} / 전체 {{total}}"
+    },
+    "cells": {
+      "title": "배치 셀 용량",
+      "description": "리전별 테넌트 배치율과 확장 여유입니다.",
+      "tenants": "테넌트"
+    },
+    "activity": {
+      "title": "최근 고권한 활동"
+    }
   },
   "tenants": {
     "title": "관리 테넌트",
-    "search": "테넌트 검색",
+    "description": "회사 계약부터 실행 환경, 서비스 상태와 격리 모델까지 한눈에 관리합니다.",
+    "search": "회사명 또는 테넌트 검색",
+    "noSubscription": "구독 없음",
+    "metrics": {
+      "organizations": "고객 회사",
+      "active": "활성 테넌트",
+      "healthy": "정상 테넌트",
+      "attention": "주의 테넌트"
+    },
     "columns": {
       "tenant": "테넌트",
+      "organization": "고객 회사",
       "tier": "등급",
       "region": "데이터 리전",
       "isolation": "격리",
+      "health": "서비스 상태",
+      "subscription": "계약 플랜",
       "onboarding": "온보딩",
-      "state": "수명주기",
-      "entitlements": "사용 권한"
+      "state": "수명주기"
     },
-    "actions": {
-      "onboard": "테넌트 온보딩",
-      "entitlements": "사용 권한 수정",
-      "suspend": "테넌트 일시중지",
-      "activate": "테넌트 활성화"
-    },
-    "lifecycleJustification": "프로바이더 운영자 수명주기 작업",
-    "toasts": { "lifecycle": "테넌트 수명주기를 변경했습니다." }
+    "actions": { "onboard": "회사 온보딩" }
   },
   "onboarding": {
-    "title": "테넌트 온보딩 계획",
-    "description": "먼저 결정적인 계획을 생성합니다. 하위 서비스와 인프라 Gate가 연결되기 전에는 실행해도 프로바이더 제어 정보만 생성됩니다.",
-    "organization": "고객 조직",
-    "tenantConfiguration": "테넌트 구성",
-    "initialAdministrator": "최초 테넌트 관리자",
-    "entitlements": "초기 사용 권한",
-    "justificationHelp": "프로바이더 감사 이력에 기록됩니다.",
-    "previewed": "검토할 온보딩 계획을 생성했습니다."
+    "title": "회사 및 테넌트 온보딩",
+    "organization": "고객 회사",
+    "tenantConfiguration": "실행 환경",
+    "initialAdministrator": "초기 회사 관리자",
+    "entitlements": "초기 제품 권한",
+    "justificationHelp": "입력한 사유는 감사 이력에 기록됩니다.",
+    "previewed": "검토할 온보딩 계획을 생성했습니다.",
+    "steps": {
+      "organization": "회사",
+      "environment": "실행 환경",
+      "access": "관리자",
+      "review": "권한 및 검토"
+    }
   },
-  "entitlements": { "title": "{{tenant}} 사용 권한", "saved": "테넌트 사용 권한을 변경했습니다." },
+  "entitlements": {
+    "title": "{{tenant}} 제품 권한",
+    "saved": "테넌트 제품 권한을 동기화했습니다."
+  },
   "operations": {
-    "title": "프로바이더 작업",
+    "title": "변경 작업 원장",
+    "description": "요청부터 승인, 실행, 실패 복구까지 변경의 전체 수명주기를 추적합니다.",
+    "filterLabel": "작업 상태 필터",
+    "filters": {
+      "ACTIVE": "진행 중",
+      "FAILED": "실패 및 부분 완료",
+      "COMPLETED": "완료",
+      "ALL": "전체"
+    },
+    "metrics": {
+      "awaitingApproval": "승인 대기",
+      "running": "실행 중",
+      "failed": "복구 필요",
+      "completed": "완료"
+    },
     "reviewTitle": "변경 계획 검토",
     "planHash": "불변 계획 해시",
     "steps": "실행 단계",
-    "externalGateNotice": "프로바이더 제어 정보는 준비되었습니다. 인증, 플랫폼, 구성원, KMS 및 오브젝트 스토리지 어댑터는 명시적 외부 Gate로 남아 있습니다.",
-    "executed": "계획 실행을 시작하고 Gate 상태를 기록했습니다.",
+    "started": "시작",
+    "completed": "완료",
+    "attempts": "시도 {{count}}회",
+    "retryReason": "재시도 사유",
+    "executed": "계획 실행을 완료했습니다.",
+    "retried": "실패 지점부터 작업을 재시도했습니다.",
     "notCreated": "생성 전",
     "columns": {
       "operation": "작업",
       "tenant": "테넌트",
       "risk": "위험",
       "state": "상태",
-      "started": "시작",
-      "steps": "단계"
+      "created": "생성 시각",
+      "steps": "완료 단계"
+    }
+  },
+  "approvals": {
+    "title": "변경 승인 큐",
+    "description": "고위험 작업은 요청자와 분리된 승인자가 업무 사유를 검토해야 합니다.",
+    "empty": "승인 대기 중인 변경이 없습니다.",
+    "expires": "만료 {{value}}",
+    "fields": {
+      "reason": "승인 또는 거절 사유"
+    },
+    "actions": {
+      "APPROVED": "승인",
+      "REJECTED": "거절"
+    },
+    "dialog": {
+      "APPROVED": { "title": "변경 승인" },
+      "REJECTED": { "title": "변경 거절" }
+    },
+    "completed": {
+      "APPROVED": "변경을 승인했습니다.",
+      "REJECTED": "변경을 거절했습니다."
     }
   },
   "steps": {
@@ -127,6 +312,247 @@
     "AUTH_TENANT": "인증 테넌트",
     "PLATFORM_TENANT": "플랫폼 테넌트",
     "PEOPLE_TENANT": "구성원 테넌트",
-    "ASSET_STORAGE": "테넌트 에셋 스토리지"
+    "ASSET_STORAGE": "테넌트 에셋 스토리지",
+    "ACTIVATE_TENANT": "테넌트 활성화"
+  },
+  "health": {
+    "lastUpdated": "최근 평가 {{value}}",
+    "metrics": {
+      "instances": "서비스 인스턴스",
+      "healthy": "정상",
+      "degraded": "성능 저하",
+      "failed": "실패",
+      "impacted": "영향 테넌트"
+    },
+    "services": {
+      "title": "서비스 상태 매트릭스",
+      "description": "서비스별 전체 인스턴스의 준비 상태와 고객 영향을 집계합니다.",
+      "coverage": "정상 {{healthy}} / 전체 {{total}} · 영향 테넌트 {{impacted}}"
+    },
+    "cells": {
+      "title": "리전 및 배치 셀",
+      "description": "테넌트 배치 용량과 셀 단위 운영 상태입니다.",
+      "capacity": "{{region}} · {{used}} / {{total}} 테넌트"
+    },
+    "severity": {
+      "SEV1": "SEV1 · 전체 서비스 중단",
+      "SEV2": "SEV2 · 중대한 고객 영향",
+      "SEV3": "SEV3 · 제한적 성능 저하",
+      "SEV4": "SEV4 · 경미한 운영 이슈"
+    },
+    "scopes": {
+      "GLOBAL": "전역",
+      "REGION": "리전",
+      "CELL": "배치 셀",
+      "SERVICE": "서비스",
+      "TENANT": "테넌트"
+    },
+    "incidents": {
+      "title": "고객 영향 인시던트",
+      "description": "탐지부터 원인 식별, 모니터링, 해결까지 타임라인을 관리합니다.",
+      "filterLabel": "인시던트 상태 필터",
+      "empty": "선택한 범위에 인시던트가 없습니다.",
+      "createTitle": "서비스 인시던트 선언",
+      "createNotice": "인시던트는 고객 영향과 운영 책임을 공식 기록하며 모든 변경이 감사됩니다.",
+      "updateTitle": "{{key}} 상태 업데이트",
+      "declared": "서비스 인시던트를 선언했습니다.",
+      "updated": "인시던트 상태와 타임라인을 갱신했습니다.",
+      "filters": {
+        "ACTIVE": "활성",
+        "RESOLVED": "해결됨",
+        "ALL": "전체"
+      },
+      "actions": {
+        "create": "인시던트 선언",
+        "declare": "인시던트 선언",
+        "update": "상태 업데이트"
+      },
+      "fields": {
+        "title": "인시던트 제목",
+        "severity": "심각도",
+        "scope": "영향 범위",
+        "target": "영향 대상",
+        "impact": "고객 영향",
+        "publicSummary": "고객 안내 요약",
+        "initialUpdate": "초기 조사 내용",
+        "state": "다음 상태",
+        "visibility": "업데이트 공개 범위",
+        "update": "상태 업데이트 내용"
+      },
+      "visibility": {
+        "INTERNAL": "내부 운영 전용",
+        "CUSTOMER": "고객 공유 가능"
+      }
+    }
+  },
+  "support": {
+    "title": "지원 세션",
+    "description": "표준 승인 접근과 비상접근을 분리하고 활성 세션을 즉시 회수합니다.",
+    "createTitle": "시간 제한 지원 액세스",
+    "elevationWarning": "고객 승인 사유와 최소 권한 범위를 확인하십시오.",
+    "breakGlassWarning": "비상접근은 고객 승인 없이 생성되며 L3 고위험 이벤트로 즉시 감사됩니다.",
+    "accessMode": "접근 방식",
+    "approvalReference": "고객 승인 참조",
+    "approvalReferenceHelp": "티켓, 변경 요청 또는 고객 승인 기록의 식별자를 입력합니다.",
+    "modes": {
+      "STANDARD": "승인된 표준 접근",
+      "BREAK_GLASS": "비상접근"
+    },
+    "filterLabel": "지원 세션 상태 필터",
+    "filters": {
+      "ACTIVE": "활성",
+      "HISTORY": "이력",
+      "ALL": "전체"
+    },
+    "metrics": {
+      "active": "활성 세션",
+      "breakGlass": "활성 비상접근",
+      "expiring": "15분 내 만료"
+    },
+    "minutes": "{{count}}분",
+    "tokenTitle": "지원 세션 자격 증명",
+    "tokenOnce": "이 자격 증명은 지금 한 번만 표시됩니다.",
+    "token": "세션 토큰",
+    "tokenCopied": "지원 세션 토큰을 복사했습니다.",
+    "expiresAt": "만료: {{value}}",
+    "revokeReason": "프로바이더 운영자가 지원 세션을 종료함",
+    "revoked": "지원 세션을 회수했습니다.",
+    "actions": { "create": "지원 세션 생성", "revoke": "지원 세션 회수" },
+    "columns": {
+      "tenant": "테넌트",
+      "operator": "운영자",
+      "scopes": "허용 범위",
+      "mode": "접근 방식",
+      "risk": "위험",
+      "expires": "만료 시각",
+      "state": "상태"
+    },
+    "scopes": {
+      "TENANT_CONFIGURATION_READ": "테넌트 설정 조회",
+      "TENANT_CONFIGURATION_WRITE": "테넌트 설정 변경",
+      "WORKFORCE_READ": "구성원 정보 조회"
+    }
+  },
+  "commercial": {
+    "metrics": {
+      "active": "활성 구독",
+      "trials": "평가판",
+      "expiring": "90일 내 갱신",
+      "uncontracted": "구독 미연결 회사"
+    },
+    "plans": {
+      "title": "서비스 플랜 포트폴리오",
+      "description": "버전이 지정된 플랜과 고객·테넌트 배포 현황입니다.",
+      "customers": "고객 회사",
+      "tenants": "테넌트",
+      "version": "{{key}} · 버전 {{version}}"
+    },
+    "subscriptions": {
+      "title": "고객 구독 및 갱신",
+      "description": "회사 단위 계약, 서비스 등급과 갱신 일정을 추적합니다."
+    },
+    "adoption": {
+      "title": "제품 권한 도입 현황",
+      "description": "활성 테넌트 중 각 제품 권한이 할당된 범위입니다."
+    },
+    "columns": {
+      "customer": "고객 회사",
+      "plan": "서비스 플랜",
+      "contract": "계약 참조",
+      "tenants": "테넌트",
+      "entitlements": "활성 권한",
+      "renewal": "갱신 또는 종료",
+      "state": "상태"
+    },
+    "noReference": "참조 없음",
+    "noEndDate": "자동 갱신"
+  },
+  "audit": {
+    "title": "프로바이더 감사 이벤트",
+    "description": "운영 이벤트를 범주, 결과, 테넌트와 상관관계로 조사합니다.",
+    "search": "작업, 대상, 운영자 또는 상관관계 검색",
+    "global": "전역",
+    "allTenants": "전체 테넌트",
+    "allCategories": "전체 범주",
+    "allOutcomes": "전체 결과",
+    "metrics": {
+      "events": "24시간 이벤트",
+      "failed": "24시간 실패",
+      "denied": "24시간 거부",
+      "privileged": "고권한 접근"
+    },
+    "columns": {
+      "time": "발생 시각",
+      "action": "작업",
+      "category": "범주",
+      "tenant": "테넌트",
+      "operator": "운영자",
+      "outcome": "결과",
+      "correlation": "상관관계 ID"
+    },
+    "categories": {
+      "ADMINISTRATION": "관리",
+      "PRIVILEGED_ACCESS": "고권한 접근",
+      "SERVICE_HEALTH": "서비스 상태",
+      "CHANGE_MANAGEMENT": "변경 관리",
+      "TENANT_LIFECYCLE": "테넌트 수명주기"
+    },
+    "detail": {
+      "title": "감사 이벤트 상세",
+      "target": "대상",
+      "snapshot": "비식별화된 이벤트 스냅샷"
+    },
+    "outcomes": { "SUCCESS": "성공", "FAILED": "실패", "DENIED": "거부" }
+  },
+  "tenantDetail": {
+    "back": "테넌트 자산",
+    "tabs": {
+      "overview": "개요",
+      "services": "서비스",
+      "access": "도메인 및 관리자",
+      "entitlements": "제품 권한",
+      "support": "지원 액세스"
+    },
+    "metrics": { "services": "정상 서비스", "authTenant": "인증 테넌트 ID" },
+    "organization": { "title": "회사 및 환경 정보" },
+    "lifecycle": {
+      "updated": "테넌트 수명주기를 변경했습니다.",
+      "ACTIVE": { "title": "테넌트 활성화", "action": "활성화" },
+      "SUSPENDED": { "title": "테넌트 일시중지", "action": "일시중지" }
+    },
+    "services": {
+      "title": "서비스 프로비저닝",
+      "reconciled": "최근 조정 {{value}}"
+    },
+    "domains": {
+      "title": "확인된 도메인",
+      "add": "도메인 등록",
+      "createTitle": "테넌트 도메인 등록",
+      "created": "도메인을 등록했습니다.",
+      "primary": "기본 도메인",
+      "dns": "DNS 레코드",
+      "challengeTitle": "DNS 소유권 확인",
+      "challengeNotice": "DNS 제공자에 다음 TXT 레코드를 등록한 뒤 검증하십시오.",
+      "recordType": "레코드 유형",
+      "recordName": "호스트 이름",
+      "recordValue": "레코드 값",
+      "verify": "DNS 검증",
+      "checked": "도메인 검증 결과를 갱신했습니다."
+    },
+    "administrators": {
+      "title": "회사 관리자",
+      "primary": "기본 관리자",
+      "invite": "활성화 링크 발급",
+      "invited": "관리자 활성화 링크를 발급했습니다.",
+      "invitationTitle": "관리자 계정 활성화",
+      "invitationOnce": "이 활성화 링크는 지금 한 번만 표시됩니다.",
+      "activationLink": "활성화 링크",
+      "expires": "만료: {{value}}"
+    },
+    "support": {
+      "title": "테넌트 지원 세션",
+      "create": "지원 세션 생성",
+      "empty": "이 테넌트의 지원 세션이 없습니다."
+    }
   }
 }

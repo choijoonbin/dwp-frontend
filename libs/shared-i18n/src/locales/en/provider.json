@@ -8,19 +8,51 @@
     "openNavigation": "Open provider navigation",
     "backToWorkspace": "Back to workspace"
   },
-  "navigation": { "tenants": "Tenant estate", "operations": "Change operations" },
-  "page": {
-    "breadcrumb": "Provider Control Plane",
-    "tenants": {
-      "title": "Tenant estate",
-      "description": "Govern tenant lifecycle, isolation, region, and product entitlements."
-    },
-    "operations": {
-      "title": "Change operations",
-      "description": "Review immutable plans, execution steps, and external infrastructure gates."
+  "navigation": {
+    "overview": "Command center",
+    "tenants": "Customers & tenants",
+    "operations": "Change control",
+    "health": "Service operations",
+    "support": "Privileged support",
+    "commercial": "Subscriptions & rights",
+    "audit": "Governance & audit",
+    "groups": {
+      "operate": "Operate",
+      "govern": "Govern"
     }
   },
-  "loading": "Loading provider control plane",
+  "page": {
+    "breadcrumb": "Provider Control Plane",
+    "overview": {
+      "title": "Operations command center",
+      "description": "Control estate health, risk, and priority actions across every customer environment."
+    },
+    "tenants": {
+      "title": "Tenant estate",
+      "description": "Manage companies, environments, regions, isolation, and product access."
+    },
+    "operations": {
+      "title": "Change control",
+      "description": "Control plans, approval gates, staged execution, and recovery history."
+    },
+    "health": {
+      "title": "Service operations",
+      "description": "Manage service, region, cell health, and customer-impacting incidents."
+    },
+    "support": {
+      "title": "Privileged support",
+      "description": "Control customer support access with approval, purpose, scope, and time limits."
+    },
+    "commercial": {
+      "title": "Subscriptions & entitlements",
+      "description": "Manage service plans, contracts, renewal risk, and entitlement adoption."
+    },
+    "audit": {
+      "title": "Governance & audit",
+      "description": "Investigate privileged changes, access, and outcomes by correlation."
+    }
+  },
+  "loading": "Loading Provider Control Plane",
   "notAvailable": "Not available",
   "actions": {
     "cancel": "Cancel",
@@ -28,41 +60,61 @@
     "save": "Save",
     "refresh": "Refresh",
     "preview": "Preview plan",
-    "execute": "Execute approved plan"
+    "execute": "Execute approved plan",
+    "retry": "Retry failed steps",
+    "back": "Back",
+    "next": "Next",
+    "viewAll": "View all",
+    "copy": "Copy",
+    "copied": "Copied to the clipboard.",
+    "create": "Create"
   },
   "errors": {
     "load": "Unable to load provider data.",
     "operation": "The provider operation could not be completed."
   },
   "fields": {
-    "organizationKey": "Organization key",
-    "organizationName": "Organization name",
-    "legalName": "Legal name (optional)",
-    "customerReference": "Customer reference (optional)",
+    "organizationKey": "Company key",
+    "organizationName": "Company name",
+    "legalName": "Legal name",
+    "customerReference": "Customer reference",
     "tenantKey": "Tenant key",
     "displayName": "Display name",
-    "environmentKey": "Environment key",
+    "environmentKey": "Environment",
+    "defaultLocale": "Default locale",
+    "timeZone": "Time zone",
+    "primaryDomain": "Primary domain",
+    "initialAdminDisplayName": "Administrator name",
+    "initialAdminEmail": "Administrator work email",
     "serviceTier": "Service tier",
     "dataRegion": "Data region",
     "isolation": "Isolation model",
-    "defaultLocale": "Default locale",
-    "timeZone": "Time zone",
-    "primaryDomain": "Primary domain (optional)",
-    "initialAdminDisplayName": "Administrator name",
-    "initialAdminEmail": "Administrator email",
-    "initialAdminPrincipal": "Sign-in principal",
-    "justification": "Business justification"
+    "justification": "Business justification",
+    "keyHelp": "Start with a lowercase letter and use lowercase letters, numbers, or hyphens.",
+    "lifecycle": "Lifecycle",
+    "tenant": "Tenant",
+    "scopes": "Scopes",
+    "duration": "Duration",
+    "domain": "Domain",
+    "domainType": "Domain purpose",
+    "createdAt": "Created",
+    "updatedAt": "Last updated",
+    "schemaVersion": "Configuration schema",
+    "servicePlan": "Contract service plan",
+    "subscriptionState": "Subscription state",
+    "contractReference": "Contract reference"
   },
   "tiers": { "STANDARD": "Standard", "ENTERPRISE": "Enterprise", "REGULATED": "Regulated" },
   "isolation": { "POOL": "Pool", "BRIDGE": "Bridge", "SILO": "Silo" },
   "states": {
+    "ALL": "All",
     "PROVISIONING": "Provisioning",
     "ACTIVE": "Active",
     "SUSPENDED": "Suspended",
     "RETIRED": "Retired",
-    "PREVIEWED": "Previewed",
-    "CONTROL_PLANE_READY": "Control plane ready",
-    "PENDING_EXTERNAL": "External gate pending",
+    "PREVIEWED": "Awaiting review",
+    "CONTROL_PLANE_READY": "Control record ready",
+    "PENDING_EXTERNAL": "External integration pending",
     "READY": "Ready",
     "FAILED": "Failed",
     "CANCELLED": "Cancelled",
@@ -71,58 +123,184 @@
     "SUCCEEDED": "Succeeded",
     "PENDING": "Pending",
     "RUNNING": "Running",
-    "SKIPPED": "Skipped"
+    "SKIPPED": "Skipped",
+    "VERIFIED": "Verified",
+    "DEGRADED": "Degraded",
+    "REVOKED": "Revoked",
+    "INVITED": "Invited",
+    "EXPIRED": "Expired",
+    "HEALTHY": "Healthy",
+    "ATTENTION": "Needs attention",
+    "CRITICAL": "Critical",
+    "INVESTIGATING": "Investigating",
+    "IDENTIFIED": "Identified",
+    "MONITORING": "Monitoring",
+    "RESOLVED": "Resolved",
+    "CLOSED": "Closed",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "TRIAL": "Trial"
+  },
+  "domainTypes": { "LOGIN": "Sign-in", "EMAIL": "Email", "CUSTOM": "Custom" },
+  "operationTypes": {
+    "TENANT_ONBOARD": "Tenant onboarding",
+    "TENANT_SUSPEND": "Tenant suspension",
+    "TENANT_ACTIVATE": "Tenant activation",
+    "ENTITLEMENT_CHANGE": "Entitlement change"
+  },
+  "overview": {
+    "health": "Provider operating metrics",
+    "metrics": {
+      "organizations": "Customer companies",
+      "tenants": "Runtime tenants",
+      "openOperations": "Open operations",
+      "supportSessions": "Active support sessions"
+    },
+    "attention": { "title": "Needs attention", "empty": "No operations require attention." },
+    "regions": { "title": "Regional distribution" },
+    "recentTenants": { "title": "Recent tenants" }
+  },
+  "command": {
+    "state": {
+      "HEALTHY": "All systems operating normally",
+      "ATTENTION": "Operational review is required",
+      "CRITICAL": "Immediate response is required"
+    },
+    "lastEvaluated": "Last evaluated {{value}}",
+    "expiringContracts_one": "1 renewal within 90 days",
+    "expiringContracts_other": "{{count}} renewals within 90 days",
+    "metrics": {
+      "label": "Global operating metrics",
+      "customers": "Customer companies",
+      "activeTenants": "Active tenants",
+      "serviceExceptions": "Service exceptions",
+      "openChanges": "Open changes",
+      "incidents": "Active incidents",
+      "support": "Active support access"
+    },
+    "queue": {
+      "title": "Priority action queue",
+      "description": "Operational actions ordered by customer impact and risk.",
+      "empty": "There are no operational actions requiring attention."
+    },
+    "categories": {
+      "CHANGE": "Change control",
+      "SERVICE_HEALTH": "Service health",
+      "IDENTITY": "Domain & identity",
+      "COMMERCIAL": "Contract & renewal"
+    },
+    "services": {
+      "title": "Service portfolio health",
+      "description": "Readiness across every tenant service instance.",
+      "open": "Service operations",
+      "instances": "{{healthy}} healthy of {{total}}"
+    },
+    "cells": {
+      "title": "Deployment cell capacity",
+      "description": "Tenant placement and expansion headroom by region.",
+      "tenants": "tenants"
+    },
+    "activity": {
+      "title": "Recent privileged activity"
+    }
   },
   "tenants": {
     "title": "Managed tenants",
-    "search": "Search tenants",
+    "description": "Manage company contracts, runtime environments, service health, and isolation in one view.",
+    "search": "Search company or tenant",
+    "noSubscription": "No subscription",
+    "metrics": {
+      "organizations": "Customer companies",
+      "active": "Active tenants",
+      "healthy": "Healthy tenants",
+      "attention": "Tenants needing attention"
+    },
     "columns": {
       "tenant": "Tenant",
+      "organization": "Customer company",
       "tier": "Tier",
       "region": "Data region",
       "isolation": "Isolation",
+      "health": "Service health",
+      "subscription": "Contract plan",
       "onboarding": "Onboarding",
-      "state": "Lifecycle",
-      "entitlements": "Entitlements"
+      "state": "Lifecycle"
     },
-    "actions": {
-      "onboard": "Onboard tenant",
-      "entitlements": "Edit entitlements",
-      "suspend": "Suspend tenant",
-      "activate": "Activate tenant"
-    },
-    "lifecycleJustification": "Provider operator lifecycle action",
-    "toasts": { "lifecycle": "Tenant lifecycle updated." }
+    "actions": { "onboard": "Onboard company" }
   },
   "onboarding": {
-    "title": "Plan tenant onboarding",
-    "description": "Create a deterministic plan first. Execution creates only the provider control record until downstream and infrastructure gates are connected.",
-    "organization": "Customer organization",
-    "tenantConfiguration": "Tenant configuration",
-    "initialAdministrator": "Initial tenant administrator",
-    "entitlements": "Initial entitlements",
-    "justificationHelp": "Recorded in the provider audit trail",
-    "previewed": "Onboarding plan created for review."
+    "title": "Company and tenant onboarding",
+    "organization": "Customer company",
+    "tenantConfiguration": "Runtime environment",
+    "initialAdministrator": "Initial company administrator",
+    "entitlements": "Initial product access",
+    "justificationHelp": "Recorded in the provider audit trail.",
+    "previewed": "Onboarding plan created for review.",
+    "steps": {
+      "organization": "Company",
+      "environment": "Environment",
+      "access": "Administrator",
+      "review": "Access and review"
+    }
   },
   "entitlements": {
-    "title": "Entitlements for {{tenant}}",
-    "saved": "Tenant entitlements updated."
+    "title": "Product access for {{tenant}}",
+    "saved": "Tenant product access synchronized."
   },
   "operations": {
-    "title": "Provider operations",
+    "title": "Change execution ledger",
+    "description": "Track the complete change lifecycle from request and approval to execution and recovery.",
+    "filterLabel": "Operation state filter",
+    "filters": {
+      "ACTIVE": "In progress",
+      "FAILED": "Failed & partial",
+      "COMPLETED": "Completed",
+      "ALL": "All"
+    },
+    "metrics": {
+      "awaitingApproval": "Awaiting approval",
+      "running": "Running",
+      "failed": "Recovery required",
+      "completed": "Completed"
+    },
     "reviewTitle": "Review change plan",
     "planHash": "Immutable plan hash",
     "steps": "Execution steps",
-    "externalGateNotice": "The provider record is ready. Auth, platform, people, KMS, and object-storage adapters remain explicit external gates.",
-    "executed": "Plan execution started and gate states recorded.",
+    "started": "Started",
+    "completed": "Completed",
+    "attempts": "{{count}} attempts",
+    "retryReason": "Retry justification",
+    "executed": "Plan execution completed.",
+    "retried": "Operation retried from the failed step.",
     "notCreated": "Not created",
     "columns": {
       "operation": "Operation",
       "tenant": "Tenant",
       "risk": "Risk",
       "state": "State",
-      "started": "Started",
-      "steps": "Steps"
+      "created": "Created",
+      "steps": "Completed steps"
+    }
+  },
+  "approvals": {
+    "title": "Change approval queue",
+    "description": "High-risk operations require a role-qualified approver who is separate from the requester.",
+    "empty": "No changes are awaiting approval.",
+    "expires": "Expires {{value}}",
+    "fields": {
+      "reason": "Approval or rejection reason"
+    },
+    "actions": {
+      "APPROVED": "Approve",
+      "REJECTED": "Reject"
+    },
+    "dialog": {
+      "APPROVED": { "title": "Approve change" },
+      "REJECTED": { "title": "Reject change" }
+    },
+    "completed": {
+      "APPROVED": "The change was approved.",
+      "REJECTED": "The change was rejected."
     }
   },
   "steps": {
@@ -130,6 +308,244 @@
     "AUTH_TENANT": "Identity tenant",
     "PLATFORM_TENANT": "Platform tenant",
     "PEOPLE_TENANT": "People tenant",
-    "ASSET_STORAGE": "Tenant asset storage"
+    "ASSET_STORAGE": "Tenant asset storage",
+    "ACTIVATE_TENANT": "Tenant activation"
+  },
+  "health": {
+    "lastUpdated": "Last evaluated {{value}}",
+    "metrics": {
+      "instances": "Service instances",
+      "healthy": "Healthy",
+      "degraded": "Degraded",
+      "failed": "Failed",
+      "impacted": "Impacted tenants"
+    },
+    "services": {
+      "title": "Service health matrix",
+      "description": "Aggregate readiness and customer impact across each service portfolio.",
+      "coverage": "{{healthy}} healthy of {{total}} · {{impacted}} impacted tenants"
+    },
+    "cells": {
+      "title": "Regions & deployment cells",
+      "description": "Tenant placement capacity and cell-level operating health.",
+      "capacity": "{{region}} · {{used}} of {{total}} tenants"
+    },
+    "severity": {
+      "SEV1": "SEV1 · Global service outage",
+      "SEV2": "SEV2 · Major customer impact",
+      "SEV3": "SEV3 · Limited degradation",
+      "SEV4": "SEV4 · Minor operational issue"
+    },
+    "scopes": {
+      "GLOBAL": "Global",
+      "REGION": "Region",
+      "CELL": "Deployment cell",
+      "SERVICE": "Service",
+      "TENANT": "Tenant"
+    },
+    "incidents": {
+      "title": "Customer-impacting incidents",
+      "description": "Manage the timeline from detection through identification, monitoring, and resolution.",
+      "filterLabel": "Incident state filter",
+      "empty": "No incidents match the selected scope.",
+      "createTitle": "Declare service incident",
+      "createNotice": "An incident formally records customer impact and operational ownership. Every change is audited.",
+      "updateTitle": "Update {{key}}",
+      "declared": "The service incident was declared.",
+      "updated": "The incident state and timeline were updated.",
+      "filters": {
+        "ACTIVE": "Active",
+        "RESOLVED": "Resolved",
+        "ALL": "All"
+      },
+      "actions": {
+        "create": "Declare incident",
+        "declare": "Declare incident",
+        "update": "Update state"
+      },
+      "fields": {
+        "title": "Incident title",
+        "severity": "Severity",
+        "scope": "Impact scope",
+        "target": "Impacted target",
+        "impact": "Customer impact",
+        "publicSummary": "Customer-facing summary",
+        "initialUpdate": "Initial investigation update",
+        "state": "Next state",
+        "visibility": "Update visibility",
+        "update": "Status update"
+      },
+      "visibility": {
+        "INTERNAL": "Internal operations only",
+        "CUSTOMER": "Customer shareable"
+      }
+    }
+  },
+  "support": {
+    "title": "Support sessions",
+    "description": "Separate approved access from emergency access and revoke active sessions immediately.",
+    "createTitle": "Time-bound support access",
+    "elevationWarning": "Confirm the customer-approved reason and least-privilege scope.",
+    "breakGlassWarning": "Emergency access is created without customer approval and immediately audited as an L3 event.",
+    "accessMode": "Access mode",
+    "approvalReference": "Customer approval reference",
+    "approvalReferenceHelp": "Enter the ticket, change request, or customer approval record identifier.",
+    "modes": {
+      "STANDARD": "Approved standard access",
+      "BREAK_GLASS": "Emergency access"
+    },
+    "filterLabel": "Support session state filter",
+    "filters": {
+      "ACTIVE": "Active",
+      "HISTORY": "History",
+      "ALL": "All"
+    },
+    "metrics": {
+      "active": "Active sessions",
+      "breakGlass": "Active emergency access",
+      "expiring": "Expiring within 15 min"
+    },
+    "minutes": "{{count}} minutes",
+    "tokenTitle": "Support session credential",
+    "tokenOnce": "This credential is shown only once.",
+    "token": "Session token",
+    "tokenCopied": "Support session token copied.",
+    "expiresAt": "Expires: {{value}}",
+    "revokeReason": "Support session ended by provider operator",
+    "revoked": "Support session revoked.",
+    "actions": { "create": "Create support session", "revoke": "Revoke support session" },
+    "columns": {
+      "tenant": "Tenant",
+      "operator": "Operator",
+      "scopes": "Scopes",
+      "mode": "Access mode",
+      "risk": "Risk",
+      "expires": "Expires",
+      "state": "State"
+    },
+    "scopes": {
+      "TENANT_CONFIGURATION_READ": "Read tenant configuration",
+      "TENANT_CONFIGURATION_WRITE": "Change tenant configuration",
+      "WORKFORCE_READ": "Read workforce data"
+    }
+  },
+  "commercial": {
+    "metrics": {
+      "active": "Active subscriptions",
+      "trials": "Trials",
+      "expiring": "Renewing within 90 days",
+      "uncontracted": "Companies without subscription"
+    },
+    "plans": {
+      "title": "Service plan portfolio",
+      "description": "Versioned plans and their customer and tenant deployment footprint.",
+      "customers": "Customer companies",
+      "tenants": "Tenants",
+      "version": "{{key}} · version {{version}}"
+    },
+    "subscriptions": {
+      "title": "Customer subscriptions & renewals",
+      "description": "Track company contracts, service tiers, and renewal schedules."
+    },
+    "adoption": {
+      "title": "Entitlement adoption",
+      "description": "The share of active tenants assigned to each product entitlement."
+    },
+    "columns": {
+      "customer": "Customer company",
+      "plan": "Service plan",
+      "contract": "Contract reference",
+      "tenants": "Tenants",
+      "entitlements": "Active rights",
+      "renewal": "Renewal or end",
+      "state": "State"
+    },
+    "noReference": "No reference",
+    "noEndDate": "Auto-renewing"
+  },
+  "audit": {
+    "title": "Provider audit events",
+    "description": "Investigate operations by category, outcome, tenant, and correlation.",
+    "search": "Search action, target, operator, or correlation",
+    "global": "Global",
+    "allTenants": "All tenants",
+    "allCategories": "All categories",
+    "allOutcomes": "All outcomes",
+    "metrics": {
+      "events": "24-hour events",
+      "failed": "24-hour failures",
+      "denied": "24-hour denials",
+      "privileged": "Privileged access"
+    },
+    "columns": {
+      "time": "Occurred",
+      "action": "Action",
+      "category": "Category",
+      "tenant": "Tenant",
+      "operator": "Operator",
+      "outcome": "Outcome",
+      "correlation": "Correlation ID"
+    },
+    "categories": {
+      "ADMINISTRATION": "Administration",
+      "PRIVILEGED_ACCESS": "Privileged access",
+      "SERVICE_HEALTH": "Service health",
+      "CHANGE_MANAGEMENT": "Change management",
+      "TENANT_LIFECYCLE": "Tenant lifecycle"
+    },
+    "detail": {
+      "title": "Audit event details",
+      "target": "Target",
+      "snapshot": "Redacted event snapshot"
+    },
+    "outcomes": { "SUCCESS": "Success", "FAILED": "Failed", "DENIED": "Denied" }
+  },
+  "tenantDetail": {
+    "back": "Tenant estate",
+    "tabs": {
+      "overview": "Overview",
+      "services": "Services",
+      "access": "Domains and administrators",
+      "entitlements": "Product access",
+      "support": "Support access"
+    },
+    "metrics": { "services": "Healthy services", "authTenant": "Identity tenant ID" },
+    "organization": { "title": "Company and environment" },
+    "lifecycle": {
+      "updated": "Tenant lifecycle updated.",
+      "ACTIVE": { "title": "Activate tenant", "action": "Activate" },
+      "SUSPENDED": { "title": "Suspend tenant", "action": "Suspend" }
+    },
+    "services": { "title": "Service provisioning", "reconciled": "Last reconciled {{value}}" },
+    "domains": {
+      "title": "Verified domains",
+      "add": "Register domain",
+      "createTitle": "Register tenant domain",
+      "created": "Domain registered.",
+      "primary": "Primary domain",
+      "dns": "DNS record",
+      "challengeTitle": "Verify DNS ownership",
+      "challengeNotice": "Add the following TXT record with the DNS provider, then verify.",
+      "recordType": "Record type",
+      "recordName": "Host name",
+      "recordValue": "Record value",
+      "verify": "Verify DNS",
+      "checked": "Domain verification result updated."
+    },
+    "administrators": {
+      "title": "Company administrators",
+      "primary": "Primary administrator",
+      "invite": "Issue activation link",
+      "invited": "Administrator activation link issued.",
+      "invitationTitle": "Activate administrator account",
+      "invitationOnce": "This activation link is shown only once.",
+      "activationLink": "Activation link",
+      "expires": "Expires: {{value}}"
+    },
+    "support": {
+      "title": "Tenant support sessions",
+      "create": "Create support session",
+      "empty": "No support sessions exist for this tenant."
+    }
   }
 }

@@ -48,9 +48,9 @@
         "description": "Review the tenant-safe workforce projection and effective-dated assignments."
       },
       "directory": {
-        "label": "Directory",
-        "title": "Organization directory",
-        "description": "Manage organizations and groups used for scoped access and experiences."
+        "label": "Organization chart",
+        "title": "Organization chart",
+        "description": "Explore effective-dated organization, reporting, matrix, and open-position structures."
       },
       "provisioning": {
         "label": "Provisioning",
@@ -81,6 +81,26 @@
         "label": "Audit log",
         "title": "Audit log",
         "description": "Trace privileged changes, actor identity, outcome, and correlation context."
+      },
+      "audit-overview": {
+        "label": "Audit overview",
+        "title": "Audit posture",
+        "description": "Assess tenant evidence coverage, risk concentration, findings, and investigations."
+      },
+      "audit-events": {
+        "label": "Event explorer",
+        "title": "Event explorer",
+        "description": "Search immutable evidence across identities, data, provisioning, and AI actions."
+      },
+      "audit-investigations": {
+        "label": "Findings & cases",
+        "title": "Findings and cases",
+        "description": "Triage high-risk activity and maintain accountable investigation workflows."
+      },
+      "audit-governance": {
+        "label": "Retention & integrity",
+        "title": "Retention and integrity",
+        "description": "Control evidence retention, exports, risk thresholds, and integrity checkpoints."
       }
     }
   },
@@ -561,6 +581,209 @@
       }
     }
   },
+  "auditControl": {
+    "loading": "Loading audit evidence",
+    "loadError": "Audit evidence could not be loaded.",
+    "updated": "Updated {{time}}",
+    "windows": { "H24": "24h", "D7": "7d", "D30": "30d", "D90": "90d" },
+    "filters": {
+      "window": "Time window",
+      "category": "Category",
+      "severity": "Severity",
+      "outcome": "Outcome",
+      "advanced": "Advanced filters",
+      "sourceService": "Source service",
+      "actor": "Actor identity",
+      "clear": "Clear filters",
+      "searchPlaceholder": "Search activity, target, actor, correlation, or trace",
+      "apply": "Apply filters"
+    },
+    "savedSearches": {
+      "label": "Saved views",
+      "current": "Current filters",
+      "description": "Reuse governed investigation scopes without rebuilding filters.",
+      "save": "Save current view",
+      "delete": "Delete saved view",
+      "saveTitle": "Save investigation view",
+      "name": "View name",
+      "shared": "Share with tenant audit teams",
+      "upsertHint": "Saving the same name updates your existing view.",
+      "saved": "Investigation view saved.",
+      "saveFailed": "The investigation view could not be saved.",
+      "deleted": "Saved investigation view deleted.",
+      "deleteFailed": "The saved investigation view could not be deleted."
+    },
+    "category": {
+      "ALL": "All categories",
+      "ADMIN_CHANGE": "Administration",
+      "AUTHENTICATION": "Authentication",
+      "AUTHORIZATION": "Authorization",
+      "DATA_ACCESS": "Data access",
+      "DATA_EXPORT": "Data export",
+      "PROVISIONING": "Provisioning",
+      "AI_ACTION": "AI action",
+      "POLICY_DENIED": "Policy denied",
+      "SYSTEM_EVENT": "System"
+    },
+    "severity": {
+      "ALL": "All severities",
+      "INFO": "Info",
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
+      "CRITICAL": "Critical"
+    },
+    "outcome": {
+      "ALL": "All outcomes",
+      "SUCCESS": "Success",
+      "DENIED": "Denied",
+      "FAILED": "Failed"
+    },
+    "kpi": {
+      "events": "Evidence events",
+      "selectedWindow": "Selected observation window",
+      "highRisk": "High risk",
+      "reviewPriority": "Priority review required",
+      "denied": "Denied",
+      "policyAndAccess": "Policy and access decisions",
+      "findings": "Open findings",
+      "openQueue": "Investigator queue",
+      "cases": "Active cases",
+      "activeInvestigations": "Accountable investigations",
+      "sources": "Healthy sources",
+      "healthyCollectors": "Reporting services"
+    },
+    "overview": {
+      "posture": "Evidence posture",
+      "indicators": "Audit posture indicators",
+      "trend": "Evidence trend",
+      "trendDescription": "Event volume with high-risk concentration across the selected window.",
+      "trendLabel": "Audit event and high-risk trend",
+      "categories": "Evidence coverage",
+      "attention": "Needs attention",
+      "noFindings": "No open high-risk findings.",
+      "sourceHealth": "Source coverage"
+    },
+    "source": {
+      "service": "Source service",
+      "status": "Delivery",
+      "events24h": "24h events",
+      "states": { "HEALTHY": "Healthy", "DEGRADED": "Degraded", "STALE": "Stale", "ERROR": "Error" }
+    },
+    "events": {
+      "label": "Immutable audit evidence events",
+      "columns": {
+        "time": "Time",
+        "severity": "Severity",
+        "risk": "Risk",
+        "activity": "Activity",
+        "actor": "Actor",
+        "target": "Target",
+        "source": "Source",
+        "outcome": "Outcome"
+      }
+    },
+    "detail": {
+      "context": "Event context",
+      "occurredAt": "Occurred at",
+      "roles": "Effective roles",
+      "retention": "Retention class",
+      "traceability": "Traceability",
+      "correlation": "Correlation ID",
+      "trace": "Trace ID",
+      "eventId": "Event ID",
+      "hash": "Record hash",
+      "change": "Change evidence",
+      "before": "Before",
+      "after": "After",
+      "metadata": "Governed metadata",
+      "copy": "Copy value",
+      "copied": "Value copied"
+    },
+    "export": {
+      "open": "Export evidence",
+      "title": "Export audit evidence",
+      "scope": "{{window}} / up to {{count}} matching events",
+      "reason": "Business reason",
+      "download": "Create and download",
+      "formats": { "CSV": "CSV", "JSONL": "JSONL" },
+      "completed": "Exported {{count}} evidence rows.",
+      "failed": "Audit export could not be completed."
+    },
+    "findingStatus": {
+      "ALL": "All states",
+      "OPEN": "Open",
+      "ACKNOWLEDGED": "Acknowledged",
+      "INVESTIGATING": "Investigating",
+      "RESOLVED": "Resolved",
+      "DISMISSED": "Dismissed"
+    },
+    "caseStatus": {
+      "OPEN": "Open",
+      "INVESTIGATING": "Investigating",
+      "CONTAINED": "Contained",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed"
+    },
+    "investigations": {
+      "views": "Investigation views",
+      "findings": "Findings",
+      "cases": "Cases",
+      "status": "Status",
+      "newCase": "New case",
+      "priority": "Priority",
+      "finding": "Finding",
+      "firstLast": "First / last seen",
+      "occurrences_one": "{{count}} occurrence",
+      "occurrences_other": "{{count}} occurrences",
+      "owner": "Owner",
+      "noFindings": "No findings match this state.",
+      "caseNumber": "Case",
+      "caseTitle": "Case title",
+      "caseDescription": "Case description",
+      "evidence": "Evidence",
+      "evidenceCount": "{{events}} events / {{findings}} findings",
+      "updated": "Updated",
+      "risk": "Risk score",
+      "linkCase": "Linked case",
+      "noCase": "No linked case",
+      "resolution": "Investigator notes or resolution",
+      "saveFinding": "Save finding",
+      "findingUpdated": "Finding workflow updated.",
+      "caseCreated": "Investigation case created.",
+      "caseUpdated": "Case status updated.",
+      "closedResolution": "Case reviewed and closed."
+    },
+    "governance": {
+      "policy": "Evidence policy",
+      "policyUpdated": "Last updated by {{actor}} / {{time}}",
+      "retention": "Retention classes",
+      "standardDays": "Standard retention (days)",
+      "extendedDays": "Extended retention (days)",
+      "riskAndExport": "Risk and export controls",
+      "riskThreshold": "High-risk threshold",
+      "exportLimit": "Maximum export rows",
+      "requireReason": "Require a business reason for every export",
+      "integrityEnabled": "Enable daily integrity checkpoints",
+      "saved": "Audit policy saved.",
+      "integrity": "Integrity checkpoints",
+      "integrityDescription": "Daily hash-chain verification for append-only evidence.",
+      "verify": "Verify now",
+      "checkpointCreated": "Integrity checkpoint verified.",
+      "appendOnly": "Append-only evidence store",
+      "appendOnlyStatus": "Mutations are blocked; retention deletion requires the controlled maintenance path.",
+      "date": "UTC date",
+      "records": "Records",
+      "signature": "Checkpoint hash",
+      "status": "Verification",
+      "noCheckpoints": "No integrity checkpoints have been generated yet."
+    },
+    "integrityStatus": {
+      "VERIFIED": "Verified",
+      "FAILED": "Failed",
+      "UNAVAILABLE": "Key unavailable"
+    }
+  },
   "audit": {
     "title": "Administration audit",
     "loading": "Loading audit events",
@@ -659,131 +882,38 @@
       }
     }
   },
-  "directory": {
-    "title": "Directory",
-    "loading": "Loading directory",
-    "type": "Directory type",
-    "organizations": "Organizations",
-    "groups": "Groups",
-    "directoryGroups": "Directory groups",
-    "directoryUsers": "Directory users",
-    "searchOrganizations": "Search organizations",
-    "searchGroups": "Search groups",
-    "allStatuses": "All statuses",
-    "noOrganizations": "No organizations found",
-    "noGroups": "No groups found",
-    "noParent": "No parent",
-    "topLevel": "Top level",
-    "loadingUsers": "Loading users",
-    "managedByScim": "Managed by SCIM",
-    "organizationFallback": "Organization {{id}}",
-    "selectedCount_one": "{{count}} selected",
-    "selectedCount_other": "{{count}} selected",
-    "memberCount_one": "{{count}} member",
-    "memberCount_other": "{{count}} members",
-    "moveFrom": "Move from {{organization}}",
-    "revisionShort": "Rev {{revision}}",
-    "previousPage": "Previous page",
-    "nextPage": "Next page",
-    "pageOf": "Page {{page}} of {{total}}",
-    "sources": {
-      "SCIM": "SCIM managed",
-      "LOCAL": "Local"
-    },
-    "kinds": {
-      "organization": "organization",
-      "group": "group",
-      "entry": "entry"
-    },
-    "columns": {
-      "organization": "Organization",
-      "group": "Group",
-      "parent": "Parent",
-      "members": "Members",
-      "source": "Source",
-      "status": "Status",
-      "revision": "Revision",
-      "actions": "Actions"
-    },
-    "fields": {
-      "organizationKey": "Organization key",
-      "groupKey": "Group key",
-      "name": "Name",
-      "displayName": "Display name",
-      "parentOrganization": "Parent organization",
-      "description": "Description",
-      "findUsers": "Find users"
-    },
-    "dialogs": {
-      "organization": {
-        "editTitle": "Edit organization",
-        "newTitle": "New organization"
-      },
-      "group": {
-        "editTitle": "Edit group",
-        "newTitle": "New group"
-      },
-      "members": {
-        "title": "Manage members",
-        "organizationNotice": "Changing primary organization moves users from their previous organization and revokes affected sessions.",
-        "groupNotice": "Changing group membership revokes affected user sessions."
-      }
-    },
-    "actions": {
-      "saveChanges": "Save changes",
-      "createOrganization": "Create organization",
-      "createGroup": "Create group",
-      "saveMembers": "Save members",
-      "newOrganization": "New organization",
-      "newGroup": "New group",
-      "editOrganization": "Edit organization",
-      "editGroup": "Edit group",
-      "editNamed": "Edit {{name}}",
-      "manageMembers": "Manage members",
-      "manageMembersFor": "Manage members for {{name}}",
-      "activate": "Activate",
-      "deactivate": "Deactivate",
-      "activateNamed": "Activate {{name}}",
-      "deactivateNamed": "Deactivate {{name}}",
-      "refresh": "Refresh directory"
-    },
-    "confirm": {
-      "activateTitle": "Activate {{subject}}?",
-      "deactivateTitle": "Deactivate {{subject}}?",
-      "activateMessage": "This {{kind}} will become available for assignments.",
-      "deactivateMessage": "This {{kind}} must have no active dependants or members."
-    },
-    "toasts": {
-      "organizationCreated": "Organization created.",
-      "organizationUpdated": "Organization updated.",
-      "groupCreated": "Group created.",
-      "groupUpdated": "Group updated.",
-      "organizationMembersUpdated": "Organization members updated and affected sessions revoked.",
-      "groupMembersUpdated": "Group members updated and affected sessions revoked.",
-      "organizationActivated": "Organization activated.",
-      "organizationDeactivated": "Organization deactivated.",
-      "groupActivated": "Group activated.",
-      "groupDeactivated": "Group deactivated."
-    }
-  },
   "people": {
-    "title": "People projection",
+    "title": "People directory",
     "loading": "Loading people projection",
     "search": "Search people",
     "asOf": "As of {{date}}",
+    "resultCount": "{{count}} people",
     "notAvailable": "Not available",
     "masked": "Masked",
-    "filters": { "status": "Worker status", "asOf": "Effective date" },
+    "filters": {
+      "status": "Worker status",
+      "organization": "Organization",
+      "grade": "Job grade",
+      "location": "Location",
+      "role": "System role",
+      "asOf": "Effective date",
+      "all": "All",
+      "reset": "Reset filters ({{count}})"
+    },
     "status": {
       "ALL": "All statuses",
       "ACTIVE": "Active",
       "LEAVE": "On leave",
+      "PENDING": "Pending start",
       "TERMINATED": "Terminated"
     },
     "columns": {
       "person": "Person",
       "organization": "Organization",
       "title": "Business title",
+      "position": "Position / grade",
+      "manager": "Reports to",
+      "roles": "System roles",
       "status": "Status",
       "workerNumber": "Worker number",
       "location": "Location"
@@ -792,13 +922,89 @@
     "detail": {
       "title": "Workforce profile",
       "loading": "Loading workforce profile",
+      "close": "Close workforce profile",
       "employer": "Legal employer",
       "hireDate": "Original hire date",
-      "manager": "Manager assignment",
+      "manager": "Reports to",
+      "jobGrade": "Job grade",
       "classification": "Data classification",
+      "roles": "System roles",
+      "noRoles": "No system role assigned",
+      "directReports": "{{count}} direct reports",
+      "noDirectReports": "No direct reports",
       "assignments": "Effective assignments",
       "primary": "Primary",
       "current": "Current"
+    }
+  },
+  "orgChart": {
+    "loading": "Loading organization chart",
+    "search": "Search organizations, people, or titles",
+    "canvasLabel": "SKAX organization chart workspace",
+    "asOf": "As of {{date}}",
+    "view": {
+      "label": "Organization chart view",
+      "organizations": "Organization",
+      "people": "Reporting lines"
+    },
+    "filters": { "asOf": "Effective date" },
+    "metrics": {
+      "headcount": "Headcount",
+      "organizations": "Active organizations",
+      "managers": "Leaders",
+      "openPositions": "Open positions",
+      "locations": "Locations"
+    },
+    "node": {
+      "headcount": "{{count}} people",
+      "openPositions": "{{count}} open",
+      "directReports": "{{count}} direct"
+    },
+    "actions": {
+      "matrix": "Matrix relationships",
+      "changeDirection": "Change layout direction",
+      "collapse": "Collapse descendants",
+      "expand": "Expand descendants",
+      "collapseAll": "Collapse all",
+      "expandAll": "Expand all",
+      "closeDetails": "Close details",
+      "focusOrganization": "Focus this organization",
+      "showCompany": "Show all SKAX"
+    },
+    "legend": {
+      "supervisory": "Primary reporting",
+      "matrix": "Matrix"
+    },
+    "details": {
+      "panelLabel": "Organization chart details",
+      "profile": "Workforce profile",
+      "organization": "Organization",
+      "headcount": "Headcount",
+      "headcountValue": "{{total}} total / {{direct}} direct",
+      "costCenter": "Cost center",
+      "openPositions": "Open positions",
+      "leader": "Organization leader",
+      "directMembers": "{{count}} direct members",
+      "email": "Work email",
+      "grade": "Job grade",
+      "location": "Location",
+      "workerType": "Worker type",
+      "status": "Worker status",
+      "accessRoles": "System roles",
+      "noAccessRole": "No system role assigned",
+      "manager": "Reports to",
+      "directReports": "{{count}} direct reports"
+    },
+    "organizationTypes": {
+      "COMPANY": "Company",
+      "BUSINESS_UNIT": "Business unit",
+      "DIVISION": "Division",
+      "DEPARTMENT": "Department",
+      "SUPERVISORY": "Team"
+    },
+    "workerTypes": {
+      "EMPLOYEE": "Employee",
+      "CONTINGENT": "Contingent worker"
     }
   },
   "provisioning": {

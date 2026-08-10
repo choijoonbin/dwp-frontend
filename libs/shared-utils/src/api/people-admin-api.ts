@@ -17,13 +17,23 @@ export type PersonSummary = {
   workerNumber?: string | null;
   workerType?: string | null;
   workerStatus?: string | null;
+  assignmentKey?: string | null;
   businessTitle?: string | null;
+  organizationId?: string | null;
+  organizationKey?: string | null;
   organizationName?: string | null;
   jobProfileName?: string | null;
+  managementLevel?: string | null;
+  jobGradeKey?: string | null;
+  jobGradeName?: string | null;
+  locationKey?: string | null;
   locationName?: string | null;
   workEmail?: string | null;
   profileImageKey?: string | null;
   assignmentEffectiveFrom?: string | null;
+  managerPersonId?: string | null;
+  managerDisplayName?: string | null;
+  directReportCount: number;
   dataAccess: PeopleDataAccess;
 };
 
@@ -36,6 +46,7 @@ export type PersonAssignment = {
   businessTitle?: string | null;
   organizationName?: string | null;
   jobProfileName?: string | null;
+  jobGradeName?: string | null;
   locationName?: string | null;
   managerAssignmentKey?: string | null;
   changeReasonCode?: string | null;
@@ -55,6 +66,88 @@ export type PeopleCursorPage = {
   size: number;
   hasMore: boolean;
   asOf: string;
+};
+
+export type OrganizationChartMetrics = {
+  headcount: number;
+  activeHeadcount: number;
+  onLeaveHeadcount: number;
+  contingentHeadcount: number;
+  organizationCount: number;
+  managerCount: number;
+  openPositionCount: number;
+  locationCount: number;
+};
+
+export type OrganizationChartOrganization = {
+  organizationId: string;
+  organizationKey: string;
+  name: string;
+  shortName?: string | null;
+  organizationType: string;
+  parentOrganizationId?: string | null;
+  description?: string | null;
+  costCenterKey?: string | null;
+  colorToken?: string | null;
+  directHeadcount: number;
+  totalHeadcount: number;
+  managerCount: number;
+  openPositionCount: number;
+  childOrganizationCount: number;
+  leaderPersonId?: string | null;
+  directMemberIds: string[];
+};
+
+export type OrganizationChartPerson = {
+  personId: string;
+  assignmentKey: string;
+  displayName: string;
+  workEmail?: string | null;
+  businessTitle?: string | null;
+  jobProfileName?: string | null;
+  jobGradeKey?: string | null;
+  jobGradeName?: string | null;
+  jobGradeOrder: number;
+  managementLevel?: string | null;
+  organizationId: string;
+  managerPersonId?: string | null;
+  workerNumber?: string | null;
+  workerType: string;
+  workerStatus: string;
+  locationKey?: string | null;
+  locationName?: string | null;
+  directReportCount: number;
+};
+
+export type OrganizationChartRelationship = {
+  childOrganizationId: string;
+  parentOrganizationId: string;
+  relationshipType: 'SUPERVISORY' | 'MATRIX' | 'FUNCTIONAL';
+  primaryRelationship: boolean;
+};
+
+export type OrganizationChartOpenPosition = {
+  positionKey: string;
+  title: string;
+  organizationId: string;
+  jobProfileName?: string | null;
+  locationName?: string | null;
+  availabilityDate?: string | null;
+};
+
+export type OrganizationChart = {
+  asOf: string;
+  company: {
+    organizationId: string;
+    organizationKey: string;
+    name: string;
+    description?: string | null;
+  };
+  metrics: OrganizationChartMetrics;
+  organizations: OrganizationChartOrganization[];
+  people: OrganizationChartPerson[];
+  relationships: OrganizationChartRelationship[];
+  openPositions: OrganizationChartOpenPosition[];
 };
 
 export type HrisSourceSystem = {
@@ -173,6 +266,20 @@ export async function getPerson(personId: string, asOf?: string): Promise<Person
   const search = asOf ? `?asOf=${encodeURIComponent(asOf)}` : '';
   const response = await axiosInstance.get<ApiResponse<PersonDetail>>(
     `/api/people/v1/people/${encodeURIComponent(personId)}${search}`
+  );
+  return response.data.data;
+}
+
+export async function getOrganizationChart(
+  params: { asOf?: string; rootOrganizationId?: string; depth?: number } = {}
+): Promise<OrganizationChart> {
+  const search = new URLSearchParams({ depth: String(params.depth ?? 10) });
+  if (params.asOf) search.set('asOf', params.asOf);
+  if (params.rootOrganizationId) {
+    search.set('rootOrganizationId', params.rootOrganizationId);
+  }
+  const response = await axiosInstance.get<ApiResponse<OrganizationChart>>(
+    `/api/people/v1/org-chart?${search.toString()}`
   );
   return response.data.data;
 }

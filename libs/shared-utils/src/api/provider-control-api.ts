@@ -18,6 +18,69 @@ export type ProviderEstateOverview = {
   serviceTiers: ProviderMetric[];
 };
 
+export type ProviderActionItem = {
+  itemId: string;
+  category: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  title: string;
+  detail: string;
+  tenantId?: string | null;
+  targetId: string;
+  createdAt: string;
+  route: string;
+};
+
+export type ProviderRecentActivity = {
+  auditEventId: string;
+  action: string;
+  category: string;
+  outcome: string;
+  operatorName?: string | null;
+  tenantKey?: string | null;
+  targetType: string;
+  targetId: string;
+  occurredAt: string;
+};
+
+export type ProviderServicePosture = {
+  serviceKey: string;
+  displayName: string;
+  criticality: string;
+  totalInstances: number;
+  healthyInstances: number;
+  pendingInstances: number;
+  degradedInstances: number;
+  failedInstances: number;
+  impactedTenants: number;
+  lastReconciledAt?: string | null;
+};
+
+export type ProviderCellPosture = {
+  deploymentCellId: string;
+  cellKey: string;
+  displayName: string;
+  regionKey: string;
+  lifecycleState: string;
+  placementCapacity: number;
+  tenantCount: number;
+  serviceInstances: number;
+  healthyInstances: number;
+  saturationPct: number;
+  healthState: 'HEALTHY' | 'ATTENTION' | 'CRITICAL';
+};
+
+export type ProviderCommandCenter = {
+  generatedAt: string;
+  operatingState: 'HEALTHY' | 'ATTENTION' | 'CRITICAL';
+  estate: ProviderEstateOverview;
+  activeIncidents: number;
+  expiringSubscriptions: number;
+  actionQueue: ProviderActionItem[];
+  services: ProviderServicePosture[];
+  cells: ProviderCellPosture[];
+  recentActivity: ProviderRecentActivity[];
+};
+
 export type ProviderOperatorProfile = {
   operatorId: number;
   authUserId: number;
@@ -65,14 +128,25 @@ export type ProviderTenantDomain = {
 export type ProviderTenantAdministrator = {
   tenantAdministratorId: string;
   authUserId?: number | null;
-  principal: string;
-  email?: string | null;
+  email: string;
   displayName: string;
   roleCode: string;
   lifecycleState: string;
   primaryAdministrator: boolean;
   lastInvitedAt?: string | null;
   activatedAt?: string | null;
+  version: number;
+};
+
+export type ProviderOrganizationSubscription = {
+  subscriptionId: string;
+  planKey: string;
+  planVersion: number;
+  planName: string;
+  lifecycleState: string;
+  startsAt: string;
+  endsAt?: string | null;
+  contractReference?: string | null;
   version: number;
 };
 
@@ -97,6 +171,7 @@ export type ProviderTenant = {
   version: number;
   createdAt?: string | null;
   updatedAt?: string | null;
+  subscription?: ProviderOrganizationSubscription | null;
   entitlements: ProviderEntitlement[];
   services: ProviderServiceInstance[];
   domains: ProviderTenantDomain[];
@@ -144,6 +219,131 @@ export type ProviderOperation = {
   steps: ProviderOperationStep[];
 };
 
+export type ProviderOperationApproval = {
+  operationApprovalId: string;
+  operationId: string;
+  tenantId?: string | null;
+  tenantName?: string | null;
+  operationType: string;
+  riskTier: string;
+  gateKey: string;
+  gateOrder: number;
+  lifecycleState: string;
+  requiredRoleCode: string;
+  separationOfDuties: boolean;
+  requestedBy: number;
+  requestedByName: string;
+  decidedBy?: number | null;
+  decidedByName?: string | null;
+  requestReason: string;
+  decisionReason?: string | null;
+  requestedAt: string;
+  decidedAt?: string | null;
+  expiresAt: string;
+  version: number;
+};
+
+export type ProviderIncidentUpdate = {
+  incidentUpdateId: string;
+  lifecycleState: string;
+  message: string;
+  visibility: string;
+  operatorName?: string | null;
+  createdAt: string;
+};
+
+export type ProviderServiceIncident = {
+  incidentId: string;
+  incidentKey: string;
+  title: string;
+  severity: 'SEV1' | 'SEV2' | 'SEV3' | 'SEV4';
+  lifecycleState: string;
+  impactScope: string;
+  serviceKey?: string | null;
+  regionKey?: string | null;
+  deploymentCellId?: string | null;
+  tenantId?: string | null;
+  tenantName?: string | null;
+  customerImpact: string;
+  publicSummary?: string | null;
+  ownerName?: string | null;
+  detectedAt: string;
+  startedAt: string;
+  resolvedAt?: string | null;
+  version: number;
+  updates: ProviderIncidentUpdate[];
+};
+
+export type ProviderServiceHealthOverview = {
+  generatedAt: string;
+  operatingState: 'HEALTHY' | 'ATTENTION' | 'CRITICAL';
+  totalInstances: number;
+  healthyInstances: number;
+  pendingInstances: number;
+  degradedInstances: number;
+  failedInstances: number;
+  impactedTenants: number;
+  services: ProviderServicePosture[];
+  cells: ProviderCellPosture[];
+  incidents: ProviderServiceIncident[];
+};
+
+export type ProviderServicePlanPortfolio = {
+  planKey: string;
+  planVersion: number;
+  planName: string;
+  serviceTier: string;
+  lifecycleState: string;
+  organizations: number;
+  tenants: number;
+};
+
+export type ProviderSubscriptionPortfolio = {
+  subscriptionId: string;
+  organizationId: string;
+  organizationKey: string;
+  organizationName: string;
+  planKey: string;
+  planName: string;
+  serviceTier: string;
+  lifecycleState: string;
+  startsAt: string;
+  endsAt?: string | null;
+  contractReference?: string | null;
+  tenants: number;
+  activeEntitlements: number;
+};
+
+export type ProviderEntitlementAdoption = {
+  entitlementId: number;
+  entitlementKey: string;
+  name: string;
+  entitlementType: string;
+  assignedTenants: number;
+  eligibleTenants: number;
+};
+
+export type ProviderCommercialOverview = {
+  generatedAt: string;
+  activeSubscriptions: number;
+  trialSubscriptions: number;
+  expiringSubscriptions: number;
+  uncontractedOrganizations: number;
+  plans: ProviderServicePlanPortfolio[];
+  subscriptions: ProviderSubscriptionPortfolio[];
+  entitlements: ProviderEntitlementAdoption[];
+};
+
+export type ProviderAuditInsights = {
+  generatedAt: string;
+  events24Hours: number;
+  failed24Hours: number;
+  denied24Hours: number;
+  privilegedAccess24Hours: number;
+  outcomes: ProviderMetric[];
+  categories: ProviderMetric[];
+};
+
 export type ProviderSupportSession = {
   supportSessionId: string;
   tenantId: string;
@@ -154,11 +354,23 @@ export type ProviderSupportSession = {
   lifecycleState: string;
   justification: string;
   scopes: string[];
+  accessMode: 'STANDARD' | 'BREAK_GLASS';
+  approvalReference?: string | null;
+  customerApprovalRequired: boolean;
+  riskTier: 'L1' | 'L2' | 'L3';
   startedAt: string;
   expiresAt: string;
   lastUsedAt?: string | null;
   revokedAt?: string | null;
   version: number;
+};
+
+export type ProviderSupportScope = {
+  scopeCode: string;
+  displayName: string;
+  riskTier: 'L1' | 'L2' | 'L3';
+  requiresCustomerApproval: boolean;
+  lifecycleState: string;
 };
 
 export type ProviderSupportSessionGrant = {
@@ -175,6 +387,7 @@ export type ProviderAuditEvent = {
   action: string;
   targetType: string;
   targetId: string;
+  eventCategory: string;
   outcome: string;
   correlationId?: string | null;
   redactedSnapshot: string;
@@ -192,7 +405,7 @@ export type ProviderAdministratorInvitation = {
   tenantAdministratorId: string;
   authTenantId: number;
   authUserId: number;
-  principal: string;
+  email: string;
   activationToken: string;
   activationPath: string;
   expiresAt: string;
@@ -214,7 +427,6 @@ export type OnboardingPlanRequest = {
   primaryDomain?: string | null;
   initialAdminDisplayName: string;
   initialAdminEmail: string;
-  initialAdminPrincipal: string;
   entitlementKeys: string[];
   justification: string;
 };
@@ -228,6 +440,34 @@ export async function getProviderOperatorProfile(): Promise<ProviderOperatorProf
 
 export async function getProviderEstateOverview(): Promise<ProviderEstateOverview> {
   const response = await axiosInstance.get<ApiResponse<ProviderEstateOverview>>(`${BASE}/overview`);
+  return response.data.data;
+}
+
+export async function getProviderCommandCenter(): Promise<ProviderCommandCenter> {
+  const response = await axiosInstance.get<ApiResponse<ProviderCommandCenter>>(
+    `${BASE}/command-center`
+  );
+  return response.data.data;
+}
+
+export async function getProviderServiceHealth(): Promise<ProviderServiceHealthOverview> {
+  const response = await axiosInstance.get<ApiResponse<ProviderServiceHealthOverview>>(
+    `${BASE}/service-health`
+  );
+  return response.data.data;
+}
+
+export async function getProviderCommercialOverview(): Promise<ProviderCommercialOverview> {
+  const response = await axiosInstance.get<ApiResponse<ProviderCommercialOverview>>(
+    `${BASE}/commercial`
+  );
+  return response.data.data;
+}
+
+export async function getProviderAuditInsights(): Promise<ProviderAuditInsights> {
+  const response = await axiosInstance.get<ApiResponse<ProviderAuditInsights>>(
+    `${BASE}/audit-insights`
+  );
   return response.data.data;
 }
 
@@ -310,6 +550,69 @@ export async function listProviderOperations(): Promise<PageResult<ProviderOpera
   return response.data.data;
 }
 
+export async function listProviderOperationApprovals(
+  state?: string
+): Promise<ProviderOperationApproval[]> {
+  const search = state ? `?state=${encodeURIComponent(state)}` : '';
+  const response = await axiosInstance.get<ApiResponse<ProviderOperationApproval[]>>(
+    `${BASE}/operation-approvals${search}`
+  );
+  return response.data.data;
+}
+
+export async function decideProviderOperationApproval(
+  approval: ProviderOperationApproval,
+  decision: 'APPROVED' | 'REJECTED',
+  reason: string
+): Promise<ProviderOperationApproval> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderOperationApproval>,
+    { decision: string; reason: string; version: number }
+  >(`${BASE}/operation-approvals/${approval.operationApprovalId}/decision`, {
+    decision,
+    reason,
+    version: approval.version,
+  });
+  return response.data.data;
+}
+
+export async function createProviderIncident(request: {
+  title: string;
+  severity: ProviderServiceIncident['severity'];
+  impactScope: string;
+  serviceKey?: string | null;
+  regionKey?: string | null;
+  deploymentCellId?: string | null;
+  tenantId?: string | null;
+  customerImpact: string;
+  publicSummary?: string | null;
+  initialUpdate: string;
+}): Promise<ProviderServiceIncident> {
+  const response = await axiosInstance.post<ApiResponse<ProviderServiceIncident>, typeof request>(
+    `${BASE}/incidents`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function updateProviderIncident(
+  incident: ProviderServiceIncident,
+  state: 'IDENTIFIED' | 'MONITORING' | 'RESOLVED' | 'CLOSED',
+  message: string,
+  visibility: 'INTERNAL' | 'CUSTOMER' = 'INTERNAL'
+): Promise<ProviderServiceIncident> {
+  const response = await axiosInstance.patch<
+    ApiResponse<ProviderServiceIncident>,
+    { state: string; message: string; visibility: string; version: number }
+  >(`${BASE}/incidents/${incident.incidentId}`, {
+    state,
+    message,
+    visibility,
+    version: incident.version,
+  });
+  return response.data.data;
+}
+
 export async function updateProviderTenantLifecycle(
   tenant: ProviderTenant,
   state: 'ACTIVE' | 'SUSPENDED',
@@ -346,10 +649,10 @@ export async function createProviderTenantDomain(
   tenantId: string,
   request: { domainName: string; domainType: string; primaryDomain: boolean }
 ): Promise<ProviderDomainChallenge> {
-  const response = await axiosInstance.post<
-    ApiResponse<ProviderDomainChallenge>,
-    typeof request
-  >(`${BASE}/tenants/${tenantId}/domains`, request);
+  const response = await axiosInstance.post<ApiResponse<ProviderDomainChallenge>, typeof request>(
+    `${BASE}/tenants/${tenantId}/domains`,
+    request
+  );
   return response.data.data;
 }
 
@@ -403,11 +706,20 @@ export async function listProviderSupportSessions(
   return response.data.data;
 }
 
+export async function listProviderSupportScopes(): Promise<ProviderSupportScope[]> {
+  const response = await axiosInstance.get<ApiResponse<ProviderSupportScope[]>>(
+    `${BASE}/support-scopes`
+  );
+  return response.data.data;
+}
+
 export async function createProviderSupportSession(request: {
   tenantId: string;
   scopes: string[];
   durationMinutes: number;
   justification: string;
+  approvalReference?: string | null;
+  emergencyAccess: boolean;
 }): Promise<ProviderSupportSessionGrant> {
   const response = await axiosInstance.post<
     ApiResponse<ProviderSupportSessionGrant>,

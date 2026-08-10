@@ -261,6 +261,7 @@ export function buildDwpTheme({
             borderColor: divider,
             display: 'flex',
             alignItems: 'center',
+            lineHeight: 'normal',
             '& .MuiChip-root': { height: 24 },
             '& .MuiIconButton-root': { width: 32, height: 32 },
           },

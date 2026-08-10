@@ -78,6 +78,36 @@ describe('axiosInstance browser session contract', () => {
     );
   });
 
+  it('refreshes a stale CSRF token once when the gateway rejects a mutation', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse(200, {
+          data: { token: 'stale-token', headerName: 'X-XSRF-TOKEN' },
+        })
+      )
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        text: async () => '',
+      } as Response)
+      .mockResolvedValueOnce(
+        jsonResponse(200, {
+          data: { token: 'fresh-token', headerName: 'X-XSRF-TOKEN' },
+        })
+      )
+      .mockResolvedValueOnce(jsonResponse(200, { data: { updated: true } }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await axiosInstance.post('/api/example', { value: 'next' });
+
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+    const retriedMutation = fetchMock.mock.calls[3]?.[1] as RequestInit;
+    expect(retriedMutation.headers).toEqual(
+      expect.objectContaining({ 'X-XSRF-TOKEN': 'fresh-token' })
+    );
+  });
+
   it('lets the browser set the multipart boundary for FormData mutations', async () => {
     const fetchMock = vi
       .fn()
@@ -97,5 +127,21 @@ describe('axiosInstance browser session contract', () => {
     expect(request.body).toBe(form);
     expect(request.headers).not.toHaveProperty('Content-Type');
     expect(request.headers).toEqual(expect.objectContaining({ 'X-XSRF-TOKEN': 'csrf-token' }));
+  });
+
+  it('returns binary downloads as Blob without text parsing', async () => {
+    const download = new Blob(['audit-export'], { type: 'text/csv' });
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      blob: async () => download,
+    } as Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    const response = await axiosInstance.get<Blob>('/api/audit/export', {
+      responseType: 'blob',
+    });
+
+    expect(response.data).toBe(download);
   });
 });

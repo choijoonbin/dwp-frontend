@@ -22,5 +22,6 @@
 - `DWP-R0-ADM-002-product-registry`: App·Connector·Agent·Tool·Policy Registry
 - `DWP-R0-ADM-003-identity-access-governance`: Tenant 사용자·Role·Session 통제
 - `DWP-R0-ADM-004-organization-group-directory`: 조직 계층·직접 Group·Membership 통제
+- `DWP-R0-GOV-001-enterprise-audit-control`: 감사 증적·탐지·조사·보존·무결성 Control Plane
 - `DWP-R1-CORE-001-reference-work-hub`: R1 Reference Work Hub
 - `DWP-R1-CORE-002-personal-home-experience`: Sidebar 없는 개인 Home과 Tenant Presentation

@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "rootPackage": "@dwp-frontend/workspace",
-  "dependencyCount": 110,
+  "dependencyCount": 131,
   "licenseCounts": {
     "0BSD": 1,
-    "BSD-3-Clause": 3,
-    "ISC": 3,
-    "MIT": 103
+    "BSD-3-Clause": 4,
+    "ISC": 11,
+    "MIT": 115
   },
   "packages": [
     {
@@ -86,6 +86,18 @@
       "version": "0.3.2",
       "license": "MIT",
       "repository": "git+https://github.com/mui/base-ui.git"
+    },
+    {
+      "name": "@dagrejs/dagre",
+      "version": "3.1.1",
+      "license": "MIT",
+      "repository": "https://github.com/dagrejs/dagre.git"
+    },
+    {
+      "name": "@dagrejs/graphlib",
+      "version": "4.0.5",
+      "license": "MIT",
+      "repository": "https://github.com/dagrejs/graphlib.git"
     },
     {
       "name": "@dnd-kit/accessibility",
@@ -310,6 +322,42 @@
       "repository": "git+https://github.com/TanStack/query.git"
     },
     {
+      "name": "@types/d3-color",
+      "version": "3.1.3",
+      "license": "MIT",
+      "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+    },
+    {
+      "name": "@types/d3-drag",
+      "version": "3.0.7",
+      "license": "MIT",
+      "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+    },
+    {
+      "name": "@types/d3-interpolate",
+      "version": "3.0.4",
+      "license": "MIT",
+      "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+    },
+    {
+      "name": "@types/d3-selection",
+      "version": "3.0.11",
+      "license": "MIT",
+      "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+    },
+    {
+      "name": "@types/d3-transition",
+      "version": "3.0.9",
+      "license": "MIT",
+      "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+    },
+    {
+      "name": "@types/d3-zoom",
+      "version": "3.0.8",
+      "license": "MIT",
+      "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+    },
+    {
       "name": "@types/parse-json",
       "version": "4.0.2",
       "license": "MIT",
@@ -328,6 +376,18 @@
       "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
     },
     {
+      "name": "@xyflow/react",
+      "version": "12.11.2",
+      "license": "MIT",
+      "repository": "https://github.com/xyflow/xyflow.git"
+    },
+    {
+      "name": "@xyflow/system",
+      "version": "0.0.79",
+      "license": "MIT",
+      "repository": "https://github.com/xyflow/xyflow.git"
+    },
+    {
       "name": "babel-plugin-macros",
       "version": "3.1.0",
       "license": "MIT",
@@ -338,6 +398,12 @@
       "version": "3.1.0",
       "license": "MIT",
       "repository": "sindresorhus/callsites"
+    },
+    {
+      "name": "classcat",
+      "version": "5.0.5",
+      "license": "MIT",
+      "repository": "jorgebucaran/classcat"
     },
     {
       "name": "clsx",
@@ -374,6 +440,60 @@
       "version": "3.2.3",
       "license": "MIT",
       "repository": "https://github.com/frenic/csstype"
+    },
+    {
+      "name": "d3-color",
+      "version": "3.1.0",
+      "license": "ISC",
+      "repository": "https://github.com/d3/d3-color.git"
+    },
+    {
+      "name": "d3-dispatch",
+      "version": "3.0.1",
+      "license": "ISC",
+      "repository": "https://github.com/d3/d3-dispatch.git"
+    },
+    {
+      "name": "d3-drag",
+      "version": "3.0.0",
+      "license": "ISC",
+      "repository": "https://github.com/d3/d3-drag.git"
+    },
+    {
+      "name": "d3-ease",
+      "version": "3.0.1",
+      "license": "BSD-3-Clause",
+      "repository": "https://github.com/d3/d3-ease.git"
+    },
+    {
+      "name": "d3-interpolate",
+      "version": "3.0.1",
+      "license": "ISC",
+      "repository": "https://github.com/d3/d3-interpolate.git"
+    },
+    {
+      "name": "d3-selection",
+      "version": "3.0.0",
+      "license": "ISC",
+      "repository": "https://github.com/d3/d3-selection.git"
+    },
+    {
+      "name": "d3-timer",
+      "version": "3.0.1",
+      "license": "ISC",
+      "repository": "https://github.com/d3/d3-timer.git"
+    },
+    {
+      "name": "d3-transition",
+      "version": "3.0.1",
+      "license": "ISC",
+      "repository": "https://github.com/d3/d3-transition.git"
+    },
+    {
+      "name": "d3-zoom",
+      "version": "3.0.0",
+      "license": "ISC",
+      "repository": "https://github.com/d3/d3-zoom.git"
     },
     {
       "name": "debug",
@@ -662,6 +782,12 @@
       "version": "1.10.2",
       "license": "ISC",
       "repository": "github:eemeli/yaml"
+    },
+    {
+      "name": "zustand",
+      "version": "4.5.7",
+      "license": "MIT",
+      "repository": "git+https://github.com/pmndrs/zustand.git"
     },
     {
       "name": "zustand",

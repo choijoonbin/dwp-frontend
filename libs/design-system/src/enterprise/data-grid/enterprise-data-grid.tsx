@@ -2,8 +2,9 @@ import { useAppearance } from '../../appearance';
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import { enUS, koKR } from '@mui/x-data-grid/locales';
 
-import type { DataGridProps, GridValidRowModel } from '@mui/x-data-grid';
+import type { DataGridProps, GridLocaleText, GridValidRowModel } from '@mui/x-data-grid';
 
 type GridDensity = NonNullable<DataGridProps['density']>;
 
@@ -15,6 +16,15 @@ const GRID_ROW_HEIGHT: Record<GridDensity, number> = {
 
 const GRID_FOOTER_HEIGHT = 52;
 const GRID_CHROME_HEIGHT = 2;
+
+const GRID_LOCALES: Record<string, Partial<GridLocaleText>> = {
+  en: enUS.components.MuiDataGrid.defaultProps.localeText,
+  ko: koKR.components.MuiDataGrid.defaultProps.localeText,
+};
+
+export function resolveDataGridLocaleText(language: string): Partial<GridLocaleText> {
+  return GRID_LOCALES[language.toLowerCase().split('-')[0]] ?? GRID_LOCALES.en;
+}
 
 type AdaptiveGridHeightInput = {
   rowCount: number;
@@ -72,6 +82,7 @@ export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowMod
   columnHeaderHeight,
   hideFooter = false,
   loading = false,
+  localeText,
   ...props
 }: EnterpriseDataGridProps<R>) {
   const appearance = useAppearance();
@@ -89,6 +100,9 @@ export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowMod
       minVisibleRows,
       maxVisibleRows,
     });
+  const resolvedLanguage =
+    typeof document === 'undefined' ? 'en' : document.documentElement.lang || 'en';
+  const resolvedLocaleText = localeText ?? resolveDataGridLocaleText(resolvedLanguage);
 
   return (
     <Box sx={{ width: 1, minWidth: 0, height: resolvedHeight }}>
@@ -100,6 +114,7 @@ export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowMod
         columnHeaderHeight={resolvedColumnHeaderHeight}
         hideFooter={hideFooter}
         loading={loading}
+        localeText={resolvedLocaleText}
         density="standard"
         pageSizeOptions={pageSizeOptions}
         disableRowSelectionOnClick={disableRowSelectionOnClick}

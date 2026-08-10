@@ -48,9 +48,9 @@
         "description": "테넌트에 안전하게 투영된 인사정보와 유효 발령 이력을 조회합니다."
       },
       "directory": {
-        "label": "조직 디렉터리",
-        "title": "조직 디렉터리",
-        "description": "범위별 권한과 사용자 경험에 사용할 조직 및 그룹을 관리합니다."
+        "label": "조직도",
+        "title": "조직도",
+        "description": "유효일 기준 조직 계층, 보고 관계, 매트릭스 조직과 공석을 탐색합니다."
       },
       "provisioning": {
         "label": "프로비저닝",
@@ -81,6 +81,26 @@
         "label": "감사 로그",
         "title": "감사 로그",
         "description": "관리 권한 변경, 수행자, 결과 및 상관관계 컨텍스트를 추적합니다."
+      },
+      "audit-overview": {
+        "label": "감사 개요",
+        "title": "감사 현황",
+        "description": "테넌트 증적 범위, 위험 집중도, 탐지 항목과 조사 현황을 평가합니다."
+      },
+      "audit-events": {
+        "label": "이벤트 탐색",
+        "title": "이벤트 탐색",
+        "description": "인증, 데이터, 프로비저닝과 AI 활동의 불변 업무 증적을 검색합니다."
+      },
+      "audit-investigations": {
+        "label": "탐지 및 케이스",
+        "title": "탐지 및 조사 케이스",
+        "description": "고위험 활동을 분류하고 책임 있는 조사 워크플로를 관리합니다."
+      },
+      "audit-governance": {
+        "label": "보존 및 무결성",
+        "title": "보존 및 무결성",
+        "description": "증적 보존, 반출, 위험 임계값과 무결성 체크포인트를 통제합니다."
       }
     }
   },
@@ -561,6 +581,200 @@
       }
     }
   },
+  "auditControl": {
+    "loading": "감사 증적 불러오는 중",
+    "loadError": "감사 증적을 불러오지 못했습니다.",
+    "updated": "{{time}} 업데이트",
+    "windows": { "H24": "24시간", "D7": "7일", "D30": "30일", "D90": "90일" },
+    "filters": {
+      "window": "조회 기간",
+      "category": "범주",
+      "severity": "심각도",
+      "outcome": "결과",
+      "advanced": "고급 필터",
+      "sourceService": "수집 서비스",
+      "actor": "수행자 식별정보",
+      "clear": "필터 초기화",
+      "searchPlaceholder": "활동, 대상, 수행자, 상관관계 또는 Trace 검색",
+      "apply": "필터 적용"
+    },
+    "savedSearches": {
+      "label": "저장된 보기",
+      "current": "현재 필터",
+      "description": "조사 범위를 저장해 반복 감사에서 동일한 조건을 재사용합니다.",
+      "save": "현재 보기 저장",
+      "delete": "저장된 보기 삭제",
+      "saveTitle": "조사 보기 저장",
+      "name": "보기 이름",
+      "shared": "테넌트 감사팀과 공유",
+      "upsertHint": "같은 이름으로 저장하면 기존 개인 보기가 갱신됩니다.",
+      "saved": "조사 보기를 저장했습니다.",
+      "saveFailed": "조사 보기를 저장하지 못했습니다.",
+      "deleted": "저장된 조사 보기를 삭제했습니다.",
+      "deleteFailed": "저장된 조사 보기를 삭제하지 못했습니다."
+    },
+    "category": {
+      "ALL": "전체 범주",
+      "ADMIN_CHANGE": "관리 변경",
+      "AUTHENTICATION": "인증",
+      "AUTHORIZATION": "권한 결정",
+      "DATA_ACCESS": "데이터 접근",
+      "DATA_EXPORT": "데이터 반출",
+      "PROVISIONING": "프로비저닝",
+      "AI_ACTION": "AI 활동",
+      "POLICY_DENIED": "정책 거부",
+      "SYSTEM_EVENT": "시스템"
+    },
+    "severity": {
+      "ALL": "전체 심각도",
+      "INFO": "정보",
+      "LOW": "낮음",
+      "MEDIUM": "보통",
+      "HIGH": "높음",
+      "CRITICAL": "치명적"
+    },
+    "outcome": { "ALL": "전체 결과", "SUCCESS": "성공", "DENIED": "거부", "FAILED": "실패" },
+    "kpi": {
+      "events": "증적 이벤트",
+      "selectedWindow": "선택한 관측 기간",
+      "highRisk": "고위험",
+      "reviewPriority": "우선 검토 필요",
+      "denied": "거부",
+      "policyAndAccess": "정책 및 접근 결정",
+      "findings": "열린 탐지",
+      "openQueue": "조사자 대기열",
+      "cases": "진행 케이스",
+      "activeInvestigations": "책임 조사",
+      "sources": "정상 수집원",
+      "healthyCollectors": "보고 서비스"
+    },
+    "overview": {
+      "posture": "증적 현황",
+      "indicators": "감사 현황 지표",
+      "trend": "증적 추세",
+      "trendDescription": "선택한 기간의 이벤트 양과 고위험 집중도를 보여줍니다.",
+      "trendLabel": "감사 이벤트 및 고위험 추세",
+      "categories": "증적 범위",
+      "attention": "확인 필요",
+      "noFindings": "열린 고위험 탐지 항목이 없습니다.",
+      "sourceHealth": "수집원 상태"
+    },
+    "source": {
+      "service": "수집 서비스",
+      "status": "전달 상태",
+      "events24h": "24시간 이벤트",
+      "states": { "HEALTHY": "정상", "DEGRADED": "저하", "STALE": "지연", "ERROR": "오류" }
+    },
+    "events": {
+      "label": "불변 감사 증적 이벤트",
+      "columns": {
+        "time": "일시",
+        "severity": "심각도",
+        "risk": "위험",
+        "activity": "활동",
+        "actor": "수행자",
+        "target": "대상",
+        "source": "출처",
+        "outcome": "결과"
+      }
+    },
+    "detail": {
+      "context": "이벤트 컨텍스트",
+      "occurredAt": "발생 시각",
+      "roles": "유효 역할",
+      "retention": "보존 등급",
+      "traceability": "추적 정보",
+      "correlation": "상관관계 ID",
+      "trace": "Trace ID",
+      "eventId": "이벤트 ID",
+      "hash": "레코드 해시",
+      "change": "변경 증적",
+      "before": "변경 전",
+      "after": "변경 후",
+      "metadata": "통제된 메타데이터",
+      "copy": "값 복사",
+      "copied": "값을 복사했습니다."
+    },
+    "export": {
+      "open": "증적 반출",
+      "title": "감사 증적 반출",
+      "scope": "{{window}} / 일치 이벤트 최대 {{count}}건",
+      "reason": "업무 사유",
+      "download": "생성 및 다운로드",
+      "formats": { "CSV": "CSV", "JSONL": "JSONL" },
+      "completed": "증적 {{count}}건을 반출했습니다.",
+      "failed": "감사 증적 반출을 완료하지 못했습니다."
+    },
+    "findingStatus": {
+      "ALL": "전체 상태",
+      "OPEN": "열림",
+      "ACKNOWLEDGED": "확인",
+      "INVESTIGATING": "조사 중",
+      "RESOLVED": "해결",
+      "DISMISSED": "제외"
+    },
+    "caseStatus": {
+      "OPEN": "열림",
+      "INVESTIGATING": "조사 중",
+      "CONTAINED": "통제됨",
+      "RESOLVED": "해결",
+      "CLOSED": "종료"
+    },
+    "investigations": {
+      "views": "조사 보기",
+      "findings": "탐지 항목",
+      "cases": "케이스",
+      "status": "상태",
+      "newCase": "새 케이스",
+      "priority": "우선순위",
+      "finding": "탐지 항목",
+      "firstLast": "최초 / 최근 발생",
+      "occurrences_one": "{{count}}회",
+      "occurrences_other": "{{count}}회",
+      "owner": "담당자",
+      "noFindings": "현재 상태에 해당하는 탐지 항목이 없습니다.",
+      "caseNumber": "케이스",
+      "caseTitle": "케이스 제목",
+      "caseDescription": "케이스 설명",
+      "evidence": "연결 증적",
+      "evidenceCount": "이벤트 {{events}}건 / 탐지 {{findings}}건",
+      "updated": "수정 시각",
+      "risk": "위험 점수",
+      "linkCase": "연결 케이스",
+      "noCase": "연결 없음",
+      "resolution": "조사 메모 또는 해결 내용",
+      "saveFinding": "탐지 항목 저장",
+      "findingUpdated": "탐지 워크플로를 변경했습니다.",
+      "caseCreated": "조사 케이스를 생성했습니다.",
+      "caseUpdated": "케이스 상태를 변경했습니다.",
+      "closedResolution": "검토를 완료하고 케이스를 종료했습니다."
+    },
+    "governance": {
+      "policy": "증적 정책",
+      "policyUpdated": "최근 변경 {{actor}} / {{time}}",
+      "retention": "보존 등급",
+      "standardDays": "표준 보존 기간(일)",
+      "extendedDays": "장기 보존 기간(일)",
+      "riskAndExport": "위험 및 반출 통제",
+      "riskThreshold": "고위험 임계값",
+      "exportLimit": "최대 반출 건수",
+      "requireReason": "모든 반출에 업무 사유 필수",
+      "integrityEnabled": "일일 무결성 체크포인트 사용",
+      "saved": "감사 정책을 저장했습니다.",
+      "integrity": "무결성 체크포인트",
+      "integrityDescription": "추가 전용 증적의 일일 해시 체인 검증입니다.",
+      "verify": "지금 검증",
+      "checkpointCreated": "무결성 체크포인트를 검증했습니다.",
+      "appendOnly": "추가 전용 증적 저장소",
+      "appendOnlyStatus": "변경은 차단되며 보존 삭제는 통제된 유지관리 경로만 사용합니다.",
+      "date": "UTC 일자",
+      "records": "레코드",
+      "signature": "체크포인트 해시",
+      "status": "검증",
+      "noCheckpoints": "아직 생성된 무결성 체크포인트가 없습니다."
+    },
+    "integrityStatus": { "VERIFIED": "검증됨", "FAILED": "실패", "UNAVAILABLE": "키 미설정" }
+  },
   "audit": {
     "title": "관리 감사 로그",
     "loading": "감사 이벤트 불러오는 중",
@@ -659,126 +873,38 @@
       }
     }
   },
-  "directory": {
-    "title": "조직 디렉터리",
-    "loading": "조직 디렉터리 불러오는 중",
-    "type": "디렉터리 유형",
-    "organizations": "조직",
-    "groups": "그룹",
-    "directoryGroups": "디렉터리 그룹",
-    "directoryUsers": "디렉터리 사용자",
-    "searchOrganizations": "조직 검색",
-    "searchGroups": "그룹 검색",
-    "allStatuses": "전체 상태",
-    "noOrganizations": "조직이 없습니다.",
-    "noGroups": "그룹이 없습니다.",
-    "noParent": "상위 조직 없음",
-    "topLevel": "최상위",
-    "loadingUsers": "사용자 불러오는 중",
-    "managedByScim": "SCIM에서 관리",
-    "organizationFallback": "조직 {{id}}",
-    "selectedCount_one": "{{count}}명 선택",
-    "selectedCount_other": "{{count}}명 선택",
-    "memberCount_one": "구성원 {{count}}명",
-    "memberCount_other": "구성원 {{count}}명",
-    "moveFrom": "{{organization}}에서 이동",
-    "revisionShort": "리비전 {{revision}}",
-    "previousPage": "이전 페이지",
-    "nextPage": "다음 페이지",
-    "pageOf": "{{total}}페이지 중 {{page}}페이지",
-    "sources": {
-      "SCIM": "SCIM 관리",
-      "LOCAL": "로컬"
-    },
-    "kinds": {
-      "organization": "조직",
-      "group": "그룹",
-      "entry": "항목"
-    },
-    "columns": {
-      "organization": "조직",
-      "group": "그룹",
-      "parent": "상위 조직",
-      "members": "구성원",
-      "source": "출처",
-      "status": "상태",
-      "revision": "리비전",
-      "actions": "작업"
-    },
-    "fields": {
-      "organizationKey": "조직 키",
-      "groupKey": "그룹 키",
-      "name": "이름",
-      "displayName": "표시명",
-      "parentOrganization": "상위 조직",
-      "description": "설명",
-      "findUsers": "사용자 찾기"
-    },
-    "dialogs": {
-      "organization": {
-        "editTitle": "조직 수정",
-        "newTitle": "새 조직"
-      },
-      "group": {
-        "editTitle": "그룹 수정",
-        "newTitle": "새 그룹"
-      },
-      "members": {
-        "title": "구성원 관리",
-        "organizationNotice": "기본 조직을 변경하면 사용자가 이전 조직에서 이동하며 관련 세션이 종료됩니다.",
-        "groupNotice": "그룹 구성원을 변경하면 관련 사용자 세션이 종료됩니다."
-      }
-    },
-    "actions": {
-      "saveChanges": "변경사항 저장",
-      "createOrganization": "조직 생성",
-      "createGroup": "그룹 생성",
-      "saveMembers": "구성원 저장",
-      "newOrganization": "새 조직",
-      "newGroup": "새 그룹",
-      "editOrganization": "조직 수정",
-      "editGroup": "그룹 수정",
-      "editNamed": "{{name}} 수정",
-      "manageMembers": "구성원 관리",
-      "manageMembersFor": "{{name}} 구성원 관리",
-      "activate": "활성화",
-      "deactivate": "비활성화",
-      "activateNamed": "{{name}} 활성화",
-      "deactivateNamed": "{{name}} 비활성화",
-      "refresh": "디렉터리 새로고침"
-    },
-    "confirm": {
-      "activateTitle": "{{subject}} 항목을 활성화할까요?",
-      "deactivateTitle": "{{subject}} 항목을 비활성화할까요?",
-      "activateMessage": "이 {{kind}}을 할당에 사용할 수 있게 됩니다.",
-      "deactivateMessage": "이 {{kind}}에 활성 하위 항목이나 구성원이 없어야 합니다."
-    },
-    "toasts": {
-      "organizationCreated": "조직을 생성했습니다.",
-      "organizationUpdated": "조직을 수정했습니다.",
-      "groupCreated": "그룹을 생성했습니다.",
-      "groupUpdated": "그룹을 수정했습니다.",
-      "organizationMembersUpdated": "조직 구성원을 변경하고 관련 세션을 종료했습니다.",
-      "groupMembersUpdated": "그룹 구성원을 변경하고 관련 세션을 종료했습니다.",
-      "organizationActivated": "조직을 활성화했습니다.",
-      "organizationDeactivated": "조직을 비활성화했습니다.",
-      "groupActivated": "그룹을 활성화했습니다.",
-      "groupDeactivated": "그룹을 비활성화했습니다."
-    }
-  },
   "people": {
-    "title": "구성원 투영 정보",
+    "title": "구성원 디렉터리",
     "loading": "구성원 정보 불러오는 중",
     "search": "구성원 검색",
     "asOf": "{{date}} 기준",
+    "resultCount": "{{count}}명",
     "notAvailable": "정보 없음",
     "masked": "마스킹됨",
-    "filters": { "status": "재직 상태", "asOf": "기준일" },
-    "status": { "ALL": "전체 상태", "ACTIVE": "재직", "LEAVE": "휴직", "TERMINATED": "퇴직" },
+    "filters": {
+      "status": "재직 상태",
+      "organization": "조직",
+      "grade": "직급",
+      "location": "근무지",
+      "role": "시스템 권한",
+      "asOf": "기준일",
+      "all": "전체",
+      "reset": "필터 초기화 ({{count}})"
+    },
+    "status": {
+      "ALL": "전체 상태",
+      "ACTIVE": "재직",
+      "LEAVE": "휴직",
+      "PENDING": "입사 예정",
+      "TERMINATED": "퇴직"
+    },
     "columns": {
       "person": "구성원",
       "organization": "조직",
       "title": "직책",
+      "position": "직책 / 직급",
+      "manager": "보고 대상",
+      "roles": "시스템 권한",
       "status": "상태",
       "workerNumber": "사번",
       "location": "근무지"
@@ -787,13 +913,89 @@
     "detail": {
       "title": "인사 프로필",
       "loading": "인사 프로필 불러오는 중",
+      "close": "인사 프로필 닫기",
       "employer": "법적 고용주",
       "hireDate": "최초 입사일",
-      "manager": "관리자 발령",
+      "manager": "보고 대상",
+      "jobGrade": "직급",
       "classification": "데이터 등급",
+      "roles": "시스템 권한",
+      "noRoles": "할당된 시스템 권한 없음",
+      "directReports": "직속 보고자 {{count}}명",
+      "noDirectReports": "직속 보고자 없음",
       "assignments": "유효 발령 이력",
       "primary": "주 발령",
       "current": "현재"
+    }
+  },
+  "orgChart": {
+    "loading": "조직도 불러오는 중",
+    "search": "조직, 구성원 또는 직책 검색",
+    "canvasLabel": "SKAX 조직도 작업 영역",
+    "asOf": "{{date}} 기준",
+    "view": {
+      "label": "조직도 보기",
+      "organizations": "조직 구조",
+      "people": "보고 체계"
+    },
+    "filters": { "asOf": "기준일" },
+    "metrics": {
+      "headcount": "전체 구성원",
+      "organizations": "활성 조직",
+      "managers": "리더",
+      "openPositions": "공석",
+      "locations": "근무지"
+    },
+    "node": {
+      "headcount": "{{count}}명",
+      "openPositions": "공석 {{count}}",
+      "directReports": "직속 {{count}}명"
+    },
+    "actions": {
+      "matrix": "매트릭스 관계",
+      "changeDirection": "배치 방향 전환",
+      "collapse": "하위 항목 접기",
+      "expand": "하위 항목 펼치기",
+      "collapseAll": "전체 접기",
+      "expandAll": "전체 펼치기",
+      "closeDetails": "상세 정보 닫기",
+      "focusOrganization": "이 조직을 기준으로 보기",
+      "showCompany": "SKAX 전체 보기"
+    },
+    "legend": {
+      "supervisory": "주 보고 관계",
+      "matrix": "매트릭스"
+    },
+    "details": {
+      "panelLabel": "조직도 상세 정보",
+      "profile": "구성원 정보",
+      "organization": "조직",
+      "headcount": "인원",
+      "headcountValue": "전체 {{total}}명 / 직속 {{direct}}명",
+      "costCenter": "코스트센터",
+      "openPositions": "공석",
+      "leader": "조직 리더",
+      "directMembers": "직속 구성원 {{count}}명",
+      "email": "회사 이메일",
+      "grade": "직급",
+      "location": "근무지",
+      "workerType": "고용 유형",
+      "status": "재직 상태",
+      "accessRoles": "시스템 권한",
+      "noAccessRole": "할당된 시스템 권한 없음",
+      "manager": "보고 대상",
+      "directReports": "직속 보고자 {{count}}명"
+    },
+    "organizationTypes": {
+      "COMPANY": "회사",
+      "BUSINESS_UNIT": "부문",
+      "DIVISION": "본부",
+      "DEPARTMENT": "부서",
+      "SUPERVISORY": "팀"
+    },
+    "workerTypes": {
+      "EMPLOYEE": "정규 구성원",
+      "CONTINGENT": "외부 전문 인력"
     }
   },
   "provisioning": {

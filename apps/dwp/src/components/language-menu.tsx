@@ -98,12 +98,7 @@ export function LanguageMenu() {
           >
             <ListItemIcon sx={{ minWidth: 34 }}>
               {language === locale.code ? (
-                <Check
-                  size={18}
-                  strokeWidth={2}
-                  color="currentColor"
-                  aria-hidden="true"
-                />
+                <Check size={18} strokeWidth={2} color="currentColor" aria-hidden="true" />
               ) : (
                 <Box sx={{ width: 18 }} />
               )}

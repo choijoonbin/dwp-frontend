@@ -270,7 +270,7 @@ async function mockIdentityAccess(page: Page) {
             {
               userId: 1,
               displayName: 'Administrator',
-              email: 'admin@localhost',
+              email: 'admin@dwp.local',
               status: 'ACTIVE',
               mfaEnabled: false,
               roles: ['ADMIN'],

@@ -1,19 +1,55 @@
 import { Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Building2, ListChecks } from 'lucide-react';
+import {
+  BadgeDollarSign,
+  Building2,
+  ClipboardList,
+  Gauge,
+  HeartPulse,
+  LifeBuoy,
+  ListChecks,
+} from 'lucide-react';
 import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { ProviderOperations, ProviderTenants } from '../features/provider/provider-control-plane';
+import {
+  ProviderAudit,
+  ProviderCommercial,
+  ProviderHealth,
+  ProviderOperations,
+  ProviderOverview,
+  ProviderSupport,
+  ProviderTenantDetail,
+  ProviderTenants,
+} from '../features/provider/provider-control-plane';
+
+const views = {
+  overview: { icon: Gauge, content: ProviderOverview },
+  tenants: { icon: Building2, content: ProviderTenants },
+  operations: { icon: ListChecks, content: ProviderOperations },
+  health: { icon: HeartPulse, content: ProviderHealth },
+  support: { icon: LifeBuoy, content: ProviderSupport },
+  commercial: { icon: BadgeDollarSign, content: ProviderCommercial },
+  audit: { icon: ClipboardList, content: ProviderAudit },
+} as const;
 
 export default function ProviderPage() {
   const { t } = useTranslation('provider');
-  const { view } = useParams();
-  if (view !== 'tenants' && view !== 'operations') return <Navigate to="/404" replace />;
-  const Icon = view === 'tenants' ? Building2 : ListChecks;
+  const { view, tenantId } = useParams();
+  if (tenantId) {
+    return (
+      <PageCanvas>
+        <ProviderTenantDetail tenantId={tenantId} />
+      </PageCanvas>
+    );
+  }
+  if (!view || !(view in views)) return <Navigate to="/404" replace />;
+  const selected = views[view as keyof typeof views];
+  const Icon = selected.icon;
+  const Content = selected.content;
   return (
     <PageCanvas>
       <Stack gap={3}>
@@ -46,7 +82,7 @@ export default function ProviderPage() {
             </Box>
           </Stack>
         </Box>
-        {view === 'tenants' ? <ProviderTenants /> : <ProviderOperations />}
+        <Content />
       </Stack>
     </PageCanvas>
   );

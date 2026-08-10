@@ -30,6 +30,7 @@ const SettingsPage = lazy(() => import('../pages/account/settings'));
 const SecurityPage = lazy(() => import('../pages/account/security'));
 const SignInPage = lazy(() => import('../pages/sign-in'));
 const OidcCallbackPage = lazy(() => import('../pages/auth/oidc-callback'));
+const AccountActivationPage = lazy(() => import('../pages/auth/account-activation'));
 const Page403 = lazy(() => import('../pages/page-403'));
 const PageNotFound = lazy(() => import('../pages/page-not-found'));
 
@@ -48,7 +49,7 @@ function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const { permissions } = usePermissions();
   const rolePermitted = auth.user?.roles.some((role) =>
-    ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'].includes(role)
+    ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN', 'AUDITOR', 'AUDIT_ADMIN'].includes(role)
   );
   const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
   return rolePermitted && appPermitted ? children : <Navigate to="/403" replace />;
@@ -61,7 +62,13 @@ function AdminLegacyRedirect() {
 
 function ProviderRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
-  return auth.user?.roles.includes('PROVIDER_ADMIN') ? children : <Navigate to="/403" replace />;
+  return auth.user?.roles.some((role) =>
+    ['PROVIDER_ADMIN', 'PROVIDER_OPERATOR', 'PROVIDER_SUPPORT', 'PROVIDER_AUDITOR'].includes(role)
+  ) ? (
+    children
+  ) : (
+    <Navigate to="/403" replace />
+  );
 }
 
 function AppRouteGuard({
@@ -211,9 +218,17 @@ export const routesSection: RouteObject[] = [
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="tenants" replace /> },
+      { index: true, element: <Navigate to="overview" replace /> },
       {
         path: ':view',
+        element: (
+          <Suspense fallback={fallback}>
+            <ProviderPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'tenants/:tenantId',
         element: (
           <Suspense fallback={fallback}>
             <ProviderPage />
@@ -230,6 +245,14 @@ export const routesSection: RouteObject[] = [
         element: (
           <Suspense fallback={fallback}>
             <SignInPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'activate',
+        element: (
+          <Suspense fallback={fallback}>
+            <AccountActivationPage />
           </Suspense>
         ),
       },

@@ -5,7 +5,7 @@ import { axiosInstance, resetCsrfToken } from '../axios-instance';
 import type { ApiResponse } from '../types';
 
 export type LoginRequest = {
-  username: string;
+  email: string;
   password: string;
   tenantId: string;
 };
@@ -53,13 +53,30 @@ export type SessionRotationData = {
   expiresAt: string;
 };
 
+export type AccountActivation = {
+  tenantId: number;
+  tenantKey: string;
+  tenantName: string;
+  userId: number;
+  displayName: string;
+  email: string;
+  expiresAt: string;
+};
+
+export type ActivatedAccount = {
+  tenantId: number;
+  tenantKey: string;
+  email: string;
+  lifecycleState: string;
+};
+
 export async function login(
   payload: Omit<LoginRequest, 'tenantId'> & { tenantId?: string }
 ): Promise<ApiResponse<LoginResponseData>> {
   const response = await axiosInstance.post<ApiResponse<LoginResponseData>, LoginRequest>(
     '/api/auth/login',
     {
-      username: payload.username,
+      email: payload.email,
       password: payload.password,
       tenantId: payload.tenantId || getTenantId(),
     }
@@ -113,6 +130,21 @@ export async function logout(): Promise<void> {
   } finally {
     resetCsrfToken();
   }
+}
+
+export async function getAccountActivation(token: string): Promise<AccountActivation> {
+  const response = await axiosInstance.get<ApiResponse<AccountActivation>>(
+    `/api/auth/activations/${encodeURIComponent(token)}`
+  );
+  return response.data.data;
+}
+
+export async function activateAccount(token: string, password: string): Promise<ActivatedAccount> {
+  const response = await axiosInstance.post<ApiResponse<ActivatedAccount>, { password: string }>(
+    `/api/auth/activations/${encodeURIComponent(token)}`,
+    { password }
+  );
+  return response.data.data;
 }
 
 export type OidcCallbackParams = {

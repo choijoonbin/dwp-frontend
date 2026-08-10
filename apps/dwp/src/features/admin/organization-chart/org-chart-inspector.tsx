@@ -1,0 +1,412 @@
+import { useTranslation } from 'react-i18next';
+import {
+  BriefcaseBusiness,
+  Building2,
+  CalendarDays,
+  CircleUserRound,
+  ExternalLink,
+  Mail,
+  MapPin,
+  Network,
+  ShieldCheck,
+  UserRoundCheck,
+  UsersRound,
+  X,
+} from 'lucide-react';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import ButtonBase from '@mui/material/ButtonBase';
+import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+
+import { PersonAvatar } from '../people/person-avatar';
+
+import type { LucideIcon } from 'lucide-react';
+import type { OrganizationChart } from '@dwp-frontend/shared-utils';
+
+export type OrgChartSelection =
+  | { kind: 'organization'; id: string }
+  | { kind: 'person'; id: string };
+
+function DetailRow({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value?: string | null;
+}) {
+  return (
+    <Stack direction="row" gap={1.25} alignItems="flex-start" sx={{ py: 0.8 }}>
+      <Icon size={16} strokeWidth={1.7} />
+      <Box sx={{ minWidth: 0, flex: 1 }}>
+        <Typography variant="caption" color="text.secondary" display="block">
+          {label}
+        </Typography>
+        <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
+          {value || '-'}
+        </Typography>
+      </Box>
+    </Stack>
+  );
+}
+
+function PersonLink({
+  personId,
+  chart,
+  secondary,
+  onSelect,
+}: {
+  personId: string;
+  chart: OrganizationChart;
+  secondary?: string | null;
+  onSelect: (selection: OrgChartSelection) => void;
+}) {
+  const person = chart.people.find((candidate) => candidate.personId === personId);
+  if (!person) return null;
+  return (
+    <ButtonBase
+      onClick={() => onSelect({ kind: 'person', id: person.personId })}
+      sx={{
+        width: 1,
+        minHeight: 52,
+        px: 1,
+        py: 0.75,
+        justifyContent: 'flex-start',
+        borderRadius: 1,
+        textAlign: 'left',
+        '&:hover': { bgcolor: 'action.hover' },
+      }}
+    >
+      <PersonAvatar name={person.displayName} size={32} />
+      <Box sx={{ ml: 1, minWidth: 0, flex: 1 }}>
+        <Typography variant="body2" fontWeight={650} noWrap>
+          {person.displayName}
+        </Typography>
+        <Typography variant="caption" color="text.secondary" display="block" noWrap>
+          {secondary || person.businessTitle || person.workEmail}
+        </Typography>
+      </Box>
+      <ExternalLink size={14} />
+    </ButtonBase>
+  );
+}
+
+export function OrgChartInspector({
+  chart,
+  selection,
+  rolesByEmail,
+  onClose,
+  onSelect,
+  onFocusOrganization,
+}: {
+  chart: OrganizationChart;
+  selection: OrgChartSelection;
+  rolesByEmail: ReadonlyMap<string, string[]>;
+  onClose: () => void;
+  onSelect: (selection: OrgChartSelection) => void;
+  onFocusOrganization: (organizationId: string) => void;
+}) {
+  const { t } = useTranslation('admin');
+  const organization =
+    selection.kind === 'organization'
+      ? chart.organizations.find((candidate) => candidate.organizationId === selection.id)
+      : undefined;
+  const person =
+    selection.kind === 'person'
+      ? chart.people.find((candidate) => candidate.personId === selection.id)
+      : undefined;
+
+  if (!organization && !person) return null;
+
+  const title = organization?.name ?? person?.displayName ?? '';
+  const subtitle = organization
+    ? t(`orgChart.organizationTypes.${organization.organizationType}`, {
+        defaultValue: organization.organizationType,
+      })
+    : person?.businessTitle || person?.jobProfileName || t('people.notAvailable');
+
+  return (
+    <Stack sx={{ height: 1, minHeight: 0, bgcolor: 'background.paper' }}>
+      <Stack direction="row" alignItems="flex-start" gap={1.25} sx={{ px: 2, py: 1.75 }}>
+        {person ? (
+          <PersonAvatar name={person.displayName} size={42} />
+        ) : (
+          <Box
+            sx={{
+              width: 42,
+              height: 42,
+              display: 'grid',
+              placeItems: 'center',
+              borderRadius: 1,
+              bgcolor: 'action.selected',
+              color: 'primary.main',
+            }}
+          >
+            <Building2 size={21} />
+          </Box>
+        )}
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <Typography component="h2" variant="subtitle1" fontWeight={750} sx={{ lineHeight: 1.25 }}>
+            {title}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.3 }}>
+            {subtitle}
+          </Typography>
+        </Box>
+        <Tooltip title={t('orgChart.actions.closeDetails')}>
+          <IconButton
+            size="small"
+            aria-label={t('orgChart.actions.closeDetails')}
+            onClick={onClose}
+          >
+            <X size={18} />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+      <Divider />
+
+      <Box sx={{ minHeight: 0, overflowY: 'auto', px: 2, py: 1.5 }}>
+        {organization && (
+          <OrganizationDetails
+            chart={chart}
+            organizationId={organization.organizationId}
+            onSelect={onSelect}
+            onFocusOrganization={onFocusOrganization}
+          />
+        )}
+        {person && (
+          <PersonDetails
+            chart={chart}
+            personId={person.personId}
+            rolesByEmail={rolesByEmail}
+            onSelect={onSelect}
+          />
+        )}
+      </Box>
+    </Stack>
+  );
+}
+
+function OrganizationDetails({
+  chart,
+  organizationId,
+  onSelect,
+  onFocusOrganization,
+}: {
+  chart: OrganizationChart;
+  organizationId: string;
+  onSelect: (selection: OrgChartSelection) => void;
+  onFocusOrganization: (organizationId: string) => void;
+}) {
+  const { t } = useTranslation('admin');
+  const organization = chart.organizations.find(
+    (candidate) => candidate.organizationId === organizationId
+  );
+  if (!organization) return null;
+  const leader = organization.leaderPersonId
+    ? chart.people.find((person) => person.personId === organization.leaderPersonId)
+    : undefined;
+  const members = organization.directMemberIds.filter((personId) => personId !== leader?.personId);
+  const openPositions = chart.openPositions.filter(
+    (position) => position.organizationId === organization.organizationId
+  );
+
+  return (
+    <Stack gap={2}>
+      {organization.description && (
+        <Typography variant="body2" color="text.secondary">
+          {organization.description}
+        </Typography>
+      )}
+      <Button
+        variant="outlined"
+        size="small"
+        startIcon={<Network size={16} />}
+        onClick={() => onFocusOrganization(organization.organizationId)}
+      >
+        {t('orgChart.actions.focusOrganization')}
+      </Button>
+      <Box>
+        <Typography variant="overline" color="text.secondary">
+          {t('orgChart.details.organization')}
+        </Typography>
+        <DetailRow
+          icon={UsersRound}
+          label={t('orgChart.details.headcount')}
+          value={t('orgChart.details.headcountValue', {
+            total: organization.totalHeadcount,
+            direct: organization.directHeadcount,
+          })}
+        />
+        <DetailRow
+          icon={Building2}
+          label={t('orgChart.details.costCenter')}
+          value={organization.costCenterKey}
+        />
+        <DetailRow
+          icon={BriefcaseBusiness}
+          label={t('orgChart.details.openPositions')}
+          value={String(organization.openPositionCount)}
+        />
+      </Box>
+
+      {leader && (
+        <Box>
+          <Typography variant="overline" color="text.secondary">
+            {t('orgChart.details.leader')}
+          </Typography>
+          <PersonLink personId={leader.personId} chart={chart} onSelect={onSelect} />
+        </Box>
+      )}
+
+      {members.length > 0 && (
+        <Box>
+          <Typography variant="overline" color="text.secondary">
+            {t('orgChart.details.directMembers', { count: members.length })}
+          </Typography>
+          <Stack sx={{ mt: 0.5 }}>
+            {members.slice(0, 10).map((personId) => (
+              <PersonLink key={personId} personId={personId} chart={chart} onSelect={onSelect} />
+            ))}
+          </Stack>
+        </Box>
+      )}
+
+      {openPositions.length > 0 && (
+        <Box>
+          <Typography variant="overline" color="text.secondary">
+            {t('orgChart.details.openPositions')}
+          </Typography>
+          <Stack divider={<Divider flexItem />} sx={{ mt: 0.5 }}>
+            {openPositions.map((position) => (
+              <Box key={position.positionKey} sx={{ py: 1 }}>
+                <Typography variant="body2" fontWeight={650}>
+                  {position.title}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {[position.locationName, position.availabilityDate].filter(Boolean).join(' / ')}
+                </Typography>
+              </Box>
+            ))}
+          </Stack>
+        </Box>
+      )}
+    </Stack>
+  );
+}
+
+function PersonDetails({
+  chart,
+  personId,
+  rolesByEmail,
+  onSelect,
+}: {
+  chart: OrganizationChart;
+  personId: string;
+  rolesByEmail: ReadonlyMap<string, string[]>;
+  onSelect: (selection: OrgChartSelection) => void;
+}) {
+  const { t } = useTranslation('admin');
+  const person = chart.people.find((candidate) => candidate.personId === personId);
+  if (!person) return null;
+  const organization = chart.organizations.find(
+    (candidate) => candidate.organizationId === person.organizationId
+  );
+  const manager = person.managerPersonId
+    ? chart.people.find((candidate) => candidate.personId === person.managerPersonId)
+    : undefined;
+  const reports = chart.people.filter((candidate) => candidate.managerPersonId === person.personId);
+  const roles = person.workEmail ? (rolesByEmail.get(person.workEmail.toLowerCase()) ?? []) : [];
+
+  return (
+    <Stack gap={2}>
+      <Box>
+        <Typography variant="overline" color="text.secondary">
+          {t('orgChart.details.profile')}
+        </Typography>
+        <DetailRow icon={Mail} label={t('orgChart.details.email')} value={person.workEmail} />
+        <DetailRow
+          icon={Building2}
+          label={t('orgChart.details.organization')}
+          value={organization?.name}
+        />
+        <DetailRow
+          icon={UserRoundCheck}
+          label={t('orgChart.details.grade')}
+          value={[person.jobGradeName, person.jobGradeKey].filter(Boolean).join(' / ')}
+        />
+        <DetailRow
+          icon={MapPin}
+          label={t('orgChart.details.location')}
+          value={person.locationName}
+        />
+        <DetailRow
+          icon={CircleUserRound}
+          label={t('orgChart.details.workerType')}
+          value={t(`orgChart.workerTypes.${person.workerType}`, {
+            defaultValue: person.workerType,
+          })}
+        />
+        <DetailRow
+          icon={CalendarDays}
+          label={t('orgChart.details.status')}
+          value={t(`people.status.${person.workerStatus}`, {
+            defaultValue: person.workerStatus,
+          })}
+        />
+      </Box>
+
+      <Box>
+        <Typography variant="overline" color="text.secondary">
+          {t('orgChart.details.accessRoles')}
+        </Typography>
+        <Stack direction="row" gap={0.6} flexWrap="wrap" useFlexGap sx={{ mt: 0.5 }}>
+          {roles.length ? (
+            roles.map((role) => (
+              <Chip key={role} icon={<ShieldCheck size={14} />} label={role} size="small" />
+            ))
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              {t('orgChart.details.noAccessRole')}
+            </Typography>
+          )}
+        </Stack>
+      </Box>
+
+      {manager && (
+        <Box>
+          <Typography variant="overline" color="text.secondary">
+            {t('orgChart.details.manager')}
+          </Typography>
+          <PersonLink personId={manager.personId} chart={chart} onSelect={onSelect} />
+        </Box>
+      )}
+
+      {reports.length > 0 && (
+        <Box>
+          <Typography variant="overline" color="text.secondary">
+            {t('orgChart.details.directReports', { count: reports.length })}
+          </Typography>
+          <Stack sx={{ mt: 0.5 }}>
+            {reports.map((report) => (
+              <PersonLink
+                key={report.personId}
+                personId={report.personId}
+                chart={chart}
+                secondary={report.businessTitle}
+                onSelect={onSelect}
+              />
+            ))}
+          </Stack>
+        </Box>
+      )}
+    </Stack>
+  );
+}
