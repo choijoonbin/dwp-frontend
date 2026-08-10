@@ -119,6 +119,28 @@ export const WorkQueue: Story = {
   },
 };
 
+export const SingleRow: Story = {
+  render: () => (
+    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: 'background.default', minHeight: '100vh' }}>
+      <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
+        Single-row queue
+      </Typography>
+      <EnterpriseDataGrid
+        ariaLabel="Single-row queue"
+        rows={rows.slice(0, 1)}
+        columns={columns}
+        hideFooter
+      />
+    </Box>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const grid = canvas.getByRole('grid', { name: 'Single-row queue' });
+
+    await expect(within(grid).getAllByRole('row')).toHaveLength(2);
+  },
+};
+
 export const Empty: Story = {
   render: () => (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: 'background.default', minHeight: '100vh' }}>

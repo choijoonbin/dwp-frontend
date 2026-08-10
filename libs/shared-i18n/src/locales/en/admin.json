@@ -111,6 +111,7 @@
     "userFallback": "User {{id}}",
     "mfaEnabled": "MFA on",
     "mfaDisabled": "MFA off",
+    "additionalRoles": "{{count}} more roles",
     "ownRolesUnavailable": "You cannot change your own roles",
     "columns": {
       "user": "User",

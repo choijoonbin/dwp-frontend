@@ -721,9 +721,6 @@ export function DirectoryManager() {
             rows={organizations}
             columns={organizationColumns}
             getRowId={(row) => row.orgUnitId}
-            height={552}
-            rowHeight={64}
-            columnHeaderHeight={44}
             paginationMode="server"
             rowCount={totalElements}
             paginationModel={{ page, pageSize: PAGE_SIZE }}
@@ -748,9 +745,6 @@ export function DirectoryManager() {
             rows={groups}
             columns={groupColumns}
             getRowId={(row) => row.groupId}
-            height={552}
-            rowHeight={64}
-            columnHeaderHeight={44}
             paginationMode="server"
             rowCount={totalElements}
             paginationModel={{ page, pageSize: PAGE_SIZE }}

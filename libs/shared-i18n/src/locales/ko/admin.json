@@ -111,6 +111,7 @@
     "userFallback": "사용자 {{id}}",
     "mfaEnabled": "MFA 켜짐",
     "mfaDisabled": "MFA 꺼짐",
+    "additionalRoles": "추가 역할 {{count}}개",
     "ownRolesUnavailable": "자신의 역할은 변경할 수 없습니다.",
     "columns": {
       "user": "사용자",

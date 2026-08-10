@@ -539,9 +539,6 @@ export function ReferenceDataManager() {
                     rows={detail.items}
                     columns={columns}
                     getRowId={(row) => row.code}
-                    rowHeight={58}
-                    columnHeaderHeight={44}
-                    height={516}
                     hideFooter={detail.items.length <= 25}
                     initialState={{ pagination: { paginationModel: { pageSize: 25, page: 0 } } }}
                     slots={{

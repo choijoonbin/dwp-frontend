@@ -391,22 +391,36 @@ export function AnnouncementManager() {
       )}
 
       <Box sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-        <Table aria-label={t('announcements.table.label')}>
+        <Table
+          size="small"
+          aria-label={t('announcements.table.label')}
+          sx={{
+            minWidth: 860,
+            tableLayout: 'fixed',
+            '& .MuiTableRow-root': { height: 52 },
+            '& .MuiTableCell-root': { py: 0.75, verticalAlign: 'middle' },
+            '& .MuiIconButton-root': { width: 32, height: 32 },
+          }}
+        >
           <TableHead>
             <TableRow>
-              <TableCell>{t('announcements.table.announcement')}</TableCell>
-              <TableCell>{t('announcements.table.status')}</TableCell>
-              <TableCell>{t('announcements.table.audience')}</TableCell>
-              <TableCell>{t('announcements.table.window')}</TableCell>
-              <TableCell align="right">{t('announcements.table.actions')}</TableCell>
+              <TableCell width="32%">{t('announcements.table.announcement')}</TableCell>
+              <TableCell width={112}>{t('announcements.table.status')}</TableCell>
+              <TableCell width={140}>{t('announcements.table.audience')}</TableCell>
+              <TableCell width={220}>{t('announcements.table.window')}</TableCell>
+              <TableCell width={140} align="right">
+                {t('announcements.table.actions')}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {announcements.map((announcement) => (
               <TableRow key={announcement.announcementId} hover>
-                <TableCell sx={{ minWidth: 280 }}>
-                  <Typography variant="subtitle2">{announcement.title}</Typography>
-                  <Typography variant="caption" color="text.secondary">
+                <TableCell>
+                  <Typography variant="subtitle2" noWrap>
+                    {announcement.title}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" display="block" noWrap>
                     {t(`announcements.severity.${announcement.severity}`)}
                     {announcement.pinned ? ` / ${t('announcements.pinned')}` : ''}
                   </Typography>
@@ -425,7 +439,7 @@ export function AnnouncementManager() {
                     : announcement.audienceValue}
                 </TableCell>
                 <TableCell sx={{ minWidth: 180 }}>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color="text.secondary" display="block" noWrap>
                     {announcement.startsAt
                       ? displayDateTime(announcement.startsAt)
                       : t('announcements.immediate')}

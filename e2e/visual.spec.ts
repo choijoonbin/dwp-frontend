@@ -251,6 +251,53 @@ async function mockSessions(page: Page) {
   );
 }
 
+async function mockIdentityAccess(page: Page) {
+  await page.route('**/api/auth/admin/identity/users**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          content: [
+            {
+              userId: 1,
+              displayName: 'Administrator',
+              email: 'admin@localhost',
+              status: 'ACTIVE',
+              mfaEnabled: false,
+              roles: ['ADMIN'],
+              accessRevision: 0,
+              version: 0,
+            },
+          ],
+          page: 0,
+          size: 25,
+          totalElements: 1,
+          totalPages: 1,
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/admin/identity/roles', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: [
+          {
+            code: 'ADMIN',
+            name: 'Administrator',
+            description: 'Tenant administration',
+            status: 'ACTIVE',
+          },
+        ],
+      }),
+    })
+  );
+}
+
 async function setAppearance(
   page: Page,
   preference: {
@@ -389,6 +436,43 @@ test('security sessions visual baseline', async ({ page }) => {
     page.getByRole('list', { name: 'Active browser sessions' }).getByRole('listitem')
   ).toHaveCount(2);
   await expect(page).toHaveScreenshot('security-sessions.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
+test('administration access grid visual baseline', async ({ page }, testInfo) => {
+  await mockAuthenticated(page);
+  await mockIdentityAccess(page);
+  await setAppearance(page, {
+    mode: 'light',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/admin/people/access');
+  await expect(page.getByRole('heading', { name: 'Identity access', level: 1 })).toBeVisible();
+
+  if (testInfo.project.name === 'mobile') {
+    await expect(
+      page.getByRole('list', { name: 'Tenant users' }).getByRole('listitem')
+    ).toHaveCount(1);
+  } else {
+    const grid = page.getByRole('grid', { name: 'Tenant users' });
+    await expect(grid).toBeVisible();
+    const [gridBox, headerBox, rowBox] = await Promise.all([
+      grid.boundingBox(),
+      grid.locator('.MuiDataGrid-columnHeaders').boundingBox(),
+      grid.locator('.MuiDataGrid-row').first().boundingBox(),
+    ]);
+    expect(gridBox?.height).toBeLessThanOrEqual(108);
+    expect(Math.round(headerBox?.height ?? 0)).toBe(Math.round(rowBox?.height ?? -1));
+  }
+
+  await expect(page).toHaveScreenshot('admin-access-grid.png', {
     animations: 'disabled',
     caret: 'hide',
     fullPage: true,

@@ -162,9 +162,6 @@ export function AuditLog() {
             rows={events}
             columns={columns}
             getRowId={(row) => row.auditEventId}
-            height={536}
-            rowHeight={52}
-            columnHeaderHeight={44}
             hideFooter={events.length <= 25}
             initialState={{ pagination: { paginationModel: { pageSize: 25, page: 0 } } }}
             slots={{

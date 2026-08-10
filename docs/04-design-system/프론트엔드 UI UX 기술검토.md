@@ -1,8 +1,8 @@
 # DWP 프론트엔드 UI/UX 기술검토
 
-> 문서 상태: R0 Technical Review v2.2
+> 문서 상태: R0 Technical Review v2.3
 >
-> 기준일: 2026-08-08
+> 기준일: 2026-08-10
 >
 > 대상: `dwp-frontend`
 >
@@ -37,7 +37,7 @@ Baseline과 Architecture Gate가 승인된 뒤 시작한다.
 | Appearance Policy        | 충족      | Product·Tenant·User·OS 우선순위와 Light·Dark·Contrast·Density 구현                                                |
 | Global Shell             | 부분 충족 | 반응형 Header·Navigation·Account 구현, 실제 업무 Floorplan 검증 남음                                              |
 | 공통 Component           | 부분 충족 | ProductMark·ToastViewport·AccessBoundary, 업무 Primitive 확장 필요                                                |
-| Enterprise Component     | 부분 충족 | MUI X Community Grid Reference 통과, 나머지 업무 Component 필요                                                   |
+| Enterprise Component     | 부분 충족 | 적응형 높이·동일 행 리듬의 MUI X Grid 정책 구현, 나머지 업무 Component 필요                                       |
 | DWP 업무 Pattern         | 미충족    | Today·Work·Approval·Service·Knowledge Pattern 구현 필요                                                           |
 | AI UX Pattern            | 부분 충족 | Citation·Plan·Execution·Retry·Handoff Reference, Streaming·Feedback 필요                                          |
 | 접근성                   | 부분 충족 | Desktop·Mobile Axe 자동검사 통과, Keyboard·Reader·Zoom 수동 Gate 남음                                             |
@@ -179,6 +179,30 @@ HTML이나 JSX를 생성하지 않는다.
 | Localization        | i18next Namespace와 Intl Formatting                               |
 | Test                | Vitest, Playwright, Axe와 Screenshot Baseline                     |
 | Font                | CJK 품질·성능·License 검증 후 승인 Font를 Self-host               |
+
+### 4.4 Enterprise Data Grid 정책
+
+운영 목록은 데이터가 적다는 이유로 빈 Grid Viewport를 크게 남기지 않는다. 기본
+`EnterpriseDataGrid`는 현재 페이지의 데이터 수에 따라 높이를 결정하고 대량 데이터에서만
+제한된 Viewport와 가상 스크롤을 사용한다.
+
+- Density별 Header·Row 높이는 `compact 44px`, `standard 52px`, `comfortable 60px`로
+  동일하게 맞춘다. 화면 단위로 임의 높이를 지정하지 않는다.
+- 1~8행은 내용 높이에 맞추고, 8행 초과는 최대 높이에서 내부 스크롤과 Virtualization을
+  유지한다. Empty는 2행, Loading은 3행 높이를 예약해 상태 전환 시 Layout Shift를 줄인다.
+- 고정 높이는 Work Split View처럼 주변 Panel과 수직 비교가 필요한 화면에만 허용하며
+  코드에 업무 근거가 있어야 한다.
+- 기본 행은 고정 높이와 한 줄 Cell을 사용한다. Identity처럼 핵심 식별 정보가 필요한 첫
+  Cell만 최대 두 줄을 허용하고, 다중 Tag는 정해진 개수 뒤 `+N`과 Tooltip으로 축약한다.
+- Cell 내부 Badge·Chip은 24px, 행 단위 Icon Action은 32px로 맞추고 모든 Cell을 수직
+  중앙 정렬한다. 숫자는 Tabular Numeric으로 비교 정렬한다.
+- Mobile은 Desktop Grid를 축소하거나 가로 스크롤시키지 않고, 정보 우선순위가 정의된
+  Structured List로 전환한다.
+- 콘텐츠 때문에 행 높이가 달라지는 목록은 Activity·Narrative Feed처럼 의미적으로
+  가변 높이가 필요한 Pattern에만 허용한다.
+
+Access, Directory, Registry, Reference Data와 Audit은 이 공통 정책을 사용한다. 공지
+Table도 같은 52px 행 리듬과 24/32px Cell Component 규격을 따른다.
 
 ## 5. AI UX Safety Pattern
 

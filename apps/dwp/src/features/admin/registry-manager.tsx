@@ -442,9 +442,6 @@ export function RegistryManager() {
               rows={entries}
               columns={columns}
               getRowId={(row) => `${row.registryType}/${row.entryKey}/${row.revision}`}
-              height={520}
-              rowHeight={56}
-              columnHeaderHeight={44}
               hideFooter={entries.length <= 25}
               initialState={{ pagination: { paginationModel: { pageSize: 25, page: 0 } } }}
               slots={{

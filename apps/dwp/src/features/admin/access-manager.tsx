@@ -62,7 +62,7 @@ function initials(name: string): string {
     .toUpperCase();
 }
 
-function RoleChips({ roles }: { roles: string[] }) {
+function RoleChips({ roles, maxVisible = 3 }: { roles: string[]; maxVisible?: number }) {
   const { t } = useTranslation('admin');
   if (!roles.length) {
     return (
@@ -71,11 +71,41 @@ function RoleChips({ roles }: { roles: string[] }) {
       </Typography>
     );
   }
+  const visibleRoles = roles.slice(0, maxVisible);
+  const hiddenRoles = roles.slice(maxVisible);
+
   return (
-    <Stack direction="row" gap={0.5} flexWrap="wrap">
-      {roles.map((role) => (
-        <Chip key={role} label={role} size="small" variant="outlined" />
+    <Stack direction="row" alignItems="center" gap={0.5} sx={{ minWidth: 0, minHeight: 24 }}>
+      {visibleRoles.map((role) => (
+        <Chip key={role} label={role} size="small" variant="outlined" sx={{ maxWidth: 128 }} />
       ))}
+      {hiddenRoles.length > 0 && (
+        <Tooltip title={hiddenRoles.join(', ')}>
+          <Chip
+            label={`+${hiddenRoles.length}`}
+            aria-label={t('access.additionalRoles', { count: hiddenRoles.length })}
+            size="small"
+            variant="outlined"
+          />
+        </Tooltip>
+      )}
+    </Stack>
+  );
+}
+
+function MfaState({ enabled }: { enabled: boolean }) {
+  const { t } = useTranslation('admin');
+  return (
+    <Stack
+      direction="row"
+      alignItems="center"
+      gap={0.75}
+      sx={{ minHeight: 24, color: enabled ? 'text.primary' : 'text.disabled' }}
+    >
+      <KeyRound size={14} strokeWidth={1.8} aria-hidden="true" />
+      <Typography variant="body2" color="inherit">
+        {enabled ? t('common.states.on') : t('common.states.off')}
+      </Typography>
     </Stack>
   );
 }
@@ -253,7 +283,15 @@ export function AccessManager() {
         flex: 1.2,
         renderCell: ({ row }) => (
           <Stack direction="row" alignItems="center" gap={1.25} sx={{ minWidth: 0 }}>
-            <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: 12 }}>
+            <Avatar
+              sx={{
+                width: 32,
+                height: 32,
+                flex: '0 0 auto',
+                bgcolor: 'primary.main',
+                fontSize: 12,
+              }}
+            >
               {initials(row.displayName)}
             </Avatar>
             <Box sx={{ minWidth: 0 }}>
@@ -273,7 +311,7 @@ export function AccessManager() {
         minWidth: 220,
         flex: 1,
         sortable: false,
-        renderCell: ({ row }) => <RoleChips roles={row.roles} />,
+        renderCell: ({ row }) => <RoleChips roles={row.roles} maxVisible={2} />,
       },
       {
         field: 'status',
@@ -285,6 +323,7 @@ export function AccessManager() {
             size="small"
             color={row.status === 'ACTIVE' ? 'success' : 'default'}
             variant="outlined"
+            sx={{ minWidth: 64 }}
           />
         ),
       },
@@ -292,7 +331,7 @@ export function AccessManager() {
         field: 'mfaEnabled',
         headerName: t('access.columns.mfa'),
         width: 82,
-        renderCell: ({ row }) => (row.mfaEnabled ? t('common.states.on') : t('common.states.off')),
+        renderCell: ({ row }) => <MfaState enabled={row.mfaEnabled} />,
       },
       {
         field: 'accessRevision',
@@ -300,6 +339,14 @@ export function AccessManager() {
         width: 92,
         align: 'right',
         headerAlign: 'right',
+        renderCell: ({ row }) => (
+          <Typography
+            variant="body2"
+            sx={{ width: 1, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}
+          >
+            {row.accessRevision}
+          </Typography>
+        ),
       },
       {
         field: 'actions',
@@ -308,7 +355,11 @@ export function AccessManager() {
         align: 'right',
         sortable: false,
         filterable: false,
-        renderCell: ({ row }) => editButton(row),
+        renderCell: ({ row }) => (
+          <Box sx={{ width: 1, display: 'flex', justifyContent: 'flex-end' }}>
+            {editButton(row)}
+          </Box>
+        ),
       },
     ],
     [editButton, t]
@@ -379,9 +430,6 @@ export function AccessManager() {
               rows={users}
               columns={columns}
               getRowId={(row) => row.userId}
-              height={536}
-              rowHeight={64}
-              columnHeaderHeight={44}
               hideFooter={users.length <= 25}
               initialState={{ pagination: { paginationModel: { pageSize: 25, page: 0 } } }}
               slots={{
