@@ -102,6 +102,8 @@ Context Envelope 계약으로 전환한다.
 - Stroke는 1.8을 기본으로 하고 상태를 Icon만으로 전달하지 않는다.
 - Icon Button은 Tooltip과 Accessible Name을 반드시 제공한다.
 - App Icon은 Domain별 Color와 Shape를 사용하되 Brand Logo를 허가 없이 모사하지 않는다.
+- Browser Favicon과 설치 Icon은 DWP Product Mark에서 파생한 전용 `D` Monogram을 사용한다.
+  원본은 `public/assets/brand/dwp-mark.svg`이며 외부 Brand나 Template Asset을 사용하지 않는다.
 
 ### Image
 

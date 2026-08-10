@@ -102,6 +102,17 @@ test('unauthenticated users see the login shell without business navigation', as
 
   await page.goto('/');
   await expect(page).toHaveURL(/\/sign-in/);
+  await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute(
+    'href',
+    '/assets/brand/dwp-mark.svg'
+  );
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
+    'href',
+    '/assets/brand/dwp-touch-icon-180.png'
+  );
+  const faviconResponse = await page.request.get('/assets/brand/dwp-mark.svg');
+  expect(faviconResponse.ok()).toBe(true);
+  expect(faviconResponse.headers()['content-type']).toContain('image/svg+xml');
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
   const password = page.getByRole('textbox', { name: /^Password/ });
   await password.fill('access-policy-test');
