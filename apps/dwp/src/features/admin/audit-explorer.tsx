@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import {
   BookmarkPlus,
   Copy,
   Download,
   FileJson2,
   Filter,
+  FolderInput,
   RefreshCw,
   Search,
   ShieldCheck,
@@ -19,6 +21,8 @@ import {
   createAuditExport,
   deleteAuditSavedSearch,
   downloadAuditExport,
+  linkAuditCaseEvent,
+  listAuditCases,
   listAuditEvents,
   listAuditSavedSearches,
   saveAuditSearch,
@@ -26,7 +30,7 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -49,7 +53,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { AdminPanelError } from './admin-ui';
@@ -138,6 +142,7 @@ function DetailRow({ label, value }: { label: string; value?: string | number | 
 
 export function AuditExplorer() {
   const { t } = useTranslation('admin');
+  const [searchParams] = useSearchParams();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
   const { hasPermission } = usePermissions();
@@ -147,8 +152,8 @@ export function AuditExplorer() {
   const [category, setCategory] = useState<AuditCategory>('ALL');
   const [severity, setSeverity] = useState<AuditSeverity>('ALL');
   const [outcome, setOutcome] = useState<AuditOutcome>('ALL');
-  const [queryInput, setQueryInput] = useState('');
-  const [query, setQuery] = useState('');
+  const [queryInput, setQueryInput] = useState(() => searchParams.get('query') ?? '');
+  const [query, setQuery] = useState(() => searchParams.get('query') ?? '');
   const [sourceService, setSourceService] = useState('');
   const [actor, setActor] = useState('');
   const [sourceInput, setSourceInput] = useState('');
@@ -163,10 +168,18 @@ export function AuditExplorer() {
   const [saveSearchOpen, setSaveSearchOpen] = useState(false);
   const [savedSearchName, setSavedSearchName] = useState('');
   const [savedSearchShared, setSavedSearchShared] = useState(false);
+  const [caseLinkOpen, setCaseLinkOpen] = useState(false);
+  const [linkCaseId, setLinkCaseId] = useState('');
+  const [linkNote, setLinkNote] = useState('');
 
   const savedSearchesQuery = useQuery({
     queryKey: ['audit-control', 'saved-searches'],
     queryFn: listAuditSavedSearches,
+  });
+  const casesQuery = useQuery({
+    queryKey: ['audit-control', 'cases'],
+    queryFn: listAuditCases,
+    enabled: hasPermission('ADMIN.AUDIT_INVESTIGATE', 'UPDATE'),
   });
 
   const filters = {
@@ -225,6 +238,8 @@ export function AuditExplorer() {
         category,
         severity,
         outcome,
+        sourceService,
+        actor,
         query,
       }),
     onSuccess: async (saved) => {
@@ -246,6 +261,24 @@ export function AuditExplorer() {
       toast.success(t('auditControl.savedSearches.deleted'));
     },
     onError: () => toast.error(t('auditControl.savedSearches.deleteFailed')),
+  });
+
+  const linkEventMutation = useMutation({
+    mutationFn: () =>
+      linkAuditCaseEvent(linkCaseId, {
+        eventId: selected!.eventId,
+        occurredAt: selected!.occurredAt,
+        note: linkNote || undefined,
+      }),
+    onSuccess: async () => {
+      setCaseLinkOpen(false);
+      setLinkCaseId('');
+      setLinkNote('');
+      await queryClient.invalidateQueries({ queryKey: ['audit-control', 'case-workspace'] });
+      await queryClient.invalidateQueries({ queryKey: ['audit-control', 'cases'] });
+      toast.success(t('auditControl.investigations.evidenceLinked'));
+    },
+    onError: () => toast.error(t('common.operationError')),
   });
 
   const applySavedSearch = (saved: AuditSavedSearch) => {
@@ -337,8 +370,79 @@ export function AuditExplorer() {
     toast.success(t('auditControl.detail.copied'));
   };
 
+  const activeFilterCount = [
+    category !== 'ALL',
+    severity !== 'ALL',
+    outcome !== 'ALL',
+    Boolean(sourceService),
+    Boolean(actor),
+    Boolean(query),
+  ].filter(Boolean).length;
+
   return (
-    <Box sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
+    <Box
+      sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}
+    >
+      <Box
+        sx={(theme) => ({
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) repeat(3, auto)' },
+          alignItems: 'center',
+          gap: { xs: 1.5, sm: 3 },
+          px: 2.25,
+          py: 1.75,
+          borderBottom: 1,
+          borderColor: 'divider',
+          bgcolor: alpha(theme.palette.primary.main, 0.035),
+        })}
+      >
+        <Stack direction="row" alignItems="center" gap={1.25} minWidth={0}>
+          <Box
+            sx={{
+              display: 'grid',
+              placeItems: 'center',
+              width: 34,
+              height: 34,
+              bgcolor: 'primary.main',
+              color: 'primary.contrastText',
+            }}
+          >
+            <ShieldCheck size={18} />
+          </Box>
+          <Box minWidth={0}>
+            <Typography component="h2" variant="subtitle2">
+              {t('auditControl.explorer.searchSession')}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" noWrap display="block">
+              {t('auditControl.explorer.searchSessionHint')}
+            </Typography>
+          </Box>
+        </Stack>
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            {t('auditControl.explorer.results')}
+          </Typography>
+          <Typography component="p" variant="subtitle1" fontWeight={760}>
+            {formatNumber(eventsQuery.data?.totalElements ?? 0)}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            {t('auditControl.explorer.activeFilters')}
+          </Typography>
+          <Typography component="p" variant="subtitle1" fontWeight={760}>
+            {activeFilterCount}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            {t('auditControl.explorer.window')}
+          </Typography>
+          <Typography component="p" variant="subtitle1" fontWeight={760}>
+            {t(`auditControl.windows.${window}`)}
+          </Typography>
+        </Box>
+      </Box>
       <Box
         sx={{
           px: 2,
@@ -680,6 +784,17 @@ export function AuditExplorer() {
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                   {selected.sourceService} / {selected.sourceModule}
                 </Typography>
+                {hasPermission('ADMIN.AUDIT_INVESTIGATE', 'UPDATE') && (
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<FolderInput size={16} />}
+                    sx={{ mt: 1.5 }}
+                    onClick={() => setCaseLinkOpen(true)}
+                  >
+                    {t('auditControl.explorer.preserveInCase')}
+                  </Button>
+                )}
               </Box>
               <IconButton aria-label={t('common.actions.close')} onClick={() => setSelected(null)}>
                 <X size={20} />
@@ -880,6 +995,51 @@ export function AuditExplorer() {
             onClick={() => saveSearchMutation.mutate()}
           >
             {t('common.actions.save')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={caseLinkOpen} onClose={() => setCaseLinkOpen(false)} fullWidth maxWidth="xs">
+        <DialogTitle>{t('auditControl.explorer.preserveTitle')}</DialogTitle>
+        <DialogContent>
+          <Stack gap={1.5} sx={{ pt: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              {t('auditControl.explorer.preserveHint')}
+            </Typography>
+            <TextField
+              select
+              required
+              label={t('auditControl.investigations.linkCase')}
+              value={linkCaseId}
+              onChange={(event) => setLinkCaseId(event.target.value)}
+            >
+              {(casesQuery.data ?? []).map((item) => (
+                <MenuItem key={item.caseId} value={item.caseId}>
+                  #{item.caseNumber} {item.title}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              multiline
+              minRows={3}
+              label={t('auditControl.explorer.evidenceNote')}
+              value={linkNote}
+              onChange={(event) => setLinkNote(event.target.value)}
+              inputProps={{ maxLength: 2000 }}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button color="inherit" onClick={() => setCaseLinkOpen(false)}>
+            {t('common.actions.cancel')}
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<FolderInput size={17} />}
+            disabled={!linkCaseId || linkEventMutation.isPending}
+            onClick={() => linkEventMutation.mutate()}
+          >
+            {t('auditControl.explorer.preserve')}
           </Button>
         </DialogActions>
       </Dialog>

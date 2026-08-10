@@ -83,24 +83,24 @@
         "description": "Trace privileged changes, actor identity, outcome, and correlation context."
       },
       "audit-overview": {
-        "label": "Audit overview",
-        "title": "Audit posture",
-        "description": "Assess tenant evidence coverage, risk concentration, findings, and investigations."
+        "label": "Audit command center",
+        "title": "Audit command center",
+        "description": "Direct attention to material risk, investigation workload, evidence health, and control gaps."
       },
       "audit-events": {
-        "label": "Event explorer",
-        "title": "Event explorer",
-        "description": "Search immutable evidence across identities, data, provisioning, and AI actions."
+        "label": "Evidence explorer",
+        "title": "Evidence explorer",
+        "description": "Search, correlate, preserve, and export immutable evidence across enterprise activity."
       },
       "audit-investigations": {
-        "label": "Findings & cases",
-        "title": "Findings and cases",
-        "description": "Triage high-risk activity and maintain accountable investigation workflows."
+        "label": "Investigation workbench",
+        "title": "Investigation workbench",
+        "description": "Triage signals and manage accountable cases with evidence, entities, tasks, and decisions."
       },
       "audit-governance": {
-        "label": "Retention & integrity",
-        "title": "Retention and integrity",
-        "description": "Control evidence retention, exports, risk thresholds, and integrity checkpoints."
+        "label": "Evidence governance",
+        "title": "Evidence governance",
+        "description": "Govern the evidence lifecycle, collection coverage, exports, and cryptographic integrity."
       }
     }
   },
@@ -613,6 +613,18 @@
       "deleted": "Saved investigation view deleted.",
       "deleteFailed": "The saved investigation view could not be deleted."
     },
+    "explorer": {
+      "searchSession": "Evidence search session",
+      "searchSessionHint": "Correlate immutable activity, preserve relevant records, and export governed evidence.",
+      "results": "Matching records",
+      "activeFilters": "Active filters",
+      "window": "Time window",
+      "preserveInCase": "Preserve in case",
+      "preserveTitle": "Preserve evidence in an investigation",
+      "preserveHint": "The original immutable record remains unchanged. A governed evidence link and investigator activity entry are added to the selected case.",
+      "evidenceNote": "Evidence relevance note",
+      "preserve": "Preserve evidence"
+    },
     "category": {
       "ALL": "All categories",
       "ADMIN_CHANGE": "Administration",
@@ -656,9 +668,32 @@
     "overview": {
       "posture": "Evidence posture",
       "indicators": "Audit posture indicators",
+      "commandPosture": "Operational audit posture",
+      "materialRisk": "Material risk index",
+      "postureState": {
+        "CONTROLLED": "Controlled",
+        "ELEVATED": "Elevated",
+        "CRITICAL": "Critical"
+      },
+      "postureGuidance": {
+        "CONTROLLED": "Evidence collection is healthy and no material investigation backlog requires escalation.",
+        "ELEVATED": "Material signals require accountable triage before the investigation backlog expands.",
+        "CRITICAL": "Critical risk or collection gaps require immediate investigation leadership action."
+      },
+      "openWorkbench": "Open investigation workbench",
+      "exploreEvidence": "Explore evidence",
       "trend": "Evidence trend",
       "trendDescription": "Event volume with high-risk concentration across the selected window.",
       "trendLabel": "Audit event and high-risk trend",
+      "riskTrajectory": "Risk trajectory",
+      "riskTrajectoryHint": "Compare evidence volume with the high-risk signals that need analyst attention.",
+      "allActivity": "All evidence",
+      "highRiskActivity": "High risk",
+      "actionQueue": "Priority action queue",
+      "viewAll": "View all",
+      "riskDomains": "Risk concentration by domain",
+      "activeActors": "Most active identities",
+      "collectionAssurance": "Collection assurance",
       "categories": "Evidence coverage",
       "attention": "Needs attention",
       "noFindings": "No open high-risk findings.",
@@ -725,10 +760,38 @@
       "RESOLVED": "Resolved",
       "CLOSED": "Closed"
     },
+    "sla": {
+      "ON_TRACK": "On track",
+      "AT_RISK": "At risk",
+      "BREACHED": "SLA breached",
+      "COMPLETED": "Completed"
+    },
+    "entity": {
+      "relationship": {
+        "ACTOR": "Actor",
+        "TARGET": "Target",
+        "SOURCE": "Source"
+      }
+    },
+    "activity": {
+      "CASE_CREATED": "Case created",
+      "CASE_UPDATED": "Case details updated",
+      "STATUS_CHANGED": "Investigation status changed",
+      "ASSIGNMENT_CHANGED": "Case ownership changed",
+      "FINDING_LINKED": "Finding added to the case",
+      "EVIDENCE_LINKED": "Evidence preserved in the case",
+      "NOTE_ADDED": "Investigator note added",
+      "TASK_CREATED": "Investigation task created",
+      "TASK_UPDATED": "Investigation task updated",
+      "RESOLUTION_RECORDED": "Resolution decision recorded"
+    },
     "investigations": {
       "views": "Investigation views",
       "findings": "Findings",
       "cases": "Cases",
+      "analysisQueue": "Analysis queue",
+      "caseWorkspace": "Case workspace",
+      "searchQueue": "Search title, actor, target, or service",
       "status": "Status",
       "newCase": "New case",
       "priority": "Priority",
@@ -737,6 +800,9 @@
       "occurrences_one": "{{count}} occurrence",
       "occurrences_other": "{{count}} occurrences",
       "owner": "Owner",
+      "unknownActor": "Unknown actor",
+      "unassigned": "Unassigned",
+      "assignToMe": "Assign to me",
       "noFindings": "No findings match this state.",
       "caseNumber": "Case",
       "caseTitle": "Case title",
@@ -748,25 +814,116 @@
       "linkCase": "Linked case",
       "noCase": "No linked case",
       "resolution": "Investigator notes or resolution",
+      "assessment": "Assessment and disposition rationale",
       "saveFinding": "Save finding",
+      "saveDecision": "Save triage decision",
       "findingUpdated": "Finding workflow updated.",
       "caseCreated": "Investigation case created.",
       "caseUpdated": "Case status updated.",
-      "closedResolution": "Case reviewed and closed."
+      "closedResolution": "Case reviewed and closed.",
+      "queueOpen": "Open signals",
+      "queueOpenHint": "Awaiting a decision",
+      "queueCritical": "Critical",
+      "queueCriticalHint": "Immediate assessment",
+      "queueUnassigned": "Unassigned",
+      "queueUnassignedHint": "No accountable owner",
+      "queueBreached": "SLA breaches",
+      "queueBreachedHint": "Cases past due",
+      "priorityQueue": "Prioritized signals",
+      "activeCases": "Active investigations",
+      "noQueueResults": "No investigation items match this view.",
+      "loadingContext": "Building the finding dossier",
+      "contextError": "The finding context could not be assembled.",
+      "loadingWorkspace": "Loading the case workspace",
+      "workspaceError": "The case workspace could not be loaded.",
+      "actionRail": "Investigation actions",
+      "whyItMatters": "Why this matters",
+      "riskNarrative": "Risk {{score}} connects {{actor}} to {{target}} with {{related}} related events in the surrounding investigation window.",
+      "entityPath": "Observed entity path",
+      "entityPathHint": "Actor, action, and affected target reconstructed from source evidence",
+      "actor": "Actor",
+      "activity": "Observed activity",
+      "target": "Affected target",
+      "signalTimeline": "Signal timeline",
+      "signalTimelineHint": "{{count}} correlated events within 24 hours",
+      "primaryEvidence": "Primary evidence record",
+      "openEvidence": "Open in evidence explorer",
+      "recommendedActions": "Recommended investigation steps",
+      "recommendations": {
+        "validateIdentity": "Validate the actor identity and effective privileges.",
+        "confirmBusinessContext": "Confirm whether the activity has an approved business context.",
+        "preserveEvidence": "Preserve correlated evidence before containment or dismissal."
+      },
+      "triageDecision": "Triage decision",
+      "caseNumberValue": "CASE-{{number}}",
+      "noDescription": "No investigation scope has been documented yet.",
+      "caseMetrics": "Case investigation indicators",
+      "entities": "Entities",
+      "openTasks": "Open tasks",
+      "scopeMap": "Investigation scope",
+      "scopeMapHint": "Identities, services, and resources currently inside the case boundary",
+      "noEntities": "No case entities have been derived from linked evidence.",
+      "evidenceTimeline": "Evidence timeline",
+      "evidenceTimelineHint": "{{events}} preserved events and {{findings}} linked findings",
+      "noEvidence": "No preserved evidence is linked to this investigation.",
+      "activityTimeline": "Investigation journal",
+      "activityTimelineHint": "Append-only record of ownership, decisions, notes, and evidence handling",
+      "noActivity": "No investigation activity has been recorded.",
+      "caseControl": "Case control",
+      "updateCase": "Update case",
+      "tasks": "Investigation tasks",
+      "taskProgress": "{{done}} of {{total}} complete",
+      "completeTask": "Complete task",
+      "noTasks": "No accountable tasks have been added.",
+      "taskTitle": "New investigation task",
+      "addTask": "Add task",
+      "taskAdded": "Investigation task added.",
+      "investigatorNote": "Investigator note",
+      "notePlaceholder": "Record an observation, decision, or handoff context",
+      "addNote": "Add to journal",
+      "noteAdded": "Investigator note added.",
+      "evidenceLinked": "Evidence preserved in the investigation case.",
+      "linkSelectedFinding": "Link the selected finding and preserve its primary evidence"
     },
     "governance": {
       "policy": "Evidence policy",
       "policyUpdated": "Last updated by {{actor}} / {{time}}",
+      "storeControl": "Evidence store",
+      "appendOnlyActive": "Append-only enforced",
+      "integrityControl": "Integrity chain",
+      "lastVerified": "Verified through {{date}}",
+      "awaitingCheckpoint": "Checkpoint required",
+      "exportControl": "Evidence export",
+      "reasonRequired": "Business reason required",
+      "reasonOptional": "Reason is optional",
+      "retentionControl": "Retention policy",
+      "retentionSummary": "{{standard}}d standard / {{extended}}d extended",
+      "lifecycle": "Evidence lifecycle",
+      "lifecycleHint": "A governed path from collection to cryptographic assurance and controlled disposition.",
+      "policyActive": "Policy active",
+      "stageCapture": "Collect",
+      "stageCaptureHint": "Verified sources",
+      "stageImmutable": "Seal",
+      "stageImmutableHint": "Append-only record",
+      "stageStandard": "Standard",
+      "stageExtended": "Extended",
+      "stageDisposition": "Disposition",
+      "stageDispositionHint": "Controlled maintenance",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
       "retention": "Retention classes",
+      "retentionHint": "Define how long routine and material evidence remains searchable before controlled disposition.",
       "standardDays": "Standard retention (days)",
       "extendedDays": "Extended retention (days)",
       "riskAndExport": "Risk and export controls",
+      "riskAndExportHint": "Set the signal threshold and maximum governed evidence package size.",
       "riskThreshold": "High-risk threshold",
       "exportLimit": "Maximum export rows",
       "requireReason": "Require a business reason for every export",
       "integrityEnabled": "Enable daily integrity checkpoints",
       "saved": "Audit policy saved.",
       "integrity": "Integrity checkpoints",
+      "integrityLedger": "Integrity ledger",
       "integrityDescription": "Daily hash-chain verification for append-only evidence.",
       "verify": "Verify now",
       "checkpointCreated": "Integrity checkpoint verified.",
@@ -776,7 +933,8 @@
       "records": "Records",
       "signature": "Checkpoint hash",
       "status": "Verification",
-      "noCheckpoints": "No integrity checkpoints have been generated yet."
+      "noCheckpoints": "No integrity checkpoints have been generated yet.",
+      "recordCount": "{{count}} sealed records"
     },
     "integrityStatus": {
       "VERIFIED": "Verified",
@@ -945,20 +1103,25 @@
     "view": {
       "label": "Organization chart view",
       "organizations": "Organization",
-      "people": "Reporting lines"
+      "people": "Reporting lines",
+      "positions": "Position hierarchy",
+      "insights": "Organization insights"
     },
-    "filters": { "asOf": "Effective date" },
+    "filters": { "asOf": "Effective date", "compareTo": "Compare with" },
     "metrics": {
       "headcount": "Headcount",
       "organizations": "Active organizations",
       "managers": "Leaders",
       "openPositions": "Open positions",
-      "locations": "Locations"
+      "locations": "Locations",
+      "plannedFte": "Planned FTE",
+      "workforceCost": "Annual workforce cost"
     },
     "node": {
       "headcount": "{{count}} people",
       "openPositions": "{{count}} open",
-      "directReports": "{{count}} direct"
+      "directReports": "{{count}} direct",
+      "subordinatePositions": "{{count}} subordinate positions"
     },
     "actions": {
       "matrix": "Matrix relationships",
@@ -969,12 +1132,31 @@
       "expandAll": "Expand all",
       "closeDetails": "Close details",
       "focusOrganization": "Focus this organization",
-      "showCompany": "Show all SKAX"
+      "showCompany": "Show all SKAX",
+      "scenarios": "Change scenarios"
     },
     "legend": {
       "supervisory": "Primary reporting",
-      "matrix": "Matrix"
+      "matrix": "Matrix",
+      "scenarioChange": "Scenario change"
     },
+    "lenses": {
+      "label": "Analysis lens",
+      "structure": "Base structure",
+      "health": "Organization health",
+      "headcount": "Headcount scale",
+      "span": "Manager span",
+      "vacancy": "Vacancy risk",
+      "changes": "Scenario changes"
+    },
+    "lensValues": {
+      "headcount": "{{count}} people",
+      "span": "Average span {{value}}",
+      "vacancy": "{{count}} vacancies",
+      "changed": "Planned change",
+      "unchanged": "No change"
+    },
+    "health": { "HEALTHY": "Healthy", "ATTENTION": "Attention", "CRITICAL": "Critical" },
     "details": {
       "panelLabel": "Organization chart details",
       "profile": "Workforce profile",
@@ -993,7 +1175,163 @@
       "accessRoles": "System roles",
       "noAccessRole": "No system role assigned",
       "manager": "Reports to",
-      "directReports": "{{count}} direct reports"
+      "directReports": "{{count}} direct reports",
+      "layerAndSpan": "Layer and manager span",
+      "layerAndSpanValue": "Layer {{layer}} / {{span}} average span",
+      "health": "Organization health",
+      "position": "Position",
+      "positionProfile": "Position profile",
+      "positionKey": "Position code",
+      "positionType": "Position type",
+      "jobProfile": "Job profile",
+      "budgetedFte": "Budgeted FTE",
+      "annualCost": "Annual cost",
+      "availabilityDate": "Available from",
+      "incumbents": "{{count}} incumbents",
+      "reportsToPosition": "Reports-to position",
+      "subordinatePositions": "{{count}} subordinate positions"
+    },
+    "intelligence": {
+      "loading": "Analyzing organization operations",
+      "export": "Export CSV",
+      "empty": "No items were found for this period.",
+      "noSignals": "No risk signal detected",
+      "tabs": {
+        "label": "Organization insight view",
+        "health": "Organization health",
+        "changes": "Period changes",
+        "quality": "Data quality"
+      },
+      "metrics": {
+        "quality": "Data quality score",
+        "atRisk": "Organizations at risk",
+        "layers": "Maximum layers",
+        "managerSpan": "Average manager span",
+        "headcountDelta": "Headcount delta",
+        "totalChanges": "Detected changes"
+      },
+      "columns": {
+        "organization": "Organization",
+        "layer": "Layer",
+        "headcount": "Headcount",
+        "managerSpan": "Manager span",
+        "openPositions": "Open positions",
+        "contingentRatio": "Contingent ratio",
+        "score": "Health score",
+        "risk": "Status",
+        "change": "Change type",
+        "entity": "Target",
+        "before": "Before",
+        "after": "After",
+        "severity": "Severity",
+        "issue": "Quality rule",
+        "description": "Description"
+      },
+      "risks": { "HEALTHY": "Healthy", "ATTENTION": "Attention", "CRITICAL": "Critical" },
+      "severity": { "LOW": "Low", "MEDIUM": "Medium", "HIGH": "High", "CRITICAL": "Critical" },
+      "signals": {
+        "NARROW_SPAN": "Narrow manager span",
+        "WIDE_SPAN": "Wide manager span",
+        "EXCESS_LAYERS": "Excess organization layers",
+        "HIGH_CONTINGENT": "High contingent ratio",
+        "HIGH_VACANCY": "High vacancy ratio"
+      },
+      "changeTypes": {
+        "ORGANIZATION_ADDED": "Organization added",
+        "ORGANIZATION_MOVED": "Organization moved",
+        "ORGANIZATION_RENAMED": "Organization renamed",
+        "ORGANIZATION_REMOVED": "Organization closed",
+        "PERSON_JOINED_SCOPE": "Person joined scope",
+        "PERSON_MOVED": "Person moved",
+        "MANAGER_CHANGED": "Manager changed",
+        "PERSON_LEFT_SCOPE": "Person left scope",
+        "POSITION_OPENED": "Position opened",
+        "POSITION_FILLED_OR_CLOSED": "Position filled or closed"
+      },
+      "issueCodes": {
+        "BROKEN_MANAGER_REFERENCE": "Invalid manager reference",
+        "MISSING_JOB_GRADE": "Missing job grade",
+        "DISCONNECTED_ORGANIZATION": "Disconnected organization",
+        "MULTIPLE_PRIMARY_PARENTS": "Multiple primary parents",
+        "ORGANIZATION_CYCLE": "Organization cycle",
+        "DISCONNECTED_POSITION": "Disconnected position hierarchy"
+      }
+    },
+    "scenarios": {
+      "panelLabel": "Organization change scenarios",
+      "title": "Organization change scenarios",
+      "subtitle": "Validate and approve future structures before they reach operations.",
+      "list": "Scenarios",
+      "listItem": "Effective {{date}} · {{count}} changes",
+      "create": "Create scenario",
+      "preview": "Preview scenario",
+      "previewActive": "Preview active",
+      "live": "Live organization",
+      "previewSummary": "Effective {{date}} · {{count}} changes",
+      "returnLive": "Return to live organization",
+      "dragHint": "Drag an organization to plan a move",
+      "removeChange": "Remove planned change",
+      "createHelp": "Freeze an organization baseline and choose a future effective date.",
+      "empty": "No organization change scenario exists yet.",
+      "noDescription": "No description",
+      "noChanges": "No planned change has been added.",
+      "changes": "{{count}} planned changes",
+      "governanceNotice": "The baseline is checked for drift and authors cannot approve their own work. Only approved changes can be published for the effective date.",
+      "fields": {
+        "name": "Scenario name",
+        "description": "Purpose and impact",
+        "baselineDate": "Baseline date",
+        "effectiveDate": "Effective date",
+        "reason": "Business reason"
+      },
+      "move": {
+        "title": "Plan an organization move",
+        "organization": "Organization to move",
+        "newParent": "New parent organization",
+        "add": "Add change",
+        "summary": "New parent: {{parent}}"
+      },
+      "submit": {
+        "title": "Request approval",
+        "help": "Record the purpose and expected impact, then request an independent review.",
+        "action": "Request review"
+      },
+      "approval": {
+        "title": "Independent approval",
+        "help": "Review the baseline and proposed changes before approving or rejecting.",
+        "approve": "Approve",
+        "reject": "Reject",
+        "separation": "Authors cannot approve their own scenario. Review by another authorized administrator is required."
+      },
+      "publish": {
+        "title": "Publish changes",
+        "help": "Register approved relationships as effective-dated history for {{date}}.",
+        "action": "Schedule effective change"
+      },
+      "states": {
+        "DRAFT": "Draft",
+        "IN_REVIEW": "In review",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "PUBLISHED": "Published",
+        "STALE": "Rebase required",
+        "CANCELLED": "Cancelled"
+      },
+      "validation": { "VALID": "Validated", "BLOCKED": "Blocked" },
+      "dragConfirm": {
+        "title": "Confirm organization move",
+        "message": "Add a planned move of {{organization}} under {{parent}} to this scenario.",
+        "action": "Add planned move"
+      },
+      "messages": {
+        "created": "Organization change scenario created.",
+        "moveAdded": "Organization move added.",
+        "changeRemoved": "Planned change removed.",
+        "submitted": "Independent review requested.",
+        "approved": "Scenario approved.",
+        "rejected": "Scenario rejected.",
+        "published": "Approved changes published as effective-dated history."
+      }
     },
     "organizationTypes": {
       "COMPANY": "Company",
@@ -1001,6 +1339,20 @@
       "DIVISION": "Division",
       "DEPARTMENT": "Department",
       "SUPERVISORY": "Team"
+    },
+    "positionStatus": {
+      "FILLED": "Filled",
+      "OPEN": "Open",
+      "FROZEN": "Frozen",
+      "CLOSED": "Closed",
+      "PLANNED": "Planned"
+    },
+    "criticality": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "STANDARD": "Standard",
+      "HIGH": "High",
+      "CRITICAL": "Critical"
     },
     "workerTypes": {
       "EMPLOYEE": "Employee",

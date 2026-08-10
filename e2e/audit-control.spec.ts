@@ -138,6 +138,8 @@ const initialCase = {
   ownerActorId: '1',
   resolution: null,
   openedAt: '2026-08-10T12:10:00Z',
+  dueAt: '2026-08-11T12:10:00Z',
+  slaState: 'ON_TRACK',
   closedAt: null,
   createdBy: '1',
   updatedBy: '1',
@@ -181,6 +183,91 @@ async function mockAuditControl(page: Page) {
   let currentPolicy = { ...policy };
   let checkpoints = [{ ...checkpoint }];
   let savedSearches: Array<Record<string, unknown>> = [];
+  let caseTasks = [
+    {
+      taskId: '80000000-0000-0000-0000-000000000001',
+      title: 'Validate actor privileges',
+      description: 'Confirm the effective role path with the identity owner.',
+      status: 'OPEN',
+      priority: 'HIGH',
+      ownerActorId: '1',
+      dueAt: '2026-08-11T08:00:00Z',
+      completedAt: null,
+      createdBy: '1',
+      updatedBy: '1',
+      createdAt: '2026-08-10T12:12:00Z',
+      updatedAt: '2026-08-10T12:12:00Z',
+    },
+  ];
+  let caseActivities = [
+    {
+      activityId: '81000000-0000-0000-0000-000000000001',
+      activityType: 'CASE_CREATED',
+      actorId: '1',
+      message: 'Investigation case created',
+      payload: {},
+      occurredAt: '2026-08-10T12:10:00Z',
+    },
+    {
+      activityId: '81000000-0000-0000-0000-000000000002',
+      activityType: 'EVIDENCE_LINKED',
+      actorId: '1',
+      message: 'Primary evidence preserved',
+      payload: { eventId: auditEvent.eventId },
+      occurredAt: '2026-08-10T12:11:00Z',
+    },
+  ];
+
+  const workspaceFor = (caseId: string) => {
+    const auditCase = cases.find((item) => item.caseId === caseId) ?? cases[0];
+    return {
+      auditCase,
+      summary: {
+        maxRiskScore: 82,
+        openTasks: caseTasks.filter((task) => task.status !== 'DONE').length,
+        overdueTasks: 0,
+        evidenceCount: 1,
+        findingCount: 1,
+        entityCount: 3,
+      },
+      findings: [findings[0]],
+      evidence: [auditEvent],
+      entities: [
+        {
+          entityType: 'USER',
+          entityId: '1',
+          displayName: 'Admin User',
+          relationship: 'ACTOR',
+          riskScore: 82,
+          firstSeenAt: auditEvent.occurredAt,
+          lastSeenAt: auditEvent.occurredAt,
+          attributes: {},
+        },
+        {
+          entityType: 'RESOURCE',
+          entityId: auditEvent.targetId,
+          displayName: auditEvent.targetDisplayName,
+          relationship: 'TARGET',
+          riskScore: 82,
+          firstSeenAt: auditEvent.occurredAt,
+          lastSeenAt: auditEvent.occurredAt,
+          attributes: {},
+        },
+        {
+          entityType: 'SERVICE',
+          entityId: auditEvent.sourceService,
+          displayName: auditEvent.sourceService,
+          relationship: 'SOURCE',
+          riskScore: 82,
+          firstSeenAt: auditEvent.occurredAt,
+          lastSeenAt: auditEvent.occurredAt,
+          attributes: {},
+        },
+      ],
+      activities: caseActivities,
+      tasks: caseTasks,
+    };
+  };
 
   await page.route('**/api/platform/v1/admin/audit-control/**', async (route) => {
     const request = route.request();
@@ -286,6 +373,13 @@ async function mockAuditControl(page: Page) {
       });
     }
     if (path.endsWith('/findings') && method === 'GET') return fulfillJson(route, findings);
+    if (path.endsWith(`/findings/${finding.findingId}/context`) && method === 'GET') {
+      return fulfillJson(route, {
+        finding: findings[0],
+        primaryEvent: auditEvent,
+        relatedEvents: [],
+      });
+    }
     if (path.includes('/findings/') && method === 'PATCH') {
       const update = request.postDataJSON();
       findings = findings.map((item) =>
@@ -304,11 +398,89 @@ async function mockAuditControl(page: Page) {
         caseId: '40000000-0000-0000-0000-000000000002',
         caseNumber: 1043,
         status: 'OPEN',
+        dueAt: '2026-08-11T12:20:00Z',
+        slaState: 'ON_TRACK',
         linkedEvents: 0,
         linkedFindings: 0,
       };
       cases = [...cases, created];
       return fulfillJson(route, created);
+    }
+    const workspaceMatch = path.match(/\/cases\/([^/]+)\/workspace$/u);
+    if (workspaceMatch && method === 'GET') {
+      return fulfillJson(route, workspaceFor(workspaceMatch[1]));
+    }
+    const noteMatch = path.match(/\/cases\/([^/]+)\/notes$/u);
+    if (noteMatch && method === 'POST') {
+      const payload = request.postDataJSON();
+      caseActivities = [
+        {
+          activityId: `81000000-0000-0000-0000-${String(caseActivities.length + 1).padStart(12, '0')}`,
+          activityType: 'NOTE_ADDED',
+          actorId: '1',
+          message: payload.message,
+          payload: {},
+          occurredAt: '2026-08-10T12:26:00Z',
+        },
+        ...caseActivities,
+      ];
+      return fulfillJson(route, workspaceFor(noteMatch[1]));
+    }
+    const taskCollectionMatch = path.match(/\/cases\/([^/]+)\/tasks$/u);
+    if (taskCollectionMatch && method === 'POST') {
+      const payload = request.postDataJSON();
+      const created = {
+        taskId: `80000000-0000-0000-0000-${String(caseTasks.length + 1).padStart(12, '0')}`,
+        title: payload.title,
+        description: payload.description ?? null,
+        status: 'OPEN',
+        priority: payload.priority,
+        ownerActorId: payload.ownerActorId ?? null,
+        dueAt: payload.dueAt ?? null,
+        completedAt: null,
+        createdBy: '1',
+        updatedBy: '1',
+        createdAt: '2026-08-10T12:25:00Z',
+        updatedAt: '2026-08-10T12:25:00Z',
+      };
+      caseTasks = [...caseTasks, created];
+      return fulfillJson(route, created);
+    }
+    const taskMatch = path.match(/\/cases\/([^/]+)\/tasks\/([^/]+)$/u);
+    if (taskMatch && method === 'PATCH') {
+      const payload = request.postDataJSON();
+      caseTasks = caseTasks.map((task) =>
+        task.taskId === taskMatch[2]
+          ? {
+              ...task,
+              ...payload,
+              completedAt: payload.status === 'DONE' ? '2026-08-10T12:27:00Z' : null,
+              updatedAt: '2026-08-10T12:27:00Z',
+            }
+          : task
+      );
+      return fulfillJson(
+        route,
+        caseTasks.find((task) => task.taskId === taskMatch[2])
+      );
+    }
+    const eventLinkMatch = path.match(/\/cases\/([^/]+)\/events$/u);
+    if (eventLinkMatch && method === 'POST') {
+      caseActivities = [
+        {
+          activityId: `81000000-0000-0000-0000-${String(caseActivities.length + 1).padStart(12, '0')}`,
+          activityType: 'EVIDENCE_LINKED',
+          actorId: '1',
+          message: request.postDataJSON().note || 'Evidence preserved',
+          payload: request.postDataJSON(),
+          occurredAt: '2026-08-10T12:28:00Z',
+        },
+        ...caseActivities,
+      ];
+      return fulfillJson(
+        route,
+        cases.find((item) => item.caseId === eventLinkMatch[1])
+      );
     }
     if (path.includes('/cases/') && method === 'PATCH') {
       const update = request.postDataJSON();
@@ -368,18 +540,19 @@ test('auditors assess posture, inspect immutable evidence, and export a governed
 }) => {
   await page.goto('/admin/governance/audit-overview');
 
-  await expect(page.getByRole('heading', { name: 'Audit posture', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Audit command center', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Operational audit posture' })).toBeVisible();
   await expect(page.getByText('1,284', { exact: true })).toBeVisible();
   await expect(page.getByText('4/5', { exact: true })).toBeVisible();
-  await expect(page.getByRole('table', { name: 'Source coverage' })).toContainText(
-    'dwp-agent-runtime'
-  );
+  await expect(page.getByText('Priority action queue')).toBeVisible();
+  await expect(page.getByText('dwp-agent-runtime', { exact: true })).toBeVisible();
 
   let accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(accessibility.violations).toEqual([]);
 
   await page.goto('/admin/governance/audit-events');
-  await expect(page.getByRole('heading', { name: 'Event explorer', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Evidence explorer', level: 1 })).toBeVisible();
+  await expect(page.getByText('Evidence search session')).toBeVisible();
   await expect(page.getByText('Role Assignment Denied', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Save current view' }).click();
   await page.getByLabel('View name').fill('Privileged access review');
@@ -407,8 +580,15 @@ test('audit administrators investigate findings and govern retention integrity',
 }) => {
   await page.goto('/admin/governance/audit-investigations');
 
-  await expect(page.getByRole('heading', { name: 'Findings and cases', level: 1 })).toBeVisible();
-  await expect(page.getByText('Repeated privileged access denials', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Investigation workbench', level: 1 })
+  ).toBeVisible();
+  await expect(page.getByText('Prioritized signals')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Repeated privileged access denials', level: 2 })
+  ).toBeVisible();
+  await expect(page.getByText('Why this matters')).toBeVisible();
+  await expect(page.getByText('Observed entity path')).toBeVisible();
   await page.getByRole('button', { name: 'New case' }).click();
   await page.getByLabel('Case title').fill('Quarterly privileged role review');
   await page
@@ -417,16 +597,31 @@ test('audit administrators investigate findings and govern retention integrity',
   await page.getByRole('button', { name: 'Create', exact: true }).click();
   await expect(page.getByText('Investigation case created.')).toBeVisible();
 
-  await page.getByRole('button', { name: /Cases/ }).click();
+  await page.getByRole('button', { name: /Case workspace/ }).click();
   await expect(page.getByText('Quarterly privileged role review', { exact: true })).toBeVisible();
+  await expect(page.getByText('Investigation scope')).toBeVisible();
+  await expect(page.getByText('Investigation journal')).toBeVisible();
+
+  await page.getByLabel('New investigation task').fill('Confirm business approver');
+  await page.getByRole('button', { name: 'Add task' }).click();
+  await expect(page.getByText('Investigation task added.')).toBeVisible();
+  await expect(page.getByText('Confirm business approver', { exact: true })).toBeVisible();
+
+  await page
+    .getByPlaceholder('Record an observation, decision, or handoff context')
+    .fill('Identity owner confirmed that no approved change existed.');
+  await page.getByRole('button', { name: 'Add to journal' }).click();
+  await expect(page.getByText('Investigator note added.')).toBeVisible();
+  await expect(
+    page.getByText('Identity owner confirmed that no approved change existed.', { exact: true })
+  ).toBeVisible();
 
   let accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(accessibility.violations).toEqual([]);
 
   await page.goto('/admin/governance/audit-governance');
-  await expect(
-    page.getByRole('heading', { name: 'Retention and integrity', level: 1 })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Evidence governance', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Evidence lifecycle' })).toBeVisible();
   await expect(page.getByText('Append-only evidence store', { exact: true })).toBeVisible();
   await page.getByLabel('Standard retention (days)').fill('730');
   await page.getByRole('button', { name: 'Save' }).click();

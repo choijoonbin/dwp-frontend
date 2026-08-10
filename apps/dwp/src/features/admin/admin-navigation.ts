@@ -162,18 +162,18 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
       },
       {
         section: 'governance',
-        view: 'audit-events',
-        path: '/admin/governance/audit-events',
-        icon: SearchCheck,
-        requiredResourceKey: 'ADMIN.AUDIT_VIEW',
-      },
-      {
-        section: 'governance',
         view: 'audit-investigations',
         path: '/admin/governance/audit-investigations',
         icon: ShieldAlert,
         requiredResourceKey: 'ADMIN.AUDIT_INVESTIGATE',
         requiredPermissionCode: 'UPDATE',
+      },
+      {
+        section: 'governance',
+        view: 'audit-events',
+        path: '/admin/governance/audit-events',
+        icon: SearchCheck,
+        requiredResourceKey: 'ADMIN.AUDIT_VIEW',
       },
       {
         section: 'governance',

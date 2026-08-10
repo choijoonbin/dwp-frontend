@@ -95,12 +95,82 @@ export type AuditCase = {
   ownerActorId?: string | null;
   resolution?: string | null;
   openedAt: string;
+  dueAt: string;
+  slaState: 'ON_TRACK' | 'AT_RISK' | 'BREACHED' | 'COMPLETED';
   closedAt?: string | null;
   createdBy: string;
   updatedBy: string;
   updatedAt: string;
   linkedEvents: number;
   linkedFindings: number;
+};
+
+export type AuditFindingContext = {
+  finding: AuditFinding;
+  primaryEvent?: AuditEvent | null;
+  relatedEvents: AuditEvent[];
+};
+
+export type AuditCaseEntity = {
+  entityType: 'USER' | 'SERVICE' | 'RESOURCE' | 'APPLICATION' | 'DATA' | 'AI_AGENT' | 'OTHER';
+  entityId: string;
+  displayName?: string | null;
+  relationship: string;
+  riskScore: number;
+  firstSeenAt?: string | null;
+  lastSeenAt?: string | null;
+  attributes: Record<string, unknown>;
+};
+
+export type AuditCaseActivity = {
+  activityId: string;
+  activityType:
+    | 'CASE_CREATED'
+    | 'CASE_UPDATED'
+    | 'STATUS_CHANGED'
+    | 'ASSIGNMENT_CHANGED'
+    | 'FINDING_LINKED'
+    | 'EVIDENCE_LINKED'
+    | 'NOTE_ADDED'
+    | 'TASK_CREATED'
+    | 'TASK_UPDATED'
+    | 'RESOLUTION_RECORDED';
+  actorId: string;
+  message: string;
+  payload: Record<string, unknown>;
+  occurredAt: string;
+};
+
+export type AuditCaseTask = {
+  taskId: string;
+  title: string;
+  description?: string | null;
+  status: 'OPEN' | 'IN_PROGRESS' | 'DONE' | 'SKIPPED';
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  ownerActorId?: string | null;
+  dueAt?: string | null;
+  completedAt?: string | null;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AuditCaseWorkspace = {
+  auditCase: AuditCase;
+  summary: {
+    maxRiskScore: number;
+    openTasks: number;
+    overdueTasks: number;
+    evidenceCount: number;
+    findingCount: number;
+    entityCount: number;
+  };
+  findings: AuditFinding[];
+  evidence: AuditEvent[];
+  entities: AuditCaseEntity[];
+  activities: AuditCaseActivity[];
+  tasks: AuditCaseTask[];
 };
 
 export type AuditSourceHealth = {
@@ -254,6 +324,13 @@ export async function updateAuditFinding(
   return response.data.data;
 }
 
+export async function getAuditFindingContext(findingId: string): Promise<AuditFindingContext> {
+  const response = await axiosInstance.get<ApiResponse<AuditFindingContext>>(
+    `/api/platform/v1/admin/audit-control/findings/${encodeURIComponent(findingId)}/context`
+  );
+  return response.data.data;
+}
+
 export async function listAuditCases(): Promise<AuditCase[]> {
   const response = await axiosInstance.get<ApiResponse<AuditCase[]>>(
     '/api/platform/v1/admin/audit-control/cases'
@@ -282,6 +359,66 @@ export async function updateAuditCase(
 ): Promise<AuditCase> {
   const response = await axiosInstance.patch<ApiResponse<AuditCase>, typeof request>(
     `/api/platform/v1/admin/audit-control/cases/${encodeURIComponent(caseId)}`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function getAuditCaseWorkspace(caseId: string): Promise<AuditCaseWorkspace> {
+  const response = await axiosInstance.get<ApiResponse<AuditCaseWorkspace>>(
+    `/api/platform/v1/admin/audit-control/cases/${encodeURIComponent(caseId)}/workspace`
+  );
+  return response.data.data;
+}
+
+export async function linkAuditCaseEvent(
+  caseId: string,
+  request: { eventId: string; occurredAt: string; note?: string }
+): Promise<AuditCase> {
+  const response = await axiosInstance.post<ApiResponse<AuditCase>, typeof request>(
+    `/api/platform/v1/admin/audit-control/cases/${encodeURIComponent(caseId)}/events`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function addAuditCaseNote(
+  caseId: string,
+  message: string
+): Promise<AuditCaseWorkspace> {
+  const response = await axiosInstance.post<ApiResponse<AuditCaseWorkspace>, { message: string }>(
+    `/api/platform/v1/admin/audit-control/cases/${encodeURIComponent(caseId)}/notes`,
+    { message }
+  );
+  return response.data.data;
+}
+
+export async function createAuditCaseTask(
+  caseId: string,
+  request: {
+    title: string;
+    description?: string;
+    priority: AuditCaseTask['priority'];
+    ownerActorId?: string;
+    dueAt?: string;
+  }
+): Promise<AuditCaseTask> {
+  const response = await axiosInstance.post<ApiResponse<AuditCaseTask>, typeof request>(
+    `/api/platform/v1/admin/audit-control/cases/${encodeURIComponent(caseId)}/tasks`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function updateAuditCaseTask(
+  caseId: string,
+  taskId: string,
+  request: Partial<
+    Pick<AuditCaseTask, 'title' | 'description' | 'status' | 'priority' | 'ownerActorId' | 'dueAt'>
+  >
+): Promise<AuditCaseTask> {
+  const response = await axiosInstance.patch<ApiResponse<AuditCaseTask>, typeof request>(
+    `/api/platform/v1/admin/audit-control/cases/${encodeURIComponent(caseId)}/tasks/${encodeURIComponent(taskId)}`,
     request
   );
   return response.data.data;
