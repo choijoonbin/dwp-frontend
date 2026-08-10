@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Bell, ChevronDown, Clock3, Search, ShieldCheck, Sparkles } from 'lucide-react';
-import { WORKSPACE_NAME } from '@dwp-frontend/shared-utils';
+import { useEffect, useMemo, useState } from 'react';
+import { Bell, ChevronDown, Clock3, Search, ShieldCheck } from 'lucide-react';
+import { useAuth, usePermissions, WORKSPACE_NAME } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
@@ -11,11 +10,12 @@ import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
 import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
+
+import { GlobalSearchDialog } from '../features/search/global-search-dialog';
+import { HOME_APPS, isAppEntitled } from '../features/home/app-launchpad-model';
 
 function WorkspaceBadge() {
   return (
@@ -87,117 +87,99 @@ export function WorkspaceMenu() {
 }
 
 export function SearchControl() {
-  const navigate = useNavigate();
-  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const [query, setQuery] = useState('');
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const auth = useAuth();
+  const { permissions } = usePermissions();
+  const [open, setOpen] = useState(false);
+  const apps = useMemo(
+    () => HOME_APPS.filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
+    [auth.user?.roles, permissions]
+  );
+  const includeWork = apps.some((app) => app.id === 'dwp-work');
+  const includeAsk = apps.some((app) => app.id === 'dwp-ask');
+  const shortcut =
+    typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
+      ? '⌘K'
+      : 'Ctrl K';
 
   useEffect(() => {
     const openCommand = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-        event.preventDefault();
-        if (triggerRef.current) setAnchor(triggerRef.current);
-      }
+      const target = event.target as HTMLElement | null;
+      const editing =
+        target?.isContentEditable ||
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(target?.tagName ?? '');
+      if (editing || event.defaultPrevented) return;
+      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== 'k') return;
+      event.preventDefault();
+      setOpen(true);
     };
     window.addEventListener('keydown', openCommand);
     return () => window.removeEventListener('keydown', openCommand);
   }, []);
 
-  const submit = (event: React.FormEvent) => {
-    event.preventDefault();
-    const value = query.trim();
-    if (!value) return;
-    setAnchor(null);
-    navigate('/ask?q=' + encodeURIComponent(value));
-    setQuery('');
-  };
-
   return (
     <>
       <ButtonBase
-        ref={triggerRef}
         aria-label="Search"
-        onClick={(event) => setAnchor(event.currentTarget)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        onClick={() => setOpen(true)}
         sx={{
-          width: { md: 300, xl: 380 },
+          width: { md: 184, xl: 208 },
           height: 38,
           px: 1.25,
           display: { xs: 'none', md: 'flex' },
           alignItems: 'center',
           gap: 1,
           color: 'text.secondary',
-          bgcolor: 'background.default',
+          bgcolor: 'action.hover',
           border: 1,
           borderColor: 'divider',
           borderRadius: 1,
           textAlign: 'left',
           transition: (theme) => theme.transitions.create(['border-color', 'background-color']),
-          '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' },
+          '&:hover': { borderColor: 'primary.main', bgcolor: 'action.selected' },
         }}
       >
         <Search size={18} strokeWidth={1.8} aria-hidden="true" />
         <Typography variant="body2" sx={{ flex: 1 }}>
-          Search or ask DWP
+          Search DWP
         </Typography>
-        <Sparkles size={15} strokeWidth={1.8} aria-hidden="true" />
+        <Box
+          component="kbd"
+          sx={{
+            px: 0.6,
+            py: 0.15,
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 0.75,
+            bgcolor: 'background.paper',
+            color: 'text.secondary',
+            font: 'inherit',
+            fontSize: 11,
+            lineHeight: 1.5,
+          }}
+        >
+          {shortcut}
+        </Box>
       </ButtonBase>
       <Tooltip title="Search">
         <IconButton
           aria-label="Search"
-          onClick={(event) => setAnchor(event.currentTarget)}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          onClick={() => setOpen(true)}
           sx={{ display: { xs: 'inline-flex', md: 'none' } }}
         >
           <Search size={20} strokeWidth={1.8} />
         </IconButton>
       </Tooltip>
-      <Popover
-        anchorEl={anchor}
-        open={Boolean(anchor)}
-        onClose={() => setAnchor(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        slotProps={{
-          paper: {
-            sx: { width: { xs: 'calc(100vw - 24px)', sm: 540 }, p: 2, mt: 1 },
-          },
-        }}
-      >
-        <Box component="form" onSubmit={submit}>
-          <TextField
-            fullWidth
-            autoFocus
-            label="Ask or search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search work, apps, services, and knowledge"
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search size={18} strokeWidth={1.8} aria-hidden="true" />
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </Box>
-        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1.5 }}>
-          {['What needs my attention?', 'Find the remote work policy'].map((prompt) => (
-            <Button
-              key={prompt}
-              size="small"
-              variant="text"
-              startIcon={<Sparkles size={15} aria-hidden="true" />}
-              onClick={() => {
-                setAnchor(null);
-                navigate('/ask?q=' + encodeURIComponent(prompt));
-              }}
-            >
-              {prompt}
-            </Button>
-          ))}
-        </Box>
-      </Popover>
+      <GlobalSearchDialog
+        open={open}
+        apps={apps}
+        includeWork={includeWork}
+        includeAsk={includeAsk}
+        onClose={() => setOpen(false)}
+      />
     </>
   );
 }

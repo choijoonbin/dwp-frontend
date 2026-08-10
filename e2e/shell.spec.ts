@@ -277,6 +277,26 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(page.getByTestId('mobile-sidebar')).toHaveCount(0);
   await expectNoAutomaticAccessibilityViolations(page);
 
+  await page.getByRole('button', { name: 'Search' }).click();
+  const globalSearch = page.getByRole('dialog', { name: 'Search DWP' });
+  await expect(globalSearch).toBeVisible();
+  const globalSearchInput = globalSearch.getByRole('combobox', { name: 'Search DWP' });
+  await expect(globalSearchInput).toBeFocused();
+  await globalSearchInput.fill('software access');
+  await expect(
+    globalSearch.getByRole('option', { name: /Approve software access request/ })
+  ).toBeVisible();
+  await globalSearchInput.press('ArrowDown');
+  await expect(globalSearch.getByRole('option').nth(1)).toHaveAttribute('aria-selected', 'true');
+  await globalSearchInput.press('ArrowUp');
+  await expect(globalSearch.getByRole('option').first()).toHaveAttribute('aria-selected', 'true');
+  await expectNoAutomaticAccessibilityViolations(page);
+  await page.keyboard.press('Escape');
+  await expect(globalSearch).toHaveCount(0);
+  await page.keyboard.press('Control+K');
+  await expect(page.getByRole('dialog', { name: 'Search DWP' })).toBeVisible();
+  await page.getByRole('button', { name: 'Close search' }).click();
+
   await page.getByRole('button', { name: 'Open Work' }).click();
   await expect(page).toHaveURL(/\/work/);
   const businessSidebar =

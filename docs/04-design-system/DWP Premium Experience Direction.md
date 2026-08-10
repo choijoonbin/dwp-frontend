@@ -149,7 +149,14 @@ Motion은 기능을 설명하고 공간 관계를 보존할 때만 사용한다.
 
 ### Global Shell
 
-- Search가 아니라 `Search or ask` Command로 표현한다.
+- Header는 실제 입력창과 혼동되지 않는 Compact `Search DWP` Trigger를 제공한다. Desktop은
+  검색 Icon·Label·`⌘K` 또는 `Ctrl K` Keycap, Mobile은 Icon Button을 사용한다.
+- 검색 입력은 화면 상단 중앙의 Modal Command Palette에서만 수행한다. 앱·업무·지식·Ask를
+  하나의 권한 기반 결과 목록으로 통합하고, 입력 즉시 추천을 갱신한다.
+- Arrow Key로 결과를 이동하고 Enter로 실행하며 Esc로 닫는다. 전역 `⌘/Ctrl+K`는 Form 입력
+  중에는 가로채지 않는다. `Command+Space`는 macOS Spotlight와 충돌하므로 사용하지 않는다.
+- Header에 넓은 Search Field를 둘 경우에는 그 자리 자체가 실제 Input과 Suggestion Surface여야
+  한다. 별도 입력 Surface를 여는 구조에서는 Compact Trigger를 공통 정책으로 사용한다.
 - 현재 Workspace, 연결 상태, Notification, Account를 한 Header에서 제공한다.
 - Work·Ask·Activity·Apps를 동일한 Navigation 문법으로 제공하고 Product Mark는 Home으로
   복귀한다. Today는 Home 내부 정보 계층으로 제공한다.
@@ -207,6 +214,10 @@ Motion은 기능을 설명하고 공간 관계를 보존할 때만 사용한다.
 - [Workday Sana](https://www.workday.com/en-us/artificial-intelligence/workday-sana.html)
 - [ServiceNow Horizon](https://horizon.servicenow.com/)
 - [Atlassian Rovo](https://www.atlassian.com/software/rovo/features)
+- [Atlassian Jira command palette](https://support.atlassian.com/jira-software-cloud/docs/what-is-the-command-palette/)
+- [Microsoft Search overview](https://learn.microsoft.com/en-us/microsoftsearch/overview-microsoft-search)
+- [Apple Spotlight search](https://support.apple.com/guide/mac-help/search-for-anything-with-spotlight-mchlp1008/mac)
+- [Slack search](https://slack.com/help/articles/202528808-Search-in-Slack-Search-in-Slack-)
 - [Fluent 2 Motion](https://fluent2.microsoft.design/motion)
 - [Fluent 2 Nav](https://fluent2.microsoft.design/components/web/react/core/nav/usage)
 - [Carbon UI Shell left panel](https://carbondesignsystem.com/components/UI-shell-left-panel/usage/)

@@ -392,6 +392,27 @@ test('personal home dark reference visual baseline', async ({ page }) => {
   });
 });
 
+test('global search command palette visual baseline', async ({ page }) => {
+  await mockAuthenticated(page);
+  await setAppearance(page, {
+    mode: 'light',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Search' }).click();
+  await expect(page.getByRole('dialog', { name: 'Search DWP' })).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Search DWP' })).toBeFocused();
+  await expect(page).toHaveScreenshot('global-search-command.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
 test('collapsed navigation visual baseline', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile', 'Compact rail is a desktop navigation state.');
   await mockAuthenticated(page);

@@ -167,6 +167,7 @@ Theme는 Mode, Contrast, Density, Reduced Motion, Tenant Accent와 Font를 입�
 - [x] Sidebar·Rail·Top Navigation Policy Engine 구현
 - [x] Shell, Account, Preference, Security 화면 독립 구현
 - [x] Premium Global Shell·Work Pulse와 Home·Work·Ask·Activity·Apps Reference 구현
+- [x] 권한 기반 Global Search·Ask Command Palette와 `⌘/Ctrl+K` Keyboard 계약 구현
 - [x] 권한 App Group·Reorder·Folder·비 Drag 대체 조작과 개인 저장 구현
 - [x] Human·System·Agent Unified Activity와 AI Trust Surface 구현
 - [x] Desktop·Mobile Login·Shell E2E와 Axe 통과
