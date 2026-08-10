@@ -192,7 +192,35 @@ test('authenticated users keep the common shell without business navigation', as
     await expect(sidebar.getByRole('link', { name: 'Activity', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Apps', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link')).toHaveCount(6);
-    await expect(page.getByRole('button', { name: 'Collapse navigation' })).toBeVisible();
+    const collapseNavigation = page.getByRole('button', { name: 'Collapse navigation' });
+    await expect(collapseNavigation).toBeVisible();
+    await expect(collapseNavigation).toHaveAttribute('aria-controls', 'desktop-navigation');
+    await expect(collapseNavigation).toHaveAttribute('aria-expanded', 'true');
+    await collapseNavigation.click();
+    await expect(sidebar).toHaveCSS('width', '72px');
+
+    const expandNavigation = page.getByRole('button', { name: 'Expand navigation' });
+    await expect(expandNavigation).toHaveAttribute('aria-expanded', 'false');
+    const compactGeometry = await page.evaluate(() => {
+      const sidebarElement = document.querySelector('[data-testid="desktop-sidebar"]');
+      const logo = sidebarElement?.querySelector('a[aria-label="Digital Workplace home"]');
+      const logoMark = logo?.querySelector('[aria-hidden="true"]');
+      const toggle = document.querySelector('button[aria-label="Expand navigation"]');
+      const sidebarRect = sidebarElement?.getBoundingClientRect();
+      const logoRect = logoMark?.getBoundingClientRect();
+      const toggleRect = toggle?.getBoundingClientRect();
+      return {
+        logoCenter: logoRect ? logoRect.left + logoRect.width / 2 : null,
+        railCenter:
+          sidebarRect && sidebarElement ? sidebarRect.left + sidebarElement.clientWidth / 2 : null,
+        controlGap: logoRect && toggleRect ? toggleRect.left - logoRect.right : null,
+      };
+    });
+    expect(compactGeometry.logoCenter).toBeCloseTo(compactGeometry.railCenter ?? 0, 0);
+    expect(compactGeometry.controlGap).toBeGreaterThanOrEqual(24);
+
+    await expandNavigation.click();
+    await expect(sidebar).toHaveCSS('width', '248px');
   }
 });
 

@@ -142,18 +142,21 @@ export function AppLayout() {
   const compactSidebar = appearance.navigationPattern === 'rail' || collapsed;
   const sidebarWidth = compactSidebar ? RAIL_WIDTH : SIDEBAR_WIDTH;
   const desktopOffset = topNavigation ? 0 : sidebarWidth;
+  const desktopNavigationCollapsible =
+    appearance.policy.navigation.allowCollapse && appearance.navigationPattern !== 'rail';
 
   const navigationContent = (compact: boolean, onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
           height: HEADER_HEIGHT,
-          px: compact ? 2.5 : 2,
+          px: compact ? 0 : 2,
           display: 'flex',
           alignItems: 'center',
+          justifyContent: compact ? 'center' : 'flex-start',
         }}
       >
-        <ProductMark compact={compact} />
+        <ProductMark compact={compact} sx={{ flexShrink: 0 }} />
       </Box>
       <Box sx={{ flex: 1 }}>
         <AppNavigation compact={compact} onNavigate={onNavigate} />
@@ -194,6 +197,7 @@ export function AppLayout() {
       {!topNavigation && (
         <Box
           component="aside"
+          id="desktop-navigation"
           data-testid="desktop-sidebar"
           sx={{
             position: 'fixed',
@@ -208,36 +212,6 @@ export function AppLayout() {
           }}
         >
           {navigationContent(compactSidebar)}
-          {appearance.policy.navigation.allowCollapse &&
-            appearance.navigationPattern !== 'rail' && (
-              <Tooltip
-                title={collapsed ? 'Expand navigation' : 'Collapse navigation'}
-                placement="right"
-              >
-                <IconButton
-                  size="small"
-                  aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
-                  onClick={() => setCollapsed((current) => !current)}
-                  sx={{
-                    position: 'absolute',
-                    top: 19,
-                    right: -17,
-                    width: 34,
-                    height: 34,
-                    bgcolor: 'background.paper',
-                    border: 1,
-                    borderColor: 'divider',
-                    '&:hover': { bgcolor: 'action.hover' },
-                  }}
-                >
-                  {collapsed ? (
-                    <PanelLeftOpen size={17} strokeWidth={1.8} />
-                  ) : (
-                    <PanelLeftClose size={17} strokeWidth={1.8} />
-                  )}
-                </IconButton>
-              </Tooltip>
-            )}
         </Box>
       )}
 
@@ -275,6 +249,34 @@ export function AppLayout() {
           >
             <Menu size={21} strokeWidth={1.8} />
           </IconButton>
+          {!topNavigation && desktopNavigationCollapsible && (
+            <Tooltip
+              title={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+              placement="bottom"
+            >
+              <IconButton
+                size="small"
+                aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+                aria-controls="desktop-navigation"
+                aria-expanded={!collapsed}
+                onClick={() => setCollapsed((current) => !current)}
+                sx={{
+                  mr: 0.5,
+                  width: 40,
+                  height: 40,
+                  display: { xs: 'none', lg: 'inline-flex' },
+                  color: 'text.secondary',
+                  '&:hover': { color: 'text.primary' },
+                }}
+              >
+                {collapsed ? (
+                  <PanelLeftOpen size={18} strokeWidth={1.8} />
+                ) : (
+                  <PanelLeftClose size={18} strokeWidth={1.8} />
+                )}
+              </IconButton>
+            </Tooltip>
+          )}
           {topNavigation && (
             <ProductMark compact sx={{ mr: 1, display: { xs: 'none', lg: 'inline-flex' } }} />
           )}

@@ -311,6 +311,28 @@ test('Today reference visual baseline', async ({ page }) => {
   });
 });
 
+test('collapsed navigation visual baseline', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'Compact rail is a desktop navigation state.');
+  await mockAuthenticated(page);
+  await setAppearance(page, {
+    mode: 'light',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/account/settings');
+  await expect(page.getByRole('heading', { name: 'Preferences' })).toBeVisible();
+  await page.getByRole('button', { name: 'Collapse navigation' }).click();
+  await expect(page.getByTestId('desktop-sidebar')).toHaveCSS('width', '72px');
+  await expect(page).toHaveScreenshot('navigation-collapsed.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
 test('Work reference visual baseline', async ({ page }) => {
   await mockAuthenticated(page);
   await setAppearance(page, {

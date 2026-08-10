@@ -146,6 +146,10 @@ Motion은 기능을 설명하고 공간 관계를 보존할 때만 사용한다.
 - Search가 아니라 `Search or ask` Command로 표현한다.
 - 현재 Workspace, 연결 상태, Notification, Account를 한 Header에서 제공한다.
 - Today·Work·Ask·Activity·Apps를 동일한 Navigation 문법으로 제공한다.
+- 72px Compact Rail에서는 Product Mark를 Rail 중심에 고정한다. Collapse·Expand 제어는
+  Logo나 Rail 경계 위에 띄우지 않고 Global Header의 첫 번째 40px Action으로 제공한다.
+- Collapse 제어는 `aria-controls`, `aria-expanded`, 상태별 Tooltip을 제공하며 Logo와
+  최소 24px의 시각 간격을 유지한다.
 
 ### Today
 
@@ -192,6 +196,8 @@ Motion은 기능을 설명하고 공간 관계를 보존할 때만 사용한다.
 - [ServiceNow Horizon](https://horizon.servicenow.com/)
 - [Atlassian Rovo](https://www.atlassian.com/software/rovo/features)
 - [Fluent 2 Motion](https://fluent2.microsoft.design/motion)
+- [Fluent 2 Nav](https://fluent2.microsoft.design/components/web/react/core/nav/usage)
+- [Carbon UI Shell left panel](https://carbondesignsystem.com/components/UI-shell-left-panel/usage/)
 - [Atlassian Motion](https://atlassian.design/foundations/motion)
 - [Carbon for AI](https://carbondesignsystem.com/guidelines/carbon-for-ai/)
 - [SAP Fiori Generative AI Design](https://experience.sap.com/fiori-design-web/generative-ai-design/)
