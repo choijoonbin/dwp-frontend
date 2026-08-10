@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
   "rootPackage": "@dwp-frontend/workspace",
-  "dependencyCount": 105,
+  "dependencyCount": 110,
   "licenseCounts": {
+    "0BSD": 1,
     "BSD-3-Clause": 3,
     "ISC": 3,
-    "MIT": 99
+    "MIT": 103
   },
   "packages": [
     {
@@ -85,6 +86,30 @@
       "version": "0.3.2",
       "license": "MIT",
       "repository": "git+https://github.com/mui/base-ui.git"
+    },
+    {
+      "name": "@dnd-kit/accessibility",
+      "version": "3.1.1",
+      "license": "MIT",
+      "repository": "git+https://github.com/clauderic/dnd-kit.git"
+    },
+    {
+      "name": "@dnd-kit/core",
+      "version": "6.3.1",
+      "license": "MIT",
+      "repository": "git+https://github.com/clauderic/dnd-kit.git"
+    },
+    {
+      "name": "@dnd-kit/sortable",
+      "version": "10.0.0",
+      "license": "MIT",
+      "repository": "git+https://github.com/clauderic/dnd-kit.git"
+    },
+    {
+      "name": "@dnd-kit/utilities",
+      "version": "3.2.2",
+      "license": "MIT",
+      "repository": "git+https://github.com/clauderic/dnd-kit.git"
     },
     {
       "name": "@emotion/babel-plugin",
@@ -613,6 +638,12 @@
       "version": "1.0.0",
       "license": "MIT",
       "repository": "git+https://github.com/inspect-js/node-supports-preserve-symlinks-flag.git"
+    },
+    {
+      "name": "tslib",
+      "version": "2.8.1",
+      "license": "0BSD",
+      "repository": "https://github.com/Microsoft/tslib.git"
     },
     {
       "name": "use-sync-external-store",

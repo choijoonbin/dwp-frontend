@@ -166,7 +166,8 @@ Theme는 Mode, Contrast, Density, Reduced Motion, Tenant Accent와 Font를 입�
 - [x] Light·Dark·High Contrast, Density와 Reduced Motion Engine 구현
 - [x] Sidebar·Rail·Top Navigation Policy Engine 구현
 - [x] Shell, Account, Preference, Security 화면 독립 구현
-- [x] Premium Global Shell·Work Pulse와 Today·Work·Ask·Activity·Apps Reference 구현
+- [x] Premium Global Shell·Work Pulse와 Home·Work·Ask·Activity·Apps Reference 구현
+- [x] 권한 App Group·Reorder·Folder·비 Drag 대체 조작과 개인 저장 구현
 - [x] Human·System·Agent Unified Activity와 AI Trust Surface 구현
 - [x] Desktop·Mobile Login·Shell E2E와 Axe 통과
 - [x] Typecheck, Lint와 Production Build 통과
@@ -179,7 +180,7 @@ Theme는 Mode, Contrast, Density, Reduced Motion, Tenant Accent와 Font를 입�
 - [x] Desktop·Mobile 자동 Visual Baseline 구축
 - [ ] Desktop 1440·1280, Tablet, Mobile 수동 Visual 승인
 - [ ] Screen Reader, Keyboard, 200% Zoom과 Manual High Contrast Review
-- [ ] 디자인 파트너와 Shell·Today·Work·Ask·Activity·Apps Flow 검증
+- [ ] 디자인 파트너와 Shell·Home·Work·Ask·Activity·Apps Flow 검증
 - [x] Dependency License Report 자동화
 - [ ] SBOM 자동화
 - [ ] 외부 Delivery용 Git History 정책 승인

@@ -122,6 +122,7 @@ test('unauthenticated users see the login shell without business navigation', as
   await expect(password).toHaveAttribute('type', 'password');
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   await page.mouse.move(0, 0);
+  await page.waitForTimeout(500);
   await page.keyboard.press('Escape');
   await expect(page.getByRole('tooltip')).toHaveCount(0);
   await expect(page.locator('nav')).toHaveCount(0);
@@ -161,7 +162,8 @@ test('authenticated users keep the common shell without business navigation', as
   await expect(page.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Notifications' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Account' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Today', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Welcome back, Admin', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your apps', level: 2 })).toBeVisible();
   await expectNoAutomaticAccessibilityViolations(page);
 
   await page.getByRole('button', { name: 'Account' }).click();
@@ -189,21 +191,21 @@ test('authenticated users keep the common shell without business navigation', as
     await page.getByRole('button', { name: 'Open navigation' }).click();
     const sidebar = page.getByTestId('mobile-sidebar');
     await expect(sidebar.getByRole('link', { name: 'Digital Workplace home' })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Today', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: 'Today', exact: true })).toHaveCount(0);
     await expect(sidebar.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Ask', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Activity', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Apps', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link')).toHaveCount(6);
+    await expect(sidebar.getByRole('link')).toHaveCount(5);
   } else {
     const sidebar = page.getByTestId('desktop-sidebar');
     await expect(sidebar.getByRole('link', { name: 'Digital Workplace home' })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Today', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: 'Today', exact: true })).toHaveCount(0);
     await expect(sidebar.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Ask', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Activity', exact: true })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Apps', exact: true })).toBeVisible();
-    await expect(sidebar.getByRole('link')).toHaveCount(6);
+    await expect(sidebar.getByRole('link')).toHaveCount(5);
     const collapseNavigation = page.getByRole('button', { name: 'Collapse navigation' });
     await expect(collapseNavigation).toBeVisible();
     await expect(collapseNavigation).toHaveAttribute('aria-controls', 'desktop-navigation');
@@ -265,7 +267,7 @@ test('compact navigation reflows the desktop workspace canvas', async ({ page },
   );
 
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Today', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Welcome back, Admin', level: 1 })).toBeVisible();
 
   const readGeometry = () =>
     page.evaluate(() => {
@@ -302,7 +304,182 @@ test('compact navigation reflows the desktop workspace canvas', async ({ page },
   expect((compact.canvas?.width ?? 0) - (expanded.canvas?.width ?? 0)).toBe(176);
 });
 
-test('reference work hub connects Today, Work, Ask, Activity, and Apps', async ({
+test('personal home launcher can create, rename, persist, and reset folders', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name === 'mobile',
+    'Desktop pointer and menu behavior is covered here.'
+  );
+
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          userId: 1,
+          displayName: 'Admin',
+          email: 'admin@dwp.local',
+          tenantId: 1,
+          tenantCode: 'default',
+          roles: ['ADMIN'],
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/permissions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
+
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Open Work' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Open Administration' })).toBeVisible();
+  await page.getByRole('button', { name: 'Customize' }).click();
+  await page.getByRole('button', { name: 'Arrange Work' }).click();
+  await page.getByRole('menuitem', { name: 'Create folder', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'With Ask DWP' }).click();
+  await page.getByRole('menuitem', { name: 'Create selected folder' }).click();
+
+  await page.getByRole('button', { name: 'Open folder Start work folder' }).click();
+  const folderDialog = page.getByRole('dialog', { name: 'Start work folder' });
+  await expect(folderDialog.getByRole('button', { name: 'Open Work' })).toBeVisible();
+  await expect(folderDialog.getByRole('button', { name: 'Open Ask DWP' })).toBeVisible();
+  await folderDialog.getByRole('button', { name: 'Rename Start work folder' }).click();
+  const renameDialog = page.getByRole('dialog', { name: 'Rename folder' });
+  await renameDialog.getByRole('textbox', { name: 'Folder name' }).fill('Priority tools');
+  await renameDialog.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => Boolean(localStorage.getItem('dwp.home.launchpad.v1:1:1'))))
+    .toBe(true);
+
+  await page.getByRole('button', { name: 'Customize' }).click();
+  await page.getByRole('button', { name: 'Reset app layout' }).click();
+  await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Open Work' }).focus();
+  await page.keyboard.press('Space');
+  await page.waitForTimeout(100);
+  await page.keyboard.press('ArrowRight');
+  await page.waitForTimeout(100);
+  await page.keyboard.press('Space');
+  await expect
+    .poll(() =>
+      page
+        .getByRole('list', { name: 'Start work apps' })
+        .locator('[data-launchpad-item]')
+        .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
+    )
+    .toEqual(['dwp-ask', 'dwp-work', 'dwp-activity']);
+  await page.getByRole('button', { name: 'Reset app layout' }).click();
+  await expect
+    .poll(() =>
+      page
+        .getByRole('list', { name: 'Start work apps' })
+        .locator('[data-launchpad-item]')
+        .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
+    )
+    .toEqual(['dwp-work', 'dwp-ask', 'dwp-activity']);
+
+  const workBounds = await page.getByRole('button', { name: 'Open Work' }).boundingBox();
+  const askTargetBounds = await page.locator('[data-folder-target="dwp-ask"]').boundingBox();
+  expect(workBounds).not.toBeNull();
+  expect(askTargetBounds).not.toBeNull();
+  await page.mouse.move(
+    (workBounds?.x ?? 0) + (workBounds?.width ?? 0) / 2,
+    (workBounds?.y ?? 0) + (workBounds?.height ?? 0) / 2
+  );
+  await page.mouse.down();
+  await page.mouse.move((workBounds?.x ?? 0) + 12, (workBounds?.y ?? 0) + 12, { steps: 4 });
+  await page.waitForTimeout(100);
+  await page.mouse.move(
+    (askTargetBounds?.x ?? 0) + (askTargetBounds?.width ?? 0) / 2,
+    (askTargetBounds?.y ?? 0) + (askTargetBounds?.height ?? 0) / 2,
+    { steps: 12 }
+  );
+  await page.waitForTimeout(100);
+  await page.mouse.up();
+  await expect(page.getByRole('button', { name: 'Open folder Start work folder' })).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('Work was placed with Ask DWP');
+  await page.waitForTimeout(100);
+  await page.getByRole('button', { name: 'Open folder Start work folder' }).click();
+  await page
+    .getByRole('dialog', { name: 'Start work folder' })
+    .getByRole('button', { name: 'Open Work' })
+    .click();
+  await expect(page).toHaveURL(/\/work/);
+});
+
+test('personal home launcher only exposes explicitly entitled apps when app permissions exist', async ({
+  page,
+}) => {
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          userId: 7,
+          displayName: 'Min Kim',
+          email: 'min@dwp.local',
+          tenantId: 2,
+          tenantCode: 'pilot',
+          roles: ['ADMIN'],
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/permissions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: [
+          {
+            resourceType: 'APP',
+            resourceKey: 'APP.WORK',
+            permissionCode: 'VIEW',
+            effect: 'ALLOW',
+          },
+        ],
+      }),
+    })
+  );
+
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Open Work' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Open Ask DWP' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Open Administration' })).toHaveCount(0);
+  await expect(page.getByText('1 assigned')).toBeVisible();
+  await expectNoAutomaticAccessibilityViolations(page);
+
+  await page.getByRole('button', { name: 'Account' }).click();
+  await expect(page.getByRole('menuitem', { name: 'Administration' })).toHaveCount(0);
+  await page.keyboard.press('Escape');
+
+  await page.goto('/apps');
+  await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();
+  await expect(page.getByText('No matching apps')).toBeVisible();
+
+  await page.goto('/ask');
+  await expect(page).toHaveURL(/\/403/);
+  await expect(page.getByRole('heading', { name: 'Access denied' })).toBeVisible();
+
+  await page.goto('/admin');
+  await expect(page).toHaveURL(/\/403/);
+});
+
+test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
   page,
 }, testInfo) => {
   await page.route('**/api/auth/me', (route) =>
@@ -346,7 +523,7 @@ test('reference work hub connects Today, Work, Ask, Activity, and Apps', async (
   };
 
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
   await page.getByRole('button', { name: /Approve software access request/ }).click();
   await expect(page).toHaveURL(/\/work\?item=WK-1042/);
   await expect(page.getByRole('heading', { name: 'Work', exact: true })).toBeVisible();

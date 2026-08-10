@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Cog, Home, LogOut, Moon, Settings2, ShieldCheck, Sun, UserRound } from 'lucide-react';
 import { useAppearance } from '@dwp-frontend/design-system';
-import { useAuth, redirectToSignIn } from '@dwp-frontend/shared-utils';
+import { useAuth, usePermissions, redirectToSignIn } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
@@ -13,17 +13,21 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
+import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
+
 const menuIconProps = { size: 19, strokeWidth: 1.8, 'aria-hidden': true } as const;
 
 export function AccountMenu() {
   const auth = useAuth();
+  const { permissions } = usePermissions();
   const appearance = useAppearance();
   const navigate = useNavigate();
   const location = useLocation();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const displayName = auth.user?.displayName || 'User';
-  const isAdmin = auth.user?.roles.some((role) =>
-    ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'].includes(role)
+  const isAdmin = Boolean(
+    auth.user?.roles.some((role) => ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'].includes(role)) &&
+      isAppResourceEntitled('APP.ADMINISTRATION', permissions)
   );
 
   const close = () => setAnchor(null);

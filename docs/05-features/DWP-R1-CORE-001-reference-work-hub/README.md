@@ -8,7 +8,7 @@
 >
 > 적용 저장소: `dwp-frontend`
 
-R1의 첫 구현 전에 `Today`, `Work`, `Ask`, `Activity`, `Apps`와 Global Shell을 하나의
+R1의 첫 구현 전에 `Home`, `Work`, `Ask`, `Activity`, `Apps`와 Global Shell을 하나의
 검증 가능한 Premium Reference Flow로 연결한다. 화면은 합성 Fixture를 사용하며 운영
 System of Record나 AI Model을 호출하지 않는다. Ask의 Action Plan은 내부 deterministic
 Contract Runtime을 호출해 Gateway·CSRF·Session·Audit 경계만 검증한다.

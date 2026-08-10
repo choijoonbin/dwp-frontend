@@ -16,7 +16,7 @@ import {
   TriangleAlert,
   UsersRound,
 } from 'lucide-react';
-import { useToast } from '@dwp-frontend/shared-utils';
+import { useAuth, usePermissions, useToast } from '@dwp-frontend/shared-utils';
 import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -31,6 +31,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { PageHeader, ReferenceModeChip, SectionHeading } from '../features/work-hub/workspace-ui';
 import { referenceApps } from '../features/work-hub/reference-data';
+import { HOME_APPS, isAppEntitled } from '../features/home/app-launchpad-model';
 
 import type { ReferenceApp } from '../features/work-hub/reference-data';
 
@@ -89,16 +90,26 @@ function AppIcon({ app, size = 46 }: { app: ReferenceApp; size?: number }) {
 }
 
 export default function AppsPage() {
+  const auth = useAuth();
+  const { permissions } = usePermissions();
   const toast = useToast();
   const [searchParams] = useSearchParams();
   const [filter, setFilter] = useState<AppFilter>('all');
   const [query, setQuery] = useState('');
-  const selectedType = searchParams.get('app');
-  const pinnedApps = referenceApps.filter((app) => app.pinned);
+  const selectedAppId = searchParams.get('app');
+  const entitledReferenceApps = useMemo(() => {
+    const entitledIds = new Set(
+      HOME_APPS.filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)).map(
+        (app) => app.id
+      )
+    );
+    return referenceApps.filter((app) => entitledIds.has(app.id));
+  }, [auth.user?.roles, permissions]);
+  const pinnedApps = entitledReferenceApps.filter((app) => app.pinned);
 
   const visibleApps = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    return referenceApps.filter((app) => {
+    return entitledReferenceApps.filter((app) => {
       const filterMatch =
         filter === 'all' ||
         (filter === 'pinned' && app.pinned) ||
@@ -111,7 +122,7 @@ export default function AppsPage() {
         );
       return filterMatch && queryMatch;
     });
-  }, [filter, query]);
+  }, [entitledReferenceApps, filter, query]);
 
   const changeFilter = (_event: React.MouseEvent<HTMLElement>, value: AppFilter | null) => {
     if (value) setFilter(value);
@@ -281,7 +292,7 @@ export default function AppsPage() {
           }}
         >
           {visibleApps.map((app) => {
-            const selected = selectedType && app.type === selectedType;
+            const selected = selectedAppId === app.id;
             const healthColor =
               app.health === 'healthy'
                 ? 'success.main'

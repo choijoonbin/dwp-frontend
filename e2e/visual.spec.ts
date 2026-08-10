@@ -291,7 +291,7 @@ test('security sessions visual baseline', async ({ page }) => {
   });
 });
 
-test('Today reference visual baseline', async ({ page }) => {
+test('personal home reference visual baseline', async ({ page }) => {
   await mockAuthenticated(page);
   await setAppearance(page, {
     mode: 'light',
@@ -301,9 +301,31 @@ test('Today reference visual baseline', async ({ page }) => {
   });
 
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your apps' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Daily brief' })).toBeVisible();
-  await expect(page).toHaveScreenshot('today-reference.png', {
+  await expect(page).toHaveScreenshot('personal-home-reference.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
+test('personal home dark reference visual baseline', async ({ page }) => {
+  await mockAuthenticated(page);
+  await setAppearance(page, {
+    mode: 'dark',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your apps' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Daily brief' })).toBeVisible();
+  await expect(page).toHaveScreenshot('personal-home-reference-dark.png', {
     animations: 'disabled',
     caret: 'hide',
     fullPage: true,

@@ -3,13 +3,14 @@ import type { RouteObject } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthGuard } from '@dwp-frontend/shared-utils';
-import { useAuth } from '@dwp-frontend/shared-utils';
+import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { AppLayout } from '../layouts/app-layout';
 import { AuthLayout } from '../layouts/auth-layout';
+import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
 
 const HomePage = lazy(() => import('../pages/home'));
 const WorkPage = lazy(() => import('../pages/work'));
@@ -33,10 +34,27 @@ const fallback = (
 
 function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
-  const permitted = auth.user?.roles.some((role) =>
+  const { permissions } = usePermissions();
+  const rolePermitted = auth.user?.roles.some((role) =>
     ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'].includes(role)
   );
-  return permitted ? children : <Navigate to="/403" replace />;
+  const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
+  return rolePermitted && appPermitted ? children : <Navigate to="/403" replace />;
+}
+
+function AppRouteGuard({
+  resourceKey,
+  children,
+}: {
+  resourceKey: string;
+  children: React.ReactNode;
+}) {
+  const { permissions } = usePermissions();
+  return isAppResourceEntitled(resourceKey, permissions) ? (
+    children
+  ) : (
+    <Navigate to="/403" replace />
+  );
 }
 
 export const routesSection: RouteObject[] = [
@@ -58,25 +76,31 @@ export const routesSection: RouteObject[] = [
       {
         path: 'work',
         element: (
-          <Suspense fallback={fallback}>
-            <WorkPage />
-          </Suspense>
+          <AppRouteGuard resourceKey="APP.WORK">
+            <Suspense fallback={fallback}>
+              <WorkPage />
+            </Suspense>
+          </AppRouteGuard>
         ),
       },
       {
         path: 'ask',
         element: (
-          <Suspense fallback={fallback}>
-            <AskPage />
-          </Suspense>
+          <AppRouteGuard resourceKey="APP.ASK">
+            <Suspense fallback={fallback}>
+              <AskPage />
+            </Suspense>
+          </AppRouteGuard>
         ),
       },
       {
         path: 'activity',
         element: (
-          <Suspense fallback={fallback}>
-            <ActivityPage />
-          </Suspense>
+          <AppRouteGuard resourceKey="APP.ACTIVITY">
+            <Suspense fallback={fallback}>
+              <ActivityPage />
+            </Suspense>
+          </AppRouteGuard>
         ),
       },
       {

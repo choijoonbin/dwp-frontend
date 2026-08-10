@@ -69,17 +69,19 @@ J4 Meeting to Outcome은 R1 P1 Discovery만 수행하고 Product Scope에는 포
 
 ### 5.1 Home
 
-Home은 `Today`와 `Apps` 두 Mode를 제공한다.
+Home은 `Assigned Apps -> Today`의 통합 정보 계층을 제공하고 `/apps`는 전체 App
+Catalog를 담당한다.
 
-#### Today
+#### Home과 Today
 
+- Entitlement가 있는 App을 목적 그룹으로 표시하고 그룹 내 Reorder·Folder를 지원
 - 마감·영향도·사용자 선호에 따른 우선 업무 목록
 - 중요 일정·승인·서비스 요청·필수 공지의 통합 상태
 - Daily Brief와 각 추천의 이유·Source·최신 시각
 - Pin, Hide, Reorder와 Personalization Reset
 - 상세·완료·위임·일정화·원본 이동 등 제한된 Quick Action
 
-#### Apps
+#### Apps Catalog
 
 - Entitlement가 있는 Native·Legacy·SaaS App만 표시
 - 검색, Category, 최근 사용과 Pin

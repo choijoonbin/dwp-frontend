@@ -37,8 +37,8 @@ Marketing Hero와 Bento Card 남용도 채택하지 않는다.
 
 ### 3.1 Work Pulse
 
-Today의 첫 화면은 단순 인사말이나 KPI Card가 아니다. 일정, 마감, Blocker, Agent 실행을
-분석해 다음 2~3시간의 업무 Rhythm을 한눈에 보여준다.
+Home의 Today 영역은 단순 인사말이나 KPI Card가 아니다. Assigned Apps 다음에 일정,
+마감, Blocker, Agent 실행을 분석해 다음 2~3시간의 업무 Rhythm을 보여준다.
 
 - `Focus now`: 지금 처리할 한 가지와 선정 이유
 - `Day signal`: 시간대별 Meeting·Focus·Deadline 밀도
@@ -58,7 +58,7 @@ Activity는 Notification 목록과 다르다. 사람, System, Connector와 Agent
 
 ### 3.3 Context-preserving Flow
 
-Today → Work → Ask → Activity → App으로 이동해도 선택한 업무 Context를 잃지 않는다.
+Home → Work → Ask → Activity → App으로 이동해도 선택한 업무 Context를 잃지 않는다.
 Reference 단계에서는 Query Parameter와 합성 Fixture로 검증하고, R1 Connector 단계에서
 Context Envelope 계약으로 전환한다.
 
@@ -69,7 +69,7 @@ Context Envelope 계약으로 전환한다.
 - Desktop Shell은 248px Sidebar와 64px Command Bar를 기준으로 한다.
 - Sidebar가 72px Rail로 축소되면 확보된 176px를 Header와 운영형 Page Canvas가 함께
   회수한다. Right Edge는 고정하고 Split Pane과 Data Surface를 유동 확장한다.
-- Today·Work·Ask·Activity·Apps·Administration은 최대폭 없는 `workspace` Canvas를,
+- Home·Work·Ask·Activity·Apps·Administration은 최대폭 없는 `workspace` Canvas를,
   Profile·Preferences·Security는 1200px `focus` Canvas를 사용한다.
 - Page Heading은 Compact하게 유지하고 첫 Viewport에 실제 업무가 보이게 한다.
 - Section은 Full-width Band나 Unframed Layout을 우선한다.
@@ -151,7 +151,8 @@ Motion은 기능을 설명하고 공간 관계를 보존할 때만 사용한다.
 
 - Search가 아니라 `Search or ask` Command로 표현한다.
 - 현재 Workspace, 연결 상태, Notification, Account를 한 Header에서 제공한다.
-- Today·Work·Ask·Activity·Apps를 동일한 Navigation 문법으로 제공한다.
+- Work·Ask·Activity·Apps를 동일한 Navigation 문법으로 제공하고 Product Mark는 Home으로
+  복귀한다. Today는 Home 내부 정보 계층으로 제공한다.
 - 72px Compact Rail에서는 Product Mark를 Rail 중심에 고정한다. Collapse·Expand 제어는
   Logo나 Rail 경계 위에 띄우지 않고 Global Header의 첫 번째 40px Action으로 제공한다.
 - Collapse 제어는 `aria-controls`, `aria-expanded`, 상태별 Tooltip을 제공하며 Logo와
@@ -160,9 +161,11 @@ Motion은 기능을 설명하고 공간 관계를 보존할 때만 사용한다.
   Reduced Motion에서는 즉시 전환하며 Overlay, Horizontal Scroll이나 빈 Max-width 여백을
   만들지 않는다.
 
-### Today
+### Home
 
-- 첫 Viewport에 Work Pulse와 `Focus now`를 배치한다.
+- 첫 Viewport에 권한 기반 Assigned Apps 전체와 Today 시작점을 함께 배치한다.
+- App Group은 관리자 의미 체계를 유지하고 그룹 안에서 Reorder·Folder를 허용한다.
+- Drag 동작에는 Keyboard와 Menu 기반의 동일한 대체 Command를 제공한다.
 - Priority Queue, Day Timeline과 Agent Activity를 서로 다른 정보 형태로 표현한다.
 - AI Brief에는 Source 수, Freshness와 Preview 상태를 항상 표시한다.
 

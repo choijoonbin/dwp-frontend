@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Activity,
@@ -11,7 +12,7 @@ import {
   TimerReset,
   UsersRound,
 } from 'lucide-react';
-import { useAuth } from '@dwp-frontend/shared-utils';
+import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
 import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -22,6 +23,12 @@ import Typography from '@mui/material/Typography';
 
 import { PageHeader, ReferenceModeChip, SectionHeading } from '../features/work-hub/workspace-ui';
 import { activityEvents, scheduleItems, todayItems } from '../features/work-hub/reference-data';
+import { AppLaunchpad } from '../features/home/app-launchpad';
+import {
+  HOME_APPS,
+  isAppEntitled,
+  launchpadStorageKey,
+} from '../features/home/app-launchpad-model';
 
 import type { Priority } from '../features/work-hub/reference-data';
 
@@ -39,24 +46,56 @@ const scheduleTone = {
 
 export default function HomePage() {
   const auth = useAuth();
+  const { permissions } = usePermissions();
   const navigate = useNavigate();
   const firstName = auth.user?.displayName?.split(' ')[0] || 'there';
   const recentActivity = activityEvents.slice(0, 3);
+  const entitledApps = useMemo(
+    () => HOME_APPS.filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
+    [auth.user?.roles, permissions]
+  );
+  const personalLayoutKey = launchpadStorageKey(auth.user?.tenantId ?? 0, auth.user?.userId ?? 0);
 
   return (
     <PageCanvas>
       <PageHeader
-        eyebrow="Saturday, August 8"
-        title="Today"
-        description={`Good morning, ${firstName}. Your next decision is ready.`}
+        eyebrow="Your workspace"
+        title={`Welcome back, ${firstName}`}
+        description="Your assigned apps and next actions, in one governed workspace."
         action={<ReferenceModeChip />}
       />
+
+      <AppLaunchpad
+        key={personalLayoutKey}
+        apps={entitledApps}
+        storageKey={personalLayoutKey}
+        onLaunch={(app) => navigate(app.route)}
+        onBrowseAll={() => navigate('/apps')}
+      />
+
+      <Box
+        sx={{
+          mt: 4,
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: 2,
+          flexWrap: 'wrap',
+        }}
+      >
+        <Typography component="p" variant="overline" color="primary.main">
+          Today
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          Saturday, August 8 / Updated 09:10
+        </Typography>
+      </Box>
 
       <Box
         component="section"
         aria-labelledby="brief-heading"
         sx={{
-          mt: 3,
+          mt: 1,
           display: 'grid',
           gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1.65fr) minmax(320px, 1fr)' },
           color: '#F8FAFC',

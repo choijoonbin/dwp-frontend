@@ -50,7 +50,7 @@ Desktop Navigation은 본문 옆에 놓이는 Inline 영역이다. Expanded `248
 
 페이지 루트는 MUI `Container`나 임의 `maxWidth` 대신 Public `PageCanvas`를 사용한다.
 
-- `workspace`: Today, Work, Ask, Activity, Apps, Administration처럼 비교·탐색·운영하는
+- `workspace`: Home, Work, Ask, Activity, Apps, Administration처럼 비교·탐색·운영하는
   화면이다. 최대폭을 두지 않고 고정 Gutter 안에서 가용 폭 전체를 사용한다.
 - `focus`: Profile, Preferences, Security처럼 읽기·입력에 집중하는 화면이다. Canvas를
   `1200px`로 제한하되 Shell 자체는 계속 Reflow한다.

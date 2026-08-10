@@ -3,7 +3,6 @@ import {
   Activity as ActivityIcon,
   AppWindow,
   BriefcaseBusiness,
-  House,
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
@@ -11,6 +10,7 @@ import {
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ProductMark, foundationTokens, useAppearance } from '@dwp-frontend/design-system';
+import { usePermissions } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -28,16 +28,16 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { AccountMenu } from '../components/account-menu';
 import { LanguageMenu } from '../components/language-menu';
 import { SearchControl, WorkspaceMenu, NotificationMenu } from '../components/shell-controls';
+import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
 
 const SIDEBAR_WIDTH = foundationTokens.layout.navigationExpanded;
 const RAIL_WIDTH = foundationTokens.layout.navigationCompact;
 const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
 
 const navigationItems = [
-  { label: 'Today', path: '/', icon: House },
-  { label: 'Work', path: '/work', icon: BriefcaseBusiness },
-  { label: 'Ask', path: '/ask', icon: Sparkles },
-  { label: 'Activity', path: '/activity', icon: ActivityIcon },
+  { label: 'Work', path: '/work', icon: BriefcaseBusiness, resourceKey: 'APP.WORK' },
+  { label: 'Ask', path: '/ask', icon: Sparkles, resourceKey: 'APP.ASK' },
+  { label: 'Activity', path: '/activity', icon: ActivityIcon, resourceKey: 'APP.ACTIVITY' },
   { label: 'Apps', path: '/apps', icon: AppWindow },
 ] as const;
 
@@ -49,6 +49,10 @@ type AppNavigationProps = {
 
 function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppNavigationProps) {
   const { pathname } = useLocation();
+  const { permissions } = usePermissions();
+  const visibleNavigationItems = navigationItems.filter(
+    (item) => !('resourceKey' in item) || isAppResourceEntitled(item.resourceKey, permissions)
+  );
 
   return (
     <Box component="nav" aria-label="Application navigation" sx={{ minWidth: 0 }}>
@@ -70,8 +74,8 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
           px: horizontal ? 0 : 1,
         }}
       >
-        {navigationItems.map((item) => {
-          const selected = item.path === '/' ? pathname === '/' : pathname.startsWith(item.path);
+        {visibleNavigationItems.map((item) => {
+          const selected = pathname.startsWith(item.path);
           const Icon = item.icon;
           return (
             <Tooltip

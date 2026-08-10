@@ -7,19 +7,26 @@
 Mutation은 호출하지 않는다. 나머지 경로와 Response는 R1 Backend·Connector Spike의
 후보 계약으로, Build 전에 OpenAPI와 권한 판정을 별도 승인한다.
 
+R0.5에서는 `resourceType=APP` 권한이 한 건도 없을 때 Reference App 전체를 일반 사용자에게
+보이는 호환 모드로 동작하고 Admin은 Role을 추가 확인한다. APP 권한이 등록되는 순간부터
+Home, Sidebar, Apps Catalog와 Route Guard는 정확한 Resource Grant만 허용한다. 운영 전에는
+반드시 APP Resource Seed와 사용자 Entitlement를 구성해 호환 모드를 종료한다.
+
 ## 2. 후보 API
 
-| Method | Path                          | 목적                   | 권한·Risk                              |
-| ------ | ----------------------------- | ---------------------- | -------------------------------------- |
-| GET    | `/api/home/today`             | 개인 우선 업무와 일정  | 본인 Projection                        |
-| GET    | `/api/work`                   | 권한 범위 Work Query   | Work ACL·Field Masking                 |
-| GET    | `/api/activity`               | 통합 실행 Timeline     | Actor·Work Object ACL                  |
-| GET    | `/api/activity/{id}`          | Event·Audit Detail     | Event Scope·Trace Masking              |
-| GET    | `/api/apps`                   | 부여된 App Registry    | Entitlement Filter                     |
-| POST   | `/api/ask/query`              | 권한 기반 검색·답변    | Source ACL, Rate·Budget                |
-| GET    | `/api/ask/runs/{id}`          | 답변·Source·Trace 상태 | Run Owner·Support Scope                |
-| POST   | `/api/actions/preview`        | 후속 Action Plan 생성  | Tool Policy, no mutation               |
-| POST   | `/api/agent/v1/plans/preview` | 결정적 Agent Plan 계약 | Session·CSRF, L2 Approval, no mutation |
+| Method | Path                          | 목적                   | 권한·Risk                                  |
+| ------ | ----------------------------- | ---------------------- | ------------------------------------------ |
+| GET    | `/api/home/today`             | 개인 우선 업무와 일정  | 본인 Projection                            |
+| GET    | `/api/work`                   | 권한 범위 Work Query   | Work ACL·Field Masking                     |
+| GET    | `/api/activity`               | 통합 실행 Timeline     | Actor·Work Object ACL                      |
+| GET    | `/api/activity/{id}`          | Event·Audit Detail     | Event Scope·Trace Masking                  |
+| GET    | `/api/apps`                   | 부여된 App Registry    | Entitlement Filter                         |
+| GET    | `/api/home/layout`            | 개인 App 순서·폴더     | 본인 Tenant·User Scope                     |
+| PUT    | `/api/home/layout`            | 개인 배치 저장         | CSRF, Manifest Version, Entitlement 재검증 |
+| POST   | `/api/ask/query`              | 권한 기반 검색·답변    | Source ACL, Rate·Budget                    |
+| GET    | `/api/ask/runs/{id}`          | 답변·Source·Trace 상태 | Run Owner·Support Scope                    |
+| POST   | `/api/actions/preview`        | 후속 Action Plan 생성  | Tool Policy, no mutation                   |
+| POST   | `/api/agent/v1/plans/preview` | 결정적 Agent Plan 계약 | Session·CSRF, L2 Approval, no mutation     |
 
 ## 3. 공통 계약
 
@@ -35,6 +42,7 @@ Mutation은 호출하지 않는다. 나머지 경로와 Response는 R1 Backend·
 - Agent Preview Response는 승인 대상을 고정하는 64자리 SHA-256 `planHash`와
   `correlationId`를 필수로 포함한다.
 - Source of Record 원문 권한을 DWP Role만으로 대체하지 않는다.
+- Home Layout은 App ID만 참조하며 서버는 응답·저장 시 현재 Entitlement를 다시 적용한다.
 - Activity 응답은 내부 Chain-of-thought를 포함하지 않고 입력 Reference, 정책 판정, Tool,
   결과와 Audit Reference만 제공한다.
 
