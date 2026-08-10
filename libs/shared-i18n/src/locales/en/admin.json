@@ -72,6 +72,11 @@
         "title": "Navigation management",
         "description": "Publish a localized, permission-aware application navigation tree."
       },
+      "api-monitoring": {
+        "label": "API monitoring",
+        "title": "API monitoring",
+        "description": "Monitor tenant API health, latency, errors, and end-to-end trace context."
+      },
       "audit": {
         "label": "Audit log",
         "title": "Audit log",
@@ -436,6 +441,124 @@
       "revisionActivated": "Registry revision activated.",
       "draftRetired": "Draft revision retired.",
       "revisionRetired": "Registry revision retired."
+    }
+  },
+  "apiMonitoring": {
+    "loading": "Loading API telemetry",
+    "loadError": "API telemetry could not be loaded.",
+    "generatedAt": "Updated {{time}}",
+    "filters": {
+      "label": "API history filters",
+      "window": "Time window",
+      "observation": "Observation point",
+      "service": "Service or route",
+      "allServices": "All services",
+      "method": "Method",
+      "allMethods": "All methods",
+      "outcome": "Outcome",
+      "searchPlaceholder": "Search route, correlation ID, or trace ID",
+      "search": "Apply search",
+      "autoRefresh": "Auto refresh",
+      "refresh": "Refresh API telemetry"
+    },
+    "windows": {
+      "H1": "1h",
+      "H6": "6h",
+      "H24": "24h",
+      "D7": "7d",
+      "D30": "30d"
+    },
+    "observation": {
+      "GATEWAY": "Gateway",
+      "SERVICE": "Services",
+      "ALL": "All hops"
+    },
+    "outcomes": {
+      "ALL": "All outcomes",
+      "SUCCESS": "Success",
+      "REDIRECTION": "Redirection",
+      "CLIENT_ERROR": "Client error",
+      "SERVER_ERROR": "Server error",
+      "CANCELLED": "Cancelled"
+    },
+    "summary": {
+      "label": "API service indicators",
+      "total": "Requests",
+      "totalHint": "Observed over {{window}}",
+      "throughput": "Throughput",
+      "perMinute": "Requests per minute",
+      "errorRate": "Server error rate",
+      "serverErrors": "{{count}} server errors",
+      "p95": "p95 latency",
+      "latencyHint": "95th percentile response",
+      "p99": "p99 latency",
+      "tailLatency": "Tail response time",
+      "activeRoutes": "Active routes",
+      "activeRoutesHint": "Distinct observed targets"
+    },
+    "trend": {
+      "title": "Request trend",
+      "description": "Volume and error concentration across the selected window.",
+      "requests": "Requests",
+      "errors": "Errors",
+      "chartLabel": "API request and error trend"
+    },
+    "status": {
+      "title": "Status distribution",
+      "description": "HTTP response families returned to callers.",
+      "empty": "No status data in this window."
+    },
+    "routes": {
+      "title": "Highest traffic routes",
+      "description": "Prioritize the routes with the largest volume and tail latency.",
+      "tableLabel": "Highest traffic API routes",
+      "empty": "No routes observed in this window.",
+      "columns": {
+        "route": "Route",
+        "service": "Service",
+        "requests": "Requests",
+        "errorRate": "Error rate",
+        "p95": "p95 latency"
+      }
+    },
+    "events": {
+      "title": "Request history",
+      "loadError": "API request history could not be loaded.",
+      "tableLabel": "API request history",
+      "empty": "No API requests match the current filters.",
+      "loadMore": "Load older requests",
+      "loadingMore": "Loading older requests",
+      "columns": {
+        "time": "Time",
+        "status": "Status",
+        "method": "Method",
+        "route": "Route",
+        "service": "Service",
+        "latency": "Latency",
+        "actor": "Actor",
+        "trace": "Trace"
+      }
+    },
+    "detail": {
+      "title": "Request trace",
+      "subtitle": "Privacy-minimized transport metadata",
+      "loading": "Loading request trace",
+      "loadError": "The request trace could not be loaded.",
+      "copyCorrelation": "Copy correlation ID",
+      "copyTrace": "Copy trace ID",
+      "traceTitle": "Trace hops",
+      "fields": {
+        "service": "Service",
+        "instance": "Instance",
+        "actor": "Actor",
+        "auth": "Authentication",
+        "requestSize": "Request size",
+        "responseSize": "Response size",
+        "client": "Client family",
+        "error": "Error type",
+        "correlation": "Correlation ID",
+        "trace": "Trace ID"
+      }
     }
   },
   "audit": {

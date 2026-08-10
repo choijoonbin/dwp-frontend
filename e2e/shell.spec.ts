@@ -676,8 +676,13 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(page.getByRole('heading', { name: '사용자 접근 권한', level: 1 })).toBeVisible();
 
   let logoutRequested = false;
+  let releaseLogout = () => undefined;
+  const logoutGate = new Promise<void>((resolve) => {
+    releaseLogout = resolve;
+  });
   await page.route('**/api/auth/logout', async (route) => {
     logoutRequested = true;
+    await logoutGate;
     await route.fulfill({
       contentType: 'application/json',
       body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: null }),
@@ -686,7 +691,14 @@ test('authenticated users enter a personal home before the business shell', asyn
   await page.getByRole('button', { name: '계정' }).click();
   await page.getByRole('button', { name: '로그아웃', exact: true }).click();
   await expect.poll(() => logoutRequested).toBe(true);
+  await expect(page.locator('html')).toHaveAttribute('data-dwp-transition', 'session-exit');
+  await expect(page).toHaveURL(/\/admin\/people\/access/);
+  await expect(page.getByRole('heading', { name: '사용자 접근 권한', level: 1 })).toBeVisible();
+  const transitionReleasedAt = Date.now();
+  releaseLogout();
   await expect(page).toHaveURL(/\/sign-in/);
+  await expect(page.locator('html')).not.toHaveAttribute('data-dwp-transition');
+  expect(Date.now() - transitionReleasedAt).toBeLessThan(1_500);
 });
 
 test('tenant branding does not shift the home header while the logo loads', async ({

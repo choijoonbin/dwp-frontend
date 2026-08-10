@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ChevronDown, Home, Menu, ShieldCheck } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { foundationTokens } from '@dwp-frontend/design-system';
-import { useAuth } from '@dwp-frontend/shared-utils';
+import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -49,6 +49,7 @@ function initialExpandedGroups(): Record<AdminSection, boolean> {
 
 function AdminNavigation({ onNavigate }: AdminNavigationProps) {
   const { t } = useTranslation('admin');
+  const { hasPermission, isLoaded } = usePermissions();
   const { pathname } = useLocation();
   const [expanded, setExpanded] = useState(initialExpandedGroups);
   const activeGroup = useMemo(
@@ -122,40 +123,46 @@ function AdminNavigation({ onNavigate }: AdminNavigationProps) {
                     gap: 0.25,
                   }}
                 >
-                  {group.items.map((item) => {
-                    const ItemIcon = item.icon;
-                    const selected = pathname === item.path;
-                    return (
-                      <Box component="li" key={item.path} sx={{ display: 'block' }}>
-                        <ListItemButton
-                          component={NavLink}
-                          to={item.path}
-                          selected={selected}
-                          aria-current={selected ? 'page' : undefined}
-                          onClick={onNavigate}
-                          sx={{
-                            minHeight: 40,
-                            px: 1.15,
-                            borderRadius: 1,
-                            color: selected ? 'primary.main' : 'text.secondary',
-                            '&.Mui-selected': { bgcolor: 'action.selected' },
-                            '&.Mui-selected:hover': { bgcolor: 'action.selected' },
-                          }}
-                        >
-                          <ListItemIcon sx={{ minWidth: 30, color: 'inherit' }}>
-                            <ItemIcon size={16} strokeWidth={1.8} aria-hidden="true" />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={t(`navigation.items.${item.view}.label`)}
-                            primaryTypographyProps={{
-                              variant: 'body2',
-                              fontWeight: selected ? 750 : 550,
+                  {group.items
+                    .filter(
+                      (item) =>
+                        !item.requiredResourceKey ||
+                        (isLoaded && hasPermission(item.requiredResourceKey))
+                    )
+                    .map((item) => {
+                      const ItemIcon = item.icon;
+                      const selected = pathname === item.path;
+                      return (
+                        <Box component="li" key={item.path} sx={{ display: 'block' }}>
+                          <ListItemButton
+                            component={NavLink}
+                            to={item.path}
+                            selected={selected}
+                            aria-current={selected ? 'page' : undefined}
+                            onClick={onNavigate}
+                            sx={{
+                              minHeight: 40,
+                              px: 1.15,
+                              borderRadius: 1,
+                              color: selected ? 'primary.main' : 'text.secondary',
+                              '&.Mui-selected': { bgcolor: 'action.selected' },
+                              '&.Mui-selected:hover': { bgcolor: 'action.selected' },
                             }}
-                          />
-                        </ListItemButton>
-                      </Box>
-                    );
-                  })}
+                          >
+                            <ListItemIcon sx={{ minWidth: 30, color: 'inherit' }}>
+                              <ItemIcon size={16} strokeWidth={1.8} aria-hidden="true" />
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={t(`navigation.items.${item.view}.label`)}
+                              primaryTypographyProps={{
+                                variant: 'body2',
+                                fontWeight: selected ? 750 : 550,
+                              }}
+                            />
+                          </ListItemButton>
+                        </Box>
+                      );
+                    })}
                 </List>
               </Collapse>
             </Box>

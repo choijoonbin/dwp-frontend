@@ -20,6 +20,7 @@ export * from './api/provisioning-admin-api';
 export * from './api/navigation-admin-api';
 export * from './api/navigation-runtime-api';
 export * from './api/provider-control-api';
+export * from './api/api-history-api';
 
 export * from './axios-instance';
 export * from './auth/auth-guard';

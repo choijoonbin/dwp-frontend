@@ -27,40 +27,45 @@ export function LanguageMenu() {
   return (
     <>
       <Button
-        variant="outlined"
+        variant="text"
         color="inherit"
         aria-label={`${t('language.label')}: ${currentLocale.nativeName}`}
         aria-haspopup="menu"
         aria-controls={anchor ? 'language-menu' : undefined}
         aria-expanded={Boolean(anchor)}
+        aria-busy={isSaving || undefined}
         disabled={isSaving}
-        startIcon={<Globe2 size={18} strokeWidth={1.8} aria-hidden="true" />}
-        endIcon={
-          <ChevronDown
-            size={16}
-            strokeWidth={1.8}
-            aria-hidden="true"
-            style={{
-              transform: anchor ? 'rotate(180deg)' : 'rotate(0deg)',
-              transition: 'transform 120ms ease-out',
-            }}
-          />
-        }
+        startIcon={<Globe2 size={17} strokeWidth={1.75} aria-hidden="true" />}
+        endIcon={<ChevronDown size={14} strokeWidth={1.75} aria-hidden="true" />}
         onClick={(event) => setAnchor(event.currentTarget)}
         sx={{
-          minWidth: 126,
-          minHeight: 42,
-          px: 1.5,
-          justifyContent: 'space-between',
+          minWidth: 0,
+          minHeight: 44,
+          px: 1,
           color: 'text.secondary',
-          borderColor: 'divider',
           borderRadius: 1,
-          bgcolor: 'background.paper',
+          bgcolor: 'transparent',
           fontSize: '0.8125rem',
           fontWeight: 650,
+          transition: (theme) =>
+            theme.transitions.create(['color', 'background-color', 'transform'], {
+              duration: theme.transitions.duration.shortest,
+            }),
+          '& .MuiButton-startIcon': { mr: 0.75 },
+          '& .MuiButton-endIcon': {
+            ml: 0.5,
+            transform: anchor ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: (theme) =>
+              theme.transitions.create('transform', {
+                duration: theme.transitions.duration.shortest,
+              }),
+          },
           '&:hover': {
             color: 'text.primary',
-            borderColor: 'text.disabled',
+            bgcolor: 'action.hover',
+          },
+          '&:focus-visible': {
+            color: 'text.primary',
             bgcolor: 'action.hover',
           },
         }}
@@ -74,9 +79,12 @@ export function LanguageMenu() {
         anchorEl={anchor}
         open={Boolean(anchor)}
         onClose={() => setAnchor(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        slotProps={{ paper: { sx: { minWidth: 220, mt: 0.75, borderRadius: 1 } } }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        slotProps={{
+          paper: { sx: { minWidth: 220, mb: 0.75, borderRadius: 1 } },
+          list: { 'aria-label': t('language.label') },
+        }}
       >
         {productLocales.map((locale) => (
           <MenuItem
@@ -86,11 +94,16 @@ export function LanguageMenu() {
             selected={language === locale.code}
             lang={locale.code}
             onClick={() => void select(locale.code)}
-            sx={{ minHeight: 48, px: 1.5 }}
+            sx={{ minHeight: 48, mx: 0.5, px: 1.5 }}
           >
             <ListItemIcon sx={{ minWidth: 34 }}>
               {language === locale.code ? (
-                <Check size={18} strokeWidth={2} aria-hidden="true" />
+                <Check
+                  size={18}
+                  strokeWidth={2}
+                  color="currentColor"
+                  aria-hidden="true"
+                />
               ) : (
                 <Box sx={{ width: 18 }} />
               )}

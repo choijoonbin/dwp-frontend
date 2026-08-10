@@ -66,7 +66,23 @@ async function mockAdminSession(page: Page) {
     })
   );
   await page.route('**/api/auth/permissions', (route) =>
-    route.fulfill({ contentType: 'application/json', body: envelope([]) })
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope([
+        {
+          resourceType: 'APP',
+          resourceKey: 'APP.ADMINISTRATION',
+          permissionCode: 'VIEW',
+          effect: 'ALLOW',
+        },
+        {
+          resourceType: 'ADMIN',
+          resourceKey: 'ADMIN.API_MONITORING',
+          permissionCode: 'VIEW',
+          effect: 'ALLOW',
+        },
+      ]),
+    })
   );
   await page.route('**/api/auth/csrf', (route) =>
     route.fulfill({
@@ -96,6 +112,142 @@ async function mockAdminSession(page: Page) {
     })
   );
 }
+
+test('tenant administrators monitor API health and inspect a distributed trace', async ({
+  page,
+}) => {
+  await mockAdminSession(page);
+  const gatewayEvent = {
+    historyId: '10000000-0000-0000-0000-000000000001',
+    occurredAt: '2026-08-10T12:00:00Z',
+    completedAt: '2026-08-10T12:00:00.084Z',
+    ingestedAt: '2026-08-10T12:00:01Z',
+    tenantId: 1,
+    actorType: 'USER',
+    actorId: '1',
+    authType: 'SESSION',
+    serviceName: 'dwp-gateway',
+    serviceVersion: '0.1.0',
+    serviceInstance: 'local',
+    environment: 'test',
+    observationPoint: 'GATEWAY',
+    routeId: 'people-server',
+    httpMethod: 'GET',
+    routeTemplate: '/api/people/v1/people',
+    requestPath: '/api/people/v1/people',
+    httpScheme: 'http',
+    httpProtocol: 'HTTP',
+    statusCode: 200,
+    outcome: 'SUCCESS',
+    durationMs: 84,
+    requestSizeBytes: 0,
+    responseSizeBytes: 1240,
+    correlationId: 'api-monitoring-e2e',
+    traceId: '4bf92f3577b34da6a3ce929d0e0e4736',
+    spanId: '00f067aa0ba902b7',
+    parentSpanId: null,
+    clientAddressHash: 'a'.repeat(64),
+    userAgentFamily: 'CHROMIUM',
+    userAgentHash: 'b'.repeat(64),
+    errorType: null,
+    capturePolicyVersion: 'dwp-api-history-v1',
+  };
+  const serviceEvent = {
+    ...gatewayEvent,
+    historyId: '10000000-0000-0000-0000-000000000002',
+    serviceName: 'dwp-people-server',
+    observationPoint: 'SERVICE',
+    routeId: null,
+    routeTemplate: '/v1/people',
+    requestPath: '/v1/people',
+    durationMs: 31,
+    spanId: '05e3ac9a4f6e3b90',
+    parentSpanId: gatewayEvent.spanId,
+  };
+
+  await page.route('**/api/platform/v1/admin/api-history/overview**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope({
+        window: 'H24',
+        observationPoint: 'GATEWAY',
+        from: '2026-08-09T12:00:00Z',
+        to: '2026-08-10T12:00:00Z',
+        generatedAt: '2026-08-10T12:00:01Z',
+        summary: {
+          totalRequests: 1284,
+          successfulRequests: 1242,
+          clientErrorRequests: 32,
+          serverErrorRequests: 10,
+          errorRate: 0.78,
+          p50DurationMs: 42,
+          p95DurationMs: 184,
+          p99DurationMs: 426,
+          requestsPerMinute: 0.9,
+          activeRoutesOrServices: 18,
+        },
+        trend: [
+          {
+            bucket: '2026-08-10T11:00:00Z',
+            totalRequests: 54,
+            clientErrors: 2,
+            serverErrors: 1,
+            p95DurationMs: 176,
+          },
+          {
+            bucket: '2026-08-10T12:00:00Z',
+            totalRequests: 68,
+            clientErrors: 1,
+            serverErrors: 0,
+            p95DurationMs: 184,
+          },
+        ],
+        topRoutes: [
+          {
+            routeId: 'people-server',
+            serviceName: 'dwp-gateway',
+            httpMethod: 'GET',
+            routeTemplate: '/api/people/v1/people',
+            totalRequests: 241,
+            serverErrors: 1,
+            errorRate: 0.41,
+            p95DurationMs: 184,
+          },
+        ],
+        statusDistribution: [
+          { statusFamily: '2xx', count: 1242 },
+          { statusFamily: '4xx', count: 32 },
+          { statusFamily: '5xx', count: 10 },
+        ],
+      }),
+    })
+  );
+  await page.route('**/api/platform/v1/admin/api-history/events**', (route) => {
+    const path = new URL(route.request().url()).pathname;
+    return route.fulfill({
+      contentType: 'application/json',
+      body: envelope(
+        path.endsWith(gatewayEvent.historyId)
+          ? { selected: gatewayEvent, trace: [gatewayEvent, serviceEvent] }
+          : { content: [gatewayEvent], nextCursor: null, size: 50 }
+      ),
+    });
+  });
+
+  await page.goto('/admin/governance/api-monitoring');
+
+  await expect(page.getByRole('heading', { name: 'API monitoring', level: 1 })).toBeVisible();
+  await expect(page.getByText('1,284', { exact: true })).toBeVisible();
+  await expect(page.getByText('/api/people/v1/people', { exact: true }).first()).toBeVisible();
+  await page.getByText('/api/people/v1/people', { exact: true }).last().click();
+  await expect(page.getByRole('heading', { name: 'Request trace', level: 2 })).toBeVisible();
+  await expect(page.getByText('dwp-people-server', { exact: true })).toBeVisible();
+
+  const accessibility = await new AxeBuilder({ page })
+    .include('[data-testid="api-monitoring"]')
+    .analyze();
+  expect(accessibility.violations).toEqual([]);
+});
 
 test('tenant administrators configure and reset the personal home presentation', async ({
   page,

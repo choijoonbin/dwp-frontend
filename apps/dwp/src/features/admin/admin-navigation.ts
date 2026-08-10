@@ -1,6 +1,7 @@
 import {
   Boxes,
   Building2,
+  ChartNoAxesCombined,
   Database,
   FolderTree,
   Image,
@@ -31,6 +32,7 @@ export type AdminView =
   | 'navigation'
   | 'reference-data'
   | 'registry'
+  | 'api-monitoring'
   | 'audit';
 
 export type AdminNavigationItem = {
@@ -38,6 +40,7 @@ export type AdminNavigationItem = {
   view: AdminView;
   path: string;
   icon: LucideIcon;
+  requiredResourceKey?: string;
 };
 
 export type AdminNavigationGroup = {
@@ -135,6 +138,13 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
     id: 'governance',
     icon: ShieldCheck,
     items: [
+      {
+        section: 'governance',
+        view: 'api-monitoring',
+        path: '/admin/governance/api-monitoring',
+        icon: ChartNoAxesCombined,
+        requiredResourceKey: 'ADMIN.API_MONITORING',
+      },
       {
         section: 'governance',
         view: 'audit',

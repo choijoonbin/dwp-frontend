@@ -16,6 +16,7 @@ export function AuthLayout() {
   return (
     <Box
       component="main"
+      data-dwp-auth-layout
       sx={{
         minHeight: '100dvh',
         display: 'grid',
@@ -163,11 +164,13 @@ export function AuthLayout() {
           },
           position: 'relative',
           zIndex: 2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: 'grid',
+          gridTemplateRows: { xs: 'minmax(min-content, 1fr) auto', md: '1fr' },
+          justifyItems: 'center',
+          alignItems: 'stretch',
           px: { xs: 3, sm: 6, md: 6 },
           py: { xs: 3.5, sm: 6, md: 8 },
+          overflowY: 'auto',
           color: 'text.primary',
           bgcolor: 'background.paper',
           borderTop: { xs: '1px solid', md: 0 },
@@ -181,11 +184,25 @@ export function AuthLayout() {
           '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
         }}
       >
-        <Box sx={{ width: 1, maxWidth: 380 }}>
+        <Box sx={{ width: 1, maxWidth: 380, alignSelf: 'center' }}>
           <Outlet />
-          <Box sx={{ mt: { xs: 2, sm: 3 }, display: 'flex', justifyContent: 'flex-start' }}>
-            <LanguageMenu />
-          </Box>
+        </Box>
+        <Box
+          component="footer"
+          data-dwp-auth-language-footer
+          sx={{
+            width: { xs: 1, md: 'auto' },
+            mt: { xs: 3, md: 0 },
+            display: 'flex',
+            justifyContent: 'flex-end',
+            justifySelf: 'end',
+            alignSelf: 'end',
+            position: { xs: 'static', md: 'absolute' },
+            right: { md: '24px', lg: '32px' },
+            bottom: { md: '24px', lg: '32px' },
+          }}
+        >
+          <LanguageMenu />
         </Box>
       </Box>
     </Box>

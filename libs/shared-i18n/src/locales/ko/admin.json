@@ -72,6 +72,11 @@
         "title": "내비게이션 관리",
         "description": "다국어 및 권한 기반 애플리케이션 메뉴 트리를 게시합니다."
       },
+      "api-monitoring": {
+        "label": "API 모니터링",
+        "title": "API 모니터링",
+        "description": "테넌트 API 상태, 지연, 오류 및 종단 간 추적 컨텍스트를 모니터링합니다."
+      },
       "audit": {
         "label": "감사 로그",
         "title": "감사 로그",
@@ -436,6 +441,124 @@
       "revisionActivated": "레지스트리 리비전을 활성화했습니다.",
       "draftRetired": "초안 리비전을 종료했습니다.",
       "revisionRetired": "레지스트리 리비전을 종료했습니다."
+    }
+  },
+  "apiMonitoring": {
+    "loading": "API 관측 데이터 불러오는 중",
+    "loadError": "API 관측 데이터를 불러오지 못했습니다.",
+    "generatedAt": "{{time}} 업데이트",
+    "filters": {
+      "label": "API 이력 필터",
+      "window": "조회 기간",
+      "observation": "관측 지점",
+      "service": "서비스 또는 라우트",
+      "allServices": "전체 서비스",
+      "method": "메서드",
+      "allMethods": "전체 메서드",
+      "outcome": "처리 결과",
+      "searchPlaceholder": "라우트, 상관관계 ID 또는 Trace ID 검색",
+      "search": "검색 적용",
+      "autoRefresh": "자동 새로고침",
+      "refresh": "API 관측 데이터 새로고침"
+    },
+    "windows": {
+      "H1": "1시간",
+      "H6": "6시간",
+      "H24": "24시간",
+      "D7": "7일",
+      "D30": "30일"
+    },
+    "observation": {
+      "GATEWAY": "게이트웨이",
+      "SERVICE": "서비스",
+      "ALL": "전체 홉"
+    },
+    "outcomes": {
+      "ALL": "전체 결과",
+      "SUCCESS": "성공",
+      "REDIRECTION": "리다이렉션",
+      "CLIENT_ERROR": "클라이언트 오류",
+      "SERVER_ERROR": "서버 오류",
+      "CANCELLED": "취소"
+    },
+    "summary": {
+      "label": "API 서비스 지표",
+      "total": "총 요청",
+      "totalHint": "{{window}} 동안 관측",
+      "throughput": "처리량",
+      "perMinute": "분당 요청 수",
+      "errorRate": "서버 오류율",
+      "serverErrors": "서버 오류 {{count}}건",
+      "p95": "p95 지연",
+      "latencyHint": "95 백분위 응답시간",
+      "p99": "p99 지연",
+      "tailLatency": "꼬리 응답시간",
+      "activeRoutes": "활성 라우트",
+      "activeRoutesHint": "관측된 고유 대상"
+    },
+    "trend": {
+      "title": "요청 추세",
+      "description": "선택한 기간의 호출량과 오류 집중도를 보여줍니다.",
+      "requests": "요청",
+      "errors": "오류",
+      "chartLabel": "API 요청 및 오류 추세"
+    },
+    "status": {
+      "title": "상태 코드 분포",
+      "description": "호출자에게 반환된 HTTP 응답 계열입니다.",
+      "empty": "이 기간에 상태 코드 데이터가 없습니다."
+    },
+    "routes": {
+      "title": "호출량 상위 라우트",
+      "description": "호출량과 꼬리 지연이 큰 라우트를 우선 확인합니다.",
+      "tableLabel": "호출량 상위 API 라우트",
+      "empty": "이 기간에 관측된 라우트가 없습니다.",
+      "columns": {
+        "route": "라우트",
+        "service": "서비스",
+        "requests": "요청 수",
+        "errorRate": "오류율",
+        "p95": "p95 지연"
+      }
+    },
+    "events": {
+      "title": "요청 이력",
+      "loadError": "API 요청 이력을 불러오지 못했습니다.",
+      "tableLabel": "API 요청 이력",
+      "empty": "현재 필터와 일치하는 API 요청이 없습니다.",
+      "loadMore": "이전 요청 더 보기",
+      "loadingMore": "이전 요청 불러오는 중",
+      "columns": {
+        "time": "일시",
+        "status": "상태",
+        "method": "메서드",
+        "route": "라우트",
+        "service": "서비스",
+        "latency": "지연",
+        "actor": "수행자",
+        "trace": "Trace"
+      }
+    },
+    "detail": {
+      "title": "요청 추적",
+      "subtitle": "개인정보를 최소화한 전송 메타데이터",
+      "loading": "요청 추적 정보 불러오는 중",
+      "loadError": "요청 추적 정보를 불러오지 못했습니다.",
+      "copyCorrelation": "상관관계 ID 복사",
+      "copyTrace": "Trace ID 복사",
+      "traceTitle": "Trace 홉",
+      "fields": {
+        "service": "서비스",
+        "instance": "인스턴스",
+        "actor": "수행자",
+        "auth": "인증 유형",
+        "requestSize": "요청 크기",
+        "responseSize": "응답 크기",
+        "client": "클라이언트 계열",
+        "error": "오류 유형",
+        "correlation": "상관관계 ID",
+        "trace": "Trace ID"
+      }
     }
   },
   "audit": {

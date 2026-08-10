@@ -1,6 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '@dwp-frontend/shared-utils';
+import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
 import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -9,6 +9,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { AuditLog } from '../features/admin/audit-log';
+import { ApiMonitoring } from '../features/admin/api-monitoring';
 import { AccessManager } from '../features/admin/access-manager';
 import { AnnouncementManager } from '../features/admin/announcement-manager';
 import { DirectoryManager } from '../features/admin/directory-manager';
@@ -52,16 +53,22 @@ function AdminContent({ view }: { view: AdminView }) {
       return <NavigationManager />;
     case 'audit':
       return <AuditLog />;
+    case 'api-monitoring':
+      return <ApiMonitoring />;
   }
 }
 
 export default function AdminPage() {
   const { t } = useTranslation('admin');
   const auth = useAuth();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
   const { section, view } = useParams();
   const page = findAdminNavigationItem(section, view);
 
   if (!page) return <Navigate to="/404" replace />;
+  if (page.requiredResourceKey && permissionsLoaded && !hasPermission(page.requiredResourceKey)) {
+    return <Navigate to="/403" replace />;
+  }
 
   const PageIcon = page.icon;
   const groupLabel =

@@ -11,6 +11,7 @@ import {
   Settings2,
   ShieldCheck,
 } from 'lucide-react';
+import { useAppearance } from '@dwp-frontend/design-system';
 import { useAuth, usePermissions, redirectToSignIn } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -24,16 +25,19 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
+import { exitSessionWithTransition } from '../features/auth/session-exit-transition';
 
 const menuIconProps = { size: 19, strokeWidth: 1.8, 'aria-hidden': true } as const;
 
 export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }) {
   const { t } = useTranslation('shell');
   const auth = useAuth();
+  const { effectiveReduceMotion } = useAppearance();
   const { permissions } = usePermissions();
   const navigate = useNavigate();
   const location = useLocation();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const buttonId = useId();
   const panelId = useId();
   const settingsDescriptionId = useId();
@@ -68,9 +72,14 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
     navigate(path);
   };
   const logout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     close();
-    await auth.logout();
-    redirectToSignIn(navigate, location);
+    await exitSessionWithTransition({
+      endSession: auth.logout,
+      navigateToSignIn: () => redirectToSignIn(navigate, location),
+      reduceMotion: effectiveReduceMotion,
+    });
   };
   return (
     <>
@@ -208,6 +217,7 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
             <Tooltip title={t('account.menu.logout')} placement="left">
               <IconButton
                 aria-label={t('account.menu.logout')}
+                disabled={isLoggingOut}
                 onClick={() => void logout()}
                 sx={{
                   width: 32,

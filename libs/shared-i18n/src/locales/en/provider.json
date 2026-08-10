@@ -35,11 +35,22 @@
     "operation": "The provider operation could not be completed."
   },
   "fields": {
+    "organizationKey": "Organization key",
+    "organizationName": "Organization name",
+    "legalName": "Legal name (optional)",
+    "customerReference": "Customer reference (optional)",
     "tenantKey": "Tenant key",
     "displayName": "Display name",
+    "environmentKey": "Environment key",
     "serviceTier": "Service tier",
     "dataRegion": "Data region",
     "isolation": "Isolation model",
+    "defaultLocale": "Default locale",
+    "timeZone": "Time zone",
+    "primaryDomain": "Primary domain (optional)",
+    "initialAdminDisplayName": "Administrator name",
+    "initialAdminEmail": "Administrator email",
+    "initialAdminPrincipal": "Sign-in principal",
     "justification": "Business justification"
   },
   "tiers": { "STANDARD": "Standard", "ENTERPRISE": "Enterprise", "REGULATED": "Regulated" },
@@ -86,6 +97,9 @@
   "onboarding": {
     "title": "Plan tenant onboarding",
     "description": "Create a deterministic plan first. Execution creates only the provider control record until downstream and infrastructure gates are connected.",
+    "organization": "Customer organization",
+    "tenantConfiguration": "Tenant configuration",
+    "initialAdministrator": "Initial tenant administrator",
     "entitlements": "Initial entitlements",
     "justificationHelp": "Recorded in the provider audit trail",
     "previewed": "Onboarding plan created for review."

@@ -89,11 +89,22 @@ function OnboardingDialog({
   onPreview: (request: OnboardingPlanRequest) => Promise<void>;
 }) {
   const { t } = useTranslation('provider');
+  const [organizationKey, setOrganizationKey] = useState('');
+  const [organizationName, setOrganizationName] = useState('');
+  const [legalName, setLegalName] = useState('');
+  const [customerReference, setCustomerReference] = useState('');
   const [tenantKey, setTenantKey] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [environmentKey, setEnvironmentKey] = useState('prod');
   const [serviceTier, setServiceTier] = useState<ProviderTenant['serviceTier']>('ENTERPRISE');
   const [dataRegion, setDataRegion] = useState('ap-northeast-2');
   const [isolationModel, setIsolationModel] = useState<ProviderTenant['isolationModel']>('POOL');
+  const [defaultLocale, setDefaultLocale] = useState('ko-KR');
+  const [timeZone, setTimeZone] = useState('Asia/Seoul');
+  const [primaryDomain, setPrimaryDomain] = useState('');
+  const [initialAdminDisplayName, setInitialAdminDisplayName] = useState('');
+  const [initialAdminEmail, setInitialAdminEmail] = useState('');
+  const [initialAdminPrincipal, setInitialAdminPrincipal] = useState('');
   const [selected, setSelected] = useState<Set<string>>(new Set(['core.workspace']));
   const [justification, setJustification] = useState('');
   const toggle = (key: string) =>
@@ -111,14 +122,46 @@ function OnboardingDialog({
           <Typography variant="body2" color="text.secondary">
             {t('onboarding.description')}
           </Typography>
+          <Typography variant="subtitle2">{t('onboarding.organization')}</Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
             <TextField
               autoFocus
               required
               fullWidth
+              label={t('fields.organizationKey')}
+              value={organizationKey}
+              onChange={(event) => setOrganizationKey(event.target.value.toLowerCase())}
+            />
+            <TextField
+              required
+              fullWidth
+              label={t('fields.organizationName')}
+              value={organizationName}
+              onChange={(event) => setOrganizationName(event.target.value)}
+            />
+          </Stack>
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
+            <TextField
+              fullWidth
+              label={t('fields.legalName')}
+              value={legalName}
+              onChange={(event) => setLegalName(event.target.value)}
+            />
+            <TextField
+              fullWidth
+              label={t('fields.customerReference')}
+              value={customerReference}
+              onChange={(event) => setCustomerReference(event.target.value)}
+            />
+          </Stack>
+          <Typography variant="subtitle2">{t('onboarding.tenantConfiguration')}</Typography>
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
+            <TextField
+              required
+              fullWidth
               label={t('fields.tenantKey')}
               value={tenantKey}
-              onChange={(event) => setTenantKey(event.target.value)}
+              onChange={(event) => setTenantKey(event.target.value.toLowerCase())}
             />
             <TextField
               required
@@ -126,6 +169,66 @@ function OnboardingDialog({
               label={t('fields.displayName')}
               value={displayName}
               onChange={(event) => setDisplayName(event.target.value)}
+            />
+            <TextField
+              required
+              fullWidth
+              label={t('fields.environmentKey')}
+              value={environmentKey}
+              onChange={(event) => setEnvironmentKey(event.target.value.toLowerCase())}
+            />
+          </Stack>
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
+            <TextField
+              required
+              fullWidth
+              label={t('fields.defaultLocale')}
+              value={defaultLocale}
+              onChange={(event) => setDefaultLocale(event.target.value)}
+            />
+            <TextField
+              required
+              fullWidth
+              label={t('fields.timeZone')}
+              value={timeZone}
+              onChange={(event) => setTimeZone(event.target.value)}
+            />
+            <TextField
+              fullWidth
+              label={t('fields.primaryDomain')}
+              value={primaryDomain}
+              onChange={(event) => setPrimaryDomain(event.target.value.toLowerCase())}
+            />
+          </Stack>
+          <Typography variant="subtitle2">{t('onboarding.initialAdministrator')}</Typography>
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
+            <TextField
+              required
+              fullWidth
+              label={t('fields.initialAdminDisplayName')}
+              value={initialAdminDisplayName}
+              onChange={(event) => setInitialAdminDisplayName(event.target.value)}
+            />
+            <TextField
+              required
+              fullWidth
+              type="email"
+              label={t('fields.initialAdminEmail')}
+              value={initialAdminEmail}
+              onChange={(event) => {
+                const nextEmail = event.target.value;
+                setInitialAdminEmail(nextEmail);
+                if (!initialAdminPrincipal || initialAdminPrincipal === initialAdminEmail) {
+                  setInitialAdminPrincipal(nextEmail);
+                }
+              }}
+            />
+            <TextField
+              required
+              fullWidth
+              label={t('fields.initialAdminPrincipal')}
+              value={initialAdminPrincipal}
+              onChange={(event) => setInitialAdminPrincipal(event.target.value)}
             />
           </Stack>
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
@@ -222,18 +325,39 @@ function OnboardingDialog({
           startIcon={<ClipboardCheck size={17} />}
           disabled={
             busy ||
+            !/^[a-z][a-z0-9-]{1,79}$/.test(organizationKey) ||
+            !organizationName.trim() ||
             tenantKey.length < 2 ||
+            !/^[a-z][a-z0-9-]{1,79}$/.test(tenantKey) ||
             !displayName.trim() ||
+            !/^[a-z][a-z0-9-]{1,31}$/.test(environmentKey) ||
             !dataRegion.trim() ||
+            !defaultLocale.trim() ||
+            !timeZone.trim() ||
+            !initialAdminDisplayName.trim() ||
+            !initialAdminEmail.includes('@') ||
+            !initialAdminPrincipal.trim() ||
+            selected.size === 0 ||
             !justification.trim()
           }
           onClick={() =>
             void onPreview({
+              organizationKey,
+              organizationName: organizationName.trim(),
+              legalName: legalName.trim() || null,
+              customerReference: customerReference.trim() || null,
               tenantKey: tenantKey.trim(),
               displayName: displayName.trim(),
+              environmentKey,
               serviceTier,
               dataRegion: dataRegion.trim(),
               isolationModel,
+              defaultLocale: defaultLocale.trim(),
+              timeZone: timeZone.trim(),
+              primaryDomain: primaryDomain.trim() || null,
+              initialAdminDisplayName: initialAdminDisplayName.trim(),
+              initialAdminEmail: initialAdminEmail.trim(),
+              initialAdminPrincipal: initialAdminPrincipal.trim(),
               entitlementKeys: [...selected],
               justification: justification.trim(),
             })
