@@ -62,6 +62,11 @@
         "title": "Reference data",
         "description": "Govern tenant code sets, localized labels, hierarchy, and effective dates."
       },
+      "system-code-catalog": {
+        "label": "System code contracts",
+        "title": "System code contracts",
+        "description": "Inspect product-owned code values, validation sources, and every registered consumer contract."
+      },
       "registry": {
         "label": "App registry",
         "title": "Application registry",
@@ -295,6 +300,63 @@
       "archived": "Announcement archived.",
       "updated": "Announcement updated.",
       "created": "Announcement draft created."
+    }
+  },
+  "systemCodeCatalog": {
+    "loading": "Loading system code contracts",
+    "loadingDetail": "Loading code contract detail",
+    "searchPlaceholder": "Search code set, owner, or configuration level",
+    "searchLabel": "Search system code contracts",
+    "refresh": "Refresh system code contracts",
+    "resultCount": "{{count}} code sets",
+    "listLabel": "System code contract list",
+    "detailLabel": "System code contract detail",
+    "valuesLabel": "System code values",
+    "empty": "No system code contract matches this search.",
+    "selectSet": "Select a system code contract.",
+    "listSummary": "{{values}} values / {{enforced}} enforced of {{bindings}}",
+    "summary": {
+      "label": "System code contract health",
+      "registered": "Registered contracts",
+      "incomplete": "Incomplete contracts",
+      "values": "Active values",
+      "bindings": "Enforced / total bindings"
+    },
+    "states": {
+      "REGISTERED": "Registered",
+      "INCOMPLETE": "Incomplete"
+    },
+    "levels": {
+      "SYSTEM": "System controlled",
+      "EXTENSIBLE": "Domain extensible",
+      "USER": "Tenant controlled"
+    },
+    "kinds": {
+      "REFERENCE": "Reference code",
+      "STATE_MACHINE": "State machine",
+      "SECURITY": "Security contract",
+      "PROTOCOL": "Protocol",
+      "OBSERVABILITY": "Observability contract",
+      "REGISTRY_META": "Registry metadata"
+    },
+    "metadata": {
+      "owner": "Owning service",
+      "validation": "Validation source",
+      "source": "Authoritative source"
+    },
+    "valuesTitle": "Canonical values",
+    "valuesHelp": "Runtime consumers use stable codes while the interface resolves locale-aware labels.",
+    "bindingsTitle": "Consumer and enforcement map",
+    "bindingsHelp": "Every database, API, interface, and behavior dependency must declare its enforcement contract.",
+    "columns": {
+      "code": "Stable code",
+      "label": "Resolved label",
+      "origin": "Origin",
+      "order": "Order"
+    },
+    "origins": {
+      "predefined": "Predefined",
+      "extension": "Extension"
     }
   },
   "referenceData": {

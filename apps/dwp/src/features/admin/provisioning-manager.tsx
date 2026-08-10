@@ -18,6 +18,7 @@ import {
   checkHrisConnectorConfiguration,
   createHrisConnector,
   createScimConnector,
+  getSystemCodeSet,
   importSyntheticWorkdayFixture,
   listHrisConnectors,
   listHrisMappingProfiles,
@@ -55,6 +56,30 @@ import type {
   ScimConnector,
   ScimCredentialIssued,
 } from '@dwp-frontend/shared-utils';
+
+const HRIS_SOURCE_TYPES: CreateHrisConnectorRequest['sourceType'][] = [
+  'WORKDAY',
+  'ORACLE_HCM',
+  'SAP_HCM',
+  'SCIM',
+  'CUSTOM',
+];
+const HRIS_CONNECTOR_TYPES: CreateHrisConnectorRequest['connectorType'][] = [
+  'WORKDAY_REST',
+  'WORKDAY_SOAP',
+  'ORACLE_HCM_REST',
+  'SAP_SUCCESSFACTORS',
+  'SCIM_BRIDGE',
+  'CUSTOM_REST',
+  'FILE_IMPORT',
+];
+const HRIS_AUTH_MODES: CreateHrisConnectorRequest['authMode'][] = [
+  'NONE',
+  'BASIC',
+  'OAUTH2_CLIENT_CREDENTIALS',
+  'MTLS',
+  'SIGNED_REQUEST',
+];
 
 function message(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
@@ -666,7 +691,35 @@ function HrisConnectorDialog({
   onClose: () => void;
   onSave: (request: CreateHrisConnectorRequest) => Promise<void>;
 }) {
-  const { t } = useTranslation('admin');
+  const { t, i18n } = useTranslation('admin');
+  const locale = i18n.resolvedLanguage ?? i18n.language;
+  const sourceTypeCatalog = useQuery({
+    queryKey: ['system-code-set', 'PEOPLE.HRIS_SOURCE_TYPE', locale],
+    queryFn: () => getSystemCodeSet('PEOPLE.HRIS_SOURCE_TYPE', locale),
+    staleTime: 5 * 60 * 1000,
+  });
+  const connectorTypeCatalog = useQuery({
+    queryKey: ['system-code-set', 'PEOPLE.HRIS_CONNECTOR_TYPE', locale],
+    queryFn: () => getSystemCodeSet('PEOPLE.HRIS_CONNECTOR_TYPE', locale),
+    staleTime: 5 * 60 * 1000,
+  });
+  const authModeCatalog = useQuery({
+    queryKey: ['system-code-set', 'PEOPLE.HRIS_AUTH_MODE', locale],
+    queryFn: () => getSystemCodeSet('PEOPLE.HRIS_AUTH_MODE', locale),
+    staleTime: 5 * 60 * 1000,
+  });
+  const sourceTypeOptions =
+    sourceTypeCatalog.data?.values.filter((value) =>
+      HRIS_SOURCE_TYPES.includes(value.code as CreateHrisConnectorRequest['sourceType'])
+    ) ?? HRIS_SOURCE_TYPES.map((code) => ({ code, label: code }));
+  const connectorTypeOptions =
+    connectorTypeCatalog.data?.values.filter((value) =>
+      HRIS_CONNECTOR_TYPES.includes(value.code as CreateHrisConnectorRequest['connectorType'])
+    ) ?? HRIS_CONNECTOR_TYPES.map((code) => ({ code, label: code }));
+  const authModeOptions =
+    authModeCatalog.data?.values.filter((value) =>
+      HRIS_AUTH_MODES.includes(value.code as CreateHrisConnectorRequest['authMode'])
+    ) ?? HRIS_AUTH_MODES.map((code) => ({ code, label: code }));
   const [sourceKey, setSourceKey] = useState('');
   const [sourceType, setSourceType] = useState<CreateHrisConnectorRequest['sourceType']>('WORKDAY');
   const [sourceName, setSourceName] = useState('');
@@ -713,9 +766,9 @@ function HrisConnectorDialog({
                 setSourceType(event.target.value as CreateHrisConnectorRequest['sourceType'])
               }
             >
-              {['WORKDAY', 'ORACLE_HCM', 'SAP_HCM', 'SCIM', 'CUSTOM'].map((value) => (
-                <MenuItem key={value} value={value}>
-                  {value}
+              {sourceTypeOptions.map((value) => (
+                <MenuItem key={value.code} value={value.code}>
+                  {value.label}
                 </MenuItem>
               ))}
             </TextField>
@@ -746,17 +799,9 @@ function HrisConnectorDialog({
                 if (value === 'FILE_IMPORT') setAuthMode('NONE');
               }}
             >
-              {[
-                'WORKDAY_REST',
-                'WORKDAY_SOAP',
-                'ORACLE_HCM_REST',
-                'SAP_SUCCESSFACTORS',
-                'SCIM_BRIDGE',
-                'CUSTOM_REST',
-                'FILE_IMPORT',
-              ].map((value) => (
-                <MenuItem key={value} value={value}>
-                  {value}
+              {connectorTypeOptions.map((value) => (
+                <MenuItem key={value.code} value={value.code}>
+                  {value.label}
                 </MenuItem>
               ))}
             </TextField>
@@ -783,13 +828,11 @@ function HrisConnectorDialog({
                 setAuthMode(event.target.value as CreateHrisConnectorRequest['authMode'])
               }
             >
-              {['NONE', 'BASIC', 'OAUTH2_CLIENT_CREDENTIALS', 'MTLS', 'SIGNED_REQUEST'].map(
-                (value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                )
-              )}
+              {authModeOptions.map((value) => (
+                <MenuItem key={value.code} value={value.code}>
+                  {value.label}
+                </MenuItem>
+              ))}
             </TextField>
             <TextField
               required={authMode !== 'NONE'}

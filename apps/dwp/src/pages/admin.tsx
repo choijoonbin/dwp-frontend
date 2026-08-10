@@ -19,6 +19,7 @@ import { AnnouncementManager } from '../features/admin/announcement-manager';
 import { HomeExperienceManager } from '../features/admin/home-experience-manager';
 import { RegistryManager } from '../features/admin/registry-manager';
 import { ReferenceDataManager } from '../features/admin/reference-data-manager';
+import { SystemCodeCatalogManager } from '../features/admin/system-code-catalog-manager';
 import { TenantBrandingManager } from '../features/admin/tenant-branding-manager';
 import { NavigationManager } from '../features/admin/navigation-manager';
 import { PeopleManager } from '../features/admin/people-manager';
@@ -51,6 +52,8 @@ function AdminContent({ view }: { view: AdminView }) {
       return <HomeExperienceManager />;
     case 'reference-data':
       return <ReferenceDataManager />;
+    case 'system-code-catalog':
+      return <SystemCodeCatalogManager />;
     case 'registry':
       return <RegistryManager />;
     case 'navigation':
@@ -133,7 +136,7 @@ export default function AdminPage() {
         </Box>
         <Chip
           label={t('page.tenantScope', {
-            tenant: auth.user?.tenantCode || t('shell.tenantFallback'),
+            tenant: auth.user?.tenantName || auth.user?.tenantCode || t('shell.tenantFallback'),
           })}
           color="info"
           variant="outlined"

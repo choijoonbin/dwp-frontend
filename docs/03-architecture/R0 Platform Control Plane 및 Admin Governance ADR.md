@@ -1,8 +1,8 @@
 # R0 Platform Control Plane 및 Admin Governance ADR
 
-> 상태: Accepted v1.0
+> 상태: Accepted and Implemented Local Baseline v1.1
 >
-> 기준일: 2026-08-08
+> 기준일: 2026-08-11
 >
 > 적용 저장소: `dwp-frontend`, `dwp-backend`, `dwp_agent`
 
@@ -71,18 +71,32 @@ System invariant를 편집 가능한 공통코드로 만들지 않는다. Secret
 - Production 전 PostgreSQL RLS 또는 동등한 방어 계층을 추가하고 격리 Test를 CI에
   고정한다.
 
+### 2.6 제품 코드 계약과 Tenant 기준정보를 분리한다
+
+- 상태 머신, 보안 효과, Protocol과 관측 상태처럼 실행 의미가 있는 값은
+  `sys_code_sets`, `sys_code_values`, `sys_code_bindings`에 Release 단위의 읽기 전용
+  계약으로 등록한다. Tenant 관리자가 이 값을 편집할 수 없다.
+- 지역·업무 분류처럼 고객이 확장하는 어휘는 Tenant 기준정보가 소유한다. People의 조직
+  유형·발령 사유·조직 역할처럼 Domain 제약이 필요한 확장값은 해당 Service의 Tenant별
+  Catalog와 FK가 소유한다.
+- 각 시스템 계약은 Owner Service, 계약 종류, 검증 원천, 실제 소비 Column/API와 강제
+  방식을 함께 기록한다. Admin의 `시스템 코드 계약` 화면은 값과 Binding 상태를 읽기
+  전용으로 진단하며 `기준정보` 편집 화면을 대체하지 않는다.
+- `scripts/audit-code-contracts.sh`가 서비스 DB의 Enum CHECK와 중앙 Registry 값 일치,
+  Catalog FK의 고아 참조, 미등록·미강제 Binding을 배포 Gate에서 검사한다.
+
 ## 3. Admin Information Architecture
 
-| 영역                  | Tenant Admin Capability                              | 목표 단계 |
-| --------------------- | ---------------------------------------------------- | --------- |
-| Overview              | 구성 상태, 보안 경고, 동기화·실행 Health             | R2        |
-| Organization & Access | 사용자·Role·조직·직접 Group Baseline, SCIM·위임      | R0~R2     |
-| Standards             | 기준정보, 분류, 다국어 Label, 유효기간               | R0 완료   |
-| Catalogs              | App, Service, Widget, Template, Entitlement          | R1        |
-| Integrations          | Connector, Data Source, Credential Ref, Sync Health  | R1~R2     |
-| AI & Automation       | Agent, Tool, Model Route, Risk, Approval, Evaluation | R1~R3     |
-| Security & Compliance | Policy, Retention, Consent, Audit, Export            | R1~R3     |
-| Operations            | Feature Rollout, Notification, Usage, Cost, SLO      | R2~R4     |
+| 영역                  | Tenant Admin Capability                                   | 목표 단계 |
+| --------------------- | --------------------------------------------------------- | --------- |
+| Overview              | 구성 상태, 보안 경고, 동기화·실행 Health                  | R2        |
+| Organization & Access | 사용자·Role·조직·직접 Group Baseline, SCIM·위임           | R0~R2     |
+| Standards             | Tenant 기준정보, 시스템 코드 계약, 다국어 Label, 유효기간 | R0 완료   |
+| Catalogs              | App, Service, Widget, Template, Entitlement               | R1        |
+| Integrations          | Connector, Data Source, Credential Ref, Sync Health       | R1~R2     |
+| AI & Automation       | Agent, Tool, Model Route, Risk, Approval, Evaluation      | R1~R3     |
+| Security & Compliance | Policy, Retention, Consent, Audit, Export                 | R1~R3     |
+| Operations            | Feature Rollout, Notification, Usage, Cost, SLO           | R2~R4     |
 
 현재 동작하지 않는 영역은 Placeholder 메뉴로 노출하지 않는다. 구현과 권한 계약,
 Empty·Error 상태가 완성된 영역만 Navigation에 추가한다.
@@ -105,9 +119,10 @@ Empty·Error 상태가 완성된 영역만 Navigation에 추가한다.
 - 장점: 제품 운영 기능이 업무 기능과 분리되고, 새 Domain Pack이 공통 통제를 재사용한다.
 - 장점: Tenant 관리자와 Provider 운영자의 권한 혼합을 예방한다.
 - 비용: 초기부터 Lifecycle, Audit, Schema와 권한 계약을 유지해야 한다.
-- 제한: 현재 구현은 Tenant Admin의 기준정보·Registry·Directory·SCIM·Role·Navigation·
-  HRIS Control과 Provider Estate·Entitlement·Onboarding Preview Baseline이다. 실제 외부
-  Provisioner, 승인 Workflow, Release·SLO 운영과 DB RLS는 후속 Gate다.
+- 제한: 현재 구현은 Tenant Admin의 기준정보·시스템 코드 계약·Registry·Directory·SCIM·
+  Role·Navigation·HRIS Control과 Provider Estate·Entitlement·Onboarding·SLO·Drift·예정
+  유지보수 Baseline이다. 실제 외부 Provisioner, 고객별 SLO Telemetry, Release 운영과 DB
+  RLS는 후속 Gate다.
 
 ## 6. 근거
 
@@ -117,3 +132,6 @@ Empty·Error 상태가 완성된 영역만 Navigation에 추가한다.
 - [SCIM Core Schema, RFC 7643](https://www.rfc-editor.org/rfc/rfc7643)
 - [SCIM Protocol, RFC 7644](https://www.rfc-editor.org/rfc/rfc7644)
 - [Microsoft 365 Agent Registry](https://learn.microsoft.com/en-us/microsoft-365/admin/manage/agent-registry?view=o365-worldwide)
+- [Oracle HCM - Overview of Lookups](https://docs.oracle.com/en/cloud/saas/human-resources/faucf/overview-of-lookups.html)
+- [SAP SuccessFactors - Creating a Picklist](https://help.sap.com/docs/successfactors-platform/implementing-picklists/creating-picklist?locale=en-US)
+- [Microsoft - Data sovereignty per microservice](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/architect-microservice-container-applications/data-sovereignty-per-microservice)
