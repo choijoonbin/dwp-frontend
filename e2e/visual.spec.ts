@@ -182,7 +182,40 @@ test('sign-in visual baseline', async ({ page }) => {
 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+  await expect
+    .poll(() =>
+      page
+        .getByTestId('auth-world-visual')
+        .evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)
+    )
+    .toBe(true);
   await expect(page).toHaveScreenshot('sign-in.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
+test('sign-in dark visual baseline', async ({ page }) => {
+  await mockUnauthenticated(page);
+  await setAppearance(page, {
+    mode: 'dark',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+  await expect
+    .poll(() =>
+      page
+        .getByTestId('auth-world-visual')
+        .evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)
+    )
+    .toBe(true);
+  await expect(page).toHaveScreenshot('sign-in-dark.png', {
     animations: 'disabled',
     caret: 'hide',
     fullPage: true,

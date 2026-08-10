@@ -178,7 +178,17 @@ export function buildDwpTheme({
         },
       },
       MuiInputBase: {
-        styleOverrides: { root: { minHeight: metrics.controlHeight } },
+        styleOverrides: {
+          root: { minHeight: metrics.controlHeight },
+          input: {
+            '&:-webkit-autofill': {
+              WebkitBoxShadow: `0 0 0 100px ${dark ? tokens.color.neutral[800] : tokens.color.neutral[0]} inset`,
+              WebkitTextFillColor: dark ? tokens.color.neutral[25] : tokens.color.neutral[900],
+              caretColor: dark ? tokens.color.neutral[25] : tokens.color.neutral[900],
+              borderRadius: 'inherit',
+            },
+          },
+        },
       },
       MuiToggleButton: {
         styleOverrides: {

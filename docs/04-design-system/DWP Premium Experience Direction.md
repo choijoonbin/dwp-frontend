@@ -1,6 +1,6 @@
 # DWP Premium Experience Direction
 
-> 상태: R0.6 Experience Decision v1.0
+> 상태: R0.6 Experience Decision v1.1
 >
 > 기준일: 2026-08-08
 >
@@ -108,6 +108,15 @@ Context Envelope 계약으로 전환한다.
   기록하고 상표·인물·외부 UI를 모사하지 않는다.
 - 실제 제품 상태를 설명할 수 있으면 이미지보다 Timeline, Mini Chart, Avatar Stack과
   Source Mark를 우선한다.
+- 로그인·Onboarding처럼 제품 세계관을 처음 전달하는 진입 화면은 예외적으로 원본
+  Full-bleed Bitmap을 사용할 수 있다. 이때 이미지는 장식용 추상 배경이 아니라 사람,
+  업무, 지식, Service와 통제된 AI의 관계를 설명해야 한다.
+- 진입 화면의 Form은 이미지와 경쟁하지 않는 고정 폭 Access Rail에 두고, Image 위
+  Text에는 Contrast Scrim만 사용한다. 운영 화면에 이 Marketing Composition을 반복하지
+  않는다.
+- 로그인 입력은 Placeholder에 Label 역할을 맡기지 않는다. 항상 Input 위에 보이는
+  Label을 제공하며 Browser Autofill, Keyboard, 200% Zoom에서도 Label과 값이 겹치지
+  않아야 한다.
 
 ### Data Visualization
 

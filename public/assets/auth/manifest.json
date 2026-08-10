@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "file": "dwp-auth-world-v1.jpg",
+      "title": "DWP Connected Work World",
+      "createdAt": "2026-08-10",
+      "tool": "OpenAI built-in image generation",
+      "source": "Original generation without external reference images",
+      "dimensions": { "width": 1586, "height": 992 },
+      "bytes": 409479,
+      "sha256": "cfb80bd670501a8986d3330e6b3b1648f45d416024856b3c231ab06c93d9b15d",
+      "prompt": "Create an original premium architectural Digital Workplace world where diverse professionals, connected work, knowledge, enterprise services, and a restrained governed-AI lattice form one coherent ecosystem. Use editorial 3D realism, glass and brushed metal, daylight, graphite, cobalt, mint-teal and coral accents, with a calm right side and dark lower-left copy area. Exclude logos, text, copied interfaces, robots, cyberpunk, stock-office composition, purple gradients, bokeh and watermarks.",
+      "promptSummary": "A premium architectural Digital Workplace ecosystem connecting people, work, knowledge, enterprise services, and governed AI.",
+      "edits": ["Converted generated RGB PNG to JPEG at quality 88 without compositional edits"],
+      "usage": ["DWP sign-in experience"],
+      "constraints": [
+        "No third-party logos",
+        "No identifiable public figures",
+        "No copied product UI",
+        "No embedded text"
+      ],
+      "deliveryReview": "Original generated asset; retain this manifest and include the asset in normal pre-delivery brand and legal review."
+    }
+  ]
+}

@@ -40,6 +40,23 @@ describe('buildDwpTheme', () => {
     expect(menuItemRoot.minHeight).toBe(foundationTokens.density.compact.itemHeight);
   });
 
+  it('neutralizes browser autofill colors without hiding the entered value', () => {
+    const theme = buildDwpTheme(baseInput);
+    const input = theme.components?.MuiInputBase?.styleOverrides?.input as {
+      '&:-webkit-autofill'?: {
+        WebkitBoxShadow?: string;
+        WebkitTextFillColor?: string;
+      };
+    };
+
+    expect(input['&:-webkit-autofill']?.WebkitBoxShadow).toContain(
+      foundationTokens.color.neutral[0]
+    );
+    expect(input['&:-webkit-autofill']?.WebkitTextFillColor).toBe(
+      foundationTokens.color.neutral[900]
+    );
+  });
+
   it('provides explicit high-contrast colors and removes motion durations', () => {
     const theme = buildDwpTheme({
       ...baseInput,

@@ -103,6 +103,15 @@ test('unauthenticated users see the login shell without business navigation', as
   await page.goto('/');
   await expect(page).toHaveURL(/\/sign-in/);
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+  const password = page.getByRole('textbox', { name: /^Password/ });
+  await password.fill('access-policy-test');
+  await page.getByRole('button', { name: 'Show password' }).click();
+  await expect(password).toHaveAttribute('type', 'text');
+  await page.getByRole('button', { name: 'Hide password' }).click();
+  await expect(password).toHaveAttribute('type', 'password');
+  await page.mouse.move(0, 0);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('tooltip')).toHaveCount(0);
   await expect(page.locator('nav')).toHaveCount(0);
   await expectNoAutomaticAccessibilityViolations(page);
 });
