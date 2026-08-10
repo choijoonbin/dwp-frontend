@@ -12,6 +12,23 @@ async function expectNoAutomaticAccessibilityViolations(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
+  let homePreference = {
+    schemaVersion: 1,
+    customized: false,
+    layout: {
+      appLayout: null,
+      widgets: [
+        { widgetKey: 'announcements', visible: true },
+        { widgetKey: 'daily-brief', visible: true },
+        { widgetKey: 'focus', visible: true },
+        { widgetKey: 'schedule', visible: true },
+        { widgetKey: 'activity', visible: true },
+      ],
+    },
+    version: 0,
+    updatedAt: null,
+  };
+
   await page.route('**/api/platform/v1/home-experience', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -26,6 +43,68 @@ test.beforeEach(async ({ page }) => {
           backgroundUrl: null,
           version: 0,
         },
+      }),
+    })
+  );
+  await page.route('**/api/platform/v1/tenant-branding', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: { organizationName: null, logoUrl: null, version: 0 },
+      }),
+    })
+  );
+  await page.route('**/api/platform/v1/announcements', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
+  await page.route('**/api/platform/v1/home-preferences**', async (route) => {
+    const request = route.request();
+    if (request.method() === 'GET') {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: homePreference }),
+      });
+      return;
+    }
+    if (new URL(request.url()).pathname.endsWith('/reset')) {
+      homePreference = {
+        ...homePreference,
+        customized: false,
+        layout: {
+          appLayout: null,
+          widgets: homePreference.layout.widgets.map((widget) => ({ ...widget, visible: true })),
+        },
+        version: 0,
+        updatedAt: null,
+      };
+    } else {
+      const body = request.postDataJSON() as { layout: typeof homePreference.layout };
+      const nextVersion = homePreference.customized ? homePreference.version + 1 : 0;
+      homePreference = {
+        ...homePreference,
+        customized: true,
+        layout: body.layout,
+        version: nextVersion,
+        updatedAt: '2026-08-10T04:00:00Z',
+      };
+    }
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: homePreference }),
+    });
+  });
+  await page.route('**/api/auth/csrf', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
       }),
     })
   );
@@ -463,6 +542,48 @@ test('personal home launcher can create, rename, persist, and reset folders', as
     .getByRole('button', { name: 'Open Work' })
     .click();
   await expect(page).toHaveURL(/\/work/);
+});
+
+test('personal home widgets persist user choices and restore governed defaults', async ({
+  page,
+}) => {
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          userId: 1,
+          displayName: 'Admin',
+          email: 'admin@dwp.local',
+          tenantId: 1,
+          tenantCode: 'default',
+          roles: ['ADMIN'],
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/permissions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
+
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Edit home' }).click();
+  await expect(page.getByRole('img', { name: 'Governed content' })).toBeVisible();
+  await page.getByRole('switch', { name: 'Show Live activity' }).uncheck();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Live activity' })).toHaveCount(0);
+
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Live activity' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Edit home' }).click();
+  await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Live activity' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Announcements' })).toBeVisible();
 });
 
 test('personal home launcher only exposes explicitly entitled apps when app permissions exist', async ({

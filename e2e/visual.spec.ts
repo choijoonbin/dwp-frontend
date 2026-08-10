@@ -120,6 +120,47 @@ async function mockAuthenticated(page: Page) {
       }),
     })
   );
+  await page.route('**/api/platform/v1/tenant-branding', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: { organizationName: null, logoUrl: null, version: 0 },
+      }),
+    })
+  );
+  await page.route('**/api/platform/v1/home-preferences', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          schemaVersion: 1,
+          customized: false,
+          layout: {
+            appLayout: null,
+            widgets: [
+              { widgetKey: 'announcements', visible: true },
+              { widgetKey: 'daily-brief', visible: true },
+              { widgetKey: 'focus', visible: true },
+              { widgetKey: 'schedule', visible: true },
+              { widgetKey: 'activity', visible: true },
+            ],
+          },
+          version: 0,
+          updatedAt: null,
+        },
+      }),
+    })
+  );
+  await page.route('**/api/platform/v1/announcements', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
   await page.route('**/api/auth/csrf', (route) =>
     route.fulfill({
       contentType: 'application/json',

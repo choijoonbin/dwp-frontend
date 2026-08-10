@@ -67,6 +67,12 @@ async function mockAdminSession(page: Page) {
       body: envelope({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }),
     })
   );
+  await page.route('**/api/platform/v1/tenant-branding', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope({ organizationName: null, logoUrl: null, version: 0 }),
+    })
+  );
 }
 
 test('tenant administrators govern organizations and direct groups', async ({ page }, testInfo) => {

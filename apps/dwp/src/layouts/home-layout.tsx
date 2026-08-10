@@ -1,11 +1,13 @@
 import { Outlet } from 'react-router-dom';
-import { ProductMark, foundationTokens } from '@dwp-frontend/design-system';
+import { foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import { alpha } from '@mui/material/styles';
 
 import { AccountMenu } from '../components/account-menu';
+import { BrandLockup } from '../components/brand-lockup';
 import { LanguageMenu } from '../components/language-menu';
 import { NotificationMenu, SearchControl, WorkspaceMenu } from '../components/shell-controls';
 
@@ -25,7 +27,14 @@ export function HomeLayout() {
         sx={{
           borderBottom: 1,
           borderColor: 'divider',
-          bgcolor: 'background.paper',
+          bgcolor: (theme) => alpha(theme.palette.background.paper, 0.88),
+          backdropFilter: 'blur(22px) saturate(150%)',
+          WebkitBackdropFilter: 'blur(22px) saturate(150%)',
+          '@media (prefers-reduced-transparency: reduce), (forced-colors: active)': {
+            bgcolor: 'background.paper',
+            backdropFilter: 'none',
+            WebkitBackdropFilter: 'none',
+          },
         }}
       >
         <Toolbar
@@ -38,8 +47,8 @@ export function HomeLayout() {
             px: { xs: 1.5, md: 3 },
           }}
         >
-          <ProductMark compact sx={{ display: { xs: 'inline-flex', sm: 'none' } }} />
-          <ProductMark sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />
+          <BrandLockup variant="condensed" sx={{ display: { xs: 'inline-flex', sm: 'none' } }} />
+          <BrandLockup sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />
           <Box sx={{ ml: { xs: 0.5, md: 2 }, display: { xs: 'none', md: 'block' } }}>
             <WorkspaceMenu />
           </Box>

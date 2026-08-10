@@ -74,6 +74,12 @@ async function mockAdminSession(page: Page) {
       body: envelope({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }),
     })
   );
+  await page.route('**/api/platform/v1/tenant-branding', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope({ organizationName: null, logoUrl: null, version: 0 }),
+    })
+  );
 }
 
 test('tenant administrators configure and reset the personal home presentation', async ({
@@ -172,6 +178,145 @@ test('tenant administrators configure and reset the personal home presentation',
   await expect(page.getByRole('alert')).toBeHidden({ timeout: 10_000 });
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations).toEqual([]);
+});
+
+test('tenant administrators manage co-branding and publish home announcements', async ({
+  page,
+}) => {
+  await mockAdminSession(page);
+  let branding = {
+    organizationName: null as string | null,
+    logoUrl: null as string | null,
+    logoOriginalName: null as string | null,
+    logoContentType: null as string | null,
+    logoSizeBytes: null as number | null,
+    logoWidth: null as number | null,
+    logoHeight: null as number | null,
+    version: 0,
+  };
+  let announcements: Array<{
+    announcementId: number;
+    title: string;
+    message: string;
+    severity: 'INFO';
+    audienceType: 'ALL';
+    audienceValue: null;
+    startsAt: null;
+    endsAt: null;
+    pinned: boolean;
+    actionLabel: null;
+    actionUrl: null;
+    lifecycleState: 'DRAFT' | 'PUBLISHED';
+    publishedAt: string | null;
+    publishedBy: number | null;
+    version: number;
+  }> = [];
+
+  await page.route('**/api/platform/v1/admin/tenant-branding**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET') {
+      await route.fulfill({ contentType: 'application/json', body: envelope(branding) });
+      return;
+    }
+    if (request.method() === 'PUT') {
+      const body = request.postDataJSON() as { organizationName: string | null };
+      branding = {
+        ...branding,
+        organizationName: body.organizationName,
+        version: branding.version + 1,
+      };
+    } else if (path.endsWith('/logo/reset')) {
+      branding = {
+        ...branding,
+        logoUrl: null,
+        logoOriginalName: null,
+        logoContentType: null,
+        logoSizeBytes: null,
+        logoWidth: null,
+        logoHeight: null,
+        version: branding.version + 1,
+      };
+    } else if (path.endsWith('/logo')) {
+      branding = {
+        ...branding,
+        logoUrl: `/api/platform/v1/tenant-branding/logo?v=${branding.version + 1}`,
+        logoOriginalName: 'dwp-mark.svg',
+        logoContentType: 'image/svg+xml',
+        logoSizeBytes: 512,
+        logoWidth: 48,
+        logoHeight: 48,
+        version: branding.version + 1,
+      };
+    }
+    await route.fulfill({ contentType: 'application/json', body: envelope(branding) });
+  });
+  await page.route('**/api/platform/v1/tenant-branding/logo**', (route) =>
+    route.fulfill({ contentType: 'image/svg+xml', path: 'public/assets/brand/dwp-mark.svg' })
+  );
+  await page.route('**/api/platform/v1/admin/announcements**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET') {
+      await route.fulfill({ contentType: 'application/json', body: envelope(announcements) });
+      return;
+    }
+    if (request.method() === 'POST' && path.endsWith('/publish')) {
+      announcements = announcements.map((announcement) => ({
+        ...announcement,
+        lifecycleState: 'PUBLISHED',
+        publishedAt: '2026-08-10T04:00:00Z',
+        publishedBy: 1,
+        version: announcement.version + 1,
+      }));
+    } else if (request.method() === 'POST' && path.endsWith('/announcements')) {
+      const body = request.postDataJSON() as {
+        definition: { title: string; message: string; pinned: boolean };
+      };
+      announcements = [
+        {
+          announcementId: 1,
+          title: body.definition.title,
+          message: body.definition.message,
+          severity: 'INFO',
+          audienceType: 'ALL',
+          audienceValue: null,
+          startsAt: null,
+          endsAt: null,
+          pinned: body.definition.pinned,
+          actionLabel: null,
+          actionUrl: null,
+          lifecycleState: 'DRAFT',
+          publishedAt: null,
+          publishedBy: null,
+          version: 0,
+        },
+      ];
+    }
+    await route.fulfill({ contentType: 'application/json', body: envelope(announcements[0]) });
+  });
+
+  await page.goto('/admin?view=branding');
+  await page.getByLabel('Organization name').fill('Northstar Semiconductor');
+  await page.getByRole('button', { name: 'Save branding' }).click();
+  await expect(page.getByText('Tenant branding saved.', { exact: true })).toBeVisible();
+  await page.locator('input[type="file"]').setInputFiles('public/assets/brand/dwp-mark.svg');
+  await page.getByRole('button', { name: 'Upload logo' }).click();
+  await expect(page.getByText('Tenant logo uploaded.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Custom logo', { exact: true })).toBeVisible();
+
+  await page.getByRole('tab', { name: 'Announcements' }).click();
+  await expect(page.getByText('No announcements')).toBeVisible();
+  await page.getByRole('button', { name: 'New announcement' }).click();
+  await page.getByLabel('Title').fill('Planned maintenance');
+  await page.getByLabel('Message').fill('The employee portal will be read-only from 22:00.');
+  await page.getByRole('switch', { name: 'Pinned' }).check();
+  await page.getByRole('button', { name: 'Create draft' }).click();
+  await expect(page.getByText('Announcement draft created.', { exact: true })).toBeVisible();
+  await expect(page.getByText('DRAFT', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Publish Planned maintenance' }).click();
+  await expect(page.getByText('Announcement published.', { exact: true })).toBeVisible();
+  await expect(page.getByText('PUBLISHED', { exact: true })).toBeVisible();
 });
 
 test('tenant administrators manage standards, registry, and audit', async ({ page }, testInfo) => {

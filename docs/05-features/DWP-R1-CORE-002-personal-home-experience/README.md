@@ -8,9 +8,10 @@
 >
 > 적용 저장소: `dwp-frontend`, `dwp-backend`
 
-Sidebar 없는 로그인 첫 Home, 권한 기반 App Launcher, 업무 Shell 전환과 Tenant별 Home
-Presentation 관리 기능을 정의한다. 개발 환경에서는 검증된 이미지를 Tenant별 Local
-Storage에 저장하고 DB에는 Metadata와 감사정보를 남긴다.
+Sidebar 없는 로그인 첫 Home, 권한 기반 App Launcher, 업무 Shell 전환, Tenant
+Co-branding, 사용자 Home 편집과 관리형 공지를 정의한다. 개발 환경에서는 검증된 배경과
+Logo를 Tenant별 Local Storage에 저장하고 DB에는 Metadata, 개인 Layout과 감사정보를
+남긴다.
 
 ## 상위 계약
 

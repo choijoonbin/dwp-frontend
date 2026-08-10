@@ -10,7 +10,9 @@
 
 로그인 첫 화면은 개인에게 부여된 앱과 오늘의 업무를 조망하는 공간이며, 특정 업무 앱의
 Navigation에 종속되면 안 된다. 동시에 Tenant별 Home 이미지를 지원하되 개발 단계의 로컬
-파일 관리가 향후 Object Storage 전환을 막아서는 안 된다.
+파일 관리가 향후 Object Storage 전환을 막아서는 안 된다. 고객 브랜드, 사용자별 Home
+구성과 전사 공지는 서로 다른 소유권과 변경 권한을 갖기 때문에 하나의 자유 형식 설정
+Payload로 합치지 않아야 한다.
 
 ## 2. 결정
 
@@ -19,13 +21,24 @@ Navigation에 종속되면 안 된다. 동시에 Tenant별 Home 이미지를 지
 3. Business Shell의 Product Mark와 Account Menu `Home`은 `/`로 이동한다.
 4. Home Presentation은 Tenant 단위 Aggregate로 문구, 이미지 위치, Overlay와 Asset
    Metadata를 관리한다.
-5. 이미지 Binary는 DB가 아닌 `HomeAssetStorage` Port에 저장한다. 현재 구현은
-   `${user.home}/.dwp/home-assets/{tenantId}`이며 운영에서는 S3 호환 Adapter로 교체한다.
-6. 업로드는 PNG·JPEG Magic Byte, Image Decode, 크기, Pixel 수와 SHA-256을 검증한다.
+5. 배경과 회사 Logo Binary는 DB가 아닌 공통 `TenantMediaStorage` Port에 저장한다. 현재
+   구현은 `${user.home}/.dwp/platform-assets/{tenantId}`이며 운영에서는 S3 호환 Adapter로
+   교체한다.
+6. 배경은 PNG·JPEG, Logo는 PNG·JPEG·안전한 SVG를 허용한다. Magic Byte, Decode,
+   크기, Pixel 수, SVG Active Content와 SHA-256을 검증한다.
 7. Media GET은 로그인 Session을 필수로 하고 Gateway가 Session에서 Tenant를 결정한다.
    브라우저 이미지 요청에 임의 Tenant Header를 요구하지 않는다.
 8. DB 변경과 파일 교체는 Transaction 완료 상태에 맞춰 이전 파일 또는 실패 파일을
    정리한다.
+9. Header Branding은 `Tenant logo | DWP Product` 공동 Lockup이다. 고객 Logo가 DWP Mark를
+   대체하거나 Product Navigation을 점유하지 않는다.
+10. 개인 Home 설정은 `(tenant_id, user_id)` 단위 Versioned JSONB로 저장한다. 서버는 구조와
+    등록 Widget·필수 정책을 검증하고 Frontend는 현재 App Registry·Entitlement로 재조정한다.
+    API는 저장 행 존재 여부를 `customized`로 명시하며 낙관적 잠금 Version과 혼용하지 않는다.
+11. 공지는 별도 Lifecycle Aggregate로 관리하고 Tenant, 역할, 게시 상태·기간을 서버에서
+    필터링한다. 게시·보관은 Tenant Admin만 수행한다.
+12. Liquid Glass 재질은 이미지 위의 Navigation·App Surface에만 선택적으로 적용한다.
+    Reduced Transparency와 Forced Colors에서는 불투명 대체 Surface를 사용한다.
 
 ## 3. 선택 이유
 
@@ -33,6 +46,9 @@ Navigation에 종속되면 안 된다. 동시에 Tenant별 Home 이미지를 지
 - DB BLOB 비대화와 Backup 결합을 피하고 CDN·Object Storage 전환 경로를 확보한다.
 - Tenant ID를 URL에 노출하지 않아 다른 Tenant의 Media Key 추측을 막는다.
 - Version Query와 ETag를 함께 사용해 변경 즉시 Cache를 무효화할 수 있다.
+- 관리자 기본 구성과 사용자 선호를 분리해 필수 공지는 유지하면서 개인화를 허용한다.
+- Branding, Home Preference와 Announcement를 분리해 각 Aggregate의 권한·감사·수명주기를
+  독립적으로 운영한다.
 
 ## 4. 배제한 대안
 
@@ -41,6 +57,9 @@ Navigation에 종속되면 안 된다. 동시에 Tenant별 Home 이미지를 지
   DB에 결합된다.
 - **공개 정적 URL**: Tenant Branding Asset의 접근 통제와 교체 감사가 사라진다.
 - **Tenant ID Query Parameter**: URL 변조와 Cache Key 오류 위험이 커진다.
+- **고객 Logo로 Product Mark 교체**: 제품 Identity와 Home Navigation이 고객마다 달라진다.
+- **임의 Widget HTML 저장**: XSS, 성능, 접근성, 업그레이드 계약을 통제할 수 없다.
+- **Liquid Glass 전면 적용**: 긴 Form·Table의 대비와 성능을 떨어뜨리고 계층 의미를 잃는다.
 
 ## 5. 운영 전 후속 조건
 
@@ -48,3 +67,5 @@ Navigation에 종속되면 안 된다. 동시에 Tenant별 Home 이미지를 지
 - Tenant별 용량·업로드 Rate Limit과 Content Security Policy
 - 이미지 삭제 보존기간, 감사 Export와 CDN Cache Purge Runbook
 - 다중 Instance 환경에서 Local Adapter 사용 금지
+- 공지 승인 Workflow, 긴급공지 다중 채널, 읽음·확인 증적과 지역별 보존정책
+- Home Layout Schema Migration, Widget Registry와 관리자 기본 Layout·Audience Targeting

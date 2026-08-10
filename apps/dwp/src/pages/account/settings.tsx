@@ -1,4 +1,5 @@
-import { RotateCcw } from 'lucide-react';
+import { LayoutDashboard, RotateCcw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@dwp-frontend/shared-i18n';
 import {
   PageCanvas,
@@ -50,6 +51,7 @@ function PreferenceRow({ title, description, children }: PreferenceRowProps) {
 }
 
 export default function SettingsPage() {
+  const navigate = useNavigate();
   const appearance = useAppearance();
   const { language, setLanguage } = useLanguage();
   const managedFontName = appearance.tenant.fontFamily ?? 'System UI';
@@ -142,6 +144,17 @@ export default function SettingsPage() {
           <ToggleButton value="ko">한국어</ToggleButton>
           <ToggleButton value="en">English</ToggleButton>
         </ToggleButtonGroup>
+      </PreferenceRow>
+      <Divider />
+
+      <PreferenceRow title="Home workspace" description="Apps and personal information widgets">
+        <Button
+          variant="outlined"
+          startIcon={<LayoutDashboard size={17} />}
+          onClick={() => navigate('/?edit=home')}
+        >
+          Edit home
+        </Button>
       </PreferenceRow>
 
       <Typography component="h2" variant="h6" sx={{ mt: 6 }}>

@@ -1,4 +1,14 @@
-import { Boxes, Database, Image, Network, ScrollText, Settings2, UsersRound } from 'lucide-react';
+import {
+  Boxes,
+  Building2,
+  Database,
+  Image,
+  Megaphone,
+  Network,
+  ScrollText,
+  Settings2,
+  UsersRound,
+} from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@dwp-frontend/shared-utils';
 import { PageCanvas } from '@dwp-frontend/design-system';
@@ -12,13 +22,17 @@ import Typography from '@mui/material/Typography';
 
 import { AuditLog } from '../features/admin/audit-log';
 import { AccessManager } from '../features/admin/access-manager';
+import { AnnouncementManager } from '../features/admin/announcement-manager';
 import { DirectoryManager } from '../features/admin/directory-manager';
 import { HomeExperienceManager } from '../features/admin/home-experience-manager';
 import { RegistryManager } from '../features/admin/registry-manager';
 import { ReferenceDataManager } from '../features/admin/reference-data-manager';
+import { TenantBrandingManager } from '../features/admin/tenant-branding-manager';
 
 type AdminView =
   | 'access'
+  | 'announcements'
+  | 'branding'
   | 'directory'
   | 'home-experience'
   | 'reference-data'
@@ -31,6 +45,8 @@ export default function AdminPage() {
   const requestedView = searchParams.get('view');
   const view: AdminView = [
     'access',
+    'announcements',
+    'branding',
     'directory',
     'home-experience',
     'reference-data',
@@ -88,10 +104,24 @@ export default function AdminPage() {
         sx={{ mt: 3, mb: 2, minHeight: 44 }}
       >
         <Tab
+          value="branding"
+          icon={<Building2 size={17} strokeWidth={1.8} />}
+          iconPosition="start"
+          label="Branding"
+          sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
+        />
+        <Tab
           value="home-experience"
           icon={<Image size={17} strokeWidth={1.8} />}
           iconPosition="start"
           label="Home"
+          sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
+        />
+        <Tab
+          value="announcements"
+          icon={<Megaphone size={17} strokeWidth={1.8} />}
+          iconPosition="start"
+          label="Announcements"
           sx={{ minWidth: 0, px: { xs: 1.25, sm: 2 } }}
         />
         <Tab
@@ -142,6 +172,8 @@ export default function AdminPage() {
       </Tabs>
 
       {view === 'access' && <AccessManager />}
+      {view === 'announcements' && <AnnouncementManager />}
+      {view === 'branding' && <TenantBrandingManager />}
       {view === 'directory' && <DirectoryManager />}
       {view === 'home-experience' && <HomeExperienceManager />}
       {view === 'reference-data' && <ReferenceDataManager />}

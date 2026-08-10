@@ -1,16 +1,19 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+import type { ReactNode } from 'react';
 import type { BoxProps } from '@mui/material/Box';
 
-export type ProductMarkProps = Omit<BoxProps<'a'>, 'component'> & {
+export type ProductMarkProps = Omit<BoxProps<'a'>, 'component' | 'prefix'> & {
   compact?: boolean;
   label?: string;
+  prefix?: ReactNode;
 };
 
 export function ProductMark({
   compact = false,
   label = 'Digital Workplace',
+  prefix,
   href = '/',
   sx,
   ...props
@@ -33,6 +36,7 @@ export function ProductMark({
       ]}
       {...props}
     >
+      {prefix}
       <Box
         aria-hidden="true"
         sx={{

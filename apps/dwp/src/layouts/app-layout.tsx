@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { ProductMark, foundationTokens, useAppearance } from '@dwp-frontend/design-system';
+import { foundationTokens, useAppearance } from '@dwp-frontend/design-system';
 import { usePermissions } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -26,6 +26,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 
 import { AccountMenu } from '../components/account-menu';
+import { BrandLockup } from '../components/brand-lockup';
 import { LanguageMenu } from '../components/language-menu';
 import { SearchControl, WorkspaceMenu, NotificationMenu } from '../components/shell-controls';
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
@@ -160,7 +161,7 @@ export function AppLayout() {
           justifyContent: compact ? 'center' : 'flex-start',
         }}
       >
-        <ProductMark compact={compact} sx={{ flexShrink: 0 }} />
+        <BrandLockup variant={compact ? 'product-only' : 'condensed'} sx={{ flexShrink: 0 }} />
       </Box>
       <Box sx={{ flex: 1 }}>
         <AppNavigation compact={compact} onNavigate={onNavigate} />
@@ -286,7 +287,10 @@ export function AppLayout() {
             </Tooltip>
           )}
           {topNavigation && (
-            <ProductMark compact sx={{ mr: 1, display: { xs: 'none', lg: 'inline-flex' } }} />
+            <BrandLockup
+              variant="condensed"
+              sx={{ mr: 1, display: { xs: 'none', lg: 'inline-flex' } }}
+            />
           )}
           <WorkspaceMenu />
           {topNavigation && (

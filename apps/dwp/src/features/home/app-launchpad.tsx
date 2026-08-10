@@ -99,8 +99,12 @@ const iconByKey: Record<HomeAppIconKey, LucideIcon> = {
 type AppLaunchpadProps = {
   apps: readonly HomeAppDefinition[];
   storageKey: string;
+  initialLayout?: unknown;
   onLaunch: (app: HomeAppDefinition) => void;
   onBrowseAll: () => void;
+  onEditHome?: () => void;
+  onLayoutCommit?: (layout: LaunchpadLayout) => void;
+  customizationBusy?: boolean;
   immersive?: boolean;
   title?: string;
   description?: string;
@@ -542,13 +546,22 @@ function FolderTile({
 export function AppLaunchpad({
   apps,
   storageKey,
+  initialLayout,
   onLaunch,
   onBrowseAll,
+  onEditHome,
+  onLayoutCommit,
+  customizationBusy = false,
   immersive = false,
   title = 'Your apps',
   description = 'Assigned to your role and workspace',
 }: AppLaunchpadProps) {
-  const [layout, setLayout] = useState(() => readStoredLayout(storageKey, apps));
+  const [layout, setLayout] = useState(() =>
+    reconcileLaunchpadLayout(
+      initialLayout !== undefined ? initialLayout : readStoredLayout(storageKey, apps),
+      apps
+    )
+  );
   const [customizing, setCustomizing] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [keyboardDragging, setKeyboardDragging] = useState(false);
@@ -620,6 +633,11 @@ export function AppLaunchpad({
     setActiveId(String(active.id));
     setKeyboardDragging(activatorEvent instanceof KeyboardEvent);
     setCustomizing(true);
+  };
+
+  const toggleCustomization = () => {
+    if (customizing) onLayoutCommit?.(layout);
+    setCustomizing((current) => !current);
   };
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
@@ -741,8 +759,25 @@ export function AppLaunchpad({
           borderBottom: 1,
           borderColor: immersive ? 'rgba(255,255,255,0.16)' : 'divider',
           borderRadius: immersive ? 1 : 0,
-          bgcolor: immersive ? 'rgba(5,17,47,0.68)' : 'transparent',
-          backdropFilter: immersive ? 'blur(16px)' : 'none',
+          position: 'relative',
+          overflow: 'hidden',
+          bgcolor: immersive ? 'rgba(9,18,38,0.52)' : 'transparent',
+          backgroundImage: immersive
+            ? 'linear-gradient(135deg, rgba(255,255,255,0.13), rgba(255,255,255,0.035) 48%, rgba(112,186,255,0.08))'
+            : 'none',
+          backdropFilter: immersive ? 'blur(24px) saturate(155%)' : 'none',
+          WebkitBackdropFilter: immersive ? 'blur(24px) saturate(155%)' : 'none',
+          boxShadow: immersive
+            ? 'inset 0 1px 0 rgba(255,255,255,0.24), 0 18px 50px rgba(0,7,24,0.18)'
+            : 'none',
+          '@media (prefers-reduced-transparency: reduce), (forced-colors: active)': immersive
+            ? {
+                bgcolor: '#15233B',
+                backgroundImage: 'none',
+                backdropFilter: 'none',
+                WebkitBackdropFilter: 'none',
+              }
+            : undefined,
         }}
       >
         <Box sx={{ minWidth: 0, mr: 'auto' }}>
@@ -781,10 +816,21 @@ export function AppLaunchpad({
         >
           All apps
         </Button>
+        {onEditHome && (
+          <Button
+            variant="text"
+            startIcon={<Settings2 size={17} strokeWidth={1.8} />}
+            onClick={onEditHome}
+            sx={immersive ? { color: '#FFFFFF' } : undefined}
+          >
+            Edit home
+          </Button>
+        )}
         <Button
           variant={customizing ? 'contained' : 'outlined'}
           startIcon={customizing ? <Check size={17} strokeWidth={1.9} /> : <Settings2 size={17} />}
-          onClick={() => setCustomizing((current) => !current)}
+          onClick={toggleCustomization}
+          disabled={customizationBusy}
           sx={
             immersive && !customizing
               ? {
@@ -871,9 +917,39 @@ export function AppLaunchpad({
                   border: immersive ? '1px solid rgba(255,255,255,0.16)' : undefined,
                   borderColor: immersive ? 'rgba(255,255,255,0.16)' : 'divider',
                   borderRadius: immersive ? 1 : 0,
-                  bgcolor: immersive ? 'rgba(5,17,47,0.68)' : 'transparent',
-                  backdropFilter: immersive ? 'blur(16px)' : 'none',
-                  boxShadow: immersive ? '0 18px 42px rgba(0,8,28,0.22)' : 'none',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  bgcolor: immersive ? 'rgba(9,18,38,0.54)' : 'transparent',
+                  backgroundImage: immersive
+                    ? 'linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.035) 50%, rgba(78,165,255,0.08))'
+                    : 'none',
+                  backdropFilter: immersive ? 'blur(24px) saturate(155%)' : 'none',
+                  WebkitBackdropFilter: immersive ? 'blur(24px) saturate(155%)' : 'none',
+                  boxShadow: immersive
+                    ? 'inset 0 1px 0 rgba(255,255,255,0.22), 0 22px 54px rgba(0,7,24,0.24)'
+                    : 'none',
+                  transition: (theme) =>
+                    theme.transitions.create(['background-color', 'border-color', 'transform']),
+                  '&:hover': immersive
+                    ? {
+                        bgcolor: 'rgba(15,29,56,0.64)',
+                        borderColor: 'rgba(255,255,255,0.28)',
+                        transform: 'translateY(-2px)',
+                      }
+                    : undefined,
+                  '@media (prefers-reduced-motion: reduce)': {
+                    transition: 'none',
+                    transform: 'none',
+                  },
+                  '@media (prefers-reduced-transparency: reduce), (forced-colors: active)':
+                    immersive
+                      ? {
+                          bgcolor: '#15233B',
+                          backgroundImage: 'none',
+                          backdropFilter: 'none',
+                          WebkitBackdropFilter: 'none',
+                        }
+                      : undefined,
                   scrollSnapAlign: immersive ? 'center' : 'none',
                 }}
               >

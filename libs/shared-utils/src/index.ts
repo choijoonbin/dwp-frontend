@@ -9,6 +9,9 @@ export * from './api/directory-admin-api';
 export * from './api/platform-admin-api';
 export * from './api/platform-registry-api';
 export * from './api/home-experience-api';
+export * from './api/tenant-branding-api';
+export * from './api/home-preference-api';
+export * from './api/announcement-api';
 
 export * from './axios-instance';
 export * from './auth/auth-guard';
