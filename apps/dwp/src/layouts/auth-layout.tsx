@@ -21,7 +21,11 @@ export function AuthLayout() {
         minHeight: '100dvh',
         display: 'grid',
         gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(0, 1fr) minmax(430px, 500px)' },
-        gridTemplateRows: { xs: '260px minmax(0, 1fr)', md: 'minmax(0, 1fr)' },
+        gridTemplateRows: {
+          xs: '230px minmax(0, 1fr)',
+          sm: '260px minmax(0, 1fr)',
+          md: 'minmax(0, 1fr)',
+        },
         position: 'relative',
         overflow: 'hidden',
         bgcolor: 'background.paper',
@@ -37,7 +41,7 @@ export function AuthLayout() {
           position: 'absolute',
           inset: 0,
           width: 1,
-          height: { xs: 260, md: '100%' },
+          height: { xs: 230, sm: 260, md: '100%' },
           objectFit: 'cover',
           objectPosition: { xs: '34% 52%', sm: '38% 54%', md: 'center center' },
           userSelect: 'none',
@@ -51,7 +55,7 @@ export function AuthLayout() {
           gridColumn: 1,
           gridRow: 1,
           minWidth: 0,
-          minHeight: { xs: 260, md: '100dvh' },
+          minHeight: { xs: 230, sm: 260, md: '100dvh' },
           position: 'relative',
           zIndex: 1,
           display: 'flex',
@@ -119,7 +123,7 @@ export function AuthLayout() {
           <Typography
             sx={{
               mt: { xs: 1, md: 2.5 },
-              maxWidth: 560,
+              maxWidth: { xs: '100%', md: 640 },
               color: '#F2F6F7',
               fontSize: { xs: '0.875rem', md: '1.0625rem' },
               lineHeight: 1.65,
@@ -150,14 +154,18 @@ export function AuthLayout() {
           gridColumn: { xs: 1, md: 2 },
           gridRow: { xs: 2, md: 1 },
           minWidth: 0,
-          minHeight: { xs: 'calc(100dvh - 260px)', md: '100dvh' },
+          minHeight: {
+            xs: 'calc(100dvh - 230px)',
+            sm: 'calc(100dvh - 260px)',
+            md: '100dvh',
+          },
           position: 'relative',
           zIndex: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           px: { xs: 3, sm: 6, md: 6 },
-          py: { xs: 6, md: 8 },
+          py: { xs: 3.5, sm: 6, md: 8 },
           color: 'text.primary',
           backgroundColor: (theme) =>
             alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.96 : 0.91),
@@ -178,11 +186,11 @@ export function AuthLayout() {
           '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
         }}
       >
-        <Box sx={{ position: 'absolute', top: { xs: 12, sm: 20 }, right: { xs: 12, sm: 20 } }}>
-          <LanguageMenu />
-        </Box>
         <Box sx={{ width: 1, maxWidth: 380 }}>
           <Outlet />
+          <Box sx={{ mt: { xs: 2, sm: 3 }, display: 'flex', justifyContent: 'flex-start' }}>
+            <LanguageMenu />
+          </Box>
         </Box>
       </Box>
     </Box>

@@ -1,6 +1,6 @@
 # R0 권한·메뉴·다국어 Admin Control Center ADR
 
-> 상태: Accepted Baseline v1.1
+> 상태: Accepted and Implemented Local Baseline v1.2
 >
 > 기준일: 2026-08-10
 >
@@ -10,7 +10,7 @@
 
 관리 기능은 일반 업무 App의 한 화면이 아니라 제품 전체의 Control Plane이다.
 Tenant Admin은 `/admin` 전용 Shell과 Navigation을 사용하고, Provider Super Admin은
-향후 별도 Identity·Route·Service로 분리한다. Tenant Admin이 Tenant ID를 바꿔 다른
+별도 `/provider` Shell·Route·Service·Database로 분리한다. Tenant Admin이 Tenant ID를 바꿔 다른
 고객을 관리하는 방식은 금지한다.
 
 권한은 `Subject -> Role -> Resource + Action -> Scope`로 계산한다. 메뉴와 버튼은
@@ -166,6 +166,12 @@ sequenceDiagram
 - User·Role·Menu·PII·Tenant 변경은 기본적으로 Preview와 Human Approval이 필요하다.
 - Plan Hash가 바뀌면 기존 승인은 무효다.
 - Audit에는 Prompt 원문 대신 필요한 Redacted Intent와 구조화된 Diff를 저장한다.
+
+2026-08-10 Local Baseline은 Access, Navigation, HRIS, SCIM과 Provider의 10개 명령을
+코드 Allowlist로 고정한다. 각 명령은 대상 유형, 파라미터 Schema, Catalog Revision,
+필수 Permission, 대상 Service와 HTTP 계약을 Plan Hash에 결합한다. 미등록 명령과 과잉
+파라미터는 요청 단계에서 거부되며 `mutationAllowed=false`다. 승인 Token, 직무분리 재평가,
+실행 Timeline과 보상은 R3 실행 Gate로 남는다.
 
 ## 10. 근거
 

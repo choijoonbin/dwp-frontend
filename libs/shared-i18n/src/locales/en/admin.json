@@ -37,10 +37,25 @@
         "title": "Identity access",
         "description": "Assign tenant roles and review effective access for workforce accounts."
       },
+      "roles": {
+        "label": "Roles & permissions",
+        "title": "Role governance",
+        "description": "Define roles, resource permissions, group assignments, and effective access."
+      },
+      "people-directory": {
+        "label": "People",
+        "title": "People directory",
+        "description": "Review the tenant-safe workforce projection and effective-dated assignments."
+      },
       "directory": {
         "label": "Directory",
         "title": "Organization directory",
         "description": "Manage organizations and groups used for scoped access and experiences."
+      },
+      "provisioning": {
+        "label": "Provisioning",
+        "title": "Provisioning & HRIS",
+        "description": "Control SCIM credentials, HR source mappings, and ingestion runs."
       },
       "reference-data": {
         "label": "Reference data",
@@ -51,6 +66,11 @@
         "label": "App registry",
         "title": "Application registry",
         "description": "Control registered applications, tenant availability, and launch metadata."
+      },
+      "navigation": {
+        "label": "Navigation",
+        "title": "Navigation management",
+        "description": "Publish a localized, permission-aware application navigation tree."
       },
       "audit": {
         "label": "Audit log",
@@ -621,6 +641,270 @@
       "organizationDeactivated": "Organization deactivated.",
       "groupActivated": "Group activated.",
       "groupDeactivated": "Group deactivated."
+    }
+  },
+  "people": {
+    "title": "People projection",
+    "loading": "Loading people projection",
+    "search": "Search people",
+    "asOf": "As of {{date}}",
+    "notAvailable": "Not available",
+    "masked": "Masked",
+    "filters": { "status": "Worker status", "asOf": "Effective date" },
+    "status": {
+      "ALL": "All statuses",
+      "ACTIVE": "Active",
+      "LEAVE": "On leave",
+      "TERMINATED": "Terminated"
+    },
+    "columns": {
+      "person": "Person",
+      "organization": "Organization",
+      "title": "Business title",
+      "status": "Status",
+      "workerNumber": "Worker number",
+      "location": "Location"
+    },
+    "pagination": { "previous": "Previous", "next": "Next" },
+    "detail": {
+      "title": "Workforce profile",
+      "loading": "Loading workforce profile",
+      "employer": "Legal employer",
+      "hireDate": "Original hire date",
+      "manager": "Manager assignment",
+      "classification": "Data classification",
+      "assignments": "Effective assignments",
+      "primary": "Primary",
+      "current": "Current"
+    }
+  },
+  "provisioning": {
+    "notAvailable": "Not available",
+    "never": "Never used",
+    "tabs": { "label": "Provisioning views", "scim": "SCIM 2.0", "hris": "HRIS connectors" },
+    "states": {
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended",
+      "RETIRED": "Retired",
+      "HEALTHY": "Healthy",
+      "UNKNOWN": "Unknown",
+      "RUNNING": "Running",
+      "SUCCEEDED": "Succeeded",
+      "SUCCESS": "Succeeded",
+      "FAILED": "Failed",
+      "PENDING": "Pending",
+      "COMPLETED": "Completed"
+    },
+    "scim": {
+      "title": "SCIM connectors",
+      "loading": "Loading SCIM connectors",
+      "columns": {
+        "connector": "Connector",
+        "tokenPrefix": "Token fingerprint",
+        "operations": "Allowed operations",
+        "state": "State",
+        "lastUsed": "Last used"
+      },
+      "actions": {
+        "new": "New connector",
+        "rotate": "Rotate secret",
+        "suspend": "Suspend",
+        "activate": "Activate"
+      },
+      "create": {
+        "title": "New SCIM connector",
+        "key": "Connector key",
+        "keyHelp": "Stable provider-facing identifier",
+        "name": "Display name"
+      },
+      "secret": {
+        "title": "SCIM bearer token",
+        "notice": "This token is shown once. Store it in the identity provider secret vault before closing.",
+        "token": "Bearer token",
+        "copy": "Copy token",
+        "copied": "Token copied."
+      },
+      "toasts": {
+        "created": "SCIM connector created.",
+        "rotated": "SCIM secret rotated.",
+        "lifecycle": "SCIM lifecycle changed."
+      }
+    },
+    "hris": {
+      "title": "HRIS ingestion control",
+      "loading": "Loading HRIS controls",
+      "synthetic": "Synthetic fixture",
+      "sources": "Source systems",
+      "connectors": "Connector instances",
+      "mappings": "Mapping profiles",
+      "runs": "HRIS synchronization runs",
+      "columns": {
+        "started": "Started",
+        "source": "Source",
+        "mode": "Mode",
+        "state": "State",
+        "read": "Read",
+        "created": "Created",
+        "updated": "Updated",
+        "rejected": "Rejected",
+        "watermark": "Committed watermark"
+      },
+      "actions": {
+        "newConnector": "New connector",
+        "importSample": "Run synthetic Workday import",
+        "check": "Validate configuration",
+        "suspend": "Suspend",
+        "activate": "Activate"
+      },
+      "create": {
+        "title": "Register HRIS connector",
+        "secretNotice": "Enter a secret-manager reference only. DWP never stores a raw provider credential in this control record.",
+        "sourceKey": "Source key",
+        "sourceType": "Source type",
+        "sourceName": "Source name",
+        "connectorKey": "Connector key",
+        "connectorType": "Adapter type",
+        "endpoint": "HTTPS endpoint",
+        "httpsOnly": "HTTPS only; embedded credentials are rejected",
+        "fileManaged": "File transport is configured by the ingestion runtime",
+        "authMode": "Authentication mode",
+        "credentialReference": "Secret reference",
+        "credentialReferencePlaceholder": "vault://tenant/hris/workday",
+        "schedule": "Schedule expression"
+      },
+      "toasts": {
+        "connectorCreated": "HRIS connector registered as draft.",
+        "checked": "Connector configuration is valid; external connectivity remains gated.",
+        "lifecycle": "HRIS connector lifecycle changed.",
+        "imported": "Imported {{count}} synthetic workers.",
+        "replayed": "The idempotent sample import was replayed."
+      }
+    }
+  },
+  "roleGovernance": {
+    "loading": "Loading role governance",
+    "notAvailable": "Not available",
+    "roles": "Governed roles",
+    "assignments": "Group role assignments",
+    "effectiveAccess": "Effective access explanation",
+    "effectiveLoading": "Calculating effective access",
+    "effectiveRoles": "Effective roles",
+    "effectivePermissions": "Effective permissions",
+    "accessRevision": "Access revision {{revision}}",
+    "privileged": "Privileged",
+    "standard": "Standard",
+    "noExpiry": "No expiry",
+    "direct": "Direct assignment",
+    "tenantWide": "Tenant wide",
+    "tabs": {
+      "label": "Role governance views",
+      "roles": "Roles & resources",
+      "assignments": "Group assignments",
+      "effective": "Effective access"
+    },
+    "columns": {
+      "role": "Role",
+      "description": "Description",
+      "risk": "Risk",
+      "permissions": "Permissions",
+      "status": "Status",
+      "resource": "Resource",
+      "group": "Group",
+      "assignmentType": "Assignment",
+      "scope": "Scope",
+      "validTo": "Valid to",
+      "source": "Source",
+      "permission": "Permission",
+      "effect": "Effect",
+      "sourceRoles": "Contributing roles"
+    },
+    "fields": {
+      "code": "Role code",
+      "name": "Name",
+      "description": "Description",
+      "status": "Status",
+      "privileged": "Privileged role",
+      "assignableToGroups": "Can be assigned to groups",
+      "resourceType": "Resource type",
+      "resourceKey": "Resource key",
+      "group": "Group",
+      "role": "Role",
+      "assignmentType": "Assignment type",
+      "scope": "Scope type",
+      "scopeRef": "Scope reference",
+      "validTo": "Expiry",
+      "justification": "Justification",
+      "user": "User"
+    },
+    "effects": { "NONE": "None", "ALLOW": "Allow", "DENY": "Deny" },
+    "assignmentTypes": { "ACTIVE": "Active", "ELIGIBLE": "Eligible" },
+    "scopes": { "TENANT": "Tenant", "ORG_UNIT": "Organization", "RESOURCE": "Resource" },
+    "actions": {
+      "permissions": "Edit permissions",
+      "savePermissions": "Save permissions",
+      "newResource": "New resource",
+      "newRole": "New role",
+      "newAssignment": "New group assignment",
+      "revoke": "Revoke assignment"
+    },
+    "roleDialog": { "create": "New governed role", "edit": "Edit governed role" },
+    "resourceDialog": { "title": "Register protected resource" },
+    "permissionDialog": {
+      "title": "Permissions for {{role}}",
+      "description": "Choose an explicit allow or deny for each protected operation. Deny wins during effective-access evaluation.",
+      "grantLabel": "{{resource}} {{permission}} effect"
+    },
+    "assignmentDialog": { "title": "Assign role to group" },
+    "toasts": {
+      "roleCreated": "Role created.",
+      "roleUpdated": "Role updated.",
+      "permissionsUpdated": "Role permissions updated.",
+      "resourceCreated": "Protected resource registered.",
+      "assignmentCreated": "Group role assignment created.",
+      "assignmentRevoked": "Group role assignment revoked."
+    }
+  },
+  "navigationManager": {
+    "title": "Navigation tree",
+    "loading": "Loading navigation tree",
+    "empty": "No navigation items have been defined.",
+    "treeLabel": "Tenant navigation tree",
+    "root": "Top level",
+    "types": { "GROUP": "Group", "APP": "Application" },
+    "fields": {
+      "key": "Navigation key",
+      "type": "Item type",
+      "parent": "Parent group",
+      "order": "Sort order",
+      "registry": "Registry entry key",
+      "route": "Application route",
+      "icon": "Icon key",
+      "resource": "Required resource",
+      "permission": "Required permission"
+    },
+    "labels": {
+      "title": "Localized labels",
+      "add": "Add locale",
+      "locale": "Locale",
+      "label": "Label",
+      "description": "Description",
+      "remove": "Remove locale"
+    },
+    "dialog": { "create": "New navigation item", "edit": "Edit navigation item" },
+    "actions": {
+      "new": "New item",
+      "expand": "Expand",
+      "collapse": "Collapse",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "activate": "Activate",
+      "retire": "Retire"
+    },
+    "toasts": {
+      "created": "Navigation item created as draft.",
+      "updated": "Navigation item updated.",
+      "lifecycle": "Navigation lifecycle changed.",
+      "reordered": "Navigation order saved."
     }
   }
 }

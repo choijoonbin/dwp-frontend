@@ -2,12 +2,16 @@ import {
   Boxes,
   Building2,
   Database,
+  FolderTree,
   Image,
+  KeyRound,
   Megaphone,
   Network,
+  PlugZap,
   ScrollText,
   Settings2,
   ShieldCheck,
+  UserRoundSearch,
   UsersRound,
 } from 'lucide-react';
 
@@ -20,7 +24,11 @@ export type AdminView =
   | 'home-experience'
   | 'announcements'
   | 'access'
+  | 'roles'
+  | 'people-directory'
+  | 'provisioning'
   | 'directory'
+  | 'navigation'
   | 'reference-data'
   | 'registry'
   | 'audit';
@@ -75,9 +83,27 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
       },
       {
         section: 'people',
+        view: 'roles',
+        path: '/admin/people/roles',
+        icon: KeyRound,
+      },
+      {
+        section: 'people',
+        view: 'people-directory',
+        path: '/admin/people/people-directory',
+        icon: UserRoundSearch,
+      },
+      {
+        section: 'people',
         view: 'directory',
         path: '/admin/people/directory',
         icon: Network,
+      },
+      {
+        section: 'people',
+        view: 'provisioning',
+        path: '/admin/people/provisioning',
+        icon: PlugZap,
       },
     ],
   },
@@ -96,6 +122,12 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'registry',
         path: '/admin/platform/registry',
         icon: Boxes,
+      },
+      {
+        section: 'platform',
+        view: 'navigation',
+        path: '/admin/platform/navigation',
+        icon: FolderTree,
       },
     ],
   },

@@ -1,6 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
+import { DEFAULT_APP_PERMISSIONS, mockRuntimeNavigation } from './support/runtime-access';
+
 async function expectNoAutomaticAccessibilityViolations(page: Page) {
   const results = await new AxeBuilder({ page }).analyze();
   const summary = results.violations.map((violation) => ({
@@ -38,6 +40,8 @@ test.beforeEach(async ({ page }) => {
     version: 0,
     updatedAt: null,
   };
+
+  await mockRuntimeNavigation(page);
 
   await page.route('**/api/platform/v1/home-experience', (route) =>
     route.fulfill({
@@ -274,12 +278,12 @@ test('unauthenticated users see the login shell without business navigation', as
   expect(faviconResponse.headers()['content-type']).toContain('image/svg+xml');
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
   await page.getByRole('button', { name: 'Language' }).click();
-  await page.getByRole('menuitem', { name: /^한국어/ }).click();
+  await page.getByRole('menuitemradio', { name: /^한국어/ }).click();
   await expect(page.getByRole('heading', { name: '로그인' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('dwp.locale'))).toBe('ko');
   await page.getByRole('button', { name: '언어' }).click();
-  await page.getByRole('menuitem', { name: 'English' }).click();
+  await page.getByRole('menuitemradio', { name: 'English' }).click();
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
   const password = page.getByRole('textbox', { name: /^Password/ });
   await password.fill('access-policy-test');
@@ -332,7 +336,11 @@ test('authenticated users enter a personal home before the business shell', asyn
   await page.route('**/api/auth/permissions', async (route) => {
     await route.fulfill({
       contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: DEFAULT_APP_PERMISSIONS,
+      }),
     });
   });
   await page.route('**/api/auth/admin/identity/users**', (route) =>
@@ -657,7 +665,11 @@ test('tenant branding does not shift the home header while the logo loads', asyn
   await page.route('**/api/auth/permissions', (route) =>
     route.fulfill({
       contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: DEFAULT_APP_PERMISSIONS,
+      }),
     })
   );
 
@@ -708,7 +720,11 @@ test('compact navigation reflows the desktop workspace canvas', async ({ page },
   await page.route('**/api/auth/permissions', (route) =>
     route.fulfill({
       contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: DEFAULT_APP_PERMISSIONS,
+      }),
     })
   );
 
@@ -778,7 +794,11 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   await page.route('**/api/auth/permissions', (route) =>
     route.fulfill({
       contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: DEFAULT_APP_PERMISSIONS,
+      }),
     })
   );
 
@@ -886,7 +906,11 @@ test('personal home widgets persist user choices and restore governed defaults',
   await page.route('**/api/auth/permissions', (route) =>
     route.fulfill({
       contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: DEFAULT_APP_PERMISSIONS,
+      }),
     })
   );
 
@@ -989,7 +1013,11 @@ test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
   await page.route('**/api/auth/permissions', (route) =>
     route.fulfill({
       contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: DEFAULT_APP_PERMISSIONS,
+      }),
     })
   );
   await mockAgentPlanContract(page);
@@ -1065,7 +1093,11 @@ test('users can review and revoke another browser session', async ({ page }) => 
   await page.route('**/api/auth/permissions', (route) =>
     route.fulfill({
       contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: DEFAULT_APP_PERMISSIONS,
+      }),
     })
   );
   await page.route('**/api/auth/csrf', (route) =>

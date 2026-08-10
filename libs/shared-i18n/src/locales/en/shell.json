@@ -89,6 +89,7 @@
     "fallbackName": "User",
     "workspace": "Workspace · {{workspace}}",
     "roles": {
+      "providerAdmin": "Provider administrator",
       "platformAdmin": "Platform administrator",
       "tenantAdmin": "Tenant administrator",
       "member": "Workspace member"
@@ -98,6 +99,8 @@
       "settingsDescription": "Profile, preferences, and security",
       "administration": "Administration console",
       "administrationDescription": "Users, policy, and system controls",
+      "provider": "Provider Control Plane",
+      "providerDescription": "Tenant delivery and change operations",
       "logout": "Log out"
     }
   },

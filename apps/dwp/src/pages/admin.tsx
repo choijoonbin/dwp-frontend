@@ -16,6 +16,10 @@ import { HomeExperienceManager } from '../features/admin/home-experience-manager
 import { RegistryManager } from '../features/admin/registry-manager';
 import { ReferenceDataManager } from '../features/admin/reference-data-manager';
 import { TenantBrandingManager } from '../features/admin/tenant-branding-manager';
+import { NavigationManager } from '../features/admin/navigation-manager';
+import { PeopleManager } from '../features/admin/people-manager';
+import { ProvisioningManager } from '../features/admin/provisioning-manager';
+import { RoleGovernanceManager } from '../features/admin/role-governance-manager';
 import {
   ADMIN_NAVIGATION,
   findAdminNavigationItem,
@@ -26,6 +30,12 @@ function AdminContent({ view }: { view: AdminView }) {
   switch (view) {
     case 'access':
       return <AccessManager />;
+    case 'roles':
+      return <RoleGovernanceManager />;
+    case 'people-directory':
+      return <PeopleManager />;
+    case 'provisioning':
+      return <ProvisioningManager />;
     case 'announcements':
       return <AnnouncementManager />;
     case 'branding':
@@ -38,6 +48,8 @@ function AdminContent({ view }: { view: AdminView }) {
       return <ReferenceDataManager />;
     case 'registry':
       return <RegistryManager />;
+    case 'navigation':
+      return <NavigationManager />;
     case 'audit':
       return <AuditLog />;
   }

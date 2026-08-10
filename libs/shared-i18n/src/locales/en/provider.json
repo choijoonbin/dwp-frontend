@@ -1,0 +1,121 @@
+{
+  "shell": {
+    "title": "Provider Control Plane",
+    "productName": "Digital Workplace",
+    "operatorWorkspace": "Provider operations",
+    "globalScope": "Global delivery scope",
+    "navigationLabel": "Provider navigation",
+    "openNavigation": "Open provider navigation",
+    "backToWorkspace": "Back to workspace"
+  },
+  "navigation": { "tenants": "Tenant estate", "operations": "Change operations" },
+  "page": {
+    "breadcrumb": "Provider Control Plane",
+    "tenants": {
+      "title": "Tenant estate",
+      "description": "Govern tenant lifecycle, isolation, region, and product entitlements."
+    },
+    "operations": {
+      "title": "Change operations",
+      "description": "Review immutable plans, execution steps, and external infrastructure gates."
+    }
+  },
+  "loading": "Loading provider control plane",
+  "notAvailable": "Not available",
+  "actions": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "refresh": "Refresh",
+    "preview": "Preview plan",
+    "execute": "Execute approved plan"
+  },
+  "errors": {
+    "load": "Unable to load provider data.",
+    "operation": "The provider operation could not be completed."
+  },
+  "fields": {
+    "tenantKey": "Tenant key",
+    "displayName": "Display name",
+    "serviceTier": "Service tier",
+    "dataRegion": "Data region",
+    "isolation": "Isolation model",
+    "justification": "Business justification"
+  },
+  "tiers": { "STANDARD": "Standard", "ENTERPRISE": "Enterprise", "REGULATED": "Regulated" },
+  "isolation": { "POOL": "Pool", "BRIDGE": "Bridge", "SILO": "Silo" },
+  "states": {
+    "PROVISIONING": "Provisioning",
+    "ACTIVE": "Active",
+    "SUSPENDED": "Suspended",
+    "RETIRED": "Retired",
+    "PREVIEWED": "Previewed",
+    "CONTROL_PLANE_READY": "Control plane ready",
+    "PENDING_EXTERNAL": "External gate pending",
+    "READY": "Ready",
+    "FAILED": "Failed",
+    "CANCELLED": "Cancelled",
+    "EXECUTING": "Executing",
+    "PARTIAL": "Partially complete",
+    "SUCCEEDED": "Succeeded",
+    "PENDING": "Pending",
+    "RUNNING": "Running",
+    "SKIPPED": "Skipped"
+  },
+  "tenants": {
+    "title": "Managed tenants",
+    "search": "Search tenants",
+    "columns": {
+      "tenant": "Tenant",
+      "tier": "Tier",
+      "region": "Data region",
+      "isolation": "Isolation",
+      "onboarding": "Onboarding",
+      "state": "Lifecycle",
+      "entitlements": "Entitlements"
+    },
+    "actions": {
+      "onboard": "Onboard tenant",
+      "entitlements": "Edit entitlements",
+      "suspend": "Suspend tenant",
+      "activate": "Activate tenant"
+    },
+    "lifecycleJustification": "Provider operator lifecycle action",
+    "toasts": { "lifecycle": "Tenant lifecycle updated." }
+  },
+  "onboarding": {
+    "title": "Plan tenant onboarding",
+    "description": "Create a deterministic plan first. Execution creates only the provider control record until downstream and infrastructure gates are connected.",
+    "entitlements": "Initial entitlements",
+    "justificationHelp": "Recorded in the provider audit trail",
+    "previewed": "Onboarding plan created for review."
+  },
+  "entitlements": {
+    "title": "Entitlements for {{tenant}}",
+    "saved": "Tenant entitlements updated."
+  },
+  "operations": {
+    "title": "Provider operations",
+    "reviewTitle": "Review change plan",
+    "planHash": "Immutable plan hash",
+    "steps": "Execution steps",
+    "externalGateNotice": "The provider record is ready. Auth, platform, people, KMS, and object-storage adapters remain explicit external gates.",
+    "executed": "Plan execution started and gate states recorded.",
+    "notCreated": "Not created",
+    "columns": {
+      "operation": "Operation",
+      "tenant": "Tenant",
+      "risk": "Risk",
+      "state": "State",
+      "started": "Started",
+      "steps": "Steps"
+    }
+  },
+  "steps": {
+    "CONTROL_RECORD": "Provider control record",
+    "AUTH_TENANT": "Identity tenant",
+    "PLATFORM_TENANT": "Platform tenant",
+    "PEOPLE_TENANT": "People tenant",
+    "ASSET_STORAGE": "Tenant asset storage"
+  }
+}

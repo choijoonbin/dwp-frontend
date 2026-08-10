@@ -89,6 +89,7 @@
     "fallbackName": "사용자",
     "workspace": "워크스페이스 · {{workspace}}",
     "roles": {
+      "providerAdmin": "프로바이더 관리자",
       "platformAdmin": "플랫폼 관리자",
       "tenantAdmin": "테넌트 관리자",
       "member": "워크스페이스 구성원"
@@ -98,6 +99,8 @@
       "settingsDescription": "프로필, 환경설정 및 보안",
       "administration": "관리 콘솔",
       "administrationDescription": "사용자, 정책 및 시스템 관리",
+      "provider": "Provider Control Plane",
+      "providerDescription": "테넌트 딜리버리 및 변경 작업",
       "logout": "로그아웃"
     }
   },

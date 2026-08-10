@@ -9,9 +9,12 @@ import {
   PanelLeftOpen,
   Sparkles,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { foundationTokens, useAppearance } from '@dwp-frontend/design-system';
-import { usePermissions } from '@dwp-frontend/shared-utils';
+import { listRuntimeNavigation, usePermissions } from '@dwp-frontend/shared-utils';
+import type { PermissionDTO, RuntimeNavigationNode } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -34,18 +37,52 @@ import {
   SearchControl,
   WorkspaceMenu,
 } from '../components/shell-controls';
-import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
 
 const SIDEBAR_WIDTH = foundationTokens.layout.navigationExpanded;
 const RAIL_WIDTH = foundationTokens.layout.navigationCompact;
 const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
 
-const navigationItems = [
-  { key: 'work', path: '/work', icon: BriefcaseBusiness, resourceKey: 'APP.WORK' },
-  { key: 'ask', path: '/ask', icon: Sparkles, resourceKey: 'APP.ASK' },
-  { key: 'activity', path: '/activity', icon: ActivityIcon, resourceKey: 'APP.ACTIVITY' },
-  { key: 'apps', path: '/apps', icon: AppWindow },
-] as const;
+const NAVIGATION_ICONS: Record<string, LucideIcon> = {
+  activity: ActivityIcon,
+  apps: AppWindow,
+  ask: Sparkles,
+  work: BriefcaseBusiness,
+};
+
+function hasRuntimePermission(node: RuntimeNavigationNode, permissions: PermissionDTO[]): boolean {
+  if (!node.requiredResourceKey) return true;
+  const requiredPermission = node.requiredPermissionCode || 'VIEW';
+  const matches = permissions.filter(
+    (permission) =>
+      permission.resourceKey === node.requiredResourceKey &&
+      permission.permissionCode === requiredPermission
+  );
+  if (matches.some((permission) => permission.effect === 'DENY')) return false;
+  return matches.some((permission) => permission.effect === 'ALLOW');
+}
+
+function filterRuntimeNavigation(
+  nodes: RuntimeNavigationNode[],
+  permissions: PermissionDTO[],
+  permissionsLoaded: boolean
+): RuntimeNavigationNode[] {
+  return nodes.flatMap((node) => {
+    if (node.itemType === 'GROUP') {
+      const children = filterRuntimeNavigation(node.children, permissions, permissionsLoaded);
+      return children.length ? [{ ...node, children }] : [];
+    }
+    if (!node.route || (!permissionsLoaded ? false : !hasRuntimePermission(node, permissions))) {
+      return [];
+    }
+    return [{ ...node, children: [] }];
+  });
+}
+
+function flattenRuntimeApps(nodes: RuntimeNavigationNode[]): RuntimeNavigationNode[] {
+  return nodes.flatMap((node) =>
+    node.itemType === 'GROUP' ? flattenRuntimeApps(node.children) : [node]
+  );
+}
 
 type AppNavigationProps = {
   compact?: boolean;
@@ -54,93 +91,151 @@ type AppNavigationProps = {
 };
 
 function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppNavigationProps) {
-  const { t } = useTranslation('shell');
+  const { t, i18n } = useTranslation('shell');
   const { pathname } = useLocation();
-  const { permissions } = usePermissions();
-  const visibleNavigationItems = navigationItems.filter(
-    (item) => !('resourceKey' in item) || isAppResourceEntitled(item.resourceKey, permissions)
-  );
+  const { permissions, isLoaded: permissionsLoaded } = usePermissions();
+  const locale = i18n.resolvedLanguage || i18n.language || 'en';
+  const navigation = useQuery({
+    queryKey: ['runtime-navigation', locale],
+    queryFn: () => listRuntimeNavigation(locale),
+    staleTime: 60_000,
+    retry: 1,
+  });
+  const fallbackNavigation: RuntimeNavigationNode[] = [
+    {
+      navigationKey: 'workspace',
+      itemType: 'GROUP',
+      label: t('navigation.section'),
+      requiredPermissionCode: 'VIEW',
+      children: [
+        {
+          navigationKey: 'work',
+          itemType: 'APP',
+          label: t('navigation.items.work'),
+          route: '/work',
+          iconKey: 'work',
+          requiredResourceKey: 'APP.WORK',
+          requiredPermissionCode: 'VIEW',
+          children: [],
+        },
+        {
+          navigationKey: 'ask',
+          itemType: 'APP',
+          label: t('navigation.items.ask'),
+          route: '/ask',
+          iconKey: 'ask',
+          requiredResourceKey: 'APP.ASK',
+          requiredPermissionCode: 'VIEW',
+          children: [],
+        },
+        {
+          navigationKey: 'activity',
+          itemType: 'APP',
+          label: t('navigation.items.activity'),
+          route: '/activity',
+          iconKey: 'activity',
+          requiredResourceKey: 'APP.ACTIVITY',
+          requiredPermissionCode: 'VIEW',
+          children: [],
+        },
+        {
+          navigationKey: 'apps',
+          itemType: 'APP',
+          label: t('navigation.items.apps'),
+          route: '/apps',
+          iconKey: 'apps',
+          requiredResourceKey: 'APP.APPS',
+          requiredPermissionCode: 'VIEW',
+          children: [],
+        },
+      ],
+    },
+  ];
+  const source = navigation.data ?? fallbackNavigation;
+  const visibleGroups = filterRuntimeNavigation(source, permissions, permissionsLoaded);
+  const horizontalItems = flattenRuntimeApps(visibleGroups);
+
+  const renderItem = (item: RuntimeNavigationNode) => {
+    if (!item.route) return null;
+    const selected = pathname.startsWith(item.route);
+    const Icon = NAVIGATION_ICONS[item.iconKey || ''] || AppWindow;
+    return (
+      <Tooltip
+        key={item.navigationKey}
+        title={compact ? item.label : ''}
+        placement="right"
+        disableInteractive={!compact}
+      >
+        <ListItem disablePadding sx={{ width: horizontal ? 'auto' : 1 }}>
+          <ListItemButton
+            component={NavLink}
+            to={item.route}
+            selected={selected}
+            aria-current={selected ? 'page' : undefined}
+            onClick={onNavigate}
+            sx={{
+              minHeight: 44,
+              justifyContent: compact ? 'center' : 'flex-start',
+              px: compact ? 1 : 1.5,
+              whiteSpace: 'nowrap',
+              position: 'relative',
+              borderRadius: 1,
+              color: selected ? 'text.primary' : 'text.secondary',
+              '& .MuiListItemText-primary': { fontWeight: selected ? 700 : 600 },
+              '&.Mui-selected': { bgcolor: 'action.selected', color: 'primary.main' },
+              '&.Mui-selected::before': {
+                content: '""',
+                position: 'absolute',
+                left: compact ? 3 : 0,
+                width: 3,
+                height: 22,
+                borderRadius: 1,
+                bgcolor: 'primary.main',
+              },
+              '&.Mui-selected:hover': { bgcolor: 'action.selected' },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: compact ? 0 : 36,
+                justifyContent: 'center',
+                color: 'inherit',
+              }}
+            >
+              <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
+            </ListItemIcon>
+            {!compact && <ListItemText primary={item.label} />}
+          </ListItemButton>
+        </ListItem>
+      </Tooltip>
+    );
+  };
 
   return (
     <Box component="nav" aria-label={t('navigation.label')} sx={{ minWidth: 0 }}>
-      {!compact && !horizontal && (
-        <Typography
-          component="p"
-          variant="overline"
-          color="text.secondary"
-          sx={{ px: 1.5, pt: 1.5, pb: 0.5 }}
-        >
-          {t('navigation.section')}
-        </Typography>
+      {horizontal ? (
+        <List disablePadding sx={{ display: 'flex', gap: 0.5 }}>
+          {horizontalItems.map(renderItem)}
+        </List>
+      ) : (
+        visibleGroups.map((group) => (
+          <Box key={group.navigationKey}>
+            {!compact && group.itemType === 'GROUP' && (
+              <Typography
+                component="p"
+                variant="overline"
+                color="text.secondary"
+                sx={{ px: 1.5, pt: 1.5, pb: 0.5 }}
+              >
+                {group.label}
+              </Typography>
+            )}
+            <List disablePadding sx={{ display: 'grid', gap: 0.5, px: 1 }}>
+              {(group.itemType === 'GROUP' ? group.children : [group]).map(renderItem)}
+            </List>
+          </Box>
+        ))
       )}
-      <List
-        disablePadding
-        sx={{
-          display: horizontal ? 'flex' : 'grid',
-          gap: 0.5,
-          px: horizontal ? 0 : 1,
-        }}
-      >
-        {visibleNavigationItems.map((item) => {
-          const selected = pathname.startsWith(item.path);
-          const Icon = item.icon;
-          return (
-            <Tooltip
-              key={item.path}
-              title={compact ? t(`navigation.items.${item.key}`) : ''}
-              placement="right"
-              disableInteractive={!compact}
-            >
-              <ListItem disablePadding sx={{ width: horizontal ? 'auto' : 1 }}>
-                <ListItemButton
-                  component={NavLink}
-                  to={item.path}
-                  selected={selected}
-                  aria-current={selected ? 'page' : undefined}
-                  onClick={onNavigate}
-                  sx={{
-                    minHeight: 44,
-                    justifyContent: compact ? 'center' : 'flex-start',
-                    px: compact ? 1 : 1.5,
-                    whiteSpace: 'nowrap',
-                    position: 'relative',
-                    borderRadius: 1,
-                    color: selected ? 'text.primary' : 'text.secondary',
-                    '& .MuiListItemText-primary': {
-                      fontWeight: selected ? 700 : 600,
-                    },
-                    '&.Mui-selected': {
-                      bgcolor: 'action.selected',
-                      color: 'primary.main',
-                    },
-                    '&.Mui-selected::before': {
-                      content: '""',
-                      position: 'absolute',
-                      left: compact ? 3 : 0,
-                      width: 3,
-                      height: 22,
-                      borderRadius: 1,
-                      bgcolor: 'primary.main',
-                    },
-                    '&.Mui-selected:hover': { bgcolor: 'action.selected' },
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: compact ? 0 : 36,
-                      justifyContent: 'center',
-                      color: 'inherit',
-                    }}
-                  >
-                    <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
-                  </ListItemIcon>
-                  {!compact && <ListItemText primary={t(`navigation.items.${item.key}`)} />}
-                </ListItemButton>
-              </ListItem>
-            </Tooltip>
-          );
-        })}
-      </List>
     </Box>
   );
 }

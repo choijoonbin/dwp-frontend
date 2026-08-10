@@ -5,6 +5,7 @@ import {
   Building2,
   ChevronDown,
   ChevronRight,
+  CloudCog,
   LogOut,
   Mail,
   Settings2,
@@ -37,18 +38,22 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
   const panelId = useId();
   const settingsDescriptionId = useId();
   const administrationDescriptionId = useId();
+  const providerDescriptionId = useId();
   const displayName = auth.user?.displayName || t('account.fallbackName');
   const positionTitle =
     auth.user?.jobTitle ||
-    (auth.user?.roles.includes('PLATFORM_ADMIN')
-      ? t('account.roles.platformAdmin')
-      : auth.user?.roles.includes('TENANT_ADMIN') || auth.user?.roles.includes('ADMIN')
-        ? t('account.roles.tenantAdmin')
-        : t('account.roles.member'));
+    (auth.user?.roles.includes('PROVIDER_ADMIN')
+      ? t('account.roles.providerAdmin')
+      : auth.user?.roles.includes('PLATFORM_ADMIN')
+        ? t('account.roles.platformAdmin')
+        : auth.user?.roles.includes('TENANT_ADMIN') || auth.user?.roles.includes('ADMIN')
+          ? t('account.roles.tenantAdmin')
+          : t('account.roles.member'));
   const isAdmin = Boolean(
     auth.user?.roles.some((role) => ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'].includes(role)) &&
       isAppResourceEntitled('APP.ADMINISTRATION', permissions)
   );
+  const isProviderAdmin = Boolean(auth.user?.roles.includes('PROVIDER_ADMIN'));
 
   const close = () => setAnchor(null);
   const dismiss = () => {
@@ -315,6 +320,44 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
                   sx={{ display: 'block' }}
                 >
                   {t('account.menu.administrationDescription')}
+                </Typography>
+              </Box>
+              <ChevronRight size={17} strokeWidth={1.8} aria-hidden="true" />
+            </MenuItem>
+          )}
+          {isProviderAdmin && (
+            <MenuItem
+              aria-label={t('account.menu.provider')}
+              aria-describedby={providerDescriptionId}
+              onClick={() => goTo('/provider')}
+              sx={{ mx: 1, px: 1, py: 1, gap: 1.25, alignItems: 'center' }}
+            >
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  flex: '0 0 auto',
+                  display: 'grid',
+                  placeItems: 'center',
+                  borderRadius: 1,
+                  color: 'info.main',
+                  bgcolor: (theme) => alpha(theme.palette.info.main, 0.12),
+                }}
+              >
+                <CloudCog {...menuIconProps} />
+              </Box>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Typography variant="body2" fontWeight={600} noWrap>
+                  {t('account.menu.provider')}
+                </Typography>
+                <Typography
+                  id={providerDescriptionId}
+                  variant="caption"
+                  color="text.secondary"
+                  noWrap
+                  sx={{ display: 'block' }}
+                >
+                  {t('account.menu.providerDescription')}
                 </Typography>
               </Box>
               <ChevronRight size={17} strokeWidth={1.8} aria-hidden="true" />

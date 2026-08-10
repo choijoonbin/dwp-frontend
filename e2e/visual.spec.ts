@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { DEFAULT_APP_PERMISSIONS, mockRuntimeNavigation } from './support/runtime-access';
+
 const authPolicy = {
   status: 'SUCCESS',
   message: 'OK',
@@ -79,6 +81,7 @@ async function mockUnauthenticated(page: Page) {
 }
 
 async function mockAuthenticated(page: Page, locale = 'en') {
+  await mockRuntimeNavigation(page);
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -102,7 +105,11 @@ async function mockAuthenticated(page: Page, locale = 'en') {
   await page.route('**/api/auth/permissions', (route) =>
     route.fulfill({
       contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: DEFAULT_APP_PERMISSIONS,
+      }),
     })
   );
   await page.route('**/api/platform/v1/home-experience', (route) =>

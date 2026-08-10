@@ -14,6 +14,7 @@ import { AccountLayout } from '../layouts/account-layout';
 import { AdminLayout } from '../layouts/admin-layout';
 import { AuthLayout } from '../layouts/auth-layout';
 import { HomeLayout } from '../layouts/home-layout';
+import { ProviderLayout } from '../layouts/provider-layout';
 import { getLegacyAdminPath } from '../features/admin/admin-navigation';
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
 
@@ -23,6 +24,7 @@ const AskPage = lazy(() => import('../pages/ask'));
 const ActivityPage = lazy(() => import('../pages/activity'));
 const AppsPage = lazy(() => import('../pages/apps'));
 const AdminPage = lazy(() => import('../pages/admin'));
+const ProviderPage = lazy(() => import('../pages/provider'));
 const ProfilePage = lazy(() => import('../pages/account/profile'));
 const SettingsPage = lazy(() => import('../pages/account/settings'));
 const SecurityPage = lazy(() => import('../pages/account/security'));
@@ -55,6 +57,11 @@ function AdminRouteGuard({ children }: { children: React.ReactNode }) {
 function AdminLegacyRedirect() {
   const [searchParams] = useSearchParams();
   return <Navigate to={getLegacyAdminPath(searchParams.get('view'))} replace />;
+}
+
+function ProviderRouteGuard({ children }: { children: React.ReactNode }) {
+  const auth = useAuth();
+  return auth.user?.roles.includes('PROVIDER_ADMIN') ? children : <Navigate to="/403" replace />;
 }
 
 function AppRouteGuard({
@@ -189,6 +196,27 @@ export const routesSection: RouteObject[] = [
         element: (
           <Suspense fallback={fallback}>
             <AdminPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: 'provider',
+    element: (
+      <AuthGuard>
+        <ProviderRouteGuard>
+          <ProviderLayout />
+        </ProviderRouteGuard>
+      </AuthGuard>
+    ),
+    children: [
+      { index: true, element: <Navigate to="tenants" replace /> },
+      {
+        path: ':view',
+        element: (
+          <Suspense fallback={fallback}>
+            <ProviderPage />
           </Suspense>
         ),
       },

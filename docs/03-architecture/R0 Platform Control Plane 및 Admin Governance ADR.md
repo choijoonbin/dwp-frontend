@@ -29,12 +29,12 @@ DWP는 여러 Tenant의 사용자, 업무 시스템, 앱, Connector와 AI Agent�
 
 ### 2.2 관리 경계를 네 단계로 분리한다
 
-| Plane             | 범위                    | 대표 책임                                      | 현재 상태                 |
-| ----------------- | ----------------------- | ---------------------------------------------- | ------------------------- |
-| Provider Admin    | 전체 제품·Tenant        | Tenant 개통, Entitlement, Release, SLO, 지원   | 설계 기준 확정, UI 미공개 |
-| Tenant Admin      | 단일 Tenant             | 조직, 권한, 기준정보, 앱·연동·Agent 정책, 감사 | 기준정보·감사 구현        |
-| Delegated Admin   | 단일 Tenant의 위임 범위 | HR·IT 등 Domain별 Catalog와 승인               | RBAC·ABAC 확장 후 구현    |
-| User Self-service | 본인                    | 언어, Theme, Density, 알림, 개인화             | 일반 설정으로 분리        |
+| Plane             | 범위                    | 대표 책임                                      | 현재 상태                              |
+| ----------------- | ----------------------- | ---------------------------------------------- | -------------------------------------- |
+| Provider Admin    | 전체 제품·Tenant        | Tenant 개통, Entitlement, Release, SLO, 지원   | Estate·Entitlement·Onboarding Baseline |
+| Tenant Admin      | 단일 Tenant             | 조직, 권한, 기준정보, 앱·연동·Agent 정책, 감사 | 기준정보·감사 구현                     |
+| Delegated Admin   | 단일 Tenant의 위임 범위 | HR·IT 등 Domain별 Catalog와 승인               | RBAC·ABAC 확장 후 구현                 |
+| User Self-service | 본인                    | 언어, Theme, Density, 알림, 개인화             | 일반 설정으로 분리                     |
 
 Provider Admin API는 Tenant Admin API에 Cross-tenant 조건을 추가하는 방식으로 만들지
 않는다. 별도 Route, 권한, Service와 감사 정책을 사용한다.
@@ -105,8 +105,9 @@ Empty·Error 상태가 완성된 영역만 Navigation에 추가한다.
 - 장점: 제품 운영 기능이 업무 기능과 분리되고, 새 Domain Pack이 공통 통제를 재사용한다.
 - 장점: Tenant 관리자와 Provider 운영자의 권한 혼합을 예방한다.
 - 비용: 초기부터 Lifecycle, Audit, Schema와 권한 계약을 유지해야 한다.
-- 제한: 현재 구현은 Tenant Admin의 기준정보·Registry·User Role·조직·직접 Group
-  Baseline이며 SCIM, Provider Admin, 승인 Workflow와 DB RLS는 후속 Gate다.
+- 제한: 현재 구현은 Tenant Admin의 기준정보·Registry·Directory·SCIM·Role·Navigation·
+  HRIS Control과 Provider Estate·Entitlement·Onboarding Preview Baseline이다. 실제 외부
+  Provisioner, 승인 Workflow, Release·SLO 운영과 DB RLS는 후속 Gate다.
 
 ## 6. 근거
 

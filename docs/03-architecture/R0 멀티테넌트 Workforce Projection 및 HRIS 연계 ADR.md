@@ -1,6 +1,6 @@
 # R0 멀티테넌트 Workforce Projection 및 HRIS 연계 ADR
 
-> 상태: Accepted Baseline v1.0
+> 상태: Accepted and Implemented Local Baseline v1.1
 >
 > 기준일: 2026-08-10
 >
@@ -31,6 +31,20 @@ Typed Attribute Definition과 Value로 확장한다.
 
 `com_users`에 HR Column을 계속 추가하는 방식은 Identity와 Workforce Lifecycle을
 결합하므로 채택하지 않는다.
+
+### 2.1 2026-08-10 구현 Baseline
+
+- `dwp_people`의 Person, Worker, Work Relationship, 유효일 Assignment Projection을
+  Workday 구조의 합성 Fixture로 End-to-end Import한다.
+- 통신 Network Operations, 미래 AI 조직 이동, 반도체 Contingent Worker를 포함해
+  현재·미래 Slice와 고용형태 차이를 검증한다.
+- People Read API는 Tenant Context, 기준일, 상태·검색, HMAC 서명 Cursor를 적용한다.
+- Worker Identifier는 HR 관리자 외 사용자에게 Masking하고 Restricted Mapping은 KMS가
+  준비될 때까지 `enabled=false`로 유지한다.
+- HRIS Control Plane은 Source, Mapping Profile, Connector Lifecycle, HTTPS Endpoint,
+  Secret Reference, Schedule, Configuration Check와 Sync Run을 관리한다.
+- 실제 고객 데이터나 외부 HRIS 호출을 흉내 내지 않는다. 현재 Fixture의
+  `example.invalid` 값은 고객 데이터가 아님을 명시한다.
 
 ## 3. Domain Model
 
@@ -147,12 +161,16 @@ Tenant를 포함한다. RLS는 `SET LOCAL dwp.tenant_id` Transaction Context와 
 
 ## 9. 구현 Gate
 
-1. 실제 SKAX HR Sample의 Attribute Classification과 Data Owner 승인
+1. 고객이 승인한 실제 HR Sample의 Attribute Classification과 Data Owner 승인
 2. Workday/Legacy Source별 Worker·Organization·Position Mapping 승인
 3. Joiner·Mover·Leaver와 미래 발령·재입사·복수 Assignment Contract Test
 4. PII Encryption Key, Field Masking, Retention과 Export 승인
 5. Tenant Cross-access, Replay, Duplicate, Out-of-order Event Test
 6. 대규모 조직/사람 Cursor Pagination과 검색 부하 Test
+
+현재 2·3번의 Reference Mapping과 핵심 Contract Test, 6번의 서명 Cursor 동작은 Local
+Baseline으로 구현되었다. 실제 고객 Mapping 승인, KMS·S3, RLS, 대규모 부하와 외부
+Connector 자격증명은 Delivery Gate로 남는다.
 
 ## 10. 근거
 
