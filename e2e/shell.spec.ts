@@ -307,6 +307,13 @@ test('authenticated users enter a personal home before the business shell', asyn
     await page.getByRole('button', { name: 'Open navigation' }).click();
   }
   await expect(businessSidebar.getByRole('link', { name: 'Digital Workplace home' })).toBeVisible();
+  await expect(businessSidebar.getByText('Digital Workplace', { exact: true })).toBeVisible();
+  await expect(businessSidebar.locator('img')).toHaveCount(0);
+  if (testInfo.project.name === 'mobile') {
+    await expect(page.getByText('Platform administrator', { exact: true })).toBeHidden();
+  } else {
+    await expect(page.getByText('Platform administrator', { exact: true })).toBeVisible();
+  }
   await businessSidebar.getByRole('link', { name: 'Digital Workplace home' }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();

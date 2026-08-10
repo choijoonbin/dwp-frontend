@@ -161,7 +161,7 @@ export function AppLayout() {
           justifyContent: compact ? 'center' : 'flex-start',
         }}
       >
-        <BrandLockup variant={compact ? 'product-only' : 'condensed'} sx={{ flexShrink: 0 }} />
+        <BrandLockup variant={compact ? 'product-only' : 'product-full'} sx={{ flexShrink: 0 }} />
       </Box>
       <Box sx={{ flex: 1 }}>
         <AppNavigation compact={compact} onNavigate={onNavigate} />
@@ -288,7 +288,7 @@ export function AppLayout() {
           )}
           {topNavigation && (
             <BrandLockup
-              variant="condensed"
+              variant="product-full"
               sx={{ mr: 1, display: { xs: 'none', lg: 'inline-flex' } }}
             />
           )}
@@ -300,11 +300,30 @@ export function AppLayout() {
           )}
           <Box sx={{ flexGrow: 1 }} />
           <SearchControl />
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <LanguageMenu />
+          <Box
+            sx={{
+              ml: { xs: 0, md: 1.5 },
+              pl: { xs: 0, md: 1 },
+              display: 'flex',
+              alignItems: 'center',
+              gap: { xs: 0.25, sm: 0.5 },
+            }}
+          >
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <LanguageMenu />
+            </Box>
+            <NotificationMenu />
           </Box>
-          <NotificationMenu />
-          <AccountMenu />
+          <Box
+            sx={{
+              ml: { xs: 0.5, sm: 1.25 },
+              pl: { xs: 0.5, sm: 1.5 },
+              borderLeft: 1,
+              borderColor: 'divider',
+            }}
+          >
+            <AccountMenu showIdentity />
+          </Box>
         </Toolbar>
       </AppBar>
 

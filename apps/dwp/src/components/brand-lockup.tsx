@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 
 import type { SxProps, Theme } from '@mui/material/styles';
 
-type BrandLockupVariant = 'full' | 'condensed' | 'product-only';
+type BrandLockupVariant = 'full' | 'condensed' | 'product-full' | 'product-only';
 
 type BrandLockupProps = {
   variant?: BrandLockupVariant;
@@ -14,22 +14,26 @@ type BrandLockupProps = {
 };
 
 export function BrandLockup({ variant = 'full', sx }: BrandLockupProps) {
+  const tenantBranded = variant === 'full' || variant === 'condensed';
   const brandingQuery = useQuery({
     queryKey: ['tenant-branding'],
     queryFn: getTenantBranding,
+    enabled: tenantBranded,
     staleTime: 10 * 60 * 1000,
     retry: 1,
   });
   const branding = brandingQuery.data;
   const logoUrl = resolveTenantLogoUrl(branding);
-  const showTenantLogo = variant !== 'product-only' && Boolean(logoUrl);
-  const accessibleName = branding?.organizationName
-    ? `${branding.organizationName} Digital Workplace home`
-    : 'Digital Workplace home';
+  const showTenantLogo = tenantBranded && Boolean(logoUrl);
+  const compact = variant === 'condensed' || variant === 'product-only';
+  const accessibleName =
+    tenantBranded && branding?.organizationName
+      ? `${branding.organizationName} Digital Workplace home`
+      : 'Digital Workplace home';
 
   return (
     <ProductMark
-      compact={variant !== 'full'}
+      compact={compact}
       aria-label={accessibleName}
       prefix={
         showTenantLogo ? (
