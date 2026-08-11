@@ -165,8 +165,8 @@ context에 두되 Workforce 메뉴만 공개 진입점을 가진다.
 자체 유형을 추가하고 임의 순서로 연결할 수 있으며, `hierarchy_rank`는 정렬 힌트로만
 사용한다. API의 `depth`도 조회 범위 제한이지 조직 골격 제한이 아니다.
 
-`@skax.example`, `@dwp-reference.example` 주소와 모든 이름·발령은 개발용 합성 데이터다. 운영 Delivery에서는
-고객별 Source Mapping 승인을 거친 HRIS/SCIM Interface가 동일 Projection을 갱신한다.
+`@sk.com` 주소의 계정과 모든 이름·발령은 개발용 합성 데이터다. 운영 Delivery에서는 고객별 Source Mapping
+승인을 거친 HRIS/SCIM Interface가 검증된 실제 이메일로 동일 Projection을 갱신한다.
 
 ## 7. 경쟁 제품 기준과 DWP 차별화
 
