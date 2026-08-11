@@ -37,6 +37,11 @@
         "title": "사용자 접근 권한",
         "description": "구성원 계정에 테넌트 역할을 할당하고 유효 권한을 검토합니다."
       },
+      "access-reviews": {
+        "label": "접근 권한 검토",
+        "title": "접근 권한 인증",
+        "description": "직접·그룹 상속 권한을 인증하고 책임 있는 판단과 후속 조치를 통제합니다."
+      },
       "roles": {
         "label": "역할 및 권한",
         "title": "역할 거버넌스",
@@ -1276,6 +1281,105 @@
         "rotated": "SCIM 비밀키를 회전했습니다.",
         "lifecycle": "SCIM 수명주기를 변경했습니다."
       }
+    }
+  },
+  "accessReviews": {
+    "loading": "접근 권한 인증 불러오는 중",
+    "loadingItems": "검토 대상을 불러오는 중",
+    "notAvailable": "정보 없음",
+    "campaigns": "검토 캠페인",
+    "campaignListLabel": "접근 권한 검토 캠페인",
+    "itemListLabel": "접근 권한 검토 대상",
+    "selectCampaign": "캠페인을 선택해 검토 대상을 확인하세요.",
+    "noDescription": "캠페인 설명 없음",
+    "noItems": "캠페인 범위에 해당하는 권한 할당이 없습니다.",
+    "noItemsDraft": "캠페인을 활성화하면 현재 권한을 검토 대상으로 확정합니다.",
+    "emptyAdmin": "접근 권한 검토가 없습니다",
+    "emptyAdminDescription": "현재 권한을 인증할 범위별 캠페인을 생성하세요.",
+    "emptyReviewer": "할당된 검토가 없습니다",
+    "emptyReviewerDescription": "검토자로 지정된 캠페인이 이곳에 표시됩니다.",
+    "progress": "{{total}}건 중 {{completed}}건 판단 완료",
+    "metrics": {
+      "activeCampaigns": "진행 중 캠페인",
+      "pendingDecisions": "미결 판단",
+      "completedCampaigns": "완료 캠페인",
+      "manualRemediation": "수동 후속 조치"
+    },
+    "states": {
+      "DRAFT": "초안",
+      "ACTIVE": "진행 중",
+      "COMPLETED": "완료"
+    },
+    "scopes": {
+      "TENANT": "테넌트 전체",
+      "ROLE": "특정 역할",
+      "GROUP": "특정 그룹"
+    },
+    "reviewerStrategies": {
+      "TENANT_ADMIN": "테넌트 관리자",
+      "NAMED_REVIEWER": "지정 검토자"
+    },
+    "sources": {
+      "DIRECT": "직접 할당",
+      "GROUP": "그룹 상속"
+    },
+    "decisions": {
+      "PENDING": "검토 대기",
+      "APPROVE": "유지 승인",
+      "REVOKE": "회수"
+    },
+    "remediation": {
+      "NOT_REQUIRED": "후속 조치 없음",
+      "PENDING": "회수 대기",
+      "APPLIED": "적용 완료",
+      "MANUAL_REQUIRED": "소유자 검토 필요"
+    },
+    "columns": {
+      "subject": "사용자",
+      "access": "검토 권한",
+      "source": "권한 출처",
+      "decision": "판단",
+      "remediation": "후속 조치"
+    },
+    "fields": {
+      "name": "캠페인 이름",
+      "description": "목적 및 통제 목표",
+      "scope": "인증 범위",
+      "role": "역할",
+      "group": "그룹",
+      "reviewerStrategy": "검토자 할당",
+      "reviewer": "검토자",
+      "dueAt": "판단 기한",
+      "reason": "판단 근거"
+    },
+    "summary": {
+      "scope": "범위: {{scope}}",
+      "due": "기한: {{value}}",
+      "reviewer": "검토자: {{value}}"
+    },
+    "actions": {
+      "new": "새 검토 캠페인",
+      "activate": "활성화 및 대상 확정",
+      "complete": "완료 및 후속 조치",
+      "review": "판단 기록",
+      "reviewFor": "{{name}} 권한 검토"
+    },
+    "create": {
+      "title": "새 접근 권한 검토 캠페인",
+      "snapshotNotice": "활성화 시점의 직접 및 그룹 상속 권한을 불변 검토 대상으로 확정합니다. 이후 권한 변경이 감사 증적을 자동으로 덮어쓰지 않습니다."
+    },
+    "decision": {
+      "title": "접근 권한 인증",
+      "choiceLabel": "접근 권한 판단",
+      "reasonHelp": "판단이 유효한 감사 증적으로 남도록 10자 이상의 근거를 입력하세요.",
+      "groupRemediation": "상속 권한은 다른 구성원에게 영향을 주지 않도록 그룹 소유자 후속 조치로 전달합니다.",
+      "submit": "판단 기록"
+    },
+    "toasts": {
+      "created": "접근 권한 검토 캠페인을 초안으로 생성했습니다.",
+      "activated": "캠페인을 활성화하고 검토 대상을 확정했습니다.",
+      "decided": "접근 권한 판단을 기록했습니다.",
+      "completed": "캠페인을 완료하고 승인된 후속 조치를 시작했습니다."
     }
   },
   "roleGovernance": {

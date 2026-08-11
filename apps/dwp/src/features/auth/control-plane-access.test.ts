@@ -60,6 +60,28 @@ describe('control plane access policy', () => {
     expect(canAccessAdminNavigationItem(item('access'), access)).toBe(false);
   });
 
+  it('exposes only the assigned-review surface to a workforce reviewer', () => {
+    const hasPermission = vi.fn(() => false);
+    const reviewItem = {
+      ...item('access-reviews'),
+      reviewerAccessible: true,
+    };
+    expect(
+      canAccessAdminNavigationItem(reviewItem, {
+        roles: ['WORKSPACE_MEMBER'],
+        permissionsLoaded: true,
+        hasPermission,
+      })
+    ).toBe(true);
+    expect(
+      canAccessAdminNavigationItem(reviewItem, {
+        roles: ['PROVIDER_SUPPORT'],
+        permissionsLoaded: true,
+        hasPermission,
+      })
+    ).toBe(false);
+  });
+
   it('uses an explicit authority role instead of a mutable job title', () => {
     expect(resolvePrimaryAuthorityRole(['ADMIN', 'PROVIDER_ADMIN'])).toBe('PROVIDER_ADMIN');
     expect(resolvePrimaryAuthorityRole(['WORKSPACE_MEMBER'])).toBe('WORKSPACE_MEMBER');

@@ -17,6 +17,7 @@ export * from './api/announcement-api';
 export * from './api/people-admin-api';
 export * from './api/workforce-api';
 export * from './api/access-governance-api';
+export * from './api/access-review-api';
 export * from './api/provisioning-admin-api';
 export * from './api/navigation-admin-api';
 export * from './api/navigation-runtime-api';

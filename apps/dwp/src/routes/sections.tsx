@@ -2,7 +2,7 @@ import type { RouteObject } from 'react-router-dom';
 
 import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
@@ -62,14 +62,17 @@ const authenticationFallback = <ShellBootScreen />;
 
 function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
+  const { pathname } = useLocation();
   const { permissions } = usePermissions();
   const roles = auth.user?.roles ?? [];
   const providerRole = hasProviderControlPlaneRole(roles);
   const supportContext = useProviderSupportContext(providerRole);
   const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
   const regularAccess = canEnterTenantControlPlane(roles, appPermitted);
+  const assignedReviewerAccess = !providerRole && pathname === '/admin/identity/access-reviews';
   if (!regularAccess && providerRole && supportContext.isLoading) return <RouteFallback />;
-  return canEnterTenantControlPlane(roles, appPermitted, Boolean(supportContext.data)) ? (
+  return assignedReviewerAccess ||
+    canEnterTenantControlPlane(roles, appPermitted, Boolean(supportContext.data)) ? (
     children
   ) : (
     <Navigate to="/403" replace />

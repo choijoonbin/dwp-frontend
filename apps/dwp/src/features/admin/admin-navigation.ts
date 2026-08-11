@@ -2,6 +2,7 @@ import {
   Boxes,
   Building2,
   ChartNoAxesCombined,
+  ClipboardCheck,
   Database,
   FolderTree,
   Fingerprint,
@@ -26,6 +27,7 @@ export type AdminView =
   | 'home-experience'
   | 'announcements'
   | 'access'
+  | 'access-reviews'
   | 'roles'
   | 'provisioning'
   | 'navigation'
@@ -45,6 +47,7 @@ export type AdminNavigationItem = {
   icon: LucideIcon;
   requiredResourceKey?: string;
   requiredPermissionCode?: string;
+  reviewerAccessible?: boolean;
 };
 
 export type AdminNavigationGroup = {
@@ -87,6 +90,13 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'access',
         path: '/admin/identity/access',
         icon: ShieldCheck,
+      },
+      {
+        section: 'identity',
+        view: 'access-reviews',
+        path: '/admin/identity/access-reviews',
+        icon: ClipboardCheck,
+        reviewerAccessible: true,
       },
       {
         section: 'identity',

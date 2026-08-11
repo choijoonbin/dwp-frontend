@@ -74,6 +74,7 @@ export function canAccessAdminNavigationItem(
     return false;
   }
 
+  if (item.reviewerAccessible) return !hasProviderControlPlaneRole(access.roles);
   if (!hasTenantControlPlaneRole(access.roles)) return false;
   if (!item.requiredResourceKey) return hasFullTenantAdminRole(access.roles);
   return (

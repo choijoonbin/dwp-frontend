@@ -37,6 +37,11 @@
         "title": "Identity access",
         "description": "Assign tenant roles and review effective access for workforce accounts."
       },
+      "access-reviews": {
+        "label": "Access reviews",
+        "title": "Access certification",
+        "description": "Certify direct and inherited access, capture accountable decisions, and govern remediation."
+      },
       "roles": {
         "label": "Roles & permissions",
         "title": "Role governance",
@@ -1276,6 +1281,105 @@
         "rotated": "SCIM secret rotated.",
         "lifecycle": "SCIM lifecycle changed."
       }
+    }
+  },
+  "accessReviews": {
+    "loading": "Loading access certification",
+    "loadingItems": "Loading review population",
+    "notAvailable": "Not available",
+    "campaigns": "Review campaigns",
+    "campaignListLabel": "Access review campaigns",
+    "itemListLabel": "Access review population",
+    "selectCampaign": "Select a campaign to inspect its review population.",
+    "noDescription": "No campaign description",
+    "noItems": "No access assignments matched this campaign.",
+    "noItemsDraft": "Activate the campaign to snapshot its review population.",
+    "emptyAdmin": "No access reviews yet",
+    "emptyAdminDescription": "Create a scoped campaign to certify current access.",
+    "emptyReviewer": "No reviews assigned to you",
+    "emptyReviewerDescription": "Assigned review campaigns will appear here.",
+    "progress": "{{completed}} of {{total}} decisions complete",
+    "metrics": {
+      "activeCampaigns": "Active campaigns",
+      "pendingDecisions": "Pending decisions",
+      "completedCampaigns": "Completed campaigns",
+      "manualRemediation": "Manual remediation"
+    },
+    "states": {
+      "DRAFT": "Draft",
+      "ACTIVE": "Active",
+      "COMPLETED": "Completed"
+    },
+    "scopes": {
+      "TENANT": "Entire tenant",
+      "ROLE": "Specific role",
+      "GROUP": "Specific group"
+    },
+    "reviewerStrategies": {
+      "TENANT_ADMIN": "Tenant administrators",
+      "NAMED_REVIEWER": "Named reviewer"
+    },
+    "sources": {
+      "DIRECT": "Direct",
+      "GROUP": "Inherited from group"
+    },
+    "decisions": {
+      "PENDING": "Pending",
+      "APPROVE": "Approve",
+      "REVOKE": "Revoke"
+    },
+    "remediation": {
+      "NOT_REQUIRED": "No remediation",
+      "PENDING": "Pending removal",
+      "APPLIED": "Applied",
+      "MANUAL_REQUIRED": "Owner review required"
+    },
+    "columns": {
+      "subject": "Identity",
+      "access": "Access under review",
+      "source": "Source",
+      "decision": "Decision",
+      "remediation": "Remediation"
+    },
+    "fields": {
+      "name": "Campaign name",
+      "description": "Purpose and control objective",
+      "scope": "Certification scope",
+      "role": "Role",
+      "group": "Group",
+      "reviewerStrategy": "Reviewer assignment",
+      "reviewer": "Reviewer",
+      "dueAt": "Decision due",
+      "reason": "Decision rationale"
+    },
+    "summary": {
+      "scope": "Scope: {{scope}}",
+      "due": "Due: {{value}}",
+      "reviewer": "Reviewer: {{value}}"
+    },
+    "actions": {
+      "new": "New review campaign",
+      "activate": "Activate & snapshot",
+      "complete": "Complete & remediate",
+      "review": "Record decision",
+      "reviewFor": "Review access for {{name}}"
+    },
+    "create": {
+      "title": "New access review campaign",
+      "snapshotNotice": "Activation creates an immutable review population from current direct and group-inherited access. Later changes do not silently rewrite the evidence set."
+    },
+    "decision": {
+      "title": "Certify access",
+      "choiceLabel": "Access decision",
+      "reasonHelp": "Provide at least 10 characters so the decision remains useful audit evidence.",
+      "groupRemediation": "Inherited access is sent to group-owner remediation so other members are not affected by an automatic group change.",
+      "submit": "Record decision"
+    },
+    "toasts": {
+      "created": "Access review campaign created as a draft.",
+      "activated": "Campaign activated and the review population was captured.",
+      "decided": "Access decision recorded.",
+      "completed": "Campaign completed and approved remediation started."
     }
   },
   "roleGovernance": {

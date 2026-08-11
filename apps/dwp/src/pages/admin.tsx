@@ -15,6 +15,7 @@ import { AuditInvestigations } from '../features/admin/audit-investigations';
 import { AuditGovernance } from '../features/admin/audit-governance';
 import { ApiMonitoring } from '../features/admin/api-monitoring';
 import { AccessManager } from '../features/admin/access-manager';
+import { AccessReviewManager } from '../features/admin/access-review-manager';
 import { AnnouncementManager } from '../features/admin/announcement-manager';
 import { HomeExperienceManager } from '../features/admin/home-experience-manager';
 import { RegistryManager } from '../features/admin/registry-manager';
@@ -38,6 +39,8 @@ function AdminContent({ view }: { view: AdminView }) {
   switch (view) {
     case 'access':
       return <AccessManager />;
+    case 'access-reviews':
+      return <AccessReviewManager />;
     case 'roles':
       return <RoleGovernanceManager />;
     case 'provisioning':
