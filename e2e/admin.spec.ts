@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
+import { mockAuthenticatedRuntime } from './support/runtime-access';
+
 type Item = {
   code: string;
   lifecycleState: 'DRAFT' | 'ACTIVE' | 'RETIRED';
@@ -42,6 +44,10 @@ type IdentityUser = {
   status: 'ACTIVE' | 'INACTIVE';
   mfaEnabled: boolean;
   roles: string[];
+  roleManagement: {
+    allowed: boolean;
+    reason: 'ALLOWED' | 'SELF' | 'IDENTITY_INACTIVE' | 'PROTECTED_ROLE';
+  };
   accessRevision: number;
   version: number;
 };
@@ -51,6 +57,7 @@ function envelope(data: unknown) {
 }
 
 async function mockAdminSession(page: Page) {
+  await mockAuthenticatedRuntime(page);
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -246,7 +253,9 @@ test('tenant administrators monitor API health and inspect a distributed trace',
   await expect(page.getByText('1,284', { exact: true })).toBeVisible();
   await expect(page.getByText('/api/people/v1/people', { exact: true }).first()).toBeVisible();
   await page.getByText('/api/people/v1/people', { exact: true }).last().click();
-  await expect(page.getByRole('heading', { name: 'Request trace', level: 2 })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Request trace', level: 2, exact: true })
+  ).toBeVisible();
   await expect(page.getByText('dwp-people-server', { exact: true })).toBeVisible();
 
   const accessibility = await new AxeBuilder({ page })
@@ -480,7 +489,7 @@ test('tenant administrators manage co-branding and publish home announcements', 
 
   await page.goto('/admin/experience/announcements');
   await expect(page.getByText('No announcements')).toBeVisible();
-  await page.getByRole('button', { name: 'New announcement' }).click();
+  await page.getByRole('button', { name: 'New announcement' }).first().click();
   await page.getByLabel('Title').fill('Planned maintenance');
   await page.getByLabel('Message').fill('The employee portal will be read-only from 22:00.');
   await page.getByRole('switch', { name: 'Pinned' }).check();
@@ -500,15 +509,25 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
   const identityAuditEvents: unknown[] = [];
   const identityRoles = [
     {
-      code: 'ADMIN',
-      name: 'Administrator',
-      description: 'Tenant administration',
+      code: 'WORKSPACE_MEMBER',
+      name: 'Workspace member',
+      description: 'Default workspace access',
+      roleFamily: 'WORKSPACE',
+      assignmentClass: 'BASELINE',
+      privileged: false,
+      assignmentMode: 'DIRECT',
+      conflictsWith: [],
       status: 'ACTIVE',
     },
     {
-      code: 'EMPLOYEE',
-      name: 'Employee',
-      description: 'Workspace member',
+      code: 'HR_ADMIN',
+      name: 'HR administrator',
+      description: 'Workforce administration',
+      roleFamily: 'PEOPLE',
+      assignmentClass: 'DELEGATED',
+      privileged: true,
+      assignmentMode: 'DIRECT',
+      conflictsWith: ['AUDITOR'],
       status: 'ACTIVE',
     },
   ];
@@ -520,6 +539,7 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
       status: 'ACTIVE',
       mfaEnabled: true,
       roles: ['ADMIN'],
+      roleManagement: { allowed: false, reason: 'SELF' },
       accessRevision: 0,
       version: 0,
     },
@@ -529,7 +549,8 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
       email: 'operations@dwp.local',
       status: 'ACTIVE',
       mfaEnabled: false,
-      roles: ['EMPLOYEE'],
+      roles: ['WORKSPACE_MEMBER'],
+      roleManagement: { allowed: true, reason: 'ALLOWED' },
       accessRevision: 0,
       version: 0,
     },
@@ -638,6 +659,24 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
         occurredAt: '2026-08-08T09:00:00Z',
       });
       await route.fulfill({ contentType: 'application/json', body: envelope(detail) });
+      return;
+    }
+    if (request.method() === 'GET' && suffix === '/WORK_PRIORITY/audit-events') {
+      const content = auditEvents.filter(
+        (event) =>
+          (event.targetType === 'REFERENCE_SET' && event.targetId === 'WORK_PRIORITY') ||
+          (event.targetType === 'REFERENCE_ITEM' && event.targetId.startsWith('WORK_PRIORITY/'))
+      );
+      await route.fulfill({
+        contentType: 'application/json',
+        body: envelope({
+          content,
+          page: 0,
+          size: 100,
+          totalElements: content.length,
+          totalPages: content.length ? 1 : 0,
+        }),
+      });
       return;
     }
     if (request.method() === 'GET' && suffix === '/WORK_PRIORITY') {
@@ -782,7 +821,7 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
     })
   );
 
-  await page.goto('/admin');
+  await page.goto('/admin/identity/access');
   await expect(page.getByTestId('admin-shell')).toBeVisible();
   await expect(page.getByTestId('desktop-sidebar')).toHaveCount(0);
   const adminSidebar =
@@ -801,10 +840,9 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
       name: 'Administration navigation',
     });
     await expect(adminNavigation).toBeVisible();
-    await expect(adminNavigation.getByRole('button', { name: 'People & access' })).toHaveAttribute(
-      'aria-expanded',
-      'true'
-    );
+    await expect(
+      adminNavigation.getByRole('button', { name: 'Identity & access' })
+    ).toHaveAttribute('aria-expanded', 'true');
     await expect(adminNavigation.getByRole('link', { name: 'Access control' })).toHaveAttribute(
       'aria-current',
       'page'
@@ -825,9 +863,12 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
   await expect(page.getByRole('button', { name: 'Edit roles for Admin User' })).toBeDisabled();
   await page.getByRole('button', { name: 'Edit roles for Operations Lead' }).click();
   const accessDialog = page.getByRole('dialog', { name: 'Edit access' });
-  await accessDialog.getByRole('checkbox', { name: /Administrator/ }).check();
+  await accessDialog.getByRole('checkbox', { name: /HR administrator/ }).check();
+  await accessDialog
+    .getByLabel('Change justification')
+    .fill('Grant workforce administration duties.');
   await accessDialog.getByRole('button', { name: 'Save access' }).click();
-  await expect(tenantUsers).toContainText('ADMIN');
+  await expect(tenantUsers).toContainText('HR_ADMIN');
 
   await page.goto('/admin/platform/reference-data');
   await expect(page.getByText('No reference sets')).toBeVisible();
@@ -852,7 +893,7 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
       : page.getByRole('grid', { name: 'Reference items' });
   await expect(referenceItems).toContainText('HIGH');
 
-  await page.getByRole('button', { name: 'Activate reference set' }).click();
+  await page.getByRole('button', { name: 'Activate', exact: true }).click();
   await page
     .getByRole('dialog', { name: 'Activate reference set?' })
     .getByRole('button', {
@@ -860,6 +901,9 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
     })
     .click();
   await expect(page.getByText('Active').first()).toBeVisible();
+  await page.getByRole('tab', { name: 'Change activity' }).click();
+  await expect(page.getByText('Reference set activated', { exact: true })).toBeVisible();
+  await expect(page.getByText('Reference value created', { exact: true })).toBeVisible();
 
   await page.goto('/admin/platform/registry');
   const registryEntries =

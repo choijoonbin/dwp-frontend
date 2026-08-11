@@ -308,6 +308,7 @@
     "notAvailable": "Not available",
     "masked": "Masked",
     "filters": {
+      "label": "People filters",
       "status": "Worker status",
       "organization": "Organization",
       "grade": "Job grade",
@@ -316,6 +317,21 @@
       "asOf": "Effective date",
       "all": "All",
       "reset": "Reset filters ({{count}})"
+    },
+    "views": {
+      "label": "Saved views",
+      "personal": "Personal",
+      "shared": "Shared",
+      "default": "Default"
+    },
+    "grid": {
+      "toolbar": "People grid tools",
+      "export": "Export people CSV",
+      "columnPresets": {
+        "label": "Column view",
+        "operational": "Operational details",
+        "compact": "Essential details"
+      }
     },
     "status": {
       "ALL": "All statuses",
@@ -353,6 +369,7 @@
       "directReports": "{{count}} direct reports",
       "noDirectReports": "No direct reports",
       "assignments": "Effective assignments",
+      "viewInOrganization": "View in organization chart",
       "primary": "Primary",
       "current": "Current"
     }
@@ -399,7 +416,10 @@
       "closeDetails": "Close details",
       "focusOrganization": "Focus this organization",
       "showCompany": "Show all SKAX",
-      "scenarios": "Change scenarios"
+      "scenarios": "Change scenarios",
+      "copyViewLink": "Copy current organization view link",
+      "copyViewLinkSuccess": "The current organization view link was copied.",
+      "copyViewLinkError": "The organization view link could not be copied."
     },
     "legend": {
       "supervisory": "Primary reporting",
@@ -856,6 +876,12 @@
       "connectors": "Connector instances",
       "mappings": "Mapping profiles",
       "runs": "HRIS synchronization runs",
+      "empty": {
+        "title": "Connect HRIS ingestion",
+        "description": "Register the source and adapter, then validate the secret reference, mapping, and connection before activation.",
+        "permissionTitle": "HRIS connections are not available",
+        "permissionDescription": "After an HR administrator configures a connector, its run state and synchronization results will appear here."
+      },
       "columns": {
         "started": "Started",
         "source": "Source",

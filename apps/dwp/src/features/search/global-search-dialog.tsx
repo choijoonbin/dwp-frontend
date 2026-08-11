@@ -1,7 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { AppWindow, BookOpenText, BriefcaseBusiness, Search, Sparkles, X } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import {
+  AppWindow,
+  BriefcaseBusiness,
+  Building2,
+  Search,
+  Sparkles,
+  UserRound,
+  X,
+} from 'lucide-react';
+import {
+  getOrganizationChart,
+  getWorkspaceWorkQueue,
+  listPeople,
+} from '@dwp-frontend/shared-utils';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -14,7 +29,6 @@ import ButtonBase from '@mui/material/ButtonBase';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { localizeWorkItems } from '../work-hub/reference-data';
 import {
   createAskSearchItem,
   createGlobalSearchItems,
@@ -27,7 +41,8 @@ import type { GlobalSearchItem, GlobalSearchKind } from './global-search-model';
 const resultIcon: Record<GlobalSearchKind, typeof Search> = {
   app: AppWindow,
   work: BriefcaseBusiness,
-  knowledge: BookOpenText,
+  person: UserRound,
+  organization: Building2,
   ask: Sparkles,
 };
 
@@ -36,6 +51,7 @@ type GlobalSearchDialogProps = {
   apps: readonly HomeAppDefinition[];
   includeWork: boolean;
   includeAsk: boolean;
+  includePeople: boolean;
   onClose: () => void;
 };
 
@@ -44,6 +60,7 @@ export function GlobalSearchDialog({
   apps,
   includeWork,
   includeAsk,
+  includePeople,
   onClose,
 }: GlobalSearchDialogProps) {
   const { t } = useTranslation('shell');
@@ -54,9 +71,53 @@ export function GlobalSearchDialog({
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
+  const workQuery = useQuery({
+    queryKey: ['workspace', 'work-queue'],
+    queryFn: getWorkspaceWorkQueue,
+    enabled: open && includeWork,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const normalizedQuery = query.trim();
+  const peopleQuery = useQuery({
+    queryKey: ['global-search', 'people', normalizedQuery],
+    queryFn: () => listPeople({ query: normalizedQuery, size: 20, surface: 'directory' }),
+    enabled: open && includePeople && normalizedQuery.length >= 2,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const organizationQuery = useQuery({
+    queryKey: ['global-search', 'organizations'],
+    queryFn: () => getOrganizationChart({ surface: 'directory', depth: 10 }),
+    enabled: open && includePeople,
+    staleTime: 300_000,
+    retry: 1,
+  });
+  const workItems = useMemo(
+    () =>
+      (workQuery.data?.items ?? []).map((item) => ({
+        ...item,
+        due: item.dueAt
+          ? formatDate(new Date(item.dueAt), { dateStyle: 'medium', timeStyle: 'short' })
+          : tWork('workPage.noDueDate'),
+      })),
+    [tWork, workQuery.data?.items]
+  );
   const catalog = useMemo(
-    () => createGlobalSearchItems(apps, includeWork ? localizeWorkItems(tWork) : [], includeAsk, t),
-    [apps, includeAsk, includeWork, t, tWork]
+    () =>
+      createGlobalSearchItems(apps, includeWork ? workItems : [], t, {
+        people: includePeople ? peopleQuery.data?.items : [],
+        organizations: includePeople ? organizationQuery.data?.organizations : [],
+      }),
+    [
+      apps,
+      includePeople,
+      includeWork,
+      organizationQuery.data?.organizations,
+      peopleQuery.data?.items,
+      t,
+      workItems,
+    ]
   );
   const results = useMemo(() => {
     const matches = filterGlobalSearchItems(catalog, query);
@@ -67,6 +128,14 @@ export function GlobalSearchDialog({
   useEffect(() => setActiveIndex(0), [query]);
   useEffect(() => {
     if (!open) setQuery('');
+  }, [open]);
+  useEffect(() => {
+    if (!open) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      searchInputRef.current?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, [open]);
 
   const close = () => {
@@ -101,7 +170,7 @@ export function GlobalSearchDialog({
       aria-labelledby="global-search-title"
       slotProps={{
         transition: {
-          onEntered: () => searchInputRef.current?.focus(),
+          onEntered: () => searchInputRef.current?.focus({ preventScroll: true }),
         },
         backdrop: {
           sx: {
@@ -188,6 +257,16 @@ export function GlobalSearchDialog({
       <Divider />
 
       <Box sx={{ overflowY: 'auto', p: { xs: 1, sm: 1.5 }, minHeight: 120 }}>
+        {(workQuery.isError || peopleQuery.isError || organizationQuery.isError) && (
+          <Typography
+            role="status"
+            variant="caption"
+            color="warning.main"
+            sx={{ display: 'block', px: 1.25, pb: 0.5 }}
+          >
+            {t('search.partialResults')}
+          </Typography>
+        )}
         <Typography
           component="p"
           variant="overline"

@@ -3,50 +3,45 @@ import { useTranslation } from 'react-i18next';
 import {
   Building2,
   BadgeDollarSign,
+  Braces,
   ClipboardList,
+  Database,
   Gauge,
   HeartPulse,
-  Home,
   LifeBuoy,
   ListChecks,
-  Menu,
-  ShieldCheck,
+  Settings2,
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { foundationTokens } from '@dwp-frontend/design-system/foundation';
-import { getProviderOperatorProfile } from '@dwp-frontend/shared-utils';
+import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
+import { getProviderOperatorProfile } from '@dwp-frontend/shared-utils/api/provider-control-api';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
-import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
-import AppBar from '@mui/material/AppBar';
-import Button from '@mui/material/Button';
-import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 
-import { AccountMenu } from '../components/account-menu';
 import { BrandLockup } from '../components/brand-lockup';
-import { FullscreenControl, NotificationMenu, SearchControl } from '../components/shell-controls';
+import { ShellHeader } from '../components/shell-header';
 import { useCurrentProviderSupportContext } from '../features/provider/use-provider-support-context';
-
-const SIDEBAR_WIDTH = foundationTokens.layout.adminNavigationExpanded;
-const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
+import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 
 export function ProviderLayout() {
   const { t } = useTranslation('provider');
+  const shell = shellRegistry.provider;
+  const sidebarWidth = shell.desktopNavigationWidth;
   const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const supportContext = useCurrentProviderSupportContext();
   const operator = useQuery({
     queryKey: ['provider', 'operator'],
     queryFn: getProviderOperatorProfile,
+    staleTime: 30_000,
   });
   const permissions = operator.data?.permissions ?? [];
   const navigationGroups = [
@@ -95,6 +90,18 @@ export function ProviderLayout() {
           permission: 'COMMERCIAL_READ',
         },
         {
+          path: '/provider/code-contracts',
+          label: t('navigation.codeContracts'),
+          icon: Braces,
+          permission: 'CATALOG_READ',
+        },
+        {
+          path: '/provider/data-governance',
+          label: t('navigation.dataGovernance'),
+          icon: Database,
+          permission: 'DATA_GOVERNANCE_READ',
+        },
+        {
           path: '/provider/audit',
           label: t('navigation.audit'),
           icon: ClipboardList,
@@ -108,7 +115,7 @@ export function ProviderLayout() {
   }));
   const navigation = (onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ minHeight: HEADER_HEIGHT, px: 2, display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ minHeight: shellHeaderHeight, px: 2, display: 'flex', alignItems: 'center' }}>
         <BrandLockup
           variant="product-full"
           label={t('shell.title')}
@@ -124,6 +131,22 @@ export function ProviderLayout() {
           {operator.data?.displayName ?? t('shell.globalScope')}
         </Typography>
       </Box>
+      {operator.isError && !operator.data && (
+        <Box role="alert" sx={{ mx: 1.5, mb: 0.75, p: 1.25, bgcolor: 'action.hover' }}>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+            {t('errors.operatorProfile')}
+          </Typography>
+          <ActionButton
+            intent="quiet"
+            size="small"
+            disabled={operator.isFetching}
+            onClick={() => void operator.refetch()}
+            sx={{ mt: 0.5, px: 0 }}
+          >
+            {t('actions.retryLoad')}
+          </ActionButton>
+        </Box>
+      )}
       <List
         component="nav"
         aria-label={t('shell.navigationLabel')}
@@ -178,19 +201,19 @@ export function ProviderLayout() {
         )}
       </List>
       <Box sx={{ p: 1.5, borderTop: 1, borderColor: 'divider' }}>
-        <Button
+        <ActionButton
           component={NavLink}
-          to={supportContext.data ? '/admin' : '/'}
+          to={supportContext.data ? '/admin' : '/account/settings/appearance'}
           fullWidth
-          color="inherit"
-          startIcon={supportContext.data ? <LifeBuoy size={17} /> : <Home size={17} />}
+          intent="quiet"
+          startIcon={supportContext.data ? <LifeBuoy size={17} /> : <Settings2 size={17} />}
           onClick={onNavigate}
           sx={{ justifyContent: 'flex-start' }}
         >
-          {t(supportContext.data ? 'shell.backToTenantSupport' : 'shell.backToWorkspace', {
+          {t(supportContext.data ? 'shell.backToTenantSupport' : 'shell.accountSettings', {
             tenant: supportContext.data?.tenantName,
           })}
-        </Button>
+        </ActionButton>
       </Box>
     </Box>
   );
@@ -201,7 +224,7 @@ export function ProviderLayout() {
         sx={{
           position: 'fixed',
           inset: '0 auto 0 0',
-          width: SIDEBAR_WIDTH,
+          width: sidebarWidth,
           zIndex: (theme) => theme.zIndex.drawer,
           display: { xs: 'none', lg: 'block' },
           bgcolor: 'background.paper',
@@ -214,72 +237,35 @@ export function ProviderLayout() {
       <Drawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
-        slotProps={{ paper: { sx: { width: SIDEBAR_WIDTH } } }}
+        slotProps={{ paper: { sx: { width: sidebarWidth } } }}
       >
-        {navigation(() => setMobileOpen(false))}
+        <Box data-testid="provider-mobile-sidebar" sx={{ height: 1 }}>
+          {navigation(() => setMobileOpen(false))}
+        </Box>
       </Drawer>
-      <AppBar
-        position="fixed"
-        color="default"
-        elevation={0}
-        sx={{
-          width: { xs: 1, lg: `calc(100% - ${SIDEBAR_WIDTH}px)` },
-          ml: { xs: 0, lg: `${SIDEBAR_WIDTH}px` },
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
+      <ShellHeader
+        testId="provider-header"
+        shellKey={shell.key}
+        scope={shell.scope}
+        desktopOffset={sidebarWidth}
+        context={{ icon: shell.context.icon, label: t(shell.context.labelKey) }}
+        navigation={{
+          label: t('shell.openNavigation'),
+          onOpen: () => setMobileOpen(true),
         }}
-      >
-        <Toolbar
-          disableGutters
-          sx={{ minHeight: `${HEADER_HEIGHT}px !important`, px: { xs: 1, md: 2 } }}
-        >
-          <IconButton
-            aria-label={t('shell.openNavigation')}
-            onClick={() => setMobileOpen(true)}
-            sx={{ mr: 0.5, display: { lg: 'none' } }}
-          >
-            <Menu size={21} />
-          </IconButton>
-          <Stack direction="row" alignItems="center" gap={1}>
-            <ShieldCheck size={18} />
-            <Typography variant="subtitle2">{t('shell.title')}</Typography>
-          </Stack>
-          <Box sx={{ flexGrow: 1 }} />
-          <SearchControl />
-          <Box
-            sx={{
-              ml: { xs: 0, md: 1.5 },
-              pl: { xs: 0, md: 1 },
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.5,
-            }}
-          >
-            <FullscreenControl />
-            <NotificationMenu />
-          </Box>
-          <Box
-            sx={{
-              ml: { xs: 0.25, md: 1 },
-              pl: { xs: 0, md: 1 },
-              borderLeft: { md: 1 },
-              borderColor: 'divider',
-            }}
-          >
-            <AccountMenu showIdentity />
-          </Box>
-        </Toolbar>
-      </AppBar>
+      />
       <Box
         component="main"
+        id="dwp-main-content"
+        tabIndex={-1}
         sx={{
-          pt: `${HEADER_HEIGHT}px`,
-          width: { xs: 1, lg: `calc(100% - ${SIDEBAR_WIDTH}px)` },
-          ml: { xs: 0, lg: `${SIDEBAR_WIDTH}px` },
+          pt: `${shellHeaderHeight}px`,
+          width: { xs: 1, lg: `calc(100% - ${sidebarWidth}px)` },
+          ml: { xs: 0, lg: `${sidebarWidth}px` },
           minWidth: 0,
           minHeight: '100dvh',
           overflowX: 'clip',
+          outline: 'none',
         }}
       >
         <Outlet />

@@ -1,11 +1,14 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 
+import { mockAuthenticatedRuntime } from './support/runtime-access';
+
 function envelope(data: unknown) {
   return JSON.stringify({ status: 'SUCCESS', message: 'OK', success: true, data });
 }
 
 async function mockAuditSession(page: Page) {
+  await mockAuthenticatedRuntime(page);
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',

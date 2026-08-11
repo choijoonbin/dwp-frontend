@@ -6,6 +6,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getHomeExperience,
   getHomePreference,
+  getWorkspaceApps,
+  getWorkspaceWorkQueue,
+  launchWorkspaceApp,
   resolveHomeBackgroundUrl,
   updateHomePreference,
   useAuth,
@@ -114,6 +117,18 @@ export default function HomePage() {
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });
+  const workspaceAppsQuery = useQuery({
+    queryKey: ['workspace', 'apps'],
+    queryFn: getWorkspaceApps,
+    staleTime: 60_000,
+    retry: 1,
+  });
+  const workQueueQuery = useQuery({
+    queryKey: ['workspace', 'work-queue'],
+    queryFn: getWorkspaceWorkQueue,
+    staleTime: 30_000,
+    retry: 1,
+  });
   const homeExperience = homeExperienceQuery.data;
   const homePreference = homePreferenceQuery.data;
   const widgetPreferences = useMemo(
@@ -170,6 +185,15 @@ export default function HomePage() {
     },
     onError: () => toast.error(t('page.saveError')),
   });
+  const appLaunchMutation = useMutation({
+    mutationFn: launchWorkspaceApp,
+    onSuccess: async (launch) => {
+      await queryClient.invalidateQueries({ queryKey: ['workspace', 'apps'] });
+      if (launch.launchMode === 'NATIVE') navigate(launch.launchTarget);
+      else window.open(launch.launchTarget, '_blank', 'noopener,noreferrer');
+    },
+    onError: () => toast.error(t('page.appLaunchError')),
+  });
 
   const saveHome = () => {
     preferenceMutation.mutate({
@@ -189,6 +213,25 @@ export default function HomePage() {
   const backgroundSize = homeExperience?.backgroundUrl ? 'cover' : { xs: 'cover', md: '195% auto' };
   const overlayOpacity = (homeExperience?.overlayOpacity ?? 18) / 100;
   const currentDate = formatDate(new Date(), { dateStyle: 'full' });
+  const workspaceUpdatedAt = workQueueQuery.data?.generatedAt
+    ? formatDate(new Date(workQueueQuery.data.generatedAt), {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : '-';
+  const runtimeAppById = new Map((workspaceAppsQuery.data ?? []).map((app) => [app.id, app]));
+  const launchApp = (app: (typeof entitledApps)[number]) => {
+    const runtimeApp = runtimeAppById.get(app.id);
+    if (!runtimeApp) {
+      navigate(app.route);
+      return;
+    }
+    if (runtimeApp.health === 'configuration-required') {
+      navigate(`/apps?app=${encodeURIComponent(runtimeApp.id)}`);
+      return;
+    }
+    appLaunchMutation.mutate(runtimeApp.id);
+  };
 
   return (
     <Box>
@@ -237,7 +280,7 @@ export default function HomePage() {
             customizationBusy={preferenceMutation.isPending}
             onStartEditing={beginEditing}
             onLayoutChange={setDraftAppLayout}
-            onLaunch={(app) => navigate(app.route)}
+            onLaunch={launchApp}
             onBrowseAll={() => navigate('/apps')}
           />
         </Box>
@@ -258,7 +301,7 @@ export default function HomePage() {
             {t('page.today')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {t('page.dateUpdated', { date: currentDate, time: '09:10' })}
+            {t('page.dateUpdated', { date: currentDate, time: workspaceUpdatedAt })}
           </Typography>
         </Box>
 
@@ -273,7 +316,7 @@ export default function HomePage() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mt: 2 }}>
           <Clock3 size={15} aria-hidden="true" />
           <Typography variant="caption" color="text.secondary">
-            {t('page.lastRefreshed', { time: '09:10' })}
+            {t('page.lastRefreshed', { time: workspaceUpdatedAt })}
           </Typography>
         </Box>
         {editorOpen && <Box aria-hidden="true" sx={{ height: 76 }} />}

@@ -6,6 +6,7 @@ import {
   resolveDataGridLocaleText,
   resolveGridExportStrategy,
   resolveGridProcessingModes,
+  resolveStickyColumnStyles,
 } from './enterprise-data-grid';
 
 const standardGrid = {
@@ -110,5 +111,22 @@ describe('resolveGridExportStrategy', () => {
         onExport: () => undefined,
       })
     ).toBe('server');
+  });
+});
+
+describe('resolveStickyColumnStyles', () => {
+  it('calculates stable offsets for leading and trailing operational columns', () => {
+    const styles = resolveStickyColumnStyles(
+      [
+        { field: 'id', width: 100 },
+        { field: 'title', minWidth: 220 },
+        { field: 'status', width: 120 },
+      ],
+      { left: ['id', 'title'], right: ['status'] }
+    );
+
+    expect(styles['& .MuiDataGrid-cell[data-field="id"]']).toMatchObject({ left: 0 });
+    expect(styles['& .MuiDataGrid-cell[data-field="title"]']).toMatchObject({ left: 100 });
+    expect(styles['& .MuiDataGrid-cell[data-field="status"]']).toMatchObject({ right: 0 });
   });
 });

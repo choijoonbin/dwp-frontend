@@ -49,9 +49,17 @@ corepack yarn test
 corepack yarn build
 corepack yarn build-storybook
 corepack yarn test:e2e
+corepack yarn test:performance
+corepack yarn test:visual
 corepack yarn test:storybook
 corepack yarn license:check
 ```
+
+`corepack yarn build`는 production manifest를 분석해 초기 Entry, 정적 의존 청크와 가장 큰
+지연 청크의 raw/gzip 예산을 강제합니다. Pull Request에서는 Shell 접근성·반응형 계약과
+Shell 준비 시간, SPA 전환 시간, CLS 예산도 GitHub Actions가 검증합니다. 운영 환경에서
+`VITE_WEB_VITALS_ENDPOINT`를 설정하면 LCP·INP·CLS를 개인정보나 원문 URL 없이 Route
+Group 단위로 전송합니다.
 
 브라우저 인증은 JavaScript Token Storage가 아니라 Backend의 `HttpOnly` Session
 Cookie를 사용합니다. 상태 변경 API는 `/api/auth/csrf`에서 받은 Token을

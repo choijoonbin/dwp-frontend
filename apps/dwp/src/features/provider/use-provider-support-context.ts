@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getProviderSupportSessionContext, useAuth } from '@dwp-frontend/shared-utils';
+import { getProviderSupportSessionContext } from '@dwp-frontend/shared-utils/api/provider-control-api';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
 import { hasProviderControlPlaneRole } from '../auth/control-plane-access';
 

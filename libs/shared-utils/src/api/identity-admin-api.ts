@@ -10,6 +10,10 @@ export type IdentityUserAccess = {
   status: string;
   mfaEnabled: boolean;
   roles: string[];
+  roleManagement: {
+    allowed: boolean;
+    reason: 'ALLOWED' | 'SELF' | 'IDENTITY_INACTIVE' | 'PROTECTED_ROLE';
+  };
   accessRevision: number;
   version: number;
   updatedAt?: string | null;
@@ -20,11 +24,17 @@ export type IdentityRole = {
   code: string;
   name: string;
   description?: string | null;
+  roleFamily: 'WORKSPACE' | 'PEOPLE' | 'AUDIT' | string;
+  assignmentClass: 'BASELINE' | 'DELEGATED' | string;
+  privileged: boolean;
+  assignmentMode: 'DIRECT' | string;
+  conflictsWith: string[];
   status: string;
 };
 
 export type ReplaceIdentityRolesRequest = {
   roleCodes: string[];
+  justification: string;
   accessRevision: number;
   version: number;
 };
@@ -47,10 +57,12 @@ export async function listIdentityRoles(): Promise<IdentityRole[]> {
 
 export async function replaceIdentityUserRoles(
   user: IdentityUserAccess,
-  roleCodes: string[]
+  roleCodes: string[],
+  justification: string
 ): Promise<IdentityUserAccess> {
   const request: ReplaceIdentityRolesRequest = {
     roleCodes,
+    justification,
     accessRevision: user.accessRevision,
     version: user.version,
   };

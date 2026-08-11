@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth, redirectToSignIn, setUnauthorizedHandler } from '@dwp-frontend/shared-utils';
+import { setUnauthorizedHandler } from '@dwp-frontend/shared-utils/axios-instance';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { redirectToSignIn } from '@dwp-frontend/shared-utils/auth/auth-redirect';
 
 export function AuthUnauthorizedHandler() {
   const navigate = useNavigate();

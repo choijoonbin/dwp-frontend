@@ -4,8 +4,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 import { I18nProvider } from '@dwp-frontend/shared-i18n';
-import { AuthProvider } from '@dwp-frontend/shared-utils';
-import { DwpDateTimeProvider } from '@dwp-frontend/design-system';
+import { AuthProvider } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { DwpDateTimeProvider } from '@dwp-frontend/design-system/enterprise/date-time/date-time-provider';
 import { DwpThemeProvider } from '@dwp-frontend/design-system/appearance';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
@@ -31,6 +31,14 @@ const tenantAppearance = {
   accentColor: '#2457D6',
   navigationPattern: 'sidebar' as const,
 };
+
+const scheduleObservability =
+  window.requestIdleCallback ?? ((callback: IdleRequestCallback) => window.setTimeout(callback, 1));
+scheduleObservability(
+  () =>
+    void import('./observability/web-vitals').then(({ registerWebVitals }) => registerWebVitals()),
+  { timeout: 2_000 }
+);
 
 function ProductDateTimeProvider({ children }: PropsWithChildren) {
   const { i18n } = useTranslation();

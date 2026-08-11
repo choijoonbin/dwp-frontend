@@ -1,4 +1,12 @@
-import { AlertCircle, Inbox, LoaderCircle } from 'lucide-react';
+import {
+  AlertCircle,
+  CircleHelp,
+  Inbox,
+  LoaderCircle,
+  SearchX,
+  Settings2,
+  ShieldX,
+} from 'lucide-react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -93,6 +101,63 @@ export function EmptyState({
   );
 }
 
+export type GuidedEmptyStateKind = 'first-use' | 'no-results' | 'permission' | 'empty';
+
+export type GuidedEmptyStateProps = {
+  kind: GuidedEmptyStateKind;
+  title: string;
+  description: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  secondaryActionLabel?: string;
+  onSecondaryAction?: () => void;
+  size?: StatePanelSize;
+};
+
+const guidedEmptyIcons = {
+  'first-use': Settings2,
+  'no-results': SearchX,
+  permission: ShieldX,
+  empty: CircleHelp,
+} as const;
+
+export function GuidedEmptyState({
+  kind,
+  title,
+  description,
+  actionLabel,
+  onAction,
+  secondaryActionLabel,
+  onSecondaryAction,
+  size,
+}: GuidedEmptyStateProps) {
+  const Icon = guidedEmptyIcons[kind];
+  const action =
+    actionLabel && onAction ? (
+      <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} justifyContent="center">
+        <ActionButton intent="primary" onClick={onAction}>
+          {actionLabel}
+        </ActionButton>
+        {secondaryActionLabel && onSecondaryAction && (
+          <ActionButton intent="secondary" onClick={onSecondaryAction}>
+            {secondaryActionLabel}
+          </ActionButton>
+        )}
+      </Stack>
+    ) : undefined;
+
+  return (
+    <StatePanel
+      role="status"
+      icon={<Icon size={28} strokeWidth={1.7} />}
+      title={title}
+      description={description}
+      action={action}
+      size={size}
+    />
+  );
+}
+
 export type ErrorStateProps = {
   title: string;
   description?: string;
@@ -100,6 +165,13 @@ export type ErrorStateProps = {
   onRetry?: () => void;
   retrying?: boolean;
   size?: StatePanelSize;
+};
+
+export type LocalErrorStateProps = ErrorStateProps & {
+  lastSuccessfulLabel?: string;
+  requestIdLabel?: string;
+  supportLabel?: string;
+  onSupport?: () => void;
 };
 
 export function ErrorState({
@@ -124,6 +196,60 @@ export function ErrorState({
         ) : undefined
       }
       size={size}
+    />
+  );
+}
+
+export function LocalErrorState({
+  title,
+  description,
+  retryLabel,
+  onRetry,
+  retrying = false,
+  size,
+  lastSuccessfulLabel,
+  requestIdLabel,
+  supportLabel,
+  onSupport,
+}: LocalErrorStateProps) {
+  return (
+    <StatePanel
+      role="alert"
+      icon={<AlertCircle size={28} strokeWidth={1.7} />}
+      title={title}
+      description={description}
+      size={size}
+      action={
+        <Stack alignItems="center" gap={1.25}>
+          {(lastSuccessfulLabel || requestIdLabel) && (
+            <Stack gap={0.25}>
+              {lastSuccessfulLabel && (
+                <Typography variant="caption">{lastSuccessfulLabel}</Typography>
+              )}
+              {requestIdLabel && (
+                <Typography
+                  variant="caption"
+                  sx={{ fontFamily: 'monospace', overflowWrap: 'anywhere' }}
+                >
+                  {requestIdLabel}
+                </Typography>
+              )}
+            </Stack>
+          )}
+          <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
+            {retryLabel && onRetry && (
+              <ActionButton intent="secondary" onClick={onRetry} loading={retrying}>
+                {retryLabel}
+              </ActionButton>
+            )}
+            {supportLabel && onSupport && (
+              <ActionButton intent="quiet" onClick={onSupport}>
+                {supportLabel}
+              </ActionButton>
+            )}
+          </Stack>
+        </Stack>
+      }
     />
   );
 }

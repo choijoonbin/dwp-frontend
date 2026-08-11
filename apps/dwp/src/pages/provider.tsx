@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import {
   BadgeDollarSign,
   Building2,
+  Braces,
   ClipboardList,
+  Database,
   Gauge,
   HeartPulse,
   LifeBuoy,
@@ -19,7 +21,9 @@ import Typography from '@mui/material/Typography';
 
 import {
   ProviderAudit,
+  ProviderCodeContracts,
   ProviderCommercial,
+  ProviderDataGovernance,
   ProviderHealth,
   ProviderOperations,
   ProviderOverview,
@@ -40,6 +44,16 @@ const views = {
     content: ProviderCommercial,
     permission: 'COMMERCIAL_READ',
   },
+  'code-contracts': {
+    icon: Braces,
+    content: ProviderCodeContracts,
+    permission: 'CATALOG_READ',
+  },
+  'data-governance': {
+    icon: Database,
+    content: ProviderDataGovernance,
+    permission: 'DATA_GOVERNANCE_READ',
+  },
   audit: { icon: ClipboardList, content: ProviderAudit, permission: 'AUDIT_READ' },
 } as const;
 
@@ -49,9 +63,18 @@ export default function ProviderPage() {
   const operator = useQuery({
     queryKey: ['provider', 'operator'],
     queryFn: getProviderOperatorProfile,
+    staleTime: 30_000,
   });
-  if (operator.isLoading) return <ProviderLoading />;
-  if (operator.isError) return <ProviderError error={operator.error} />;
+  if (operator.isLoading && !operator.data) return <ProviderLoading />;
+  if (operator.isError && !operator.data) {
+    return (
+      <ProviderError
+        error={operator.error}
+        onRetry={() => void operator.refetch()}
+        retrying={operator.isFetching}
+      />
+    );
+  }
   if (tenantId) {
     if (!operator.data?.permissions.includes('ESTATE_READ')) {
       return <Navigate to="/403" replace />;

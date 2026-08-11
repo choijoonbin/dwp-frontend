@@ -1,0 +1,68 @@
+name: Frontend quality
+
+on:
+  push:
+    branches: [dwp-dev]
+  pull_request:
+    branches: [dwp-dev]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Static, bundle, and runtime gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Install Chromium
+        run: corepack yarn playwright install --with-deps chromium
+
+      - name: Check formatting
+        run: corepack yarn format:check
+
+      - name: Lint source and design-system boundaries
+        run: corepack yarn lint
+
+      - name: Check types
+        run: corepack yarn typecheck
+
+      - name: Run unit tests
+        run: corepack yarn test
+
+      - name: Build and enforce bundle budgets
+        run: corepack yarn build
+
+      - name: Run shell contract gates
+        run: corepack yarn playwright test e2e/shell-contract.spec.ts --project=chromium
+
+      - name: Run responsive and accessibility gates
+        run: corepack yarn playwright test e2e/responsive-accessibility.spec.ts --project=chromium --workers=1
+
+      - name: Run runtime performance gate in isolation
+        run: corepack yarn test:performance
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

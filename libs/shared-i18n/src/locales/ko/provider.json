@@ -6,6 +6,7 @@
     "globalScope": "글로벌 딜리버리 범위",
     "navigationLabel": "프로바이더 메뉴",
     "openNavigation": "프로바이더 메뉴 열기",
+    "accountSettings": "계정 설정",
     "backToWorkspace": "워크스페이스로 돌아가기",
     "backToTenantSupport": "{{tenant}} 지원 콘솔로 돌아가기"
   },
@@ -16,6 +17,8 @@
     "health": "서비스 운영",
     "support": "권한 있는 지원",
     "commercial": "구독 및 권한",
+    "codeContracts": "제품 계약",
+    "dataGovernance": "데이터 거버넌스",
     "audit": "거버넌스 및 감사",
     "groups": {
       "operate": "운영",
@@ -48,6 +51,14 @@
       "title": "구독 및 권한",
       "description": "서비스 플랜, 고객 계약, 갱신 위험과 제품 권한 도입을 관리합니다."
     },
+    "code-contracts": {
+      "title": "제품 계약 레지스트리",
+      "description": "DWP 전역 코드 계약의 소유권, 호환성 경계 및 런타임 강제 상태를 점검합니다."
+    },
+    "data-governance": {
+      "title": "데이터 자산 및 흐름",
+      "description": "서비스 DB의 실시간 메타데이터, ER 관계, 서비스 간 흐름과 스키마 품질을 통합 점검합니다."
+    },
     "audit": {
       "title": "거버넌스 및 감사",
       "description": "고권한 작업, 변경, 접근 및 결과를 상관관계 단위로 조사합니다."
@@ -60,6 +71,7 @@
     "close": "닫기",
     "save": "저장",
     "refresh": "새로고침",
+    "retryLoad": "다시 시도",
     "preview": "계획 미리보기",
     "execute": "승인한 계획 실행",
     "retry": "실패 단계 재시도",
@@ -71,7 +83,9 @@
     "create": "등록"
   },
   "errors": {
+    "loadTitle": "프로바이더 정보를 불러오지 못했습니다",
     "load": "프로바이더 데이터를 불러오지 못했습니다.",
+    "operatorProfile": "운영자 권한 정보를 확인할 수 없습니다. 메뉴는 복구 후 표시됩니다.",
     "operation": "프로바이더 작업을 완료하지 못했습니다."
   },
   "fields": {
@@ -242,7 +256,14 @@
       "onboarding": "온보딩",
       "state": "수명주기"
     },
-    "actions": { "onboard": "회사 온보딩" }
+    "actions": { "onboard": "회사 온보딩" },
+    "empty": {
+      "firstUseTitle": "아직 관리 중인 테넌트가 없습니다",
+      "firstUseDescription": "회사 정보, 실행 환경, 초기 관리자와 제품 권한을 단계별로 검토하여 첫 테넌트를 온보딩하세요.",
+      "noResultsTitle": "조건에 맞는 테넌트가 없습니다",
+      "noResultsDescription": "검색어 또는 수명주기 필터를 조정하세요.",
+      "reset": "필터 초기화"
+    }
   },
   "onboarding": {
     "title": "회사 및 테넌트 온보딩",
@@ -492,6 +513,13 @@
     "revokeReason": "프로바이더 운영자가 지원 세션을 종료함",
     "revoked": "지원 세션을 회수했습니다.",
     "actions": { "create": "지원 세션 생성", "revoke": "지원 세션 회수" },
+    "empty": {
+      "firstUseTitle": "지원 세션이 없습니다",
+      "firstUseDescription": "고객 승인, 최소 권한 범위와 만료 시간을 확인한 후 필요한 경우에만 지원 세션을 생성하세요.",
+      "noResultsTitle": "선택한 상태의 지원 세션이 없습니다",
+      "noResultsDescription": "다른 상태를 선택하거나 전체 이력을 확인하세요.",
+      "showAll": "전체 이력 보기"
+    },
     "columns": {
       "tenant": "테넌트",
       "operator": "운영자",
@@ -569,6 +597,7 @@
       "PRIVILEGED_ACCESS": "고권한 접근",
       "SERVICE_HEALTH": "서비스 상태",
       "CHANGE_MANAGEMENT": "변경 관리",
+      "DATA_GOVERNANCE": "데이터 거버넌스",
       "TENANT_LIFECYCLE": "테넌트 수명주기"
     },
     "detail": {
@@ -577,6 +606,244 @@
       "snapshot": "비식별화된 이벤트 스냅샷"
     },
     "outcomes": { "SUCCESS": "성공", "FAILED": "실패", "DENIED": "거부" }
+  },
+  "codeContracts": {
+    "scope": {
+      "label": "제품 계약 범위",
+      "title": "DWP 전역 제품 코드 계약",
+      "description": "모든 고객 테넌트가 공통으로 사용하는 제품 실행 규칙입니다. 특정 고객사의 계약 데이터나 회사 기준정보가 아닙니다.",
+      "global": "전역 제품 범위",
+      "readOnly": "읽기 전용",
+      "releaseManaged": "제품 릴리스에서 관리"
+    },
+    "summary": {
+      "label": "제품 코드 계약 상태",
+      "registered": "검증 완료 계약",
+      "incomplete": "조치 필요 계약",
+      "values": "활성 표준 코드",
+      "coverage": "강제 적용률"
+    },
+    "filters": {
+      "searchPlaceholder": "계약 키, 이름, 소유 서비스 검색",
+      "searchLabel": "제품 코드 계약 검색",
+      "owner": "소유 서비스",
+      "allOwners": "모든 소유 서비스",
+      "level": "설정 수준",
+      "allLevels": "모든 설정 수준",
+      "kind": "계약 종류",
+      "allKinds": "모든 계약 종류",
+      "state": "검증 상태",
+      "allStates": "모든 검증 상태",
+      "toggle": "필터",
+      "toggleActive": "필터 {{count}}",
+      "reset": "필터 초기화"
+    },
+    "refresh": "제품 코드 계약 새로고침",
+    "resultCount": "{{total}}개 중 {{filtered}}개",
+    "pageStatus": "{{total}}개 중 {{from}}–{{to}}",
+    "previousPage": "이전 계약 페이지",
+    "nextPage": "다음 계약 페이지",
+    "listLabel": "제품 코드 계약 목록",
+    "detailLabel": "제품 코드 계약 상세",
+    "empty": "조건에 맞는 제품 코드 계약이 없습니다.",
+    "selectSet": "검토할 제품 코드 계약을 선택하세요.",
+    "listSummary": "값 {{values}} · 소비자 {{consumers}}",
+    "states": {
+      "REGISTERED": "검증 완료",
+      "INCOMPLETE": "조치 필요"
+    },
+    "levels": {
+      "SYSTEM": "시스템 고정",
+      "EXTENSIBLE": "제품 확장 가능",
+      "USER": "사용자 정의"
+    },
+    "kinds": {
+      "REFERENCE": "기준 코드",
+      "STATE_MACHINE": "상태 머신",
+      "SECURITY": "보안 계약",
+      "PROTOCOL": "프로토콜",
+      "OBSERVABILITY": "관측 계약",
+      "REGISTRY_META": "레지스트리 메타"
+    },
+    "tabs": {
+      "label": "제품 코드 계약 상세 보기",
+      "overview": "개요",
+      "values": "표준 코드값 {{count}}",
+      "consumers": "소비자·강제 방식 {{count}}"
+    },
+    "health": {
+      "registeredTitle": "런타임 강제 증적이 완전합니다",
+      "registeredDescription": "등록된 소비자 {{bindings}}개 중 {{enforced}}개가 검증 가능한 강제 방식에 연결되어 있습니다.",
+      "incompleteTitle": "계약 강제 증적을 보완해야 합니다",
+      "incompleteDescription": "등록된 소비자 {{bindings}}개 중 {{enforced}}개만 강제 방식이 확인되었습니다. 배포 전에 소유 서비스의 보완이 필요합니다."
+    },
+    "metadata": {
+      "owner": "책임 소유 서비스",
+      "validation": "검증 원천",
+      "source": "권위 원천",
+      "visibility": "런타임 노출",
+      "changePolicy": "변경 정책",
+      "enforcement": "강제 적용"
+    },
+    "visibility": {
+      "ADMIN_ONLY": "Provider 운영자 전용",
+      "RUNTIME": "허용된 런타임 소비자 조회 가능"
+    },
+    "enforcementSummary": "{{bindings}}개 중 {{enforced}}개 검증",
+    "valuesLabel": "제품 표준 코드값",
+    "valuesHelp": "안정 코드는 API와 데이터에 저장되는 제품 계약입니다. 표시명은 언어별로 해석되며 코드는 테넌트 관리자가 변경할 수 없습니다.",
+    "consumersHelp": "이 계약을 사용하는 서비스·API·DB·화면과 실제 강제 방식을 추적합니다. 누락된 연결은 배포 게이트에서 실패해야 합니다.",
+    "consumerFields": {
+      "service": "소비 서비스",
+      "enforcement": "사용·강제 방식",
+      "source": "소비 원천"
+    },
+    "columns": {
+      "code": "안정 코드",
+      "label": "표시명",
+      "origin": "출처",
+      "order": "순서"
+    },
+    "origins": {
+      "predefined": "제품 사전 정의",
+      "extension": "확장 값"
+    }
+  },
+  "dataGovernance": {
+    "metrics": {
+      "databases": "연결된 DB",
+      "tables": "논리 테이블",
+      "columns": "컬럼",
+      "relationships": "외래키 관계",
+      "storage": "총 저장공간"
+    },
+    "databaseTitle": "데이터 도메인 범위",
+    "databaseDescription": "DB는 서비스 소유권 경계이며, 내부 업무영역은 테이블 접두사와 검증된 주석으로 분류됩니다.",
+    "databaseSummary": "테이블 {{tables}} · 컬럼 {{columns}} · 문서화 {{documentation}}%",
+    "allDatabases": "전체 데이터 자산",
+    "globalScope": "서비스 경계 전체",
+    "providerOwned": "Provider 통제 범위",
+    "refresh": "원본 DB 다시 스캔",
+    "refreshCompleted": "네 데이터베이스의 메타데이터를 다시 스캔했습니다.",
+    "generatedAt": "마지막 스캔 {{value}}",
+    "assetCount": "{{count}}개 자산",
+    "searchPlaceholder": "테이블, 업무영역, 서비스 또는 설명 검색",
+    "tabs": {
+      "catalog": "자산 카탈로그",
+      "relationships": "ER 관계",
+      "lineage": "데이터 흐름",
+      "quality": "품질 및 정리 검토"
+    },
+    "filters": {
+      "domain": "업무영역",
+      "allDomains": "전체 업무영역",
+      "partitions": "물리 파티션 포함",
+      "severity": "심각도",
+      "allSeverities": "전체 심각도",
+      "reset": "필터 초기화"
+    },
+    "status": {
+      "AVAILABLE": "정상",
+      "UNAVAILABLE": "연결 실패"
+    },
+    "asset": {
+      "selectPrompt": "자산을 선택하면 컬럼 계약과 통제 상태를 확인할 수 있습니다.",
+      "noDescription": "검증된 업무 설명이 아직 없습니다.",
+      "tenantScoped": "테넌트 격리",
+      "reviewRequired": "소유권 결정 필요",
+      "columns": "컬럼",
+      "storage": "저장공간",
+      "relationships": "연결 관계",
+      "estimatedRows": "추정 행",
+      "columnContract": "컬럼 계약",
+      "listMeta": "컬럼 {{columns}} · 추정 {{rows}}행"
+    },
+    "columns": {
+      "name": "컬럼",
+      "type": "데이터 형식",
+      "controls": "통제",
+      "primaryKey": "기본키",
+      "foreignKey": "외래키"
+    },
+    "classification": {
+      "PUBLIC": "공개",
+      "INTERNAL": "내부",
+      "CONFIDENTIAL": "기밀",
+      "RESTRICTED": "제한"
+    },
+    "severity": {
+      "CRITICAL": "치명",
+      "HIGH": "높음",
+      "MEDIUM": "중간",
+      "LOW": "낮음"
+    },
+    "categories": {
+      "SOURCE_UNAVAILABLE": "메타데이터 연결",
+      "OWNERSHIP_REVIEW": "소유권 검토",
+      "MISSING_PRIMARY_KEY": "기본키",
+      "MISSING_DOCUMENTATION": "문서화",
+      "TIMEZONE_AMBIGUITY": "시간대 일관성",
+      "UNINDEXED_FOREIGN_KEY": "인덱스 검토",
+      "DUPLICATE_FOREIGN_KEY": "중복 제약조건",
+      "ANNOTATION_DRIFT": "카탈로그 드리프트",
+      "LINEAGE_DRIFT": "흐름 드리프트"
+    },
+    "findings": {
+      "SOURCE_UNAVAILABLE": {
+        "description": "구성된 원본 DB의 메타데이터를 읽을 수 없습니다.",
+        "recommendation": "스키마 변경을 승인하기 전에 읽기 전용 연결과 자격 증명을 복구하고 다시 스캔하세요."
+      },
+      "OWNERSHIP_REVIEW": {
+        "description": "발견된 자산의 운영 소유자와 유지 여부가 확정되지 않았습니다.",
+        "recommendation": "런타임 소유자를 지정하고 버전 마이그레이션을 통해 활성화, 통합 또는 폐기 결정을 기록하세요."
+      },
+      "MISSING_PRIMARY_KEY": {
+        "description": "논리 테이블에 안정적인 행 식별자가 없습니다.",
+        "recommendation": "중복 행과 하위 계약을 확인한 뒤 기본키를 추가하세요."
+      },
+      "MISSING_DOCUMENTATION": {
+        "description": "원본 카탈로그와 Provider 주석에 업무 설명이 없습니다.",
+        "recommendation": "다음 검토 전까지 목적, 소유권, 보존기간과 테넌트 경계를 문서화하세요."
+      },
+      "TIMEZONE_AMBIGUITY": {
+        "description": "일부 타임스탬프 컬럼에 시간대 의미가 정의되지 않았습니다.",
+        "recommendation": "UTC 변환 계약을 정하고 호환성 릴리스에서 timestamptz로 마이그레이션하세요."
+      },
+      "UNINDEXED_FOREIGN_KEY": {
+        "description": "외래키 조회를 지원하는 선두 인덱스가 확인되지 않았습니다.",
+        "recommendation": "삭제 및 조인 실행계획을 검증하고 운영 부하가 있는 관계에 선두 인덱스를 추가하세요."
+      },
+      "DUPLICATE_FOREIGN_KEY": {
+        "description": "동일한 컬럼 관계를 강제하는 외래키 제약조건이 중복되어 있습니다.",
+        "recommendation": "대표 제약조건 하나를 유지하고 중복 항목은 버전 마이그레이션으로 제거하세요."
+      },
+      "ANNOTATION_DRIFT": {
+        "description": "Provider 주석에 등록된 자산이 실시간 원본 카탈로그에서 발견되지 않았습니다.",
+        "recommendation": "원본 연결과 이름 변경 매핑을 확인하거나 오래된 주석을 폐기하세요."
+      },
+      "LINEAGE_DRIFT": {
+        "description": "등록된 데이터 흐름의 시작 또는 대상 자산이 원본 카탈로그에 없습니다.",
+        "recommendation": "소유 프로세스를 확인한 뒤 흐름 계약을 복구하거나 폐기하세요."
+      }
+    },
+    "relationships": {
+      "guidance": "{{database}} DB의 실제 외래키만 표시합니다. 점선은 선두 인덱스가 없어 실행계획 검토가 필요한 관계입니다."
+    },
+    "lineage": {
+      "guidance": "프로비저닝과 이벤트 전달처럼 DB 외래키로 표현할 수 없는 서비스 간 계약입니다. 움직이는 선은 비동기 이벤트 흐름입니다.",
+      "processes": "연결된 처리 계약"
+    },
+    "quality": {
+      "count": "{{count}}개 검토 항목 · {{categories}}개 범주",
+      "selectPrompt": "검토 항목을 선택하면 근거와 권장 조치를 확인할 수 있습니다.",
+      "recommendation": "권장 조치",
+      "evidence": "근거"
+    },
+    "graph": {
+      "columns": "컬럼 {{count}}",
+      "tenant": "테넌트",
+      "empty": "현재 범위에 연결된 데이터 자산이 없습니다."
+    }
   },
   "tenantDetail": {
     "back": "테넌트 자산",

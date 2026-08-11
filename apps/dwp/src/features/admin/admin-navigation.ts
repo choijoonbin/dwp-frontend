@@ -1,5 +1,4 @@
 import {
-  Braces,
   Boxes,
   Building2,
   ChartNoAxesCombined,
@@ -31,7 +30,6 @@ export type AdminView =
   | 'provisioning'
   | 'navigation'
   | 'reference-data'
-  | 'system-code-catalog'
   | 'registry'
   | 'api-monitoring'
   | 'audit'
@@ -113,12 +111,6 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'reference-data',
         path: '/admin/platform/reference-data',
         icon: Database,
-      },
-      {
-        section: 'platform',
-        view: 'system-code-catalog',
-        path: '/admin/platform/system-code-catalog',
-        icon: Braces,
       },
       {
         section: 'platform',

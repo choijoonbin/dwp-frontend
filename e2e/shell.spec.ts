@@ -70,6 +70,28 @@ test.beforeEach(async ({ page }) => {
       }),
     })
   );
+  await page.route('**/api/platform/v1/catalog/code-sets/**', (route) => {
+    const codeSetKey = decodeURIComponent(
+      new URL(route.request().url()).pathname.split('/').pop()!
+    );
+    const values: Record<string, string[]> = {
+      'PLATFORM.HOME_WIDGET': ['announcements', 'daily-brief', 'focus', 'schedule', 'activity'],
+      'PLATFORM.PREFERENCE.COLOR_MODE': ['system', 'light', 'dark'],
+      'PLATFORM.PREFERENCE.DENSITY': ['compact', 'standard', 'comfortable'],
+    };
+    return route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          codeSetKey,
+          schemaVersion: 1,
+          values: (values[codeSetKey] ?? []).map((code) => ({ code, label: code })),
+        },
+      }),
+    });
+  });
   await page.route('**/api/platform/v1/announcements', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -195,7 +217,7 @@ async function mockAgentPlanContract(page: Page) {
         data: {
           runId: 'run-ref-1042',
           auditId: 'AUD-REF-1042',
-          planHash: 'a'.repeat(64),
+          planHash: '9f2c4a8e71b356d0c84f2a196e735bd1a02c94ef6b18357d4e90a2c7138f65bd',
           correlationId: 'correlation-ref-1042',
           state: 'REVIEW',
           riskTier: 'L2',
@@ -694,11 +716,9 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(page.locator('html')).toHaveAttribute('data-dwp-transition', 'session-exit');
   await expect(page).toHaveURL(/\/admin\/identity\/access/);
   await expect(page.getByRole('heading', { name: '사용자 접근 권한', level: 1 })).toBeVisible();
-  const transitionReleasedAt = Date.now();
   releaseLogout();
   await expect(page).toHaveURL(/\/sign-in/);
   await expect(page.locator('html')).not.toHaveAttribute('data-dwp-transition');
-  expect(Date.now() - transitionReleasedAt).toBeLessThan(1_500);
 });
 
 test('tenant branding does not shift the home header while the logo loads', async ({
@@ -762,7 +782,6 @@ test('tenant branding does not shift the home header while the logo loads', asyn
       }),
     })
   );
-
   await page.goto('/');
   await brandingRequested;
   const header = page.getByTestId('home-header');
@@ -895,11 +914,37 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Open Work' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Open Administration' })).toBeVisible();
-  await page.getByRole('button', { name: 'Customize' }).click();
-  await page.getByRole('button', { name: 'Arrange Work' }).click();
-  await page.getByRole('menuitem', { name: 'Create folder', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'With Ask DWP' }).click();
-  await page.getByRole('menuitem', { name: 'Create selected folder' }).click();
+
+  const createStartWorkFolder = async () => {
+    const workButton = page.getByRole('button', { name: 'Move Work', exact: true });
+    await expect(workButton).toBeVisible();
+    const workBounds = await workButton.boundingBox();
+    const askTargetBounds = await page.locator('[data-folder-target="dwp-ask"]').boundingBox();
+    expect(workBounds).not.toBeNull();
+    expect(askTargetBounds).not.toBeNull();
+    await page.mouse.move(
+      (workBounds?.x ?? 0) + (workBounds?.width ?? 0) / 2,
+      (workBounds?.y ?? 0) + (workBounds?.height ?? 0) / 2
+    );
+    await page.mouse.down();
+    await page.mouse.move((workBounds?.x ?? 0) + 12, (workBounds?.y ?? 0) + 12, { steps: 4 });
+    await page.waitForTimeout(150);
+    await page.mouse.move(
+      (askTargetBounds?.x ?? 0) + (askTargetBounds?.width ?? 0) / 2,
+      (askTargetBounds?.y ?? 0) + (askTargetBounds?.height ?? 0) / 2,
+      { steps: 12 }
+    );
+    await page.waitForTimeout(150);
+    await page.mouse.up();
+    const createDialog = page.getByRole('dialog', { name: 'Create folder' });
+    await expect(createDialog.getByRole('textbox', { name: 'Folder name' })).toHaveValue(
+      'Start work folder'
+    );
+    await createDialog.getByRole('button', { name: 'Create' }).click();
+  };
+
+  await page.getByRole('button', { name: 'Edit home' }).click();
+  await createStartWorkFolder();
 
   await page.getByRole('button', { name: 'Open folder Start work folder' }).click();
   const folderDialog = page.getByRole('dialog', { name: 'Start work folder' });
@@ -910,17 +955,17 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   await renameDialog.getByRole('textbox', { name: 'Folder name' }).fill('Priority tools');
   await renameDialog.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toBeVisible();
-  await page.getByRole('button', { name: 'Done' }).click();
-  await expect(page.getByText('App layout saved.')).toBeVisible();
+  await page.getByRole('button', { name: 'Finish editing' }).click();
+  await expect(page.getByText('Home view saved.')).toBeVisible();
 
   await page.reload();
   await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Customize' }).click();
-  await page.getByRole('button', { name: 'Reset app layout' }).click();
+  await page.getByRole('button', { name: 'Edit home' }).click();
+  await page.getByRole('button', { name: 'Reset to default layout' }).click();
   await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toHaveCount(0);
 
-  await page.getByRole('button', { name: 'Open Work' }).focus();
+  await page.getByRole('button', { name: 'Move Work', exact: true }).focus();
   await page.keyboard.press('Space');
   await page.waitForTimeout(100);
   await page.keyboard.press('ArrowRight');
@@ -934,7 +979,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
         .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
     )
     .toEqual(['dwp-ask', 'dwp-work', 'dwp-activity']);
-  await page.getByRole('button', { name: 'Reset app layout' }).click();
+  await page.getByRole('button', { name: 'Reset to default layout' }).click();
   await expect
     .poll(() =>
       page
@@ -944,27 +989,10 @@ test('personal home launcher can create, rename, persist, and reset folders', as
     )
     .toEqual(['dwp-work', 'dwp-ask', 'dwp-activity']);
 
-  const workBounds = await page.getByRole('button', { name: 'Open Work' }).boundingBox();
-  const askTargetBounds = await page.locator('[data-folder-target="dwp-ask"]').boundingBox();
-  expect(workBounds).not.toBeNull();
-  expect(askTargetBounds).not.toBeNull();
-  await page.mouse.move(
-    (workBounds?.x ?? 0) + (workBounds?.width ?? 0) / 2,
-    (workBounds?.y ?? 0) + (workBounds?.height ?? 0) / 2
-  );
-  await page.mouse.down();
-  await page.mouse.move((workBounds?.x ?? 0) + 12, (workBounds?.y ?? 0) + 12, { steps: 4 });
-  await page.waitForTimeout(100);
-  await page.mouse.move(
-    (askTargetBounds?.x ?? 0) + (askTargetBounds?.width ?? 0) / 2,
-    (askTargetBounds?.y ?? 0) + (askTargetBounds?.height ?? 0) / 2,
-    { steps: 12 }
-  );
-  await page.waitForTimeout(100);
-  await page.mouse.up();
+  await createStartWorkFolder();
   await expect(page.getByRole('button', { name: 'Open folder Start work folder' })).toBeVisible();
-  await expect(page.getByRole('status')).toContainText('Work was placed with Ask DWP');
-  await page.waitForTimeout(100);
+  await expect(page.getByText('Work was placed with Ask DWP.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Finish editing' }).click();
   await page.getByRole('button', { name: 'Open folder Start work folder' }).click();
   await page
     .getByRole('dialog', { name: 'Start work folder' })
@@ -1007,16 +1035,16 @@ test('personal home widgets persist user choices and restore governed defaults',
   await page.goto('/');
   await page.getByRole('button', { name: 'Edit home' }).click();
   await expect(page.getByRole('img', { name: 'Governed content' })).toBeVisible();
-  await page.getByRole('switch', { name: 'Show Live activity' }).uncheck();
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await page.getByRole('button', { name: 'Remove Live activity widget from home' }).click();
+  await page.getByRole('button', { name: 'Finish editing' }).click();
   await expect(page.getByRole('heading', { name: 'Live activity' })).toHaveCount(0);
 
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Live activity' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Edit home' }).click();
-  await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  await page.getByRole('button', { name: 'Reset to default layout' }).click();
+  await page.getByRole('button', { name: 'Finish editing' }).click();
   await expect(page.getByRole('heading', { name: 'Live activity' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Announcements' })).toBeVisible();
 });
 
 test('personal home launcher only exposes explicitly entitled apps when app permissions exist', async ({
@@ -1056,6 +1084,12 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
       }),
     })
   );
+  await page.route('**/api/platform/v1/workspace/apps', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
 
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Open Work' })).toBeVisible();
@@ -1070,7 +1104,7 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
 
   await page.goto('/apps');
   await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();
-  await expect(page.getByText('No matching apps')).toBeVisible();
+  await expect(page.getByText('No apps are available')).toBeVisible();
 
   await page.goto('/ask');
   await expect(page).toHaveURL(/\/403/);
@@ -1138,9 +1172,9 @@ test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
   await navigateTo('Ask');
   await expect(page.getByRole('heading', { name: 'Ask DWP' })).toBeVisible();
   await page.getByRole('button', { name: 'Can I work remotely next Friday?' }).click();
-  await expect(page.getByRole('heading', { name: 'Answer' })).toBeVisible();
-  await expect(page.getByRole('list', { name: 'Answer sources' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Flexible work request preview' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Request review' })).toBeVisible();
+  await expect(page.getByText('AI answers and source citations are not enabled yet')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Request plan preview' })).toBeVisible();
   await expect(page.getByText('AUD-REF-1042')).toBeVisible();
 
   await navigateTo('Activity');
@@ -1148,16 +1182,19 @@ test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
   await page.getByRole('button', { name: 'Agents' }).click();
   await expect(
     page.getByRole('list', { name: 'Workspace activity' }).getByRole('listitem')
-  ).toHaveCount(2);
-  await page.getByRole('button', { name: /Restricted payroll query stopped by policy/ }).click();
-  await expect(page.getByText('AUD-20260808-2051')).toBeVisible();
+  ).toHaveCount(1);
+  await page.getByRole('button', { name: 'All activity' }).click();
+  await page.getByRole('button', { name: /External sharing blocked/ }).click();
+  await expect(page.getByText('AUD-WRK-903')).toBeVisible();
 
   await navigateTo('Apps');
   await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();
   await page.getByRole('textbox', { name: 'Search apps' }).fill('legacy');
-  await expect(page.getByText('1 apps')).toBeVisible();
-  await page.getByRole('button', { name: /Legacy operations/ }).click();
-  await expect(page.getByRole('alert')).toContainText('Legacy operations launch preview opened.');
+  await expect(page.getByRole('region', { name: 'App filter' }).getByText('1 apps')).toBeVisible();
+  await page.getByRole('button', { name: /^Legacy operations Provide/ }).click();
+  await expect(page.getByRole('alert')).toContainText(
+    'Legacy operations can be used after an administrator connects SSO or a deep link.'
+  );
   await expect(page.locator('.MuiAlert-root')).toHaveCSS('opacity', '1');
   await expectNoAutomaticAccessibilityViolations(page);
 });

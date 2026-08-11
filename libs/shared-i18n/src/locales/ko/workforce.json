@@ -308,6 +308,7 @@
     "notAvailable": "정보 없음",
     "masked": "마스킹됨",
     "filters": {
+      "label": "구성원 필터",
       "status": "재직 상태",
       "organization": "조직",
       "grade": "직급",
@@ -316,6 +317,21 @@
       "asOf": "기준일",
       "all": "전체",
       "reset": "필터 초기화 ({{count}})"
+    },
+    "views": {
+      "label": "저장된 보기",
+      "personal": "개인",
+      "shared": "공유",
+      "default": "기본"
+    },
+    "grid": {
+      "toolbar": "구성원 표 도구",
+      "export": "구성원 CSV 내보내기",
+      "columnPresets": {
+        "label": "열 보기",
+        "operational": "운영 정보",
+        "compact": "핵심 정보"
+      }
     },
     "status": {
       "ALL": "전체 상태",
@@ -353,6 +369,7 @@
       "directReports": "직속 보고자 {{count}}명",
       "noDirectReports": "직속 보고자 없음",
       "assignments": "유효 발령 이력",
+      "viewInOrganization": "조직도에서 보기",
       "primary": "주 발령",
       "current": "현재"
     }
@@ -399,7 +416,10 @@
       "closeDetails": "상세 정보 닫기",
       "focusOrganization": "이 조직을 기준으로 보기",
       "showCompany": "SKAX 전체 보기",
-      "scenarios": "변경 시나리오"
+      "scenarios": "변경 시나리오",
+      "copyViewLink": "현재 조직도 링크 복사",
+      "copyViewLinkSuccess": "현재 조직도 보기가 링크로 복사되었습니다.",
+      "copyViewLinkError": "조직도 링크를 복사하지 못했습니다."
     },
     "legend": {
       "supervisory": "주 보고 관계",
@@ -856,6 +876,12 @@
       "connectors": "커넥터 인스턴스",
       "mappings": "매핑 프로필",
       "runs": "HRIS 동기화 실행",
+      "empty": {
+        "title": "HRIS 수집을 연결하세요",
+        "description": "원천과 어댑터를 등록하고 비밀 참조, 매핑, 연결 검사 순서로 검증한 뒤 활성화하세요.",
+        "permissionTitle": "HRIS 연결을 조회할 수 없습니다",
+        "permissionDescription": "HR 관리자가 커넥터를 설정하면 실행 상태와 동기화 결과를 이곳에서 확인할 수 있습니다."
+      },
       "columns": {
         "started": "시작",
         "source": "원천",

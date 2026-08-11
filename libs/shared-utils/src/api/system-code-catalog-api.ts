@@ -55,10 +55,18 @@ export type SystemCodeSetHealth = Pick<
   | 'validationSource'
   | 'runtimeVisibility'
 > & {
+  displayName: string;
+  schemaVersion: number;
   valueCount: number;
   bindingCount: number;
   enforcedBindingCount: number;
   registrationState: 'REGISTERED' | 'INCOMPLETE';
+};
+
+export type SystemCodeCatalogSnapshot = {
+  catalogScope: 'GLOBAL_PRODUCT';
+  changePolicy: 'RELEASE_MANAGED';
+  codeSets: SystemCodeSetHealth[];
 };
 
 export async function getSystemCodeSet(
@@ -72,20 +80,20 @@ export async function getSystemCodeSet(
   return response.data.data;
 }
 
-export async function getAdminSystemCodeSet(
+export async function getProviderSystemCodeSet(
   setKey: string,
   locale: string
 ): Promise<SystemCodeSet> {
   const search = new URLSearchParams({ locale });
   const response = await axiosInstance.get<ApiResponse<SystemCodeSet>>(
-    `/api/platform/v1/admin/code-catalog/code-sets/${encodeURIComponent(setKey)}?${search.toString()}`
+    `/api/provider/v1/admin/code-catalog/code-sets/${encodeURIComponent(setKey)}?${search.toString()}`
   );
   return response.data.data;
 }
 
-export async function listSystemCodeSetHealth(): Promise<SystemCodeSetHealth[]> {
-  const response = await axiosInstance.get<ApiResponse<SystemCodeSetHealth[]>>(
-    '/api/platform/v1/admin/code-catalog/code-sets'
+export async function getProviderSystemCodeCatalog(): Promise<SystemCodeCatalogSnapshot> {
+  const response = await axiosInstance.get<ApiResponse<SystemCodeCatalogSnapshot>>(
+    '/api/provider/v1/admin/code-catalog/code-sets'
   );
   return response.data.data;
 }

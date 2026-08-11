@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { getSystemCodeSet } from '@dwp-frontend/shared-utils';
+import { getSystemCodeSet } from '@dwp-frontend/shared-utils/api/system-code-catalog-api';
 
 export function useSystemCodeOptions<T extends string>(
   codeSetKey: string,

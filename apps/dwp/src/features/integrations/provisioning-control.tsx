@@ -30,7 +30,7 @@ import {
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import { EnterpriseDataGrid, GuidedEmptyState } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -374,16 +374,27 @@ export function IdentityProvisioningManager() {
           </Button>
         </Stack>
       </Stack>
-      <EnterpriseDataGrid
-        ariaLabel={t('provisioning.scim.title')}
-        rows={connectors}
-        columns={columns}
-        getRowId={(row) => row.connectorId}
-        hideFooter
-        minVisibleRows={3}
-        maxVisibleRows={8}
-        sx={{ border: 0, borderRadius: 0 }}
-      />
+      {connectors.length === 0 ? (
+        <GuidedEmptyState
+          kind="first-use"
+          title={t('provisioning.scim.empty.title')}
+          description={t('provisioning.scim.empty.description')}
+          actionLabel={t('provisioning.scim.actions.new')}
+          onAction={() => setCreateOpen(true)}
+        />
+      ) : (
+        <EnterpriseDataGrid
+          ariaLabel={t('provisioning.scim.title')}
+          rows={connectors}
+          columns={columns}
+          getRowId={(row) => row.connectorId}
+          hideFooter
+          minVisibleRows={3}
+          maxVisibleRows={8}
+          stickyColumns={{ left: ['displayName'], right: ['actions'] }}
+          sx={{ border: 0, borderRadius: 0 }}
+        />
+      )}
       <ScimCreateDialog
         open={createOpen}
         busy={busy}
@@ -406,6 +417,7 @@ export function WorkforceDataOperations() {
   const [busy, setBusy] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const canManage = (auth.user?.roles ?? []).some((role) => ['ADMIN', 'HR_ADMIN'].includes(role));
+  const syntheticImportEnabled = import.meta.env.DEV;
   const sources = useQuery({
     queryKey: ['workforce', 'hris', 'sources'],
     queryFn: listHrisSources,
@@ -537,12 +549,14 @@ export function WorkforceDataOperations() {
           <Typography component="h2" variant="subtitle1">
             {t('provisioning.hris.title')}
           </Typography>
-          <Chip
-            label={t('provisioning.hris.synthetic')}
-            size="small"
-            color="warning"
-            variant="outlined"
-          />
+          {syntheticImportEnabled && (
+            <Chip
+              label={t('provisioning.hris.synthetic')}
+              size="small"
+              color="warning"
+              variant="outlined"
+            />
+          )}
           {!canManage && <Chip label={t('pages.context.readOnly')} size="small" />}
         </Stack>
         <Stack direction="row" justifyContent="flex-end">
@@ -553,132 +567,154 @@ export function WorkforceDataOperations() {
           >
             {t('provisioning.hris.actions.newConnector')}
           </Button>
-          <Button
-            startIcon={<Play size={17} />}
-            disabled={busy || !canManage}
-            onClick={() => void runImport()}
-          >
-            {t('provisioning.hris.actions.importSample')}
-          </Button>
+          {syntheticImportEnabled && (
+            <Button
+              startIcon={<Play size={17} />}
+              disabled={busy || !canManage}
+              onClick={() => void runImport()}
+            >
+              {t('provisioning.hris.actions.importSample')}
+            </Button>
+          )}
         </Stack>
       </Stack>
-      <Box
-        sx={{
-          px: 2,
-          pb: 2,
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-          gap: 0,
-        }}
-      >
-        <Box sx={{ py: 1.5, pr: { md: 2 }, borderRight: { md: 1 }, borderColor: 'divider' }}>
-          <Typography variant="caption" color="text.secondary">
-            {t('provisioning.hris.sources')}
-          </Typography>
-          {(sources.data ?? []).map((source) => (
-            <Typography key={source.sourceKey} variant="body2" fontWeight={700}>
-              {source.name}{' '}
-              <Typography component="span" variant="caption" color="text.secondary">
-                / {source.systemType}
+      {(connectors.data?.length ?? 0) === 0 ? (
+        <GuidedEmptyState
+          kind={canManage ? 'first-use' : 'permission'}
+          title={
+            canManage
+              ? t('provisioning.hris.empty.title')
+              : t('provisioning.hris.empty.permissionTitle')
+          }
+          description={
+            canManage
+              ? t('provisioning.hris.empty.description')
+              : t('provisioning.hris.empty.permissionDescription')
+          }
+          actionLabel={canManage ? t('provisioning.hris.actions.newConnector') : undefined}
+          onAction={canManage ? () => setCreateOpen(true) : undefined}
+        />
+      ) : (
+        <>
+          <Box
+            sx={{
+              px: 2,
+              pb: 2,
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
+              gap: 0,
+            }}
+          >
+            <Box sx={{ py: 1.5, pr: { md: 2 }, borderRight: { md: 1 }, borderColor: 'divider' }}>
+              <Typography variant="caption" color="text.secondary">
+                {t('provisioning.hris.sources')}
               </Typography>
-            </Typography>
-          ))}
-        </Box>
-        <Box sx={{ py: 1.5, px: { md: 2 }, borderRight: { md: 1 }, borderColor: 'divider' }}>
-          <Typography variant="caption" color="text.secondary">
-            {t('provisioning.hris.connectors')}
-          </Typography>
-          {(connectors.data ?? []).map((connector) => (
-            <Stack
-              key={connector.connectorInstanceId}
-              direction="row"
-              alignItems="center"
-              gap={0.5}
-            >
-              <Link2 size={14} />
-              <Typography variant="body2" fontWeight={700} sx={{ flex: 1 }} noWrap>
-                {connector.connectorKey}
+              {(sources.data ?? []).map((source) => (
+                <Typography key={source.sourceKey} variant="body2" fontWeight={700}>
+                  {source.name}{' '}
+                  <Typography component="span" variant="caption" color="text.secondary">
+                    / {source.systemType}
+                  </Typography>
+                </Typography>
+              ))}
+            </Box>
+            <Box sx={{ py: 1.5, px: { md: 2 }, borderRight: { md: 1 }, borderColor: 'divider' }}>
+              <Typography variant="caption" color="text.secondary">
+                {t('provisioning.hris.connectors')}
               </Typography>
-              <StateChip state={connector.healthState} namespace="workforce" />
-              <Tooltip title={t('provisioning.hris.actions.check')}>
-                <IconButton
-                  size="small"
-                  disabled={busy || !canManage}
-                  onClick={() =>
-                    void runConnectorAction(async () => {
-                      const result = await checkHrisConnectorConfiguration(
-                        connector.connectorInstanceId
-                      );
-                      if (!result.valid) throw new Error(result.issues.join(' '));
-                    }, t('provisioning.hris.toasts.checked'))
-                  }
+              {(connectors.data ?? []).map((connector) => (
+                <Stack
+                  key={connector.connectorInstanceId}
+                  direction="row"
+                  alignItems="center"
+                  gap={0.5}
                 >
-                  <CircleCheckBig size={15} />
-                </IconButton>
-              </Tooltip>
-              <Tooltip
-                title={
-                  connector.lifecycleState === 'ACTIVE'
-                    ? t('provisioning.hris.actions.suspend')
-                    : t('provisioning.hris.actions.activate')
-                }
-              >
-                <span>
-                  <IconButton
-                    size="small"
-                    disabled={busy || !canManage || connector.lifecycleState === 'RETIRED'}
-                    onClick={() =>
-                      void runConnectorAction(
-                        () =>
-                          updateHrisConnector(connector, {
-                            endpointUri: connector.endpointUri ?? undefined,
-                            credentialReference: connector.credentialReference ?? undefined,
-                            scheduleExpression: connector.scheduleExpression ?? undefined,
-                            lifecycleState:
-                              connector.lifecycleState === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE',
-                          }),
-                        t('provisioning.hris.toasts.lifecycle')
-                      )
+                  <Link2 size={14} />
+                  <Typography variant="body2" fontWeight={700} sx={{ flex: 1 }} noWrap>
+                    {connector.connectorKey}
+                  </Typography>
+                  <StateChip state={connector.healthState} namespace="workforce" />
+                  <Tooltip title={t('provisioning.hris.actions.check')}>
+                    <IconButton
+                      size="small"
+                      disabled={busy || !canManage}
+                      onClick={() =>
+                        void runConnectorAction(async () => {
+                          const result = await checkHrisConnectorConfiguration(
+                            connector.connectorInstanceId
+                          );
+                          if (!result.valid) throw new Error(result.issues.join(' '));
+                        }, t('provisioning.hris.toasts.checked'))
+                      }
+                    >
+                      <CircleCheckBig size={15} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip
+                    title={
+                      connector.lifecycleState === 'ACTIVE'
+                        ? t('provisioning.hris.actions.suspend')
+                        : t('provisioning.hris.actions.activate')
                     }
                   >
-                    {connector.lifecycleState === 'ACTIVE' ? (
-                      <Pause size={15} />
-                    ) : (
-                      <Play size={15} />
-                    )}
-                  </IconButton>
-                </span>
-              </Tooltip>
-            </Stack>
-          ))}
-        </Box>
-        <Box sx={{ py: 1.5, pl: { md: 2 } }}>
-          <Typography variant="caption" color="text.secondary">
-            {t('provisioning.hris.mappings')}
-          </Typography>
-          {(mappings.data ?? []).map((mapping) => (
-            <Typography key={mapping.mappingProfileId} variant="body2" fontWeight={700}>
-              {mapping.profileKey}{' '}
-              <Typography component="span" variant="caption" color="text.secondary">
-                / {mapping.sourceSchemaVersion} - {mapping.targetSchemaVersion}
+                    <span>
+                      <IconButton
+                        size="small"
+                        disabled={busy || !canManage || connector.lifecycleState === 'RETIRED'}
+                        onClick={() =>
+                          void runConnectorAction(
+                            () =>
+                              updateHrisConnector(connector, {
+                                endpointUri: connector.endpointUri ?? undefined,
+                                credentialReference: connector.credentialReference ?? undefined,
+                                scheduleExpression: connector.scheduleExpression ?? undefined,
+                                lifecycleState:
+                                  connector.lifecycleState === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE',
+                              }),
+                            t('provisioning.hris.toasts.lifecycle')
+                          )
+                        }
+                      >
+                        {connector.lifecycleState === 'ACTIVE' ? (
+                          <Pause size={15} />
+                        ) : (
+                          <Play size={15} />
+                        )}
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+                </Stack>
+              ))}
+            </Box>
+            <Box sx={{ py: 1.5, pl: { md: 2 } }}>
+              <Typography variant="caption" color="text.secondary">
+                {t('provisioning.hris.mappings')}
               </Typography>
-            </Typography>
-          ))}
-        </Box>
-      </Box>
-      <Box sx={{ borderTop: 1, borderColor: 'divider' }}>
-        <EnterpriseDataGrid
-          ariaLabel={t('provisioning.hris.runs')}
-          rows={runs.data ?? []}
-          columns={columns}
-          getRowId={(row) => row.syncRunId}
-          hideFooter={(runs.data?.length ?? 0) <= 25}
-          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 25 } } }}
-          minVisibleRows={3}
-          maxVisibleRows={8}
-          sx={{ border: 0, borderRadius: 0 }}
-        />
-      </Box>
+              {(mappings.data ?? []).map((mapping) => (
+                <Typography key={mapping.mappingProfileId} variant="body2" fontWeight={700}>
+                  {mapping.profileKey}{' '}
+                  <Typography component="span" variant="caption" color="text.secondary">
+                    / {mapping.sourceSchemaVersion} - {mapping.targetSchemaVersion}
+                  </Typography>
+                </Typography>
+              ))}
+            </Box>
+          </Box>
+          <Box sx={{ borderTop: 1, borderColor: 'divider' }}>
+            <EnterpriseDataGrid
+              ariaLabel={t('provisioning.hris.runs')}
+              rows={runs.data ?? []}
+              columns={columns}
+              getRowId={(row) => row.syncRunId}
+              hideFooter={(runs.data?.length ?? 0) <= 25}
+              initialState={{ pagination: { paginationModel: { page: 0, pageSize: 25 } } }}
+              minVisibleRows={3}
+              maxVisibleRows={8}
+              sx={{ border: 0, borderRadius: 0 }}
+            />
+          </Box>
+        </>
+      )}
       {createOpen && canManage && (
         <HrisConnectorDialog
           open

@@ -14,6 +14,7 @@
     "label": "애플리케이션 탐색",
     "section": "워크스페이스",
     "open": "탐색 메뉴 열기",
+    "skipToContent": "본문으로 건너뛰기",
     "expand": "탐색 메뉴 펼치기",
     "collapse": "탐색 메뉴 접기",
     "items": {
@@ -28,16 +29,18 @@
   "search": {
     "label": "DWP 검색",
     "shortPlaceholder": "DWP 검색",
-    "placeholder": "업무, 앱, 서비스 및 지식 검색",
+    "placeholder": "업무, 앱, 구성원 및 조직 검색",
     "close": "검색 닫기",
     "bestMatches": "가장 일치하는 결과",
     "suggested": "추천",
     "resultsLabel": "검색 결과",
     "noResults": "검색 결과가 없습니다",
+    "partialResults": "일부 검색 소스를 불러오지 못해 사용 가능한 결과만 표시합니다.",
     "types": {
       "app": "앱",
       "work": "업무",
-      "knowledge": "지식",
+      "person": "구성원",
+      "organization": "조직",
       "ask": "AI 질문"
     },
     "workTypes": {
@@ -51,21 +54,15 @@
       "description": "할당된 애플리케이션 카탈로그 열기",
       "keywords": "애플리케이션 앱 카탈로그 서비스 시스템"
     },
-    "prompts": {
-      "attention": {
-        "title": "지금 확인해야 할 일은 무엇인가요?",
-        "description": "권한이 있는 업무의 우선순위를 검토합니다",
-        "keywords": "우선순위 오늘 확인 승인 업무"
-      },
-      "remotePolicy": {
-        "title": "원격 근무 정책 찾기",
-        "description": "관리되는 업무 지식을 검색합니다",
-        "keywords": "원격 근무 정책 지식 가이드"
-      }
+    "people": {
+      "descriptionFallback": "구성원 디렉터리"
+    },
+    "organizations": {
+      "description": "{{type}} / 구성원 {{count}}명"
     },
     "askQuery": {
       "title": "DWP에 질문: {{query}}",
-      "description": "권한이 있는 업무 및 지식 소스를 사용합니다"
+      "description": "추적 가능한 읽기 전용 요청 계획을 준비합니다"
     }
   },
   "notifications": {

@@ -381,9 +381,16 @@ export function ProviderHealth() {
     }
   };
 
-  if (health.isLoading || operator.isLoading || tenants.isLoading) return <ProviderLoading />;
-  if (health.isError || operator.isError || tenants.isError)
-    return <ProviderError error={health.error ?? operator.error ?? tenants.error} />;
+  if (health.isLoading || tenants.isLoading || (operator.isLoading && !operator.data))
+    return <ProviderLoading />;
+  if (health.isError || tenants.isError || (operator.isError && !operator.data))
+    return (
+      <ProviderError
+        error={health.error ?? tenants.error ?? operator.error}
+        onRetry={() => void Promise.all([health.refetch(), tenants.refetch(), operator.refetch()])}
+        retrying={health.isFetching || tenants.isFetching || operator.isFetching}
+      />
+    );
   if (!health.data) return null;
 
   const metrics = [

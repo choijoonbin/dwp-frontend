@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bell, ChevronDown, Clock3, Maximize2, Minimize2, Search, ShieldCheck } from 'lucide-react';
 import { GlyphSurface } from '@dwp-frontend/design-system/components/glyph-surface';
-import { useAuth, usePermissions, WORKSPACE_NAME } from '@dwp-frontend/shared-utils';
+import { WORKSPACE_NAME } from '@dwp-frontend/shared-utils/env';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
@@ -96,6 +98,7 @@ export function SearchControl() {
   );
   const includeWork = apps.some((app) => app.id === 'dwp-work');
   const includeAsk = apps.some((app) => app.id === 'dwp-ask');
+  const includePeople = apps.some((app) => app.id === 'ref-app-people');
   const shortcut =
     typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
       ? '⌘K'
@@ -138,6 +141,7 @@ export function SearchControl() {
           textAlign: 'left',
           transition: (theme) => theme.transitions.create(['border-color', 'background-color']),
           '&:hover': { borderColor: 'primary.main', bgcolor: 'action.selected' },
+          '@container dwp-shell-header (max-width: 1120px)': { display: 'none' },
         }}
       >
         <Search size={18} strokeWidth={1.8} aria-hidden="true" />
@@ -168,7 +172,10 @@ export function SearchControl() {
           aria-haspopup="dialog"
           aria-expanded={open}
           onClick={() => setOpen(true)}
-          sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+          sx={{
+            display: { xs: 'inline-flex', md: 'none' },
+            '@container dwp-shell-header (max-width: 1120px)': { display: 'inline-flex' },
+          }}
         >
           <Search size={20} strokeWidth={1.8} />
         </IconButton>
@@ -178,6 +185,7 @@ export function SearchControl() {
         apps={apps}
         includeWork={includeWork}
         includeAsk={includeAsk}
+        includePeople={includePeople}
         onClose={() => setOpen(false)}
       />
     </>
@@ -231,6 +239,7 @@ export function FullscreenControl() {
         onClick={() => void toggleFullscreen()}
         sx={{
           display: { xs: 'none', md: 'inline-flex' },
+          '@container dwp-shell-header (max-width: 900px)': { display: 'none' },
           width: 36,
           height: 36,
           borderRadius: 1,

@@ -7,15 +7,16 @@
     "today": "Today",
     "updatedAt": "Updated {{time}}",
     "dateUpdated": "{{date}} / Updated {{time}}",
-    "lastRefreshed": "Last refreshed {{time}} / Reference data only",
+    "lastRefreshed": "Last refreshed {{time}} / Permission-scoped data",
     "saveError": "The home preference could not be saved.",
-    "homeSaved": "Home view saved."
+    "homeSaved": "Home view saved.",
+    "appLaunchError": "The app could not be launched. Check its connection status."
   },
   "apps": {
     "groups": {
       "work": {
         "name": "Start work",
-        "description": "Priorities and AI-assisted action"
+        "description": "Priorities and governed workspace actions"
       },
       "connect": {
         "name": "Connect",
@@ -33,50 +34,62 @@
     "items": {
       "dwp-work": {
         "name": "Work",
+        "shortName": "Work",
         "description": "Priorities, approvals, and tasks"
       },
       "dwp-ask": {
         "name": "Ask DWP",
-        "description": "Grounded answers and governed actions"
+        "shortName": "Ask DWP",
+        "description": "Read-only request plans with an audit trace"
       },
       "dwp-activity": {
         "name": "Activity",
+        "shortName": "Activity",
         "description": "Human, system, and agent events"
       },
       "ref-app-mail": {
         "name": "Mail & calendar",
+        "shortName": "Mail",
         "description": "Messages, meetings, and follow-ups"
       },
       "ref-app-collaboration": {
         "name": "Collaboration",
+        "shortName": "Collab",
         "description": "Chat, channels, and meetings"
       },
       "ref-app-service": {
         "name": "Employee services",
+        "shortName": "Services",
         "description": "HR, IT, and workplace requests"
       },
       "ref-app-people": {
         "name": "People directory",
+        "shortName": "People",
         "description": "People, teams, and contact details"
       },
       "dwp-workforce": {
         "name": "Workforce management",
+        "shortName": "Workforce",
         "description": "Workforce, positions, organization design, and HRIS operations"
       },
       "ref-app-knowledge": {
         "name": "Knowledge",
-        "description": "Policies, guides, and verified answers"
+        "shortName": "Knowledge",
+        "description": "Connect policies and workplace guides"
       },
       "ref-app-erp": {
         "name": "Business ERP",
+        "shortName": "ERP",
         "description": "Finance and purchasing workspace"
       },
       "ref-app-legacy": {
         "name": "Legacy operations",
+        "shortName": "Legacy",
         "description": "Existing operational systems"
       },
       "dwp-admin": {
         "name": "Administration",
+        "shortName": "Admin",
         "description": "Access, registry, policies, and codes"
       }
     }
@@ -143,7 +156,7 @@
       },
       "daily-brief": {
         "label": "Daily brief",
-        "description": "AI-grounded priorities and day rhythm"
+        "description": "Live work priorities and day rhythm"
       },
       "focus": {
         "label": "Focus now",
@@ -163,28 +176,46 @@
       "pinned": "Pinned"
     },
     "brief": {
-      "sourceSummary": "AI generated / {{count}} verified sources",
+      "sourceSummary": "Permission-scoped work / {{count}} source systems",
       "title": "Daily brief",
-      "summary": "Two decisions before the 11:00 customer meeting. Approving software access now unblocks a new team member; the customer brief still has three unanswered questions.",
+      "liveSummary": "‘{{title}}’ is the next priority, with {{count}} work items currently in your queue.",
+      "emptySummary": "There is no priority work right now.",
+      "loadError": "The work brief could not be loaded. Check the Work page for connection status.",
       "signals": {
-        "deadline": { "label": "Next deadline", "value": "10:30", "detail": "Software access" },
-        "focus": { "label": "Protected focus", "value": "90 min", "detail": "14:00-15:30" },
-        "meeting": { "label": "Meeting ready", "value": "72%", "detail": "6 sources checked" }
+        "deadline": { "label": "Due soon", "detail": "Work requiring action" },
+        "focus": { "label": "In progress", "detail": "Work currently in progress" },
+        "meeting": { "label": "Waiting", "detail": "Waiting for input or response" }
       },
       "reviewPriority": "Review priority",
-      "askToday": "Ask about today",
-      "askPrompt": "What should I prepare before the 11:00 meeting?",
+      "askToday": "Prepare request plan",
+      "askPrompt": "Review my current work context and prepare a read-only request plan.",
       "rhythmTitle": "Day rhythm",
-      "rhythmDescription": "Meetings are concentrated before lunch.",
-      "rhythmLabel": "Day rhythm from 9 AM to 5 PM with meetings, focus time, and one deadline",
-      "meetings": "Meetings",
-      "focus": "Focus",
-      "deadline": "Deadline",
-      "meetingDuration": "2h 05m",
-      "focusDuration": "1h 30m"
+      "calendarConnectionDescription": "Connect the organization calendar to show real meetings and focus time.",
+      "calendarConnectionEmpty": "The calendar connector has not been configured.",
+      "reviewConnection": "Review app connection"
     },
-    "focus": { "title": "Focus now" },
-    "schedule": { "title": "Schedule" },
-    "activity": { "title": "Live activity", "view": "View activity" }
+    "focus": {
+      "title": "Focus now",
+      "loading": "Loading priority work",
+      "loadError": "Priority work could not be loaded",
+      "retry": "Try again",
+      "empty": "There is no priority work",
+      "emptyDescription": "Newly assigned work will appear here.",
+      "noDueDate": "No due date"
+    },
+    "schedule": {
+      "title": "Schedule",
+      "connectionRequired": "Calendar connection required",
+      "connectionDescription": "Sample events are not shown. Real events will appear after the organization calendar is connected.",
+      "reviewConnection": "Review connection"
+    },
+    "activity": {
+      "title": "Live activity",
+      "view": "View activity",
+      "loading": "Loading activity",
+      "loadError": "Activity could not be loaded",
+      "retry": "Try again",
+      "empty": "There is no recent activity"
+    }
   }
 }

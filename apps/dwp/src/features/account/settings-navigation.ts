@@ -1,12 +1,12 @@
 import {
   Accessibility,
   Building2,
-  Languages,
   LayoutDashboard,
   Palette,
   ShieldCheck,
   UserRound,
 } from 'lucide-react';
+import { LanguageIcon } from '@dwp-frontend/design-system/components/icons';
 
 import type { LucideIcon } from 'lucide-react';
 
@@ -44,7 +44,7 @@ export const accountNavigationGroups: AccountNavigationGroup[] = [
     items: [
       { key: 'appearance', path: '/account/settings/appearance', icon: Palette },
       { key: 'accessibility', path: '/account/settings/accessibility', icon: Accessibility },
-      { key: 'language', path: '/account/settings/language', icon: Languages },
+      { key: 'language', path: '/account/settings/language', icon: LanguageIcon },
       { key: 'home', path: '/account/settings/home', icon: LayoutDashboard },
     ],
   },

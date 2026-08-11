@@ -2,7 +2,9 @@ import '@xyflow/react/dist/style.css';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { formatNumber } from '@dwp-frontend/shared-i18n';
+import { ActionIconButton, mergeFilterSearchParams } from '@dwp-frontend/design-system';
 import {
   BriefcaseBusiness,
   Building2,
@@ -17,6 +19,7 @@ import {
   RefreshCw,
   Rows3,
   Search,
+  Share2,
   SlidersHorizontal,
   Undo2,
   UserRound,
@@ -73,6 +76,7 @@ import {
   type OrgChartFlowNode,
 } from './org-chart-nodes';
 import {
+  initialViewportTarget,
   layoutChart,
   visibleOrganizationIds,
   visiblePersonIds,
@@ -83,6 +87,18 @@ import { OrgChartInspector, type OrgChartSelection } from './org-chart-inspector
 import { OrganizationIntelligencePanel } from './organization-intelligence-panel';
 import { OrganizationScenarioDrawer } from './organization-scenario-drawer';
 import { useCurrentProviderSupportContext } from '../../provider/use-provider-support-context';
+import {
+  isIsoDate,
+  modeForSelection,
+  organizationAncestorIds,
+  organizationSelectionSearchParams,
+  parseChartMode,
+  parseOrganizationSelection,
+  personAncestorIds,
+  positionAncestorIds,
+  removeValues,
+  type ChartMode,
+} from './organization-navigation';
 
 import type {
   Edge,
@@ -99,8 +115,15 @@ import type {
   OrganizationScenario,
 } from '@dwp-frontend/shared-utils';
 
-type ChartMode = 'organizations' | 'people' | 'positions' | 'insights';
 type OrganizationLens = 'structure' | 'health' | 'headcount' | 'span' | 'vacancy' | 'changes';
+const ORGANIZATION_LENSES: readonly OrganizationLens[] = [
+  'structure',
+  'health',
+  'headcount',
+  'span',
+  'vacancy',
+  'changes',
+];
 
 const nodeTypes = {
   organization: OrganizationNode,
@@ -173,6 +196,44 @@ export function OrganizationExplorer({
   const auth = useAuth();
   const supportContext = useCurrentProviderSupportContext();
   const workforceView = experience === 'workforce';
+  const [searchParams, setSearchParams] = useSearchParams();
+  const defaultMode: ChartMode = workforceView ? 'organizations' : 'people';
+  const currentDate = today();
+  const serializedSearchParams = searchParams.toString();
+  const requestedSelection = useMemo(
+    () => parseOrganizationSelection(new URLSearchParams(serializedSearchParams)),
+    [serializedSearchParams]
+  );
+  const mode = modeForSelection(
+    requestedSelection,
+    parseChartMode(searchParams.get('mode'), defaultMode)
+  );
+  const asOfParam = searchParams.get('asOf');
+  const asOf = isIsoDate(asOfParam) ? asOfParam : currentDate;
+  const compareToParam = searchParams.get('compareTo');
+  const compareTo = isIsoDate(compareToParam) ? compareToParam : monthBefore(asOf);
+  const rootOrganizationId = searchParams.get('root') || undefined;
+  const scenarioId = workforceView ? searchParams.get('scenario') || '' : '';
+  const requestedLens = searchParams.get('lens');
+  const lens: OrganizationLens = ORGANIZATION_LENSES.includes(requestedLens as OrganizationLens)
+    ? (requestedLens as OrganizationLens)
+    : 'structure';
+  const direction: ChartDirection = searchParams.get('direction') === 'LR' ? 'LR' : 'TB';
+  const showMatrix = searchParams.get('matrix') !== 'false';
+  const search = searchParams.get('q') ?? '';
+  const selection: OrgChartSelection | undefined = requestedSelection;
+  const updateNavigationState = useCallback(
+    (values: Record<string, string | null | undefined>) => {
+      setSearchParams(
+        (current) => {
+          const next = mergeFilterSearchParams(current, values);
+          return next.toString() === current.toString() ? current : next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
   const canManageWorkforce = (auth.user?.roles ?? []).some((role) =>
     ['ADMIN', 'HR_ADMIN'].includes(role)
   );
@@ -181,19 +242,9 @@ export function OrganizationExplorer({
   const queryClient = useQueryClient();
   const theme = useTheme();
   const compactInspector = useMediaQuery(theme.breakpoints.down('md'));
-  const [asOf, setAsOf] = useState(today);
-  const [compareTo, setCompareTo] = useState(() => monthBefore(today()));
-  const [rootOrganizationId, setRootOrganizationId] = useState<string>();
-  const [mode, setMode] = useState<ChartMode>(workforceView ? 'organizations' : 'people');
-  const [lens, setLens] = useState<OrganizationLens>('structure');
-  const [scenarioId, setScenarioId] = useState('');
-  const [direction, setDirection] = useState<ChartDirection>('TB');
-  const [showMatrix, setShowMatrix] = useState(true);
-  const [search, setSearch] = useState('');
   const [collapsedOrganizations, setCollapsedOrganizations] = useState<Set<string>>(new Set());
   const [collapsedPeople, setCollapsedPeople] = useState<Set<string>>(new Set());
   const [collapsedPositions, setCollapsedPositions] = useState<Set<string>>(new Set());
-  const [selection, setSelection] = useState<OrgChartSelection>();
   const [scenarioOpen, setScenarioOpen] = useState(false);
   const [pendingMove, setPendingMove] = useState<{
     kind: 'organization' | 'position';
@@ -204,7 +255,8 @@ export function OrganizationExplorer({
   const [flow, setFlow] = useState<ReactFlowInstance<OrgChartFlowNode, Edge>>();
   const [renderNodes, setRenderNodes] = useState<OrgChartFlowNode[]>([]);
   const initializedChart = useRef('');
-  const directionWasCustomized = useRef(false);
+  const initializedViewport = useRef('');
+  const directionWasCustomized = useRef(searchParams.has('direction'));
 
   const chartQuery = useQuery({
     queryKey: [experience, 'organization-chart', asOf, rootOrganizationId, scenarioId],
@@ -330,8 +382,41 @@ export function OrganizationExplorer({
 
   useEffect(() => {
     if (directionWasCustomized.current) return;
-    setDirection(compactInspector ? 'LR' : 'TB');
-  }, [compactInspector]);
+    updateNavigationState({ direction: compactInspector ? 'LR' : null });
+  }, [compactInspector, updateNavigationState]);
+
+  useEffect(() => {
+    if (!chart || !selection) return;
+    const targetExists =
+      selection.kind === 'person'
+        ? chart.people.some((person) => person.personId === selection.id)
+        : selection.kind === 'position'
+          ? chart.positions.some((position) => position.positionId === selection.id)
+          : chart.organizations.some(
+              (organization) => organization.organizationId === selection.id
+            );
+
+    if (!targetExists) {
+      updateNavigationState(
+        rootOrganizationId ? { root: null } : organizationSelectionSearchParams(undefined)
+      );
+      return;
+    }
+
+    if (selection.kind === 'person') {
+      setCollapsedPeople((current) =>
+        removeValues(current, personAncestorIds(chart.people, selection.id))
+      );
+    } else if (selection.kind === 'position') {
+      setCollapsedPositions((current) =>
+        removeValues(current, positionAncestorIds(chart.positions, selection.id))
+      );
+    } else {
+      setCollapsedOrganizations((current) =>
+        removeValues(current, organizationAncestorIds(chart.organizations, selection.id))
+      );
+    }
+  }, [chart, rootOrganizationId, selection, updateNavigationState]);
 
   const graph = useMemo(() => {
     if (!chart) return { nodes: [] as OrgChartFlowNode[], edges: [] as Edge[] };
@@ -548,18 +633,57 @@ export function OrganizationExplorer({
 
   useEffect(() => {
     if (mode === 'insights' || !flow || !graph.nodes.length) return;
+    const selectedNodeId =
+      selection &&
+      ((selection.kind === 'person' && mode === 'people') ||
+        (selection.kind === 'position' && mode === 'positions') ||
+        (selection.kind === 'organization' && mode === 'organizations'))
+        ? selection.id
+        : undefined;
+    if (selectedNodeId && !graph.nodes.some((node) => node.id === selectedNodeId)) return;
+    const viewportKey = [
+      chart?.asOf,
+      chart?.company.organizationId,
+      chart?.scenario?.scenarioId ?? 'live',
+      rootOrganizationId ?? 'company',
+      mode,
+      lens,
+      direction,
+      selectedNodeId ?? 'unselected',
+    ].join(':');
+    if (initializedViewport.current === viewportKey) return;
+    initializedViewport.current = viewportKey;
     const timer = window.setTimeout(() => {
-      void flow.fitView({ padding: 0.15, duration: 380, maxZoom: 1.05 });
+      const preferredNodeId =
+        selectedNodeId ?? (mode === 'organizations' ? chart?.company.organizationId : undefined);
+      const focusNodeId = initialViewportTarget(graph.nodes, graph.edges, preferredNodeId);
+      if (selectedNodeId || focusNodeId) {
+        void flow.fitView({
+          nodes: [{ id: selectedNodeId ?? (focusNodeId as string) }],
+          padding: selectedNodeId ? 0.75 : 1.1,
+          duration: 420,
+          minZoom: selectedNodeId ? 0.76 : 0.72,
+          maxZoom: selectedNodeId ? 1.18 : 0.92,
+        });
+        return;
+      }
+      void flow.fitView({ padding: 0.18, duration: 380, maxZoom: 1.05 });
     }, 40);
     return () => window.clearTimeout(timer);
-  }, [direction, flow, graph.nodes.length, mode, rootOrganizationId, scenarioId]);
+  }, [chart, direction, flow, graph.edges, graph.nodes, lens, mode, rootOrganizationId, selection]);
 
   const handleNodeClick: NodeMouseHandler<OrgChartFlowNode> = (_event, node) => {
-    setSelection({
-      kind:
-        node.type === 'person' ? 'person' : node.type === 'position' ? 'position' : 'organization',
-      id: node.id,
-    });
+    updateNavigationState(
+      organizationSelectionSearchParams({
+        kind:
+          node.type === 'person'
+            ? 'person'
+            : node.type === 'position'
+              ? 'position'
+              : 'organization',
+        id: node.id,
+      })
+    );
   };
 
   const handleNodeChanges = (changes: NodeChange<OrgChartFlowNode>[]) => {
@@ -619,10 +743,12 @@ export function OrganizationExplorer({
     const fallbackId = mode === 'organizations' ? person?.organizationId : undefined;
     const id = targetId ?? fallbackId;
     if (!id) return;
-    setSelection({
-      kind: mode === 'people' ? 'person' : mode === 'positions' ? 'position' : 'organization',
-      id,
-    });
+    updateNavigationState(
+      organizationSelectionSearchParams({
+        kind: mode === 'people' ? 'person' : mode === 'positions' ? 'position' : 'organization',
+        id,
+      })
+    );
     void flow?.fitView({ nodes: [{ id }], padding: 0.75, duration: 480, maxZoom: 1.2 });
   };
 
@@ -670,6 +796,15 @@ export function OrganizationExplorer({
     else if (mode === 'positions') setCollapsedPositions(new Set());
   };
 
+  const copyViewLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success(t('orgChart.actions.copyViewLinkSuccess'));
+    } catch {
+      toast.error(t('orgChart.actions.copyViewLinkError'));
+    }
+  };
+
   const confirmScenarioMove = async () => {
     if (!pendingMove || !selectedScenario) return;
     setScenarioBusy(true);
@@ -712,11 +847,15 @@ export function OrganizationExplorer({
       chart={chart}
       selection={selection}
       rolesByEmail={rolesByEmail}
-      onClose={() => setSelection(undefined)}
-      onSelect={setSelection}
+      onClose={() => updateNavigationState(organizationSelectionSearchParams(undefined))}
+      onSelect={(nextSelection) =>
+        updateNavigationState(organizationSelectionSearchParams(nextSelection))
+      }
       onFocusOrganization={(organizationId) => {
-        setRootOrganizationId(organizationId);
-        setSelection(undefined);
+        updateNavigationState({
+          root: organizationId,
+          ...organizationSelectionSearchParams(undefined),
+        });
         setCollapsedOrganizations(new Set());
       }}
     />
@@ -810,7 +949,11 @@ export function OrganizationExplorer({
               })}
             </Typography>
           </Stack>
-          <Button size="small" startIcon={<Undo2 size={14} />} onClick={() => setScenarioId('')}>
+          <Button
+            size="small"
+            startIcon={<Undo2 size={14} />}
+            onClick={() => updateNavigationState({ scenario: null })}
+          >
             {t('orgChart.scenarios.returnLive')}
           </Button>
         </Stack>
@@ -839,8 +982,10 @@ export function OrganizationExplorer({
             }}
             onChange={(_event, value: ChartMode | null) => {
               if (!value) return;
-              setMode(value);
-              setSelection(undefined);
+              updateNavigationState({
+                mode: value === defaultMode ? null : value,
+                ...organizationSelectionSearchParams(undefined),
+              });
             }}
           >
             <ToggleButton
@@ -892,7 +1037,7 @@ export function OrganizationExplorer({
             <TextField
               size="small"
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) => updateNavigationState({ q: event.target.value || null })}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') focusSearchResult();
               }}
@@ -913,8 +1058,10 @@ export function OrganizationExplorer({
               size="small"
               startIcon={<Undo2 size={15} />}
               onClick={() => {
-                setRootOrganizationId(undefined);
-                setSelection(undefined);
+                updateNavigationState({
+                  root: null,
+                  ...organizationSelectionSearchParams(undefined),
+                });
               }}
             >
               {t('orgChart.actions.showCompany')}
@@ -938,13 +1085,13 @@ export function OrganizationExplorer({
               onChange={(event) => {
                 const nextScenarioId = event.target.value;
                 const scenario = scenarios.find((item) => item.scenarioId === nextScenarioId);
-                setScenarioId(nextScenarioId);
-                if (scenario) {
-                  setAsOf(scenario.baselineDate);
-                  setCompareTo(scenario.baselineDate);
-                }
-                setSelection(undefined);
-                setRootOrganizationId(undefined);
+                updateNavigationState({
+                  scenario: nextScenarioId || null,
+                  asOf: scenario?.baselineDate ?? null,
+                  compareTo: scenario?.baselineDate ?? null,
+                  root: null,
+                  ...organizationSelectionSearchParams(undefined),
+                });
               }}
               inputProps={{ 'aria-label': t('orgChart.scenarios.preview') }}
               SelectProps={{ displayEmpty: true }}
@@ -963,7 +1110,11 @@ export function OrganizationExplorer({
               select
               size="small"
               value={lens}
-              onChange={(event) => setLens(event.target.value as OrganizationLens)}
+              onChange={(event) =>
+                updateNavigationState({
+                  lens: event.target.value === 'structure' ? null : event.target.value,
+                })
+              }
               inputProps={{ 'aria-label': t('orgChart.lenses.label') }}
               sx={{ width: { xs: 1, sm: 150 } }}
               InputProps={{
@@ -991,7 +1142,9 @@ export function OrganizationExplorer({
                 <Switch
                   size="small"
                   checked={showMatrix}
-                  onChange={(event) => setShowMatrix(event.target.checked)}
+                  onChange={(event) =>
+                    updateNavigationState({ matrix: event.target.checked ? null : 'false' })
+                  }
                 />
               }
               label={<Typography variant="caption">{t('orgChart.actions.matrix')}</Typography>}
@@ -1003,8 +1156,11 @@ export function OrganizationExplorer({
             value={asOf}
             disabled={Boolean(scenarioId)}
             onChange={(event) => {
-              setAsOf(event.target.value);
-              setSelection(undefined);
+              updateNavigationState({
+                asOf: event.target.value === currentDate ? null : event.target.value,
+                compareTo: null,
+                ...organizationSelectionSearchParams(undefined),
+              });
             }}
             inputProps={{ 'aria-label': t('orgChart.filters.asOf') }}
             sx={{ width: { xs: 1, sm: 172 } }}
@@ -1022,7 +1178,11 @@ export function OrganizationExplorer({
               type="date"
               label={t('orgChart.filters.compareTo')}
               value={compareTo}
-              onChange={(event) => setCompareTo(event.target.value)}
+              onChange={(event) =>
+                updateNavigationState({
+                  compareTo: event.target.value === monthBefore(asOf) ? null : event.target.value,
+                })
+              }
               inputProps={{ 'aria-label': t('orgChart.filters.compareTo') }}
               InputLabelProps={{ shrink: true }}
               sx={{ width: { xs: 1, sm: 172 } }}
@@ -1036,7 +1196,7 @@ export function OrganizationExplorer({
                   aria-label={t('orgChart.actions.changeDirection')}
                   onClick={() => {
                     directionWasCustomized.current = true;
-                    setDirection((current) => (current === 'TB' ? 'LR' : 'TB'));
+                    updateNavigationState({ direction: direction === 'TB' ? 'LR' : null });
                   }}
                 >
                   {direction === 'TB' ? <Rows3 size={17} /> : <Columns3 size={17} />}
@@ -1073,6 +1233,13 @@ export function OrganizationExplorer({
               {t('orgChart.actions.scenarios')}
             </Button>
           )}
+          <ActionIconButton
+            size="small"
+            label={t('orgChart.actions.copyViewLink')}
+            onClick={() => void copyViewLink()}
+          >
+            <Share2 size={17} />
+          </ActionIconButton>
           <Tooltip title={t('common.actions.refresh')}>
             <IconButton
               size="small"
@@ -1108,14 +1275,16 @@ export function OrganizationExplorer({
                   : undefined
               }
               onSelect={(nextSelection) => {
-                setMode(
+                const nextMode =
                   nextSelection.kind === 'person'
                     ? 'people'
                     : nextSelection.kind === 'position'
                       ? 'positions'
-                      : 'organizations'
-                );
-                setSelection(nextSelection);
+                      : 'organizations';
+                updateNavigationState({
+                  mode: nextMode === defaultMode ? null : nextMode,
+                  ...organizationSelectionSearchParams(nextSelection),
+                });
               }}
             />
           ) : (
@@ -1224,7 +1393,7 @@ export function OrganizationExplorer({
 
       <Drawer
         open={Boolean(selection) && compactInspector}
-        onClose={() => setSelection(undefined)}
+        onClose={() => updateNavigationState(organizationSelectionSearchParams(undefined))}
         anchor="bottom"
         PaperProps={{
           'aria-label': t('orgChart.details.panelLabel'),
@@ -1241,15 +1410,15 @@ export function OrganizationExplorer({
           previewScenarioId={scenarioId}
           onPreviewScenario={(nextScenarioId) => {
             const scenario = scenarios.find((item) => item.scenarioId === nextScenarioId);
-            setScenarioId(nextScenarioId);
-            if (scenario) {
-              setAsOf(scenario.baselineDate);
-              setCompareTo(scenario.baselineDate);
-            }
-            setRootOrganizationId(undefined);
-            setSelection(undefined);
-            setMode('organizations');
-            setLens('changes');
+            updateNavigationState({
+              scenario: nextScenarioId,
+              asOf: scenario?.baselineDate ?? null,
+              compareTo: scenario?.baselineDate ?? null,
+              root: null,
+              mode: defaultMode === 'organizations' ? null : 'organizations',
+              lens: 'changes',
+              ...organizationSelectionSearchParams(undefined),
+            });
             setScenarioOpen(false);
           }}
           onScenarioChanged={() => {

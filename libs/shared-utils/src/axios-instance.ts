@@ -7,6 +7,7 @@ type AxiosLikeResponse<T> = { data: T };
 type RequestConfig = {
   headers?: Record<string, string>;
   responseType?: 'json' | 'blob';
+  timeoutMs?: number;
 };
 
 type CsrfTokenData = {
@@ -104,12 +105,22 @@ async function request<T>(
     headers[csrf.headerName] = csrf.token;
   }
 
-  const response = await fetch(API_URL + url, {
-    method,
-    headers,
-    credentials: 'include',
-    body: body === undefined ? undefined : isFormData(body) ? body : JSON.stringify(body),
-  });
+  const controller = config.timeoutMs ? new AbortController() : undefined;
+  const timeout = controller
+    ? globalThis.setTimeout(() => controller.abort('request-timeout'), config.timeoutMs)
+    : undefined;
+  let response: Response;
+  try {
+    response = await fetch(API_URL + url, {
+      method,
+      headers,
+      credentials: 'include',
+      body: body === undefined ? undefined : isFormData(body) ? body : JSON.stringify(body),
+      signal: controller?.signal,
+    });
+  } finally {
+    if (timeout !== undefined) globalThis.clearTimeout(timeout);
+  }
   const payload = await parseBody(response, response.ok ? config.responseType : 'json');
 
   if (!response.ok) {

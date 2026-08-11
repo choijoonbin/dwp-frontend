@@ -13,7 +13,7 @@ import {
   revokeProviderSupportSession,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import { EnterpriseDataGrid, GuidedEmptyState } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -414,12 +414,36 @@ export function ProviderSupport() {
     }
   };
 
-  if (sessions.isLoading || tenants.isLoading || operator.isLoading || scopeCatalog.isLoading)
+  if (
+    sessions.isLoading ||
+    tenants.isLoading ||
+    scopeCatalog.isLoading ||
+    (operator.isLoading && !operator.data)
+  )
     return <ProviderLoading />;
-  if (sessions.isError || tenants.isError || operator.isError || scopeCatalog.isError)
+  if (
+    sessions.isError ||
+    tenants.isError ||
+    scopeCatalog.isError ||
+    (operator.isError && !operator.data)
+  )
     return (
       <ProviderError
         error={sessions.error ?? tenants.error ?? operator.error ?? scopeCatalog.error}
+        onRetry={() =>
+          void Promise.all([
+            sessions.refetch(),
+            tenants.refetch(),
+            scopeCatalog.refetch(),
+            operator.refetch(),
+          ])
+        }
+        retrying={
+          sessions.isFetching ||
+          tenants.isFetching ||
+          scopeCatalog.isFetching ||
+          operator.isFetching
+        }
       />
     );
 
@@ -512,15 +536,46 @@ export function ProviderSupport() {
           </ToggleButton>
         ))}
       </ToggleButtonGroup>
-      <EnterpriseDataGrid
-        ariaLabel={t('support.title')}
-        rows={visibleSessions}
-        columns={columns}
-        getRowId={(row) => row.supportSessionId}
-        loading={sessions.isFetching || busy}
-        hideFooter
-        maxVisibleRows={12}
-      />
+      {visibleSessions.length > 0 ? (
+        <EnterpriseDataGrid
+          ariaLabel={t('support.title')}
+          rows={visibleSessions}
+          columns={columns}
+          getRowId={(row) => row.supportSessionId}
+          loading={sessions.isFetching || busy}
+          hideFooter
+          maxVisibleRows={12}
+        />
+      ) : (
+        <GuidedEmptyState
+          kind={allSessions.length ? 'no-results' : 'first-use'}
+          title={
+            allSessions.length
+              ? t('support.empty.noResultsTitle')
+              : t('support.empty.firstUseTitle')
+          }
+          description={
+            allSessions.length
+              ? t('support.empty.noResultsDescription')
+              : t('support.empty.firstUseDescription')
+          }
+          actionLabel={
+            allSessions.length
+              ? t('support.empty.showAll')
+              : canWrite
+                ? t('support.actions.create')
+                : undefined
+          }
+          onAction={
+            allSessions.length
+              ? () => setSessionFilter('ALL')
+              : canWrite
+                ? () => setCreateOpen(true)
+                : undefined
+          }
+          size="standard"
+        />
+      )}
       {createOpen && (
         <CreateSupportSessionDialog
           initialTenantId={requestedTenantId}

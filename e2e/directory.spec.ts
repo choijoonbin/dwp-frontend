@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
+import { mockAuthenticatedRuntime } from './support/runtime-access';
+
 const ROOT_ID = '00000000-0000-0000-0000-000000000001';
 const TEAM_ID = '00000000-0000-0000-0000-000000000002';
 const CEO_ID = '00000000-0000-0000-0000-000000000011';
@@ -13,6 +15,7 @@ function envelope(data: unknown) {
 }
 
 async function mockAdminSession(page: Page) {
+  await mockAuthenticatedRuntime(page);
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -108,7 +111,7 @@ test('workforce administrators explore effective organization and reporting stru
   );
 
   await page.goto('/workforce/organization');
-  await expect(page.getByRole('heading', { name: 'Organization chart' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Organization design' })).toBeVisible();
   await expect(page.getByLabel('SKAX organization chart workspace')).toBeVisible();
   await expect(page.getByText('2', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('AI Platform', { exact: true })).toBeVisible();
@@ -151,6 +154,91 @@ test('workforce administrators explore effective organization and reporting stru
   await expect(page.getByRole('tooltip')).toHaveCount(0);
   const accessibility = await new AxeBuilder({ page }).exclude('.react-flow__minimap').analyze();
   expect(accessibility.violations).toEqual([]);
+});
+
+test('people profile deep-links to the selected person in the reporting chart', async ({
+  page,
+}, testInfo) => {
+  await mockAdminSession(page);
+  await page.route('**/api/people/v1/workforce/organization/**', (route) => {
+    const path = new URL(route.request().url()).pathname;
+    const data = path.endsWith('/scenarios') ? [] : chartFixture();
+    return route.fulfill({ contentType: 'application/json', body: envelope(data) });
+  });
+  await page.route('**/api/people/v1/workforce/people**', (route) => {
+    const path = new URL(route.request().url()).pathname;
+    const people = chartFixture().people;
+    const lead = people.find((person) => person.personId === LEAD_ID);
+    const summary = lead
+      ? {
+          ...lead,
+          lifecycleState: 'ACTIVE',
+          organizationKey: 'ORG-AI',
+          organizationName: 'AI Platform Division',
+          managerDisplayName: 'Kim Jiwon',
+          assignmentEffectiveFrom: '2025-01-01',
+          dataAccess: {
+            classification: 'INTERNAL',
+            workerNumberMasked: false,
+            excludedFieldGroups: [],
+          },
+        }
+      : null;
+    const data = path.endsWith(`/${LEAD_ID}`)
+      ? {
+          person: summary,
+          originalHireDate: '2022-03-14',
+          legalEmployerName: 'SKAX',
+          managerAssignmentKey: 'ASG-CEO',
+          assignments: [
+            {
+              assignmentKey: 'ASG-AI-LEAD',
+              assignmentStatus: 'ACTIVE',
+              primaryAssignment: true,
+              effectiveStartDate: '2025-01-01',
+              businessTitle: 'AI Lead',
+              organizationName: 'AI Platform Division',
+              jobProfileName: 'AI Lead',
+              jobGradeName: 'Division Lead',
+              locationName: 'Seoul HQ',
+            },
+          ],
+        }
+      : {
+          items: summary ? [summary] : [],
+          nextCursor: null,
+          size: 100,
+          hasMore: false,
+          asOf: '2026-08-10',
+        };
+    return route.fulfill({ contentType: 'application/json', body: envelope(data) });
+  });
+  await page.route('**/api/auth/admin/identity/users**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope({ content: [], page: 0, size: 100, totalElements: 0, totalPages: 0 }),
+    })
+  );
+
+  await page.goto('/workforce/people?asOf=2026-08-10&q=Hana');
+  await page.getByText('Lee Hana', { exact: true }).click();
+  await expect(
+    page.getByRole('dialog').getByText('Workforce profile', { exact: true })
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'View in organization chart' }).click();
+
+  await expect(page).toHaveURL(
+    new RegExp(`/workforce/organization\\?.*mode=people.*person=${LEAD_ID}`)
+  );
+  if (testInfo.project.name === 'mobile') {
+    await expect(page.getByLabel('Organization chart details')).toBeVisible();
+  } else {
+    await expect(
+      page.getByRole('button', { name: 'Reporting lines', pressed: true })
+    ).toBeVisible();
+  }
+  await expect(page.getByText('hana.lee@sk.com', { exact: true })).toBeVisible();
+  await expect(page.getByText('AI Platform Division', { exact: true }).last()).toBeVisible();
 });
 
 function chartFixture() {

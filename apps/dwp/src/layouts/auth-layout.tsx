@@ -16,6 +16,8 @@ export function AuthLayout() {
   return (
     <Box
       component="main"
+      id="dwp-main-content"
+      tabIndex={-1}
       data-dwp-auth-layout
       sx={{
         minHeight: '100dvh',
@@ -29,6 +31,7 @@ export function AuthLayout() {
         position: 'relative',
         overflow: 'hidden',
         bgcolor: 'background.paper',
+        outline: 'none',
       }}
     >
       <Box

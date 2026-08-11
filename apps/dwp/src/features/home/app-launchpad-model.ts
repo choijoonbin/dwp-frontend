@@ -22,6 +22,7 @@ export type HomeAppIconKey =
 export type HomeAppDefinition = {
   id: string;
   name: string;
+  shortName: string;
   description: string;
   groupId: HomeAppGroupId;
   route: string;
@@ -65,7 +66,7 @@ export const HOME_APP_GROUPS: readonly HomeAppGroup[] = [
   {
     id: 'work',
     name: 'Start work',
-    description: 'Priorities and AI-assisted action',
+    description: 'Priorities and governed workspace actions',
   },
   {
     id: 'connect',
@@ -88,6 +89,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'dwp-work',
     name: 'Work',
+    shortName: 'Work',
     description: 'Priorities, approvals, and tasks',
     groupId: 'work',
     route: '/work',
@@ -99,17 +101,18 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'dwp-ask',
     name: 'Ask DWP',
-    description: 'Grounded answers and governed actions',
+    shortName: 'Ask DWP',
+    description: 'Read-only request plans with an audit trace',
     groupId: 'work',
     route: '/ask',
     iconKey: 'ask',
     tone: '#7A4FC4',
     resourceKey: 'APP.ASK',
-    badge: 'AI',
   },
   {
     id: 'dwp-activity',
     name: 'Activity',
+    shortName: 'Activity',
     description: 'Human, system, and agent events',
     groupId: 'work',
     route: '/activity',
@@ -121,6 +124,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'ref-app-mail',
     name: 'Mail & calendar',
+    shortName: 'Mail',
     description: 'Messages, meetings, and follow-ups',
     groupId: 'connect',
     route: '/apps?app=ref-app-mail',
@@ -132,6 +136,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'ref-app-collaboration',
     name: 'Collaboration',
+    shortName: 'Collab',
     description: 'Chat, channels, and meetings',
     groupId: 'connect',
     route: '/apps?app=ref-app-collaboration',
@@ -143,6 +148,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'ref-app-service',
     name: 'Employee services',
+    shortName: 'Services',
     description: 'HR, IT, and workplace requests',
     groupId: 'services',
     route: '/apps?app=ref-app-service',
@@ -154,6 +160,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'ref-app-people',
     name: 'People directory',
+    shortName: 'People',
     description: 'People, teams, and contact details',
     groupId: 'services',
     route: '/people',
@@ -164,6 +171,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'dwp-workforce',
     name: 'Workforce management',
+    shortName: 'Workforce',
     description: 'Workforce, positions, organization design, and HRIS operations',
     groupId: 'services',
     route: '/workforce',
@@ -175,7 +183,8 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'ref-app-knowledge',
     name: 'Knowledge',
-    description: 'Policies, guides, and verified answers',
+    shortName: 'Knowledge',
+    description: 'Connect policies and workplace guides',
     groupId: 'systems',
     route: '/apps?app=ref-app-knowledge',
     iconKey: 'knowledge',
@@ -185,6 +194,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'ref-app-erp',
     name: 'Business ERP',
+    shortName: 'ERP',
     description: 'Finance and purchasing workspace',
     groupId: 'systems',
     route: '/apps?app=ref-app-erp',
@@ -195,6 +205,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'ref-app-legacy',
     name: 'Legacy operations',
+    shortName: 'Legacy',
     description: 'Existing operational systems',
     groupId: 'systems',
     route: '/apps?app=ref-app-legacy',
@@ -205,6 +216,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   {
     id: 'dwp-admin',
     name: 'Administration',
+    shortName: 'Admin',
     description: 'Access, registry, policies, and codes',
     groupId: 'systems',
     route: '/admin',
@@ -229,6 +241,7 @@ export function localizeHomeApps(translate: HomeTranslate): HomeAppDefinition[] 
   return HOME_APPS.map((app) => ({
     ...app,
     name: translate(`apps.items.${app.id}.name`, { defaultValue: app.name }),
+    shortName: translate(`apps.items.${app.id}.shortName`, { defaultValue: app.shortName }),
     description: translate(`apps.items.${app.id}.description`, {
       defaultValue: app.description,
     }),

@@ -265,12 +265,33 @@ export function ProviderOperations() {
     }
   };
 
-  if (operations.isLoading || approvals.isLoading || tenants.isLoading || operator.isLoading)
+  if (
+    operations.isLoading ||
+    approvals.isLoading ||
+    tenants.isLoading ||
+    (operator.isLoading && !operator.data)
+  )
     return <ProviderLoading />;
-  if (operations.isError || approvals.isError || tenants.isError || operator.isError)
+  if (
+    operations.isError ||
+    approvals.isError ||
+    tenants.isError ||
+    (operator.isError && !operator.data)
+  )
     return (
       <ProviderError
         error={operations.error ?? approvals.error ?? tenants.error ?? operator.error}
+        onRetry={() =>
+          void Promise.all([
+            operations.refetch(),
+            approvals.refetch(),
+            tenants.refetch(),
+            operator.refetch(),
+          ])
+        }
+        retrying={
+          operations.isFetching || approvals.isFetching || tenants.isFetching || operator.isFetching
+        }
       />
     );
 

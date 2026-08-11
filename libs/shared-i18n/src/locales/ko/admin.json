@@ -52,11 +52,6 @@
         "title": "기준정보",
         "description": "테넌트 코드 세트, 다국어 표시명, 계층 및 유효 기간을 관리합니다."
       },
-      "system-code-catalog": {
-        "label": "시스템 코드 계약",
-        "title": "시스템 코드 계약",
-        "description": "제품 소유 코드값, 검증 원천 및 등록된 모든 소비자 계약을 점검합니다."
-      },
       "registry": {
         "label": "앱 레지스트리",
         "title": "애플리케이션 레지스트리",
@@ -153,7 +148,20 @@
     "mfaEnabled": "MFA 켜짐",
     "mfaDisabled": "MFA 꺼짐",
     "additionalRoles": "추가 역할 {{count}}개",
-    "ownRolesUnavailable": "자신의 역할은 변경할 수 없습니다.",
+    "roleFamilies": {
+      "WORKSPACE": "기본 접근",
+      "PEOPLE": "인사 운영",
+      "AUDIT": "감사 및 규정 준수"
+    },
+    "assignmentClasses": {
+      "BASELINE": "필수 기본 역할",
+      "DELEGATED": "위임 가능"
+    },
+    "managementReasons": {
+      "SELF": "자신의 역할은 변경할 수 없습니다.",
+      "IDENTITY_INACTIVE": "비활성 또는 정지된 계정은 역할을 변경할 수 없습니다.",
+      "PROTECTED_ROLE": "동급·상위 또는 통제 영역 역할을 보유한 사용자는 변경할 수 없습니다."
+    },
     "columns": {
       "user": "사용자",
       "roles": "역할",
@@ -165,11 +173,16 @@
       "refresh": "사용자 및 역할 새로고침",
       "editRoles": "역할 수정",
       "editRolesFor": "{{name}} 역할 수정",
-      "save": "접근 권한 저장"
+      "save": "접근 권한 저장",
+      "saving": "접근 권한 저장 중"
     },
     "dialog": {
       "title": "접근 권한 수정",
       "assignedRoles": "할당된 역할",
+      "delegationBoundary": "회사 관리자가 직접 부여할 수 있도록 위임된 역할만 표시됩니다. 테넌트·감사 관리 및 플랫폼 제어 역할은 별도 승인 절차로 관리됩니다.",
+      "justification": "변경 사유",
+      "justificationHelp": "감사 추적을 위해 10자 이상 입력하세요.",
+      "conflictsWith": "직무분리 정책상 {{roles}} 역할과 함께 부여할 수 없습니다.",
       "sessionNotice": "역할을 저장하면 이 사용자의 모든 활성 세션이 종료됩니다."
     },
     "toasts": {
@@ -241,6 +254,10 @@
     "immediate": "즉시",
     "openEnded": "종료일 없음",
     "noAnnouncements": "공지사항이 없습니다.",
+    "empty": {
+      "title": "아직 공지사항이 없습니다",
+      "description": "첫 공지를 초안으로 작성한 뒤 대상과 게시 기간을 검토하여 게시하세요."
+    },
     "fields": {
       "title": "제목",
       "message": "내용",
@@ -362,23 +379,111 @@
     "referenceSets": "기준정보 세트",
     "referenceItems": "기준정보 항목",
     "setDetail": "기준정보 세트 상세",
+    "detailViews": "기준정보 상세 보기",
+    "catalogListHelp": "테넌트가 소유하는 업무 어휘",
     "searchSets": "세트 검색",
+    "searchItems": "코드 또는 표시명 검색",
     "noSets": "기준정보 세트가 없습니다.",
     "noItems": "기준정보 항목이 없습니다.",
     "selectSet": "기준정보 세트를 선택하세요.",
+    "noDescription": "설명이 등록되지 않았습니다.",
     "localizedLabels": "다국어 표시명",
     "itemCount_one": "항목 {{count}}개",
     "itemCount_other": "항목 {{count}}개",
     "revision": "{{key}} / 리비전 {{revision}}",
+    "revisionShort": "리비전 {{revision}}",
     "itemSummary_one": "정렬 {{order}} / 언어 {{count}}개",
     "itemSummary_other": "정렬 {{order}} / 언어 {{count}}개",
     "parentSummary": "상위 {{code}}",
+    "overview": {
+      "title": "운영 카탈로그",
+      "description": "테넌트 업무 코드의 배포 상태와 운영 준비도를 한눈에 확인합니다.",
+      "catalogs": "카탈로그",
+      "catalogsDetail": "테넌트 소유 세트",
+      "values": "전체 값",
+      "valuesDetail": "계층 포함 코드값",
+      "published": "배포 중",
+      "publishedDetail": "런타임 조회 가능",
+      "drafts": "초안 세트",
+      "draftsDetail": "검토 및 활성화 필요"
+    },
+    "health": {
+      "title": "기준정보 운영 상태",
+      "available": "현재 사용 가능",
+      "availableDetail": "활성·유효 항목",
+      "draft": "초안 변경",
+      "draftDetail": "활성화 전 검토 대상",
+      "timeBound": "기간 지정",
+      "timeBoundDetail": "예약 또는 만료 정책",
+      "translation": "번역 완성도",
+      "translationDetail": "한국어·영어 기준",
+      "roots": "최상위 값",
+      "rootsDetail": "계층 탐색 시작점"
+    },
+    "tabs": {
+      "values": "기준값",
+      "activity": "변경 활동"
+    },
+    "filters": {
+      "lifecycle": "수명주기 필터",
+      "all": "전체"
+    },
+    "runtime": {
+      "published": "런타임 배포 중",
+      "notPublished": "런타임 미배포"
+    },
+    "validity": {
+      "noLimit": "기간 제한 없음",
+      "always": "현재 적용",
+      "scheduled": "적용 예정",
+      "expired": "만료",
+      "bounded": "기간 적용 중",
+      "from": "{{date}}부터",
+      "until": "{{date}}까지"
+    },
+    "hierarchy": {
+      "root": "최상위"
+    },
+    "empty": {
+      "catalogDescription": "첫 세트를 만들면 업무 코드, 번역 및 유효기간을 관리할 수 있습니다.",
+      "selectDescription": "왼쪽 카탈로그에서 운영할 기준정보를 선택하세요.",
+      "noMatchingItems": "조건에 맞는 기준정보 항목이 없습니다."
+    },
+    "activity": {
+      "title": "변경 활동",
+      "description": "이 세트와 하위 항목의 생성, 수정, 활성화 및 종료 이력을 추적합니다.",
+      "loading": "변경 활동 불러오는 중",
+      "empty": "기록된 변경 활동이 없습니다.",
+      "emptyDescription": "첫 변경이 완료되면 감사 가능한 활동 이력이 여기에 표시됩니다.",
+      "systemActor": "플랫폼 서비스",
+      "userActor": "사용자 {{id}}",
+      "outcomes": {
+        "SUCCESS": "성공",
+        "DENIED": "거부",
+        "FAILED": "실패"
+      },
+      "actions": {
+        "seeded": "초기 운영 카탈로그 구성",
+        "setCreated": "기준정보 세트 생성",
+        "setUpdated": "기준정보 세트 수정",
+        "setActivated": "기준정보 세트 활성화",
+        "setRetired": "기준정보 세트 종료",
+        "itemCreated": "기준정보 항목 생성",
+        "itemUpdated": "기준정보 항목 수정",
+        "itemActivated": "기준정보 항목 활성화",
+        "itemRetired": "기준정보 항목 종료"
+      }
+    },
     "columns": {
       "code": "코드",
+      "value": "기준값",
       "state": "상태",
       "locales": "언어",
       "order": "정렬",
-      "parent": "상위 코드"
+      "parent": "상위 코드",
+      "validity": "적용 기간",
+      "hierarchy": "계층",
+      "updated": "최근 변경"
     },
     "fields": {
       "setKey": "세트 키",
@@ -1136,6 +1241,10 @@
     "scim": {
       "title": "SCIM 커넥터",
       "loading": "SCIM 커넥터 불러오는 중",
+      "empty": {
+        "title": "첫 SCIM 연결을 설정하세요",
+        "description": "커넥터를 만든 뒤 한 번만 표시되는 토큰을 IDP 비밀 저장소에 보관하고 프로비저닝 범위를 검증하세요."
+      },
       "columns": {
         "connector": "커넥터",
         "tokenPrefix": "토큰 식별자",
@@ -1184,6 +1293,7 @@
     "noExpiry": "만료 없음",
     "direct": "직접 할당",
     "tenantWide": "테넌트 전체",
+    "systemManaged": "시스템 내장 역할은 중앙 정책으로 관리되며 이 화면에서 변경할 수 없습니다.",
     "roleTypes": {
       "SYSTEM": "시스템",
       "CUSTOM": "사용자 정의"
@@ -1328,6 +1438,10 @@
     "title": "내비게이션 트리",
     "loading": "내비게이션 트리 불러오는 중",
     "empty": "정의된 내비게이션 항목이 없습니다.",
+    "emptyState": {
+      "title": "내비게이션 트리가 비어 있습니다",
+      "description": "먼저 최상위 그룹을 만든 뒤 권한이 연결된 애플리케이션 항목을 추가하세요."
+    },
     "treeLabel": "테넌트 내비게이션 트리",
     "root": "최상위",
     "types": {

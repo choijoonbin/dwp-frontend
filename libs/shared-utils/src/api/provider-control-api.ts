@@ -471,6 +471,122 @@ export type ProviderAuditEvent = {
   occurredAt: string;
 };
 
+export type ProviderDataGovernanceSummary = {
+  databases: number;
+  availableDatabases: number;
+  logicalTables: number;
+  partitions: number;
+  columns: number;
+  foreignKeys: number;
+  documentedAssets: number;
+  reviewRequired: number;
+  totalBytes: number;
+};
+
+export type ProviderDatabaseAssetSummary = {
+  databaseKey: string;
+  databaseName: string;
+  displayName: string;
+  ownerService: string;
+  status: 'AVAILABLE' | 'UNAVAILABLE';
+  error?: string | null;
+  logicalTables: number;
+  partitions: number;
+  views: number;
+  columns: number;
+  foreignKeys: number;
+  documentedAssets: number;
+  totalAssets: number;
+  totalBytes: number;
+  businessDomains: string[];
+};
+
+export type ProviderDataColumn = {
+  name: string;
+  dataType: string;
+  nullable: boolean;
+  defaultValue?: string | null;
+  description?: string | null;
+  primaryKey: boolean;
+  foreignKey: boolean;
+  indexed: boolean;
+  classification: 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED';
+};
+
+export type ProviderDataAsset = {
+  assetKey: string;
+  databaseKey: string;
+  databaseName: string;
+  schemaName: string;
+  objectName: string;
+  objectType:
+    'TABLE' | 'PARTITIONED_TABLE' | 'PARTITION' | 'VIEW' | 'MATERIALIZED_VIEW' | 'SYSTEM_TABLE';
+  parentObjectName?: string | null;
+  businessDomain: string;
+  ownerService: string;
+  lifecycleState: 'ACTIVE' | 'PLANNED' | 'DEPRECATED' | 'RETIRED';
+  criticality: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  dataClassification: 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED';
+  reviewState: 'DISCOVERED' | 'REVIEW_REQUIRED' | 'VERIFIED';
+  description?: string | null;
+  reviewNote?: string | null;
+  estimatedRows: number;
+  totalBytes: number;
+  tenantScoped: boolean;
+  constraintCount: number;
+  indexCount: number;
+  inboundRelationships: number;
+  outboundRelationships: number;
+  primaryKey: string[];
+  columns: ProviderDataColumn[];
+};
+
+export type ProviderDataRelationship = {
+  relationshipId: string;
+  databaseKey: string;
+  constraintName: string;
+  sourceAssetKey: string;
+  targetAssetKey: string;
+  sourceColumns: string[];
+  targetColumns: string[];
+  sourceIndexed: boolean;
+};
+
+export type ProviderDataLineageEdge = {
+  edgeId: string;
+  edgeKey: string;
+  sourceAssetKey: string;
+  targetAssetKey: string;
+  processKey: string;
+  edgeType: 'PROVISIONING' | 'EVENT' | 'REPLICATION' | 'REFERENCE' | 'AGGREGATION';
+  ownerService: string;
+  description: string;
+  evidence?: string | null;
+  metadata: string;
+};
+
+export type ProviderDataGovernanceFinding = {
+  findingId: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  category: string;
+  databaseKey: string;
+  assetKey?: string | null;
+  title: string;
+  detail: string;
+  recommendation: string;
+  evidence?: string | null;
+};
+
+export type ProviderDataGovernanceSnapshot = {
+  generatedAt: string;
+  summary: ProviderDataGovernanceSummary;
+  databases: ProviderDatabaseAssetSummary[];
+  assets: ProviderDataAsset[];
+  relationships: ProviderDataRelationship[];
+  lineage: ProviderDataLineageEdge[];
+  findings: ProviderDataGovernanceFinding[];
+};
+
 export type ProviderDomainChallenge = {
   domain: ProviderTenantDomain;
   recordName: string;
@@ -511,7 +627,9 @@ export type OnboardingPlanRequest = {
 const BASE = '/api/provider/v1/admin';
 
 export async function getProviderOperatorProfile(): Promise<ProviderOperatorProfile> {
-  const response = await axiosInstance.get<ApiResponse<ProviderOperatorProfile>>(`${BASE}/me`);
+  const response = await axiosInstance.get<ApiResponse<ProviderOperatorProfile>>(`${BASE}/me`, {
+    timeoutMs: 5_000,
+  });
   return response.data.data;
 }
 
@@ -867,6 +985,21 @@ export async function listProviderAuditEvents(tenantId?: string): Promise<Provid
   if (tenantId) search.set('tenantId', tenantId);
   const response = await axiosInstance.get<ApiResponse<ProviderAuditEvent[]>>(
     `${BASE}/audit-events?${search.toString()}`
+  );
+  return response.data.data;
+}
+
+export async function getProviderDataGovernance(): Promise<ProviderDataGovernanceSnapshot> {
+  const response = await axiosInstance.get<ApiResponse<ProviderDataGovernanceSnapshot>>(
+    `${BASE}/data-governance`
+  );
+  return response.data.data;
+}
+
+export async function refreshProviderDataGovernance(): Promise<ProviderDataGovernanceSnapshot> {
+  const response = await axiosInstance.post<ApiResponse<ProviderDataGovernanceSnapshot>, undefined>(
+    `${BASE}/data-governance/refresh`,
+    undefined
   );
   return response.data.data;
 }

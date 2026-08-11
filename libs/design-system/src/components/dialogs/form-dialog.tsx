@@ -59,13 +59,19 @@ export function FormDialog({
     >
       <Box
         component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: 0,
+          maxHeight: 'calc(100dvh - 64px)',
+        }}
         onSubmit={(event) => {
           event.preventDefault();
           if (!busy && !submitDisabled) void onSubmit();
         }}
       >
         <DialogTitle id={titleId}>{title}</DialogTitle>
-        <DialogContent sx={{ pt: '8px !important' }}>
+        <DialogContent sx={{ minHeight: 0, overflowY: 'auto', pt: '8px !important' }}>
           {description && (
             <Typography id={descriptionId} variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {description}
@@ -73,7 +79,12 @@ export function FormDialog({
           )}
           {children}
         </DialogContent>
-        <DialogActions sx={{ justifyContent: secondaryActions ? 'space-between' : 'flex-end' }}>
+        <DialogActions
+          sx={{
+            flex: '0 0 auto',
+            justifyContent: secondaryActions ? 'space-between' : 'flex-end',
+          }}
+        >
           {secondaryActions && <Box>{secondaryActions}</Box>}
           <Box sx={{ display: 'flex', gap: 1 }}>
             <ActionButton intent="quiet" onClick={onClose} disabled={busy}>

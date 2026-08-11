@@ -5,6 +5,7 @@
     "accountFallback": "Account",
     "navigationLabel": "Settings navigation",
     "openNavigation": "Open settings navigation",
+    "backToProvider": "Back to Provider Control Plane",
     "backToWorkspace": "Back to workspace",
     "groups": {
       "account": "Account",
@@ -115,6 +116,7 @@
   "personalPreferences": {
     "loading": "Loading your personal preferences",
     "loadError": "Your account preferences could not be loaded. Cached settings remain active, and changes are disabled until the service is available.",
+    "retry": "Retry",
     "saveError": "Your personal preference could not be saved. The previous setting has been restored."
   },
   "labels": {

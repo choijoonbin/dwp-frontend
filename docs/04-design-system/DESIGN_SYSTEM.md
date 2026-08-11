@@ -43,6 +43,11 @@ MUI Component를 기계적으로 전부 감싸지 않는다. 제품 의미, 반�
 
 ## Shell Reflow와 Page Width
 
+Header와 Sidebar의 의미·순서·Scope 계약은
+[`R1 Global Shell 및 Header Context ADR`](../03-architecture/R1%20Global%20Shell%20및%20Header%20Context%20ADR.md)을
+Source of Truth로 사용한다. Layout은 Header 내부 요소를 화면별로 다시 조립하지 않고 공통
+`ShellHeader`에 현재 Application Context와 Scope만 전달한다.
+
 Desktop Navigation은 본문 옆에 놓이는 Inline 영역이다. Expanded `248px`와 Compact
 `72px`의 차이 `176px`는 Sidebar를 접는 즉시 Global Header와 Main Canvas가 함께
 회수한다. Header와 Main은 동일한 Motion Duration을 사용하고 오른쪽 Viewport 경계를
@@ -80,6 +85,7 @@ Gate로 검증한다.
 
 - `ActionButton`: Primary·Secondary·Quiet·Danger 의도와 Disabled·Loading 상태 계약
 - `ActionIconButton`: 필수 Accessible Name, Tooltip, 의도와 Loading 상태 계약
+- `LanguageIcon`: 로그인·탐색·설정에서 동일하게 사용하는 제품 언어 의미 아이콘
 - `FormField`: Supporting Text·Validation Error·Feedback 높이의 공통 Text Field 계약
 - `SelectField`: 문자열·숫자 Option과 빈 값·오류·도움말의 공통 Select 계약
 - `AutocompleteField`: 단일 Entity 선택과 검색 입력의 공통 접근성·오류 계약
@@ -109,6 +115,8 @@ Public Gate로 추가한다.
   제출이 차단되고 Button 크기와 Accessible Name이 유지되어야 한다.
 - Icon-only 명령은 `ActionIconButton`의 `label`을 반드시 제공한다. Tooltip은 설명 보조이며
   Accessible Name을 대신하지 않는다.
+- 동일한 제품 의미는 화면마다 Lucide 아이콘을 직접 고르지 않고 Semantic Icon을 사용한다.
+  크기와 색상은 배치 맥락에 맞추되 아이콘 형태는 변경하지 않는다.
 - 필드의 오류는 Supporting Text보다 우선한다. 레이아웃 이동이 문제인 밀집 Form은
   `reserveFeedbackSpace`를 사용한다.
 - 화면 Form은 도메인 상태와 검증을 소유하고, 공통 Field는 표시·상태·접근성 계약만

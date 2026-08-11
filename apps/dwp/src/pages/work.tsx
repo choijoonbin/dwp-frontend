@@ -1,35 +1,56 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowUpRight,
   BriefcaseBusiness,
   CheckCircle2,
   CircleAlert,
   Clock3,
-  ListFilter,
   Sparkles,
   UserRound,
 } from 'lucide-react';
-import { EnterpriseDataGrid, PageCanvas } from '@dwp-frontend/design-system';
-import { useToast } from '@dwp-frontend/shared-utils';
+import {
+  ActionButton,
+  EnterpriseDataGrid,
+  EmptyState,
+  FilterBar,
+  LiveStatus,
+  LocalErrorState,
+  LoadingState,
+  mergeFilterSearchParams,
+  OperationalKpiStrip,
+  PageCanvas,
+  ResourcePageHeader,
+  SavedViewMenu,
+} from '@dwp-frontend/design-system';
+import {
+  getWorkspaceWorkQueue,
+  updateWorkspaceWorkStatus,
+  useToast,
+} from '@dwp-frontend/shared-utils';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import { PageHeader, ReferenceModeChip, SectionHeading } from '../features/work-hub/workspace-ui';
-import { localizeWorkItems } from '../features/work-hub/reference-data';
+import { SectionHeading } from '../features/work-hub/workspace-ui';
 
 import type { GridColDef } from '@mui/x-data-grid';
-import type { Priority, ReferenceWorkItem, WorkStatus } from '../features/work-hub/reference-data';
+import type {
+  WorkspacePriority as Priority,
+  WorkspaceWorkItem,
+  WorkspaceWorkStatus as WorkStatus,
+} from '@dwp-frontend/shared-utils';
 
 type WorkFilter = 'all' | WorkStatus;
+type WorkRow = WorkspaceWorkItem & { due: string };
 
 const statusColor: Record<WorkStatus, 'error' | 'info' | 'warning' | 'success'> = {
   'due-soon': 'error',
@@ -44,73 +65,64 @@ const priorityColor: Record<Priority, 'error' | 'warning' | 'default'> = {
   low: 'default',
 };
 
-const insightByWork: Record<string, { reason: string; next: string; activity: string }> = {
-  'WK-1042': {
-    reason: 'A new team member cannot access the project workspace until this request is approved.',
-    next: 'Review role and license scope, then approve or return the request.',
-    activity: 'Policy engine verified role eligibility at 09:08.',
-  },
-  'WK-1045': {
-    reason: 'The customer meeting starts at 11:00 and three questions remain unresolved.',
-    next: 'Review the questions and assign an owner before 10:40.',
-    activity: 'Mina Kim added three discovery questions at 08:54.',
-  },
-  'WK-1043': {
-    reason: 'The enrollment window closes at 17:00 today.',
-    next: 'Confirm the selected plan and submit the employee acknowledgement.',
-    activity: 'People connector confirmed the deadline at 08:41.',
-  },
-  'WK-1046': {
-    reason: 'The acknowledgement is required before tomorrow.',
-    next: 'Complete the 15 minute module and record acknowledgement.',
-    activity: 'Learning system issued the reminder this morning.',
-  },
-  'WK-1038': {
-    reason: 'Quarterly objectives are ready for your manager review.',
-    next: 'Confirm progress notes and submit the review draft.',
-    activity: 'Two objective metrics were updated yesterday.',
-  },
-  'WK-1027': {
-    reason: 'Shared Services completed the requested expense follow-up.',
-    next: 'No action required. Keep the record for reference.',
-    activity: 'The finance case closed on Aug 7.',
-  },
-};
+const WORK_FILTERS: WorkFilter[] = ['all', 'due-soon', 'in-progress', 'waiting', 'completed'];
+
+function isWorkFilter(value: string | null): value is WorkFilter {
+  return Boolean(value && WORK_FILTERS.includes(value as WorkFilter));
+}
 
 export default function WorkPage() {
   const { t } = useTranslation(['work', 'common']);
   const toast = useToast();
-  const [searchParams] = useSearchParams();
-  const [filter, setFilter] = useState<WorkFilter>('all');
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filterParam = searchParams.get('status');
+  const filter: WorkFilter = isWorkFilter(filterParam) ? filterParam : 'all';
+  const query = searchParams.get('q') ?? '';
+  const columnPreset = searchParams.get('columns') === 'compact' ? 'compact' : 'operational';
+  const showQueueDetailColumns = useMediaQuery('(min-width:600px)');
   const showSourceColumn = useMediaQuery('(min-width:1600px)');
-  const localizedItems = useMemo(() => localizeWorkItems(t), [t]);
-  const [selectedId, setSelectedId] = useState(
-    () => searchParams.get('item') || localizedItems[0]?.id || ''
-  );
-  const filteredItems = useMemo(
+  const queueQuery = useQuery({
+    queryKey: ['workspace', 'work-queue'],
+    queryFn: getWorkspaceWorkQueue,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const items = useMemo<WorkRow[]>(
     () =>
-      filter === 'all' ? localizedItems : localizedItems.filter((item) => item.status === filter),
-    [filter, localizedItems]
+      (queueQuery.data?.items ?? []).map((item) => ({
+        ...item,
+        due: item.dueAt
+          ? formatDate(new Date(item.dueAt), {
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+          : t('workPage.noDueDate'),
+      })),
+    [queueQuery.data?.items, t]
   );
-  const selected = localizedItems.find((item) => item.id === selectedId) || filteredItems[0];
-  const selectedInsightDefaults = selected ? insightByWork[selected.id] : undefined;
-  const selectedInsight =
-    selected && selectedInsightDefaults
-      ? {
-          reason: t(`workPage.insights.${selected.id}.reason`, {
-            defaultValue: selectedInsightDefaults.reason,
-          }),
-          next: t(`workPage.insights.${selected.id}.next`, {
-            defaultValue: selectedInsightDefaults.next,
-          }),
-          activity: t(`workPage.insights.${selected.id}.activity`, {
-            defaultValue: selectedInsightDefaults.activity,
-          }),
-        }
-      : undefined;
-  const columns = useMemo<GridColDef<ReferenceWorkItem>[]>(
+  const selectedId = searchParams.get('item') ?? '';
+  const filteredItems = useMemo(() => {
+    const normalized = query.trim().toLocaleLowerCase();
+    return items.filter((item) => {
+      const statusMatches = filter === 'all' || item.status === filter;
+      const queryMatches =
+        !normalized ||
+        [item.id, item.title, item.summary, item.owner, item.sourceSystem].some((value) =>
+          String(value ?? '')
+            .toLocaleLowerCase()
+            .includes(normalized)
+        );
+      return statusMatches && queryMatches;
+    });
+  }, [filter, items, query]);
+  const selected = items.find((item) => item.id === selectedId) || filteredItems[0];
+  const columns = useMemo<GridColDef<WorkRow>[]>(
     () => [
-      { field: 'id', headerName: t('workPage.columns.id'), width: 96 },
+      { field: 'id', headerName: t('workPage.columns.id'), width: 112 },
       { field: 'title', headerName: t('workPage.columns.work'), minWidth: 200, flex: 1 },
       {
         field: 'priority',
@@ -144,100 +156,215 @@ export default function WorkPage() {
           );
         },
       },
-      { field: 'due', headerName: t('workPage.columns.due'), width: 112 },
+      { field: 'due', headerName: t('workPage.columns.due'), width: 128 },
       { field: 'sourceSystem', headerName: t('workPage.columns.source'), width: 120 },
     ],
     [t]
   );
 
+  const statusMutation = useMutation({
+    mutationFn: ({ item, status }: { item: WorkRow; status: 'IN_PROGRESS' | 'COMPLETED' }) =>
+      updateWorkspaceWorkStatus(item.workItemId, status, item.version),
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ['workspace', 'work-queue'],
+        (current: Awaited<ReturnType<typeof getWorkspaceWorkQueue>> | undefined) =>
+          current
+            ? {
+                ...current,
+                items: current.items.map((item) =>
+                  item.workItemId === updated.workItemId ? updated : item
+                ),
+              }
+            : current
+      );
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['workspace', 'work-queue'] }),
+        queryClient.invalidateQueries({ queryKey: ['workspace', 'activity'] }),
+      ]);
+      toast.success(t('workPage.statusUpdated', { title: updated.title }));
+    },
+    onError: () => toast.error(t('workPage.statusUpdateError')),
+  });
+
+  const selectFilter = (value: WorkFilter) => {
+    setSearchParams(
+      mergeFilterSearchParams(searchParams, {
+        status: value === 'all' ? null : value,
+        item: null,
+      }),
+      { replace: true }
+    );
+  };
   const changeFilter = (_event: React.MouseEvent<HTMLElement>, value: WorkFilter | null) => {
-    if (value) setFilter(value);
+    if (value) selectFilter(value);
+  };
+
+  const header = (
+    <ResourcePageHeader
+      eyebrow={t('workPage.header.eyebrow')}
+      title={t('workPage.header.title')}
+      description={t('workPage.header.description')}
+      status={
+        <LiveStatus
+          state={queueQuery.isFetching ? 'syncing' : 'live'}
+          label={t('workPage.liveData')}
+          refreshLabel={t('workPage.retry')}
+          refreshing={queueQuery.isFetching}
+          onRefresh={() => void queueQuery.refetch()}
+        />
+      }
+    />
+  );
+  if (queueQuery.isLoading) {
+    return (
+      <PageCanvas>
+        {header}
+        <LoadingState label={t('workPage.loading')} variant="skeleton" size="page" />
+      </PageCanvas>
+    );
+  }
+  if (queueQuery.isError) {
+    return (
+      <PageCanvas>
+        {header}
+        <LocalErrorState
+          title={t('workPage.loadErrorTitle')}
+          description={t('workPage.loadErrorDescription')}
+          retryLabel={t('workPage.retry')}
+          onRetry={() => void queueQuery.refetch()}
+          retrying={queueQuery.isFetching}
+          size="page"
+        />
+      </PageCanvas>
+    );
+  }
+  if (items.length === 0) {
+    return (
+      <PageCanvas>
+        {header}
+        <EmptyState
+          title={t('workPage.emptyTitle')}
+          description={t('workPage.emptyDescription')}
+          size="page"
+        />
+      </PageCanvas>
+    );
+  }
+
+  const summaryValues: Record<string, number> = {
+    all: queueQuery.data?.summary.total ?? 0,
+    due: queueQuery.data?.summary.dueSoon ?? 0,
+    progress: queueQuery.data?.summary.inProgress ?? 0,
+    waiting: queueQuery.data?.summary.waiting ?? 0,
   };
 
   return (
     <PageCanvas>
-      <PageHeader
-        eyebrow={t('workPage.header.eyebrow')}
-        title={t('workPage.header.title')}
-        description={t('workPage.header.description')}
-        action={<ReferenceModeChip />}
-      />
+      {header}
 
-      <Box
-        aria-label={t('workPage.summaryLabel')}
-        sx={{
-          mt: 3,
-          display: 'grid',
-          gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))', md: 'repeat(4, minmax(0, 1fr))' },
-          borderTop: 1,
-          borderBottom: 1,
-          borderColor: 'divider',
-        }}
-      >
-        {[
-          ['all', 'text.primary'],
-          ['due', 'error.main'],
-          ['progress', 'info.main'],
-          ['waiting', 'warning.main'],
-        ].map(([key, color], index) => (
-          <Box
-            key={key}
-            sx={{
-              py: 2,
-              px: { xs: 1.5, md: 2.5 },
-              borderLeft: index % 2 === 0 ? 0 : 1,
-              borderTop: { xs: index > 1 ? 1 : 0, md: 0 },
-              '&:nth-of-type(3)': { borderLeft: { xs: 0, md: 1 } },
-              borderColor: 'divider',
-            }}
-          >
-            <Typography
-              component="p"
-              variant="h5"
-              sx={{ color, fontVariantNumeric: 'tabular-nums' }}
-            >
-              {t(`workPage.summary.${key}.value`)}
-            </Typography>
-            <Typography component="p" variant="subtitle2" sx={{ mt: 0.25 }}>
-              {t(`workPage.summary.${key}.label`)}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {t(`workPage.summary.${key}.detail`)}
-            </Typography>
-          </Box>
-        ))}
+      <Box sx={{ mt: 3 }}>
+        <OperationalKpiStrip
+          ariaLabel={t('workPage.summaryLabel')}
+          items={[
+            {
+              key: 'all',
+              value: String(summaryValues.all).padStart(2, '0'),
+              label: t('workPage.summary.all.label'),
+              detail: t('workPage.summary.all.detail'),
+              onSelect: () => selectFilter('all'),
+            },
+            {
+              key: 'due',
+              value: String(summaryValues.due).padStart(2, '0'),
+              label: t('workPage.summary.due.label'),
+              detail: t('workPage.summary.due.detail'),
+              tone: 'critical',
+              onSelect: () => selectFilter('due-soon'),
+            },
+            {
+              key: 'progress',
+              value: String(summaryValues.progress).padStart(2, '0'),
+              label: t('workPage.summary.progress.label'),
+              detail: t('workPage.summary.progress.detail'),
+              tone: 'info',
+              onSelect: () => selectFilter('in-progress'),
+            },
+            {
+              key: 'waiting',
+              value: String(summaryValues.waiting).padStart(2, '0'),
+              label: t('workPage.summary.waiting.label'),
+              detail: t('workPage.summary.waiting.detail'),
+              tone: 'warning',
+              onSelect: () => selectFilter('waiting'),
+            },
+          ]}
+        />
       </Box>
 
-      <Box
-        sx={{
-          mt: 3,
-          display: 'flex',
-          alignItems: { xs: 'stretch', md: 'center' },
-          justifyContent: 'space-between',
-          flexDirection: { xs: 'column', md: 'row' },
-          gap: 1.5,
-        }}
-      >
-        <ToggleButtonGroup
-          exclusive
-          size="small"
-          value={filter}
-          onChange={changeFilter}
-          aria-label={t('workPage.filterLabel')}
-          sx={{ overflowX: 'auto', maxWidth: 1 }}
-        >
-          <ToggleButton value="all">{t('workPage.filters.all')}</ToggleButton>
-          <ToggleButton value="due-soon">{t('workPage.filters.due-soon')}</ToggleButton>
-          <ToggleButton value="in-progress">{t('workPage.filters.in-progress')}</ToggleButton>
-          <ToggleButton value="waiting">{t('workPage.filters.waiting')}</ToggleButton>
-          <ToggleButton value="completed">{t('workPage.filters.completed')}</ToggleButton>
-        </ToggleButtonGroup>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-          <ListFilter size={15} aria-hidden="true" />
-          <Typography variant="body2" color="text.secondary">
-            {t('workPage.resultSummary', { count: filteredItems.length })}
-          </Typography>
-        </Box>
+      <Box sx={{ mt: 3 }}>
+        <FilterBar
+          ariaLabel={t('workPage.filterLabel')}
+          searchLabel={t('workPage.searchLabel')}
+          searchPlaceholder={t('workPage.searchPlaceholder')}
+          searchValue={query}
+          onSearchChange={(value) =>
+            setSearchParams(
+              mergeFilterSearchParams(searchParams, { q: value || null, item: null }),
+              { replace: true }
+            )
+          }
+          filters={
+            <ToggleButtonGroup
+              exclusive
+              size="small"
+              value={filter}
+              onChange={changeFilter}
+              aria-label={t('workPage.filterLabel')}
+            >
+              {WORK_FILTERS.map((value) => (
+                <ToggleButton key={value} value={value}>
+                  {t(`workPage.filters.${value}`)}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          }
+          savedViews={
+            <SavedViewMenu
+              label={t('workPage.views.label')}
+              personalLabel={t('workPage.views.personal')}
+              sharedLabel={t('workPage.views.shared')}
+              defaultLabel={t('workPage.views.default')}
+              selectedViewId={filter}
+              views={WORK_FILTERS.map((value) => ({
+                id: value,
+                name: t(`workPage.filters.${value}`),
+                scope: 'personal' as const,
+                isDefault: value === 'all',
+              }))}
+              onSelect={(view) => selectFilter(view.id as WorkFilter)}
+            />
+          }
+          activeFilters={
+            filter === 'all'
+              ? []
+              : [
+                  {
+                    key: 'status',
+                    label: t(`workPage.filters.${filter}`),
+                    onRemove: () => selectFilter('all'),
+                  },
+                ]
+          }
+          resetLabel={t('workPage.resetFilters')}
+          onReset={() =>
+            setSearchParams(
+              mergeFilterSearchParams(searchParams, { q: null, status: null, item: null }),
+              { replace: true }
+            )
+          }
+          resultLabel={t('workPage.resultSummary', { count: filteredItems.length })}
+        />
       </Box>
 
       <Box
@@ -257,17 +384,49 @@ export default function WorkPage() {
             rows={filteredItems}
             columns={columns}
             getRowId={(row) => row.id}
-            onRowClick={({ row }) => setSelectedId(row.id)}
-            columnVisibilityModel={{ sourceSystem: showSourceColumn }}
+            onRowClick={({ row }) =>
+              setSearchParams(mergeFilterSearchParams(searchParams, { item: row.id }), {
+                replace: true,
+              })
+            }
+            columnVisibilityModel={{
+              priority: columnPreset === 'operational' && showQueueDetailColumns,
+              status: showQueueDetailColumns,
+              due: showQueueDetailColumns,
+              sourceSystem: columnPreset === 'operational' && showSourceColumn,
+            }}
             rowSelectionModel={
               selected ? { type: 'include', ids: new Set([selected.id]) } : undefined
             }
             height={520}
             hideFooter={filteredItems.length <= 25}
+            stickyColumns={{ left: ['id'] }}
+            toolbar={{
+              ariaLabel: t('workPage.gridToolbar'),
+              showQuickFilter: false,
+              columnsLabel: t('workPage.chooseColumns'),
+              filtersLabel: t('workPage.gridFilters'),
+              columnPresetsLabel: t('workPage.columnPresets.label'),
+              selectedColumnPresetId: columnPreset,
+              columnPresets: [
+                { id: 'operational', label: t('workPage.columnPresets.operational') },
+                { id: 'compact', label: t('workPage.columnPresets.compact') },
+              ],
+              onColumnPresetChange: (value) =>
+                setSearchParams(
+                  mergeFilterSearchParams(searchParams, {
+                    columns: value === 'operational' ? null : value,
+                  }),
+                  { replace: true }
+                ),
+              onRefresh: () => void queueQuery.refetch(),
+              refreshLabel: t('workPage.retry'),
+              refreshing: queueQuery.isFetching,
+            }}
           />
         </Box>
 
-        {selected && selectedInsight && (
+        {selected && (
           <Box
             component="aside"
             aria-labelledby="selected-work-heading"
@@ -337,7 +496,7 @@ export default function WorkPage() {
                 </Typography>
               </Box>
               <Typography variant="body2" sx={{ mt: 0.75 }}>
-                {selectedInsight.reason}
+                {selected.reason || t('workPage.noDecisionContext')}
               </Typography>
             </Box>
 
@@ -347,7 +506,7 @@ export default function WorkPage() {
                   {t('workPage.recommendedNext')}
                 </Typography>
                 <Typography variant="body2" sx={{ mt: 0.35 }}>
-                  {selectedInsight.next}
+                  {selected.recommendedNext || t('workPage.noRecommendedNext')}
                 </Typography>
               </Box>
               <Box>
@@ -356,15 +515,17 @@ export default function WorkPage() {
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
                   <UserRound size={16} strokeWidth={1.8} aria-hidden="true" />
-                  <Typography variant="body2">{selectedInsight.activity}</Typography>
+                  <Typography variant="body2">
+                    {selected.latestActivity || t('workPage.noLatestActivity')}
+                  </Typography>
                 </Box>
               </Box>
             </Box>
 
             <Divider sx={{ my: 3 }} />
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              <Button
-                variant="contained"
+              <ActionButton
+                intent="primary"
                 startIcon={
                   selected.status === 'completed' ? (
                     <CheckCircle2 size={17} aria-hidden="true" />
@@ -372,24 +533,43 @@ export default function WorkPage() {
                     <CircleAlert size={17} aria-hidden="true" />
                   )
                 }
-                onClick={() => toast.success(t('workPage.actionOpened', { title: selected.title }))}
+                disabled={
+                  statusMutation.isPending ||
+                  (selected.status === 'completed' && !selected.sourceRoute)
+                }
+                onClick={() => {
+                  if (selected.status === 'completed') {
+                    if (selected.sourceRoute) navigate(selected.sourceRoute);
+                    return;
+                  }
+                  statusMutation.mutate({ item: selected, status: 'IN_PROGRESS' });
+                }}
               >
                 {selected.status === 'completed'
                   ? t('workPage.viewRecord')
                   : t('workPage.continueWork')}
-              </Button>
-              <Button
-                variant="outlined"
+              </ActionButton>
+              {selected.status !== 'completed' && (
+                <ActionButton
+                  intent="secondary"
+                  startIcon={<CheckCircle2 size={17} aria-hidden="true" />}
+                  disabled={statusMutation.isPending}
+                  onClick={() => statusMutation.mutate({ item: selected, status: 'COMPLETED' })}
+                >
+                  {t('workPage.completeWork')}
+                </ActionButton>
+              )}
+              <ActionButton
+                intent="secondary"
                 endIcon={<ArrowUpRight size={16} aria-hidden="true" />}
-                onClick={() =>
-                  toast.success(t('workPage.sourceOpened', { source: selected.sourceSystem }))
-                }
+                disabled={!selected.sourceRoute}
+                onClick={() => selected.sourceRoute && navigate(selected.sourceRoute)}
               >
                 {t('workPage.openSource')}
-              </Button>
+              </ActionButton>
             </Box>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
-              {t('workPage.referenceNotice')}
+              {t('workPage.liveNotice')}
             </Typography>
           </Box>
         )}

@@ -19,7 +19,6 @@ import { AnnouncementManager } from '../features/admin/announcement-manager';
 import { HomeExperienceManager } from '../features/admin/home-experience-manager';
 import { RegistryManager } from '../features/admin/registry-manager';
 import { ReferenceDataManager } from '../features/admin/reference-data-manager';
-import { SystemCodeCatalogManager } from '../features/admin/system-code-catalog-manager';
 import { TenantBrandingManager } from '../features/admin/tenant-branding-manager';
 import { NavigationManager } from '../features/admin/navigation-manager';
 import { IdentityProvisioningManager } from '../features/admin/identity-provisioning-manager';
@@ -51,8 +50,6 @@ function AdminContent({ view }: { view: AdminView }) {
       return <HomeExperienceManager />;
     case 'reference-data':
       return <ReferenceDataManager />;
-    case 'system-code-catalog':
-      return <SystemCodeCatalogManager />;
     case 'registry':
       return <RegistryManager />;
     case 'navigation':

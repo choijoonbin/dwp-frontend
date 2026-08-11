@@ -65,6 +65,7 @@ export default defineConfig(({ mode }) => {
       proxy: { '/api': { target: proxyTarget, changeOrigin: true } },
     },
     build: {
+      manifest: true,
       chunkSizeWarningLimit: 600,
       rollupOptions: {
         output: { manualChunks: vendorGroup },

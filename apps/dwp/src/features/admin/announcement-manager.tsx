@@ -11,7 +11,7 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
-import { DateTimePickerField } from '@dwp-frontend/design-system';
+import { DateTimePickerField, GuidedEmptyState } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -519,8 +519,22 @@ export function AnnouncementManager() {
             ))}
             {announcements.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} sx={{ py: 6, textAlign: 'center', color: 'text.secondary' }}>
-                  {t('announcements.noAnnouncements')}
+                <TableCell colSpan={5} sx={{ p: 0 }}>
+                  <GuidedEmptyState
+                    kind="first-use"
+                    title={t('announcements.empty.title')}
+                    description={t('announcements.empty.description')}
+                    actionLabel={canWrite ? t('announcements.actions.new') : undefined}
+                    onAction={
+                      canWrite
+                        ? () => {
+                            setSelected(null);
+                            setDialogOpen(true);
+                          }
+                        : undefined
+                    }
+                    size="standard"
+                  />
                 </TableCell>
               </TableRow>
             )}

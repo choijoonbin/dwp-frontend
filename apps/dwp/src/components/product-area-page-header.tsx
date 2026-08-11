@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { CalendarRange, ShieldCheck } from 'lucide-react';
-import { GlyphSurface } from '@dwp-frontend/design-system';
+import { GlyphSurface } from '@dwp-frontend/design-system/components/glyph-surface/glyph-surface';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';

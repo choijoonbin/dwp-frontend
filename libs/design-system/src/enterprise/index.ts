@@ -1,2 +1,3 @@
 export * from './data-grid';
 export * from './date-time';
+export * from './resource';

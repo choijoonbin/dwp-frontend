@@ -12,6 +12,7 @@ function jsonResponse(status: number, payload: unknown): Response {
 
 describe('axiosInstance browser session contract', () => {
   afterEach(() => {
+    vi.useRealTimers();
     resetCsrfToken();
     setUnauthorizedHandler(null);
     vi.unstubAllGlobals();
@@ -154,5 +155,28 @@ describe('axiosInstance browser session contract', () => {
     });
 
     expect(response.data).toBe(download);
+  });
+
+  it('aborts non-essential requests after their configured timeout', async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn(
+      (_url: string, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => {
+            reject(new DOMException('The operation was aborted.', 'AbortError'));
+          });
+        })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const request = axiosInstance.get('/api/optional-preference', { timeoutMs: 25 }).then(
+      () => undefined,
+      (error: unknown) => error
+    );
+    await vi.advanceTimersByTimeAsync(25);
+
+    await expect(request).resolves.toMatchObject({ name: 'AbortError' });
+    const init = fetchMock.mock.calls[0]?.[1];
+    expect(init?.signal?.aborted).toBe(true);
   });
 });

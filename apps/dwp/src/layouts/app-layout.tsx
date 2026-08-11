@@ -1,29 +1,19 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Activity as ActivityIcon,
-  AppWindow,
-  BriefcaseBusiness,
-  Menu,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Sparkles,
-  UsersRound,
-  Workflow,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { AppWindow, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
-import { foundationTokens } from '@dwp-frontend/design-system/foundation';
-import { listRuntimeNavigation, usePermissions } from '@dwp-frontend/shared-utils';
-import type { PermissionDTO, RuntimeNavigationNode } from '@dwp-frontend/shared-utils';
+import {
+  listRuntimeNavigation,
+  type RuntimeNavigationNode,
+} from '@dwp-frontend/shared-utils/api/navigation-runtime-api';
+import type { PermissionDTO } from '@dwp-frontend/shared-utils/api/auth-api';
+import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Drawer from '@mui/material/Drawer';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
@@ -32,27 +22,14 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 
-import { AccountMenu } from '../components/account-menu';
 import { BrandLockup } from '../components/brand-lockup';
+import { ShellHeader } from '../components/shell-header';
 import {
-  FullscreenControl,
-  NotificationMenu,
-  SearchControl,
-  WorkspaceMenu,
-} from '../components/shell-controls';
-
-const SIDEBAR_WIDTH = foundationTokens.layout.navigationExpanded;
-const RAIL_WIDTH = foundationTokens.layout.navigationCompact;
-const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
-
-const NAVIGATION_ICONS: Record<string, LucideIcon> = {
-  activity: ActivityIcon,
-  apps: AppWindow,
-  ask: Sparkles,
-  work: BriefcaseBusiness,
-  people: UsersRound,
-  workforce: Workflow,
-};
+  shellHeaderHeight,
+  shellRegistry,
+  workspaceCoreContexts,
+  workspaceNavigationIcons,
+} from '../features/shell/shell-registry';
 
 function hasRuntimePermission(node: RuntimeNavigationNode, permissions: PermissionDTO[]): boolean {
   if (!node.requiredResourceKey) return true;
@@ -90,14 +67,14 @@ function flattenRuntimeApps(nodes: RuntimeNavigationNode[]): RuntimeNavigationNo
 }
 
 type AppNavigationProps = {
+  groups: RuntimeNavigationNode[];
   compact?: boolean;
   horizontal?: boolean;
   onNavigate?: () => void;
 };
 
-function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppNavigationProps) {
+function useAppNavigationModel() {
   const { t, i18n } = useTranslation('shell');
-  const { pathname } = useLocation();
   const { permissions, isLoaded: permissionsLoaded } = usePermissions();
   const locale = i18n.resolvedLanguage || i18n.language || 'en';
   const navigation = useQuery({
@@ -177,13 +154,23 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
     },
   ];
   const source = navigation.data ?? fallbackNavigation;
-  const visibleGroups = filterRuntimeNavigation(source, permissions, permissionsLoaded);
-  const horizontalItems = flattenRuntimeApps(visibleGroups);
+  return filterRuntimeNavigation(source, permissions, permissionsLoaded);
+}
+
+function AppNavigation({
+  groups,
+  compact = false,
+  horizontal = false,
+  onNavigate,
+}: AppNavigationProps) {
+  const { t } = useTranslation('shell');
+  const { pathname } = useLocation();
+  const horizontalItems = flattenRuntimeApps(groups);
 
   const renderItem = (item: RuntimeNavigationNode) => {
     if (!item.route) return null;
     const selected = pathname.startsWith(item.route);
-    const Icon = NAVIGATION_ICONS[item.iconKey || ''] || AppWindow;
+    const Icon = workspaceNavigationIcons[item.iconKey || ''] || AppWindow;
     return (
       <Tooltip
         key={item.navigationKey}
@@ -243,7 +230,7 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
           {horizontalItems.map(renderItem)}
         </List>
       ) : (
-        visibleGroups.map((group) => (
+        groups.map((group) => (
           <Box key={group.navigationKey}>
             {!compact && group.itemType === 'GROUP' && (
               <Typography
@@ -267,21 +254,37 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
 
 export function AppLayout() {
   const { t } = useTranslation('shell');
+  const { pathname } = useLocation();
+  const shell = shellRegistry.workspace;
   const appearance = useAppearance();
+  const navigationGroups = useAppNavigationModel();
   const [collapsed, setCollapsed] = useState(appearance.navigationPattern === 'rail');
   const [mobileOpen, setMobileOpen] = useState(false);
   const topNavigation = appearance.navigationPattern === 'top';
   const compactSidebar = appearance.navigationPattern === 'rail' || collapsed;
-  const sidebarWidth = compactSidebar ? RAIL_WIDTH : SIDEBAR_WIDTH;
+  const sidebarWidth = compactSidebar
+    ? (shell.compactNavigationWidth ?? shell.desktopNavigationWidth)
+    : shell.desktopNavigationWidth;
   const desktopOffset = topNavigation ? 0 : sidebarWidth;
   const desktopNavigationCollapsible =
     appearance.policy.navigation.allowCollapse && appearance.navigationPattern !== 'rail';
+  const runtimeContext = flattenRuntimeApps(navigationGroups).find(
+    (item) => item.route && (pathname === item.route || pathname.startsWith(`${item.route}/`))
+  );
+  const coreContext = workspaceCoreContexts.find(
+    (item) => pathname === item.route || pathname.startsWith(`${item.route}/`)
+  );
+  const applicationContext = {
+    icon: workspaceNavigationIcons[runtimeContext?.iconKey || ''] || coreContext?.icon || AppWindow,
+    label:
+      runtimeContext?.label || (coreContext ? t(coreContext.labelKey) : t('navigation.items.apps')),
+  };
 
   const navigationContent = (compact: boolean, onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
-          height: HEADER_HEIGHT,
+          height: shellHeaderHeight,
           px: compact ? 0 : 2,
           display: 'flex',
           alignItems: 'center',
@@ -291,7 +294,7 @@ export function AppLayout() {
         <BrandLockup variant={compact ? 'product-only' : 'product-full'} sx={{ flexShrink: 0 }} />
       </Box>
       <Box sx={{ flex: 1 }}>
-        <AppNavigation compact={compact} onNavigate={onNavigate} />
+        <AppNavigation groups={navigationGroups} compact={compact} onNavigate={onNavigate} />
       </Box>
       <Box
         sx={{
@@ -353,39 +356,22 @@ export function AppLayout() {
       <Drawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
-        slotProps={{ paper: { sx: { width: SIDEBAR_WIDTH } } }}
+        slotProps={{ paper: { sx: { width: shell.desktopNavigationWidth } } }}
       >
         <Box data-testid="mobile-sidebar" sx={{ height: 1 }}>
           {navigationContent(false, () => setMobileOpen(false))}
         </Box>
       </Drawer>
 
-      <AppBar
-        data-testid="app-header"
-        position="fixed"
-        color="default"
-        elevation={0}
-        sx={{
-          width: { xs: 1, lg: `calc(100% - ${desktopOffset}px)` },
-          ml: { xs: 0, lg: `${desktopOffset}px` },
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
-          transition: (theme) => theme.transitions.create(['width', 'margin-left']),
-        }}
-      >
-        <Toolbar
-          disableGutters
-          sx={{ minHeight: `${HEADER_HEIGHT}px !important`, px: { xs: 1, md: 2 } }}
-        >
-          <IconButton
-            aria-label={t('navigation.open')}
-            onClick={() => setMobileOpen(true)}
-            sx={{ mr: 0.5, display: { lg: 'none' } }}
-          >
-            <Menu size={21} strokeWidth={1.8} />
-          </IconButton>
-          {!topNavigation && desktopNavigationCollapsible && (
+      <ShellHeader
+        testId="app-header"
+        shellKey={shell.key}
+        scope={shell.scope}
+        desktopOffset={desktopOffset}
+        context={applicationContext}
+        navigation={{ label: t('navigation.open'), onOpen: () => setMobileOpen(true) }}
+        leading={
+          !topNavigation && desktopNavigationCollapsible ? (
             <Tooltip
               title={collapsed ? t('navigation.expand') : t('navigation.collapse')}
               placement="bottom"
@@ -412,57 +398,36 @@ export function AppLayout() {
                 )}
               </IconButton>
             </Tooltip>
-          )}
-          {topNavigation && (
+          ) : undefined
+        }
+        brand={
+          topNavigation ? (
             <BrandLockup
               variant="product-full"
               sx={{ mr: 1, display: { xs: 'none', lg: 'inline-flex' } }}
             />
-          )}
-          <WorkspaceMenu />
-          {topNavigation && (
-            <Box sx={{ ml: 1.5, display: { xs: 'none', lg: 'block' } }}>
-              <AppNavigation horizontal />
-            </Box>
-          )}
-          <Box sx={{ flexGrow: 1 }} />
-          <SearchControl />
-          <Box
-            sx={{
-              ml: { xs: 0, md: 1.5 },
-              pl: { xs: 0, md: 1 },
-              display: 'flex',
-              alignItems: 'center',
-              gap: { xs: 0.25, sm: 0.5 },
-            }}
-          >
-            <FullscreenControl />
-            <NotificationMenu />
-          </Box>
-          <Box
-            sx={{
-              ml: { xs: 0.5, sm: 1.25 },
-              pl: { xs: 0.5, sm: 1.5 },
-              borderLeft: 1,
-              borderColor: 'divider',
-            }}
-          >
-            <AccountMenu showIdentity />
-          </Box>
-        </Toolbar>
-      </AppBar>
+          ) : undefined
+        }
+        showWorkspace={shell.showWorkspace}
+        primaryNavigation={
+          topNavigation ? <AppNavigation groups={navigationGroups} horizontal /> : undefined
+        }
+      />
 
       <Box
         component="main"
+        id="dwp-main-content"
+        tabIndex={-1}
         data-testid="app-main"
         sx={{
-          pt: `${HEADER_HEIGHT}px`,
+          pt: `${shellHeaderHeight}px`,
           width: { xs: 1, lg: `calc(100% - ${desktopOffset}px)` },
           ml: { xs: 0, lg: `${desktopOffset}px` },
           minWidth: 0,
           minHeight: '100dvh',
           overflowX: 'clip',
           transition: (theme) => theme.transitions.create(['width', 'margin-left']),
+          outline: 'none',
         }}
       >
         <Outlet />

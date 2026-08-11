@@ -20,6 +20,14 @@
       "title": "업무",
       "description": "의사결정, 할 일 및 서비스 요청을 영향도 순으로 보여줍니다"
     },
+    "liveData": "실시간 업무 데이터",
+    "loading": "업무를 불러오는 중입니다",
+    "loadErrorTitle": "업무를 불러오지 못했습니다",
+    "loadErrorDescription": "연결 상태를 확인한 후 다시 시도하세요.",
+    "retry": "다시 시도",
+    "emptyTitle": "현재 처리할 업무가 없습니다",
+    "emptyDescription": "새 업무가 배정되면 우선순위에 따라 이곳에 표시됩니다.",
+    "noDueDate": "마감 없음",
     "summaryLabel": "업무 요약",
     "summary": {
       "all": { "value": "06", "label": "전체 업무", "detail": "소스 5개에서 수집" },
@@ -28,6 +36,15 @@
       "waiting": { "value": "01", "label": "대기 중", "detail": "임직원 확인" }
     },
     "filterLabel": "업무 상태",
+    "searchLabel": "업무 검색",
+    "searchPlaceholder": "업무 ID, 제목, 담당자 또는 소스",
+    "resetFilters": "필터 초기화",
+    "views": {
+      "label": "저장된 보기",
+      "personal": "개인",
+      "shared": "공유",
+      "default": "기본"
+    },
     "filters": {
       "all": "전체",
       "due-soon": "마감 임박",
@@ -37,6 +54,14 @@
     },
     "resultSummary": "결과 {{count}}개 / 영향도 순",
     "queueLabel": "업무 목록",
+    "gridToolbar": "업무 목록 도구",
+    "chooseColumns": "표시 열 선택",
+    "gridFilters": "표 필터",
+    "columnPresets": {
+      "label": "열 보기",
+      "operational": "운영 보기",
+      "compact": "간결 보기"
+    },
     "columns": {
       "id": "업무 ID",
       "work": "업무",
@@ -52,7 +77,14 @@
     "latestActivity": "최근 활동",
     "viewRecord": "기록 보기",
     "continueWork": "업무 계속",
+    "completeWork": "완료 처리",
     "openSource": "소스 열기",
+    "statusUpdated": "{{title}} 상태를 업데이트했습니다.",
+    "statusUpdateError": "업무 상태를 업데이트하지 못했습니다. 최신 상태를 확인한 후 다시 시도하세요.",
+    "noDecisionContext": "이 업무에 등록된 우선순위 근거가 없습니다.",
+    "noRecommendedNext": "등록된 다음 단계가 없습니다.",
+    "noLatestActivity": "최근 활동이 없습니다.",
+    "liveNotice": "상태 변경은 즉시 저장되며 활동 타임라인과 감사 기록에 반영됩니다.",
     "actionOpened": "{{title}} 작업 미리보기를 열었습니다.",
     "sourceOpened": "{{source}} 소스 미리보기를 열었습니다.",
     "referenceNotice": "참조용 작업입니다. 외부 시스템은 변경되지 않습니다.",
@@ -93,7 +125,7 @@
     "header": {
       "eyebrow": "엔터프라이즈 인텔리전스",
       "title": "DWP에게 묻기",
-      "description": "신뢰할 수 있는 컨텍스트를 찾고 통제된 실행을 준비합니다"
+      "description": "현재 권한 범위에서 요청을 검토하고 읽기 전용 실행 계획을 준비합니다"
     },
     "questionLabel": "업무 질문",
     "questionPlaceholder": "정책, 업무, 서비스 또는 애플리케이션에 대해 질문하세요",
@@ -105,44 +137,39 @@
       "software": "소프트웨어 접근은 어디에서 요청하나요?"
     },
     "recentContext": "최근 업무 컨텍스트",
-    "context": {
-      "customer": { "title": "고객 디스커버리", "detail": "11:00 회의 / 소스 6개" },
-      "software": { "title": "소프트웨어 접근", "detail": "10:30 승인 마감" },
-      "benefits": { "title": "복리후생 등록", "detail": "17:00 등록 종료" }
-    },
-    "responseStatus": "AI 응답 상태",
+    "contextLoading": "권한이 있는 최근 업무를 불러오는 중입니다.",
+    "contextUnavailable": "최근 업무를 불러오지 못했습니다. Ask 계획 미리보기는 계속 사용할 수 있습니다.",
+    "contextEmpty": "연결할 최근 업무가 없습니다.",
+    "openContext": "업무에서 열기",
+    "responseStatus": "Ask 요청 처리 상태",
     "status": {
-      "permission": { "label": "권한 확인 완료", "detail": "임직원 범위" },
+      "permission": { "label": "세션 권한 경계 적용", "detail": "인증된 워크스페이스 범위" },
       "retrievalStopped": { "label": "검색 중단", "detail": "정책으로 보호됨" },
-      "sourcesVerified": { "label": "소스 검증 완료", "detail": "최신 기록 2개" },
+      "retrievalUnavailable": { "label": "검색 비활성", "detail": "지식 커넥터 연동 전" },
       "noAnswer": { "label": "답변을 생성하지 않음", "detail": "담당자에게 전달" },
       "preparing": { "label": "실행 계약 준비 중", "detail": "외부 변경 없음" },
       "verified": { "label": "에이전트 계약 검증 완료", "detail": "모델 호출 및 변경 없음" },
       "preview": { "label": "참조 미리보기 준비됨", "detail": "외부 변경 없음" }
     },
-    "answer": "답변",
-    "reviewRequired": "AI 생성 / 검토 필요",
+    "previewHeading": "요청 검토",
+    "previewOnly": "참조 계획 / 읽기 전용",
     "restricted": "이 질문에는 제한된 정보가 포함되어 있습니다. 이 참조 세션에서는 소스 콘텐츠를 조회하지 않았으며 AI 모델로 질문을 전송하지 않았습니다.",
     "yourQuestion": "내 질문",
-    "answerText": "유연 근무 정책에 따라 대상 임직원은 주당 최대 이틀의 원격 근무를 신청할 수 있습니다. 요청이 활성화되기 전에 관리자가 날짜를 승인해야 합니다. 팀 일정을 업데이트할 수 있도록 목요일 15시 전에 요청을 제출하세요.",
-    "answerCaution": "자격 조건과 사업장별 규정에 따라 결과가 달라질 수 있습니다. 제출하기 전에 요청 미리보기를 확인하세요.",
-    "verifiedSources": "검증된 소스",
-    "currentCount": "최신 {{count}}개",
-    "answerSources": "답변 소스",
+    "answerUnavailableTitle": "AI 답변과 소스 인용은 아직 제공하지 않습니다",
+    "answerUnavailableDescription": "현재 런타임은 모델·검색·도구를 호출하지 않습니다. 아래에는 서버가 생성하고 감사 ID와 해시로 추적하는 읽기 전용 계획 계약만 표시됩니다.",
     "preparingPreview": "통제된 실행 미리보기 준비 중",
     "noMutation": "변경 없음",
     "preparingPlanLabel": "에이전트 계획 미리보기 준비 중",
-    "fallback": "에이전트 계약을 일시적으로 사용할 수 없어 읽기 전용 참조 미리보기를 표시합니다.",
+    "fallback": "에이전트 계약을 불러오지 못했습니다. 검증되지 않은 정적 계획은 대신 표시하지 않습니다.",
     "governedContract": "통제된 에이전트 계약 검증 완료",
-    "referenceContract": "참조 에이전트 계약 검증 완료",
+    "referenceContract": "읽기 전용 참조 계획 계약 준비됨",
     "contractAria": "에이전트 {{agent}} 리비전 {{revision}}, 감사 {{audit}}, 계획 해시 {{hash}}",
     "contractMeta": "에이전트 {{agent}} r{{revision}} / 감사 {{audit}} / 계획 {{hash}}",
-    "planTitle": "유연 근무 요청 미리보기",
-    "planSummary": "이 참조 흐름에서는 외부 시스템을 변경하지 않습니다.",
+    "planTitle": "요청 계획 미리보기",
     "riskApproval": "{{tier}} / 승인 필요",
-    "openService": "서비스 미리보기 열기",
+    "openService": "승인된 앱에서 계속",
     "dismiss": "닫기",
-    "serviceOpened": "임직원 서비스 미리보기를 열었습니다."
+    "serviceOpened": "승인된 앱 목록을 열었습니다."
   },
   "activityPage": {
     "header": {
@@ -151,6 +178,12 @@
       "description": "사람, 시스템 및 에이전트의 업무를 하나의 책임 추적 가능한 타임라인으로 보여줍니다",
       "live": "워크스페이스 이벤트 수신 중"
     },
+    "loading": "활동을 불러오는 중입니다",
+    "loadErrorTitle": "활동을 불러오지 못했습니다",
+    "loadErrorDescription": "이벤트 서비스 연결 상태를 확인한 후 다시 시도하세요.",
+    "retry": "다시 시도",
+    "emptyTitle": "표시할 활동이 없습니다",
+    "emptyDescription": "사용자, 시스템 또는 에이전트 활동이 발생하면 이곳에 기록됩니다.",
     "summaryLabel": "활동 요약",
     "summary": {
       "signals": { "value": "6", "label": "오늘 오전 신호", "detail": "연결된 소스 4개" },
@@ -158,6 +191,15 @@
       "input": { "value": "1", "label": "확인 필요", "detail": "소프트웨어 접근 승인" }
     },
     "actorFilter": "활동 주체",
+    "searchLabel": "활동 검색",
+    "searchPlaceholder": "제목, 객체, 활동 주체 또는 소스",
+    "resetFilters": "필터 초기화",
+    "views": {
+      "label": "저장된 보기",
+      "personal": "개인",
+      "shared": "공유",
+      "default": "기본"
+    },
     "filters": { "all": "전체 활동", "agent": "에이전트", "person": "사용자", "system": "시스템" },
     "visibleCount": "표시 중인 이벤트 {{count}}개",
     "timeline": "워크스페이스 타임라인",
@@ -183,6 +225,7 @@
     "reviewNow": "지금 검토",
     "sourceOpened": "{{source}} 미리보기를 열었습니다.",
     "openSource": "소스 열기",
+    "liveNotice": "표시된 이벤트는 서버에서 권한 범위에 맞게 제공됩니다.",
     "referenceNotice": "참조용 활동입니다. 외부 작업은 실행되지 않습니다."
   },
   "appsPage": {
@@ -191,12 +234,26 @@
       "title": "앱",
       "description": "DWP 컨텍스트를 유지하며 승인된 도구를 실행합니다"
     },
+    "liveCatalog": "권한 동기화됨",
+    "loading": "앱 카탈로그를 불러오는 중입니다",
+    "loadErrorTitle": "앱 카탈로그를 불러오지 못했습니다",
+    "loadErrorDescription": "권한 또는 플랫폼 연결 상태를 확인한 후 다시 시도하세요.",
+    "retry": "다시 시도",
+    "emptyTitle": "사용 가능한 앱이 없습니다",
+    "emptyDescription": "관리자가 앱 권한을 부여하면 이곳에 표시됩니다.",
     "launchpad": "내 런치패드",
     "pinnedCount": "고정 {{count}}개",
     "lastUsed": "최근 사용: {{value}}",
+    "neverUsed": "사용 기록 없음",
     "searchLabel": "앱 검색",
     "searchPlaceholder": "이름, 용도 또는 소유 조직",
     "filterLabel": "앱 필터",
+    "views": {
+      "label": "저장된 보기",
+      "personal": "개인",
+      "shared": "공유",
+      "default": "기본"
+    },
     "filters": {
       "all": "전체",
       "pinned": "고정됨",
@@ -206,10 +263,25 @@
     "available": "사용 가능한 앱",
     "appCount": "앱 {{count}}개",
     "pinned": "고정됨",
-    "health": { "healthy": "정상", "managed": "관리됨", "attention": "확인 필요" },
+    "health": {
+      "healthy": "정상",
+      "managed": "관리됨",
+      "attention": "확인 필요",
+      "configuration-required": "관리자 연결 필요"
+    },
     "launchMode": { "Native": "네이티브", "SSO": "SSO", "Deep link": "딥 링크" },
     "launchOpened": "{{app}} 실행 미리보기를 열었습니다.",
+    "launchError": "앱을 실행하지 못했습니다. 연결 상태를 확인하세요.",
+    "configurationRequired": "{{app}}은(는) 관리자가 SSO 또는 딥 링크를 연결한 후 사용할 수 있습니다.",
+    "pin": "런치패드에 고정",
+    "unpin": "런치패드에서 제거",
+    "pinApp": "{{app}} 고정",
+    "unpinApp": "{{app}} 고정 해제",
+    "pinSuccess": "{{app}}을(를) 런치패드에 고정했습니다.",
+    "unpinSuccess": "{{app}}을(를) 런치패드에서 제거했습니다.",
+    "pinError": "런치패드 설정을 저장하지 못했습니다.",
     "noMatches": "조건에 맞는 앱이 없습니다",
+    "noMatchesDescription": "검색어나 앱 유형을 초기화해 사용 가능한 전체 앱을 확인하세요.",
     "resetFilters": "필터 초기화"
   },
   "ai": {
@@ -224,7 +296,7 @@
     "planSources": "계획 소스",
     "planApproved": "계획 승인됨",
     "planRejected": "계획 거부됨",
-    "reviewBeforeExecution": "실행 전에 소스와 변경 사항을 검토하세요.",
+    "reviewBeforeExecution": "읽기 전용 계획을 검토하세요. 현재 런타임에서는 실행되지 않습니다.",
     "noApprovalRequired": "현재 정책에서는 승인 없이 이 계획을 실행할 수 있습니다.",
     "approvePlan": "계획 승인",
     "reject": "거부",
@@ -348,7 +420,7 @@
       },
       "ref-app-knowledge": {
         "name": "지식",
-        "description": "정책, 가이드 및 검증된 답변",
+        "description": "정책 및 업무 가이드 연결",
         "owner": "지식 관리 조직",
         "lastUsed": "2시간 전"
       },

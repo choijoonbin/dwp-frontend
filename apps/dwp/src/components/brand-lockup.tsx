@@ -2,7 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProductMark } from '@dwp-frontend/design-system/components/product-mark';
-import { getTenantBranding, resolveTenantLogoUrl } from '@dwp-frontend/shared-utils';
+import {
+  getTenantBranding,
+  resolveTenantLogoUrl,
+} from '@dwp-frontend/shared-utils/api/tenant-branding-api';
 
 import Box from '@mui/material/Box';
 

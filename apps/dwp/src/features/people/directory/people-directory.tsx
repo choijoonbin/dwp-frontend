@@ -1,15 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  CalendarDays,
-  Mail,
-  RefreshCw,
-  Search,
-  ShieldCheck,
-  UserRound,
-  UsersRound,
-  X,
-} from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { CalendarDays, Mail, Network, ShieldCheck, UserRound, UsersRound, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import {
   getOrganizationChart,
@@ -17,10 +9,15 @@ import {
   listIdentityUsers,
   listPeople,
 } from '@dwp-frontend/shared-utils';
-import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  EnterpriseDataGrid,
+  FilterBar,
+  mergeFilterSearchParams,
+  SavedViewMenu,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -31,10 +28,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { AdminPanelError, AdminPanelLoading } from '../../admin/admin-ui';
+import { isIsoDate } from '../organization/organization-navigation';
 import { PersonAvatar } from './person-avatar';
 
 import type { GridColDef } from '@mui/x-data-grid';
@@ -82,6 +79,7 @@ function PersonDetailDialog({
   onClose: () => void;
 }) {
   const { t } = useTranslation('workforce');
+  const navigate = useNavigate();
   const detailQuery = useQuery({
     queryKey: [experience, 'people', 'detail', person?.personId, asOf],
     queryFn: () => getPerson(person?.personId ?? '', asOf, experience),
@@ -127,6 +125,16 @@ function PersonDetailDialog({
                 ?.displayName
             }
             directReports={directReports ?? []}
+            onViewInOrganization={() => {
+              const params = new URLSearchParams({
+                asOf,
+                mode: 'people',
+                person: person.personId,
+              });
+              navigate(
+                `${experience === 'workforce' ? '/workforce' : '/people'}/organization?${params}`
+              );
+            }}
           />
         )}
       </DialogContent>
@@ -141,6 +149,7 @@ function PersonProfile({
   experience,
   managerName,
   directReports,
+  onViewInOrganization,
 }: {
   detail: PersonDetail;
   person: PeopleDirectoryRow;
@@ -148,6 +157,7 @@ function PersonProfile({
   experience: PeopleDirectoryExperience;
   managerName?: string;
   directReports: OrganizationChart['people'];
+  onViewInOrganization: () => void;
 }) {
   const { t } = useTranslation('workforce');
   const workforceView = experience === 'workforce';
@@ -184,6 +194,15 @@ function PersonProfile({
             </Stack>
           )}
         </Box>
+        <ActionButton
+          intent="secondary"
+          size="small"
+          startIcon={<Network size={16} aria-hidden="true" />}
+          onClick={onViewInOrganization}
+          sx={{ flexShrink: 0 }}
+        >
+          {t('people.detail.viewInOrganization')}
+        </ActionButton>
       </Stack>
 
       <Box
@@ -349,14 +368,21 @@ export function PeopleDirectory({
 }) {
   const { t } = useTranslation('workforce');
   const workforceView = experience === 'workforce';
-  const [asOf, setAsOf] = useState(today);
-  const [query, setQuery] = useState('');
-  const [status, setStatus] = useState(workforceView ? 'ALL' : 'ACTIVE');
-  const [organization, setOrganization] = useState('ALL');
-  const [grade, setGrade] = useState('ALL');
-  const [location, setLocation] = useState('ALL');
-  const [role, setRole] = useState('ALL');
-  const [selected, setSelected] = useState<PeopleDirectoryRow | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentDate = today();
+  const asOfParam = searchParams.get('asOf');
+  const asOf = isIsoDate(asOfParam) ? asOfParam : currentDate;
+  const query = searchParams.get('q') ?? '';
+  const status = workforceView ? searchParams.get('status') || 'ALL' : 'ACTIVE';
+  const organization = searchParams.get('org') || 'ALL';
+  const grade = workforceView ? searchParams.get('grade') || 'ALL' : 'ALL';
+  const location = searchParams.get('location') || 'ALL';
+  const role = workforceView ? searchParams.get('role') || 'ALL' : 'ALL';
+  const columnPreset = searchParams.get('columns') === 'compact' ? 'compact' : 'operational';
+
+  const updateSearchParams = (values: Record<string, string | null | undefined>) => {
+    setSearchParams(mergeFilterSearchParams(searchParams, values), { replace: true });
+  };
 
   const peopleQuery = useQuery({
     queryKey: [experience, 'people', 'directory', asOf, workforceView ? undefined : 'ACTIVE'],
@@ -395,6 +421,7 @@ export function PeopleDirectory({
       })),
     [peopleQuery.data, rolesByEmail]
   );
+  const selected = rows.find((row) => row.personId === searchParams.get('person')) ?? null;
 
   const options = useMemo(
     () => ({
@@ -537,20 +564,77 @@ export function PeopleDirectory({
     );
   }
 
-  const activeFilters = [
-    ...(workforceView ? [status, role] : []),
-    organization,
-    grade,
-    location,
-  ].filter((value) => value !== 'ALL').length;
   const resetFilters = () => {
-    setStatus(workforceView ? 'ALL' : 'ACTIVE');
-    setOrganization('ALL');
-    setGrade('ALL');
-    setLocation('ALL');
-    setRole('ALL');
-    setQuery('');
+    updateSearchParams({
+      asOf: null,
+      columns: null,
+      grade: null,
+      location: null,
+      org: null,
+      person: null,
+      q: null,
+      role: null,
+      status: null,
+    });
   };
+  const activeFilters = [
+    ...(workforceView && status !== 'ALL'
+      ? [
+          {
+            key: 'status',
+            label: `${t('people.filters.status')}: ${t(`people.status.${status}`, {
+              defaultValue: status,
+            })}`,
+            onRemove: () => updateSearchParams({ status: null, person: null }),
+          },
+        ]
+      : []),
+    ...(organization !== 'ALL'
+      ? [
+          {
+            key: 'organization',
+            label: `${t('people.filters.organization')}: ${organization}`,
+            onRemove: () => updateSearchParams({ org: null, person: null }),
+          },
+        ]
+      : []),
+    ...(workforceView && grade !== 'ALL'
+      ? [
+          {
+            key: 'grade',
+            label: `${t('people.filters.grade')}: ${grade}`,
+            onRemove: () => updateSearchParams({ grade: null, person: null }),
+          },
+        ]
+      : []),
+    ...(location !== 'ALL'
+      ? [
+          {
+            key: 'location',
+            label: `${t('people.filters.location')}: ${location}`,
+            onRemove: () => updateSearchParams({ location: null, person: null }),
+          },
+        ]
+      : []),
+    ...(workforceView && role !== 'ALL'
+      ? [
+          {
+            key: 'role',
+            label: `${t('people.filters.role')}: ${role}`,
+            onRemove: () => updateSearchParams({ role: null, person: null }),
+          },
+        ]
+      : []),
+    ...(asOf !== currentDate
+      ? [
+          {
+            key: 'asOf',
+            label: `${t('people.filters.asOf')}: ${asOf}`,
+            onRemove: () => updateSearchParams({ asOf: null, person: null }),
+          },
+        ]
+      : []),
+  ];
 
   return (
     <>
@@ -574,106 +658,116 @@ export function PeopleDirectory({
             />
             <Chip label={t('people.asOf', { date: peopleQuery.data?.asOf })} size="small" />
           </Stack>
-          <Stack direction="row" gap={0.5} justifyContent="flex-end">
-            {activeFilters > 0 && (
-              <Button size="small" startIcon={<X size={15} />} onClick={resetFilters}>
-                {t('people.filters.reset', { count: activeFilters })}
-              </Button>
-            )}
-            <Tooltip title={t('common.actions.refresh')}>
-              <IconButton
-                aria-label={t('common.actions.refresh')}
-                onClick={() => {
-                  void peopleQuery.refetch();
-                  void chartQuery.refetch();
-                  void identitiesQuery.refetch();
-                }}
-              >
-                <RefreshCw size={18} />
-              </IconButton>
-            </Tooltip>
-          </Stack>
         </Stack>
 
-        <Stack
-          direction="row"
-          alignItems="center"
-          gap={0.75}
-          flexWrap="wrap"
-          useFlexGap
-          sx={{ p: 1.5, bgcolor: 'action.hover', borderBottom: 1, borderColor: 'divider' }}
-        >
-          <TextField
-            size="small"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={t('people.search')}
-            inputProps={{ 'aria-label': t('people.search') }}
-            sx={{ width: { xs: 1, sm: 250 } }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search size={16} />
-                </InputAdornment>
-              ),
-            }}
+        <Box sx={{ px: 1.5, bgcolor: 'action.hover' }}>
+          <FilterBar
+            ariaLabel={t('people.filters.label')}
+            searchLabel={t('people.search')}
+            searchValue={query}
+            onSearchChange={(value) => updateSearchParams({ q: value || null, person: null })}
+            filters={
+              <>
+                {workforceView && (
+                  <FilterSelect
+                    label={t('people.filters.status')}
+                    value={status}
+                    onChange={(value) => updateSearchParams({ status: value, person: null })}
+                    options={['ACTIVE', 'LEAVE', 'PENDING', 'TERMINATED']}
+                    optionLabel={(value) => t(`people.status.${value}`)}
+                  />
+                )}
+                <FilterSelect
+                  label={t('people.filters.organization')}
+                  value={organization}
+                  onChange={(value) => updateSearchParams({ org: value, person: null })}
+                  options={options.organizations}
+                />
+                {workforceView && (
+                  <FilterSelect
+                    label={t('people.filters.grade')}
+                    value={grade}
+                    onChange={(value) => updateSearchParams({ grade: value, person: null })}
+                    options={options.grades}
+                  />
+                )}
+                <FilterSelect
+                  label={t('people.filters.location')}
+                  value={location}
+                  onChange={(value) => updateSearchParams({ location: value, person: null })}
+                  options={options.locations}
+                />
+                {workforceView && (
+                  <FilterSelect
+                    label={t('people.filters.role')}
+                    value={role}
+                    onChange={(value) => updateSearchParams({ role: value, person: null })}
+                    options={options.roles}
+                  />
+                )}
+                <TextField
+                  size="small"
+                  type="date"
+                  value={asOf}
+                  onChange={(event) =>
+                    updateSearchParams({
+                      asOf: event.target.value === currentDate ? null : event.target.value,
+                      person: null,
+                    })
+                  }
+                  inputProps={{ 'aria-label': t('people.filters.asOf') }}
+                  sx={{ width: 172 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <CalendarDays size={15} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </>
+            }
+            savedViews={
+              workforceView ? (
+                <SavedViewMenu
+                  label={t('people.views.label')}
+                  personalLabel={t('people.views.personal')}
+                  sharedLabel={t('people.views.shared')}
+                  defaultLabel={t('people.views.default')}
+                  selectedViewId={status}
+                  views={[
+                    {
+                      id: 'ALL',
+                      name: t('people.status.ALL'),
+                      scope: 'personal',
+                      isDefault: workforceView,
+                    },
+                    {
+                      id: 'ACTIVE',
+                      name: t('people.status.ACTIVE'),
+                      scope: 'personal',
+                      isDefault: !workforceView,
+                    },
+                    {
+                      id: 'LEAVE',
+                      name: t('people.status.LEAVE'),
+                      scope: 'personal',
+                    },
+                  ]}
+                  onSelect={(view) =>
+                    updateSearchParams({
+                      status: view.id === (workforceView ? 'ALL' : 'ACTIVE') ? null : view.id,
+                      person: null,
+                    })
+                  }
+                />
+              ) : undefined
+            }
+            activeFilters={activeFilters}
+            resetLabel={t('people.filters.reset', { count: activeFilters.length })}
+            onReset={resetFilters}
           />
-          {workforceView && (
-            <FilterSelect
-              label={t('people.filters.status')}
-              value={status}
-              onChange={setStatus}
-              options={['ACTIVE', 'LEAVE', 'PENDING', 'TERMINATED']}
-              optionLabel={(value) => t(`people.status.${value}`)}
-            />
-          )}
-          <FilterSelect
-            label={t('people.filters.organization')}
-            value={organization}
-            onChange={setOrganization}
-            options={options.organizations}
-          />
-          {workforceView && (
-            <FilterSelect
-              label={t('people.filters.grade')}
-              value={grade}
-              onChange={setGrade}
-              options={options.grades}
-            />
-          )}
-          <FilterSelect
-            label={t('people.filters.location')}
-            value={location}
-            onChange={setLocation}
-            options={options.locations}
-          />
-          {workforceView && (
-            <FilterSelect
-              label={t('people.filters.role')}
-              value={role}
-              onChange={setRole}
-              options={options.roles}
-            />
-          )}
-          <TextField
-            size="small"
-            type="date"
-            value={asOf}
-            onChange={(event) => {
-              setAsOf(event.target.value);
-              setSelected(null);
-            }}
-            inputProps={{ 'aria-label': t('people.filters.asOf') }}
-            sx={{ width: 172 }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <CalendarDays size={15} />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Stack>
+        </Box>
 
         <EnterpriseDataGrid
           ariaLabel={t('people.title')}
@@ -683,7 +777,42 @@ export function PeopleDirectory({
           hideFooter
           minVisibleRows={5}
           maxVisibleRows={12}
-          onRowClick={({ row }) => setSelected(row)}
+          onRowClick={({ row }) => updateSearchParams({ person: row.personId })}
+          columnVisibilityModel={
+            columnPreset === 'compact'
+              ? {
+                  locationName: false,
+                  managerDisplayName: false,
+                  roles: false,
+                }
+              : undefined
+          }
+          stickyColumns={{ left: ['displayName'], right: ['workerStatus'] }}
+          toolbar={{
+            ariaLabel: t('people.grid.toolbar'),
+            showColumns: false,
+            showFilters: false,
+            showQuickFilter: false,
+            enableCsvExport: true,
+            exportLabel: t('people.grid.export'),
+            csvFileName: `dwp-people-${asOf}`,
+            refreshLabel: t('common.actions.refresh'),
+            refreshing:
+              peopleQuery.isFetching || chartQuery.isFetching || identitiesQuery.isFetching,
+            onRefresh: () => {
+              void peopleQuery.refetch();
+              void chartQuery.refetch();
+              void identitiesQuery.refetch();
+            },
+            columnPresetsLabel: t('people.grid.columnPresets.label'),
+            selectedColumnPresetId: columnPreset,
+            columnPresets: [
+              { id: 'operational', label: t('people.grid.columnPresets.operational') },
+              { id: 'compact', label: t('people.grid.columnPresets.compact') },
+            ],
+            onColumnPresetChange: (value) =>
+              updateSearchParams({ columns: value === 'operational' ? null : value }),
+          }}
           sx={{ border: 0, borderRadius: 0, '& .MuiDataGrid-row': { cursor: 'pointer' } }}
         />
       </Box>
@@ -693,7 +822,7 @@ export function PeopleDirectory({
         chart={chartQuery.data}
         roles={selected?.roles ?? []}
         experience={experience}
-        onClose={() => setSelected(null)}
+        onClose={() => updateSearchParams({ person: null })}
       />
     </>
   );

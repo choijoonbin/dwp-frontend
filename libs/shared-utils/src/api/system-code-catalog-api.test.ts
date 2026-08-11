@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  getAdminSystemCodeSet,
+  getProviderSystemCodeCatalog,
+  getProviderSystemCodeSet,
   getSystemCodeSet,
-  listSystemCodeSetHealth,
 } from './system-code-catalog-api';
 
 function jsonResponse(data: unknown): Response {
@@ -35,10 +35,15 @@ describe('system code catalog API boundary', () => {
     );
   });
 
-  it('keeps inventory and detailed evidence on administrator routes', async () => {
+  it('keeps global inventory and detailed evidence on provider routes', async () => {
+    const snapshot = {
+      catalogScope: 'GLOBAL_PRODUCT',
+      changePolicy: 'RELEASE_MANAGED',
+      codeSets: [],
+    };
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(jsonResponse(snapshot))
       .mockResolvedValueOnce(
         jsonResponse({
           codeSetKey: 'AUTH.BUILT_IN_ROLE',
@@ -49,12 +54,12 @@ describe('system code catalog API boundary', () => {
       );
     vi.stubGlobal('fetch', fetchMock);
 
-    await listSystemCodeSetHealth();
-    await getAdminSystemCodeSet('AUTH.BUILT_IN_ROLE', 'en');
+    await expect(getProviderSystemCodeCatalog()).resolves.toEqual(snapshot);
+    await getProviderSystemCodeSet('AUTH.BUILT_IN_ROLE', 'en');
 
     expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
-      '/api/platform/v1/admin/code-catalog/code-sets',
-      '/api/platform/v1/admin/code-catalog/code-sets/AUTH.BUILT_IN_ROLE?locale=en',
+      '/api/provider/v1/admin/code-catalog/code-sets',
+      '/api/provider/v1/admin/code-catalog/code-sets/AUTH.BUILT_IN_ROLE?locale=en',
     ]);
   });
 });

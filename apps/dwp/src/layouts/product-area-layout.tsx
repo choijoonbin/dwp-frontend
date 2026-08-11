@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Home, Menu } from 'lucide-react';
+import { Home } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { foundationTokens } from '@dwp-frontend/design-system/foundation';
-import { ActionButton, ActionIconButton } from '@dwp-frontend/design-system';
-import { useAuth } from '@dwp-frontend/shared-utils';
+import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -14,22 +12,13 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
-import { AccountMenu } from '../components/account-menu';
 import { BrandLockup } from '../components/brand-lockup';
-import {
-  FullscreenControl,
-  NotificationMenu,
-  SearchControl,
-  WorkspaceMenu,
-} from '../components/shell-controls';
+import { ShellHeader } from '../components/shell-header';
+import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 
 import type { LucideIcon } from 'lucide-react';
-
-const SIDEBAR_WIDTH = foundationTokens.layout.adminNavigationExpanded;
-const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
 
 export type ProductAreaNavigationItem = {
   path: string;
@@ -44,16 +33,14 @@ export type ProductAreaNavigationGroup = {
 
 type ProductAreaLayoutProps = {
   areaKey: 'people' | 'workforce';
-  areaIcon: LucideIcon;
   navigation: readonly ProductAreaNavigationGroup[];
 };
 
-export function ProductAreaLayout({
-  areaKey,
-  areaIcon: AreaIcon,
-  navigation,
-}: ProductAreaLayoutProps) {
+export function ProductAreaLayout({ areaKey, navigation }: ProductAreaLayoutProps) {
   const { t } = useTranslation('workforce');
+  const shell = shellRegistry[areaKey];
+  const AreaIcon = shell.context.icon;
+  const sidebarWidth = shell.desktopNavigationWidth;
   const auth = useAuth();
   const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -63,17 +50,13 @@ export function ProductAreaLayout({
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
-          minHeight: HEADER_HEIGHT,
+          minHeight: shellHeaderHeight,
           px: 2,
           display: 'flex',
           alignItems: 'center',
         }}
       >
-        <BrandLockup
-          variant="product-full"
-          label={t(`shell.${areaKey}.name`)}
-          description={t(`shell.${areaKey}.description`)}
-        />
+        <BrandLockup variant="product-full" />
       </Box>
       <Divider />
       <Box sx={{ px: 2.5, pt: 2.25, pb: 1 }}>
@@ -100,33 +83,34 @@ export function ProductAreaLayout({
                 const Icon = item.icon;
                 const selected = pathname === item.path;
                 return (
-                  <ListItemButton
-                    key={item.path}
-                    component={NavLink}
-                    to={item.path}
-                    selected={selected}
-                    aria-current={selected ? 'page' : undefined}
-                    onClick={onNavigate}
-                    sx={{
-                      minHeight: 42,
-                      px: 1.25,
-                      borderRadius: 1,
-                      color: selected ? 'primary.main' : 'text.secondary',
-                      '&.Mui-selected': { bgcolor: 'action.selected' },
-                      '&.Mui-selected:hover': { bgcolor: 'action.selected' },
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 34, color: 'inherit' }}>
-                      <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={t(`navigation.items.${areaKey}.${item.view}.label`)}
-                      primaryTypographyProps={{
-                        variant: 'body2',
-                        fontWeight: selected ? 750 : 600,
+                  <Box component="li" key={item.path} sx={{ display: 'block' }}>
+                    <ListItemButton
+                      component={NavLink}
+                      to={item.path}
+                      selected={selected}
+                      aria-current={selected ? 'page' : undefined}
+                      onClick={onNavigate}
+                      sx={{
+                        minHeight: 42,
+                        px: 1.25,
+                        borderRadius: 1,
+                        color: selected ? 'primary.main' : 'text.secondary',
+                        '&.Mui-selected': { bgcolor: 'action.selected' },
+                        '&.Mui-selected:hover': { bgcolor: 'action.selected' },
                       }}
-                    />
-                  </ListItemButton>
+                    >
+                      <ListItemIcon sx={{ minWidth: 34, color: 'inherit' }}>
+                        <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t(`navigation.items.${areaKey}.${item.view}.label`)}
+                        primaryTypographyProps={{
+                          variant: 'body2',
+                          fontWeight: selected ? 750 : 600,
+                        }}
+                      />
+                    </ListItemButton>
+                  </Box>
                 );
               })}
             </List>
@@ -160,7 +144,7 @@ export function ProductAreaLayout({
         sx={{
           position: 'fixed',
           inset: '0 auto 0 0',
-          width: SIDEBAR_WIDTH,
+          width: sidebarWidth,
           zIndex: (theme) => theme.zIndex.drawer,
           display: { xs: 'none', lg: 'block' },
           bgcolor: 'background.paper',
@@ -173,60 +157,36 @@ export function ProductAreaLayout({
       <Drawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
-        slotProps={{ paper: { sx: { width: SIDEBAR_WIDTH } } }}
+        slotProps={{ paper: { sx: { width: sidebarWidth } } }}
       >
-        {navigationContent(() => setMobileOpen(false))}
+        <Box data-testid={`${areaKey}-mobile-sidebar`} sx={{ height: 1 }}>
+          {navigationContent(() => setMobileOpen(false))}
+        </Box>
       </Drawer>
-      <AppBar
-        position="fixed"
-        color="default"
-        elevation={0}
-        sx={{
-          width: { xs: 1, lg: `calc(100% - ${SIDEBAR_WIDTH}px)` },
-          ml: { xs: 0, lg: `${SIDEBAR_WIDTH}px` },
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
+      <ShellHeader
+        testId={`${areaKey}-header`}
+        shellKey={shell.key}
+        scope={shell.scope}
+        desktopOffset={sidebarWidth}
+        context={{ icon: AreaIcon, label: t(`shell.${areaKey}.name`) }}
+        navigation={{
+          label: t('shell.openNavigation'),
+          onOpen: () => setMobileOpen(true),
         }}
-      >
-        <Toolbar
-          disableGutters
-          sx={{ minHeight: `${HEADER_HEIGHT}px !important`, px: { xs: 1, md: 2 } }}
-        >
-          <ActionIconButton
-            label={t('shell.openNavigation')}
-            onClick={() => setMobileOpen(true)}
-            sx={{ mr: 0.5, display: { lg: 'none' } }}
-          >
-            <Menu size={21} strokeWidth={1.8} />
-          </ActionIconButton>
-          <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
-            <AreaIcon size={18} strokeWidth={1.8} aria-hidden="true" />
-            <Typography variant="subtitle2">{t(`shell.${areaKey}.name`)}</Typography>
-          </Box>
-          <Box sx={{ ml: { xs: 0, sm: 1.5 } }}>
-            <WorkspaceMenu />
-          </Box>
-          <Box sx={{ flexGrow: 1 }} />
-          <SearchControl />
-          <Box sx={{ ml: { xs: 0, md: 1.5 }, display: 'flex', alignItems: 'center' }}>
-            <FullscreenControl />
-            <NotificationMenu />
-          </Box>
-          <Box sx={{ ml: 1, pl: 1, borderLeft: 1, borderColor: 'divider' }}>
-            <AccountMenu showIdentity />
-          </Box>
-        </Toolbar>
-      </AppBar>
+        showWorkspace={shell.showWorkspace}
+      />
       <Box
         component="main"
+        id="dwp-main-content"
+        tabIndex={-1}
         sx={{
-          pt: `${HEADER_HEIGHT}px`,
-          width: { xs: 1, lg: `calc(100% - ${SIDEBAR_WIDTH}px)` },
-          ml: { xs: 0, lg: `${SIDEBAR_WIDTH}px` },
+          pt: `${shellHeaderHeight}px`,
+          width: { xs: 1, lg: `calc(100% - ${sidebarWidth}px)` },
+          ml: { xs: 0, lg: `${sidebarWidth}px` },
           minWidth: 0,
           minHeight: '100dvh',
           overflowX: 'clip',
+          outline: 'none',
         }}
       >
         <Outlet />

@@ -1,32 +1,28 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getPersonalPreference,
   patchPersonalPreference,
   resetPersonalPreference,
-  useAuth,
-  useToast,
-} from '@dwp-frontend/shared-utils';
+  type PersonalPreference,
+  type PersonalPreferencePatch,
+  type PersonalPreferenceValues,
+} from '@dwp-frontend/shared-utils/api/personal-preference-api';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import CircularProgress from '@mui/material/CircularProgress';
-
-import type {
-  PersonalPreference,
-  PersonalPreferencePatch,
-  PersonalPreferenceValues,
-} from '@dwp-frontend/shared-utils';
 import type { UserAppearancePreference } from '@dwp-frontend/design-system/appearance';
 
 type PersonalPreferenceContextValue = {
   preference: PersonalPreference | null;
+  isLoading: boolean;
   isSaving: boolean;
   loadFailed: boolean;
   update: (patch: PersonalPreferencePatch) => void;
   reset: () => void;
+  retry: () => void;
 };
 
 type MutationRequest =
@@ -89,7 +85,7 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
   const queryClient = useQueryClient();
   const toast = useToast();
   const { t } = useTranslation('account');
-  const [hydratedIdentity, setHydratedIdentity] = useState<string | null>(null);
+  const appliedIdentity = useRef<string | null>(null);
   const identity = auth.user ? `${auth.user.tenantId}:${auth.user.userId}` : null;
   const queryKey = useMemo(
     () => ['personal-preference', auth.user?.tenantId, auth.user?.userId] as const,
@@ -106,14 +102,17 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
 
   useEffect(() => {
     if (!identity) {
-      setHydratedIdentity(null);
+      appliedIdentity.current = null;
       return;
+    }
+    if (appliedIdentity.current !== identity) {
+      appliedIdentity.current = identity;
+      replaceAppearancePreference(appearanceDefaults);
     }
     if (preferenceQuery.data && !preferenceQuery.isFetching) {
       replaceAppearancePreference(
         toAppearance(preferenceQuery.data.preferences, appearanceDefaults)
       );
-      setHydratedIdentity(identity);
       return;
     }
     if (preferenceQuery.isError) {
@@ -122,7 +121,6 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
           toAppearance(preferenceQuery.data.preferences, appearanceDefaults)
         );
       }
-      setHydratedIdentity(identity);
     }
   }, [
     appearanceDefaults,
@@ -192,37 +190,30 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
     mutation.mutate({ kind: 'reset', current: preferenceQuery.data });
   }, [mutation, preferenceQuery.data]);
 
+  const retry = useCallback(() => {
+    void preferenceQuery.refetch();
+  }, [preferenceQuery]);
+
   const value = useMemo<PersonalPreferenceContextValue>(
     () => ({
       preference: preferenceQuery.data ?? null,
+      isLoading: preferenceQuery.isPending,
       isSaving: mutation.isPending,
       loadFailed: preferenceQuery.isError,
       update,
       reset,
+      retry,
     }),
-    [mutation.isPending, preferenceQuery.data, preferenceQuery.isError, reset, update]
+    [
+      mutation.isPending,
+      preferenceQuery.data,
+      preferenceQuery.isError,
+      preferenceQuery.isPending,
+      reset,
+      retry,
+      update,
+    ]
   );
-
-  const isHydrating = Boolean(auth.user) && hydratedIdentity !== identity;
-  if (isHydrating) {
-    return (
-      <Box
-        role="status"
-        aria-live="polite"
-        sx={{
-          minHeight: '100dvh',
-          display: 'grid',
-          placeItems: 'center',
-          bgcolor: 'background.default',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <CircularProgress size={24} />
-          <Typography color="text.secondary">{t('personalPreferences.loading')}</Typography>
-        </Box>
-      </Box>
-    );
-  }
 
   return (
     <PersonalPreferenceContext.Provider value={value}>

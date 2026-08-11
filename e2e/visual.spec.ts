@@ -1,6 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { DEFAULT_APP_PERMISSIONS, mockRuntimeNavigation } from './support/runtime-access';
+import {
+  DEFAULT_APP_PERMISSIONS,
+  mockRuntimeNavigation,
+  WORKSPACE_QUEUE_FIXTURE,
+} from './support/runtime-access';
+
+test.describe.configure({ mode: 'serial' });
 
 const authPolicy = {
   status: 'SUCCESS',
@@ -22,13 +28,13 @@ const agentPlan = {
   data: {
     runId: 'run-ref-1042',
     auditId: 'AUD-REF-1042',
-    planHash: 'a'.repeat(64),
+    planHash: '9f2c4a8e71b356d0c84f2a196e735bd1a02c94ef6b18357d4e90a2c7138f65bd',
     correlationId: 'correlation-ref-1042',
     state: 'REVIEW',
     riskTier: 'L2',
     approvalRequired: true,
     mutationAllowed: false,
-    summary: 'Prepare a governed flexible work request preview.',
+    summary: 'Prepare a governed workspace request preview.',
     steps: [
       {
         id: 'verify-sources',
@@ -38,7 +44,7 @@ const agentPlan = {
       },
       {
         id: 'prepare-preview',
-        title: 'Prepare the flexible work request preview',
+        title: 'Prepare the workspace request preview',
         tool: 'tool.preview',
         description: 'Build a reversible preview without changing the source system.',
       },
@@ -49,7 +55,7 @@ const agentPlan = {
         description: 'A separate approved command is required before any mutation.',
       },
     ],
-    sourceReferences: ['src-policy-flex', 'src-remote-guide'],
+    sourceReferences: [],
     referenceMode: true,
     agentRegistry: {
       entryKey: 'REFERENCE_PLANNER',
@@ -164,43 +170,103 @@ async function mockAuthenticated(page: Page, locale = 'en') {
       }),
     })
   );
-  await page.route('**/api/platform/v1/personal-preferences**', async (route) => {
-    const cached = await page.evaluate(() => {
-      try {
-        return JSON.parse(window.localStorage.getItem('dwp.appearance.v1') ?? 'null') as {
-          mode?: 'system' | 'light' | 'dark';
-          density?: 'compact' | 'standard' | 'comfortable';
-          highContrast?: boolean;
-          reduceMotion?: boolean;
-        } | null;
-      } catch {
-        return null;
-      }
-    });
-    await route.fulfill({
+  await page.route('**/api/platform/v1/workspace/work-items', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: WORKSPACE_QUEUE_FIXTURE,
+      }),
+    })
+  );
+  await page.route('**/api/people/v1/org-chart**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          organizations: [
+            {
+              organizationId: 'org-skax',
+              organizationKey: 'SKAX',
+              name: 'SKAX',
+              organizationTypeName: 'Company',
+              totalHeadcount: 42,
+            },
+          ],
+        },
+      }),
+    })
+  );
+  await page.route('**/api/people/v1/people**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: { items: [], nextCursor: null, size: 20, hasMore: false, asOf: '2026-08-11' },
+      }),
+    })
+  );
+  await page.route('**/api/people/v1/org-chart**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          asOf: '2026-08-11',
+          company: { organizationId: 'org-skax', organizationKey: 'SKAX', name: 'SKAX' },
+          scenario: null,
+          metrics: {
+            headcount: 0,
+            activeHeadcount: 0,
+            onLeaveHeadcount: 0,
+            contingentHeadcount: 0,
+            organizationCount: 1,
+            managerCount: 0,
+            openPositionCount: 0,
+            locationCount: 0,
+            plannedFte: 0,
+            workforceCostAmount: 0,
+            costCurrency: 'KRW',
+          },
+          organizations: [],
+          people: [],
+          positions: [],
+          relationships: [],
+          openPositions: [],
+        },
+      }),
+    })
+  );
+  await page.route('**/api/platform/v1/personal-preferences**', (route) =>
+    route.fulfill({
       contentType: 'application/json',
       body: JSON.stringify({
         status: 'SUCCESS',
         message: 'OK',
         data: {
           schemaVersion: 1,
-          customized: Boolean(cached),
+          customized: false,
           preferences: {
             appearance: {
-              mode: cached?.mode ?? 'system',
-              density: cached?.density ?? 'standard',
+              mode: 'system',
+              density: 'standard',
             },
             accessibility: {
-              highContrast: cached?.highContrast ?? false,
-              reduceMotion: cached?.reduceMotion ?? false,
+              highContrast: false,
+              reduceMotion: false,
             },
           },
           version: 0,
           updatedAt: null,
         },
       }),
-    });
-  });
+    })
+  );
   await page.route('**/api/platform/v1/announcements', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -274,6 +340,7 @@ async function mockIdentityAccess(page: Page) {
               status: 'ACTIVE',
               mfaEnabled: false,
               roles: ['ADMIN'],
+              roleManagement: { allowed: true, reason: 'ALLOWED' },
               accessRevision: 0,
               version: 0,
             },
@@ -297,6 +364,11 @@ async function mockIdentityAccess(page: Page) {
             code: 'ADMIN',
             name: 'Administrator',
             description: 'Tenant administration',
+            roleFamily: 'WORKSPACE',
+            assignmentClass: 'DELEGATED',
+            privileged: true,
+            assignmentMode: 'DIRECT',
+            conflictsWith: [],
             status: 'ACTIVE',
           },
         ],
@@ -317,6 +389,31 @@ async function setAppearance(
   await page.addInitScript((value) => {
     window.localStorage.setItem('dwp.appearance.v1', JSON.stringify(value));
   }, preference);
+  await page.route('**/api/platform/v1/personal-preferences**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          schemaVersion: 1,
+          customized: true,
+          preferences: {
+            appearance: {
+              mode: preference.mode,
+              density: preference.density,
+            },
+            accessibility: {
+              highContrast: preference.highContrast,
+              reduceMotion: preference.reduceMotion,
+            },
+          },
+          version: 1,
+          updatedAt: '2026-08-11T00:00:00Z',
+        },
+      }),
+    })
+  );
 }
 
 async function setLocale(page: Page, locale: string) {
@@ -613,7 +710,7 @@ test('global search command palette visual baseline', async ({ page }) => {
   await expect(page).toHaveScreenshot('global-search-command.png', {
     animations: 'disabled',
     caret: 'hide',
-    fullPage: true,
+    fullPage: false,
     maxDiffPixelRatio: 0.001,
   });
 });
@@ -694,7 +791,9 @@ test('Ask reference visual baseline', async ({ page }) => {
 
   await page.goto('/ask');
   await page.getByRole('button', { name: 'Can I work remotely next Friday?' }).click();
-  await expect(page.getByRole('heading', { name: 'Answer' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Request review' })).toBeVisible();
+  await expect(page.getByText('AI answers and source citations are not enabled yet')).toBeVisible();
+  await expect(page.getByText('Verified sources')).toHaveCount(0);
   await expect(page.getByText('AUD-REF-1042')).toBeVisible();
   await expect(page).toHaveScreenshot('ask-reference.png', {
     animations: 'disabled',

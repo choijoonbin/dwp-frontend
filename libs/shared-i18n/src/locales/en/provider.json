@@ -6,6 +6,7 @@
     "globalScope": "Global delivery scope",
     "navigationLabel": "Provider navigation",
     "openNavigation": "Open provider navigation",
+    "accountSettings": "Account settings",
     "backToWorkspace": "Back to workspace",
     "backToTenantSupport": "Back to {{tenant}} support console"
   },
@@ -16,6 +17,8 @@
     "health": "Service operations",
     "support": "Privileged support",
     "commercial": "Subscriptions & rights",
+    "codeContracts": "Product contracts",
+    "dataGovernance": "Data governance",
     "audit": "Governance & audit",
     "groups": {
       "operate": "Operate",
@@ -48,6 +51,14 @@
       "title": "Subscriptions & entitlements",
       "description": "Manage service plans, contracts, renewal risk, and entitlement adoption."
     },
+    "code-contracts": {
+      "title": "Product contract registry",
+      "description": "Inspect ownership, compatibility boundaries, and runtime enforcement across DWP global code contracts."
+    },
+    "data-governance": {
+      "title": "Data assets & flow",
+      "description": "Inspect live service-database metadata, ER relationships, cross-service flow, and schema quality."
+    },
     "audit": {
       "title": "Governance & audit",
       "description": "Investigate privileged changes, access, and outcomes by correlation."
@@ -60,6 +71,7 @@
     "close": "Close",
     "save": "Save",
     "refresh": "Refresh",
+    "retryLoad": "Retry",
     "preview": "Preview plan",
     "execute": "Execute approved plan",
     "retry": "Retry failed steps",
@@ -71,7 +83,9 @@
     "create": "Create"
   },
   "errors": {
+    "loadTitle": "Provider information is unavailable",
     "load": "Unable to load provider data.",
+    "operatorProfile": "Operator permissions are unavailable. Navigation will return when the service recovers.",
     "operation": "The provider operation could not be completed."
   },
   "fields": {
@@ -238,7 +252,14 @@
       "onboarding": "Onboarding",
       "state": "Lifecycle"
     },
-    "actions": { "onboard": "Onboard company" }
+    "actions": { "onboard": "Onboard company" },
+    "empty": {
+      "firstUseTitle": "There are no managed tenants yet",
+      "firstUseDescription": "Onboard the first tenant by reviewing company details, runtime environment, initial administrator, and entitlements.",
+      "noResultsTitle": "No tenants match these conditions",
+      "noResultsDescription": "Adjust the search term or lifecycle filter.",
+      "reset": "Reset filters"
+    }
   },
   "onboarding": {
     "title": "Company and tenant onboarding",
@@ -488,6 +509,13 @@
     "revokeReason": "Support session ended by provider operator",
     "revoked": "Support session revoked.",
     "actions": { "create": "Create support session", "revoke": "Revoke support session" },
+    "empty": {
+      "firstUseTitle": "There are no support sessions",
+      "firstUseDescription": "Create a session only after confirming customer approval, least-privilege scopes, and expiration.",
+      "noResultsTitle": "No support sessions match this state",
+      "noResultsDescription": "Choose another state or review the full history.",
+      "showAll": "View all history"
+    },
     "columns": {
       "tenant": "Tenant",
       "operator": "Operator",
@@ -565,6 +593,7 @@
       "PRIVILEGED_ACCESS": "Privileged access",
       "SERVICE_HEALTH": "Service health",
       "CHANGE_MANAGEMENT": "Change management",
+      "DATA_GOVERNANCE": "Data governance",
       "TENANT_LIFECYCLE": "Tenant lifecycle"
     },
     "detail": {
@@ -573,6 +602,244 @@
       "snapshot": "Redacted event snapshot"
     },
     "outcomes": { "SUCCESS": "Success", "FAILED": "Failed", "DENIED": "Denied" }
+  },
+  "codeContracts": {
+    "scope": {
+      "label": "Product contract scope",
+      "title": "DWP global product code contracts",
+      "description": "These product execution rules are shared by every customer tenant. They are not customer contract data or tenant reference data.",
+      "global": "Global product scope",
+      "readOnly": "Read only",
+      "releaseManaged": "Managed by product release"
+    },
+    "summary": {
+      "label": "Product code contract health",
+      "registered": "Verified contracts",
+      "incomplete": "Contracts requiring action",
+      "values": "Active canonical codes",
+      "coverage": "Enforcement coverage"
+    },
+    "filters": {
+      "searchPlaceholder": "Search contract key, name, or owner",
+      "searchLabel": "Search product code contracts",
+      "owner": "Owning service",
+      "allOwners": "All owning services",
+      "level": "Configuration level",
+      "allLevels": "All configuration levels",
+      "kind": "Contract kind",
+      "allKinds": "All contract kinds",
+      "state": "Verification state",
+      "allStates": "All verification states",
+      "toggle": "Filters",
+      "toggleActive": "Filters {{count}}",
+      "reset": "Reset filters"
+    },
+    "refresh": "Refresh product code contracts",
+    "resultCount": "{{filtered}} of {{total}}",
+    "pageStatus": "{{from}}–{{to}} of {{total}}",
+    "previousPage": "Previous contract page",
+    "nextPage": "Next contract page",
+    "listLabel": "Product code contract list",
+    "detailLabel": "Product code contract details",
+    "empty": "No product code contract matches these filters.",
+    "selectSet": "Select a product code contract to inspect.",
+    "listSummary": "{{values}} values · {{consumers}} consumers",
+    "states": {
+      "REGISTERED": "Verified",
+      "INCOMPLETE": "Action required"
+    },
+    "levels": {
+      "SYSTEM": "System fixed",
+      "EXTENSIBLE": "Product extensible",
+      "USER": "User defined"
+    },
+    "kinds": {
+      "REFERENCE": "Reference code",
+      "STATE_MACHINE": "State machine",
+      "SECURITY": "Security contract",
+      "PROTOCOL": "Protocol",
+      "OBSERVABILITY": "Observability contract",
+      "REGISTRY_META": "Registry metadata"
+    },
+    "tabs": {
+      "label": "Product code contract detail views",
+      "overview": "Overview",
+      "values": "Canonical values {{count}}",
+      "consumers": "Consumers & enforcement {{count}}"
+    },
+    "health": {
+      "registeredTitle": "Runtime enforcement evidence is complete",
+      "registeredDescription": "{{enforced}} of {{bindings}} registered consumers are connected to verifiable enforcement.",
+      "incompleteTitle": "Contract enforcement evidence requires action",
+      "incompleteDescription": "Only {{enforced}} of {{bindings}} registered consumers have verified enforcement. The owning service must resolve this before release."
+    },
+    "metadata": {
+      "owner": "Accountable owning service",
+      "validation": "Validation source",
+      "source": "Authoritative source",
+      "visibility": "Runtime exposure",
+      "changePolicy": "Change policy",
+      "enforcement": "Enforcement"
+    },
+    "visibility": {
+      "ADMIN_ONLY": "Provider operators only",
+      "RUNTIME": "Readable by approved runtime consumers"
+    },
+    "enforcementSummary": "{{enforced}} of {{bindings}} verified",
+    "valuesLabel": "Canonical product code values",
+    "valuesHelp": "Stable codes are product contracts stored in APIs and data. Labels are localized, while tenant administrators cannot alter the codes.",
+    "consumersHelp": "Trace the services, APIs, databases, interfaces, and enforcement mechanisms that consume this contract. Missing bindings must fail the release gate.",
+    "consumerFields": {
+      "service": "Consumer service",
+      "enforcement": "Usage & enforcement",
+      "source": "Consumer source"
+    },
+    "columns": {
+      "code": "Stable code",
+      "label": "Resolved label",
+      "origin": "Origin",
+      "order": "Order"
+    },
+    "origins": {
+      "predefined": "Product predefined",
+      "extension": "Extension value"
+    }
+  },
+  "dataGovernance": {
+    "metrics": {
+      "databases": "Connected databases",
+      "tables": "Logical tables",
+      "columns": "Columns",
+      "relationships": "Foreign-key relationships",
+      "storage": "Total storage"
+    },
+    "databaseTitle": "Data-domain scope",
+    "databaseDescription": "Each database is a service ownership boundary; tables are classified into internal business domains from prefixes and reviewed annotations.",
+    "databaseSummary": "{{tables}} tables · {{columns}} columns · {{documentation}}% documented",
+    "allDatabases": "All data assets",
+    "globalScope": "All service boundaries",
+    "providerOwned": "Provider control scope",
+    "refresh": "Rescan source databases",
+    "refreshCompleted": "Metadata was rescanned across all four databases.",
+    "generatedAt": "Last scan {{value}}",
+    "assetCount": "{{count}} assets",
+    "searchPlaceholder": "Search table, domain, service, or description",
+    "tabs": {
+      "catalog": "Asset catalog",
+      "relationships": "ER relationships",
+      "lineage": "Data flow",
+      "quality": "Quality & cleanup review"
+    },
+    "filters": {
+      "domain": "Business domain",
+      "allDomains": "All business domains",
+      "partitions": "Include physical partitions",
+      "severity": "Severity",
+      "allSeverities": "All severities",
+      "reset": "Reset filters"
+    },
+    "status": {
+      "AVAILABLE": "Available",
+      "UNAVAILABLE": "Unavailable"
+    },
+    "asset": {
+      "selectPrompt": "Select an asset to inspect its column contract and control posture.",
+      "noDescription": "No reviewed business description exists yet.",
+      "tenantScoped": "Tenant isolated",
+      "reviewRequired": "Ownership decision required",
+      "columns": "Columns",
+      "storage": "Storage",
+      "relationships": "Relationships",
+      "estimatedRows": "Estimated rows",
+      "columnContract": "Column contract",
+      "listMeta": "{{columns}} columns · {{rows}} estimated rows"
+    },
+    "columns": {
+      "name": "Column",
+      "type": "Data type",
+      "controls": "Controls",
+      "primaryKey": "Primary key",
+      "foreignKey": "Foreign key"
+    },
+    "classification": {
+      "PUBLIC": "Public",
+      "INTERNAL": "Internal",
+      "CONFIDENTIAL": "Confidential",
+      "RESTRICTED": "Restricted"
+    },
+    "severity": {
+      "CRITICAL": "Critical",
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
+    "categories": {
+      "SOURCE_UNAVAILABLE": "Metadata connectivity",
+      "OWNERSHIP_REVIEW": "Ownership review",
+      "MISSING_PRIMARY_KEY": "Primary key",
+      "MISSING_DOCUMENTATION": "Documentation",
+      "TIMEZONE_AMBIGUITY": "Time-zone consistency",
+      "UNINDEXED_FOREIGN_KEY": "Index review",
+      "DUPLICATE_FOREIGN_KEY": "Duplicate constraint",
+      "ANNOTATION_DRIFT": "Catalog drift",
+      "LINEAGE_DRIFT": "Lineage drift"
+    },
+    "findings": {
+      "SOURCE_UNAVAILABLE": {
+        "description": "Metadata cannot be read from the configured source database.",
+        "recommendation": "Restore the read-only connection and credentials, then rescan before approving schema changes."
+      },
+      "OWNERSHIP_REVIEW": {
+        "description": "The runtime owner and disposition of this discovered asset have not been decided.",
+        "recommendation": "Assign a runtime owner and record an activate, consolidate, or retire decision through a versioned migration."
+      },
+      "MISSING_PRIMARY_KEY": {
+        "description": "The logical table has no stable row identity.",
+        "recommendation": "Check duplicate rows and downstream contracts before adding a primary key."
+      },
+      "MISSING_DOCUMENTATION": {
+        "description": "The source catalog and Provider annotation have no business description.",
+        "recommendation": "Document purpose, ownership, retention, and tenant boundary before the next review."
+      },
+      "TIMEZONE_AMBIGUITY": {
+        "description": "Some timestamp columns have no defined time-zone semantics.",
+        "recommendation": "Define a UTC conversion contract and migrate to timestamptz in a compatibility release."
+      },
+      "UNINDEXED_FOREIGN_KEY": {
+        "description": "No leading index was found for this foreign-key lookup.",
+        "recommendation": "Validate delete and join plans, then add a leading index where the relationship carries operational load."
+      },
+      "DUPLICATE_FOREIGN_KEY": {
+        "description": "More than one foreign-key constraint enforces the same column relationship.",
+        "recommendation": "Keep one canonical constraint and remove duplicates through a versioned migration."
+      },
+      "ANNOTATION_DRIFT": {
+        "description": "An asset registered in Provider annotations is absent from the live source catalog.",
+        "recommendation": "Check the source connection and rename mapping, or retire the stale annotation."
+      },
+      "LINEAGE_DRIFT": {
+        "description": "A registered data-flow source or target is absent from the live source catalog.",
+        "recommendation": "Confirm the owning process, then repair or retire the lineage contract."
+      }
+    },
+    "relationships": {
+      "guidance": "Only live foreign keys in {{database}} are shown. Dashed edges have no leading index and require query-plan review."
+    },
+    "lineage": {
+      "guidance": "These are cross-service contracts such as provisioning and event delivery that cannot be expressed as database foreign keys. Animated edges are asynchronous event flows.",
+      "processes": "Connected process contracts"
+    },
+    "quality": {
+      "count": "{{count}} review items · {{categories}} categories",
+      "selectPrompt": "Select a review item to inspect its evidence and recommended action.",
+      "recommendation": "Recommended action",
+      "evidence": "Evidence"
+    },
+    "graph": {
+      "columns": "{{count}} columns",
+      "tenant": "Tenant",
+      "empty": "No connected data assets exist in this scope."
+    }
   },
   "tenantDetail": {
     "back": "Tenant estate",

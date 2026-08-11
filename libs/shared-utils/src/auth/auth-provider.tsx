@@ -1,4 +1,13 @@
-import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
+import {
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  createContext,
+} from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { usePermissionsStore } from './permissions-store';
 import {
@@ -27,20 +36,29 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 const SESSION_ROTATION_INTERVAL_MS = 10 * 60 * 1000;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<MeResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const authenticatedIdentity = useRef<string | null>(null);
 
   const invalidateSession = useCallback(() => {
+    queryClient.clear();
+    authenticatedIdentity.current = null;
     setUser(null);
     setIsLoading(false);
     usePermissionsStore.getState().clearPermissions();
-  }, []);
+  }, [queryClient]);
 
   const refreshSession = useCallback(async () => {
     setIsLoading(true);
     try {
       const meResponse = await getMe();
       const permissionsResponse = await getPermissions();
+      const nextIdentity = `${meResponse.data.tenantId}:${meResponse.data.userId}`;
+      if (authenticatedIdentity.current && authenticatedIdentity.current !== nextIdentity) {
+        queryClient.clear();
+      }
+      authenticatedIdentity.current = nextIdentity;
       setUser(meResponse.data);
       usePermissionsStore
         .getState()
@@ -51,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       invalidateSession();
       return false;
     }
-  }, [invalidateSession]);
+  }, [invalidateSession, queryClient]);
 
   useEffect(() => {
     void refreshSession();

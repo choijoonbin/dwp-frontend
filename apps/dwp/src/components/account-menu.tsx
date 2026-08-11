@@ -13,7 +13,9 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
-import { useAuth, usePermissions, redirectToSignIn } from '@dwp-frontend/shared-utils';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { redirectToSignIn } from '@dwp-frontend/shared-utils/auth/auth-redirect';
+import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -69,6 +71,7 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
   const supportContext = useProviderSupportContext(providerRole);
   const authorityRole = resolvePrimaryAuthorityRole(roles);
   const positionTitle = t(`account.roles.${authorityTranslationKeys[authorityRole] ?? 'member'}`);
+  const identitySubtitle = auth.user?.jobTitle?.trim() || positionTitle;
   const isAdmin = canEnterTenantControlPlane(
     roles,
     isAppResourceEntitled('APP.ADMINISTRATION', permissions),
@@ -107,7 +110,7 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
           component="button"
           type="button"
           id={buttonId}
-          aria-label={t('account.buttonLabel', { name: displayName, position: positionTitle })}
+          aria-label={t('account.buttonLabel', { name: displayName, position: identitySubtitle })}
           aria-haspopup="dialog"
           aria-controls={anchor ? panelId : undefined}
           aria-expanded={Boolean(anchor)}
@@ -138,7 +141,14 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
           }}
         >
           {showIdentity && (
-            <Box sx={{ minWidth: 0, maxWidth: 190, display: { xs: 'none', md: 'block' } }}>
+            <Box
+              sx={{
+                minWidth: 0,
+                maxWidth: 190,
+                display: { xs: 'none', md: 'block' },
+                '@container dwp-shell-header (max-width: 1000px)': { display: 'none' },
+              }}
+            >
               <Typography component="span" variant="subtitle2" noWrap sx={{ display: 'block' }}>
                 {displayName}
               </Typography>
@@ -149,7 +159,7 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
                 noWrap
                 sx={{ display: 'block' }}
               >
-                {positionTitle}
+                {identitySubtitle}
               </Typography>
             </Box>
           )}

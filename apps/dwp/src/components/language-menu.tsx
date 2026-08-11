@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Globe2, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 import { productLocales } from '@dwp-frontend/shared-i18n';
+import { LanguageIcon } from '@dwp-frontend/design-system/components/icons';
 
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
@@ -35,7 +36,7 @@ export function LanguageMenu() {
         aria-expanded={Boolean(anchor)}
         aria-busy={isSaving || undefined}
         disabled={isSaving}
-        startIcon={<Globe2 size={17} strokeWidth={1.75} aria-hidden="true" />}
+        startIcon={<LanguageIcon size={17} strokeWidth={1.75} aria-hidden="true" />}
         endIcon={<ChevronDown size={14} strokeWidth={1.75} aria-hidden="true" />}
         onClick={(event) => setAnchor(event.currentTarget)}
         sx={{

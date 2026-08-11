@@ -451,11 +451,29 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
     [tenant.data]
   );
 
-  if (tenant.isLoading || catalog.isLoading || sessions.isLoading || operator.isLoading)
+  if (
+    tenant.isLoading ||
+    catalog.isLoading ||
+    sessions.isLoading ||
+    (operator.isLoading && !operator.data)
+  )
     return <ProviderLoading />;
-  if (tenant.isError || catalog.isError || sessions.isError || operator.isError)
+  if (tenant.isError || catalog.isError || sessions.isError || (operator.isError && !operator.data))
     return (
-      <ProviderError error={tenant.error ?? catalog.error ?? sessions.error ?? operator.error} />
+      <ProviderError
+        error={tenant.error ?? catalog.error ?? sessions.error ?? operator.error}
+        onRetry={() =>
+          void Promise.all([
+            tenant.refetch(),
+            catalog.refetch(),
+            sessions.refetch(),
+            operator.refetch(),
+          ])
+        }
+        retrying={
+          tenant.isFetching || catalog.isFetching || sessions.isFetching || operator.isFetching
+        }
+      />
     );
   if (!tenant.data) return null;
   const value = tenant.data;

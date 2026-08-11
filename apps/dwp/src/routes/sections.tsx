@@ -3,8 +3,9 @@ import type { RouteObject } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
-import { AuthGuard } from '@dwp-frontend/shared-utils';
-import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
+import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -19,6 +20,7 @@ import { ProviderLayout } from '../layouts/provider-layout';
 import { WorkforceLayout } from '../layouts/workforce-layout';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
+import { ShellBootScreen } from '../components/shell-boot-screen';
 import {
   canAccessAdminNavigationItem,
   canEnterTenantControlPlane,
@@ -56,6 +58,7 @@ function RouteFallback() {
 }
 
 const fallback = <RouteFallback />;
+const authenticationFallback = <ShellBootScreen />;
 
 function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
@@ -118,7 +121,12 @@ function WorkspaceRouteGuard({ children }: { children: React.ReactNode }) {
   const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
   const supportContext = useProviderSupportContext(providerRole);
   if (providerRole && supportContext.isLoading) return <RouteFallback />;
-  return supportContext.data ? <Navigate to="/admin" replace /> : children;
+  if (!providerRole) return children;
+  return supportContext.data ? (
+    <Navigate to="/admin" replace />
+  ) : (
+    <Navigate to="/provider" replace />
+  );
 }
 
 function AppRouteGuard({
@@ -169,7 +177,7 @@ export const routesSection: RouteObject[] = [
   {
     path: 'people',
     element: (
-      <AuthGuard>
+      <AuthGuard fallback={authenticationFallback}>
         <PeopleRouteGuard>
           <PeopleLayout />
         </PeopleRouteGuard>
@@ -190,7 +198,7 @@ export const routesSection: RouteObject[] = [
   {
     path: 'workforce',
     element: (
-      <AuthGuard>
+      <AuthGuard fallback={authenticationFallback}>
         <WorkforceRouteGuard>
           <WorkforceLayout />
         </WorkforceRouteGuard>
@@ -210,7 +218,7 @@ export const routesSection: RouteObject[] = [
   },
   {
     element: (
-      <AuthGuard>
+      <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
           <HomeLayout />
         </WorkspaceRouteGuard>
@@ -229,7 +237,7 @@ export const routesSection: RouteObject[] = [
   },
   {
     element: (
-      <AuthGuard>
+      <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
           <AppLayout />
         </WorkspaceRouteGuard>
@@ -279,10 +287,8 @@ export const routesSection: RouteObject[] = [
   {
     path: 'account',
     element: (
-      <AuthGuard>
-        <WorkspaceRouteGuard>
-          <AccountLayout />
-        </WorkspaceRouteGuard>
+      <AuthGuard fallback={authenticationFallback}>
+        <AccountLayout />
       </AuthGuard>
     ),
     children: [
@@ -317,7 +323,7 @@ export const routesSection: RouteObject[] = [
   {
     path: 'admin',
     element: (
-      <AuthGuard>
+      <AuthGuard fallback={authenticationFallback}>
         <AdminRouteGuard>
           <AdminLayout />
         </AdminRouteGuard>
@@ -339,7 +345,7 @@ export const routesSection: RouteObject[] = [
   {
     path: 'provider',
     element: (
-      <AuthGuard>
+      <AuthGuard fallback={authenticationFallback}>
         <ProviderRouteGuard>
           <ProviderLayout />
         </ProviderRouteGuard>

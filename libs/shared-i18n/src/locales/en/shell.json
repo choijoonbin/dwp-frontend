@@ -14,6 +14,7 @@
     "label": "Application navigation",
     "section": "Workspace",
     "open": "Open navigation",
+    "skipToContent": "Skip to main content",
     "expand": "Expand navigation",
     "collapse": "Collapse navigation",
     "items": {
@@ -28,16 +29,18 @@
   "search": {
     "label": "Search DWP",
     "shortPlaceholder": "Search DWP",
-    "placeholder": "Search work, apps, services, and knowledge",
+    "placeholder": "Search work, apps, people, and organizations",
     "close": "Close search",
     "bestMatches": "Best matches",
     "suggested": "Suggested",
     "resultsLabel": "Search results",
     "noResults": "No results",
+    "partialResults": "Some search sources are unavailable. Showing the results that could be loaded.",
     "types": {
       "app": "App",
       "work": "Work",
-      "knowledge": "Knowledge",
+      "person": "Person",
+      "organization": "Organization",
       "ask": "Ask"
     },
     "workTypes": {
@@ -51,21 +54,15 @@
       "description": "Open the assigned application catalog",
       "keywords": "application catalog service system"
     },
-    "prompts": {
-      "attention": {
-        "title": "What needs my attention?",
-        "description": "Review priorities across your permitted work",
-        "keywords": "priority today attention approval task"
-      },
-      "remotePolicy": {
-        "title": "Find the remote work policy",
-        "description": "Search governed workplace knowledge",
-        "keywords": "remote work policy knowledge guide"
-      }
+    "people": {
+      "descriptionFallback": "People directory"
+    },
+    "organizations": {
+      "description": "{{type}} / {{count}} people"
     },
     "askQuery": {
       "title": "Ask DWP: {{query}}",
-      "description": "Use permitted work and knowledge sources"
+      "description": "Prepare a traceable read-only request plan"
     }
   },
   "notifications": {

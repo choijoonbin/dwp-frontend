@@ -93,23 +93,24 @@ System invariant를 편집 가능한 공통코드로 만들지 않는다. Secret
   유형·발령 사유·조직 역할처럼 Domain 제약이 필요한 확장값은 해당 Service의 Tenant별
   Catalog와 FK가 소유한다.
 - 각 시스템 계약은 Owner Service, 계약 종류, 검증 원천, 실제 소비 Column/API와 강제
-  방식을 함께 기록한다. Admin의 `시스템 코드 계약` 화면은 값과 Binding 상태를 읽기
-  전용으로 진단하며 `기준정보` 편집 화면을 대체하지 않는다.
+  방식을 함께 기록한다. Provider Control Plane의 `제품 계약 레지스트리`는 전역 값과
+  Binding 상태를 읽기 전용으로 진단하며 Tenant Admin의 `기준정보` 편집 화면을 대체하지
+  않는다. Tenant Admin에게 전역 계약 Inventory와 내부 Source Reference를 노출하지 않는다.
 - `scripts/audit-code-contracts.sh`가 서비스 DB의 Enum CHECK와 중앙 Registry 값 일치,
   Catalog FK의 고아 참조, 미등록·미강제 Binding을 배포 Gate에서 검사한다.
 
 ## 3. Admin Information Architecture
 
-| 영역                  | Tenant Admin Capability                                   | 목표 단계 |
-| --------------------- | --------------------------------------------------------- | --------- |
-| Overview              | 구성 상태, 보안 경고, 동기화·실행 Health                  | R2        |
-| Organization & Access | 사용자·Role·조직·직접 Group Baseline, SCIM·위임           | R0~R2     |
-| Standards             | Tenant 기준정보, 시스템 코드 계약, 다국어 Label, 유효기간 | R0 완료   |
-| Catalogs              | App, Service, Widget, Template, Entitlement               | R1        |
-| Integrations          | Connector, Data Source, Credential Ref, Sync Health       | R1~R2     |
-| AI & Automation       | Agent, Tool, Model Route, Risk, Approval, Evaluation      | R1~R3     |
-| Security & Compliance | Policy, Retention, Consent, Audit, Export                 | R1~R3     |
-| Operations            | Feature Rollout, Notification, Usage, Cost, SLO           | R2~R4     |
+| 영역                  | Tenant Admin Capability                              | 목표 단계 |
+| --------------------- | ---------------------------------------------------- | --------- |
+| Overview              | 구성 상태, 보안 경고, 동기화·실행 Health             | R2        |
+| Organization & Access | 사용자·Role·조직·직접 Group Baseline, SCIM·위임      | R0~R2     |
+| Standards             | Tenant 기준정보, 다국어 Label, 계층 및 유효기간      | R0 완료   |
+| Catalogs              | App, Service, Widget, Template, Entitlement          | R1        |
+| Integrations          | Connector, Data Source, Credential Ref, Sync Health  | R1~R2     |
+| AI & Automation       | Agent, Tool, Model Route, Risk, Approval, Evaluation | R1~R3     |
+| Security & Compliance | Policy, Retention, Consent, Audit, Export            | R1~R3     |
+| Operations            | Feature Rollout, Notification, Usage, Cost, SLO      | R2~R4     |
 
 현재 동작하지 않는 영역은 Placeholder 메뉴로 노출하지 않는다. 구현과 권한 계약,
 Empty·Error 상태가 완성된 영역만 Navigation에 추가한다.
@@ -132,7 +133,7 @@ Empty·Error 상태가 완성된 영역만 Navigation에 추가한다.
 - 장점: 제품 운영 기능이 업무 기능과 분리되고, 새 Domain Pack이 공통 통제를 재사용한다.
 - 장점: Tenant 관리자와 Provider 운영자의 권한 혼합을 예방한다.
 - 비용: 초기부터 Lifecycle, Audit, Schema와 권한 계약을 유지해야 한다.
-- 제한: 현재 구현은 Tenant Admin의 기준정보·시스템 코드 계약·Registry·Directory·SCIM·
+- 제한: 현재 구현은 Tenant Admin의 기준정보·Registry·Directory·SCIM·
   Role·Navigation·HRIS Control과 Provider Estate·Entitlement·Onboarding·SLO·Drift·예정
   유지보수 Baseline이다. 실제 외부 Provisioner, 고객별 SLO Telemetry, Release 운영과 DB
   RLS는 후속 Gate다.

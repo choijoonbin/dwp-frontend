@@ -21,6 +21,7 @@ import {
   listGovernanceResources,
   listGovernanceRoles,
   listGroupRoleAssignments,
+  listIdentityRoles,
   listIdentityUsers,
   replaceGovernanceRolePermissions,
   revokeGroupRoleAssignment,
@@ -85,7 +86,6 @@ function RoleDialog({
   const [name, setName] = useState(role?.name ?? '');
   const [description, setDescription] = useState(role?.description ?? '');
   const [status, setStatus] = useState(role?.status ?? 'ACTIVE');
-  const [privileged, setPrivileged] = useState(role?.privileged ?? false);
   const [assignableToGroups, setAssignableToGroups] = useState(role?.assignableToGroups ?? true);
 
   return (
@@ -131,15 +131,6 @@ function RoleDialog({
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={privileged}
-                  onChange={(event) => setPrivileged(event.target.checked)}
-                />
-              }
-              label={t('roleGovernance.fields.privileged')}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
                   checked={assignableToGroups}
                   onChange={(event) => setAssignableToGroups(event.target.checked)}
                 />
@@ -162,7 +153,7 @@ function RoleDialog({
               name: name.trim(),
               description: description.trim(),
               status,
-              privileged,
+              privileged: false,
               assignableToGroups,
             })
           }
@@ -467,26 +458,44 @@ function RolesPanel() {
         headerName: '',
         width: 112,
         sortable: false,
-        renderCell: ({ row }) => (
-          <Stack direction="row">
-            <Tooltip title={t('roleGovernance.actions.permissions')}>
-              <IconButton size="small" onClick={() => setPermissionRole(row)}>
-                <KeyRound size={16} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={t('common.actions.edit')}>
-              <IconButton
-                size="small"
-                onClick={() => {
-                  setEditingRole(row);
-                  setDialogOpen(true);
-                }}
+        renderCell: ({ row }) => {
+          const systemManaged = row.roleType === 'SYSTEM';
+          const tooltip = systemManaged
+            ? t('roleGovernance.systemManaged')
+            : t('roleGovernance.actions.permissions');
+          return (
+            <Stack direction="row">
+              <Tooltip title={tooltip}>
+                <span>
+                  <IconButton
+                    size="small"
+                    disabled={systemManaged}
+                    aria-label={tooltip}
+                    onClick={() => setPermissionRole(row)}
+                  >
+                    <KeyRound size={16} />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Tooltip
+                title={systemManaged ? t('roleGovernance.systemManaged') : t('common.actions.edit')}
               >
-                <Pencil size={16} />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-        ),
+                <span>
+                  <IconButton
+                    size="small"
+                    disabled={systemManaged}
+                    onClick={() => {
+                      setEditingRole(row);
+                      setDialogOpen(true);
+                    }}
+                  >
+                    <Pencil size={16} />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </Stack>
+          );
+        },
       },
     ],
     [t]
@@ -761,6 +770,14 @@ function AssignmentsPanel() {
     queryKey: ['admin', 'governance', 'roles'],
     queryFn: listGovernanceRoles,
   });
+  const assignableRoles = useQuery({
+    queryKey: ['admin', 'identity-roles'],
+    queryFn: listIdentityRoles,
+  });
+  const assignableRoleCodes = useMemo(
+    () => new Set((assignableRoles.data ?? []).map((role) => role.code)),
+    [assignableRoles.data]
+  );
   const mutate = useCallback(
     async (action: () => Promise<unknown>, success: string) => {
       setBusy(true);
@@ -824,7 +841,9 @@ function AssignmentsPanel() {
               <IconButton
                 size="small"
                 color="error"
-                disabled={busy || row.lifecycleState !== 'ACTIVE'}
+                disabled={
+                  busy || row.lifecycleState !== 'ACTIVE' || !assignableRoleCodes.has(row.roleCode)
+                }
                 onClick={() =>
                   void mutate(
                     () => revokeGroupRoleAssignment(row),
@@ -839,11 +858,11 @@ function AssignmentsPanel() {
         ),
       },
     ],
-    [busy, mutate, t]
+    [assignableRoleCodes, busy, mutate, t]
   );
-  if (assignments.isLoading || roles.isLoading)
+  if (assignments.isLoading || roles.isLoading || assignableRoles.isLoading)
     return <AdminPanelLoading label={t('roleGovernance.loading')} />;
-  if (assignments.isError || roles.isError)
+  if (assignments.isError || roles.isError || assignableRoles.isError)
     return <AdminPanelError message={t('common.operationError')} />;
   return (
     <>
@@ -870,7 +889,7 @@ function AssignmentsPanel() {
       {dialogOpen && (
         <AssignmentDialog
           open
-          roles={roles.data ?? []}
+          roles={(roles.data ?? []).filter((role) => assignableRoleCodes.has(role.code))}
           busy={busy}
           onClose={() => setDialogOpen(false)}
           onSave={async (request) => {

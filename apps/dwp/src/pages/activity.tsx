@@ -1,5 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
   Activity,
   ArrowUpRight,
@@ -12,8 +14,20 @@ import {
   UserRound,
   Wrench,
 } from 'lucide-react';
-import { useToast } from '@dwp-frontend/shared-utils';
-import { PageCanvas } from '@dwp-frontend/design-system';
+import { getWorkspaceActivity } from '@dwp-frontend/shared-utils';
+import { formatDate } from '@dwp-frontend/shared-i18n';
+import {
+  EmptyState,
+  FilterBar,
+  LiveStatus,
+  LocalErrorState,
+  LoadingState,
+  mergeFilterSearchParams,
+  OperationalKpiStrip,
+  PageCanvas,
+  ResourcePageHeader,
+  SavedViewMenu,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -25,12 +39,22 @@ import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import { LiveSignal, PageHeader, SectionHeading } from '../features/work-hub/workspace-ui';
-import { localizeActivityEvents } from '../features/work-hub/reference-data';
+import { LiveSignal, SectionHeading } from '../features/work-hub/workspace-ui';
 
-import type { ActivityActor, ActivityState } from '../features/work-hub/reference-data';
+import type {
+  WorkspaceActivityActor as ActivityActor,
+  WorkspaceActivityEvent,
+  WorkspaceActivityState as ActivityState,
+} from '@dwp-frontend/shared-utils';
 
 type ActorFilter = 'all' | ActivityActor;
+type ActivityRow = WorkspaceActivityEvent & { time: string };
+
+const ACTOR_FILTERS: ActorFilter[] = ['all', 'agent', 'person', 'system'];
+
+function isActorFilter(value: string | null): value is ActorFilter {
+  return Boolean(value && ACTOR_FILTERS.includes(value as ActorFilter));
+}
 
 const stateColor: Record<ActivityState, 'info' | 'warning' | 'success' | 'error'> = {
   running: 'info',
@@ -54,92 +78,200 @@ function StateIcon({ state }: { state: ActivityState }) {
 
 export default function ActivityPage() {
   const { t } = useTranslation('work');
-  const toast = useToast();
-  const [actorFilter, setActorFilter] = useState<ActorFilter>('all');
-  const events = useMemo(() => localizeActivityEvents(t), [t]);
-  const [selectedId, setSelectedId] = useState(events[0]?.id || '');
-  const visibleEvents = useMemo(
-    () => (actorFilter === 'all' ? events : events.filter((event) => event.actor === actorFilter)),
-    [actorFilter, events]
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const actorParam = searchParams.get('actor');
+  const actorFilter: ActorFilter = isActorFilter(actorParam) ? actorParam : 'all';
+  const query = searchParams.get('q') ?? '';
+  const activityQuery = useQuery({
+    queryKey: ['workspace', 'activity'],
+    queryFn: getWorkspaceActivity,
+    staleTime: 15_000,
+    refetchInterval: 60_000,
+    retry: 1,
+  });
+  const events = useMemo<ActivityRow[]>(
+    () =>
+      (activityQuery.data?.events ?? []).map((event) => ({
+        ...event,
+        time: formatDate(new Date(event.occurredAt), { hour: '2-digit', minute: '2-digit' }),
+      })),
+    [activityQuery.data?.events]
   );
+  const selectedId = searchParams.get('event') ?? '';
+  const visibleEvents = useMemo(() => {
+    const normalized = query.trim().toLocaleLowerCase();
+    return events.filter((event) => {
+      const actorMatches = actorFilter === 'all' || event.actor === actorFilter;
+      const queryMatches =
+        !normalized ||
+        [event.title, event.summary, event.actorName, event.objectLabel, event.source].some(
+          (value) =>
+            String(value ?? '')
+              .toLocaleLowerCase()
+              .includes(normalized)
+        );
+      return actorMatches && queryMatches;
+    });
+  }, [actorFilter, events, query]);
   const selected = events.find((event) => event.id === selectedId) || visibleEvents[0];
 
+  const selectActor = (value: ActorFilter) => {
+    setSearchParams(
+      mergeFilterSearchParams(searchParams, {
+        actor: value === 'all' ? null : value,
+        event: null,
+      }),
+      { replace: true }
+    );
+  };
   const changeActor = (_event: React.MouseEvent<HTMLElement>, value: ActorFilter | null) => {
-    if (value) setActorFilter(value);
+    if (value) selectActor(value);
+  };
+  const header = (
+    <ResourcePageHeader
+      eyebrow={t('activityPage.header.eyebrow')}
+      title={t('activityPage.header.title')}
+      description={t('activityPage.header.description')}
+      status={
+        <LiveStatus
+          state={activityQuery.isFetching ? 'syncing' : 'live'}
+          label={t('activityPage.header.live')}
+          refreshLabel={t('activityPage.retry')}
+          refreshing={activityQuery.isFetching}
+          onRefresh={() => void activityQuery.refetch()}
+        />
+      }
+    />
+  );
+  if (activityQuery.isLoading) {
+    return (
+      <PageCanvas>
+        {header}
+        <LoadingState label={t('activityPage.loading')} variant="skeleton" size="page" />
+      </PageCanvas>
+    );
+  }
+  if (activityQuery.isError) {
+    return (
+      <PageCanvas>
+        {header}
+        <LocalErrorState
+          title={t('activityPage.loadErrorTitle')}
+          description={t('activityPage.loadErrorDescription')}
+          retryLabel={t('activityPage.retry')}
+          onRetry={() => void activityQuery.refetch()}
+          retrying={activityQuery.isFetching}
+          size="page"
+        />
+      </PageCanvas>
+    );
+  }
+  if (events.length === 0) {
+    return (
+      <PageCanvas>
+        {header}
+        <EmptyState
+          title={t('activityPage.emptyTitle')}
+          description={t('activityPage.emptyDescription')}
+          size="page"
+        />
+      </PageCanvas>
+    );
+  }
+
+  const summaryValues = {
+    signals: events.length,
+    agent: events.filter((event) => event.actor === 'agent').length,
+    input: events.filter((event) => event.state === 'needs-input').length,
   };
 
   return (
     <PageCanvas>
-      <PageHeader
-        eyebrow={t('activityPage.header.eyebrow')}
-        title={t('activityPage.header.title')}
-        description={t('activityPage.header.description')}
-        action={<LiveSignal label={t('activityPage.header.live')} />}
-      />
+      {header}
 
-      <Box
-        aria-label={t('activityPage.summaryLabel')}
-        sx={{
-          mt: 3,
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
-          borderTop: 1,
-          borderBottom: 1,
-          borderColor: 'divider',
-        }}
-      >
-        {(['signals', 'agent', 'input'] as const).map((key, index) => (
-          <Box
-            key={key}
-            sx={{
-              py: 2,
-              px: { xs: 0, sm: 2.5 },
-              borderLeft: { xs: 0, sm: index === 0 ? 0 : 1 },
-              borderTop: { xs: index === 0 ? 0 : 1, sm: 0 },
-              borderColor: 'divider',
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
-              <Typography component="p" variant="h5">
-                {t(`activityPage.summary.${key}.value`)}
-              </Typography>
-              <Typography component="p" variant="subtitle2">
-                {t(`activityPage.summary.${key}.label`)}
-              </Typography>
-            </Box>
-            <Typography variant="caption" color="text.secondary">
-              {t(`activityPage.summary.${key}.detail`)}
-            </Typography>
-          </Box>
-        ))}
+      <Box sx={{ mt: 3 }}>
+        <OperationalKpiStrip
+          ariaLabel={t('activityPage.summaryLabel')}
+          items={(['signals', 'agent', 'input'] as const).map((key) => ({
+            key,
+            value: String(summaryValues[key]).padStart(2, '0'),
+            label: t(`activityPage.summary.${key}.label`),
+            detail: t(`activityPage.summary.${key}.detail`),
+            tone:
+              key === 'input'
+                ? ('warning' as const)
+                : key === 'agent'
+                  ? ('info' as const)
+                  : ('neutral' as const),
+            onSelect: key === 'agent' ? () => selectActor('agent') : undefined,
+          }))}
+        />
       </Box>
 
-      <Box
-        sx={{
-          mt: 3,
-          display: 'flex',
-          alignItems: { xs: 'stretch', md: 'center' },
-          justifyContent: 'space-between',
-          flexDirection: { xs: 'column', md: 'row' },
-          gap: 1.5,
-        }}
-      >
-        <ToggleButtonGroup
-          exclusive
-          size="small"
-          value={actorFilter}
-          onChange={changeActor}
-          aria-label={t('activityPage.actorFilter')}
-          sx={{ maxWidth: 1, overflowX: 'auto' }}
-        >
-          <ToggleButton value="all">{t('activityPage.filters.all')}</ToggleButton>
-          <ToggleButton value="agent">{t('activityPage.filters.agent')}</ToggleButton>
-          <ToggleButton value="person">{t('activityPage.filters.person')}</ToggleButton>
-          <ToggleButton value="system">{t('activityPage.filters.system')}</ToggleButton>
-        </ToggleButtonGroup>
-        <Typography variant="body2" color="text.secondary">
-          {t('activityPage.visibleCount', { count: visibleEvents.length })}
-        </Typography>
+      <Box sx={{ mt: 3 }}>
+        <FilterBar
+          ariaLabel={t('activityPage.actorFilter')}
+          searchLabel={t('activityPage.searchLabel')}
+          searchPlaceholder={t('activityPage.searchPlaceholder')}
+          searchValue={query}
+          onSearchChange={(value) =>
+            setSearchParams(
+              mergeFilterSearchParams(searchParams, { q: value || null, event: null }),
+              { replace: true }
+            )
+          }
+          filters={
+            <ToggleButtonGroup
+              exclusive
+              size="small"
+              value={actorFilter}
+              onChange={changeActor}
+              aria-label={t('activityPage.actorFilter')}
+            >
+              {ACTOR_FILTERS.map((value) => (
+                <ToggleButton key={value} value={value}>
+                  {t(`activityPage.filters.${value}`)}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          }
+          savedViews={
+            <SavedViewMenu
+              label={t('activityPage.views.label')}
+              personalLabel={t('activityPage.views.personal')}
+              sharedLabel={t('activityPage.views.shared')}
+              defaultLabel={t('activityPage.views.default')}
+              selectedViewId={actorFilter}
+              views={ACTOR_FILTERS.map((value) => ({
+                id: value,
+                name: t(`activityPage.filters.${value}`),
+                scope: 'personal' as const,
+                isDefault: value === 'all',
+              }))}
+              onSelect={(view) => selectActor(view.id as ActorFilter)}
+            />
+          }
+          activeFilters={
+            actorFilter === 'all'
+              ? []
+              : [
+                  {
+                    key: 'actor',
+                    label: t(`activityPage.filters.${actorFilter}`),
+                    onRemove: () => selectActor('all'),
+                  },
+                ]
+          }
+          resetLabel={t('activityPage.resetFilters')}
+          onReset={() =>
+            setSearchParams(
+              mergeFilterSearchParams(searchParams, { q: null, actor: null, event: null }),
+              { replace: true }
+            )
+          }
+          resultLabel={t('activityPage.visibleCount', { count: visibleEvents.length })}
+        />
       </Box>
 
       <Box
@@ -172,7 +304,11 @@ export default function ActivityPage() {
               return (
                 <Box component="li" key={event.id} sx={{ borderBottom: 1, borderColor: 'divider' }}>
                   <ButtonBase
-                    onClick={() => setSelectedId(event.id)}
+                    onClick={() =>
+                      setSearchParams(mergeFilterSearchParams(searchParams, { event: event.id }), {
+                        replace: true,
+                      })
+                    }
                     sx={{
                       width: 1,
                       display: 'grid',
@@ -224,7 +360,7 @@ export default function ActivityPage() {
                       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
                         {event.summary}
                       </Typography>
-                      {event.progress !== undefined && (
+                      {event.progress != null && (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mt: 1.25 }}>
                           <LinearProgress
                             variant="determinate"
@@ -319,7 +455,8 @@ export default function ActivityPage() {
                 <Button
                   variant="contained"
                   startIcon={<FileClock size={17} aria-hidden="true" />}
-                  onClick={() => toast.success(t('activityPage.reviewOpened'))}
+                  disabled={!selected.sourceRoute}
+                  onClick={() => selected.sourceRoute && navigate(selected.sourceRoute)}
                 >
                   {t('activityPage.reviewNow')}
                 </Button>
@@ -327,15 +464,14 @@ export default function ActivityPage() {
               <Button
                 variant="outlined"
                 endIcon={<ArrowUpRight size={16} aria-hidden="true" />}
-                onClick={() =>
-                  toast.success(t('activityPage.sourceOpened', { source: selected.source }))
-                }
+                disabled={!selected.sourceRoute}
+                onClick={() => selected.sourceRoute && navigate(selected.sourceRoute)}
               >
                 {t('activityPage.openSource')}
               </Button>
             </Box>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
-              {t('activityPage.referenceNotice')}
+              {t('activityPage.liveNotice')}
             </Typography>
           </Box>
         )}

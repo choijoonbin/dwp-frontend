@@ -3,20 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { KeyRound, Pencil, RefreshCw, Search, ShieldAlert, UsersRound } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  useAuth,
   useToast,
   listIdentityRoles,
   listIdentityUsers,
   replaceIdentityUserRoles,
 } from '@dwp-frontend/shared-utils';
-import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import { EnterpriseDataGrid, FormDialog, FormField } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
 import Tooltip from '@mui/material/Tooltip';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
@@ -24,9 +21,6 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import FormGroup from '@mui/material/FormGroup';
 import { useTheme } from '@mui/material/styles';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -116,107 +110,162 @@ type RoleDialogProps = {
   roles: IdentityRole[];
   busy: boolean;
   onClose: () => void;
-  onSave: (roles: string[]) => Promise<void>;
+  onSave: (roles: string[], justification: string) => Promise<void>;
 };
 
 function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
   const { t } = useTranslation('admin');
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [justification, setJustification] = useState('');
+
+  const groupedRoles = useMemo(() => {
+    const groups = new Map<string, IdentityRole[]>();
+    roles.forEach((role) => {
+      const family = role.roleFamily || 'OTHER';
+      groups.set(family, [...(groups.get(family) ?? []), role]);
+    });
+    return [...groups.entries()];
+  }, [roles]);
 
   useEffect(() => {
-    setSelected(new Set(user?.roles ?? []));
-  }, [user]);
+    const available = new Set(roles.map((role) => role.code));
+    const next = new Set((user?.roles ?? []).filter((code) => available.has(code)));
+    const baseline = roles.find((role) => role.assignmentClass === 'BASELINE');
+    if (user && baseline) next.add(baseline.code);
+    setSelected(next);
+    setJustification('');
+  }, [roles, user]);
 
-  const toggle = (code: string) => {
+  const toggle = (role: IdentityRole) => {
+    if (role.assignmentClass === 'BASELINE') return;
     setSelected((current) => {
       const next = new Set(current);
-      if (next.has(code)) next.delete(code);
-      else next.add(code);
+      if (next.has(role.code)) next.delete(role.code);
+      else next.add(role.code);
       return next;
     });
   };
 
+  const changed = Boolean(user) && !equalRoles(user?.roles ?? [], [...selected]);
+  const justificationValid = justification.trim().length >= 10;
+
   return (
-    <Dialog open={Boolean(user)} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{t('access.dialog.title')}</DialogTitle>
-      <DialogContent sx={{ pt: '8px !important' }}>
-        {user && (
-          <>
-            <Stack direction="row" alignItems="center" gap={1.5} sx={{ mb: 2.5 }}>
-              <Avatar sx={{ width: 40, height: 40, bgcolor: 'primary.main', fontSize: 14 }}>
-                {initials(user.displayName)}
-              </Avatar>
-              <Box sx={{ minWidth: 0 }}>
-                <Typography variant="subtitle2" noWrap>
-                  {user.displayName}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" noWrap>
-                  {user.email || t('access.userFallback', { id: user.userId })}
-                </Typography>
-              </Box>
-            </Stack>
-            <FormGroup aria-label={t('access.dialog.assignedRoles')} sx={{ gap: 0.75 }}>
-              {roles.map((role) => {
-                const display = resolveRoleDisplayCopy(role, t);
-                return (
-                  <Box key={role.code} sx={{ borderTop: 1, borderColor: 'divider', pt: 0.75 }}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={selected.has(role.code)}
-                          onChange={() => toggle(role.code)}
-                        />
-                      }
-                      label={
-                        <Box>
-                          <Typography variant="body2" fontWeight={700}>
-                            {display.name}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {role.code}
-                            {display.description ? ` / ${display.description}` : ''}
-                          </Typography>
-                        </Box>
-                      }
-                      sx={{ alignItems: 'flex-start', m: 0, width: 1 }}
-                    />
-                  </Box>
-                );
-              })}
-            </FormGroup>
-            <Stack
-              direction="row"
-              alignItems="flex-start"
-              gap={1}
-              sx={{ mt: 2.5, p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}
-            >
-              <ShieldAlert size={18} strokeWidth={1.8} aria-hidden="true" />
-              <Typography variant="body2" color="text.secondary">
-                {t('access.dialog.sessionNotice')}
+    <FormDialog
+      open={Boolean(user)}
+      title={t('access.dialog.title')}
+      description={t('access.dialog.delegationBoundary')}
+      cancelLabel={t('common.actions.cancel')}
+      submitLabel={t('access.actions.save')}
+      submittingLabel={t('access.actions.saving')}
+      busy={busy}
+      submitDisabled={!user || !changed || !justificationValid}
+      onClose={onClose}
+      onSubmit={() => onSave(sorted(selected), justification.trim())}
+    >
+      {user && (
+        <>
+          <Stack direction="row" alignItems="center" gap={1.5} sx={{ mb: 2.5 }}>
+            <Avatar sx={{ width: 40, height: 40, bgcolor: 'primary.main', fontSize: 14 }}>
+              {initials(user.displayName)}
+            </Avatar>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="subtitle2" noWrap>
+                {user.displayName}
               </Typography>
-            </Stack>
-          </>
-        )}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} disabled={busy}>
-          {t('common.actions.cancel')}
-        </Button>
-        <Button
-          variant="contained"
-          disabled={busy || !user || equalRoles(user.roles, [...selected])}
-          onClick={() => void onSave(sorted(selected))}
-        >
-          {t('access.actions.save')}
-        </Button>
-      </DialogActions>
-    </Dialog>
+              <Typography variant="body2" color="text.secondary" noWrap>
+                {user.email || t('access.userFallback', { id: user.userId })}
+              </Typography>
+            </Box>
+          </Stack>
+
+          {groupedRoles.map(([family, familyRoles]) => (
+            <Box key={family} sx={{ mb: 2 }}>
+              <Typography variant="overline" color="text.secondary">
+                {t(`access.roleFamilies.${family}`, { defaultValue: family })}
+              </Typography>
+              <FormGroup aria-label={t('access.dialog.assignedRoles')}>
+                {familyRoles.map((role) => {
+                  const display = resolveRoleDisplayCopy(role, t);
+                  const baseline = role.assignmentClass === 'BASELINE';
+                  const activeConflicts = (role.conflictsWith ?? []).filter((code) =>
+                    selected.has(code)
+                  );
+                  const conflictBlocked = !selected.has(role.code) && activeConflicts.length > 0;
+                  return (
+                    <Box key={role.code} sx={{ borderTop: 1, borderColor: 'divider', py: 0.75 }}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={selected.has(role.code)}
+                            disabled={baseline || conflictBlocked}
+                            onChange={() => toggle(role)}
+                          />
+                        }
+                        label={
+                          <Box sx={{ minWidth: 0, py: 0.25 }}>
+                            <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
+                              <Typography variant="body2" fontWeight={700}>
+                                {display.name}
+                              </Typography>
+                              <Chip
+                                size="small"
+                                variant="outlined"
+                                label={t(`access.assignmentClasses.${role.assignmentClass}`, {
+                                  defaultValue: role.assignmentClass,
+                                })}
+                              />
+                            </Stack>
+                            <Typography variant="caption" color="text.secondary">
+                              {role.code}
+                              {display.description ? ` / ${display.description}` : ''}
+                            </Typography>
+                            {conflictBlocked && (
+                              <Typography variant="caption" color="warning.main" display="block">
+                                {t('access.dialog.conflictsWith', {
+                                  roles: activeConflicts.join(', '),
+                                })}
+                              </Typography>
+                            )}
+                          </Box>
+                        }
+                        sx={{ alignItems: 'flex-start', m: 0, width: 1 }}
+                      />
+                    </Box>
+                  );
+                })}
+              </FormGroup>
+            </Box>
+          ))}
+
+          <FormField
+            required
+            multiline
+            minRows={2}
+            inputProps={{ maxLength: 500 }}
+            label={t('access.dialog.justification')}
+            value={justification}
+            onChange={(event) => setJustification(event.target.value)}
+            supportingText={t('access.dialog.justificationHelp')}
+          />
+          <Stack
+            direction="row"
+            alignItems="flex-start"
+            gap={1}
+            sx={{ mt: 2, p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}
+          >
+            <ShieldAlert size={18} strokeWidth={1.8} aria-hidden="true" />
+            <Typography variant="body2" color="text.secondary">
+              {t('access.dialog.sessionNotice')}
+            </Typography>
+          </Stack>
+        </>
+      )}
+    </FormDialog>
   );
 }
 
 export function AccessManager() {
   const { t } = useTranslation('admin');
-  const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
   const theme = useTheme();
@@ -237,11 +286,11 @@ export function AccessManager() {
   const users = useMemo(() => usersQuery.data?.content ?? [], [usersQuery.data]);
   const roles = rolesQuery.data ?? [];
 
-  const saveRoles = async (roleCodes: string[]) => {
+  const saveRoles = async (roleCodes: string[], justification: string) => {
     if (!selectedUser) return;
     setBusy(true);
     try {
-      await replaceIdentityUserRoles(selectedUser, roleCodes);
+      await replaceIdentityUserRoles(selectedUser, roleCodes, justification);
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['admin', 'identity-users'] }),
         queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] }),
@@ -257,16 +306,21 @@ export function AccessManager() {
 
   const editButton = useCallback(
     (user: IdentityUserAccess) => {
-      const currentUser = user.userId === auth.user?.userId;
+      const manageable = user.roleManagement.allowed;
+      const reason = user.roleManagement.reason;
       return (
         <Tooltip
-          title={currentUser ? t('access.ownRolesUnavailable') : t('access.actions.editRoles')}
+          title={
+            manageable
+              ? t('access.actions.editRoles')
+              : t(`access.managementReasons.${reason}`, { defaultValue: reason })
+          }
         >
           <span>
             <IconButton
               size="small"
               aria-label={t('access.actions.editRolesFor', { name: user.displayName })}
-              disabled={currentUser}
+              disabled={!manageable}
               onClick={() => setSelectedUser(user)}
             >
               <Pencil size={17} strokeWidth={1.8} />
@@ -275,7 +329,7 @@ export function AccessManager() {
         </Tooltip>
       );
     },
-    [auth.user?.userId, t]
+    [t]
   );
 
   const columns = useMemo<GridColDef<IdentityUserAccess>[]>(

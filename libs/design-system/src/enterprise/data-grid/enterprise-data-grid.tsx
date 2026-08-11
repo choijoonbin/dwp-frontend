@@ -1,11 +1,13 @@
-import { forwardRef, useCallback, useLayoutEffect, useRef } from 'react';
+import { forwardRef, useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import { useAppearance } from '../../appearance';
 
 import { Columns3, Download, Filter, RefreshCw } from 'lucide-react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
+import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
@@ -123,6 +125,20 @@ export type EnterpriseDataGridToolbarConfig = {
   refreshing?: boolean;
   selectedCountLabel?: (count: number) => string;
   bulkActions?: React.ReactNode;
+  columnPresets?: EnterpriseGridColumnPreset[];
+  columnPresetsLabel?: string;
+  selectedColumnPresetId?: string;
+  onColumnPresetChange?: (presetId: string) => void;
+};
+
+export type EnterpriseGridColumnPreset = {
+  id: string;
+  label: string;
+};
+
+export type EnterpriseGridStickyColumns = {
+  left?: string[];
+  right?: string[];
 };
 
 export function resolveGridExportStrategy(
@@ -188,6 +204,23 @@ function EnterpriseGridToolbar({
   return (
     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
       <Toolbar aria-label={config.ariaLabel}>
+        {config.columnPresets && config.columnPresets.length > 0 && (
+          <Select
+            size="small"
+            variant="standard"
+            disableUnderline
+            value={config.selectedColumnPresetId ?? config.columnPresets[0].id}
+            onChange={(event) => config.onColumnPresetChange?.(String(event.target.value))}
+            inputProps={{ 'aria-label': config.columnPresetsLabel ?? 'Column preset' }}
+            sx={{ minWidth: 132, mr: 0.5 }}
+          >
+            {config.columnPresets.map((preset) => (
+              <MenuItem key={preset.id} value={preset.id}>
+                {preset.label}
+              </MenuItem>
+            ))}
+          </Select>
+        )}
         {showColumns && (
           <Tooltip title={config.columnsLabel ?? 'Columns'}>
             <ColumnsPanelTrigger render={<ToolbarButton />}>
@@ -317,7 +350,71 @@ export type EnterpriseDataGridProps<R extends GridValidRowModel = GridValidRowMo
   height?: number | string;
   minVisibleRows?: number;
   maxVisibleRows?: number;
+  stickyColumns?: EnterpriseGridStickyColumns;
 };
+
+function escapeCssAttribute(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+export function resolveStickyColumnStyles<R extends GridValidRowModel>(
+  columns: DataGridProps<R>['columns'],
+  stickyColumns: EnterpriseGridStickyColumns | undefined
+): Record<string, Record<string, string | number>> {
+  if (!stickyColumns) return {};
+  const byField = new Map(columns.map((column) => [column.field, column]));
+  const styles: Record<string, Record<string, string | number>> = {};
+
+  const apply = (field: string, edge: 'left' | 'right', offset: number, last: boolean) => {
+    const escaped = escapeCssAttribute(field);
+    styles[`& .MuiDataGrid-columnHeader[data-field="${escaped}"]`] = {
+      position: 'sticky',
+      [edge]: offset,
+      zIndex: 4,
+      backgroundColor: 'var(--DataGrid-containerBackground)',
+      ...(last
+        ? {
+            boxShadow:
+              edge === 'left'
+                ? '2px 0 0 var(--DataGrid-rowBorderColor)'
+                : '-2px 0 0 var(--DataGrid-rowBorderColor)',
+          }
+        : {}),
+    };
+    styles[`& .MuiDataGrid-cell[data-field="${escaped}"]`] = {
+      position: 'sticky',
+      [edge]: offset,
+      zIndex: 3,
+      backgroundColor: 'inherit',
+      ...(last
+        ? {
+            boxShadow:
+              edge === 'left'
+                ? '2px 0 0 var(--DataGrid-rowBorderColor)'
+                : '-2px 0 0 var(--DataGrid-rowBorderColor)',
+          }
+        : {}),
+    };
+  };
+
+  let leftOffset = 0;
+  (stickyColumns.left ?? []).forEach((field, index, fields) => {
+    const column = byField.get(field);
+    if (!column) return;
+    apply(field, 'left', leftOffset, index === fields.length - 1);
+    leftOffset += column.width ?? column.minWidth ?? 100;
+  });
+
+  let rightOffset = 0;
+  [...(stickyColumns.right ?? [])].reverse().forEach((field, reverseIndex, fields) => {
+    const column = byField.get(field);
+    if (!column) return;
+    apply(field, 'right', rightOffset, reverseIndex === fields.length - 1);
+    rightOffset += column.width ?? column.minWidth ?? 100;
+  });
+
+  return styles;
+}
 
 export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowModel>({
   ariaLabel,
@@ -325,6 +422,7 @@ export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowMod
   height,
   minVisibleRows = 1,
   maxVisibleRows = 8,
+  stickyColumns,
   pageSizeOptions = [25, 50, 100],
   disableRowSelectionOnClick = true,
   rows = [],
@@ -345,6 +443,9 @@ export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowMod
   showToolbar,
   slots,
   slotProps,
+  columns,
+  sx,
+  disableVirtualization,
   ...props
 }: EnterpriseDataGridProps<R>) {
   const appearance = useAppearance();
@@ -372,6 +473,11 @@ export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowMod
   });
   const totalRowCount = rowCount ?? rows.length;
   const selectedCount = countSelectedRows(rowSelectionModel, totalRowCount);
+  const stickyColumnStyles = useMemo(
+    () => resolveStickyColumnStyles(columns, stickyColumns),
+    [columns, stickyColumns]
+  );
+  const hasStickyColumns = Boolean(stickyColumns?.left?.length || stickyColumns?.right?.length);
   const toolbarEnabled = toolbar !== false;
   const resolvedSlotProps = {
     ...slotProps,
@@ -401,6 +507,7 @@ export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowMod
     <Box sx={{ width: 1, minWidth: 0, height: resolvedHeight }}>
       <DataGrid
         {...props}
+        columns={columns}
         aria-label={ariaLabel}
         rows={rows}
         rowHeight={resolvedRowHeight}
@@ -421,6 +528,8 @@ export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowMod
         slotProps={resolvedSlotProps}
         pageSizeOptions={pageSizeOptions}
         disableRowSelectionOnClick={disableRowSelectionOnClick}
+        disableVirtualization={hasStickyColumns || disableVirtualization}
+        sx={[stickyColumnStyles, ...(Array.isArray(sx) ? sx : sx ? [sx] : [])]}
       />
     </Box>
   );

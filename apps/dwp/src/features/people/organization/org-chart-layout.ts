@@ -19,6 +19,21 @@ import type { OrgChartFlowNode } from './org-chart-nodes';
 
 export type ChartDirection = 'TB' | 'LR';
 
+const INITIAL_FIT_NODE_LIMIT = 8;
+
+export function initialViewportTarget(
+  nodes: OrgChartFlowNode[],
+  edges: Edge[],
+  preferredNodeId?: string
+): string | undefined {
+  if (nodes.length <= INITIAL_FIT_NODE_LIMIT) return undefined;
+  if (preferredNodeId && nodes.some((node) => node.id === preferredNodeId)) {
+    return preferredNodeId;
+  }
+  const childIds = new Set(edges.map((edge) => edge.target));
+  return nodes.find((node) => !childIds.has(node.id))?.id ?? nodes[0]?.id;
+}
+
 export function visibleOrganizationIds(
   organizations: OrganizationChartOrganization[],
   collapsed: ReadonlySet<string>

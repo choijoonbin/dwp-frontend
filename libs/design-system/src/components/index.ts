@@ -1,4 +1,5 @@
 export * from './product-mark';
+export * from './icons';
 export * from './glyph-surface';
 export * from './toast-viewport';
 export * from './access-boundary';

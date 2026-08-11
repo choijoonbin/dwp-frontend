@@ -1,0 +1,5 @@
+{
+  "shellReadyMs": 3000,
+  "routeTransitionMs": 1000,
+  "cumulativeLayoutShift": 0.1
+}

@@ -1,7 +1,39 @@
 import type { HomeAppDefinition } from '../home/app-launchpad-model';
-import type { ReferenceWorkItem } from '../work-hub/reference-data';
+import type {
+  WorkspacePriority,
+  WorkspaceWorkStatus,
+  WorkspaceWorkType,
+} from '@dwp-frontend/shared-utils';
 
-export type GlobalSearchKind = 'app' | 'work' | 'knowledge' | 'ask';
+export type SearchableWorkItem = {
+  id: string;
+  title: string;
+  type: WorkspaceWorkType;
+  priority: WorkspacePriority;
+  status: WorkspaceWorkStatus;
+  due: string;
+  sourceSystem: string;
+  owner: string;
+};
+
+export type SearchablePerson = {
+  personId: string;
+  displayName: string;
+  workEmail?: string | null;
+  businessTitle?: string | null;
+  organizationName?: string | null;
+  jobProfileName?: string | null;
+};
+
+export type SearchableOrganization = {
+  organizationId: string;
+  organizationKey: string;
+  name: string;
+  organizationTypeName: string;
+  totalHeadcount: number;
+};
+
+export type GlobalSearchKind = 'app' | 'work' | 'person' | 'organization' | 'ask';
 
 export type GlobalSearchItem = {
   id: string;
@@ -17,25 +49,6 @@ export type GlobalSearchTranslate = (
   key: string,
   options?: Record<string, string | number>
 ) => string;
-
-const ASK_PROMPTS = [
-  {
-    id: 'ask-attention',
-    translationKey: 'search.prompts.attention',
-    kind: 'ask' as const,
-    title: 'What needs my attention?',
-    description: 'Review priorities across your permitted work',
-    keywords: ['priority', 'today', 'attention', 'approval', 'task'],
-  },
-  {
-    id: 'knowledge-remote-policy',
-    translationKey: 'search.prompts.remotePolicy',
-    kind: 'knowledge' as const,
-    title: 'Find the remote work policy',
-    description: 'Search governed workplace knowledge',
-    keywords: ['remote', 'work', 'policy', 'knowledge', 'guide'],
-  },
-] as const;
 
 function askRoute(query: string): string {
   return '/ask?q=' + encodeURIComponent(query);
@@ -64,9 +77,12 @@ function translatedKeywords(
 
 export function createGlobalSearchItems(
   apps: readonly HomeAppDefinition[],
-  work: readonly ReferenceWorkItem[],
-  includeAsk: boolean,
-  translate?: GlobalSearchTranslate
+  work: readonly SearchableWorkItem[],
+  translate?: GlobalSearchTranslate,
+  entities: {
+    people?: readonly SearchablePerson[];
+    organizations?: readonly SearchableOrganization[];
+  } = {}
 ): GlobalSearchItem[] {
   const appItems = apps.map<GlobalSearchItem>((app) => ({
     id: `app-${app.id}`,
@@ -85,6 +101,45 @@ export function createGlobalSearchItems(
     route: `/work?item=${encodeURIComponent(item.id)}`,
     keywords: [item.id, item.type, item.priority, item.status, item.sourceSystem, item.owner],
   }));
+  const peopleItems = (entities.people ?? []).map<GlobalSearchItem>((person) => ({
+    id: `person-${person.personId}`,
+    kind: 'person',
+    title: person.displayName,
+    description:
+      [person.businessTitle || person.jobProfileName, person.organizationName]
+        .filter(Boolean)
+        .join(' / ') ||
+      person.workEmail ||
+      translated(translate, 'search.people.descriptionFallback', 'People directory'),
+    route: `/people/directory?person=${encodeURIComponent(person.personId)}`,
+    keywords: [
+      person.personId,
+      person.workEmail ?? '',
+      person.businessTitle ?? '',
+      person.jobProfileName ?? '',
+      person.organizationName ?? '',
+    ],
+  }));
+  const organizationItems = (entities.organizations ?? []).map<GlobalSearchItem>(
+    (organization) => ({
+      id: `organization-${organization.organizationId}`,
+      kind: 'organization',
+      title: organization.name,
+      description: translated(
+        translate,
+        'search.organizations.description',
+        `${organization.organizationTypeName} / ${organization.totalHeadcount} people`,
+        {
+          type: organization.organizationTypeName,
+          count: organization.totalHeadcount,
+        }
+      ),
+      route: `/people/organization?mode=organizations&organization=${encodeURIComponent(
+        organization.organizationId
+      )}`,
+      keywords: [organization.organizationId, organization.organizationKey],
+    })
+  );
   const browseApps: GlobalSearchItem = {
     id: 'app-catalog',
     kind: 'app',
@@ -103,30 +158,7 @@ export function createGlobalSearchItems(
     ]),
     recommended: true,
   };
-  const prompts = includeAsk
-    ? ASK_PROMPTS.map<GlobalSearchItem>((prompt) => {
-        const title = translated(translate, `${prompt.translationKey}.title`, prompt.title);
-        return {
-          id: prompt.id,
-          kind: prompt.kind,
-          title,
-          description: translated(
-            translate,
-            `${prompt.translationKey}.description`,
-            prompt.description
-          ),
-          keywords: translatedKeywords(
-            translate,
-            `${prompt.translationKey}.keywords`,
-            prompt.keywords
-          ),
-          route: askRoute(title),
-          recommended: true,
-        };
-      })
-    : [];
-
-  return [...appItems, browseApps, ...workItems, ...prompts];
+  return [...appItems, browseApps, ...workItems, ...peopleItems, ...organizationItems];
 }
 
 export function filterGlobalSearchItems(
@@ -175,7 +207,7 @@ export function createAskSearchItem(
     description: translated(
       translate,
       'search.askQuery.description',
-      'Use permitted work and knowledge sources'
+      'Prepare a traceable read-only request plan'
     ),
     route: askRoute(value),
     keywords: [],

@@ -1,4 +1,6 @@
 export { ProviderAudit } from './provider-audit';
+export { ProviderCodeContracts } from './provider-code-contracts';
+export { ProviderDataGovernance } from './provider-data-governance';
 export { ProviderCommercial } from './provider-commercial';
 export { ProviderHealth } from './provider-health';
 export { ProviderOperations } from './provider-operations';

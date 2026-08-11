@@ -2,7 +2,6 @@ import {
   Accessibility,
   Building2,
   Contrast,
-  Languages,
   LayoutDashboard,
   MoveHorizontal,
   Palette,
@@ -15,7 +14,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { productLocales, type SupportedLocale } from '@dwp-frontend/shared-i18n';
+import { LanguageIcon } from '@dwp-frontend/design-system/components/icons';
 import {
+  ActionButton,
   PageCanvas,
   colorModeOptions,
   densityOptions,
@@ -27,7 +28,6 @@ import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
-import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -60,7 +60,7 @@ type PreferenceGroupProps = {
 const sectionIcons: Record<SettingsSection, LucideIcon> = {
   appearance: Palette,
   accessibility: Accessibility,
-  language: Languages,
+  language: LanguageIcon,
   home: LayoutDashboard,
   managed: Building2,
 };
@@ -199,30 +199,41 @@ export default function SettingsPage() {
   );
   const registeredDensities = useSystemCodeOptions('PLATFORM.PREFERENCE.DENSITY', densityOptions);
   const managedFontName = appearance.tenant.fontFamily ?? t('managed.systemFont');
+  const preferenceControlsDisabled =
+    personalPreference.isLoading || personalPreference.isSaving || personalPreference.loadFailed;
+  const preferenceError = personalPreference.loadFailed ? (
+    <Alert
+      severity="warning"
+      action={
+        <ActionButton intent="quiet" size="small" onClick={personalPreference.retry}>
+          {t('personalPreferences.retry')}
+        </ActionButton>
+      }
+      sx={{ mb: 3 }}
+    >
+      {t('personalPreferences.loadError')}
+    </Alert>
+  ) : null;
 
   if (!isSettingsSection(section)) {
     return <Navigate to="/account/settings/appearance" replace />;
   }
 
   const resetAction = (
-    <Button
-      variant="outlined"
+    <ActionButton
+      intent="secondary"
       startIcon={<RotateCcw size={17} />}
-      disabled={personalPreference.isSaving || personalPreference.loadFailed}
+      disabled={preferenceControlsDisabled}
       onClick={personalPreference.reset}
     >
       {t('actions.resetPreferences')}
-    </Button>
+    </ActionButton>
   );
 
   if (section === 'appearance') {
     return (
       <PageCanvas mode="focus">
-        {personalPreference.loadFailed && (
-          <Alert severity="warning" sx={{ mb: 3 }}>
-            {t('personalPreferences.loadError')}
-          </Alert>
-        )}
+        {preferenceError}
         <PageHeading
           section={section}
           title={t('sections.appearance.title')}
@@ -243,7 +254,7 @@ export default function SettingsPage() {
               size="small"
               value={appearance.preference.mode}
               aria-label={t('settings.colorMode.title')}
-              disabled={personalPreference.isSaving || personalPreference.loadFailed}
+              disabled={preferenceControlsDisabled}
               onChange={(_, value) =>
                 value && personalPreference.update({ appearance: { mode: value } })
               }
@@ -265,7 +276,7 @@ export default function SettingsPage() {
               size="small"
               value={appearance.preference.density}
               aria-label={t('settings.density.ariaLabel')}
-              disabled={personalPreference.isSaving || personalPreference.loadFailed}
+              disabled={preferenceControlsDisabled}
               onChange={(_, value) =>
                 value && personalPreference.update({ appearance: { density: value } })
               }
@@ -285,11 +296,7 @@ export default function SettingsPage() {
   if (section === 'accessibility') {
     return (
       <PageCanvas mode="focus">
-        {personalPreference.loadFailed && (
-          <Alert severity="warning" sx={{ mb: 3 }}>
-            {t('personalPreferences.loadError')}
-          </Alert>
-        )}
+        {preferenceError}
         <PageHeading
           section={section}
           title={t('sections.accessibility.title')}
@@ -307,7 +314,7 @@ export default function SettingsPage() {
           >
             <Switch
               checked={appearance.preference.highContrast}
-              disabled={personalPreference.isSaving || personalPreference.loadFailed}
+              disabled={preferenceControlsDisabled}
               slotProps={{ input: { 'aria-label': t('settings.highContrast.title') } }}
               onChange={(_, checked) =>
                 personalPreference.update({ accessibility: { highContrast: checked } })
@@ -321,7 +328,7 @@ export default function SettingsPage() {
           >
             <Switch
               checked={appearance.preference.reduceMotion}
-              disabled={personalPreference.isSaving || personalPreference.loadFailed}
+              disabled={preferenceControlsDisabled}
               slotProps={{ input: { 'aria-label': t('settings.reduceMotion.title') } }}
               onChange={(_, checked) =>
                 personalPreference.update({ accessibility: { reduceMotion: checked } })
@@ -346,7 +353,7 @@ export default function SettingsPage() {
           description={t('sections.language.groupDescription')}
         >
           <PreferenceRow
-            icon={Languages}
+            icon={LanguageIcon}
             title={t('settings.language.title')}
             description={t('settings.language.description')}
           >
@@ -387,13 +394,13 @@ export default function SettingsPage() {
             title={t('settings.homeWorkspace.title')}
             description={t('settings.homeWorkspace.description')}
           >
-            <Button
-              variant="outlined"
+            <ActionButton
+              intent="secondary"
               startIcon={<LayoutDashboard size={17} />}
               onClick={() => navigate('/?edit=home')}
             >
               {t('actions.editHome')}
-            </Button>
+            </ActionButton>
           </PreferenceRow>
         </PreferenceGroup>
       </PageCanvas>

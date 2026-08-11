@@ -5,6 +5,7 @@
     "accountFallback": "계정",
     "navigationLabel": "설정 탐색",
     "openNavigation": "설정 탐색 열기",
+    "backToProvider": "Provider Control Plane으로 돌아가기",
     "backToWorkspace": "워크스페이스로 돌아가기",
     "groups": {
       "account": "계정",
@@ -115,6 +116,7 @@
   "personalPreferences": {
     "loading": "개인 환경 설정 불러오는 중",
     "loadError": "계정 환경 설정을 불러오지 못했습니다. 캐시된 설정은 유지되며 서비스가 복구될 때까지 변경할 수 없습니다.",
+    "retry": "다시 시도",
     "saveError": "개인 환경 설정을 저장하지 못해 이전 값으로 되돌렸습니다."
   },
   "labels": {

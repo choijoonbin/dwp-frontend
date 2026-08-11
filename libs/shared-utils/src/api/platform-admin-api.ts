@@ -211,3 +211,12 @@ export async function listPlatformAuditEvents(): Promise<PageResult<PlatformAudi
   );
   return response.data.data;
 }
+
+export async function listReferenceSetAuditEvents(
+  setKey: string
+): Promise<PageResult<PlatformAuditEvent>> {
+  const response = await axiosInstance.get<ApiResponse<PageResult<PlatformAuditEvent>>>(
+    '/api/platform/v1/admin/reference-sets/' + encodePath(setKey) + '/audit-events?page=0&size=100'
+  );
+  return response.data.data;
+}

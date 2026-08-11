@@ -38,7 +38,8 @@ export type PersonalPreference = {
 
 export async function getPersonalPreference(): Promise<PersonalPreference> {
   const response = await axiosInstance.get<ApiResponse<PersonalPreference>>(
-    '/api/platform/v1/personal-preferences'
+    '/api/platform/v1/personal-preferences',
+    { timeoutMs: 4_000 }
   );
   return response.data.data;
 }

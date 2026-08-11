@@ -20,6 +20,14 @@
       "title": "Work",
       "description": "Decisions, tasks, and service requests ordered by impact"
     },
+    "liveData": "Live work data",
+    "loading": "Loading work",
+    "loadErrorTitle": "Work could not be loaded",
+    "loadErrorDescription": "Check the connection and try again.",
+    "retry": "Try again",
+    "emptyTitle": "There is no work to process",
+    "emptyDescription": "Newly assigned work will appear here in priority order.",
+    "noDueDate": "No due date",
     "summaryLabel": "Work summary",
     "summary": {
       "all": { "value": "06", "label": "All work", "detail": "Across 5 sources" },
@@ -28,6 +36,15 @@
       "waiting": { "value": "01", "label": "Waiting", "detail": "Employee confirmation" }
     },
     "filterLabel": "Work status",
+    "searchLabel": "Search work",
+    "searchPlaceholder": "Work ID, title, owner, or source",
+    "resetFilters": "Reset filters",
+    "views": {
+      "label": "Saved views",
+      "personal": "Personal",
+      "shared": "Shared",
+      "default": "Default"
+    },
     "filters": {
       "all": "All",
       "due-soon": "Due soon",
@@ -37,6 +54,14 @@
     },
     "resultSummary": "{{count}} results / impact order",
     "queueLabel": "Work queue",
+    "gridToolbar": "Work queue tools",
+    "chooseColumns": "Choose columns",
+    "gridFilters": "Grid filters",
+    "columnPresets": {
+      "label": "Column view",
+      "operational": "Operational view",
+      "compact": "Compact view"
+    },
     "columns": {
       "id": "Work ID",
       "work": "Work",
@@ -52,7 +77,14 @@
     "latestActivity": "Latest activity",
     "viewRecord": "View record",
     "continueWork": "Continue work",
+    "completeWork": "Mark complete",
     "openSource": "Open source",
+    "statusUpdated": "{{title}} was updated.",
+    "statusUpdateError": "The work status could not be updated. Refresh and try again.",
+    "noDecisionContext": "No prioritization context is registered for this work item.",
+    "noRecommendedNext": "No next step is registered.",
+    "noLatestActivity": "There is no recent activity.",
+    "liveNotice": "Status changes are saved immediately and recorded in activity and audit history.",
     "actionOpened": "{{title}} action preview opened.",
     "sourceOpened": "{{source}} source preview opened.",
     "referenceNotice": "Reference action only. No external system is changed.",
@@ -93,7 +125,7 @@
     "header": {
       "eyebrow": "Enterprise intelligence",
       "title": "Ask DWP",
-      "description": "Find trusted context and prepare governed actions"
+      "description": "Review a request within the current permission boundary and prepare a read-only plan"
     },
     "questionLabel": "Ask a work question",
     "questionPlaceholder": "Ask about a policy, task, service, or application",
@@ -105,44 +137,45 @@
       "software": "Where do I request software access?"
     },
     "recentContext": "Recent work context",
-    "context": {
-      "customer": { "title": "Customer discovery", "detail": "Meeting at 11:00 / 6 sources" },
-      "software": { "title": "Software access", "detail": "Approval due at 10:30" },
-      "benefits": { "title": "Benefits enrollment", "detail": "Window closes at 17:00" }
-    },
-    "responseStatus": "AI response status",
+    "contextLoading": "Loading recent work available to you.",
+    "contextUnavailable": "Recent work could not be loaded. The Ask plan preview remains available.",
+    "contextEmpty": "There is no recent work to connect.",
+    "openContext": "Open in Work",
+    "responseStatus": "Ask request status",
     "status": {
-      "permission": { "label": "Permission checked", "detail": "Employee scope" },
+      "permission": {
+        "label": "Session boundary applied",
+        "detail": "Authenticated workspace scope"
+      },
       "retrievalStopped": { "label": "Retrieval stopped", "detail": "Policy protected" },
-      "sourcesVerified": { "label": "Sources verified", "detail": "2 current records" },
+      "retrievalUnavailable": {
+        "label": "Retrieval inactive",
+        "detail": "Knowledge connectors not enabled"
+      },
       "noAnswer": { "label": "No answer generated", "detail": "Human handoff" },
       "preparing": { "label": "Preparing action contract", "detail": "No external mutation" },
       "verified": { "label": "Agent contract verified", "detail": "No model / no mutation" },
       "preview": { "label": "Reference preview ready", "detail": "No external mutation" }
     },
-    "answer": "Answer",
-    "reviewRequired": "AI generated / review required",
+    "previewHeading": "Request review",
+    "previewOnly": "Reference plan / read only",
     "restricted": "This question includes restricted information. No source content was retrieved and no answer was sent to an AI model in this reference session.",
     "yourQuestion": "Your question",
-    "answerText": "The flexible work policy allows eligible employees to request up to two remote workdays per week. A manager must approve the dates before the request becomes active. Submit the request before Thursday at 15:00 so the team calendar can be updated.",
-    "answerCaution": "Eligibility and local workplace rules can change the result. Confirm the request preview before submission.",
-    "verifiedSources": "Verified sources",
-    "currentCount": "{{count}} current",
-    "answerSources": "Answer sources",
+    "answerUnavailableTitle": "AI answers and source citations are not enabled yet",
+    "answerUnavailableDescription": "The current runtime does not invoke a model, retrieval, or tools. Only the server-generated read-only plan contract, traceable by audit ID and hash, is shown below.",
     "preparingPreview": "Preparing governed action preview",
     "noMutation": "No mutation",
     "preparingPlanLabel": "Preparing agent plan preview",
-    "fallback": "The Agent contract is temporarily unavailable. A read-only reference preview is shown instead.",
+    "fallback": "The Agent contract could not be loaded. An unverified static plan is not shown as a substitute.",
     "governedContract": "Governed Agent contract verified",
-    "referenceContract": "Reference Agent contract verified",
+    "referenceContract": "Read-only reference plan contract ready",
     "contractAria": "Agent {{agent}} revision {{revision}}, audit {{audit}}, plan hash {{hash}}",
     "contractMeta": "Agent {{agent}} r{{revision}} / Audit {{audit}} / Plan {{hash}}",
-    "planTitle": "Flexible work request preview",
-    "planSummary": "No external system will be changed from this reference flow.",
+    "planTitle": "Request plan preview",
     "riskApproval": "{{tier}} / Approval required",
-    "openService": "Open service preview",
+    "openService": "Continue in an approved app",
     "dismiss": "Dismiss",
-    "serviceOpened": "Employee services preview opened."
+    "serviceOpened": "Approved apps opened."
   },
   "activityPage": {
     "header": {
@@ -151,6 +184,12 @@
       "description": "Human, system, and agent work in one accountable timeline",
       "live": "Listening for workspace events"
     },
+    "loading": "Loading activity",
+    "loadErrorTitle": "Activity could not be loaded",
+    "loadErrorDescription": "Check the event service connection and try again.",
+    "retry": "Try again",
+    "emptyTitle": "There is no activity to show",
+    "emptyDescription": "Human, system, and agent events will be recorded here.",
     "summaryLabel": "Activity summary",
     "summary": {
       "signals": {
@@ -162,6 +201,15 @@
       "input": { "value": "1", "label": "Needs your input", "detail": "Software access approval" }
     },
     "actorFilter": "Activity actor",
+    "searchLabel": "Search activity",
+    "searchPlaceholder": "Title, object, actor, or source",
+    "resetFilters": "Reset filters",
+    "views": {
+      "label": "Saved views",
+      "personal": "Personal",
+      "shared": "Shared",
+      "default": "Default"
+    },
     "filters": {
       "all": "All activity",
       "agent": "Agents",
@@ -192,6 +240,7 @@
     "reviewNow": "Review now",
     "sourceOpened": "{{source}} preview opened.",
     "openSource": "Open source",
+    "liveNotice": "Events are provided by the server within your permission scope.",
     "referenceNotice": "Reference activity only. No external action is executed."
   },
   "appsPage": {
@@ -200,12 +249,26 @@
       "title": "Apps",
       "description": "Launch approved tools without losing your DWP context"
     },
+    "liveCatalog": "Entitlements synced",
+    "loading": "Loading the app catalog",
+    "loadErrorTitle": "The app catalog could not be loaded",
+    "loadErrorDescription": "Check your permissions or platform connection and try again.",
+    "retry": "Try again",
+    "emptyTitle": "No apps are available",
+    "emptyDescription": "Apps will appear here after an administrator grants access.",
     "launchpad": "Your launchpad",
     "pinnedCount": "{{count}} pinned",
     "lastUsed": "Last used {{value}}",
+    "neverUsed": "Never used",
     "searchLabel": "Search apps",
     "searchPlaceholder": "Name, purpose, or owner",
     "filterLabel": "App filter",
+    "views": {
+      "label": "Saved views",
+      "personal": "Personal",
+      "shared": "Shared",
+      "default": "Default"
+    },
     "filters": {
       "all": "All",
       "pinned": "Pinned",
@@ -215,10 +278,25 @@
     "available": "Available apps",
     "appCount": "{{count}} apps",
     "pinned": "Pinned",
-    "health": { "healthy": "Healthy", "managed": "Managed", "attention": "Needs attention" },
+    "health": {
+      "healthy": "Healthy",
+      "managed": "Managed",
+      "attention": "Needs attention",
+      "configuration-required": "Admin connection required"
+    },
     "launchMode": { "Native": "Native", "SSO": "SSO", "Deep link": "Deep link" },
     "launchOpened": "{{app}} launch preview opened.",
+    "launchError": "The app could not be launched. Check its connection status.",
+    "configurationRequired": "{{app}} can be used after an administrator connects SSO or a deep link.",
+    "pin": "Pin to launchpad",
+    "unpin": "Remove from launchpad",
+    "pinApp": "Pin {{app}}",
+    "unpinApp": "Unpin {{app}}",
+    "pinSuccess": "{{app}} was pinned to your launchpad.",
+    "unpinSuccess": "{{app}} was removed from your launchpad.",
+    "pinError": "The launchpad setting could not be saved.",
     "noMatches": "No matching apps",
+    "noMatchesDescription": "Clear the search or app type to see all available apps.",
     "resetFilters": "Reset filters"
   },
   "ai": {
@@ -233,7 +311,7 @@
     "planSources": "Plan sources",
     "planApproved": "Plan approved",
     "planRejected": "Plan rejected",
-    "reviewBeforeExecution": "Review the sources and changes before execution.",
+    "reviewBeforeExecution": "Review this read-only plan. The current runtime does not execute it.",
     "noApprovalRequired": "This plan can run without approval under the current policy.",
     "approvePlan": "Approve plan",
     "reject": "Reject",
@@ -360,7 +438,7 @@
       },
       "ref-app-knowledge": {
         "name": "Knowledge",
-        "description": "Policies, guides, and verified answers",
+        "description": "Connect policies and workplace guides",
         "owner": "Knowledge Office",
         "lastUsed": "2 hours ago"
       },

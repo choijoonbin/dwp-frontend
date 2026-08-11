@@ -20,7 +20,7 @@ import {
   previewProviderOnboarding,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import { EnterpriseDataGrid, GuidedEmptyState } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -190,12 +190,33 @@ export function ProviderTenants() {
     }
   };
 
-  if (tenants.isLoading || entitlements.isLoading || regions.isLoading || operator.isLoading)
+  if (
+    tenants.isLoading ||
+    entitlements.isLoading ||
+    regions.isLoading ||
+    (operator.isLoading && !operator.data)
+  )
     return <ProviderLoading />;
-  if (tenants.isError || entitlements.isError || regions.isError || operator.isError)
+  if (
+    tenants.isError ||
+    entitlements.isError ||
+    regions.isError ||
+    (operator.isError && !operator.data)
+  )
     return (
       <ProviderError
         error={tenants.error ?? entitlements.error ?? regions.error ?? operator.error}
+        onRetry={() =>
+          void Promise.all([
+            tenants.refetch(),
+            entitlements.refetch(),
+            regions.refetch(),
+            operator.refetch(),
+          ])
+        }
+        retrying={
+          tenants.isFetching || entitlements.isFetching || regions.isFetching || operator.isFetching
+        }
       />
     );
 
@@ -315,17 +336,51 @@ export function ProviderTenants() {
         )}
       </Stack>
 
-      <EnterpriseDataGrid
-        ariaLabel={t('tenants.title')}
-        rows={tenants.data?.content ?? []}
-        columns={columns}
-        getRowId={(row) => row.tenantId}
-        onRowClick={({ row }) => navigate(`/provider/tenants/${row.tenantId}`)}
-        loading={tenants.isFetching}
-        hideFooter
-        maxVisibleRows={12}
-        sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
-      />
+      {(tenants.data?.content ?? []).length > 0 ? (
+        <EnterpriseDataGrid
+          ariaLabel={t('tenants.title')}
+          rows={tenants.data?.content ?? []}
+          columns={columns}
+          getRowId={(row) => row.tenantId}
+          onRowClick={({ row }) => navigate(`/provider/tenants/${row.tenantId}`)}
+          loading={tenants.isFetching}
+          hideFooter
+          maxVisibleRows={12}
+          sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
+        />
+      ) : (
+        <GuidedEmptyState
+          kind={query.trim() || state !== 'ALL' ? 'no-results' : 'first-use'}
+          title={
+            query.trim() || state !== 'ALL'
+              ? t('tenants.empty.noResultsTitle')
+              : t('tenants.empty.firstUseTitle')
+          }
+          description={
+            query.trim() || state !== 'ALL'
+              ? t('tenants.empty.noResultsDescription')
+              : t('tenants.empty.firstUseDescription')
+          }
+          actionLabel={
+            query.trim() || state !== 'ALL'
+              ? t('tenants.empty.reset')
+              : canWrite
+                ? t('tenants.actions.onboard')
+                : undefined
+          }
+          onAction={
+            query.trim() || state !== 'ALL'
+              ? () => {
+                  setQuery('');
+                  setState('ALL');
+                }
+              : canWrite
+                ? () => setOnboardingOpen(true)
+                : undefined
+          }
+          size="standard"
+        />
+      )}
 
       {onboardingOpen && (
         <ProviderOnboardingDialog

@@ -75,6 +75,10 @@ const LAUNCHPAD_GRID_HEIGHT =
   LAUNCHPAD_ROW_GAP * (LAUNCHPAD_VISIBLE_ROWS - 1);
 const LAUNCHPAD_GROUP_MIN_HEIGHT = LAUNCHPAD_GRID_HEIGHT + 82;
 
+function launchpadLabelFontSize(label: string) {
+  return label.length > 8 ? '0.625rem' : '0.6875rem';
+}
+
 const appWiggle = keyframes`
   0%, 100% { transform: rotate(-0.9deg); }
   50% { transform: rotate(0.9deg); }
@@ -100,7 +104,7 @@ function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProps<Theme
     textAlign: 'center',
     cursor: editing ? 'grab' : 'pointer',
     touchAction: 'manipulation',
-    animation: editing ? `${appWiggle} 380ms ease-in-out infinite` : 'none',
+    animation: editing ? `${appWiggle} 320ms ease-out 1` : 'none',
     animationDelay: editing ? `${motionDelayMs}ms` : '0ms',
     transition: (theme) =>
       theme.transitions.create(['background-color', 'border-color', 'box-shadow', 'transform'], {
@@ -468,16 +472,17 @@ function AppTile({
               sx={{
                 width: 1,
                 height: 28,
+                fontSize: launchpadLabelFontSize(app.shortName),
                 display: '-webkit-box',
                 overflow: 'hidden',
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical',
                 lineHeight: 1.2,
-                wordBreak: 'keep-all',
-                overflowWrap: 'break-word',
+                wordBreak: 'normal',
+                overflowWrap: 'normal',
               }}
             >
-              {app.name}
+              {app.shortName}
             </Typography>
           </ButtonBase>
           {editing && (
@@ -1182,17 +1187,20 @@ export function AppLaunchpad({
                     sx={{
                       width: 1,
                       height: 28,
+                      fontSize: launchpadLabelFontSize(
+                        (appById.get(activeId) as HomeAppDefinition).shortName
+                      ),
                       display: '-webkit-box',
                       overflow: 'hidden',
                       WebkitLineClamp: 2,
                       WebkitBoxOrient: 'vertical',
                       lineHeight: 1.2,
-                      wordBreak: 'keep-all',
-                      overflowWrap: 'break-word',
+                      wordBreak: 'normal',
+                      overflowWrap: 'normal',
                       color: 'inherit',
                     }}
                   >
-                    {appById.get(activeId)?.name}
+                    {appById.get(activeId)?.shortName}
                   </Typography>
                 </>
               ) : (

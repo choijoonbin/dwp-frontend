@@ -1,15 +1,24 @@
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '@dwp-frontend/shared-i18n';
+import { ErrorState, LoadingState } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 export function providerError(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
+  if (!(error instanceof Error)) return fallback;
+  const status = 'status' in error && typeof error.status === 'number' ? error.status : undefined;
+  if (
+    status === undefined &&
+    error.name !== 'AbortError' &&
+    error.message !== 'Internal Server Error'
+  ) {
+    return error.message;
+  }
+  if (status !== undefined && status > 0 && status < 500 && error.message) return error.message;
+  return fallback;
 }
 export function formatProviderDate(value?: string | null): string {
   if (!value) return '-';
@@ -91,21 +100,29 @@ export function ProviderStatusChip({ state }: { state: string }) {
 
 export function ProviderLoading() {
   const { t } = useTranslation('provider');
-  return (
-    <Box sx={{ minHeight: 260, display: 'grid', placeItems: 'center' }}>
-      <Stack alignItems="center" gap={1.25}>
-        <CircularProgress size={28} />
-        <Typography variant="body2" color="text.secondary">
-          {t('loading')}
-        </Typography>
-      </Stack>
-    </Box>
-  );
+  return <LoadingState label={t('loading')} variant="skeleton" size="standard" />;
 }
 
-export function ProviderError({ error }: { error: unknown }) {
+export function ProviderError({
+  error,
+  onRetry,
+  retrying,
+}: {
+  error: unknown;
+  onRetry?: () => void;
+  retrying?: boolean;
+}) {
   const { t } = useTranslation('provider');
-  return <Alert severity="error">{providerError(error, t('errors.load'))}</Alert>;
+  return (
+    <ErrorState
+      title={t('errors.loadTitle')}
+      description={providerError(error, t('errors.load'))}
+      retryLabel={t('actions.retryLoad')}
+      onRetry={onRetry}
+      retrying={retrying}
+      size="standard"
+    />
+  );
 }
 
 export function ProviderSectionHeading({

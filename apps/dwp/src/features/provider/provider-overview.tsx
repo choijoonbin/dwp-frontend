@@ -243,7 +243,7 @@ export function ProviderOverview() {
                   <Box sx={{ ml: 1.25, minWidth: 0, flex: 1 }}>
                     <Stack direction="row" alignItems="center" gap={1}>
                       <Typography variant="body2" fontWeight={750} noWrap>
-                        {t(`operationTypes.${item.title}`, { defaultValue: item.title })}
+                        {item.title}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         {t(`command.categories.${item.category}`, { defaultValue: item.category })}

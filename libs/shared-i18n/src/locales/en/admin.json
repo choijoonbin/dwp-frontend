@@ -52,11 +52,6 @@
         "title": "Reference data",
         "description": "Govern tenant code sets, localized labels, hierarchy, and effective dates."
       },
-      "system-code-catalog": {
-        "label": "System code contracts",
-        "title": "System code contracts",
-        "description": "Inspect product-owned code values, validation sources, and every registered consumer contract."
-      },
       "registry": {
         "label": "App registry",
         "title": "Application registry",
@@ -153,7 +148,20 @@
     "mfaEnabled": "MFA on",
     "mfaDisabled": "MFA off",
     "additionalRoles": "{{count}} more roles",
-    "ownRolesUnavailable": "You cannot change your own roles",
+    "roleFamilies": {
+      "WORKSPACE": "Baseline access",
+      "PEOPLE": "People operations",
+      "AUDIT": "Audit and compliance"
+    },
+    "assignmentClasses": {
+      "BASELINE": "Required baseline",
+      "DELEGATED": "Delegated"
+    },
+    "managementReasons": {
+      "SELF": "You cannot change your own roles.",
+      "IDENTITY_INACTIVE": "Roles cannot be changed for inactive or suspended identities.",
+      "PROTECTED_ROLE": "Users with peer, higher, or control-plane roles cannot be changed."
+    },
     "columns": {
       "user": "User",
       "roles": "Roles",
@@ -165,11 +173,16 @@
       "refresh": "Refresh users and roles",
       "editRoles": "Edit roles",
       "editRolesFor": "Edit roles for {{name}}",
-      "save": "Save access"
+      "save": "Save access",
+      "saving": "Saving access"
     },
     "dialog": {
       "title": "Edit access",
       "assignedRoles": "Assigned roles",
+      "delegationBoundary": "Only roles explicitly delegated for direct assignment are shown. Tenant, audit administration, and platform control roles follow a separate approval path.",
+      "justification": "Change justification",
+      "justificationHelp": "Enter at least 10 characters for the audit trail.",
+      "conflictsWith": "Separation-of-duties policy prevents assignment with {{roles}}.",
       "sessionNotice": "Saving role changes signs this user out of all active sessions."
     },
     "toasts": {
@@ -241,6 +254,10 @@
     "immediate": "Immediate",
     "openEnded": "Open ended",
     "noAnnouncements": "No announcements",
+    "empty": {
+      "title": "There are no announcements yet",
+      "description": "Create the first draft, then review its audience and publication window before publishing."
+    },
     "fields": {
       "title": "Title",
       "message": "Message",
@@ -362,23 +379,111 @@
     "referenceSets": "Reference sets",
     "referenceItems": "Reference items",
     "setDetail": "Reference set detail",
+    "detailViews": "Reference data detail views",
+    "catalogListHelp": "Tenant-owned business vocabulary",
     "searchSets": "Search sets",
+    "searchItems": "Search codes or labels",
     "noSets": "No reference sets",
     "noItems": "No reference items",
     "selectSet": "Select a reference set",
+    "noDescription": "No description has been provided.",
     "localizedLabels": "Localized labels",
     "itemCount_one": "{{count}} item",
     "itemCount_other": "{{count}} items",
     "revision": "{{key}} / revision {{revision}}",
+    "revisionShort": "revision {{revision}}",
     "itemSummary_one": "Order {{order}} / {{count}} locale",
     "itemSummary_other": "Order {{order}} / {{count}} locales",
     "parentSummary": "Parent {{code}}",
+    "overview": {
+      "title": "Operational catalog",
+      "description": "Review publication state and operational readiness for tenant business codes.",
+      "catalogs": "Catalogs",
+      "catalogsDetail": "Tenant-owned sets",
+      "values": "All values",
+      "valuesDetail": "Codes including hierarchy",
+      "published": "Published",
+      "publishedDetail": "Available at runtime",
+      "drafts": "Draft sets",
+      "draftsDetail": "Review and activation required"
+    },
+    "health": {
+      "title": "Reference data health",
+      "available": "Available now",
+      "availableDetail": "Active and effective values",
+      "draft": "Draft changes",
+      "draftDetail": "Pending activation review",
+      "timeBound": "Time-bound",
+      "timeBoundDetail": "Scheduled or expiry policy",
+      "translation": "Translation coverage",
+      "translationDetail": "Korean and English baseline",
+      "roots": "Root values",
+      "rootsDetail": "Hierarchy entry points"
+    },
+    "tabs": {
+      "values": "Values",
+      "activity": "Change activity"
+    },
+    "filters": {
+      "lifecycle": "Lifecycle filter",
+      "all": "All"
+    },
+    "runtime": {
+      "published": "Published to runtime",
+      "notPublished": "Not published"
+    },
+    "validity": {
+      "noLimit": "No time limit",
+      "always": "In effect",
+      "scheduled": "Scheduled",
+      "expired": "Expired",
+      "bounded": "Within effective period",
+      "from": "From {{date}}",
+      "until": "Until {{date}}"
+    },
+    "hierarchy": {
+      "root": "Root"
+    },
+    "empty": {
+      "catalogDescription": "Create the first set to manage business codes, translations, and validity.",
+      "selectDescription": "Choose a reference catalog from the left to manage its values.",
+      "noMatchingItems": "No reference values match these conditions."
+    },
+    "activity": {
+      "title": "Change activity",
+      "description": "Trace creation, edits, activation, and retirement for this set and its values.",
+      "loading": "Loading change activity",
+      "empty": "No change activity has been recorded.",
+      "emptyDescription": "Auditable activity will appear here after the first change.",
+      "systemActor": "Platform service",
+      "userActor": "User {{id}}",
+      "outcomes": {
+        "SUCCESS": "Success",
+        "DENIED": "Denied",
+        "FAILED": "Failed"
+      },
+      "actions": {
+        "seeded": "Initial operational catalog provisioned",
+        "setCreated": "Reference set created",
+        "setUpdated": "Reference set updated",
+        "setActivated": "Reference set activated",
+        "setRetired": "Reference set retired",
+        "itemCreated": "Reference value created",
+        "itemUpdated": "Reference value updated",
+        "itemActivated": "Reference value activated",
+        "itemRetired": "Reference value retired"
+      }
+    },
     "columns": {
       "code": "Code",
+      "value": "Reference value",
       "state": "State",
       "locales": "Locales",
       "order": "Order",
-      "parent": "Parent"
+      "parent": "Parent",
+      "validity": "Effective period",
+      "hierarchy": "Hierarchy",
+      "updated": "Last updated"
     },
     "fields": {
       "setKey": "Set key",
@@ -1136,6 +1241,10 @@
     "scim": {
       "title": "SCIM connectors",
       "loading": "Loading SCIM connectors",
+      "empty": {
+        "title": "Set up the first SCIM connection",
+        "description": "Create a connector, store its one-time token in the identity provider vault, and validate the provisioning scope."
+      },
       "columns": {
         "connector": "Connector",
         "tokenPrefix": "Token fingerprint",
@@ -1184,6 +1293,7 @@
     "noExpiry": "No expiry",
     "direct": "Direct assignment",
     "tenantWide": "Tenant wide",
+    "systemManaged": "Built-in system roles are governed centrally and cannot be changed here.",
     "roleTypes": {
       "SYSTEM": "System",
       "CUSTOM": "Custom"
@@ -1328,6 +1438,10 @@
     "title": "Navigation tree",
     "loading": "Loading navigation tree",
     "empty": "No navigation items have been defined.",
+    "emptyState": {
+      "title": "The navigation tree is empty",
+      "description": "Create a root group first, then add permission-bound application items."
+    },
     "treeLabel": "Tenant navigation tree",
     "root": "Top level",
     "types": {

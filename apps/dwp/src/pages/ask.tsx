@@ -1,6 +1,7 @@
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
   ArrowRight,
   BookOpenCheck,
@@ -10,8 +11,9 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
-import { AgentPlanPreview, PageCanvas, SourceCitationList } from '@dwp-frontend/design-system';
+import { ActionButton, AgentPlanPreview, PageCanvas } from '@dwp-frontend/design-system';
 import {
+  getWorkspaceWorkQueue,
   useToast,
   previewAgentPlan,
   type AgentPlanPreview as AgentPlanContract,
@@ -20,7 +22,6 @@ import {
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -28,14 +29,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import { PageHeader, ReferenceModeChip, SectionHeading } from '../features/work-hub/workspace-ui';
-import {
-  askSources,
-  localizeAskPlanSteps,
-  localizeAskSources,
-} from '../features/work-hub/reference-data';
 
 const promptKeys = ['remote', 'blocking', 'software'] as const;
-const contextKeys = ['customer', 'software', 'benefits'] as const;
 
 type PlanLoadState = 'idle' | 'loading' | 'ready' | 'fallback';
 
@@ -56,11 +51,19 @@ export default function AskPage() {
   const [runtimePlan, setRuntimePlan] = useState<AgentPlanContract | null>(null);
   const [planLoadState, setPlanLoadState] = useState<PlanLoadState>('idle');
   const requestSequence = useRef(0);
+  const workQueueQuery = useQuery({
+    queryKey: ['workspace', 'work-queue'],
+    queryFn: getWorkspaceWorkQueue,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const recentWork = useMemo(
+    () => (workQueueQuery.data?.items ?? []).slice(0, 3),
+    [workQueueQuery.data?.items]
+  );
   const restricted = Boolean(
     submittedQuery && /salary|confidential|payroll|급여|기밀|비밀/i.test(submittedQuery)
   );
-  const localizedSources = useMemo(() => localizeAskSources(t), [t]);
-  const localizedPlanSteps = useMemo(() => localizeAskPlanSteps(t), [t]);
 
   const prepareAnswer = useCallback(async (value: string) => {
     const nextSequence = requestSequence.current + 1;
@@ -78,9 +81,9 @@ export default function AskPage() {
       const plan = await previewAgentPlan({
         requestId: globalThis.crypto.randomUUID(),
         intent: value,
-        action: 'flexible work request',
-        target: 'employee-services/flexible-work',
-        sourceReferences: askSources.map((source) => source.id),
+        action: 'workspace request',
+        target: 'workspace/request-preview',
+        sourceReferences: [],
         agentKey: 'REFERENCE_PLANNER',
       });
       if (requestSequence.current !== nextSequence) return;
@@ -154,14 +157,14 @@ export default function AskPage() {
             },
           }}
         />
-        <Button
+        <ActionButton
           type="submit"
-          variant="contained"
+          intent="primary"
           endIcon={<ArrowRight size={16} />}
           sx={{ minWidth: 112 }}
         >
           {t('askPage.submit')}
-        </Button>
+        </ActionButton>
       </Box>
 
       <Box
@@ -179,9 +182,14 @@ export default function AskPage() {
         {promptKeys.map((key) => {
           const prompt = t(`askPage.prompts.${key}`);
           return (
-            <Button key={prompt} size="small" variant="text" onClick={() => choosePrompt(prompt)}>
+            <ActionButton
+              key={prompt}
+              size="small"
+              intent="quiet"
+              onClick={() => choosePrompt(prompt)}
+            >
               {prompt}
-            </Button>
+            </ActionButton>
           );
         })}
       </Box>
@@ -199,37 +207,56 @@ export default function AskPage() {
               title={t('askPage.recentContext')}
             />
           </Box>
-          <Box
-            component="ul"
-            sx={{
-              p: 0,
-              m: 0,
-              listStyle: 'none',
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
-            }}
-          >
-            {contextKeys.map((key, index) => (
-              <Box
-                component="li"
-                key={key}
-                sx={{
-                  py: 2.5,
-                  px: { xs: 0, md: 2.5 },
-                  borderTop: 1,
-                  borderLeft: { xs: 0, md: index === 0 ? 0 : 1 },
-                  borderColor: 'divider',
-                }}
-              >
-                <Typography component="h3" variant="subtitle2">
-                  {t(`askPage.context.${key}.title`)}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-                  {t(`askPage.context.${key}.detail`)}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
+          {workQueueQuery.isLoading ? (
+            <Typography role="status" color="text.secondary" sx={{ py: 2.5 }}>
+              {t('askPage.contextLoading')}
+            </Typography>
+          ) : recentWork.length ? (
+            <Box
+              component="ul"
+              sx={{
+                p: 0,
+                m: 0,
+                listStyle: 'none',
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
+              }}
+            >
+              {recentWork.map((item, index) => (
+                <Box
+                  component="li"
+                  key={item.workItemId}
+                  sx={{
+                    py: 2.5,
+                    px: { xs: 0, md: 2.5 },
+                    borderTop: 1,
+                    borderLeft: { xs: 0, md: index === 0 ? 0 : 1 },
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Typography component="h3" variant="subtitle2">
+                    {item.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
+                    {item.summary || item.sourceSystem}
+                  </Typography>
+                  <ActionButton
+                    size="small"
+                    intent="quiet"
+                    endIcon={<ArrowRight size={14} aria-hidden="true" />}
+                    onClick={() => navigate(`/work?item=${encodeURIComponent(item.id)}`)}
+                    sx={{ mt: 1, px: 0 }}
+                  >
+                    {t('askPage.openContext')}
+                  </ActionButton>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <Typography color="text.secondary" sx={{ py: 2.5 }}>
+              {workQueueQuery.isError ? t('askPage.contextUnavailable') : t('askPage.contextEmpty')}
+            </Typography>
+          )}
         </Box>
       )}
 
@@ -255,10 +282,10 @@ export default function AskPage() {
                 BookOpenCheck,
                 restricted
                   ? t('askPage.status.retrievalStopped.label')
-                  : t('askPage.status.sourcesVerified.label'),
+                  : t('askPage.status.retrievalUnavailable.label'),
                 restricted
                   ? t('askPage.status.retrievalStopped.detail')
-                  : t('askPage.status.sourcesVerified.detail'),
+                  : t('askPage.status.retrievalUnavailable.detail'),
               ],
               [
                 CheckCircle2,
@@ -294,7 +321,12 @@ export default function AskPage() {
                     borderColor: 'divider',
                   }}
                 >
-                  <Box sx={{ color: restricted && index > 0 ? 'warning.main' : 'success.main' }}>
+                  <Box
+                    sx={{
+                      color:
+                        index === 1 || (restricted && index > 0) ? 'warning.main' : 'success.main',
+                    }}
+                  >
                     <StatusIcon size={18} strokeWidth={1.8} aria-hidden="true" />
                   </Box>
                   <Box>
@@ -320,13 +352,12 @@ export default function AskPage() {
                 gap: 1,
               }}
             >
-              <SectionHeading id="answer-heading" icon={Sparkles} title={t('askPage.answer')} />
-              <Chip
-                label={t('askPage.reviewRequired')}
-                color="info"
-                variant="outlined"
-                size="small"
+              <SectionHeading
+                id="answer-heading"
+                icon={Sparkles}
+                title={t('askPage.previewHeading')}
               />
+              <Chip label={t('askPage.previewOnly')} color="info" variant="outlined" size="small" />
             </Box>
             <Divider sx={{ mt: 1.5 }} />
 
@@ -335,17 +366,7 @@ export default function AskPage() {
                 {t('askPage.restricted')}
               </Alert>
             ) : (
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: {
-                    xs: 'minmax(0, 1fr)',
-                    lg: 'minmax(0, 1.8fr) minmax(300px, 0.8fr)',
-                  },
-                  gap: { xs: 4, lg: 5 },
-                  mt: 3,
-                }}
-              >
+              <Box sx={{ mt: 3 }}>
                 <Box sx={{ minWidth: 0 }}>
                   <Typography variant="caption" color="text.secondary">
                     {t('askPage.yourQuestion')}
@@ -353,39 +374,14 @@ export default function AskPage() {
                   <Typography component="h3" variant="subtitle1" sx={{ mt: 0.4 }}>
                     {submittedQuery}
                   </Typography>
-                  <Box sx={{ mt: 2.5, pl: 2.5, borderLeft: 3, borderColor: 'primary.main' }}>
-                    <Typography sx={{ fontSize: '1rem', lineHeight: 1.75 }}>
-                      {t('askPage.answerText')}
-                    </Typography>
-                  </Box>
                   <Alert severity="info" variant="outlined" sx={{ mt: 2.5 }}>
-                    {t('askPage.answerCaution')}
+                    <Typography component="p" variant="subtitle2">
+                      {t('askPage.answerUnavailableTitle')}
+                    </Typography>
+                    <Typography component="p" variant="body2" sx={{ mt: 0.4 }}>
+                      {t('askPage.answerUnavailableDescription')}
+                    </Typography>
                   </Alert>
-                </Box>
-                <Box component="aside" aria-labelledby="sources-heading" sx={{ minWidth: 0 }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'baseline',
-                      justifyContent: 'space-between',
-                      gap: 2,
-                    }}
-                  >
-                    <Typography id="sources-heading" component="h3" variant="subtitle2">
-                      {t('askPage.verifiedSources')}
-                    </Typography>
-                    <Typography variant="caption" color="success.main" fontWeight={700}>
-                      {t('askPage.currentCount', { count: 2 })}
-                    </Typography>
-                  </Box>
-                  <SourceCitationList
-                    sources={localizedSources}
-                    ariaLabel={t('askPage.answerSources')}
-                    stateLabels={{
-                      restricted: t('ai.citationStates.restricted'),
-                      stale: t('ai.citationStates.stale'),
-                    }}
-                  />
                 </Box>
               </Box>
             )}
@@ -440,9 +436,9 @@ export default function AskPage() {
                       aria-hidden="true"
                     />
                     <Typography component="p" variant="subtitle2">
-                      {runtimePlan.agentRegistry.resolution === 'ACTIVE'
-                        ? t('askPage.governedContract')
-                        : t('askPage.referenceContract')}
+                      {runtimePlan.referenceMode
+                        ? t('askPage.referenceContract')
+                        : t('askPage.governedContract')}
                     </Typography>
                   </Box>
                   <Typography
@@ -466,19 +462,15 @@ export default function AskPage() {
                 </Box>
               )}
 
-              {planLoadState !== 'loading' && (
+              {runtimePlan && (
                 <AgentPlanPreview
                   title={t('askPage.planTitle')}
-                  summary={runtimePlan?.summary || t('askPage.planSummary')}
-                  riskLevel={runtimePlan ? toVisualRisk(runtimePlan.riskTier) : 'medium'}
-                  riskLabel={
-                    runtimePlan
-                      ? t('askPage.riskApproval', { tier: runtimePlan.riskTier })
-                      : undefined
-                  }
-                  steps={runtimePlan?.steps || localizedPlanSteps}
-                  sources={runtimePlan ? [] : localizedSources}
-                  approvalRequired={runtimePlan?.approvalRequired ?? true}
+                  summary={runtimePlan.summary}
+                  riskLevel={toVisualRisk(runtimePlan.riskTier)}
+                  riskLabel={t('askPage.riskApproval', { tier: runtimePlan.riskTier })}
+                  steps={runtimePlan.steps}
+                  sources={[]}
+                  approvalRequired={runtimePlan.approvalRequired}
                   approveLabel={t('askPage.openService')}
                   rejectLabel={t('askPage.dismiss')}
                   labels={{
@@ -502,7 +494,7 @@ export default function AskPage() {
                   }}
                   onApprove={() => {
                     toast.success(t('askPage.serviceOpened'));
-                    navigate('/apps?app=service');
+                    navigate('/apps');
                   }}
                   onReject={() => {
                     requestSequence.current += 1;

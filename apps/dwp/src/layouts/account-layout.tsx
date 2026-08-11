@@ -1,36 +1,25 @@
-import { Home, Menu, Settings2 } from 'lucide-react';
+import { CloudCog, Home } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { foundationTokens } from '@dwp-frontend/design-system/foundation';
-import { useAuth } from '@dwp-frontend/shared-utils';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Drawer from '@mui/material/Drawer';
-import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
-import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 
-import { AccountMenu } from '../components/account-menu';
 import { BrandLockup } from '../components/brand-lockup';
-import {
-  FullscreenControl,
-  NotificationMenu,
-  SearchControl,
-  WorkspaceMenu,
-} from '../components/shell-controls';
+import { ShellHeader } from '../components/shell-header';
 import { accountNavigationGroups } from '../features/account/settings-navigation';
+import { hasProviderControlPlaneRole } from '../features/auth/control-plane-access';
+import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 
 import { useState } from 'react';
-
-const SIDEBAR_WIDTH = foundationTokens.layout.adminNavigationExpanded;
-const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
 
 type AccountNavigationProps = {
   onNavigate?: () => void;
@@ -105,9 +94,13 @@ function AccountNavigation({ onNavigate }: AccountNavigationProps) {
 
 export function AccountLayout() {
   const { t } = useTranslation('account');
+  const shell = shellRegistry.account;
+  const sidebarWidth = shell.desktopNavigationWidth;
   const auth = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const accountName = auth.user?.displayName || t('shell.accountFallback');
+  const providerAccount = hasProviderControlPlaneRole(auth.user?.roles ?? []);
+  const returnDestination = providerAccount ? '/provider/overview' : '/';
   const accountContext =
     auth.user?.email ||
     auth.user?.tenantName ||
@@ -118,7 +111,7 @@ export function AccountLayout() {
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
-          minHeight: HEADER_HEIGHT,
+          minHeight: shellHeaderHeight,
           px: 2,
           display: 'flex',
           alignItems: 'center',
@@ -152,14 +145,20 @@ export function AccountLayout() {
       <Box sx={{ p: 1.5, borderTop: 1, borderColor: 'divider' }}>
         <Button
           component={NavLink}
-          to="/"
+          to={returnDestination}
           fullWidth
           color="inherit"
-          startIcon={<Home size={17} strokeWidth={1.8} />}
+          startIcon={
+            providerAccount ? (
+              <CloudCog size={17} strokeWidth={1.8} />
+            ) : (
+              <Home size={17} strokeWidth={1.8} />
+            )
+          }
           onClick={onNavigate}
           sx={{ justifyContent: 'flex-start' }}
         >
-          {t('shell.backToWorkspace')}
+          {t(providerAccount ? 'shell.backToProvider' : 'shell.backToWorkspace')}
         </Button>
       </Box>
     </Box>
@@ -173,7 +172,7 @@ export function AccountLayout() {
         sx={{
           position: 'fixed',
           inset: '0 auto 0 0',
-          width: SIDEBAR_WIDTH,
+          width: sidebarWidth,
           zIndex: (theme) => theme.zIndex.drawer,
           display: { xs: 'none', lg: 'block' },
           bgcolor: 'background.paper',
@@ -190,7 +189,7 @@ export function AccountLayout() {
         slotProps={{
           paper: {
             'aria-label': t('shell.navigationLabel'),
-            sx: { width: SIDEBAR_WIDTH },
+            sx: { width: sidebarWidth },
           },
         }}
       >
@@ -199,76 +198,32 @@ export function AccountLayout() {
         </Box>
       </Drawer>
 
-      <AppBar
-        data-testid="account-header"
-        position="fixed"
-        color="default"
-        elevation={0}
-        sx={{
-          width: { xs: 1, lg: `calc(100% - ${SIDEBAR_WIDTH}px)` },
-          ml: { xs: 0, lg: `${SIDEBAR_WIDTH}px` },
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
+      <ShellHeader
+        testId="account-header"
+        shellKey={shell.key}
+        scope={shell.scope}
+        desktopOffset={sidebarWidth}
+        context={{ icon: shell.context.icon, label: t(shell.context.labelKey) }}
+        navigation={{
+          label: t('shell.openNavigation'),
+          onOpen: () => setMobileOpen(true),
         }}
-      >
-        <Toolbar
-          disableGutters
-          sx={{ minHeight: `${HEADER_HEIGHT}px !important`, px: { xs: 1, md: 2 } }}
-        >
-          <IconButton
-            aria-label={t('shell.openNavigation')}
-            onClick={() => setMobileOpen(true)}
-            sx={{ mr: 0.5, display: { lg: 'none' } }}
-          >
-            <Menu size={21} strokeWidth={1.8} />
-          </IconButton>
-          <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
-            <Settings2 size={18} strokeWidth={1.8} aria-hidden="true" />
-            <Typography component="span" variant="subtitle2">
-              {t('shell.title')}
-            </Typography>
-          </Box>
-          <Box sx={{ ml: { xs: 0, sm: 1.5 } }}>
-            <WorkspaceMenu />
-          </Box>
-          <Box sx={{ flexGrow: 1 }} />
-          <SearchControl />
-          <Box
-            sx={{
-              ml: { xs: 0, md: 1.5 },
-              pl: { xs: 0, md: 1 },
-              display: 'flex',
-              alignItems: 'center',
-              gap: { xs: 0.25, sm: 0.5 },
-            }}
-          >
-            <FullscreenControl />
-            <NotificationMenu />
-          </Box>
-          <Box
-            sx={{
-              ml: { xs: 0.25, md: 1 },
-              pl: { xs: 0, md: 1 },
-              borderLeft: { md: 1 },
-              borderColor: 'divider',
-            }}
-          >
-            <AccountMenu showIdentity />
-          </Box>
-        </Toolbar>
-      </AppBar>
+        showWorkspace={shell.showWorkspace}
+      />
 
       <Box
         component="main"
+        id="dwp-main-content"
+        tabIndex={-1}
         data-testid="account-main"
         sx={{
-          pt: `${HEADER_HEIGHT}px`,
-          width: { xs: 1, lg: `calc(100% - ${SIDEBAR_WIDTH}px)` },
-          ml: { xs: 0, lg: `${SIDEBAR_WIDTH}px` },
+          pt: `${shellHeaderHeight}px`,
+          width: { xs: 1, lg: `calc(100% - ${sidebarWidth}px)` },
+          ml: { xs: 0, lg: `${sidebarWidth}px` },
           minWidth: 0,
           minHeight: '100dvh',
           overflowX: 'clip',
+          outline: 'none',
         }}
       >
         <Outlet />

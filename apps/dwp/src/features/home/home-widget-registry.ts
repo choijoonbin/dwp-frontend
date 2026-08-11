@@ -24,7 +24,7 @@ export const HOME_WIDGET_REGISTRY: readonly HomeWidgetDefinition[] = [
   {
     key: 'daily-brief',
     label: 'Daily brief',
-    description: 'AI-grounded priorities and day rhythm',
+    description: 'Live work priorities and day rhythm',
     icon: Sparkles,
     canHide: true,
     desktopSpan: 12,

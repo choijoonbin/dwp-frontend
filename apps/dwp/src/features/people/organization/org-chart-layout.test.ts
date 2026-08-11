@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  initialViewportTarget,
   layoutChart,
   visibleOrganizationIds,
   visiblePersonIds,
@@ -132,5 +133,42 @@ describe('organization chart layout', () => {
 
     expect(result[1].position.y).toBeGreaterThan(result[0].position.y);
     expect(Number.isFinite(result[0].position.x)).toBe(true);
+  });
+
+  it('keeps a small hierarchy fully fitted and focuses the root of a large hierarchy', () => {
+    const smallNodes = ['root', 'child'].map((id): OrgChartFlowNode => ({
+      id,
+      type: 'organization',
+      position: { x: 0, y: 0 },
+      data: {
+        organization: organization(id, id === 'child' ? 'root' : undefined),
+        collapsed: false,
+        matched: false,
+        headcountLabel: '1',
+        openPositionLabel: '0',
+        collapseLabel: 'collapse',
+        expandLabel: 'expand',
+        onToggle: () => undefined,
+        direction: 'TB',
+        accentColor: '',
+        surfaceColor: '',
+        scenarioChanged: false,
+      },
+    }));
+    expect(
+      initialViewportTarget(smallNodes, [{ id: 'edge', source: 'root', target: 'child' }])
+    ).toBeUndefined();
+
+    const largeNodes = Array.from({ length: 9 }, (_, index): OrgChartFlowNode => ({
+      ...smallNodes[0],
+      id: index === 0 ? 'root' : `child-${index}`,
+    }));
+    const largeEdges = largeNodes.slice(1).map((node) => ({
+      id: `edge-${node.id}`,
+      source: 'root',
+      target: node.id,
+    }));
+    expect(initialViewportTarget(largeNodes, largeEdges)).toBe('root');
+    expect(initialViewportTarget(largeNodes, largeEdges, 'child-3')).toBe('child-3');
   });
 });

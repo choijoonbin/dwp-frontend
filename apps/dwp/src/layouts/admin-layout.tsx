@@ -1,40 +1,31 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Home, LifeBuoy, Menu, ShieldCheck, X } from 'lucide-react';
+import { ChevronDown, Home, LifeBuoy, X } from 'lucide-react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   revokeProviderSupportSession,
-  useAuth,
-  usePermissions,
-  useToast,
-} from '@dwp-frontend/shared-utils';
+  type ProviderSupportSessionContext,
+} from '@dwp-frontend/shared-utils/api/provider-control-api';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
+import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Drawer from '@mui/material/Drawer';
-import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-import Toolbar from '@mui/material/Toolbar';
 import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 
-import { AccountMenu } from '../components/account-menu';
 import { BrandLockup } from '../components/brand-lockup';
-import {
-  FullscreenControl,
-  NotificationMenu,
-  SearchControl,
-  WorkspaceMenu,
-} from '../components/shell-controls';
+import { ShellHeader } from '../components/shell-header';
 import {
   ADMIN_NAVIGATION,
   type AdminNavigationGroup,
@@ -48,11 +39,7 @@ import {
   providerSupportContextQueryKey,
   useProviderSupportContext,
 } from '../features/provider/use-provider-support-context';
-
-import type { ProviderSupportSessionContext } from '@dwp-frontend/shared-utils';
-
-const SIDEBAR_WIDTH = foundationTokens.layout.adminNavigationExpanded;
-const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
+import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 
 type AdminNavigationProps = {
   onNavigate?: () => void;
@@ -274,6 +261,8 @@ function SupportAccessBanner({ context }: { context: ProviderSupportSessionConte
 
 export function AdminLayout() {
   const { t } = useTranslation('admin');
+  const shell = shellRegistry.admin;
+  const sidebarWidth = shell.desktopNavigationWidth;
   const auth = useAuth();
   const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
   const supportContext = useProviderSupportContext(providerRole);
@@ -288,7 +277,7 @@ export function AdminLayout() {
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
-          minHeight: HEADER_HEIGHT,
+          minHeight: shellHeaderHeight,
           px: 2,
           display: 'flex',
           alignItems: 'center',
@@ -347,7 +336,7 @@ export function AdminLayout() {
         sx={{
           position: 'fixed',
           inset: '0 auto 0 0',
-          width: SIDEBAR_WIDTH,
+          width: sidebarWidth,
           zIndex: (theme) => theme.zIndex.drawer,
           display: { xs: 'none', lg: 'block' },
           bgcolor: 'background.paper',
@@ -361,83 +350,39 @@ export function AdminLayout() {
       <Drawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
-        slotProps={{ paper: { sx: { width: SIDEBAR_WIDTH } } }}
+        slotProps={{ paper: { sx: { width: sidebarWidth } } }}
       >
         <Box data-testid="admin-mobile-sidebar" sx={{ height: 1 }}>
           {navigationContent(() => setMobileOpen(false))}
         </Box>
       </Drawer>
 
-      <AppBar
-        data-testid="admin-header"
-        position="fixed"
-        color="default"
-        elevation={0}
-        sx={{
-          width: { xs: 1, lg: `calc(100% - ${SIDEBAR_WIDTH}px)` },
-          ml: { xs: 0, lg: `${SIDEBAR_WIDTH}px` },
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
+      <ShellHeader
+        testId="admin-header"
+        shellKey={shell.key}
+        scope={supportContext.data ? 'support' : 'tenant'}
+        desktopOffset={sidebarWidth}
+        context={{ icon: shell.context.icon, label: t(shell.context.labelKey) }}
+        navigation={{
+          label: t('shell.openNavigation'),
+          onOpen: () => setMobileOpen(true),
         }}
-      >
-        <Toolbar
-          disableGutters
-          sx={{ minHeight: `${HEADER_HEIGHT}px !important`, px: { xs: 1, md: 2 } }}
-        >
-          <IconButton
-            aria-label={t('shell.openNavigation')}
-            onClick={() => setMobileOpen(true)}
-            sx={{ mr: 0.5, display: { lg: 'none' } }}
-          >
-            <Menu size={21} strokeWidth={1.8} />
-          </IconButton>
-          <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
-            <ShieldCheck size={18} strokeWidth={1.8} aria-hidden="true" />
-            <Typography variant="subtitle2">{t('shell.administration')}</Typography>
-          </Box>
-          {!supportContext.data && (
-            <Box sx={{ ml: { xs: 0, sm: 1.5 } }}>
-              <WorkspaceMenu />
-            </Box>
-          )}
-          <Box sx={{ flexGrow: 1 }} />
-          <SearchControl />
-          <Box
-            sx={{
-              ml: { xs: 0, md: 1.5 },
-              pl: { xs: 0, md: 1 },
-              display: 'flex',
-              alignItems: 'center',
-              gap: { xs: 0.25, sm: 0.5 },
-            }}
-          >
-            <FullscreenControl />
-            <NotificationMenu />
-          </Box>
-          <Box
-            sx={{
-              ml: { xs: 0.25, md: 1 },
-              pl: { xs: 0, md: 1 },
-              borderLeft: { md: 1 },
-              borderColor: 'divider',
-            }}
-          >
-            <AccountMenu showIdentity />
-          </Box>
-        </Toolbar>
-      </AppBar>
+        showWorkspace={shell.showWorkspace && !supportContext.data}
+      />
 
       <Box
         component="main"
+        id="dwp-main-content"
+        tabIndex={-1}
         data-testid="admin-main"
         sx={{
-          pt: `${HEADER_HEIGHT}px`,
-          width: { xs: 1, lg: `calc(100% - ${SIDEBAR_WIDTH}px)` },
-          ml: { xs: 0, lg: `${SIDEBAR_WIDTH}px` },
+          pt: `${shellHeaderHeight}px`,
+          width: { xs: 1, lg: `calc(100% - ${sidebarWidth}px)` },
+          ml: { xs: 0, lg: `${sidebarWidth}px` },
           minWidth: 0,
           minHeight: '100dvh',
           overflowX: 'clip',
+          outline: 'none',
         }}
       >
         {supportContext.data && <SupportAccessBanner context={supportContext.data} />}

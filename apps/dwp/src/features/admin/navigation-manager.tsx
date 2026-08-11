@@ -24,6 +24,7 @@ import {
   updateNavigationItem,
   useToast,
 } from '@dwp-frontend/shared-utils';
+import { GuidedEmptyState } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -651,11 +652,17 @@ export function NavigationManager() {
             ))}
           </Box>
         ) : (
-          <Box sx={{ py: 8, textAlign: 'center' }}>
-            <Typography variant="body2" color="text.secondary">
-              {t('navigationManager.empty')}
-            </Typography>
-          </Box>
+          <GuidedEmptyState
+            kind="first-use"
+            title={t('navigationManager.emptyState.title')}
+            description={t('navigationManager.emptyState.description')}
+            actionLabel={t('navigationManager.actions.new')}
+            onAction={() => {
+              setEditing(null);
+              setDialogOpen(true);
+            }}
+            size="standard"
+          />
         )}
       </Box>
       {dialogOpen && (

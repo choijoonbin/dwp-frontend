@@ -1,76 +1,100 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowRight,
-  ArrowUpRight,
   CheckCircle2,
   Grid3X3,
-  Search,
+  Pin,
+  PinOff,
   ShieldCheck,
   TriangleAlert,
 } from 'lucide-react';
-import { useAuth, usePermissions, useToast } from '@dwp-frontend/shared-utils';
-import { PageCanvas } from '@dwp-frontend/design-system';
+import {
+  getWorkspaceApps,
+  launchWorkspaceApp,
+  setWorkspaceAppPinned,
+  useToast,
+} from '@dwp-frontend/shared-utils';
+import { formatDate } from '@dwp-frontend/shared-i18n';
+import {
+  ActionIconButton,
+  EmptyState,
+  FilterBar,
+  GuidedEmptyState,
+  LiveStatus,
+  LocalErrorState,
+  LoadingState,
+  mergeFilterSearchParams,
+  PageCanvas,
+  ResourcePageHeader,
+  SavedViewMenu,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import ButtonBase from '@mui/material/ButtonBase';
 import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
-import InputAdornment from '@mui/material/InputAdornment';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import { PageHeader, ReferenceModeChip, SectionHeading } from '../features/work-hub/workspace-ui';
-import { localizeReferenceApps } from '../features/work-hub/reference-data';
-import { HOME_APPS, isAppEntitled } from '../features/home/app-launchpad-model';
+import { SectionHeading } from '../features/work-hub/workspace-ui';
+import { HOME_APPS } from '../features/home/app-launchpad-model';
 import { AppGlyph } from '../features/home/app-glyph';
 
-import type { ReferenceApp } from '../features/work-hub/reference-data';
+import type { WorkspaceApp } from '@dwp-frontend/shared-utils';
 
 type AppFilter = 'all' | 'pinned' | 'native' | 'connected';
 
 const homeAppById = new Map(HOME_APPS.map((app) => [app.id, app]));
 const fallbackAppVisual = { iconKey: 'legacy', tone: '#4B5663' } as const;
+const emptyApps: WorkspaceApp[] = [];
+const APP_FILTERS: AppFilter[] = ['all', 'pinned', 'native', 'connected'];
 
-function appVisual(app: ReferenceApp) {
+function isAppFilter(value: string | null): value is AppFilter {
+  return Boolean(value && APP_FILTERS.includes(value as AppFilter));
+}
+
+function appVisual(app: WorkspaceApp) {
   return homeAppById.get(app.id) ?? fallbackAppVisual;
 }
 
-function HealthIcon({ health }: { health: ReferenceApp['health'] }) {
+function HealthIcon({ health }: { health: WorkspaceApp['health'] }) {
   if (health === 'healthy') return <CheckCircle2 size={15} strokeWidth={1.8} />;
   if (health === 'attention') return <TriangleAlert size={15} strokeWidth={1.8} />;
+  if (health === 'configuration-required') {
+    return <TriangleAlert size={15} strokeWidth={1.8} />;
+  }
   return <ShieldCheck size={15} strokeWidth={1.8} />;
 }
 
-function AppIcon({ app, size = 46 }: { app: ReferenceApp; size?: number }) {
+function AppIcon({ app, size = 46 }: { app: WorkspaceApp; size?: number }) {
   return <AppGlyph app={appVisual(app)} size={size} />;
 }
 
 export default function AppsPage() {
   const { t } = useTranslation('work');
-  const auth = useAuth();
-  const { permissions } = usePermissions();
   const toast = useToast();
-  const [searchParams] = useSearchParams();
-  const [filter, setFilter] = useState<AppFilter>('all');
-  const [query, setQuery] = useState('');
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filterParam = searchParams.get('type');
+  const filter: AppFilter = isAppFilter(filterParam) ? filterParam : 'all';
+  const query = searchParams.get('q') ?? '';
   const selectedAppId = searchParams.get('app');
-  const entitledReferenceApps = useMemo(() => {
-    const entitledIds = new Set(
-      HOME_APPS.filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)).map(
-        (app) => app.id
-      )
-    );
-    return localizeReferenceApps(t).filter((app) => entitledIds.has(app.id));
-  }, [auth.user?.roles, permissions, t]);
-  const pinnedApps = entitledReferenceApps.filter((app) => app.pinned);
+  const appsQuery = useQuery({
+    queryKey: ['workspace', 'apps'],
+    queryFn: getWorkspaceApps,
+    staleTime: 60_000,
+    retry: 1,
+  });
+  const apps = appsQuery.data ?? emptyApps;
+  const pinnedApps = apps.filter((app) => app.pinned);
 
   const visibleApps = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    return entitledReferenceApps.filter((app) => {
+    return apps.filter((app) => {
       const filterMatch =
         filter === 'all' ||
         (filter === 'pinned' && app.pinned) ||
@@ -83,23 +107,108 @@ export default function AppsPage() {
         );
       return filterMatch && queryMatch;
     });
-  }, [entitledReferenceApps, filter, query]);
+  }, [apps, filter, query]);
 
+  const selectFilter = (value: AppFilter) => {
+    setSearchParams(
+      mergeFilterSearchParams(searchParams, { type: value === 'all' ? null : value }),
+      { replace: true }
+    );
+  };
   const changeFilter = (_event: React.MouseEvent<HTMLElement>, value: AppFilter | null) => {
-    if (value) setFilter(value);
+    if (value) selectFilter(value);
   };
 
-  const launch = (app: ReferenceApp) =>
-    toast.success(t('appsPage.launchOpened', { app: app.name }));
+  const pinMutation = useMutation({
+    mutationFn: (app: WorkspaceApp) => setWorkspaceAppPinned(app.id, !app.pinned, app.version),
+    onSuccess: (updated) => {
+      queryClient.setQueryData<WorkspaceApp[]>(['workspace', 'apps'], (current = []) =>
+        current.map((app) => (app.id === updated.id ? updated : app))
+      );
+      toast.success(
+        updated.pinned
+          ? t('appsPage.pinSuccess', { app: updated.name })
+          : t('appsPage.unpinSuccess', { app: updated.name })
+      );
+    },
+    onError: () => toast.error(t('appsPage.pinError')),
+  });
+  const launchMutation = useMutation({
+    mutationFn: launchWorkspaceApp,
+    onSuccess: async (launch) => {
+      await queryClient.invalidateQueries({ queryKey: ['workspace', 'apps'] });
+      if (launch.launchMode === 'NATIVE') {
+        navigate(launch.launchTarget);
+      } else {
+        window.open(launch.launchTarget, '_blank', 'noopener,noreferrer');
+      }
+    },
+    onError: () => toast.error(t('appsPage.launchError')),
+  });
+
+  const launch = (app: WorkspaceApp) => {
+    if (app.health === 'configuration-required') {
+      toast.warning(t('appsPage.configurationRequired', { app: app.name }));
+      return;
+    }
+    launchMutation.mutate(app.id);
+  };
+
+  const header = (
+    <ResourcePageHeader
+      eyebrow={t('appsPage.header.eyebrow')}
+      title={t('appsPage.header.title')}
+      description={t('appsPage.header.description')}
+      status={
+        <LiveStatus
+          state={appsQuery.isFetching ? 'syncing' : 'live'}
+          label={t('appsPage.liveCatalog')}
+          refreshLabel={t('appsPage.retry')}
+          refreshing={appsQuery.isFetching}
+          onRefresh={() => void appsQuery.refetch()}
+        />
+      }
+    />
+  );
+  if (appsQuery.isLoading) {
+    return (
+      <PageCanvas>
+        {header}
+        <LoadingState label={t('appsPage.loading')} variant="skeleton" size="page" />
+      </PageCanvas>
+    );
+  }
+  if (appsQuery.isError) {
+    return (
+      <PageCanvas>
+        {header}
+        <LocalErrorState
+          title={t('appsPage.loadErrorTitle')}
+          description={t('appsPage.loadErrorDescription')}
+          retryLabel={t('appsPage.retry')}
+          onRetry={() => void appsQuery.refetch()}
+          retrying={appsQuery.isFetching}
+          size="page"
+        />
+      </PageCanvas>
+    );
+  }
+  if (apps.length === 0) {
+    return (
+      <PageCanvas>
+        {header}
+        <EmptyState
+          title={t('appsPage.emptyTitle')}
+          description={t('appsPage.emptyDescription')}
+          size="page"
+        />
+      </PageCanvas>
+    );
+  }
 
   return (
     <PageCanvas>
-      <PageHeader
-        eyebrow={t('appsPage.header.eyebrow')}
-        title={t('appsPage.header.title')}
-        description={t('appsPage.header.description')}
-        action={<ReferenceModeChip />}
-      />
+      {header}
 
       <Box component="section" aria-labelledby="launchpad-heading" sx={{ mt: 4 }}>
         <SectionHeading
@@ -130,7 +239,11 @@ export default function AppsPage() {
           }}
         >
           {pinnedApps.map((app) => (
-            <Box component="li" key={app.id} sx={{ minWidth: 0, scrollSnapAlign: 'start' }}>
+            <Box
+              component="li"
+              key={app.id}
+              sx={{ minWidth: 0, scrollSnapAlign: 'start', position: 'relative' }}
+            >
               <ButtonBase
                 onClick={() => launch(app)}
                 sx={{
@@ -167,7 +280,7 @@ export default function AppsPage() {
                   }}
                 >
                   <AppIcon app={app} size={50} />
-                  <ArrowUpRight size={17} strokeWidth={1.8} aria-hidden="true" />
+                  <Box sx={{ width: 32 }} />
                 </Box>
                 <Box sx={{ minWidth: 0 }}>
                   <Typography component="h3" variant="subtitle1">
@@ -181,52 +294,92 @@ export default function AppsPage() {
                     color="text.secondary"
                     sx={{ display: 'block', mt: 1 }}
                   >
-                    {t('appsPage.lastUsed', { value: app.lastUsed })}
+                    {t('appsPage.lastUsed', {
+                      value: app.lastUsedAt
+                        ? formatDate(new Date(app.lastUsedAt), {
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                          })
+                        : t('appsPage.neverUsed'),
+                    })}
                   </Typography>
                 </Box>
               </ButtonBase>
+              <ActionIconButton
+                label={t('appsPage.unpinApp', { app: app.name })}
+                tooltip={t('appsPage.unpin')}
+                disabled={pinMutation.isPending}
+                onClick={() => pinMutation.mutate(app)}
+                sx={{ position: 'absolute', top: 12, right: 12 }}
+              >
+                <PinOff size={17} strokeWidth={1.8} />
+              </ActionIconButton>
             </Box>
           ))}
         </Box>
       </Box>
 
-      <Box
-        sx={{
-          mt: 5,
-          display: 'grid',
-          gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(280px, 1fr) auto' },
-          gap: 2,
-          alignItems: 'center',
-        }}
-      >
-        <TextField
-          label={t('appsPage.searchLabel')}
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={t('appsPage.searchPlaceholder')}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search size={18} strokeWidth={1.8} aria-hidden="true" />
-                </InputAdornment>
-              ),
-            },
-          }}
+      <Box sx={{ mt: 5 }}>
+        <FilterBar
+          ariaLabel={t('appsPage.filterLabel')}
+          searchLabel={t('appsPage.searchLabel')}
+          searchValue={query}
+          searchPlaceholder={t('appsPage.searchPlaceholder')}
+          onSearchChange={(value) =>
+            setSearchParams(mergeFilterSearchParams(searchParams, { q: value || null }), {
+              replace: true,
+            })
+          }
+          filters={
+            <ToggleButtonGroup
+              exclusive
+              size="small"
+              value={filter}
+              onChange={changeFilter}
+              aria-label={t('appsPage.filterLabel')}
+            >
+              {APP_FILTERS.map((value) => (
+                <ToggleButton key={value} value={value}>
+                  {t(`appsPage.filters.${value}`)}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          }
+          savedViews={
+            <SavedViewMenu
+              label={t('appsPage.views.label')}
+              personalLabel={t('appsPage.views.personal')}
+              sharedLabel={t('appsPage.views.shared')}
+              defaultLabel={t('appsPage.views.default')}
+              selectedViewId={filter}
+              views={APP_FILTERS.map((value) => ({
+                id: value,
+                name: t(`appsPage.filters.${value}`),
+                scope: 'personal' as const,
+                isDefault: value === 'all',
+              }))}
+              onSelect={(view) => selectFilter(view.id as AppFilter)}
+            />
+          }
+          activeFilters={
+            filter === 'all'
+              ? []
+              : [
+                  {
+                    key: 'type',
+                    label: t(`appsPage.filters.${filter}`),
+                    onRemove: () => selectFilter('all'),
+                  },
+                ]
+          }
+          resetLabel={t('appsPage.resetFilters')}
+          onReset={() =>
+            setSearchParams(mergeFilterSearchParams(searchParams, { q: null, type: null }), {
+              replace: true,
+            })
+          }
+          resultLabel={t('appsPage.appCount', { count: visibleApps.length })}
         />
-        <ToggleButtonGroup
-          exclusive
-          size="small"
-          value={filter}
-          onChange={changeFilter}
-          aria-label={t('appsPage.filterLabel')}
-          sx={{ overflowX: 'auto', maxWidth: 1 }}
-        >
-          <ToggleButton value="all">{t('appsPage.filters.all')}</ToggleButton>
-          <ToggleButton value="pinned">{t('appsPage.filters.pinned')}</ToggleButton>
-          <ToggleButton value="native">{t('appsPage.filters.native')}</ToggleButton>
-          <ToggleButton value="connected">{t('appsPage.filters.connected')}</ToggleButton>
-        </ToggleButtonGroup>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mt: 3 }}>
@@ -260,13 +413,16 @@ export default function AppsPage() {
                 ? 'success.main'
                 : app.health === 'attention'
                   ? 'warning.main'
-                  : 'info.main';
+                  : app.health === 'configuration-required'
+                    ? 'warning.main'
+                    : 'info.main';
             return (
               <Box
                 component="li"
                 key={app.id}
                 sx={{
                   minWidth: 0,
+                  position: 'relative',
                   borderRight: { xs: 0, lg: 1 },
                   borderBottom: 1,
                   borderColor: 'divider',
@@ -335,28 +491,39 @@ export default function AppsPage() {
                   </Box>
                   <ArrowRight size={17} strokeWidth={1.8} aria-hidden="true" />
                 </ButtonBase>
+                <ActionIconButton
+                  label={
+                    app.pinned
+                      ? t('appsPage.unpinApp', { app: app.name })
+                      : t('appsPage.pinApp', { app: app.name })
+                  }
+                  tooltip={app.pinned ? t('appsPage.unpin') : t('appsPage.pin')}
+                  disabled={pinMutation.isPending}
+                  onClick={() => pinMutation.mutate(app)}
+                  sx={{ position: 'absolute', right: 8, bottom: 8 }}
+                >
+                  {app.pinned ? (
+                    <PinOff size={16} strokeWidth={1.8} />
+                  ) : (
+                    <Pin size={16} strokeWidth={1.8} />
+                  )}
+                </ActionIconButton>
               </Box>
             );
           })}
         </Box>
       ) : (
-        <Box
-          sx={{ py: 8, borderTop: 1, borderBottom: 1, borderColor: 'divider', textAlign: 'center' }}
-        >
-          <Search size={28} strokeWidth={1.6} aria-hidden="true" />
-          <Typography component="p" variant="subtitle1" sx={{ mt: 1.5 }}>
-            {t('appsPage.noMatches')}
-          </Typography>
-          <Button
-            sx={{ mt: 1.5 }}
-            onClick={() => {
-              setQuery('');
-              setFilter('all');
-            }}
-          >
-            {t('appsPage.resetFilters')}
-          </Button>
-        </Box>
+        <GuidedEmptyState
+          kind="no-results"
+          title={t('appsPage.noMatches')}
+          description={t('appsPage.noMatchesDescription')}
+          actionLabel={t('appsPage.resetFilters')}
+          onAction={() =>
+            setSearchParams(mergeFilterSearchParams(searchParams, { q: null, type: null }), {
+              replace: true,
+            })
+          }
+        />
       )}
     </PageCanvas>
   );

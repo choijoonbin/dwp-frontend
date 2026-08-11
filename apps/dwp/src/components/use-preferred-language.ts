@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage, type SupportedLocale } from '@dwp-frontend/shared-i18n';
-import { useAuth, useToast } from '@dwp-frontend/shared-utils';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 
 export function usePreferredLanguage() {
   const languageState = useLanguage();
