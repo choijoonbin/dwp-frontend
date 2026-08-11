@@ -9,9 +9,7 @@
     "dateUpdated": "{{date}} / Updated {{time}}",
     "lastRefreshed": "Last refreshed {{time}} / Reference data only",
     "saveError": "The home preference could not be saved.",
-    "homeSaved": "Home view saved.",
-    "appLayoutSaved": "App layout saved.",
-    "defaultRestored": "Default home view restored."
+    "homeSaved": "Home view saved."
   },
   "apps": {
     "groups": {
@@ -61,6 +59,10 @@
         "name": "People directory",
         "description": "People, teams, and contact details"
       },
+      "dwp-workforce": {
+        "name": "Workforce management",
+        "description": "Workforce, positions, organization design, and HRIS operations"
+      },
       "ref-app-knowledge": {
         "name": "Knowledge",
         "description": "Policies, guides, and verified answers"
@@ -85,20 +87,17 @@
     "assignedCount": "{{count}} assigned",
     "allApps": "All apps",
     "editHome": "Edit home",
-    "customize": "Customize",
-    "done": "Done",
-    "resetTooltip": "Restore the assigned app layout",
-    "resetLabel": "Reset app layout",
     "fallbackApp": "app",
     "defaultFolder": "App folder",
     "groupFolder": "{{group}} folder",
     "groupApps": "{{group}} apps",
     "openApp": "Open {{app}}",
-    "arrangeApp": "Arrange {{app}}",
+    "dragApp": "Move {{app}}",
+    "removeApp": "Remove from home",
+    "removeAppLabel": "Remove {{app}} from home",
     "openFolder": "Open folder {{folder}}",
-    "arrangeFolder": "Arrange folder {{folder}}",
     "drag": {
-      "instructions": "Press space to pick up an app. Use arrow keys to move it, then press space to drop. Use the arrange menu for non-drag controls.",
+      "instructions": "Press space to pick up an app. Use arrow keys to move it, then press space to drop.",
       "pickedUp": "Picked up {{item}}.",
       "over": "Over {{item}}.",
       "notOver": "Not over a drop target.",
@@ -106,34 +105,34 @@
       "returned": "{{item}} was returned to its original position.",
       "cancelled": "Moving {{item}} was cancelled."
     },
-    "menu": {
-      "moveEarlier": "Move earlier",
-      "moveLater": "Move later",
-      "createFolder": "Create folder",
-      "withApp": "With {{app}}",
-      "createSelectedFolder": "Create selected folder",
-      "addToFolder": "Add to {{folder}}",
-      "renameFolder": "Rename folder",
-      "ungroup": "Ungroup apps"
-    },
     "folder": {
+      "create": "Create folder",
       "rename": "Rename folder",
       "renameLabel": "Rename {{folder}}",
       "name": "Folder name",
-      "moveOut": "Move out of folder",
-      "moveOutLabel": "Move {{app}} out of {{folder}}"
+      "ungroup": "Ungroup folder",
+      "ungroupLabel": "Ungroup {{folder}}"
     }
   },
   "editor": {
-    "title": "Edit home",
-    "subtitle": "Personal view",
+    "editing": "Editing",
     "closeLabel": "Close home editor",
-    "widgetsLabel": "Home widgets",
-    "moveUp": "Move up",
-    "moveDown": "Move down",
-    "moveUpLabel": "Move {{widget}} up",
-    "moveDownLabel": "Move {{widget}} down",
-    "showLabel": "Show {{widget}}",
+    "toolbarLabel": "Home editing tools",
+    "addItems": "Add items",
+    "reset": "Reset to default layout",
+    "cancel": "Cancel editing",
+    "done": "Finish editing",
+    "galleryTitle": "Add to home",
+    "gallerySubtitle": "Restore hidden apps and information widgets to your home.",
+    "galleryTabs": "Types of home items to add",
+    "appsTab": "Apps {{count}}",
+    "widgetsTab": "Widgets {{count}}",
+    "nothingHidden": "There is nothing to add",
+    "nothingHiddenDescription": "Every available item is already visible on your home.",
+    "add": "Add",
+    "dragWidgetLabel": "Move {{widget}} widget",
+    "removeWidget": "Remove from home",
+    "removeWidgetLabel": "Remove {{widget}} widget from home",
     "governed": "Governed content"
   },
   "widgets": {

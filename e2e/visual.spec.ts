@@ -460,7 +460,7 @@ test('administration access grid visual baseline', async ({ page }, testInfo) =>
     reduceMotion: true,
   });
 
-  await page.goto('/admin/people/access');
+  await page.goto('/admin/identity/access');
   await expect(page.getByRole('heading', { name: 'Identity access', level: 1 })).toBeVisible();
 
   if (testInfo.project.name === 'mobile') {

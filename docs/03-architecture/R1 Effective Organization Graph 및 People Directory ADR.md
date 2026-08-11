@@ -1,6 +1,6 @@
 # R1 Effective Organization Graph 및 People Directory ADR
 
-> 상태: Accepted and Implemented Local Baseline v2.0
+> 상태: Accepted and Implemented Local Baseline v3.0
 >
 > 기준일: 2026-08-11
 >
@@ -9,8 +9,18 @@
 ## 1. 결정
 
 DWP의 조직도는 Auth의 접근 제어용 조직·그룹을 시각화하지 않는다. People bounded
-context가 소유하는 유효일 기준 Workforce Projection을 원본으로 사용하며, 동일 API를
-조직도와 구성원 디렉터리가 공유한다.
+context가 소유하는 유효일 기준 Workforce Projection을 원본으로 사용하되, 제품 표면과
+API는 데이터 목적에 따라 분리한다.
+
+| 제품 표면              | 사용자와 목적                        | 데이터 노출                              | 소유 메뉴                                                |
+| ---------------------- | ------------------------------------ | ---------------------------------------- | -------------------------------------------------------- |
+| `People`               | 전 구성원의 동료 검색·보고 체계 탐색 | 업무용 공개 필드, 활성 구성원, 읽기 전용 | 구성원 디렉터리, 조직 탐색                               |
+| `Workforce Management` | HR 운영자·조직 설계자                | Worker·발령·직급·Position·비용·Scenario  | Overview, 구성원, 발령, 조직 설계, 기준정보, 데이터 운영 |
+| `Control Center`       | Tenant IAM·플랫폼 관리자             | 계정·Role·Group·SCIM·Navigation 정책     | Identity & Access, Platform Setup, Governance            |
+
+Tenant Admin 권한은 HR 데이터 권한을 자동 포함하지 않는다. Workforce는 `ADMIN`,
+`HR_ADMIN`, `PEOPLE_ADMIN`만 진입하며 `PEOPLE_ADMIN`은 읽기 전용이다. Provider 지원은
+승인된 `WORKFORCE_READ` 세션에서만 읽기 접근하고 제한 필드는 계속 마스킹한다.
 
 - 조직 계층은 `ppl_organization_relationships`의 유효기간 관계로 표현한다.
 - 직급은 `ppl_job_grades`, 직무는 `ppl_job_profiles`, 자리와 공석은 `ppl_positions`가
@@ -27,6 +37,9 @@ context가 소유하는 유효일 기준 Workforce Projection을 원본으로 �
   레이아웃 알고리즘을 업무 코드에서 직접 구현하지 않는다.
 - `dwp_auth`의 역할은 이메일 정규화 키로 화면에서 읽기 결합한다. People DB에 RBAC
   테이블을 복제하거나 Database 간 FK를 만들지 않는다.
+- 메뉴마다 물리 DB를 생성하지 않는다. 서비스 트랜잭션 경계인 `dwp_people` 안에서
+  `ppl_`은 Workforce Projection, `int_`는 HRIS 연계, `sys_`는 감사·이벤트를 소유한다.
+  Auth는 `dwp_auth`, 앱·Navigation Registry는 `dwp_platform`이 소유한다.
 
 ## 2. 제품 설계 원칙
 
@@ -85,9 +98,20 @@ erDiagram
 서비스 계층에서 순환을 방어한다. 유효일 조회는 시작일 포함·종료일 포함이며 같은 날짜의
 복수 발령은 `effective_sequence`와 최신 ID 순으로 결정한다.
 
-## 4. API 계약
+## 4. 제품별 API 계약
 
-`GET /api/people/v1/org-chart`
+| Surface   | API                                                      | 계약                                            |
+| --------- | -------------------------------------------------------- | ----------------------------------------------- |
+| People    | `GET /api/people/v1/people`                              | 활성 구성원 검색, Worker ID·직급·발령 이력 제외 |
+| People    | `GET /api/people/v1/org-chart`                           | 사람·보고 관계 중심의 읽기 전용 Directory Graph |
+| Workforce | `GET /api/people/v1/workforce/people`                    | HR 운영용 Worker·직급·발령 Projection           |
+| Workforce | `GET /api/people/v1/workforce/organization/chart`        | 조직·사람·Position·공석·비용 Effective Graph    |
+| Workforce | `GET /api/people/v1/workforce/organization/intelligence` | Health·Change·Quality 비교                      |
+| Workforce | `/api/people/v1/workforce/organization/scenarios/**`     | 조직 개편 설계·검증·승인·게시                   |
+| Workforce | `/api/people/v1/workforce/reference-data/**`             | 고객 소유 인력 기준정보 조회·변경               |
+| Workforce | `/api/people/v1/workforce/data-operations/hris/**`       | HRIS Connector·Mapping·동기화 운영              |
+
+조직 API의 공통 Query는 다음과 같다.
 
 | Query                | 기본값       | 의미                            |
 | -------------------- | ------------ | ------------------------------- |
@@ -95,10 +119,10 @@ erDiagram
 | `rootOrganizationId` | Company Root | 선택 조직을 Root로 하는 Subtree |
 | `depth`              | 6            | 1~12 범위의 최대 탐색 깊이      |
 
-응답은 `company`, `metrics`, `organizations`, `people`, `relationships`, `positions`,
-`positionRelationships`, `openPositions`로 구성한다. Worker Number는 HR Admin 계열 역할 외
-사용자에게 마스킹한다.
-People Directory API도 조직·직급·관리자·근무지·직속 인원 필드를 같은 기준일로 반환한다.
+Workforce 응답은 `company`, `metrics`, `organizations`, `people`, `relationships`,
+`positions`, `positionRelationships`, `openPositions`로 구성한다. 일반 People 응답은
+Position·공석·비용·Scenario와 Worker Number·직급·발령 Key를 서버에서 제거한다. UI에서
+숨기는 방식은 보안 경계로 인정하지 않는다.
 
 Scenario API는 생성·계보 기반 복제·변경 추가/삭제·검증·제출·승인/거절·게시를 별도 명령으로 제공한다.
 제출, 승인, 게시 시마다 Cycle, Root, Version, Baseline Fingerprint와 Blocking Issue를 다시
@@ -120,6 +144,11 @@ Interactive organization/reporting canvas              | Selection detail
 노드 크기는 조직 `276x156`, 사람 `252x116`으로 고정한다. Dagre rank 간격과 node 간격을
 방향별로 고정해 Hover·상태·텍스트가 레이아웃을 밀지 않게 한다. 긴 이름은 노드에서 한 줄
 생략하고 상세 패널에서 전체를 제공한다. Zoom·Pan·Fit View·Mini Map을 기본 제공한다.
+
+Frontend는 `features/people`, `features/workforce`, `features/admin`,
+`features/integrations`로 화면 책임을 분리한다. Backend는 `directory`, `organization`,
+`workforce`, `integration`, `security` package로 분리한다. HRIS Adapter는 연계 bounded
+context에 두되 Workforce 메뉴만 공개 진입점을 가진다.
 
 ## 6. SKAX 합성 Baseline
 
@@ -159,8 +188,9 @@ Interactive organization/reporting canvas              | Selection detail
 2. 조직 순환, 고아 조직, 겹치는 유효기간, 관리자 부재 Reconciliation
 3. 대규모 Tenant의 Server-side Graph Slice, Search Index와 응답 Cache
 4. 역할별 Profile Field Masking과 Export Audit
-5. 1만 명 이상 조직의 Layout Worker 또는 ELK 전환 성능 검증
-6. Tablet·Mobile 탐색, Keyboard, Screen Reader와 Reduced Motion 회귀 검증
+5. SAP Target Population 수준의 조직 범위형 조회·Field Policy·Export 권한 강제
+6. 1만 명 이상 조직의 Layout Worker 또는 ELK 전환 성능 검증
+7. Tablet·Mobile 탐색, Keyboard, Screen Reader와 Reduced Motion 회귀 검증
 
 현재 Baseline은 유효일 조직·Position Graph, 네 가지 View, 조직 건강·데이터 품질·기간
 비교, Scenario Preview·대안 복제/비교·독립 승인·게시와 반응형 탐색을 구현한다. 10k 이상 Graph의 가상화,
@@ -171,8 +201,9 @@ HRIS 충돌 해소 Workbench와 고객별 정책 임계값은 Delivery 성능·�
 - [Workday Organization Management](https://www.workday.com/content/dam/web/en-us/documents/datasheets/organization-management-in-workday-datasheet-en-us.pdf)
 - [Workday Superior and Subordinate Organizations](https://doc.workday.com/admin-guide/en-us/manage-workday/organizations/manage-organization-concepts/concept--superior-and-subordinate-organizations.html)
 - [Workday Org Design and Scenario Modeling](https://doc.workday.com/adaptive-planning/en-us/what-s-new/releases/2026r1-release-notes/2026r1-planning-for-hcm-and-financials/org-design-and-scenario-modeling.html)
-- [Microsoft Org Explorer](https://support.microsoft.com/en-US/People-Skills/org-explorer)
-- [SAP Latest Org Chart](https://help.sap.com/docs/successfactors-platform/managing-sap-successfactors-user-experience/latest-org-chart?locale=en-US)
+- [Microsoft Org Explorer](https://learn.microsoft.com/en-us/viva/people-in-viva/introducing-org-explorer)
+- [SAP Latest Org Chart](https://help.sap.com/docs/successfactors-platform/configuring-and-using-organization-chart/latest-org-chart)
+- [SAP Org Chart Permissions](https://help.sap.com/docs/successfactors-platform/configuring-and-using-organization-chart/permissions-for-configuring-and-using-org-chart)
 - [SAP Position Organization Chart](https://help.sap.com/docs/SAP_SUCCESSFACTORS_RELEASE_INFORMATION/8e0d540f96474717bbf18df51e54e522/6b91cd3f8e3f494591f32089c12f1d11.html)
 - [Oracle Workforce Modeling](https://docs.oracle.com/en/cloud/saas/human-resources/fawhr/workforce-modeling.html)
 - [Oracle Workforce Modeling Synchronization](https://docs.oracle.com/en/cloud/saas/human-resources/fawhr/how-synchronization-works-in-workforce-modeling.html)

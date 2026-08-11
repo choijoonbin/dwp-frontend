@@ -15,6 +15,7 @@ export * from './api/home-preference-api';
 export * from './api/personal-preference-api';
 export * from './api/announcement-api';
 export * from './api/people-admin-api';
+export * from './api/workforce-api';
 export * from './api/access-governance-api';
 export * from './api/provisioning-admin-api';
 export * from './api/navigation-admin-api';

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bell, ChevronDown, Clock3, Maximize2, Minimize2, Search, ShieldCheck } from 'lucide-react';
-import { GlyphSurface } from '@dwp-frontend/design-system';
+import { GlyphSurface } from '@dwp-frontend/design-system/components/glyph-surface';
 import { useAuth, usePermissions, WORKSPACE_NAME } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';

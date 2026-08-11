@@ -34,6 +34,13 @@ export function resolveHomeBackgroundUrl(experience?: HomeExperience | null): st
     : DEFAULT_HOME_BACKGROUND_URL;
 }
 
+export function resolveAdminHomeBackgroundUrl(experience?: HomeExperience | null): string {
+  return experience?.backgroundUrl
+    ? API_URL +
+        experience.backgroundUrl.replace('/v1/home-experience/', '/v1/admin/home-experience/')
+    : DEFAULT_HOME_BACKGROUND_URL;
+}
+
 export async function getHomeExperience(): Promise<HomeExperience> {
   const response = await axiosInstance.get<ApiResponse<HomeExperience>>(
     '/api/platform/v1/home-experience'

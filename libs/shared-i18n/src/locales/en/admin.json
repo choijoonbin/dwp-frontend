@@ -12,7 +12,7 @@
   "navigation": {
     "groups": {
       "experience": "Experience",
-      "people": "People & access",
+      "identity": "Identity & access",
       "platform": "Platform setup",
       "governance": "Governance"
     },
@@ -42,20 +42,10 @@
         "title": "Role governance",
         "description": "Define roles, resource permissions, group assignments, and effective access."
       },
-      "people-directory": {
-        "label": "People",
-        "title": "People directory",
-        "description": "Review the tenant-safe workforce projection and effective-dated assignments."
-      },
-      "directory": {
-        "label": "Organization chart",
-        "title": "Organization chart",
-        "description": "Explore effective-dated organization, reporting, matrix, and open-position structures."
-      },
       "provisioning": {
-        "label": "Provisioning",
-        "title": "Provisioning & HRIS",
-        "description": "Control SCIM credentials, HR source mappings, and ingestion runs."
+        "label": "Identity provisioning",
+        "title": "Identity provisioning",
+        "description": "Manage SCIM credentials and automated account lifecycle provisioning."
       },
       "reference-data": {
         "label": "Reference data",
@@ -138,6 +128,7 @@
     },
     "status": {
       "ACTIVE": "Active",
+      "INVITED": "Invited",
       "INACTIVE": "Inactive",
       "DRAFT": "Draft",
       "PUBLISHED": "Published",
@@ -259,6 +250,7 @@
       "pinned": "Pinned",
       "starts": "Starts",
       "ends": "Ends",
+      "invalidScheduleWindow": "The end time cannot be earlier than the start time.",
       "actionLabel": "Action label",
       "actionUrl": "Action URL"
     },
@@ -342,7 +334,12 @@
     "metadata": {
       "owner": "Owning service",
       "validation": "Validation source",
-      "source": "Authoritative source"
+      "source": "Authoritative source",
+      "visibility": "Runtime exposure"
+    },
+    "visibility": {
+      "ADMIN_ONLY": "Administrator only",
+      "RUNTIME": "Runtime readable"
     },
     "valuesTitle": "Canonical values",
     "valuesHelp": "Runtime consumers use stable codes while the interface resolves locale-aware labels.",
@@ -647,7 +644,12 @@
     "loading": "Loading audit evidence",
     "loadError": "Audit evidence could not be loaded.",
     "updated": "Updated {{time}}",
-    "windows": { "H24": "24h", "D7": "7d", "D30": "30d", "D90": "90d" },
+    "windows": {
+      "H24": "24h",
+      "D7": "7d",
+      "D30": "30d",
+      "D90": "90d"
+    },
     "filters": {
       "window": "Time window",
       "category": "Category",
@@ -765,7 +767,12 @@
       "service": "Source service",
       "status": "Delivery",
       "events24h": "24h events",
-      "states": { "HEALTHY": "Healthy", "DEGRADED": "Degraded", "STALE": "Stale", "ERROR": "Error" }
+      "states": {
+        "HEALTHY": "Healthy",
+        "DEGRADED": "Degraded",
+        "STALE": "Stale",
+        "ERROR": "Error"
+      }
     },
     "events": {
       "label": "Immutable audit evidence events",
@@ -803,7 +810,10 @@
       "scope": "{{window}} / up to {{count}} matching events",
       "reason": "Business reason",
       "download": "Create and download",
-      "formats": { "CSV": "CSV", "JSONL": "JSONL" },
+      "formats": {
+        "CSV": "CSV",
+        "JSONL": "JSONL"
+      },
       "completed": "Exported {{count}} evidence rows.",
       "failed": "Audit export could not be completed."
     },
@@ -1102,514 +1112,14 @@
       }
     }
   },
-  "people": {
-    "title": "People directory",
-    "loading": "Loading people projection",
-    "search": "Search people",
-    "asOf": "As of {{date}}",
-    "resultCount": "{{count}} people",
-    "notAvailable": "Not available",
-    "masked": "Masked",
-    "filters": {
-      "status": "Worker status",
-      "organization": "Organization",
-      "grade": "Job grade",
-      "location": "Location",
-      "role": "System role",
-      "asOf": "Effective date",
-      "all": "All",
-      "reset": "Reset filters ({{count}})"
-    },
-    "status": {
-      "ALL": "All statuses",
-      "ACTIVE": "Active",
-      "LEAVE": "On leave",
-      "PENDING": "Pending start",
-      "TERMINATED": "Terminated"
-    },
-    "columns": {
-      "person": "Person",
-      "organization": "Organization",
-      "title": "Business title",
-      "position": "Position / grade",
-      "manager": "Reports to",
-      "roles": "System roles",
-      "status": "Status",
-      "workerNumber": "Worker number",
-      "location": "Location"
-    },
-    "pagination": { "previous": "Previous", "next": "Next" },
-    "detail": {
-      "title": "Workforce profile",
-      "loading": "Loading workforce profile",
-      "close": "Close workforce profile",
-      "employer": "Legal employer",
-      "hireDate": "Original hire date",
-      "manager": "Reports to",
-      "jobGrade": "Job grade",
-      "classification": "Data classification",
-      "roles": "System roles",
-      "noRoles": "No system role assigned",
-      "directReports": "{{count}} direct reports",
-      "noDirectReports": "No direct reports",
-      "assignments": "Effective assignments",
-      "primary": "Primary",
-      "current": "Current"
-    }
-  },
-  "orgChart": {
-    "loading": "Loading organization chart",
-    "search": "Search organizations, people, or titles",
-    "canvasLabel": "SKAX organization chart workspace",
-    "asOf": "As of {{date}}",
-    "view": {
-      "label": "Organization chart view",
-      "organizations": "Organization",
-      "people": "Reporting lines",
-      "positions": "Position hierarchy",
-      "insights": "Organization insights"
-    },
-    "filters": { "asOf": "Effective date", "compareTo": "Compare with" },
-    "metrics": {
-      "summaryLabel": "Organization key metrics",
-      "headcount": "Headcount",
-      "organizations": "Active organizations",
-      "managers": "Leaders",
-      "openPositions": "Open positions",
-      "locations": "Locations",
-      "plannedFte": "Planned FTE",
-      "workforceCost": "Annual workforce cost"
-    },
-    "node": {
-      "headcount": "{{count}} people",
-      "openPositions": "{{count}} open",
-      "directReports": "{{count}} direct",
-      "subordinatePositions": "{{count}} subordinate positions"
-    },
-    "actions": {
-      "matrix": "Matrix relationships",
-      "changeDirection": "Change layout direction",
-      "collapse": "Collapse descendants",
-      "expand": "Expand descendants",
-      "collapseAll": "Collapse all",
-      "expandAll": "Expand all",
-      "closeDetails": "Close details",
-      "focusOrganization": "Focus this organization",
-      "showCompany": "Show all SKAX",
-      "scenarios": "Change scenarios"
-    },
-    "legend": {
-      "supervisory": "Primary reporting",
-      "matrix": "Matrix",
-      "scenarioChange": "Scenario change"
-    },
-    "lenses": {
-      "label": "Analysis lens",
-      "structure": "Base structure",
-      "health": "Organization health",
-      "headcount": "Headcount scale",
-      "span": "Manager span",
-      "vacancy": "Vacancy risk",
-      "changes": "Scenario changes"
-    },
-    "lensValues": {
-      "headcount": "{{count}} people",
-      "span": "Average span {{value}}",
-      "vacancy": "{{count}} vacancies",
-      "changed": "Planned change",
-      "unchanged": "No change"
-    },
-    "health": { "HEALTHY": "Healthy", "ATTENTION": "Attention", "CRITICAL": "Critical" },
-    "details": {
-      "panelLabel": "Organization chart details",
-      "profile": "Workforce profile",
-      "organization": "Organization",
-      "headcount": "Headcount",
-      "headcountValue": "{{total}} total / {{direct}} direct",
-      "costCenter": "Cost center",
-      "openPositions": "Open positions",
-      "leader": "Organization leader",
-      "directMembers": "{{count}} direct members",
-      "email": "Work email",
-      "grade": "Job grade",
-      "location": "Location",
-      "workerType": "Worker type",
-      "status": "Worker status",
-      "accessRoles": "System roles",
-      "noAccessRole": "No system role assigned",
-      "manager": "Reports to",
-      "directReports": "{{count}} direct reports",
-      "layerAndSpan": "Layer and manager span",
-      "layerAndSpanValue": "Layer {{layer}} / {{span}} average span",
-      "health": "Organization health",
-      "position": "Position",
-      "positionProfile": "Position profile",
-      "positionKey": "Position code",
-      "positionType": "Position type",
-      "jobProfile": "Job profile",
-      "budgetedFte": "Budgeted FTE",
-      "annualCost": "Annual cost",
-      "availabilityDate": "Available from",
-      "incumbents": "{{count}} incumbents",
-      "reportsToPosition": "Reports-to position",
-      "subordinatePositions": "{{count}} subordinate positions"
-    },
-    "intelligence": {
-      "loading": "Analyzing organization operations",
-      "export": "Export CSV",
-      "empty": "No items were found for this period.",
-      "noSignals": "No risk signal detected",
-      "tabs": {
-        "label": "Organization insight view",
-        "health": "Organization health",
-        "changes": "Period changes",
-        "quality": "Data quality"
-      },
-      "metrics": {
-        "health": "Organization health",
-        "quality": "Data quality score",
-        "atRisk": "Organizations at risk",
-        "critical": "Critical organizations",
-        "layers": "Maximum layers",
-        "managerSpan": "Average manager span",
-        "headcountDelta": "Headcount delta",
-        "fteDelta": "Planned FTE delta",
-        "costDelta": "Annual cost delta",
-        "layersDelta": "Layer delta",
-        "healthDelta": "Health delta",
-        "totalChanges": "Detected changes"
-      },
-      "decision": {
-        "healthMapTitle": "Organization portfolio risk map",
-        "healthMapHelp": "Compare manager span, organization scale, and health in one decision surface.",
-        "higherRisk": "Higher risk",
-        "largerSpan": "Larger manager span",
-        "mapTooltip": "{{organization}} · health {{score}} · span {{span}} · people {{headcount}}",
-        "priorityTitle": "Priority action queue",
-        "priorityHelp": "Organizations to review first, ranked by risk and impact scale.",
-        "portfolioDistribution": "Portfolio distribution",
-        "portfolioHelp": "{{count}} organizations analyzed",
-        "precisionTitle": "Organization precision metrics",
-        "precisionHelp": "Select an organization to focus the graph and its supporting evidence.",
-        "changesTitle": "Period and scenario impact",
-        "changesHelp": "Review changes between baseline and proposed structures with operating impact.",
-        "qualityTitle": "Data trust remediation queue",
-        "qualityHelp": "Prioritize source data issues that reduce confidence in organization decisions."
-      },
-      "recommendations": {
-        "NARROW_SPAN": "Review layer consolidation or role scope",
-        "WIDE_SPAN": "Review management load balancing and leader capacity",
-        "EXCESS_LAYERS": "Model a shorter decision hierarchy",
-        "HIGH_CONTINGENT": "Review capability ownership and workforce mix",
-        "HIGH_VACANCY": "Prioritize critical vacancy fill or redeployment",
-        "NO_SIGNAL": "Continue monitoring within policy thresholds"
-      },
-      "qualityActions": {
-        "BROKEN_MANAGER_REFERENCE": "Connect a valid manager or reporting position",
-        "MISSING_JOB_GRADE": "Complete the HRIS grade mapping",
-        "DISCONNECTED_ORGANIZATION": "Restore the primary parent relationship",
-        "MULTIPLE_PRIMARY_PARENTS": "Normalize to one primary reporting line",
-        "ORGANIZATION_CYCLE": "Break the cycle and resynchronize source data",
-        "DISCONNECTED_POSITION": "Assign a parent position or approved root exception",
-        "DEFAULT": "Correct the source system and validate again"
-      },
-      "columns": {
-        "organization": "Organization",
-        "layer": "Layer",
-        "headcount": "Headcount",
-        "managerSpan": "Manager span",
-        "openPositions": "Open positions",
-        "contingentRatio": "Contingent ratio",
-        "score": "Health score",
-        "risk": "Status",
-        "change": "Change type",
-        "entity": "Target",
-        "before": "Before",
-        "after": "After",
-        "severity": "Severity",
-        "issue": "Quality rule",
-        "description": "Description"
-      },
-      "risks": { "HEALTHY": "Healthy", "ATTENTION": "Attention", "CRITICAL": "Critical" },
-      "severity": { "LOW": "Low", "MEDIUM": "Medium", "HIGH": "High", "CRITICAL": "Critical" },
-      "signals": {
-        "NARROW_SPAN": "Narrow manager span",
-        "WIDE_SPAN": "Wide manager span",
-        "EXCESS_LAYERS": "Excess organization layers",
-        "HIGH_CONTINGENT": "High contingent ratio",
-        "HIGH_VACANCY": "High vacancy ratio"
-      },
-      "changeTypes": {
-        "ORGANIZATION_ADDED": "Organization added",
-        "ORGANIZATION_MOVED": "Organization moved",
-        "ORGANIZATION_RENAMED": "Organization renamed",
-        "ORGANIZATION_REMOVED": "Organization closed",
-        "PERSON_JOINED_SCOPE": "Person joined scope",
-        "PERSON_MOVED": "Person moved",
-        "MANAGER_CHANGED": "Manager changed",
-        "PERSON_LEFT_SCOPE": "Person left scope",
-        "POSITION_OPENED": "Position opened",
-        "POSITION_FILLED_OR_CLOSED": "Position filled or closed"
-      },
-      "issueCodes": {
-        "BROKEN_MANAGER_REFERENCE": "Invalid manager reference",
-        "MISSING_JOB_GRADE": "Missing job grade",
-        "DISCONNECTED_ORGANIZATION": "Disconnected organization",
-        "MULTIPLE_PRIMARY_PARENTS": "Multiple primary parents",
-        "ORGANIZATION_CYCLE": "Organization cycle",
-        "DISCONNECTED_POSITION": "Disconnected position hierarchy"
-      }
-    },
-    "scenarios": {
-      "panelLabel": "Organization change scenarios",
-      "title": "Organization change scenarios",
-      "subtitle": "Validate and approve future structures before they reach operations.",
-      "list": "Scenarios",
-      "listItem": "Effective {{date}} · {{count}} changes",
-      "create": "Create scenario",
-      "preview": "Preview scenario",
-      "previewActive": "Preview active",
-      "live": "Live organization",
-      "previewSummary": "Effective {{date}} · {{count}} changes",
-      "returnLive": "Return to live organization",
-      "dragHint": "Drag an organization or position to plan a move",
-      "removeChange": "Remove planned change",
-      "createHelp": "Freeze an organization baseline and choose a future effective date.",
-      "clone": {
-        "action": "Clone as alternative",
-        "title": "Create a scenario alternative",
-        "help": "Branch the same change set and baseline into an independent draft.",
-        "source": "Branched from {{name}}",
-        "defaultName": "{{name}} alternative"
-      },
-      "compare": {
-        "title": "Compare scenario alternatives",
-        "help": "Compare execution readiness and workforce and cost outcomes on one basis.",
-        "select": "Alternative to compare",
-        "none": "No comparison",
-        "loading": "Calculating the alternative decision evidence",
-        "empty": "Select another scenario to compare two future-state outcomes side by side.",
-        "noAlternatives": "No other scenario is available. Clone this option to create an alternative.",
-        "baselineMismatch": "These scenarios use different baseline evidence. Values remain visible, but differences are not decision-comparable.",
-        "notComparable": "Not comparable",
-        "metric": "Metric",
-        "difference": "Alternative difference",
-        "metrics": {
-          "headcount": "Projected headcount",
-          "fte": "Planned FTE",
-          "cost": "Annual workforce cost",
-          "span": "Average manager span",
-          "layers": "Maximum layers",
-          "health": "Organization health",
-          "quality": "Data quality"
-        }
-      },
-      "empty": "No organization change scenario exists yet.",
-      "noDescription": "No description",
-      "noChanges": "No planned change has been added.",
-      "changes": "{{count}} planned changes",
-      "governanceNotice": "The baseline is checked for drift and authors cannot approve their own work. Only approved changes can be published for the effective date.",
-      "evidenceBound": "Decision evidence bound",
-      "legacyEvidence": "Legacy workflow without linked evidence",
-      "fields": {
-        "name": "Scenario name",
-        "description": "Purpose and impact",
-        "baselineDate": "Baseline date",
-        "effectiveDate": "Effective date",
-        "reason": "Business reason"
-      },
-      "decision": {
-        "eyebrow": "DECISION PACK",
-        "loading": "Validating scenario execution readiness",
-        "validate": "Revalidate evidence",
-        "summary": "{{blockers}} blockers · {{warnings}} review items",
-        "states": {
-          "READY": "Ready to execute",
-          "REVIEW_REQUIRED": "Human review required",
-          "BLOCKED": "Execution blocked"
-        },
-        "outcomes": { "PASS": "Pass", "WARN": "Review", "BLOCK": "Block" },
-        "metrics": {
-          "headcount": "Headcount impact",
-          "fte": "FTE impact",
-          "cost": "Annual cost impact",
-          "layers": "Layer impact",
-          "health": "Health impact"
-        },
-        "checks": {
-          "BASELINE_CURRENT": {
-            "title": "Baseline trust",
-            "description": "Fingerprint the system of record at {{baselineDate}} for drift."
-          },
-          "CHANGE_SET_VALID": {
-            "title": "Change-set validation",
-            "description": "{{changeCount}} changes · {{blockedCount}} blocked · {{warningCount}} warnings"
-          },
-          "CHANGE_IMPACT": {
-            "title": "Change blast radius",
-            "description": "{{impactedHeadcount}} people · {{impactedOrganizationCount}} organizations · {{impactedPositionCount}} positions · {{criticalPositionCount}} critical positions"
-          },
-          "HIERARCHY_INTEGRITY": {
-            "title": "Hierarchy integrity",
-            "description": "{{orphanOrganizationCount}} orphan organizations · {{positionRootCount}} position roots"
-          },
-          "DATA_QUALITY": {
-            "title": "Workforce data quality",
-            "description": "Score {{score}} · {{missingManagerCount}} manager gaps · {{missingGradeCount}} grade gaps"
-          },
-          "DESIGN_POLICY": {
-            "title": "Organization design principles",
-            "description": "Health {{healthScore}} · {{maximumLayers}} layers · {{wideSpanManagerCount}} wide spans"
-          },
-          "CRITICAL_VACANCY": {
-            "title": "Critical vacancy exposure",
-            "description": "Critical vacancies {{baselineCriticalVacancies}} → {{proposedCriticalVacancies}} · delta {{delta}}"
-          },
-          "FINANCIAL_COVERAGE": {
-            "title": "Cost data coverage",
-            "description": "Portfolio coverage {{costCoveragePercent}}% · {{unpricedPositionCount}} unpriced · changed positions {{pricedPositionCount}}/{{changedPositionCount}} · {{currency}}"
-          },
-          "APPROVAL_GATE": {
-            "title": "Independent approval gate",
-            "description": "Current approval state: {{approvalState}}"
-          },
-          "EFFECTIVE_DATE": {
-            "title": "Effective-date validity",
-            "description": "Planned effective date: {{effectiveDate}}"
-          }
-        },
-        "triggers": {
-          "MANUAL": "Manual check",
-          "SUBMIT": "Review request",
-          "APPROVE": "Approval",
-          "REJECT": "Rejection",
-          "PUBLISH": "Publication"
-        },
-        "history": {
-          "title": "Validation evidence history",
-          "empty": "No saved validation evidence yet. Run validation to create an immutable record."
-        },
-        "messages": { "validated": "Decision evidence and readiness history were recorded." }
-      },
-      "move": {
-        "title": "Plan a structural change",
-        "kindLabel": "Change target type",
-        "organizationKind": "Organization",
-        "positionKind": "Move position",
-        "organization": "Organization to move",
-        "newParent": "New parent organization",
-        "position": "Position to move",
-        "newParentPosition": "New parent position",
-        "add": "Add change",
-        "summary": "New parent organization: {{parent}}",
-        "positionSummary": "New parent position: {{parent}}",
-        "positionCreateSummary": "Create position · {{fte}} FTE",
-        "positionCloseSummary": "Close position · {{fte}} FTE"
-      },
-      "positionPlan": {
-        "actionLabel": "Position planning action",
-        "move": "Move",
-        "create": "Create",
-        "close": "Close",
-        "positionKey": "Position code",
-        "title": "Position title",
-        "organization": "Organization",
-        "reportsTo": "Reports to position",
-        "positionType": "Position type",
-        "criticality": "Criticality",
-        "fte": "Budgeted FTE",
-        "annualCost": "Annual cost",
-        "currency": "Currency",
-        "availabilityDate": "Available from",
-        "addCreate": "Add position plan",
-        "positionToClose": "Vacant position to close",
-        "addClose": "Add closure plan",
-        "closeGuard": "Only positions without incumbents or subordinate positions can be closed. Resolve workforce and reporting relationships first.",
-        "noClosablePositions": "No vacant position can be closed safely right now."
-      },
-      "submit": {
-        "title": "Request approval",
-        "help": "Record the purpose and expected impact, then request an independent review.",
-        "action": "Request review"
-      },
-      "approval": {
-        "title": "Independent approval",
-        "help": "Review the baseline and proposed changes before approving or rejecting.",
-        "approve": "Approve",
-        "reject": "Reject",
-        "separation": "Authors cannot approve their own scenario. Review by another authorized administrator is required."
-      },
-      "publish": {
-        "title": "Publish changes",
-        "help": "Register approved relationships as effective-dated history for {{date}}.",
-        "action": "Schedule effective change"
-      },
-      "states": {
-        "DRAFT": "Draft",
-        "IN_REVIEW": "In review",
-        "APPROVED": "Approved",
-        "REJECTED": "Rejected",
-        "PUBLISHED": "Published",
-        "STALE": "Rebase required",
-        "CANCELLED": "Cancelled"
-      },
-      "validation": { "VALID": "Validated", "WARNING": "Review", "BLOCKED": "Blocked" },
-      "dragConfirm": {
-        "title": "Confirm structural move",
-        "message": "Add a planned move of {{organization}} under {{parent}} to this scenario.",
-        "positionMessage": "Add a planned move of position {{position}} under {{parent}} to this scenario.",
-        "action": "Add planned move"
-      },
-      "messages": {
-        "created": "Organization change scenario created.",
-        "cloned": "A new scenario alternative was created with its change set and lineage intact.",
-        "moveAdded": "Organization move added.",
-        "positionMoveAdded": "Position move added.",
-        "positionCreated": "New position plan added.",
-        "positionClosed": "Position closure plan added.",
-        "changeRemoved": "Planned change removed.",
-        "submitted": "Independent review requested.",
-        "approved": "Scenario approved.",
-        "rejected": "Scenario rejected.",
-        "published": "Approved changes published as effective-dated history."
-      }
-    },
-    "organizationTypes": {
-      "COMPANY": "Company",
-      "BUSINESS_UNIT": "Business unit",
-      "DIVISION": "Division",
-      "DEPARTMENT": "Department",
-      "SUPERVISORY": "Team"
-    },
-    "positionStatus": {
-      "FILLED": "Filled",
-      "OPEN": "Open",
-      "FROZEN": "Frozen",
-      "CLOSED": "Closed",
-      "PLANNED": "Planned"
-    },
-    "positionTypes": {
-      "REGULAR": "Regular",
-      "SHARED": "Shared",
-      "ASSISTANT": "Assistant",
-      "TEMPORARY": "Temporary"
-    },
-    "criticality": {
-      "LOW": "Low",
-      "MEDIUM": "Medium",
-      "STANDARD": "Standard",
-      "HIGH": "High",
-      "CRITICAL": "Critical"
-    },
-    "workerTypes": {
-      "EMPLOYEE": "Employee",
-      "CONTINGENT": "Contingent worker"
-    }
-  },
   "provisioning": {
     "notAvailable": "Not available",
     "never": "Never used",
-    "tabs": { "label": "Provisioning views", "scim": "SCIM 2.0", "hris": "HRIS connectors" },
+    "tabs": {
+      "label": "Provisioning views",
+      "scim": "SCIM 2.0",
+      "hris": "HRIS connectors"
+    },
     "states": {
       "ACTIVE": "Active",
       "SUSPENDED": "Suspended",
@@ -1657,56 +1167,6 @@
         "rotated": "SCIM secret rotated.",
         "lifecycle": "SCIM lifecycle changed."
       }
-    },
-    "hris": {
-      "title": "HRIS ingestion control",
-      "loading": "Loading HRIS controls",
-      "synthetic": "Synthetic fixture",
-      "sources": "Source systems",
-      "connectors": "Connector instances",
-      "mappings": "Mapping profiles",
-      "runs": "HRIS synchronization runs",
-      "columns": {
-        "started": "Started",
-        "source": "Source",
-        "mode": "Mode",
-        "state": "State",
-        "read": "Read",
-        "created": "Created",
-        "updated": "Updated",
-        "rejected": "Rejected",
-        "watermark": "Committed watermark"
-      },
-      "actions": {
-        "newConnector": "New connector",
-        "importSample": "Run synthetic Workday import",
-        "check": "Validate configuration",
-        "suspend": "Suspend",
-        "activate": "Activate"
-      },
-      "create": {
-        "title": "Register HRIS connector",
-        "secretNotice": "Enter a secret-manager reference only. DWP never stores a raw provider credential in this control record.",
-        "sourceKey": "Source key",
-        "sourceType": "Source type",
-        "sourceName": "Source name",
-        "connectorKey": "Connector key",
-        "connectorType": "Adapter type",
-        "endpoint": "HTTPS endpoint",
-        "httpsOnly": "HTTPS only; embedded credentials are rejected",
-        "fileManaged": "File transport is configured by the ingestion runtime",
-        "authMode": "Authentication mode",
-        "credentialReference": "Secret reference",
-        "credentialReferencePlaceholder": "vault://tenant/hris/workday",
-        "schedule": "Schedule expression"
-      },
-      "toasts": {
-        "connectorCreated": "HRIS connector registered as draft.",
-        "checked": "Connector configuration is valid; external connectivity remains gated.",
-        "lifecycle": "HRIS connector lifecycle changed.",
-        "imported": "Imported {{count}} synthetic workers.",
-        "replayed": "The idempotent sample import was replayed."
-      }
     }
   },
   "roleGovernance": {
@@ -1724,6 +1184,60 @@
     "noExpiry": "No expiry",
     "direct": "Direct assignment",
     "tenantWide": "Tenant wide",
+    "roleTypes": {
+      "SYSTEM": "System",
+      "CUSTOM": "Custom"
+    },
+    "systemRoles": {
+      "ADMIN": {
+        "name": "Administrator",
+        "description": "Provides foundational administration across the platform."
+      },
+      "PLATFORM_ADMIN": {
+        "name": "Platform administrator",
+        "description": "Manages tenant platform configuration and shared services."
+      },
+      "TENANT_ADMIN": {
+        "name": "Tenant administrator",
+        "description": "Manages users, policies, and operational settings for a customer tenant."
+      },
+      "WORKSPACE_MEMBER": {
+        "name": "Workspace member",
+        "description": "Non-privileged baseline role for authenticated workforce members."
+      },
+      "HR_ADMIN": {
+        "name": "HR administrator",
+        "description": "Manages workforce data and organization information."
+      },
+      "PEOPLE_ADMIN": {
+        "name": "People administrator",
+        "description": "Manages the people directory and people-service operations."
+      },
+      "AUDITOR": {
+        "name": "Audit investigator",
+        "description": "Reads, investigates, and exports tenant audit evidence."
+      },
+      "AUDIT_ADMIN": {
+        "name": "Audit administrator",
+        "description": "Manages audit evidence, policy, integrity, and integrations."
+      },
+      "PROVIDER_ADMIN": {
+        "name": "Provider administrator",
+        "description": "Operates the isolated provider control plane."
+      },
+      "PROVIDER_OPERATOR": {
+        "name": "Provider operator",
+        "description": "Performs day-to-day operations across the provider estate."
+      },
+      "PROVIDER_SUPPORT": {
+        "name": "Provider support",
+        "description": "Performs limited customer support operations for an approved period."
+      },
+      "PROVIDER_AUDITOR": {
+        "name": "Provider auditor",
+        "description": "Reviews provider control-plane audit information with read-only access."
+      }
+    },
     "tabs": {
       "label": "Role governance views",
       "roles": "Roles & resources",
@@ -1764,9 +1278,20 @@
       "justification": "Justification",
       "user": "User"
     },
-    "effects": { "NONE": "None", "ALLOW": "Allow", "DENY": "Deny" },
-    "assignmentTypes": { "ACTIVE": "Active", "ELIGIBLE": "Eligible" },
-    "scopes": { "TENANT": "Tenant", "ORG_UNIT": "Organization", "RESOURCE": "Resource" },
+    "effects": {
+      "NONE": "None",
+      "ALLOW": "Allow",
+      "DENY": "Deny"
+    },
+    "assignmentTypes": {
+      "ACTIVE": "Active",
+      "ELIGIBLE": "Eligible"
+    },
+    "scopes": {
+      "TENANT": "Tenant",
+      "ORG_UNIT": "Organization",
+      "RESOURCE": "Resource"
+    },
     "actions": {
       "permissions": "Edit permissions",
       "savePermissions": "Save permissions",
@@ -1775,14 +1300,21 @@
       "newAssignment": "New group assignment",
       "revoke": "Revoke assignment"
     },
-    "roleDialog": { "create": "New governed role", "edit": "Edit governed role" },
-    "resourceDialog": { "title": "Register protected resource" },
+    "roleDialog": {
+      "create": "New governed role",
+      "edit": "Edit governed role"
+    },
+    "resourceDialog": {
+      "title": "Register protected resource"
+    },
     "permissionDialog": {
       "title": "Permissions for {{role}}",
       "description": "Choose an explicit allow or deny for each protected operation. Deny wins during effective-access evaluation.",
       "grantLabel": "{{resource}} {{permission}} effect"
     },
-    "assignmentDialog": { "title": "Assign role to group" },
+    "assignmentDialog": {
+      "title": "Assign role to group"
+    },
     "toasts": {
       "roleCreated": "Role created.",
       "roleUpdated": "Role updated.",
@@ -1798,7 +1330,10 @@
     "empty": "No navigation items have been defined.",
     "treeLabel": "Tenant navigation tree",
     "root": "Top level",
-    "types": { "GROUP": "Group", "APP": "Application" },
+    "types": {
+      "GROUP": "Group",
+      "APP": "Application"
+    },
     "fields": {
       "key": "Navigation key",
       "type": "Item type",
@@ -1818,7 +1353,10 @@
       "description": "Description",
       "remove": "Remove locale"
     },
-    "dialog": { "create": "New navigation item", "edit": "Edit navigation item" },
+    "dialog": {
+      "create": "New navigation item",
+      "edit": "Edit navigation item"
+    },
     "actions": {
       "new": "New item",
       "expand": "Expand",
@@ -1834,5 +1372,18 @@
       "lifecycle": "Navigation lifecycle changed.",
       "reordered": "Navigation order saved."
     }
+  },
+  "supportMode": {
+    "title": "Support mode · {{tenant}}",
+    "expires": "Approved scope is available until {{value}}.",
+    "accessMode": {
+      "STANDARD": "Approved access",
+      "BREAK_GLASS": "Emergency access"
+    },
+    "backToProvider": "Back to Provider Control Plane",
+    "exit": "End support mode",
+    "exitReason": "Provider operator ended tenant support mode",
+    "exited": "Support session ended.",
+    "exitFailed": "The support session could not be ended. Try again."
   }
 }

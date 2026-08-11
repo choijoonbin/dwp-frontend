@@ -78,15 +78,99 @@ Gate로 검증한다.
 
 ## 현재 Reference API
 
+- `ActionButton`: Primary·Secondary·Quiet·Danger 의도와 Disabled·Loading 상태 계약
+- `ActionIconButton`: 필수 Accessible Name, Tooltip, 의도와 Loading 상태 계약
+- `FormField`: Supporting Text·Validation Error·Feedback 높이의 공통 Text Field 계약
+- `SelectField`: 문자열·숫자 Option과 빈 값·오류·도움말의 공통 Select 계약
+- `AutocompleteField`: 단일 Entity 선택과 검색 입력의 공통 접근성·오류 계약
+- `FormDialog`: 제목·설명·폼 제출·Busy·취소·Secondary Action의 공통 Modal Form 계약
+- `ConfirmDialog`: 일반·파괴적 확인, 초기 취소 Focus와 Busy 상태의 공통 계약
+- `EmptyState`·`ErrorState`·`LoadingState`: 안정된 높이와 Live Region을 가진 비동기 상태
 - `PageCanvas`: 운영형 Fluid Canvas와 집중형 Bounded Canvas의 공통 폭 계약
-- `EnterpriseDataGrid`: MUI X Community를 DWP Density·상태·접근성 계약에 연결
+- `EnterpriseDataGrid`: Client·Server 처리 모드, Toolbar, 검색, 내보내기, 새로고침,
+  페이지 간 선택과 Bulk Action을 DWP Density·접근성 계약에 연결
+- `DwpDateTimeProvider`: 제품 Locale과 IANA Timezone의 단일 공급자
+- `DatePickerField`: Timezone 변환이 없는 `YYYY-MM-DD` 날짜 전용 값 계약
+- `DateTimePickerField`: 저장은 UTC ISO Instant, 표시는 제품 Timezone인 일시 계약
+- `DateRangePickerField`: 시작·종료 날짜와 순서·최소·최대 범위 검증 계약
 - `SourceCitationList`: 근거 이름, 유형, Version·시각과 원본 Link
 - `AgentPlanPreview`: 변경 계획, Tool, Risk, 근거와 승인·반려
 - `AgentExecutionTimeline`: Step 상태, 실패 원인, Retry와 Handoff
 
-이 API는 R0 Reference이며 제품 기능에서 복제하지 않는다. Filter·Form·Date·Tree·File,
-Streaming·Stop·Feedback은 각각 실제 Journey의 Feature Package와 수용 기준이 준비된 뒤
-같은 Public Gate로 추가한다.
+이 API는 제품 기능에서 복제하지 않는다. Filter Bar·Saved View·Tree·Entity Picker·File,
+Streaming·Stop·Feedback은 실제 Journey의 Feature Package와 수용 기준이 준비된 뒤 같은
+Public Gate로 추가한다.
+
+## Action과 Form 계약
+
+- 화면의 명령은 색상이나 `variant`를 직접 선택하지 않고 제품 의도인
+  `primary | secondary | quiet | danger`를 선택한다.
+- 비동기 명령은 별도 Spinner를 조합하지 않고 `loading`을 사용한다. Loading 중에는 중복
+  제출이 차단되고 Button 크기와 Accessible Name이 유지되어야 한다.
+- Icon-only 명령은 `ActionIconButton`의 `label`을 반드시 제공한다. Tooltip은 설명 보조이며
+  Accessible Name을 대신하지 않는다.
+- 필드의 오류는 Supporting Text보다 우선한다. 레이아웃 이동이 문제인 밀집 Form은
+  `reserveFeedbackSpace`를 사용한다.
+- 화면 Form은 도메인 상태와 검증을 소유하고, 공통 Field는 표시·상태·접근성 계약만
+  소유한다. API DTO와 Form 상태를 공통 Component에 넣지 않는다.
+
+## Dialog와 비동기 상태
+
+- Form 제출은 `FormDialog.onSubmit` 하나로 통합하고 Busy 중 닫기와 중복 제출을 막는다.
+- 삭제·회수처럼 복구 불가능한 작업만 `ConfirmDialog intent="danger"`를 사용한다. 위험
+  Dialog의 초기 Focus는 취소 명령에 둔다.
+- 로딩·빈 결과·오류를 임의 Typography 묶음으로 만들지 않는다. Page·Standard·Compact
+  크기 중 주변 Layout에 맞는 공통 상태를 사용해 Content Shift를 줄인다.
+- Error는 `role="alert"`, Loading은 `role="status"` 계약을 유지한다. 장시간 목록 로딩은
+  Skeleton, 짧은 명령 대기는 Button Loading을 사용한다.
+
+## EnterpriseDataGrid 계약
+
+- `mode="client"`: 전달된 Row 안에서 Pagination·Sort·Filter를 처리한다.
+- `mode="server"`: `rowCount`, `paginationModel`, `sortModel`, `filterModel`과 각 Change
+  Handler를 Feature가 API Query와 연결한다. Grid는 세 처리 모드를 모두 Server로
+  고정하고 페이지가 바뀌어도 선택을 보존한다.
+- 공통 도구는 `toolbar` 설정으로 Columns·Filter·Quick Search·CSV·Refresh를 제공한다.
+  화면별 Button을 Grid 위에 중복 배치하지 않는다.
+- Client 모드의 `enableCsvExport`는 메모리에 로드된 결과를 내보낸다. Server 모드는 전체
+  Filter 결과를 내보내는 백엔드 Job·Download API를 `onExport`에 연결해야 하며 기본 CSV를
+  노출하지 않는다.
+- 선택 작업은 `rowSelectionModel`을 제어하고 `selectedCountLabel`과 `bulkActions`를
+  제공한다. Exclude Selection Model은 전체 `rowCount`를 기준으로 계산한다.
+- MUI X의 기본 Checkbox가 최신 Axe에서 만드는 Indeterminate ARIA 중복은
+  `EnterpriseDataGrid` 내부 Native State Adapter가 교정한다. Feature에서 DOM Patch를
+  추가하지 않는다.
+
+## 날짜와 시간대 정책
+
+- 생일·적용일·마감일처럼 달력 날짜 자체가 의미인 값은 `YYYY-MM-DD` 문자열로 저장한다.
+  UTC 변환이나 자정 `Date` 객체 직렬화를 하지 않는다.
+- 게시 시각·실행 시각·감사 시각처럼 순간이 의미인 값은 API와 저장소에서 UTC ISO 8601로
+  저장하고 `DwpDateTimeProvider`의 명시적 IANA Timezone으로 표시한다.
+- Product Locale은 현재 `ko | en`이며 미지원 Locale은 `en`으로 정규화한다. Timezone은
+  유효한 제품 설정을 우선하고 없으면 Browser IANA Zone, 마지막으로 `UTC`를 사용한다.
+- 날짜 입력을 사용하는 지연 로드 Route 경계와 Storybook Root에는 공급자를 한 번만 둔다.
+  Feature에서 Day.js Plugin을 다시 확장하지 않으며, 로그인처럼 날짜 입력이 없는 초기
+  화면 번들에는 Picker Runtime을 포함하지 않는다.
+- 범위 값은 `{ start, end }`로 전달하고 열린 범위를 허용하되 닫힌 범위의 역전은
+  차단한다. 현재 Community Picker 두 개를 조합하므로 Pro License 의존성이 없다.
+
+## 도입과 강제 규칙
+
+`scripts/check-design-system-adoption.mjs`가 제품 Source의 직접 MUI Button·IconButton,
+TextField·Autocomplete, Dialog, DataGrid, Date Picker와 Native Date Input 사용을 TypeScript
+AST로 검사한다.
+
+- 기존 직접 사용은 `scripts/design-system-adoption-baseline.json`에 파일·Component별로만
+  한시 허용한다.
+- 신규 파일의 직접 사용과 기존 파일의 증가분은 `yarn lint`, `yarn build`와
+  `yarn design-system:check`를 실패시킨다.
+- 기존 화면 전환으로 숫자가 줄면 `yarn design-system:baseline`을 실행해 기준선을
+  낮춘다. 증가를 승인하는 용도로 기준선을 갱신하지 않는다.
+- 새 화면은 처음부터 Public Component를 사용한다. 기존 화면은 기능 수정 시 인접한
+  Action·Form·Dialog·State를 함께 전환하는 Boy Scout 방식으로 줄인다.
+- 예외가 필요하면 Public API로 흡수할 제품 의미인지 먼저 검토하고, 일회성 시각 차이는
+  Theme·`sx` 범위에서 해결한다.
 
 ## Feature 개발
 

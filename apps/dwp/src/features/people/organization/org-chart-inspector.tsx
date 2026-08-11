@@ -27,7 +27,7 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { PersonAvatar } from '../people/person-avatar';
+import { PersonAvatar } from '../directory/person-avatar';
 
 import type { LucideIcon } from 'lucide-react';
 import type { OrganizationChart } from '@dwp-frontend/shared-utils';
@@ -126,7 +126,7 @@ export function OrgChartInspector({
   onSelect: (selection: OrgChartSelection) => void;
   onFocusOrganization: (organizationId: string) => void;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const organization =
     selection.kind === 'organization'
       ? chart.organizations.find((candidate) => candidate.organizationId === selection.id)
@@ -231,7 +231,7 @@ function OrganizationDetails({
   onSelect: (selection: OrgChartSelection) => void;
   onFocusOrganization: (organizationId: string) => void;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const organization = chart.organizations.find(
     (candidate) => candidate.organizationId === organizationId
   );
@@ -366,7 +366,7 @@ function PersonDetails({
   rolesByEmail: ReadonlyMap<string, string[]>;
   onSelect: (selection: OrgChartSelection) => void;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const person = chart.people.find((candidate) => candidate.personId === personId);
   if (!person) return null;
   const organization = chart.organizations.find(
@@ -478,7 +478,7 @@ function PositionDetails({
   positionId: string;
   onSelect: (selection: OrgChartSelection) => void;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const position = chart.positions.find((candidate) => candidate.positionId === positionId);
   if (!position) return null;
   const organization = chart.organizations.find(
@@ -605,7 +605,7 @@ function PositionLink({
   chart: OrganizationChart;
   onSelect: (selection: OrgChartSelection) => void;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const position = chart.positions.find((candidate) => candidate.positionId === positionId);
   if (!position) return null;
   return (

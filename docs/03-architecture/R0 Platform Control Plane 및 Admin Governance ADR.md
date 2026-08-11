@@ -1,6 +1,6 @@
 # R0 Platform Control Plane 및 Admin Governance ADR
 
-> 상태: Accepted and Implemented Local Baseline v1.1
+> 상태: Accepted and Implemented Local Baseline v1.2
 >
 > 기준일: 2026-08-11
 >
@@ -38,6 +38,19 @@ DWP는 여러 Tenant의 사용자, 업무 시스템, 앱, Connector와 AI Agent�
 
 Provider Admin API는 Tenant Admin API에 Cross-tenant 조건을 추가하는 방식으로 만들지
 않는다. 별도 Route, 권한, Service와 감사 정책을 사용한다.
+
+실제 제품 진입점도 같은 경계를 따른다.
+
+- `계정 설정`은 인증된 모든 사용자의 Profile, 환경 설정, 보안·Session과 개인 홈 구성을
+  소유한다. 설정은 `(tenant_id, user_id)` 단위의 Versioned Personal Preference로 저장한다.
+- `관리 콘솔`은 현재 Tenant만 관리한다. 전체 Tenant 관리자, 감사 전용 사용자와 위임된
+  Permission 사용자는 공통 정책으로 자신에게 허용된 메뉴만 본다.
+- `Provider Control Plane`은 활성 Provider Operator 전용이며 전 Tenant Estate를 다룬다.
+  Provider 역할은 Tenant 관리자 역할과 합치지 않고 화면별 Provider Permission을 재검증한다.
+- 화면의 직책명은 설명 Metadata일 뿐 권한으로 사용하지 않는다. 계정 메뉴와 Route는 실제
+  Role·Permission에서 권한 명칭과 진입 가능 영역을 계산한다.
+- Provider 운영자가 Tenant 화면에 들어갈 때는 지원 세션이 필수다. 지원 중에는 일반
+  Workspace와 개인 설정으로 이동하지 않고 허용 Scope의 Tenant Admin 화면만 사용한다.
 
 ### 2.3 관리 데이터의 성격을 구분한다
 

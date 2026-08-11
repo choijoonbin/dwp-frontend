@@ -32,6 +32,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import { resolveRoleDisplayCopy } from './role-display';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { IdentityRole, IdentityUserAccess } from '@dwp-frontend/shared-utils';
@@ -155,30 +156,33 @@ function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
               </Box>
             </Stack>
             <FormGroup aria-label={t('access.dialog.assignedRoles')} sx={{ gap: 0.75 }}>
-              {roles.map((role) => (
-                <Box key={role.code} sx={{ borderTop: 1, borderColor: 'divider', pt: 0.75 }}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selected.has(role.code)}
-                        onChange={() => toggle(role.code)}
-                      />
-                    }
-                    label={
-                      <Box>
-                        <Typography variant="body2" fontWeight={700}>
-                          {role.name}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {role.code}
-                          {role.description ? ` / ${role.description}` : ''}
-                        </Typography>
-                      </Box>
-                    }
-                    sx={{ alignItems: 'flex-start', m: 0, width: 1 }}
-                  />
-                </Box>
-              ))}
+              {roles.map((role) => {
+                const display = resolveRoleDisplayCopy(role, t);
+                return (
+                  <Box key={role.code} sx={{ borderTop: 1, borderColor: 'divider', pt: 0.75 }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={selected.has(role.code)}
+                          onChange={() => toggle(role.code)}
+                        />
+                      }
+                      label={
+                        <Box>
+                          <Typography variant="body2" fontWeight={700}>
+                            {display.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {role.code}
+                            {display.description ? ` / ${display.description}` : ''}
+                          </Typography>
+                        </Box>
+                      }
+                      sx={{ alignItems: 'flex-start', m: 0, width: 1 }}
+                    />
+                  </Box>
+                );
+              })}
             </FormGroup>
             <Stack
               direction="row"

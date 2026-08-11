@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock3 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -6,7 +6,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getHomeExperience,
   getHomePreference,
-  resetHomePreference,
   resolveHomeBackgroundUrl,
   updateHomePreference,
   useAuth,
@@ -21,8 +20,15 @@ import Typography from '@mui/material/Typography';
 
 import { AppLaunchpad } from '../features/home/app-launchpad';
 import { AnnouncementsWidget } from '../features/home/announcements-widget';
-import { HomeWidgetEditor } from '../features/home/home-widget-editor';
-import { reconcileHomeWidgets } from '../features/home/home-widget-registry';
+import { HomeEditToolbar } from '../features/home/home-edit-toolbar';
+import { HomeItemGallery } from '../features/home/home-item-gallery';
+import { HomeWidgetLayout } from '../features/home/home-widget-layout';
+import {
+  HOME_WIDGET_KEYS,
+  defaultHomeWidgets,
+  reconcileHomeWidgets,
+  setHomeWidgetVisibility,
+} from '../features/home/home-widget-registry';
 import {
   ActivityWidget,
   DailyBriefWidget,
@@ -30,10 +36,13 @@ import {
   ScheduleWidget,
 } from '../features/home/home-widgets';
 import {
+  createDefaultLaunchpadLayout,
   isAppEntitled,
-  launchpadStorageKey,
   localizeHomeApps,
+  reconcileLaunchpadLayout,
+  restoreLaunchpadApp,
 } from '../features/home/app-launchpad-model';
+import { useSystemCodeOptions } from '../components/use-system-code-options';
 
 import type {
   HomePreferenceLayout,
@@ -42,9 +51,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { LaunchpadLayout } from '../features/home/app-launchpad-model';
 
-type PreferenceMutation =
-  | { kind: 'save'; layout: HomePreferenceLayout; messageKey: 'homeSaved' | 'appLayoutSaved' }
-  | { kind: 'reset'; messageKey: 'defaultRestored' };
+type PreferenceMutation = { layout: HomePreferenceLayout };
 
 function HomeWidget({ widgetKey }: { widgetKey: HomeWidgetKey }) {
   switch (widgetKey) {
@@ -70,8 +77,13 @@ export default function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [editorOpen, setEditorOpen] = useState(searchParams.get('edit') === 'home');
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [editBaseVersion, setEditBaseVersion] = useState<number | null>(null);
+  const registeredWidgetKeys = useSystemCodeOptions('PLATFORM.HOME_WIDGET', HOME_WIDGET_KEYS);
   const closeEditor = () => {
+    setGalleryOpen(false);
     setEditorOpen(false);
+    setEditBaseVersion(null);
     if (searchParams.get('edit') === 'home') {
       const next = new URLSearchParams(searchParams);
       next.delete('edit');
@@ -84,7 +96,12 @@ export default function HomePage() {
       localizeHomeApps(t).filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
     [auth.user?.roles, permissions, t]
   );
-  const personalLayoutKey = launchpadStorageKey(auth.user?.tenantId ?? 0, auth.user?.userId ?? 0);
+  const [draftAppLayout, setDraftAppLayout] = useState<LaunchpadLayout>(() =>
+    createDefaultLaunchpadLayout(entitledApps)
+  );
+  const [draftWidgets, setDraftWidgets] = useState<HomeWidgetPreference[]>(() =>
+    defaultHomeWidgets(registeredWidgetKeys)
+  );
   const homeExperienceQuery = useQuery({
     queryKey: ['home-experience', auth.user?.tenantId],
     queryFn: getHomeExperience,
@@ -100,48 +117,69 @@ export default function HomePage() {
   const homeExperience = homeExperienceQuery.data;
   const homePreference = homePreferenceQuery.data;
   const widgetPreferences = useMemo(
-    () => reconcileHomeWidgets(homePreference?.layout.widgets),
-    [homePreference?.layout.widgets]
+    () => reconcileHomeWidgets(homePreference?.layout.widgets, registeredWidgetKeys),
+    [homePreference?.layout.widgets, registeredWidgetKeys]
   );
-  const visibleWidgets = widgetPreferences.filter((widget) => widget.visible);
+  const appLayout = useMemo(
+    () => reconcileLaunchpadLayout(homePreference?.layout.appLayout, entitledApps),
+    [entitledApps, homePreference?.layout.appLayout]
+  );
   const preferenceVersion = homePreference?.version ?? 0;
+  const activeAppLayout = editorOpen ? draftAppLayout : appLayout;
+  const activeWidgets = editorOpen ? draftWidgets : widgetPreferences;
+  const hiddenApps = useMemo(
+    () =>
+      activeAppLayout.hiddenAppIds
+        .map((appId) => entitledApps.find((app) => app.id === appId))
+        .filter((app): app is (typeof entitledApps)[number] => Boolean(app)),
+    [activeAppLayout.hiddenAppIds, entitledApps]
+  );
+  const hiddenWidgetKeys = activeWidgets
+    .filter((widget) => !widget.visible)
+    .map((widget) => widget.widgetKey);
+
+  useEffect(() => {
+    if (!editorOpen || editBaseVersion !== preferenceVersion) {
+      setDraftAppLayout(appLayout);
+      setDraftWidgets(widgetPreferences);
+      if (editorOpen) setEditBaseVersion(preferenceVersion);
+    }
+  }, [appLayout, editBaseVersion, editorOpen, preferenceVersion, widgetPreferences]);
+
+  const beginEditing = () => {
+    setDraftAppLayout(appLayout);
+    setDraftWidgets(widgetPreferences);
+    setEditBaseVersion(preferenceVersion);
+    setEditorOpen(true);
+  };
+
+  const cancelEditing = () => {
+    setDraftAppLayout(appLayout);
+    setDraftWidgets(widgetPreferences);
+    closeEditor();
+  };
 
   const preferenceMutation = useMutation({
     mutationFn: (request: PreferenceMutation) =>
-      request.kind === 'reset'
-        ? resetHomePreference(preferenceVersion)
-        : updateHomePreference(request.layout, preferenceVersion),
-    onSuccess: async (next, request) => {
+      updateHomePreference(request.layout, editBaseVersion ?? preferenceVersion),
+    onSuccess: async (next) => {
       queryClient.setQueryData(['home-preference', auth.user?.tenantId, auth.user?.userId], next);
       await queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] });
       closeEditor();
-      toast.success(t(`page.${request.messageKey}`));
+      toast.success(t('page.homeSaved'));
     },
     onError: () => toast.error(t('page.saveError')),
   });
 
-  const saveWidgets = (widgets: HomeWidgetPreference[]) => {
+  const saveHome = () => {
     preferenceMutation.mutate({
-      kind: 'save',
-      layout: { appLayout: homePreference?.layout.appLayout ?? null, widgets },
-      messageKey: 'homeSaved',
+      layout: { appLayout: draftAppLayout, widgets: draftWidgets },
     });
   };
 
-  const saveAppLayout = (appLayout: LaunchpadLayout) => {
-    preferenceMutation.mutate({
-      kind: 'save',
-      layout: { appLayout, widgets: widgetPreferences },
-      messageKey: 'appLayoutSaved',
-    });
-  };
-
-  const resetPreference = () => {
-    if (!homePreference?.customized) {
-      closeEditor();
-      return;
-    }
-    preferenceMutation.mutate({ kind: 'reset', messageKey: 'defaultRestored' });
+  const resetDraft = () => {
+    setDraftAppLayout(createDefaultLaunchpadLayout(entitledApps));
+    setDraftWidgets(defaultHomeWidgets(registeredWidgetKeys));
   };
 
   const backgroundUrl = resolveHomeBackgroundUrl(homeExperience);
@@ -187,10 +225,9 @@ export default function HomePage() {
       >
         <Box sx={{ position: 'relative', zIndex: 1 }}>
           <AppLaunchpad
-            key={`${personalLayoutKey}:${homePreference?.version ?? 'local'}`}
             apps={entitledApps}
-            storageKey={personalLayoutKey}
-            initialLayout={homePreference ? homePreference.layout.appLayout : undefined}
+            layout={activeAppLayout}
+            editing={editorOpen}
             title={
               homeExperience?.headline ||
               (firstName ? t('page.welcomeName', { name: firstName }) : t('page.welcome'))
@@ -198,8 +235,8 @@ export default function HomePage() {
             description={homeExperience?.subheadline || t('page.assignedDescription')}
             immersive
             customizationBusy={preferenceMutation.isPending}
-            onEditHome={() => setEditorOpen(true)}
-            onLayoutCommit={saveAppLayout}
+            onStartEditing={beginEditing}
+            onLayoutChange={setDraftAppLayout}
             onLaunch={(app) => navigate(app.route)}
             onBrowseAll={() => navigate('/apps')}
           />
@@ -225,25 +262,13 @@ export default function HomePage() {
           </Typography>
         </Box>
 
-        <Box
-          sx={{
-            mt: 1,
-            display: 'grid',
-            gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'repeat(12, minmax(0, 1fr))' },
-            columnGap: { xs: 0, lg: 3 },
-            rowGap: 3,
-            '& > section:not([aria-labelledby="brief-heading"]):not([aria-labelledby="announcements-heading"])':
-              {
-                borderTop: 1,
-                borderBottom: 1,
-                borderColor: 'divider',
-              },
-          }}
-        >
-          {visibleWidgets.map((widget) => (
-            <HomeWidget key={widget.widgetKey} widgetKey={widget.widgetKey} />
-          ))}
-        </Box>
+        <HomeWidgetLayout
+          widgets={activeWidgets}
+          editing={editorOpen}
+          busy={preferenceMutation.isPending}
+          onChange={setDraftWidgets}
+          renderWidget={(widgetKey) => <HomeWidget widgetKey={widgetKey} />}
+        />
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mt: 2 }}>
           <Clock3 size={15} aria-hidden="true" />
@@ -251,16 +276,30 @@ export default function HomePage() {
             {t('page.lastRefreshed', { time: '09:10' })}
           </Typography>
         </Box>
+        {editorOpen && <Box aria-hidden="true" sx={{ height: 76 }} />}
       </PageCanvas>
 
-      <HomeWidgetEditor
-        open={editorOpen}
-        value={widgetPreferences}
+      <HomeItemGallery
+        open={galleryOpen}
+        hiddenApps={hiddenApps}
+        hiddenWidgetKeys={hiddenWidgetKeys}
         busy={preferenceMutation.isPending}
-        onClose={closeEditor}
-        onSave={saveWidgets}
-        onReset={resetPreference}
+        onClose={() => setGalleryOpen(false)}
+        onAddApp={(app) => setDraftAppLayout((current) => restoreLaunchpadApp(current, app))}
+        onAddWidget={(widgetKey) =>
+          setDraftWidgets((current) => setHomeWidgetVisibility(current, widgetKey, true))
+        }
       />
+
+      {editorOpen && (
+        <HomeEditToolbar
+          busy={preferenceMutation.isPending}
+          onAdd={() => setGalleryOpen(true)}
+          onReset={resetDraft}
+          onCancel={cancelEditing}
+          onDone={saveHome}
+        />
+      )}
     </Box>
   );
 }

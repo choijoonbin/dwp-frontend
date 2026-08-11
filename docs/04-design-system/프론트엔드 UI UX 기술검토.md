@@ -36,13 +36,13 @@ Baseline과 Architecture Gate가 승인된 뒤 시작한다.
 | Design Token             | 부분 충족 | DTCG Draft와 Code Adapter 구현, Figma 승인·배포 자동화 남음                                                       |
 | Appearance Policy        | 충족      | Product·Tenant·User·OS 우선순위와 Light·Dark·Contrast·Density 구현                                                |
 | Global Shell             | 부분 충족 | 반응형 Header·Navigation·Account 구현, 실제 업무 Floorplan 검증 남음                                              |
-| 공통 Component           | 부분 충족 | ProductMark·ToastViewport·AccessBoundary, 업무 Primitive 확장 필요                                                |
-| Enterprise Component     | 부분 충족 | 적응형 높이·동일 행 리듬의 MUI X Grid 정책 구현, 나머지 업무 Component 필요                                       |
+| 공통 Component           | 1차 충족  | Action·Form·Dialog·Async State 공통 계약과 직접 사용 증가 차단, Navigation Primitive 확장 필요                    |
+| Enterprise Component     | 부분 충족 | Server Grid·Toolbar·Selection과 Date·DateRange·Timezone 정책 구현, Filter·Tree·File·Timeline 필요                 |
 | DWP 업무 Pattern         | 미충족    | Today·Work·Approval·Service·Knowledge Pattern 구현 필요                                                           |
 | AI UX Pattern            | 부분 충족 | Citation·Plan·Execution·Retry·Handoff Reference, Streaming·Feedback 필요                                          |
 | 접근성                   | 부분 충족 | Desktop·Mobile Axe 자동검사 통과, Keyboard·Reader·Zoom 수동 Gate 남음                                             |
 | 다국어·한국어            | 1차 충족  | `ko`·`en` 전 제품 Namespace, 사용자·Tenant Fallback, API 오류와 Coverage Gate 구현. Native QA·제품 Font 승인 남음 |
-| UI Test·Governance       | 부분 충족 | Storybook Play·Axe·Visual 통과, CI와 수동 접근성 Gate 남음                                                        |
+| UI Test·Governance       | 1차 충족  | Storybook Play·Axe·Visual 및 AST 도입 Gate 구현, CI 승인 규칙과 수동 접근성 Gate 남음                             |
 | Browser Session Security | 부분 충족 | HttpOnly Session·CSRF·Logout 구현, Rotation·Idle·운영 검증 남음                                                   |
 
 ## 2. Foundation Architecture
@@ -253,9 +253,11 @@ Registry, JSON Schema, 관계 규칙과 Policy 안에서만 조합한다.
 - [x] Light·Dark·High Contrast·Density·Reduced Motion Runtime
 - [x] Storybook·Playwright Axe 자동 기반
 - [x] MUI X Community Data Grid와 AI Trust Pattern 1차 Reference
+- [x] Action·Form·Dialog·Async State와 Date·DateRange·Timezone Reference
+- [x] 직접 MUI 사용 증가를 차단하는 AST Baseline Gate
 - [x] Storybook Play·Axe·Desktop·Mobile Visual Baseline 1차
 - [ ] Figma Variable·Component Library와 Code Token Mapping 승인
-- [ ] Filter·Form·Date·Tree·File·Timeline Enterprise Reference
+- [ ] Filter·Tree·Entity Picker·File·Timeline Enterprise Reference
 - [ ] Global Shell·Today·Work·Apps·Ask Reference Flow 승인
 - [ ] Citation·Plan·Approval·Trace의 Figma·수동 AI Trust Pattern 승인
 - [ ] Keyboard·Screen Reader·Zoom 수동 접근성 Gate

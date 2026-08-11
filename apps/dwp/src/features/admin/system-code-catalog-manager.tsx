@@ -2,7 +2,7 @@ import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Braces, RefreshCw, Search } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getSystemCodeSet, listSystemCodeSetHealth } from '@dwp-frontend/shared-utils';
+import { getAdminSystemCodeSet, listSystemCodeSetHealth } from '@dwp-frontend/shared-utils';
 import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -66,6 +66,7 @@ export function SystemCodeCatalogManager() {
               item.contractKind,
               item.configurationLevel,
               item.validationSource,
+              item.runtimeVisibility,
             ]
               .join(' ')
               .toLowerCase()
@@ -87,7 +88,7 @@ export function SystemCodeCatalogManager() {
 
   const detailQuery = useQuery({
     queryKey: ['admin', 'system-code-set', selectedKey, locale],
-    queryFn: () => getSystemCodeSet(selectedKey!, locale),
+    queryFn: () => getAdminSystemCodeSet(selectedKey!, locale),
     enabled: Boolean(selectedKey),
   });
   const detail = detailQuery.data;
@@ -366,7 +367,11 @@ export function SystemCodeCatalogManager() {
                 <Box
                   sx={{
                     display: 'grid',
-                    gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+                    gridTemplateColumns: {
+                      xs: '1fr',
+                      sm: 'repeat(2, minmax(0, 1fr))',
+                      lg: 'repeat(4, minmax(0, 1fr))',
+                    },
                     gap: 1.5,
                     mt: 2,
                   }}
@@ -375,6 +380,7 @@ export function SystemCodeCatalogManager() {
                     ['owner', detail.ownerService],
                     ['validation', detail.validationSource],
                     ['source', detail.sourceReference],
+                    ['visibility', t(`systemCodeCatalog.visibility.${detail.runtimeVisibility}`)],
                   ].map(([key, value]) => (
                     <Box key={key} sx={{ minWidth: 0 }}>
                       <Typography variant="caption" color="text.secondary">

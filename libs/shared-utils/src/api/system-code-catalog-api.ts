@@ -3,6 +3,7 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 
 export type SystemCodeConfigurationLevel = 'SYSTEM' | 'EXTENSIBLE' | 'USER';
+export type SystemCodeRuntimeVisibility = 'ADMIN_ONLY' | 'RUNTIME';
 
 export type SystemCodeContractKind =
   'REFERENCE' | 'STATE_MACHINE' | 'SECURITY' | 'PROTOCOL' | 'OBSERVABILITY' | 'REGISTRY_META';
@@ -34,13 +35,25 @@ export type SystemCodeSet = {
   validationSource: string;
   sourceReference: string;
   schemaVersion: number;
+  runtimeVisibility: SystemCodeRuntimeVisibility;
   values: SystemCodeValue[];
   bindings: SystemCodeBinding[];
 };
 
+export type RuntimeSystemCodeValue = Pick<SystemCodeValue, 'code' | 'label'>;
+
+export type RuntimeSystemCodeSet = Pick<SystemCodeSet, 'codeSetKey' | 'schemaVersion'> & {
+  values: RuntimeSystemCodeValue[];
+};
+
 export type SystemCodeSetHealth = Pick<
   SystemCodeSet,
-  'codeSetKey' | 'ownerService' | 'contractKind' | 'configurationLevel' | 'validationSource'
+  | 'codeSetKey'
+  | 'ownerService'
+  | 'contractKind'
+  | 'configurationLevel'
+  | 'validationSource'
+  | 'runtimeVisibility'
 > & {
   valueCount: number;
   bindingCount: number;
@@ -48,17 +61,31 @@ export type SystemCodeSetHealth = Pick<
   registrationState: 'REGISTERED' | 'INCOMPLETE';
 };
 
-export async function getSystemCodeSet(setKey: string, locale: string): Promise<SystemCodeSet> {
+export async function getSystemCodeSet(
+  setKey: string,
+  locale: string
+): Promise<RuntimeSystemCodeSet> {
+  const search = new URLSearchParams({ locale });
+  const response = await axiosInstance.get<ApiResponse<RuntimeSystemCodeSet>>(
+    `/api/platform/v1/catalog/code-sets/${encodeURIComponent(setKey)}?${search.toString()}`
+  );
+  return response.data.data;
+}
+
+export async function getAdminSystemCodeSet(
+  setKey: string,
+  locale: string
+): Promise<SystemCodeSet> {
   const search = new URLSearchParams({ locale });
   const response = await axiosInstance.get<ApiResponse<SystemCodeSet>>(
-    `/api/platform/v1/catalog/code-sets/${encodeURIComponent(setKey)}?${search.toString()}`
+    `/api/platform/v1/admin/code-catalog/code-sets/${encodeURIComponent(setKey)}?${search.toString()}`
   );
   return response.data.data;
 }
 
 export async function listSystemCodeSetHealth(): Promise<SystemCodeSetHealth[]> {
   const response = await axiosInstance.get<ApiResponse<SystemCodeSetHealth[]>>(
-    '/api/platform/v1/catalog/code-sets'
+    '/api/platform/v1/admin/code-catalog/code-sets'
   );
   return response.data.data;
 }

@@ -65,7 +65,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
-import { AdminPanelError, AdminPanelLoading } from '../admin-ui';
+import { AdminPanelError, AdminPanelLoading } from '../../admin/admin-ui';
 import {
   OrganizationNode,
   PersonNode,
@@ -82,6 +82,7 @@ import {
 import { OrgChartInspector, type OrgChartSelection } from './org-chart-inspector';
 import { OrganizationIntelligencePanel } from './organization-intelligence-panel';
 import { OrganizationScenarioDrawer } from './organization-scenario-drawer';
+import { useCurrentProviderSupportContext } from '../../provider/use-provider-support-context';
 
 import type {
   Edge,
@@ -161,9 +162,21 @@ function Metric({
   );
 }
 
-export function OrganizationChartManager() {
-  const { t } = useTranslation('admin');
+export type OrganizationExperience = 'directory' | 'workforce';
+
+export function OrganizationExplorer({
+  experience = 'workforce',
+}: {
+  experience?: OrganizationExperience;
+}) {
+  const { t } = useTranslation('workforce');
   const auth = useAuth();
+  const supportContext = useCurrentProviderSupportContext();
+  const workforceView = experience === 'workforce';
+  const canManageWorkforce = (auth.user?.roles ?? []).some((role) =>
+    ['ADMIN', 'HR_ADMIN'].includes(role)
+  );
+  const workforceReadOnly = !workforceView || Boolean(supportContext.data) || !canManageWorkforce;
   const toast = useToast();
   const queryClient = useQueryClient();
   const theme = useTheme();
@@ -171,7 +184,7 @@ export function OrganizationChartManager() {
   const [asOf, setAsOf] = useState(today);
   const [compareTo, setCompareTo] = useState(() => monthBefore(today()));
   const [rootOrganizationId, setRootOrganizationId] = useState<string>();
-  const [mode, setMode] = useState<ChartMode>('organizations');
+  const [mode, setMode] = useState<ChartMode>(workforceView ? 'organizations' : 'people');
   const [lens, setLens] = useState<OrganizationLens>('structure');
   const [scenarioId, setScenarioId] = useState('');
   const [direction, setDirection] = useState<ChartDirection>('TB');
@@ -194,22 +207,25 @@ export function OrganizationChartManager() {
   const directionWasCustomized = useRef(false);
 
   const chartQuery = useQuery({
-    queryKey: ['admin', 'organization-chart', asOf, rootOrganizationId, scenarioId],
+    queryKey: [experience, 'organization-chart', asOf, rootOrganizationId, scenarioId],
     queryFn: () =>
       getOrganizationChart({
         asOf,
         rootOrganizationId,
-        scenarioId: scenarioId || undefined,
+        scenarioId: workforceView && scenarioId ? scenarioId : undefined,
         depth: 10,
+        surface: experience,
       }),
   });
   const scenariosQuery = useQuery({
-    queryKey: ['admin', 'organization-scenarios'],
+    queryKey: ['workforce', 'organization-scenarios'],
     queryFn: listOrganizationScenarios,
+    enabled: workforceView,
   });
   const identitiesQuery = useQuery({
-    queryKey: ['admin', 'organization-chart', 'identity-roles'],
+    queryKey: ['workforce', 'organization-chart', 'identity-roles'],
     queryFn: () => listIdentityUsers(),
+    enabled: workforceView && !workforceReadOnly,
     retry: false,
   });
   const intelligenceQuery = useQuery({
@@ -230,7 +246,7 @@ export function OrganizationChartManager() {
         scenarioId: scenarioId || undefined,
         depth: 10,
       }),
-    enabled: mode === 'insights',
+    enabled: workforceView && mode === 'insights',
   });
 
   const chart = chartQuery.data;
@@ -558,6 +574,7 @@ export function OrganizationChartManager() {
           ? 'position'
           : undefined;
     if (
+      workforceReadOnly ||
       !draggableKind ||
       selectedScenario?.lifecycleState !== 'DRAFT' ||
       (draggableKind === 'organization' && node.id === chart?.company.organizationId)
@@ -670,10 +687,10 @@ export function OrganizationChartManager() {
               pendingMove.newParentId
             );
       queryClient.setQueryData<OrganizationScenario[]>(
-        ['admin', 'organization-scenarios'],
+        ['workforce', 'organization-scenarios'],
         (current = []) => current.map((item) => (item.scenarioId === next.scenarioId ? next : item))
       );
-      await queryClient.invalidateQueries({ queryKey: ['admin', 'organization-chart'] });
+      await queryClient.invalidateQueries({ queryKey: ['workforce', 'organization-chart'] });
       toast.success(
         t(
           pendingMove.kind === 'organization'
@@ -732,34 +749,40 @@ export function OrganizationChartManager() {
             value={chart.metrics.managerCount}
             color="#7C3AED"
           />
-          <Metric
-            icon={BriefcaseBusiness}
-            label={t('orgChart.metrics.openPositions')}
-            value={chart.metrics.openPositionCount}
-            color="#B7791F"
-          />
+          {workforceView && (
+            <Metric
+              icon={BriefcaseBusiness}
+              label={t('orgChart.metrics.openPositions')}
+              value={chart.metrics.openPositionCount}
+              color="#B7791F"
+            />
+          )}
           <Metric
             icon={MapPin}
             label={t('orgChart.metrics.locations')}
             value={chart.metrics.locationCount}
             color="#D55B42"
           />
-          <Metric
-            icon={BriefcaseBusiness}
-            label={t('orgChart.metrics.plannedFte')}
-            value={chart.metrics.plannedFte.toFixed(1)}
-            color="#0F766E"
-          />
-          <Metric
-            icon={CircleDollarSign}
-            label={t('orgChart.metrics.workforceCost')}
-            value={compactMoney(chart.metrics.workforceCostAmount, chart.metrics.costCurrency)}
-            color="#9A6700"
-          />
+          {workforceView && (
+            <Metric
+              icon={BriefcaseBusiness}
+              label={t('orgChart.metrics.plannedFte')}
+              value={chart.metrics.plannedFte.toFixed(1)}
+              color="#0F766E"
+            />
+          )}
+          {workforceView && (
+            <Metric
+              icon={CircleDollarSign}
+              label={t('orgChart.metrics.workforceCost')}
+              value={compactMoney(chart.metrics.workforceCostAmount, chart.metrics.costCurrency)}
+              color="#9A6700"
+            />
+          )}
         </Stack>
       </Box>
 
-      {chart.scenario && (
+      {workforceView && chart.scenario && (
         <Stack
           direction={{ xs: 'column', md: 'row' }}
           alignItems={{ xs: 'flex-start', md: 'center' }}
@@ -840,26 +863,30 @@ export function OrganizationChartManager() {
                 {t('orgChart.view.people')}
               </Box>
             </ToggleButton>
-            <ToggleButton
-              value="positions"
-              aria-label={t('orgChart.view.positions')}
-              title={t('orgChart.view.positions')}
-            >
-              <BriefcaseBusiness size={15} />
-              <Box component="span" sx={{ ml: 0.75, display: { xs: 'none', sm: 'inline' } }}>
-                {t('orgChart.view.positions')}
-              </Box>
-            </ToggleButton>
-            <ToggleButton
-              value="insights"
-              aria-label={t('orgChart.view.insights')}
-              title={t('orgChart.view.insights')}
-            >
-              <GitCompareArrows size={15} />
-              <Box component="span" sx={{ ml: 0.75, display: { xs: 'none', sm: 'inline' } }}>
-                {t('orgChart.view.insights')}
-              </Box>
-            </ToggleButton>
+            {workforceView && (
+              <ToggleButton
+                value="positions"
+                aria-label={t('orgChart.view.positions')}
+                title={t('orgChart.view.positions')}
+              >
+                <BriefcaseBusiness size={15} />
+                <Box component="span" sx={{ ml: 0.75, display: { xs: 'none', sm: 'inline' } }}>
+                  {t('orgChart.view.positions')}
+                </Box>
+              </ToggleButton>
+            )}
+            {workforceView && (
+              <ToggleButton
+                value="insights"
+                aria-label={t('orgChart.view.insights')}
+                title={t('orgChart.view.insights')}
+              >
+                <GitCompareArrows size={15} />
+                <Box component="span" sx={{ ml: 0.75, display: { xs: 'none', sm: 'inline' } }}>
+                  {t('orgChart.view.insights')}
+                </Box>
+              </ToggleButton>
+            )}
           </ToggleButtonGroup>
           {mode !== 'insights' && (
             <TextField
@@ -903,32 +930,34 @@ export function OrganizationChartManager() {
           useFlexGap
           sx={{ width: { xs: 1, xl: 'auto' } }}
         >
-          <TextField
-            select
-            size="small"
-            value={scenarioId}
-            onChange={(event) => {
-              const nextScenarioId = event.target.value;
-              const scenario = scenarios.find((item) => item.scenarioId === nextScenarioId);
-              setScenarioId(nextScenarioId);
-              if (scenario) {
-                setAsOf(scenario.baselineDate);
-                setCompareTo(scenario.baselineDate);
-              }
-              setSelection(undefined);
-              setRootOrganizationId(undefined);
-            }}
-            inputProps={{ 'aria-label': t('orgChart.scenarios.preview') }}
-            SelectProps={{ displayEmpty: true }}
-            sx={{ width: { xs: 1, sm: 210 } }}
-          >
-            <MenuItem value="">{t('orgChart.scenarios.live')}</MenuItem>
-            {scenarios.map((scenario) => (
-              <MenuItem key={scenario.scenarioId} value={scenario.scenarioId}>
-                {scenario.name}
-              </MenuItem>
-            ))}
-          </TextField>
+          {workforceView && (
+            <TextField
+              select
+              size="small"
+              value={scenarioId}
+              onChange={(event) => {
+                const nextScenarioId = event.target.value;
+                const scenario = scenarios.find((item) => item.scenarioId === nextScenarioId);
+                setScenarioId(nextScenarioId);
+                if (scenario) {
+                  setAsOf(scenario.baselineDate);
+                  setCompareTo(scenario.baselineDate);
+                }
+                setSelection(undefined);
+                setRootOrganizationId(undefined);
+              }}
+              inputProps={{ 'aria-label': t('orgChart.scenarios.preview') }}
+              SelectProps={{ displayEmpty: true }}
+              sx={{ width: { xs: 1, sm: 210 } }}
+            >
+              <MenuItem value="">{t('orgChart.scenarios.live')}</MenuItem>
+              {scenarios.map((scenario) => (
+                <MenuItem key={scenario.scenarioId} value={scenario.scenarioId}>
+                  {scenario.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
           {mode === 'organizations' && (
             <TextField
               select
@@ -1033,14 +1062,17 @@ export function OrganizationChartManager() {
               </Tooltip>
             </>
           )}
-          <Button
-            size="small"
-            variant="outlined"
-            startIcon={<GitPullRequest size={15} />}
-            onClick={() => setScenarioOpen(true)}
-          >
-            {t('orgChart.actions.scenarios')}
-          </Button>
+          {workforceView && (
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<GitPullRequest size={15} />}
+              disabled={workforceReadOnly}
+              onClick={() => setScenarioOpen(true)}
+            >
+              {t('orgChart.actions.scenarios')}
+            </Button>
+          )}
           <Tooltip title={t('common.actions.refresh')}>
             <IconButton
               size="small"
@@ -1201,29 +1233,31 @@ export function OrganizationChartManager() {
       >
         {inspector}
       </Drawer>
-      <OrganizationScenarioDrawer
-        open={scenarioOpen}
-        chart={chart}
-        currentUserId={auth.user?.userId}
-        previewScenarioId={scenarioId}
-        onPreviewScenario={(nextScenarioId) => {
-          const scenario = scenarios.find((item) => item.scenarioId === nextScenarioId);
-          setScenarioId(nextScenarioId);
-          if (scenario) {
-            setAsOf(scenario.baselineDate);
-            setCompareTo(scenario.baselineDate);
-          }
-          setRootOrganizationId(undefined);
-          setSelection(undefined);
-          setMode('organizations');
-          setLens('changes');
-          setScenarioOpen(false);
-        }}
-        onScenarioChanged={() => {
-          void queryClient.invalidateQueries({ queryKey: ['admin', 'organization-chart'] });
-        }}
-        onClose={() => setScenarioOpen(false)}
-      />
+      {workforceView && (
+        <OrganizationScenarioDrawer
+          open={scenarioOpen && !workforceReadOnly}
+          chart={chart}
+          currentUserId={auth.user?.userId}
+          previewScenarioId={scenarioId}
+          onPreviewScenario={(nextScenarioId) => {
+            const scenario = scenarios.find((item) => item.scenarioId === nextScenarioId);
+            setScenarioId(nextScenarioId);
+            if (scenario) {
+              setAsOf(scenario.baselineDate);
+              setCompareTo(scenario.baselineDate);
+            }
+            setRootOrganizationId(undefined);
+            setSelection(undefined);
+            setMode('organizations');
+            setLens('changes');
+            setScenarioOpen(false);
+          }}
+          onScenarioChanged={() => {
+            void queryClient.invalidateQueries({ queryKey: ['workforce', 'organization-chart'] });
+          }}
+          onClose={() => setScenarioOpen(false)}
+        />
+      )}
       <Dialog
         open={Boolean(pendingMove)}
         onClose={() => {

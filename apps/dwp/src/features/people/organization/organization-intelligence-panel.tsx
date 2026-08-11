@@ -118,7 +118,7 @@ function formatCost(value: number, currency?: string | null): string {
 }
 
 export function OrganizationIntelligencePanel({ intelligence, loading, error, onSelect }: Props) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const [view, setView] = useState<IntelligenceView>('health');
 
   const csvRows = useMemo(() => {
@@ -327,7 +327,7 @@ function HealthDecisionView({
   health: OrganizationIntelligence['health'];
   onSelect: Props['onSelect'];
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const prioritized = [...rows]
     .sort((a, b) => a.healthScore - b.healthScore || b.totalHeadcount - a.totalHeadcount)
     .slice(0, 6);
@@ -656,7 +656,7 @@ function ChangeImpactView({
   comparison: OrganizationIntelligence['comparison'];
   onSelect: Props['onSelect'];
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const impacts = [
     [t('orgChart.intelligence.metrics.headcountDelta'), signed(comparison.headcountDelta)],
     [t('orgChart.intelligence.metrics.fteDelta'), signed(comparison.plannedFteDelta, 1)],
@@ -797,7 +797,7 @@ function QualityTriageView({
   score: number;
   onSelect: Props['onSelect'];
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const severityCount = (severity: OrganizationDataQualityIssue['severity']) =>
     rows.filter((row) => row.severity === severity).length;
   return (
@@ -917,7 +917,7 @@ function QualityTriageView({
 }
 
 function EmptyState() {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   return (
     <Stack
       alignItems="center"

@@ -1,0 +1,325 @@
+{
+  "version": 1,
+  "files": {
+    "apps/dwp/src/components/account-menu.tsx": {
+      "IconButton": 1
+    },
+    "apps/dwp/src/components/language-menu.tsx": {
+      "Button": 1
+    },
+    "apps/dwp/src/components/shell-controls.tsx": {
+      "Button": 1,
+      "IconButton": 3
+    },
+    "apps/dwp/src/features/admin/access-manager.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "DialogActions": 1,
+      "Button": 2,
+      "IconButton": 2,
+      "TextField": 1
+    },
+    "apps/dwp/src/features/admin/announcement-manager.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "IconButton": 4,
+      "DialogContent": 1,
+      "TextField": 7,
+      "DialogActions": 1,
+      "Button": 3
+    },
+    "apps/dwp/src/features/admin/api-monitoring.tsx": {
+      "IconButton": 4,
+      "TextField": 4,
+      "Button": 1
+    },
+    "apps/dwp/src/features/admin/audit-explorer.tsx": {
+      "TextField": 11,
+      "IconButton": 8,
+      "Button": 9,
+      "Dialog": 3,
+      "DialogTitle": 3,
+      "DialogContent": 3,
+      "DialogActions": 3
+    },
+    "apps/dwp/src/features/admin/audit-governance.tsx": {
+      "Button": 2,
+      "TextField": 4,
+      "IconButton": 1
+    },
+    "apps/dwp/src/features/admin/audit-investigations.tsx": {
+      "TextField": 15,
+      "Button": 9,
+      "IconButton": 1,
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/features/admin/audit-log.tsx": {
+      "IconButton": 1
+    },
+    "apps/dwp/src/features/admin/audit-overview.tsx": {
+      "IconButton": 1,
+      "Button": 3
+    },
+    "apps/dwp/src/features/admin/home-experience-manager.tsx": {
+      "Button": 4,
+      "TextField": 2
+    },
+    "apps/dwp/src/features/admin/navigation-manager.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "TextField": 12,
+      "Button": 4,
+      "IconButton": 7,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/features/admin/reference-data-manager.tsx": {
+      "IconButton": 12,
+      "TextField": 1
+    },
+    "apps/dwp/src/features/admin/reference-dialogs.tsx": {
+      "Dialog": 3,
+      "DialogTitle": 3,
+      "DialogContent": 3,
+      "TextField": 10,
+      "DialogActions": 3,
+      "Button": 6,
+      "NativeDateTimeInput": 2,
+      "IconButton": 2
+    },
+    "apps/dwp/src/features/admin/registry-manager.tsx": {
+      "IconButton": 6,
+      "TextField": 3
+    },
+    "apps/dwp/src/features/admin/role-governance-manager.tsx": {
+      "Dialog": 4,
+      "DialogTitle": 4,
+      "DialogContent": 4,
+      "TextField": 16,
+      "DialogActions": 4,
+      "Button": 11,
+      "IconButton": 4,
+      "NativeDateTimeInput": 1
+    },
+    "apps/dwp/src/features/admin/system-code-catalog-manager.tsx": {
+      "TextField": 1,
+      "IconButton": 1
+    },
+    "apps/dwp/src/features/admin/tenant-branding-manager.tsx": {
+      "Button": 4,
+      "TextField": 1
+    },
+    "apps/dwp/src/features/home/announcements-widget.tsx": {
+      "Button": 2
+    },
+    "apps/dwp/src/features/home/app-launchpad.tsx": {
+      "Button": 7,
+      "Dialog": 3,
+      "DialogTitle": 3,
+      "DialogContent": 3,
+      "TextField": 2,
+      "DialogActions": 3,
+      "IconButton": 2
+    },
+    "apps/dwp/src/features/home/home-widgets.tsx": {
+      "Button": 3
+    },
+    "apps/dwp/src/features/integrations/provisioning-control.tsx": {
+      "Dialog": 3,
+      "DialogTitle": 3,
+      "DialogContent": 3,
+      "TextField": 12,
+      "IconButton": 6,
+      "DialogActions": 3,
+      "Button": 8
+    },
+    "apps/dwp/src/features/people/directory/people-directory.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "IconButton": 2,
+      "DialogContent": 1,
+      "Button": 1,
+      "TextField": 3,
+      "NativeDateTimeInput": 1
+    },
+    "apps/dwp/src/features/people/organization/org-chart-inspector.tsx": {
+      "IconButton": 1,
+      "Button": 1
+    },
+    "apps/dwp/src/features/people/organization/org-chart-nodes.tsx": {
+      "IconButton": 3
+    },
+    "apps/dwp/src/features/people/organization/organization-chart-manager.tsx": {
+      "Button": 5,
+      "TextField": 5,
+      "NativeDateTimeInput": 2,
+      "IconButton": 4,
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/features/people/organization/organization-intelligence-panel.tsx": {
+      "Button": 1
+    },
+    "apps/dwp/src/features/people/organization/organization-scenario-comparison.tsx": {
+      "TextField": 1
+    },
+    "apps/dwp/src/features/people/organization/organization-scenario-decision-pack.tsx": {
+      "Button": 1
+    },
+    "apps/dwp/src/features/people/organization/organization-scenario-drawer.tsx": {
+      "IconButton": 4,
+      "TextField": 7,
+      "NativeDateTimeInput": 2,
+      "Button": 8
+    },
+    "apps/dwp/src/features/people/organization/organization-scenario-position-editor.tsx": {
+      "Button": 3,
+      "TextField": 10,
+      "NativeDateTimeInput": 1
+    },
+    "apps/dwp/src/features/provider/provider-audit.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "DialogActions": 1,
+      "Button": 1,
+      "IconButton": 1,
+      "TextField": 4
+    },
+    "apps/dwp/src/features/provider/provider-commercial.tsx": {
+      "IconButton": 1
+    },
+    "apps/dwp/src/features/provider/provider-health.tsx": {
+      "Dialog": 2,
+      "DialogTitle": 2,
+      "DialogContent": 2,
+      "TextField": 9,
+      "DialogActions": 2,
+      "Button": 6,
+      "IconButton": 1
+    },
+    "apps/dwp/src/features/provider/provider-onboarding-dialog.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "TextField": 16,
+      "DialogActions": 1,
+      "Button": 4
+    },
+    "apps/dwp/src/features/provider/provider-operation-dialog.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "TextField": 1,
+      "DialogActions": 1,
+      "Button": 3
+    },
+    "apps/dwp/src/features/provider/provider-operations.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "TextField": 1,
+      "DialogActions": 1,
+      "Button": 4,
+      "IconButton": 1
+    },
+    "apps/dwp/src/features/provider/provider-overview.tsx": {
+      "IconButton": 1,
+      "Button": 4
+    },
+    "apps/dwp/src/features/provider/provider-reliability.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "TextField": 11,
+      "NativeDateTimeInput": 3,
+      "DialogActions": 1,
+      "Button": 4,
+      "IconButton": 1
+    },
+    "apps/dwp/src/features/provider/provider-support.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "TextField": 4,
+      "DialogActions": 1,
+      "Button": 3,
+      "IconButton": 1
+    },
+    "apps/dwp/src/features/provider/provider-tenant-detail.tsx": {
+      "Dialog": 4,
+      "DialogTitle": 4,
+      "DialogContent": 4,
+      "TextField": 7,
+      "DialogActions": 4,
+      "Button": 16
+    },
+    "apps/dwp/src/features/provider/provider-tenants.tsx": {
+      "TextField": 1,
+      "IconButton": 1,
+      "Button": 1
+    },
+    "apps/dwp/src/features/search/global-search-dialog.tsx": {
+      "Dialog": 1,
+      "IconButton": 1
+    },
+    "apps/dwp/src/layouts/account-layout.tsx": {
+      "Button": 1,
+      "IconButton": 1
+    },
+    "apps/dwp/src/layouts/admin-layout.tsx": {
+      "Button": 2,
+      "IconButton": 1
+    },
+    "apps/dwp/src/layouts/app-layout.tsx": {
+      "IconButton": 2
+    },
+    "apps/dwp/src/layouts/provider-layout.tsx": {
+      "Button": 1,
+      "IconButton": 1
+    },
+    "apps/dwp/src/pages/account/security.tsx": {
+      "Button": 5,
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/pages/account/settings.tsx": {
+      "Button": 2
+    },
+    "apps/dwp/src/pages/activity.tsx": {
+      "Button": 2
+    },
+    "apps/dwp/src/pages/apps.tsx": {
+      "TextField": 1,
+      "Button": 1
+    },
+    "apps/dwp/src/pages/ask.tsx": {
+      "TextField": 1,
+      "Button": 2
+    },
+    "apps/dwp/src/pages/auth/account-activation.tsx": {
+      "Button": 2,
+      "TextField": 2,
+      "IconButton": 1
+    },
+    "apps/dwp/src/pages/sign-in.tsx": {
+      "TextField": 2,
+      "IconButton": 1,
+      "Button": 2
+    },
+    "apps/dwp/src/pages/status-page.tsx": {
+      "Button": 1
+    },
+    "apps/dwp/src/pages/work.tsx": {
+      "Button": 2
+    }
+  }
+}

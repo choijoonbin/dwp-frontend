@@ -8,7 +8,7 @@ import {
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { useAppearance } from '@dwp-frontend/design-system';
+import { useAppearance } from '@dwp-frontend/design-system/appearance';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -19,7 +19,7 @@ import type {
   PersonalPreferencePatch,
   PersonalPreferenceValues,
 } from '@dwp-frontend/shared-utils';
-import type { UserAppearancePreference } from '@dwp-frontend/design-system';
+import type { UserAppearancePreference } from '@dwp-frontend/design-system/appearance';
 
 type PersonalPreferenceContextValue = {
   preference: PersonalPreference | null;

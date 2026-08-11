@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { foundationTokens } from '@dwp-frontend/design-system';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';

@@ -35,10 +35,11 @@ import Typography from '@mui/material/Typography';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
 import { RiskScore, severityColor } from './audit-ui';
+import { useSystemCodeOptions } from '../../components/use-system-code-options';
 
 import type { AuditOverview as AuditOverviewData, AuditWindow } from '@dwp-frontend/shared-utils';
 
-const WINDOWS: AuditWindow[] = ['H24', 'D7', 'D30', 'D90'];
+const WINDOW_FALLBACK: AuditWindow[] = ['H24', 'D7', 'D30', 'D90'];
 
 function TrendChart({ data, label }: { data: AuditOverviewData['trend']; label: string }) {
   const theme = useTheme();
@@ -197,6 +198,7 @@ export function AuditOverview() {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const [window, setWindow] = useState<AuditWindow>('D7');
+  const windows = useSystemCodeOptions('PLATFORM.AUDIT.WINDOW', WINDOW_FALLBACK);
   const query = useQuery({
     queryKey: ['audit-control', 'overview', window],
     queryFn: () => getAuditOverview(window),
@@ -253,7 +255,7 @@ export function AuditOverview() {
             onChange={(_, value: AuditWindow | null) => value && setWindow(value)}
             aria-label={t('auditControl.filters.window')}
           >
-            {WINDOWS.map((item) => (
+            {windows.map((item) => (
               <ToggleButton key={item} value={item} sx={{ minWidth: 52 }}>
                 {t(`auditControl.windows.${item}`)}
               </ToggleButton>

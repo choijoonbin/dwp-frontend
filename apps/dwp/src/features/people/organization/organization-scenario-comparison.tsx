@@ -54,7 +54,7 @@ export function OrganizationScenarioComparison({
   loading,
   onComparisonChange,
 }: Props) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const alternatives = scenarios.filter((scenario) => scenario.scenarioId !== selected.scenarioId);
   const comparisonBasisMatches =
     !selectedDecision ||
@@ -199,7 +199,7 @@ function MobileComparison({
   comparisonDecision: OrganizationScenarioDecisionPack;
   comparisonBasisMatches: boolean;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
 
   return (
     <Box sx={{ borderTop: 1, borderColor: 'divider' }}>
@@ -275,7 +275,7 @@ function MobileScenarioHeader({
   scenario: OrganizationScenario;
   decision: OrganizationScenarioDecisionPack;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const color =
     decision.decisionState === 'READY'
       ? 'success.main'
@@ -306,7 +306,7 @@ function ScenarioHeader({
   scenario: OrganizationScenario;
   decision: OrganizationScenarioDecisionPack;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const color =
     decision.decisionState === 'READY'
       ? 'success'

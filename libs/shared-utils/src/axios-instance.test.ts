@@ -1,6 +1,6 @@
 import { it, vi, expect, describe, afterEach } from 'vitest';
 
-import { axiosInstance, resetCsrfToken } from './axios-instance';
+import { axiosInstance, resetCsrfToken, setUnauthorizedHandler } from './axios-instance';
 
 function jsonResponse(status: number, payload: unknown): Response {
   return {
@@ -13,7 +13,18 @@ function jsonResponse(status: number, payload: unknown): Response {
 describe('axiosInstance browser session contract', () => {
   afterEach(() => {
     resetCsrfToken();
+    setUnauthorizedHandler(null);
     vi.unstubAllGlobals();
+  });
+
+  it('keeps the authenticated session when an authorized route returns forbidden', async () => {
+    const unauthorized = vi.fn();
+    setUnauthorizedHandler(unauthorized);
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(403, { message: 'Forbidden' })));
+
+    await expect(axiosInstance.get('/api/restricted')).rejects.toMatchObject({ status: 403 });
+
+    expect(unauthorized).not.toHaveBeenCalled();
   });
 
   it('uses credentials and adds an in-memory CSRF token to mutations', async () => {

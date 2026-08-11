@@ -57,6 +57,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { AdminPanelError } from './admin-ui';
+import { useSystemCodeOptions } from '../../components/use-system-code-options';
 import {
   OutcomeChip,
   RiskScore,
@@ -76,8 +77,8 @@ import type {
   AuditWindow,
 } from '@dwp-frontend/shared-utils';
 
-const WINDOWS: AuditWindow[] = ['H24', 'D7', 'D30', 'D90'];
-const CATEGORIES: AuditCategory[] = [
+const WINDOW_FALLBACK: AuditWindow[] = ['H24', 'D7', 'D30', 'D90'];
+const CATEGORY_FALLBACK: AuditCategory[] = [
   'ALL',
   'ADMIN_CHANGE',
   'AUTHENTICATION',
@@ -89,8 +90,9 @@ const CATEGORIES: AuditCategory[] = [
   'POLICY_DENIED',
   'SYSTEM_EVENT',
 ];
-const SEVERITIES: AuditSeverity[] = ['ALL', 'INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
-const OUTCOMES: AuditOutcome[] = ['ALL', 'SUCCESS', 'DENIED', 'FAILED'];
+const SEVERITY_FALLBACK: AuditSeverity[] = ['ALL', 'INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+const OUTCOME_FALLBACK: AuditOutcome[] = ['ALL', 'SUCCESS', 'DENIED', 'FAILED'];
+const EXPORT_FORMAT_FALLBACK = ['CSV', 'JSONL'] as const;
 
 function JsonState({ label, value }: { label: string; value: Record<string, unknown> }) {
   return (
@@ -171,6 +173,14 @@ export function AuditExplorer() {
   const [caseLinkOpen, setCaseLinkOpen] = useState(false);
   const [linkCaseId, setLinkCaseId] = useState('');
   const [linkNote, setLinkNote] = useState('');
+  const windows = useSystemCodeOptions('PLATFORM.AUDIT.WINDOW', WINDOW_FALLBACK);
+  const categories = useSystemCodeOptions('PLATFORM.AUDIT.CATEGORY_FILTER', CATEGORY_FALLBACK);
+  const severities = useSystemCodeOptions('PLATFORM.AUDIT.SEVERITY_FILTER', SEVERITY_FALLBACK);
+  const outcomes = useSystemCodeOptions('PLATFORM.AUDIT.OUTCOME_FILTER', OUTCOME_FALLBACK);
+  const exportFormats = useSystemCodeOptions(
+    'PLATFORM.SYS_AUDIT_EXPORT_JOBS.FORMAT',
+    EXPORT_FORMAT_FALLBACK
+  );
 
   const savedSearchesQuery = useQuery({
     queryKey: ['audit-control', 'saved-searches'],
@@ -538,7 +548,7 @@ export function AuditExplorer() {
           }}
           aria-label={t('auditControl.filters.window')}
         >
-          {WINDOWS.map((item) => (
+          {windows.map((item) => (
             <ToggleButton key={item} value={item}>
               {t(`auditControl.windows.${item}`)}
             </ToggleButton>
@@ -554,7 +564,7 @@ export function AuditExplorer() {
             setPagination((current) => ({ ...current, page: 0 }));
           }}
         >
-          {CATEGORIES.map((item) => (
+          {categories.map((item) => (
             <MenuItem key={item} value={item}>
               {t(`auditControl.category.${item}`)}
             </MenuItem>
@@ -570,7 +580,7 @@ export function AuditExplorer() {
             setPagination((current) => ({ ...current, page: 0 }));
           }}
         >
-          {SEVERITIES.map((item) => (
+          {severities.map((item) => (
             <MenuItem key={item} value={item}>
               {t(`auditControl.severity.${item}`)}
             </MenuItem>
@@ -586,7 +596,7 @@ export function AuditExplorer() {
             setPagination((current) => ({ ...current, page: 0 }));
           }}
         >
-          {OUTCOMES.map((item) => (
+          {outcomes.map((item) => (
             <MenuItem key={item} value={item}>
               {t(`auditControl.outcome.${item}`)}
             </MenuItem>
@@ -917,12 +927,12 @@ export function AuditExplorer() {
               onChange={(_, value: 'CSV' | 'JSONL' | null) => value && setExportFormat(value)}
               size="small"
             >
-              <ToggleButton value="CSV">
-                <Download size={16} /> {t('auditControl.export.formats.CSV')}
-              </ToggleButton>
-              <ToggleButton value="JSONL">
-                <FileJson2 size={16} /> {t('auditControl.export.formats.JSONL')}
-              </ToggleButton>
+              {exportFormats.map((format) => (
+                <ToggleButton key={format} value={format}>
+                  {format === 'CSV' ? <Download size={16} /> : <FileJson2 size={16} />}{' '}
+                  {t(`auditControl.export.formats.${format}`)}
+                </ToggleButton>
+              ))}
             </ToggleButtonGroup>
             <TextField
               autoFocus

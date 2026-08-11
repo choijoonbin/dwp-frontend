@@ -38,6 +38,7 @@ import {
   type SettingsSection,
 } from '../../features/account/settings-navigation';
 import { usePreferredLanguage } from '../../components/use-preferred-language';
+import { useSystemCodeOptions } from '../../components/use-system-code-options';
 import { usePersonalPreference } from '../../features/account/personal-preference-provider';
 
 import type { LucideIcon } from 'lucide-react';
@@ -192,6 +193,11 @@ export default function SettingsPage() {
   const appearance = useAppearance();
   const personalPreference = usePersonalPreference();
   const { language, setLanguage, isSaving: isLanguageSaving } = usePreferredLanguage();
+  const registeredColorModes = useSystemCodeOptions(
+    'PLATFORM.PREFERENCE.COLOR_MODE',
+    colorModeOptions
+  );
+  const registeredDensities = useSystemCodeOptions('PLATFORM.PREFERENCE.DENSITY', densityOptions);
   const managedFontName = appearance.tenant.fontFamily ?? t('managed.systemFont');
 
   if (!isSettingsSection(section)) {
@@ -242,7 +248,7 @@ export default function SettingsPage() {
                 value && personalPreference.update({ appearance: { mode: value } })
               }
             >
-              {colorModeOptions.map((mode) => (
+              {registeredColorModes.map((mode) => (
                 <ToggleButton key={mode} value={mode}>
                   {t(`options.colorMode.${mode}`)}
                 </ToggleButton>
@@ -264,7 +270,7 @@ export default function SettingsPage() {
                 value && personalPreference.update({ appearance: { density: value } })
               }
             >
-              {densityOptions.map((density) => (
+              {registeredDensities.map((density) => (
                 <ToggleButton key={density} value={density}>
                   {t(`options.density.${density}`)}
                 </ToggleButton>

@@ -111,7 +111,7 @@ export function OrganizationScenarioDrawer({
   onScenarioChanged,
   onClose,
 }: Props) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const toast = useToast();
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string>();
@@ -130,19 +130,19 @@ export function OrganizationScenarioDrawer({
   const [reason, setReason] = useState('');
 
   const scenariosQuery = useQuery({
-    queryKey: ['admin', 'organization-scenarios'],
+    queryKey: ['workforce', 'organization-scenarios'],
     queryFn: listOrganizationScenarios,
     enabled: open,
   });
   const scenarios = useMemo(() => scenariosQuery.data ?? [], [scenariosQuery.data]);
   const selected = scenarios.find((scenario) => scenario.scenarioId === selectedId) ?? scenarios[0];
   const decisionQuery = useQuery({
-    queryKey: ['admin', 'organization-scenarios', selected?.scenarioId, 'decision-pack'],
+    queryKey: ['workforce', 'organization-scenarios', selected?.scenarioId, 'decision-pack'],
     queryFn: () => getOrganizationScenarioDecisionPack(selected?.scenarioId as string),
     enabled: open && Boolean(selected?.scenarioId),
   });
   const decisionHistoryQuery = useQuery({
-    queryKey: ['admin', 'organization-scenarios', selected?.scenarioId, 'decision-history'],
+    queryKey: ['workforce', 'organization-scenarios', selected?.scenarioId, 'decision-history'],
     queryFn: () => getOrganizationScenarioDecisionHistory(selected?.scenarioId as string),
     enabled: open && Boolean(selected?.scenarioId),
   });
@@ -150,7 +150,12 @@ export function OrganizationScenarioDrawer({
     (scenario) => scenario.scenarioId === comparisonScenarioId
   );
   const comparisonDecisionQuery = useQuery({
-    queryKey: ['admin', 'organization-scenarios', comparisonScenario?.scenarioId, 'decision-pack'],
+    queryKey: [
+      'workforce',
+      'organization-scenarios',
+      comparisonScenario?.scenarioId,
+      'decision-pack',
+    ],
     queryFn: () => getOrganizationScenarioDecisionPack(comparisonScenario?.scenarioId as string),
     enabled: open && Boolean(comparisonScenario?.scenarioId),
   });
@@ -189,7 +194,7 @@ export function OrganizationScenarioDrawer({
 
   const replaceScenario = (next: OrganizationScenario) => {
     queryClient.setQueryData<OrganizationScenario[]>(
-      ['admin', 'organization-scenarios'],
+      ['workforce', 'organization-scenarios'],
       (current = []) => {
         const found = current.some((item) => item.scenarioId === next.scenarioId);
         return found
@@ -211,10 +216,10 @@ export function OrganizationScenarioDrawer({
       replaceScenario(next);
       onScenarioChanged();
       await queryClient.invalidateQueries({
-        queryKey: ['admin', 'organization-scenarios', next.scenarioId, 'decision-pack'],
+        queryKey: ['workforce', 'organization-scenarios', next.scenarioId, 'decision-pack'],
       });
       await queryClient.invalidateQueries({
-        queryKey: ['admin', 'organization-scenarios', next.scenarioId, 'decision-history'],
+        queryKey: ['workforce', 'organization-scenarios', next.scenarioId, 'decision-history'],
       });
       toast.success(successMessage);
       return next;
@@ -295,11 +300,11 @@ export function OrganizationScenarioDrawer({
     try {
       const decision = await validateOrganizationScenarioDecisionPack(selected);
       queryClient.setQueryData(
-        ['admin', 'organization-scenarios', selected.scenarioId, 'decision-pack'],
+        ['workforce', 'organization-scenarios', selected.scenarioId, 'decision-pack'],
         decision
       );
       await queryClient.invalidateQueries({
-        queryKey: ['admin', 'organization-scenarios', selected.scenarioId, 'decision-history'],
+        queryKey: ['workforce', 'organization-scenarios', selected.scenarioId, 'decision-history'],
       });
       toast.success(t('orgChart.scenarios.decision.messages.validated'));
     } catch (caught) {
@@ -984,7 +989,7 @@ function WorkflowAction({
   onAction: () => Promise<void>;
   onSecondary?: () => Promise<void>;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   return (
     <Stack gap={1} sx={{ pt: 1 }}>
       <Box>

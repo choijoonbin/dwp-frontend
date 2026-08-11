@@ -1,7 +1,7 @@
 import { Home, Menu, Settings2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { foundationTokens } from '@dwp-frontend/design-system';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 import { useAuth } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';

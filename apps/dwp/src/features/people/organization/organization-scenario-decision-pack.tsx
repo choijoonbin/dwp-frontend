@@ -29,7 +29,7 @@ export function OrganizationScenarioDecisionPackView({
   validating,
   onValidate,
 }: Props) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   if (loading) {
     return (
       <Stack alignItems="center" justifyContent="center" gap={1} sx={{ minHeight: 150 }}>

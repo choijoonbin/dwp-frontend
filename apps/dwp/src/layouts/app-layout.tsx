@@ -8,11 +8,14 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Sparkles,
+  UsersRound,
+  Workflow,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { foundationTokens, useAppearance } from '@dwp-frontend/design-system';
+import { useAppearance } from '@dwp-frontend/design-system/appearance';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 import { listRuntimeNavigation, usePermissions } from '@dwp-frontend/shared-utils';
 import type { PermissionDTO, RuntimeNavigationNode } from '@dwp-frontend/shared-utils';
 
@@ -47,6 +50,8 @@ const NAVIGATION_ICONS: Record<string, LucideIcon> = {
   apps: AppWindow,
   ask: Sparkles,
   work: BriefcaseBusiness,
+  people: UsersRound,
+  workforce: Workflow,
 };
 
 function hasRuntimePermission(node: RuntimeNavigationNode, permissions: PermissionDTO[]): boolean {
@@ -135,6 +140,26 @@ function AppNavigation({ compact = false, horizontal = false, onNavigate }: AppN
           route: '/activity',
           iconKey: 'activity',
           requiredResourceKey: 'APP.ACTIVITY',
+          requiredPermissionCode: 'VIEW',
+          children: [],
+        },
+        {
+          navigationKey: 'people',
+          itemType: 'APP',
+          label: t('navigation.items.people'),
+          route: '/people',
+          iconKey: 'people',
+          requiredResourceKey: 'APP.PEOPLE_DIRECTORY',
+          requiredPermissionCode: 'VIEW',
+          children: [],
+        },
+        {
+          navigationKey: 'workforce',
+          itemType: 'APP',
+          label: t('navigation.items.workforce'),
+          route: '/workforce',
+          iconKey: 'workforce',
+          requiredResourceKey: 'APP.WORKFORCE_MANAGEMENT',
           requiredPermissionCode: 'VIEW',
           children: [],
         },

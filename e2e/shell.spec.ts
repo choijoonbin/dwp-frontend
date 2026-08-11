@@ -672,7 +672,7 @@ test('authenticated users enter a personal home before the business shell', asyn
   ).toBeVisible();
   await page.getByRole('button', { name: '업무 열기', exact: true }).click();
   await expect(page.getByRole('heading', { name: '업무', level: 1 })).toBeVisible();
-  await page.goto('/admin/people/access');
+  await page.goto('/admin/identity/access');
   await expect(page.getByRole('heading', { name: '사용자 접근 권한', level: 1 })).toBeVisible();
 
   let logoutRequested = false;
@@ -692,7 +692,7 @@ test('authenticated users enter a personal home before the business shell', asyn
   await page.getByRole('button', { name: '로그아웃', exact: true }).click();
   await expect.poll(() => logoutRequested).toBe(true);
   await expect(page.locator('html')).toHaveAttribute('data-dwp-transition', 'session-exit');
-  await expect(page).toHaveURL(/\/admin\/people\/access/);
+  await expect(page).toHaveURL(/\/admin\/identity\/access/);
   await expect(page.getByRole('heading', { name: '사용자 접근 권한', level: 1 })).toBeVisible();
   const transitionReleasedAt = Date.now();
   releaseLogout();

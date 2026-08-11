@@ -9,9 +9,7 @@
     "dateUpdated": "{{date}} / {{time}} 업데이트",
     "lastRefreshed": "{{time}} 마지막 새로고침 / 참조 데이터 전용",
     "saveError": "홈 환경 설정을 저장하지 못했습니다.",
-    "homeSaved": "홈 화면을 저장했습니다.",
-    "appLayoutSaved": "앱 배치를 저장했습니다.",
-    "defaultRestored": "기본 홈 화면으로 복원했습니다."
+    "homeSaved": "홈 화면을 저장했습니다."
   },
   "apps": {
     "groups": {
@@ -61,6 +59,10 @@
         "name": "구성원 디렉터리",
         "description": "구성원, 팀 및 연락처 정보"
       },
+      "dwp-workforce": {
+        "name": "인력 운영",
+        "description": "인력, 포지션, 조직 설계 및 HRIS 데이터 운영"
+      },
       "ref-app-knowledge": {
         "name": "지식",
         "description": "정책, 가이드 및 검증된 답변"
@@ -84,21 +86,18 @@
     "defaultDescription": "역할과 워크스페이스에 할당된 앱",
     "assignedCount": "{{count}}개 할당됨",
     "allApps": "모든 앱",
-    "editHome": "홈 편집",
-    "customize": "앱 배치 편집",
-    "done": "완료",
-    "resetTooltip": "할당된 기본 앱 배치로 복원",
-    "resetLabel": "앱 배치 초기화",
+    "editHome": "홈 화면 편집",
     "fallbackApp": "앱",
     "defaultFolder": "앱 폴더",
     "groupFolder": "{{group}} 폴더",
     "groupApps": "{{group}} 앱",
     "openApp": "{{app}} 열기",
-    "arrangeApp": "{{app}} 배치",
+    "dragApp": "{{app}} 이동",
+    "removeApp": "홈에서 제거",
+    "removeAppLabel": "{{app}} 앱을 홈에서 제거",
     "openFolder": "{{folder}} 폴더 열기",
-    "arrangeFolder": "{{folder}} 폴더 배치",
     "drag": {
-      "instructions": "스페이스 키로 앱을 선택하고 방향키로 이동한 다음 스페이스 키를 눌러 놓으세요. 드래그하지 않을 때는 배치 메뉴를 사용할 수 있습니다.",
+      "instructions": "스페이스 키로 앱을 선택하고 방향키로 이동한 다음 스페이스 키를 눌러 놓으세요.",
       "pickedUp": "{{item}} 항목을 선택했습니다.",
       "over": "{{item}} 위에 있습니다.",
       "notOver": "놓을 수 있는 대상 위가 아닙니다.",
@@ -106,34 +105,34 @@
       "returned": "{{item}} 항목을 원래 위치로 되돌렸습니다.",
       "cancelled": "{{item}} 항목 이동을 취소했습니다."
     },
-    "menu": {
-      "moveEarlier": "앞으로 이동",
-      "moveLater": "뒤로 이동",
-      "createFolder": "폴더 만들기",
-      "withApp": "{{app}} 앱과 함께",
-      "createSelectedFolder": "선택한 앱으로 폴더 만들기",
-      "addToFolder": "{{folder}}에 추가",
-      "renameFolder": "폴더 이름 변경",
-      "ungroup": "폴더 해제"
-    },
     "folder": {
+      "create": "폴더 만들기",
       "rename": "폴더 이름 변경",
       "renameLabel": "{{folder}} 이름 변경",
       "name": "폴더 이름",
-      "moveOut": "폴더 밖으로 이동",
-      "moveOutLabel": "{{app}} 앱을 {{folder}} 밖으로 이동"
+      "ungroup": "폴더 해제",
+      "ungroupLabel": "{{folder}} 폴더 해제"
     }
   },
   "editor": {
-    "title": "홈 편집",
-    "subtitle": "개인 화면",
+    "editing": "편집 중",
     "closeLabel": "홈 편집기 닫기",
-    "widgetsLabel": "홈 위젯",
-    "moveUp": "위로 이동",
-    "moveDown": "아래로 이동",
-    "moveUpLabel": "{{widget}} 위로 이동",
-    "moveDownLabel": "{{widget}} 아래로 이동",
-    "showLabel": "{{widget}} 표시",
+    "toolbarLabel": "홈 화면 편집 도구",
+    "addItems": "항목 추가",
+    "reset": "기본 배치로 초기화",
+    "cancel": "편집 취소",
+    "done": "편집 완료",
+    "galleryTitle": "홈에 항목 추가",
+    "gallerySubtitle": "숨긴 앱과 정보 위젯을 다시 홈에 배치합니다.",
+    "galleryTabs": "추가할 홈 항목 종류",
+    "appsTab": "앱 {{count}}",
+    "widgetsTab": "정보 위젯 {{count}}",
+    "nothingHidden": "추가할 항목이 없습니다",
+    "nothingHiddenDescription": "현재 사용할 수 있는 모든 항목이 홈에 표시되어 있습니다.",
+    "add": "추가",
+    "dragWidgetLabel": "{{widget}} 위젯 이동",
+    "removeWidget": "홈에서 제거",
+    "removeWidgetLabel": "{{widget}} 위젯을 홈에서 제거",
     "governed": "관리자가 지정한 콘텐츠"
   },
   "widgets": {

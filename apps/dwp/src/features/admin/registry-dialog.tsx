@@ -1,14 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
 
 import type { RegistryEntry, RegistryType, RiskTier } from '@dwp-frontend/shared-utils';
 
@@ -70,8 +64,7 @@ export function RegistryDialog({
     setArtifactVersion(value?.artifactVersion ?? '1.0.0');
   }, [open, value]);
 
-  const submit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const submit = async () => {
     await onSubmit({
       registryType,
       entryKey: entryKey.trim(),
@@ -90,93 +83,86 @@ export function RegistryDialog({
     artifactVersion.trim().length > 0;
 
   return (
-    <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
-      <Box component="form" onSubmit={(event) => void submit(event)}>
-        <DialogTitle>{t(dialogCopy[mode].title)}</DialogTitle>
-        <DialogContent
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-            gap: 2,
-            pt: '8px !important',
+    <FormDialog
+      open={open}
+      title={t(dialogCopy[mode].title)}
+      cancelLabel={t('common.actions.cancel')}
+      submitLabel={t(dialogCopy[mode].submit)}
+      busy={busy}
+      submitDisabled={!valid}
+      onClose={onClose}
+      onSubmit={submit}
+    >
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+          gap: 2,
+        }}
+      >
+        <SelectField
+          label={t('registry.fields.type')}
+          value={registryType}
+          onValueChange={(next) => setRegistryType(next as RegistryType)}
+          disabled={mode !== 'create'}
+          options={registryTypes.map((type) => ({
+            value: type,
+            label: t(`registry.types.${type}`),
+          }))}
+        />
+        <FormField
+          autoFocus={mode === 'create'}
+          label={t('registry.fields.key')}
+          value={entryKey}
+          onChange={(event) => setEntryKey(event.target.value.toUpperCase())}
+          disabled={mode !== 'create'}
+          required
+          slotProps={{
+            htmlInput: { pattern: '[A-Za-z][A-Za-z0-9_.-]{0,99}', maxLength: 100 },
           }}
-        >
-          <TextField
-            select
-            label={t('registry.fields.type')}
-            value={registryType}
-            onChange={(event) => setRegistryType(event.target.value as RegistryType)}
-            disabled={mode !== 'create'}
-          >
-            {registryTypes.map((type) => (
-              <MenuItem key={type} value={type}>
-                {t(`registry.types.${type}`)}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            autoFocus={mode === 'create'}
-            label={t('registry.fields.key')}
-            value={entryKey}
-            onChange={(event) => setEntryKey(event.target.value.toUpperCase())}
-            disabled={mode !== 'create'}
-            required
-            inputProps={{ pattern: '[A-Za-z][A-Za-z0-9_.-]{0,99}', maxLength: 100 }}
-          />
-          <TextField
-            autoFocus={mode !== 'create'}
-            label={t('registry.fields.name')}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            required
-            inputProps={{ maxLength: 160 }}
-            sx={{ gridColumn: { sm: '1 / -1' } }}
-          />
-          <TextField
-            label={t('registry.fields.owner')}
-            value={ownerRef}
-            onChange={(event) => setOwnerRef(event.target.value)}
-            required
-            inputProps={{ maxLength: 160 }}
-          />
-          <TextField
-            label={t('registry.fields.version')}
-            value={artifactVersion}
-            onChange={(event) => setArtifactVersion(event.target.value)}
-            required
-            inputProps={{ maxLength: 64 }}
-          />
-          <TextField
-            select
-            label={t('registry.fields.risk')}
-            value={riskTier}
-            onChange={(event) => setRiskTier(event.target.value as RiskTier)}
-          >
-            {riskTiers.map((tier) => (
-              <MenuItem key={tier} value={tier}>
-                {t(`registry.risk.${tier}`)}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            label={t('registry.fields.description')}
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            multiline
-            minRows={3}
-            inputProps={{ maxLength: 1000 }}
-            sx={{ gridColumn: { sm: '1 / -1' } }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose} disabled={busy}>
-            {t('common.actions.cancel')}
-          </Button>
-          <Button type="submit" variant="contained" disabled={busy || !valid}>
-            {t(dialogCopy[mode].submit)}
-          </Button>
-        </DialogActions>
+        />
+        <FormField
+          autoFocus={mode !== 'create'}
+          label={t('registry.fields.name')}
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          required
+          slotProps={{ htmlInput: { maxLength: 160 } }}
+          sx={{ gridColumn: { sm: '1 / -1' } }}
+        />
+        <FormField
+          label={t('registry.fields.owner')}
+          value={ownerRef}
+          onChange={(event) => setOwnerRef(event.target.value)}
+          required
+          slotProps={{ htmlInput: { maxLength: 160 } }}
+        />
+        <FormField
+          label={t('registry.fields.version')}
+          value={artifactVersion}
+          onChange={(event) => setArtifactVersion(event.target.value)}
+          required
+          slotProps={{ htmlInput: { maxLength: 64 } }}
+        />
+        <SelectField
+          label={t('registry.fields.risk')}
+          value={riskTier}
+          onValueChange={(next) => setRiskTier(next as RiskTier)}
+          options={riskTiers.map((tier) => ({
+            value: tier,
+            label: t(`registry.risk.${tier}`),
+          }))}
+        />
+        <FormField
+          label={t('registry.fields.description')}
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+          multiline
+          minRows={3}
+          slotProps={{ htmlInput: { maxLength: 1000 } }}
+          sx={{ gridColumn: { sm: '1 / -1' } }}
+        />
       </Box>
-    </Dialog>
+    </FormDialog>
   );
 }

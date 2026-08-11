@@ -1,7 +1,7 @@
 import '@dwp-frontend/design-system/styles/global.css';
 
 import { useEffect } from 'react';
-import { DwpThemeProvider, useAppearance } from '@dwp-frontend/design-system';
+import { DwpDateTimeProvider, DwpThemeProvider, useAppearance } from '@dwp-frontend/design-system';
 
 import type { Decorator, Preview } from '@storybook/react-vite';
 import type { DensityPreference, ColorModePreference } from '@dwp-frontend/design-system';
@@ -31,7 +31,9 @@ const withDwpFoundation: Decorator = (Story, context) => {
   return (
     <DwpThemeProvider>
       <FoundationState mode={mode} density={density} highContrast={highContrast}>
-        <Story />
+        <DwpDateTimeProvider locale="en" timeZone="UTC">
+          <Story />
+        </DwpDateTimeProvider>
       </FoundationState>
     </DwpThemeProvider>
   );

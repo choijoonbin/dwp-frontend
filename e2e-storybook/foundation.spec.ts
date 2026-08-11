@@ -60,6 +60,53 @@ test('enterprise grid visual and accessibility', async ({ page }) => {
   });
 });
 
+test('shared action and form contracts are interactive and accessible', async ({ page }) => {
+  await openStory(page, 'dwp-components-actions--intent-and-state');
+
+  await expect(page.getByRole('button', { name: 'Save changes' }).first()).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Saving changes' })).toBeDisabled();
+  await expectNoAutomaticAccessibilityViolations(page);
+
+  await openStory(page, 'dwp-components-form-fields--product-contract');
+  await expect(page.getByRole('textbox', { name: /Company email/ })).toHaveValue(
+    'employee@skax.co.kr'
+  );
+  await expect(page.getByText('Enter an approved company domain.')).toBeVisible();
+  await expectNoAutomaticAccessibilityViolations(page);
+});
+
+test('danger confirmation follows modal focus and accessibility contracts', async ({ page }) => {
+  await openStory(page, 'dwp-components-dialogs--focus-and-intent');
+
+  const dialog = page.getByRole('alertdialog', { name: 'Delete workspace?' });
+  await expect(dialog).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Keep workspace' })).toBeFocused();
+  await expectNoAutomaticAccessibilityViolations(page);
+});
+
+test('server grid toolbar and cross-page selection are accessible', async ({ page }) => {
+  await openStory(page, 'dwp-enterprise-data-grid--server-toolbar-and-selection');
+
+  await expect(page.getByRole('toolbar', { name: 'Work queue tools' })).toBeVisible();
+  await expect(page.getByRole('searchbox', { name: 'Search work' })).toBeVisible();
+  await expect(page.getByText('1 selected')).toBeVisible();
+  await expectNoAutomaticAccessibilityViolations(page);
+});
+
+test('date policy and async states expose stable accessible semantics', async ({ page }) => {
+  await openStory(page, 'dwp-enterprise-date-and-time--product-policy');
+
+  await expect(page.getByRole('group', { name: 'Start date - End date' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Effective date' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Publish time' })).toBeVisible();
+  await expectNoAutomaticAccessibilityViolations(page);
+
+  await openStory(page, 'dwp-components-async-states--complete-set');
+  await expect(page.getByRole('status', { name: 'Loading members' })).toBeVisible();
+  await expect(page.getByRole('alert')).toContainText('Members could not be loaded');
+  await expectNoAutomaticAccessibilityViolations(page);
+});
+
 test('agent plan visual and accessibility', async ({ page }) => {
   await openStory(page, 'dwp-ai-trust-patterns--plan-review');
 

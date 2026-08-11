@@ -2,7 +2,7 @@ import type { RouteObject } from 'react-router-dom';
 
 import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { AuthGuard } from '@dwp-frontend/shared-utils';
 import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
 
@@ -14,15 +14,27 @@ import { AccountLayout } from '../layouts/account-layout';
 import { AdminLayout } from '../layouts/admin-layout';
 import { AuthLayout } from '../layouts/auth-layout';
 import { HomeLayout } from '../layouts/home-layout';
+import { PeopleLayout } from '../layouts/people-layout';
 import { ProviderLayout } from '../layouts/provider-layout';
-import { getLegacyAdminPath } from '../features/admin/admin-navigation';
+import { WorkforceLayout } from '../layouts/workforce-layout';
+import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
+import {
+  canAccessAdminNavigationItem,
+  canEnterTenantControlPlane,
+  hasAnyRole,
+  hasProviderControlPlaneRole,
+  WORKFORCE_OPERATIONS_ROLES,
+} from '../features/auth/control-plane-access';
+import { useProviderSupportContext } from '../features/provider/use-provider-support-context';
 
 const HomePage = lazy(() => import('../pages/home'));
 const WorkPage = lazy(() => import('../pages/work'));
 const AskPage = lazy(() => import('../pages/ask'));
 const ActivityPage = lazy(() => import('../pages/activity'));
 const AppsPage = lazy(() => import('../pages/apps'));
+const PeoplePage = lazy(() => import('../pages/people'));
+const WorkforcePage = lazy(() => import('../pages/workforce'));
 const AdminPage = lazy(() => import('../pages/admin'));
 const ProviderPage = lazy(() => import('../pages/provider'));
 const ProfilePage = lazy(() => import('../pages/account/profile'));
@@ -48,27 +60,65 @@ const fallback = <RouteFallback />;
 function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const { permissions } = usePermissions();
-  const rolePermitted = auth.user?.roles.some((role) =>
-    ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN', 'AUDITOR', 'AUDIT_ADMIN'].includes(role)
-  );
+  const roles = auth.user?.roles ?? [];
+  const providerRole = hasProviderControlPlaneRole(roles);
+  const supportContext = useProviderSupportContext(providerRole);
   const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
-  return rolePermitted && appPermitted ? children : <Navigate to="/403" replace />;
-}
-
-function AdminLegacyRedirect() {
-  const [searchParams] = useSearchParams();
-  return <Navigate to={getLegacyAdminPath(searchParams.get('view'))} replace />;
-}
-
-function ProviderRouteGuard({ children }: { children: React.ReactNode }) {
-  const auth = useAuth();
-  return auth.user?.roles.some((role) =>
-    ['PROVIDER_ADMIN', 'PROVIDER_OPERATOR', 'PROVIDER_SUPPORT', 'PROVIDER_AUDITOR'].includes(role)
-  ) ? (
+  const regularAccess = canEnterTenantControlPlane(roles, appPermitted);
+  if (!regularAccess && providerRole && supportContext.isLoading) return <RouteFallback />;
+  return canEnterTenantControlPlane(roles, appPermitted, Boolean(supportContext.data)) ? (
     children
   ) : (
     <Navigate to="/403" replace />
   );
+}
+
+function AdminLegacyRedirect() {
+  const auth = useAuth();
+  const { hasPermission, isLoaded } = usePermissions();
+  const [searchParams] = useSearchParams();
+  const roles = auth.user?.roles ?? [];
+  const providerRole = hasProviderControlPlaneRole(roles);
+  const supportContext = useProviderSupportContext(providerRole);
+  if (providerRole && supportContext.isLoading) return <RouteFallback />;
+  const items = ADMIN_NAVIGATION.flatMap((group) => group.items).filter((item) =>
+    canAccessAdminNavigationItem(item, {
+      roles,
+      permissionsLoaded: isLoaded,
+      hasPermission,
+      supportScopes: supportContext.data?.scopes,
+    })
+  );
+  const requestedView = searchParams.get('view');
+  const destination = items.find((item) => item.view === requestedView)?.path ?? items[0]?.path;
+  return <Navigate to={destination ?? '/403'} replace />;
+}
+
+function AdminPeopleLegacyRedirect() {
+  const { view } = useParams();
+  if (view === 'people-directory') return <Navigate to="/people/directory" replace />;
+  if (view === 'directory') return <Navigate to="/people/organization" replace />;
+  if (view === 'access' || view === 'roles' || view === 'provisioning') {
+    return <Navigate to={`/admin/identity/${view}`} replace />;
+  }
+  return <Navigate to="/admin" replace />;
+}
+
+function ProviderRouteGuard({ children }: { children: React.ReactNode }) {
+  const auth = useAuth();
+  return hasProviderControlPlaneRole(auth.user?.roles ?? []) ? (
+    children
+  ) : (
+    <Navigate to="/403" replace />
+  );
+}
+
+function WorkspaceRouteGuard({ children }: { children: React.ReactNode }) {
+  const auth = useAuth();
+  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
+  const supportContext = useProviderSupportContext(providerRole);
+  if (providerRole && supportContext.isLoading) return <RouteFallback />;
+  return supportContext.data ? <Navigate to="/admin" replace /> : children;
 }
 
 function AppRouteGuard({
@@ -86,11 +136,84 @@ function AppRouteGuard({
   );
 }
 
+function WorkforceRouteGuard({ children }: { children: React.ReactNode }) {
+  const auth = useAuth();
+  const { permissions } = usePermissions();
+  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
+  const supportContext = useProviderSupportContext(providerRole);
+  if (providerRole && supportContext.isLoading) return <RouteFallback />;
+  if (supportContext.data?.scopes.includes('WORKFORCE_READ')) return children;
+  const entitled = isAppResourceEntitled('APP.WORKFORCE_MANAGEMENT', permissions);
+  return entitled && hasAnyRole(auth.user?.roles ?? [], WORKFORCE_OPERATIONS_ROLES) ? (
+    children
+  ) : (
+    <Navigate to="/403" replace />
+  );
+}
+
+function PeopleRouteGuard({ children }: { children: React.ReactNode }) {
+  const auth = useAuth();
+  const { permissions } = usePermissions();
+  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
+  const supportContext = useProviderSupportContext(providerRole);
+  if (providerRole && supportContext.isLoading) return <RouteFallback />;
+  if (supportContext.data?.scopes.includes('WORKFORCE_READ')) return children;
+  return isAppResourceEntitled('APP.PEOPLE_DIRECTORY', permissions) ? (
+    children
+  ) : (
+    <Navigate to="/403" replace />
+  );
+}
+
 export const routesSection: RouteObject[] = [
+  {
+    path: 'people',
+    element: (
+      <AuthGuard>
+        <PeopleRouteGuard>
+          <PeopleLayout />
+        </PeopleRouteGuard>
+      </AuthGuard>
+    ),
+    children: [
+      { index: true, element: <Navigate to="directory" replace /> },
+      {
+        path: ':view',
+        element: (
+          <Suspense fallback={fallback}>
+            <PeoplePage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: 'workforce',
+    element: (
+      <AuthGuard>
+        <WorkforceRouteGuard>
+          <WorkforceLayout />
+        </WorkforceRouteGuard>
+      </AuthGuard>
+    ),
+    children: [
+      { index: true, element: <Navigate to="overview" replace /> },
+      {
+        path: ':view',
+        element: (
+          <Suspense fallback={fallback}>
+            <WorkforcePage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
   {
     element: (
       <AuthGuard>
-        <HomeLayout />
+        <WorkspaceRouteGuard>
+          <HomeLayout />
+        </WorkspaceRouteGuard>
       </AuthGuard>
     ),
     children: [
@@ -107,7 +230,9 @@ export const routesSection: RouteObject[] = [
   {
     element: (
       <AuthGuard>
-        <AppLayout />
+        <WorkspaceRouteGuard>
+          <AppLayout />
+        </WorkspaceRouteGuard>
       </AuthGuard>
     ),
     children: [
@@ -155,7 +280,9 @@ export const routesSection: RouteObject[] = [
     path: 'account',
     element: (
       <AuthGuard>
-        <AccountLayout />
+        <WorkspaceRouteGuard>
+          <AccountLayout />
+        </WorkspaceRouteGuard>
       </AuthGuard>
     ),
     children: [
@@ -198,6 +325,7 @@ export const routesSection: RouteObject[] = [
     ),
     children: [
       { index: true, element: <AdminLegacyRedirect /> },
+      { path: 'people/:view', element: <AdminPeopleLegacyRedirect /> },
       {
         path: ':section/:view',
         element: (

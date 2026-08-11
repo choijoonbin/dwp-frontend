@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { foundationTokens } from '@dwp-frontend/design-system';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 import { getProviderOperatorProfile } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -34,6 +34,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { AccountMenu } from '../components/account-menu';
 import { BrandLockup } from '../components/brand-lockup';
 import { FullscreenControl, NotificationMenu, SearchControl } from '../components/shell-controls';
+import { useCurrentProviderSupportContext } from '../features/provider/use-provider-support-context';
 
 const SIDEBAR_WIDTH = foundationTokens.layout.adminNavigationExpanded;
 const HEADER_HEIGHT = foundationTokens.layout.headerHeight;
@@ -42,6 +43,7 @@ export function ProviderLayout() {
   const { t } = useTranslation('provider');
   const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const supportContext = useCurrentProviderSupportContext();
   const operator = useQuery({
     queryKey: ['provider', 'operator'],
     queryFn: getProviderOperatorProfile,
@@ -178,14 +180,16 @@ export function ProviderLayout() {
       <Box sx={{ p: 1.5, borderTop: 1, borderColor: 'divider' }}>
         <Button
           component={NavLink}
-          to="/"
+          to={supportContext.data ? '/admin' : '/'}
           fullWidth
           color="inherit"
-          startIcon={<Home size={17} />}
+          startIcon={supportContext.data ? <LifeBuoy size={17} /> : <Home size={17} />}
           onClick={onNavigate}
           sx={{ justifyContent: 'flex-start' }}
         >
-          {t('shell.backToWorkspace')}
+          {t(supportContext.data ? 'shell.backToTenantSupport' : 'shell.backToWorkspace', {
+            tenant: supportContext.data?.tenantName,
+          })}
         </Button>
       </Box>
     </Box>

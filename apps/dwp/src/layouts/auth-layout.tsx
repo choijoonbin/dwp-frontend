@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ProductMark } from '@dwp-frontend/design-system';
+import { ProductMark } from '@dwp-frontend/design-system/components/product-mark';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';

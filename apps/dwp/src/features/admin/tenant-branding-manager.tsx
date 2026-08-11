@@ -6,6 +6,7 @@ import { ProductMark } from '@dwp-frontend/design-system';
 import { formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   getAdminTenantBranding,
+  resolveAdminTenantLogoUrl,
   resetTenantLogo,
   resolveTenantLogoUrl,
   updateTenantBranding,
@@ -23,6 +24,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import { useCurrentProviderSupportContext } from '../provider/use-provider-support-context';
 
 import type { TenantBranding } from '@dwp-frontend/shared-utils';
 
@@ -43,6 +45,9 @@ export function TenantBrandingManager() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const supportContext = useCurrentProviderSupportContext();
+  const canWrite =
+    !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [organizationName, setOrganizationName] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -66,7 +71,9 @@ export function TenantBrandingManager() {
     [previewUrl]
   );
 
-  const activeLogoUrl = previewUrl || resolveTenantLogoUrl(branding);
+  const activeLogoUrl =
+    previewUrl ||
+    (supportContext.data ? resolveAdminTenantLogoUrl(branding) : resolveTenantLogoUrl(branding));
   const changed = useMemo(
     () => Boolean(branding && organizationName.trim() !== (branding.organizationName ?? '')),
     [branding, organizationName]
@@ -188,6 +195,7 @@ export function TenantBrandingManager() {
           ref={inputRef}
           hidden
           type="file"
+          disabled={!canWrite}
           accept="image/svg+xml,image/png,image/jpeg"
           onChange={(event) => selectFile(event.target.files?.[0])}
         />
@@ -195,7 +203,7 @@ export function TenantBrandingManager() {
           variant="outlined"
           startIcon={<ImageUp size={17} strokeWidth={1.8} />}
           onClick={() => inputRef.current?.click()}
-          disabled={busy}
+          disabled={busy || !canWrite}
         >
           {t('branding.actions.chooseLogo')}
         </Button>
@@ -210,7 +218,7 @@ export function TenantBrandingManager() {
                 return next;
               }, t('branding.toasts.logoUploaded'))
             }
-            disabled={busy}
+            disabled={busy || !canWrite}
           >
             {t('branding.actions.uploadLogo')}
           </Button>
@@ -224,7 +232,7 @@ export function TenantBrandingManager() {
             else
               void run(() => resetTenantLogo(branding.version), t('branding.toasts.logoRemoved'));
           }}
-          disabled={busy || (!selectedFile && !branding.logoUrl)}
+          disabled={busy || !canWrite || (!selectedFile && !branding.logoUrl)}
         >
           {selectedFile ? t('common.actions.discardSelection') : t('branding.actions.removeLogo')}
         </Button>
@@ -252,6 +260,7 @@ export function TenantBrandingManager() {
           fullWidth
           label={t('branding.organizationName')}
           value={organizationName}
+          disabled={!canWrite}
           onChange={(event) => setOrganizationName(event.target.value.slice(0, 160))}
           helperText={`${organizationName.length}/160`}
           slotProps={{ input: { startAdornment: <Building2 size={18} /> } }}
@@ -259,7 +268,7 @@ export function TenantBrandingManager() {
         <Button
           variant="contained"
           startIcon={<Save size={17} />}
-          disabled={busy || !changed}
+          disabled={busy || !canWrite || !changed}
           onClick={() =>
             void run(
               () => updateTenantBranding(organizationName.trim() || null, branding.version),

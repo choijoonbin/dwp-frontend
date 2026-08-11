@@ -9,6 +9,7 @@ export type HomeWidgetDefinition = {
   description: string;
   icon: LucideIcon;
   canHide: boolean;
+  desktopSpan: 3 | 6 | 12;
 };
 
 export const HOME_WIDGET_REGISTRY: readonly HomeWidgetDefinition[] = [
@@ -18,6 +19,7 @@ export const HOME_WIDGET_REGISTRY: readonly HomeWidgetDefinition[] = [
     description: 'Official and time-sensitive organization updates',
     icon: Megaphone,
     canHide: false,
+    desktopSpan: 12,
   },
   {
     key: 'daily-brief',
@@ -25,6 +27,7 @@ export const HOME_WIDGET_REGISTRY: readonly HomeWidgetDefinition[] = [
     description: 'AI-grounded priorities and day rhythm',
     icon: Sparkles,
     canHide: true,
+    desktopSpan: 12,
   },
   {
     key: 'focus',
@@ -32,6 +35,7 @@ export const HOME_WIDGET_REGISTRY: readonly HomeWidgetDefinition[] = [
     description: 'Priority work and approvals',
     icon: CheckCircle2,
     canHide: true,
+    desktopSpan: 6,
   },
   {
     key: 'schedule',
@@ -39,6 +43,7 @@ export const HOME_WIDGET_REGISTRY: readonly HomeWidgetDefinition[] = [
     description: 'Meetings, focus time, and deadlines',
     icon: CalendarDays,
     canHide: true,
+    desktopSpan: 3,
   },
   {
     key: 'activity',
@@ -46,15 +51,25 @@ export const HOME_WIDGET_REGISTRY: readonly HomeWidgetDefinition[] = [
     description: 'Human, system, and agent events',
     icon: Activity,
     canHide: true,
+    desktopSpan: 3,
   },
 ];
 
-export function defaultHomeWidgets(): HomeWidgetPreference[] {
-  return HOME_WIDGET_REGISTRY.map((widget) => ({ widgetKey: widget.key, visible: true }));
+export const HOME_WIDGET_KEYS: readonly HomeWidgetKey[] = HOME_WIDGET_REGISTRY.map(
+  (widget) => widget.key
+);
+
+export function defaultHomeWidgets(
+  registeredOrder: readonly HomeWidgetKey[] = HOME_WIDGET_KEYS
+): HomeWidgetPreference[] {
+  return registeredOrder.map((widgetKey) => ({ widgetKey, visible: true }));
 }
 
-export function reconcileHomeWidgets(value: unknown): HomeWidgetPreference[] {
-  if (!Array.isArray(value)) return defaultHomeWidgets();
+export function reconcileHomeWidgets(
+  value: unknown,
+  registeredOrder: readonly HomeWidgetKey[] = HOME_WIDGET_KEYS
+): HomeWidgetPreference[] {
+  if (!Array.isArray(value)) return defaultHomeWidgets(registeredOrder);
   const definitions = new Map(HOME_WIDGET_REGISTRY.map((widget) => [widget.key, widget]));
   const used = new Set<HomeWidgetKey>();
   const reconciled: HomeWidgetPreference[] = [];
@@ -71,7 +86,9 @@ export function reconcileHomeWidgets(value: unknown): HomeWidgetPreference[] {
     });
   });
 
-  HOME_WIDGET_REGISTRY.forEach((definition) => {
+  registeredOrder.forEach((widgetKey) => {
+    const definition = definitions.get(widgetKey);
+    if (!definition) return;
     if (!used.has(definition.key)) {
       reconciled.push({ widgetKey: definition.key, visible: true });
     }
@@ -79,16 +96,31 @@ export function reconcileHomeWidgets(value: unknown): HomeWidgetPreference[] {
   return reconciled;
 }
 
-export function moveHomeWidget(
+export function reorderHomeWidgets(
   widgets: readonly HomeWidgetPreference[],
-  index: number,
-  offset: -1 | 1
+  activeKey: HomeWidgetKey,
+  overKey: HomeWidgetKey
 ): HomeWidgetPreference[] {
-  const target = index + offset;
-  if (index < 0 || index >= widgets.length || target < 0 || target >= widgets.length) {
+  const activeIndex = widgets.findIndex((widget) => widget.widgetKey === activeKey);
+  const overIndex = widgets.findIndex((widget) => widget.widgetKey === overKey);
+  if (activeIndex < 0 || overIndex < 0 || activeIndex === overIndex) {
     return [...widgets];
   }
   const next = [...widgets];
-  [next[index], next[target]] = [next[target], next[index]];
+  const [active] = next.splice(activeIndex, 1);
+  if (!active) return [...widgets];
+  next.splice(overIndex, 0, active);
   return next;
+}
+
+export function setHomeWidgetVisibility(
+  widgets: readonly HomeWidgetPreference[],
+  widgetKey: HomeWidgetKey,
+  visible: boolean
+): HomeWidgetPreference[] {
+  const definition = HOME_WIDGET_REGISTRY.find((widget) => widget.key === widgetKey);
+  if (!definition || (!definition.canHide && !visible)) return [...widgets];
+  return widgets.map((widget) =>
+    widget.widgetKey === widgetKey ? { ...widget, visible } : widget
+  );
 }

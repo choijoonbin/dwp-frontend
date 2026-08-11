@@ -1,6 +1,6 @@
 # R0 Provider Control Plane 및 Tenant Estate ADR
 
-> 상태: Accepted and Implemented Local Baseline v1.2
+> 상태: Accepted and Implemented Local Baseline v1.3
 >
 > 기준일: 2026-08-11
 >
@@ -150,6 +150,25 @@ erDiagram
 - 세션에는 Scope 선택 시 평가된 `customer_approval_required`를 보존한다. 표준 접근은 이
   정책값이 참일 때만 승인 참조가 필수이고, 비상 접근은 별도 권한과 감사 규칙을 따른다.
 
+### 4.2 지원 세션의 실행 경로
+
+- 지원 세션 원문 Token은 API 응답과 JavaScript에 반환하지 않는다. DB에는 SHA-256 Hash만
+  저장하고 Browser에는 `HttpOnly`, `SameSite=Strict`, Production `Secure` Cookie로 발급한다.
+  Cookie는 Provider Context, Tenant Configuration Admin, People 조회 경로로만 제한한다.
+- Gateway는 외부 요청의 지원 관련 Header를 모두 제거한다. 지원 Cookie가 포함된 Platform·
+  People 요청은 Provider 내부 검증 API에서 현재 운영자, 대상 Tenant, 만료, 회수 상태와
+  요청 Method·Path별 Scope를 매 요청 다시 검증한다.
+- 검증 성공 시에만 Gateway가 인증 세션의 원 Tenant를 별도 Actor Tenant로 보존하고 대상
+  Auth Tenant ID를 내부 Tenant Header에 설정한다. 검증 실패는 `403`, Provider 검증 장애는
+  `503`으로 닫힌다.
+- Platform과 People Service도 지원 Session ID, Actor Tenant와 Scope를 다시 확인한다.
+  일반 Provider 역할에 `ADMIN`이 함께 있어도 읽기 전용 세션으로 변경 API를 호출할 수 없고,
+  허용 목록 밖의 Tenant Admin API에는 접근할 수 없다.
+- 현재 지원 범위는 브랜딩·홈 경험·공지사항의 구성 조회/변경과 구성원·조직도 조회다. 지원
+  모드에서는 Frontend Navigation도 같은 범위만 노출하고, 대상 Tenant·만료·접근 모드를
+  고정 Banner로 표시하며 종료 시 Provider 범위로 복귀한다.
+- 허용, 거부와 회수는 Support Session ID와 Correlation ID로 Provider 감사 원장에 남긴다.
+
 ## 5. 도메인과 관리자 초대
 
 - 내부 Fallback 도메인은 항상 검증된 Primary로 먼저 유지한다.
@@ -249,6 +268,12 @@ Provider Control Plane은 테이블 중심 메뉴가 아니라 운영 의사결�
     이력으로 추적할 수 있다.
 15. 예정 유지보수는 Operation 없는 행을 허용하지 않고, L3 승인 전에는 `SCHEDULED`로
     전이할 수 없으며 요청자는 자신의 작업을 승인할 수 없다.
+16. 지원 Token 원문은 JSON 응답에 직렬화되지 않고 Path 제한 HttpOnly Cookie로만 전달된다.
+17. Gateway는 위조한 지원 Header를 제거하고 Provider 검증 성공 전에는 대상 Tenant Header를
+    변경하지 않는다.
+18. 읽기 전용 지원 세션은 Tenant 설정 변경과 조직 변경을 모두 거부한다.
+19. 지원 세션은 허용 목록 밖의 Admin API를 거부하고 대상 Service도 같은 Scope를 재검증한다.
+20. 지원 모드의 UI, Gateway, Provider, 대상 Service가 동일한 Tenant와 Session ID를 사용한다.
 
 ## 10. 근거
 

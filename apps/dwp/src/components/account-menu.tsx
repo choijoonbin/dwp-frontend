@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Building2,
+  BriefcaseBusiness,
   ChevronDown,
   ChevronRight,
   CloudCog,
@@ -11,7 +12,7 @@ import {
   Settings2,
   ShieldCheck,
 } from 'lucide-react';
-import { useAppearance } from '@dwp-frontend/design-system';
+import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { useAuth, usePermissions, redirectToSignIn } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
@@ -26,8 +27,27 @@ import { alpha } from '@mui/material/styles';
 
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
 import { exitSessionWithTransition } from '../features/auth/session-exit-transition';
+import {
+  canEnterTenantControlPlane,
+  hasProviderControlPlaneRole,
+  resolvePrimaryAuthorityRole,
+} from '../features/auth/control-plane-access';
+import { useProviderSupportContext } from '../features/provider/use-provider-support-context';
 
 const menuIconProps = { size: 19, strokeWidth: 1.8, 'aria-hidden': true } as const;
+
+const authorityTranslationKeys: Record<string, string> = {
+  PROVIDER_ADMIN: 'providerAdmin',
+  PROVIDER_OPERATOR: 'providerOperator',
+  PROVIDER_SUPPORT: 'providerSupport',
+  PROVIDER_AUDITOR: 'providerAuditor',
+  PLATFORM_ADMIN: 'platformAdmin',
+  TENANT_ADMIN: 'tenantAdmin',
+  ADMIN: 'tenantAdmin',
+  AUDIT_ADMIN: 'auditAdmin',
+  AUDITOR: 'auditor',
+  WORKSPACE_MEMBER: 'member',
+};
 
 export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }) {
   const { t } = useTranslation('shell');
@@ -44,20 +64,19 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
   const administrationDescriptionId = useId();
   const providerDescriptionId = useId();
   const displayName = auth.user?.displayName || t('account.fallbackName');
-  const positionTitle =
-    auth.user?.jobTitle ||
-    (auth.user?.roles.includes('PROVIDER_ADMIN')
-      ? t('account.roles.providerAdmin')
-      : auth.user?.roles.includes('PLATFORM_ADMIN')
-        ? t('account.roles.platformAdmin')
-        : auth.user?.roles.includes('TENANT_ADMIN') || auth.user?.roles.includes('ADMIN')
-          ? t('account.roles.tenantAdmin')
-          : t('account.roles.member'));
-  const isAdmin = Boolean(
-    auth.user?.roles.some((role) => ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'].includes(role)) &&
-    isAppResourceEntitled('APP.ADMINISTRATION', permissions)
+  const roles = auth.user?.roles ?? [];
+  const providerRole = hasProviderControlPlaneRole(roles);
+  const supportContext = useProviderSupportContext(providerRole);
+  const authorityRole = resolvePrimaryAuthorityRole(roles);
+  const positionTitle = t(`account.roles.${authorityTranslationKeys[authorityRole] ?? 'member'}`);
+  const isAdmin = canEnterTenantControlPlane(
+    roles,
+    isAppResourceEntitled('APP.ADMINISTRATION', permissions),
+    Boolean(supportContext.data)
   );
-  const isProviderAdmin = Boolean(auth.user?.roles.includes('PROVIDER_ADMIN'));
+  const isProviderAdmin = providerRole;
+  const workspaceName =
+    supportContext.data?.tenantName || auth.user?.tenantName || auth.user?.tenantCode;
 
   const close = () => setAnchor(null);
   const dismiss = () => {
@@ -245,12 +264,26 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
                 </Typography>
               </Box>
             )}
-            {(auth.user?.tenantName || auth.user?.tenantCode) && (
+            {auth.user?.jobTitle && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+                <BriefcaseBusiness size={15} strokeWidth={1.8} aria-hidden="true" />
+                <Typography variant="caption" color="text.secondary" noWrap>
+                  {auth.user.jobTitle}
+                </Typography>
+              </Box>
+            )}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+              <ShieldCheck size={15} strokeWidth={1.8} aria-hidden="true" />
+              <Typography variant="caption" color="text.secondary" noWrap>
+                {t('account.access', { role: positionTitle })}
+              </Typography>
+            </Box>
+            {workspaceName && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                 <Building2 size={15} strokeWidth={1.8} aria-hidden="true" />
                 <Typography variant="caption" color="text.secondary" noWrap>
                   {t('account.workspace', {
-                    workspace: auth.user.tenantName || auth.user.tenantCode,
+                    workspace: workspaceName,
                   })}
                 </Typography>
               </Box>
@@ -263,48 +296,57 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
           aria-label={t('account.actionsLabel')}
           sx={{ pt: 0, pb: 1 }}
         >
-          <MenuItem
-            aria-label={t('account.menu.settings')}
-            aria-describedby={settingsDescriptionId}
-            onClick={() => goTo('/account/profile')}
-            sx={{ mx: 1, mt: 1, px: 1, py: 1, gap: 1.25, alignItems: 'center' }}
-          >
-            <Box
-              sx={{
-                width: 36,
-                height: 36,
-                flex: '0 0 auto',
-                display: 'grid',
-                placeItems: 'center',
-                borderRadius: 1,
-                color: 'primary.main',
-                bgcolor: 'action.selected',
-              }}
+          {!supportContext.data && (
+            <MenuItem
+              aria-label={t('account.menu.settings')}
+              aria-describedby={settingsDescriptionId}
+              onClick={() => goTo('/account/profile')}
+              sx={{ mx: 1, mt: 1, px: 1, py: 1, gap: 1.25, alignItems: 'center' }}
             >
-              <Settings2 {...menuIconProps} />
-            </Box>
-            <Box sx={{ minWidth: 0, flex: 1 }}>
-              <Typography variant="body2" fontWeight={600} noWrap>
-                {t('account.menu.settings')}
-              </Typography>
-              <Typography
-                id={settingsDescriptionId}
-                variant="caption"
-                color="text.secondary"
-                noWrap
-                sx={{ display: 'block' }}
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  flex: '0 0 auto',
+                  display: 'grid',
+                  placeItems: 'center',
+                  borderRadius: 1,
+                  color: 'primary.main',
+                  bgcolor: 'action.selected',
+                }}
               >
-                {t('account.menu.settingsDescription')}
-              </Typography>
-            </Box>
-            <ChevronRight size={17} strokeWidth={1.8} aria-hidden="true" />
-          </MenuItem>
+                <Settings2 {...menuIconProps} />
+              </Box>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Typography variant="body2" fontWeight={600} noWrap>
+                  {t('account.menu.settings')}
+                </Typography>
+                <Typography
+                  id={settingsDescriptionId}
+                  variant="caption"
+                  color="text.secondary"
+                  noWrap
+                  sx={{ display: 'block' }}
+                >
+                  {t('account.menu.settingsDescription')}
+                </Typography>
+              </Box>
+              <ChevronRight size={17} strokeWidth={1.8} aria-hidden="true" />
+            </MenuItem>
+          )}
           {isAdmin && (
             <MenuItem
               aria-label={t('account.menu.administration')}
               aria-describedby={administrationDescriptionId}
               onClick={() => goTo('/admin')}
-              sx={{ mx: 1, px: 1, py: 1, gap: 1.25, alignItems: 'center' }}
+              sx={{
+                mx: 1,
+                mt: supportContext.data ? 1 : 0,
+                px: 1,
+                py: 1,
+                gap: 1.25,
+                alignItems: 'center',
+              }}
             >
               <Box
                 sx={{
@@ -331,7 +373,12 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
                   noWrap
                   sx={{ display: 'block' }}
                 >
-                  {t('account.menu.administrationDescription')}
+                  {t(
+                    supportContext.data
+                      ? 'account.menu.supportAdministrationDescription'
+                      : 'account.menu.administrationDescription',
+                    { tenant: supportContext.data?.tenantName }
+                  )}
                 </Typography>
               </Box>
               <ChevronRight size={17} strokeWidth={1.8} aria-hidden="true" />

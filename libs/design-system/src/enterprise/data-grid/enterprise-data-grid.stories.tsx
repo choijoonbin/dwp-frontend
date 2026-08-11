@@ -1,14 +1,17 @@
+import { useState } from 'react';
 import { expect, within } from 'storybook/test';
+import { Archive } from 'lucide-react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { ActionButton } from '../../components/actions';
 import { EnterpriseDataGrid } from './enterprise-data-grid';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 
 type WorkRow = {
   id: number;
@@ -161,4 +164,61 @@ export const Loading: Story = {
       <EnterpriseDataGrid ariaLabel="Loading work queue" rows={[]} columns={columns} loading />
     </Box>
   ),
+};
+
+function ServerGridStory() {
+  const [selection, setSelection] = useState<GridRowSelectionModel>({
+    type: 'include',
+    ids: new Set([1]),
+  });
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
+
+  return (
+    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: 'background.default', minHeight: '100vh' }}>
+      <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
+        Governed work queue
+      </Typography>
+      <EnterpriseDataGrid
+        ariaLabel="Governed work queue"
+        mode="server"
+        rows={rows}
+        rowCount={250}
+        columns={columns}
+        checkboxSelection
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        rowSelectionModel={selection}
+        onRowSelectionModelChange={setSelection}
+        pageSizeOptions={[5, 25, 50]}
+        toolbar={{
+          ariaLabel: 'Work queue tools',
+          columnsLabel: 'Choose columns',
+          filtersLabel: 'Filter work',
+          quickFilterLabel: 'Search work',
+          quickFilterPlaceholder: 'Search work',
+          onExport: () => undefined,
+          exportLabel: 'Export work as CSV',
+          onRefresh: () => undefined,
+          refreshLabel: 'Refresh work',
+          selectedCountLabel: (count) => `${count} selected`,
+          bulkActions: (
+            <ActionButton intent="quiet" size="small" startIcon={<Archive size={16} />}>
+              Archive
+            </ActionButton>
+          ),
+        }}
+      />
+    </Box>
+  );
+}
+
+export const ServerToolbarAndSelection: Story = {
+  render: () => <ServerGridStory />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('toolbar', { name: 'Work queue tools' })).toBeVisible();
+    await expect(canvas.getByRole('searchbox', { name: 'Search work' })).toBeVisible();
+    await expect(canvas.getByText('1 selected')).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Archive' })).toBeEnabled();
+  },
 };

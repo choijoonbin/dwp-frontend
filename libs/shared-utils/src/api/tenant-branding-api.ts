@@ -20,6 +20,12 @@ export function resolveTenantLogoUrl(branding?: TenantBranding | null): string |
   return branding?.logoUrl ? API_URL + branding.logoUrl : null;
 }
 
+export function resolveAdminTenantLogoUrl(branding?: TenantBranding | null): string | null {
+  return branding?.logoUrl
+    ? API_URL + branding.logoUrl.replace('/v1/tenant-branding/', '/v1/admin/tenant-branding/')
+    : null;
+}
+
 export async function getTenantBranding(): Promise<TenantBranding> {
   const response = await axiosInstance.get<ApiResponse<TenantBranding>>(
     '/api/platform/v1/tenant-branding'

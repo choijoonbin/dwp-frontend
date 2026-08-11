@@ -66,7 +66,9 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       chunkSizeWarningLimit: 600,
-      rollupOptions: { output: { manualChunks: vendorGroup } },
+      rollupOptions: {
+        output: { manualChunks: vendorGroup },
+      },
     },
     test: {
       exclude: [

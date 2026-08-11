@@ -20,6 +20,8 @@
       "work": "업무",
       "ask": "AI에게 묻기",
       "activity": "활동",
+      "people": "구성원",
+      "workforce": "인력 운영",
       "apps": "앱"
     }
   },
@@ -88,10 +90,16 @@
     "actionsLabel": "계정 작업",
     "fallbackName": "사용자",
     "workspace": "워크스페이스 · {{workspace}}",
+    "access": "접근 권한 · {{role}}",
     "roles": {
       "providerAdmin": "프로바이더 관리자",
+      "providerOperator": "프로바이더 운영자",
+      "providerSupport": "프로바이더 지원 담당자",
+      "providerAuditor": "프로바이더 감사자",
       "platformAdmin": "플랫폼 관리자",
       "tenantAdmin": "테넌트 관리자",
+      "auditAdmin": "감사 관리자",
+      "auditor": "감사자",
       "member": "워크스페이스 구성원"
     },
     "menu": {
@@ -99,6 +107,7 @@
       "settingsDescription": "프로필, 환경설정 및 보안",
       "administration": "관리 콘솔",
       "administrationDescription": "사용자, 정책 및 시스템 관리",
+      "supportAdministrationDescription": "{{tenant}} 승인 범위 지원",
       "provider": "Provider Control Plane",
       "providerDescription": "테넌트 딜리버리 및 변경 작업",
       "logout": "로그아웃"

@@ -49,6 +49,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import { useSystemCodeOptions } from '../../components/use-system-code-options';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -61,10 +62,10 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
 
-const WINDOWS: ApiHistoryWindow[] = ['H1', 'H6', 'H24', 'D7', 'D30'];
-const OBSERVATION_POINTS: ApiHistoryObservationPoint[] = ['GATEWAY', 'SERVICE', 'ALL'];
-const METHODS = ['ALL', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
-const OUTCOMES: Array<ApiHistoryOutcome | 'ALL'> = [
+const WINDOW_FALLBACK: ApiHistoryWindow[] = ['H1', 'H6', 'H24', 'D7', 'D30'];
+const OBSERVATION_POINT_FALLBACK: ApiHistoryObservationPoint[] = ['GATEWAY', 'SERVICE', 'ALL'];
+const METHOD_FALLBACK = ['ALL', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+const OUTCOME_FALLBACK: Array<ApiHistoryOutcome | 'ALL'> = [
   'ALL',
   'SUCCESS',
   'CLIENT_ERROR',
@@ -494,6 +495,13 @@ export function ApiMonitoring() {
   const [query, setQuery] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
+  const windows = useSystemCodeOptions('PLATFORM.API_HISTORY.WINDOW', WINDOW_FALLBACK);
+  const observationPoints = useSystemCodeOptions(
+    'PLATFORM.API_HISTORY.OBSERVATION_POINT_FILTER',
+    OBSERVATION_POINT_FALLBACK
+  );
+  const methods = useSystemCodeOptions('PLATFORM.API_HISTORY.HTTP_METHOD_FILTER', METHOD_FALLBACK);
+  const outcomes = useSystemCodeOptions('PLATFORM.API_HISTORY.OUTCOME_FILTER', OUTCOME_FALLBACK);
 
   const filters = useMemo<ApiHistoryFilters>(
     () => ({
@@ -637,7 +645,7 @@ export function ApiMonitoring() {
             aria-label={t('apiMonitoring.filters.window')}
             onChange={(_event, value: ApiHistoryWindow | null) => value && setWindow(value)}
           >
-            {WINDOWS.map((value) => (
+            {windows.map((value) => (
               <ToggleButton key={value} value={value} sx={{ minWidth: 52 }}>
                 {t(`apiMonitoring.windows.${value}`)}
               </ToggleButton>
@@ -652,7 +660,7 @@ export function ApiMonitoring() {
               value && setObservationPoint(value)
             }
           >
-            {OBSERVATION_POINTS.map((value) => (
+            {observationPoints.map((value) => (
               <ToggleButton key={value} value={value}>
                 {t(`apiMonitoring.observation.${value}`)}
               </ToggleButton>
@@ -681,7 +689,7 @@ export function ApiMonitoring() {
               onChange={(event) => setHttpMethod(event.target.value)}
               sx={{ minWidth: 112 }}
             >
-              {METHODS.map((value) => (
+              {methods.map((value) => (
                 <MenuItem key={value} value={value}>
                   {value === 'ALL' ? t('apiMonitoring.filters.allMethods') : value}
                 </MenuItem>
@@ -695,7 +703,7 @@ export function ApiMonitoring() {
               onChange={(event) => setOutcome(event.target.value as ApiHistoryOutcome | 'ALL')}
               sx={{ minWidth: 154 }}
             >
-              {OUTCOMES.map((value) => (
+              {outcomes.map((value) => (
                 <MenuItem key={value} value={value}>
                   {t(`apiMonitoring.outcomes.${value}`)}
                 </MenuItem>

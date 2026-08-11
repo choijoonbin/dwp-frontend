@@ -52,7 +52,7 @@ function plannedPositionKey(): string {
 }
 
 export function OrganizationScenarioPositionEditor({ chart, scenario, busy, execute }: Props) {
-  const { t, i18n } = useTranslation('admin');
+  const { t, i18n } = useTranslation('workforce');
   const locale = i18n.resolvedLanguage ?? i18n.language;
   const positionTypeCatalog = useQuery({
     queryKey: ['system-code-set', 'PEOPLE.POSITION_TYPE', locale],

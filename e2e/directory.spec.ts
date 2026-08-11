@@ -70,9 +70,11 @@ async function closeDetails(page: Page) {
   await expect(closeButton).toBeHidden();
 }
 
-test('administrators explore effective organization and reporting structures', async ({ page }) => {
+test('workforce administrators explore effective organization and reporting structures', async ({
+  page,
+}) => {
   await mockAdminSession(page);
-  await page.route('**/api/people/v1/org-chart**', (route) => {
+  await page.route('**/api/people/v1/workforce/organization/**', (route) => {
     const path = new URL(route.request().url()).pathname;
     const data = path.endsWith('/scenarios')
       ? []
@@ -105,7 +107,7 @@ test('administrators explore effective organization and reporting structures', a
     })
   );
 
-  await page.goto('/admin/people/directory');
+  await page.goto('/workforce/organization');
   await expect(page.getByRole('heading', { name: 'Organization chart' })).toBeVisible();
   await expect(page.getByLabel('SKAX organization chart workspace')).toBeVisible();
   await expect(page.getByText('2', { exact: true }).first()).toBeVisible();

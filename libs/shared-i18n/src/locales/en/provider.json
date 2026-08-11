@@ -6,7 +6,8 @@
     "globalScope": "Global delivery scope",
     "navigationLabel": "Provider navigation",
     "openNavigation": "Open provider navigation",
-    "backToWorkspace": "Back to workspace"
+    "backToWorkspace": "Back to workspace",
+    "backToTenantSupport": "Back to {{tenant}} support console"
   },
   "navigation": {
     "overview": "Command center",
@@ -482,10 +483,7 @@
       "expiring": "Expiring within 15 min"
     },
     "minutes": "{{count}} minutes",
-    "tokenTitle": "Support session credential",
-    "tokenOnce": "This credential is shown only once.",
-    "token": "Session token",
-    "tokenCopied": "Support session token copied.",
+    "activated": "Approved tenant support mode started.",
     "expiresAt": "Expires: {{value}}",
     "revokeReason": "Support session ended by provider operator",
     "revoked": "Support session revoked.",

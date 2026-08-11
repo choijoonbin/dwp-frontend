@@ -443,9 +443,16 @@ export type ProviderSupportScope = {
   lifecycleState: string;
 };
 
-export type ProviderSupportSessionGrant = {
-  session: ProviderSupportSession;
-  sessionToken: string;
+export type ProviderSupportSessionContext = {
+  supportSessionId: string;
+  tenantId: string;
+  authTenantId: number;
+  tenantKey: string;
+  tenantName: string;
+  scopes: string[];
+  accessMode: 'STANDARD' | 'BREAK_GLASS';
+  expiresAt: string;
+  version: number;
 };
 
 export type ProviderAuditEvent = {
@@ -826,16 +833,23 @@ export async function createProviderSupportSession(request: {
   justification: string;
   approvalReference?: string | null;
   emergencyAccess: boolean;
-}): Promise<ProviderSupportSessionGrant> {
-  const response = await axiosInstance.post<
-    ApiResponse<ProviderSupportSessionGrant>,
-    typeof request
-  >(`${BASE}/support-sessions`, request);
+}): Promise<ProviderSupportSession> {
+  const response = await axiosInstance.post<ApiResponse<ProviderSupportSession>, typeof request>(
+    `${BASE}/support-sessions`,
+    request
+  );
   return response.data.data;
 }
 
+export async function getProviderSupportSessionContext(): Promise<ProviderSupportSessionContext | null> {
+  const response = await axiosInstance.get<ApiResponse<ProviderSupportSessionContext | null>>(
+    `${BASE}/support-session-context`
+  );
+  return response.data.data ?? null;
+}
+
 export async function revokeProviderSupportSession(
-  session: ProviderSupportSession,
+  session: Pick<ProviderSupportSession, 'supportSessionId' | 'version'>,
   justification: string
 ): Promise<ProviderSupportSession> {
   const response = await axiosInstance.post<

@@ -11,6 +11,7 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
+import { DateTimePickerField } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -35,6 +36,7 @@ import DialogActions from '@mui/material/DialogActions';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import { useCurrentProviderSupportContext } from '../provider/use-provider-support-context';
 
 import type {
   Announcement,
@@ -49,8 +51,8 @@ type AnnouncementForm = {
   severity: AnnouncementSeverity;
   audienceType: AnnouncementAudienceType;
   audienceValue: string;
-  startsAt: string;
-  endsAt: string;
+  startsAt: string | null;
+  endsAt: string | null;
   pinned: boolean;
   actionLabel: string;
   actionUrl: string;
@@ -62,8 +64,8 @@ const emptyForm: AnnouncementForm = {
   severity: 'INFO',
   audienceType: 'ALL',
   audienceValue: '',
-  startsAt: '',
-  endsAt: '',
+  startsAt: null,
+  endsAt: null,
   pinned: false,
   actionLabel: '',
   actionUrl: '',
@@ -79,17 +81,6 @@ function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
-function localDateTime(value?: string | null): string {
-  if (!value) return '';
-  const date = new Date(value);
-  const offset = date.getTimezoneOffset() * 60_000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
-}
-
-function isoDateTime(value: string): string | null {
-  return value ? new Date(value).toISOString() : null;
-}
-
 function displayDateTime(value: string): string {
   return formatDate(value, { dateStyle: 'medium', timeStyle: 'short' });
 }
@@ -101,8 +92,8 @@ function formFrom(announcement: Announcement): AnnouncementForm {
     severity: announcement.severity,
     audienceType: announcement.audienceType,
     audienceValue: announcement.audienceValue ?? '',
-    startsAt: localDateTime(announcement.startsAt),
-    endsAt: localDateTime(announcement.endsAt),
+    startsAt: announcement.startsAt ?? null,
+    endsAt: announcement.endsAt ?? null,
     pinned: announcement.pinned,
     actionLabel: announcement.actionLabel ?? '',
     actionUrl: announcement.actionUrl ?? '',
@@ -116,8 +107,8 @@ function definitionFrom(form: AnnouncementForm): AnnouncementDefinition {
     severity: form.severity,
     audienceType: form.audienceType,
     audienceValue: form.audienceType === 'ROLE' ? form.audienceValue.trim() : null,
-    startsAt: isoDateTime(form.startsAt),
-    endsAt: isoDateTime(form.endsAt),
+    startsAt: form.startsAt,
+    endsAt: form.endsAt,
     pinned: form.pinned,
     actionLabel: form.actionLabel.trim() || null,
     actionUrl: form.actionUrl.trim() || null,
@@ -139,6 +130,9 @@ function AnnouncementDialog({
 }) {
   const { t } = useTranslation('admin');
   const [form, setForm] = useState<AnnouncementForm>(emptyForm);
+  const invalidWindow = Boolean(
+    form.startsAt && form.endsAt && Date.parse(form.startsAt) > Date.parse(form.endsAt)
+  );
 
   const reset = () => setForm(announcement ? formFrom(announcement) : emptyForm);
 
@@ -234,6 +228,7 @@ function AnnouncementDialog({
               />
             )}
             <FormControlLabel
+              sx={{ gridColumn: { sm: '1 / -1' } }}
               control={
                 <Switch
                   checked={form.pinned}
@@ -244,23 +239,20 @@ function AnnouncementDialog({
               }
               label={t('announcements.fields.pinned')}
             />
-            <TextField
-              type="datetime-local"
+            <DateTimePickerField
               label={t('announcements.fields.starts')}
               value={form.startsAt}
-              onChange={(event) =>
-                setForm((current) => ({ ...current, startsAt: event.target.value }))
-              }
-              slotProps={{ inputLabel: { shrink: true } }}
+              onValueChange={(startsAt) => setForm((current) => ({ ...current, startsAt }))}
+              minutesStep={5}
             />
-            <TextField
-              type="datetime-local"
+            <DateTimePickerField
               label={t('announcements.fields.ends')}
               value={form.endsAt}
-              onChange={(event) =>
-                setForm((current) => ({ ...current, endsAt: event.target.value }))
+              onValueChange={(endsAt) => setForm((current) => ({ ...current, endsAt }))}
+              errorMessage={
+                invalidWindow ? t('announcements.fields.invalidScheduleWindow') : undefined
               }
-              slotProps={{ inputLabel: { shrink: true } }}
+              minutesStep={5}
             />
             <TextField
               label={t('announcements.fields.actionLabel')}
@@ -292,7 +284,7 @@ function AnnouncementDialog({
         <Button
           variant="contained"
           onClick={() => onSubmit(form)}
-          disabled={busy || !form.title.trim() || !form.message.trim()}
+          disabled={busy || invalidWindow || !form.title.trim() || !form.message.trim()}
         >
           {announcement
             ? t('announcements.actions.saveChanges')
@@ -307,6 +299,9 @@ export function AnnouncementManager() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const supportContext = useCurrentProviderSupportContext();
+  const canWrite =
+    !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selected, setSelected] = useState<Announcement | null>(null);
   const [busy, setBusy] = useState(false);
@@ -375,6 +370,7 @@ export function AnnouncementManager() {
         <Button
           variant="contained"
           startIcon={<Plus size={17} />}
+          disabled={!canWrite}
           onClick={() => {
             setSelected(null);
             setDialogOpen(true);
@@ -457,7 +453,7 @@ export function AnnouncementManager() {
                         aria-label={t('announcements.actions.editNamed', {
                           title: announcement.title,
                         })}
-                        disabled={busy || announcement.lifecycleState === 'ARCHIVED'}
+                        disabled={!canWrite || busy || announcement.lifecycleState === 'ARCHIVED'}
                         onClick={() => {
                           setSelected(announcement);
                           setDialogOpen(true);
@@ -476,7 +472,7 @@ export function AnnouncementManager() {
                           aria-label={t('announcements.actions.publishNamed', {
                             title: announcement.title,
                           })}
-                          disabled={busy}
+                          disabled={!canWrite || busy}
                           onClick={() =>
                             void run(
                               () =>
@@ -501,7 +497,7 @@ export function AnnouncementManager() {
                           aria-label={t('announcements.actions.archiveNamed', {
                             title: announcement.title,
                           })}
-                          disabled={busy}
+                          disabled={!canWrite || busy}
                           onClick={() =>
                             void run(
                               () =>
@@ -534,7 +530,7 @@ export function AnnouncementManager() {
 
       <AnnouncementDialog
         key={selected?.announcementId ?? 'new'}
-        open={dialogOpen}
+        open={dialogOpen && canWrite}
         announcement={selected}
         busy={busy}
         onClose={() => setDialogOpen(false)}

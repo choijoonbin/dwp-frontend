@@ -22,15 +22,18 @@ import { ReferenceDataManager } from '../features/admin/reference-data-manager';
 import { SystemCodeCatalogManager } from '../features/admin/system-code-catalog-manager';
 import { TenantBrandingManager } from '../features/admin/tenant-branding-manager';
 import { NavigationManager } from '../features/admin/navigation-manager';
-import { PeopleManager } from '../features/admin/people-manager';
-import { OrganizationChartManager } from '../features/admin/organization-chart/organization-chart-manager';
-import { ProvisioningManager } from '../features/admin/provisioning-manager';
+import { IdentityProvisioningManager } from '../features/admin/identity-provisioning-manager';
 import { RoleGovernanceManager } from '../features/admin/role-governance-manager';
 import {
   ADMIN_NAVIGATION,
   findAdminNavigationItem,
   type AdminView,
 } from '../features/admin/admin-navigation';
+import {
+  canAccessAdminNavigationItem,
+  hasProviderControlPlaneRole,
+} from '../features/auth/control-plane-access';
+import { useProviderSupportContext } from '../features/provider/use-provider-support-context';
 
 function AdminContent({ view }: { view: AdminView }) {
   switch (view) {
@@ -38,16 +41,12 @@ function AdminContent({ view }: { view: AdminView }) {
       return <AccessManager />;
     case 'roles':
       return <RoleGovernanceManager />;
-    case 'people-directory':
-      return <PeopleManager />;
     case 'provisioning':
-      return <ProvisioningManager />;
+      return <IdentityProvisioningManager />;
     case 'announcements':
       return <AnnouncementManager />;
     case 'branding':
       return <TenantBrandingManager />;
-    case 'directory':
-      return <OrganizationChartManager />;
     case 'home-experience':
       return <HomeExperienceManager />;
     case 'reference-data':
@@ -77,14 +76,20 @@ export default function AdminPage() {
   const { t } = useTranslation('admin');
   const auth = useAuth();
   const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const supportContext = useProviderSupportContext(
+    hasProviderControlPlaneRole(auth.user?.roles ?? [])
+  );
   const { section, view } = useParams();
   const page = findAdminNavigationItem(section, view);
 
   if (!page) return <Navigate to="/404" replace />;
   if (
-    page.requiredResourceKey &&
-    permissionsLoaded &&
-    !hasPermission(page.requiredResourceKey, page.requiredPermissionCode)
+    !canAccessAdminNavigationItem(page, {
+      roles: auth.user?.roles ?? [],
+      permissionsLoaded,
+      hasPermission,
+      supportScopes: supportContext.data?.scopes,
+    })
   ) {
     return <Navigate to="/403" replace />;
   }
@@ -136,7 +141,11 @@ export default function AdminPage() {
         </Box>
         <Chip
           label={t('page.tenantScope', {
-            tenant: auth.user?.tenantName || auth.user?.tenantCode || t('shell.tenantFallback'),
+            tenant:
+              supportContext.data?.tenantName ||
+              auth.user?.tenantName ||
+              auth.user?.tenantCode ||
+              t('shell.tenantFallback'),
           })}
           color="info"
           variant="outlined"

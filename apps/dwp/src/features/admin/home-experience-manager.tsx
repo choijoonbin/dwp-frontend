@@ -6,6 +6,7 @@ import {
   useToast,
   getAdminHomeExperience,
   resetHomeBackground,
+  resolveAdminHomeBackgroundUrl,
   resolveHomeBackgroundUrl,
   updateHomeExperience,
   uploadHomeBackground,
@@ -25,6 +26,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import { useCurrentProviderSupportContext } from '../provider/use-provider-support-context';
 
 import type { HomeBackgroundPosition, HomeExperience } from '@dwp-frontend/shared-utils';
 
@@ -68,6 +70,9 @@ export function HomeExperienceManager() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const supportContext = useCurrentProviderSupportContext();
+  const canWrite =
+    !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -92,7 +97,9 @@ export function HomeExperienceManager() {
     [previewUrl]
   );
 
-  const persistedBackgroundUrl = resolveHomeBackgroundUrl(experience);
+  const persistedBackgroundUrl = supportContext.data
+    ? resolveAdminHomeBackgroundUrl(experience)
+    : resolveHomeBackgroundUrl(experience);
   const activeBackgroundUrl = previewUrl || persistedBackgroundUrl;
   const changed = useMemo(() => {
     if (!experience) return false;
@@ -268,6 +275,7 @@ export function HomeExperienceManager() {
           ref={inputRef}
           hidden
           type="file"
+          disabled={!canWrite}
           accept="image/png,image/jpeg"
           onChange={(event) => selectFile(event.target.files?.[0])}
         />
@@ -275,7 +283,7 @@ export function HomeExperienceManager() {
           variant="outlined"
           startIcon={<ImageUp size={17} strokeWidth={1.8} />}
           onClick={() => inputRef.current?.click()}
-          disabled={busy}
+          disabled={busy || !canWrite}
         >
           {t('homeExperience.actions.chooseImage')}
         </Button>
@@ -284,7 +292,7 @@ export function HomeExperienceManager() {
             variant="contained"
             startIcon={<Upload size={17} strokeWidth={1.8} />}
             onClick={upload}
-            disabled={busy}
+            disabled={busy || !canWrite}
           >
             {t('homeExperience.actions.upload')}
           </Button>
@@ -294,7 +302,7 @@ export function HomeExperienceManager() {
           color="inherit"
           startIcon={selectedFile ? <X size={17} /> : <RotateCcw size={17} />}
           onClick={resetBackground}
-          disabled={busy || (!selectedFile && !experience.backgroundUrl)}
+          disabled={busy || !canWrite || (!selectedFile && !experience.backgroundUrl)}
         >
           {selectedFile
             ? t('common.actions.discardSelection')
@@ -334,6 +342,7 @@ export function HomeExperienceManager() {
           <TextField
             label={t('homeExperience.fields.headline')}
             value={form.headline}
+            disabled={!canWrite}
             onChange={(event) =>
               setForm((current) => ({ ...current, headline: event.target.value.slice(0, 160) }))
             }
@@ -342,6 +351,7 @@ export function HomeExperienceManager() {
           <TextField
             label={t('homeExperience.fields.message')}
             value={form.subheadline}
+            disabled={!canWrite}
             onChange={(event) =>
               setForm((current) => ({ ...current, subheadline: event.target.value.slice(0, 500) }))
             }
@@ -361,6 +371,7 @@ export function HomeExperienceManager() {
               fullWidth
               size="small"
               value={form.backgroundPosition}
+              disabled={!canWrite}
               onChange={(_event, value: HomeBackgroundPosition | null) => {
                 if (value) setForm((current) => ({ ...current, backgroundPosition: value }));
               }}
@@ -384,6 +395,7 @@ export function HomeExperienceManager() {
             </Box>
             <Slider
               value={form.overlayOpacity}
+              disabled={!canWrite}
               min={0}
               max={70}
               step={1}
@@ -400,7 +412,7 @@ export function HomeExperienceManager() {
             variant="contained"
             startIcon={<Save size={17} strokeWidth={1.8} />}
             onClick={saveSettings}
-            disabled={busy || !changed}
+            disabled={busy || !canWrite || !changed}
             sx={{ alignSelf: { sm: 'flex-start' } }}
           >
             {t('homeExperience.actions.save')}

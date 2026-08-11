@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "rootPackage": "@dwp-frontend/workspace",
-  "dependencyCount": 131,
+  "dependencyCount": 133,
   "licenseCounts": {
     "0BSD": 1,
     "BSD-3-Clause": 4,
     "ISC": 11,
-    "MIT": 115
+    "MIT": 117
   },
   "packages": [
     {
@@ -173,7 +173,7 @@
     },
     {
       "name": "@emotion/styled",
-      "version": "11.14.0",
+      "version": "11.14.1",
       "license": "MIT",
       "repository": "https://github.com/emotion-js/emotion/tree/main/packages/styled"
     },
@@ -292,6 +292,12 @@
       "repository": "git+https://github.com/mui/mui-x.git"
     },
     {
+      "name": "@mui/x-date-pickers",
+      "version": "9.11.0",
+      "license": "MIT",
+      "repository": "git+https://github.com/mui/mui-x.git"
+    },
+    {
       "name": "@mui/x-internals",
       "version": "9.11.0",
       "license": "MIT",
@@ -317,7 +323,7 @@
     },
     {
       "name": "@tanstack/react-query",
-      "version": "5.90.16",
+      "version": "5.101.4",
       "license": "MIT",
       "repository": "git+https://github.com/TanStack/query.git"
     },
@@ -496,6 +502,12 @@
       "repository": "https://github.com/d3/d3-zoom.git"
     },
     {
+      "name": "dayjs",
+      "version": "1.11.21",
+      "license": "MIT",
+      "repository": "https://github.com/iamkun/dayjs.git"
+    },
+    {
       "name": "debug",
       "version": "4.4.3",
       "license": "MIT",
@@ -557,7 +569,7 @@
     },
     {
       "name": "i18next-resources-to-backend",
-      "version": "1.2.1",
+      "version": "1.2.3",
       "license": "MIT",
       "repository": "git@github.com:i18next/i18next-resources-to-backend.git"
     },
@@ -611,7 +623,7 @@
     },
     {
       "name": "lucide-react",
-      "version": "1.30.0",
+      "version": "1.31.0",
       "license": "ISC",
       "repository": "https://github.com/lucide-icons/lucide.git"
     },
@@ -665,15 +677,15 @@
     },
     {
       "name": "react",
-      "version": "19.1.0",
+      "version": "19.2.8",
       "license": "MIT",
-      "repository": "https://github.com/facebook/react.git"
+      "repository": "https://github.com/react/react.git"
     },
     {
       "name": "react-dom",
-      "version": "19.1.0",
+      "version": "19.2.8",
       "license": "MIT",
-      "repository": "https://github.com/facebook/react.git"
+      "repository": "https://github.com/react/react.git"
     },
     {
       "name": "react-i18next",
@@ -701,7 +713,7 @@
     },
     {
       "name": "react-router-dom",
-      "version": "7.12.0",
+      "version": "7.18.2",
       "license": "MIT",
       "repository": "https://github.com/remix-run/react-router"
     },
@@ -791,7 +803,7 @@
     },
     {
       "name": "zustand",
-      "version": "5.0.9",
+      "version": "5.0.14",
       "license": "MIT",
       "repository": "git+https://github.com/pmndrs/zustand.git"
     }

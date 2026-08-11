@@ -14,7 +14,7 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { PersonAvatar } from '../people/person-avatar';
+import { PersonAvatar } from '../directory/person-avatar';
 
 import type { Node, NodeProps } from '@xyflow/react';
 import type {

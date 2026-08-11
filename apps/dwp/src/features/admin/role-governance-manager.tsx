@@ -48,6 +48,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import { resolveRoleDisplayCopy } from './role-display';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -187,6 +188,7 @@ function PermissionDialog({
   onSave: (permissions: PermissionSelection[]) => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
+  const roleDisplay = role ? resolveRoleDisplayCopy(role, t) : null;
   const initial = useMemo(
     () =>
       new Map(
@@ -211,7 +213,9 @@ function PermissionDialog({
 
   return (
     <Dialog open={Boolean(role)} onClose={busy ? undefined : onClose} fullWidth maxWidth="lg">
-      <DialogTitle>{t('roleGovernance.permissionDialog.title', { role: role?.name })}</DialogTitle>
+      <DialogTitle>
+        {t('roleGovernance.permissionDialog.title', { role: roleDisplay?.name })}
+      </DialogTitle>
       <DialogContent sx={{ pt: '8px !important' }}>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           {t('roleGovernance.permissionDialog.description')}
@@ -409,10 +413,11 @@ function RolesPanel() {
         renderCell: ({ row }) => (
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="body2" fontWeight={700} noWrap>
-              {row.name}
+              {resolveRoleDisplayCopy(row, t).name}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap display="block">
-              {row.code} / {row.roleType}
+              {row.code} /{' '}
+              {t(`roleGovernance.roleTypes.${row.roleType}`, { defaultValue: row.roleType })}
             </Typography>
           </Box>
         ),
@@ -422,7 +427,8 @@ function RolesPanel() {
         headerName: t('roleGovernance.columns.description'),
         minWidth: 260,
         flex: 1.2,
-        valueGetter: (_value, row) => row.description || t('roleGovernance.notAvailable'),
+        valueGetter: (_value, row) =>
+          resolveRoleDisplayCopy(row, t).description || t('roleGovernance.notAvailable'),
       },
       {
         field: 'privileged',
@@ -657,7 +663,7 @@ function AssignmentDialog({
               .filter((role) => role.assignableToGroups && role.status === 'ACTIVE')
               .map((role) => (
                 <MenuItem key={role.roleId} value={role.roleId}>
-                  {role.name} ({role.code})
+                  {resolveRoleDisplayCopy(role, t).name} ({role.code})
                 </MenuItem>
               ))}
           </TextField>

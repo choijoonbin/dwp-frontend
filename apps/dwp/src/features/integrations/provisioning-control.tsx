@@ -27,6 +27,7 @@ import {
   listScimConnectors,
   rotateScimConnectorSecret,
   updateHrisConnector,
+  useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
@@ -36,8 +37,6 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
@@ -47,7 +46,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import { AdminPanelError, AdminPanelLoading } from '../admin/admin-ui';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -85,8 +84,14 @@ function message(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
-function StateChip({ state }: { state: string }) {
-  const { t } = useTranslation('admin');
+function StateChip({
+  state,
+  namespace = 'admin',
+}: {
+  state: string;
+  namespace?: 'admin' | 'workforce';
+}) {
+  const { t } = useTranslation(namespace);
   const color =
     state === 'ACTIVE' || state === 'SUCCEEDED'
       ? 'success'
@@ -205,7 +210,7 @@ function ScimCreateDialog({
   );
 }
 
-function ScimPanel() {
+export function IdentityProvisioningManager() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -340,7 +345,7 @@ function ScimPanel() {
   const connectors = connectorsQuery.data ?? [];
 
   return (
-    <>
+    <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'stretch', sm: 'center' }}
@@ -389,27 +394,32 @@ function ScimPanel() {
         }}
       />
       <SecretDialog issued={issued} onClose={() => setIssued(null)} />
-    </>
+    </Box>
   );
 }
 
-function HrisPanel() {
-  const { t } = useTranslation('admin');
+export function WorkforceDataOperations() {
+  const { t } = useTranslation('workforce');
+  const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [busy, setBusy] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
-  const sources = useQuery({ queryKey: ['admin', 'hris', 'sources'], queryFn: listHrisSources });
+  const canManage = (auth.user?.roles ?? []).some((role) => ['ADMIN', 'HR_ADMIN'].includes(role));
+  const sources = useQuery({
+    queryKey: ['workforce', 'hris', 'sources'],
+    queryFn: listHrisSources,
+  });
   const connectors = useQuery({
-    queryKey: ['admin', 'hris', 'connectors'],
+    queryKey: ['workforce', 'hris', 'connectors'],
     queryFn: listHrisConnectors,
   });
   const mappings = useQuery({
-    queryKey: ['admin', 'hris', 'mappings'],
+    queryKey: ['workforce', 'hris', 'mappings'],
     queryFn: listHrisMappingProfiles,
   });
   const runs = useQuery({
-    queryKey: ['admin', 'hris', 'runs'],
+    queryKey: ['workforce', 'hris', 'runs'],
     queryFn: () => listHrisSyncRuns(100),
   });
   const pending = sources.isLoading || connectors.isLoading || mappings.isLoading || runs.isLoading;
@@ -434,7 +444,7 @@ function HrisPanel() {
         field: 'lifecycleState',
         headerName: t('provisioning.hris.columns.state'),
         width: 130,
-        renderCell: ({ row }) => <StateChip state={row.lifecycleState} />,
+        renderCell: ({ row }) => <StateChip state={row.lifecycleState} namespace="workforce" />,
       },
       {
         field: 'readCount',
@@ -479,10 +489,11 @@ function HrisPanel() {
   if (failed) return <AdminPanelError message={t('common.operationError')} />;
 
   const runImport = async () => {
+    if (!canManage) return;
     setBusy(true);
     try {
       const result = await importSyntheticWorkdayFixture();
-      await queryClient.invalidateQueries({ queryKey: ['admin', 'hris'] });
+      await queryClient.invalidateQueries({ queryKey: ['workforce', 'hris'] });
       toast.success(
         t(
           result.replayed
@@ -499,10 +510,11 @@ function HrisPanel() {
   };
 
   const runConnectorAction = async (action: () => Promise<unknown>, success: string) => {
+    if (!canManage) return;
     setBusy(true);
     try {
       await action();
-      await queryClient.invalidateQueries({ queryKey: ['admin', 'hris'] });
+      await queryClient.invalidateQueries({ queryKey: ['workforce', 'hris'] });
       toast.success(success);
     } catch (error) {
       toast.error(message(error, t('common.operationError')));
@@ -512,7 +524,7 @@ function HrisPanel() {
   };
 
   return (
-    <>
+    <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         alignItems={{ xs: 'stretch', md: 'center' }}
@@ -531,16 +543,21 @@ function HrisPanel() {
             color="warning"
             variant="outlined"
           />
+          {!canManage && <Chip label={t('pages.context.readOnly')} size="small" />}
         </Stack>
         <Stack direction="row" justifyContent="flex-end">
           <Button
             startIcon={<Plus size={17} />}
-            disabled={busy}
+            disabled={busy || !canManage}
             onClick={() => setCreateOpen(true)}
           >
             {t('provisioning.hris.actions.newConnector')}
           </Button>
-          <Button startIcon={<Play size={17} />} disabled={busy} onClick={() => void runImport()}>
+          <Button
+            startIcon={<Play size={17} />}
+            disabled={busy || !canManage}
+            onClick={() => void runImport()}
+          >
             {t('provisioning.hris.actions.importSample')}
           </Button>
         </Stack>
@@ -582,11 +599,11 @@ function HrisPanel() {
               <Typography variant="body2" fontWeight={700} sx={{ flex: 1 }} noWrap>
                 {connector.connectorKey}
               </Typography>
-              <StateChip state={connector.healthState} />
+              <StateChip state={connector.healthState} namespace="workforce" />
               <Tooltip title={t('provisioning.hris.actions.check')}>
                 <IconButton
                   size="small"
-                  disabled={busy}
+                  disabled={busy || !canManage}
                   onClick={() =>
                     void runConnectorAction(async () => {
                       const result = await checkHrisConnectorConfiguration(
@@ -609,7 +626,7 @@ function HrisPanel() {
                 <span>
                   <IconButton
                     size="small"
-                    disabled={busy || connector.lifecycleState === 'RETIRED'}
+                    disabled={busy || !canManage || connector.lifecycleState === 'RETIRED'}
                     onClick={() =>
                       void runConnectorAction(
                         () =>
@@ -662,7 +679,7 @@ function HrisPanel() {
           sx={{ border: 0, borderRadius: 0 }}
         />
       </Box>
-      {createOpen && (
+      {createOpen && canManage && (
         <HrisConnectorDialog
           open
           busy={busy}
@@ -676,7 +693,7 @@ function HrisPanel() {
           }}
         />
       )}
-    </>
+    </Box>
   );
 }
 
@@ -691,7 +708,7 @@ function HrisConnectorDialog({
   onClose: () => void;
   onSave: (request: CreateHrisConnectorRequest) => Promise<void>;
 }) {
-  const { t, i18n } = useTranslation('admin');
+  const { t, i18n } = useTranslation('workforce');
   const locale = i18n.resolvedLanguage ?? i18n.language;
   const sourceTypeCatalog = useQuery({
     queryKey: ['system-code-set', 'PEOPLE.HRIS_SOURCE_TYPE', locale],
@@ -877,24 +894,5 @@ function HrisConnectorDialog({
         </Button>
       </DialogActions>
     </Dialog>
-  );
-}
-
-export function ProvisioningManager() {
-  const { t } = useTranslation('admin');
-  const [tab, setTab] = useState<'scim' | 'hris'>('scim');
-  return (
-    <Box sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-      <Tabs
-        value={tab}
-        onChange={(_event, value: 'scim' | 'hris') => setTab(value)}
-        aria-label={t('provisioning.tabs.label')}
-        sx={{ px: 2, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Tab value="scim" label={t('provisioning.tabs.scim')} />
-        <Tab value="hris" label={t('provisioning.tabs.hris')} />
-      </Tabs>
-      {tab === 'scim' ? <ScimPanel /> : <HrisPanel />}
-    </Box>
   );
 }

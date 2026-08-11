@@ -9,20 +9,18 @@ import {
   Image,
   KeyRound,
   Megaphone,
-  Network,
   PlugZap,
   ScrollText,
   SearchCheck,
   Settings2,
   ShieldCheck,
-  UserRoundSearch,
   UsersRound,
   ShieldAlert,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
 
-export type AdminSection = 'experience' | 'people' | 'platform' | 'governance';
+export type AdminSection = 'experience' | 'identity' | 'platform' | 'governance';
 
 export type AdminView =
   | 'branding'
@@ -30,9 +28,7 @@ export type AdminView =
   | 'announcements'
   | 'access'
   | 'roles'
-  | 'people-directory'
   | 'provisioning'
-  | 'directory'
   | 'navigation'
   | 'reference-data'
   | 'system-code-catalog'
@@ -85,37 +81,25 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
     ],
   },
   {
-    id: 'people',
+    id: 'identity',
     icon: UsersRound,
     items: [
       {
-        section: 'people',
+        section: 'identity',
         view: 'access',
-        path: '/admin/people/access',
+        path: '/admin/identity/access',
         icon: ShieldCheck,
       },
       {
-        section: 'people',
+        section: 'identity',
         view: 'roles',
-        path: '/admin/people/roles',
+        path: '/admin/identity/roles',
         icon: KeyRound,
       },
       {
-        section: 'people',
-        view: 'people-directory',
-        path: '/admin/people/people-directory',
-        icon: UserRoundSearch,
-      },
-      {
-        section: 'people',
-        view: 'directory',
-        path: '/admin/people/directory',
-        icon: Network,
-      },
-      {
-        section: 'people',
+        section: 'identity',
         view: 'provisioning',
-        path: '/admin/people/provisioning',
+        path: '/admin/identity/provisioning',
         icon: PlugZap,
       },
     ],
@@ -195,7 +179,7 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
   },
 ];
 
-export const ADMIN_DEFAULT_PATH = '/admin/people/access';
+export const ADMIN_DEFAULT_PATH = '/admin/identity/access';
 
 const ADMIN_ITEMS = ADMIN_NAVIGATION.flatMap((group) => group.items);
 

@@ -118,7 +118,7 @@ async function request<T>(
       resetCsrfToken();
       if (allowCsrfRetry) return request<T>(method, url, body, config, false);
     }
-    if (response.status === 401 || (response.status === 403 && !isMutation(method))) {
+    if (response.status === 401) {
       unauthorizedHandler?.(response.status);
     }
     const record =

@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Sparkles,
   UsersRound,
+  Workflow,
 } from 'lucide-react';
 import { GlyphSurface } from '@dwp-frontend/design-system';
 
@@ -27,6 +28,7 @@ export const homeAppIconByKey: Record<HomeAppIconKey, LucideIcon> = {
   mail: Mail,
   people: UsersRound,
   services: LifeBuoy,
+  workforce: Workflow,
   work: BriefcaseBusiness,
 };
 

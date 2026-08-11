@@ -522,6 +522,7 @@ export async function listPeople(
     cursor?: string;
     size?: number;
     asOf?: string;
+    surface?: 'directory' | 'workforce';
   } = {}
 ): Promise<PeopleCursorPage> {
   const search = new URLSearchParams({ size: String(params.size ?? 50) });
@@ -530,15 +531,19 @@ export async function listPeople(
   if (params.cursor) search.set('cursor', params.cursor);
   if (params.asOf) search.set('asOf', params.asOf);
   const response = await axiosInstance.get<ApiResponse<PeopleCursorPage>>(
-    `/api/people/v1/people?${search.toString()}`
+    `/api/people/v1/${params.surface === 'workforce' ? 'workforce/people' : 'people'}?${search.toString()}`
   );
   return response.data.data;
 }
 
-export async function getPerson(personId: string, asOf?: string): Promise<PersonDetail> {
+export async function getPerson(
+  personId: string,
+  asOf?: string,
+  surface: 'directory' | 'workforce' = 'directory'
+): Promise<PersonDetail> {
   const search = asOf ? `?asOf=${encodeURIComponent(asOf)}` : '';
   const response = await axiosInstance.get<ApiResponse<PersonDetail>>(
-    `/api/people/v1/people/${encodeURIComponent(personId)}${search}`
+    `/api/people/v1/${surface === 'workforce' ? 'workforce/people' : 'people'}/${encodeURIComponent(personId)}${search}`
   );
   return response.data.data;
 }
@@ -549,6 +554,7 @@ export async function getOrganizationChart(
     rootOrganizationId?: string;
     scenarioId?: string;
     depth?: number;
+    surface?: 'directory' | 'workforce';
   } = {}
 ): Promise<OrganizationChart> {
   const search = new URLSearchParams({ depth: String(params.depth ?? 10) });
@@ -558,7 +564,7 @@ export async function getOrganizationChart(
   }
   if (params.scenarioId) search.set('scenarioId', params.scenarioId);
   const response = await axiosInstance.get<ApiResponse<OrganizationChart>>(
-    `/api/people/v1/org-chart?${search.toString()}`
+    `/api/people/v1/${params.surface === 'workforce' ? 'workforce/organization/chart' : 'org-chart'}?${search.toString()}`
   );
   return response.data.data;
 }
@@ -578,12 +584,12 @@ export async function getOrganizationIntelligence(
   if (params.rootOrganizationId) search.set('rootOrganizationId', params.rootOrganizationId);
   if (params.scenarioId) search.set('scenarioId', params.scenarioId);
   const response = await axiosInstance.get<ApiResponse<OrganizationIntelligence>>(
-    `/api/people/v1/org-chart/intelligence?${search.toString()}`
+    `/api/people/v1/workforce/organization/intelligence?${search.toString()}`
   );
   return response.data.data;
 }
 
-const ORG_SCENARIO_BASE = '/api/people/v1/org-chart/scenarios';
+const ORG_SCENARIO_BASE = '/api/people/v1/workforce/organization/scenarios';
 
 export async function listOrganizationScenarios(): Promise<OrganizationScenario[]> {
   const response = await axiosInstance.get<ApiResponse<OrganizationScenario[]>>(ORG_SCENARIO_BASE);
@@ -768,7 +774,7 @@ export async function publishOrganizationScenario(
   return response.data.data;
 }
 
-const HRIS_BASE = '/api/people/v1/admin/integrations/hris';
+const HRIS_BASE = '/api/people/v1/workforce/data-operations/hris';
 
 export async function listHrisSources(): Promise<HrisSourceSystem[]> {
   const response = await axiosInstance.get<ApiResponse<HrisSourceSystem[]>>(`${HRIS_BASE}/sources`);

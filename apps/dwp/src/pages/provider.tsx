@@ -10,6 +10,8 @@ import {
   ListChecks,
 } from 'lucide-react';
 import { PageCanvas } from '@dwp-frontend/design-system';
+import { useQuery } from '@tanstack/react-query';
+import { getProviderOperatorProfile } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -25,21 +27,35 @@ import {
   ProviderTenantDetail,
   ProviderTenants,
 } from '../features/provider/provider-control-plane';
+import { ProviderError, ProviderLoading } from '../features/provider/provider-ui';
 
 const views = {
-  overview: { icon: Gauge, content: ProviderOverview },
-  tenants: { icon: Building2, content: ProviderTenants },
-  operations: { icon: ListChecks, content: ProviderOperations },
-  health: { icon: HeartPulse, content: ProviderHealth },
-  support: { icon: LifeBuoy, content: ProviderSupport },
-  commercial: { icon: BadgeDollarSign, content: ProviderCommercial },
-  audit: { icon: ClipboardList, content: ProviderAudit },
+  overview: { icon: Gauge, content: ProviderOverview, permission: 'ESTATE_READ' },
+  tenants: { icon: Building2, content: ProviderTenants, permission: 'ESTATE_READ' },
+  operations: { icon: ListChecks, content: ProviderOperations, permission: 'ESTATE_READ' },
+  health: { icon: HeartPulse, content: ProviderHealth, permission: 'HEALTH_READ' },
+  support: { icon: LifeBuoy, content: ProviderSupport, permission: 'ESTATE_READ' },
+  commercial: {
+    icon: BadgeDollarSign,
+    content: ProviderCommercial,
+    permission: 'COMMERCIAL_READ',
+  },
+  audit: { icon: ClipboardList, content: ProviderAudit, permission: 'AUDIT_READ' },
 } as const;
 
 export default function ProviderPage() {
   const { t } = useTranslation('provider');
   const { view, tenantId } = useParams();
+  const operator = useQuery({
+    queryKey: ['provider', 'operator'],
+    queryFn: getProviderOperatorProfile,
+  });
+  if (operator.isLoading) return <ProviderLoading />;
+  if (operator.isError) return <ProviderError error={operator.error} />;
   if (tenantId) {
+    if (!operator.data?.permissions.includes('ESTATE_READ')) {
+      return <Navigate to="/403" replace />;
+    }
     return (
       <PageCanvas>
         <ProviderTenantDetail tenantId={tenantId} />
@@ -48,6 +64,9 @@ export default function ProviderPage() {
   }
   if (!view || !(view in views)) return <Navigate to="/404" replace />;
   const selected = views[view as keyof typeof views];
+  if (!operator.data?.permissions.includes(selected.permission)) {
+    return <Navigate to="/403" replace />;
+  }
   const Icon = selected.icon;
   const Content = selected.content;
   return (

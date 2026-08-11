@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Copy, KeyRound, Plus, ShieldAlert, ShieldCheck, ShieldOff, Timer } from 'lucide-react';
+import { KeyRound, Plus, ShieldAlert, ShieldCheck, ShieldOff, Timer } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createProviderSupportSession,
@@ -35,11 +36,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import type { GridColDef } from '@mui/x-data-grid';
-import type {
-  ProviderSupportScope,
-  ProviderSupportSession,
-  ProviderSupportSessionGrant,
-} from '@dwp-frontend/shared-utils';
+import type { ProviderSupportScope, ProviderSupportSession } from '@dwp-frontend/shared-utils';
 
 import {
   formatProviderDate,
@@ -245,55 +242,13 @@ function CreateSupportSessionDialog({
   );
 }
 
-function SupportGrantDialog({
-  grant,
-  onClose,
-}: {
-  grant: ProviderSupportSessionGrant;
-  onClose: () => void;
-}) {
-  const { t } = useTranslation('provider');
-  const toast = useToast();
-  const copy = async () => {
-    await navigator.clipboard.writeText(grant.sessionToken);
-    toast.success(t('support.tokenCopied'));
-  };
-  return (
-    <Dialog open onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{t('support.tokenTitle')}</DialogTitle>
-      <DialogContent dividers>
-        <Stack gap={2}>
-          <Alert severity="info">{t('support.tokenOnce')}</Alert>
-          <TextField
-            fullWidth
-            multiline
-            minRows={3}
-            label={t('support.token')}
-            value={grant.sessionToken}
-            slotProps={{ input: { readOnly: true } }}
-          />
-          <Typography variant="body2" color="text.secondary">
-            {t('support.expiresAt', { value: formatProviderDate(grant.session.expiresAt) })}
-          </Typography>
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>{t('actions.close')}</Button>
-        <Button variant="contained" startIcon={<Copy size={17} />} onClick={() => void copy()}>
-          {t('actions.copy')}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
-
 export function ProviderSupport() {
   const { t } = useTranslation('provider');
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
-  const [grant, setGrant] = useState<ProviderSupportSessionGrant | null>(null);
   const [sessionFilter, setSessionFilter] = useState<'ACTIVE' | 'HISTORY' | 'ALL'>('ACTIVE');
   const [busy, setBusy] = useState(false);
   const sessions = useQuery({
@@ -438,11 +393,20 @@ export function ProviderSupport() {
   }) => {
     setBusy(true);
     try {
-      const next = await createProviderSupportSession(request);
+      await createProviderSupportSession(request);
       setCreateOpen(false);
       if (requestedTenantId) setSearchParams({}, { replace: true });
-      setGrant(next);
-      await queryClient.invalidateQueries({ queryKey: ['provider', 'support'] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['provider', 'support'] }),
+        queryClient.invalidateQueries({ queryKey: ['provider', 'support-context'] }),
+      ]);
+      toast.success(t('support.activated'));
+      navigate(
+        request.scopes.includes('TENANT_CONFIGURATION_READ') ||
+          request.scopes.includes('TENANT_CONFIGURATION_WRITE')
+          ? '/admin/experience/branding'
+          : '/workforce/organization'
+      );
     } catch (error) {
       toast.error(providerError(error, t('errors.operation')));
     } finally {
@@ -571,7 +535,6 @@ export function ProviderSupport() {
           onCreate={create}
         />
       )}
-      {grant && <SupportGrantDialog grant={grant} onClose={() => setGrant(null)} />}
     </Stack>
   );
 }

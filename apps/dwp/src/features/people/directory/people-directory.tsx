@@ -34,13 +34,14 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
-import { PersonAvatar } from './people/person-avatar';
+import { AdminPanelError, AdminPanelLoading } from '../../admin/admin-ui';
+import { PersonAvatar } from './person-avatar';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { OrganizationChart, PersonDetail, PersonSummary } from '@dwp-frontend/shared-utils';
 
 type PeopleDirectoryRow = PersonSummary & { roles: string[] };
+export type PeopleDirectoryExperience = 'directory' | 'workforce';
 
 function today(): string {
   return new Date().toISOString().slice(0, 10);
@@ -70,18 +71,20 @@ function PersonDetailDialog({
   asOf,
   chart,
   roles,
+  experience,
   onClose,
 }: {
   person: PeopleDirectoryRow | null;
   asOf: string;
   chart?: OrganizationChart;
   roles: string[];
+  experience: PeopleDirectoryExperience;
   onClose: () => void;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   const detailQuery = useQuery({
-    queryKey: ['admin', 'people', 'detail', person?.personId, asOf],
-    queryFn: () => getPerson(person?.personId ?? '', asOf),
+    queryKey: [experience, 'people', 'detail', person?.personId, asOf],
+    queryFn: () => getPerson(person?.personId ?? '', asOf, experience),
     enabled: Boolean(person),
   });
   const chartPerson = chart?.people.find((candidate) => candidate.personId === person?.personId);
@@ -118,6 +121,7 @@ function PersonDetailDialog({
             detail={detailQuery.data}
             person={person}
             roles={roles}
+            experience={experience}
             managerName={
               chart?.people.find((candidate) => candidate.personId === chartPerson?.managerPersonId)
                 ?.displayName
@@ -134,16 +138,19 @@ function PersonProfile({
   detail,
   person,
   roles,
+  experience,
   managerName,
   directReports,
 }: {
   detail: PersonDetail;
   person: PeopleDirectoryRow;
   roles: string[];
+  experience: PeopleDirectoryExperience;
   managerName?: string;
   directReports: OrganizationChart['people'];
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
+  const workforceView = experience === 'workforce';
   return (
     <Stack>
       <Stack
@@ -193,37 +200,45 @@ function PersonProfile({
         }}
       >
         <Fact label={t('people.columns.organization')} value={person.organizationName} />
-        <Fact
-          label={t('people.detail.jobGrade')}
-          value={[person.jobGradeName, person.jobGradeKey].filter(Boolean).join(' / ')}
-        />
+        {workforceView && (
+          <Fact
+            label={t('people.detail.jobGrade')}
+            value={[person.jobGradeName, person.jobGradeKey].filter(Boolean).join(' / ')}
+          />
+        )}
         <Fact label={t('people.detail.manager')} value={managerName || person.managerDisplayName} />
         <Fact label={t('people.columns.location')} value={person.locationName} />
-        <Fact label={t('people.detail.employer')} value={detail.legalEmployerName} />
-        <Fact label={t('people.detail.hireDate')} value={detail.originalHireDate} />
+        {workforceView && (
+          <Fact label={t('people.detail.employer')} value={detail.legalEmployerName} />
+        )}
+        {workforceView && (
+          <Fact label={t('people.detail.hireDate')} value={detail.originalHireDate} />
+        )}
       </Box>
 
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         divider={<Divider flexItem orientation="vertical" />}
       >
-        <Box sx={{ px: 3, py: 2.5, flex: 1, minWidth: 0 }}>
-          <Stack direction="row" alignItems="center" gap={0.75} sx={{ mb: 1.25 }}>
-            <ShieldCheck size={16} />
-            <Typography component="h3" variant="subtitle2">
-              {t('people.detail.roles')}
-            </Typography>
-          </Stack>
-          <Stack direction="row" flexWrap="wrap" gap={0.6} useFlexGap>
-            {roles.length ? (
-              roles.map((role) => <Chip key={role} label={role} size="small" />)
-            ) : (
-              <Typography variant="body2" color="text.secondary">
-                {t('people.detail.noRoles')}
+        {workforceView && (
+          <Box sx={{ px: 3, py: 2.5, flex: 1, minWidth: 0 }}>
+            <Stack direction="row" alignItems="center" gap={0.75} sx={{ mb: 1.25 }}>
+              <ShieldCheck size={16} />
+              <Typography component="h3" variant="subtitle2">
+                {t('people.detail.roles')}
               </Typography>
-            )}
-          </Stack>
-        </Box>
+            </Stack>
+            <Stack direction="row" flexWrap="wrap" gap={0.6} useFlexGap>
+              {roles.length ? (
+                roles.map((role) => <Chip key={role} label={role} size="small" />)
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  {t('people.detail.noRoles')}
+                </Typography>
+              )}
+            </Stack>
+          </Box>
+        )}
         <Box sx={{ px: 3, py: 2.5, flex: 1, minWidth: 0 }}>
           <Stack direction="row" alignItems="center" gap={0.75} sx={{ mb: 1.25 }}>
             <UsersRound size={16} />
@@ -255,81 +270,88 @@ function PersonProfile({
         </Box>
       </Stack>
 
-      <Box sx={{ px: 3, py: 2.5, borderTop: 1, borderColor: 'divider' }}>
-        <Stack direction="row" alignItems="center" gap={0.75} sx={{ mb: 1.25 }}>
-          <CalendarDays size={16} />
-          <Typography component="h3" variant="subtitle2">
-            {t('people.detail.assignments')}
-          </Typography>
-        </Stack>
-        <Stack component="ol" sx={{ p: 0, m: 0, listStyle: 'none' }}>
-          {detail.assignments.map((assignment, index) => (
-            <Stack
-              component="li"
-              key={`${assignment.assignmentKey}-${assignment.effectiveStartDate}`}
-              direction="row"
-              gap={1.5}
-              sx={{ position: 'relative', pb: index === detail.assignments.length - 1 ? 0 : 2 }}
-            >
-              <Box sx={{ width: 14, position: 'relative', flex: '0 0 14px' }}>
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: 4,
-                    left: 3,
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    bgcolor: assignment.primaryAssignment ? 'primary.main' : 'text.disabled',
-                  }}
-                />
-                {index < detail.assignments.length - 1 && (
+      {workforceView && (
+        <Box sx={{ px: 3, py: 2.5, borderTop: 1, borderColor: 'divider' }}>
+          <Stack direction="row" alignItems="center" gap={0.75} sx={{ mb: 1.25 }}>
+            <CalendarDays size={16} />
+            <Typography component="h3" variant="subtitle2">
+              {t('people.detail.assignments')}
+            </Typography>
+          </Stack>
+          <Stack component="ol" sx={{ p: 0, m: 0, listStyle: 'none' }}>
+            {detail.assignments.map((assignment, index) => (
+              <Stack
+                component="li"
+                key={`${assignment.assignmentKey}-${assignment.effectiveStartDate}`}
+                direction="row"
+                gap={1.5}
+                sx={{ position: 'relative', pb: index === detail.assignments.length - 1 ? 0 : 2 }}
+              >
+                <Box sx={{ width: 14, position: 'relative', flex: '0 0 14px' }}>
                   <Box
                     sx={{
                       position: 'absolute',
-                      top: 14,
-                      bottom: -2,
-                      left: 6.5,
-                      borderLeft: 1,
-                      borderColor: 'divider',
+                      top: 4,
+                      left: 3,
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      bgcolor: assignment.primaryAssignment ? 'primary.main' : 'text.disabled',
                     }}
                   />
-                )}
-              </Box>
-              <Box sx={{ minWidth: 0, flex: 1 }}>
-                <Stack direction="row" justifyContent="space-between" gap={1} flexWrap="wrap">
-                  <Typography variant="body2" fontWeight={700}>
-                    {assignment.businessTitle || assignment.assignmentKey}
-                  </Typography>
+                  {index < detail.assignments.length - 1 && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: 14,
+                        bottom: -2,
+                        left: 6.5,
+                        borderLeft: 1,
+                        borderColor: 'divider',
+                      }}
+                    />
+                  )}
+                </Box>
+                <Box sx={{ minWidth: 0, flex: 1 }}>
+                  <Stack direction="row" justifyContent="space-between" gap={1} flexWrap="wrap">
+                    <Typography variant="body2" fontWeight={700}>
+                      {assignment.businessTitle || assignment.assignmentKey}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {assignment.effectiveStartDate} -{' '}
+                      {assignment.effectiveEndDate || t('people.detail.current')}
+                    </Typography>
+                  </Stack>
                   <Typography variant="caption" color="text.secondary">
-                    {assignment.effectiveStartDate} -{' '}
-                    {assignment.effectiveEndDate || t('people.detail.current')}
+                    {[
+                      assignment.organizationName,
+                      assignment.jobProfileName,
+                      assignment.jobGradeName,
+                      assignment.locationName,
+                    ]
+                      .filter(Boolean)
+                      .join(' / ') || t('people.notAvailable')}
                   </Typography>
-                </Stack>
-                <Typography variant="caption" color="text.secondary">
-                  {[
-                    assignment.organizationName,
-                    assignment.jobProfileName,
-                    assignment.jobGradeName,
-                    assignment.locationName,
-                  ]
-                    .filter(Boolean)
-                    .join(' / ') || t('people.notAvailable')}
-                </Typography>
-              </Box>
-            </Stack>
-          ))}
-        </Stack>
-      </Box>
+                </Box>
+              </Stack>
+            ))}
+          </Stack>
+        </Box>
+      )}
     </Stack>
   );
 }
 
-export function PeopleManager() {
-  const { t } = useTranslation('admin');
+export function PeopleDirectory({
+  experience = 'workforce',
+}: {
+  experience?: PeopleDirectoryExperience;
+}) {
+  const { t } = useTranslation('workforce');
+  const workforceView = experience === 'workforce';
   const [asOf, setAsOf] = useState(today);
   const [query, setQuery] = useState('');
-  const [status, setStatus] = useState('ALL');
+  const [status, setStatus] = useState(workforceView ? 'ALL' : 'ACTIVE');
   const [organization, setOrganization] = useState('ALL');
   const [grade, setGrade] = useState('ALL');
   const [location, setLocation] = useState('ALL');
@@ -337,16 +359,23 @@ export function PeopleManager() {
   const [selected, setSelected] = useState<PeopleDirectoryRow | null>(null);
 
   const peopleQuery = useQuery({
-    queryKey: ['admin', 'people', 'directory', asOf],
-    queryFn: () => listPeople({ asOf, size: 100 }),
+    queryKey: [experience, 'people', 'directory', asOf, workforceView ? undefined : 'ACTIVE'],
+    queryFn: () =>
+      listPeople({
+        asOf,
+        status: workforceView ? undefined : 'ACTIVE',
+        size: 100,
+        surface: experience,
+      }),
   });
   const chartQuery = useQuery({
-    queryKey: ['admin', 'people', 'org-context', asOf],
-    queryFn: () => getOrganizationChart({ asOf, depth: 10 }),
+    queryKey: [experience, 'people', 'org-context', asOf],
+    queryFn: () => getOrganizationChart({ asOf, depth: 10, surface: experience }),
   });
   const identitiesQuery = useQuery({
-    queryKey: ['admin', 'people', 'identity-roles'],
+    queryKey: ['workforce', 'people', 'identity-roles'],
     queryFn: () => listIdentityUsers(),
+    enabled: workforceView,
     retry: false,
   });
 
@@ -384,7 +413,7 @@ export function PeopleManager() {
       if (organization !== 'ALL' && row.organizationName !== organization) return false;
       if (grade !== 'ALL' && row.jobGradeName !== grade) return false;
       if (location !== 'ALL' && row.locationName !== location) return false;
-      if (role !== 'ALL' && !row.roles.includes(role)) return false;
+      if (workforceView && role !== 'ALL' && !row.roles.includes(role)) return false;
       if (!needle) return true;
       return [
         row.displayName,
@@ -395,10 +424,10 @@ export function PeopleManager() {
         row.managerDisplayName,
       ].some((value) => value?.toLocaleLowerCase().includes(needle));
     });
-  }, [grade, location, organization, query, role, rows, status]);
+  }, [grade, location, organization, query, role, rows, status, workforceView]);
 
-  const columns = useMemo<GridColDef<PeopleDirectoryRow>[]>(
-    () => [
+  const columns = useMemo<GridColDef<PeopleDirectoryRow>[]>(() => {
+    const values: GridColDef<PeopleDirectoryRow>[] = [
       {
         field: 'displayName',
         headerName: t('people.columns.person'),
@@ -427,7 +456,7 @@ export function PeopleManager() {
       },
       {
         field: 'businessTitle',
-        headerName: t('people.columns.position'),
+        headerName: workforceView ? t('people.columns.position') : t('people.columns.title'),
         minWidth: 210,
         flex: 0.9,
         renderCell: ({ row }) => (
@@ -435,9 +464,11 @@ export function PeopleManager() {
             <Typography variant="body2" noWrap>
               {row.businessTitle || row.jobProfileName || t('people.notAvailable')}
             </Typography>
-            <Typography variant="caption" color="text.secondary" display="block" noWrap>
-              {[row.jobGradeName, row.jobGradeKey].filter(Boolean).join(' / ')}
-            </Typography>
+            {workforceView && (
+              <Typography variant="caption" color="text.secondary" display="block" noWrap>
+                {[row.jobGradeName, row.jobGradeKey].filter(Boolean).join(' / ')}
+              </Typography>
+            )}
           </Box>
         ),
       },
@@ -454,20 +485,24 @@ export function PeopleManager() {
         flex: 0.65,
         valueGetter: (_value, row) => row.locationName || t('people.notAvailable'),
       },
-      {
-        field: 'roles',
-        headerName: t('people.columns.roles'),
-        minWidth: 190,
-        flex: 0.75,
-        renderCell: ({ row }) => (
-          <Stack direction="row" gap={0.4} sx={{ minWidth: 0, overflow: 'hidden' }}>
-            {row.roles.slice(0, 2).map((assignedRole) => (
-              <Chip key={assignedRole} label={assignedRole} size="small" variant="outlined" />
-            ))}
-            {row.roles.length > 2 && <Chip label={`+${row.roles.length - 2}`} size="small" />}
-          </Stack>
-        ),
-      },
+      ...(workforceView
+        ? [
+            {
+              field: 'roles',
+              headerName: t('people.columns.roles'),
+              minWidth: 190,
+              flex: 0.75,
+              renderCell: ({ row }) => (
+                <Stack direction="row" gap={0.4} sx={{ minWidth: 0, overflow: 'hidden' }}>
+                  {row.roles.slice(0, 2).map((assignedRole) => (
+                    <Chip key={assignedRole} label={assignedRole} size="small" variant="outlined" />
+                  ))}
+                  {row.roles.length > 2 && <Chip label={`+${row.roles.length - 2}`} size="small" />}
+                </Stack>
+              ),
+            } satisfies GridColDef<PeopleDirectoryRow>,
+          ]
+        : []),
       {
         field: 'workerStatus',
         headerName: t('people.columns.status'),
@@ -483,9 +518,9 @@ export function PeopleManager() {
           />
         ),
       },
-    ],
-    [t]
-  );
+    ];
+    return values;
+  }, [t, workforceView]);
 
   if (peopleQuery.isLoading || chartQuery.isLoading) {
     return <AdminPanelLoading label={t('people.loading')} />;
@@ -502,11 +537,14 @@ export function PeopleManager() {
     );
   }
 
-  const activeFilters = [status, organization, grade, location, role].filter(
-    (value) => value !== 'ALL'
-  ).length;
+  const activeFilters = [
+    ...(workforceView ? [status, role] : []),
+    organization,
+    grade,
+    location,
+  ].filter((value) => value !== 'ALL').length;
   const resetFilters = () => {
-    setStatus('ALL');
+    setStatus(workforceView ? 'ALL' : 'ACTIVE');
     setOrganization('ALL');
     setGrade('ALL');
     setLocation('ALL');
@@ -580,37 +618,43 @@ export function PeopleManager() {
               ),
             }}
           />
-          <FilterSelect
-            label={t('people.filters.status')}
-            value={status}
-            onChange={setStatus}
-            options={['ACTIVE', 'LEAVE', 'PENDING', 'TERMINATED']}
-            optionLabel={(value) => t(`people.status.${value}`)}
-          />
+          {workforceView && (
+            <FilterSelect
+              label={t('people.filters.status')}
+              value={status}
+              onChange={setStatus}
+              options={['ACTIVE', 'LEAVE', 'PENDING', 'TERMINATED']}
+              optionLabel={(value) => t(`people.status.${value}`)}
+            />
+          )}
           <FilterSelect
             label={t('people.filters.organization')}
             value={organization}
             onChange={setOrganization}
             options={options.organizations}
           />
-          <FilterSelect
-            label={t('people.filters.grade')}
-            value={grade}
-            onChange={setGrade}
-            options={options.grades}
-          />
+          {workforceView && (
+            <FilterSelect
+              label={t('people.filters.grade')}
+              value={grade}
+              onChange={setGrade}
+              options={options.grades}
+            />
+          )}
           <FilterSelect
             label={t('people.filters.location')}
             value={location}
             onChange={setLocation}
             options={options.locations}
           />
-          <FilterSelect
-            label={t('people.filters.role')}
-            value={role}
-            onChange={setRole}
-            options={options.roles}
-          />
+          {workforceView && (
+            <FilterSelect
+              label={t('people.filters.role')}
+              value={role}
+              onChange={setRole}
+              options={options.roles}
+            />
+          )}
           <TextField
             size="small"
             type="date"
@@ -648,6 +692,7 @@ export function PeopleManager() {
         asOf={asOf}
         chart={chartQuery.data}
         roles={selected?.roles ?? []}
+        experience={experience}
         onClose={() => setSelected(null)}
       />
     </>
@@ -667,7 +712,7 @@ function FilterSelect({
   onChange: (value: string) => void;
   optionLabel?: (option: string) => string;
 }) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('workforce');
   return (
     <TextField
       select

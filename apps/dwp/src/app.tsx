@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ToastViewport } from '@dwp-frontend/design-system';
+import { ToastViewport } from '@dwp-frontend/design-system/components/toast-viewport';
 
 import { AuthUnauthorizedHandler } from './components/auth-unauthorized-handler';
 import { UserLocaleSync } from './components/user-locale-sync';

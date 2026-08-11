@@ -20,6 +20,8 @@
       "work": "Work",
       "ask": "Ask",
       "activity": "Activity",
+      "people": "People",
+      "workforce": "Workforce management",
       "apps": "Apps"
     }
   },
@@ -88,10 +90,16 @@
     "actionsLabel": "Account actions",
     "fallbackName": "User",
     "workspace": "Workspace · {{workspace}}",
+    "access": "Access · {{role}}",
     "roles": {
       "providerAdmin": "Provider administrator",
+      "providerOperator": "Provider operator",
+      "providerSupport": "Provider support",
+      "providerAuditor": "Provider auditor",
       "platformAdmin": "Platform administrator",
       "tenantAdmin": "Tenant administrator",
+      "auditAdmin": "Audit administrator",
+      "auditor": "Auditor",
       "member": "Workspace member"
     },
     "menu": {
@@ -99,6 +107,7 @@
       "settingsDescription": "Profile, preferences, and security",
       "administration": "Administration console",
       "administrationDescription": "Users, policy, and system controls",
+      "supportAdministrationDescription": "Approved support scope for {{tenant}}",
       "provider": "Provider Control Plane",
       "providerDescription": "Tenant delivery and change operations",
       "logout": "Log out"
