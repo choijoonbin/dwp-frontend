@@ -1,1 +1,1 @@
-export { WorkforceDataOperations } from '../integrations/provisioning-control';
+export { HrisOperationsWorkbench as WorkforceDataOperations } from './hris-operations-workbench';

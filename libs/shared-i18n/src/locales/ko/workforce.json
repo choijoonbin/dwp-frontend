@@ -857,25 +857,58 @@
     "never": "사용 이력 없음",
     "states": {
       "ACTIVE": "활성",
+      "DRAFT": "초안",
       "SUSPENDED": "일시중지",
       "RETIRED": "종료",
       "HEALTHY": "정상",
+      "DEGRADED": "주의",
       "UNKNOWN": "알 수 없음",
       "RUNNING": "실행 중",
       "SUCCEEDED": "성공",
+      "PARTIAL": "부분 성공",
       "SUCCESS": "성공",
       "FAILED": "실패",
       "PENDING": "대기",
-      "COMPLETED": "완료"
+      "COMPLETED": "완료",
+      "RESOLVED": "해결",
+      "ACCEPTED": "위험 수용",
+      "WARNING": "경고",
+      "CRITICAL": "심각"
     },
     "hris": {
       "title": "HRIS 수집 제어",
+      "description": "원천 연결, 매핑, 동기화 커서와 데이터 대사를 하나의 운영 흐름으로 관리합니다.",
       "loading": "HRIS 제어 정보 불러오는 중",
       "synthetic": "합성 픽스처",
       "sources": "원천 시스템",
       "connectors": "커넥터 인스턴스",
       "mappings": "매핑 프로필",
       "runs": "HRIS 동기화 실행",
+      "cursorPolicy": "커서는 성공한 투영 트랜잭션 이후에만 확정됩니다.",
+      "kpi": {
+        "label": "HRIS 운영 지표",
+        "connectors": "정상 커넥터",
+        "healthy": "활성 및 연결 확인",
+        "lastRun": "최근 실행",
+        "failedRuns": "실패 실행",
+        "retainedRuns": "재시도 가능한 실행 이력",
+        "openIssues": "열린 대사 이슈",
+        "reviewRequired": "인사 데이터 검토 필요"
+      },
+      "views": {
+        "label": "HRIS 운영 보기",
+        "connectors": "연결",
+        "runs": "실행 이력",
+        "reconciliation": "대사",
+        "mappings": "매핑"
+      },
+      "connector": {
+        "mapping": "활성 매핑",
+        "missing": "매핑 필요",
+        "lastSuccess": "최근 성공",
+        "lastAttempt": "최근 시도",
+        "failures": "연속 실패"
+      },
       "empty": {
         "title": "HRIS 수집을 연결하세요",
         "description": "원천과 어댑터를 등록하고 비밀 참조, 매핑, 연결 검사 순서로 검증한 뒤 활성화하세요.",
@@ -891,14 +924,23 @@
         "created": "생성",
         "updated": "수정",
         "rejected": "거부",
-        "watermark": "확정 워터마크"
+        "watermark": "확정 워터마크",
+        "pages": "페이지",
+        "failure": "실패 코드",
+        "actions": "작업"
       },
       "actions": {
         "newConnector": "새 커넥터",
         "importSample": "합성 Workday 수집 실행",
         "check": "설정 검증",
         "suspend": "일시중지",
-        "activate": "활성화"
+        "activate": "활성화",
+        "deltaSync": "증분 동기화",
+        "fullSync": "전체 동기화",
+        "retry": "실패 실행 재시도",
+        "reconcile": "데이터 대사 실행",
+        "resolve": "이슈 검토",
+        "newMapping": "새 매핑"
       },
       "create": {
         "title": "HRIS 커넥터 등록",
@@ -916,12 +958,43 @@
         "credentialReferencePlaceholder": "vault://tenant/hris/workday",
         "schedule": "스케줄 표현식"
       },
+      "mapping": {
+        "policy": "매핑은 초안 작성과 검토 후 활성화하며, 원천별 활성 버전은 하나만 유지됩니다.",
+        "createTitle": "HRIS 매핑 초안 등록",
+        "createDescription": "원천 필드를 DWP 인력 투영 계약에 연결합니다. 초안은 활성화 전까지 실행에 사용되지 않습니다.",
+        "source": "원천 시스템",
+        "key": "매핑 키",
+        "sourceVersion": "원천 스키마 버전",
+        "definition": "매핑 정의 JSON",
+        "invalidJson": "유효한 JSON 객체를 입력하세요. mappings 배열에는 한 개 이상의 항목이 필요합니다."
+      },
+      "reconciliation": {
+        "detected": "탐지 시각",
+        "severity": "심각도",
+        "issue": "이슈 코드",
+        "entity": "대상",
+        "summary": "검토 요약",
+        "open": "열린 이슈 {{count}}건",
+        "runs": "대사 실행 {{count}}회",
+        "emptyTitle": "열린 대사 이슈가 없습니다",
+        "emptyDescription": "성공한 동기화 실행에서 대사를 시작하면 중복, 참조 단절, 전체 동기화 누락을 점검합니다.",
+        "resolveTitle": "대사 이슈 판정",
+        "disposition": "판정",
+        "resolved": "해결 완료",
+        "accepted": "위험 수용",
+        "note": "판정 근거"
+      },
       "toasts": {
         "connectorCreated": "HRIS 커넥터를 초안으로 등록했습니다.",
-        "checked": "커넥터 설정이 유효합니다. 외부 연결 확인은 Gate로 남아 있습니다.",
+        "checked": "자격증명과 외부 HRIS 연결을 확인했습니다.",
         "lifecycle": "HRIS 커넥터 수명주기를 변경했습니다.",
         "imported": "합성 구성원 {{count}}명을 수집했습니다.",
-        "replayed": "멱등 처리된 샘플 수집 결과를 재사용했습니다."
+        "replayed": "멱등 처리된 샘플 수집 결과를 재사용했습니다.",
+        "syncStarted": "HRIS 동기화를 완료하고 커서를 확정했습니다.",
+        "reconciled": "동기화 결과 대사를 완료했습니다.",
+        "mappingCreated": "매핑 초안을 등록했습니다.",
+        "mappingActivated": "검토된 매핑을 활성화했습니다.",
+        "issueResolved": "대사 이슈 판정을 저장했습니다."
       }
     }
   }

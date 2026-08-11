@@ -857,25 +857,58 @@
     "never": "Never used",
     "states": {
       "ACTIVE": "Active",
+      "DRAFT": "Draft",
       "SUSPENDED": "Suspended",
       "RETIRED": "Retired",
       "HEALTHY": "Healthy",
+      "DEGRADED": "Degraded",
       "UNKNOWN": "Unknown",
       "RUNNING": "Running",
       "SUCCEEDED": "Succeeded",
+      "PARTIAL": "Partial",
       "SUCCESS": "Succeeded",
       "FAILED": "Failed",
       "PENDING": "Pending",
-      "COMPLETED": "Completed"
+      "COMPLETED": "Completed",
+      "RESOLVED": "Resolved",
+      "ACCEPTED": "Risk accepted",
+      "WARNING": "Warning",
+      "CRITICAL": "Critical"
     },
     "hris": {
       "title": "HRIS ingestion control",
+      "description": "Operate source connections, mappings, synchronization cursors, and data reconciliation in one governed flow.",
       "loading": "Loading HRIS controls",
       "synthetic": "Synthetic fixture",
       "sources": "Source systems",
       "connectors": "Connector instances",
       "mappings": "Mapping profiles",
       "runs": "HRIS synchronization runs",
+      "cursorPolicy": "A cursor is committed only after the projection transaction succeeds.",
+      "kpi": {
+        "label": "HRIS operating indicators",
+        "connectors": "Healthy connectors",
+        "healthy": "Active and connectivity verified",
+        "lastRun": "Latest run",
+        "failedRuns": "Failed runs",
+        "retainedRuns": "Runs available for controlled retry",
+        "openIssues": "Open reconciliation issues",
+        "reviewRequired": "Workforce data review required"
+      },
+      "views": {
+        "label": "HRIS operations view",
+        "connectors": "Connections",
+        "runs": "Run history",
+        "reconciliation": "Reconciliation",
+        "mappings": "Mappings"
+      },
+      "connector": {
+        "mapping": "Active mapping",
+        "missing": "Mapping required",
+        "lastSuccess": "Last success",
+        "lastAttempt": "Last attempt",
+        "failures": "Consecutive failures"
+      },
       "empty": {
         "title": "Connect HRIS ingestion",
         "description": "Register the source and adapter, then validate the secret reference, mapping, and connection before activation.",
@@ -891,14 +924,23 @@
         "created": "Created",
         "updated": "Updated",
         "rejected": "Rejected",
-        "watermark": "Committed watermark"
+        "watermark": "Committed watermark",
+        "pages": "Pages",
+        "failure": "Failure code",
+        "actions": "Actions"
       },
       "actions": {
         "newConnector": "New connector",
         "importSample": "Run synthetic Workday import",
         "check": "Validate configuration",
         "suspend": "Suspend",
-        "activate": "Activate"
+        "activate": "Activate",
+        "deltaSync": "Delta sync",
+        "fullSync": "Full sync",
+        "retry": "Retry failed run",
+        "reconcile": "Run data reconciliation",
+        "resolve": "Review issue",
+        "newMapping": "New mapping"
       },
       "create": {
         "title": "Register HRIS connector",
@@ -916,12 +958,43 @@
         "credentialReferencePlaceholder": "vault://tenant/hris/workday",
         "schedule": "Schedule expression"
       },
+      "mapping": {
+        "policy": "Mappings are drafted and reviewed before activation; only one active version is retained per source.",
+        "createTitle": "Register HRIS mapping draft",
+        "createDescription": "Map source fields to the DWP workforce projection contract. A draft is never used until activated.",
+        "source": "Source system",
+        "key": "Mapping key",
+        "sourceVersion": "Source schema version",
+        "definition": "Mapping definition JSON",
+        "invalidJson": "Enter a valid JSON object with at least one item in its mappings array."
+      },
+      "reconciliation": {
+        "detected": "Detected",
+        "severity": "Severity",
+        "issue": "Issue code",
+        "entity": "Entity",
+        "summary": "Review summary",
+        "open": "{{count}} open issues",
+        "runs": "{{count}} reconciliation runs",
+        "emptyTitle": "No open reconciliation issues",
+        "emptyDescription": "Start reconciliation from a successful run to check duplicates, broken references, and omissions from a full sync.",
+        "resolveTitle": "Decide reconciliation issue",
+        "disposition": "Disposition",
+        "resolved": "Resolved",
+        "accepted": "Risk accepted",
+        "note": "Decision rationale"
+      },
       "toasts": {
         "connectorCreated": "HRIS connector registered as draft.",
-        "checked": "Connector configuration is valid; external connectivity remains gated.",
+        "checked": "Credential resolution and external HRIS connectivity were verified.",
         "lifecycle": "HRIS connector lifecycle changed.",
         "imported": "Imported {{count}} synthetic workers.",
-        "replayed": "The idempotent sample import was replayed."
+        "replayed": "The idempotent sample import was replayed.",
+        "syncStarted": "HRIS synchronization completed and committed its cursor.",
+        "reconciled": "Synchronization reconciliation completed.",
+        "mappingCreated": "Mapping draft registered.",
+        "mappingActivated": "Reviewed mapping activated.",
+        "issueResolved": "Reconciliation decision saved."
       }
     }
   }

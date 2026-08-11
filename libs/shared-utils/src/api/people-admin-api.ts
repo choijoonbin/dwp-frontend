@@ -446,6 +446,9 @@ export type HrisConnector = {
   healthState: string;
   lastHealthCheckedAt?: string | null;
   lastSuccessfulSyncAt?: string | null;
+  lastAttemptedSyncAt?: string | null;
+  lastErrorCode?: string | null;
+  consecutiveFailureCount: number;
   version: number;
 };
 
@@ -479,11 +482,14 @@ export type HrisConfigurationCheck = {
 
 export type HrisMappingProfile = {
   mappingProfileId: string;
+  sourceSystemId: number;
   profileKey: string;
   adapterType: string;
   sourceSchemaVersion: string;
   targetSchemaVersion: string;
   lifecycleState: string;
+  mappingSha256: string;
+  activatedAt?: string | null;
   version: number;
 };
 
@@ -498,8 +504,42 @@ export type HrisSyncRun = {
   createdCount: number;
   updatedCount: number;
   rejectedCount: number;
+  connectorInstanceId?: string | null;
+  mappingProfileId?: string | null;
+  retryOfSyncRunId?: string | null;
+  pageCount: number;
+  unchangedCount: number;
+  failureCode?: string | null;
+  redactedFailureMessage?: string | null;
   startedAt: string;
   completedAt?: string | null;
+};
+
+export type HrisReconciliationRun = {
+  reconciliationRunId: string;
+  connectorInstanceId: string;
+  syncRunId?: string | null;
+  lifecycleState: string;
+  checkedCount: number;
+  issueCount: number;
+  criticalCount: number;
+  startedAt: string;
+  completedAt?: string | null;
+};
+
+export type HrisReconciliationIssue = {
+  reconciliationIssueId: string;
+  reconciliationRunId: string;
+  connectorInstanceId: string;
+  issueCode: string;
+  severity: string;
+  entityType: string;
+  internalKey?: string | null;
+  externalId?: string | null;
+  redactedSummary: string;
+  lifecycleState: string;
+  firstDetectedAt: string;
+  resolvedAt?: string | null;
 };
 
 export type HrisImportResult = {
@@ -837,6 +877,91 @@ export async function listHrisSyncRuns(size = 50): Promise<HrisSyncRun[]> {
     `${HRIS_BASE}/sync-runs?size=${size}`
   );
   return response.data.data;
+}
+
+export async function executeHrisConnector(
+  connectorId: string,
+  syncMode: 'FULL' | 'DELTA'
+): Promise<HrisImportResult> {
+  const response = await axiosInstance.post<ApiResponse<HrisImportResult>, { syncMode: string }>(
+    `${HRIS_BASE}/connectors/${connectorId}/executions`,
+    { syncMode }
+  );
+  return response.data.data;
+}
+
+export async function retryHrisSyncRun(syncRunId: string): Promise<HrisImportResult> {
+  const response = await axiosInstance.post<ApiResponse<HrisImportResult>, undefined>(
+    `${HRIS_BASE}/sync-runs/${syncRunId}/retry`,
+    undefined
+  );
+  return response.data.data;
+}
+
+export async function createHrisMappingProfile(request: {
+  sourceSystemId: number;
+  profileKey: string;
+  adapterType: string;
+  sourceSchemaVersion: string;
+  targetSchemaVersion: string;
+  mappingDefinition: Record<string, unknown>;
+}): Promise<HrisMappingProfile> {
+  const response = await axiosInstance.post<ApiResponse<HrisMappingProfile>, typeof request>(
+    `${HRIS_BASE}/mapping-profiles`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function activateHrisMappingProfile(
+  mapping: HrisMappingProfile
+): Promise<HrisMappingProfile> {
+  const response = await axiosInstance.post<ApiResponse<HrisMappingProfile>, { version: number }>(
+    `${HRIS_BASE}/mapping-profiles/${mapping.mappingProfileId}/activate`,
+    { version: mapping.version }
+  );
+  return response.data.data;
+}
+
+export async function listHrisReconciliations(size = 50): Promise<HrisReconciliationRun[]> {
+  const response = await axiosInstance.get<ApiResponse<HrisReconciliationRun[]>>(
+    `${HRIS_BASE}/reconciliations?size=${size}`
+  );
+  return response.data.data;
+}
+
+export async function reconcileHrisRun(
+  connectorId: string,
+  syncRunId: string
+): Promise<HrisReconciliationRun> {
+  const response = await axiosInstance.post<ApiResponse<HrisReconciliationRun>, undefined>(
+    `${HRIS_BASE}/connectors/${connectorId}/reconciliations?syncRunId=${encodeURIComponent(syncRunId)}`,
+    undefined
+  );
+  return response.data.data;
+}
+
+export async function listHrisReconciliationIssues(
+  state: 'OPEN' | 'RESOLVED' | 'ACCEPTED' | '' = 'OPEN',
+  size = 100
+): Promise<HrisReconciliationIssue[]> {
+  const query = new URLSearchParams({ size: String(size) });
+  if (state) query.set('state', state);
+  const response = await axiosInstance.get<ApiResponse<HrisReconciliationIssue[]>>(
+    `${HRIS_BASE}/reconciliation-issues?${query.toString()}`
+  );
+  return response.data.data;
+}
+
+export async function resolveHrisReconciliationIssue(
+  issueId: string,
+  lifecycleState: 'RESOLVED' | 'ACCEPTED',
+  resolutionNote: string
+): Promise<void> {
+  await axiosInstance.put<ApiResponse<void>, { lifecycleState: string; resolutionNote: string }>(
+    `${HRIS_BASE}/reconciliation-issues/${issueId}`,
+    { lifecycleState, resolutionNote }
+  );
 }
 
 export async function importSyntheticWorkdayFixture(): Promise<HrisImportResult> {
