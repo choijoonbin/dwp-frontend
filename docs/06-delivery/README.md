@@ -8,4 +8,6 @@ Release별 Pilot Charter, 수용 Test 결과, 접근성·Security·License·SBOM
 - `R0 C1 Productivity Connector 준비 체크리스트.md`: 첫 Tenant·권한·동기화 입력과 Exit Evidence
 - `People Provisioning Provider 구현 및 Gate.md`: Workforce·SCIM·Access·Provider·Agent
   Local Baseline과 외부 Gate 판정
+- `로컬 권한별 로그인 검증 계정.md`: 구성원·회사 관리자·프로바이더 관리자
+  역할 격리 계정과 메뉴·접근 경계 검증 기준선
 - `generated/production-dependency-licenses.json`: 현재 Production Graph의 생성 증거

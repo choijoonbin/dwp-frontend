@@ -49,6 +49,7 @@
 - `05-features/DWP-R1-CORE-001-reference-work-hub/`
 - `06-delivery/디자인 파트너 선정 및 Pilot Charter.md`
 - `06-delivery/R0 C1 Productivity Connector 준비 체크리스트.md`
+- `06-delivery/로컬 권한별 로그인 검증 계정.md`
 
 ## Feature 문서 규칙
 
