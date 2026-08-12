@@ -200,6 +200,19 @@ export type ProviderOperationStep = {
   nextRetryAt?: string | null;
   startedAt?: string | null;
   completedAt?: string | null;
+  attempts: ProviderOperationStepAttempt[];
+};
+
+export type ProviderOperationStepAttempt = {
+  attemptId: string;
+  attemptNumber: number;
+  lifecycleState: string;
+  requestFingerprint: string;
+  redactedResult: string;
+  errorCode?: string | null;
+  errorMessage?: string | null;
+  startedAt: string;
+  completedAt?: string | null;
 };
 
 export type ProviderOperation = {
