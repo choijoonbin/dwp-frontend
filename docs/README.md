@@ -22,11 +22,13 @@
 - `01-product/프로젝트 개요.md`
 - `01-product/프로젝트로드맵.md`
 - `01-product/핵심기술 실행계획.md`
+- `01-product/최종 잔여작업 실행목록.md`: 장기 Capability와 의존성 Portfolio
 - `01-product/R0 핵심 사용자 Journey 및 KPI.md`
 - `01-product/R1 AI Employee Work Hub MVP PRD.md`
 - `01-product/개인화 홈 및 앱 경험 기획.md`
 - `02-research/참고 자료 평가 원칙.md`
 - `02-research/DWP Experience Modernization Roadmap 2026-08-12.md`
+- `06-delivery/DWP 최종 실행 백로그 및 출시 조건 2026-08-12.md`: 현행 실행 Backlog SSOT
 - `03-architecture/R0 기반 의사결정.md`
 - `03-architecture/R0 플랫폼 통합 및 Agent Runtime ADR.md`
 - `03-architecture/R0 Contract Spike 1 - Governed Plan Preview.md`
