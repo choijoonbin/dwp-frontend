@@ -215,6 +215,13 @@ Secret은 계약 검증용이며 운영 배포 전 Workload Identity 또는 mTLS
 Secret Rotation으로 교체한다. 상세 증적은
 `R0 Contract Spike 2 - Service Trust and Plan Integrity.md`에 기록한다.
 
+Contract Spike 3에서는 L0·L1 읽기 전용 Ask에 대해 App Permission 기반 Context 조회,
+구조화 Model 응답, Citation 집합 검증, 암호화된 Idempotency Store와 Privacy-minimized
+Audit를 구현했다. Model Credential이 없는 환경은 답변을 합성하지 않고 설정 필요 상태를
+반환한다. 운영 Model Route, 평가 Dataset, Budget·Rate Limit과 품질 Report가 남아 있어
+A1 Exit Evidence는 아직 완료가 아니다. 상세 증적은
+`R0 Contract Spike 3 - Governed Grounded Ask.md`에 기록한다.
+
 R0에서는 위 계약을 검증하기 위한 최소 Fixture만 만든다. 디자인 파트너와 첫 Journey가
 정해지기 전에 제품 메뉴, 업무 Table, Connector SDK와 Multi-agent Framework를 대량으로
 생성하지 않는다.

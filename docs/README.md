@@ -30,6 +30,7 @@
 - `03-architecture/R0 플랫폼 통합 및 Agent Runtime ADR.md`
 - `03-architecture/R0 Contract Spike 1 - Governed Plan Preview.md`
 - `03-architecture/R0 Contract Spike 2 - Service Trust and Plan Integrity.md`
+- `03-architecture/R0 Contract Spike 3 - Governed Grounded Ask.md`
 - `03-architecture/R0 Platform Control Plane 및 Admin Governance ADR.md`
 - `03-architecture/R0 Organization Directory 및 Provisioning Boundary ADR.md`
 - `03-architecture/R0 권한·메뉴·다국어 Admin Control Center ADR.md`
@@ -47,6 +48,7 @@
 - `05-features/DWP-R0-ADM-004-organization-group-directory/`
 - `05-features/DWP-R0-OPS-001-api-observability/`
 - `05-features/DWP-R1-CORE-001-reference-work-hub/`
+- `05-features/DWP-R1-AI-001-governed-ask-runtime/`
 - `06-delivery/디자인 파트너 선정 및 Pilot Charter.md`
 - `06-delivery/R0 C1 Productivity Connector 준비 체크리스트.md`
 - `06-delivery/로컬 권한별 로그인 검증 계정.md`

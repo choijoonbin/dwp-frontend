@@ -2,10 +2,11 @@
 
 ## 1. Reference 범위
 
-Today Daily Brief, Ask Answer와 Activity Event는 합성된 Preview다. Ask Action Plan은
-내부 deterministic Agent Contract Runtime을 호출하지만 실제 Model, Retrieval,
-Connector와 Tool을 호출하지 않는다. UI에서 `AI generated preview`, `Reference data`,
-Audit ID와 Mutation 금지 상태를 표시한다.
+Today Daily Brief와 Activity Event는 Reference 범위다. Ask Answer는 현재
+`DWP-R1-AI-001-governed-ask-runtime`이 소유하며 권한 범위의 Work·Productivity Context와
+승인된 Model Route를 호출한다. Model Credential이 없으면 합성 Preview 대신
+`CONFIGURATION_REQUIRED`를 표시한다. Ask Action Plan은 별도의 deterministic Contract
+Runtime이며 Tool Mutation은 수행하지 않는다.
 
 ## 2. 미래 Ask Pipeline
 

@@ -125,8 +125,9 @@
     "header": {
       "eyebrow": "Enterprise intelligence",
       "title": "Ask DWP",
-      "description": "Review a request within the current permission boundary and prepare a read-only plan"
+      "description": "Get evidence-bound answers from workplace sources available in your verified scope"
     },
+    "readOnly": "Read only",
     "questionLabel": "Ask a work question",
     "questionPlaceholder": "Ask about a policy, task, service, or application",
     "submit": "Ask DWP",
@@ -138,44 +139,79 @@
     },
     "recentContext": "Recent work context",
     "contextLoading": "Loading recent work available to you.",
-    "contextUnavailable": "Recent work could not be loaded. The Ask plan preview remains available.",
+    "contextUnavailable": "Recent work could not be loaded. Check the connection and try again.",
     "contextEmpty": "There is no recent work to connect.",
     "openContext": "Open in Work",
+    "runtimeLoadingTitle": "Evaluating your request",
+    "runtimeLoadingDescription": "Applying policy, collecting permission-scoped evidence, and validating citations.",
+    "runtimeErrorTitle": "Ask DWP could not evaluate this request",
+    "runtimeErrorDescription": "No unverified answer was substituted. Check the service connection and try again.",
+    "retry": "Try again",
     "responseStatus": "Ask request status",
     "status": {
       "permission": {
         "label": "Session boundary applied",
         "detail": "Authenticated workspace scope"
       },
-      "retrievalStopped": { "label": "Retrieval stopped", "detail": "Policy protected" },
-      "retrievalUnavailable": {
-        "label": "Retrieval inactive",
-        "detail": "Knowledge connectors not enabled"
+      "sources": {
+        "label": "{{count}} scoped sources",
+        "detail": "Citation set fixed before generation"
       },
-      "noAnswer": { "label": "No answer generated", "detail": "Human handoff" },
-      "preparing": { "label": "Preparing action contract", "detail": "No external mutation" },
-      "verified": { "label": "Agent contract verified", "detail": "No model / no mutation" },
-      "preview": { "label": "Reference preview ready", "detail": "No external mutation" }
+      "modelNotInvoked": "No model invocation"
     },
-    "previewHeading": "Request review",
-    "previewOnly": "Reference plan / read only",
-    "restricted": "This question includes restricted information. No source content was retrieved and no answer was sent to an AI model in this reference session.",
+    "policyOutcomes": {
+      "ALLOW": "Read policy allowed",
+      "HANDOFF": "Governed handoff required",
+      "DENY": "Access policy denied"
+    },
+    "modelStates": {
+      "COMPLETED": "Grounded response validated",
+      "NOT_INVOKED": "Model not invoked",
+      "CONFIGURATION_REQUIRED": "Model route needs configuration",
+      "REFUSED": "Answer safely withheld"
+    },
+    "states": {
+      "COMPLETED": "Verified answer",
+      "ABSTAINED": "Answer withheld",
+      "CONFIGURATION_REQUIRED": "Configuration required"
+    },
+    "answerHeading": "Governed answer",
     "yourQuestion": "Your question",
-    "answerUnavailableTitle": "AI answers and source citations are not enabled yet",
-    "answerUnavailableDescription": "The current runtime does not invoke a model, retrieval, or tools. Only the server-generated read-only plan contract, traceable by audit ID and hash, is shown below.",
-    "preparingPreview": "Preparing governed action preview",
-    "noMutation": "No mutation",
-    "preparingPlanLabel": "Preparing agent plan preview",
-    "fallback": "The Agent contract could not be loaded. An unverified static plan is not shown as a substitute.",
-    "governedContract": "Governed Agent contract verified",
-    "referenceContract": "Read-only reference plan contract ready",
-    "contractAria": "Agent {{agent}} revision {{revision}}, audit {{audit}}, plan hash {{hash}}",
-    "contractMeta": "Agent {{agent}} r{{revision}} / Audit {{audit}} / Plan {{hash}}",
-    "planTitle": "Request plan preview",
-    "riskApproval": "{{tier}} / Approval required",
-    "openService": "Continue in an approved app",
-    "dismiss": "Dismiss",
-    "serviceOpened": "Approved apps opened."
+    "sourcesHeading": "Verified sources ({{count}})",
+    "sourceTypes": {
+      "WORK_ITEM": "Work item",
+      "MAIL": "Mail",
+      "CALENDAR": "Calendar"
+    },
+    "openSource": "Open source: {{title}}",
+    "outcomes": {
+      "configurationTitle": "An administrator must complete the runtime configuration",
+      "deniedTitle": "This session does not permit the request",
+      "handoffTitle": "Continue in an approved workflow",
+      "insufficientTitle": "The available evidence is not sufficient for a reliable answer",
+      "agentRegistryConfiguration": "Activate the DWP Assistant contract in the tenant Agent Registry.",
+      "contextConfiguration": "Configure the read-only Platform context service identity.",
+      "modelConfiguration": "Configure an approved model route and managed provider credential. No substitute answer was generated.",
+      "permissionRequired": "Ask DWP access is not present in the current verified session.",
+      "privilegedHandoff": "The request may involve privileged workforce or financial data, so no source was retrieved and no model was invoked.",
+      "mutationHandoff": "Changes must be reviewed and approved in the owning application. Ask DWP did not execute the request.",
+      "noSource": "No source available to this user can support the answer.",
+      "sourceUnavailable": "An entitled source is temporarily unavailable. Ask DWP withheld the answer.",
+      "evidenceInsufficient": "The model found no evidence-supported answer and explicitly abstained.",
+      "modelRefused": "The model refused or failed the grounding contract, so the answer was withheld.",
+      "safeFallback": "The request ended without a verified answer. Review the policy code or try again later."
+    },
+    "evidence": {
+      "label": "Runtime evidence",
+      "agent": "Agent contract",
+      "usage": "Model usage",
+      "tokens": "{{count}} tokens",
+      "latency": "Model latency",
+      "milliseconds": "{{count}} ms",
+      "audit": "Audit ID",
+      "notApplicable": "Not invoked",
+      "privacy": "Question, answer, and source titles are excluded from plaintext execution and audit logs."
+    }
   },
   "activityPage": {
     "header": {

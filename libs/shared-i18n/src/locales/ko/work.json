@@ -125,8 +125,9 @@
     "header": {
       "eyebrow": "엔터프라이즈 인텔리전스",
       "title": "DWP에게 묻기",
-      "description": "현재 권한 범위에서 요청을 검토하고 읽기 전용 실행 계획을 준비합니다"
+      "description": "검증된 사용자 권한 범위의 업무 소스를 근거로 답변합니다"
     },
+    "readOnly": "읽기 전용",
     "questionLabel": "업무 질문",
     "questionPlaceholder": "정책, 업무, 서비스 또는 애플리케이션에 대해 질문하세요",
     "submit": "DWP에게 묻기",
@@ -138,38 +139,76 @@
     },
     "recentContext": "최근 업무 컨텍스트",
     "contextLoading": "권한이 있는 최근 업무를 불러오는 중입니다.",
-    "contextUnavailable": "최근 업무를 불러오지 못했습니다. Ask 계획 미리보기는 계속 사용할 수 있습니다.",
+    "contextUnavailable": "최근 업무를 불러오지 못했습니다. 연결 상태를 확인한 후 다시 시도하세요.",
     "contextEmpty": "연결할 최근 업무가 없습니다.",
     "openContext": "업무에서 열기",
+    "runtimeLoadingTitle": "요청을 평가하고 있습니다",
+    "runtimeLoadingDescription": "정책을 적용하고 권한 범위의 근거를 수집한 뒤 인용을 검증합니다.",
+    "runtimeErrorTitle": "DWP가 요청을 평가하지 못했습니다",
+    "runtimeErrorDescription": "검증되지 않은 답변으로 대체하지 않았습니다. 서비스 연결 상태를 확인한 후 다시 시도하세요.",
+    "retry": "다시 시도",
     "responseStatus": "Ask 요청 처리 상태",
     "status": {
       "permission": { "label": "세션 권한 경계 적용", "detail": "인증된 워크스페이스 범위" },
-      "retrievalStopped": { "label": "검색 중단", "detail": "정책으로 보호됨" },
-      "retrievalUnavailable": { "label": "검색 비활성", "detail": "지식 커넥터 연동 전" },
-      "noAnswer": { "label": "답변을 생성하지 않음", "detail": "담당자에게 전달" },
-      "preparing": { "label": "실행 계약 준비 중", "detail": "외부 변경 없음" },
-      "verified": { "label": "에이전트 계약 검증 완료", "detail": "모델 호출 및 변경 없음" },
-      "preview": { "label": "참조 미리보기 준비됨", "detail": "외부 변경 없음" }
+      "sources": {
+        "label": "권한 범위 소스 {{count}}개",
+        "detail": "생성 전 인용 집합 확정"
+      },
+      "modelNotInvoked": "모델 호출 없음"
     },
-    "previewHeading": "요청 검토",
-    "previewOnly": "참조 계획 / 읽기 전용",
-    "restricted": "이 질문에는 제한된 정보가 포함되어 있습니다. 이 참조 세션에서는 소스 콘텐츠를 조회하지 않았으며 AI 모델로 질문을 전송하지 않았습니다.",
+    "policyOutcomes": {
+      "ALLOW": "읽기 정책 허용",
+      "HANDOFF": "통제된 업무 절차 필요",
+      "DENY": "접근 정책 거부"
+    },
+    "modelStates": {
+      "COMPLETED": "근거 기반 응답 검증 완료",
+      "NOT_INVOKED": "모델 호출 없음",
+      "CONFIGURATION_REQUIRED": "모델 경로 설정 필요",
+      "REFUSED": "안전하게 답변 보류"
+    },
+    "states": {
+      "COMPLETED": "검증된 답변",
+      "ABSTAINED": "답변 보류",
+      "CONFIGURATION_REQUIRED": "설정 필요"
+    },
+    "answerHeading": "통제된 답변",
     "yourQuestion": "내 질문",
-    "answerUnavailableTitle": "AI 답변과 소스 인용은 아직 제공하지 않습니다",
-    "answerUnavailableDescription": "현재 런타임은 모델·검색·도구를 호출하지 않습니다. 아래에는 서버가 생성하고 감사 ID와 해시로 추적하는 읽기 전용 계획 계약만 표시됩니다.",
-    "preparingPreview": "통제된 실행 미리보기 준비 중",
-    "noMutation": "변경 없음",
-    "preparingPlanLabel": "에이전트 계획 미리보기 준비 중",
-    "fallback": "에이전트 계약을 불러오지 못했습니다. 검증되지 않은 정적 계획은 대신 표시하지 않습니다.",
-    "governedContract": "통제된 에이전트 계약 검증 완료",
-    "referenceContract": "읽기 전용 참조 계획 계약 준비됨",
-    "contractAria": "에이전트 {{agent}} 리비전 {{revision}}, 감사 {{audit}}, 계획 해시 {{hash}}",
-    "contractMeta": "에이전트 {{agent}} r{{revision}} / 감사 {{audit}} / 계획 {{hash}}",
-    "planTitle": "요청 계획 미리보기",
-    "riskApproval": "{{tier}} / 승인 필요",
-    "openService": "승인된 앱에서 계속",
-    "dismiss": "닫기",
-    "serviceOpened": "승인된 앱 목록을 열었습니다."
+    "sourcesHeading": "검증된 출처 ({{count}})",
+    "sourceTypes": {
+      "WORK_ITEM": "업무 항목",
+      "MAIL": "메일",
+      "CALENDAR": "일정"
+    },
+    "openSource": "출처 열기: {{title}}",
+    "outcomes": {
+      "configurationTitle": "관리자가 런타임 설정을 완료해야 합니다",
+      "deniedTitle": "현재 세션에서는 이 요청을 사용할 수 없습니다",
+      "handoffTitle": "승인된 업무 절차에서 계속하세요",
+      "insufficientTitle": "신뢰할 수 있는 답변을 만들 근거가 부족합니다",
+      "agentRegistryConfiguration": "테넌트 에이전트 레지스트리에서 DWP Assistant 계약을 활성화하세요.",
+      "contextConfiguration": "읽기 전용 플랫폼 컨텍스트 서비스 신원을 설정하세요.",
+      "modelConfiguration": "승인된 모델 경로와 관리형 공급자 인증 정보를 설정하세요. 대체 답변은 생성하지 않았습니다.",
+      "permissionRequired": "현재 검증된 세션에 DWP에게 묻기 권한이 없습니다.",
+      "privilegedHandoff": "권한이 제한된 인사 또는 재무 정보가 포함될 수 있어 소스를 조회하거나 모델을 호출하지 않았습니다.",
+      "mutationHandoff": "변경 작업은 담당 애플리케이션에서 검토와 승인을 거쳐야 합니다. DWP는 요청을 실행하지 않았습니다.",
+      "noSource": "현재 사용자가 접근할 수 있는 소스에서 답변 근거를 찾지 못했습니다.",
+      "sourceUnavailable": "권한이 있는 소스가 일시적으로 응답하지 않아 답변을 보류했습니다.",
+      "evidenceInsufficient": "모델이 근거로 뒷받침할 답변을 찾지 못해 명시적으로 답변을 보류했습니다.",
+      "modelRefused": "모델이 요청을 거부했거나 근거 계약을 충족하지 못해 답변을 보류했습니다.",
+      "safeFallback": "검증된 답변 없이 요청이 종료되었습니다. 정책 코드를 확인하거나 나중에 다시 시도하세요."
+    },
+    "evidence": {
+      "label": "런타임 증적",
+      "agent": "에이전트 계약",
+      "usage": "모델 사용량",
+      "tokens": "토큰 {{count}}개",
+      "latency": "모델 지연 시간",
+      "milliseconds": "{{count}}ms",
+      "audit": "감사 ID",
+      "notApplicable": "호출 없음",
+      "privacy": "질문, 답변 및 출처 제목은 평문 실행 이력과 감사 로그에 기록하지 않습니다."
+    }
   },
   "activityPage": {
     "header": {

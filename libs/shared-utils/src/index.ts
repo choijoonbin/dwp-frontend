@@ -5,6 +5,7 @@ export * from './tenant-util';
 export * from './locale-preference';
 export * from './api/auth-api';
 export * from './api/agent-plan-api';
+export * from './api/agent-runtime-api';
 export * from './api/identity-admin-api';
 export * from './api/directory-admin-api';
 export * from './api/platform-admin-api';

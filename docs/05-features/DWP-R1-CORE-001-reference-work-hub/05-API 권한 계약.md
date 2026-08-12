@@ -2,10 +2,10 @@
 
 ## 1. Reference 상태
 
-현재 화면의 업무·검색 데이터는 Frontend Fixture를 사용한다. Ask의 Plan Preview만
-`/api/agent/v1/plans/preview` Contract Spike를 호출하며 외부 Model·Connector·Tool과
-Mutation은 호출하지 않는다. 나머지 경로와 Response는 R1 Backend·Connector Spike의
-후보 계약으로, Build 전에 OpenAPI와 권한 판정을 별도 승인한다.
+이 문서의 초기 Reference 화면은 Frontend Fixture를 사용했다. 현재 Ask 답변은
+`POST /api/agent/v1/ask`, Action Plan 계약은 `POST /api/agent/v1/plans/preview`를 사용한다.
+Ask의 세부 권한·응답·데이터 계약은 `DWP-R1-AI-001-governed-ask-runtime`이 소유한다.
+Tool Mutation은 여전히 호출하지 않는다.
 
 R0.5에서는 `resourceType=APP` 권한이 한 건도 없을 때 Reference App 전체를 일반 사용자에게
 보이는 호환 모드로 동작하고 Admin은 Role을 추가 확인한다. APP 권한이 등록되는 순간부터
@@ -23,7 +23,7 @@ Home, Sidebar, Apps Catalog와 Route Guard는 정확한 Resource Grant만 허용
 | GET    | `/api/apps`                   | 부여된 App Registry    | Entitlement Filter                         |
 | GET    | `/api/home/layout`            | 개인 App 순서·폴더     | 본인 Tenant·User Scope                     |
 | PUT    | `/api/home/layout`            | 개인 배치 저장         | CSRF, Manifest Version, Entitlement 재검증 |
-| POST   | `/api/ask/query`              | 권한 기반 검색·답변    | Source ACL, Rate·Budget                    |
+| POST   | `/api/agent/v1/ask`           | 권한 기반 검색·답변    | App Permission, Source ACL, Rate·Budget    |
 | GET    | `/api/ask/runs/{id}`          | 답변·Source·Trace 상태 | Run Owner·Support Scope                    |
 | POST   | `/api/actions/preview`        | 후속 Action Plan 생성  | Tool Policy, no mutation                   |
 | POST   | `/api/agent/v1/plans/preview` | 결정적 Agent Plan 계약 | Session·CSRF, L2 Approval, no mutation     |

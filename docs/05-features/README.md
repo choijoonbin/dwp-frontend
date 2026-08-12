@@ -25,3 +25,4 @@
 - `DWP-R0-GOV-001-enterprise-audit-control`: 감사 증적·탐지·조사·보존·무결성 Control Plane
 - `DWP-R1-CORE-001-reference-work-hub`: R1 Reference Work Hub
 - `DWP-R1-CORE-002-personal-home-experience`: Sidebar 없는 개인 Home과 Tenant Presentation
+- `DWP-R1-AI-001-governed-ask-runtime`: 권한 기반 Context·Citation·Model Route Ask Runtime

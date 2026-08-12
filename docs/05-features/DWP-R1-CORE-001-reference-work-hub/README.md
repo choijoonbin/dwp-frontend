@@ -9,9 +9,10 @@
 > 적용 저장소: `dwp-frontend`
 
 R1의 첫 구현 전에 `Home`, `Work`, `Ask`, `Activity`, `Apps`와 Global Shell을 하나의
-검증 가능한 Premium Reference Flow로 연결한다. 화면은 합성 Fixture를 사용하며 운영
-System of Record나 AI Model을 호출하지 않는다. Ask의 Action Plan은 내부 deterministic
-Contract Runtime을 호출해 Gateway·CSRF·Session·Audit 경계만 검증한다.
+검증 가능한 Premium Reference Flow로 연결한다. 이 Package가 처음 승인된 시점의 화면은
+합성 Fixture와 deterministic Plan Preview를 사용했다. 이후 Ask는
+`DWP-R1-AI-001-governed-ask-runtime`으로 분리되어 실제 권한 범위 Context와 Model Route를
+호출하며, Credential이 없으면 설정 필요 상태로 중단한다.
 
 현재 구현은 정보 구조, 핵심 상태와 반응형 동작을 검증하는 Reference 수준이다. 실제
 Connector, 업무 데이터 Mutation과 Agent 실행은 Design Partner 검증 및 각 기능의
@@ -23,6 +24,7 @@ Connector, 업무 데이터 Mutation과 Agent 실행은 Design Partner 검증 �
 - `01-product/R1 AI Employee Work Hub MVP PRD.md`
 - `01-product/개인화 홈 및 앱 경험 기획.md`
 - `03-architecture/R0 Contract Spike 1 - Governed Plan Preview.md`
+- `05-features/DWP-R1-AI-001-governed-ask-runtime/`
 - `04-design-system/DWP UI Foundation 전략.md`
 - `04-design-system/DWP Premium Experience Direction.md`
 
