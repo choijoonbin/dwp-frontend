@@ -1,6 +1,14 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyRound, Pencil, RefreshCw, Search, ShieldAlert, UsersRound } from 'lucide-react';
+import {
+  KeyRound,
+  Pencil,
+  RefreshCw,
+  Search,
+  ShieldAlert,
+  ShieldCheck,
+  UsersRound,
+} from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   useToast,
@@ -8,7 +16,15 @@ import {
   listIdentityUsers,
   replaceIdentityUserRoles,
 } from '@dwp-frontend/shared-utils';
-import { EnterpriseDataGrid, FormDialog, FormField } from '@dwp-frontend/design-system';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import {
+  ActionButton,
+  DetailInspector,
+  EnterpriseDataGrid,
+  FormDialog,
+  FormField,
+  OperationalKpiStrip,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -29,7 +45,11 @@ import { AdminPanelError, AdminPanelLoading } from './admin-ui';
 import { resolveRoleDisplayCopy } from './role-display';
 
 import type { GridColDef } from '@mui/x-data-grid';
-import type { IdentityRole, IdentityUserAccess } from '@dwp-frontend/shared-utils';
+import type {
+  IdentityEffectiveAccess,
+  IdentityRole,
+  IdentityUserAccess,
+} from '@dwp-frontend/shared-utils';
 
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
@@ -55,6 +75,19 @@ function initials(name: string): string {
     .map((part) => part.charAt(0))
     .join('')
     .toUpperCase();
+}
+
+function effectiveRoles(user: IdentityUserAccess): string[] {
+  return user.effectiveRoles?.length ? user.effectiveRoles : user.roles;
+}
+
+function formatDateTime(value: string | null | undefined, locale: string, fallback: string) {
+  if (!value) return fallback;
+  return formatDate(
+    value,
+    { dateStyle: 'medium', timeStyle: 'short' },
+    resolveSupportedLocale(locale)
+  );
 }
 
 function RoleChips({ roles, maxVisible = 3 }: { roles: string[]; maxVisible?: number }) {
@@ -264,8 +297,225 @@ function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
   );
 }
 
-export function AccessManager() {
+function AccessInspector({
+  user,
+  locale,
+  onClose,
+  onEdit,
+}: {
+  user: IdentityUserAccess | null;
+  locale: string;
+  onClose: () => void;
+  onEdit: (user: IdentityUserAccess) => void;
+}) {
   const { t } = useTranslation('admin');
+  const assignments = user?.effectiveAccess ?? [];
+
+  return (
+    <DetailInspector
+      open={Boolean(user)}
+      variant="drawer"
+      width={460}
+      title={user?.displayName ?? t('access.inspector.title')}
+      subtitle={user?.email || (user ? t('access.userFallback', { id: user.userId }) : undefined)}
+      closeLabel={t('access.inspector.close')}
+      onClose={onClose}
+      status={
+        user ? (
+          <Stack direction="row" gap={0.75} flexWrap="wrap">
+            <Chip
+              size="small"
+              color={user.status === 'ACTIVE' ? 'success' : 'default'}
+              variant="outlined"
+              label={t(`common.status.${user.status}`, { defaultValue: user.status })}
+            />
+            {assignments.some((assignment) => assignment.privileged) && (
+              <Chip
+                size="small"
+                color="warning"
+                variant="outlined"
+                label={t('access.inspector.privileged')}
+              />
+            )}
+          </Stack>
+        ) : undefined
+      }
+    >
+      {user && (
+        <Stack gap={2.5}>
+          <Box component="section" aria-labelledby="identity-posture-title">
+            <Typography id="identity-posture-title" component="h3" variant="subtitle2">
+              {t('access.inspector.posture')}
+            </Typography>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                mt: 1,
+                borderTop: 1,
+                borderLeft: 1,
+                borderColor: 'divider',
+              }}
+            >
+              {[
+                {
+                  label: t('access.inspector.mfa'),
+                  value: user.mfaEnabled ? t('common.states.on') : t('common.states.off'),
+                },
+                {
+                  label: t('access.inspector.sessions'),
+                  value: String(user.activeSessionCount ?? 0),
+                },
+                {
+                  label: t('access.inspector.lastSignIn'),
+                  value: formatDateTime(
+                    user.lastSignInAt,
+                    locale,
+                    t('access.inspector.neverSignedIn')
+                  ),
+                },
+                {
+                  label: t('access.inspector.revision'),
+                  value: String(user.accessRevision),
+                },
+              ].map((item) => (
+                <Box
+                  key={item.label}
+                  sx={{ p: 1.25, borderRight: 1, borderBottom: 1, borderColor: 'divider' }}
+                >
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    {item.label}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={700} sx={{ mt: 0.25 }}>
+                    {item.value}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          <Box component="section" aria-labelledby="effective-access-title">
+            <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+              <Box>
+                <Typography id="effective-access-title" component="h3" variant="subtitle2">
+                  {t('access.inspector.effectiveAccess')}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {t('access.inspector.assignmentCount', { count: assignments.length })}
+                </Typography>
+              </Box>
+              <ActionButton
+                intent="secondary"
+                size="small"
+                startIcon={<Pencil size={15} />}
+                disabled={!user.roleManagement.allowed}
+                onClick={() => onEdit(user)}
+              >
+                {t('access.actions.editDirectRoles')}
+              </ActionButton>
+            </Stack>
+
+            {assignments.length ? (
+              <Stack sx={{ mt: 1.25, borderTop: 1, borderColor: 'divider' }}>
+                {assignments.map((assignment) => (
+                  <AccessAssignmentRow
+                    key={`${assignment.sourceType}-${assignment.sourceId}`}
+                    assignment={assignment}
+                    locale={locale}
+                  />
+                ))}
+              </Stack>
+            ) : (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }}>
+                {t('access.inspector.noEffectiveAccess')}
+              </Typography>
+            )}
+          </Box>
+
+          <Stack
+            direction="row"
+            alignItems="flex-start"
+            gap={1}
+            sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}
+          >
+            <ShieldCheck size={18} strokeWidth={1.8} aria-hidden="true" />
+            <Typography variant="body2" color="text.secondary">
+              {t('access.inspector.sourceNotice')}
+            </Typography>
+          </Stack>
+        </Stack>
+      )}
+    </DetailInspector>
+  );
+}
+
+function AccessAssignmentRow({
+  assignment,
+  locale,
+}: {
+  assignment: IdentityEffectiveAccess;
+  locale: string;
+}) {
+  const { t } = useTranslation('admin');
+  const source =
+    assignment.sourceType === 'GROUP'
+      ? assignment.sourceName || assignment.sourceKey || t('access.sources.group')
+      : t('access.sources.direct');
+  const validity = assignment.validTo
+    ? t('access.inspector.validUntil', {
+        date: formatDateTime(assignment.validTo, locale, t('access.inspector.notAvailable')),
+      })
+    : t('access.inspector.noExpiry');
+
+  return (
+    <Box sx={{ py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+      <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={1}>
+        <Box sx={{ minWidth: 0 }}>
+          <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
+            <Typography variant="body2" fontWeight={700}>
+              {assignment.roleName || assignment.roleCode}
+            </Typography>
+            {assignment.privileged && (
+              <Chip
+                size="small"
+                color="warning"
+                variant="outlined"
+                label={t('access.inspector.privileged')}
+              />
+            )}
+          </Stack>
+          <Typography variant="caption" color="text.secondary" display="block">
+            {assignment.roleCode}
+          </Typography>
+        </Box>
+        <Chip
+          size="small"
+          color={assignment.sourceType === 'GROUP' ? 'info' : 'default'}
+          variant="outlined"
+          label={t(`access.sources.${assignment.sourceType.toLowerCase()}`)}
+        />
+      </Stack>
+      <Stack gap={0.35} sx={{ mt: 1 }}>
+        <Typography variant="caption" color="text.secondary">
+          {t('access.inspector.sourceValue', { source })}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {t('access.inspector.scopeValue', {
+            scope: assignment.scopeRef
+              ? `${assignment.scopeType} / ${assignment.scopeRef}`
+              : assignment.scopeType,
+          })}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {validity}
+        </Typography>
+      </Stack>
+    </Box>
+  );
+}
+
+export function AccessManager() {
+  const { t, i18n } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
   const theme = useTheme();
@@ -273,6 +523,7 @@ export function AccessManager() {
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
   const [selectedUser, setSelectedUser] = useState<IdentityUserAccess | null>(null);
+  const [inspectedUser, setInspectedUser] = useState<IdentityUserAccess | null>(null);
   const [busy, setBusy] = useState(false);
 
   const usersQuery = useQuery({
@@ -285,6 +536,18 @@ export function AccessManager() {
   });
   const users = useMemo(() => usersQuery.data?.content ?? [], [usersQuery.data]);
   const roles = rolesQuery.data ?? [];
+  const locale = i18n.resolvedLanguage ?? i18n.language;
+  const accessSignals = useMemo(() => {
+    const assignments = users.flatMap((user) => user.effectiveAccess ?? []);
+    return {
+      privilegedIdentities: users.filter((user) =>
+        (user.effectiveAccess ?? []).some((assignment) => assignment.privileged)
+      ).length,
+      inheritedAssignments: assignments.filter((assignment) => assignment.sourceType === 'GROUP')
+        .length,
+      identitiesWithoutMfa: users.filter((user) => !user.mfaEnabled).length,
+    };
+  }, [users]);
 
   const saveRoles = async (roleCodes: string[], justification: string) => {
     if (!selectedUser) return;
@@ -321,7 +584,10 @@ export function AccessManager() {
               size="small"
               aria-label={t('access.actions.editRolesFor', { name: user.displayName })}
               disabled={!manageable}
-              onClick={() => setSelectedUser(user)}
+              onClick={(event) => {
+                event.stopPropagation();
+                setSelectedUser(user);
+              }}
             >
               <Pencil size={17} strokeWidth={1.8} />
             </IconButton>
@@ -369,7 +635,44 @@ export function AccessManager() {
         minWidth: 220,
         flex: 1,
         sortable: false,
-        renderCell: ({ row }) => <RoleChips roles={row.roles} maxVisible={2} />,
+        renderCell: ({ row }) => <RoleChips roles={effectiveRoles(row)} maxVisible={2} />,
+      },
+      {
+        field: 'sources',
+        headerName: t('access.columns.sources'),
+        width: 126,
+        sortable: false,
+        valueGetter: (_value, row) => row.effectiveAccess?.length ?? row.roles.length,
+        renderCell: ({ row }) => {
+          const inherited = (row.effectiveAccess ?? []).filter(
+            (assignment) => assignment.sourceType === 'GROUP'
+          ).length;
+          return (
+            <Stack direction="row" alignItems="center" gap={0.5}>
+              <Typography variant="body2">
+                {row.effectiveAccess?.length ?? row.roles.length}
+              </Typography>
+              {inherited > 0 && (
+                <Chip
+                  size="small"
+                  color="info"
+                  variant="outlined"
+                  label={t('access.inheritedCount', { count: inherited })}
+                />
+              )}
+            </Stack>
+          );
+        },
+      },
+      {
+        field: 'lastSignInAt',
+        headerName: t('access.columns.lastSignIn'),
+        width: 168,
+        renderCell: ({ row }) => (
+          <Typography variant="body2" color={row.lastSignInAt ? 'text.primary' : 'warning.main'}>
+            {formatDateTime(row.lastSignInAt, locale, t('access.inspector.neverSignedIn'))}
+          </Typography>
+        ),
       },
       {
         field: 'status',
@@ -392,21 +695,6 @@ export function AccessManager() {
         renderCell: ({ row }) => <MfaState enabled={row.mfaEnabled} />,
       },
       {
-        field: 'accessRevision',
-        headerName: t('access.columns.revision'),
-        width: 92,
-        align: 'right',
-        headerAlign: 'right',
-        renderCell: ({ row }) => (
-          <Typography
-            variant="body2"
-            sx={{ width: 1, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}
-          >
-            {row.accessRevision}
-          </Typography>
-        ),
-      },
-      {
         field: 'actions',
         headerName: '',
         width: 64,
@@ -420,7 +708,7 @@ export function AccessManager() {
         ),
       },
     ],
-    [editButton, t]
+    [editButton, locale, t]
   );
 
   if (usersQuery.isLoading || rolesQuery.isLoading) {
@@ -481,6 +769,39 @@ export function AccessManager() {
           </Stack>
         </Stack>
 
+        <OperationalKpiStrip
+          ariaLabel={t('access.signals.label')}
+          items={[
+            {
+              key: 'identities',
+              label: t('access.signals.identities'),
+              value: usersQuery.data?.totalElements ?? users.length,
+              detail: t('access.signals.currentScope'),
+            },
+            {
+              key: 'privileged',
+              label: t('access.signals.privileged'),
+              value: accessSignals.privilegedIdentities,
+              tone: accessSignals.privilegedIdentities ? 'warning' : 'success',
+              detail: t('access.signals.reviewEvidence'),
+            },
+            {
+              key: 'inherited',
+              label: t('access.signals.inherited'),
+              value: accessSignals.inheritedAssignments,
+              tone: 'info',
+              detail: t('access.signals.groupManaged'),
+            },
+            {
+              key: 'mfa',
+              label: t('access.signals.withoutMfa'),
+              value: accessSignals.identitiesWithoutMfa,
+              tone: accessSignals.identitiesWithoutMfa ? 'critical' : 'success',
+              detail: t('access.signals.authenticationPosture'),
+            },
+          ]}
+        />
+
         {desktop && (
           <Box>
             <EnterpriseDataGrid
@@ -490,6 +811,7 @@ export function AccessManager() {
               getRowId={(row) => row.userId}
               hideFooter={users.length <= 25}
               initialState={{ pagination: { paginationModel: { pageSize: 25, page: 0 } } }}
+              onRowClick={({ row }) => setInspectedUser(row)}
               slots={{
                 noRowsOverlay: () => (
                   <Box sx={{ height: 1, display: 'grid', placeItems: 'center' }}>
@@ -499,7 +821,7 @@ export function AccessManager() {
                   </Box>
                 ),
               }}
-              sx={{ border: 0, borderRadius: 0 }}
+              sx={{ border: 0, borderRadius: 0, '& .MuiDataGrid-row': { cursor: 'pointer' } }}
             />
           </Box>
         )}
@@ -539,7 +861,7 @@ export function AccessManager() {
                     {editButton(user)}
                   </Stack>
                   <Box sx={{ mt: 1.25 }}>
-                    <RoleChips roles={user.roles} />
+                    <RoleChips roles={effectiveRoles(user)} />
                   </Box>
                   <Stack direction="row" gap={1} sx={{ mt: 1.25 }}>
                     <Chip
@@ -554,6 +876,14 @@ export function AccessManager() {
                       variant="outlined"
                     />
                   </Stack>
+                  <ActionButton
+                    intent="quiet"
+                    size="small"
+                    sx={{ mt: 1.25 }}
+                    onClick={() => setInspectedUser(user)}
+                  >
+                    {t('access.actions.reviewEffectiveAccess')}
+                  </ActionButton>
                 </Box>
               ))
             ) : (
@@ -573,6 +903,15 @@ export function AccessManager() {
         busy={busy}
         onClose={() => setSelectedUser(null)}
         onSave={saveRoles}
+      />
+      <AccessInspector
+        user={inspectedUser}
+        locale={locale}
+        onClose={() => setInspectedUser(null)}
+        onEdit={(user) => {
+          setInspectedUser(null);
+          setSelectedUser(user);
+        }}
       />
     </>
   );

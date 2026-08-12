@@ -112,7 +112,50 @@
   "overview": {
     "loading": "인력 운영 정보를 불러오는 중",
     "loadError": "인력 운영 정보를 불러오지 못했습니다.",
+    "context": {
+      "label": "인력 운영 범위",
+      "scope": "조직 범위",
+      "model": "인력 모델",
+      "effectiveWorkforce": "유효 인력",
+      "asOf": "유효일",
+      "compareTo": "비교 기준"
+    },
+    "savedViews": {
+      "currentMonth": "현재 월간 기준",
+      "annualBaseline": "전년 동기 비교"
+    },
+    "live": {
+      "live": "현재 인력 스냅샷",
+      "syncing": "인력 근거를 갱신하는 중",
+      "stale": "과거 인력 스냅샷",
+      "degraded": "일부 인력 근거를 확인할 수 없음",
+      "latestSync": "최근 원천 동기화 {{time}}",
+      "snapshot": "{{date}} 현재 유효 조직"
+    },
+    "comparison": {
+      "loading": "기간 비교를 계산하는 중",
+      "unavailable": "비교 정보를 확인할 수 없음",
+      "delta": "{{date}} 대비 {{delta}}"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "인력 운영이 정책 범위 내에 있습니다",
+        "ATTENTION": "인력 운영 검토가 필요합니다",
+        "CRITICAL": "중요 인력 조치가 필요합니다"
+      },
+      "detail": {
+        "HEALTHY": "유효 인력과 원천 통제에서 우선 처리할 조치가 없습니다.",
+        "ATTENTION": "다음 유효 변경 전에 {{organizations}}개 조직의 우선 조치 {{actions}}건을 검토하세요.",
+        "CRITICAL": "인력 변경을 진행하기 전에 가장 영향이 큰 통제 실패 또는 조직 위험을 해결하세요."
+      },
+      "leave": "휴직 {{count}}명",
+      "criticalVacancies": "중요 공석 {{count}}건",
+      "dataIssues": "데이터 이슈 {{count}}건",
+      "scenarios": "작성 중 시나리오 {{count}}건",
+      "openPriority": "최우선 조치 열기"
+    },
     "metrics": {
+      "label": "인력 운영 핵심 신호",
       "activeWorkforce": "재직 인원",
       "leaveDetail": "휴직 {{count}}명",
       "organizations": "조직 수",
@@ -120,7 +163,81 @@
       "openPositions": "공석 포지션",
       "managersDetail": "관리자 {{count}}명",
       "dataQuality": "데이터 품질",
-      "issuesDetail": "무결성 이슈 {{count}}건"
+      "issuesDetail": "무결성 이슈 {{count}}건",
+      "organizationRisk": "검토 필요 조직",
+      "organizationRiskDetail": "위험 {{critical}} · 주의 {{attention}}",
+      "healthyOrganizations": "전체 {{total}}개 중 정상 조직 {{count}}개",
+      "vacancyRatio": "전체 포지션 중 공석 {{value}}%",
+      "openPeople": "재직 인력 열기",
+      "openPositionsAction": "포지션 계층 열기",
+      "openHealth": "조직 건전성 열기",
+      "openQuality": "데이터 품질 열기"
+    },
+    "queue": {
+      "title": "우선 인력 조치",
+      "description": "통제 실패, 조직 위험, 인력 영향과 준비도 순으로 정렬했습니다.",
+      "count": "조치 {{count}}건",
+      "clearTitle": "현재 필요한 인력 조치가 없습니다",
+      "clearDescription": "유효 인력, 조직 정책과 확인 가능한 원천 근거가 통제 범위 내에 있습니다."
+    },
+    "actions": {
+      "syncFailed": "최근 HRIS 동기화 복구",
+      "syncFailedDetail": "{{source}} 동기화가 {{code}} 오류로 실패했습니다. 하위 인력 데이터를 사용하기 전에 실행을 점검하세요.",
+      "unknownFailure": "확인되지 않은 오류",
+      "immediate": "즉시",
+      "dataQuality": "인력 무결성 이슈 {{count}}건 보정",
+      "dataQualityDetail": "관리자 누락 {{managers}} · 직급 누락 {{grades}} · 단절 조직 {{organizations}}",
+      "organizationRisk": "{{name}} 조직 설계 검토",
+      "organizationRiskDetail": "정책 신호 {{signals}}건 · 구성원 {{headcount}}명 · 공석 {{vacancies}}건",
+      "criticalVacancies": "중요 공석 {{count}}건 검토",
+      "criticalVacanciesDetail": "전체 공석 {{total}}건 중 중요도 높음 이상 포지션을 우선 배치하세요.",
+      "staffing": "인력 배치",
+      "rejectedRecords": "원천 거부 레코드 {{count}}건 정합성 처리",
+      "rejectedRecordsDetail": "최근 {{source}} 실행에서 투영되지 않은 레코드가 발생했습니다.",
+      "reconcile": "정합성",
+      "draftScenarios": "작성 중인 조직 시나리오 {{count}}건 검토",
+      "draftScenariosDetail": "유효일 전에 소유자, 영향과 승인 준비도를 확인하세요.",
+      "plan": "계획"
+    },
+    "composition": {
+      "title": "인력 구성",
+      "description": "선택한 유효일의 인력 구성과 구조 비율입니다.",
+      "openPeople": "인력 정보 열기",
+      "summary": "인력 구성: 일반 재직 {{active}}명, 휴직 {{leave}}명, 비정규 {{contingent}}명",
+      "active": "일반 재직",
+      "leave": "휴직",
+      "contingent": "비정규",
+      "plannedFte": "계획 FTE",
+      "managerRatio": "관리자 비율",
+      "contingentRatio": "비정규 인력 비율"
+    },
+    "risk": {
+      "title": "조직 위험 분포",
+      "description": "예외 조직을 정상 조직보다 먼저 정렬하고 영향받는 구조로 연결합니다.",
+      "openInsights": "인사이트 열기",
+      "summary": "조직 건전성: 정상 {{healthy}}, 주의 {{attention}}, 위험 {{critical}}",
+      "states": {
+        "HEALTHY": "정상",
+        "ATTENTION": "주의",
+        "CRITICAL": "위험"
+      },
+      "organizationDetail": "구성원 {{headcount}}명 · 평균 관리 범위 {{span}} · 공석 {{vacancies}}건",
+      "openOrganization": "{{name}} 조직 열기",
+      "clear": "현재 건전성 정책을 벗어난 조직이 없습니다."
+    },
+    "control": {
+      "title": "데이터 및 계획 통제",
+      "description": "이 스냅샷을 구성하는 원천 최신성, 거부 레코드와 작성 중인 설계 작업입니다.",
+      "latestSync": "최근 원천 동기화",
+      "unavailable": "근거 원천을 확인할 수 없음",
+      "never": "기록된 동기화 없음",
+      "partial": "일부 확인 불가",
+      "reconciliation": "원천 정합성 처리",
+      "reconciliationDetail": "최근 확인 가능한 실행의 거부 레코드 {{count}}건",
+      "scenarios": "조직 설계 시나리오",
+      "scenarioDetail": "작성 중 시나리오 {{count}}건의 소유권과 승인 준비도 검토 필요",
+      "comparisonUnavailable": "기간 비교를 확인할 수 없습니다",
+      "comparisonUnavailableDetail": "현재 운영 근거는 계속 사용할 수 있습니다. 비교 기준만 독립적으로 다시 시도하세요."
     },
     "attention": {
       "title": "주의 신호",
@@ -305,8 +422,23 @@
     "search": "구성원 검색",
     "asOf": "{{date}} 기준",
     "resultCount": "{{count}}명",
+    "moreAvailable": "추가 결과 있음",
+    "loadMore": "구성원 더 불러오기",
     "notAvailable": "정보 없음",
     "masked": "마스킹됨",
+    "partial": {
+      "organizationTitle": "조직 컨텍스트를 일시적으로 불러올 수 없습니다",
+      "organizationDescription": "구성원 정보는 계속 사용할 수 있습니다. 보고 체계와 조직 이동 정보는 일부 누락될 수 있습니다.",
+      "rolesTitle": "시스템 권한 컨텍스트를 일시적으로 불러올 수 없습니다",
+      "rolesDescription": "인증 서비스가 복구될 때까지 권한 할당 정보 없이 인사 정보를 제공합니다."
+    },
+    "empty": {
+      "title": "이 기준일에 조회 가능한 구성원이 없습니다",
+      "description": "현재 테넌트 범위에 표시할 수 있는 재직 구성원 정보가 없습니다.",
+      "noResultsTitle": "조건에 맞는 구성원이 없습니다",
+      "noResultsDescription": "검색어, 기준일 또는 필터를 조정해 조회 범위를 넓혀보세요.",
+      "reset": "디렉터리 보기 초기화"
+    },
     "filters": {
       "label": "구성원 필터",
       "status": "재직 상태",
@@ -326,7 +458,6 @@
     },
     "grid": {
       "toolbar": "구성원 표 도구",
-      "export": "구성원 CSV 내보내기",
       "columnPresets": {
         "label": "열 보기",
         "operational": "운영 정보",
@@ -379,6 +510,36 @@
     "search": "조직, 구성원 또는 직책 검색",
     "canvasLabel": "SKAX 조직도 작업 영역",
     "asOf": "{{date}} 기준",
+    "context": {
+      "label": "조직 설계 컨텍스트",
+      "scope": "설계 범위",
+      "model": "모델",
+      "liveModel": "현재 운영 조직",
+      "effectiveDate": "유효일",
+      "perspective": "분석 관점",
+      "status": {
+        "live": "현재 운영 기준",
+        "historical": "과거 시점 스냅샷",
+        "scenario": "시나리오 미리보기"
+      },
+      "scenarioDetail": "{{date}} 기준선에서 분기",
+      "snapshotDetail": "{{date}} 기준 유효 조직"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "조직 설계 기준을 충족합니다",
+        "ATTENTION": "조직 설계 검토가 필요합니다",
+        "CRITICAL": "조직 설계 위험 조치가 필요합니다"
+      },
+      "detail": "정책 편차와 데이터 신뢰 신호를 검토해 현재 또는 제안 구조의 실행 준비도를 판단합니다.",
+      "critical": "위험 조직 {{count}}개",
+      "attention": "주의 조직 {{count}}개",
+      "dataTrust": "데이터 신뢰 {{score}}% · 문제 {{count}}건",
+      "scenarioChanges": "계획 변경 {{count}}건",
+      "designLimits": "평균 관리 범위 {{span}}명 · {{layers}}계층",
+      "signalsLabel": "조직 설계 위험 신호",
+      "reviewInsights": "조직 인사이트 검토"
+    },
     "view": {
       "label": "조직도 보기",
       "organizations": "조직 구조",

@@ -1,13 +1,14 @@
 import '@dwp-frontend/design-system/styles/global.css';
 
-import { StrictMode } from 'react';
+import { StrictMode, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 import { I18nProvider } from '@dwp-frontend/shared-i18n';
-import { AuthProvider } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { AuthProvider, useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { getTenantBranding } from '@dwp-frontend/shared-utils/api/tenant-branding-api';
 import { DwpDateTimeProvider } from '@dwp-frontend/design-system/enterprise/date-time/date-time-provider';
 import { DwpThemeProvider } from '@dwp-frontend/design-system/appearance';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import App from './app';
@@ -27,11 +28,31 @@ const queryClient = new QueryClient({
   },
 });
 
-const tenantAppearance = {
+const defaultTenantAppearance = {
   productName: 'Digital Workplace',
   accentColor: '#2457D6',
   navigationPattern: 'sidebar' as const,
 };
+
+function ProductThemeProvider({ children }: PropsWithChildren) {
+  const auth = useAuth();
+  const brandingQuery = useQuery({
+    queryKey: ['tenant-branding'],
+    queryFn: getTenantBranding,
+    enabled: auth.isAuthenticated,
+    staleTime: 10 * 60 * 1000,
+    retry: 1,
+  });
+  const tenantAppearance = useMemo(
+    () => ({
+      ...defaultTenantAppearance,
+      accentColor: brandingQuery.data?.accentColor || defaultTenantAppearance.accentColor,
+    }),
+    [brandingQuery.data?.accentColor]
+  );
+
+  return <DwpThemeProvider tenant={tenantAppearance}>{children}</DwpThemeProvider>;
+}
 
 const scheduleObservability =
   window.requestIdleCallback ?? ((callback: IdleRequestCallback) => window.setTimeout(callback, 1));
@@ -76,17 +97,17 @@ if (hotData) {
 reactRoot.render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <DwpThemeProvider tenant={tenantAppearance}>
-        <I18nProvider>
-          <AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <ProductThemeProvider>
             <ProductDateTimeProvider>
               <PersonalPreferenceProvider>
                 <RouterProvider router={router} />
               </PersonalPreferenceProvider>
             </ProductDateTimeProvider>
-          </AuthProvider>
-        </I18nProvider>
-      </DwpThemeProvider>
+          </ProductThemeProvider>
+        </AuthProvider>
+      </I18nProvider>
     </QueryClientProvider>
   </StrictMode>
 );

@@ -4,13 +4,19 @@ import {
   ArrowLeft,
   CheckCircle2,
   Copy,
+  Globe2,
   KeyRound,
+  Layers3,
+  PackageCheck,
   PauseCircle,
   PlayCircle,
   Plus,
   Send,
+  ShieldCheck,
+  TriangleAlert,
+  UserCheck,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createProviderTenantDomain,
@@ -25,6 +31,7 @@ import {
   useToast,
   verifyProviderTenantDomain,
 } from '@dwp-frontend/shared-utils';
+import { LiveStatus, OperationalContextBar, SignalMetric } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -39,11 +46,13 @@ import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import type {
   ProviderAdministratorInvitation,
@@ -313,9 +322,18 @@ function InvitationDialog({
 export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
   const { t } = useTranslation('provider');
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [tab, setTab] = useState(0);
+  const tenantTabs = ['overview', 'services', 'access', 'entitlements', 'support'] as const;
+  const requestedTab = searchParams.get('tab');
+  const tab = Math.max(0, tenantTabs.indexOf(requestedTab as (typeof tenantTabs)[number]));
+  const selectTab = (next: number) => {
+    const params = new URLSearchParams(searchParams);
+    if (next === 0) params.delete('tab');
+    else params.set('tab', tenantTabs[next]);
+    setSearchParams(params, { replace: true });
+  };
   const [busy, setBusy] = useState(false);
   const [lifecycleOpen, setLifecycleOpen] = useState(false);
   const [domainOpen, setDomainOpen] = useState(false);
@@ -477,9 +495,33 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
     );
   if (!tenant.data) return null;
   const value = tenant.data;
+  const serviceExceptions = value.services.filter((service) =>
+    ['DEGRADED', 'FAILED'].includes(service.lifecycleState)
+  ).length;
+  const verifiedDomains = value.domains.filter(
+    (domain) => domain.verificationState === 'VERIFIED'
+  ).length;
+  const activeAdministrators = value.administrators.filter(
+    (administrator) => administrator.lifecycleState === 'ACTIVE'
+  ).length;
+  const activeSupportSessions = (sessions.data ?? []).filter(
+    (session) => session.lifecycleState === 'ACTIVE'
+  ).length;
+  const tenantState = value.services.some((service) => service.lifecycleState === 'FAILED')
+    ? 'CRITICAL'
+    : value.lifecycleState !== 'ACTIVE' ||
+        serviceExceptions > 0 ||
+        serviceHealth < value.services.length ||
+        verifiedDomains < value.domains.length ||
+        activeAdministrators === 0
+      ? 'ATTENTION'
+      : 'HEALTHY';
+  const tenantTone =
+    tenantState === 'CRITICAL' ? 'error' : tenantState === 'ATTENTION' ? 'warning' : 'success';
+  const observedAt = Math.max(tenant.dataUpdatedAt, sessions.dataUpdatedAt);
 
   return (
-    <Stack gap={3}>
+    <Stack gap={2.5} sx={{ width: 1, maxWidth: 1600, mx: 'auto' }}>
       <Box>
         <Button
           size="small"
@@ -490,23 +532,125 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
         >
           {t('tenantDetail.back')}
         </Button>
+        <Box sx={{ minWidth: 0 }}>
+          <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+            <Typography component="h1" variant="h4">
+              {value.displayName}
+            </Typography>
+            <ProviderStatusChip state={value.lifecycleState} />
+          </Stack>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            {value.organizationName} / {value.tenantKey} / {value.environmentKey}
+          </Typography>
+        </Box>
+      </Box>
+
+      <OperationalContextBar
+        label={t('tenantDetail.context.label')}
+        items={[
+          {
+            label: t('tenantDetail.context.scope'),
+            value: `${value.organizationName} / ${value.environmentKey}`,
+            icon: <Globe2 size={16} />,
+          },
+          {
+            label: t('tenantDetail.context.placement'),
+            value: `${value.dataRegion} / ${t(`isolation.${value.isolationModel}`)}`,
+            icon: <Layers3 size={16} />,
+          },
+          {
+            label: t('tenantDetail.context.contract'),
+            value: value.subscription?.planName ?? t('tenants.noSubscription'),
+            icon: <PackageCheck size={16} />,
+          },
+        ]}
+        status={
+          <LiveStatus
+            state={tenant.isFetching || sessions.isFetching ? 'syncing' : 'live'}
+            label={t(
+              tenant.isFetching || sessions.isFetching
+                ? 'tenantDetail.live.syncing'
+                : 'tenantDetail.live.live'
+            )}
+            detail={t('tenantDetail.context.lastLoaded', {
+              value: formatProviderDate(new Date(observedAt).toISOString()),
+            })}
+            refreshLabel={t('actions.refresh')}
+            refreshing={tenant.isFetching || sessions.isFetching}
+            onRefresh={() => void invalidate()}
+          />
+        }
+      />
+
+      <Paper
+        component="section"
+        variant="outlined"
+        sx={(theme) => {
+          const color = theme.palette[tenantTone].main;
+          return {
+            position: 'relative',
+            overflow: 'hidden',
+            px: { xs: 2, md: 2.5 },
+            py: { xs: 2, md: 2.25 },
+            bgcolor: alpha(color, theme.palette.mode === 'dark' ? 0.12 : 0.055),
+            borderColor: alpha(color, 0.35),
+            '&::before': {
+              position: 'absolute',
+              inset: '0 auto 0 0',
+              width: 4,
+              bgcolor: color,
+              content: '""',
+            },
+          };
+        }}
+      >
         <Stack
           direction={{ xs: 'column', md: 'row' }}
-          alignItems={{ xs: 'stretch', md: 'flex-start' }}
+          alignItems={{ xs: 'stretch', md: 'center' }}
           justifyContent="space-between"
           gap={2}
         >
-          <Box sx={{ minWidth: 0 }}>
-            <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-              <Typography component="h1" variant="h4">
-                {value.displayName}
+          <Stack direction="row" alignItems="flex-start" gap={1.25} minWidth={0}>
+            <Box
+              aria-hidden="true"
+              sx={{
+                width: 38,
+                height: 38,
+                flex: '0 0 38px',
+                display: 'grid',
+                placeItems: 'center',
+                borderRadius: 1,
+                color: `${tenantTone}.main`,
+                bgcolor: 'background.paper',
+              }}
+            >
+              {tenantState === 'HEALTHY' ? <ShieldCheck size={20} /> : <TriangleAlert size={20} />}
+            </Box>
+            <Box minWidth={0}>
+              <Typography component="h2" variant="h5">
+                {t(`tenantDetail.pulse.title.${tenantState}`)}
               </Typography>
-              <ProviderStatusChip state={value.lifecycleState} />
-            </Stack>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {value.organizationName} / {value.tenantKey} / {value.environmentKey}
-            </Typography>
-          </Box>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                {t(`tenantDetail.pulse.detail.${tenantState}`, {
+                  services: serviceExceptions,
+                  domains: value.domains.length - verifiedDomains,
+                  administrators: activeAdministrators,
+                })}
+              </Typography>
+              <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 1.25 }}>
+                <ProviderStatusChip state={value.onboardingState} />
+                {value.subscription && (
+                  <ProviderStatusChip state={value.subscription.lifecycleState} />
+                )}
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color={activeSupportSessions ? 'warning' : 'default'}
+                  label={t('tenantDetail.pulse.support', { count: activeSupportSessions })}
+                />
+              </Stack>
+            </Box>
+          </Stack>
           {canWrite && ['ACTIVE', 'SUSPENDED'].includes(value.lifecycleState) && (
             <Button
               variant="outlined"
@@ -519,6 +663,7 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
                 )
               }
               onClick={() => setLifecycleOpen(true)}
+              sx={{ alignSelf: { xs: 'flex-start', md: 'center' }, flexShrink: 0 }}
             >
               {t(
                 `tenantDetail.lifecycle.${value.lifecycleState === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'}.action`
@@ -526,11 +671,68 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
             </Button>
           )}
         </Stack>
+      </Paper>
+
+      <Box
+        component="section"
+        aria-label={t('tenantDetail.signals.label')}
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, minmax(0, 1fr))',
+            lg: 'repeat(4, minmax(0, 1fr))',
+          },
+          gap: 1.5,
+        }}
+      >
+        <SignalMetric
+          label={t('tenantDetail.metrics.services')}
+          value={`${serviceHealth}/${value.services.length}`}
+          detail={t('tenantDetail.signals.servicesDetail', { exceptions: serviceExceptions })}
+          icon={<Layers3 size={18} />}
+          tone={serviceExceptions ? 'error' : 'success'}
+          progress={
+            value.services.length ? (serviceHealth / value.services.length) * 100 : undefined
+          }
+          progressLabel={t('tenantDetail.signals.servicesProgress', {
+            ready: serviceHealth,
+            total: value.services.length,
+          })}
+        />
+        <SignalMetric
+          label={t('tenantDetail.signals.domains')}
+          value={`${verifiedDomains}/${value.domains.length}`}
+          detail={t('tenantDetail.signals.domainsDetail')}
+          icon={<ShieldCheck size={18} />}
+          tone={verifiedDomains === value.domains.length ? 'success' : 'warning'}
+        />
+        <SignalMetric
+          label={t('tenantDetail.signals.administrators')}
+          value={`${activeAdministrators}/${value.administrators.length}`}
+          detail={t('tenantDetail.signals.administratorsDetail')}
+          icon={<UserCheck size={18} />}
+          tone={activeAdministrators ? 'success' : 'error'}
+        />
+        <SignalMetric
+          label={t('tenantDetail.signals.entitlements')}
+          value={value.entitlements.length.toLocaleString()}
+          detail={t('tenantDetail.signals.entitlementsDetail', {
+            schema: value.schemaVersion,
+          })}
+          icon={<PackageCheck size={18} />}
+          tone="info"
+        />
       </Box>
 
       <Box sx={{ borderBottom: 1, borderColor: 'divider', overflowX: 'auto' }}>
-        <Tabs value={tab} onChange={(_event, next) => setTab(next)} variant="scrollable">
-          {['overview', 'services', 'access', 'entitlements', 'support'].map((item) => (
+        <Tabs
+          value={tab}
+          onChange={(_event, next) => selectTab(next)}
+          variant="scrollable"
+          aria-label={t('tenantDetail.tabs.label')}
+        >
+          {tenantTabs.map((item) => (
             <Tab key={item} label={t(`tenantDetail.tabs.${item}`)} />
           ))}
         </Tabs>
@@ -538,39 +740,6 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
 
       {tab === 0 && (
         <Stack gap={4}>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
-              borderBlock: 1,
-              borderColor: 'divider',
-            }}
-          >
-            {[
-              [t('fields.serviceTier'), t(`tiers.${value.serviceTier}`)],
-              [t('fields.dataRegion'), value.dataRegion],
-              [t('tenantDetail.metrics.services'), `${serviceHealth}/${value.services.length}`],
-              [t('tenantDetail.metrics.authTenant'), value.authTenantId ?? '-'],
-            ].map(([label, metric], index) => (
-              <Box
-                key={label}
-                sx={{
-                  px: 1.5,
-                  py: 1.25,
-                  borderLeft: { xs: index % 2 === 0 ? 0 : 1, md: index === 0 ? 0 : 1 },
-                  borderTop: { xs: index > 1 ? 1 : 0, md: 0 },
-                  borderColor: 'divider',
-                }}
-              >
-                <Typography variant="caption" color="text.secondary">
-                  {label}
-                </Typography>
-                <Typography variant="h6" sx={{ mt: 0.25 }}>
-                  {metric}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
           <Box component="section">
             <ProviderSectionHeading title={t('tenantDetail.organization.title')} />
             <Box

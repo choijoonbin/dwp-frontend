@@ -117,8 +117,7 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
           onClick={(event) => setAnchor(anchor ? null : event.currentTarget)}
           sx={{
             py: 0.5,
-            pl: showIdentity ? 1 : 0.5,
-            pr: 0.5,
+            px: 0.5,
             display: 'flex',
             alignItems: 'center',
             gap: 0.75,
@@ -128,7 +127,7 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
             borderRadius: 1,
             cursor: 'pointer',
             font: 'inherit',
-            textAlign: 'right',
+            textAlign: 'start',
             transition: (theme) => theme.transitions.create(['background-color', 'box-shadow']),
             boxShadow: (theme) =>
               anchor ? `inset 0 0 0 1px ${alpha(theme.palette.primary.main, 0.22)}` : 'none',
@@ -140,6 +139,19 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
             },
           }}
         >
+          <Avatar
+            sx={{
+              width: 36,
+              height: 36,
+              flex: '0 0 36px',
+              fontSize: 14,
+              bgcolor: 'primary.main',
+              border: 1,
+              borderColor: 'divider',
+            }}
+          >
+            {displayName.charAt(0).toUpperCase()}
+          </Avatar>
           {showIdentity && (
             <Box
               sx={{
@@ -163,18 +175,6 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
               </Typography>
             </Box>
           )}
-          <Avatar
-            sx={{
-              width: 36,
-              height: 36,
-              fontSize: 14,
-              bgcolor: 'primary.main',
-              border: 1,
-              borderColor: 'divider',
-            }}
-          >
-            {displayName.charAt(0).toUpperCase()}
-          </Avatar>
           <Box
             component={ChevronDown}
             size={16}

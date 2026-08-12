@@ -55,8 +55,15 @@ test('tenant administration shell preserves Korean context in dark mode', async 
   });
 
   await page.goto('/admin/experience/branding');
-  await expect(page.getByTestId('admin-header')).toBeVisible();
+  const header = page.getByTestId('admin-header');
+  await expect(header).toBeVisible();
   await expect(page.locator('#tenant-branding-heading')).toBeVisible();
+  const accountTrigger = header.locator('button[aria-haspopup="dialog"]');
+  const avatarBounds = await accountTrigger.locator('.MuiAvatar-root').boundingBox();
+  const identityBounds = await accountTrigger.getByText('박현우', { exact: true }).boundingBox();
+  expect(avatarBounds).not.toBeNull();
+  expect(identityBounds).not.toBeNull();
+  expect(avatarBounds!.x).toBeLessThan(identityBounds!.x);
   await expect(page).toHaveScreenshot('shell-admin-ko-dark.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -111,7 +118,7 @@ test('mobile product-area shell keeps navigation usable in Korean high contrast'
   await page.goto('/people/directory');
   const header = page.getByTestId('people-header');
   await expect(header).toBeVisible();
-  await expect(page.getByRole('grid', { name: '구성원 디렉터리' })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: '구성원 검색' })).toBeVisible();
   await header.locator('button').first().click();
   await expect(page.getByTestId('people-mobile-sidebar')).toBeVisible();
   await expect(page).toHaveScreenshot('shell-people-ko-mobile-drawer.png', {

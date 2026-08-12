@@ -12,21 +12,21 @@ R0.5에서는 `resourceType=APP` 권한이 한 건도 없을 때 Reference App �
 Home, Sidebar, Apps Catalog와 Route Guard는 정확한 Resource Grant만 허용한다. 운영 전에는
 반드시 APP Resource Seed와 사용자 Entitlement를 구성해 호환 모드를 종료한다.
 
-## 2. 후보 API
+## 2. 현재 API
 
-| Method | Path                          | 목적                   | 권한·Risk                                  |
-| ------ | ----------------------------- | ---------------------- | ------------------------------------------ |
-| GET    | `/api/home/today`             | 개인 우선 업무와 일정  | 본인 Projection                            |
-| GET    | `/api/work`                   | 권한 범위 Work Query   | Work ACL·Field Masking                     |
-| GET    | `/api/activity`               | 통합 실행 Timeline     | Actor·Work Object ACL                      |
-| GET    | `/api/activity/{id}`          | Event·Audit Detail     | Event Scope·Trace Masking                  |
-| GET    | `/api/apps`                   | 부여된 App Registry    | Entitlement Filter                         |
-| GET    | `/api/home/layout`            | 개인 App 순서·폴더     | 본인 Tenant·User Scope                     |
-| PUT    | `/api/home/layout`            | 개인 배치 저장         | CSRF, Manifest Version, Entitlement 재검증 |
-| POST   | `/api/agent/v1/ask`           | 권한 기반 검색·답변    | App Permission, Source ACL, Rate·Budget    |
-| GET    | `/api/ask/runs/{id}`          | 답변·Source·Trace 상태 | Run Owner·Support Scope                    |
-| POST   | `/api/actions/preview`        | 후속 Action Plan 생성  | Tool Policy, no mutation                   |
-| POST   | `/api/agent/v1/plans/preview` | 결정적 Agent Plan 계약 | Session·CSRF, L2 Approval, no mutation     |
+| Method       | Path                                                 | 목적                       | 권한·Risk                                                  |
+| ------------ | ---------------------------------------------------- | -------------------------- | ---------------------------------------------------------- |
+| GET          | `/api/platform/v1/workspace/work-items`              | 권한 범위 Work Queue       | `APP.WORK:VIEW`, Tenant·Assignee Scope                     |
+| PATCH        | `/api/platform/v1/workspace/work-items/{id}/status`  | 단건 상태 변경             | `APP.WORK:UPDATE`, CSRF, `version`, Activity·Audit         |
+| PATCH        | `/api/platform/v1/workspace/work-items/batch/status` | 최대 50건 원자적 상태 변경 | `APP.WORK:UPDATE`, 중복·Version 전수 검증, 전부 성공/실패  |
+| GET          | `/api/platform/v1/workspace/activity`                | 통합 실행 Timeline         | `APP.ACTIVITY:VIEW`, Actor·Work Object Scope               |
+| GET          | `/api/platform/v1/workspace/apps`                    | 부여된 App Registry        | `APP.APPS:VIEW`, Entitlement Filter                        |
+| PATCH        | `/api/platform/v1/workspace/apps/{id}/pin`           | 개인 Pin 변경              | CSRF, Tenant·User, `version`                               |
+| POST         | `/api/platform/v1/workspace/apps/{id}/launch`        | 승인 App 실행 기록         | Entitlement 재검증, Activity·Audit                         |
+| GET·PUT·POST | `/api/platform/v1/home-preferences[/reset]`          | 개인 Home 조회·저장·초기화 | CSRF, Tenant·User, `version`                               |
+| CRUD         | `/api/platform/v1/workspace/saved-views`             | 개인·Tenant 운영 View      | Owner·Scope·관리 권한, JSON Schema                         |
+| POST         | `/api/agent/v1/ask`                                  | 권한 기반 검색·답변        | App Permission, Source ACL, Rate·Budget, Browser 60초 제한 |
+| POST         | `/api/agent/v1/plans/preview`                        | 결정적 Agent Plan 계약     | Session·CSRF, L2 Approval, no mutation                     |
 
 ## 3. 공통 계약
 

@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Fingerprint, Play, RotateCcw } from 'lucide-react';
+import {
+  CheckCircle2,
+  Clock3,
+  Fingerprint,
+  Play,
+  RotateCcw,
+  ShieldCheck,
+  UserCheck,
+} from 'lucide-react';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -15,12 +23,13 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import type { ProviderOperation } from '@dwp-frontend/shared-utils';
+import type { ProviderOperation, ProviderOperationApproval } from '@dwp-frontend/shared-utils';
 
 import { formatProviderDate, parseProviderJson, ProviderStatusChip } from './provider-ui';
 
 type Props = {
   operation: ProviderOperation;
+  approvals?: ProviderOperationApproval[];
   busy: boolean;
   approvalPending?: boolean;
   onClose: () => void;
@@ -36,6 +45,7 @@ function planValue(value: unknown): string {
 
 export function ProviderOperationDialog({
   operation,
+  approvals = [],
   busy,
   approvalPending = false,
   onClose,
@@ -137,124 +147,285 @@ export function ProviderOperationDialog({
             </Box>
           </Box>
 
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
-              borderBlock: 1,
-              borderColor: 'divider',
-            }}
-          >
-            {[
-              [t('operations.planHash'), operation.planHash],
-              [t('operations.started'), formatProviderDate(operation.startedAt)],
-              [t('operations.completed'), formatProviderDate(operation.completedAt)],
-            ].map(([label, value], index) => (
-              <Box
-                key={label}
-                sx={{
-                  minWidth: 0,
-                  px: 1.5,
-                  py: 1.25,
-                  borderLeft: { sm: index === 0 ? 0 : 1 },
-                  borderColor: 'divider',
-                }}
+          <Box>
+            <Typography variant="subtitle2">{t('operations.gates.title')}</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t('operations.gates.description')}
+            </Typography>
+            {approvals.length === 0 ? (
+              <Alert severity="success" icon={<ShieldCheck size={18} />} sx={{ mt: 1 }}>
+                {t('operations.gates.notRequired')}
+              </Alert>
+            ) : (
+              <Stack
+                sx={{ mt: 1, borderBlock: 1, borderColor: 'divider' }}
+                divider={<Divider flexItem />}
               >
-                <Typography variant="caption" color="text.secondary">
-                  {label}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 0.25, wordBreak: 'break-word' }}>
-                  {value}
-                </Typography>
-              </Box>
-            ))}
+                {approvals
+                  .slice()
+                  .sort((left, right) => left.gateOrder - right.gateOrder)
+                  .map((approval) => (
+                    <Stack
+                      key={approval.operationApprovalId}
+                      direction={{ xs: 'column', sm: 'row' }}
+                      alignItems={{ xs: 'stretch', sm: 'flex-start' }}
+                      gap={1.25}
+                      sx={{ py: 1.25 }}
+                    >
+                      <Box
+                        aria-hidden="true"
+                        sx={{
+                          width: 32,
+                          height: 32,
+                          flex: '0 0 32px',
+                          display: 'grid',
+                          placeItems: 'center',
+                          borderRadius: 1,
+                          color:
+                            approval.lifecycleState === 'APPROVED'
+                              ? 'success.main'
+                              : approval.lifecycleState === 'REJECTED'
+                                ? 'error.main'
+                                : 'warning.main',
+                          bgcolor: 'action.hover',
+                        }}
+                      >
+                        {approval.lifecycleState === 'APPROVED' ? (
+                          <CheckCircle2 size={17} />
+                        ) : approval.lifecycleState === 'PENDING' ? (
+                          <Clock3 size={17} />
+                        ) : (
+                          <ShieldCheck size={17} />
+                        )}
+                      </Box>
+                      <Box minWidth={0} flex={1}>
+                        <Stack direction="row" alignItems="center" flexWrap="wrap" gap={0.75}>
+                          <Typography variant="body2" fontWeight={750}>
+                            {t('operations.gates.gate', {
+                              order: approval.gateOrder,
+                              key: approval.gateKey,
+                            })}
+                          </Typography>
+                          <Chip size="small" variant="outlined" label={approval.requiredRoleCode} />
+                          {approval.separationOfDuties && (
+                            <Chip
+                              size="small"
+                              variant="outlined"
+                              icon={<UserCheck size={14} />}
+                              label={t('operations.gates.separationOfDuties')}
+                            />
+                          )}
+                        </Stack>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.45 }}>
+                          {approval.requestReason}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                          sx={{ mt: 0.55 }}
+                        >
+                          {t('operations.gates.requestedBy', {
+                            name: approval.requestedByName,
+                            value: formatProviderDate(approval.requestedAt),
+                          })}
+                        </Typography>
+                        {approval.decidedByName && (
+                          <Typography variant="caption" color="text.secondary" display="block">
+                            {t('operations.gates.decidedBy', {
+                              name: approval.decidedByName,
+                              value: formatProviderDate(approval.decidedAt),
+                              reason: approval.decisionReason ?? '-',
+                            })}
+                          </Typography>
+                        )}
+                      </Box>
+                      <ProviderStatusChip state={approval.lifecycleState} />
+                    </Stack>
+                  ))}
+              </Stack>
+            )}
           </Box>
 
           <Box>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              {t('operations.steps')}
+            <Typography variant="subtitle2">{t('operations.evidence.title')}</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t('operations.evidence.description')}
             </Typography>
-            <Stack divider={<Divider flexItem />} sx={{ borderBlock: 1, borderColor: 'divider' }}>
-              {operation.steps.map((step) => (
-                <Box key={step.stepId} sx={{ py: 1.25 }}>
-                  <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    alignItems={{ xs: 'stretch', sm: 'center' }}
-                    gap={1.25}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+                mt: 1,
+                borderBlock: 1,
+                borderColor: 'divider',
+              }}
+            >
+              {[
+                [t('operations.planHash'), operation.planHash],
+                [t('operations.started'), formatProviderDate(operation.startedAt)],
+                [t('operations.completed'), formatProviderDate(operation.completedAt)],
+              ].map(([label, value], index) => (
+                <Box
+                  key={label}
+                  sx={{
+                    minWidth: 0,
+                    px: 1.5,
+                    py: 1.25,
+                    borderLeft: { sm: index === 0 ? 0 : 1 },
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Typography variant="caption" color="text.secondary">
+                    {label}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mt: 0.25,
+                      wordBreak: 'break-word',
+                      fontFamily: index === 0 ? 'monospace' : undefined,
+                    }}
                   >
-                    <Box sx={{ minWidth: 0, flex: 1 }}>
-                      <Typography variant="body2" fontWeight={700}>
-                        {step.order}. {t(`steps.${step.stepKey}`, { defaultValue: step.stepKey })}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {step.targetService}
-                        {step.externalReference ? ` / ${step.externalReference}` : ''}
-                      </Typography>
-                      {step.lastErrorMessage && (
-                        <Typography variant="caption" color="error.main" display="block">
-                          {step.lastErrorCode ? `${step.lastErrorCode}: ` : ''}
-                          {step.lastErrorMessage}
-                        </Typography>
-                      )}
-                    </Box>
-                    <Typography variant="caption" color="text.secondary">
-                      {t('operations.attempts', { count: step.attemptCount })}
-                    </Typography>
-                    <ProviderStatusChip state={step.lifecycleState} />
-                  </Stack>
+                    {value}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Box>
 
-                  {step.attempts.length > 0 && (
-                    <Stack
-                      gap={0.75}
+          <Box>
+            <Typography variant="subtitle2">{t('operations.steps')}</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t('operations.stepsDescription')}
+            </Typography>
+            <Stack
+              divider={<Divider flexItem />}
+              sx={{ mt: 1, borderBlock: 1, borderColor: 'divider' }}
+            >
+              {operation.steps.map((step) => (
+                <Stack key={step.stepId} direction="row" gap={1.25} sx={{ py: 1.25 }}>
+                  <Box
+                    aria-hidden="true"
+                    sx={{
+                      position: 'relative',
+                      width: 28,
+                      flex: '0 0 28px',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      '&::before': {
+                        position: 'absolute',
+                        inset: '30px auto -20px',
+                        width: 1,
+                        bgcolor: 'divider',
+                        content: '""',
+                      },
+                    }}
+                  >
+                    <Box
                       sx={{
-                        mt: 1,
-                        ml: { sm: 2.25 },
-                        pl: 1.5,
-                        borderLeft: 2,
-                        borderColor: 'divider',
+                        width: 18,
+                        height: 18,
+                        display: 'grid',
+                        placeItems: 'center',
+                        borderRadius: '50%',
+                        color:
+                          step.lifecycleState === 'SUCCEEDED'
+                            ? 'success.main'
+                            : ['FAILED', 'PARTIAL'].includes(step.lifecycleState)
+                              ? 'error.main'
+                              : 'warning.main',
+                        bgcolor: 'background.paper',
+                        border: 1,
+                        borderColor: 'currentColor',
                       }}
                     >
-                      {step.attempts.map((attempt) => (
-                        <Stack
-                          key={attempt.attemptId}
-                          direction={{ xs: 'column', sm: 'row' }}
-                          alignItems={{ xs: 'flex-start', sm: 'center' }}
-                          gap={1}
-                        >
-                          <Typography variant="caption" fontWeight={700} sx={{ minWidth: 62 }}>
-                            {t('operations.attemptLabel', { number: attempt.attemptNumber })}
+                      {step.lifecycleState === 'SUCCEEDED' ? (
+                        <CheckCircle2 size={12} />
+                      ) : (
+                        <Clock3 size={11} />
+                      )}
+                    </Box>
+                  </Box>
+                  <Box minWidth={0} flex={1}>
+                    <Stack
+                      direction={{ xs: 'column', sm: 'row' }}
+                      alignItems={{ xs: 'stretch', sm: 'center' }}
+                      gap={1.25}
+                    >
+                      <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Typography variant="body2" fontWeight={700}>
+                          {step.order}. {t(`steps.${step.stepKey}`, { defaultValue: step.stepKey })}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {step.targetService}
+                          {step.externalReference ? ` / ${step.externalReference}` : ''}
+                        </Typography>
+                        {step.lastErrorMessage && (
+                          <Typography variant="caption" color="error.main" display="block">
+                            {step.lastErrorCode ? `${step.lastErrorCode}: ` : ''}
+                            {step.lastErrorMessage}
                           </Typography>
-                          <Stack
-                            direction="row"
-                            alignItems="center"
-                            gap={0.5}
-                            sx={{ minWidth: 0, flex: 1 }}
-                          >
-                            <Fingerprint size={14} />
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                              title={attempt.requestFingerprint}
-                              noWrap
-                            >
-                              {attempt.requestFingerprint.slice(0, 16)}
-                            </Typography>
-                          </Stack>
-                          <Typography variant="caption" color="text.secondary">
-                            {formatProviderDate(attempt.startedAt)}
-                          </Typography>
-                          <ProviderStatusChip state={attempt.lifecycleState} />
-                          {attempt.errorMessage && (
-                            <Typography variant="caption" color="error.main">
-                              {attempt.errorCode ? `${attempt.errorCode}: ` : ''}
-                              {attempt.errorMessage}
-                            </Typography>
-                          )}
-                        </Stack>
-                      ))}
+                        )}
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        {t('operations.attempts', { count: step.attemptCount })}
+                      </Typography>
+                      <ProviderStatusChip state={step.lifecycleState} />
                     </Stack>
-                  )}
-                </Box>
+
+                    {step.attempts.length > 0 && (
+                      <Stack
+                        gap={0.75}
+                        sx={{
+                          mt: 1,
+                          pl: 1.5,
+                          borderLeft: 2,
+                          borderColor: 'divider',
+                        }}
+                      >
+                        {step.attempts.map((attempt) => (
+                          <Stack
+                            key={attempt.attemptId}
+                            direction={{ xs: 'column', sm: 'row' }}
+                            alignItems={{ xs: 'flex-start', sm: 'center' }}
+                            gap={1}
+                          >
+                            <Typography variant="caption" fontWeight={700} sx={{ minWidth: 62 }}>
+                              {t('operations.attemptLabel', { number: attempt.attemptNumber })}
+                            </Typography>
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              gap={0.5}
+                              sx={{ minWidth: 0, flex: 1 }}
+                            >
+                              <Fingerprint size={14} />
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                title={attempt.requestFingerprint}
+                                noWrap
+                              >
+                                {attempt.requestFingerprint.slice(0, 16)}
+                              </Typography>
+                            </Stack>
+                            <Typography variant="caption" color="text.secondary">
+                              {formatProviderDate(attempt.startedAt)}
+                            </Typography>
+                            <ProviderStatusChip state={attempt.lifecycleState} />
+                            {attempt.errorMessage && (
+                              <Typography variant="caption" color="error.main">
+                                {attempt.errorCode ? `${attempt.errorCode}: ` : ''}
+                                {attempt.errorMessage}
+                              </Typography>
+                            )}
+                          </Stack>
+                        ))}
+                      </Stack>
+                    )}
+                  </Box>
+                </Stack>
               ))}
             </Stack>
           </Box>

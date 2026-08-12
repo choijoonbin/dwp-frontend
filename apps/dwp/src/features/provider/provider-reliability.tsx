@@ -1,21 +1,14 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
-import {
-  CalendarClock,
-  Gauge,
-  ListChecks,
-  Plus,
-  RefreshCw,
-  ShieldAlert,
-  ShieldCheck,
-} from 'lucide-react';
+import { CalendarClock, ListChecks, Plus } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createProviderMaintenanceWindow,
   getProviderReliabilityControl,
   useToast,
 } from '@dwp-frontend/shared-utils';
+import { ActionButton, foundationTokens } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -26,14 +19,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import LinearProgress from '@mui/material/LinearProgress';
 import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import type {
@@ -41,7 +32,6 @@ import type {
   ProviderServicePosture,
   ProviderTenant,
 } from '@dwp-frontend/shared-utils';
-import type { LucideIcon } from 'lucide-react';
 
 import {
   formatProviderDate,
@@ -96,32 +86,6 @@ function initialMaintenance(): MaintenanceDraft {
     customerNoticeAt: localDateTime(new Date()),
     minimumNoticeHours: 120,
   };
-}
-
-function ReliabilityMetric({
-  icon: Icon,
-  label,
-  value,
-  color,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: number;
-  color: string;
-}) {
-  return (
-    <Stack direction="row" alignItems="center" gap={1.1} sx={{ px: 1.5, py: 1.25 }}>
-      <Box sx={{ color, display: 'grid', placeItems: 'center' }}>
-        <Icon size={18} strokeWidth={1.8} />
-      </Box>
-      <Box minWidth={0}>
-        <Typography variant="caption" color="text.secondary" display="block" noWrap>
-          {label}
-        </Typography>
-        <Typography variant="h6">{value.toLocaleString()}</Typography>
-      </Box>
-    </Stack>
-  );
 }
 
 function MaintenanceDialog({
@@ -387,77 +351,51 @@ export function ProviderReliability({
     }
   };
 
-  const metrics = [
-    {
-      label: t('reliability.metrics.healthyObjectives'),
-      value: reliability.data.healthyObjectives,
-      icon: ShieldCheck,
-      color: '#14805E',
-    },
-    {
-      label: t('reliability.metrics.atRiskObjectives'),
-      value: reliability.data.atRiskObjectives + reliability.data.exhaustedObjectives,
-      icon: Gauge,
-      color: '#B7791F',
-    },
-    {
-      label: t('reliability.metrics.drift'),
-      value: reliability.data.openDriftFindings,
-      icon: ShieldAlert,
-      color: '#C2413B',
-    },
-    {
-      label: t('reliability.metrics.maintenance'),
-      value: reliability.data.upcomingMaintenance,
-      icon: CalendarClock,
-      color: '#2563EB',
-    },
-  ];
+  const riskObjectives = reliability.data.atRiskObjectives + reliability.data.exhaustedObjectives;
 
   return (
-    <Box component="section">
+    <Paper component="section" variant="outlined" sx={{ minWidth: 0, p: 2 }}>
       <ProviderSectionHeading
         title={t('reliability.title')}
         description={t('reliability.description')}
-        action={
-          <Tooltip title={t('actions.refresh')}>
-            <IconButton
-              aria-label={t('actions.refresh')}
-              onClick={() => void reliability.refetch()}
-            >
-              <RefreshCw size={18} />
-            </IconButton>
-          </Tooltip>
-        }
       />
 
-      <Box
-        sx={(theme) => ({
-          mt: 1.5,
-          display: 'grid',
-          gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
-          borderBlock: 1,
-          borderColor: 'divider',
-          '& > *': { borderBottom: 1, borderColor: 'divider' },
-          '& > *:nth-of-type(odd)': { borderRight: 1, borderColor: 'divider' },
-          '& > *:nth-of-type(n+3)': { borderBottom: 0 },
-          [theme.breakpoints.up('md')]: {
-            '& > *': { borderRight: 1, borderBottom: 0, borderColor: 'divider' },
-            '& > *:last-of-type': { borderRight: 0 },
-          },
-        })}
-      >
-        {metrics.map((metric) => (
-          <ReliabilityMetric key={metric.label} {...metric} />
-        ))}
-      </Box>
+      <Stack direction="row" alignItems="center" flexWrap="wrap" gap={0.75} sx={{ mt: 1.5 }}>
+        <Chip
+          size="small"
+          variant="outlined"
+          color="success"
+          label={`${t('reliability.metrics.healthyObjectives')} ${reliability.data.healthyObjectives}`}
+        />
+        <Chip
+          size="small"
+          variant="outlined"
+          color={riskObjectives ? 'warning' : 'default'}
+          label={`${t('reliability.metrics.atRiskObjectives')} ${riskObjectives}`}
+        />
+        <Chip
+          size="small"
+          variant="outlined"
+          color={reliability.data.openDriftFindings ? 'error' : 'default'}
+          label={`${t('reliability.metrics.drift')} ${reliability.data.openDriftFindings}`}
+        />
+        <Chip
+          size="small"
+          variant="outlined"
+          color={reliability.data.upcomingMaintenance ? 'info' : 'default'}
+          label={`${t('reliability.metrics.maintenance')} ${reliability.data.upcomingMaintenance}`}
+        />
+        <Typography variant="caption" color="text.secondary" sx={{ ml: { sm: 'auto' } }}>
+          {t('health.lastUpdated', { value: formatProviderDate(reliability.data.generatedAt) })}
+        </Typography>
+      </Stack>
 
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'stretch', sm: 'center' }}
         justifyContent="space-between"
         gap={1}
-        sx={{ mt: 1.5 }}
+        sx={{ mt: 1.25, pt: 1.25, borderTop: 1, borderColor: 'divider' }}
       >
         <ToggleButtonGroup
           exclusive
@@ -471,82 +409,108 @@ export function ProviderReliability({
           <ToggleButton value="MAINTENANCE">{t('reliability.views.MAINTENANCE')}</ToggleButton>
         </ToggleButtonGroup>
         {view === 'MAINTENANCE' && canSchedule && (
-          <Button
+          <ActionButton
+            intent="primary"
             size="small"
-            variant="contained"
             startIcon={<Plus size={16} />}
             onClick={() => setDialogOpen(true)}
           >
             {t('reliability.maintenance.actions.create')}
-          </Button>
+          </ActionButton>
         )}
       </Stack>
 
       {view === 'SLO' && (
-        <Stack
-          divider={<Divider flexItem />}
-          sx={{ mt: 1, borderBlock: 1, borderColor: 'divider' }}
-        >
-          {reliability.data.objectives.map((objective) => {
-            const budget = objective.errorBudgetRemainingPct ?? 0;
-            return (
-              <Stack
-                key={objective.objectiveId}
-                direction={{ xs: 'column', md: 'row' }}
-                alignItems={{ xs: 'stretch', md: 'center' }}
-                gap={{ xs: 1, md: 2 }}
-                sx={{ py: 1.4 }}
-              >
-                <Box sx={{ minWidth: 0, flex: 1.4 }}>
-                  <Typography variant="body2" fontWeight={750} noWrap>
-                    {objective.serviceName}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {t('reliability.slo.target', {
-                      target: objective.targetPct,
-                      days: objective.complianceWindowDays,
-                      scope: objective.scopeLabel,
-                    })}
-                  </Typography>
-                </Box>
-                <Box sx={{ minWidth: 180, flex: 1 }}>
-                  <Stack direction="row" justifyContent="space-between" gap={1}>
-                    <Typography variant="caption" color="text.secondary">
-                      {t('reliability.slo.errorBudget')}
-                    </Typography>
-                    <Typography variant="caption" fontWeight={750}>
-                      {objective.errorBudgetRemainingPct == null
-                        ? t('reliability.slo.noData')
-                        : `${objective.errorBudgetRemainingPct.toFixed(1)}%`}
+        <Stack divider={<Divider flexItem />} sx={{ mt: 1 }}>
+          {reliability.data.objectives.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
+              {t('reliability.slo.empty')}
+            </Typography>
+          ) : (
+            reliability.data.objectives.map((objective) => {
+              const budget = Math.max(0, Math.min(100, objective.errorBudgetRemainingPct ?? 0));
+              const budgetColor =
+                objective.complianceState === 'EXHAUSTED'
+                  ? foundationTokens.color.data.coral
+                  : objective.complianceState === 'AT_RISK'
+                    ? foundationTokens.color.data.saffron
+                    : foundationTokens.color.data.teal;
+              return (
+                <Box key={objective.objectiveId} sx={{ py: 1.35 }}>
+                  <Stack
+                    direction="row"
+                    alignItems="flex-start"
+                    justifyContent="space-between"
+                    gap={1.5}
+                  >
+                    <Box minWidth={0}>
+                      <Typography variant="body2" fontWeight={750}>
+                        {objective.serviceName}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {t('reliability.slo.target', {
+                          target: objective.targetPct,
+                          days: objective.complianceWindowDays,
+                          scope: objective.scopeLabel,
+                        })}
+                      </Typography>
+                    </Box>
+                    <ProviderStatusChip state={objective.complianceState} />
+                  </Stack>
+                  <Stack
+                    direction={{ xs: 'column', sm: 'row' }}
+                    alignItems={{ sm: 'center' }}
+                    gap={1}
+                    sx={{ mt: 0.9 }}
+                  >
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Stack direction="row" justifyContent="space-between" gap={1}>
+                        <Typography variant="caption" color="text.secondary">
+                          {t('reliability.slo.errorBudget')}
+                        </Typography>
+                        <Typography variant="caption" fontWeight={750}>
+                          {objective.errorBudgetRemainingPct == null
+                            ? t('reliability.slo.noData')
+                            : `${objective.errorBudgetRemainingPct.toFixed(1)}%`}
+                        </Typography>
+                      </Stack>
+                      <Box
+                        role="meter"
+                        aria-label={t('reliability.slo.budgetLabel', {
+                          name: objective.displayName,
+                        })}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round(budget)}
+                        sx={{
+                          mt: 0.45,
+                          height: 6,
+                          overflow: 'hidden',
+                          borderRadius: 0.5,
+                          bgcolor: 'action.hover',
+                        }}
+                      >
+                        <Box sx={{ width: `${budget}%`, height: 1, bgcolor: budgetColor }} />
+                      </Box>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ minWidth: 148 }}>
+                      {t('reliability.slo.achieved', {
+                        value:
+                          objective.achievedPct == null
+                            ? t('reliability.slo.noData')
+                            : `${objective.achievedPct.toFixed(3)}%`,
+                      })}
                     </Typography>
                   </Stack>
-                  <LinearProgress
-                    variant="determinate"
-                    value={Math.max(0, Math.min(100, budget))}
-                    color={budget < 0 ? 'error' : budget < 25 ? 'warning' : 'success'}
-                    sx={{ mt: 0.5, height: 5, borderRadius: 0 }}
-                  />
                 </Box>
-                <Typography variant="caption" sx={{ minWidth: 110 }}>
-                  {t('reliability.slo.achieved', {
-                    value:
-                      objective.achievedPct == null
-                        ? t('reliability.slo.noData')
-                        : `${objective.achievedPct.toFixed(3)}%`,
-                  })}
-                </Typography>
-                <ProviderStatusChip state={objective.complianceState} />
-              </Stack>
-            );
-          })}
+              );
+            })
+          )}
         </Stack>
       )}
 
       {view === 'DRIFT' && (
-        <Stack
-          divider={<Divider flexItem />}
-          sx={{ mt: 1, borderBlock: 1, borderColor: 'divider' }}
-        >
+        <Stack divider={<Divider flexItem />} sx={{ mt: 1 }}>
           {reliability.data.driftFindings.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ py: 2.5 }}>
               {t('reliability.drift.empty')}
@@ -581,10 +545,7 @@ export function ProviderReliability({
       )}
 
       {view === 'MAINTENANCE' && (
-        <Stack
-          divider={<Divider flexItem />}
-          sx={{ mt: 1, borderBlock: 1, borderColor: 'divider' }}
-        >
+        <Stack divider={<Divider flexItem />} sx={{ mt: 1 }}>
           {reliability.data.maintenanceWindows.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ py: 2.5 }}>
               {t('reliability.maintenance.empty')}
@@ -622,7 +583,8 @@ export function ProviderReliability({
                 />
                 <ProviderStatusChip state={maintenance.lifecycleState} />
                 {maintenance.lifecycleState === 'DRAFT' && (
-                  <Button
+                  <ActionButton
+                    intent="quiet"
                     component={RouterLink}
                     to="/provider/operations"
                     size="small"
@@ -630,7 +592,7 @@ export function ProviderReliability({
                     sx={{ alignSelf: { xs: 'flex-start', md: 'center' } }}
                   >
                     {t('reliability.maintenance.actions.reviewChange')}
-                  </Button>
+                  </ActionButton>
                 )}
               </Stack>
             ))
@@ -648,6 +610,6 @@ export function ProviderReliability({
           onCreate={createMaintenance}
         />
       )}
-    </Box>
+    </Paper>
   );
 }

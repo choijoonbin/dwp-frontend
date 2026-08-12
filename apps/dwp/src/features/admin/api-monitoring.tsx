@@ -7,24 +7,33 @@ import {
   ChevronRight,
   Clock3,
   Copy,
+  FileSearch,
   Gauge,
+  Globe2,
   RefreshCw,
   Route,
   Search,
   Server,
   X,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   getApiHistoryOverview,
   getApiHistoryTrace,
+  listAuditEvents,
   listApiHistoryEvents,
 } from '@dwp-frontend/shared-utils';
-import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  EnterpriseDataGrid,
+  LiveStatus,
+  OperationalContextBar,
+} from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -32,6 +41,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Table from '@mui/material/Table';
@@ -59,6 +69,8 @@ import type {
   ApiHistoryOutcome,
   ApiHistoryTrendPoint,
   ApiHistoryWindow,
+  AuditEvent,
+  AuditWindow,
 } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
 
@@ -105,6 +117,12 @@ function compactTimestamp(value: string): string {
 function duration(value: number): string {
   if (value < 1_000) return `${formatNumber(value)} ms`;
   return `${formatNumber(value / 1_000, { maximumFractionDigits: 2 })} s`;
+}
+
+function auditWindowForApiHistory(value: ApiHistoryWindow): AuditWindow {
+  if (value === 'D7') return 'D7';
+  if (value === 'D30') return 'D30';
+  return 'H24';
 }
 
 function bytes(value?: number | null): string {
@@ -173,7 +191,15 @@ function Metric({ label, value, hint, icon: Icon, tone = 'neutral' }: MetricProp
   );
 }
 
-function TrafficChart({ points, label }: { points: ApiHistoryTrendPoint[]; label: string }) {
+function TrafficChart({
+  points,
+  changes,
+  label,
+}: {
+  points: ApiHistoryTrendPoint[];
+  changes: AuditEvent[];
+  label: string;
+}) {
   const theme = useTheme();
   const width = 900;
   const height = 220;
@@ -187,6 +213,19 @@ function TrafficChart({ points, label }: { points: ApiHistoryTrendPoint[]; label
   const y = (value: number) => padding.top + chartHeight - (value / maximum) * chartHeight;
   const line = points.map((point, index) => `${x(index)},${y(point.totalRequests)}`).join(' ');
   const barWidth = Math.max(2, Math.min(10, chartWidth / Math.max(1, points.length) - 2));
+  const changeMarkers = changes
+    .map((change) => {
+      const occurredAt = new Date(change.occurredAt).getTime();
+      const nearestIndex = points.reduce(
+        (best, point, index) =>
+          Math.abs(new Date(point.bucket).getTime() - occurredAt) < best.distance
+            ? { index, distance: Math.abs(new Date(point.bucket).getTime() - occurredAt) }
+            : best,
+        { index: 0, distance: Number.POSITIVE_INFINITY }
+      ).index;
+      return { change, index: nearestIndex };
+    })
+    .filter(() => points.length > 0);
 
   return (
     <Box>
@@ -207,6 +246,30 @@ function TrafficChart({ points, label }: { points: ApiHistoryTrendPoint[]; label
             stroke={theme.palette.divider}
             strokeWidth="1"
           />
+        ))}
+        {changeMarkers.map(({ change, index }) => (
+          <g key={change.eventId}>
+            <line
+              x1={x(index)}
+              x2={x(index)}
+              y1={padding.top}
+              y2={padding.top + chartHeight}
+              stroke={theme.palette.secondary.main}
+              strokeWidth="1"
+              strokeDasharray="4 4"
+              opacity="0.65"
+            />
+            <circle
+              cx={x(index)}
+              cy={padding.top + 5}
+              r="4"
+              fill={theme.palette.secondary.main}
+              stroke={theme.palette.background.paper}
+              strokeWidth="1.5"
+            >
+              <title>{change.action}</title>
+            </circle>
+          </g>
         ))}
         {points.map((point, index) => {
           const errors = point.clientErrors + point.serverErrors;
@@ -294,6 +357,7 @@ function CopyValue({ value, label }: { value?: string | null; label: string }) {
 
 function TraceDrawer({ historyId, onClose }: { historyId: string | null; onClose: () => void }) {
   const { t } = useTranslation('admin');
+  const navigate = useNavigate();
   const detailQuery = useQuery({
     queryKey: ['admin', 'api-history', 'detail', historyId],
     queryFn: () => getApiHistoryTrace(historyId!),
@@ -476,6 +540,23 @@ function TraceDrawer({ historyId, onClose }: { historyId: string | null; onClose
               ))}
             </Box>
           </Box>
+          {detail.selected.correlationId && (
+            <Box sx={{ px: 2.5, pb: 2.5 }}>
+              <ActionButton
+                fullWidth
+                intent="secondary"
+                startIcon={<FileSearch size={17} />}
+                onClick={() => {
+                  navigate(
+                    `/admin/governance/audit-events?mode=events&query=${encodeURIComponent(detail.selected.correlationId!)}`
+                  );
+                  onClose();
+                }}
+              >
+                {t('apiMonitoring.detail.openAuditEvidence')}
+              </ActionButton>
+            </Box>
+          )}
         </Box>
       )}
     </Drawer>
@@ -484,6 +565,7 @@ function TraceDrawer({ historyId, onClose }: { historyId: string | null; onClose
 
 export function ApiMonitoring() {
   const { t } = useTranslation('admin');
+  const navigate = useNavigate();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
   const [window, setWindow] = useState<ApiHistoryWindow>('H24');
@@ -520,6 +602,20 @@ export function ApiMonitoring() {
     queryFn: () => getApiHistoryOverview(filters),
     refetchInterval: autoRefresh ? 30_000 : false,
   });
+  const changesQuery = useQuery({
+    queryKey: ['admin', 'api-history', 'changes', auditWindowForApiHistory(window)],
+    queryFn: () =>
+      listAuditEvents({
+        window: auditWindowForApiHistory(window),
+        category: 'ADMIN_CHANGE',
+        severity: 'ALL',
+        outcome: 'ALL',
+        page: 0,
+        size: 20,
+      }),
+    retry: false,
+    refetchInterval: autoRefresh ? 30_000 : false,
+  });
   const eventsQuery = useInfiniteQuery({
     queryKey: ['admin', 'api-history', 'events', filters],
     queryFn: ({ pageParam }) => listApiHistoryEvents(filters, pageParam),
@@ -531,6 +627,7 @@ export function ApiMonitoring() {
     () => eventsQuery.data?.pages.flatMap((page) => page.content) ?? [],
     [eventsQuery.data]
   );
+  const changeEvents = changesQuery.data?.content ?? [];
 
   const columns = useMemo<GridColDef<ApiHistoryEvent>[]>(
     () => [
@@ -618,18 +715,197 @@ export function ApiMonitoring() {
     1,
     ...(overview?.statusDistribution.map((item) => item.count) ?? [])
   );
+  const monitoringState =
+    (summary?.serverErrorRequests ?? 0) > 0 &&
+    ((summary?.errorRate ?? 0) >= 5 || (summary?.p99DurationMs ?? 0) > 2_000)
+      ? 'CRITICAL'
+      : (summary?.serverErrorRequests ?? 0) > 0 || (summary?.p95DurationMs ?? 0) > 1_000
+        ? 'ATTENTION'
+        : 'HEALTHY';
+  const monitoringTone =
+    monitoringState === 'CRITICAL'
+      ? 'error'
+      : monitoringState === 'ATTENTION'
+        ? 'warning'
+        : 'success';
   const refresh = () => {
     void overviewQuery.refetch();
     void eventsQuery.refetch();
+    void changesQuery.refetch();
   };
   const applySearch = () => setQuery(queryInput.trim());
 
   return (
-    <Box data-testid="api-monitoring">
+    <Box data-testid="api-monitoring" sx={{ width: 1, maxWidth: 1680, mx: 'auto' }}>
+      <OperationalContextBar
+        label={t('apiMonitoring.context.label')}
+        items={[
+          {
+            label: t('apiMonitoring.context.window'),
+            value: t('apiMonitoring.context.windowValue', {
+              window: t(`apiMonitoring.windows.${window}`),
+              from: overview?.from ? compactTimestamp(overview.from) : '—',
+              to: overview?.to ? compactTimestamp(overview.to) : '—',
+            }),
+            icon: <Globe2 size={16} />,
+          },
+          {
+            label: t('apiMonitoring.context.observation'),
+            value: t(`apiMonitoring.observation.${observationPoint}`),
+            icon: <Server size={16} />,
+          },
+          {
+            label: t('apiMonitoring.context.target'),
+            value: t('apiMonitoring.context.targetValue', {
+              service: serviceName === 'ALL' ? t('apiMonitoring.filters.allServices') : serviceName,
+              method: httpMethod === 'ALL' ? t('apiMonitoring.filters.allMethods') : httpMethod,
+            }),
+            icon: <Route size={16} />,
+          },
+        ]}
+        status={
+          <LiveStatus
+            state={
+              overviewQuery.isFetching || eventsQuery.isFetching || changesQuery.isFetching
+                ? 'syncing'
+                : changesQuery.isError
+                  ? 'degraded'
+                  : 'live'
+            }
+            label={t(
+              overviewQuery.isFetching || eventsQuery.isFetching || changesQuery.isFetching
+                ? 'apiMonitoring.live.syncing'
+                : changesQuery.isError
+                  ? 'apiMonitoring.live.changeContextUnavailable'
+                  : autoRefresh
+                    ? 'apiMonitoring.live.auto'
+                    : 'apiMonitoring.live.manual'
+            )}
+            detail={
+              overview?.generatedAt
+                ? t('apiMonitoring.generatedAt', {
+                    time: eventTimestamp(overview.generatedAt),
+                  })
+                : undefined
+            }
+            refreshLabel={t('apiMonitoring.filters.refresh')}
+            refreshing={
+              overviewQuery.isFetching || eventsQuery.isFetching || changesQuery.isFetching
+            }
+            onRefresh={refresh}
+          />
+        }
+      />
+
+      <Paper
+        component="section"
+        variant="outlined"
+        sx={(surfaceTheme) => {
+          const color = surfaceTheme.palette[monitoringTone].main;
+          return {
+            position: 'relative',
+            overflow: 'hidden',
+            mt: 2,
+            px: { xs: 2, md: 2.5 },
+            py: { xs: 2, md: 2.25 },
+            bgcolor: alpha(color, surfaceTheme.palette.mode === 'dark' ? 0.12 : 0.055),
+            borderColor: alpha(color, 0.35),
+            '&::before': {
+              position: 'absolute',
+              inset: '0 auto 0 0',
+              width: 4,
+              bgcolor: color,
+              content: '""',
+            },
+          };
+        }}
+      >
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          alignItems={{ xs: 'stretch', md: 'center' }}
+          justifyContent="space-between"
+          gap={2}
+        >
+          <Stack direction="row" alignItems="flex-start" gap={1.25} minWidth={0}>
+            <Box
+              aria-hidden="true"
+              sx={{
+                width: 38,
+                height: 38,
+                flex: '0 0 38px',
+                display: 'grid',
+                placeItems: 'center',
+                borderRadius: 1,
+                color: `${monitoringTone}.main`,
+                bgcolor: 'background.paper',
+              }}
+            >
+              {monitoringState === 'HEALTHY' ? (
+                <CheckCircle2 size={20} />
+              ) : (
+                <AlertTriangle size={20} />
+              )}
+            </Box>
+            <Box minWidth={0}>
+              <Typography component="h2" variant="h5">
+                {t(`apiMonitoring.pulse.title.${monitoringState}`)}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                {t(`apiMonitoring.pulse.detail.${monitoringState}`, {
+                  errors: summary?.serverErrorRequests ?? 0,
+                  rate: formatNumber(summary?.errorRate ?? 0, { maximumFractionDigits: 2 }),
+                  latency: duration(summary?.p95DurationMs ?? 0),
+                })}
+              </Typography>
+              <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 1.25 }}>
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color={summary?.serverErrorRequests ? 'error' : 'success'}
+                  label={t('apiMonitoring.pulse.errors', {
+                    count: summary?.serverErrorRequests ?? 0,
+                  })}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color={(summary?.errorRate ?? 0) >= 5 ? 'error' : 'default'}
+                  label={t('apiMonitoring.pulse.errorRate', {
+                    value: formatNumber(summary?.errorRate ?? 0, { maximumFractionDigits: 2 }),
+                  })}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color={(summary?.p95DurationMs ?? 0) > 1_000 ? 'warning' : 'default'}
+                  label={t('apiMonitoring.pulse.p95', {
+                    value: duration(summary?.p95DurationMs ?? 0),
+                  })}
+                />
+              </Stack>
+            </Box>
+          </Stack>
+          <ActionButton
+            intent="secondary"
+            startIcon={<FileSearch size={17} />}
+            onClick={() => navigate('/admin/governance/audit-events')}
+            sx={{ alignSelf: { xs: 'flex-start', md: 'center' }, flexShrink: 0 }}
+          >
+            {t('apiMonitoring.pulse.openEvidence')}
+          </ActionButton>
+        </Stack>
+      </Paper>
+
       <Box
         component="section"
         aria-label={t('apiMonitoring.filters.label')}
-        sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}
+        sx={{
+          mt: 2,
+          borderTop: 1,
+          borderBottom: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+        }}
       >
         <Stack
           direction={{ xs: 'column', lg: 'row' }}
@@ -857,11 +1133,16 @@ export function ApiMonitoring() {
                 <Box sx={{ width: 8, height: 8, bgcolor: 'error.main' }} />
                 <Typography variant="caption">{t('apiMonitoring.trend.errors')}</Typography>
               </Stack>
+              <Stack direction="row" alignItems="center" gap={0.5}>
+                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'secondary.main' }} />
+                <Typography variant="caption">{t('apiMonitoring.trend.changes')}</Typography>
+              </Stack>
             </Stack>
           </Stack>
           <Box sx={{ mt: 1.5 }}>
             <TrafficChart
               points={overview?.trend ?? []}
+              changes={changeEvents}
               label={t('apiMonitoring.trend.chartLabel')}
             />
           </Box>
@@ -918,6 +1199,66 @@ export function ApiMonitoring() {
               </Typography>
             )}
           </Stack>
+          <Divider sx={{ my: 2.25 }} />
+          <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+            <Box>
+              <Typography component="h3" variant="subtitle2">
+                {t('apiMonitoring.changes.title')}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('apiMonitoring.changes.description')}
+              </Typography>
+            </Box>
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t('apiMonitoring.changes.count', { count: changeEvents.length })}
+            />
+          </Stack>
+          {changesQuery.isError ? (
+            <Typography variant="body2" color="warning.main" sx={{ mt: 1.5 }}>
+              {t('apiMonitoring.changes.unavailable')}
+            </Typography>
+          ) : changeEvents.length ? (
+            <Stack component="ol" sx={{ p: 0, mt: 1.25, mb: 0, listStyle: 'none' }}>
+              {changeEvents.slice(0, 4).map((event) => (
+                <Box component="li" key={event.eventId}>
+                  <ButtonBase
+                    onClick={() =>
+                      navigate(
+                        `/admin/governance/audit-events?query=${encodeURIComponent(
+                          event.correlationId ?? event.action
+                        )}`
+                      )
+                    }
+                    sx={{
+                      width: 1,
+                      py: 1,
+                      textAlign: 'left',
+                      justifyContent: 'stretch',
+                      borderTop: 1,
+                      borderColor: 'divider',
+                      '&:hover': { bgcolor: 'action.hover' },
+                    }}
+                  >
+                    <Box minWidth={0} flex={1}>
+                      <Typography variant="body2" fontWeight={700} noWrap title={event.action}>
+                        {event.action}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" display="block" noWrap>
+                        {event.sourceService} / {compactTimestamp(event.occurredAt)}
+                      </Typography>
+                    </Box>
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </ButtonBase>
+                </Box>
+              ))}
+            </Stack>
+          ) : (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
+              {t('apiMonitoring.changes.empty')}
+            </Typography>
+          )}
         </Box>
       </Box>
 
@@ -947,7 +1288,12 @@ export function ApiMonitoring() {
           </Box>
           <Chip label={overview?.topRoutes.length ?? 0} size="small" variant="outlined" />
         </Stack>
-        <TableContainer sx={{ borderTop: 1, borderColor: 'divider' }}>
+        <TableContainer
+          tabIndex={0}
+          role="region"
+          aria-label={t('apiMonitoring.routes.tableLabel')}
+          sx={{ borderTop: 1, borderColor: 'divider' }}
+        >
           <Table size="small" aria-label={t('apiMonitoring.routes.tableLabel')}>
             <TableHead>
               <TableRow>
@@ -1063,48 +1409,56 @@ export function ApiMonitoring() {
             sx={{ listStyle: 'none', p: 0, m: 0, borderTop: 1, borderColor: 'divider' }}
           >
             {events.map((event) => (
-              <Box
-                component="li"
-                key={event.historyId}
-                onClick={() => setSelectedHistoryId(event.historyId)}
-                sx={{ p: 1.75, borderBottom: 1, borderColor: 'divider', cursor: 'pointer' }}
-              >
-                <Stack
-                  direction="row"
-                  alignItems="flex-start"
-                  justifyContent="space-between"
-                  gap={1.5}
+              <Box component="li" key={event.historyId}>
+                <ButtonBase
+                  onClick={() => setSelectedHistoryId(event.historyId)}
+                  sx={{
+                    width: 1,
+                    p: 1.75,
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                    justifyContent: 'stretch',
+                    textAlign: 'left',
+                  }}
                 >
-                  <Box sx={{ minWidth: 0 }}>
-                    <Stack direction="row" alignItems="center" gap={0.75}>
-                      <Chip
-                        label={event.statusCode}
-                        size="small"
-                        color={outcomeColor(event.outcome)}
-                        variant="outlined"
-                      />
-                      <Typography variant="caption" fontWeight={700}>
-                        {event.httpMethod}
+                  <Stack
+                    direction="row"
+                    alignItems="flex-start"
+                    justifyContent="space-between"
+                    gap={1.5}
+                    width={1}
+                  >
+                    <Box sx={{ minWidth: 0 }}>
+                      <Stack direction="row" alignItems="center" gap={0.75}>
+                        <Chip
+                          label={event.statusCode}
+                          size="small"
+                          color={outcomeColor(event.outcome)}
+                          variant="outlined"
+                        />
+                        <Typography variant="caption" fontWeight={700}>
+                          {event.httpMethod}
+                        </Typography>
+                      </Stack>
+                      <Typography variant="body2" noWrap sx={{ mt: 1 }}>
+                        {event.routeTemplate}
                       </Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block', mt: 0.35 }}
+                      >
+                        {event.serviceName} / {eventTimestamp(event.occurredAt)}
+                      </Typography>
+                    </Box>
+                    <Stack alignItems="flex-end" gap={0.5}>
+                      <Typography variant="body2" fontWeight={700}>
+                        {duration(event.durationMs)}
+                      </Typography>
+                      <ChevronRight size={17} />
                     </Stack>
-                    <Typography variant="body2" noWrap sx={{ mt: 1 }}>
-                      {event.routeTemplate}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ display: 'block', mt: 0.35 }}
-                    >
-                      {event.serviceName} / {eventTimestamp(event.occurredAt)}
-                    </Typography>
-                  </Box>
-                  <Stack alignItems="flex-end" gap={0.5}>
-                    <Typography variant="body2" fontWeight={700}>
-                      {duration(event.durationMs)}
-                    </Typography>
-                    <ChevronRight size={17} />
                   </Stack>
-                </Stack>
+                </ButtonBase>
               </Box>
             ))}
             {!events.length && !eventsQuery.isLoading && (
@@ -1126,15 +1480,15 @@ export function ApiMonitoring() {
               borderColor: 'divider',
             }}
           >
-            <Button
-              variant="text"
+            <ActionButton
+              intent="quiet"
               onClick={() => void eventsQuery.fetchNextPage()}
               disabled={eventsQuery.isFetchingNextPage}
             >
               {eventsQuery.isFetchingNextPage
                 ? t('apiMonitoring.events.loadingMore')
                 : t('apiMonitoring.events.loadMore')}
-            </Button>
+            </ActionButton>
           </Box>
         )}
       </Box>

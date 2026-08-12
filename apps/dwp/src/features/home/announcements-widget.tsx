@@ -1,8 +1,9 @@
 import { ArrowUpRight, Megaphone, Pin } from 'lucide-react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { listAnnouncements } from '@dwp-frontend/shared-utils';
+import { listAnnouncements, recordAnnouncementEngagement } from '@dwp-frontend/shared-utils';
 import { formatNumber } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -27,7 +28,18 @@ export function AnnouncementsWidget() {
     staleTime: 60 * 1000,
     retry: 1,
   });
-  const announcements = announcementsQuery.data ?? [];
+  const announcements = useMemo(() => announcementsQuery.data ?? [], [announcementsQuery.data]);
+  const recordedViews = useRef(new Set<number>());
+
+  useEffect(() => {
+    announcements.forEach((announcement) => {
+      if (recordedViews.current.has(announcement.announcementId)) return;
+      recordedViews.current.add(announcement.announcementId);
+      void recordAnnouncementEngagement(announcement.announcementId, 'view').catch(() => {
+        recordedViews.current.delete(announcement.announcementId);
+      });
+    });
+  }, [announcements]);
 
   if (announcements.length === 0) return null;
 
@@ -104,6 +116,9 @@ export function AnnouncementsWidget() {
                     href={announcement.actionUrl}
                     target="_blank"
                     rel="noreferrer"
+                    onClick={() =>
+                      void recordAnnouncementEngagement(announcement.announcementId, 'action')
+                    }
                     sx={{ gridColumn: { xs: 2, sm: 3 }, justifySelf: 'start', textAlign: 'left' }}
                   >
                     {announcement.actionLabel}
@@ -113,7 +128,10 @@ export function AnnouncementsWidget() {
                     size="small"
                     variant="text"
                     endIcon={<ArrowUpRight size={15} />}
-                    onClick={() => navigate(announcement.actionUrl as string)}
+                    onClick={() => {
+                      void recordAnnouncementEngagement(announcement.announcementId, 'action');
+                      navigate(announcement.actionUrl as string);
+                    }}
                     sx={{ gridColumn: { xs: 2, sm: 3 }, justifySelf: 'start', textAlign: 'left' }}
                   >
                     {announcement.actionLabel}

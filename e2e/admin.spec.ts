@@ -44,6 +44,25 @@ type IdentityUser = {
   status: 'ACTIVE' | 'INACTIVE';
   mfaEnabled: boolean;
   roles: string[];
+  effectiveRoles: string[];
+  effectiveAccess: Array<{
+    roleId: number;
+    roleCode: string;
+    roleName: string;
+    privileged: boolean;
+    sourceType: 'DIRECT' | 'GROUP';
+    sourceId: number;
+    sourceKey: string;
+    sourceName: string;
+    assignmentType: string;
+    scopeType: string;
+    scopeRef: string | null;
+    validFrom: string | null;
+    validTo: string | null;
+    assignedAt: string;
+  }>;
+  lastSignInAt: string | null;
+  activeSessionCount: number;
   roleManagement: {
     allowed: boolean;
     reason: 'ALLOWED' | 'SELF' | 'IDENTITY_INACTIVE' | 'PROTECTED_ROLE';
@@ -246,16 +265,61 @@ test('tenant administrators monitor API health and inspect a distributed trace',
       ),
     });
   });
+  await page.route('**/api/platform/v1/admin/audit-control/events**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope({
+        content: [
+          {
+            eventId: 'change-api-monitoring-1',
+            occurredAt: '2026-08-10T11:16:00Z',
+            ingestedAt: '2026-08-10T11:16:01Z',
+            tenantId: 1,
+            category: 'ADMIN_CHANGE',
+            action: 'people.release.deployed',
+            outcome: 'SUCCESS',
+            severity: 'MEDIUM',
+            riskScore: 38,
+            actorType: 'SERVICE',
+            actorId: 'release-orchestrator',
+            actorRoles: ['SYSTEM'],
+            sourceService: 'dwp-people-server',
+            sourceModule: 'release-control',
+            environment: 'test',
+            targetType: 'SERVICE_RELEASE',
+            targetId: 'people-2026.08.10.1',
+            correlationId: 'release-people-1',
+            beforeState: { version: '2026.08.09.2' },
+            afterState: { version: '2026.08.10.1' },
+            changedFields: ['version'],
+            metadata: {},
+            retentionClass: 'EXTENDED',
+            recordHash: 'api-monitoring-change-e2e',
+          },
+        ],
+        page: 0,
+        size: 20,
+        totalElements: 1,
+        totalPages: 1,
+      }),
+    })
+  );
 
   await page.goto('/admin/governance/api-monitoring');
 
   await expect(page.getByRole('heading', { name: 'API monitoring', level: 1 })).toBeVisible();
   await expect(page.getByText('1,284', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Change correlation' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /people\.release\.deployed/ })).toBeVisible();
   await expect(page.getByText('/api/people/v1/people', { exact: true }).first()).toBeVisible();
-  await page.getByText('/api/people/v1/people', { exact: true }).last().click();
+  if ((page.viewportSize()?.width ?? 0) < 900) {
+    await page.getByRole('button').filter({ hasText: '/api/people/v1/people' }).click();
+  } else {
+    await page.getByRole('row').filter({ hasText: '/api/people/v1/people' }).last().click();
+  }
   await expect(
     page.getByRole('heading', { name: 'Request trace', level: 2, exact: true })
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 10_000 });
   await expect(page.getByText('dwp-people-server', { exact: true })).toBeVisible();
 
   const accessibility = await new AxeBuilder({ page })
@@ -271,6 +335,8 @@ test('tenant administrators configure and reset the personal home presentation',
   let homeExperience = {
     headline: null as string | null,
     subheadline: null as string | null,
+    localizedContent: {} as Record<string, { headline: string | null; subheadline: string | null }>,
+    defaultLocale: 'ko',
     backgroundPosition: 'CENTER',
     overlayOpacity: 18,
     backgroundUrl: null as string | null,
@@ -285,6 +351,10 @@ test('tenant administrators configure and reset the personal home presentation',
   await page.route('**/api/platform/v1/admin/home-experience**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/revisions')) {
+      await route.fulfill({ contentType: 'application/json', body: envelope([]) });
+      return;
+    }
     if (request.method() === 'GET') {
       await route.fulfill({ contentType: 'application/json', body: envelope(homeExperience) });
       return;
@@ -334,28 +404,27 @@ test('tenant administrators configure and reset the personal home presentation',
 
   await page.goto('/admin/experience/home-experience');
   await expect(page.getByRole('heading', { name: 'Home experience', level: 1 })).toBeVisible();
-  await expect(page.getByText('Default background', { exact: true })).toBeVisible();
+  await expect(page.getByText('Built-in DWP background', { exact: true })).toBeVisible();
   await page.getByLabel('Headline').fill('One workspace, ready for action');
   await page
     .getByLabel('Supporting message')
     .fill('Your governed apps and priorities in one place.');
   await page.getByRole('button', { name: 'Right' }).click();
-  await page.getByRole('button', { name: 'Save presentation' }).click();
-  await expect(page.getByText('Home experience settings saved.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Publish presentation' }).click();
+  await expect(page.getByText('Home presentation published.', { exact: true })).toBeVisible();
 
   await page
     .locator('input[type="file"]')
     .setInputFiles('public/assets/home/default/agentic-workspace-hero.png');
-  await page.getByRole('button', { name: 'Upload background' }).click();
+  await page.getByRole('button', { name: 'Publish background' }).click();
   await expect(page.getByText('Home background uploaded.', { exact: true })).toBeVisible();
-  await expect(page.getByText('Custom background', { exact: true })).toBeVisible();
   await expect(page.getByText('1909 x 494 / 1.3 MB')).toBeVisible();
 
   await page.getByRole('button', { name: 'Restore default' }).click();
   await expect(
     page.getByText('The default home background was restored.', { exact: true })
   ).toBeVisible();
-  await expect(page.getByText('Default background', { exact: true })).toBeVisible();
+  await expect(page.getByText('Built-in DWP background', { exact: true })).toBeVisible();
 
   await expect(page.getByRole('alert')).toBeHidden({ timeout: 10_000 });
   const accessibility = await new AxeBuilder({ page }).analyze();
@@ -368,6 +437,7 @@ test('tenant administrators manage co-branding and publish home announcements', 
   await mockAdminSession(page);
   let branding = {
     organizationName: null as string | null,
+    accentColor: '#2457D6',
     logoUrl: null as string | null,
     logoOriginalName: null as string | null,
     logoContentType: null as string | null,
@@ -397,15 +467,23 @@ test('tenant administrators manage co-branding and publish home announcements', 
   await page.route('**/api/platform/v1/admin/tenant-branding**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path.endsWith('/revisions')) {
+      await route.fulfill({ contentType: 'application/json', body: envelope([]) });
+      return;
+    }
     if (request.method() === 'GET') {
       await route.fulfill({ contentType: 'application/json', body: envelope(branding) });
       return;
     }
     if (request.method() === 'PUT') {
-      const body = request.postDataJSON() as { organizationName: string | null };
+      const body = request.postDataJSON() as {
+        organizationName: string | null;
+        accentColor: string;
+      };
       branding = {
         ...branding,
         organizationName: body.organizationName,
+        accentColor: body.accentColor,
         version: branding.version + 1,
       };
     } else if (path.endsWith('/logo/reset')) {
@@ -480,12 +558,12 @@ test('tenant administrators manage co-branding and publish home announcements', 
 
   await page.goto('/admin/experience/branding');
   await page.getByLabel('Organization name').fill('Northstar Semiconductor');
-  await page.getByRole('button', { name: 'Save branding' }).click();
-  await expect(page.getByText('Tenant branding saved.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Publish brand definition' }).click();
+  await expect(page.getByText('Tenant brand definition published.', { exact: true })).toBeVisible();
   await page.locator('input[type="file"]').setInputFiles('public/assets/brand/dwp-mark.svg');
-  await page.getByRole('button', { name: 'Upload logo' }).click();
+  await page.getByRole('button', { name: 'Publish logo' }).click();
   await expect(page.getByText('Tenant logo uploaded.', { exact: true })).toBeVisible();
-  await expect(page.getByText('Custom logo', { exact: true })).toBeVisible();
+  await expect(page.getByText('dwp-mark.svg', { exact: true })).toBeVisible();
 
   await page.goto('/admin/experience/announcements');
   await expect(page.getByText('No announcements')).toBeVisible();
@@ -495,10 +573,217 @@ test('tenant administrators manage co-branding and publish home announcements', 
   await page.getByRole('switch', { name: 'Pinned' }).check();
   await page.getByRole('button', { name: 'Create draft' }).click();
   await expect(page.getByText('Announcement draft created.', { exact: true })).toBeVisible();
-  await expect(page.getByText('Draft', { exact: true })).toBeVisible();
+  await expect(
+    page
+      .getByRole('row')
+      .filter({ hasText: 'Planned maintenance' })
+      .getByText('Draft', { exact: true })
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Publish Planned maintenance' }).click();
   await expect(page.getByText('Announcement published.', { exact: true })).toBeVisible();
-  await expect(page.getByText('Published', { exact: true })).toBeVisible();
+  await expect(
+    page
+      .getByRole('row')
+      .filter({ hasText: 'Planned maintenance' })
+      .getByText('Live', { exact: true })
+  ).toBeVisible();
+});
+
+test('tenant administrators decide access reviews from immutable assignment evidence', async ({
+  page,
+}) => {
+  await mockAdminSession(page);
+  const campaignId = 'review-2026-q3';
+  let campaign = {
+    campaignId,
+    name: 'Quarterly privileged access review',
+    description: 'Certify privileged and inherited access before quarter close.',
+    scopeType: 'TENANT' as const,
+    scopeRef: null,
+    reviewerStrategy: 'TENANT_ADMIN' as const,
+    reviewerUserId: null,
+    lifecycleState: 'ACTIVE' as const,
+    dueAt: '2026-08-28T09:00:00Z',
+    activatedAt: '2026-08-10T09:00:00Z',
+    completedAt: null,
+    totalItems: 1,
+    pendingItems: 1,
+    approvedItems: 0,
+    revokedItems: 0,
+    manualRemediationItems: 0,
+    version: 1,
+  };
+  let reviewItem = {
+    itemId: 'review-item-1',
+    subjectUserId: 42,
+    subjectDisplayName: 'Dana Kim',
+    subjectEmail: 'dana.kim@example.com',
+    roleId: 7,
+    roleCode: 'HR_ADMIN',
+    roleName: 'HR administrator',
+    accessSourceType: 'GROUP' as const,
+    accessSourceId: 44,
+    sourceKey: 'ENG_MANAGERS',
+    sourceDisplayName: 'Engineering managers',
+    assignmentCreatedAt: '2026-03-12T09:00:00Z',
+    subjectLastSignInAt: '2026-04-01T01:30:00Z',
+    privileged: true,
+    recommendation: 'REVIEW' as const,
+    recommendationReason: 'PRIVILEGED_ROLE' as const,
+    reviewerUserId: null,
+    decision: 'PENDING' as 'PENDING' | 'REVOKE',
+    decisionReason: null as string | null,
+    decidedBy: null as number | null,
+    decidedAt: null as string | null,
+    remediationState: 'NOT_REQUIRED' as 'NOT_REQUIRED' | 'MANUAL_REQUIRED',
+    version: 0,
+  };
+  let decisionPayload: Record<string, unknown> | null = null;
+
+  await page.route('**/api/auth/admin/access/reviews**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'GET' && path === '/api/auth/admin/access/reviews') {
+      await route.fulfill({ contentType: 'application/json', body: envelope([campaign]) });
+      return;
+    }
+    if (request.method() === 'GET' && path === `/api/auth/admin/access/reviews/${campaignId}`) {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: envelope({ campaign, items: [reviewItem] }),
+      });
+      return;
+    }
+    if (
+      request.method() === 'PUT' &&
+      path === `/api/auth/admin/access/reviews/${campaignId}/items/${reviewItem.itemId}/decision`
+    ) {
+      decisionPayload = request.postDataJSON() as Record<string, unknown>;
+      reviewItem = {
+        ...reviewItem,
+        decision: 'REVOKE',
+        decisionReason: String(decisionPayload.reason),
+        decidedBy: 1,
+        decidedAt: '2026-08-12T03:00:00Z',
+        remediationState: 'MANUAL_REQUIRED',
+        version: 1,
+      };
+      campaign = {
+        ...campaign,
+        pendingItems: 0,
+        revokedItems: 1,
+        manualRemediationItems: 1,
+        version: 2,
+      };
+      await route.fulfill({ contentType: 'application/json', body: envelope(reviewItem) });
+      return;
+    }
+    await route.fulfill({ status: 404, contentType: 'application/json', body: '{}' });
+  });
+
+  await page.goto('/admin/identity/access-reviews');
+  await expect(page.getByRole('heading', { name: 'Access certification', level: 1 })).toBeVisible();
+  await expect(
+    page.getByText('Quarterly privileged access review', { exact: true }).first()
+  ).toBeVisible();
+
+  await page
+    .getByRole('button', { name: /Review access for Dana Kim|Record decision/ })
+    .first()
+    .click();
+  const dialog = page.getByRole('dialog', { name: 'Certify access' });
+  await expect(dialog.getByText('Engineering managers', { exact: true })).toBeVisible();
+  await expect(dialog.getByText('Privileged role requires explicit review')).toBeVisible();
+  await expect(dialog.getByText('Privileged', { exact: true })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Revoke' }).click();
+  await dialog
+    .getByLabel('Decision rationale')
+    .fill('Remove inherited privileged access pending owner review.');
+  await dialog.getByRole('button', { name: 'Record decision' }).click();
+
+  await expect(page.getByText('Access decision recorded.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Revoke', { exact: true }).first()).toBeVisible();
+  expect(decisionPayload).toEqual({
+    decision: 'REVOKE',
+    reason: 'Remove inherited privileged access pending owner review.',
+    version: 0,
+  });
+});
+
+test('tenant administrators inspect SCIM readiness and provisioning evidence', async ({ page }) => {
+  await mockAdminSession(page);
+  const connector = {
+    connectorId: 'scim-entra-1',
+    connectorKey: 'entra-production',
+    displayName: 'Microsoft Entra ID',
+    tokenPrefix: 'dwp_scim_9f2a',
+    allowedOperations: ['Users', 'Groups'],
+    lifecycleState: 'ACTIVE' as const,
+    lastUsedAt: '2026-08-12T01:45:00Z',
+    health: 'ATTENTION' as const,
+    events24h: 12,
+    failedEvents24h: 2,
+    lastSuccessAt: '2026-08-12T01:40:00Z',
+    lastFailureAt: '2026-08-12T01:45:00Z',
+    version: 3,
+  };
+  const events = [
+    {
+      eventId: 'scim-event-1',
+      connectorId: connector.connectorId,
+      connectorName: connector.displayName,
+      operation: 'PATCH',
+      resourceType: 'Group',
+      resourceId: 'engineering-managers',
+      outcome: 'FAILED' as const,
+      correlationId: 'scim-correlation-1',
+      summary: 'Group member reference could not be resolved',
+      occurredAt: '2026-08-12T01:45:00Z',
+    },
+    {
+      eventId: 'scim-event-2',
+      connectorId: connector.connectorId,
+      connectorName: connector.displayName,
+      operation: 'POST',
+      resourceType: 'User',
+      resourceId: 'dana.kim@example.com',
+      outcome: 'SUCCESS' as const,
+      correlationId: 'scim-correlation-2',
+      summary: 'User provisioned',
+      occurredAt: '2026-08-12T01:40:00Z',
+    },
+  ];
+
+  await page.route('**/api/auth/admin/provisioning/scim/connectors**', async (route) => {
+    const path = new URL(route.request().url()).pathname;
+    if (route.request().method() === 'GET' && path.endsWith('/events')) {
+      await route.fulfill({ contentType: 'application/json', body: envelope(events) });
+      return;
+    }
+    if (route.request().method() === 'GET') {
+      await route.fulfill({ contentType: 'application/json', body: envelope([connector]) });
+      return;
+    }
+    await route.fulfill({ status: 404, contentType: 'application/json', body: '{}' });
+  });
+
+  await page.goto('/admin/identity/provisioning');
+  await expect(
+    page.getByRole('heading', { name: 'Identity provisioning', level: 1 })
+  ).toBeVisible();
+  await expect(page.getByText('Provisioning activation path', { exact: true })).toBeVisible();
+  await expect(page.getByText('Microsoft Entra ID', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('2 failed', { exact: true })).toBeVisible();
+  await expect(page.getByText('engineering-managers', { exact: true })).toBeVisible();
+
+  await page.getByRole('row').filter({ hasText: 'entra-production' }).click();
+  await expect(page.getByRole('heading', { name: 'Microsoft Entra ID', level: 2 })).toBeVisible();
+  await expect(page.getByText('Activation readiness', { exact: true })).toBeVisible();
+  await expect(page.getByText('Supported attribute contract', { exact: true })).toBeVisible();
+  await expect(page.getByText('Recent connector evidence', { exact: true })).toBeVisible();
+  await expect(page.getByText('Group PATCH', { exact: true })).toBeVisible();
+  await expect(page.getByText('Group member reference could not be resolved')).toBeVisible();
+  await expect(page.locator('input[value$="/api/auth/scim/v2"]')).toBeVisible();
 });
 
 test('tenant administrators manage standards, registry, and audit', async ({ page }, testInfo) => {
@@ -539,6 +824,27 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
       status: 'ACTIVE',
       mfaEnabled: true,
       roles: ['ADMIN'],
+      effectiveRoles: ['ADMIN'],
+      effectiveAccess: [
+        {
+          roleId: 1,
+          roleCode: 'ADMIN',
+          roleName: 'Tenant administrator',
+          privileged: true,
+          sourceType: 'DIRECT',
+          sourceId: 1,
+          sourceKey: 'ADMIN',
+          sourceName: 'Direct assignment',
+          assignmentType: 'DIRECT',
+          scopeType: 'TENANT',
+          scopeRef: null,
+          validFrom: null,
+          validTo: null,
+          assignedAt: '2026-01-02T09:00:00Z',
+        },
+      ],
+      lastSignInAt: '2026-08-08T08:30:00Z',
+      activeSessionCount: 1,
       roleManagement: { allowed: false, reason: 'SELF' },
       accessRevision: 0,
       version: 0,
@@ -550,6 +856,43 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
       status: 'ACTIVE',
       mfaEnabled: false,
       roles: ['WORKSPACE_MEMBER'],
+      effectiveRoles: ['WORKSPACE_MEMBER', 'TEAM_LEAD'],
+      effectiveAccess: [
+        {
+          roleId: 2,
+          roleCode: 'WORKSPACE_MEMBER',
+          roleName: 'Workspace member',
+          privileged: false,
+          sourceType: 'DIRECT',
+          sourceId: 2,
+          sourceKey: 'WORKSPACE_MEMBER',
+          sourceName: 'Direct assignment',
+          assignmentType: 'DIRECT',
+          scopeType: 'TENANT',
+          scopeRef: null,
+          validFrom: null,
+          validTo: null,
+          assignedAt: '2026-02-01T09:00:00Z',
+        },
+        {
+          roleId: 3,
+          roleCode: 'TEAM_LEAD',
+          roleName: 'Team lead',
+          privileged: false,
+          sourceType: 'GROUP',
+          sourceId: 44,
+          sourceKey: 'ENG_MANAGERS',
+          sourceName: 'Engineering managers',
+          assignmentType: 'GROUP',
+          scopeType: 'ORGANIZATION_UNIT',
+          scopeRef: 'engineering',
+          validFrom: null,
+          validTo: null,
+          assignedAt: '2026-03-12T09:00:00Z',
+        },
+      ],
+      lastSignInAt: '2026-08-07T23:40:00Z',
+      activeSessionCount: 2,
       roleManagement: { allowed: true, reason: 'ALLOWED' },
       accessRevision: 0,
       version: 0,
@@ -578,6 +921,7 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
       identityUsers[1] = {
         ...identityUsers[1],
         roles: [...body.roleCodes].sort(),
+        effectiveRoles: [...new Set([...body.roleCodes, 'TEAM_LEAD'])].sort(),
         accessRevision: identityUsers[1].accessRevision + 1,
         version: identityUsers[1].version + 1,
       };
@@ -861,6 +1205,19 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
       : page.getByRole('grid', { name: 'Tenant users' });
   await expect(tenantUsers).toContainText('Operations Lead');
   await expect(page.getByRole('button', { name: 'Edit roles for Admin User' })).toBeDisabled();
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: 'Review effective access' }).last().click();
+  } else {
+    await page.getByRole('row').filter({ hasText: 'Operations Lead' }).click();
+  }
+  const accessInspector = page.getByRole('complementary', { name: 'Operations Lead' });
+  await expect(
+    accessInspector.getByRole('heading', { name: 'Operations Lead', level: 2 })
+  ).toBeVisible();
+  await expect(accessInspector).toContainText('Engineering managers');
+  await expect(accessInspector).toContainText('Group');
+  await expect(accessInspector).toContainText('2 access assignments');
+  await page.getByRole('button', { name: 'Close access details' }).click();
   await page.getByRole('button', { name: 'Edit roles for Operations Lead' }).click();
   const accessDialog = page.getByRole('dialog', { name: 'Edit access' });
   await accessDialog.getByRole('checkbox', { name: /HR administrator/ }).check();

@@ -73,7 +73,12 @@ export function OperationalContextBar({
           ))}
         </Stack>
         {(status || actions) && (
-          <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1.5}>
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            alignItems={{ xs: 'stretch', sm: 'center' }}
+            justifyContent="space-between"
+            gap={1.5}
+          >
             {status}
             {actions}
           </Stack>

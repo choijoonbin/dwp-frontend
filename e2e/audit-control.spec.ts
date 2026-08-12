@@ -265,6 +265,7 @@ async function mockAuditControl(page: Page) {
   let currentPolicy = { ...policy };
   let checkpoints = [{ ...checkpoint }];
   let savedSearches: Array<Record<string, unknown>> = [];
+  const closureReports = new Map<string, Record<string, unknown>>();
   let caseTasks = [
     {
       taskId: '80000000-0000-0000-0000-000000000001',
@@ -504,6 +505,29 @@ async function mockAuditControl(page: Page) {
     if (workspaceMatch && method === 'GET') {
       return fulfillJson(route, workspaceFor(workspaceMatch[1]));
     }
+    const closureReportMatch = path.match(/\/cases\/([^/]+)\/closure-report$/u);
+    if (closureReportMatch && method === 'GET') {
+      const report = closureReports.get(closureReportMatch[1]);
+      if (!report) {
+        return route.fulfill({ status: 404, contentType: 'application/json', body: '{}' });
+      }
+      return fulfillJson(route, report);
+    }
+    if (closureReportMatch && method === 'POST') {
+      const auditCase = cases.find((item) => item.caseId === closureReportMatch[1]) ?? cases[0];
+      const report = {
+        reportId: '82000000-0000-0000-0000-000000000001',
+        caseId: auditCase.caseId,
+        caseNumber: auditCase.caseNumber,
+        reportVersion: 1,
+        contentSha256: 'd'.repeat(64),
+        generatedBy: '1',
+        generatedAt: '2026-08-10T12:30:00Z',
+        report: { schemaVersion: '1.0', investigation: workspaceFor(auditCase.caseId) },
+      };
+      closureReports.set(auditCase.caseId, report);
+      return fulfillJson(route, report);
+    }
     const noteMatch = path.match(/\/cases\/([^/]+)\/notes$/u);
     if (noteMatch && method === 'POST') {
       const payload = request.postDataJSON();
@@ -580,13 +604,28 @@ async function mockAuditControl(page: Page) {
       const update = request.postDataJSON();
       cases = cases.map((item) =>
         path.endsWith(item.caseId)
-          ? { ...item, ...update, updatedAt: '2026-08-10T12:25:00Z' }
+          ? {
+              ...item,
+              ...update,
+              closedAt: update.status === 'CLOSED' ? '2026-08-10T12:30:00Z' : null,
+              updatedAt: '2026-08-10T12:25:00Z',
+            }
           : item
       );
-      return fulfillJson(
-        route,
-        cases.find((item) => path.endsWith(item.caseId))
-      );
+      const updated = cases.find((item) => path.endsWith(item.caseId));
+      if (updated?.status === 'CLOSED') {
+        closureReports.set(updated.caseId, {
+          reportId: '82000000-0000-0000-0000-000000000001',
+          caseId: updated.caseId,
+          caseNumber: updated.caseNumber,
+          reportVersion: 1,
+          contentSha256: 'd'.repeat(64),
+          generatedBy: '1',
+          generatedAt: '2026-08-10T12:30:00Z',
+          report: { schemaVersion: '1.0', investigation: workspaceFor(updated.caseId) },
+        });
+      }
+      return fulfillJson(route, updated);
     }
     if (path.endsWith('/policy') && method === 'GET') return fulfillJson(route, currentPolicy);
     if (path.endsWith('/policy') && method === 'PUT') {
@@ -625,6 +664,7 @@ async function mockAuditControl(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockAuditSession(page);
   await mockAuditControl(page);
 });
@@ -658,6 +698,7 @@ test('auditors assess posture, inspect immutable evidence, and export a governed
   await expect(page.getByText('Role Assignment Denied', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Causal timeline', { exact: true })).toBeVisible();
   await expect(page.getByText('audit-control-e2e', { exact: true })).toBeVisible();
+  await expect(page.locator('.MuiTouchRipple-ripple')).toHaveCount(0, { timeout: 5_000 });
 
   accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(accessibility.violations).toEqual([]);
@@ -710,7 +751,9 @@ test('audit administrators investigate findings and govern retention integrity',
   await expect(page.getByText('Investigation case created.')).toBeVisible();
 
   await page.getByRole('button', { name: /Case workspace/ }).click();
-  await expect(page.getByText('Quarterly privileged role review', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Quarterly privileged role review', level: 2 })
+  ).toBeVisible();
   await expect(page.getByText('Investigation scope')).toBeVisible();
   await expect(page.getByText('Investigation journal')).toBeVisible();
 
@@ -727,6 +770,45 @@ test('audit administrators investigate findings and govern retention integrity',
   await expect(
     page.getByText('Identity owner confirmed that no approved change existed.', { exact: true })
   ).toBeVisible();
+
+  const openTasks = page.getByRole('checkbox', { name: /Complete task:/ });
+  const taskLabels = await openTasks.evaluateAll((inputs) =>
+    inputs.map((input) => input.getAttribute('aria-label') ?? '')
+  );
+  for (const label of taskLabels) {
+    const task = page.getByRole('checkbox', { name: label, exact: true });
+    if (!(await task.isChecked())) {
+      await task.click();
+      await expect(task).toBeChecked();
+    }
+  }
+  await page.getByRole('combobox', { name: 'Status' }).click();
+  await page.getByRole('option', { name: 'Closed' }).click();
+  await page
+    .getByLabel('Investigator notes or resolution')
+    .fill(
+      'No authorized business change existed. Access remained denied and evidence was preserved.'
+    );
+  await page.getByRole('button', { name: 'Update case' }).click();
+  await expect(page.getByText('Case status updated.')).toBeVisible();
+  await expect(
+    page.getByText(
+      'This closed case and its investigation artifacts are read-only. Create a follow-up case for additional work.'
+    )
+  ).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Status' })).toBeDisabled();
+  await expect(page.getByLabel('New investigation task')).toBeDisabled();
+  await expect(
+    page.getByPlaceholder('Record an observation, decision, or handoff context')
+  ).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Update case' })).toBeDisabled();
+  await expect(page.getByRole('checkbox', { name: /Complete task:/ }).first()).toBeDisabled();
+  await expect(page.getByText('Immutable snapshot v1')).toBeVisible();
+  await expect(page.getByText(`SHA-256 ${'d'.repeat(64)}`)).toBeVisible();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download closure report' }).click();
+  const closureDownload = await downloadPromise;
+  expect(closureDownload.suggestedFilename()).toBe('dwp-audit-case-1043-closure-v1.json');
 
   let accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(accessibility.violations).toEqual([]);

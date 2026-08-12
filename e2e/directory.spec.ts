@@ -111,8 +111,20 @@ test('workforce administrators explore effective organization and reporting stru
   );
 
   await page.goto('/workforce/organization');
-  await expect(page.getByRole('heading', { name: 'Organization design' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Organization design', exact: true })
+  ).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Organization design context' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Organization design needs review' })
+  ).toBeVisible();
+  await expect(page.getByText('Current workforce', { exact: true })).toBeVisible();
   await expect(page.getByLabel('SKAX organization chart workspace')).toBeVisible();
+  let geometry = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    content: document.documentElement.scrollWidth,
+  }));
+  expect(geometry.content).toBeLessThanOrEqual(geometry.viewport);
   await expect(page.getByText('2', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('AI Platform', { exact: true })).toBeVisible();
 
@@ -128,14 +140,24 @@ test('workforce administrators explore effective organization and reporting stru
   await expect(page.getByText('100,000,000')).toBeVisible();
   await closeDetails(page);
 
-  await page.getByRole('button', { name: 'Organization insights' }).click();
+  await page.getByRole('button', { name: 'Review organization insights' }).click();
+  await expect.poll(() => new URL(page.url()).searchParams.get('mode')).toBe('insights');
   await expect(page.getByText('Data quality score')).toBeVisible();
-  await expect(page.getByText('100%')).toBeVisible();
+  await expect(page.getByText('100%', { exact: true })).toBeVisible();
   await expect(page.getByText('Organization portfolio risk map')).toBeVisible();
   await expect(page.getByText('Priority action queue')).toBeVisible();
   await expect(
     page.getByRole('button', { name: /SKAX.*Review layer consolidation/ })
   ).toBeVisible();
+  await page.getByRole('button', { name: 'Data quality' }).click();
+  await expect.poll(() => new URL(page.url()).searchParams.get('insight')).toBe('quality');
+  await page.getByRole('button', { name: 'Organization health' }).click();
+  await expect.poll(() => new URL(page.url()).searchParams.get('insight')).toBeNull();
+  geometry = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    content: document.documentElement.scrollWidth,
+  }));
+  expect(geometry.content).toBeLessThanOrEqual(geometry.viewport);
   await page.getByRole('button', { name: 'Organization', exact: true }).click();
 
   await page.getByRole('button', { name: 'Reporting lines' }).click();

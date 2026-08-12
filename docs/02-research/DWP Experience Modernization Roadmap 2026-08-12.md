@@ -157,6 +157,57 @@ Grid**를 배우고, PagerDuty·Grafana·Azure Workbooks의 **운영 판단과 �
 2. Apps·Connector·Navigation Studio
 3. Account의 Simple/Structured 화면 정교화
 
+### 13.1 2026-08-12 실행 현황
+
+Wave 완료는 화면이 바뀌었다는 의미가 아니라 실제 API, 상태 계약, 연결형 행동, 반응형·접근성
+검증이 함께 존재한다는 의미로 사용한다. 외부 계약이나 장기 운영 증거가 남은 항목은 현재 구현
+가능 범위 완료와 출시 완료를 구분한다.
+
+| 실행 단위                                  | 현재 상태           | 반영된 범위                                                                                                                                                                                                                                               | 남은 출시 조건                                                                                     |
+| ------------------------------------------ | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Wave 0 공통 운영 기반                      | 기반 완료, 전환 중  | 최대 1600px 운영 Grid, Surface·Signal·Context·부분 실패 계약, URL 기간 상태, 320px Reflow와 200% Text-size·Axe 자동 Gate를 Wave 1·Workspace 대표 화면에 적용                                                                                              | 기존 45개 메뉴의 공통 패턴 전환, 실제 Browser Zoom·Screen Reader 및 CI Browser/OS 수동 증거 `D-10` |
+| Provider 운영 지휘                         | 현재 가능 범위 완료 | 고객 영향 Pulse, 우선 조치 Queue, 서비스·Reliability·테넌트 Drill-down, Freshness·부분 실패 상태                                                                                                                                                          | 장기 추세, 이상 탐지 품질, 실제 고객 규모 장애 주입                                                |
+| Provider 서비스 운영·변경 통제·테넌트 자산 | 현재 가능 범위 완료 | Service/Region 운영 신호와 SLO·Error Budget, 변경 Gate·실행 증거, URL 필터·서버 저장 View·최대 3개 테넌트 비교, Tenant 360, 정상·빈·부분 실패 검증                                                                                                        | Service Topology, 실행기 연계 자동 Rollback·고객 통지 `D-13`, 실제 고객 규모 장애 주입             |
+| Tenant API 모니터링·감사                   | 현재 가능 범위 완료 | RED/SLO, 기간·서비스 Scope, 배포·관리 변경 Annotation과 상관관계, 이상→요청 상세, 위험 Queue→조사, Note·Task·SLA, SHA-256 종료 보고서와 종료 후 Case Workspace 전체 불변성·동시성 잠금, 보조 API 장애 격리                                                | 진짜 비동기 대량 Export Worker·WORM 저장소 `D-12`, 실제 보존 규모 성능·복구 시험                   |
+| Workforce 조직 설계                        | 현재 가능 범위 완료 | 조직 Graph의 운영 개요, 시나리오 비교·검증·승인·게시, 비용/FTE 영향, 조직 Focus·Inspector·URL 복구                                                                                                                                                        | `D-04` 협업·Bulk·실행 Bridge, `D-05` 역량 영향, 실제 대규모 Graph 성능                             |
+| Workforce 인력 개요                        | 현재 가능 범위 완료 | 실제 현재·비교 스냅샷, 공석·조직 위험·품질 Signal, 우선 조치 Queue, 서버 저장 운영 View, 조직·사람·Position·HRIS·시나리오 Drill-down, Healthy Empty와 부분 실패                                                                                           | 장기 변화 시계열과 고객 HRIS 원천 계약 `D-11`, 실제 운영 규모 성능·사용성 시험                     |
+| Wave 2 개인화 Home                         | 현재 가능 범위 완료 | 실제 Work Queue로 다음 우선 업무와 열린 업무·마감·진행·대기 신호를 편집하고 앱·위젯을 뒤에 배치했다. Keyboard 진입, Healthy Empty, 국소 장애·재시도, 320px·Axe를 검증했다.                                                                                | Calendar·결재 Connector `D-08`, 고객별 역할 추천 근거·운영 사용성 시험                             |
+| Wave 2 Work·Ask·Activity                   | 현재 가능 범위 완료 | Work의 실제 KPI·URL/Saved View·낙관적 단건 및 최대 50건 원자적 상태 변경·감사, Ask의 권한 Relay·근거·정책·감사·URL 재실행·이전 요청 취소와 60초 제한, Activity의 실제 소스·상태 KPI·URL/Saved View·주체/상태 필터·사건 상세가 실제 API에 연결된다.        | 외부 업무 원천 Adapter·SLA/Compensation, 운영 Model·지식 `D-02·D-03`, 서비스별 사건 생산자 `D-07`  |
+| Wave 2 People Directory·조직도             | 현재 가능 범위 완료 | 서버 검색과 Cursor 기반 점진 로딩, 부분 실패 복구, 사람 상세와 조직도 Deep link를 연결했다. 조직도는 자동 Focus, 검색, Inspector, URL 복구·공유와 운영 개요를 제공하며 Desktop·Mobile 대표 여정을 검증했다.                                               | 실제 고객 최대 규모 성능·가상화 시험, 개인정보가 포함된 Export·Print 정책 `D-09`                   |
+| Wave 2 접근 제어·검토·프로비저닝           | 현재 가능 범위 완료 | 직접·그룹 Role의 Effective Access와 Scope·최근 로그인·활성 Session 근거, Campaign 기반 접근 검토와 불변 Assignment Snapshot·권고·회수 사유, SCIM 2.0 Users/Groups·Credential 수명주기·건강 상태·Provisioning Event를 실제 API와 감사에 연결했다.          | 실제 기업 IdP 선택·Domain/MFA·Mapping·Sandbox Reconciliation `D-01`, 운영 부하·복구 시험           |
+| Wave 2 공지·브랜딩·홈 경험 Studio          | 현재 가능 범위 완료 | 공지 상태 Pipeline·검색·Preview·복제·예약과 사용자별 View/Action 증적, Branding의 Shell·Sign-in·Email·Favicon Preview·Accent·품질 검사, Home의 Desktop/Mobile·Light/Dark·KO/EN Preview와 기본 Locale 검증, 두 Studio의 불변 Revision·Rollback을 구현했다. | 미디어 Object Storage·보존 수명주기 `D-14`, 공지 승인·긴급 채널·확인 정책 `D-15`, 실제 브랜드 승인 |
+
+Wave 1의 내부 구현 가능 범위와 Wave 2의 `Home → Work → Ask → Activity`,
+`People Directory → 조직도`, `접근 제어 → 접근 검토 → 프로비저닝`,
+`공지 → 브랜딩 → 홈 경험 Studio`는 완료했다. 여기서 완료는 외부 고객·보안·인프라 결정을
+임의로 대체했다는 뜻이 아니다. `D-01`, `D-08`~`D-15`에 등록한 외부 결정은 안전하게 닫힌
+상태로 유지하고, 결정 이후 실제 Sandbox·운영 규모·수동 접근성 증거를 추가해야 출시 완료가 된다.
+
+최종 전수 Gate는 프론트 단위 테스트 106개, 제품 Playwright 250개 중 239개 통과·상호 배타
+프로젝트 11개 제외·실패 0개, Storybook 상호작용 18개, 백엔드 Clean Gradle 47개 Task,
+Agent Pytest 44개를 통과했다. Auth Flyway V35·Platform V43·People V33·Provider V25와
+PostgreSQL·Redis·Auth·Platform·People·Provider·Agent·Gateway·Frontend의 실제 기동 및
+HTTP 200도 확인했다. 코드 계약 306개·활성 값 1,138개·바인딩 345개를 전수 대조했고,
+세션 활동 갱신과 토큰 회전의 동시 실행도 원자적 갱신으로 검증했다.
+
+### 13.2 외부 결정 체크포인트
+
+아래 항목은 내부 UI만 추가하면 거짓 완료가 되므로 `외부 결정 대기`로 체크하고, 결정 전까지
+안전하게 비활성·국소 안내 상태를 유지한다. 결정이 끝나면 ADR, API/데이터 계약, 장애·감사
+E2E를 함께 갱신해야 한다.
+
+| 결정 ID | 상태               | 차단 범위                        | 필요한 외부 결정                                                                         | 현재 안전 상태                                                                      |
+| ------- | ------------------ | -------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `D-01`  | 외부 결정 대기     | 기업 SSO·SCIM 운영 연결          | Entra/Okta 우선순위, Domain 소유 검증, MFA·복구, JIT/SCIM Mapping과 Break-glass 정책     | 표준 SCIM API·Credential·건강·Event까지만 제공하고 실제 IdP 연결은 활성화하지 않음  |
+| `D-08`  | 외부 결정 대기     | Home 일정·결재                   | Microsoft/Google 및 결재 원천 우선순위, OAuth Scope, Webhook·삭제·동기화 SLA             | 샘플 일정을 만들지 않고 Connector 필요 상태 표시                                    |
+| `D-09`  | 외부 결정 대기     | 조직도 Export·Print              | 허용 역할·필드 Masking·Watermark·만료·수신자와 다운로드 감사 정책                        | 화면 탐색·권한 유지 Deep link만 제공하고 파일 반출은 제공하지 않음                  |
+| `D-10`  | 외부 결정 대기     | 전 메뉴 출시 접근성              | CI Browser/OS 조합, NVDA·JAWS·VoiceOver 승인 절차와 증거 보관 방식                       | 320px·200% Text-size·Axe 자동 Gate 유지                                             |
+| `D-11`  | 고객 계약 대기     | Workforce 장기 추세·실행         | 고객 HRIS Mapping, Delta/Full, Reconciliation Owner, 보존 기간·SLA                       | 합성 수집의 운영 사용 차단, 현재/비교 Projection만 표시                             |
+| `D-12`  | 인프라 결정 대기   | 감사 대량 반출                   | Queue/Worker, KMS 암호화 Object Storage·WORM/만료, 분할·취소·알림·최대 행 정책           | 현재 동기 Export는 제한 행·사유·SHA-256 증거 범위로만 제공                          |
+| `D-13`  | 연동 계약 대기     | Provider 자동 Rollback·고객 통지 | 배포 실행기 Adapter, Idempotency·Compensation, 승인 Gate, 통지 채널·Template·수신자 정책 | 계획·승인·실행 원장과 통지 준수 여부만 제공하고 자동 실행하지 않음                  |
+| `D-14`  | 인프라 결정 대기   | Tenant 미디어 운영 수명주기      | Object Storage·KMS·Versioning, Malware Scan, CDN Purge, Revision 보존·삭제 기간          | Local Adapter와 불변 Revision 참조 Asset을 유지하고 자동 삭제하지 않음              |
+| `D-15`  | 거버넌스 결정 대기 | 공지 승인·다중 채널·확인 증적    | 승인 분리, 긴급 채널, 수신 확인 기준, 지역별 보존·개인정보와 실패 재처리 정책            | Tenant Admin 단일 게시와 Home View/Action 집계만 제공하고 채널 발송을 가장하지 않음 |
+
 ## 14. 완료 판정
 
 - 한 메뉴의 대표 업무를 처음부터 끝까지 수행하고 결과·감사 증거를 확인할 수 있다.

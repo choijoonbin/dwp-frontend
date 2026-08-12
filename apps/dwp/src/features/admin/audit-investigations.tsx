@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Activity,
   ArrowRight,
@@ -9,10 +9,12 @@ import {
   ChevronRight,
   Circle,
   Database,
+  Download,
   FileCheck2,
   FolderKanban,
   FolderPlus,
   ListChecks,
+  LockKeyhole,
   MessageSquarePlus,
   Network,
   RefreshCw,
@@ -27,6 +29,8 @@ import {
   addAuditCaseNote,
   createAuditCase,
   createAuditCaseTask,
+  ensureAuditCaseClosureReport,
+  getAuditCaseClosureReport,
   getAuditCaseWorkspace,
   getAuditFindingContext,
   listAuditCases,
@@ -38,6 +42,7 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import { ActionButton } from '@dwp-frontend/design-system';
 
 import { alpha } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
@@ -68,6 +73,7 @@ import { severityColor } from './audit-ui';
 import type {
   AuditCase,
   AuditCaseActivity,
+  AuditCaseClosureReport,
   AuditCaseEntity,
   AuditCaseTask,
   AuditCaseWorkspace,
@@ -77,6 +83,29 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 type View = 'findings' | 'cases';
+
+function downloadClosureReport(report: AuditCaseClosureReport) {
+  const content = JSON.stringify(
+    {
+      reportId: report.reportId,
+      caseId: report.caseId,
+      caseNumber: report.caseNumber,
+      reportVersion: report.reportVersion,
+      contentSha256: report.contentSha256,
+      generatedBy: report.generatedBy,
+      generatedAt: report.generatedAt,
+      report: report.report,
+    },
+    null,
+    2
+  );
+  const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `dwp-audit-case-${report.caseNumber}-closure-v${report.reportVersion}.json`;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
 
 const FINDING_STATES: AuditFinding['status'][] = [
   'OPEN',
@@ -731,6 +760,9 @@ function FindingActionRail({
   const [caseId, setCaseId] = useState(finding.caseId ?? '');
   const [assignedTo, setAssignedTo] = useState(finding.assignedTo ?? '');
   const [resolution, setResolution] = useState(finding.resolution ?? '');
+  const linkedCaseClosed = cases.some(
+    (item) => item.caseId === finding.caseId && item.status === 'CLOSED'
+  );
 
   useEffect(() => {
     setStatus(finding.status);
@@ -761,11 +793,30 @@ function FindingActionRail({
         title={t('auditControl.investigations.triageDecision')}
       />
       <Stack gap={1.5}>
+        {linkedCaseClosed && (
+          <Stack
+            direction="row"
+            gap={1}
+            sx={(theme) => ({
+              p: 1.25,
+              border: '1px solid',
+              borderColor: alpha(theme.palette.info.main, 0.35),
+              borderRadius: 1,
+              bgcolor: alpha(theme.palette.info.main, 0.06),
+            })}
+          >
+            <LockKeyhole size={16} style={{ flex: '0 0 auto', marginTop: 2 }} />
+            <Typography variant="caption" color="text.secondary">
+              {t('auditControl.investigations.closedCaseImmutable')}
+            </Typography>
+          </Stack>
+        )}
         <TextField
           select
           size="small"
           label={t('auditControl.investigations.status')}
           value={status}
+          disabled={linkedCaseClosed}
           onChange={(event) => setStatus(event.target.value as AuditFinding['status'])}
         >
           {FINDING_STATES.map((item) => (
@@ -778,6 +829,7 @@ function FindingActionRail({
           size="small"
           label={t('auditControl.investigations.owner')}
           value={assignedTo}
+          disabled={linkedCaseClosed}
           onChange={(event) => setAssignedTo(event.target.value)}
           placeholder={t('auditControl.investigations.unassigned')}
         />
@@ -785,6 +837,7 @@ function FindingActionRail({
           size="small"
           variant="text"
           sx={{ alignSelf: 'flex-start' }}
+          disabled={linkedCaseClosed}
           onClick={() => setAssignedTo(auth.user?.userId ? String(auth.user.userId) : '')}
         >
           {t('auditControl.investigations.assignToMe')}
@@ -794,12 +847,14 @@ function FindingActionRail({
           size="small"
           label={t('auditControl.investigations.linkCase')}
           value={caseId}
+          disabled={linkedCaseClosed}
           onChange={(event) => setCaseId(event.target.value)}
         >
           <MenuItem value="">{t('auditControl.investigations.noCase')}</MenuItem>
           {cases.map((item) => (
-            <MenuItem key={item.caseId} value={item.caseId}>
+            <MenuItem key={item.caseId} value={item.caseId} disabled={item.status === 'CLOSED'}>
               #{item.caseNumber} {item.title}
+              {item.status === 'CLOSED' ? ` · ${t('auditControl.caseStatus.CLOSED')}` : ''}
             </MenuItem>
           ))}
         </TextField>
@@ -808,12 +863,13 @@ function FindingActionRail({
           minRows={3}
           label={t('auditControl.investigations.assessment')}
           value={resolution}
+          disabled={linkedCaseClosed}
           onChange={(event) => setResolution(event.target.value)}
         />
         <Button
           variant="contained"
           startIcon={<Check size={17} />}
-          disabled={mutation.isPending}
+          disabled={linkedCaseClosed || mutation.isPending}
           onClick={() => mutation.mutate()}
         >
           {t('auditControl.investigations.saveDecision')}
@@ -862,7 +918,9 @@ function CaseActionRail({
   const { t } = useTranslation('admin');
   const auth = useAuth();
   const toast = useToast();
+  const queryClient = useQueryClient();
   const item = workspace.auditCase;
+  const caseClosed = item.status === 'CLOSED';
   const [status, setStatus] = useState<AuditCase['status']>(item.status);
   const [owner, setOwner] = useState(item.ownerActorId ?? '');
   const [resolution, setResolution] = useState(item.resolution ?? '');
@@ -876,6 +934,22 @@ function CaseActionRail({
     setResolution(item.resolution ?? '');
   }, [item]);
 
+  const closureReportQuery = useQuery({
+    queryKey: ['audit-control', 'case-closure-report', item.caseId],
+    queryFn: () => getAuditCaseClosureReport(item.caseId),
+    enabled: item.status === 'CLOSED',
+    retry: false,
+  });
+  const closureReportMutation = useMutation({
+    mutationFn: () => ensureAuditCaseClosureReport(item.caseId),
+    onSuccess: (report) => {
+      queryClient.setQueryData(['audit-control', 'case-closure-report', item.caseId], report);
+      toast.success(t('auditControl.investigations.closureReportGenerated'));
+      downloadClosureReport(report);
+    },
+    onError: () => toast.error(t('common.operationError')),
+  });
+
   const updateMutation = useMutation({
     mutationFn: () =>
       updateAuditCase(item.caseId, {
@@ -884,13 +958,14 @@ function CaseActionRail({
         severity: item.severity,
         status,
         ownerActorId: owner || undefined,
-        resolution:
-          resolution ||
-          (status === 'CLOSED' ? t('auditControl.investigations.closedResolution') : undefined),
+        resolution: resolution || undefined,
       }),
     onSuccess: async () => {
       toast.success(t('auditControl.investigations.caseUpdated'));
       await onSaved();
+      await queryClient.invalidateQueries({
+        queryKey: ['audit-control', 'case-closure-report', item.caseId],
+      });
     },
     onError: () => toast.error(t('common.operationError')),
   });
@@ -930,11 +1005,30 @@ function CaseActionRail({
     <Box sx={{ p: 2, position: { xl: 'sticky' }, top: { xl: 0 } }}>
       <SectionHeading icon={FolderKanban} title={t('auditControl.investigations.caseControl')} />
       <Stack gap={1.5}>
+        {caseClosed && (
+          <Stack
+            direction="row"
+            gap={1}
+            sx={(theme) => ({
+              p: 1.25,
+              border: '1px solid',
+              borderColor: alpha(theme.palette.info.main, 0.35),
+              borderRadius: 1,
+              bgcolor: alpha(theme.palette.info.main, 0.06),
+            })}
+          >
+            <LockKeyhole size={16} style={{ flex: '0 0 auto', marginTop: 2 }} />
+            <Typography variant="caption" color="text.secondary">
+              {t('auditControl.investigations.closedCaseImmutable')}
+            </Typography>
+          </Stack>
+        )}
         <TextField
           select
           size="small"
           label={t('auditControl.investigations.status')}
           value={status}
+          disabled={caseClosed}
           onChange={(event) => setStatus(event.target.value as AuditCase['status'])}
         >
           {CASE_STATES.map((state) => (
@@ -947,6 +1041,7 @@ function CaseActionRail({
           size="small"
           label={t('auditControl.investigations.owner')}
           value={owner}
+          disabled={caseClosed}
           onChange={(event) => setOwner(event.target.value)}
         />
         <TextField
@@ -954,17 +1049,90 @@ function CaseActionRail({
           minRows={3}
           label={t('auditControl.investigations.resolution')}
           value={resolution}
+          disabled={caseClosed}
           onChange={(event) => setResolution(event.target.value)}
         />
         <Button
           variant="contained"
           startIcon={<Check size={17} />}
-          disabled={updateMutation.isPending}
+          disabled={
+            caseClosed ||
+            updateMutation.isPending ||
+            (status === 'CLOSED' && (!resolution.trim() || workspace.summary.openTasks > 0))
+          }
           onClick={() => updateMutation.mutate()}
         >
           {t('auditControl.investigations.updateCase')}
         </Button>
+        {status === 'CLOSED' && !resolution.trim() && (
+          <Typography variant="caption" color="error.main">
+            {t('auditControl.investigations.closureResolutionRequired')}
+          </Typography>
+        )}
+        {status === 'CLOSED' && workspace.summary.openTasks > 0 && (
+          <Typography variant="caption" color="error.main">
+            {t('auditControl.investigations.closureTasksRequired', {
+              count: workspace.summary.openTasks,
+            })}
+          </Typography>
+        )}
       </Stack>
+
+      {item.status === 'CLOSED' && (
+        <>
+          <Divider sx={{ my: 2.5 }} />
+          <SectionHeading
+            icon={FileCheck2}
+            title={t('auditControl.investigations.closureReport')}
+            detail={
+              closureReportQuery.data
+                ? t('auditControl.investigations.closureReportVersion', {
+                    version: closureReportQuery.data.reportVersion,
+                  })
+                : t('auditControl.investigations.closureReportDescription')
+            }
+          />
+          {closureReportQuery.data ? (
+            <Stack gap={1}>
+              <Typography variant="caption" color="text.secondary">
+                {t('auditControl.investigations.closureReportGeneratedAt', {
+                  date: formatDate(closureReportQuery.data.generatedAt, {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  }),
+                })}
+              </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                title={closureReportQuery.data.contentSha256}
+                sx={{ fontFamily: 'monospace', overflowWrap: 'anywhere' }}
+              >
+                {t('auditControl.investigations.closureReportHash', {
+                  hash: closureReportQuery.data.contentSha256,
+                })}
+              </Typography>
+              <ActionButton
+                intent="secondary"
+                startIcon={<Download size={17} />}
+                onClick={() => downloadClosureReport(closureReportQuery.data!)}
+              >
+                {t('auditControl.investigations.downloadClosureReport')}
+              </ActionButton>
+            </Stack>
+          ) : (
+            <ActionButton
+              intent="secondary"
+              startIcon={<FileCheck2 size={17} />}
+              loading={closureReportQuery.isLoading || closureReportMutation.isPending}
+              loadingLabel={t('auditControl.investigations.generateClosureReport')}
+              onClick={() => closureReportMutation.mutate()}
+            >
+              {t('auditControl.investigations.generateClosureReport')}
+            </ActionButton>
+          )}
+        </>
+      )}
 
       <Divider sx={{ my: 2.5 }} />
       <SectionHeading
@@ -993,6 +1161,7 @@ function CaseActionRail({
             <Checkbox
               size="small"
               checked={task.status === 'DONE'}
+              disabled={caseClosed || taskStatusMutation.isPending}
               onChange={() => taskStatusMutation.mutate(task)}
               inputProps={{
                 'aria-label': `${t('auditControl.investigations.completeTask')}: ${task.title}`,
@@ -1022,6 +1191,7 @@ function CaseActionRail({
           size="small"
           label={t('auditControl.investigations.taskTitle')}
           value={taskTitle}
+          disabled={caseClosed}
           onChange={(event) => setTaskTitle(event.target.value)}
         />
         <TextField
@@ -1029,6 +1199,7 @@ function CaseActionRail({
           size="small"
           label={t('auditControl.investigations.priority')}
           value={taskPriority}
+          disabled={caseClosed}
           onChange={(event) => setTaskPriority(event.target.value as AuditCaseTask['priority'])}
         >
           {PRIORITIES.map((priority) => (
@@ -1040,7 +1211,7 @@ function CaseActionRail({
         <Button
           size="small"
           variant="outlined"
-          disabled={!taskTitle.trim() || taskMutation.isPending}
+          disabled={caseClosed || !taskTitle.trim() || taskMutation.isPending}
           onClick={() => taskMutation.mutate()}
         >
           {t('auditControl.investigations.addTask')}
@@ -1058,13 +1229,14 @@ function CaseActionRail({
         minRows={3}
         placeholder={t('auditControl.investigations.notePlaceholder')}
         value={note}
+        disabled={caseClosed}
         onChange={(event) => setNote(event.target.value)}
       />
       <Button
         fullWidth
         variant="outlined"
         sx={{ mt: 1 }}
-        disabled={!note.trim() || noteMutation.isPending}
+        disabled={caseClosed || !note.trim() || noteMutation.isPending}
         onClick={() => noteMutation.mutate()}
       >
         {t('auditControl.investigations.addNote')}
@@ -1078,11 +1250,59 @@ export function AuditInvestigations() {
   const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [view, setView] = useState<View>('findings');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const view: View = searchParams.get('view') === 'cases' ? 'cases' : 'findings';
+  const selectedFindingId = searchParams.get('finding') ?? '';
+  const selectedCaseId = searchParams.get('case') ?? '';
+  const setView = useCallback(
+    (nextView: View) => {
+      setSearchParams(
+        (current) => {
+          const next = new URLSearchParams(current);
+          if (nextView === 'findings') next.delete('view');
+          else next.set('view', nextView);
+          if (nextView === 'findings') next.delete('case');
+          else next.delete('finding');
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
+  const setSelectedFindingId = useCallback(
+    (findingId: string) => {
+      setSearchParams(
+        (current) => {
+          const next = new URLSearchParams(current);
+          if (findingId) next.set('finding', findingId);
+          else next.delete('finding');
+          next.delete('case');
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
+  const setSelectedCaseId = useCallback(
+    (caseId: string) => {
+      setSearchParams(
+        (current) => {
+          const next = new URLSearchParams(current);
+          if (caseId) next.set('case', caseId);
+          else next.delete('case');
+          next.set('view', 'cases');
+          next.delete('finding');
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
   const [status, setStatus] = useState('ALL');
   const [search, setSearch] = useState('');
-  const [selectedFindingId, setSelectedFindingId] = useState('');
-  const [selectedCaseId, setSelectedCaseId] = useState('');
   const [createOpen, setCreateOpen] = useState(false);
   const [caseTitle, setCaseTitle] = useState('');
   const [caseDescription, setCaseDescription] = useState('');
@@ -1134,14 +1354,14 @@ export function AuditInvestigations() {
         setSelectedFindingId(filteredFindings[0].findingId);
       }
     }
-  }, [filteredFindings, selectedFindingId, view]);
+  }, [filteredFindings, selectedFindingId, setSelectedFindingId, view]);
   useEffect(() => {
     if (view === 'cases' && filteredCases.length) {
       if (!filteredCases.some((item) => item.caseId === selectedCaseId)) {
         setSelectedCaseId(filteredCases[0].caseId);
       }
     }
-  }, [filteredCases, selectedCaseId, view]);
+  }, [filteredCases, selectedCaseId, setSelectedCaseId, view]);
 
   const refresh = async () => {
     await Promise.all([
@@ -1178,10 +1398,13 @@ export function AuditInvestigations() {
       setCreateOpen(false);
       setCaseTitle('');
       setCaseDescription('');
-      setView('cases');
+      await refresh();
+      queryClient.setQueryData<AuditCase[]>(['audit-control', 'cases'], (current = []) => [
+        created,
+        ...current.filter((item) => item.caseId !== created.caseId),
+      ]);
       setSelectedCaseId(created.caseId);
       toast.success(t('auditControl.investigations.caseCreated'));
-      await refresh();
     },
     onError: () => toast.error(t('common.operationError')),
   });

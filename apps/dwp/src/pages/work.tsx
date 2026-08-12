@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import {
   ActionButton,
+  ConfirmDialog,
   EnterpriseDataGrid,
   EmptyState,
   FilterBar,
@@ -27,6 +28,7 @@ import {
 import {
   getWorkspaceWorkQueue,
   updateWorkspaceWorkStatus,
+  updateWorkspaceWorkStatuses,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
@@ -42,7 +44,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { SectionHeading } from '../features/work-hub/workspace-ui';
 import { GovernedSavedViewControl } from '../features/saved-views/governed-saved-view-control';
 
-import type { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import type {
   WorkspacePriority as Priority,
   WorkspaceWorkItem,
@@ -66,6 +68,7 @@ const priorityColor: Record<Priority, 'error' | 'warning' | 'default'> = {
 };
 
 const WORK_FILTERS: WorkFilter[] = ['all', 'due-soon', 'in-progress', 'waiting', 'completed'];
+const MAX_BATCH_SIZE = 50;
 
 function isWorkFilter(value: string | null): value is WorkFilter {
   return Boolean(value && WORK_FILTERS.includes(value as WorkFilter));
@@ -81,6 +84,11 @@ export default function WorkPage() {
   const filter: WorkFilter = isWorkFilter(filterParam) ? filterParam : 'all';
   const query = searchParams.get('q') ?? '';
   const columnPreset = searchParams.get('columns') === 'compact' ? 'compact' : 'operational';
+  const [batchSelection, setBatchSelection] = useState<GridRowSelectionModel>({
+    type: 'include',
+    ids: new Set(),
+  });
+  const [batchTarget, setBatchTarget] = useState<'IN_PROGRESS' | 'COMPLETED' | null>(null);
   const showQueueDetailColumns = useMediaQuery('(min-width:600px)');
   const showSourceColumn = useMediaQuery('(min-width:1600px)');
   const queueQuery = useQuery({
@@ -120,10 +128,39 @@ export default function WorkPage() {
     });
   }, [filter, items, query]);
   const selected = items.find((item) => item.id === selectedId) || filteredItems[0];
+  const selectedBatchItems = useMemo(() => {
+    const selectedIds = batchSelection.ids;
+    return items.filter((item) =>
+      batchSelection.type === 'include' ? selectedIds.has(item.id) : !selectedIds.has(item.id)
+    );
+  }, [batchSelection, items]);
+  const batchLimitExceeded = selectedBatchItems.length > MAX_BATCH_SIZE;
   const columns = useMemo<GridColDef<WorkRow>[]>(
     () => [
       { field: 'id', headerName: t('workPage.columns.id'), width: 112 },
-      { field: 'title', headerName: t('workPage.columns.work'), minWidth: 200, flex: 1 },
+      {
+        field: 'title',
+        headerName: t('workPage.columns.work'),
+        minWidth: 200,
+        flex: 1,
+        renderCell: ({ row }) =>
+          showQueueDetailColumns ? (
+            row.title
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minWidth: 0, width: 1 }}>
+              <Typography component="span" variant="body2" noWrap sx={{ minWidth: 0, flex: 1 }}>
+                {row.title}
+              </Typography>
+              <Chip
+                label={t(`labels.status.${row.status}`)}
+                color={statusColor[row.status]}
+                size="small"
+                variant="outlined"
+                sx={{ height: 22, flexShrink: 0, '& .MuiChip-label': { px: 0.75 } }}
+              />
+            </Box>
+          ),
+      },
       {
         field: 'priority',
         headerName: t('workPage.columns.priority'),
@@ -159,7 +196,7 @@ export default function WorkPage() {
       { field: 'due', headerName: t('workPage.columns.due'), width: 128 },
       { field: 'sourceSystem', headerName: t('workPage.columns.source'), width: 120 },
     ],
-    [t]
+    [showQueueDetailColumns, t]
   );
 
   const statusMutation = useMutation({
@@ -185,6 +222,36 @@ export default function WorkPage() {
       toast.success(t('workPage.statusUpdated', { title: updated.title }));
     },
     onError: () => toast.error(t('workPage.statusUpdateError')),
+  });
+
+  const batchStatusMutation = useMutation({
+    mutationFn: (status: 'IN_PROGRESS' | 'COMPLETED') =>
+      updateWorkspaceWorkStatuses(
+        selectedBatchItems.map(({ workItemId, version }) => ({ workItemId, version })),
+        status
+      ),
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(
+        ['workspace', 'work-queue'],
+        (current: Awaited<ReturnType<typeof getWorkspaceWorkQueue>> | undefined) =>
+          current
+            ? {
+                ...current,
+                items: current.items.map(
+                  (item) => updated.find((result) => result.workItemId === item.workItemId) ?? item
+                ),
+              }
+            : current
+      );
+      setBatchSelection({ type: 'include', ids: new Set() });
+      setBatchTarget(null);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['workspace', 'work-queue'] }),
+        queryClient.invalidateQueries({ queryKey: ['workspace', 'activity'] }),
+      ]);
+      toast.success(t('workPage.batch.updated', { count: updated.length }));
+    },
+    onError: () => toast.error(t('workPage.batch.updateError')),
   });
 
   const selectFilter = (value: WorkFilter) => {
@@ -258,6 +325,11 @@ export default function WorkPage() {
     progress: queueQuery.data?.summary.inProgress ?? 0,
     waiting: queueQuery.data?.summary.waiting ?? 0,
   };
+  const sourceCount = new Set(items.map((item) => item.sourceSystem)).size;
+  const nextDeadline = items
+    .filter((item) => item.status === 'due-soon' && item.dueAt)
+    .map((item) => item.dueAt as string)
+    .sort()[0];
 
   return (
     <PageCanvas>
@@ -271,14 +343,18 @@ export default function WorkPage() {
               key: 'all',
               value: String(summaryValues.all).padStart(2, '0'),
               label: t('workPage.summary.all.label'),
-              detail: t('workPage.summary.all.detail'),
+              detail: t('workPage.summary.all.detail', { count: sourceCount }),
               onSelect: () => selectFilter('all'),
             },
             {
               key: 'due',
               value: String(summaryValues.due).padStart(2, '0'),
               label: t('workPage.summary.due.label'),
-              detail: t('workPage.summary.due.detail'),
+              detail: nextDeadline
+                ? t('workPage.summary.due.detail', {
+                    date: formatDate(nextDeadline, { dateStyle: 'medium', timeStyle: 'short' }),
+                  })
+                : t('workPage.summary.due.clearDetail'),
               tone: 'critical',
               onSelect: () => selectFilter('due-soon'),
             },
@@ -286,7 +362,7 @@ export default function WorkPage() {
               key: 'progress',
               value: String(summaryValues.progress).padStart(2, '0'),
               label: t('workPage.summary.progress.label'),
-              detail: t('workPage.summary.progress.detail'),
+              detail: t('workPage.summary.progress.detail', { count: summaryValues.progress }),
               tone: 'info',
               onSelect: () => selectFilter('in-progress'),
             },
@@ -294,7 +370,7 @@ export default function WorkPage() {
               key: 'waiting',
               value: String(summaryValues.waiting).padStart(2, '0'),
               label: t('workPage.summary.waiting.label'),
-              detail: t('workPage.summary.waiting.detail'),
+              detail: t('workPage.summary.waiting.detail', { count: summaryValues.waiting }),
               tone: 'warning',
               onSelect: () => selectFilter('waiting'),
             },
@@ -405,15 +481,16 @@ export default function WorkPage() {
                 replace: true,
               })
             }
+            checkboxSelection
+            rowSelectionModel={batchSelection}
+            onRowSelectionModelChange={setBatchSelection}
+            isRowSelectable={({ row }) => row.status !== 'completed'}
             columnVisibilityModel={{
               priority: columnPreset === 'operational' && showQueueDetailColumns,
               status: showQueueDetailColumns,
               due: showQueueDetailColumns,
               sourceSystem: columnPreset === 'operational' && showSourceColumn,
             }}
-            rowSelectionModel={
-              selected ? { type: 'include', ids: new Set([selected.id]) } : undefined
-            }
             height={520}
             hideFooter={filteredItems.length <= 25}
             stickyColumns={{ left: ['id'] }}
@@ -438,6 +515,34 @@ export default function WorkPage() {
               onRefresh: () => void queueQuery.refetch(),
               refreshLabel: t('workPage.retry'),
               refreshing: queueQuery.isFetching,
+              selectedCountLabel: (count) =>
+                count > MAX_BATCH_SIZE
+                  ? t('workPage.batch.limitExceeded', { count, max: MAX_BATCH_SIZE })
+                  : t('workPage.batch.selected', { count }),
+              bulkActions: (
+                <>
+                  <ActionButton
+                    intent="quiet"
+                    size="small"
+                    disabled={
+                      batchStatusMutation.isPending ||
+                      batchLimitExceeded ||
+                      selectedBatchItems.some((item) => item.status === 'completed')
+                    }
+                    onClick={() => setBatchTarget('IN_PROGRESS')}
+                  >
+                    {t('workPage.batch.start')}
+                  </ActionButton>
+                  <ActionButton
+                    intent="quiet"
+                    size="small"
+                    disabled={batchStatusMutation.isPending || batchLimitExceeded}
+                    onClick={() => setBatchTarget('COMPLETED')}
+                  >
+                    {t('workPage.batch.complete')}
+                  </ActionButton>
+                </>
+              ),
             }}
           />
         </Box>
@@ -590,6 +695,29 @@ export default function WorkPage() {
           </Box>
         )}
       </Box>
+      <ConfirmDialog
+        open={batchTarget !== null}
+        title={t(
+          batchTarget === 'COMPLETED' ? 'workPage.batch.completeTitle' : 'workPage.batch.startTitle'
+        )}
+        description={t(
+          batchTarget === 'COMPLETED'
+            ? 'workPage.batch.completeDescription'
+            : 'workPage.batch.startDescription',
+          { count: selectedBatchItems.length }
+        )}
+        cancelLabel={t('common:actions.cancel')}
+        confirmLabel={t(
+          batchTarget === 'COMPLETED' ? 'workPage.batch.complete' : 'workPage.batch.start'
+        )}
+        confirmingLabel={t('workPage.batch.updating')}
+        busy={batchStatusMutation.isPending}
+        onClose={() => setBatchTarget(null)}
+        onConfirm={() => {
+          if (!batchTarget) return;
+          batchStatusMutation.mutate(batchTarget);
+        }}
+      />
     </PageCanvas>
   );
 }

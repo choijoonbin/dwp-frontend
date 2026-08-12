@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { keyframes } from '@emotion/react';
 import {
@@ -74,6 +74,7 @@ const LAUNCHPAD_GRID_HEIGHT =
   LAUNCHPAD_TILE_HEIGHT * LAUNCHPAD_VISIBLE_ROWS +
   LAUNCHPAD_ROW_GAP * (LAUNCHPAD_VISIBLE_ROWS - 1);
 const LAUNCHPAD_GROUP_MIN_HEIGHT = LAUNCHPAD_GRID_HEIGHT + 82;
+const FOLDER_POINTER_ACTION_DELAY_MS = 75;
 
 function launchpadLabelFontSize(label: string) {
   return label.length > 8 ? '0.625rem' : '0.6875rem';
@@ -200,7 +201,18 @@ const launchpadCollisionDetection: CollisionDetection = (args) => {
   const groupTarget = pointerCollisions.find((collision) =>
     String(collision.id).startsWith(GROUP_TARGET_PREFIX)
   );
-  return groupTarget ? [groupTarget] : closestCenter(args);
+  if (groupTarget) {
+    const nearestItem = closestCenter(args).find((collision) => {
+      const id = String(collision.id);
+      return (
+        id !== String(args.active.id) &&
+        !id.startsWith(GROUP_TARGET_PREFIX) &&
+        !id.startsWith(FOLDER_TARGET_PREFIX)
+      );
+    });
+    return nearestItem ? [nearestItem] : [groupTarget];
+  }
+  return closestCenter(args);
 };
 
 type LaunchpadGroupListProps = {
@@ -322,7 +334,8 @@ function SortableItemShell({
   } = useSortable({ id: itemId, data: { groupId }, disabled: dragDisabled });
   const target = useDroppable({
     id: folderTargetId(itemId),
-    disabled: dragDisabled || !activeId || activeId === itemId || !canReceiveApp,
+    // Keep targets registered before drag start so dnd-kit can measure them for pointer drops.
+    disabled: dragDisabled || Boolean(activeId && (activeId === itemId || !canReceiveApp)),
     data: { groupId, itemId, type: 'folder-target' },
   });
 
@@ -693,11 +706,22 @@ export function AppLaunchpad({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [keyboardDragging, setKeyboardDragging] = useState(false);
   const [pendingFolderCreation, setPendingFolderCreation] = useState<PendingFolderCreation>(null);
+  const [folderPointerActionReady, setFolderPointerActionReady] = useState(false);
   const [openFolderId, setOpenFolderId] = useState<string | null>(null);
   const [renameFolderId, setRenameFolderId] = useState<string | null>(null);
   const [folderName, setFolderName] = useState('');
   const suppressLaunch = useRef(false);
   const launchSuppressionTimer = useRef<number | null>(null);
+  const folderPointerActionTimer = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (folderPointerActionTimer.current !== null) {
+        window.clearTimeout(folderPointerActionTimer.current);
+      }
+    },
+    []
+  );
 
   const appById = useMemo(() => new Map(apps.map((app) => [app.id, app])), [apps]);
   const localizedGroups = useMemo(() => localizeHomeAppGroups(t), [t]);
@@ -748,6 +772,30 @@ export function AppLaunchpad({
     }, LAUNCHPAD_POST_DRAG_CLICK_GUARD_MS);
   };
 
+  const prepareFolderCreation = (creation: NonNullable<PendingFolderCreation>, name: string) => {
+    setFolderName(name);
+    setFolderPointerActionReady(false);
+    setPendingFolderCreation(creation);
+    if (folderPointerActionTimer.current !== null) {
+      window.clearTimeout(folderPointerActionTimer.current);
+    }
+    // dnd-kit retains a document click guard for 50ms after a pointer drag ends.
+    folderPointerActionTimer.current = window.setTimeout(() => {
+      setFolderPointerActionReady(true);
+      folderPointerActionTimer.current = null;
+    }, FOLDER_POINTER_ACTION_DELAY_MS);
+  };
+
+  const closeFolderCreation = () => {
+    if (folderPointerActionTimer.current !== null) {
+      window.clearTimeout(folderPointerActionTimer.current);
+      folderPointerActionTimer.current = null;
+    }
+    setPendingFolderCreation(null);
+    setFolderName('');
+    setFolderPointerActionReady(false);
+  };
+
   const handleDragStart = ({ active, activatorEvent }: DragStartEvent) => {
     if (launchSuppressionTimer.current !== null) {
       window.clearTimeout(launchSuppressionTimer.current);
@@ -789,18 +837,37 @@ export function AppLaunchpad({
       const targetApp = appById.get(folderTarget);
       if (appById.has(draggedId) && targetApp) {
         const groupName = groupById.get(targetGroupId)?.name ?? t('launchpad.fallbackApp');
-        setFolderName(t('launchpad.groupFolder', { group: groupName }));
-        setPendingFolderCreation({
-          groupId: targetGroupId,
-          firstAppId: draggedId,
-          secondAppId: folderTarget,
-          folderId: `folder-${crypto.randomUUID()}`,
-        });
+        prepareFolderCreation(
+          {
+            groupId: targetGroupId,
+            firstAppId: draggedId,
+            secondAppId: folderTarget,
+            folderId: `folder-${crypto.randomUUID()}`,
+          },
+          t('launchpad.groupFolder', { group: groupName })
+        );
         return;
       }
 
       onLayoutChange(
         moveLaunchpadItemToGroup(layout, sourceGroupId, targetGroupId, draggedId, folderTarget)
+      );
+      return;
+    }
+
+    const directTargetApp = appById.get(overId);
+    if (!keyboardDragging && draggedId !== overId && appById.has(draggedId) && directTargetApp) {
+      const targetGroupId = findGroupId(overId);
+      if (!targetGroupId) return;
+      const groupName = groupById.get(targetGroupId)?.name ?? t('launchpad.fallbackApp');
+      prepareFolderCreation(
+        {
+          groupId: targetGroupId,
+          firstAppId: draggedId,
+          secondAppId: overId,
+          folderId: `folder-${crypto.randomUUID()}`,
+        },
+        t('launchpad.groupFolder', { group: groupName })
       );
       return;
     }
@@ -814,18 +881,16 @@ export function AppLaunchpad({
 
   const handleCreateFolder = () => {
     if (!pendingFolderCreation || !folderName.trim()) return;
-    onLayoutChange(
-      createLaunchpadFolder(
-        layout,
-        pendingFolderCreation.groupId,
-        pendingFolderCreation.firstAppId,
-        pendingFolderCreation.secondAppId,
-        pendingFolderCreation.folderId,
-        folderName
-      )
+    const nextLayout = createLaunchpadFolder(
+      layout,
+      pendingFolderCreation.groupId,
+      pendingFolderCreation.firstAppId,
+      pendingFolderCreation.secondAppId,
+      pendingFolderCreation.folderId,
+      folderName
     );
-    setPendingFolderCreation(null);
-    setFolderName('');
+    onLayoutChange(nextLayout);
+    closeFolderCreation();
   };
 
   const openRenameDialog = (folder: LaunchpadFolder) => {
@@ -1234,10 +1299,7 @@ export function AppLaunchpad({
 
       <Dialog
         open={Boolean(pendingFolderCreation)}
-        onClose={() => {
-          setPendingFolderCreation(null);
-          setFolderName('');
-        }}
+        onClose={closeFolderCreation}
         fullWidth
         maxWidth="xs"
       >
@@ -1257,15 +1319,12 @@ export function AppLaunchpad({
           />
         </DialogContent>
         <DialogActions>
+          <Button onClick={closeFolderCreation}>{t('actions.cancel', { ns: 'common' })}</Button>
           <Button
-            onClick={() => {
-              setPendingFolderCreation(null);
-              setFolderName('');
-            }}
+            variant="contained"
+            disabled={!folderName.trim() || !folderPointerActionReady}
+            onClick={handleCreateFolder}
           >
-            {t('actions.cancel', { ns: 'common' })}
-          </Button>
-          <Button variant="contained" disabled={!folderName.trim()} onClick={handleCreateFolder}>
             {t('actions.create', { ns: 'common' })}
           </Button>
         </DialogActions>

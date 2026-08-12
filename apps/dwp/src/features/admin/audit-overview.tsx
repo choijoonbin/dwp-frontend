@@ -469,7 +469,11 @@ export function AuditOverview() {
                 component="button"
                 type="button"
                 key={finding.findingId}
-                onClick={() => navigate('/admin/governance/audit-investigations')}
+                onClick={() =>
+                  navigate(
+                    `/admin/governance/audit-investigations?finding=${encodeURIComponent(finding.findingId)}`
+                  )
+                }
                 sx={(theme) => ({
                   display: 'grid',
                   gridTemplateColumns: 'minmax(0, 1fr) auto',

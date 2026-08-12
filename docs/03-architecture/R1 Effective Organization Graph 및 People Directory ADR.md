@@ -2,7 +2,7 @@
 
 > 상태: Accepted and Implemented Local Baseline v3.0
 >
-> 기준일: 2026-08-11
+> 기준일: 2026-08-12
 >
 > 적용 저장소: `dwp-backend`, `dwp-frontend`
 
@@ -53,7 +53,9 @@ Workleap의 자동 갱신·공석·매트릭스 표현을 공통 기준으로 �
 4. 조직·사람·이메일·직책 검색 결과로 Canvas가 이동한다.
 5. 주 보고선과 매트릭스 관계는 색·선형·범례를 함께 달리해 색만으로 구분하지 않는다.
 6. 선택 상세는 Desktop Side Inspector, Mobile Bottom Drawer로 제공한다.
-7. 구성원 디렉터리는 조직·직급·근무지·재직상태·시스템 역할을 교차 필터링한다.
+7. 구성원 디렉터리는 조직·직급·근무지·재직상태·시스템 역할을 교차 필터링한다. 검색은
+   Tenant·Query·상태·기준일 Fingerprint에 결속된 서명 Cursor로 점진 로딩하며 만료·변조된
+   Cursor는 Fail-closed한다.
 8. Span, Layer, 공석, FTE, 인건비, 외부인력과 데이터 품질을 분석 Lens로 제공한다.
 9. Scenario는 Drag-to-draft, 직위 이동·신설·종료, 전후 Preview, 독립 승인, 게시와 CSV
    Evidence Export를 제공한다.
@@ -100,16 +102,16 @@ erDiagram
 
 ## 4. 제품별 API 계약
 
-| Surface   | API                                                      | 계약                                            |
-| --------- | -------------------------------------------------------- | ----------------------------------------------- |
-| People    | `GET /api/people/v1/people`                              | 활성 구성원 검색, Worker ID·직급·발령 이력 제외 |
-| People    | `GET /api/people/v1/org-chart`                           | 사람·보고 관계 중심의 읽기 전용 Directory Graph |
-| Workforce | `GET /api/people/v1/workforce/people`                    | HR 운영용 Worker·직급·발령 Projection           |
-| Workforce | `GET /api/people/v1/workforce/organization/chart`        | 조직·사람·Position·공석·비용 Effective Graph    |
-| Workforce | `GET /api/people/v1/workforce/organization/intelligence` | Health·Change·Quality 비교                      |
-| Workforce | `/api/people/v1/workforce/organization/scenarios/**`     | 조직 개편 설계·검증·승인·게시                   |
-| Workforce | `/api/people/v1/workforce/reference-data/**`             | 고객 소유 인력 기준정보 조회·변경               |
-| Workforce | `/api/people/v1/workforce/data-operations/hris/**`       | HRIS Connector·Mapping·동기화 운영              |
+| Surface   | API                                                      | 계약                                                 |
+| --------- | -------------------------------------------------------- | ---------------------------------------------------- |
+| People    | `GET /api/people/v1/people`                              | 활성 구성원 서버 검색·Cursor Page, HR 제한 필드 제외 |
+| People    | `GET /api/people/v1/org-chart`                           | 사람·보고 관계 중심의 읽기 전용 Directory Graph      |
+| Workforce | `GET /api/people/v1/workforce/people`                    | HR 운영용 Worker·직급·발령 Projection                |
+| Workforce | `GET /api/people/v1/workforce/organization/chart`        | 조직·사람·Position·공석·비용 Effective Graph         |
+| Workforce | `GET /api/people/v1/workforce/organization/intelligence` | Health·Change·Quality 비교                           |
+| Workforce | `/api/people/v1/workforce/organization/scenarios/**`     | 조직 개편 설계·검증·승인·게시                        |
+| Workforce | `/api/people/v1/workforce/reference-data/**`             | 고객 소유 인력 기준정보 조회·변경                    |
+| Workforce | `/api/people/v1/workforce/data-operations/hris/**`       | HRIS Connector·Mapping·동기화 운영                   |
 
 조직 API의 공통 Query는 다음과 같다.
 
@@ -195,6 +197,10 @@ context에 두되 Workforce 메뉴만 공개 진입점을 가진다.
 현재 Baseline은 유효일 조직·Position Graph, 네 가지 View, 조직 건강·데이터 품질·기간
 비교, Scenario Preview·대안 복제/비교·독립 승인·게시와 반응형 탐색을 구현한다. 10k 이상 Graph의 가상화,
 HRIS 충돌 해소 Workbench와 고객별 정책 임계값은 Delivery 성능·통합 Gate로 남긴다.
+
+일반 People Directory는 서버 검색·서명 Cursor 점진 로딩, Healthy Empty·부분 실패 복구,
+사람 상세와 조직도 Focus Deep link를 제공한다. 조직도 파일 반출은 개인정보 분류·Masking·
+Watermark·만료 정책 `D-09`가 승인되기 전까지 제공하지 않는다.
 
 ## 9. 근거
 

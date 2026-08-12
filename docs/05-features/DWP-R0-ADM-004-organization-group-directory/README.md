@@ -24,8 +24,9 @@ Tenant 관리자가 조직 계층과 직접 사용자 그룹을 안전하게 운
 
 ## 후속 범위
 
-SCIM Inbound, 중첩 Group, Group Role·Effective Permission, 위임 조직 범위, SoD,
-Access Review와 Joiner·Mover·Leaver Workflow는 다음 Revision에서 구현한다.
+SCIM Inbound, Group Role·Effective Access, Access Review와 Joiner·Mover·Leaver 원장은
+`DWP-R0-ADM-003`의 후속 Revision에서 구현했다. 중첩 Group, 위임 조직 범위, SoD 정책과
+실제 고객 IdP Mapping·Reconciliation은 `D-01` 결정 뒤 확장한다.
 
 ## 구현 증거
 

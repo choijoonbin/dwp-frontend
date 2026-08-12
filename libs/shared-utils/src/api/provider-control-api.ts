@@ -692,7 +692,15 @@ export async function listProviderRegions(): Promise<ProviderRegion[]> {
 }
 
 export async function listProviderTenants(
-  params: { query?: string; state?: string; page?: number; size?: number } = {}
+  params: {
+    query?: string;
+    state?: string;
+    region?: string;
+    serviceTier?: string;
+    isolationModel?: string;
+    page?: number;
+    size?: number;
+  } = {}
 ): Promise<PageResult<ProviderTenant>> {
   const search = new URLSearchParams({
     page: String(params.page ?? 0),
@@ -700,6 +708,9 @@ export async function listProviderTenants(
   });
   if (params.query?.trim()) search.set('query', params.query.trim());
   if (params.state) search.set('state', params.state);
+  if (params.region) search.set('region', params.region);
+  if (params.serviceTier) search.set('serviceTier', params.serviceTier);
+  if (params.isolationModel) search.set('isolationModel', params.isolationModel);
   const response = await axiosInstance.get<ApiResponse<PageResult<ProviderTenant>>>(
     `${BASE}/tenants?${search.toString()}`
   );

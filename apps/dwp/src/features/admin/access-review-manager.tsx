@@ -98,6 +98,21 @@ function decisionColor(decision: AccessReviewDecision) {
   return 'warning' as const;
 }
 
+function RecommendationChip({ item }: { item: AccessReviewItem }) {
+  const { t } = useTranslation('admin');
+  const recommendation = item.recommendation ?? 'UNAVAILABLE';
+  return (
+    <Chip
+      size="small"
+      color={
+        recommendation === 'REVIEW' ? 'warning' : recommendation === 'KEEP' ? 'success' : 'default'
+      }
+      variant="outlined"
+      label={t(`accessReviews.recommendations.${recommendation}`)}
+    />
+  );
+}
+
 function Metric({
   icon: Icon,
   label,
@@ -313,6 +328,10 @@ function DecisionDialog({
   const { t } = useTranslation('admin');
   const [decision, setDecision] = useState<'APPROVE' | 'REVOKE'>('APPROVE');
   const [reason, setReason] = useState('');
+  const formatEvidenceDate = (value?: string | null) =>
+    value
+      ? formatDate(value, { dateStyle: 'medium', timeStyle: 'short' })
+      : t('accessReviews.notAvailable');
 
   return (
     <FormDialog
@@ -329,11 +348,68 @@ function DecisionDialog({
       {item && (
         <Stack gap={2}>
           <Box sx={{ p: 1.5, borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-            <Typography variant="subtitle2">{item.subjectDisplayName}</Typography>
-            <Typography variant="body2" color="text.secondary">
-              {item.roleName} ({item.roleCode}) ·{' '}
-              {t(`accessReviews.sources.${item.accessSourceType}`)}
-            </Typography>
+            <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={1}>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="subtitle2">{item.subjectDisplayName}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {item.roleName} ({item.roleCode})
+                </Typography>
+              </Box>
+              <Stack direction="row" gap={0.5} flexWrap="wrap" justifyContent="flex-end">
+                <RecommendationChip item={item} />
+                {item.privileged && (
+                  <Chip
+                    size="small"
+                    color="warning"
+                    variant="outlined"
+                    label={t('accessReviews.evidence.privileged')}
+                  />
+                )}
+              </Stack>
+            </Stack>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+                gap: 1,
+                mt: 1.5,
+              }}
+            >
+              <Box>
+                <Typography variant="caption" color="text.secondary" display="block">
+                  {t('accessReviews.evidence.source')}
+                </Typography>
+                <Typography variant="body2">
+                  {item.sourceDisplayName || t(`accessReviews.sources.${item.accessSourceType}`)}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="caption" color="text.secondary" display="block">
+                  {t('accessReviews.evidence.assignedAt')}
+                </Typography>
+                <Typography variant="body2">
+                  {formatEvidenceDate(item.assignmentCreatedAt)}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="caption" color="text.secondary" display="block">
+                  {t('accessReviews.evidence.lastSignIn')}
+                </Typography>
+                <Typography variant="body2">
+                  {formatEvidenceDate(item.subjectLastSignInAt)}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="caption" color="text.secondary" display="block">
+                  {t('accessReviews.evidence.reason')}
+                </Typography>
+                <Typography variant="body2">
+                  {t(
+                    `accessReviews.recommendationReasons.${item.recommendationReason ?? 'EVIDENCE_UNAVAILABLE'}`
+                  )}
+                </Typography>
+              </Box>
+            </Box>
           </Box>
           <ToggleButtonGroup
             exclusive
@@ -526,13 +602,37 @@ export function AccessReviewManager() {
       {
         field: 'accessSourceType',
         headerName: t('accessReviews.columns.source'),
-        width: 112,
+        minWidth: 170,
+        flex: 0.75,
         renderCell: ({ row }) => (
-          <Chip
-            size="small"
-            variant="outlined"
-            label={t(`accessReviews.sources.${row.accessSourceType}`)}
-          />
+          <Box sx={{ minWidth: 0 }}>
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t(`accessReviews.sources.${row.accessSourceType}`)}
+            />
+            {row.sourceDisplayName && (
+              <Typography variant="caption" color="text.secondary" noWrap display="block">
+                {row.sourceDisplayName}
+              </Typography>
+            )}
+          </Box>
+        ),
+      },
+      {
+        field: 'recommendation',
+        headerName: t('accessReviews.columns.evidence'),
+        minWidth: 176,
+        flex: 0.7,
+        renderCell: ({ row }) => (
+          <Box sx={{ minWidth: 0 }}>
+            <RecommendationChip item={row} />
+            <Typography variant="caption" color="text.secondary" noWrap display="block">
+              {t(
+                `accessReviews.recommendationReasons.${row.recommendationReason ?? 'EVIDENCE_UNAVAILABLE'}`
+              )}
+            </Typography>
+          </Box>
         ),
       },
       {
@@ -872,8 +972,21 @@ export function AccessReviewManager() {
                         <Box sx={{ minWidth: 0 }}>
                           <Typography variant="subtitle2">{item.subjectDisplayName}</Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {item.roleName} · {t(`accessReviews.sources.${item.accessSourceType}`)}
+                            {item.roleName} ·{' '}
+                            {item.sourceDisplayName ||
+                              t(`accessReviews.sources.${item.accessSourceType}`)}
                           </Typography>
+                          <Stack direction="row" gap={0.5} sx={{ mt: 0.75 }}>
+                            <RecommendationChip item={item} />
+                            {item.privileged && (
+                              <Chip
+                                size="small"
+                                color="warning"
+                                variant="outlined"
+                                label={t('accessReviews.evidence.privileged')}
+                              />
+                            )}
+                          </Stack>
                         </Box>
                         <Chip
                           size="small"

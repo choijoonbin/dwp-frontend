@@ -106,6 +106,8 @@
     "isolation": "격리 모델",
     "justification": "업무 사유",
     "keyHelp": "영문 소문자로 시작하며 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
+    "domainHelp": "하위 도메인을 포함한 유효한 회사 도메인을 입력하십시오.",
+    "emailHelp": "유효한 회사 이메일 주소를 입력하십시오.",
     "lifecycle": "수명주기",
     "tenant": "테넌트",
     "scopes": "허용 범위",
@@ -322,7 +324,74 @@
     "title": "관리 테넌트",
     "description": "회사 계약부터 실행 환경, 서비스 상태와 격리 모델까지 한눈에 관리합니다.",
     "search": "회사명 또는 테넌트 검색",
+    "results": "현재 {{visible}} / 전체 {{total}}",
     "noSubscription": "구독 없음",
+    "savedViews": {
+      "all": "전체 고객 자산",
+      "active": "운영 중인 고객",
+      "onboarding": "온보딩 진행 중"
+    },
+    "filters": {
+      "region": "데이터 리전",
+      "allRegions": "전체 리전",
+      "tier": "서비스 등급",
+      "allTiers": "전체 등급",
+      "isolation": "격리 모델",
+      "allIsolation": "전체 격리 모델"
+    },
+    "compare": {
+      "title": "테넌트 운영 비교",
+      "description": "선택한 {{count}}개 환경의 배치, 계약과 서비스 상태를 비교합니다.",
+      "selectMore": "비교하려면 테넌트를 하나 이상 더 선택하세요. 최대 3개까지 선택할 수 있습니다.",
+      "clear": "비교 해제",
+      "limit": "테넌트 비교는 최대 3개까지 선택할 수 있습니다."
+    },
+    "context": {
+      "label": "고객 자산 범위",
+      "scope": "운영 범위",
+      "global": "전체 고객 및 실행 환경",
+      "coverage": "고객 자산",
+      "coverageValue": "회사 {{organizations}} · 테넌트 {{tenants}}",
+      "placement": "배치 구성",
+      "placementValue": "리전 {{regions}} · 등급 {{tiers}}",
+      "lastLoaded": "최근 동기화 {{value}}"
+    },
+    "live": {
+      "live": "고객 자산 연결됨",
+      "syncing": "최신 자산 동기화 중"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "고객 자산이 정상 운영 범위입니다",
+        "ATTENTION": "테넌트 수명주기 검토가 필요합니다",
+        "CRITICAL": "실패한 테넌트에 즉시 대응해야 합니다"
+      },
+      "detail": {
+        "HEALTHY": "모든 고객 환경이 활성 상태이며 실패한 프로비저닝 작업이 없습니다.",
+        "ATTENTION": "구성 중 {{provisioning}}건과 일시중지 {{suspended}}건의 계약 및 운영 상태를 검토하십시오.",
+        "CRITICAL": "실패한 테넌트 {{failed}}건을 고객 영향과 실패 단계 순서로 복구하십시오."
+      },
+      "failed": "실패 {{count}}",
+      "provisioning": "구성 중 {{count}}",
+      "suspended": "일시중지 {{count}}"
+    },
+    "signals": {
+      "label": "고객 자산 핵심 신호",
+      "organizationDetail": "실행 테넌트 {{tenants}}개",
+      "activeDetail": "전체 테넌트 {{total}}개",
+      "activeProgress": "활성 테넌트 {{active}} / 전체 {{total}}",
+      "provisioning": "온보딩 진행",
+      "provisioningDetail": "계획부터 서비스 준비까지 추적",
+      "attentionDetail": "실패 {{failed}} · 일시중지 {{suspended}}"
+    },
+    "mix": {
+      "title": "자산 배치 구성",
+      "description": "데이터 리전과 계약 서비스 등급별 분포입니다.",
+      "regions": "데이터 리전",
+      "tiers": "서비스 등급",
+      "distributionLabel": "{{label}} {{count}} / 전체 {{total}}",
+      "visibleAttention": "현재 결과에서 서비스 검토가 필요한 테넌트 {{count}}개"
+    },
     "metrics": {
       "organizations": "고객 회사",
       "active": "활성 테넌트",
@@ -357,6 +426,11 @@
     "entitlements": "초기 제품 권한",
     "justificationHelp": "입력한 사유는 감사 이력에 기록됩니다.",
     "previewed": "검토할 온보딩 계획을 생성했습니다.",
+    "review": {
+      "notice": "이 단계에서는 실행하지 않습니다. 입력 내용을 고정한 온보딩 계획을 생성한 뒤 별도 검토 화면에서 실행합니다.",
+      "plan": "온보딩 계획 요약",
+      "selected": "제품 권한 {{count}}개"
+    },
     "steps": {
       "organization": "회사",
       "environment": "실행 환경",
@@ -371,6 +445,58 @@
   "operations": {
     "title": "변경 작업 원장",
     "description": "요청부터 승인, 실행, 실패 복구까지 변경의 전체 수명주기를 추적합니다.",
+    "context": {
+      "label": "변경 통제 범위",
+      "scope": "운영 범위",
+      "global": "전체 고객 환경",
+      "mode": "통제 방식",
+      "governed": "승인 및 증적 기반",
+      "coverage": "현재 원장",
+      "coverageValue": "변경 {{operations}}건 · 테넌트 {{tenants}}개",
+      "lastLoaded": "최근 동기화 {{value}}"
+    },
+    "live": {
+      "live": "변경 원장 연결됨",
+      "syncing": "최신 변경 동기화 중"
+    },
+    "pulse": {
+      "title": {
+        "RECOVERY": "실패한 변경의 복구가 필요합니다",
+        "APPROVAL": "독립 승인을 기다리는 변경이 있습니다",
+        "RUNNING": "승인된 변경을 실행하고 있습니다",
+        "CLEAR": "변경 통제가 정상 범위입니다"
+      },
+      "detail": {
+        "RECOVERY": "복구 대상 {{recovery}}건을 실패 단계와 고객 영향 순서로 검토하십시오.",
+        "APPROVAL": "승인 대기 {{approvals}}건의 위험, 요청 사유와 직무 분리를 확인하십시오.",
+        "RUNNING": "실행 중 {{running}}건의 단계 진행과 서비스 증적을 추적하고 있습니다.",
+        "CLEAR": "실행 또는 복구가 필요한 변경 없이 모든 통제 게이트가 충족되었습니다."
+      },
+      "approvals": "승인 대기 {{count}}",
+      "running": "실행 중 {{count}}",
+      "recovery": "복구 필요 {{count}}",
+      "openRecovery": "복구 작업 열기",
+      "openApproval": "승인 큐 열기"
+    },
+    "signals": {
+      "label": "변경 통제 핵심 신호",
+      "approvalDetail": "고위험 {{highRisk}}건",
+      "runningDetail": "실행 전 계획 {{previewed}}건",
+      "recoveryDetail": "실패 지점부터 통제된 재시도",
+      "successRate": "종료 변경 성공률",
+      "successRateDetail": "성공 {{successful}} / 종료 {{terminal}}",
+      "successProgress": "종료된 변경 성공률 {{value}}%"
+    },
+    "path": {
+      "title": "통제 경로",
+      "description": "모든 변경은 동일한 계획, 승인, 실행, 복구 통제를 따릅니다.",
+      "stages": {
+        "PLAN": { "title": "계획 고정", "detail": "영향과 실행 단계를 해시로 고정" },
+        "GATE": { "title": "독립 승인", "detail": "위험별 역할과 직무 분리 검증" },
+        "EXECUTE": { "title": "통제 실행", "detail": "단계별 멱등 실행과 상태 기록" },
+        "RECOVER": { "title": "증적 기반 복구", "detail": "실패 단계부터 사유를 남기고 재시도" }
+      }
+    },
     "filterLabel": "작업 상태 필터",
     "filters": {
       "ACTIVE": "진행 중",
@@ -387,6 +513,21 @@
     "reviewTitle": "변경 계획 검토",
     "planHash": "불변 계획 해시",
     "steps": "실행 단계",
+    "stepsDescription": "서비스별 실행 상태와 요청 지문을 통해 재시도와 결과를 검증합니다.",
+    "stepProgress": "완료 {{completed}} / 전체 {{total}}, 실패 {{failed}}",
+    "gates": {
+      "title": "승인 게이트",
+      "description": "위험 등급에 맞는 승인 역할과 요청자-승인자 직무 분리를 확인합니다.",
+      "notRequired": "이 변경에는 별도의 독립 승인 게이트가 필요하지 않습니다.",
+      "gate": "게이트 {{order}} · {{key}}",
+      "separationOfDuties": "직무 분리",
+      "requestedBy": "요청 {{name}} · {{value}}",
+      "decidedBy": "결정 {{name}} · {{value}} · {{reason}}"
+    },
+    "evidence": {
+      "title": "실행 증적",
+      "description": "변경 계획의 동일성과 실행 시간을 감사 가능한 형태로 보존합니다."
+    },
     "started": "시작",
     "completed": "완료",
     "attempts": "시도 {{count}}회",
@@ -424,6 +565,7 @@
   "approvals": {
     "title": "변경 승인 큐",
     "description": "고위험 작업은 요청자와 분리된 승인자가 업무 사유를 검토해야 합니다.",
+    "emptyTitle": "모든 승인 게이트가 정리되었습니다",
     "empty": "승인 대기 중인 변경이 없습니다.",
     "expires": "만료 {{value}}",
     "independentReviewerRequired": "독립 검토자 필요",
@@ -454,6 +596,50 @@
   },
   "health": {
     "lastUpdated": "최근 평가 {{value}}",
+    "context": {
+      "label": "서비스 운영 범위",
+      "scope": "운영 범위",
+      "global": "전체 고객 서비스",
+      "time": "시간 기준",
+      "snapshot": "현재 스냅샷",
+      "coverage": "관측 범위",
+      "coverageValue": "서비스 {{services}} · 배치 셀 {{cells}}"
+    },
+    "live": {
+      "live": "자동 갱신 중",
+      "syncing": "최신 상태 동기화 중"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "고객 서비스가 정상 범위입니다",
+        "ATTENTION": "서비스 운영 검토가 필요합니다",
+        "CRITICAL": "즉시 서비스 대응이 필요합니다"
+      },
+      "detail": {
+        "HEALTHY": "활성 인시던트와 고객 영향 없이 모든 서비스가 운영 기준을 충족합니다.",
+        "ATTENTION": "인시던트 {{incidents}}건, 영향 테넌트 {{impacted}}개와 예외 인스턴스 {{exceptions}}개를 영향도 순서로 검토하십시오.",
+        "CRITICAL": "고객 영향을 최소화하도록 인시던트 {{incidents}}건과 예외 인스턴스 {{exceptions}}개에 즉시 대응하십시오."
+      },
+      "incidents": "활성 인시던트 {{count}}",
+      "impacted": "영향 테넌트 {{count}}",
+      "sloRisk": "위험 SLO {{count}}",
+      "openIncident": "최우선 인시던트 열기"
+    },
+    "signals": {
+      "label": "서비스 운영 핵심 신호",
+      "readiness": "서비스 준비도",
+      "readinessDetail": "대기·저하·실패 인스턴스 {{exceptions}}개",
+      "readinessProgress": "정상 서비스 인스턴스 {{value}}%",
+      "customerImpact": "영향 테넌트",
+      "customerImpactDetail": "활성 고객 영향 인시던트 {{incidents}}건",
+      "reliability": "SLO 준수",
+      "reliabilityDetail": "위험 또는 소진 SLO {{risk}}개",
+      "reliabilityUnavailable": "신뢰성 세부 정보만 일시적으로 사용할 수 없습니다.",
+      "capacity": "최소 배치 여유",
+      "capacityDetail": "{{cell}} 기준",
+      "capacityUnavailable": "활성 배치 셀이 없습니다.",
+      "capacityProgress": "남은 배치 용량 {{value}}%"
+    },
     "metrics": {
       "instances": "서비스 인스턴스",
       "healthy": "정상",
@@ -464,12 +650,19 @@
     "services": {
       "title": "서비스 상태 매트릭스",
       "description": "서비스별 전체 인스턴스의 준비 상태와 고객 영향을 집계합니다.",
-      "coverage": "정상 {{healthy}} / 전체 {{total}} · 영향 테넌트 {{impacted}}"
+      "coverage": "정상 {{healthy}} / 전체 {{total}} · 영향 테넌트 {{impacted}}",
+      "allHealthyTitle": "모든 서비스가 정상 범위입니다",
+      "allHealthyDetail": "서비스 {{services}}개와 인스턴스 {{instances}}개가 준비 완료 상태입니다.",
+      "expand": "서비스 펼치기",
+      "collapse": "서비스 접기",
+      "breakdown": "{{name}}: 정상 {{healthy}}, 준비 중 {{pending}}, 성능 저하 {{degraded}}, 실패 {{failed}}",
+      "exceptions": "예외 인스턴스 {{count}}개 · 영향 테넌트 {{impacted}}개"
     },
     "cells": {
       "title": "리전 및 배치 셀",
       "description": "테넌트 배치 용량과 셀 단위 운영 상태입니다.",
-      "capacity": "{{region}} · {{used}} / {{total}} 테넌트"
+      "capacity": "{{region}} · {{used}} / {{total}} 테넌트",
+      "saturationLabel": "{{name}} 배치 용량 사용률"
     },
     "severity": {
       "SEV1": "SEV1 · 전체 서비스 중단",
@@ -488,7 +681,9 @@
       "title": "고객 영향 인시던트",
       "description": "탐지부터 원인 식별, 모니터링, 해결까지 타임라인을 관리합니다.",
       "filterLabel": "인시던트 상태 필터",
+      "emptyTitle": "이 범위에 운영 중인 인시던트가 없습니다",
       "empty": "선택한 범위에 인시던트가 없습니다.",
+      "unassigned": "담당자 미지정",
       "createTitle": "서비스 인시던트 선언",
       "createNotice": "인시던트는 고객 영향과 운영 책임을 공식 기록하며 모든 변경이 감사됩니다.",
       "updateTitle": "{{key}} 상태 업데이트",
@@ -541,7 +736,9 @@
       "target": "목표 {{target}}% · {{days}}일 · {{scope}}",
       "errorBudget": "남은 오류 예산",
       "achieved": "달성 {{value}}",
-      "noData": "측정 없음"
+      "noData": "측정 없음",
+      "empty": "등록된 신뢰성 목표가 없습니다. 서비스 등급별 SLO 정책을 먼저 정의해야 합니다.",
+      "budgetLabel": "{{name}} 남은 오류 예산"
     },
     "drift": {
       "empty": "현재 기준선에서 벗어난 운영 대상이 없습니다.",
@@ -949,11 +1146,47 @@
   "tenantDetail": {
     "back": "테넌트 자산",
     "tabs": {
+      "label": "테넌트 관리 영역",
       "overview": "개요",
       "services": "서비스",
       "access": "도메인 및 관리자",
       "entitlements": "제품 권한",
       "support": "지원 액세스"
+    },
+    "context": {
+      "label": "테넌트 360 범위",
+      "scope": "회사 및 환경",
+      "placement": "배치 및 격리",
+      "contract": "계약 플랜",
+      "lastLoaded": "최근 동기화 {{value}}"
+    },
+    "live": {
+      "live": "테넌트 상태 연결됨",
+      "syncing": "최신 테넌트 상태 동기화 중"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "테넌트가 운영 준비 기준을 충족합니다",
+        "ATTENTION": "테넌트 구성 검토가 필요합니다",
+        "CRITICAL": "테넌트 서비스 복구가 필요합니다"
+      },
+      "detail": {
+        "HEALTHY": "서비스, 도메인과 회사 관리자 구성이 모두 정상 범위입니다.",
+        "ATTENTION": "서비스 예외 {{services}}건, 미확인 도메인 {{domains}}건과 활성 관리자 상태를 검토하십시오.",
+        "CRITICAL": "실패한 서비스부터 복구하고 고객 영향과 실행 증적을 확인하십시오."
+      },
+      "support": "활성 지원 세션 {{count}}"
+    },
+    "signals": {
+      "label": "테넌트 준비도 신호",
+      "servicesDetail": "서비스 예외 {{exceptions}}건",
+      "servicesProgress": "준비 서비스 {{ready}} / 전체 {{total}}",
+      "domains": "확인된 도메인",
+      "domainsDetail": "로그인 및 회사 도메인 소유권",
+      "administrators": "활성 회사 관리자",
+      "administratorsDetail": "테넌트 관리 권한 활성 상태",
+      "entitlements": "제품 권한",
+      "entitlementsDetail": "구성 스키마 v{{schema}}"
     },
     "metrics": { "services": "정상 서비스", "authTenant": "인증 테넌트 ID" },
     "organization": { "title": "회사 및 환경 정보" },

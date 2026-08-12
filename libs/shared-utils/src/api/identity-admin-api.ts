@@ -10,6 +10,10 @@ export type IdentityUserAccess = {
   status: string;
   mfaEnabled: boolean;
   roles: string[];
+  effectiveRoles?: string[];
+  effectiveAccess?: IdentityEffectiveAccess[];
+  lastSignInAt?: string | null;
+  activeSessionCount?: number;
   roleManagement: {
     allowed: boolean;
     reason: 'ALLOWED' | 'SELF' | 'IDENTITY_INACTIVE' | 'PROTECTED_ROLE';
@@ -18,6 +22,23 @@ export type IdentityUserAccess = {
   version: number;
   updatedAt?: string | null;
   updatedBy?: number | null;
+};
+
+export type IdentityEffectiveAccess = {
+  roleId: number;
+  roleCode: string;
+  roleName: string;
+  privileged: boolean;
+  sourceType: 'DIRECT' | 'GROUP';
+  sourceId: number;
+  sourceKey?: string | null;
+  sourceName?: string | null;
+  assignmentType: string;
+  scopeType: string;
+  scopeRef?: string | null;
+  validFrom?: string | null;
+  validTo?: string | null;
+  assignedAt?: string | null;
 };
 
 export type IdentityRole = {

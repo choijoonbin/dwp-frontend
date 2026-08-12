@@ -179,4 +179,28 @@ describe('axiosInstance browser session contract', () => {
     const init = fetchMock.mock.calls[0]?.[1];
     expect(init?.signal?.aborted).toBe(true);
   });
+
+  it('propagates caller cancellation to the active browser request', async () => {
+    const fetchMock = vi.fn(
+      (_url: string, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => {
+            reject(new DOMException('The operation was aborted.', 'AbortError'));
+          });
+        })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const controller = new AbortController();
+
+    const request = axiosInstance
+      .get('/api/long-running-query', { signal: controller.signal })
+      .then(
+        () => undefined,
+        (error: unknown) => error
+      );
+    controller.abort('superseded');
+
+    await expect(request).resolves.toMatchObject({ name: 'AbortError' });
+    expect(fetchMock.mock.calls[0]?.[1]?.signal?.aborted).toBe(true);
+  });
 });

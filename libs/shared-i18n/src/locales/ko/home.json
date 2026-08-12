@@ -1,9 +1,31 @@
 {
   "page": {
-    "personalWorkspace": "개인 앱 워크스페이스",
+    "personalWorkspace": "개인 업무 지휘 홈",
     "welcome": "다시 오신 것을 환영합니다",
     "welcomeName": "{{name}}님, 다시 오신 것을 환영합니다",
     "assignedDescription": "할당된 앱과 서비스를 바로 시작할 수 있습니다.",
+    "commandDescription": "실제 업무 신호를 기준으로 지금 처리할 일과 다음 행동을 한눈에 확인합니다.",
+    "nextPriority": "다음 우선 업무",
+    "loadingPriorities": "업무 우선순위를 불러오는 중입니다.",
+    "priorityLoadError": "업무 우선순위를 불러오지 못했습니다. 다른 홈 영역은 계속 사용할 수 있습니다.",
+    "retry": "다시 시도",
+    "priority": {
+      "high": "높은 우선순위",
+      "medium": "중간 우선순위",
+      "low": "낮은 우선순위"
+    },
+    "openPriority": "업무에서 우선 항목 열기",
+    "clearTitle": "지금 처리할 우선 업무가 없습니다",
+    "clearDescription": "새 업무가 배정되면 이 영역에 표시됩니다.",
+    "commandSignals": "현재 업무 신호",
+    "signals": {
+      "open": "열린 업무",
+      "dueSoon": "마감 임박",
+      "inProgress": "진행 중",
+      "waiting": "응답 대기"
+    },
+    "appsTitle": "업무 도구",
+    "appsDescription": "권한과 역할에 맞게 배정된 앱을 빠르게 실행합니다.",
     "today": "오늘",
     "updatedAt": "{{time}} 업데이트",
     "dateUpdated": "{{date}} / {{time}} 업데이트",

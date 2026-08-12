@@ -9,9 +9,10 @@
 > 적용 저장소: `dwp-frontend`, `dwp-backend`
 
 Sidebar 없는 로그인 첫 Home, 권한 기반 App Launcher, 업무 Shell 전환, Tenant
-Co-branding, 사용자 Home 편집과 관리형 공지를 정의한다. 개발 환경에서는 검증된 배경과
-Logo를 Tenant별 Local Storage에 저장하고 DB에는 Metadata, 개인 Layout과 감사정보를
-남긴다.
+Co-branding, 사용자 Home 편집과 관리형 공지를 정의한다. Tenant 관리자는 Branding·Home
+Studio에서 채널·Viewport·Theme·Locale별 Preview와 품질 검사를 거쳐 게시하고 불변 Revision으로
+Rollback할 수 있다. 개발 환경에서는 검증된 배경과 Logo를 Tenant별 Local Storage에 저장하고
+DB에는 Metadata, 개인 Layout, Revision과 공지 참여 증적을 남긴다.
 
 ## 상위 계약
 

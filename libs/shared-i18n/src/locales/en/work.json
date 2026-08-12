@@ -30,10 +30,14 @@
     "noDueDate": "No due date",
     "summaryLabel": "Work summary",
     "summary": {
-      "all": { "value": "06", "label": "All work", "detail": "Across 5 sources" },
-      "due": { "value": "02", "label": "Due soon", "detail": "First due at 10:30" },
-      "progress": { "value": "02", "label": "In progress", "detail": "24 min estimated" },
-      "waiting": { "value": "01", "label": "Waiting", "detail": "Employee confirmation" }
+      "all": { "label": "All work", "detail": "{{count}} active sources" },
+      "due": {
+        "label": "Due soon",
+        "detail": "Next deadline {{date}}",
+        "clearDetail": "No urgent deadline"
+      },
+      "progress": { "label": "In progress", "detail": "{{count}} active items" },
+      "waiting": { "label": "Waiting", "detail": "{{count}} items awaiting input" }
     },
     "filterLabel": "Work status",
     "searchLabel": "Search work",
@@ -81,6 +85,19 @@
     "openSource": "Open source",
     "statusUpdated": "{{title}} was updated.",
     "statusUpdateError": "The work status could not be updated. Refresh and try again.",
+    "batch": {
+      "selected": "{{count}} work items selected",
+      "limitExceeded": "{{count}} selected / {{max}} maximum",
+      "start": "Start selected",
+      "complete": "Complete selected",
+      "startTitle": "Start selected work?",
+      "completeTitle": "Complete selected work?",
+      "startDescription": "Move {{count}} selected work items to in progress. Each change is recorded in activity and audit history.",
+      "completeDescription": "Mark {{count}} selected work items complete. Completed work cannot be reopened from this queue.",
+      "updating": "Updating selected work",
+      "updated": "{{count}} work items were updated.",
+      "updateError": "The selected work could not be updated. Refresh the queue and review any version conflicts."
+    },
     "noDecisionContext": "No prioritization context is registered for this work item.",
     "noRecommendedNext": "No next step is registered.",
     "noLatestActivity": "There is no recent activity.",
@@ -229,14 +246,16 @@
     "summaryLabel": "Activity summary",
     "summary": {
       "signals": {
-        "value": "6",
-        "label": "Signals this morning",
-        "detail": "Across 4 connected sources"
+        "label": "Workspace signals",
+        "detail": "Events from {{count}} sources"
       },
-      "agent": { "value": "1", "label": "Agent running", "detail": "Customer context / 72%" },
-      "input": { "value": "1", "label": "Needs your input", "detail": "Software access approval" }
+      "agent": { "label": "Active agent runs", "detail": "{{count}} currently running" },
+      "input": { "label": "Needs your input", "detail": "{{count}} awaiting review" },
+      "blocked": { "label": "Policy blocked", "detail": "{{count}} requiring investigation" }
     },
     "actorFilter": "Activity actor",
+    "stateFilter": "Activity state",
+    "allStates": "All states",
     "searchLabel": "Search activity",
     "searchPlaceholder": "Title, object, actor, or source",
     "resetFilters": "Reset filters",
@@ -253,6 +272,8 @@
       "system": "Systems"
     },
     "visibleCount": "{{count}} visible events",
+    "filteredEmptyTitle": "No activity matches these filters",
+    "filteredEmptyDescription": "Change or reset the actor, state, and search filters.",
     "timeline": "Workspace timeline",
     "timelineLabel": "Workspace activity",
     "actorLabel": "{{actor}} actor",

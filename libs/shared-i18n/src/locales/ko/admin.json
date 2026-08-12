@@ -301,6 +301,7 @@
     "mfaEnabled": "MFA 켜짐",
     "mfaDisabled": "MFA 꺼짐",
     "additionalRoles": "추가 역할 {{count}}개",
+    "inheritedCount": "상속 {{count}}",
     "roleFamilies": {
       "WORKSPACE": "기본 접근",
       "PEOPLE": "인사 운영",
@@ -317,7 +318,9 @@
     },
     "columns": {
       "user": "사용자",
-      "roles": "역할",
+      "roles": "유효 역할",
+      "sources": "권한 출처",
+      "lastSignIn": "최근 로그인",
       "status": "상태",
       "mfa": "MFA",
       "revision": "리비전"
@@ -326,6 +329,8 @@
       "refresh": "사용자 및 역할 새로고침",
       "editRoles": "역할 수정",
       "editRolesFor": "{{name}} 역할 수정",
+      "editDirectRoles": "직접 역할 수정",
+      "reviewEffectiveAccess": "유효 권한 검토",
       "save": "접근 권한 저장",
       "saving": "접근 권한 저장 중"
     },
@@ -338,44 +343,222 @@
       "conflictsWith": "직무분리 정책상 {{roles}} 역할과 함께 부여할 수 없습니다.",
       "sessionNotice": "역할을 저장하면 이 사용자의 모든 활성 세션이 종료됩니다."
     },
+    "signals": {
+      "label": "ID 접근 권한 신호",
+      "identities": "표시 계정",
+      "currentScope": "현재 테넌트 범위",
+      "privileged": "특권 계정",
+      "reviewEvidence": "근거 검토 필요",
+      "inherited": "상속 할당",
+      "groupManaged": "그룹에서 관리",
+      "withoutMfa": "MFA 미적용",
+      "authenticationPosture": "인증 상태"
+    },
+    "sources": {
+      "direct": "직접",
+      "group": "그룹"
+    },
+    "inspector": {
+      "title": "유효 접근 권한",
+      "close": "접근 권한 상세 닫기",
+      "posture": "계정 보안 상태",
+      "mfa": "다단계 인증",
+      "sessions": "활성 세션",
+      "lastSignIn": "최근 로그인",
+      "neverSignedIn": "로그인 기록 없음",
+      "revision": "접근 리비전",
+      "effectiveAccess": "유효 접근 권한",
+      "assignmentCount": "권한 할당 {{count}}건",
+      "noEffectiveAccess": "현재 유효한 접근 권한이 없습니다.",
+      "privileged": "특권",
+      "sourceValue": "출처: {{source}}",
+      "scopeValue": "범위: {{scope}}",
+      "validUntil": "{{date}}까지 유효",
+      "noExpiry": "만료 없음",
+      "notAvailable": "확인 불가",
+      "sourceNotice": "이 화면에서는 직접 역할만 변경합니다. 그룹에서 상속된 권한은 한 사용자의 변경이 다른 구성원에게 조용히 영향을 주지 않도록 원본 그룹에서 관리합니다."
+    },
     "toasts": {
       "updated": "사용자 접근 권한을 변경하고 활성 세션을 종료했습니다."
     }
   },
   "branding": {
     "title": "테넌트 브랜딩",
-    "description": "DWP 공동 브랜드 영역에 표시할 조직 아이덴티티입니다.",
+    "description": "DWP 전 영역에 게시되는 조직 아이덴티티를 통제합니다.",
     "loading": "테넌트 브랜딩 불러오는 중",
     "customLogo": "사용자 지정 로고",
     "productOnly": "제품 브랜드만 사용",
+    "unsaved": "게시되지 않은 변경",
+    "version": "게시 버전 v{{version}}",
     "headerPreview": "헤더 브랜드 미리보기",
     "lockupPreview": "브랜드 조합 미리보기",
     "organizationName": "조직명",
+    "accentColor": "브랜드 강조색",
+    "accentColorInvalid": "#2457D6과 같은 6자리 16진수 색상을 입력하세요.",
     "noLogo": "테넌트 로고 없음",
     "fileRequirements": "SVG, PNG 또는 JPEG / 최대 2 MB",
+    "preview": {
+      "title": "사용 영역 미리보기",
+      "surfaceLabel": "미리보기 영역",
+      "organizationFallback": "조직 이름",
+      "surfaces": {
+        "SHELL": "워크스페이스 셸",
+        "SIGN_IN": "로그인 경험",
+        "EMAIL": "알림 메일",
+        "FAVICON": "브라우저 아이덴티티"
+      }
+    },
+    "editor": {
+      "title": "브랜드 정의"
+    },
+    "quality": {
+      "title": "게시 전 점검",
+      "organization": {
+        "label": "조직명",
+        "pass": "보조 기술과 소형 화면에 제공할 고객 아이덴티티가 준비되었습니다.",
+        "warning": "고객 브랜드 게시 전에 조직명을 입력하세요."
+      },
+      "contrast": {
+        "label": "강조색 대비",
+        "detail": "최적 전경색 대비는 {{ratio}}:1이며 게시 기준은 4.5:1입니다."
+      },
+      "asset": {
+        "label": "로고 자산",
+        "pass": "게시된 로고가 형식과 파일 크기 검증을 통과했습니다.",
+        "pending": "대기 자산은 {{size}}이며 서버가 다시 검증합니다.",
+        "warning": "제품 단독 브랜드는 유효하지만 고객 로고가 게시되지 않았습니다."
+      },
+      "ratio": {
+        "label": "로고 비율",
+        "detail": "게시 크기는 {{width}} x {{height}}입니다.",
+        "notAvailable": "사용자 지정 로고를 게시하면 비율 점검을 시작합니다."
+      }
+    },
+    "history": {
+      "title": "브랜드 게시 이력",
+      "subtitle": "불변 스냅샷과 복구 가능한 브랜드 자산",
+      "close": "브랜드 게시 이력 닫기",
+      "empty": "다음 게시부터 이력이 기록됩니다.",
+      "current": "현재",
+      "restore": "복구",
+      "version": "v{{version}}",
+      "productOnly": "제품 브랜드만 사용",
+      "changeTypes": {
+        "BASELINE": "최초 기준점",
+        "SETTINGS_PUBLISHED": "브랜드 정의 게시",
+        "ASSET_PUBLISHED": "로고 게시",
+        "ASSET_RESET": "로고 제거",
+        "ROLLBACK": "이전 리비전 복구"
+      }
+    },
     "actions": {
       "chooseLogo": "로고 선택",
       "uploadLogo": "로고 업로드",
+      "publishLogo": "로고 게시",
       "removeLogo": "로고 제거",
-      "save": "브랜딩 저장"
+      "save": "브랜딩 저장",
+      "publish": "브랜드 정의 게시",
+      "history": "이력"
     },
     "toasts": {
       "logoUploaded": "테넌트 로고를 업로드했습니다.",
       "logoRemoved": "테넌트 로고를 제거했습니다.",
-      "saved": "테넌트 브랜딩을 저장했습니다."
+      "saved": "테넌트 브랜딩을 저장했습니다.",
+      "published": "테넌트 브랜드 정의를 게시했습니다.",
+      "restored": "선택한 브랜드 리비전을 복구했습니다."
     }
   },
   "homeExperience": {
     "title": "홈 경험",
-    "description": "개인 앱 워크스페이스에 적용할 테넌트 화면입니다.",
+    "description": "테넌트 홈 화면을 구성하고 검증한 뒤 게시합니다.",
     "loading": "홈 경험 불러오는 중",
     "customBackground": "사용자 지정 배경",
     "defaultBackground": "기본 배경",
+    "unsaved": "게시되지 않은 변경",
+    "version": "게시 버전 v{{version}}",
     "preview": "홈 히어로 미리보기",
     "previewHeadline": "Administrator님, 환영합니다",
     "previewMessage": "할당된 앱과 서비스를 바로 시작할 수 있습니다.",
     "builtInBackground": "DWP 기본 배경",
     "fileRequirements": "PNG 또는 JPEG / 최대 10 MB",
+    "locales": {
+      "ko": "한국어",
+      "en": "영어"
+    },
+    "localeCodes": {
+      "ko": "KO",
+      "en": "EN"
+    },
+    "previewStudio": {
+      "title": "경험 미리보기",
+      "status": "{{viewport}} · {{locale}} · {{theme}}",
+      "viewportLabel": "미리보기 화면 크기",
+      "themeLabel": "미리보기 테마",
+      "localeLabel": "미리보기 언어",
+      "viewports": {
+        "DESKTOP": "데스크톱",
+        "MOBILE": "모바일"
+      },
+      "themes": {
+        "LIGHT": "라이트 셸",
+        "DARK": "다크 셸"
+      }
+    },
+    "editor": {
+      "title": "다국어 화면 문구",
+      "localeStatus": "{{locale}} 문구 편집 중",
+      "localeLabel": "콘텐츠 언어",
+      "defaultLocale": "기본 언어",
+      "makeDefault": "기본값 지정"
+    },
+    "asset": {
+      "title": "배경 이미지와 초점 영역"
+    },
+    "quality": {
+      "title": "게시 전 점검",
+      "notAvailable": "확인 불가",
+      "defaultCopy": {
+        "label": "기본 언어 문구",
+        "pass": "기본 언어의 헤드라인과 보조 문구가 준비되었습니다.",
+        "warning": "게시 전에 기본 언어 문구를 완성하세요."
+      },
+      "locales": {
+        "label": "언어별 완성도",
+        "detail": "설정 언어 {{total}}개 중 {{complete}}개의 문구가 완성되었습니다."
+      },
+      "asset": {
+        "label": "이미지 품질",
+        "pending": "대기 이미지는 {{size}}이며 서버가 다시 검증합니다.",
+        "dimensions": "게시 크기는 {{width}} x {{height}}이며 권장 최소 크기는 1440 x 400입니다.",
+        "builtIn": "관리되는 기본 이미지가 게시 품질 기준을 충족합니다."
+      },
+      "safeArea": {
+        "label": "반응형 안전 영역",
+        "detail": "이미지 비율은 {{ratio}}이며 점선은 문구 보호 영역입니다."
+      },
+      "readability": {
+        "label": "문구 가독성",
+        "detail": "가독성 오버레이는 {{opacity}}%입니다. 게시 전에 두 셸 테마를 확인하세요."
+      }
+    },
+    "history": {
+      "title": "홈 게시 이력",
+      "subtitle": "불변 문구·화면 설정과 복구 가능한 자산 스냅샷",
+      "close": "홈 게시 이력 닫기",
+      "empty": "다음 게시부터 이력이 기록됩니다.",
+      "current": "현재",
+      "restore": "복구",
+      "defaultCopy": "DWP 기본 문구",
+      "localeCount": "{{count}}개 언어",
+      "summary": "{{locales}} / v{{version}}",
+      "changeTypes": {
+        "BASELINE": "최초 기준점",
+        "SETTINGS_PUBLISHED": "홈 화면 게시",
+        "ASSET_PUBLISHED": "배경 이미지 게시",
+        "ASSET_RESET": "기본 배경 복원",
+        "ROLLBACK": "이전 리비전 복구"
+      }
+    },
     "fields": {
       "headline": "헤드라인",
       "message": "보조 메시지",
@@ -390,13 +573,18 @@
     "actions": {
       "chooseImage": "이미지 선택",
       "upload": "배경 업로드",
+      "publishImage": "배경 게시",
       "restore": "기본값 복원",
-      "save": "화면 설정 저장"
+      "save": "화면 설정 저장",
+      "publish": "홈 화면 게시",
+      "history": "이력"
     },
     "toasts": {
       "saved": "홈 경험 설정을 저장했습니다.",
+      "published": "홈 화면을 게시했습니다.",
       "uploaded": "홈 배경을 업로드했습니다.",
-      "restored": "기본 홈 배경을 복원했습니다."
+      "restored": "기본 홈 배경을 복원했습니다.",
+      "revisionRestored": "선택한 홈 리비전을 복구했습니다."
     }
   },
   "announcements": {
@@ -409,7 +597,30 @@
     "noAnnouncements": "공지사항이 없습니다.",
     "empty": {
       "title": "아직 공지사항이 없습니다",
-      "description": "첫 공지를 초안으로 작성한 뒤 대상과 게시 기간을 검토하여 게시하세요."
+      "description": "첫 공지를 초안으로 작성한 뒤 대상과 게시 기간을 검토하여 게시하세요.",
+      "filteredTitle": "이 파이프라인 상태에 해당하는 공지가 없습니다",
+      "filteredDescription": "다른 상태를 선택하거나 전체 커뮤니케이션 파이프라인으로 돌아가세요."
+    },
+    "copyTitle": "{{title}} 복사본",
+    "pipeline": {
+      "label": "공지 파이프라인",
+      "ALL": "전체",
+      "DRAFT": "초안",
+      "LIVE": "게시 중",
+      "SCHEDULED": "예약",
+      "EXPIRED": "기간 종료",
+      "ARCHIVED": "보관",
+      "resultCount": "현재 보기 공지 {{count}}건"
+    },
+    "metrics": {
+      "label": "공지 전달 신호",
+      "currentlyVisible": "현재 워크스페이스에 노출",
+      "awaitingWindow": "게시 시작 대기",
+      "awaitingPublish": "검토 및 게시 필요",
+      "uniqueViewers": "고유 열람자",
+      "views": "노출 수",
+      "actionClicks": "작업 클릭",
+      "aggregateNotice": "공지별 고유 열람자 합계"
     },
     "fields": {
       "title": "제목",
@@ -440,6 +651,9 @@
       "status": "상태",
       "audience": "대상",
       "window": "게시 기간",
+      "engagement": "반응",
+      "engagementValue": "열람자 {{viewers}}명 · 클릭 {{clicks}}회",
+      "viewsValue": "전체 노출 {{count}}회",
       "actions": "작업"
     },
     "dialog": {
@@ -455,13 +669,27 @@
       "publish": "게시",
       "publishNamed": "{{title}} 게시",
       "archive": "보관",
-      "archiveNamed": "{{title}} 보관"
+      "archiveNamed": "{{title}} 보관",
+      "preview": "미리보기",
+      "previewNamed": "{{title}} 미리보기",
+      "duplicate": "초안으로 복제",
+      "duplicateNamed": "{{title}} 공지를 초안으로 복제",
+      "showAll": "전체 공지 보기"
+    },
+    "preview": {
+      "title": "공지 미리보기",
+      "close": "공지 미리보기 닫기",
+      "workspace": "워크스페이스 표시",
+      "delivery": "전달 근거",
+      "analyticsNotice": "실제 관측된 전달 횟수만 표시합니다. 전체 대상자 수와 도달률은 승인된 ID 대상자 계약이 필요합니다.",
+      "governance": "대상 및 게시 기간"
     },
     "toasts": {
       "published": "공지사항을 게시했습니다.",
       "archived": "공지사항을 보관했습니다.",
       "updated": "공지사항을 수정했습니다.",
-      "created": "공지사항 초안을 생성했습니다."
+      "created": "공지사항 초안을 생성했습니다.",
+      "duplicated": "공지사항을 초안으로 복제했습니다."
     }
   },
   "systemCodeCatalog": {
@@ -784,6 +1012,36 @@
     "loading": "API 관측 데이터 불러오는 중",
     "loadError": "API 관측 데이터를 불러오지 못했습니다.",
     "generatedAt": "{{time}} 업데이트",
+    "context": {
+      "label": "API 관측 범위",
+      "window": "관측 기간",
+      "windowValue": "{{window}} · {{from}} ~ {{to}}",
+      "observation": "관측 지점",
+      "target": "서비스 범위",
+      "targetValue": "{{service}} · {{method}}"
+    },
+    "live": {
+      "syncing": "최신 API 상태 동기화 중",
+      "auto": "30초 자동 갱신 중",
+      "manual": "수동 스냅샷",
+      "changeContextUnavailable": "변경 이벤트 연결 지연"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "API 서비스가 정상 응답 범위입니다",
+        "ATTENTION": "API 오류 또는 지연 검토가 필요합니다",
+        "CRITICAL": "API 고객 영향에 즉시 대응해야 합니다"
+      },
+      "detail": {
+        "HEALTHY": "선택 범위에서 서버 오류 없이 지연 임계치가 정상 범위입니다.",
+        "ATTENTION": "서버 오류 {{errors}}건, 오류율 {{rate}}%, p95 {{latency}}를 라우트와 Trace 순서로 검토하십시오.",
+        "CRITICAL": "오류율 또는 꼬리 지연 임계치를 초과했습니다. 영향 라우트를 격리하고 감사 증적을 보존하십시오."
+      },
+      "errors": "서버 오류 {{count}}",
+      "errorRate": "오류율 {{value}}%",
+      "p95": "p95 {{value}}",
+      "openEvidence": "감사 증적 탐색"
+    },
     "filters": {
       "label": "API 이력 필터",
       "window": "조회 기간",
@@ -838,7 +1096,15 @@
       "description": "선택한 기간의 호출량과 오류 집중도를 보여줍니다.",
       "requests": "요청",
       "errors": "오류",
+      "changes": "변경",
       "chartLabel": "API 요청 및 오류 추세"
+    },
+    "changes": {
+      "title": "변경 상관관계",
+      "description": "같은 기간의 배포 및 관리자 설정 변경입니다.",
+      "count": "{{count}}건",
+      "unavailable": "변경 감사 원장을 불러오지 못했습니다. API 지표는 계속 사용할 수 있습니다.",
+      "empty": "이 기간에는 연결할 변경 이벤트가 없습니다."
     },
     "status": {
       "title": "상태 코드 분포",
@@ -883,6 +1149,7 @@
       "loadError": "요청 추적 정보를 불러오지 못했습니다.",
       "copyCorrelation": "상관관계 ID 복사",
       "copyTrace": "Trace ID 복사",
+      "openAuditEvidence": "상관관계 감사 증적 열기",
       "traceTitle": "Trace 홉",
       "fields": {
         "service": "서비스",
@@ -1232,6 +1499,17 @@
       "caseCreated": "조사 케이스를 생성했습니다.",
       "caseUpdated": "케이스 상태를 변경했습니다.",
       "closedResolution": "검토를 완료하고 케이스를 종료했습니다.",
+      "closedCaseImmutable": "종료된 케이스와 조사 증적은 읽기 전용입니다. 추가 조사가 필요하면 후속 케이스를 생성하세요.",
+      "closureResolutionRequired": "케이스를 종료하려면 구체적인 조사 결론과 처리 근거를 입력해야 합니다.",
+      "closureTasksRequired": "미완료 작업 {{count}}건을 완료하거나 건너뜀 처리한 뒤 종료할 수 있습니다.",
+      "closureReport": "종료 보고서",
+      "closureReportDescription": "최종 조사 증거와 의사결정을 불변 보고서로 보존합니다.",
+      "closureReportVersion": "불변 스냅샷 v{{version}}",
+      "closureReportGeneratedAt": "생성 {{date}}",
+      "closureReportHash": "SHA-256 {{hash}}",
+      "generateClosureReport": "종료 보고서 생성",
+      "downloadClosureReport": "종료 보고서 다운로드",
+      "closureReportGenerated": "종료 보고서를 생성하고 무결성 해시를 기록했습니다.",
       "queueOpen": "미결 신호",
       "queueOpenHint": "판단 대기 중",
       "queueCritical": "치명적",
@@ -1468,6 +1746,9 @@
       "RUNNING": "실행 중",
       "SUCCEEDED": "성공",
       "SUCCESS": "성공",
+      "READY": "준비 완료",
+      "ATTENTION": "조치 필요",
+      "DENIED": "거부",
       "FAILED": "실패",
       "PENDING": "대기",
       "COMPLETED": "완료"
@@ -1484,7 +1765,68 @@
         "tokenPrefix": "토큰 식별자",
         "operations": "허용 작업",
         "state": "상태",
+        "health": "준비 상태",
+        "activity24h": "24시간 활동",
         "lastUsed": "최근 사용"
+      },
+      "failedCount": "실패 {{count}}",
+      "metrics": {
+        "label": "SCIM 프로비저닝 신호",
+        "active": "활성 커넥터",
+        "activeDetail": "요청 수신 가능 엔드포인트",
+        "attention": "조치 필요",
+        "attentionDetail": "최근 결과가 성공하지 않음",
+        "events": "24시간 이벤트",
+        "eventsDetail": "수신 SCIM 작업",
+        "failures": "24시간 실패",
+        "failuresDetail": "실패 또는 거부 작업"
+      },
+      "workflow": {
+        "title": "프로비저닝 활성화 경로",
+        "description": "통제를 순서대로 완료하고 수신 근거로 연결을 검증합니다.",
+        "step": "{{number}}단계"
+      },
+      "steps": {
+        "credential": "엔드포인트 자격 증명 발급",
+        "credentialDetail": "범위가 제한된 커넥터를 만들고 일회성 토큰을 보호합니다.",
+        "idp": "ID 공급자 설정",
+        "idpDetail": "IdP를 선택하고 테넌트 속성 매핑을 승인합니다.",
+        "firstSync": "첫 동기화 검증",
+        "firstSyncDetail": "인증된 Users 또는 Groups 수신 작업을 확인합니다.",
+        "reconcile": "프로비저닝 실패 정합성 처리",
+        "reconcileDetail": "운영 전환 전에 거부·실패 레코드를 해결합니다."
+      },
+      "stepStates": {
+        "complete": "완료",
+        "pending": "근거 대기",
+        "attention": "조치 필요",
+        "external": "외부 결정"
+      },
+      "activity": {
+        "title": "최근 프로비저닝 활동",
+        "description": "테넌트 커넥터에서 수신한 마스킹된 SCIM 작업입니다.",
+        "empty": "아직 수신된 프로비저닝 활동이 없습니다.",
+        "loadError": "프로비저닝 활동을 일시적으로 불러올 수 없습니다. 커넥터 통제 기능은 계속 사용할 수 있습니다."
+      },
+      "eventColumns": {
+        "connector": "커넥터",
+        "operation": "작업",
+        "resource": "리소스",
+        "outcome": "결과",
+        "occurredAt": "발생 시각"
+      },
+      "inspector": {
+        "title": "커넥터 준비 상태",
+        "close": "커넥터 상세 닫기",
+        "readiness": "활성화 준비 상태",
+        "endpoint": "SCIM 엔드포인트",
+        "copyEndpoint": "SCIM 엔드포인트 복사",
+        "endpointCopied": "SCIM 엔드포인트를 복사했습니다.",
+        "tokenPrefix": "자격 증명 식별자: {{prefix}}",
+        "mapping": "지원 속성 계약",
+        "mappingDescription": "운영 전환 전에 테넌트 IdP 매핑을 승인해야 합니다. DWP는 다음의 안정된 SCIM 투영을 수신합니다.",
+        "recentEvents": "최근 커넥터 근거",
+        "noEvents": "이 커넥터에서 수신된 이벤트가 없습니다."
       },
       "actions": {
         "new": "새 커넥터",
@@ -1552,6 +1894,25 @@
       "DIRECT": "직접 할당",
       "GROUP": "그룹 상속"
     },
+    "recommendations": {
+      "KEEP": "유지 신호",
+      "REVIEW": "검토 신호",
+      "UNAVAILABLE": "신호 없음"
+    },
+    "recommendationReasons": {
+      "RECENT_ACTIVITY": "최근 로그인 근거 있음",
+      "PRIVILEGED_ROLE": "특권 역할은 명시적 검토 필요",
+      "NEVER_SIGNED_IN": "로그인 근거 없음",
+      "INACTIVE_90_DAYS": "최근 90일 로그인 없음",
+      "EVIDENCE_UNAVAILABLE": "활성화 시점에 근거 확인 불가"
+    },
+    "evidence": {
+      "source": "할당 출처",
+      "assignedAt": "할당 시각",
+      "lastSignIn": "활성화 시점 최근 로그인",
+      "reason": "검토 신호 근거",
+      "privileged": "특권"
+    },
     "decisions": {
       "PENDING": "검토 대기",
       "APPROVE": "유지 승인",
@@ -1567,6 +1928,7 @@
       "subject": "사용자",
       "access": "검토 권한",
       "source": "권한 출처",
+      "evidence": "근거 신호",
       "decision": "판단",
       "remediation": "후속 조치"
     },

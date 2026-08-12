@@ -252,6 +252,17 @@ export type AuditCaseWorkspace = {
   tasks: AuditCaseTask[];
 };
 
+export type AuditCaseClosureReport = {
+  reportId: string;
+  caseId: string;
+  caseNumber: number;
+  reportVersion: number;
+  contentSha256: string;
+  generatedBy: string;
+  generatedAt: string;
+  report: Record<string, unknown>;
+};
+
 export type AuditSourceHealth = {
   sourceService: string;
   lastEventAt?: string | null;
@@ -470,6 +481,23 @@ export async function updateAuditCase(
 export async function getAuditCaseWorkspace(caseId: string): Promise<AuditCaseWorkspace> {
   const response = await axiosInstance.get<ApiResponse<AuditCaseWorkspace>>(
     `/api/platform/v1/admin/audit-control/cases/${encodeURIComponent(caseId)}/workspace`
+  );
+  return response.data.data;
+}
+
+export async function getAuditCaseClosureReport(caseId: string): Promise<AuditCaseClosureReport> {
+  const response = await axiosInstance.get<ApiResponse<AuditCaseClosureReport>>(
+    `/api/platform/v1/admin/audit-control/cases/${encodeURIComponent(caseId)}/closure-report`
+  );
+  return response.data.data;
+}
+
+export async function ensureAuditCaseClosureReport(
+  caseId: string
+): Promise<AuditCaseClosureReport> {
+  const response = await axiosInstance.post<ApiResponse<AuditCaseClosureReport>, undefined>(
+    `/api/platform/v1/admin/audit-control/cases/${encodeURIComponent(caseId)}/closure-report`,
+    undefined
   );
   return response.data.data;
 }

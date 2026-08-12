@@ -39,6 +39,18 @@ export type AccessReviewItem = {
   roleName: string;
   accessSourceType: 'DIRECT' | 'GROUP';
   accessSourceId: number;
+  sourceKey?: string | null;
+  sourceDisplayName?: string | null;
+  assignmentCreatedAt?: string | null;
+  subjectLastSignInAt?: string | null;
+  privileged: boolean;
+  recommendation: 'KEEP' | 'REVIEW' | 'UNAVAILABLE';
+  recommendationReason:
+    | 'RECENT_ACTIVITY'
+    | 'PRIVILEGED_ROLE'
+    | 'NEVER_SIGNED_IN'
+    | 'INACTIVE_90_DAYS'
+    | 'EVIDENCE_UNAVAILABLE';
   reviewerUserId?: number | null;
   decision: AccessReviewDecision;
   decisionReason?: string | null;

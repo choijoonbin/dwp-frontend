@@ -24,6 +24,9 @@ export type Announcement = AnnouncementDefinition & {
   lifecycleState: AnnouncementLifecycle;
   publishedAt?: string | null;
   publishedBy?: number | null;
+  uniqueViewerCount?: number;
+  viewCount?: number;
+  actionClickCount?: number;
   version: number;
   updatedAt?: string | null;
   updatedBy?: number | null;
@@ -34,6 +37,16 @@ export async function listAnnouncements(): Promise<Announcement[]> {
     '/api/platform/v1/announcements'
   );
   return response.data.data;
+}
+
+export async function recordAnnouncementEngagement(
+  announcementId: number,
+  engagement: 'view' | 'action'
+): Promise<void> {
+  await axiosInstance.post<ApiResponse<void>, undefined>(
+    `/api/platform/v1/announcements/${announcementId}/engagements/${engagement}`,
+    undefined
+  );
 }
 
 export async function listAdminAnnouncements(): Promise<Announcement[]> {

@@ -6,6 +6,7 @@ import Snackbar from '@mui/material/Snackbar';
 
 export function ToastViewport() {
   const toast = useToastStore();
+  const passiveSuccess = toast.severity === 'success' && !toast.action;
 
   return (
     <Snackbar
@@ -13,14 +14,16 @@ export function ToastViewport() {
       anchorOrigin={toast.anchorOrigin}
       autoHideDuration={6000}
       onClose={toast.hide}
+      sx={{ pointerEvents: 'none' }}
     >
       <Alert
         variant="filled"
         severity={toast.severity}
-        onClose={toast.hide}
+        onClose={passiveSuccess ? undefined : toast.hide}
         sx={{
           bgcolor: `${toast.severity}.dark`,
           color: 'common.white',
+          pointerEvents: passiveSuccess ? 'none' : 'auto',
           '& .MuiAlert-icon, & .MuiAlert-action': { color: 'inherit' },
         }}
         action={

@@ -136,6 +136,258 @@ const PROVIDER_TENANT_FIXTURE = {
   ],
 };
 
+const PROVIDER_SECOND_TENANT_FIXTURE = {
+  ...PROVIDER_TENANT_FIXTURE,
+  tenantId: 'tenant-acme',
+  organizationId: 'organization-acme',
+  organizationKey: 'ACME',
+  organizationName: 'Acme Group',
+  tenantKey: 'acme-production',
+  displayName: 'Acme Production',
+  serviceTier: 'REGULATED',
+  dataRegion: 'us-east-1',
+  isolationModel: 'SILO',
+  authTenantId: 2,
+  subscription: {
+    ...PROVIDER_TENANT_FIXTURE.subscription,
+    subscriptionId: 'subscription-acme',
+    planKey: 'regulated',
+    planName: 'Regulated enterprise',
+    contractReference: 'ACME-2026-001',
+  },
+  services: PROVIDER_TENANT_FIXTURE.services.map((service) => ({
+    ...service,
+    serviceInstanceId: 'service-acme-identity',
+    deploymentCell: 'virginia-1',
+    dataRegion: 'us-east-1',
+    lifecycleState: 'DEGRADED',
+    externalResourceId: 'identity-acme',
+  })),
+  domains: [],
+  administrators: [],
+};
+
+function workforceOverviewChartFixture(asOf: string) {
+  const current = asOf >= '2026-08-01';
+  const openPositionCount = current ? 12 : 9;
+  const organizations = [
+    {
+      organizationId: 'org-skax',
+      organizationKey: 'SKAX',
+      name: 'SKAX',
+      organizationType: 'COMPANY',
+      organizationTypeName: 'Company',
+      parentOrganizationId: null,
+      directHeadcount: 0,
+      totalHeadcount: current ? 186 : 178,
+      managerCount: current ? 31 : 29,
+      openPositionCount,
+      childOrganizationCount: 4,
+      directMemberIds: [],
+      layerDepth: 0,
+      averageManagerSpan: 5.7,
+      contingentHeadcount: current ? 24 : 22,
+      healthStatus: 'HEALTHY',
+      healthSignals: [],
+    },
+    {
+      organizationId: 'org-ai-platform',
+      organizationKey: 'AI_PLATFORM',
+      name: 'AI Platform',
+      organizationType: 'DIVISION',
+      organizationTypeName: 'Division',
+      parentOrganizationId: 'org-skax',
+      directHeadcount: 52,
+      totalHeadcount: 52,
+      managerCount: 4,
+      openPositionCount: 5,
+      childOrganizationCount: 1,
+      directMemberIds: [],
+      layerDepth: 1,
+      averageManagerSpan: 13,
+      contingentHeadcount: 9,
+      healthStatus: 'CRITICAL',
+      healthSignals: ['WIDE_MANAGER_SPAN', 'HIGH_VACANCY_RATIO'],
+    },
+    {
+      organizationId: 'org-digital-workplace',
+      organizationKey: 'DIGITAL_WORKPLACE',
+      name: 'Digital Workplace',
+      organizationType: 'DIVISION',
+      organizationTypeName: 'Division',
+      parentOrganizationId: 'org-skax',
+      directHeadcount: 48,
+      totalHeadcount: 48,
+      managerCount: 9,
+      openPositionCount: 3,
+      childOrganizationCount: 0,
+      directMemberIds: [],
+      layerDepth: 1,
+      averageManagerSpan: 3.2,
+      contingentHeadcount: 7,
+      healthStatus: 'ATTENTION',
+      healthSignals: ['NARROW_MANAGER_SPAN'],
+    },
+    {
+      organizationId: 'org-cloud-platform',
+      organizationKey: 'CLOUD_PLATFORM',
+      name: 'Cloud Platform',
+      organizationType: 'DIVISION',
+      organizationTypeName: 'Division',
+      parentOrganizationId: 'org-skax',
+      directHeadcount: 38,
+      totalHeadcount: 38,
+      managerCount: 8,
+      openPositionCount: 2,
+      childOrganizationCount: 0,
+      directMemberIds: [],
+      layerDepth: 1,
+      averageManagerSpan: 5.4,
+      contingentHeadcount: 4,
+      healthStatus: 'HEALTHY',
+      healthSignals: [],
+    },
+    {
+      organizationId: 'org-corporate-services',
+      organizationKey: 'CORPORATE_SERVICES',
+      name: 'Corporate Services',
+      organizationType: 'DIVISION',
+      organizationTypeName: 'Division',
+      parentOrganizationId: 'org-skax',
+      directHeadcount: 26,
+      totalHeadcount: 26,
+      managerCount: 6,
+      openPositionCount: 1,
+      childOrganizationCount: 0,
+      directMemberIds: [],
+      layerDepth: 1,
+      averageManagerSpan: 4.3,
+      contingentHeadcount: 2,
+      healthStatus: 'HEALTHY',
+      healthSignals: [],
+    },
+    {
+      organizationId: 'org-data-governance',
+      organizationKey: 'DATA_GOVERNANCE',
+      name: 'Data Governance',
+      organizationType: 'TEAM',
+      organizationTypeName: 'Team',
+      parentOrganizationId: 'org-ai-platform',
+      directHeadcount: 22,
+      totalHeadcount: 22,
+      managerCount: 2,
+      openPositionCount: 1,
+      childOrganizationCount: 0,
+      directMemberIds: [],
+      layerDepth: 2,
+      averageManagerSpan: 11,
+      contingentHeadcount: 2,
+      healthStatus: 'ATTENTION',
+      healthSignals: ['WIDE_MANAGER_SPAN'],
+    },
+  ];
+  const positions = Array.from({ length: 30 }, (_value, index) => ({
+    positionId: `position-${index + 1}`,
+    positionKey: `POS-${String(index + 1).padStart(3, '0')}`,
+    title: index < openPositionCount ? `Open role ${index + 1}` : `Filled role ${index + 1}`,
+    organizationId: index < 10 ? 'org-ai-platform' : 'org-digital-workplace',
+    reportsToPositionId: index === 0 ? null : 'position-1',
+    status: index < openPositionCount ? 'OPEN' : 'FILLED',
+    positionType: 'REGULAR',
+    criticality: index === 0 ? 'CRITICAL' : index < 3 ? 'HIGH' : 'STANDARD',
+    budgetedFte: 1,
+    annualCostAmount: 120000000,
+    costCurrency: 'KRW',
+    incumbentPersonIds: index < openPositionCount ? [] : [`person-${index + 1}`],
+    subordinatePositionCount: index === 0 ? 8 : 0,
+  }));
+  const openPositions = positions.slice(0, openPositionCount).map((position) => ({
+    positionId: position.positionId,
+    positionKey: position.positionKey,
+    title: position.title,
+    organizationId: position.organizationId,
+    jobProfileName: 'Digital product professional',
+    locationName: 'Seoul',
+    availabilityDate: asOf,
+    budgetedFte: 1,
+    annualCostAmount: position.annualCostAmount,
+    costCurrency: 'KRW',
+    criticality: position.criticality,
+  }));
+
+  return {
+    asOf,
+    company: { organizationId: 'org-skax', organizationKey: 'SKAX', name: 'SKAX' },
+    scenario: null,
+    metrics: {
+      headcount: current ? 186 : 178,
+      activeHeadcount: current ? 178 : 171,
+      onLeaveHeadcount: current ? 8 : 7,
+      contingentHeadcount: current ? 24 : 22,
+      organizationCount: organizations.length,
+      managerCount: current ? 31 : 29,
+      openPositionCount,
+      locationCount: 4,
+      plannedFte: current ? 192.5 : 183,
+      workforceCostAmount: current ? 21800000000 : 20500000000,
+      costCurrency: 'KRW',
+    },
+    analysis: {
+      healthScore: current ? 84 : 80,
+      dataQualityScore: current ? 92 : 88,
+      averageManagerSpan: current ? 5.7 : 5.4,
+      maximumLayers: 3,
+      managerRatioPercent: current ? 17.4 : 16.9,
+      contingentRatioPercent: current ? 12.9 : 12.4,
+      narrowSpanManagerCount: 2,
+      wideSpanManagerCount: 3,
+      singleReportManagerCount: 1,
+      missingManagerCount: current ? 1 : 2,
+      missingGradeCount: current ? 2 : 3,
+      orphanOrganizationCount: 0,
+      policy: {
+        minimumManagerSpan: 3,
+        maximumManagerSpan: 12,
+        maximumLayers: 8,
+        maximumContingentPercent: 20,
+        maximumVacancyPercent: 15,
+      },
+      signals: [
+        {
+          code: 'WIDE_MANAGER_SPAN',
+          severity: 'CRITICAL',
+          count: 3,
+          organizationId: 'org-ai-platform',
+        },
+        {
+          code: 'HIGH_VACANCY_RATIO',
+          severity: 'WARNING',
+          count: openPositionCount,
+          organizationId: 'org-ai-platform',
+        },
+        {
+          code: 'NARROW_MANAGER_SPAN',
+          severity: 'WARNING',
+          count: 2,
+          organizationId: 'org-digital-workplace',
+        },
+      ],
+    },
+    organizations,
+    people: [],
+    positions,
+    relationships: organizations
+      .filter((organization) => organization.parentOrganizationId)
+      .map((organization) => ({
+        childOrganizationId: organization.organizationId,
+        parentOrganizationId: organization.parentOrganizationId,
+        relationshipType: 'SUPERVISORY',
+        primaryRelationship: true,
+      })),
+    openPositions,
+  };
+}
+
 export function fulfillSuccess(route: Route, data: unknown) {
   return route.fulfill({
     contentType: 'application/json',
@@ -226,15 +478,28 @@ export async function mockShellSession(
       return fulfillSuccess(route, { codeSetKey, schemaVersion: 1, values: [] });
     }
     if (
+      path === '/api/platform/v1/admin/tenant-branding/revisions' ||
+      path === '/api/platform/v1/admin/home-experience/revisions'
+    ) {
+      return fulfillSuccess(route, []);
+    }
+    if (
       path.startsWith('/api/platform/v1/tenant-branding') ||
       path.startsWith('/api/platform/v1/admin/tenant-branding')
     ) {
-      return fulfillSuccess(route, { organizationName: 'SKAX', logoUrl: null, version: 0 });
+      return fulfillSuccess(route, {
+        organizationName: 'SKAX',
+        accentColor: '#2457D6',
+        logoUrl: null,
+        version: 0,
+      });
     }
     if (path === '/api/platform/v1/home-experience') {
       return fulfillSuccess(route, {
         headline: null,
         subheadline: null,
+        localizedContent: {},
+        defaultLocale: 'ko',
         backgroundPosition: 'CENTER',
         overlayOpacity: 18,
         backgroundUrl: null,
@@ -332,6 +597,12 @@ export async function mockShellSession(
       });
     }
     if (path === '/api/people/v1/workforce/organization/chart') {
+      if (url.searchParams.get('depth') === '12') {
+        return fulfillSuccess(
+          route,
+          workforceOverviewChartFixture(url.searchParams.get('asOf') ?? '2026-08-11')
+        );
+      }
       return fulfillSuccess(route, {
         asOf: '2026-08-11',
         company: { organizationId: 'org-skax', organizationKey: 'SKAX', name: 'SKAX' },
@@ -404,10 +675,50 @@ export async function mockShellSession(
       });
     }
     if (path === '/api/people/v1/workforce/organization/scenarios') {
-      return fulfillSuccess(route, []);
+      return fulfillSuccess(route, [
+        {
+          scenarioId: 'scenario-ai-growth',
+          scenarioKey: 'AI_GROWTH_2027',
+          name: 'AI growth plan',
+          description: 'Capacity and leadership changes for the next operating plan.',
+          baselineDate: '2026-08-01',
+          effectiveDate: '2027-01-01',
+          lifecycleState: 'DRAFT',
+          version: 2,
+          changes: [],
+        },
+      ]);
     }
     if (path === '/api/people/v1/workforce/reference-data') {
       return fulfillSuccess(route, []);
+    }
+    if (path === '/api/people/v1/workforce/data-operations/hris/sync-runs') {
+      if (url.searchParams.get('size') !== '20') {
+        return fulfillSuccess(route, []);
+      }
+      return fulfillSuccess(route, [
+        {
+          syncRunId: 'sync-workday-20260811',
+          sourceKey: 'WORKDAY_PRODUCTION',
+          syncMode: 'DELTA',
+          lifecycleState: 'SUCCEEDED',
+          requestedWatermark: '2026-08-10T23:00:00Z',
+          committedWatermark: '2026-08-11T00:00:00Z',
+          readCount: 186,
+          createdCount: 4,
+          updatedCount: 11,
+          rejectedCount: 2,
+          connectorInstanceId: 'workday-production',
+          mappingProfileId: 'workday-v3',
+          retryOfSyncRunId: null,
+          pageCount: 2,
+          unchangedCount: 169,
+          failureCode: null,
+          redactedFailureMessage: null,
+          startedAt: '2026-08-11T00:05:00Z',
+          completedAt: '2026-08-11T00:06:12Z',
+        },
+      ]);
     }
     if (path.startsWith('/api/people/v1/workforce/data-operations/hris/')) {
       return fulfillSuccess(route, []);
@@ -436,6 +747,9 @@ export async function mockShellSession(
     if (path === '/api/auth/admin/provisioning/scim/connectors') {
       return fulfillSuccess(route, []);
     }
+    if (path === '/api/auth/admin/provisioning/scim/connectors/events') {
+      return fulfillSuccess(route, []);
+    }
     if (path === '/api/platform/v1/admin/announcements') {
       return fulfillSuccess(route, []);
     }
@@ -443,6 +757,8 @@ export async function mockShellSession(
       return fulfillSuccess(route, {
         headline: null,
         subheadline: null,
+        localizedContent: {},
+        defaultLocale: 'ko',
         backgroundPosition: 'CENTER',
         overlayOpacity: 18,
         backgroundUrl: null,
@@ -791,6 +1107,48 @@ export async function mockShellSession(
       });
     }
     if (path === '/api/platform/v1/admin/audit-control/events') {
+      if (url.searchParams.get('category') === 'ADMIN_CHANGE') {
+        return fulfillSuccess(route, {
+          content: [
+            {
+              eventId: 'audit-change-api-1',
+              occurredAt: '2026-08-10T18:08:00Z',
+              ingestedAt: '2026-08-10T18:08:01Z',
+              tenantId: 1,
+              category: 'ADMIN_CHANGE',
+              action: 'platform.release.deployed',
+              outcome: 'SUCCESS',
+              severity: 'MEDIUM',
+              riskScore: 42,
+              actorType: 'SERVICE',
+              actorId: 'release-orchestrator',
+              actorPrincipal: 'release-orchestrator',
+              actorDisplayName: 'Release orchestrator',
+              actorRoles: ['SYSTEM'],
+              sourceService: 'dwp-platform-server',
+              sourceModule: 'release-control',
+              sourceInstance: 'platform-01',
+              environment: 'development',
+              targetType: 'SERVICE_RELEASE',
+              targetId: 'platform-2026.08.10.1',
+              targetDisplayName: 'Platform 2026.08.10.1',
+              reason: 'Approved production rollout',
+              correlationId: 'corr-release-20260810-1',
+              traceId: 'trace-release-20260810-1',
+              beforeState: { version: '2026.08.09.3' },
+              afterState: { version: '2026.08.10.1' },
+              changedFields: ['version'],
+              metadata: { deploymentCell: 'ap-northeast-2-primary' },
+              retentionClass: 'EXTENDED',
+              recordHash: 'change-api-monitoring-fixture',
+            },
+          ],
+          page: 0,
+          size: 20,
+          totalElements: 1,
+          totalPages: 1,
+        });
+      }
       return fulfillSuccess(route, {
         content: [],
         page: 0,
@@ -1001,12 +1359,15 @@ export async function mockShellSession(
     }
     if (path === '/api/provider/v1/admin/tenants') {
       return fulfillSuccess(route, {
-        content: [PROVIDER_TENANT_FIXTURE],
+        content: [PROVIDER_TENANT_FIXTURE, PROVIDER_SECOND_TENANT_FIXTURE],
         page: 0,
         size: 100,
-        totalElements: 1,
+        totalElements: 2,
         totalPages: 1,
       });
+    }
+    if (path === '/api/provider/v1/admin/tenants/tenant-skax') {
+      return fulfillSuccess(route, PROVIDER_TENANT_FIXTURE);
     }
     if (path === '/api/provider/v1/admin/regions') {
       return fulfillSuccess(route, [
@@ -1014,6 +1375,13 @@ export async function mockShellSession(
           regionKey: 'ap-northeast-2',
           displayName: 'Seoul',
           jurisdictionCode: 'KR',
+          residencyClass: 'REGIONAL',
+          lifecycleState: 'ACTIVE',
+        },
+        {
+          regionKey: 'us-east-1',
+          displayName: 'Virginia',
+          jurisdictionCode: 'US',
           residencyClass: 'REGIONAL',
           lifecycleState: 'ACTIVE',
         },

@@ -17,6 +17,11 @@ export type AskDwpRequest = {
   agentKey?: string;
 };
 
+export type AskDwpOptions = {
+  signal?: AbortSignal;
+  timeoutMs?: number;
+};
+
 export type AskPolicyDecision = {
   outcome: AskPolicyOutcome;
   riskTier: AgentRiskTier;
@@ -187,13 +192,17 @@ function isAskResponse(value: unknown): value is AskDwpResponse {
     : response.answer === null && response.confidence === null && response.citations.length === 0;
 }
 
-export async function askDwp(request: AskDwpRequest): Promise<AskDwpResponse> {
+export async function askDwp(
+  request: AskDwpRequest,
+  options: AskDwpOptions = {}
+): Promise<AskDwpResponse> {
   const response = await axiosInstance.post<ApiResponse<unknown>, AskDwpRequest>(
     '/api/agent/v1/ask',
     {
       ...request,
       agentKey: request.agentKey ?? 'DWP_ASSISTANT',
-    }
+    },
+    { signal: options.signal, timeoutMs: options.timeoutMs ?? 60_000 }
   );
   if (!isAskResponse(response.data.data)) {
     throw new HttpError('Ask runtime response is invalid.', 502, response.data);

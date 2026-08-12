@@ -8,6 +8,7 @@ type RequestConfig = {
   headers?: Record<string, string>;
   responseType?: 'json' | 'blob';
   timeoutMs?: number;
+  signal?: AbortSignal;
 };
 
 type CsrfTokenData = {
@@ -105,10 +106,14 @@ async function request<T>(
     headers[csrf.headerName] = csrf.token;
   }
 
-  const controller = config.timeoutMs ? new AbortController() : undefined;
-  const timeout = controller
-    ? globalThis.setTimeout(() => controller.abort('request-timeout'), config.timeoutMs)
-    : undefined;
+  const controller = config.timeoutMs || config.signal ? new AbortController() : undefined;
+  const abortFromCaller = () => controller?.abort(config.signal?.reason);
+  if (config.signal?.aborted) abortFromCaller();
+  else config.signal?.addEventListener('abort', abortFromCaller, { once: true });
+  const timeout =
+    controller && config.timeoutMs
+      ? globalThis.setTimeout(() => controller.abort('request-timeout'), config.timeoutMs)
+      : undefined;
   let response: Response;
   try {
     response = await fetch(API_URL + url, {
@@ -120,6 +125,7 @@ async function request<T>(
     });
   } finally {
     if (timeout !== undefined) globalThis.clearTimeout(timeout);
+    config.signal?.removeEventListener('abort', abortFromCaller);
   }
   const payload = await parseBody(response, response.ok ? config.responseType : 'json');
 

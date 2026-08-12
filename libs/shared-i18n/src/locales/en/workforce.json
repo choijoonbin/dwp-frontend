@@ -112,7 +112,50 @@
   "overview": {
     "loading": "Loading workforce operations",
     "loadError": "Workforce operations data could not be loaded.",
+    "context": {
+      "label": "Workforce operating context",
+      "scope": "Organization scope",
+      "model": "Workforce model",
+      "effectiveWorkforce": "Effective workforce",
+      "asOf": "Effective date",
+      "compareTo": "Compare with"
+    },
+    "savedViews": {
+      "currentMonth": "Current monthly baseline",
+      "annualBaseline": "Year-over-year comparison"
+    },
+    "live": {
+      "live": "Current workforce snapshot",
+      "syncing": "Refreshing workforce evidence",
+      "stale": "Historical workforce snapshot",
+      "degraded": "Workforce evidence is partially available",
+      "latestSync": "Latest source sync {{time}}",
+      "snapshot": "Effective organization as of {{date}}"
+    },
+    "comparison": {
+      "loading": "Calculating period comparison",
+      "unavailable": "Comparison is unavailable",
+      "delta": "{{delta}} since {{date}}"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "Workforce operations are within policy",
+        "ATTENTION": "Workforce operations need review",
+        "CRITICAL": "Critical workforce action is required"
+      },
+      "detail": {
+        "HEALTHY": "No priority action is required across the effective workforce and source controls.",
+        "ATTENTION": "Review {{actions}} prioritized actions across {{organizations}} organizations before the next effective change.",
+        "CRITICAL": "Resolve the highest-impact control failure or organization risk before proceeding with workforce changes."
+      },
+      "leave": "{{count}} on leave",
+      "criticalVacancies": "{{count}} high-priority vacancies",
+      "dataIssues": "{{count}} data issues",
+      "scenarios": "{{count}} draft scenarios",
+      "openPriority": "Open highest priority"
+    },
     "metrics": {
+      "label": "Workforce operating signals",
       "activeWorkforce": "Active workforce",
       "leaveDetail": "{{count}} on leave",
       "organizations": "Organizations",
@@ -120,7 +163,81 @@
       "openPositions": "Open positions",
       "managersDetail": "{{count}} people managers",
       "dataQuality": "Data quality",
-      "issuesDetail": "{{count}} integrity issues"
+      "issuesDetail": "{{count}} integrity issues",
+      "organizationRisk": "Organizations needing review",
+      "organizationRiskDetail": "{{critical}} critical · {{attention}} attention",
+      "healthyOrganizations": "{{count}} of {{total}} organizations healthy",
+      "vacancyRatio": "{{value}}% of positions are open",
+      "openPeople": "Open active workforce",
+      "openPositionsAction": "Open position hierarchy",
+      "openHealth": "Open organization health",
+      "openQuality": "Open data quality"
+    },
+    "queue": {
+      "title": "Priority workforce actions",
+      "description": "Ordered by control failure, organization risk, staffing impact, and readiness.",
+      "count": "{{count}} actions",
+      "clearTitle": "No workforce action is currently required",
+      "clearDescription": "Effective workforce, organization policy, and available source evidence are within control."
+    },
+    "actions": {
+      "syncFailed": "Restore the latest HRIS synchronization",
+      "syncFailedDetail": "{{source}} failed with {{code}}. Inspect the run before relying on downstream workforce data.",
+      "unknownFailure": "an unspecified failure",
+      "immediate": "Immediate",
+      "dataQuality": "Remediate {{count}} workforce integrity issues",
+      "dataQualityDetail": "Missing managers {{managers}} · grades {{grades}} · disconnected organizations {{organizations}}",
+      "organizationRisk": "Review {{name}} organization design",
+      "organizationRiskDetail": "{{signals}} policy signals · {{headcount}} people · {{vacancies}} vacancies",
+      "criticalVacancies": "Review {{count}} high-priority vacancies",
+      "criticalVacanciesDetail": "Prioritize critical and high positions within {{total}} total vacancies.",
+      "staffing": "Staffing",
+      "rejectedRecords": "Reconcile {{count}} rejected source records",
+      "rejectedRecordsDetail": "The latest {{source}} run completed with records that did not project.",
+      "reconcile": "Reconcile",
+      "draftScenarios": "Review {{count}} draft organization scenarios",
+      "draftScenariosDetail": "Confirm ownership, impact, and approval readiness before the effective date.",
+      "plan": "Plan"
+    },
+    "composition": {
+      "title": "Workforce composition",
+      "description": "Point-in-time mix and structural ratios for the selected effective date.",
+      "openPeople": "Open workforce",
+      "summary": "Workforce composition: {{active}} employees, {{leave}} on leave, {{contingent}} contingent",
+      "active": "Employees",
+      "leave": "On leave",
+      "contingent": "Contingent",
+      "plannedFte": "Planned FTE",
+      "managerRatio": "Manager ratio",
+      "contingentRatio": "Contingent ratio"
+    },
+    "risk": {
+      "title": "Organization risk distribution",
+      "description": "Exceptions are ranked before healthy organizations and connect to the affected structure.",
+      "openInsights": "Open insights",
+      "summary": "Organization health: {{healthy}} healthy, {{attention}} attention, {{critical}} critical",
+      "states": {
+        "HEALTHY": "Healthy",
+        "ATTENTION": "Attention",
+        "CRITICAL": "Critical"
+      },
+      "organizationDetail": "{{headcount}} people · average span {{span}} · {{vacancies}} vacancies",
+      "openOrganization": "Open {{name}} organization",
+      "clear": "No organization is outside the current health policy."
+    },
+    "control": {
+      "title": "Data and plan controls",
+      "description": "Source freshness, rejected records, and draft design work supporting this snapshot.",
+      "latestSync": "Latest source synchronization",
+      "unavailable": "Evidence source unavailable",
+      "never": "No synchronization has been recorded",
+      "partial": "Partial",
+      "reconciliation": "Source reconciliation",
+      "reconciliationDetail": "{{count}} rejected records in the latest available run",
+      "scenarios": "Organization design scenarios",
+      "scenarioDetail": "{{count}} draft scenarios require ownership and approval review",
+      "comparisonUnavailable": "Period comparison is unavailable",
+      "comparisonUnavailableDetail": "Current operating evidence remains available. Retry the baseline independently."
     },
     "attention": {
       "title": "Attention signals",
@@ -305,8 +422,23 @@
     "search": "Search people",
     "asOf": "As of {{date}}",
     "resultCount": "{{count}} people",
+    "moreAvailable": "More available",
+    "loadMore": "Load more people",
     "notAvailable": "Not available",
     "masked": "Masked",
+    "partial": {
+      "organizationTitle": "Organization context is temporarily unavailable",
+      "organizationDescription": "People remain available. Reporting lines and organization navigation may be incomplete.",
+      "rolesTitle": "System role context is temporarily unavailable",
+      "rolesDescription": "Workforce records remain available without role assignments until identity access recovers."
+    },
+    "empty": {
+      "title": "No people are available for this effective date",
+      "description": "The directory has no visible active workforce records in the current tenant scope.",
+      "noResultsTitle": "No people match this view",
+      "noResultsDescription": "Change the search, effective date, or filters to widen the result set.",
+      "reset": "Reset directory view"
+    },
     "filters": {
       "label": "People filters",
       "status": "Worker status",
@@ -326,7 +458,6 @@
     },
     "grid": {
       "toolbar": "People grid tools",
-      "export": "Export people CSV",
       "columnPresets": {
         "label": "Column view",
         "operational": "Operational details",
@@ -379,6 +510,36 @@
     "search": "Search organizations, people, or titles",
     "canvasLabel": "SKAX organization chart workspace",
     "asOf": "As of {{date}}",
+    "context": {
+      "label": "Organization design context",
+      "scope": "Design scope",
+      "model": "Model",
+      "liveModel": "Current workforce",
+      "effectiveDate": "Effective date",
+      "perspective": "Perspective",
+      "status": {
+        "live": "Current workforce baseline",
+        "historical": "Historical snapshot",
+        "scenario": "Scenario preview"
+      },
+      "scenarioDetail": "Branched from the {{date}} baseline",
+      "snapshotDetail": "Effective organization as of {{date}}"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "Organization design is within policy",
+        "ATTENTION": "Organization design needs review",
+        "CRITICAL": "Organization design risk requires action"
+      },
+      "detail": "Use policy deviations and data trust signals to judge whether the current or proposed structure is ready.",
+      "critical": "{{count}} critical organizations",
+      "attention": "{{count}} attention organizations",
+      "dataTrust": "Data trust {{score}}% · {{count}} issues",
+      "scenarioChanges": "{{count}} planned changes",
+      "designLimits": "Average span {{span}} · {{layers}} layers",
+      "signalsLabel": "Organization design risk signals",
+      "reviewInsights": "Review organization insights"
+    },
     "view": {
       "label": "Organization chart view",
       "organizations": "Organization",

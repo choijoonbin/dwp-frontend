@@ -5,9 +5,16 @@ import type { ApiResponse } from '../types';
 
 export type HomeBackgroundPosition = 'LEFT' | 'CENTER' | 'RIGHT';
 
+export type LocalizedHomeCopy = {
+  headline?: string | null;
+  subheadline?: string | null;
+};
+
 export type HomeExperience = {
   headline?: string | null;
   subheadline?: string | null;
+  localizedContent: Record<string, LocalizedHomeCopy>;
+  defaultLocale: string;
   backgroundPosition: HomeBackgroundPosition;
   overlayOpacity: number;
   backgroundUrl?: string | null;
@@ -21,9 +28,29 @@ export type HomeExperience = {
   updatedBy?: number | null;
 };
 
+export type HomeExperienceRevision = {
+  revisionId: number;
+  sourceVersion: number;
+  changeType: 'BASELINE' | 'SETTINGS_PUBLISHED' | 'ASSET_PUBLISHED' | 'ASSET_RESET' | 'ROLLBACK';
+  headline?: string | null;
+  backgroundOriginalName?: string | null;
+  backgroundWidth?: number | null;
+  backgroundHeight?: number | null;
+  localeCount: number;
+  current: boolean;
+  createdAt: string;
+  createdBy?: number | null;
+};
+
 export type UpdateHomeExperienceRequest = Pick<
   HomeExperience,
-  'headline' | 'subheadline' | 'backgroundPosition' | 'overlayOpacity' | 'version'
+  | 'headline'
+  | 'subheadline'
+  | 'localizedContent'
+  | 'defaultLocale'
+  | 'backgroundPosition'
+  | 'overlayOpacity'
+  | 'version'
 >;
 
 export const DEFAULT_HOME_BACKGROUND_URL = '/assets/home/default/agentic-workspace-hero.png';
@@ -78,6 +105,24 @@ export async function uploadHomeBackground(file: File, version: number): Promise
 export async function resetHomeBackground(version: number): Promise<HomeExperience> {
   const response = await axiosInstance.post<ApiResponse<HomeExperience>, { version: number }>(
     '/api/platform/v1/admin/home-experience/background/reset',
+    { version }
+  );
+  return response.data.data;
+}
+
+export async function getHomeExperienceRevisions(limit = 20): Promise<HomeExperienceRevision[]> {
+  const response = await axiosInstance.get<ApiResponse<HomeExperienceRevision[]>>(
+    `/api/platform/v1/admin/home-experience/revisions?limit=${limit}`
+  );
+  return response.data.data;
+}
+
+export async function rollbackHomeExperience(
+  revisionId: number,
+  version: number
+): Promise<HomeExperience> {
+  const response = await axiosInstance.post<ApiResponse<HomeExperience>, { version: number }>(
+    `/api/platform/v1/admin/home-experience/revisions/${revisionId}/rollback`,
     { version }
   );
   return response.data.data;

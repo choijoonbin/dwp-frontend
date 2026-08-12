@@ -449,6 +449,7 @@ export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowMod
   ...props
 }: EnterpriseDataGridProps<R>) {
   const appearance = useAppearance();
+  const gridRootRef = useRef<HTMLDivElement>(null);
   const resolvedDensity = density ?? appearance.preference.density;
   const resolvedRowHeight = rowHeight ?? GRID_ROW_HEIGHT[resolvedDensity];
   const resolvedColumnHeaderHeight = columnHeaderHeight ?? resolvedRowHeight;
@@ -503,8 +504,20 @@ export function EnterpriseDataGrid<R extends GridValidRowModel = GridValidRowMod
       : {}),
   };
 
+  useLayoutEffect(() => {
+    const scroller = gridRootRef.current?.querySelector<HTMLElement>(
+      '.MuiDataGrid-virtualScroller'
+    );
+    if (!scroller) return;
+    scroller.removeAttribute('tabindex');
+    if (!scroller.querySelector('[tabindex="0"]')) {
+      const firstCell = scroller.querySelector<HTMLElement>('[role="gridcell"]');
+      if (firstCell) firstCell.tabIndex = 0;
+    }
+  });
+
   return (
-    <Box sx={{ width: 1, minWidth: 0, height: resolvedHeight }}>
+    <Box ref={gridRootRef} sx={{ width: 1, minWidth: 0, height: resolvedHeight }}>
       <DataGrid
         {...props}
         columns={columns}

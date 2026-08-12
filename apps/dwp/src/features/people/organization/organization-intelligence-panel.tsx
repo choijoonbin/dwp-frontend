@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   AlertTriangle,
@@ -34,12 +34,14 @@ import type {
 import type { LucideIcon } from 'lucide-react';
 import type { OrgChartSelection } from './org-chart-inspector';
 
-type IntelligenceView = 'health' | 'changes' | 'quality';
+export type OrganizationIntelligenceView = 'health' | 'changes' | 'quality';
 
 type Props = {
   intelligence?: OrganizationIntelligence;
   loading: boolean;
   error?: string;
+  view: OrganizationIntelligenceView;
+  onViewChange: (view: OrganizationIntelligenceView) => void;
   onSelect: (selection: OrgChartSelection) => void;
 };
 
@@ -117,9 +119,15 @@ function formatCost(value: number, currency?: string | null): string {
   });
 }
 
-export function OrganizationIntelligencePanel({ intelligence, loading, error, onSelect }: Props) {
+export function OrganizationIntelligencePanel({
+  intelligence,
+  loading,
+  error,
+  view,
+  onViewChange,
+  onSelect,
+}: Props) {
   const { t } = useTranslation('workforce');
-  const [view, setView] = useState<IntelligenceView>('health');
 
   const csvRows = useMemo(() => {
     if (!intelligence) return [] as unknown[][];
@@ -275,7 +283,9 @@ export function OrganizationIntelligencePanel({ intelligence, loading, error, on
           size="small"
           value={view}
           aria-label={t('orgChart.intelligence.tabs.label')}
-          onChange={(_event, next: IntelligenceView | null) => next && setView(next)}
+          onChange={(_event, next: OrganizationIntelligenceView | null) =>
+            onViewChange(next ?? view)
+          }
           sx={{
             width: { xs: 1, sm: 'auto' },
             '& .MuiToggleButton-root': {

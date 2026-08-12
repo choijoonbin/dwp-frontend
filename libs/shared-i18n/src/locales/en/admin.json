@@ -301,6 +301,7 @@
     "mfaEnabled": "MFA on",
     "mfaDisabled": "MFA off",
     "additionalRoles": "{{count}} more roles",
+    "inheritedCount": "{{count}} inherited",
     "roleFamilies": {
       "WORKSPACE": "Baseline access",
       "PEOPLE": "People operations",
@@ -317,7 +318,9 @@
     },
     "columns": {
       "user": "User",
-      "roles": "Roles",
+      "roles": "Effective roles",
+      "sources": "Sources",
+      "lastSignIn": "Last sign-in",
       "status": "Status",
       "mfa": "MFA",
       "revision": "Revision"
@@ -326,6 +329,8 @@
       "refresh": "Refresh users and roles",
       "editRoles": "Edit roles",
       "editRolesFor": "Edit roles for {{name}}",
+      "editDirectRoles": "Edit direct roles",
+      "reviewEffectiveAccess": "Review effective access",
       "save": "Save access",
       "saving": "Saving access"
     },
@@ -338,44 +343,222 @@
       "conflictsWith": "Separation-of-duties policy prevents assignment with {{roles}}.",
       "sessionNotice": "Saving role changes signs this user out of all active sessions."
     },
+    "signals": {
+      "label": "Identity access signals",
+      "identities": "Visible identities",
+      "currentScope": "Current tenant scope",
+      "privileged": "Privileged identities",
+      "reviewEvidence": "Require evidence review",
+      "inherited": "Inherited assignments",
+      "groupManaged": "Managed through groups",
+      "withoutMfa": "Without MFA",
+      "authenticationPosture": "Authentication posture"
+    },
+    "sources": {
+      "direct": "Direct",
+      "group": "Group"
+    },
+    "inspector": {
+      "title": "Effective access",
+      "close": "Close access details",
+      "posture": "Identity posture",
+      "mfa": "Multi-factor authentication",
+      "sessions": "Active sessions",
+      "lastSignIn": "Last sign-in",
+      "neverSignedIn": "No sign-in recorded",
+      "revision": "Access revision",
+      "effectiveAccess": "Effective access",
+      "assignmentCount": "{{count}} access assignments",
+      "noEffectiveAccess": "No effective access is currently assigned.",
+      "privileged": "Privileged",
+      "sourceValue": "Source: {{source}}",
+      "scopeValue": "Scope: {{scope}}",
+      "validUntil": "Valid until {{date}}",
+      "noExpiry": "No expiry",
+      "notAvailable": "Not available",
+      "sourceNotice": "Direct roles can be changed here. Group-derived access remains controlled by its source group so one user's access cannot be changed in a way that silently affects other members."
+    },
     "toasts": {
       "updated": "User access updated and active sessions revoked."
     }
   },
   "branding": {
     "title": "Tenant branding",
-    "description": "Organization identity in the DWP co-brand lockup.",
+    "description": "Govern the organization identity published across DWP surfaces.",
     "loading": "Loading tenant branding",
     "customLogo": "Custom logo",
     "productOnly": "Product brand only",
+    "unsaved": "Unpublished changes",
+    "version": "Published v{{version}}",
     "headerPreview": "Header brand preview",
     "lockupPreview": "Brand lockup preview",
     "organizationName": "Organization name",
+    "accentColor": "Brand accent",
+    "accentColorInvalid": "Use a six-digit hex color such as #2457D6.",
     "noLogo": "No tenant logo",
     "fileRequirements": "SVG, PNG, or JPEG / up to 2 MB",
+    "preview": {
+      "title": "Surface preview",
+      "surfaceLabel": "Preview surface",
+      "organizationFallback": "Your organization",
+      "surfaces": {
+        "SHELL": "Workspace shell",
+        "SIGN_IN": "Sign-in experience",
+        "EMAIL": "Notification email",
+        "FAVICON": "Browser identity"
+      }
+    },
+    "editor": {
+      "title": "Brand definition"
+    },
+    "quality": {
+      "title": "Publication checks",
+      "organization": {
+        "label": "Organization name",
+        "pass": "A customer identity is available to assistive technology and compact surfaces.",
+        "warning": "Add an organization name before publishing a customer brand."
+      },
+      "contrast": {
+        "label": "Accent contrast",
+        "detail": "Best foreground contrast is {{ratio}}:1; publication target is 4.5:1."
+      },
+      "asset": {
+        "label": "Logo asset",
+        "pass": "The published logo passed type and file-size validation.",
+        "pending": "Pending asset is {{size}} and will be validated again by the server.",
+        "warning": "Product-only branding is valid, but no customer logo is published."
+      },
+      "ratio": {
+        "label": "Logo proportions",
+        "detail": "Published dimensions are {{width}} x {{height}}.",
+        "notAvailable": "Proportion checks start after a custom logo is published."
+      }
+    },
+    "history": {
+      "title": "Brand publication history",
+      "subtitle": "Immutable snapshots and recoverable brand assets",
+      "close": "Close brand publication history",
+      "empty": "History begins with the next publication.",
+      "current": "Current",
+      "restore": "Restore",
+      "version": "v{{version}}",
+      "productOnly": "Product brand only",
+      "changeTypes": {
+        "BASELINE": "Initial baseline",
+        "SETTINGS_PUBLISHED": "Brand definition published",
+        "ASSET_PUBLISHED": "Logo published",
+        "ASSET_RESET": "Logo removed",
+        "ROLLBACK": "Prior revision restored"
+      }
+    },
     "actions": {
       "chooseLogo": "Choose logo",
       "uploadLogo": "Upload logo",
+      "publishLogo": "Publish logo",
       "removeLogo": "Remove logo",
-      "save": "Save branding"
+      "save": "Save branding",
+      "publish": "Publish brand definition",
+      "history": "History"
     },
     "toasts": {
       "logoUploaded": "Tenant logo uploaded.",
       "logoRemoved": "Tenant logo removed.",
-      "saved": "Tenant branding saved."
+      "saved": "Tenant branding saved.",
+      "published": "Tenant brand definition published.",
+      "restored": "The selected brand revision was restored."
     }
   },
   "homeExperience": {
     "title": "Home experience",
-    "description": "Tenant presentation for the personal app workspace.",
+    "description": "Compose, validate, and publish the tenant home presentation.",
     "loading": "Loading home experience",
     "customBackground": "Custom background",
     "defaultBackground": "Default background",
+    "unsaved": "Unpublished changes",
+    "version": "Published v{{version}}",
     "preview": "Home hero preview",
     "previewHeadline": "Welcome back, Administrator",
     "previewMessage": "Your assigned apps and services, ready to launch.",
     "builtInBackground": "Built-in DWP background",
     "fileRequirements": "PNG or JPEG / up to 10 MB",
+    "locales": {
+      "ko": "Korean",
+      "en": "English"
+    },
+    "localeCodes": {
+      "ko": "KO",
+      "en": "EN"
+    },
+    "previewStudio": {
+      "title": "Experience preview",
+      "status": "{{viewport}} · {{locale}} · {{theme}}",
+      "viewportLabel": "Preview viewport",
+      "themeLabel": "Preview theme",
+      "localeLabel": "Preview locale",
+      "viewports": {
+        "DESKTOP": "Desktop",
+        "MOBILE": "Mobile"
+      },
+      "themes": {
+        "LIGHT": "Light shell",
+        "DARK": "Dark shell"
+      }
+    },
+    "editor": {
+      "title": "Localized presentation",
+      "localeStatus": "Editing {{locale}} copy",
+      "localeLabel": "Content locale",
+      "defaultLocale": "Default locale",
+      "makeDefault": "Make default"
+    },
+    "asset": {
+      "title": "Background and focal area"
+    },
+    "quality": {
+      "title": "Publication checks",
+      "notAvailable": "N/A",
+      "defaultCopy": {
+        "label": "Default-locale copy",
+        "pass": "The default locale has a headline and supporting message.",
+        "warning": "Complete the default locale before publishing."
+      },
+      "locales": {
+        "label": "Locale coverage",
+        "detail": "{{complete}} of {{total}} configured locales have complete copy."
+      },
+      "asset": {
+        "label": "Image quality",
+        "pending": "Pending image is {{size}} and will be validated again by the server.",
+        "dimensions": "Published dimensions are {{width}} x {{height}}; target is at least 1440 x 400.",
+        "builtIn": "The governed built-in image meets the publication profile."
+      },
+      "safeArea": {
+        "label": "Responsive safe area",
+        "detail": "Image ratio is {{ratio}}; dashed guides show protected copy space."
+      },
+      "readability": {
+        "label": "Text readability",
+        "detail": "Readability overlay is {{opacity}}%; review both shell themes before publishing."
+      }
+    },
+    "history": {
+      "title": "Home publication history",
+      "subtitle": "Immutable copy, presentation, and recoverable asset snapshots",
+      "close": "Close home publication history",
+      "empty": "History begins with the next publication.",
+      "current": "Current",
+      "restore": "Restore",
+      "defaultCopy": "Default DWP copy",
+      "localeCount": "{{count}} locales",
+      "summary": "{{locales}} / v{{version}}",
+      "changeTypes": {
+        "BASELINE": "Initial baseline",
+        "SETTINGS_PUBLISHED": "Presentation published",
+        "ASSET_PUBLISHED": "Background published",
+        "ASSET_RESET": "Built-in background restored",
+        "ROLLBACK": "Prior revision restored"
+      }
+    },
     "fields": {
       "headline": "Headline",
       "message": "Supporting message",
@@ -390,13 +573,18 @@
     "actions": {
       "chooseImage": "Choose image",
       "upload": "Upload background",
+      "publishImage": "Publish background",
       "restore": "Restore default",
-      "save": "Save presentation"
+      "save": "Save presentation",
+      "publish": "Publish presentation",
+      "history": "History"
     },
     "toasts": {
       "saved": "Home experience settings saved.",
+      "published": "Home presentation published.",
       "uploaded": "Home background uploaded.",
-      "restored": "The default home background was restored."
+      "restored": "The default home background was restored.",
+      "revisionRestored": "The selected home revision was restored."
     }
   },
   "announcements": {
@@ -409,7 +597,30 @@
     "noAnnouncements": "No announcements",
     "empty": {
       "title": "There are no announcements yet",
-      "description": "Create the first draft, then review its audience and publication window before publishing."
+      "description": "Create the first draft, then review its audience and publication window before publishing.",
+      "filteredTitle": "No announcements match this pipeline state",
+      "filteredDescription": "Choose another state or return to the full communications pipeline."
+    },
+    "copyTitle": "Copy of {{title}}",
+    "pipeline": {
+      "label": "Announcement pipeline",
+      "ALL": "All",
+      "DRAFT": "Draft",
+      "LIVE": "Live",
+      "SCHEDULED": "Scheduled",
+      "EXPIRED": "Expired",
+      "ARCHIVED": "Archived",
+      "resultCount": "{{count}} announcements in this view"
+    },
+    "metrics": {
+      "label": "Announcement delivery signals",
+      "currentlyVisible": "Visible in the workspace now",
+      "awaitingWindow": "Waiting for publication start",
+      "awaitingPublish": "Requires review and publish",
+      "uniqueViewers": "Unique viewers",
+      "views": "Views",
+      "actionClicks": "Action clicks",
+      "aggregateNotice": "Sum of per-announcement viewers"
     },
     "fields": {
       "title": "Title",
@@ -440,6 +651,9 @@
       "status": "Status",
       "audience": "Audience",
       "window": "Window",
+      "engagement": "Engagement",
+      "engagementValue": "{{viewers}} viewers · {{clicks}} clicks",
+      "viewsValue": "{{count}} total views",
       "actions": "Actions"
     },
     "dialog": {
@@ -455,13 +669,27 @@
       "publish": "Publish",
       "publishNamed": "Publish {{title}}",
       "archive": "Archive",
-      "archiveNamed": "Archive {{title}}"
+      "archiveNamed": "Archive {{title}}",
+      "preview": "Preview",
+      "previewNamed": "Preview {{title}}",
+      "duplicate": "Duplicate as draft",
+      "duplicateNamed": "Duplicate {{title}} as a draft",
+      "showAll": "Show all announcements"
+    },
+    "preview": {
+      "title": "Announcement preview",
+      "close": "Close announcement preview",
+      "workspace": "Workspace rendering",
+      "delivery": "Delivery evidence",
+      "analyticsNotice": "Counts show observed delivery only. Audience-size and reach-rate reporting require the approved identity audience contract.",
+      "governance": "Audience and publication window"
     },
     "toasts": {
       "published": "Announcement published.",
       "archived": "Announcement archived.",
       "updated": "Announcement updated.",
-      "created": "Announcement draft created."
+      "created": "Announcement draft created.",
+      "duplicated": "Announcement duplicated as a draft."
     }
   },
   "systemCodeCatalog": {
@@ -784,6 +1012,36 @@
     "loading": "Loading API telemetry",
     "loadError": "API telemetry could not be loaded.",
     "generatedAt": "Updated {{time}}",
+    "context": {
+      "label": "API observation scope",
+      "window": "Observation window",
+      "windowValue": "{{window}} · {{from}} to {{to}}",
+      "observation": "Observation point",
+      "target": "Service scope",
+      "targetValue": "{{service}} · {{method}}"
+    },
+    "live": {
+      "syncing": "Synchronizing latest API state",
+      "auto": "Auto-refreshing every 30 seconds",
+      "manual": "Manual snapshot",
+      "changeContextUnavailable": "Change event correlation delayed"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "API services are within normal response bounds",
+        "ATTENTION": "API error or latency review is required",
+        "CRITICAL": "Immediate API customer-impact response is required"
+      },
+      "detail": {
+        "HEALTHY": "The selected scope has no server errors and latency is within its operating threshold.",
+        "ATTENTION": "Review {{errors}} server errors, {{rate}}% error rate, and {{latency}} p95 in route and trace order.",
+        "CRITICAL": "Error rate or tail latency exceeded its threshold. Isolate impacted routes and preserve audit evidence."
+      },
+      "errors": "{{count}} server errors",
+      "errorRate": "{{value}}% error rate",
+      "p95": "{{value}} p95",
+      "openEvidence": "Explore audit evidence"
+    },
     "filters": {
       "label": "API history filters",
       "window": "Time window",
@@ -838,7 +1096,15 @@
       "description": "Volume and error concentration across the selected window.",
       "requests": "Requests",
       "errors": "Errors",
+      "changes": "Changes",
       "chartLabel": "API request and error trend"
+    },
+    "changes": {
+      "title": "Change correlation",
+      "description": "Deployments and administrative changes in the same window.",
+      "count": "{{count}} events",
+      "unavailable": "The change audit ledger is unavailable. API metrics remain usable.",
+      "empty": "There are no change events to correlate in this window."
     },
     "status": {
       "title": "Status distribution",
@@ -883,6 +1149,7 @@
       "loadError": "The request trace could not be loaded.",
       "copyCorrelation": "Copy correlation ID",
       "copyTrace": "Copy trace ID",
+      "openAuditEvidence": "Open correlated audit evidence",
       "traceTitle": "Trace hops",
       "fields": {
         "service": "Service",
@@ -1232,6 +1499,17 @@
       "caseCreated": "Investigation case created.",
       "caseUpdated": "Case status updated.",
       "closedResolution": "Case reviewed and closed.",
+      "closedCaseImmutable": "This closed case and its investigation artifacts are read-only. Create a follow-up case for additional work.",
+      "closureResolutionRequired": "Enter a specific investigation conclusion and disposition rationale before closing.",
+      "closureTasksRequired": "Complete or skip {{count}} open tasks before closing this case.",
+      "closureReport": "Closure report",
+      "closureReportDescription": "Preserve final investigation evidence and decisions as an immutable report.",
+      "closureReportVersion": "Immutable snapshot v{{version}}",
+      "closureReportGeneratedAt": "Generated {{date}}",
+      "closureReportHash": "SHA-256 {{hash}}",
+      "generateClosureReport": "Generate closure report",
+      "downloadClosureReport": "Download closure report",
+      "closureReportGenerated": "Closure report generated with an integrity hash.",
       "queueOpen": "Open signals",
       "queueOpenHint": "Awaiting a decision",
       "queueCritical": "Critical",
@@ -1468,6 +1746,9 @@
       "RUNNING": "Running",
       "SUCCEEDED": "Succeeded",
       "SUCCESS": "Succeeded",
+      "READY": "Ready",
+      "ATTENTION": "Attention",
+      "DENIED": "Denied",
       "FAILED": "Failed",
       "PENDING": "Pending",
       "COMPLETED": "Completed"
@@ -1484,7 +1765,68 @@
         "tokenPrefix": "Token fingerprint",
         "operations": "Allowed operations",
         "state": "State",
+        "health": "Readiness",
+        "activity24h": "Activity (24h)",
         "lastUsed": "Last used"
+      },
+      "failedCount": "{{count}} failed",
+      "metrics": {
+        "label": "SCIM provisioning signals",
+        "active": "Active connectors",
+        "activeDetail": "Endpoints accepting traffic",
+        "attention": "Needs attention",
+        "attentionDetail": "Latest outcome is unsuccessful",
+        "events": "Events in 24h",
+        "eventsDetail": "Inbound SCIM operations",
+        "failures": "Failures in 24h",
+        "failuresDetail": "Failed or denied operations"
+      },
+      "workflow": {
+        "title": "Provisioning activation path",
+        "description": "Complete each control in order and use inbound evidence to verify the connection.",
+        "step": "Step {{number}}"
+      },
+      "steps": {
+        "credential": "Issue endpoint credential",
+        "credentialDetail": "Create a scoped connector and secure its one-time token.",
+        "idp": "Configure the identity provider",
+        "idpDetail": "Select the IdP and approve the tenant attribute mapping.",
+        "firstSync": "Verify first synchronization",
+        "firstSyncDetail": "Confirm authenticated inbound Users or Groups activity.",
+        "reconcile": "Reconcile provisioning failures",
+        "reconcileDetail": "Resolve denied or failed records before production rollout."
+      },
+      "stepStates": {
+        "complete": "Complete",
+        "pending": "Pending evidence",
+        "attention": "Action required",
+        "external": "External decision"
+      },
+      "activity": {
+        "title": "Recent provisioning activity",
+        "description": "Redacted inbound SCIM operations across tenant connectors.",
+        "empty": "No provisioning activity has been received yet.",
+        "loadError": "Provisioning activity is temporarily unavailable. Connector controls remain available."
+      },
+      "eventColumns": {
+        "connector": "Connector",
+        "operation": "Operation",
+        "resource": "Resource",
+        "outcome": "Outcome",
+        "occurredAt": "Occurred at"
+      },
+      "inspector": {
+        "title": "Connector readiness",
+        "close": "Close connector details",
+        "readiness": "Activation readiness",
+        "endpoint": "SCIM endpoint",
+        "copyEndpoint": "Copy SCIM endpoint",
+        "endpointCopied": "SCIM endpoint copied.",
+        "tokenPrefix": "Credential fingerprint: {{prefix}}",
+        "mapping": "Supported attribute contract",
+        "mappingDescription": "The tenant IdP mapping must be approved before rollout. DWP accepts the following stable SCIM projection.",
+        "recentEvents": "Recent connector evidence",
+        "noEvents": "No events have been received for this connector."
       },
       "actions": {
         "new": "New connector",
@@ -1552,6 +1894,25 @@
       "DIRECT": "Direct",
       "GROUP": "Inherited from group"
     },
+    "recommendations": {
+      "KEEP": "Keep signal",
+      "REVIEW": "Review signal",
+      "UNAVAILABLE": "No signal"
+    },
+    "recommendationReasons": {
+      "RECENT_ACTIVITY": "Recent sign-in evidence",
+      "PRIVILEGED_ROLE": "Privileged role requires explicit review",
+      "NEVER_SIGNED_IN": "No sign-in evidence",
+      "INACTIVE_90_DAYS": "No sign-in in the last 90 days",
+      "EVIDENCE_UNAVAILABLE": "Evidence was unavailable at activation"
+    },
+    "evidence": {
+      "source": "Assignment source",
+      "assignedAt": "Assigned at",
+      "lastSignIn": "Last sign-in at activation",
+      "reason": "Review signal basis",
+      "privileged": "Privileged"
+    },
     "decisions": {
       "PENDING": "Pending",
       "APPROVE": "Approve",
@@ -1567,6 +1928,7 @@
       "subject": "Identity",
       "access": "Access under review",
       "source": "Source",
+      "evidence": "Evidence signal",
       "decision": "Decision",
       "remediation": "Remediation"
     },

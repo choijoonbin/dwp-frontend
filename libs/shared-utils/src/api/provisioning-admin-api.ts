@@ -10,7 +10,25 @@ export type ScimConnector = {
   allowedOperations: string[];
   lifecycleState: 'ACTIVE' | 'SUSPENDED' | 'RETIRED';
   lastUsedAt?: string | null;
+  health: 'READY' | 'PENDING' | 'ATTENTION' | 'SUSPENDED' | 'RETIRED';
+  events24h: number;
+  failedEvents24h: number;
+  lastSuccessAt?: string | null;
+  lastFailureAt?: string | null;
   version: number;
+};
+
+export type ScimProvisioningEvent = {
+  eventId: string;
+  connectorId: string;
+  connectorName: string;
+  operation: string;
+  resourceType: string;
+  resourceId?: string | null;
+  outcome: 'SUCCESS' | 'DENIED' | 'FAILED';
+  correlationId?: string | null;
+  summary: string;
+  occurredAt: string;
 };
 
 export type ScimCredentialIssued = {
@@ -22,6 +40,18 @@ const BASE = '/api/auth/admin/provisioning/scim/connectors';
 
 export async function listScimConnectors(): Promise<ScimConnector[]> {
   const response = await axiosInstance.get<ApiResponse<ScimConnector[]>>(BASE);
+  return response.data.data;
+}
+
+export async function listScimProvisioningEvents(
+  connectorId?: string,
+  limit = 100
+): Promise<ScimProvisioningEvent[]> {
+  const search = new URLSearchParams({ limit: String(limit) });
+  if (connectorId) search.set('connectorId', connectorId);
+  const response = await axiosInstance.get<ApiResponse<ScimProvisioningEvent[]>>(
+    `${BASE}/events?${search.toString()}`
+  );
   return response.data.data;
 }
 

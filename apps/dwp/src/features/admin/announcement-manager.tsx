@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Archive, Edit3, Megaphone, Plus, Send, X } from 'lucide-react';
+import { Archive, CopyPlus, Edit3, Eye, Megaphone, Plus, Send, X } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   archiveAnnouncement,
@@ -11,7 +11,14 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
-import { DateTimePickerField, GuidedEmptyState } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ActionIconButton,
+  DateTimePickerField,
+  DetailInspector,
+  GuidedEmptyState,
+  OperationalKpiStrip,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -21,15 +28,15 @@ import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Switch from '@mui/material/Switch';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
@@ -71,11 +78,23 @@ const emptyForm: AnnouncementForm = {
   actionUrl: '',
 };
 
-const lifecycleColor = {
-  DRAFT: 'default',
-  PUBLISHED: 'success',
-  ARCHIVED: 'warning',
-} as const;
+type AnnouncementPipelineState = 'ALL' | 'DRAFT' | 'LIVE' | 'SCHEDULED' | 'EXPIRED' | 'ARCHIVED';
+
+function pipelineState(announcement: Announcement): Exclude<AnnouncementPipelineState, 'ALL'> {
+  if (announcement.lifecycleState === 'DRAFT') return 'DRAFT';
+  if (announcement.lifecycleState === 'ARCHIVED') return 'ARCHIVED';
+  const now = Date.now();
+  if (announcement.startsAt && Date.parse(announcement.startsAt) > now) return 'SCHEDULED';
+  if (announcement.endsAt && Date.parse(announcement.endsAt) <= now) return 'EXPIRED';
+  return 'LIVE';
+}
+
+function pipelineColor(state: Exclude<AnnouncementPipelineState, 'ALL'>) {
+  if (state === 'LIVE') return 'success' as const;
+  if (state === 'SCHEDULED') return 'info' as const;
+  if (state === 'EXPIRED' || state === 'ARCHIVED') return 'warning' as const;
+  return 'default' as const;
+}
 
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
@@ -149,9 +168,9 @@ function AnnouncementDialog({
         <Box sx={{ flex: 1 }}>
           {announcement ? t('announcements.dialog.editTitle') : t('announcements.dialog.newTitle')}
         </Box>
-        <IconButton aria-label={t('announcements.dialog.close')} onClick={onClose} disabled={busy}>
+        <ActionIconButton label={t('announcements.dialog.close')} onClick={onClose} disabled={busy}>
           <X size={18} />
-        </IconButton>
+        </ActionIconButton>
       </DialogTitle>
       <DialogContent dividers>
         <Stack gap={2.25}>
@@ -295,6 +314,175 @@ function AnnouncementDialog({
   );
 }
 
+function AnnouncementPreview({
+  announcement,
+  onClose,
+}: {
+  announcement: Announcement | null;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation('admin');
+  const accent = {
+    INFO: 'info.main',
+    SUCCESS: 'success.main',
+    WARNING: 'warning.main',
+    CRITICAL: 'error.main',
+  }[announcement?.severity ?? 'INFO'];
+
+  return (
+    <DetailInspector
+      open={Boolean(announcement)}
+      variant="drawer"
+      width={500}
+      title={t('announcements.preview.title')}
+      subtitle={announcement?.title}
+      closeLabel={t('announcements.preview.close')}
+      onClose={onClose}
+      status={
+        announcement ? (
+          <Chip
+            size="small"
+            variant="outlined"
+            color={pipelineColor(pipelineState(announcement))}
+            label={t(`announcements.pipeline.${pipelineState(announcement)}`)}
+          />
+        ) : undefined
+      }
+    >
+      {announcement && (
+        <Stack gap={2.5}>
+          <Box component="section" aria-labelledby="announcement-workspace-preview">
+            <Typography id="announcement-workspace-preview" component="h3" variant="subtitle2">
+              {t('announcements.preview.workspace')}
+            </Typography>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: '4px minmax(0, 1fr)',
+                gap: 1.5,
+                mt: 1,
+                p: 1.5,
+                borderTop: 1,
+                borderBottom: 1,
+                borderColor: 'divider',
+                bgcolor: 'action.hover',
+              }}
+            >
+              <Box sx={{ width: 4, minHeight: 46, bgcolor: accent }} />
+              <Box sx={{ minWidth: 0 }}>
+                <Typography component="h4" variant="subtitle2">
+                  {announcement.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+                  {announcement.message}
+                </Typography>
+                {announcement.actionLabel && (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={announcement.actionLabel}
+                    sx={{ mt: 0.75 }}
+                  />
+                )}
+              </Box>
+            </Box>
+          </Box>
+
+          <Box component="section" aria-labelledby="announcement-delivery-evidence">
+            <Typography id="announcement-delivery-evidence" component="h3" variant="subtitle2">
+              {t('announcements.preview.delivery')}
+            </Typography>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                mt: 1,
+                borderTop: 1,
+                borderLeft: 1,
+                borderColor: 'divider',
+              }}
+            >
+              {[
+                {
+                  label: t('announcements.metrics.uniqueViewers'),
+                  value: announcement.uniqueViewerCount ?? 0,
+                },
+                {
+                  label: t('announcements.metrics.views'),
+                  value: announcement.viewCount ?? 0,
+                },
+                {
+                  label: t('announcements.metrics.actionClicks'),
+                  value: announcement.actionClickCount ?? 0,
+                },
+              ].map((item) => (
+                <Box
+                  key={item.label}
+                  sx={{ p: 1.25, borderRight: 1, borderBottom: 1, borderColor: 'divider' }}
+                >
+                  <Typography variant="h6" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {item.value}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {item.label}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+            <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
+              {t('announcements.preview.analyticsNotice')}
+            </Typography>
+          </Box>
+
+          <Box component="section" aria-labelledby="announcement-governance-preview">
+            <Typography id="announcement-governance-preview" component="h3" variant="subtitle2">
+              {t('announcements.preview.governance')}
+            </Typography>
+            <Stack sx={{ mt: 1, borderTop: 1, borderColor: 'divider' }}>
+              {[
+                {
+                  label: t('announcements.fields.audience'),
+                  value:
+                    announcement.audienceType === 'ALL'
+                      ? t('announcements.audience.ALL')
+                      : announcement.audienceValue,
+                },
+                {
+                  label: t('announcements.fields.starts'),
+                  value: announcement.startsAt
+                    ? displayDateTime(announcement.startsAt)
+                    : t('announcements.immediate'),
+                },
+                {
+                  label: t('announcements.fields.ends'),
+                  value: announcement.endsAt
+                    ? displayDateTime(announcement.endsAt)
+                    : t('announcements.openEnded'),
+                },
+              ].map((item) => (
+                <Stack
+                  key={item.label}
+                  direction="row"
+                  justifyContent="space-between"
+                  gap={2}
+                  sx={{ py: 1, borderBottom: 1, borderColor: 'divider' }}
+                >
+                  <Typography variant="caption" color="text.secondary">
+                    {item.label}
+                  </Typography>
+                  <Typography variant="body2" textAlign="right">
+                    {item.value}
+                  </Typography>
+                </Stack>
+              ))}
+            </Stack>
+          </Box>
+        </Stack>
+      )}
+    </DetailInspector>
+  );
+}
+
 export function AnnouncementManager() {
   const { t } = useTranslation('admin');
   const toast = useToast();
@@ -304,6 +492,8 @@ export function AnnouncementManager() {
     !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selected, setSelected] = useState<Announcement | null>(null);
+  const [previewed, setPreviewed] = useState<Announcement | null>(null);
+  const [pipelineFilter, setPipelineFilter] = useState<AnnouncementPipelineState>('ALL');
   const [busy, setBusy] = useState(false);
   const [operationError, setOperationError] = useState<string | null>(null);
   const announcementsQuery = useQuery({
@@ -337,6 +527,32 @@ export function AnnouncementManager() {
     }
   };
 
+  const announcements = useMemo(() => announcementsQuery.data ?? [], [announcementsQuery.data]);
+  const filteredAnnouncements = useMemo(
+    () =>
+      pipelineFilter === 'ALL'
+        ? announcements
+        : announcements.filter((announcement) => pipelineState(announcement) === pipelineFilter),
+    [announcements, pipelineFilter]
+  );
+  const pipelineCounts = useMemo(() => {
+    const counts: Record<Exclude<AnnouncementPipelineState, 'ALL'>, number> = {
+      DRAFT: 0,
+      LIVE: 0,
+      SCHEDULED: 0,
+      EXPIRED: 0,
+      ARCHIVED: 0,
+    };
+    announcements.forEach((announcement) => {
+      counts[pipelineState(announcement)] += 1;
+    });
+    return counts;
+  }, [announcements]);
+  const uniqueViewers = announcements.reduce(
+    (sum, announcement) => sum + (announcement.uniqueViewerCount ?? 0),
+    0
+  );
+
   if (announcementsQuery.isLoading) {
     return <AdminPanelLoading label={t('announcements.loading')} />;
   }
@@ -347,8 +563,6 @@ export function AnnouncementManager() {
       />
     );
   }
-
-  const announcements = announcementsQuery.data ?? [];
 
   return (
     <Box component="section" aria-labelledby="announcements-admin-heading">
@@ -367,8 +581,8 @@ export function AnnouncementManager() {
             {t('announcements.description')}
           </Typography>
         </Box>
-        <Button
-          variant="contained"
+        <ActionButton
+          intent="primary"
           startIcon={<Plus size={17} />}
           disabled={!canWrite}
           onClick={() => {
@@ -377,7 +591,72 @@ export function AnnouncementManager() {
           }}
         >
           {t('announcements.actions.new')}
-        </Button>
+        </ActionButton>
+      </Stack>
+
+      <OperationalKpiStrip
+        ariaLabel={t('announcements.metrics.label')}
+        items={[
+          {
+            key: 'live',
+            label: t('announcements.pipeline.LIVE'),
+            value: pipelineCounts.LIVE,
+            tone: pipelineCounts.LIVE ? 'success' : 'neutral',
+            detail: t('announcements.metrics.currentlyVisible'),
+          },
+          {
+            key: 'scheduled',
+            label: t('announcements.pipeline.SCHEDULED'),
+            value: pipelineCounts.SCHEDULED,
+            tone: 'info',
+            detail: t('announcements.metrics.awaitingWindow'),
+          },
+          {
+            key: 'draft',
+            label: t('announcements.pipeline.DRAFT'),
+            value: pipelineCounts.DRAFT,
+            tone: pipelineCounts.DRAFT ? 'warning' : 'neutral',
+            detail: t('announcements.metrics.awaitingPublish'),
+          },
+          {
+            key: 'viewers',
+            label: t('announcements.metrics.uniqueViewers'),
+            value: uniqueViewers,
+            tone: 'info',
+            detail: t('announcements.metrics.aggregateNotice'),
+          },
+        ]}
+      />
+
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        alignItems={{ xs: 'stretch', md: 'center' }}
+        justifyContent="space-between"
+        gap={1}
+        sx={{ py: 1.5 }}
+      >
+        <ToggleButtonGroup
+          exclusive
+          size="small"
+          value={pipelineFilter}
+          onChange={(_, value: AnnouncementPipelineState | null) =>
+            value && setPipelineFilter(value)
+          }
+          aria-label={t('announcements.pipeline.label')}
+          sx={{ overflowX: 'auto', justifyContent: { xs: 'flex-start', md: 'initial' } }}
+        >
+          {(['ALL', 'DRAFT', 'LIVE', 'SCHEDULED', 'EXPIRED', 'ARCHIVED'] as const).map((state) => (
+            <ToggleButton key={state} value={state} sx={{ whiteSpace: 'nowrap' }}>
+              {t(`announcements.pipeline.${state}`)}
+              <Typography component="span" variant="caption" sx={{ ml: 0.5 }}>
+                {state === 'ALL' ? announcements.length : pipelineCounts[state]}
+              </Typography>
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+        <Typography variant="caption" color="text.secondary">
+          {t('announcements.pipeline.resultCount', { count: filteredAnnouncements.length })}
+        </Typography>
       </Stack>
 
       {operationError && (
@@ -391,7 +670,7 @@ export function AnnouncementManager() {
           size="small"
           aria-label={t('announcements.table.label')}
           sx={{
-            minWidth: 860,
+            minWidth: 1080,
             tableLayout: 'fixed',
             '& .MuiTableRow-root': { height: 52 },
             '& .MuiTableCell-root': { py: 0.75, verticalAlign: 'middle' },
@@ -404,13 +683,14 @@ export function AnnouncementManager() {
               <TableCell width={112}>{t('announcements.table.status')}</TableCell>
               <TableCell width={140}>{t('announcements.table.audience')}</TableCell>
               <TableCell width={220}>{t('announcements.table.window')}</TableCell>
-              <TableCell width={140} align="right">
+              <TableCell width={150}>{t('announcements.table.engagement')}</TableCell>
+              <TableCell width={176} align="right">
                 {t('announcements.table.actions')}
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {announcements.map((announcement) => (
+            {filteredAnnouncements.map((announcement) => (
               <TableRow key={announcement.announcementId} hover>
                 <TableCell>
                   <Typography variant="subtitle2" noWrap>
@@ -424,8 +704,8 @@ export function AnnouncementManager() {
                 <TableCell>
                   <Chip
                     size="small"
-                    label={t(`common.status.${announcement.lifecycleState}`)}
-                    color={lifecycleColor[announcement.lifecycleState]}
+                    label={t(`announcements.pipeline.${pipelineState(announcement)}`)}
+                    color={pipelineColor(pipelineState(announcement))}
                     variant="outlined"
                   />
                 </TableCell>
@@ -445,93 +725,139 @@ export function AnnouncementManager() {
                       : t('announcements.openEnded')}
                   </Typography>
                 </TableCell>
+                <TableCell>
+                  <Typography variant="body2" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {t('announcements.table.engagementValue', {
+                      viewers: announcement.uniqueViewerCount ?? 0,
+                      clicks: announcement.actionClickCount ?? 0,
+                    })}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('announcements.table.viewsValue', {
+                      count: announcement.viewCount ?? 0,
+                    })}
+                  </Typography>
+                </TableCell>
                 <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-                  <Tooltip title={t('common.actions.edit')}>
-                    <span>
-                      <IconButton
-                        size="small"
-                        aria-label={t('announcements.actions.editNamed', {
-                          title: announcement.title,
-                        })}
-                        disabled={!canWrite || busy || announcement.lifecycleState === 'ARCHIVED'}
-                        onClick={() => {
-                          setSelected(announcement);
-                          setDialogOpen(true);
-                        }}
-                      >
-                        <Edit3 size={17} />
-                      </IconButton>
-                    </span>
-                  </Tooltip>
+                  <ActionIconButton
+                    size="small"
+                    label={t('announcements.actions.previewNamed', {
+                      title: announcement.title,
+                    })}
+                    tooltip={t('announcements.actions.preview')}
+                    onClick={() => setPreviewed(announcement)}
+                  >
+                    <Eye size={17} />
+                  </ActionIconButton>
+                  <ActionIconButton
+                    size="small"
+                    label={t('announcements.actions.duplicateNamed', {
+                      title: announcement.title,
+                    })}
+                    tooltip={t('announcements.actions.duplicate')}
+                    disabled={!canWrite || busy}
+                    onClick={() =>
+                      void run(
+                        () =>
+                          createAnnouncement({
+                            ...definitionFrom(formFrom(announcement)),
+                            title: t('announcements.copyTitle', {
+                              title: announcement.title,
+                            }).slice(0, 160),
+                          }),
+                        t('announcements.toasts.duplicated')
+                      )
+                    }
+                  >
+                    <CopyPlus size={17} />
+                  </ActionIconButton>
+                  <ActionIconButton
+                    size="small"
+                    label={t('announcements.actions.editNamed', {
+                      title: announcement.title,
+                    })}
+                    tooltip={t('common.actions.edit')}
+                    disabled={!canWrite || busy || announcement.lifecycleState === 'ARCHIVED'}
+                    onClick={() => {
+                      setSelected(announcement);
+                      setDialogOpen(true);
+                    }}
+                  >
+                    <Edit3 size={17} />
+                  </ActionIconButton>
                   {announcement.lifecycleState === 'DRAFT' && (
-                    <Tooltip title={t('announcements.actions.publish')}>
-                      <span>
-                        <IconButton
-                          size="small"
-                          color="primary"
-                          aria-label={t('announcements.actions.publishNamed', {
-                            title: announcement.title,
-                          })}
-                          disabled={!canWrite || busy}
-                          onClick={() =>
-                            void run(
-                              () =>
-                                publishAnnouncement(
-                                  announcement.announcementId,
-                                  announcement.version
-                                ),
-                              t('announcements.toasts.published')
-                            )
-                          }
-                        >
-                          <Send size={17} />
-                        </IconButton>
-                      </span>
-                    </Tooltip>
+                    <ActionIconButton
+                      size="small"
+                      intent="primary"
+                      label={t('announcements.actions.publishNamed', {
+                        title: announcement.title,
+                      })}
+                      tooltip={t('announcements.actions.publish')}
+                      disabled={!canWrite || busy}
+                      onClick={() =>
+                        void run(
+                          () =>
+                            publishAnnouncement(announcement.announcementId, announcement.version),
+                          t('announcements.toasts.published')
+                        )
+                      }
+                    >
+                      <Send size={17} />
+                    </ActionIconButton>
                   )}
                   {announcement.lifecycleState !== 'ARCHIVED' && (
-                    <Tooltip title={t('announcements.actions.archive')}>
-                      <span>
-                        <IconButton
-                          size="small"
-                          aria-label={t('announcements.actions.archiveNamed', {
-                            title: announcement.title,
-                          })}
-                          disabled={!canWrite || busy}
-                          onClick={() =>
-                            void run(
-                              () =>
-                                archiveAnnouncement(
-                                  announcement.announcementId,
-                                  announcement.version
-                                ),
-                              t('announcements.toasts.archived')
-                            )
-                          }
-                        >
-                          <Archive size={17} />
-                        </IconButton>
-                      </span>
-                    </Tooltip>
+                    <ActionIconButton
+                      size="small"
+                      label={t('announcements.actions.archiveNamed', {
+                        title: announcement.title,
+                      })}
+                      tooltip={t('announcements.actions.archive')}
+                      disabled={!canWrite || busy}
+                      onClick={() =>
+                        void run(
+                          () =>
+                            archiveAnnouncement(announcement.announcementId, announcement.version),
+                          t('announcements.toasts.archived')
+                        )
+                      }
+                    >
+                      <Archive size={17} />
+                    </ActionIconButton>
                   )}
                 </TableCell>
               </TableRow>
             ))}
-            {announcements.length === 0 && (
+            {filteredAnnouncements.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} sx={{ p: 0 }}>
+                <TableCell colSpan={6} sx={{ p: 0 }}>
                   <GuidedEmptyState
-                    kind="first-use"
-                    title={t('announcements.empty.title')}
-                    description={t('announcements.empty.description')}
-                    actionLabel={canWrite ? t('announcements.actions.new') : undefined}
+                    kind={announcements.length ? 'no-results' : 'first-use'}
+                    title={t(
+                      announcements.length
+                        ? 'announcements.empty.filteredTitle'
+                        : 'announcements.empty.title'
+                    )}
+                    description={t(
+                      announcements.length
+                        ? 'announcements.empty.filteredDescription'
+                        : 'announcements.empty.description'
+                    )}
+                    actionLabel={
+                      announcements.length
+                        ? t('announcements.actions.showAll')
+                        : canWrite
+                          ? t('announcements.actions.new')
+                          : undefined
+                    }
                     onAction={
-                      canWrite
-                        ? () => {
-                            setSelected(null);
-                            setDialogOpen(true);
-                          }
-                        : undefined
+                      announcements.length
+                        ? () => setPipelineFilter('ALL')
+                        : canWrite
+                          ? () => {
+                              setSelected(null);
+                              setDialogOpen(true);
+                            }
+                          : undefined
                     }
                     size="standard"
                   />
@@ -562,6 +888,7 @@ export function AnnouncementManager() {
           )
         }
       />
+      <AnnouncementPreview announcement={previewed} onClose={() => setPreviewed(null)} />
     </Box>
   );
 }

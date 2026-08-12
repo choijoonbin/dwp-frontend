@@ -106,6 +106,8 @@
     "isolation": "Isolation model",
     "justification": "Business justification",
     "keyHelp": "Start with a lowercase letter and use lowercase letters, numbers, or hyphens.",
+    "domainHelp": "Enter a valid corporate domain, including any required subdomain.",
+    "emailHelp": "Enter a valid work email address.",
     "lifecycle": "Lifecycle",
     "tenant": "Tenant",
     "scopes": "Scopes",
@@ -318,7 +320,74 @@
     "title": "Managed tenants",
     "description": "Manage company contracts, runtime environments, service health, and isolation in one view.",
     "search": "Search company or tenant",
+    "results": "{{visible}} shown / {{total}} total",
     "noSubscription": "No subscription",
+    "savedViews": {
+      "all": "All customer estate",
+      "active": "Active customers",
+      "onboarding": "Onboarding in progress"
+    },
+    "filters": {
+      "region": "Data region",
+      "allRegions": "All regions",
+      "tier": "Service tier",
+      "allTiers": "All tiers",
+      "isolation": "Isolation model",
+      "allIsolation": "All isolation models"
+    },
+    "compare": {
+      "title": "Tenant operations comparison",
+      "description": "Compare placement, contract, and service state across {{count}} selected environments.",
+      "selectMore": "Select at least one more tenant to compare. You can select up to three.",
+      "clear": "Clear comparison",
+      "limit": "You can compare up to three tenants."
+    },
+    "context": {
+      "label": "Customer estate scope",
+      "scope": "Operating scope",
+      "global": "All customers and environments",
+      "coverage": "Customer estate",
+      "coverageValue": "{{organizations}} companies · {{tenants}} tenants",
+      "placement": "Placement profile",
+      "placementValue": "{{regions}} regions · {{tiers}} tiers",
+      "lastLoaded": "Last synchronized {{value}}"
+    },
+    "live": {
+      "live": "Customer estate connected",
+      "syncing": "Synchronizing latest estate"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "The customer estate is within normal bounds",
+        "ATTENTION": "Tenant lifecycle review is required",
+        "CRITICAL": "Failed tenants require immediate response"
+      },
+      "detail": {
+        "HEALTHY": "Every customer environment is active with no failed provisioning work.",
+        "ATTENTION": "Review contract and operating state for {{provisioning}} provisioning and {{suspended}} suspended tenants.",
+        "CRITICAL": "Recover {{failed}} failed tenants in customer-impact and failed-step order."
+      },
+      "failed": "{{count}} failed",
+      "provisioning": "{{count}} provisioning",
+      "suspended": "{{count}} suspended"
+    },
+    "signals": {
+      "label": "Customer estate key signals",
+      "organizationDetail": "{{tenants}} runtime tenants",
+      "activeDetail": "{{total}} total tenants",
+      "activeProgress": "{{active}} of {{total}} tenants active",
+      "provisioning": "Onboarding in progress",
+      "provisioningDetail": "Track plan through service readiness",
+      "attentionDetail": "{{failed}} failed · {{suspended}} suspended"
+    },
+    "mix": {
+      "title": "Estate placement profile",
+      "description": "Distribution by data region and contracted service tier.",
+      "regions": "Data regions",
+      "tiers": "Service tiers",
+      "distributionLabel": "{{label}} {{count}} of {{total}}",
+      "visibleAttention": "{{count}} tenants in the current result require service review"
+    },
     "metrics": {
       "organizations": "Customer companies",
       "active": "Active tenants",
@@ -353,6 +422,11 @@
     "entitlements": "Initial product access",
     "justificationHelp": "Recorded in the provider audit trail.",
     "previewed": "Onboarding plan created for review.",
+    "review": {
+      "notice": "This step does not execute the change. It creates an immutable onboarding plan for review before execution.",
+      "plan": "Onboarding plan summary",
+      "selected": "{{count}} product entitlements"
+    },
     "steps": {
       "organization": "Company",
       "environment": "Environment",
@@ -367,6 +441,67 @@
   "operations": {
     "title": "Change execution ledger",
     "description": "Track the complete change lifecycle from request and approval to execution and recovery.",
+    "context": {
+      "label": "Change control scope",
+      "scope": "Operating scope",
+      "global": "All customer environments",
+      "mode": "Control mode",
+      "governed": "Approval and evidence based",
+      "coverage": "Current ledger",
+      "coverageValue": "{{operations}} changes · {{tenants}} tenants",
+      "lastLoaded": "Last synchronized {{value}}"
+    },
+    "live": {
+      "live": "Change ledger connected",
+      "syncing": "Synchronizing latest changes"
+    },
+    "pulse": {
+      "title": {
+        "RECOVERY": "Failed changes require recovery",
+        "APPROVAL": "Changes are awaiting independent approval",
+        "RUNNING": "Approved changes are executing",
+        "CLEAR": "Change control is within normal bounds"
+      },
+      "detail": {
+        "RECOVERY": "Review {{recovery}} recovery items in failed-step and customer-impact order.",
+        "APPROVAL": "Validate risk, business justification, and separation of duties for {{approvals}} pending approvals.",
+        "RUNNING": "Tracking execution progress and service evidence for {{running}} running changes.",
+        "CLEAR": "Every control gate is satisfied with no change awaiting execution or recovery."
+      },
+      "approvals": "{{count}} awaiting approval",
+      "running": "{{count}} running",
+      "recovery": "{{count}} requiring recovery",
+      "openRecovery": "Open recovery item",
+      "openApproval": "Open approval queue"
+    },
+    "signals": {
+      "label": "Change control key signals",
+      "approvalDetail": "{{highRisk}} high risk",
+      "runningDetail": "{{previewed}} plans awaiting execution",
+      "recoveryDetail": "Governed retry from the failed step",
+      "successRate": "Terminal change success rate",
+      "successRateDetail": "{{successful}} succeeded / {{terminal}} terminal",
+      "successProgress": "Terminal change success rate {{value}}%"
+    },
+    "path": {
+      "title": "Control path",
+      "description": "Every change follows the same planning, approval, execution, and recovery controls.",
+      "stages": {
+        "PLAN": { "title": "Freeze plan", "detail": "Hash impact and execution steps" },
+        "GATE": {
+          "title": "Independent approval",
+          "detail": "Validate risk role and separation of duties"
+        },
+        "EXECUTE": {
+          "title": "Governed execution",
+          "detail": "Record idempotent step execution and state"
+        },
+        "RECOVER": {
+          "title": "Evidence-based recovery",
+          "detail": "Retry from the failed step with justification"
+        }
+      }
+    },
     "filterLabel": "Operation state filter",
     "filters": {
       "ACTIVE": "In progress",
@@ -383,6 +518,21 @@
     "reviewTitle": "Review change plan",
     "planHash": "Immutable plan hash",
     "steps": "Execution steps",
+    "stepsDescription": "Verify retries and outcomes through per-service state and request fingerprints.",
+    "stepProgress": "{{completed}} of {{total}} completed, {{failed}} failed",
+    "gates": {
+      "title": "Approval gates",
+      "description": "Validate risk-qualified roles and requester-approver separation of duties.",
+      "notRequired": "This change does not require a separate independent approval gate.",
+      "gate": "Gate {{order}} · {{key}}",
+      "separationOfDuties": "Separation of duties",
+      "requestedBy": "Requested by {{name}} · {{value}}",
+      "decidedBy": "Decided by {{name}} · {{value}} · {{reason}}"
+    },
+    "evidence": {
+      "title": "Execution evidence",
+      "description": "Preserve plan identity and execution timestamps in an auditable form."
+    },
     "started": "Started",
     "completed": "Completed",
     "attempts": "{{count}} attempts",
@@ -420,6 +570,7 @@
   "approvals": {
     "title": "Change approval queue",
     "description": "High-risk operations require a role-qualified approver who is separate from the requester.",
+    "emptyTitle": "All approval gates are clear",
     "empty": "No changes are awaiting approval.",
     "expires": "Expires {{value}}",
     "independentReviewerRequired": "Independent reviewer required",
@@ -450,6 +601,50 @@
   },
   "health": {
     "lastUpdated": "Last evaluated {{value}}",
+    "context": {
+      "label": "Service operating scope",
+      "scope": "Operating scope",
+      "global": "All customer services",
+      "time": "Time context",
+      "snapshot": "Current snapshot",
+      "coverage": "Coverage",
+      "coverageValue": "{{services}} services · {{cells}} deployment cells"
+    },
+    "live": {
+      "live": "Auto-refreshing",
+      "syncing": "Synchronizing latest state"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "Customer services are within normal ranges",
+        "ATTENTION": "Service operations review is required",
+        "CRITICAL": "Immediate service response is required"
+      },
+      "detail": {
+        "HEALTHY": "Every service meets its operating threshold with no active incident or customer impact.",
+        "ATTENTION": "Review {{incidents}} incidents, {{impacted}} impacted tenants, and {{exceptions}} exceptional instances in impact order.",
+        "CRITICAL": "Respond immediately to {{incidents}} incidents and {{exceptions}} exceptional instances to limit customer impact."
+      },
+      "incidents": "{{count}} active incidents",
+      "impacted": "{{count}} impacted tenants",
+      "sloRisk": "{{count}} at-risk SLOs",
+      "openIncident": "Open top incident"
+    },
+    "signals": {
+      "label": "Service operating signals",
+      "readiness": "Service readiness",
+      "readinessDetail": "{{exceptions}} pending, degraded, or failed instances",
+      "readinessProgress": "{{value}}% of service instances healthy",
+      "customerImpact": "Impacted tenants",
+      "customerImpactDetail": "{{incidents}} active customer-impacting incidents",
+      "reliability": "SLO compliance",
+      "reliabilityDetail": "{{risk}} at-risk or exhausted objectives",
+      "reliabilityUnavailable": "Only reliability detail is temporarily unavailable.",
+      "capacity": "Lowest placement headroom",
+      "capacityDetail": "Measured at {{cell}}",
+      "capacityUnavailable": "No active deployment cells are available.",
+      "capacityProgress": "{{value}}% placement capacity remaining"
+    },
     "metrics": {
       "instances": "Service instances",
       "healthy": "Healthy",
@@ -460,12 +655,19 @@
     "services": {
       "title": "Service health matrix",
       "description": "Aggregate readiness and customer impact across each service portfolio.",
-      "coverage": "{{healthy}} healthy of {{total}} · {{impacted}} impacted tenants"
+      "coverage": "{{healthy}} healthy of {{total}} · {{impacted}} impacted tenants",
+      "allHealthyTitle": "Every service is within its normal range",
+      "allHealthyDetail": "{{services}} services and {{instances}} instances are ready.",
+      "expand": "Show services",
+      "collapse": "Collapse services",
+      "breakdown": "{{name}}: {{healthy}} healthy, {{pending}} provisioning, {{degraded}} degraded, {{failed}} failed",
+      "exceptions": "{{count}} exceptional instances · {{impacted}} impacted tenants"
     },
     "cells": {
       "title": "Regions & deployment cells",
       "description": "Tenant placement capacity and cell-level operating health.",
-      "capacity": "{{region}} · {{used}} of {{total}} tenants"
+      "capacity": "{{region}} · {{used}} of {{total}} tenants",
+      "saturationLabel": "Placement capacity utilization for {{name}}"
     },
     "severity": {
       "SEV1": "SEV1 · Global service outage",
@@ -484,7 +686,9 @@
       "title": "Customer-impacting incidents",
       "description": "Manage the timeline from detection through identification, monitoring, and resolution.",
       "filterLabel": "Incident state filter",
+      "emptyTitle": "No active incidents in this scope",
       "empty": "No incidents match the selected scope.",
+      "unassigned": "Unassigned",
       "createTitle": "Declare service incident",
       "createNotice": "An incident formally records customer impact and operational ownership. Every change is audited.",
       "updateTitle": "Update {{key}}",
@@ -537,7 +741,9 @@
       "target": "Target {{target}}% · {{days}} days · {{scope}}",
       "errorBudget": "Error budget remaining",
       "achieved": "Achieved {{value}}",
-      "noData": "No measurement"
+      "noData": "No measurement",
+      "empty": "No reliability objectives are registered. Define SLO policy for each service tier first.",
+      "budgetLabel": "Remaining error budget for {{name}}"
     },
     "drift": {
       "empty": "No operating targets currently diverge from their baseline.",
@@ -945,11 +1151,47 @@
   "tenantDetail": {
     "back": "Tenant estate",
     "tabs": {
+      "label": "Tenant management areas",
       "overview": "Overview",
       "services": "Services",
       "access": "Domains and administrators",
       "entitlements": "Product access",
       "support": "Support access"
+    },
+    "context": {
+      "label": "Tenant 360 scope",
+      "scope": "Company and environment",
+      "placement": "Placement and isolation",
+      "contract": "Contract plan",
+      "lastLoaded": "Last synchronized {{value}}"
+    },
+    "live": {
+      "live": "Tenant state connected",
+      "syncing": "Synchronizing latest tenant state"
+    },
+    "pulse": {
+      "title": {
+        "HEALTHY": "The tenant meets operational readiness criteria",
+        "ATTENTION": "Tenant configuration review is required",
+        "CRITICAL": "Tenant service recovery is required"
+      },
+      "detail": {
+        "HEALTHY": "Services, domains, and company administrator configuration are all within normal bounds.",
+        "ATTENTION": "Review {{services}} service exceptions, {{domains}} unverified domains, and active administrator status.",
+        "CRITICAL": "Recover failed services first, then verify customer impact and execution evidence."
+      },
+      "support": "{{count}} active support sessions"
+    },
+    "signals": {
+      "label": "Tenant readiness signals",
+      "servicesDetail": "{{exceptions}} service exceptions",
+      "servicesProgress": "{{ready}} of {{total}} services ready",
+      "domains": "Verified domains",
+      "domainsDetail": "Sign-in and corporate domain ownership",
+      "administrators": "Active company administrators",
+      "administratorsDetail": "Tenant administration access state",
+      "entitlements": "Product entitlements",
+      "entitlementsDetail": "Configuration schema v{{schema}}"
     },
     "metrics": { "services": "Healthy services", "authTenant": "Identity tenant ID" },
     "organization": { "title": "Company and environment" },

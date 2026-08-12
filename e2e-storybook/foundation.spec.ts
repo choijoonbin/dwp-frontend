@@ -10,7 +10,19 @@ async function openStory(page: Page, id: string, globals?: string) {
 }
 
 async function expectNoAutomaticAccessibilityViolations(page: Page) {
-  const results = await new AxeBuilder({ page }).include('#storybook-root').analyze();
+  let results: Awaited<ReturnType<AxeBuilder['analyze']>> | undefined;
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    try {
+      results = await new AxeBuilder({ page }).include('#storybook-root').analyze();
+      break;
+    } catch (error) {
+      if (!(error instanceof Error) || !error.message.includes('Axe is already running')) {
+        throw error;
+      }
+      await page.waitForTimeout(100);
+    }
+  }
+  if (!results) throw new Error('Storybook accessibility analysis did not become available.');
   const summary = results.violations.map((violation) => ({
     id: violation.id,
     impact: violation.impact,

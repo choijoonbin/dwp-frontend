@@ -31,6 +31,7 @@ export function OperationalKpiStrip({
 }) {
   return (
     <Box
+      component="section"
       aria-label={ariaLabel}
       sx={{
         display: 'grid',

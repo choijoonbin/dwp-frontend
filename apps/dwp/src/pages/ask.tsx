@@ -42,13 +42,15 @@ type LoadState = 'idle' | 'loading' | 'ready' | 'error';
 export default function AskPage() {
   const { t, i18n } = useTranslation('work');
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const [query, setQuery] = useState(initialQuery);
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
   const [runtimeResponse, setRuntimeResponse] = useState<AskDwpResponse | null>(null);
   const [loadState, setLoadState] = useState<LoadState>('idle');
   const requestSequence = useRef(0);
+  const requestController = useRef<AbortController | null>(null);
+  const unmountAbortTimer = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const autoSubmittedQuery = useRef<string | null>(null);
   const workQueueQuery = useQuery({
     queryKey: ['workspace', 'work-queue'],
@@ -63,24 +65,32 @@ export default function AskPage() {
 
   const prepareAnswer = useCallback(
     async (value: string) => {
+      requestController.current?.abort('superseded');
+      const controller = new AbortController();
+      requestController.current = controller;
       const nextSequence = requestSequence.current + 1;
       requestSequence.current = nextSequence;
       setSubmittedQuery(value);
       setRuntimeResponse(null);
       setLoadState('loading');
       try {
-        const response = await askDwp({
-          requestId: globalThis.crypto.randomUUID(),
-          query: value,
-          locale: i18n.resolvedLanguage || i18n.language || 'en',
-          agentKey: 'DWP_ASSISTANT',
-        });
+        const response = await askDwp(
+          {
+            requestId: globalThis.crypto.randomUUID(),
+            query: value,
+            locale: i18n.resolvedLanguage || i18n.language || 'en',
+            agentKey: 'DWP_ASSISTANT',
+          },
+          { signal: controller.signal }
+        );
         if (requestSequence.current !== nextSequence) return;
         setRuntimeResponse(response);
         setLoadState('ready');
       } catch {
-        if (requestSequence.current !== nextSequence) return;
+        if (controller.signal.aborted || requestSequence.current !== nextSequence) return;
         setLoadState('error');
+      } finally {
+        if (requestController.current === controller) requestController.current = null;
       }
     },
     [i18n.language, i18n.resolvedLanguage]
@@ -89,19 +99,41 @@ export default function AskPage() {
   useEffect(() => {
     if (initialQuery && autoSubmittedQuery.current !== initialQuery) {
       autoSubmittedQuery.current = initialQuery;
+      setQuery(initialQuery);
       void prepareAnswer(initialQuery);
     }
   }, [initialQuery, prepareAnswer]);
 
+  useEffect(() => {
+    if (unmountAbortTimer.current !== null) {
+      globalThis.clearTimeout(unmountAbortTimer.current);
+      unmountAbortTimer.current = null;
+    }
+    return () => {
+      unmountAbortTimer.current = globalThis.setTimeout(() => {
+        requestSequence.current += 1;
+        requestController.current?.abort('page-unmounted');
+      }, 0);
+    };
+  }, []);
+
+  const runQuery = (value: string) => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('q', value);
+    autoSubmittedQuery.current = value;
+    setSearchParams(nextParams, { replace: true });
+    void prepareAnswer(value);
+  };
+
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
     const value = query.trim();
-    if (value) void prepareAnswer(value);
+    if (value) runQuery(value);
   };
 
   const choosePrompt = (value: string) => {
     setQuery(value);
-    void prepareAnswer(value);
+    runQuery(value);
   };
 
   const openCitation = (citation: AskCitation) => {
@@ -176,7 +208,7 @@ export default function AskPage() {
               <ArrowRight size={16} />
             )
           }
-          disabled={loadState === 'loading' || !query.trim()}
+          disabled={!query.trim()}
           sx={{ minWidth: 124, minHeight: 56 }}
         >
           {t('askPage.submit')}

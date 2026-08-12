@@ -210,6 +210,17 @@ export async function updateWorkspaceWorkStatus(
   return mapWorkItem(response.data.data);
 }
 
+export async function updateWorkspaceWorkStatuses(
+  items: Array<Pick<WorkspaceWorkItem, 'workItemId' | 'version'>>,
+  status: 'IN_PROGRESS' | 'WAITING' | 'COMPLETED'
+): Promise<WorkspaceWorkItem[]> {
+  const response = await axiosInstance.patch<
+    ApiResponse<RawWorkItem[]>,
+    { items: Array<{ workItemId: string; version: number }>; status: string }
+  >('/api/platform/v1/workspace/work-items/batch/status', { items, status });
+  return response.data.data.map(mapWorkItem);
+}
+
 export async function getWorkspaceActivity(): Promise<WorkspaceActivityFeed> {
   const response = await axiosInstance.get<ApiResponse<RawActivityFeed>>(
     '/api/platform/v1/workspace/activity',

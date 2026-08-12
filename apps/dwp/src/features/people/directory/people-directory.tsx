@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
+import { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CalendarDays, Mail, Network, ShieldCheck, UserRound, UsersRound, X } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   getOrganizationChart,
   getPerson,
@@ -13,6 +13,8 @@ import {
   ActionButton,
   EnterpriseDataGrid,
   FilterBar,
+  GuidedEmptyState,
+  LocalErrorState,
   mergeFilterSearchParams,
 } from '@dwp-frontend/design-system';
 
@@ -373,6 +375,7 @@ export function PeopleDirectory({
   const asOfParam = searchParams.get('asOf');
   const asOf = isIsoDate(asOfParam) ? asOfParam : currentDate;
   const query = searchParams.get('q') ?? '';
+  const deferredQuery = useDeferredValue(query);
   const status = workforceView ? searchParams.get('status') || 'ALL' : 'ACTIVE';
   const organization = searchParams.get('org') || 'ALL';
   const grade = workforceView ? searchParams.get('grade') || 'ALL' : 'ALL';
@@ -384,15 +387,20 @@ export function PeopleDirectory({
     setSearchParams(mergeFilterSearchParams(searchParams, values), { replace: true });
   };
 
-  const peopleQuery = useQuery({
-    queryKey: [experience, 'people', 'directory', asOf, workforceView ? undefined : 'ACTIVE'],
-    queryFn: () =>
+  const serverStatus = workforceView ? (status === 'ALL' ? undefined : status) : 'ACTIVE';
+  const peopleQuery = useInfiniteQuery({
+    queryKey: [experience, 'people', 'directory', asOf, deferredQuery, serverStatus],
+    queryFn: ({ pageParam }) =>
       listPeople({
+        query: deferredQuery,
         asOf,
-        status: workforceView ? undefined : 'ACTIVE',
+        status: serverStatus,
+        cursor: pageParam ?? undefined,
         size: 100,
         surface: experience,
       }),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.nextCursor : null),
   });
   const chartQuery = useQuery({
     queryKey: [experience, 'people', 'org-context', asOf],
@@ -415,10 +423,12 @@ export function PeopleDirectory({
 
   const rows = useMemo<PeopleDirectoryRow[]>(
     () =>
-      (peopleQuery.data?.items ?? []).map((person) => ({
-        ...person,
-        roles: person.workEmail ? (rolesByEmail.get(person.workEmail.toLowerCase()) ?? []) : [],
-      })),
+      (peopleQuery.data?.pages ?? []).flatMap((page) =>
+        page.items.map((person) => ({
+          ...person,
+          roles: person.workEmail ? (rolesByEmail.get(person.workEmail.toLowerCase()) ?? []) : [],
+        }))
+      ),
     [peopleQuery.data, rolesByEmail]
   );
   const selected = rows.find((row) => row.personId === searchParams.get('person')) ?? null;
@@ -549,7 +559,7 @@ export function PeopleDirectory({
     return values;
   }, [t, workforceView]);
 
-  if (peopleQuery.isLoading || chartQuery.isLoading) {
+  if (peopleQuery.isLoading) {
     return <AdminPanelLoading label={t('people.loading')} />;
   }
   if (peopleQuery.isError) {
@@ -635,9 +645,35 @@ export function PeopleDirectory({
         ]
       : []),
   ];
+  const noResults = rows.length > 0 && filteredRows.length === 0;
+  const firstPage = peopleQuery.data?.pages[0];
 
   return (
     <>
+      {chartQuery.isError && (
+        <Box sx={{ mb: 1.5 }}>
+          <LocalErrorState
+            size="compact"
+            title={t('people.partial.organizationTitle')}
+            description={t('people.partial.organizationDescription')}
+            retryLabel={t('common.actions.retry')}
+            retrying={chartQuery.isFetching}
+            onRetry={() => void chartQuery.refetch()}
+          />
+        </Box>
+      )}
+      {workforceView && identitiesQuery.isError && (
+        <Box sx={{ mb: 1.5 }}>
+          <LocalErrorState
+            size="compact"
+            title={t('people.partial.rolesTitle')}
+            description={t('people.partial.rolesDescription')}
+            retryLabel={t('common.actions.retry')}
+            retrying={identitiesQuery.isFetching}
+            onRetry={() => void identitiesQuery.refetch()}
+          />
+        </Box>
+      )}
       <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
         <Stack
           direction={{ xs: 'column', lg: 'row' }}
@@ -656,7 +692,15 @@ export function PeopleDirectory({
               size="small"
               variant="outlined"
             />
-            <Chip label={t('people.asOf', { date: peopleQuery.data?.asOf })} size="small" />
+            {peopleQuery.hasNextPage && (
+              <Chip
+                label={t('people.moreAvailable')}
+                size="small"
+                color="info"
+                variant="outlined"
+              />
+            )}
+            <Chip label={t('people.asOf', { date: firstPage?.asOf })} size="small" />
           </Stack>
         </Stack>
 
@@ -842,52 +886,82 @@ export function PeopleDirectory({
           />
         </Box>
 
-        <EnterpriseDataGrid
-          ariaLabel={t('people.title')}
-          rows={filteredRows}
-          columns={columns}
-          getRowId={(row) => row.personId}
-          hideFooter
-          minVisibleRows={5}
-          maxVisibleRows={12}
-          onRowClick={({ row }) => updateSearchParams({ person: row.personId })}
-          columnVisibilityModel={
-            columnPreset === 'compact'
-              ? {
-                  locationName: false,
-                  managerDisplayName: false,
-                  roles: false,
-                }
-              : undefined
-          }
-          stickyColumns={{ left: ['displayName'], right: ['workerStatus'] }}
-          toolbar={{
-            ariaLabel: t('people.grid.toolbar'),
-            showColumns: false,
-            showFilters: false,
-            showQuickFilter: false,
-            enableCsvExport: true,
-            exportLabel: t('people.grid.export'),
-            csvFileName: `dwp-people-${asOf}`,
-            refreshLabel: t('common.actions.refresh'),
-            refreshing:
-              peopleQuery.isFetching || chartQuery.isFetching || identitiesQuery.isFetching,
-            onRefresh: () => {
-              void peopleQuery.refetch();
-              void chartQuery.refetch();
-              void identitiesQuery.refetch();
-            },
-            columnPresetsLabel: t('people.grid.columnPresets.label'),
-            selectedColumnPresetId: columnPreset,
-            columnPresets: [
-              { id: 'operational', label: t('people.grid.columnPresets.operational') },
-              { id: 'compact', label: t('people.grid.columnPresets.compact') },
-            ],
-            onColumnPresetChange: (value) =>
-              updateSearchParams({ columns: value === 'operational' ? null : value }),
-          }}
-          sx={{ border: 0, borderRadius: 0, '& .MuiDataGrid-row': { cursor: 'pointer' } }}
-        />
+        {filteredRows.length === 0 ? (
+          <GuidedEmptyState
+            kind={noResults || query || activeFilters.length ? 'no-results' : 'empty'}
+            title={t(
+              noResults || query || activeFilters.length
+                ? 'people.empty.noResultsTitle'
+                : 'people.empty.title'
+            )}
+            description={t(
+              noResults || query || activeFilters.length
+                ? 'people.empty.noResultsDescription'
+                : 'people.empty.description'
+            )}
+            actionLabel={
+              noResults || query || activeFilters.length ? t('people.empty.reset') : undefined
+            }
+            onAction={noResults || query || activeFilters.length ? resetFilters : undefined}
+          />
+        ) : (
+          <>
+            <EnterpriseDataGrid
+              ariaLabel={t('people.title')}
+              rows={filteredRows}
+              columns={columns}
+              getRowId={(row) => row.personId}
+              hideFooter
+              minVisibleRows={5}
+              maxVisibleRows={12}
+              onRowClick={({ row }) => updateSearchParams({ person: row.personId })}
+              columnVisibilityModel={
+                columnPreset === 'compact'
+                  ? {
+                      locationName: false,
+                      managerDisplayName: false,
+                      roles: false,
+                    }
+                  : undefined
+              }
+              stickyColumns={{ left: ['displayName'], right: ['workerStatus'] }}
+              toolbar={{
+                ariaLabel: t('people.grid.toolbar'),
+                showColumns: false,
+                showFilters: false,
+                showQuickFilter: false,
+                refreshLabel: t('common.actions.refresh'),
+                refreshing:
+                  peopleQuery.isFetching || chartQuery.isFetching || identitiesQuery.isFetching,
+                onRefresh: () => {
+                  void peopleQuery.refetch();
+                  void chartQuery.refetch();
+                  void identitiesQuery.refetch();
+                },
+                columnPresetsLabel: t('people.grid.columnPresets.label'),
+                selectedColumnPresetId: columnPreset,
+                columnPresets: [
+                  { id: 'operational', label: t('people.grid.columnPresets.operational') },
+                  { id: 'compact', label: t('people.grid.columnPresets.compact') },
+                ],
+                onColumnPresetChange: (value) =>
+                  updateSearchParams({ columns: value === 'operational' ? null : value }),
+              }}
+              sx={{ border: 0, borderRadius: 0, '& .MuiDataGrid-row': { cursor: 'pointer' } }}
+            />
+            {peopleQuery.hasNextPage && (
+              <Stack alignItems="center" sx={{ p: 1.5, borderTop: 1, borderColor: 'divider' }}>
+                <ActionButton
+                  intent="secondary"
+                  loading={peopleQuery.isFetchingNextPage}
+                  onClick={() => void peopleQuery.fetchNextPage()}
+                >
+                  {t('people.loadMore')}
+                </ActionButton>
+              </Stack>
+            )}
+          </>
+        )}
       </Box>
       <PersonDetailDialog
         person={selected}

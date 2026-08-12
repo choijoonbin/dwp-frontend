@@ -2,13 +2,16 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ArrowRight, ClipboardCheck } from 'lucide-react';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
@@ -36,6 +39,8 @@ type Props = {
 
 const KEY_PATTERN = /^[a-z][a-z0-9-]{1,79}$/;
 const ENVIRONMENT_PATTERN = /^[a-z][a-z0-9-]{1,31}$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DOMAIN_PATTERN = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
 
 export function ProviderOnboardingDialog({
   entitlements,
@@ -87,9 +92,10 @@ export function ProviderOnboardingDialog({
         ENVIRONMENT_PATTERN.test(environmentKey) &&
         Boolean(dataRegion) &&
         Boolean(defaultLocale.trim()) &&
-        Boolean(timeZone.trim())
+        Boolean(timeZone.trim()) &&
+        (!primaryDomain || DOMAIN_PATTERN.test(primaryDomain))
       );
-    if (step === 2) return Boolean(adminDisplayName.trim()) && adminEmail.includes('@');
+    if (step === 2) return Boolean(adminDisplayName.trim()) && EMAIL_PATTERN.test(adminEmail);
     return selected.size > 0 && Boolean(justification.trim());
   }, [
     adminDisplayName,
@@ -101,6 +107,7 @@ export function ProviderOnboardingDialog({
     justification,
     organizationKey,
     organizationName,
+    primaryDomain,
     selected.size,
     step,
     tenantKey,
@@ -284,6 +291,8 @@ export function ProviderOnboardingDialog({
                 label={t('fields.primaryDomain')}
                 value={primaryDomain}
                 onChange={(event) => setPrimaryDomain(event.target.value.toLowerCase())}
+                error={Boolean(primaryDomain) && !DOMAIN_PATTERN.test(primaryDomain)}
+                helperText={primaryDomain ? t('fields.domainHelp') : ' '}
               />
             </Stack>
           </Stack>
@@ -309,46 +318,112 @@ export function ProviderOnboardingDialog({
               label={t('fields.initialAdminEmail')}
               value={adminEmail}
               onChange={(event) => setAdminEmail(event.target.value)}
+              error={Boolean(adminEmail) && !EMAIL_PATTERN.test(adminEmail)}
+              helperText={adminEmail ? t('fields.emailHelp') : ' '}
             />
           </Stack>
         )}
 
         {step === 3 && (
           <Stack gap={2.25}>
-            <Box>
-              <Typography variant="subtitle2" sx={{ mb: 0.75 }}>
-                {t('onboarding.entitlements')}
-              </Typography>
-              <FormGroup
+            <Alert severity="info">{t('onboarding.review.notice')}</Alert>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 7fr) minmax(280px, 5fr)' },
+                borderBlock: 1,
+                borderColor: 'divider',
+              }}
+            >
+              <Box sx={{ minWidth: 0, py: 1.5, pr: { md: 2 } }}>
+                <Typography variant="subtitle2">{t('onboarding.review.plan')}</Typography>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+                    mt: 1,
+                  }}
+                >
+                  {[
+                    [t('fields.organizationName'), organizationName],
+                    [t('fields.organizationKey'), organizationKey],
+                    [t('fields.displayName'), displayName],
+                    [t('fields.environmentKey'), environmentKey],
+                    [t('fields.serviceTier'), t(`tiers.${serviceTier}`)],
+                    [
+                      t('fields.dataRegion'),
+                      regions.find((region) => region.regionKey === dataRegion)?.displayName ??
+                        dataRegion,
+                    ],
+                    [t('fields.isolation'), t(`isolation.${isolationModel}`)],
+                    [t('fields.primaryDomain'), primaryDomain || '-'],
+                    [t('fields.initialAdminDisplayName'), adminDisplayName],
+                    [t('fields.initialAdminEmail'), adminEmail],
+                  ].map(([label, value], index) => (
+                    <Box
+                      key={label}
+                      sx={{
+                        minWidth: 0,
+                        py: 0.8,
+                        pr: 1.5,
+                        borderTop: index > 1 ? 1 : 0,
+                        borderColor: 'divider',
+                      }}
+                    >
+                      <Typography variant="caption" color="text.secondary">
+                        {label}
+                      </Typography>
+                      <Typography variant="body2" fontWeight={650} sx={{ wordBreak: 'break-word' }}>
+                        {value}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+              <Box
                 sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-                  columnGap: 2,
+                  minWidth: 0,
+                  py: 1.5,
+                  pl: { md: 2 },
+                  borderTop: { xs: 1, md: 0 },
+                  borderLeft: { xs: 0, md: 1 },
+                  borderColor: 'divider',
                 }}
               >
-                {entitlements.map((entitlement) => (
-                  <FormControlLabel
-                    key={entitlement.entitlementId}
-                    control={
-                      <Checkbox
-                        checked={selected.has(entitlement.entitlementKey)}
-                        onChange={() => toggleEntitlement(entitlement.entitlementKey)}
-                      />
-                    }
-                    label={
-                      <Box>
-                        <Typography variant="body2" fontWeight={700}>
-                          {entitlement.name}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {entitlement.entitlementKey}
-                        </Typography>
-                      </Box>
-                    }
-                    sx={{ m: 0, alignItems: 'flex-start' }}
+                <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+                  <Typography variant="subtitle2">{t('onboarding.entitlements')}</Typography>
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={t('onboarding.review.selected', { count: selected.size })}
                   />
-                ))}
-              </FormGroup>
+                </Stack>
+                <Divider sx={{ my: 1 }} />
+                <FormGroup>
+                  {entitlements.map((entitlement) => (
+                    <FormControlLabel
+                      key={entitlement.entitlementId}
+                      control={
+                        <Checkbox
+                          checked={selected.has(entitlement.entitlementKey)}
+                          onChange={() => toggleEntitlement(entitlement.entitlementKey)}
+                        />
+                      }
+                      label={
+                        <Box>
+                          <Typography variant="body2" fontWeight={700}>
+                            {entitlement.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {entitlement.entitlementKey}
+                          </Typography>
+                        </Box>
+                      }
+                      sx={{ m: 0, alignItems: 'flex-start' }}
+                    />
+                  ))}
+                </FormGroup>
+              </Box>
             </Box>
             <TextField
               required
