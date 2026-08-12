@@ -1,19 +1,25 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowRight,
   CheckCircle2,
+  Clock3,
   Grid3X3,
+  LockKeyhole,
   Pin,
   PinOff,
+  Send,
   ShieldCheck,
   TriangleAlert,
+  X,
 } from 'lucide-react';
 import {
+  cancelWorkspaceAppAccessRequest,
   getWorkspaceApps,
   launchWorkspaceApp,
+  requestWorkspaceAppAccess,
   setWorkspaceAppPinned,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -22,6 +28,8 @@ import {
   ActionIconButton,
   EmptyState,
   FilterBar,
+  FormDialog,
+  FormField,
   GuidedEmptyState,
   LiveStatus,
   LocalErrorState,
@@ -33,6 +41,8 @@ import {
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import MenuItem from '@mui/material/MenuItem';
 import ButtonBase from '@mui/material/ButtonBase';
 import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
@@ -45,12 +55,19 @@ import { GovernedSavedViewControl } from '../features/saved-views/governed-saved
 
 import type { WorkspaceApp } from '@dwp-frontend/shared-utils';
 
-type AppFilter = 'all' | 'pinned' | 'native' | 'connected';
+type AppFilter = 'all' | 'available' | 'requestable' | 'pending' | 'pinned' | 'connected';
 
 const homeAppById = new Map(HOME_APPS.map((app) => [app.id, app]));
 const fallbackAppVisual = { iconKey: 'legacy', tone: '#4B5663' } as const;
 const emptyApps: WorkspaceApp[] = [];
-const APP_FILTERS: AppFilter[] = ['all', 'pinned', 'native', 'connected'];
+const APP_FILTERS: AppFilter[] = [
+  'all',
+  'available',
+  'requestable',
+  'pending',
+  'pinned',
+  'connected',
+];
 
 function isAppFilter(value: string | null): value is AppFilter {
   return Boolean(value && APP_FILTERS.includes(value as AppFilter));
@@ -73,6 +90,76 @@ function AppIcon({ app, size = 46 }: { app: WorkspaceApp; size?: number }) {
   return <AppGlyph app={appVisual(app)} size={size} />;
 }
 
+function AccessRequestDialog({
+  app,
+  busy,
+  onClose,
+  onSubmit,
+}: {
+  app: WorkspaceApp | null;
+  busy: boolean;
+  onClose: () => void;
+  onSubmit: (justification: string, requestedUntil?: string) => Promise<void>;
+}) {
+  const { t } = useTranslation('work');
+  const [justification, setJustification] = useState('');
+  const [duration, setDuration] = useState<'30' | '90' | 'NONE'>('30');
+  const valid = justification.trim().length >= 10;
+  const requestedUntil =
+    duration === 'NONE'
+      ? undefined
+      : new Date(Date.now() + Number(duration) * 24 * 60 * 60 * 1000).toISOString();
+
+  return (
+    <FormDialog
+      open={Boolean(app)}
+      title={t('appsPage.access.dialogTitle', { app: app?.name ?? '' })}
+      description={t('appsPage.access.dialogDescription')}
+      cancelLabel={t('appsPage.access.cancel')}
+      submitLabel={t('appsPage.access.submit')}
+      submittingLabel={t('appsPage.access.submitting')}
+      busy={busy}
+      submitDisabled={!valid}
+      onClose={onClose}
+      onSubmit={() => onSubmit(justification.trim(), requestedUntil)}
+      maxWidth="sm"
+    >
+      <Stack gap={2}>
+        <FormField
+          label={t('appsPage.access.resource')}
+          size="small"
+          value={app?.resourceKey ?? ''}
+          disabled
+        />
+        <FormField
+          select
+          size="small"
+          label={t('appsPage.access.duration')}
+          required
+          value={duration}
+          onChange={(event) => setDuration(event.target.value as typeof duration)}
+        >
+          {(['30', '90', 'NONE'] as const).map((value) => (
+            <MenuItem key={value} value={value}>
+              {t(`appsPage.access.durations.${value}`)}
+            </MenuItem>
+          ))}
+        </FormField>
+        <FormField
+          label={t('appsPage.access.justification')}
+          required
+          multiline
+          minRows={3}
+          value={justification}
+          onChange={(event) => setJustification(event.target.value)}
+          supportingText={t('appsPage.access.justificationHelp')}
+          slotProps={{ htmlInput: { maxLength: 1000 } }}
+        />
+      </Stack>
+    </FormDialog>
+  );
+}
+
 export default function AppsPage() {
   const { t } = useTranslation('work');
   const toast = useToast();
@@ -83,6 +170,7 @@ export default function AppsPage() {
   const filter: AppFilter = isAppFilter(filterParam) ? filterParam : 'all';
   const query = searchParams.get('q') ?? '';
   const selectedAppId = searchParams.get('app');
+  const [requestingApp, setRequestingApp] = useState<WorkspaceApp | null>(null);
   const appsQuery = useQuery({
     queryKey: ['workspace', 'apps'],
     queryFn: getWorkspaceApps,
@@ -90,7 +178,7 @@ export default function AppsPage() {
     retry: 1,
   });
   const apps = appsQuery.data ?? emptyApps;
-  const pinnedApps = apps.filter((app) => app.pinned);
+  const pinnedApps = apps.filter((app) => app.pinned && app.accessState === 'AVAILABLE');
 
   const visibleApps = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -98,7 +186,9 @@ export default function AppsPage() {
       const filterMatch =
         filter === 'all' ||
         (filter === 'pinned' && app.pinned) ||
-        (filter === 'native' && app.launchMode === 'Native') ||
+        (filter === 'available' && app.accessState === 'AVAILABLE') ||
+        (filter === 'requestable' && app.accessState === 'REQUESTABLE') ||
+        (filter === 'pending' && ['PENDING', 'APPROVED_PENDING_SYNC'].includes(app.accessState)) ||
         (filter === 'connected' && app.launchMode !== 'Native');
       const queryMatch =
         !normalized ||
@@ -145,8 +235,46 @@ export default function AppsPage() {
     },
     onError: () => toast.error(t('appsPage.launchError')),
   });
+  const requestMutation = useMutation({
+    mutationFn: ({
+      app,
+      justification,
+      requestedUntil,
+    }: {
+      app: WorkspaceApp;
+      justification: string;
+      requestedUntil?: string;
+    }) => requestWorkspaceAppAccess(app.id, { justification, requestedUntil }),
+    onSuccess: async () => {
+      setRequestingApp(null);
+      await queryClient.invalidateQueries({ queryKey: ['workspace', 'apps'] });
+      toast.success(t('appsPage.access.requested'));
+    },
+    onError: () => toast.error(t('appsPage.access.requestError')),
+  });
+  const cancelRequestMutation = useMutation({
+    mutationFn: (app: WorkspaceApp) =>
+      cancelWorkspaceAppAccessRequest(app.accessRequestId!, app.accessRequestVersion!),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['workspace', 'apps'] });
+      toast.success(t('appsPage.access.cancelled'));
+    },
+    onError: () => toast.error(t('appsPage.access.cancelError')),
+  });
 
   const launch = (app: WorkspaceApp) => {
+    if (app.accessState === 'REQUESTABLE') {
+      setRequestingApp(app);
+      return;
+    }
+    if (app.accessState === 'PENDING') {
+      toast.warning(t('appsPage.access.pendingMessage', { app: app.name }));
+      return;
+    }
+    if (app.accessState === 'APPROVED_PENDING_SYNC') {
+      toast.warning(t('appsPage.access.syncMessage', { app: app.name }));
+      return;
+    }
     if (app.health === 'configuration-required') {
       toast.warning(t('appsPage.configurationRequired', { app: app.name }));
       return;
@@ -465,6 +593,18 @@ export default function AppsPage() {
                       {app.pinned && (
                         <Chip label={t('appsPage.pinned')} size="small" color="info" />
                       )}
+                      <Chip
+                        label={t(`appsPage.access.states.${app.accessState}`)}
+                        size="small"
+                        color={
+                          app.accessState === 'AVAILABLE'
+                            ? 'success'
+                            : app.accessState === 'REQUESTABLE'
+                              ? 'info'
+                              : 'warning'
+                        }
+                        variant="outlined"
+                      />
                     </Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.2 }}>
                       {app.description}
@@ -501,25 +641,45 @@ export default function AppsPage() {
                       </Typography>
                     </Box>
                   </Box>
-                  <ArrowRight size={17} strokeWidth={1.8} aria-hidden="true" />
-                </ButtonBase>
-                <ActionIconButton
-                  label={
-                    app.pinned
-                      ? t('appsPage.unpinApp', { app: app.name })
-                      : t('appsPage.pinApp', { app: app.name })
-                  }
-                  tooltip={app.pinned ? t('appsPage.unpin') : t('appsPage.pin')}
-                  disabled={pinMutation.isPending}
-                  onClick={() => pinMutation.mutate(app)}
-                  sx={{ position: 'absolute', right: 8, bottom: 8 }}
-                >
-                  {app.pinned ? (
-                    <PinOff size={16} strokeWidth={1.8} />
+                  {app.accessState === 'AVAILABLE' ? (
+                    <ArrowRight size={17} strokeWidth={1.8} aria-hidden="true" />
+                  ) : app.accessState === 'REQUESTABLE' ? (
+                    <LockKeyhole size={17} strokeWidth={1.8} aria-hidden="true" />
+                  ) : app.accessState === 'PENDING' ? (
+                    <Clock3 size={17} strokeWidth={1.8} aria-hidden="true" />
                   ) : (
-                    <Pin size={16} strokeWidth={1.8} />
+                    <Send size={17} strokeWidth={1.8} aria-hidden="true" />
                   )}
-                </ActionIconButton>
+                </ButtonBase>
+                {app.accessState === 'AVAILABLE' ? (
+                  <ActionIconButton
+                    label={
+                      app.pinned
+                        ? t('appsPage.unpinApp', { app: app.name })
+                        : t('appsPage.pinApp', { app: app.name })
+                    }
+                    tooltip={app.pinned ? t('appsPage.unpin') : t('appsPage.pin')}
+                    disabled={pinMutation.isPending}
+                    onClick={() => pinMutation.mutate(app)}
+                    sx={{ position: 'absolute', right: 8, bottom: 8 }}
+                  >
+                    {app.pinned ? (
+                      <PinOff size={16} strokeWidth={1.8} />
+                    ) : (
+                      <Pin size={16} strokeWidth={1.8} />
+                    )}
+                  </ActionIconButton>
+                ) : app.accessState === 'PENDING' && app.accessRequestId ? (
+                  <ActionIconButton
+                    label={t('appsPage.access.cancelRequestFor', { app: app.name })}
+                    tooltip={t('appsPage.access.cancelRequest')}
+                    disabled={cancelRequestMutation.isPending}
+                    onClick={() => cancelRequestMutation.mutate(app)}
+                    sx={{ position: 'absolute', right: 8, bottom: 8 }}
+                  >
+                    <X size={16} strokeWidth={1.8} />
+                  </ActionIconButton>
+                ) : null}
               </Box>
             );
           })}
@@ -537,6 +697,19 @@ export default function AppsPage() {
           }
         />
       )}
+      <AccessRequestDialog
+        app={requestingApp}
+        busy={requestMutation.isPending}
+        onClose={() => setRequestingApp(null)}
+        onSubmit={async (justification, requestedUntil) => {
+          if (!requestingApp) return;
+          await requestMutation.mutateAsync({
+            app: requestingApp,
+            justification,
+            requestedUntil,
+          });
+        }}
+      />
     </PageCanvas>
   );
 }

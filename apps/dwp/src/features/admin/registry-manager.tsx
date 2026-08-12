@@ -56,6 +56,8 @@ const registryTypes: Array<RegistryType | 'ALL'> = [
   'AGENT',
   'TOOL',
   'POLICY',
+  'API',
+  'DATA_PRODUCT',
 ];
 const lifecycleStates: Array<ReferenceLifecycle | 'ALL'> = ['ALL', 'DRAFT', 'ACTIVE', 'RETIRED'];
 
@@ -65,6 +67,8 @@ const typeColor = {
   AGENT: 'primary',
   TOOL: 'warning',
   POLICY: 'default',
+  API: 'primary',
+  DATA_PRODUCT: 'success',
 } as const;
 
 const riskColor = {

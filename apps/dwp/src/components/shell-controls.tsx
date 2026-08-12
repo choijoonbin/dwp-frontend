@@ -166,7 +166,7 @@ export function SearchControl() {
           {shortcut}
         </Box>
       </ButtonBase>
-      <Tooltip title={t('search.label')}>
+      <Tooltip title={t('search.label')} slotProps={{ popper: { disablePortal: true } }}>
         <IconButton
           aria-label={t('search.label')}
           aria-haspopup="dialog"
@@ -231,7 +231,7 @@ export function FullscreenControl() {
   };
 
   return (
-    <Tooltip title={label} enterDelay={500}>
+    <Tooltip title={label} enterDelay={500} slotProps={{ popper: { disablePortal: true } }}>
       <IconButton
         data-testid="fullscreen-control"
         aria-label={label}
@@ -271,7 +271,7 @@ export function NotificationMenu() {
 
   return (
     <>
-      <Tooltip title={t('notifications.label')}>
+      <Tooltip title={t('notifications.label')} slotProps={{ popper: { disablePortal: true } }}>
         <IconButton
           aria-label={t('notifications.label')}
           onClick={(event) => setAnchor(event.currentTarget)}

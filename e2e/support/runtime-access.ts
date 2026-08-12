@@ -191,6 +191,11 @@ export const WORKSPACE_APPS_FIXTURE = [
     lastUsedAt: '2026-08-11T00:00:00Z',
     launchCount: 3,
     version: 1,
+    accessState: 'AVAILABLE',
+    accessRequestId: null,
+    accessRequestState: null,
+    accessRequestUpdatedAt: null,
+    accessRequestVersion: null,
   },
   {
     id: 'ref-app-legacy',
@@ -207,6 +212,11 @@ export const WORKSPACE_APPS_FIXTURE = [
     lastUsedAt: null,
     launchCount: 0,
     version: 0,
+    accessState: 'CONFIGURATION_REQUIRED',
+    accessRequestId: null,
+    accessRequestState: null,
+    accessRequestUpdatedAt: null,
+    accessRequestVersion: null,
   },
 ];
 

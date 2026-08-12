@@ -1,7 +1,7 @@
 # DWP Experience Modernization Roadmap
 
 - 기준일: 2026-08-12
-- 범위: 실제 노출 메뉴 45개와 공통 Shell
+- 범위: 실제 노출 메뉴 47개와 공통 Shell
 - 목표: 글로벌 제품의 기능적 모범 사례를 흡수하되 DWP 고유의 유연하고 살아 있는 업무 경험으로 재구성
 - 상세 결함 기준선: `DWP 메뉴별 UI UX 감사 2026-08-11.md`
 - 제품 규칙: `DWP Product Experience Rules.md`
@@ -69,22 +69,24 @@ Grid**를 배우고, PagerDuty·Grafana·Azure Workbooks의 **운영 판단과 �
 | 홈 경험 `/admin/experience/home-experience` | Studio · Structured             | Focal point·안전 영역·Locale·Theme·Viewport Preview, 이미지 품질 검사, Draft/Publish/History                      | P1       |
 | 공지 `/admin/experience/announcements`      | Editorial workflow · Structured | Audience → 작성 → Preview → 예약 Calendar → 승인/게시 → 도달·읽음 분석. 목록은 상태 Pipeline과 Calendar 전환 제공 | P1       |
 
-## 7. Tenant Admin Identity 4개
+## 7. Tenant Admin Identity 5개
 
-| 메뉴                                         | Archetype·밀도 판단                      | 고도화 방향                                                                                                         | 우선순위 |
-| -------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | -------- |
-| 접근 제어 `/admin/identity/access`           | List-detail · Dense                      | 직접/그룹/SCIM 부여 근거, Effective Access, 위험·만료, 변경 영향과 승인 필요 여부를 사용자 Inspector에 통합         | P0       |
-| 접근 검토 `/admin/identity/access-reviews`   | Review workflow · Structured             | Campaign 진행, 검토 Queue, 근거·최근 사용·위험 Signal, 승인/회수·위임, 기한과 감사 증거                             | P0       |
-| 역할 및 권한 `/admin/identity/roles`         | Relationship explorer + editor · Dense   | 역할-리소스-그룹 Graph, 중복·충돌, 사용자 영향 Preview, 권한 Simulation과 Version Diff                              | P1       |
-| ID 프로비저닝 `/admin/identity/provisioning` | Guided integration workflow · Structured | Provider 선택, Test, Mapping, Dry run, Sync, 오류 Reconciliation, Secret 회전과 건강 상태. Empty에서 첫 연결로 안내 | P0       |
+| 메뉴                                               | Archetype·밀도 판단                      | 고도화 방향                                                                                                         | 우선순위 |
+| -------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | -------- |
+| 접근 제어 `/admin/identity/access`                 | List-detail · Dense                      | 직접/그룹/SCIM 부여 근거, Effective Access, 위험·만료, 변경 영향과 승인 필요 여부를 사용자 Inspector에 통합         | P0       |
+| 앱 접근 요청 `/admin/identity/app-access-requests` | Review workflow · Structured             | 사용자 요청·사유·만료·검토 결정을 불변 이력으로 연결하고 승인 결과를 IAM 프로비저닝 상태와 분리해 표시              | P1       |
+| 접근 검토 `/admin/identity/access-reviews`         | Review workflow · Structured             | Campaign 진행, 검토 Queue, 근거·최근 사용·위험 Signal, 승인/회수·위임, 기한과 감사 증거                             | P0       |
+| 역할 및 권한 `/admin/identity/roles`               | Relationship explorer + editor · Dense   | 역할-리소스-그룹 Graph, 중복·충돌, 사용자 영향 Preview, 권한 Simulation과 Version Diff                              | P1       |
+| ID 프로비저닝 `/admin/identity/provisioning`       | Guided integration workflow · Structured | Provider 선택, Test, Mapping, Dry run, Sync, 오류 Reconciliation, Secret 회전과 건강 상태. Empty에서 첫 연결로 안내 | P0       |
 
-## 8. Tenant Admin Platform 3개
+## 8. Tenant Admin Platform 4개
 
-| 메뉴                                       | Archetype·밀도 판단                 | 고도화 방향                                                                                   | 우선순위 |
-| ------------------------------------------ | ----------------------------------- | --------------------------------------------------------------------------------------------- | -------- |
-| 기준정보 `/admin/platform/reference-data`  | Catalog list-detail · Dense         | 현재 강점을 유지하고 소유권, 계약, 소비처 영향, 변경 승인·Diff와 Activity 상관관계 강화       | P1       |
-| 제품 레지스트리 `/admin/platform/registry` | Catalog + relationship · Structured | 제품-메뉴-권한-API 관계, Version 호환성, 수명주기와 폐기 영향 Preview                         | P1       |
-| 내비게이션 `/admin/platform/navigation`    | Tree studio · Structured            | Drag/Keyboard 재정렬, Locale·Role별 실제 Shell Preview, 고아 메뉴·충돌 검사, 변경 Diff와 게시 | P1       |
+| 메뉴                                       | Archetype·밀도 판단                 | 고도화 방향                                                                                                    | 우선순위 |
+| ------------------------------------------ | ----------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------- |
+| Catalog 탐색 `/admin/platform/catalog`     | Graph explorer + inspector · Dense  | 제품·서비스·코드·메뉴·권한·연결 자산의 소유권과 관계를 통합하고 핵심 연결망·집중 탐색·변경 영향·명시 증적 제공 | P0       |
+| 기준정보 `/admin/platform/reference-data`  | Catalog list-detail · Dense         | 현재 강점을 유지하고 소유권, 계약, 소비처 영향, 변경 승인·Diff와 Activity 상관관계 강화                        | P1       |
+| 제품 레지스트리 `/admin/platform/registry` | Catalog + relationship · Structured | 제품-메뉴-권한-API 관계, Version 호환성, 수명주기와 폐기 영향 Preview                                          | P1       |
+| 내비게이션 `/admin/platform/navigation`    | Tree studio · Structured            | Drag/Keyboard 재정렬, Locale·Role별 실제 Shell Preview, 고아 메뉴·충돌 검사, 변경 Diff와 게시                  | P1       |
 
 ## 9. Tenant Admin Integration 1개
 
@@ -163,31 +165,35 @@ Wave 완료는 화면이 바뀌었다는 의미가 아니라 실제 API, 상태 
 검증이 함께 존재한다는 의미로 사용한다. 외부 계약이나 장기 운영 증거가 남은 항목은 현재 구현
 가능 범위 완료와 출시 완료를 구분한다.
 
-| 실행 단위                                  | 현재 상태           | 반영된 범위                                                                                                                                                                                                                                               | 남은 출시 조건                                                                                     |
-| ------------------------------------------ | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Wave 0 공통 운영 기반                      | 기반 완료, 전환 중  | 최대 1600px 운영 Grid, Surface·Signal·Context·부분 실패 계약, URL 기간 상태, 320px Reflow와 200% Text-size·Axe 자동 Gate를 Wave 1·Workspace 대표 화면에 적용                                                                                              | 기존 45개 메뉴의 공통 패턴 전환, 실제 Browser Zoom·Screen Reader 및 CI Browser/OS 수동 증거 `D-10` |
-| Provider 운영 지휘                         | 현재 가능 범위 완료 | 고객 영향 Pulse, 우선 조치 Queue, 서비스·Reliability·테넌트 Drill-down, Freshness·부분 실패 상태                                                                                                                                                          | 장기 추세, 이상 탐지 품질, 실제 고객 규모 장애 주입                                                |
-| Provider 서비스 운영·변경 통제·테넌트 자산 | 현재 가능 범위 완료 | Service/Region 운영 신호와 SLO·Error Budget, 변경 Gate·실행 증거, URL 필터·서버 저장 View·최대 3개 테넌트 비교, Tenant 360, 정상·빈·부분 실패 검증                                                                                                        | Service Topology, 실행기 연계 자동 Rollback·고객 통지 `D-13`, 실제 고객 규모 장애 주입             |
-| Tenant API 모니터링·감사                   | 현재 가능 범위 완료 | RED/SLO, 기간·서비스 Scope, 배포·관리 변경 Annotation과 상관관계, 이상→요청 상세, 위험 Queue→조사, Note·Task·SLA, SHA-256 종료 보고서와 종료 후 Case Workspace 전체 불변성·동시성 잠금, 보조 API 장애 격리                                                | 진짜 비동기 대량 Export Worker·WORM 저장소 `D-12`, 실제 보존 규모 성능·복구 시험                   |
-| Workforce 조직 설계                        | 현재 가능 범위 완료 | 조직 Graph의 운영 개요, 시나리오 비교·검증·승인·게시, 비용/FTE 영향, 조직 Focus·Inspector·URL 복구                                                                                                                                                        | `D-04` 협업·Bulk·실행 Bridge, `D-05` 역량 영향, 실제 대규모 Graph 성능                             |
-| Workforce 인력 개요                        | 현재 가능 범위 완료 | 실제 현재·비교 스냅샷, 공석·조직 위험·품질 Signal, 우선 조치 Queue, 서버 저장 운영 View, 조직·사람·Position·HRIS·시나리오 Drill-down, Healthy Empty와 부분 실패                                                                                           | 장기 변화 시계열과 고객 HRIS 원천 계약 `D-11`, 실제 운영 규모 성능·사용성 시험                     |
-| Wave 2 개인화 Home                         | 현재 가능 범위 완료 | 실제 Work Queue로 다음 우선 업무와 열린 업무·마감·진행·대기 신호를 편집하고 앱·위젯을 뒤에 배치했다. Keyboard 진입, Healthy Empty, 국소 장애·재시도, 320px·Axe를 검증했다.                                                                                | Calendar·결재 Connector `D-08`, 고객별 역할 추천 근거·운영 사용성 시험                             |
-| Wave 2 Work·Ask·Activity                   | 현재 가능 범위 완료 | Work의 실제 KPI·URL/Saved View·낙관적 단건 및 최대 50건 원자적 상태 변경·감사, Ask의 권한 Relay·근거·정책·감사·URL 재실행·이전 요청 취소와 60초 제한, Activity의 실제 소스·상태 KPI·URL/Saved View·주체/상태 필터·사건 상세가 실제 API에 연결된다.        | 외부 업무 원천 Adapter·SLA/Compensation, 운영 Model·지식 `D-02·D-03`, 서비스별 사건 생산자 `D-07`  |
-| Wave 2 People Directory·조직도             | 현재 가능 범위 완료 | 서버 검색과 Cursor 기반 점진 로딩, 부분 실패 복구, 사람 상세와 조직도 Deep link를 연결했다. 조직도는 자동 Focus, 검색, Inspector, URL 복구·공유와 운영 개요를 제공하며 Desktop·Mobile 대표 여정을 검증했다.                                               | 실제 고객 최대 규모 성능·가상화 시험, 개인정보가 포함된 Export·Print 정책 `D-09`                   |
-| Wave 2 접근 제어·검토·프로비저닝           | 현재 가능 범위 완료 | 직접·그룹 Role의 Effective Access와 Scope·최근 로그인·활성 Session 근거, Campaign 기반 접근 검토와 불변 Assignment Snapshot·권고·회수 사유, SCIM 2.0 Users/Groups·Credential 수명주기·건강 상태·Provisioning Event를 실제 API와 감사에 연결했다.          | 실제 기업 IdP 선택·Domain/MFA·Mapping·Sandbox Reconciliation `D-01`, 운영 부하·복구 시험           |
-| Wave 2 공지·브랜딩·홈 경험 Studio          | 현재 가능 범위 완료 | 공지 상태 Pipeline·검색·Preview·복제·예약과 사용자별 View/Action 증적, Branding의 Shell·Sign-in·Email·Favicon Preview·Accent·품질 검사, Home의 Desktop/Mobile·Light/Dark·KO/EN Preview와 기본 Locale 검증, 두 Studio의 불변 Revision·Rollback을 구현했다. | 미디어 Object Storage·보존 수명주기 `D-14`, 공지 승인·긴급 채널·확인 정책 `D-15`, 실제 브랜드 승인 |
+| 실행 단위                                  | 현재 상태           | 반영된 범위                                                                                                                                                                                                                                                                | 남은 출시 조건                                                                                           |
+| ------------------------------------------ | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Wave 0 공통 운영 기반                      | 기반 완료, 전환 중  | 최대 1600px 운영 Grid, Surface·Signal·Context·부분 실패 계약, URL 기간 상태, 320px Reflow와 200% Text-size·Axe 자동 Gate를 Wave 1·Workspace 대표 화면에 적용                                                                                                               | 기존 47개 메뉴의 공통 패턴 전환, 실제 Browser Zoom·Screen Reader 및 CI Browser/OS 수동 증거 `D-10`       |
+| Provider 운영 지휘                         | 현재 가능 범위 완료 | 고객 영향 Pulse, 우선 조치 Queue, 서비스·Reliability·테넌트 Drill-down, Freshness·부분 실패 상태                                                                                                                                                                           | 장기 추세, 이상 탐지 품질, 실제 고객 규모 장애 주입                                                      |
+| Provider 서비스 운영·변경 통제·테넌트 자산 | 현재 가능 범위 완료 | Service/Region 운영 신호와 SLO·Error Budget, 변경 Gate·실행 증거, URL 필터·서버 저장 View·최대 3개 테넌트 비교, Tenant 360, 정상·빈·부분 실패 검증                                                                                                                         | Service Topology, 실행기 연계 자동 Rollback·고객 통지 `D-13`, 실제 고객 규모 장애 주입                   |
+| Tenant API 모니터링·감사                   | 현재 가능 범위 완료 | RED/SLO, 기간·서비스 Scope, 배포·관리 변경 Annotation과 상관관계, 이상→요청 상세, 위험 Queue→조사, Note·Task·SLA, SHA-256 종료 보고서와 종료 후 Case Workspace 전체 불변성·동시성 잠금, 보조 API 장애 격리                                                                 | 진짜 비동기 대량 Export Worker·WORM 저장소 `D-12`, 실제 보존 규모 성능·복구 시험                         |
+| Workforce 조직 설계                        | 현재 가능 범위 완료 | 조직 Graph의 운영 개요, 시나리오 비교·검증·승인·게시, 비용/FTE 영향, 조직 Focus·Inspector·URL 복구                                                                                                                                                                         | `D-04` 협업·Bulk·실행 Bridge, `D-05` 역량 영향, 실제 대규모 Graph 성능                                   |
+| Workforce 인력 개요                        | 현재 가능 범위 완료 | 실제 현재·비교 스냅샷, 공석·조직 위험·품질 Signal, 우선 조치 Queue, 서버 저장 운영 View, 조직·사람·Position·HRIS·시나리오 Drill-down, Healthy Empty와 부분 실패                                                                                                            | 장기 변화 시계열과 고객 HRIS 원천 계약 `D-11`, 실제 운영 규모 성능·사용성 시험                           |
+| Wave 2 개인화 Home                         | 현재 가능 범위 완료 | 실제 Work Queue로 다음 우선 업무와 열린 업무·마감·진행·대기 신호를 편집하고 앱·위젯을 뒤에 배치했다. Keyboard 진입, Healthy Empty, 국소 장애·재시도, 320px·Axe를 검증했다.                                                                                                 | Calendar·결재 Connector `D-08`, 고객별 역할 추천 근거·운영 사용성 시험                                   |
+| Wave 2 Work·Ask·Activity                   | 현재 가능 범위 완료 | Work의 실제 KPI·URL/Saved View·낙관적 단건 및 최대 50건 원자적 상태 변경·감사, Ask의 권한 Relay·근거·정책·감사·URL 재실행·이전 요청 취소와 60초 제한, Activity의 실제 소스·상태 KPI·URL/Saved View·주체/상태 필터·사건 상세가 실제 API에 연결된다.                         | 외부 업무 원천 Adapter·SLA/Compensation, 운영 Model·지식 `D-02·D-03`, 서비스별 사건 생산자 `D-07`        |
+| Wave 2 People Directory·조직도             | 현재 가능 범위 완료 | 서버 검색과 Cursor 기반 점진 로딩, 부분 실패 복구, 사람 상세와 조직도 Deep link를 연결했다. 조직도는 자동 Focus, 검색, Inspector, URL 복구·공유와 운영 개요를 제공하며 Desktop·Mobile 대표 여정을 검증했다.                                                                | 실제 고객 최대 규모 성능·가상화 시험, 개인정보가 포함된 Export·Print 정책 `D-09`                         |
+| Wave 2 접근 제어·검토·프로비저닝           | 현재 가능 범위 완료 | 직접·그룹 Role의 Effective Access와 Scope·최근 로그인·활성 Session 근거, Campaign 기반 접근 검토와 불변 Assignment Snapshot·권고·회수 사유, SCIM 2.0 Users/Groups·Credential 수명주기·건강 상태·Provisioning Event를 실제 API와 감사에 연결했다.                           | 실제 기업 IdP 선택·Domain/MFA·Mapping·Sandbox Reconciliation `D-01`, 운영 부하·복구 시험                 |
+| Wave 2 공지·브랜딩·홈 경험 Studio          | 현재 가능 범위 완료 | 공지 상태 Pipeline·검색·Preview·복제·예약과 사용자별 View/Action 증적, Branding의 Shell·Sign-in·Email·Favicon Preview·Accent·품질 검사, Home의 Desktop/Mobile·Light/Dark·KO/EN Preview와 기본 Locale 검증, 두 Studio의 불변 Revision·Rollback을 구현했다.                  | 미디어 Object Storage·보존 수명주기 `D-14`, 공지 승인·긴급 채널·확인 정책 `D-15`, 실제 브랜드 승인       |
+| Wave 3 Catalog 관계 탐색                   | 현재 가능 범위 완료 | Tenant·제품 범위의 앱·서비스·코드·기준정보·메뉴·권한·Connector 인벤토리를 통합하고, 연결도 기반 8개 핵심 자산 개요와 선택 자산 집중 그래프, 직접·전이 영향 분석, 명시 관계 등록·종료·낙관적 잠금·감사를 구현했다. 실제 351개 자산·687개 관계에서 기본 프레이밍을 검증했다. | 외부 Catalog/GitOps 원천·소유권 동기화와 Schema Registry 계약 `D-17`, 실제 최대 규모 성능·운영 품질 시험 |
+| Wave 3 Apps·Connector·Navigation Studio    | 현재 가능 범위 완료 | 사용자 앱 접근 요청·취소·만료와 관리자 승인·반려·사유·감사, 승인 후 IAM 반영 대기 상태를 분리했다. 내비게이션은 불변 개정, 초안 생성·편집, 다국어·권한 미리보기, 검증, 게시·취소·복원과 변경 지표를 실제 API에 연결했다.                                                   | 승인→IAM Entitlement Adapter·재조정 계약 `D-16`, 실제 Connector Sandbox와 다중 관리자 승인 정책          |
+| Wave 3 Account 정교화                      | 현재 가능 범위 완료 | 개인 설정 Schema v2와 JSONB 확장 필드, 낙관적 버전·관리형 정책·자동저장 상태를 구현했다. 화면·접근성·언어·시간대·날짜·시간·숫자·주 시작일과 Home 설정을 로그인 후 복원하며, 프로필 원천과 SSO/MFA 정책·활성 세션을 사실 기반으로 구분한다.                                 | 실제 Screen Reader·Browser/OS 증거 `D-10`, 고객별 프로필 수정·재인증·위험 로그인 정책                    |
 
 Wave 1의 내부 구현 가능 범위와 Wave 2의 `Home → Work → Ask → Activity`,
 `People Directory → 조직도`, `접근 제어 → 접근 검토 → 프로비저닝`,
-`공지 → 브랜딩 → 홈 경험 Studio`는 완료했다. 여기서 완료는 외부 고객·보안·인프라 결정을
-임의로 대체했다는 뜻이 아니다. `D-01`, `D-08`~`D-15`에 등록한 외부 결정은 안전하게 닫힌
+`공지 → 브랜딩 → 홈 경험 Studio`, Wave 3의 `Catalog → Apps·Connector·Navigation → Account`는
+현재 내부 구현 가능 범위를 완료했다. 여기서 완료는 외부 고객·보안·인프라 결정을 임의로
+대체했다는 뜻이 아니다. `D-01`, `D-08`~`D-17`에 등록한 외부 결정은 안전하게 닫힌
 상태로 유지하고, 결정 이후 실제 Sandbox·운영 규모·수동 접근성 증거를 추가해야 출시 완료가 된다.
 
-최종 전수 Gate는 프론트 단위 테스트 106개, 제품 Playwright 250개 중 239개 통과·상호 배타
+최종 전수 Gate는 프론트 단위 테스트 109개, 제품 Playwright 260개 중 249개 통과·상호 배타
 프로젝트 11개 제외·실패 0개, Storybook 상호작용 18개, 백엔드 Clean Gradle 47개 Task,
-Agent Pytest 44개를 통과했다. Auth Flyway V35·Platform V43·People V33·Provider V25와
+Agent Pytest 44개를 통과했다. Auth Flyway V35·Platform V48·People V33·Provider V25와
 PostgreSQL·Redis·Auth·Platform·People·Provider·Agent·Gateway·Frontend의 실제 기동 및
-HTTP 200도 확인했다. 코드 계약 306개·활성 값 1,138개·바인딩 345개를 전수 대조했고,
+HTTP 200도 확인했다. 코드 계약 317개·활성 값 1,187개·바인딩 362개를 전수 대조했고,
 세션 활동 갱신과 토큰 회전의 동시 실행도 원자적 갱신으로 검증했다.
 
 ### 13.2 외부 결정 체크포인트
@@ -196,17 +202,19 @@ HTTP 200도 확인했다. 코드 계약 306개·활성 값 1,138개·바인딩 3
 안전하게 비활성·국소 안내 상태를 유지한다. 결정이 끝나면 ADR, API/데이터 계약, 장애·감사
 E2E를 함께 갱신해야 한다.
 
-| 결정 ID | 상태               | 차단 범위                        | 필요한 외부 결정                                                                         | 현재 안전 상태                                                                      |
-| ------- | ------------------ | -------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `D-01`  | 외부 결정 대기     | 기업 SSO·SCIM 운영 연결          | Entra/Okta 우선순위, Domain 소유 검증, MFA·복구, JIT/SCIM Mapping과 Break-glass 정책     | 표준 SCIM API·Credential·건강·Event까지만 제공하고 실제 IdP 연결은 활성화하지 않음  |
-| `D-08`  | 외부 결정 대기     | Home 일정·결재                   | Microsoft/Google 및 결재 원천 우선순위, OAuth Scope, Webhook·삭제·동기화 SLA             | 샘플 일정을 만들지 않고 Connector 필요 상태 표시                                    |
-| `D-09`  | 외부 결정 대기     | 조직도 Export·Print              | 허용 역할·필드 Masking·Watermark·만료·수신자와 다운로드 감사 정책                        | 화면 탐색·권한 유지 Deep link만 제공하고 파일 반출은 제공하지 않음                  |
-| `D-10`  | 외부 결정 대기     | 전 메뉴 출시 접근성              | CI Browser/OS 조합, NVDA·JAWS·VoiceOver 승인 절차와 증거 보관 방식                       | 320px·200% Text-size·Axe 자동 Gate 유지                                             |
-| `D-11`  | 고객 계약 대기     | Workforce 장기 추세·실행         | 고객 HRIS Mapping, Delta/Full, Reconciliation Owner, 보존 기간·SLA                       | 합성 수집의 운영 사용 차단, 현재/비교 Projection만 표시                             |
-| `D-12`  | 인프라 결정 대기   | 감사 대량 반출                   | Queue/Worker, KMS 암호화 Object Storage·WORM/만료, 분할·취소·알림·최대 행 정책           | 현재 동기 Export는 제한 행·사유·SHA-256 증거 범위로만 제공                          |
-| `D-13`  | 연동 계약 대기     | Provider 자동 Rollback·고객 통지 | 배포 실행기 Adapter, Idempotency·Compensation, 승인 Gate, 통지 채널·Template·수신자 정책 | 계획·승인·실행 원장과 통지 준수 여부만 제공하고 자동 실행하지 않음                  |
-| `D-14`  | 인프라 결정 대기   | Tenant 미디어 운영 수명주기      | Object Storage·KMS·Versioning, Malware Scan, CDN Purge, Revision 보존·삭제 기간          | Local Adapter와 불변 Revision 참조 Asset을 유지하고 자동 삭제하지 않음              |
-| `D-15`  | 거버넌스 결정 대기 | 공지 승인·다중 채널·확인 증적    | 승인 분리, 긴급 채널, 수신 확인 기준, 지역별 보존·개인정보와 실패 재처리 정책            | Tenant Admin 단일 게시와 Home View/Action 집계만 제공하고 채널 발송을 가장하지 않음 |
+| 결정 ID | 상태                | 차단 범위                        | 필요한 외부 결정                                                                                   | 현재 안전 상태                                                                                     |
+| ------- | ------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `D-01`  | 외부 결정 대기      | 기업 SSO·SCIM 운영 연결          | Entra/Okta 우선순위, Domain 소유 검증, MFA·복구, JIT/SCIM Mapping과 Break-glass 정책               | 표준 SCIM API·Credential·건강·Event까지만 제공하고 실제 IdP 연결은 활성화하지 않음                 |
+| `D-08`  | 외부 결정 대기      | Home 일정·결재                   | Microsoft/Google 및 결재 원천 우선순위, OAuth Scope, Webhook·삭제·동기화 SLA                       | 샘플 일정을 만들지 않고 Connector 필요 상태 표시                                                   |
+| `D-09`  | 외부 결정 대기      | 조직도 Export·Print              | 허용 역할·필드 Masking·Watermark·만료·수신자와 다운로드 감사 정책                                  | 화면 탐색·권한 유지 Deep link만 제공하고 파일 반출은 제공하지 않음                                 |
+| `D-10`  | 외부 결정 대기      | 전 메뉴 출시 접근성              | CI Browser/OS 조합, NVDA·JAWS·VoiceOver 승인 절차와 증거 보관 방식                                 | 320px·200% Text-size·Axe 자동 Gate 유지                                                            |
+| `D-11`  | 고객 계약 대기      | Workforce 장기 추세·실행         | 고객 HRIS Mapping, Delta/Full, Reconciliation Owner, 보존 기간·SLA                                 | 합성 수집의 운영 사용 차단, 현재/비교 Projection만 표시                                            |
+| `D-12`  | 인프라 결정 대기    | 감사 대량 반출                   | Queue/Worker, KMS 암호화 Object Storage·WORM/만료, 분할·취소·알림·최대 행 정책                     | 현재 동기 Export는 제한 행·사유·SHA-256 증거 범위로만 제공                                         |
+| `D-13`  | 연동 계약 대기      | Provider 자동 Rollback·고객 통지 | 배포 실행기 Adapter, Idempotency·Compensation, 승인 Gate, 통지 채널·Template·수신자 정책           | 계획·승인·실행 원장과 통지 준수 여부만 제공하고 자동 실행하지 않음                                 |
+| `D-14`  | 인프라 결정 대기    | Tenant 미디어 운영 수명주기      | Object Storage·KMS·Versioning, Malware Scan, CDN Purge, Revision 보존·삭제 기간                    | Local Adapter와 불변 Revision 참조 Asset을 유지하고 자동 삭제하지 않음                             |
+| `D-15`  | 거버넌스 결정 대기  | 공지 승인·다중 채널·확인 증적    | 승인 분리, 긴급 채널, 수신 확인 기준, 지역별 보존·개인정보와 실패 재처리 정책                      | Tenant Admin 단일 게시와 Home View/Action 집계만 제공하고 채널 발송을 가장하지 않음                |
+| `D-16`  | 연동 계약 대기      | 앱 승인 후 실제 권한 반영        | Entra/Okta 등 IAM 대상, Entitlement Mapping, 승인 분리, Idempotency·재시도·회수·Reconciliation SLA | 요청·검토·만료·감사와 `IAM_SYNC_PENDING`까지만 기록하고 실제 권한이 부여됐다고 표시하지 않음       |
+| `D-17`  | 제품 운영 결정 대기 | 외부 Catalog·GitOps 동기화       | Source Adapter 우선순위, Entity Owner 계약, Schema Registry, 삭제·충돌·Stale 처리와 증적 정책      | DB에서 확인 가능한 자산과 자동 탐지 관계, 운영자 명시 관계만 표시하고 외부 Lineage를 합성하지 않음 |
 
 ## 14. 완료 판정
 
@@ -225,3 +233,7 @@ E2E를 함께 갱신해야 한다.
 - [Datadog template variables](https://docs.datadoghq.com/dashboards/template_variables/)
 - [Google Cloud custom dashboards](https://docs.cloud.google.com/monitoring/charts/dashboards)
 - [AWS CloudWatch dashboard widgets](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-and-work-with-widgets.html)
+- [Backstage Software Catalog](https://backstage.io/docs/features/software-catalog/)
+- [Backstage Catalog Graph](https://backstage.io/docs/features/software-catalog/creating-the-catalog-graph/)
+- [Microsoft Entra application management](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/what-is-application-management)
+- [Microsoft Entra access reviews](https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview)

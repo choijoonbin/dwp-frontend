@@ -4,7 +4,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {
   CircleHelp,
   Clock3,
+  KeyRound,
   LogOut,
+  Network,
   MapPin,
   Monitor,
   RefreshCw,
@@ -19,6 +21,8 @@ import {
   redirectToSignIn,
   revokeAuthSession,
   useAuth,
+  useAuthPolicyQuery,
+  useIdpQuery,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { PageCanvas } from '@dwp-frontend/design-system';
@@ -34,10 +38,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 
 import type { AuthSessionData, SessionDevice } from '@dwp-frontend/shared-utils';
+import type { LucideIcon } from 'lucide-react';
 
 type PendingAction = { kind: 'session'; session: AuthSessionData } | { kind: 'others' } | null;
 
@@ -59,12 +65,81 @@ function formatSessionDate(value: string): string {
   });
 }
 
+function SecurityPostureRow({
+  icon: Icon,
+  title,
+  value,
+  detail,
+  state = 'managed',
+}: {
+  icon: LucideIcon;
+  title: string;
+  value: string;
+  detail: string;
+  state?: 'healthy' | 'managed' | 'attention';
+}) {
+  const { t } = useTranslation('account');
+  return (
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: '36px minmax(0, 1fr)', md: '36px 180px minmax(0, 1fr) auto' },
+        alignItems: 'center',
+        gap: 1.5,
+        px: { xs: 2, md: 2.5 },
+        py: 2,
+      }}
+    >
+      <Box
+        aria-hidden="true"
+        sx={{
+          width: 36,
+          height: 36,
+          display: 'grid',
+          placeItems: 'center',
+          borderRadius: 1,
+          bgcolor: 'action.hover',
+          color: 'text.secondary',
+        }}
+      >
+        <Icon size={18} strokeWidth={1.8} />
+      </Box>
+      <Typography component="p" variant="subtitle2" sx={{ gridColumn: { xs: '2', md: 'auto' } }}>
+        {title}
+      </Typography>
+      <Box sx={{ gridColumn: { xs: '2', md: 'auto' }, minWidth: 0 }}>
+        <Typography variant="body2" fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>
+          {value}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {detail}
+        </Typography>
+      </Box>
+      <Chip
+        size="small"
+        variant="outlined"
+        color={state === 'healthy' ? 'success' : state === 'attention' ? 'warning' : 'default'}
+        label={t(`security.posture.states.${state}`)}
+        sx={{ gridColumn: { xs: '2', md: 'auto' }, justifySelf: { xs: 'start', md: 'end' } }}
+      />
+    </Box>
+  );
+}
+
 export default function SecurityPage() {
   const { t } = useTranslation('account');
   const auth = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const policyQuery = useAuthPolicyQuery();
+  const ssoConfigured = Boolean(
+    policyQuery.data?.ssoLoginEnabled && policyQuery.data.allowedLoginTypes.includes('SSO')
+  );
+  const idpQuery = useIdpQuery({
+    enabled: ssoConfigured,
+    providerKey: policyQuery.data?.ssoProviderKey,
+  });
   const [sessions, setSessions] = useState<AuthSessionData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -150,6 +225,82 @@ export default function SecurityPage() {
         >
           {t('security.actions.signOutOthers')}
         </Button>
+      </Box>
+
+      <Box component="section" sx={{ mt: 4 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <ShieldCheck size={20} strokeWidth={1.8} aria-hidden="true" />
+          <Typography component="h2" variant="h6">
+            {t('security.posture.title')}
+          </Typography>
+          <Chip size="small" variant="outlined" label={t('security.posture.tenantManaged')} />
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          {t('security.posture.description')}
+        </Typography>
+
+        {policyQuery.isError ? (
+          <Alert severity="warning" sx={{ mt: 1.5 }}>
+            {t('security.posture.policyUnavailable')}
+          </Alert>
+        ) : policyQuery.isLoading ? (
+          <Box sx={{ minHeight: 120, display: 'grid', placeItems: 'center' }}>
+            <CircularProgress size={24} aria-label={t('security.posture.loading')} />
+          </Box>
+        ) : policyQuery.data ? (
+          <Stack
+            divider={<Divider flexItem />}
+            sx={{
+              mt: 1.5,
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: 1,
+              bgcolor: 'background.paper',
+            }}
+          >
+            <SecurityPostureRow
+              icon={KeyRound}
+              title={t('security.posture.signInMethods')}
+              value={policyQuery.data.allowedLoginTypes
+                .map((method) => t(`security.posture.methods.${method}`))
+                .join(' + ')}
+              detail={t('security.posture.signInMethodsDetail', {
+                defaultMethod: t(`security.posture.methods.${policyQuery.data.defaultLoginType}`),
+              })}
+              state="healthy"
+            />
+            <SecurityPostureRow
+              icon={Network}
+              title={t('security.posture.sso')}
+              value={
+                ssoConfigured
+                  ? idpQuery.data?.providerKey || t('security.posture.ssoConfigured')
+                  : t('security.posture.ssoNotConfigured')
+              }
+              detail={
+                idpQuery.isError
+                  ? t('security.posture.idpUnavailable')
+                  : ssoConfigured
+                    ? t('security.posture.ssoDetail', {
+                        protocol: idpQuery.data?.providerType ?? 'OIDC',
+                      })
+                    : t('security.posture.ssoNotConfiguredDetail')
+              }
+              state={ssoConfigured && idpQuery.data ? 'healthy' : 'managed'}
+            />
+            <SecurityPostureRow
+              icon={ShieldCheck}
+              title={t('security.posture.mfa')}
+              value={
+                policyQuery.data.requireMfa
+                  ? t('security.posture.mfaRequired')
+                  : t('security.posture.mfaNotRequired')
+              }
+              detail={t('security.posture.mfaDetail')}
+              state={policyQuery.data.requireMfa ? 'healthy' : 'managed'}
+            />
+          </Stack>
+        ) : null}
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 5 }}>

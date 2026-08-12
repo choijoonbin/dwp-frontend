@@ -69,6 +69,8 @@ export type WorkspaceAppCategory =
   'productivity' | 'service' | 'people' | 'knowledge' | 'business' | 'legacy';
 export type WorkspaceAppLaunchMode = 'Native' | 'SSO' | 'Deep link';
 export type WorkspaceAppHealth = 'healthy' | 'managed' | 'attention' | 'configuration-required';
+export type WorkspaceAppAccessState =
+  'AVAILABLE' | 'REQUESTABLE' | 'PENDING' | 'APPROVED_PENDING_SYNC' | 'CONFIGURATION_REQUIRED';
 
 export type WorkspaceApp = {
   id: string;
@@ -85,6 +87,29 @@ export type WorkspaceApp = {
   lastUsedAt?: string | null;
   launchCount: number;
   version: number;
+  accessState: WorkspaceAppAccessState;
+  accessRequestId?: string | null;
+  accessRequestState?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED' | null;
+  accessRequestUpdatedAt?: string | null;
+  accessRequestVersion?: number | null;
+};
+
+export type AppAccessRequest = {
+  requestId: string;
+  userId: number;
+  appId: string;
+  appName: string;
+  resourceKey: string;
+  requestedPermissionCode: 'VIEW';
+  justification: string;
+  state: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED';
+  requestedUntil?: string | null;
+  decisionNote?: string | null;
+  decidedAt?: string | null;
+  decidedBy?: number | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type WorkspaceAppLaunch = {
@@ -254,5 +279,52 @@ export async function launchWorkspaceApp(appId: string): Promise<WorkspaceAppLau
     `/api/platform/v1/workspace/apps/${encodeURIComponent(appId)}/launch`,
     {}
   );
+  return response.data.data;
+}
+
+export async function requestWorkspaceAppAccess(
+  appId: string,
+  request: { justification: string; requestedUntil?: string }
+): Promise<AppAccessRequest> {
+  const response = await axiosInstance.post<ApiResponse<AppAccessRequest>, typeof request>(
+    `/api/platform/v1/workspace/apps/${encodeURIComponent(appId)}/access-requests`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function cancelWorkspaceAppAccessRequest(
+  requestId: string,
+  version: number
+): Promise<AppAccessRequest> {
+  const response = await axiosInstance.post<ApiResponse<AppAccessRequest>, { version: number }>(
+    `/api/platform/v1/workspace/app-access-requests/${requestId}/cancel`,
+    { version }
+  );
+  return response.data.data;
+}
+
+export async function listAppAccessRequests(
+  state: AppAccessRequest['state'] | 'ALL' = 'ALL'
+): Promise<AppAccessRequest[]> {
+  const response = await axiosInstance.get<ApiResponse<AppAccessRequest[]>>(
+    `/api/platform/v1/admin/app-access-requests?state=${state}`
+  );
+  return response.data.data;
+}
+
+export async function decideAppAccessRequest(
+  request: AppAccessRequest,
+  decision: 'APPROVED' | 'REJECTED',
+  decisionNote: string
+): Promise<AppAccessRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<AppAccessRequest>,
+    { decision: 'APPROVED' | 'REJECTED'; decisionNote: string; version: number }
+  >(`/api/platform/v1/admin/app-access-requests/${request.requestId}/decision`, {
+    decision,
+    decisionNote,
+    version: request.version,
+  });
   return response.data.data;
 }

@@ -73,9 +73,37 @@
       "title": "움직임 줄이기",
       "description": "필수적이지 않은 전환 효과와 인터페이스 움직임을 최소화합니다."
     },
+    "underlineLinks": {
+      "title": "링크 항상 밑줄 표시",
+      "description": "링크가 색상에만 의존하지 않도록 지속적인 시각 단서를 표시합니다."
+    },
+    "reduceTransparency": {
+      "title": "투명도 줄이기",
+      "description": "반투명 배경과 후면 효과를 제거해 경계를 더 명확하게 표시합니다."
+    },
     "language": {
       "title": "제품 언어",
       "description": "Digital Workplace에서 사용할 언어를 변경합니다."
+    },
+    "timeZone": {
+      "title": "시간대",
+      "description": "날짜와 활동 시간을 원하는 IANA 시간대로 표시합니다."
+    },
+    "dateFormat": {
+      "title": "날짜 형식",
+      "description": "목록, 상세 및 내보내기에 사용할 일관된 날짜 순서를 선택합니다."
+    },
+    "timeFormat": {
+      "title": "시간 형식",
+      "description": "언어 기본값 또는 12시간제와 24시간제를 선택합니다."
+    },
+    "firstDayOfWeek": {
+      "title": "한 주의 시작일",
+      "description": "캘린더와 기간 선택에서 사용할 주간 경계를 설정합니다."
+    },
+    "numberFormat": {
+      "title": "숫자 형식",
+      "description": "숫자에 사용할 천 단위와 소수점 구분자를 선택합니다."
     },
     "homeWorkspace": {
       "title": "앱 및 위젯",
@@ -90,6 +118,14 @@
     },
     "navigationPattern": {
       "title": "탐색 패턴"
+    },
+    "policySource": {
+      "title": "정책 원천",
+      "description": "조직 관리 기본값을 제공하는 테넌트 경험 정책입니다."
+    },
+    "policyOwner": {
+      "title": "정책 담당자",
+      "description": "관리형 설정의 검토가 필요할 때 문의할 담당 역할입니다."
     }
   },
   "options": {
@@ -107,6 +143,38 @@
       "sidebar": "사이드바",
       "rail": "축소 레일",
       "top": "상단 탐색"
+    },
+    "timeZone": {
+      "system": "기기 시간대",
+      "UTC": "UTC",
+      "Asia_Seoul": "서울 (UTC+09:00)",
+      "Asia_Tokyo": "도쿄 (UTC+09:00)",
+      "Asia_Singapore": "싱가포르 (UTC+08:00)",
+      "Europe_London": "런던",
+      "America_New_York": "뉴욕",
+      "America_Los_Angeles": "로스앤젤레스"
+    },
+    "dateFormat": {
+      "locale": "언어 기본값",
+      "iso": "2026-08-12",
+      "month_first": "08/12/2026",
+      "day_first": "12/08/2026"
+    },
+    "timeFormat": {
+      "locale": "언어 기본값",
+      "12_hour": "12시간제",
+      "24_hour": "24시간제"
+    },
+    "firstDayOfWeek": {
+      "locale": "언어 기본값",
+      "monday": "월요일",
+      "sunday": "일요일"
+    },
+    "numberFormat": {
+      "locale": "언어 기본값",
+      "comma_decimal": "1,234.56",
+      "dot_decimal": "1.234,56",
+      "space_decimal": "1 234,56"
     }
   },
   "actions": {
@@ -117,22 +185,78 @@
     "loading": "개인 환경 설정 불러오는 중",
     "loadError": "계정 환경 설정을 불러오지 못했습니다. 캐시된 설정은 유지되며 서비스가 복구될 때까지 변경할 수 없습니다.",
     "retry": "다시 시도",
-    "saveError": "개인 환경 설정을 저장하지 못해 이전 값으로 되돌렸습니다."
+    "saveError": "개인 환경 설정을 저장하지 못해 마지막으로 확인된 값으로 되돌렸습니다.",
+    "autoSave": "변경 사항 자동 저장",
+    "saving": "변경 사항 저장 중",
+    "saved": "{{time}} 저장됨",
+    "justNow": "방금",
+    "saveStateError": "변경 사항이 저장되지 않음"
   },
   "labels": {
     "managed": "조직 관리"
   },
   "managed": {
-    "systemFont": "시스템 UI"
+    "systemFont": "시스템 UI",
+    "tenantScope": "테넌트 범위",
+    "sources": {
+      "TENANT_EXPERIENCE_POLICY": "테넌트 경험 정책"
+    },
+    "owners": {
+      "TENANT_ADMINISTRATOR": "테넌트 관리자"
+    },
+    "paths": "관리 경로: {{paths}}"
+  },
+  "preview": {
+    "live": "실시간 미리보기",
+    "ready": "준비 완료",
+    "action": "업무 검토",
+    "link": "상세 열기",
+    "appearance": {
+      "label": "화면 모양 미리보기",
+      "title": "운영 워크스페이스",
+      "description": "테마와 밀도 변경이 이 영역과 제품 전체에 즉시 적용됩니다."
+    },
+    "accessibility": {
+      "label": "접근성 미리보기",
+      "title": "명확한 상태와 작업",
+      "description": "대비, 움직임, 투명도와 링크 단서가 새로고침 없이 반영됩니다."
+    },
+    "regional": {
+      "label": "지역 형식 미리보기",
+      "date": "날짜",
+      "time": "시간",
+      "number": "숫자"
+    }
   },
   "profile": {
     "title": "프로필",
+    "description": "워크스페이스 전반에서 사용하는 신원 정보와 접근 컨텍스트를 확인합니다.",
     "loading": "프로필 불러오는 중",
+    "loadError": "프로필을 불러오지 못했습니다.",
+    "retry": "다시 시도",
+    "editLanguage": "변경",
+    "identity": {
+      "title": "신원 상세",
+      "description": "각 값의 기준 시스템을 표시합니다. 조직에서 관리하는 신원 필드는 여기에서 수정할 수 없습니다."
+    },
     "fields": {
       "name": "이름",
+      "jobTitle": "직책",
       "email": "이메일",
       "tenant": "조직",
+      "language": "기본 언어",
       "roles": "역할"
+    },
+    "sources": {
+      "workforce": "인력 디렉터리",
+      "identity": "ID 디렉터리",
+      "tenant": "테넌트 원장",
+      "personal": "개인 설정",
+      "access": "접근 정책"
+    },
+    "governance": {
+      "title": "프로필 데이터는 조직에서 관리합니다",
+      "description": "이름, 직책, 이메일, 조직 및 역할 변경은 기준 인력 또는 ID 시스템에서 수행해야 합니다. 프로필 가시성은 테넌트 디렉터리 권한을 따르며 소유 서비스에서 감사됩니다."
     }
   },
   "security": {
@@ -147,6 +271,34 @@
     "userAgentUnavailable": "브라우저 정보를 확인할 수 없음",
     "ipUnavailable": "IP를 확인할 수 없음",
     "lastActive": "마지막 활동 {{date}}",
+    "posture": {
+      "title": "로그인 보호",
+      "description": "현재 테넌트 인증 정책과 ID 공급자 준비 상태입니다. ID 공급자가 제공하지 않는 등록 상태는 추정하지 않습니다.",
+      "tenantManaged": "테넌트 관리",
+      "loading": "로그인 보호 상태 불러오는 중",
+      "policyUnavailable": "로그인 정책을 일시적으로 확인할 수 없습니다. 아래의 세션 관리는 계속 사용할 수 있습니다.",
+      "signInMethods": "로그인 방식",
+      "signInMethodsDetail": "기본 방식: {{defaultMethod}}",
+      "sso": "기업 SSO",
+      "ssoConfigured": "구성된 공급자",
+      "ssoNotConfigured": "구성되지 않음",
+      "ssoDetail": "이 테넌트에 {{protocol}} ID 공급자가 활성화되어 있습니다.",
+      "ssoNotConfiguredDetail": "테넌트 관리자가 기업 ID 공급자를 구성하고 검증해야 합니다.",
+      "idpUnavailable": "ID 공급자의 준비 상태를 확인하지 못했습니다.",
+      "mfa": "다중 인증 정책",
+      "mfaRequired": "테넌트 정책에서 필수",
+      "mfaNotRequired": "테넌트 정책에서 필수 아님",
+      "mfaDetail": "테넌트 요구 정책이며 사용자의 MFA 등록 상태를 의미하지 않습니다.",
+      "methods": {
+        "LOCAL": "비밀번호",
+        "SSO": "기업 SSO"
+      },
+      "states": {
+        "healthy": "준비 완료",
+        "managed": "조직 관리",
+        "attention": "검토 필요"
+      }
+    },
     "actions": {
       "signOutOthers": "다른 세션 로그아웃",
       "retry": "다시 시도",

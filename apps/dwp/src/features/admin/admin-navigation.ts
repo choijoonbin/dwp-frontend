@@ -1,5 +1,6 @@
 import {
   Boxes,
+  AppWindow,
   Building2,
   ChartNoAxesCombined,
   ClipboardCheck,
@@ -16,6 +17,7 @@ import {
   ShieldCheck,
   UsersRound,
   ShieldAlert,
+  Network,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
@@ -27,9 +29,11 @@ export type AdminView =
   | 'home-experience'
   | 'announcements'
   | 'access'
+  | 'app-access-requests'
   | 'access-reviews'
   | 'roles'
   | 'provisioning'
+  | 'catalog'
   | 'navigation'
   | 'reference-data'
   | 'registry'
@@ -94,6 +98,12 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
       },
       {
         section: 'identity',
+        view: 'app-access-requests',
+        path: '/admin/identity/app-access-requests',
+        icon: AppWindow,
+      },
+      {
+        section: 'identity',
         view: 'access-reviews',
         path: '/admin/identity/access-reviews',
         icon: ClipboardCheck,
@@ -117,6 +127,12 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
     id: 'platform',
     icon: Settings2,
     items: [
+      {
+        section: 'platform',
+        view: 'catalog',
+        path: '/admin/platform/catalog',
+        icon: Network,
+      },
       {
         section: 'platform',
         view: 'reference-data',

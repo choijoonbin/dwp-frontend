@@ -73,9 +73,37 @@
       "title": "Reduce motion",
       "description": "Minimize nonessential transitions and interface movement."
     },
+    "underlineLinks": {
+      "title": "Always underline links",
+      "description": "Add a persistent visual cue so links do not rely on color alone."
+    },
+    "reduceTransparency": {
+      "title": "Reduce transparency",
+      "description": "Remove translucent backgrounds and backdrop effects for clearer boundaries."
+    },
     "language": {
       "title": "Product language",
       "description": "Change the language used by Digital Workplace."
+    },
+    "timeZone": {
+      "title": "Time zone",
+      "description": "Display dates and activity times in your preferred IANA time zone."
+    },
+    "dateFormat": {
+      "title": "Date format",
+      "description": "Choose a consistent date order for lists, details, and exports."
+    },
+    "timeFormat": {
+      "title": "Time format",
+      "description": "Use your language default or choose a 12- or 24-hour clock."
+    },
+    "firstDayOfWeek": {
+      "title": "First day of week",
+      "description": "Set the week boundary used by calendars and date ranges."
+    },
+    "numberFormat": {
+      "title": "Number format",
+      "description": "Choose the grouping and decimal separators used for numeric values."
     },
     "homeWorkspace": {
       "title": "Apps and widgets",
@@ -90,6 +118,14 @@
     },
     "navigationPattern": {
       "title": "Navigation pattern"
+    },
+    "policySource": {
+      "title": "Policy source",
+      "description": "The tenant experience policy that supplies organization-managed defaults."
+    },
+    "policyOwner": {
+      "title": "Policy owner",
+      "description": "Contact this role when a managed setting needs to be reviewed."
     }
   },
   "options": {
@@ -107,6 +143,38 @@
       "sidebar": "Sidebar",
       "rail": "Compact rail",
       "top": "Top navigation"
+    },
+    "timeZone": {
+      "system": "System time zone",
+      "UTC": "UTC",
+      "Asia_Seoul": "Seoul (UTC+09:00)",
+      "Asia_Tokyo": "Tokyo (UTC+09:00)",
+      "Asia_Singapore": "Singapore (UTC+08:00)",
+      "Europe_London": "London",
+      "America_New_York": "New York",
+      "America_Los_Angeles": "Los Angeles"
+    },
+    "dateFormat": {
+      "locale": "Language default",
+      "iso": "2026-08-12",
+      "month_first": "08/12/2026",
+      "day_first": "12/08/2026"
+    },
+    "timeFormat": {
+      "locale": "Language default",
+      "12_hour": "12-hour",
+      "24_hour": "24-hour"
+    },
+    "firstDayOfWeek": {
+      "locale": "Language default",
+      "monday": "Monday",
+      "sunday": "Sunday"
+    },
+    "numberFormat": {
+      "locale": "Language default",
+      "comma_decimal": "1,234.56",
+      "dot_decimal": "1.234,56",
+      "space_decimal": "1 234,56"
     }
   },
   "actions": {
@@ -117,22 +185,78 @@
     "loading": "Loading your personal preferences",
     "loadError": "Your account preferences could not be loaded. Cached settings remain active, and changes are disabled until the service is available.",
     "retry": "Retry",
-    "saveError": "Your personal preference could not be saved. The previous setting has been restored."
+    "saveError": "Your personal preference could not be saved. The last confirmed settings have been restored.",
+    "autoSave": "Changes save automatically",
+    "saving": "Saving changes",
+    "saved": "Saved {{time}}",
+    "justNow": "just now",
+    "saveStateError": "Changes were not saved"
   },
   "labels": {
     "managed": "Managed"
   },
   "managed": {
-    "systemFont": "System UI"
+    "systemFont": "System UI",
+    "tenantScope": "Tenant scope",
+    "sources": {
+      "TENANT_EXPERIENCE_POLICY": "Tenant experience policy"
+    },
+    "owners": {
+      "TENANT_ADMINISTRATOR": "Tenant administrator"
+    },
+    "paths": "Managed paths: {{paths}}"
+  },
+  "preview": {
+    "live": "Live preview",
+    "ready": "Ready",
+    "action": "Review work",
+    "link": "Open details",
+    "appearance": {
+      "label": "Appearance preview",
+      "title": "Operational workspace",
+      "description": "Theme and density changes are applied here and across the product immediately."
+    },
+    "accessibility": {
+      "label": "Accessibility preview",
+      "title": "Clear status and actions",
+      "description": "Contrast, motion, transparency, and link cues update without reloading."
+    },
+    "regional": {
+      "label": "Regional format preview",
+      "date": "Date",
+      "time": "Time",
+      "number": "Number"
+    }
   },
   "profile": {
     "title": "Profile",
+    "description": "Review the identity information and access context used across your workspace.",
     "loading": "Loading profile",
+    "loadError": "Your profile could not be loaded.",
+    "retry": "Retry",
+    "editLanguage": "Change",
+    "identity": {
+      "title": "Identity details",
+      "description": "Each value shows its system of record. Organization-managed identity fields are read only here."
+    },
     "fields": {
       "name": "Name",
+      "jobTitle": "Job title",
       "email": "Email",
       "tenant": "Organization",
+      "language": "Preferred language",
       "roles": "Roles"
+    },
+    "sources": {
+      "workforce": "Workforce directory",
+      "identity": "Identity directory",
+      "tenant": "Tenant record",
+      "personal": "Personal setting",
+      "access": "Access policy"
+    },
+    "governance": {
+      "title": "Profile data is governed by your organization",
+      "description": "Name, title, email, organization, and role changes must be made in the authoritative workforce or identity system. Profile visibility follows tenant directory permissions and is audited by the owning service."
     }
   },
   "security": {
@@ -147,6 +271,34 @@
     "userAgentUnavailable": "Browser details unavailable",
     "ipUnavailable": "IP unavailable",
     "lastActive": "Last active {{date}}",
+    "posture": {
+      "title": "Sign-in protection",
+      "description": "Current tenant authentication policy and identity provider readiness. Enrollment details are not inferred when the identity provider does not expose them.",
+      "tenantManaged": "Tenant managed",
+      "loading": "Loading sign-in protection",
+      "policyUnavailable": "Sign-in policy is temporarily unavailable. Session management remains available below.",
+      "signInMethods": "Sign-in methods",
+      "signInMethodsDetail": "Default method: {{defaultMethod}}",
+      "sso": "Enterprise SSO",
+      "ssoConfigured": "Configured provider",
+      "ssoNotConfigured": "Not configured",
+      "ssoDetail": "{{protocol}} identity provider is enabled for this tenant.",
+      "ssoNotConfiguredDetail": "A tenant administrator must configure and verify an enterprise identity provider.",
+      "idpUnavailable": "Identity provider readiness could not be verified.",
+      "mfa": "Multi-factor policy",
+      "mfaRequired": "Required by tenant policy",
+      "mfaNotRequired": "Not required by tenant policy",
+      "mfaDetail": "This is the tenant requirement, not a claim about your enrollment status.",
+      "methods": {
+        "LOCAL": "Password",
+        "SSO": "Enterprise SSO"
+      },
+      "states": {
+        "healthy": "Ready",
+        "managed": "Managed",
+        "attention": "Review"
+      }
+    },
     "actions": {
       "signOutOthers": "Sign out other sessions",
       "retry": "Retry",

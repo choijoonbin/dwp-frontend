@@ -66,7 +66,7 @@ function localizedLabel(node: NavigationNode, language: string): string {
   );
 }
 
-function NavigationDialog({
+export function NavigationDialog({
   item,
   groups,
   registryEntries,

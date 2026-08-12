@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   Activity,
   AlertTriangle,
@@ -10,6 +11,7 @@ import {
   DatabaseZap,
   KeyRound,
   Mail,
+  Network,
   Pencil,
   Play,
   PlugZap,
@@ -281,6 +283,7 @@ function ConnectorDialog({
 
 export function ProductivityConnectorManager() {
   const { t } = useTranslation('admin');
+  const navigate = useNavigate();
   const theme = useTheme();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -542,6 +545,17 @@ export function ProductivityConnectorManager() {
                   </Typography>
                 </Box>
                 <Stack direction="row" gap={1} flexWrap="wrap">
+                  <ActionButton
+                    intent="quiet"
+                    startIcon={<Network size={17} />}
+                    onClick={() =>
+                      navigate(
+                        `/admin/platform/catalog?focus=${encodeURIComponent(`CONNECTOR_INSTANCE:${selected.connectorKey}`)}`
+                      )
+                    }
+                  >
+                    {t('productivity.actions.catalogImpact')}
+                  </ActionButton>
                   <ActionButton
                     intent="secondary"
                     loading={busyAction === 'check'}

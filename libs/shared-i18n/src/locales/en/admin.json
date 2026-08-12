@@ -38,6 +38,11 @@
         "title": "Identity access",
         "description": "Assign tenant roles and review effective access for workforce accounts."
       },
+      "app-access-requests": {
+        "label": "App access requests",
+        "title": "App access requests",
+        "description": "Review employee app requests, record accountable decisions, and hand approved access to IAM provisioning."
+      },
       "access-reviews": {
         "label": "Access reviews",
         "title": "Access certification",
@@ -52,6 +57,11 @@
         "label": "Identity provisioning",
         "title": "Identity provisioning",
         "description": "Manage SCIM credentials and automated account lifecycle provisioning."
+      },
+      "catalog": {
+        "label": "Catalog explorer",
+        "title": "Catalog explorer",
+        "description": "Explore ownership, dependencies, permissions, and change impact across tenant and product assets."
       },
       "reference-data": {
         "label": "Reference data",
@@ -176,7 +186,8 @@
       "add": "Add connector",
       "check": "Check configuration",
       "activate": "Activate",
-      "suspend": "Emergency stop"
+      "suspend": "Emergency stop",
+      "catalogImpact": "Catalog impact"
     },
     "health": {
       "CONFIGURATION_REQUIRED": "Configuration required",
@@ -2129,6 +2140,121 @@
       "assignmentRevoked": "Group role assignment revoked."
     }
   },
+  "catalog": {
+    "loadError": "The catalog could not be loaded. Refresh and try again.",
+    "search": "Search assets, references, or owners",
+    "allKinds": "All asset types",
+    "metrics": {
+      "assets": "Governed assets",
+      "assetsDetail": "Tenant and product scope",
+      "relations": "Relationships",
+      "relationsDetail": "Discovered and declared",
+      "declared": "Declared evidence",
+      "declaredDetail": "Operator-maintained edges",
+      "critical": "Critical paths",
+      "criticalDetail": "Blocking operational impact",
+      "orphans": "Orphan assets",
+      "orphansDetail": "No observed relationship"
+    },
+    "views": {
+      "label": "Catalog view",
+      "graph": "Relationship graph",
+      "inventory": "Asset inventory"
+    },
+    "actions": {
+      "refresh": "Refresh catalog",
+      "clearFocus": "Show full catalog",
+      "addRelation": "Declare relationship",
+      "retireRelation": "Retire declared relationship"
+    },
+    "columns": {
+      "asset": "Asset",
+      "kind": "Type",
+      "owner": "Owner",
+      "scope": "Scope",
+      "state": "Lifecycle"
+    },
+    "scopes": {
+      "TENANT": "Tenant",
+      "GLOBAL_PRODUCT": "Global product"
+    },
+    "kinds": {
+      "REFERENCE_SET": "Reference data",
+      "APP": "Application",
+      "CONNECTOR": "Connector definition",
+      "CONNECTOR_INSTANCE": "Connector instance",
+      "AGENT": "Agent",
+      "TOOL": "Tool",
+      "POLICY": "Policy",
+      "API": "API contract",
+      "DATA_PRODUCT": "Data product",
+      "CODE_SET": "System code contract",
+      "SERVICE": "Runtime service",
+      "NAVIGATION": "Navigation item",
+      "PERMISSION": "Permission"
+    },
+    "graph": {
+      "all": "Showing the full governed catalog",
+      "focused": "Showing dependencies around {{name}}",
+      "depth": "Relationship depth",
+      "global": "Global",
+      "orphan": "Orphan",
+      "empty": "No catalog relationships match this view.",
+      "truncated": "The overview shows the most connected assets. Select an asset from inventory to inspect its full neighborhood."
+    },
+    "inspector": {
+      "title": "Catalog inspector",
+      "select": "Select an asset to inspect ownership, relationships, and impact.",
+      "revision": "Revision"
+    },
+    "criticality": {
+      "INFORMATIONAL": "Informational",
+      "OPERATIONAL": "Operational",
+      "CRITICAL": "Critical"
+    },
+    "relation": {
+      "dialogTitle": "Declare catalog relationship",
+      "source": "Source asset",
+      "target": "Target asset",
+      "type": "Relationship",
+      "criticality": "Operational criticality",
+      "evidence": "Evidence reference",
+      "evidencePlaceholder": "ADR, API contract, or runbook URL",
+      "save": "Save relationship",
+      "connected": "Connected relationships",
+      "none": "No relationship is visible in this neighborhood.",
+      "types": {
+        "DEPENDS_ON": "Depends on",
+        "CONSUMES": "Consumes",
+        "PRODUCES": "Produces",
+        "EXPOSES": "Exposes",
+        "GOVERNS": "Governs",
+        "NAVIGATES_TO": "Navigates to",
+        "REQUIRES_PERMISSION": "Requires permission",
+        "SYNCHRONIZES": "Synchronizes"
+      }
+    },
+    "impact": {
+      "title": "Change impact",
+      "blocked": "Review blocked",
+      "ready": "Review ready",
+      "risk": "Risk score",
+      "direct": "Direct",
+      "transitive": "Transitive",
+      "none": "No downstream dependency was detected.",
+      "distance": "{{count}} hop",
+      "operations": {
+        "CHANGE": "Change",
+        "RETIRE": "Retire",
+        "OUTAGE": "Outage"
+      }
+    },
+    "toasts": {
+      "saved": "Catalog relationship saved.",
+      "retired": "Catalog relationship retired.",
+      "error": "The catalog relationship could not be changed."
+    }
+  },
   "navigationManager": {
     "title": "Navigation tree",
     "loading": "Loading navigation tree",
@@ -2180,6 +2306,121 @@
       "updated": "Navigation item updated.",
       "lifecycle": "Navigation lifecycle changed.",
       "reordered": "Navigation order saved."
+    },
+    "studio": {
+      "title": "Navigation Studio",
+      "description": "Design, validate, preview, and publish the tenant menu through a governed revision.",
+      "drag": "Reorder",
+      "dragItem": "Reorder {{name}}",
+      "states": {
+        "draft": "Revision {{revision}} draft",
+        "published": "Revision {{revision}} published"
+      },
+      "changeSummary": "Change summary",
+      "changeSummaryHelp": "Record the purpose and expected user impact for reviewers and audit history.",
+      "readOnly": "The published menu is read-only. Create a draft to propose a governed change.",
+      "restoreSummary": "Restore navigation revision {{revision}}",
+      "diff": {
+        "added": "Added",
+        "removed": "Removed",
+        "changed": "Changed",
+        "reordered": "Reordered",
+        "lifecycleChanged": "Lifecycle"
+      },
+      "validation": {
+        "title": "Release validation",
+        "errors": "{{count}} errors",
+        "warnings": "{{count}} warnings",
+        "unsaved": "Save the draft to refresh server validation before publishing.",
+        "ready": "No blocking issues were found. This revision is ready to publish."
+      },
+      "preview": {
+        "title": "Runtime preview",
+        "description": "Inspect the menu exactly as active items will be exposed after publication.",
+        "locale": "Preview language",
+        "locales": {
+          "ko": "KO",
+          "en": "EN"
+        },
+        "permissionView": "Resource visibility",
+        "allResources": "All resources",
+        "runtimeMenu": "Published user menu",
+        "empty": "No active menu items match this preview scope."
+      },
+      "actions": {
+        "createDraft": "Create draft",
+        "save": "Save and validate",
+        "publish": "Publish revision",
+        "cancelDraft": "Cancel draft",
+        "restore": "Restore as draft"
+      },
+      "confirm": {
+        "publishTitle": "Publish this navigation revision?",
+        "publishDescription": "The validated menu becomes the runtime menu for tenant users immediately. The previous revision remains available for restoration.",
+        "cancelTitle": "Cancel this navigation draft?",
+        "cancelDescription": "Unpublished changes will be retained in audit history but cannot be edited again.",
+        "restoreTitle": "Restore revision {{revision}}?",
+        "restoreDescription": "A new draft will be created from this revision. The current published menu will remain active until that draft is validated and published."
+      },
+      "history": {
+        "title": "Revision history",
+        "revision": "Revision {{revision}}",
+        "noSummary": "No change summary was provided"
+      },
+      "toasts": {
+        "created": "Navigation draft created.",
+        "saved": "Draft saved and validated.",
+        "published": "Navigation revision published.",
+        "cancelled": "Navigation draft cancelled.",
+        "restored": "A restoration draft was created."
+      }
+    }
+  },
+  "appAccess": {
+    "loading": "Loading app access requests",
+    "filterLabel": "Request state",
+    "states": {
+      "ALL": "All",
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled",
+      "EXPIRED": "Expired"
+    },
+    "fields": {
+      "requester": "Requester",
+      "email": "Email",
+      "requestedUntil": "Requested until",
+      "requestedAt": "Requested at",
+      "justification": "Business justification",
+      "decision": "Decision record"
+    },
+    "userFallback": "User {{id}}",
+    "notAvailable": "Not available",
+    "noExpiry": "No requested end date",
+    "decision": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "approveTitle": "Approve {{app}} access?",
+      "rejectTitle": "Reject {{app}} access?",
+      "approveDescription": "Record the business decision. The requester will see approval pending until IAM grants the protected resource.",
+      "rejectDescription": "Record a clear reason so the requester understands what must change before another request.",
+      "note": "Decision rationale",
+      "noteHelp": "At least 10 characters. This rationale is retained as audit evidence.",
+      "saving": "Saving decision"
+    },
+    "provisioning": {
+      "title": "IAM entitlement synchronization required",
+      "description": "Approval does not bypass the identity authority. Assign a governed role that grants this resource, then the user's next token refresh will make the app available.",
+      "openAccess": "Open access control"
+    },
+    "empty": {
+      "title": "No requests in this state",
+      "description": "There is no app access work to review for the selected state."
+    },
+    "toasts": {
+      "approved": "The access request was approved.",
+      "rejected": "The access request was rejected."
     }
   },
   "supportMode": {

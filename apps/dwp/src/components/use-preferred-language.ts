@@ -10,6 +10,8 @@ export function usePreferredLanguage() {
   const toast = useToast();
   const { t } = useTranslation('common');
   const [isSaving, setIsSaving] = useState(false);
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
 
   const setLanguage = useCallback(
     async (locale: SupportedLocale) => {
@@ -19,10 +21,14 @@ export function usePreferredLanguage() {
         return;
       }
       setIsSaving(true);
+      setSaveState('saving');
       try {
         if (auth.user.preferredLocale !== locale) await auth.setPreferredLocale(locale);
         await languageState.setLanguage(locale);
+        setLastSavedAt(new Date().toISOString());
+        setSaveState('saved');
       } catch {
+        setSaveState('error');
         toast.error(t('language.preferenceSaveError'));
       } finally {
         setIsSaving(false);
@@ -31,5 +37,5 @@ export function usePreferredLanguage() {
     [auth, isSaving, languageState, t, toast]
   );
 
-  return { ...languageState, setLanguage, isSaving };
+  return { ...languageState, setLanguage, isSaving, saveState, lastSavedAt };
 }

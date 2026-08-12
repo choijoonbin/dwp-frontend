@@ -20,11 +20,29 @@ async function expectNoAutomaticAccessibilityViolations(page: Page) {
 
 test.beforeEach(async ({ page }) => {
   let personalPreference = {
-    schemaVersion: 1 as const,
+    schemaVersion: 2 as const,
     customized: false,
     preferences: {
       appearance: { mode: 'system', density: 'standard' },
-      accessibility: { highContrast: false, reduceMotion: false },
+      accessibility: {
+        highContrast: false,
+        reduceMotion: false,
+        underlineLinks: false,
+        reduceTransparency: false,
+      },
+      regional: {
+        timeZone: 'Asia/Seoul',
+        dateFormat: 'LOCALE',
+        timeFormat: '24_HOUR',
+        firstDayOfWeek: 'MONDAY',
+        numberFormat: 'LOCALE',
+      },
+    },
+    managedPolicy: {
+      scope: 'TENANT',
+      source: 'TENANT_EXPERIENCE_POLICY',
+      owner: 'TENANT_ADMINISTRATOR',
+      managedPaths: [] as string[],
     },
     version: 0,
     updatedAt: null as string | null,
@@ -150,12 +168,25 @@ test.beforeEach(async ({ page }) => {
     }
     if (new URL(request.url()).pathname.endsWith('/reset')) {
       personalPreference = {
-        schemaVersion: 1,
+        schemaVersion: 2,
         customized: false,
         preferences: {
           appearance: { mode: 'system', density: 'standard' },
-          accessibility: { highContrast: false, reduceMotion: false },
+          accessibility: {
+            highContrast: false,
+            reduceMotion: false,
+            underlineLinks: false,
+            reduceTransparency: false,
+          },
+          regional: {
+            timeZone: 'Asia/Seoul',
+            dateFormat: 'LOCALE',
+            timeFormat: '24_HOUR',
+            firstDayOfWeek: 'MONDAY',
+            numberFormat: 'LOCALE',
+          },
         },
+        managedPolicy: personalPreference.managedPolicy,
         version: 0,
         updatedAt: null,
       };
@@ -164,6 +195,7 @@ test.beforeEach(async ({ page }) => {
         patch: {
           appearance?: Partial<typeof personalPreference.preferences.appearance>;
           accessibility?: Partial<typeof personalPreference.preferences.accessibility>;
+          regional?: Partial<typeof personalPreference.preferences.regional>;
         };
       };
       const nextVersion = personalPreference.customized ? personalPreference.version + 1 : 0;
@@ -178,6 +210,10 @@ test.beforeEach(async ({ page }) => {
           accessibility: {
             ...personalPreference.preferences.accessibility,
             ...body.patch.accessibility,
+          },
+          regional: {
+            ...personalPreference.preferences.regional,
+            ...body.patch.regional,
           },
         },
         version: nextVersion,
@@ -562,6 +598,12 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(page).toHaveURL(/\/account\/settings\/appearance/);
   await expect(page.getByRole('group', { name: 'Color mode' })).toBeVisible();
   await expect(page.getByRole('group', { name: 'Interface density' })).toBeVisible();
+  const preferenceSaved = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === '/api/platform/v1/personal-preferences' &&
+      response.request().method() === 'PATCH' &&
+      response.ok()
+  );
   await page
     .getByRole('group', { name: 'Color mode' })
     .getByRole('button', { name: 'Dark' })
@@ -570,6 +612,7 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(
     page.getByRole('group', { name: 'Color mode' }).getByRole('button', { name: 'Dark' })
   ).toBeEnabled();
+  await preferenceSaved;
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Appearance' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-color-scheme', 'dark');
@@ -1140,7 +1183,7 @@ test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
   await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();
   await page.getByRole('textbox', { name: 'Search apps' }).fill('legacy');
   await expect(page.getByRole('region', { name: 'App filter' }).getByText('1 apps')).toBeVisible();
-  await page.getByRole('button', { name: /^Legacy operations Provide/ }).click();
+  await page.getByRole('button', { name: /^Legacy operations/ }).click();
   await expect(page.getByRole('alert')).toContainText(
     'Legacy operations can be used after an administrator connects SSO or a deep link.'
   );

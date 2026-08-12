@@ -1,56 +1,121 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  defaultRegionalPreference,
   getPersonalPreference,
+  HttpError,
+  normalizeRegionalPreference,
   patchPersonalPreference,
   resetPersonalPreference,
+  writeRegionalPreference,
   type PersonalPreference,
   type PersonalPreferencePatch,
   type PersonalPreferenceValues,
-} from '@dwp-frontend/shared-utils/api/personal-preference-api';
+} from '@dwp-frontend/shared-utils';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 
 import type { UserAppearancePreference } from '@dwp-frontend/design-system/appearance';
 
+export type PersonalPreferenceSaveState = 'idle' | 'saving' | 'saved' | 'error';
+
 type PersonalPreferenceContextValue = {
   preference: PersonalPreference | null;
   isLoading: boolean;
   isSaving: boolean;
   loadFailed: boolean;
+  saveState: PersonalPreferenceSaveState;
+  lastSavedAt: string | null;
   update: (patch: PersonalPreferencePatch) => void;
   reset: () => void;
   retry: () => void;
 };
 
-type MutationRequest =
-  | { kind: 'patch'; patch: PersonalPreferencePatch; current: PersonalPreference }
-  | { kind: 'reset'; current: PersonalPreference };
-
-type MutationContext = {
-  previous: PersonalPreference;
-  previousAppearance: UserAppearancePreference;
-};
-
 const PersonalPreferenceContext = createContext<PersonalPreferenceContextValue | null>(null);
+const SAVE_DEBOUNCE_MS = 250;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
-function mergePatch(target: unknown, patch: unknown): unknown {
-  if (!isRecord(patch)) return patch;
+function mergePatch<T>(target: T, patch: unknown): T {
+  if (!isRecord(patch)) return patch as T;
   const result: Record<string, unknown> = isRecord(target) ? { ...target } : {};
   Object.entries(patch).forEach(([key, value]) => {
-    if (value === null) {
-      delete result[key];
-    } else {
-      result[key] = mergePatch(result[key], value);
-    }
+    if (value === null) delete result[key];
+    else result[key] = mergePatch(result[key], value);
   });
-  return result;
+  return result as T;
+}
+
+function mergeQueuedPatch(
+  current: PersonalPreferencePatch | null,
+  next: PersonalPreferencePatch
+): PersonalPreferencePatch {
+  return mergePatch(current ?? {}, next);
+}
+
+function normalizeValues(
+  values: Partial<PersonalPreferenceValues> | undefined,
+  defaults: UserAppearancePreference
+): PersonalPreferenceValues {
+  const appearance: Record<string, unknown> = isRecord(values?.appearance) ? values.appearance : {};
+  const accessibility: Record<string, unknown> = isRecord(values?.accessibility)
+    ? values.accessibility
+    : {};
+  return {
+    ...(values ?? {}),
+    appearance: {
+      mode:
+        appearance.mode === 'light' || appearance.mode === 'dark' || appearance.mode === 'system'
+          ? appearance.mode
+          : defaults.mode,
+      density:
+        appearance.density === 'compact' ||
+        appearance.density === 'comfortable' ||
+        appearance.density === 'standard'
+          ? appearance.density
+          : defaults.density,
+    },
+    accessibility: {
+      highContrast:
+        typeof accessibility.highContrast === 'boolean'
+          ? accessibility.highContrast
+          : defaults.highContrast,
+      reduceMotion:
+        typeof accessibility.reduceMotion === 'boolean'
+          ? accessibility.reduceMotion
+          : defaults.reduceMotion,
+      underlineLinks:
+        typeof accessibility.underlineLinks === 'boolean' ? accessibility.underlineLinks : false,
+      reduceTransparency:
+        typeof accessibility.reduceTransparency === 'boolean'
+          ? accessibility.reduceTransparency
+          : false,
+    },
+    regional: normalizeRegionalPreference(values?.regional ?? defaultRegionalPreference),
+  };
+}
+
+function normalizePreference(
+  preference: PersonalPreference,
+  defaults: UserAppearancePreference
+): PersonalPreference {
+  return {
+    ...preference,
+    schemaVersion: 2,
+    preferences: normalizeValues(preference.preferences, defaults),
+  };
 }
 
 function toAppearance(
@@ -65,14 +130,27 @@ function toAppearance(
   };
 }
 
+function applyDocumentPreferences(values: PersonalPreferenceValues) {
+  const regional = writeRegionalPreference(normalizeRegionalPreference(values.regional));
+  document.documentElement.dataset.underlineLinks = values.accessibility.underlineLinks
+    ? 'always'
+    : 'standard';
+  document.documentElement.dataset.transparency = values.accessibility.reduceTransparency
+    ? 'reduced'
+    : 'full';
+  document.documentElement.dataset.timeZone = regional.timeZone;
+  document.documentElement.dataset.firstDayOfWeek = regional.firstDayOfWeek;
+}
+
 function optimisticPreference(
   current: PersonalPreference,
-  patch: PersonalPreferencePatch
+  patch: PersonalPreferencePatch,
+  defaults: UserAppearancePreference
 ): PersonalPreference {
   return {
     ...current,
     customized: true,
-    preferences: mergePatch(current.preferences, patch) as PersonalPreferenceValues,
+    preferences: normalizeValues(mergePatch(current.preferences, patch), defaults),
   };
 }
 
@@ -80,12 +158,18 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
   const auth = useAuth();
   const appearance = useAppearance();
   const appearanceDefaults = appearance.policy.defaults;
-  const appearancePreference = appearance.preference;
   const replaceAppearancePreference = appearance.replacePreference;
   const queryClient = useQueryClient();
   const toast = useToast();
   const { t } = useTranslation('account');
   const appliedIdentity = useRef<string | null>(null);
+  const serverPreference = useRef<PersonalPreference | null>(null);
+  const queuedPatch = useRef<PersonalPreferencePatch | null>(null);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inFlight = useRef(false);
+  const mounted = useRef(true);
+  const [saveState, setSaveState] = useState<PersonalPreferenceSaveState>('idle');
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const identity = auth.user ? `${auth.user.tenantId}:${auth.user.userId}` : null;
   const queryKey = useMemo(
     () => ['personal-preference', auth.user?.tenantId, auth.user?.userId] as const,
@@ -93,102 +177,162 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
   );
   const preferenceQuery = useQuery({
     queryKey,
-    queryFn: getPersonalPreference,
+    queryFn: async () => normalizePreference(await getPersonalPreference(), appearanceDefaults),
     enabled: Boolean(auth.user),
     staleTime: 0,
     retry: 1,
     refetchOnMount: 'always',
   });
 
+  const applyPreference = useCallback(
+    (next: PersonalPreference) => {
+      queryClient.setQueryData(queryKey, next);
+      replaceAppearancePreference(toAppearance(next.preferences, appearanceDefaults));
+      applyDocumentPreferences(next.preferences);
+    },
+    [appearanceDefaults, queryClient, queryKey, replaceAppearancePreference]
+  );
+
+  const flushQueue = useCallback(async () => {
+    if (inFlight.current || !queuedPatch.current || !serverPreference.current) return;
+    if (saveTimer.current) {
+      clearTimeout(saveTimer.current);
+      saveTimer.current = null;
+    }
+
+    const patch = queuedPatch.current;
+    queuedPatch.current = null;
+    inFlight.current = true;
+    if (mounted.current) setSaveState('saving');
+    let base = serverPreference.current;
+
+    try {
+      let saved: PersonalPreference;
+      try {
+        saved = await patchPersonalPreference(patch, base.version);
+      } catch (error) {
+        if (!(error instanceof HttpError) || error.status !== 409) throw error;
+        base = normalizePreference(await getPersonalPreference(), appearanceDefaults);
+        saved = await patchPersonalPreference(patch, base.version);
+      }
+
+      const normalized = normalizePreference(saved, appearanceDefaults);
+      serverPreference.current = normalized;
+      const local = queuedPatch.current
+        ? optimisticPreference(normalized, queuedPatch.current, appearanceDefaults)
+        : normalized;
+      applyPreference(local);
+      if (mounted.current) {
+        setLastSavedAt(normalized.updatedAt ?? new Date().toISOString());
+        setSaveState(queuedPatch.current ? 'saving' : 'saved');
+      }
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] });
+    } catch {
+      queuedPatch.current = null;
+      applyPreference(base);
+      if (mounted.current) setSaveState('error');
+      toast.error(t('personalPreferences.saveError'));
+    } finally {
+      inFlight.current = false;
+      if (queuedPatch.current && mounted.current) {
+        saveTimer.current = setTimeout(() => void flushQueue(), 0);
+      }
+    }
+  }, [appearanceDefaults, applyPreference, queryClient, t, toast]);
+
+  const scheduleSave = useCallback(() => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => void flushQueue(), SAVE_DEBOUNCE_MS);
+  }, [flushQueue]);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, []);
+
   useEffect(() => {
     if (!identity) {
       appliedIdentity.current = null;
+      serverPreference.current = null;
+      queuedPatch.current = null;
+      setSaveState('idle');
       return;
     }
     if (appliedIdentity.current !== identity) {
       appliedIdentity.current = identity;
+      serverPreference.current = null;
+      queuedPatch.current = null;
       replaceAppearancePreference(appearanceDefaults);
+      applyDocumentPreferences({
+        appearance: { mode: appearanceDefaults.mode, density: appearanceDefaults.density },
+        accessibility: {
+          highContrast: appearanceDefaults.highContrast,
+          reduceMotion: appearanceDefaults.reduceMotion,
+          underlineLinks: false,
+          reduceTransparency: false,
+        },
+        regional: defaultRegionalPreference,
+      });
     }
-    if (preferenceQuery.data && !preferenceQuery.isFetching) {
+    if (preferenceQuery.data && !inFlight.current && !queuedPatch.current) {
+      serverPreference.current = preferenceQuery.data;
       replaceAppearancePreference(
         toAppearance(preferenceQuery.data.preferences, appearanceDefaults)
       );
-      return;
+      applyDocumentPreferences(preferenceQuery.data.preferences);
+      setLastSavedAt(preferenceQuery.data.updatedAt ?? null);
     }
-    if (preferenceQuery.isError) {
-      if (preferenceQuery.data) {
-        replaceAppearancePreference(
-          toAppearance(preferenceQuery.data.preferences, appearanceDefaults)
-        );
-      }
-    }
-  }, [
-    appearanceDefaults,
-    identity,
-    preferenceQuery.data,
-    preferenceQuery.isError,
-    preferenceQuery.isFetching,
-    replaceAppearancePreference,
-  ]);
-
-  const mutation = useMutation<PersonalPreference, unknown, MutationRequest, MutationContext>({
-    mutationFn: (request) =>
-      request.kind === 'reset'
-        ? resetPersonalPreference(request.current.version)
-        : patchPersonalPreference(request.patch, request.current.version),
-    onMutate: async (request) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previousAppearance = appearancePreference;
-      const next =
-        request.kind === 'reset'
-          ? {
-              ...request.current,
-              customized: false,
-              preferences: {
-                appearance: {
-                  mode: appearanceDefaults.mode,
-                  density: appearanceDefaults.density,
-                },
-                accessibility: {
-                  highContrast: appearanceDefaults.highContrast,
-                  reduceMotion: appearanceDefaults.reduceMotion,
-                },
-              },
-              version: 0,
-              updatedAt: null,
-            }
-          : optimisticPreference(request.current, request.patch);
-      queryClient.setQueryData(queryKey, next);
-      replaceAppearancePreference(toAppearance(next.preferences, appearanceDefaults));
-      return { previous: request.current, previousAppearance };
-    },
-    onSuccess: (next) => {
-      queryClient.setQueryData(queryKey, next);
-      replaceAppearancePreference(toAppearance(next.preferences, appearanceDefaults));
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] });
-    },
-    onError: (_error, _request, context) => {
-      if (context) {
-        queryClient.setQueryData(queryKey, context.previous);
-        replaceAppearancePreference(context.previousAppearance);
-      }
-      toast.error(t('personalPreferences.saveError'));
-      void queryClient.invalidateQueries({ queryKey });
-    },
-  });
+  }, [appearanceDefaults, identity, preferenceQuery.data, replaceAppearancePreference]);
 
   const update = useCallback(
     (patch: PersonalPreferencePatch) => {
-      if (!preferenceQuery.data || mutation.isPending) return;
-      mutation.mutate({ kind: 'patch', patch, current: preferenceQuery.data });
+      const current = queryClient.getQueryData<PersonalPreference>(queryKey);
+      if (!current || preferenceQuery.isError) return;
+      queuedPatch.current = mergeQueuedPatch(queuedPatch.current, patch);
+      applyPreference(optimisticPreference(current, patch, appearanceDefaults));
+      setSaveState('saving');
+      scheduleSave();
     },
-    [mutation, preferenceQuery.data]
+    [
+      appearanceDefaults,
+      applyPreference,
+      preferenceQuery.isError,
+      queryClient,
+      queryKey,
+      scheduleSave,
+    ]
   );
 
-  const reset = useCallback(() => {
-    if (!preferenceQuery.data || mutation.isPending) return;
-    mutation.mutate({ kind: 'reset', current: preferenceQuery.data });
-  }, [mutation, preferenceQuery.data]);
+  const reset = useCallback(async () => {
+    if (!serverPreference.current || inFlight.current || queuedPatch.current) return;
+    inFlight.current = true;
+    setSaveState('saving');
+    const previous = serverPreference.current;
+    try {
+      const next = normalizePreference(
+        await resetPersonalPreference(serverPreference.current.version),
+        appearanceDefaults
+      );
+      serverPreference.current = next;
+      applyPreference(
+        queuedPatch.current
+          ? optimisticPreference(next, queuedPatch.current, appearanceDefaults)
+          : next
+      );
+      setLastSavedAt(new Date().toISOString());
+      setSaveState(queuedPatch.current ? 'saving' : 'saved');
+    } catch {
+      applyPreference(previous);
+      setSaveState('error');
+      toast.error(t('personalPreferences.saveError'));
+    } finally {
+      inFlight.current = false;
+      if (queuedPatch.current) scheduleSave();
+    }
+  }, [appearanceDefaults, applyPreference, scheduleSave, t, toast]);
 
   const retry = useCallback(() => {
     void preferenceQuery.refetch();
@@ -198,19 +342,22 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
     () => ({
       preference: preferenceQuery.data ?? null,
       isLoading: preferenceQuery.isPending,
-      isSaving: mutation.isPending,
+      isSaving: saveState === 'saving',
       loadFailed: preferenceQuery.isError,
+      saveState,
+      lastSavedAt,
       update,
-      reset,
+      reset: () => void reset(),
       retry,
     }),
     [
-      mutation.isPending,
+      lastSavedAt,
       preferenceQuery.data,
       preferenceQuery.isError,
       preferenceQuery.isPending,
       reset,
       retry,
+      saveState,
       update,
     ]
   );

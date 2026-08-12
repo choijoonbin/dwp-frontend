@@ -51,6 +51,28 @@ input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 
+html[data-underline-links='always'] a:not(.MuiButtonBase-root) {
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+}
+
+html[data-transparency='reduced'] *,
+html[data-transparency='reduced'] *::before,
+html[data-transparency='reduced'] *::after {
+  backdrop-filter: none !important;
+}
+
+@keyframes dwp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.dwp-spin {
+  animation: dwp-spin 900ms linear infinite;
+}
+
 @keyframes dwp-session-exit-old {
   from {
     opacity: 1;

@@ -3,6 +3,7 @@ export * from './types';
 export * from './http-error';
 export * from './tenant-util';
 export * from './locale-preference';
+export * from './regional-preference';
 export * from './api/auth-api';
 export * from './api/agent-plan-api';
 export * from './api/agent-runtime-api';
@@ -29,6 +30,7 @@ export * from './api/system-code-catalog-api';
 export * from './api/workspace-api';
 export * from './api/saved-view-api';
 export * from './api/productivity-connector-api';
+export * from './api/catalog-api';
 
 export * from './axios-instance';
 export * from './auth/auth-guard';

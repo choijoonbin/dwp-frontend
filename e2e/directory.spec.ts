@@ -160,7 +160,9 @@ test('workforce administrators explore effective organization and reporting stru
   expect(geometry.content).toBeLessThanOrEqual(geometry.viewport);
   await page.getByRole('button', { name: 'Organization', exact: true }).click();
 
-  await page.getByRole('button', { name: 'Reporting lines' }).click();
+  const reportingLines = page.getByRole('button', { name: 'Reporting lines' });
+  await reportingLines.click();
+  await expect(reportingLines).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByText('Kim Jiwon', { exact: true })).toBeVisible();
   await page.getByText('Kim Jiwon', { exact: true }).click();
   await expect(page.getByText('System roles')).toBeVisible();

@@ -1,23 +1,51 @@
 import {
   Accessibility,
   Building2,
+  CalendarDays,
+  Check,
+  CircleAlert,
+  Clock3,
   Contrast,
+  Hash,
   LayoutDashboard,
+  Link2,
+  LoaderCircle,
   MoveHorizontal,
   Palette,
   PanelLeft,
   RotateCcw,
   Rows3,
+  ScanLine,
   SunMoon,
   Type,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { productLocales, type SupportedLocale } from '@dwp-frontend/shared-i18n';
+import {
+  formatDate,
+  formatNumber,
+  productLocales,
+  type SupportedLocale,
+} from '@dwp-frontend/shared-i18n';
+import {
+  dateFormatOptions,
+  defaultRegionalPreference,
+  firstDayOfWeekOptions,
+  numberFormatOptions,
+  timeFormatOptions,
+  timeZoneOptions,
+  type DateFormatPreference,
+  type FirstDayOfWeekPreference,
+  type NumberFormatPreference,
+  type RegionalPreference,
+  type TimeFormatPreference,
+  type TimeZonePreference,
+} from '@dwp-frontend/shared-utils';
 import { LanguageIcon } from '@dwp-frontend/design-system/components/icons';
 import {
   ActionButton,
   PageCanvas,
+  SelectField,
   colorModeOptions,
   densityOptions,
   useAppearance,
@@ -43,6 +71,7 @@ import { usePersonalPreference } from '../../features/account/personal-preferenc
 
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+import type { PersonalPreferenceSaveState } from '../../features/account/personal-preference-provider';
 
 type PreferenceRowProps = {
   icon: LucideIcon;
@@ -145,6 +174,173 @@ function PreferenceGroup({ title, description, children }: PreferenceGroupProps)
   );
 }
 
+function AutoSaveStatus({
+  state,
+  lastSavedAt,
+}: {
+  state: PersonalPreferenceSaveState;
+  lastSavedAt: string | null;
+}) {
+  const { t } = useTranslation('account');
+  const Icon = state === 'saving' ? LoaderCircle : state === 'error' ? CircleAlert : Check;
+  const color =
+    state === 'error' ? 'error.main' : state === 'saved' ? 'success.main' : 'text.secondary';
+  const label =
+    state === 'saving'
+      ? t('personalPreferences.saving')
+      : state === 'error'
+        ? t('personalPreferences.saveStateError')
+        : state === 'saved'
+          ? t('personalPreferences.saved', {
+              time: lastSavedAt
+                ? formatDate(lastSavedAt, { timeStyle: 'short' })
+                : t('personalPreferences.justNow'),
+            })
+          : t('personalPreferences.autoSave');
+
+  return (
+    <Box
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color, minHeight: 32 }}
+    >
+      <Icon
+        size={16}
+        strokeWidth={1.9}
+        aria-hidden="true"
+        className={state === 'saving' ? 'dwp-spin' : undefined}
+      />
+      <Typography variant="caption" color="inherit" fontWeight={700}>
+        {label}
+      </Typography>
+    </Box>
+  );
+}
+
+function ExperiencePreview({ kind }: { kind: 'appearance' | 'accessibility' }) {
+  const { t } = useTranslation('account');
+  return (
+    <Box
+      component="section"
+      aria-label={t(`preview.${kind}.label`)}
+      sx={{
+        mt: 3,
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: 1,
+        bgcolor: 'background.paper',
+        overflow: 'hidden',
+      }}
+    >
+      <Box sx={{ px: 2.5, py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+        <Typography variant="overline" color="text.secondary">
+          {t('preview.live')}
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) auto' },
+          alignItems: 'center',
+          gap: 2,
+          px: 2.5,
+          py: 2.25,
+        }}
+      >
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="subtitle2">{t(`preview.${kind}.title`)}</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            {t(`preview.${kind}.description`)}
+          </Typography>
+        </Box>
+        <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+          <Chip size="small" color="success" label={t('preview.ready')} />
+          <ActionButton intent="secondary" size="small">
+            {t('preview.action')}
+          </ActionButton>
+          {kind === 'accessibility' && (
+            <Typography component="a" href="#dwp-main-content" variant="body2">
+              {t('preview.link')}
+            </Typography>
+          )}
+        </Stack>
+      </Box>
+    </Box>
+  );
+}
+
+function RegionalPreview({ regional }: { regional: RegionalPreference }) {
+  const { t, i18n } = useTranslation('account');
+  const locale: SupportedLocale = (i18n.resolvedLanguage ?? i18n.language).startsWith('ko')
+    ? 'ko'
+    : 'en';
+  const previewDate = new Date('2026-08-12T09:30:00+09:00');
+  return (
+    <Box
+      component="section"
+      aria-label={t('preview.regional.label')}
+      data-time-zone={regional.timeZone}
+      sx={{
+        mt: 3,
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: 1,
+        bgcolor: 'background.paper',
+        overflow: 'hidden',
+      }}
+    >
+      {[
+        [
+          CalendarDays,
+          t('preview.regional.date'),
+          formatDate(previewDate, { dateStyle: 'full' }, locale),
+        ],
+        [
+          Clock3,
+          t('preview.regional.time'),
+          formatDate(previewDate, { timeStyle: 'short' }, locale),
+        ],
+        [
+          Hash,
+          t('preview.regional.number'),
+          formatNumber(1234567.89, { maximumFractionDigits: 2 }, locale),
+        ],
+      ].map(([Icon, label, value], index) => {
+        const PreviewIcon = Icon as LucideIcon;
+        return (
+          <Box
+            key={String(label)}
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '32px minmax(0, 1fr)',
+              gap: 1.25,
+              alignItems: 'center',
+              px: 2,
+              py: 2,
+              borderLeft: { xs: 0, md: index === 0 ? 0 : 1 },
+              borderTop: { xs: index === 0 ? 0 : 1, md: 0 },
+              borderColor: 'divider',
+            }}
+          >
+            <PreviewIcon size={18} aria-hidden="true" />
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="caption" color="text.secondary">
+                {String(label)}
+              </Typography>
+              <Typography variant="subtitle2" sx={{ overflowWrap: 'anywhere' }}>
+                {String(value)}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      })}
+    </Box>
+  );
+}
+
 function PageHeading({
   section,
   title,
@@ -192,15 +388,49 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const appearance = useAppearance();
   const personalPreference = usePersonalPreference();
-  const { language, setLanguage, isSaving: isLanguageSaving } = usePreferredLanguage();
+  const {
+    language,
+    setLanguage,
+    isSaving: isLanguageSaving,
+    saveState: languageSaveState,
+    lastSavedAt: languageLastSavedAt,
+  } = usePreferredLanguage();
   const registeredColorModes = useSystemCodeOptions(
     'PLATFORM.PREFERENCE.COLOR_MODE',
     colorModeOptions
   );
   const registeredDensities = useSystemCodeOptions('PLATFORM.PREFERENCE.DENSITY', densityOptions);
+  const registeredTimeZones = useSystemCodeOptions(
+    'PLATFORM.PREFERENCE.TIME_ZONE',
+    timeZoneOptions
+  );
+  const registeredDateFormats = useSystemCodeOptions(
+    'PLATFORM.PREFERENCE.DATE_FORMAT',
+    dateFormatOptions
+  );
+  const registeredTimeFormats = useSystemCodeOptions(
+    'PLATFORM.PREFERENCE.TIME_FORMAT',
+    timeFormatOptions
+  );
+  const registeredFirstDays = useSystemCodeOptions(
+    'PLATFORM.PREFERENCE.FIRST_DAY_OF_WEEK',
+    firstDayOfWeekOptions
+  );
+  const registeredNumberFormats = useSystemCodeOptions(
+    'PLATFORM.PREFERENCE.NUMBER_FORMAT',
+    numberFormatOptions
+  );
   const managedFontName = appearance.tenant.fontFamily ?? t('managed.systemFont');
-  const preferenceControlsDisabled =
-    personalPreference.isLoading || personalPreference.isSaving || personalPreference.loadFailed;
+  const preferenceValues = personalPreference.preference?.preferences;
+  const regional = preferenceValues?.regional ?? defaultRegionalPreference;
+  const managedPolicy = personalPreference.preference?.managedPolicy;
+  const languageRegionSaveState = isLanguageSaving
+    ? 'saving'
+    : personalPreference.saveState !== 'idle'
+      ? personalPreference.saveState
+      : languageSaveState;
+  const languageRegionSavedAt = personalPreference.lastSavedAt ?? languageLastSavedAt;
+  const preferenceControlsDisabled = personalPreference.isLoading || personalPreference.loadFailed;
   const preferenceError = personalPreference.loadFailed ? (
     <Alert
       severity="warning"
@@ -220,14 +450,20 @@ export default function SettingsPage() {
   }
 
   const resetAction = (
-    <ActionButton
-      intent="secondary"
-      startIcon={<RotateCcw size={17} />}
-      disabled={preferenceControlsDisabled}
-      onClick={personalPreference.reset}
-    >
-      {t('actions.resetPreferences')}
-    </ActionButton>
+    <Stack direction="row" alignItems="center" gap={1.5} flexWrap="wrap">
+      <AutoSaveStatus
+        state={personalPreference.saveState}
+        lastSavedAt={personalPreference.lastSavedAt}
+      />
+      <ActionButton
+        intent="secondary"
+        startIcon={<RotateCcw size={17} />}
+        disabled={preferenceControlsDisabled || personalPreference.isSaving}
+        onClick={personalPreference.reset}
+      >
+        {t('actions.resetPreferences')}
+      </ActionButton>
+    </Stack>
   );
 
   if (section === 'appearance') {
@@ -289,6 +525,7 @@ export default function SettingsPage() {
             </ToggleButtonGroup>
           </PreferenceRow>
         </PreferenceGroup>
+        <ExperiencePreview kind="appearance" />
       </PageCanvas>
     );
   }
@@ -335,7 +572,36 @@ export default function SettingsPage() {
               }
             />
           </PreferenceRow>
+          <PreferenceRow
+            icon={Link2}
+            title={t('settings.underlineLinks.title')}
+            description={t('settings.underlineLinks.description')}
+          >
+            <Switch
+              checked={preferenceValues?.accessibility.underlineLinks ?? false}
+              disabled={preferenceControlsDisabled}
+              slotProps={{ input: { 'aria-label': t('settings.underlineLinks.title') } }}
+              onChange={(_, checked) =>
+                personalPreference.update({ accessibility: { underlineLinks: checked } })
+              }
+            />
+          </PreferenceRow>
+          <PreferenceRow
+            icon={ScanLine}
+            title={t('settings.reduceTransparency.title')}
+            description={t('settings.reduceTransparency.description')}
+          >
+            <Switch
+              checked={preferenceValues?.accessibility.reduceTransparency ?? false}
+              disabled={preferenceControlsDisabled}
+              slotProps={{ input: { 'aria-label': t('settings.reduceTransparency.title') } }}
+              onChange={(_, checked) =>
+                personalPreference.update({ accessibility: { reduceTransparency: checked } })
+              }
+            />
+          </PreferenceRow>
         </PreferenceGroup>
+        <ExperiencePreview kind="accessibility" />
       </PageCanvas>
     );
   }
@@ -347,6 +613,9 @@ export default function SettingsPage() {
           section={section}
           title={t('sections.language.title')}
           description={t('sections.language.description')}
+          action={
+            <AutoSaveStatus state={languageRegionSaveState} lastSavedAt={languageRegionSavedAt} />
+          }
         />
         <PreferenceGroup
           title={t('sections.language.groupTitle')}
@@ -372,7 +641,115 @@ export default function SettingsPage() {
               ))}
             </ToggleButtonGroup>
           </PreferenceRow>
+          <PreferenceRow
+            icon={Clock3}
+            title={t('settings.timeZone.title')}
+            description={t('settings.timeZone.description')}
+          >
+            <Box sx={{ width: { xs: 'min(100%, 280px)', sm: 280 } }}>
+              <SelectField<TimeZonePreference>
+                size="small"
+                aria-label={t('settings.timeZone.title')}
+                value={regional.timeZone}
+                disabled={preferenceControlsDisabled}
+                options={registeredTimeZones.map((value) => ({
+                  value,
+                  label: t(`options.timeZone.${value.replace(/\//g, '_')}`),
+                }))}
+                onValueChange={(value) =>
+                  value && personalPreference.update({ regional: { timeZone: value } })
+                }
+              />
+            </Box>
+          </PreferenceRow>
+          <PreferenceRow
+            icon={CalendarDays}
+            title={t('settings.dateFormat.title')}
+            description={t('settings.dateFormat.description')}
+          >
+            <Box sx={{ width: { xs: 'min(100%, 240px)', sm: 240 } }}>
+              <SelectField<DateFormatPreference>
+                size="small"
+                aria-label={t('settings.dateFormat.title')}
+                value={regional.dateFormat}
+                disabled={preferenceControlsDisabled}
+                options={registeredDateFormats.map((value) => ({
+                  value,
+                  label: t(`options.dateFormat.${value}`),
+                }))}
+                onValueChange={(value) =>
+                  value && personalPreference.update({ regional: { dateFormat: value } })
+                }
+              />
+            </Box>
+          </PreferenceRow>
+          <PreferenceRow
+            icon={Clock3}
+            title={t('settings.timeFormat.title')}
+            description={t('settings.timeFormat.description')}
+          >
+            <ToggleButtonGroup
+              exclusive
+              size="small"
+              value={regional.timeFormat}
+              disabled={preferenceControlsDisabled}
+              aria-label={t('settings.timeFormat.title')}
+              onChange={(_, value: TimeFormatPreference | null) =>
+                value && personalPreference.update({ regional: { timeFormat: value } })
+              }
+            >
+              {registeredTimeFormats.map((value) => (
+                <ToggleButton key={value} value={value}>
+                  {t(`options.timeFormat.${value}`)}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </PreferenceRow>
+          <PreferenceRow
+            icon={CalendarDays}
+            title={t('settings.firstDayOfWeek.title')}
+            description={t('settings.firstDayOfWeek.description')}
+          >
+            <ToggleButtonGroup
+              exclusive
+              size="small"
+              value={regional.firstDayOfWeek}
+              disabled={preferenceControlsDisabled}
+              aria-label={t('settings.firstDayOfWeek.title')}
+              onChange={(_, value: FirstDayOfWeekPreference | null) =>
+                value && personalPreference.update({ regional: { firstDayOfWeek: value } })
+              }
+            >
+              {registeredFirstDays.map((value) => (
+                <ToggleButton key={value} value={value}>
+                  {t(`options.firstDayOfWeek.${value}`)}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </PreferenceRow>
+          <PreferenceRow
+            icon={Hash}
+            title={t('settings.numberFormat.title')}
+            description={t('settings.numberFormat.description')}
+          >
+            <Box sx={{ width: { xs: 'min(100%, 240px)', sm: 240 } }}>
+              <SelectField<NumberFormatPreference>
+                size="small"
+                aria-label={t('settings.numberFormat.title')}
+                value={regional.numberFormat}
+                disabled={preferenceControlsDisabled}
+                options={registeredNumberFormats.map((value) => ({
+                  value,
+                  label: t(`options.numberFormat.${value}`),
+                }))}
+                onValueChange={(value) =>
+                  value && personalPreference.update({ regional: { numberFormat: value } })
+                }
+              />
+            </Box>
+          </PreferenceRow>
         </PreferenceGroup>
+        <RegionalPreview regional={regional} />
       </PageCanvas>
     );
   }
@@ -455,7 +832,35 @@ export default function SettingsPage() {
             <Chip size="small" label={t('labels.managed')} variant="outlined" />
           </Stack>
         </PreferenceRow>
+        <PreferenceRow
+          icon={Building2}
+          title={t('settings.policySource.title')}
+          description={t('settings.policySource.description')}
+        >
+          <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+            <Typography variant="body2">
+              {t(`managed.sources.${managedPolicy?.source ?? 'TENANT_EXPERIENCE_POLICY'}`)}
+            </Typography>
+            <Chip size="small" label={t('managed.tenantScope')} variant="outlined" />
+          </Stack>
+        </PreferenceRow>
+        <PreferenceRow
+          icon={Accessibility}
+          title={t('settings.policyOwner.title')}
+          description={t('settings.policyOwner.description')}
+        >
+          <Typography variant="body2">
+            {t(`managed.owners.${managedPolicy?.owner ?? 'TENANT_ADMINISTRATOR'}`)}
+          </Typography>
+        </PreferenceRow>
       </PreferenceGroup>
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1.5 }}>
+        {t('managed.paths', {
+          paths:
+            managedPolicy?.managedPaths.join(', ') ??
+            'appearance.fontFamily, appearance.accentColor, navigation.pattern',
+        })}
+      </Typography>
     </PageCanvas>
   );
 }

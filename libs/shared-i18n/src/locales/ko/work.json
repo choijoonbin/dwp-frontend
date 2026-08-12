@@ -317,6 +317,9 @@
     },
     "filters": {
       "all": "전체",
+      "available": "사용 가능",
+      "requestable": "접근 요청",
+      "pending": "검토 중",
       "pinned": "고정됨",
       "native": "DWP 네이티브",
       "connected": "연결형"
@@ -341,6 +344,37 @@
     "pinSuccess": "{{app}}을(를) 런치패드에 고정했습니다.",
     "unpinSuccess": "{{app}}을(를) 런치패드에서 제거했습니다.",
     "pinError": "런치패드 설정을 저장하지 못했습니다.",
+    "access": {
+      "dialogTitle": "{{app}} 접근 요청",
+      "dialogDescription": "테넌트 관리자 검토를 위해 업무 사유를 제출합니다. 승인과 실제 실행 권한은 별도로 추적됩니다.",
+      "resource": "보호 리소스",
+      "duration": "요청 기간",
+      "durations": {
+        "30": "30일",
+        "90": "90일",
+        "NONE": "종료일 지정 안 함"
+      },
+      "justification": "업무 사유",
+      "justificationHelp": "10자 이상 입력하세요. 입력 내용은 감사 이력에 보존됩니다.",
+      "submit": "요청 제출",
+      "submitting": "제출 중",
+      "cancel": "취소",
+      "requested": "접근 요청을 제출했습니다.",
+      "requestError": "접근 요청을 제출하지 못했습니다.",
+      "cancelRequest": "접근 요청 취소",
+      "cancelRequestFor": "{{app}} 접근 요청 취소",
+      "cancelled": "접근 요청을 취소했습니다.",
+      "cancelError": "접근 요청을 취소하지 못했습니다.",
+      "pendingMessage": "{{app}}은(는) 관리자 검토를 기다리고 있습니다.",
+      "syncMessage": "{{app}}은(는) 승인되었으며 IAM 권한 동기화를 기다리고 있습니다.",
+      "states": {
+        "AVAILABLE": "사용 가능",
+        "REQUESTABLE": "접근 필요",
+        "PENDING": "검토 대기",
+        "APPROVED_PENDING_SYNC": "승인됨 · 동기화 중",
+        "CONFIGURATION_REQUIRED": "관리자 설정 필요"
+      }
+    },
     "noMatches": "조건에 맞는 앱이 없습니다",
     "noMatchesDescription": "검색어나 앱 유형을 초기화해 사용 가능한 전체 앱을 확인하세요.",
     "resetFilters": "필터 초기화"

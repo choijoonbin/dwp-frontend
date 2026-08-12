@@ -15,16 +15,18 @@ import { AuditInvestigations } from '../features/admin/audit-investigations';
 import { AuditGovernance } from '../features/admin/audit-governance';
 import { ApiMonitoring } from '../features/admin/api-monitoring';
 import { AccessManager } from '../features/admin/access-manager';
+import { AppAccessRequestManager } from '../features/admin/app-access-request-manager';
 import { AccessReviewManager } from '../features/admin/access-review-manager';
 import { AnnouncementManager } from '../features/admin/announcement-manager';
 import { HomeExperienceManager } from '../features/admin/home-experience-manager';
 import { RegistryManager } from '../features/admin/registry-manager';
 import { ReferenceDataManager } from '../features/admin/reference-data-manager';
 import { TenantBrandingManager } from '../features/admin/tenant-branding-manager';
-import { NavigationManager } from '../features/admin/navigation-manager';
+import { NavigationManager } from '../features/admin/navigation-studio-manager';
 import { IdentityProvisioningManager } from '../features/admin/identity-provisioning-manager';
 import { RoleGovernanceManager } from '../features/admin/role-governance-manager';
 import { ProductivityConnectorManager } from '../features/admin/productivity-connector-manager';
+import { CatalogExplorer } from '../features/admin/catalog-explorer';
 import {
   ADMIN_NAVIGATION,
   findAdminNavigationItem,
@@ -40,6 +42,8 @@ function AdminContent({ view }: { view: AdminView }) {
   switch (view) {
     case 'access':
       return <AccessManager />;
+    case 'app-access-requests':
+      return <AppAccessRequestManager />;
     case 'access-reviews':
       return <AccessReviewManager />;
     case 'roles':
@@ -54,6 +58,8 @@ function AdminContent({ view }: { view: AdminView }) {
       return <HomeExperienceManager />;
     case 'reference-data':
       return <ReferenceDataManager />;
+    case 'catalog':
+      return <CatalogExplorer />;
     case 'registry':
       return <RegistryManager />;
     case 'navigation':

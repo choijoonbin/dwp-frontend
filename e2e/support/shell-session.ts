@@ -50,6 +50,116 @@ export const FULL_PRODUCT_PERMISSIONS = [
   })),
 ];
 
+export const NAVIGATION_TREE_FIXTURE = [
+  {
+    navigationItemId: 1,
+    navigationKey: 'workspace',
+    itemType: 'GROUP',
+    parentNavigationItemId: null,
+    registryEntryKey: null,
+    route: null,
+    iconKey: 'layout-grid',
+    requiredResourceKey: null,
+    requiredPermissionCode: 'VIEW',
+    sortOrder: 0,
+    lifecycleState: 'ACTIVE',
+    version: 1,
+    labels: [
+      { locale: 'ko', label: '워크스페이스', description: '개인 업무 공간' },
+      { locale: 'en', label: 'Workspace', description: 'Personal work area' },
+    ],
+    children: [
+      {
+        navigationItemId: 2,
+        navigationKey: 'work',
+        itemType: 'APP',
+        parentNavigationItemId: 1,
+        registryEntryKey: 'DWP_WORK',
+        route: '/work',
+        iconKey: 'briefcase',
+        requiredResourceKey: 'APP.WORK',
+        requiredPermissionCode: 'VIEW',
+        sortOrder: 0,
+        lifecycleState: 'ACTIVE',
+        version: 1,
+        labels: [
+          { locale: 'ko', label: '업무', description: '우선 업무와 승인' },
+          { locale: 'en', label: 'Work', description: 'Priorities and approvals' },
+        ],
+        children: [],
+      },
+    ],
+  },
+] as const;
+
+export const NAVIGATION_VALIDATION_FIXTURE = {
+  valid: true,
+  errorCount: 0,
+  warningCount: 0,
+  issues: [],
+  checkedAt: '2026-08-11T00:15:00Z',
+};
+
+export const NAVIGATION_REVISION_FIXTURE = {
+  navigationRevisionId: '61000000-0000-0000-0000-000000000001',
+  revisionNumber: 1,
+  lifecycleState: 'PUBLISHED',
+  baselineRevisionId: null,
+  baselineTreeHash: 'navigation-baseline-fixture',
+  tree: NAVIGATION_TREE_FIXTURE,
+  validation: NAVIGATION_VALIDATION_FIXTURE,
+  diff: { added: 0, removed: 0, changed: 0, reordered: 0, lifecycleChanged: 0 },
+  changeSummary: 'Initial governed navigation baseline',
+  version: 1,
+  createdAt: '2026-08-10T00:00:00Z',
+  createdBy: 1,
+  updatedAt: '2026-08-11T00:15:00Z',
+  publishedAt: '2026-08-11T00:15:00Z',
+  publishedBy: 1,
+};
+
+export const CATALOG_ENTITIES_FIXTURE = [
+  {
+    ref: 'APP:DWP_WORK',
+    kind: 'APP',
+    key: 'DWP_WORK',
+    name: 'DWP Work',
+    description: 'Governed priorities and approvals workspace.',
+    ownerRef: 'SERVICE:dwp-platform-server',
+    lifecycleState: 'ACTIVE',
+    riskTier: 'MEDIUM',
+    scope: 'TENANT',
+    revision: 1,
+    metadata: {},
+  },
+  {
+    ref: 'SERVICE:dwp-platform-server',
+    kind: 'SERVICE',
+    key: 'dwp-platform-server',
+    name: 'DWP Platform Service',
+    description: 'Tenant experience and workspace control plane.',
+    ownerRef: 'TEAM:platform',
+    lifecycleState: 'ACTIVE',
+    riskTier: 'HIGH',
+    scope: 'GLOBAL_PRODUCT',
+    revision: 1,
+    metadata: {},
+  },
+] as const;
+
+export const CATALOG_RELATION_FIXTURE = {
+  relationId: null,
+  sourceRef: 'SERVICE:dwp-platform-server',
+  targetRef: 'APP:DWP_WORK',
+  relationType: 'PRODUCES',
+  relationOrigin: 'DISCOVERED',
+  criticality: 'OPERATIONAL',
+  evidenceRef: 'workspace registry',
+  metadata: {},
+  lifecycleState: 'ACTIVE',
+  version: 0,
+} as const;
+
 const PROVIDER_TENANT_FIXTURE = {
   tenantId: 'tenant-skax',
   organizationId: 'organization-skax',
@@ -408,6 +518,35 @@ export async function mockShellSession(
     highContrast: false,
     reduceMotion: false,
   };
+  const defaultPersonalPreference = {
+    schemaVersion: 2 as const,
+    customized: true,
+    preferences: {
+      appearance: { mode: appearance.mode, density: appearance.density },
+      accessibility: {
+        highContrast: appearance.highContrast,
+        reduceMotion: appearance.reduceMotion,
+        underlineLinks: false,
+        reduceTransparency: false,
+      },
+      regional: {
+        timeZone: 'Asia/Seoul',
+        dateFormat: 'LOCALE',
+        timeFormat: '24_HOUR',
+        firstDayOfWeek: 'MONDAY',
+        numberFormat: 'LOCALE',
+      },
+    },
+    managedPolicy: {
+      scope: 'TENANT',
+      source: 'TENANT_EXPERIENCE_POLICY',
+      owner: 'TENANT_ADMINISTRATOR',
+      managedPaths: [] as string[],
+    },
+    version: 1,
+    updatedAt: '2026-08-11T00:00:00Z' as string | null,
+  };
+  let personalPreference = structuredClone(defaultPersonalPreference);
 
   await page.route('**/api/**', (route) => {
     const url = new URL(route.request().url());
@@ -446,20 +585,67 @@ export async function mockShellSession(
         expiresAt: '2026-08-11T08:00:00Z',
       });
     }
-    if (path.startsWith('/api/platform/v1/personal-preferences')) {
+    if (path === '/api/auth/policy') {
       return fulfillSuccess(route, {
-        schemaVersion: 1,
-        customized: true,
-        preferences: {
-          appearance: { mode: appearance.mode, density: appearance.density },
-          accessibility: {
-            highContrast: appearance.highContrast,
-            reduceMotion: appearance.reduceMotion,
-          },
-        },
-        version: 1,
-        updatedAt: '2026-08-11T00:00:00Z',
+        tenantId: 1,
+        defaultLoginType: 'LOCAL',
+        allowedLoginTypes: ['LOCAL'],
+        localLoginEnabled: true,
+        ssoLoginEnabled: false,
+        ssoProviderKey: null,
+        requireMfa: true,
       });
+    }
+    if (path.startsWith('/api/platform/v1/personal-preferences')) {
+      const request = route.request();
+      if (request.method() === 'GET') return fulfillSuccess(route, personalPreference);
+
+      const body = request.postDataJSON() as {
+        patch?: {
+          appearance?: Partial<typeof personalPreference.preferences.appearance>;
+          accessibility?: Partial<typeof personalPreference.preferences.accessibility>;
+          regional?: Partial<typeof personalPreference.preferences.regional>;
+        };
+        version: number;
+      };
+      if (body.version !== personalPreference.version) {
+        return route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({ status: 'ERROR', errorCode: 'OPTIMISTIC_LOCK_FAILED' }),
+        });
+      }
+
+      if (path.endsWith('/reset')) {
+        personalPreference = {
+          ...structuredClone(defaultPersonalPreference),
+          customized: false,
+          version: personalPreference.version + 1,
+          updatedAt: '2026-08-11T00:10:00Z',
+        };
+      } else {
+        personalPreference = {
+          ...personalPreference,
+          customized: true,
+          preferences: {
+            appearance: {
+              ...personalPreference.preferences.appearance,
+              ...body.patch?.appearance,
+            },
+            accessibility: {
+              ...personalPreference.preferences.accessibility,
+              ...body.patch?.accessibility,
+            },
+            regional: {
+              ...personalPreference.preferences.regional,
+              ...body.patch?.regional,
+            },
+          },
+          version: personalPreference.version + 1,
+          updatedAt: '2026-08-11T00:10:00Z',
+        };
+      }
+      return fulfillSuccess(route, personalPreference);
     }
     if (path === '/api/platform/v1/workspace/work-items') {
       return fulfillSuccess(route, WORKSPACE_QUEUE_FIXTURE);
@@ -781,6 +967,45 @@ export async function mockShellSession(
         size: 100,
         totalElements: 0,
         totalPages: 0,
+      });
+    }
+    if (path === '/api/platform/v1/admin/app-access-requests') {
+      return fulfillSuccess(route, []);
+    }
+    if (path === '/api/platform/v1/admin/navigation/studio') {
+      return fulfillSuccess(route, {
+        published: NAVIGATION_REVISION_FIXTURE,
+        draft: null,
+        history: [NAVIGATION_REVISION_FIXTURE],
+        currentTree: NAVIGATION_TREE_FIXTURE,
+        currentValidation: NAVIGATION_VALIDATION_FIXTURE,
+      });
+    }
+    if (path === '/api/platform/v1/admin/catalog') {
+      return fulfillSuccess(route, {
+        entityCount: CATALOG_ENTITIES_FIXTURE.length,
+        relationCount: 1,
+        declaredRelationCount: 0,
+        orphanCount: 0,
+        criticalRelationCount: 0,
+        entitiesByKind: { APP: 1, SERVICE: 1 },
+        entitiesByLifecycle: { ACTIVE: 2 },
+        entities: CATALOG_ENTITIES_FIXTURE,
+        generatedAt: '2026-08-11T00:20:00Z',
+      });
+    }
+    if (path === '/api/platform/v1/admin/catalog/graph') {
+      return fulfillSuccess(route, {
+        focusRef: url.searchParams.get('focusRef'),
+        nodes: CATALOG_ENTITIES_FIXTURE.map((entity) => ({
+          entity,
+          incomingCount: entity.kind === 'APP' ? 1 : 0,
+          outgoingCount: entity.kind === 'SERVICE' ? 1 : 0,
+          orphan: false,
+        })),
+        relations: [CATALOG_RELATION_FIXTURE],
+        truncated: false,
+        generatedAt: '2026-08-11T00:20:00Z',
       });
     }
     if (path === '/api/platform/v1/admin/navigation') {
