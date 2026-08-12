@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 
 import { AuditLog } from '../features/admin/audit-log';
 import { AuditOverview } from '../features/admin/audit-overview';
-import { AuditExplorer } from '../features/admin/audit-explorer';
+import { AuditEvidenceWorkspace } from '../features/admin/audit-evidence-workspace';
 import { AuditInvestigations } from '../features/admin/audit-investigations';
 import { AuditGovernance } from '../features/admin/audit-governance';
 import { ApiMonitoring } from '../features/admin/api-monitoring';
@@ -65,7 +65,7 @@ function AdminContent({ view }: { view: AdminView }) {
     case 'audit-overview':
       return <AuditOverview />;
     case 'audit-events':
-      return <AuditExplorer />;
+      return <AuditEvidenceWorkspace />;
     case 'audit-investigations':
       return <AuditInvestigations />;
     case 'audit-governance':

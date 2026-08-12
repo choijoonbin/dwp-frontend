@@ -24,7 +24,6 @@ import { EnterpriseDataGrid, GuidedEmptyState } from '@dwp-frontend/design-syste
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
@@ -280,11 +279,7 @@ export function ProviderTenants() {
           </Box>
         ))}
       </Box>
-      <ProviderSectionHeading
-        title={t('tenants.title')}
-        description={t('tenants.description')}
-        action={<Chip size="small" variant="outlined" label={tenants.data?.totalElements ?? 0} />}
-      />
+      <ProviderSectionHeading title={t('tenants.title')} description={t('tenants.description')} />
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         alignItems={{ xs: 'stretch', md: 'center' }}

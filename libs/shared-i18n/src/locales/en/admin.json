@@ -902,6 +902,87 @@
     "loading": "Loading audit evidence",
     "loadError": "Audit evidence could not be loaded.",
     "updated": "Updated {{time}}",
+    "evidenceModes": {
+      "label": "Evidence exploration mode",
+      "correlations": {
+        "short": "Incident flows",
+        "title": "Cross-domain incident flows",
+        "description": "Group activity across service boundaries to understand cause and impact first."
+      },
+      "events": {
+        "short": "Raw evidence",
+        "title": "Immutable audit evidence",
+        "description": "Filter individual events and preserve, export, or link them to an investigation."
+      }
+    },
+    "correlation": {
+      "title": "Correlation-led incident exploration",
+      "description": "Connect identity, people, platform, provider, and AI activity through a standard event envelope.",
+      "summaryLabel": "Correlation posture",
+      "resultCount": "{{count}} incident flows",
+      "tableLabel": "Cross-domain incident flows",
+      "loadErrorTitle": "Incident flows could not be loaded",
+      "loadError": "A problem occurred while loading correlated evidence.",
+      "flowMeta": "{{events}} events / {{services}} services",
+      "eventCount": "{{count}} events",
+      "attentionRequired": "Attention required",
+      "controlled": "Controlled",
+      "kpi": {
+        "flows": "Incident flows",
+        "flowsDetail": "Entire selected window",
+        "crossDomain": "Cross-domain",
+        "attention": "Needs attention",
+        "services": "Connected services",
+        "visiblePage": "Current result page"
+      },
+      "filters": {
+        "label": "Incident flow filters",
+        "search": "Search incidents",
+        "searchPlaceholder": "Search activity, subject, actor, service, or correlation",
+        "domain": "Business domain",
+        "allDomains": "All domains",
+        "classification": "Data classification",
+        "allClassifications": "All classifications"
+      },
+      "columns": {
+        "lastSeen": "Last seen",
+        "flow": "Incident flow",
+        "domains": "Domains",
+        "classification": "Classification",
+        "risk": "Max risk"
+      },
+      "domain": {
+        "IDENTITY_ACCESS": "Identity & access",
+        "PEOPLE_WORKFORCE": "People & workforce",
+        "PLATFORM_WORKSPACE": "Platform & workspace",
+        "PROVIDER_OPERATIONS": "Provider operations",
+        "AI_AUTOMATION": "AI & automation",
+        "DATA_GOVERNANCE": "Data governance"
+      },
+      "classification": {
+        "INTERNAL": "Internal",
+        "CONFIDENTIAL": "Confidential",
+        "RESTRICTED": "Restricted"
+      },
+      "detail": {
+        "title": "Incident flow detail",
+        "loading": "Loading the incident timeline.",
+        "loadError": "The incident timeline could not be loaded.",
+        "correlationId": "Correlation ID",
+        "timeline": "Causal timeline",
+        "previous": "Previous incident",
+        "next": "Next incident",
+        "subject": "Subject",
+        "actor": "Actor",
+        "causation": "Causation event",
+        "rootEvent": "Flow root event",
+        "integrity": "Evidence hash",
+        "before": "Before",
+        "after": "After",
+        "metadata": "Governed metadata",
+        "envelopeVersion": "{{eventId}} / schema v{{version}}"
+      }
+    },
     "windows": {
       "H24": "24h",
       "D7": "7d",

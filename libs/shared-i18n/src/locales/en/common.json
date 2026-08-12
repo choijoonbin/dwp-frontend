@@ -69,5 +69,58 @@
     "unexpected": "An unexpected error occurred.",
     "loadFailed": "The requested data could not be loaded.",
     "operationFailed": "The operation could not be completed."
+  },
+  "savedViews": {
+    "label": "Saved views",
+    "saveCurrent": "Save current view",
+    "manage": "Manage saved views",
+    "default": "Default",
+    "loading": "Loading saved views",
+    "empty": "No saved views yet.",
+    "saving": "Saving",
+    "deleting": "Deleting",
+    "scope": {
+      "personal": "Personal",
+      "organization": "Organization",
+      "builtIn": "Built in"
+    },
+    "owner": {
+      "personal": "My view",
+      "organization": "Managed by your organization"
+    },
+    "editor": {
+      "createTitle": "Save the current view",
+      "editTitle": "Edit saved view",
+      "description": "Save search, filters, and presentation settings for quick reuse.",
+      "name": "View name",
+      "visibility": "Visibility",
+      "organizationHint": "Only company administrators can publish organization views.",
+      "personalOwnerHint": "Only the original owner can return an organization view to personal scope.",
+      "favorite": "Add to favorites",
+      "defaultView": "Use as the default for this page"
+    },
+    "manager": {
+      "title": "Manage saved views",
+      "description": "Organize favorites and personal defaults, and maintain views you can edit.",
+      "readOnly": "Read only",
+      "addFavorite": "Add to favorites",
+      "removeFavorite": "Remove from favorites",
+      "makeDefault": "Make default",
+      "removeDefault": "Remove default",
+      "edit": "Edit view",
+      "delete": "Delete view"
+    },
+    "deleteDialog": {
+      "title": "Delete saved view",
+      "description": "Delete ‘{{name}}’? This action cannot be undone."
+    },
+    "feedback": {
+      "created": "The current settings were saved as a new view.",
+      "updated": "The saved view was updated.",
+      "deleted": "The saved view was deleted.",
+      "saveFailed": "The view could not be saved.",
+      "deleteFailed": "The view could not be deleted.",
+      "preferenceFailed": "The view preference could not be changed."
+    }
   }
 }

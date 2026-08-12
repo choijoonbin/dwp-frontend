@@ -26,7 +26,6 @@ import {
   OperationalKpiStrip,
   PageCanvas,
   ResourcePageHeader,
-  SavedViewMenu,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -40,6 +39,7 @@ import Typography from '@mui/material/Typography';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { LiveSignal, SectionHeading } from '../features/work-hub/workspace-ui';
+import { GovernedSavedViewControl } from '../features/saved-views/governed-saved-view-control';
 
 import type {
   WorkspaceActivityActor as ActivityActor,
@@ -237,19 +237,31 @@ export default function ActivityPage() {
             </ToggleButtonGroup>
           }
           savedViews={
-            <SavedViewMenu
-              label={t('activityPage.views.label')}
-              personalLabel={t('activityPage.views.personal')}
-              sharedLabel={t('activityPage.views.shared')}
-              defaultLabel={t('activityPage.views.default')}
-              selectedViewId={actorFilter}
-              views={ACTOR_FILTERS.map((value) => ({
-                id: value,
+            <GovernedSavedViewControl
+              surfaceKey="workspace.activity"
+              currentConfiguration={{ q: query, actor: actorFilter }}
+              selectedBuiltInViewId={!query ? `builtin-${actorFilter}` : null}
+              builtInViews={ACTOR_FILTERS.map((value) => ({
+                id: `builtin-${value}`,
                 name: t(`activityPage.filters.${value}`),
-                scope: 'personal' as const,
+                configuration: { q: '', actor: value },
                 isDefault: value === 'all',
               }))}
-              onSelect={(view) => selectActor(view.id as ActorFilter)}
+              onApply={(configuration) => {
+                const nextActor =
+                  typeof configuration.actor === 'string' && isActorFilter(configuration.actor)
+                    ? configuration.actor
+                    : 'all';
+                const nextQuery = typeof configuration.q === 'string' ? configuration.q : '';
+                setSearchParams(
+                  mergeFilterSearchParams(searchParams, {
+                    q: nextQuery || null,
+                    actor: nextActor === 'all' ? null : nextActor,
+                    event: null,
+                  }),
+                  { replace: true }
+                );
+              }}
             />
           }
           activeFilters={

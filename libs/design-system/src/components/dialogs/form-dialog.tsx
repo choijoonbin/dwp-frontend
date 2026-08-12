@@ -27,6 +27,7 @@ export type FormDialogProps = {
   submitIntent?: ActionIntent;
   secondaryActions?: React.ReactNode;
   maxWidth?: DialogProps['maxWidth'];
+  showCancel?: boolean;
 };
 
 export function FormDialog({
@@ -44,6 +45,7 @@ export function FormDialog({
   submitIntent = 'primary',
   secondaryActions,
   maxWidth = 'sm',
+  showCancel = true,
 }: FormDialogProps) {
   const titleId = useId();
   const descriptionId = useId();
@@ -87,9 +89,11 @@ export function FormDialog({
         >
           {secondaryActions && <Box>{secondaryActions}</Box>}
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <ActionButton intent="quiet" onClick={onClose} disabled={busy}>
-              {cancelLabel}
-            </ActionButton>
+            {showCancel && (
+              <ActionButton intent="quiet" onClick={onClose} disabled={busy}>
+                {cancelLabel}
+              </ActionButton>
+            )}
             <ActionButton
               type="submit"
               intent={submitIntent}

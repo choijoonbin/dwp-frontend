@@ -16,6 +16,85 @@ export type AuditCategory =
   | 'SYSTEM_EVENT';
 export type AuditSeverity = 'ALL' | 'INFO' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type AuditOutcome = 'ALL' | 'SUCCESS' | 'DENIED' | 'FAILED';
+export type EventDomain =
+  | 'IDENTITY_ACCESS'
+  | 'PEOPLE_WORKFORCE'
+  | 'PLATFORM_WORKSPACE'
+  | 'PROVIDER_OPERATIONS'
+  | 'AI_AUTOMATION'
+  | 'DATA_GOVERNANCE';
+export type EventClassification = 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED';
+
+export type EventEnvelope = {
+  eventId: string;
+  eventType: string;
+  schemaVersion: string;
+  occurredAt: string;
+  ingestedAt: string;
+  tenantId: number;
+  domain: EventDomain;
+  classification: EventClassification;
+  sourceService: string;
+  sourceModule: string;
+  subjectType: string;
+  subjectId: string;
+  subjectDisplayName?: string | null;
+  actorType: string;
+  actorId?: string | null;
+  actorDisplayName?: string | null;
+  outcome: Exclude<AuditOutcome, 'ALL'>;
+  severity: Exclude<AuditSeverity, 'ALL'>;
+  riskScore: number;
+  correlationId: string;
+  causationId?: string | null;
+  traceId?: string | null;
+  beforeState: Record<string, unknown>;
+  afterState: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+  recordHash: string;
+};
+
+export type EventCorrelation = {
+  correlationId: string;
+  firstOccurredAt: string;
+  lastOccurredAt: string;
+  eventCount: number;
+  domainCount: number;
+  serviceCount: number;
+  domains: EventDomain[];
+  classifications: EventClassification[];
+  sourceServices: string[];
+  outcomes: Array<Exclude<AuditOutcome, 'ALL'>>;
+  latestEventType: string;
+  latestSubjectType: string;
+  latestSubjectId: string;
+  latestSubjectDisplayName?: string | null;
+  maxSeverity: Exclude<AuditSeverity, 'ALL'>;
+  maxRiskScore: number;
+  attentionRequired: boolean;
+};
+
+export type EventCorrelationPage = {
+  content: EventCorrelation[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+};
+
+export type EventCorrelationDetail = {
+  summary: EventCorrelation;
+  events: EventEnvelope[];
+};
+
+export type EventCorrelationFilters = {
+  window: AuditWindow;
+  domain?: EventDomain | 'ALL';
+  classification?: EventClassification | 'ALL';
+  query?: string;
+  page?: number;
+  size?: number;
+};
 
 export type AuditEvent = {
   eventId: string;
@@ -279,6 +358,30 @@ export async function listAuditEvents(filters: AuditFilters): Promise<AuditEvent
 export async function getAuditEvent(eventId: string): Promise<AuditEvent> {
   const response = await axiosInstance.get<ApiResponse<AuditEvent>>(
     `/api/platform/v1/admin/audit-control/events/${encodeURIComponent(eventId)}`
+  );
+  return response.data.data;
+}
+
+export async function listEventCorrelations(
+  filters: EventCorrelationFilters
+): Promise<EventCorrelationPage> {
+  const search = new URLSearchParams({ window: filters.window });
+  Object.entries(filters).forEach(([key, value]) => {
+    if (key !== 'window' && value !== undefined && value !== '') search.set(key, String(value));
+  });
+  const response = await axiosInstance.get<ApiResponse<EventCorrelationPage>>(
+    `/api/platform/v1/admin/audit-control/event-correlations?${search.toString()}`
+  );
+  return response.data.data;
+}
+
+export async function getEventCorrelationDetail(
+  correlationId: string
+): Promise<EventCorrelationDetail> {
+  const response = await axiosInstance.get<ApiResponse<EventCorrelationDetail>>(
+    `/api/platform/v1/admin/audit-control/event-correlations/detail?correlationId=${encodeURIComponent(
+      correlationId
+    )}`
   );
   return response.data.data;
 }

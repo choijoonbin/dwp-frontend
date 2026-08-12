@@ -137,6 +137,7 @@
     "EXECUTING": "Executing",
     "PARTIAL": "Partially complete",
     "SUCCEEDED": "Succeeded",
+    "SUCCESS": "Success",
     "PENDING": "Pending",
     "RUNNING": "Running",
     "SKIPPED": "Skipped",
@@ -193,6 +194,27 @@
       "CRITICAL": "Immediate response is required"
     },
     "lastEvaluated": "Last evaluated {{value}}",
+    "context": {
+      "label": "Operations command scope",
+      "scope": "Scope",
+      "global": "All customer environments",
+      "time": "Time context",
+      "snapshot": "Current snapshot",
+      "coverage": "Coverage",
+      "coverageValue": "{{organizations}} companies · {{tenants}} tenants"
+    },
+    "live": {
+      "live": "Auto-refreshing",
+      "syncing": "Synchronizing latest state"
+    },
+    "pulse": {
+      "HEALTHY": "All customer environments are operating within normal ranges with no active incidents.",
+      "ATTENTION": "Review {{actions}} actions and {{incidents}} incidents in impact order.",
+      "CRITICAL": "Respond immediately to {{critical}} critical actions and {{incidents}} incidents.",
+      "incidents": "{{count}} active incidents",
+      "actions": "{{count}} queued actions",
+      "openPriority": "Open top priority"
+    },
     "expiringContracts_one": "1 renewal within 90 days",
     "expiringContracts_other": "{{count}} renewals within 90 days",
     "metrics": {
@@ -204,30 +226,92 @@
       "incidents": "Active incidents",
       "support": "Active support access"
     },
+    "signals": {
+      "estate": "Customer environment readiness",
+      "estateDetail": "Runtime environments for {{count}} customer companies",
+      "tenantReadiness": "{{value}}% of tenants active",
+      "openEstate": "Open customers and tenants",
+      "services": "Service readiness",
+      "servicesDetail": "{{exceptions}} degraded or failed instances",
+      "serviceReadiness": "{{value}}% of service instances healthy",
+      "openServices": "Open service operations",
+      "customerImpact": "Active customer-impact incidents",
+      "customerImpactDetail": "{{count}} service-tenant impact signals",
+      "openIncidents": "Open incidents",
+      "controlLoad": "Changes awaiting control",
+      "controlLoadDetail": "{{support}} support access · {{objectives}} at-risk SLOs",
+      "openChanges": "Open change control"
+    },
+    "severity": {
+      "CRITICAL": "Critical",
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
     "queue": {
       "title": "Priority action queue",
       "description": "Operational actions ordered by customer impact and risk.",
-      "empty": "There are no operational actions requiring attention."
+      "emptyTitle": "No urgent actions in this scope",
+      "empty": "Maintain the current posture while waiting for the next automated evaluation.",
+      "filterLabel": "Priority action severity filter",
+      "filters": {
+        "all": "All",
+        "critical": "Immediate",
+        "review": "Review"
+      }
     },
     "categories": {
       "CHANGE": "Change control",
       "SERVICE_HEALTH": "Service health",
       "IDENTITY": "Domain & identity",
-      "COMMERCIAL": "Contract & renewal"
+      "COMMERCIAL": "Contract & renewal",
+      "RELIABILITY": "Reliability objective",
+      "GOVERNANCE_DRIFT": "Governance drift",
+      "MAINTENANCE": "Planned maintenance"
     },
     "services": {
       "title": "Service portfolio health",
       "description": "Readiness across every tenant service instance.",
       "open": "Service operations",
-      "instances": "{{healthy}} healthy of {{total}}"
+      "instances": "{{healthy}} healthy of {{total}}",
+      "healthy": "Healthy",
+      "pending": "Provisioning",
+      "degraded": "Degraded",
+      "failed": "Failed",
+      "allHealthyTitle": "All services are within normal ranges",
+      "allHealthyDetail": "{{services}} services and {{instances}} instances are ready.",
+      "impacted": "{{count}} impacted tenants",
+      "breakdown": "{{name}}: {{healthy}} healthy, {{pending}} provisioning, {{degraded}} degraded, {{failed}} failed"
     },
     "cells": {
       "title": "Deployment cell capacity",
       "description": "Tenant placement and expansion headroom by region.",
-      "tenants": "tenants"
+      "tenants": "tenants",
+      "instances": "{{count}} service instances",
+      "tenantCount": "{{count}} tenants / {{capacity}} capacity"
+    },
+    "reliability": {
+      "title": "Service reliability and error budget",
+      "description": "Surface risk using current SLO achievement and remaining error budget.",
+      "open": "Reliability details",
+      "unavailable": "Only reliability details are unavailable. Other operational information is current.",
+      "healthy": "{{count}} healthy SLOs",
+      "risk": "{{count}} at-risk SLOs",
+      "drift": "{{count}} drift findings",
+      "empty": "No active reliability objectives are registered.",
+      "days": " days",
+      "achieved": "{{value}}% achieved / {{target}}% target",
+      "budgetLabel": "Remaining error budget for {{name}}"
+    },
+    "estateMix": {
+      "title": "Customer environment mix",
+      "description": "Regional and service-tier distribution in the current operating scope.",
+      "regions": "Data regions",
+      "tiers": "Service tiers"
     },
     "activity": {
-      "title": "Recent privileged activity"
+      "title": "Recent privileged activity",
+      "description": "Review the operator, target tenant, and outcome together."
     }
   },
   "tenants": {

@@ -1,7 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import {
+  ASK_RUNTIME_FIXTURE,
   DEFAULT_APP_PERMISSIONS,
+  mockAskRuntime,
   mockRuntimeNavigation,
   WORKSPACE_QUEUE_FIXTURE,
 } from './support/runtime-access';
@@ -18,52 +20,6 @@ const authPolicy = {
     localLoginEnabled: true,
     ssoLoginEnabled: false,
     requireMfa: false,
-  },
-};
-
-const agentPlan = {
-  status: 'SUCCESS',
-  message: 'Plan preview prepared.',
-  success: true,
-  data: {
-    runId: 'run-ref-1042',
-    auditId: 'AUD-REF-1042',
-    planHash: '9f2c4a8e71b356d0c84f2a196e735bd1a02c94ef6b18357d4e90a2c7138f65bd',
-    correlationId: 'correlation-ref-1042',
-    state: 'REVIEW',
-    riskTier: 'L2',
-    approvalRequired: true,
-    mutationAllowed: false,
-    summary: 'Prepare a governed workspace request preview.',
-    steps: [
-      {
-        id: 'verify-sources',
-        title: 'Verify source permissions and freshness',
-        tool: 'policy.check',
-        description: 'Stop if a source is missing, stale, or outside the user scope.',
-      },
-      {
-        id: 'prepare-preview',
-        title: 'Prepare the workspace request preview',
-        tool: 'tool.preview',
-        description: 'Build a reversible preview without changing the source system.',
-      },
-      {
-        id: 'human-gate',
-        title: 'Wait for explicit user approval',
-        tool: 'workflow.human-approval',
-        description: 'A separate approved command is required before any mutation.',
-      },
-    ],
-    sourceReferences: [],
-    referenceMode: true,
-    agentRegistry: {
-      entryKey: 'REFERENCE_PLANNER',
-      revision: 2,
-      artifactVersion: '1.1.0',
-      riskTier: 'MEDIUM',
-      resolution: 'ACTIVE',
-    },
   },
 };
 
@@ -283,9 +239,7 @@ async function mockAuthenticated(page: Page, locale = 'en') {
       }),
     })
   );
-  await page.route('**/api/agent/v1/plans/preview', (route) =>
-    route.fulfill({ contentType: 'application/json', body: JSON.stringify(agentPlan) })
-  );
+  await mockAskRuntime(page);
 }
 
 async function mockSessions(page: Page) {
@@ -791,9 +745,9 @@ test('Ask reference visual baseline', async ({ page }) => {
 
   await page.goto('/ask');
   await page.getByRole('button', { name: 'Can I work remotely next Friday?' }).click();
-  await expect(page.getByRole('heading', { name: 'Request review' })).toBeVisible();
-  await expect(page.getByText('AI answers and source citations are not enabled yet')).toBeVisible();
-  await expect(page.getByText('Verified sources')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Governed answer' })).toBeVisible();
+  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Verified sources (2)' })).toBeVisible();
   await expect(page.getByText('AUD-REF-1042')).toBeVisible();
   await expect(page).toHaveScreenshot('ask-reference.png', {
     animations: 'disabled',

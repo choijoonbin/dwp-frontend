@@ -141,6 +141,7 @@
     "EXECUTING": "실행 중",
     "PARTIAL": "부분 완료",
     "SUCCEEDED": "성공",
+    "SUCCESS": "성공",
     "PENDING": "대기",
     "RUNNING": "실행 중",
     "SKIPPED": "건너뜀",
@@ -197,6 +198,27 @@
       "CRITICAL": "즉시 대응이 필요합니다"
     },
     "lastEvaluated": "최근 평가 {{value}}",
+    "context": {
+      "label": "운영 지휘 범위",
+      "scope": "범위",
+      "global": "전체 고객 환경",
+      "time": "시간 기준",
+      "snapshot": "현재 스냅샷",
+      "coverage": "관측 범위",
+      "coverageValue": "회사 {{organizations}} · 테넌트 {{tenants}}"
+    },
+    "live": {
+      "live": "자동 갱신 중",
+      "syncing": "최신 상태 동기화 중"
+    },
+    "pulse": {
+      "HEALTHY": "활성 인시던트 없이 전체 고객 환경이 정상 범위에서 운영 중입니다.",
+      "ATTENTION": "조치 {{actions}}건과 인시던트 {{incidents}}건을 영향도 순서로 검토해야 합니다.",
+      "CRITICAL": "심각 조치 {{critical}}건과 인시던트 {{incidents}}건에 즉시 대응해야 합니다.",
+      "incidents": "활성 인시던트 {{count}}",
+      "actions": "대기 조치 {{count}}",
+      "openPriority": "최우선 조치 열기"
+    },
     "expiringContracts_one": "90일 이내 갱신 1건",
     "expiringContracts_other": "90일 이내 갱신 {{count}}건",
     "metrics": {
@@ -208,30 +230,92 @@
       "incidents": "활성 인시던트",
       "support": "활성 지원 접근"
     },
+    "signals": {
+      "estate": "고객 환경 준비도",
+      "estateDetail": "고객 회사 {{count}}곳의 실행 환경",
+      "tenantReadiness": "활성 테넌트 비율 {{value}}%",
+      "openEstate": "고객 및 테넌트 열기",
+      "services": "서비스 준비도",
+      "servicesDetail": "성능 저하·실패 인스턴스 {{exceptions}}개",
+      "serviceReadiness": "정상 서비스 인스턴스 {{value}}%",
+      "openServices": "서비스 운영 열기",
+      "customerImpact": "활성 고객 영향 사건",
+      "customerImpactDetail": "서비스-테넌트 영향 신호 {{count}}건",
+      "openIncidents": "인시던트 열기",
+      "controlLoad": "변경 통제 대기",
+      "controlLoadDetail": "지원 접근 {{support}} · 위험 SLO {{objectives}}",
+      "openChanges": "변경 통제 열기"
+    },
+    "severity": {
+      "CRITICAL": "심각",
+      "HIGH": "높음",
+      "MEDIUM": "보통",
+      "LOW": "낮음"
+    },
     "queue": {
       "title": "우선 조치 큐",
       "description": "서비스 영향과 위험도 기준으로 정렬된 운영 조치입니다.",
-      "empty": "현재 조치가 필요한 운영 항목이 없습니다."
+      "emptyTitle": "선택한 범위에 긴급 조치가 없습니다",
+      "empty": "현재 상태를 유지하며 다음 자동 평가를 기다립니다.",
+      "filterLabel": "우선 조치 위험도 필터",
+      "filters": {
+        "all": "전체",
+        "critical": "즉시 대응",
+        "review": "검토"
+      }
     },
     "categories": {
       "CHANGE": "변경 통제",
       "SERVICE_HEALTH": "서비스 상태",
       "IDENTITY": "도메인 및 ID",
-      "COMMERCIAL": "계약 및 갱신"
+      "COMMERCIAL": "계약 및 갱신",
+      "RELIABILITY": "신뢰성 목표",
+      "GOVERNANCE_DRIFT": "정책 드리프트",
+      "MAINTENANCE": "예정 유지보수"
     },
     "services": {
       "title": "서비스 포트폴리오 상태",
       "description": "모든 테넌트의 서비스 인스턴스 준비 상태입니다.",
       "open": "서비스 운영",
-      "instances": "정상 {{healthy}} / 전체 {{total}}"
+      "instances": "정상 {{healthy}} / 전체 {{total}}",
+      "healthy": "정상",
+      "pending": "구성 중",
+      "degraded": "성능 저하",
+      "failed": "실패",
+      "allHealthyTitle": "모든 서비스가 정상 범위입니다",
+      "allHealthyDetail": "서비스 {{services}}개 · 인스턴스 {{instances}}개가 준비 완료 상태입니다.",
+      "impacted": "영향 테넌트 {{count}}",
+      "breakdown": "{{name}}: 정상 {{healthy}}, 구성 중 {{pending}}, 성능 저하 {{degraded}}, 실패 {{failed}}"
     },
     "cells": {
       "title": "배치 셀 용량",
       "description": "리전별 테넌트 배치율과 확장 여유입니다.",
-      "tenants": "테넌트"
+      "tenants": "테넌트",
+      "instances": "서비스 인스턴스 {{count}}",
+      "tenantCount": "테넌트 {{count}} / 용량 {{capacity}}"
+    },
+    "reliability": {
+      "title": "서비스 신뢰성 및 오류 예산",
+      "description": "현재 SLO 달성률과 남은 오류 예산을 기준으로 위험을 선별합니다.",
+      "open": "신뢰성 상세",
+      "unavailable": "신뢰성 세부 정보만 불러오지 못했습니다. 다른 운영 정보는 최신 상태입니다.",
+      "healthy": "정상 SLO {{count}}",
+      "risk": "위험 SLO {{count}}",
+      "drift": "정책 드리프트 {{count}}",
+      "empty": "등록된 활성 신뢰성 목표가 없습니다.",
+      "days": "일",
+      "achieved": "달성 {{value}}% / 목표 {{target}}%",
+      "budgetLabel": "{{name}} 남은 오류 예산"
+    },
+    "estateMix": {
+      "title": "고객 환경 구성",
+      "description": "운영 범위의 지역 및 서비스 등급 분포입니다.",
+      "regions": "데이터 리전",
+      "tiers": "서비스 등급"
     },
     "activity": {
-      "title": "최근 고권한 활동"
+      "title": "최근 고권한 활동",
+      "description": "운영자, 대상 테넌트와 결과를 함께 확인합니다."
     }
   },
   "tenants": {

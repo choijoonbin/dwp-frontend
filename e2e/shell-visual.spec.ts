@@ -82,6 +82,7 @@ test('provider control plane keeps global scope visually distinct', async ({ pag
   await page.goto('/provider/overview');
   await expect(page.getByTestId('provider-header')).toBeVisible();
   await expect(page.getByRole('region', { name: 'Global operating metrics' })).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('Auto-refreshing', { timeout: 15_000 });
   await expect(page).toHaveScreenshot('shell-provider-en-compact.png', {
     animations: 'disabled',
     caret: 'hide',

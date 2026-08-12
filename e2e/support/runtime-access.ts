@@ -210,6 +210,62 @@ export const WORKSPACE_APPS_FIXTURE = [
   },
 ];
 
+export const ASK_RUNTIME_FIXTURE = {
+  runId: 'run-ref-1042',
+  auditId: 'AUD-REF-1042',
+  requestId: 'request-ref-1042',
+  correlationId: 'correlation-ref-1042',
+  state: 'COMPLETED',
+  answer:
+    'Your verified flexible work guidance allows remote work next Friday after manager acknowledgement.',
+  confidence: 'HIGH',
+  citations: [
+    {
+      sourceId: 'src-01',
+      sourceType: 'MAIL',
+      title: 'Flexible work guidance',
+      sourceSystem: 'Microsoft 365',
+      route: null,
+      occurredAt: '2026-08-10T08:00:00Z',
+    },
+    {
+      sourceId: 'src-02',
+      sourceType: 'CALENDAR',
+      title: 'Manager acknowledgement window',
+      sourceSystem: 'Microsoft 365',
+      route: null,
+      occurredAt: '2026-08-11T01:00:00Z',
+    },
+  ],
+  sourceCount: 2,
+  policy: {
+    outcome: 'ALLOW',
+    riskTier: 'L1',
+    code: 'READ_ONLY_GROUNDED_ANSWER',
+    explanation: 'Read-only evidence is available within the verified session scope.',
+    modelAllowed: true,
+    mutationAllowed: false,
+  },
+  modelRoute: {
+    state: 'COMPLETED',
+    provider: 'OPENAI',
+    model: 'gpt-test-2026-08-01',
+    inputTokens: 142,
+    outputTokens: 31,
+    totalTokens: 173,
+    latencyMs: 286,
+  },
+  agentRegistry: {
+    entryKey: 'DWP_ASSISTANT',
+    revision: 2,
+    artifactVersion: 'ask-runtime-v1',
+    riskTier: 'MEDIUM',
+    resolution: 'ACTIVE',
+  },
+  statusCode: 'ANSWER_GROUNDED',
+  completedAt: '2026-08-11T01:00:01Z',
+} as const;
+
 function success(data: unknown) {
   return JSON.stringify({ status: 'SUCCESS', message: 'OK', data });
 }
@@ -244,6 +300,21 @@ export async function mockWorkspaceRuntime(page: Page): Promise<void> {
       ),
     });
   });
+  await page.route('**/api/platform/v1/workspace/saved-views**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: success(route.request().method() === 'GET' ? [] : null),
+    })
+  );
+}
+
+export async function mockAskRuntime(page: Page): Promise<void> {
+  await page.route('**/api/agent/v1/ask', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: success(ASK_RUNTIME_FIXTURE),
+    })
+  );
 }
 
 export async function mockRuntimeCodeCatalog(page: Page): Promise<void> {

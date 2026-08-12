@@ -166,6 +166,68 @@
           "hex": "#B42318"
         }
       }
+    },
+    "data": {
+      "cobalt": {
+        "$type": "color",
+        "$description": "Primary comparison series and selected data.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.141, 0.341, 0.839],
+          "alpha": 1,
+          "hex": "#2457D6"
+        }
+      },
+      "teal": {
+        "$type": "color",
+        "$description": "Healthy, verified, and completed data.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.039, 0.498, 0.4],
+          "alpha": 1,
+          "hex": "#0A7F66"
+        }
+      },
+      "saffron": {
+        "$type": "color",
+        "$description": "Attention, approaching threshold, and planned change data.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.78, 0.475, 0.047],
+          "alpha": 1,
+          "hex": "#C7790C"
+        }
+      },
+      "coral": {
+        "$type": "color",
+        "$description": "Critical customer impact and failed data.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.82, 0.231, 0.216],
+          "alpha": 1,
+          "hex": "#D13B37"
+        }
+      },
+      "cyan": {
+        "$type": "color",
+        "$description": "Observation and secondary comparison data.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.047, 0.522, 0.651],
+          "alpha": 1,
+          "hex": "#0C85A6"
+        }
+      },
+      "violet": {
+        "$type": "color",
+        "$description": "Independent categorical comparison data only.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.431, 0.337, 0.812],
+          "alpha": 1,
+          "hex": "#6E56CF"
+        }
+      }
     }
   },
   "dimension": {

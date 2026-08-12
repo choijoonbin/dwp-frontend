@@ -47,6 +47,7 @@ export function OperationalKpiStrip({
         const body = (
           <Box sx={{ width: 1, px: { xs: 1.5, md: 2.25 }, py: 1.75, textAlign: 'left' }}>
             <Typography
+              component="p"
               variant="h5"
               sx={{ color: TONE_COLOR[item.tone ?? 'neutral'], fontVariantNumeric: 'tabular-nums' }}
             >

@@ -26,6 +26,7 @@
 - `01-product/R1 AI Employee Work Hub MVP PRD.md`
 - `01-product/개인화 홈 및 앱 경험 기획.md`
 - `02-research/참고 자료 평가 원칙.md`
+- `02-research/DWP Experience Modernization Roadmap 2026-08-12.md`
 - `03-architecture/R0 기반 의사결정.md`
 - `03-architecture/R0 플랫폼 통합 및 Agent Runtime ADR.md`
 - `03-architecture/R0 Contract Spike 1 - Governed Plan Preview.md`
@@ -38,6 +39,7 @@
 - `03-architecture/R0 API 이력 및 운영 관측 ADR.md`
 - `04-design-system/DWP UI Foundation 전략.md`
 - `04-design-system/DWP Premium Experience Direction.md`
+- `04-design-system/DWP Product Experience Rules.md`
 - `04-design-system/프론트엔드 UI UX 기술검토.md`
 - `04-design-system/DESIGN_SYSTEM.md`
 - `04-design-system/Figma 운영 가이드.md`

@@ -147,9 +147,7 @@ function ConnectorDialog({
   const [displayName, setDisplayName] = useState('Microsoft 365');
   const [providerTenantId, setProviderTenantId] = useState('organizations');
   const [clientId, setClientId] = useState('');
-  const [credentialReference, setCredentialReference] = useState(
-    'env:DWP_MS_GRAPH_CLIENT_SECRET'
-  );
+  const [credentialReference, setCredentialReference] = useState('env:DWP_MS_GRAPH_CLIENT_SECRET');
   const [redirectUri, setRedirectUri] = useState(
     `${window.location.origin}/integrations/microsoft-365/callback`
   );
@@ -161,9 +159,7 @@ function ConnectorDialog({
     setDisplayName(connector?.displayName ?? 'Microsoft 365');
     setProviderTenantId(connector?.providerTenantId ?? 'organizations');
     setClientId(connector?.clientId ?? '');
-    setCredentialReference(
-      connector?.credentialReference ?? 'env:DWP_MS_GRAPH_CLIENT_SECRET'
-    );
+    setCredentialReference(connector?.credentialReference ?? 'env:DWP_MS_GRAPH_CLIENT_SECRET');
     setRedirectUri(
       connector?.redirectUri ?? `${window.location.origin}/integrations/microsoft-365/callback`
     );
@@ -392,7 +388,11 @@ export function ProductivityConnectorManager() {
           bgcolor: 'background.paper',
         }}
       >
-        <Metric icon={PlugZap} label={t('productivity.metrics.connectors')} value={overview.connectors} />
+        <Metric
+          icon={PlugZap}
+          label={t('productivity.metrics.connectors')}
+          value={overview.connectors}
+        />
         <Metric
           icon={CheckCircle2}
           label={t('productivity.metrics.active')}
@@ -436,10 +436,7 @@ export function ProductivityConnectorManager() {
           <ToggleButton value="policy">{t('productivity.views.policy')}</ToggleButton>
         </ToggleButtonGroup>
         <Stack direction="row" gap={1} justifyContent="flex-end">
-          <ActionIconButton
-            label={t('common.actions.refresh')}
-            onClick={() => invalidate()}
-          >
+          <ActionIconButton label={t('common.actions.refresh')} onClick={() => invalidate()}>
             <RefreshCw size={18} />
           </ActionIconButton>
           <ActionButton
@@ -567,7 +564,8 @@ export function ProductivityConnectorManager() {
                       onClick={() =>
                         runAction(
                           'suspend',
-                          () => suspendProductivityConnector(selected.connectorId, selected.version),
+                          () =>
+                            suspendProductivityConnector(selected.connectorId, selected.version),
                           t('productivity.toasts.suspended')
                         )
                       }
@@ -582,7 +580,8 @@ export function ProductivityConnectorManager() {
                       onClick={() =>
                         runAction(
                           'activate',
-                          () => activateProductivityConnector(selected.connectorId, selected.version),
+                          () =>
+                            activateProductivityConnector(selected.connectorId, selected.version),
                           t('productivity.toasts.activated')
                         )
                       }
@@ -611,8 +610,15 @@ export function ProductivityConnectorManager() {
               >
                 <Stack gap={2.5} sx={{ p: 2.5, borderRight: { md: 1 }, borderColor: 'divider' }}>
                   <Box>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2}>
-                      <Typography variant="subtitle2">{t('productivity.readiness.title')}</Typography>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      gap={2}
+                    >
+                      <Typography variant="subtitle2">
+                        {t('productivity.readiness.title')}
+                      </Typography>
                       <Typography variant="caption" color="text.secondary">
                         {readinessChecks}/4
                       </Typography>
@@ -643,14 +649,29 @@ export function ProductivityConnectorManager() {
                       }}
                     >
                       {[
-                        [UsersRound, t('productivity.flow.user'), t('productivity.flow.userDetail')],
-                        [KeyRound, t('productivity.flow.consent'), t('productivity.flow.consentDetail')],
+                        [
+                          UsersRound,
+                          t('productivity.flow.user'),
+                          t('productivity.flow.userDetail'),
+                        ],
+                        [
+                          KeyRound,
+                          t('productivity.flow.consent'),
+                          t('productivity.flow.consentDetail'),
+                        ],
                         [Cloud, t('productivity.flow.delta'), t('productivity.flow.deltaDetail')],
-                        [DatabaseZap, t('productivity.flow.projection'), t('productivity.flow.projectionDetail')],
+                        [
+                          DatabaseZap,
+                          t('productivity.flow.projection'),
+                          t('productivity.flow.projectionDetail'),
+                        ],
                       ].map(([Icon, label, detail]) => {
                         const FlowIcon = Icon as typeof UsersRound;
                         return (
-                          <Box key={String(label)} sx={{ p: 1.25, border: 1, borderColor: 'divider' }}>
+                          <Box
+                            key={String(label)}
+                            sx={{ p: 1.25, border: 1, borderColor: 'divider' }}
+                          >
                             <FlowIcon size={17} aria-hidden="true" />
                             <Typography variant="subtitle2" sx={{ mt: 0.75 }}>
                               {String(label)}
@@ -688,7 +709,10 @@ export function ProductivityConnectorManager() {
                 <Stack gap={2} sx={{ p: 2.5 }}>
                   <Typography variant="subtitle2">{t('productivity.signals.title')}</Typography>
                   {[
-                    [t('productivity.signals.policy'), t(`productivity.policyStates.${selected.policyState}`)],
+                    [
+                      t('productivity.signals.policy'),
+                      t(`productivity.policyStates.${selected.policyState}`),
+                    ],
                     [t('productivity.signals.auth'), t('productivity.auth.DELEGATED')],
                     [t('productivity.signals.lastCheck'), selected.lastConfigurationCheckAt],
                     [t('productivity.signals.lastSync'), selected.lastSuccessfulSyncAt],
@@ -745,10 +769,15 @@ export function ProductivityConnectorManager() {
                       label={t(`productivity.consentStates.${subject.consentState}`)}
                     />
                   </TableCell>
-                  <TableCell>{subject.grantedScopes.join(', ') || t('productivity.notAvailable')}</TableCell>
+                  <TableCell>
+                    {subject.grantedScopes.join(', ') || t('productivity.notAvailable')}
+                  </TableCell>
                   <TableCell>
                     {subject.tokenExpiresAt
-                      ? formatDate(subject.tokenExpiresAt, { dateStyle: 'short', timeStyle: 'short' })
+                      ? formatDate(subject.tokenExpiresAt, {
+                          dateStyle: 'short',
+                          timeStyle: 'short',
+                        })
                       : t('productivity.notAvailable')}
                   </TableCell>
                   <TableCell>
@@ -792,7 +821,9 @@ export function ProductivityConnectorManager() {
               <Stack direction="row" alignItems="center" gap={1}>
                 {run.resourceKind === 'MAIL' ? <Mail size={17} /> : <CalendarDays size={17} />}
                 <Box>
-                  <Typography variant="subtitle2">{t(`productivity.resources.${run.resourceKind}`)}</Typography>
+                  <Typography variant="subtitle2">
+                    {t(`productivity.resources.${run.resourceKind}`)}
+                  </Typography>
                   <Typography variant="caption" color="text.secondary">
                     {run.syncMode}
                   </Typography>
@@ -800,14 +831,23 @@ export function ProductivityConnectorManager() {
               </Stack>
               <Chip
                 size="small"
-                color={run.runState === 'SUCCEEDED' ? 'success' : run.runState === 'FAILED' ? 'error' : 'warning'}
+                color={
+                  run.runState === 'SUCCEEDED'
+                    ? 'success'
+                    : run.runState === 'FAILED'
+                      ? 'error'
+                      : 'warning'
+                }
                 label={t(`productivity.runStates.${run.runState}`)}
                 sx={{ justifySelf: 'start' }}
               />
               <Stack direction="row" gap={2} flexWrap="wrap">
                 <Typography variant="caption">+{run.upsertCount}</Typography>
                 <Typography variant="caption">−{run.deleteCount}</Typography>
-                <Typography variant="caption" color={run.errorCount ? 'error.main' : 'text.secondary'}>
+                <Typography
+                  variant="caption"
+                  color={run.errorCount ? 'error.main' : 'text.secondary'}
+                >
                   {t('productivity.runs.errors', { count: run.errorCount })}
                 </Typography>
                 {run.safeErrorCode && (
@@ -840,13 +880,28 @@ export function ProductivityConnectorManager() {
           }}
         >
           {[
-            [ShieldCheck, t('productivity.policy.leastPrivilege'), t('productivity.policy.leastPrivilegeDetail')],
-            [KeyRound, t('productivity.policy.secretIsolation'), t('productivity.policy.secretIsolationDetail')],
-            [DatabaseZap, t('productivity.policy.minimumProjection'), t('productivity.policy.minimumProjectionDetail')],
+            [
+              ShieldCheck,
+              t('productivity.policy.leastPrivilege'),
+              t('productivity.policy.leastPrivilegeDetail'),
+            ],
+            [
+              KeyRound,
+              t('productivity.policy.secretIsolation'),
+              t('productivity.policy.secretIsolationDetail'),
+            ],
+            [
+              DatabaseZap,
+              t('productivity.policy.minimumProjection'),
+              t('productivity.policy.minimumProjectionDetail'),
+            ],
           ].map(([Icon, title, description]) => {
             const PolicyIcon = Icon as typeof ShieldCheck;
             return (
-              <Box key={String(title)} sx={{ p: 2.5, borderRight: { md: 1 }, borderColor: 'divider' }}>
+              <Box
+                key={String(title)}
+                sx={{ p: 2.5, borderRight: { md: 1 }, borderColor: 'divider' }}
+              >
                 <PolicyIcon size={20} />
                 <Typography variant="subtitle1" sx={{ mt: 1.25 }}>
                   {String(title)}

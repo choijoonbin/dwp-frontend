@@ -49,6 +49,7 @@ export function ProviderStatusChip({ state }: { state: string }) {
     'ACTIVE',
     'READY',
     'SUCCEEDED',
+    'SUCCESS',
     'VERIFIED',
     'HEALTHY',
     'APPROVED',
@@ -151,7 +152,9 @@ export function ProviderSectionHeading({
           </Typography>
         )}
       </Box>
-      {action}
+      {action && (
+        <Box sx={{ alignSelf: { xs: 'flex-start', sm: 'auto' }, flexShrink: 0 }}>{action}</Box>
+      )}
     </Stack>
   );
 }

@@ -60,8 +60,11 @@ Cache·Index·보존·삭제 계약을 기록한다.
 
 ### G2. Experience and Technical Design
 
+- 주 사용자, 화면이 답할 업무 질문, 주 행동과 Page Archetype
 - Route·Navigation·Page Title과 정보구조
+- 정보 밀도를 Simple·Structured·Dense 중에서 선택한 근거
 - Desktop·Tablet·Mobile 화면, 상태와 Keyboard Flow
+- Dashboard의 Scope·기간·Freshness·Baseline·Drill-down 또는 단순 화면 유지 근거
 - Figma File·Page·Frame URL과 Design System Component Mapping
 - Table·Entity·Index·Migration·Retention·Deletion 설계
 - API, Error, Idempotency, Permission, Audit와 Observability 계약
@@ -83,6 +86,8 @@ Cache·Index·보존·삭제 계약을 기록한다.
 ### G4. Release Ready
 
 - 자동 Test, Axe, Keyboard, Zoom과 Visual Regression 통과
+- 1440·1280·390·320px와 200% Zoom에서 첫 Viewport·Overflow·Partial Failure 증거 확보
+- 실제 계약이 없는 Trend·Insight·AI·성공 상태가 화면에 없음을 검증
 - Security·Privacy·License·SBOM 검사 통과
 - SLO, Dashboard, Alert, Runbook과 Support Handoff 완료
 - Pilot KPI와 Feedback 수집 준비
@@ -108,6 +113,9 @@ Cache·Index·보존·삭제 계약을 기록한다.
 - 외부 Asset, Source, 문구와 화면 Layout을 그대로 저장소에 복사하지 않는다.
 - 채택 시 DWP Token, Component, 접근성, 권한과 데이터 계약으로 다시 설계한다.
 - 기각한 Pattern도 사유를 남겨 같은 논의를 반복하지 않는다.
+
+Frontend Experience 판단과 화면별 완료 계약은
+`docs/04-design-system/DWP Product Experience Rules.md`를 필수 기준으로 사용한다.
 
 ## 6. 변경 통제
 

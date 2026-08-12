@@ -14,7 +14,6 @@ import {
   EnterpriseDataGrid,
   FilterBar,
   mergeFilterSearchParams,
-  SavedViewMenu,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -33,6 +32,7 @@ import Typography from '@mui/material/Typography';
 import { AdminPanelError, AdminPanelLoading } from '../../admin/admin-ui';
 import { isIsoDate } from '../organization/organization-navigation';
 import { PersonAvatar } from './person-avatar';
+import { GovernedSavedViewControl } from '../../saved-views/governed-saved-view-control';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { OrganizationChart, PersonDetail, PersonSummary } from '@dwp-frontend/shared-utils';
@@ -729,34 +729,107 @@ export function PeopleDirectory({
             }
             savedViews={
               workforceView ? (
-                <SavedViewMenu
-                  label={t('people.views.label')}
-                  personalLabel={t('people.views.personal')}
-                  sharedLabel={t('people.views.shared')}
-                  defaultLabel={t('people.views.default')}
-                  selectedViewId={status}
-                  views={[
+                <GovernedSavedViewControl
+                  surfaceKey="people.workforce-directory"
+                  currentConfiguration={{
+                    q: query,
+                    status,
+                    organization,
+                    grade,
+                    location,
+                    role,
+                    asOf,
+                    columns: columnPreset,
+                  }}
+                  selectedBuiltInViewId={
+                    !query &&
+                    organization === 'ALL' &&
+                    grade === 'ALL' &&
+                    location === 'ALL' &&
+                    role === 'ALL' &&
+                    asOf === currentDate &&
+                    columnPreset === 'operational'
+                      ? `builtin-${status}`
+                      : null
+                  }
+                  builtInViews={[
                     {
-                      id: 'ALL',
+                      id: 'builtin-ALL',
                       name: t('people.status.ALL'),
-                      scope: 'personal',
+                      configuration: {
+                        q: '',
+                        status: 'ALL',
+                        organization: 'ALL',
+                        grade: 'ALL',
+                        location: 'ALL',
+                        role: 'ALL',
+                        asOf: currentDate,
+                        columns: 'operational',
+                      },
                       isDefault: workforceView,
                     },
                     {
-                      id: 'ACTIVE',
+                      id: 'builtin-ACTIVE',
                       name: t('people.status.ACTIVE'),
-                      scope: 'personal',
+                      configuration: {
+                        q: '',
+                        status: 'ACTIVE',
+                        organization: 'ALL',
+                        grade: 'ALL',
+                        location: 'ALL',
+                        role: 'ALL',
+                        asOf: currentDate,
+                        columns: 'operational',
+                      },
                       isDefault: !workforceView,
                     },
                     {
-                      id: 'LEAVE',
+                      id: 'builtin-LEAVE',
                       name: t('people.status.LEAVE'),
-                      scope: 'personal',
+                      configuration: {
+                        q: '',
+                        status: 'LEAVE',
+                        organization: 'ALL',
+                        grade: 'ALL',
+                        location: 'ALL',
+                        role: 'ALL',
+                        asOf: currentDate,
+                        columns: 'operational',
+                      },
                     },
                   ]}
-                  onSelect={(view) =>
+                  onApply={(configuration) =>
                     updateSearchParams({
-                      status: view.id === (workforceView ? 'ALL' : 'ACTIVE') ? null : view.id,
+                      q: typeof configuration.q === 'string' ? configuration.q || null : null,
+                      status:
+                        typeof configuration.status === 'string' && configuration.status !== 'ALL'
+                          ? configuration.status
+                          : null,
+                      org:
+                        typeof configuration.organization === 'string' &&
+                        configuration.organization !== 'ALL'
+                          ? configuration.organization
+                          : null,
+                      grade:
+                        typeof configuration.grade === 'string' && configuration.grade !== 'ALL'
+                          ? configuration.grade
+                          : null,
+                      location:
+                        typeof configuration.location === 'string' &&
+                        configuration.location !== 'ALL'
+                          ? configuration.location
+                          : null,
+                      role:
+                        typeof configuration.role === 'string' && configuration.role !== 'ALL'
+                          ? configuration.role
+                          : null,
+                      asOf:
+                        typeof configuration.asOf === 'string' &&
+                        isIsoDate(configuration.asOf) &&
+                        configuration.asOf !== currentDate
+                          ? configuration.asOf
+                          : null,
+                      columns: configuration.columns === 'compact' ? 'compact' : null,
                       person: null,
                     })
                   }

@@ -1,7 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-import { DEFAULT_APP_PERMISSIONS, mockRuntimeNavigation } from './support/runtime-access';
+import {
+  ASK_RUNTIME_FIXTURE,
+  DEFAULT_APP_PERMISSIONS,
+  mockAskRuntime,
+  mockRuntimeNavigation,
+} from './support/runtime-access';
 
 async function expectNoAutomaticAccessibilityViolations(page: Page) {
   const results = await new AxeBuilder({ page }).analyze();
@@ -195,63 +200,6 @@ test.beforeEach(async ({ page }) => {
     })
   );
 });
-
-async function mockAgentPlanContract(page: Page) {
-  await page.route('**/api/auth/csrf', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
-      }),
-    })
-  );
-  await page.route('**/api/agent/v1/plans/preview', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'Plan preview prepared.',
-        success: true,
-        data: {
-          runId: 'run-ref-1042',
-          auditId: 'AUD-REF-1042',
-          planHash: '9f2c4a8e71b356d0c84f2a196e735bd1a02c94ef6b18357d4e90a2c7138f65bd',
-          correlationId: 'correlation-ref-1042',
-          state: 'REVIEW',
-          riskTier: 'L2',
-          approvalRequired: true,
-          mutationAllowed: false,
-          summary: 'Prepare a governed flexible work request preview.',
-          steps: [
-            {
-              id: 'verify-sources',
-              title: 'Verify source permissions and freshness',
-              tool: 'policy.check',
-              description: 'Stop if a source is outside the user scope.',
-            },
-            {
-              id: 'human-gate',
-              title: 'Wait for explicit user approval',
-              tool: 'workflow.human-approval',
-              description: 'A separate approved command is required before mutation.',
-            },
-          ],
-          sourceReferences: ['src-policy-flex', 'src-remote-guide'],
-          referenceMode: true,
-          agentRegistry: {
-            entryKey: 'REFERENCE_PLANNER',
-            revision: 2,
-            artifactVersion: '1.1.0',
-            riskTier: 'MEDIUM',
-            resolution: 'ACTIVE',
-          },
-        },
-      }),
-    })
-  );
-}
 
 test('unauthenticated users see the login shell without business navigation', async ({ page }) => {
   await page.route('**/api/auth/me', async (route) => {
@@ -1144,7 +1092,7 @@ test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
       }),
     })
   );
-  await mockAgentPlanContract(page);
+  await mockAskRuntime(page);
 
   const navigateTo = async (label: 'Work' | 'Ask' | 'Activity' | 'Apps') => {
     if (testInfo.project.name === 'mobile') {
@@ -1172,9 +1120,10 @@ test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
   await navigateTo('Ask');
   await expect(page.getByRole('heading', { name: 'Ask DWP' })).toBeVisible();
   await page.getByRole('button', { name: 'Can I work remotely next Friday?' }).click();
-  await expect(page.getByRole('heading', { name: 'Request review' })).toBeVisible();
-  await expect(page.getByText('AI answers and source citations are not enabled yet')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Request plan preview' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Governed answer' })).toBeVisible();
+  await expect(page.getByText('Verified answer', { exact: true })).toBeVisible();
+  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Verified sources (2)' })).toBeVisible();
   await expect(page.getByText('AUD-REF-1042')).toBeVisible();
 
   await navigateTo('Activity');

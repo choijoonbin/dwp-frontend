@@ -1,17 +1,6 @@
 import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Building2,
-  BadgeDollarSign,
-  Braces,
-  ClipboardList,
-  Database,
-  Gauge,
-  HeartPulse,
-  LifeBuoy,
-  ListChecks,
-  Settings2,
-} from 'lucide-react';
+import { LifeBuoy, Settings2 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
@@ -29,6 +18,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { BrandLockup } from '../components/brand-lockup';
 import { ShellHeader } from '../components/shell-header';
 import { useCurrentProviderSupportContext } from '../features/provider/use-provider-support-context';
+import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 
 export function ProviderLayout() {
@@ -44,74 +34,11 @@ export function ProviderLayout() {
     staleTime: 30_000,
   });
   const permissions = operator.data?.permissions ?? [];
-  const navigationGroups = [
-    {
-      key: 'operate',
-      items: [
-        {
-          path: '/provider/overview',
-          label: t('navigation.overview'),
-          icon: Gauge,
-          permission: 'ESTATE_READ',
-        },
-        {
-          path: '/provider/tenants',
-          label: t('navigation.tenants'),
-          icon: Building2,
-          permission: 'ESTATE_READ',
-        },
-        {
-          path: '/provider/operations',
-          label: t('navigation.operations'),
-          icon: ListChecks,
-          permission: 'ESTATE_READ',
-        },
-        {
-          path: '/provider/health',
-          label: t('navigation.health'),
-          icon: HeartPulse,
-          permission: 'HEALTH_READ',
-        },
-      ],
-    },
-    {
-      key: 'govern',
-      items: [
-        {
-          path: '/provider/support',
-          label: t('navigation.support'),
-          icon: LifeBuoy,
-          permission: 'ESTATE_READ',
-        },
-        {
-          path: '/provider/commercial',
-          label: t('navigation.commercial'),
-          icon: BadgeDollarSign,
-          permission: 'COMMERCIAL_READ',
-        },
-        {
-          path: '/provider/code-contracts',
-          label: t('navigation.codeContracts'),
-          icon: Braces,
-          permission: 'CATALOG_READ',
-        },
-        {
-          path: '/provider/data-governance',
-          label: t('navigation.dataGovernance'),
-          icon: Database,
-          permission: 'DATA_GOVERNANCE_READ',
-        },
-        {
-          path: '/provider/audit',
-          label: t('navigation.audit'),
-          icon: ClipboardList,
-          permission: 'AUDIT_READ',
-        },
-      ],
-    },
-  ].map((group) => ({
+  const navigationGroups = PROVIDER_NAVIGATION.map((group) => ({
     ...group,
-    items: group.items.filter((item) => permissions.includes(item.permission)),
+    items: group.items
+      .filter((item) => permissions.includes(item.permission))
+      .map((item) => ({ ...item, label: t(`navigation.${item.key}`) })),
   }));
   const navigation = (onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>

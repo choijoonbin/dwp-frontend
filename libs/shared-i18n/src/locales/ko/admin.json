@@ -902,6 +902,87 @@
     "loading": "감사 증적 불러오는 중",
     "loadError": "감사 증적을 불러오지 못했습니다.",
     "updated": "{{time}} 업데이트",
+    "evidenceModes": {
+      "label": "증적 탐색 방식",
+      "correlations": {
+        "short": "사건 흐름",
+        "title": "도메인 간 사건 흐름",
+        "description": "서비스 경계를 넘는 활동을 하나의 상관관계로 묶어 원인과 영향을 먼저 파악합니다."
+      },
+      "events": {
+        "short": "원시 증적",
+        "title": "불변 감사 증적",
+        "description": "개별 감사 이벤트를 정밀 필터링하고 보존·반출·조사 케이스에 연결합니다."
+      }
+    },
+    "correlation": {
+      "title": "상관관계 기반 사건 탐색",
+      "description": "인증, 인사, 플랫폼, 프로바이더, AI 활동을 표준 이벤트 엔벌로프로 연결합니다.",
+      "summaryLabel": "상관관계 현황",
+      "resultCount": "사건 흐름 {{count}}건",
+      "tableLabel": "도메인 간 사건 흐름",
+      "loadErrorTitle": "사건 흐름을 불러오지 못했습니다",
+      "loadError": "상관관계 증적을 불러오는 중 문제가 발생했습니다.",
+      "flowMeta": "이벤트 {{events}} / 서비스 {{services}}",
+      "eventCount": "이벤트 {{count}}건",
+      "attentionRequired": "주의 필요",
+      "controlled": "통제됨",
+      "kpi": {
+        "flows": "사건 흐름",
+        "flowsDetail": "선택 기간 전체",
+        "crossDomain": "다중 도메인",
+        "attention": "주의 필요",
+        "services": "연결 서비스",
+        "visiblePage": "현재 결과 페이지"
+      },
+      "filters": {
+        "label": "사건 흐름 필터",
+        "search": "사건 검색",
+        "searchPlaceholder": "활동, 대상, 수행자, 서비스 또는 상관관계 검색",
+        "domain": "업무 도메인",
+        "allDomains": "전체 도메인",
+        "classification": "데이터 분류",
+        "allClassifications": "전체 분류"
+      },
+      "columns": {
+        "lastSeen": "최근 발생",
+        "flow": "사건 흐름",
+        "domains": "도메인",
+        "classification": "분류",
+        "risk": "최대 위험"
+      },
+      "domain": {
+        "IDENTITY_ACCESS": "신원 및 접근",
+        "PEOPLE_WORKFORCE": "인사 및 조직",
+        "PLATFORM_WORKSPACE": "플랫폼 및 워크스페이스",
+        "PROVIDER_OPERATIONS": "프로바이더 운영",
+        "AI_AUTOMATION": "AI 및 자동화",
+        "DATA_GOVERNANCE": "데이터 거버넌스"
+      },
+      "classification": {
+        "INTERNAL": "내부",
+        "CONFIDENTIAL": "기밀",
+        "RESTRICTED": "제한"
+      },
+      "detail": {
+        "title": "사건 흐름 상세",
+        "loading": "사건 타임라인을 불러오는 중입니다.",
+        "loadError": "사건 타임라인을 불러오지 못했습니다.",
+        "correlationId": "상관관계 ID",
+        "timeline": "인과 타임라인",
+        "previous": "이전 사건",
+        "next": "다음 사건",
+        "subject": "대상",
+        "actor": "수행자",
+        "causation": "원인 이벤트",
+        "rootEvent": "흐름 시작 이벤트",
+        "integrity": "증적 해시",
+        "before": "변경 전",
+        "after": "변경 후",
+        "metadata": "통제 메타데이터",
+        "envelopeVersion": "{{eventId}} / 스키마 v{{version}}"
+      }
+    },
     "windows": {
       "H24": "24시간",
       "D7": "7일",

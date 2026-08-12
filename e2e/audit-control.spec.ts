@@ -108,6 +108,85 @@ const auditEvent = {
   recordHash: 'a'.repeat(64),
 };
 
+const eventCorrelation = {
+  correlationId: 'audit-control-e2e',
+  firstOccurredAt: '2026-08-10T12:00:00Z',
+  lastOccurredAt: auditEvent.occurredAt,
+  eventCount: 2,
+  domainCount: 2,
+  serviceCount: 2,
+  domains: ['IDENTITY_ACCESS', 'PLATFORM_WORKSPACE'],
+  classifications: ['CONFIDENTIAL', 'RESTRICTED'],
+  sourceServices: ['dwp-auth-server', 'dwp-platform-server'],
+  outcomes: ['SUCCESS', 'DENIED'],
+  latestEventType: auditEvent.action,
+  latestSubjectType: auditEvent.targetType,
+  latestSubjectId: auditEvent.targetId,
+  latestSubjectDisplayName: auditEvent.targetDisplayName,
+  maxSeverity: 'HIGH',
+  maxRiskScore: 82,
+  attentionRequired: true,
+};
+
+const eventEnvelopes = [
+  {
+    eventId: '10000000-0000-0000-0000-000000000001',
+    eventType: 'user.authenticated',
+    schemaVersion: '1.0',
+    occurredAt: '2026-08-10T12:00:00Z',
+    ingestedAt: '2026-08-10T12:00:01Z',
+    tenantId: 1,
+    domain: 'IDENTITY_ACCESS',
+    classification: 'CONFIDENTIAL',
+    sourceService: 'dwp-auth-server',
+    sourceModule: 'session',
+    subjectType: 'USER',
+    subjectId: '1',
+    subjectDisplayName: 'Admin User',
+    actorType: 'USER',
+    actorId: '1',
+    actorDisplayName: 'Admin User',
+    outcome: 'SUCCESS',
+    severity: 'INFO',
+    riskScore: 8,
+    correlationId: 'audit-control-e2e',
+    causationId: null,
+    traceId: auditEvent.traceId,
+    beforeState: {},
+    afterState: { sessionState: 'AUTHENTICATED' },
+    metadata: { authenticationMethod: 'SESSION' },
+    recordHash: 'b'.repeat(64),
+  },
+  {
+    eventId: auditEvent.eventId,
+    eventType: auditEvent.action,
+    schemaVersion: '1.0',
+    occurredAt: auditEvent.occurredAt,
+    ingestedAt: auditEvent.ingestedAt,
+    tenantId: auditEvent.tenantId,
+    domain: 'PLATFORM_WORKSPACE',
+    classification: 'RESTRICTED',
+    sourceService: 'dwp-platform-server',
+    sourceModule: 'authorization',
+    subjectType: auditEvent.targetType,
+    subjectId: auditEvent.targetId,
+    subjectDisplayName: auditEvent.targetDisplayName,
+    actorType: auditEvent.actorType,
+    actorId: auditEvent.actorId,
+    actorDisplayName: auditEvent.actorDisplayName,
+    outcome: auditEvent.outcome,
+    severity: auditEvent.severity,
+    riskScore: auditEvent.riskScore,
+    correlationId: 'audit-control-e2e',
+    causationId: '10000000-0000-0000-0000-000000000001',
+    traceId: auditEvent.traceId,
+    beforeState: auditEvent.beforeState,
+    afterState: auditEvent.afterState,
+    metadata: auditEvent.metadata,
+    recordHash: auditEvent.recordHash,
+  },
+];
+
 const finding = {
   findingId: '30000000-0000-0000-0000-000000000001',
   eventId: auditEvent.eventId,
@@ -278,6 +357,18 @@ async function mockAuditControl(page: Page) {
     const path = url.pathname;
     const method = request.method();
 
+    if (path.endsWith('/event-correlations/detail') && method === 'GET') {
+      return fulfillJson(route, { summary: eventCorrelation, events: eventEnvelopes });
+    }
+    if (path.endsWith('/event-correlations') && method === 'GET') {
+      return fulfillJson(route, {
+        content: [eventCorrelation],
+        page: Number(url.searchParams.get('page') || 0),
+        size: Number(url.searchParams.get('size') || 25),
+        totalElements: 1,
+        totalPages: 1,
+      });
+    }
     if (path.endsWith('/saved-searches') && method === 'GET') {
       return fulfillJson(route, savedSearches);
     }
@@ -555,6 +646,24 @@ test('auditors assess posture, inspect immutable evidence, and export a governed
 
   await page.goto('/admin/governance/audit-events');
   await expect(page.getByRole('heading', { name: 'Evidence explorer', level: 1 })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Cross-domain incident flows', level: 2 })
+  ).toBeVisible();
+  const desktop = (page.viewportSize()?.width ?? 0) >= 1200;
+  if (desktop) {
+    await expect(page.getByRole('grid', { name: 'Cross-domain incident flows' })).toBeVisible();
+  } else {
+    await page.getByText('Role Assignment Denied', { exact: true }).first().click();
+  }
+  await expect(page.getByText('Role Assignment Denied', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('Causal timeline', { exact: true })).toBeVisible();
+  await expect(page.getByText('audit-control-e2e', { exact: true })).toBeVisible();
+
+  accessibility = await new AxeBuilder({ page }).include('main').analyze();
+  expect(accessibility.violations).toEqual([]);
+
+  if (!desktop) await page.getByRole('button', { name: 'Close' }).click();
+  await page.getByRole('button', { name: 'Raw evidence' }).click();
   await expect(page.getByText('Evidence search session')).toBeVisible();
   await expect(page.getByText('Role Assignment Denied', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Save current view' }).click();

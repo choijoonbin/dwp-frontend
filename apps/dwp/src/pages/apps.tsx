@@ -29,7 +29,6 @@ import {
   mergeFilterSearchParams,
   PageCanvas,
   ResourcePageHeader,
-  SavedViewMenu,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -42,6 +41,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { SectionHeading } from '../features/work-hub/workspace-ui';
 import { HOME_APPS } from '../features/home/app-launchpad-model';
 import { AppGlyph } from '../features/home/app-glyph';
+import { GovernedSavedViewControl } from '../features/saved-views/governed-saved-view-control';
 
 import type { WorkspaceApp } from '@dwp-frontend/shared-utils';
 
@@ -346,19 +346,31 @@ export default function AppsPage() {
             </ToggleButtonGroup>
           }
           savedViews={
-            <SavedViewMenu
-              label={t('appsPage.views.label')}
-              personalLabel={t('appsPage.views.personal')}
-              sharedLabel={t('appsPage.views.shared')}
-              defaultLabel={t('appsPage.views.default')}
-              selectedViewId={filter}
-              views={APP_FILTERS.map((value) => ({
-                id: value,
+            <GovernedSavedViewControl
+              surfaceKey="workspace.apps"
+              currentConfiguration={{ q: query, type: filter }}
+              selectedBuiltInViewId={!query ? `builtin-${filter}` : null}
+              builtInViews={APP_FILTERS.map((value) => ({
+                id: `builtin-${value}`,
                 name: t(`appsPage.filters.${value}`),
-                scope: 'personal' as const,
+                configuration: { q: '', type: value },
                 isDefault: value === 'all',
               }))}
-              onSelect={(view) => selectFilter(view.id as AppFilter)}
+              onApply={(configuration) => {
+                const nextType =
+                  typeof configuration.type === 'string' && isAppFilter(configuration.type)
+                    ? configuration.type
+                    : 'all';
+                const nextQuery = typeof configuration.q === 'string' ? configuration.q : '';
+                setSearchParams(
+                  mergeFilterSearchParams(searchParams, {
+                    q: nextQuery || null,
+                    type: nextType === 'all' ? null : nextType,
+                    app: null,
+                  }),
+                  { replace: true }
+                );
+              }}
             />
           }
           activeFilters={

@@ -31,6 +31,14 @@ export const foundationTokens = {
       warning: hex(tokenFile.color.status.warning),
       error: hex(tokenFile.color.status.error),
     },
+    data: {
+      cobalt: hex(tokenFile.color.data.cobalt),
+      teal: hex(tokenFile.color.data.teal),
+      saffron: hex(tokenFile.color.data.saffron),
+      coral: hex(tokenFile.color.data.coral),
+      cyan: hex(tokenFile.color.data.cyan),
+      violet: hex(tokenFile.color.data.violet),
+    },
   },
   radius: {
     compact: pixels(tokenFile.dimension.radius.compact),

@@ -69,5 +69,58 @@
     "unexpected": "예기치 않은 오류가 발생했습니다.",
     "loadFailed": "요청한 데이터를 불러오지 못했습니다.",
     "operationFailed": "작업을 완료하지 못했습니다."
+  },
+  "savedViews": {
+    "label": "저장된 뷰",
+    "saveCurrent": "현재 조건 저장",
+    "manage": "저장된 뷰 관리",
+    "default": "기본",
+    "loading": "저장된 뷰를 불러오는 중",
+    "empty": "저장된 뷰가 없습니다.",
+    "saving": "저장 중",
+    "deleting": "삭제 중",
+    "scope": {
+      "personal": "개인",
+      "organization": "조직 공유",
+      "builtIn": "기본 제공"
+    },
+    "owner": {
+      "personal": "나의 뷰",
+      "organization": "조직에서 관리"
+    },
+    "editor": {
+      "createTitle": "현재 조건을 뷰로 저장",
+      "editTitle": "저장된 뷰 편집",
+      "description": "검색 조건과 필터, 표시 방식을 다시 사용할 수 있도록 저장합니다.",
+      "name": "뷰 이름",
+      "visibility": "공개 범위",
+      "organizationHint": "조직 공유 뷰는 회사 관리자만 게시할 수 있습니다.",
+      "personalOwnerHint": "조직 공유 뷰를 개인 범위로 되돌리는 작업은 원 소유자만 할 수 있습니다.",
+      "favorite": "즐겨찾기에 추가",
+      "defaultView": "이 화면의 기본 뷰로 사용"
+    },
+    "manager": {
+      "title": "저장된 뷰 관리",
+      "description": "즐겨찾기와 개인 기본값을 정리하고, 편집 권한이 있는 뷰를 관리합니다.",
+      "readOnly": "읽기 전용",
+      "addFavorite": "즐겨찾기에 추가",
+      "removeFavorite": "즐겨찾기에서 제거",
+      "makeDefault": "기본 뷰로 지정",
+      "removeDefault": "기본 뷰 해제",
+      "edit": "뷰 편집",
+      "delete": "뷰 삭제"
+    },
+    "deleteDialog": {
+      "title": "저장된 뷰 삭제",
+      "description": "‘{{name}}’ 뷰를 삭제합니다. 이 작업은 되돌릴 수 없습니다."
+    },
+    "feedback": {
+      "created": "현재 조건을 새 뷰로 저장했습니다.",
+      "updated": "저장된 뷰를 업데이트했습니다.",
+      "deleted": "저장된 뷰를 삭제했습니다.",
+      "saveFailed": "뷰를 저장하지 못했습니다.",
+      "deleteFailed": "뷰를 삭제하지 못했습니다.",
+      "preferenceFailed": "뷰 환경 설정을 변경하지 못했습니다."
+    }
   }
 }

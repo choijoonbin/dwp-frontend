@@ -23,7 +23,6 @@ import {
   OperationalKpiStrip,
   PageCanvas,
   ResourcePageHeader,
-  SavedViewMenu,
 } from '@dwp-frontend/design-system';
 import {
   getWorkspaceWorkQueue,
@@ -41,6 +40,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { SectionHeading } from '../features/work-hub/workspace-ui';
+import { GovernedSavedViewControl } from '../features/saved-views/governed-saved-view-control';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -330,19 +330,35 @@ export default function WorkPage() {
             </ToggleButtonGroup>
           }
           savedViews={
-            <SavedViewMenu
-              label={t('workPage.views.label')}
-              personalLabel={t('workPage.views.personal')}
-              sharedLabel={t('workPage.views.shared')}
-              defaultLabel={t('workPage.views.default')}
-              selectedViewId={filter}
-              views={WORK_FILTERS.map((value) => ({
-                id: value,
+            <GovernedSavedViewControl
+              surfaceKey="workspace.work"
+              currentConfiguration={{ q: query, status: filter, columns: columnPreset }}
+              selectedBuiltInViewId={
+                !query && columnPreset === 'operational' ? `builtin-${filter}` : null
+              }
+              builtInViews={WORK_FILTERS.map((value) => ({
+                id: `builtin-${value}`,
                 name: t(`workPage.filters.${value}`),
-                scope: 'personal' as const,
+                configuration: { q: '', status: value, columns: 'operational' },
                 isDefault: value === 'all',
               }))}
-              onSelect={(view) => selectFilter(view.id as WorkFilter)}
+              onApply={(configuration) => {
+                const nextStatus =
+                  typeof configuration.status === 'string' && isWorkFilter(configuration.status)
+                    ? configuration.status
+                    : 'all';
+                const nextQuery = typeof configuration.q === 'string' ? configuration.q : '';
+                const nextColumns = configuration.columns === 'compact' ? 'compact' : 'operational';
+                setSearchParams(
+                  mergeFilterSearchParams(searchParams, {
+                    q: nextQuery || null,
+                    status: nextStatus === 'all' ? null : nextStatus,
+                    columns: nextColumns === 'operational' ? null : nextColumns,
+                    item: null,
+                  }),
+                  { replace: true }
+                );
+              }}
             />
           }
           activeFilters={
