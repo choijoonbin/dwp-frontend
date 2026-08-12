@@ -24,6 +24,7 @@ import { TenantBrandingManager } from '../features/admin/tenant-branding-manager
 import { NavigationManager } from '../features/admin/navigation-manager';
 import { IdentityProvisioningManager } from '../features/admin/identity-provisioning-manager';
 import { RoleGovernanceManager } from '../features/admin/role-governance-manager';
+import { ProductivityConnectorManager } from '../features/admin/productivity-connector-manager';
 import {
   ADMIN_NAVIGATION,
   findAdminNavigationItem,
@@ -57,6 +58,8 @@ function AdminContent({ view }: { view: AdminView }) {
       return <RegistryManager />;
     case 'navigation':
       return <NavigationManager />;
+    case 'productivity':
+      return <ProductivityConnectorManager />;
     case 'audit':
       return <AuditLog />;
     case 'audit-overview':

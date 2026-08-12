@@ -20,7 +20,7 @@ import {
 
 import type { LucideIcon } from 'lucide-react';
 
-export type AdminSection = 'experience' | 'identity' | 'platform' | 'governance';
+export type AdminSection = 'experience' | 'identity' | 'platform' | 'integrations' | 'governance';
 
 export type AdminView =
   | 'branding'
@@ -33,6 +33,7 @@ export type AdminView =
   | 'navigation'
   | 'reference-data'
   | 'registry'
+  | 'productivity'
   | 'api-monitoring'
   | 'audit'
   | 'audit-overview'
@@ -133,6 +134,20 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'navigation',
         path: '/admin/platform/navigation',
         icon: FolderTree,
+      },
+    ],
+  },
+  {
+    id: 'integrations',
+    icon: PlugZap,
+    items: [
+      {
+        section: 'integrations',
+        view: 'productivity',
+        path: '/admin/integrations/productivity',
+        icon: PlugZap,
+        requiredResourceKey: 'ADMIN.PRODUCTIVITY_CONNECTOR',
+        requiredPermissionCode: 'MANAGE',
       },
     ],
   },

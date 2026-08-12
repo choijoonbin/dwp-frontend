@@ -26,6 +26,7 @@ export * from './api/api-history-api';
 export * from './api/audit-control-api';
 export * from './api/system-code-catalog-api';
 export * from './api/workspace-api';
+export * from './api/productivity-connector-api';
 
 export * from './axios-instance';
 export * from './auth/auth-guard';

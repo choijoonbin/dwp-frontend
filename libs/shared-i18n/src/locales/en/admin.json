@@ -14,6 +14,7 @@
       "experience": "Experience",
       "identity": "Identity & access",
       "platform": "Platform setup",
+      "integrations": "Integrations & automation",
       "governance": "Governance"
     },
     "items": {
@@ -66,6 +67,11 @@
         "label": "Navigation",
         "title": "Navigation management",
         "description": "Publish a localized, permission-aware application navigation tree."
+      },
+      "productivity": {
+        "label": "Productivity connectors",
+        "title": "Productivity connectors",
+        "description": "Govern Microsoft 365 consent, least privilege, incremental sync, and operational trust."
       },
       "api-monitoring": {
         "label": "API monitoring",
@@ -140,6 +146,148 @@
       "DRAFT": "Draft",
       "ACTIVE": "Active",
       "RETIRED": "Retired"
+    }
+  },
+  "productivity": {
+    "loading": "Loading the productivity connector control plane",
+    "notAvailable": "Not yet available",
+    "metrics": {
+      "connectors": "Registered connectors",
+      "active": "Active connectors",
+      "connected": "Consented users",
+      "stale": "Streams needing action",
+      "failed24h": "Failures in 24h"
+    },
+    "views": {
+      "label": "Productivity connector view",
+      "connections": "Connection control",
+      "consent": "Consent & scope",
+      "runs": "Sync runs",
+      "policy": "Data policy"
+    },
+    "connections": {
+      "title": "Connection catalog",
+      "description": "Tenant productivity providers and operational state",
+      "boundary": "Delegated consent · Graph delta · per-user encrypted projection",
+      "empty": "No productivity connector is registered."
+    },
+    "metricsHelp": "Operational state is based on actual synchronization evidence.",
+    "actions": {
+      "add": "Add connector",
+      "check": "Check configuration",
+      "activate": "Activate",
+      "suspend": "Emergency stop"
+    },
+    "health": {
+      "CONFIGURATION_REQUIRED": "Configuration required",
+      "HEALTHY": "Healthy",
+      "DEGRADED": "Degraded",
+      "AUTHENTICATION_REQUIRED": "Reconsent required",
+      "UNAVAILABLE": "Unavailable"
+    },
+    "lifecycle": {
+      "DRAFT": "Draft",
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended",
+      "RETIRED": "Retired"
+    },
+    "policyStates": {
+      "REVIEW_REQUIRED": "Security review required",
+      "APPROVED": "Approved",
+      "BLOCKED": "Blocked"
+    },
+    "auth": {
+      "DELEGATED": "User delegated"
+    },
+    "readiness": {
+      "title": "Operational readiness",
+      "signal": "Current signal: {{code}}",
+      "ready": "No blocking signal. Health becomes healthy only after the first successful sync."
+    },
+    "flow": {
+      "title": "Trust boundary and data flow",
+      "user": "DWP user",
+      "userDetail": "Own connection only",
+      "consent": "Entra consent",
+      "consentDetail": "PKCE and minimum scope",
+      "delta": "Graph delta",
+      "deltaDetail": "Opaque cursor and retry",
+      "projection": "Encrypted projection",
+      "projectionDetail": "No body or attachments"
+    },
+    "scopes": {
+      "title": "Approved least-privilege contract",
+      "description": "Mail is limited to basic metadata and calendar access is read only. Tenant-wide application permissions are prohibited."
+    },
+    "signals": {
+      "title": "Operational signals",
+      "policy": "Policy decision",
+      "auth": "Authentication model",
+      "lastCheck": "Last configuration check",
+      "lastSync": "Last successful sync",
+      "failures": "Consecutive failures"
+    },
+    "dialog": {
+      "createTitle": "Add productivity connector",
+      "editTitle": "Edit productivity connector",
+      "delegatedTitle": "Delegated access only",
+      "delegatedDescription": "Only the signed-in user's consented mail metadata and calendar are synchronized. Store a secret reference, never the secret value."
+    },
+    "fields": {
+      "connectorKey": "Connector key",
+      "displayName": "Display name",
+      "providerTenant": "Entra tenant",
+      "clientId": "Application client ID",
+      "credentialReference": "Client secret reference",
+      "credentialReferenceHelp": "Example: env:DWP_MS_GRAPH_CLIENT_SECRET. Do not enter the secret value.",
+      "redirectUri": "OAuth redirect URI",
+      "policyState": "Tenant security policy",
+      "delegatedScopes": "Fixed minimum delegated scopes"
+    },
+    "consent": {
+      "title": "User consent state",
+      "user": "User",
+      "state": "Consent state",
+      "scopes": "Actually granted scopes",
+      "tokenExpiry": "Access token expiry",
+      "lastSync": "Last success",
+      "userId": "User {{id}}",
+      "empty": "No user has completed delegated consent yet."
+    },
+    "consentStates": {
+      "NOT_CONNECTED": "Not connected",
+      "CONNECTED": "Connected",
+      "REAUTHORIZATION_REQUIRED": "Reconsent required",
+      "REVOKED": "Revoked"
+    },
+    "resources": {
+      "MAIL": "Mail metadata",
+      "CALENDAR": "Calendar"
+    },
+    "runStates": {
+      "RUNNING": "Running",
+      "SUCCEEDED": "Succeeded",
+      "PARTIAL": "Partial",
+      "FAILED": "Failed",
+      "BLOCKED": "Blocked"
+    },
+    "runs": {
+      "errors": "{{count}} errors",
+      "empty": "No synchronization evidence is available yet."
+    },
+    "policy": {
+      "leastPrivilege": "Least privilege",
+      "leastPrivilegeDetail": "Allow only Mail.ReadBasic and Calendars.Read; message bodies and attachments are not collected.",
+      "secretIsolation": "Secret isolation",
+      "secretIsolationDetail": "Client secrets are external references while delegated tokens and cursors use AES-GCM encryption.",
+      "minimumProjection": "Minimum projection",
+      "minimumProjectionDetail": "Retain only the title, time, state, and deep link required for personal search and briefing."
+    },
+    "toasts": {
+      "saved": "Productivity connector configuration saved.",
+      "checked": "Configuration, policy, and credential reference checks completed.",
+      "activated": "Productivity connector activated.",
+      "suspended": "Productivity connector execution stopped immediately."
     }
   },
   "access": {

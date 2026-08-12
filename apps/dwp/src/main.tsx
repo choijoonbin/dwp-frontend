@@ -16,6 +16,7 @@ import { ErrorBoundary } from './routes/components/error-boundary';
 import { PersonalPreferenceProvider } from './features/account/personal-preference-provider';
 
 import type { PropsWithChildren } from 'react';
+import type { Root } from 'react-dom/client';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,7 +62,18 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error('DWP application root element is missing.');
+}
+
+const hotData = import.meta.hot?.data as { reactRoot?: Root } | undefined;
+const reactRoot = hotData?.reactRoot ?? createRoot(rootElement);
+if (hotData) {
+  hotData.reactRoot = reactRoot;
+}
+
+reactRoot.render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <DwpThemeProvider tenant={tenantAppearance}>
