@@ -14,12 +14,14 @@ export function ProductAreaPageHeader({
   view,
   icon: Icon,
 }: {
-  area: 'people' | 'workforce';
+  area: 'people' | 'workforce' | 'hris';
   view: string;
   icon: LucideIcon;
 }) {
-  const { t } = useTranslation('workforce');
-  const workforce = area === 'workforce';
+  const { t } = useTranslation(area === 'hris' ? 'hris' : 'workforce');
+  const workforce =
+    area === 'workforce' ||
+    (area === 'hris' && !['me', 'directory', 'organization', 'team'].includes(view));
 
   return (
     <Box

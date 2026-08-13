@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { Check, ExternalLink, FileCheck2, RefreshCw, ShieldCheck, X } from 'lucide-react';
+import { Check, FileCheck2, KeyRound, RefreshCw, ShieldCheck, ShieldOff, X } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   decideAppAccessRequest,
+  fulfillAppAccessRequest,
   listAppAccessRequests,
   listIdentityUsers,
+  revokeAppAccessRequest,
+  useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
@@ -27,12 +29,22 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import { hasFullTenantAdminRole } from '../auth/control-plane-access';
 
 import type { AppAccessRequest, IdentityUserAccess } from '@dwp-frontend/shared-utils';
 
 type RequestState = AppAccessRequest['state'] | 'ALL';
+type FulfillmentOperation = 'FULFILL' | 'REVOKE';
 
-const STATES: RequestState[] = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'EXPIRED', 'ALL'];
+const STATES: RequestState[] = [
+  'PENDING',
+  'APPROVED',
+  'REVOKED',
+  'REJECTED',
+  'CANCELLED',
+  'EXPIRED',
+  'ALL',
+];
 
 function DecisionDialog({
   request,
@@ -82,14 +94,62 @@ function DecisionDialog({
   );
 }
 
+function FulfillmentDialog({
+  request,
+  operation,
+  busy,
+  onClose,
+  onSubmit,
+}: {
+  request: AppAccessRequest | null;
+  operation: FulfillmentOperation | null;
+  busy: boolean;
+  onClose: () => void;
+  onSubmit: (note: string) => Promise<void>;
+}) {
+  const { t } = useTranslation('admin');
+  const [note, setNote] = useState('');
+  const action = operation === 'REVOKE' ? 'revoke' : 'fulfill';
+  return (
+    <FormDialog
+      open={Boolean(request && operation)}
+      title={t(`appAccess.fulfillment.${action}Title`, { app: request?.appName ?? '' })}
+      description={t(`appAccess.fulfillment.${action}Description`)}
+      cancelLabel={t('common.actions.cancel')}
+      submitLabel={t(`appAccess.fulfillment.${action}`)}
+      submittingLabel={t('appAccess.fulfillment.saving')}
+      submitDisabled={note.trim().length < 10}
+      busy={busy}
+      onClose={onClose}
+      onSubmit={() => onSubmit(note.trim())}
+      submitIntent={operation === 'REVOKE' ? 'danger' : 'primary'}
+      maxWidth="sm"
+    >
+      <FormField
+        label={t('appAccess.fulfillment.note')}
+        multiline
+        minRows={4}
+        required
+        value={note}
+        onChange={(event) => setNote(event.target.value)}
+        supportingText={t('appAccess.fulfillment.noteHelp')}
+        slotProps={{ htmlInput: { maxLength: 1000 } }}
+      />
+    </FormDialog>
+  );
+}
+
 export function AppAccessRequestManager() {
   const { t } = useTranslation('admin');
-  const navigate = useNavigate();
+  const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [state, setState] = useState<RequestState>('PENDING');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [decision, setDecision] = useState<'APPROVED' | 'REJECTED' | null>(null);
+  const [fulfillmentOperation, setFulfillmentOperation] = useState<FulfillmentOperation | null>(
+    null
+  );
   const [busy, setBusy] = useState(false);
   const requestsQuery = useQuery({
     queryKey: ['admin', 'app-access-requests'],
@@ -98,6 +158,7 @@ export function AppAccessRequestManager() {
   const usersQuery = useQuery({
     queryKey: ['admin', 'identity-users', 'app-access'],
     queryFn: () => listIdentityUsers(),
+    enabled: hasFullTenantAdminRole(auth.user?.roles ?? []),
   });
   const allRequests = requestsQuery.data ?? [];
   const requests =
@@ -128,10 +189,34 @@ export function AppAccessRequestManager() {
     }
   };
 
-  if (requestsQuery.isLoading || usersQuery.isLoading) {
+  const saveFulfillment = async (note: string) => {
+    if (!selected || !fulfillmentOperation) return;
+    setBusy(true);
+    try {
+      const updated =
+        fulfillmentOperation === 'FULFILL'
+          ? await fulfillAppAccessRequest(selected, note)
+          : await revokeAppAccessRequest(selected, note);
+      await refresh();
+      setFulfillmentOperation(null);
+      if (updated.fulfillmentState === 'FAILED') {
+        toast.error(t('appAccess.toasts.fulfillmentFailed'));
+      } else {
+        toast.success(
+          t(`appAccess.toasts.${fulfillmentOperation === 'FULFILL' ? 'fulfilled' : 'revoked'}`)
+        );
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('common.operationError'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (requestsQuery.isLoading || (usersQuery.isLoading && usersQuery.fetchStatus !== 'idle')) {
     return <AdminPanelLoading label={t('appAccess.loading')} />;
   }
-  if (requestsQuery.isError || usersQuery.isError) {
+  if (requestsQuery.isError || (usersQuery.isError && usersQuery.fetchStatus !== 'idle')) {
     const error = requestsQuery.error ?? usersQuery.error;
     return (
       <AdminPanelError
@@ -143,10 +228,42 @@ export function AppAccessRequestManager() {
   const selectedUser: IdentityUserAccess | null = selected
     ? (users.get(selected.userId) ?? null)
     : null;
-  const counts = STATES.slice(0, 5).map((candidate) => ({
+  const counts = STATES.slice(0, -1).map((candidate) => ({
     state: candidate,
     count: allRequests.filter((request) => request.state === candidate).length,
   }));
+  const canDecideSelected = Boolean(
+    selected &&
+    (auth.user?.resourceRoles ?? []).some(
+      (role) =>
+        role.responsibilityCode === 'APP_ACCESS_APPROVER' &&
+        role.resourceKey === selected.resourceKey
+    ) &&
+    selected.userId !== auth.user?.userId
+  );
+  const hasManagerScope = Boolean(
+    selected &&
+    (auth.user?.resourceRoles ?? []).some(
+      (role) =>
+        role.responsibilityCode === 'APP_ACCESS_MANAGER' &&
+        role.resourceKey === selected.resourceKey
+    )
+  );
+  const canFulfillSelected = Boolean(
+    selected &&
+    hasManagerScope &&
+    selected.userId !== auth.user?.userId &&
+    selected.decidedBy !== auth.user?.userId &&
+    selected.state === 'APPROVED' &&
+    ['PENDING', 'FAILED'].includes(selected.fulfillmentState)
+  );
+  const canRevokeSelected = Boolean(
+    selected &&
+    hasManagerScope &&
+    selected.userId !== auth.user?.userId &&
+    selected.state === 'APPROVED' &&
+    selected.fulfillmentState === 'SUCCEEDED'
+  );
 
   return (
     <>
@@ -156,7 +273,7 @@ export function AppAccessRequestManager() {
             display: 'grid',
             gridTemplateColumns: {
               xs: 'repeat(2, minmax(0, 1fr))',
-              md: 'repeat(5, minmax(0, 1fr))',
+              md: 'repeat(6, minmax(0, 1fr))',
             },
             borderTop: 1,
             borderBottom: 1,
@@ -330,6 +447,11 @@ export function AppAccessRequestManager() {
                       t('appAccess.fields.requestedAt'),
                       formatDate(selected.createdAt, { dateStyle: 'medium', timeStyle: 'short' }),
                     ],
+                    [
+                      t('appAccess.fields.fulfillment'),
+                      t(`appAccess.fulfillmentStates.${selected.fulfillmentState}`),
+                    ],
+                    [t('appAccess.fields.attempts'), String(selected.fulfillmentAttempts)],
                   ].map(([label, value]) => (
                     <Box key={String(label)} sx={{ display: 'contents' }}>
                       <Typography variant="caption" color="text.secondary">
@@ -363,7 +485,18 @@ export function AppAccessRequestManager() {
                   </Box>
                 ) : null}
 
-                {selected.state === 'PENDING' ? (
+                {selected.lastFulfillmentError ? (
+                  <Box sx={{ borderLeft: 3, borderColor: 'error.main', pl: 1.5, py: 0.5 }}>
+                    <Typography variant="subtitle2" color="error.main">
+                      {t('appAccess.fulfillment.failureEvidence')}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
+                      {selected.lastFulfillmentError}
+                    </Typography>
+                  </Box>
+                ) : null}
+
+                {selected.state === 'PENDING' && canDecideSelected ? (
                   <Stack direction="row" gap={1} justifyContent="flex-end">
                     <ActionButton
                       intent="danger"
@@ -386,18 +519,31 @@ export function AppAccessRequestManager() {
                       <ShieldCheck size={18} />
                       <Box sx={{ flex: 1 }}>
                         <Typography variant="subtitle2">
-                          {t('appAccess.provisioning.title')}
+                          {t('appAccess.fulfillment.title')}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-                          {t('appAccess.provisioning.description')}
+                          {t(`appAccess.fulfillmentDescriptions.${selected.fulfillmentState}`)}
                         </Typography>
                       </Box>
-                      <ActionButton
-                        endIcon={<ExternalLink size={15} />}
-                        onClick={() => navigate('/admin/identity/access')}
-                      >
-                        {t('appAccess.provisioning.openAccess')}
-                      </ActionButton>
+                      {canFulfillSelected ? (
+                        <ActionButton
+                          intent="primary"
+                          startIcon={<KeyRound size={16} />}
+                          onClick={() => setFulfillmentOperation('FULFILL')}
+                        >
+                          {t(
+                            `appAccess.fulfillment.${selected.fulfillmentState === 'FAILED' ? 'retry' : 'fulfill'}`
+                          )}
+                        </ActionButton>
+                      ) : canRevokeSelected ? (
+                        <ActionButton
+                          intent="danger"
+                          startIcon={<ShieldOff size={16} />}
+                          onClick={() => setFulfillmentOperation('REVOKE')}
+                        >
+                          {t('appAccess.fulfillment.revoke')}
+                        </ActionButton>
+                      ) : null}
                     </Stack>
                   </Box>
                 ) : null}
@@ -415,12 +561,20 @@ export function AppAccessRequestManager() {
       </Stack>
 
       <DecisionDialog
-        key={`${selected?.requestId ?? 'none'}:${decision ?? 'none'}`}
+        key={`decision:${selected?.requestId ?? 'none'}:${decision ?? 'none'}`}
         request={selected}
         decision={decision}
         busy={busy}
         onClose={() => setDecision(null)}
         onSubmit={saveDecision}
+      />
+      <FulfillmentDialog
+        key={`fulfillment:${selected?.requestId ?? 'none'}:${fulfillmentOperation ?? 'none'}`}
+        request={selected}
+        operation={fulfillmentOperation}
+        busy={busy}
+        onClose={() => setFulfillmentOperation(null)}
+        onSubmit={saveFulfillment}
       />
     </>
   );

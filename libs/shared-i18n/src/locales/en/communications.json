@@ -1,0 +1,104 @@
+{
+  "shell": {
+    "tenantFallback": "Company",
+    "openNavigation": "Open newsroom navigation",
+    "backToHome": "Back to personal home",
+    "communications": {
+      "name": "Newsroom",
+      "context": "Employee communications",
+      "navigationLabel": "Newsroom navigation"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "discover": "Discover",
+      "library": "My library"
+    },
+    "items": {
+      "for-you": "For you",
+      "all": "All stories",
+      "required": "Required",
+      "saved": "Saved"
+    }
+  },
+  "page": {
+    "eyebrow": "{{tenant}} newsroom",
+    "title": "Know what is moving today",
+    "description": "Company news, events, and policy updates curated for your role and work.",
+    "refreshed": "Updated {{time}}",
+    "searchLabel": "Search news",
+    "searchPlaceholder": "Search titles, stories, or publishers",
+    "clearSearch": "Clear search",
+    "filterLabel": "Content type",
+    "latest": "Fresh stories",
+    "latestCount": "{{count}} items",
+    "requiredTitle": "Needs your attention",
+    "requiredDescription": "Time-bound required updates",
+    "requiredEmpty": "Nothing needs confirmation right now.",
+    "allCaughtUp": "You are all caught up",
+    "errorTitle": "We could not load the newsroom",
+    "errorDescription": "Please try again in a moment.",
+    "detailErrorTitle": "This story is unavailable",
+    "detailErrorDescription": "Check its publication window or your access, then try again.",
+    "retry": "Try again",
+    "emptyTitle": "No stories match these filters",
+    "emptyDescription": "Try a different search or content type.",
+    "unread": "Unread",
+    "required": "Required",
+    "saved": "Saved",
+    "total": "Total"
+  },
+  "types": {
+    "ALL": "All",
+    "ANNOUNCEMENT": "Update",
+    "NEWS": "News",
+    "EVENT": "Event",
+    "POLICY_UPDATE": "Policy"
+  },
+  "categories": {
+    "COMPANY": "Company",
+    "INNOVATION": "Innovation",
+    "CULTURE": "Culture",
+    "SECURITY": "Security",
+    "LEADERSHIP": "Leadership",
+    "GROWTH": "Growth"
+  },
+  "story": {
+    "reactions": {
+      "title": "How did this land?",
+      "description": "Leave a lightweight reaction to help shape future updates.",
+      "CELEBRATE": "Celebrate",
+      "INSIGHTFUL": "Insightful",
+      "SUPPORT": "Support",
+      "error": "We couldn't save your reaction."
+    },
+    "featured": "Featured story",
+    "readTime": "{{count}} min",
+    "published": "{{date}}",
+    "open": "Read story",
+    "save": "Save",
+    "saved": "Saved",
+    "removeSaved": "Remove from saved",
+    "dismiss": "Dismiss",
+    "dismissed": "Story dismissed from your personalized feed.",
+    "dismissError": "We could not dismiss this story.",
+    "external": "Open related content",
+    "back": "Back to stories",
+    "acknowledge": "I have reviewed this update",
+    "acknowledged": "Confirmed",
+    "acknowledgementDue": "Confirm by {{date}}",
+    "acknowledgementEvidence": "Your confirmation is retained as governed compliance evidence.",
+    "share": "Copy link",
+    "copied": "Story link copied.",
+    "shareError": "We could not share this story.",
+    "saveError": "We could not update the saved state.",
+    "acknowledgeError": "We could not record your confirmation."
+  },
+  "home": {
+    "title": "Fresh from the newsroom",
+    "count": "{{count}} unread",
+    "viewAll": "View all news",
+    "required": "Required",
+    "empty": "No new stories right now."
+  }
+}

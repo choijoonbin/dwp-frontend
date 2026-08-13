@@ -15,11 +15,13 @@ import { AccountLayout } from '../layouts/account-layout';
 import { AdminLayout } from '../layouts/admin-layout';
 import { AuthLayout } from '../layouts/auth-layout';
 import { HomeLayout } from '../layouts/home-layout';
-import { PeopleLayout } from '../layouts/people-layout';
+import { CommunicationsLayout } from '../layouts/communications-layout';
+import { HrisLayout } from '../layouts/hris-layout';
 import { ProviderLayout } from '../layouts/provider-layout';
-import { WorkforceLayout } from '../layouts/workforce-layout';
+import { ServicesLayout } from '../layouts/services-layout';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
+import { mapLegacyHrisPath } from '../features/hris/hris-navigation';
 import { ShellBootScreen } from '../components/shell-boot-screen';
 import {
   canAccessAdminNavigationItem,
@@ -35,8 +37,9 @@ const WorkPage = lazy(() => import('../pages/work'));
 const AskPage = lazy(() => import('../pages/ask'));
 const ActivityPage = lazy(() => import('../pages/activity'));
 const AppsPage = lazy(() => import('../pages/apps'));
-const PeoplePage = lazy(() => import('../pages/people'));
-const WorkforcePage = lazy(() => import('../pages/workforce'));
+const HrisPage = lazy(() => import('../pages/hris'));
+const CommunicationsPage = lazy(() => import('../pages/communications'));
+const ServicesPage = lazy(() => import('../pages/services'));
 const AdminPage = lazy(() => import('../pages/admin'));
 const ProviderPage = lazy(() => import('../pages/provider'));
 const ProfilePage = lazy(() => import('../pages/account/profile'));
@@ -68,11 +71,21 @@ function AdminRouteGuard({ children }: { children: React.ReactNode }) {
   const providerRole = hasProviderControlPlaneRole(roles);
   const supportContext = useProviderSupportContext(providerRole);
   const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
-  const regularAccess = canEnterTenantControlPlane(roles, appPermitted);
+  const regularAccess = canEnterTenantControlPlane(
+    roles,
+    appPermitted,
+    false,
+    auth.user?.resourceRoles
+  );
   const assignedReviewerAccess = !providerRole && pathname === '/admin/identity/access-reviews';
   if (!regularAccess && providerRole && supportContext.isLoading) return <RouteFallback />;
   return assignedReviewerAccess ||
-    canEnterTenantControlPlane(roles, appPermitted, Boolean(supportContext.data)) ? (
+    canEnterTenantControlPlane(
+      roles,
+      appPermitted,
+      Boolean(supportContext.data),
+      auth.user?.resourceRoles
+    ) ? (
     children
   ) : (
     <Navigate to="/403" replace />
@@ -93,6 +106,7 @@ function AdminLegacyRedirect() {
       permissionsLoaded: isLoaded,
       hasPermission,
       supportScopes: supportContext.data?.scopes,
+      resourceRoles: auth.user?.resourceRoles,
     })
   );
   const requestedView = searchParams.get('view');
@@ -102,8 +116,8 @@ function AdminLegacyRedirect() {
 
 function AdminPeopleLegacyRedirect() {
   const { view } = useParams();
-  if (view === 'people-directory') return <Navigate to="/people/directory" replace />;
-  if (view === 'directory') return <Navigate to="/people/organization" replace />;
+  if (view === 'people-directory') return <Navigate to="/hr/directory" replace />;
+  if (view === 'directory') return <Navigate to="/hr/organization" replace />;
   if (view === 'access' || view === 'roles' || view === 'provisioning') {
     return <Navigate to={`/admin/identity/${view}`} replace />;
   }
@@ -147,77 +161,126 @@ function AppRouteGuard({
   );
 }
 
-function WorkforceRouteGuard({ children }: { children: React.ReactNode }) {
+function HrisRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const { permissions } = usePermissions();
   const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
   const supportContext = useProviderSupportContext(providerRole);
   if (providerRole && supportContext.isLoading) return <RouteFallback />;
   if (supportContext.data?.scopes.includes('WORKFORCE_READ')) return children;
-  const entitled = isAppResourceEntitled('APP.WORKFORCE_MANAGEMENT', permissions);
-  return entitled && hasAnyRole(auth.user?.roles ?? [], WORKFORCE_OPERATIONS_ROLES) ? (
-    children
-  ) : (
-    <Navigate to="/403" replace />
-  );
+  const entitled =
+    isAppResourceEntitled('APP.HRIS', permissions) ||
+    isAppResourceEntitled('APP.PEOPLE_DIRECTORY', permissions) ||
+    (isAppResourceEntitled('APP.WORKFORCE_MANAGEMENT', permissions) &&
+      hasAnyRole(auth.user?.roles ?? [], WORKFORCE_OPERATIONS_ROLES));
+  return entitled ? children : <Navigate to="/403" replace />;
 }
 
-function PeopleRouteGuard({ children }: { children: React.ReactNode }) {
-  const auth = useAuth();
-  const { permissions } = usePermissions();
-  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
-  const supportContext = useProviderSupportContext(providerRole);
-  if (providerRole && supportContext.isLoading) return <RouteFallback />;
-  if (supportContext.data?.scopes.includes('WORKFORCE_READ')) return children;
-  return isAppResourceEntitled('APP.PEOPLE_DIRECTORY', permissions) ? (
-    children
-  ) : (
-    <Navigate to="/403" replace />
-  );
+function LegacyHrisRedirect() {
+  const location = useLocation();
+  const pathname = mapLegacyHrisPath(location.pathname);
+  return <Navigate to={`${pathname}${location.search}${location.hash}`} replace />;
 }
 
 export const routesSection: RouteObject[] = [
   {
-    path: 'people',
+    path: 'services',
     element: (
       <AuthGuard fallback={authenticationFallback}>
-        <PeopleRouteGuard>
-          <PeopleLayout />
-        </PeopleRouteGuard>
+        <WorkspaceRouteGuard>
+          <AppRouteGuard resourceKey="APP.EMPLOYEE_SERVICES">
+            <ServicesLayout />
+          </AppRouteGuard>
+        </WorkspaceRouteGuard>
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="directory" replace /> },
+      { index: true, element: <Navigate to="discover" replace /> },
       {
         path: ':view',
         element: (
           <Suspense fallback={fallback}>
-            <PeoplePage />
+            <ServicesPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: ':view/:requestId',
+        element: (
+          <Suspense fallback={fallback}>
+            <ServicesPage />
           </Suspense>
         ),
       },
     ],
   },
   {
-    path: 'workforce',
+    path: 'communications',
     element: (
       <AuthGuard fallback={authenticationFallback}>
-        <WorkforceRouteGuard>
-          <WorkforceLayout />
-        </WorkforceRouteGuard>
+        <WorkspaceRouteGuard>
+          <AppRouteGuard resourceKey="APP.COMMUNICATIONS">
+            <CommunicationsLayout />
+          </AppRouteGuard>
+        </WorkspaceRouteGuard>
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="overview" replace /> },
+      { index: true, element: <Navigate to="for-you" replace /> },
       {
         path: ':view',
         element: (
           <Suspense fallback={fallback}>
-            <WorkforcePage />
+            <CommunicationsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: ':view/:storyId',
+        element: (
+          <Suspense fallback={fallback}>
+            <CommunicationsPage />
           </Suspense>
         ),
       },
     ],
+  },
+  {
+    path: 'hr',
+    element: (
+      <AuthGuard fallback={authenticationFallback}>
+        <HrisRouteGuard>
+          <HrisLayout />
+        </HrisRouteGuard>
+      </AuthGuard>
+    ),
+    children: [
+      { index: true, element: <Navigate to="home" replace /> },
+      {
+        path: '*',
+        element: (
+          <Suspense fallback={fallback}>
+            <HrisPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: 'people/*',
+    element: (
+      <AuthGuard fallback={authenticationFallback}>
+        <LegacyHrisRedirect />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: 'workforce/*',
+    element: (
+      <AuthGuard fallback={authenticationFallback}>
+        <LegacyHrisRedirect />
+      </AuthGuard>
+    ),
   },
   {
     element: (

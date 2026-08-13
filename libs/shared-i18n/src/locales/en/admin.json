@@ -12,6 +12,7 @@
   "navigation": {
     "groups": {
       "experience": "Experience",
+      "services": "Service operations",
       "identity": "Identity & access",
       "platform": "Platform setup",
       "integrations": "Integrations & automation",
@@ -29,9 +30,9 @@
         "description": "Configure the tenant home artwork and personalized launchpad experience."
       },
       "announcements": {
-        "label": "Announcements",
-        "title": "Announcements",
-        "description": "Publish time-bound notices to the appropriate tenant audience."
+        "label": "Newsroom publishing",
+        "title": "Newsroom publishing",
+        "description": "Author, review, and publish targeted news, events, and policy updates."
       },
       "preference-exceptions": {
         "label": "Setting exceptions",
@@ -43,10 +44,25 @@
         "title": "Localization studio",
         "description": "Create, review, approve, publish, and restore tenant translations with quality evidence."
       },
+      "service-catalog": {
+        "label": "Service catalog",
+        "title": "Service catalog",
+        "description": "Manage multilingual service definitions, intake forms, owning teams, SLAs, and data classifications."
+      },
+      "service-operations": {
+        "label": "Request operations",
+        "title": "Service request operations",
+        "description": "Triage, assign, and resolve tenant requests with controlled SLAs and a complete history."
+      },
       "access": {
         "label": "Access control",
         "title": "Identity access",
         "description": "Assign tenant roles and review effective access for workforce accounts."
+      },
+      "app-governance": {
+        "label": "App responsibilities",
+        "title": "App responsibility governance",
+        "description": "Separate app ownership, configuration, access approval, fulfilment, and review by explicit scope and validity."
       },
       "app-access-requests": {
         "label": "App access requests",
@@ -225,6 +241,7 @@
     "policyStates": {
       "REVIEW_REQUIRED": "Security review required",
       "APPROVED": "Approved",
+      "REVOKED": "Revoked",
       "BLOCKED": "Blocked"
     },
     "auth": {
@@ -345,7 +362,8 @@
     "managementReasons": {
       "SELF": "You cannot change your own roles.",
       "IDENTITY_INACTIVE": "Roles cannot be changed for inactive or suspended identities.",
-      "PROTECTED_ROLE": "Users with peer, higher, or control-plane roles cannot be changed."
+      "PROTECTED_ROLE": "Users with peer, higher, or control-plane roles cannot be changed.",
+      "ROLE_ASSIGNMENT_REQUIRES_TENANT_ADMIN": "Identity administrators can inspect access, but tenant role delegation requires a tenant administrator."
     },
     "columns": {
       "user": "User",
@@ -387,7 +405,11 @@
     },
     "sources": {
       "direct": "Direct",
-      "group": "Group"
+      "group": "Group",
+      "app_access_request": "Approved app request",
+      "admin_direct": "Governed direct assignment",
+      "access_package": "Access package",
+      "governed": "Governed entitlement"
     },
     "inspector": {
       "title": "Effective access",
@@ -619,13 +641,44 @@
     }
   },
   "announcements": {
-    "title": "Announcements",
-    "description": "Governed, audience-aware employee communications.",
-    "loading": "Loading announcements",
+    "immutableNotice": "Published content is immutable to preserve evidence. Duplicate it into a new draft for any reviewed change.",
+    "title": "Newsroom publishing",
+    "description": "Manage the full employee-communications lifecycle from editorial assets and audiences to publication windows and acknowledgement evidence.",
+    "loading": "Loading the newsroom pipeline",
     "pinned": "Pinned",
+    "featured": "Featured",
     "immediate": "Immediate",
     "openEnded": "Open ended",
     "noAnnouncements": "No announcements",
+    "sections": {
+      "editorial": "Content and editorial assets",
+      "delivery": "Audience and delivery policy",
+      "action": "Connected action"
+    },
+    "contentTypes": {
+      "ANNOUNCEMENT": "Update",
+      "NEWS": "News",
+      "EVENT": "Event",
+      "POLICY_UPDATE": "Policy update"
+    },
+    "categories": {
+      "COMPANY": "Company",
+      "INNOVATION": "Innovation",
+      "CULTURE": "Culture",
+      "SECURITY": "Security",
+      "LEADERSHIP": "Leadership",
+      "GROWTH": "Growth"
+    },
+    "coverAssets": {
+      "none": "No cover image",
+      "innovation-lab": "Innovation lab",
+      "community-day": "Community day",
+      "security-readiness": "Security readiness"
+    },
+    "values": {
+      "required": "Required acknowledgement",
+      "optional": "Standard story"
+    },
     "empty": {
       "title": "There are no announcements yet",
       "description": "Create the first draft, then review its audience and publication window before publishing.",
@@ -651,18 +704,33 @@
       "uniqueViewers": "Unique viewers",
       "views": "Views",
       "actionClicks": "Action clicks",
+      "acknowledgements": "Acknowledged",
       "aggregateNotice": "Sum of per-announcement viewers"
     },
     "fields": {
       "title": "Title",
       "message": "Message",
+      "body": "Story body",
+      "contentType": "Content type",
+      "category": "Topic",
+      "publisher": "Publisher",
+      "sourceLocale": "Source locale",
+      "invalidLocale": "Use a locale such as ko or en-US.",
+      "invalidCategory": "Select a registered reference-data category.",
+      "coverAsset": "Cover asset",
+      "readingMinutes": "Estimated reading time (minutes)",
       "severity": "Severity",
       "audience": "Audience",
       "roleKey": "Role key",
       "pinned": "Pinned",
+      "featured": "Show as featured story",
+      "dismissible": "Allow readers to dismiss",
+      "acknowledgementRequired": "Require acknowledgement evidence",
+      "acknowledgementDue": "Acknowledgement due",
       "starts": "Starts",
       "ends": "Ends",
       "invalidScheduleWindow": "The end time cannot be earlier than the start time.",
+      "invalidAction": "Action label and URL must be provided together.",
       "actionLabel": "Action label",
       "actionUrl": "Action URL"
     },
@@ -677,8 +745,8 @@
       "ROLE": "Role"
     },
     "table": {
-      "label": "Announcements",
-      "announcement": "Announcement",
+      "label": "Newsroom publishing pipeline",
+      "announcement": "Content",
       "status": "Status",
       "audience": "Audience",
       "window": "Window",
@@ -688,12 +756,12 @@
       "actions": "Actions"
     },
     "dialog": {
-      "editTitle": "Edit announcement",
-      "newTitle": "New announcement",
-      "close": "Close announcement dialog"
+      "editTitle": "Edit newsroom content",
+      "newTitle": "New newsroom content",
+      "close": "Close newsroom editor"
     },
     "actions": {
-      "new": "New announcement",
+      "new": "New content",
       "saveChanges": "Save changes",
       "createDraft": "Create draft",
       "editNamed": "Edit {{title}}",
@@ -708,12 +776,12 @@
       "showAll": "Show all announcements"
     },
     "preview": {
-      "title": "Announcement preview",
-      "close": "Close announcement preview",
-      "workspace": "Workspace rendering",
-      "delivery": "Delivery evidence",
+      "title": "Story preview",
+      "close": "Close story preview",
+      "workspace": "Employee experience preview",
+      "delivery": "Delivery and acknowledgement evidence",
       "analyticsNotice": "Counts show observed delivery only. Audience-size and reach-rate reporting require the approved identity audience contract.",
-      "governance": "Audience and publication window"
+      "governance": "Audience, publication, and acknowledgement policy"
     },
     "toasts": {
       "published": "Announcement published.",
@@ -2091,6 +2159,30 @@
         "name": "Audit administrator",
         "description": "Manages audit evidence, policy, integrity, and integrations."
       },
+      "IDENTITY_ADMIN": {
+        "name": "Identity administrator",
+        "description": "Manages workforce identities, groups, and provisioning separately from privileged role policy."
+      },
+      "APP_CATALOG_ADMIN": {
+        "name": "Application catalog administrator",
+        "description": "Governs application ownership and scoped administrative delegation."
+      },
+      "COMMUNICATIONS_EDITOR": {
+        "name": "Communications editor",
+        "description": "Authors and maintains employee communications without publication authority."
+      },
+      "COMMUNICATIONS_PUBLISHER": {
+        "name": "Communications publisher",
+        "description": "Reviews audiences and delivery policy, then publishes and governs newsroom content."
+      },
+      "SERVICE_CATALOG_MANAGER": {
+        "name": "Service catalog manager",
+        "description": "Manages employee service definitions, intake forms, owning teams, and SLA policies."
+      },
+      "SERVICE_AGENT": {
+        "name": "Service agent",
+        "description": "Triages, assigns, and resolves employee service requests with accountable evidence."
+      },
       "PROVIDER_ADMIN": {
         "name": "Provider administrator",
         "description": "Operates the isolated provider control plane."
@@ -2106,6 +2198,26 @@
       "PROVIDER_AUDITOR": {
         "name": "Provider auditor",
         "description": "Reviews provider control-plane audit information with read-only access."
+      },
+      "PROVIDER_TENANT_PROVISIONER": {
+        "name": "Provider tenant provisioner",
+        "description": "Creates and activates customer tenant foundations."
+      },
+      "PROVIDER_ENTITLEMENT_ADMIN": {
+        "name": "Provider entitlement administrator",
+        "description": "Manages contract-backed tenant entitlements without customer data access."
+      },
+      "PROVIDER_CHANGE_APPROVER": {
+        "name": "Provider change approver",
+        "description": "Approves high-risk provider changes independently from the requester."
+      },
+      "PROVIDER_RELEASE_APPROVER": {
+        "name": "Provider release approver",
+        "description": "Approves production releases and feature rollouts independently from operators."
+      },
+      "PROVIDER_DATA_APPROVER": {
+        "name": "Provider data policy approver",
+        "description": "Approves data-policy lifecycle changes independently from policy authors."
       }
     },
     "tabs": {
@@ -2632,6 +2744,86 @@
       }
     }
   },
+  "appGovernance": {
+    "loading": "Loading application responsibility governance",
+    "attention": "Review {{pending}} pending approvals and {{ownerless}} app scopes without an owner.",
+    "viewLabel": "Application governance view",
+    "views": { "assignments": "Responsibility assignments", "boundaries": "App resource sets" },
+    "metrics": {
+      "activeAssignments": "Active responsibilities",
+      "pendingApprovals": "Pending approval",
+      "reviewsDueSoon": "Reviews due in 30 days",
+      "resourcesWithoutOwner": "Scopes without owner"
+    },
+    "columns": {
+      "principal": "User or group",
+      "responsibility": "Responsibility",
+      "scope": "App scope",
+      "validity": "Validity",
+      "state": "State",
+      "actions": "Actions"
+    },
+    "actions": {
+      "newBoundary": "Create app scope",
+      "requestAssignment": "Request assignment",
+      "submitForApproval": "Submit for approval",
+      "approve": "Approve",
+      "approved": "Approve",
+      "deny": "Deny",
+      "denied": "Deny",
+      "revoke": "Revoke",
+      "revoked": "Revoke"
+    },
+    "fields": {
+      "principal": "User or group",
+      "responsibility": "Administrative responsibility",
+      "scope": "App resource set",
+      "validTo": "Expiration time (optional)",
+      "justification": "Business justification",
+      "justificationHelp": "A specific reason of at least 10 characters is retained as audit evidence.",
+      "boundaryKey": "Scope key",
+      "boundaryName": "Scope name",
+      "description": "Description",
+      "applications": "Included applications",
+      "decisionReason": "Decision rationale"
+    },
+    "dialog": {
+      "assignmentTitle": "Request app responsibility assignment",
+      "boundaryTitle": "Create app resource set",
+      "approvedTitle": "Approve this responsibility assignment?",
+      "deniedTitle": "Deny this responsibility assignment?",
+      "revokedTitle": "Revoke this active responsibility?"
+    },
+    "responsibilities": {
+      "APP_OWNER": "App owner",
+      "APP_CONFIG_ADMIN": "App configuration administrator",
+      "APP_ACCESS_MANAGER": "App access fulfiller",
+      "APP_ACCESS_APPROVER": "App access approver",
+      "APP_ACCESS_REVIEWER": "App access reviewer"
+    },
+    "states": {
+      "PENDING_APPROVAL": "Pending approval",
+      "ACTIVE": "Active",
+      "DENIED": "Denied",
+      "REVOKED": "Revoked",
+      "EXPIRED": "Expired"
+    },
+    "assignmentTable": "Scoped application responsibility assignments",
+    "noExpiry": "No expiration",
+    "reviewDue": "Review due {{value}}",
+    "assignmentCount": "{{count}} active",
+    "empty": {
+      "assignmentsTitle": "No application responsibilities assigned",
+      "assignmentsDescription": "Request an assignment with an explicit responsibility, resource scope, and validity."
+    },
+    "toasts": {
+      "requested": "Responsibility assignment submitted for approval.",
+      "boundaryCreated": "Application resource set created.",
+      "approved": "Responsibility assignment approved.",
+      "denied": "Responsibility assignment denied.",
+      "revoked": "Active responsibility revoked."
+    }
+  },
   "appAccess": {
     "loading": "Loading app access requests",
     "filterLabel": "Request state",
@@ -2639,6 +2831,7 @@
       "ALL": "All",
       "PENDING": "Pending",
       "APPROVED": "Approved",
+      "REVOKED": "Revoked",
       "REJECTED": "Rejected",
       "CANCELLED": "Cancelled",
       "EXPIRED": "Expired"
@@ -2649,7 +2842,9 @@
       "requestedUntil": "Requested until",
       "requestedAt": "Requested at",
       "justification": "Business justification",
-      "decision": "Decision record"
+      "decision": "Decision record",
+      "fulfillment": "Runtime entitlement",
+      "attempts": "Execution attempts"
     },
     "userFallback": "User {{id}}",
     "notAvailable": "Not available",
@@ -2665,10 +2860,35 @@
       "noteHelp": "At least 10 characters. This rationale is retained as audit evidence.",
       "saving": "Saving decision"
     },
-    "provisioning": {
-      "title": "IAM entitlement synchronization required",
-      "description": "Approval does not bypass the identity authority. Assign a governed role that grants this resource, then the user's next token refresh will make the app available.",
-      "openAccess": "Open access control"
+    "fulfillmentStates": {
+      "NOT_REQUIRED": "Not required",
+      "PENDING": "Execution pending",
+      "SUCCEEDED": "Access active",
+      "FAILED": "Execution failed",
+      "REVOKED": "Access revoked",
+      "EXPIRED": "Access expired"
+    },
+    "fulfillmentDescriptions": {
+      "NOT_REQUIRED": "No runtime entitlement action is required for this decision.",
+      "PENDING": "An application access manager must independently execute this approved decision.",
+      "SUCCEEDED": "Auth is enforcing the entitlement. Revocation takes effect on the next request.",
+      "FAILED": "The entitlement authority rejected or could not complete the last attempt. Review the evidence and retry.",
+      "REVOKED": "The runtime entitlement has been removed from the authority source.",
+      "EXPIRED": "The approved entitlement reached its policy end time and is no longer effective."
+    },
+    "fulfillment": {
+      "title": "Runtime entitlement lifecycle",
+      "fulfill": "Apply access",
+      "retry": "Retry execution",
+      "revoke": "Revoke access",
+      "fulfillTitle": "Apply {{app}} access?",
+      "fulfillDescription": "Execute the approved decision in Auth. The approver and requester cannot perform this step.",
+      "revokeTitle": "Revoke {{app}} access?",
+      "revokeDescription": "Remove the runtime entitlement immediately and retain the reason as audit evidence.",
+      "note": "Execution rationale",
+      "noteHelp": "At least 10 characters. Do not enter credentials or sensitive personal data.",
+      "failureEvidence": "Last execution failure",
+      "saving": "Updating entitlement"
     },
     "empty": {
       "title": "No requests in this state",
@@ -2676,7 +2896,10 @@
     },
     "toasts": {
       "approved": "The access request was approved.",
-      "rejected": "The access request was rejected."
+      "rejected": "The access request was rejected.",
+      "fulfilled": "The runtime application entitlement is active.",
+      "fulfillmentFailed": "The entitlement could not be applied. Failure evidence was retained for retry.",
+      "revoked": "The runtime application entitlement was revoked."
     }
   },
   "workforceAccess": {
@@ -3071,6 +3294,125 @@
     "userFallback": "User #{{id}}",
     "toasts": {
       "completed": "Custody processing completed for {{count}} saved views."
+    }
+  },
+  "serviceCenter": {
+    "catalog": {
+      "active": "Active",
+      "draft": "Draft",
+      "retired": "Retired",
+      "averageSla": "Average response target",
+      "hours": "{{count}}h",
+      "search": "Search by service, key, or owning team",
+      "lifecycle": "Lifecycle",
+      "all": "All",
+      "new": "Create service",
+      "tableLabel": "Service catalog definitions",
+      "service": "Service",
+      "category": "Category",
+      "owner": "Owning team",
+      "sla": "SLA",
+      "classification": "Data class",
+      "state": "State",
+      "edit": "Edit service",
+      "emptyTitle": "No services match",
+      "emptyDescription": "Change the search phrase or lifecycle filter.",
+      "loadError": "We could not load the service catalog.",
+      "saved": "The service definition was saved.",
+      "saveError": "We could not save the service definition.",
+      "governanceNotice": "Changing an active intake schema does not alter existing requests. Each request preserves its submission-time schema as evidence.",
+      "editor": {
+        "newTitle": "New service definition",
+        "editTitle": "Edit service definition",
+        "identity": "Service identity",
+        "delivery": "Operations and controls",
+        "form": "Intake form",
+        "serviceKey": "Service key",
+        "categoryKey": "Category",
+        "nameKo": "Korean name",
+        "nameEn": "English name",
+        "descriptionKo": "Korean description",
+        "descriptionEn": "English description",
+        "ownerGroup": "Owning team",
+        "lifecycleState": "Lifecycle",
+        "slaHours": "Response target (hours)",
+        "estimatedHours": "Estimated handling (hours)",
+        "classification": "Data classification",
+        "featured": "Show as a featured service",
+        "tags": "Search tags",
+        "tagsHelp": "Comma separated",
+        "addField": "Add field",
+        "fieldKey": "Field key",
+        "fieldType": "Type",
+        "labelKo": "Korean label",
+        "labelEn": "English label",
+        "required": "Required",
+        "options": "Options",
+        "optionsHelp": "Comma separated for SELECT fields",
+        "removeField": "Remove field",
+        "cancel": "Cancel",
+        "save": "Save definition",
+        "invalid": "Review required values and intake form fields."
+      }
+    },
+    "operations": {
+      "open": "Active requests",
+      "waiting": "Waiting for requester",
+      "atRisk": "SLA at risk",
+      "breached": "SLA breached",
+      "filter": "Status filter",
+      "all": "All",
+      "search": "Search by request, service, or summary",
+      "queue": "Service operations queue",
+      "request": "Request",
+      "service": "Service",
+      "summary": "Summary",
+      "status": "Status",
+      "owner": "Owning team",
+      "sla": "SLA target",
+      "updated": "Updated",
+      "selectTitle": "Select a request",
+      "selectDescription": "Review its handling history, submitted information, and allowed next states.",
+      "emptyTitle": "No requests match",
+      "emptyDescription": "Change the status or search filter.",
+      "loadError": "We could not load the service operations queue.",
+      "detailError": "We could not load the request detail.",
+      "requestData": "Submitted information",
+      "timeline": "Handling history",
+      "nextAction": "Next action",
+      "targetStatus": "Target status",
+      "assignee": "Assignee",
+      "assigneePlaceholder": "Name or operations queue ID",
+      "note": "Handling note",
+      "notePlaceholder": "Record the decision rationale and requester guidance",
+      "transition": "Change status",
+      "transitioned": "Request {{number}} was updated.",
+      "transitionError": "We could not change the request status.",
+      "noTransition": "There are no administrative transitions from the current state.",
+      "slaHealthy": "Healthy",
+      "slaAtRisk": "At risk",
+      "slaBreached": "Breached"
+    },
+    "lifecycle": {
+      "DRAFT": "Draft",
+      "ACTIVE": "Active",
+      "RETIRED": "Retired"
+    },
+    "requestStatus": {
+      "DRAFT": "Draft",
+      "SUBMITTED": "Submitted",
+      "TRIAGED": "Triaged",
+      "IN_PROGRESS": "In progress",
+      "AWAITING_REQUESTER": "Waiting for requester",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed",
+      "CANCELLED": "Cancelled"
+    },
+    "classification": {
+      "PUBLIC": "Public",
+      "INTERNAL": "Internal",
+      "CONFIDENTIAL": "Confidential",
+      "RESTRICTED": "Restricted"
     }
   },
   "supportMode": {

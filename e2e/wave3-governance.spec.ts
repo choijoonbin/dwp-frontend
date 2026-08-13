@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import type { NavigationNode } from '@dwp-frontend/shared-utils';
+import type { AppAccessRequest, NavigationNode } from '@dwp-frontend/shared-utils';
 
 import { WORKSPACE_APPS_FIXTURE } from './support/runtime-access';
 import {
@@ -13,24 +13,6 @@ import {
   fulfillSuccess,
   mockShellSession,
 } from './support/shell-session';
-
-type AccessRequest = {
-  requestId: string;
-  userId: number;
-  appId: string;
-  appName: string;
-  resourceKey: string;
-  requestedPermissionCode: 'VIEW';
-  justification: string;
-  state: 'PENDING' | 'APPROVED';
-  requestedUntil: string | null;
-  decisionNote: string | null;
-  decidedAt: string | null;
-  decidedBy: number | null;
-  version: number;
-  createdAt: string;
-  updatedAt: string;
-};
 
 async function installTenantAdmin(page: Page) {
   await mockShellSession(page, ['ADMIN', 'HR_ADMIN'], {
@@ -47,11 +29,52 @@ async function installTenantAdmin(page: Page) {
   });
 }
 
+async function installWorkforceMember(page: Page) {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    userId: 1,
+    locale: 'en',
+    displayName: 'Minseo Kim',
+    jobTitle: 'Network Operations Lead',
+    email: 'minseo.kim@sk.com',
+    appearance: {
+      mode: 'light',
+      density: 'standard',
+      highContrast: false,
+      reduceMotion: true,
+    },
+  });
+}
+
+async function installKnowledgeAccessApprover(page: Page) {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    userId: 2,
+    locale: 'en',
+    displayName: 'Taehoon Kang',
+    jobTitle: 'Application Access Approver',
+    email: 'taehoon.kang@sk.com',
+    resourceRoles: [
+      {
+        responsibilityCode: 'APP_ACCESS_APPROVER',
+        resourceType: 'APP',
+        resourceKey: 'APP.KNOWLEDGE',
+        resourceSetId: 'resource-set-knowledge',
+        resourceSetKey: 'APP.KNOWLEDGE',
+      },
+    ],
+    appearance: {
+      mode: 'light',
+      density: 'standard',
+      highContrast: false,
+      reduceMotion: true,
+    },
+  });
+}
+
 test('app access moves from employee request to governed approval and IAM synchronization', async ({
   page,
 }) => {
-  await installTenantAdmin(page);
-  let request: AccessRequest | null = null;
+  await installWorkforceMember(page);
+  let request: AppAccessRequest | null = null;
   let app = {
     ...WORKSPACE_APPS_FIXTURE[1],
     id: 'knowledge-workspace',
@@ -67,96 +90,103 @@ test('app access moves from employee request to governed approval and IAM synchr
     accessState: 'REQUESTABLE',
   };
 
-  await page.route('**/api/platform/v1/workspace/apps**', async (route) => {
-    const path = new URL(route.request().url()).pathname;
-    if (route.request().method() === 'GET' && path === '/api/platform/v1/workspace/apps') {
-      return fulfillSuccess(route, [WORKSPACE_APPS_FIXTURE[0], app]);
-    }
-    if (path.endsWith('/knowledge-workspace/access-requests')) {
-      const body = route.request().postDataJSON() as {
-        justification: string;
-        requestedUntil?: string;
-      };
-      request = {
-        requestId: 'access-request-wave3',
-        userId: 1,
-        appId: app.id,
-        appName: app.name,
-        resourceKey: app.resourceKey,
-        requestedPermissionCode: 'VIEW',
-        justification: body.justification,
-        state: 'PENDING',
-        requestedUntil: body.requestedUntil ?? null,
-        decisionNote: null,
-        decidedAt: null,
-        decidedBy: null,
-        version: 0,
-        createdAt: '2026-08-12T00:00:00Z',
-        updatedAt: '2026-08-12T00:00:00Z',
-      };
-      app = {
-        ...app,
-        accessState: 'PENDING',
-        accessRequestId: request.requestId,
-        accessRequestState: request.state,
-        accessRequestUpdatedAt: request.updatedAt,
-        accessRequestVersion: request.version,
-      };
-      return fulfillSuccess(route, request);
-    }
-    return route.fallback();
-  });
-  await page.route('**/api/platform/v1/admin/app-access-requests**', async (route) => {
-    const path = new URL(route.request().url()).pathname;
-    if (route.request().method() === 'GET') {
-      return fulfillSuccess(route, request ? [request] : []);
-    }
-    if (path.endsWith('/access-request-wave3/decision') && request) {
-      const body = route.request().postDataJSON() as {
-        decision: 'APPROVED';
-        decisionNote: string;
-      };
-      request = {
-        ...request,
-        state: body.decision,
-        decisionNote: body.decisionNote,
-        decidedAt: '2026-08-12T00:05:00Z',
-        decidedBy: 1,
-        version: request.version + 1,
-        updatedAt: '2026-08-12T00:05:00Z',
-      };
-      app = {
-        ...app,
-        accessState: 'APPROVED_PENDING_SYNC',
-        accessRequestState: 'APPROVED',
-        accessRequestUpdatedAt: request.updatedAt,
-        accessRequestVersion: request.version,
-      };
-      return fulfillSuccess(route, request);
-    }
-    return route.fallback();
-  });
-  await page.route('**/api/auth/admin/identity/users**', (route) =>
-    fulfillSuccess(route, {
-      content: [
-        {
+  const installAccessWorkflowRoutes = async (targetPage: Page) => {
+    await targetPage.route('**/api/platform/v1/workspace/apps**', async (route) => {
+      const path = new URL(route.request().url()).pathname;
+      if (route.request().method() === 'GET' && path === '/api/platform/v1/workspace/apps') {
+        return fulfillSuccess(route, [WORKSPACE_APPS_FIXTURE[0], app]);
+      }
+      if (path.endsWith('/knowledge-workspace/access-requests')) {
+        const body = route.request().postDataJSON() as {
+          justification: string;
+          requestedUntil?: string;
+        };
+        request = {
+          requestId: 'access-request-wave3',
           userId: 1,
-          displayName: 'Tenant Admin',
-          email: 'tenant.admin@dwp.local',
-          status: 'ACTIVE',
-          mfaEnabled: true,
-          roles: ['ADMIN'],
-          roleManagement: { allowed: false, reason: 'SELF' },
-          accessRevision: 3,
-          version: 2,
-        },
-      ],
-      page: 0,
-      size: 100,
-      totalElements: 1,
-      totalPages: 1,
-    })
-  );
+          appId: app.id,
+          appName: app.name,
+          resourceKey: app.resourceKey,
+          requestedPermissionCode: 'VIEW',
+          justification: body.justification,
+          state: 'PENDING',
+          requestedUntil: body.requestedUntil ?? null,
+          decisionNote: null,
+          decidedAt: null,
+          decidedBy: null,
+          fulfillmentState: 'NOT_REQUIRED',
+          fulfillmentAttempts: 0,
+          version: 0,
+          createdAt: '2026-08-12T00:00:00Z',
+          updatedAt: '2026-08-12T00:00:00Z',
+        };
+        app = {
+          ...app,
+          accessState: 'PENDING',
+          accessRequestId: request.requestId,
+          accessRequestState: request.state,
+          accessRequestUpdatedAt: request.updatedAt,
+          accessRequestVersion: request.version,
+        };
+        return fulfillSuccess(route, request);
+      }
+      return route.fallback();
+    });
+    await targetPage.route('**/api/platform/v1/admin/app-access-requests**', async (route) => {
+      const path = new URL(route.request().url()).pathname;
+      if (route.request().method() === 'GET') {
+        return fulfillSuccess(route, request ? [request] : []);
+      }
+      if (path.endsWith('/access-request-wave3/decision') && request) {
+        const body = route.request().postDataJSON() as {
+          decision: 'APPROVED';
+          decisionNote: string;
+        };
+        request = {
+          ...request,
+          state: body.decision,
+          decisionNote: body.decisionNote,
+          decidedAt: '2026-08-12T00:05:00Z',
+          decidedBy: 2,
+          fulfillmentState: 'PENDING',
+          version: request.version + 1,
+          updatedAt: '2026-08-12T00:05:00Z',
+        };
+        app = {
+          ...app,
+          accessState: 'APPROVED_PENDING_SYNC',
+          accessRequestState: 'APPROVED',
+          accessRequestUpdatedAt: request.updatedAt,
+          accessRequestVersion: request.version,
+        };
+        return fulfillSuccess(route, request);
+      }
+      return route.fallback();
+    });
+    await targetPage.route('**/api/auth/admin/identity/users**', (route) =>
+      fulfillSuccess(route, {
+        content: [
+          {
+            userId: 1,
+            displayName: 'Minseo Kim',
+            email: 'minseo.kim@sk.com',
+            status: 'ACTIVE',
+            mfaEnabled: true,
+            roles: ['WORKSPACE_MEMBER'],
+            roleManagement: { allowed: true, reason: null },
+            accessRevision: 3,
+            version: 2,
+          },
+        ],
+        page: 0,
+        size: 100,
+        totalElements: 1,
+        totalPages: 1,
+      })
+    );
+  };
+
+  await installAccessWorkflowRoutes(page);
 
   await page.goto('/apps');
   await page.getByText('Knowledge workspace', { exact: true }).click();
@@ -169,18 +199,28 @@ test('app access moves from employee request to governed approval and IAM synchr
   await requestDialog.getByRole('button', { name: 'Submit request' }).click();
   await expect(page.getByText('Review pending', { exact: true })).toBeVisible();
 
-  await page.goto('/admin/identity/app-access-requests');
-  await expect(page.getByRole('heading', { name: 'Knowledge workspace', level: 2 })).toBeVisible();
-  await page.getByRole('button', { name: 'Approve', exact: true }).click();
-  const decisionDialog = page.getByRole('dialog', {
+  const approverPage = await page.context().newPage();
+  await installKnowledgeAccessApprover(approverPage);
+  await installAccessWorkflowRoutes(approverPage);
+  await approverPage.goto('/admin/identity/app-access-requests');
+  await expect(
+    approverPage.getByRole('heading', { name: 'Knowledge workspace', level: 2 })
+  ).toBeVisible();
+  await approverPage.getByRole('button', { name: 'Approve', exact: true }).click();
+  const decisionDialog = approverPage.getByRole('dialog', {
     name: 'Approve Knowledge workspace access?',
   });
   await decisionDialog
     .getByRole('textbox', { name: 'Decision rationale' })
     .fill('Approved for the current customer delivery assignment.');
   await decisionDialog.getByRole('button', { name: 'Approve', exact: true }).click();
-  await page.getByRole('button', { name: 'Approved', exact: true }).click();
-  await expect(page.getByText('IAM entitlement synchronization required')).toBeVisible();
+  await approverPage.getByRole('button', { name: 'Approved', exact: true }).click();
+  await expect(
+    approverPage.getByText(
+      'An application access manager must independently execute this approved decision.'
+    )
+  ).toBeVisible();
+  await approverPage.close();
 
   await page.goto('/apps');
   await expect(page.getByText('Approved · syncing', { exact: true })).toBeVisible();

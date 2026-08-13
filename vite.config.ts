@@ -46,6 +46,7 @@ export default defineConfig(({ mode }) => {
         }),
     ].filter(Boolean),
     resolve: {
+      dedupe: ['react', 'react-dom', '@emotion/react', '@emotion/styled'],
       alias: {
         '@dwp-frontend/design-system': path.join(workspaceRoot, 'libs/design-system/src'),
         '@dwp-frontend/shared-utils': path.join(workspaceRoot, 'libs/shared-utils/src'),

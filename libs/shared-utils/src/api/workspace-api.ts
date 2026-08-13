@@ -66,12 +66,7 @@ export type WorkspaceActivityFeed = {
 };
 
 export type WorkspaceAppCategory =
-  | 'productivity'
-  | 'service'
-  | 'people'
-  | 'knowledge'
-  | 'business'
-  | 'legacy';
+  'productivity' | 'service' | 'people' | 'knowledge' | 'business' | 'legacy';
 export type WorkspaceAppLaunchMode = 'Native' | 'SSO' | 'Deep link';
 export type WorkspaceAppHealth = 'healthy' | 'managed' | 'attention' | 'configuration-required';
 export type WorkspaceAppAccessState =
@@ -79,6 +74,8 @@ export type WorkspaceAppAccessState =
   | 'REQUESTABLE'
   | 'PENDING'
   | 'APPROVED_PENDING_SYNC'
+  | 'APPROVED_SYNC_FAILED'
+  | 'APPROVED_REFRESHING'
   | 'CONFIGURATION_REQUIRED';
 
 export type WorkspaceApp = {
@@ -98,7 +95,8 @@ export type WorkspaceApp = {
   version: number;
   accessState: WorkspaceAppAccessState;
   accessRequestId?: string | null;
-  accessRequestState?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED' | null;
+  accessRequestState?:
+    'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED' | 'REVOKED' | null;
   accessRequestUpdatedAt?: string | null;
   accessRequestVersion?: number | null;
 };
@@ -111,11 +109,21 @@ export type AppAccessRequest = {
   resourceKey: string;
   requestedPermissionCode: 'VIEW';
   justification: string;
-  state: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED';
+  state: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED' | 'REVOKED';
   requestedUntil?: string | null;
   decisionNote?: string | null;
   decidedAt?: string | null;
   decidedBy?: number | null;
+  fulfillmentState: 'NOT_REQUIRED' | 'PENDING' | 'SUCCEEDED' | 'FAILED' | 'REVOKED' | 'EXPIRED';
+  fulfillmentAttempts: number;
+  fulfillmentNote?: string | null;
+  lastFulfillmentAt?: string | null;
+  lastFulfillmentError?: string | null;
+  fulfilledAt?: string | null;
+  fulfilledBy?: number | null;
+  revokedAt?: string | null;
+  revokedBy?: number | null;
+  revocationNote?: string | null;
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -333,6 +341,34 @@ export async function decideAppAccessRequest(
   >(`/api/platform/v1/admin/app-access-requests/${request.requestId}/decision`, {
     decision,
     decisionNote,
+    version: request.version,
+  });
+  return response.data.data;
+}
+
+export async function fulfillAppAccessRequest(
+  request: AppAccessRequest,
+  note: string
+): Promise<AppAccessRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<AppAccessRequest>,
+    { note: string; version: number }
+  >(`/api/platform/v1/admin/app-access-requests/${request.requestId}/fulfillment`, {
+    note,
+    version: request.version,
+  });
+  return response.data.data;
+}
+
+export async function revokeAppAccessRequest(
+  request: AppAccessRequest,
+  note: string
+): Promise<AppAccessRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<AppAccessRequest>,
+    { note: string; version: number }
+  >(`/api/platform/v1/admin/app-access-requests/${request.requestId}/revocation`, {
+    note,
     version: request.version,
   });
   return response.data.data;

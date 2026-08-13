@@ -43,7 +43,7 @@ export function LanguageMenu() {
           minWidth: 0,
           minHeight: 44,
           px: 1,
-          color: 'text.secondary',
+          color: 'text.primary',
           borderRadius: 1,
           bgcolor: 'transparent',
           fontSize: '0.8125rem',

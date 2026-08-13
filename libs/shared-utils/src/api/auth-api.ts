@@ -17,6 +17,15 @@ export type PermissionDTO = {
   effect: 'ALLOW' | 'DENY';
 };
 
+export type ResourceRoleDTO = {
+  responsibilityCode: string;
+  resourceType: string;
+  resourceKey: string;
+  resourceSetId: string;
+  resourceSetKey: string;
+  validTo?: string | null;
+};
+
 export type LoginResponseData = {
   expiresIn?: number;
   userId?: string;
@@ -26,6 +35,7 @@ export type LoginResponseData = {
 
 export type MeResponse = {
   userId: number;
+  personPublicId?: string | null;
   displayName: string;
   jobTitle?: string | null;
   preferredLocale?: string | null;
@@ -39,6 +49,7 @@ export type MeResponse = {
     groupRef: string;
     displayName: string;
   }>;
+  resourceRoles?: ResourceRoleDTO[];
 };
 
 export type AuthSessionData = {

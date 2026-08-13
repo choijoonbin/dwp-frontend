@@ -2,11 +2,11 @@ import { expect, test, type Page } from '@playwright/test';
 
 import {
   ASK_RUNTIME_FIXTURE,
-  DEFAULT_APP_PERMISSIONS,
   mockAskRuntime,
   mockRuntimeNavigation,
   WORKSPACE_QUEUE_FIXTURE,
 } from './support/runtime-access';
+import { FULL_PRODUCT_PERMISSIONS } from './support/shell-session';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -76,7 +76,7 @@ async function mockAuthenticated(page: Page, locale = 'en') {
       body: JSON.stringify({
         status: 'SUCCESS',
         message: 'OK',
-        data: DEFAULT_APP_PERMISSIONS,
+        data: FULL_PRODUCT_PERMISSIONS,
       }),
     })
   );
@@ -107,27 +107,44 @@ async function mockAuthenticated(page: Page, locale = 'en') {
       }),
     })
   );
-  await page.route('**/api/platform/v1/home-preferences', (route) =>
+  await page.route('**/api/platform/v1/home-preferences**', (route) =>
     route.fulfill({
       contentType: 'application/json',
       body: JSON.stringify({
         status: 'SUCCESS',
         message: 'OK',
         data: {
-          schemaVersion: 1,
+          schemaVersion: 2,
+          surfaceKey: 'workspace-home',
           customized: false,
           layout: {
             appLayout: null,
+            presentation: 'balanced',
             widgets: [
-              { widgetKey: 'announcements', visible: true },
-              { widgetKey: 'daily-brief', visible: true },
-              { widgetKey: 'focus', visible: true },
-              { widgetKey: 'schedule', visible: true },
-              { widgetKey: 'activity', visible: true },
+              { widgetKey: 'announcements', visible: true, size: 'full' },
+              { widgetKey: 'daily-brief', visible: true, size: 'medium' },
+              { widgetKey: 'focus', visible: true, size: 'medium' },
+              { widgetKey: 'schedule', visible: true, size: 'medium' },
+              { widgetKey: 'activity', visible: true, size: 'medium' },
             ],
           },
           version: 0,
           updatedAt: null,
+        },
+      }),
+    })
+  );
+  await page.route('**/api/platform/v1/communications**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          featured: null,
+          items: [],
+          summary: { total: 0, unread: 0, required: 0, saved: 0 },
+          generatedAt: '2026-08-11T00:20:00Z',
         },
       }),
     })

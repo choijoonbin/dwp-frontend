@@ -115,13 +115,13 @@ test('mobile product-area shell keeps navigation usable in Korean high contrast'
     },
   });
 
-  await page.goto('/people/directory');
-  const header = page.getByTestId('people-header');
+  await page.goto('/hr/directory');
+  const header = page.getByTestId('hris-header');
   await expect(header).toBeVisible();
   await expect(page.getByRole('textbox', { name: '구성원 검색' })).toBeVisible();
   await header.locator('button').first().click();
-  await expect(page.getByTestId('people-mobile-sidebar')).toBeVisible();
-  await expect(page).toHaveScreenshot('shell-people-ko-mobile-drawer.png', {
+  await expect(page.getByTestId('hris-mobile-sidebar')).toBeVisible();
+  await expect(page).toHaveScreenshot('shell-hris-ko-mobile-drawer.png', {
     animations: 'disabled',
     caret: 'hide',
     fullPage: false,

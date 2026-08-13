@@ -13,6 +13,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getHomeExperience,
   getHomePreference,
+  getCommunicationFeed,
   getWorkspaceApps,
   getWorkspaceWorkQueue,
   launchWorkspaceApp,
@@ -103,10 +104,26 @@ export default function HomePage() {
     }
   };
   const firstName = auth.user?.displayName?.split(' ')[0];
+  const communicationsSummaryQuery = useQuery({
+    queryKey: ['communications', 'feed', 'for-you', '', 'ALL', 24],
+    queryFn: () => getCommunicationFeed({ scope: 'for-you', type: 'ALL', size: 24 }),
+    staleTime: 30_000,
+    retry: 1,
+  });
   const entitledApps = useMemo(
     () =>
-      localizeHomeApps(t).filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
-    [auth.user?.roles, permissions, t]
+      localizeHomeApps(t)
+        .map((app) =>
+          app.id === 'dwp-communications' &&
+          (communicationsSummaryQuery.data?.summary.unread ?? 0) > 0
+            ? {
+                ...app,
+                badge: String(Math.min(99, communicationsSummaryQuery.data?.summary.unread ?? 0)),
+              }
+            : app
+        )
+        .filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
+    [auth.user?.roles, communicationsSummaryQuery.data?.summary.unread, permissions, t]
   );
   const [draftAppLayout, setDraftAppLayout] = useState<LaunchpadLayout>(() =>
     createDefaultLaunchpadLayout(entitledApps)

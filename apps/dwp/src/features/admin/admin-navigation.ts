@@ -21,11 +21,14 @@ import {
   Network,
   Languages,
   LibraryBig,
+  LifeBuoy,
+  ListChecks,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
 
-export type AdminSection = 'experience' | 'identity' | 'platform' | 'integrations' | 'governance';
+export type AdminSection =
+  'experience' | 'services' | 'identity' | 'platform' | 'integrations' | 'governance';
 
 export type AdminView =
   | 'branding'
@@ -35,11 +38,14 @@ export type AdminView =
   | 'localization'
   | 'access'
   | 'app-access-requests'
+  | 'app-governance'
   | 'access-reviews'
   | 'roles'
   | 'workforce-access'
   | 'saved-view-custody'
   | 'provisioning'
+  | 'service-catalog'
+  | 'service-operations'
   | 'catalog'
   | 'navigation'
   | 'reference-data'
@@ -60,6 +66,7 @@ export type AdminNavigationItem = {
   requiredResourceKey?: string;
   requiredPermissionCode?: string;
   reviewerAccessible?: boolean;
+  requiredResponsibilityCodes?: readonly string[];
 };
 
 export type AdminNavigationGroup = {
@@ -90,6 +97,8 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'announcements',
         path: '/admin/experience/announcements',
         icon: Megaphone,
+        requiredResourceKey: 'ADMIN.COMMUNICATIONS',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'experience',
@@ -106,6 +115,28 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
     ],
   },
   {
+    id: 'services',
+    icon: LifeBuoy,
+    items: [
+      {
+        section: 'services',
+        view: 'service-catalog',
+        path: '/admin/services/service-catalog',
+        icon: LifeBuoy,
+        requiredResourceKey: 'ADMIN.SERVICE_CATALOG',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'services',
+        view: 'service-operations',
+        path: '/admin/services/service-operations',
+        icon: ListChecks,
+        requiredResourceKey: 'ADMIN.SERVICE_OPERATIONS',
+        requiredPermissionCode: 'VIEW',
+      },
+    ],
+  },
+  {
     id: 'identity',
     icon: UsersRound,
     items: [
@@ -114,12 +145,37 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'access',
         path: '/admin/identity/access',
         icon: ShieldCheck,
+        requiredResourceKey: 'ADMIN.IDENTITY_DIRECTORY',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'identity',
+        view: 'app-governance',
+        path: '/admin/identity/app-governance',
+        icon: Boxes,
+        requiredResourceKey: 'ADMIN.APP_GOVERNANCE',
+        requiredPermissionCode: 'VIEW',
+        requiredResponsibilityCodes: [
+          'APP_OWNER',
+          'APP_CONFIG_ADMIN',
+          'APP_ACCESS_MANAGER',
+          'APP_ACCESS_APPROVER',
+          'APP_ACCESS_REVIEWER',
+        ],
       },
       {
         section: 'identity',
         view: 'app-access-requests',
         path: '/admin/identity/app-access-requests',
         icon: AppWindow,
+        requiredResourceKey: 'ADMIN.APP_ACCESS_REQUESTS',
+        requiredPermissionCode: 'VIEW',
+        requiredResponsibilityCodes: [
+          'APP_OWNER',
+          'APP_ACCESS_MANAGER',
+          'APP_ACCESS_APPROVER',
+          'APP_ACCESS_REVIEWER',
+        ],
       },
       {
         section: 'identity',
@@ -155,6 +211,8 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'provisioning',
         path: '/admin/identity/provisioning',
         icon: PlugZap,
+        requiredResourceKey: 'ADMIN.IDENTITY_PROVISIONING',
+        requiredPermissionCode: 'VIEW',
       },
     ],
   },

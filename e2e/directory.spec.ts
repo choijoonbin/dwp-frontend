@@ -110,7 +110,7 @@ test('workforce administrators explore effective organization and reporting stru
     })
   );
 
-  await page.goto('/workforce/organization');
+  await page.goto('/hr/design/organization');
   await expect(
     page.getByRole('heading', { name: 'Organization design', exact: true })
   ).toBeVisible();
@@ -244,7 +244,7 @@ test('people profile deep-links to the selected person in the reporting chart', 
     })
   );
 
-  await page.goto('/workforce/people?asOf=2026-08-10&q=Hana');
+  await page.goto('/hr/operations/people?asOf=2026-08-10&q=Hana');
   await page.getByText('Lee Hana', { exact: true }).click();
   await expect(
     page.getByRole('dialog').getByText('Workforce profile', { exact: true })
@@ -252,7 +252,7 @@ test('people profile deep-links to the selected person in the reporting chart', 
   await page.getByRole('button', { name: 'View in organization chart' }).click();
 
   await expect(page).toHaveURL(
-    new RegExp(`/workforce/organization\\?.*mode=people.*person=${LEAD_ID}`)
+    new RegExp(`/hr/design/organization\\?.*mode=people.*person=${LEAD_ID}`)
   );
   if (testInfo.project.name === 'mobile') {
     await expect(page.getByLabel('Organization chart details')).toBeVisible();

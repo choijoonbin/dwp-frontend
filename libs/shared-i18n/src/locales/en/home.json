@@ -69,6 +69,11 @@
         "shortName": "Activity",
         "description": "Human, system, and agent events"
       },
+      "dwp-communications": {
+        "name": "Newsroom",
+        "shortName": "News",
+        "description": "Targeted company news, events, and required updates"
+      },
       "ref-app-mail": {
         "name": "Mail & calendar",
         "shortName": "Mail",
@@ -80,19 +85,14 @@
         "description": "Chat, channels, and meetings"
       },
       "ref-app-service": {
-        "name": "Employee services",
+        "name": "Services",
         "shortName": "Services",
-        "description": "HR, IT, and workplace requests"
+        "description": "IT, people, workplace, finance, and procurement requests"
       },
       "ref-app-people": {
-        "name": "People directory",
-        "shortName": "People",
-        "description": "People, teams, and contact details"
-      },
-      "dwp-workforce": {
-        "name": "Workforce management",
-        "shortName": "Workforce",
-        "description": "Workforce, positions, organization design, and HRIS operations"
+        "name": "HRIS",
+        "shortName": "HRIS",
+        "description": "Personal HR, people, organization, and workforce operations"
       },
       "ref-app-knowledge": {
         "name": "Knowledge",

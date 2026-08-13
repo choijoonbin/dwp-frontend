@@ -6,8 +6,10 @@ describe('global shell registry', () => {
   it('resolves every product route to one explicit shell contract', () => {
     expect(resolveShellKey('/')).toBe('home');
     expect(resolveShellKey('/work/queue')).toBe('workspace');
-    expect(resolveShellKey('/people/directory')).toBe('people');
-    expect(resolveShellKey('/workforce/organization')).toBe('workforce');
+    expect(resolveShellKey('/communications/for-you')).toBe('communications');
+    expect(resolveShellKey('/services/discover')).toBe('services');
+    expect(resolveShellKey('/hr/directory')).toBe('hris');
+    expect(resolveShellKey('/hr/design/organization')).toBe('hris');
     expect(resolveShellKey('/account/settings')).toBe('account');
     expect(resolveShellKey('/admin/platform/reference-data')).toBe('admin');
     expect(resolveShellKey('/provider/data-governance')).toBe('provider');
@@ -26,7 +28,13 @@ describe('global shell registry', () => {
     expect(shellRegistry.workspace.desktopNavigationWidth).toBeLessThan(
       shellRegistry.admin.desktopNavigationWidth
     );
-    expect(shellRegistry.people.desktopNavigationWidth).toBe(
+    expect(shellRegistry.hris.desktopNavigationWidth).toBe(
+      shellRegistry.workspace.desktopNavigationWidth
+    );
+    expect(shellRegistry.communications.desktopNavigationWidth).toBe(
+      shellRegistry.workspace.desktopNavigationWidth
+    );
+    expect(shellRegistry.services.desktopNavigationWidth).toBe(
       shellRegistry.workspace.desktopNavigationWidth
     );
     expect(shellRegistry.provider.desktopNavigationWidth).toBe(

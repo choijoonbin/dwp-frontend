@@ -16,7 +16,12 @@ export type IdentityUserAccess = {
   activeSessionCount?: number;
   roleManagement: {
     allowed: boolean;
-    reason: 'ALLOWED' | 'SELF' | 'IDENTITY_INACTIVE' | 'PROTECTED_ROLE';
+    reason:
+      | 'ALLOWED'
+      | 'SELF'
+      | 'IDENTITY_INACTIVE'
+      | 'PROTECTED_ROLE'
+      | 'ROLE_ASSIGNMENT_REQUIRES_TENANT_ADMIN';
   };
   accessRevision: number;
   version: number;
@@ -29,8 +34,8 @@ export type IdentityEffectiveAccess = {
   roleCode: string;
   roleName: string;
   privileged: boolean;
-  sourceType: 'DIRECT' | 'GROUP';
-  sourceId: number;
+  sourceType: 'DIRECT' | 'GROUP' | 'APP_ACCESS_REQUEST' | 'ADMIN_DIRECT' | 'ACCESS_PACKAGE';
+  sourceId: string;
   sourceKey?: string | null;
   sourceName?: string | null;
   assignmentType: string;

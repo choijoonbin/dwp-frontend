@@ -1,0 +1,30 @@
+{
+  "toolbarLabel": "Home composition tools",
+  "addWidget": "Add widget",
+  "presentationLabel": "Home presentation",
+  "presentations": {
+    "balanced": "Balanced",
+    "expressive": "Expressive",
+    "focused": "Focused"
+  },
+  "reset": "Reset to default",
+  "cancel": "Cancel changes",
+  "done": "Save",
+  "moveWidget": "Move {{widget}} widget",
+  "resizeWidget": "Resize {{widget}} widget",
+  "removeWidget": "Hide {{widget}} widget",
+  "governed": "Widget locked by your organization",
+  "sizes": {
+    "compact": "Compact",
+    "medium": "Medium",
+    "large": "Large",
+    "full": "Full width"
+  },
+  "galleryTitle": "Add widgets",
+  "galleryDescription": "Widgets available for your current role and permissions.",
+  "galleryEmptyTitle": "No hidden widgets",
+  "galleryEmptyDescription": "Every widget available to you is already shown on this home.",
+  "close": "Close",
+  "add": "Add",
+  "widgetFallback": "Widget"
+}

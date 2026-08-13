@@ -207,7 +207,7 @@ test('workforce governor records and cancels a release-gated export with evidenc
   const store = await mockExportControl(page);
 
   await page.goto(
-    '/workforce/exports?dataset=ORGANIZATION_INTELLIGENCE&view=quality&asOf=2026-08-13&compareTo=2026-07-13&scenarioId=scenario-2027'
+    '/hr/data/exports?dataset=ORGANIZATION_INTELLIGENCE&view=quality&asOf=2026-08-13&compareTo=2026-07-13&scenarioId=scenario-2027'
   );
 
   await expect(

@@ -1,0 +1,132 @@
+{
+  "shell": {
+    "name": "Services",
+    "context": "Employee services",
+    "tenantFallback": "My organization",
+    "navigationLabel": "Services navigation",
+    "openNavigation": "Open services navigation",
+    "backToHome": "Back to workspace"
+  },
+  "navigation": {
+    "groups": {
+      "discover": "Services",
+      "services": "Services",
+      "requests": "My requests"
+    },
+    "items": {
+      "discover": "Discover services",
+      "my": "Active requests",
+      "drafts": "Drafts"
+    }
+  },
+  "discover": {
+    "eyebrow": "Employee service hub",
+    "title": "Start every workplace request in one place",
+    "description": "Discover IT, people, workplace, finance, and procurement services and track the outcome.",
+    "searchLabel": "Search services",
+    "searchPlaceholder": "Search for devices, certificates, corporate cards, and more",
+    "featured": "Frequently used services",
+    "allServices": "All services",
+    "allCategories": "All",
+    "serviceCount": "{{count}} services",
+    "noResultsTitle": "No matching services",
+    "noResultsDescription": "Try another phrase or browse all categories.",
+    "clearSearch": "Clear search",
+    "request": "Start request",
+    "owner": "Owned by {{owner}}",
+    "estimate": "About {{hours}} hours",
+    "sla": "Response target {{hours}} hours",
+    "featuredBadge": "Featured",
+    "classification": "{{level}} data",
+    "loadError": "We could not load the service catalog."
+  },
+  "requestDialog": {
+    "title": "Request {{service}}",
+    "editTitle": "Edit {{service}} draft",
+    "description": "Review before submitting, or save a draft and return later.",
+    "editDescription": "Update the saved information, then save again or submit it now.",
+    "summary": "Request summary",
+    "summaryPlaceholder": "Describe what you need in one sentence",
+    "required": "Required",
+    "selectPlaceholder": "Choose an option",
+    "saveDraft": "Save draft",
+    "submit": "Submit request",
+    "cancel": "Close",
+    "privacy": "The information is handled as {{classification}} data and shared only with the owning team.",
+    "invalid": "Complete all required fields.",
+    "created": "Request {{number}} was submitted.",
+    "drafted": "Request {{number}} was saved as a draft.",
+    "updated": "Draft {{number}} was updated.",
+    "updatedAndSubmitted": "Draft {{number}} was updated and submitted.",
+    "error": "We could not save the request. Try again shortly.",
+    "booleanYes": "Yes",
+    "booleanNo": "No"
+  },
+  "requests": {
+    "eyebrow": "My service requests",
+    "activeTitle": "Active requests",
+    "activeDescription": "Track the owning team, SLA target, and complete handling history.",
+    "draftTitle": "Drafts",
+    "draftDescription": "Review and submit requests you started earlier.",
+    "requestNumber": "Request",
+    "service": "Service",
+    "summary": "Summary",
+    "status": "Status",
+    "owner": "Owning team",
+    "updated": "Updated",
+    "due": "SLA target",
+    "view": "View request details",
+    "emptyActiveTitle": "No active requests",
+    "emptyActiveDescription": "Choose a service and track it here from submission through completion.",
+    "emptyDraftTitle": "No saved drafts",
+    "emptyDraftDescription": "Requests you save while writing will appear here.",
+    "discover": "Discover services",
+    "loadError": "We could not load your requests.",
+    "statusLabels": {
+      "DRAFT": "Draft",
+      "SUBMITTED": "Submitted",
+      "TRIAGED": "Triaged",
+      "IN_PROGRESS": "In progress",
+      "AWAITING_REQUESTER": "Waiting for you",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed",
+      "CANCELLED": "Cancelled"
+    }
+  },
+  "detail": {
+    "back": "Back to requests",
+    "overview": "Request overview",
+    "submitted": "Submitted",
+    "updated": "Last updated",
+    "slaDue": "SLA target",
+    "assignedGroup": "Owning team",
+    "assignedTo": "Assignee",
+    "unassigned": "Assignment pending",
+    "requestData": "Submitted information",
+    "timeline": "Handling timeline",
+    "editDraft": "Edit draft",
+    "submitDraft": "Submit request",
+    "cancelRequest": "Cancel request",
+    "confirmCancel": "Cancel this request?",
+    "confirmCancelDescription": "The request will stop moving through the owning team. This action is retained in its handling timeline.",
+    "cancel": "Go back",
+    "confirm": "Cancel request",
+    "submittedSuccess": "The request was submitted.",
+    "cancelledSuccess": "The request was cancelled.",
+    "actionError": "We could not change the request status.",
+    "loadError": "We could not load the request details.",
+    "eventLabels": {
+      "DRAFT_CREATED": "Draft saved",
+      "DRAFT_UPDATED": "Draft updated",
+      "REQUEST_SUBMITTED": "Request submitted",
+      "REQUEST_CANCELLED": "Request cancelled",
+      "STATUS_CHANGED": "Status changed"
+    }
+  },
+  "classification": {
+    "PUBLIC": "public",
+    "INTERNAL": "internal",
+    "CONFIDENTIAL": "confidential",
+    "RESTRICTED": "restricted"
+  }
+}

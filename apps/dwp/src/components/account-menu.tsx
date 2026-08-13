@@ -43,11 +43,27 @@ const authorityTranslationKeys: Record<string, string> = {
   PROVIDER_OPERATOR: 'providerOperator',
   PROVIDER_SUPPORT: 'providerSupport',
   PROVIDER_AUDITOR: 'providerAuditor',
+  PROVIDER_TENANT_PROVISIONER: 'providerTenantProvisioner',
+  PROVIDER_ENTITLEMENT_ADMIN: 'providerEntitlementAdmin',
+  PROVIDER_CHANGE_APPROVER: 'providerChangeApprover',
+  PROVIDER_RELEASE_APPROVER: 'providerReleaseApprover',
+  PROVIDER_DATA_APPROVER: 'providerDataApprover',
   PLATFORM_ADMIN: 'platformAdmin',
   TENANT_ADMIN: 'tenantAdmin',
   ADMIN: 'tenantAdmin',
   AUDIT_ADMIN: 'auditAdmin',
   AUDITOR: 'auditor',
+  IDENTITY_ADMIN: 'identityAdmin',
+  APP_CATALOG_ADMIN: 'appCatalogAdmin',
+  COMMUNICATIONS_EDITOR: 'communicationsEditor',
+  COMMUNICATIONS_PUBLISHER: 'communicationsPublisher',
+  SERVICE_CATALOG_MANAGER: 'serviceCatalogManager',
+  SERVICE_AGENT: 'serviceAgent',
+  APP_OWNER: 'appOwner',
+  APP_CONFIG_ADMIN: 'appConfigAdmin',
+  APP_ACCESS_MANAGER: 'appAccessManager',
+  APP_ACCESS_APPROVER: 'appAccessApprover',
+  APP_ACCESS_REVIEWER: 'appAccessReviewer',
   WORKSPACE_MEMBER: 'member',
 };
 
@@ -69,13 +85,14 @@ export function AccountMenu({ showIdentity = false }: { showIdentity?: boolean }
   const roles = auth.user?.roles ?? [];
   const providerRole = hasProviderControlPlaneRole(roles);
   const supportContext = useProviderSupportContext(providerRole);
-  const authorityRole = resolvePrimaryAuthorityRole(roles);
+  const authorityRole = resolvePrimaryAuthorityRole(roles, auth.user?.resourceRoles);
   const positionTitle = t(`account.roles.${authorityTranslationKeys[authorityRole] ?? 'member'}`);
   const identitySubtitle = auth.user?.jobTitle?.trim() || positionTitle;
   const isAdmin = canEnterTenantControlPlane(
     roles,
     isAppResourceEntitled('APP.ADMINISTRATION', permissions),
-    Boolean(supportContext.data)
+    Boolean(supportContext.data),
+    auth.user?.resourceRoles
   );
   const isProviderAdmin = providerRole;
   const workspaceName =

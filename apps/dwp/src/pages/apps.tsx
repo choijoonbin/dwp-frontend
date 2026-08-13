@@ -271,7 +271,11 @@ export default function AppsPage() {
       toast.warning(t('appsPage.access.pendingMessage', { app: app.name }));
       return;
     }
-    if (app.accessState === 'APPROVED_PENDING_SYNC') {
+    if (
+      app.accessState === 'APPROVED_PENDING_SYNC' ||
+      app.accessState === 'APPROVED_REFRESHING' ||
+      app.accessState === 'APPROVED_SYNC_FAILED'
+    ) {
       toast.warning(t('appsPage.access.syncMessage', { app: app.name }));
       return;
     }

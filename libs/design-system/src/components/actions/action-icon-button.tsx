@@ -30,7 +30,7 @@ export function ActionIconButton({
   ...props
 }: ActionIconButtonProps) {
   return (
-    <Tooltip title={tooltip} placement={tooltipPlacement}>
+    <Tooltip title={tooltip} placement={tooltipPlacement} describeChild>
       <span style={{ display: 'inline-flex' }}>
         <IconButton
           {...props}

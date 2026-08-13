@@ -16,6 +16,7 @@ import { AuditGovernance } from '../features/admin/audit-governance';
 import { ApiMonitoring } from '../features/admin/api-monitoring';
 import { AccessManager } from '../features/admin/access-manager';
 import { AppAccessRequestManager } from '../features/admin/app-access-request-manager';
+import { AppGovernanceManager } from '../features/admin/app-governance-manager';
 import { AccessReviewManager } from '../features/admin/access-review-manager';
 import { AnnouncementManager } from '../features/admin/announcement-manager';
 import { HomeExperienceManager } from '../features/admin/home-experience-manager';
@@ -31,6 +32,8 @@ import { WorkforceAccessManager } from '../features/admin/workforce-access-manag
 import { SavedViewCustodyManager } from '../features/admin/saved-view-custody-manager';
 import { ProductivityConnectorManager } from '../features/admin/productivity-connector-manager';
 import { CatalogExplorer } from '../features/admin/catalog-explorer';
+import { ServiceCatalogManager } from '../features/admin/service-catalog-manager';
+import { ServiceOperationsManager } from '../features/admin/service-operations-manager';
 import {
   ADMIN_NAVIGATION,
   findAdminNavigationItem,
@@ -48,6 +51,8 @@ function AdminContent({ view }: { view: AdminView }) {
       return <AccessManager />;
     case 'app-access-requests':
       return <AppAccessRequestManager />;
+    case 'app-governance':
+      return <AppGovernanceManager />;
     case 'access-reviews':
       return <AccessReviewManager />;
     case 'roles':
@@ -58,6 +63,10 @@ function AdminContent({ view }: { view: AdminView }) {
       return <SavedViewCustodyManager />;
     case 'provisioning':
       return <IdentityProvisioningManager />;
+    case 'service-catalog':
+      return <ServiceCatalogManager />;
+    case 'service-operations':
+      return <ServiceOperationsManager />;
     case 'announcements':
       return <AnnouncementManager />;
     case 'preference-exceptions':
@@ -110,6 +119,7 @@ export default function AdminPage() {
       permissionsLoaded,
       hasPermission,
       supportScopes: supportContext.data?.scopes,
+      resourceRoles: auth.user?.resourceRoles,
     })
   ) {
     return <Navigate to="/403" replace />;

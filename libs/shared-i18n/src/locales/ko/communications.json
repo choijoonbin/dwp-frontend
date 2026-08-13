@@ -1,0 +1,104 @@
+{
+  "shell": {
+    "tenantFallback": "회사",
+    "openNavigation": "소식 메뉴 열기",
+    "backToHome": "개인 홈으로 돌아가기",
+    "communications": {
+      "name": "소식",
+      "context": "사내 커뮤니케이션",
+      "navigationLabel": "소식 탐색"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "discover": "발견",
+      "library": "내 라이브러리"
+    },
+    "items": {
+      "for-you": "나를 위한 소식",
+      "all": "전체 소식",
+      "required": "필수 확인",
+      "saved": "저장한 소식"
+    }
+  },
+  "page": {
+    "eyebrow": "{{tenant}} 뉴스룸",
+    "title": "오늘의 흐름을 한눈에",
+    "description": "나의 역할과 업무에 맞는 회사 소식, 행사, 정책 업데이트를 모았습니다.",
+    "refreshed": "{{time}} 업데이트",
+    "searchLabel": "소식 검색",
+    "searchPlaceholder": "제목, 내용 또는 발행 부서 검색",
+    "clearSearch": "검색어 지우기",
+    "filterLabel": "콘텐츠 유형",
+    "latest": "새로운 이야기",
+    "latestCount": "{{count}}개",
+    "requiredTitle": "확인이 필요해요",
+    "requiredDescription": "기한이 있는 필수 소식",
+    "requiredEmpty": "지금 확인할 항목이 없습니다.",
+    "allCaughtUp": "모두 확인했습니다",
+    "errorTitle": "소식을 불러오지 못했습니다",
+    "errorDescription": "잠시 후 다시 시도해 주세요.",
+    "detailErrorTitle": "이 소식을 열 수 없습니다",
+    "detailErrorDescription": "게시 기간이나 열람 권한을 확인한 뒤 다시 시도해 주세요.",
+    "retry": "다시 시도",
+    "emptyTitle": "조건에 맞는 소식이 없습니다",
+    "emptyDescription": "검색어 또는 콘텐츠 유형을 바꿔 보세요.",
+    "unread": "읽지 않음",
+    "required": "필수",
+    "saved": "저장",
+    "total": "전체"
+  },
+  "types": {
+    "ALL": "전체",
+    "ANNOUNCEMENT": "안내",
+    "NEWS": "뉴스",
+    "EVENT": "행사",
+    "POLICY_UPDATE": "정책"
+  },
+  "categories": {
+    "COMPANY": "회사",
+    "INNOVATION": "혁신",
+    "CULTURE": "문화",
+    "SECURITY": "보안",
+    "LEADERSHIP": "리더십",
+    "GROWTH": "성장"
+  },
+  "story": {
+    "reactions": {
+      "title": "이 소식이 어땠나요?",
+      "description": "가볍게 반응을 남겨 소식의 가치를 전해 주세요.",
+      "CELEBRATE": "축하해요",
+      "INSIGHTFUL": "유익해요",
+      "SUPPORT": "응원해요",
+      "error": "반응을 저장하지 못했습니다."
+    },
+    "featured": "주목할 소식",
+    "readTime": "{{count}}분",
+    "published": "{{date}}",
+    "open": "읽기",
+    "save": "저장",
+    "saved": "저장됨",
+    "removeSaved": "저장 취소",
+    "dismiss": "숨기기",
+    "dismissed": "나를 위한 소식에서 숨겼습니다.",
+    "dismissError": "소식을 숨기지 못했습니다.",
+    "external": "관련 내용 열기",
+    "back": "소식 목록으로",
+    "acknowledge": "내용을 확인했습니다",
+    "acknowledged": "확인 완료",
+    "acknowledgementDue": "{{date}}까지 확인",
+    "acknowledgementEvidence": "확인 기록은 정책 준수 증적으로 안전하게 보관됩니다.",
+    "share": "링크 복사",
+    "copied": "소식 링크를 복사했습니다.",
+    "shareError": "소식 링크를 공유하지 못했습니다.",
+    "saveError": "저장 상태를 변경하지 못했습니다.",
+    "acknowledgeError": "확인 기록을 저장하지 못했습니다."
+  },
+  "home": {
+    "title": "새로운 소식",
+    "count": "읽지 않은 소식 {{count}}개",
+    "viewAll": "모든 소식 보기",
+    "required": "필수 확인",
+    "empty": "새로운 소식이 없습니다."
+  }
+}

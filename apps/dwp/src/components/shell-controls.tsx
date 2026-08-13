@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bell, ChevronDown, Clock3, Maximize2, Minimize2, Search, ShieldCheck } from 'lucide-react';
 import { GlyphSurface } from '@dwp-frontend/design-system/components/glyph-surface';
@@ -19,13 +19,18 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import { alpha } from '@mui/material/styles';
 
-import { GlobalSearchDialog } from '../features/search/global-search-dialog';
 import {
   hasFullTenantAdminRole,
   hasProviderControlPlaneRole,
   hasTenantControlPlaneRole,
 } from '../features/auth/control-plane-access';
 import { isAppEntitled, localizeHomeApps } from '../features/home/app-launchpad-model';
+
+const GlobalSearchDialog = lazy(() =>
+  import('../features/search/global-search-dialog').then((module) => ({
+    default: module.GlobalSearchDialog,
+  }))
+);
 
 function WorkspaceBadge() {
   return (
@@ -192,17 +197,21 @@ export function SearchControl() {
           <Search size={20} strokeWidth={1.8} />
         </IconButton>
       </Tooltip>
-      <GlobalSearchDialog
-        open={open}
-        apps={apps}
-        includeWork={includeWork}
-        includeAsk={includeAsk}
-        includePeople={includePeople}
-        includeTenantAudit={includeTenantAudit}
-        includeTenantCatalog={includeTenantCatalog}
-        includeProvider={includeProvider}
-        onClose={() => setOpen(false)}
-      />
+      {open ? (
+        <Suspense fallback={null}>
+          <GlobalSearchDialog
+            open
+            apps={apps}
+            includeWork={includeWork}
+            includeAsk={includeAsk}
+            includePeople={includePeople}
+            includeTenantAudit={includeTenantAudit}
+            includeTenantCatalog={includeTenantCatalog}
+            includeProvider={includeProvider}
+            onClose={() => setOpen(false)}
+          />
+        </Suspense>
+      ) : null}
     </>
   );
 }

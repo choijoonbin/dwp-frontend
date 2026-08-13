@@ -57,6 +57,15 @@ describe('personal home app entitlements', () => {
 
     expect(isAppEntitled(workApp, ['EMPLOYEE'], permissions)).toBe(false);
   });
+
+  it('launches employee services in its native product shell', () => {
+    const serviceApp = HOME_APPS.find((app) => app.id === 'ref-app-service');
+
+    expect(serviceApp).toMatchObject({
+      route: '/services',
+      resourceKey: 'APP.EMPLOYEE_SERVICES',
+    });
+  });
 });
 
 describe('personal home launchpad layout', () => {
@@ -160,7 +169,7 @@ describe('personal home launchpad layout', () => {
     const moved = moveLaunchpadItemToGroup(expanded, 'services', 'systems', 'folder-people-tools');
     const restored = reconcileLaunchpadLayout(moved, HOME_APPS);
 
-    expect(restored.groups.connect).toEqual([]);
+    expect(restored.groups.connect).toEqual(['dwp-communications']);
     expect(restored.groups.systems).toContain('folder-people-tools');
     expect(restored.folders['folder-people-tools']).toMatchObject({
       groupId: 'systems',

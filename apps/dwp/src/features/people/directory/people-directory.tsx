@@ -134,7 +134,7 @@ function PersonDetailDialog({
                 person: person.personId,
               });
               navigate(
-                `${experience === 'workforce' ? '/workforce' : '/people'}/organization?${params}`
+                `${experience === 'workforce' ? '/hr/design' : '/hr'}/organization?${params}`
               );
             }}
           />

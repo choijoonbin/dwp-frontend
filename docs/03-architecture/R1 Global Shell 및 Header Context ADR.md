@@ -1,12 +1,12 @@
 # R1 Global Shell 및 Header Context ADR
 
 - 상태: Accepted
-- 적용일: 2026-08-11
+- 적용일: 2026-08-13
 - 대상: Personal Home, Business App, Product Area, Tenant Control Center, Provider Control Plane
 
 ## 1. 결정 배경
 
-DWP에는 홈, 일반 업무, 구성원·HRIS, 테넌트 관리, 프로바이더 운영처럼 성격이 다른
+DWP에는 홈, 일반 업무, HR, 테넌트 관리, 프로바이더 운영처럼 성격이 다른
 Shell이 있다. 기존 구현은 각 Layout이 Header를 직접 조립하여 같은 사용자가 이동하는
 동안 현재 앱 이름, Product Mark, Workspace, Global Utility의 위치와 명칭이 달라졌다.
 이 차이는 업무 Context 차이가 아니라 공통 계약 부재에서 발생한 Drift다.
@@ -30,7 +30,7 @@ DWP는 다음 세 계층을 섞지 않는다.
 | 계층                | 표시 위치                     | 책임                             | 예시                                  |
 | ------------------- | ----------------------------- | -------------------------------- | ------------------------------------- |
 | Product identity    | Sidebar 상단 또는 Home Header | DWP 제품과 Home 복귀             | Digital Workplace                     |
-| Application context | Global Header 왼쪽            | 현재 실행 중인 독립 앱·운영 영역 | 업무, 구성원, 인력 운영, 관리 센터    |
+| Application context | Global Header 왼쪽            | 현재 실행 중인 독립 앱·운영 영역 | 업무, HR, 관리 센터                   |
 | Page context        | Main의 Page Header            | 현재 기능·객체·작업              | 구성원 찾기, 테넌트 브랜딩, 접근 권한 |
 
 Application Context를 Page 제목으로 대체하지 않는다. Header는 Route가 깊어져도 현재 앱을
@@ -42,7 +42,7 @@ Application Context를 Page 제목으로 대체하지 않는다. Header는 Route
 | ------------------------ | ------------------------ | ---------------------- | ------------------------------------ | ---------------- |
 | Personal Home            | Tenant Logo + DWP Lockup | 없음                   | 표시                                 | 없음             |
 | Business App             | DWP Lockup               | 현재 앱                | 표시                                 | 248 / 72px Rail  |
-| Product Area             | DWP Lockup               | 구성원 또는 인력 운영  | 표시                                 | 248px            |
+| HR Product               | DWP Lockup               | HR                     | 표시                                 | 248px            |
 | Tenant Control Center    | 관리 센터 Lockup         | 관리 센터              | 표시                                 | 272px            |
 | Provider Control Plane   | Provider Lockup          | Provider Control Plane | 미표시                               | 272px            |
 | Provider Support Session | 관리 센터 Lockup         | 관리 센터              | Header Workspace 대신 Support Banner | 272px            |
@@ -97,7 +97,7 @@ Account Identity는 이름과 Avatar를 항상 유지하고, 두 번째 줄은 H
 
 ## 6. 검증 Gate
 
-- Home, Business, People, HRIS, Admin, Provider의 Header Context·Workspace·Utility 순서
+- Home, Business, HR, Admin, Provider의 Header Context·Workspace·Utility 순서
 - 1920px Expanded/Compact Reflow와 1280px·390px Responsive Layout
 - 한국어·영어의 긴 Context Label Truncation과 Tooltip/Accessible Name
 - Keyboard Focus, Drawer Open/Close, Home Link, Search Dialog와 Account Menu

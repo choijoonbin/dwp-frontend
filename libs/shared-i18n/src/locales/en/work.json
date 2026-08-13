@@ -516,14 +516,14 @@
         "lastUsed": "22 min ago"
       },
       "ref-app-service": {
-        "name": "Employee services",
-        "description": "HR, IT, and workplace requests",
+        "name": "Workplace services",
+        "description": "IT help, workplace access, and shared-service requests",
         "owner": "Shared Services",
         "lastUsed": "Yesterday"
       },
       "ref-app-people": {
-        "name": "People directory",
-        "description": "Profiles, teams, roles, and contact details",
+        "name": "HR",
+        "description": "Personal HR, people, organization, and workforce operations",
         "owner": "People Operations",
         "lastUsed": "Aug 5"
       },

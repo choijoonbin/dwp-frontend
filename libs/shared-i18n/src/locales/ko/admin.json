@@ -12,6 +12,7 @@
   "navigation": {
     "groups": {
       "experience": "사용자 경험",
+      "services": "서비스 운영",
       "identity": "ID 및 접근 권한",
       "platform": "플랫폼 설정",
       "integrations": "연계 및 자동화",
@@ -29,9 +30,9 @@
         "description": "테넌트 홈 이미지와 개인화 런치패드 경험을 설정합니다."
       },
       "announcements": {
-        "label": "공지사항",
-        "title": "공지사항",
-        "description": "적절한 테넌트 대상에게 기간이 정해진 공지를 게시합니다."
+        "label": "소식·공지 운영",
+        "title": "소식·공지 운영",
+        "description": "대상별 소식, 행사, 정책 업데이트를 작성하고 검토·게시합니다."
       },
       "preference-exceptions": {
         "label": "설정 예외 검토",
@@ -43,10 +44,25 @@
         "title": "다국어 Studio",
         "description": "테넌트 번역을 품질 근거와 함께 작성·검토·승인·게시·복원합니다."
       },
+      "service-catalog": {
+        "label": "서비스 카탈로그",
+        "title": "서비스 카탈로그",
+        "description": "직원 서비스의 다국어 정의, 신청 양식, 담당 조직, SLA와 데이터 등급을 관리합니다."
+      },
+      "service-operations": {
+        "label": "요청 운영",
+        "title": "서비스 요청 운영",
+        "description": "테넌트 서비스 요청을 분류·배정·처리하고 SLA와 전체 이력을 통제합니다."
+      },
       "access": {
         "label": "접근 제어",
         "title": "사용자 접근 권한",
         "description": "구성원 계정에 테넌트 역할을 할당하고 유효 권한을 검토합니다."
+      },
+      "app-governance": {
+        "label": "앱 책임 관리",
+        "title": "앱 책임 및 위임",
+        "description": "앱 소유권, 설정, 접근 승인·실행·검토 책임을 명시적 범위와 기한으로 분리해 통제합니다."
       },
       "app-access-requests": {
         "label": "앱 접근 요청",
@@ -225,6 +241,7 @@
     "policyStates": {
       "REVIEW_REQUIRED": "보안 검토 필요",
       "APPROVED": "승인됨",
+      "REVOKED": "회수됨",
       "BLOCKED": "차단됨"
     },
     "auth": {
@@ -345,7 +362,8 @@
     "managementReasons": {
       "SELF": "자신의 역할은 변경할 수 없습니다.",
       "IDENTITY_INACTIVE": "비활성 또는 정지된 계정은 역할을 변경할 수 없습니다.",
-      "PROTECTED_ROLE": "동급·상위 또는 통제 영역 역할을 보유한 사용자는 변경할 수 없습니다."
+      "PROTECTED_ROLE": "동급·상위 또는 통제 영역 역할을 보유한 사용자는 변경할 수 없습니다.",
+      "ROLE_ASSIGNMENT_REQUIRES_TENANT_ADMIN": "ID 관리자는 권한을 조회할 수 있지만 테넌트 역할 위임은 회사 관리자가 수행해야 합니다."
     },
     "columns": {
       "user": "사용자",
@@ -387,7 +405,11 @@
     },
     "sources": {
       "direct": "직접",
-      "group": "그룹"
+      "group": "그룹",
+      "app_access_request": "승인된 앱 요청",
+      "admin_direct": "통제된 직접 할당",
+      "access_package": "접근 패키지",
+      "governed": "통제된 권한"
     },
     "inspector": {
       "title": "유효 접근 권한",
@@ -619,13 +641,44 @@
     }
   },
   "announcements": {
-    "title": "공지사항",
-    "description": "대상별로 통제되는 구성원 커뮤니케이션을 관리합니다.",
-    "loading": "공지사항 불러오는 중",
+    "immutableNotice": "게시된 콘텐츠는 증적 보존을 위해 수정할 수 없습니다. 변경이 필요하면 복제하여 새 초안으로 검토·게시하세요.",
+    "title": "소식·공지 운영",
+    "description": "편집 자산부터 대상, 게시 창, 필수 확인 증적까지 구성원 커뮤니케이션의 전체 수명주기를 관리합니다.",
+    "loading": "소식 파이프라인 불러오는 중",
     "pinned": "상단 고정",
+    "featured": "추천 소식",
     "immediate": "즉시",
     "openEnded": "종료일 없음",
     "noAnnouncements": "공지사항이 없습니다.",
+    "sections": {
+      "editorial": "콘텐츠와 편집 자산",
+      "delivery": "대상 및 전달 정책",
+      "action": "연결 작업"
+    },
+    "contentTypes": {
+      "ANNOUNCEMENT": "안내",
+      "NEWS": "뉴스",
+      "EVENT": "행사",
+      "POLICY_UPDATE": "정책 업데이트"
+    },
+    "categories": {
+      "COMPANY": "회사",
+      "INNOVATION": "혁신",
+      "CULTURE": "문화",
+      "SECURITY": "보안",
+      "LEADERSHIP": "리더십",
+      "GROWTH": "성장"
+    },
+    "coverAssets": {
+      "none": "커버 이미지 없음",
+      "innovation-lab": "혁신 랩",
+      "community-day": "커뮤니티 데이",
+      "security-readiness": "보안 대응"
+    },
+    "values": {
+      "required": "필수 확인",
+      "optional": "일반 소식"
+    },
     "empty": {
       "title": "아직 공지사항이 없습니다",
       "description": "첫 공지를 초안으로 작성한 뒤 대상과 게시 기간을 검토하여 게시하세요.",
@@ -651,18 +704,33 @@
       "uniqueViewers": "고유 열람자",
       "views": "노출 수",
       "actionClicks": "작업 클릭",
+      "acknowledgements": "확인 완료",
       "aggregateNotice": "공지별 고유 열람자 합계"
     },
     "fields": {
       "title": "제목",
       "message": "내용",
+      "body": "본문",
+      "contentType": "콘텐츠 유형",
+      "category": "주제",
+      "publisher": "발행 부서",
+      "sourceLocale": "원문 언어",
+      "invalidLocale": "ko 또는 en-US와 같은 언어 코드를 입력하세요.",
+      "invalidCategory": "등록된 기준정보 카테고리를 선택하세요.",
+      "coverAsset": "커버 자산",
+      "readingMinutes": "예상 읽기 시간(분)",
       "severity": "중요도",
       "audience": "대상",
       "roleKey": "역할 키",
       "pinned": "상단 고정",
+      "featured": "추천 영역 노출",
+      "dismissible": "사용자가 숨길 수 있음",
+      "acknowledgementRequired": "확인 기록 필수",
+      "acknowledgementDue": "확인 기한",
       "starts": "시작 일시",
       "ends": "종료 일시",
       "invalidScheduleWindow": "종료 일시는 시작 일시보다 빠를 수 없습니다.",
+      "invalidAction": "작업 이름과 URL은 함께 입력해야 합니다.",
       "actionLabel": "작업 이름",
       "actionUrl": "작업 URL"
     },
@@ -677,8 +745,8 @@
       "ROLE": "역할"
     },
     "table": {
-      "label": "공지사항",
-      "announcement": "공지",
+      "label": "소식·공지 발행 파이프라인",
+      "announcement": "콘텐츠",
       "status": "상태",
       "audience": "대상",
       "window": "게시 기간",
@@ -688,12 +756,12 @@
       "actions": "작업"
     },
     "dialog": {
-      "editTitle": "공지사항 수정",
-      "newTitle": "새 공지사항",
-      "close": "공지사항 창 닫기"
+      "editTitle": "소식 콘텐츠 수정",
+      "newTitle": "새 소식 콘텐츠",
+      "close": "소식 편집 창 닫기"
     },
     "actions": {
-      "new": "새 공지사항",
+      "new": "새 콘텐츠",
       "saveChanges": "변경사항 저장",
       "createDraft": "초안 생성",
       "editNamed": "{{title}} 수정",
@@ -708,12 +776,12 @@
       "showAll": "전체 공지 보기"
     },
     "preview": {
-      "title": "공지 미리보기",
-      "close": "공지 미리보기 닫기",
-      "workspace": "워크스페이스 표시",
-      "delivery": "전달 근거",
+      "title": "소식 미리보기",
+      "close": "소식 미리보기 닫기",
+      "workspace": "구성원 화면 미리보기",
+      "delivery": "전달 및 확인 증적",
       "analyticsNotice": "실제 관측된 전달 횟수만 표시합니다. 전체 대상자 수와 도달률은 승인된 ID 대상자 계약이 필요합니다.",
-      "governance": "대상 및 게시 기간"
+      "governance": "대상, 발행 및 확인 정책"
     },
     "toasts": {
       "published": "공지사항을 게시했습니다.",
@@ -2091,6 +2159,30 @@
         "name": "감사 관리자",
         "description": "감사 증적, 정책, 무결성 및 연동을 관리합니다."
       },
+      "IDENTITY_ADMIN": {
+        "name": "ID 관리자",
+        "description": "특권 역할 정책과 분리하여 구성원, 그룹 및 프로비저닝을 관리합니다."
+      },
+      "APP_CATALOG_ADMIN": {
+        "name": "앱 카탈로그 관리자",
+        "description": "앱 소유권과 범위형 앱 관리 책임 위임을 통제합니다."
+      },
+      "COMMUNICATIONS_EDITOR": {
+        "name": "사내 소식 편집자",
+        "description": "게시 권한 없이 구성원 소식의 초안을 작성하고 편집합니다."
+      },
+      "COMMUNICATIONS_PUBLISHER": {
+        "name": "사내 소식 게시 책임자",
+        "description": "대상과 게시 정책을 검토한 뒤 소식을 게시하고 수명주기를 관리합니다."
+      },
+      "SERVICE_CATALOG_MANAGER": {
+        "name": "서비스 카탈로그 관리자",
+        "description": "직원 서비스 정의, 신청 양식, 담당 조직과 SLA 정책을 관리합니다."
+      },
+      "SERVICE_AGENT": {
+        "name": "서비스 처리 담당자",
+        "description": "직원 서비스 요청을 분류·배정·처리하고 근거와 이력을 기록합니다."
+      },
       "PROVIDER_ADMIN": {
         "name": "프로바이더 관리자",
         "description": "격리된 프로바이더 제어 영역을 운영합니다."
@@ -2106,6 +2198,26 @@
       "PROVIDER_AUDITOR": {
         "name": "프로바이더 감사자",
         "description": "프로바이더 제어 영역의 감사 정보를 읽기 전용으로 조회합니다."
+      },
+      "PROVIDER_TENANT_PROVISIONER": {
+        "name": "프로바이더 테넌트 개통 담당자",
+        "description": "고객 테넌트의 기반을 생성하고 개통 작업을 수행합니다."
+      },
+      "PROVIDER_ENTITLEMENT_ADMIN": {
+        "name": "프로바이더 구독 권한 관리자",
+        "description": "고객 데이터 접근 없이 계약 기반 구독 권한을 관리합니다."
+      },
+      "PROVIDER_CHANGE_APPROVER": {
+        "name": "프로바이더 변경 승인자",
+        "description": "고위험 프로바이더 변경을 요청자와 독립적으로 승인합니다."
+      },
+      "PROVIDER_RELEASE_APPROVER": {
+        "name": "프로바이더 릴리스 승인자",
+        "description": "운영 릴리스와 기능 롤아웃을 실행 담당자와 독립적으로 승인합니다."
+      },
+      "PROVIDER_DATA_APPROVER": {
+        "name": "프로바이더 데이터 정책 승인자",
+        "description": "데이터 정책의 수명주기 변경을 작성자와 독립적으로 승인합니다."
       }
     },
     "tabs": {
@@ -2632,6 +2744,86 @@
       }
     }
   },
+  "appGovernance": {
+    "loading": "앱 책임 체계를 불러오는 중",
+    "attention": "승인 대기 {{pending}}건 · 소유자 없는 앱 범위 {{ownerless}}건을 확인하세요.",
+    "viewLabel": "앱 책임 관리 보기",
+    "views": { "assignments": "책임 할당", "boundaries": "앱 리소스 범위" },
+    "metrics": {
+      "activeAssignments": "활성 책임",
+      "pendingApprovals": "승인 대기",
+      "reviewsDueSoon": "30일 내 재검토",
+      "resourcesWithoutOwner": "소유자 없는 범위"
+    },
+    "columns": {
+      "principal": "사용자 또는 그룹",
+      "responsibility": "책임",
+      "scope": "앱 범위",
+      "validity": "유효 기간",
+      "state": "상태",
+      "actions": "작업"
+    },
+    "actions": {
+      "newBoundary": "앱 범위 생성",
+      "requestAssignment": "책임 할당 요청",
+      "submitForApproval": "승인 요청",
+      "approve": "승인",
+      "approved": "승인",
+      "deny": "반려",
+      "denied": "반려",
+      "revoke": "회수",
+      "revoked": "회수"
+    },
+    "fields": {
+      "principal": "사용자 또는 그룹",
+      "responsibility": "관리 책임",
+      "scope": "앱 리소스 범위",
+      "validTo": "만료 시각(선택)",
+      "justification": "업무 근거",
+      "justificationHelp": "10자 이상의 구체적 근거가 감사 증거로 보존됩니다.",
+      "boundaryKey": "범위 키",
+      "boundaryName": "범위 이름",
+      "description": "설명",
+      "applications": "포함 애플리케이션",
+      "decisionReason": "결정 근거"
+    },
+    "dialog": {
+      "assignmentTitle": "앱 책임 할당 요청",
+      "boundaryTitle": "앱 리소스 범위 생성",
+      "approvedTitle": "이 책임 할당을 승인할까요?",
+      "deniedTitle": "이 책임 할당을 반려할까요?",
+      "revokedTitle": "이 활성 책임을 회수할까요?"
+    },
+    "responsibilities": {
+      "APP_OWNER": "앱 소유자",
+      "APP_CONFIG_ADMIN": "앱 설정 관리자",
+      "APP_ACCESS_MANAGER": "앱 접근 실행자",
+      "APP_ACCESS_APPROVER": "앱 접근 승인자",
+      "APP_ACCESS_REVIEWER": "앱 접근 검토자"
+    },
+    "states": {
+      "PENDING_APPROVAL": "승인 대기",
+      "ACTIVE": "활성",
+      "DENIED": "반려",
+      "REVOKED": "회수",
+      "EXPIRED": "만료"
+    },
+    "assignmentTable": "범위형 앱 책임 할당",
+    "noExpiry": "만료 없음",
+    "reviewDue": "재검토 {{value}}",
+    "assignmentCount": "활성 {{count}}",
+    "empty": {
+      "assignmentsTitle": "앱 책임 할당이 없습니다",
+      "assignmentsDescription": "책임과 범위, 유효 기간을 지정해 승인 가능한 할당을 요청하세요."
+    },
+    "toasts": {
+      "requested": "책임 할당을 승인 요청했습니다.",
+      "boundaryCreated": "앱 리소스 범위를 생성했습니다.",
+      "approved": "책임 할당을 승인했습니다.",
+      "denied": "책임 할당을 반려했습니다.",
+      "revoked": "활성 책임을 회수했습니다."
+    }
+  },
   "appAccess": {
     "loading": "앱 접근 요청을 불러오는 중",
     "filterLabel": "요청 상태",
@@ -2639,6 +2831,7 @@
       "ALL": "전체",
       "PENDING": "검토 대기",
       "APPROVED": "승인됨",
+      "REVOKED": "회수됨",
       "REJECTED": "반려됨",
       "CANCELLED": "취소됨",
       "EXPIRED": "기한 만료"
@@ -2649,7 +2842,9 @@
       "requestedUntil": "요청 종료일",
       "requestedAt": "요청 시각",
       "justification": "업무 사유",
-      "decision": "결정 기록"
+      "decision": "결정 기록",
+      "fulfillment": "실제 적용 권한",
+      "attempts": "실행 시도 횟수"
     },
     "userFallback": "사용자 {{id}}",
     "notAvailable": "정보 없음",
@@ -2665,10 +2860,35 @@
       "noteHelp": "10자 이상 입력하세요. 이 근거는 감사 증적으로 보존됩니다.",
       "saving": "결정 저장 중"
     },
-    "provisioning": {
-      "title": "IAM 권한 동기화 필요",
-      "description": "승인은 ID 권한 원천을 우회하지 않습니다. 해당 리소스를 부여하는 통제된 역할을 할당하면 다음 토큰 갱신 후 앱을 사용할 수 있습니다.",
-      "openAccess": "접근 제어 열기"
+    "fulfillmentStates": {
+      "NOT_REQUIRED": "실행 불필요",
+      "PENDING": "권한 실행 대기",
+      "SUCCEEDED": "접근 활성",
+      "FAILED": "권한 실행 실패",
+      "REVOKED": "접근 회수",
+      "EXPIRED": "접근 만료"
+    },
+    "fulfillmentDescriptions": {
+      "NOT_REQUIRED": "이 결정에는 실제 권한 원장 작업이 필요하지 않습니다.",
+      "PENDING": "앱 접근 관리자가 승인자와 독립적으로 이 결정을 실행해야 합니다.",
+      "SUCCEEDED": "Auth가 권한을 적용하고 있습니다. 회수 시 다음 요청부터 즉시 차단됩니다.",
+      "FAILED": "권한 원장이 마지막 실행을 거부했거나 완료하지 못했습니다. 실패 증적을 확인한 뒤 재시도하세요.",
+      "REVOKED": "권한 원천에서 실제 접근 권한이 제거되었습니다.",
+      "EXPIRED": "정책 종료 시각에 도달해 승인 권한이 더 이상 유효하지 않습니다."
+    },
+    "fulfillment": {
+      "title": "실제 권한 수명주기",
+      "fulfill": "접근 권한 적용",
+      "retry": "권한 실행 재시도",
+      "revoke": "접근 권한 회수",
+      "fulfillTitle": "{{app}} 접근 권한을 적용할까요?",
+      "fulfillDescription": "승인 결정을 Auth 권한 원장에 실행합니다. 승인자와 요청자는 이 단계를 수행할 수 없습니다.",
+      "revokeTitle": "{{app}} 접근 권한을 회수할까요?",
+      "revokeDescription": "실제 권한을 즉시 제거하고 사유를 감사 증적으로 보존합니다.",
+      "note": "실행 근거",
+      "noteHelp": "10자 이상 입력하세요. 자격 증명이나 민감한 개인정보는 입력하지 마세요.",
+      "failureEvidence": "최근 실행 실패 증적",
+      "saving": "권한 원장 반영 중"
     },
     "empty": {
       "title": "이 상태의 요청이 없습니다",
@@ -2676,7 +2896,10 @@
     },
     "toasts": {
       "approved": "접근 요청을 승인했습니다.",
-      "rejected": "접근 요청을 반려했습니다."
+      "rejected": "접근 요청을 반려했습니다.",
+      "fulfilled": "실제 앱 접근 권한을 활성화했습니다.",
+      "fulfillmentFailed": "권한을 적용하지 못했습니다. 재시도를 위해 실패 증적을 보존했습니다.",
+      "revoked": "실제 앱 접근 권한을 회수했습니다."
     }
   },
   "workforceAccess": {
@@ -3071,6 +3294,125 @@
     "userFallback": "사용자 #{{id}}",
     "toasts": {
       "completed": "저장 뷰 {{count}}개의 관리권 처리를 완료했습니다."
+    }
+  },
+  "serviceCenter": {
+    "catalog": {
+      "active": "운영 중",
+      "draft": "초안",
+      "retired": "종료",
+      "averageSla": "평균 응답 목표",
+      "hours": "{{count}}시간",
+      "search": "서비스명, 키, 담당 조직 검색",
+      "lifecycle": "수명주기",
+      "all": "전체",
+      "new": "서비스 생성",
+      "tableLabel": "서비스 카탈로그 정의",
+      "service": "서비스",
+      "category": "카테고리",
+      "owner": "담당 조직",
+      "sla": "SLA",
+      "classification": "데이터 등급",
+      "state": "상태",
+      "edit": "서비스 편집",
+      "emptyTitle": "조건에 맞는 서비스가 없습니다",
+      "emptyDescription": "검색어 또는 수명주기 필터를 변경해보세요.",
+      "loadError": "서비스 카탈로그를 불러오지 못했습니다.",
+      "saved": "서비스 정의를 저장했습니다.",
+      "saveError": "서비스 정의를 저장하지 못했습니다.",
+      "governanceNotice": "운영 중인 서비스의 신청 스키마는 기존 요청에 영향을 주지 않습니다. 각 요청은 제출 당시 스키마를 증적으로 보존합니다.",
+      "editor": {
+        "newTitle": "새 서비스 정의",
+        "editTitle": "서비스 정의 편집",
+        "identity": "서비스 식별",
+        "delivery": "운영 및 통제",
+        "form": "신청 양식",
+        "serviceKey": "서비스 키",
+        "categoryKey": "카테고리",
+        "nameKo": "한국어 이름",
+        "nameEn": "영어 이름",
+        "descriptionKo": "한국어 설명",
+        "descriptionEn": "영어 설명",
+        "ownerGroup": "담당 조직",
+        "lifecycleState": "수명주기",
+        "slaHours": "응답 목표(시간)",
+        "estimatedHours": "예상 처리(시간)",
+        "classification": "데이터 등급",
+        "featured": "추천 서비스로 표시",
+        "tags": "검색 태그",
+        "tagsHelp": "쉼표로 구분",
+        "addField": "항목 추가",
+        "fieldKey": "필드 키",
+        "fieldType": "유형",
+        "labelKo": "한국어 라벨",
+        "labelEn": "영어 라벨",
+        "required": "필수",
+        "options": "선택값",
+        "optionsHelp": "SELECT 유형만 쉼표로 구분",
+        "removeField": "항목 제거",
+        "cancel": "취소",
+        "save": "정의 저장",
+        "invalid": "필수 값과 신청 양식 항목을 확인해주세요."
+      }
+    },
+    "operations": {
+      "open": "활성 요청",
+      "waiting": "사용자 대기",
+      "atRisk": "SLA 임박",
+      "breached": "SLA 초과",
+      "filter": "상태 필터",
+      "all": "전체",
+      "search": "요청 번호, 서비스, 요약 검색",
+      "queue": "서비스 운영 큐",
+      "request": "요청",
+      "service": "서비스",
+      "summary": "요약",
+      "status": "상태",
+      "owner": "담당 조직",
+      "sla": "SLA 목표",
+      "updated": "최근 변경",
+      "selectTitle": "요청을 선택하세요",
+      "selectDescription": "처리 이력, 제출 정보와 허용된 다음 상태를 확인할 수 있습니다.",
+      "emptyTitle": "조건에 맞는 요청이 없습니다",
+      "emptyDescription": "상태 또는 검색 필터를 변경해보세요.",
+      "loadError": "서비스 운영 큐를 불러오지 못했습니다.",
+      "detailError": "요청 상세를 불러오지 못했습니다.",
+      "requestData": "제출 정보",
+      "timeline": "처리 이력",
+      "nextAction": "다음 처리",
+      "targetStatus": "변경할 상태",
+      "assignee": "담당자",
+      "assigneePlaceholder": "이름 또는 운영 큐 ID",
+      "note": "처리 메모",
+      "notePlaceholder": "결정 근거와 요청자에게 필요한 안내를 기록하세요",
+      "transition": "상태 변경",
+      "transitioned": "{{number}}의 상태를 변경했습니다.",
+      "transitionError": "요청 상태를 변경하지 못했습니다.",
+      "noTransition": "현재 상태에서 관리자가 수행할 다음 전이가 없습니다.",
+      "slaHealthy": "정상",
+      "slaAtRisk": "임박",
+      "slaBreached": "초과"
+    },
+    "lifecycle": {
+      "DRAFT": "초안",
+      "ACTIVE": "운영 중",
+      "RETIRED": "종료"
+    },
+    "requestStatus": {
+      "DRAFT": "임시 저장",
+      "SUBMITTED": "접수",
+      "TRIAGED": "분류 완료",
+      "IN_PROGRESS": "처리 중",
+      "AWAITING_REQUESTER": "사용자 응답 대기",
+      "RESOLVED": "해결",
+      "CLOSED": "종료",
+      "CANCELLED": "취소"
+    },
+    "classification": {
+      "PUBLIC": "공개",
+      "INTERNAL": "내부",
+      "CONFIDENTIAL": "기밀",
+      "RESTRICTED": "제한"
     }
   },
   "supportMode": {

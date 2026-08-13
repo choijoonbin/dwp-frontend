@@ -10,6 +10,7 @@ import type {
   LocalizationRevision,
   LocalizationRevisionState,
   PreferenceExceptionRequest,
+  ResourceRoleDTO,
 } from '@dwp-frontend/shared-utils';
 
 type Appearance = {
@@ -20,18 +21,38 @@ type Appearance = {
 };
 
 type ShellSessionOptions = {
+  userId?: number;
   locale?: 'en' | 'ko';
   displayName?: string;
   jobTitle?: string;
+  email?: string;
   appearance?: Appearance;
   localizationState?: LocalizationRevisionState;
   groups?: Array<{ groupRef: string; displayName: string }>;
+  resourceRoles?: ResourceRoleDTO[];
   permissions?: Array<{
     resourceType: string;
     resourceKey: string;
     permissionCode: string;
     effect: 'ALLOW' | 'DENY';
   }>;
+};
+
+type MockHomeSurface = {
+  schemaVersion: 2;
+  surfaceKey: 'workspace-home' | 'hris-home';
+  customized: boolean;
+  layout: {
+    appLayout: Record<string, unknown> | null;
+    presentation: 'balanced' | 'expressive' | 'focused';
+    widgets: Array<{
+      widgetKey: string;
+      visible: boolean;
+      size: 'compact' | 'medium' | 'large' | 'full';
+    }>;
+  };
+  version: number;
+  updatedAt: string | null;
 };
 
 export const FULL_PRODUCT_PERMISSIONS = [
@@ -48,7 +69,39 @@ export const FULL_PRODUCT_PERMISSIONS = [
     permissionCode: 'MANAGE',
     effect: 'ALLOW' as const,
   },
+  {
+    resourceType: 'ACTION',
+    resourceKey: 'ACTION.WORKFORCE_REFERENCE',
+    permissionCode: 'MANAGE',
+    effect: 'ALLOW' as const,
+  },
+  {
+    resourceType: 'ACTION',
+    resourceKey: 'ACTION.WORKFORCE_DATA_OPERATIONS',
+    permissionCode: 'MANAGE',
+    effect: 'ALLOW' as const,
+  },
   ...[
+    ['ADMIN.COMMUNICATIONS', 'VIEW'],
+    ['ADMIN.COMMUNICATIONS', 'CREATE'],
+    ['ADMIN.COMMUNICATIONS', 'UPDATE'],
+    ['ADMIN.COMMUNICATIONS', 'APPROVE'],
+    ['ADMIN.COMMUNICATIONS', 'MANAGE'],
+    ['ADMIN.SERVICE_CATALOG', 'VIEW'],
+    ['ADMIN.SERVICE_CATALOG', 'CREATE'],
+    ['ADMIN.SERVICE_CATALOG', 'UPDATE'],
+    ['ADMIN.SERVICE_CATALOG', 'MANAGE'],
+    ['ADMIN.SERVICE_OPERATIONS', 'VIEW'],
+    ['ADMIN.SERVICE_OPERATIONS', 'UPDATE'],
+    ['ADMIN.SERVICE_OPERATIONS', 'MANAGE'],
+    ['ADMIN.IDENTITY_DIRECTORY', 'VIEW'],
+    ['ADMIN.IDENTITY_DIRECTORY', 'MANAGE'],
+    ['ADMIN.APP_GOVERNANCE', 'VIEW'],
+    ['ADMIN.APP_GOVERNANCE', 'MANAGE'],
+    ['ADMIN.APP_ACCESS_REQUESTS', 'VIEW'],
+    ['ADMIN.APP_ACCESS_REQUESTS', 'MANAGE'],
+    ['ADMIN.IDENTITY_PROVISIONING', 'VIEW'],
+    ['ADMIN.IDENTITY_PROVISIONING', 'MANAGE'],
     ['ADMIN.API_MONITORING', 'VIEW'],
     ['ADMIN.AUDIT_VIEW', 'VIEW'],
     ['ADMIN.AUDIT_INVESTIGATE', 'UPDATE'],
@@ -643,6 +696,46 @@ export async function mockShellSession(
   };
   let personalPreference = structuredClone(defaultPersonalPreference);
   let preferenceExceptions: PreferenceExceptionRequest[] = [];
+  const defaultHomeSurfaces: Record<MockHomeSurface['surfaceKey'], MockHomeSurface> = {
+    'workspace-home': {
+      schemaVersion: 2,
+      surfaceKey: 'workspace-home',
+      customized: false,
+      layout: {
+        appLayout: null,
+        presentation: 'balanced',
+        widgets: [
+          { widgetKey: 'announcements', visible: true, size: 'full' },
+          { widgetKey: 'daily-brief', visible: true, size: 'medium' },
+          { widgetKey: 'focus', visible: true, size: 'medium' },
+          { widgetKey: 'schedule', visible: true, size: 'medium' },
+          { widgetKey: 'activity', visible: true, size: 'medium' },
+        ],
+      },
+      version: 0,
+      updatedAt: null,
+    },
+    'hris-home': {
+      schemaVersion: 2,
+      surfaceKey: 'hris-home',
+      customized: false,
+      layout: {
+        appLayout: null,
+        presentation: 'balanced',
+        widgets: [
+          { widgetKey: 'quick-actions', visible: true, size: 'full' },
+          { widgetKey: 'people-signals', visible: true, size: 'full' },
+          { widgetKey: 'attention', visible: true, size: 'large' },
+          { widgetKey: 'profile', visible: true, size: 'compact' },
+          { widgetKey: 'team', visible: true, size: 'full' },
+          { widgetKey: 'operations', visible: true, size: 'full' },
+        ],
+      },
+      version: 0,
+      updatedAt: null,
+    },
+  };
+  const homeSurfaces = structuredClone(defaultHomeSurfaces);
   const localizationPreview = (
     sourceEntries: Record<string, string>,
     entries: Record<string, string>
@@ -757,18 +850,20 @@ export async function mockShellSession(
   });
 
   await page.route('**/api/**', (route) => {
-    const url = new URL(route.request().url());
+    const request = route.request();
+    const url = new URL(request.url());
     const path = url.pathname;
 
     if (!path.startsWith('/api/')) return route.continue();
 
     if (path === '/api/auth/me') {
       return fulfillSuccess(route, {
-        userId: 1,
+        userId: options.userId ?? 1,
+        personPublicId: provider ? null : 'person-session-user',
         displayName: options.displayName ?? (provider ? 'Provider Admin' : 'Tenant Admin'),
         jobTitle:
           options.jobTitle ?? (provider ? 'Platform operations lead' : 'Tenant administrator'),
-        email: provider ? 'provider.admin@dwp.local' : 'tenant.admin@dwp.local',
+        email: options.email ?? (provider ? 'provider.admin@dwp.local' : 'tenant.admin@dwp.local'),
         tenantId: 1,
         tenantCode: 'default',
         tenantName: 'SKAX',
@@ -776,6 +871,7 @@ export async function mockShellSession(
         tenantDefaultLocale: locale,
         roles,
         groups: options.groups ?? [],
+        resourceRoles: options.resourceRoles ?? [],
       });
     }
     if (path === '/api/auth/permissions') {
@@ -1132,33 +1228,155 @@ export async function mockShellSession(
       });
     }
     if (path === '/api/platform/v1/home-preferences') {
-      return fulfillSuccess(route, {
-        schemaVersion: 1,
-        customized: false,
-        layout: {
-          appLayout: null,
-          widgets: [
-            { widgetKey: 'announcements', visible: true },
-            { widgetKey: 'daily-brief', visible: true },
-            { widgetKey: 'focus', visible: true },
-            { widgetKey: 'schedule', visible: true },
-            { widgetKey: 'activity', visible: true },
-          ],
-        },
-        version: 0,
-        updatedAt: null,
-      });
+      if (request.method() === 'GET') {
+        return fulfillSuccess(route, homeSurfaces['workspace-home']);
+      }
+      const body = request.postDataJSON() as {
+        layout: MockHomeSurface['layout'];
+        version: number;
+      };
+      const current = homeSurfaces['workspace-home'];
+      if (body.version !== current.version) {
+        return route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({ status: 'ERROR', message: 'Version conflict' }),
+        });
+      }
+      homeSurfaces['workspace-home'] = {
+        ...current,
+        customized: true,
+        layout: body.layout,
+        version: current.customized ? current.version + 1 : 0,
+        updatedAt: '2026-08-14T00:00:00Z',
+      };
+      return fulfillSuccess(route, homeSurfaces['workspace-home']);
+    }
+    if (path === '/api/platform/v1/home-preferences/reset') {
+      homeSurfaces['workspace-home'] = structuredClone(defaultHomeSurfaces['workspace-home']);
+      return fulfillSuccess(route, homeSurfaces['workspace-home']);
+    }
+    const homeSurfaceMatch = path.match(
+      /^\/api\/platform\/v1\/home-preferences\/surfaces\/(workspace-home|hris-home)(\/reset)?$/u
+    );
+    if (homeSurfaceMatch) {
+      const surfaceKey = homeSurfaceMatch[1] as MockHomeSurface['surfaceKey'];
+      if (request.method() === 'GET') return fulfillSuccess(route, homeSurfaces[surfaceKey]);
+      if (homeSurfaceMatch[2] === '/reset') {
+        homeSurfaces[surfaceKey] = structuredClone(defaultHomeSurfaces[surfaceKey]);
+        return fulfillSuccess(route, homeSurfaces[surfaceKey]);
+      }
+      const body = request.postDataJSON() as {
+        layout: MockHomeSurface['layout'];
+        version: number;
+      };
+      const current = homeSurfaces[surfaceKey];
+      if (body.version !== current.version) {
+        return route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({ status: 'ERROR', message: 'Version conflict' }),
+        });
+      }
+      homeSurfaces[surfaceKey] = {
+        ...current,
+        customized: true,
+        layout: body.layout,
+        version: current.customized ? current.version + 1 : 0,
+        updatedAt: '2026-08-14T00:00:00Z',
+      };
+      return fulfillSuccess(route, homeSurfaces[surfaceKey]);
     }
     if (path === '/api/platform/v1/announcements') {
       return fulfillSuccess(route, []);
     }
+    if (path === '/api/platform/v1/communications') {
+      return fulfillSuccess(route, {
+        featured: null,
+        items: [],
+        summary: { total: 0, unread: 0, required: 0, saved: 0 },
+        generatedAt: '2026-08-11T00:20:00Z',
+      });
+    }
+    if (path === '/api/platform/v1/admin/services/catalog') {
+      return fulfillSuccess(route, []);
+    }
+    if (path === '/api/platform/v1/services/catalog') {
+      return fulfillSuccess(route, {
+        categories: [],
+        items: [],
+        activeCount: 0,
+        generatedAt: '2026-08-11T00:20:00Z',
+      });
+    }
+    if (path === '/api/platform/v1/admin/services/requests') {
+      return fulfillSuccess(route, []);
+    }
+    const sessionDisplayName =
+      options.displayName ?? (provider ? 'Provider Admin' : 'Tenant Admin');
+    const sessionEmail =
+      options.email ?? (provider ? 'provider.admin@dwp.local' : 'tenant.admin@dwp.local');
+    const sessionPerson = {
+      personId: 'person-session-user',
+      displayName: sessionDisplayName,
+      lifecycleState: 'ACTIVE',
+      workerNumber: null,
+      workerType: 'EMPLOYEE',
+      workerStatus: 'ACTIVE',
+      assignmentKey: 'ASG-SESSION-USER',
+      businessTitle:
+        options.jobTitle ?? (provider ? 'Platform operations lead' : 'Tenant administrator'),
+      organizationId: 'org-skax',
+      organizationKey: 'SKAX',
+      organizationName: 'SKAX',
+      jobProfileName: options.jobTitle ?? 'Tenant administrator',
+      managementLevel: roles.includes('MANAGER') ? 'MANAGER' : 'INDIVIDUAL_CONTRIBUTOR',
+      jobGradeKey: null,
+      jobGradeName: null,
+      locationKey: 'SEOUL-HQ',
+      locationName: 'Seoul HQ',
+      workEmail: sessionEmail,
+      profileImageKey: null,
+      assignmentEffectiveFrom: '2026-01-01',
+      managerPersonId: null,
+      managerDisplayName: null,
+      directReportCount: roles.includes('MANAGER') ? 2 : 0,
+      dataAccess: {
+        classification: 'DIRECTORY',
+        workerNumberMasked: true,
+        excludedFieldGroups: [],
+      },
+    };
     if (path === '/api/people/v1/people') {
       return fulfillSuccess(route, {
-        items: [],
+        items: url.searchParams.get('query') ? [sessionPerson] : [],
         nextCursor: null,
         size: 100,
         hasMore: false,
         asOf: '2026-08-11',
+      });
+    }
+    if (path === `/api/people/v1/people/${sessionPerson.personId}`) {
+      return fulfillSuccess(route, {
+        person: sessionPerson,
+        originalHireDate: '2026-01-01',
+        legalEmployerName: 'SKAX',
+        managerAssignmentKey: null,
+        assignments: [
+          {
+            assignmentKey: 'ASG-SESSION-USER',
+            assignmentStatus: 'ACTIVE',
+            primaryAssignment: true,
+            effectiveStartDate: '2026-01-01',
+            businessTitle: sessionPerson.businessTitle,
+            organizationName: 'SKAX',
+            jobProfileName: sessionPerson.jobProfileName,
+            jobGradeName: null,
+            locationName: 'Seoul HQ',
+            managerAssignmentKey: null,
+            changeReasonCode: null,
+          },
+        ],
       });
     }
     if (path === '/api/people/v1/workforce/people') {
@@ -1428,16 +1646,32 @@ export async function mockShellSession(
         content: [
           {
             userId: 1,
-            username: 'tenant.admin',
             displayName: options.displayName ?? 'Tenant Admin',
-            email: 'tenant.admin@dwp.local',
+            email: options.email ?? 'tenant.admin@dwp.local',
             status: 'ACTIVE',
             mfaEnabled: true,
             roles: ['TENANT_ADMIN'],
             directRoles: ['TENANT_ADMIN'],
             inheritedRoles: [],
             effectiveRoles: ['TENANT_ADMIN'],
-            effectiveAccess: [],
+            effectiveAccess: [
+              {
+                roleId: 1,
+                roleCode: 'TENANT_ADMIN',
+                roleName: 'Tenant administrator',
+                privileged: true,
+                sourceType: 'DIRECT',
+                sourceId: 1,
+                sourceKey: 'TENANT_ADMIN',
+                sourceName: 'Direct assignment',
+                assignmentType: 'DIRECT',
+                scopeType: 'TENANT',
+                scopeRef: null,
+                validFrom: null,
+                validTo: null,
+                assignedAt: '2026-08-11T00:00:00Z',
+              },
+            ],
             groupIds: [],
             roleManagement: { allowed: false, reason: 'SELF' },
             accessRevision: 1,
@@ -1518,6 +1752,20 @@ export async function mockShellSession(
     }
     if (path === '/api/auth/admin/identity/roles') {
       return fulfillSuccess(route, []);
+    }
+    if (path === '/api/auth/admin/access/app-governance') {
+      return fulfillSuccess(route, {
+        metrics: {
+          activeAssignments: 0,
+          pendingApprovals: 0,
+          reviewsDueSoon: 0,
+          resourcesWithoutOwner: 0,
+        },
+        responsibilities: [],
+        principals: [],
+        resourceSets: [],
+        assignments: [],
+      });
     }
     if (path.startsWith('/api/auth/admin/access/governance/')) {
       return fulfillSuccess(route, []);

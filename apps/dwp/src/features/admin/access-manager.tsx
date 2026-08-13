@@ -460,7 +460,9 @@ function AccessAssignmentRow({
   const source =
     assignment.sourceType === 'GROUP'
       ? assignment.sourceName || assignment.sourceKey || t('access.sources.group')
-      : t('access.sources.direct');
+      : assignment.sourceType === 'DIRECT'
+        ? t('access.sources.direct')
+        : assignment.sourceName || assignment.sourceKey || t('access.sources.governed');
   const validity = assignment.validTo
     ? t('access.inspector.validUntil', {
         date: formatDateTime(assignment.validTo, locale, t('access.inspector.notAvailable')),

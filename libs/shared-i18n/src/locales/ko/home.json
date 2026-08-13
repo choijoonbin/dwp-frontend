@@ -69,6 +69,11 @@
         "shortName": "활동",
         "description": "사람, 시스템 및 에이전트 이벤트"
       },
+      "dwp-communications": {
+        "name": "소식",
+        "shortName": "소식",
+        "description": "나에게 맞는 회사 소식, 행사 및 필수 확인"
+      },
       "ref-app-mail": {
         "name": "메일과 일정",
         "shortName": "메일",
@@ -80,19 +85,14 @@
         "description": "채팅, 채널 및 회의"
       },
       "ref-app-service": {
-        "name": "임직원 서비스",
+        "name": "서비스 센터",
         "shortName": "서비스",
-        "description": "HR, IT 및 업무 환경 요청"
+        "description": "IT, 구성원, 업무 환경, 재무 및 구매 요청"
       },
       "ref-app-people": {
-        "name": "구성원 디렉터리",
-        "shortName": "구성원",
-        "description": "구성원, 팀 및 연락처 정보"
-      },
-      "dwp-workforce": {
-        "name": "인력 운영",
-        "shortName": "인력 운영",
-        "description": "인력, 포지션, 조직 설계 및 HRIS 데이터 운영"
+        "name": "HRIS",
+        "shortName": "HRIS",
+        "description": "나의 HR, 구성원, 조직 및 권한에 따른 인력 운영"
       },
       "ref-app-knowledge": {
         "name": "지식",

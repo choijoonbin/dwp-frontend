@@ -1,6 +1,18 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Archive, CopyPlus, Edit3, Eye, Megaphone, Plus, Send, X } from 'lucide-react';
+import {
+  Archive,
+  CheckCircle2,
+  CopyPlus,
+  Edit3,
+  Eye,
+  Image,
+  Megaphone,
+  Plus,
+  Send,
+  ShieldCheck,
+  X,
+} from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   archiveAnnouncement,
@@ -8,6 +20,7 @@ import {
   listAdminAnnouncements,
   publishAnnouncement,
   updateAnnouncement,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
@@ -16,6 +29,7 @@ import {
   ActionIconButton,
   DateTimePickerField,
   DetailInspector,
+  FormField,
   GuidedEmptyState,
   OperationalKpiStrip,
 } from '@dwp-frontend/design-system';
@@ -25,12 +39,10 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
-import TextField from '@mui/material/TextField';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
@@ -43,11 +55,13 @@ import DialogActions from '@mui/material/DialogActions';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import { useSystemCodeOptions } from '../../components/use-system-code-options';
 import { useCurrentProviderSupportContext } from '../provider/use-provider-support-context';
 
 import type {
   Announcement,
   AnnouncementAudienceType,
+  AnnouncementContentType,
   AnnouncementDefinition,
   AnnouncementSeverity,
 } from '@dwp-frontend/shared-utils';
@@ -63,7 +77,41 @@ type AnnouncementForm = {
   pinned: boolean;
   actionLabel: string;
   actionUrl: string;
+  contentType: AnnouncementContentType;
+  categoryKey: string;
+  body: string;
+  coverImageUrl: string;
+  publisherName: string;
+  featured: boolean;
+  acknowledgementRequired: boolean;
+  acknowledgementDueAt: string | null;
+  dismissible: boolean;
+  readingMinutes: number;
+  sourceLocale: string;
 };
+
+const contentTypeValues: readonly AnnouncementContentType[] = [
+  'ANNOUNCEMENT',
+  'NEWS',
+  'EVENT',
+  'POLICY_UPDATE',
+];
+
+const categoryValues = [
+  'COMPANY',
+  'INNOVATION',
+  'CULTURE',
+  'SECURITY',
+  'LEADERSHIP',
+  'GROWTH',
+] as const;
+
+const coverAssets = [
+  '',
+  '/media/communications/innovation-lab.jpg',
+  '/media/communications/community-day.jpg',
+  '/media/communications/security-readiness.jpg',
+] as const;
 
 const emptyForm: AnnouncementForm = {
   title: '',
@@ -76,6 +124,17 @@ const emptyForm: AnnouncementForm = {
   pinned: false,
   actionLabel: '',
   actionUrl: '',
+  contentType: 'ANNOUNCEMENT',
+  categoryKey: 'COMPANY',
+  body: '',
+  coverImageUrl: '',
+  publisherName: 'DWP Communications',
+  featured: false,
+  acknowledgementRequired: false,
+  acknowledgementDueAt: null,
+  dismissible: true,
+  readingMinutes: 2,
+  sourceLocale: 'ko',
 };
 
 type AnnouncementPipelineState = 'ALL' | 'DRAFT' | 'LIVE' | 'SCHEDULED' | 'EXPIRED' | 'ARCHIVED';
@@ -116,6 +175,17 @@ function formFrom(announcement: Announcement): AnnouncementForm {
     pinned: announcement.pinned,
     actionLabel: announcement.actionLabel ?? '',
     actionUrl: announcement.actionUrl ?? '',
+    contentType: announcement.contentType ?? 'ANNOUNCEMENT',
+    categoryKey: announcement.categoryKey ?? 'COMPANY',
+    body: announcement.body ?? '',
+    coverImageUrl: announcement.coverImageUrl ?? '',
+    publisherName: announcement.publisherName ?? 'DWP Communications',
+    featured: announcement.featured ?? false,
+    acknowledgementRequired: announcement.acknowledgementRequired ?? false,
+    acknowledgementDueAt: announcement.acknowledgementDueAt ?? null,
+    dismissible: announcement.dismissible ?? true,
+    readingMinutes: announcement.readingMinutes ?? 2,
+    sourceLocale: announcement.sourceLocale ?? 'ko',
   };
 }
 
@@ -131,6 +201,17 @@ function definitionFrom(form: AnnouncementForm): AnnouncementDefinition {
     pinned: form.pinned,
     actionLabel: form.actionLabel.trim() || null,
     actionUrl: form.actionUrl.trim() || null,
+    contentType: form.contentType,
+    categoryKey: form.categoryKey.trim().toUpperCase(),
+    body: form.body.trim() || null,
+    coverImageUrl: form.coverImageUrl.trim() || null,
+    publisherName: form.publisherName.trim(),
+    featured: form.featured,
+    acknowledgementRequired: form.acknowledgementRequired,
+    acknowledgementDueAt: form.acknowledgementRequired ? form.acknowledgementDueAt : null,
+    dismissible: form.acknowledgementRequired ? false : form.dismissible,
+    readingMinutes: form.readingMinutes,
+    sourceLocale: form.sourceLocale.trim(),
   };
 }
 
@@ -149,9 +230,20 @@ function AnnouncementDialog({
 }) {
   const { t } = useTranslation('admin');
   const [form, setForm] = useState<AnnouncementForm>(emptyForm);
+  const registeredContentTypes = useSystemCodeOptions(
+    'PLATFORM.COMMUNICATION.CONTENT_TYPE',
+    contentTypeValues
+  );
+  const registeredCategories = useSystemCodeOptions(
+    'PLATFORM.COMMUNICATION.CATEGORY',
+    categoryValues
+  );
   const invalidWindow = Boolean(
     form.startsAt && form.endsAt && Date.parse(form.startsAt) > Date.parse(form.endsAt)
   );
+  const invalidAction = Boolean(form.actionLabel.trim()) !== Boolean(form.actionUrl.trim());
+  const invalidCategory = !/^[A-Z][A-Z0-9_]{1,39}$/.test(form.categoryKey.trim().toUpperCase());
+  const invalidLocale = !/^[a-z]{2}(-[A-Z]{2})?$/.test(form.sourceLocale.trim());
 
   const reset = () => setForm(announcement ? formFrom(announcement) : emptyForm);
 
@@ -160,7 +252,7 @@ function AnnouncementDialog({
       open={open}
       onClose={busy ? undefined : onClose}
       fullWidth
-      maxWidth="md"
+      maxWidth="lg"
       slotProps={{ transition: { onEnter: reset } }}
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -173,142 +265,365 @@ function AnnouncementDialog({
         </ActionIconButton>
       </DialogTitle>
       <DialogContent dividers>
-        <Stack gap={2.25}>
-          <TextField
-            autoFocus
-            required
-            label={t('announcements.fields.title')}
-            value={form.title}
-            onChange={(event) =>
-              setForm((current) => ({ ...current, title: event.target.value.slice(0, 160) }))
-            }
-            helperText={`${form.title.length}/160`}
-          />
-          <TextField
-            required
-            multiline
-            minRows={4}
-            label={t('announcements.fields.message')}
-            value={form.message}
-            onChange={(event) =>
-              setForm((current) => ({ ...current, message: event.target.value.slice(0, 1000) }))
-            }
-            helperText={`${form.message.length}/1000`}
-          />
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-              gap: 2,
-            }}
-          >
-            <TextField
-              select
-              label={t('announcements.fields.severity')}
-              value={form.severity}
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  severity: event.target.value as AnnouncementSeverity,
-                }))
-              }
+        <Stack gap={3}>
+          <Box component="section" aria-labelledby="announcement-editorial-fields">
+            <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1.75 }}>
+              <Edit3 size={17} aria-hidden="true" />
+              <Typography id="announcement-editorial-fields" component="h3" variant="subtitle2">
+                {t('announcements.sections.editorial')}
+              </Typography>
+            </Stack>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+                gap: 2,
+              }}
             >
-              {['INFO', 'SUCCESS', 'WARNING', 'CRITICAL'].map((severity) => (
-                <MenuItem key={severity} value={severity}>
-                  {t(`announcements.severity.${severity}`)}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              label={t('announcements.fields.audience')}
-              value={form.audienceType}
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  audienceType: event.target.value as AnnouncementAudienceType,
-                }))
-              }
-            >
-              <MenuItem value="ALL">{t('announcements.audience.ALL')}</MenuItem>
-              <MenuItem value="ROLE">{t('announcements.audience.ROLE')}</MenuItem>
-            </TextField>
-            {form.audienceType === 'ROLE' && (
-              <TextField
-                required
-                label={t('announcements.fields.roleKey')}
-                value={form.audienceValue}
+              <FormField
+                select
+                autoFocus
+                label={t('announcements.fields.contentType')}
+                value={form.contentType}
                 onChange={(event) =>
                   setForm((current) => ({
                     ...current,
-                    audienceValue: event.target.value.toUpperCase().slice(0, 80),
+                    contentType: event.target.value as AnnouncementContentType,
+                  }))
+                }
+              >
+                {registeredContentTypes.map((value) => (
+                  <MenuItem key={value} value={value}>
+                    {t(`announcements.contentTypes.${value}`)}
+                  </MenuItem>
+                ))}
+              </FormField>
+              <FormField
+                select
+                label={t('announcements.fields.category')}
+                value={form.categoryKey}
+                errorMessage={
+                  invalidCategory ? t('announcements.fields.invalidCategory') : undefined
+                }
+                onChange={(event) =>
+                  setForm((current) => ({ ...current, categoryKey: event.target.value }))
+                }
+              >
+                {registeredCategories.map((value) => (
+                  <MenuItem key={value} value={value}>
+                    {t(`announcements.categories.${value}`)}
+                  </MenuItem>
+                ))}
+              </FormField>
+              <FormField
+                required
+                label={t('announcements.fields.publisher')}
+                value={form.publisherName}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    publisherName: event.target.value.slice(0, 160),
                   }))
                 }
               />
-            )}
-            <FormControlLabel
-              sx={{ gridColumn: { sm: '1 / -1' } }}
-              control={
-                <Switch
-                  checked={form.pinned}
+              <FormField
+                required
+                label={t('announcements.fields.sourceLocale')}
+                value={form.sourceLocale}
+                errorMessage={invalidLocale ? t('announcements.fields.invalidLocale') : undefined}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    sourceLocale: event.target.value.slice(0, 16),
+                  }))
+                }
+              />
+              <FormField
+                required
+                label={t('announcements.fields.title')}
+                value={form.title}
+                onChange={(event) =>
+                  setForm((current) => ({ ...current, title: event.target.value.slice(0, 160) }))
+                }
+                supportingText={`${form.title.length}/160`}
+                sx={{ gridColumn: { md: '1 / -1' } }}
+              />
+              <FormField
+                required
+                multiline
+                minRows={2}
+                label={t('announcements.fields.message')}
+                value={form.message}
+                onChange={(event) =>
+                  setForm((current) => ({ ...current, message: event.target.value.slice(0, 1000) }))
+                }
+                supportingText={`${form.message.length}/1000`}
+                sx={{ gridColumn: { md: '1 / -1' } }}
+              />
+              <FormField
+                multiline
+                minRows={7}
+                label={t('announcements.fields.body')}
+                value={form.body}
+                onChange={(event) =>
+                  setForm((current) => ({ ...current, body: event.target.value.slice(0, 20000) }))
+                }
+                supportingText={`${form.body.length}/20000`}
+                sx={{ gridColumn: { md: '1 / -1' } }}
+              />
+              <FormField
+                select
+                label={t('announcements.fields.coverAsset')}
+                value={form.coverImageUrl}
+                onChange={(event) =>
+                  setForm((current) => ({ ...current, coverImageUrl: event.target.value }))
+                }
+              >
+                {coverAssets.map((value) => (
+                  <MenuItem key={value || 'none'} value={value}>
+                    {t(
+                      `announcements.coverAssets.${value ? value.split('/').pop()?.split('.')[0] : 'none'}`
+                    )}
+                  </MenuItem>
+                ))}
+              </FormField>
+              <FormField
+                type="number"
+                label={t('announcements.fields.readingMinutes')}
+                value={form.readingMinutes}
+                slotProps={{ htmlInput: { min: 1, max: 60 } }}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    readingMinutes: Math.min(60, Math.max(1, Number(event.target.value) || 1)),
+                  }))
+                }
+              />
+              {form.coverImageUrl && (
+                <Box
+                  component="img"
+                  src={form.coverImageUrl}
+                  alt=""
+                  sx={{
+                    gridColumn: { md: '1 / -1' },
+                    width: 1,
+                    maxHeight: 230,
+                    objectFit: 'cover',
+                    borderRadius: 1,
+                    border: 1,
+                    borderColor: 'divider',
+                  }}
+                />
+              )}
+            </Box>
+          </Box>
+
+          <Box component="section" aria-labelledby="announcement-delivery-fields">
+            <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1.75 }}>
+              <ShieldCheck size={17} aria-hidden="true" />
+              <Typography id="announcement-delivery-fields" component="h3" variant="subtitle2">
+                {t('announcements.sections.delivery')}
+              </Typography>
+            </Stack>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+                gap: 2,
+              }}
+            >
+              <FormField
+                select
+                label={t('announcements.fields.severity')}
+                value={form.severity}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    severity: event.target.value as AnnouncementSeverity,
+                  }))
+                }
+              >
+                {['INFO', 'SUCCESS', 'WARNING', 'CRITICAL'].map((severity) => (
+                  <MenuItem key={severity} value={severity}>
+                    {t(`announcements.severity.${severity}`)}
+                  </MenuItem>
+                ))}
+              </FormField>
+              <FormField
+                select
+                label={t('announcements.fields.audience')}
+                value={form.audienceType}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    audienceType: event.target.value as AnnouncementAudienceType,
+                  }))
+                }
+              >
+                <MenuItem value="ALL">{t('announcements.audience.ALL')}</MenuItem>
+                <MenuItem value="ROLE">{t('announcements.audience.ROLE')}</MenuItem>
+              </FormField>
+              {form.audienceType === 'ROLE' && (
+                <FormField
+                  required
+                  label={t('announcements.fields.roleKey')}
+                  value={form.audienceValue}
                   onChange={(event) =>
-                    setForm((current) => ({ ...current, pinned: event.target.checked }))
+                    setForm((current) => ({
+                      ...current,
+                      audienceValue: event.target.value.toUpperCase().slice(0, 80),
+                    }))
                   }
                 />
-              }
-              label={t('announcements.fields.pinned')}
-            />
-            <DateTimePickerField
-              label={t('announcements.fields.starts')}
-              value={form.startsAt}
-              onValueChange={(startsAt) => setForm((current) => ({ ...current, startsAt }))}
-              minutesStep={5}
-            />
-            <DateTimePickerField
-              label={t('announcements.fields.ends')}
-              value={form.endsAt}
-              onValueChange={(endsAt) => setForm((current) => ({ ...current, endsAt }))}
-              errorMessage={
-                invalidWindow ? t('announcements.fields.invalidScheduleWindow') : undefined
-              }
-              minutesStep={5}
-            />
-            <TextField
-              label={t('announcements.fields.actionLabel')}
-              value={form.actionLabel}
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  actionLabel: event.target.value.slice(0, 80),
-                }))
-              }
-            />
-            <TextField
-              label={t('announcements.fields.actionUrl')}
-              value={form.actionUrl}
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  actionUrl: event.target.value.slice(0, 1000),
-                }))
-              }
-            />
+              )}
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                gap={{ xs: 0, sm: 2 }}
+                sx={{ gridColumn: { sm: '1 / -1' } }}
+              >
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={form.featured}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, featured: event.target.checked }))
+                      }
+                    />
+                  }
+                  label={t('announcements.fields.featured')}
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={form.pinned}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, pinned: event.target.checked }))
+                      }
+                    />
+                  }
+                  label={t('announcements.fields.pinned')}
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={form.dismissible}
+                      disabled={form.acknowledgementRequired}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, dismissible: event.target.checked }))
+                      }
+                    />
+                  }
+                  label={t('announcements.fields.dismissible')}
+                />
+              </Stack>
+              <DateTimePickerField
+                label={t('announcements.fields.starts')}
+                value={form.startsAt}
+                onValueChange={(startsAt) => setForm((current) => ({ ...current, startsAt }))}
+                minutesStep={5}
+              />
+              <DateTimePickerField
+                label={t('announcements.fields.ends')}
+                value={form.endsAt}
+                onValueChange={(endsAt) => setForm((current) => ({ ...current, endsAt }))}
+                errorMessage={
+                  invalidWindow ? t('announcements.fields.invalidScheduleWindow') : undefined
+                }
+                minutesStep={5}
+              />
+              <FormControlLabel
+                sx={{ alignSelf: 'center' }}
+                control={
+                  <Switch
+                    checked={form.acknowledgementRequired}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        acknowledgementRequired: event.target.checked,
+                        acknowledgementDueAt: event.target.checked
+                          ? current.acknowledgementDueAt
+                          : null,
+                        dismissible: event.target.checked ? false : current.dismissible,
+                      }))
+                    }
+                  />
+                }
+                label={t('announcements.fields.acknowledgementRequired')}
+              />
+              <DateTimePickerField
+                label={t('announcements.fields.acknowledgementDue')}
+                value={form.acknowledgementDueAt}
+                onValueChange={(acknowledgementDueAt) =>
+                  setForm((current) => ({ ...current, acknowledgementDueAt }))
+                }
+                disabled={!form.acknowledgementRequired}
+                minutesStep={5}
+              />
+            </Box>
+          </Box>
+
+          <Box component="section" aria-labelledby="announcement-action-fields">
+            <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1.75 }}>
+              <CheckCircle2 size={17} aria-hidden="true" />
+              <Typography id="announcement-action-fields" component="h3" variant="subtitle2">
+                {t('announcements.sections.action')}
+              </Typography>
+            </Stack>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+                gap: 2,
+              }}
+            >
+              <FormField
+                label={t('announcements.fields.actionLabel')}
+                value={form.actionLabel}
+                errorMessage={invalidAction ? t('announcements.fields.invalidAction') : undefined}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    actionLabel: event.target.value.slice(0, 80),
+                  }))
+                }
+              />
+              <FormField
+                label={t('announcements.fields.actionUrl')}
+                value={form.actionUrl}
+                errorMessage={invalidAction ? t('announcements.fields.invalidAction') : undefined}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    actionUrl: event.target.value.slice(0, 1000),
+                  }))
+                }
+              />
+            </Box>
           </Box>
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={busy}>
+        <ActionButton intent="quiet" onClick={onClose} disabled={busy}>
           {t('common.actions.cancel')}
-        </Button>
-        <Button
-          variant="contained"
+        </ActionButton>
+        <ActionButton
+          intent="primary"
           onClick={() => onSubmit(form)}
-          disabled={busy || invalidWindow || !form.title.trim() || !form.message.trim()}
+          disabled={
+            busy ||
+            invalidWindow ||
+            invalidAction ||
+            invalidCategory ||
+            invalidLocale ||
+            !form.title.trim() ||
+            !form.message.trim() ||
+            !form.publisherName.trim()
+          }
         >
           {announcement
             ? t('announcements.actions.saveChanges')
             : t('announcements.actions.createDraft')}
-        </Button>
+        </ActionButton>
       </DialogActions>
     </Dialog>
   );
@@ -357,10 +672,32 @@ function AnnouncementPreview({
             </Typography>
             <Box
               sx={{
+                mt: 1,
+                height: 180,
+                display: 'grid',
+                placeItems: 'center',
+                overflow: 'hidden',
+                borderRadius: 1,
+                bgcolor: 'action.hover',
+                color: 'text.secondary',
+              }}
+            >
+              {announcement.coverImageUrl ? (
+                <Box
+                  component="img"
+                  src={announcement.coverImageUrl}
+                  alt=""
+                  sx={{ width: 1, height: 1, objectFit: 'cover' }}
+                />
+              ) : (
+                <Image size={32} strokeWidth={1.5} aria-hidden="true" />
+              )}
+            </Box>
+            <Box
+              sx={{
                 display: 'grid',
                 gridTemplateColumns: '4px minmax(0, 1fr)',
                 gap: 1.5,
-                mt: 1,
                 p: 1.5,
                 borderTop: 1,
                 borderBottom: 1,
@@ -370,6 +707,22 @@ function AnnouncementPreview({
             >
               <Box sx={{ width: 4, minHeight: 46, bgcolor: accent }} />
               <Box sx={{ minWidth: 0 }}>
+                <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mb: 0.75 }}>
+                  <Chip
+                    size="small"
+                    label={t(
+                      `announcements.contentTypes.${announcement.contentType ?? 'ANNOUNCEMENT'}`
+                    )}
+                  />
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={t(`announcements.categories.${announcement.categoryKey ?? 'COMPANY'}`)}
+                  />
+                  {announcement.featured && (
+                    <Chip size="small" color="primary" label={t('announcements.featured')} />
+                  )}
+                </Stack>
                 <Typography component="h4" variant="subtitle2">
                   {announcement.title}
                 </Typography>
@@ -395,7 +748,7 @@ function AnnouncementPreview({
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
                 mt: 1,
                 borderTop: 1,
                 borderLeft: 1,
@@ -414,6 +767,10 @@ function AnnouncementPreview({
                 {
                   label: t('announcements.metrics.actionClicks'),
                   value: announcement.actionClickCount ?? 0,
+                },
+                {
+                  label: t('announcements.metrics.acknowledgements'),
+                  value: announcement.acknowledgementCount ?? 0,
                 },
               ].map((item) => (
                 <Box
@@ -459,6 +816,26 @@ function AnnouncementPreview({
                     ? displayDateTime(announcement.endsAt)
                     : t('announcements.openEnded'),
                 },
+                {
+                  label: t('announcements.fields.publisher'),
+                  value: announcement.publisherName ?? 'DWP Communications',
+                },
+                {
+                  label: t('announcements.fields.acknowledgementRequired'),
+                  value: announcement.acknowledgementRequired
+                    ? t('announcements.values.required')
+                    : t('announcements.values.optional'),
+                },
+                ...(announcement.acknowledgementRequired
+                  ? [
+                      {
+                        label: t('announcements.fields.acknowledgementDue'),
+                        value: announcement.acknowledgementDueAt
+                          ? displayDateTime(announcement.acknowledgementDueAt)
+                          : t('announcements.openEnded'),
+                      },
+                    ]
+                  : []),
               ].map((item) => (
                 <Stack
                   key={item.label}
@@ -487,9 +864,22 @@ export function AnnouncementManager() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
   const supportContext = useCurrentProviderSupportContext();
-  const canWrite =
-    !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
+  const supportWrite = supportContext.data?.scopes.includes('TENANT_CONFIGURATION_WRITE') ?? false;
+  const useSupportPermissions = Boolean(supportContext.data);
+  const canCreate = useSupportPermissions
+    ? supportWrite
+    : permissionsLoaded && hasPermission('ADMIN.COMMUNICATIONS', 'CREATE');
+  const canUpdate = useSupportPermissions
+    ? supportWrite
+    : permissionsLoaded && hasPermission('ADMIN.COMMUNICATIONS', 'UPDATE');
+  const canPublish = useSupportPermissions
+    ? supportWrite
+    : permissionsLoaded && hasPermission('ADMIN.COMMUNICATIONS', 'APPROVE');
+  const canArchive = useSupportPermissions
+    ? supportWrite
+    : permissionsLoaded && hasPermission('ADMIN.COMMUNICATIONS', 'MANAGE');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selected, setSelected] = useState<Announcement | null>(null);
   const [previewed, setPreviewed] = useState<Announcement | null>(null);
@@ -584,7 +974,7 @@ export function AnnouncementManager() {
         <ActionButton
           intent="primary"
           startIcon={<Plus size={17} />}
-          disabled={!canWrite}
+          disabled={!canCreate}
           onClick={() => {
             setSelected(null);
             setDialogOpen(true);
@@ -664,6 +1054,10 @@ export function AnnouncementManager() {
           {operationError}
         </Alert>
       )}
+
+      <Alert severity="info" sx={{ mb: 2 }}>
+        {t('announcements.immutableNotice')}
+      </Alert>
 
       <Box sx={{ overflowX: 'auto', borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
         <Table
@@ -755,7 +1149,7 @@ export function AnnouncementManager() {
                       title: announcement.title,
                     })}
                     tooltip={t('announcements.actions.duplicate')}
-                    disabled={!canWrite || busy}
+                    disabled={!canCreate || busy}
                     onClick={() =>
                       void run(
                         () =>
@@ -777,7 +1171,7 @@ export function AnnouncementManager() {
                       title: announcement.title,
                     })}
                     tooltip={t('common.actions.edit')}
-                    disabled={!canWrite || busy || announcement.lifecycleState === 'ARCHIVED'}
+                    disabled={!canUpdate || busy || announcement.lifecycleState !== 'DRAFT'}
                     onClick={() => {
                       setSelected(announcement);
                       setDialogOpen(true);
@@ -793,7 +1187,7 @@ export function AnnouncementManager() {
                         title: announcement.title,
                       })}
                       tooltip={t('announcements.actions.publish')}
-                      disabled={!canWrite || busy}
+                      disabled={!canPublish || busy}
                       onClick={() =>
                         void run(
                           () =>
@@ -812,7 +1206,7 @@ export function AnnouncementManager() {
                         title: announcement.title,
                       })}
                       tooltip={t('announcements.actions.archive')}
-                      disabled={!canWrite || busy}
+                      disabled={!canArchive || busy}
                       onClick={() =>
                         void run(
                           () =>
@@ -845,14 +1239,14 @@ export function AnnouncementManager() {
                     actionLabel={
                       announcements.length
                         ? t('announcements.actions.showAll')
-                        : canWrite
+                        : canCreate
                           ? t('announcements.actions.new')
                           : undefined
                     }
                     onAction={
                       announcements.length
                         ? () => setPipelineFilter('ALL')
-                        : canWrite
+                        : canCreate
                           ? () => {
                               setSelected(null);
                               setDialogOpen(true);
@@ -870,7 +1264,7 @@ export function AnnouncementManager() {
 
       <AnnouncementDialog
         key={selected?.announcementId ?? 'new'}
-        open={dialogOpen && canWrite}
+        open={dialogOpen && (selected ? canUpdate : canCreate)}
         announcement={selected}
         busy={busy}
         onClose={() => setDialogOpen(false)}

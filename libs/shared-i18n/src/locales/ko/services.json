@@ -1,0 +1,132 @@
+{
+  "shell": {
+    "name": "서비스 센터",
+    "context": "직원 서비스",
+    "tenantFallback": "내 조직",
+    "navigationLabel": "서비스 센터 탐색",
+    "openNavigation": "서비스 탐색 열기",
+    "backToHome": "워크스페이스로 돌아가기"
+  },
+  "navigation": {
+    "groups": {
+      "discover": "서비스 이용",
+      "services": "서비스",
+      "requests": "나의 요청"
+    },
+    "items": {
+      "discover": "서비스 찾기",
+      "my": "진행 중인 요청",
+      "drafts": "임시 저장"
+    }
+  },
+  "discover": {
+    "eyebrow": "직원 서비스 허브",
+    "title": "필요한 지원을 한곳에서 시작하세요",
+    "description": "IT, 구성원, 업무 환경, 재무와 구매 서비스를 찾고 진행 상태를 추적합니다.",
+    "searchLabel": "서비스 검색",
+    "searchPlaceholder": "업무 기기, 재직 증명서, 법인카드 등을 검색",
+    "featured": "자주 찾는 서비스",
+    "allServices": "전체 서비스",
+    "allCategories": "전체",
+    "serviceCount": "{{count}}개 서비스",
+    "noResultsTitle": "일치하는 서비스를 찾지 못했습니다",
+    "noResultsDescription": "검색어를 바꾸거나 전체 카테고리에서 다시 찾아보세요.",
+    "clearSearch": "검색 초기화",
+    "request": "요청 시작",
+    "owner": "담당 {{owner}}",
+    "estimate": "예상 {{hours}}시간",
+    "sla": "응답 목표 {{hours}}시간",
+    "featuredBadge": "추천",
+    "classification": "{{level}} 데이터",
+    "loadError": "서비스 카탈로그를 불러오지 못했습니다."
+  },
+  "requestDialog": {
+    "title": "{{service}} 요청",
+    "editTitle": "{{service}} 초안 편집",
+    "description": "제출 전에 내용을 검토할 수 있으며, 임시 저장 후 이어서 작성할 수 있습니다.",
+    "editDescription": "저장한 내용을 수정한 뒤 다시 임시 저장하거나 바로 제출할 수 있습니다.",
+    "summary": "요청 요약",
+    "summaryPlaceholder": "무엇이 필요한지 한 문장으로 입력하세요",
+    "required": "필수",
+    "selectPlaceholder": "선택하세요",
+    "saveDraft": "임시 저장",
+    "submit": "요청 제출",
+    "cancel": "닫기",
+    "privacy": "입력 정보는 {{classification}} 등급으로 처리되며 담당 그룹에만 전달됩니다.",
+    "invalid": "필수 항목을 모두 입력해주세요.",
+    "created": "{{number}} 요청을 접수했습니다.",
+    "drafted": "{{number}} 요청을 임시 저장했습니다.",
+    "updated": "{{number}} 초안을 저장했습니다.",
+    "updatedAndSubmitted": "{{number}} 초안을 갱신하고 접수했습니다.",
+    "error": "요청을 저장하지 못했습니다. 잠시 후 다시 시도해주세요.",
+    "booleanYes": "예",
+    "booleanNo": "아니오"
+  },
+  "requests": {
+    "eyebrow": "나의 서비스 요청",
+    "activeTitle": "진행 중인 요청",
+    "activeDescription": "접수 이후 담당 조직, SLA 목표와 처리 이력을 확인합니다.",
+    "draftTitle": "임시 저장",
+    "draftDescription": "작성 중인 요청을 검토하고 제출할 수 있습니다.",
+    "requestNumber": "요청 번호",
+    "service": "서비스",
+    "summary": "요약",
+    "status": "상태",
+    "owner": "담당 그룹",
+    "updated": "최근 변경",
+    "due": "SLA 목표",
+    "view": "요청 상세 보기",
+    "emptyActiveTitle": "진행 중인 요청이 없습니다",
+    "emptyActiveDescription": "서비스를 선택하면 접수부터 완료까지 한곳에서 추적할 수 있습니다.",
+    "emptyDraftTitle": "임시 저장된 요청이 없습니다",
+    "emptyDraftDescription": "작성 중 저장한 요청이 이곳에 표시됩니다.",
+    "discover": "서비스 찾아보기",
+    "loadError": "요청 목록을 불러오지 못했습니다.",
+    "statusLabels": {
+      "DRAFT": "임시 저장",
+      "SUBMITTED": "접수",
+      "TRIAGED": "분류 완료",
+      "IN_PROGRESS": "처리 중",
+      "AWAITING_REQUESTER": "사용자 응답 대기",
+      "RESOLVED": "해결",
+      "CLOSED": "종료",
+      "CANCELLED": "취소"
+    }
+  },
+  "detail": {
+    "back": "요청 목록으로",
+    "overview": "요청 개요",
+    "submitted": "제출 일시",
+    "updated": "최근 변경",
+    "slaDue": "SLA 목표",
+    "assignedGroup": "담당 그룹",
+    "assignedTo": "담당자",
+    "unassigned": "배정 중",
+    "requestData": "제출 정보",
+    "timeline": "처리 타임라인",
+    "editDraft": "초안 편집",
+    "submitDraft": "요청 제출",
+    "cancelRequest": "요청 취소",
+    "confirmCancel": "이 요청을 취소하시겠습니까?",
+    "confirmCancelDescription": "담당 조직의 처리가 중단되며, 취소 기록은 요청 처리 이력에 보존됩니다.",
+    "cancel": "돌아가기",
+    "confirm": "취소하기",
+    "submittedSuccess": "요청을 제출했습니다.",
+    "cancelledSuccess": "요청을 취소했습니다.",
+    "actionError": "요청 상태를 변경하지 못했습니다.",
+    "loadError": "요청 상세를 불러오지 못했습니다.",
+    "eventLabels": {
+      "DRAFT_CREATED": "임시 저장됨",
+      "DRAFT_UPDATED": "임시 저장 내용 변경",
+      "REQUEST_SUBMITTED": "요청 접수됨",
+      "REQUEST_CANCELLED": "요청 취소됨",
+      "STATUS_CHANGED": "처리 상태 변경"
+    }
+  },
+  "classification": {
+    "PUBLIC": "공개",
+    "INTERNAL": "내부",
+    "CONFIDENTIAL": "기밀",
+    "RESTRICTED": "제한"
+  }
+}

@@ -62,8 +62,8 @@ test('Wave 1 tenant and workforce command surfaces reflow at 320px', async ({ pa
     '/admin/governance/api-monitoring',
     '/admin/governance/audit-overview',
     '/admin/governance/audit-investigations',
-    '/workforce/overview',
-    '/workforce/organization',
+    '/hr/operations',
+    '/hr/design/organization',
   ]) {
     await page.goto(path);
     await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible();
@@ -90,7 +90,7 @@ test('Wave 1 representative command surfaces pass 200 percent text and accessibi
   for (const path of [
     '/admin/governance/api-monitoring',
     '/admin/governance/audit-investigations',
-    '/workforce/overview',
+    '/hr/operations',
   ]) {
     await page.goto(path);
     await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });

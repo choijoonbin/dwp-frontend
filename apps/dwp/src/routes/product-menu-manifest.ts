@@ -1,10 +1,9 @@
 import { accountNavigationGroups } from '../features/account/settings-navigation';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
-import { PEOPLE_NAVIGATION } from '../features/people/people-navigation';
+import { HRIS_NAVIGATION } from '../features/hris/hris-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
-import { WORKFORCE_NAVIGATION } from '../features/workforce/workforce-navigation';
 
-export type ProductShell = 'workspace' | 'people' | 'workforce' | 'admin' | 'provider' | 'account';
+export type ProductShell = 'workspace' | 'hris' | 'admin' | 'provider' | 'account';
 
 export type ProductMenuRoute = {
   id: string;
@@ -18,16 +17,11 @@ export const PRODUCT_MENU_ROUTES: readonly ProductMenuRoute[] = [
   { id: 'workspace.ask', path: '/ask', shell: 'workspace' },
   { id: 'workspace.activity', path: '/activity', shell: 'workspace' },
   { id: 'workspace.apps', path: '/apps', shell: 'workspace' },
-  ...PEOPLE_NAVIGATION.map((item) => ({
-    id: `people.${item.view}`,
-    path: item.path,
-    shell: 'people' as const,
-  })),
-  ...WORKFORCE_NAVIGATION.flatMap((group) =>
+  ...HRIS_NAVIGATION.flatMap((group) =>
     group.items.map((item) => ({
-      id: `workforce.${item.view}`,
+      id: `hris.${item.view}`,
       path: item.path,
-      shell: 'workforce' as const,
+      shell: 'hris' as const,
     }))
   ),
   ...ADMIN_NAVIGATION.flatMap((group) =>

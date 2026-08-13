@@ -2,9 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { accountNavigationGroups } from '../features/account/settings-navigation';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
-import { PEOPLE_NAVIGATION } from '../features/people/people-navigation';
+import { HRIS_NAVIGATION } from '../features/hris/hris-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
-import { WORKFORCE_NAVIGATION } from '../features/workforce/workforce-navigation';
 
 import { PRODUCT_MENU_ROUTES } from './product-menu-manifest';
 
@@ -13,8 +12,7 @@ import adminKo from '../../../../libs/shared-i18n/src/locales/ko/admin.json';
 
 const EXPECTED_SHELL_COUNTS = {
   workspace: 5,
-  people: PEOPLE_NAVIGATION.length,
-  workforce: WORKFORCE_NAVIGATION.flatMap((group) => group.items).length,
+  hris: HRIS_NAVIGATION.flatMap((group) => group.items).length,
   admin: ADMIN_NAVIGATION.flatMap((group) => group.items).length,
   provider: PROVIDER_NAVIGATION.flatMap((group) => group.items).length,
   account: accountNavigationGroups.flatMap((group) => group.items).length,
@@ -33,7 +31,7 @@ describe('product menu manifest', () => {
   });
 
   it('derives the governed route count from each product navigation source', () => {
-    expect(expectedRouteCount).toBe(53);
+    expect(expectedRouteCount).toBe(59);
     const counts = PRODUCT_MENU_ROUTES.reduce<Record<string, number>>((result, route) => {
       result[route.shell] = (result[route.shell] ?? 0) + 1;
       return result;

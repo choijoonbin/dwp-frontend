@@ -61,14 +61,7 @@ export type SearchableCatalogAsset = {
 };
 
 export type GlobalSearchKind =
-  | 'app'
-  | 'work'
-  | 'person'
-  | 'organization'
-  | 'audit'
-  | 'tenant'
-  | 'catalog'
-  | 'ask';
+  'app' | 'work' | 'person' | 'organization' | 'audit' | 'tenant' | 'catalog' | 'ask';
 
 export type GlobalSearchItem = {
   id: string;
@@ -152,7 +145,7 @@ export function createGlobalSearchItems(
         .join(' / ') ||
       person.workEmail ||
       translated(translate, 'search.people.descriptionFallback', 'People directory'),
-    route: `/people/directory?person=${encodeURIComponent(person.personId)}`,
+    route: `/hr/directory?person=${encodeURIComponent(person.personId)}`,
     keywords: [
       person.personId,
       person.workEmail ?? '',
@@ -176,7 +169,7 @@ export function createGlobalSearchItems(
           count: organization.totalHeadcount,
         }
       ),
-      route: `/people/organization?mode=organizations&organization=${encodeURIComponent(
+      route: `/hr/organization?mode=organizations&organization=${encodeURIComponent(
         organization.organizationId
       )}`,
       keywords: [organization.organizationId, organization.organizationKey],

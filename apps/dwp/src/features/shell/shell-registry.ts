@@ -2,6 +2,9 @@ import {
   Activity,
   AppWindow,
   BriefcaseBusiness,
+  ContactRound,
+  LifeBuoy,
+  Newspaper,
   Settings2,
   ShieldCheck,
   Sparkles,
@@ -14,13 +17,7 @@ import type { LucideIcon } from 'lucide-react';
 
 export type ShellScope = 'home' | 'tenant' | 'provider' | 'support';
 export type ShellKey =
-  | 'home'
-  | 'workspace'
-  | 'people'
-  | 'workforce'
-  | 'account'
-  | 'admin'
-  | 'provider';
+  'home' | 'workspace' | 'communications' | 'services' | 'hris' | 'account' | 'admin' | 'provider';
 
 type ShellBrandMode = 'tenant-cobrand' | 'product' | 'control-center' | 'provider';
 
@@ -65,27 +62,38 @@ export const shellRegistry = {
     headerPosition: 'fixed',
     headerSurface: 'solid',
   },
-  people: {
-    key: 'people',
-    routePrefixes: ['/people'],
+  communications: {
+    key: 'communications',
+    routePrefixes: ['/communications'],
     scope: 'tenant',
     brandMode: 'product',
     showWorkspace: true,
     desktopNavigationWidth: navigationExpanded,
     headerPosition: 'fixed',
     headerSurface: 'solid',
-    context: { icon: UsersRound, labelKey: 'shell.people.name' },
+    context: { icon: Newspaper, labelKey: 'shell.communications.name' },
   },
-  workforce: {
-    key: 'workforce',
-    routePrefixes: ['/workforce'],
+  services: {
+    key: 'services',
+    routePrefixes: ['/services'],
     scope: 'tenant',
     brandMode: 'product',
     showWorkspace: true,
     desktopNavigationWidth: navigationExpanded,
     headerPosition: 'fixed',
     headerSurface: 'solid',
-    context: { icon: Workflow, labelKey: 'shell.workforce.name' },
+    context: { icon: LifeBuoy, labelKey: 'shell.services.name' },
+  },
+  hris: {
+    key: 'hris',
+    routePrefixes: ['/hr'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: ContactRound, labelKey: 'shell.hris.name' },
   },
   account: {
     key: 'account',
@@ -131,6 +139,7 @@ export const workspaceNavigationIcons: Readonly<Record<string, LucideIcon>> = {
   work: BriefcaseBusiness,
   people: UsersRound,
   workforce: Workflow,
+  hris: ContactRound,
 };
 
 export const workspaceCoreContexts = [
@@ -144,8 +153,9 @@ const routeResolutionOrder: readonly ShellKey[] = [
   'provider',
   'admin',
   'account',
-  'workforce',
-  'people',
+  'hris',
+  'services',
+  'communications',
   'workspace',
   'home',
 ];

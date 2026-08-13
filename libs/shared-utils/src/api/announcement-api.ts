@@ -5,6 +5,7 @@ import type { ApiResponse } from '../types';
 export type AnnouncementSeverity = 'INFO' | 'SUCCESS' | 'WARNING' | 'CRITICAL';
 export type AnnouncementLifecycle = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
 export type AnnouncementAudienceType = 'ALL' | 'ROLE';
+export type AnnouncementContentType = 'ANNOUNCEMENT' | 'NEWS' | 'EVENT' | 'POLICY_UPDATE';
 
 export type AnnouncementDefinition = {
   title: string;
@@ -17,6 +18,17 @@ export type AnnouncementDefinition = {
   pinned: boolean;
   actionLabel?: string | null;
   actionUrl?: string | null;
+  contentType?: AnnouncementContentType;
+  categoryKey?: string;
+  body?: string | null;
+  coverImageUrl?: string | null;
+  publisherName?: string;
+  featured?: boolean;
+  acknowledgementRequired?: boolean;
+  acknowledgementDueAt?: string | null;
+  dismissible?: boolean;
+  readingMinutes?: number;
+  sourceLocale?: string;
 };
 
 export type Announcement = AnnouncementDefinition & {
@@ -27,6 +39,7 @@ export type Announcement = AnnouncementDefinition & {
   uniqueViewerCount?: number;
   viewCount?: number;
   actionClickCount?: number;
+  acknowledgementCount?: number;
   version: number;
   updatedAt?: string | null;
   updatedBy?: number | null;

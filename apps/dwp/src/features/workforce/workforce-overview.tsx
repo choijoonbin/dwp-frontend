@@ -376,7 +376,7 @@ export function WorkforceOverview() {
         source: latestRun.sourceKey,
         code: latestRun.failureCode ?? t('overview.actions.unknownFailure'),
       }),
-      route: '/workforce/data-operations',
+      route: '/hr/data/integrations',
       tone: 'error',
       badge: t('overview.actions.immediate'),
     });
@@ -390,7 +390,7 @@ export function WorkforceOverview() {
         grades: data.analysis.missingGradeCount,
         organizations: data.analysis.orphanOrganizationCount,
       }),
-      route: `/workforce/organization?mode=insights&insight=quality&asOf=${asOf}`,
+      route: `/hr/design/organization?mode=insights&insight=quality&asOf=${asOf}`,
       tone: data.analysis.dataQualityScore < 80 ? 'error' : 'warning',
       badge: `${data.analysis.dataQualityScore}%`,
     });
@@ -404,7 +404,7 @@ export function WorkforceOverview() {
         headcount: organization.totalHeadcount,
         vacancies: organization.openPositionCount,
       }),
-      route: `/workforce/organization?organization=${encodeURIComponent(
+      route: `/hr/design/organization?organization=${encodeURIComponent(
         organization.organizationId
       )}&asOf=${asOf}`,
       tone: organization.healthStatus === 'CRITICAL' ? 'error' : 'warning',
@@ -418,7 +418,7 @@ export function WorkforceOverview() {
       detail: t('overview.actions.criticalVacanciesDetail', {
         total: data.metrics.openPositionCount,
       }),
-      route: `/workforce/organization?mode=positions&asOf=${asOf}`,
+      route: `/hr/design/organization?mode=positions&asOf=${asOf}`,
       tone: 'warning',
       badge: t('overview.actions.staffing'),
     });
@@ -428,7 +428,7 @@ export function WorkforceOverview() {
       id: `rejected-${latestRun?.syncRunId}`,
       title: t('overview.actions.rejectedRecords', { count: latestRun?.rejectedCount }),
       detail: t('overview.actions.rejectedRecordsDetail', { source: latestRun?.sourceKey }),
-      route: '/workforce/data-operations',
+      route: '/hr/data/integrations',
       tone: 'warning',
       badge: t('overview.actions.reconcile'),
     });
@@ -438,7 +438,7 @@ export function WorkforceOverview() {
       id: 'draft-scenarios',
       title: t('overview.actions.draftScenarios', { count: draftScenarios.length }),
       detail: t('overview.actions.draftScenariosDetail'),
-      route: `/workforce/organization?asOf=${asOf}`,
+      route: `/hr/design/organization?asOf=${asOf}`,
       tone: 'info',
       badge: t('overview.actions.plan'),
     });
@@ -649,7 +649,7 @@ export function WorkforceOverview() {
           icon={<UsersRound size={18} />}
           tone="primary"
           actionLabel={t('overview.metrics.openPeople')}
-          onClick={() => navigate(`/workforce/people?status=ACTIVE&asOf=${asOf}`)}
+          onClick={() => navigate(`/hr/operations/people?status=ACTIVE&asOf=${asOf}`)}
         />
         <SignalMetric
           label={t('overview.metrics.openPositions')}
@@ -665,7 +665,7 @@ export function WorkforceOverview() {
             value: formatNumber(vacancyRatio, { maximumFractionDigits: 1 }),
           })}
           actionLabel={t('overview.metrics.openPositionsAction')}
-          onClick={() => navigate(`/workforce/organization?mode=positions&asOf=${asOf}`)}
+          onClick={() => navigate(`/hr/design/organization?mode=positions&asOf=${asOf}`)}
         />
         <SignalMetric
           label={t('overview.metrics.organizationRisk')}
@@ -692,7 +692,7 @@ export function WorkforceOverview() {
             total: data.organizations.length,
           })}
           actionLabel={t('overview.metrics.openHealth')}
-          onClick={() => navigate(`/workforce/organization?mode=insights&asOf=${asOf}`)}
+          onClick={() => navigate(`/hr/design/organization?mode=insights&asOf=${asOf}`)}
         />
         <SignalMetric
           label={t('overview.metrics.dataQuality')}
@@ -713,7 +713,7 @@ export function WorkforceOverview() {
           progressLabel={t('overview.metrics.issuesDetail', { count: qualityIssues })}
           actionLabel={t('overview.metrics.openQuality')}
           onClick={() =>
-            navigate(`/workforce/organization?mode=insights&insight=quality&asOf=${asOf}`)
+            navigate(`/hr/design/organization?mode=insights&insight=quality&asOf=${asOf}`)
           }
         />
       </Box>
@@ -824,7 +824,7 @@ export function WorkforceOverview() {
               intent="quiet"
               size="small"
               endIcon={<ArrowRight size={15} />}
-              onClick={() => navigate(`/workforce/people?asOf=${asOf}`)}
+              onClick={() => navigate(`/hr/operations/people?asOf=${asOf}`)}
             >
               {t('overview.composition.openPeople')}
             </ActionButton>
@@ -923,7 +923,7 @@ export function WorkforceOverview() {
               intent="quiet"
               size="small"
               endIcon={<ArrowRight size={15} />}
-              onClick={() => navigate(`/workforce/organization?mode=insights&asOf=${asOf}`)}
+              onClick={() => navigate(`/hr/design/organization?mode=insights&asOf=${asOf}`)}
             >
               {t('overview.risk.openInsights')}
             </ActionButton>
@@ -983,7 +983,7 @@ export function WorkforceOverview() {
                   organization={organization}
                   onOpen={() =>
                     navigate(
-                      `/workforce/organization?organization=${encodeURIComponent(
+                      `/hr/design/organization?organization=${encodeURIComponent(
                         organization.organizationId
                       )}&asOf=${asOf}`
                     )
@@ -1058,7 +1058,7 @@ export function WorkforceOverview() {
               )}
             </Box>
             <ButtonBase
-              onClick={() => navigate('/workforce/data-operations')}
+              onClick={() => navigate('/hr/data/integrations')}
               sx={{ width: 1, p: 2, justifyContent: 'stretch', textAlign: 'left' }}
             >
               <Stack direction="row" alignItems="center" gap={1} width={1}>
@@ -1077,7 +1077,7 @@ export function WorkforceOverview() {
               </Stack>
             </ButtonBase>
             <ButtonBase
-              onClick={() => navigate(`/workforce/organization?asOf=${asOf}`)}
+              onClick={() => navigate(`/hr/design/organization?asOf=${asOf}`)}
               sx={{ width: 1, p: 2, justifyContent: 'stretch', textAlign: 'left' }}
             >
               <Stack direction="row" alignItems="center" gap={1} width={1}>

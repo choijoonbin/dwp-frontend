@@ -1,25 +1,27 @@
 # R1 Effective Organization Graph 및 People Directory ADR
 
-> 상태: Accepted and Implemented Local Baseline v3.0
+> 상태: Accepted and Implemented Local Baseline v4.0
 >
-> 기준일: 2026-08-12
+> 기준일: 2026-08-13
 >
 > 적용 저장소: `dwp-backend`, `dwp-frontend`
 
 ## 1. 결정
 
 DWP의 조직도는 Auth의 접근 제어용 조직·그룹을 시각화하지 않는다. People bounded
-context가 소유하는 유효일 기준 Workforce Projection을 원본으로 사용하되, 제품 표면과
-API는 데이터 목적에 따라 분리한다.
+context가 소유하는 유효일 기준 Workforce Projection을 원본으로 사용한다. 사용자에게는
+하나의 HR 제품 Shell을 제공하되, API와 데이터 권한은 목적에 따라 계속 분리한다.
 
-| 제품 표면              | 사용자와 목적                        | 데이터 노출                              | 소유 메뉴                                                |
-| ---------------------- | ------------------------------------ | ---------------------------------------- | -------------------------------------------------------- |
-| `People`               | 전 구성원의 동료 검색·보고 체계 탐색 | 업무용 공개 필드, 활성 구성원, 읽기 전용 | 구성원 디렉터리, 조직 탐색                               |
-| `Workforce Management` | HR 운영자·조직 설계자                | Worker·발령·직급·Position·비용·Scenario  | Overview, 구성원, 발령, 조직 설계, 기준정보, 데이터 운영 |
-| `Control Center`       | Tenant IAM·플랫폼 관리자             | 계정·Role·Group·SCIM·Navigation 정책     | Identity & Access, Platform Setup, Governance            |
+| HR 제품 내부 표면 | 사용자와 목적                           | 데이터 노출                                             | 소유 메뉴                                                 |
+| ----------------- | --------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------- |
+| `Employee`        | 전 구성원의 개인 HR·동료·보고 체계 탐색 | 본인 정보와 업무용 공개 Profile, 활성 구성원, 읽기 전용 | HR Home, 나의 HR, 구성원 디렉터리, 조직 탐색              |
+| `Manager`         | 실제 직속 구성원이 있는 관리자          | 허용된 팀 관계와 공개 Profile                           | 나의 팀                                                   |
+| `HR Operations`   | HR 운영자·조직 설계자                   | Worker·발령·직급·Position·비용·Scenario                 | 인력 운영, 구성원, 발령, 조직 설계, 기준정보, 데이터 운영 |
+| `Control Center`  | Tenant IAM·플랫폼 관리자                | 계정·Role·Group·SCIM·Navigation 정책                    | Identity & Access, Platform Setup, Governance             |
 
-Tenant Admin 권한은 HR 데이터 권한을 자동 포함하지 않는다. Workforce는 `ADMIN`,
-`HR_ADMIN`, `PEOPLE_ADMIN`만 진입하며 `PEOPLE_ADMIN`은 읽기 전용이다. Provider 지원은
+Tenant Admin 권한은 HR 데이터 권한을 자동 포함하지 않는다. HR Operations는 `ADMIN`,
+`HR_ADMIN`, `PEOPLE_ADMIN`과 `APP.WORKFORCE_MANAGEMENT` Entitlement를 함께 검사하며
+`PEOPLE_ADMIN`은 읽기 전용이다. Provider 지원은
 승인된 `WORKFORCE_READ` 세션에서만 읽기 접근하고 제한 필드는 계속 마스킹한다.
 
 - 조직 계층은 `ppl_organization_relationships`의 유효기간 관계로 표현한다.
@@ -147,10 +149,11 @@ Interactive organization/reporting canvas              | Selection detail
 방향별로 고정해 Hover·상태·텍스트가 레이아웃을 밀지 않게 한다. 긴 이름은 노드에서 한 줄
 생략하고 상세 패널에서 전체를 제공한다. Zoom·Pan·Fit View·Mini Map을 기본 제공한다.
 
-Frontend는 `features/people`, `features/workforce`, `features/admin`,
-`features/integrations`로 화면 책임을 분리한다. Backend는 `directory`, `organization`,
-`workforce`, `integration`, `security` package로 분리한다. HRIS Adapter는 연계 bounded
-context에 두되 Workforce 메뉴만 공개 진입점을 가진다.
+Frontend는 `features/hris`가 제품 Shell·Home·역할 인지 Navigation을 조합하고,
+`features/people`, `features/workforce`, `features/integrations`는 각 도메인 화면 책임을
+유지한다. Backend는 `directory`, `organization`, `workforce`, `integration`, `security`
+package로 분리한다. HRIS Adapter는 연계 bounded context에 두되 권한이 있는 사용자의 HR
+데이터 운영 메뉴에서만 진입할 수 있다.
 
 ## 6. SKAX 합성 Baseline
 
@@ -198,7 +201,7 @@ context에 두되 Workforce 메뉴만 공개 진입점을 가진다.
 비교, Scenario Preview·대안 복제/비교·독립 승인·게시와 반응형 탐색을 구현한다. 10k 이상 Graph의 가상화,
 HRIS 충돌 해소 Workbench와 고객별 정책 임계값은 Delivery 성능·통합 Gate로 남긴다.
 
-일반 People Directory는 서버 검색·서명 Cursor 점진 로딩, Healthy Empty·부분 실패 복구,
+HR의 일반 구성원 디렉터리는 서버 검색·서명 Cursor 점진 로딩, Healthy Empty·부분 실패 복구,
 사람 상세와 조직도 Focus Deep link를 제공한다. 조직도 파일 반출은 개인정보 분류·Masking·
 Watermark·만료 정책 `D-09`가 승인되기 전까지 제공하지 않는다.
 

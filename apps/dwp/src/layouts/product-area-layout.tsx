@@ -26,6 +26,7 @@ export type ProductAreaNavigationItem = {
   icon: LucideIcon;
   requiredResourceKey?: string;
   requiredPermissionCode?: string;
+  requiredAnyPermissionCodes?: readonly string[];
 };
 
 export type ProductAreaNavigationGroup = {
@@ -34,12 +35,17 @@ export type ProductAreaNavigationGroup = {
 };
 
 type ProductAreaLayoutProps = {
-  areaKey: 'people' | 'workforce';
+  areaKey: 'hris';
   navigation: readonly ProductAreaNavigationGroup[];
+  translationNamespace?: 'workforce' | 'hris';
 };
 
-export function ProductAreaLayout({ areaKey, navigation }: ProductAreaLayoutProps) {
-  const { t } = useTranslation('workforce');
+export function ProductAreaLayout({
+  areaKey,
+  navigation,
+  translationNamespace = 'workforce',
+}: ProductAreaLayoutProps) {
+  const { t } = useTranslation(translationNamespace);
   const shell = shellRegistry[areaKey];
   const AreaIcon = shell.context.icon;
   const sidebarWidth = shell.desktopNavigationWidth;
@@ -86,7 +92,10 @@ export function ProductAreaLayout({ areaKey, navigation }: ProductAreaLayoutProp
                 .filter(
                   (item) =>
                     !item.requiredResourceKey ||
-                    hasPermission(item.requiredResourceKey, item.requiredPermissionCode)
+                    (item.requiredAnyPermissionCodes?.some((code) =>
+                      hasPermission(item.requiredResourceKey!, code)
+                    ) ??
+                      hasPermission(item.requiredResourceKey, item.requiredPermissionCode))
                 )
                 .map((item) => {
                   const Icon = item.icon;

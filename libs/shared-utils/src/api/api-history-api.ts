@@ -5,11 +5,7 @@ import type { ApiResponse } from '../types';
 export type ApiHistoryWindow = 'H1' | 'H6' | 'H24' | 'D7' | 'D30';
 export type ApiHistoryObservationPoint = 'GATEWAY' | 'SERVICE' | 'ALL';
 export type ApiHistoryOutcome =
-  | 'SUCCESS'
-  | 'REDIRECTION'
-  | 'CLIENT_ERROR'
-  | 'SERVER_ERROR'
-  | 'CANCELLED';
+  'SUCCESS' | 'REDIRECTION' | 'CLIENT_ERROR' | 'SERVER_ERROR' | 'CANCELLED';
 
 export type ApiHistoryFilters = {
   window: ApiHistoryWindow;

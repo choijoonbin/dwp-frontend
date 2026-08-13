@@ -13,7 +13,7 @@ async function expectHeaderContract(
   context: string,
   scope: 'tenant' | 'provider',
   mobile: boolean,
-  shellKey: 'workspace' | 'people' | 'account' | 'admin' | 'provider'
+  shellKey: 'workspace' | 'hris' | 'account' | 'admin' | 'provider'
 ) {
   await expect(header).toBeVisible();
   await expect(header).toHaveAttribute('data-dwp-shell', shellKey);
@@ -59,24 +59,18 @@ test('tenant shells keep one application-context and global-utility contract', a
   await page.goto('/work');
   await expectHeaderContract(page.getByTestId('app-header'), 'Work', 'tenant', mobile, 'workspace');
 
-  await page.goto('/people/directory');
-  await expectHeaderContract(
-    page.getByTestId('people-header'),
-    'People',
-    'tenant',
-    mobile,
-    'people'
-  );
+  await page.goto('/hr/directory');
+  await expectHeaderContract(page.getByTestId('hris-header'), 'HRIS', 'tenant', mobile, 'hris');
   if (mobile) {
-    await page.getByRole('button', { name: 'Open product navigation' }).click();
+    await page.getByRole('button', { name: 'Open HRIS navigation' }).click();
     await expect(
-      page.getByTestId('people-mobile-sidebar').getByText('Digital Workplace', { exact: true })
+      page.getByTestId('hris-mobile-sidebar').getByText('Digital Workplace', { exact: true })
     ).toBeVisible();
     await page.keyboard.press('Escape');
   } else {
-    await expect(page.getByTestId('people-sidebar')).toHaveCSS('width', '248px');
+    await expect(page.getByTestId('hris-sidebar')).toHaveCSS('width', '248px');
     await expect(
-      page.getByTestId('people-sidebar').getByText('Digital Workplace', { exact: true })
+      page.getByTestId('hris-sidebar').getByText('Digital Workplace', { exact: true })
     ).toBeVisible();
   }
 

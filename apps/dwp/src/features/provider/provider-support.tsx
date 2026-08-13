@@ -376,7 +376,7 @@ export function ProviderSupport() {
           request.scopes.includes('TENANT_CONFIGURATION_READ') ||
             request.scopes.includes('TENANT_CONFIGURATION_WRITE')
             ? '/admin/experience/branding'
-            : '/workforce/organization'
+            : '/hr/design/organization'
         );
       } catch (error) {
         toast.error(providerError(error, t('errors.operation')));
@@ -695,7 +695,7 @@ export function ProviderSupport() {
           request.scopes.includes('TENANT_CONFIGURATION_READ') ||
             request.scopes.includes('TENANT_CONFIGURATION_WRITE')
             ? '/admin/experience/branding'
-            : '/workforce/organization'
+            : '/hr/design/organization'
         );
       }
     } catch (error) {

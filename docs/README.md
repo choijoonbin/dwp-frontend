@@ -39,6 +39,11 @@
 - `03-architecture/R0 권한·메뉴·다국어 Admin Control Center ADR.md`
 - `03-architecture/R0 제품 다국어 운영 및 확장 가이드.md`
 - `03-architecture/R0 API 이력 및 운영 관측 ADR.md`
+- `03-architecture/R1 권한 계층 및 앱 접근 거버넌스 ADR.md`
+- `03-architecture/R1 HRIS Product Shell 및 Role-Aware Experience ADR.md`
+- `03-architecture/R1 Multi-Surface Personal Home Composer ADR.md`
+- `03-architecture/R1 Enterprise Communications and Newsroom ADR.md`
+- `03-architecture/R1 Employee Services and Service Request Orchestration ADR.md`
 - `04-design-system/DWP UI Foundation 전략.md`
 - `04-design-system/DWP Premium Experience Direction.md`
 - `04-design-system/DWP Product Experience Rules.md`
@@ -59,6 +64,8 @@
 - `05-features/DWP-R1-ADM-008-localization-studio/`
 - `05-features/DWP-R1-CORE-003-account-preferences/`
 - `05-features/DWP-R1-CORE-004-governed-sharing-export/`
+- `05-features/DWP-R1-COM-001-enterprise-communications/`
+- `05-features/DWP-R1-SVC-001-employee-services/`
 - `06-delivery/디자인 파트너 선정 및 Pilot Charter.md`
 - `06-delivery/R0 C1 Productivity Connector 준비 체크리스트.md`
 - `06-delivery/로컬 권한별 로그인 검증 계정.md`

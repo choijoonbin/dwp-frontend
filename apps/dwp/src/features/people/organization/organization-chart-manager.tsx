@@ -1333,7 +1333,7 @@ export function OrganizationExplorer({
                   });
                   if (scenarioId) params.set('scenarioId', scenarioId);
                   if (rootOrganizationId) params.set('rootOrganizationId', rootOrganizationId);
-                  navigate(`/workforce/exports?${params.toString()}`);
+                  navigate(`/hr/data/exports?${params.toString()}`);
                 }}
               />
             ) : (

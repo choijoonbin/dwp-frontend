@@ -1,0 +1,267 @@
+{
+  "common": {
+    "loadError": "정보를 불러오지 못했습니다",
+    "retry": "다시 시도"
+  },
+  "shell": {
+    "tenantFallback": "회사",
+    "openNavigation": "HRIS 메뉴 열기",
+    "backToHome": "개인 홈으로 돌아가기",
+    "hris": {
+      "name": "HRIS",
+      "context": "HRIS 워크스페이스",
+      "navigationLabel": "HRIS 탐색"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "hris": {
+        "start": "홈",
+        "personal": "나의 인사",
+        "organization": "조직",
+        "team": "팀 관리",
+        "operate": "HR 운영",
+        "design": "조직 설계",
+        "foundation": "HRIS 데이터"
+      }
+    },
+    "items": {
+      "hris": {
+        "home": { "label": "HR 홈" },
+        "me": { "label": "나의 인사정보" },
+        "directory": { "label": "구성원 디렉터리" },
+        "organization": { "label": "조직 탐색" },
+        "team": { "label": "내 팀" },
+        "operations": { "label": "운영 현황" },
+        "people": { "label": "인력 정보" },
+        "assignments": { "label": "발령 현황" },
+        "organization-design": { "label": "조직 설계" },
+        "reference-data": { "label": "인력 기준정보" },
+        "data-operations": { "label": "연계 및 정합성" },
+        "exports": { "label": "통제형 반출" }
+      }
+    }
+  },
+  "pages": {
+    "context": {
+      "directorySafe": "권한에 맞춘 인사정보",
+      "effectiveDated": "유효일 기준 인력 정보"
+    },
+    "hris": {
+      "me": {
+        "eyebrow": "HRIS / 나의 인사",
+        "title": "나의 인사정보",
+        "description": "HRIS와 연결된 현재 고용, 배치 및 조직 정보를 확인합니다."
+      },
+      "directory": {
+        "eyebrow": "HRIS / 조직",
+        "title": "구성원 찾기",
+        "description": "동료가 조직 내에 공유한 현재 업무 정보를 찾습니다."
+      },
+      "organization": {
+        "eyebrow": "HRIS / 조직",
+        "title": "조직 탐색",
+        "description": "업무에 필요한 팀과 보고 관계를 공개 범위 안에서 탐색합니다."
+      },
+      "team": {
+        "eyebrow": "HRIS / 팀 관리",
+        "title": "내 팀",
+        "description": "현재 보고 관계를 기준으로 팀 구성과 업무 위치를 확인합니다."
+      },
+      "operations": {
+        "eyebrow": "HRIS / HR 운영",
+        "title": "인력 운영 현황",
+        "description": "인력 데이터 무결성, 조직 신호 및 원천 데이터 최신성을 점검합니다."
+      },
+      "people": {
+        "eyebrow": "HRIS / HR 운영",
+        "title": "인력 정보",
+        "description": "유효일 기준 구성원, 발령, 조직 및 접근 권한 맥락을 검토합니다."
+      },
+      "assignments": {
+        "eyebrow": "HRIS / HR 운영",
+        "title": "발령 현황",
+        "description": "선택한 유효일의 현재 발령 투영 정보를 점검합니다."
+      },
+      "organization-design": {
+        "eyebrow": "HRIS / 조직 설계",
+        "title": "조직 설계",
+        "description": "검토와 승인이 가능한 시나리오로 조직과 포지션을 설계합니다."
+      },
+      "reference-data": {
+        "eyebrow": "HRIS / HRIS 데이터",
+        "title": "인력 기준정보",
+        "description": "제품 소유 계약을 보존하면서 회사별 HR 코드값을 관리합니다."
+      },
+      "data-operations": {
+        "eyebrow": "HRIS / HRIS 데이터",
+        "title": "연계 및 정합성",
+        "description": "원천 커넥터, 매핑, 동기화와 정합성 처리 근거를 통제합니다."
+      },
+      "exports": {
+        "eyebrow": "HRIS / HRIS 데이터",
+        "title": "통제형 데이터 반출",
+        "description": "데이터 경계를 검토하고 승인 가능한 반출 수명주기 근거를 보존합니다."
+      }
+    }
+  },
+  "home": {
+    "personFallback": "구성원",
+    "customize": "홈 구성",
+    "customizeLabel": "HR 홈 위젯 구성",
+    "saved": "HR 홈 구성을 저장했습니다.",
+    "saveConflict": "다른 세션에서 HR 홈이 변경되었습니다. 최신 구성을 불러왔으니 다시 확인한 후 편집해 주세요.",
+    "saveError": "HR 홈 구성을 저장하지 못했습니다. 최신 구성을 다시 확인해 주세요.",
+    "widgets": {
+      "quick-actions": {
+        "label": "바로가기",
+        "description": "자주 사용하는 개인·조직·운영 메뉴"
+      },
+      "people-signals": {
+        "label": "인사 신호",
+        "description": "현재 인사 상태와 확인이 필요한 변화"
+      },
+      "attention": {
+        "label": "확인할 일",
+        "description": "마감과 우선순위가 있는 인사 업무"
+      },
+      "profile": {
+        "label": "내 프로필",
+        "description": "HRIS의 현재 고용 및 조직 정보"
+      },
+      "team": {
+        "label": "내 팀",
+        "description": "현재 보고 관계의 팀 구성"
+      },
+      "operations": {
+        "label": "HR 운영",
+        "description": "인력 규모, 품질과 원천 데이터 상태"
+      }
+    },
+    "greeting": {
+      "morning": "좋은 아침입니다, {{name}}님",
+      "afternoon": "좋은 오후입니다, {{name}}님",
+      "evening": "안녕하세요, {{name}}님"
+    },
+    "context": {
+      "personal": "내 정보",
+      "manager": "팀 관리자",
+      "operator": "HR 운영"
+    },
+    "shortcuts": {
+      "label": "인사 바로가기",
+      "myProfile": "나의 인사정보",
+      "directory": "구성원 찾기",
+      "organization": "조직 탐색",
+      "myTeam": "내 팀",
+      "operations": "HR 운영 현황"
+    },
+    "signals": {
+      "label": "나의 인사 현황",
+      "attention": "확인할 인사 업무",
+      "attentionDetail": "현재 열려 있는 인사 관련 업무",
+      "organization": "현재 소속",
+      "organizationValue": "소속 조직",
+      "managerUnavailable": "보고 대상 정보 없음",
+      "team": "직접 보고 구성원",
+      "teamDetailManager": "현재 보고 관계 기준",
+      "teamDetail": "관리자 권한이 확인되면 표시됩니다",
+      "profile": "고용 상태",
+      "connected": "연결됨",
+      "profileDetail": "HRIS 계정과 연결됨"
+    },
+    "attention": {
+      "title": "확인이 필요합니다",
+      "meta": "열린 인사 업무 {{count}}건",
+      "allWork": "전체 업무",
+      "clearTitle": "지금 확인할 인사 업무가 없습니다",
+      "clearDescription": "현재 개인 인사 업무와 필수 확인 항목이 모두 정리되어 있습니다."
+    },
+    "states": {
+      "due-soon": "마감 임박",
+      "in-progress": "진행 중",
+      "waiting": "대기",
+      "completed": "완료"
+    },
+    "profile": {
+      "title": "나의 인사정보",
+      "meta": "현재 HRIS 기준",
+      "open": "상세 보기",
+      "titleFallback": "직책 정보 없음",
+      "organization": "소속",
+      "manager": "보고 대상",
+      "location": "근무지",
+      "email": "업무 이메일"
+    },
+    "team": {
+      "title": "내 팀",
+      "meta": "직접 보고 구성원 {{count}}명",
+      "open": "팀 보기",
+      "emptyTitle": "현재 직접 보고 구성원이 없습니다",
+      "emptyDescription": "보고 관계가 반영되면 이 영역에서 팀 현황을 확인할 수 있습니다."
+    },
+    "operations": {
+      "title": "HR 운영 펄스",
+      "meta": "유효 인력과 원천 데이터 근거",
+      "open": "운영 현황 열기",
+      "activeWorkforce": "재직 인원",
+      "dataQuality": "데이터 품질",
+      "openPositions": "공석 포지션",
+      "latestSync": "최근 동기화",
+      "noSync": "실행 없음"
+    }
+  },
+  "myProfile": {
+    "loading": "나의 인사정보를 불러오는 중",
+    "loadError": "인사 디렉터리와 계정 연결을 확인하지 못했습니다.",
+    "notLinkedTitle": "계정과 인사정보가 아직 연결되지 않았습니다",
+    "notLinkedDescription": "{{email}} 계정에 해당하는 공개 인사 프로필을 찾지 못했습니다.",
+    "openDirectory": "구성원 디렉터리 열기",
+    "directorySafe": "본인 조회 범위",
+    "fields": {
+      "email": "업무 이메일",
+      "manager": "보고 대상",
+      "workerType": "고용 유형",
+      "status": "고용 상태",
+      "legalEmployer": "법적 고용 주체",
+      "hireDate": "입사일",
+      "assignment": "주 발령",
+      "jobProfile": "직무 프로필",
+      "grade": "직급",
+      "location": "근무지",
+      "organization": "소속 조직",
+      "organizationKey": "조직 코드",
+      "directReports": "직접 보고 인원"
+    },
+    "employment": {
+      "title": "고용 및 발령",
+      "loading": "고용 세부정보를 불러오는 중"
+    },
+    "organization": {
+      "title": "조직 관계",
+      "open": "조직에서 보기"
+    }
+  },
+  "myTeam": {
+    "loading": "팀 정보를 불러오는 중",
+    "loadError": "현재 보고 관계를 불러오지 못했습니다.",
+    "signalsLabel": "팀 요약",
+    "signals": {
+      "directReports": "직접 보고 구성원",
+      "directReportsDetail": "현재 유효 보고 관계",
+      "peopleManagers": "하위 팀 관리자",
+      "peopleManagersDetail": "직접 보고자 중 관리자",
+      "locations": "근무 위치",
+      "locationsDetail": "팀이 근무하는 위치 수"
+    },
+    "roster": {
+      "title": "팀 구성",
+      "meta": "현재 구성원 {{count}}명",
+      "openOrganization": "조직 탐색",
+      "manager": "관리자"
+    },
+    "emptyTitle": "표시할 직접 보고 구성원이 없습니다",
+    "emptyDescription": "현재 유효한 보고 관계를 기준으로 팀 구성원이 확인되지 않습니다.",
+    "openDirectory": "구성원 찾기"
+  }
+}

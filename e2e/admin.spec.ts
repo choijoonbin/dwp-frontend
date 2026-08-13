@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 import { mockAuthenticatedRuntime } from './support/runtime-access';
+import { FULL_PRODUCT_PERMISSIONS } from './support/shell-session';
 
 type Item = {
   code: string;
@@ -75,7 +76,38 @@ function envelope(data: unknown) {
   return JSON.stringify({ status: 'SUCCESS', message: 'OK', success: true, data });
 }
 
-async function mockAdminSession(page: Page) {
+type AdminSessionOptions = {
+  roles?: string[];
+  permissions?: Array<{
+    resourceType: string;
+    resourceKey: string;
+    permissionCode: string;
+    effect: 'ALLOW' | 'DENY';
+  }>;
+};
+
+const DEFAULT_ADMIN_PERMISSIONS = [
+  {
+    resourceType: 'APP',
+    resourceKey: 'APP.ADMINISTRATION',
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  },
+  {
+    resourceType: 'ADMIN',
+    resourceKey: 'ADMIN.API_MONITORING',
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  },
+  {
+    resourceType: 'ADMIN',
+    resourceKey: 'ADMIN.AUDIT_VIEW',
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  },
+];
+
+async function mockAdminSession(page: Page, options: AdminSessionOptions = {}) {
   await mockAuthenticatedRuntime(page);
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
@@ -87,33 +119,15 @@ async function mockAdminSession(page: Page) {
         email: 'admin@dwp.local',
         tenantId: 1,
         tenantCode: 'default',
-        roles: ['ADMIN'],
+        roles: options.roles ?? ['ADMIN'],
+        resourceRoles: [],
       }),
     })
   );
   await page.route('**/api/auth/permissions', (route) =>
     route.fulfill({
       contentType: 'application/json',
-      body: envelope([
-        {
-          resourceType: 'APP',
-          resourceKey: 'APP.ADMINISTRATION',
-          permissionCode: 'VIEW',
-          effect: 'ALLOW',
-        },
-        {
-          resourceType: 'ADMIN',
-          resourceKey: 'ADMIN.API_MONITORING',
-          permissionCode: 'VIEW',
-          effect: 'ALLOW',
-        },
-        {
-          resourceType: 'ADMIN',
-          resourceKey: 'ADMIN.AUDIT_VIEW',
-          permissionCode: 'VIEW',
-          effect: 'ALLOW',
-        },
-      ]),
+      body: envelope(options.permissions ?? DEFAULT_ADMIN_PERMISSIONS),
     })
   );
   await page.route('**/api/auth/csrf', (route) =>
@@ -431,10 +445,13 @@ test('tenant administrators configure and reset the personal home presentation',
   expect(accessibility.violations).toEqual([]);
 });
 
-test('tenant administrators manage co-branding and publish home announcements', async ({
+test('brand and communications administrators manage co-branding and publish announcements', async ({
   page,
 }) => {
-  await mockAdminSession(page);
+  await mockAdminSession(page, {
+    roles: ['ADMIN', 'COMMUNICATIONS_EDITOR', 'COMMUNICATIONS_PUBLISHER', 'WORKSPACE_MEMBER'],
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
   let branding = {
     organizationName: null as string | null,
     accentColor: '#2457D6',
@@ -567,7 +584,7 @@ test('tenant administrators manage co-branding and publish home announcements', 
 
   await page.goto('/admin/experience/announcements');
   await expect(page.getByText('No announcements')).toBeVisible();
-  await page.getByRole('button', { name: 'New announcement' }).first().click();
+  await page.getByRole('button', { name: 'New content' }).first().click();
   await page.getByLabel('Title').fill('Planned maintenance');
   await page.getByLabel('Message').fill('The employee portal will be read-only from 22:00.');
   await page.getByRole('switch', { name: 'Pinned' }).check();
@@ -710,8 +727,13 @@ test('tenant administrators decide access reviews from immutable assignment evid
   });
 });
 
-test('tenant administrators inspect SCIM readiness and provisioning evidence', async ({ page }) => {
-  await mockAdminSession(page);
+test('identity administrators inspect SCIM readiness and provisioning evidence', async ({
+  page,
+}) => {
+  await mockAdminSession(page, {
+    roles: ['IDENTITY_ADMIN', 'WORKSPACE_MEMBER'],
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
   const connector = {
     connectorId: 'scim-entra-1',
     connectorKey: 'entra-production',
@@ -786,8 +808,13 @@ test('tenant administrators inspect SCIM readiness and provisioning evidence', a
   await expect(page.locator('input[value$="/api/auth/scim/v2"]')).toBeVisible();
 });
 
-test('tenant administrators manage standards, registry, and audit', async ({ page }, testInfo) => {
-  await mockAdminSession(page);
+test('delegated administrators manage identity, standards, registry, and audit', async ({
+  page,
+}, testInfo) => {
+  await mockAdminSession(page, {
+    roles: ['ADMIN', 'IDENTITY_ADMIN', 'APP_CATALOG_ADMIN', 'AUDIT_ADMIN', 'WORKSPACE_MEMBER'],
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
   let detail: Detail | null = null;
   let registryEntry: RegistryEntry | null = null;
   const auditEvents: unknown[] = [];

@@ -48,16 +48,18 @@ test.beforeEach(async ({ page }) => {
     updatedAt: null as string | null,
   };
   let homePreference = {
-    schemaVersion: 1,
+    schemaVersion: 2,
+    surfaceKey: 'workspace-home',
     customized: false,
     layout: {
       appLayout: null,
+      presentation: 'balanced' as const,
       widgets: [
-        { widgetKey: 'announcements', visible: true },
-        { widgetKey: 'daily-brief', visible: true },
-        { widgetKey: 'focus', visible: true },
-        { widgetKey: 'schedule', visible: true },
-        { widgetKey: 'activity', visible: true },
+        { widgetKey: 'announcements', visible: true, size: 'full' },
+        { widgetKey: 'daily-brief', visible: true, size: 'medium' },
+        { widgetKey: 'focus', visible: true, size: 'medium' },
+        { widgetKey: 'schedule', visible: true, size: 'medium' },
+        { widgetKey: 'activity', visible: true, size: 'medium' },
       ],
     },
     version: 0,
@@ -121,6 +123,21 @@ test.beforeEach(async ({ page }) => {
       body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
     })
   );
+  await page.route('**/api/platform/v1/communications**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          featured: null,
+          items: [],
+          summary: { total: 0, unread: 0, required: 0, saved: 0 },
+          generatedAt: '2026-08-11T00:20:00Z',
+        },
+      }),
+    })
+  );
   await page.route('**/api/platform/v1/home-preferences**', async (route) => {
     const request = route.request();
     if (request.method() === 'GET') {
@@ -136,6 +153,7 @@ test.beforeEach(async ({ page }) => {
         customized: false,
         layout: {
           appLayout: null,
+          presentation: 'balanced',
           widgets: homePreference.layout.widgets.map((widget) => ({ ...widget, visible: true })),
         },
         version: 0,
@@ -251,6 +269,20 @@ test.beforeEach(async ({ page }) => {
         status: 'SUCCESS',
         message: 'OK',
         data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
+      }),
+    })
+  );
+  await page.route('**/api/auth/session/refresh', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          rotated: true,
+          idleExpiresAt: '2026-08-11T01:00:00Z',
+          expiresAt: '2026-08-11T08:00:00Z',
+        },
       }),
     })
   );
@@ -394,7 +426,7 @@ test('tenant policy promotes the configured SSO provider without hiding local ac
     await ssoButton.evaluate((button) =>
       Boolean(
         button.compareDocumentPosition(document.querySelector('form')) &
-          Node.DOCUMENT_POSITION_FOLLOWING
+        Node.DOCUMENT_POSITION_FOLLOWING
       )
     )
   ).toBe(true);
@@ -442,7 +474,15 @@ test('authenticated users enter a personal home before the business shell', asyn
       body: JSON.stringify({
         status: 'SUCCESS',
         message: 'OK',
-        data: DEFAULT_APP_PERMISSIONS,
+        data: [
+          ...DEFAULT_APP_PERMISSIONS,
+          {
+            resourceType: 'ADMIN',
+            resourceKey: 'ADMIN.IDENTITY_DIRECTORY',
+            permissionCode: 'VIEW',
+            effect: 'ALLOW',
+          },
+        ],
       }),
     });
   });

@@ -81,6 +81,7 @@ function AdminNavigation({ onNavigate, supportScopes }: AdminNavigationProps) {
         permissionsLoaded: isLoaded,
         hasPermission,
         supportScopes,
+        resourceRoles: auth.user?.resourceRoles,
       })
     ),
   })).filter((group) => group.items.length > 0);

@@ -1,0 +1,30 @@
+{
+  "toolbarLabel": "홈 구성 편집 도구",
+  "addWidget": "위젯 추가",
+  "presentationLabel": "홈 표현 방식",
+  "presentations": {
+    "balanced": "균형",
+    "expressive": "생동감",
+    "focused": "집중"
+  },
+  "reset": "기본 구성으로 되돌리기",
+  "cancel": "변경 취소",
+  "done": "저장",
+  "moveWidget": "{{widget}} 위젯 이동",
+  "resizeWidget": "{{widget}} 위젯 크기 변경",
+  "removeWidget": "{{widget}} 위젯 숨기기",
+  "governed": "조직에서 고정한 위젯",
+  "sizes": {
+    "compact": "작게",
+    "medium": "보통",
+    "large": "넓게",
+    "full": "전체 너비"
+  },
+  "galleryTitle": "위젯 추가",
+  "galleryDescription": "현재 역할과 권한에서 사용할 수 있는 위젯입니다.",
+  "galleryEmptyTitle": "숨긴 위젯이 없습니다",
+  "galleryEmptyDescription": "현재 사용할 수 있는 위젯이 모두 홈에 표시되어 있습니다.",
+  "close": "닫기",
+  "add": "추가",
+  "widgetFallback": "위젯"
+}

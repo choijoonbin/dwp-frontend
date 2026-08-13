@@ -82,7 +82,7 @@ test('workforce operators move from operating signals to the affected organizati
   await mockShellSession(page, ['ADMIN', 'HR_ADMIN', 'PEOPLE_ADMIN'], {
     permissions: FULL_PRODUCT_PERMISSIONS,
   });
-  await page.goto('/workforce/overview');
+  await page.goto('/hr/operations');
 
   await expect(page.getByRole('heading', { name: 'Workforce operations', level: 1 })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Workforce operating context' })).toBeVisible();
@@ -128,7 +128,7 @@ test('workforce overview isolates comparison and planning evidence failures', as
     route.fulfill({ status: 503, contentType: 'application/json', body: '{}' })
   );
 
-  await page.goto('/workforce/overview');
+  await page.goto('/hr/operations');
 
   await expect(page.getByText('178', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Comparison is unavailable').first()).toBeVisible();
@@ -159,7 +159,7 @@ test('workforce overview presents a healthy empty state without invented trends'
     fulfillSuccess(route, [])
   );
 
-  await page.goto('/workforce/overview');
+  await page.goto('/hr/operations');
 
   await expect(
     page.getByRole('heading', { name: 'Workforce operations are within policy', level: 2 })

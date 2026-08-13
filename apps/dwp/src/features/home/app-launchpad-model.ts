@@ -1,7 +1,4 @@
-import {
-  TENANT_CONTROL_PLANE_ROLES,
-  WORKFORCE_OPERATIONS_ROLES,
-} from '../auth/control-plane-access';
+import { TENANT_CONTROL_PLANE_ROLES } from '../auth/control-plane-access';
 
 export type HomeAppGroupId = 'work' | 'connect' | 'services' | 'systems';
 
@@ -10,10 +7,12 @@ export type HomeAppIconKey =
   | 'admin'
   | 'ask'
   | 'collaboration'
+  | 'communications'
   | 'erp'
   | 'knowledge'
   | 'legacy'
   | 'mail'
+  | 'hris'
   | 'people'
   | 'services'
   | 'workforce'
@@ -122,6 +121,17 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     badge: '2',
   },
   {
+    id: 'dwp-communications',
+    name: 'Newsroom',
+    shortName: 'News',
+    description: 'Targeted company news, events, and required updates',
+    groupId: 'connect',
+    route: '/communications',
+    iconKey: 'communications',
+    tone: '#E14F5A',
+    resourceKey: 'APP.COMMUNICATIONS',
+  },
+  {
     id: 'ref-app-mail',
     name: 'Mail & calendar',
     shortName: 'Mail',
@@ -147,11 +157,11 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   },
   {
     id: 'ref-app-service',
-    name: 'Employee services',
+    name: 'Services',
     shortName: 'Services',
-    description: 'HR, IT, and workplace requests',
+    description: 'IT, people, workplace, finance, and procurement requests',
     groupId: 'services',
-    route: '/apps?app=ref-app-service',
+    route: '/services',
     iconKey: 'services',
     tone: '#15805A',
     resourceKey: 'APP.EMPLOYEE_SERVICES',
@@ -159,26 +169,14 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   },
   {
     id: 'ref-app-people',
-    name: 'People directory',
-    shortName: 'People',
-    description: 'People, teams, and contact details',
+    name: 'HRIS',
+    shortName: 'HRIS',
+    description: 'Personal HR, people, organization, and workforce operations',
     groupId: 'services',
-    route: '/people',
-    iconKey: 'people',
-    tone: '#007F73',
-    resourceKey: 'APP.PEOPLE_DIRECTORY',
-  },
-  {
-    id: 'dwp-workforce',
-    name: 'Workforce management',
-    shortName: 'Workforce',
-    description: 'Workforce, positions, organization design, and HRIS operations',
-    groupId: 'services',
-    route: '/workforce',
-    iconKey: 'workforce',
-    tone: '#365E73',
-    resourceKey: 'APP.WORKFORCE_MANAGEMENT',
-    requiredRoles: WORKFORCE_OPERATIONS_ROLES,
+    route: '/hr',
+    iconKey: 'hris',
+    tone: '#176B68',
+    resourceKey: 'APP.HRIS',
   },
   {
     id: 'ref-app-knowledge',
