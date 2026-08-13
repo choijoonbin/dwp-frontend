@@ -277,7 +277,6 @@
     "loading": "프로필 불러오는 중",
     "loadError": "프로필을 불러오지 못했습니다.",
     "retry": "다시 시도",
-    "editLanguage": "변경",
     "identity": {
       "title": "신원 상세",
       "description": "각 값의 기준 시스템을 표시합니다. 조직에서 관리하는 신원 필드는 여기에서 수정할 수 없습니다."
@@ -287,14 +286,12 @@
       "jobTitle": "직책",
       "email": "이메일",
       "tenant": "조직",
-      "language": "기본 언어",
       "roles": "역할"
     },
     "sources": {
       "workforce": "인력 디렉터리",
       "identity": "ID 디렉터리",
       "tenant": "테넌트 원장",
-      "personal": "개인 설정",
       "access": "접근 정책"
     },
     "governance": {

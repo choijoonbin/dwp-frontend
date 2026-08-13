@@ -277,7 +277,6 @@
     "loading": "Loading profile",
     "loadError": "Your profile could not be loaded.",
     "retry": "Retry",
-    "editLanguage": "Change",
     "identity": {
       "title": "Identity details",
       "description": "Each value shows its system of record. Organization-managed identity fields are read only here."
@@ -287,14 +286,12 @@
       "jobTitle": "Job title",
       "email": "Email",
       "tenant": "Organization",
-      "language": "Preferred language",
       "roles": "Roles"
     },
     "sources": {
       "workforce": "Workforce directory",
       "identity": "Identity directory",
       "tenant": "Tenant record",
-      "personal": "Personal setting",
       "access": "Access policy"
     },
     "governance": {

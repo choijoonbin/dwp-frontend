@@ -1,15 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Link as RouterLink } from 'react-router-dom';
-import {
-  BriefcaseBusiness,
-  Building2,
-  Database,
-  Languages,
-  Mail,
-  ShieldCheck,
-  UserRound,
-} from 'lucide-react';
+import { BriefcaseBusiness, Building2, Database, Mail, ShieldCheck, UserRound } from 'lucide-react';
 import { getMe } from '@dwp-frontend/shared-utils';
 import { ActionButton, PageCanvas } from '@dwp-frontend/design-system';
 
@@ -37,19 +28,17 @@ function ProfileField({
   label,
   value,
   source,
-  action,
 }: {
   icon: LucideIcon;
   label: string;
   value: ReactNode;
   source: string;
-  action?: ReactNode;
 }) {
   return (
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: '36px minmax(0, 1fr)', md: '36px 180px minmax(0, 1fr) auto' },
+        gridTemplateColumns: { xs: '36px minmax(0, 1fr)', md: '36px 180px minmax(0, 1fr)' },
         gap: 1.5,
         alignItems: 'center',
         px: { xs: 2, md: 2.5 },
@@ -89,11 +78,6 @@ function ProfileField({
         label={source}
         sx={{ gridColumn: { xs: '2', md: 'auto' }, justifySelf: 'start' }}
       />
-      {action && (
-        <Box sx={{ gridColumn: { xs: '2', md: 'auto' }, justifySelf: { xs: 'start', md: 'end' } }}>
-          {action}
-        </Box>
-      )}
     </Box>
   );
 }
@@ -190,22 +174,6 @@ export default function ProfilePage() {
               label={t('profile.fields.tenant')}
               value={profile.tenantName || profile.tenantCode}
               source={t('profile.sources.tenant')}
-            />
-            <ProfileField
-              icon={Languages}
-              label={t('profile.fields.language')}
-              value={profile.preferredLocale || profile.tenantDefaultLocale}
-              source={t('profile.sources.personal')}
-              action={
-                <ActionButton
-                  component={RouterLink}
-                  to="/account/settings/language"
-                  intent="secondary"
-                  size="small"
-                >
-                  {t('profile.editLanguage')}
-                </ActionButton>
-              }
             />
             <ProfileField
               icon={ShieldCheck}
