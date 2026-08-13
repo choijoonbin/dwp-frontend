@@ -737,6 +737,7 @@ test('tenant branding does not shift the home header while the logo loads', asyn
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile', 'Desktop header geometry is verified here.');
+  await page.setViewportSize({ width: 1920, height: 1080 });
 
   let signalBrandingRequest = () => undefined;
   let releaseBranding = () => undefined;
@@ -766,6 +767,9 @@ test('tenant branding does not shift the home header while the logo loads', asyn
       }),
     });
   });
+  await page.route('**/assets/brand/dwp-mark.svg', (route) =>
+    route.fulfill({ contentType: 'image/svg+xml', path: 'public/assets/brand/dwp-mark.svg' })
+  );
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -807,14 +811,22 @@ test('tenant branding does not shift the home header while the logo loads', asyn
   };
 
   releaseBranding();
-  await expect(header.getByRole('link', { name: 'SK AX Digital Workplace home' })).toBeVisible();
+  const brand = header.getByRole('link', { name: 'SK AX Digital Workplace home' });
+  const tenantLogo = brand.getByTestId('tenant-brand-logo');
+  await expect(brand).toBeVisible();
+  await expect(tenantLogo).toBeVisible();
   const after = {
     product: await productLabel.boundingBox(),
     workspace: await workspaceMenu.boundingBox(),
+    brand: await brand.boundingBox(),
+    tenantLogo: await tenantLogo.boundingBox(),
   };
 
   expect(after.product?.x).toBeCloseTo(before.product?.x ?? 0, 1);
   expect(after.workspace?.x).toBeCloseTo(before.workspace?.x ?? 0, 1);
+  expect(after.brand?.x ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(24);
+  expect(after.tenantLogo?.x).toBeCloseTo(after.brand?.x ?? 0, 1);
+  expect(after.tenantLogo?.height ?? 0).toBeGreaterThanOrEqual(38);
 });
 
 test('compact navigation reflows the desktop workspace canvas', async ({ page }, testInfo) => {

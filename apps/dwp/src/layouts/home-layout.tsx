@@ -20,7 +20,6 @@ export function HomeLayout() {
         position={shell.headerPosition}
         surface={shell.headerSurface}
         showWorkspace={shell.showWorkspace}
-        maxContentWidth={1600}
         brand={
           <>
             <BrandLockup variant="condensed" sx={{ display: { xs: 'inline-flex', sm: 'none' } }} />

@@ -35,7 +35,8 @@ export function BrandLockup({ variant = 'full', label, description, sx }: BrandL
   const branding = brandingQuery.data;
   const logoUrl = resolveTenantLogoUrl(branding);
   const showTenantLogoSlot = tenantBranded && (brandingQuery.isPending || Boolean(logoUrl));
-  const logoSlotWidth = variant === 'full' ? 92 : 56;
+  const logoSlotWidth = variant === 'full' ? 80 : 64;
+  const logoSlotHeight = variant === 'full' ? 40 : 32;
   const compact = variant === 'condensed' || variant === 'product-only';
   const accessibleName =
     tenantBranded && branding?.organizationName
@@ -67,16 +68,17 @@ export function BrandLockup({ variant = 'full', label, description, sx }: BrandL
             <Box
               sx={{
                 width: logoSlotWidth,
-                height: variant === 'full' ? 30 : 26,
+                height: logoSlotHeight,
                 display: 'flex',
                 flex: `0 0 ${logoSlotWidth}px`,
                 alignItems: 'center',
-                justifyContent: 'flex-end',
+                justifyContent: 'flex-start',
               }}
             >
               {logoUrl ? (
                 <Box
                   component="img"
+                  data-testid="tenant-brand-logo"
                   src={logoUrl}
                   alt=""
                   sx={{ display: 'block', maxWidth: 1, maxHeight: 1, objectFit: 'contain' }}
