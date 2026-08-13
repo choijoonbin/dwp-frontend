@@ -54,6 +54,9 @@
         },
         "data-operations": {
           "label": "HRIS 데이터 운영"
+        },
+        "exports": {
+          "label": "통제형 데이터 반출"
         }
       }
     }
@@ -106,6 +109,11 @@
         "eyebrow": "인력 운영 / 데이터 기반",
         "title": "HRIS 데이터 운영",
         "description": "원천 커넥터, 매핑 프로필, 동기화 및 정합성 처리를 통제합니다."
+      },
+      "exports": {
+        "eyebrow": "인력 운영 / 데이터 기반",
+        "title": "통제형 데이터 반출",
+        "description": "데이터 경계를 검토하고 통제된 반출을 요청하며 검증 가능한 수명주기 근거를 보존합니다."
       }
     }
   },
@@ -644,7 +652,7 @@
     },
     "intelligence": {
       "loading": "조직 운영 지표를 분석하는 중",
-      "export": "CSV 내보내기",
+      "export": "통제형 반출 요청",
       "empty": "해당 기간에 표시할 항목이 없습니다.",
       "noSignals": "감지된 위험 신호 없음",
       "tabs": {
@@ -935,6 +943,11 @@
         "help": "변경 목적과 예상 영향을 남기고 다른 관리자에게 검토를 요청합니다.",
         "action": "검토 요청"
       },
+      "cancel": {
+        "title": "시나리오 취소",
+        "help": "의사결정 근거와 감사 이력은 보존하고 이 대안과 대기 중 승인을 종료합니다.",
+        "action": "시나리오 취소"
+      },
       "approval": {
         "title": "독립 승인",
         "help": "기준 구조와 변경 내용을 확인한 후 승인 또는 반려합니다.",
@@ -978,6 +991,7 @@
         "submitted": "독립 검토를 요청했습니다.",
         "approved": "시나리오를 승인했습니다.",
         "rejected": "시나리오를 반려했습니다.",
+        "cancelled": "시나리오와 대기 중 승인을 취소했습니다.",
         "published": "승인된 변경을 시행 이력으로 게시했습니다."
       }
     },
@@ -1011,6 +1025,144 @@
     "workerTypes": {
       "EMPLOYEE": "정규 구성원",
       "CONTINGENT": "외부 전문 인력"
+    }
+  },
+  "exports": {
+    "loading": "통제형 반출 정책을 불러오는 중",
+    "datasets": {
+      "ORGANIZATION_INTELLIGENCE": {
+        "name": "조직 인텔리전스",
+        "description": "조직 건전성, 시점 비교 및 데이터 품질 의사결정 근거입니다."
+      },
+      "WORKFORCE_DIRECTORY": {
+        "name": "인력 디렉터리",
+        "description": "승인된 인력 범위 안의 통제형 구성원 디렉터리 데이터입니다."
+      },
+      "ASSIGNMENT_REGISTER": {
+        "name": "발령 원장",
+        "description": "승인된 범위 안의 유효일 기준 구성원 및 발령 기록입니다."
+      }
+    },
+    "policy": {
+      "title": "반출 정책 미리보기",
+      "evaluating": "현재 인력 접근 경계를 평가하는 중",
+      "readyTitle": "통제된 실행이 가능합니다",
+      "readyDescription": "마스킹, 워터마크, 자동 만료 및 무결성 근거를 적용한 작업 큐에 요청을 등록할 수 있습니다.",
+      "blockedTitle": "출시 게이트에서 실행이 보류되었습니다",
+      "blockedDescription": "요청과 감사 근거는 지금 기록할 수 있습니다. 외부 보안 결정이 모두 승인되기 전에는 산출물을 생성하지 않습니다.",
+      "masking": "마스킹: {{profile}}",
+      "retention": "산출물 보존: {{hours}}시간"
+    },
+    "request": {
+      "title": "통제형 반출 요청",
+      "description": "통제된 작업 큐에 등록하기 전에 책임 수신자와 업무 목적을 기록합니다.",
+      "blockedDescription": "출시 게이트로 실행이 비활성화된 동안에도 업무 수요와 근거를 기록합니다.",
+      "recipientHelp": "책임자, 담당 팀 또는 통제된 수신 위치를 식별합니다.",
+      "purposeHelp": "데이터가 필요한 이유와 취급 방법을 설명합니다.",
+      "sourceHelp": "승인된 티켓, 사건 또는 업무 요청 참조를 입력합니다."
+    },
+    "decision": {
+      "cancelTitle": "반출 요청 취소",
+      "cancelDescription": "취소는 불변 요청 이력에 기록되며 실행 중인 작업은 게시 전에 중단됩니다.",
+      "retryTitle": "수동 재시도 승인",
+      "retryDescription": "보안 처리된 실패 근거를 검토한 후 새 통제형 재시도 주기를 시작합니다.",
+      "reasonHelp": "검토 가능한 사유를 10자 이상 입력합니다."
+    },
+    "actions": {
+      "newRequest": "새 반출 요청",
+      "submit": "통제 요청 제출",
+      "recordBlocked": "차단 요청 기록",
+      "submitting": "요청 기록 중",
+      "saving": "판정 저장 중",
+      "cancelRequest": "요청 취소",
+      "retry": "재시도 승인"
+    },
+    "fields": {
+      "dataset": "데이터 제품",
+      "recipient": "책임 수신자",
+      "purpose": "업무 목적",
+      "sourceReference": "권위 있는 요청 참조",
+      "decisionReason": "판정 근거",
+      "selection": "원본 선택 조건",
+      "boundary": "승인된 인력 및 필드 범위",
+      "controls": "출력 통제",
+      "watermark": "책임 추적 워터마크",
+      "requestEvidence": "요청 무결성 근거",
+      "artifactEvidence": "산출물 무결성 근거",
+      "retention": "산출물 만료"
+    },
+    "selection": {
+      "view": "인사이트 보기",
+      "asOf": "유효일",
+      "compareTo": "비교일",
+      "scenarioId": "시나리오",
+      "rootOrganizationId": "루트 조직",
+      "query": "검색",
+      "status": "상태",
+      "organization": "조직",
+      "location": "근무지",
+      "grade": "직급",
+      "role": "역할"
+    },
+    "values": {
+      "tenantScope": "승인된 테넌트 전체 인력",
+      "organizationScope": "승인된 조직 범위 {{count}}개",
+      "currentScope": "현재 승인 범위",
+      "controls": "{{format}} · {{masking}} · 책임 추적 워터마크",
+      "sha256": "SHA-256 {{value}}",
+      "artifactSize": "무결성 근거로 보존된 {{size}}바이트",
+      "noArtifact": "게시된 산출물 없음"
+    },
+    "blockers": {
+      "D-09": "D-09 · 키 관리 및 산출물 저장소",
+      "D-12": "D-12 · 데이터 반출 및 보존 정책"
+    },
+    "kpi": {
+      "label": "통제형 반출 수명주기 요약",
+      "requests": "기록된 요청",
+      "blocked": "출시 게이트 보류",
+      "active": "처리 중",
+      "evidence": "완료 또는 만료 근거"
+    },
+    "queue": {
+      "title": "반출 요청 대장",
+      "description": "책임 요청, 정책 스냅샷, 작업 시도 및 보존된 무결성 근거를 점검합니다.",
+      "label": "통제형 반출 요청 대장",
+      "count_one": "요청 {{count}}건",
+      "count_other": "요청 {{count}}건"
+    },
+    "columns": {
+      "dataset": "데이터 제품",
+      "state": "수명주기 상태",
+      "scope": "승인 범위",
+      "recipient": "수신자",
+      "requestedAt": "요청 시각"
+    },
+    "timeline": {
+      "title": "불변 처리 이력",
+      "summary": "작업 시도 {{attempts}}회 · 수동 재시도 주기 {{manualRetries}}회",
+      "loading": "처리 근거를 불러오는 중",
+      "empty": "기록된 처리 근거가 아직 없습니다."
+    },
+    "events": {
+      "BLOCKED": "출시 게이트 보류",
+      "QUEUED": "통제형 처리 대기열 등록",
+      "CLAIMED": "통제 작업자가 선점",
+      "RETRY_SCHEDULED": "재시도 예약",
+      "FAILED": "처리 실패",
+      "COMPLETED": "산출물 근거 완료",
+      "CANCELLED": "요청 취소",
+      "EXPIRED": "산출물 보존 만료"
+    },
+    "empty": {
+      "title": "기록된 반출 요청이 없습니다",
+      "description": "현재 정책 경계를 미리 확인하고 첫 책임 요청을 생성합니다."
+    },
+    "toasts": {
+      "submitted": "통제형 반출 요청을 작업 큐에 등록했습니다.",
+      "blockedRecorded": "차단된 반출 수요와 정책 근거를 기록했습니다.",
+      "cancelled": "반출 취소를 기록했습니다.",
+      "retried": "통제형 수동 재시도 주기를 승인했습니다."
     }
   },
   "provisioning": {

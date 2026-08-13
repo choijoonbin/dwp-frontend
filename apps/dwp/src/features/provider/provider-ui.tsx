@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import { ErrorState, LoadingState } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -44,7 +44,7 @@ export function parseProviderJson(value?: string | null): Record<string, unknown
 }
 
 export function ProviderStatusChip({ state }: { state: string }) {
-  const { t } = useTranslation('provider');
+  const display = useDisplayDictionary();
   const color = [
     'ACTIVE',
     'READY',
@@ -85,18 +85,14 @@ export function ProviderStatusChip({ state }: { state: string }) {
             'AT_RISK',
             'NO_DATA',
             'IN_PROGRESS',
+            'PAUSED',
+            'PENDING_APPROVAL',
+            'ROLLED_BACK',
           ].includes(state)
         ? 'warning'
         : 'default';
 
-  return (
-    <Chip
-      size="small"
-      variant="outlined"
-      color={color}
-      label={t(`states.${state}`, { defaultValue: state })}
-    />
-  );
+  return <Chip size="small" variant="outlined" color={color} label={display('states', state)} />;
 }
 
 export function ProviderLoading() {

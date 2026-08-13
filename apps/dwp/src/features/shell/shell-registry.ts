@@ -14,7 +14,13 @@ import type { LucideIcon } from 'lucide-react';
 
 export type ShellScope = 'home' | 'tenant' | 'provider' | 'support';
 export type ShellKey =
-  'home' | 'workspace' | 'people' | 'workforce' | 'account' | 'admin' | 'provider';
+  | 'home'
+  | 'workspace'
+  | 'people'
+  | 'workforce'
+  | 'account'
+  | 'admin'
+  | 'provider';
 
 type ShellBrandMode = 'tenant-cobrand' | 'product' | 'control-center' | 'provider';
 

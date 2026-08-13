@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BookKey, LockKeyhole, Pencil, RefreshCw } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   ActionIconButton,
   EnterpriseDataGrid,
@@ -137,6 +138,7 @@ function ReferenceEditDialog({
 
 export function WorkforceReferenceData() {
   const { t, i18n } = useTranslation('workforce');
+  const display = useDisplayDictionary();
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'en';
   const auth = useAuth();
   const toast = useToast();
@@ -207,9 +209,7 @@ export function WorkforceReferenceData() {
             size="small"
             variant="outlined"
             color={row.lifecycleState === 'ACTIVE' ? 'success' : 'default'}
-            label={t(`reference.states.${row.lifecycleState}`, {
-              defaultValue: row.lifecycleState,
-            })}
+            label={display('states', row.lifecycleState)}
           />
         ),
       },
@@ -234,7 +234,7 @@ export function WorkforceReferenceData() {
           ),
       },
     ],
-    [canEdit, selected?.editable, t]
+    [canEdit, display, selected?.editable, t]
   );
 
   if (query.isLoading) return <LoadingState label={t('reference.loading')} size="page" />;

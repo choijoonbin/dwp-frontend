@@ -33,7 +33,42 @@ export type SearchableOrganization = {
   totalHeadcount: number;
 };
 
-export type GlobalSearchKind = 'app' | 'work' | 'person' | 'organization' | 'ask';
+export type SearchableAuditEvent = {
+  id: string;
+  title: string;
+  description: string;
+  route: string;
+  keywords: readonly string[];
+  source: string;
+};
+
+export type SearchableTenant = {
+  tenantId: string;
+  title: string;
+  description: string;
+  route: string;
+  keywords: readonly string[];
+  source: string;
+};
+
+export type SearchableCatalogAsset = {
+  id: string;
+  title: string;
+  description: string;
+  route: string;
+  keywords: readonly string[];
+  source: string;
+};
+
+export type GlobalSearchKind =
+  | 'app'
+  | 'work'
+  | 'person'
+  | 'organization'
+  | 'audit'
+  | 'tenant'
+  | 'catalog'
+  | 'ask';
 
 export type GlobalSearchItem = {
   id: string;
@@ -42,6 +77,7 @@ export type GlobalSearchItem = {
   description: string;
   route: string;
   keywords: readonly string[];
+  source: string;
   recommended?: boolean;
 };
 
@@ -82,6 +118,9 @@ export function createGlobalSearchItems(
   entities: {
     people?: readonly SearchablePerson[];
     organizations?: readonly SearchableOrganization[];
+    audits?: readonly SearchableAuditEvent[];
+    tenants?: readonly SearchableTenant[];
+    catalogAssets?: readonly SearchableCatalogAsset[];
   } = {}
 ): GlobalSearchItem[] {
   const appItems = apps.map<GlobalSearchItem>((app) => ({
@@ -91,6 +130,7 @@ export function createGlobalSearchItems(
     description: app.description,
     route: app.route,
     keywords: [app.groupId, app.resourceKey],
+    source: translated(translate, 'search.sources.apps', 'Apps'),
     recommended: ['dwp-work', 'dwp-ask', 'dwp-activity'].includes(app.id),
   }));
   const workItems = work.map<GlobalSearchItem>((item) => ({
@@ -100,6 +140,7 @@ export function createGlobalSearchItems(
     description: `${translated(translate, `search.workTypes.${item.type}`, item.type)} / ${item.due} / ${item.sourceSystem}`,
     route: `/work?item=${encodeURIComponent(item.id)}`,
     keywords: [item.id, item.type, item.priority, item.status, item.sourceSystem, item.owner],
+    source: translated(translate, 'search.sources.work', 'Work'),
   }));
   const peopleItems = (entities.people ?? []).map<GlobalSearchItem>((person) => ({
     id: `person-${person.personId}`,
@@ -119,6 +160,7 @@ export function createGlobalSearchItems(
       person.jobProfileName ?? '',
       person.organizationName ?? '',
     ],
+    source: translated(translate, 'search.sources.people', 'People'),
   }));
   const organizationItems = (entities.organizations ?? []).map<GlobalSearchItem>(
     (organization) => ({
@@ -138,8 +180,36 @@ export function createGlobalSearchItems(
         organization.organizationId
       )}`,
       keywords: [organization.organizationId, organization.organizationKey],
+      source: translated(translate, 'search.sources.organizations', 'Organizations'),
     })
   );
+  const auditItems = (entities.audits ?? []).map<GlobalSearchItem>((event) => ({
+    id: `audit-${event.id}`,
+    kind: 'audit',
+    title: event.title,
+    description: event.description,
+    route: event.route,
+    keywords: event.keywords,
+    source: event.source,
+  }));
+  const tenantItems = (entities.tenants ?? []).map<GlobalSearchItem>((tenant) => ({
+    id: `tenant-${tenant.tenantId}`,
+    kind: 'tenant',
+    title: tenant.title,
+    description: tenant.description,
+    route: tenant.route,
+    keywords: tenant.keywords,
+    source: tenant.source,
+  }));
+  const catalogItems = (entities.catalogAssets ?? []).map<GlobalSearchItem>((asset) => ({
+    id: `catalog-${asset.id}`,
+    kind: 'catalog',
+    title: asset.title,
+    description: asset.description,
+    route: asset.route,
+    keywords: asset.keywords,
+    source: asset.source,
+  }));
   const browseApps: GlobalSearchItem = {
     id: 'app-catalog',
     kind: 'app',
@@ -156,9 +226,19 @@ export function createGlobalSearchItems(
       'service',
       'system',
     ]),
+    source: translated(translate, 'search.sources.apps', 'Apps'),
     recommended: true,
   };
-  return [...appItems, browseApps, ...workItems, ...peopleItems, ...organizationItems];
+  return [
+    ...appItems,
+    browseApps,
+    ...workItems,
+    ...peopleItems,
+    ...organizationItems,
+    ...tenantItems,
+    ...auditItems,
+    ...catalogItems,
+  ];
 }
 
 export function filterGlobalSearchItems(
@@ -211,5 +291,6 @@ export function createAskSearchItem(
     ),
     route: askRoute(value),
     keywords: [],
+    source: translated(translate, 'search.sources.ask', 'Ask DWP'),
   };
 }

@@ -11,6 +11,18 @@ export type ActionButtonProps = Omit<ButtonProps, 'color' | 'loading' | 'variant
   to?: string;
 };
 
+export function resolveActionButtonAriaLabel(
+  ariaLabel: string | undefined,
+  loading: boolean,
+  loadingLabel: string | undefined,
+  children: React.ReactNode
+): string | undefined {
+  if (loading && loadingLabel) return loadingLabel;
+  if (ariaLabel) return ariaLabel;
+  if (typeof children === 'string' || typeof children === 'number') return String(children);
+  return undefined;
+}
+
 const INTENT_PROPS: Record<ActionIntent, Pick<ButtonProps, 'color' | 'variant'>> = {
   primary: { color: 'primary', variant: 'contained' },
   secondary: { color: 'primary', variant: 'outlined' },
@@ -26,6 +38,13 @@ export function ActionButton({
   children,
   ...props
 }: ActionButtonProps) {
+  const ariaLabel = resolveActionButtonAriaLabel(
+    props['aria-label'],
+    loading,
+    loadingLabel,
+    children
+  );
+
   return (
     <Button
       {...INTENT_PROPS[intent]}
@@ -33,7 +52,7 @@ export function ActionButton({
       disabled={disabled || loading}
       loading={loading}
       aria-busy={loading || undefined}
-      aria-label={loading && loadingLabel ? loadingLabel : props['aria-label']}
+      aria-label={ariaLabel}
     >
       {children}
     </Button>

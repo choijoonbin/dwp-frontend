@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { Ban, KeyRound, RefreshCw, Search, ShieldAlert } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -8,8 +9,10 @@ import {
   listProviderTenants,
 } from '@dwp-frontend/shared-utils';
 import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -37,6 +40,7 @@ import {
 
 function AuditEventDialog({ event, onClose }: { event: ProviderAuditEvent; onClose: () => void }) {
   const { t } = useTranslation('provider');
+  const display = useDisplayDictionary();
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>{t('audit.detail.title')}</DialogTitle>
@@ -54,9 +58,12 @@ function AuditEventDialog({ event, onClose }: { event: ProviderAuditEvent; onClo
               [t('audit.columns.category'), t(`audit.categories.${event.eventCategory}`)],
               [t('audit.columns.operator'), event.operatorName ?? '-'],
               [t('audit.columns.tenant'), event.tenantKey ?? t('audit.global')],
-              [t('audit.columns.action'), event.action],
+              [t('audit.columns.action'), display('auditActions', event.action)],
               [t('audit.columns.outcome'), t(`audit.outcomes.${event.outcome}`)],
-              [t('audit.detail.target'), `${event.targetType} / ${event.targetId}`],
+              [
+                t('audit.detail.target'),
+                `${display('targetTypes', event.targetType)} / ${event.targetId}`,
+              ],
               [t('audit.columns.correlation'), event.correlationId ?? '-'],
             ].map(([label, value]) => (
               <Box key={label} minWidth={0}>
@@ -68,6 +75,17 @@ function AuditEventDialog({ event, onClose }: { event: ProviderAuditEvent; onClo
                 </Typography>
               </Box>
             ))}
+          </Box>
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 0.75 }}>
+              {t('audit.detail.rawCode')}
+            </Typography>
+            <Box
+              component="code"
+              sx={{ display: 'block', p: 1.5, bgcolor: 'action.hover', overflowWrap: 'anywhere' }}
+            >
+              {event.action}
+            </Box>
           </Box>
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 0.75 }}>
@@ -102,10 +120,15 @@ function AuditEventDialog({ event, onClose }: { event: ProviderAuditEvent; onClo
 
 export function ProviderAudit() {
   const { t } = useTranslation('provider');
-  const [tenantId, setTenantId] = useState('ALL');
+  const display = useDisplayDictionary();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedEventId = searchParams.get('event');
+  const requestedQuery = searchParams.get('query') ?? '';
+  const requestedTenantId = searchParams.get('tenantId') ?? 'ALL';
+  const [tenantId, setTenantId] = useState(requestedTenantId);
   const [outcome, setOutcome] = useState('ALL');
   const [category, setCategory] = useState('ALL');
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(() => requestedEventId ?? requestedQuery);
   const [selected, setSelected] = useState<ProviderAuditEvent | null>(null);
   const events = useQuery({
     queryKey: ['provider', 'audit', tenantId],
@@ -136,6 +159,46 @@ export function ProviderAudit() {
     });
   }, [category, events.data, outcome, query]);
 
+  useEffect(() => {
+    if (!events.data) return;
+    if (!requestedEventId) {
+      setSelected(null);
+      return;
+    }
+    const event = events.data.find((item) => item.auditEventId === requestedEventId);
+    setSelected(event ?? null);
+    setQuery(requestedEventId);
+  }, [events.data, requestedEventId]);
+
+  useEffect(() => {
+    if (requestedEventId) return;
+    setQuery(requestedQuery);
+    setTenantId(requestedTenantId);
+  }, [requestedEventId, requestedQuery, requestedTenantId]);
+
+  const updateFilterUrl = (nextQuery: string, nextTenantId: string) => {
+    const next = new URLSearchParams(searchParams);
+    next.delete('event');
+    if (nextQuery.trim()) next.set('query', nextQuery.trim());
+    else next.delete('query');
+    if (nextTenantId !== 'ALL') next.set('tenantId', nextTenantId);
+    else next.delete('tenantId');
+    setSearchParams(next, { replace: true });
+  };
+
+  const selectEvent = (event: ProviderAuditEvent) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('event', event.auditEventId);
+    setSearchParams(next);
+  };
+  const closeEvent = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete('event');
+    setSearchParams(next, { replace: true });
+    setSelected(null);
+    setQuery('');
+  };
+
   const columns = useMemo<GridColDef<ProviderAuditEvent>[]>(
     () => [
       {
@@ -152,10 +215,10 @@ export function ProviderAudit() {
         renderCell: ({ row }) => (
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="body2" fontWeight={750} noWrap>
-              {row.action}
+              {display('auditActions', row.action)}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap display="block">
-              {row.targetType} / {row.targetId}
+              {display('targetTypes', row.targetType)} / {row.targetId}
             </Typography>
           </Box>
         ),
@@ -195,7 +258,7 @@ export function ProviderAudit() {
         ),
       },
     ],
-    [t]
+    [display, t]
   );
 
   if (events.isLoading || insights.isLoading || tenants.isLoading) return <ProviderLoading />;
@@ -257,12 +320,20 @@ export function ProviderAudit() {
             </Tooltip>
           }
         />
+        {requestedEventId && events.data && !selected && (
+          <Alert severity="warning" sx={{ mt: 1.5 }}>
+            {t('audit.deepLinkNotFound', { id: requestedEventId })}
+          </Alert>
+        )}
         <Stack direction={{ xs: 'column', lg: 'row' }} gap={1} sx={{ mt: 1.5, mb: 1 }}>
           <TextField
             size="small"
             label={t('audit.search')}
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              updateFilterUrl(event.target.value, tenantId);
+            }}
             sx={{ minWidth: { lg: 320 } }}
             slotProps={{
               input: {
@@ -279,7 +350,10 @@ export function ProviderAudit() {
             size="small"
             label={t('fields.tenant')}
             value={tenantId}
-            onChange={(event) => setTenantId(event.target.value)}
+            onChange={(event) => {
+              setTenantId(event.target.value);
+              updateFilterUrl(query, event.target.value);
+            }}
             sx={{ minWidth: 220 }}
           >
             <MenuItem value="ALL">{t('audit.allTenants')}</MenuItem>
@@ -325,7 +399,7 @@ export function ProviderAudit() {
           rows={visibleEvents}
           columns={columns}
           getRowId={(row) => row.auditEventId}
-          onRowClick={({ row }) => setSelected(row)}
+          onRowClick={({ row }) => selectEvent(row)}
           loading={events.isFetching}
           hideFooter
           maxVisibleRows={14}
@@ -333,7 +407,7 @@ export function ProviderAudit() {
         />
       </Box>
 
-      {selected && <AuditEventDialog event={selected} onClose={() => setSelected(null)} />}
+      {selected && <AuditEventDialog event={selected} onClose={closeEvent} />}
     </Stack>
   );
 }

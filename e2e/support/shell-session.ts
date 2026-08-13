@@ -6,6 +6,11 @@ import {
 } from './runtime-access';
 
 import type { Page, Route } from '@playwright/test';
+import type {
+  LocalizationRevision,
+  LocalizationRevisionState,
+  PreferenceExceptionRequest,
+} from '@dwp-frontend/shared-utils';
 
 type Appearance = {
   mode: 'system' | 'light' | 'dark';
@@ -19,6 +24,8 @@ type ShellSessionOptions = {
   displayName?: string;
   jobTitle?: string;
   appearance?: Appearance;
+  localizationState?: LocalizationRevisionState;
+  groups?: Array<{ groupRef: string; displayName: string }>;
   permissions?: Array<{
     resourceType: string;
     resourceKey: string;
@@ -35,6 +42,12 @@ export const FULL_PRODUCT_PERMISSIONS = [
     permissionCode: 'VIEW',
     effect: 'ALLOW' as const,
   },
+  {
+    resourceType: 'DATA',
+    resourceKey: 'DATA.WORKFORCE',
+    permissionCode: 'MANAGE',
+    effect: 'ALLOW' as const,
+  },
   ...[
     ['ADMIN.API_MONITORING', 'VIEW'],
     ['ADMIN.AUDIT_VIEW', 'VIEW'],
@@ -42,6 +55,9 @@ export const FULL_PRODUCT_PERMISSIONS = [
     ['ADMIN.AUDIT_CONFIGURE', 'MANAGE'],
     ['ADMIN.AUDIT_EXPORT', 'EXPORT'],
     ['ADMIN.PRODUCTIVITY_CONNECTOR', 'MANAGE'],
+    ['ADMIN.WORKFORCE_ACCESS', 'MANAGE'],
+    ['ADMIN.SAVED_VIEW_CUSTODY', 'VIEW'],
+    ['ADMIN.SAVED_VIEW_CUSTODY', 'MANAGE'],
   ].map(([resourceKey, permissionCode]) => ({
     resourceType: 'ADMIN',
     resourceKey,
@@ -158,6 +174,54 @@ export const CATALOG_RELATION_FIXTURE = {
   metadata: {},
   lifecycleState: 'ACTIVE',
   version: 0,
+} as const;
+
+export const CATALOG_ASSURANCE_FINDING_FIXTURE = {
+  findingId: '71000000-0000-0000-0000-000000000001',
+  entityRef: 'APP:DWP_WORK',
+  findingCode: 'OWNER_MISSING',
+  severity: 'HIGH',
+  lifecycleState: 'OPEN',
+  ruleKey: 'DWP_CATALOG_IMPACT',
+  ruleVersion: 1,
+  evidence: {
+    entityRef: 'APP:DWP_WORK',
+    entityRevision: 1,
+    lifecycleState: 'ACTIVE',
+    signal: 'ownerRef',
+    value: null,
+    directDependentCount: 0,
+    ruleKey: 'DWP_CATALOG_IMPACT',
+    ruleVersion: 1,
+  },
+  evidenceSha256: 'a'.repeat(64),
+  firstDetectedAt: '2026-08-11T00:20:00Z',
+  lastDetectedAt: '2026-08-12T00:20:00Z',
+  dispositionReason: null,
+  dispositionEvidenceRef: null,
+  disposedBy: null,
+  disposedAt: null,
+  version: 0,
+} as const;
+
+export const CATALOG_ASSURANCE_FIXTURE = {
+  openCount: 1,
+  criticalCount: 0,
+  ownerMissingCount: 1,
+  deprecationImpactCount: 0,
+  activeRule: {
+    ruleKey: 'DWP_CATALOG_IMPACT',
+    ruleVersion: 1,
+    definition: {
+      maximumTraversalDepth: 8,
+      criticalDirectBlocks: true,
+      retireWithDirectDependentsBlocks: true,
+      criticalityWeights: { INFORMATIONAL: 1, OPERATIONAL: 2, CRITICAL: 4 },
+    },
+    contentSha256: 'b'.repeat(64),
+  },
+  findings: [CATALOG_ASSURANCE_FINDING_FIXTURE],
+  generatedAt: '2026-08-12T00:20:00Z',
 } as const;
 
 const PROVIDER_TENANT_FIXTURE = {
@@ -538,15 +602,159 @@ export async function mockShellSession(
       },
     },
     managedPolicy: {
+      policyId: 'policy-default',
       scope: 'TENANT',
       source: 'TENANT_EXPERIENCE_POLICY',
-      owner: 'TENANT_ADMINISTRATOR',
-      managedPaths: [] as string[],
+      ownerType: 'ROLE',
+      ownerRef: 'TENANT_ADMIN',
+      ownerDisplayName: 'Tenant administrator',
+      contactUri: '/admin/experience/preference-exceptions',
+      managedPaths: ['appearance.fontFamily', 'appearance.accentColor', 'navigation.pattern'],
+      rules: [
+        {
+          ruleId: 'rule-font',
+          preferencePath: 'appearance.fontFamily',
+          displayKey: 'settings.productFont.title',
+          managedValue: null,
+          exceptionAllowed: true,
+          version: 0,
+        },
+        {
+          ruleId: 'rule-accent',
+          preferencePath: 'appearance.accentColor',
+          displayKey: 'settings.brandAccent.title',
+          managedValue: null,
+          exceptionAllowed: true,
+          version: 0,
+        },
+        {
+          ruleId: 'rule-navigation',
+          preferencePath: 'navigation.pattern',
+          displayKey: 'settings.navigationPattern.title',
+          managedValue: 'sidebar',
+          exceptionAllowed: true,
+          version: 0,
+        },
+      ],
+      version: 0,
     },
     version: 1,
     updatedAt: '2026-08-11T00:00:00Z' as string | null,
   };
   let personalPreference = structuredClone(defaultPersonalPreference);
+  let preferenceExceptions: PreferenceExceptionRequest[] = [];
+  const localizationPreview = (
+    sourceEntries: Record<string, string>,
+    entries: Record<string, string>
+  ) => {
+    const missingKeys = Object.keys(sourceEntries).filter((key) => !entries[key]?.trim());
+    const resolvedEntries = Object.fromEntries(
+      Object.entries(sourceEntries).map(([key, value]) => [key, entries[key]?.trim() || value])
+    );
+    return {
+      resolvedEntries,
+      missingKeys,
+      fallbackKeys: missingKeys,
+      unknownKeys: Object.keys(entries).filter((key) => !(key in sourceEntries)),
+      placeholderIssues: [],
+      completeness:
+        Math.round(
+          ((Object.keys(sourceEntries).length - missingKeys.length) * 10_000) /
+            Object.keys(sourceEntries).length
+        ) / 100,
+      publishable:
+        missingKeys.length === 0 && Object.keys(entries).every((key) => key in sourceEntries),
+    };
+  };
+  const initialLocalizationState = options.localizationState ?? 'DRAFT';
+  const initialSourceEntries = {
+    'shell.welcome': 'Welcome, {{name}}',
+    'shell.empty': 'No work requires your attention.',
+  };
+  const initialLocalizationEntries = {
+    'shell.welcome': '환영합니다, {{name}}',
+    'shell.empty': '확인이 필요한 업무가 없습니다.',
+  };
+  let localizationRevision: LocalizationRevision = {
+    revisionId: '81000000-0000-0000-0000-000000000001',
+    bundleId: '80000000-0000-0000-0000-000000000001',
+    bundleKey: 'shell',
+    sourceLocale: 'en',
+    targetLocale: 'ko',
+    revisionNumber: 2,
+    basedOnRevisionId: '81000000-0000-0000-0000-000000000000',
+    sourceEntries: initialSourceEntries,
+    entries: initialLocalizationEntries,
+    lifecycleState: initialLocalizationState,
+    changeSummary: 'Improve the governed Korean shell language',
+    contentSha256: 'c'.repeat(64),
+    submittedBy: initialLocalizationState === 'DRAFT' ? null : 2,
+    submittedAt: initialLocalizationState === 'DRAFT' ? null : '2026-08-13T00:05:00Z',
+    decidedBy: null,
+    decidedAt: null,
+    publishedBy: null,
+    publishedAt: null,
+    version: initialLocalizationState === 'DRAFT' ? 0 : 1,
+    createdAt: '2026-08-13T00:00:00Z',
+    createdBy: 2,
+    updatedAt: '2026-08-13T00:05:00Z',
+    decisions:
+      initialLocalizationState === 'DRAFT'
+        ? []
+        : [
+            {
+              decisionId: '82000000-0000-0000-0000-000000000001',
+              previousState: 'DRAFT',
+              decision: 'SUBMITTED',
+              reason: 'Ready for independent language review.',
+              actorId: 2,
+              decidedAt: '2026-08-13T00:05:00Z',
+            },
+          ],
+    preview: localizationPreview(initialSourceEntries, initialLocalizationEntries),
+  };
+
+  const localizationWorkspace = () => ({
+    bundleCount: 1,
+    draftCount: localizationRevision.lifecycleState === 'DRAFT' ? 1 : 0,
+    reviewCount: ['IN_REVIEW', 'APPROVED'].includes(localizationRevision.lifecycleState) ? 1 : 0,
+    publishedCount: localizationRevision.lifecycleState === 'PUBLISHED' ? 1 : 0,
+    issueCount:
+      localizationRevision.preview.missingKeys.length +
+      localizationRevision.preview.unknownKeys.length +
+      localizationRevision.preview.placeholderIssues.length,
+    bundles: [
+      {
+        bundleId: localizationRevision.bundleId,
+        bundleKey: localizationRevision.bundleKey,
+        sourceLocale: localizationRevision.sourceLocale,
+        targetLocale: localizationRevision.targetLocale,
+        lifecycleState: 'ACTIVE',
+        currentPublishedRevisionId:
+          localizationRevision.lifecycleState === 'PUBLISHED'
+            ? localizationRevision.revisionId
+            : '81000000-0000-0000-0000-000000000000',
+        currentPublishedRevisionNumber: localizationRevision.lifecycleState === 'PUBLISHED' ? 2 : 1,
+        openRevisionState: ['DRAFT', 'IN_REVIEW', 'APPROVED'].includes(
+          localizationRevision.lifecycleState
+        )
+          ? localizationRevision.lifecycleState
+          : null,
+        openRevisionNumber: ['DRAFT', 'IN_REVIEW', 'APPROVED'].includes(
+          localizationRevision.lifecycleState
+        )
+          ? localizationRevision.revisionNumber
+          : null,
+        completeness: localizationRevision.preview.completeness,
+        issueCount:
+          localizationRevision.preview.missingKeys.length +
+          localizationRevision.preview.unknownKeys.length +
+          localizationRevision.preview.placeholderIssues.length,
+        version: 1,
+        updatedAt: localizationRevision.updatedAt,
+      },
+    ],
+  });
 
   await page.route('**/api/**', (route) => {
     const url = new URL(route.request().url());
@@ -567,6 +775,7 @@ export async function mockShellSession(
         preferredLocale: locale,
         tenantDefaultLocale: locale,
         roles,
+        groups: options.groups ?? [],
       });
     }
     if (path === '/api/auth/permissions') {
@@ -577,6 +786,12 @@ export async function mockShellSession(
     }
     if (path === '/api/auth/csrf') {
       return fulfillSuccess(route, { token: 'visual-csrf-token', headerName: 'X-XSRF-TOKEN' });
+    }
+    if (path === '/api/platform/v1/search/audit') {
+      return fulfillSuccess(route, {
+        eventId: 'search-audit-event',
+        queryDigest: '0'.repeat(64),
+      });
     }
     if (path === '/api/auth/session/refresh') {
       return fulfillSuccess(route, {
@@ -596,7 +811,231 @@ export async function mockShellSession(
         requireMfa: true,
       });
     }
-    if (path.startsWith('/api/platform/v1/personal-preferences')) {
+    if (
+      path === '/api/auth/admin/access/privileged/me/eligibilities' ||
+      path === '/api/auth/admin/access/privileged/me/requests'
+    ) {
+      return fulfillSuccess(route, []);
+    }
+    if (path === '/api/platform/v1/personal-preferences/managed-policy') {
+      return fulfillSuccess(route, personalPreference.managedPolicy);
+    }
+    if (path === '/api/platform/v1/personal-preferences/exceptions') {
+      if (route.request().method() === 'GET') {
+        return fulfillSuccess(route, preferenceExceptions);
+      }
+      const body = route.request().postDataJSON() as {
+        preferencePath: string;
+        requestedValue: unknown;
+        businessJustification: string;
+        businessImpact: string;
+        requestedUntil?: string | null;
+      };
+      const request: PreferenceExceptionRequest = {
+        requestId: `exception-${preferenceExceptions.length + 1}`,
+        userId: 1,
+        preferencePath: body.preferencePath,
+        requestedValue: body.requestedValue,
+        businessJustification: body.businessJustification,
+        businessImpact: body.businessImpact,
+        requestState: 'PENDING',
+        assignedOwnerRef: 'TENANT_ADMIN',
+        requestedUntil: body.requestedUntil ?? null,
+        decisionReason: null,
+        decisionEvidenceRef: null,
+        decidedBy: null,
+        decidedAt: null,
+        createdAt: '2026-08-13T00:00:00Z',
+        updatedAt: '2026-08-13T00:00:00Z',
+        version: 0,
+      };
+      preferenceExceptions = [request, ...preferenceExceptions];
+      return fulfillSuccess(route, request);
+    }
+    if (
+      path.startsWith('/api/platform/v1/personal-preferences/exceptions/') &&
+      path.endsWith('/cancel')
+    ) {
+      const requestId = path.split('/').at(-2) ?? '';
+      const request = preferenceExceptions.find((candidate) => candidate.requestId === requestId);
+      if (!request) return route.fulfill({ status: 404 });
+      const cancelled: PreferenceExceptionRequest = {
+        ...request,
+        requestState: 'CANCELLED',
+        updatedAt: '2026-08-13T00:05:00Z',
+        version: request.version + 1,
+      };
+      preferenceExceptions = preferenceExceptions.map((candidate) =>
+        candidate.requestId === requestId ? cancelled : candidate
+      );
+      return fulfillSuccess(route, cancelled);
+    }
+    if (path === '/api/platform/v1/admin/preference-exceptions') {
+      return fulfillSuccess(route, preferenceExceptions);
+    }
+    if (
+      path.startsWith('/api/platform/v1/admin/preference-exceptions/') &&
+      path.endsWith('/decision')
+    ) {
+      const requestId = path.split('/').at(-2) ?? '';
+      const request = preferenceExceptions.find((candidate) => candidate.requestId === requestId);
+      if (!request) return route.fulfill({ status: 404 });
+      const body = route.request().postDataJSON() as {
+        decision: 'APPROVED' | 'REJECTED';
+        reason: string;
+        evidenceRef?: string;
+      };
+      const decided: PreferenceExceptionRequest = {
+        ...request,
+        requestState: body.decision,
+        decisionReason: body.reason,
+        decisionEvidenceRef: body.evidenceRef ?? null,
+        decidedBy: 1,
+        decidedAt: '2026-08-13T00:10:00Z',
+        updatedAt: '2026-08-13T00:10:00Z',
+        version: request.version + 1,
+      };
+      preferenceExceptions = preferenceExceptions.map((candidate) =>
+        candidate.requestId === requestId ? decided : candidate
+      );
+      return fulfillSuccess(route, decided);
+    }
+    if (path === '/api/platform/v1/admin/localization') {
+      return fulfillSuccess(route, localizationWorkspace());
+    }
+    if (
+      path ===
+      `/api/platform/v1/admin/localization/bundles/${localizationRevision.bundleId}/revisions`
+    ) {
+      return fulfillSuccess(route, [localizationRevision]);
+    }
+    if (
+      path ===
+      `/api/platform/v1/admin/localization/revisions/${localizationRevision.revisionId}/diff`
+    ) {
+      return fulfillSuccess(route, {
+        revisionId: localizationRevision.revisionId,
+        comparedWithRevisionId: localizationRevision.basedOnRevisionId,
+        added: 0,
+        updated: 2,
+        removed: 0,
+        unchanged: 0,
+        entries: Object.keys(localizationRevision.sourceEntries).map((key) => ({
+          key,
+          changeType: 'UPDATED',
+          sourceValue: localizationRevision.sourceEntries[key],
+          beforeValue: key === 'shell.welcome' ? '{{name}}님, 안녕하세요' : '새 업무가 없습니다.',
+          afterValue: localizationRevision.entries[key],
+          fallback: false,
+        })),
+      });
+    }
+    if (
+      path === `/api/platform/v1/admin/localization/revisions/${localizationRevision.revisionId}` &&
+      route.request().method() === 'PUT'
+    ) {
+      const body = route.request().postDataJSON() as {
+        sourceEntries: Record<string, string>;
+        entries: Record<string, string>;
+        changeSummary: string;
+      };
+      localizationRevision = {
+        ...localizationRevision,
+        sourceEntries: body.sourceEntries,
+        entries: body.entries,
+        changeSummary: body.changeSummary,
+        contentSha256: 'd'.repeat(64),
+        version: localizationRevision.version + 1,
+        updatedAt: '2026-08-13T00:10:00Z',
+        preview: localizationPreview(body.sourceEntries, body.entries),
+      };
+      return fulfillSuccess(route, localizationRevision);
+    }
+    if (
+      path ===
+      `/api/platform/v1/admin/localization/revisions/${localizationRevision.revisionId}/submit`
+    ) {
+      const body = route.request().postDataJSON() as { reason: string };
+      localizationRevision = {
+        ...localizationRevision,
+        lifecycleState: 'IN_REVIEW',
+        submittedBy: 1,
+        submittedAt: '2026-08-13T00:12:00Z',
+        version: localizationRevision.version + 1,
+        updatedAt: '2026-08-13T00:12:00Z',
+        decisions: [
+          ...localizationRevision.decisions,
+          {
+            decisionId: `localization-decision-${localizationRevision.decisions.length + 1}`,
+            previousState: 'DRAFT',
+            decision: 'SUBMITTED',
+            reason: body.reason,
+            actorId: 1,
+            decidedAt: '2026-08-13T00:12:00Z',
+          },
+        ],
+      };
+      return fulfillSuccess(route, localizationRevision);
+    }
+    if (
+      path ===
+      `/api/platform/v1/admin/localization/revisions/${localizationRevision.revisionId}/decision`
+    ) {
+      const body = route.request().postDataJSON() as {
+        decision: 'APPROVED' | 'REJECTED';
+        reason: string;
+      };
+      localizationRevision = {
+        ...localizationRevision,
+        lifecycleState: body.decision,
+        decidedBy: 1,
+        decidedAt: '2026-08-13T00:15:00Z',
+        version: localizationRevision.version + 1,
+        updatedAt: '2026-08-13T00:15:00Z',
+        decisions: [
+          ...localizationRevision.decisions,
+          {
+            decisionId: `localization-decision-${localizationRevision.decisions.length + 1}`,
+            previousState: 'IN_REVIEW',
+            decision: body.decision,
+            reason: body.reason,
+            actorId: 1,
+            decidedAt: '2026-08-13T00:15:00Z',
+          },
+        ],
+      };
+      return fulfillSuccess(route, localizationRevision);
+    }
+    if (
+      path ===
+      `/api/platform/v1/admin/localization/revisions/${localizationRevision.revisionId}/publish`
+    ) {
+      const body = route.request().postDataJSON() as { reason: string };
+      localizationRevision = {
+        ...localizationRevision,
+        lifecycleState: 'PUBLISHED',
+        publishedBy: 1,
+        publishedAt: '2026-08-13T00:18:00Z',
+        version: localizationRevision.version + 1,
+        updatedAt: '2026-08-13T00:18:00Z',
+        decisions: [
+          ...localizationRevision.decisions,
+          {
+            decisionId: `localization-decision-${localizationRevision.decisions.length + 1}`,
+            previousState: 'APPROVED',
+            decision: 'PUBLISHED',
+            reason: body.reason,
+            actorId: 1,
+            decidedAt: '2026-08-13T00:18:00Z',
+          },
+        ],
+      };
+      return fulfillSuccess(route, localizationRevision);
+    }
+    if (
+      path === '/api/platform/v1/personal-preferences' ||
+      path === '/api/platform/v1/personal-preferences/reset'
+    ) {
       const request = route.request();
       if (request.method() === 'GET') return fulfillSuccess(route, personalPreference);
 
@@ -878,6 +1317,78 @@ export async function mockShellSession(
     if (path === '/api/people/v1/workforce/reference-data') {
       return fulfillSuccess(route, []);
     }
+    if (path === '/api/people/v1/workforce/exports/datasets') {
+      return fulfillSuccess(route, [
+        {
+          datasetKey: 'ORGANIZATION_INTELLIGENCE',
+          name: 'Organization intelligence',
+          description: 'Organization health, comparison, and data-quality decision evidence.',
+          requiredFieldGroups: ['DIRECTORY'],
+          allowedSelectionKeys: ['view', 'asOf', 'compareTo', 'scenarioId', 'rootOrganizationId'],
+          version: 2,
+        },
+        {
+          datasetKey: 'WORKFORCE_DIRECTORY',
+          name: 'Workforce directory',
+          description: 'Governed workforce directory rows within the resolved population.',
+          requiredFieldGroups: ['DIRECTORY', 'EMPLOYMENT'],
+          allowedSelectionKeys: [
+            'query',
+            'status',
+            'organization',
+            'location',
+            'grade',
+            'role',
+            'asOf',
+          ],
+          version: 1,
+        },
+        {
+          datasetKey: 'ASSIGNMENT_REGISTER',
+          name: 'Assignment register',
+          description: 'Effective-dated worker and assignment records.',
+          requiredFieldGroups: ['DIRECTORY', 'WORKER_IDENTIFIERS', 'EMPLOYMENT'],
+          allowedSelectionKeys: ['organization', 'status', 'asOf'],
+          version: 1,
+        },
+      ]);
+    }
+    if (
+      path === '/api/people/v1/workforce/exports/preview' &&
+      route.request().method() === 'POST'
+    ) {
+      const body = route.request().postDataJSON() as {
+        datasetKey: string;
+      };
+      return fulfillSuccess(route, {
+        authorized: true,
+        executionEnabled: false,
+        datasetKey: body.datasetKey,
+        allowedSelectionKeys: [],
+        populationType: 'TENANT',
+        organizationIds: [],
+        fieldGroups: ['DIRECTORY', 'WORKER_IDENTIFIERS', 'EMPLOYMENT', 'JOB_GRADE'],
+        exportFormat: 'CSV',
+        maskingProfile: 'WORKFORCE_MINIMUM',
+        watermarkTemplate: 'DWP confidential | request={{requestId}}',
+        artifactTtlHours: 24,
+        maximumAttempts: 5,
+        maximumManualRetries: 1,
+        blockers: ['D-09', 'D-12'],
+        message: 'Execution remains blocked until release decisions are approved.',
+        evaluatedAt: '2026-08-13T01:00:00Z',
+      });
+    }
+    if (path === '/api/people/v1/workforce/exports' && route.request().method() === 'GET') {
+      return fulfillSuccess(route, []);
+    }
+    if (
+      path.startsWith('/api/people/v1/workforce/exports/') &&
+      path.endsWith('/attempts') &&
+      route.request().method() === 'GET'
+    ) {
+      return fulfillSuccess(route, []);
+    }
     if (path === '/api/people/v1/workforce/data-operations/hris/sync-runs') {
       if (url.searchParams.get('size') !== '20') {
         return fulfillSuccess(route, []);
@@ -914,12 +1425,96 @@ export async function mockShellSession(
     }
     if (path === '/api/auth/admin/identity/users') {
       return fulfillSuccess(route, {
-        content: [],
+        content: [
+          {
+            userId: 1,
+            username: 'tenant.admin',
+            displayName: options.displayName ?? 'Tenant Admin',
+            email: 'tenant.admin@dwp.local',
+            status: 'ACTIVE',
+            mfaEnabled: true,
+            roles: ['TENANT_ADMIN'],
+            directRoles: ['TENANT_ADMIN'],
+            inheritedRoles: [],
+            effectiveRoles: ['TENANT_ADMIN'],
+            effectiveAccess: [],
+            groupIds: [],
+            roleManagement: { allowed: false, reason: 'SELF' },
+            accessRevision: 1,
+            version: 0,
+            updatedAt: '2026-08-11T00:00:00Z',
+            updatedBy: 1,
+          },
+        ],
         page: 0,
         size: 25,
-        totalElements: 0,
-        totalPages: 0,
+        totalElements: 1,
+        totalPages: 1,
       });
+    }
+    if (path === '/api/people/v1/admin/workforce/access-policies/organizations') {
+      return fulfillSuccess(route, [
+        {
+          organizationId: '55000000-0000-0000-0000-000000000001',
+          organizationKey: 'SKAX',
+          name: 'SKAX',
+          parentOrganizationId: null,
+        },
+        {
+          organizationId: '55000000-0000-0000-0000-000000000002',
+          organizationKey: 'PLATFORM',
+          name: 'Digital Workplace Platform',
+          parentOrganizationId: '55000000-0000-0000-0000-000000000001',
+        },
+      ]);
+    }
+    if (path === '/api/people/v1/admin/workforce/access-policies') {
+      return fulfillSuccess(route, [
+        {
+          policyId: '56000000-0000-0000-0000-000000000001',
+          subjectType: 'ROLE',
+          subjectRef: 'HR_ADMIN',
+          populationType: 'ORG_TREE',
+          organizationId: '55000000-0000-0000-0000-000000000002',
+          organizationName: 'Digital Workplace Platform',
+          fieldGroups: ['DIRECTORY', 'EMPLOYMENT'],
+          actionCodes: ['READ', 'EXPORT'],
+          validFrom: '2026-08-01T00:00:00Z',
+          validTo: '2026-12-31T00:00:00Z',
+          lifecycleState: 'ACTIVE',
+          justification: 'Approved workforce operating boundary for the HR administration role.',
+          version: 1,
+        },
+      ]);
+    }
+    if (path === '/api/platform/v1/admin/saved-view-ownership/orphaned') {
+      return fulfillSuccess(route, [
+        {
+          savedViewId: '57000000-0000-0000-0000-000000000001',
+          surfaceKey: 'WORKFORCE_OVERVIEW',
+          name: 'Quarterly workforce risk review',
+          scope: 'TEAM',
+          ownerGroupRef: 'group-people-operations',
+          retentionUntil: '2026-09-30T00:00:00Z',
+          updatedAt: '2026-08-10T03:00:00Z',
+        },
+      ]);
+    }
+    if (path === '/api/platform/v1/admin/saved-view-ownership/transfers') {
+      return fulfillSuccess(route, [
+        {
+          transferBatchId: '58000000-0000-0000-0000-000000000001',
+          sourceOwnerUserId: 42,
+          targetOwnerUserId: 1,
+          disposition: 'TRANSFER',
+          reasonCode: 'OFFBOARDING',
+          sourceReference: 'HR-OFFBOARDING-2026-0810',
+          retentionUntil: null,
+          transferredCount: 4,
+          createdAt: '2026-08-10T03:10:00Z',
+          createdBy: 1,
+        },
+      ]);
     }
     if (path === '/api/auth/admin/identity/roles') {
       return fulfillSuccess(route, []);
@@ -979,6 +1574,32 @@ export async function mockShellSession(
         history: [NAVIGATION_REVISION_FIXTURE],
         currentTree: NAVIGATION_TREE_FIXTURE,
         currentValidation: NAVIGATION_VALIDATION_FIXTURE,
+      });
+    }
+    if (path === '/api/platform/v1/admin/catalog/assurance') {
+      return fulfillSuccess(route, CATALOG_ASSURANCE_FIXTURE);
+    }
+    if (path === '/api/platform/v1/admin/catalog/assurance/evaluate') {
+      return fulfillSuccess(route, CATALOG_ASSURANCE_FIXTURE);
+    }
+    if (
+      path.startsWith('/api/platform/v1/admin/catalog/assurance/findings/') &&
+      path.endsWith('/disposition')
+    ) {
+      const body = route.request().postDataJSON() as {
+        decision: string;
+        reason: string;
+        evidenceRef?: string;
+        version: number;
+      };
+      return fulfillSuccess(route, {
+        ...CATALOG_ASSURANCE_FINDING_FIXTURE,
+        lifecycleState: body.decision,
+        dispositionReason: body.reason,
+        dispositionEvidenceRef: body.evidenceRef ?? null,
+        disposedBy: 1,
+        disposedAt: '2026-08-12T00:25:00Z',
+        version: body.version + 1,
       });
     }
     if (path === '/api/platform/v1/admin/catalog') {
@@ -1424,7 +2045,33 @@ export async function mockShellSession(
         highRiskThreshold: 70,
         updatedBy: 'system',
         updatedAt: '2026-08-11T00:00:00Z',
+        activeRevisionId: '51000000-0000-0000-0000-000000000001',
+        activeRevisionNumber: 1,
       });
+    }
+    if (path === '/api/platform/v1/admin/audit-control/policy/revisions') {
+      return fulfillSuccess(route, [
+        {
+          revisionId: '51000000-0000-0000-0000-000000000001',
+          revisionNumber: 1,
+          lifecycleState: 'PUBLISHED',
+          standardRetentionDays: 365,
+          extendedRetentionDays: 2555,
+          exportLimitRows: 10000,
+          requireExportReason: true,
+          integrityEnabled: true,
+          highRiskThreshold: 70,
+          changeReason: 'Initial governed baseline',
+          diff: {},
+          contentSha256: 'a'.repeat(64),
+          createdBy: 'system',
+          createdAt: '2026-08-11T00:00:00Z',
+          publishedBy: 'system',
+          publishedAt: '2026-08-11T00:00:00Z',
+          version: 0,
+          approval: null,
+        },
+      ]);
     }
     if (path === '/api/platform/v1/navigation') {
       const korean = (url.searchParams.get('locale') ?? locale).toLowerCase().startsWith('ko');
@@ -1472,14 +2119,99 @@ export async function mockShellSession(
           'INCIDENT_WRITE',
           'MAINTENANCE_WRITE',
           'SUPPORT_SESSION_WRITE',
+          'SUPPORT_ACCESS_REVIEW',
+          'SUPPORT_POST_REVIEW',
           'BREAK_GLASS_SUPPORT',
           'COMMERCIAL_READ',
+          'COMMERCIAL_WRITE',
+          'COMMERCIAL_APPROVE',
           'CATALOG_READ',
           'DATA_GOVERNANCE_READ',
           'DATA_GOVERNANCE_WRITE',
+          'FEATURE_ROLLOUT_READ',
+          'FEATURE_ROLLOUT_WRITE',
+          'FEATURE_ROLLOUT_APPROVE',
           'AUDIT_READ',
         ],
       });
+    }
+    if (path === '/api/provider/v1/admin/feature-rollouts/flags') {
+      return fulfillSuccess(route, [
+        {
+          featureFlagId: '59000000-0000-0000-0000-000000000001',
+          featureKey: 'WORKFORCE_EXPORT_V2',
+          displayName: 'Governed workforce export',
+          description: 'Controls the governed workforce export request experience.',
+          ownerService: 'dwp-people-server',
+          valueType: 'BOOLEAN',
+          defaultValue: false,
+          configurationSchema: { type: 'boolean' },
+          riskTier: 'L2',
+          lifecycleState: 'ACTIVE',
+          version: 1,
+        },
+      ]);
+    }
+    if (path === '/api/provider/v1/admin/feature-rollouts') {
+      return fulfillSuccess(route, [
+        {
+          rolloutRevisionId: '5a000000-0000-0000-0000-000000000001',
+          featureFlagId: '59000000-0000-0000-0000-000000000001',
+          featureKey: 'WORKFORCE_EXPORT_V2',
+          revisionNumber: 3,
+          name: 'Pilot ring rollout',
+          lifecycleState: 'PENDING_APPROVAL',
+          rolloutValue: true,
+          targeting: { serviceTier: ['ENTERPRISE'], region: ['ap-northeast-2'] },
+          strategy: 'RING',
+          currentStageOrder: null,
+          previousRevisionId: '5a000000-0000-0000-0000-000000000000',
+          rollbackOfRevisionId: null,
+          justification: 'Enable the governed experience for approved design partners.',
+          requestedBy: 1,
+          approvedBy: null,
+          submittedAt: '2026-08-11T00:05:00Z',
+          approvedAt: null,
+          activatedAt: null,
+          completedAt: null,
+          pausedAt: null,
+          version: 2,
+          stages: [
+            {
+              rolloutStageId: '5b000000-0000-0000-0000-000000000001',
+              stageOrder: 1,
+              stageName: 'Design partners',
+              exposurePercentage: 5,
+              minimumObservationMinutes: 60,
+              healthGate: { maxErrorRate: 1, maxP95LatencyMs: 800 },
+              lifecycleState: 'PENDING',
+              startedAt: null,
+              completedAt: null,
+            },
+            {
+              rolloutStageId: '5b000000-0000-0000-0000-000000000002',
+              stageOrder: 2,
+              stageName: 'Enterprise ring',
+              exposurePercentage: 25,
+              minimumObservationMinutes: 180,
+              healthGate: { maxErrorRate: 1, maxP95LatencyMs: 800 },
+              lifecycleState: 'PENDING',
+              startedAt: null,
+              completedAt: null,
+            },
+          ],
+          approval: {
+            approvalId: '5c000000-0000-0000-0000-000000000001',
+            lifecycleState: 'PENDING',
+            requestedBy: 1,
+            requestedAt: '2026-08-11T00:05:00Z',
+            decidedBy: null,
+            decidedAt: null,
+            decisionReason: null,
+          },
+          externalExecutionEnabled: false,
+        },
+      ]);
     }
     if (path === '/api/provider/v1/admin/command-center') {
       return fulfillSuccess(route, {
@@ -1790,6 +2522,59 @@ export async function mockShellSession(
         },
       ]);
     }
+    if (path === '/api/provider/v1/admin/support-access-requests') {
+      return fulfillSuccess(route, [
+        {
+          supportAccessRequestId: 'support-request-pending',
+          tenantId: 'tenant-skax',
+          tenantKey: 'skax-production',
+          tenantName: 'SKAX Production',
+          requesterOperatorId: 2,
+          requesterName: 'Provider Support Engineer',
+          lifecycleState: 'PENDING_APPROVAL',
+          accessMode: 'STANDARD',
+          justification: 'Investigate the customer-approved workspace latency case.',
+          scopes: ['TENANT_CONFIGURATION_WRITE'],
+          durationMinutes: 30,
+          approvalReference: 'SKAX-CASE-2408',
+          customerApprovalRequired: true,
+          riskTier: 'L3',
+          requestKey: 'support-case-2408',
+          requestedAt: '2026-08-11T00:00:00Z',
+          decisionDueAt: '2026-08-12T00:00:00Z',
+          postReviewState: 'NOT_REQUIRED',
+          version: 0,
+        },
+        {
+          supportAccessRequestId: 'support-request-review',
+          tenantId: 'tenant-skax',
+          tenantKey: 'skax-production',
+          tenantName: 'SKAX Production',
+          requesterOperatorId: 2,
+          requesterName: 'Provider Support Engineer',
+          lifecycleState: 'COMPLETED',
+          accessMode: 'STANDARD',
+          justification: 'Validate the tenant configuration after the approved change.',
+          scopes: ['TENANT_CONFIGURATION_WRITE'],
+          durationMinutes: 15,
+          approvalReference: 'SKAX-CASE-2401',
+          customerApprovalRequired: true,
+          riskTier: 'L3',
+          requestKey: 'support-case-2401',
+          requestedAt: '2026-08-10T21:00:00Z',
+          decisionDueAt: '2026-08-11T21:00:00Z',
+          decidedAt: '2026-08-10T21:05:00Z',
+          decidedBy: 1,
+          decidedByName: 'Provider Admin',
+          decisionReason: 'Customer evidence and least privilege confirmed.',
+          supportSessionId: 'support-session-history',
+          activatedAt: '2026-08-10T21:10:00Z',
+          completedAt: '2026-08-10T21:25:00Z',
+          postReviewState: 'PENDING',
+          version: 3,
+        },
+      ]);
+    }
     if (path === '/api/provider/v1/admin/support-scopes') {
       return fulfillSuccess(route, [
         {
@@ -1850,6 +2635,7 @@ export async function mockShellSession(
             contractReference: 'SKAX-2026-001',
             tenants: 1,
             activeEntitlements: 8,
+            version: 2,
           },
         ],
         entitlements: [
@@ -1862,6 +2648,95 @@ export async function mockShellSession(
             eligibleTenants: 18,
           },
         ],
+      });
+    }
+    if (path === '/api/provider/v1/admin/subscription-renewals') {
+      const request = route.request();
+      const pending = {
+        renewalRevisionId: 'renewal-pending',
+        subscriptionId: 'subscription-skax',
+        organizationId: 'organization-skax',
+        organizationKey: 'SKAX',
+        organizationName: 'SKAX',
+        revisionNumber: 2,
+        lifecycleState: 'PENDING_APPROVAL',
+        baselineSubscriptionVersion: 2,
+        currentPlanKey: 'enterprise',
+        currentPlanName: 'Enterprise',
+        targetPlanKey: 'regulated',
+        targetPlanName: 'Regulated enterprise',
+        targetServiceTier: 'REGULATED',
+        currentEndsAt: '2027-01-01T00:00:00Z',
+        proposedEndsAt: '2028-01-01T00:00:00Z',
+        currentContractReference: 'SKAX-2026-001',
+        proposedContractReference: 'SKAX-2027-001',
+        reason: 'Renew the regulated service package after security and commercial review.',
+        addedEntitlements: ['premium-audit'],
+        removedEntitlements: [],
+        impactedTenants: 1,
+        currentEntitlementCount: 8,
+        projectedEntitlementCount: 9,
+        contentSha256: 'b'.repeat(64),
+        requestKey: 'commercial-renewal-fixture',
+        requestedBy: 2,
+        requestedByName: 'Commercial Operations',
+        requestedAt: '2026-08-11T00:00:00Z',
+        decisionDueAt: '2026-08-13T00:00:00Z',
+        executionState: 'NOT_STARTED',
+        notificationState: 'DISABLED_PENDING_CONTRACT',
+        version: 0,
+      };
+      if (request.method() === 'POST') {
+        return fulfillSuccess(route, {
+          ...pending,
+          renewalRevisionId: 'renewal-created',
+          revisionNumber: 3,
+          requestedBy: 1,
+          requestedByName: 'Provider Admin',
+          reason: 'Renew the customer contract after commercial evidence review.',
+        });
+      }
+      return fulfillSuccess(route, [
+        pending,
+        {
+          ...pending,
+          renewalRevisionId: 'renewal-published',
+          revisionNumber: 1,
+          lifecycleState: 'PUBLISHED',
+          requestedAt: '2026-08-01T00:00:00Z',
+          decisionDueAt: '2026-08-03T00:00:00Z',
+          decidedBy: 1,
+          decidedByName: 'Provider Admin',
+          decidedAt: '2026-08-01T01:00:00Z',
+          decisionReason: 'Independent commercial and security review completed.',
+          publishedBy: 2,
+          publishedByName: 'Commercial Operations',
+          publishedAt: '2026-08-01T02:00:00Z',
+          executionState: 'MANUAL_ACTION_REQUIRED',
+          version: 2,
+        },
+      ]);
+    }
+    if (
+      path.startsWith('/api/provider/v1/admin/subscription-renewals/') &&
+      path.endsWith('/decision')
+    ) {
+      return fulfillSuccess(route, {
+        renewalRevisionId: path.split('/').at(-2),
+        lifecycleState: 'APPROVED',
+        version: 1,
+      });
+    }
+    if (
+      path.startsWith('/api/provider/v1/admin/subscription-renewals/') &&
+      path.endsWith('/publish')
+    ) {
+      return fulfillSuccess(route, {
+        renewalRevisionId: path.split('/').at(-2),
+        lifecycleState: 'PUBLISHED',
+        executionState: 'MANUAL_ACTION_REQUIRED',
+        notificationState: 'DISABLED_PENDING_CONTRACT',
+        version: 2,
       });
     }
     if (path === '/api/provider/v1/admin/audit-insights') {

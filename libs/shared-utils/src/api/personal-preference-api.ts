@@ -48,11 +48,67 @@ export type PersonalPreferencePatch = {
   } | null;
 };
 
+export type ManagedPreferenceRule = {
+  ruleId: string;
+  preferencePath: string;
+  displayKey: string;
+  managedValue: unknown;
+  exceptionAllowed: boolean;
+  version: number;
+};
+
 export type ManagedPreferencePolicy = {
+  policyId: string;
   scope: 'TENANT';
   source: 'TENANT_EXPERIENCE_POLICY';
-  owner: 'TENANT_ADMINISTRATOR';
+  ownerType: 'ROLE' | 'USER' | 'GROUP';
+  ownerRef: string;
+  ownerDisplayName: string;
+  contactUri?: string | null;
   managedPaths: string[];
+  rules: ManagedPreferenceRule[];
+  version: number;
+};
+
+export type PreferenceExceptionState =
+  | 'PENDING'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'CANCELLED'
+  | 'EXPIRED';
+
+export type PreferenceExceptionRequest = {
+  requestId: string;
+  userId: number;
+  preferencePath: string;
+  requestedValue: unknown;
+  businessJustification: string;
+  businessImpact: string;
+  requestState: PreferenceExceptionState;
+  assignedOwnerRef: string;
+  requestedUntil?: string | null;
+  decisionReason?: string | null;
+  decisionEvidenceRef?: string | null;
+  decidedBy?: number | null;
+  decidedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  version: number;
+};
+
+export type CreatePreferenceExceptionRequest = {
+  preferencePath: string;
+  requestedValue: unknown;
+  businessJustification: string;
+  businessImpact: string;
+  requestedUntil?: string | null;
+};
+
+export type DecidePreferenceExceptionRequest = {
+  decision: 'APPROVED' | 'REJECTED';
+  reason: string;
+  evidenceRef?: string;
+  version: number;
 };
 
 export type PersonalPreference = {
@@ -88,5 +144,61 @@ export async function resetPersonalPreference(version: number): Promise<Personal
     '/api/platform/v1/personal-preferences/reset',
     { version }
   );
+  return response.data.data;
+}
+
+export async function getManagedPreferencePolicy(): Promise<ManagedPreferencePolicy> {
+  const response = await axiosInstance.get<ApiResponse<ManagedPreferencePolicy>>(
+    '/api/platform/v1/personal-preferences/managed-policy'
+  );
+  return response.data.data;
+}
+
+export async function listMyPreferenceExceptions(): Promise<PreferenceExceptionRequest[]> {
+  const response = await axiosInstance.get<ApiResponse<PreferenceExceptionRequest[]>>(
+    '/api/platform/v1/personal-preferences/exceptions'
+  );
+  return response.data.data;
+}
+
+export async function requestPreferenceException(
+  request: CreatePreferenceExceptionRequest
+): Promise<PreferenceExceptionRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<PreferenceExceptionRequest>,
+    CreatePreferenceExceptionRequest
+  >('/api/platform/v1/personal-preferences/exceptions', request);
+  return response.data.data;
+}
+
+export async function cancelPreferenceException(
+  requestId: string,
+  version: number
+): Promise<PreferenceExceptionRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<PreferenceExceptionRequest>,
+    { version: number }
+  >(`/api/platform/v1/personal-preferences/exceptions/${requestId}/cancel`, { version });
+  return response.data.data;
+}
+
+export async function listAdminPreferenceExceptions(
+  state: PreferenceExceptionState | 'ALL' = 'ALL'
+): Promise<PreferenceExceptionRequest[]> {
+  const search = new URLSearchParams({ state });
+  const response = await axiosInstance.get<ApiResponse<PreferenceExceptionRequest[]>>(
+    `/api/platform/v1/admin/preference-exceptions?${search.toString()}`
+  );
+  return response.data.data;
+}
+
+export async function decidePreferenceException(
+  requestId: string,
+  request: DecidePreferenceExceptionRequest
+): Promise<PreferenceExceptionRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<PreferenceExceptionRequest>,
+    DecidePreferenceExceptionRequest
+  >(`/api/platform/v1/admin/preference-exceptions/${requestId}/decision`, request);
   return response.data.data;
 }

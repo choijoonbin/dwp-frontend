@@ -45,6 +45,8 @@ import Typography from '@mui/material/Typography';
 import type { AuthSessionData, SessionDevice } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
 
+import { MyPrivilegedAccess } from '../../features/account/my-privileged-access';
+
 type PendingAction = { kind: 'session'; session: AuthSessionData } | { kind: 'others' } | null;
 
 const iconProps = { size: 20, strokeWidth: 1.8, 'aria-hidden': true } as const;
@@ -302,6 +304,8 @@ export default function SecurityPage() {
           </Stack>
         ) : null}
       </Box>
+
+      <MyPrivilegedAccess />
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 5 }}>
         <ShieldCheck size={20} strokeWidth={1.8} aria-hidden="true" />

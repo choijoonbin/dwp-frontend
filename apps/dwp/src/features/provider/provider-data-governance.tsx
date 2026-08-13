@@ -1,6 +1,7 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatNumber } from '@dwp-frontend/shared-i18n';
+import { useSearchParams } from 'react-router-dom';
+import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   BookOpenCheck,
   Boxes,
@@ -12,6 +13,7 @@ import {
   HardDrive,
   KeyRound,
   RefreshCw,
+  ScrollText,
   Search,
   ShieldCheck,
   Table2,
@@ -53,6 +55,7 @@ import { ActionButton } from '@dwp-frontend/design-system/components/actions/act
 import { FormField } from '@dwp-frontend/design-system/components/forms/form-field';
 
 import { ProviderDataGovernanceGraph } from './provider-data-governance-graph';
+import { ProviderDataPolicyStudio } from './provider-data-policy-studio';
 import { ProviderError, ProviderLoading, formatProviderDate } from './provider-ui';
 
 import type { LucideIcon } from 'lucide-react';
@@ -63,7 +66,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 const ALL = 'ALL';
-type GovernanceTab = 'catalog' | 'relationships' | 'lineage' | 'quality';
+type GovernanceTab = 'catalog' | 'relationships' | 'lineage' | 'quality' | 'policies';
 
 const databaseColor: Record<string, string> = {
   auth: '#2f6feb',
@@ -162,6 +165,7 @@ function DatabaseScope({
 
 function AssetInspector({ asset }: { asset?: ProviderDataAsset }) {
   const { t } = useTranslation('provider');
+  const display = useDisplayDictionary();
   if (!asset) {
     return (
       <Box sx={{ minHeight: 320, display: 'grid', placeItems: 'center', px: 3 }}>
@@ -189,7 +193,7 @@ function AssetInspector({ asset }: { asset?: ProviderDataAsset }) {
       </Box>
       <Stack direction="row" gap={0.75} flexWrap="wrap" useFlexGap>
         <Chip size="small" variant="outlined" label={asset.businessDomain} />
-        <Chip size="small" variant="outlined" label={asset.objectType} />
+        <Chip size="small" variant="outlined" label={display('objectTypes', asset.objectType)} />
         <Chip
           size="small"
           variant="outlined"
@@ -373,15 +377,29 @@ function FindingInspector({ finding }: { finding?: ProviderDataGovernanceFinding
 
 export function ProviderDataGovernance() {
   const { t } = useTranslation('provider');
+  const [searchParams, setSearchParams] = useSearchParams();
   const theme = useTheme();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [tab, setTab] = useState<GovernanceTab>('catalog');
+  const requestedTab = searchParams.get('tab');
+  const requestedAssetKey = searchParams.get('asset') ?? undefined;
+  const initialTab: GovernanceTab = [
+    'catalog',
+    'relationships',
+    'lineage',
+    'quality',
+    'policies',
+  ].includes(requestedTab ?? '')
+    ? (requestedTab as GovernanceTab)
+    : 'catalog';
+  const [tab, setTab] = useState<GovernanceTab>(initialTab);
   const [database, setDatabase] = useState(ALL);
   const [domain, setDomain] = useState(ALL);
   const [query, setQuery] = useState('');
-  const [includePartitions, setIncludePartitions] = useState(false);
-  const [selectedAssetKey, setSelectedAssetKey] = useState<string>();
+  const [includePartitions, setIncludePartitions] = useState(
+    () => searchParams.get('partitions') === 'true'
+  );
+  const [selectedAssetKey, setSelectedAssetKey] = useState<string | undefined>(requestedAssetKey);
   const [selectedFindingId, setSelectedFindingId] = useState<string>();
   const [severity, setSeverity] = useState(ALL);
   const deferredQuery = useDeferredValue(query.trim().toLowerCase());
@@ -435,6 +453,24 @@ export function ProviderDataGovernance() {
     [deferredQuery, domain, includePartitions, selectedDatabase, snapshot?.assets]
   );
   const selectedAsset = snapshot?.assets.find((asset) => asset.assetKey === selectedAssetKey);
+  const requestedAssetMissing = Boolean(
+    requestedAssetKey &&
+      snapshot &&
+      !snapshot.assets.some((asset) => asset.assetKey === requestedAssetKey)
+  );
+
+  useEffect(() => {
+    const nextTab = searchParams.get('tab');
+    if (
+      nextTab &&
+      ['catalog', 'relationships', 'lineage', 'quality', 'policies'].includes(nextTab) &&
+      nextTab !== tab
+    ) {
+      setTab(nextTab as GovernanceTab);
+    }
+    const nextAsset = searchParams.get('asset') ?? undefined;
+    if (nextAsset && nextAsset !== selectedAssetKey) setSelectedAssetKey(nextAsset);
+  }, [searchParams, selectedAssetKey, tab]);
 
   useEffect(() => {
     if (tab !== 'catalog') return;
@@ -598,6 +634,10 @@ export function ProviderDataGovernance() {
 
   const setTabAndScope = (next: GovernanceTab) => {
     setTab(next);
+    const params = new URLSearchParams(searchParams);
+    params.set('tab', next);
+    if (next !== 'catalog' && next !== 'lineage' && next !== 'quality') params.delete('asset');
+    setSearchParams(params);
     setQuery('');
     if (next === 'lineage') {
       setDatabase(ALL);
@@ -623,6 +663,11 @@ export function ProviderDataGovernance() {
 
   return (
     <Stack gap={2.5}>
+      {requestedAssetMissing && (
+        <Alert severity="warning">
+          {t('dataGovernance.asset.deepLinkNotFound', { id: requestedAssetKey })}
+        </Alert>
+      )}
       <Box
         sx={{
           display: 'grid',
@@ -750,98 +795,110 @@ export function ProviderDataGovernance() {
             value="quality"
             label={`${t('dataGovernance.tabs.quality')} (${snapshot.findings.length})`}
           />
+          <Tab
+            icon={<ScrollText size={17} />}
+            iconPosition="start"
+            value="policies"
+            label={t('dataGovernance.tabs.policies')}
+          />
         </Tabs>
       </Box>
 
-      <Stack direction={{ xs: 'column', md: 'row' }} gap={1.25} alignItems={{ md: 'center' }}>
-        <FormField
-          fullWidth={false}
-          size="small"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={t('dataGovernance.searchPlaceholder')}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search size={17} />
-                </InputAdornment>
-              ),
-            },
-          }}
-          sx={{ minWidth: { md: 330 } }}
-        />
-        {(tab === 'catalog' || tab === 'relationships') && (
-          <FormControl size="small" sx={{ minWidth: 210 }}>
-            <InputLabel id="data-governance-domain-label">
-              {t('dataGovernance.filters.domain')}
-            </InputLabel>
-            <Select
-              labelId="data-governance-domain-label"
-              value={domain}
-              label={t('dataGovernance.filters.domain')}
-              onChange={(event) => setDomain(event.target.value)}
-            >
-              <MenuItem value={ALL}>{t('dataGovernance.filters.allDomains')}</MenuItem>
-              {domains.map((item) => (
-                <MenuItem key={item} value={item}>
-                  {item}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-        {tab === 'catalog' && (
-          <Stack direction="row" alignItems="center" gap={0.5}>
-            <Switch
-              size="small"
-              checked={includePartitions}
-              onChange={(event) => setIncludePartitions(event.target.checked)}
-            />
-            <Typography variant="body2">{t('dataGovernance.filters.partitions')}</Typography>
-          </Stack>
-        )}
-        {tab === 'quality' && (
-          <FormControl size="small" sx={{ minWidth: 170 }}>
-            <InputLabel id="data-governance-severity-label">
-              {t('dataGovernance.filters.severity')}
-            </InputLabel>
-            <Select
-              labelId="data-governance-severity-label"
-              value={severity}
-              label={t('dataGovernance.filters.severity')}
-              onChange={(event) => setSeverity(event.target.value)}
-            >
-              <MenuItem value={ALL}>{t('dataGovernance.filters.allSeverities')}</MenuItem>
-              {['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].map((item) => (
-                <MenuItem key={item} value={item}>
-                  {t(`dataGovernance.severity.${item}`)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-        {(query ||
-          ((tab === 'catalog' || tab === 'relationships') && domain !== ALL) ||
-          (tab === 'quality' && severity !== ALL) ||
-          (tab === 'catalog' && includePartitions)) && (
-          <ActionButton
-            intent="quiet"
-            startIcon={<FilterX size={16} />}
-            onClick={() => {
-              setQuery('');
-              setDomain(ALL);
-              setSeverity(ALL);
-              setIncludePartitions(false);
+      {tab !== 'policies' && (
+        <Stack direction={{ xs: 'column', md: 'row' }} gap={1.25} alignItems={{ md: 'center' }}>
+          <FormField
+            fullWidth={false}
+            size="small"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={t('dataGovernance.searchPlaceholder')}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search size={17} />
+                  </InputAdornment>
+                ),
+              },
             }}
-          >
-            {t('dataGovernance.filters.reset')}
-          </ActionButton>
-        )}
-        <Typography variant="caption" color="text.secondary" sx={{ ml: { md: 'auto' } }}>
-          {t('dataGovernance.generatedAt', { value: formatProviderDate(snapshot.generatedAt) })}
-        </Typography>
-      </Stack>
+            sx={{ minWidth: { md: 330 } }}
+          />
+          {(tab === 'catalog' || tab === 'relationships') && (
+            <FormControl size="small" sx={{ minWidth: 210 }}>
+              <InputLabel id="data-governance-domain-label">
+                {t('dataGovernance.filters.domain')}
+              </InputLabel>
+              <Select
+                labelId="data-governance-domain-label"
+                value={domain}
+                label={t('dataGovernance.filters.domain')}
+                onChange={(event) => setDomain(event.target.value)}
+              >
+                <MenuItem value={ALL}>{t('dataGovernance.filters.allDomains')}</MenuItem>
+                {domains.map((item) => (
+                  <MenuItem key={item} value={item}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          {tab === 'catalog' && (
+            <Stack direction="row" alignItems="center" gap={0.5}>
+              <Switch
+                size="small"
+                checked={includePartitions}
+                onChange={(event) => setIncludePartitions(event.target.checked)}
+              />
+              <Typography variant="body2">{t('dataGovernance.filters.partitions')}</Typography>
+            </Stack>
+          )}
+          {tab === 'quality' && (
+            <FormControl size="small" sx={{ minWidth: 170 }}>
+              <InputLabel id="data-governance-severity-label">
+                {t('dataGovernance.filters.severity')}
+              </InputLabel>
+              <Select
+                labelId="data-governance-severity-label"
+                value={severity}
+                label={t('dataGovernance.filters.severity')}
+                onChange={(event) => setSeverity(event.target.value)}
+              >
+                <MenuItem value={ALL}>{t('dataGovernance.filters.allSeverities')}</MenuItem>
+                {['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].map((item) => (
+                  <MenuItem key={item} value={item}>
+                    {t(`dataGovernance.severity.${item}`)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          {(query ||
+            ((tab === 'catalog' || tab === 'relationships') && domain !== ALL) ||
+            (tab === 'quality' && severity !== ALL) ||
+            (tab === 'catalog' && includePartitions)) && (
+            <ActionButton
+              intent="quiet"
+              startIcon={<FilterX size={16} />}
+              onClick={() => {
+                setQuery('');
+                setDomain(ALL);
+                setSeverity(ALL);
+                setIncludePartitions(false);
+              }}
+            >
+              {t('dataGovernance.filters.reset')}
+            </ActionButton>
+          )}
+          <Typography variant="caption" color="text.secondary" sx={{ ml: { md: 'auto' } }}>
+            {t('dataGovernance.generatedAt', { value: formatProviderDate(snapshot.generatedAt) })}
+          </Typography>
+        </Stack>
+      )}
+
+      {tab === 'policies' && (
+        <ProviderDataPolicyStudio assets={snapshot.assets} databases={snapshot.databases} />
+      )}
 
       {tab === 'catalog' && (
         <Box
@@ -871,7 +928,13 @@ export function ProviderDataGovernance() {
               <ListItemButton
                 key={asset.assetKey}
                 selected={asset.assetKey === selectedAssetKey}
-                onClick={() => setSelectedAssetKey(asset.assetKey)}
+                onClick={() => {
+                  setSelectedAssetKey(asset.assetKey);
+                  const params = new URLSearchParams(searchParams);
+                  params.set('tab', 'catalog');
+                  params.set('asset', asset.assetKey);
+                  setSearchParams(params);
+                }}
                 sx={{
                   alignItems: 'flex-start',
                   px: 1.75,

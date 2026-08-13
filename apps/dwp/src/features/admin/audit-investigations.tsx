@@ -41,7 +41,7 @@ import {
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import { formatDate, formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import { ActionButton } from '@dwp-frontend/design-system';
 
 import { alpha } from '@mui/material/styles';
@@ -376,6 +376,7 @@ function EntityNode({ entity }: { entity: AuditCaseEntity }) {
 
 function EventTimeline({ events, limit = 8 }: { events: AuditEvent[]; limit?: number }) {
   const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
   const sorted = [...events]
     .sort((left, right) => Date.parse(right.occurredAt) - Date.parse(left.occurredAt))
     .slice(0, limit);
@@ -429,7 +430,7 @@ function EventTimeline({ events, limit = 8 }: { events: AuditEvent[]; limit?: nu
           <Box minWidth={0} flex={1}>
             <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={0.5}>
               <Typography variant="body2" fontWeight={700} noWrap>
-                {event.action}
+                {display('auditActions', event.action)}
               </Typography>
               <Typography variant="caption" color="text.secondary" flex="0 0 auto">
                 {formatDate(event.occurredAt, { dateStyle: 'short', timeStyle: 'short' })}

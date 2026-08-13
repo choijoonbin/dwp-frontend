@@ -4,7 +4,7 @@ import { RefreshCw, ScrollText } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { listIdentityAuditEvents, listPlatformAuditEvents } from '@dwp-frontend/shared-utils';
 import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -35,16 +35,9 @@ function formatTimestamp(value: string): string {
   });
 }
 
-function fallbackAuditAction(action: string): string {
-  return action
-    .split(/[.-]/u)
-    .filter(Boolean)
-    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
-    .join(' ');
-}
-
 export function AuditLog() {
   const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('sm'));
   const auditQuery = useQuery({
@@ -85,7 +78,7 @@ export function AuditLog() {
         flex: 1,
         renderCell: ({ row }) => (
           <Typography variant="body2" fontWeight={700}>
-            {t(`audit.actions.${row.action}`, { defaultValue: fallbackAuditAction(row.action) })}
+            {display('auditActions', row.action)}
           </Typography>
         ),
       },
@@ -110,7 +103,7 @@ export function AuditLog() {
         width: 112,
         renderCell: ({ row }) => (
           <Chip
-            label={t(`common.status.${row.outcome}`, { defaultValue: row.outcome })}
+            label={display('outcomes', row.outcome)}
             size="small"
             color={row.outcome === 'SUCCESS' ? 'success' : 'error'}
             variant="outlined"
@@ -125,7 +118,7 @@ export function AuditLog() {
         renderCell: ({ row }) => row.correlationId || '—',
       },
     ],
-    [t]
+    [display, t]
   );
 
   if (auditQuery.isLoading) return <AdminPanelLoading label={t('audit.loading')} />;
@@ -198,9 +191,7 @@ export function AuditLog() {
                 >
                   <Box sx={{ minWidth: 0 }}>
                     <Typography component="h3" variant="subtitle2">
-                      {t(`audit.actions.${event.action}`, {
-                        defaultValue: fallbackAuditAction(event.action),
-                      })}
+                      {display('auditActions', event.action)}
                     </Typography>
                     <Typography
                       variant="body2"
@@ -211,9 +202,7 @@ export function AuditLog() {
                     </Typography>
                   </Box>
                   <Chip
-                    label={t(`common.status.${event.outcome}`, {
-                      defaultValue: event.outcome,
-                    })}
+                    label={display('outcomes', event.outcome)}
                     size="small"
                     color={event.outcome === 'SUCCESS' ? 'success' : 'error'}
                     variant="outlined"

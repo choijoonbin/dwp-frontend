@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import { useSearchParams } from 'react-router-dom';
 import {
   Check,
@@ -78,6 +79,7 @@ function ApprovalDecisionDialog({
   onDecide: (reason: string) => Promise<void>;
 }) {
   const { t } = useTranslation('provider');
+  const display = useDisplayDictionary();
   const [reason, setReason] = useState('');
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="sm">
@@ -91,8 +93,8 @@ function ApprovalDecisionDialog({
               })}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {approval.tenantName ?? t('operations.notCreated')} / {approval.riskTier} /{' '}
-              {approval.gateKey}
+              {approval.tenantName ?? t('operations.notCreated')} /{' '}
+              {display('riskTiers', approval.riskTier)} / {approval.gateKey}
             </Typography>
           </Box>
           <TextField
@@ -147,6 +149,7 @@ type OperationFilter = (typeof operationFilters)[number];
 
 export function ProviderOperations() {
   const { t } = useTranslation('provider');
+  const display = useDisplayDictionary();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -674,7 +677,7 @@ export function ProviderOperations() {
                               size="small"
                               color="warning"
                               variant="outlined"
-                              label={approval.riskTier}
+                              label={display('riskTiers', approval.riskTier)}
                             />
                             <Chip size="small" variant="outlined" label={approval.gateKey} />
                           </Stack>

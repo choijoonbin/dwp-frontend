@@ -171,7 +171,7 @@ Wave 완료는 화면이 바뀌었다는 의미가 아니라 실제 API, 상태 
 
 | 실행 단위                                  | 현재 상태           | 반영된 범위                                                                                                                                                                                                                                                                | 남은 출시 조건                                                                                           |
 | ------------------------------------------ | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Wave 0 공통 운영 기반                      | 기반 완료, 전환 중  | 최대 1600px 운영 Grid, Surface·Signal·Context·부분 실패 계약, URL 기간 상태, 320px Reflow와 200% Text-size·Axe 자동 Gate를 Wave 1·Workspace 대표 화면에 적용                                                                                                               | 기존 47개 메뉴의 공통 패턴 전환, 실제 Browser Zoom·Screen Reader 및 CI Browser/OS 수동 증거 `D-10`       |
+| Wave 0 공통 운영 기반                      | 기반 완료, 전환 중  | 최대 1600px 운영 Grid, Surface·Signal·Context·부분 실패 계약, URL 기간 상태, 320px Reflow와 200% Text-size·Axe 자동 Gate를 Wave 1·Workspace 대표 화면에 적용                                                                                                               | 53개 메뉴의 공통 패턴 유지, 실제 Browser Zoom·Screen Reader 및 CI Browser/OS 수동 증거 `D-10`            |
 | Provider 운영 지휘                         | 현재 가능 범위 완료 | 고객 영향 Pulse, 우선 조치 Queue, 서비스·Reliability·테넌트 Drill-down, Freshness·부분 실패 상태                                                                                                                                                                           | 장기 추세, 이상 탐지 품질, 실제 고객 규모 장애 주입                                                      |
 | Provider 서비스 운영·변경 통제·테넌트 자산 | 현재 가능 범위 완료 | Service/Region 운영 신호와 SLO·Error Budget, 변경 Gate·실행 증거, URL 필터·서버 저장 View·최대 3개 테넌트 비교, Tenant 360, 정상·빈·부분 실패 검증                                                                                                                         | Service Topology, 실행기 연계 자동 Rollback·고객 통지 `D-13`, 실제 고객 규모 장애 주입                   |
 | Tenant API 모니터링·감사                   | 현재 가능 범위 완료 | RED/SLO, 기간·서비스 Scope, 배포·관리 변경 Annotation과 상관관계, 이상→요청 상세, 위험 Queue→조사, Note·Task·SLA, SHA-256 종료 보고서와 종료 후 Case Workspace 전체 불변성·동시성 잠금, 보조 API 장애 격리                                                                 | 진짜 비동기 대량 Export Worker·WORM 저장소 `D-12`, 실제 보존 규모 성능·복구 시험                         |
@@ -197,11 +197,11 @@ Wave 1의 내부 구현 가능 범위와 Wave 2의 `Home → Work → Ask → Ac
 전체 잔여 항목의 우선순위·결정 Owner·완료 조건은
 `../06-delivery/DWP 최종 실행 백로그 및 출시 조건 2026-08-12.md`를 단일 실행 등록부로 사용한다.
 
-최종 전수 Gate는 프론트 단위 테스트 109개, 제품 Playwright 260개 중 249개 통과·상호 배타
+최종 전수 Gate는 프론트 단위 테스트 119개, 제품 Playwright 300개 중 289개 통과·상호 배타
 프로젝트 11개 제외·실패 0개, Storybook 상호작용 18개, 백엔드 Clean Gradle 47개 Task,
-Agent Pytest 44개를 통과했다. Auth Flyway V35·Platform V48·People V33·Provider V25와
+Agent Pytest 44개를 통과했다. Auth Flyway V38·Platform V56·People V36·Provider V29와
 PostgreSQL·Redis·Auth·Platform·People·Provider·Agent·Gateway·Frontend의 실제 기동 및
-HTTP 200도 확인했다. 코드 계약 317개·활성 값 1,187개·바인딩 362개를 전수 대조했고,
+HTTP 200도 확인했다. 코드 계약 381개·활성 값 1,441개·바인딩 456개를 전수 대조했고,
 세션 활동 갱신과 토큰 회전의 동시 실행도 원자적 갱신으로 검증했다.
 
 ### 13.2 외부 결정 체크포인트

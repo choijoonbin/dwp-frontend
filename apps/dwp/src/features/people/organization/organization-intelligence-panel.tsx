@@ -1,10 +1,9 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   AlertTriangle,
   ArrowRight,
   Building2,
-  Download,
+  FileLock2,
   GitCompareArrows,
   Layers3,
   MoveRight,
@@ -12,11 +11,11 @@ import {
   ShieldCheck,
   UsersRound,
 } from 'lucide-react';
-import { formatNumber } from '@dwp-frontend/shared-i18n';
+import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { ActionButton } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
@@ -43,6 +42,7 @@ type Props = {
   view: OrganizationIntelligenceView;
   onViewChange: (view: OrganizationIntelligenceView) => void;
   onSelect: (selection: OrgChartSelection) => void;
+  onRequestExport: () => void;
 };
 
 type MetricProps = {
@@ -86,21 +86,6 @@ function riskColor(state: string): 'success' | 'warning' | 'error' | 'default' {
   return 'default';
 }
 
-function quoteCsv(value: unknown): string {
-  const text = value == null ? '' : String(value);
-  return `"${text.replace(/"/g, '""')}"`;
-}
-
-function downloadCsv(fileName: string, rows: unknown[][]) {
-  const csv = `\uFEFF${rows.map((row) => row.map(quoteCsv).join(',')).join('\n')}`;
-  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = fileName;
-  anchor.click();
-  URL.revokeObjectURL(url);
-}
-
 function signed(value: number, fractionDigits = 0): string {
   return formatNumber(value, {
     signDisplay: 'always',
@@ -126,68 +111,9 @@ export function OrganizationIntelligencePanel({
   view,
   onViewChange,
   onSelect,
+  onRequestExport,
 }: Props) {
   const { t } = useTranslation('workforce');
-
-  const csvRows = useMemo(() => {
-    if (!intelligence) return [] as unknown[][];
-    if (view === 'health') {
-      return [
-        [
-          t('orgChart.intelligence.columns.organization'),
-          t('orgChart.intelligence.columns.layer'),
-          t('orgChart.intelligence.columns.headcount'),
-          t('orgChart.intelligence.columns.managerSpan'),
-          t('orgChart.intelligence.columns.openPositions'),
-          t('orgChart.intelligence.columns.contingentRatio'),
-          t('orgChart.intelligence.columns.score'),
-          t('orgChart.intelligence.columns.risk'),
-        ],
-        ...intelligence.organizations.map((row) => [
-          row.organizationName,
-          row.layer,
-          row.totalHeadcount,
-          row.averageManagerSpan,
-          row.openPositionCount,
-          row.contingentRatioPct,
-          row.healthScore,
-          row.riskState,
-        ]),
-      ];
-    }
-    if (view === 'changes') {
-      return [
-        [
-          t('orgChart.intelligence.columns.change'),
-          t('orgChart.intelligence.columns.entity'),
-          t('orgChart.intelligence.columns.before'),
-          t('orgChart.intelligence.columns.after'),
-          t('orgChart.intelligence.columns.risk'),
-        ],
-        ...intelligence.changes.map((row) => [
-          row.changeType,
-          row.entityName,
-          row.fromValue,
-          row.toValue,
-          row.riskState,
-        ]),
-      ];
-    }
-    return [
-      [
-        t('orgChart.intelligence.columns.severity'),
-        t('orgChart.intelligence.columns.issue'),
-        t('orgChart.intelligence.columns.entity'),
-        t('orgChart.intelligence.columns.description'),
-      ],
-      ...intelligence.dataQualityIssues.map((row) => [
-        row.severity,
-        row.issueCode,
-        row.entityName,
-        row.message,
-      ]),
-    ];
-  }, [intelligence, t, view]);
 
   if (loading) {
     return (
@@ -301,14 +227,14 @@ export function OrganizationIntelligencePanel({
           <ToggleButton value="changes">{t('orgChart.intelligence.tabs.changes')}</ToggleButton>
           <ToggleButton value="quality">{t('orgChart.intelligence.tabs.quality')}</ToggleButton>
         </ToggleButtonGroup>
-        <Button
+        <ActionButton
           size="small"
-          variant="outlined"
-          startIcon={<Download size={15} />}
-          onClick={() => downloadCsv(`organization-${view}-${intelligence.asOf}.csv`, csvRows)}
+          intent="secondary"
+          startIcon={<FileLock2 size={15} />}
+          onClick={onRequestExport}
         >
           {t('orgChart.intelligence.export')}
-        </Button>
+        </ActionButton>
       </Stack>
 
       {view === 'health' && (
@@ -808,6 +734,7 @@ function QualityTriageView({
   onSelect: Props['onSelect'];
 }) {
   const { t } = useTranslation('workforce');
+  const display = useDisplayDictionary();
   const severityCount = (severity: OrganizationDataQualityIssue['severity']) =>
     rows.filter((row) => row.severity === severity).length;
   return (
@@ -883,9 +810,7 @@ function QualityTriageView({
               size="small"
               variant="outlined"
               color={riskColor(row.severity)}
-              label={t(`orgChart.intelligence.severity.${row.severity}`, {
-                defaultValue: row.severity,
-              })}
+              label={display('severities', row.severity)}
               sx={{ justifySelf: 'start' }}
             />
             <Box sx={{ minWidth: 0 }}>

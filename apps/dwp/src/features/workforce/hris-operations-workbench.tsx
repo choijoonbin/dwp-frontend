@@ -48,6 +48,7 @@ import {
   OperationalKpiStrip,
   SelectField,
 } from '@dwp-frontend/design-system';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -98,7 +99,7 @@ function errorMessage(error: unknown, fallback: string): string {
 }
 
 function StateChip({ state }: { state: string }) {
-  const { t } = useTranslation('workforce');
+  const display = useDisplayDictionary();
   const color = ['ACTIVE', 'HEALTHY', 'SUCCEEDED', 'RESOLVED'].includes(state)
     ? 'success'
     : ['FAILED', 'CRITICAL'].includes(state)
@@ -106,14 +107,7 @@ function StateChip({ state }: { state: string }) {
       : ['DEGRADED', 'WARNING', 'PARTIAL'].includes(state)
         ? 'warning'
         : 'default';
-  return (
-    <Chip
-      size="small"
-      variant="outlined"
-      color={color}
-      label={t(`provisioning.states.${state}`, { defaultValue: state })}
-    />
-  );
+  return <Chip size="small" variant="outlined" color={color} label={display('states', state)} />;
 }
 
 function formatInstant(value?: string | null): string {
@@ -122,6 +116,7 @@ function formatInstant(value?: string | null): string {
 
 export function HrisOperationsWorkbench() {
   const { t } = useTranslation('workforce');
+  const display = useDisplayDictionary();
   const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -213,11 +208,7 @@ export function HrisOperationsWorkbench() {
     {
       key: 'lastRun',
       label: t('provisioning.hris.kpi.lastRun'),
-      value: runs.data?.[0]
-        ? t(`provisioning.states.${runs.data[0].lifecycleState}`, {
-            defaultValue: runs.data[0].lifecycleState,
-          })
-        : '-',
+      value: runs.data?.[0] ? display('states', runs.data[0].lifecycleState) : '-',
       detail: runs.data?.[0] ? formatInstant(runs.data[0].startedAt) : t('provisioning.never'),
       tone: runs.data?.[0]?.lifecycleState === 'FAILED' ? ('critical' as const) : ('info' as const),
       onSelect: () => setView('runs'),
@@ -445,6 +436,7 @@ function ConnectorView({
   onOperate: (action: () => Promise<unknown>, success: string) => Promise<void>;
 }) {
   const { t } = useTranslation('workforce');
+  const display = useDisplayDictionary();
   if (!connectors.length) {
     return (
       <GuidedEmptyState
@@ -505,7 +497,7 @@ function ConnectorView({
                     {connector.connectorKey}
                   </Typography>
                   <Typography variant="caption" color="text.secondary" noWrap>
-                    {connector.connectorType} · {host}
+                    {display('connectorTypes', connector.connectorType)} · {host}
                   </Typography>
                 </Box>
               </Stack>

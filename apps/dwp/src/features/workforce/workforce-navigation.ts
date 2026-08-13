@@ -2,6 +2,7 @@ import {
   Activity,
   BookKey,
   DatabaseZap,
+  FileLock2,
   LayoutDashboard,
   Network,
   UserRoundSearch,
@@ -11,13 +12,21 @@ import type { LucideIcon } from 'lucide-react';
 
 export type WorkforceSection = 'operate' | 'design' | 'foundation';
 export type WorkforceView =
-  'overview' | 'people' | 'assignments' | 'organization' | 'reference-data' | 'data-operations';
+  | 'overview'
+  | 'people'
+  | 'assignments'
+  | 'organization'
+  | 'reference-data'
+  | 'data-operations'
+  | 'exports';
 
 export type WorkforceNavigationItem = {
   section: WorkforceSection;
   view: WorkforceView;
   path: string;
   icon: LucideIcon;
+  requiredResourceKey?: string;
+  requiredPermissionCode?: string;
 };
 
 export type WorkforceNavigationGroup = {
@@ -74,6 +83,14 @@ export const WORKFORCE_NAVIGATION: readonly WorkforceNavigationGroup[] = [
         view: 'data-operations',
         path: '/workforce/data-operations',
         icon: DatabaseZap,
+      },
+      {
+        section: 'foundation',
+        view: 'exports',
+        path: '/workforce/exports',
+        icon: FileLock2,
+        requiredResourceKey: 'DATA.WORKFORCE',
+        requiredPermissionCode: 'MANAGE',
       },
     ],
   },

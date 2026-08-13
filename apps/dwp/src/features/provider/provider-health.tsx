@@ -14,6 +14,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   createProviderIncident,
   getProviderOperatorProfile,
@@ -347,6 +348,7 @@ function HealthSection({
 
 export function ProviderHealth() {
   const { t } = useTranslation('provider');
+  const display = useDisplayDictionary();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [incidentFilter, setIncidentFilter] = useState<'ACTIVE' | 'RESOLVED' | 'ALL'>('ACTIVE');
@@ -770,7 +772,11 @@ export function ProviderHealth() {
                         <Typography variant="body2" fontWeight={750}>
                           {incident.incidentKey} · {incident.title}
                         </Typography>
-                        <Chip size="small" variant="outlined" label={incident.severity} />
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          label={display('severities', incident.severity)}
+                        />
                         <ProviderStatusChip state={incident.lifecycleState} />
                       </Stack>
                       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.45 }}>

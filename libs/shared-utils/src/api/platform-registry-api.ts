@@ -4,7 +4,13 @@ import type { ApiResponse } from '../types';
 import type { PageResult, ReferenceLifecycle } from './platform-admin-api';
 
 export type RegistryType =
-  'APP' | 'CONNECTOR' | 'AGENT' | 'TOOL' | 'POLICY' | 'API' | 'DATA_PRODUCT';
+  | 'APP'
+  | 'CONNECTOR'
+  | 'AGENT'
+  | 'TOOL'
+  | 'POLICY'
+  | 'API'
+  | 'DATA_PRODUCT';
 export type RiskTier = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
 export type RegistryEntry = {

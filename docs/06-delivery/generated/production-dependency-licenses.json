@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "rootPackage": "@dwp-frontend/workspace",
-  "dependencyCount": 134,
+  "dependencyCount": 133,
   "licenseCounts": {
     "0BSD": 1,
     "Apache-2.0": 1,
     "BSD-3-Clause": 4,
     "ISC": 11,
-    "MIT": 117
+    "MIT": 116
   },
   "packages": [
     {
@@ -801,12 +801,6 @@
       "version": "1.10.2",
       "license": "ISC",
       "repository": "github:eemeli/yaml"
-    },
-    {
-      "name": "zustand",
-      "version": "4.5.7",
-      "license": "MIT",
-      "repository": "git+https://github.com/pmndrs/zustand.git"
     },
     {
       "name": "zustand",

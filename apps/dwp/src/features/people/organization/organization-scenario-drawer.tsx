@@ -16,9 +16,10 @@ import {
   X,
 } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { formatNumber } from '@dwp-frontend/shared-i18n';
+import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   addOrganizationScenarioMove,
+  cancelOrganizationScenario,
   cloneOrganizationScenario,
   createOrganizationScenario,
   decideOrganizationScenario,
@@ -112,6 +113,7 @@ export function OrganizationScenarioDrawer({
   onClose,
 }: Props) {
   const { t } = useTranslation('workforce');
+  const display = useDisplayDictionary();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string>();
@@ -417,9 +419,7 @@ export function OrganizationScenarioDrawer({
                     size="small"
                     variant="outlined"
                     color={statusColor(scenario.lifecycleState)}
-                    label={t(`orgChart.scenarios.states.${scenario.lifecycleState}`, {
-                      defaultValue: scenario.lifecycleState,
-                    })}
+                    label={display('states', scenario.lifecycleState)}
                     sx={{ ml: 0.5 }}
                   />
                 </ListItemButton>
@@ -526,9 +526,7 @@ export function OrganizationScenarioDrawer({
                       size="small"
                       variant="outlined"
                       color={statusColor(selected.lifecycleState)}
-                      label={t(`orgChart.scenarios.states.${selected.lifecycleState}`, {
-                        defaultValue: selected.lifecycleState,
-                      })}
+                      label={display('states', selected.lifecycleState)}
                     />
                     {(selected.approval || selected.lifecycleState === 'PUBLISHED') && (
                       <Chip
@@ -831,10 +829,18 @@ export function OrganizationScenarioDrawer({
                   disabled={!selected.changes.length}
                   icon={<Send size={15} />}
                   actionLabel={t('orgChart.scenarios.submit.action')}
+                  secondaryLabel={t('orgChart.scenarios.cancel.action')}
                   onAction={async () => {
                     const next = await execute(
                       () => submitOrganizationScenario(selected, reason.trim()),
                       t('orgChart.scenarios.messages.submitted')
+                    );
+                    if (next) setReason('');
+                  }}
+                  onSecondary={async () => {
+                    const next = await execute(
+                      () => cancelOrganizationScenario(selected, reason.trim()),
+                      t('orgChart.scenarios.messages.cancelled')
                     );
                     if (next) setReason('');
                   }}
@@ -843,7 +849,26 @@ export function OrganizationScenarioDrawer({
 
               {selected.lifecycleState === 'IN_REVIEW' &&
                 (currentUserId === selected.ownerUserId ? (
-                  <Alert severity="warning">{t('orgChart.scenarios.approval.separation')}</Alert>
+                  <Stack gap={1}>
+                    <Alert severity="warning">{t('orgChart.scenarios.approval.separation')}</Alert>
+                    <WorkflowAction
+                      title={t('orgChart.scenarios.cancel.title')}
+                      help={t('orgChart.scenarios.cancel.help')}
+                      reason={reason}
+                      setReason={setReason}
+                      busy={busy}
+                      icon={<CircleMinus size={15} />}
+                      actionLabel={t('orgChart.scenarios.cancel.action')}
+                      actionColor="error"
+                      onAction={async () => {
+                        const next = await execute(
+                          () => cancelOrganizationScenario(selected, reason.trim()),
+                          t('orgChart.scenarios.messages.cancelled')
+                        );
+                        if (next) setReason('');
+                      }}
+                    />
+                  </Stack>
                 ) : (
                   <WorkflowAction
                     title={t('orgChart.scenarios.approval.title')}
@@ -974,6 +999,7 @@ function WorkflowAction({
   icon,
   actionLabel,
   secondaryLabel,
+  actionColor = 'primary',
   onAction,
   onSecondary,
 }: {
@@ -986,6 +1012,7 @@ function WorkflowAction({
   icon: ReactNode;
   actionLabel: string;
   secondaryLabel?: string;
+  actionColor?: 'primary' | 'error';
   onAction: () => Promise<void>;
   onSecondary?: () => Promise<void>;
 }) {
@@ -1018,7 +1045,8 @@ function WorkflowAction({
           </Button>
         )}
         <Button
-          variant="contained"
+          color={actionColor}
+          variant={actionColor === 'error' ? 'outlined' : 'contained'}
           startIcon={busy ? <CircularProgress size={14} color="inherit" /> : icon}
           disabled={busy || disabled || !reason.trim()}
           onClick={() => void onAction()}

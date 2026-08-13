@@ -144,6 +144,14 @@ export function buildDwpTheme({
               ? 'none'
               : `background-color ${tokens.duration.fast}ms ease-out, border-color ${tokens.duration.fast}ms ease-out, transform ${tokens.duration.fast}ms ease-out`,
             '&:not(.Mui-disabled):active': { transform: 'translateY(1px)' },
+            '&.MuiButton-containedPrimary': {
+              color: contrastText(primary),
+              backgroundColor: primary,
+              '&:hover': {
+                backgroundColor: primary,
+                boxShadow: `0 0 0 3px ${alpha(primary, highContrast ? 0.34 : 0.18)}`,
+              },
+            },
           },
         },
       },

@@ -81,11 +81,13 @@
     "deleting": "삭제 중",
     "scope": {
       "personal": "개인",
+      "team": "팀 공유",
       "organization": "조직 공유",
       "builtIn": "기본 제공"
     },
     "owner": {
       "personal": "나의 뷰",
+      "team": "{{name}} 팀과 공유",
       "organization": "조직에서 관리"
     },
     "editor": {
@@ -94,6 +96,8 @@
       "description": "검색 조건과 필터, 표시 방식을 다시 사용할 수 있도록 저장합니다.",
       "name": "뷰 이름",
       "visibility": "공개 범위",
+      "team": "소유 팀",
+      "teamPlaceholder": "팀 선택",
       "organizationHint": "조직 공유 뷰는 회사 관리자만 게시할 수 있습니다.",
       "personalOwnerHint": "조직 공유 뷰를 개인 범위로 되돌리는 작업은 원 소유자만 할 수 있습니다.",
       "favorite": "즐겨찾기에 추가",
@@ -108,18 +112,18 @@
       "makeDefault": "기본 뷰로 지정",
       "removeDefault": "기본 뷰 해제",
       "edit": "뷰 편집",
-      "delete": "뷰 삭제"
+      "delete": "뷰 보관"
     },
     "deleteDialog": {
-      "title": "저장된 뷰 삭제",
-      "description": "‘{{name}}’ 뷰를 삭제합니다. 이 작업은 되돌릴 수 없습니다."
+      "title": "저장된 뷰 보관",
+      "description": "‘{{name}}’ 뷰를 활성 목록에서 제거하고 거버넌스 이력으로 보관합니다."
     },
     "feedback": {
       "created": "현재 조건을 새 뷰로 저장했습니다.",
       "updated": "저장된 뷰를 업데이트했습니다.",
-      "deleted": "저장된 뷰를 삭제했습니다.",
+      "deleted": "저장된 뷰를 보관했습니다.",
       "saveFailed": "뷰를 저장하지 못했습니다.",
-      "deleteFailed": "뷰를 삭제하지 못했습니다.",
+      "deleteFailed": "뷰를 보관하지 못했습니다.",
       "preferenceFailed": "뷰 환경 설정을 변경하지 못했습니다."
     }
   }

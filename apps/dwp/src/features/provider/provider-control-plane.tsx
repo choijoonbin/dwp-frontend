@@ -3,6 +3,7 @@ export { ProviderCodeContracts } from './provider-code-contracts';
 export { ProviderDataGovernance } from './provider-data-governance';
 export { ProviderCommercial } from './provider-commercial';
 export { ProviderHealth } from './provider-health';
+export { ProviderFeatureRollouts } from './provider-feature-rollouts';
 export { ProviderOperations } from './provider-operations';
 export { ProviderOverview } from './provider-overview';
 export { ProviderSupport } from './provider-support';

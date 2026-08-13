@@ -49,8 +49,8 @@
     },
     "managed": {
       "title": "Managed settings",
-      "description": "Review experience defaults controlled by your organization.",
-      "notice": "These values are set by your organization and cannot be changed from personal settings.",
+      "description": "Review organization-managed experience defaults and exception requests.",
+      "notice": "These values are managed by {{owner}}. If work requires a different value, request an exception with evidence and impact.",
       "groupTitle": "Organization defaults",
       "groupDescription": "Managed values keep the experience consistent across your workspace."
     }
@@ -198,13 +198,56 @@
   "managed": {
     "systemFont": "System UI",
     "tenantScope": "Tenant scope",
+    "ownerFallback": "Tenant administrator",
     "sources": {
       "TENANT_EXPERIENCE_POLICY": "Tenant experience policy"
     },
     "owners": {
       "TENANT_ADMINISTRATOR": "Tenant administrator"
     },
-    "paths": "Managed paths: {{paths}}"
+    "paths": "Managed paths: {{paths}}",
+    "pathLabels": {
+      "appearance.fontFamily": "Product font",
+      "appearance.accentColor": "Brand accent",
+      "navigation.pattern": "Navigation pattern"
+    },
+    "exceptions": {
+      "title": "My exception requests",
+      "description": "Track managed-value requests and the accountable decision. Approval does not apply a value automatically; the policy owner completes a governed change.",
+      "request": "Request exception",
+      "pending": "Pending review",
+      "cancel": "Cancel request",
+      "loadError": "Exception request history could not be loaded.",
+      "emptyTitle": "No exception requests",
+      "emptyDescription": "You are currently using your organization's managed defaults.",
+      "requestedValue": "Requested value: {{value}} · {{date}}",
+      "decisionReason": "Decision reason: {{reason}}",
+      "states": {
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "CANCELLED": "Cancelled",
+        "EXPIRED": "Expired"
+      },
+      "dialog": {
+        "title": "Request a {{setting}} exception",
+        "description": "Send the business purpose and impact to {{owner}}. Approval records authority for a governed change and does not alter the setting immediately.",
+        "requestedValue": "Requested value",
+        "requestedValueHelp": "Enter the specific value required for the work.",
+        "justification": "Business justification",
+        "justificationHelp": "Describe the work and scope in at least 10 characters.",
+        "impact": "Business impact",
+        "impactHelp": "Describe the impact if denied and the expected users in at least 10 characters.",
+        "cancel": "Cancel",
+        "submit": "Request review",
+        "submitting": "Requesting"
+      },
+      "toasts": {
+        "requested": "Managed setting exception review requested.",
+        "cancelled": "Exception request cancelled.",
+        "failed": "The exception request operation could not be completed."
+      }
+    }
   },
   "preview": {
     "live": "Live preview",
@@ -297,6 +340,51 @@
         "healthy": "Ready",
         "managed": "Managed",
         "attention": "Review"
+      }
+    },
+    "privileged": {
+      "title": "My privileged access",
+      "description": "Activate approved, automatically expiring roles only when needed instead of keeping standing administrator access.",
+      "reauthenticationNotice": "After activation or revocation, you will sign in again to receive a token with the current access set.",
+      "loading": "Loading my privileged access",
+      "loadError": "Privileged access information could not be loaded.",
+      "emptyTitle": "No privileged roles are eligible for activation",
+      "emptyDescription": "Ask your company administrator for an eligibility with a defined duration and scope.",
+      "activateTitle": "Request {{role}} activation",
+      "activateDescription": "Enter the least time and business justification. Policy may require approval or stronger authentication.",
+      "activate": "Activate access",
+      "activating": "Requesting...",
+      "duration": "Required duration",
+      "minutes": "{{count}} min",
+      "ticket": "Change or incident ticket",
+      "ticketHelp": "Enter an approved ticket reference when the role policy requires one.",
+      "justification": "Business justification",
+      "justificationHelp": "Describe the task and required scope in at least 10 characters.",
+      "requested": "Privileged access approval requested.",
+      "activatedReauthenticate": "Temporary access is active. Signing in again with the current access set.",
+      "requestError": "Privileged access could not be requested.",
+      "revokeTitle": "End {{role}} access",
+      "revokeDescription": "Active access will be revoked immediately; a pending request will be cancelled.",
+      "revokeReason": "Revocation or cancellation reason",
+      "revoke": "End access",
+      "cancelRequest": "Cancel request",
+      "revokedReauthenticate": "Temporary access was revoked. Signing in again with baseline access.",
+      "cancelled": "Privileged access request cancelled.",
+      "revokeError": "Privileged access could not be ended.",
+      "eligibleUntil": "Eligibility expires {{date}}",
+      "eligibilityNoExpiry": "Eligibility does not expire",
+      "scope": {
+        "TENANT": "Tenant",
+        "ORG_UNIT": "Organization scope",
+        "RESOURCE": "Resource scope"
+      },
+      "state": {
+        "ACTIVE": "Active",
+        "PENDING_APPROVAL": "Awaiting approval",
+        "DENIED": "Denied",
+        "CANCELLED": "Cancelled",
+        "REVOKED": "Revoked",
+        "EXPIRED": "Expired"
       }
     },
     "actions": {

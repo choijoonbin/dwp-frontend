@@ -29,7 +29,7 @@ import {
   foundationTokens,
   mergeFilterSearchParams,
 } from '@dwp-frontend/design-system';
-import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import { formatDate, formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   getOrganizationChart,
   listHrisSyncRuns,
@@ -217,6 +217,7 @@ function RiskOrganizationRow({
 
 export function WorkforceOverview() {
   const { t } = useTranslation('workforce');
+  const display = useDisplayDictionary();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentDate = today();
@@ -1037,9 +1038,7 @@ export function WorkforceOverview() {
                     runs.isError
                       ? t('overview.control.partial')
                       : latestRun
-                        ? t(`overview.syncStates.${latestRun.lifecycleState}`, {
-                            defaultValue: latestRun.lifecycleState,
-                          })
+                        ? display('states', latestRun.lifecycleState)
                         : t('overview.freshness.never')
                   }
                 />

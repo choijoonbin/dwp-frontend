@@ -15,6 +15,7 @@
     "tenants": "Customers & tenants",
     "operations": "Change control",
     "health": "Service operations",
+    "featureRollouts": "Feature rollouts",
     "support": "Privileged support",
     "commercial": "Subscriptions & rights",
     "codeContracts": "Product contracts",
@@ -42,6 +43,10 @@
     "health": {
       "title": "Service operations",
       "description": "Manage service, region, cell health, and customer-impacting incidents."
+    },
+    "feature-rollouts": {
+      "title": "Feature rollout control",
+      "description": "Approve, observe, pause, and restore typed feature configuration by tenant and stage."
     },
     "support": {
       "title": "Privileged support",
@@ -167,7 +172,162 @@
     "ERROR": "Evaluation error",
     "SCHEDULED": "Scheduled",
     "IN_PROGRESS": "In progress",
-    "COMPLETED": "Completed"
+    "COMPLETED": "Completed",
+    "PAUSED": "Paused",
+    "PENDING_APPROVAL": "Pending independent approval",
+    "ROLLED_BACK": "Rolled back",
+    "SUPERSEDED": "Superseded"
+  },
+  "featureRollouts": {
+    "contextLabel": "Feature rollout operating boundary",
+    "context": {
+      "registry": "Configuration registry",
+      "flagCount": "{{count}} flags",
+      "evaluation": "Target evaluation",
+      "deterministic": "Deterministic tenant hash",
+      "externalExecution": "External execution",
+      "locked": "Locked until D-13 approval"
+    },
+    "metrics": {
+      "flags": "Registered features",
+      "flagsDetail": "Feature configuration with validated type, owner, and default.",
+      "pending": "Awaiting approval",
+      "pendingDetail": "A different operator must decide each submission.",
+      "running": "Running rollouts",
+      "runningDetail": "Revisions that are active or paused for observation."
+    },
+    "inventory": {
+      "title": "Rollout revisions",
+      "description": "Trace immutable history from draft through approval, stages, pause, and recovery."
+    },
+    "gridLabel": "Feature rollout revisions",
+    "columns": {
+      "rollout": "Feature and revision",
+      "strategy": "Strategy",
+      "stage": "Current stage",
+      "state": "State",
+      "updated": "Latest milestone"
+    },
+    "empty": {
+      "title": "No rollout revisions yet",
+      "description": "Select a registered flag and define targeting, stages, and observation gates."
+    },
+    "actions": {
+      "newFlag": "Register feature",
+      "newRollout": "Design rollout",
+      "submit": "Request approval",
+      "approve": "Approve",
+      "reject": "Reject",
+      "activate": "Start first stage",
+      "pause": "Pause observation",
+      "resume": "Resume observation",
+      "advance": "Review next stage",
+      "rollback": "Restore previous value"
+    },
+    "createFlag": {
+      "title": "Register feature flag",
+      "action": "Register flag",
+      "guidance": "A feature flag is a durable product contract. Do not store temporary environment values or inline secrets.",
+      "keyHint": "Example: workspace.search-v2",
+      "secretHint": "Secret values must use secret:// references."
+    },
+    "createRollout": {
+      "title": "Design rollout revision",
+      "action": "Create draft",
+      "guidance": "This changes the internal evaluation control plane only. Deployment execution and customer notification remain disabled until D-13 is approved.",
+      "stageHint": "Comma-separated ascending percentages ending at 100.",
+      "targetHint": "Allowed keys: tenantIds, tenantKeys, regions, serviceTiers, isolationModels"
+    },
+    "fields": {
+      "feature": "Feature",
+      "featureKey": "Feature key",
+      "displayName": "Display name",
+      "description": "Business description",
+      "ownerService": "Owner service",
+      "valueType": "Value type",
+      "defaultValue": "Default value JSON",
+      "schema": "Configuration schema JSON",
+      "riskTier": "Risk tier",
+      "rolloutName": "Rollout name",
+      "strategy": "Strategy",
+      "stagePercentages": "Stage exposure",
+      "observationMinutes": "Minimum observation (minutes)",
+      "rolloutValue": "Rollout value JSON",
+      "targeting": "Targeting JSON",
+      "healthGate": "Health gate JSON",
+      "observedHealth": "Observed health JSON",
+      "justification": "Business justification",
+      "reason": "Decision reason",
+      "tenant": "Evaluation tenant"
+    },
+    "strategies": {
+      "RING": "Ring-based stages",
+      "PERCENTAGE": "Percentage stages",
+      "ALL_AT_ONCE": "All targets at once"
+    },
+    "validation": {
+      "schemaObject": "The configuration schema must be a JSON object.",
+      "objectJson": "Targeting and health gates must be JSON objects.",
+      "percentages": "Exposure values must be numbers greater than zero and at most 100."
+    },
+    "stageName": "Stage {{index}} · {{percentage}}%",
+    "revision": "Revision {{revision}}",
+    "revisionIdentity": "{{key}} · revision {{revision}}",
+    "requester": "Requester #{{id}}",
+    "approver": "Approver #{{id}}",
+    "externalLocked": "External execution locked",
+    "stagePlan": "Stages and health gates",
+    "observation": "Minimum {{minutes}} min",
+    "stageExposure": "{{percentage}} percent exposure",
+    "activeStage": "{{name}} is deterministically evaluating {{percentage}}% of targets.",
+    "noAvailableActions": "No next action is available for the current state and permission set.",
+    "completed": "The feature rollout action was recorded.",
+    "actionDialog": {
+      "submit": {
+        "title": "Request independent approval",
+        "description": "After submission, a different approver must review the revision and stage gates."
+      },
+      "approve": {
+        "title": "Approve rollout",
+        "description": "Approval is not execution; an operator must start the first stage separately."
+      },
+      "reject": {
+        "title": "Reject rollout",
+        "description": "The rejection reason is retained permanently with the revision audit trail."
+      },
+      "activate": {
+        "title": "Start first stage",
+        "description": "This activates internal evaluation only. It does not deploy software or notify customers."
+      },
+      "pause": {
+        "title": "Pause observation",
+        "description": "Keep the current exposure while blocking promotion to the next stage."
+      },
+      "resume": {
+        "title": "Resume observation",
+        "description": "Resume observation for the paused current stage."
+      },
+      "advance": {
+        "title": "Review health gate and advance",
+        "description": "Promotion occurs only when evidence passes the configured gate and observation window."
+      },
+      "rollback": {
+        "title": "Restore previous value",
+        "description": "End the current revision and record the previous effective value or default as a recovery revision."
+      }
+    },
+    "evaluation": {
+      "title": "Tenant evaluation preview",
+      "description": "Use the same targeting and deterministic hash as runtime evaluation.",
+      "action": "Evaluate",
+      "result": "{{tenant}} receives {{value}}. Bucket {{bucket}}, current exposure {{exposure}}%.",
+      "reasons": {
+        "DEFAULT": "No active revision; the default value applies",
+        "TARGET_MISS": "Targeting does not match; the default value applies",
+        "PERCENTAGE_EXCLUDED": "Target matches but is outside current exposure",
+        "ROLLOUT_MATCH": "The active rollout value applies"
+      }
+    }
   },
   "domainTypes": { "LOGIN": "Sign-in", "EMAIL": "Email", "CUSTOM": "Custom" },
   "operationTypes": {
@@ -789,9 +949,14 @@
   "support": {
     "title": "Support sessions",
     "description": "Separate approved access from emergency access and revoke active sessions immediately.",
-    "createTitle": "Time-bound support access",
-    "elevationWarning": "Confirm the customer-approved reason and least-privilege scope.",
-    "breakGlassWarning": "Emergency access is created without customer approval and immediately audited as an L3 event.",
+    "workflowTitle": "Support access lifecycle",
+    "workflowDescription": "Request, independently review, activate, expire, and close every customer access path with evidence.",
+    "sessionsTitle": "Active and historical sessions",
+    "sessionsDescription": "Monitor issued credentials, emergency access, expiration, and immediate revocation.",
+    "createTitle": "Request time-bound support access",
+    "elevationWarning": "A standard request is recorded first. A different authorized operator must approve it before activation.",
+    "breakGlassWarning": "Emergency access skips approval, is recorded as L3, and requires an independent post-access review.",
+    "partialRequests": "The request ledger is temporarily unavailable. Session monitoring remains available; request actions are disabled.",
     "accessMode": "Access mode",
     "approvalReference": "Customer approval reference",
     "approvalReferenceHelp": "Enter the ticket, change request, or customer approval record identifier.",
@@ -806,31 +971,76 @@
       "ALL": "All"
     },
     "metrics": {
+      "pendingApproval": "Awaiting approval",
       "active": "Active sessions",
       "breakGlass": "Active emergency access",
-      "expiring": "Expiring within 15 min"
+      "expiring": "Expiring within 15 min",
+      "pendingReview": "Post-reviews due"
     },
     "minutes": "{{count}} minutes",
     "activated": "Approved tenant support mode started.",
+    "requestSubmitted": "Support access request submitted for independent review.",
     "expiresAt": "Expires: {{value}}",
     "revokeReason": "Support session ended by provider operator",
     "revoked": "Support session revoked.",
-    "actions": { "create": "Create support session", "revoke": "Revoke support session" },
+    "actions": {
+      "create": "Request support access",
+      "request": "Submit for review",
+      "activateEmergency": "Activate emergency access",
+      "activate": "Activate",
+      "audit": "View audit evidence",
+      "revoke": "Revoke support session",
+      "APPROVED": "Approve",
+      "DENIED": "Deny",
+      "CANCELLED": "Cancel request",
+      "REVIEWED": "Complete review"
+    },
+    "messages": {
+      "APPROVED": "Support access approved.",
+      "DENIED": "Support access denied.",
+      "CANCELLED": "Support access request cancelled.",
+      "REVIEWED": "Post-access review completed."
+    },
+    "actionDialog": {
+      "reviewSummary": "Review evidence and conclusion",
+      "APPROVED": {
+        "title": "Approve support access",
+        "description": "Confirm customer evidence, purpose, least privilege, and duration. You cannot approve your own request."
+      },
+      "DENIED": {
+        "title": "Deny support access",
+        "description": "Record a specific denial reason so the requester and audit trail can act on it."
+      },
+      "CANCELLED": {
+        "title": "Cancel support access request",
+        "description": "Cancellation closes the pending approval and prevents later activation."
+      },
+      "REVIEWED": {
+        "title": "Complete post-access review",
+        "description": "Confirm the session ended, activity matched the approved purpose, and any follow-up evidence is recorded."
+      }
+    },
     "empty": {
       "firstUseTitle": "There are no support sessions",
       "firstUseDescription": "Create a session only after confirming customer approval, least-privilege scopes, and expiration.",
       "noResultsTitle": "No support sessions match this state",
       "noResultsDescription": "Choose another state or review the full history.",
-      "showAll": "View all history"
+      "showAll": "View all history",
+      "noRequestsTitle": "No governed access requests",
+      "noRequestsDescription": "Standard access starts here and remains inactive until an independent reviewer approves it."
     },
     "columns": {
       "tenant": "Tenant",
       "operator": "Operator",
+      "requester": "Requester",
+      "purpose": "Purpose",
       "scopes": "Scopes",
       "mode": "Access mode",
       "risk": "Risk",
       "expires": "Expires",
-      "state": "State"
+      "state": "State",
+      "decisionDue": "Decision expires",
+      "actions": "Next action"
     },
     "scopes": {
       "TENANT_CONFIGURATION_READ": "Read tenant configuration",
@@ -839,18 +1049,36 @@
     }
   },
   "commercial": {
+    "completed": "The commercial renewal state was updated.",
+    "context": {
+      "label": "Commercial governance context",
+      "scope": "Portfolio scope",
+      "allCustomers": "All customer companies",
+      "approval": "Decision control",
+      "separatedApproval": "Independent approval",
+      "externalExecution": "Entitlement delivery",
+      "locked": "Locked pending adapter contract"
+    },
     "metrics": {
       "active": "Active subscriptions",
       "trials": "Trials",
       "expiring": "Renewing within 90 days",
-      "uncontracted": "Companies without subscription"
+      "expiringDetail": "Contracts requiring renewal attention",
+      "uncontracted": "Companies without subscription",
+      "pendingApproval": "Awaiting approval",
+      "pendingApprovalDetail": "Renewal proposals requiring an independent decision",
+      "entitlementChanges": "Entitlement impact",
+      "entitlementChangesDetail": "Proposals that add or remove product rights",
+      "manualActions": "Delivery actions blocked",
+      "manualActionsDetail": "Published changes waiting for an approved delivery adapter"
     },
     "plans": {
       "title": "Service plan portfolio",
       "description": "Versioned plans and their customer and tenant deployment footprint.",
       "customers": "Customer companies",
       "tenants": "Tenants",
-      "version": "{{key}} · version {{version}}"
+      "version": "{{key}} · version {{version}}",
+      "deployment": "{{customers}} companies · {{tenants}} tenants"
     },
     "subscriptions": {
       "title": "Customer subscriptions & renewals",
@@ -858,7 +1086,8 @@
     },
     "adoption": {
       "title": "Entitlement adoption",
-      "description": "The share of active tenants assigned to each product entitlement."
+      "description": "The share of active tenants assigned to each product entitlement.",
+      "progress": "{{name}} entitlement adoption"
     },
     "columns": {
       "customer": "Customer company",
@@ -867,10 +1096,81 @@
       "tenants": "Tenants",
       "entitlements": "Active rights",
       "renewal": "Renewal or end",
-      "state": "State"
+      "state": "State",
+      "actions": "Next action"
     },
     "noReference": "No reference",
-    "noEndDate": "Auto-renewing"
+    "noEndDate": "Auto-renewing",
+    "actions": {
+      "propose": "Propose renewal",
+      "submitRenewal": "Submit for approval",
+      "submittingRenewal": "Submitting renewal",
+      "approve": "Approve",
+      "reject": "Reject",
+      "publish": "Publish contract",
+      "publishing": "Publishing contract",
+      "viewAudit": "View audit evidence"
+    },
+    "renewals": {
+      "title": "Renewal decision queue",
+      "description": "Review commercial changes, customer and entitlement impact, approval evidence, and delivery readiness.",
+      "partialFailure": "Subscription data remains available, but the renewal decision queue could not be loaded.",
+      "emptyTitle": "No renewal proposals",
+      "emptyDescription": "Create a proposal from a customer subscription when its plan, term, or contract reference must change.",
+      "createTitle": "Propose renewal for {{company}}",
+      "createDescription": "Capture the target commercial state. An independent operator must approve it before publishing.",
+      "approvalGuidance": "Submitting creates an immutable impact snapshot. It does not change the customer subscription until independent approval and publication.",
+      "currentPlan": "Current plan",
+      "proposedPlan": "Proposed plan",
+      "currentTerm": "Current end: {{date}}",
+      "currentEnd": "Current contract end",
+      "proposedEnd": "Proposed contract end",
+      "contractReferenceHelp": "Use the approved customer contract or renewal reference.",
+      "reasonHelp": "Record the business basis and evidence reviewed. Enter at least 10 characters.",
+      "revision": "Revision {{revision}}",
+      "entitlementImpact": "Entitlement and tenant impact",
+      "tenantImpact": "{{count}} tenant(s) are within this company scope.",
+      "added": "Add {{entitlement}}",
+      "removed": "Remove {{entitlement}}",
+      "noRightsChange": "No product-right change",
+      "businessReason": "Business reason",
+      "controlEvidence": "Control evidence",
+      "requestedBy": "Requested",
+      "actorAt": "{{actor}} · {{time}}",
+      "decisionDue": "Decision expires",
+      "decidedBy": "Decision",
+      "publishedBy": "Published",
+      "evidenceHash": "Evidence hash",
+      "awaitingDecision": "Awaiting independent decision",
+      "notPublished": "Not published",
+      "externalExecutionLocked": "The contract metadata is published. Entitlement delivery and customer notification remain blocked until the D-13 adapter contract is approved.",
+      "selfApproval": "You requested this proposal. Separation of duties prevents you from deciding it.",
+      "fields": {
+        "targetPlan": "Target service plan",
+        "endsAt": "Proposed contract end",
+        "contractReference": "Proposed contract reference",
+        "reason": "Renewal reason and evidence",
+        "decisionReason": "Decision reason"
+      },
+      "validation": {
+        "futureDate": "Choose a future contract end."
+      },
+      "columns": {
+        "change": "Plan change",
+        "impact": "Tenants",
+        "due": "Decision expires"
+      }
+    },
+    "decision": {
+      "description": "Decide {{company}} revision {{revision}} after reviewing the term, entitlement impact, and customer evidence.",
+      "reasonHelp": "Record the evidence and policy basis for this independent decision.",
+      "approve": { "title": "Approve renewal proposal" },
+      "reject": { "title": "Reject renewal proposal" }
+    },
+    "publish": {
+      "title": "Publish approved contract change",
+      "description": "Publish {{company}} on {{plan}}? This updates commercial metadata only. Entitlement delivery and customer notification stay locked."
+    }
   },
   "audit": {
     "title": "Provider audit events",
@@ -880,6 +1180,7 @@
     "allTenants": "All tenants",
     "allCategories": "All categories",
     "allOutcomes": "All outcomes",
+    "deepLinkNotFound": "Audit event {{id}} is unavailable or outside your permitted scope.",
     "metrics": {
       "events": "24-hour events",
       "failed": "24-hour failures",
@@ -906,6 +1207,7 @@
     "detail": {
       "title": "Audit event details",
       "target": "Target",
+      "rawCode": "Raw evidence code",
       "snapshot": "Redacted event snapshot"
     },
     "outcomes": { "SUCCESS": "Success", "FAILED": "Failed", "DENIED": "Denied" }
@@ -1035,7 +1337,8 @@
       "catalog": "Asset catalog",
       "relationships": "ER relationships",
       "lineage": "Data flow",
-      "quality": "Quality & cleanup review"
+      "quality": "Quality & cleanup review",
+      "policies": "Policy control"
     },
     "filters": {
       "domain": "Business domain",
@@ -1051,6 +1354,7 @@
     },
     "asset": {
       "selectPrompt": "Select an asset to inspect its column contract and control posture.",
+      "deepLinkNotFound": "Data asset {{id}} is unavailable or outside your permitted scope.",
       "noDescription": "No reviewed business description exists yet.",
       "tenantScoped": "Tenant isolated",
       "reviewRequired": "Ownership decision required",
@@ -1141,6 +1445,132 @@
       "selectPrompt": "Select a review item to inspect its evidence and recommended action.",
       "recommendation": "Recommended action",
       "evidence": "Evidence"
+    },
+    "policy": {
+      "revision": "Revision {{revision}}",
+      "revisionIdentity": "{{key}} · revision {{revision}}",
+      "guidance": "Policies are versioned control contracts. A fresh impact preview and approval by a different operator are required before publication.",
+      "title": "Data policy control",
+      "description": "Define classification, minimization, residency, retention, deletion, legal hold, restricted-field, and tenant-isolation controls against live catalog evidence.",
+      "completed": "The policy operation completed and the control ledger was refreshed.",
+      "emptySelection": "Select a policy revision to inspect its rule, impact evidence, and approval state.",
+      "editor": {
+        "policyTitle": "Register data policy",
+        "revisionTitle": "Create policy revision",
+        "guidance": "Policy identity and scope remain stable across revisions. Runtime enforcement stays disabled until its separately approved integration gate is open.",
+        "keyHint": "Stable lowercase key, for example privacy.customer-retention"
+      },
+      "fields": {
+        "classification": "Required classification",
+        "allowedFields": "Allowed fields",
+        "csvHint": "Enter comma-separated stable field or region identifiers.",
+        "purpose": "Approved purpose",
+        "allowedRegions": "Allowed regions",
+        "retentionDays": "Retention period (days)",
+        "deletionSlaDays": "Deletion SLA (days)",
+        "deletionMode": "Deletion method",
+        "holdKey": "Legal hold reference",
+        "holdActive": "Hold is active",
+        "restrictedFields": "Restricted fields",
+        "handling": "Required handling",
+        "tenantColumns": "Tenant boundary columns",
+        "tenantRlsHint": "At least one listed column must exist on every in-scope tenant asset.",
+        "policyKey": "Policy key",
+        "displayName": "Policy name",
+        "description": "Purpose and control intent",
+        "policyType": "Policy type",
+        "scopeType": "Scope type",
+        "scopeRef": "Catalog scope",
+        "ownerService": "Owning service",
+        "rule": "Versioned policy rule",
+        "justification": "Revision justification",
+        "reason": "Decision or operation reason"
+      },
+      "types": {
+        "CLASSIFICATION": "Classification",
+        "MINIMIZATION": "Data minimization",
+        "RESIDENCY": "Data residency",
+        "RETENTION": "Retention",
+        "DELETION": "Deletion",
+        "LEGAL_HOLD": "Legal hold",
+        "RESTRICTED_FIELD": "Restricted fields",
+        "TENANT_RLS": "Tenant row isolation"
+      },
+      "scopes": {
+        "GLOBAL": "All governed assets",
+        "DATABASE": "Database boundary",
+        "ASSET": "Single catalog asset"
+      },
+      "deletionModes": {
+        "SOFT_DELETE": "Soft delete",
+        "HARD_DELETE": "Hard delete",
+        "ANONYMIZE": "Irreversible anonymization"
+      },
+      "handling": {
+        "MASK": "Mask on read",
+        "DENY": "Deny access",
+        "TOKENIZE": "Tokenize"
+      },
+      "actions": {
+        "createPolicy": "Register policy",
+        "createRevision": "Create revision",
+        "preview": "Preview impact",
+        "submit": "Request approval",
+        "approve": "Approve revision",
+        "reject": "Reject revision",
+        "publish": "Publish policy",
+        "rollback": "Prepare rollback"
+      },
+      "actionDialog": {
+        "preview": {
+          "title": "Generate impact preview",
+          "description": "The current catalog snapshot is evaluated and fixed to an immutable evidence hash."
+        },
+        "submit": {
+          "title": "Submit for independent approval",
+          "description": "The revision becomes immutable. Its author cannot approve it."
+        },
+        "approve": {
+          "title": "Approve policy revision",
+          "description": "Confirm that scope, blockers, warnings, and rollback expectations were independently reviewed."
+        },
+        "reject": {
+          "title": "Reject policy revision",
+          "description": "Record an actionable rejection reason for the policy owner."
+        },
+        "publish": {
+          "title": "Publish approved policy",
+          "description": "This makes the revision the active control contract and supersedes the prior revision."
+        },
+        "rollback": {
+          "title": "Prepare rollback revision",
+          "description": "Rollback creates a new governed draft from the previous active rule; it does not bypass preview or approval."
+        }
+      },
+      "impact": {
+        "title": "Immutable impact evidence",
+        "notPreviewed": "Generate a preview before requesting approval.",
+        "summary": "{{count}} catalog assets evaluated · {{blockers}} blockers · {{warnings}} warnings",
+        "blockers": "Publication blockers",
+        "warnings": "Operational warnings",
+        "generated": "Generated {{value}} · evidence {{hash}}",
+        "codes": {
+          "SCOPE_HAS_NO_LIVE_ASSETS": "No live assets match the selected scope.",
+          "RESTRICTED_FIELDS_NOT_FOUND": "Restricted fields were not found: {{detail}}",
+          "MINIMIZATION_FIELDS_NOT_FOUND": "Allowed minimization fields were not found: {{detail}}",
+          "NO_TENANT_SCOPED_ASSETS": "No tenant-scoped assets exist in the selected scope.",
+          "TENANT_COLUMN_MISSING": "A required tenant boundary column is missing: {{detail}}",
+          "NON_TENANT_ASSETS_EXCLUDED": "Non-tenant assets are excluded from row-isolation enforcement: {{detail}}",
+          "RUNTIME_RESIDENCY_ADAPTER_REQUIRES_R3_04": "Runtime residency enforcement remains locked until R3-04 infrastructure approval.",
+          "DELETION_WORKER_REQUIRES_APPROVED_INFRASTRUCTURE": "The deletion worker remains locked until its infrastructure and runbook are approved.",
+          "ACTIVE_LEGAL_HOLD": "An active legal hold blocks retention or deletion for this scope: {{detail}}"
+        }
+      },
+      "history": "Revision history",
+      "empty": {
+        "title": "No governed data policies yet",
+        "description": "Register the first policy against a live catalog scope; publication will require impact evidence and an independent approver."
+      }
     },
     "graph": {
       "columns": "{{count}} columns",

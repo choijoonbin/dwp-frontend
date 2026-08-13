@@ -27,6 +27,36 @@ describe('buildDwpTheme', () => {
     expect(theme.palette.primary.main).toBe(foundationTokens.color.product.primary);
   });
 
+  it('keeps contained primary actions on the accessible tenant accent in every interaction state', () => {
+    const theme = buildDwpTheme(baseInput);
+    const buttonRoot = theme.components?.MuiButton?.styleOverrides?.root as {
+      '&.MuiButton-containedPrimary'?: {
+        color?: string;
+        backgroundColor?: string;
+        '&:hover'?: { backgroundColor?: string };
+      };
+    };
+    const containedPrimary = buttonRoot['&.MuiButton-containedPrimary'];
+
+    expect(containedPrimary?.color).toBe('#FFFFFF');
+    expect(containedPrimary?.backgroundColor).toBe(foundationTokens.color.product.primary);
+    expect(containedPrimary?.['&:hover']?.backgroundColor).toBe(
+      foundationTokens.color.product.primary
+    );
+  });
+
+  it('uses dark action text when a tenant chooses a light accent', () => {
+    const theme = buildDwpTheme({ ...baseInput, accentColor: '#F4D35E' });
+    const buttonRoot = theme.components?.MuiButton?.styleOverrides?.root as {
+      '&.MuiButton-containedPrimary'?: { color?: string; backgroundColor?: string };
+    };
+
+    expect(buttonRoot['&.MuiButton-containedPrimary']).toMatchObject({
+      color: '#0F151D',
+      backgroundColor: '#F4D35E',
+    });
+  });
+
   it('resolves density metrics from the DTCG token adapter', () => {
     const theme = buildDwpTheme({ ...baseInput, density: 'compact' });
     const buttonRoot = theme.components?.MuiButton?.styleOverrides?.root as {

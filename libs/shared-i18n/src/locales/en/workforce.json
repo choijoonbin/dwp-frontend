@@ -54,6 +54,9 @@
         },
         "data-operations": {
           "label": "HRIS data operations"
+        },
+        "exports": {
+          "label": "Governed data exports"
         }
       }
     }
@@ -106,6 +109,11 @@
         "eyebrow": "Workforce / Data foundation",
         "title": "HRIS data operations",
         "description": "Control source connectors, mapping profiles, synchronization, and reconciliation."
+      },
+      "exports": {
+        "eyebrow": "Workforce / Data foundation",
+        "title": "Governed data exports",
+        "description": "Review data boundaries, request controlled exports, and retain verifiable lifecycle evidence."
       }
     }
   },
@@ -644,7 +652,7 @@
     },
     "intelligence": {
       "loading": "Analyzing organization operations",
-      "export": "Export CSV",
+      "export": "Request governed export",
       "empty": "No items were found for this period.",
       "noSignals": "No risk signal detected",
       "tabs": {
@@ -935,6 +943,11 @@
         "help": "Record the purpose and expected impact, then request an independent review.",
         "action": "Request review"
       },
+      "cancel": {
+        "title": "Cancel scenario",
+        "help": "Close this option and its pending approval while preserving the decision evidence and audit history.",
+        "action": "Cancel scenario"
+      },
       "approval": {
         "title": "Independent approval",
         "help": "Review the baseline and proposed changes before approving or rejecting.",
@@ -978,6 +991,7 @@
         "submitted": "Independent review requested.",
         "approved": "Scenario approved.",
         "rejected": "Scenario rejected.",
+        "cancelled": "Scenario and its pending approval were cancelled.",
         "published": "Approved changes published as effective-dated history."
       }
     },
@@ -1011,6 +1025,144 @@
     "workerTypes": {
       "EMPLOYEE": "Employee",
       "CONTINGENT": "Contingent worker"
+    }
+  },
+  "exports": {
+    "loading": "Loading governed export controls",
+    "datasets": {
+      "ORGANIZATION_INTELLIGENCE": {
+        "name": "Organization intelligence",
+        "description": "Organization health, comparison, and data-quality decision evidence."
+      },
+      "WORKFORCE_DIRECTORY": {
+        "name": "Workforce directory",
+        "description": "Governed workforce directory rows within the resolved population."
+      },
+      "ASSIGNMENT_REGISTER": {
+        "name": "Assignment register",
+        "description": "Effective-dated worker and assignment records within the approved boundary."
+      }
+    },
+    "policy": {
+      "title": "Export policy preview",
+      "evaluating": "Evaluating the current workforce boundary",
+      "readyTitle": "Controlled execution is available",
+      "readyDescription": "This request can enter the governed worker queue with masking, watermarking, expiry, and integrity evidence.",
+      "blockedTitle": "Execution is held at the release gate",
+      "blockedDescription": "You can record and audit the request now. No artifact will be produced until every external security decision is approved.",
+      "masking": "Masking: {{profile}}",
+      "retention": "Artifact retention: {{hours}} hours"
+    },
+    "request": {
+      "title": "Request a governed export",
+      "description": "Record the accountable recipient and business purpose before the request enters the controlled worker queue.",
+      "blockedDescription": "Record this business demand and its evidence while execution remains disabled by the release gate.",
+      "recipientHelp": "Identify the accountable person, team, or controlled destination.",
+      "purposeHelp": "Describe why the data is needed and how it will be handled.",
+      "sourceHelp": "Enter an approved ticket, case, or business request reference."
+    },
+    "decision": {
+      "cancelTitle": "Cancel export request",
+      "cancelDescription": "Cancellation is recorded in the immutable request timeline. A running worker will stop before publication.",
+      "retryTitle": "Authorize manual retry",
+      "retryDescription": "Start one new governed retry cycle after reviewing secured failure evidence.",
+      "reasonHelp": "Provide a reviewable rationale of at least 10 characters."
+    },
+    "actions": {
+      "newRequest": "New export request",
+      "submit": "Submit controlled request",
+      "recordBlocked": "Record blocked request",
+      "submitting": "Recording request",
+      "saving": "Saving decision",
+      "cancelRequest": "Cancel request",
+      "retry": "Authorize retry"
+    },
+    "fields": {
+      "dataset": "Data product",
+      "recipient": "Accountable recipient",
+      "purpose": "Business purpose",
+      "sourceReference": "Authoritative request reference",
+      "decisionReason": "Decision rationale",
+      "selection": "Source selection",
+      "boundary": "Approved population and fields",
+      "controls": "Output controls",
+      "watermark": "Accountability watermark",
+      "requestEvidence": "Request integrity evidence",
+      "artifactEvidence": "Artifact integrity evidence",
+      "retention": "Artifact expiry"
+    },
+    "selection": {
+      "view": "Insight view",
+      "asOf": "Effective date",
+      "compareTo": "Comparison date",
+      "scenarioId": "Scenario",
+      "rootOrganizationId": "Root organization",
+      "query": "Search",
+      "status": "Status",
+      "organization": "Organization",
+      "location": "Location",
+      "grade": "Grade",
+      "role": "Role"
+    },
+    "values": {
+      "tenantScope": "Entire approved tenant population",
+      "organizationScope": "{{count}} approved organization scopes",
+      "currentScope": "Current approved scope",
+      "controls": "{{format}} · {{masking}} · accountable watermark",
+      "sha256": "SHA-256 {{value}}",
+      "artifactSize": "{{size}} bytes retained as integrity evidence",
+      "noArtifact": "No artifact has been published"
+    },
+    "blockers": {
+      "D-09": "D-09 · Key management and artifact storage",
+      "D-12": "D-12 · Data export and retention policy"
+    },
+    "kpi": {
+      "label": "Governed export lifecycle summary",
+      "requests": "Recorded requests",
+      "blocked": "Held by release gate",
+      "active": "Active processing",
+      "evidence": "Completed or expired evidence"
+    },
+    "queue": {
+      "title": "Export request register",
+      "description": "Inspect the accountable request, policy snapshot, worker attempts, and retained integrity evidence.",
+      "label": "Governed export request register",
+      "count_one": "{{count}} request",
+      "count_other": "{{count}} requests"
+    },
+    "columns": {
+      "dataset": "Data product",
+      "state": "Lifecycle state",
+      "scope": "Approved scope",
+      "recipient": "Recipient",
+      "requestedAt": "Requested"
+    },
+    "timeline": {
+      "title": "Immutable processing timeline",
+      "summary": "{{attempts}} worker attempts · {{manualRetries}} manual retry cycles",
+      "loading": "Loading processing evidence",
+      "empty": "No processing evidence has been recorded yet."
+    },
+    "events": {
+      "BLOCKED": "Held by release gate",
+      "QUEUED": "Queued for governed processing",
+      "CLAIMED": "Claimed by controlled worker",
+      "RETRY_SCHEDULED": "Retry scheduled",
+      "FAILED": "Processing failed",
+      "COMPLETED": "Artifact evidence completed",
+      "CANCELLED": "Request cancelled",
+      "EXPIRED": "Artifact retention expired"
+    },
+    "empty": {
+      "title": "No export requests have been recorded",
+      "description": "Preview the current policy boundary and create the first accountable request."
+    },
+    "toasts": {
+      "submitted": "The governed export request entered the controlled queue.",
+      "blockedRecorded": "The blocked export demand and policy evidence were recorded.",
+      "cancelled": "The export cancellation was recorded.",
+      "retried": "A governed manual retry cycle was authorized."
     }
   },
   "provisioning": {

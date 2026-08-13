@@ -15,9 +15,12 @@ import {
   SearchCheck,
   Settings2,
   ShieldCheck,
+  SlidersHorizontal,
   UsersRound,
   ShieldAlert,
   Network,
+  Languages,
+  LibraryBig,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
@@ -28,10 +31,14 @@ export type AdminView =
   | 'branding'
   | 'home-experience'
   | 'announcements'
+  | 'preference-exceptions'
+  | 'localization'
   | 'access'
   | 'app-access-requests'
   | 'access-reviews'
   | 'roles'
+  | 'workforce-access'
+  | 'saved-view-custody'
   | 'provisioning'
   | 'catalog'
   | 'navigation'
@@ -84,6 +91,18 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         path: '/admin/experience/announcements',
         icon: Megaphone,
       },
+      {
+        section: 'experience',
+        view: 'preference-exceptions',
+        path: '/admin/experience/preference-exceptions',
+        icon: SlidersHorizontal,
+      },
+      {
+        section: 'experience',
+        view: 'localization',
+        path: '/admin/experience/localization',
+        icon: Languages,
+      },
     ],
   },
   {
@@ -114,6 +133,22 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'roles',
         path: '/admin/identity/roles',
         icon: KeyRound,
+      },
+      {
+        section: 'identity',
+        view: 'workforce-access',
+        path: '/admin/identity/workforce-access',
+        icon: UsersRound,
+        requiredResourceKey: 'ADMIN.WORKFORCE_ACCESS',
+        requiredPermissionCode: 'MANAGE',
+      },
+      {
+        section: 'identity',
+        view: 'saved-view-custody',
+        path: '/admin/identity/saved-view-custody',
+        icon: LibraryBig,
+        requiredResourceKey: 'ADMIN.SAVED_VIEW_CUSTODY',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'identity',

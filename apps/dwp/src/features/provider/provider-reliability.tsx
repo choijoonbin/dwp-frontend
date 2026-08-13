@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import { Link as RouterLink } from 'react-router-dom';
 import { CalendarClock, ListChecks, Plus } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -308,6 +309,7 @@ export function ProviderReliability({
   canSchedule: boolean;
 }) {
   const { t } = useTranslation('provider');
+  const display = useDisplayDictionary();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [view, setView] = useState<ReliabilityView>('SLO');
@@ -524,7 +526,11 @@ export function ProviderReliability({
                 gap={{ xs: 1, md: 2 }}
                 sx={{ py: 1.4 }}
               >
-                <Chip size="small" variant="outlined" label={finding.riskTier} />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={display('riskTiers', finding.riskTier)}
+                />
                 <Box sx={{ minWidth: 0, flex: 1 }}>
                   <Typography variant="body2" fontWeight={750} noWrap>
                     {finding.controlName}

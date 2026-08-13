@@ -39,7 +39,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
-import { RiskScore, SeverityChip, fallbackAction } from './audit-ui';
+import { RiskScore, SeverityChip, useAuditActionLabel } from './audit-ui';
 
 import type { GridColDef, GridPaginationModel } from '@mui/x-data-grid';
 import type {
@@ -63,6 +63,7 @@ const CLASSIFICATIONS: EventClassification[] = ['INTERNAL', 'CONFIDENTIAL', 'RES
 
 function EnvelopeEvidence({ event }: { event: EventEnvelope }) {
   const { t } = useTranslation('admin');
+  const auditActionLabel = useAuditActionLabel();
   const states = [
     { key: 'before', label: t('auditControl.correlation.detail.before'), value: event.beforeState },
     { key: 'after', label: t('auditControl.correlation.detail.after'), value: event.afterState },
@@ -78,7 +79,7 @@ function EnvelopeEvidence({ event }: { event: EventEnvelope }) {
       <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
         <Box sx={{ minWidth: 0 }}>
           <Typography component="p" variant="subtitle2">
-            {fallbackAction(event.eventType)}
+            {auditActionLabel(event.eventType)}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             {t('auditControl.correlation.detail.envelopeVersion', {
@@ -168,6 +169,7 @@ function EnvelopeEvidence({ event }: { event: EventEnvelope }) {
 
 export function AuditEventCorrelations() {
   const { t } = useTranslation('admin');
+  const auditActionLabel = useAuditActionLabel();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('lg'));
   const toast = useToast();
@@ -229,7 +231,7 @@ export function AuditEventCorrelations() {
         renderCell: ({ row }) => (
           <Box sx={{ minWidth: 0, py: 0.5 }}>
             <Typography variant="body2" fontWeight={700} noWrap>
-              {fallbackAction(row.latestEventType)}
+              {auditActionLabel(row.latestEventType)}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap>
               {t('auditControl.correlation.flowMeta', {
@@ -285,7 +287,7 @@ export function AuditEventCorrelations() {
         renderCell: ({ row }) => <RiskScore value={row.maxRiskScore} />,
       },
     ],
-    [t]
+    [auditActionLabel, t]
   );
 
   const pageRows = correlationsQuery.data?.content ?? [];
@@ -535,7 +537,7 @@ export function AuditEventCorrelations() {
                     <Box sx={{ minWidth: 0, width: 1 }}>
                       <Stack direction="row" justifyContent="space-between" gap={1}>
                         <Typography component="p" variant="subtitle2" noWrap>
-                          {fallbackAction(row.latestEventType)}
+                          {auditActionLabel(row.latestEventType)}
                         </Typography>
                         <SeverityChip severity={row.maxSeverity} />
                       </Stack>
@@ -661,7 +663,7 @@ export function AuditEventCorrelations() {
                   selectedId={selectedEventId ?? undefined}
                   items={detailQuery.data.events.map((event) => ({
                     id: event.eventId,
-                    title: fallbackAction(event.eventType),
+                    title: auditActionLabel(event.eventType),
                     summary: `${event.subjectDisplayName || event.subjectId} / ${t(
                       `auditControl.correlation.domain.${event.domain}`
                     )}`,

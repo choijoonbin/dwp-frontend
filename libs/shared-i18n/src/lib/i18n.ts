@@ -20,6 +20,7 @@ export const PRODUCT_NAMESPACES = [
   'admin',
   'workforce',
   'provider',
+  'display',
 ] as const;
 
 function getInitialLanguage(): SupportedLocale {

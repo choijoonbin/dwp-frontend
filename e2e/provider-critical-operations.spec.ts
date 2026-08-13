@@ -92,3 +92,119 @@ test('change control stays within the viewport', async ({ page }) => {
 
   expect(geometry.content).toBeLessThanOrEqual(geometry.viewport);
 });
+
+test('privileged support separates request approval, sessions, and post-access review', async ({
+  page,
+}) => {
+  await page.goto('/provider/support');
+
+  await expect(
+    page.getByRole('heading', { name: 'Support access lifecycle', exact: true })
+  ).toBeVisible();
+  await expect(page.getByText('Awaiting approval').locator('../..')).toContainText('1');
+  await expect(page.getByText('Post-reviews due').locator('../..')).toContainText('1');
+  await expect(
+    page.getByText('Investigate the customer-approved workspace latency case.')
+  ).toBeVisible();
+
+  await page.getByRole('button', { name: 'Approve' }).click();
+  const approval = page.getByRole('dialog', { name: 'Approve support access' });
+  await expect(approval).toContainText('You cannot approve your own request');
+  await approval.getByLabel('Justification').fill('Customer evidence and scope verified.');
+
+  await approval.getByRole('button', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Complete review' }).click();
+  await expect(page.getByRole('dialog', { name: 'Complete post-access review' })).toContainText(
+    'Confirm the session ended'
+  );
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel' }).click();
+
+  await expect(
+    page.getByRole('heading', { name: 'Active and historical sessions', exact: true })
+  ).toBeVisible();
+  await expect(page.getByText('Approved standard access')).toBeVisible();
+});
+
+test('privileged support remains usable when the request ledger partially fails', async ({
+  page,
+}) => {
+  await page.route('**/api/provider/v1/admin/support-access-requests*', async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: false, code: 'E5000', message: 'Unavailable' }),
+    });
+  });
+  await page.goto('/provider/support');
+
+  await expect(page.getByText('The request ledger is temporarily unavailable.')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Active and historical sessions', exact: true })
+  ).toBeVisible();
+  await expect(page.getByText('Approved standard access')).toBeVisible();
+});
+
+test('commercial governance connects renewal impact, independent approval, and locked delivery', async ({
+  page,
+}) => {
+  await page.goto('/provider/commercial');
+
+  await expect(page.getByRole('region', { name: 'Commercial governance context' })).toContainText(
+    'Independent approval'
+  );
+  await expect(
+    page.getByRole('heading', { name: 'Renewal decision queue', exact: true })
+  ).toBeVisible();
+  await expect(page.getByText('Enterprise → Regulated enterprise').first()).toBeVisible();
+  await expect(page.getByText('Add premium-audit')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Approve' }).click();
+  const approval = page.getByRole('dialog', { name: 'Approve renewal proposal' });
+  await approval
+    .getByLabel('Decision reason')
+    .fill(
+      'Customer contract, entitlement impact, and security evidence were independently reviewed.'
+    );
+  await approval.getByRole('button', { name: 'Cancel' }).click();
+
+  await page.getByRole('button', { name: 'Propose renewal' }).click();
+  const proposal = page.getByRole('dialog', { name: 'Propose renewal for SKAX' });
+  await expect(proposal).toContainText('immutable impact snapshot');
+  await proposal
+    .getByLabel('Renewal reason and evidence')
+    .fill('Renew the customer contract after commercial evidence review.');
+  await expect(proposal.getByRole('button', { name: 'Submit for approval' })).toBeEnabled();
+});
+
+test('commercial governance keeps subscriptions usable when renewal queue fails', async ({
+  page,
+}) => {
+  await page.route('**/api/provider/v1/admin/subscription-renewals*', async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: false, code: 'E5000', message: 'Unavailable' }),
+    });
+  });
+  await page.goto('/provider/commercial');
+
+  await expect(
+    page.getByText('Subscription data remains available, but the renewal decision queue')
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Customer subscriptions & renewals', exact: true })
+  ).toBeVisible();
+  await expect(page.getByText('SKAX-2026-001')).toBeVisible();
+});
+
+test('provider audit restores relationship query and tenant scope from the URL', async ({
+  page,
+}) => {
+  await page.goto('/provider/audit?query=support-session-1&tenantId=tenant-skax');
+
+  await expect(page.getByLabel('Search action, target, operator, or correlation')).toHaveValue(
+    'support-session-1'
+  );
+  await expect(page.getByRole('combobox', { name: 'Tenant' })).toContainText('SKAX Production');
+  await expect(page.getByText('Support session started')).toBeVisible();
+});

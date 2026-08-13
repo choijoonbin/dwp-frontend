@@ -39,6 +39,36 @@ describe('global search model', () => {
         totalHeadcount: 12,
       },
     ],
+    audits: [
+      {
+        id: 'event-1',
+        title: 'Access denied',
+        description: 'Audit authorization event',
+        route: '/admin/governance/audit-events?query=event-1',
+        keywords: ['event-1', 'correlation-1'],
+        source: 'Tenant audit',
+      },
+    ],
+    tenants: [
+      {
+        tenantId: 'tenant-1',
+        title: 'SKAX Digital Workplace',
+        description: 'SKAX / ap-northeast-2',
+        route: '/provider/tenants/tenant-1',
+        keywords: ['skax', 'production'],
+        source: 'Provider tenants',
+      },
+    ],
+    catalogAssets: [
+      {
+        id: 'asset-1',
+        title: 'ppl_workers',
+        description: 'People workforce table',
+        route: '/provider/data-governance?tab=catalog&asset=asset-1',
+        keywords: ['asset-1', 'people'],
+        source: 'Provider data catalog',
+      },
+    ],
   });
 
   it('combines applications, governed work, people, and organizations', () => {
@@ -48,6 +78,9 @@ describe('global search model', () => {
     );
     expect(filterGlobalSearchItems(items, 'minseo.kim')[0]?.kind).toBe('person');
     expect(filterGlobalSearchItems(items, 'org-1')[0]?.kind).toBe('organization');
+    expect(filterGlobalSearchItems(items, 'correlation-1')[0]?.kind).toBe('audit');
+    expect(filterGlobalSearchItems(items, 'production')[0]?.kind).toBe('tenant');
+    expect(filterGlobalSearchItems(items, 'ppl_workers')[0]?.kind).toBe('catalog');
   });
 
   it('returns recommended destinations before a query is entered', () => {

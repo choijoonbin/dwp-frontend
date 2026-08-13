@@ -1,5 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom';
 import { PageCanvas } from '@dwp-frontend/design-system';
+import { usePermissions } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 
@@ -14,11 +15,19 @@ import {
 import { WorkforceOverview } from '../features/workforce/workforce-overview';
 import { WorkforceReferenceData } from '../features/workforce/workforce-reference-data';
 import { WorkforceDataOperations } from '../features/workforce/workforce-data-operations';
+import { WorkforceExportCenter } from '../features/workforce/workforce-export-center';
 
 export default function WorkforcePage() {
   const { view } = useParams();
+  const { hasPermission } = usePermissions();
   const page = findWorkforceNavigationItem(view);
   if (!page) return <Navigate to={WORKFORCE_DEFAULT_PATH} replace />;
+  if (
+    page.requiredResourceKey &&
+    !hasPermission(page.requiredResourceKey, page.requiredPermissionCode)
+  ) {
+    return <Navigate to={WORKFORCE_DEFAULT_PATH} replace />;
+  }
 
   const content = {
     overview: <WorkforceOverview />,
@@ -27,6 +36,7 @@ export default function WorkforcePage() {
     organization: <OrganizationExplorer experience="workforce" />,
     'reference-data': <WorkforceReferenceData />,
     'data-operations': <WorkforceDataOperations />,
+    exports: <WorkforceExportCenter />,
   }[page.view];
 
   return (

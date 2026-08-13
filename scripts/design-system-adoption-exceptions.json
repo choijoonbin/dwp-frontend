@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "DS-EX-SHELL",
+      "pathPrefix": "apps/dwp/src/components/",
+      "owner": "Frontend Platform",
+      "reason": "Existing shell controls have compact focus, tooltip, and menu-anchor behavior that must migrate as one keyboard-tested unit.",
+      "removalCondition": "Replace the remaining direct controls when the shell interaction regression suite covers focus return, mobile navigation, and account-menu anchoring."
+    },
+    {
+      "id": "DS-EX-ADMIN",
+      "pathPrefix": "apps/dwp/src/features/admin/",
+      "owner": "Tenant Administration",
+      "reason": "Existing administration workflows predate the public Form, Dialog, and Grid contracts and include coupled validation and optimistic-lock behavior.",
+      "removalCondition": "Migrate each workflow with its desktop, mobile, keyboard, partial-failure, and version-conflict journey; never replace primitives without preserving behavior."
+    },
+    {
+      "id": "DS-EX-HOME",
+      "pathPrefix": "apps/dwp/src/features/home/",
+      "owner": "Workspace Experience",
+      "reason": "Home composition controls retain legacy compact launch and edit interactions covered by existing product tests.",
+      "removalCondition": "Remove when Home Studio and launchpad share the design-system action and form contracts with equivalent drag, focus, and empty-state coverage."
+    },
+    {
+      "id": "DS-EX-INTEGRATIONS",
+      "pathPrefix": "apps/dwp/src/features/integrations/",
+      "owner": "Identity Integrations",
+      "reason": "Provisioning operations use legacy multi-step forms while external SCIM contracts remain fail-closed.",
+      "removalCondition": "Migrate alongside the next approved provisioning journey and retain dry-run, retry, secret, and partial-failure evidence."
+    },
+    {
+      "id": "DS-EX-PEOPLE",
+      "pathPrefix": "apps/dwp/src/features/people/",
+      "owner": "People Platform",
+      "reason": "Directory and organization-design interactions include graph, effective-date, and scenario controls that require domain-level migration rather than mechanical wrapping.",
+      "removalCondition": "Remove per journey after population policy, effective dating, graph keyboard operation, conflict preview, and mobile inspector tests pass."
+    },
+    {
+      "id": "DS-EX-PROVIDER",
+      "pathPrefix": "apps/dwp/src/features/provider/",
+      "owner": "Provider Operations",
+      "reason": "Established Provider workflows retain legacy controls around high-risk approval, support, incident, and tenant lifecycle operations.",
+      "removalCondition": "Convert when each operation uses shared approval and resource patterns with SoD, stale-version, retry, rollback, and audit journey coverage."
+    },
+    {
+      "id": "DS-EX-SEARCH",
+      "pathPrefix": "apps/dwp/src/features/search/",
+      "owner": "Frontend Platform",
+      "reason": "The command search dialog has specialized combobox focus and partial-source behavior pending a public command-palette contract.",
+      "removalCondition": "Remove after a reusable permission-aware command palette ships with keyboard, source-failure, and route-restoration tests."
+    },
+    {
+      "id": "DS-EX-LAYOUTS",
+      "pathPrefix": "apps/dwp/src/layouts/",
+      "owner": "Frontend Platform",
+      "reason": "Layout-level icon actions coordinate responsive navigation and focus restoration across product shells.",
+      "removalCondition": "Remove after shell primitives own responsive navigation, focus restoration, and compact-mode behavior across all layouts."
+    },
+    {
+      "id": "DS-EX-ACCOUNT",
+      "pathPrefix": "apps/dwp/src/pages/account/",
+      "owner": "Identity Experience",
+      "reason": "Account forms mix autosave, managed-policy, reauthentication, and session controls that require end-to-end migration.",
+      "removalCondition": "Remove after autosave state, managed policy, reauthentication boundary, session revocation, and mobile keyboard journeys use public contracts."
+    },
+    {
+      "id": "DS-EX-AUTH",
+      "pathPrefix": "apps/dwp/src/pages/auth/",
+      "owner": "Identity Experience",
+      "reason": "Account activation is a security-sensitive standalone flow with existing legacy form controls.",
+      "removalCondition": "Remove after activation, expiry, invalid token, password policy, and screen-reader journeys pass on the shared auth form contract."
+    },
+    {
+      "id": "DS-EX-WORKSPACE-PAGES",
+      "pathPrefix": "apps/dwp/src/pages/",
+      "owner": "Workspace Experience",
+      "reason": "A small set of established workspace pages still use direct controls for page-specific command surfaces.",
+      "removalCondition": "Remove when the owning page is next changed and its representative desktop, mobile, keyboard, empty, and error journeys are migrated together."
+    }
+  ]
+}

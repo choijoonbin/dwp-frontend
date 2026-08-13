@@ -33,6 +33,16 @@
         "title": "Announcements",
         "description": "Publish time-bound notices to the appropriate tenant audience."
       },
+      "preference-exceptions": {
+        "label": "Setting exceptions",
+        "title": "Managed setting exceptions",
+        "description": "Review member requests for work exceptions to organization-managed defaults with evidence and impact."
+      },
+      "localization": {
+        "label": "Localization studio",
+        "title": "Localization studio",
+        "description": "Create, review, approve, publish, and restore tenant translations with quality evidence."
+      },
       "access": {
         "label": "Access control",
         "title": "Identity access",
@@ -52,6 +62,16 @@
         "label": "Roles & permissions",
         "title": "Role governance",
         "description": "Define roles, resource permissions, group assignments, and effective access."
+      },
+      "workforce-access": {
+        "label": "Workforce boundaries",
+        "title": "Workforce data boundaries",
+        "description": "Apply least-privilege population, field, and export boundaries to delegated HR administrators."
+      },
+      "saved-view-custody": {
+        "label": "Saved view custody",
+        "title": "Saved view custody",
+        "description": "Govern evidence-based ownership transfer and time-bound retention for personal and team views after workforce changes."
       },
       "provisioning": {
         "label": "Identity provisioning",
@@ -1622,6 +1642,40 @@
       "requireReason": "Require a business reason for every export",
       "integrityEnabled": "Enable daily integrity checkpoints",
       "saved": "Audit policy saved.",
+      "revisions": {
+        "title": "Policy revision control",
+        "description": "Every retention or export change is reviewed independently, bound to evidence, and recoverable.",
+        "activeRevision": "Revision {{number}} active",
+        "revision": "Revision {{number}}",
+        "active": "Active",
+        "baseline": "Initial governed baseline",
+        "rollbackDraft": "Restore draft",
+        "author": "{{actor}} · {{time}}",
+        "hashLabel": "SHA-256",
+        "empty": "No policy revision evidence is available.",
+        "reasonShared": "The reason below is used for the next lifecycle decision.",
+        "create": "Create revision",
+        "created": "Audit policy revision created.",
+        "transitioned": "Audit policy lifecycle and evidence were updated.",
+        "submit": "Request review",
+        "approve": "Approve",
+        "reject": "Reject",
+        "publish": "Publish",
+        "rollback": "Prepare restore",
+        "changeEvidence": "Change evidence",
+        "changeEvidenceHint": "Describe the business or incident basis. Direct changes to the active policy are blocked.",
+        "reason": "Decision or change reason",
+        "incidentCase": "Linked audit case ID (optional)",
+        "incidentCaseHint": "Use an existing investigation case UUID when this change responds to an incident.",
+        "fields": {
+          "standardRetentionDays": "Standard retention",
+          "extendedRetentionDays": "Extended retention",
+          "exportLimitRows": "Export limit",
+          "requireExportReason": "Export reason requirement",
+          "integrityEnabled": "Integrity checkpoints",
+          "highRiskThreshold": "High-risk threshold"
+        }
+      },
       "integrity": "Integrity checkpoints",
       "integrityLedger": "Integrity ledger",
       "integrityDescription": "Daily hash-chain verification for append-only evidence.",
@@ -2058,6 +2112,7 @@
       "label": "Role governance views",
       "roles": "Roles & resources",
       "assignments": "Group assignments",
+      "privileged": "Privileged access",
       "effective": "Effective access"
     },
     "columns": {
@@ -2129,7 +2184,8 @@
       "grantLabel": "{{resource}} {{permission}} effect"
     },
     "assignmentDialog": {
-      "title": "Assign role to group"
+      "title": "Assign role to group",
+      "justificationHelp": "Enter 10 to 500 characters for the audit trail. Every current member is checked against separation-of-duties policy before assignment."
     },
     "toasts": {
       "roleCreated": "Role created.",
@@ -2138,6 +2194,133 @@
       "resourceCreated": "Protected resource registered.",
       "assignmentCreated": "Group role assignment created.",
       "assignmentRevoked": "Group role assignment revoked."
+    }
+  },
+  "privilegedAccess": {
+    "loading": "Loading privileged access controls",
+    "minutes": "{{count}} min",
+    "quorum": "{{count}} approver",
+    "views": {
+      "label": "Privileged access control views",
+      "requests": "Approvals & active grants",
+      "eligibilities": "Eligibilities",
+      "policies": "Activation policies",
+      "boundaries": "Delegation & emergency"
+    },
+    "metrics": {
+      "policies": "Enforced policies",
+      "policiesDetail": "Privileged role activation rules",
+      "pending": "Awaiting approval",
+      "pendingDetail": "Requests needing action",
+      "active": "Active grants",
+      "activeDetail": "Temporary, automatically expiring access",
+      "expiring": "Expires in 14 days",
+      "expiringDetail": "Eligibilities needing review"
+    },
+    "columns": {
+      "requester": "Requester",
+      "principal": "Principal",
+      "nextAction": "Next action"
+    },
+    "fields": {
+      "activationMode": "Activation mode",
+      "maximumDuration": "Maximum active time (minutes)",
+      "durationError": "Enter a duration between 15 and 480 minutes.",
+      "assurance": "Session assurance",
+      "approvalQuorum": "Required approvals",
+      "emergencyMode": "Emergency access mode",
+      "ticketRequired": "Require a change or incident ticket",
+      "reason": "Decision reason",
+      "reasonHelp": "Enter at least 10 characters so an auditor can understand the decision.",
+      "principalType": "Principal type",
+      "principal": "User or group",
+      "selectPrincipal": "Select a principal",
+      "selectRole": "Select a privileged role",
+      "reviewDueAt": "Next emergency-account review",
+      "action": "Permitted action"
+    },
+    "activationModes": {
+      "SELF_SERVICE": "Self-activate without approval",
+      "APPROVAL": "Activate after administrator approval",
+      "DISABLED": "Activation disabled"
+    },
+    "assurance": {
+      "SESSION": "Authenticated session",
+      "MFA": "Multifactor authentication",
+      "PHISHING_RESISTANT": "Phishing-resistant authentication"
+    },
+    "emergencyModes": {
+      "DISABLED": "Disabled",
+      "REGISTERED_PRINCIPAL": "Registered emergency principal",
+      "DUAL_APPROVAL": "Two-person approval"
+    },
+    "principalTypes": {
+      "USER": "User",
+      "GROUP": "Group"
+    },
+    "states": {
+      "ACTIVE": "Active",
+      "PENDING_APPROVAL": "Awaiting approval",
+      "DENIED": "Denied",
+      "CANCELLED": "Cancelled",
+      "REVOKED": "Revoked",
+      "EXPIRED": "Expired",
+      "RETIRED": "Retired",
+      "SUSPENDED": "Suspended"
+    },
+    "actions": {
+      "approve": "Approve",
+      "deny": "Deny",
+      "revoke": "Revoke",
+      "createEligibility": "Grant eligibility",
+      "addDelegation": "Add delegated scope",
+      "registerEmergency": "Register emergency account"
+    },
+    "actionsCatalog": {
+      "ACCESS.ASSIGNMENT.MANAGE": "Manage role assignments in scope",
+      "ACCESS.ROLE.MANAGE": "Manage role definitions",
+      "ACCESS.RESOURCE.MANAGE": "Manage protected resources"
+    },
+    "decision": {
+      "description": "Decide {{person}}'s request for {{role}}. Self-approval is blocked by the server.",
+      "APPROVE": { "title": "Approve temporary privileged access", "action": "Approve" },
+      "DENY": { "title": "Deny privileged access request", "action": "Deny" },
+      "REVOKE": { "title": "Revoke active privileged access", "action": "Revoke now" }
+    },
+    "policyDialog": {
+      "title": "{{role}} activation policy",
+      "description": "Eligibility grants no runtime access. Only a time-bound activation that satisfies this policy becomes effective."
+    },
+    "eligibilityDialog": {
+      "title": "Grant privileged-role eligibility",
+      "description": "Set the least scope and an expiry. The user must request a separate activation when access is needed."
+    },
+    "boundaryDialog": {
+      "emergency": {
+        "title": "Register emergency access account",
+        "description": "Register a separate account that is not used for daily administration and schedule its next review."
+      },
+      "delegation": {
+        "title": "Add administrator delegation boundary",
+        "description": "Constrain an administrator's permitted action and target scope with a server policy."
+      }
+    },
+    "boundaries": {
+      "delegatedTitle": "Delegated administrator boundaries",
+      "delegatedDescription": "Limit both the operation and data population instead of granting a broad role alone.",
+      "emergencyTitle": "Emergency access register",
+      "emergencyDescription": "An emergency principal must be pre-registered and in review before it can request activation."
+    },
+    "toasts": {
+      "policyUpdated": "Privileged role activation policy updated.",
+      "eligibilityCreated": "Time-bound role eligibility granted.",
+      "eligibilityRevoked": "Role eligibility revoked.",
+      "approve": "Privileged access request approved.",
+      "deny": "Privileged access request denied.",
+      "revoke": "Active privileged access revoked immediately.",
+      "delegationCreated": "Administrator delegation boundary added.",
+      "delegationRevoked": "Administrator delegation boundary revoked.",
+      "emergencyRegistered": "Emergency access account registered."
     }
   },
   "catalog": {
@@ -2159,7 +2342,8 @@
     "views": {
       "label": "Catalog view",
       "graph": "Relationship graph",
-      "inventory": "Asset inventory"
+      "inventory": "Asset inventory",
+      "assurance": "Assurance"
     },
     "actions": {
       "refresh": "Refresh catalog",
@@ -2243,10 +2427,82 @@
       "transitive": "Transitive",
       "none": "No downstream dependency was detected.",
       "distance": "{{count}} hop",
+      "rule": "Decision rule: {{key}} v{{version}}",
       "operations": {
         "CHANGE": "Change",
         "RETIRE": "Retire",
         "OUTAGE": "Outage"
+      }
+    },
+    "assurance": {
+      "contextLabel": "Catalog assurance context",
+      "title": "Catalog assurance",
+      "description": "Detect ownership gaps, isolated assets, and deprecation impact using a versioned decision rule.",
+      "ruleVersion": "{{key}} v{{version}}",
+      "queueLabel": "Catalog assurance findings",
+      "partialFailure": "Assurance findings are temporarily unavailable. The relationship graph and inventory remain usable.",
+      "actions": {
+        "evaluate": "Evaluate catalog",
+        "evaluating": "Evaluating catalog",
+        "review": "Review",
+        "recordDisposition": "Record disposition"
+      },
+      "metrics": {
+        "label": "Catalog assurance signals",
+        "open": "Open findings",
+        "openDetail": "Require owner review",
+        "critical": "Critical findings",
+        "criticalDetail": "Block deprecation review",
+        "owner": "Missing owners",
+        "ownerDetail": "No accountable owner",
+        "deprecation": "Deprecation impact",
+        "deprecationDetail": "Active direct consumers"
+      },
+      "columns": {
+        "asset": "Asset and finding",
+        "severity": "Severity",
+        "state": "Disposition",
+        "detected": "Last detected"
+      },
+      "findings": {
+        "OWNER_MISSING": "Accountable owner is missing",
+        "ORPHAN_ASSET": "No catalog relationship was observed",
+        "DEPRECATION_IMPACT": "Deprecated asset still has active consumers"
+      },
+      "states": {
+        "OPEN": "Open",
+        "ACKNOWLEDGED": "Acknowledged",
+        "FALSE_POSITIVE": "False positive",
+        "ACCEPTED_RISK": "Risk accepted",
+        "RESOLVED": "Resolved"
+      },
+      "inspector": {
+        "title": "Finding evidence",
+        "select": "Select a finding to review its rule, signals, and evidence hash.",
+        "hash": "Evidence SHA-256: {{hash}}",
+        "disposition": "Recorded disposition: {{reason}}"
+      },
+      "disposition": {
+        "title": "Record finding disposition",
+        "description": "Record a governed decision for {{entity}}.",
+        "decision": "Decision",
+        "reason": "Decision reason",
+        "reasonHelp": "Describe the authoritative evidence and why this decision is appropriate.",
+        "evidence": "Evidence reference",
+        "evidenceHelp": "Case, ADR, contract, or approved source reference.",
+        "submit": "Record decision",
+        "submitting": "Recording decision",
+        "guidance": {
+          "ACKNOWLEDGED": "The finding remains active and assigned for follow-up.",
+          "FALSE_POSITIVE": "Use only when authoritative evidence proves the detected signal is incorrect.",
+          "ACCEPTED_RISK": "Document the accountable owner and approved risk evidence.",
+          "RESOLVED": "Use when the underlying ownership, relationship, or lifecycle issue has been corrected."
+        }
+      },
+      "toasts": {
+        "evaluated": "Catalog assurance evaluation completed.",
+        "dispositionSaved": "Finding disposition recorded.",
+        "error": "The catalog assurance operation could not be completed."
       }
     },
     "toasts": {
@@ -2421,6 +2677,400 @@
     "toasts": {
       "approved": "The access request was approved.",
       "rejected": "The access request was rejected."
+    }
+  },
+  "workforceAccess": {
+    "loading": "Loading workforce data boundaries",
+    "gridLabel": "Workforce data boundaries",
+    "create": "Add access boundary",
+    "userSubject": "User {{id}}",
+    "metrics": {
+      "active": "Active boundaries",
+      "scoped": "Organization-scoped",
+      "userOverrides": "User overrides"
+    },
+    "columns": {
+      "subject": "Subject",
+      "population": "Target population",
+      "fields": "Permitted fields",
+      "validTo": "Expires",
+      "status": "Status"
+    },
+    "subjectTypes": {
+      "ROLE": "Role default",
+      "USER": "User override"
+    },
+    "roles": {
+      "HR_ADMIN": "HR administrator",
+      "PEOPLE_ADMIN": "People operations administrator"
+    },
+    "populations": {
+      "TENANT": "Entire tenant",
+      "ORG_UNIT": "Selected organization only",
+      "ORG_TREE": "Selected organization and descendants"
+    },
+    "fieldGroups": {
+      "DIRECTORY": "Directory basics",
+      "WORKER_IDENTIFIERS": "Worker and assignment identifiers",
+      "EMPLOYMENT": "Employment and assignment history",
+      "JOB_GRADE": "Job grade and level"
+    },
+    "actions": {
+      "READ": "Read",
+      "EXPORT": "Eligible to export"
+    },
+    "states": {
+      "ACTIVE": "Active",
+      "REVOKED": "Revoked",
+      "EXPIRED": "Expired"
+    },
+    "fields": {
+      "subjectType": "Subject type",
+      "subject": "Role or user",
+      "selectSubject": "Select a subject",
+      "population": "Target population",
+      "organization": "Root organization",
+      "selectOrganization": "Select an organization",
+      "fieldGroups": "Permitted field groups",
+      "actions": "Permitted actions",
+      "validTo": "Expiration",
+      "justification": "Business justification",
+      "justificationHelp": "Record at least 10 characters explaining why this minimum access is required.",
+      "reason": "Revocation reason"
+    },
+    "dialog": {
+      "title": "Add a workforce data boundary",
+      "description": "A user policy overrides role defaults. The API re-evaluates the population and field groups on every request."
+    },
+    "revoke": {
+      "title": "Revoke this access boundary?",
+      "description": "The workforce data scope is blocked from the next request after revocation.",
+      "action": "Revoke"
+    },
+    "empty": {
+      "title": "No workforce data boundaries",
+      "description": "An administrator role alone does not expose detailed workforce data. Add an approved minimum scope."
+    },
+    "toasts": {
+      "created": "The workforce data boundary was added.",
+      "revoked": "The workforce data boundary was revoked."
+    }
+  },
+  "preferenceExceptions": {
+    "loading": "Loading managed setting exception requests",
+    "filterLabel": "Exception request state",
+    "queueLabel": "Managed setting exception review queue",
+    "userFallback": "User #{{id}}",
+    "approvalNotice": "Approval does not apply the requested value immediately. The policy owner must complete a governed change using this decision as authority.",
+    "decidedAt": "Decided {{date}}",
+    "columns": {
+      "requester": "Requester",
+      "setting": "Managed setting",
+      "requestedValue": "Requested value",
+      "state": "State",
+      "requestedAt": "Requested"
+    },
+    "fields": {
+      "requestedValue": "Requested value",
+      "justification": "Business justification",
+      "impact": "Business impact",
+      "owner": "Assigned owner",
+      "requestedUntil": "Requested until",
+      "decisionReason": "Decision reason",
+      "evidence": "Evidence reference"
+    },
+    "paths": {
+      "appearance.fontFamily": "Product font",
+      "appearance.accentColor": "Brand accent",
+      "navigation.pattern": "Navigation pattern"
+    },
+    "states": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled",
+      "EXPIRED": "Expired",
+      "ALL": "All"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "decision": {
+      "approveTitle": "Approve exception request",
+      "approveDescription": "Review purpose and impact, then record accountable evidence for the governed implementation work.",
+      "rejectTitle": "Reject exception request",
+      "rejectDescription": "Record a specific rejection reason that can be returned to the requester.",
+      "reasonHelp": "Enter at least 10 characters. This reason is retained in the audit trail.",
+      "evidenceHelp": "Optional: enter a ticket, policy, or review document identifier.",
+      "saving": "Saving decision"
+    },
+    "empty": {
+      "title": "No exception requests in this state",
+      "description": "Choose another state or return when a new request arrives."
+    },
+    "toasts": {
+      "approved": "Exception request approved and decision evidence recorded.",
+      "rejected": "Exception request rejected and decision reason recorded."
+    }
+  },
+  "localization": {
+    "loading": "Loading the localization workspace",
+    "loadingRevisions": "Loading localization revisions",
+    "metrics": {
+      "bundles": "Translation bundles",
+      "drafts": "Open drafts",
+      "review": "Awaiting decision",
+      "published": "Published bundles",
+      "issues": "Quality issues"
+    },
+    "workspace": {
+      "title": "Translation release workspace",
+      "description": "Move tenant language changes through an accountable draft, review, approval, and publication lifecycle."
+    },
+    "bundle": {
+      "listTitle": "Bundles",
+      "listDescription": "Select a product surface and target locale.",
+      "completeness": "{{value}}% complete",
+      "issues": "{{count}} issues"
+    },
+    "revision": {
+      "number": "Revision {{number}}",
+      "select": "Revision history",
+      "option": "v{{number}} · {{state}}",
+      "emptyTitle": "No localization revision",
+      "emptyDescription": "Create a governed bundle to begin its translation history."
+    },
+    "states": {
+      "DRAFT": "Draft",
+      "IN_REVIEW": "In review",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "PUBLISHED": "Published",
+      "SUPERSEDED": "Superseded"
+    },
+    "fields": {
+      "bundleKey": "Bundle key",
+      "sourceLocale": "Source locale",
+      "targetLocale": "Target locale",
+      "key": "Translation key",
+      "sourceText": "Source text",
+      "translation": "Translation",
+      "changeSummary": "Change summary",
+      "reason": "Decision reason"
+    },
+    "locales": {
+      "en": "English",
+      "ko": "Korean"
+    },
+    "actions": {
+      "createBundle": "Create bundle",
+      "creating": "Creating bundle",
+      "saving": "Saving decision",
+      "saveDraft": "Save draft",
+      "addKey": "Add key",
+      "remove": "Remove",
+      "removeKey": "Remove translation key {{key}}",
+      "submit": "Submit for review",
+      "approve": "Approve",
+      "reject": "Reject",
+      "publish": "Publish",
+      "restore": "Restore as draft",
+      "newDraft": "Create next draft"
+    },
+    "create": {
+      "title": "Create localization bundle",
+      "description": "Establish the source and target locale, then seed the first governed translation key.",
+      "bundleKeyHelp": "Use a stable product key such as shell or account.settings.",
+      "entryHelp": "Use a stable dotted key. Keys become part of the product language contract.",
+      "fallbackHelp": "Leave blank to preview source-language fallback. Review submission remains blocked."
+    },
+    "editor": {
+      "title": "Translation entries",
+      "description": "Keep source meaning and placeholders aligned while authoring the target language.",
+      "tableLabel": "Localization translation entries"
+    },
+    "quality": {
+      "completeness": "Completeness",
+      "missing": "Missing keys",
+      "placeholders": "Placeholder errors",
+      "unknown": "Unknown keys",
+      "blocked": "This revision cannot enter review until missing, unknown, and placeholder issues are resolved and the draft is saved.",
+      "missingValue": "Translation is required before review.",
+      "placeholderMismatch": "Placeholders must match the source text."
+    },
+    "views": {
+      "label": "Localization revision workspace view",
+      "editor": "Editor",
+      "diff": "Changes",
+      "preview": "Fallback preview",
+      "history": "Decision history"
+    },
+    "diff": {
+      "loading": "Loading revision changes",
+      "title": "Changes from the baseline revision",
+      "before": "Before",
+      "after": "After",
+      "states": {
+        "ADDED": "Added",
+        "UPDATED": "Updated",
+        "REMOVED": "Removed",
+        "UNCHANGED": "Unchanged"
+      }
+    },
+    "preview": {
+      "title": "Resolved language preview",
+      "description": "Shows the target text users receive and clearly identifies source-language fallback.",
+      "fallback": "Source fallback"
+    },
+    "history": {
+      "emptyTitle": "No decisions recorded",
+      "emptyDescription": "Submission, approval, publication, and restore evidence will appear here.",
+      "actor": "Actor #{{id}}"
+    },
+    "decisions": {
+      "SUBMITTED": "Submitted for review",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "PUBLISHED": "Published",
+      "RESTORED": "Restored as a new draft"
+    },
+    "transitions": {
+      "reasonHelp": "Enter at least 5 characters. This reason is retained as immutable decision evidence.",
+      "SUBMIT": {
+        "title": "Submit revision for review",
+        "description": "The content becomes immutable and must be decided by another administrator.",
+        "submit": "Submit revision"
+      },
+      "APPROVE": {
+        "title": "Approve localization revision",
+        "description": "Confirm language quality, placeholder integrity, and release readiness.",
+        "submit": "Approve revision"
+      },
+      "REJECT": {
+        "title": "Reject localization revision",
+        "description": "Record a specific reason so the author can restore it as a corrected draft.",
+        "submit": "Reject revision"
+      },
+      "PUBLISH": {
+        "title": "Publish localization revision",
+        "description": "Make this approved revision the active tenant translation and supersede the previous publication.",
+        "submit": "Publish revision"
+      },
+      "RESTORE": {
+        "title": "Restore historical revision",
+        "description": "Create a new editable draft from this closed revision without changing historical evidence.",
+        "submit": "Create restored draft"
+      },
+      "NEW_DRAFT": {
+        "title": "Create next localization draft",
+        "description": "Start a new editable revision from the current published translation.",
+        "submit": "Create draft"
+      }
+    },
+    "empty": {
+      "title": "No localization bundles",
+      "description": "Create the first product-language bundle and establish its governed release history."
+    },
+    "toasts": {
+      "created": "Localization bundle and initial draft created.",
+      "saved": "Localization draft saved and quality checks refreshed.",
+      "SUBMIT": "Localization revision submitted for independent review.",
+      "APPROVE": "Localization revision approved.",
+      "REJECT": "Localization revision rejected with decision evidence.",
+      "PUBLISH": "Localization revision published.",
+      "RESTORE": "Historical localization revision restored as a new draft.",
+      "NEW_DRAFT": "Next localization draft created from the publication."
+    }
+  },
+  "savedViewCustody": {
+    "loading": "Loading the saved view custody workspace",
+    "readOnly": "This account can review custody status but cannot execute an ownership plan.",
+    "metrics": {
+      "activeUsers": "Eligible active users",
+      "orphaned": "Retained without owner",
+      "recentTransfers": "Recent custody actions"
+    },
+    "tabs": {
+      "label": "Saved view custody workspace",
+      "plan": "Custody plan",
+      "orphaned": "Unowned views {{count}}",
+      "history": "Decision history"
+    },
+    "plan": {
+      "title": "Custody change plan",
+      "description": "Link authoritative workforce evidence and freeze the current impact before execution."
+    },
+    "fields": {
+      "sourceOwner": "Current owner",
+      "targetOwner": "New owner",
+      "selectUser": "Select a tenant user",
+      "disposition": "Disposition",
+      "retentionUntil": "Retention deadline",
+      "retentionHelp": "The background retention policy archives the view after this deadline.",
+      "reasonCode": "Change type",
+      "sourceReference": "Authoritative evidence ID",
+      "sourceReferenceHelp": "Enter an immutable HR event, reorganization, or approved case reference.",
+      "reason": "Detailed reason",
+      "reasonHelp": "Enter at least 10 characters. This is retained as audit evidence."
+    },
+    "dispositions": {
+      "TRANSFER": "Transfer to an active user",
+      "RETAIN_ORPHANED": "Retain without an owner until a deadline"
+    },
+    "reasons": {
+      "OFFBOARDING": "Offboarding or transfer",
+      "TEAM_REORGANIZATION": "Team reorganization",
+      "OWNER_CORRECTION": "Owner correction"
+    },
+    "scopes": {
+      "PERSONAL": "Personal",
+      "TEAM": "Team",
+      "TENANT": "Organization"
+    },
+    "preview": {
+      "title": "Impact preview",
+      "description": "Freeze the current owned views and versions, then revalidate them immediately before execution.",
+      "emptyTitle": "No custody plan has been evaluated",
+      "emptyDescription": "Complete the evidence and disposition on the left, then preview the impact.",
+      "summary": "{{count}} views will use ‘{{disposition}}’.",
+      "evaluatedAt": "Evaluated {{value}}",
+      "fingerprint": "Snapshot {{value}}…",
+      "confirmHelp": "Any input or ownership change invalidates this preview and prevents execution.",
+      "gridLabel": "Saved views affected by the custody change"
+    },
+    "actions": {
+      "preview": "Preview impact",
+      "previewing": "Evaluating impact",
+      "execute": "Execute verified plan",
+      "executing": "Changing custody"
+    },
+    "columns": {
+      "view": "Saved view",
+      "surface": "Surface",
+      "scope": "Visibility",
+      "updatedAt": "Last changed",
+      "retentionUntil": "Retention deadline",
+      "sourceOwner": "Previous owner",
+      "targetOwner": "New owner",
+      "disposition": "Disposition",
+      "affected": "Affected",
+      "sourceReference": "Evidence",
+      "executedAt": "Executed"
+    },
+    "orphaned": {
+      "gridLabel": "Saved views retained without an owner",
+      "emptyTitle": "No views are retained without an owner",
+      "emptyDescription": "Every active saved view has an accountable owner."
+    },
+    "history": {
+      "gridLabel": "Saved view custody decision history",
+      "emptyTitle": "No custody decisions yet",
+      "emptyDescription": "Immutable evidence appears after a transfer or time-bound retention action."
+    },
+    "userFallback": "User #{{id}}",
+    "toasts": {
+      "completed": "Custody processing completed for {{count}} saved views."
     }
   },
   "supportMode": {

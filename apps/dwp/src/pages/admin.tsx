@@ -19,12 +19,16 @@ import { AppAccessRequestManager } from '../features/admin/app-access-request-ma
 import { AccessReviewManager } from '../features/admin/access-review-manager';
 import { AnnouncementManager } from '../features/admin/announcement-manager';
 import { HomeExperienceManager } from '../features/admin/home-experience-manager';
+import { PreferenceExceptionManager } from '../features/admin/preference-exception-manager';
+import { LocalizationStudio } from '../features/admin/localization-studio';
 import { RegistryManager } from '../features/admin/registry-manager';
 import { ReferenceDataManager } from '../features/admin/reference-data-manager';
 import { TenantBrandingManager } from '../features/admin/tenant-branding-manager';
 import { NavigationManager } from '../features/admin/navigation-studio-manager';
 import { IdentityProvisioningManager } from '../features/admin/identity-provisioning-manager';
 import { RoleGovernanceManager } from '../features/admin/role-governance-manager';
+import { WorkforceAccessManager } from '../features/admin/workforce-access-manager';
+import { SavedViewCustodyManager } from '../features/admin/saved-view-custody-manager';
 import { ProductivityConnectorManager } from '../features/admin/productivity-connector-manager';
 import { CatalogExplorer } from '../features/admin/catalog-explorer';
 import {
@@ -48,10 +52,18 @@ function AdminContent({ view }: { view: AdminView }) {
       return <AccessReviewManager />;
     case 'roles':
       return <RoleGovernanceManager />;
+    case 'workforce-access':
+      return <WorkforceAccessManager />;
+    case 'saved-view-custody':
+      return <SavedViewCustodyManager />;
     case 'provisioning':
       return <IdentityProvisioningManager />;
     case 'announcements':
       return <AnnouncementManager />;
+    case 'preference-exceptions':
+      return <PreferenceExceptionManager />;
+    case 'localization':
+      return <LocalizationStudio />;
     case 'branding':
       return <TenantBrandingManager />;
     case 'home-experience':

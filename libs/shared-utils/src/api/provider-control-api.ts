@@ -89,6 +89,94 @@ export type ProviderOperatorProfile = {
   permissions: string[];
 };
 
+export type ProviderFeatureValue = boolean | string | number | Record<string, unknown> | unknown[];
+
+export type ProviderFeatureFlag = {
+  featureFlagId: string;
+  featureKey: string;
+  displayName: string;
+  description: string;
+  ownerService: string;
+  valueType: 'BOOLEAN' | 'STRING' | 'NUMBER' | 'JSON';
+  defaultValue: ProviderFeatureValue;
+  configurationSchema: Record<string, unknown>;
+  riskTier: 'L1' | 'L2' | 'L3';
+  lifecycleState: 'ACTIVE' | 'DEPRECATED' | 'RETIRED';
+  version: number;
+};
+
+export type ProviderFeatureRolloutStage = {
+  rolloutStageId: string;
+  stageOrder: number;
+  stageName: string;
+  exposurePercentage: number;
+  minimumObservationMinutes: number;
+  healthGate: Record<string, unknown>;
+  lifecycleState: 'PENDING' | 'ACTIVE' | 'COMPLETED' | 'SKIPPED';
+  startedAt?: string | null;
+  completedAt?: string | null;
+};
+
+export type ProviderFeatureRolloutApproval = {
+  approvalId: string;
+  lifecycleState: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+  requestedBy: number;
+  requestedAt: string;
+  decidedBy?: number | null;
+  decidedAt?: string | null;
+  decisionReason?: string | null;
+};
+
+export type ProviderFeatureRollout = {
+  rolloutRevisionId: string;
+  featureFlagId: string;
+  featureKey: string;
+  revisionNumber: number;
+  name: string;
+  lifecycleState:
+    | 'DRAFT'
+    | 'PENDING_APPROVAL'
+    | 'APPROVED'
+    | 'ACTIVE'
+    | 'PAUSED'
+    | 'COMPLETED'
+    | 'REJECTED'
+    | 'ROLLED_BACK'
+    | 'CANCELLED';
+  rolloutValue: ProviderFeatureValue;
+  targeting: Record<string, unknown>;
+  strategy: 'RING' | 'PERCENTAGE' | 'ALL_AT_ONCE';
+  currentStageOrder?: number | null;
+  previousRevisionId?: string | null;
+  rollbackOfRevisionId?: string | null;
+  justification: string;
+  requestedBy: number;
+  approvedBy?: number | null;
+  submittedAt?: string | null;
+  approvedAt?: string | null;
+  activatedAt?: string | null;
+  completedAt?: string | null;
+  pausedAt?: string | null;
+  version: number;
+  stages: ProviderFeatureRolloutStage[];
+  approval?: ProviderFeatureRolloutApproval | null;
+  externalExecutionEnabled: boolean;
+};
+
+export type ProviderFeatureEvaluation = {
+  featureKey: string;
+  providerTenantId: string;
+  tenantKey: string;
+  value: ProviderFeatureValue;
+  reasonCode: 'DEFAULT' | 'TARGET_MISS' | 'PERCENTAGE_EXCLUDED' | 'ROLLOUT_MATCH';
+  rolloutRevisionId?: string | null;
+  revisionNumber?: number | null;
+  exposurePercentage: number;
+  deterministicBucket: number;
+  externalExecutionEnabled: boolean;
+  evaluatedAt: string;
+};
+
 export type ProviderEntitlement = {
   entitlementId: number;
   entitlementKey: string;
@@ -395,6 +483,49 @@ export type ProviderSubscriptionPortfolio = {
   contractReference?: string | null;
   tenants: number;
   activeEntitlements: number;
+  version: number;
+};
+
+export type ProviderSubscriptionRenewalRevision = {
+  renewalRevisionId: string;
+  subscriptionId: string;
+  organizationId: string;
+  organizationKey: string;
+  organizationName: string;
+  revisionNumber: number;
+  lifecycleState: 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'EXPIRED' | 'PUBLISHED';
+  baselineSubscriptionVersion: number;
+  currentPlanKey: string;
+  currentPlanName: string;
+  targetPlanKey: string;
+  targetPlanName: string;
+  targetServiceTier: string;
+  currentEndsAt?: string | null;
+  proposedEndsAt: string;
+  currentContractReference?: string | null;
+  proposedContractReference: string;
+  reason: string;
+  addedEntitlements: string[];
+  removedEntitlements: string[];
+  impactedTenants: number;
+  currentEntitlementCount: number;
+  projectedEntitlementCount: number;
+  contentSha256: string;
+  requestKey: string;
+  requestedBy: number;
+  requestedByName: string;
+  requestedAt: string;
+  decisionDueAt: string;
+  decidedBy?: number | null;
+  decidedByName?: string | null;
+  decidedAt?: string | null;
+  decisionReason?: string | null;
+  publishedBy?: number | null;
+  publishedByName?: string | null;
+  publishedAt?: string | null;
+  executionState: 'NOT_STARTED' | 'NOT_REQUIRED' | 'MANUAL_ACTION_REQUIRED' | 'COMPLETED';
+  notificationState: 'DISABLED_PENDING_CONTRACT' | 'NOT_REQUIRED' | 'QUEUED' | 'SENT' | 'FAILED';
+  version: number;
 };
 
 export type ProviderEntitlementAdoption = {
@@ -429,6 +560,7 @@ export type ProviderAuditInsights = {
 
 export type ProviderSupportSession = {
   supportSessionId: string;
+  supportAccessRequestId?: string | null;
   tenantId: string;
   tenantKey: string;
   tenantName: string;
@@ -445,6 +577,47 @@ export type ProviderSupportSession = {
   expiresAt: string;
   lastUsedAt?: string | null;
   revokedAt?: string | null;
+  version: number;
+};
+
+export type ProviderSupportAccessRequest = {
+  supportAccessRequestId: string;
+  tenantId: string;
+  tenantKey: string;
+  tenantName: string;
+  requesterOperatorId: number;
+  requesterName: string;
+  lifecycleState:
+    | 'PENDING_APPROVAL'
+    | 'APPROVED'
+    | 'DENIED'
+    | 'CANCELLED'
+    | 'EXPIRED'
+    | 'ACTIVATED'
+    | 'COMPLETED'
+    | 'REVIEWED';
+  accessMode: 'STANDARD' | 'BREAK_GLASS';
+  justification: string;
+  scopes: string[];
+  durationMinutes: number;
+  approvalReference?: string | null;
+  customerApprovalRequired: boolean;
+  riskTier: 'L1' | 'L2' | 'L3';
+  requestKey: string;
+  requestedAt: string;
+  decisionDueAt: string;
+  decidedAt?: string | null;
+  decidedBy?: number | null;
+  decidedByName?: string | null;
+  decisionReason?: string | null;
+  supportSessionId?: string | null;
+  activatedAt?: string | null;
+  completedAt?: string | null;
+  postReviewState: 'NOT_REQUIRED' | 'PENDING' | 'COMPLETED';
+  postReviewedAt?: string | null;
+  postReviewedBy?: number | null;
+  postReviewedByName?: string | null;
+  postReviewSummary?: string | null;
   version: number;
 };
 
@@ -533,7 +706,12 @@ export type ProviderDataAsset = {
   schemaName: string;
   objectName: string;
   objectType:
-    'TABLE' | 'PARTITIONED_TABLE' | 'PARTITION' | 'VIEW' | 'MATERIALIZED_VIEW' | 'SYSTEM_TABLE';
+    | 'TABLE'
+    | 'PARTITIONED_TABLE'
+    | 'PARTITION'
+    | 'VIEW'
+    | 'MATERIALIZED_VIEW'
+    | 'SYSTEM_TABLE';
   parentObjectName?: string | null;
   businessDomain: string;
   ownerService: string;
@@ -598,6 +776,78 @@ export type ProviderDataGovernanceSnapshot = {
   relationships: ProviderDataRelationship[];
   lineage: ProviderDataLineageEdge[];
   findings: ProviderDataGovernanceFinding[];
+};
+
+export type ProviderDataPolicyImpact = {
+  catalogGeneratedAt: string;
+  affectedAssetCount: number;
+  affectedAssetKeys: string[];
+  blockers: string[];
+  warnings: string[];
+  controls: string[];
+  impactHash: string;
+  previewedAt: string;
+  publishable: boolean;
+};
+
+export type ProviderDataPolicyApproval = {
+  approvalId: string;
+  lifecycleState: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+  requestedBy: number;
+  requestedAt: string;
+  decidedBy?: number | null;
+  decidedAt?: string | null;
+  decisionReason?: string | null;
+};
+
+export type ProviderDataPolicyRevision = {
+  revisionId: string;
+  revisionNumber: number;
+  lifecycleState:
+    | 'DRAFT'
+    | 'PENDING_APPROVAL'
+    | 'APPROVED'
+    | 'ACTIVE'
+    | 'REJECTED'
+    | 'SUPERSEDED'
+    | 'ROLLED_BACK'
+    | 'CANCELLED';
+  policyRule: Record<string, unknown>;
+  effectiveFrom?: string | null;
+  effectiveTo?: string | null;
+  justification: string;
+  previousRevisionId?: string | null;
+  rollbackOfRevisionId?: string | null;
+  impact?: ProviderDataPolicyImpact | null;
+  requestedBy: number;
+  approvedBy?: number | null;
+  submittedAt?: string | null;
+  approvedAt?: string | null;
+  publishedAt?: string | null;
+  version: number;
+  approval?: ProviderDataPolicyApproval | null;
+};
+
+export type ProviderDataPolicy = {
+  policyId: string;
+  policyKey: string;
+  displayName: string;
+  description: string;
+  policyType:
+    | 'CLASSIFICATION'
+    | 'MINIMIZATION'
+    | 'RESIDENCY'
+    | 'RETENTION'
+    | 'DELETION'
+    | 'LEGAL_HOLD'
+    | 'RESTRICTED_FIELD'
+    | 'TENANT_RLS';
+  scopeType: 'GLOBAL' | 'DATABASE' | 'ASSET';
+  scopeRef?: string | null;
+  ownerService: string;
+  lifecycleState: 'ACTIVE' | 'RETIRED';
+  version: number;
+  revisions: ProviderDataPolicyRevision[];
 };
 
 export type ProviderDomainChallenge = {
@@ -676,6 +926,59 @@ export async function getProviderCommercialOverview(): Promise<ProviderCommercia
   const response = await axiosInstance.get<ApiResponse<ProviderCommercialOverview>>(
     `${BASE}/commercial`
   );
+  return response.data.data;
+}
+
+export async function listProviderSubscriptionRenewals(): Promise<
+  ProviderSubscriptionRenewalRevision[]
+> {
+  const response = await axiosInstance.get<ApiResponse<ProviderSubscriptionRenewalRevision[]>>(
+    `${BASE}/subscription-renewals`
+  );
+  return response.data.data;
+}
+
+export async function createProviderSubscriptionRenewal(request: {
+  subscriptionId: string;
+  targetPlanKey: string;
+  proposedEndsAt: string;
+  proposedContractReference: string;
+  reason: string;
+  requestKey: string;
+  subscriptionVersion: number;
+}): Promise<ProviderSubscriptionRenewalRevision> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderSubscriptionRenewalRevision>,
+    typeof request
+  >(`${BASE}/subscription-renewals`, request);
+  return response.data.data;
+}
+
+export async function decideProviderSubscriptionRenewal(
+  revision: Pick<ProviderSubscriptionRenewalRevision, 'renewalRevisionId' | 'version'>,
+  decision: 'APPROVED' | 'REJECTED',
+  reason: string
+): Promise<ProviderSubscriptionRenewalRevision> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderSubscriptionRenewalRevision>,
+    { decision: 'APPROVED' | 'REJECTED'; reason: string; version: number }
+  >(`${BASE}/subscription-renewals/${revision.renewalRevisionId}/decision`, {
+    decision,
+    reason,
+    version: revision.version,
+  });
+  return response.data.data;
+}
+
+export async function publishProviderSubscriptionRenewal(
+  revision: Pick<ProviderSubscriptionRenewalRevision, 'renewalRevisionId' | 'version'>
+): Promise<ProviderSubscriptionRenewalRevision> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderSubscriptionRenewalRevision>,
+    { version: number }
+  >(`${BASE}/subscription-renewals/${revision.renewalRevisionId}/publish`, {
+    version: revision.version,
+  });
   return response.data.data;
 }
 
@@ -968,6 +1271,87 @@ export async function listProviderSupportScopes(): Promise<ProviderSupportScope[
   return response.data.data;
 }
 
+export async function listProviderSupportAccessRequests(
+  tenantId?: string
+): Promise<ProviderSupportAccessRequest[]> {
+  const search = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : '';
+  const response = await axiosInstance.get<ApiResponse<ProviderSupportAccessRequest[]>>(
+    `${BASE}/support-access-requests${search}`
+  );
+  return response.data.data;
+}
+
+export async function createProviderSupportAccessRequest(request: {
+  tenantId: string;
+  scopes: string[];
+  durationMinutes: number;
+  justification: string;
+  approvalReference?: string | null;
+  requestKey: string;
+}): Promise<ProviderSupportAccessRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderSupportAccessRequest>,
+    typeof request
+  >(`${BASE}/support-access-requests`, request);
+  return response.data.data;
+}
+
+export async function decideProviderSupportAccessRequest(
+  request: Pick<ProviderSupportAccessRequest, 'supportAccessRequestId' | 'version'>,
+  decision: 'APPROVED' | 'DENIED',
+  reason: string
+): Promise<ProviderSupportAccessRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderSupportAccessRequest>,
+    { decision: 'APPROVED' | 'DENIED'; reason: string; version: number }
+  >(`${BASE}/support-access-requests/${request.supportAccessRequestId}/decision`, {
+    decision,
+    reason,
+    version: request.version,
+  });
+  return response.data.data;
+}
+
+export async function activateProviderSupportAccessRequest(
+  request: Pick<ProviderSupportAccessRequest, 'supportAccessRequestId' | 'version'>
+): Promise<ProviderSupportAccessRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderSupportAccessRequest>,
+    { version: number }
+  >(`${BASE}/support-access-requests/${request.supportAccessRequestId}/activate`, {
+    version: request.version,
+  });
+  return response.data.data;
+}
+
+export async function cancelProviderSupportAccessRequest(
+  request: Pick<ProviderSupportAccessRequest, 'supportAccessRequestId' | 'version'>,
+  reason: string
+): Promise<ProviderSupportAccessRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderSupportAccessRequest>,
+    { reason: string; version: number }
+  >(`${BASE}/support-access-requests/${request.supportAccessRequestId}/cancel`, {
+    reason,
+    version: request.version,
+  });
+  return response.data.data;
+}
+
+export async function reviewProviderSupportAccessRequest(
+  request: Pick<ProviderSupportAccessRequest, 'supportAccessRequestId' | 'version'>,
+  summary: string
+): Promise<ProviderSupportAccessRequest> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderSupportAccessRequest>,
+    { summary: string; version: number }
+  >(`${BASE}/support-access-requests/${request.supportAccessRequestId}/review`, {
+    summary,
+    version: request.version,
+  });
+  return response.data.data;
+}
+
 export async function createProviderSupportSession(request: {
   tenantId: string;
   scopes: string[];
@@ -975,10 +1359,11 @@ export async function createProviderSupportSession(request: {
   justification: string;
   approvalReference?: string | null;
   emergencyAccess: boolean;
+  requestKey?: string;
 }): Promise<ProviderSupportSession> {
   const response = await axiosInstance.post<ApiResponse<ProviderSupportSession>, typeof request>(
     `${BASE}/support-sessions`,
-    request
+    { ...request, requestKey: request.requestKey ?? `break-glass-${crypto.randomUUID()}` }
   );
   return response.data.data;
 }
@@ -1024,6 +1409,224 @@ export async function refreshProviderDataGovernance(): Promise<ProviderDataGover
   const response = await axiosInstance.post<ApiResponse<ProviderDataGovernanceSnapshot>, undefined>(
     `${BASE}/data-governance/refresh`,
     undefined
+  );
+  return response.data.data;
+}
+
+export async function listProviderDataPolicies(): Promise<ProviderDataPolicy[]> {
+  const response = await axiosInstance.get<ApiResponse<ProviderDataPolicy[]>>(
+    `${BASE}/data-governance/policies`
+  );
+  return response.data.data;
+}
+
+export async function createProviderDataPolicy(request: {
+  policyKey: string;
+  displayName: string;
+  description: string;
+  policyType: ProviderDataPolicy['policyType'];
+  scopeType: ProviderDataPolicy['scopeType'];
+  scopeRef?: string | null;
+  ownerService: string;
+  policyRule: Record<string, unknown>;
+  justification: string;
+  effectiveFrom?: string | null;
+  effectiveTo?: string | null;
+}): Promise<ProviderDataPolicy> {
+  const response = await axiosInstance.post<ApiResponse<ProviderDataPolicy>, typeof request>(
+    `${BASE}/data-governance/policies`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function createProviderDataPolicyRevision(
+  policyId: string,
+  request: {
+    policyRule: Record<string, unknown>;
+    justification: string;
+    effectiveFrom?: string | null;
+    effectiveTo?: string | null;
+  }
+): Promise<ProviderDataPolicyRevision> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderDataPolicyRevision>,
+    typeof request
+  >(`${BASE}/data-governance/policies/${policyId}/revisions`, request);
+  return response.data.data;
+}
+
+async function transitionProviderDataPolicy(
+  revision: ProviderDataPolicyRevision,
+  action: 'impact-preview' | 'submit' | 'publish' | 'rollback-request',
+  reason: string
+): Promise<ProviderDataPolicyRevision> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderDataPolicyRevision>,
+    { version: number; reason: string }
+  >(`${BASE}/data-governance/policies/revisions/${revision.revisionId}/${action}`, {
+    version: revision.version,
+    reason,
+  });
+  return response.data.data;
+}
+
+export const previewProviderDataPolicy = (revision: ProviderDataPolicyRevision, reason: string) =>
+  transitionProviderDataPolicy(revision, 'impact-preview', reason);
+
+export const submitProviderDataPolicy = (revision: ProviderDataPolicyRevision, reason: string) =>
+  transitionProviderDataPolicy(revision, 'submit', reason);
+
+export const publishProviderDataPolicy = (revision: ProviderDataPolicyRevision, reason: string) =>
+  transitionProviderDataPolicy(revision, 'publish', reason);
+
+export const rollbackProviderDataPolicy = (revision: ProviderDataPolicyRevision, reason: string) =>
+  transitionProviderDataPolicy(revision, 'rollback-request', reason);
+
+export async function decideProviderDataPolicy(
+  revision: ProviderDataPolicyRevision,
+  decision: 'APPROVED' | 'REJECTED',
+  reason: string
+): Promise<ProviderDataPolicyRevision> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderDataPolicyRevision>,
+    { version: number; decision: string; reason: string }
+  >(`${BASE}/data-governance/policies/revisions/${revision.revisionId}/approval`, {
+    version: revision.version,
+    decision,
+    reason,
+  });
+  return response.data.data;
+}
+
+export async function listProviderFeatureFlags(): Promise<ProviderFeatureFlag[]> {
+  const response = await axiosInstance.get<ApiResponse<ProviderFeatureFlag[]>>(
+    `${BASE}/feature-rollouts/flags`
+  );
+  return response.data.data;
+}
+
+export async function createProviderFeatureFlag(request: {
+  featureKey: string;
+  displayName: string;
+  description: string;
+  ownerService: string;
+  valueType: ProviderFeatureFlag['valueType'];
+  defaultValue: ProviderFeatureValue;
+  configurationSchema: Record<string, unknown>;
+  riskTier: ProviderFeatureFlag['riskTier'];
+}): Promise<ProviderFeatureFlag> {
+  const response = await axiosInstance.post<ApiResponse<ProviderFeatureFlag>, typeof request>(
+    `${BASE}/feature-rollouts/flags`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function listProviderFeatureRollouts(
+  featureKey?: string
+): Promise<ProviderFeatureRollout[]> {
+  const search = featureKey ? `?featureKey=${encodeURIComponent(featureKey)}` : '';
+  const response = await axiosInstance.get<ApiResponse<ProviderFeatureRollout[]>>(
+    `${BASE}/feature-rollouts${search}`
+  );
+  return response.data.data;
+}
+
+export async function createProviderFeatureRollout(
+  featureKey: string,
+  request: {
+    name: string;
+    rolloutValue: ProviderFeatureValue;
+    targeting: Record<string, unknown>;
+    strategy: ProviderFeatureRollout['strategy'];
+    justification: string;
+    stages: Array<{
+      stageName: string;
+      exposurePercentage: number;
+      minimumObservationMinutes: number;
+      healthGate: Record<string, unknown>;
+    }>;
+  }
+): Promise<ProviderFeatureRollout> {
+  const response = await axiosInstance.post<ApiResponse<ProviderFeatureRollout>, typeof request>(
+    `${BASE}/feature-rollouts/flags/${encodeURIComponent(featureKey)}/revisions`,
+    request
+  );
+  return response.data.data;
+}
+
+type ProviderFeatureVersionedReason = { version: number; reason: string };
+
+async function transitionProviderFeatureRollout(
+  rollout: ProviderFeatureRollout,
+  action: 'submit' | 'activate' | 'pause' | 'resume' | 'rollback',
+  reason: string
+): Promise<ProviderFeatureRollout> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderFeatureRollout>,
+    ProviderFeatureVersionedReason
+  >(`${BASE}/feature-rollouts/${rollout.rolloutRevisionId}/${action}`, {
+    version: rollout.version,
+    reason,
+  });
+  return response.data.data;
+}
+
+export const submitProviderFeatureRollout = (rollout: ProviderFeatureRollout, reason: string) =>
+  transitionProviderFeatureRollout(rollout, 'submit', reason);
+
+export const activateProviderFeatureRollout = (rollout: ProviderFeatureRollout, reason: string) =>
+  transitionProviderFeatureRollout(rollout, 'activate', reason);
+
+export const pauseProviderFeatureRollout = (rollout: ProviderFeatureRollout, reason: string) =>
+  transitionProviderFeatureRollout(rollout, 'pause', reason);
+
+export const resumeProviderFeatureRollout = (rollout: ProviderFeatureRollout, reason: string) =>
+  transitionProviderFeatureRollout(rollout, 'resume', reason);
+
+export const rollbackProviderFeatureRollout = (rollout: ProviderFeatureRollout, reason: string) =>
+  transitionProviderFeatureRollout(rollout, 'rollback', reason);
+
+export async function decideProviderFeatureRollout(
+  rollout: ProviderFeatureRollout,
+  decision: 'APPROVED' | 'REJECTED',
+  reason: string
+): Promise<ProviderFeatureRollout> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderFeatureRollout>,
+    { version: number; decision: string; reason: string }
+  >(`${BASE}/feature-rollouts/${rollout.rolloutRevisionId}/approval`, {
+    version: rollout.version,
+    decision,
+    reason,
+  });
+  return response.data.data;
+}
+
+export async function advanceProviderFeatureRollout(
+  rollout: ProviderFeatureRollout,
+  reason: string,
+  observedHealth: Record<string, unknown>
+): Promise<ProviderFeatureRollout> {
+  const response = await axiosInstance.post<
+    ApiResponse<ProviderFeatureRollout>,
+    { version: number; reason: string; observedHealth: Record<string, unknown> }
+  >(`${BASE}/feature-rollouts/${rollout.rolloutRevisionId}/advance`, {
+    version: rollout.version,
+    reason,
+    observedHealth,
+  });
+  return response.data.data;
+}
+
+export async function evaluateProviderFeatureFlag(
+  featureKey: string,
+  tenantId: string
+): Promise<ProviderFeatureEvaluation> {
+  const search = new URLSearchParams({ tenantId });
+  const response = await axiosInstance.get<ApiResponse<ProviderFeatureEvaluation>>(
+    `${BASE}/feature-rollouts/flags/${encodeURIComponent(featureKey)}/evaluate?${search.toString()}`
   );
   return response.data.data;
 }

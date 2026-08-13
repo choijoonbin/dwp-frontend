@@ -2,8 +2,8 @@ import '@xyflow/react/dist/style.css';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
-import { formatNumber } from '@dwp-frontend/shared-i18n';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import { ActionIconButton, mergeFilterSearchParams } from '@dwp-frontend/design-system';
 import {
   BriefcaseBusiness,
@@ -197,10 +197,12 @@ export function OrganizationExplorer({
   experience?: OrganizationExperience;
 }) {
   const { t } = useTranslation('workforce');
+  const display = useDisplayDictionary();
   const auth = useAuth();
   const supportContext = useCurrentProviderSupportContext();
   const workforceView = experience === 'workforce';
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const defaultMode: ChartMode = workforceView ? 'organizations' : 'people';
   const currentDate = today();
   const serializedSearchParams = searchParams.toString();
@@ -970,9 +972,7 @@ export function OrganizationExplorer({
                 size="small"
                 variant="outlined"
                 color={chart.scenario.lifecycleState === 'DRAFT' ? 'warning' : 'info'}
-                label={t(`orgChart.scenarios.states.${chart.scenario.lifecycleState}`, {
-                  defaultValue: chart.scenario.lifecycleState,
-                })}
+                label={display('states', chart.scenario.lifecycleState)}
               />
               <Typography variant="caption" color="text.secondary">
                 {t('orgChart.scenarios.previewSummary', {
@@ -1323,6 +1323,17 @@ export function OrganizationExplorer({
                     insight: null,
                     ...organizationSelectionSearchParams(nextSelection),
                   });
+                }}
+                onRequestExport={() => {
+                  const params = new URLSearchParams({
+                    dataset: 'ORGANIZATION_INTELLIGENCE',
+                    view: insightView,
+                    asOf: intelligenceQuery.data?.asOf ?? asOf,
+                    compareTo,
+                  });
+                  if (scenarioId) params.set('scenarioId', scenarioId);
+                  if (rootOrganizationId) params.set('rootOrganizationId', rootOrganizationId);
+                  navigate(`/workforce/exports?${params.toString()}`);
                 }}
               />
             ) : (

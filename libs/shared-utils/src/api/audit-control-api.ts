@@ -305,6 +305,46 @@ export type AuditRetentionPolicy = {
   highRiskThreshold: number;
   updatedBy?: string | null;
   updatedAt: string;
+  activeRevisionId?: string | null;
+  activeRevisionNumber?: number;
+};
+
+export type AuditPolicyApproval = {
+  approvalId: string;
+  lifecycleState: string;
+  requestedBy: string;
+  requestedAt: string;
+  expiresAt: string;
+  decidedBy?: string | null;
+  decidedAt?: string | null;
+  decisionReason?: string | null;
+  version: number;
+};
+
+export type AuditPolicyRevision = {
+  revisionId: string;
+  revisionNumber: number;
+  lifecycleState: string;
+  standardRetentionDays: number;
+  extendedRetentionDays: number;
+  exportLimitRows: number;
+  requireExportReason: boolean;
+  integrityEnabled: boolean;
+  highRiskThreshold: number;
+  baselineRevisionId?: string | null;
+  rollbackOfRevisionId?: string | null;
+  incidentCaseId?: string | null;
+  changeReason: string;
+  diff: Record<string, { before: unknown; after: unknown }>;
+  contentSha256: string;
+  createdBy: string;
+  createdAt: string;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  publishedBy?: string | null;
+  publishedAt?: string | null;
+  version: number;
+  approval?: AuditPolicyApproval | null;
 };
 
 export type AuditIntegrityCheckpoint = {
@@ -569,6 +609,90 @@ export async function updateAuditPolicy(
     '/api/platform/v1/admin/audit-control/policy',
     request
   );
+  return response.data.data;
+}
+
+const AUDIT_POLICY_REVISIONS = '/api/platform/v1/admin/audit-control/policy/revisions';
+
+export async function listAuditPolicyRevisions(): Promise<AuditPolicyRevision[]> {
+  const response =
+    await axiosInstance.get<ApiResponse<AuditPolicyRevision[]>>(AUDIT_POLICY_REVISIONS);
+  return response.data.data;
+}
+
+export async function createAuditPolicyRevision(
+  request: Omit<
+    AuditRetentionPolicy,
+    'updatedBy' | 'updatedAt' | 'activeRevisionId' | 'activeRevisionNumber'
+  > & {
+    reason: string;
+    incidentCaseId?: string;
+  }
+): Promise<AuditPolicyRevision> {
+  const response = await axiosInstance.post<ApiResponse<AuditPolicyRevision>, typeof request>(
+    AUDIT_POLICY_REVISIONS,
+    request
+  );
+  return response.data.data;
+}
+
+export async function submitAuditPolicyRevision(
+  revision: AuditPolicyRevision,
+  reason: string
+): Promise<AuditPolicyRevision> {
+  const response = await axiosInstance.post<
+    ApiResponse<AuditPolicyRevision>,
+    { reason: string; version: number }
+  >(`${AUDIT_POLICY_REVISIONS}/${revision.revisionId}/submit`, {
+    reason,
+    version: revision.version,
+  });
+  return response.data.data;
+}
+
+export async function decideAuditPolicyRevision(
+  revision: AuditPolicyRevision,
+  decision: 'APPROVED' | 'REJECTED',
+  reason: string
+): Promise<AuditPolicyRevision> {
+  if (!revision.approval) throw new Error('The policy revision has no approval request.');
+  const response = await axiosInstance.post<
+    ApiResponse<AuditPolicyRevision>,
+    { decision: string; reason: string; version: number }
+  >(`${AUDIT_POLICY_REVISIONS}/${revision.revisionId}/decision`, {
+    decision,
+    reason,
+    version: revision.approval.version,
+  });
+  return response.data.data;
+}
+
+export async function publishAuditPolicyRevision(
+  revision: AuditPolicyRevision,
+  reason: string
+): Promise<AuditRetentionPolicy> {
+  const response = await axiosInstance.post<
+    ApiResponse<AuditRetentionPolicy>,
+    { reason: string; version: number }
+  >(`${AUDIT_POLICY_REVISIONS}/${revision.revisionId}/publish`, {
+    reason,
+    version: revision.version,
+  });
+  return response.data.data;
+}
+
+export async function rollbackAuditPolicyRevision(
+  revision: AuditPolicyRevision,
+  reason: string,
+  incidentCaseId?: string
+): Promise<AuditPolicyRevision> {
+  const response = await axiosInstance.post<
+    ApiResponse<AuditPolicyRevision>,
+    { reason: string; incidentCaseId?: string }
+  >(`${AUDIT_POLICY_REVISIONS}/${revision.revisionId}/rollback`, {
+    reason,
+    incidentCaseId: incidentCaseId || undefined,
+  });
   return response.data.data;
 }
 

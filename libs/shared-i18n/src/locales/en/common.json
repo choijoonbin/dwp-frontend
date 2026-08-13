@@ -81,11 +81,13 @@
     "deleting": "Deleting",
     "scope": {
       "personal": "Personal",
+      "team": "Team",
       "organization": "Organization",
       "builtIn": "Built in"
     },
     "owner": {
       "personal": "My view",
+      "team": "Shared with {{name}}",
       "organization": "Managed by your organization"
     },
     "editor": {
@@ -94,6 +96,8 @@
       "description": "Save search, filters, and presentation settings for quick reuse.",
       "name": "View name",
       "visibility": "Visibility",
+      "team": "Owner team",
+      "teamPlaceholder": "Select a team",
       "organizationHint": "Only company administrators can publish organization views.",
       "personalOwnerHint": "Only the original owner can return an organization view to personal scope.",
       "favorite": "Add to favorites",
@@ -108,18 +112,18 @@
       "makeDefault": "Make default",
       "removeDefault": "Remove default",
       "edit": "Edit view",
-      "delete": "Delete view"
+      "delete": "Archive view"
     },
     "deleteDialog": {
-      "title": "Delete saved view",
-      "description": "Delete ‘{{name}}’? This action cannot be undone."
+      "title": "Archive saved view",
+      "description": "Archive ‘{{name}}’? It will be removed from active saved views and retained for governance."
     },
     "feedback": {
       "created": "The current settings were saved as a new view.",
       "updated": "The saved view was updated.",
-      "deleted": "The saved view was deleted.",
+      "deleted": "The saved view was archived.",
       "saveFailed": "The view could not be saved.",
-      "deleteFailed": "The view could not be deleted.",
+      "deleteFailed": "The view could not be archived.",
       "preferenceFailed": "The view preference could not be changed."
     }
   }

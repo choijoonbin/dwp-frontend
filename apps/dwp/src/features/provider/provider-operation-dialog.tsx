@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   CheckCircle2,
   Clock3,
@@ -53,6 +54,7 @@ export function ProviderOperationDialog({
   onRetry,
 }: Props) {
   const { t } = useTranslation('provider');
+  const display = useDisplayDictionary();
   const [retryReason, setRetryReason] = useState('');
   const plan = parseProviderJson(operation.plan);
   const canExecute = operation.lifecycleState === 'PREVIEWED' && onExecute;
@@ -100,7 +102,7 @@ export function ProviderOperationDialog({
               <Chip
                 size="small"
                 variant="outlined"
-                label={operation.riskTier}
+                label={display('riskTiers', operation.riskTier)}
                 color={operation.riskTier === 'L3' ? 'warning' : 'default'}
               />
               <ProviderStatusChip state={operation.lifecycleState} />

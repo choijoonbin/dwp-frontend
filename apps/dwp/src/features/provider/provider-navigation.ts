@@ -4,6 +4,7 @@ import {
   Building2,
   ClipboardList,
   Database,
+  Flag,
   Gauge,
   HeartPulse,
   LifeBuoy,
@@ -42,6 +43,12 @@ export const PROVIDER_NAVIGATION: readonly ProviderNavigationGroup[] = [
   {
     key: 'govern',
     items: [
+      {
+        key: 'featureRollouts',
+        path: '/provider/feature-rollouts',
+        icon: Flag,
+        permission: 'FEATURE_ROLLOUT_READ',
+      },
       { key: 'support', path: '/provider/support', icon: LifeBuoy, permission: 'ESTATE_READ' },
       {
         key: 'commercial',

@@ -1,13 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Building2, CircleCheckBig, Pencil, Star, Trash2, UserRound } from 'lucide-react';
+import {
+  Archive,
+  Building2,
+  CircleCheckBig,
+  Pencil,
+  Star,
+  UserRound,
+  UsersRound,
+} from 'lucide-react';
 import {
   ActionIconButton,
   ConfirmDialog,
   FormDialog,
   FormField,
   SavedViewMenu,
+  SelectField,
 } from '@dwp-frontend/design-system';
 import {
   createSavedView,
@@ -53,6 +62,7 @@ type GovernedSavedViewControlProps = {
 type EditorDraft = {
   name: string;
   scope: SavedViewScope;
+  ownerGroupRef: string;
   favorite: boolean;
   defaultView: boolean;
 };
@@ -60,12 +70,14 @@ type EditorDraft = {
 const EMPTY_DRAFT: EditorDraft = {
   name: '',
   scope: 'PERSONAL',
+  ownerGroupRef: '',
   favorite: false,
   defaultView: false,
 };
 
 const SHARED_EDITOR_ROLES = new Set(['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN']);
 const EMPTY_VIEWS: GovernedSavedView[] = [];
+const EMPTY_GROUPS: Array<{ groupRef: string; displayName: string }> = [];
 
 export function GovernedSavedViewControl({
   surfaceKey,
@@ -98,6 +110,11 @@ export function GovernedSavedViewControl({
     auth.user?.roles.some((role) => SHARED_EDITOR_ROLES.has(role.toUpperCase()))
   );
   const canMakePersonal = !editing || editing.ownerUserId === auth.user?.userId;
+  const groups = auth.user?.groups ?? EMPTY_GROUPS;
+  const groupNames = useMemo(
+    () => new Map(groups.map((group) => [group.groupRef, group.displayName])),
+    [groups]
+  );
 
   useEffect(() => {
     if (!selectedServerViewId) return;
@@ -128,6 +145,7 @@ export function GovernedSavedViewControl({
       createSavedView(surfaceKey, {
         name: draft.name.trim(),
         scope: draft.scope,
+        ownerGroupRef: draft.scope === 'TEAM' ? draft.ownerGroupRef : null,
         configuration: currentConfiguration,
         favorite: draft.favorite,
         defaultView: draft.defaultView,
@@ -146,6 +164,7 @@ export function GovernedSavedViewControl({
       return updateSavedView(editing.savedViewId, {
         name: draft.name.trim(),
         scope: draft.scope,
+        ownerGroupRef: draft.scope === 'TEAM' ? draft.ownerGroupRef : null,
         configuration: editing.configuration,
         version: editing.version,
       });
@@ -193,16 +212,20 @@ export function GovernedSavedViewControl({
       ...views.map((view) => ({
         id: view.savedViewId,
         name: view.name,
-        scope: view.scope === 'TENANT' ? ('shared' as const) : ('personal' as const),
+        scope: view.scope === 'PERSONAL' ? ('personal' as const) : ('shared' as const),
         owner:
           view.scope === 'TENANT'
             ? t('savedViews.owner.organization')
-            : t('savedViews.owner.personal'),
+            : view.scope === 'TEAM'
+              ? t('savedViews.owner.team', {
+                  name: groupNames.get(view.ownerGroupRef ?? '') ?? t('savedViews.scope.team'),
+                })
+              : t('savedViews.owner.personal'),
         favorite: view.favorite,
         isDefault: view.defaultView,
       })),
     ],
-    [builtInViews, t, views]
+    [builtInViews, groupNames, t, views]
   );
 
   const beginCreate = () => {
@@ -215,6 +238,7 @@ export function GovernedSavedViewControl({
     setDraft({
       name: view.name,
       scope: view.scope,
+      ownerGroupRef: view.ownerGroupRef ?? '',
       favorite: view.favorite,
       defaultView: view.defaultView,
     });
@@ -265,7 +289,7 @@ export function GovernedSavedViewControl({
         submitLabel={editing ? t('actions.save') : t('actions.create')}
         submittingLabel={t('savedViews.saving')}
         busy={busy}
-        submitDisabled={!draft.name.trim()}
+        submitDisabled={!draft.name.trim() || (draft.scope === 'TEAM' && !draft.ownerGroupRef)}
         onClose={() => {
           setEditorOpen(false);
           setEditing(null);
@@ -306,6 +330,14 @@ export function GovernedSavedViewControl({
                   {t('savedViews.scope.personal')}
                 </Box>
               </ToggleButton>
+              {groups.length > 0 && (
+                <ToggleButton value="TEAM" disabled={!canMakePersonal}>
+                  <UsersRound size={16} aria-hidden="true" />
+                  <Box component="span" sx={{ ml: 0.75 }}>
+                    {t('savedViews.scope.team')}
+                  </Box>
+                </ToggleButton>
+              )}
               <ToggleButton value="TENANT" disabled={!canPublish}>
                 <Building2 size={16} aria-hidden="true" />
                 <Box component="span" sx={{ ml: 0.75 }}>
@@ -313,6 +345,21 @@ export function GovernedSavedViewControl({
                 </Box>
               </ToggleButton>
             </ToggleButtonGroup>
+            {draft.scope === 'TEAM' && (
+              <SelectField
+                label={t('savedViews.editor.team')}
+                value={draft.ownerGroupRef}
+                options={groups.map((group) => ({
+                  value: group.groupRef,
+                  label: group.displayName,
+                }))}
+                placeholder={t('savedViews.editor.teamPlaceholder')}
+                onValueChange={(ownerGroupRef) =>
+                  setDraft((current) => ({ ...current, ownerGroupRef: String(ownerGroupRef) }))
+                }
+                sx={{ mt: 1.5 }}
+              />
+            )}
             {!canPublish && (
               <Typography
                 variant="caption"
@@ -409,7 +456,9 @@ export function GovernedSavedViewControl({
                         label={
                           view.scope === 'TENANT'
                             ? t('savedViews.scope.organization')
-                            : t('savedViews.scope.personal')
+                            : view.scope === 'TEAM'
+                              ? t('savedViews.scope.team')
+                              : t('savedViews.scope.personal')
                         }
                       />
                       {view.defaultView && <Chip size="small" label={t('savedViews.default')} />}
@@ -470,7 +519,7 @@ export function GovernedSavedViewControl({
                       disabled={!view.editable}
                       onClick={() => setDeleting(view)}
                     >
-                      <Trash2 size={17} />
+                      <Archive size={17} />
                     </ActionIconButton>
                   </Box>
                 </Box>

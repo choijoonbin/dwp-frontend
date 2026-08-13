@@ -4,6 +4,7 @@ import type { NavigationNode } from '@dwp-frontend/shared-utils';
 
 import { WORKSPACE_APPS_FIXTURE } from './support/runtime-access';
 import {
+  CATALOG_ASSURANCE_FIXTURE,
   CATALOG_ENTITIES_FIXTURE,
   CATALOG_RELATION_FIXTURE,
   FULL_PRODUCT_PERMISSIONS,
@@ -295,6 +296,9 @@ test('catalog graph exposes change impact and records an explicit relationship',
       return fulfillSuccess(route, {
         target: entities[1],
         operation: url.searchParams.get('operation') ?? 'CHANGE',
+        compatibilityState: 'REVIEW_REQUIRED',
+        ruleKey: 'DWP_CATALOG_IMPACT',
+        ruleVersion: 1,
         riskScore: 62,
         blocked: false,
         directDependentCount: 1,
@@ -310,6 +314,9 @@ test('catalog graph exposes change impact and records an explicit relationship',
         findings: [],
         generatedAt: '2026-08-12T00:20:00Z',
       });
+    }
+    if (path.endsWith('/assurance')) {
+      return fulfillSuccess(route, CATALOG_ASSURANCE_FIXTURE);
     }
     if (path.endsWith('/relations') && route.request().method() === 'POST') {
       const body = route.request().postDataJSON() as {
@@ -360,4 +367,75 @@ test('catalog graph exposes change impact and records an explicit relationship',
   await dialog.getByRole('button', { name: 'Save relationship' }).click();
   await expect(page.getByText('Catalog relationship saved.')).toBeVisible();
   await expect(page.getByText('Depends on', { exact: true })).toBeVisible();
+});
+
+test('catalog assurance restores deep links and records governed false-positive evidence', async ({
+  page,
+}) => {
+  await installTenantAdmin(page);
+  let finding = structuredClone(CATALOG_ASSURANCE_FIXTURE.findings[0]);
+
+  await page.route('**/api/platform/v1/admin/catalog**', async (route) => {
+    const path = new URL(route.request().url()).pathname;
+    if (path === '/api/platform/v1/admin/catalog/assurance') {
+      return fulfillSuccess(route, {
+        ...CATALOG_ASSURANCE_FIXTURE,
+        openCount: ['OPEN', 'ACKNOWLEDGED'].includes(finding.lifecycleState) ? 1 : 0,
+        findings: [finding],
+      });
+    }
+    if (
+      path.endsWith(`/assurance/findings/${finding.findingId}/disposition`) &&
+      route.request().method() === 'POST'
+    ) {
+      const body = route.request().postDataJSON() as {
+        decision: typeof finding.lifecycleState;
+        reason: string;
+        evidenceRef?: string;
+        version: number;
+      };
+      finding = {
+        ...finding,
+        lifecycleState: body.decision,
+        dispositionReason: body.reason,
+        dispositionEvidenceRef: body.evidenceRef ?? null,
+        disposedBy: 1,
+        disposedAt: '2026-08-12T00:25:00Z',
+        version: body.version + 1,
+      };
+      return fulfillSuccess(route, finding);
+    }
+    return route.fallback();
+  });
+
+  await page.goto(
+    `/admin/platform/catalog?view=assurance&finding=${CATALOG_ASSURANCE_FIXTURE.findings[0].findingId}`
+  );
+  await expect(page.getByRole('tab', { name: 'Assurance' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
+  await expect(page.getByText('DWP_CATALOG_IMPACT v1')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Accountable owner is missing' })).toBeVisible();
+  await expect(page.getByText(`Evidence SHA-256: ${'a'.repeat(64)}`)).toBeVisible();
+
+  await page.getByRole('button', { name: 'Record disposition' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Record finding disposition' });
+  await dialog.getByRole('combobox', { name: /Decision/ }).click();
+  await page.getByRole('option', { name: 'False positive' }).click();
+  await dialog
+    .getByRole('textbox', { name: 'Decision reason' })
+    .fill('The application owner is synchronized from the approved service catalog source.');
+  await dialog.getByRole('textbox', { name: 'Evidence reference' }).fill('CATALOG-CASE-203');
+  await dialog.getByRole('button', { name: 'Record decision' }).click();
+
+  await expect(page.getByText('Finding disposition recorded.')).toBeVisible();
+  await expect(
+    page.getByLabel('Finding evidence').getByText('False positive', { exact: true })
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      'Recorded disposition: The application owner is synchronized from the approved service catalog source.'
+    )
+  ).toBeVisible();
 });

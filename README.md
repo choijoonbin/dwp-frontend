@@ -30,6 +30,10 @@ corepack yarn install
 corepack yarn dev
 ```
 
+이 저장소는 `packageManager`와 CI가 고정한 Yarn 4 단일 Workspace다. `pnpm-lock.yaml`,
+`pnpm-workspace.yaml`, `package-lock.json` 또는 Bun Lockfile이 생기면
+`corepack yarn package-manager:check`와 CI가 실패한다.
+
 기본 주소는 `http://localhost:4200`입니다. 개발 환경에서는 동일 출처 `/api`를
 `VITE_API_PROXY_TARGET`의 Gateway로 전달합니다. 별도 API Origin이 필요한 배포만
 `VITE_API_URL`을 설정합니다. 전체 환경은 백엔드 통합 명령으로 실행합니다.
@@ -53,6 +57,7 @@ corepack yarn test:performance
 corepack yarn test:visual
 corepack yarn test:storybook
 corepack yarn license:check
+corepack yarn release:evidence:check
 ```
 
 `corepack yarn build`는 production manifest를 분석해 초기 Entry, 정적 의존 청크와 가장 큰
@@ -60,6 +65,11 @@ corepack yarn license:check
 Shell 준비 시간, SPA 전환 시간, CLS 예산도 GitHub Actions가 검증합니다. 운영 환경에서
 `VITE_WEB_VITALS_ENDPOINT`를 설정하면 LCP·INP·CLS를 개인정보나 원문 URL 없이 Route
 Group 단위로 전송합니다.
+
+`release:evidence:check`는 `R2`·`R3`·외부 결정·승인 원장의 구조와 증거 경로를 검증합니다.
+실제 출시 승인에는 `corepack yarn release:gate`를 사용하며, 외부 성능·접근성·보안·운영
+증거가 완료되기 전에는 의도적으로 실패합니다. GitHub의 수동 `Release readiness`
+워크플로도 같은 Gate를 실행합니다.
 
 브라우저 인증은 JavaScript Token Storage가 아니라 Backend의 `HttpOnly` Session
 Cookie를 사용합니다. 상태 변경 API는 `/api/auth/csrf`에서 받은 Token을

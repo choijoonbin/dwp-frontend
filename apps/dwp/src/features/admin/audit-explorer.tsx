@@ -63,8 +63,8 @@ import {
   RiskScore,
   SeverityChip,
   actorLabel,
-  fallbackAction,
   targetLabel,
+  useAuditActionLabel,
 } from './audit-ui';
 
 import type { GridColDef, GridPaginationModel } from '@mui/x-data-grid';
@@ -144,6 +144,7 @@ function DetailRow({ label, value }: { label: string; value?: string | number | 
 
 export function AuditExplorer() {
   const { t } = useTranslation('admin');
+  const auditActionLabel = useAuditActionLabel();
   const [searchParams] = useSearchParams();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -336,7 +337,7 @@ export function AuditExplorer() {
         renderCell: ({ row }) => (
           <Box sx={{ minWidth: 0, py: 0.75 }}>
             <Typography variant="body2" fontWeight={700} noWrap>
-              {fallbackAction(row.action)}
+              {auditActionLabel(row.action)}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap>
               {t(`auditControl.category.${row.category}`)}
@@ -371,7 +372,7 @@ export function AuditExplorer() {
         renderCell: ({ row }) => <OutcomeChip outcome={row.outcome} />,
       },
     ],
-    [t]
+    [auditActionLabel, t]
   );
 
   const copy = async (value?: string | null) => {
@@ -744,7 +745,7 @@ export function AuditExplorer() {
               >
                 <Stack direction="row" justifyContent="space-between" gap={2}>
                   <Typography component="p" variant="subtitle2">
-                    {fallbackAction(event.action)}
+                    {auditActionLabel(event.action)}
                   </Typography>
                   <SeverityChip severity={event.severity} />
                 </Stack>
@@ -789,7 +790,7 @@ export function AuditExplorer() {
                   <OutcomeChip outcome={selected.outcome} />
                 </Stack>
                 <Typography component="h2" variant="h5" sx={{ mt: 1.5 }}>
-                  {fallbackAction(selected.action)}
+                  {auditActionLabel(selected.action)}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                   {selected.sourceService} / {selected.sourceModule}

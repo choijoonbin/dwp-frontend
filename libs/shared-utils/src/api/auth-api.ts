@@ -35,6 +35,10 @@ export type MeResponse = {
   tenantCode: string;
   tenantName?: string | null;
   roles: string[];
+  groups?: Array<{
+    groupRef: string;
+    displayName: string;
+  }>;
 };
 
 export type AuthSessionData = {

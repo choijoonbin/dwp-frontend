@@ -1,4 +1,6 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -78,10 +80,7 @@ export function targetLabel(event: AuditEvent): string {
   return event.targetDisplayName || event.targetId;
 }
 
-export function fallbackAction(action: string): string {
-  return action
-    .split(/[._-]/u)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+export function useAuditActionLabel() {
+  const display = useDisplayDictionary();
+  return useCallback((action: string) => display('auditActions', action), [display]);
 }

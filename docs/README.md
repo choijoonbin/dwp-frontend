@@ -53,9 +53,17 @@
 - `05-features/DWP-R0-OPS-001-api-observability/`
 - `05-features/DWP-R1-CORE-001-reference-work-hub/`
 - `05-features/DWP-R1-AI-001-governed-ask-runtime/`
+- `05-features/DWP-R1-CORE-002-personal-home-experience/`
+- `05-features/DWP-R1-ADM-006-governed-catalog/`
+- `05-features/DWP-R1-ADM-007-navigation-app-access-governance/`
+- `05-features/DWP-R1-ADM-008-localization-studio/`
+- `05-features/DWP-R1-CORE-003-account-preferences/`
+- `05-features/DWP-R1-CORE-004-governed-sharing-export/`
 - `06-delivery/디자인 파트너 선정 및 Pilot Charter.md`
 - `06-delivery/R0 C1 Productivity Connector 준비 체크리스트.md`
 - `06-delivery/로컬 권한별 로그인 검증 계정.md`
+- `06-delivery/R2 R3 출시 증거 실행 가이드.md`
+- `06-delivery/release-evidence/release-readiness.json`
 
 ## Feature 문서 규칙
 

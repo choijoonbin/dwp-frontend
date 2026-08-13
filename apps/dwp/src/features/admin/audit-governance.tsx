@@ -2,45 +2,64 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Archive,
+  Check,
   CheckCircle2,
   Database,
   Download,
   Fingerprint,
+  GitPullRequest,
   KeyRound,
   LockKeyhole,
   RefreshCw,
+  RotateCcw,
   Save,
+  Send,
   ShieldCheck,
   TimerReset,
+  X,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  createAuditPolicyRevision,
   createAuditCheckpoint,
+  decideAuditPolicyRevision,
   getAuditPolicy,
   listAuditIntegrity,
-  updateAuditPolicy,
+  listAuditPolicyRevisions,
+  publishAuditPolicyRevision,
+  rollbackAuditPolicyRevision,
+  submitAuditPolicyRevision,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { ActionButton, ActionIconButton, FormField } from '@dwp-frontend/design-system';
 
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
-import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
 
-import type { AuditIntegrityCheckpoint, AuditRetentionPolicy } from '@dwp-frontend/shared-utils';
+import type {
+  AuditIntegrityCheckpoint,
+  AuditPolicyRevision,
+  AuditRetentionPolicy,
+} from '@dwp-frontend/shared-utils';
 
-type EditablePolicy = Omit<AuditRetentionPolicy, 'updatedBy' | 'updatedAt'>;
+type EditablePolicy = Pick<
+  AuditRetentionPolicy,
+  | 'standardRetentionDays'
+  | 'extendedRetentionDays'
+  | 'exportLimitRows'
+  | 'requireExportReason'
+  | 'integrityEnabled'
+  | 'highRiskThreshold'
+>;
 
 function AssuranceItem({
   icon: Icon,
@@ -210,28 +229,261 @@ function IntegrityLedger({ items }: { items: AuditIntegrityCheckpoint[] }) {
   );
 }
 
+type PolicyRevisionAction = 'submit' | 'approve' | 'reject' | 'publish' | 'rollback';
+
+function revisionColor(state: string): 'default' | 'info' | 'warning' | 'success' | 'error' {
+  if (state === 'PUBLISHED' || state === 'APPROVED') return 'success';
+  if (state === 'IN_REVIEW' || state === 'DRAFT') return 'warning';
+  if (state === 'REJECTED' || state === 'CANCELLED') return 'error';
+  if (state === 'SUPERSEDED') return 'info';
+  return 'default';
+}
+
+function PolicyRevisionLedger({
+  items,
+  activeRevisionId,
+  reason,
+  busy,
+  onAction,
+}: {
+  items: AuditPolicyRevision[];
+  activeRevisionId?: string | null;
+  reason: string;
+  busy: boolean;
+  onAction: (revision: AuditPolicyRevision, action: PolicyRevisionAction) => void;
+}) {
+  const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
+  if (!items.length) {
+    return (
+      <Typography variant="body2" color="text.secondary" sx={{ px: 2.5, py: 4 }}>
+        {t('auditControl.governance.revisions.empty')}
+      </Typography>
+    );
+  }
+  return (
+    <Stack divider={<Divider flexItem />}>
+      {items.map((revision) => {
+        const active = revision.revisionId === activeRevisionId;
+        const changedFields = Object.keys(revision.diff);
+        return (
+          <Box key={revision.revisionId} sx={{ px: 2.5, py: 2 }}>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              alignItems={{ md: 'flex-start' }}
+              justifyContent="space-between"
+              gap={2}
+            >
+              <Box minWidth={0} flex={1}>
+                <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+                  <Typography component="h3" variant="subtitle2">
+                    {t('auditControl.governance.revisions.revision', {
+                      number: revision.revisionNumber,
+                    })}
+                  </Typography>
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    color={revisionColor(revision.lifecycleState)}
+                    label={display('states', revision.lifecycleState)}
+                  />
+                  {active && (
+                    <Chip
+                      size="small"
+                      color="success"
+                      label={t('auditControl.governance.revisions.active')}
+                    />
+                  )}
+                  {revision.rollbackOfRevisionId && (
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      icon={<RotateCcw size={13} />}
+                      label={t('auditControl.governance.revisions.rollbackDraft')}
+                    />
+                  )}
+                </Stack>
+                <Typography variant="body2" sx={{ mt: 0.75 }}>
+                  {revision.changeReason}
+                </Typography>
+                <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+                  {changedFields.length ? (
+                    changedFields.map((field) => (
+                      <Chip
+                        key={field}
+                        size="small"
+                        variant="outlined"
+                        label={t(`auditControl.governance.revisions.fields.${field}`, {
+                          defaultValue: field,
+                        })}
+                      />
+                    ))
+                  ) : (
+                    <Typography variant="caption" color="text.secondary">
+                      {t('auditControl.governance.revisions.baseline')}
+                    </Typography>
+                  )}
+                </Stack>
+                <Stack direction={{ xs: 'column', sm: 'row' }} gap={{ xs: 0.25, sm: 2 }} mt={1}>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('auditControl.governance.revisions.author', {
+                      actor: revision.createdBy,
+                      time: formatDate(revision.createdAt, {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      }),
+                    })}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('auditControl.governance.revisions.hashLabel')}{' '}
+                    <Box component="code" sx={{ fontFamily: 'monospace' }}>
+                      {revision.contentSha256.slice(0, 12)}…
+                    </Box>
+                  </Typography>
+                </Stack>
+              </Box>
+              <Stack direction="row" gap={1} flexWrap="wrap" justifyContent="flex-end">
+                {revision.lifecycleState === 'DRAFT' && (
+                  <ActionButton
+                    intent="secondary"
+                    size="small"
+                    startIcon={<Send size={15} />}
+                    disabled={busy || !reason.trim()}
+                    onClick={() => onAction(revision, 'submit')}
+                  >
+                    {t('auditControl.governance.revisions.submit')}
+                  </ActionButton>
+                )}
+                {revision.lifecycleState === 'IN_REVIEW' && (
+                  <>
+                    <ActionButton
+                      intent="danger"
+                      size="small"
+                      startIcon={<X size={15} />}
+                      disabled={busy || !reason.trim()}
+                      onClick={() => onAction(revision, 'reject')}
+                    >
+                      {t('auditControl.governance.revisions.reject')}
+                    </ActionButton>
+                    <ActionButton
+                      intent="primary"
+                      size="small"
+                      startIcon={<Check size={15} />}
+                      disabled={busy || !reason.trim()}
+                      onClick={() => onAction(revision, 'approve')}
+                    >
+                      {t('auditControl.governance.revisions.approve')}
+                    </ActionButton>
+                  </>
+                )}
+                {revision.lifecycleState === 'APPROVED' && (
+                  <ActionButton
+                    intent="primary"
+                    size="small"
+                    startIcon={<ShieldCheck size={15} />}
+                    disabled={busy || !reason.trim()}
+                    onClick={() => onAction(revision, 'publish')}
+                  >
+                    {t('auditControl.governance.revisions.publish')}
+                  </ActionButton>
+                )}
+                {revision.lifecycleState === 'SUPERSEDED' && (
+                  <ActionButton
+                    intent="secondary"
+                    size="small"
+                    startIcon={<RotateCcw size={15} />}
+                    disabled={busy || !reason.trim()}
+                    onClick={() => onAction(revision, 'rollback')}
+                  >
+                    {t('auditControl.governance.revisions.rollback')}
+                  </ActionButton>
+                )}
+              </Stack>
+            </Stack>
+          </Box>
+        );
+      })}
+    </Stack>
+  );
+}
+
 export function AuditGovernance() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
   const policyQuery = useQuery({ queryKey: ['audit-control', 'policy'], queryFn: getAuditPolicy });
+  const revisionsQuery = useQuery({
+    queryKey: ['audit-control', 'policy-revisions'],
+    queryFn: listAuditPolicyRevisions,
+  });
   const integrityQuery = useQuery({
     queryKey: ['audit-control', 'integrity'],
     queryFn: listAuditIntegrity,
   });
   const [policy, setPolicy] = useState<EditablePolicy | null>(null);
+  const [reason, setReason] = useState('');
+  const [incidentCaseId, setIncidentCaseId] = useState('');
 
   useEffect(() => {
     if (!policyQuery.data) return;
-    const { updatedBy: _updatedBy, updatedAt: _updatedAt, ...editable } = policyQuery.data;
-    setPolicy(editable);
+    setPolicy({
+      standardRetentionDays: policyQuery.data.standardRetentionDays,
+      extendedRetentionDays: policyQuery.data.extendedRetentionDays,
+      exportLimitRows: policyQuery.data.exportLimitRows,
+      requireExportReason: policyQuery.data.requireExportReason,
+      integrityEnabled: policyQuery.data.integrityEnabled,
+      highRiskThreshold: policyQuery.data.highRiskThreshold,
+    });
   }, [policyQuery.data]);
 
-  const saveMutation = useMutation({
-    mutationFn: () => updateAuditPolicy(policy!),
+  const refreshPolicy = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['audit-control', 'policy'] }),
+      queryClient.invalidateQueries({ queryKey: ['audit-control', 'policy-revisions'] }),
+    ]);
+  };
+  const createRevisionMutation = useMutation({
+    mutationFn: () =>
+      createAuditPolicyRevision({
+        ...policy!,
+        reason: reason.trim(),
+        incidentCaseId: incidentCaseId.trim() || undefined,
+      }),
     onSuccess: async () => {
-      toast.success(t('auditControl.governance.saved'));
-      await queryClient.invalidateQueries({ queryKey: ['audit-control', 'policy'] });
+      toast.success(t('auditControl.governance.revisions.created'));
+      setReason('');
+      setIncidentCaseId('');
+      await refreshPolicy();
+    },
+    onError: () => toast.error(t('common.operationError')),
+  });
+  const revisionActionMutation = useMutation({
+    mutationFn: async ({
+      revision,
+      action,
+    }: {
+      revision: AuditPolicyRevision;
+      action: PolicyRevisionAction;
+    }) => {
+      if (action === 'submit') return submitAuditPolicyRevision(revision, reason.trim());
+      if (action === 'approve') {
+        return decideAuditPolicyRevision(revision, 'APPROVED', reason.trim());
+      }
+      if (action === 'reject') {
+        return decideAuditPolicyRevision(revision, 'REJECTED', reason.trim());
+      }
+      if (action === 'publish') return publishAuditPolicyRevision(revision, reason.trim());
+      return rollbackAuditPolicyRevision(
+        revision,
+        reason.trim(),
+        incidentCaseId.trim() || undefined
+      );
+    },
+    onSuccess: async () => {
+      toast.success(t('auditControl.governance.revisions.transitioned'));
+      setReason('');
+      setIncidentCaseId('');
+      await refreshPolicy();
     },
     onError: () => toast.error(t('common.operationError')),
   });
@@ -246,16 +498,25 @@ export function AuditGovernance() {
 
   const latestCheckpoint = useMemo(() => integrityQuery.data?.[0], [integrityQuery.data]);
 
-  if (policyQuery.isLoading || integrityQuery.isLoading || !policy) {
+  if (policyQuery.isLoading || revisionsQuery.isLoading || integrityQuery.isLoading || !policy) {
     return <AdminPanelLoading label={t('auditControl.loading')} />;
   }
-  if (policyQuery.isError || integrityQuery.isError) {
+  if (policyQuery.isError || revisionsQuery.isError || integrityQuery.isError) {
     return <AdminPanelError message={t('auditControl.loadError')} />;
   }
 
   const setNumber = (field: keyof EditablePolicy, value: string) => {
     setPolicy((current) => (current ? { ...current, [field]: Number(value) } : current));
   };
+  const activePolicy = policyQuery.data;
+  const policyChanged =
+    Boolean(activePolicy) &&
+    (policy.standardRetentionDays !== activePolicy?.standardRetentionDays ||
+      policy.extendedRetentionDays !== activePolicy?.extendedRetentionDays ||
+      policy.exportLimitRows !== activePolicy?.exportLimitRows ||
+      policy.requireExportReason !== activePolicy?.requireExportReason ||
+      policy.integrityEnabled !== activePolicy?.integrityEnabled ||
+      policy.highRiskThreshold !== activePolicy?.highRiskThreshold);
 
   return (
     <Box
@@ -331,7 +592,9 @@ export function AuditGovernance() {
             size="small"
             variant="outlined"
             color="success"
-            label={t('auditControl.governance.policyActive')}
+            label={t('auditControl.governance.revisions.activeRevision', {
+              number: policyQuery.data?.activeRevisionNumber ?? 1,
+            })}
           />
         </Stack>
         <Stack direction="row" alignItems="flex-start" sx={{ minWidth: 760 }}>
@@ -364,6 +627,38 @@ export function AuditGovernance() {
         </Stack>
       </Box>
 
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems={{ sm: 'center' }}
+          justifyContent="space-between"
+          gap={1}
+          sx={{ px: 2.5, py: 1.75, bgcolor: 'background.default' }}
+        >
+          <Box>
+            <Stack direction="row" alignItems="center" gap={1}>
+              <GitPullRequest size={18} />
+              <Typography component="h2" variant="subtitle1">
+                {t('auditControl.governance.revisions.title')}
+              </Typography>
+            </Stack>
+            <Typography variant="body2" color="text.secondary">
+              {t('auditControl.governance.revisions.description')}
+            </Typography>
+          </Box>
+          <Typography variant="caption" color="text.secondary">
+            {t('auditControl.governance.revisions.reasonShared')}
+          </Typography>
+        </Stack>
+        <PolicyRevisionLedger
+          items={revisionsQuery.data ?? []}
+          activeRevisionId={policyQuery.data?.activeRevisionId}
+          reason={reason}
+          busy={revisionActionMutation.isPending}
+          onAction={(revision, action) => revisionActionMutation.mutate({ revision, action })}
+        />
+      </Box>
+
       <Box
         sx={{
           display: 'grid',
@@ -394,14 +689,14 @@ export function AuditGovernance() {
                 })}
               </Typography>
             </Box>
-            <Button
-              variant="contained"
+            <ActionButton
+              intent="primary"
               startIcon={<Save size={17} />}
-              disabled={saveMutation.isPending}
-              onClick={() => saveMutation.mutate()}
+              disabled={createRevisionMutation.isPending || !policyChanged || !reason.trim()}
+              onClick={() => createRevisionMutation.mutate()}
             >
-              {t('common.actions.save')}
-            </Button>
+              {t('auditControl.governance.revisions.create')}
+            </ActionButton>
           </Stack>
           <Divider />
           <Box sx={{ p: 2.5 }}>
@@ -414,14 +709,14 @@ export function AuditGovernance() {
             <Box
               sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}
             >
-              <TextField
+              <FormField
                 type="number"
                 label={t('auditControl.governance.standardDays')}
                 value={policy.standardRetentionDays}
                 onChange={(event) => setNumber('standardRetentionDays', event.target.value)}
                 slotProps={{ htmlInput: { min: 90, max: 3650 } }}
               />
-              <TextField
+              <FormField
                 type="number"
                 label={t('auditControl.governance.extendedDays')}
                 value={policy.extendedRetentionDays}
@@ -439,14 +734,14 @@ export function AuditGovernance() {
             <Box
               sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}
             >
-              <TextField
+              <FormField
                 type="number"
                 label={t('auditControl.governance.riskThreshold')}
                 value={policy.highRiskThreshold}
                 onChange={(event) => setNumber('highRiskThreshold', event.target.value)}
                 slotProps={{ htmlInput: { min: 50, max: 100 } }}
               />
-              <TextField
+              <FormField
                 type="number"
                 label={t('auditControl.governance.exportLimit')}
                 value={policy.exportLimitRows}
@@ -484,6 +779,29 @@ export function AuditGovernance() {
                 label={t('auditControl.governance.integrityEnabled')}
               />
             </Stack>
+            <Divider sx={{ my: 3 }} />
+            <Typography variant="overline" color="text.secondary">
+              {t('auditControl.governance.revisions.changeEvidence')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+              {t('auditControl.governance.revisions.changeEvidenceHint')}
+            </Typography>
+            <Stack gap={2}>
+              <FormField
+                multiline
+                minRows={2}
+                label={t('auditControl.governance.revisions.reason')}
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                slotProps={{ htmlInput: { maxLength: 1000 } }}
+              />
+              <FormField
+                label={t('auditControl.governance.revisions.incidentCase')}
+                supportingText={t('auditControl.governance.revisions.incidentCaseHint')}
+                value={incidentCaseId}
+                onChange={(event) => setIncidentCaseId(event.target.value)}
+              />
+            </Stack>
           </Box>
         </Box>
 
@@ -504,22 +822,20 @@ export function AuditGovernance() {
               </Typography>
             </Box>
             <Stack direction="row" gap={0.5}>
-              <Tooltip title={t('common.actions.refresh')}>
-                <IconButton
-                  aria-label={t('common.actions.refresh')}
-                  onClick={() => void integrityQuery.refetch()}
-                >
-                  <RefreshCw size={18} />
-                </IconButton>
-              </Tooltip>
-              <Button
-                variant="outlined"
+              <ActionIconButton
+                label={t('common.actions.refresh')}
+                onClick={() => void integrityQuery.refetch()}
+              >
+                <RefreshCw size={18} />
+              </ActionIconButton>
+              <ActionButton
+                intent="secondary"
                 startIcon={<Fingerprint size={17} />}
                 disabled={checkpointMutation.isPending || !policy.integrityEnabled}
                 onClick={() => checkpointMutation.mutate()}
               >
                 {t('auditControl.governance.verify')}
-              </Button>
+              </ActionButton>
             </Stack>
           </Stack>
           <Divider />

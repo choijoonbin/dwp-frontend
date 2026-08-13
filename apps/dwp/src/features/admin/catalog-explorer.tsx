@@ -11,12 +11,18 @@ import {
   Plus,
   RefreshCw,
   Search,
+  ScanSearch,
   ShieldAlert,
+  ShieldCheck,
   Unlink,
 } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   declareCatalogRelation,
+  dispositionCatalogFinding,
+  evaluateCatalogAssurance,
+  getCatalogAssurance,
   getCatalogGraph,
   getCatalogImpact,
   getCatalogOverview,
@@ -49,6 +55,9 @@ import { CatalogGraphView } from './catalog-graph';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
+  CatalogAssuranceFinding,
+  CatalogAssuranceFindingState,
+  CatalogAssuranceSummary,
   CatalogCriticality,
   CatalogEntity,
   CatalogEntityKind,
@@ -57,7 +66,7 @@ import type {
   CatalogRelationType,
 } from '@dwp-frontend/shared-utils';
 
-type View = 'graph' | 'inventory';
+type View = 'graph' | 'inventory' | 'assurance';
 
 const KINDS: Array<CatalogEntityKind | 'ALL'> = [
   'ALL',
@@ -124,6 +133,7 @@ function RelationDialog({
   }) => void;
 }) {
   const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
   const targets = entities.filter((entity) => entity.ref !== source.ref);
   const [targetRef, setTargetRef] = useState(targets[0]?.ref ?? '');
   const [relationType, setRelationType] = useState<CatalogRelationType>('DEPENDS_ON');
@@ -159,7 +169,7 @@ function RelationDialog({
         >
           {targets.map((entity) => (
             <MenuItem key={entity.ref} value={entity.ref}>
-              {entity.name} · {entity.kind}
+              {entity.name} · {display('entityKinds', entity.kind)}
             </MenuItem>
           ))}
         </FormField>
@@ -220,6 +230,12 @@ function ImpactPanel({ impact }: { impact: CatalogImpact }) {
           label={impact.blocked ? t('catalog.impact.blocked') : t('catalog.impact.ready')}
         />
       </Stack>
+      <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+        {t('catalog.impact.rule', {
+          key: impact.ruleKey,
+          version: impact.ruleVersion,
+        })}
+      </Typography>
       <Box
         sx={{
           mt: 1,
@@ -277,12 +293,372 @@ function ImpactPanel({ impact }: { impact: CatalogImpact }) {
   );
 }
 
+type FindingDecision = Exclude<CatalogAssuranceFindingState, 'OPEN'>;
+
+function FindingDispositionDialog({
+  finding,
+  busy,
+  onClose,
+  onSubmit,
+}: {
+  finding: CatalogAssuranceFinding;
+  busy: boolean;
+  onClose: () => void;
+  onSubmit: (value: {
+    decision: FindingDecision;
+    reason: string;
+    evidenceRef: string;
+  }) => Promise<void>;
+}) {
+  const { t } = useTranslation('admin');
+  const [decision, setDecision] = useState<FindingDecision>('ACKNOWLEDGED');
+  const [reason, setReason] = useState('');
+  const [evidenceRef, setEvidenceRef] = useState('');
+  return (
+    <FormDialog
+      open
+      title={t('catalog.assurance.disposition.title')}
+      description={t('catalog.assurance.disposition.description', {
+        entity: finding.entityRef,
+      })}
+      cancelLabel={t('common.actions.cancel')}
+      submitLabel={t('catalog.assurance.disposition.submit')}
+      submittingLabel={t('catalog.assurance.disposition.submitting')}
+      submitIntent={decision === 'FALSE_POSITIVE' ? 'secondary' : 'primary'}
+      submitDisabled={reason.trim().length < 10}
+      busy={busy}
+      onClose={onClose}
+      onSubmit={() =>
+        onSubmit({ decision, reason: reason.trim(), evidenceRef: evidenceRef.trim() })
+      }
+    >
+      <Stack gap={2}>
+        <Alert severity={decision === 'ACCEPTED_RISK' ? 'warning' : 'info'}>
+          {t(`catalog.assurance.disposition.guidance.${decision}`)}
+        </Alert>
+        <FormField
+          select
+          required
+          label={t('catalog.assurance.disposition.decision')}
+          value={decision}
+          onChange={(event) => setDecision(event.target.value as FindingDecision)}
+        >
+          {(
+            ['ACKNOWLEDGED', 'FALSE_POSITIVE', 'ACCEPTED_RISK', 'RESOLVED'] as FindingDecision[]
+          ).map((value) => (
+            <MenuItem key={value} value={value}>
+              {t(`catalog.assurance.states.${value}`)}
+            </MenuItem>
+          ))}
+        </FormField>
+        <FormField
+          required
+          multiline
+          minRows={3}
+          label={t('catalog.assurance.disposition.reason')}
+          value={reason}
+          inputProps={{ maxLength: 1000 }}
+          supportingText={t('catalog.assurance.disposition.reasonHelp')}
+          onChange={(event) => setReason(event.target.value)}
+        />
+        <FormField
+          label={t('catalog.assurance.disposition.evidence')}
+          value={evidenceRef}
+          inputProps={{ maxLength: 500 }}
+          supportingText={t('catalog.assurance.disposition.evidenceHelp')}
+          onChange={(event) => setEvidenceRef(event.target.value)}
+        />
+      </Stack>
+    </FormDialog>
+  );
+}
+
+function AssuranceWorkspace({
+  summary,
+  loading,
+  evaluating,
+  selectedFindingId,
+  onEvaluate,
+  onSelect,
+  onReview,
+}: {
+  summary?: CatalogAssuranceSummary;
+  loading: boolean;
+  evaluating: boolean;
+  selectedFindingId: string | null;
+  onEvaluate: () => void;
+  onSelect: (findingId: string) => void;
+  onReview: (finding: CatalogAssuranceFinding) => void;
+}) {
+  const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
+  const findings = summary?.findings ?? [];
+  const selected = findings.find((finding) => finding.findingId === selectedFindingId) ?? null;
+  const columns = useMemo<GridColDef<CatalogAssuranceFinding>[]>(
+    () => [
+      {
+        field: 'entityRef',
+        headerName: t('catalog.assurance.columns.asset'),
+        minWidth: 250,
+        flex: 1,
+        renderCell: ({ row }) => (
+          <Box sx={{ minWidth: 0, py: 0.5 }}>
+            <Typography variant="body2" fontWeight={700} noWrap>
+              {row.entityRef}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t(`catalog.assurance.findings.${row.findingCode}`)}
+            </Typography>
+          </Box>
+        ),
+      },
+      {
+        field: 'severity',
+        headerName: t('catalog.assurance.columns.severity'),
+        width: 112,
+        renderCell: ({ value }) => (
+          <Chip
+            size="small"
+            variant="outlined"
+            color={value === 'CRITICAL' || value === 'HIGH' ? 'error' : 'default'}
+            label={display('severities', String(value))}
+          />
+        ),
+      },
+      {
+        field: 'lifecycleState',
+        headerName: t('catalog.assurance.columns.state'),
+        width: 140,
+        renderCell: ({ value }) => (
+          <Chip
+            size="small"
+            label={t(`catalog.assurance.states.${String(value)}`, {
+              defaultValue: display('states', String(value)),
+            })}
+          />
+        ),
+      },
+      {
+        field: 'lastDetectedAt',
+        headerName: t('catalog.assurance.columns.detected'),
+        width: 176,
+        valueFormatter: (value?: string) =>
+          value ? formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }) : '-',
+      },
+      {
+        field: 'actions',
+        headerName: '',
+        width: 104,
+        sortable: false,
+        filterable: false,
+        renderCell: ({ row }) => (
+          <ActionButton
+            intent="quiet"
+            size="small"
+            disabled={!['OPEN', 'ACKNOWLEDGED'].includes(row.lifecycleState)}
+            onClick={(event) => {
+              event.stopPropagation();
+              onReview(row);
+            }}
+          >
+            {t('catalog.assurance.actions.review')}
+          </ActionButton>
+        ),
+      },
+    ],
+    [display, onReview, t]
+  );
+
+  return (
+    <Stack gap={2}>
+      <Box
+        component="section"
+        aria-label={t('catalog.assurance.contextLabel')}
+        sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}
+      >
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          alignItems={{ xs: 'stretch', md: 'center' }}
+          justifyContent="space-between"
+          gap={1.5}
+          sx={{ px: 2, py: 1.5 }}
+        >
+          <Box minWidth={0}>
+            <Stack direction="row" alignItems="center" gap={1}>
+              <ShieldCheck size={18} />
+              <Typography component="h2" variant="subtitle1">
+                {t('catalog.assurance.title')}
+              </Typography>
+              {summary && (
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={t('catalog.assurance.ruleVersion', {
+                    key: summary.activeRule.ruleKey,
+                    version: summary.activeRule.ruleVersion,
+                  })}
+                />
+              )}
+            </Stack>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+              {t('catalog.assurance.description')}
+            </Typography>
+          </Box>
+          <ActionButton
+            intent="primary"
+            startIcon={<ScanSearch size={17} />}
+            loading={evaluating}
+            loadingLabel={t('catalog.assurance.actions.evaluating')}
+            onClick={onEvaluate}
+          >
+            {t('catalog.assurance.actions.evaluate')}
+          </ActionButton>
+        </Stack>
+        <Box
+          aria-label={t('catalog.assurance.metrics.label')}
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, minmax(0, 1fr))' },
+            borderTop: 1,
+            borderColor: 'divider',
+          }}
+        >
+          <Metric
+            label={t('catalog.assurance.metrics.open')}
+            value={summary?.openCount ?? 0}
+            detail={t('catalog.assurance.metrics.openDetail')}
+          />
+          <Metric
+            label={t('catalog.assurance.metrics.critical')}
+            value={summary?.criticalCount ?? 0}
+            detail={t('catalog.assurance.metrics.criticalDetail')}
+          />
+          <Metric
+            label={t('catalog.assurance.metrics.owner')}
+            value={summary?.ownerMissingCount ?? 0}
+            detail={t('catalog.assurance.metrics.ownerDetail')}
+          />
+          <Metric
+            label={t('catalog.assurance.metrics.deprecation')}
+            value={summary?.deprecationImpactCount ?? 0}
+            detail={t('catalog.assurance.metrics.deprecationDetail')}
+          />
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1fr) 360px' },
+          gap: 2,
+          minWidth: 0,
+        }}
+      >
+        <EnterpriseDataGrid
+          ariaLabel={t('catalog.assurance.queueLabel')}
+          rows={findings}
+          columns={columns}
+          getRowId={(row) => row.findingId}
+          loading={loading}
+          hideFooter={findings.length <= 20}
+          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 20 } } }}
+          onRowClick={({ row }) => onSelect(row.findingId)}
+        />
+        <Box
+          component="aside"
+          aria-label={t('catalog.assurance.inspector.title')}
+          sx={{ minWidth: 0, borderLeft: { xl: 1 }, borderColor: 'divider', pl: { xl: 2 } }}
+        >
+          {!selected ? (
+            <Box sx={{ py: 7, textAlign: 'center', color: 'text.secondary' }}>
+              <ScanSearch size={28} />
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                {t('catalog.assurance.inspector.select')}
+              </Typography>
+            </Box>
+          ) : (
+            <Stack gap={1.5}>
+              <Box>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    color={selected.severity === 'CRITICAL' ? 'error' : 'default'}
+                    label={display('severities', selected.severity)}
+                  />
+                  <Chip
+                    size="small"
+                    label={t(`catalog.assurance.states.${selected.lifecycleState}`)}
+                  />
+                </Stack>
+                <Typography component="h3" variant="subtitle1" sx={{ mt: 1.25 }}>
+                  {t(`catalog.assurance.findings.${selected.findingCode}`)}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ overflowWrap: 'anywhere' }}
+                >
+                  {selected.entityRef}
+                </Typography>
+              </Box>
+              <Divider />
+              <Box component="dl" sx={{ m: 0, display: 'grid', gap: 1 }}>
+                {Object.entries(selected.evidence).map(([key, value]) => (
+                  <Box key={key} sx={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 1 }}>
+                    <Typography component="dt" variant="caption" color="text.secondary">
+                      {key}
+                    </Typography>
+                    <Typography
+                      component="dd"
+                      variant="body2"
+                      sx={{ m: 0, overflowWrap: 'anywhere' }}
+                    >
+                      {value === null ? '-' : String(value)}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+              <Divider />
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ overflowWrap: 'anywhere' }}
+              >
+                {t('catalog.assurance.inspector.hash', {
+                  hash: selected.evidenceSha256,
+                })}
+              </Typography>
+              {selected.dispositionReason && (
+                <Alert severity="info">
+                  {t('catalog.assurance.inspector.disposition', {
+                    reason: selected.dispositionReason,
+                  })}
+                </Alert>
+              )}
+              {['OPEN', 'ACKNOWLEDGED'].includes(selected.lifecycleState) && (
+                <ActionButton intent="secondary" onClick={() => onReview(selected)}>
+                  {t('catalog.assurance.actions.recordDisposition')}
+                </ActionButton>
+              )}
+            </Stack>
+          )}
+        </Box>
+      </Box>
+    </Stack>
+  );
+}
+
 export function CatalogExplorer() {
   const { t } = useTranslation('admin');
-  const [searchParams] = useSearchParams();
+  const display = useDisplayDictionary();
+  const [searchParams, setSearchParams] = useSearchParams();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [view, setView] = useState<View>('graph');
+  const [view, setViewState] = useState<View>(() => {
+    const requested = searchParams.get('view');
+    return requested === 'inventory' || requested === 'assurance' ? requested : 'graph';
+  });
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
   const [kind, setKind] = useState<CatalogEntityKind | 'ALL'>('ALL');
@@ -290,6 +666,10 @@ export function CatalogExplorer() {
   const [depth, setDepth] = useState(2);
   const [operation, setOperation] = useState<CatalogImpact['operation']>('CHANGE');
   const [relationDialog, setRelationDialog] = useState(false);
+  const [selectedFindingId, setSelectedFindingId] = useState<string | null>(() =>
+    searchParams.get('finding')
+  );
+  const [dispositionTarget, setDispositionTarget] = useState<CatalogAssuranceFinding | null>(null);
   const [busy, setBusy] = useState(false);
 
   const overviewQuery = useQuery({
@@ -305,6 +685,32 @@ export function CatalogExplorer() {
     queryFn: () => getCatalogImpact(selectedRef!, operation),
     enabled: Boolean(selectedRef),
   });
+  const assuranceQuery = useQuery({
+    queryKey: ['admin', 'catalog', 'assurance'],
+    queryFn: getCatalogAssurance,
+  });
+
+  const updateLocationState = (nextView: View, findingId?: string | null) => {
+    setViewState(nextView);
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        if (nextView === 'graph') next.delete('view');
+        else next.set('view', nextView);
+        if (findingId) next.set('finding', findingId);
+        else next.delete('finding');
+        return next;
+      },
+      { replace: true }
+    );
+  };
+
+  const setView = (nextView: View) => updateLocationState(nextView, selectedFindingId);
+
+  const selectFinding = (findingId: string) => {
+    setSelectedFindingId(findingId);
+    updateLocationState('assurance', findingId);
+  };
 
   const entities = useMemo(() => overviewQuery.data?.entities ?? [], [overviewQuery.data]);
   const selected = entities.find((entity) => entity.ref === selectedRef) ?? null;
@@ -331,6 +737,43 @@ export function CatalogExplorer() {
 
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ['admin', 'catalog'] });
+  };
+
+  const evaluateAssurance = async () => {
+    setBusy(true);
+    try {
+      const result = await evaluateCatalogAssurance();
+      queryClient.setQueryData(['admin', 'catalog', 'assurance'], result);
+      toast.success(t('catalog.assurance.toasts.evaluated'));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('catalog.assurance.toasts.error'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const dispositionFinding = async (value: {
+    decision: FindingDecision;
+    reason: string;
+    evidenceRef: string;
+  }) => {
+    if (!dispositionTarget) return;
+    setBusy(true);
+    try {
+      await dispositionCatalogFinding(dispositionTarget.findingId, {
+        decision: value.decision,
+        reason: value.reason,
+        evidenceRef: value.evidenceRef || undefined,
+        version: dispositionTarget.version,
+      });
+      await assuranceQuery.refetch();
+      setDispositionTarget(null);
+      toast.success(t('catalog.assurance.toasts.dispositionSaved'));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('catalog.assurance.toasts.error'));
+    } finally {
+      setBusy(false);
+    }
   };
 
   const saveRelation = async (value: {
@@ -404,10 +847,12 @@ export function CatalogExplorer() {
         field: 'lifecycleState',
         headerName: t('catalog.columns.state'),
         width: 110,
-        renderCell: ({ row }) => <Chip size="small" label={row.lifecycleState} />,
+        renderCell: ({ row }) => (
+          <Chip size="small" label={display('states', row.lifecycleState)} />
+        ),
       },
     ],
-    [t]
+    [display, t]
   );
 
   if (overviewQuery.isError || graphQuery.isError) {
@@ -476,6 +921,12 @@ export function CatalogExplorer() {
             icon={<Boxes size={17} />}
             iconPosition="start"
             label={t('catalog.views.inventory')}
+          />
+          <Tab
+            value="assurance"
+            icon={<ShieldCheck size={17} />}
+            iconPosition="start"
+            label={t('catalog.views.assurance')}
           />
         </Tabs>
         <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={0.75}>
@@ -669,7 +1120,7 @@ export function CatalogExplorer() {
                   {[
                     [t('catalog.columns.owner'), selected.ownerRef || '-'],
                     [t('catalog.columns.scope'), t(`catalog.scopes.${selected.scope}`)],
-                    [t('catalog.columns.state'), selected.lifecycleState],
+                    [t('catalog.columns.state'), display('states', selected.lifecycleState)],
                     [t('catalog.inspector.revision'), selected.revision],
                   ].map(([label, value]) => (
                     <Box key={String(label)} sx={{ display: 'contents' }}>
@@ -773,6 +1224,37 @@ export function CatalogExplorer() {
         </Box>
       )}
 
+      {view === 'assurance' && (
+        <>
+          {assuranceQuery.isError && (
+            <Alert
+              severity="warning"
+              action={
+                <ActionButton
+                  intent="quiet"
+                  size="small"
+                  onClick={() => void assuranceQuery.refetch()}
+                >
+                  {t('common.actions.retry')}
+                </ActionButton>
+              }
+              sx={{ mb: 2 }}
+            >
+              {t('catalog.assurance.partialFailure')}
+            </Alert>
+          )}
+          <AssuranceWorkspace
+            summary={assuranceQuery.data}
+            loading={assuranceQuery.isLoading}
+            evaluating={busy}
+            selectedFindingId={selectedFindingId}
+            onEvaluate={() => void evaluateAssurance()}
+            onSelect={selectFinding}
+            onReview={setDispositionTarget}
+          />
+        </>
+      )}
+
       {relationDialog && selected && (
         <RelationDialog
           source={selected}
@@ -780,6 +1262,14 @@ export function CatalogExplorer() {
           busy={busy}
           onClose={() => setRelationDialog(false)}
           onSubmit={(value) => void saveRelation(value)}
+        />
+      )}
+      {dispositionTarget && (
+        <FindingDispositionDialog
+          finding={dispositionTarget}
+          busy={busy}
+          onClose={() => setDispositionTarget(null)}
+          onSubmit={dispositionFinding}
         />
       )}
     </Box>

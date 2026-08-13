@@ -310,7 +310,7 @@ test('tenant administrators monitor API health and inspect a distributed trace',
   await expect(page.getByRole('heading', { name: 'API monitoring', level: 1 })).toBeVisible();
   await expect(page.getByText('1,284', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Change correlation' })).toBeVisible();
-  await expect(page.getByRole('button', { name: /people\.release\.deployed/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /People release deployed/ })).toBeVisible();
   await expect(page.getByText('/api/people/v1/people', { exact: true }).first()).toBeVisible();
   if ((page.viewportSize()?.width ?? 0) < 900) {
     await page.getByRole('button').filter({ hasText: '/api/people/v1/people' }).click();
@@ -1289,9 +1289,9 @@ test('tenant administrators manage standards, registry, and audit', async ({ pag
     testInfo.project.name === 'mobile'
       ? page.getByRole('list', { name: 'Administration audit events' })
       : page.getByRole('grid', { name: 'Administration audit events' });
-  await expect(auditList).toContainText('Identity User Roles Replaced');
-  await expect(auditList).toContainText('Reference Set Activated');
-  await expect(auditList).toContainText('Registry Entry Activated');
+  await expect(auditList).toContainText('Identity user roles replaced');
+  await expect(auditList).toContainText('Reference set activated');
+  await expect(auditList).toContainText('Registry entry activated');
 
   await expect(page.getByRole('alert')).toBeHidden({ timeout: 10_000 });
   const accessibility = await new AxeBuilder({ page }).analyze();

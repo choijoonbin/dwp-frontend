@@ -30,7 +30,7 @@ import {
   LiveStatus,
   OperationalContextBar,
 } from '@dwp-frontend/design-system';
-import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import { formatDate, formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -201,6 +201,7 @@ function TrafficChart({
   label: string;
 }) {
   const theme = useTheme();
+  const display = useDisplayDictionary();
   const width = 900;
   const height = 220;
   const padding = { top: 20, right: 16, bottom: 28, left: 36 };
@@ -267,7 +268,7 @@ function TrafficChart({
               stroke={theme.palette.background.paper}
               strokeWidth="1.5"
             >
-              <title>{change.action}</title>
+              <title>{display('auditActions', change.action)}</title>
             </circle>
           </g>
         ))}
@@ -565,6 +566,7 @@ function TraceDrawer({ historyId, onClose }: { historyId: string | null; onClose
 
 export function ApiMonitoring() {
   const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
   const navigate = useNavigate();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -1242,8 +1244,13 @@ export function ApiMonitoring() {
                     }}
                   >
                     <Box minWidth={0} flex={1}>
-                      <Typography variant="body2" fontWeight={700} noWrap title={event.action}>
-                        {event.action}
+                      <Typography
+                        variant="body2"
+                        fontWeight={700}
+                        noWrap
+                        title={display('auditActions', event.action)}
+                      >
+                        {display('auditActions', event.action)}
                       </Typography>
                       <Typography variant="caption" color="text.secondary" display="block" noWrap>
                         {event.sourceService} / {compactTimestamp(event.occurredAt)}

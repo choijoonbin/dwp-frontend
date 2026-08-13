@@ -19,7 +19,12 @@ import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 
 export type AgentExecutionStatus =
-  'queued' | 'running' | 'waiting-approval' | 'succeeded' | 'failed' | 'stopped';
+  | 'queued'
+  | 'running'
+  | 'waiting-approval'
+  | 'succeeded'
+  | 'failed'
+  | 'stopped';
 
 export type AgentExecutionStep = {
   id: string;

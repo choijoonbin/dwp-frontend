@@ -346,6 +346,22 @@ export async function mockRuntimeCodeCatalog(page: Page): Promise<void> {
 export async function mockAuthenticatedRuntime(page: Page): Promise<void> {
   await mockRuntimeCodeCatalog(page);
   await mockWorkspaceRuntime(page);
+  await page.route(/\/api\/platform\/v1\/admin\/catalog(?:\?.*)?$/, (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: success({
+        entityCount: 0,
+        relationCount: 0,
+        declaredRelationCount: 0,
+        orphanCount: 0,
+        criticalRelationCount: 0,
+        entitiesByKind: {},
+        entitiesByLifecycle: {},
+        entities: [],
+        generatedAt: '2026-08-11T00:10:00Z',
+      }),
+    })
+  );
   await page.route('**/api/people/v1/people**', (route) =>
     route.fulfill({
       contentType: 'application/json',

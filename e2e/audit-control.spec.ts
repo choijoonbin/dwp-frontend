@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
+import type { AuditPolicyRevision } from '@dwp-frontend/shared-utils';
 
 import { mockAuthenticatedRuntime } from './support/runtime-access';
 
@@ -239,6 +240,34 @@ const policy = {
   highRiskThreshold: 70,
   updatedBy: 'audit-admin',
   updatedAt: '2026-08-10T12:00:00Z',
+  activeRevisionId: '51000000-0000-0000-0000-000000000001',
+  activeRevisionNumber: 1,
+};
+
+const baselinePolicyRevision: AuditPolicyRevision = {
+  revisionId: '51000000-0000-0000-0000-000000000001',
+  revisionNumber: 1,
+  lifecycleState: 'PUBLISHED',
+  standardRetentionDays: 365,
+  extendedRetentionDays: 2555,
+  exportLimitRows: 10000,
+  requireExportReason: true,
+  integrityEnabled: true,
+  highRiskThreshold: 70,
+  baselineRevisionId: null,
+  rollbackOfRevisionId: null,
+  incidentCaseId: null,
+  changeReason: 'Initial governed baseline',
+  diff: {},
+  contentSha256: 'a'.repeat(64),
+  createdBy: 'audit-admin',
+  createdAt: '2026-08-10T12:00:00Z',
+  submittedBy: null,
+  submittedAt: null,
+  publishedBy: 'audit-admin',
+  publishedAt: '2026-08-10T12:00:00Z',
+  version: 0,
+  approval: null,
 };
 
 const checkpoint = {
@@ -263,6 +292,7 @@ async function mockAuditControl(page: Page) {
   let findings = [{ ...finding }];
   let cases = [{ ...initialCase }];
   let currentPolicy = { ...policy };
+  let policyRevisions: AuditPolicyRevision[] = [{ ...baselinePolicyRevision }];
   let checkpoints = [{ ...checkpoint }];
   let savedSearches: Array<Record<string, unknown>> = [];
   const closureReports = new Map<string, Record<string, unknown>>();
@@ -628,14 +658,88 @@ async function mockAuditControl(page: Page) {
       return fulfillJson(route, updated);
     }
     if (path.endsWith('/policy') && method === 'GET') return fulfillJson(route, currentPolicy);
-    if (path.endsWith('/policy') && method === 'PUT') {
-      currentPolicy = {
-        ...currentPolicy,
-        ...request.postDataJSON(),
-        updatedBy: '1',
-        updatedAt: '2026-08-10T12:30:00Z',
+    if (path.endsWith('/policy/revisions') && method === 'GET') {
+      return fulfillJson(route, policyRevisions);
+    }
+    if (path.endsWith('/policy/revisions') && method === 'POST') {
+      const body = request.postDataJSON();
+      const draft: AuditPolicyRevision = {
+        ...baselinePolicyRevision,
+        ...body,
+        revisionId: '51000000-0000-0000-0000-000000000002',
+        revisionNumber: 2,
+        lifecycleState: 'DRAFT',
+        baselineRevisionId: currentPolicy.activeRevisionId,
+        changeReason: body.reason,
+        diff: { standardRetentionDays: { before: 365, after: body.standardRetentionDays } },
+        contentSha256: 'b'.repeat(64),
+        createdBy: '1',
+        createdAt: '2026-08-10T12:20:00Z',
+        publishedBy: null,
+        publishedAt: null,
+        approval: null,
       };
-      return fulfillJson(route, currentPolicy);
+      policyRevisions = [draft, ...policyRevisions];
+      return fulfillJson(route, draft);
+    }
+    const revisionAction = path.match(/\/policy\/revisions\/([^/]+)\/(submit|decision|publish)$/);
+    if (revisionAction && method === 'POST') {
+      const [, revisionId, action] = revisionAction;
+      const body = request.postDataJSON();
+      const current = policyRevisions.find((item) => item.revisionId === revisionId)!;
+      let next: AuditPolicyRevision = current;
+      if (action === 'submit') {
+        next = {
+          ...current,
+          lifecycleState: 'IN_REVIEW',
+          version: current.version + 1,
+          approval: {
+            approvalId: '52000000-0000-0000-0000-000000000001',
+            lifecycleState: 'PENDING',
+            requestedBy: 'policy-author',
+            requestedAt: '2026-08-10T12:22:00Z',
+            expiresAt: '2026-08-11T12:22:00Z',
+            version: 0,
+          },
+        };
+      } else if (action === 'decision') {
+        next = {
+          ...current,
+          lifecycleState: body.decision,
+          version: current.version + 1,
+          approval: {
+            ...current.approval!,
+            lifecycleState: body.decision,
+            decidedBy: 'policy-reviewer',
+            decidedAt: '2026-08-10T12:25:00Z',
+            decisionReason: body.reason,
+            version: (current.approval?.version ?? 0) + 1,
+          },
+        };
+      } else {
+        next = {
+          ...current,
+          lifecycleState: 'PUBLISHED',
+          version: current.version + 1,
+          publishedBy: '1',
+          publishedAt: '2026-08-10T12:30:00Z',
+        };
+        policyRevisions = policyRevisions.map((item) =>
+          item.lifecycleState === 'PUBLISHED' ? { ...item, lifecycleState: 'SUPERSEDED' } : item
+        );
+        currentPolicy = {
+          ...currentPolicy,
+          standardRetentionDays: next.standardRetentionDays,
+          activeRevisionId: next.revisionId,
+          activeRevisionNumber: next.revisionNumber,
+          updatedBy: '1',
+          updatedAt: '2026-08-10T12:30:00Z',
+        };
+      }
+      policyRevisions = policyRevisions.map((item) =>
+        item.revisionId === revisionId ? next : item
+      );
+      return fulfillJson(route, action === 'publish' ? currentPolicy : next);
     }
     if (path.endsWith('/integrity') && method === 'GET') return fulfillJson(route, checkpoints);
     if (path.endsWith('/integrity/checkpoint') && method === 'POST') {
@@ -693,9 +797,9 @@ test('auditors assess posture, inspect immutable evidence, and export a governed
   if (desktop) {
     await expect(page.getByRole('grid', { name: 'Cross-domain incident flows' })).toBeVisible();
   } else {
-    await page.getByText('Role Assignment Denied', { exact: true }).first().click();
+    await page.getByText('Role assignment denied', { exact: true }).first().click();
   }
-  await expect(page.getByText('Role Assignment Denied', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('Role assignment denied', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Causal timeline', { exact: true })).toBeVisible();
   await expect(page.getByText('audit-control-e2e', { exact: true })).toBeVisible();
   await expect(page.locator('.MuiTouchRipple-ripple')).toHaveCount(0, { timeout: 5_000 });
@@ -706,15 +810,15 @@ test('auditors assess posture, inspect immutable evidence, and export a governed
   if (!desktop) await page.getByRole('button', { name: 'Close' }).click();
   await page.getByRole('button', { name: 'Raw evidence' }).click();
   await expect(page.getByText('Evidence search session')).toBeVisible();
-  await expect(page.getByText('Role Assignment Denied', { exact: true })).toBeVisible();
+  await expect(page.getByText('Role assignment denied', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Save current view' }).click();
   await page.getByLabel('View name').fill('Privileged access review');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByText('Investigation view saved.')).toBeVisible();
   await expect(page.getByLabel('Saved views')).toHaveText(/Privileged access review/);
-  await page.getByText('Role Assignment Denied', { exact: true }).click();
+  await page.getByText('Role assignment denied', { exact: true }).click();
   await expect(
-    page.getByRole('heading', { name: 'Role Assignment Denied', level: 2 })
+    page.getByRole('heading', { name: 'Role assignment denied', level: 2 })
   ).toBeVisible();
   await expect(page.getByText('audit-control-e2e', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).click();
@@ -818,8 +922,20 @@ test('audit administrators investigate findings and govern retention integrity',
   await expect(page.getByRole('heading', { name: 'Evidence lifecycle' })).toBeVisible();
   await expect(page.getByText('Append-only evidence store', { exact: true })).toBeVisible();
   await page.getByLabel('Standard retention (days)').fill('730');
-  await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByText('Audit policy saved.')).toBeVisible();
+  await page.getByLabel('Decision or change reason').fill('Regulatory retention update.');
+  await page.getByRole('button', { name: 'Create revision' }).click();
+  await expect(page.getByText('Audit policy revision created.')).toBeVisible();
+  await page.getByLabel('Decision or change reason').fill('Ready for independent review.');
+  await page.getByRole('button', { name: 'Request review' }).click();
+  await expect(page.getByText('Audit policy lifecycle and evidence were updated.')).toBeVisible();
+  await page.getByLabel('Decision or change reason').fill('Evidence and impact reviewed.');
+  await expect(page.getByRole('button', { name: 'Approve' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Approve' }).click();
+  await expect(page.getByRole('button', { name: 'Approve' })).toBeHidden();
+  await page.getByLabel('Decision or change reason').fill('Publish approved controls.');
+  await expect(page.getByRole('button', { name: 'Publish' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Publish' }).click();
+  await expect(page.getByText('Revision 2 active')).toBeVisible();
   await page.getByRole('button', { name: 'Verify now' }).click();
   await expect(page.getByText('Integrity checkpoint verified.')).toBeVisible();
 

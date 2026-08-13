@@ -33,6 +33,16 @@
         "title": "공지사항",
         "description": "적절한 테넌트 대상에게 기간이 정해진 공지를 게시합니다."
       },
+      "preference-exceptions": {
+        "label": "설정 예외 검토",
+        "title": "관리형 설정 예외 검토",
+        "description": "조직 관리 기본값에 대한 구성원의 업무 예외 요청을 근거와 영향에 따라 검토합니다."
+      },
+      "localization": {
+        "label": "다국어 Studio",
+        "title": "다국어 Studio",
+        "description": "테넌트 번역을 품질 근거와 함께 작성·검토·승인·게시·복원합니다."
+      },
       "access": {
         "label": "접근 제어",
         "title": "사용자 접근 권한",
@@ -52,6 +62,16 @@
         "label": "역할 및 권한",
         "title": "역할 거버넌스",
         "description": "역할, 리소스 권한, 그룹 할당 및 최종 유효 권한을 관리합니다."
+      },
+      "workforce-access": {
+        "label": "인력 데이터 경계",
+        "title": "인력 데이터 접근 경계",
+        "description": "범위형 HR 관리자의 대상 조직, 열람 필드와 반출 권한을 최소 권한으로 통제합니다."
+      },
+      "saved-view-custody": {
+        "label": "저장 뷰 관리권",
+        "title": "저장 뷰 관리권",
+        "description": "퇴직·이동 시 개인·팀 저장 뷰의 관리권 이전과 기한부 보존을 근거 기반으로 통제합니다."
       },
       "provisioning": {
         "label": "ID 프로비저닝",
@@ -1622,6 +1642,40 @@
       "requireReason": "모든 반출에 업무 사유 필수",
       "integrityEnabled": "일일 무결성 체크포인트 사용",
       "saved": "감사 정책을 저장했습니다.",
+      "revisions": {
+        "title": "정책 개정 통제",
+        "description": "모든 보존·반출 정책 변경을 독립 검토하고 근거와 연결하며 이전 게시본으로 복구할 수 있게 관리합니다.",
+        "activeRevision": "개정 {{number}} 적용 중",
+        "revision": "개정 {{number}}",
+        "active": "적용 중",
+        "baseline": "최초 거버넌스 기준본",
+        "rollbackDraft": "복구 초안",
+        "author": "{{actor}} · {{time}}",
+        "hashLabel": "SHA-256",
+        "empty": "정책 개정 근거가 없습니다.",
+        "reasonShared": "아래 사유는 다음 수명주기 결정에 사용됩니다.",
+        "create": "개정안 만들기",
+        "created": "감사 정책 개정안을 만들었습니다.",
+        "transitioned": "감사 정책 수명주기와 근거를 갱신했습니다.",
+        "submit": "검토 요청",
+        "approve": "승인",
+        "reject": "반려",
+        "publish": "게시",
+        "rollback": "복구안 준비",
+        "changeEvidence": "변경 근거",
+        "changeEvidenceHint": "업무 또는 사고 대응 근거를 기록하세요. 적용 중 정책의 직접 변경은 차단됩니다.",
+        "reason": "결정 또는 변경 사유",
+        "incidentCase": "연결할 감사 케이스 ID(선택)",
+        "incidentCaseHint": "사고 대응 변경이면 기존 조사 케이스 UUID를 입력합니다.",
+        "fields": {
+          "standardRetentionDays": "표준 보존",
+          "extendedRetentionDays": "장기 보존",
+          "exportLimitRows": "반출 한도",
+          "requireExportReason": "반출 사유 필수",
+          "integrityEnabled": "무결성 체크포인트",
+          "highRiskThreshold": "고위험 임계값"
+        }
+      },
       "integrity": "무결성 체크포인트",
       "integrityLedger": "무결성 원장",
       "integrityDescription": "추가 전용 증적의 일일 해시 체인 검증입니다.",
@@ -2058,6 +2112,7 @@
       "label": "역할 거버넌스 보기",
       "roles": "역할 및 리소스",
       "assignments": "그룹 할당",
+      "privileged": "특권 접근",
       "effective": "유효 권한"
     },
     "columns": {
@@ -2129,7 +2184,8 @@
       "grantLabel": "{{resource}} {{permission}} 효과"
     },
     "assignmentDialog": {
-      "title": "그룹에 역할 할당"
+      "title": "그룹에 역할 할당",
+      "justificationHelp": "감사 추적을 위해 10~500자로 입력하세요. 할당 전 모든 현재 구성원의 직무분리 정책을 검사합니다."
     },
     "toasts": {
       "roleCreated": "역할을 생성했습니다.",
@@ -2138,6 +2194,133 @@
       "resourceCreated": "보호 리소스를 등록했습니다.",
       "assignmentCreated": "그룹 역할을 할당했습니다.",
       "assignmentRevoked": "그룹 역할 할당을 회수했습니다."
+    }
+  },
+  "privilegedAccess": {
+    "loading": "특권 접근 통제 불러오는 중",
+    "minutes": "{{count}}분",
+    "quorum": "승인자 {{count}}명",
+    "views": {
+      "label": "특권 접근 통제 보기",
+      "requests": "승인 및 활성 권한",
+      "eligibilities": "자격",
+      "policies": "활성화 정책",
+      "boundaries": "위임 및 긴급 접근"
+    },
+    "metrics": {
+      "policies": "적용 정책",
+      "policiesDetail": "특권 역할 활성화 기준",
+      "pending": "승인 대기",
+      "pendingDetail": "행동이 필요한 요청",
+      "active": "활성 권한",
+      "activeDetail": "자동 만료되는 임시 권한",
+      "expiring": "14일 내 만료",
+      "expiringDetail": "재검토가 필요한 자격"
+    },
+    "columns": {
+      "requester": "요청자",
+      "principal": "주체",
+      "nextAction": "다음 조치"
+    },
+    "fields": {
+      "activationMode": "활성화 방식",
+      "maximumDuration": "최대 활성 시간(분)",
+      "durationError": "15분 이상 480분 이하로 입력하세요.",
+      "assurance": "세션 보증 수준",
+      "approvalQuorum": "필요 승인 수",
+      "emergencyMode": "긴급 접근 방식",
+      "ticketRequired": "변경 또는 장애 티켓 필수",
+      "reason": "판단 사유",
+      "reasonHelp": "감사자가 판단 근거를 이해할 수 있도록 10자 이상 입력하세요.",
+      "principalType": "주체 유형",
+      "principal": "사용자 또는 그룹",
+      "selectPrincipal": "대상을 선택하세요",
+      "selectRole": "특권 역할을 선택하세요",
+      "reviewDueAt": "다음 긴급 계정 검토",
+      "action": "허용 작업"
+    },
+    "activationModes": {
+      "SELF_SERVICE": "승인 없이 본인 활성화",
+      "APPROVAL": "관리자 승인 후 활성화",
+      "DISABLED": "활성화 중지"
+    },
+    "assurance": {
+      "SESSION": "인증 세션",
+      "MFA": "다중 인증",
+      "PHISHING_RESISTANT": "피싱 방지 인증"
+    },
+    "emergencyModes": {
+      "DISABLED": "사용 안 함",
+      "REGISTERED_PRINCIPAL": "등록된 긴급 계정",
+      "DUAL_APPROVAL": "2인 승인"
+    },
+    "principalTypes": {
+      "USER": "사용자",
+      "GROUP": "그룹"
+    },
+    "states": {
+      "ACTIVE": "활성",
+      "PENDING_APPROVAL": "승인 대기",
+      "DENIED": "거부",
+      "CANCELLED": "취소",
+      "REVOKED": "회수",
+      "EXPIRED": "만료",
+      "RETIRED": "종료",
+      "SUSPENDED": "중지"
+    },
+    "actions": {
+      "approve": "승인",
+      "deny": "거부",
+      "revoke": "회수",
+      "createEligibility": "자격 부여",
+      "addDelegation": "위임 범위 추가",
+      "registerEmergency": "긴급 계정 등록"
+    },
+    "actionsCatalog": {
+      "ACCESS.ASSIGNMENT.MANAGE": "범위 내 역할 할당 관리",
+      "ACCESS.ROLE.MANAGE": "역할 정의 관리",
+      "ACCESS.RESOURCE.MANAGE": "보호 리소스 관리"
+    },
+    "decision": {
+      "description": "{{person}}의 {{role}} 요청을 판단합니다. 자기 승인은 서버에서 차단됩니다.",
+      "APPROVE": { "title": "임시 특권 접근 승인", "action": "승인" },
+      "DENY": { "title": "특권 접근 요청 거부", "action": "거부" },
+      "REVOKE": { "title": "활성 특권 접근 회수", "action": "즉시 회수" }
+    },
+    "policyDialog": {
+      "title": "{{role}} 활성화 정책",
+      "description": "자격 자체는 권한을 주지 않습니다. 이 정책을 통과한 시간 제한 활성화만 실행 권한이 됩니다."
+    },
+    "eligibilityDialog": {
+      "title": "특권 역할 자격 부여",
+      "description": "최소 범위와 만료 시점을 지정합니다. 사용자는 필요할 때 별도 활성화를 요청해야 합니다."
+    },
+    "boundaryDialog": {
+      "emergency": {
+        "title": "긴급 접근 계정 등록",
+        "description": "일상 관리에 사용하지 않는 별도 계정을 등록하고 다음 검토 시점을 지정합니다."
+      },
+      "delegation": {
+        "title": "관리자 위임 범위 추가",
+        "description": "관리자가 수행할 수 있는 작업과 대상 범위를 서버 정책으로 제한합니다."
+      }
+    },
+    "boundaries": {
+      "delegatedTitle": "위임 관리자 경계",
+      "delegatedDescription": "역할만으로 넓은 권한을 주지 않고 작업과 데이터 범위를 함께 제한합니다.",
+      "emergencyTitle": "긴급 접근 등록부",
+      "emergencyDescription": "긴급 계정은 사전 등록과 주기적 검토를 통과해야만 활성화 요청을 만들 수 있습니다."
+    },
+    "toasts": {
+      "policyUpdated": "특권 역할 활성화 정책을 변경했습니다.",
+      "eligibilityCreated": "시간 제한 역할 자격을 부여했습니다.",
+      "eligibilityRevoked": "역할 자격을 회수했습니다.",
+      "approve": "특권 접근 요청을 승인했습니다.",
+      "deny": "특권 접근 요청을 거부했습니다.",
+      "revoke": "활성 특권 접근을 즉시 회수했습니다.",
+      "delegationCreated": "관리자 위임 범위를 추가했습니다.",
+      "delegationRevoked": "관리자 위임 범위를 회수했습니다.",
+      "emergencyRegistered": "긴급 접근 계정을 등록했습니다."
     }
   },
   "catalog": {
@@ -2159,7 +2342,8 @@
     "views": {
       "label": "Catalog 보기",
       "graph": "관계 그래프",
-      "inventory": "자산 인벤토리"
+      "inventory": "자산 인벤토리",
+      "assurance": "보증 검토"
     },
     "actions": {
       "refresh": "Catalog 새로고침",
@@ -2243,10 +2427,82 @@
       "transitive": "전이 영향",
       "none": "하위 의존성이 탐지되지 않았습니다.",
       "distance": "{{count}}단계",
+      "rule": "판정 규칙: {{key}} v{{version}}",
       "operations": {
         "CHANGE": "변경",
         "RETIRE": "종료",
         "OUTAGE": "장애"
+      }
+    },
+    "assurance": {
+      "contextLabel": "Catalog 보증 검토 범위",
+      "title": "Catalog 보증 검토",
+      "description": "버전이 고정된 판정 규칙으로 소유자 누락, 고립 자산과 폐기 영향을 탐지합니다.",
+      "ruleVersion": "{{key}} v{{version}}",
+      "queueLabel": "Catalog 보증 Finding",
+      "partialFailure": "보증 Finding을 일시적으로 불러오지 못했습니다. 관계 그래프와 자산 인벤토리는 계속 사용할 수 있습니다.",
+      "actions": {
+        "evaluate": "Catalog 평가",
+        "evaluating": "Catalog 평가 중",
+        "review": "검토",
+        "recordDisposition": "처분 기록"
+      },
+      "metrics": {
+        "label": "Catalog 보증 신호",
+        "open": "열린 Finding",
+        "openDetail": "소유자 검토 필요",
+        "critical": "심각 Finding",
+        "criticalDetail": "폐기 검토 차단",
+        "owner": "소유자 누락",
+        "ownerDetail": "책임 소유자 없음",
+        "deprecation": "폐기 영향",
+        "deprecationDetail": "활성 직접 소비처"
+      },
+      "columns": {
+        "asset": "자산 및 Finding",
+        "severity": "심각도",
+        "state": "처분 상태",
+        "detected": "최근 탐지"
+      },
+      "findings": {
+        "OWNER_MISSING": "책임 소유자가 없습니다",
+        "ORPHAN_ASSET": "Catalog 관계가 관찰되지 않았습니다",
+        "DEPRECATION_IMPACT": "폐기 대상 자산을 사용 중인 소비처가 있습니다"
+      },
+      "states": {
+        "OPEN": "열림",
+        "ACKNOWLEDGED": "확인됨",
+        "FALSE_POSITIVE": "오탐",
+        "ACCEPTED_RISK": "위험 수용",
+        "RESOLVED": "해결됨"
+      },
+      "inspector": {
+        "title": "Finding 근거",
+        "select": "Finding을 선택해 판정 규칙, 신호와 근거 해시를 검토하세요.",
+        "hash": "근거 SHA-256: {{hash}}",
+        "disposition": "기록된 처분: {{reason}}"
+      },
+      "disposition": {
+        "title": "Finding 처분 기록",
+        "description": "{{entity}}에 대한 통제된 결정을 기록합니다.",
+        "decision": "결정",
+        "reason": "결정 사유",
+        "reasonHelp": "권위 있는 근거와 이 결정이 적절한 이유를 작성하세요.",
+        "evidence": "근거 참조",
+        "evidenceHelp": "사건, ADR, 계약 또는 승인된 원천 참조를 입력합니다.",
+        "submit": "결정 기록",
+        "submitting": "결정 기록 중",
+        "guidance": {
+          "ACKNOWLEDGED": "Finding을 활성 상태로 유지하고 후속 조치를 담당자에게 배정합니다.",
+          "FALSE_POSITIVE": "권위 있는 근거로 탐지 신호가 잘못됐음을 확인한 경우에만 사용합니다.",
+          "ACCEPTED_RISK": "책임 소유자와 승인된 위험 수용 근거를 기록합니다.",
+          "RESOLVED": "소유권, 관계 또는 수명주기 문제가 실제로 수정된 경우 사용합니다."
+        }
+      },
+      "toasts": {
+        "evaluated": "Catalog 보증 평가를 완료했습니다.",
+        "dispositionSaved": "Finding 처분을 기록했습니다.",
+        "error": "Catalog 보증 작업을 완료하지 못했습니다."
       }
     },
     "toasts": {
@@ -2421,6 +2677,400 @@
     "toasts": {
       "approved": "접근 요청을 승인했습니다.",
       "rejected": "접근 요청을 반려했습니다."
+    }
+  },
+  "workforceAccess": {
+    "loading": "인력 데이터 접근 경계를 불러오는 중",
+    "gridLabel": "인력 데이터 접근 경계",
+    "create": "접근 경계 추가",
+    "userSubject": "사용자 {{id}}",
+    "metrics": {
+      "active": "활성 경계",
+      "scoped": "조직 범위 제한",
+      "userOverrides": "개인별 재정의"
+    },
+    "columns": {
+      "subject": "적용 대상",
+      "population": "대상 인구",
+      "fields": "허용 필드",
+      "validTo": "만료 시각",
+      "status": "상태"
+    },
+    "subjectTypes": {
+      "ROLE": "역할 기본 정책",
+      "USER": "사용자별 재정의"
+    },
+    "roles": {
+      "HR_ADMIN": "HR 관리자",
+      "PEOPLE_ADMIN": "인력 운영 관리자"
+    },
+    "populations": {
+      "TENANT": "테넌트 전체",
+      "ORG_UNIT": "선택 조직만",
+      "ORG_TREE": "선택 조직 및 하위 조직"
+    },
+    "fieldGroups": {
+      "DIRECTORY": "기본 디렉터리",
+      "WORKER_IDENTIFIERS": "사번 및 배치 식별자",
+      "EMPLOYMENT": "고용 및 배치 이력",
+      "JOB_GRADE": "직급 및 등급"
+    },
+    "actions": {
+      "READ": "열람",
+      "EXPORT": "반출 승인 가능"
+    },
+    "states": {
+      "ACTIVE": "활성",
+      "REVOKED": "회수됨",
+      "EXPIRED": "만료됨"
+    },
+    "fields": {
+      "subjectType": "대상 유형",
+      "subject": "역할 또는 사용자",
+      "selectSubject": "적용 대상을 선택하세요",
+      "population": "대상 인구 범위",
+      "organization": "기준 조직",
+      "selectOrganization": "조직을 선택하세요",
+      "fieldGroups": "허용할 필드 그룹",
+      "actions": "허용할 작업",
+      "validTo": "만료 시각",
+      "justification": "업무 근거",
+      "justificationHelp": "최소 권한이 필요한 이유를 10자 이상 기록하세요.",
+      "reason": "회수 사유"
+    },
+    "dialog": {
+      "title": "인력 데이터 접근 경계 추가",
+      "description": "사용자별 정책이 있으면 역할 기본 정책보다 우선 적용됩니다. 대상 조직과 필드 그룹은 API에서 다시 검증됩니다."
+    },
+    "revoke": {
+      "title": "접근 경계를 회수할까요?",
+      "description": "회수 후 다음 요청부터 해당 인력 데이터 범위가 즉시 차단됩니다.",
+      "action": "회수"
+    },
+    "empty": {
+      "title": "등록된 인력 데이터 경계가 없습니다",
+      "description": "관리자 역할만으로 상세 인력 데이터는 열리지 않습니다. 승인된 최소 범위를 추가하세요."
+    },
+    "toasts": {
+      "created": "인력 데이터 접근 경계를 추가했습니다.",
+      "revoked": "인력 데이터 접근 경계를 회수했습니다."
+    }
+  },
+  "preferenceExceptions": {
+    "loading": "관리형 설정 예외 요청 불러오는 중",
+    "filterLabel": "예외 요청 상태",
+    "queueLabel": "관리형 설정 예외 검토 큐",
+    "userFallback": "사용자 #{{id}}",
+    "approvalNotice": "승인은 요청 값을 즉시 적용하지 않습니다. 정책 담당자가 승인 근거에 따라 통제된 변경 절차로 적용해야 합니다.",
+    "decidedAt": "{{date}} 결정됨",
+    "columns": {
+      "requester": "요청자",
+      "setting": "관리형 설정",
+      "requestedValue": "요청 값",
+      "state": "상태",
+      "requestedAt": "요청 시각"
+    },
+    "fields": {
+      "requestedValue": "요청 값",
+      "justification": "업무 사유",
+      "impact": "업무 영향",
+      "owner": "할당 담당자",
+      "requestedUntil": "요청 기한",
+      "decisionReason": "결정 근거",
+      "evidence": "증적 참조"
+    },
+    "paths": {
+      "appearance.fontFamily": "제품 글꼴",
+      "appearance.accentColor": "브랜드 강조색",
+      "navigation.pattern": "탐색 패턴"
+    },
+    "states": {
+      "PENDING": "검토 대기",
+      "APPROVED": "승인",
+      "REJECTED": "반려",
+      "CANCELLED": "취소",
+      "EXPIRED": "만료",
+      "ALL": "전체"
+    },
+    "actions": {
+      "approve": "승인",
+      "reject": "반려"
+    },
+    "decision": {
+      "approveTitle": "예외 요청 승인",
+      "approveDescription": "업무 근거와 영향을 검토하고 통제된 적용 작업에 사용할 승인 증적을 기록합니다.",
+      "rejectTitle": "예외 요청 반려",
+      "rejectDescription": "요청자에게 전달할 구체적인 반려 근거를 기록합니다.",
+      "reasonHelp": "결정 근거를 10자 이상 입력하세요. 감사 이력에 영구 보관됩니다.",
+      "evidenceHelp": "선택 사항: 티켓, 정책 또는 검토 문서의 식별자를 입력하세요.",
+      "saving": "결정 저장 중"
+    },
+    "empty": {
+      "title": "이 상태의 예외 요청이 없습니다",
+      "description": "다른 상태를 선택하거나 새 요청이 들어올 때 다시 확인하세요."
+    },
+    "toasts": {
+      "approved": "예외 요청을 승인하고 결정 증적을 기록했습니다.",
+      "rejected": "예외 요청을 반려하고 결정 근거를 기록했습니다."
+    }
+  },
+  "localization": {
+    "loading": "다국어 작업공간을 불러오는 중",
+    "loadingRevisions": "번역 개정을 불러오는 중",
+    "metrics": {
+      "bundles": "번역 번들",
+      "drafts": "열린 초안",
+      "review": "결정 대기",
+      "published": "게시된 번들",
+      "issues": "품질 문제"
+    },
+    "workspace": {
+      "title": "번역 출시 작업공간",
+      "description": "테넌트 언어 변경을 책임 있는 초안·검토·승인·게시 수명주기로 운영합니다."
+    },
+    "bundle": {
+      "listTitle": "번들",
+      "listDescription": "제품 영역과 대상 언어를 선택합니다.",
+      "completeness": "{{value}}% 완료",
+      "issues": "문제 {{count}}건"
+    },
+    "revision": {
+      "number": "개정 {{number}}",
+      "select": "개정 이력",
+      "option": "v{{number}} · {{state}}",
+      "emptyTitle": "번역 개정이 없습니다",
+      "emptyDescription": "거버넌스 번들을 생성하여 번역 이력을 시작하세요."
+    },
+    "states": {
+      "DRAFT": "초안",
+      "IN_REVIEW": "검토 중",
+      "APPROVED": "승인",
+      "REJECTED": "반려",
+      "PUBLISHED": "게시됨",
+      "SUPERSEDED": "대체됨"
+    },
+    "fields": {
+      "bundleKey": "번들 Key",
+      "sourceLocale": "원문 언어",
+      "targetLocale": "대상 언어",
+      "key": "번역 Key",
+      "sourceText": "원문",
+      "translation": "번역",
+      "changeSummary": "변경 요약",
+      "reason": "결정 사유"
+    },
+    "locales": {
+      "en": "영어",
+      "ko": "한국어"
+    },
+    "actions": {
+      "createBundle": "번들 생성",
+      "creating": "번들 생성 중",
+      "saving": "결정 저장 중",
+      "saveDraft": "초안 저장",
+      "addKey": "Key 추가",
+      "remove": "제거",
+      "removeKey": "번역 Key {{key}} 제거",
+      "submit": "검토 제출",
+      "approve": "승인",
+      "reject": "반려",
+      "publish": "게시",
+      "restore": "초안으로 복원",
+      "newDraft": "다음 초안 생성"
+    },
+    "create": {
+      "title": "다국어 번들 생성",
+      "description": "원문과 대상 언어를 정하고 첫 번째 거버넌스 번역 Key를 등록합니다.",
+      "bundleKeyHelp": "shell 또는 account.settings와 같은 안정적인 제품 Key를 사용하세요.",
+      "entryHelp": "안정적인 점 표기 Key를 사용하세요. Key는 제품 언어 계약의 일부가 됩니다.",
+      "fallbackHelp": "비워두면 원문 Fallback을 미리 볼 수 있지만 검토 제출은 차단됩니다."
+    },
+    "editor": {
+      "title": "번역 항목",
+      "description": "대상 언어를 작성하면서 원문의 의미와 placeholder를 일치시키세요.",
+      "tableLabel": "다국어 번역 항목"
+    },
+    "quality": {
+      "completeness": "완성도",
+      "missing": "누락 Key",
+      "placeholders": "Placeholder 오류",
+      "unknown": "알 수 없는 Key",
+      "blocked": "누락·알 수 없는 Key·placeholder 문제를 해결하고 초안을 저장하기 전에는 검토 단계로 이동할 수 없습니다.",
+      "missingValue": "검토 전에 번역을 입력해야 합니다.",
+      "placeholderMismatch": "Placeholder가 원문과 일치해야 합니다."
+    },
+    "views": {
+      "label": "번역 개정 작업공간 보기",
+      "editor": "편집",
+      "diff": "변경 비교",
+      "preview": "Fallback 미리보기",
+      "history": "결정 이력"
+    },
+    "diff": {
+      "loading": "개정 변경 내용을 불러오는 중",
+      "title": "기준 개정 대비 변경",
+      "before": "변경 전",
+      "after": "변경 후",
+      "states": {
+        "ADDED": "추가",
+        "UPDATED": "수정",
+        "REMOVED": "제거",
+        "UNCHANGED": "변경 없음"
+      }
+    },
+    "preview": {
+      "title": "해석된 언어 미리보기",
+      "description": "사용자에게 전달될 대상 문구와 원문 Fallback을 명확히 구분해 보여줍니다.",
+      "fallback": "원문 Fallback"
+    },
+    "history": {
+      "emptyTitle": "기록된 결정이 없습니다",
+      "emptyDescription": "제출·승인·게시·복원 근거가 여기에 표시됩니다.",
+      "actor": "처리자 #{{id}}"
+    },
+    "decisions": {
+      "SUBMITTED": "검토 제출",
+      "APPROVED": "승인",
+      "REJECTED": "반려",
+      "PUBLISHED": "게시",
+      "RESTORED": "새 초안으로 복원"
+    },
+    "transitions": {
+      "reasonHelp": "5자 이상 입력하세요. 이 사유는 변경 불가 결정 근거로 보존됩니다.",
+      "SUBMIT": {
+        "title": "개정 검토 제출",
+        "description": "제출 후 내용은 변경할 수 없으며 다른 관리자가 결정해야 합니다.",
+        "submit": "개정 제출"
+      },
+      "APPROVE": {
+        "title": "번역 개정 승인",
+        "description": "언어 품질, placeholder 무결성, 출시 준비 상태를 확인합니다.",
+        "submit": "개정 승인"
+      },
+      "REJECT": {
+        "title": "번역 개정 반려",
+        "description": "작성자가 수정 초안으로 복원할 수 있도록 구체적인 사유를 기록합니다.",
+        "submit": "개정 반려"
+      },
+      "PUBLISH": {
+        "title": "번역 개정 게시",
+        "description": "승인된 개정을 현재 테넌트 번역으로 활성화하고 이전 게시본을 대체합니다.",
+        "submit": "개정 게시"
+      },
+      "RESTORE": {
+        "title": "과거 개정 복원",
+        "description": "과거 근거를 변경하지 않고 이 닫힌 개정에서 새 편집 초안을 생성합니다.",
+        "submit": "복원 초안 생성"
+      },
+      "NEW_DRAFT": {
+        "title": "다음 번역 초안 생성",
+        "description": "현재 게시된 번역에서 새 편집 개정을 시작합니다.",
+        "submit": "초안 생성"
+      }
+    },
+    "empty": {
+      "title": "다국어 번들이 없습니다",
+      "description": "첫 제품 언어 번들을 만들고 거버넌스 출시 이력을 시작하세요."
+    },
+    "toasts": {
+      "created": "다국어 번들과 첫 초안을 생성했습니다.",
+      "saved": "번역 초안을 저장하고 품질 검사를 갱신했습니다.",
+      "SUBMIT": "번역 개정을 독립 검토에 제출했습니다.",
+      "APPROVE": "번역 개정을 승인했습니다.",
+      "REJECT": "결정 근거와 함께 번역 개정을 반려했습니다.",
+      "PUBLISH": "번역 개정을 게시했습니다.",
+      "RESTORE": "과거 번역 개정을 새 초안으로 복원했습니다.",
+      "NEW_DRAFT": "게시본에서 다음 번역 초안을 생성했습니다."
+    }
+  },
+  "savedViewCustody": {
+    "loading": "저장 뷰 관리권 작업공간을 불러오는 중",
+    "readOnly": "현재 계정은 관리권 현황을 조회할 수 있지만 승계 계획을 실행할 권한은 없습니다.",
+    "metrics": {
+      "activeUsers": "승계 가능한 활성 사용자",
+      "orphaned": "소유자 없이 보존",
+      "recentTransfers": "최근 처리 이력"
+    },
+    "tabs": {
+      "label": "저장 뷰 관리권 작업공간",
+      "plan": "승계 계획",
+      "orphaned": "소유자 없는 뷰 {{count}}",
+      "history": "처리 이력"
+    },
+    "plan": {
+      "title": "관리권 변경 계획",
+      "description": "권위 있는 인사·조직 근거를 연결하고 실행 전에 현재 영향 범위를 고정합니다."
+    },
+    "fields": {
+      "sourceOwner": "현재 소유자",
+      "targetOwner": "새 소유자",
+      "selectUser": "테넌트 사용자 선택",
+      "disposition": "처리 방식",
+      "retentionUntil": "보존 만료 시각",
+      "retentionHelp": "만료 후 백그라운드 보존 정책이 뷰를 자동 보관합니다.",
+      "reasonCode": "변경 유형",
+      "sourceReference": "권위 근거 ID",
+      "sourceReferenceHelp": "HR 이벤트, 조직 개편 또는 승인 Case의 변경 불가 참조를 입력하세요.",
+      "reason": "상세 사유",
+      "reasonHelp": "10자 이상 입력하며 감사 증거에 보존됩니다."
+    },
+    "dispositions": {
+      "TRANSFER": "활성 사용자에게 이전",
+      "RETAIN_ORPHANED": "소유자 없이 기한부 보존"
+    },
+    "reasons": {
+      "OFFBOARDING": "퇴직·이동",
+      "TEAM_REORGANIZATION": "팀 개편",
+      "OWNER_CORRECTION": "소유자 정정"
+    },
+    "scopes": {
+      "PERSONAL": "개인",
+      "TEAM": "팀 공유",
+      "TENANT": "조직 공유"
+    },
+    "preview": {
+      "title": "영향 미리보기",
+      "description": "현재 소유 뷰와 version을 snapshot으로 고정하고 실행 직전에 다시 검증합니다.",
+      "emptyTitle": "아직 평가한 승계 계획이 없습니다",
+      "emptyDescription": "왼쪽에서 근거와 처리 방식을 입력한 뒤 영향 미리보기를 실행하세요.",
+      "summary": "{{count}}개 뷰에 ‘{{disposition}}’ 처리가 적용됩니다.",
+      "evaluatedAt": "평가 {{value}}",
+      "fingerprint": "Snapshot {{value}}…",
+      "confirmHelp": "입력이나 소유 상태가 바뀌면 이 미리보기는 무효화되고 실행이 거부됩니다.",
+      "gridLabel": "관리권 변경 대상 저장 뷰"
+    },
+    "actions": {
+      "preview": "영향 미리보기",
+      "previewing": "영향 평가 중",
+      "execute": "검증된 계획 실행",
+      "executing": "관리권 변경 중"
+    },
+    "columns": {
+      "view": "저장 뷰",
+      "surface": "사용 화면",
+      "scope": "공개 범위",
+      "updatedAt": "최근 변경",
+      "retentionUntil": "보존 만료",
+      "sourceOwner": "이전 소유자",
+      "targetOwner": "새 소유자",
+      "disposition": "처리 방식",
+      "affected": "대상 수",
+      "sourceReference": "권위 근거",
+      "executedAt": "처리 시각"
+    },
+    "orphaned": {
+      "gridLabel": "소유자 없이 보존 중인 저장 뷰",
+      "emptyTitle": "소유자 없이 보존 중인 뷰가 없습니다",
+      "emptyDescription": "모든 활성 저장 뷰에 책임 있는 소유자가 연결되어 있습니다."
+    },
+    "history": {
+      "gridLabel": "저장 뷰 관리권 처리 이력",
+      "emptyTitle": "아직 관리권 처리 이력이 없습니다",
+      "emptyDescription": "승계 또는 기한부 보존을 실행하면 변경 불가 처리 증거가 표시됩니다."
+    },
+    "userFallback": "사용자 #{{id}}",
+    "toasts": {
+      "completed": "저장 뷰 {{count}}개의 관리권 처리를 완료했습니다."
     }
   },
   "supportMode": {

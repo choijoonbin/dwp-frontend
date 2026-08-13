@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   getProviderCommandCenter,
   getProviderReliabilityControl,
@@ -135,6 +136,7 @@ function DistributionList({ items, color }: { items: ProviderMetric[]; color: st
 
 export function ProviderOverview() {
   const { t } = useTranslation('provider');
+  const display = useDisplayDictionary();
   const navigate = useNavigate();
   const [queueFilter, setQueueFilter] = useState<QueueFilter>('ALL');
   const command = useQuery({
@@ -946,7 +948,7 @@ export function ProviderOverview() {
                     display="block"
                     sx={{ fontFamily: foundationTokens.font.mono }}
                   >
-                    {event.action}
+                    {display('auditActions', event.action)}
                   </Typography>
                   <Typography variant="caption" color="text.secondary" noWrap display="block">
                     {event.operatorName ?? t('audit.global')} ·{' '}

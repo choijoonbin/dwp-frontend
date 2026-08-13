@@ -159,6 +159,25 @@ test.beforeEach(async ({ page }) => {
   });
   await page.route('**/api/platform/v1/personal-preferences**', async (route) => {
     const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (path === '/api/platform/v1/personal-preferences/managed-policy') {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'SUCCESS',
+          message: 'OK',
+          data: personalPreference.managedPolicy,
+        }),
+      });
+      return;
+    }
+    if (path === '/api/platform/v1/personal-preferences/exceptions') {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+      });
+      return;
+    }
     if (request.method() === 'GET') {
       await route.fulfill({
         contentType: 'application/json',
@@ -166,7 +185,7 @@ test.beforeEach(async ({ page }) => {
       });
       return;
     }
-    if (new URL(request.url()).pathname.endsWith('/reset')) {
+    if (path.endsWith('/reset')) {
       personalPreference = {
         schemaVersion: 2,
         customized: false,
@@ -375,7 +394,7 @@ test('tenant policy promotes the configured SSO provider without hiding local ac
     await ssoButton.evaluate((button) =>
       Boolean(
         button.compareDocumentPosition(document.querySelector('form')) &
-        Node.DOCUMENT_POSITION_FOLLOWING
+          Node.DOCUMENT_POSITION_FOLLOWING
       )
     )
   ).toBe(true);
@@ -507,14 +526,16 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(
     globalSearch.getByRole('option', { name: /Approve software access request/ })
   ).toBeVisible();
-  await globalSearchInput.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
   await expect(globalSearch.getByRole('option').nth(1)).toHaveAttribute('aria-selected', 'true');
-  await globalSearchInput.press('ArrowUp');
+  await page.keyboard.press('ArrowUp');
   await expect(globalSearch.getByRole('option').first()).toHaveAttribute('aria-selected', 'true');
   await expectNoAutomaticAccessibilityViolations(page);
   await page.keyboard.press('Escape');
   await expect(globalSearch).toHaveCount(0);
-  await page.keyboard.press('Control+K');
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
+  });
   await expect(page.getByRole('dialog', { name: 'Search DWP' })).toBeVisible();
   await page.getByRole('button', { name: 'Close search' }).click();
 
@@ -1227,6 +1248,12 @@ test('users can review and revoke another browser session', async ({ page }) => 
         message: 'OK',
         data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
       }),
+    })
+  );
+  await page.route('**/api/auth/admin/access/privileged/me/**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
     })
   );
 

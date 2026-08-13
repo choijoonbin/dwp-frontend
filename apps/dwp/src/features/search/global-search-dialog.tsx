@@ -6,17 +6,26 @@ import {
   AppWindow,
   BriefcaseBusiness,
   Building2,
+  ClipboardList,
+  Database,
   Search,
   Sparkles,
   UserRound,
   X,
 } from 'lucide-react';
 import {
+  getCatalogOverview,
   getOrganizationChart,
+  getProviderDataGovernance,
+  getProviderOperatorProfile,
   getWorkspaceWorkQueue,
+  listAuditEvents,
   listPeople,
+  listProviderAuditEvents,
+  listProviderTenants,
+  recordGlobalSearchAudit,
 } from '@dwp-frontend/shared-utils';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -37,12 +46,16 @@ import {
 
 import type { HomeAppDefinition } from '../home/app-launchpad-model';
 import type { GlobalSearchItem, GlobalSearchKind } from './global-search-model';
+import type { GlobalSearchAuditSource } from '@dwp-frontend/shared-utils';
 
 const resultIcon: Record<GlobalSearchKind, typeof Search> = {
   app: AppWindow,
   work: BriefcaseBusiness,
   person: UserRound,
   organization: Building2,
+  audit: ClipboardList,
+  tenant: Building2,
+  catalog: Database,
   ask: Sparkles,
 };
 
@@ -52,6 +65,9 @@ type GlobalSearchDialogProps = {
   includeWork: boolean;
   includeAsk: boolean;
   includePeople: boolean;
+  includeTenantAudit: boolean;
+  includeTenantCatalog: boolean;
+  includeProvider: boolean;
   onClose: () => void;
 };
 
@@ -61,16 +77,22 @@ export function GlobalSearchDialog({
   includeWork,
   includeAsk,
   includePeople,
+  includeTenantAudit,
+  includeTenantCatalog,
+  includeProvider,
   onClose,
 }: GlobalSearchDialogProps) {
   const { t } = useTranslation('shell');
+  const display = useDisplayDictionary();
   const { t: tWork } = useTranslation('work');
   const navigate = useNavigate();
   const theme = useTheme();
   const compactSearchLabel = useMediaQuery(theme.breakpoints.down('sm'));
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const lastAuditSignature = useRef('');
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
+  const [auditUnavailable, setAuditUnavailable] = useState(false);
   const workQuery = useQuery({
     queryKey: ['workspace', 'work-queue'],
     queryFn: getWorkspaceWorkQueue,
@@ -93,6 +115,64 @@ export function GlobalSearchDialog({
     staleTime: 300_000,
     retry: 1,
   });
+  const tenantAuditQuery = useQuery({
+    queryKey: ['global-search', 'tenant-audit', normalizedQuery],
+    queryFn: () => listAuditEvents({ window: 'D90', query: normalizedQuery, page: 0, size: 20 }),
+    enabled: open && includeTenantAudit && normalizedQuery.length >= 2,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const tenantCatalogQuery = useQuery({
+    queryKey: ['global-search', 'tenant-catalog', normalizedQuery],
+    queryFn: () => getCatalogOverview({ query: normalizedQuery }),
+    enabled: open && includeTenantCatalog && normalizedQuery.length >= 2,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const providerOperatorQuery = useQuery({
+    queryKey: ['provider', 'operator'],
+    queryFn: getProviderOperatorProfile,
+    enabled: open && includeProvider,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const providerPermissions = useMemo(
+    () => new Set(providerOperatorQuery.data?.permissions ?? []),
+    [providerOperatorQuery.data?.permissions]
+  );
+  const providerTenantsQuery = useQuery({
+    queryKey: ['global-search', 'provider-tenants', normalizedQuery],
+    queryFn: () => listProviderTenants({ query: normalizedQuery, page: 0, size: 20 }),
+    enabled:
+      open &&
+      normalizedQuery.length >= 2 &&
+      includeProvider &&
+      providerPermissions.has('ESTATE_READ'),
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const providerAuditQuery = useQuery({
+    queryKey: ['global-search', 'provider-audit'],
+    queryFn: () => listProviderAuditEvents(),
+    enabled:
+      open &&
+      normalizedQuery.length >= 2 &&
+      includeProvider &&
+      providerPermissions.has('AUDIT_READ'),
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const providerCatalogQuery = useQuery({
+    queryKey: ['global-search', 'provider-catalog'],
+    queryFn: getProviderDataGovernance,
+    enabled:
+      open &&
+      normalizedQuery.length >= 2 &&
+      includeProvider &&
+      providerPermissions.has('DATA_GOVERNANCE_READ'),
+    staleTime: 60_000,
+    retry: 1,
+  });
   const workItems = useMemo(
     () =>
       (workQuery.data?.items ?? []).map((item) => ({
@@ -108,26 +188,169 @@ export function GlobalSearchDialog({
       createGlobalSearchItems(apps, includeWork ? workItems : [], t, {
         people: includePeople ? peopleQuery.data?.items : [],
         organizations: includePeople ? organizationQuery.data?.organizations : [],
+        audits: [
+          ...(tenantAuditQuery.data?.content ?? []).map((event) => ({
+            id: `tenant-${event.eventId}`,
+            title: event.targetDisplayName
+              ? `${display('auditActions', event.action)} / ${event.targetDisplayName}`
+              : display('auditActions', event.action),
+            description: `${event.sourceService} / ${display(
+              'outcomes',
+              event.outcome
+            )} / ${formatDate(new Date(event.occurredAt), {
+              dateStyle: 'medium',
+              timeStyle: 'short',
+            })}`,
+            route: `/admin/governance/audit-events?mode=events&query=${encodeURIComponent(
+              event.eventId
+            )}`,
+            keywords: [
+              event.eventId,
+              event.action,
+              event.targetType,
+              event.targetId,
+              event.actorDisplayName ?? '',
+              event.correlationId ?? '',
+            ],
+            source: t('search.sources.tenantAudit'),
+          })),
+          ...(providerAuditQuery.data ?? []).map((event) => ({
+            id: `provider-${event.auditEventId}`,
+            title: display('auditActions', event.action),
+            description: `${event.tenantKey ?? t('search.globalScope')} / ${display(
+              'outcomes',
+              event.outcome
+            )} / ${formatDate(new Date(event.occurredAt), {
+              dateStyle: 'medium',
+              timeStyle: 'short',
+            })}`,
+            route: `/provider/audit?event=${encodeURIComponent(event.auditEventId)}`,
+            keywords: [
+              event.auditEventId,
+              event.targetType,
+              event.targetId,
+              event.operatorName ?? '',
+              event.tenantKey ?? '',
+              event.correlationId ?? '',
+            ],
+            source: t('search.sources.providerAudit'),
+          })),
+        ],
+        tenants: (providerTenantsQuery.data?.content ?? []).map((tenant) => ({
+          tenantId: tenant.tenantId,
+          title: tenant.displayName,
+          description: `${tenant.organizationName} / ${tenant.dataRegion} / ${display(
+            'states',
+            tenant.lifecycleState
+          )}`,
+          route: `/provider/tenants/${encodeURIComponent(tenant.tenantId)}`,
+          keywords: [
+            tenant.tenantKey,
+            tenant.organizationKey,
+            tenant.organizationName,
+            tenant.environmentKey,
+            tenant.serviceTier,
+          ],
+          source: t('search.sources.providerTenants'),
+        })),
+        catalogAssets: [
+          ...(tenantCatalogQuery.data?.entities ?? []).map((entity) => ({
+            id: `tenant-${entity.ref}`,
+            title: entity.name,
+            description: `${display('entityKinds', entity.kind)} / ${
+              entity.ownerRef ?? t('search.unassignedOwner')
+            } / ${display('states', entity.lifecycleState)}`,
+            route: `/admin/platform/catalog?focus=${encodeURIComponent(entity.ref)}`,
+            keywords: [entity.ref, entity.key, entity.kind, entity.riskTier, entity.scope],
+            source: t('search.sources.tenantCatalog'),
+          })),
+          ...(providerCatalogQuery.data?.assets ?? []).map((asset) => ({
+            id: `provider-${asset.assetKey}`,
+            title: asset.objectName,
+            description: `${asset.databaseName}.${asset.schemaName} / ${asset.businessDomain} / ${asset.ownerService}`,
+            route: `/provider/data-governance?tab=catalog&asset=${encodeURIComponent(
+              asset.assetKey
+            )}`,
+            keywords: [
+              asset.assetKey,
+              asset.databaseKey,
+              asset.objectType,
+              asset.lifecycleState,
+              asset.dataClassification,
+            ],
+            source: t('search.sources.providerCatalog'),
+          })),
+        ],
       }),
     [
       apps,
+      display,
       includePeople,
       includeWork,
       organizationQuery.data?.organizations,
       peopleQuery.data?.items,
+      providerAuditQuery.data,
+      providerCatalogQuery.data?.assets,
+      providerTenantsQuery.data?.content,
       t,
+      tenantAuditQuery.data?.content,
+      tenantCatalogQuery.data?.entities,
       workItems,
     ]
   );
   const results = useMemo(() => {
-    const matches = filterGlobalSearchItems(catalog, query);
+    const matches = filterGlobalSearchItems(catalog, query, 11);
     if (!query.trim() || !includeAsk) return matches;
-    return [...matches, createAskSearchItem(query, t)].slice(0, 8);
+    return [...matches, createAskSearchItem(query, t)].slice(0, 12);
   }, [catalog, includeAsk, query, t]);
+
+  const activeSources = useMemo(() => {
+    const sources: GlobalSearchAuditSource[] = ['APPS'];
+    if (includeWork) sources.push('WORK');
+    if (includePeople) sources.push('PEOPLE', 'ORGANIZATIONS');
+    if (includeTenantAudit) sources.push('TENANT_AUDIT');
+    if (includeTenantCatalog) sources.push('TENANT_CATALOG');
+    if (providerPermissions.has('ESTATE_READ')) sources.push('PROVIDER_TENANTS');
+    if (providerPermissions.has('AUDIT_READ')) sources.push('PROVIDER_AUDIT');
+    if (providerPermissions.has('DATA_GOVERNANCE_READ')) sources.push('PROVIDER_CATALOG');
+    return sources;
+  }, [includePeople, includeTenantAudit, includeTenantCatalog, includeWork, providerPermissions]);
+
+  const sourceFailures = [
+    workQuery.isError && t('search.sources.work'),
+    peopleQuery.isError && t('search.sources.people'),
+    organizationQuery.isError && t('search.sources.organizations'),
+    tenantAuditQuery.isError && t('search.sources.tenantAudit'),
+    tenantCatalogQuery.isError && t('search.sources.tenantCatalog'),
+    providerOperatorQuery.isError && t('search.sources.providerControl'),
+    providerTenantsQuery.isError && t('search.sources.providerTenants'),
+    providerAuditQuery.isError && t('search.sources.providerAudit'),
+    providerCatalogQuery.isError && t('search.sources.providerCatalog'),
+  ].filter((value): value is string => Boolean(value));
+
+  useEffect(() => {
+    if (!open || normalizedQuery.length < 2) return;
+    const signature = `${normalizedQuery}\u0000${activeSources.join(',')}\u0000${results.length}`;
+    if (signature === lastAuditSignature.current) return;
+    const timer = window.setTimeout(() => {
+      lastAuditSignature.current = signature;
+      void recordGlobalSearchAudit({
+        phase: 'QUERY',
+        query: normalizedQuery,
+        sources: activeSources,
+        resultCount: results.length,
+      }).catch(() => setAuditUnavailable(true));
+    }, 800);
+    return () => window.clearTimeout(timer);
+  }, [activeSources, normalizedQuery, open, results.length]);
 
   useEffect(() => setActiveIndex(0), [query]);
   useEffect(() => {
-    if (!open) setQuery('');
+    if (!open) {
+      setQuery('');
+      setAuditUnavailable(false);
+      lastAuditSignature.current = '';
+    }
   }, [open]);
   useEffect(() => {
     if (!open) return;
@@ -144,6 +367,16 @@ export function GlobalSearchDialog({
     onClose();
   };
   const select = (item: GlobalSearchItem) => {
+    if (normalizedQuery.length >= 2) {
+      void recordGlobalSearchAudit({
+        phase: 'SELECTION',
+        query: normalizedQuery,
+        sources: activeSources,
+        resultCount: results.length,
+        selectedKind: item.kind.toUpperCase(),
+        selectedId: item.id,
+      }).catch(() => undefined);
+    }
     close();
     navigate(item.route);
   };
@@ -257,14 +490,24 @@ export function GlobalSearchDialog({
       <Divider />
 
       <Box sx={{ overflowY: 'auto', p: { xs: 1, sm: 1.5 }, minHeight: 120 }}>
-        {(workQuery.isError || peopleQuery.isError || organizationQuery.isError) && (
+        {sourceFailures.length > 0 && (
           <Typography
             role="status"
             variant="caption"
             color="warning.main"
             sx={{ display: 'block', px: 1.25, pb: 0.5 }}
           >
-            {t('search.partialResults')}
+            {t('search.partialResults', { sources: sourceFailures.join(', ') })}
+          </Typography>
+        )}
+        {auditUnavailable && (
+          <Typography
+            role="status"
+            variant="caption"
+            color="warning.main"
+            sx={{ display: 'block', px: 1.25, pb: 0.5 }}
+          >
+            {t('search.auditUnavailable')}
           </Typography>
         )}
         <Typography
@@ -346,7 +589,7 @@ export function GlobalSearchDialog({
                       color="text.secondary"
                       sx={{ px: 0.5, display: { xs: 'none', sm: 'block' } }}
                     >
-                      {t(`search.types.${item.kind}`)}
+                      {item.source}
                     </Typography>
                   </ButtonBase>
                 </Box>

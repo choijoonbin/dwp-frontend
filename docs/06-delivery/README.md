@@ -13,3 +13,7 @@ Release별 Pilot Charter, 수용 Test 결과, 접근성·Security·License·SBOM
 - `로컬 권한별 로그인 검증 계정.md`: 구성원·회사 관리자·프로바이더 관리자
   역할 격리 계정과 메뉴·접근 경계 검증 기준선
 - `generated/production-dependency-licenses.json`: 현재 Production Graph의 생성 증거
+- `R2 R3 출시 증거 실행 가이드.md`: 성능·접근성·복구·보안·운영 증거의 실행 계약
+- `release-evidence/release-readiness.json`: R2·R3·D·A Gate의 기계 검증 가능한 현행 원장
+- `.github/workflows/release-readiness.yml`: 승인된 증거만 Production Release를 허용하는
+  수동 실행 Gate

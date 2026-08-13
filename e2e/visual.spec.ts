@@ -44,6 +44,12 @@ async function mockUnauthenticated(page: Page) {
 
 async function mockAuthenticated(page: Page, locale = 'en') {
   await mockRuntimeNavigation(page);
+  await page.route('**/api/auth/admin/access/privileged/me/**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
+    })
+  );
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',

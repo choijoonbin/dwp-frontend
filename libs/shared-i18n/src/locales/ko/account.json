@@ -49,8 +49,8 @@
     },
     "managed": {
       "title": "관리형 설정",
-      "description": "조직에서 관리하는 사용자 경험 기본값을 확인합니다.",
-      "notice": "이 값은 조직에서 설정하며 개인 환경 설정에서는 변경할 수 없습니다.",
+      "description": "조직에서 관리하는 사용자 경험 기본값과 예외 요청을 확인합니다.",
+      "notice": "이 값은 {{owner}}에서 관리합니다. 업무상 다른 값이 필요하면 근거와 영향을 포함해 예외를 요청할 수 있습니다.",
       "groupTitle": "조직 기본값",
       "groupDescription": "관리형 값은 워크스페이스 전체에 일관된 사용 경험을 제공합니다."
     }
@@ -198,13 +198,56 @@
   "managed": {
     "systemFont": "시스템 UI",
     "tenantScope": "테넌트 범위",
+    "ownerFallback": "테넌트 관리자",
     "sources": {
       "TENANT_EXPERIENCE_POLICY": "테넌트 경험 정책"
     },
     "owners": {
       "TENANT_ADMINISTRATOR": "테넌트 관리자"
     },
-    "paths": "관리 경로: {{paths}}"
+    "paths": "관리 경로: {{paths}}",
+    "pathLabels": {
+      "appearance.fontFamily": "제품 글꼴",
+      "appearance.accentColor": "브랜드 강조색",
+      "navigation.pattern": "탐색 패턴"
+    },
+    "exceptions": {
+      "title": "내 예외 요청",
+      "description": "관리형 값의 변경 요청과 담당자의 결정 근거를 추적합니다. 승인되더라도 값은 정책 담당자가 통제된 절차로 적용합니다.",
+      "request": "예외 요청",
+      "pending": "검토 대기 중",
+      "cancel": "요청 취소",
+      "loadError": "예외 요청 이력을 불러오지 못했습니다.",
+      "emptyTitle": "예외 요청이 없습니다",
+      "emptyDescription": "현재 조직 기본값을 그대로 사용하고 있습니다.",
+      "requestedValue": "요청 값: {{value}} · {{date}}",
+      "decisionReason": "결정 근거: {{reason}}",
+      "states": {
+        "PENDING": "검토 대기",
+        "APPROVED": "승인",
+        "REJECTED": "반려",
+        "CANCELLED": "취소",
+        "EXPIRED": "만료"
+      },
+      "dialog": {
+        "title": "{{setting}} 예외 요청",
+        "description": "{{owner}}에게 업무 목적과 영향을 전달합니다. 승인은 설정을 즉시 변경하지 않으며 통제된 적용 작업의 근거가 됩니다.",
+        "requestedValue": "요청 값",
+        "requestedValueHelp": "업무에 필요한 구체적인 값을 입력하세요.",
+        "justification": "업무 사유",
+        "justificationHelp": "이 값이 필요한 업무와 사용 범위를 10자 이상 입력하세요.",
+        "impact": "업무 영향",
+        "impactHelp": "승인되지 않을 경우의 영향과 예상 사용자를 10자 이상 입력하세요.",
+        "cancel": "취소",
+        "submit": "검토 요청",
+        "submitting": "요청 중"
+      },
+      "toasts": {
+        "requested": "관리형 설정 예외 검토를 요청했습니다.",
+        "cancelled": "예외 요청을 취소했습니다.",
+        "failed": "예외 요청 작업을 완료하지 못했습니다."
+      }
+    }
   },
   "preview": {
     "live": "실시간 미리보기",
@@ -297,6 +340,51 @@
         "healthy": "준비 완료",
         "managed": "조직 관리",
         "attention": "검토 필요"
+      }
+    },
+    "privileged": {
+      "title": "내 특권 접근",
+      "description": "상시 관리자 권한 대신 승인되고 자동 만료되는 역할을 필요한 시간에만 활성화합니다.",
+      "reauthenticationNotice": "권한 활성화 또는 회수 후에는 최신 권한 토큰을 받기 위해 다시 로그인합니다.",
+      "loading": "내 특권 접근 불러오는 중",
+      "loadError": "특권 접근 정보를 불러오지 못했습니다.",
+      "emptyTitle": "활성화할 수 있는 특권 역할이 없습니다",
+      "emptyDescription": "필요한 역할은 회사 관리자에게 기간과 범위를 지정한 자격으로 요청하세요.",
+      "activateTitle": "{{role}} 활성화 요청",
+      "activateDescription": "필요한 최소 시간과 업무 근거를 입력하세요. 정책에 따라 승인 또는 추가 인증이 필요합니다.",
+      "activate": "권한 활성화",
+      "activating": "요청 중...",
+      "duration": "필요 시간",
+      "minutes": "{{count}}분",
+      "ticket": "변경 또는 장애 티켓",
+      "ticketHelp": "역할 정책에서 필수인 경우 승인된 티켓 번호를 입력하세요.",
+      "justification": "업무 사유",
+      "justificationHelp": "수행할 업무와 필요한 범위를 10자 이상 입력하세요.",
+      "requested": "특권 접근 승인 요청을 보냈습니다.",
+      "activatedReauthenticate": "임시 권한이 활성화되었습니다. 최신 권한으로 다시 로그인합니다.",
+      "requestError": "특권 접근을 요청하지 못했습니다.",
+      "revokeTitle": "{{role}} 접근 종료",
+      "revokeDescription": "활성 권한은 즉시 회수되고 승인 대기 요청은 취소됩니다.",
+      "revokeReason": "종료 또는 취소 사유",
+      "revoke": "권한 종료",
+      "cancelRequest": "요청 취소",
+      "revokedReauthenticate": "임시 권한을 회수했습니다. 기본 권한으로 다시 로그인합니다.",
+      "cancelled": "특권 접근 요청을 취소했습니다.",
+      "revokeError": "특권 접근을 종료하지 못했습니다.",
+      "eligibleUntil": "자격 만료 {{date}}",
+      "eligibilityNoExpiry": "자격 만료 없음",
+      "scope": {
+        "TENANT": "테넌트",
+        "ORG_UNIT": "조직 범위",
+        "RESOURCE": "리소스 범위"
+      },
+      "state": {
+        "ACTIVE": "활성",
+        "PENDING_APPROVAL": "승인 대기",
+        "DENIED": "거부",
+        "CANCELLED": "취소",
+        "REVOKED": "회수",
+        "EXPIRED": "만료"
       }
     },
     "actions": {

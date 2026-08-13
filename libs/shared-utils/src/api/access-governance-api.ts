@@ -90,7 +90,7 @@ export type PermissionSelection = {
 export type CreateGroupRoleAssignmentRequest = {
   groupId: number;
   roleId: number;
-  assignmentType: 'ACTIVE' | 'ELIGIBLE';
+  assignmentType: 'ACTIVE';
   scopeType: 'TENANT' | 'ORG_UNIT' | 'RESOURCE';
   scopeRef?: string;
   validFrom?: string;

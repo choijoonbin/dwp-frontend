@@ -11,8 +11,11 @@ type SavedView = {
   savedViewId: string;
   surfaceKey: string;
   name: string;
-  scope: 'PERSONAL' | 'TENANT';
-  ownerUserId: number;
+  scope: 'PERSONAL' | 'TEAM' | 'TENANT';
+  ownerUserId: number | null;
+  ownerGroupRef: string | null;
+  lifecycleState: 'ACTIVE' | 'ORPHANED' | 'ARCHIVED';
+  retentionUntil: string | null;
   editable: boolean;
   favorite: boolean;
   defaultView: boolean;
@@ -48,6 +51,9 @@ async function mockSavedViewStore(page: Page) {
         name: String(createdPayload.name),
         scope: createdPayload.scope as SavedView['scope'],
         ownerUserId: 1,
+        ownerGroupRef: (createdPayload.ownerGroupRef as string | null) ?? null,
+        lifecycleState: 'ACTIVE',
+        retentionUntil: null,
         editable: true,
         favorite: Boolean(createdPayload.favorite),
         defaultView: Boolean(createdPayload.defaultView),
@@ -89,6 +95,7 @@ async function mockSavedViewStore(page: Page) {
               ...view,
               name: String(update.name),
               scope: update.scope,
+              ownerGroupRef: update.ownerGroupRef ?? null,
               configuration: update.configuration,
               version: view.version + 1,
               updatedAt: '2026-08-11T00:10:00Z',
@@ -175,11 +182,45 @@ test('administrators govern shared reusable views through their complete lifecyc
 
   await page.getByRole('button', { name: 'Saved views: Executive operations' }).click();
   await page.getByRole('menuitem', { name: 'Manage saved views' }).click();
-  await page.getByRole('button', { name: 'Delete view' }).click();
-  await expect(page.getByRole('heading', { name: 'Delete saved view' })).toBeVisible();
+  await page.getByRole('button', { name: 'Archive view' }).click();
+  await expect(page.getByRole('heading', { name: 'Archive saved view' })).toBeVisible();
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
-  await expect(page.getByText('The saved view was deleted.')).toBeVisible();
+  await expect(page.getByText('The saved view was archived.')).toBeVisible();
   await expect.poll(() => store.views).toHaveLength(0);
   await page.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Saved views: All' })).toBeVisible();
+});
+
+test('members publish a reusable view only to one of their verified teams', async ({ page }) => {
+  const financeGroupRef = '58fa4516-dc70-4785-ac9f-3606992c3f6b';
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'en',
+    displayName: 'Finance Member',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+    groups: [{ groupRef: financeGroupRef, displayName: 'Finance Operations' }],
+  });
+  const store = await mockSavedViewStore(page);
+
+  await page.goto('/work');
+  await page.getByRole('button', { name: 'Saved views: All' }).click();
+  await page.getByRole('menuitem', { name: 'Save current view' }).click();
+  await page.getByLabel('View name').fill('Month-end exceptions');
+  await page.getByRole('button', { name: 'Team' }).click();
+  await page.getByLabel('Owner team').click();
+  await page.getByRole('option', { name: 'Finance Operations' }).click();
+
+  const accessibility = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
+  expect(accessibility.violations).toEqual([]);
+
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
+  await expect(page.getByText('The current settings were saved as a new view.')).toBeVisible();
+  expect(store.createdPayload).toMatchObject({
+    name: 'Month-end exceptions',
+    scope: 'TEAM',
+    ownerGroupRef: financeGroupRef,
+  });
+
+  await page.getByRole('button', { name: 'Saved views: Month-end exceptions' }).click();
+  await page.getByRole('menuitem', { name: 'Manage saved views' }).click();
+  await expect(page.getByText('Team', { exact: true })).toBeVisible();
 });

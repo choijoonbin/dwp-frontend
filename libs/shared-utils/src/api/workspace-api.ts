@@ -66,11 +66,20 @@ export type WorkspaceActivityFeed = {
 };
 
 export type WorkspaceAppCategory =
-  'productivity' | 'service' | 'people' | 'knowledge' | 'business' | 'legacy';
+  | 'productivity'
+  | 'service'
+  | 'people'
+  | 'knowledge'
+  | 'business'
+  | 'legacy';
 export type WorkspaceAppLaunchMode = 'Native' | 'SSO' | 'Deep link';
 export type WorkspaceAppHealth = 'healthy' | 'managed' | 'attention' | 'configuration-required';
 export type WorkspaceAppAccessState =
-  'AVAILABLE' | 'REQUESTABLE' | 'PENDING' | 'APPROVED_PENDING_SYNC' | 'CONFIGURATION_REQUIRED';
+  | 'AVAILABLE'
+  | 'REQUESTABLE'
+  | 'PENDING'
+  | 'APPROVED_PENDING_SYNC'
+  | 'CONFIGURATION_REQUIRED';
 
 export type WorkspaceApp = {
   id: string;

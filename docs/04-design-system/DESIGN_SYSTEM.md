@@ -171,6 +171,9 @@ AST로 검사한다.
 
 - 기존 직접 사용은 `scripts/design-system-adoption-baseline.json`에 파일·Component별로만
   한시 허용한다.
+- 모든 한시 허용 파일은 `scripts/design-system-adoption-exceptions.json`에서 가장
+  구체적인 경로 규칙으로 책임자, 존치 사유와 제거 조건을 가져야 한다. 이 정보가 없는
+  숫자 예외는 CI에서 거부한다.
 - 신규 파일의 직접 사용과 기존 파일의 증가분은 `yarn lint`, `yarn build`와
   `yarn design-system:check`를 실패시킨다.
 - 기존 화면 전환으로 숫자가 줄면 `yarn design-system:baseline`을 실행해 기준선을

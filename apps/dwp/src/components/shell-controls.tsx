@@ -20,6 +20,11 @@ import IconButton from '@mui/material/IconButton';
 import { alpha } from '@mui/material/styles';
 
 import { GlobalSearchDialog } from '../features/search/global-search-dialog';
+import {
+  hasFullTenantAdminRole,
+  hasProviderControlPlaneRole,
+  hasTenantControlPlaneRole,
+} from '../features/auth/control-plane-access';
 import { isAppEntitled, localizeHomeApps } from '../features/home/app-launchpad-model';
 
 function WorkspaceBadge() {
@@ -87,7 +92,7 @@ export function SearchControl() {
   const { t } = useTranslation('shell');
   const { t: tHome } = useTranslation('home');
   const auth = useAuth();
-  const { permissions } = usePermissions();
+  const { permissions, hasPermission, isLoaded: permissionsLoaded } = usePermissions();
   const [open, setOpen] = useState(false);
   const apps = useMemo(
     () =>
@@ -99,6 +104,13 @@ export function SearchControl() {
   const includeWork = apps.some((app) => app.id === 'dwp-work');
   const includeAsk = apps.some((app) => app.id === 'dwp-ask');
   const includePeople = apps.some((app) => app.id === 'ref-app-people');
+  const roles = auth.user?.roles ?? [];
+  const includeProvider = hasProviderControlPlaneRole(roles);
+  const includeTenantAudit =
+    hasTenantControlPlaneRole(roles) &&
+    permissionsLoaded &&
+    hasPermission('ADMIN.AUDIT_VIEW', 'VIEW');
+  const includeTenantCatalog = hasFullTenantAdminRole(roles);
   const shortcut =
     typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
       ? '⌘K'
@@ -186,6 +198,9 @@ export function SearchControl() {
         includeWork={includeWork}
         includeAsk={includeAsk}
         includePeople={includePeople}
+        includeTenantAudit={includeTenantAudit}
+        includeTenantCatalog={includeTenantCatalog}
+        includeProvider={includeProvider}
         onClose={() => setOpen(false)}
       />
     </>

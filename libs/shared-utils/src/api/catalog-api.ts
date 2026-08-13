@@ -93,6 +93,9 @@ export type CatalogImpactItem = {
 export type CatalogImpact = {
   target: CatalogEntity;
   operation: 'CHANGE' | 'RETIRE' | 'OUTAGE';
+  compatibilityState: 'COMPATIBLE' | 'REVIEW_REQUIRED' | 'BLOCKED';
+  ruleKey: string;
+  ruleVersion: number;
   riskScore: number;
   blocked: boolean;
   directDependentCount: number;
@@ -100,6 +103,56 @@ export type CatalogImpact = {
   impactedEntities: CatalogImpactItem[];
   findings: string[];
   generatedAt: string;
+};
+
+export type CatalogCompatibilityRule = {
+  ruleKey: string;
+  ruleVersion: number;
+  definition: Record<string, unknown>;
+  contentSha256: string;
+};
+
+export type CatalogAssuranceFindingState =
+  | 'OPEN'
+  | 'ACKNOWLEDGED'
+  | 'FALSE_POSITIVE'
+  | 'ACCEPTED_RISK'
+  | 'RESOLVED';
+
+export type CatalogAssuranceFinding = {
+  findingId: string;
+  entityRef: string;
+  findingCode: 'OWNER_MISSING' | 'ORPHAN_ASSET' | 'DEPRECATION_IMPACT';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  lifecycleState: CatalogAssuranceFindingState;
+  ruleKey: string;
+  ruleVersion: number;
+  evidence: Record<string, unknown>;
+  evidenceSha256: string;
+  firstDetectedAt: string;
+  lastDetectedAt: string;
+  dispositionReason?: string | null;
+  dispositionEvidenceRef?: string | null;
+  disposedBy?: number | null;
+  disposedAt?: string | null;
+  version: number;
+};
+
+export type CatalogAssuranceSummary = {
+  openCount: number;
+  criticalCount: number;
+  ownerMissingCount: number;
+  deprecationImpactCount: number;
+  activeRule: CatalogCompatibilityRule;
+  findings: CatalogAssuranceFinding[];
+  generatedAt: string;
+};
+
+export type CatalogFindingDispositionRequest = {
+  decision: Exclude<CatalogAssuranceFindingState, 'OPEN'>;
+  reason: string;
+  evidenceRef?: string;
+  version: number;
 };
 
 export type DeclareCatalogRelationRequest = {
@@ -147,6 +200,32 @@ export async function getCatalogImpact(
   const response = await axiosInstance.get<ApiResponse<CatalogImpact>>(
     `${BASE}/impact?${search.toString()}`
   );
+  return response.data.data;
+}
+
+export async function getCatalogAssurance(): Promise<CatalogAssuranceSummary> {
+  const response = await axiosInstance.get<ApiResponse<CatalogAssuranceSummary>>(
+    `${BASE}/assurance`
+  );
+  return response.data.data;
+}
+
+export async function evaluateCatalogAssurance(): Promise<CatalogAssuranceSummary> {
+  const response = await axiosInstance.post<ApiResponse<CatalogAssuranceSummary>, object>(
+    `${BASE}/assurance/evaluate`,
+    {}
+  );
+  return response.data.data;
+}
+
+export async function dispositionCatalogFinding(
+  findingId: string,
+  request: CatalogFindingDispositionRequest
+): Promise<CatalogAssuranceFinding> {
+  const response = await axiosInstance.post<
+    ApiResponse<CatalogAssuranceFinding>,
+    CatalogFindingDispositionRequest
+  >(`${BASE}/assurance/findings/${encodeURIComponent(findingId)}/disposition`, request);
   return response.data.data;
 }
 

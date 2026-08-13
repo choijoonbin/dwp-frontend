@@ -29,6 +29,7 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -50,6 +51,7 @@ import DialogContent from '@mui/material/DialogContent';
 
 import { AdminPanelError, AdminPanelLoading } from './admin-ui';
 import { resolveRoleDisplayCopy } from './role-display';
+import { PrivilegedAccessManager } from './privileged-access-manager';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -624,7 +626,7 @@ function AssignmentDialog({
   onSave: (request: {
     groupId: number;
     roleId: number;
-    assignmentType: 'ACTIVE' | 'ELIGIBLE';
+    assignmentType: 'ACTIVE';
     scopeType: 'TENANT' | 'ORG_UNIT' | 'RESOURCE';
     scopeRef?: string;
     validTo?: string;
@@ -638,7 +640,6 @@ function AssignmentDialog({
   });
   const [groupId, setGroupId] = useState('');
   const [roleId, setRoleId] = useState('');
-  const [assignmentType, setAssignmentType] = useState<'ACTIVE' | 'ELIGIBLE'>('ACTIVE');
   const [scopeType, setScopeType] = useState<'TENANT' | 'ORG_UNIT' | 'RESOURCE'>('TENANT');
   const [scopeRef, setScopeRef] = useState('');
   const [validTo, setValidTo] = useState('');
@@ -676,31 +677,19 @@ function AssignmentDialog({
                 </MenuItem>
               ))}
           </TextField>
-          <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-            <TextField
-              select
-              fullWidth
-              label={t('roleGovernance.fields.assignmentType')}
-              value={assignmentType}
-              onChange={(event) => setAssignmentType(event.target.value as 'ACTIVE' | 'ELIGIBLE')}
-            >
-              <MenuItem value="ACTIVE">{t('roleGovernance.assignmentTypes.ACTIVE')}</MenuItem>
-              <MenuItem value="ELIGIBLE">{t('roleGovernance.assignmentTypes.ELIGIBLE')}</MenuItem>
-            </TextField>
-            <TextField
-              select
-              fullWidth
-              label={t('roleGovernance.fields.scope')}
-              value={scopeType}
-              onChange={(event) => setScopeType(event.target.value as typeof scopeType)}
-            >
-              {['TENANT', 'ORG_UNIT', 'RESOURCE'].map((value) => (
-                <MenuItem key={value} value={value}>
-                  {t(`roleGovernance.scopes.${value}`)}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Stack>
+          <TextField
+            select
+            fullWidth
+            label={t('roleGovernance.fields.scope')}
+            value={scopeType}
+            onChange={(event) => setScopeType(event.target.value as typeof scopeType)}
+          >
+            {['TENANT', 'ORG_UNIT', 'RESOURCE'].map((value) => (
+              <MenuItem key={value} value={value}>
+                {t(`roleGovernance.scopes.${value}`)}
+              </MenuItem>
+            ))}
+          </TextField>
           {scopeType !== 'TENANT' && (
             <TextField
               required
@@ -723,6 +712,8 @@ function AssignmentDialog({
             label={t('roleGovernance.fields.justification')}
             value={justification}
             onChange={(event) => setJustification(event.target.value)}
+            helperText={t('roleGovernance.assignmentDialog.justificationHelp')}
+            slotProps={{ htmlInput: { maxLength: 500 } }}
           />
         </Stack>
       </DialogContent>
@@ -734,14 +725,14 @@ function AssignmentDialog({
             busy ||
             !groupId ||
             !roleId ||
-            !justification.trim() ||
+            justification.trim().length < 10 ||
             (scopeType !== 'TENANT' && !scopeRef.trim())
           }
           onClick={() =>
             void onSave({
               groupId: Number(groupId),
               roleId: Number(roleId),
-              assignmentType,
+              assignmentType: 'ACTIVE',
               scopeType,
               scopeRef: scopeRef || undefined,
               validTo: validTo ? new Date(validTo).toISOString() : undefined,
@@ -758,6 +749,7 @@ function AssignmentDialog({
 
 function AssignmentsPanel() {
   const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -826,7 +818,7 @@ function AssignmentsPanel() {
             size="small"
             variant="outlined"
             color={row.lifecycleState === 'ACTIVE' ? 'success' : 'default'}
-            label={row.lifecycleState}
+            label={display('states', row.lifecycleState)}
           />
         ),
       },
@@ -858,7 +850,7 @@ function AssignmentsPanel() {
         ),
       },
     ],
-    [assignableRoleCodes, busy, mutate, t]
+    [assignableRoleCodes, busy, display, mutate, t]
   );
   if (assignments.isLoading || roles.isLoading || assignableRoles.isLoading)
     return <AdminPanelLoading label={t('roleGovernance.loading')} />;
@@ -1042,7 +1034,7 @@ function EffectiveAccessPanel() {
 
 export function RoleGovernanceManager() {
   const { t } = useTranslation('admin');
-  const [tab, setTab] = useState<'roles' | 'assignments' | 'effective'>('roles');
+  const [tab, setTab] = useState<'roles' | 'assignments' | 'privileged' | 'effective'>('roles');
   return (
     <Box sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
       <Tabs
@@ -1053,10 +1045,12 @@ export function RoleGovernanceManager() {
       >
         <Tab value="roles" label={t('roleGovernance.tabs.roles')} />
         <Tab value="assignments" label={t('roleGovernance.tabs.assignments')} />
+        <Tab value="privileged" label={t('roleGovernance.tabs.privileged')} />
         <Tab value="effective" label={t('roleGovernance.tabs.effective')} />
       </Tabs>
       {tab === 'roles' && <RolesPanel />}
       {tab === 'assignments' && <AssignmentsPanel />}
+      {tab === 'privileged' && <PrivilegedAccessManager />}
       {tab === 'effective' && <EffectiveAccessPanel />}
     </Box>
   );

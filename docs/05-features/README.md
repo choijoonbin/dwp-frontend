@@ -26,3 +26,8 @@
 - `DWP-R1-CORE-001-reference-work-hub`: R1 Reference Work Hub
 - `DWP-R1-CORE-002-personal-home-experience`: Sidebar 없는 개인 Home과 Tenant Presentation
 - `DWP-R1-AI-001-governed-ask-runtime`: 권한 기반 Context·Citation·Model Route Ask Runtime
+- `DWP-R1-ADM-006-governed-catalog`: 자산 관계·영향·Assurance Catalog
+- `DWP-R1-ADM-007-navigation-app-access-governance`: 메뉴·앱 접근 계약과 승인 수명주기
+- `DWP-R1-ADM-008-localization-studio`: 번역 Draft·독립 검토·게시·복원 Studio
+- `DWP-R1-CORE-003-account-preferences`: 개인 설정과 Tenant 관리 정책·예외
+- `DWP-R1-CORE-004-governed-sharing-export`: Team View 소유권과 통제형 Workforce 반출

@@ -30,6 +30,7 @@ import {
   GuidedEmptyState,
   OperationalKpiStrip,
 } from '@dwp-frontend/design-system';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -57,14 +58,8 @@ function message(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
-function StateChip({
-  state,
-  namespace = 'admin',
-}: {
-  state: string;
-  namespace?: 'admin' | 'workforce';
-}) {
-  const { t } = useTranslation(namespace);
+function StateChip({ state }: { state: string }) {
+  const display = useDisplayDictionary();
   const color =
     state === 'ACTIVE' || state === 'SUCCEEDED' || state === 'READY'
       ? 'success'
@@ -73,14 +68,7 @@ function StateChip({
         : state === 'PENDING'
           ? 'warning'
           : 'default';
-  return (
-    <Chip
-      size="small"
-      variant="outlined"
-      color={color}
-      label={t(`provisioning.states.${state}`, { defaultValue: state })}
-    />
-  );
+  return <Chip size="small" variant="outlined" color={color} label={display('states', state)} />;
 }
 
 function ConnectorInspector({

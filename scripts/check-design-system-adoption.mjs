@@ -5,6 +5,7 @@ import ts from 'typescript';
 const root = process.cwd();
 const sourceRoot = path.join(root, 'apps/dwp/src');
 const baselinePath = path.join(root, 'scripts/design-system-adoption-baseline.json');
+const exceptionPath = path.join(root, 'scripts/design-system-adoption-exceptions.json');
 const writeBaseline = process.argv.includes('--write');
 
 const materialComponents = new Set([
@@ -175,6 +176,29 @@ const issues = [];
 let legacyUseCount = 0;
 let removedUseCount = 0;
 
+if (!fs.existsSync(exceptionPath)) {
+  console.error('Missing design-system exception ownership registry.');
+  process.exit(1);
+}
+const exceptionRegistry = JSON.parse(fs.readFileSync(exceptionPath, 'utf8'));
+if (exceptionRegistry.version !== 1 || !Array.isArray(exceptionRegistry.rules)) {
+  console.error('Unsupported design-system exception registry format.');
+  process.exit(1);
+}
+for (const rule of exceptionRegistry.rules) {
+  for (const field of ['id', 'pathPrefix', 'owner', 'reason', 'removalCondition']) {
+    if (typeof rule[field] !== 'string' || !rule[field].trim()) {
+      issues.push(`design-system exception rule is missing ${field}`);
+    }
+  }
+}
+
+function exceptionFor(file) {
+  return exceptionRegistry.rules
+    .filter((rule) => file.startsWith(rule.pathPrefix))
+    .sort((left, right) => right.pathPrefix.length - left.pathPrefix.length)[0];
+}
+
 for (const [file, counts] of Object.entries(current.files)) {
   for (const [contract, count] of Object.entries(counts)) {
     const allowed = baseline.files[file]?.[contract] ?? 0;
@@ -188,6 +212,9 @@ for (const [file, counts] of Object.entries(current.files)) {
 }
 
 for (const [file, counts] of Object.entries(baseline.files)) {
+  if (Object.values(counts).some((count) => count > 0) && !exceptionFor(file)) {
+    issues.push(`${file}: grandfathered JSX has no owner, reason, and removal condition`);
+  }
   for (const [contract, count] of Object.entries(counts)) {
     const currentCount = current.files[file]?.[contract] ?? 0;
     removedUseCount += Math.max(0, count - currentCount);

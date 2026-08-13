@@ -1,0 +1,31 @@
+name: Release readiness
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  authorize-release:
+    name: Verify approved release evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Validate evidence registry integrity
+        run: corepack yarn release:evidence:check
+
+      - name: Enforce release authorization
+        run: corepack yarn release:gate

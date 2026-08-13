@@ -804,6 +804,20 @@ export async function decideOrganizationScenario(
   return response.data.data;
 }
 
+export async function cancelOrganizationScenario(
+  scenario: OrganizationScenario,
+  reason: string
+): Promise<OrganizationScenario> {
+  const response = await axiosInstance.post<
+    ApiResponse<OrganizationScenario>,
+    { reason: string; version: number }
+  >(`${ORG_SCENARIO_BASE}/${scenario.scenarioId}/cancel`, {
+    reason,
+    version: scenario.version,
+  });
+  return response.data.data;
+}
+
 export async function publishOrganizationScenario(
   scenario: OrganizationScenario
 ): Promise<OrganizationScenario> {

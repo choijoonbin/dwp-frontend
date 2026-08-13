@@ -6,6 +6,7 @@ import {
   Braces,
   ClipboardList,
   Database,
+  Flag,
   Gauge,
   HeartPulse,
   LifeBuoy,
@@ -24,6 +25,7 @@ import {
   ProviderCodeContracts,
   ProviderCommercial,
   ProviderDataGovernance,
+  ProviderFeatureRollouts,
   ProviderHealth,
   ProviderOperations,
   ProviderOverview,
@@ -38,6 +40,11 @@ const views = {
   tenants: { icon: Building2, content: ProviderTenants, permission: 'ESTATE_READ' },
   operations: { icon: ListChecks, content: ProviderOperations, permission: 'ESTATE_READ' },
   health: { icon: HeartPulse, content: ProviderHealth, permission: 'HEALTH_READ' },
+  'feature-rollouts': {
+    icon: Flag,
+    content: ProviderFeatureRollouts,
+    permission: 'FEATURE_ROLLOUT_READ',
+  },
   support: { icon: LifeBuoy, content: ProviderSupport, permission: 'ESTATE_READ' },
   commercial: {
     icon: BadgeDollarSign,

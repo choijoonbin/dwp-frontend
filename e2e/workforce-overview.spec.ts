@@ -11,6 +11,15 @@ import type { Page } from '@playwright/test';
 
 test.describe.configure({ mode: 'parallel' });
 
+function previousYear(value: string): string {
+  const [year, month, day] = value.split('-').map(Number);
+  const lastDay = new Date(Date.UTC(year - 1, month, 0)).getUTCDate();
+  return `${year - 1}-${String(month).padStart(2, '0')}-${String(Math.min(day, lastDay)).padStart(
+    2,
+    '0'
+  )}`;
+}
+
 async function expectNoHorizontalOverflow(page: Page) {
   const geometry = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
@@ -94,7 +103,8 @@ test('workforce operators move from operating signals to the affected organizati
 
   await page.getByRole('button', { name: /Saved views:/ }).click();
   await page.getByRole('menuitem', { name: /Year-over-year comparison/ }).click();
-  await expect.poll(() => new URL(page.url()).searchParams.get('compareTo')).toBe('2025-08-12');
+  const expectedBaseline = previousYear(new Date().toISOString().slice(0, 10));
+  await expect.poll(() => new URL(page.url()).searchParams.get('compareTo')).toBe(expectedBaseline);
 
   await page.getByRole('button', { name: 'Open AI Platform organization' }).click();
   await expect

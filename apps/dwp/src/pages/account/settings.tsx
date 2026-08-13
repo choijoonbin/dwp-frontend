@@ -16,11 +16,15 @@ import {
   RotateCcw,
   Rows3,
   ScanLine,
+  Send,
   SunMoon,
   Type,
+  X,
 } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   formatDate,
   formatNumber,
@@ -32,18 +36,26 @@ import {
   defaultRegionalPreference,
   firstDayOfWeekOptions,
   numberFormatOptions,
+  cancelPreferenceException,
   timeFormatOptions,
   timeZoneOptions,
+  listMyPreferenceExceptions,
+  requestPreferenceException,
+  useToast,
   type DateFormatPreference,
   type FirstDayOfWeekPreference,
   type NumberFormatPreference,
   type RegionalPreference,
   type TimeFormatPreference,
   type TimeZonePreference,
+  type ManagedPreferenceRule,
+  type PreferenceExceptionRequest,
 } from '@dwp-frontend/shared-utils';
 import { LanguageIcon } from '@dwp-frontend/design-system/components/icons';
 import {
   ActionButton,
+  FormDialog,
+  FormField,
   PageCanvas,
   SelectField,
   colorModeOptions,
@@ -386,6 +398,13 @@ export default function SettingsPage() {
   const { t } = useTranslation('account');
   const { section } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const toast = useToast();
+  const [exceptionRule, setExceptionRule] = useState<ManagedPreferenceRule | null>(null);
+  const [requestedValue, setRequestedValue] = useState('');
+  const [businessJustification, setBusinessJustification] = useState('');
+  const [businessImpact, setBusinessImpact] = useState('');
+  const [exceptionBusy, setExceptionBusy] = useState(false);
   const appearance = useAppearance();
   const personalPreference = usePersonalPreference();
   const {
@@ -424,6 +443,18 @@ export default function SettingsPage() {
   const preferenceValues = personalPreference.preference?.preferences;
   const regional = preferenceValues?.regional ?? defaultRegionalPreference;
   const managedPolicy = personalPreference.preference?.managedPolicy;
+  const managedRules = managedPolicy?.rules ?? [];
+  const managedExceptionsQuery = useQuery({
+    queryKey: ['personal-preferences', 'managed-exceptions'],
+    queryFn: listMyPreferenceExceptions,
+    enabled: section === 'managed',
+  });
+  const managedExceptions = managedExceptionsQuery.data ?? [];
+  const pendingExceptionPaths = new Set(
+    managedExceptions
+      .filter((request) => request.requestState === 'PENDING')
+      .map((request) => request.preferencePath)
+  );
   const languageRegionSaveState = isLanguageSaving
     ? 'saving'
     : personalPreference.saveState !== 'idle'
@@ -444,6 +475,54 @@ export default function SettingsPage() {
       {t('personalPreferences.loadError')}
     </Alert>
   ) : null;
+
+  const closeExceptionDialog = () => {
+    if (exceptionBusy) return;
+    setExceptionRule(null);
+    setRequestedValue('');
+    setBusinessJustification('');
+    setBusinessImpact('');
+  };
+
+  const submitExceptionRequest = async () => {
+    if (!exceptionRule) return;
+    setExceptionBusy(true);
+    try {
+      await requestPreferenceException({
+        preferencePath: exceptionRule.preferencePath,
+        requestedValue: requestedValue.trim(),
+        businessJustification: businessJustification.trim(),
+        businessImpact: businessImpact.trim(),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['personal-preferences', 'managed-exceptions'],
+      });
+      toast.success(t('managed.exceptions.toasts.requested'));
+      setExceptionRule(null);
+      setRequestedValue('');
+      setBusinessJustification('');
+      setBusinessImpact('');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('managed.exceptions.toasts.failed'));
+    } finally {
+      setExceptionBusy(false);
+    }
+  };
+
+  const cancelException = async (request: PreferenceExceptionRequest) => {
+    setExceptionBusy(true);
+    try {
+      await cancelPreferenceException(request.requestId, request.version);
+      await queryClient.invalidateQueries({
+        queryKey: ['personal-preferences', 'managed-exceptions'],
+      });
+      toast.success(t('managed.exceptions.toasts.cancelled'));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('managed.exceptions.toasts.failed'));
+    } finally {
+      setExceptionBusy(false);
+    }
+  };
 
   if (!isSettingsSection(section)) {
     return <Navigate to="/account/settings/appearance" replace />;
@@ -792,7 +871,9 @@ export default function SettingsPage() {
         description={t('sections.managed.description')}
       />
       <Alert severity="info" sx={{ mt: 3 }}>
-        {t('sections.managed.notice')}
+        {t('sections.managed.notice', {
+          owner: managedPolicy?.ownerDisplayName ?? t('managed.ownerFallback'),
+        })}
       </Alert>
       <PreferenceGroup
         title={t('sections.managed.groupTitle')}
@@ -804,6 +885,25 @@ export default function SettingsPage() {
               {managedFontName}
             </Typography>
             <Chip size="small" label={t('labels.managed')} variant="outlined" />
+            {managedRules.find((rule) => rule.preferencePath === 'appearance.fontFamily')
+              ?.exceptionAllowed && (
+              <ActionButton
+                intent="quiet"
+                size="small"
+                startIcon={<Send size={15} />}
+                disabled={pendingExceptionPaths.has('appearance.fontFamily')}
+                onClick={() =>
+                  setExceptionRule(
+                    managedRules.find((rule) => rule.preferencePath === 'appearance.fontFamily') ??
+                      null
+                  )
+                }
+              >
+                {pendingExceptionPaths.has('appearance.fontFamily')
+                  ? t('managed.exceptions.pending')
+                  : t('managed.exceptions.request')}
+              </ActionButton>
+            )}
           </Stack>
         </PreferenceRow>
         <PreferenceRow icon={Palette} title={t('settings.brandAccent.title')}>
@@ -822,6 +922,25 @@ export default function SettingsPage() {
             />
             <Typography variant="body2">{appearance.accentColor}</Typography>
             <Chip size="small" label={t('labels.managed')} variant="outlined" />
+            {managedRules.find((rule) => rule.preferencePath === 'appearance.accentColor')
+              ?.exceptionAllowed && (
+              <ActionButton
+                intent="quiet"
+                size="small"
+                startIcon={<Send size={15} />}
+                disabled={pendingExceptionPaths.has('appearance.accentColor')}
+                onClick={() =>
+                  setExceptionRule(
+                    managedRules.find((rule) => rule.preferencePath === 'appearance.accentColor') ??
+                      null
+                  )
+                }
+              >
+                {pendingExceptionPaths.has('appearance.accentColor')
+                  ? t('managed.exceptions.pending')
+                  : t('managed.exceptions.request')}
+              </ActionButton>
+            )}
           </Stack>
         </PreferenceRow>
         <PreferenceRow icon={PanelLeft} title={t('settings.navigationPattern.title')}>
@@ -830,6 +949,25 @@ export default function SettingsPage() {
               {t(`options.navigationPattern.${appearance.navigationPattern}`)}
             </Typography>
             <Chip size="small" label={t('labels.managed')} variant="outlined" />
+            {managedRules.find((rule) => rule.preferencePath === 'navigation.pattern')
+              ?.exceptionAllowed && (
+              <ActionButton
+                intent="quiet"
+                size="small"
+                startIcon={<Send size={15} />}
+                disabled={pendingExceptionPaths.has('navigation.pattern')}
+                onClick={() =>
+                  setExceptionRule(
+                    managedRules.find((rule) => rule.preferencePath === 'navigation.pattern') ??
+                      null
+                  )
+                }
+              >
+                {pendingExceptionPaths.has('navigation.pattern')
+                  ? t('managed.exceptions.pending')
+                  : t('managed.exceptions.request')}
+              </ActionButton>
+            )}
           </Stack>
         </PreferenceRow>
         <PreferenceRow
@@ -850,7 +988,7 @@ export default function SettingsPage() {
           description={t('settings.policyOwner.description')}
         >
           <Typography variant="body2">
-            {t(`managed.owners.${managedPolicy?.owner ?? 'TENANT_ADMINISTRATOR'}`)}
+            {managedPolicy?.ownerDisplayName ?? t('managed.ownerFallback')}
           </Typography>
         </PreferenceRow>
       </PreferenceGroup>
@@ -861,6 +999,148 @@ export default function SettingsPage() {
             'appearance.fontFamily, appearance.accentColor, navigation.pattern',
         })}
       </Typography>
+      <Box component="section" sx={{ mt: 4 }}>
+        <Typography component="h2" variant="h6">
+          {t('managed.exceptions.title')}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          {t('managed.exceptions.description')}
+        </Typography>
+        {managedExceptionsQuery.isError ? (
+          <Alert severity="warning" sx={{ mt: 1.5 }}>
+            {t('managed.exceptions.loadError')}
+          </Alert>
+        ) : managedExceptions.length === 0 ? (
+          <Box sx={{ mt: 1.5, px: 2.5, py: 3, border: 1, borderColor: 'divider', borderRadius: 1 }}>
+            <Typography component="h3" variant="subtitle2">
+              {t('managed.exceptions.emptyTitle')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              {t('managed.exceptions.emptyDescription')}
+            </Typography>
+          </Box>
+        ) : (
+          <Stack
+            divider={<Divider flexItem />}
+            sx={{ mt: 1.5, border: 1, borderColor: 'divider', borderRadius: 1 }}
+          >
+            {managedExceptions.map((request) => (
+              <Box
+                key={request.requestId}
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) auto' },
+                  gap: 1.5,
+                  alignItems: 'center',
+                  px: 2.5,
+                  py: 2,
+                }}
+              >
+                <Box sx={{ minWidth: 0 }}>
+                  <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+                    <Typography variant="subtitle2">
+                      {t(`managed.pathLabels.${request.preferencePath}`)}
+                    </Typography>
+                    <Chip
+                      size="small"
+                      color={
+                        request.requestState === 'APPROVED'
+                          ? 'success'
+                          : request.requestState === 'REJECTED'
+                            ? 'error'
+                            : request.requestState === 'PENDING'
+                              ? 'warning'
+                              : 'default'
+                      }
+                      variant={request.requestState === 'PENDING' ? 'filled' : 'outlined'}
+                      label={t(`managed.exceptions.states.${request.requestState}`)}
+                    />
+                  </Stack>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {t('managed.exceptions.requestedValue', {
+                      value:
+                        typeof request.requestedValue === 'string'
+                          ? request.requestedValue
+                          : JSON.stringify(request.requestedValue),
+                      date: formatDate(request.createdAt, { dateStyle: 'medium' }),
+                    })}
+                  </Typography>
+                  {request.decisionReason && (
+                    <Typography variant="body2" sx={{ mt: 0.5 }}>
+                      {t('managed.exceptions.decisionReason', {
+                        reason: request.decisionReason,
+                      })}
+                    </Typography>
+                  )}
+                </Box>
+                {request.requestState === 'PENDING' && (
+                  <ActionButton
+                    intent="secondary"
+                    size="small"
+                    startIcon={<X size={15} />}
+                    disabled={exceptionBusy}
+                    onClick={() => void cancelException(request)}
+                  >
+                    {t('managed.exceptions.cancel')}
+                  </ActionButton>
+                )}
+              </Box>
+            ))}
+          </Stack>
+        )}
+      </Box>
+      <FormDialog
+        open={Boolean(exceptionRule)}
+        title={t('managed.exceptions.dialog.title', {
+          setting: exceptionRule ? t(`managed.pathLabels.${exceptionRule.preferencePath}`) : '',
+        })}
+        description={t('managed.exceptions.dialog.description', {
+          owner: managedPolicy?.ownerDisplayName ?? t('managed.ownerFallback'),
+        })}
+        cancelLabel={t('managed.exceptions.dialog.cancel')}
+        submitLabel={t('managed.exceptions.dialog.submit')}
+        submittingLabel={t('managed.exceptions.dialog.submitting')}
+        busy={exceptionBusy}
+        submitDisabled={
+          requestedValue.trim().length === 0 ||
+          businessJustification.trim().length < 10 ||
+          businessImpact.trim().length < 10
+        }
+        onClose={closeExceptionDialog}
+        onSubmit={submitExceptionRequest}
+      >
+        <Stack gap={2}>
+          <FormField
+            autoFocus
+            required
+            label={t('managed.exceptions.dialog.requestedValue')}
+            value={requestedValue}
+            onChange={(event) => setRequestedValue(event.target.value)}
+            supportingText={t('managed.exceptions.dialog.requestedValueHelp')}
+            slotProps={{ htmlInput: { maxLength: 500 } }}
+          />
+          <FormField
+            required
+            multiline
+            minRows={3}
+            label={t('managed.exceptions.dialog.justification')}
+            value={businessJustification}
+            onChange={(event) => setBusinessJustification(event.target.value)}
+            supportingText={t('managed.exceptions.dialog.justificationHelp')}
+            slotProps={{ htmlInput: { maxLength: 1000 } }}
+          />
+          <FormField
+            required
+            multiline
+            minRows={3}
+            label={t('managed.exceptions.dialog.impact')}
+            value={businessImpact}
+            onChange={(event) => setBusinessImpact(event.target.value)}
+            supportingText={t('managed.exceptions.dialog.impactHelp')}
+            slotProps={{ htmlInput: { maxLength: 1000 } }}
+          />
+        </Stack>
+      </FormDialog>
     </PageCanvas>
   );
 }

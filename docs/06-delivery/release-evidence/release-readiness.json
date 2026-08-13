@@ -1,0 +1,320 @@
+{
+  "schemaVersion": 1,
+  "release": "R1-pilot",
+  "asOf": "2026-08-13",
+  "status": "BLOCKED_EXTERNAL_EVIDENCE",
+  "qualityGates": [
+    {
+      "id": "R2-01",
+      "owner": "Performance Engineering",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Customer-scale graph, grid, catalog, and evidence performance",
+      "evidence": [
+        "scripts/runtime-performance-budgets.json",
+        "e2e/performance-budget.spec.ts"
+      ],
+      "blockers": ["APPROVED_CUSTOMER_SCALE", "APPROVED_P95_AND_MEMORY_BUDGETS"]
+    },
+    {
+      "id": "R2-02",
+      "owner": "Site Reliability Engineering",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Failure injection, soak, queue, database, Redis, and adapter recovery",
+      "evidence": [
+        "../dwp-backend/dwp-core/src/test/java/com/dwp/core/event",
+        "../dwp-backend/.github/workflows/backend-quality-gates.yml"
+      ],
+      "blockers": ["PRODUCTION_LIKE_TOPOLOGY", "APPROVED_RECOVERY_TIME"]
+    },
+    {
+      "id": "R2-03",
+      "owner": "Accessibility Lead",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Browser zoom, keyboard-only, VoiceOver, NVDA, and JAWS verification",
+      "evidence": ["e2e/responsive-accessibility.spec.ts"],
+      "blockers": ["ASSISTIVE_TECHNOLOGY_MATRIX", "HUMAN_ACCESSIBILITY_SIGN_OFF"]
+    },
+    {
+      "id": "R2-04",
+      "owner": "Frontend Platform",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Approved browser and operating system matrix",
+      "evidence": [
+        "playwright.config.ts",
+        "e2e/menu-visual-baseline.spec.ts"
+      ],
+      "blockers": ["D-10", "APPROVED_BROWSER_OS_MATRIX"]
+    },
+    {
+      "id": "R2-05",
+      "owner": "Product Research",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Role-based usability and competitor benchmark evidence",
+      "evidence": ["docs/06-delivery/디자인 파트너 선정 및 Pilot Charter.md"],
+      "blockers": ["DESIGN_PARTNER", "PARTICIPANTS", "APPROVED_KPI_BASELINE"]
+    }
+  ],
+  "productionHardening": [
+    {
+      "id": "R3-01",
+      "owner": "Security Engineering",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Trusted proxy boundary, secure cookies, and key rotation",
+      "evidence": [
+        "../dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/SessionCookieService.java",
+        "../dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthSessionService.java"
+      ],
+      "blockers": ["OPERATING_TOPOLOGY", "SECRET_MANAGER", "PENETRATION_TEST"]
+    },
+    {
+      "id": "R3-02",
+      "owner": "Security and Compliance",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Audit workload identity, KMS or HSM, WORM, SIEM, RLS, and alerting",
+      "evidence": [
+        "docs/03-architecture/R0 Contract Spike 2 - Service Trust and Plan Integrity.md",
+        "../dwp-backend/dwp-core/src/main/java/com/dwp/core/audit/AuditOutboxRecorder.java"
+      ],
+      "blockers": ["KMS_HSM", "WORM_STORE", "SIEM", "DATABASE_RLS_POLICY"]
+    },
+    {
+      "id": "R3-03",
+      "owner": "Observability Platform",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Telemetry workload identity, OpenTelemetry HA, and durable buffering",
+      "evidence": ["docs/03-architecture/R0 API 이력 및 운영 관측 ADR.md"],
+      "blockers": ["OTEL_COLLECTOR_HA", "DURABLE_BUFFER", "EXPORTER_ALERTS"]
+    },
+    {
+      "id": "R3-04",
+      "owner": "Provider Operations",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Provisioning adapter, release rings, rollback, and external SLI",
+      "evidence": [
+        "../dwp-backend/dwp-provider-server/src/main/java/com/dwp/services/provider/ProviderControlPlaneService.java",
+        "docs/06-delivery/People Provisioning Provider 구현 및 Gate.md"
+      ],
+      "blockers": ["D-13", "PROVISIONING_ADAPTER", "CUSTOMER_NOTIFICATION_CHANNEL"]
+    },
+    {
+      "id": "R3-05",
+      "owner": "Release Engineering",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Customer-scale load, soak, recovery, and rollback gate",
+      "evidence": ["docs/06-delivery/R2 R3 출시 증거 실행 가이드.md"],
+      "blockers": ["APPROVED_SLO", "APPROVED_RTO_RPO", "PRODUCTION_LIKE_ENVIRONMENT"]
+    }
+  ],
+  "externalDecisions": [
+    {
+      "id": "D-01",
+      "owner": "Identity and Security",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Enterprise SSO, MFA, recovery, and identity provider discovery",
+      "failClosedEvidence": ["docs/05-features/DWP-R1-CORE-003-account-preferences/01-기획 정의.md"],
+      "blockers": ["IDP_SELECTION", "DOMAIN_OWNERSHIP", "SANDBOX"]
+    },
+    {
+      "id": "D-02",
+      "owner": "AI Governance",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Production model, tool, residency, DLP, retention, and evaluation policy",
+      "failClosedEvidence": ["docs/05-features/DWP-R1-AI-001-governed-ask-runtime/07-수용 테스트.md"],
+      "blockers": ["MODEL_POLICY", "TEVV", "RED_TEAM"]
+    },
+    {
+      "id": "D-03",
+      "owner": "Knowledge Platform",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "External knowledge connector and ACL-aware search",
+      "failClosedEvidence": ["docs/05-features/DWP-R1-AI-001-governed-ask-runtime/01-기획 정의.md"],
+      "blockers": ["CONNECTOR_PRIORITY", "ACL_AND_DELETION_SLA"]
+    },
+    {
+      "id": "D-04",
+      "owner": "Organization Design",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Collaborative scenarios, finance approval, and HCM execution",
+      "failClosedEvidence": ["docs/05-features/DWP-R0-ADM-005-admin-workforce-foundation/01-기획 정의.md"],
+      "blockers": ["COLLABORATION_POLICY", "FINANCE_APPROVAL", "HCM_TRANSACTION"]
+    },
+    {
+      "id": "D-05",
+      "owner": "People Data Governance",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Skills ontology, provenance, proficiency, and privacy",
+      "failClosedEvidence": ["docs/06-delivery/DWP 최종 실행 백로그 및 출시 조건 2026-08-12.md"],
+      "blockers": ["ONTOLOGY_OWNER", "DATA_SOURCE", "PRIVACY_APPROVAL"]
+    },
+    {
+      "id": "D-06",
+      "owner": "Tenant Product Governance",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Team view sharing roles, offboarding source, and custody policy",
+      "failClosedEvidence": ["e2e/saved-view-custody.spec.ts"],
+      "blockers": ["SHARING_POLICY", "AUTHORITATIVE_OFFBOARDING_SIGNAL"]
+    },
+    {
+      "id": "D-07",
+      "owner": "Platform Architecture",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Production broker, partitions, retention, replay, and DLQ ownership",
+      "failClosedEvidence": ["../dwp-backend/dwp-core/src/main/java/com/dwp/core/event"],
+      "blockers": ["BROKER_TOPOLOGY", "REPLAY_OWNER", "DLQ_POLICY"]
+    },
+    {
+      "id": "D-08",
+      "owner": "Productivity Integrations",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Calendar, approval, and productivity source integration",
+      "failClosedEvidence": ["docs/06-delivery/R0 C1 Productivity Connector 준비 체크리스트.md"],
+      "blockers": ["SOURCE_SELECTION", "OAUTH_SCOPE", "SANDBOX"]
+    },
+    {
+      "id": "D-09",
+      "owner": "Security and Privacy",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Workforce export role, masking, watermark, recipient, and retention policy",
+      "failClosedEvidence": ["e2e/workforce-export-governance.spec.ts"],
+      "blockers": ["EXPORT_POLICY", "SECURITY_REVIEW"]
+    },
+    {
+      "id": "D-10",
+      "owner": "Accessibility and Frontend Platform",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Approved browser, operating system, and assistive technology matrix",
+      "failClosedEvidence": ["e2e/responsive-accessibility.spec.ts"],
+      "blockers": ["MATRIX_APPROVAL", "HUMAN_SIGN_OFF"]
+    },
+    {
+      "id": "D-11",
+      "owner": "Customer HRIS Integration",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Customer HRIS mapping, reconciliation, retention, and SLA",
+      "failClosedEvidence": ["docs/06-delivery/People Provisioning Provider 구현 및 Gate.md"],
+      "blockers": ["CUSTOMER_PAYLOAD", "MAPPING_OWNER", "SANDBOX"]
+    },
+    {
+      "id": "D-12",
+      "owner": "Data Platform and Security",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Export queue, worker, KMS object storage, WORM, expiry, and notification",
+      "failClosedEvidence": ["docs/05-features/DWP-R1-CORE-004-governed-sharing-export/07-수용 테스트.md"],
+      "blockers": ["QUEUE", "KMS_STORAGE", "WORM", "NOTIFICATION"]
+    },
+    {
+      "id": "D-13",
+      "owner": "Provider Operations",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Provisioner, compensation, release ring, and customer notification",
+      "failClosedEvidence": ["e2e/provider-critical-operations.spec.ts"],
+      "blockers": ["PROVISIONER", "COMPENSATION", "NOTIFICATION_POLICY"]
+    },
+    {
+      "id": "D-14",
+      "owner": "Tenant Media Platform",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Tenant media storage, KMS, malware scan, CDN purge, and legal hold",
+      "failClosedEvidence": ["docs/06-delivery/DWP 최종 실행 백로그 및 출시 조건 2026-08-12.md"],
+      "blockers": ["OBJECT_STORAGE", "MALWARE_SCAN", "CDN", "LEGAL_HOLD"]
+    },
+    {
+      "id": "D-15",
+      "owner": "Communications Governance",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "Announcement approval, channels, acknowledgment, and retention",
+      "failClosedEvidence": ["docs/05-features/DWP-R1-CORE-002-personal-home-experience/07-수용 테스트.md"],
+      "blockers": ["APPROVAL_POLICY", "CHANNEL_SANDBOX", "RETENTION_POLICY"]
+    },
+    {
+      "id": "D-16",
+      "owner": "Identity Integrations",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "IAM entitlement grant, revoke, and reconciliation",
+      "failClosedEvidence": ["docs/05-features/DWP-R1-ADM-007-navigation-app-access-governance/07-수용 테스트.md"],
+      "blockers": ["IAM_TARGET", "MAPPING", "RECONCILIATION_SLA"]
+    },
+    {
+      "id": "D-17",
+      "owner": "Catalog Platform",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "External catalog, GitOps, schema registry, and drift reconciliation",
+      "failClosedEvidence": ["docs/05-features/DWP-R1-ADM-006-governed-catalog/07-수용 테스트.md"],
+      "blockers": ["SOURCE_PRIORITY", "ENTITY_OWNER", "DRIFT_POLICY"]
+    }
+  ],
+  "approvals": [
+    {
+      "id": "A-01",
+      "owner": "Product Leadership",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Design partner and pilot charter approval",
+      "evidence": ["docs/06-delivery/디자인 파트너 선정 및 Pilot Charter.md"],
+      "blockers": ["DESIGN_PARTNER_SIGNATURE"]
+    },
+    {
+      "id": "A-02",
+      "owner": "Product Analytics",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Journey KPI baseline, target, event, and owner approval",
+      "evidence": ["docs/01-product/R0 핵심 사용자 Journey 및 KPI.md"],
+      "blockers": ["MEASURED_BASELINE", "TARGET_APPROVAL"]
+    },
+    {
+      "id": "A-03",
+      "owner": "Product, Security, and Privacy",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Product, domain, security, and privacy release sign-off",
+      "evidence": ["docs/06-delivery/R2 R3 출시 증거 실행 가이드.md"],
+      "blockers": ["PRODUCT_SIGN_OFF", "SECURITY_SIGN_OFF", "PRIVACY_SIGN_OFF"]
+    },
+    {
+      "id": "A-04",
+      "owner": "Design System",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Figma multi-mode foundation and enterprise pattern approval",
+      "evidence": ["docs/04-design-system/Figma 운영 가이드.md"],
+      "blockers": ["FIGMA_LICENSE", "DESIGN_APPROVAL"]
+    },
+    {
+      "id": "A-05",
+      "owner": "Product Research",
+      "state": "BLOCKED_EXTERNAL",
+      "releaseRequired": true,
+      "summary": "Observed member, tenant admin, and provider operator usability approval",
+      "evidence": ["docs/06-delivery/디자인 파트너 선정 및 Pilot Charter.md"],
+      "blockers": ["PARTICIPANTS", "OBSERVED_SESSIONS", "REMEDIATION_SIGN_OFF"]
+    }
+  ]
+}
