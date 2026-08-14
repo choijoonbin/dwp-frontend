@@ -30,8 +30,9 @@ import { SectionHeading } from '../work-hub/workspace-ui';
 import type {
   HomeOverview,
   HomeOverviewSection,
-  WorkspacePriority as Priority,
   HomeRecommendation,
+  HomeWidgetSize,
+  WorkspacePriority as Priority,
 } from '@dwp-frontend/shared-utils';
 
 export type HomeOverviewWidgetProps = {
@@ -40,6 +41,7 @@ export type HomeOverviewWidgetProps = {
   fetching: boolean;
   requestFailed: boolean;
   onRetry: () => void;
+  size?: HomeWidgetSize;
   feedbackBusy?: boolean;
   onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
 };
@@ -76,6 +78,7 @@ export function DailyBriefWidget({
   const updatedTime = overview?.generatedAt
     ? formatDate(new Date(overview.generatedAt), { hour: '2-digit', minute: '2-digit' })
     : '-';
+  const recommendationColumns = Math.min(3, Math.max(1, recommendations.length));
 
   return (
     <Box
@@ -127,7 +130,10 @@ export function DailyBriefWidget({
             mt: 2,
             mb: 0,
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
+            gridTemplateColumns: {
+              xs: '1fr',
+              md: `repeat(${recommendationColumns}, minmax(0, 1fr))`,
+            },
             borderTop: 1,
             borderLeft: 1,
             borderColor: 'divider',
@@ -143,7 +149,7 @@ export function DailyBriefWidget({
               <Box
                 sx={{
                   width: 1,
-                  minHeight: 180,
+                  minHeight: recommendations.length === 1 ? 152 : 180,
                   p: 2,
                   display: 'flex',
                   flexDirection: 'column',
@@ -448,6 +454,7 @@ export function ActivityWidget({
   fetching,
   requestFailed,
   onRetry,
+  size = 'compact',
 }: HomeOverviewWidgetProps) {
   const { t } = useTranslation(['home', 'work']);
   const navigate = useNavigate();
@@ -494,12 +501,32 @@ export function ActivityWidget({
         !sectionUnavailable(overview?.activity) &&
         !sectionForbidden(overview?.activity) &&
         events.length > 0 && (
-          <Box component="ul" sx={{ p: 0, mt: 2, mb: 0, listStyle: 'none' }}>
-            {events.map((event) => (
+          <Box
+            component="ul"
+            sx={{
+              p: 0,
+              mt: 2,
+              mb: 0,
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                lg: size === 'full' ? 'repeat(3, minmax(0, 1fr))' : '1fr',
+              },
+              listStyle: 'none',
+            }}
+          >
+            {events.map((event, index) => (
               <Box
                 component="li"
                 key={event.id}
-                sx={{ py: 1.5, borderTop: 1, borderColor: 'divider' }}
+                sx={{
+                  minWidth: 0,
+                  px: { lg: size === 'full' ? 2 : 0 },
+                  py: 1.5,
+                  borderTop: 1,
+                  borderLeft: { lg: size === 'full' && index > 0 ? 1 : 0 },
+                  borderColor: 'divider',
+                }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Typography variant="caption" color="text.secondary">

@@ -88,7 +88,7 @@ function DayTimeline({ events }: { events: readonly CalendarEvent[] }) {
   const visibleEvents = events.filter((event) => event.status !== 'CANCELLED' && !event.allDay);
 
   return (
-    <Box component="section" aria-label={t('dayRail.timeline')} sx={{ mt: 2.5 }}>
+    <Box component="section" aria-label={t('dayRail.timeline')} sx={{ mt: { xs: 2.5, md: 1.5 } }}>
       <Box
         sx={{
           display: 'grid',
@@ -188,7 +188,7 @@ export function HomeDayRail({
   const calendarForbidden = overview?.calendar.status === 'FORBIDDEN';
   const audience = overview?.audience.profile ?? 'MEMBER';
   const backgroundAlignment = usesDefaultBackground
-    ? 'right center'
+    ? 'center center'
     : `${backgroundPosition.toLowerCase()} center`;
   const backgroundOverlay = Math.min(0.8, Math.max(0, overlayOpacity / 100));
 
@@ -208,7 +208,7 @@ export function HomeDayRail({
           backgroundImage: `url(${backgroundUrl})`,
           backgroundRepeat: 'no-repeat',
           backgroundPosition: backgroundAlignment,
-          backgroundSize: usesDefaultBackground ? { xs: 'cover', md: '195% auto' } : 'cover',
+          backgroundSize: 'cover',
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -237,9 +237,9 @@ export function HomeDayRail({
           sx={{
             width: 'calc(100% - 32px)',
             maxWidth: 1600,
-            minHeight: { xs: 142, md: 156 },
+            minHeight: { xs: 142, md: 132 },
             mx: 'auto',
-            py: { xs: 2.5, md: 3 },
+            py: { xs: 2.5, md: 2 },
             display: 'flex',
             alignItems: 'center',
             color: 'common.white',
@@ -314,19 +314,41 @@ export function HomeDayRail({
         </Box>
       </Box>
 
-      <Box sx={{ width: 'calc(100% - 32px)', maxWidth: 1600, mx: 'auto', py: { xs: 2, md: 2.5 } }}>
+      <Box
+        sx={{
+          width: 'calc(100% - 32px)',
+          maxWidth: 1600,
+          mx: 'auto',
+          py: { xs: 2, md: 1.5 },
+        }}
+      >
         <Box
+          data-testid="home-priority-rail"
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr)' },
+            gridTemplateColumns: {
+              xs: 'none',
+              lg: 'minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr)',
+            },
+            gridAutoFlow: { xs: 'column', lg: 'row' },
+            gridAutoColumns: {
+              xs: 'minmax(292px, calc(100vw - 64px))',
+              sm: 'minmax(320px, 48vw)',
+              lg: 'auto',
+            },
             bgcolor: 'background.paper',
             border: 1,
             borderColor: 'divider',
             borderRadius: 1,
-            overflow: 'hidden',
+            overflowX: { xs: 'auto', lg: 'hidden' },
+            overflowY: 'hidden',
+            scrollSnapType: { xs: 'x mandatory', lg: 'none' },
+            overscrollBehaviorX: 'contain',
+            scrollbarWidth: 'thin',
+            WebkitOverflowScrolling: 'touch',
           }}
         >
-          <Box sx={{ p: { xs: 2, md: 2.5 }, minWidth: 0 }}>
+          <Box sx={{ p: 2, minWidth: 0, scrollSnapAlign: { xs: 'start', lg: 'none' } }}>
             <Stack direction="row" alignItems="center" gap={0.75}>
               <BriefcaseBusiness size={17} color="#356AE6" aria-hidden="true" />
               <Typography variant="overline" color="text.secondary">
@@ -392,10 +414,10 @@ export function HomeDayRail({
 
           <Box
             sx={{
-              p: { xs: 2, md: 2.5 },
-              borderTop: { xs: 1, lg: 0 },
-              borderLeft: { lg: 1 },
+              p: 2,
+              borderLeft: 1,
               borderColor: 'divider',
+              scrollSnapAlign: { xs: 'start', lg: 'none' },
             }}
           >
             <Stack direction="row" alignItems="center" gap={0.75}>
@@ -443,10 +465,10 @@ export function HomeDayRail({
 
           <Box
             sx={{
-              p: { xs: 2, md: 2.5 },
-              borderTop: { xs: 1, lg: 0 },
-              borderLeft: { lg: 1 },
+              p: 2,
+              borderLeft: 1,
               borderColor: 'divider',
+              scrollSnapAlign: { xs: 'start', lg: 'none' },
             }}
           >
             <Stack direction="row" alignItems="center" gap={0.75}>

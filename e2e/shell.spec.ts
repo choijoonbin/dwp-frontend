@@ -1004,6 +1004,25 @@ test('personal home launcher can create, rename, persist, and reset folders', as
     await page.waitForTimeout(650);
     await expect(launchpad).toHaveAttribute('data-launchpad-editing', 'true');
     await expect(page.getByRole('button', { name: 'Move Work', exact: true })).toBeVisible();
+    const composerToolbar = page.locator('[data-workspace-composer-placement="floating"]');
+    await expect(composerToolbar).toBeVisible();
+    const toolbarGeometry = await composerToolbar.evaluate((node) => {
+      const rect = node.getBoundingClientRect();
+      return {
+        bottom: Math.round(rect.bottom),
+        left: Math.round(rect.left),
+        position: window.getComputedStyle(node).position,
+        viewportHeight: window.innerHeight,
+        viewportWidth: window.innerWidth,
+        right: Math.round(rect.right),
+        top: Math.round(rect.top),
+      };
+    });
+    expect(toolbarGeometry.position).toBe('fixed');
+    expect(toolbarGeometry.top).toBeGreaterThanOrEqual(0);
+    expect(toolbarGeometry.bottom).toBeLessThan(toolbarGeometry.viewportHeight);
+    expect(toolbarGeometry.left).toBeGreaterThanOrEqual(0);
+    expect(toolbarGeometry.right).toBeLessThanOrEqual(toolbarGeometry.viewportWidth);
     const iconMotion = await launchpad
       .locator('[data-launchpad-glyph]')
       .first()

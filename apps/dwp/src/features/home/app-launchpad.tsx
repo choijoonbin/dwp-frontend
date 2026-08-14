@@ -256,7 +256,7 @@ function LaunchpadGroupList({
           '--launchpad-tile-width': immersive ? '100%' : `${LAUNCHPAD_TILE_WIDTH}px`,
           p: 0,
           pt: immersive ? `${LAUNCHPAD_GRID_TOP_INSET}px` : 0,
-          mt: 0.75,
+          mt: immersive ? 0.75 : { xs: 0.75, md: 0.5 },
           mb: 0,
           boxSizing: 'border-box',
           listStyle: 'none',
@@ -944,7 +944,7 @@ export function AppLaunchpad({
               },
             }
           : {
-              mt: 3,
+              mt: { xs: 2, md: 1.5 },
               mx: { xs: -2, md: -3, xl: -4 },
               borderTop: 1,
               borderBottom: 1,
@@ -957,11 +957,11 @@ export function AppLaunchpad({
         sx={{
           width: immersive ? 'calc(100% - 32px)' : 1,
           maxWidth: immersive ? 1540 : 'none',
-          minHeight: immersive ? 76 : 64,
+          minHeight: immersive ? 76 : { xs: 64, md: 56 },
           mx: immersive ? 'auto' : 0,
           mb: immersive ? 2 : 0,
           px: { xs: 2, md: 3, xl: 4 },
-          py: immersive ? 1.5 : 1.25,
+          py: immersive ? 1.5 : { xs: 1.25, md: 1 },
           display: 'flex',
           alignItems: 'center',
           gap: 1,
@@ -1109,7 +1109,7 @@ export function AppLaunchpad({
                   minWidth: 0,
                   minHeight: immersive ? LAUNCHPAD_GROUP_MIN_HEIGHT : 'auto',
                   px: immersive ? 1 : { xs: 0, md: 2 },
-                  py: immersive ? 1.5 : 2,
+                  py: immersive ? 1.5 : { xs: 2, md: 1.5 },
                   borderLeft: {
                     xs: 0,
                     md: immersive ? 0 : groupIndex % 2 === 0 ? 0 : 1,
@@ -1169,7 +1169,11 @@ export function AppLaunchpad({
                 <Typography
                   variant="caption"
                   color={immersive ? 'rgba(255,255,255,0.68)' : 'text.secondary'}
-                  sx={{ display: 'block', minHeight: 30, mt: 0.25 }}
+                  sx={{
+                    display: 'block',
+                    minHeight: immersive ? 30 : { xs: 30, md: 24 },
+                    mt: 0.25,
+                  }}
                 >
                   {group.description}
                 </Typography>

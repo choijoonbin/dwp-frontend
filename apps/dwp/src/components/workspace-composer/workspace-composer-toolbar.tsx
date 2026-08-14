@@ -12,6 +12,7 @@ import type { HomePresentation } from '@dwp-frontend/shared-utils';
 
 type WorkspaceComposerToolbarProps = {
   presentation: HomePresentation;
+  placement?: 'sticky' | 'floating';
   busy?: boolean;
   onPresentationChange: (presentation: HomePresentation) => void;
   onAdd: () => void;
@@ -28,6 +29,7 @@ const presentationIcons = {
 
 export function WorkspaceComposerToolbar({
   presentation,
+  placement = 'sticky',
   busy = false,
   onPresentationChange,
   onAdd,
@@ -36,21 +38,28 @@ export function WorkspaceComposerToolbar({
   onDone,
 }: WorkspaceComposerToolbarProps) {
   const { t } = useTranslation('composer');
+  const floating = placement === 'floating';
 
   return (
     <Paper
       component="nav"
       aria-label={t('toolbarLabel')}
+      data-workspace-composer-placement={placement}
       elevation={0}
       sx={{
-        position: 'sticky',
-        top: { xs: 8, md: 12 },
-        zIndex: 20,
+        position: floating ? 'fixed' : 'sticky',
+        top: floating ? 'auto' : { xs: 8, md: 12 },
+        bottom: floating ? { xs: 'max(12px, env(safe-area-inset-bottom))', sm: 16 } : 'auto',
+        left: floating
+          ? { xs: '50%', lg: 'calc((100vw + var(--dwp-shell-navigation-offset, 0px)) / 2)' }
+          : 'auto',
+        transform: floating ? 'translateX(-50%)' : 'none',
+        zIndex: floating ? (theme) => theme.zIndex.snackbar : 20,
         width: 'max-content',
         maxWidth: 'calc(100vw - 24px)',
         minHeight: 58,
-        mx: 'auto',
-        mb: 2,
+        mx: floating ? 0 : 'auto',
+        mb: floating ? 0 : 2,
         px: { xs: 0.5, sm: 1 },
         display: 'flex',
         alignItems: 'center',

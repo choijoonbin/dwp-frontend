@@ -74,7 +74,7 @@ export type UpdateHomeExperienceRequest = Pick<
   | 'version'
 >;
 
-export const DEFAULT_HOME_BACKGROUND_URL = '/assets/home/default/agentic-workspace-hero.png';
+export const DEFAULT_HOME_BACKGROUND_URL = '/assets/home/default/agentic-workspace-hero-clean.png';
 
 export function resolveHomeBackgroundUrl(experience?: HomeExperience | null): string {
   return experience?.backgroundUrl

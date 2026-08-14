@@ -397,11 +397,11 @@ test('tenant administrators configure and reset the personal home presentation',
       homeExperience = {
         ...homeExperience,
         backgroundUrl: `/api/platform/v1/home-experience/background?v=${homeExperience.version + 1}`,
-        backgroundOriginalName: 'agentic-workspace-hero.png',
+        backgroundOriginalName: 'agentic-workspace-hero-clean.png',
         backgroundContentType: 'image/png',
-        backgroundSizeBytes: 1_314_998,
-        backgroundWidth: 1909,
-        backgroundHeight: 494,
+        backgroundSizeBytes: 1_492_965,
+        backgroundWidth: 2176,
+        backgroundHeight: 723,
         version: homeExperience.version + 1,
       };
       await route.fulfill({ contentType: 'application/json', body: envelope(homeExperience) });
@@ -412,7 +412,7 @@ test('tenant administrators configure and reset the personal home presentation',
   await page.route('**/api/platform/v1/home-experience/background**', (route) =>
     route.fulfill({
       contentType: 'image/png',
-      path: 'public/assets/home/default/agentic-workspace-hero.png',
+      path: 'public/assets/home/default/agentic-workspace-hero-clean.png',
     })
   );
 
@@ -429,10 +429,10 @@ test('tenant administrators configure and reset the personal home presentation',
 
   await page
     .locator('input[type="file"]')
-    .setInputFiles('public/assets/home/default/agentic-workspace-hero.png');
+    .setInputFiles('public/assets/home/default/agentic-workspace-hero-clean.png');
   await page.getByRole('button', { name: 'Publish background' }).click();
   await expect(page.getByText('Home background uploaded.', { exact: true })).toBeVisible();
-  await expect(page.getByText('1909 x 494 / 1.3 MB')).toBeVisible();
+  await expect(page.getByText('2176 x 723 / 1.4 MB')).toBeVisible();
 
   await page.getByRole('button', { name: 'Restore default' }).click();
   await expect(

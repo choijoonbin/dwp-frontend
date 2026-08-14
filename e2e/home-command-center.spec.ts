@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('home turns live work signals into a keyboard-operable next action', async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
 
   const commandCenter = page.getByTestId('home-command-center');
@@ -33,6 +33,9 @@ test('home turns live work signals into a keyboard-operable next action', async 
   await expect(
     commandCenter.getByRole('region', { name: "Today's schedule timeline" })
   ).toBeVisible();
+  const firstAppBounds = await page.getByRole('button', { name: 'Open Work' }).boundingBox();
+  expect(firstAppBounds).not.toBeNull();
+  expect((firstAppBounds?.y ?? 0) + (firstAppBounds?.height ?? 0)).toBeLessThanOrEqual(720);
   await expect(page.getByRole('heading', { name: 'Workday insights' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Work tools' })).toBeVisible();
 
@@ -81,8 +84,23 @@ test('home presents a truthful healthy-empty state without invented priorities',
   const geometry = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
     content: document.documentElement.scrollWidth,
+    priorityRail: (() => {
+      const rail = document.querySelector('[data-testid="home-priority-rail"]');
+      const style = rail ? window.getComputedStyle(rail) : null;
+      return rail
+        ? {
+            clientWidth: rail.clientWidth,
+            scrollWidth: rail.scrollWidth,
+            scrollSnapType: style?.scrollSnapType,
+          }
+        : null;
+    })(),
   }));
   expect(geometry.content).toBeLessThanOrEqual(geometry.viewport);
+  expect(geometry.priorityRail?.scrollWidth).toBeGreaterThan(
+    geometry.priorityRail?.clientWidth ?? 0
+  );
+  expect(geometry.priorityRail?.scrollSnapType).toContain('x');
 });
 
 test('home isolates a work-queue outage and recovers without hiding apps or widgets', async ({

@@ -59,6 +59,7 @@ import type {
   HomeRecommendation,
   HomeWidgetKey,
   HomeWidgetPreference,
+  HomeWidgetSize,
 } from '@dwp-frontend/shared-utils';
 import type { LaunchpadLayout } from '../features/home/app-launchpad-model';
 
@@ -66,8 +67,9 @@ type PreferenceMutation = { layout: HomePreferenceLayout };
 
 function HomeWidget({
   widgetKey,
+  size,
   ...overviewProps
-}: { widgetKey: HomeWidgetKey } & HomeOverviewWidgetProps) {
+}: { widgetKey: HomeWidgetKey; size: HomeWidgetSize } & HomeOverviewWidgetProps) {
   switch (widgetKey) {
     case 'announcements':
       return <AnnouncementsWidget {...overviewProps} />;
@@ -78,7 +80,7 @@ function HomeWidget({
     case 'schedule':
       return <ScheduleWidget {...overviewProps} />;
     case 'activity':
-      return <ActivityWidget {...overviewProps} />;
+      return <ActivityWidget {...overviewProps} size={size} />;
   }
 }
 
@@ -382,7 +384,7 @@ export default function HomePage() {
         }
       />
 
-      <PageCanvas>
+      <PageCanvas topInset="compact">
         <AppLaunchpad
           apps={entitledApps}
           groups={launchpadCatalog.groups}
@@ -423,9 +425,10 @@ export default function HomePage() {
           presentation={activePresentation}
           getLabel={(widgetKey) => t(`widgets.registry.${widgetKey}.label`)}
           onChange={setDraftWidgets}
-          renderWidget={(widgetKey) => (
+          renderWidget={(widgetKey, size) => (
             <HomeWidget
               widgetKey={widgetKey}
+              size={size}
               overview={homeOverviewQuery.data}
               loading={homeOverviewQuery.isLoading}
               fetching={homeOverviewQuery.isFetching}
@@ -462,6 +465,7 @@ export default function HomePage() {
 
       {editorOpen && (
         <WorkspaceComposerToolbar
+          placement="floating"
           presentation={draftPresentation}
           busy={customizationBusy}
           onPresentationChange={setDraftPresentation}

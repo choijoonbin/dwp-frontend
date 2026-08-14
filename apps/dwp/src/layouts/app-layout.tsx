@@ -320,7 +320,11 @@ export function AppLayout() {
   return (
     <Box
       data-dwp-navigation-state={topNavigation ? 'top' : compactSidebar ? 'compact' : 'expanded'}
-      sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}
+      sx={{
+        '--dwp-shell-navigation-offset': `${desktopOffset}px`,
+        minHeight: '100dvh',
+        bgcolor: 'background.default',
+      }}
     >
       {!topNavigation && (
         <Box

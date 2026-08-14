@@ -86,8 +86,8 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
     key: 'activity',
     icon: Activity,
     canHide: true,
-    defaultSize: 'compact',
-    allowedSizes: ['compact', 'medium'],
+    defaultSize: 'full',
+    allowedSizes: ['compact', 'medium', 'full'],
     audience: 'all',
     manifest: {
       schemaVersion: 1,

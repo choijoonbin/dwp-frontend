@@ -17,7 +17,7 @@ describe('home widget registry', () => {
     ]);
 
     expect(widgets).toHaveLength(5);
-    expect(widgets[0]).toEqual({ widgetKey: 'activity', visible: false, size: 'compact' });
+    expect(widgets[0]).toEqual({ widgetKey: 'activity', visible: false, size: 'full' });
     expect(widgets.find((widget) => widget.widgetKey === 'announcements')?.visible).toBe(true);
   });
 
