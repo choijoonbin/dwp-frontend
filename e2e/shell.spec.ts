@@ -987,8 +987,39 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   );
 
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Open Work' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Open Administration' })).toHaveCount(0);
+  const launchpad = page.locator('[data-launchpad-surface="page"]');
+  const openWorkButton = page.getByRole('button', { name: 'Open Work' });
+  await expect(openWorkButton).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Open Administration' })).toBeVisible();
+
+  await openWorkButton.scrollIntoViewIfNeeded();
+  const openWorkBounds = await openWorkButton.boundingBox();
+  expect(openWorkBounds).not.toBeNull();
+  await page.mouse.move(
+    (openWorkBounds?.x ?? 0) + (openWorkBounds?.width ?? 0) / 2,
+    (openWorkBounds?.y ?? 0) + (openWorkBounds?.height ?? 0) / 2
+  );
+  await page.mouse.down();
+  try {
+    await page.waitForTimeout(650);
+    await expect(launchpad).toHaveAttribute('data-launchpad-editing', 'true');
+    await expect(page.getByRole('button', { name: 'Move Work', exact: true })).toBeVisible();
+    const iconMotion = await launchpad
+      .locator('[data-launchpad-glyph]')
+      .first()
+      .evaluate((node) => {
+        const style = window.getComputedStyle(node);
+        return {
+          animationName: style.animationName,
+          iterationCount: style.animationIterationCount,
+        };
+      });
+    expect(iconMotion.animationName).not.toBe('none');
+    expect(iconMotion.iterationCount).toBe('infinite');
+  } finally {
+    await page.mouse.up();
+  }
+  await expect(page.getByRole('dialog', { name: 'Create folder' })).toHaveCount(0);
 
   const createStartWorkFolder = async () => {
     const workButton = page.getByRole('button', { name: 'Move Work', exact: true });
@@ -1018,7 +1049,6 @@ test('personal home launcher can create, rename, persist, and reset folders', as
     await createDialog.getByRole('button', { name: 'Create' }).click();
   };
 
-  await page.getByRole('button', { name: 'Edit home' }).click();
   await expect(
     page.getByRole('button', { name: 'Move Administration', exact: true })
   ).toBeVisible();
@@ -1174,7 +1204,7 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
   await expect(page.getByRole('button', { name: 'Open Ask DWP' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Open Administration' })).toHaveCount(0);
   await expect(
-    page.getByRole('region', { name: 'Frequent apps' }).getByRole('button', { name: /^Open / })
+    page.getByRole('region', { name: 'Work tools' }).getByRole('button', { name: /^Open / })
   ).toHaveCount(1);
   await expectNoAutomaticAccessibilityViolations(page);
 

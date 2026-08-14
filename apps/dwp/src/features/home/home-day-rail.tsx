@@ -27,6 +27,7 @@ import Typography from '@mui/material/Typography';
 
 import type {
   CalendarEvent,
+  HomeBackgroundPosition,
   HomeOverview,
   HomeRecommendation,
   WorkspaceWorkItem,
@@ -41,6 +42,9 @@ type HomeDayRailProps = {
   updatedAt: string;
   headline: string;
   subheadline: string;
+  backgroundUrl: string;
+  backgroundPosition: HomeBackgroundPosition;
+  overlayOpacity: number;
   onRetry: () => void;
   feedbackBusy?: boolean;
   onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
@@ -163,6 +167,9 @@ export function HomeDayRail({
   updatedAt,
   headline,
   subheadline,
+  backgroundUrl,
+  backgroundPosition,
+  overlayOpacity,
   onRetry,
   feedbackBusy = false,
   onRecommendationFeedback,
@@ -178,6 +185,8 @@ export function HomeDayRail({
   const calendarUnavailable = requestFailed || overview?.calendar.status === 'UNAVAILABLE';
   const calendarForbidden = overview?.calendar.status === 'FORBIDDEN';
   const audience = overview?.audience.profile ?? 'MEMBER';
+  const backgroundAlignment = `${backgroundPosition.toLowerCase()} center`;
+  const backgroundOverlay = Math.min(0.8, Math.max(0, overlayOpacity / 100));
 
   return (
     <Box
@@ -186,70 +195,124 @@ export function HomeDayRail({
       data-testid="home-command-center"
       sx={{ bgcolor: '#F7F9FC', borderBottom: 1, borderColor: 'divider' }}
     >
-      <Box sx={{ width: 'calc(100% - 32px)', maxWidth: 1600, mx: 'auto', py: { xs: 2.5, md: 3 } }}>
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          alignItems={{ xs: 'flex-start', md: 'center' }}
-          justifyContent="space-between"
-          gap={2}
-        >
-          <Box minWidth={0}>
-            <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-              <Typography variant="overline" color="primary.main">
-                {currentDate}
-              </Typography>
-              <Chip
-                size="small"
-                icon={<ShieldCheck size={14} aria-hidden="true" />}
-                label={t(`dayRail.audience.${audience.toLowerCase()}`)}
-                sx={{
-                  color: audienceTone[audience],
-                  bgcolor: 'common.white',
-                  border: 1,
-                  borderColor: 'divider',
-                  '& .MuiChip-icon': { color: 'inherit' },
-                }}
-              />
-            </Stack>
-            <Typography component="h1" variant="h5" sx={{ mt: 0.5 }}>
-              {headline}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, maxWidth: 760 }}>
-              {subheadline}
-            </Typography>
-          </Box>
-          <Stack direction="row" alignItems="center" gap={0.5}>
-            <Typography variant="caption" color="text.secondary">
-              {t('page.updatedAt', { time: updatedAt })}
-            </Typography>
-            <ActionIconButton
-              label={t('page.retry')}
-              size="small"
-              disabled={fetching}
-              onClick={onRetry}
-              sx={
-                fetching
-                  ? {
-                      '& svg': { animation: 'dwp-home-refresh 900ms linear infinite' },
-                      '@keyframes dwp-home-refresh': {
-                        from: { transform: 'rotate(0deg)' },
-                        to: { transform: 'rotate(360deg)' },
-                      },
-                      '@media (prefers-reduced-motion: reduce)': {
-                        '& svg': { animation: 'none' },
-                      },
-                    }
-                  : undefined
-              }
-            >
-              <RefreshCw size={16} />
-            </ActionIconButton>
-          </Stack>
-        </Stack>
-
+      <Box
+        sx={{
+          position: 'relative',
+          isolation: 'isolate',
+          overflow: 'hidden',
+          bgcolor: '#07163D',
+          backgroundImage: `url(${backgroundUrl})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: backgroundAlignment,
+          backgroundSize: 'cover',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            inset: 0,
+            zIndex: -2,
+            bgcolor: `rgba(2, 10, 34, ${backgroundOverlay})`,
+            pointerEvents: 'none',
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            inset: 0,
+            zIndex: -1,
+            background:
+              'linear-gradient(90deg, rgba(2,10,34,0.62) 0%, rgba(2,10,34,0.34) 58%, rgba(2,10,34,0.12) 100%)',
+            pointerEvents: 'none',
+          },
+          '@media (forced-colors: active)': {
+            bgcolor: 'Canvas',
+            backgroundImage: 'none',
+            '&::before, &::after': { display: 'none' },
+          },
+        }}
+      >
         <Box
           sx={{
-            mt: 2.5,
+            width: 'calc(100% - 32px)',
+            maxWidth: 1600,
+            minHeight: { xs: 142, md: 156 },
+            mx: 'auto',
+            py: { xs: 2.5, md: 3 },
+            display: 'flex',
+            alignItems: 'center',
+            color: 'common.white',
+          }}
+        >
+          <Stack
+            width={1}
+            direction={{ xs: 'column', md: 'row' }}
+            alignItems={{ xs: 'flex-start', md: 'center' }}
+            justifyContent="space-between"
+            gap={2}
+          >
+            <Box minWidth={0}>
+              <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.78)' }}>
+                  {currentDate}
+                </Typography>
+                <Chip
+                  size="small"
+                  icon={<ShieldCheck size={14} aria-hidden="true" />}
+                  label={t(`dayRail.audience.${audience.toLowerCase()}`)}
+                  sx={{
+                    color: audienceTone[audience],
+                    bgcolor: 'common.white',
+                    border: 1,
+                    borderColor: 'divider',
+                    '& .MuiChip-icon': { color: 'inherit' },
+                  }}
+                />
+              </Stack>
+              <Typography component="h1" variant="h5" sx={{ mt: 0.5, color: 'common.white' }}>
+                {headline}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{ mt: 0.5, maxWidth: 760, color: 'rgba(255,255,255,0.82)' }}
+              >
+                {subheadline}
+              </Typography>
+            </Box>
+            <Stack direction="row" alignItems="center" gap={0.5}>
+              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.74)' }}>
+                {t('page.updatedAt', { time: updatedAt })}
+              </Typography>
+              <ActionIconButton
+                label={t('page.retry')}
+                size="small"
+                disabled={fetching}
+                onClick={onRetry}
+                sx={{
+                  color: 'common.white',
+                  bgcolor: 'rgba(2,10,34,0.28)',
+                  '&:hover': { bgcolor: 'rgba(2,10,34,0.46)' },
+                  ...(fetching
+                    ? {
+                        '& svg': { animation: 'dwp-home-refresh 900ms linear infinite' },
+                        '@keyframes dwp-home-refresh': {
+                          from: { transform: 'rotate(0deg)' },
+                          to: { transform: 'rotate(360deg)' },
+                        },
+                        '@media (prefers-reduced-motion: reduce)': {
+                          '& svg': { animation: 'none' },
+                        },
+                      }
+                    : {}),
+                }}
+              >
+                <RefreshCw size={16} />
+              </ActionIconButton>
+            </Stack>
+          </Stack>
+        </Box>
+      </Box>
+
+      <Box sx={{ width: 'calc(100% - 32px)', maxWidth: 1600, mx: 'auto', py: { xs: 2, md: 2.5 } }}>
+        <Box
+          sx={{
             display: 'grid',
             gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr)' },
             bgcolor: 'common.white',

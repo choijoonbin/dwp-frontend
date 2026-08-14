@@ -34,7 +34,7 @@ test('home turns live work signals into a keyboard-operable next action', async 
     commandCenter.getByRole('region', { name: "Today's schedule timeline" })
   ).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Workday insights' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Frequent apps' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Work tools' })).toBeVisible();
 
   const accessibility = await new AxeBuilder({ page })
     .include('[data-testid="home-command-center"]')
@@ -76,7 +76,7 @@ test('home presents a truthful healthy-empty state without invented priorities',
   const commandCenter = page.getByTestId('home-command-center');
   await expect(commandCenter.getByText('There is no priority work right now')).toBeVisible();
   await expect(commandCenter.getByRole('button', { name: 'Open priority in Work' })).toHaveCount(0);
-  await expect(page.getByRole('heading', { name: 'Frequent apps' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Work tools' })).toBeVisible();
 
   const geometry = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
@@ -99,7 +99,7 @@ test('home isolates a work-queue outage and recovers without hiding apps or widg
 
   const commandCenter = page.getByTestId('home-command-center');
   await expect(commandCenter.getByText(/Work priorities could not be loaded/)).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Frequent apps' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Work tools' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Workday insights' })).toBeVisible();
 
   unavailable = false;

@@ -11,6 +11,7 @@ import {
   launchWorkspaceApp,
   readRegionalPreference,
   recordHomeRecommendationFeedback,
+  resolveHomeBackgroundUrl,
   updateHomePreference,
   useAuth,
   usePermissions,
@@ -26,7 +27,6 @@ import { AppLaunchpad } from '../features/home/app-launchpad';
 import { AnnouncementsWidget } from '../features/home/announcements-widget';
 import { HomeItemGallery } from '../features/home/home-item-gallery';
 import { HomeDayRail } from '../features/home/home-day-rail';
-import { HomeQuickApps } from '../features/home/home-quick-apps';
 import { WorkspaceWidgetCanvas } from '../components/workspace-composer/workspace-widget-canvas';
 import { WorkspaceComposerToolbar } from '../components/workspace-composer/workspace-composer-toolbar';
 import {
@@ -328,6 +328,7 @@ export default function HomePage() {
     setDraftPresentation('balanced');
   };
 
+  const backgroundUrl = resolveHomeBackgroundUrl(homeExperience);
   const currentDate = formatDate(new Date(), { dateStyle: 'full' });
   const workQueue = homeOverviewQuery.data?.work.data;
   const workspaceUpdatedAt =
@@ -370,6 +371,9 @@ export default function HomePage() {
           homeExperience?.subheadline ||
           t('page.commandDescription')
         }
+        backgroundUrl={backgroundUrl}
+        backgroundPosition={homeExperience?.backgroundPosition ?? 'RIGHT'}
+        overlayOpacity={homeExperience?.overlayOpacity ?? 18}
         onRetry={() => void homeOverviewQuery.refetch()}
         feedbackBusy={recommendationFeedbackMutation.isPending}
         onRecommendationFeedback={(recommendation) =>
@@ -378,25 +382,23 @@ export default function HomePage() {
       />
 
       <PageCanvas>
-        {editorOpen && (
-          <AppLaunchpad
-            apps={entitledApps}
-            groups={launchpadCatalog.groups}
-            layout={activeAppLayout}
-            editing
-            title={t('page.appsTitle')}
-            description={t('page.appsDescription')}
-            customizationBusy={customizationBusy}
-            onStartEditing={beginEditing}
-            onLayoutChange={setDraftAppLayout}
-            onLaunch={launchApp}
-            onBrowseAll={() => navigate('/apps')}
-          />
-        )}
+        <AppLaunchpad
+          apps={entitledApps}
+          groups={launchpadCatalog.groups}
+          layout={activeAppLayout}
+          editing={editorOpen}
+          title={t('page.appsTitle')}
+          description={t('page.appsDescription')}
+          customizationBusy={customizationBusy}
+          onStartEditing={beginEditing}
+          onLayoutChange={setDraftAppLayout}
+          onLaunch={launchApp}
+          onBrowseAll={() => navigate('/apps')}
+        />
 
         <Box
           sx={{
-            mt: editorOpen ? 4 : 0,
+            mt: 4,
             display: 'flex',
             alignItems: 'baseline',
             justifyContent: 'space-between',
@@ -435,19 +437,6 @@ export default function HomePage() {
             />
           )}
         />
-
-        {!editorOpen && (
-          <HomeQuickApps
-            apps={entitledApps}
-            runtimeApps={workspaceAppsQuery.data ?? []}
-            layout={activeAppLayout}
-            busy={customizationBusy}
-            limit={activePresentation === 'focused' ? 4 : 6}
-            onLaunch={launchApp}
-            onBrowseAll={() => navigate('/apps')}
-            onEdit={beginEditing}
-          />
-        )}
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mt: 2 }}>
           <Clock3 size={15} aria-hidden="true" />

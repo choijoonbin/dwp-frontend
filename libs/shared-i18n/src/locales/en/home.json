@@ -52,11 +52,6 @@
     "noRecommendation": "There are no additional recommendations to review.",
     "review": "Review"
   },
-  "quickApps": {
-    "title": "Frequent apps",
-    "description": "Prioritized from your pinned apps and personal home layout.",
-    "folderSummary": "{{count}} apps"
-  },
   "apps": {
     "groups": {
       "work": {

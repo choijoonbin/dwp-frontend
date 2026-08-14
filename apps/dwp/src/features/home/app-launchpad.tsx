@@ -81,8 +81,9 @@ function launchpadLabelFontSize(label: string) {
 }
 
 const appWiggle = keyframes`
-  0%, 100% { transform: rotate(-0.9deg); }
-  50% { transform: rotate(0.9deg); }
+  0% { transform: translate3d(-0.35px, 0, 0) rotate(-1.15deg); }
+  50% { transform: translate3d(0.35px, -0.25px, 0) rotate(1.05deg); }
+  100% { transform: translate3d(-0.2px, 0.2px, 0) rotate(-0.8deg); }
 `;
 
 function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProps<Theme> {
@@ -105,8 +106,6 @@ function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProps<Theme
     textAlign: 'center',
     cursor: editing ? 'grab' : 'pointer',
     touchAction: 'manipulation',
-    animation: editing ? `${appWiggle} 320ms ease-out 1` : 'none',
-    animationDelay: editing ? `${motionDelayMs}ms` : '0ms',
     transition: (theme) =>
       theme.transitions.create(['background-color', 'border-color', 'box-shadow', 'transform'], {
         duration: theme.transitions.duration.shorter,
@@ -115,6 +114,9 @@ function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProps<Theme
       transition: (theme) =>
         theme.transitions.create('transform', { duration: theme.transitions.duration.shorter }),
       transformOrigin: 'center',
+      animation: editing ? `${appWiggle} 380ms ease-in-out infinite` : 'none',
+      animationDelay: editing ? `${motionDelayMs}ms` : '0ms',
+      willChange: editing ? 'transform' : 'auto',
     },
     '&:hover': editing
       ? {
@@ -137,10 +139,14 @@ function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProps<Theme
       boxShadow: '0 0 0 2px rgba(37,99,235,0.20), 0 10px 24px rgba(15,23,42,0.10)',
     },
     '@media (prefers-reduced-motion: reduce)': {
-      animation: 'none',
       transition: 'none',
       transform: 'none',
-      '& [data-launchpad-glyph]': { transition: 'none', transform: 'none' },
+      '& [data-launchpad-glyph]': {
+        animation: 'none',
+        transition: 'none',
+        transform: 'none',
+        willChange: 'auto',
+      },
     },
   };
 }
@@ -825,6 +831,9 @@ export function AppLaunchpad({
     releaseLaunchSuppression();
     if (!overId || !sourceGroupId) return;
 
+    const folderTarget = targetItemId(overId);
+    if (overId === draggedId || folderTarget === draggedId) return;
+
     const directTargetGroupId = groupIdFromTarget(overId);
     if (directTargetGroupId) {
       onLayoutChange(
@@ -833,7 +842,6 @@ export function AppLaunchpad({
       return;
     }
 
-    const folderTarget = targetItemId(overId);
     if (folderTarget) {
       const targetGroupId = findGroupId(folderTarget);
       if (!targetGroupId) return;
@@ -919,6 +927,7 @@ export function AppLaunchpad({
       component="section"
       aria-labelledby="assigned-apps-heading"
       data-launchpad-surface={immersive ? 'immersive' : 'page'}
+      data-launchpad-editing={editing ? 'true' : 'false'}
       sx={
         immersive
           ? {
