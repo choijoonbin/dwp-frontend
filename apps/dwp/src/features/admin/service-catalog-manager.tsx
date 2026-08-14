@@ -119,23 +119,23 @@ function formFrom(item: AdminServiceCatalogItem): CatalogForm {
 function validForm(form: CatalogForm) {
   return Boolean(
     /^[a-z][a-z0-9.-]{2,79}$/.test(form.serviceKey) &&
-    /^[A-Z][A-Z0-9_]{1,49}$/.test(form.categoryKey) &&
-    form.nameKo.trim() &&
-    form.nameEn.trim() &&
-    form.descriptionKo.trim() &&
-    form.descriptionEn.trim() &&
-    form.ownerGroup.trim() &&
-    form.slaHours > 0 &&
-    form.estimatedResolutionHours > 0 &&
-    form.fields.length > 0 &&
-    form.fields.every(
-      (field) =>
-        /^[a-z][A-Za-z0-9]{1,49}$/.test(field.key) &&
-        field.labelKo.trim() &&
-        field.labelEn.trim() &&
-        (field.type !== 'SELECT' || Boolean(field.options?.length))
-    ) &&
-    new Set(form.fields.map((field) => field.key)).size === form.fields.length
+      /^[A-Z][A-Z0-9_]{1,49}$/.test(form.categoryKey) &&
+      form.nameKo.trim() &&
+      form.nameEn.trim() &&
+      form.descriptionKo.trim() &&
+      form.descriptionEn.trim() &&
+      form.ownerGroup.trim() &&
+      form.slaHours > 0 &&
+      form.estimatedResolutionHours > 0 &&
+      form.fields.length > 0 &&
+      form.fields.every(
+        (field) =>
+          /^[a-z][A-Za-z0-9]{1,49}$/.test(field.key) &&
+          field.labelKo.trim() &&
+          field.labelEn.trim() &&
+          (field.type !== 'SELECT' || Boolean(field.options?.length))
+      ) &&
+      new Set(form.fields.map((field) => field.key)).size === form.fields.length
   );
 }
 

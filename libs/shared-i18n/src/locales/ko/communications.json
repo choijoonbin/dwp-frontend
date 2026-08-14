@@ -99,6 +99,10 @@
     "count": "읽지 않은 소식 {{count}}개",
     "viewAll": "모든 소식 보기",
     "required": "필수 확인",
-    "empty": "새로운 소식이 없습니다."
+    "empty": "새로운 소식이 없습니다.",
+    "loadError": "조직 소식을 불러오지 못했습니다.",
+    "restrictedTitle": "조직 소식 접근 권한이 없습니다",
+    "restrictedDescription": "내 역할에 배정된 소식만 이 영역에 표시됩니다.",
+    "retry": "다시 시도"
   }
 }

@@ -1,0 +1,722 @@
+{
+  "common": {
+    "loadError": "Information could not be loaded",
+    "retry": "Retry"
+  },
+  "shell": {
+    "tenantFallback": "Company",
+    "openNavigation": "Open HR navigation",
+    "backToHome": "Back to personal home",
+    "hcm": {
+      "name": "HR",
+      "context": "DWP HCM",
+      "navigationLabel": "HR navigation"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "hcm": {
+        "start": "Home",
+        "personal": "My HR",
+        "organization": "Organization",
+        "team": "Team management",
+        "operate": "HR operations",
+        "design": "Organization design",
+        "foundation": "Data & integrations"
+      }
+    },
+    "items": {
+      "hcm": {
+        "home": { "label": "HR home" },
+        "me": { "label": "My HR profile" },
+        "time": { "label": "My time" },
+        "absence": { "label": "Time off" },
+        "benefits": { "label": "Benefits" },
+        "pay": { "label": "Pay statements" },
+        "talent": { "label": "Growth & career" },
+        "services": { "label": "HR help & requests" },
+        "directory": { "label": "People directory" },
+        "organization": { "label": "Organization explorer" },
+        "team": { "label": "My team" },
+        "team-time": { "label": "Team time approvals" },
+        "team-absence": { "label": "Team leave approvals" },
+        "operations": { "label": "Operations overview" },
+        "people": { "label": "Workforce people" },
+        "assignments": { "label": "Assignments" },
+        "time-operations": { "label": "Time operations" },
+        "absence-operations": { "label": "Absence operations" },
+        "benefits-operations": { "label": "Benefits operations" },
+        "pay-operations": { "label": "Pay operations" },
+        "talent-operations": { "label": "Talent operations" },
+        "organization-design": { "label": "Organization design" },
+        "reference-data": { "label": "Workforce reference data" },
+        "data-operations": { "label": "Integrations & reconciliation" },
+        "exports": { "label": "Governed exports" }
+      }
+    }
+  },
+  "pages": {
+    "context": {
+      "directorySafe": "Permission-aware HR view",
+      "effectiveDated": "Effective-dated workforce view"
+    },
+    "hcm": {
+      "me": {
+        "eyebrow": "HR / My HR",
+        "title": "My HR profile",
+        "description": "Review your current work relationships, assignments, and organization details."
+      },
+      "time": {
+        "eyebrow": "HR / My HR",
+        "title": "My time",
+        "description": "Review this week's work record and exceptions before submitting."
+      },
+      "absence": {
+        "eyebrow": "HR / My HR",
+        "title": "Time off",
+        "description": "Review available leave and submit a new time-off request."
+      },
+      "benefits": {
+        "eyebrow": "HR / My HR",
+        "title": "Benefits",
+        "description": "Review current coverage and open enrollment windows in one place."
+      },
+      "pay": {
+        "eyebrow": "HR / My HR",
+        "title": "Pay statements",
+        "description": "Review the next pay date and secure statement availability."
+      },
+      "talent": {
+        "eyebrow": "HR / My HR",
+        "title": "Growth and career",
+        "description": "Continue growth journeys, goals, and required learning."
+      },
+      "services": {
+        "eyebrow": "HR / My HR",
+        "title": "HR help and requests",
+        "description": "Manage HR data, pay, benefits, and document requests through one secure channel."
+      },
+      "directory": {
+        "eyebrow": "HR / Organization",
+        "title": "Find people",
+        "description": "Find the current work details colleagues share inside the organization."
+      },
+      "organization": {
+        "eyebrow": "HR / Organization",
+        "title": "Explore the organization",
+        "description": "Navigate teams and reporting relationships within the directory-safe boundary."
+      },
+      "team": {
+        "eyebrow": "HR / Team management",
+        "title": "My team",
+        "description": "Review team composition and work locations from current reporting relationships."
+      },
+      "team-time": {
+        "eyebrow": "HR / Team management",
+        "title": "Team time approvals",
+        "description": "Review submitted time cards inside your current reporting population."
+      },
+      "team-absence": {
+        "eyebrow": "HR / Team management",
+        "title": "Team leave approvals",
+        "description": "Review time-off requests inside your current reporting population."
+      },
+      "operations": {
+        "eyebrow": "HR / Operations",
+        "title": "Workforce operations",
+        "description": "Review workforce integrity, structure signals, and source freshness."
+      },
+      "people": {
+        "eyebrow": "HR / Operations",
+        "title": "Workforce people",
+        "description": "Review effective-dated worker, assignment, organization, and access context."
+      },
+      "assignments": {
+        "eyebrow": "HR / Operations",
+        "title": "Assignment register",
+        "description": "Inspect the current assignment projection for a selected effective date."
+      },
+      "time-operations": {
+        "eyebrow": "HR / HR operations",
+        "title": "Time operations",
+        "description": "Manage time exceptions, submitted cards, and close readiness."
+      },
+      "absence-operations": {
+        "eyebrow": "HR / HR operations",
+        "title": "Absence operations",
+        "description": "Control leave plans, balances, and pending requests."
+      },
+      "benefits-operations": {
+        "eyebrow": "HR / HR operations",
+        "title": "Benefits operations",
+        "description": "Manage benefit programs, enrollment windows, and readiness."
+      },
+      "pay-operations": {
+        "eyebrow": "HR / HR operations",
+        "title": "Pay operations",
+        "description": "Control payroll-cycle readiness and statement publication."
+      },
+      "talent-operations": {
+        "eyebrow": "HR / HR operations",
+        "title": "Talent operations",
+        "description": "Manage journeys, goal risk, and required learning."
+      },
+      "organization-design": {
+        "eyebrow": "HR / Organization design",
+        "title": "Organization design",
+        "description": "Model organizations and positions through governed, reviewable scenarios."
+      },
+      "reference-data": {
+        "eyebrow": "HR / Data governance",
+        "title": "Workforce reference data",
+        "description": "Govern company-owned HR codes while preserving product-owned contracts."
+      },
+      "data-operations": {
+        "eyebrow": "HR / HRIS integrations",
+        "title": "Integrations and reconciliation",
+        "description": "Control source connectors, mappings, synchronization, and reconciliation evidence."
+      },
+      "exports": {
+        "eyebrow": "HR / Data governance",
+        "title": "Governed data exports",
+        "description": "Review data boundaries and retain evidence across an approvable export lifecycle."
+      }
+    }
+  },
+  "home": {
+    "personFallback": "colleague",
+    "customize": "Customize home",
+    "customizeLabel": "Customize HR home widgets",
+    "saved": "Your HR home was saved.",
+    "saveConflict": "Your HR home changed in another session. The latest version is now shown; review it before editing again.",
+    "saveError": "Your HR home could not be saved. Review the latest composition and try again.",
+    "widgets": {
+      "quick-actions": {
+        "label": "Quick actions",
+        "description": "Frequently used personal, organization, and operations destinations"
+      },
+      "people-signals": {
+        "label": "My HR insights",
+        "description": "Time, leave, rewards, benefits, and growth signals"
+      },
+      "attention": {
+        "label": "Guidance for me",
+        "description": "Relevant guidance and next steps based on my HR status"
+      },
+      "profile": {
+        "label": "My profile",
+        "description": "Current employment and organization details"
+      },
+      "team": {
+        "label": "My team",
+        "description": "Team composition from current reporting relationships"
+      },
+      "operations": {
+        "label": "HR operations",
+        "description": "Workforce scale, quality, and source freshness"
+      }
+    },
+    "greeting": {
+      "morning": "Good morning, {{name}}",
+      "afternoon": "Good afternoon, {{name}}",
+      "evening": "Welcome back, {{name}}"
+    },
+    "header": {
+      "snapshot": "My HR snapshot",
+      "weekProgress": "Weekly time",
+      "timeValue": "{{recorded}} / {{target}}h"
+    },
+    "summary": {
+      "steady": "Your weekly time is {{progress}}% complete, with {{leave}} days of leave available.",
+      "timeException": "Your weekly time has {{count}} item to review, with {{leave}} days of leave available."
+    },
+    "context": {
+      "personal": "My information",
+      "manager": "People manager",
+      "operator": "HR operations"
+    },
+    "shortcuts": {
+      "label": "HR shortcuts",
+      "title": "Start the HR task you need",
+      "meta": "Open frequently used self-service and organization tools in one step.",
+      "count": "{{count}} actions",
+      "myProfile": "My HR profile",
+      "directory": "Find people",
+      "organization": "Explore organization",
+      "myTeam": "My team",
+      "operations": "HR operations",
+      "time": "Enter time",
+      "requestLeave": "Request time off",
+      "pay": "Pay statements",
+      "services": "Get HR help",
+      "descriptions": {
+        "time": "Review this week's record",
+        "requestLeave": "Check balance and request",
+        "pay": "Secure statements and pay day",
+        "myProfile": "Employment and assignment details",
+        "services": "Documents and HR questions",
+        "directory": "Find colleagues and relationships",
+        "myTeam": "Team composition and people signals",
+        "operations": "Workforce data operations"
+      }
+    },
+    "signals": {
+      "label": "My HR status",
+      "title": "My HR at a glance",
+      "meta": "Current data from each HR domain, distilled to the changes that matter.",
+      "attention": "HR items to review",
+      "attentionDetail": "Open HR-related work items",
+      "organization": "Current organization",
+      "organizationValue": "Organization",
+      "managerUnavailable": "No manager information",
+      "team": "Direct reports",
+      "teamDetailManager": "From current reporting lines",
+      "teamDetail": "Appears when manager authority is confirmed",
+      "profile": "Worker status",
+      "connected": "Connected",
+      "profileDetail": "Connected to your HCM profile",
+      "weekTime": "Time this week",
+      "weekTimeDetail": "{{target}}-hour weekly target",
+      "weekTimeTarget": "/ {{value}}h",
+      "leaveBalance": "Available leave",
+      "noLeavePlan": "No linked leave plan",
+      "leaveUsed": "used",
+      "leaveBreakdown": "Used, pending, and available leave ratio",
+      "leaveUsedDays": "{{value}}d used",
+      "leavePendingDays": "{{value}}d pending",
+      "payDay": "Next pay day",
+      "payUnavailable": "No pay-cycle information",
+      "payReadiness": "Payroll readiness",
+      "payReadinessValue": "{{value}} / 3 verified",
+      "benefits": "Benefits",
+      "benefitsDetail": "Benefits currently in effect",
+      "benefitWindowOpen": "{{count}} enrollment window is open",
+      "benefitWindowClosed": "No additional enrollment window is open",
+      "teamPending": "Team approvals",
+      "teamPendingDetail": "Time and leave awaiting a decision",
+      "growth": "Growth activity",
+      "growthDetail": "Active goals and required learning",
+      "goalCount": "{{count}} active goals",
+      "learningCount": "{{count}} required learning"
+    },
+    "values": {
+      "hours": "{{value}}h",
+      "days": "{{value}} days",
+      "dDay": "D-{{value}}",
+      "count": "{{value}}"
+    },
+    "guidance": {
+      "eyebrow": "Personalized HR guidance",
+      "title": "Worth a look right now",
+      "meta": "Only relevant guidance from time, benefits, growth, and team data.",
+      "timeException": {
+        "title": "Review your time record",
+        "description": "Check exception causes and recorded time before submission.",
+        "value": "{{count}} exceptions"
+      },
+      "benefitWindow": {
+        "title": "A benefits enrollment window is open",
+        "description": "Review your current elections and coverage.",
+        "value": "{{count}} windows"
+      },
+      "requiredLearning": {
+        "title": "Keep your growth journey moving",
+        "description": "Review required learning and goal progress for your role.",
+        "value": "{{count}} required"
+      },
+      "teamApproval": {
+        "title": "A team people decision is waiting",
+        "description": "Review time and leave within your reporting line.",
+        "value": "{{count}} approvals"
+      },
+      "payReadiness": {
+        "title": "Review readiness for the next pay cycle",
+        "description": "Check time, absence, and payroll source validation.",
+        "value": "{{value}} / 3 verified"
+      },
+      "clearTitle": "Your HR status is on track",
+      "clearDescription": "There are no immediate changes to review across time, benefits, growth, or team management."
+    },
+    "attention": {
+      "title": "Needs attention",
+      "meta": "{{count}} open HR items",
+      "allWork": "All work",
+      "clearTitle": "No HR item currently needs attention",
+      "clearDescription": "Your personal HR tasks and required acknowledgements are up to date."
+    },
+    "states": {
+      "due-soon": "Due soon",
+      "in-progress": "In progress",
+      "waiting": "Waiting",
+      "completed": "Completed"
+    },
+    "profile": {
+      "eyebrow": "Employment profile",
+      "title": "My HR profile",
+      "meta": "Current HCM profile",
+      "open": "View details",
+      "titleFallback": "No title available",
+      "organization": "Organization",
+      "manager": "Manager",
+      "location": "Work location",
+      "email": "Work email"
+    },
+    "team": {
+      "eyebrow": "Manager insight",
+      "title": "My team",
+      "meta": "{{count}} direct reports",
+      "open": "View team",
+      "emptyTitle": "There are no current direct reports",
+      "emptyDescription": "Team information will appear when a reporting relationship becomes effective."
+    },
+    "operations": {
+      "eyebrow": "HR operations insight",
+      "title": "HR operations pulse",
+      "meta": "Effective workforce and source evidence",
+      "open": "Open operations",
+      "activeWorkforce": "Active workforce",
+      "dataQuality": "Data quality",
+      "openPositions": "Open positions",
+      "latestSync": "Latest synchronization",
+      "noSync": "No run"
+    }
+  },
+  "services": {
+    "metrics": {
+      "available": "Available HR services",
+      "availableDetail": "Request types enabled by company policy",
+      "open": "Open requests",
+      "openDetail": "From drafts through active handling",
+      "awaiting": "Needs my response",
+      "awaitingDetail": "Requests where the assigned team needs more information"
+    },
+    "catalogTitle": "How can we help?",
+    "catalogDescription": "Each request applies a security classification, owning team, and response target.",
+    "openCatalog": "All services",
+    "request": "Request",
+    "sla": "{{hours}}h response target",
+    "classification": {
+      "PUBLIC": "Public",
+      "INTERNAL": "Internal",
+      "CONFIDENTIAL": "Confidential",
+      "RESTRICTED": "Restricted"
+    },
+    "requestsTitle": "My HR requests",
+    "requestsDescription": "Track the current status and owning team for HR-related requests.",
+    "allRequests": "All requests",
+    "emptyCatalogTitle": "No HR service is active",
+    "emptyCatalogDescription": "Services appear here after the company HR operator activates the catalog.",
+    "emptyRequestsTitle": "There are no HR requests yet",
+    "emptyRequestsDescription": "Choose a service when you need help and track its progress here.",
+    "status": {
+      "DRAFT": "Draft",
+      "SUBMITTED": "Submitted",
+      "TRIAGED": "Triaged",
+      "IN_PROGRESS": "In progress",
+      "AWAITING_REQUESTER": "Needs my response",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed",
+      "CANCELLED": "Cancelled"
+    }
+  },
+  "domains": {
+    "loading": "Loading HR information",
+    "loadError": "HR work information could not be loaded. Check your permission and service connection.",
+    "names": {
+      "TIME": "Time",
+      "ABSENCE": "Absence",
+      "BENEFITS": "Benefits",
+      "PAY": "Pay",
+      "TALENT": "Talent"
+    },
+    "actions": {
+      "add": "Add",
+      "edit": "Edit",
+      "update": "Update",
+      "save": "Save",
+      "cancel": "Cancel",
+      "withdraw": "Withdraw",
+      "confirm": "Confirm"
+    },
+    "status": {
+      "OPEN": "Open",
+      "SUBMITTED": "Awaiting approval",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "LOCKED": "Locked",
+      "ACTIVE": "Active",
+      "ELECTED": "Elected",
+      "WAIVED": "Waived",
+      "AVAILABLE": "Available",
+      "PENDING": "Pending",
+      "WITHHELD": "Withheld",
+      "RETIRED": "Retired",
+      "COMPLETED": "Completed",
+      "IN_PROGRESS": "In progress",
+      "ASSIGNED": "Assigned",
+      "AT_RISK": "At risk",
+      "CANCELLED": "Cancelled",
+      "RESOLVED": "Resolved"
+    },
+    "reference": {
+      "title": "Reference data is being shown",
+      "description": "These validation values apply until tenant policies and source HR connections are confirmed. They are not authoritative employee records."
+    },
+    "approvals": {
+      "saved": "The decision was saved.",
+      "error": "The request changed or is outside your authority. Refresh and review it again.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approveTitle": "Approve request",
+      "rejectTitle": "Reject request",
+      "note": "Decision reason",
+      "emptyTitle": "No request is awaiting approval",
+      "emptyDescription": "All requests in your current population have been processed."
+    },
+    "time": {
+      "saved": "The work record was saved.",
+      "saveError": "The time card changed or this date cannot be edited.",
+      "submitted": "The time card was submitted.",
+      "submitError": "The time card changed or has unresolved exceptions.",
+      "teamPending": "Time cards awaiting approval",
+      "teamPendingDetail": "Submitted cards in current reporting lines",
+      "teamCoverage": "Review period",
+      "currentWeek": "This week",
+      "teamCoverageDetail": "Only current effective reporting lines",
+      "queueTitle": "Team time approval queue",
+      "queueDescription": "Review exceptions and recorded time, then retain a reason with the decision.",
+      "noCardTitle": "There is no current time card",
+      "noCardDescription": "A time card is created when a work schedule is connected.",
+      "recorded": "Recorded time",
+      "target": "Target {{value}}",
+      "exceptions": "Open exceptions",
+      "exceptionsOpen": "Resolve exceptions before submitting",
+      "exceptionsClear": "No exception blocks submission",
+      "cardStatus": "Time-card status",
+      "submit": "Submit",
+      "weekTitle": "Weekly record",
+      "weekDescription": "{{start}} - {{end}}",
+      "notRecorded": "Not recorded",
+      "editTitle": "Edit work record",
+      "minutes": "Work time (minutes)",
+      "workMode": "Work mode",
+      "note": "Note",
+      "exceptionTitle": "Time validation results",
+      "exceptionDescription": "See the cause and date of records that block submission or need review.",
+      "correctEntry": "Correct entry",
+      "severity": {
+        "INFO": "Information",
+        "WARNING": "Review needed",
+        "BLOCKING": "Blocks submission"
+      },
+      "workModes": {
+        "OFFICE": "Office",
+        "REMOTE": "Remote",
+        "FIELD": "Field",
+        "HYBRID": "Hybrid"
+      }
+    },
+    "absence": {
+      "submitted": "The time-off request was submitted.",
+      "submitError": "Review the leave balance, period, and policy.",
+      "withdrawn": "The request was withdrawn and its pending balance was restored.",
+      "withdrawError": "The request was already processed or is no longer current. Refresh and review it.",
+      "teamPending": "Leave awaiting approval",
+      "teamPendingDetail": "Requests in current reporting lines",
+      "managerBoundary": "Review boundary",
+      "directReports": "Direct reports",
+      "managerBoundaryDetail": "Requests from other organizations are excluded",
+      "upcomingCoverage": "People with upcoming absence",
+      "upcomingCoverageDetail": "{{count}} absences in the next 60 days",
+      "queueTitle": "Team leave approval queue",
+      "queueDescription": "Review the balance and period, then retain a reason with the decision.",
+      "teamCalendarTitle": "Team absence schedule",
+      "teamCalendarDescription": "See pending and approved leave together to plan team coverage early.",
+      "noTeamAbsenceTitle": "There is no upcoming team absence",
+      "noTeamAbsenceDescription": "Pending or approved leave in the next 60 days will appear here.",
+      "daysAvailable": "{{value}} days available",
+      "balanceDetail": "{{used}} used · {{pending}} pending",
+      "noBalanceTitle": "No leave balance is available",
+      "noBalanceDescription": "Balances appear when leave-plan eligibility is connected.",
+      "historyTitle": "Request history",
+      "historyDescription": "Current status and decision evidence for your time-off requests.",
+      "request": "Request time off",
+      "hours": "{{value}} hours",
+      "noRequestsTitle": "There are no time-off requests",
+      "noRequestsDescription": "A new request will appear here with its progress.",
+      "requestTitle": "New time-off request",
+      "plan": "Leave type",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "durationHours": "Requested hours",
+      "reason": "Request reason",
+      "submit": "Submit request",
+      "withdrawTitle": "Withdraw time-off request",
+      "withdrawDescription": "Withdrawing this {{plan}} request immediately restores the pending balance.",
+      "withdrawReason": "Reason for withdrawal"
+    },
+    "benefits": {
+      "activePlans": "Active benefits",
+      "activePlansDetail": "Coverage currently in effect",
+      "enrollmentWindows": "Enrollment windows",
+      "enrollmentWindowsDetail": "Current or scheduled windows",
+      "coverageStatus": "Coverage status",
+      "covered": "Covered",
+      "notEnrolled": "Not enrolled",
+      "plansTitle": "My benefits",
+      "plansDescription": "Review benefits and coverage currently in effect.",
+      "reportLifeEvent": "Report life event",
+      "emptyTitle": "There are no active benefits",
+      "emptyDescription": "Coverage appears when eligibility and enrollment are connected.",
+      "coverage": {
+        "EMPLOYEE": "Employee",
+        "EMPLOYEE_SPOUSE": "Employee and spouse",
+        "EMPLOYEE_CHILDREN": "Employee and children",
+        "FAMILY": "Family",
+        "WAIVED": "Waived"
+      }
+    },
+    "pay": {
+      "privacyTitle": "Payroll data protection",
+      "privacyDescription": "This view does not replicate monetary values. It shows only statement references and publication status from the encrypted payroll source.",
+      "nextPayDay": "Next pay day",
+      "dDay": "D-{{value}}",
+      "readiness": "Payroll readiness",
+      "readinessItems": {
+        "time": "Time validated",
+        "absence": "Absence validated",
+        "source": "Payroll source confirmed"
+      },
+      "statementsTitle": "Pay statements",
+      "statementsDescription": "Availability of statements published by the secure source.",
+      "askPayroll": "Ask payroll",
+      "awaitingPublication": "Awaiting publication",
+      "openStatement": "Open statement",
+      "emptyTitle": "No pay statement is available",
+      "emptyDescription": "A secure reference appears after publication by the payroll source."
+    },
+    "talent": {
+      "journeys": "Active journeys",
+      "journeysDetail": "Role-aware growth stages",
+      "goals": "Active goals",
+      "goalsDetail": "Growth outcomes currently in progress",
+      "learning": "Required learning",
+      "learningDetail": "Learning that still needs completion",
+      "goalsTitle": "My goals",
+      "goalsDescription": "Maintain progress on manager-aligned goals.",
+      "noDueDate": "No due date",
+      "noGoalsTitle": "There are no active goals",
+      "noGoalsDescription": "A manager-aligned growth goal will appear here.",
+      "learningTitle": "Learning",
+      "learningDescription": "Completion state for required and recommended learning.",
+      "required": "Required",
+      "noLearningTitle": "No learning is in progress",
+      "noLearningDescription": "Assigned learning will appear here.",
+      "journeyTitle": "Growth journey",
+      "journeyDescription": "Connected stages for role change and growth.",
+      "getJourneyHelp": "Get journey help",
+      "updateGoalTitle": "Update goal progress",
+      "progress": "Progress",
+      "saved": "Goal progress was saved.",
+      "saveError": "The goal changed or is no longer editable."
+    },
+    "operations": {
+      "boundaryTitle": "Delegated HR work boundary",
+      "boundaryDescription": "You can manage only {{domain}} work; other sensitive HR domains are excluded.",
+      "tenantScope": "Current company scope",
+      "metrics": "Operational metrics",
+      "queueTitle": "{{domain}} work queue",
+      "queueDescription": "Process tenant-wide submitted requests using their state and evidence.",
+      "readinessTitle": "Operational readiness",
+      "readinessDescription": "Review {{domain}} source and workflow state.",
+      "emptyTitle": "There is no operational metric to show",
+      "emptyDescription": "Readiness metrics appear when domain data is connected.",
+      "metricDetails": {
+        "INFO": "Tracked",
+        "ATTENTION": "Needs attention",
+        "CRITICAL": "Act now"
+      },
+      "metricLabels": {
+        "TIME": {
+          "submitted": "Submitted cards",
+          "openExceptions": "Open exceptions",
+          "openCards": "Open cards"
+        },
+        "ABSENCE": {
+          "submitted": "Pending approval",
+          "activePlans": "Active leave plans",
+          "activeEnrollments": "Active eligibility"
+        },
+        "BENEFITS": {
+          "activePlans": "Active plans",
+          "openWindows": "Open windows",
+          "activeEnrollments": "Active enrollments"
+        },
+        "PAY": {
+          "openCycles": "Open pay cycles",
+          "pendingStatements": "Pending statements",
+          "availableStatements": "Available statements"
+        },
+        "TALENT": {
+          "activeJourneys": "Active journeys",
+          "atRiskGoals": "At-risk goals",
+          "requiredLearning": "Incomplete required learning"
+        }
+      }
+    }
+  },
+  "myProfile": {
+    "loading": "Loading your HR profile",
+    "loadError": "The directory link for this account could not be verified.",
+    "notLinkedTitle": "This account is not yet linked to an HR profile",
+    "notLinkedDescription": "No directory-safe HR profile was found for {{email}}.",
+    "openDirectory": "Open people directory",
+    "directorySafe": "Self-service scope",
+    "requestChange": "Request a change",
+    "fields": {
+      "email": "Work email",
+      "manager": "Manager",
+      "workerType": "Worker type",
+      "status": "Worker status",
+      "legalEmployer": "Legal employer",
+      "hireDate": "Hire date",
+      "assignment": "Primary assignment",
+      "jobProfile": "Job profile",
+      "grade": "Grade",
+      "location": "Work location",
+      "organization": "Organization",
+      "organizationKey": "Organization code",
+      "directReports": "Direct reports"
+    },
+    "employment": {
+      "title": "Employment and assignment",
+      "loading": "Loading employment details"
+    },
+    "organization": {
+      "title": "Organization relationship",
+      "open": "View in organization"
+    }
+  },
+  "myTeam": {
+    "loading": "Loading team information",
+    "loadError": "Current reporting relationships could not be loaded.",
+    "signalsLabel": "Team summary",
+    "signals": {
+      "directReports": "Direct reports",
+      "directReportsDetail": "Current effective relationships",
+      "peopleManagers": "People managers",
+      "peopleManagersDetail": "Managers among direct reports",
+      "locations": "Work locations",
+      "locationsDetail": "Distinct locations across the team"
+    },
+    "roster": {
+      "title": "Team roster",
+      "meta": "{{count}} current team members",
+      "openOrganization": "Explore organization",
+      "manager": "Manager"
+    },
+    "emptyTitle": "No direct reports are available",
+    "emptyDescription": "No team members were found in the current effective reporting relationships.",
+    "openDirectory": "Find people"
+  }
+}

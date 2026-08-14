@@ -31,3 +31,8 @@
 - `DWP-R1-ADM-008-localization-studio`: 번역 Draft·독립 검토·게시·복원 Studio
 - `DWP-R1-CORE-003-account-preferences`: 개인 설정과 Tenant 관리 정책·예외
 - `DWP-R1-CORE-004-governed-sharing-export`: Team View 소유권과 통제형 Workforce 반출
+- `DWP-R1-COM-001-enterprise-communications`: 대상화 소식·필수 확인·게시 거버넌스
+- `DWP-R1-SVC-001-employee-services`: 구성원 서비스 Catalog·Request·SLA 운영
+- `DWP-R1-APR-001-enterprise-approval-decision-hub`: 통합 결재함·Workflow·결정 증적·원업무 반영
+- `DWP-R1-HR-001-role-aware-hcm`: 개인·Manager·위임 HR 운영을 분리한 역할 인지 DWP HCM
+- `DWP-R1-CAL-001-enterprise-calendar`: 오늘 중심 일정·가용 시간·자원 예약·위임 운영

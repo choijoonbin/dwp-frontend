@@ -4,6 +4,39 @@ import {
   WORKSPACE_APPS_FIXTURE,
   WORKSPACE_QUEUE_FIXTURE,
 } from './runtime-access';
+import {
+  APPROVAL_ADMIN_FIXTURE,
+  APPROVAL_DELEGATIONS_FIXTURE,
+  APPROVAL_FORM_DETAIL_FIXTURE,
+  APPROVAL_FORM_FIXTURE,
+  APPROVAL_HOME_FIXTURE,
+  APPROVAL_OPERATIONS_FIXTURE,
+  APPROVAL_POLICIES_FIXTURE,
+  APPROVAL_REQUEST_DETAIL_FIXTURE,
+  APPROVAL_REQUEST_FIXTURE,
+  APPROVAL_SIGNATURE_FIXTURES,
+  APPROVAL_TASK_DETAIL_FIXTURE,
+  APPROVAL_TASK_FIXTURE,
+  APPROVAL_WORKFLOW_DETAIL_FIXTURE,
+  APPROVAL_WORKFLOW_FIXTURE,
+  CALENDAR_ADMIN_FIXTURE,
+  CALENDAR_AVAILABILITY_FIXTURE,
+  CALENDAR_BOOKINGS_FIXTURE,
+  CALENDAR_EVENT_FIXTURE,
+  CALENDAR_FOCUS_FIXTURE,
+  CALENDAR_HOME_FIXTURE,
+  CALENDAR_RESOURCES_FIXTURE,
+  CALENDAR_SUMMARIES_FIXTURE,
+  HR_ABSENCE_FIXTURE,
+  HR_BENEFITS_FIXTURE,
+  HR_HOME_FIXTURE,
+  HR_PAY_FIXTURE,
+  HR_SERVICE_CATALOG_FIXTURE,
+  HR_SERVICE_REQUESTS_FIXTURE,
+  HR_TALENT_FIXTURE,
+  HR_TIME_FIXTURE,
+  hrDomainOperationsFixture,
+} from './product-area-fixtures';
 
 import type { Page, Route } from '@playwright/test';
 import type {
@@ -40,7 +73,7 @@ type ShellSessionOptions = {
 
 type MockHomeSurface = {
   schemaVersion: 2;
-  surfaceKey: 'workspace-home' | 'hris-home';
+  surfaceKey: 'workspace-home' | 'hcm-home' | 'approval-home';
   customized: boolean;
   layout: {
     appLayout: Record<string, unknown> | null;
@@ -60,6 +93,18 @@ export const FULL_PRODUCT_PERMISSIONS = [
   {
     resourceType: 'APP',
     resourceKey: 'APP.WORKFORCE_MANAGEMENT',
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  },
+  {
+    resourceType: 'APP',
+    resourceKey: 'APP.CALENDAR',
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  },
+  {
+    resourceType: 'APP',
+    resourceKey: 'APP.APPROVALS',
     permissionCode: 'VIEW',
     effect: 'ALLOW' as const,
   },
@@ -111,8 +156,39 @@ export const FULL_PRODUCT_PERMISSIONS = [
     ['ADMIN.WORKFORCE_ACCESS', 'MANAGE'],
     ['ADMIN.SAVED_VIEW_CUSTODY', 'VIEW'],
     ['ADMIN.SAVED_VIEW_CUSTODY', 'MANAGE'],
+    ['ADMIN.CALENDAR', 'VIEW'],
+    ['ADMIN.CALENDAR', 'CREATE'],
+    ['ADMIN.CALENDAR', 'UPDATE'],
+    ['ADMIN.CALENDAR', 'MANAGE'],
+    ['ADMIN.APPROVAL_DESIGN', 'VIEW'],
+    ['ADMIN.APPROVAL_DESIGN', 'CREATE'],
+    ['ADMIN.APPROVAL_DESIGN', 'UPDATE'],
+    ['ADMIN.APPROVAL_DESIGN', 'APPROVE'],
+    ['ADMIN.APPROVAL_DESIGN', 'MANAGE'],
+    ['ADMIN.APPROVAL_POLICY', 'VIEW'],
+    ['ADMIN.APPROVAL_POLICY', 'APPROVE'],
+    ['ADMIN.APPROVAL_POLICY', 'MANAGE'],
+    ['ADMIN.APPROVAL_OPERATIONS', 'VIEW'],
+    ['ADMIN.APPROVAL_OPERATIONS', 'UPDATE'],
+    ['ADMIN.APPROVAL_OPERATIONS', 'MANAGE'],
+    ['ADMIN.APPROVAL_SIGNATURE', 'VIEW'],
+    ['ADMIN.APPROVAL_SIGNATURE', 'MANAGE'],
   ].map(([resourceKey, permissionCode]) => ({
     resourceType: 'ADMIN',
+    resourceKey,
+    permissionCode,
+    effect: 'ALLOW' as const,
+  })),
+  ...[
+    ['ACTION.APPROVAL_TASK', 'VIEW'],
+    ['ACTION.APPROVAL_TASK', 'APPROVE'],
+    ['ACTION.APPROVAL_REQUEST', 'VIEW'],
+    ['ACTION.APPROVAL_REQUEST', 'CREATE'],
+    ['ACTION.APPROVAL_REQUEST', 'UPDATE'],
+    ['ACTION.APPROVAL_DELEGATION', 'VIEW'],
+    ['ACTION.APPROVAL_DELEGATION', 'MANAGE'],
+  ].map(([resourceKey, permissionCode]) => ({
+    resourceType: 'ACTION',
     resourceKey,
     permissionCode,
     effect: 'ALLOW' as const,
@@ -622,6 +698,75 @@ export function fulfillSuccess(route: Route, data: unknown) {
   });
 }
 
+export function createHomeOverviewFixture(roles: readonly string[] = ['WORKSPACE_MEMBER']) {
+  const operator = roles.some((role) =>
+    ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN', 'PROVIDER_ADMIN'].includes(role)
+  );
+  const manager = roles.some((role) => ['MANAGER', 'PEOPLE_MANAGER'].includes(role));
+  const communications = {
+    featured: null,
+    items: [],
+    summary: { total: 0, unread: 0, required: 0, saved: 0 },
+    generatedAt: '2026-08-14T00:20:00Z',
+  };
+
+  return {
+    audience: {
+      profile: operator ? 'OPERATOR' : manager ? 'MANAGER' : 'MEMBER',
+      ruleVersion: 'home-rules-2026.08',
+      reasons: [
+        operator
+          ? 'CONTROL_PLANE_RESPONSIBILITY'
+          : manager
+            ? 'PEOPLE_LEADERSHIP_RESPONSIBILITY'
+            : 'AUTHENTICATED_WORKFORCE_MEMBER',
+      ],
+    },
+    work: {
+      status: 'AVAILABLE',
+      source: 'DWP_WORKSPACE',
+      generatedAt: WORKSPACE_QUEUE_FIXTURE.generatedAt,
+      data: WORKSPACE_QUEUE_FIXTURE,
+      reason: null,
+    },
+    calendar: {
+      status: 'AVAILABLE',
+      source: 'DWP_CALENDAR',
+      generatedAt: CALENDAR_HOME_FIXTURE.generatedAt,
+      data: CALENDAR_HOME_FIXTURE,
+      reason: null,
+    },
+    communications: {
+      status: 'AVAILABLE',
+      source: 'DWP_COMMUNICATIONS',
+      generatedAt: communications.generatedAt,
+      data: communications,
+      reason: null,
+    },
+    activity: {
+      status: 'AVAILABLE',
+      source: 'DWP_ACTIVITY',
+      generatedAt: WORKSPACE_ACTIVITY_FIXTURE.generatedAt,
+      data: WORKSPACE_ACTIVITY_FIXTURE,
+      reason: null,
+    },
+    recommendations: [
+      {
+        key: 'work-due-soon',
+        kind: 'ACTION',
+        priority: 'HIGH',
+        title: 'Review work approaching its deadline',
+        description: 'Your personal work queue contains time-sensitive items.',
+        actionPath: '/work',
+        source: 'DWP_WORKSPACE',
+        evidenceCount: WORKSPACE_QUEUE_FIXTURE.summary.dueSoon,
+        confidence: 'HIGH',
+      },
+    ],
+    generatedAt: '2026-08-14T00:20:00Z',
+  } as const;
+}
+
 export async function mockShellSession(
   page: Page,
   roles: string[],
@@ -715,9 +860,9 @@ export async function mockShellSession(
       version: 0,
       updatedAt: null,
     },
-    'hris-home': {
+    'hcm-home': {
       schemaVersion: 2,
-      surfaceKey: 'hris-home',
+      surfaceKey: 'hcm-home',
       customized: false,
       layout: {
         appLayout: null,
@@ -729,6 +874,25 @@ export async function mockShellSession(
           { widgetKey: 'profile', visible: true, size: 'compact' },
           { widgetKey: 'team', visible: true, size: 'full' },
           { widgetKey: 'operations', visible: true, size: 'full' },
+        ],
+      },
+      version: 0,
+      updatedAt: null,
+    },
+    'approval-home': {
+      schemaVersion: 2,
+      surfaceKey: 'approval-home',
+      customized: false,
+      layout: {
+        appLayout: null,
+        presentation: 'balanced',
+        widgets: [
+          { widgetKey: 'decision-pulse', visible: true, size: 'full' },
+          { widgetKey: 'focus-queue', visible: true, size: 'large' },
+          { widgetKey: 'flow', visible: true, size: 'medium' },
+          { widgetKey: 'my-requests', visible: true, size: 'medium' },
+          { widgetKey: 'insights', visible: true, size: 'medium' },
+          { widgetKey: 'admin-health', visible: true, size: 'full' },
         ],
       },
       version: 0,
@@ -1185,6 +1349,23 @@ export async function mockShellSession(
     if (path === '/api/platform/v1/workspace/work-items') {
       return fulfillSuccess(route, WORKSPACE_QUEUE_FIXTURE);
     }
+    if (path === '/api/platform/v1/home/overview') {
+      return fulfillSuccess(route, createHomeOverviewFixture(roles));
+    }
+    const recommendationFeedbackMatch = path.match(
+      /^\/api\/platform\/v1\/home\/recommendations\/([^/]+)\/feedback$/u
+    );
+    if (recommendationFeedbackMatch) {
+      const body = request.postDataJSON() as {
+        feedbackType: 'HELPFUL' | 'NOT_RELEVANT' | 'DISMISSED';
+      };
+      return fulfillSuccess(route, {
+        recommendationKey: decodeURIComponent(recommendationFeedbackMatch[1] ?? ''),
+        feedbackType: body.feedbackType,
+        ruleVersion: 'home-rules-2026.08',
+        recordedAt: '2026-08-14T00:30:00Z',
+      });
+    }
     if (path === '/api/platform/v1/workspace/activity') {
       return fulfillSuccess(route, WORKSPACE_ACTIVITY_FIXTURE);
     }
@@ -1257,10 +1438,13 @@ export async function mockShellSession(
       return fulfillSuccess(route, homeSurfaces['workspace-home']);
     }
     const homeSurfaceMatch = path.match(
-      /^\/api\/platform\/v1\/home-preferences\/surfaces\/(workspace-home|hris-home)(\/reset)?$/u
+      /^\/api\/platform\/v1\/home-preferences\/surfaces\/(workspace-home|hcm-home|hris-home|approval-home)(\/reset)?$/u
     );
     if (homeSurfaceMatch) {
-      const surfaceKey = homeSurfaceMatch[1] as MockHomeSurface['surfaceKey'];
+      const requestedSurfaceKey = homeSurfaceMatch[1];
+      const surfaceKey = (
+        requestedSurfaceKey === 'hris-home' ? 'hcm-home' : requestedSurfaceKey
+      ) as MockHomeSurface['surfaceKey'];
       if (request.method() === 'GET') return fulfillSuccess(route, homeSurfaces[surfaceKey]);
       if (homeSurfaceMatch[2] === '/reset') {
         homeSurfaces[surfaceKey] = structuredClone(defaultHomeSurfaces[surfaceKey]);
@@ -1302,15 +1486,117 @@ export async function mockShellSession(
       return fulfillSuccess(route, []);
     }
     if (path === '/api/platform/v1/services/catalog') {
-      return fulfillSuccess(route, {
-        categories: [],
-        items: [],
-        activeCount: 0,
-        generatedAt: '2026-08-11T00:20:00Z',
-      });
+      return fulfillSuccess(route, HR_SERVICE_CATALOG_FIXTURE);
+    }
+    if (path === '/api/platform/v1/services/requests') {
+      return fulfillSuccess(route, HR_SERVICE_REQUESTS_FIXTURE);
     }
     if (path === '/api/platform/v1/admin/services/requests') {
       return fulfillSuccess(route, []);
+    }
+    if (path === '/api/platform/v1/calendar/home') {
+      return fulfillSuccess(route, CALENDAR_HOME_FIXTURE);
+    }
+    if (path === '/api/platform/v1/calendar/calendars') {
+      return fulfillSuccess(route, CALENDAR_SUMMARIES_FIXTURE);
+    }
+    if (path === '/api/platform/v1/calendar/events') {
+      return fulfillSuccess(route, [CALENDAR_EVENT_FIXTURE, CALENDAR_FOCUS_FIXTURE]);
+    }
+    if (path === '/api/platform/v1/calendar/resources') {
+      return fulfillSuccess(route, CALENDAR_RESOURCES_FIXTURE);
+    }
+    if (path === '/api/platform/v1/calendar/availability') {
+      return fulfillSuccess(route, CALENDAR_AVAILABILITY_FIXTURE);
+    }
+    if (path === '/api/platform/v1/admin/calendar/overview') {
+      return fulfillSuccess(route, CALENDAR_ADMIN_FIXTURE);
+    }
+    if (path === '/api/platform/v1/admin/calendar/bookings/pending') {
+      return fulfillSuccess(route, CALENDAR_BOOKINGS_FIXTURE);
+    }
+    if (path === '/api/approvals/v1/home') {
+      return fulfillSuccess(route, APPROVAL_HOME_FIXTURE);
+    }
+    if (path === '/api/approvals/v1/tasks') {
+      return fulfillSuccess(route, [APPROVAL_TASK_FIXTURE]);
+    }
+    if (/^\/api\/approvals\/v1\/tasks\/[^/]+$/u.test(path)) {
+      return fulfillSuccess(route, APPROVAL_TASK_DETAIL_FIXTURE);
+    }
+    if (path === '/api/approvals/v1/requests') {
+      return fulfillSuccess(route, [APPROVAL_REQUEST_FIXTURE]);
+    }
+    if (/^\/api\/approvals\/v1\/requests\/[^/]+\/detail$/u.test(path)) {
+      return fulfillSuccess(route, APPROVAL_REQUEST_DETAIL_FIXTURE);
+    }
+    if (/^\/api\/approvals\/v1\/requests\/[^/]+$/u.test(path)) {
+      return fulfillSuccess(route, APPROVAL_REQUEST_FIXTURE);
+    }
+    if (path === '/api/approvals/v1/workflows/published') {
+      return fulfillSuccess(route, [APPROVAL_WORKFLOW_FIXTURE]);
+    }
+    if (/^\/api\/approvals\/v1\/workflows\/published\/[^/]+\/template$/u.test(path)) {
+      return fulfillSuccess(route, {
+        workflow: APPROVAL_WORKFLOW_FIXTURE,
+        form: APPROVAL_FORM_DETAIL_FIXTURE,
+      });
+    }
+    if (path === '/api/approvals/v1/delegations') {
+      return fulfillSuccess(route, APPROVAL_DELEGATIONS_FIXTURE);
+    }
+    if (path === '/api/approvals/v1/admin/overview') {
+      return fulfillSuccess(route, APPROVAL_ADMIN_FIXTURE);
+    }
+    if (path === '/api/approvals/v1/admin/workflows') {
+      return fulfillSuccess(route, [APPROVAL_WORKFLOW_FIXTURE]);
+    }
+    if (/^\/api\/approvals\/v1\/admin\/workflows\/[^/]+$/u.test(path)) {
+      return fulfillSuccess(route, APPROVAL_WORKFLOW_DETAIL_FIXTURE);
+    }
+    if (path === '/api/approvals/v1/admin/forms') {
+      return fulfillSuccess(route, [APPROVAL_FORM_FIXTURE]);
+    }
+    if (/^\/api\/approvals\/v1\/admin\/forms\/[^/]+$/u.test(path)) {
+      return fulfillSuccess(route, APPROVAL_FORM_DETAIL_FIXTURE);
+    }
+    if (path === '/api/approvals/v1/admin/policies') {
+      return fulfillSuccess(route, APPROVAL_POLICIES_FIXTURE);
+    }
+    if (path === '/api/approvals/v1/admin/operations') {
+      return fulfillSuccess(route, APPROVAL_OPERATIONS_FIXTURE);
+    }
+    if (path === '/api/approvals/v1/admin/signatures') {
+      return fulfillSuccess(route, APPROVAL_SIGNATURE_FIXTURES);
+    }
+    if (path === '/api/people/v1/hr/home') {
+      return fulfillSuccess(route, HR_HOME_FIXTURE);
+    }
+    if (path === '/api/people/v1/hr/time') {
+      return fulfillSuccess(route, HR_TIME_FIXTURE);
+    }
+    if (path === '/api/people/v1/hr/absence') {
+      return fulfillSuccess(route, HR_ABSENCE_FIXTURE);
+    }
+    if (path === '/api/people/v1/hr/benefits') {
+      return fulfillSuccess(route, HR_BENEFITS_FIXTURE);
+    }
+    if (path === '/api/people/v1/hr/pay') {
+      return fulfillSuccess(route, HR_PAY_FIXTURE);
+    }
+    if (path === '/api/people/v1/hr/talent') {
+      return fulfillSuccess(route, HR_TALENT_FIXTURE);
+    }
+    const hrOperationsMatch = path.match(
+      /^\/api\/people\/v1\/hr\/operations\/(time|absence|benefits|pay|talent)$/u
+    );
+    if (hrOperationsMatch) {
+      return fulfillSuccess(
+        route,
+        hrDomainOperationsFixture(
+          hrOperationsMatch[1].toUpperCase() as Parameters<typeof hrDomainOperationsFixture>[0]
+        )
+      );
     }
     const sessionDisplayName =
       options.displayName ?? (provider ? 'Provider Admin' : 'Tenant Admin');

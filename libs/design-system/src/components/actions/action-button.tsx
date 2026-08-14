@@ -9,6 +9,8 @@ export type ActionButtonProps = Omit<ButtonProps, 'color' | 'loading' | 'variant
   loading?: boolean;
   loadingLabel?: string;
   to?: string;
+  target?: string;
+  rel?: string;
 };
 
 export function resolveActionButtonAriaLabel(

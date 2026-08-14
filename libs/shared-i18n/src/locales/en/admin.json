@@ -29,6 +29,11 @@
         "title": "Home experience",
         "description": "Configure the tenant home artwork and personalized launchpad experience."
       },
+      "home-apps": {
+        "label": "Home app layout",
+        "title": "Home app layout",
+        "description": "Publish tenant default zones and app placement while governing personalization boundaries."
+      },
       "announcements": {
         "label": "Newsroom publishing",
         "title": "Newsroom publishing",
@@ -519,6 +524,70 @@
       "saved": "Tenant branding saved.",
       "published": "Tenant brand definition published.",
       "restored": "The selected brand revision was restored."
+    }
+  },
+  "homeApps": {
+    "loading": "Loading home app layout",
+    "metrics": {
+      "groups": "Home zones",
+      "apps": "Registered apps",
+      "active": "Active zones",
+      "personal": "Personalization scope",
+      "personalValue": "Per user"
+    },
+    "policy": {
+      "title": "Tenant defaults and personal choices stay separate",
+      "description": "Administrators publish zones, localized names, and default app placement. People can only move, folder, or hide apps already granted to them; those choices never change access or another person's home."
+    },
+    "groups": {
+      "title": "Home information architecture",
+      "description": "Define an understandable starting structure and display order for the workforce.",
+      "appCount": "{{count}} apps",
+      "inactive": "Inactive"
+    },
+    "editor": {
+      "title": "Zone definition",
+      "locale": "Editing language",
+      "languages": {
+        "ko": "Korean",
+        "en": "English"
+      },
+      "name": "Zone name",
+      "description": "Zone description",
+      "enabled": "Show on home"
+    },
+    "placements": {
+      "title": "Default app placement",
+      "description": "Choose where a newly entitled app first appears and its default order within the zone.",
+      "search": "Search apps or resources",
+      "group": "Default zone"
+    },
+    "preview": {
+      "title": "Tenant default preview",
+      "description": "Review the starting layout used when a person has no personal arrangement.",
+      "more": "+{{count}} more"
+    },
+    "newGroup": {
+      "ko": "새 홈 영역",
+      "en": "New home zone",
+      "descriptionKo": "업무 성격에 맞는 앱 모음",
+      "descriptionEn": "A focused collection of workplace apps"
+    },
+    "actions": {
+      "addGroup": "Add zone",
+      "revert": "Revert to published",
+      "publish": "Publish default layout",
+      "deleteGroup": "Delete zone",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
+    },
+    "toasts": {
+      "saved": "Tenant home app defaults published."
+    },
+    "errors": {
+      "load": "Home app layout could not be loaded.",
+      "save": "Home app layout could not be published.",
+      "groupInUse": "A zone with assigned apps cannot be disabled or deleted. Move its apps to another zone first."
     }
   },
   "homeExperience": {

@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { accountNavigationGroups } from '../features/account/settings-navigation';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
-import { HRIS_NAVIGATION } from '../features/hris/hris-navigation';
+import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
+import { CALENDAR_NAVIGATION } from '../features/calendar/calendar-navigation';
+import { HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
 
 import { PRODUCT_MENU_ROUTES } from './product-menu-manifest';
@@ -10,12 +12,18 @@ import { PRODUCT_MENU_ROUTES } from './product-menu-manifest';
 import adminEn from '../../../../libs/shared-i18n/src/locales/en/admin.json';
 import adminKo from '../../../../libs/shared-i18n/src/locales/ko/admin.json';
 
+function navigationItemCount(groups: readonly { items: readonly unknown[] }[]) {
+  return groups.reduce((count, group) => count + group.items.length, 0);
+}
+
 const EXPECTED_SHELL_COUNTS = {
   workspace: 5,
-  hris: HRIS_NAVIGATION.flatMap((group) => group.items).length,
-  admin: ADMIN_NAVIGATION.flatMap((group) => group.items).length,
-  provider: PROVIDER_NAVIGATION.flatMap((group) => group.items).length,
-  account: accountNavigationGroups.flatMap((group) => group.items).length,
+  calendar: navigationItemCount(CALENDAR_NAVIGATION),
+  approvals: navigationItemCount(APPROVAL_NAVIGATION),
+  hcm: navigationItemCount(HCM_NAVIGATION),
+  admin: navigationItemCount(ADMIN_NAVIGATION),
+  provider: navigationItemCount(PROVIDER_NAVIGATION),
+  account: navigationItemCount(accountNavigationGroups),
 };
 
 const expectedRouteCount = Object.values(EXPECTED_SHELL_COUNTS).reduce(
@@ -31,7 +39,7 @@ describe('product menu manifest', () => {
   });
 
   it('derives the governed route count from each product navigation source', () => {
-    expect(expectedRouteCount).toBe(59);
+    expect(expectedRouteCount).toBe(95);
     const counts = PRODUCT_MENU_ROUTES.reduce<Record<string, number>>((result, route) => {
       result[route.shell] = (result[route.shell] ?? 0) + 1;
       return result;

@@ -16,12 +16,14 @@ import { AdminLayout } from '../layouts/admin-layout';
 import { AuthLayout } from '../layouts/auth-layout';
 import { HomeLayout } from '../layouts/home-layout';
 import { CommunicationsLayout } from '../layouts/communications-layout';
-import { HrisLayout } from '../layouts/hris-layout';
+import { CalendarLayout } from '../layouts/calendar-layout';
+import { ApprovalLayout } from '../layouts/approval-layout';
+import { HcmLayout } from '../layouts/hcm-layout';
 import { ProviderLayout } from '../layouts/provider-layout';
 import { ServicesLayout } from '../layouts/services-layout';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
-import { mapLegacyHrisPath } from '../features/hris/hris-navigation';
+import { mapLegacyHrPath } from '../features/hcm/hcm-navigation';
 import { ShellBootScreen } from '../components/shell-boot-screen';
 import {
   canAccessAdminNavigationItem,
@@ -37,8 +39,10 @@ const WorkPage = lazy(() => import('../pages/work'));
 const AskPage = lazy(() => import('../pages/ask'));
 const ActivityPage = lazy(() => import('../pages/activity'));
 const AppsPage = lazy(() => import('../pages/apps'));
-const HrisPage = lazy(() => import('../pages/hris'));
+const HcmPage = lazy(() => import('../pages/hcm'));
 const CommunicationsPage = lazy(() => import('../pages/communications'));
+const CalendarPage = lazy(() => import('../pages/calendar'));
+const ApprovalsPage = lazy(() => import('../pages/approvals'));
 const ServicesPage = lazy(() => import('../pages/services'));
 const AdminPage = lazy(() => import('../pages/admin'));
 const ProviderPage = lazy(() => import('../pages/provider'));
@@ -161,7 +165,7 @@ function AppRouteGuard({
   );
 }
 
-function HrisRouteGuard({ children }: { children: React.ReactNode }) {
+function HcmRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const { permissions } = usePermissions();
   const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
@@ -169,20 +173,66 @@ function HrisRouteGuard({ children }: { children: React.ReactNode }) {
   if (providerRole && supportContext.isLoading) return <RouteFallback />;
   if (supportContext.data?.scopes.includes('WORKFORCE_READ')) return children;
   const entitled =
-    isAppResourceEntitled('APP.HRIS', permissions) ||
+    isAppResourceEntitled('APP.HCM', permissions) ||
     isAppResourceEntitled('APP.PEOPLE_DIRECTORY', permissions) ||
     (isAppResourceEntitled('APP.WORKFORCE_MANAGEMENT', permissions) &&
       hasAnyRole(auth.user?.roles ?? [], WORKFORCE_OPERATIONS_ROLES));
   return entitled ? children : <Navigate to="/403" replace />;
 }
 
-function LegacyHrisRedirect() {
+function LegacyPeopleRedirect() {
   const location = useLocation();
-  const pathname = mapLegacyHrisPath(location.pathname);
+  const pathname = mapLegacyHrPath(location.pathname);
   return <Navigate to={`${pathname}${location.search}${location.hash}`} replace />;
 }
 
 export const routesSection: RouteObject[] = [
+  {
+    path: 'approvals',
+    element: (
+      <AuthGuard fallback={authenticationFallback}>
+        <WorkspaceRouteGuard>
+          <AppRouteGuard resourceKey="APP.APPROVALS">
+            <ApprovalLayout />
+          </AppRouteGuard>
+        </WorkspaceRouteGuard>
+      </AuthGuard>
+    ),
+    children: [
+      { index: true, element: <Navigate to="home" replace /> },
+      {
+        path: '*',
+        element: (
+          <Suspense fallback={fallback}>
+            <ApprovalsPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: 'calendar',
+    element: (
+      <AuthGuard fallback={authenticationFallback}>
+        <WorkspaceRouteGuard>
+          <AppRouteGuard resourceKey="APP.CALENDAR">
+            <CalendarLayout />
+          </AppRouteGuard>
+        </WorkspaceRouteGuard>
+      </AuthGuard>
+    ),
+    children: [
+      { index: true, element: <Navigate to="home" replace /> },
+      {
+        path: '*',
+        element: (
+          <Suspense fallback={fallback}>
+            <CalendarPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
   {
     path: 'services',
     element: (
@@ -249,9 +299,9 @@ export const routesSection: RouteObject[] = [
     path: 'hr',
     element: (
       <AuthGuard fallback={authenticationFallback}>
-        <HrisRouteGuard>
-          <HrisLayout />
-        </HrisRouteGuard>
+        <HcmRouteGuard>
+          <HcmLayout />
+        </HcmRouteGuard>
       </AuthGuard>
     ),
     children: [
@@ -260,7 +310,7 @@ export const routesSection: RouteObject[] = [
         path: '*',
         element: (
           <Suspense fallback={fallback}>
-            <HrisPage />
+            <HcmPage />
           </Suspense>
         ),
       },
@@ -270,7 +320,7 @@ export const routesSection: RouteObject[] = [
     path: 'people/*',
     element: (
       <AuthGuard fallback={authenticationFallback}>
-        <LegacyHrisRedirect />
+        <LegacyPeopleRedirect />
       </AuthGuard>
     ),
   },
@@ -278,7 +328,7 @@ export const routesSection: RouteObject[] = [
     path: 'workforce/*',
     element: (
       <AuthGuard fallback={authenticationFallback}>
-        <LegacyHrisRedirect />
+        <LegacyPeopleRedirect />
       </AuthGuard>
     ),
   },

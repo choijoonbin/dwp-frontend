@@ -71,7 +71,11 @@ export type ManagedPreferencePolicy = {
 };
 
 export type PreferenceExceptionState =
-  'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED';
+  | 'PENDING'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'CANCELLED'
+  | 'EXPIRED';
 
 export type PreferenceExceptionRequest = {
   requestId: string;

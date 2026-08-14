@@ -20,6 +20,7 @@ import { AppGovernanceManager } from '../features/admin/app-governance-manager';
 import { AccessReviewManager } from '../features/admin/access-review-manager';
 import { AnnouncementManager } from '../features/admin/announcement-manager';
 import { HomeExperienceManager } from '../features/admin/home-experience-manager';
+import { HomeAppLayoutManager } from '../features/admin/home-app-layout-manager';
 import { PreferenceExceptionManager } from '../features/admin/preference-exception-manager';
 import { LocalizationStudio } from '../features/admin/localization-studio';
 import { RegistryManager } from '../features/admin/registry-manager';
@@ -77,6 +78,8 @@ function AdminContent({ view }: { view: AdminView }) {
       return <TenantBrandingManager />;
     case 'home-experience':
       return <HomeExperienceManager />;
+    case 'home-apps':
+      return <HomeAppLayoutManager />;
     case 'reference-data':
       return <ReferenceDataManager />;
     case 'catalog':

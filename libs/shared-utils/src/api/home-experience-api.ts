@@ -10,6 +10,26 @@ export type LocalizedHomeCopy = {
   subheadline?: string | null;
 };
 
+export type HomeLaunchpadGroup = {
+  groupKey: string;
+  labels: Record<string, string>;
+  descriptions: Record<string, string>;
+  sortOrder: number;
+  enabled: boolean;
+};
+
+export type HomeAppPlacement = {
+  resourceKey: string;
+  groupKey: string;
+  sortOrder: number;
+};
+
+export type HomeLaunchpadConfiguration = {
+  schemaVersion: 1;
+  groups: HomeLaunchpadGroup[];
+  placements: HomeAppPlacement[];
+};
+
 export type HomeExperience = {
   headline?: string | null;
   subheadline?: string | null;
@@ -23,6 +43,7 @@ export type HomeExperience = {
   backgroundSizeBytes?: number | null;
   backgroundWidth?: number | null;
   backgroundHeight?: number | null;
+  launchpadConfiguration: HomeLaunchpadConfiguration;
   version: number;
   updatedAt?: string | null;
   updatedBy?: number | null;
@@ -89,6 +110,17 @@ export async function updateHomeExperience(
     ApiResponse<HomeExperience>,
     UpdateHomeExperienceRequest
   >('/api/platform/v1/admin/home-experience', request);
+  return response.data.data;
+}
+
+export async function updateHomeLaunchpadConfiguration(
+  configuration: HomeLaunchpadConfiguration,
+  version: number
+): Promise<HomeExperience> {
+  const response = await axiosInstance.put<
+    ApiResponse<HomeExperience>,
+    { configuration: HomeLaunchpadConfiguration; version: number }
+  >('/api/platform/v1/admin/home-experience/launchpad', { configuration, version });
   return response.data.data;
 }
 

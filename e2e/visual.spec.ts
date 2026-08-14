@@ -6,7 +6,7 @@ import {
   mockRuntimeNavigation,
   WORKSPACE_QUEUE_FIXTURE,
 } from './support/runtime-access';
-import { FULL_PRODUCT_PERMISSIONS } from './support/shell-session';
+import { createHomeOverviewFixture, FULL_PRODUCT_PERMISSIONS } from './support/shell-session';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -156,6 +156,16 @@ async function mockAuthenticated(page: Page, locale = 'en') {
         status: 'SUCCESS',
         message: 'OK',
         data: WORKSPACE_QUEUE_FIXTURE,
+      }),
+    })
+  );
+  await page.route('**/api/platform/v1/home/overview**', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: createHomeOverviewFixture(['ADMIN']),
       }),
     })
   );
@@ -573,7 +583,7 @@ test('personal home reference visual baseline', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Daily brief' })).toBeVisible();
+  await expect(page.getByTestId('home-command-center')).toBeVisible();
   await expect(page).toHaveScreenshot('personal-home-reference.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -596,7 +606,7 @@ test('personal home Korean visual baseline', async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: 'Admin님, 다시 오신 것을 환영합니다' })
   ).toBeVisible();
-  await expect(page.getByRole('heading', { name: '일일 브리핑' })).toBeVisible();
+  await expect(page.getByTestId('home-command-center')).toBeVisible();
   await expect(page).toHaveScreenshot('personal-home-reference-ko.png', {
     animations: 'disabled',
     caret: 'hide',
@@ -662,7 +672,7 @@ test('personal home dark reference visual baseline', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Daily brief' })).toBeVisible();
+  await expect(page.getByTestId('home-command-center')).toBeVisible();
   await expect(page).toHaveScreenshot('personal-home-reference-dark.png', {
     animations: 'disabled',
     caret: 'hide',

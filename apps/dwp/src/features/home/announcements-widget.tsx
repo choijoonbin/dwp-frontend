@@ -1,14 +1,15 @@
 import { ArrowRight, CircleAlert, Newspaper } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getCommunicationFeed } from '@dwp-frontend/shared-utils';
+import { ErrorState, GuidedEmptyState } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+
+import type { HomeOverviewWidgetProps } from './home-widgets';
 
 const categoryAccent: Record<string, string> = {
   COMPANY: '#315FD5',
@@ -19,19 +20,21 @@ const categoryAccent: Record<string, string> = {
   GROWTH: '#18794E',
 };
 
-export function AnnouncementsWidget() {
+export function AnnouncementsWidget({
+  overview,
+  loading,
+  fetching,
+  requestFailed,
+  onRetry,
+}: HomeOverviewWidgetProps) {
   const { t } = useTranslation('communications');
-  const feed = useQuery({
-    queryKey: ['communications', 'feed', 'for-you', '', 'ALL', 24],
-    queryFn: () => getCommunicationFeed({ scope: 'for-you', type: 'ALL', size: 24 }),
-    staleTime: 30_000,
-    retry: 1,
-  });
-  const stories = [feed.data?.featured, ...(feed.data?.items ?? [])]
+  const section = overview?.communications;
+  const feed = section?.data;
+  const stories = [feed?.featured, ...(feed?.items ?? [])]
     .filter((item) => Boolean(item))
     .slice(0, 3);
-
-  if (feed.isError) return null;
+  const unavailable = requestFailed || section?.status === 'UNAVAILABLE';
+  const forbidden = section?.status === 'FORBIDDEN';
 
   return (
     <Box
@@ -64,9 +67,9 @@ export function AnnouncementsWidget() {
             <Typography id="announcements-heading" component="h2" variant="subtitle1">
               {t('home.title')}
             </Typography>
-            {(feed.data?.summary.unread ?? 0) > 0 && (
+            {(feed?.summary.unread ?? 0) > 0 && (
               <Typography variant="caption" color="text.secondary">
-                {t('home.count', { count: feed.data?.summary.unread ?? 0 })}
+                {t('home.count', { count: feed?.summary.unread ?? 0 })}
               </Typography>
             )}
           </Box>
@@ -84,7 +87,7 @@ export function AnnouncementsWidget() {
         </Typography>
       </Stack>
 
-      {feed.isLoading ? (
+      {loading ? (
         <Box
           sx={{
             display: 'grid',
@@ -98,6 +101,21 @@ export function AnnouncementsWidget() {
             <Skeleton key={item} variant="rounded" height={124} />
           ))}
         </Box>
+      ) : unavailable ? (
+        <ErrorState
+          title={t('home.loadError')}
+          retryLabel={t('home.retry')}
+          onRetry={onRetry}
+          retrying={fetching}
+          size="compact"
+        />
+      ) : forbidden ? (
+        <GuidedEmptyState
+          kind="permission"
+          title={t('home.restrictedTitle')}
+          description={t('home.restrictedDescription')}
+          size="compact"
+        />
       ) : stories.length === 0 ? (
         <Typography variant="body2" color="text.secondary" sx={{ py: 3 }}>
           {t('home.empty')}

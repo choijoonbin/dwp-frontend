@@ -32,7 +32,30 @@
     "lastRefreshed": "Last refreshed {{time}} / Permission-scoped data",
     "saveError": "The home preference could not be saved.",
     "homeSaved": "Home view saved.",
-    "appLaunchError": "The app could not be launched. Check its connection status."
+    "appLaunchError": "The app could not be launched. Check its connection status.",
+    "recommendationHidden": "This recommendation was hidden.",
+    "recommendationFeedbackError": "Recommendation feedback could not be saved."
+  },
+  "dayRail": {
+    "audience": {
+      "member": "Personal work",
+      "manager": "Leader work",
+      "operator": "Operations work"
+    },
+    "now": "Now",
+    "next": "Next",
+    "later": "Later",
+    "timeline": "Today's schedule timeline",
+    "openTimeline": "No events are scheduled in this window",
+    "restricted": "This work area is outside your current access scope.",
+    "noNextEvent": "There is no upcoming event.",
+    "noRecommendation": "There are no additional recommendations to review.",
+    "review": "Review"
+  },
+  "quickApps": {
+    "title": "Frequent apps",
+    "description": "Prioritized from your pinned apps and personal home layout.",
+    "folderSummary": "{{count}} apps"
   },
   "apps": {
     "groups": {
@@ -69,10 +92,20 @@
         "shortName": "Activity",
         "description": "Human, system, and agent events"
       },
+      "dwp-approvals": {
+        "name": "Approvals",
+        "shortName": "Approvals",
+        "description": "Requests, accountable decisions, delegation, and approval operations"
+      },
       "dwp-communications": {
         "name": "Newsroom",
         "shortName": "News",
         "description": "Targeted company news, events, and required updates"
+      },
+      "dwp-calendar": {
+        "name": "Calendar",
+        "shortName": "Calendar",
+        "description": "Schedules, focus time, responses, and workplace bookings"
       },
       "ref-app-mail": {
         "name": "Mail & calendar",
@@ -90,9 +123,9 @@
         "description": "IT, people, workplace, finance, and procurement requests"
       },
       "ref-app-people": {
-        "name": "HRIS",
-        "shortName": "HRIS",
-        "description": "Personal HR, people, organization, and workforce operations"
+        "name": "HR",
+        "shortName": "HR",
+        "description": "Personal HR, people, organization, and workforce operations in DWP HCM"
       },
       "ref-app-knowledge": {
         "name": "Knowledge",
@@ -165,12 +198,17 @@
     "nothingHidden": "There is nothing to add",
     "nothingHiddenDescription": "Every available item is already visible on your home.",
     "add": "Add",
+    "widgetMetadata": "{{source}} / up to {{minutes}} min freshness",
     "dragWidgetLabel": "Move {{widget}} widget",
     "removeWidget": "Remove from home",
     "removeWidgetLabel": "Remove {{widget}} widget from home",
     "governed": "Governed content"
   },
   "widgets": {
+    "common": {
+      "restrictedTitle": "This area is outside your current access",
+      "restrictedDescription": "It will appear automatically when your role or data scope changes."
+    },
     "registry": {
       "announcements": {
         "label": "Announcements",
@@ -199,22 +237,40 @@
     },
     "brief": {
       "sourceSummary": "Permission-scoped work / {{count}} source systems",
-      "title": "Daily brief",
+      "title": "Workday insights",
+      "description": "Recommendations and evidence calculated from live work signals as of {{time}}.",
+      "loading": "Loading workday insights.",
+      "retry": "Try again",
+      "empty": "There are no additional workday insights",
+      "emptyDescription": "Your current work and schedule flow is stable.",
+      "open": "Open related work",
+      "notRelevant": "This recommendation is not relevant",
+      "evidence": "{{count}} signals from {{source}}",
+      "confidence": "{{confidence}} confidence",
+      "confidenceLevel": {
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      },
+      "kind": {
+        "action": "Work",
+        "schedule": "Schedule",
+        "communication": "News",
+        "focus": "Focus"
+      },
       "liveSummary": "‘{{title}}’ is the next priority, with {{count}} work items currently in your queue.",
       "emptySummary": "There is no priority work right now.",
       "loadError": "The work brief could not be loaded. Check the Work page for connection status.",
       "signals": {
         "deadline": { "label": "Due soon", "detail": "Work requiring action" },
-        "focus": { "label": "In progress", "detail": "Work currently in progress" },
-        "meeting": { "label": "Waiting", "detail": "Waiting for input or response" }
+        "focus": { "label": "Focus time", "detail": "Minutes this week" },
+        "meeting": { "label": "Invitations", "detail": "Awaiting your response" }
       },
       "reviewPriority": "Review priority",
       "askToday": "Prepare request plan",
       "askPrompt": "Review my current work context and prepare a read-only request plan.",
       "rhythmTitle": "Day rhythm",
-      "calendarConnectionDescription": "Connect the organization calendar to show real meetings and focus time.",
-      "calendarConnectionEmpty": "The calendar connector has not been configured.",
-      "reviewConnection": "Review app connection"
+      "rhythmDescription": "Your next rhythm, grounded in real schedule and focus data."
     },
     "focus": {
       "title": "Focus now",
@@ -227,9 +283,13 @@
     },
     "schedule": {
       "title": "Schedule",
-      "connectionRequired": "Calendar connection required",
-      "connectionDescription": "Sample events are not shown. Real events will appear after the organization calendar is connected.",
-      "reviewConnection": "Review connection"
+      "loading": "Loading today's schedule.",
+      "loadError": "The schedule could not be loaded.",
+      "retry": "Try again",
+      "clear": "No remaining events",
+      "clearDescription": "New events will appear here when they are scheduled.",
+      "noLocation": "No location",
+      "openCalendar": "Open calendar"
     },
     "activity": {
       "title": "Live activity",

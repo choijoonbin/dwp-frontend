@@ -1,8 +1,8 @@
-import path from 'path';
+import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
-const projectRoot = path.resolve(__dirname);
-const workspaceRoot = path.resolve(__dirname, '../..');
+const projectRoot = import.meta.dirname;
+const workspaceRoot = path.resolve(projectRoot, '../..');
 
 export default defineConfig({
   root: projectRoot,

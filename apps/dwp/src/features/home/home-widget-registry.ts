@@ -1,57 +1,103 @@
 import { Activity, CalendarDays, CheckCircle2, Megaphone, Sparkles } from 'lucide-react';
 
-import type { LucideIcon } from 'lucide-react';
-import type { HomeWidgetKey, HomeWidgetPreference } from '@dwp-frontend/shared-utils';
+import {
+  defaultWorkspaceWidgets,
+  reconcileWorkspaceWidgets,
+  setWorkspaceWidgetVisibility,
+} from '../../components/workspace-composer/workspace-composer-model';
 
-export type HomeWidgetDefinition = {
-  key: HomeWidgetKey;
-  label: string;
-  description: string;
-  icon: LucideIcon;
-  canHide: boolean;
-  desktopSpan: 3 | 6 | 12;
-};
+import type {
+  HomeAudienceProfile,
+  HomeWidgetKey,
+  HomeWidgetPreference,
+} from '@dwp-frontend/shared-utils';
+import type { WorkspaceWidgetDefinition } from '../../components/workspace-composer/workspace-composer-model';
 
-export const HOME_WIDGET_REGISTRY: readonly HomeWidgetDefinition[] = [
+export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidgetKey>[] = [
   {
     key: 'announcements',
-    label: 'Announcements',
-    description: 'Official and time-sensitive organization updates',
     icon: Megaphone,
     canHide: false,
-    desktopSpan: 12,
+    defaultSize: 'full',
+    allowedSizes: ['full'],
+    audience: 'all',
+    manifest: {
+      schemaVersion: 1,
+      owner: 'Employee Communications',
+      dataSource: 'DWP_COMMUNICATIONS',
+      freshnessSeconds: 60,
+      privacyClass: 'INTERNAL',
+      retention: 'NONE',
+      analyticsKey: 'home.announcements',
+    },
   },
   {
     key: 'daily-brief',
-    label: 'Daily brief',
-    description: 'Live work priorities and day rhythm',
     icon: Sparkles,
     canHide: true,
-    desktopSpan: 12,
+    defaultSize: 'full',
+    allowedSizes: ['large', 'full'],
+    audience: 'all',
+    manifest: {
+      schemaVersion: 1,
+      owner: 'Digital Workplace Product',
+      dataSource: 'DWP_HOME_OVERVIEW',
+      freshnessSeconds: 30,
+      privacyClass: 'INTERNAL',
+      retention: 'NONE',
+      analyticsKey: 'home.workday-insights',
+    },
   },
   {
     key: 'focus',
-    label: 'Focus now',
-    description: 'Priority work and approvals',
     icon: CheckCircle2,
     canHide: true,
-    desktopSpan: 6,
+    defaultSize: 'large',
+    allowedSizes: ['medium', 'large', 'full'],
+    audience: 'all',
+    manifest: {
+      schemaVersion: 1,
+      owner: 'Digital Workplace Product',
+      dataSource: 'DWP_WORKSPACE',
+      freshnessSeconds: 30,
+      privacyClass: 'CONFIDENTIAL',
+      retention: 'NONE',
+      analyticsKey: 'home.focus',
+    },
   },
   {
     key: 'schedule',
-    label: 'Schedule',
-    description: 'Meetings, focus time, and deadlines',
     icon: CalendarDays,
     canHide: true,
-    desktopSpan: 3,
+    defaultSize: 'compact',
+    allowedSizes: ['compact', 'medium'],
+    audience: 'all',
+    manifest: {
+      schemaVersion: 1,
+      owner: 'Calendar Product',
+      dataSource: 'DWP_CALENDAR',
+      freshnessSeconds: 30,
+      privacyClass: 'CONFIDENTIAL',
+      retention: 'NONE',
+      analyticsKey: 'home.schedule',
+    },
   },
   {
     key: 'activity',
-    label: 'Live activity',
-    description: 'Human, system, and agent events',
     icon: Activity,
     canHide: true,
-    desktopSpan: 3,
+    defaultSize: 'compact',
+    allowedSizes: ['compact', 'medium'],
+    audience: 'all',
+    manifest: {
+      schemaVersion: 1,
+      owner: 'Digital Workplace Product',
+      dataSource: 'DWP_ACTIVITY',
+      freshnessSeconds: 30,
+      privacyClass: 'INTERNAL',
+      retention: 'NONE',
+      analyticsKey: 'home.activity',
+    },
   },
 ];
 
@@ -59,58 +105,37 @@ export const HOME_WIDGET_KEYS: readonly HomeWidgetKey[] = HOME_WIDGET_REGISTRY.m
   (widget) => widget.key
 );
 
+export const HOME_WIDGET_ROLE_ORDER: Record<HomeAudienceProfile, readonly HomeWidgetKey[]> = {
+  MEMBER: ['announcements', 'focus', 'schedule', 'daily-brief', 'activity'],
+  MANAGER: ['announcements', 'daily-brief', 'focus', 'schedule', 'activity'],
+  OPERATOR: ['announcements', 'activity', 'daily-brief', 'focus', 'schedule'],
+};
+
+function orderedRegistry(
+  registeredOrder: readonly HomeWidgetKey[],
+  profile: HomeAudienceProfile
+): WorkspaceWidgetDefinition<HomeWidgetKey>[] {
+  const definitions = new Map(HOME_WIDGET_REGISTRY.map((widget) => [widget.key, widget]));
+  const registered = new Set(registeredOrder);
+  return HOME_WIDGET_ROLE_ORDER[profile]
+    .filter((widgetKey) => registered.has(widgetKey))
+    .map((widgetKey) => definitions.get(widgetKey))
+    .filter((widget): widget is WorkspaceWidgetDefinition<HomeWidgetKey> => Boolean(widget));
+}
+
 export function defaultHomeWidgets(
-  registeredOrder: readonly HomeWidgetKey[] = HOME_WIDGET_KEYS
+  registeredOrder: readonly HomeWidgetKey[] = HOME_WIDGET_KEYS,
+  profile: HomeAudienceProfile = 'MEMBER'
 ): HomeWidgetPreference[] {
-  return registeredOrder.map((widgetKey) => ({ widgetKey, visible: true }));
+  return defaultWorkspaceWidgets(orderedRegistry(registeredOrder, profile));
 }
 
 export function reconcileHomeWidgets(
   value: unknown,
-  registeredOrder: readonly HomeWidgetKey[] = HOME_WIDGET_KEYS
+  registeredOrder: readonly HomeWidgetKey[] = HOME_WIDGET_KEYS,
+  profile: HomeAudienceProfile = 'MEMBER'
 ): HomeWidgetPreference[] {
-  if (!Array.isArray(value)) return defaultHomeWidgets(registeredOrder);
-  const definitions = new Map(HOME_WIDGET_REGISTRY.map((widget) => [widget.key, widget]));
-  const used = new Set<HomeWidgetKey>();
-  const reconciled: HomeWidgetPreference[] = [];
-
-  value.forEach((candidate) => {
-    if (!candidate || typeof candidate !== 'object') return;
-    const item = candidate as Partial<HomeWidgetPreference>;
-    const definition = definitions.get(item.widgetKey as HomeWidgetKey);
-    if (!definition || used.has(definition.key)) return;
-    used.add(definition.key);
-    reconciled.push({
-      widgetKey: definition.key,
-      visible: definition.canHide ? item.visible !== false : true,
-    });
-  });
-
-  registeredOrder.forEach((widgetKey) => {
-    const definition = definitions.get(widgetKey);
-    if (!definition) return;
-    if (!used.has(definition.key)) {
-      reconciled.push({ widgetKey: definition.key, visible: true });
-    }
-  });
-  return reconciled;
-}
-
-export function reorderHomeWidgets(
-  widgets: readonly HomeWidgetPreference[],
-  activeKey: HomeWidgetKey,
-  overKey: HomeWidgetKey
-): HomeWidgetPreference[] {
-  const activeIndex = widgets.findIndex((widget) => widget.widgetKey === activeKey);
-  const overIndex = widgets.findIndex((widget) => widget.widgetKey === overKey);
-  if (activeIndex < 0 || overIndex < 0 || activeIndex === overIndex) {
-    return [...widgets];
-  }
-  const next = [...widgets];
-  const [active] = next.splice(activeIndex, 1);
-  if (!active) return [...widgets];
-  next.splice(overIndex, 0, active);
-  return next;
+  return reconcileWorkspaceWidgets(value, orderedRegistry(registeredOrder, profile));
 }
 
 export function setHomeWidgetVisibility(
@@ -118,9 +143,5 @@ export function setHomeWidgetVisibility(
   widgetKey: HomeWidgetKey,
   visible: boolean
 ): HomeWidgetPreference[] {
-  const definition = HOME_WIDGET_REGISTRY.find((widget) => widget.key === widgetKey);
-  if (!definition || (!definition.canHide && !visible)) return [...widgets];
-  return widgets.map((widget) =>
-    widget.widgetKey === widgetKey ? { ...widget, visible } : widget
-  );
+  return setWorkspaceWidgetVisibility(widgets, HOME_WIDGET_REGISTRY, widgetKey, visible);
 }

@@ -1,8 +1,8 @@
 # DWP Product Experience Rules
 
-> 상태: R0.7 Product Experience Decision
+> 상태: R0.8 Product Experience Decision
 >
-> 기준일: 2026-08-12
+> 기준일: 2026-08-14
 >
 > 적용 범위: `dwp-frontend`의 모든 사용자·테넌트 관리자·Provider 화면
 
@@ -24,7 +24,60 @@ DWP의 제품 경험은 다음 네 가지로 정의한다.
 고급스러움은 Glass, 큰 Hero, 그림자나 장식이 아니라 정보 구조의 자신감, 빠른 반응,
 정확한 상태, 세밀한 Feedback과 일관된 마감에서 만든다.
 
-## 2. 첨부 레퍼런스 판정
+## 2. Product Experience Profile
+
+모든 앱이 같은 Admin Theme를 공유하지 않는다. 공통 Shell·Form·상태·접근성 계약은 유지하되,
+앱의 핵심 업무가 요구하는 탐색 방식과 정보 밀도를 `Product Experience Profile`로 구분한다.
+
+| 앱        | Concept         | 기본 경험                                   | 시각 신호                           |
+| --------- | --------------- | ------------------------------------------- | ----------------------------------- |
+| DWP HCM   | `people-flow`   | 사람·여정·지원 행동 중심, 편안한 밀도       | Teal 기준색과 제한된 Coral 신호     |
+| Calendar  | `temporal-flow` | 시간축·가용성·충돌 해소 중심, 표준 밀도     | Cobalt 기준색과 Cyan 보조 신호      |
+| Approvals | `decision-flow` | 판단 근거·위험·기한·감사 중심, 표준 밀도    | Ink Blue 기준색과 Saffron 주의 신호 |
+| Mail      | `message-flow`  | 읽기·분류·회신·후속 조치 중심의 고밀도 목록 | 향후 제품 계약과 함께 확정          |
+| Chat      | `presence-flow` | 대화·현재성·맥락 전환 중심의 실시간 흐름    | 향후 제품 계약과 함께 확정          |
+
+Profile은 `concept`, `density`, `canvas`, `accent`, `selection`, `softSurface`만 변경한다.
+Button 의미, Focus, Error, 권한, Loading, 반응형 Breakpoint와 Design Token 명명은 앱마다
+재해석하지 않는다. 새 Product Shell은 Profile 등록과 상호 차별성 Test가 없으면 배포하지 않는다.
+
+### Product Profile 승인 계약
+
+새 앱은 색상과 아이콘만 바꾼 공통 Admin 화면으로 출시할 수 없다. 구현 전에 다음 계약을
+문서와 Test로 고정한다.
+
+1. 사용자가 앱에 들어온 뒤 5초 안에 답해야 하는 대표 업무 질문
+2. 구성원·관리자·운영자별 시작 화면과 허용 Navigation
+3. 주 Page Archetype과 List·Detail·Workflow 사이의 Context 전달 방식
+4. 앱만의 정보 밀도, 선택 상태, Empty·Partial·Error 표현과 핵심 Interaction
+5. 공통 Shell·권한·Form·접근성 Token을 침범하지 않는 Profile 범위
+6. Desktop·Mobile·Dark·High Contrast Screenshot과 권한·Keyboard E2E 증거
+
+Mail은 `message-flow`에 맞춰 Folder/Label, 고밀도 Message List, Reading Pane, Compose를
+연속된 문맥으로 제공하고 Unread·Follow-up·Attachment·Bulk Action을 우선한다. 장식용 KPI
+Dashboard를 첫 화면으로 만들지 않는다.
+
+Chat은 `presence-flow`에 맞춰 Space/Channel, 대화, Thread, 검색과 현재성을 중심으로 구성한다.
+연결·재연결·전송 중·실패·읽음 상태를 즉시 설명하고, 긴 관리 Table이나 새로고침 중심 경험을
+대화 Surface에 이식하지 않는다.
+
+Approvals는 `decision-flow`를 유지해 요청 목록보다 판단 근거, 기한, 위험, 위임, 전자서명과
+결정 후 감사 증거를 앞세운다. Calendar는 `temporal-flow`, DWP HCM은 `people-flow` 계약을 같은
+방식으로 유지한다.
+
+### HCM `people-flow` Home 계약
+
+- 개인 홈의 범용 오늘 할 일·일정·공지·앱 현황을 HCM Home에 반복하지 않는다.
+- 첫 화면은 **이번 주 근무, 사용 가능 휴가, 다음 급여일**을 하나의 HR Snapshot으로 답한다.
+- 다음 순서는 완료 가능한 Quick Action, 휴가·급여·복리후생·성장 Insight, 역할별 Guidance다.
+- Manager·HR Operator 정보는 일반 구성원 Home을 대체하지 않고 권한에 따라 누적한다.
+- HCM 색은 업무 범주를 구분할 때만 쓰며 전체 화면을 Teal 단색 Theme로 만들지 않는다.
+- 기능이 없는 Chart·가상 추세·Stock Illustration은 넣지 않는다. 실제 Aggregate가 없는
+  Insight는 신뢰 가능한 Empty/Unavailable 상태로 설명한다.
+- Mobile은 동일 정보를 축소하지 않고 Snapshot → Action → Insight → Guidance 순으로
+  한 Column에 재배치한다.
+
+## 3. 첨부 레퍼런스 판정
 
 ### 배울 점
 
@@ -40,7 +93,7 @@ DWP의 제품 경험은 다음 네 가지로 정의한다.
 - 실제 데이터 계약이 없는 추세와 가짜 Demo 수치를 만들지 않는다.
 - 색이 많다는 이유만으로 현대적인 것이 아니다. 상태, 범주, 비교라는 의미가 있을 때만 쓴다.
 
-## 3. 공식 제품 비교에서 확인한 운영 계약
+## 4. 공식 제품 비교에서 확인한 운영 계약
 
 | 제품                         | 검증된 패턴                                                                | DWP 적용                                                              |
 | ---------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -51,7 +104,7 @@ DWP의 제품 경험은 다음 네 가지로 정의한다.
 | Google Cloud Monitoring      | 지표, Incident, SLO, Log, Event를 한 Dashboard에서 상관 분석               | 상태 수치 옆에 변경·Incident·Audit Event를 연결                       |
 | AWS CloudWatch               | Alarm 변화 우선, Live/기간 제어, Sparkline Number와 연결 Chart             | 현재값에는 추세 또는 기준을, 실시간 값에는 Freshness를 표시           |
 
-## 4. 페이지 Archetype
+## 5. 페이지 Archetype
 
 화면을 만들기 전에 다음 중 하나를 선택한다. 둘 이상이 필요하면 주 Archetype과 보조
 Archetype을 명시한다.
@@ -65,7 +118,7 @@ Archetype을 명시한다.
 | Graph explorer | 조직·관계·데이터 흐름 탐색    | Search/Scope → Canvas → Minimap → Inspector → 영향 경로 | 전체 Fit만 제공, Label이 읽히지 않는 초기 화면   |
 | Focus form     | 개인 설정·보안·작은 편집      | 짧은 설명 → Sectioned Form → Auto-save 상태/명시적 제출 | Dashboard 장식, 불필요한 Chart와 KPI             |
 
-## 5. 화면 밀도 판정
+## 6. 화면 밀도 판정
 
 - **Simple**: 하나의 개인 선택, 작은 설정, 확인 중심 업무. 한 Column 또는 짧은 2-Column
   Form이 적절하며 시각화를 추가하지 않는다.
@@ -76,7 +129,7 @@ Archetype을 명시한다.
 빈 공간은 고급스러움이 아니다. 반대로 밀도는 모든 공간을 채우는 것이 아니다. 정보의 관계와
 다음 행동이 보이도록 필요한 만큼만 사용한다.
 
-## 6. Layout와 Surface
+## 7. Layout와 Surface
 
 - Shell의 Workspace Canvas는 Fluid를 유지하되 콘텐츠는 최대 `1600px`의 안정적인 내부
   12-Column Grid로 묶는다. 초광폭에서 관계가 끊기는 긴 직선을 만들지 않는다.
@@ -90,7 +143,7 @@ Archetype을 명시한다.
   떠 있는 Card로 만들거나 Card 안에 Card를 넣지 않는다.
 - 건강한 반복은 압축한다. 예외가 발생하면 해당 Surface가 확장되어 원인과 영향을 보여준다.
 
-## 7. Color와 데이터 시각화
+## 8. Color와 데이터 시각화
 
 ### 역할
 
@@ -110,7 +163,7 @@ Archetype을 명시한다.
 - 색만으로 구분하지 않고 Label, 수치, Pattern 또는 Icon을 함께 제공한다.
 - Chart의 핵심 값은 Screen Reader용 요약과 Table/목록 대안을 제공한다.
 
-## 8. Motion과 Feedback
+## 9. Motion과 Feedback
 
 - Hover/Press `80-120ms`, 선택·Inspector `160-220ms`, 큰 Pane 전환 `220-280ms`를 사용한다.
 - Metric, Row, Graph Node 선택 시 관련 Surface가 같은 Context로 전환되는 원인을 보여준다.
@@ -119,7 +172,7 @@ Archetype을 명시한다.
 - 새 데이터는 Layout Shift 없이 Highlight 후 안정 상태로 돌아간다.
 - `prefers-reduced-motion`과 개인 설정에서 위치 이동·연속 Animation을 제거한다.
 
-## 9. 운영 Dashboard 완료 계약
+## 10. 운영 Dashboard 완료 계약
 
 다음 항목이 없으면 Command Center를 완료로 판정하지 않는다.
 
@@ -134,7 +187,7 @@ Archetype을 명시한다.
 9. Incident·Change·Audit Event의 상관관계
 10. Loading, Healthy Empty, No data, Partial, Error, Permission 상태
 
-## 10. 단순 화면 완료 계약
+## 11. 단순 화면 완료 계약
 
 단순해야 하는 화면은 시각적 요소를 늘리는 대신 다음을 완성한다.
 
@@ -145,7 +198,7 @@ Archetype을 명시한다.
 - Keyboard, 200% Zoom, 긴 한영 문구에서 안정적인 정렬
 - 성공 후 무엇이 반영됐는지 확인 가능한 Feedback
 
-## 11. 공통 컴포넌트 우선순위
+## 12. 공통 컴포넌트 우선순위
 
 | 단계 | 컴포넌트                | 제품 계약                                           |
 | ---- | ----------------------- | --------------------------------------------------- |
@@ -158,7 +211,7 @@ Archetype을 명시한다.
 | P1   | `RelationshipCanvas`    | 조직·권한·데이터·제품 관계의 공통 Graph 조작        |
 | P2   | `StudioPreviewFrame`    | Viewport·Locale·Theme 전환, 품질 검사, 게시 비교    |
 
-## 12. 품질 Gate
+## 13. 품질 Gate
 
 - 1440, 1280, 390, 320px와 200% Zoom
 - Light, Dark, High Contrast, Reduced Motion
@@ -168,7 +221,7 @@ Archetype을 명시한다.
 - Playwright Screenshot과 주요 Canvas Pixel/Content 검증
 - 실제 데이터 계약이 없는 Trend, AI 결과, 성공 상태를 화면에 만들지 않음
 
-## 13. 참고 자료
+## 14. 참고 자료
 
 - [Grafana dashboard best practices](https://grafana.com/docs/grafana/latest/visualizations/dashboards/build-dashboards/best-practices/)
 - [PagerDuty Operations Console](https://support.pagerduty.com/main/docs/operations-console)

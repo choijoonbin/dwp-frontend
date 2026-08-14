@@ -32,7 +32,30 @@
     "lastRefreshed": "{{time}} 마지막 새로고침 / 권한 범위 데이터",
     "saveError": "홈 환경 설정을 저장하지 못했습니다.",
     "homeSaved": "홈 화면을 저장했습니다.",
-    "appLaunchError": "앱을 실행하지 못했습니다. 앱 연결 상태를 확인하세요."
+    "appLaunchError": "앱을 실행하지 못했습니다. 앱 연결 상태를 확인하세요.",
+    "recommendationHidden": "이 추천을 숨겼습니다.",
+    "recommendationFeedbackError": "추천 피드백을 저장하지 못했습니다."
+  },
+  "dayRail": {
+    "audience": {
+      "member": "개인 업무",
+      "manager": "리더 업무",
+      "operator": "운영 업무"
+    },
+    "now": "지금",
+    "next": "다음",
+    "later": "이후",
+    "timeline": "오늘의 일정 시간대",
+    "openTimeline": "등록된 일정이 없는 시간대입니다",
+    "restricted": "이 업무 영역은 현재 권한 범위에 포함되지 않습니다.",
+    "noNextEvent": "예정된 다음 일정이 없습니다.",
+    "noRecommendation": "추가로 확인할 추천 항목이 없습니다.",
+    "review": "확인하기"
+  },
+  "quickApps": {
+    "title": "자주 쓰는 앱",
+    "description": "즐겨찾기와 내 홈 배치를 기준으로 우선 표시합니다.",
+    "folderSummary": "앱 {{count}}개"
   },
   "apps": {
     "groups": {
@@ -69,10 +92,20 @@
         "shortName": "활동",
         "description": "사람, 시스템 및 에이전트 이벤트"
       },
+      "dwp-approvals": {
+        "name": "전자결재",
+        "shortName": "전자결재",
+        "description": "기안, 책임 있는 의사결정, 위임 및 결재 운영"
+      },
       "dwp-communications": {
         "name": "소식",
         "shortName": "소식",
         "description": "나에게 맞는 회사 소식, 행사 및 필수 확인"
+      },
+      "dwp-calendar": {
+        "name": "캘린더",
+        "shortName": "캘린더",
+        "description": "일정, 집중 시간, 참석 응답 및 업무 공간 예약"
       },
       "ref-app-mail": {
         "name": "메일과 일정",
@@ -90,9 +123,9 @@
         "description": "IT, 구성원, 업무 환경, 재무 및 구매 요청"
       },
       "ref-app-people": {
-        "name": "HRIS",
-        "shortName": "HRIS",
-        "description": "나의 HR, 구성원, 조직 및 권한에 따른 인력 운영"
+        "name": "인사",
+        "shortName": "인사",
+        "description": "DWP HCM에서 나의 인사, 구성원, 조직 및 권한별 인력 운영을 연결합니다"
       },
       "ref-app-knowledge": {
         "name": "지식",
@@ -165,12 +198,17 @@
     "nothingHidden": "추가할 항목이 없습니다",
     "nothingHiddenDescription": "현재 사용할 수 있는 모든 항목이 홈에 표시되어 있습니다.",
     "add": "추가",
+    "widgetMetadata": "{{source}} / 최대 {{minutes}}분 최신성",
     "dragWidgetLabel": "{{widget}} 위젯 이동",
     "removeWidget": "홈에서 제거",
     "removeWidgetLabel": "{{widget}} 위젯을 홈에서 제거",
     "governed": "관리자가 지정한 콘텐츠"
   },
   "widgets": {
+    "common": {
+      "restrictedTitle": "현재 권한으로 볼 수 없는 영역입니다",
+      "restrictedDescription": "내 역할과 데이터 접근 범위가 변경되면 자동으로 표시됩니다."
+    },
     "registry": {
       "announcements": {
         "label": "공지사항",
@@ -199,22 +237,40 @@
     },
     "brief": {
       "sourceSummary": "권한 범위 업무 / 원천 시스템 {{count}}개",
-      "title": "일일 브리핑",
+      "title": "업무 인사이트",
+      "description": "{{time}} 기준 실제 업무 신호에서 계산된 추천과 근거입니다.",
+      "loading": "업무 인사이트를 불러오는 중입니다.",
+      "retry": "다시 시도",
+      "empty": "추가로 제안할 업무 인사이트가 없습니다",
+      "emptyDescription": "현재 업무와 일정 흐름이 안정적입니다.",
+      "open": "관련 업무 열기",
+      "notRelevant": "이 추천은 관련 없음",
+      "evidence": "{{source}} 근거 {{count}}건",
+      "confidence": "신뢰도 {{confidence}}",
+      "confidenceLevel": {
+        "high": "높음",
+        "medium": "중간",
+        "low": "낮음"
+      },
+      "kind": {
+        "action": "업무",
+        "schedule": "일정",
+        "communication": "소식",
+        "focus": "집중"
+      },
       "liveSummary": "우선 처리할 업무는 ‘{{title}}’이며, 현재 업무 {{count}}개가 있습니다.",
       "emptySummary": "현재 우선 처리할 업무가 없습니다.",
       "loadError": "업무 브리핑을 불러오지 못했습니다. 업무 메뉴에서 연결 상태를 확인하세요.",
       "signals": {
         "deadline": { "label": "마감 임박", "detail": "조치가 필요한 업무" },
-        "focus": { "label": "진행 중", "detail": "현재 진행 중인 업무" },
-        "meeting": { "label": "대기 중", "detail": "입력 또는 응답 대기" }
+        "focus": { "label": "집중 시간", "detail": "이번 주 누적 분" },
+        "meeting": { "label": "일정 응답", "detail": "응답이 필요한 초대" }
       },
       "reviewPriority": "우선순위 검토",
       "askToday": "요청 계획 준비",
       "askPrompt": "현재 업무 맥락을 검토하고 읽기 전용 요청 계획을 준비해 주세요.",
       "rhythmTitle": "하루 흐름",
-      "calendarConnectionDescription": "실제 회의와 집중 시간을 표시하려면 조직 캘린더 연결이 필요합니다.",
-      "calendarConnectionEmpty": "캘린더 커넥터가 아직 구성되지 않았습니다.",
-      "reviewConnection": "앱 연결 확인"
+      "rhythmDescription": "실제 일정과 집중 시간을 기준으로 다음 흐름을 보여줍니다."
     },
     "focus": {
       "title": "지금 집중할 일",
@@ -227,9 +283,13 @@
     },
     "schedule": {
       "title": "일정",
-      "connectionRequired": "캘린더 연결이 필요합니다",
-      "connectionDescription": "샘플 일정을 표시하지 않습니다. 조직 캘린더를 연결하면 실제 일정이 표시됩니다.",
-      "reviewConnection": "연결 상태 확인"
+      "loading": "오늘 일정을 불러오는 중입니다.",
+      "loadError": "일정을 불러오지 못했습니다.",
+      "retry": "다시 시도",
+      "clear": "남은 일정이 없습니다",
+      "clearDescription": "새 일정이 등록되면 이곳에 표시됩니다.",
+      "noLocation": "위치 정보 없음",
+      "openCalendar": "캘린더 열기"
     },
     "activity": {
       "title": "실시간 활동",

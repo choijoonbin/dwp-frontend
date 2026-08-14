@@ -1,17 +1,25 @@
-import { TENANT_CONTROL_PLANE_ROLES } from '../auth/control-plane-access';
+import { TENANT_CONTROL_PLANE_ROLES } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import {
+  appResourceAliasCandidates,
+  isAppResourceEntitled as isSharedAppResourceEntitled,
+  type AppEntitlementPermission,
+} from '@dwp-frontend/shared-utils/auth/app-entitlements';
 
-export type HomeAppGroupId = 'work' | 'connect' | 'services' | 'systems';
+export type HomeAppGroupId = string;
 
 export type HomeAppIconKey =
   | 'activity'
   | 'admin'
+  | 'approvals'
   | 'ask'
   | 'collaboration'
+  | 'calendar'
   | 'communications'
   | 'erp'
   | 'knowledge'
   | 'legacy'
   | 'mail'
+  | 'hcm'
   | 'hris'
   | 'people'
   | 'services'
@@ -47,19 +55,30 @@ export type LaunchpadFolder = {
 
 export type LaunchpadLayout = {
   version: 1;
-  groups: Record<HomeAppGroupId, string[]>;
+  groups: Record<string, string[]>;
   folders: Record<string, LaunchpadFolder>;
   hiddenAppIds: string[];
 };
 
-export type AppEntitlementPermission = {
-  resourceType: string;
-  resourceKey: string;
-  permissionCode: string;
-  effect: string;
-};
+export type { AppEntitlementPermission };
 
 export type HomeTranslate = (key: string, options?: Record<string, string | number>) => string;
+
+export type TenantHomeLaunchpadConfiguration = {
+  schemaVersion: number;
+  groups: Array<{
+    groupKey: string;
+    labels: Record<string, string>;
+    descriptions: Record<string, string>;
+    sortOrder: number;
+    enabled: boolean;
+  }>;
+  placements: Array<{
+    resourceKey: string;
+    groupKey: string;
+    sortOrder: number;
+  }>;
+};
 
 export const HOME_APP_GROUPS: readonly HomeAppGroup[] = [
   {
@@ -121,6 +140,17 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     badge: '2',
   },
   {
+    id: 'dwp-approvals',
+    name: 'Approvals',
+    shortName: 'Approvals',
+    description: 'Requests, governed decisions, delegation, and approval health',
+    groupId: 'work',
+    route: '/approvals/home',
+    iconKey: 'approvals',
+    tone: '#2856C7',
+    resourceKey: 'APP.APPROVALS',
+  },
+  {
     id: 'dwp-communications',
     name: 'Newsroom',
     shortName: 'News',
@@ -130,6 +160,17 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'communications',
     tone: '#E14F5A',
     resourceKey: 'APP.COMMUNICATIONS',
+  },
+  {
+    id: 'dwp-calendar',
+    name: 'Calendar',
+    shortName: 'Calendar',
+    description: 'Schedules, focus time, responses, and workplace bookings',
+    groupId: 'connect',
+    route: '/calendar/home',
+    iconKey: 'calendar',
+    tone: '#0F766E',
+    resourceKey: 'APP.CALENDAR',
   },
   {
     id: 'ref-app-mail',
@@ -169,14 +210,14 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   },
   {
     id: 'ref-app-people',
-    name: 'HRIS',
-    shortName: 'HRIS',
-    description: 'Personal HR, people, organization, and workforce operations',
+    name: 'HR',
+    shortName: 'HR',
+    description: 'Personal HR, people, organization, and workforce operations in DWP HCM',
     groupId: 'services',
     route: '/hr',
-    iconKey: 'hris',
+    iconKey: 'hcm',
     tone: '#176B68',
-    resourceKey: 'APP.HRIS',
+    resourceKey: 'APP.HCM',
   },
   {
     id: 'ref-app-knowledge',
@@ -235,6 +276,82 @@ export function localizeHomeAppGroups(translate: HomeTranslate): HomeAppGroup[] 
   }));
 }
 
+function localizedPolicyValue(
+  values: Record<string, string> | undefined,
+  locale: string,
+  fallback: string
+): string {
+  const normalizedLocale = locale.toLowerCase();
+  const language = normalizedLocale.split('-')[0];
+  return (
+    values?.[normalizedLocale] ||
+    values?.[language] ||
+    values?.en ||
+    values?.ko ||
+    Object.values(values ?? {}).find(Boolean) ||
+    fallback
+  );
+}
+
+export function resolveHomeLaunchpadCatalog(
+  apps: readonly HomeAppDefinition[],
+  configuration: TenantHomeLaunchpadConfiguration | null | undefined,
+  locale: string,
+  translate: HomeTranslate
+): { groups: HomeAppGroup[]; apps: HomeAppDefinition[] } {
+  const fallbackGroups = localizeHomeAppGroups(translate);
+  if (configuration?.schemaVersion !== 1 || !configuration.groups?.length) {
+    return { groups: fallbackGroups, apps: [...apps] };
+  }
+
+  const groups = configuration.groups
+    .filter((group) => group.enabled)
+    .sort(
+      (left, right) =>
+        left.sortOrder - right.sortOrder || left.groupKey.localeCompare(right.groupKey)
+    )
+    .map((group) => ({
+      id: group.groupKey,
+      name: localizedPolicyValue(group.labels, locale, group.groupKey),
+      description: localizedPolicyValue(group.descriptions, locale, ''),
+    }));
+  if (groups.length === 0) return { groups: fallbackGroups, apps: [...apps] };
+
+  const enabledGroupIds = new Set(groups.map((group) => group.id));
+  const firstGroupId = groups[0]!.id;
+  const placements = new Map(
+    configuration.placements.map((placement) => [placement.resourceKey, placement])
+  );
+  const resolvePlacement = (resourceKey: string) =>
+    appResourceAliasCandidates(resourceKey)
+      .map((candidate) => placements.get(candidate))
+      .find((placement) => placement !== undefined);
+  const groupOrder = new Map(groups.map((group, index) => [group.id, index]));
+  const resolvedApps = apps
+    .map((app) => {
+      const placement = resolvePlacement(app.resourceKey);
+      const configuredGroupId = placement?.groupKey;
+      const groupId =
+        configuredGroupId && enabledGroupIds.has(configuredGroupId)
+          ? configuredGroupId
+          : enabledGroupIds.has(app.groupId)
+            ? app.groupId
+            : firstGroupId;
+      return { ...app, groupId };
+    })
+    .sort((left, right) => {
+      const groupDelta =
+        (groupOrder.get(left.groupId) ?? Number.MAX_SAFE_INTEGER) -
+        (groupOrder.get(right.groupId) ?? Number.MAX_SAFE_INTEGER);
+      if (groupDelta !== 0) return groupDelta;
+      const leftOrder = resolvePlacement(left.resourceKey)?.sortOrder ?? Number.MAX_SAFE_INTEGER;
+      const rightOrder = resolvePlacement(right.resourceKey)?.sortOrder ?? Number.MAX_SAFE_INTEGER;
+      return leftOrder - rightOrder || left.name.localeCompare(right.name);
+    });
+
+  return { groups, apps: resolvedApps };
+}
+
 export function localizeHomeApps(translate: HomeTranslate): HomeAppDefinition[] {
   return HOME_APPS.map((app) => ({
     ...app,
@@ -246,19 +363,17 @@ export function localizeHomeApps(translate: HomeTranslate): HomeAppDefinition[] 
   }));
 }
 
-const GROUP_IDS = HOME_APP_GROUPS.map((group) => group.id);
-
-function emptyGroups(): Record<HomeAppGroupId, string[]> {
-  return {
-    work: [],
-    connect: [],
-    services: [],
-    systems: [],
-  };
+function configuredGroupIds(groups: readonly HomeAppGroup[]): string[] {
+  const values = [...new Set(groups.map((group) => group.id).filter(Boolean))];
+  return values.length > 0 ? values : HOME_APP_GROUPS.map((group) => group.id);
 }
 
-function isGroupId(value: unknown): value is HomeAppGroupId {
-  return typeof value === 'string' && GROUP_IDS.includes(value as HomeAppGroupId);
+function emptyGroups(groupIds: readonly string[]): Record<string, string[]> {
+  return Object.fromEntries(groupIds.map((groupId) => [groupId, []]));
+}
+
+function isGroupId(value: unknown, groupIds: readonly string[]): value is HomeAppGroupId {
+  return typeof value === 'string' && groupIds.includes(value);
 }
 
 function unique(values: readonly string[]): string[] {
@@ -272,11 +387,12 @@ function safeFolderName(value: unknown, fallback: string): string {
 }
 
 function copyLayout(layout: LaunchpadLayout): LaunchpadLayout {
+  const groupIds = Object.keys(layout.groups);
   return {
     version: 1,
     groups: Object.fromEntries(
-      GROUP_IDS.map((groupId) => [groupId, [...layout.groups[groupId]]])
-    ) as Record<HomeAppGroupId, string[]>,
+      groupIds.map((groupId) => [groupId, [...(layout.groups[groupId] ?? [])]])
+    ),
     folders: Object.fromEntries(
       Object.values(layout.folders).map((folder) => [
         folder.id,
@@ -301,31 +417,28 @@ export function isAppResourceEntitled(
   resourceKey: string,
   permissions: readonly AppEntitlementPermission[]
 ): boolean {
-  const appPermissions = permissions.filter(
-    (permission) => permission.resourceType.toUpperCase() === 'APP'
-  );
-  if (appPermissions.length === 0) return true;
-
-  const matchingPermissions = appPermissions.filter(
-    (permission) =>
-      permission.resourceKey === resourceKey &&
-      ['VIEW', 'USE', 'LAUNCH'].includes(permission.permissionCode)
-  );
-  if (matchingPermissions.some((permission) => permission.effect === 'DENY')) return false;
-  return matchingPermissions.some((permission) => permission.effect === 'ALLOW');
+  return isSharedAppResourceEntitled(resourceKey, permissions);
 }
 
-export function createDefaultLaunchpadLayout(apps: readonly HomeAppDefinition[]): LaunchpadLayout {
-  const groups = emptyGroups();
-  apps.forEach((app) => groups[app.groupId].push(app.id));
+export function createDefaultLaunchpadLayout(
+  apps: readonly HomeAppDefinition[],
+  configuredGroups: readonly HomeAppGroup[] = HOME_APP_GROUPS
+): LaunchpadLayout {
+  const groupIds = configuredGroupIds(configuredGroups);
+  const groups = emptyGroups(groupIds);
+  apps.forEach((app) => (groups[app.groupId] ?? groups[groupIds[0]!]!).push(app.id));
   return { version: 1, groups, folders: {}, hiddenAppIds: [] };
 }
 
 export function reconcileLaunchpadLayout(
   value: unknown,
-  apps: readonly HomeAppDefinition[]
+  apps: readonly HomeAppDefinition[],
+  configuredGroups: readonly HomeAppGroup[] = HOME_APP_GROUPS
 ): LaunchpadLayout {
-  if (!value || typeof value !== 'object') return createDefaultLaunchpadLayout(apps);
+  const groupIds = configuredGroupIds(configuredGroups);
+  if (!value || typeof value !== 'object') {
+    return createDefaultLaunchpadLayout(apps, configuredGroups);
+  }
 
   const candidate = value as {
     version?: unknown;
@@ -334,7 +447,7 @@ export function reconcileLaunchpadLayout(
     hiddenAppIds?: unknown;
   };
   if (candidate.version !== 1 || !candidate.groups || !candidate.folders) {
-    return createDefaultLaunchpadLayout(apps);
+    return createDefaultLaunchpadLayout(apps, configuredGroups);
   }
 
   const appById = new Map(apps.map((app) => [app.id, app]));
@@ -350,7 +463,7 @@ export function reconcileLaunchpadLayout(
   Object.entries(candidate.folders).forEach(([folderId, rawFolder]) => {
     if (!folderId.startsWith('folder-') || !rawFolder || typeof rawFolder !== 'object') return;
     const folder = rawFolder as Partial<LaunchpadFolder>;
-    if (!isGroupId(folder.groupId) || !Array.isArray(folder.appIds)) return;
+    if (!isGroupId(folder.groupId, groupIds) || !Array.isArray(folder.appIds)) return;
 
     const appIds = unique(
       folder.appIds.filter((id): id is string => typeof id === 'string')
@@ -369,11 +482,11 @@ export function reconcileLaunchpadLayout(
     };
   });
 
-  const groups = emptyGroups();
+  const groups = emptyGroups(groupIds);
   const usedTopLevelApps = new Set<string>();
   const usedFolders = new Set<string>();
 
-  GROUP_IDS.forEach((groupId) => {
+  groupIds.forEach((groupId) => {
     const rawItems = candidate.groups?.[groupId];
     if (!Array.isArray(rawItems)) return;
 
@@ -404,7 +517,7 @@ export function reconcileLaunchpadLayout(
   });
   apps.forEach((app) => {
     if (!hiddenApps.has(app.id) && !claimedApps.has(app.id) && !usedTopLevelApps.has(app.id)) {
-      groups[app.groupId].push(app.id);
+      (groups[app.groupId] ?? groups[groupIds[0]!]!).push(app.id);
     }
   });
 
@@ -418,6 +531,7 @@ export function moveLaunchpadItem(
   overId: string
 ): LaunchpadLayout {
   const items = layout.groups[groupId];
+  if (!items) return layout;
   const activeIndex = items.indexOf(activeId);
   const overIndex = items.indexOf(overId);
   if (activeIndex < 0 || overIndex < 0 || activeIndex === overIndex) return layout;
@@ -437,6 +551,8 @@ export function moveLaunchpadItemToGroup(
   overId?: string
 ): LaunchpadLayout {
   const sourceItems = layout.groups[sourceGroupId];
+  const targetItems = layout.groups[targetGroupId];
+  if (!sourceItems || !targetItems) return layout;
   const activeIndex = sourceItems.indexOf(activeId);
   if (activeIndex < 0) return layout;
 
@@ -445,7 +561,6 @@ export function moveLaunchpadItemToGroup(
   }
   if (sourceGroupId === targetGroupId && sourceItems.at(-1) === activeId) return layout;
 
-  const targetItems = layout.groups[targetGroupId];
   const targetIndex = overId ? targetItems.indexOf(overId) : targetItems.length;
   if (overId && targetIndex < 0) return layout;
 
@@ -473,15 +588,18 @@ export function createLaunchpadFolder(
   ) {
     return layout;
   }
-  const firstGroupId = GROUP_IDS.find((candidate) => layout.groups[candidate].includes(firstAppId));
-  const secondIndex = layout.groups[groupId].indexOf(secondAppId);
+  const groupIds = Object.keys(layout.groups);
+  const targetItems = layout.groups[groupId];
+  if (!targetItems) return layout;
+  const firstGroupId = groupIds.find((candidate) => layout.groups[candidate]?.includes(firstAppId));
+  const secondIndex = targetItems.indexOf(secondAppId);
   if (!firstGroupId || secondIndex < 0) return layout;
 
   const next = copyLayout(layout);
   const insertAt = layout.groups[groupId]
     .slice(0, secondIndex)
     .filter((itemId) => itemId !== firstAppId).length;
-  GROUP_IDS.forEach((candidate) => {
+  groupIds.forEach((candidate) => {
     next.groups[candidate] = next.groups[candidate].filter(
       (itemId) => itemId !== firstAppId && itemId !== secondAppId
     );
@@ -503,10 +621,11 @@ export function addAppToLaunchpadFolder(
 ): LaunchpadLayout {
   const folder = layout.folders[folderId];
   if (!folder || layout.folders[appId] || folder.appIds.includes(appId)) return layout;
-  if (!GROUP_IDS.some((groupId) => layout.groups[groupId].includes(appId))) return layout;
+  const groupIds = Object.keys(layout.groups);
+  if (!groupIds.some((groupId) => layout.groups[groupId]?.includes(appId))) return layout;
 
   const next = copyLayout(layout);
-  GROUP_IDS.forEach((groupId) => {
+  groupIds.forEach((groupId) => {
     next.groups[groupId] = next.groups[groupId].filter((itemId) => itemId !== appId);
   });
   next.folders[folderId]?.appIds.push(appId);
@@ -542,7 +661,7 @@ export function hideLaunchpadApp(layout: LaunchpadLayout, appId: string): Launch
   const next = copyLayout(layout);
   let removed = false;
 
-  HOME_APP_GROUPS.forEach(({ id: groupId }) => {
+  Object.keys(next.groups).forEach((groupId) => {
     if (!next.groups[groupId].includes(appId)) return;
     next.groups[groupId] = next.groups[groupId].filter((itemId) => itemId !== appId);
     removed = true;
@@ -573,7 +692,9 @@ export function restoreLaunchpadApp(
   if (!layout.hiddenAppIds.includes(app.id)) return layout;
   const next = copyLayout(layout);
   next.hiddenAppIds = next.hiddenAppIds.filter((appId) => appId !== app.id);
-  next.groups[app.groupId].push(app.id);
+  const targetGroup = next.groups[app.groupId] ?? next.groups[Object.keys(next.groups)[0] ?? ''];
+  if (!targetGroup) return layout;
+  targetGroup.push(app.id);
   return next;
 }
 

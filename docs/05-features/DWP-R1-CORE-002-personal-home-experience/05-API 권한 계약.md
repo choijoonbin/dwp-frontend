@@ -4,10 +4,13 @@
 
 | Method | Path                                                             | 권한                | 목적                          |
 | ------ | ---------------------------------------------------------------- | ------------------- | ----------------------------- |
+| GET    | `/api/platform/v1/home/overview`                                 | 로그인 사용자       | 권한 범위 Home 통합 조회      |
+| POST   | `/api/platform/v1/home/recommendations/{key}/feedback`           | 로그인 사용자, CSRF | 명시적 추천 피드백 기록       |
 | GET    | `/api/platform/v1/home-experience`                               | 로그인 사용자       | Tenant Home 설정 조회         |
 | GET    | `/api/platform/v1/home-experience/background?v={version}`        | 로그인 사용자       | Tenant Background 전송        |
 | GET    | `/api/platform/v1/admin/home-experience`                         | Tenant Admin        | 관리 상세 조회                |
 | PUT    | `/api/platform/v1/admin/home-experience`                         | Tenant Admin, CSRF  | Locale 문구·위치·Overlay 게시 |
+| PUT    | `/api/platform/v1/admin/home-experience/launchpad`               | Tenant Admin, CSRF  | Home 영역·기본 App 배치 게시  |
 | POST   | `/api/platform/v1/admin/home-experience/background?version={n}`  | Tenant Admin, CSRF  | 이미지 교체                   |
 | POST   | `/api/platform/v1/admin/home-experience/background/reset`        | Tenant Admin, CSRF  | Built-in 기본값 복원          |
 | GET    | `/api/platform/v1/admin/home-experience/revisions`               | Tenant Admin        | 불변 게시 이력                |
@@ -35,6 +38,19 @@
 `GET /home-preferences`는 저장된 개인 설정이 없어도 관리형 기본 Layout을 반환한다. 응답의
 `customized=false`는 기본값, `customized=true`는 저장된 사용자 설정을 뜻한다. 최초 저장의
 `version`도 `0`일 수 있으므로 Reset 가능 여부는 `customized`로 판단한다.
+
+`GET /home-experience`는 Tenant `launchpadConfiguration`을 함께 반환한다. Runtime은 이 설정을
+App Registry와 결합한 뒤 RBAC Entitlement를 적용하고, 마지막으로 개인 Layout을 조정한다.
+`PUT /admin/home-experience/launchpad`는 현재 Aggregate `version`을 요구하며 게시 성공 시
+Revision과 Durable Audit Event를 남긴다.
+
+`GET /home/overview`는 Work, Calendar, Communications와 Activity를 한 번에 조합하지만
+각 Section은 `AVAILABLE|FORBIDDEN|UNAVAILABLE` 상태를 독립적으로 가진다. 한 원천의 장애나
+권한 거부가 Home 전체 실패로 승격되지 않는다. 응답의 Audience와 Recommendation에는 적용한
+규칙 버전, 노출 사유, 원천, 근거 수와 신뢰도가 포함된다.
+
+추천 피드백 요청은 `feedbackType`만 받는다. 원천과 규칙 버전은 클라이언트 값을 신뢰하지
+않고 서버의 등록된 Recommendation Catalog에서 결정하며, 미등록 Key는 `404`로 거부한다.
 
 ## 2. 인증·Tenant
 

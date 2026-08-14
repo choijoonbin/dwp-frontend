@@ -33,6 +33,46 @@ export function AutocompleteField<T>({
         <TextField
           {...params}
           {...textFieldProps}
+          InputProps={params.InputProps as TextFieldProps['InputProps']}
+          fullWidth={textFieldProps?.fullWidth ?? true}
+          label={label}
+          required={required}
+          error={Boolean(errorMessage)}
+          helperText={resolveFieldFeedback({ errorMessage, supportingText, reserveFeedbackSpace })}
+        />
+      )}
+    />
+  );
+}
+
+export type AutocompleteMultiFieldProps<T> = Omit<
+  AutocompleteProps<T, true, false, false>,
+  'renderInput'
+> &
+  FieldFeedbackProps & {
+    label: string;
+    required?: boolean;
+    textFieldProps?: Omit<TextFieldProps, 'error' | 'helperText' | 'label' | 'required'>;
+  };
+
+export function AutocompleteMultiField<T>({
+  label,
+  required = false,
+  supportingText,
+  errorMessage,
+  reserveFeedbackSpace = false,
+  textFieldProps,
+  ...props
+}: AutocompleteMultiFieldProps<T>) {
+  return (
+    <Autocomplete
+      {...props}
+      multiple
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          {...textFieldProps}
+          InputProps={params.InputProps as TextFieldProps['InputProps']}
           fullWidth={textFieldProps?.fullWidth ?? true}
           label={label}
           required={required}

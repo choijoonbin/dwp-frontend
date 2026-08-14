@@ -74,8 +74,17 @@ export function PageHeader({ eyebrow, title, description, action }: PageHeaderPr
 
 export function SectionHeading({ id, icon: Icon, title, meta }: SectionHeadingProps) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 2,
+        '& > :last-child': { maxWidth: '100%' },
+      }}
+    >
+      <Box sx={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: 1 }}>
         <GlyphSurface size={30} variant="soft">
           <Icon size={17} strokeWidth={1.8} />
         </GlyphSurface>

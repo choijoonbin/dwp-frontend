@@ -1,42 +1,36 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ArrowRight,
-  CheckCircle2,
-  CircleAlert,
-  Clock3,
-  ListChecks,
-  TimerReset,
-} from 'lucide-react';
+import { Clock3 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getHomeExperience,
   getHomePreference,
-  getCommunicationFeed,
+  getHomeOverview,
   getWorkspaceApps,
-  getWorkspaceWorkQueue,
   launchWorkspaceApp,
-  resolveHomeBackgroundUrl,
+  readRegionalPreference,
+  recordHomeRecommendationFeedback,
   updateHomePreference,
   useAuth,
   usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { ActionButton, PageCanvas } from '@dwp-frontend/design-system';
+import { PageCanvas } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { AppLaunchpad } from '../features/home/app-launchpad';
 import { AnnouncementsWidget } from '../features/home/announcements-widget';
-import { HomeEditToolbar } from '../features/home/home-edit-toolbar';
 import { HomeItemGallery } from '../features/home/home-item-gallery';
-import { HomeWidgetLayout } from '../features/home/home-widget-layout';
+import { HomeDayRail } from '../features/home/home-day-rail';
+import { HomeQuickApps } from '../features/home/home-quick-apps';
+import { WorkspaceWidgetCanvas } from '../components/workspace-composer/workspace-widget-canvas';
+import { WorkspaceComposerToolbar } from '../components/workspace-composer/workspace-composer-toolbar';
 import {
+  HOME_WIDGET_REGISTRY,
   HOME_WIDGET_KEYS,
   defaultHomeWidgets,
   reconcileHomeWidgets,
@@ -48,17 +42,21 @@ import {
   FocusWidget,
   ScheduleWidget,
 } from '../features/home/home-widgets';
+import type { HomeOverviewWidgetProps } from '../features/home/home-widgets';
 import {
   createDefaultLaunchpadLayout,
   isAppEntitled,
   localizeHomeApps,
   reconcileLaunchpadLayout,
+  resolveHomeLaunchpadCatalog,
   restoreLaunchpadApp,
 } from '../features/home/app-launchpad-model';
 import { useSystemCodeOptions } from '../components/use-system-code-options';
 
 import type {
   HomePreferenceLayout,
+  HomePresentation,
+  HomeRecommendation,
   HomeWidgetKey,
   HomeWidgetPreference,
 } from '@dwp-frontend/shared-utils';
@@ -66,18 +64,21 @@ import type { LaunchpadLayout } from '../features/home/app-launchpad-model';
 
 type PreferenceMutation = { layout: HomePreferenceLayout };
 
-function HomeWidget({ widgetKey }: { widgetKey: HomeWidgetKey }) {
+function HomeWidget({
+  widgetKey,
+  ...overviewProps
+}: { widgetKey: HomeWidgetKey } & HomeOverviewWidgetProps) {
   switch (widgetKey) {
     case 'announcements':
-      return <AnnouncementsWidget />;
+      return <AnnouncementsWidget {...overviewProps} />;
     case 'daily-brief':
-      return <DailyBriefWidget />;
+      return <DailyBriefWidget {...overviewProps} />;
     case 'focus':
-      return <FocusWidget />;
+      return <FocusWidget {...overviewProps} />;
     case 'schedule':
-      return <ScheduleWidget />;
+      return <ScheduleWidget {...overviewProps} />;
     case 'activity':
-      return <ActivityWidget />;
+      return <ActivityWidget {...overviewProps} />;
   }
 }
 
@@ -104,39 +105,69 @@ export default function HomePage() {
     }
   };
   const firstName = auth.user?.displayName?.split(' ')[0];
-  const communicationsSummaryQuery = useQuery({
-    queryKey: ['communications', 'feed', 'for-you', '', 'ALL', 24],
-    queryFn: () => getCommunicationFeed({ scope: 'for-you', type: 'ALL', size: 24 }),
+  const timeZone = useMemo(() => {
+    const preference = readRegionalPreference().timeZone;
+    return preference === 'system'
+      ? Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul'
+      : preference;
+  }, []);
+  const homeOverviewQueryKey = [
+    'home-overview',
+    auth.user?.tenantId,
+    auth.user?.userId,
+    timeZone,
+  ] as const;
+  const homeOverviewQuery = useQuery({
+    queryKey: homeOverviewQueryKey,
+    queryFn: () => getHomeOverview(timeZone),
     staleTime: 30_000,
     retry: 1,
   });
-  const entitledApps = useMemo(
-    () =>
-      localizeHomeApps(t)
-        .map((app) =>
-          app.id === 'dwp-communications' &&
-          (communicationsSummaryQuery.data?.summary.unread ?? 0) > 0
-            ? {
-                ...app,
-                badge: String(Math.min(99, communicationsSummaryQuery.data?.summary.unread ?? 0)),
-              }
-            : app
-        )
-        .filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
-    [auth.user?.roles, communicationsSummaryQuery.data?.summary.unread, permissions, t]
-  );
-  const [draftAppLayout, setDraftAppLayout] = useState<LaunchpadLayout>(() =>
-    createDefaultLaunchpadLayout(entitledApps)
-  );
-  const [draftWidgets, setDraftWidgets] = useState<HomeWidgetPreference[]>(() =>
-    defaultHomeWidgets(registeredWidgetKeys)
-  );
   const homeExperienceQuery = useQuery({
     queryKey: ['home-experience', auth.user?.tenantId],
     queryFn: getHomeExperience,
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });
+  const launchpadCatalog = useMemo(
+    () =>
+      resolveHomeLaunchpadCatalog(
+        localizeHomeApps(t),
+        homeExperienceQuery.data?.launchpadConfiguration,
+        i18n.resolvedLanguage || i18n.language || 'en',
+        t
+      ),
+    [homeExperienceQuery.data?.launchpadConfiguration, i18n.language, i18n.resolvedLanguage, t]
+  );
+  const entitledApps = useMemo(
+    () =>
+      launchpadCatalog.apps
+        .map((app) =>
+          app.id === 'dwp-communications' &&
+          (homeOverviewQuery.data?.communications.data?.summary.unread ?? 0) > 0
+            ? {
+                ...app,
+                badge: String(
+                  Math.min(99, homeOverviewQuery.data?.communications.data?.summary.unread ?? 0)
+                ),
+              }
+            : app
+        )
+        .filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
+    [
+      auth.user?.roles,
+      homeOverviewQuery.data?.communications.data?.summary.unread,
+      launchpadCatalog.apps,
+      permissions,
+    ]
+  );
+  const [draftAppLayout, setDraftAppLayout] = useState<LaunchpadLayout>(() =>
+    createDefaultLaunchpadLayout(entitledApps, launchpadCatalog.groups)
+  );
+  const [draftWidgets, setDraftWidgets] = useState<HomeWidgetPreference[]>(() =>
+    defaultHomeWidgets(registeredWidgetKeys)
+  );
+  const [draftPresentation, setDraftPresentation] = useState<HomePresentation>('balanced');
   const homePreferenceQuery = useQuery({
     queryKey: ['home-preference', auth.user?.tenantId, auth.user?.userId],
     queryFn: getHomePreference,
@@ -147,12 +178,6 @@ export default function HomePage() {
     queryKey: ['workspace', 'apps'],
     queryFn: getWorkspaceApps,
     staleTime: 60_000,
-    retry: 1,
-  });
-  const workQueueQuery = useQuery({
-    queryKey: ['workspace', 'work-queue'],
-    queryFn: getWorkspaceWorkQueue,
-    staleTime: 30_000,
     retry: 1,
   });
   const homeExperience = homeExperienceQuery.data;
@@ -168,17 +193,34 @@ export default function HomePage() {
     );
   }, [homeExperience, i18n.language, i18n.resolvedLanguage]);
   const homePreference = homePreferenceQuery.data;
+  const audienceProfile = homeOverviewQuery.data?.audience.profile ?? 'MEMBER';
   const widgetPreferences = useMemo(
-    () => reconcileHomeWidgets(homePreference?.layout.widgets, registeredWidgetKeys),
-    [homePreference?.layout.widgets, registeredWidgetKeys]
+    () =>
+      homePreference?.customized
+        ? reconcileHomeWidgets(homePreference.layout.widgets, registeredWidgetKeys, audienceProfile)
+        : defaultHomeWidgets(registeredWidgetKeys, audienceProfile),
+    [
+      audienceProfile,
+      homePreference?.customized,
+      homePreference?.layout.widgets,
+      registeredWidgetKeys,
+    ]
   );
   const appLayout = useMemo(
-    () => reconcileLaunchpadLayout(homePreference?.layout.appLayout, entitledApps),
-    [entitledApps, homePreference?.layout.appLayout]
+    () =>
+      reconcileLaunchpadLayout(
+        homePreference?.layout.appLayout,
+        entitledApps,
+        launchpadCatalog.groups
+      ),
+    [entitledApps, homePreference?.layout.appLayout, launchpadCatalog.groups]
   );
   const preferenceVersion = homePreference?.version ?? 0;
   const activeAppLayout = editorOpen ? draftAppLayout : appLayout;
   const activeWidgets = editorOpen ? draftWidgets : widgetPreferences;
+  const activePresentation = editorOpen
+    ? draftPresentation
+    : (homePreference?.layout.presentation ?? 'balanced');
   const hiddenApps = useMemo(
     () =>
       activeAppLayout.hiddenAppIds
@@ -194,11 +236,13 @@ export default function HomePage() {
     if (!editorOpen) {
       setDraftAppLayout(appLayout);
       setDraftWidgets(widgetPreferences);
+      setDraftPresentation(homePreference?.layout.presentation ?? 'balanced');
       return;
     }
     if (editBaseVersion === null && !homePreferenceQuery.isLoading) {
       setDraftAppLayout(appLayout);
       setDraftWidgets(widgetPreferences);
+      setDraftPresentation(homePreference?.layout.presentation ?? 'balanced');
       setEditBaseVersion(preferenceVersion);
     }
   }, [
@@ -206,6 +250,7 @@ export default function HomePage() {
     editBaseVersion,
     editorOpen,
     homePreferenceQuery.isLoading,
+    homePreference?.layout.presentation,
     preferenceVersion,
     widgetPreferences,
   ]);
@@ -214,6 +259,7 @@ export default function HomePage() {
     if (homePreferenceQuery.isLoading) return;
     setDraftAppLayout(appLayout);
     setDraftWidgets(widgetPreferences);
+    setDraftPresentation(homePreference?.layout.presentation ?? 'balanced');
     setEditBaseVersion(preferenceVersion);
     setEditorOpen(true);
   };
@@ -221,6 +267,7 @@ export default function HomePage() {
   const cancelEditing = () => {
     setDraftAppLayout(appLayout);
     setDraftWidgets(widgetPreferences);
+    setDraftPresentation(homePreference?.layout.presentation ?? 'balanced');
     closeEditor();
   };
 
@@ -244,62 +291,53 @@ export default function HomePage() {
     },
     onError: () => toast.error(t('page.appLaunchError')),
   });
+  const recommendationFeedbackMutation = useMutation({
+    mutationFn: (recommendation: HomeRecommendation) =>
+      recordHomeRecommendationFeedback(recommendation.key, 'NOT_RELEVANT'),
+    onSuccess: async (_, recommendation) => {
+      queryClient.setQueryData<typeof homeOverviewQuery.data>(homeOverviewQueryKey, (current) =>
+        current
+          ? {
+              ...current,
+              recommendations: current.recommendations.filter(
+                (candidate) => candidate.key !== recommendation.key
+              ),
+            }
+          : current
+      );
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'audit-events'] });
+      toast.success(t('page.recommendationHidden'));
+    },
+    onError: () => toast.error(t('page.recommendationFeedbackError')),
+  });
   const customizationBusy = homePreferenceQuery.isLoading || preferenceMutation.isPending;
 
   const saveHome = () => {
     preferenceMutation.mutate({
-      layout: { appLayout: draftAppLayout, widgets: draftWidgets },
+      layout: {
+        appLayout: draftAppLayout,
+        presentation: draftPresentation,
+        widgets: draftWidgets,
+      },
     });
   };
 
   const resetDraft = () => {
-    setDraftAppLayout(createDefaultLaunchpadLayout(entitledApps));
-    setDraftWidgets(defaultHomeWidgets(registeredWidgetKeys));
+    setDraftAppLayout(createDefaultLaunchpadLayout(entitledApps, launchpadCatalog.groups));
+    setDraftWidgets(defaultHomeWidgets(registeredWidgetKeys, audienceProfile));
+    setDraftPresentation('balanced');
   };
 
-  const backgroundUrl = resolveHomeBackgroundUrl(homeExperience);
-  const backgroundPosition = homeExperience?.backgroundUrl
-    ? `${homeExperience.backgroundPosition.toLowerCase()} center`
-    : 'right center';
-  const backgroundSize = homeExperience?.backgroundUrl ? 'cover' : { xs: 'cover', md: '195% auto' };
-  const overlayOpacity = (homeExperience?.overlayOpacity ?? 18) / 100;
   const currentDate = formatDate(new Date(), { dateStyle: 'full' });
-  const workspaceUpdatedAt = workQueueQuery.data?.generatedAt
-    ? formatDate(new Date(workQueueQuery.data.generatedAt), {
-        hour: '2-digit',
-        minute: '2-digit',
-      })
-    : '-';
+  const workQueue = homeOverviewQuery.data?.work.data;
+  const workspaceUpdatedAt =
+    workQueue?.generatedAt || homeOverviewQuery.data?.generatedAt
+      ? formatDate(new Date(workQueue?.generatedAt || homeOverviewQuery.data!.generatedAt), {
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : '-';
   const runtimeAppById = new Map((workspaceAppsQuery.data ?? []).map((app) => [app.id, app]));
-  const activeWorkItems = useMemo(
-    () =>
-      [...(workQueueQuery.data?.items ?? [])]
-        .filter((item) => item.status !== 'completed')
-        .sort((left, right) => {
-          const statusOrder = { 'due-soon': 0, 'in-progress': 1, waiting: 2, completed: 3 };
-          const priorityOrder = { high: 0, medium: 1, low: 2 };
-          return (
-            statusOrder[left.status] - statusOrder[right.status] ||
-            priorityOrder[left.priority] - priorityOrder[right.priority] ||
-            new Date(left.dueAt ?? '9999-12-31').getTime() -
-              new Date(right.dueAt ?? '9999-12-31').getTime()
-          );
-        }),
-    [workQueueQuery.data?.items]
-  );
-  const topPriority = activeWorkItems[0];
-  const workSummary = workQueueQuery.data?.summary;
-  const commandSignals = [
-    {
-      key: 'open',
-      value: Math.max(0, (workSummary?.total ?? 0) - (workSummary?.completed ?? 0)),
-      icon: ListChecks,
-      color: '#7DB7FF',
-    },
-    { key: 'dueSoon', value: workSummary?.dueSoon ?? 0, icon: TimerReset, color: '#F8C15C' },
-    { key: 'inProgress', value: workSummary?.inProgress ?? 0, icon: Clock3, color: '#6FE0C1' },
-    { key: 'waiting', value: workSummary?.waiting ?? 0, icon: CircleAlert, color: '#FF9A8B' },
-  ] as const;
   const launchApp = (app: (typeof entitledApps)[number]) => {
     const runtimeApp = runtimeAppById.get(app.id);
     if (!runtimeApp) {
@@ -315,229 +353,50 @@ export default function HomePage() {
 
   return (
     <Box>
-      <Box
-        component="section"
-        aria-label={t('page.personalWorkspace')}
-        data-testid="home-command-center"
-        sx={{
-          position: 'relative',
-          py: { xs: 3, md: 4 },
-          overflow: 'hidden',
-          isolation: 'isolate',
-          bgcolor: '#07163D',
-          backgroundImage: `url(${backgroundUrl})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition,
-          backgroundSize,
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            inset: 0,
-            bgcolor: `rgba(2, 10, 34, ${overlayOpacity})`,
-            pointerEvents: 'none',
-          },
-        }}
-      >
-        <Box
-          sx={{
-            position: 'relative',
-            zIndex: 1,
-            width: 'calc(100% - 32px)',
-            maxWidth: 1600,
-            mx: 'auto',
-            px: { xs: 0, md: 2 },
-            color: 'common.white',
-          }}
-        >
-          <Stack
-            direction={{ xs: 'column', md: 'row' }}
-            alignItems={{ xs: 'stretch', md: 'flex-end' }}
-            justifyContent="space-between"
-            gap={2}
-          >
-            <Box minWidth={0}>
-              <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.74)' }}>
-                {currentDate}
-              </Typography>
-              <Typography component="h1" variant="h4" sx={{ mt: 0.25, color: 'common.white' }}>
-                {localizedHomeCopy?.headline ||
-                  homeExperience?.headline ||
-                  (firstName ? t('page.welcomeName', { name: firstName }) : t('page.welcome'))}
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{ mt: 0.75, maxWidth: 720, color: 'rgba(255,255,255,0.78)' }}
-              >
-                {localizedHomeCopy?.subheadline ||
-                  homeExperience?.subheadline ||
-                  t('page.commandDescription')}
-              </Typography>
-            </Box>
-            <Chip
-              size="small"
-              variant="outlined"
-              label={t('page.updatedAt', { time: workspaceUpdatedAt })}
-              sx={{
-                alignSelf: { xs: 'flex-start', md: 'flex-end' },
-                color: 'common.white',
-                borderColor: 'rgba(255,255,255,0.42)',
-                bgcolor: 'rgba(2,10,34,0.28)',
-              }}
-            />
-          </Stack>
-
-          <Box
-            sx={{
-              mt: { xs: 2.5, md: 3 },
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 7fr) minmax(420px, 5fr)' },
-              borderTop: '1px solid rgba(255,255,255,0.26)',
-              borderBottom: '1px solid rgba(255,255,255,0.26)',
-              bgcolor: 'rgba(2,10,34,0.36)',
-            }}
-          >
-            <Box sx={{ p: { xs: 2, md: 2.5 }, minWidth: 0 }}>
-              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.68)' }}>
-                {t('page.nextPriority')}
-              </Typography>
-              {workQueueQuery.isLoading ? (
-                <Typography variant="body2" sx={{ mt: 1.25, color: 'rgba(255,255,255,0.78)' }}>
-                  {t('page.loadingPriorities')}
-                </Typography>
-              ) : workQueueQuery.isError ? (
-                <Stack alignItems="flex-start" gap={1} sx={{ mt: 1 }}>
-                  <Typography variant="body2" sx={{ color: '#FFD5CE' }}>
-                    {t('page.priorityLoadError')}
-                  </Typography>
-                  <ActionButton
-                    size="small"
-                    intent="secondary"
-                    onClick={() => void workQueueQuery.refetch()}
-                    sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.52)' }}
-                  >
-                    {t('page.retry')}
-                  </ActionButton>
-                </Stack>
-              ) : topPriority ? (
-                <Stack
-                  direction={{ xs: 'column', sm: 'row' }}
-                  alignItems={{ xs: 'stretch', sm: 'center' }}
-                  gap={2}
-                  sx={{ mt: 0.75 }}
-                >
-                  <Box minWidth={0} flex={1}>
-                    <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
-                      <Chip
-                        size="small"
-                        label={topPriority.type}
-                        sx={{ color: '#07163D', bgcolor: '#E7F0FF' }}
-                      />
-                      <Chip
-                        size="small"
-                        variant="outlined"
-                        label={t(`page.priority.${topPriority.priority}`)}
-                        sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.42)' }}
-                      />
-                      {topPriority.dueAt && (
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                          {formatDate(topPriority.dueAt, {
-                            dateStyle: 'medium',
-                            timeStyle: 'short',
-                          })}
-                        </Typography>
-                      )}
-                    </Stack>
-                    <Typography component="h2" variant="h6" sx={{ mt: 1, color: 'common.white' }}>
-                      {topPriority.title}
-                    </Typography>
-                    <Typography variant="body2" sx={{ mt: 0.35, color: 'rgba(255,255,255,0.76)' }}>
-                      {topPriority.reason ?? topPriority.summary}
-                    </Typography>
-                  </Box>
-                  <ActionButton
-                    intent="primary"
-                    endIcon={<ArrowRight size={17} aria-hidden="true" />}
-                    onClick={() => navigate(`/work?item=${encodeURIComponent(topPriority.id)}`)}
-                    sx={{ flexShrink: 0, alignSelf: { xs: 'flex-start', sm: 'center' } }}
-                  >
-                    {t('page.openPriority')}
-                  </ActionButton>
-                </Stack>
-              ) : (
-                <Stack direction="row" alignItems="center" gap={1} sx={{ mt: 1 }}>
-                  <CheckCircle2 size={20} color="#6FE0C1" aria-hidden="true" />
-                  <Box>
-                    <Typography variant="body2" fontWeight={700} color="common.white">
-                      {t('page.clearTitle')}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                      {t('page.clearDescription')}
-                    </Typography>
-                  </Box>
-                </Stack>
-              )}
-            </Box>
-
-            <Box
-              component="section"
-              aria-label={t('page.commandSignals')}
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                borderTop: { xs: '1px solid rgba(255,255,255,0.22)', lg: 0 },
-                borderLeft: { lg: '1px solid rgba(255,255,255,0.22)' },
-              }}
-            >
-              {commandSignals.map(({ key, value, icon: SignalIcon, color }, index) => (
-                <Stack
-                  key={key}
-                  direction="row"
-                  alignItems="center"
-                  gap={1}
-                  sx={{
-                    minWidth: 0,
-                    p: { xs: 1.5, md: 2 },
-                    borderRight: index % 2 === 0 ? '1px solid rgba(255,255,255,0.18)' : undefined,
-                    borderBottom: index < 2 ? '1px solid rgba(255,255,255,0.18)' : undefined,
-                  }}
-                >
-                  <SignalIcon size={18} color={color} aria-hidden="true" />
-                  <Box minWidth={0}>
-                    <Typography
-                      component="p"
-                      variant="h6"
-                      sx={{ color: 'common.white', fontVariantNumeric: 'tabular-nums' }}
-                    >
-                      {value}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.68)' }}>
-                      {t(`page.signals.${key}`)}
-                    </Typography>
-                  </Box>
-                </Stack>
-              ))}
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+      <HomeDayRail
+        overview={homeOverviewQuery.data}
+        loading={homeOverviewQuery.isLoading}
+        fetching={homeOverviewQuery.isFetching}
+        requestFailed={homeOverviewQuery.isError}
+        currentDate={currentDate}
+        updatedAt={workspaceUpdatedAt}
+        headline={
+          localizedHomeCopy?.headline ||
+          homeExperience?.headline ||
+          (firstName ? t('page.welcomeName', { name: firstName }) : t('page.welcome'))
+        }
+        subheadline={
+          localizedHomeCopy?.subheadline ||
+          homeExperience?.subheadline ||
+          t('page.commandDescription')
+        }
+        onRetry={() => void homeOverviewQuery.refetch()}
+        feedbackBusy={recommendationFeedbackMutation.isPending}
+        onRecommendationFeedback={(recommendation) =>
+          recommendationFeedbackMutation.mutate(recommendation)
+        }
+      />
 
       <PageCanvas>
-        <AppLaunchpad
-          apps={entitledApps}
-          layout={activeAppLayout}
-          editing={editorOpen}
-          title={t('page.appsTitle')}
-          description={t('page.appsDescription')}
-          customizationBusy={customizationBusy}
-          onStartEditing={beginEditing}
-          onLayoutChange={setDraftAppLayout}
-          onLaunch={launchApp}
-          onBrowseAll={() => navigate('/apps')}
-        />
+        {editorOpen && (
+          <AppLaunchpad
+            apps={entitledApps}
+            groups={launchpadCatalog.groups}
+            layout={activeAppLayout}
+            editing
+            title={t('page.appsTitle')}
+            description={t('page.appsDescription')}
+            customizationBusy={customizationBusy}
+            onStartEditing={beginEditing}
+            onLayoutChange={setDraftAppLayout}
+            onLaunch={launchApp}
+            onBrowseAll={() => navigate('/apps')}
+          />
+        )}
 
         <Box
           sx={{
-            mt: 4,
+            mt: editorOpen ? 4 : 0,
             display: 'flex',
             alignItems: 'baseline',
             justifyContent: 'space-between',
@@ -553,13 +412,42 @@ export default function HomePage() {
           </Typography>
         </Box>
 
-        <HomeWidgetLayout
+        <WorkspaceWidgetCanvas
+          registry={HOME_WIDGET_REGISTRY}
           widgets={activeWidgets}
           editing={editorOpen}
           busy={customizationBusy}
+          presentation={activePresentation}
+          getLabel={(widgetKey) => t(`widgets.registry.${widgetKey}.label`)}
           onChange={setDraftWidgets}
-          renderWidget={(widgetKey) => <HomeWidget widgetKey={widgetKey} />}
+          renderWidget={(widgetKey) => (
+            <HomeWidget
+              widgetKey={widgetKey}
+              overview={homeOverviewQuery.data}
+              loading={homeOverviewQuery.isLoading}
+              fetching={homeOverviewQuery.isFetching}
+              requestFailed={homeOverviewQuery.isError}
+              onRetry={() => void homeOverviewQuery.refetch()}
+              feedbackBusy={recommendationFeedbackMutation.isPending}
+              onRecommendationFeedback={(recommendation) =>
+                recommendationFeedbackMutation.mutate(recommendation)
+              }
+            />
+          )}
         />
+
+        {!editorOpen && (
+          <HomeQuickApps
+            apps={entitledApps}
+            runtimeApps={workspaceAppsQuery.data ?? []}
+            layout={activeAppLayout}
+            busy={customizationBusy}
+            limit={activePresentation === 'focused' ? 4 : 6}
+            onLaunch={launchApp}
+            onBrowseAll={() => navigate('/apps')}
+            onEdit={beginEditing}
+          />
+        )}
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mt: 2 }}>
           <Clock3 size={15} aria-hidden="true" />
@@ -583,8 +471,10 @@ export default function HomePage() {
       />
 
       {editorOpen && (
-        <HomeEditToolbar
+        <WorkspaceComposerToolbar
+          presentation={draftPresentation}
           busy={customizationBusy}
+          onPresentationChange={setDraftPresentation}
           onAdd={() => setGalleryOpen(true)}
           onReset={resetDraft}
           onCancel={cancelEditing}

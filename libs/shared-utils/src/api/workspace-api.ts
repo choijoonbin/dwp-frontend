@@ -66,7 +66,12 @@ export type WorkspaceActivityFeed = {
 };
 
 export type WorkspaceAppCategory =
-  'productivity' | 'service' | 'people' | 'knowledge' | 'business' | 'legacy';
+  | 'productivity'
+  | 'service'
+  | 'people'
+  | 'knowledge'
+  | 'business'
+  | 'legacy';
 export type WorkspaceAppLaunchMode = 'Native' | 'SSO' | 'Deep link';
 export type WorkspaceAppHealth = 'healthy' | 'managed' | 'attention' | 'configuration-required';
 export type WorkspaceAppAccessState =
@@ -96,7 +101,13 @@ export type WorkspaceApp = {
   accessState: WorkspaceAppAccessState;
   accessRequestId?: string | null;
   accessRequestState?:
-    'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED' | 'REVOKED' | null;
+    | 'PENDING'
+    | 'APPROVED'
+    | 'REJECTED'
+    | 'CANCELLED'
+    | 'EXPIRED'
+    | 'REVOKED'
+    | null;
   accessRequestUpdatedAt?: string | null;
   accessRequestVersion?: number | null;
 };
@@ -136,20 +147,24 @@ export type WorkspaceAppLaunch = {
   launchedAt: string;
 };
 
-type RawWorkItem = Omit<WorkspaceWorkItem, 'type' | 'priority' | 'status'> & {
+export type RawWorkspaceWorkItem = Omit<WorkspaceWorkItem, 'type' | 'priority' | 'status'> & {
   type: 'APPROVAL' | 'TASK' | 'SERVICE' | 'REQUIRED';
   priority: 'HIGH' | 'MEDIUM' | 'LOW';
   status: 'DUE_SOON' | 'IN_PROGRESS' | 'WAITING' | 'COMPLETED';
 };
 
-type RawWorkQueue = Omit<WorkspaceWorkQueue, 'items'> & { items: RawWorkItem[] };
+export type RawWorkspaceWorkQueue = Omit<WorkspaceWorkQueue, 'items'> & {
+  items: RawWorkspaceWorkItem[];
+};
 
-type RawActivityEvent = Omit<WorkspaceActivityEvent, 'actor' | 'state'> & {
+export type RawWorkspaceActivityEvent = Omit<WorkspaceActivityEvent, 'actor' | 'state'> & {
   actor: 'AGENT' | 'PERSON' | 'SYSTEM';
   state: 'RUNNING' | 'NEEDS_INPUT' | 'COMPLETED' | 'POLICY_BLOCKED';
 };
 
-type RawActivityFeed = Omit<WorkspaceActivityFeed, 'events'> & { events: RawActivityEvent[] };
+export type RawWorkspaceActivityFeed = Omit<WorkspaceActivityFeed, 'events'> & {
+  events: RawWorkspaceActivityEvent[];
+};
 
 type RawWorkspaceApp = Omit<WorkspaceApp, 'category' | 'launchMode' | 'health'> & {
   category: Uppercase<WorkspaceAppCategory>;
@@ -157,33 +172,33 @@ type RawWorkspaceApp = Omit<WorkspaceApp, 'category' | 'launchMode' | 'health'> 
   health: 'HEALTHY' | 'MANAGED' | 'ATTENTION' | 'CONFIGURATION_REQUIRED';
 };
 
-const typeMap: Record<RawWorkItem['type'], WorkspaceWorkType> = {
+const typeMap: Record<RawWorkspaceWorkItem['type'], WorkspaceWorkType> = {
   APPROVAL: 'Approval',
   TASK: 'Task',
   SERVICE: 'Service',
   REQUIRED: 'Required',
 };
 
-const priorityMap: Record<RawWorkItem['priority'], WorkspacePriority> = {
+const priorityMap: Record<RawWorkspaceWorkItem['priority'], WorkspacePriority> = {
   HIGH: 'high',
   MEDIUM: 'medium',
   LOW: 'low',
 };
 
-const statusMap: Record<RawWorkItem['status'], WorkspaceWorkStatus> = {
+const statusMap: Record<RawWorkspaceWorkItem['status'], WorkspaceWorkStatus> = {
   DUE_SOON: 'due-soon',
   IN_PROGRESS: 'in-progress',
   WAITING: 'waiting',
   COMPLETED: 'completed',
 };
 
-const actorMap: Record<RawActivityEvent['actor'], WorkspaceActivityActor> = {
+const actorMap: Record<RawWorkspaceActivityEvent['actor'], WorkspaceActivityActor> = {
   AGENT: 'agent',
   PERSON: 'person',
   SYSTEM: 'system',
 };
 
-const activityStateMap: Record<RawActivityEvent['state'], WorkspaceActivityState> = {
+const activityStateMap: Record<RawWorkspaceActivityEvent['state'], WorkspaceActivityState> = {
   RUNNING: 'running',
   NEEDS_INPUT: 'needs-input',
   COMPLETED: 'completed',
@@ -203,7 +218,7 @@ const appHealthMap: Record<RawWorkspaceApp['health'], WorkspaceAppHealth> = {
   CONFIGURATION_REQUIRED: 'configuration-required',
 };
 
-function mapWorkItem(item: RawWorkItem): WorkspaceWorkItem {
+function mapWorkItem(item: RawWorkspaceWorkItem): WorkspaceWorkItem {
   return {
     ...item,
     type: typeMap[item.type],
@@ -212,7 +227,7 @@ function mapWorkItem(item: RawWorkItem): WorkspaceWorkItem {
   };
 }
 
-function mapActivityEvent(event: RawActivityEvent): WorkspaceActivityEvent {
+function mapActivityEvent(event: RawWorkspaceActivityEvent): WorkspaceActivityEvent {
   return {
     ...event,
     actor: actorMap[event.actor],
@@ -230,11 +245,15 @@ function mapApp(app: RawWorkspaceApp): WorkspaceApp {
 }
 
 export async function getWorkspaceWorkQueue(): Promise<WorkspaceWorkQueue> {
-  const response = await axiosInstance.get<ApiResponse<RawWorkQueue>>(
+  const response = await axiosInstance.get<ApiResponse<RawWorkspaceWorkQueue>>(
     '/api/platform/v1/workspace/work-items',
     { timeoutMs: 8000 }
   );
-  return { ...response.data.data, items: response.data.data.items.map(mapWorkItem) };
+  return normalizeWorkspaceWorkQueue(response.data.data);
+}
+
+export function normalizeWorkspaceWorkQueue(queue: RawWorkspaceWorkQueue): WorkspaceWorkQueue {
+  return { ...queue, items: queue.items.map(mapWorkItem) };
 }
 
 export async function updateWorkspaceWorkStatus(
@@ -243,7 +262,7 @@ export async function updateWorkspaceWorkStatus(
   version: number
 ): Promise<WorkspaceWorkItem> {
   const response = await axiosInstance.patch<
-    ApiResponse<RawWorkItem>,
+    ApiResponse<RawWorkspaceWorkItem>,
     { status: string; version: number }
   >(`/api/platform/v1/workspace/work-items/${encodeURIComponent(workItemId)}/status`, {
     status,
@@ -257,18 +276,24 @@ export async function updateWorkspaceWorkStatuses(
   status: 'IN_PROGRESS' | 'WAITING' | 'COMPLETED'
 ): Promise<WorkspaceWorkItem[]> {
   const response = await axiosInstance.patch<
-    ApiResponse<RawWorkItem[]>,
+    ApiResponse<RawWorkspaceWorkItem[]>,
     { items: Array<{ workItemId: string; version: number }>; status: string }
   >('/api/platform/v1/workspace/work-items/batch/status', { items, status });
   return response.data.data.map(mapWorkItem);
 }
 
 export async function getWorkspaceActivity(): Promise<WorkspaceActivityFeed> {
-  const response = await axiosInstance.get<ApiResponse<RawActivityFeed>>(
+  const response = await axiosInstance.get<ApiResponse<RawWorkspaceActivityFeed>>(
     '/api/platform/v1/workspace/activity',
     { timeoutMs: 8000 }
   );
-  return { ...response.data.data, events: response.data.data.events.map(mapActivityEvent) };
+  return normalizeWorkspaceActivityFeed(response.data.data);
+}
+
+export function normalizeWorkspaceActivityFeed(
+  feed: RawWorkspaceActivityFeed
+): WorkspaceActivityFeed {
+  return { ...feed, events: feed.events.map(mapActivityEvent) };
 }
 
 export async function getWorkspaceApps(): Promise<WorkspaceApp[]> {

@@ -9,7 +9,7 @@ const releaseMode = process.argv.includes('--release');
 const expected = {
   qualityGates: range('R2-', 1, 5),
   productionHardening: range('R3-', 1, 5),
-  externalDecisions: range('D-', 1, 17),
+  externalDecisions: range('D-', 1, 18),
   approvals: range('A-', 1, 5),
 };
 const allowedStates = new Set(['COMPLETE', 'BLOCKED_EXTERNAL', 'FEATURE_DISABLED']);

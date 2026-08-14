@@ -19,7 +19,7 @@ import {
   WalletCards,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   cancelServiceRequest,
   createServiceRequest,
@@ -168,11 +168,11 @@ function RequestDialog({
   }, [draft, service]);
   const valid = Boolean(
     summary.trim() &&
-    fields.every((field) => {
-      if (!field.required) return true;
-      const value = values[field.key];
-      return value !== undefined && value !== null && value !== '' && value !== false;
-    })
+      fields.every((field) => {
+        if (!field.required) return true;
+        const value = values[field.key];
+        return value !== undefined && value !== null && value !== '' && value !== false;
+      })
   );
   const mutation = useMutation({
     mutationFn: async ({ submit }: { submit: boolean }) => {
@@ -450,8 +450,9 @@ function ServiceCard({
 
 function DiscoverView() {
   const { t } = useTranslation('services');
+  const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState('');
-  const [categoryKey, setCategoryKey] = useState('ALL');
+  const [categoryKey, setCategoryKey] = useState(searchParams.get('category') ?? 'ALL');
   const [requesting, setRequesting] = useState<ServiceCatalogItem | null>(null);
   const catalog = useQuery({
     queryKey: ['services', 'catalog'],
@@ -477,6 +478,18 @@ function DiscoverView() {
     });
   }, [catalog.data?.items, categoryKey, query]);
   const featured = (catalog.data?.items ?? []).filter((item) => item.featured).slice(0, 4);
+
+  useEffect(() => {
+    const requestedService = searchParams.get('service');
+    if (!requestedService || !catalog.data) return;
+    const match = catalog.data.items.find((item) => item.serviceKey === requestedService);
+    if (!match) return;
+    setCategoryKey(match.categoryKey);
+    setRequesting(match);
+    const next = new URLSearchParams(searchParams);
+    next.delete('service');
+    setSearchParams(next, { replace: true });
+  }, [catalog.data, searchParams, setSearchParams]);
 
   return (
     <>

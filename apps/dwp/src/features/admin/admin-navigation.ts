@@ -8,6 +8,7 @@ import {
   FolderTree,
   Fingerprint,
   Image,
+  LayoutGrid,
   KeyRound,
   Megaphone,
   PlugZap,
@@ -28,11 +29,17 @@ import {
 import type { LucideIcon } from 'lucide-react';
 
 export type AdminSection =
-  'experience' | 'services' | 'identity' | 'platform' | 'integrations' | 'governance';
+  | 'experience'
+  | 'services'
+  | 'identity'
+  | 'platform'
+  | 'integrations'
+  | 'governance';
 
 export type AdminView =
   | 'branding'
   | 'home-experience'
+  | 'home-apps'
   | 'announcements'
   | 'preference-exceptions'
   | 'localization'
@@ -91,6 +98,12 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'home-experience',
         path: '/admin/experience/home-experience',
         icon: Image,
+      },
+      {
+        section: 'experience',
+        view: 'home-apps',
+        path: '/admin/experience/home-apps',
+        icon: LayoutGrid,
       },
       {
         section: 'experience',

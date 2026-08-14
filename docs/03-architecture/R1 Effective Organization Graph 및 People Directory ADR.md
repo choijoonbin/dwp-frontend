@@ -149,7 +149,7 @@ Interactive organization/reporting canvas              | Selection detail
 방향별로 고정해 Hover·상태·텍스트가 레이아웃을 밀지 않게 한다. 긴 이름은 노드에서 한 줄
 생략하고 상세 패널에서 전체를 제공한다. Zoom·Pan·Fit View·Mini Map을 기본 제공한다.
 
-Frontend는 `features/hris`가 제품 Shell·Home·역할 인지 Navigation을 조합하고,
+Frontend는 `features/hcm`이 제품 Shell·Home·역할 인지 Navigation을 조합하고,
 `features/people`, `features/workforce`, `features/integrations`는 각 도메인 화면 책임을
 유지한다. Backend는 `directory`, `organization`, `workforce`, `integration`, `security`
 package로 분리한다. HRIS Adapter는 연계 bounded context에 두되 권한이 있는 사용자의 HR

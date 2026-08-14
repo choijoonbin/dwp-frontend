@@ -49,20 +49,20 @@ Grid**를 배우고, PagerDuty·Grafana·Azure Workbooks의 **운영 판단과 �
 
 ## 4. HR 12개
 
-| 메뉴                                   | Archetype·밀도 판단                    | 고도화 방향                                                                                              | 우선순위 |
-| -------------------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------- |
-| HR 홈 `/hr/home`                       | Role-aware command center · Structured | 개인·Manager·HR Operator별 실제 Profile, Work Queue, 팀·동기화 Signal과 Quick Action을 한 시작점에 편집  | P0       |
-| 나의 HR `/hr/me`                       | Personal profile · Calm                | 시스템 원천 Profile과 조직·직책·Manager를 명료하게 보여주고 연결되지 않은 급여·휴가 기능을 합성하지 않음 | P1       |
-| 구성원 디렉터리 `/hr/directory`        | List-detail · Structured               | 역할별 Saved View, 사람 Peek, 조직·역량·위치 Filter, 연락·협업 Quick Action                              | P1       |
-| 조직 탐색 `/hr/organization`           | Graph explorer · Dense                 | 사용자 중심 Focus, 의미 기반 Zoom, Minimap, 경로 Highlight와 읽기 전용 공유 View                         | P0       |
-| 나의 팀 `/hr/team`                     | Manager workspace · Structured         | 실제 직속 구성원과 후속 작업을 연결하고 Manager가 아닌 사용자는 메뉴·직접 URL 모두 차단                  | P1       |
-| 인력 운영 `/hr/operations`             | Domain command center · Dense          | 증감·공석·위험·데이터 품질을 시간 기준으로 보여주고 모든 Signal을 사람·조직·실행으로 Drill-down          | P1       |
-| 구성원 관리 `/hr/operations/people`    | Enterprise grid + inspector · Dense    | Sticky 핵심 열, 열 Preset, Saved View, 일괄 작업, Governed Export와 사람 Inspector                       | P1       |
-| 발령 관리 `/hr/operations/assignments` | Timeline list-detail · Structured      | 현재/예정 발령, 겸직·공석·충돌 Signal, Effective Date Diff와 승인·취소 Timeline                          | P1       |
-| 조직 설계 `/hr/design/organization`    | Graph studio · Dense                   | Scenario Canvas, 제안·비교·비용/FTE 영향, 승인·게시와 대규모 Graph 성능                                  | P0       |
-| 기준정보 `/hr/data/reference`          | Catalog list-detail · Structured       | 소유자·원천·유효기간·동기화 상태, 소비 기능 영향, 변경 요청과 Version Diff                               | P2       |
-| 데이터 연계 `/hr/data/integrations`    | Integration workflow · Dense           | 연결 → Mapping → Dry run → 품질 검사 → Import → Reconciliation과 실행 증거                               | P1       |
-| 데이터 반출 `/hr/data/exports`         | Governed request queue · Dense         | Target Population·필드 정책·승인·수명주기·무결성 Evidence를 결속                                         | P1       |
+| 메뉴                                   | Archetype·밀도 판단                 | 고도화 방향                                                                                                             | 우선순위 |
+| -------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------- |
+| HR 홈 `/hr/home`                       | Role-aware people flow · Structured | 개인 홈의 범용 할 일을 반복하지 않고 실제 근무·휴가·급여·복리후생·성장 Insight와 역할별 Quick Action을 한 시작점에 편집 | P0       |
+| 나의 HR `/hr/me`                       | Personal profile · Calm             | 시스템 원천 Profile과 조직·직책·Manager를 명료하게 보여주고 연결되지 않은 급여·휴가 기능을 합성하지 않음                | P1       |
+| 구성원 디렉터리 `/hr/directory`        | List-detail · Structured            | 역할별 Saved View, 사람 Peek, 조직·역량·위치 Filter, 연락·협업 Quick Action                                             | P1       |
+| 조직 탐색 `/hr/organization`           | Graph explorer · Dense              | 사용자 중심 Focus, 의미 기반 Zoom, Minimap, 경로 Highlight와 읽기 전용 공유 View                                        | P0       |
+| 나의 팀 `/hr/team`                     | Manager workspace · Structured      | 실제 직속 구성원과 후속 작업을 연결하고 Manager가 아닌 사용자는 메뉴·직접 URL 모두 차단                                 | P1       |
+| 인력 운영 `/hr/operations`             | Domain command center · Dense       | 증감·공석·위험·데이터 품질을 시간 기준으로 보여주고 모든 Signal을 사람·조직·실행으로 Drill-down                         | P1       |
+| 구성원 관리 `/hr/operations/people`    | Enterprise grid + inspector · Dense | Sticky 핵심 열, 열 Preset, Saved View, 일괄 작업, Governed Export와 사람 Inspector                                      | P1       |
+| 발령 관리 `/hr/operations/assignments` | Timeline list-detail · Structured   | 현재/예정 발령, 겸직·공석·충돌 Signal, Effective Date Diff와 승인·취소 Timeline                                         | P1       |
+| 조직 설계 `/hr/design/organization`    | Graph studio · Dense                | Scenario Canvas, 제안·비교·비용/FTE 영향, 승인·게시와 대규모 Graph 성능                                                 | P0       |
+| 기준정보 `/hr/data/reference`          | Catalog list-detail · Structured    | 소유자·원천·유효기간·동기화 상태, 소비 기능 영향, 변경 요청과 Version Diff                                              | P2       |
+| 데이터 연계 `/hr/data/integrations`    | Integration workflow · Dense        | 연결 → Mapping → Dry run → 품질 검사 → Import → Reconciliation과 실행 증거                                              | P1       |
+| 데이터 반출 `/hr/data/exports`         | Governed request queue · Dense      | Target Population·필드 정책·승인·수명주기·무결성 Evidence를 결속                                                        | P1       |
 
 ## 6. Tenant Admin Experience 3개
 

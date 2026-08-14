@@ -1,0 +1,339 @@
+import {
+  BookKey,
+  BriefcaseBusiness,
+  CalendarCheck2,
+  CalendarDays,
+  ClipboardList,
+  Clock3,
+  ContactRound,
+  DatabaseZap,
+  FileLock2,
+  Gauge,
+  GitBranch,
+  HeartHandshake,
+  House,
+  LifeBuoy,
+  Network,
+  ReceiptText,
+  ShieldCheck,
+  Sparkles,
+  UserRoundCheck,
+  UsersRound,
+} from 'lucide-react';
+
+import type { LucideIcon } from 'lucide-react';
+
+export type HcmAudience =
+  | 'all'
+  | 'manager'
+  | 'operator'
+  | 'time-admin'
+  | 'absence-admin'
+  | 'benefits-admin'
+  | 'pay-admin'
+  | 'talent-admin';
+export type HcmSection =
+  | 'start'
+  | 'personal'
+  | 'organization'
+  | 'team'
+  | 'operate'
+  | 'design'
+  | 'foundation';
+export type HcmView =
+  | 'home'
+  | 'me'
+  | 'time'
+  | 'absence'
+  | 'benefits'
+  | 'pay'
+  | 'talent'
+  | 'services'
+  | 'directory'
+  | 'organization'
+  | 'team'
+  | 'team-time'
+  | 'team-absence'
+  | 'operations'
+  | 'people'
+  | 'assignments'
+  | 'time-operations'
+  | 'absence-operations'
+  | 'benefits-operations'
+  | 'pay-operations'
+  | 'talent-operations'
+  | 'organization-design'
+  | 'reference-data'
+  | 'data-operations'
+  | 'exports';
+
+export type HcmNavigationItem = {
+  section: HcmSection;
+  view: HcmView;
+  path: string;
+  icon: LucideIcon;
+  audience: HcmAudience;
+  requiredResourceKey?: string;
+  requiredPermissionCode?: string;
+  requiredAnyPermissionCodes?: readonly string[];
+};
+
+export type HcmNavigationGroup = {
+  id: HcmSection;
+  items: readonly HcmNavigationItem[];
+};
+
+export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
+  {
+    id: 'start',
+    items: [{ section: 'start', view: 'home', path: '/hr/home', icon: House, audience: 'all' }],
+  },
+  {
+    id: 'personal',
+    items: [
+      { section: 'personal', view: 'me', path: '/hr/me', icon: ContactRound, audience: 'all' },
+      { section: 'personal', view: 'time', path: '/hr/time', icon: Clock3, audience: 'all' },
+      {
+        section: 'personal',
+        view: 'absence',
+        path: '/hr/absence',
+        icon: CalendarDays,
+        audience: 'all',
+      },
+      {
+        section: 'personal',
+        view: 'benefits',
+        path: '/hr/benefits',
+        icon: HeartHandshake,
+        audience: 'all',
+      },
+      { section: 'personal', view: 'pay', path: '/hr/pay', icon: ReceiptText, audience: 'all' },
+      {
+        section: 'personal',
+        view: 'talent',
+        path: '/hr/talent',
+        icon: Sparkles,
+        audience: 'all',
+      },
+      {
+        section: 'personal',
+        view: 'services',
+        path: '/hr/services',
+        icon: LifeBuoy,
+        audience: 'all',
+        requiredResourceKey: 'APP.EMPLOYEE_SERVICES',
+        requiredPermissionCode: 'VIEW',
+      },
+    ],
+  },
+  {
+    id: 'organization',
+    items: [
+      {
+        section: 'organization',
+        view: 'directory',
+        path: '/hr/directory',
+        icon: UsersRound,
+        audience: 'all',
+      },
+      {
+        section: 'organization',
+        view: 'organization',
+        path: '/hr/organization',
+        icon: Network,
+        audience: 'all',
+      },
+    ],
+  },
+  {
+    id: 'team',
+    items: [
+      {
+        section: 'team',
+        view: 'team',
+        path: '/hr/team',
+        icon: UserRoundCheck,
+        audience: 'manager',
+      },
+      {
+        section: 'team',
+        view: 'team-time',
+        path: '/hr/team/time',
+        icon: CalendarCheck2,
+        audience: 'manager',
+      },
+      {
+        section: 'team',
+        view: 'team-absence',
+        path: '/hr/team/absence',
+        icon: CalendarDays,
+        audience: 'manager',
+      },
+    ],
+  },
+  {
+    id: 'operate',
+    items: [
+      {
+        section: 'operate',
+        view: 'operations',
+        path: '/hr/operations',
+        icon: Gauge,
+        audience: 'operator',
+      },
+      {
+        section: 'operate',
+        view: 'time-operations',
+        path: '/hr/operations/time',
+        icon: Clock3,
+        audience: 'time-admin',
+        requiredResourceKey: 'DATA.HR_TIME',
+        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+      },
+      {
+        section: 'operate',
+        view: 'absence-operations',
+        path: '/hr/operations/absence',
+        icon: CalendarCheck2,
+        audience: 'absence-admin',
+        requiredResourceKey: 'DATA.HR_ABSENCE',
+        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+      },
+      {
+        section: 'operate',
+        view: 'benefits-operations',
+        path: '/hr/operations/benefits',
+        icon: HeartHandshake,
+        audience: 'benefits-admin',
+        requiredResourceKey: 'DATA.HR_BENEFITS',
+        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+      },
+      {
+        section: 'operate',
+        view: 'pay-operations',
+        path: '/hr/operations/pay',
+        icon: ReceiptText,
+        audience: 'pay-admin',
+        requiredResourceKey: 'DATA.HR_PAY',
+        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+      },
+      {
+        section: 'operate',
+        view: 'talent-operations',
+        path: '/hr/operations/talent',
+        icon: ShieldCheck,
+        audience: 'talent-admin',
+        requiredResourceKey: 'DATA.HR_TALENT',
+        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+      },
+      {
+        section: 'operate',
+        view: 'people',
+        path: '/hr/operations/people',
+        icon: BriefcaseBusiness,
+        audience: 'operator',
+      },
+      {
+        section: 'operate',
+        view: 'assignments',
+        path: '/hr/operations/assignments',
+        icon: ClipboardList,
+        audience: 'operator',
+      },
+    ],
+  },
+  {
+    id: 'design',
+    items: [
+      {
+        section: 'design',
+        view: 'organization-design',
+        path: '/hr/design/organization',
+        icon: GitBranch,
+        audience: 'operator',
+      },
+    ],
+  },
+  {
+    id: 'foundation',
+    items: [
+      {
+        section: 'foundation',
+        view: 'reference-data',
+        path: '/hr/data/reference',
+        icon: BookKey,
+        audience: 'operator',
+        requiredResourceKey: 'ACTION.WORKFORCE_REFERENCE',
+        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+      },
+      {
+        section: 'foundation',
+        view: 'data-operations',
+        path: '/hr/data/integrations',
+        icon: DatabaseZap,
+        audience: 'operator',
+        requiredResourceKey: 'ACTION.WORKFORCE_DATA_OPERATIONS',
+        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+      },
+      {
+        section: 'foundation',
+        view: 'exports',
+        path: '/hr/data/exports',
+        icon: FileLock2,
+        audience: 'operator',
+        requiredResourceKey: 'DATA.WORKFORCE',
+        requiredAnyPermissionCodes: ['MANAGE'],
+      },
+    ],
+  },
+];
+
+export const HCM_DEFAULT_PATH = '/hr/home';
+
+export function visibleHcmNavigation(access: {
+  isManager: boolean;
+  canOperate: boolean;
+  canManageTime?: boolean;
+  canManageAbsence?: boolean;
+  canManageBenefits?: boolean;
+  canManagePay?: boolean;
+  canManageTalent?: boolean;
+}): HcmNavigationGroup[] {
+  return HCM_NAVIGATION.flatMap((group) => {
+    const items = group.items.filter(
+      (item) =>
+        item.audience === 'all' ||
+        (item.audience === 'manager' && access.isManager) ||
+        (item.audience === 'operator' && access.canOperate) ||
+        (item.audience === 'time-admin' && access.canManageTime) ||
+        (item.audience === 'absence-admin' && access.canManageAbsence) ||
+        (item.audience === 'benefits-admin' && access.canManageBenefits) ||
+        (item.audience === 'pay-admin' && access.canManagePay) ||
+        (item.audience === 'talent-admin' && access.canManageTalent)
+    );
+    return items.length ? [{ ...group, items }] : [];
+  });
+}
+
+export function findHcmNavigationItem(pathname: string): HcmNavigationItem | undefined {
+  const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
+  return HCM_NAVIGATION.flatMap((group) => group.items).find((item) => item.path === normalized);
+}
+
+export function mapLegacyHrPath(pathname: string): string {
+  const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
+  const explicitRoutes: Record<string, string> = {
+    '/people': HCM_DEFAULT_PATH,
+    '/people/directory': '/hr/directory',
+    '/people/organization': '/hr/organization',
+    '/workforce': '/hr/operations',
+    '/workforce/overview': '/hr/operations',
+    '/workforce/people': '/hr/operations/people',
+    '/workforce/assignments': '/hr/operations/assignments',
+    '/workforce/organization': '/hr/design/organization',
+    '/workforce/reference-data': '/hr/data/reference',
+    '/workforce/data-operations': '/hr/data/integrations',
+    '/workforce/exports': '/hr/data/exports',
+  };
+  return explicitRoutes[normalized] ?? normalized;
+}

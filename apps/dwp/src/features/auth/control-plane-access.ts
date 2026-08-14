@@ -1,36 +1,32 @@
 import type { AdminNavigationItem, AdminView } from '../admin/admin-navigation';
 import type { ResourceRoleDTO } from '@dwp-frontend/shared-utils/api/auth-api';
+import {
+  canEnterTenantControlPlane,
+  FULL_TENANT_ADMIN_ROLES,
+  hasAnyRole,
+  hasFullTenantAdminRole,
+  hasProviderControlPlaneRole,
+  hasTenantControlPlaneRole,
+  TENANT_AUDIT_ROLES,
+  TENANT_CONTROL_PLANE_ROLES,
+  WORKFORCE_OPERATIONS_ROLES,
+  PROVIDER_CONTROL_PLANE_ROLES,
+  resolvePrimaryAuthorityRole,
+} from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
-export const FULL_TENANT_ADMIN_ROLES = ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN'] as const;
-
-export const TENANT_AUDIT_ROLES = ['AUDITOR', 'AUDIT_ADMIN'] as const;
-
-export const TENANT_CONTROL_PLANE_ROLES = [
-  ...FULL_TENANT_ADMIN_ROLES,
-  ...TENANT_AUDIT_ROLES,
-  'IDENTITY_ADMIN',
-  'APP_CATALOG_ADMIN',
-  'COMMUNICATIONS_EDITOR',
-  'COMMUNICATIONS_PUBLISHER',
-  'SERVICE_CATALOG_MANAGER',
-  'SERVICE_AGENT',
-  'HR_ADMIN',
-  'PEOPLE_ADMIN',
-] as const;
-
-export const WORKFORCE_OPERATIONS_ROLES = ['ADMIN', 'HR_ADMIN', 'PEOPLE_ADMIN'] as const;
-
-export const PROVIDER_CONTROL_PLANE_ROLES = [
-  'PROVIDER_ADMIN',
-  'PROVIDER_OPERATOR',
-  'PROVIDER_SUPPORT',
-  'PROVIDER_AUDITOR',
-  'PROVIDER_TENANT_PROVISIONER',
-  'PROVIDER_ENTITLEMENT_ADMIN',
-  'PROVIDER_CHANGE_APPROVER',
-  'PROVIDER_RELEASE_APPROVER',
-  'PROVIDER_DATA_APPROVER',
-] as const;
+export {
+  canEnterTenantControlPlane,
+  FULL_TENANT_ADMIN_ROLES,
+  hasAnyRole,
+  hasFullTenantAdminRole,
+  hasProviderControlPlaneRole,
+  hasTenantControlPlaneRole,
+  TENANT_AUDIT_ROLES,
+  TENANT_CONTROL_PLANE_ROLES,
+  WORKFORCE_OPERATIONS_ROLES,
+  PROVIDER_CONTROL_PLANE_ROLES,
+  resolvePrimaryAuthorityRole,
+};
 
 const SUPPORT_CONFIGURATION_VIEWS = new Set<AdminView>([
   'branding',
@@ -47,34 +43,6 @@ type AdminItemAccess = {
   supportScopes?: readonly string[];
   resourceRoles?: readonly ResourceRoleDTO[];
 };
-
-export function hasAnyRole(roles: readonly string[], allowedRoles: readonly string[]): boolean {
-  return roles.some((role) => allowedRoles.includes(role));
-}
-
-export function hasFullTenantAdminRole(roles: readonly string[]): boolean {
-  return hasAnyRole(roles, FULL_TENANT_ADMIN_ROLES);
-}
-
-export function hasTenantControlPlaneRole(roles: readonly string[]): boolean {
-  return hasAnyRole(roles, TENANT_CONTROL_PLANE_ROLES);
-}
-
-export function hasProviderControlPlaneRole(roles: readonly string[]): boolean {
-  return hasAnyRole(roles, PROVIDER_CONTROL_PLANE_ROLES);
-}
-
-export function canEnterTenantControlPlane(
-  roles: readonly string[],
-  administrationAppEntitled: boolean,
-  hasActiveSupportSession = false,
-  resourceRoles: readonly ResourceRoleDTO[] = []
-): boolean {
-  if (hasActiveSupportSession && hasProviderControlPlaneRole(roles)) return true;
-  return (
-    (hasTenantControlPlaneRole(roles) && administrationAppEntitled) || resourceRoles.length > 0
-  );
-}
 
 export function canAccessAdminNavigationItem(
   item: AdminNavigationItem,
@@ -106,47 +74,5 @@ export function canAccessAdminNavigationItem(
   return (
     access.permissionsLoaded &&
     access.hasPermission(item.requiredResourceKey, item.requiredPermissionCode)
-  );
-}
-
-export function resolvePrimaryAuthorityRole(
-  roles: readonly string[],
-  resourceRoles: readonly ResourceRoleDTO[] = []
-): string {
-  const priority = [
-    'PROVIDER_ADMIN',
-    'PROVIDER_OPERATOR',
-    'PROVIDER_SUPPORT',
-    'PROVIDER_AUDITOR',
-    'PROVIDER_TENANT_PROVISIONER',
-    'PROVIDER_ENTITLEMENT_ADMIN',
-    'PROVIDER_CHANGE_APPROVER',
-    'PROVIDER_RELEASE_APPROVER',
-    'PROVIDER_DATA_APPROVER',
-    'PLATFORM_ADMIN',
-    'TENANT_ADMIN',
-    'ADMIN',
-    'AUDIT_ADMIN',
-    'AUDITOR',
-    'IDENTITY_ADMIN',
-    'APP_CATALOG_ADMIN',
-    'COMMUNICATIONS_PUBLISHER',
-    'COMMUNICATIONS_EDITOR',
-    'SERVICE_CATALOG_MANAGER',
-    'SERVICE_AGENT',
-  ];
-  const tenantRole = priority.find((role) => roles.includes(role));
-  if (tenantRole) return tenantRole;
-  const scopedPriority = [
-    'APP_OWNER',
-    'APP_ACCESS_MANAGER',
-    'APP_ACCESS_APPROVER',
-    'APP_ACCESS_REVIEWER',
-    'APP_CONFIG_ADMIN',
-  ];
-  return (
-    scopedPriority.find((responsibility) =>
-      resourceRoles.some((role) => role.responsibilityCode === responsibility)
-    ) ?? 'WORKSPACE_MEMBER'
   );
 }

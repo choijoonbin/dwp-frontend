@@ -1,6 +1,6 @@
 # DWP-R1-CORE-002 Personal Home Experience
 
-> 상태: reference-implemented, automated-verification-complete
+> 상태: P0-P3 implemented, runtime-and-automated-verification-complete
 >
 > Release: R0.5 Reference, R1 Candidate
 >
@@ -29,3 +29,5 @@ DB에는 Metadata, 개인 Layout, Revision과 공지 참여 증적을 남긴다.
 - `05-API 권한 계약.md`
 - `06-AI Agent 계약.md`
 - `07-수용 테스트.md`
+- `08-홈 앱 거버넌스 및 공통 내비게이션 정책.md`
+- `09-적응형 홈 런타임 및 기술 기준.md`

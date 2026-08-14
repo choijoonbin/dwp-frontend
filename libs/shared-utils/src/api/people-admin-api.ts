@@ -38,7 +38,7 @@ export type PersonSummary = {
 };
 
 export type PersonAssignment = {
-  assignmentKey: string;
+  assignmentKey?: string | null;
   assignmentStatus: string;
   primaryAssignment: boolean;
   effectiveStartDate: string;
@@ -52,12 +52,56 @@ export type PersonAssignment = {
   changeReasonCode?: string | null;
 };
 
+export type WorkAssignment = {
+  assignmentId: string;
+  assignmentKey?: string | null;
+  assignmentStatus: string;
+  primaryAssignment: boolean;
+  effectiveStartDate: string;
+  effectiveEndDate?: string | null;
+  effectiveSequence: number;
+  businessTitle?: string | null;
+  organizationId?: string | null;
+  organizationKey?: string | null;
+  organizationName?: string | null;
+  jobProfileName?: string | null;
+  jobGradeName?: string | null;
+  locationKey?: string | null;
+  locationName?: string | null;
+  managerAssignmentKey?: string | null;
+  changeReasonCode?: string | null;
+};
+
+export type WorkRelationship = {
+  workRelationshipId: string;
+  relationshipKey?: string | null;
+  relationshipType: string;
+  primaryRelationship: boolean;
+  startDate: string;
+  endDate?: string | null;
+  projectedEndDate?: string | null;
+  legalEmployerKey: string;
+  legalEmployerName: string;
+  legalEmployerCountryCode?: string | null;
+  assignments: WorkAssignment[];
+};
+
+export type PersonWorker = {
+  workerId: string;
+  workerNumber?: string | null;
+  workerType: string;
+  workerStatus: string;
+  originalHireDate?: string | null;
+  workRelationships: WorkRelationship[];
+};
+
 export type PersonDetail = {
   person: PersonSummary;
   originalHireDate?: string | null;
   legalEmployerName?: string | null;
   managerAssignmentKey?: string | null;
   assignments: PersonAssignment[];
+  workers: PersonWorker[];
 };
 
 export type PeopleCursorPage = {

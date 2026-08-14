@@ -12,13 +12,14 @@
   "scripts": {
     "dev": "vite",
     "start": "vite preview",
-    "build": "node scripts/check-package-manager-policy.mjs && node scripts/check-design-system-adoption.mjs && node scripts/check-i18n.mjs && node scripts/check-display-dictionary.mjs && tsc && vite build && node scripts/check-bundle-budget.mjs",
+    "build": "node scripts/check-package-manager-policy.mjs && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-design-system-adoption.mjs && node scripts/check-i18n.mjs && node scripts/check-display-dictionary.mjs && eslint . && tsc && vite build && node scripts/check-bundle-budget.mjs",
     "bundle:check": "vite build && node scripts/check-bundle-budget.mjs",
-    "lint": "node scripts/check-package-manager-policy.mjs && eslint . && node scripts/check-design-system-adoption.mjs && node scripts/check-display-dictionary.mjs",
+    "lint": "node scripts/check-package-manager-policy.mjs && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && eslint . && node scripts/check-design-system-adoption.mjs && node scripts/check-display-dictionary.mjs",
     "lint:fix": "eslint --fix .",
     "format:check": "prettier --check \"{apps,libs,e2e,e2e-storybook,.storybook,scripts}/**/*.{js,jsx,mjs,cjs,ts,tsx,json}\" \"*.{js,mjs,ts,json,md}\" \"docs/**/*.md\"",
     "format": "prettier --write \"{apps,libs,e2e,e2e-storybook,.storybook,scripts}/**/*.{js,jsx,mjs,cjs,ts,tsx,json}\" \"*.{js,mjs,ts,json,md}\" \"docs/**/*.md\"",
     "typecheck": "tsc --noEmit",
+    "architecture:check": "node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs",
     "package-manager:check": "node scripts/check-package-manager-policy.mjs",
     "design-system:check": "node scripts/check-design-system-adoption.mjs",
     "design-system:baseline": "node scripts/check-design-system-adoption.mjs --write",
@@ -45,7 +46,7 @@
     "test:e2e:report": "playwright show-report"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.12 <27"
   },
   "packageManager": "yarn@4.17.1",
   "dependencies": {
@@ -62,12 +63,12 @@
     "@tanstack/react-query": "^5.66.6",
     "@xyflow/react": "12.11.2",
     "dayjs": "^1.11.21",
-    "i18next": "^24.2.0",
-    "i18next-resources-to-backend": "^1.2.1",
+    "i18next": "^26.3.6",
+    "i18next-resources-to-backend": "^1.2.3",
     "lucide-react": "^1.30.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-i18next": "^15.1.3",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-i18next": "^17.0.11",
     "react-router-dom": "^7.4.1",
     "web-vitals": "6.1.0",
     "zustand": "^5.0.9"
@@ -79,10 +80,10 @@
     "@storybook/addon-a11y": "^10.5.7",
     "@storybook/addon-docs": "^10.5.7",
     "@storybook/react-vite": "^10.5.7",
-    "@types/node": "^22.19.5",
-    "@types/react": "^19.1.0",
-    "@types/react-dom": "^19.1.1",
-    "@vitejs/plugin-react-swc": "^3.8.1",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react-swc": "^4.3.3",
     "@vitest/expect": "4.1.10",
     "eslint": "^9.23.0",
     "eslint-plugin-react": "^7.37.4",
@@ -94,9 +95,9 @@
     "playwright-core": "1.58.0",
     "prettier": "^3.5.3",
     "storybook": "^10.5.7",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.29.0",
-    "vite": "^6.2.5",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.67.0",
+    "vite": "^8.2.1",
     "vite-plugin-checker": "^0.9.1",
     "vitest": "4.1.10"
   }

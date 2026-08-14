@@ -468,11 +468,11 @@ export function WorkforceExportCenter() {
   const canGovern = hasPermission('ADMIN.WORKFORCE_ACCESS', 'MANAGE');
   const canRetry = Boolean(
     selected &&
-    canGovern &&
-    selected.lifecycleState === 'FAILED' &&
-    selected.executionEnabled &&
-    !selected.blockers.length &&
-    selected.manualRetryCount < (previewQuery.data?.maximumManualRetries ?? 0)
+      canGovern &&
+      selected.lifecycleState === 'FAILED' &&
+      selected.executionEnabled &&
+      !selected.blockers.length &&
+      selected.manualRetryCount < (previewQuery.data?.maximumManualRetries ?? 0)
   );
 
   const refresh = async () => {

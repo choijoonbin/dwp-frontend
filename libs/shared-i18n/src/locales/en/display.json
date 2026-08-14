@@ -67,6 +67,7 @@
     "TRIAL": "Trial",
     "UNAVAILABLE": "Unavailable",
     "VERIFIED": "Verified",
+    "WAIVED": "Waived",
     "WARNING": "Warning"
   },
   "outcomes": {
@@ -88,6 +89,8 @@
   },
   "severities": {
     "ALL": "All severities",
+    "ATTENTION": "Needs attention",
+    "BLOCKING": "Blocking",
     "CRITICAL": "Critical",
     "ERROR": "Error",
     "HIGH": "High",
@@ -136,6 +139,7 @@
     "TENANT_LIFECYCLE": "Tenant lifecycle"
   },
   "auditActions": {
+    "APPROVE": "Approved",
     "BLOCKED": "Export processing blocked",
     "CANCELLED": "Export request cancelled",
     "CLAIMED": "Export request claimed by worker",
@@ -218,6 +222,13 @@
     "ROLE_ASSIGNMENT_DENIED": "Role assignment denied",
     "REQUEST_CANCELLED": "Request cancelled",
     "REQUEST_SUBMITTED": "Request submitted",
+    "REQUEST_DRAFTED": "Approval draft created",
+    "TASK_CLAIMED": "Approval task claimed",
+    "TASK_APPROVED": "Approval granted",
+    "TASK_REJECTED": "Approval rejected",
+    "INFORMATION_REQUESTED": "Approval information requested",
+    "INFORMATION_RESPONDED": "Approval information supplied",
+    "APPROVAL_STEP_STARTED": "Next approval stage started",
     "STATUS_CHANGED": "Request status changed",
     "PROVIDER_DATA_GOVERNANCE_IMPACT_PREVIEWED": "Data policy impact previewed",
     "PROVIDER_DATA_GOVERNANCE_POLICY_CREATED": "Data policy created",
@@ -309,6 +320,7 @@
     "JIT": "Just-in-time access"
   },
   "scopeTypes": {
+    "ALL": "All workflows",
     "ASSET": "Asset",
     "CELL": "Deployment cell",
     "DATABASE": "Database",
@@ -317,7 +329,8 @@
     "REGION": "Region",
     "RESOURCE": "Resource",
     "SERVICE": "Service",
-    "TENANT": "Tenant"
+    "TENANT": "Tenant",
+    "WORKFLOW": "Workflow"
   },
   "targetTypes": {
     "AUDIT_CASE": "Audit case",

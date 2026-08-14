@@ -9,19 +9,33 @@ import Typography from '@mui/material/Typography';
 
 import type { LucideIcon } from 'lucide-react';
 
+import { getProductExperienceProfile } from '../features/shell/product-experience-registry';
+
 export function ProductAreaPageHeader({
   area,
   view,
   icon: Icon,
 }: {
-  area: 'people' | 'workforce' | 'hris';
+  area: 'people' | 'workforce' | 'hcm';
   view: string;
   icon: LucideIcon;
 }) {
-  const { t } = useTranslation(area === 'hris' ? 'hris' : 'workforce');
+  const { t } = useTranslation(area === 'hcm' ? 'hcm' : 'workforce');
+  const productTone = area === 'hcm' ? getProductExperienceProfile('hcm').accent : undefined;
   const workforce =
     area === 'workforce' ||
-    (area === 'hris' && !['me', 'directory', 'organization', 'team'].includes(view));
+    (area === 'hcm' &&
+      ![
+        'me',
+        'time',
+        'absence',
+        'benefits',
+        'pay',
+        'talent',
+        'services',
+        'directory',
+        'organization',
+      ].includes(view));
 
   return (
     <Box
@@ -37,11 +51,15 @@ export function ProductAreaPageHeader({
       }}
     >
       <Stack direction="row" alignItems="flex-start" gap={1.5} sx={{ minWidth: 0 }}>
-        <GlyphSurface size={42} variant="soft">
+        <GlyphSurface size={42} variant="soft" tone={productTone}>
           <Icon size={21} strokeWidth={1.8} aria-hidden="true" />
         </GlyphSurface>
         <Box sx={{ minWidth: 0 }}>
-          <Typography component="p" variant="overline" color="primary.main">
+          <Typography
+            component="p"
+            variant="overline"
+            sx={{ color: productTone ?? 'primary.main' }}
+          >
             {t(`pages.${area}.${view}.eyebrow`)}
           </Typography>
           <Typography component="h1" variant="h4">

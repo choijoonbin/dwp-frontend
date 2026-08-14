@@ -9,21 +9,11 @@ const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.join(workspaceRoot, 'apps/dwp');
 const developmentPort = 4200;
 
-function vendorGroup(moduleId: string): string | undefined {
-  if (!moduleId.includes('/node_modules/')) return undefined;
-  if (
-    /\/(react|react-dom|react-router|scheduler|react-i18next)\//.test(moduleId) ||
-    moduleId.includes('/@emotion/') ||
-    /\/(@tanstack|zustand)\//.test(moduleId)
-  ) {
-    return 'vendor-react';
-  }
-  if (moduleId.includes('/lucide-react/')) return 'vendor-icons';
-  if (/\/i18next\//.test(moduleId)) return 'vendor-i18n';
-  return undefined;
-}
+const packagePath = (moduleId: string, packageName: string) =>
+  moduleId.includes(`/node_modules/${packageName}/`) ||
+  moduleId.includes(`/node_modules/.pnpm/${packageName.replace('/', '+')}@`);
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, workspaceRoot, '');
   const proxyTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:8080';
   const runningTests = mode === 'test' || Boolean(process.env.VITEST);
@@ -35,6 +25,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       !runningTests &&
+        command === 'serve' &&
         checker({
           typescript: true,
           eslint: {
@@ -67,9 +58,51 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       manifest: true,
-      chunkSizeWarningLimit: 600,
+      chunkSizeWarningLimit: 700,
       rollupOptions: {
-        output: { manualChunks: vendorGroup },
+        output: {
+          codeSplitting: {
+            minSize: 50 * 1024,
+            groups: [
+              {
+                name: 'vendor-mui-x-grid',
+                test: (moduleId) =>
+                  packagePath(moduleId, '@mui/x-data-grid') ||
+                  packagePath(moduleId, '@mui/x-virtualizer'),
+                includeDependenciesRecursively: false,
+                priority: 30,
+              },
+              {
+                name: 'vendor-mui-x-date',
+                test: (moduleId) => packagePath(moduleId, '@mui/x-date-pickers'),
+                includeDependenciesRecursively: false,
+                priority: 30,
+              },
+              {
+                name: 'vendor-mui-x-shared',
+                test: (moduleId) => packagePath(moduleId, '@mui/x-internals'),
+                includeDependenciesRecursively: false,
+                priority: 30,
+              },
+              {
+                name: 'initial-vendor',
+                test: (moduleId) => moduleId.includes('/node_modules/'),
+                tags: ['$initial'],
+                includeDependenciesRecursively: true,
+                priority: 20,
+              },
+              {
+                name: 'application-shell',
+                test: (moduleId) =>
+                  !moduleId.includes('/node_modules/') && !moduleId.startsWith('\0'),
+                tags: ['$initial'],
+                includeDependenciesRecursively: false,
+                maxSize: 430 * 1024,
+                priority: 10,
+              },
+            ],
+          },
+        },
       },
     },
     test: {

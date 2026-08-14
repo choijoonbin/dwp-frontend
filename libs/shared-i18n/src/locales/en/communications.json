@@ -99,6 +99,10 @@
     "count": "{{count}} unread",
     "viewAll": "View all news",
     "required": "Required",
-    "empty": "No new stories right now."
+    "empty": "No new stories right now.",
+    "loadError": "Organization news could not be loaded.",
+    "restrictedTitle": "Organization news is outside your access",
+    "restrictedDescription": "Only communications assigned to your role appear here.",
+    "retry": "Try again"
   }
 }

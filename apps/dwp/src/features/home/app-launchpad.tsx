@@ -37,7 +37,6 @@ import DialogActions from '@mui/material/DialogActions';
 import type { SxProps, Theme } from '@mui/material/styles';
 
 import {
-  HOME_APP_GROUPS,
   addAppToLaunchpadFolder,
   createLaunchpadFolder,
   hideLaunchpadApp,
@@ -56,6 +55,7 @@ import {
 import type { DragEndEvent, DragStartEvent, CollisionDetection } from '@dnd-kit/core';
 import type {
   HomeAppDefinition,
+  HomeAppGroup,
   HomeAppGroupId,
   LaunchpadFolder,
   LaunchpadLayout,
@@ -147,6 +147,7 @@ function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProps<Theme
 
 type AppLaunchpadProps = {
   apps: readonly HomeAppDefinition[];
+  groups?: readonly HomeAppGroup[];
   layout: LaunchpadLayout;
   editing: boolean;
   onLaunch: (app: HomeAppDefinition) => void;
@@ -183,7 +184,7 @@ function groupTargetId(groupId: HomeAppGroupId): string {
 function groupIdFromTarget(droppableId: string): HomeAppGroupId | null {
   if (!droppableId.startsWith(GROUP_TARGET_PREFIX)) return null;
   const groupId = droppableId.slice(GROUP_TARGET_PREFIX.length);
-  return HOME_APP_GROUPS.some((group) => group.id === groupId) ? (groupId as HomeAppGroupId) : null;
+  return groupId || null;
 }
 
 const launchpadCollisionDetection: CollisionDetection = (args) => {
@@ -412,7 +413,8 @@ function AppTile({
             onKeyDown={
               editing
                 ? (activatorListeners?.onKeyDown as
-                    React.KeyboardEventHandler<HTMLButtonElement> | undefined)
+                    | React.KeyboardEventHandler<HTMLButtonElement>
+                    | undefined)
                 : undefined
             }
             onContextMenu={(event) => event.preventDefault()}
@@ -592,7 +594,8 @@ function FolderTile({
             onKeyDown={
               editing
                 ? (activatorListeners?.onKeyDown as
-                    React.KeyboardEventHandler<HTMLButtonElement> | undefined)
+                    | React.KeyboardEventHandler<HTMLButtonElement>
+                    | undefined)
                 : undefined
             }
             onContextMenu={(event) => event.preventDefault()}
@@ -691,6 +694,7 @@ function FolderTile({
 
 export function AppLaunchpad({
   apps,
+  groups,
   layout,
   editing,
   onLaunch,
@@ -724,7 +728,10 @@ export function AppLaunchpad({
   );
 
   const appById = useMemo(() => new Map(apps.map((app) => [app.id, app])), [apps]);
-  const localizedGroups = useMemo(() => localizeHomeAppGroups(t), [t]);
+  const localizedGroups = useMemo(
+    () => (groups?.length ? [...groups] : localizeHomeAppGroups(t)),
+    [groups, t]
+  );
   const groupById = useMemo(
     () => new Map(localizedGroups.map((group) => [group.id, group])),
     [localizedGroups]
@@ -745,7 +752,9 @@ export function AppLaunchpad({
   );
 
   const findGroupId = (itemId: string): HomeAppGroupId | null => {
-    const group = HOME_APP_GROUPS.find((candidate) => layout.groups[candidate.id].includes(itemId));
+    const group = localizedGroups.find((candidate) =>
+      layout.groups[candidate.id]?.includes(itemId)
+    );
     return group?.id ?? null;
   };
 
@@ -1080,7 +1089,7 @@ export function AppLaunchpad({
           }}
         >
           {localizedGroups.map((group, groupIndex) => {
-            const itemIds = layout.groups[group.id];
+            const itemIds = layout.groups[group.id] ?? [];
             if (itemIds.length === 0 && !editing) return null;
             return (
               <Box

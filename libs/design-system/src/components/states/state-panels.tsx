@@ -67,6 +67,7 @@ function StatePanel({
 }
 
 export type EmptyStateProps = {
+  icon?: React.ReactNode;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -76,6 +77,7 @@ export type EmptyStateProps = {
 };
 
 export function EmptyState({
+  icon,
   title,
   description,
   actionLabel,
@@ -92,7 +94,7 @@ export function EmptyState({
     ) : undefined);
   return (
     <StatePanel
-      icon={<Inbox size={28} strokeWidth={1.7} />}
+      icon={icon ?? <Inbox size={28} strokeWidth={1.7} />}
       title={title}
       description={description}
       action={resolvedAction}

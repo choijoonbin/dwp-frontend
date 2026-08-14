@@ -29,6 +29,11 @@
         "title": "홈 경험",
         "description": "테넌트 홈 이미지와 개인화 런치패드 경험을 설정합니다."
       },
+      "home-apps": {
+        "label": "홈 앱 구성",
+        "title": "홈 앱 구성",
+        "description": "테넌트 기본 영역과 앱 배치를 게시하고 개인화 경계를 관리합니다."
+      },
       "announcements": {
         "label": "소식·공지 운영",
         "title": "소식·공지 운영",
@@ -519,6 +524,70 @@
       "saved": "테넌트 브랜딩을 저장했습니다.",
       "published": "테넌트 브랜드 정의를 게시했습니다.",
       "restored": "선택한 브랜드 리비전을 복구했습니다."
+    }
+  },
+  "homeApps": {
+    "loading": "홈 앱 구성을 불러오는 중",
+    "metrics": {
+      "groups": "홈 영역",
+      "apps": "등록 앱",
+      "active": "활성 영역",
+      "personal": "개인화 경계",
+      "personalValue": "사용자별"
+    },
+    "policy": {
+      "title": "테넌트 기본값과 개인 설정을 분리합니다",
+      "description": "관리자는 영역, 다국어 명칭, 앱의 기본 위치를 게시합니다. 사용자는 자신에게 부여된 앱만 이동·폴더화·숨김 처리할 수 있으며 이 작업으로 권한이나 다른 사용자의 홈은 변경되지 않습니다."
+    },
+    "groups": {
+      "title": "홈 영역 체계",
+      "description": "구성원이 업무를 시작할 때 이해하기 쉬운 정보 구조와 표시 순서를 정의합니다.",
+      "appCount": "앱 {{count}}개",
+      "inactive": "비활성"
+    },
+    "editor": {
+      "title": "영역 정의",
+      "locale": "편집 언어",
+      "languages": {
+        "ko": "한국어",
+        "en": "영어"
+      },
+      "name": "영역 이름",
+      "description": "영역 설명",
+      "enabled": "홈에 표시"
+    },
+    "placements": {
+      "title": "앱 기본 배치",
+      "description": "새로 권한이 부여된 앱이 처음 표시될 영역과 영역 안의 기본 순서를 정의합니다.",
+      "search": "앱 또는 리소스 검색",
+      "group": "기본 영역"
+    },
+    "preview": {
+      "title": "테넌트 기본 미리보기",
+      "description": "개인 설정이 없는 구성원에게 적용되는 초기 구성을 확인합니다.",
+      "more": "+{{count}}개"
+    },
+    "newGroup": {
+      "ko": "새 홈 영역",
+      "en": "New home zone",
+      "descriptionKo": "업무 성격에 맞는 앱 모음",
+      "descriptionEn": "A focused collection of workplace apps"
+    },
+    "actions": {
+      "addGroup": "영역 추가",
+      "revert": "게시본으로 되돌리기",
+      "publish": "기본 구성 게시",
+      "deleteGroup": "영역 삭제",
+      "moveUp": "위로 이동",
+      "moveDown": "아래로 이동"
+    },
+    "toasts": {
+      "saved": "테넌트 홈 앱 기본 구성을 게시했습니다."
+    },
+    "errors": {
+      "load": "홈 앱 구성을 불러오지 못했습니다.",
+      "save": "홈 앱 구성을 게시하지 못했습니다.",
+      "groupInUse": "앱이 배치된 영역은 비활성화하거나 삭제할 수 없습니다. 먼저 앱을 다른 영역으로 이동하세요."
     }
   },
   "homeExperience": {

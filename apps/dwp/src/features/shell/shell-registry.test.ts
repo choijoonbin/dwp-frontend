@@ -8,8 +8,9 @@ describe('global shell registry', () => {
     expect(resolveShellKey('/work/queue')).toBe('workspace');
     expect(resolveShellKey('/communications/for-you')).toBe('communications');
     expect(resolveShellKey('/services/discover')).toBe('services');
-    expect(resolveShellKey('/hr/directory')).toBe('hris');
-    expect(resolveShellKey('/hr/design/organization')).toBe('hris');
+    expect(resolveShellKey('/hr/directory')).toBe('hcm');
+    expect(resolveShellKey('/hr/design/organization')).toBe('hcm');
+    expect(resolveShellKey('/calendar/availability')).toBe('calendar');
     expect(resolveShellKey('/account/settings')).toBe('account');
     expect(resolveShellKey('/admin/platform/reference-data')).toBe('admin');
     expect(resolveShellKey('/provider/data-governance')).toBe('provider');
@@ -28,7 +29,7 @@ describe('global shell registry', () => {
     expect(shellRegistry.workspace.desktopNavigationWidth).toBeLessThan(
       shellRegistry.admin.desktopNavigationWidth
     );
-    expect(shellRegistry.hris.desktopNavigationWidth).toBe(
+    expect(shellRegistry.hcm.desktopNavigationWidth).toBe(
       shellRegistry.workspace.desktopNavigationWidth
     );
     expect(shellRegistry.communications.desktopNavigationWidth).toBe(

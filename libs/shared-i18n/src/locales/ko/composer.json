@@ -11,6 +11,8 @@
   "cancel": "변경 취소",
   "done": "저장",
   "moveWidget": "{{widget}} 위젯 이동",
+  "moveWidgetEarlier": "{{widget}} 위젯을 앞으로 이동",
+  "moveWidgetLater": "{{widget}} 위젯을 뒤로 이동",
   "resizeWidget": "{{widget}} 위젯 크기 변경",
   "removeWidget": "{{widget}} 위젯 숨기기",
   "governed": "조직에서 고정한 위젯",

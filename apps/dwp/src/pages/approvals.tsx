@@ -1,0 +1,63 @@
+import { Navigate, useLocation } from 'react-router-dom';
+import { PageCanvas } from '@dwp-frontend/design-system';
+import { usePermissions } from '@dwp-frontend/shared-utils';
+
+import Box from '@mui/material/Box';
+
+import { ApprovalAdmin } from '../features/approvals/approval-admin';
+import { ApprovalDelegations } from '../features/approvals/approval-delegations';
+import { ApprovalHome } from '../features/approvals/approval-home';
+import { ApprovalInbox } from '../features/approvals/approval-inbox';
+import {
+  APPROVAL_DEFAULT_PATH,
+  findApprovalNavigationItem,
+  isApprovalAdminView,
+} from '../features/approvals/approval-navigation';
+import { ApprovalRequests } from '../features/approvals/approval-requests';
+import { ApprovalPageHeader } from '../features/approvals/approval-ui';
+
+export default function ApprovalsPage() {
+  const { pathname } = useLocation();
+  const { hasPermission } = usePermissions();
+  const page = findApprovalNavigationItem(pathname);
+  if (!page) return <Navigate to={APPROVAL_DEFAULT_PATH} replace />;
+  if (
+    page.requiredResourceKey &&
+    !(
+      page.requiredAnyPermissionCodes?.some((code) =>
+        hasPermission(page.requiredResourceKey!, code)
+      ) ?? hasPermission(page.requiredResourceKey, page.requiredPermissionCode)
+    )
+  )
+    return <Navigate to={APPROVAL_DEFAULT_PATH} replace />;
+  if (page.view === 'home') return <ApprovalHome />;
+  let content: React.ReactNode;
+  if (page.view === 'inbox') content = <ApprovalInbox />;
+  else if (page.view === 'delegations') content = <ApprovalDelegations />;
+  else if (isApprovalAdminView(page.view))
+    content = (
+      <ApprovalAdmin
+        view={
+          page.view as
+            | 'admin-overview'
+            | 'workflows'
+            | 'forms'
+            | 'policies'
+            | 'operations'
+            | 'signatures'
+        }
+      />
+    );
+  else
+    content = (
+      <ApprovalRequests
+        view={page.view as 'new' | 'drafts' | 'submitted' | 'needs-info' | 'archive'}
+      />
+    );
+  return (
+    <PageCanvas>
+      <ApprovalPageHeader view={page.view} icon={page.icon} />
+      <Box sx={{ mt: 3 }}>{content}</Box>
+    </PageCanvas>
+  );
+}

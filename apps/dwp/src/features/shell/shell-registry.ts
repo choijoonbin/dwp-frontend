@@ -2,7 +2,9 @@ import {
   Activity,
   AppWindow,
   BriefcaseBusiness,
+  CalendarDays,
   ContactRound,
+  FileCheck2,
   LifeBuoy,
   Newspaper,
   Settings2,
@@ -17,7 +19,16 @@ import type { LucideIcon } from 'lucide-react';
 
 export type ShellScope = 'home' | 'tenant' | 'provider' | 'support';
 export type ShellKey =
-  'home' | 'workspace' | 'communications' | 'services' | 'hris' | 'account' | 'admin' | 'provider';
+  | 'home'
+  | 'workspace'
+  | 'communications'
+  | 'services'
+  | 'calendar'
+  | 'hcm'
+  | 'approvals'
+  | 'account'
+  | 'admin'
+  | 'provider';
 
 type ShellBrandMode = 'tenant-cobrand' | 'product' | 'control-center' | 'provider';
 
@@ -69,6 +80,7 @@ export const shellRegistry = {
     brandMode: 'product',
     showWorkspace: true,
     desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
     headerPosition: 'fixed',
     headerSurface: 'solid',
     context: { icon: Newspaper, labelKey: 'shell.communications.name' },
@@ -80,20 +92,46 @@ export const shellRegistry = {
     brandMode: 'product',
     showWorkspace: true,
     desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
     headerPosition: 'fixed',
     headerSurface: 'solid',
     context: { icon: LifeBuoy, labelKey: 'shell.services.name' },
   },
-  hris: {
-    key: 'hris',
+  calendar: {
+    key: 'calendar',
+    routePrefixes: ['/calendar'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: CalendarDays, labelKey: 'shell.calendar.name' },
+  },
+  hcm: {
+    key: 'hcm',
     routePrefixes: ['/hr'],
     scope: 'tenant',
     brandMode: 'product',
     showWorkspace: true,
     desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
     headerPosition: 'fixed',
     headerSurface: 'solid',
-    context: { icon: ContactRound, labelKey: 'shell.hris.name' },
+    context: { icon: ContactRound, labelKey: 'shell.hcm.name' },
+  },
+  approvals: {
+    key: 'approvals',
+    routePrefixes: ['/approvals'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: FileCheck2, labelKey: 'shell.approvals.name' },
   },
   account: {
     key: 'account',
@@ -102,6 +140,7 @@ export const shellRegistry = {
     brandMode: 'product',
     showWorkspace: true,
     desktopNavigationWidth: controlNavigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
     headerPosition: 'fixed',
     headerSurface: 'solid',
     context: { icon: Settings2, labelKey: 'shell.title' },
@@ -113,6 +152,7 @@ export const shellRegistry = {
     brandMode: 'control-center',
     showWorkspace: true,
     desktopNavigationWidth: controlNavigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
     headerPosition: 'fixed',
     headerSurface: 'solid',
     context: { icon: ShieldCheck, labelKey: 'shell.controlCenter' },
@@ -124,6 +164,7 @@ export const shellRegistry = {
     brandMode: 'provider',
     showWorkspace: false,
     desktopNavigationWidth: controlNavigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
     headerPosition: 'fixed',
     headerSurface: 'solid',
     context: { icon: ShieldCheck, labelKey: 'shell.title' },
@@ -139,6 +180,7 @@ export const workspaceNavigationIcons: Readonly<Record<string, LucideIcon>> = {
   work: BriefcaseBusiness,
   people: UsersRound,
   workforce: Workflow,
+  hcm: ContactRound,
   hris: ContactRound,
 };
 
@@ -153,7 +195,9 @@ const routeResolutionOrder: readonly ShellKey[] = [
   'provider',
   'admin',
   'account',
-  'hris',
+  'approvals',
+  'calendar',
+  'hcm',
   'services',
   'communications',
   'workspace',

@@ -28,6 +28,9 @@
 - `01-product/개인화 홈 및 앱 경험 기획.md`
 - `02-research/참고 자료 평가 원칙.md`
 - `02-research/DWP Experience Modernization Roadmap 2026-08-12.md`
+- `02-research/DWP 전자결재 글로벌 벤치마크 및 제품 방향 2026-08-14.md`
+- `02-research/DWP HCM 글로벌 벤치마크 및 제품 방향 2026-08-14.md`
+- `02-research/DWP 캘린더 글로벌 벤치마크 및 제품 설계 2026-08-14.md`
 - `06-delivery/DWP 최종 실행 백로그 및 출시 조건 2026-08-12.md`: 현행 실행 Backlog SSOT
 - `03-architecture/R0 기반 의사결정.md`
 - `03-architecture/R0 플랫폼 통합 및 Agent Runtime ADR.md`
@@ -40,10 +43,13 @@
 - `03-architecture/R0 제품 다국어 운영 및 확장 가이드.md`
 - `03-architecture/R0 API 이력 및 운영 관측 ADR.md`
 - `03-architecture/R1 권한 계층 및 앱 접근 거버넌스 ADR.md`
-- `03-architecture/R1 HRIS Product Shell 및 Role-Aware Experience ADR.md`
+- `03-architecture/R1 DWP HCM Product Shell 및 Role-Aware Experience ADR.md`
+- `03-architecture/DWP HCM 용어 사전 및 호환 전환 규칙.md`
 - `03-architecture/R1 Multi-Surface Personal Home Composer ADR.md`
 - `03-architecture/R1 Enterprise Communications and Newsroom ADR.md`
 - `03-architecture/R1 Employee Services and Service Request Orchestration ADR.md`
+- `03-architecture/R1 Enterprise Approval Decision Hub ADR.md`
+- `03-architecture/R1 Enterprise Calendar Scheduling ADR.md`
 - `04-design-system/DWP UI Foundation 전략.md`
 - `04-design-system/DWP Premium Experience Direction.md`
 - `04-design-system/DWP Product Experience Rules.md`
@@ -66,6 +72,9 @@
 - `05-features/DWP-R1-CORE-004-governed-sharing-export/`
 - `05-features/DWP-R1-COM-001-enterprise-communications/`
 - `05-features/DWP-R1-SVC-001-employee-services/`
+- `05-features/DWP-R1-APR-001-enterprise-approval-decision-hub/`
+- `05-features/DWP-R1-HR-001-role-aware-hcm/`
+- `05-features/DWP-R1-CAL-001-enterprise-calendar/`
 - `06-delivery/디자인 파트너 선정 및 Pilot Charter.md`
 - `06-delivery/R0 C1 Productivity Connector 준비 체크리스트.md`
 - `06-delivery/로컬 권한별 로그인 검증 계정.md`

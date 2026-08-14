@@ -3,7 +3,7 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 
 export type HomeWidgetKey = 'announcements' | 'daily-brief' | 'focus' | 'schedule' | 'activity';
-export type HomeSurfaceKey = 'workspace-home' | 'hris-home';
+export type HomeSurfaceKey = 'workspace-home' | 'hcm-home' | 'approval-home' | 'hris-home'; // Compatibility alias accepted by the server during the HCM transition.
 export type HomePresentation = 'balanced' | 'expressive' | 'focused';
 export type HomeWidgetSize = 'compact' | 'medium' | 'large' | 'full';
 

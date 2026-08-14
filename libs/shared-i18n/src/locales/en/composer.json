@@ -11,6 +11,8 @@
   "cancel": "Cancel changes",
   "done": "Save",
   "moveWidget": "Move {{widget}} widget",
+  "moveWidgetEarlier": "Move {{widget}} widget earlier",
+  "moveWidgetLater": "Move {{widget}} widget later",
   "resizeWidget": "Resize {{widget}} widget",
   "removeWidget": "Hide {{widget}} widget",
   "governed": "Widget locked by your organization",

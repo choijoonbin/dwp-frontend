@@ -455,8 +455,8 @@ export function ProviderDataGovernance() {
   const selectedAsset = snapshot?.assets.find((asset) => asset.assetKey === selectedAssetKey);
   const requestedAssetMissing = Boolean(
     requestedAssetKey &&
-    snapshot &&
-    !snapshot.assets.some((asset) => asset.assetKey === requestedAssetKey)
+      snapshot &&
+      !snapshot.assets.some((asset) => asset.assetKey === requestedAssetKey)
   );
 
   useEffect(() => {

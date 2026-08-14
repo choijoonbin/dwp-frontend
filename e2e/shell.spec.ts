@@ -7,13 +7,19 @@ import {
   mockAskRuntime,
   mockRuntimeNavigation,
 } from './support/runtime-access';
+import { createHomeOverviewFixture, fulfillSuccess } from './support/shell-session';
 
 async function expectNoAutomaticAccessibilityViolations(page: Page) {
   const results = await new AxeBuilder({ page }).analyze();
   const summary = results.violations.map((violation) => ({
     id: violation.id,
     impact: violation.impact,
-    nodes: violation.nodes.map((node) => ({ target: node.target, html: node.html })),
+    nodes: violation.nodes.map((node) => ({
+      target: node.target,
+      html: node.html,
+      failureSummary: node.failureSummary,
+      checks: node.any.map((check) => check.data),
+    })),
   }));
   expect(summary).toEqual([]);
 }
@@ -137,6 +143,9 @@ test.beforeEach(async ({ page }) => {
         },
       }),
     })
+  );
+  await page.route('**/api/platform/v1/home/overview**', (route) =>
+    fulfillSuccess(route, createHomeOverviewFixture(['ADMIN']))
   );
   await page.route('**/api/platform/v1/home-preferences**', async (route) => {
     const request = route.request();
@@ -426,7 +435,7 @@ test('tenant policy promotes the configured SSO provider without hiding local ac
     await ssoButton.evaluate((button) =>
       Boolean(
         button.compareDocumentPosition(document.querySelector('form')) &
-        Node.DOCUMENT_POSITION_FOLLOWING
+          Node.DOCUMENT_POSITION_FOLLOWING
       )
     )
   ).toBe(true);
@@ -615,6 +624,8 @@ test('authenticated users enter a personal home before the business shell', asyn
 
   const accountButton = page.getByRole('button', { name: 'Account' });
   await accountButton.click();
+  const accountPanel = page.getByRole('dialog', { name: 'Account and session' });
+  await expect(accountPanel).toHaveCSS('opacity', '1');
   await expect(page.getByText('admin@dwp.local', { exact: true })).toBeVisible();
   await expect(page.getByText('Workspace · default', { exact: true })).toBeVisible();
   const accountSettingsItem = page.getByRole('menuitem', { name: 'Account settings' });
@@ -977,22 +988,22 @@ test('personal home launcher can create, rename, persist, and reset folders', as
 
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Open Work' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Open Administration' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Open Administration' })).toHaveCount(0);
 
   const createStartWorkFolder = async () => {
     const workButton = page.getByRole('button', { name: 'Move Work', exact: true });
     await expect(workButton).toBeVisible();
+    await workButton.scrollIntoViewIfNeeded();
     const workBounds = await workButton.boundingBox();
-    const askTargetBounds = await page.locator('[data-folder-target="dwp-ask"]').boundingBox();
     expect(workBounds).not.toBeNull();
-    expect(askTargetBounds).not.toBeNull();
-    await page.mouse.move(
-      (workBounds?.x ?? 0) + (workBounds?.width ?? 0) / 2,
-      (workBounds?.y ?? 0) + (workBounds?.height ?? 0) / 2
-    );
+    const sourceX = (workBounds?.x ?? 0) + (workBounds?.width ?? 0) / 2;
+    const sourceY = (workBounds?.y ?? 0) + (workBounds?.height ?? 0) / 2;
+    await page.mouse.move(sourceX, sourceY);
     await page.mouse.down();
-    await page.mouse.move((workBounds?.x ?? 0) + 12, (workBounds?.y ?? 0) + 12, { steps: 4 });
-    await page.waitForTimeout(150);
+    await page.mouse.move(sourceX + 16, sourceY, { steps: 4 });
+    await expect(page.locator('[data-launchpad-item="dwp-work"]')).toHaveCSS('opacity', '0.28');
+    const askTargetBounds = await page.locator('[data-folder-target="dwp-ask"]').boundingBox();
+    expect(askTargetBounds).not.toBeNull();
     await page.mouse.move(
       (askTargetBounds?.x ?? 0) + (askTargetBounds?.width ?? 0) / 2,
       (askTargetBounds?.y ?? 0) + (askTargetBounds?.height ?? 0) / 2,
@@ -1008,6 +1019,9 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   };
 
   await page.getByRole('button', { name: 'Edit home' }).click();
+  await expect(
+    page.getByRole('button', { name: 'Move Administration', exact: true })
+  ).toBeVisible();
   await createStartWorkFolder();
 
   await page.getByRole('button', { name: 'Open folder Start work folder' }).click();
@@ -1019,14 +1033,14 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   await renameDialog.getByRole('textbox', { name: 'Folder name' }).fill('Priority tools');
   await renameDialog.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toBeVisible();
-  await page.getByRole('button', { name: 'Finish editing' }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByText('Home view saved.')).toBeVisible();
 
   await page.reload();
   await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Edit home' }).click();
-  await page.getByRole('button', { name: 'Reset to default layout' }).click();
+  await page.getByRole('button', { name: 'Reset to default', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toHaveCount(0);
 
   await page.getByRole('button', { name: 'Move Work', exact: true }).focus();
@@ -1043,7 +1057,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
         .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
     )
     .toEqual(['dwp-ask', 'dwp-work', 'dwp-activity']);
-  await page.getByRole('button', { name: 'Reset to default layout' }).click();
+  await page.getByRole('button', { name: 'Reset to default', exact: true }).click();
   await expect
     .poll(() =>
       page
@@ -1056,7 +1070,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   await createStartWorkFolder();
   await expect(page.getByRole('button', { name: 'Open folder Start work folder' })).toBeVisible();
   await expect(page.getByText('Work was placed with Ask DWP.', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Finish editing' }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
   await page.getByRole('button', { name: 'Open folder Start work folder' }).click();
   await page
     .getByRole('dialog', { name: 'Start work folder' })
@@ -1098,16 +1112,16 @@ test('personal home widgets persist user choices and restore governed defaults',
 
   await page.goto('/');
   await page.getByRole('button', { name: 'Edit home' }).click();
-  await expect(page.getByRole('img', { name: 'Governed content' })).toBeVisible();
-  await page.getByRole('button', { name: 'Remove Live activity widget from home' }).click();
-  await page.getByRole('button', { name: 'Finish editing' }).click();
+  await expect(page.getByRole('img', { name: 'Widget locked by your organization' })).toBeVisible();
+  await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Live activity' })).toHaveCount(0);
 
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Live activity' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Edit home' }).click();
-  await page.getByRole('button', { name: 'Reset to default layout' }).click();
-  await page.getByRole('button', { name: 'Finish editing' }).click();
+  await page.getByRole('button', { name: 'Reset to default', exact: true }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Live activity' })).toBeVisible();
 });
 
@@ -1159,7 +1173,9 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
   await expect(page.getByRole('button', { name: 'Open Work' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Open Ask DWP' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Open Administration' })).toHaveCount(0);
-  await expect(page.getByText('1 assigned')).toBeVisible();
+  await expect(
+    page.getByRole('region', { name: 'Frequent apps' }).getByRole('button', { name: /^Open / })
+  ).toHaveCount(1);
   await expectNoAutomaticAccessibilityViolations(page);
 
   await page.getByRole('button', { name: 'Account' }).click();

@@ -1,0 +1,525 @@
+{
+  "shell": {
+    "approvals": {
+      "name": "Approvals",
+      "context": "Approval workspace",
+      "navigationLabel": "Approval navigation"
+    },
+    "tenantFallback": "Organization",
+    "openNavigation": "Open approval navigation",
+    "backToHome": "Back to workspace"
+  },
+  "navigation": {
+    "groups": {
+      "approvals": {
+        "overview": "Start",
+        "decisions": "My approvals",
+        "administration": "Approval administration"
+      }
+    },
+    "items": {
+      "approvals": {
+        "home": { "label": "Approval home" },
+        "inbox": { "label": "Decision inbox" },
+        "new": { "label": "New request" },
+        "drafts": { "label": "Drafts" },
+        "submitted": { "label": "My requests" },
+        "needs-info": { "label": "Needs information" },
+        "archive": { "label": "Archive" },
+        "delegations": { "label": "Delegations" },
+        "admin-overview": { "label": "Operations overview" },
+        "workflows": { "label": "Process design" },
+        "forms": { "label": "Forms" },
+        "policies": { "label": "Policies" },
+        "operations": { "label": "SLA & delivery" },
+        "signatures": { "label": "E-signature providers" }
+      }
+    }
+  },
+  "pages": {
+    "inbox": {
+      "eyebrow": "Approvals / My decisions",
+      "title": "Decision inbox",
+      "description": "Review business context and evidence together, then make an accountable decision."
+    },
+    "new": {
+      "eyebrow": "Approvals / Request",
+      "title": "New approval request",
+      "description": "Start a traceable request from a published process and form."
+    },
+    "drafts": {
+      "eyebrow": "Approvals / My requests",
+      "title": "Drafts",
+      "description": "Review approval requests that have not been submitted."
+    },
+    "submitted": {
+      "eyebrow": "Approvals / My requests",
+      "title": "My requests",
+      "description": "Track the current stage and outcome of submitted requests."
+    },
+    "needs-info": {
+      "eyebrow": "Approvals / My requests",
+      "title": "Needs information",
+      "description": "See the additional context requested by a decision maker."
+    },
+    "archive": {
+      "eyebrow": "Approvals / My requests",
+      "title": "Archive",
+      "description": "Review completed, rejected, and withdrawn approval evidence."
+    },
+    "delegations": {
+      "eyebrow": "Approvals / Delegation",
+      "title": "Approval delegation",
+      "description": "Manage time-bound and explicitly scoped decision authority."
+    },
+    "admin-overview": {
+      "eyebrow": "Approvals / Administration",
+      "title": "Approval operations",
+      "description": "Control processes, policies, SLA, and integration delivery from one plane."
+    },
+    "workflows": {
+      "eyebrow": "Approvals / Design",
+      "title": "Process design",
+      "description": "Design versioned stages and controls, then publish through independent review."
+    },
+    "forms": {
+      "eyebrow": "Approvals / Design",
+      "title": "Form management",
+      "description": "Manage business input schemas and data classification by version."
+    },
+    "policies": {
+      "eyebrow": "Approvals / Governance",
+      "title": "Approval policies",
+      "description": "Govern self-approval, reasons, evidence retention, and SLA rules."
+    },
+    "operations": {
+      "eyebrow": "Approvals / Operations",
+      "title": "SLA and delivery operations",
+      "description": "Resolve overdue tasks, event backlog, and external delivery failures."
+    },
+    "signatures": {
+      "eyebrow": "Approvals / Integration",
+      "title": "E-signature providers",
+      "description": "Manage provider capabilities and credential readiness safely."
+    }
+  },
+  "governance": { "evidence": "Decision evidence retained" },
+  "home": {
+    "eyebrow": "My decision hub",
+    "title": "Approvals",
+    "subtitle": "See the decisions that need you and the health of every approval flow.",
+    "personFallback": "Member",
+    "customize": "Customize approval home",
+    "saved": "Approval home saved.",
+    "saveConflict": "The layout changed elsewhere. The latest version has been loaded.",
+    "saveError": "Approval home could not be saved.",
+    "loadError": "Approval status could not be loaded.",
+    "unknownRequester": "Requester",
+    "pulse": {
+      "trusted": "Verified approval data",
+      "title": "Decisions are waiting for {{name}}",
+      "description": "{{pending}} reviews are pending and {{overdue}} are overdue. Work by risk and due time."
+    },
+    "widgets": {
+      "decision-pulse": {
+        "label": "Decision pulse",
+        "description": "A governed summary of priority and SLA"
+      },
+      "focus-queue": {
+        "label": "Focus queue",
+        "description": "Reviews ordered by risk and due time",
+        "meta": "{{count}} priority reviews"
+      },
+      "flow": { "label": "Approval flow", "description": "Volume and risk by stage" },
+      "my-requests": {
+        "label": "My requests",
+        "description": "Current state of recent submissions"
+      },
+      "insights": {
+        "label": "Decision insights",
+        "description": "Policy and SLA signals to address"
+      },
+      "admin-health": {
+        "label": "Approval operations health",
+        "description": "Process and integration delivery health",
+        "metricDetail": "Current tenant scope"
+      }
+    }
+  },
+  "metrics": {
+    "pending": "Pending",
+    "dueToday": "Due today",
+    "overdue": "Overdue",
+    "sla": "SLA compliance",
+    "atRisk": "{{count}} at risk"
+  },
+  "actions": {
+    "retry": "Retry",
+    "reviewInbox": "Review priority decisions",
+    "newRequest": "New request",
+    "viewAll": "View all",
+    "openOperations": "Open operations",
+    "openAdmin": "Open approval administration",
+    "requestInfo": "Request information",
+    "reject": "Reject",
+    "approve": "Approve",
+    "cancel": "Cancel",
+    "submitRequest": "Submit request",
+    "saveDraft": "Save draft",
+    "edit": "Edit",
+    "submit": "Submit",
+    "respondInfo": "Respond",
+    "withdraw": "Withdraw",
+    "save": "Save",
+    "publish": "Publish"
+  },
+  "priority": { "LOW": "Low", "NORMAL": "Normal", "HIGH": "High", "URGENT": "Urgent" },
+  "status": {
+    "PENDING": "Pending",
+    "CLAIMED": "Claimed",
+    "SUBMITTED": "Submitted",
+    "IN_REVIEW": "In review",
+    "NEEDS_INFO": "Needs information",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "DRAFT": "Draft",
+    "WITHDRAWN": "Withdrawn",
+    "CANCELLED": "Cancelled"
+  },
+  "insights": {
+    "overdue": {
+      "title": "Decisions have passed their due time",
+      "detail": "Review high-risk items first to reduce downstream delay."
+    },
+    "needs-info": {
+      "title": "More information is required",
+      "detail": "Respond to restart the approval flow."
+    },
+    "draft-workflow": {
+      "title": "A process is waiting to be published",
+      "detail": "Designer and publisher separation requires review."
+    },
+    "healthy": {
+      "title": "Approval flow is healthy",
+      "detail": "No SLA or integration issue requires immediate action."
+    }
+  },
+  "inbox": {
+    "queue": "Priority decision queue",
+    "queueMeta": "Ordered by due time and risk",
+    "loadError": "The decision queue could not be loaded.",
+    "empty": "No decisions need you",
+    "emptyDescription": "New approval tasks will appear here.",
+    "select": "Select a request to review",
+    "selectDescription": "Business context, request data, and decision history stay together.",
+    "risk": "Risk score",
+    "selfApprovalBlocked": "Self-approval is blocked because requester and decision maker are the same identity.",
+    "context": "Decision context",
+    "requestData": "Request data",
+    "timeline": "Decision timeline",
+    "timelineMeta": "Immutable business evidence",
+    "requester": "Requester",
+    "organization": "Organization",
+    "workflow": "Approval process",
+    "currentStage": "Current stage",
+    "stageProgress": "Stage {{current}} · {{name}}",
+    "due": "Due",
+    "comment": "Decision reason",
+    "decisionSaved": "Decision recorded.",
+    "decisionError": "The decision could not be recorded.",
+    "dialog": {
+      "APPROVE": {
+        "title": "Approve this request?",
+        "description": "The outcome and verified identity will be recorded as decision evidence.",
+        "confirm": "Confirm approval"
+      },
+      "REJECT": {
+        "title": "Reject this request?",
+        "description": "Enter an auditable rejection reason of at least eight characters.",
+        "confirm": "Confirm rejection"
+      },
+      "REQUEST_INFO": {
+        "title": "Request more information?",
+        "description": "Tell the requester exactly what is needed to continue.",
+        "confirm": "Request information"
+      }
+    }
+  },
+  "events": {
+    "REFERENCE_TASK_CREATED": "Reference approval created",
+    "REQUEST_CREATED": "Request created",
+    "REQUEST_SUBMITTED": "Request submitted",
+    "TASK_APPROVED": "Request approved",
+    "TASK_REJECTED": "Request rejected",
+    "TASK_INFO_REQUESTED": "Information requested"
+  },
+  "requests": {
+    "created": "Approval request submitted.",
+    "draftSaved": "Approval draft saved.",
+    "createError": "The approval request could not be created.",
+    "submitted": "Draft submitted.",
+    "submitError": "The draft could not be submitted.",
+    "informationResponded": "The response was submitted and the approval resumed.",
+    "withdrawn": "The in-flight approval was withdrawn.",
+    "actionError": "The request could not be processed. Refresh its latest state and try again.",
+    "loadError": "Approval requests could not be loaded.",
+    "templateError": "The published approval form could not be loaded.",
+    "draftLoadError": "The draft could not be loaded. Verify ownership and its latest state.",
+    "empty": "No approvals to show",
+    "emptyDescription": "Matching requests will appear here.",
+    "compose": {
+      "title": "Compose request",
+      "meta": "Uses a published process and form",
+      "editTitle": "Edit approval draft",
+      "editMeta": "Review saved content and validate it against the latest published process"
+    },
+    "fields": {
+      "workflow": "Approval process",
+      "title": "Title",
+      "summary": "Request context",
+      "summaryHelp": "Describe the purpose, impact, and decision needed so the reviewer can decide in one pass.",
+      "priority": "Priority"
+    },
+    "template": {
+      "process": "Applied process",
+      "sla": "End-to-end target",
+      "form": "Frozen form",
+      "formVersion": "Version {{version}} · {{count}} fields",
+      "businessFields": "Business information",
+      "fieldCount": "{{count}} fields",
+      "fieldHelp": {
+        "SELECT": "Enter the governed business code or option value.",
+        "USER": "Enter a member email address or employee number."
+      }
+    },
+    "route": {
+      "title": "Approval route",
+      "meta": "Published process version {{count}}"
+    },
+    "currentStep": "{{current}}/{{total}} · {{name}}",
+    "assurance": {
+      "title": "Submission controls",
+      "description": "The process and form version are frozen at submission and every decision becomes evidence.",
+      "identity": "Verified user and tenant identity",
+      "policy": "Self-approval and role separation",
+      "evidence": "Append-only decision timeline",
+      "concurrency": "Concurrent update protection"
+    },
+    "views": {
+      "drafts": { "title": "Drafts", "meta": "{{count}} drafts" },
+      "submitted": { "title": "My requests", "meta": "{{count}} in progress" },
+      "needs-info": { "title": "Needs information", "meta": "{{count}} awaiting response" },
+      "archive": { "title": "Archive", "meta": "{{count}} completed records" }
+    },
+    "columns": {
+      "request": "Request",
+      "workflow": "Process",
+      "priority": "Priority",
+      "status": "Status",
+      "due": "Due",
+      "action": "Action"
+    },
+    "responseLabel": "Information response",
+    "responseHelp": "Describe the change and evidence clearly so the decision maker can resume review.",
+    "withdrawNotice": "The approval will end immediately and active decision tasks will be cancelled. Its history remains as audit evidence.",
+    "dialog": {
+      "respond": {
+        "title": "Submit this response?",
+        "description": "Review the question for {{title}}. Your response resumes the same approval stage.",
+        "confirm": "Submit response"
+      },
+      "withdraw": {
+        "title": "Withdraw this approval?",
+        "description": "{{title}} will no longer proceed through approval.",
+        "confirm": "Confirm withdrawal"
+      }
+    }
+  },
+  "delegations": {
+    "title": "Active delegations",
+    "meta": "Time-bound and explicitly scoped authority",
+    "add": "Add delegation",
+    "delegateLabel": "Delegated to user {{userId}}",
+    "empty": "No active delegation",
+    "emptyDescription": "Delegate only the minimum authority needed during an absence.",
+    "created": "Delegation created.",
+    "createError": "The delegation could not be created.",
+    "dialog": { "title": "Add approval delegation" },
+    "fields": {
+      "delegateUserId": "Delegate user ID",
+      "startsAt": "Starts at",
+      "endsAt": "Ends at",
+      "reason": "Reason"
+    }
+  },
+  "admin": {
+    "publishedWorkflows": "Published processes",
+    "draftWorkflows": "Awaiting publish",
+    "activeRequests": "Active requests",
+    "overdueTasks": "Overdue tasks",
+    "failedIntegrations": "Delivery failures",
+    "metricDetail": "Current tenant scope",
+    "version": "v{{version}}",
+    "workflowRevision": "{{key}} · v{{version}}",
+    "formRevision": "{{key}} · v{{version}} · {{hash}}",
+    "formListMeta": "{{count}} fields · v{{version}}",
+    "hours": "{{count}}h",
+    "minutes": "{{count}} min",
+    "loadError": "Approval operations could not be loaded.",
+    "controlModel": {
+      "title": "Separated operating model",
+      "meta": "No one person owns design, publication, and audit",
+      "designer": {
+        "title": "Process designer",
+        "detail": "Designs stages and forms without publication authority."
+      },
+      "publisher": {
+        "title": "Policy publisher",
+        "detail": "Independently reviews and publishes design changes."
+      },
+      "operator": {
+        "title": "Approval operator",
+        "detail": "Operates SLA, delegation, and delivery incidents."
+      },
+      "auditor": {
+        "title": "Independent auditor",
+        "detail": "Reviews evidence and controls without operating access."
+      }
+    },
+    "assurance": {
+      "title": "Built-in assurance",
+      "meta": "Approval runtime guarantees",
+      "identity": {
+        "title": "Trust boundary",
+        "detail": "Only gateway-verified user and tenant identities are accepted."
+      },
+      "segregation": {
+        "title": "Separation of duties",
+        "detail": "Designer, publisher, operator, and auditor conflicts are blocked."
+      },
+      "evidence": {
+        "title": "Decision evidence",
+        "detail": "Decisions and transitions are retained as append-only events."
+      },
+      "delivery": {
+        "title": "Safe delivery",
+        "detail": "External integration is isolated through a transactional outbox."
+      }
+    },
+    "workflows": { "title": "Approval processes", "meta": "Versioned stages and controls" },
+    "workflowPublished": "Process published.",
+    "workflowPublishError": "The process could not be published.",
+    "forms": { "title": "Approval forms", "meta": "Checksummed, versioned input schemas" },
+    "policies": { "title": "Approval policies", "meta": "Decision, data, and SLA control rules" },
+    "studio": {
+      "workflowCreated": "The approval process draft was created.",
+      "workflowSaved": "The approval process draft was saved.",
+      "formSaved": "The approval form draft was saved.",
+      "policySaved": "The approval policy was saved.",
+      "saveError": "The draft could not be saved. Check its key and input values.",
+      "saveConflict": "Another user changed this item first. Reload the latest version and try again.",
+      "createWorkflow": "New process draft",
+      "editWorkflow": "Edit process draft",
+      "editDraft": "Edit draft",
+      "noWorkflow": "No approval processes",
+      "noWorkflowDescription": "Create the first process draft when you have design permission.",
+      "noForm": "No approval forms",
+      "noFormDescription": "A linked form is created with each process draft.",
+      "noPolicy": "No approval policies",
+      "noPolicyDescription": "Tenant approval controls will appear here when configured.",
+      "definitionSection": "Definition",
+      "workflowKey": "Process key",
+      "nameKo": "Korean name",
+      "nameEn": "English name",
+      "descriptionKo": "Korean description",
+      "descriptionEn": "English description",
+      "category": "Business category",
+      "classification": "Data classification",
+      "owner": "Approver role",
+      "workflowSla": "Overall SLA",
+      "workflowSlaMinutes": "Overall SLA (minutes)",
+      "definitionHash": "Definition hash",
+      "stepsSection": "Approval stages",
+      "stepsHelp": "Define stage order, candidate roles, and due times.",
+      "addStep": "Add stage",
+      "stepKey": "Stage key",
+      "stepName": "Stage name",
+      "mode": "Quorum mode",
+      "modeHelp": "Only ANY, approval by one eligible role candidate, can currently be published.",
+      "stepSla": "SLA (minutes)",
+      "candidateRole": "Approver candidate role",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "removeStep": "Remove stage",
+      "routeTitle": "Approval route",
+      "routeMeta": "{{count}} stages to validate",
+      "sodNotice": "Designers can save drafts but cannot publish them. An independent publisher reviews the definition hash and changes before publication.",
+      "validation": {
+        "route": {
+          "title": "Route completeness",
+          "detail": "Every stage has a candidate role and SLA."
+        },
+        "identity": {
+          "title": "Separation of duties",
+          "detail": "Self-approval and design-publish separation are enforced."
+        },
+        "concurrency": {
+          "title": "Conflict protection",
+          "detail": "Row versions and definition hashes block concurrent changes."
+        }
+      },
+      "editForm": "Edit form draft",
+      "formFields": "Form fields",
+      "formFieldsMeta": "{{count}} version-locked fields",
+      "required": "Required",
+      "optional": "Optional",
+      "schemaNotice": "The form schema and checksum are pinned to each request at publication and are not changed retroactively.",
+      "fieldKeyNotice": "Field keys are integration contracts and should not change after publication.",
+      "addField": "Add field",
+      "fieldKey": "Field key",
+      "labelKo": "Korean label",
+      "labelEn": "English label",
+      "helpKo": "Korean help text",
+      "helpEn": "English help text",
+      "fieldType": "Field type",
+      "requirement": "Requirement",
+      "fieldOrdinal": "Field {{count}}",
+      "options": "Allowed options",
+      "optionsHelp": "Enter comma-separated allowed values. Duplicates and extra spaces are removed on save.",
+      "removeField": "Remove field",
+      "configurePolicy": "Configure policy",
+      "enforcement": "Enforcement",
+      "severity": "Risk severity",
+      "lifecycle": "Lifecycle",
+      "policyVersion": "Policy version",
+      "ruleTitle": "Policy rules",
+      "ruleMeta": "Structured controls enforced by the server",
+      "ruleKey": "Rule key",
+      "ruleValue": "Rule value",
+      "policyChangeNotice": "Policy changes apply to new approvals and subsequent evaluations, and every change is retained as audit evidence.",
+      "policyReviewNotice": "BLOCK and CRITICAL changes can immediately affect approval eligibility. Review scope and business impact before saving."
+    },
+    "policyRule": "Enforced rule",
+    "breached": {
+      "title": "Overdue decisions",
+      "meta": "Items requiring immediate operational action"
+    },
+    "signatures": {
+      "gate": "External e-signature activates only after infrastructure gate D-18 is approved. Credentials belong in a secret store, never this database.",
+      "configured": "Credentials and health checks are ready.",
+      "notConfigured": "Credential configuration is required."
+    },
+    "columns": {
+      "process": "Process",
+      "category": "Category",
+      "owner": "Owner group",
+      "sla": "SLA",
+      "state": "State",
+      "action": "Action",
+      "form": "Form",
+      "schema": "Schema",
+      "fields": "Fields",
+      "updated": "Updated"
+    }
+  }
+}

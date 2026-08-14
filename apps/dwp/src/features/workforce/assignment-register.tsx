@@ -19,7 +19,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { PersonAvatar } from '../people/directory/person-avatar';
+import { PersonAvatar } from '../../components/person-avatar';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { PersonSummary } from '@dwp-frontend/shared-utils';

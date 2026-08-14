@@ -23,6 +23,7 @@ import Typography from '@mui/material/Typography';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
+import Tooltip from '@mui/material/Tooltip';
 
 import { BrandLockup } from '../components/brand-lockup';
 import { ShellHeader } from '../components/shell-header';
@@ -40,8 +41,13 @@ import {
   useProviderSupportContext,
 } from '../features/provider/use-provider-support-context';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
+import {
+  DesktopNavigationToggle,
+  useDesktopNavigation,
+} from '../features/shell/desktop-navigation';
 
 type AdminNavigationProps = {
+  compact?: boolean;
   onNavigate?: () => void;
   supportScopes?: readonly string[];
 };
@@ -53,7 +59,7 @@ function initialExpandedGroups(): Record<AdminSection, boolean> {
   );
 }
 
-function AdminNavigation({ onNavigate, supportScopes }: AdminNavigationProps) {
+function AdminNavigation({ compact = false, onNavigate, supportScopes }: AdminNavigationProps) {
   const { t } = useTranslation('admin');
   const { hasPermission, isLoaded } = usePermissions();
   const auth = useAuth();
@@ -85,6 +91,51 @@ function AdminNavigation({ onNavigate, supportScopes }: AdminNavigationProps) {
       })
     ),
   })).filter((group) => group.items.length > 0);
+
+  if (compact) {
+    return (
+      <Box component="nav" aria-label={t('shell.navigationLabel')} sx={{ py: 1.5 }}>
+        <List disablePadding sx={{ display: 'grid', gap: 0.35, px: 1 }}>
+          {visibleGroups.flatMap((group) =>
+            group.items.map((item) => {
+              const ItemIcon = item.icon;
+              const selected = pathname === item.path;
+              const label = t(`navigation.items.${item.view}.label`);
+              return (
+                <Box component="li" key={item.path} sx={{ display: 'block' }}>
+                  <Tooltip title={label} placement="right">
+                    <ListItemButton
+                      component={NavLink}
+                      to={item.path}
+                      selected={selected}
+                      aria-label={label}
+                      aria-current={selected ? 'page' : undefined}
+                      onClick={onNavigate}
+                      sx={{
+                        minHeight: 42,
+                        justifyContent: 'center',
+                        px: 1,
+                        borderRadius: 1,
+                        color: selected ? 'primary.main' : 'text.secondary',
+                        '&.Mui-selected': { bgcolor: 'action.selected' },
+                        '&.Mui-selected:hover': { bgcolor: 'action.selected' },
+                      }}
+                    >
+                      <ListItemIcon
+                        sx={{ minWidth: 0, justifyContent: 'center', color: 'inherit' }}
+                      >
+                        <ItemIcon size={18} strokeWidth={1.8} aria-hidden="true" />
+                      </ListItemIcon>
+                    </ListItemButton>
+                  </Tooltip>
+                </Box>
+              );
+            })
+          )}
+        </List>
+      </Box>
+    );
+  }
 
   return (
     <Box component="nav" aria-label={t('shell.navigationLabel')} sx={{ py: 1.5 }}>
@@ -263,30 +314,37 @@ function SupportAccessBanner({ context }: { context: ProviderSupportSessionConte
 export function AdminLayout() {
   const { t } = useTranslation('admin');
   const shell = shellRegistry.admin;
-  const sidebarWidth = shell.desktopNavigationWidth;
   const auth = useAuth();
   const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
   const supportContext = useProviderSupportContext(providerRole);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const {
+    compact,
+    collapsible,
+    desktopOffset,
+    sidebarWidth,
+    toggle: toggleDesktopNavigation,
+  } = useDesktopNavigation(shell);
   const tenantName =
     supportContext.data?.tenantName ||
     auth.user?.tenantName ||
     auth.user?.tenantCode ||
     t('shell.tenantFallback');
 
-  const navigationContent = (onNavigate?: () => void) => (
+  const navigationContent = (compactNavigation: boolean, onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
           minHeight: shellHeaderHeight,
-          px: 2,
+          px: compactNavigation ? 0 : 2,
           display: 'flex',
           alignItems: 'center',
-          gap: 1.25,
+          gap: compactNavigation ? 0 : 1.25,
+          justifyContent: compactNavigation ? 'center' : 'flex-start',
         }}
       >
         <BrandLockup
-          variant="product-full"
+          variant={compactNavigation ? 'product-only' : 'product-full'}
           label={t('shell.controlCenter')}
           description={t('shell.productName')}
           sx={{ flexShrink: 0 }}
@@ -294,7 +352,7 @@ export function AdminLayout() {
       </Box>
 
       <Divider />
-      <Box sx={{ px: 2.5, pt: 2.25, pb: 0.75 }}>
+      <Box sx={{ px: 2.5, pt: 2.25, pb: 0.75, display: compactNavigation ? 'none' : 'block' }}>
         <Typography component="p" variant="overline" color="text.secondary">
           {t('shell.tenantAdministration')}
         </Typography>
@@ -304,35 +362,64 @@ export function AdminLayout() {
       </Box>
 
       <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-        <AdminNavigation onNavigate={onNavigate} supportScopes={supportContext.data?.scopes} />
+        <AdminNavigation
+          compact={compactNavigation}
+          onNavigate={onNavigate}
+          supportScopes={supportContext.data?.scopes}
+        />
       </Box>
 
-      <Box sx={{ p: 1.5, borderTop: 1, borderColor: 'divider' }}>
-        <Button
-          component={NavLink}
-          to={supportContext.data ? '/provider/support' : '/'}
-          fullWidth
-          color="inherit"
-          startIcon={
-            supportContext.data ? (
-              <LifeBuoy size={17} strokeWidth={1.8} />
-            ) : (
-              <Home size={17} strokeWidth={1.8} />
-            )
+      <Box sx={{ p: compactNavigation ? 1 : 1.5, borderTop: 1, borderColor: 'divider' }}>
+        <Tooltip
+          title={
+            compactNavigation
+              ? t(supportContext.data ? 'supportMode.backToProvider' : 'shell.backToWorkspace')
+              : ''
           }
-          onClick={onNavigate}
-          sx={{ justifyContent: 'flex-start' }}
+          placement="right"
         >
-          {t(supportContext.data ? 'supportMode.backToProvider' : 'shell.backToWorkspace')}
-        </Button>
+          <Button
+            component={NavLink}
+            to={supportContext.data ? '/provider/support' : '/'}
+            fullWidth
+            color="inherit"
+            aria-label={
+              compactNavigation
+                ? t(supportContext.data ? 'supportMode.backToProvider' : 'shell.backToWorkspace')
+                : undefined
+            }
+            startIcon={
+              supportContext.data ? (
+                <LifeBuoy size={17} strokeWidth={1.8} />
+              ) : (
+                <Home size={17} strokeWidth={1.8} />
+              )
+            }
+            onClick={onNavigate}
+            sx={{
+              justifyContent: compactNavigation ? 'center' : 'flex-start',
+              minWidth: 0,
+              px: compactNavigation ? 1 : undefined,
+              '& .MuiButton-startIcon': { m: compactNavigation ? 0 : undefined },
+            }}
+          >
+            {!compactNavigation &&
+              t(supportContext.data ? 'supportMode.backToProvider' : 'shell.backToWorkspace')}
+          </Button>
+        </Tooltip>
       </Box>
     </Box>
   );
 
   return (
-    <Box data-testid="admin-shell" sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}>
+    <Box
+      data-testid="admin-shell"
+      data-dwp-navigation-state={compact ? 'compact' : 'expanded'}
+      sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}
+    >
       <Box
         component="aside"
+        id="admin-desktop-navigation"
         data-testid="admin-sidebar"
         sx={{
           position: 'fixed',
@@ -343,18 +430,19 @@ export function AdminLayout() {
           bgcolor: 'background.paper',
           borderRight: 1,
           borderColor: 'divider',
+          transition: (theme) => theme.transitions.create('width'),
         }}
       >
-        {navigationContent()}
+        {navigationContent(compact)}
       </Box>
 
       <Drawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
-        slotProps={{ paper: { sx: { width: sidebarWidth } } }}
+        slotProps={{ paper: { sx: { width: shell.desktopNavigationWidth } } }}
       >
         <Box data-testid="admin-mobile-sidebar" sx={{ height: 1 }}>
-          {navigationContent(() => setMobileOpen(false))}
+          {navigationContent(false, () => setMobileOpen(false))}
         </Box>
       </Drawer>
 
@@ -362,12 +450,21 @@ export function AdminLayout() {
         testId="admin-header"
         shellKey={shell.key}
         scope={supportContext.data ? 'support' : 'tenant'}
-        desktopOffset={sidebarWidth}
+        desktopOffset={desktopOffset}
         context={{ icon: shell.context.icon, label: t(shell.context.labelKey) }}
         navigation={{
           label: t('shell.openNavigation'),
           onOpen: () => setMobileOpen(true),
         }}
+        leading={
+          collapsible ? (
+            <DesktopNavigationToggle
+              compact={compact}
+              controlsId="admin-desktop-navigation"
+              onToggle={toggleDesktopNavigation}
+            />
+          ) : undefined
+        }
         showWorkspace={shell.showWorkspace && !supportContext.data}
       />
 
@@ -378,12 +475,13 @@ export function AdminLayout() {
         data-testid="admin-main"
         sx={{
           pt: `${shellHeaderHeight}px`,
-          width: { xs: 1, lg: `calc(100% - ${sidebarWidth}px)` },
-          ml: { xs: 0, lg: `${sidebarWidth}px` },
+          width: { xs: 1, lg: `calc(100% - ${desktopOffset}px)` },
+          ml: { xs: 0, lg: `${desktopOffset}px` },
           minWidth: 0,
           minHeight: '100dvh',
           overflowX: 'clip',
           outline: 'none',
+          transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >
         {supportContext.data && <SupportAccessBanner context={supportContext.data} />}

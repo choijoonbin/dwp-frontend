@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppWindow, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { AppWindow } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import {
   listRuntimeNavigation,
   type RuntimeNavigationNode,
@@ -15,7 +14,6 @@ import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Drawer from '@mui/material/Drawer';
 import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -30,6 +28,10 @@ import {
   workspaceCoreContexts,
   workspaceNavigationIcons,
 } from '../features/shell/shell-registry';
+import {
+  DesktopNavigationToggle,
+  useDesktopNavigation,
+} from '../features/shell/desktop-navigation';
 
 function hasRuntimePermission(node: RuntimeNavigationNode, permissions: PermissionDTO[]): boolean {
   if (!node.requiredResourceKey) return true;
@@ -121,12 +123,12 @@ function useAppNavigationModel() {
           children: [],
         },
         {
-          navigationKey: 'hris',
+          navigationKey: 'hcm',
           itemType: 'APP',
-          label: t('navigation.items.hris'),
+          label: t('navigation.items.hcm'),
           route: '/hr',
-          iconKey: 'hris',
-          requiredResourceKey: 'APP.HRIS',
+          iconKey: 'hcm',
+          requiredResourceKey: 'APP.HCM',
           requiredPermissionCode: 'VIEW',
           children: [],
         },
@@ -246,18 +248,16 @@ export function AppLayout() {
   const { t } = useTranslation('shell');
   const { pathname } = useLocation();
   const shell = shellRegistry.workspace;
-  const appearance = useAppearance();
   const navigationGroups = useAppNavigationModel();
-  const [collapsed, setCollapsed] = useState(appearance.navigationPattern === 'rail');
   const [mobileOpen, setMobileOpen] = useState(false);
-  const topNavigation = appearance.navigationPattern === 'top';
-  const compactSidebar = appearance.navigationPattern === 'rail' || collapsed;
-  const sidebarWidth = compactSidebar
-    ? (shell.compactNavigationWidth ?? shell.desktopNavigationWidth)
-    : shell.desktopNavigationWidth;
-  const desktopOffset = topNavigation ? 0 : sidebarWidth;
-  const desktopNavigationCollapsible =
-    appearance.policy.navigation.allowCollapse && appearance.navigationPattern !== 'rail';
+  const {
+    compact: compactSidebar,
+    collapsible: desktopNavigationCollapsible,
+    desktopOffset,
+    sidebarWidth,
+    toggle: toggleDesktopNavigation,
+    topNavigation,
+  } = useDesktopNavigation(shell, { allowTopNavigation: true });
   const runtimeContext = flattenRuntimeApps(navigationGroups).find(
     (item) => item.route && (pathname === item.route || pathname.startsWith(`${item.route}/`))
   );
@@ -362,32 +362,11 @@ export function AppLayout() {
         navigation={{ label: t('navigation.open'), onOpen: () => setMobileOpen(true) }}
         leading={
           !topNavigation && desktopNavigationCollapsible ? (
-            <Tooltip
-              title={collapsed ? t('navigation.expand') : t('navigation.collapse')}
-              placement="bottom"
-            >
-              <IconButton
-                size="small"
-                aria-label={collapsed ? t('navigation.expand') : t('navigation.collapse')}
-                aria-controls="desktop-navigation"
-                aria-expanded={!collapsed}
-                onClick={() => setCollapsed((current) => !current)}
-                sx={{
-                  mr: 0.5,
-                  width: 40,
-                  height: 40,
-                  display: { xs: 'none', lg: 'inline-flex' },
-                  color: 'text.secondary',
-                  '&:hover': { color: 'text.primary' },
-                }}
-              >
-                {collapsed ? (
-                  <PanelLeftOpen size={18} strokeWidth={1.8} />
-                ) : (
-                  <PanelLeftClose size={18} strokeWidth={1.8} />
-                )}
-              </IconButton>
-            </Tooltip>
+            <DesktopNavigationToggle
+              compact={compactSidebar}
+              controlsId="desktop-navigation"
+              onToggle={toggleDesktopNavigation}
+            />
           ) : undefined
         }
         brand={

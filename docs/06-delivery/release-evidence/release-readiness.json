@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "release": "R1-pilot",
-  "asOf": "2026-08-13",
+  "asOf": "2026-08-14",
   "status": "BLOCKED_EXTERNAL_EVIDENCE",
   "qualityGates": [
     {
@@ -10,10 +10,7 @@
       "state": "BLOCKED_EXTERNAL",
       "releaseRequired": true,
       "summary": "Customer-scale graph, grid, catalog, and evidence performance",
-      "evidence": [
-        "scripts/runtime-performance-budgets.json",
-        "e2e/performance-budget.spec.ts"
-      ],
+      "evidence": ["scripts/runtime-performance-budgets.json", "e2e/performance-budget.spec.ts"],
       "blockers": ["APPROVED_CUSTOMER_SCALE", "APPROVED_P95_AND_MEMORY_BUDGETS"]
     },
     {
@@ -43,10 +40,7 @@
       "state": "BLOCKED_EXTERNAL",
       "releaseRequired": true,
       "summary": "Approved browser and operating system matrix",
-      "evidence": [
-        "playwright.config.ts",
-        "e2e/menu-visual-baseline.spec.ts"
-      ],
+      "evidence": ["playwright.config.ts", "e2e/menu-visual-baseline.spec.ts"],
       "blockers": ["D-10", "APPROVED_BROWSER_OS_MATRIX"]
     },
     {
@@ -122,7 +116,9 @@
       "state": "FEATURE_DISABLED",
       "releaseRequired": false,
       "summary": "Enterprise SSO, MFA, recovery, and identity provider discovery",
-      "failClosedEvidence": ["docs/05-features/DWP-R1-CORE-003-account-preferences/01-기획 정의.md"],
+      "failClosedEvidence": [
+        "docs/05-features/DWP-R1-CORE-003-account-preferences/01-기획 정의.md"
+      ],
       "blockers": ["IDP_SELECTION", "DOMAIN_OWNERSHIP", "SANDBOX"]
     },
     {
@@ -131,7 +127,9 @@
       "state": "FEATURE_DISABLED",
       "releaseRequired": false,
       "summary": "Production model, tool, residency, DLP, retention, and evaluation policy",
-      "failClosedEvidence": ["docs/05-features/DWP-R1-AI-001-governed-ask-runtime/07-수용 테스트.md"],
+      "failClosedEvidence": [
+        "docs/05-features/DWP-R1-AI-001-governed-ask-runtime/07-수용 테스트.md"
+      ],
       "blockers": ["MODEL_POLICY", "TEVV", "RED_TEAM"]
     },
     {
@@ -149,7 +147,9 @@
       "state": "FEATURE_DISABLED",
       "releaseRequired": false,
       "summary": "Collaborative scenarios, finance approval, and HCM execution",
-      "failClosedEvidence": ["docs/05-features/DWP-R0-ADM-005-admin-workforce-foundation/01-기획 정의.md"],
+      "failClosedEvidence": [
+        "docs/05-features/DWP-R0-ADM-005-admin-workforce-foundation/01-기획 정의.md"
+      ],
       "blockers": ["COLLABORATION_POLICY", "FINANCE_APPROVAL", "HCM_TRANSACTION"]
     },
     {
@@ -221,7 +221,9 @@
       "state": "FEATURE_DISABLED",
       "releaseRequired": false,
       "summary": "Export queue, worker, KMS object storage, WORM, expiry, and notification",
-      "failClosedEvidence": ["docs/05-features/DWP-R1-CORE-004-governed-sharing-export/07-수용 테스트.md"],
+      "failClosedEvidence": [
+        "docs/05-features/DWP-R1-CORE-004-governed-sharing-export/07-수용 테스트.md"
+      ],
       "blockers": ["QUEUE", "KMS_STORAGE", "WORM", "NOTIFICATION"]
     },
     {
@@ -248,7 +250,9 @@
       "state": "FEATURE_DISABLED",
       "releaseRequired": false,
       "summary": "Announcement approval, channels, acknowledgment, and retention",
-      "failClosedEvidence": ["docs/05-features/DWP-R1-CORE-002-personal-home-experience/07-수용 테스트.md"],
+      "failClosedEvidence": [
+        "docs/05-features/DWP-R1-CORE-002-personal-home-experience/07-수용 테스트.md"
+      ],
       "blockers": ["APPROVAL_POLICY", "CHANNEL_SANDBOX", "RETENTION_POLICY"]
     },
     {
@@ -257,7 +261,9 @@
       "state": "FEATURE_DISABLED",
       "releaseRequired": false,
       "summary": "IAM entitlement grant, revoke, and reconciliation",
-      "failClosedEvidence": ["docs/05-features/DWP-R1-ADM-007-navigation-app-access-governance/07-수용 테스트.md"],
+      "failClosedEvidence": [
+        "docs/05-features/DWP-R1-ADM-007-navigation-app-access-governance/07-수용 테스트.md"
+      ],
       "blockers": ["IAM_TARGET", "MAPPING", "RECONCILIATION_SLA"]
     },
     {
@@ -268,6 +274,23 @@
       "summary": "External catalog, GitOps, schema registry, and drift reconciliation",
       "failClosedEvidence": ["docs/05-features/DWP-R1-ADM-006-governed-catalog/07-수용 테스트.md"],
       "blockers": ["SOURCE_PRIORITY", "ENTITY_OWNER", "DRIFT_POLICY"]
+    },
+    {
+      "id": "D-18",
+      "owner": "Legal, Security, and Approval Platform",
+      "state": "FEATURE_DISABLED",
+      "releaseRequired": false,
+      "summary": "External signature provider, legal effect, identity assurance, seal, certificate, KMS object storage, and WORM retention",
+      "failClosedEvidence": [
+        "docs/05-features/DWP-R1-APR-001-enterprise-approval-decision-hub/07-수용 테스트.md"
+      ],
+      "blockers": [
+        "SIGNATURE_PROVIDER",
+        "LEGAL_REVIEW",
+        "IDENTITY_ASSURANCE",
+        "KMS_OBJECT_STORAGE",
+        "WORM_RETENTION"
+      ]
     }
   ],
   "approvals": [

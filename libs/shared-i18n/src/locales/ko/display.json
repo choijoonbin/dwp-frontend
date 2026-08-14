@@ -67,6 +67,7 @@
     "TRIAL": "평가판",
     "UNAVAILABLE": "사용 불가",
     "VERIFIED": "검증됨",
+    "WAIVED": "면제됨",
     "WARNING": "경고"
   },
   "outcomes": {
@@ -88,6 +89,8 @@
   },
   "severities": {
     "ALL": "전체 심각도",
+    "ATTENTION": "조치 필요",
+    "BLOCKING": "차단",
     "CRITICAL": "심각",
     "ERROR": "오류",
     "HIGH": "높음",
@@ -136,6 +139,7 @@
     "TENANT_LIFECYCLE": "테넌트 수명주기"
   },
   "auditActions": {
+    "APPROVE": "승인",
     "BLOCKED": "반출 처리 차단",
     "CANCELLED": "반출 요청 취소",
     "CLAIMED": "작업자가 반출 요청 선점",
@@ -218,6 +222,13 @@
     "ROLE_ASSIGNMENT_DENIED": "역할 할당 거부",
     "REQUEST_CANCELLED": "서비스 요청 취소",
     "REQUEST_SUBMITTED": "서비스 요청 제출",
+    "REQUEST_DRAFTED": "결재 초안 생성",
+    "TASK_CLAIMED": "결재 작업 담당",
+    "TASK_APPROVED": "결재 승인",
+    "TASK_REJECTED": "결재 반려",
+    "INFORMATION_REQUESTED": "결재 보완 요청",
+    "INFORMATION_RESPONDED": "결재 보완 답변",
+    "APPROVAL_STEP_STARTED": "다음 결재 단계 시작",
     "STATUS_CHANGED": "서비스 요청 상태 변경",
     "PROVIDER_DATA_GOVERNANCE_IMPACT_PREVIEWED": "데이터 정책 영향 미리보기",
     "PROVIDER_DATA_GOVERNANCE_POLICY_CREATED": "데이터 정책 생성",
@@ -309,6 +320,7 @@
     "JIT": "적시 접근"
   },
   "scopeTypes": {
+    "ALL": "전체 워크플로",
     "ASSET": "자산",
     "CELL": "배포 셀",
     "DATABASE": "데이터베이스",
@@ -317,7 +329,8 @@
     "REGION": "리전",
     "RESOURCE": "리소스",
     "SERVICE": "서비스",
-    "TENANT": "테넌트"
+    "TENANT": "테넌트",
+    "WORKFLOW": "워크플로"
   },
   "targetTypes": {
     "AUDIT_CASE": "감사 사건",

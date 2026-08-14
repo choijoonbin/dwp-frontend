@@ -14,12 +14,17 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { BrandLockup } from '../components/brand-lockup';
 import { ShellHeader } from '../components/shell-header';
 import { SERVICES_NAVIGATION } from '../features/services/services-navigation';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
+import {
+  DesktopNavigationToggle,
+  useDesktopNavigation,
+} from '../features/shell/desktop-navigation';
 
 export function ServicesLayout() {
   const { t } = useTranslation('services');
@@ -27,7 +32,13 @@ export function ServicesLayout() {
   const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const shell = shellRegistry.services;
-  const sidebarWidth = shell.desktopNavigationWidth;
+  const {
+    compact,
+    collapsible,
+    desktopOffset,
+    sidebarWidth,
+    toggle: toggleDesktopNavigation,
+  } = useDesktopNavigation(shell);
   const tenantName = auth.user?.tenantName || auth.user?.tenantCode || t('shell.tenantFallback');
   const requests = useQuery({
     queryKey: ['services', 'requests'],
@@ -42,13 +53,21 @@ export function ServicesLayout() {
           (request) => !['DRAFT', 'CLOSED', 'CANCELLED'].includes(request.status)
         ).length ?? 0);
 
-  const navigationContent = (onNavigate?: () => void) => (
+  const navigationContent = (compactNavigation: boolean, onNavigate?: () => void) => (
     <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ minHeight: shellHeaderHeight, px: 2, display: 'flex', alignItems: 'center' }}>
-        <BrandLockup variant="product-full" />
+      <Box
+        sx={{
+          minHeight: shellHeaderHeight,
+          px: compactNavigation ? 0 : 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: compactNavigation ? 'center' : 'flex-start',
+        }}
+      >
+        <BrandLockup variant={compactNavigation ? 'product-only' : 'product-full'} />
       </Box>
       <Divider />
-      <Box sx={{ px: 2.5, pt: 2.25, pb: 1.25 }}>
+      <Box sx={{ px: 2.5, pt: 2.25, pb: 1.25, display: compactNavigation ? 'none' : 'block' }}>
         <Typography component="p" variant="overline" color="text.secondary">
           {t('shell.context')}
         </Typography>
@@ -59,54 +78,80 @@ export function ServicesLayout() {
       <Box component="nav" aria-label={t('shell.navigationLabel')} sx={{ flex: 1 }}>
         {SERVICES_NAVIGATION.map((group) => (
           <Box key={group.id} sx={{ pb: 1.5 }}>
-            <Typography
-              component="p"
-              variant="overline"
-              color="text.secondary"
-              sx={{ px: 2.5, py: 0.75 }}
+            {!compactNavigation && (
+              <Typography
+                component="p"
+                variant="overline"
+                color="text.secondary"
+                sx={{ px: 2.5, py: 0.75 }}
+              >
+                {t(`navigation.groups.${group.id}`)}
+              </Typography>
+            )}
+            <List
+              disablePadding
+              sx={{ display: 'grid', gap: 0.35, px: compactNavigation ? 1 : 1.25 }}
             >
-              {t(`navigation.groups.${group.id}`)}
-            </Typography>
-            <List disablePadding sx={{ display: 'grid', gap: 0.35, px: 1.25 }}>
               {group.items.map((item) => {
                 const selected = pathname === item.path || pathname.startsWith(`${item.path}/`);
                 const Icon = item.icon;
                 const count = item.id === 'my' || item.id === 'drafts' ? countFor(item.id) : 0;
+                const label = t(`navigation.items.${item.id}`);
                 return (
                   <Box component="li" key={item.id} sx={{ listStyle: 'none' }}>
-                    <ListItemButton
-                      component={NavLink}
-                      to={item.path}
-                      selected={selected}
-                      aria-current={selected ? 'page' : undefined}
-                      onClick={onNavigate}
-                      sx={{
-                        minHeight: 42,
-                        px: 1.25,
-                        borderRadius: 1,
-                        color: selected ? 'primary.main' : 'text.secondary',
-                        '&.Mui-selected': { bgcolor: 'action.selected' },
-                        '&.Mui-selected:hover': { bgcolor: 'action.selected' },
-                      }}
-                    >
-                      <ListItemIcon sx={{ minWidth: 34, color: 'inherit' }}>
-                        <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={t(`navigation.items.${item.id}`)}
-                        primaryTypographyProps={{
-                          variant: 'body2',
-                          fontWeight: selected ? 750 : 600,
+                    <Tooltip title={compactNavigation ? label : ''} placement="right">
+                      <ListItemButton
+                        component={NavLink}
+                        to={item.path}
+                        selected={selected}
+                        aria-label={compactNavigation ? label : undefined}
+                        aria-current={selected ? 'page' : undefined}
+                        onClick={onNavigate}
+                        sx={{
+                          minHeight: 42,
+                          justifyContent: compactNavigation ? 'center' : 'flex-start',
+                          px: compactNavigation ? 1 : 1.25,
+                          borderRadius: 1,
+                          position: 'relative',
+                          color: selected ? 'primary.main' : 'text.secondary',
+                          '&.Mui-selected': { bgcolor: 'action.selected' },
+                          '&.Mui-selected:hover': { bgcolor: 'action.selected' },
                         }}
-                      />
-                      {count > 0 && (
-                        <Chip
-                          size="small"
-                          label={count > 99 ? '99+' : count}
-                          sx={{ minWidth: 28, height: 20, '& .MuiChip-label': { px: 0.75 } }}
-                        />
-                      )}
-                    </ListItemButton>
+                      >
+                        <ListItemIcon
+                          sx={{
+                            minWidth: compactNavigation ? 0 : 34,
+                            justifyContent: 'center',
+                            color: 'inherit',
+                          }}
+                        >
+                          <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
+                        </ListItemIcon>
+                        {!compactNavigation && (
+                          <ListItemText
+                            primary={label}
+                            primaryTypographyProps={{
+                              variant: 'body2',
+                              fontWeight: selected ? 750 : 600,
+                            }}
+                          />
+                        )}
+                        {count > 0 && (
+                          <Chip
+                            size="small"
+                            label={count > 99 ? '99+' : count}
+                            sx={{
+                              minWidth: compactNavigation ? 18 : 28,
+                              height: compactNavigation ? 18 : 20,
+                              position: compactNavigation ? 'absolute' : 'static',
+                              top: compactNavigation ? 2 : undefined,
+                              right: compactNavigation ? 2 : undefined,
+                              '& .MuiChip-label': { px: compactNavigation ? 0.45 : 0.75 },
+                            }}
+                          />
+                        )}
+                      </ListItemButton>
+                    </Tooltip>
                   </Box>
                 );
               })}
@@ -114,26 +159,39 @@ export function ServicesLayout() {
           </Box>
         ))}
       </Box>
-      <Box sx={{ p: 1.5, borderTop: 1, borderColor: 'divider' }}>
-        <ActionButton
-          component={NavLink}
-          to="/"
-          fullWidth
-          intent="quiet"
-          startIcon={<Home size={17} />}
-          onClick={onNavigate}
-          sx={{ justifyContent: 'flex-start' }}
-        >
-          {t('shell.backToHome')}
-        </ActionButton>
+      <Box sx={{ p: compactNavigation ? 1 : 1.5, borderTop: 1, borderColor: 'divider' }}>
+        <Tooltip title={compactNavigation ? t('shell.backToHome') : ''} placement="right">
+          <ActionButton
+            component={NavLink}
+            to="/"
+            fullWidth
+            intent="quiet"
+            aria-label={compactNavigation ? t('shell.backToHome') : undefined}
+            startIcon={<Home size={17} />}
+            onClick={onNavigate}
+            sx={{
+              justifyContent: compactNavigation ? 'center' : 'flex-start',
+              minWidth: 0,
+              px: compactNavigation ? 1 : undefined,
+              '& .MuiButton-startIcon': { m: compactNavigation ? 0 : undefined },
+            }}
+          >
+            {!compactNavigation && t('shell.backToHome')}
+          </ActionButton>
+        </Tooltip>
       </Box>
     </Box>
   );
 
   return (
-    <Box data-testid="services-shell" sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}>
+    <Box
+      data-testid="services-shell"
+      data-dwp-navigation-state={compact ? 'compact' : 'expanded'}
+      sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}
+    >
       <Box
         component="aside"
+        id="services-desktop-navigation"
         data-testid="services-sidebar"
         sx={{
           position: 'fixed',
@@ -144,26 +202,39 @@ export function ServicesLayout() {
           bgcolor: 'background.paper',
           borderRight: 1,
           borderColor: 'divider',
+          transition: (theme) => theme.transitions.create('width'),
         }}
       >
-        {navigationContent()}
+        {navigationContent(compact)}
       </Box>
       <Drawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
         slotProps={{
-          paper: { 'aria-label': t('shell.navigationLabel'), sx: { width: sidebarWidth } },
+          paper: {
+            'aria-label': t('shell.navigationLabel'),
+            sx: { width: shell.desktopNavigationWidth },
+          },
         }}
       >
-        <Box sx={{ height: 1 }}>{navigationContent(() => setMobileOpen(false))}</Box>
+        <Box sx={{ height: 1 }}>{navigationContent(false, () => setMobileOpen(false))}</Box>
       </Drawer>
       <ShellHeader
         testId="services-header"
         shellKey={shell.key}
         scope={shell.scope}
-        desktopOffset={sidebarWidth}
+        desktopOffset={desktopOffset}
         context={{ icon: LifeBuoy, label: t('shell.name') }}
         navigation={{ label: t('shell.openNavigation'), onOpen: () => setMobileOpen(true) }}
+        leading={
+          collapsible ? (
+            <DesktopNavigationToggle
+              compact={compact}
+              controlsId="services-desktop-navigation"
+              onToggle={toggleDesktopNavigation}
+            />
+          ) : undefined
+        }
         showWorkspace={shell.showWorkspace}
       />
       <Box
@@ -172,12 +243,13 @@ export function ServicesLayout() {
         tabIndex={-1}
         sx={{
           pt: `${shellHeaderHeight}px`,
-          width: { xs: 1, lg: `calc(100% - ${sidebarWidth}px)` },
-          ml: { xs: 0, lg: `${sidebarWidth}px` },
+          width: { xs: 1, lg: `calc(100% - ${desktopOffset}px)` },
+          ml: { xs: 0, lg: `${desktopOffset}px` },
           minWidth: 0,
           minHeight: '100dvh',
           overflowX: 'clip',
           outline: 'none',
+          transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >
         <Outlet />

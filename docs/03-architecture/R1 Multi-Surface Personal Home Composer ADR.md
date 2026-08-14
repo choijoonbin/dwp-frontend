@@ -10,7 +10,7 @@
 
 DWP는 제품마다 별도의 자유 배치형 포털 빌더를 만들지 않는다. 하나의 **Personal Home
 Composer**를 공유하고, 각 제품은 승인된 Widget Registry와 실제 데이터 조회·권한 계약만
-등록한다. 첫 적용 Surface는 `hris-home`이며 기존 개인 홈은 `workspace-home`으로 명시한다.
+등록한다. HR 제품 Surface는 `hcm-home`이며 기존 개인 홈은 `workspace-home`으로 명시한다.
 
 사용자는 자신에게 허용된 범위에서 다음 작업을 할 수 있다.
 
@@ -33,7 +33,7 @@ Component만 Registry에 등록하고 DB에는 식별자, 노출 여부, 의미 
   Frontend Audience Filter와 Backend 권한 검사를 분리한다.
 - [Oracle HCM Quick Actions](https://docs.oracle.com/en/cloud/saas/human-resources/faucf/quick-actions.html)은
   `Me`, `My Team`, `My Client Groups` 작업을 Security Privilege와 대상 인구에 따라 다르게
-  제공한다. HRIS Home의 개인·Manager·Operator Widget도 같은 누적 Audience 원칙을 따른다.
+  제공한다. HCM Home의 개인·Manager·Operator Widget도 같은 누적 Audience 원칙을 따른다.
 - [W3C WCAG Animation from Interactions](https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions.html)은
   비필수 동작을 끄고 사용자 Reduce Motion 선호를 존중하도록 요구한다. 모든 Drag·표현
   Transition은 `prefers-reduced-motion`에서 제거한다.
@@ -44,7 +44,7 @@ Component만 Registry에 등록하고 DB에는 식별자, 노출 여부, 의미 
 
 | 컬럼             | 계약                                                                |
 | ---------------- | ------------------------------------------------------------------- |
-| `surface_key`    | `workspace-home`, `hris-home` 같은 불변 제품 Surface 식별자         |
+| `surface_key`    | `workspace-home`, `hcm-home` 같은 불변 제품 Surface 식별자          |
 | `schema_version` | 현재 `2`; 저장 Payload의 호환성·승격 기준                           |
 | `layout_payload` | 서버가 검증한 JSONB Layout; 실행 코드와 업무 데이터는 저장하지 않음 |
 | `version`        | 동시 편집 충돌을 막는 낙관적 잠금                                   |
@@ -90,7 +90,7 @@ API는 기존 Workspace 호환 Endpoint를 유지하면서 Surface API를 추가
 
 ## 5. Frontend 재사용 계약
 
-공통 모듈 `features/workspace-composer`는 다음 책임만 가진다.
+공통 모듈 `components/workspace-composer`는 다음 책임만 가진다.
 
 - Registry와 저장값 Reconcile
 - Mouse·Touch·Keyboard Drag 정렬
@@ -147,5 +147,5 @@ Tenant 관리자가 Registry 자체를 임의 확장하는 기능은 이번 Base
 - DB Migration: `V67__evolve_personal_home_surfaces.sql`
 - Backend: `HomePreferenceServiceTest`와 플랫폼 전체 Test
 - Frontend: `workspace-composer-model.test.ts`
-- E2E: `hris-experience.spec.ts`의 저장·새로고침·복원, 구성원·Manager·Operator 시나리오
+- E2E: `hcm-experience.spec.ts`의 저장·새로고침·복원, 구성원·Manager·Operator 시나리오
 - Visual QA: Desktop Chrome과 iPhone 13에서 Home·Editor 프레이밍, 겹침, Overflow 점검

@@ -155,15 +155,19 @@ export function HomeItemGallery({
                     </Box>
                     <Box sx={{ minWidth: 0 }}>
                       <Typography variant="subtitle2">
-                        {t(`widgets.registry.${widget.key}.label`, {
-                          defaultValue: widget.label,
-                        })}
+                        {t(`widgets.registry.${widget.key}.label`)}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {t(`widgets.registry.${widget.key}.description`, {
-                          defaultValue: widget.description,
-                        })}
+                        {t(`widgets.registry.${widget.key}.description`)}
                       </Typography>
+                      {widget.manifest && (
+                        <Typography variant="caption" color="text.secondary" display="block">
+                          {t('editor.widgetMetadata', {
+                            source: widget.manifest.dataSource,
+                            minutes: Math.max(1, Math.ceil(widget.manifest.freshnessSeconds / 60)),
+                          })}
+                        </Typography>
+                      )}
                     </Box>
                     <ActionButton
                       intent="quiet"
