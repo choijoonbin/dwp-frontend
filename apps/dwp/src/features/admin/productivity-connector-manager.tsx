@@ -59,7 +59,10 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type {
   ProductivityConnector,
@@ -363,10 +366,12 @@ export function ProductivityConnectorManager() {
   };
 
   if (overviewQuery.isLoading) {
-    return <AdminPanelLoading label={t('productivity.loading')} />;
+    return <ManagementPanelLoading label={t('productivity.loading')} />;
   }
   if (overviewQuery.isError || !overviewQuery.data) {
-    return <AdminPanelError message={errorMessage(overviewQuery.error, t('common.loadError'))} />;
+    return (
+      <ManagementPanelError message={errorMessage(overviewQuery.error, t('common.loadError'))} />
+    );
   }
 
   const overview = overviewQuery.data;

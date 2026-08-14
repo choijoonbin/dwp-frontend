@@ -1,0 +1,17 @@
+{
+  "name": "dwp-communications",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/product-runtime/src",
+  "tags": ["scope:communications", "type:product", "runtime:browser", "deployment:independent"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "inputs": ["communicationsProduct"],
+      "options": {
+        "command": "node scripts/build-product-app.mjs communications"
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/communications"]
+    }
+  }
+}

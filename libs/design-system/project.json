@@ -3,5 +3,6 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/design-system/src",
+  "tags": ["scope:platform", "type:ui", "runtime:browser", "deployment:shared"],
   "targets": {}
 }

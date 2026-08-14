@@ -1,6 +1,5 @@
-import type { ReferenceLifecycle } from '@dwp-frontend/shared-utils';
 import { useTranslation } from 'react-i18next';
-import { ErrorState, LoadingState } from '@dwp-frontend/design-system';
+import type { ReferenceLifecycle } from '@dwp-frontend/shared-utils';
 
 import Chip from '@mui/material/Chip';
 
@@ -20,13 +19,4 @@ export function LifecycleChip({ state }: { state: ReferenceLifecycle }) {
       size="small"
     />
   );
-}
-
-export function AdminPanelLoading({ label }: { label: string }) {
-  return <LoadingState label={label} size="page" />;
-}
-
-export function AdminPanelError({ message }: { message: string }) {
-  const { t } = useTranslation('admin');
-  return <ErrorState title={t('common.loadError')} description={message} size="standard" />;
 }

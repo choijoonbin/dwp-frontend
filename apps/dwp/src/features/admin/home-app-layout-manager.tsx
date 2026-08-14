@@ -37,9 +37,12 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
-import { localizeHomeApps } from '../home/app-launchpad-model';
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
-import { useCurrentProviderSupportContext } from '../provider/use-provider-support-context';
+import { localizeHomeApps } from '../../components/workspace-composer/app-launchpad-model';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
+import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 import type {
   HomeLaunchpadConfiguration,
@@ -206,11 +209,13 @@ export function HomeAppLayoutManager() {
   });
 
   if (experienceQuery.isLoading || !draft) {
-    return <AdminPanelLoading label={t('homeApps.loading')} />;
+    return <ManagementPanelLoading label={t('homeApps.loading')} />;
   }
   if (experienceQuery.isError) {
     return (
-      <AdminPanelError message={errorMessage(experienceQuery.error, t('homeApps.errors.load'))} />
+      <ManagementPanelError
+        message={errorMessage(experienceQuery.error, t('homeApps.errors.load'))}
+      />
     );
   }
 

@@ -10,6 +10,7 @@ import {
 } from '@dwp-frontend/shared-utils/api/provider-control-api';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
+import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 
 import Box from '@mui/material/Box';
@@ -32,14 +33,11 @@ import {
   type AdminNavigationGroup,
   type AdminSection,
 } from '../features/admin/admin-navigation';
-import {
-  canAccessAdminNavigationItem,
-  hasProviderControlPlaneRole,
-} from '../features/auth/control-plane-access';
+import { canAccessAdminNavigationItem } from '../features/admin/admin-access-policy';
 import {
   providerSupportContextQueryKey,
   useProviderSupportContext,
-} from '../features/provider/use-provider-support-context';
+} from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 import {
   DesktopNavigationToggle,

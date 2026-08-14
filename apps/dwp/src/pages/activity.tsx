@@ -39,8 +39,8 @@ import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import { LiveSignal, SectionHeading } from '../features/work-hub/workspace-ui';
-import { GovernedSavedViewControl } from '../features/saved-views/governed-saved-view-control';
+import { LiveSignal, SectionHeading } from '../components/workspace-ui';
+import { GovernedSavedViewControl } from '../components/governed-saved-view-control';
 
 import type {
   WorkspaceActivityActor as ActivityActor,

@@ -127,7 +127,7 @@ export type HrEnrollmentWindow = {
   windowType: string;
   opensAt: string;
   closesAt: string;
-  lifecycleState: string;
+  lifecycleState: 'SCHEDULED' | 'OPEN' | 'CLOSED' | 'CANCELLED';
 };
 
 export type HrBenefitsWorkspace = {
@@ -147,6 +147,7 @@ export type HrPayCycle = {
   timeValidated: boolean;
   absenceValidated: boolean;
   sourceConfirmed: boolean;
+  dataOrigin: HrHomeDataOrigin;
 };
 
 export type HrPayStatement = {
@@ -170,7 +171,7 @@ export type HrJourney = {
   journeyType: string;
   progressPercent: number;
   targetDate?: string | null;
-  status: string;
+  status: 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'CANCELLED';
 };
 
 export type HrGoal = {
@@ -214,19 +215,75 @@ export type HrDomainOperations = {
   dataBoundary: string;
 };
 
+export type HrHomeDomain = 'TIME' | 'ABSENCE' | 'BENEFITS' | 'PAY' | 'TALENT' | 'TEAM';
+export type HrHomeDataOrigin = 'SOURCE' | 'MANUAL' | 'REFERENCE' | 'MIXED' | 'NONE' | 'UNKNOWN';
+export type HrHomeDomainState = {
+  availability: 'AVAILABLE' | 'UNAVAILABLE';
+  dataOrigin: HrHomeDataOrigin;
+  reasonCode?: string | null;
+};
+
+function normalizeHrHomeDataOrigin(value: string | null | undefined): HrHomeDataOrigin {
+  if (value === 'LOCAL_SEED') return 'REFERENCE';
+  if (
+    value === 'SOURCE' ||
+    value === 'MANUAL' ||
+    value === 'REFERENCE' ||
+    value === 'MIXED' ||
+    value === 'NONE' ||
+    value === 'UNKNOWN'
+  ) {
+    return value;
+  }
+  return 'UNKNOWN';
+}
+
 export type HrHomeOverview = {
   asOf: string;
+  generatedAt: string | null;
+  timeZone: string;
+  standardDayMinutes: number | null;
   employee: HrEmployeeContext;
   time?: HrTimeCard | null;
   leaveBalances: HrLeaveBalance[];
   pay?: HrPayCycle | null;
+  enrollmentWindows: HrEnrollmentWindow[];
+  journeys: HrJourney[];
   activeBenefitCount: number;
   openBenefitWindowCount: number;
   activeGoalCount: number;
   requiredLearningCount: number;
   teamPendingCount: number;
+  teamTimePendingCount: number | null;
+  teamAbsencePendingCount: number | null;
+  domainStates: Partial<Record<HrHomeDomain, HrHomeDomainState>>;
   referenceDataPresent: boolean;
 };
+
+type HrHomeOverviewWire = Omit<
+  HrHomeOverview,
+  | 'generatedAt'
+  | 'timeZone'
+  | 'standardDayMinutes'
+  | 'enrollmentWindows'
+  | 'journeys'
+  | 'teamTimePendingCount'
+  | 'teamAbsencePendingCount'
+  | 'domainStates'
+> &
+  Partial<
+    Pick<
+      HrHomeOverview,
+      | 'generatedAt'
+      | 'timeZone'
+      | 'standardDayMinutes'
+      | 'enrollmentWindows'
+      | 'journeys'
+      | 'teamTimePendingCount'
+      | 'teamAbsencePendingCount'
+      | 'domainStates'
+    >
+  >;
 
 const BASE = '/api/people/v1/hr';
 
@@ -235,7 +292,38 @@ async function get<T>(path: string): Promise<T> {
   return response.data.data;
 }
 
-export const getHrHome = () => get<HrHomeOverview>('/home');
+export const getHrHome = async (): Promise<HrHomeOverview> => {
+  const value = await get<HrHomeOverviewWire>('/home');
+  const legacyDomainState: HrHomeDomainState = {
+    availability: 'AVAILABLE',
+    dataOrigin: 'UNKNOWN',
+    reasonCode: null,
+  };
+  const domains: HrHomeDomain[] = ['TIME', 'ABSENCE', 'BENEFITS', 'PAY', 'TALENT', 'TEAM'];
+  const domainStates = Object.fromEntries(
+    domains.map((domain) => {
+      const state = value.domainStates?.[domain] ?? legacyDomainState;
+      return [domain, { ...state, dataOrigin: normalizeHrHomeDataOrigin(state.dataOrigin) }];
+    })
+  ) as Record<HrHomeDomain, HrHomeDomainState>;
+  return {
+    ...value,
+    generatedAt: value.generatedAt ?? null,
+    timeZone: value.timeZone ?? 'UTC',
+    standardDayMinutes: value.standardDayMinutes ?? null,
+    enrollmentWindows: value.enrollmentWindows ?? [],
+    journeys: value.journeys ?? [],
+    teamTimePendingCount: value.teamTimePendingCount ?? null,
+    teamAbsencePendingCount: value.teamAbsencePendingCount ?? null,
+    domainStates,
+    pay: value.pay
+      ? {
+          ...value.pay,
+          dataOrigin: normalizeHrHomeDataOrigin(value.pay.dataOrigin),
+        }
+      : value.pay,
+  };
+};
 export const getHrTime = () => get<HrTimeWorkspace>('/time');
 export const getHrAbsence = () => get<HrAbsenceWorkspace>('/absence');
 export const getHrBenefits = () => get<HrBenefitsWorkspace>('/benefits');

@@ -15,7 +15,10 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { PlatformAuditEvent } from '@dwp-frontend/shared-utils';
@@ -121,9 +124,9 @@ export function AuditLog() {
     [display, t]
   );
 
-  if (auditQuery.isLoading) return <AdminPanelLoading label={t('audit.loading')} />;
+  if (auditQuery.isLoading) return <ManagementPanelLoading label={t('audit.loading')} />;
   if (auditQuery.isError) {
-    return <AdminPanelError message={errorMessage(auditQuery.error, t('audit.loadError'))} />;
+    return <ManagementPanelError message={errorMessage(auditQuery.error, t('audit.loadError'))} />;
   }
 
   const events = auditQuery.data ?? [];

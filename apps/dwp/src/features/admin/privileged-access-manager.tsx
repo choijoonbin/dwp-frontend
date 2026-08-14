@@ -48,7 +48,10 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { TFunction } from 'i18next';
@@ -804,11 +807,11 @@ export function PrivilegedAccessManager() {
   );
 
   if (policies.isLoading || eligibilities.isLoading || requests.isLoading) {
-    return <AdminPanelLoading label={t('privilegedAccess.loading')} />;
+    return <ManagementPanelLoading label={t('privilegedAccess.loading')} />;
   }
   if (policies.isError || eligibilities.isError || requests.isError) {
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={message(
           policies.error ?? eligibilities.error ?? requests.error,
           t('common.operationError')

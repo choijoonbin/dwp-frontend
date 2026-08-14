@@ -51,8 +51,11 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
-import { hasFullTenantAdminRole } from '../auth/control-plane-access';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
+import { hasFullTenantAdminRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
 type View = 'assignments' | 'boundaries';
 type Decision = 'APPROVED' | 'DENIED' | 'REVOKED';
@@ -96,10 +99,11 @@ export function AppGovernanceManager() {
     await queryClient.invalidateQueries({ queryKey });
   };
 
-  if (dashboard.isLoading && !data) return <AdminPanelLoading label={t('appGovernance.loading')} />;
+  if (dashboard.isLoading && !data)
+    return <ManagementPanelLoading label={t('appGovernance.loading')} />;
   if (dashboard.isError || !data) {
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={
           dashboard.error instanceof Error ? dashboard.error.message : t('common.operationError')
         }

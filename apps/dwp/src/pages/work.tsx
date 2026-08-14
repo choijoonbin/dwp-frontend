@@ -41,8 +41,8 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import { SectionHeading } from '../features/work-hub/workspace-ui';
-import { GovernedSavedViewControl } from '../features/saved-views/governed-saved-view-control';
+import { SectionHeading } from '../components/workspace-ui';
+import { GovernedSavedViewControl } from '../components/governed-saved-view-control';
 
 import type { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import type {

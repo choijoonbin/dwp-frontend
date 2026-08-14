@@ -40,8 +40,11 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
-import { useCurrentProviderSupportContext } from '../provider/use-provider-support-context';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
+import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 import type {
   HomeBackgroundPosition,
@@ -397,11 +400,13 @@ export function HomeExperienceManager() {
   };
 
   if (experienceQuery.isLoading) {
-    return <AdminPanelLoading label={t('homeExperience.loading')} />;
+    return <ManagementPanelLoading label={t('homeExperience.loading')} />;
   }
   if (experienceQuery.isError || !experience) {
     return (
-      <AdminPanelError message={errorMessage(experienceQuery.error, t('common.operationError'))} />
+      <ManagementPanelError
+        message={errorMessage(experienceQuery.error, t('common.operationError'))}
+      />
     );
   }
 

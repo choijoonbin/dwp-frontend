@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "composition": "same-origin-route",
+  "gatewayPrefix": "/api",
+  "assetBaseTemplate": "/assets/dwp/{applicationId}/",
+  "shell": {
+    "id": "platform-shell",
+    "routePrefixes": ["/sign-in", "/activate", "/auth/oidc", "/403", "/404"],
+    "deployment": "independent"
+  },
+  "applications": [
+    {
+      "id": "workspace",
+      "features": ["home", "work-hub"],
+      "routePrefixes": ["/", "/work", "/ask", "/activity", "/apps"],
+      "backendServices": ["platform"],
+      "deployment": "independent"
+    },
+    {
+      "id": "hcm",
+      "features": ["hcm", "people", "workforce"],
+      "routePrefixes": ["/hr", "/people", "/workforce"],
+      "backendServices": ["people", "platform"],
+      "deployment": "independent"
+    },
+    {
+      "id": "approvals",
+      "features": ["approvals"],
+      "routePrefixes": ["/approvals"],
+      "backendServices": ["approval"],
+      "deployment": "independent"
+    },
+    {
+      "id": "calendar",
+      "features": ["calendar"],
+      "routePrefixes": ["/calendar"],
+      "backendServices": ["platform"],
+      "deployment": "independent"
+    },
+    {
+      "id": "communications",
+      "features": ["communications"],
+      "routePrefixes": ["/communications"],
+      "backendServices": ["platform"],
+      "deployment": "independent"
+    },
+    {
+      "id": "services",
+      "features": ["services"],
+      "routePrefixes": ["/services"],
+      "backendServices": ["platform"],
+      "deployment": "independent"
+    },
+    {
+      "id": "administration",
+      "features": ["admin", "integrations"],
+      "routePrefixes": ["/admin"],
+      "backendServices": ["auth", "people", "platform", "provider"],
+      "deployment": "independent"
+    },
+    {
+      "id": "provider",
+      "features": ["provider"],
+      "routePrefixes": ["/provider"],
+      "backendServices": ["provider"],
+      "deployment": "independent"
+    },
+    {
+      "id": "account",
+      "features": ["account"],
+      "routePrefixes": ["/account"],
+      "backendServices": ["auth", "platform"],
+      "deployment": "independent"
+    }
+  ],
+  "platformFeatures": ["auth", "saved-views", "search", "shell"]
+}

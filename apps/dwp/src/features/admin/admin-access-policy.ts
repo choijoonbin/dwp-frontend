@@ -1,32 +1,11 @@
-import type { AdminNavigationItem, AdminView } from '../admin/admin-navigation';
 import type { ResourceRoleDTO } from '@dwp-frontend/shared-utils/api/auth-api';
 import {
-  canEnterTenantControlPlane,
-  FULL_TENANT_ADMIN_ROLES,
-  hasAnyRole,
   hasFullTenantAdminRole,
   hasProviderControlPlaneRole,
   hasTenantControlPlaneRole,
-  TENANT_AUDIT_ROLES,
-  TENANT_CONTROL_PLANE_ROLES,
-  WORKFORCE_OPERATIONS_ROLES,
-  PROVIDER_CONTROL_PLANE_ROLES,
-  resolvePrimaryAuthorityRole,
 } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
-export {
-  canEnterTenantControlPlane,
-  FULL_TENANT_ADMIN_ROLES,
-  hasAnyRole,
-  hasFullTenantAdminRole,
-  hasProviderControlPlaneRole,
-  hasTenantControlPlaneRole,
-  TENANT_AUDIT_ROLES,
-  TENANT_CONTROL_PLANE_ROLES,
-  WORKFORCE_OPERATIONS_ROLES,
-  PROVIDER_CONTROL_PLANE_ROLES,
-  resolvePrimaryAuthorityRole,
-};
+import type { AdminNavigationItem, AdminView } from './admin-navigation';
 
 const SUPPORT_CONFIGURATION_VIEWS = new Set<AdminView>([
   'branding',

@@ -48,10 +48,10 @@ import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import { SectionHeading } from '../features/work-hub/workspace-ui';
-import { HOME_APPS } from '../features/home/app-launchpad-model';
+import { SectionHeading } from '../components/workspace-ui';
+import { HOME_APPS } from '../components/workspace-composer/app-launchpad-model';
 import { AppGlyph } from '../features/home/app-glyph';
-import { GovernedSavedViewControl } from '../features/saved-views/governed-saved-view-control';
+import { GovernedSavedViewControl } from '../components/governed-saved-view-control';
 
 import type { WorkspaceApp } from '@dwp-frontend/shared-utils';
 

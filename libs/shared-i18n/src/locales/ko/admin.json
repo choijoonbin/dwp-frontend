@@ -1113,7 +1113,9 @@
       "CONNECTOR": "커넥터",
       "AGENT": "에이전트",
       "TOOL": "도구",
-      "POLICY": "정책"
+      "POLICY": "정책",
+      "API": "API 계약",
+      "DATA_PRODUCT": "데이터 제품"
     },
     "risk": {
       "LOW": "낮음",

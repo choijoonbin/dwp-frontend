@@ -57,7 +57,10 @@ import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import { AdminPanelError, AdminPanelLoading } from '../admin/admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -190,8 +193,8 @@ export function HrisOperationsWorkbench() {
     }
   };
 
-  if (pending) return <AdminPanelLoading label={t('provisioning.hris.loading')} />;
-  if (failed) return <AdminPanelError message={t('common.operationError')} />;
+  if (pending) return <ManagementPanelLoading label={t('provisioning.hris.loading')} />;
+  if (failed) return <ManagementPanelError message={t('common.operationError')} />;
 
   const kpis = [
     {

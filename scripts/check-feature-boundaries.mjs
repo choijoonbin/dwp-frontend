@@ -6,7 +6,6 @@ import process from 'node:process';
 
 const root = process.cwd();
 const featureRoot = path.join(root, 'apps/dwp/src/features');
-const guardedFeatures = new Set(['approvals', 'calendar', 'hcm']);
 const sourceExtensions = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs']);
 const importPattern =
   /(?:import|export)\s+(?:type\s+)?(?:[^'";]+?\s+from\s+)?['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g;
@@ -37,7 +36,7 @@ const violations = [];
 
 for (const sourceFile of walk(featureRoot)) {
   const fromFeature = featureNameFor(sourceFile);
-  if (!fromFeature || !guardedFeatures.has(fromFeature)) continue;
+  if (!fromFeature) continue;
 
   const source = fs.readFileSync(sourceFile, 'utf8');
   for (const match of source.matchAll(importPattern)) {
@@ -68,5 +67,5 @@ if (violations.length > 0) {
 }
 
 console.log(
-  `PASS feature boundaries: ${[...guardedFeatures].sort().join(', ')} do not import sibling features.`
+  'PASS feature boundaries: product features do not import sibling feature implementations.'
 );

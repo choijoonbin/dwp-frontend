@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
-import { mockAuthenticatedRuntime } from './support/runtime-access';
+import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 
 const ROOT_ID = '00000000-0000-0000-0000-000000000001';
 const TEAM_ID = '00000000-0000-0000-0000-000000000002';
@@ -15,50 +15,11 @@ function envelope(data: unknown) {
 }
 
 async function mockAdminSession(page: Page) {
-  await mockAuthenticatedRuntime(page);
-  await page.route('**/api/auth/me', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({
-        userId: 1,
-        displayName: 'Admin User',
-        email: 'admin@sk.com',
-        tenantId: 1,
-        tenantCode: 'SKAX',
-        roles: ['ADMIN'],
-      }),
-    })
-  );
-  await page.route('**/api/auth/permissions', (route) =>
-    route.fulfill({ contentType: 'application/json', body: envelope([]) })
-  );
-  await page.route('**/api/auth/csrf', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }),
-    })
-  );
-  await page.route('**/api/platform/v1/tenant-branding', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({ organizationName: 'SKAX', logoUrl: null, version: 1 }),
-    })
-  );
-  await page.route('**/api/platform/v1/personal-preferences**', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({
-        schemaVersion: 1,
-        customized: false,
-        preferences: {
-          appearance: { mode: 'system', density: 'standard' },
-          accessibility: { highContrast: false, reduceMotion: false },
-        },
-        version: 0,
-        updatedAt: null,
-      }),
-    })
-  );
+  await mockShellSession(page, ['HR_ADMIN'], {
+    displayName: 'HR Administrator',
+    email: 'hr.admin@sk.com',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
 }
 
 async function closeDetails(page: Page) {

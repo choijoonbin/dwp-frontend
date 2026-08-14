@@ -16,6 +16,11 @@ import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { redirectToSignIn } from '@dwp-frontend/shared-utils/auth/auth-redirect';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
+import {
+  canEnterTenantControlPlane,
+  hasProviderControlPlaneRole,
+  resolvePrimaryAuthorityRole,
+} from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -27,14 +32,9 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
-import { isAppResourceEntitled } from '../features/home/app-launchpad-model';
+import { isAppResourceEntitled } from '../components/workspace-composer/app-launchpad-model';
 import { exitSessionWithTransition } from '../features/auth/session-exit-transition';
-import {
-  canEnterTenantControlPlane,
-  hasProviderControlPlaneRole,
-  resolvePrimaryAuthorityRole,
-} from '../features/auth/control-plane-access';
-import { useProviderSupportContext } from '../features/provider/use-provider-support-context';
+import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 const menuIconProps = { size: 19, strokeWidth: 1.8, 'aria-hidden': true } as const;
 

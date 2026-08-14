@@ -68,14 +68,33 @@ Approvals는 `decision-flow`를 유지해 요청 목록보다 판단 근거, 기
 ### HCM `people-flow` Home 계약
 
 - 개인 홈의 범용 오늘 할 일·일정·공지·앱 현황을 HCM Home에 반복하지 않는다.
-- 첫 화면은 **이번 주 근무, 사용 가능 휴가, 다음 급여일**을 하나의 HR Snapshot으로 답한다.
-- 다음 순서는 완료 가능한 Quick Action, 휴가·급여·복리후생·성장 Insight, 역할별 Guidance다.
-- Manager·HR Operator 정보는 일반 구성원 Home을 대체하지 않고 권한에 따라 누적한다.
+- 첫 화면은 **Compact Context → 필수 Needs attention → People Rhythm → 선택형 HR 도구** 순서다.
+- `Needs attention`은 사용자가 실제 처리할 수 있는 항목만 포함하며 개인화로 숨길 수 없다.
+- 화면 이동 링크는 `HR 도구`로 부르고, 현재 화면에서 완료되지 않는 기능을 Quick Action으로
+  오인시키지 않는다.
+- Manager·HR Operator 정보는 일반 구성원 정보에 누적하지 않고 `나 / 내 팀 / HR 운영`
+  Context로 분리한다. Context 전환은 Backend 권한이나 Target Population을 확장하지 않는다.
+- 근태는 기록 → 검증 → 제출 단계, 휴가·급여·복리후생·Journey는 실제 다음 이벤트와 진행
+  상태로 보여준다. 서로 다른 도메인의 숫자를 장식용 KPI로 나열하지 않는다.
 - HCM 색은 업무 범주를 구분할 때만 쓰며 전체 화면을 Teal 단색 Theme로 만들지 않는다.
 - 기능이 없는 Chart·가상 추세·Stock Illustration은 넣지 않는다. 실제 Aggregate가 없는
   Insight는 신뢰 가능한 Empty/Unavailable 상태로 설명한다.
-- Mobile은 동일 정보를 축소하지 않고 Snapshot → Action → Insight → Guidance 순으로
+- `0`, `Unavailable`, `Reference`, `Partial`, `Error`를 서로 다른 데이터 상태로 표현한다.
+- Mobile은 동일 정보를 축소하지 않고 Context → Needs attention → Rhythm → Tools 순으로
   한 Column에 재배치한다.
+
+### 설계 고정과 변경 조건
+
+- 승인된 Product Profile과 첫 화면의 정보 계층은 새로운 경쟁사 Screenshot이나 Template를
+  발견했다는 이유만으로 다시 설계하지 않는다.
+- 글로벌 제품에서는 업무 수명주기, 역할 분리, 권한 통제, 예외 복구, 감사 방식을 학습한다.
+  Tile Portal, Admin Table, Card 배열, 색상 Theme는 그대로 이식하지 않는다.
+- 변경은 사용성 실패, 권한·데이터 오류, 접근성·성능 Gate 실패, 고객 정책 또는 System of
+  Record 계약 변경 중 하나의 증거가 있을 때만 시작한다.
+- 변경 전 문제 증거, 유지할 계약, 영향 역할·경로·API, 회귀 Test와 Rollback 범위를 기록한다.
+  막연한 `더 현대적으로` 또는 `경쟁사처럼`은 변경 사유가 아니다.
+- 개선은 실패한 업무 범위에 한정한다. 이미 통과한 IA와 공통 Component를 전면 교체해 같은
+  문제를 반복 해결하지 않는다.
 
 ## 3. 첨부 레퍼런스 판정
 

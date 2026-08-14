@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["apps", "libs", "vite.config.ts"],
+  "include": ["apps", "libs", "vite.config.ts", "vite.product.config.ts"],
   "exclude": ["node_modules"]
 }

@@ -3,9 +3,17 @@ import path from 'node:path';
 import { gzipSync } from 'node:zlib';
 
 const workspaceRoot = path.resolve(import.meta.dirname, '..');
-const outputRoot = path.join(workspaceRoot, 'apps/dwp/dist');
+const argumentsByName = new Map();
+for (let index = 2; index < process.argv.length; index += 2) {
+  argumentsByName.set(process.argv[index], process.argv[index + 1]);
+}
+const outputRoot = path.resolve(workspaceRoot, argumentsByName.get('--output') ?? 'apps/dwp/dist');
 const manifestPath = path.join(outputRoot, '.vite/manifest.json');
-const budgetsPath = path.join(import.meta.dirname, 'bundle-budgets.json');
+const budgetsPath = path.resolve(
+  workspaceRoot,
+  argumentsByName.get('--budgets') ?? 'scripts/bundle-budgets.json'
+);
+const reportLabel = argumentsByName.get('--label') ?? 'DWP production bundle budget';
 
 const [manifest, budgets] = await Promise.all([
   readFile(manifestPath, 'utf8').then(JSON.parse),
@@ -83,7 +91,7 @@ const checks = [
   ['largest async gzip', largestAsync.gzip, budgets.largestAsyncGzipBytes, largestAsync.file],
 ];
 
-console.log('\nDWP production bundle budget');
+console.log(`\n${reportLabel}`);
 for (const [label, actual, limit, detail] of checks) {
   const sizeCheck = !label.includes('requests');
   const actualLabel = sizeCheck ? formatBytes(actual) : String(actual);

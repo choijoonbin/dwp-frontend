@@ -9,3 +9,5 @@ playwright-report/
 test-results/
 blob-report/
 yarn.lock
+libs/api-contracts/openapi/gateway-public.json
+libs/api-contracts/src/gateway-public.ts

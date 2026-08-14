@@ -67,7 +67,10 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 import { severityColor } from './audit-ui';
 
 import type {
@@ -1411,10 +1414,10 @@ export function AuditInvestigations() {
   });
 
   if (findingsQuery.isLoading || casesQuery.isLoading) {
-    return <AdminPanelLoading label={t('auditControl.loading')} />;
+    return <ManagementPanelLoading label={t('auditControl.loading')} />;
   }
   if (findingsQuery.isError || casesQuery.isError) {
-    return <AdminPanelError message={t('auditControl.loadError')} />;
+    return <ManagementPanelError message={t('auditControl.loadError')} />;
   }
 
   const criticalCount = findings.filter((item) => item.severity === 'CRITICAL').length;
@@ -1601,19 +1604,19 @@ export function AuditInvestigations() {
 
         <Box sx={{ minWidth: 0, borderRight: { xl: 1 }, borderColor: 'divider' }}>
           {view === 'findings' && findingContextQuery.isLoading && (
-            <AdminPanelLoading label={t('auditControl.investigations.loadingContext')} />
+            <ManagementPanelLoading label={t('auditControl.investigations.loadingContext')} />
           )}
           {view === 'findings' && findingContextQuery.isError && (
-            <AdminPanelError message={t('auditControl.investigations.contextError')} />
+            <ManagementPanelError message={t('auditControl.investigations.contextError')} />
           )}
           {view === 'findings' && findingContextQuery.data && (
             <FindingDossier context={findingContextQuery.data} />
           )}
           {view === 'cases' && caseWorkspaceQuery.isLoading && (
-            <AdminPanelLoading label={t('auditControl.investigations.loadingWorkspace')} />
+            <ManagementPanelLoading label={t('auditControl.investigations.loadingWorkspace')} />
           )}
           {view === 'cases' && caseWorkspaceQuery.isError && (
-            <AdminPanelError message={t('auditControl.investigations.workspaceError')} />
+            <ManagementPanelError message={t('auditControl.investigations.workspaceError')} />
           )}
           {view === 'cases' && caseWorkspaceQuery.data && (
             <CaseDossier workspace={caseWorkspaceQuery.data} />

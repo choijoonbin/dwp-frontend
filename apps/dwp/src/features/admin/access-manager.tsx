@@ -41,7 +41,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 import { resolveRoleDisplayCopy } from './role-display';
 
 import type { GridColDef } from '@mui/x-data-grid';
@@ -714,11 +717,11 @@ export function AccessManager() {
   );
 
   if (usersQuery.isLoading || rolesQuery.isLoading) {
-    return <AdminPanelLoading label={t('access.loading')} />;
+    return <ManagementPanelLoading label={t('access.loading')} />;
   }
   if (usersQuery.isError || rolesQuery.isError) {
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={errorMessage(usersQuery.error ?? rolesQuery.error, t('common.operationError'))}
       />
     );

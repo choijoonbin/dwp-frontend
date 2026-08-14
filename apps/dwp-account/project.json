@@ -1,0 +1,17 @@
+{
+  "name": "dwp-account",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/product-runtime/src",
+  "tags": ["scope:account", "type:product", "runtime:browser", "deployment:independent"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "inputs": ["accountProduct"],
+      "options": {
+        "command": "node scripts/build-product-app.mjs account"
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/account"]
+    }
+  }
+}

@@ -40,7 +40,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type {
   CreateNavigationRequest,
@@ -550,12 +553,12 @@ export function NavigationManager() {
   };
 
   if (tree.isLoading || registry.isLoading || resources.isLoading) {
-    return <AdminPanelLoading label={t('navigationManager.loading')} />;
+    return <ManagementPanelLoading label={t('navigationManager.loading')} />;
   }
   const dependencyError = tree.error || registry.error || resources.error;
   if (dependencyError)
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={
           dependencyError instanceof Error ? dependencyError.message : t('common.operationError')
         }

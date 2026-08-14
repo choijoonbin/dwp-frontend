@@ -27,7 +27,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -378,12 +381,14 @@ export function WorkforceAccessManager() {
   );
 
   if (policies.isLoading || organizations.isLoading || users.isLoading) {
-    return <AdminPanelLoading label={t('workforceAccess.loading')} />;
+    return <ManagementPanelLoading label={t('workforceAccess.loading')} />;
   }
   if (policies.isError || organizations.isError || users.isError) {
     const error = policies.error || organizations.error || users.error;
     return (
-      <AdminPanelError message={error instanceof Error ? error.message : t('common.loadError')} />
+      <ManagementPanelError
+        message={error instanceof Error ? error.message : t('common.loadError')}
+      />
     );
   }
 

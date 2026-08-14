@@ -190,6 +190,9 @@
     "saved": "HR 홈 구성을 저장했습니다.",
     "saveConflict": "다른 세션에서 HR 홈이 변경되었습니다. 최신 구성을 불러왔으니 다시 확인한 후 편집해 주세요.",
     "saveError": "HR 홈 구성을 저장하지 못했습니다. 최신 구성을 다시 확인해 주세요.",
+    "error": {
+      "description": "홈 집계를 불러오지 못했습니다. 다시 시도해도 계속되면 People 서비스 연결 상태를 확인해 주세요."
+    },
     "widgets": {
       "quick-actions": {
         "label": "바로가기",
@@ -224,7 +227,22 @@
     "header": {
       "snapshot": "나의 HR 스냅샷",
       "weekProgress": "주간 근무",
-      "timeValue": "{{recorded}} / {{target}}시간"
+      "timeValue": "{{recorded}} / {{target}}시간",
+      "updated": "{{value}} 기준",
+      "generatedUnavailable": "조회 시각 없음",
+      "stale": "{{value}} 기준 · 갱신 지연",
+      "reference": "검증용 참조 데이터",
+      "personalSummary": "이번 주의 근태, 휴가, 급여와 성장 흐름을 실제 인사 데이터 기준으로 정리했습니다.",
+      "personalExceptionSummary": "이번 주 근태에서 먼저 확인할 예외가 {{count}}건 있습니다.",
+      "teamSummary": "현재 보고 관계에서 검토를 기다리는 팀 인사 업무가 {{count}}건 있습니다.",
+      "teamUnavailableSummary": "팀 승인 집계를 불러오지 못해 현재 상태를 확인할 수 없습니다.",
+      "operationsSummary": "현재 인력 데이터 품질은 {{quality}}이며 원천 연계와 운영 예외를 함께 점검합니다."
+    },
+    "mode": {
+      "label": "HR 홈 범위",
+      "personal": "나",
+      "team": "내 팀",
+      "operations": "HR 운영"
     },
     "summary": {
       "steady": "이번 주 근무 기록은 {{progress}}% 진행되었고, 사용할 수 있는 휴가는 {{leave}}일입니다.",
@@ -258,6 +276,37 @@
         "directory": "동료와 조직 관계 탐색",
         "myTeam": "팀 구성과 인력 신호",
         "operations": "인력 데이터 운영 현황"
+      }
+    },
+    "tools": {
+      "title": "HR 도구",
+      "meta": "반복해서 사용하는 HR 화면으로 이동합니다. 처리해야 할 일과는 분리되어 있습니다.",
+      "count": "{{count}}개 도구",
+      "time": "근태 기록",
+      "requestLeave": "휴가 신청",
+      "pay": "급여 명세",
+      "services": "HR 도움 요청",
+      "directory": "구성원 찾기",
+      "myTeam": "내 팀",
+      "teamTime": "팀 근태 승인",
+      "teamAbsence": "팀 휴가 승인",
+      "operations": "HR 운영 현황",
+      "workforce": "인력 정보",
+      "assignments": "발령 현황",
+      "integrations": "연계 및 정합성",
+      "descriptions": {
+        "time": "이번 주 기록과 예외 확인",
+        "requestLeave": "잔여 휴가 확인 후 신청",
+        "pay": "급여일과 보안 명세 확인",
+        "services": "증명서와 인사 문의 요청",
+        "directory": "동료와 조직 관계 탐색",
+        "myTeam": "현재 보고 관계와 팀 정보",
+        "teamTime": "제출된 팀 근태 검토",
+        "teamAbsence": "팀 휴가 요청 검토",
+        "operations": "도메인별 운영 준비도",
+        "workforce": "유효일 기준 인력 현황",
+        "assignments": "발령과 포지션 상태",
+        "integrations": "원천 동기화와 오류 근거"
       }
     },
     "signals": {
@@ -303,7 +352,8 @@
       "hours": "{{value}}시간",
       "days": "{{value}}일",
       "dDay": "D-{{value}}",
-      "count": "{{value}}개"
+      "count": "{{value}}개",
+      "people": "{{value}}명"
     },
     "guidance": {
       "eyebrow": "개인화된 HR 가이드",
@@ -344,11 +394,145 @@
       "clearTitle": "지금 확인할 인사 업무가 없습니다",
       "clearDescription": "현재 개인 인사 업무와 필수 확인 항목이 모두 정리되어 있습니다."
     },
+    "needsAttention": {
+      "title": "지금 확인할 HR 업무",
+      "personalMeta": "내가 직접 확인하거나 이어서 처리할 항목만 우선순위로 보여줍니다.",
+      "teamMeta": "현재 보고 관계 안에서 관리자의 결정을 기다리는 항목입니다.",
+      "operationsMeta": "인력 데이터와 원천 연계에서 운영자의 확인이 필요한 항목입니다.",
+      "count": "{{count}}건",
+      "countPartial": "확인 가능 {{count}}건 · 일부 집계 지연",
+      "countUnavailable": "집계 정보 없음",
+      "openRhythm": "HR 흐름 보기",
+      "review": "확인",
+      "continue": "계속",
+      "decide": "검토",
+      "investigate": "조사",
+      "resolveTime": "예외 수정",
+      "finishTime": "근태 마무리",
+      "reviewEnrollment": "가입 내용 검토",
+      "continueLearning": "학습 계속",
+      "reviewTime": "근태 검토",
+      "reviewLeave": "휴가 검토",
+      "inspectSync": "동기화 조사",
+      "inspectData": "제외 데이터 조사",
+      "clearTitle": "현재 바로 처리할 HR 업무가 없습니다",
+      "unavailableTitle": "일부 HR 업무를 지금 확인할 수 없습니다",
+      "personalClear": "근태, 복리후생과 필수 학습이 현재 기준으로 정상입니다.",
+      "teamClear": "현재 보고 관계의 근태와 휴가 승인 대기가 없습니다.",
+      "operationsClear": "최근 인력 연계와 데이터 운영에서 즉시 확인할 예외가 없습니다.",
+      "personalUnavailable": "근태, 복리후생 또는 성장 데이터의 연결 상태를 확인해 주세요.",
+      "teamUnavailable": "팀 승인 집계를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.",
+      "operationsUnavailable": "인력 운영 또는 원천 연계 상태를 불러오지 못했습니다.",
+      "timeException": {
+        "title": "근태 예외를 해결해 주세요",
+        "description": "제출 전에 원인과 기록 시간을 확인해야 합니다.",
+        "value": "예외 {{count}}건"
+      },
+      "timeRemaining": {
+        "title": "이번 주 근태 기록을 마무리해 주세요",
+        "description": "{{end}} 마감 전에 남은 시간을 확인하고 기록합니다.",
+        "value": "{{value}}시간 남음"
+      },
+      "benefitWindow": {
+        "title": "복리후생 등록 기간이 열려 있습니다",
+        "description": "{{name}} 선택 사항과 현재 보장 내용을 확인합니다."
+      },
+      "requiredLearning": {
+        "title": "필수 학습을 이어서 완료해 주세요",
+        "description": "현재 역할에 지정된 학습과 성장 활동을 확인합니다.",
+        "value": "{{count}}개 필수"
+      },
+      "teamTime": {
+        "title": "팀 근태 결정이 기다리고 있습니다",
+        "description": "기록 시간과 예외 근거를 검토한 뒤 결정합니다.",
+        "value": "{{count}}건 대기"
+      },
+      "teamAbsence": {
+        "title": "팀 휴가 결정이 기다리고 있습니다",
+        "description": "팀 일정과 요청 기간을 함께 확인합니다.",
+        "value": "{{count}}건 대기"
+      },
+      "syncFailure": {
+        "title": "최근 HR 원천 동기화를 확인해 주세요",
+        "description": "{{source}} 실행이 정상 완료되지 않았습니다."
+      },
+      "rejectedRecords": {
+        "title": "정합성 처리에서 제외된 레코드가 있습니다",
+        "description": "원천 값, 매핑과 제외 사유를 확인합니다.",
+        "value": "{{count}}건 제외"
+      }
+    },
     "states": {
       "due-soon": "마감 임박",
       "in-progress": "진행 중",
       "waiting": "대기",
-      "completed": "완료"
+      "completed": "완료",
+      "unavailable": "정보 없음"
+    },
+    "rhythm": {
+      "personal": {
+        "eyebrow": "DWP PEOPLE RHYTHM",
+        "title": "나의 HR 흐름",
+        "meta": "단순 수치가 아니라 이번 주 처리 단계와 다음 인사 이벤트를 연결해 보여줍니다."
+      },
+      "team": {
+        "eyebrow": "MANAGER RHYTHM",
+        "title": "내 팀의 결정 흐름",
+        "meta": "현재 보고 관계 기준의 근태·휴가 승인과 팀 구성을 분리해 확인합니다.",
+        "time": "근태 승인 대기",
+        "timeDetail": "제출 완료된 팀 근태 카드",
+        "absence": "휴가 승인 대기",
+        "absenceDetail": "현재 결정을 기다리는 휴가 요청",
+        "people": "직접 보고 구성원",
+        "peopleDetail": "현재 유효한 보고 관계 기준"
+      },
+      "operations": {
+        "eyebrow": "WORKFORCE RHYTHM",
+        "title": "인력 운영 흐름",
+        "meta": "인력 규모, 데이터 품질과 원천 최신성을 같은 운영 범위에서 확인합니다.",
+        "workforce": "활성 인력",
+        "workforceDetail": "현재 유효일의 주 발령 기준",
+        "quality": "데이터 품질",
+        "qualityDetail": "조직·발령 관계 무결성",
+        "sync": "최근 원천 동기화",
+        "noSync": "완료된 실행 없음",
+        "positions": "공석 포지션",
+        "positionsDetail": "현재 조직 설계 기준"
+      },
+      "time": {
+        "title": "이번 주 근태 흐름",
+        "period": "{{start}} - {{end}}",
+        "noCard": "연결된 근무 일정이 없습니다.",
+        "open": "근태 열기",
+        "record": "기록",
+        "recordValue": "{{recorded}} / {{target}}시간",
+        "validate": "검증",
+        "validated": "예외 없음",
+        "exceptionValue": "예외 {{count}}건",
+        "submit": "제출"
+      },
+      "leave": {
+        "label": "사용 가능 휴가",
+        "detail": "사용 {{used}}일 · 승인 대기 {{pending}}일",
+        "noPlan": "연결된 휴가 제도 없음"
+      },
+      "pay": {
+        "label": "다음 급여일",
+        "scheduleDetail": "개인에게 연결된 급여 일정 기준",
+        "detail": "급여 준비 {{readiness}} / 3 확인",
+        "noCycle": "연결된 급여 주기 없음"
+      },
+      "benefits": {
+        "label": "적용 중인 복리후생",
+        "window": "등록 기간 D-{{days}}",
+        "steady": "현재 추가 등록 기간 없음"
+      },
+      "journey": {
+        "label": "성장 여정",
+        "detail": "{{name}} · 목표 D-{{days}}",
+        "emptyValue": "진행 없음",
+        "empty": "현재 활성화된 여정 없음"
+      }
     },
     "profile": {
       "eyebrow": "고용 프로필",
@@ -367,7 +551,9 @@
       "meta": "직접 보고 구성원 {{count}}명",
       "open": "팀 보기",
       "emptyTitle": "현재 직접 보고 구성원이 없습니다",
-      "emptyDescription": "보고 관계가 반영되면 이 영역에서 팀 현황을 확인할 수 있습니다."
+      "emptyDescription": "보고 관계가 반영되면 이 영역에서 팀 현황을 확인할 수 있습니다.",
+      "loadErrorTitle": "팀 구성을 불러오지 못했습니다",
+      "loadErrorDescription": "승인 집계와 별개로 구성원 목록 조회에 실패했습니다. 다시 시도해 주세요."
     },
     "operations": {
       "eyebrow": "HR 운영 인사이트",
@@ -448,6 +634,7 @@
       "ELECTED": "선택됨",
       "WAIVED": "미가입",
       "AVAILABLE": "이용 가능",
+      "UNAVAILABLE": "이용 불가",
       "PENDING": "준비 중",
       "WITHHELD": "보류",
       "RETIRED": "종료",

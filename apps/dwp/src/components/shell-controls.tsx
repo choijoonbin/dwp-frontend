@@ -5,6 +5,11 @@ import { GlyphSurface } from '@dwp-frontend/design-system/components/glyph-surfa
 import { WORKSPACE_NAME } from '@dwp-frontend/shared-utils/env';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
+import {
+  hasFullTenantAdminRole,
+  hasProviderControlPlaneRole,
+  hasTenantControlPlaneRole,
+} from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
@@ -20,11 +25,9 @@ import IconButton from '@mui/material/IconButton';
 import { alpha } from '@mui/material/styles';
 
 import {
-  hasFullTenantAdminRole,
-  hasProviderControlPlaneRole,
-  hasTenantControlPlaneRole,
-} from '../features/auth/control-plane-access';
-import { isAppEntitled, localizeHomeApps } from '../features/home/app-launchpad-model';
+  isAppEntitled,
+  localizeHomeApps,
+} from '../components/workspace-composer/app-launchpad-model';
 
 const GlobalSearchDialog = lazy(() =>
   import('../features/search/global-search-dialog').then((module) => ({

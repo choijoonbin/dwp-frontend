@@ -68,7 +68,10 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
-import { AdminPanelError, AdminPanelLoading } from '../../admin/admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../../components/management-panel-state';
 import {
   OrganizationNode,
   PersonNode,
@@ -90,7 +93,7 @@ import {
 } from './organization-intelligence-panel';
 import { OrganizationDesignOverview } from './organization-design-overview';
 import { OrganizationScenarioDrawer } from './organization-scenario-drawer';
-import { useCurrentProviderSupportContext } from '../../provider/use-provider-support-context';
+import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import {
   isIsoDate,
   modeForSelection,
@@ -764,10 +767,10 @@ export function OrganizationExplorer({
     void flow?.fitView({ nodes: [{ id }], padding: 0.75, duration: 480, maxZoom: 1.2 });
   };
 
-  if (chartQuery.isLoading) return <AdminPanelLoading label={t('orgChart.loading')} />;
+  if (chartQuery.isLoading) return <ManagementPanelLoading label={t('orgChart.loading')} />;
   if (chartQuery.isError || !chart) {
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={
           chartQuery.error instanceof Error ? chartQuery.error.message : t('common.operationError')
         }

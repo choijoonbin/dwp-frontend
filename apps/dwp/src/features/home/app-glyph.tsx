@@ -19,7 +19,10 @@ import {
 import { GlyphSurface } from '@dwp-frontend/design-system';
 
 import type { LucideIcon } from 'lucide-react';
-import type { HomeAppDefinition, HomeAppIconKey } from './app-launchpad-model';
+import type {
+  HomeAppDefinition,
+  HomeAppIconKey,
+} from '../../components/workspace-composer/app-launchpad-model';
 
 export const homeAppIconByKey: Record<HomeAppIconKey, LucideIcon> = {
   activity: Activity,

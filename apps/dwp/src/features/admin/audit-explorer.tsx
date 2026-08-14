@@ -56,7 +56,7 @@ import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { AdminPanelError } from './admin-ui';
+import { ManagementPanelError } from '../../components/management-panel-state';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
 import {
   OutcomeChip,
@@ -713,7 +713,7 @@ export function AuditExplorer() {
       </Popover>
 
       {eventsQuery.isError ? (
-        <AdminPanelError message={t('auditControl.loadError')} />
+        <ManagementPanelError message={t('auditControl.loadError')} />
       ) : desktop ? (
         <EnterpriseDataGrid
           ariaLabel={t('auditControl.events.label')}

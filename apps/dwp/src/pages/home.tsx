@@ -50,7 +50,7 @@ import {
   reconcileLaunchpadLayout,
   resolveHomeLaunchpadCatalog,
   restoreLaunchpadApp,
-} from '../features/home/app-launchpad-model';
+} from '../components/workspace-composer/app-launchpad-model';
 import { useSystemCodeOptions } from '../components/use-system-code-options';
 
 import type {
@@ -61,7 +61,7 @@ import type {
   HomeWidgetPreference,
   HomeWidgetSize,
 } from '@dwp-frontend/shared-utils';
-import type { LaunchpadLayout } from '../features/home/app-launchpad-model';
+import type { LaunchpadLayout } from '../components/workspace-composer/app-launchpad-model';
 
 type PreferenceMutation = { layout: HomePreferenceLayout };
 

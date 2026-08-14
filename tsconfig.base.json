@@ -25,7 +25,9 @@
       "@dwp-frontend/shared-utils": ["libs/shared-utils/src/index.ts"],
       "@dwp-frontend/shared-utils/*": ["libs/shared-utils/src/*"],
       "@dwp-frontend/shared-i18n": ["libs/shared-i18n/src/index.ts"],
-      "@dwp-frontend/shared-i18n/*": ["libs/shared-i18n/src/*"]
+      "@dwp-frontend/shared-i18n/*": ["libs/shared-i18n/src/*"],
+      "@dwp-frontend/api-contracts": ["libs/api-contracts/src/index.ts"],
+      "@dwp-frontend/api-contracts/*": ["libs/api-contracts/src/*"]
     },
 
     /* Linting */

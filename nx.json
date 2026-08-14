@@ -3,5 +3,111 @@
   "workspaceLayout": {
     "appsDir": "apps",
     "libsDir": "libs"
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": ["default", "!{projectRoot}/**/*.{spec,test}.{ts,tsx,js,jsx}"],
+    "sharedGlobals": ["{workspaceRoot}/package.json", "{workspaceRoot}/yarn.lock"],
+    "productRuntime": [
+      "production",
+      "sharedGlobals",
+      "{workspaceRoot}/apps/product-runtime/**/*",
+      "{workspaceRoot}/apps/dwp/src/app.tsx",
+      "{workspaceRoot}/apps/dwp/src/bootstrap-application.tsx",
+      "{workspaceRoot}/apps/dwp/src/vite-env.d.ts",
+      "{workspaceRoot}/apps/dwp/src/components/**/*",
+      "{workspaceRoot}/apps/dwp/src/layouts/**/*",
+      "{workspaceRoot}/apps/dwp/src/observability/**/*",
+      "{workspaceRoot}/apps/dwp/src/providers/**/*",
+      "{workspaceRoot}/apps/dwp/src/routes/components/**/*",
+      "{workspaceRoot}/apps/dwp/src/routes/route-support.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/auth/**/*",
+      "{workspaceRoot}/apps/dwp/src/features/saved-views/**/*",
+      "{workspaceRoot}/apps/dwp/src/features/search/**/*",
+      "{workspaceRoot}/apps/dwp/src/features/shell/**/*",
+      "{workspaceRoot}/libs/**/*",
+      "{workspaceRoot}/public/**/*",
+      "{workspaceRoot}/architecture/frontend-apps.json",
+      "{workspaceRoot}/scripts/build-product-app.mjs",
+      "{workspaceRoot}/scripts/check-bundle-budget.mjs",
+      "{workspaceRoot}/scripts/product-bundle-budgets.json",
+      "{workspaceRoot}/vite.product.config.ts",
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/tsconfig.json"
+    ],
+    "workspaceProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/workspace-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/{home,work,ask,activity,apps}.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/{home,work-hub}/**/*"
+    ],
+    "hcmProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/hcm-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/hcm.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/{hcm,people,workforce}/**/*"
+    ],
+    "approvalsProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/approvals-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/approvals.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/approvals/**/*"
+    ],
+    "calendarProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/calendar-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/calendar.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/calendar/**/*"
+    ],
+    "communicationsProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/communications-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/communications.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/communications/**/*"
+    ],
+    "servicesProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/services-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/services.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/services/**/*"
+    ],
+    "administrationProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/administration-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/admin.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/{admin,integrations}/**/*"
+    ],
+    "providerProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/provider-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/provider.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/provider/**/*"
+    ],
+    "accountProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/account-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/account/**/*",
+      "{workspaceRoot}/apps/dwp/src/features/account/**/*"
+    ],
+    "platformShellProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/platform-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/{sign-in,page-403,page-not-found,status-page}.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/auth/**/*"
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "inputs": ["production", "^production"],
+      "cache": true
+    },
+    "test": {
+      "inputs": ["default", "^production"],
+      "cache": true
+    },
+    "typecheck": {
+      "inputs": ["default", "^production"],
+      "cache": true
+    }
   }
 }

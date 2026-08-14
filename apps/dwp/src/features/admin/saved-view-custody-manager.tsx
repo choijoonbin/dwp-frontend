@@ -37,7 +37,10 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { TFunction } from 'i18next';
@@ -272,12 +275,14 @@ export function SavedViewCustodyManager() {
   );
 
   if (users.isLoading || orphaned.isLoading || history.isLoading) {
-    return <AdminPanelLoading label={t('savedViewCustody.loading')} />;
+    return <ManagementPanelLoading label={t('savedViewCustody.loading')} />;
   }
   if (users.isError || orphaned.isError || history.isError) {
     const error = users.error || orphaned.error || history.error;
     return (
-      <AdminPanelError message={error instanceof Error ? error.message : t('common.loadError')} />
+      <ManagementPanelError
+        message={error instanceof Error ? error.message : t('common.loadError')}
+      />
     );
   }
 

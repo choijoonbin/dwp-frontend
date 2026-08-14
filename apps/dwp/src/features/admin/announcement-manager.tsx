@@ -54,9 +54,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
-import { useCurrentProviderSupportContext } from '../provider/use-provider-support-context';
+import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 import type {
   Announcement,
@@ -944,11 +947,11 @@ export function AnnouncementManager() {
   );
 
   if (announcementsQuery.isLoading) {
-    return <AdminPanelLoading label={t('announcements.loading')} />;
+    return <ManagementPanelLoading label={t('announcements.loading')} />;
   }
   if (announcementsQuery.isError) {
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={errorMessage(announcementsQuery.error, t('common.operationError'))}
       />
     );

@@ -9,6 +9,7 @@ type RequestConfig = {
   responseType?: 'json' | 'blob';
   timeoutMs?: number;
   signal?: AbortSignal;
+  keepalive?: boolean;
 };
 
 type CsrfTokenData = {
@@ -61,7 +62,7 @@ async function parseBody(response: Response, responseType: 'json' | 'blob' = 'js
   }
 }
 
-async function loadCsrfToken(): Promise<CsrfTokenData> {
+async function loadCsrfToken(keepalive = false): Promise<CsrfTokenData> {
   if (csrfToken) return csrfToken;
   if (csrfTokenPromise) return csrfTokenPromise;
 
@@ -69,6 +70,7 @@ async function loadCsrfToken(): Promise<CsrfTokenData> {
     method: 'GET',
     headers: buildHeaders(undefined),
     credentials: 'include',
+    keepalive,
   })
     .then(async (response) => {
       const payload = await parseBody(response);
@@ -102,7 +104,7 @@ async function request<T>(
 ): Promise<AxiosLikeResponse<T>> {
   const headers = buildHeaders(body, config.headers);
   if (isMutation(method)) {
-    const csrf = await loadCsrfToken();
+    const csrf = await loadCsrfToken(config.keepalive);
     headers[csrf.headerName] = csrf.token;
   }
 
@@ -122,6 +124,7 @@ async function request<T>(
       credentials: 'include',
       body: body === undefined ? undefined : isFormData(body) ? body : JSON.stringify(body),
       signal: controller?.signal,
+      keepalive: config.keepalive,
     });
   } finally {
     if (timeout !== undefined) globalThis.clearTimeout(timeout);

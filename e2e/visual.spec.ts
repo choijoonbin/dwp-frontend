@@ -526,6 +526,7 @@ test('security sessions visual baseline', async ({ page }) => {
   await expect(
     page.getByRole('list', { name: 'Active browser sessions' }).getByRole('listitem')
   ).toHaveCount(2);
+  await expect(page.getByText('Sign-in methods', { exact: true })).toBeVisible();
   await expect(page).toHaveScreenshot('security-sessions.png', {
     animations: 'disabled',
     caret: 'hide',

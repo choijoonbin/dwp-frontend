@@ -1,6 +1,6 @@
 # R1 DWP HCM Product Shell 및 Role-Aware Experience ADR
 
-> 상태: Accepted and Implemented Local Baseline v1.3
+> 상태: Accepted and Implemented Local Baseline v1.4
 >
 > 기준일: 2026-08-14
 >
@@ -65,7 +65,9 @@ DWP는 이 패턴을 채택하되 권위 데이터와 Local Reference를 혼동�
 Manager 여부는 표시용 직함 문자열로 추정하지 않는다. 현재 Person Projection의 실제
 직속 구성원 관계를 우선하고, 전환 기간에만 명시적 Manager Role을 보조 근거로 사용한다.
 도메인 관리자 여부는 역할 이름이 아니라 Runtime Permission을 기준으로 판정한다. Workforce
-Operator 여부는 역할과 `APP.WORKFORCE_MANAGEMENT` Entitlement를 함께 만족해야 한다.
+Operator 여부는 운영 역할, `APP.WORKFORCE_MANAGEMENT` Entitlement와
+`DATA.WORKFORCE:VIEW|MANAGE`를 모두 만족해야 한다. 승인된 Provider Support는 별도의
+시간 제한 Support Scope에 `WORKFORCE_READ`가 있을 때만 읽기 Context를 사용한다.
 
 ## 4. 경로와 전환 계약
 
@@ -98,18 +100,23 @@ App은 `DWP_HCM`과 `APP.HCM`을 정식 제품 진입점으로 사용한다. `DW
 HR Home은 마케팅 Hero나 장식용 Dashboard가 아니다. 사용자가 5초 안에 현재 Context와
 다음 행동을 판단하는 개인 Command Center다.
 
-1. 상단 Context Band는 현재 사람·조직·직책을 짧게 확인하고 핵심 HR 작업으로 이동한다.
-2. Quick Action은 최대 여섯 개를 우선 표시하며 권한이 없는 명령은 렌더링하지 않는다.
-3. `확인할 일`은 실제 HR Workflow와 Workspace Work Queue 항목만 사용한다.
-4. 개인 신호는 출처·기준일과 함께 표시하며 Reference Seed를 고객 실제 데이터처럼 보이게
+1. 상단 Compact Context는 현재 사람·조직·직책, 기준일과 데이터 최신성을 짧게 확인한다.
+2. `Needs attention`은 실제 HR Workflow와 Aggregate에서 계산한 완료 가능한 행동을 최대
+   세 건까지 우선 표시하며 사용자가 숨길 수 없다.
+3. `People Rhythm`은 근태의 기록→검증→제출과 휴가·급여·복리후생·성장의 다음 이벤트를
+   하나의 시간적 흐름으로 보여준다. 일반 Dashboard KPI를 반복하지 않는다.
+4. 화면 이동만 수행하는 링크는 `HR 도구`로 분리하고 현재 화면에서 완료되지 않는 기능을
+   Quick Action으로 부르지 않는다.
+5. 개인 신호는 출처·기준일과 함께 표시하며 Reference Seed를 고객 실제 데이터처럼 보이게
    하지 않는다.
-5. Manager와 HR Operator Section은 해당 Audience에만 나타나며, 정상적인 빈 상태와
+6. Manager와 HR Operator Context는 개인 화면에 누적하지 않고 명시적으로 전환한다. 해당
+   Audience에만 나타나며, 정상적인 빈 상태와
    데이터 오류를 구분한다.
-6. 숫자와 Chart는 비교 기준·기간·Drill-down이 있을 때만 사용한다. 연결되지 않은 값을
+7. 숫자와 Chart는 비교 기준·기간·Drill-down이 있을 때만 사용한다. 연결되지 않은 값을
    합성하지 않고 `REFERENCE`, `SOURCE`, 연결 대기 상태를 구분한다.
-7. Desktop은 밀도 있는 12-column Grid, Mobile은 행동 우선 단일 열을 사용한다. Page
+8. Desktop은 밀도 있는 12-column Grid, Mobile은 행동 우선 단일 열을 사용한다. Page
    Section을 중첩 Card로 감싸지 않고 개별 반복 객체만 Surface로 표현한다.
-8. 사용자는 공통 Personal Home Composer에서 권한이 허용된 Widget의 순서·표시·의미 크기와
+9. 사용자는 공통 Personal Home Composer에서 권한이 허용된 Widget의 순서·표시·의미 크기와
    표현 모드를 조정한다. 저장·감사·서버 검증 계약은
    `R1 Multi-Surface Personal Home Composer ADR.md`를 따른다.
 
@@ -124,6 +131,17 @@ HR Home은 마케팅 Hero나 장식용 Dashboard가 아니다. 사용자가 5초
   HR Home으로 복귀시킨다.
 - HR API는 Request의 Worker ID가 아니라 검증된 `person_public_id`로 본인을 결정하고,
   Manager 결정은 실제 보고 관계 또는 `DATA.HR_{DOMAIN}:APPROVE|MANAGE`를 다시 검사한다.
+- Home API는 서버가 결정한 Worker Scope만 조회한다. 급여·복리후생·Talent를 Tenant 전체에서
+  추정하지 않으며 유효일 기준의 현재 Work Relationship과 Assignment를 사용한다.
+- 응답은 `asOf`, `generatedAt`, `timeZone`, `standardDayMinutes`를 포함한다. Frontend는 브라우저
+  시각이나 480분 상수를 업무 기준으로 대신 사용하지 않는다.
+- 각 Domain은 `availability`, `dataOrigin`, `reason`을 독립적으로 제공한다. 유효한 `0`, 권한
+  없음, 미연결, 부분 실패와 `REFERENCE`를 서로 바꾸어 표시하지 않는다. 한 Domain 장애가
+  전체 Home 500으로 확산되지 않도록 격리한다.
+- 고객 Runtime에서는 Source 장애를 Seed나 Reference 값으로 조용히 대체하지 않는다.
+  Reference 데이터는 명시적 검증 환경에서만 표식과 함께 사용한다.
+- Team과 Operations Aggregate는 선택된 Context와 권한이 있을 때만 지연 조회하고 목록 대신
+  Count·요약 Query를 우선한다. 개인 사용자의 Home 요청으로 Tenant 운영 Queue를 조회하지 않는다.
 - `ppl_*`은 Core HR Projection을 유지하고 `tme_*`, `abs_*`, `bnf_*`, `pay_*`, `tal_*`이
   독립 업무 수명주기를 소유한다. 급여 금액은 저장하지 않고 보안 문서 참조만 유지한다.
 - HR 문의·증명서·인사정보 변경은 별도 HR Case Table을 만들지 않고 Platform의 `svc_*`
@@ -133,8 +151,8 @@ HR Home은 마케팅 Hero나 장식용 Dashboard가 아니다. 사용자가 5초
   보존하고 Pending Balance를 원복한다. 승인 후 취소는 회사·국가 정책이 필요한 별도
   Workflow이며 단순 상태 변경으로 처리하지 않는다.
 - Aggregate Version, Tenant 복합 FK, 휴가 Range Exclusion, Audit Outbox를 쓰기 Gate로 둔다.
-- 한국어·영어 Resource, 1280/1440/390px, Keyboard Focus, Axe, 구형 Deep Link Redirect를
-  회귀 Gate로 둔다.
+- 한국어·영어 Resource, 1280/1440/390/320px, 200% Zoom, Keyboard Focus, Axe, Reduced Motion,
+  Desktop·Mobile Visual 기준선과 구형 Deep Link Redirect를 회귀 Gate로 둔다.
 - 실제 고객 Delivery 전에는 HRIS Field Mapping, Target Population, 개인정보 Export 정책,
   최대 조직 규모와 Screen Reader를 별도 승인한다.
 

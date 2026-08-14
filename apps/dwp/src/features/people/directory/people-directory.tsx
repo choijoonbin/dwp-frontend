@@ -31,10 +31,13 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from '../../admin/admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../../components/management-panel-state';
 import { isIsoDate } from '../organization/organization-navigation';
 import { PersonAvatar } from './person-avatar';
-import { GovernedSavedViewControl } from '../../saved-views/governed-saved-view-control';
+import { GovernedSavedViewControl } from '../../../components/governed-saved-view-control';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { OrganizationChart, PersonDetail, PersonSummary } from '@dwp-frontend/shared-utils';
@@ -106,9 +109,9 @@ function PersonDetailDialog({
         </IconButton>
       </DialogTitle>
       <DialogContent dividers sx={{ p: 0 }}>
-        {detailQuery.isLoading && <AdminPanelLoading label={t('people.detail.loading')} />}
+        {detailQuery.isLoading && <ManagementPanelLoading label={t('people.detail.loading')} />}
         {detailQuery.isError && (
-          <AdminPanelError
+          <ManagementPanelError
             message={
               detailQuery.error instanceof Error
                 ? detailQuery.error.message
@@ -560,11 +563,11 @@ export function PeopleDirectory({
   }, [t, workforceView]);
 
   if (peopleQuery.isLoading) {
-    return <AdminPanelLoading label={t('people.loading')} />;
+    return <ManagementPanelLoading label={t('people.loading')} />;
   }
   if (peopleQuery.isError) {
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={
           peopleQuery.error instanceof Error
             ? peopleQuery.error.message

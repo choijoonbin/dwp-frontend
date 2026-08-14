@@ -20,7 +20,7 @@ export function useHcmExperience() {
   const roles = auth.user?.roles ?? [];
   const providerRole = hasProviderControlPlaneRole(roles);
   const supportContext = useProviderSupportContext(providerRole);
-  const identityQueries = [auth.user?.email, auth.user?.displayName]
+  const identityQueries = [auth.user?.email]
     .map((value) => value?.trim())
     .filter((value): value is string => Boolean(value));
   const currentPersonQuery = useQuery({
@@ -37,7 +37,7 @@ export function useHcmExperience() {
         try {
           return (await getPerson(auth.user.personPublicId, undefined, 'directory')).person;
         } catch {
-          // Older or partially synchronized identities can still use the directory fallback.
+          // A verified email is the only safe fallback for partially synchronized identities.
         }
       }
       for (const query of identityQueries) {
@@ -56,9 +56,12 @@ export function useHcmExperience() {
   });
   const currentPerson = currentPersonQuery.data;
   const supportCanReadWorkforce = supportContext.data?.scopes.includes('WORKFORCE_READ') ?? false;
+  const hasWorkforceDataAccess =
+    hasPermission('DATA.WORKFORCE', 'VIEW') || hasPermission('DATA.WORKFORCE', 'MANAGE');
   const canOperate =
     supportCanReadWorkforce ||
     (isAppResourceEntitled('APP.WORKFORCE_MANAGEMENT', permissions) &&
+      hasWorkforceDataAccess &&
       hasAnyRole(roles, WORKFORCE_OPERATIONS_ROLES));
   const isManager = (currentPerson?.directReportCount ?? 0) > 0 || hasAnyRole(roles, MANAGER_ROLES);
   const canManageDomain = (resource: string) =>

@@ -51,7 +51,10 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
-import { AdminPanelError, AdminPanelLoading } from '../admin/admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type { GridColDef } from '@mui/x-data-grid';
 
@@ -590,12 +593,12 @@ export function WorkforceExportCenter() {
   );
 
   if (datasetsQuery.isLoading || requestsQuery.isLoading) {
-    return <AdminPanelLoading label={t('exports.loading')} />;
+    return <ManagementPanelLoading label={t('exports.loading')} />;
   }
   if (datasetsQuery.isError || requestsQuery.isError) {
     const error = datasetsQuery.error ?? requestsQuery.error;
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={error instanceof Error ? error.message : t('common.operationError')}
       />
     );
@@ -652,7 +655,7 @@ export function WorkforceExportCenter() {
           </Stack>
           <Stack gap={1.5} sx={{ p: 2.25 }}>
             {previewQuery.isLoading ? (
-              <AdminPanelLoading label={t('exports.policy.evaluating')} />
+              <ManagementPanelLoading label={t('exports.policy.evaluating')} />
             ) : previewQuery.isError || !preview ? (
               <Alert severity="error">
                 {previewQuery.error instanceof Error

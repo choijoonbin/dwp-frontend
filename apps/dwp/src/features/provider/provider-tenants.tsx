@@ -58,7 +58,7 @@ import type {
 
 import { ProviderOnboardingDialog } from './provider-onboarding-dialog';
 import { ProviderOperationDialog } from './provider-operation-dialog';
-import { GovernedSavedViewControl } from '../saved-views/governed-saved-view-control';
+import { GovernedSavedViewControl } from '../../components/governed-saved-view-control';
 import {
   formatProviderDate,
   ProviderError,

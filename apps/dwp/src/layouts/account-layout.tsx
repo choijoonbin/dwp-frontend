@@ -17,7 +17,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { BrandLockup } from '../components/brand-lockup';
 import { ShellHeader } from '../components/shell-header';
 import { accountNavigationGroups } from '../features/account/settings-navigation';
-import { hasProviderControlPlaneRole } from '../features/auth/control-plane-access';
+import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 import {
   DesktopNavigationToggle,

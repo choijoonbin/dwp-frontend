@@ -1113,7 +1113,9 @@
       "CONNECTOR": "Connector",
       "AGENT": "Agent",
       "TOOL": "Tool",
-      "POLICY": "Policy"
+      "POLICY": "Policy",
+      "API": "API contract",
+      "DATA_PRODUCT": "Data product"
     },
     "risk": {
       "LOW": "Low",

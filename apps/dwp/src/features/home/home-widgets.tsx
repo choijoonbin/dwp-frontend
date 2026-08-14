@@ -25,7 +25,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { SectionHeading } from '../work-hub/workspace-ui';
+import { SectionHeading } from '../../components/workspace-ui';
 
 import type {
   HomeOverview,

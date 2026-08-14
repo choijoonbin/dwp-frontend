@@ -336,6 +336,7 @@
   "domainTypes": { "LOGIN": "로그인", "EMAIL": "이메일", "CUSTOM": "사용자 지정" },
   "operationTypes": {
     "TENANT_ONBOARD": "테넌트 온보딩",
+    "TENANT_UPGRADE": "테넌트 업그레이드",
     "TENANT_SUSPEND": "테넌트 일시중지",
     "TENANT_ACTIVATE": "테넌트 활성화",
     "ENTITLEMENT_CHANGE": "사용 권한 변경",
@@ -746,6 +747,7 @@
     }
   },
   "steps": {
+    "validate-contracts": "계약 검증",
     "CONTROL_RECORD": "프로바이더 제어 정보",
     "AUTH_TENANT": "인증 테넌트",
     "PLATFORM_TENANT": "플랫폼 테넌트",
@@ -1040,6 +1042,7 @@
     "scopes": {
       "TENANT_CONFIGURATION_READ": "테넌트 설정 조회",
       "TENANT_CONFIGURATION_WRITE": "테넌트 설정 변경",
+      "TENANT_DIAGNOSTICS_READ": "테넌트 진단 조회",
       "WORKFORCE_READ": "구성원 정보 조회"
     }
   },
@@ -1193,8 +1196,11 @@
     },
     "categories": {
       "ADMINISTRATION": "관리",
+      "CHANGE": "변경",
       "PRIVILEGED_ACCESS": "고권한 접근",
       "SERVICE_HEALTH": "서비스 상태",
+      "SUPPORT": "지원",
+      "TENANT": "테넌트",
       "CHANGE_MANAGEMENT": "변경 관리",
       "DATA_GOVERNANCE": "데이터 거버넌스",
       "TENANT_LIFECYCLE": "테넌트 수명주기"

@@ -25,8 +25,11 @@ import {
 } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
+  ActionIconButton,
   DetailInspector,
   EnterpriseDataGrid,
+  FormDialog,
+  FormField,
   GuidedEmptyState,
   OperationalKpiStrip,
 } from '@dwp-frontend/design-system';
@@ -35,17 +38,12 @@ import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import Tooltip from '@mui/material/Tooltip';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
 
-import { AdminPanelError, AdminPanelLoading } from '../admin/admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -174,7 +172,7 @@ function ConnectorInspector({
             <Typography id="scim-endpoint-title" component="h3" variant="subtitle2">
               {t('provisioning.scim.inspector.endpoint')}
             </Typography>
-            <TextField
+            <FormField
               fullWidth
               size="small"
               value={endpoint}
@@ -182,20 +180,16 @@ function ConnectorInspector({
               sx={{ mt: 1 }}
               InputProps={{
                 endAdornment: (
-                  <Tooltip title={t('provisioning.scim.inspector.copyEndpoint')}>
-                    <IconButton
-                      aria-label={t('provisioning.scim.inspector.copyEndpoint')}
-                      onClick={() =>
-                        void navigator.clipboard
-                          .writeText(endpoint)
-                          .then(() =>
-                            toast.success(t('provisioning.scim.inspector.endpointCopied'))
-                          )
-                      }
-                    >
-                      <Copy size={16} />
-                    </IconButton>
-                  </Tooltip>
+                  <ActionIconButton
+                    label={t('provisioning.scim.inspector.copyEndpoint')}
+                    onClick={() =>
+                      void navigator.clipboard
+                        .writeText(endpoint)
+                        .then(() => toast.success(t('provisioning.scim.inspector.endpointCopied')))
+                    }
+                  >
+                    <Copy size={16} />
+                  </ActionIconButton>
                 ),
               }}
             />
@@ -273,42 +267,37 @@ function SecretDialog({
   const { t } = useTranslation('admin');
   const toast = useToast();
   return (
-    <Dialog open={Boolean(issued)} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{t('provisioning.scim.secret.title')}</DialogTitle>
-      <DialogContent sx={{ pt: '8px !important' }}>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {t('provisioning.scim.secret.notice')}
-        </Typography>
-        <TextField
-          fullWidth
-          label={t('provisioning.scim.secret.token')}
-          value={issued?.bearerToken ?? ''}
-          inputProps={{ readOnly: true }}
-          InputProps={{
-            endAdornment: (
-              <Tooltip title={t('provisioning.scim.secret.copy')}>
-                <IconButton
-                  aria-label={t('provisioning.scim.secret.copy')}
-                  onClick={() => {
-                    if (!issued) return;
-                    void navigator.clipboard
-                      .writeText(issued.bearerToken)
-                      .then(() => toast.success(t('provisioning.scim.secret.copied')));
-                  }}
-                >
-                  <Copy size={17} />
-                </IconButton>
-              </Tooltip>
-            ),
-          }}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button variant="contained" onClick={onClose}>
-          {t('common.actions.close')}
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <FormDialog
+      open={Boolean(issued)}
+      title={t('provisioning.scim.secret.title')}
+      description={t('provisioning.scim.secret.notice')}
+      cancelLabel={t('common.actions.cancel')}
+      submitLabel={t('common.actions.close')}
+      onClose={onClose}
+      onSubmit={onClose}
+      showCancel={false}
+    >
+      <FormField
+        label={t('provisioning.scim.secret.token')}
+        value={issued?.bearerToken ?? ''}
+        inputProps={{ readOnly: true }}
+        InputProps={{
+          endAdornment: (
+            <ActionIconButton
+              label={t('provisioning.scim.secret.copy')}
+              onClick={() => {
+                if (!issued) return;
+                void navigator.clipboard
+                  .writeText(issued.bearerToken)
+                  .then(() => toast.success(t('provisioning.scim.secret.copied')));
+              }}
+            >
+              <Copy size={17} />
+            </ActionIconButton>
+          ),
+        }}
+      />
+    </FormDialog>
   );
 }
 
@@ -321,47 +310,48 @@ function ScimCreateDialog({
   open: boolean;
   busy: boolean;
   onClose: () => void;
-  onSave: (request: { connectorKey: string; displayName: string }) => Promise<void>;
+  onSave: (request: { connectorKey: string; displayName: string }) => Promise<boolean>;
 }) {
   const { t } = useTranslation('admin');
   const [connectorKey, setConnectorKey] = useState('');
   const [displayName, setDisplayName] = useState('');
   return (
-    <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{t('provisioning.scim.create.title')}</DialogTitle>
-      <DialogContent sx={{ pt: '8px !important' }}>
-        <Stack gap={2}>
-          <TextField
-            autoFocus
-            required
-            label={t('provisioning.scim.create.key')}
-            value={connectorKey}
-            onChange={(event) => setConnectorKey(event.target.value)}
-            helperText={t('provisioning.scim.create.keyHelp')}
-          />
-          <TextField
-            required
-            label={t('provisioning.scim.create.name')}
-            value={displayName}
-            onChange={(event) => setDisplayName(event.target.value)}
-          />
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} disabled={busy}>
-          {t('common.actions.cancel')}
-        </Button>
-        <Button
-          variant="contained"
-          disabled={busy || !connectorKey.trim() || !displayName.trim()}
-          onClick={() =>
-            void onSave({ connectorKey: connectorKey.trim(), displayName: displayName.trim() })
-          }
-        >
-          {t('common.actions.create')}
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <FormDialog
+      open={open}
+      title={t('provisioning.scim.create.title')}
+      cancelLabel={t('common.actions.cancel')}
+      submitLabel={t('common.actions.create')}
+      onClose={onClose}
+      onSubmit={async () => {
+        const saved = await onSave({
+          connectorKey: connectorKey.trim(),
+          displayName: displayName.trim(),
+        });
+        if (saved) {
+          setConnectorKey('');
+          setDisplayName('');
+        }
+      }}
+      busy={busy}
+      submitDisabled={!connectorKey.trim() || !displayName.trim()}
+    >
+      <Stack gap={2}>
+        <FormField
+          autoFocus
+          required
+          label={t('provisioning.scim.create.key')}
+          value={connectorKey}
+          onChange={(event) => setConnectorKey(event.target.value)}
+          supportingText={t('provisioning.scim.create.keyHelp')}
+        />
+        <FormField
+          required
+          label={t('provisioning.scim.create.name')}
+          value={displayName}
+          onChange={(event) => setDisplayName(event.target.value)}
+        />
+      </Stack>
+    </FormDialog>
   );
 }
 
@@ -395,8 +385,10 @@ export function IdentityProvisioningManager() {
         if ('bearerToken' in result) setIssued(result);
         await refresh();
         toast.success(success);
+        return true;
       } catch (error) {
         toast.error(message(error, t('common.operationError')));
+        return false;
       } finally {
         setBusy(false);
       }
@@ -468,50 +460,42 @@ export function IdentityProvisioningManager() {
         sortable: false,
         renderCell: ({ row }) => (
           <Stack direction="row">
-            <Tooltip title={t('provisioning.scim.actions.rotate')}>
-              <span>
-                <IconButton
-                  size="small"
-                  disabled={busy || row.lifecycleState === 'RETIRED'}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    void run(
-                      () => rotateScimConnectorSecret(row.connectorId),
-                      t('provisioning.scim.toasts.rotated')
-                    );
-                  }}
-                >
-                  <RotateCw size={16} />
-                </IconButton>
-              </span>
-            </Tooltip>
-            <Tooltip
-              title={
+            <ActionIconButton
+              label={t('provisioning.scim.actions.rotate')}
+              size="small"
+              disabled={busy || row.lifecycleState === 'RETIRED'}
+              onClick={(event) => {
+                event.stopPropagation();
+                void run(
+                  () => rotateScimConnectorSecret(row.connectorId),
+                  t('provisioning.scim.toasts.rotated')
+                );
+              }}
+            >
+              <RotateCw size={16} />
+            </ActionIconButton>
+            <ActionIconButton
+              label={
                 row.lifecycleState === 'ACTIVE'
                   ? t('provisioning.scim.actions.suspend')
                   : t('provisioning.scim.actions.activate')
               }
+              size="small"
+              disabled={busy || row.lifecycleState === 'RETIRED'}
+              onClick={(event) => {
+                event.stopPropagation();
+                void run(
+                  () =>
+                    changeScimConnectorLifecycle(
+                      row.connectorId,
+                      row.lifecycleState === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'
+                    ),
+                  t('provisioning.scim.toasts.lifecycle')
+                );
+              }}
             >
-              <span>
-                <IconButton
-                  size="small"
-                  disabled={busy || row.lifecycleState === 'RETIRED'}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    void run(
-                      () =>
-                        changeScimConnectorLifecycle(
-                          row.connectorId,
-                          row.lifecycleState === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'
-                        ),
-                      t('provisioning.scim.toasts.lifecycle')
-                    );
-                  }}
-                >
-                  {row.lifecycleState === 'ACTIVE' ? <Pause size={16} /> : <Play size={16} />}
-                </IconButton>
-              </span>
-            </Tooltip>
+              {row.lifecycleState === 'ACTIVE' ? <Pause size={16} /> : <Play size={16} />}
+            </ActionIconButton>
           </Stack>
         ),
       },
@@ -562,9 +546,11 @@ export function IdentityProvisioningManager() {
   );
 
   if (connectorsQuery.isLoading)
-    return <AdminPanelLoading label={t('provisioning.scim.loading')} />;
+    return <ManagementPanelLoading label={t('provisioning.scim.loading')} />;
   if (connectorsQuery.isError)
-    return <AdminPanelError message={message(connectorsQuery.error, t('common.operationError'))} />;
+    return (
+      <ManagementPanelError message={message(connectorsQuery.error, t('common.operationError'))} />
+    );
   const connectors = connectorsQuery.data ?? [];
   const events = eventsQuery.data ?? [];
   const inspectedConnector =
@@ -598,14 +584,12 @@ export function IdentityProvisioningManager() {
           <Chip label={connectors.length} size="small" variant="outlined" />
         </Stack>
         <Stack direction="row" justifyContent="flex-end">
-          <Tooltip title={t('common.actions.refresh')}>
-            <IconButton
-              aria-label={t('common.actions.refresh')}
-              onClick={() => void connectorsQuery.refetch()}
-            >
-              <RefreshCw size={18} />
-            </IconButton>
-          </Tooltip>
+          <ActionIconButton
+            label={t('common.actions.refresh')}
+            onClick={() => void connectorsQuery.refetch()}
+          >
+            <RefreshCw size={18} />
+          </ActionIconButton>
           <ActionButton
             intent="primary"
             size="small"
@@ -814,8 +798,12 @@ export function IdentityProvisioningManager() {
         busy={busy}
         onClose={() => setCreateOpen(false)}
         onSave={async (request) => {
-          await run(() => createScimConnector(request), t('provisioning.scim.toasts.created'));
-          setCreateOpen(false);
+          const saved = await run(
+            () => createScimConnector(request),
+            t('provisioning.scim.toasts.created')
+          );
+          if (saved) setCreateOpen(false);
+          return saved;
         }}
       />
       <SecretDialog issued={issued} onClose={() => setIssued(null)} />

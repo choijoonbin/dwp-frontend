@@ -1,26 +1,7 @@
 <!doctype html>
 <html lang="ko">
   <head>
-    <script>
-      (() => {
-        const key = 'dwp.appearance.v1';
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        let requestedMode = 'system';
-
-        try {
-          const preference = JSON.parse(window.localStorage.getItem(key) || '{}');
-          if (['system', 'light', 'dark'].includes(preference.mode)) {
-            requestedMode = preference.mode;
-          }
-        } catch {
-          requestedMode = 'system';
-        }
-
-        const resolvedMode =
-          requestedMode === 'system' ? (systemDark ? 'dark' : 'light') : requestedMode;
-        document.documentElement.dataset.colorScheme = resolvedMode;
-      })();
-    </script>
+    <script src="/theme-bootstrap.js"></script>
     <meta charset="UTF-8" />
     <meta name="theme-color" content="#F3F5F7" />
     <meta name="application-name" content="Digital Workplace" />

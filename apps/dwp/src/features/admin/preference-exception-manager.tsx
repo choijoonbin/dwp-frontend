@@ -33,7 +33,10 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type { GridColDef } from '@mui/x-data-grid';
 
@@ -259,12 +262,12 @@ export function PreferenceExceptionManager() {
   };
 
   if (requestsQuery.isLoading || usersQuery.isLoading) {
-    return <AdminPanelLoading label={t('preferenceExceptions.loading')} />;
+    return <ManagementPanelLoading label={t('preferenceExceptions.loading')} />;
   }
   if (requestsQuery.isError || usersQuery.isError) {
     const error = requestsQuery.error ?? usersQuery.error;
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={error instanceof Error ? error.message : t('common.operationError')}
       />
     );

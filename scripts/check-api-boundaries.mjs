@@ -17,7 +17,7 @@ const checks = [
     allow: (relative) => allowedFetchFiles.has(relative),
   },
   {
-    pattern: /\bXMLHttpRequest\b|\bEventSource\s*\(|\bnew\s+WebSocket\s*\(/g,
+    pattern: /\bXMLHttpRequest\b|\bEventSource\s*\(|\bnew\s+WebSocket\s*\(|\bsendBeacon\s*\(/g,
     message:
       'Browser transport must be introduced through an approved shared client and Gateway contract.',
   },

@@ -55,6 +55,7 @@ type Appearance = {
 
 type ShellSessionOptions = {
   userId?: number;
+  personPublicId?: string | null;
   locale?: 'en' | 'ko';
   displayName?: string;
   jobTitle?: string;
@@ -868,9 +869,8 @@ export async function mockShellSession(
         appLayout: null,
         presentation: 'balanced',
         widgets: [
-          { widgetKey: 'quick-actions', visible: true, size: 'full' },
           { widgetKey: 'people-signals', visible: true, size: 'full' },
-          { widgetKey: 'attention', visible: true, size: 'large' },
+          { widgetKey: 'quick-actions', visible: true, size: 'full' },
           { widgetKey: 'profile', visible: true, size: 'compact' },
           { widgetKey: 'team', visible: true, size: 'full' },
           { widgetKey: 'operations', visible: true, size: 'full' },
@@ -1023,7 +1023,12 @@ export async function mockShellSession(
     if (path === '/api/auth/me') {
       return fulfillSuccess(route, {
         userId: options.userId ?? 1,
-        personPublicId: provider ? null : 'person-session-user',
+        personPublicId:
+          options.personPublicId !== undefined
+            ? options.personPublicId
+            : provider
+              ? null
+              : 'person-session-user',
         displayName: options.displayName ?? (provider ? 'Provider Admin' : 'Tenant Admin'),
         jobTitle:
           options.jobTitle ?? (provider ? 'Platform operations lead' : 'Tenant administrator'),

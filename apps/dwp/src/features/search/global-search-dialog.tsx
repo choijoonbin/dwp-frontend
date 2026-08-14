@@ -44,7 +44,7 @@ import {
   filterGlobalSearchItems,
 } from './global-search-model';
 
-import type { HomeAppDefinition } from '../home/app-launchpad-model';
+import type { HomeAppDefinition } from '../../components/workspace-composer/app-launchpad-model';
 import type { GlobalSearchItem, GlobalSearchKind } from './global-search-model';
 import type { GlobalSearchAuditSource } from '@dwp-frontend/shared-utils';
 
@@ -580,13 +580,18 @@ export function GlobalSearchDialog({
                       >
                         {item.title}
                       </Typography>
-                      <Typography component="p" variant="caption" color="text.secondary" noWrap>
+                      <Typography
+                        component="p"
+                        variant="caption"
+                        color={selected ? 'text.primary' : 'text.secondary'}
+                        noWrap
+                      >
                         {item.description}
                       </Typography>
                     </Box>
                     <Typography
                       variant="caption"
-                      color="text.secondary"
+                      color={selected ? 'text.primary' : 'text.secondary'}
                       sx={{ px: 0.5, display: { xs: 'none', sm: 'block' } }}
                     >
                       {item.source}

@@ -79,11 +79,11 @@ import {
 } from '../../features/account/settings-navigation';
 import { usePreferredLanguage } from '../../components/use-preferred-language';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
-import { usePersonalPreference } from '../../features/account/personal-preference-provider';
+import { usePersonalPreference } from '../../providers/personal-preference-provider';
 
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
-import type { PersonalPreferenceSaveState } from '../../features/account/personal-preference-provider';
+import type { PersonalPreferenceSaveState } from '../../providers/personal-preference-provider';
 
 type PreferenceRowProps = {
   icon: LucideIcon;

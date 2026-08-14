@@ -49,7 +49,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 import { resolveRoleDisplayCopy } from './role-display';
 import { PrivilegedAccessManager } from './privileged-access-manager';
 
@@ -504,10 +507,10 @@ function RolesPanel() {
   );
 
   if (roles.isLoading || resources.isLoading)
-    return <AdminPanelLoading label={t('roleGovernance.loading')} />;
+    return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
   if (roles.isError || resources.isError)
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={errorMessage(roles.error ?? resources.error, t('common.operationError'))}
       />
     );
@@ -853,9 +856,9 @@ function AssignmentsPanel() {
     [assignableRoleCodes, busy, display, mutate, t]
   );
   if (assignments.isLoading || roles.isLoading || assignableRoles.isLoading)
-    return <AdminPanelLoading label={t('roleGovernance.loading')} />;
+    return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
   if (assignments.isError || roles.isError || assignableRoles.isError)
-    return <AdminPanelError message={t('common.operationError')} />;
+    return <ManagementPanelError message={t('common.operationError')} />;
   return (
     <>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}>
@@ -964,7 +967,7 @@ function EffectiveAccessPanel() {
     ],
     [t]
   );
-  if (users.isLoading) return <AdminPanelLoading label={t('roleGovernance.loading')} />;
+  if (users.isLoading) return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
   return (
     <Box>
       <Stack
@@ -992,9 +995,9 @@ function EffectiveAccessPanel() {
           ))}
         </TextField>
       </Stack>
-      {access.isLoading && <AdminPanelLoading label={t('roleGovernance.effectiveLoading')} />}
+      {access.isLoading && <ManagementPanelLoading label={t('roleGovernance.effectiveLoading')} />}
       {access.isError && (
-        <AdminPanelError message={errorMessage(access.error, t('common.operationError'))} />
+        <ManagementPanelError message={errorMessage(access.error, t('common.operationError'))} />
       )}
       {access.data && (
         <>

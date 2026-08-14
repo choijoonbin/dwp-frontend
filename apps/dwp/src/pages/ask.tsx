@@ -33,7 +33,7 @@ import Divider from '@mui/material/Divider';
 import InputAdornment from '@mui/material/InputAdornment';
 import Typography from '@mui/material/Typography';
 
-import { PageHeader, SectionHeading } from '../features/work-hub/workspace-ui';
+import { PageHeader, SectionHeading } from '../components/workspace-ui';
 
 const promptKeys = ['remote', 'blocking', 'software'] as const;
 

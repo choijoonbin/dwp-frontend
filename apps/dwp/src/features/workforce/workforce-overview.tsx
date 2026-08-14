@@ -51,7 +51,7 @@ import type {
   OrganizationChartOrganization,
 } from '@dwp-frontend/shared-utils';
 
-import { GovernedSavedViewControl } from '../saved-views/governed-saved-view-control';
+import { GovernedSavedViewControl } from '../../components/governed-saved-view-control';
 
 type PriorityTone = 'error' | 'warning' | 'info';
 

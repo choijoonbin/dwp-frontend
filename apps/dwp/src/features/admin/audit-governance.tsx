@@ -43,7 +43,10 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 import type {
   AuditIntegrityCheckpoint,
@@ -499,10 +502,10 @@ export function AuditGovernance() {
   const latestCheckpoint = useMemo(() => integrityQuery.data?.[0], [integrityQuery.data]);
 
   if (policyQuery.isLoading || revisionsQuery.isLoading || integrityQuery.isLoading || !policy) {
-    return <AdminPanelLoading label={t('auditControl.loading')} />;
+    return <ManagementPanelLoading label={t('auditControl.loading')} />;
   }
   if (policyQuery.isError || revisionsQuery.isError || integrityQuery.isError) {
-    return <AdminPanelError message={t('auditControl.loadError')} />;
+    return <ManagementPanelError message={t('auditControl.loadError')} />;
   }
 
   const setNumber = (field: keyof EditablePolicy, value: string) => {

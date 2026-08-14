@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
-  canAccessAdminNavigationItem,
   canEnterTenantControlPlane,
   hasProviderControlPlaneRole,
   resolvePrimaryAuthorityRole,
-} from './control-plane-access';
+} from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
-import type { AdminNavigationItem } from '../admin/admin-navigation';
+import { canAccessAdminNavigationItem } from './admin-access-policy';
+import type { AdminNavigationItem } from './admin-navigation';
 
 const item = (
   view: AdminNavigationItem['view'],

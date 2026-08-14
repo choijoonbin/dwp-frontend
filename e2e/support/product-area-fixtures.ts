@@ -276,10 +276,10 @@ export const HR_BENEFITS_FIXTURE = {
     {
       windowId: 'benefit-window-2027',
       name: '2027 annual enrollment',
-      windowType: 'ANNUAL',
-      opensAt: '2026-10-05T00:00:00Z',
-      closesAt: '2026-10-23T09:00:00Z',
-      lifecycleState: 'UPCOMING',
+      windowType: 'OPEN_ENROLLMENT',
+      opensAt: '2026-08-01T00:00:00Z',
+      closesAt: '2026-08-23T09:00:00Z',
+      lifecycleState: 'OPEN',
     },
   ],
   referenceData: true,
@@ -297,6 +297,7 @@ export const HR_PAY_FIXTURE = {
     timeValidated: true,
     absenceValidated: true,
     sourceConfirmed: false,
+    dataOrigin: 'REFERENCE',
   },
   statements: [
     {
@@ -319,7 +320,7 @@ export const HR_TALENT_FIXTURE = {
       journeyType: 'ROLE_TRANSITION',
       progressPercent: 68,
       targetDate: '2026-09-30',
-      status: 'IN_PROGRESS',
+      status: 'ACTIVE',
     },
   ],
   goals: [
@@ -348,15 +349,30 @@ export const HR_TALENT_FIXTURE = {
 
 export const HR_HOME_FIXTURE = {
   asOf: '2026-08-11',
+  generatedAt: '2026-08-11T00:20:00Z',
+  timeZone: 'Asia/Seoul',
+  standardDayMinutes: 480,
   employee: HR_EMPLOYEE_FIXTURE,
   time: HR_TIME_FIXTURE.card,
   leaveBalances: HR_ABSENCE_FIXTURE.balances,
   pay: HR_PAY_FIXTURE.nextCycle,
+  enrollmentWindows: HR_BENEFITS_FIXTURE.windows,
+  journeys: HR_TALENT_FIXTURE.journeys,
   activeBenefitCount: HR_BENEFITS_FIXTURE.plans.length,
   openBenefitWindowCount: HR_BENEFITS_FIXTURE.windows.length,
   activeGoalCount: HR_TALENT_FIXTURE.goals.length,
   requiredLearningCount: HR_TALENT_FIXTURE.learning.filter((item) => item.required).length,
   teamPendingCount: 2,
+  teamTimePendingCount: 1,
+  teamAbsencePendingCount: 1,
+  domainStates: {
+    TIME: { availability: 'AVAILABLE', dataOrigin: 'REFERENCE', reasonCode: null },
+    ABSENCE: { availability: 'AVAILABLE', dataOrigin: 'REFERENCE', reasonCode: null },
+    BENEFITS: { availability: 'AVAILABLE', dataOrigin: 'REFERENCE', reasonCode: null },
+    PAY: { availability: 'AVAILABLE', dataOrigin: 'REFERENCE', reasonCode: null },
+    TALENT: { availability: 'AVAILABLE', dataOrigin: 'REFERENCE', reasonCode: null },
+    TEAM: { availability: 'AVAILABLE', dataOrigin: 'UNKNOWN', reasonCode: null },
+  },
   referenceDataPresent: true,
 } satisfies HrHomeOverview;
 

@@ -33,7 +33,10 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 import { RiskScore, severityColor } from './audit-ui';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
 
@@ -218,9 +221,9 @@ export function AuditOverview() {
     );
   }, [query.data]);
 
-  if (query.isLoading) return <AdminPanelLoading label={t('auditControl.loading')} />;
+  if (query.isLoading) return <ManagementPanelLoading label={t('auditControl.loading')} />;
   if (query.isError || !query.data)
-    return <AdminPanelError message={t('auditControl.loadError')} />;
+    return <ManagementPanelError message={t('auditControl.loadError')} />;
 
   const data = query.data;
   const summary = data.summary;

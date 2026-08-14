@@ -34,7 +34,11 @@ import { useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { AdminPanelError, AdminPanelLoading, LifecycleChip } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
+import { LifecycleChip } from './lifecycle-chip';
 import { ConfirmActionDialog } from './reference-dialogs';
 import { RegistryDialog } from './registry-dialog';
 
@@ -321,11 +325,13 @@ export function RegistryManager() {
   );
 
   if (registryQuery.isLoading) {
-    return <AdminPanelLoading label={t('registry.loading')} />;
+    return <ManagementPanelLoading label={t('registry.loading')} />;
   }
   if (registryQuery.isError) {
     return (
-      <AdminPanelError message={errorMessage(registryQuery.error, t('common.operationError'))} />
+      <ManagementPanelError
+        message={errorMessage(registryQuery.error, t('common.operationError'))}
+      />
     );
   }
 

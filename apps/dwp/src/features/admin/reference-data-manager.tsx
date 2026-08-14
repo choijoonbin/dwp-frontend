@@ -48,7 +48,11 @@ import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { AdminPanelError, AdminPanelLoading, LifecycleChip } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
+import { LifecycleChip } from './lifecycle-chip';
 import { ConfirmActionDialog, ReferenceItemDialog, ReferenceSetDialog } from './reference-dialogs';
 
 import type { ReactNode } from 'react';
@@ -526,10 +530,12 @@ export function ReferenceDataManager() {
   );
 
   if (setsQuery.isLoading) {
-    return <AdminPanelLoading label={t('referenceData.loading')} />;
+    return <ManagementPanelLoading label={t('referenceData.loading')} />;
   }
   if (setsQuery.isError) {
-    return <AdminPanelError message={errorMessage(setsQuery.error, t('common.operationError'))} />;
+    return (
+      <ManagementPanelError message={errorMessage(setsQuery.error, t('common.operationError'))} />
+    );
   }
 
   const confirmCopy = pendingAction
@@ -790,9 +796,9 @@ export function ReferenceDataManager() {
 
         <Box component="section" aria-label={t('referenceData.setDetail')} sx={{ minWidth: 0 }}>
           {detailQuery.isLoading ? (
-            <AdminPanelLoading label={t('referenceData.loadingSet')} />
+            <ManagementPanelLoading label={t('referenceData.loadingSet')} />
           ) : detailQuery.isError ? (
-            <AdminPanelError
+            <ManagementPanelError
               message={errorMessage(detailQuery.error, t('common.operationError'))}
             />
           ) : detail ? (
@@ -1190,9 +1196,9 @@ export function ReferenceDataManager() {
                     </Typography>
                   </Box>
                   {activityQuery.isLoading ? (
-                    <AdminPanelLoading label={t('referenceData.activity.loading')} />
+                    <ManagementPanelLoading label={t('referenceData.activity.loading')} />
                   ) : activityQuery.isError ? (
-                    <AdminPanelError
+                    <ManagementPanelError
                       message={errorMessage(activityQuery.error, t('common.operationError'))}
                     />
                   ) : activities.length ? (

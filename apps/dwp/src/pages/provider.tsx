@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,20 +21,63 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import {
-  ProviderAudit,
-  ProviderCodeContracts,
-  ProviderCommercial,
-  ProviderDataGovernance,
-  ProviderFeatureRollouts,
-  ProviderHealth,
-  ProviderOperations,
-  ProviderOverview,
-  ProviderSupport,
-  ProviderTenantDetail,
-  ProviderTenants,
-} from '../features/provider/provider-control-plane';
 import { ProviderError, ProviderLoading } from '../features/provider/provider-ui';
+
+const ProviderOverview = lazy(() =>
+  import('../features/provider/provider-overview').then((module) => ({
+    default: module.ProviderOverview,
+  }))
+);
+const ProviderTenants = lazy(() =>
+  import('../features/provider/provider-tenants').then((module) => ({
+    default: module.ProviderTenants,
+  }))
+);
+const ProviderOperations = lazy(() =>
+  import('../features/provider/provider-operations').then((module) => ({
+    default: module.ProviderOperations,
+  }))
+);
+const ProviderHealth = lazy(() =>
+  import('../features/provider/provider-health').then((module) => ({
+    default: module.ProviderHealth,
+  }))
+);
+const ProviderFeatureRollouts = lazy(() =>
+  import('../features/provider/provider-feature-rollouts').then((module) => ({
+    default: module.ProviderFeatureRollouts,
+  }))
+);
+const ProviderSupport = lazy(() =>
+  import('../features/provider/provider-support').then((module) => ({
+    default: module.ProviderSupport,
+  }))
+);
+const ProviderCommercial = lazy(() =>
+  import('../features/provider/provider-commercial').then((module) => ({
+    default: module.ProviderCommercial,
+  }))
+);
+const ProviderCodeContracts = lazy(() =>
+  import('../features/provider/provider-code-contracts').then((module) => ({
+    default: module.ProviderCodeContracts,
+  }))
+);
+const ProviderDataGovernance = lazy(() =>
+  import('../features/provider/provider-data-governance').then((module) => ({
+    default: module.ProviderDataGovernance,
+  }))
+);
+const ProviderAudit = lazy(() =>
+  import('../features/provider/provider-audit').then((module) => ({
+    default: module.ProviderAudit,
+  }))
+);
+const ProviderTenantDetail = lazy(() =>
+  import('../features/provider/provider-tenant-detail').then((module) => ({
+    default: module.ProviderTenantDetail,
+  }))
+);
 
 const views = {
   overview: { icon: Gauge, content: ProviderOverview, permission: 'ESTATE_READ' },
@@ -88,7 +132,9 @@ export default function ProviderPage() {
     }
     return (
       <PageCanvas>
-        <ProviderTenantDetail tenantId={tenantId} />
+        <Suspense fallback={<ProviderLoading />}>
+          <ProviderTenantDetail tenantId={tenantId} />
+        </Suspense>
       </PageCanvas>
     );
   }
@@ -131,7 +177,9 @@ export default function ProviderPage() {
             </Box>
           </Stack>
         </Box>
-        <Content />
+        <Suspense fallback={<ProviderLoading />}>
+          <Content />
+        </Suspense>
       </Stack>
     </PageCanvas>
   );

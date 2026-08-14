@@ -1,4 +1,4 @@
-import type { HomeAppDefinition } from '../home/app-launchpad-model';
+import type { HomeAppDefinition } from '../../components/workspace-composer/app-launchpad-model';
 import type {
   WorkspacePriority,
   WorkspaceWorkStatus,

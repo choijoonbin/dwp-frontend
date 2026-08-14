@@ -58,7 +58,10 @@ import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
 
 import type { GridColDef } from '@mui/x-data-grid';
@@ -395,9 +398,11 @@ function TraceDrawer({ historyId, onClose }: { historyId: string | null; onClose
           </IconButton>
         </Tooltip>
       </Stack>
-      {detailQuery.isLoading && <AdminPanelLoading label={t('apiMonitoring.detail.loading')} />}
+      {detailQuery.isLoading && (
+        <ManagementPanelLoading label={t('apiMonitoring.detail.loading')} />
+      )}
       {detailQuery.isError && (
-        <AdminPanelError
+        <ManagementPanelError
           message={errorMessage(detailQuery.error, t('apiMonitoring.detail.loadError'))}
         />
       )}
@@ -703,11 +708,13 @@ export function ApiMonitoring() {
   );
 
   if (overviewQuery.isLoading && !overviewQuery.data) {
-    return <AdminPanelLoading label={t('apiMonitoring.loading')} />;
+    return <ManagementPanelLoading label={t('apiMonitoring.loading')} />;
   }
   if (overviewQuery.isError && !overviewQuery.data) {
     return (
-      <AdminPanelError message={errorMessage(overviewQuery.error, t('apiMonitoring.loadError'))} />
+      <ManagementPanelError
+        message={errorMessage(overviewQuery.error, t('apiMonitoring.loadError'))}
+      />
     );
   }
 
@@ -1380,7 +1387,7 @@ export function ApiMonitoring() {
           </Typography>
         </Stack>
         {eventsQuery.isError && (
-          <AdminPanelError
+          <ManagementPanelError
             message={errorMessage(eventsQuery.error, t('apiMonitoring.events.loadError'))}
           />
         )}

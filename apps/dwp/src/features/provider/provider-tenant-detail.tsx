@@ -76,7 +76,7 @@ function DetailField({ label, value }: { label: string; value: React.ReactNode }
       <Typography variant="caption" color="text.secondary">
         {label}
       </Typography>
-      <Typography variant="body2" sx={{ mt: 0.25, wordBreak: 'break-word' }}>
+      <Typography component="div" variant="body2" sx={{ mt: 0.25, wordBreak: 'break-word' }}>
         {value || '-'}
       </Typography>
     </Box>

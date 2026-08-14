@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { HOME_APPS } from '../home/app-launchpad-model';
+import { HOME_APPS } from '../../components/workspace-composer/app-launchpad-model';
 import {
   createAskSearchItem,
   createGlobalSearchItems,

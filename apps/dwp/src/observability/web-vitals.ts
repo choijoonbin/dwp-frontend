@@ -1,12 +1,14 @@
 import { onCLS, onINP, onLCP } from 'web-vitals';
+import {
+  reportWebVital,
+  type WebVitalMetric,
+} from '@dwp-frontend/shared-utils/api/observability-api';
 
 import { classifyRouteGroup } from './route-performance';
 
 import type { Metric } from 'web-vitals';
 
-type DwpWebVital = Pick<Metric, 'name' | 'value' | 'delta' | 'id' | 'rating' | 'navigationType'> & {
-  routeGroup: string;
-};
+type DwpWebVital = WebVitalMetric;
 
 declare global {
   interface Window {
@@ -15,6 +17,7 @@ declare global {
 }
 
 function reportMetric(metric: Metric) {
+  if (metric.name !== 'CLS' && metric.name !== 'INP' && metric.name !== 'LCP') return;
   const payload: DwpWebVital = {
     name: metric.name,
     value: metric.value,
@@ -27,10 +30,9 @@ function reportMetric(metric: Metric) {
 
   window.dispatchEvent(new CustomEvent<DwpWebVital>('dwp:web-vital', { detail: payload }));
 
-  const endpoint = import.meta.env.VITE_WEB_VITALS_ENDPOINT?.trim();
-  if (!endpoint) return;
-  const body = JSON.stringify(payload);
-  navigator.sendBeacon?.(endpoint, new Blob([body], { type: 'application/json' }));
+  void reportWebVital(payload).catch(() => {
+    // Telemetry must never block or alter the user workflow.
+  });
 }
 
 export function registerWebVitals() {

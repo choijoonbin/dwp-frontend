@@ -1,6 +1,7 @@
 import { Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
+import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -8,102 +9,11 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { AuditLog } from '../features/admin/audit-log';
-import { AuditOverview } from '../features/admin/audit-overview';
-import { AuditEvidenceWorkspace } from '../features/admin/audit-evidence-workspace';
-import { AuditInvestigations } from '../features/admin/audit-investigations';
-import { AuditGovernance } from '../features/admin/audit-governance';
-import { ApiMonitoring } from '../features/admin/api-monitoring';
-import { AccessManager } from '../features/admin/access-manager';
-import { AppAccessRequestManager } from '../features/admin/app-access-request-manager';
-import { AppGovernanceManager } from '../features/admin/app-governance-manager';
-import { AccessReviewManager } from '../features/admin/access-review-manager';
-import { AnnouncementManager } from '../features/admin/announcement-manager';
-import { HomeExperienceManager } from '../features/admin/home-experience-manager';
-import { HomeAppLayoutManager } from '../features/admin/home-app-layout-manager';
-import { PreferenceExceptionManager } from '../features/admin/preference-exception-manager';
-import { LocalizationStudio } from '../features/admin/localization-studio';
-import { RegistryManager } from '../features/admin/registry-manager';
-import { ReferenceDataManager } from '../features/admin/reference-data-manager';
-import { TenantBrandingManager } from '../features/admin/tenant-branding-manager';
-import { NavigationManager } from '../features/admin/navigation-studio-manager';
-import { IdentityProvisioningManager } from '../features/admin/identity-provisioning-manager';
-import { RoleGovernanceManager } from '../features/admin/role-governance-manager';
-import { WorkforceAccessManager } from '../features/admin/workforce-access-manager';
-import { SavedViewCustodyManager } from '../features/admin/saved-view-custody-manager';
-import { ProductivityConnectorManager } from '../features/admin/productivity-connector-manager';
-import { CatalogExplorer } from '../features/admin/catalog-explorer';
-import { ServiceCatalogManager } from '../features/admin/service-catalog-manager';
-import { ServiceOperationsManager } from '../features/admin/service-operations-manager';
-import {
-  ADMIN_NAVIGATION,
-  findAdminNavigationItem,
-  type AdminView,
-} from '../features/admin/admin-navigation';
-import {
-  canAccessAdminNavigationItem,
-  hasProviderControlPlaneRole,
-} from '../features/auth/control-plane-access';
-import { useProviderSupportContext } from '../features/provider/use-provider-support-context';
-
-function AdminContent({ view }: { view: AdminView }) {
-  switch (view) {
-    case 'access':
-      return <AccessManager />;
-    case 'app-access-requests':
-      return <AppAccessRequestManager />;
-    case 'app-governance':
-      return <AppGovernanceManager />;
-    case 'access-reviews':
-      return <AccessReviewManager />;
-    case 'roles':
-      return <RoleGovernanceManager />;
-    case 'workforce-access':
-      return <WorkforceAccessManager />;
-    case 'saved-view-custody':
-      return <SavedViewCustodyManager />;
-    case 'provisioning':
-      return <IdentityProvisioningManager />;
-    case 'service-catalog':
-      return <ServiceCatalogManager />;
-    case 'service-operations':
-      return <ServiceOperationsManager />;
-    case 'announcements':
-      return <AnnouncementManager />;
-    case 'preference-exceptions':
-      return <PreferenceExceptionManager />;
-    case 'localization':
-      return <LocalizationStudio />;
-    case 'branding':
-      return <TenantBrandingManager />;
-    case 'home-experience':
-      return <HomeExperienceManager />;
-    case 'home-apps':
-      return <HomeAppLayoutManager />;
-    case 'reference-data':
-      return <ReferenceDataManager />;
-    case 'catalog':
-      return <CatalogExplorer />;
-    case 'registry':
-      return <RegistryManager />;
-    case 'navigation':
-      return <NavigationManager />;
-    case 'productivity':
-      return <ProductivityConnectorManager />;
-    case 'audit':
-      return <AuditLog />;
-    case 'audit-overview':
-      return <AuditOverview />;
-    case 'audit-events':
-      return <AuditEvidenceWorkspace />;
-    case 'audit-investigations':
-      return <AuditInvestigations />;
-    case 'audit-governance':
-      return <AuditGovernance />;
-    case 'api-monitoring':
-      return <ApiMonitoring />;
-  }
-}
+import { ADMIN_NAVIGATION, findAdminNavigationItem } from '../features/admin/admin-navigation';
+import { AdminContent } from '../features/admin/admin-content';
+import { canAccessAdminNavigationItem } from '../features/admin/admin-access-policy';
+import { RouteFallback } from '../routes/route-support';
+import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 export default function AdminPage() {
   const { t } = useTranslation('admin');
@@ -187,7 +97,7 @@ export default function AdminPage() {
         />
       </Stack>
 
-      <AdminContent view={page.view} />
+      <AdminContent view={page.view} fallback={<RouteFallback />} />
     </PageCanvas>
   );
 }

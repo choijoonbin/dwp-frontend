@@ -13,7 +13,7 @@ import { AppGlyph } from './app-glyph';
 import { HOME_WIDGET_REGISTRY } from './home-widget-registry';
 
 import type { HomeWidgetKey } from '@dwp-frontend/shared-utils';
-import type { HomeAppDefinition } from './app-launchpad-model';
+import type { HomeAppDefinition } from '../../components/workspace-composer/app-launchpad-model';
 
 type HomeItemGalleryProps = {
   open: boolean;

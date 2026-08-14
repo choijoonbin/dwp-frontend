@@ -332,6 +332,7 @@
   "domainTypes": { "LOGIN": "Sign-in", "EMAIL": "Email", "CUSTOM": "Custom" },
   "operationTypes": {
     "TENANT_ONBOARD": "Tenant onboarding",
+    "TENANT_UPGRADE": "Tenant upgrade",
     "TENANT_SUSPEND": "Tenant suspension",
     "TENANT_ACTIVATE": "Tenant activation",
     "ENTITLEMENT_CHANGE": "Entitlement change",
@@ -751,6 +752,7 @@
     }
   },
   "steps": {
+    "validate-contracts": "Validate contracts",
     "CONTROL_RECORD": "Provider control record",
     "AUTH_TENANT": "Identity tenant",
     "PLATFORM_TENANT": "Platform tenant",
@@ -1045,6 +1047,7 @@
     "scopes": {
       "TENANT_CONFIGURATION_READ": "Read tenant configuration",
       "TENANT_CONFIGURATION_WRITE": "Change tenant configuration",
+      "TENANT_DIAGNOSTICS_READ": "Read tenant diagnostics",
       "WORKFORCE_READ": "Read workforce data"
     }
   },
@@ -1198,8 +1201,11 @@
     },
     "categories": {
       "ADMINISTRATION": "Administration",
+      "CHANGE": "Change",
       "PRIVILEGED_ACCESS": "Privileged access",
       "SERVICE_HEALTH": "Service health",
+      "SUPPORT": "Support",
+      "TENANT": "Tenant",
       "CHANGE_MANAGEMENT": "Change management",
       "DATA_GOVERNANCE": "Data governance",
       "TENANT_LIFECYCLE": "Tenant lifecycle"

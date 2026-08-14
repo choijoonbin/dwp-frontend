@@ -9,17 +9,28 @@
     "apps/*",
     "libs/*"
   ],
+  "resolutions": {
+    "brace-expansion@npm:^1.1.7": "npm:1.1.18",
+    "brace-expansion@npm:5.0.8": "npm:5.0.9",
+    "flatted@npm:^3.2.9": "npm:3.4.4",
+    "js-yaml@npm:^4.1.0": "npm:4.3.1",
+    "minimatch@npm:^3.1.2": "npm:3.1.5"
+  },
   "scripts": {
     "dev": "vite",
     "start": "vite preview",
-    "build": "node scripts/check-package-manager-policy.mjs && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-design-system-adoption.mjs && node scripts/check-i18n.mjs && node scripts/check-display-dictionary.mjs && eslint . && tsc && vite build && node scripts/check-bundle-budget.mjs",
+    "build": "node scripts/check-package-manager-policy.mjs && node scripts/check-app-architecture.mjs && node scripts/generate-route-composition.mjs --check && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-source-size.mjs && node scripts/check-design-system-adoption.mjs && node scripts/check-i18n.mjs && node scripts/check-display-dictionary.mjs && eslint . && tsc && vite build && node scripts/check-bundle-budget.mjs",
     "bundle:check": "vite build && node scripts/check-bundle-budget.mjs",
-    "lint": "node scripts/check-package-manager-policy.mjs && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && eslint . && node scripts/check-design-system-adoption.mjs && node scripts/check-display-dictionary.mjs",
+    "build:products": "nx run-many -t build --projects='dwp-*' --exclude=dwp --parallel=3",
+    "lint": "node scripts/check-package-manager-policy.mjs && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-source-size.mjs && eslint . && node scripts/check-design-system-adoption.mjs && node scripts/check-display-dictionary.mjs",
     "lint:fix": "eslint --fix .",
     "format:check": "prettier --check \"{apps,libs,e2e,e2e-storybook,.storybook,scripts}/**/*.{js,jsx,mjs,cjs,ts,tsx,json}\" \"*.{js,mjs,ts,json,md}\" \"docs/**/*.md\"",
     "format": "prettier --write \"{apps,libs,e2e,e2e-storybook,.storybook,scripts}/**/*.{js,jsx,mjs,cjs,ts,tsx,json}\" \"*.{js,mjs,ts,json,md}\" \"docs/**/*.md\"",
     "typecheck": "tsc --noEmit",
-    "architecture:check": "node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs",
+    "architecture:check": "node scripts/check-app-architecture.mjs && node scripts/generate-route-composition.mjs --check && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-source-size.mjs",
+    "routes:sync": "node scripts/generate-route-composition.mjs --write",
+    "routes:check": "node scripts/generate-route-composition.mjs --check",
+    "source-size:check": "node scripts/check-source-size.mjs",
     "package-manager:check": "node scripts/check-package-manager-policy.mjs",
     "design-system:check": "node scripts/check-design-system-adoption.mjs",
     "design-system:baseline": "node scripts/check-design-system-adoption.mjs --write",
@@ -39,6 +50,10 @@
     "test:storybook": "playwright test --config playwright.storybook.config.ts",
     "test:storybook:update": "playwright test --config playwright.storybook.config.ts --update-snapshots=all",
     "license:check": "node scripts/check-production-licenses.mjs",
+    "security:audit": "yarn npm audit --recursive --severity high",
+    "sbom:generate": "node scripts/generate-sbom.mjs",
+    "openapi:sync": "node scripts/sync-openapi-contract.mjs --sync",
+    "openapi:check": "node scripts/sync-openapi-contract.mjs --check",
     "license:report": "node scripts/check-production-licenses.mjs --write",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
@@ -46,7 +61,7 @@
     "test:e2e:report": "playwright show-report"
   },
   "engines": {
-    "node": ">=22.12 <27"
+    "node": ">=24.18 <25"
   },
   "packageManager": "yarn@4.17.1",
   "dependencies": {
@@ -69,12 +84,13 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-i18next": "^17.0.11",
-    "react-router-dom": "^7.4.1",
+    "react-router-dom": "^7.18.2",
     "web-vitals": "6.1.0",
     "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
+    "@cyclonedx/yarn-plugin-cyclonedx": "3.3.2",
     "@eslint/js": "^9.23.0",
     "@playwright/test": "^1.57.0",
     "@storybook/addon-a11y": "^10.5.7",
@@ -91,7 +107,8 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^16.0.0",
     "jsdom": "^29.0.0",
-    "nx": "^22.3.3",
+    "nx": "^22.7.7",
+    "openapi-typescript": "7.13.0",
     "playwright-core": "1.58.0",
     "prettier": "^3.5.3",
     "storybook": "^10.5.7",

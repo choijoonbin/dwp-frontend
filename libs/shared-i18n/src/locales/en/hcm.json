@@ -190,6 +190,9 @@
     "saved": "Your HR home was saved.",
     "saveConflict": "Your HR home changed in another session. The latest version is now shown; review it before editing again.",
     "saveError": "Your HR home could not be saved. Review the latest composition and try again.",
+    "error": {
+      "description": "The home aggregate could not be loaded. If retrying does not help, check the People service connection."
+    },
     "widgets": {
       "quick-actions": {
         "label": "Quick actions",
@@ -224,7 +227,22 @@
     "header": {
       "snapshot": "My HR snapshot",
       "weekProgress": "Weekly time",
-      "timeValue": "{{recorded}} / {{target}}h"
+      "timeValue": "{{recorded}} / {{target}}h",
+      "updated": "As of {{value}}",
+      "generatedUnavailable": "Snapshot time unavailable",
+      "stale": "As of {{value}} · refresh delayed",
+      "reference": "Validation reference data",
+      "personalSummary": "See this week's time, leave, pay, and growth flow from current HR data.",
+      "personalExceptionSummary": "{{count}} time exception needs your attention this week.",
+      "teamSummary": "{{count}} team HR decision is waiting in your current reporting line.",
+      "teamUnavailableSummary": "Team approval totals are unavailable, so the current state cannot be confirmed.",
+      "operationsSummary": "Workforce data quality is {{quality}}; review source freshness and operating exceptions together."
+    },
+    "mode": {
+      "label": "HR home scope",
+      "personal": "Me",
+      "team": "My team",
+      "operations": "HR operations"
     },
     "summary": {
       "steady": "Your weekly time is {{progress}}% complete, with {{leave}} days of leave available.",
@@ -258,6 +276,37 @@
         "directory": "Find colleagues and relationships",
         "myTeam": "Team composition and people signals",
         "operations": "Workforce data operations"
+      }
+    },
+    "tools": {
+      "title": "HR tools",
+      "meta": "Open frequently used HR destinations. These links are separate from work that needs action.",
+      "count": "{{count}} tools",
+      "time": "Time record",
+      "requestLeave": "Request time off",
+      "pay": "Pay statements",
+      "services": "Get HR help",
+      "directory": "Find people",
+      "myTeam": "My team",
+      "teamTime": "Team time approvals",
+      "teamAbsence": "Team leave approvals",
+      "operations": "HR operations",
+      "workforce": "Workforce people",
+      "assignments": "Assignments",
+      "integrations": "Integrations and reconciliation",
+      "descriptions": {
+        "time": "Review this week's record and exceptions",
+        "requestLeave": "Check balance and make a request",
+        "pay": "Review pay day and secure statements",
+        "services": "Request documents or HR help",
+        "directory": "Explore colleagues and relationships",
+        "myTeam": "Current reporting lines and team details",
+        "teamTime": "Review submitted team time",
+        "teamAbsence": "Review team time-off requests",
+        "operations": "Readiness across HR domains",
+        "workforce": "Effective-dated workforce records",
+        "assignments": "Assignment and position state",
+        "integrations": "Source synchronization and error evidence"
       }
     },
     "signals": {
@@ -303,7 +352,8 @@
       "hours": "{{value}}h",
       "days": "{{value}} days",
       "dDay": "D-{{value}}",
-      "count": "{{value}}"
+      "count": "{{value}}",
+      "people": "{{value}} people"
     },
     "guidance": {
       "eyebrow": "Personalized HR guidance",
@@ -344,11 +394,145 @@
       "clearTitle": "No HR item currently needs attention",
       "clearDescription": "Your personal HR tasks and required acknowledgements are up to date."
     },
+    "needsAttention": {
+      "title": "HR work that needs attention",
+      "personalMeta": "Only work that you can review or continue is prioritized here.",
+      "teamMeta": "Manager decisions waiting inside your current reporting line.",
+      "operationsMeta": "Workforce data and source-integration signals that need an operator.",
+      "count": "{{count}} items",
+      "countPartial": "{{count}} available · some data delayed",
+      "countUnavailable": "Count unavailable",
+      "openRhythm": "View HR flow",
+      "review": "Review",
+      "continue": "Continue",
+      "decide": "Decide",
+      "investigate": "Investigate",
+      "resolveTime": "Fix exceptions",
+      "finishTime": "Finish time",
+      "reviewEnrollment": "Review enrollment",
+      "continueLearning": "Continue learning",
+      "reviewTime": "Review time",
+      "reviewLeave": "Review leave",
+      "inspectSync": "Inspect sync",
+      "inspectData": "Inspect exclusions",
+      "clearTitle": "No HR work needs immediate attention",
+      "unavailableTitle": "Some HR work is temporarily unavailable",
+      "personalClear": "Time, benefits, and required learning are currently on track.",
+      "teamClear": "No time or leave decision is waiting in your reporting line.",
+      "operationsClear": "No immediate workforce integration or data exception needs review.",
+      "personalUnavailable": "Check the connection for time, benefits, or talent data.",
+      "teamUnavailable": "Team approval totals could not be loaded. Try again shortly.",
+      "operationsUnavailable": "Workforce operations or source integration status could not be loaded.",
+      "timeException": {
+        "title": "Resolve your time exceptions",
+        "description": "Review the cause and recorded time before submission.",
+        "value": "{{count}} exceptions"
+      },
+      "timeRemaining": {
+        "title": "Finish this week's time record",
+        "description": "Review and record the remaining time before {{end}}.",
+        "value": "{{value}}h remaining"
+      },
+      "benefitWindow": {
+        "title": "A benefits enrollment window is open",
+        "description": "Review {{name}} choices and your current coverage."
+      },
+      "requiredLearning": {
+        "title": "Continue your required learning",
+        "description": "Review learning and growth activities assigned to your role.",
+        "value": "{{count}} required"
+      },
+      "teamTime": {
+        "title": "Team time decisions are waiting",
+        "description": "Review recorded time and exception evidence before deciding.",
+        "value": "{{count}} waiting"
+      },
+      "teamAbsence": {
+        "title": "Team leave decisions are waiting",
+        "description": "Review team coverage and the requested period together.",
+        "value": "{{count}} waiting"
+      },
+      "syncFailure": {
+        "title": "Review the latest HR source synchronization",
+        "description": "The {{source}} run did not complete successfully."
+      },
+      "rejectedRecords": {
+        "title": "Records were excluded during reconciliation",
+        "description": "Review source values, mappings, and exclusion reasons.",
+        "value": "{{count}} rejected"
+      }
+    },
     "states": {
       "due-soon": "Due soon",
       "in-progress": "In progress",
       "waiting": "Waiting",
-      "completed": "Completed"
+      "completed": "Completed",
+      "unavailable": "Unavailable"
+    },
+    "rhythm": {
+      "personal": {
+        "eyebrow": "DWP PEOPLE RHYTHM",
+        "title": "My HR flow",
+        "meta": "See this week's completion stages and upcoming people events, not just isolated totals."
+      },
+      "team": {
+        "eyebrow": "MANAGER RHYTHM",
+        "title": "My team's decision flow",
+        "meta": "Review time, leave, and team composition within current reporting lines.",
+        "time": "Time approvals",
+        "timeDetail": "Submitted team time cards",
+        "absence": "Leave approvals",
+        "absenceDetail": "Time-off requests awaiting a decision",
+        "people": "Direct reports",
+        "peopleDetail": "From currently effective reporting lines"
+      },
+      "operations": {
+        "eyebrow": "WORKFORCE RHYTHM",
+        "title": "Workforce operations flow",
+        "meta": "Review workforce scale, data quality, and source freshness in one operating scope.",
+        "workforce": "Active workforce",
+        "workforceDetail": "Primary assignments at the current effective date",
+        "quality": "Data quality",
+        "qualityDetail": "Organization and assignment relationship integrity",
+        "sync": "Latest source sync",
+        "noSync": "No completed run",
+        "positions": "Open positions",
+        "positionsDetail": "From the current organization design"
+      },
+      "time": {
+        "title": "This week's time flow",
+        "period": "{{start}} - {{end}}",
+        "noCard": "No work schedule is connected.",
+        "open": "Open time",
+        "record": "Record",
+        "recordValue": "{{recorded}} / {{target}}h",
+        "validate": "Validate",
+        "validated": "No exceptions",
+        "exceptionValue": "{{count}} exceptions",
+        "submit": "Submit"
+      },
+      "leave": {
+        "label": "Available leave",
+        "detail": "{{used}}d used · {{pending}}d pending",
+        "noPlan": "No leave plan is connected"
+      },
+      "pay": {
+        "label": "Next pay day",
+        "scheduleDetail": "Based on your linked pay schedule",
+        "detail": "Payroll readiness {{readiness}} / 3 verified",
+        "noCycle": "No pay cycle is connected"
+      },
+      "benefits": {
+        "label": "Active benefits",
+        "window": "Enrollment closes in {{days}} days",
+        "steady": "No additional enrollment window is open"
+      },
+      "journey": {
+        "label": "Growth journey",
+        "detail": "{{name}} · target in {{days}} days",
+        "emptyValue": "No active flow",
+        "empty": "No journey is currently active"
+      }
     },
     "profile": {
       "eyebrow": "Employment profile",
@@ -367,7 +551,9 @@
       "meta": "{{count}} direct reports",
       "open": "View team",
       "emptyTitle": "There are no current direct reports",
-      "emptyDescription": "Team information will appear when a reporting relationship becomes effective."
+      "emptyDescription": "Team information will appear when a reporting relationship becomes effective.",
+      "loadErrorTitle": "Team composition could not be loaded",
+      "loadErrorDescription": "The people list failed independently of approval totals. Try again."
     },
     "operations": {
       "eyebrow": "HR operations insight",
@@ -448,6 +634,7 @@
       "ELECTED": "Elected",
       "WAIVED": "Waived",
       "AVAILABLE": "Available",
+      "UNAVAILABLE": "Unavailable",
       "PENDING": "Pending",
       "WITHHELD": "Withheld",
       "RETIRED": "Retired",

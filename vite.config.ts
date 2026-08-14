@@ -8,6 +8,30 @@ import { defineConfig, loadEnv } from 'vite';
 const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.join(workspaceRoot, 'apps/dwp');
 const developmentPort = 4200;
+const trustedHttpOrigin = (value: string) => {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.origin : '';
+  } catch {
+    return '';
+  }
+};
+
+const securityHeaders = (development = false, apiOrigin = '') => {
+  const trustedApiSource = apiOrigin ? ` ${apiOrigin}` : '';
+  return {
+    'Content-Security-Policy':
+      `default-src 'self'; script-src 'self'${development ? " 'unsafe-inline'" : ''}; ` +
+      "style-src 'self' 'unsafe-inline'; " +
+      `img-src 'self' data: blob:${trustedApiSource}; font-src 'self' data:; ` +
+      `connect-src 'self' ws:${trustedApiSource}; ` +
+      "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+    'Referrer-Policy': 'no-referrer',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+  };
+};
 
 const packagePath = (moduleId: string, packageName: string) =>
   moduleId.includes(`/node_modules/${packageName}/`) ||
@@ -16,6 +40,7 @@ const packagePath = (moduleId: string, packageName: string) =>
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, workspaceRoot, '');
   const proxyTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:8080';
+  const apiOrigin = trustedHttpOrigin(process.env.VITE_API_URL || env.VITE_API_URL || proxyTarget);
   const runningTests = mode === 'test' || Boolean(process.env.VITEST);
 
   return {
@@ -42,18 +67,21 @@ export default defineConfig(({ command, mode }) => {
         '@dwp-frontend/design-system': path.join(workspaceRoot, 'libs/design-system/src'),
         '@dwp-frontend/shared-utils': path.join(workspaceRoot, 'libs/shared-utils/src'),
         '@dwp-frontend/shared-i18n': path.join(workspaceRoot, 'libs/shared-i18n/src'),
+        '@dwp-frontend/api-contracts': path.join(workspaceRoot, 'libs/api-contracts/src'),
       },
     },
     optimizeDeps: { include: ['i18next', 'react-i18next', 'i18next-resources-to-backend'] },
     server: {
       host: true,
       port: developmentPort,
+      headers: securityHeaders(true, apiOrigin),
       fs: { allow: [workspaceRoot] },
       proxy: { '/api': { target: proxyTarget, changeOrigin: true } },
     },
     preview: {
       host: true,
       port: developmentPort,
+      headers: securityHeaders(false, apiOrigin),
       proxy: { '/api': { target: proxyTarget, changeOrigin: true } },
     },
     build: {
@@ -82,6 +110,7 @@ export default defineConfig(({ command, mode }) => {
                 name: 'vendor-mui-x-shared',
                 test: (moduleId) => packagePath(moduleId, '@mui/x-internals'),
                 includeDependenciesRecursively: false,
+                minSize: 0,
                 priority: 30,
               },
               {
@@ -90,6 +119,16 @@ export default defineConfig(({ command, mode }) => {
                 tags: ['$initial'],
                 includeDependenciesRecursively: true,
                 priority: 20,
+              },
+              {
+                name: 'async-vendor',
+                test: (moduleId) => moduleId.includes('/node_modules/'),
+                entriesAware: true,
+                entriesAwareMergeThreshold: 30 * 1024,
+                includeDependenciesRecursively: false,
+                minSize: 0,
+                maxSize: 430 * 1024,
+                priority: 15,
               },
               {
                 name: 'application-shell',

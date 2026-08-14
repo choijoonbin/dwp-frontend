@@ -44,7 +44,7 @@ import {
   localizeHomeAppGroups,
   renameLaunchpadFolder,
   ungroupLaunchpadFolder,
-} from './app-launchpad-model';
+} from '../../components/workspace-composer/app-launchpad-model';
 import { AppGlyph } from './app-glyph';
 import {
   LAUNCHPAD_POST_DRAG_CLICK_GUARD_MS,
@@ -59,7 +59,7 @@ import type {
   HomeAppGroupId,
   LaunchpadFolder,
   LaunchpadLayout,
-} from './app-launchpad-model';
+} from '../../components/workspace-composer/app-launchpad-model';
 
 const FOLDER_TARGET_PREFIX = 'folder-target::';
 const GROUP_TARGET_PREFIX = 'group-target::';

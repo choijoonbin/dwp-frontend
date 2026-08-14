@@ -74,7 +74,10 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 import { NavigationDialog } from './navigation-manager';
 
 import type { DragEndEvent } from '@dnd-kit/core';
@@ -829,12 +832,12 @@ export function NavigationManager() {
   };
 
   if (workspace.isLoading || registry.isLoading || resources.isLoading) {
-    return <AdminPanelLoading label={t('navigationManager.loading')} />;
+    return <ManagementPanelLoading label={t('navigationManager.loading')} />;
   }
   const dependencyError = workspace.error || registry.error || resources.error;
   if (dependencyError) {
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={
           dependencyError instanceof Error ? dependencyError.message : t('common.operationError')
         }

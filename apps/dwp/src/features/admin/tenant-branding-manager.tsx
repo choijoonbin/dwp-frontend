@@ -40,8 +40,11 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { getContrastRatio } from '@mui/material/styles';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
-import { useCurrentProviderSupportContext } from '../provider/use-provider-support-context';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
+import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 
 import type { TenantBranding, TenantBrandingRevision } from '@dwp-frontend/shared-utils';
 
@@ -286,11 +289,13 @@ export function TenantBrandingManager() {
   };
 
   if (brandingQuery.isLoading) {
-    return <AdminPanelLoading label={t('branding.loading')} />;
+    return <ManagementPanelLoading label={t('branding.loading')} />;
   }
   if (brandingQuery.isError || !branding) {
     return (
-      <AdminPanelError message={errorMessage(brandingQuery.error, t('common.operationError'))} />
+      <ManagementPanelError
+        message={errorMessage(brandingQuery.error, t('common.operationError'))}
+      />
     );
   }
 

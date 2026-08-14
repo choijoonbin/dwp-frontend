@@ -18,7 +18,7 @@ import Tooltip from '@mui/material/Tooltip';
 
 import { BrandLockup } from '../components/brand-lockup';
 import { ShellHeader } from '../components/shell-header';
-import { useCurrentProviderSupportContext } from '../features/provider/use-provider-support-context';
+import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 import {

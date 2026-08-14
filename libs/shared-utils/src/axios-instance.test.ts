@@ -62,6 +62,23 @@ describe('axiosInstance browser session contract', () => {
     expect(request.headers).not.toHaveProperty('Authorization');
   });
 
+  it('keeps the CSRF bootstrap alive for unload-safe mutations', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse(200, {
+          data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
+        })
+      )
+      .mockResolvedValueOnce(jsonResponse(204, undefined));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await axiosInstance.post('/api/telemetry', { name: 'LCP' }, { keepalive: true });
+
+    expect(fetchMock.mock.calls[0]?.[1]).toEqual(expect.objectContaining({ keepalive: true }));
+    expect(fetchMock.mock.calls[1]?.[1]).toEqual(expect.objectContaining({ keepalive: true }));
+  });
+
   it('requests a new CSRF token after the in-memory token is reset', async () => {
     const fetchMock = vi
       .fn()

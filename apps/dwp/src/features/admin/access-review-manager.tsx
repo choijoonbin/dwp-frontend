@@ -52,8 +52,11 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
-import { hasFullTenantAdminRole } from '../auth/control-plane-access';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
+import { hasFullTenantAdminRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -684,11 +687,13 @@ export function AccessReviewManager() {
   );
 
   if (campaignsQuery.isLoading) {
-    return <AdminPanelLoading label={t('accessReviews.loading')} />;
+    return <ManagementPanelLoading label={t('accessReviews.loading')} />;
   }
   if (campaignsQuery.isError) {
     return (
-      <AdminPanelError message={errorMessage(campaignsQuery.error, t('common.operationError'))} />
+      <ManagementPanelError
+        message={errorMessage(campaignsQuery.error, t('common.operationError'))}
+      />
     );
   }
 
@@ -925,9 +930,9 @@ export function AccessReviewManager() {
               </Stack>
               <Divider />
               {detailQuery.isLoading ? (
-                <AdminPanelLoading label={t('accessReviews.loadingItems')} />
+                <ManagementPanelLoading label={t('accessReviews.loadingItems')} />
               ) : detailQuery.isError ? (
-                <AdminPanelError
+                <ManagementPanelError
                   message={errorMessage(detailQuery.error, t('common.operationError'))}
                 />
               ) : desktop ? (

@@ -52,7 +52,10 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
-import { AdminPanelError, AdminPanelLoading } from './admin-ui';
+import {
+  ManagementPanelError,
+  ManagementPanelLoading,
+} from '../../components/management-panel-state';
 
 type WorkspaceView = 'EDITOR' | 'DIFF' | 'PREVIEW' | 'HISTORY';
 type Transition = 'SUBMIT' | 'APPROVE' | 'REJECT' | 'PUBLISH' | 'RESTORE' | 'NEW_DRAFT';
@@ -626,11 +629,11 @@ export function LocalizationStudio() {
   };
 
   if (workspaceQuery.isLoading) {
-    return <AdminPanelLoading label={t('localization.loading')} />;
+    return <ManagementPanelLoading label={t('localization.loading')} />;
   }
   if (workspaceQuery.isError) {
     return (
-      <AdminPanelError
+      <ManagementPanelError
         message={
           workspaceQuery.error instanceof Error
             ? workspaceQuery.error.message
@@ -745,7 +748,7 @@ export function LocalizationStudio() {
 
             <Box sx={{ minWidth: 0 }}>
               {revisionsQuery.isLoading ? (
-                <AdminPanelLoading label={t('localization.loadingRevisions')} />
+                <ManagementPanelLoading label={t('localization.loadingRevisions')} />
               ) : !selectedRevision ? (
                 <GuidedEmptyState
                   kind="empty"
@@ -938,7 +941,7 @@ export function LocalizationStudio() {
                     )}
                     {view === 'DIFF' &&
                       (diffQuery.isLoading ? (
-                        <AdminPanelLoading label={t('localization.diff.loading')} />
+                        <ManagementPanelLoading label={t('localization.diff.loading')} />
                       ) : (
                         <Stack gap={1}>
                           <Typography variant="subtitle2">
