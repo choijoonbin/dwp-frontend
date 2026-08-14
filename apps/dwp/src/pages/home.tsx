@@ -372,6 +372,7 @@ export default function HomePage() {
           t('page.commandDescription')
         }
         backgroundUrl={backgroundUrl}
+        usesDefaultBackground={!homeExperience?.backgroundUrl}
         backgroundPosition={homeExperience?.backgroundPosition ?? 'RIGHT'}
         overlayOpacity={homeExperience?.overlayOpacity ?? 18}
         onRetry={() => void homeOverviewQuery.refetch()}

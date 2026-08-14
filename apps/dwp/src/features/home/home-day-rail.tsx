@@ -43,6 +43,7 @@ type HomeDayRailProps = {
   headline: string;
   subheadline: string;
   backgroundUrl: string;
+  usesDefaultBackground: boolean;
   backgroundPosition: HomeBackgroundPosition;
   overlayOpacity: number;
   onRetry: () => void;
@@ -168,6 +169,7 @@ export function HomeDayRail({
   headline,
   subheadline,
   backgroundUrl,
+  usesDefaultBackground,
   backgroundPosition,
   overlayOpacity,
   onRetry,
@@ -185,7 +187,9 @@ export function HomeDayRail({
   const calendarUnavailable = requestFailed || overview?.calendar.status === 'UNAVAILABLE';
   const calendarForbidden = overview?.calendar.status === 'FORBIDDEN';
   const audience = overview?.audience.profile ?? 'MEMBER';
-  const backgroundAlignment = `${backgroundPosition.toLowerCase()} center`;
+  const backgroundAlignment = usesDefaultBackground
+    ? 'right center'
+    : `${backgroundPosition.toLowerCase()} center`;
   const backgroundOverlay = Math.min(0.8, Math.max(0, overlayOpacity / 100));
 
   return (
@@ -193,7 +197,7 @@ export function HomeDayRail({
       component="section"
       aria-label={t('page.personalWorkspace')}
       data-testid="home-command-center"
-      sx={{ bgcolor: '#F7F9FC', borderBottom: 1, borderColor: 'divider' }}
+      sx={{ bgcolor: 'background.default', borderBottom: 1, borderColor: 'divider' }}
     >
       <Box
         sx={{
@@ -204,7 +208,7 @@ export function HomeDayRail({
           backgroundImage: `url(${backgroundUrl})`,
           backgroundRepeat: 'no-repeat',
           backgroundPosition: backgroundAlignment,
-          backgroundSize: 'cover',
+          backgroundSize: usesDefaultBackground ? { xs: 'cover', md: '195% auto' } : 'cover',
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -315,7 +319,7 @@ export function HomeDayRail({
           sx={{
             display: 'grid',
             gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr)' },
-            bgcolor: 'common.white',
+            bgcolor: 'background.paper',
             border: 1,
             borderColor: 'divider',
             borderRadius: 1,
