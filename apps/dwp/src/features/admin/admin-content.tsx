@@ -76,6 +76,11 @@ const ADMIN_CONTENT: Record<AdminView, AdminComponent> = {
       default: module.HomeExperienceManager,
     }))
   ),
+  'home-composition': lazy(() =>
+    import('./home-composition-manager').then((module) => ({
+      default: module.HomeCompositionManager,
+    }))
+  ),
   'home-apps': lazy(() =>
     import('./home-app-layout-manager').then((module) => ({ default: module.HomeAppLayoutManager }))
   ),

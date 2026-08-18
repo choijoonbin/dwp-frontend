@@ -9,7 +9,7 @@ import {
 import { reorderWorkspaceWidgets } from '../../components/workspace-composer/workspace-composer-model';
 
 describe('home widget registry', () => {
-  it('restores registered widgets and keeps announcements visible', () => {
+  it('restores personal widgets and drops fixed-zone or unknown preferences', () => {
     const widgets = reconcileHomeWidgets([
       { widgetKey: 'activity', visible: false },
       { widgetKey: 'announcements', visible: false },
@@ -17,39 +17,94 @@ describe('home widget registry', () => {
     ]);
 
     expect(widgets).toHaveLength(5);
-    expect(widgets[0]).toEqual({ widgetKey: 'activity', visible: false, size: 'full' });
-    expect(widgets.find((widget) => widget.widgetKey === 'announcements')?.visible).toBe(true);
+    expect(widgets[0]).toEqual({
+      widgetKey: 'activity',
+      visible: false,
+      size: 'quarter',
+      height: 'tall',
+    });
+    expect(widgets.map((widget) => widget.widgetKey)).not.toContain('announcements');
   });
 
   it('moves widgets without mutating the source list', () => {
     const source = reconcileHomeWidgets(null);
-    const moved = reorderWorkspaceWidgets(source, 'announcements', 'daily-brief');
+    const moved = reorderWorkspaceWidgets(source, 'activity', 'daily-brief');
 
-    expect(moved[3].widgetKey).toBe('announcements');
-    expect(source[0].widgetKey).toBe('announcements');
+    expect(moved[4].widgetKey).toBe('activity');
+    expect(source[0].widgetKey).toBe('command-rail');
   });
 
   it('provides distinct governed defaults for each work audience', () => {
     expect(defaultHomeWidgets(undefined, 'MEMBER').map((widget) => widget.widgetKey)).toEqual([
-      'announcements',
+      'command-rail',
+      'activity',
       'focus',
       'schedule',
       'daily-brief',
-      'activity',
     ]);
     expect(defaultHomeWidgets(undefined, 'MANAGER').map((widget) => widget.widgetKey)).toEqual([
-      'announcements',
-      'daily-brief',
+      'command-rail',
+      'activity',
       'focus',
       'schedule',
-      'activity',
+      'daily-brief',
     ]);
     expect(defaultHomeWidgets(undefined, 'OPERATOR').map((widget) => widget.widgetKey)).toEqual([
-      'announcements',
+      'command-rail',
       'activity',
-      'daily-brief',
       'focus',
       'schedule',
+      'daily-brief',
+    ]);
+  });
+
+  it('keeps client widget sizes aligned with the workspace-home server contract', () => {
+    expect(
+      HOME_WIDGET_REGISTRY.map(
+        ({ key, defaultSize, allowedSizes, defaultHeight, allowedHeights }) => ({
+          key,
+          defaultSize,
+          allowedSizes,
+          defaultHeight,
+          allowedHeights,
+        })
+      )
+    ).toEqual([
+      {
+        key: 'command-rail',
+        defaultSize: 'large',
+        allowedSizes: ['large', 'full'],
+        defaultHeight: 'short',
+        allowedHeights: ['short', 'standard'],
+      },
+      {
+        key: 'daily-brief',
+        defaultSize: 'full',
+        allowedSizes: ['large', 'full'],
+        defaultHeight: 'standard',
+        allowedHeights: ['short', 'standard', 'tall'],
+      },
+      {
+        key: 'focus',
+        defaultSize: 'medium',
+        allowedSizes: ['quarter', 'compact', 'medium', 'large', 'full'],
+        defaultHeight: 'tall',
+        allowedHeights: ['short', 'standard', 'tall', 'expanded'],
+      },
+      {
+        key: 'schedule',
+        defaultSize: 'quarter',
+        allowedSizes: ['fifth', 'quarter', 'compact', 'medium'],
+        defaultHeight: 'standard',
+        allowedHeights: ['short', 'standard', 'tall'],
+      },
+      {
+        key: 'activity',
+        defaultSize: 'quarter',
+        allowedSizes: ['fifth', 'quarter', 'compact', 'medium'],
+        defaultHeight: 'tall',
+        allowedHeights: ['short', 'standard', 'tall'],
+      },
     ]);
   });
 
@@ -62,18 +117,14 @@ describe('home widget registry', () => {
     expect(manifests.every((manifest) => (manifest?.freshnessSeconds ?? 0) > 0)).toBe(true);
   });
 
-  it('hides personal widgets but keeps governed announcements visible', () => {
+  it('hides personal widgets without changing their governed default size', () => {
     const source = reconcileHomeWidgets(null);
 
     expect(setHomeWidgetVisibility(source, 'focus', false)).toContainEqual({
       widgetKey: 'focus',
       visible: false,
-      size: 'large',
+      size: 'medium',
+      height: 'tall',
     });
-    expect(
-      setHomeWidgetVisibility(source, 'announcements', false).find(
-        (widget) => widget.widgetKey === 'announcements'
-      )?.visible
-    ).toBe(true);
   });
 });

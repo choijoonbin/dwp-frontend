@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock3 } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getHomeExperience,
@@ -17,9 +17,7 @@ import {
   usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { PageCanvas } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
-
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
@@ -27,6 +25,7 @@ import { AppLaunchpad } from '../features/home/app-launchpad';
 import { AnnouncementsWidget } from '../features/home/announcements-widget';
 import { HomeItemGallery } from '../features/home/home-item-gallery';
 import { HomeDayRail } from '../features/home/home-day-rail';
+import { CommandRailWidget } from '../features/home/command-rail-widget';
 import { WorkspaceWidgetCanvas } from '../components/workspace-composer/workspace-widget-canvas';
 import { WorkspaceComposerToolbar } from '../components/workspace-composer/workspace-composer-toolbar';
 import {
@@ -36,6 +35,10 @@ import {
   reconcileHomeWidgets,
   setHomeWidgetVisibility,
 } from '../features/home/home-widget-registry';
+import {
+  governedHomeZone,
+  reconcileHomeCompositionPolicy,
+} from '../features/home/home-composition-policy';
 import {
   ActivityWidget,
   DailyBriefWidget,
@@ -57,6 +60,7 @@ import type {
   HomePreferenceLayout,
   HomePresentation,
   HomeRecommendation,
+  HomeWidgetHeight,
   HomeWidgetKey,
   HomeWidgetPreference,
   HomeWidgetSize,
@@ -68,19 +72,24 @@ type PreferenceMutation = { layout: HomePreferenceLayout };
 function HomeWidget({
   widgetKey,
   size,
+  height,
   ...overviewProps
-}: { widgetKey: HomeWidgetKey; size: HomeWidgetSize } & HomeOverviewWidgetProps) {
+}: {
+  widgetKey: HomeWidgetKey;
+  size: HomeWidgetSize;
+  height: HomeWidgetHeight;
+} & HomeOverviewWidgetProps) {
   switch (widgetKey) {
-    case 'announcements':
-      return <AnnouncementsWidget {...overviewProps} />;
+    case 'command-rail':
+      return <CommandRailWidget {...overviewProps} />;
     case 'daily-brief':
       return <DailyBriefWidget {...overviewProps} />;
     case 'focus':
-      return <FocusWidget {...overviewProps} />;
+      return <FocusWidget {...overviewProps} size={size} height={height} />;
     case 'schedule':
-      return <ScheduleWidget {...overviewProps} />;
+      return <ScheduleWidget {...overviewProps} size={size} height={height} />;
     case 'activity':
-      return <ActivityWidget {...overviewProps} size={size} />;
+      return <ActivityWidget {...overviewProps} size={size} height={height} />;
   }
 }
 
@@ -96,7 +105,7 @@ export default function HomePage() {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [editBaseVersion, setEditBaseVersion] = useState<number | null>(null);
   const registeredWidgetKeys = useSystemCodeOptions('PLATFORM.HOME_WIDGET', HOME_WIDGET_KEYS);
-  const closeEditor = () => {
+  const closeEditor = useCallback(() => {
     setGalleryOpen(false);
     setEditorOpen(false);
     setEditBaseVersion(null);
@@ -105,7 +114,7 @@ export default function HomePage() {
       next.delete('edit');
       setSearchParams(next, { replace: true });
     }
-  };
+  }, [searchParams, setSearchParams]);
   const firstName = auth.user?.displayName?.split(' ')[0];
   const timeZone = useMemo(() => {
     const preference = readRegionalPreference().timeZone;
@@ -163,11 +172,11 @@ export default function HomePage() {
       permissions,
     ]
   );
-  const [draftAppLayout, setDraftAppLayout] = useState<LaunchpadLayout>(() =>
-    createDefaultLaunchpadLayout(entitledApps, launchpadCatalog.groups)
-  );
   const [draftWidgets, setDraftWidgets] = useState<HomeWidgetPreference[]>(() =>
     defaultHomeWidgets(registeredWidgetKeys)
+  );
+  const [draftAppLayout, setDraftAppLayout] = useState<LaunchpadLayout>(() =>
+    createDefaultLaunchpadLayout(entitledApps, launchpadCatalog.groups)
   );
   const [draftPresentation, setDraftPresentation] = useState<HomePresentation>('balanced');
   const homePreferenceQuery = useQuery({
@@ -183,6 +192,13 @@ export default function HomePage() {
     retry: 1,
   });
   const homeExperience = homeExperienceQuery.data;
+  const compositionPolicy = useMemo(
+    () => reconcileHomeCompositionPolicy(homeExperience?.compositionPolicy),
+    [homeExperience?.compositionPolicy]
+  );
+  const announcementsZone = governedHomeZone(compositionPolicy, 'announcements');
+  const personalCustomizationEnabled =
+    homeExperienceQuery.isSuccess && compositionPolicy.personalCustomizationEnabled;
   const localizedHomeCopy = useMemo(() => {
     if (!homeExperience) return undefined;
     const locale = (i18n.resolvedLanguage || i18n.language || '').toLowerCase();
@@ -223,18 +239,16 @@ export default function HomePage() {
   const activePresentation = editorOpen
     ? draftPresentation
     : (homePreference?.layout.presentation ?? 'balanced');
-  const hiddenApps = useMemo(
-    () =>
-      activeAppLayout.hiddenAppIds
-        .map((appId) => entitledApps.find((app) => app.id === appId))
-        .filter((app): app is (typeof entitledApps)[number] => Boolean(app)),
-    [activeAppLayout.hiddenAppIds, entitledApps]
-  );
   const hiddenWidgetKeys = activeWidgets
     .filter((widget) => !widget.visible)
     .map((widget) => widget.widgetKey);
+  const hiddenApps = entitledApps.filter((app) => activeAppLayout.hiddenAppIds.includes(app.id));
 
   useEffect(() => {
+    if (!personalCustomizationEnabled && editorOpen) {
+      closeEditor();
+      return;
+    }
     if (!editorOpen) {
       setDraftAppLayout(appLayout);
       setDraftWidgets(widgetPreferences);
@@ -248,17 +262,19 @@ export default function HomePage() {
       setEditBaseVersion(preferenceVersion);
     }
   }, [
+    closeEditor,
     appLayout,
     editBaseVersion,
     editorOpen,
     homePreferenceQuery.isLoading,
     homePreference?.layout.presentation,
+    personalCustomizationEnabled,
     preferenceVersion,
     widgetPreferences,
   ]);
 
   const beginEditing = () => {
-    if (homePreferenceQuery.isLoading) return;
+    if (homePreferenceQuery.isLoading || !personalCustomizationEnabled) return;
     setDraftAppLayout(appLayout);
     setDraftWidgets(widgetPreferences);
     setDraftPresentation(homePreference?.layout.presentation ?? 'balanced');
@@ -301,9 +317,12 @@ export default function HomePage() {
         current
           ? {
               ...current,
-              recommendations: current.recommendations.filter(
-                (candidate) => candidate.key !== recommendation.key
-              ),
+              recommendations: {
+                ...current.recommendations,
+                data: (current.recommendations.data ?? []).filter(
+                  (candidate) => candidate.key !== recommendation.key
+                ),
+              },
             }
           : current
       );
@@ -353,16 +372,32 @@ export default function HomePage() {
     }
     appLaunchMutation.mutate(runtimeApp.id);
   };
+  const governedCanvasWidgets = announcementsZone.visible
+    ? [
+        {
+          widgetKey: announcementsZone.zoneKey,
+          label: t('widgets.registry.announcements.label'),
+          size: announcementsZone.size,
+          height: announcementsZone.height,
+          surface: 'plain' as const,
+          content: (
+            <AnnouncementsWidget
+              overview={homeOverviewQuery.data}
+              loading={homeOverviewQuery.isLoading}
+              fetching={homeOverviewQuery.isFetching}
+              requestFailed={homeOverviewQuery.isError}
+              onRetry={() => void homeOverviewQuery.refetch()}
+            />
+          ),
+        },
+      ]
+    : [];
 
   return (
     <Box>
       <HomeDayRail
-        overview={homeOverviewQuery.data}
-        loading={homeOverviewQuery.isLoading}
-        fetching={homeOverviewQuery.isFetching}
-        requestFailed={homeOverviewQuery.isError}
+        audience={audienceProfile}
         currentDate={currentDate}
-        updatedAt={workspaceUpdatedAt}
         headline={
           localizedHomeCopy?.headline ||
           homeExperience?.headline ||
@@ -377,79 +412,148 @@ export default function HomePage() {
         usesDefaultBackground={!homeExperience?.backgroundUrl}
         backgroundPosition={homeExperience?.backgroundPosition ?? 'RIGHT'}
         overlayOpacity={homeExperience?.overlayOpacity ?? 18}
-        onRetry={() => void homeOverviewQuery.refetch()}
-        feedbackBusy={recommendationFeedbackMutation.isPending}
-        onRecommendationFeedback={(recommendation) =>
-          recommendationFeedbackMutation.mutate(recommendation)
+        assignedAppCount={entitledApps.length}
+        onBrowseAll={() => navigate('/apps')}
+        onStartEditing={personalCustomizationEnabled && !editorOpen ? beginEditing : undefined}
+        workspaceTools={
+          <AppLaunchpad
+            apps={entitledApps}
+            groups={launchpadCatalog.groups}
+            layout={activeAppLayout}
+            editing={editorOpen}
+            reorderable={personalCustomizationEnabled}
+            title={t('page.appsTitle')}
+            customizationBusy={customizationBusy}
+            onImageBackground
+            onLayoutChange={setDraftAppLayout}
+            onLaunch={launchApp}
+            onStartEditing={personalCustomizationEnabled && !editorOpen ? beginEditing : undefined}
+          />
         }
+        personalizationBusy={homePreferenceQuery.isLoading || customizationBusy}
       />
 
-      <PageCanvas topInset="compact">
-        <AppLaunchpad
-          apps={entitledApps}
-          groups={launchpadCatalog.groups}
-          layout={activeAppLayout}
-          editing={editorOpen}
-          title={t('page.appsTitle')}
-          description={t('page.appsDescription')}
-          customizationBusy={customizationBusy}
-          onStartEditing={beginEditing}
-          onLayoutChange={setDraftAppLayout}
-          onLaunch={launchApp}
-          onBrowseAll={() => navigate('/apps')}
-        />
-
+      <Box
+        sx={{
+          width: 1,
+          maxWidth: 2240,
+          mx: 'auto',
+          px: { xs: 2, md: '50px' },
+          py: { xs: 3, md: 4 },
+          display: 'block',
+        }}
+      >
         <Box
+          data-testid="home-workspace-grid"
           sx={{
-            mt: 4,
-            display: 'flex',
-            alignItems: 'baseline',
-            justifyContent: 'space-between',
-            gap: 2,
-            flexWrap: 'wrap',
+            mt: 0,
+            '& [data-workspace-widget-surface="card"] [data-workspace-widget-content] > section': {
+              bgcolor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: 0.5,
+              overflow: 'hidden',
+              px: { xs: 1.75, md: 2 },
+              py: { xs: 1.75, md: 2 },
+            },
           }}
         >
-          <Typography component="p" variant="overline" color="primary.main">
-            {t('page.today')}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {t('page.dateUpdated', { date: currentDate, time: workspaceUpdatedAt })}
-          </Typography>
+          <WorkspaceWidgetCanvas
+            registry={HOME_WIDGET_REGISTRY}
+            widgets={activeWidgets}
+            governedWidgets={governedCanvasWidgets}
+            editing={editorOpen && personalCustomizationEnabled}
+            busy={customizationBusy}
+            presentation={activePresentation}
+            getLabel={(widgetKey) => t(`widgets.registry.${widgetKey}.label`)}
+            onChange={setDraftWidgets}
+            renderWidget={(widgetKey, size, height) => (
+              <HomeWidget
+                widgetKey={widgetKey}
+                size={size}
+                height={height}
+                overview={homeOverviewQuery.data}
+                loading={homeOverviewQuery.isLoading}
+                fetching={homeOverviewQuery.isFetching}
+                requestFailed={homeOverviewQuery.isError}
+                onRetry={() => void homeOverviewQuery.refetch()}
+                feedbackBusy={recommendationFeedbackMutation.isPending}
+                onRecommendationFeedback={(recommendation) =>
+                  recommendationFeedbackMutation.mutate(recommendation)
+                }
+              />
+            )}
+          />
         </Box>
 
-        <WorkspaceWidgetCanvas
-          registry={HOME_WIDGET_REGISTRY}
-          widgets={activeWidgets}
-          editing={editorOpen}
-          busy={customizationBusy}
-          presentation={activePresentation}
-          getLabel={(widgetKey) => t(`widgets.registry.${widgetKey}.label`)}
-          onChange={setDraftWidgets}
-          renderWidget={(widgetKey, size) => (
-            <HomeWidget
-              widgetKey={widgetKey}
-              size={size}
-              overview={homeOverviewQuery.data}
-              loading={homeOverviewQuery.isLoading}
-              fetching={homeOverviewQuery.isFetching}
-              requestFailed={homeOverviewQuery.isError}
-              onRetry={() => void homeOverviewQuery.refetch()}
-              feedbackBusy={recommendationFeedbackMutation.isPending}
-              onRecommendationFeedback={(recommendation) =>
-                recommendationFeedbackMutation.mutate(recommendation)
-              }
-            />
-          )}
-        />
-
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mt: 2 }}>
-          <Clock3 size={15} aria-hidden="true" />
-          <Typography variant="caption" color="text.secondary">
-            {t('page.lastRefreshed', { time: workspaceUpdatedAt })}
-          </Typography>
-        </Box>
         {editorOpen && <Box aria-hidden="true" sx={{ height: 76 }} />}
-      </PageCanvas>
+      </Box>
+
+      <Box
+        component="footer"
+        sx={{
+          minHeight: { xs: 120, md: 64 },
+          bgcolor: 'background.paper',
+          borderTop: 1,
+          borderColor: 'divider',
+        }}
+      >
+        <Box
+          sx={{
+            width: 1,
+            maxWidth: 2240,
+            minHeight: 'inherit',
+            mx: 'auto',
+            px: { xs: 2, md: '50px' },
+            py: { xs: 2, md: 1.5 },
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            alignItems: { xs: 'flex-start', md: 'center' },
+            justifyContent: 'space-between',
+            gap: 2,
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.75 }}>
+            <Clock3 size={15} aria-hidden="true" />
+            <Typography variant="caption" color="text.secondary">
+              {t('page.lastRefreshed', { time: workspaceUpdatedAt })}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              maxWidth: '100%',
+              columnGap: { xs: 2.5, md: 4 },
+              rowGap: 1,
+            }}
+          >
+            {[
+              ['privacy', '/account/settings?view=privacy'],
+              ['terms', '/account/settings?view=terms'],
+              ['help', '/services'],
+              ['status', '/status'],
+            ].map(([label, to], index) => (
+              <Typography
+                key={label}
+                component={Link}
+                to={to}
+                variant="caption"
+                color="text.primary"
+                sx={{
+                  display: index === 3 ? { xs: 'none', md: 'inline' } : 'inline',
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                  '&:hover': { textDecoration: 'underline' },
+                }}
+              >
+                {t(`footer.${label}`)}
+              </Typography>
+            ))}
+          </Box>
+        </Box>
+      </Box>
 
       <HomeItemGallery
         open={galleryOpen}
@@ -463,7 +567,7 @@ export default function HomePage() {
         }
       />
 
-      {editorOpen && (
+      {editorOpen && personalCustomizationEnabled && (
         <WorkspaceComposerToolbar
           placement="floating"
           presentation={draftPresentation}

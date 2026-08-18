@@ -81,16 +81,21 @@ export function WorkspaceComposerToolbar({
       <ActionButton
         intent="quiet"
         size="small"
+        aria-label={t('addWidget')}
         startIcon={<Plus size={17} />}
         onClick={onAdd}
         disabled={busy}
         sx={{
-          minWidth: { xs: 60, sm: 'auto' },
+          width: { xs: 36, sm: 'auto' },
+          minWidth: { xs: 36, sm: 'auto' },
+          px: { xs: 0, sm: 1.25 },
           whiteSpace: 'nowrap',
-          '& .MuiButton-startIcon': { display: { xs: 'none', sm: 'inherit' } },
+          '& .MuiButton-startIcon': { mr: { xs: 0, sm: 1 } },
         }}
       >
-        {t('addWidget')}
+        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+          {t('addWidget')}
+        </Box>
       </ActionButton>
       <Box sx={{ width: 1, height: 28, bgcolor: 'divider', mx: 0.25 }} />
       <ToggleButtonGroup
@@ -126,17 +131,22 @@ export function WorkspaceComposerToolbar({
       <ActionButton
         intent="primary"
         size="small"
+        aria-label={t('done')}
         startIcon={<Check size={17} />}
         onClick={onDone}
         loading={busy}
         loadingLabel={t('done')}
         sx={{
-          minWidth: { xs: 68, sm: 'auto' },
+          width: { xs: 36, sm: 'auto' },
+          minWidth: { xs: 36, sm: 'auto' },
+          px: { xs: 0, sm: 1.25 },
           whiteSpace: 'nowrap',
-          '& .MuiButton-startIcon': { display: { xs: 'none', sm: 'inherit' } },
+          '& .MuiButton-startIcon': { mr: { xs: 0, sm: 1 } },
         }}
       >
-        {t('done')}
+        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+          {t('done')}
+        </Box>
       </ActionButton>
     </Paper>
   );

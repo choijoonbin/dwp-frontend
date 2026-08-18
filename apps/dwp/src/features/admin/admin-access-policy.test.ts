@@ -192,6 +192,25 @@ describe('control plane access policy', () => {
     expect(canAccessAdminNavigationItem(item('access'), access)).toBe(false);
   });
 
+  it('exposes home composition only through tenant configuration support scope', () => {
+    expect(
+      canAccessAdminNavigationItem(item('home-composition'), {
+        roles: ['PROVIDER_SUPPORT'],
+        permissionsLoaded: true,
+        hasPermission: vi.fn(() => false),
+        supportScopes: ['TENANT_CONFIGURATION_WRITE'],
+      })
+    ).toBe(true);
+    expect(
+      canAccessAdminNavigationItem(item('home-composition'), {
+        roles: ['PROVIDER_SUPPORT'],
+        permissionsLoaded: true,
+        hasPermission: vi.fn(() => false),
+        supportScopes: ['WORKFORCE_READ'],
+      })
+    ).toBe(false);
+  });
+
   it('exposes only the assigned-review surface to a workforce reviewer', () => {
     const hasPermission = vi.fn(() => false);
     const reviewItem = {

@@ -1,4 +1,4 @@
-import { Activity, CalendarDays, CheckCircle2, Megaphone, Sparkles } from 'lucide-react';
+import { Activity, CalendarDays, CheckCircle2, ListChecks, Sparkles } from 'lucide-react';
 
 import {
   defaultWorkspaceWidgets,
@@ -15,20 +15,23 @@ import type { WorkspaceWidgetDefinition } from '../../components/workspace-compo
 
 export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidgetKey>[] = [
   {
-    key: 'announcements',
-    icon: Megaphone,
-    canHide: false,
-    defaultSize: 'full',
-    allowedSizes: ['full'],
+    key: 'command-rail',
+    icon: ListChecks,
+    canHide: true,
+    defaultSize: 'large',
+    allowedSizes: ['large', 'full'],
+    defaultHeight: 'short',
+    allowedHeights: ['short', 'standard'],
+    surface: 'plain',
     audience: 'all',
     manifest: {
       schemaVersion: 1,
-      owner: 'Employee Communications',
-      dataSource: 'DWP_COMMUNICATIONS',
-      freshnessSeconds: 60,
-      privacyClass: 'INTERNAL',
+      owner: 'Digital Workplace Product',
+      dataSource: 'DWP_HOME_OVERVIEW',
+      freshnessSeconds: 30,
+      privacyClass: 'CONFIDENTIAL',
       retention: 'NONE',
-      analyticsKey: 'home.announcements',
+      analyticsKey: 'home.command-rail',
     },
   },
   {
@@ -37,6 +40,8 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
     canHide: true,
     defaultSize: 'full',
     allowedSizes: ['large', 'full'],
+    defaultHeight: 'standard',
+    allowedHeights: ['short', 'standard', 'tall'],
     audience: 'all',
     manifest: {
       schemaVersion: 1,
@@ -52,8 +57,10 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
     key: 'focus',
     icon: CheckCircle2,
     canHide: true,
-    defaultSize: 'large',
-    allowedSizes: ['medium', 'large', 'full'],
+    defaultSize: 'medium',
+    allowedSizes: ['quarter', 'compact', 'medium', 'large', 'full'],
+    defaultHeight: 'tall',
+    allowedHeights: ['short', 'standard', 'tall', 'expanded'],
     audience: 'all',
     manifest: {
       schemaVersion: 1,
@@ -69,8 +76,10 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
     key: 'schedule',
     icon: CalendarDays,
     canHide: true,
-    defaultSize: 'compact',
-    allowedSizes: ['compact', 'medium'],
+    defaultSize: 'quarter',
+    allowedSizes: ['fifth', 'quarter', 'compact', 'medium'],
+    defaultHeight: 'standard',
+    allowedHeights: ['short', 'standard', 'tall'],
     audience: 'all',
     manifest: {
       schemaVersion: 1,
@@ -86,8 +95,10 @@ export const HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HomeWidget
     key: 'activity',
     icon: Activity,
     canHide: true,
-    defaultSize: 'full',
-    allowedSizes: ['compact', 'medium', 'full'],
+    defaultSize: 'quarter',
+    allowedSizes: ['fifth', 'quarter', 'compact', 'medium'],
+    defaultHeight: 'tall',
+    allowedHeights: ['short', 'standard', 'tall'],
     audience: 'all',
     manifest: {
       schemaVersion: 1,
@@ -106,9 +117,9 @@ export const HOME_WIDGET_KEYS: readonly HomeWidgetKey[] = HOME_WIDGET_REGISTRY.m
 );
 
 export const HOME_WIDGET_ROLE_ORDER: Record<HomeAudienceProfile, readonly HomeWidgetKey[]> = {
-  MEMBER: ['announcements', 'focus', 'schedule', 'daily-brief', 'activity'],
-  MANAGER: ['announcements', 'daily-brief', 'focus', 'schedule', 'activity'],
-  OPERATOR: ['announcements', 'activity', 'daily-brief', 'focus', 'schedule'],
+  MEMBER: ['command-rail', 'activity', 'focus', 'schedule', 'daily-brief'],
+  MANAGER: ['command-rail', 'activity', 'focus', 'schedule', 'daily-brief'],
+  OPERATOR: ['command-rail', 'activity', 'focus', 'schedule', 'daily-brief'],
 };
 
 function orderedRegistry(

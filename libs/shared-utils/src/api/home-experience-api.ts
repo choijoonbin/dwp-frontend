@@ -2,6 +2,7 @@ import { API_URL } from '../env';
 import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
+import type { HomeWidgetHeight } from './home-preference-api';
 
 export type HomeBackgroundPosition = 'LEFT' | 'CENTER' | 'RIGHT';
 
@@ -30,6 +31,25 @@ export type HomeLaunchpadConfiguration = {
   placements: HomeAppPlacement[];
 };
 
+export type HomePersonalZoneKey = 'workspace-tools';
+export type HomeGovernedZoneKey = 'announcements';
+export type HomeGovernedZonePlacement = 'HERO' | 'CANVAS';
+
+export type GovernedHomeZone = {
+  zoneKey: HomeGovernedZoneKey;
+  placement: HomeGovernedZonePlacement;
+  visible: boolean;
+  size: 'compact' | 'medium' | 'large' | 'full';
+  height: HomeWidgetHeight;
+  sortOrder: number;
+};
+
+export type HomeCompositionPolicy = {
+  schemaVersion: 2;
+  personalCustomizationEnabled: boolean;
+  governedZones: GovernedHomeZone[];
+};
+
 export type HomeExperience = {
   headline?: string | null;
   subheadline?: string | null;
@@ -44,6 +64,7 @@ export type HomeExperience = {
   backgroundWidth?: number | null;
   backgroundHeight?: number | null;
   launchpadConfiguration: HomeLaunchpadConfiguration;
+  compositionPolicy: HomeCompositionPolicy;
   version: number;
   updatedAt?: string | null;
   updatedBy?: number | null;
@@ -121,6 +142,17 @@ export async function updateHomeLaunchpadConfiguration(
     ApiResponse<HomeExperience>,
     { configuration: HomeLaunchpadConfiguration; version: number }
   >('/api/platform/v1/admin/home-experience/launchpad', { configuration, version });
+  return response.data.data;
+}
+
+export async function updateHomeCompositionPolicy(
+  policy: HomeCompositionPolicy,
+  version: number
+): Promise<HomeExperience> {
+  const response = await axiosInstance.put<
+    ApiResponse<HomeExperience>,
+    { policy: HomeCompositionPolicy; version: number }
+  >('/api/platform/v1/admin/home-experience/composition', { policy, version });
   return response.data.data;
 }
 

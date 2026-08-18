@@ -1,5 +1,6 @@
 import type {
   HomePresentation,
+  HomeWidgetHeight,
   HomeWidgetSize,
   PersonalHomeWidgetPreference,
 } from '@dwp-frontend/shared-utils';
@@ -26,6 +27,9 @@ export type WorkspaceWidgetDefinition<WidgetKey extends string> = {
   canHide: boolean;
   defaultSize: HomeWidgetSize;
   allowedSizes: readonly HomeWidgetSize[];
+  defaultHeight: HomeWidgetHeight;
+  allowedHeights: readonly HomeWidgetHeight[];
+  surface?: 'card' | 'plain';
   audience?: WorkspaceWidgetAudience;
   manifest?: WorkspaceWidgetManifest;
 };
@@ -43,6 +47,7 @@ export function defaultWorkspaceWidgets<WidgetKey extends string>(
     widgetKey: widget.key,
     visible: true,
     size: widget.defaultSize,
+    height: widget.defaultHeight,
   }));
 }
 
@@ -67,6 +72,9 @@ export function reconcileWorkspaceWidgets<WidgetKey extends string>(
       size: definition.allowedSizes.includes(item.size as HomeWidgetSize)
         ? item.size
         : definition.defaultSize,
+      height: definition.allowedHeights.includes(item.height as HomeWidgetHeight)
+        ? item.height
+        : definition.defaultHeight,
     });
   });
 
@@ -76,6 +84,7 @@ export function reconcileWorkspaceWidgets<WidgetKey extends string>(
       widgetKey: definition.key,
       visible: true,
       size: definition.defaultSize,
+      height: definition.defaultHeight,
     });
   });
   return reconciled;
@@ -137,6 +146,17 @@ export function setWorkspaceWidgetSize<WidgetKey extends string>(
   const definition = registry.find((widget) => widget.key === widgetKey);
   if (!definition?.allowedSizes.includes(size)) return [...widgets];
   return widgets.map((widget) => (widget.widgetKey === widgetKey ? { ...widget, size } : widget));
+}
+
+export function setWorkspaceWidgetHeight<WidgetKey extends string>(
+  widgets: readonly PersonalHomeWidgetPreference<WidgetKey>[],
+  registry: readonly WorkspaceWidgetDefinition<WidgetKey>[],
+  widgetKey: WidgetKey,
+  height: HomeWidgetHeight
+): PersonalHomeWidgetPreference<WidgetKey>[] {
+  const definition = registry.find((widget) => widget.key === widgetKey);
+  if (!definition?.allowedHeights.includes(height)) return [...widgets];
+  return widgets.map((widget) => (widget.widgetKey === widgetKey ? { ...widget, height } : widget));
 }
 
 export function visibleWorkspaceRegistry<WidgetKey extends string>(

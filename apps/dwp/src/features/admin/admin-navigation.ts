@@ -21,6 +21,7 @@ import {
   ShieldAlert,
   Network,
   Languages,
+  PanelTop,
   LibraryBig,
   LifeBuoy,
   ListChecks,
@@ -29,16 +30,12 @@ import {
 import type { LucideIcon } from 'lucide-react';
 
 export type AdminSection =
-  | 'experience'
-  | 'services'
-  | 'identity'
-  | 'platform'
-  | 'integrations'
-  | 'governance';
+  'experience' | 'services' | 'identity' | 'platform' | 'integrations' | 'governance';
 
 export type AdminView =
   | 'branding'
   | 'home-experience'
+  | 'home-composition'
   | 'home-apps'
   | 'announcements'
   | 'preference-exceptions'
@@ -98,6 +95,12 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'home-experience',
         path: '/admin/experience/home-experience',
         icon: Image,
+      },
+      {
+        section: 'experience',
+        view: 'home-composition',
+        path: '/admin/experience/home-composition',
+        icon: PanelTop,
       },
       {
         section: 'experience',

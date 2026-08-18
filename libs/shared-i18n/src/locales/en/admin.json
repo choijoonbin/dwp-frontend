@@ -29,6 +29,11 @@
         "title": "Home experience",
         "description": "Configure the tenant home artwork and personalized launchpad experience."
       },
+      "home-composition": {
+        "label": "Home composition",
+        "title": "Home composition policy",
+        "description": "Govern the editing boundary between managed home zones and personal widgets."
+      },
       "home-apps": {
         "label": "Home app layout",
         "title": "Home app layout",
@@ -524,6 +529,70 @@
       "saved": "Tenant branding saved.",
       "published": "Tenant brand definition published.",
       "restored": "The selected brand revision was restored."
+    }
+  },
+  "homeComposition": {
+    "loading": "Loading home composition policy",
+    "title": "Home composition policy",
+    "description": "Publish the boundary between tenant-governed zones and widgets that members can personalize.",
+    "unsaved": "Unpublished changes",
+    "policy": {
+      "title": "Governance is enforced by the server",
+      "description": "Governed zones are never stored in a personal preference document and members cannot move, resize, or hide them. Disabling personalization preserves existing choices but blocks update and reset requests."
+    },
+    "policyKinds": {
+      "governed": "Company managed",
+      "personal": "Personal"
+    },
+    "personal": {
+      "title": "Allow member home personalization",
+      "description": "Members can arrange, group, or hide entitled workspace tools and change the visibility, order, and permitted footprint of personal widgets."
+    },
+    "zones": {
+      "title": "Governed home zones",
+      "description": "Visibility and default footprint for organization-owned content are published by tenant administrators for every member.",
+      "workspaceTools": {
+        "title": "Workspace tools",
+        "description": "Members arrange the entitled apps that administrators publish through the app catalog."
+      },
+      "announcements": {
+        "title": "Announcements",
+        "description": "Shows the latest audience-targeted organization news in a governed banner.",
+        "sizeLabel": "Announcements footprint",
+        "heightLabel": "Announcements height"
+      }
+    },
+    "placements": {
+      "hero": "Hero artwork",
+      "canvas": "Home canvas"
+    },
+    "sizes": {
+      "compact": "One-third row",
+      "medium": "One-half row",
+      "large": "Two-thirds row",
+      "full": "Full width"
+    },
+    "heights": {
+      "short": "Short",
+      "standard": "Standard",
+      "tall": "Tall",
+      "expanded": "Expanded"
+    },
+    "preview": {
+      "title": "Composition preview",
+      "description": "Desktop uses the 60-unit grid. Tablet and mobile promote every zone to full width.",
+      "commandRail": "Command rail"
+    },
+    "actions": {
+      "revert": "Revert changes",
+      "publish": "Publish policy"
+    },
+    "toasts": {
+      "saved": "Home composition policy published."
+    },
+    "errors": {
+      "load": "The home composition policy could not be loaded.",
+      "save": "The home composition policy could not be published."
     }
   },
   "homeApps": {

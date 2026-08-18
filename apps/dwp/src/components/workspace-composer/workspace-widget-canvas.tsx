@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DndContext,
@@ -7,6 +7,7 @@ import {
   MouseSensor,
   TouchSensor,
   closestCenter,
+  pointerWithin,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -17,55 +18,66 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ArrowDown, ArrowUp, GripVertical, LockKeyhole, Maximize2, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, GripVertical, LockKeyhole, X } from 'lucide-react';
 import { ActionIconButton } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
+import { alpha } from '@mui/material/styles';
 
 import {
   reorderWorkspaceWidgets,
   moveWorkspaceWidget,
+  setWorkspaceWidgetHeight,
   setWorkspaceWidgetSize,
   setWorkspaceWidgetVisibility,
 } from './workspace-composer-model';
+import {
+  WORKSPACE_WIDGET_GRID_COLUMNS,
+  workspaceWidgetBlockSize,
+  workspaceWidgetGridColumn,
+  workspaceWidgetSpacing,
+} from './workspace-widget-layout-policy';
+import { WorkspaceWidgetFootprintPicker } from './workspace-widget-footprint-picker';
 
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import type {
+  CollisionDetection,
+  DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
+} from '@dnd-kit/core';
 import type {
   HomePresentation,
+  HomeWidgetHeight,
   HomeWidgetSize,
   PersonalHomeWidgetPreference,
 } from '@dwp-frontend/shared-utils';
 import type { WorkspaceWidgetDefinition } from './workspace-composer-model';
 
-const sizeColumns: Record<HomeWidgetSize, number> = {
-  compact: 4,
-  medium: 6,
-  large: 8,
-  full: 12,
-};
-
-const sizeGlyph: Record<HomeWidgetSize, string> = {
-  compact: '1/3',
-  medium: '1/2',
-  large: '2/3',
-  full: '1/1',
-};
-
 type WorkspaceWidgetCanvasProps<WidgetKey extends string> = {
   registry: readonly WorkspaceWidgetDefinition<WidgetKey>[];
   widgets: readonly PersonalHomeWidgetPreference<WidgetKey>[];
+  governedWidgets?: readonly GovernedWorkspaceWidget[];
   editing: boolean;
   busy?: boolean;
   presentation?: HomePresentation;
   getLabel: (widgetKey: WidgetKey) => string;
   onChange: (widgets: PersonalHomeWidgetPreference<WidgetKey>[]) => void;
-  renderWidget: (widgetKey: WidgetKey, size: HomeWidgetSize) => React.ReactNode;
+  renderWidget: (
+    widgetKey: WidgetKey,
+    size: HomeWidgetSize,
+    height: HomeWidgetHeight
+  ) => React.ReactNode;
+};
+
+export type GovernedWorkspaceWidget = {
+  widgetKey: string;
+  label: string;
+  size: HomeWidgetSize;
+  height: HomeWidgetHeight;
+  surface?: 'card' | 'plain';
+  content: React.ReactNode;
 };
 
 type SortableWidgetProps<WidgetKey extends string> = {
@@ -76,11 +88,56 @@ type SortableWidgetProps<WidgetKey extends string> = {
   label: string;
   onRemove: () => void;
   onResize: (size: HomeWidgetSize) => void;
+  onResizeHeight: (height: HomeWidgetHeight) => void;
   onMove: (direction: -1 | 1) => void;
   first: boolean;
   last: boolean;
+  inlineInset: Readonly<{ xs: number; sm: number; lg: number }>;
   children: React.ReactNode;
 };
+
+const workspaceWidgetCollisionDetection: CollisionDetection = (args) => {
+  const pointerCollisions = pointerWithin(args);
+  return pointerCollisions.length > 0 ? pointerCollisions : closestCenter(args);
+};
+
+function reorderWidgetKeys<WidgetKey extends string>(
+  keys: readonly WidgetKey[],
+  activeKey: WidgetKey,
+  overKey: WidgetKey
+): WidgetKey[] {
+  const activeIndex = keys.indexOf(activeKey);
+  const overIndex = keys.indexOf(overKey);
+  if (activeIndex < 0 || overIndex < 0 || activeIndex === overIndex) return [...keys];
+  const next = [...keys];
+  const [active] = next.splice(activeIndex, 1);
+  if (!active) return [...keys];
+  next.splice(overIndex, 0, active);
+  return next;
+}
+
+function WorkspaceWidgetContent({ children }: { children: React.ReactNode }) {
+  return (
+    <Box
+      data-workspace-widget-content
+      sx={{
+        flex: 1,
+        minHeight: 0,
+        overflowX: { xs: 'visible', sm: 'hidden' },
+        overflowY: { xs: 'visible', sm: 'auto' },
+        overscrollBehavior: 'contain',
+        scrollbarGutter: 'stable',
+        '& > section': {
+          height: 'auto !important',
+          minHeight: '100% !important',
+          overflow: 'visible !important',
+        },
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
 
 function SortableWidget<WidgetKey extends string>({
   definition,
@@ -90,61 +147,164 @@ function SortableWidget<WidgetKey extends string>({
   label,
   onRemove,
   onResize,
+  onResizeHeight,
   onMove,
   first,
   last,
+  inlineInset,
   children,
 }: SortableWidgetProps<WidgetKey>) {
   const { t } = useTranslation('composer');
-  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: widget.widgetKey,
     disabled: !editing || busy,
   });
   const size = widget.size ?? definition.defaultSize;
+  const height = widget.height ?? definition.defaultHeight;
+  const blockSize = workspaceWidgetBlockSize(height);
+  const dropPreviewTransform = isDragging ? null : transform;
 
   return (
     <Box
       ref={setNodeRef}
       data-workspace-widget={widget.widgetKey}
       data-workspace-widget-size={size}
-      sx={{
+      data-workspace-widget-height={height}
+      data-workspace-widget-policy="PERSONAL"
+      data-workspace-widget-surface={definition.surface ?? 'card'}
+      data-widget-drop-preview={isDragging ? 'true' : undefined}
+      sx={(theme) => ({
         position: 'relative',
         minWidth: 0,
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
         pt: editing ? 5 : 0,
-        gridColumn: {
-          xs: '1 / -1',
-          md: size === 'compact' ? 'span 6' : '1 / -1',
-          lg: `span ${sizeColumns[size]}`,
+        px: {
+          xs: `${inlineInset.xs}px`,
+          sm: `${inlineInset.sm}px`,
+          lg: `${inlineInset.lg}px`,
         },
-        opacity: isDragging ? 0.32 : 1,
-        transform: CSS.Transform.toString(transform),
+        gridColumn: workspaceWidgetGridColumn(size),
+        height: {
+          xs: 'auto',
+          sm: blockSize.sm + (editing ? 40 : 0),
+        },
+        opacity: 1,
+        transform: CSS.Transform.toString(dropPreviewTransform),
         transition,
         zIndex: isDragging ? 4 : 1,
-        outline: editing ? '2px solid rgba(37,99,235,0.52)' : 'none',
-        outlineOffset: editing ? 3 : 0,
+        willChange: isDragging ? 'transform' : 'auto',
         borderRadius: 1,
         '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
-        '& > section': { flex: 1, minHeight: 0 },
-      }}
+        '& > [data-workspace-widget-content]': {
+          opacity: isDragging ? 0 : 1,
+          visibility: isDragging ? 'hidden' : 'visible',
+          transition: 'opacity 120ms ease',
+        },
+        '&::after': editing
+          ? {
+              content: '""',
+              position: 'absolute',
+              insetBlock: 0,
+              left: {
+                xs: `${inlineInset.xs}px`,
+                sm: `${inlineInset.sm}px`,
+                lg: `${inlineInset.lg}px`,
+              },
+              right: {
+                xs: `${inlineInset.xs}px`,
+                sm: `${inlineInset.sm}px`,
+                lg: `${inlineInset.lg}px`,
+              },
+              border: isDragging
+                ? `2px dashed ${theme.palette.primary.main}`
+                : '2px solid rgba(37,99,235,0.52)',
+              borderRadius: 1,
+              backgroundColor: isDragging
+                ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.2 : 0.1)
+                : 'transparent',
+              boxShadow: isDragging
+                ? `inset 0 0 0 1px ${alpha(theme.palette.common.white, 0.5)}, 0 10px 30px ${alpha(
+                    theme.palette.primary.main,
+                    0.18
+                  )}`
+                : 'none',
+              pointerEvents: 'none',
+              zIndex: 5,
+              transition:
+                'background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease',
+            }
+          : undefined,
+      })}
     >
-      {children}
+      <WorkspaceWidgetContent>{children}</WorkspaceWidgetContent>
+      {isDragging && (
+        <Box
+          data-widget-drop-slot
+          aria-hidden="true"
+          sx={{
+            position: 'absolute',
+            insetBlock: 0,
+            left: {
+              xs: `${inlineInset.xs}px`,
+              sm: `${inlineInset.sm}px`,
+              lg: `${inlineInset.lg}px`,
+            },
+            right: {
+              xs: `${inlineInset.xs}px`,
+              sm: `${inlineInset.sm}px`,
+              lg: `${inlineInset.lg}px`,
+            },
+            zIndex: 6,
+            display: 'grid',
+            placeItems: 'center',
+            pointerEvents: 'none',
+          }}
+        >
+          <Box
+            sx={(theme) => ({
+              width: 42,
+              height: 42,
+              display: 'grid',
+              placeItems: 'center',
+              border: 1,
+              borderColor: alpha(theme.palette.primary.main, 0.4),
+              borderRadius: '50%',
+              bgcolor: alpha(theme.palette.background.paper, 0.9),
+              color: 'primary.main',
+              boxShadow: `0 8px 22px ${alpha(theme.palette.common.black, 0.14)}`,
+              backdropFilter: 'blur(12px)',
+            })}
+          >
+            <GripVertical size={20} />
+          </Box>
+        </Box>
+      )}
       {editing && (
         <Box
           sx={{
             position: 'absolute',
             top: 6,
-            left: 8,
-            right: 8,
+            left: {
+              xs: inlineInset.xs + 8,
+              sm: inlineInset.sm + 8,
+              lg: inlineInset.lg + 8,
+            },
+            right: {
+              xs: inlineInset.xs + 8,
+              sm: inlineInset.sm + 8,
+              lg: inlineInset.lg + 8,
+            },
             zIndex: 7,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 1,
             pointerEvents: 'none',
+            opacity: isDragging ? 0 : 1,
+            visibility: isDragging ? 'hidden' : 'visible',
+            transition: 'opacity 100ms ease',
           }}
         >
           <Chip
@@ -204,24 +364,17 @@ function SortableWidget<WidgetKey extends string>({
             >
               <ArrowDown size={14} />
             </ActionIconButton>
-            {definition.allowedSizes.length > 1 && (
-              <ActionIconButton
-                label={t('resizeWidget', { widget: label })}
-                size="small"
+            {(definition.allowedSizes.length > 1 || definition.allowedHeights.length > 1) && (
+              <WorkspaceWidgetFootprintPicker
+                label={label}
+                value={size}
+                options={definition.allowedSizes}
+                height={height}
+                heightOptions={definition.allowedHeights}
                 disabled={busy}
-                onClick={(event) => setAnchor(event.currentTarget)}
-                sx={{
-                  width: 28,
-                  height: 28,
-                  bgcolor: 'grey.900',
-                  color: 'common.white',
-                  border: 1,
-                  borderColor: 'rgba(255,255,255,0.8)',
-                  '&:hover': { bgcolor: 'grey.800' },
-                }}
-              >
-                <Maximize2 size={14} />
-              </ActionIconButton>
+                onChange={onResize}
+                onHeightChange={onResizeHeight}
+              />
             )}
             {definition.canHide ? (
               <ActionIconButton
@@ -260,43 +413,92 @@ function SortableWidget<WidgetKey extends string>({
               </Tooltip>
             )}
           </Box>
-          <Menu
-            anchorEl={anchor}
-            open={Boolean(anchor)}
-            onClose={() => setAnchor(null)}
-            slotProps={{ paper: { sx: { minWidth: 180, borderRadius: 1 } } }}
-          >
-            {definition.allowedSizes.map((allowedSize) => (
-              <MenuItem
-                key={allowedSize}
-                selected={allowedSize === size}
-                onClick={() => {
-                  onResize(allowedSize);
-                  setAnchor(null);
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: 34 }}>
-                  <Box
-                    aria-hidden="true"
-                    sx={{
-                      width: 22,
-                      height: 14,
-                      border: 1,
-                      borderColor: 'currentColor',
-                      borderRadius: 0.5,
-                      display: 'grid',
-                      placeItems: 'center',
-                      fontSize: '0.55rem',
-                    }}
-                  >
-                    {sizeGlyph[allowedSize]}
-                  </Box>
-                </ListItemIcon>
-                <ListItemText>{t(`sizes.${allowedSize}`)}</ListItemText>
-              </MenuItem>
-            ))}
-          </Menu>
         </Box>
+      )}
+    </Box>
+  );
+}
+
+function GovernedWidget({
+  widget,
+  editing,
+  inlineInset,
+}: {
+  widget: GovernedWorkspaceWidget;
+  editing: boolean;
+  inlineInset: Readonly<{ xs: number; sm: number; lg: number }>;
+}) {
+  const { t } = useTranslation('composer');
+  return (
+    <Box
+      data-workspace-widget={widget.widgetKey}
+      data-workspace-widget-size={widget.size}
+      data-workspace-widget-height={widget.height}
+      data-workspace-widget-policy="GOVERNED"
+      data-workspace-widget-surface={widget.surface ?? 'plain'}
+      sx={{
+        position: 'relative',
+        minWidth: 0,
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        pt: editing ? 5 : 0,
+        px: {
+          xs: `${inlineInset.xs}px`,
+          sm: `${inlineInset.sm}px`,
+          lg: `${inlineInset.lg}px`,
+        },
+        gridColumn: workspaceWidgetGridColumn(widget.size),
+        height: {
+          xs: 'auto',
+          sm: workspaceWidgetBlockSize(widget.height).sm + (editing ? 40 : 0),
+        },
+        '&::after': editing
+          ? {
+              content: '""',
+              position: 'absolute',
+              insetBlock: 0,
+              left: {
+                xs: `${inlineInset.xs}px`,
+                sm: `${inlineInset.sm}px`,
+                lg: `${inlineInset.lg}px`,
+              },
+              right: {
+                xs: `${inlineInset.xs}px`,
+                sm: `${inlineInset.sm}px`,
+                lg: `${inlineInset.lg}px`,
+              },
+              border: '1px dashed',
+              borderColor: 'text.disabled',
+              borderRadius: 1,
+              pointerEvents: 'none',
+              zIndex: 5,
+            }
+          : undefined,
+      }}
+    >
+      <WorkspaceWidgetContent>{widget.content}</WorkspaceWidgetContent>
+      {editing && (
+        <Chip
+          icon={<LockKeyhole size={14} aria-hidden="true" />}
+          label={`${widget.label} (${t('governed')})`}
+          size="small"
+          sx={{
+            position: 'absolute',
+            top: 6,
+            left: {
+              xs: inlineInset.xs + 8,
+              sm: inlineInset.sm + 8,
+              lg: inlineInset.lg + 8,
+            },
+            zIndex: 7,
+            maxWidth: 'calc(100% - 32px)',
+            bgcolor: 'rgba(255,255,255,0.94)',
+            color: 'text.secondary',
+            boxShadow: '0 6px 18px rgba(15,23,42,0.12)',
+            backdropFilter: 'blur(12px)',
+          }}
+        />
       )}
     </Box>
   );
@@ -305,6 +507,7 @@ function SortableWidget<WidgetKey extends string>({
 export function WorkspaceWidgetCanvas<WidgetKey extends string>({
   registry,
   widgets,
+  governedWidgets = [],
   editing,
   busy = false,
   presentation = 'balanced',
@@ -314,6 +517,8 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
 }: WorkspaceWidgetCanvasProps<WidgetKey>) {
   const { t } = useTranslation('composer');
   const [activeKey, setActiveKey] = useState<WidgetKey | null>(null);
+  const [previewOrder, setPreviewOrder] = useState<WidgetKey[] | null>(null);
+  const dropTargetKeyRef = useRef<WidgetKey | null>(null);
   const definitionByKey = useMemo(
     () => new Map(registry.map((definition) => [definition.key, definition])),
     [registry]
@@ -322,48 +527,104 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
     () => widgets.filter((widget) => widget.visible && definitionByKey.has(widget.widgetKey)),
     [definitionByKey, widgets]
   );
+  const previewVisible = useMemo(() => {
+    if (!previewOrder) return visible;
+    const visibleByKey = new Map(visible.map((widget) => [widget.widgetKey, widget]));
+    return previewOrder
+      .map((widgetKey) => visibleByKey.get(widgetKey))
+      .filter((widget): widget is PersonalHomeWidgetPreference<WidgetKey> => widget !== undefined);
+  }, [previewOrder, visible]);
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 240, tolerance: 7 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+  const clearDragPreview = () => {
     setActiveKey(null);
+    setPreviewOrder(null);
+    dropTargetKeyRef.current = null;
+  };
+
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    const nextActiveKey = String(active.id) as WidgetKey;
+    setActiveKey(nextActiveKey);
+    setPreviewOrder(visible.map((widget) => widget.widgetKey));
+    dropTargetKeyRef.current = null;
+  };
+
+  const handleDragOver = ({ active, over }: DragOverEvent) => {
     if (!over) return;
-    onChange(
-      reorderWorkspaceWidgets(widgets, String(active.id) as WidgetKey, String(over.id) as WidgetKey)
+    const nextActiveKey = String(active.id) as WidgetKey;
+    const nextOverKey = String(over.id) as WidgetKey;
+    if (nextOverKey === nextActiveKey) return;
+    dropTargetKeyRef.current = nextOverKey;
+    setPreviewOrder((current) =>
+      reorderWidgetKeys(
+        current ?? visible.map((widget) => widget.widgetKey),
+        nextActiveKey,
+        nextOverKey
+      )
     );
   };
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    const nextActiveKey = String(active.id) as WidgetKey;
+    const nextOverKey = dropTargetKeyRef.current;
+    clearDragPreview();
+    if (!over || !nextOverKey) return;
+    onChange(reorderWorkspaceWidgets(widgets, nextActiveKey, nextOverKey));
+  };
+  const spacing = workspaceWidgetSpacing(presentation);
+  const inlineInset = spacing.inlineInset;
 
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={({ active }: DragStartEvent) => setActiveKey(String(active.id) as WidgetKey)}
-      onDragCancel={() => setActiveKey(null)}
+      collisionDetection={workspaceWidgetCollisionDetection}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragCancel={clearDragPreview}
       onDragEnd={handleDragEnd}
     >
       <SortableContext
-        items={visible.map((widget) => widget.widgetKey)}
+        items={previewVisible.map((widget) => widget.widgetKey)}
         strategy={rectSortingStrategy}
       >
         <Box
           data-workspace-presentation={presentation}
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'repeat(12, minmax(0, 1fr))' },
-            gap: {
-              xs: presentation === 'focused' ? 1 : 1.5,
-              md: presentation === 'focused' ? 1.25 : presentation === 'expressive' ? 3 : 2,
+            gridTemplateColumns: {
+              xs: 'minmax(0, 1fr)',
+              sm: `repeat(${WORKSPACE_WIDGET_GRID_COLUMNS}, minmax(0, 1fr))`,
             },
-            alignItems: 'stretch',
+            mx: {
+              xs: `${-inlineInset.xs}px`,
+              sm: `${-inlineInset.sm}px`,
+              lg: `${-inlineInset.lg}px`,
+            },
+            columnGap: {
+              xs: spacing.virtualColumnGapPx.xs,
+              sm: `${spacing.virtualColumnGapPx.sm}px`,
+            },
+            rowGap: spacing.rowGap,
+            alignItems: 'start',
           }}
         >
-          {visible.map((widget, index) => {
+          {governedWidgets.map((widget) => (
+            <GovernedWidget
+              key={widget.widgetKey}
+              widget={widget}
+              editing={editing}
+              inlineInset={inlineInset}
+            />
+          ))}
+          {previewVisible.map((widget, index) => {
             const definition = definitionByKey.get(widget.widgetKey);
             if (!definition) return null;
             const size = widget.size ?? definition.defaultSize;
+            const height = widget.height ?? definition.defaultHeight;
             return (
               <SortableWidget
                 key={widget.widgetKey}
@@ -378,13 +639,19 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
                 onResize={(nextSize) =>
                   onChange(setWorkspaceWidgetSize(widgets, registry, widget.widgetKey, nextSize))
                 }
+                onResizeHeight={(nextHeight) =>
+                  onChange(
+                    setWorkspaceWidgetHeight(widgets, registry, widget.widgetKey, nextHeight)
+                  )
+                }
                 onMove={(direction) =>
                   onChange(moveWorkspaceWidget(widgets, widget.widgetKey, direction))
                 }
                 first={index === 0}
-                last={index === visible.length - 1}
+                last={index === previewVisible.length - 1}
+                inlineInset={inlineInset}
               >
-                {renderWidget(widget.widgetKey, size)}
+                {renderWidget(widget.widgetKey, size, height)}
               </SortableWidget>
             );
           })}
@@ -393,22 +660,57 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
       <DragOverlay dropAnimation={null}>
         {activeKey ? (
           <Box
-            sx={{
-              minWidth: 240,
-              px: 2,
-              py: 1.5,
+            data-widget-drag-overlay
+            sx={(theme) => ({
+              minWidth: 260,
+              maxWidth: 360,
+              minHeight: 62,
+              px: 1.5,
+              py: 1.25,
               display: 'flex',
               alignItems: 'center',
-              gap: 1,
-              border: 1,
+              gap: 1.25,
+              border: '1.5px solid',
               borderColor: 'primary.main',
               borderRadius: 1,
-              bgcolor: 'background.paper',
-              boxShadow: '0 20px 46px rgba(15,23,42,0.24)',
-            }}
+              bgcolor: alpha(theme.palette.background.paper, 0.96),
+              color: 'text.primary',
+              boxShadow: `0 22px 54px ${alpha(theme.palette.common.black, 0.26)}, 0 0 0 1px ${alpha(
+                theme.palette.common.white,
+                0.6
+              )} inset`,
+              backdropFilter: 'blur(18px)',
+              cursor: 'grabbing',
+            })}
           >
-            <GripVertical size={18} aria-hidden="true" />
-            {getLabel(activeKey) || t('widgetFallback')}
+            <Box
+              aria-hidden="true"
+              sx={(theme) => ({
+                width: 38,
+                height: 38,
+                flex: '0 0 auto',
+                display: 'grid',
+                placeItems: 'center',
+                borderRadius: 1,
+                bgcolor: alpha(theme.palette.primary.main, 0.12),
+                color: 'primary.main',
+              })}
+            >
+              <GripVertical size={19} />
+            </Box>
+            <Box
+              component="span"
+              sx={{
+                minWidth: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                fontWeight: 700,
+                fontSize: '0.875rem',
+              }}
+            >
+              {getLabel(activeKey) || t('widgetFallback')}
+            </Box>
           </Box>
         ) : null}
       </DragOverlay>

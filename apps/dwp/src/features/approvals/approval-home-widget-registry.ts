@@ -3,12 +3,7 @@ import { Activity, Gauge, Lightbulb, ListChecks, Send, TimerReset } from 'lucide
 import type { WorkspaceWidgetDefinition } from '../../components/workspace-composer/workspace-composer-model';
 
 export type ApprovalHomeWidgetKey =
-  | 'decision-pulse'
-  | 'focus-queue'
-  | 'flow'
-  | 'my-requests'
-  | 'insights'
-  | 'admin-health';
+  'decision-pulse' | 'focus-queue' | 'flow' | 'my-requests' | 'insights' | 'admin-health';
 
 export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<ApprovalHomeWidgetKey>[] =
   [
@@ -18,6 +13,8 @@ export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<A
       canHide: false,
       defaultSize: 'full',
       allowedSizes: ['full'],
+      defaultHeight: 'short',
+      allowedHeights: ['short', 'standard'],
     },
     {
       key: 'focus-queue',
@@ -25,6 +22,8 @@ export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<A
       canHide: true,
       defaultSize: 'large',
       allowedSizes: ['medium', 'large', 'full'],
+      defaultHeight: 'tall',
+      allowedHeights: ['standard', 'tall', 'expanded'],
     },
     {
       key: 'flow',
@@ -32,6 +31,8 @@ export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<A
       canHide: true,
       defaultSize: 'medium',
       allowedSizes: ['medium', 'large', 'full'],
+      defaultHeight: 'standard',
+      allowedHeights: ['short', 'standard', 'tall'],
     },
     {
       key: 'my-requests',
@@ -39,6 +40,8 @@ export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<A
       canHide: true,
       defaultSize: 'medium',
       allowedSizes: ['medium', 'large', 'full'],
+      defaultHeight: 'standard',
+      allowedHeights: ['short', 'standard', 'tall'],
     },
     {
       key: 'insights',
@@ -46,6 +49,8 @@ export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<A
       canHide: true,
       defaultSize: 'medium',
       allowedSizes: ['compact', 'medium', 'large'],
+      defaultHeight: 'standard',
+      allowedHeights: ['short', 'standard', 'tall'],
     },
     {
       key: 'admin-health',
@@ -53,6 +58,8 @@ export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<A
       canHide: true,
       defaultSize: 'full',
       allowedSizes: ['large', 'full'],
+      defaultHeight: 'tall',
+      allowedHeights: ['standard', 'tall', 'expanded'],
       audience: 'operator',
     },
   ];

@@ -542,7 +542,9 @@ export function ApprovalHome() {
             '& [data-workspace-widget]': { filter: 'saturate(0.8)' },
           }),
           ...(activePresentation === 'expressive' && {
-            '& [data-workspace-widget] > section': { boxShadow: '0 12px 32px rgba(15,23,42,0.09)' },
+            '& [data-workspace-widget] [data-workspace-widget-content] > section': {
+              boxShadow: '0 12px 32px rgba(15,23,42,0.09)',
+            },
           }),
         }}
       >
@@ -551,6 +553,7 @@ export function ApprovalHome() {
           widgets={activeWidgets}
           editing={editing}
           busy={mutation.isPending}
+          presentation={activePresentation}
           getLabel={(key) => t(`home.widgets.${key}.label`)}
           onChange={setDraftWidgets}
           renderWidget={renderWidget}

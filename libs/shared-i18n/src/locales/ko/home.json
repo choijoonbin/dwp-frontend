@@ -25,9 +25,7 @@
       "waiting": "응답 대기"
     },
     "appsTitle": "업무 도구",
-    "appsDescription": "권한과 역할에 맞게 배정된 앱을 빠르게 실행합니다.",
     "today": "오늘",
-    "updatedAt": "{{time}} 업데이트",
     "dateUpdated": "{{date}} / {{time}} 업데이트",
     "lastRefreshed": "{{time}} 마지막 새로고침 / 권한 범위 데이터",
     "saveError": "홈 환경 설정을 저장하지 못했습니다.",
@@ -50,7 +48,10 @@
     "restricted": "이 업무 영역은 현재 권한 범위에 포함되지 않습니다.",
     "noNextEvent": "예정된 다음 일정이 없습니다.",
     "noRecommendation": "추가로 확인할 추천 항목이 없습니다.",
-    "review": "확인하기"
+    "review": "확인하기",
+    "title": "업무 지휘",
+    "description": "다음 업무, 일정, 추천 후속 조치를 한 흐름으로 확인합니다",
+    "recommendationLoadError": "추천 후속 조치를 불러오지 못했습니다."
   },
   "apps": {
     "groups": {
@@ -150,6 +151,7 @@
     "assignedCount": "{{count}}개 할당됨",
     "allApps": "모든 앱",
     "editHome": "홈 화면 편집",
+    "actionsLabel": "업무 도구 동작",
     "fallbackApp": "앱",
     "defaultFolder": "앱 폴더",
     "groupFolder": "{{group}} 폴더",
@@ -206,7 +208,7 @@
     },
     "registry": {
       "announcements": {
-        "label": "공지사항",
+        "label": "새로운 소식",
         "description": "조직의 공식 공지 및 긴급 업데이트"
       },
       "daily-brief": {
@@ -224,6 +226,10 @@
       "activity": {
         "label": "실시간 활동",
         "description": "사람, 시스템 및 에이전트 이벤트"
+      },
+      "command-rail": {
+        "label": "업무 지휘",
+        "description": "현재 업무, 다음 일정 및 추천 후속 조치"
       }
     },
     "announcements": {
@@ -255,7 +261,7 @@
       },
       "liveSummary": "우선 처리할 업무는 ‘{{title}}’이며, 현재 업무 {{count}}개가 있습니다.",
       "emptySummary": "현재 우선 처리할 업무가 없습니다.",
-      "loadError": "업무 브리핑을 불러오지 못했습니다. 업무 메뉴에서 연결 상태를 확인하세요.",
+      "loadError": "업무 인사이트를 불러오지 못했습니다. 다른 홈 영역은 계속 사용할 수 있습니다.",
       "signals": {
         "deadline": { "label": "마감 임박", "detail": "조치가 필요한 업무" },
         "focus": { "label": "집중 시간", "detail": "이번 주 누적 분" },
@@ -294,5 +300,11 @@
       "retry": "다시 시도",
       "empty": "최근 활동이 없습니다"
     }
+  },
+  "footer": {
+    "privacy": "개인정보 처리방침",
+    "terms": "이용약관",
+    "help": "헬프 데스크",
+    "status": "시스템 상태"
   }
 }

@@ -10,6 +10,7 @@ import type { AdminNavigationItem, AdminView } from './admin-navigation';
 const SUPPORT_CONFIGURATION_VIEWS = new Set<AdminView>([
   'branding',
   'home-experience',
+  'home-composition',
   'announcements',
 ]);
 

@@ -13,14 +13,16 @@
   "moveWidget": "{{widget}} 위젯 이동",
   "moveWidgetEarlier": "{{widget}} 위젯을 앞으로 이동",
   "moveWidgetLater": "{{widget}} 위젯을 뒤로 이동",
-  "resizeWidget": "{{widget}} 위젯 크기 변경",
+  "resizeWidget": "{{widget}} 위젯 크기 선택",
   "removeWidget": "{{widget}} 위젯 숨기기",
   "governed": "조직에서 고정한 위젯",
   "sizes": {
-    "compact": "작게",
-    "medium": "보통",
-    "large": "넓게",
-    "full": "전체 너비"
+    "compact": "한 줄에 3개",
+    "medium": "한 줄에 2개",
+    "large": "한 줄의 3분의 2",
+    "full": "전체 너비",
+    "fifth": "한 줄에 5개",
+    "quarter": "한 줄에 4개"
   },
   "galleryTitle": "위젯 추가",
   "galleryDescription": "현재 역할과 권한에서 사용할 수 있는 위젯입니다.",
@@ -28,5 +30,24 @@
   "galleryEmptyDescription": "현재 사용할 수 있는 위젯이 모두 홈에 표시되어 있습니다.",
   "close": "닫기",
   "add": "추가",
-  "widgetFallback": "위젯"
+  "widgetFallback": "위젯",
+  "footprintPicker": "{{widget}} 위젯 크기",
+  "widthPicker": "{{widget}} 위젯 너비",
+  "heightPicker": "{{widget}} 위젯 높이",
+  "widthLabel": "너비",
+  "heightLabel": "높이",
+  "heights": {
+    "short": "낮게",
+    "standard": "표준",
+    "tall": "높게",
+    "expanded": "확장"
+  },
+  "footprints": {
+    "fifth": "한 줄에 5개",
+    "quarter": "한 줄에 4개",
+    "compact": "한 줄에 3개",
+    "medium": "한 줄에 2개",
+    "large": "한 줄의 3분의 2",
+    "full": "전체 너비"
+  }
 }

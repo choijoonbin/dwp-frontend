@@ -1,54 +1,29 @@
-import { useMemo } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import {
-  ArrowRight,
-  BriefcaseBusiness,
-  CalendarDays,
-  CheckCircle2,
-  Clock3,
-  EyeOff,
-  RefreshCw,
-  ShieldCheck,
-  Sparkles,
-} from 'lucide-react';
-import { formatDate } from '@dwp-frontend/shared-i18n';
-import {
-  ActionButton,
-  ActionIconButton,
-  ErrorState,
-  LoadingState,
-} from '@dwp-frontend/design-system';
+import { AppWindow, Settings2, ShieldCheck } from 'lucide-react';
+import { ActionButton } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type {
-  CalendarEvent,
-  HomeBackgroundPosition,
-  HomeOverview,
-  HomeRecommendation,
-  WorkspaceWorkItem,
-} from '@dwp-frontend/shared-utils';
+import type { HomeBackgroundPosition, HomeAudienceProfile } from '@dwp-frontend/shared-utils';
 
 type HomeDayRailProps = {
-  overview?: HomeOverview;
-  loading: boolean;
-  fetching: boolean;
-  requestFailed: boolean;
+  audience: HomeAudienceProfile;
   currentDate: string;
-  updatedAt: string;
   headline: string;
   subheadline: string;
   backgroundUrl: string;
   usesDefaultBackground: boolean;
   backgroundPosition: HomeBackgroundPosition;
   overlayOpacity: number;
-  onRetry: () => void;
-  feedbackBusy?: boolean;
-  onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
+  workspaceTools?: ReactNode;
+  assignedAppCount: number;
+  onBrowseAll: () => void;
+  personalizationBusy?: boolean;
+  onStartEditing?: () => void;
 };
 
 const audienceTone = {
@@ -57,154 +32,46 @@ const audienceTone = {
   OPERATOR: '#A14B14',
 } as const;
 
-function nextWorkItem(items: readonly WorkspaceWorkItem[] = []): WorkspaceWorkItem | undefined {
-  const statusOrder = { 'due-soon': 0, 'in-progress': 1, waiting: 2, completed: 3 };
-  const priorityOrder = { high: 0, medium: 1, low: 2 };
-  return [...items]
-    .filter((item) => item.status !== 'completed')
-    .sort(
-      (left, right) =>
-        statusOrder[left.status] - statusOrder[right.status] ||
-        priorityOrder[left.priority] - priorityOrder[right.priority] ||
-        new Date(left.dueAt ?? '9999-12-31').getTime() -
-          new Date(right.dueAt ?? '9999-12-31').getTime()
-    )[0];
-}
-
-function eventPosition(event: CalendarEvent) {
-  const startsAt = new Date(event.startsAt);
-  const endsAt = new Date(event.endsAt);
-  const dayStart = 8 * 60;
-  const dayEnd = 20 * 60;
-  const start = startsAt.getHours() * 60 + startsAt.getMinutes();
-  const end = endsAt.getHours() * 60 + endsAt.getMinutes();
-  const left = Math.max(0, Math.min(100, ((start - dayStart) / (dayEnd - dayStart)) * 100));
-  const width = Math.max(2.5, (Math.max(15, end - start) / (dayEnd - dayStart)) * 100);
-  return { left: `${left}%`, width: `${Math.min(100 - left, width)}%` };
-}
-
-function DayTimeline({ events }: { events: readonly CalendarEvent[] }) {
-  const { t } = useTranslation('home');
-  const visibleEvents = events.filter((event) => event.status !== 'CANCELLED' && !event.allDay);
-
-  return (
-    <Box component="section" aria-label={t('dayRail.timeline')} sx={{ mt: { xs: 2.5, md: 1.5 } }}>
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-          color: 'text.secondary',
-        }}
-      >
-        {['08', '10', '12', '14', '16', '18', '20'].map((hour) => (
-          <Typography
-            key={hour}
-            variant="caption"
-            sx={{ textAlign: hour === '08' ? 'left' : hour === '20' ? 'right' : 'center' }}
-          >
-            {hour}:00
-          </Typography>
-        ))}
-      </Box>
-      <Box
-        sx={{
-          position: 'relative',
-          height: 38,
-          mt: 0.5,
-          borderTop: 1,
-          borderBottom: 1,
-          borderColor: 'divider',
-        }}
-      >
-        {[1, 2, 3, 4, 5].map((marker) => (
-          <Box
-            key={marker}
-            aria-hidden="true"
-            sx={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              left: `${(marker / 6) * 100}%`,
-              borderLeft: 1,
-              borderColor: 'divider',
-            }}
-          />
-        ))}
-        {visibleEvents.map((event, index) => (
-          <Box
-            key={`${event.eventId}-${event.startsAt}`}
-            title={`${event.title} ${formatDate(event.startsAt, { hour: '2-digit', minute: '2-digit' })}`}
-            sx={{
-              position: 'absolute',
-              top: index % 2 === 0 ? 6 : 20,
-              height: 10,
-              borderRadius: 0.5,
-              bgcolor: event.type === 'FOCUS' ? '#0F8A78' : event.conflict ? '#D64545' : '#356AE6',
-              border: '1px solid rgba(255,255,255,0.8)',
-              ...eventPosition(event),
-            }}
-          />
-        ))}
-        {visibleEvents.length === 0 && (
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}
-          >
-            {t('dayRail.openTimeline')}
-          </Typography>
-        )}
-      </Box>
-    </Box>
-  );
-}
-
 export function HomeDayRail({
-  overview,
-  loading,
-  fetching,
-  requestFailed,
+  audience,
   currentDate,
-  updatedAt,
   headline,
   subheadline,
   backgroundUrl,
   usesDefaultBackground,
   backgroundPosition,
   overlayOpacity,
-  onRetry,
-  feedbackBusy = false,
-  onRecommendationFeedback,
+  workspaceTools,
+  assignedAppCount,
+  onBrowseAll,
+  personalizationBusy = false,
+  onStartEditing,
 }: HomeDayRailProps) {
   const { t } = useTranslation('home');
-  const navigate = useNavigate();
-  const work = overview?.work.data;
-  const calendar = overview?.calendar.data;
-  const topWork = useMemo(() => nextWorkItem(work?.items), [work?.items]);
-  const recommendation = overview?.recommendations[0];
-  const workUnavailable = requestFailed || overview?.work.status === 'UNAVAILABLE';
-  const workForbidden = overview?.work.status === 'FORBIDDEN';
-  const calendarUnavailable = requestFailed || overview?.calendar.status === 'UNAVAILABLE';
-  const calendarForbidden = overview?.calendar.status === 'FORBIDDEN';
-  const audience = overview?.audience.profile ?? 'MEMBER';
   const backgroundAlignment = usesDefaultBackground
     ? 'center center'
     : `${backgroundPosition.toLowerCase()} center`;
   const backgroundOverlay = Math.min(0.8, Math.max(0, overlayOpacity / 100));
+  const mobileScrim = Math.max(0.58, backgroundOverlay);
+  const desktopImageScrim = Math.min(0.05, backgroundOverlay);
 
   return (
     <Box
       component="section"
       aria-label={t('page.personalWorkspace')}
       data-testid="home-command-center"
-      sx={{ bgcolor: 'background.default', borderBottom: 1, borderColor: 'divider' }}
+      sx={{
+        bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'background.default' : '#FAF8FF'),
+      }}
     >
       <Box
+        data-testid="home-hero"
         sx={{
           position: 'relative',
           isolation: 'isolate',
           overflow: 'hidden',
-          bgcolor: '#07163D',
+          minHeight: { xs: 180, md: 144 },
+          bgcolor: { xs: '#DAE2FF', md: '#E2E2EB' },
           backgroundImage: `url(${backgroundUrl})`,
           backgroundRepeat: 'no-repeat',
           backgroundPosition: backgroundAlignment,
@@ -213,48 +80,69 @@ export function HomeDayRail({
             content: '""',
             position: 'absolute',
             inset: 0,
-            zIndex: -2,
-            bgcolor: `rgba(2, 10, 34, ${backgroundOverlay})`,
-            pointerEvents: 'none',
-          },
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            inset: 0,
-            zIndex: -1,
-            background:
-              'linear-gradient(90deg, rgba(2,10,34,0.62) 0%, rgba(2,10,34,0.34) 58%, rgba(2,10,34,0.12) 100%)',
+            zIndex: 0,
+            background: (theme) =>
+              theme.palette.mode === 'dark'
+                ? {
+                    xs: `rgba(9,16,28,${mobileScrim})`,
+                    md: `rgba(9,16,28,${desktopImageScrim})`,
+                  }
+                : {
+                    xs: `rgba(250,248,255,${mobileScrim})`,
+                    md: `rgba(250,248,255,${desktopImageScrim})`,
+                  },
             pointerEvents: 'none',
           },
           '@media (forced-colors: active)': {
             bgcolor: 'Canvas',
             backgroundImage: 'none',
-            '&::before, &::after': { display: 'none' },
+            '&::before': { display: 'none' },
           },
         }}
       >
         <Box
           sx={{
-            width: 'calc(100% - 32px)',
-            maxWidth: 1600,
-            minHeight: { xs: 142, md: 132 },
+            width: 1,
+            maxWidth: 2240,
+            minHeight: { xs: 180, md: 144 },
             mx: 'auto',
-            py: { xs: 2.5, md: 2 },
+            px: { xs: 2, md: '50px' },
+            py: { xs: 2, md: 3 },
             display: 'flex',
             alignItems: 'center',
-            color: 'common.white',
+            color: (theme) =>
+              theme.palette.mode === 'dark' ? '#F8FAFC' : { xs: '#191B22', md: '#F8FAFC' },
+            position: 'relative',
+            zIndex: 1,
           }}
         >
           <Stack
             width={1}
             direction={{ xs: 'column', md: 'row' }}
-            alignItems={{ xs: 'flex-start', md: 'center' }}
+            alignItems={{ xs: 'flex-start', md: 'flex-end' }}
             justifyContent="space-between"
             gap={2}
           >
             <Box minWidth={0}>
-              <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.78)' }}>
+              <Stack
+                data-home-hero-context
+                direction="row"
+                alignItems="center"
+                gap={1}
+                flexWrap="wrap"
+              >
+                <Typography
+                  variant="overline"
+                  sx={{
+                    color: (theme) =>
+                      theme.palette.mode === 'dark'
+                        ? 'rgba(248,250,252,0.78)'
+                        : { xs: '#434653', md: 'rgba(248,250,252,0.82)' },
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: 11,
+                    textShadow: { md: '0 1px 3px rgba(0,0,0,0.42)' },
+                  }}
+                >
                   {currentDate}
                 </Typography>
                 <Chip
@@ -270,256 +158,155 @@ export function HomeDayRail({
                   }}
                 />
               </Stack>
-              <Typography component="h1" variant="h5" sx={{ mt: 0.5, color: 'common.white' }}>
+              <Typography
+                component="h1"
+                sx={{
+                  mt: 0.5,
+                  color: (theme) =>
+                    theme.palette.mode === 'dark' ? '#F8FAFC' : { xs: '#001946', md: '#F8FAFC' },
+                  fontSize: { xs: 24, md: 32 },
+                  fontWeight: 600,
+                  lineHeight: { xs: '32px', md: '40px' },
+                  textShadow: { md: '0 2px 8px rgba(0,0,0,0.42)' },
+                }}
+              >
                 {headline}
               </Typography>
               <Typography
-                variant="body2"
-                sx={{ mt: 0.5, maxWidth: 760, color: 'rgba(255,255,255,0.82)' }}
+                variant="body1"
+                sx={{
+                  mt: 0.5,
+                  maxWidth: 760,
+                  color: (theme) =>
+                    theme.palette.mode === 'dark'
+                      ? 'rgba(248,250,252,0.8)'
+                      : { xs: '#00419E', md: 'rgba(248,250,252,0.84)' },
+                  fontSize: { xs: 14, md: 16 },
+                  lineHeight: { xs: '20px', md: '24px' },
+                  display: '-webkit-box',
+                  WebkitLineClamp: { xs: 2, md: 1 },
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textShadow: { md: '0 1px 4px rgba(0,0,0,0.42)' },
+                }}
               >
                 {subheadline}
               </Typography>
             </Box>
-            <Stack direction="row" alignItems="center" gap={0.5}>
-              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.74)' }}>
-                {t('page.updatedAt', { time: updatedAt })}
-              </Typography>
-              <ActionIconButton
-                label={t('page.retry')}
-                size="small"
-                disabled={fetching}
-                onClick={onRetry}
+            <Stack
+              data-launchpad-actions
+              data-home-action-placement="hero"
+              role="group"
+              aria-label={t('launchpad.actionsLabel')}
+              direction="row"
+              alignItems="stretch"
+              gap={0}
+              alignSelf={{ xs: 'flex-end', md: 'auto' }}
+              sx={{
+                flex: '0 0 auto',
+                minHeight: 38,
+                maxWidth: '100%',
+                overflow: 'hidden',
+                color: '#FFFFFF',
+                bgcolor: 'rgba(7,18,42,0.46)',
+                border: 1,
+                borderColor: 'rgba(255,255,255,0.34)',
+                borderRadius: 1,
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.13), 0 8px 24px rgba(0,7,24,0.16)',
+                backdropFilter: 'blur(16px) saturate(145%)',
+                WebkitBackdropFilter: 'blur(16px) saturate(145%)',
+                '& .MuiButton-root': {
+                  minHeight: 38,
+                  px: { xs: 1, sm: 1.25 },
+                  borderRadius: 0,
+                  color: 'inherit',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  lineHeight: '18px',
+                  whiteSpace: 'nowrap',
+                  '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' },
+                  '&:focus-visible': {
+                    outline: '2px solid #8DB8FF',
+                    outlineOffset: -3,
+                  },
+                },
+                '@media (prefers-reduced-transparency: reduce), (forced-colors: active)': {
+                  bgcolor: '#15233B',
+                  backdropFilter: 'none',
+                  WebkitBackdropFilter: 'none',
+                  boxShadow: 'none',
+                },
+              }}
+            >
+              <Box
+                data-launchpad-assignment-count
+                aria-label={t('launchpad.assignedCount', { count: assignedAppCount })}
                 sx={{
-                  color: 'common.white',
-                  bgcolor: 'rgba(2,10,34,0.28)',
-                  '&:hover': { bgcolor: 'rgba(2,10,34,0.46)' },
-                  ...(fetching
-                    ? {
-                        '& svg': { animation: 'dwp-home-refresh 900ms linear infinite' },
-                        '@keyframes dwp-home-refresh': {
-                          from: { transform: 'rotate(0deg)' },
-                          to: { transform: 'rotate(360deg)' },
-                        },
-                        '@media (prefers-reduced-motion: reduce)': {
-                          '& svg': { animation: 'none' },
-                        },
-                      }
-                    : {}),
+                  minHeight: 38,
+                  px: { xs: 1, sm: 1.25 },
+                  display: 'flex',
+                  alignItems: 'center',
+                  borderRight: 1,
+                  borderColor: 'rgba(255,255,255,0.22)',
                 }}
               >
-                <RefreshCw size={16} />
-              </ActionIconButton>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  sx={{
+                    color: 'rgba(255,255,255,0.76)',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    lineHeight: '18px',
+                    fontVariantNumeric: 'tabular-nums',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {t('launchpad.assignedCount', { count: assignedAppCount })}
+                </Typography>
+              </Box>
+              <ActionButton
+                intent="quiet"
+                startIcon={<AppWindow size={17} strokeWidth={1.8} aria-hidden="true" />}
+                onClick={onBrowseAll}
+                sx={{
+                  borderRight: onStartEditing ? 1 : 0,
+                  borderColor: 'rgba(255,255,255,0.22)',
+                }}
+              >
+                {t('launchpad.allApps')}
+              </ActionButton>
+              {onStartEditing && (
+                <ActionButton
+                  data-home-action-policy="PERSONAL"
+                  intent="quiet"
+                  startIcon={<Settings2 size={17} strokeWidth={1.8} aria-hidden="true" />}
+                  disabled={personalizationBusy}
+                  onClick={onStartEditing}
+                >
+                  {t('launchpad.editHome')}
+                </ActionButton>
+              )}
             </Stack>
           </Stack>
         </Box>
-      </Box>
 
-      <Box
-        sx={{
-          width: 'calc(100% - 32px)',
-          maxWidth: 1600,
-          mx: 'auto',
-          py: { xs: 2, md: 1.5 },
-        }}
-      >
-        <Box
-          data-testid="home-priority-rail"
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: 'none',
-              lg: 'minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr)',
-            },
-            gridAutoFlow: { xs: 'column', lg: 'row' },
-            gridAutoColumns: {
-              xs: 'minmax(292px, calc(100vw - 64px))',
-              sm: 'minmax(320px, 48vw)',
-              lg: 'auto',
-            },
-            bgcolor: 'background.paper',
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: 1,
-            overflowX: { xs: 'auto', lg: 'hidden' },
-            overflowY: 'hidden',
-            scrollSnapType: { xs: 'x mandatory', lg: 'none' },
-            overscrollBehaviorX: 'contain',
-            scrollbarWidth: 'thin',
-            WebkitOverflowScrolling: 'touch',
-          }}
-        >
-          <Box sx={{ p: 2, minWidth: 0, scrollSnapAlign: { xs: 'start', lg: 'none' } }}>
-            <Stack direction="row" alignItems="center" gap={0.75}>
-              <BriefcaseBusiness size={17} color="#356AE6" aria-hidden="true" />
-              <Typography variant="overline" color="text.secondary">
-                {t('dayRail.now')}
-              </Typography>
-            </Stack>
-            {loading ? (
-              <LoadingState label={t('page.loadingPriorities')} variant="skeleton" size="compact" />
-            ) : workUnavailable ? (
-              <ErrorState
-                title={t('page.priorityLoadError')}
-                retryLabel={t('page.retry')}
-                onRetry={onRetry}
-                retrying={fetching}
-                size="compact"
-              />
-            ) : workForbidden ? (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-                {t('dayRail.restricted')}
-              </Typography>
-            ) : topWork ? (
-              <Box sx={{ mt: 1 }}>
-                <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
-                  <Chip size="small" label={topWork.type} />
-                  <Chip
-                    size="small"
-                    variant="outlined"
-                    label={t(`page.priority.${topWork.priority}`)}
-                  />
-                  {topWork.dueAt && (
-                    <Typography variant="caption" color="text.secondary">
-                      {formatDate(topWork.dueAt, { dateStyle: 'medium', timeStyle: 'short' })}
-                    </Typography>
-                  )}
-                </Stack>
-                <Typography component="h2" variant="h6" sx={{ mt: 0.75 }}>
-                  {topWork.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                  {topWork.reason ?? topWork.summary}
-                </Typography>
-                <ActionButton
-                  intent="quiet"
-                  endIcon={<ArrowRight size={16} aria-hidden="true" />}
-                  onClick={() => navigate(`/work?item=${encodeURIComponent(topWork.id)}`)}
-                  sx={{ mt: 1 }}
-                >
-                  {t('page.openPriority')}
-                </ActionButton>
-              </Box>
-            ) : (
-              <Stack direction="row" alignItems="center" gap={1} sx={{ mt: 1.5 }}>
-                <CheckCircle2 size={20} color="#0F8A78" aria-hidden="true" />
-                <Box>
-                  <Typography variant="subtitle2">{t('page.clearTitle')}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {t('page.clearDescription')}
-                  </Typography>
-                </Box>
-              </Stack>
-            )}
-          </Box>
-
+        {workspaceTools && (
           <Box
+            data-home-zone="workspace-tools"
+            data-home-zone-policy="PERSONAL"
             sx={{
-              p: 2,
-              borderLeft: 1,
-              borderColor: 'divider',
-              scrollSnapAlign: { xs: 'start', lg: 'none' },
+              width: 1,
+              maxWidth: 2240,
+              mx: 'auto',
+              px: { xs: 2, md: '50px' },
+              pb: { xs: 2, md: 3 },
+              position: 'relative',
+              zIndex: 1,
             }}
           >
-            <Stack direction="row" alignItems="center" gap={0.75}>
-              <CalendarDays size={17} color="#0F8A78" aria-hidden="true" />
-              <Typography variant="overline" color="text.secondary">
-                {t('dayRail.next')}
-              </Typography>
-            </Stack>
-            {loading ? (
-              <LoadingState
-                label={t('widgets.schedule.loading')}
-                variant="skeleton"
-                size="compact"
-              />
-            ) : calendarUnavailable ? (
-              <ErrorState
-                title={t('widgets.schedule.loadError')}
-                retryLabel={t('page.retry')}
-                onRetry={onRetry}
-                retrying={fetching}
-                size="compact"
-              />
-            ) : calendarForbidden ? (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-                {t('dayRail.restricted')}
-              </Typography>
-            ) : calendar?.nextEvent ? (
-              <Box sx={{ mt: 1 }}>
-                <Typography variant="caption" color="primary.main">
-                  {formatDate(calendar.nextEvent.startsAt, { hour: '2-digit', minute: '2-digit' })}
-                </Typography>
-                <Typography component="h2" variant="subtitle1" sx={{ mt: 0.35 }}>
-                  {calendar.nextEvent.title}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {calendar.nextEvent.location || t('widgets.schedule.noLocation')}
-                </Typography>
-              </Box>
-            ) : (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-                {t('dayRail.noNextEvent')}
-              </Typography>
-            )}
+            {workspaceTools}
           </Box>
-
-          <Box
-            sx={{
-              p: 2,
-              borderLeft: 1,
-              borderColor: 'divider',
-              scrollSnapAlign: { xs: 'start', lg: 'none' },
-            }}
-          >
-            <Stack direction="row" alignItems="center" gap={0.75}>
-              <Sparkles size={17} color="#A14B14" aria-hidden="true" />
-              <Typography variant="overline" color="text.secondary">
-                {t('dayRail.later')}
-              </Typography>
-            </Stack>
-            {loading ? (
-              <LoadingState label={t('widgets.brief.loading')} variant="skeleton" size="compact" />
-            ) : recommendation ? (
-              <Box sx={{ mt: 1 }}>
-                <Typography component="h2" variant="subtitle1">
-                  {recommendation.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                  {recommendation.description}
-                </Typography>
-                <Stack direction="row" alignItems="center" gap={0.5} sx={{ mt: 1 }}>
-                  <ActionButton
-                    intent="quiet"
-                    endIcon={<ArrowRight size={16} aria-hidden="true" />}
-                    onClick={() => navigate(recommendation.actionPath)}
-                  >
-                    {t('dayRail.review')}
-                  </ActionButton>
-                  {onRecommendationFeedback && (
-                    <ActionIconButton
-                      label={t('widgets.brief.notRelevant')}
-                      size="small"
-                      disabled={feedbackBusy}
-                      onClick={() => onRecommendationFeedback(recommendation)}
-                    >
-                      <EyeOff size={16} />
-                    </ActionIconButton>
-                  )}
-                </Stack>
-              </Box>
-            ) : (
-              <Stack direction="row" alignItems="center" gap={1} sx={{ mt: 1.5 }}>
-                <Clock3 size={18} color="#64748B" aria-hidden="true" />
-                <Typography variant="body2" color="text.secondary">
-                  {t('dayRail.noRecommendation')}
-                </Typography>
-              </Stack>
-            )}
-          </Box>
-        </Box>
-
-        {!loading && !calendarUnavailable && !calendarForbidden && (
-          <DayTimeline events={calendar?.today ?? []} />
         )}
       </Box>
     </Box>

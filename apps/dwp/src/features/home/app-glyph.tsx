@@ -47,13 +47,14 @@ export const homeAppIconByKey: Record<HomeAppIconKey, LucideIcon> = {
 type AppGlyphProps = {
   app: Pick<HomeAppDefinition, 'iconKey' | 'tone'>;
   size?: number;
+  variant?: 'glass' | 'soft';
 };
 
-export function AppGlyph({ app, size = 52 }: AppGlyphProps) {
+export function AppGlyph({ app, size = 52, variant = 'glass' }: AppGlyphProps) {
   const Icon = homeAppIconByKey[app.iconKey];
 
   return (
-    <GlyphSurface size={size} tone={app.tone}>
+    <GlyphSurface size={size} tone={app.tone} variant={variant}>
       <Icon size={Math.round(size * 0.44)} strokeWidth={1.85} />
     </GlyphSurface>
   );

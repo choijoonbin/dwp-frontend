@@ -97,7 +97,11 @@
   "home": {
     "title": "Fresh from the newsroom",
     "count": "{{count}} unread",
+    "totalCount": "{{count}} stories",
     "viewAll": "View all news",
+    "showStory": "Show story {{index}}",
+    "pauseRotation": "Pause automatic story rotation",
+    "resumeRotation": "Resume automatic story rotation",
     "required": "Required",
     "empty": "No new stories right now.",
     "loadError": "Organization news could not be loaded.",

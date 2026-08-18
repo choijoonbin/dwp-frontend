@@ -3,7 +3,7 @@ import type { LucideIcon } from 'lucide-react';
 
 import { FlaskConical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { GlyphSurface, useAppearance } from '@dwp-frontend/design-system';
+import { SectionHeader, useAppearance } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -27,6 +27,7 @@ type SectionHeadingProps = {
   icon: LucideIcon;
   title: string;
   meta?: ReactNode;
+  divider?: boolean;
 };
 
 export function ReferenceModeChip() {
@@ -72,29 +73,8 @@ export function PageHeader({ eyebrow, title, description, action }: PageHeaderPr
   );
 }
 
-export function SectionHeading({ id, icon: Icon, title, meta }: SectionHeadingProps) {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: 2,
-        '& > :last-child': { maxWidth: '100%' },
-      }}
-    >
-      <Box sx={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: 1 }}>
-        <GlyphSurface size={30} variant="soft">
-          <Icon size={17} strokeWidth={1.8} />
-        </GlyphSurface>
-        <Typography id={id} component="h2" variant="h6">
-          {title}
-        </Typography>
-      </Box>
-      {meta}
-    </Box>
-  );
+export function SectionHeading({ id, icon, title, meta, divider }: SectionHeadingProps) {
+  return <SectionHeader id={id} icon={icon} title={title} meta={meta} divider={divider} />;
 }
 
 export function LiveSignal({ label }: { label?: string }) {

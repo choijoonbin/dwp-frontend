@@ -6,6 +6,7 @@ import {
   moveWorkspaceWidget,
   reconcileWorkspaceWidgets,
   reorderWorkspaceWidgets,
+  setWorkspaceWidgetHeight,
   setWorkspaceWidgetSize,
   setWorkspaceWidgetVisibility,
   visibleWorkspaceRegistry,
@@ -22,6 +23,8 @@ const registry: readonly WorkspaceWidgetDefinition<Key>[] = [
     canHide: false,
     defaultSize: 'large',
     allowedSizes: ['medium', 'large', 'full'],
+    defaultHeight: 'tall',
+    allowedHeights: ['standard', 'tall', 'expanded'],
   },
   {
     key: 'profile',
@@ -29,6 +32,8 @@ const registry: readonly WorkspaceWidgetDefinition<Key>[] = [
     canHide: true,
     defaultSize: 'compact',
     allowedSizes: ['compact', 'medium'],
+    defaultHeight: 'short',
+    allowedHeights: ['short', 'standard'],
   },
   {
     key: 'team',
@@ -36,6 +41,8 @@ const registry: readonly WorkspaceWidgetDefinition<Key>[] = [
     canHide: true,
     defaultSize: 'full',
     allowedSizes: ['medium', 'large', 'full'],
+    defaultHeight: 'standard',
+    allowedHeights: ['standard', 'tall'],
     audience: 'manager',
   },
 ];
@@ -45,15 +52,15 @@ describe('workspace composer model', () => {
     expect(
       reconcileWorkspaceWidgets(
         [
-          { widgetKey: 'profile', visible: false, size: 'full' },
+          { widgetKey: 'profile', visible: false, size: 'full', height: 'expanded' },
           { widgetKey: 'unknown', visible: true, size: 'full' },
         ],
         registry
       )
     ).toEqual([
-      { widgetKey: 'profile', visible: false, size: 'compact' },
-      { widgetKey: 'attention', visible: true, size: 'large' },
-      { widgetKey: 'team', visible: true, size: 'full' },
+      { widgetKey: 'profile', visible: false, size: 'compact', height: 'short' },
+      { widgetKey: 'attention', visible: true, size: 'large', height: 'tall' },
+      { widgetKey: 'team', visible: true, size: 'full', height: 'standard' },
     ]);
   });
 
@@ -66,6 +73,10 @@ describe('workspace composer model', () => {
     );
     expect(setWorkspaceWidgetSize(defaults, registry, 'profile', 'full')).toEqual(defaults);
     expect(setWorkspaceWidgetSize(defaults, registry, 'profile', 'medium')[1]?.size).toBe('medium');
+    expect(setWorkspaceWidgetHeight(defaults, registry, 'profile', 'expanded')).toEqual(defaults);
+    expect(setWorkspaceWidgetHeight(defaults, registry, 'profile', 'standard')[1]?.height).toBe(
+      'standard'
+    );
     expect(moveWorkspaceWidget(defaults, 'team', -1).map((widget) => widget.widgetKey)).toEqual([
       'attention',
       'team',

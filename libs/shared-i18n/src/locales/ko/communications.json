@@ -103,6 +103,10 @@
     "loadError": "조직 소식을 불러오지 못했습니다.",
     "restrictedTitle": "조직 소식 접근 권한이 없습니다",
     "restrictedDescription": "내 역할에 배정된 소식만 이 영역에 표시됩니다.",
-    "retry": "다시 시도"
+    "retry": "다시 시도",
+    "totalCount": "{{count}}개",
+    "showStory": "{{index}}번째 소식 보기",
+    "pauseRotation": "소식 자동 전환 일시정지",
+    "resumeRotation": "소식 자동 전환 다시 시작"
   }
 }

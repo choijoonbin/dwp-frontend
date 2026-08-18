@@ -2,15 +2,17 @@ import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 
-export type HomeWidgetKey = 'announcements' | 'daily-brief' | 'focus' | 'schedule' | 'activity';
+export type HomeWidgetKey = 'command-rail' | 'daily-brief' | 'focus' | 'schedule' | 'activity';
 export type HomeSurfaceKey = 'workspace-home' | 'hcm-home' | 'approval-home' | 'hris-home'; // Compatibility alias accepted by the server during the HCM transition.
 export type HomePresentation = 'balanced' | 'expressive' | 'focused';
-export type HomeWidgetSize = 'compact' | 'medium' | 'large' | 'full';
+export type HomeWidgetSize = 'fifth' | 'quarter' | 'compact' | 'medium' | 'large' | 'full';
+export type HomeWidgetHeight = 'short' | 'standard' | 'tall' | 'expanded';
 
 export type PersonalHomeWidgetPreference<WidgetKey extends string = string> = {
   widgetKey: WidgetKey;
   visible: boolean;
   size?: HomeWidgetSize | null;
+  height?: HomeWidgetHeight | null;
 };
 
 export type HomeWidgetPreference = PersonalHomeWidgetPreference<HomeWidgetKey>;
@@ -22,7 +24,7 @@ export type HomePreferenceLayout<WidgetKey extends string = HomeWidgetKey> = {
 };
 
 export type HomePreference<WidgetKey extends string = HomeWidgetKey> = {
-  schemaVersion: 2;
+  schemaVersion: 5;
   surfaceKey: HomeSurfaceKey;
   customized: boolean;
   layout: HomePreferenceLayout<WidgetKey>;

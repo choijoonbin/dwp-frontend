@@ -3328,6 +3328,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/admin/home-experience/composition": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateComposition"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/admin/home-experience/launchpad": {
         parameters: {
             query?: never;
@@ -13021,6 +13037,15 @@ export interface components {
             resolution?: string;
             status?: string;
         };
+        platform_GovernedHomeZone: {
+            height?: string;
+            placement?: string;
+            size?: string;
+            /** Format: int32 */
+            sortOrder?: number;
+            visible?: boolean;
+            zoneKey?: string;
+        };
         platform_Graph: {
             focusRef?: string;
             /** Format: date-time */
@@ -13043,6 +13068,12 @@ export interface components {
             /** Format: int32 */
             sortOrder?: number;
         };
+        platform_HomeCompositionPolicy: {
+            governedZones?: components["schemas"]["platform_GovernedHomeZone"][];
+            personalCustomizationEnabled?: boolean;
+            /** Format: int32 */
+            schemaVersion?: number;
+        };
         platform_HomeExperienceResponse: {
             backgroundContentType?: string;
             /** Format: int32 */
@@ -13054,6 +13085,7 @@ export interface components {
             backgroundUrl?: string;
             /** Format: int32 */
             backgroundWidth?: number;
+            compositionPolicy?: components["schemas"]["platform_HomeCompositionPolicy"];
             defaultLocale?: string;
             headline?: string;
             launchpadConfiguration?: components["schemas"]["platform_HomeLaunchpadConfiguration"];
@@ -13136,6 +13168,11 @@ export interface components {
             communications?: components["schemas"]["platform_SectionFeedResponse"];
             /** Format: date-time */
             generatedAt?: string;
+            recommendationSection?: components["schemas"]["platform_SectionListRecommendation"];
+            /**
+             * @deprecated
+             * @description Rolling-deployment compatibility field; use recommendationSection.data.
+             */
             recommendations?: components["schemas"]["platform_Recommendation"][];
             work?: components["schemas"]["platform_SectionWorkQueue"];
         };
@@ -14133,6 +14170,15 @@ export interface components {
             /** @enum {string} */
             status?: "AVAILABLE" | "FORBIDDEN" | "UNAVAILABLE";
         };
+        platform_SectionListRecommendation: {
+            data?: components["schemas"]["platform_Recommendation"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            reason?: string;
+            source?: string;
+            /** @enum {string} */
+            status?: "AVAILABLE" | "FORBIDDEN" | "UNAVAILABLE";
+        };
         platform_SectionWorkQueue: {
             data?: components["schemas"]["platform_WorkQueue"];
             /** Format: date-time */
@@ -14280,6 +14326,11 @@ export interface components {
             /** @enum {string} */
             visibility: "DEFAULT" | "PUBLIC" | "PRIVATE" | "CONFIDENTIAL";
         };
+        platform_UpdateHomeCompositionPolicyRequest: {
+            policy: components["schemas"]["platform_HomeCompositionPolicy"];
+            /** Format: int64 */
+            version: number;
+        };
         platform_UpdateHomeExperienceRequest: {
             backgroundPosition: string;
             defaultLocale?: string;
@@ -14392,6 +14443,7 @@ export interface components {
             value: number;
         };
         platform_WidgetPreference: {
+            height?: string;
             size?: string;
             visible: boolean;
             widgetKey: string;
@@ -22272,6 +22324,34 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeExperienceResponse"];
+                };
+            };
+        };
+    };
+    platform_updateComposition: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_UpdateHomeCompositionPolicyRequest"];
             };
         };
         responses: {

@@ -56,13 +56,15 @@ export type HomeOverview = {
   calendar: HomeOverviewSection<CalendarHome>;
   communications: HomeOverviewSection<CommunicationFeed>;
   activity: HomeOverviewSection<WorkspaceActivityFeed>;
-  recommendations: HomeRecommendation[];
+  recommendations: HomeOverviewSection<HomeRecommendation[]>;
   generatedAt: string;
 };
 
-type RawHomeOverview = Omit<HomeOverview, 'work' | 'activity'> & {
+type RawHomeOverview = Omit<HomeOverview, 'work' | 'activity' | 'recommendations'> & {
   work: HomeOverviewSection<RawWorkspaceWorkQueue>;
   activity: HomeOverviewSection<RawWorkspaceActivityFeed>;
+  recommendations?: HomeRecommendation[] | HomeOverviewSection<HomeRecommendation[]>;
+  recommendationSection?: HomeOverviewSection<HomeRecommendation[]>;
 };
 
 function normalizeSection<Raw, Normalized>(
@@ -86,10 +88,28 @@ export async function getHomeOverview(timeZone = 'Asia/Seoul'): Promise<HomeOver
     { timeoutMs: 8000 }
   );
   const overview = response.data.data;
+  const { recommendationSection, recommendations, ...rest } = overview;
+  const normalizedRecommendations = recommendationSection ??
+    (Array.isArray(recommendations)
+      ? {
+          status: 'AVAILABLE' as const,
+          source: 'DWP_HOME_RECOMMENDATIONS',
+          generatedAt: overview.generatedAt,
+          data: recommendations,
+          reason: null,
+        }
+      : recommendations) ?? {
+      status: 'UNAVAILABLE' as const,
+      source: 'DWP_HOME_RECOMMENDATIONS',
+      generatedAt: overview.generatedAt,
+      data: null,
+      reason: 'MISSING_RECOMMENDATION_CONTRACT',
+    };
   return {
-    ...overview,
+    ...rest,
     work: normalizeSection(overview.work, normalizeWorkspaceWorkQueue),
     activity: normalizeSection(overview.activity, normalizeWorkspaceActivityFeed),
+    recommendations: normalizedRecommendations,
   };
 }
 

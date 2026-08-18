@@ -26,11 +26,13 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { SectionHeading } from '../../components/workspace-ui';
+import { workspaceWidgetContentRows } from '../../components/workspace-composer/workspace-widget-layout-policy';
 
 import type {
   HomeOverview,
   HomeOverviewSection,
   HomeRecommendation,
+  HomeWidgetHeight,
   HomeWidgetSize,
   WorkspacePriority as Priority,
 } from '@dwp-frontend/shared-utils';
@@ -42,6 +44,7 @@ export type HomeOverviewWidgetProps = {
   requestFailed: boolean;
   onRetry: () => void;
   size?: HomeWidgetSize;
+  height?: HomeWidgetHeight;
   feedbackBusy?: boolean;
   onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
 };
@@ -60,6 +63,11 @@ const priorityColor: Record<Priority, 'error' | 'warning' | 'default'> = {
   low: 'default',
 };
 
+function widgetListLimit(size: HomeWidgetSize, height: HomeWidgetHeight): 2 | 3 | 4 {
+  const widthLimit = size === 'medium' || size === 'large' || size === 'full' ? 4 : 3;
+  return Math.min(widthLimit, workspaceWidgetContentRows(height), 4) as 2 | 3 | 4;
+}
+
 export function DailyBriefWidget({
   overview,
   loading,
@@ -71,7 +79,11 @@ export function DailyBriefWidget({
 }: HomeOverviewWidgetProps) {
   const { t } = useTranslation('home');
   const navigate = useNavigate();
-  const recommendations = overview?.recommendations ?? [];
+  const recommendationSection = overview?.recommendations;
+  const recommendations = recommendationSection?.data ?? [];
+  const recommendationsUnavailable =
+    requestFailed || recommendationSection?.status === 'UNAVAILABLE';
+  const recommendationsForbidden = recommendationSection?.status === 'FORBIDDEN';
   const sourceCount = [overview?.work, overview?.calendar, overview?.communications].filter(
     (section) => section?.status === 'AVAILABLE'
   ).length;
@@ -84,12 +96,13 @@ export function DailyBriefWidget({
     <Box
       component="section"
       aria-labelledby="brief-heading"
-      sx={{ gridColumn: '1 / -1', minWidth: 0, py: 2.5 }}
+      sx={{ gridColumn: '1 / -1', minWidth: 0, py: 2 }}
     >
       <SectionHeading
         id="brief-heading"
         icon={Sparkles}
         title={t('widgets.brief.title')}
+        divider
         meta={
           <Chip
             icon={<ShieldCheck size={14} aria-hidden="true" />}
@@ -106,7 +119,7 @@ export function DailyBriefWidget({
       {loading && (
         <LoadingState label={t('widgets.brief.loading')} variant="skeleton" size="compact" />
       )}
-      {requestFailed && (
+      {recommendationsUnavailable && (
         <ErrorState
           title={t('widgets.brief.loadError')}
           retryLabel={t('widgets.brief.retry')}
@@ -115,117 +128,136 @@ export function DailyBriefWidget({
           size="compact"
         />
       )}
-      {!loading && !requestFailed && recommendations.length === 0 && (
-        <EmptyState
-          title={t('widgets.brief.empty')}
-          description={t('widgets.brief.emptyDescription')}
+      {!loading && !recommendationsUnavailable && recommendationsForbidden && (
+        <GuidedEmptyState
+          kind="permission"
+          title={t('widgets.common.restrictedTitle')}
+          description={t('widgets.common.restrictedDescription')}
           size="compact"
         />
       )}
-      {!loading && !requestFailed && recommendations.length > 0 && (
-        <Box
-          component="ol"
-          sx={{
-            p: 0,
-            mt: 2,
-            mb: 0,
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              md: `repeat(${recommendationColumns}, minmax(0, 1fr))`,
-            },
-            borderTop: 1,
-            borderLeft: 1,
-            borderColor: 'divider',
-            listStyle: 'none',
-          }}
-        >
-          {recommendations.slice(0, 3).map((recommendation) => (
-            <Box
-              component="li"
-              key={recommendation.key}
-              sx={{ minWidth: 0, borderRight: 1, borderBottom: 1, borderColor: 'divider' }}
-            >
+      {!loading &&
+        !recommendationsUnavailable &&
+        !recommendationsForbidden &&
+        recommendations.length === 0 && (
+          <EmptyState
+            title={t('widgets.brief.empty')}
+            description={t('widgets.brief.emptyDescription')}
+            size="compact"
+          />
+        )}
+      {!loading &&
+        !recommendationsUnavailable &&
+        !recommendationsForbidden &&
+        recommendations.length > 0 && (
+          <Box
+            component="ol"
+            sx={{
+              p: 0,
+              mt: 2,
+              mb: 0,
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                md: `repeat(${recommendationColumns}, minmax(0, 1fr))`,
+              },
+              borderTop: 1,
+              borderLeft: 1,
+              borderColor: 'divider',
+              listStyle: 'none',
+            }}
+          >
+            {recommendations.slice(0, 3).map((recommendation) => (
               <Box
-                sx={{
-                  width: 1,
-                  minHeight: recommendations.length === 1 ? 152 : 180,
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'stretch',
-                  justifyContent: 'space-between',
-                  textAlign: 'left',
-                  borderTop: 3,
-                  borderTopColor:
-                    recommendation.priority === 'HIGH'
-                      ? 'error.main'
-                      : recommendation.priority === 'MEDIUM'
-                        ? 'warning.main'
-                        : 'success.main',
-                }}
+                component="li"
+                key={recommendation.key}
+                sx={{ minWidth: 0, borderRight: 1, borderBottom: 1, borderColor: 'divider' }}
               >
-                <Box>
-                  <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-                    <Chip
-                      size="small"
-                      label={t(`widgets.brief.kind.${recommendation.kind.toLowerCase()}`)}
-                    />
+                <Box
+                  sx={{
+                    width: 1,
+                    minHeight: recommendations.length === 1 ? 152 : 180,
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    justifyContent: 'space-between',
+                    textAlign: 'left',
+                    borderTop: 3,
+                    borderTopColor:
+                      recommendation.priority === 'HIGH'
+                        ? 'error.main'
+                        : recommendation.priority === 'MEDIUM'
+                          ? 'warning.main'
+                          : 'success.main',
+                  }}
+                >
+                  <Box>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      gap={1}
+                    >
+                      <Chip
+                        size="small"
+                        label={t(`widgets.brief.kind.${recommendation.kind.toLowerCase()}`)}
+                      />
+                      <Typography variant="caption" color="text.secondary">
+                        {t('widgets.brief.confidence', {
+                          confidence: t(
+                            `widgets.brief.confidenceLevel.${recommendation.confidence.toLowerCase()}`
+                          ),
+                        })}
+                      </Typography>
+                    </Stack>
+                    <Typography component="h3" variant="subtitle1" sx={{ mt: 1.25 }}>
+                      {recommendation.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                      {recommendation.description}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ mt: 2 }}>
                     <Typography variant="caption" color="text.secondary">
-                      {t('widgets.brief.confidence', {
-                        confidence: t(
-                          `widgets.brief.confidenceLevel.${recommendation.confidence.toLowerCase()}`
-                        ),
+                      {t('widgets.brief.evidence', {
+                        count: recommendation.evidenceCount,
+                        source: recommendation.source,
                       })}
                     </Typography>
-                  </Stack>
-                  <Typography component="h3" variant="subtitle1" sx={{ mt: 1.25 }}>
-                    {recommendation.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    {recommendation.description}
-                  </Typography>
-                </Box>
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="caption" color="text.secondary">
-                    {t('widgets.brief.evidence', {
-                      count: recommendation.evidenceCount,
-                      source: recommendation.source,
-                    })}
-                  </Typography>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    gap={1}
-                    sx={{ mt: 0.75 }}
-                  >
-                    <ActionButton
-                      intent="quiet"
-                      size="small"
-                      endIcon={<ArrowRight size={15} aria-hidden="true" />}
-                      onClick={() => navigate(recommendation.actionPath)}
-                      sx={{ px: 0 }}
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      gap={1}
+                      sx={{ mt: 0.75 }}
                     >
-                      {t('widgets.brief.open')}
-                    </ActionButton>
-                    {onRecommendationFeedback && (
-                      <ActionIconButton
-                        label={t('widgets.brief.notRelevant')}
+                      <ActionButton
+                        intent="quiet"
                         size="small"
-                        disabled={feedbackBusy}
-                        onClick={() => onRecommendationFeedback(recommendation)}
+                        endIcon={<ArrowRight size={15} aria-hidden="true" />}
+                        onClick={() => navigate(recommendation.actionPath)}
+                        sx={{ px: 0 }}
                       >
-                        <EyeOff size={16} />
-                      </ActionIconButton>
-                    )}
-                  </Stack>
+                        {t('widgets.brief.open')}
+                      </ActionButton>
+                      {onRecommendationFeedback && (
+                        <ActionIconButton
+                          label={t('widgets.brief.notRelevant')}
+                          size="small"
+                          disabled={feedbackBusy}
+                          onClick={() => onRecommendationFeedback(recommendation)}
+                        >
+                          <EyeOff size={16} />
+                        </ActionIconButton>
+                      )}
+                    </Stack>
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-          ))}
-        </Box>
-      )}
+            ))}
+          </Box>
+        )}
     </Box>
   );
 }
@@ -236,27 +268,26 @@ export function FocusWidget({
   fetching,
   requestFailed,
   onRetry,
+  size = 'medium',
+  height = 'tall',
 }: HomeOverviewWidgetProps) {
   const { t } = useTranslation(['home', 'work', 'common']);
   const navigate = useNavigate();
   const items = (overview?.work.data?.items ?? [])
     .filter((item) => item.status !== 'completed')
-    .slice(0, 4);
+    .slice(0, widgetListLimit(size, height));
   return (
     <Box
       component="section"
       aria-labelledby="priority-heading"
-      sx={{ gridColumn: { xs: '1 / -1', lg: 'span 6' }, minWidth: 0, py: 2.5 }}
+      sx={{ gridColumn: { xs: '1 / -1', lg: 'span 6' }, minWidth: 0 }}
     >
       <SectionHeading
         id="priority-heading"
         icon={CheckCircle2}
         title={t('widgets.focus.title')}
-        meta={
-          <Typography variant="body2" color="text.secondary">
-            {t('units.item', { ns: 'common', count: items.length })}
-          </Typography>
-        }
+        divider
+        meta={t('units.item', { ns: 'common', count: items.length })}
       />
       {loading && (
         <LoadingState label={t('widgets.focus.loading')} variant="skeleton" size="compact" />
@@ -296,12 +327,16 @@ export function FocusWidget({
         items.length > 0 && (
           <Box component="ol" sx={{ p: 0, mt: 2, mb: 0, listStyle: 'none' }}>
             {items.map((item, index) => (
-              <Box component="li" key={item.id} sx={{ borderTop: 1, borderColor: 'divider' }}>
+              <Box
+                component="li"
+                key={item.id}
+                sx={{ borderTop: index === 0 ? 0 : 1, borderColor: 'divider' }}
+              >
                 <ButtonBase
                   onClick={() => navigate(`/work?item=${encodeURIComponent(item.id)}`)}
                   sx={{
                     width: 1,
-                    minHeight: 78,
+                    minHeight: 72,
                     p: 1.5,
                     display: 'grid',
                     gridTemplateColumns: '32px minmax(0, 1fr) auto',
@@ -358,20 +393,33 @@ export function ScheduleWidget({
   fetching,
   requestFailed,
   onRetry,
+  size = 'quarter',
+  height = 'standard',
 }: HomeOverviewWidgetProps) {
   const { t } = useTranslation('home');
   const navigate = useNavigate();
+  const events = (overview?.calendar.data?.today ?? []).filter(
+    (event) => event.status !== 'CANCELLED'
+  );
+  const visibleEvents = events.slice(0, widgetListLimit(size, height));
 
   return (
     <Box
       component="section"
       aria-labelledby="schedule-heading"
-      sx={{ gridColumn: { xs: '1 / -1', lg: 'span 3' }, minWidth: 0, py: 2.5 }}
+      sx={{
+        gridColumn: { xs: '1 / -1', lg: 'span 3' },
+        minWidth: 0,
+        height: 1,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
     >
       <SectionHeading
         id="schedule-heading"
         icon={CalendarDays}
         title={t('widgets.schedule.title')}
+        divider
       />
       {loading && (
         <LoadingState label={t('widgets.schedule.loading')} variant="skeleton" size="compact" />
@@ -397,7 +445,7 @@ export function ScheduleWidget({
         !requestFailed &&
         !sectionUnavailable(overview?.calendar) &&
         !sectionForbidden(overview?.calendar) &&
-        (overview?.calendar.data?.today.length ?? 0) === 0 && (
+        events.length === 0 && (
           <EmptyState
             title={t('widgets.schedule.clear')}
             description={t('widgets.schedule.clearDescription')}
@@ -410,20 +458,81 @@ export function ScheduleWidget({
         !requestFailed &&
         !sectionUnavailable(overview?.calendar) &&
         !sectionForbidden(overview?.calendar) &&
-        (overview?.calendar.data?.today.length ?? 0) > 0 && (
+        events.length > 0 && (
           <>
-            <Box component="ol" sx={{ p: 0, mt: 2, mb: 0, listStyle: 'none' }}>
-              {overview?.calendar.data?.today.slice(0, 4).map((event) => (
-                <li key={`${event.eventId}-${event.startsAt}`}>
-                  <Box sx={{ py: 1.25, borderTop: 1, borderColor: 'divider' }}>
+            <Box component="ol" sx={{ p: 0, mt: 1.5, mb: 2, listStyle: 'none' }}>
+              {visibleEvents.map((event, index) => {
+                const accent = event.conflict
+                  ? 'error.main'
+                  : event.type === 'FOCUS'
+                    ? '#087F72'
+                    : 'primary.main';
+                return (
+                  <Box
+                    component="li"
+                    key={`${event.eventId}-${event.startsAt}`}
+                    sx={{
+                      position: 'relative',
+                      pl: 2.25,
+                      pb: index === visibleEvents.length - 1 ? 0 : 1.5,
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        zIndex: 1,
+                        top: 7,
+                        left: 1,
+                        width: 6,
+                        height: 6,
+                        borderRadius: '50%',
+                        bgcolor: accent,
+                        border: 2,
+                        borderColor: 'background.paper',
+                        boxSizing: 'content-box',
+                      },
+                      '&::after':
+                        index === visibleEvents.length - 1
+                          ? undefined
+                          : {
+                              content: '""',
+                              position: 'absolute',
+                              top: 16,
+                              bottom: -1,
+                              left: 5,
+                              width: '1px',
+                              bgcolor: 'divider',
+                            },
+                    }}
+                  >
                     <ButtonBase
-                      onClick={() => navigate('/calendar/schedule')}
-                      sx={{ width: 1, display: 'block', textAlign: 'left' }}
+                      disableRipple
+                      onClick={() =>
+                        navigate(`/calendar/schedule?event=${encodeURIComponent(event.eventId)}`)
+                      }
+                      sx={{
+                        width: 1,
+                        mx: -0.75,
+                        px: 0.75,
+                        py: 0.25,
+                        display: 'block',
+                        borderRadius: 0.5,
+                        textAlign: 'left',
+                        '&:hover': { bgcolor: 'action.hover' },
+                        '&:focus-visible': {
+                          outline: '2px solid',
+                          outlineColor: 'primary.main',
+                          outlineOffset: 2,
+                        },
+                      }}
                     >
-                      <Typography variant="caption" color="primary.main" fontWeight={700}>
+                      <Typography
+                        variant="caption"
+                        color={accent}
+                        fontWeight={800}
+                        sx={{ fontFamily: '"JetBrains Mono", monospace' }}
+                      >
                         {formatDate(event.startsAt, { hour: '2-digit', minute: '2-digit' })}
                       </Typography>
-                      <Typography component="h3" variant="subtitle2" sx={{ mt: 0.25 }}>
+                      <Typography component="h3" variant="subtitle2" sx={{ mt: 0.125 }}>
                         {event.title}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
@@ -431,17 +540,19 @@ export function ScheduleWidget({
                       </Typography>
                     </ButtonBase>
                   </Box>
-                </li>
-              ))}
+                );
+              })}
             </Box>
-            <ActionButton
-              intent="quiet"
-              endIcon={<ArrowRight size={16} aria-hidden="true" />}
-              onClick={() => navigate('/calendar/schedule')}
-              sx={{ mt: 1, px: 0 }}
-            >
-              {t('widgets.schedule.openCalendar')}
-            </ActionButton>
+            <Box sx={{ mt: 'auto', pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
+              <ActionButton
+                intent="quiet"
+                endIcon={<ArrowRight size={16} aria-hidden="true" />}
+                onClick={() => navigate('/calendar/schedule')}
+                sx={{ px: 0 }}
+              >
+                {t('widgets.schedule.openCalendar')}
+              </ActionButton>
+            </Box>
           </>
         )}
     </Box>
@@ -454,21 +565,23 @@ export function ActivityWidget({
   fetching,
   requestFailed,
   onRetry,
-  size = 'compact',
+  size = 'quarter',
+  height = 'tall',
 }: HomeOverviewWidgetProps) {
   const { t } = useTranslation(['home', 'work']);
   const navigate = useNavigate();
-  const events = (overview?.activity.data?.events ?? []).slice(0, 3);
+  const events = (overview?.activity.data?.events ?? []).slice(0, widgetListLimit(size, height));
   return (
     <Box
       component="section"
       aria-labelledby="activity-heading"
-      sx={{ gridColumn: { xs: '1 / -1', lg: 'span 3' }, minWidth: 0, py: 2.5 }}
+      sx={{ gridColumn: { xs: '1 / -1', lg: 'span 3' }, minWidth: 0 }}
     >
       <SectionHeading
         id="activity-heading"
         icon={Activity}
         title={t('widgets.activity.title')}
+        divider
         meta={<Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: 'success.main' }} />}
       />
       {loading && (
@@ -523,7 +636,7 @@ export function ActivityWidget({
                   minWidth: 0,
                   px: { lg: size === 'full' ? 2 : 0 },
                   py: 1.5,
-                  borderTop: 1,
+                  borderTop: index === 0 ? 0 : 1,
                   borderLeft: { lg: size === 'full' && index > 0 ? 1 : 0 },
                   borderColor: 'divider',
                 }}
