@@ -8,10 +8,18 @@ import { shellRegistry } from '../features/shell/shell-registry';
 
 export function HomeLayout() {
   const shell = shellRegistry.home;
+
   return (
     <Box
       data-testid="personal-home-shell"
-      sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}
+      sx={{
+        minHeight: '100dvh',
+        bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'background.default' : '#FAF8FF'),
+        fontFamily: '"Hanken Grotesk", "Noto Sans KR", system-ui, sans-serif',
+        '& .MuiTypography-root, & .MuiButtonBase-root, & .MuiChip-root': {
+          fontFamily: 'inherit',
+        },
+      }}
     >
       <ShellHeader
         testId="home-header"
@@ -20,10 +28,24 @@ export function HomeLayout() {
         position={shell.headerPosition}
         surface={shell.headerSurface}
         showWorkspace={shell.showWorkspace}
+        compactSearch
+        maxContentWidth={2240}
+        sx={{
+          bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'background.paper' : '#FAF8FF'),
+          backdropFilter: 'none',
+          WebkitBackdropFilter: 'none',
+          '& .MuiToolbar-root': { minHeight: '63px !important', px: { xs: 2, md: '50px' } },
+        }}
         brand={
           <>
-            <BrandLockup variant="condensed" sx={{ display: { xs: 'inline-flex', sm: 'none' } }} />
-            <BrandLockup sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />
+            <BrandLockup
+              variant="product-only"
+              sx={{ display: { xs: 'inline-flex', md: 'none' }, flexShrink: 0 }}
+            />
+            <BrandLockup
+              variant="full"
+              sx={{ display: { xs: 'none', md: 'inline-flex' }, flexShrink: 0 }}
+            />
           </>
         }
       />

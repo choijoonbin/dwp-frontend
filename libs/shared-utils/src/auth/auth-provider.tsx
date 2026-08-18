@@ -32,10 +32,15 @@ type AuthContextValue = {
   invalidateSession: () => void;
 };
 
+type AuthProviderProps = {
+  children: React.ReactNode;
+  prepareAuthenticatedSession?: (user: MeResponse) => Promise<void>;
+};
+
 const AuthContext = createContext<AuthContextValue | null>(null);
 const SESSION_ROTATION_INTERVAL_MS = 10 * 60 * 1000;
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children, prepareAuthenticatedSession }: AuthProviderProps) {
   const queryClient = useQueryClient();
   const [user, setUser] = useState<MeResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,23 +58,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const meResponse = await getMe();
-      const permissionsResponse = await getPermissions();
       const nextIdentity = `${meResponse.data.tenantId}:${meResponse.data.userId}`;
       if (authenticatedIdentity.current && authenticatedIdentity.current !== nextIdentity) {
         queryClient.clear();
       }
+
+      const sessionPreparation = prepareAuthenticatedSession
+        ? prepareAuthenticatedSession(meResponse.data)
+        : Promise.resolve();
+      const [permissionsResponse] = await Promise.all([getPermissions(), sessionPreparation]);
+
       authenticatedIdentity.current = nextIdentity;
-      setUser(meResponse.data);
       usePermissionsStore
         .getState()
         .setPermissions(Array.isArray(permissionsResponse.data) ? permissionsResponse.data : []);
+      setUser(meResponse.data);
       setIsLoading(false);
       return true;
     } catch {
       invalidateSession();
       return false;
     }
-  }, [invalidateSession, queryClient]);
+  }, [invalidateSession, prepareAuthenticatedSession, queryClient]);
 
   useEffect(() => {
     void refreshSession();

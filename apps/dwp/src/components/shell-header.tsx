@@ -46,6 +46,7 @@ type ShellHeaderProps = {
   };
   showWorkspace?: boolean;
   primaryNavigation?: ReactNode;
+  compactSearch?: boolean;
   maxContentWidth?: number;
   sx?: SxProps<Theme>;
 };
@@ -63,6 +64,7 @@ export function ShellHeader({
   navigation,
   showWorkspace = false,
   primaryNavigation,
+  compactSearch = false,
   maxContentWidth,
   sx,
 }: ShellHeaderProps) {
@@ -217,7 +219,7 @@ export function ShellHeader({
           data-testid="shell-global-actions"
           sx={{ display: 'flex', alignItems: 'center', flex: '0 0 auto' }}
         >
-          <SearchControl />
+          <SearchControl compact={compactSearch} />
           <Box
             sx={{
               ml: { xs: 0, md: 1 },

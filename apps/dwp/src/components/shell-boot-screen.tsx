@@ -9,6 +9,7 @@ import {
   shellHeaderHeight,
   shellRegistry,
 } from '../features/shell/shell-registry';
+import { HomeLoadingSkeleton } from './home-loading-skeleton';
 
 type ShellBootScreenProps = {
   pathname?: string;
@@ -22,6 +23,7 @@ export function ShellBootScreen({
   const shell = shellRegistry[shellKey];
   const sidebarWidth = shell.desktopNavigationWidth;
   const hasSidebar = sidebarWidth > 0;
+  const homeShell = shellKey === 'home';
 
   const shimmer = {
     bgcolor: 'action.hover',
@@ -83,37 +85,53 @@ export function ShellBootScreen({
           display: 'flex',
           alignItems: 'center',
           gap: 1.25,
-          px: { xs: 1.5, md: 2 },
-          bgcolor: 'background.paper',
+          px: homeShell ? { xs: 2, md: '50px' } : { xs: 1.5, md: 2 },
+          bgcolor: (theme) =>
+            homeShell && theme.palette.mode !== 'dark' ? '#FAF8FF' : 'background.paper',
           borderBottom: 1,
           borderColor: 'divider',
+          fontFamily: homeShell
+            ? '"Hanken Grotesk", "Noto Sans KR", system-ui, sans-serif'
+            : undefined,
         }}
       >
-        {!hasSidebar && <ProductMark compact={false} />}
+        {!hasSidebar && homeShell && (
+          <>
+            <ProductMark compact sx={{ display: { xs: 'inline-flex', md: 'none' } }} />
+            <ProductMark sx={{ display: { xs: 'none', md: 'inline-flex' } }} />
+          </>
+        )}
+        {!hasSidebar && !homeShell && <ProductMark compact={false} />}
         {hasSidebar && <Box sx={{ ...shimmer, width: 132, height: 24, borderRadius: 0.75 }} />}
         <Box sx={{ flex: 1 }} />
         <Box sx={{ ...shimmer, width: { xs: 38, md: 184 }, height: 38, borderRadius: 1 }} />
         <Box sx={{ ...shimmer, width: 38, height: 38, borderRadius: '50%' }} />
       </Box>
 
-      <Box
-        component="main"
-        id="dwp-main-content"
-        tabIndex={-1}
-        data-testid="shell-boot-main"
-        sx={{
-          pt: `${shellHeaderHeight + 32}px`,
-          px: { xs: 2, md: 4 },
-          ml: { xs: 0, lg: `${sidebarWidth}px` },
-          display: 'grid',
-          gap: 2,
-          outline: 'none',
-        }}
-      >
-        <Box sx={{ ...shimmer, width: { xs: '58%', md: 280 }, height: 24, borderRadius: 0.75 }} />
-        <Box sx={{ ...shimmer, width: { xs: '86%', md: 520 }, height: 14, borderRadius: 0.75 }} />
-        <Box sx={{ ...shimmer, width: 1, height: 1, minHeight: 220, borderRadius: 1 }} />
-      </Box>
+      {homeShell ? (
+        <Box component="main" id="dwp-main-content" tabIndex={-1} data-testid="shell-boot-main">
+          <HomeLoadingSkeleton reserveHeader />
+        </Box>
+      ) : (
+        <Box
+          component="main"
+          id="dwp-main-content"
+          tabIndex={-1}
+          data-testid="shell-boot-main"
+          sx={{
+            pt: `${shellHeaderHeight + 32}px`,
+            px: { xs: 2, md: 4 },
+            ml: { xs: 0, lg: `${sidebarWidth}px` },
+            display: 'grid',
+            gap: 2,
+            outline: 'none',
+          }}
+        >
+          <Box sx={{ ...shimmer, width: { xs: '58%', md: 280 }, height: 24, borderRadius: 0.75 }} />
+          <Box sx={{ ...shimmer, width: { xs: '86%', md: 520 }, height: 14, borderRadius: 0.75 }} />
+          <Box sx={{ ...shimmer, width: 1, height: 1, minHeight: 220, borderRadius: 1 }} />
+        </Box>
+      )}
 
       <Typography
         sx={{ position: 'fixed', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}

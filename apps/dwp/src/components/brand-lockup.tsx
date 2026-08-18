@@ -2,15 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProductMark } from '@dwp-frontend/design-system/components/product-mark';
-import {
-  getTenantBranding,
-  resolveTenantLogoUrl,
-} from '@dwp-frontend/shared-utils/api/tenant-branding-api';
+import { resolveTenantLogoUrl } from '@dwp-frontend/shared-utils/api/tenant-branding-api';
 
 import Box from '@mui/material/Box';
 
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import type { SxProps, Theme } from '@mui/material/styles';
+
+import { tenantBrandingQueryOptions } from '../features/shell/tenant-branding-query';
 
 type BrandLockupVariant = 'full' | 'condensed' | 'product-full' | 'product-only';
 
@@ -26,15 +25,12 @@ export function BrandLockup({ variant = 'full', label, description, sx }: BrandL
   const navigate = useNavigate();
   const tenantBranded = variant === 'full' || variant === 'condensed';
   const brandingQuery = useQuery({
-    queryKey: ['tenant-branding'],
-    queryFn: getTenantBranding,
+    ...tenantBrandingQueryOptions,
     enabled: tenantBranded,
-    staleTime: 10 * 60 * 1000,
-    retry: 1,
   });
   const branding = brandingQuery.data;
   const logoUrl = resolveTenantLogoUrl(branding);
-  const showTenantLogoSlot = tenantBranded && (brandingQuery.isPending || Boolean(logoUrl));
+  const showTenantLogoSlot = tenantBranded && Boolean(logoUrl);
   const logoSlotWidth = variant === 'full' ? 80 : 64;
   const logoSlotHeight = variant === 'full' ? 40 : 32;
   const compact = variant === 'condensed' || variant === 'product-only';
@@ -42,6 +38,49 @@ export function BrandLockup({ variant = 'full', label, description, sx }: BrandL
     tenantBranded && branding?.organizationName
       ? t('brand.tenantHomeLabel', { organization: branding.organizationName })
       : t('brand.homeLabel');
+  const tenantBrandContext = showTenantLogoSlot ? (
+    <Box
+      data-testid="tenant-brand-context"
+      sx={{
+        display: 'inline-flex',
+        minWidth: 0,
+        flex: '0 0 auto',
+        alignItems: 'center',
+        gap: 1.25,
+      }}
+    >
+      <Box
+        data-testid="tenant-brand-divider"
+        aria-hidden="true"
+        sx={{ width: '1px', height: 24, flex: '0 0 1px', bgcolor: 'divider' }}
+      />
+      <Box
+        sx={{
+          width: logoSlotWidth,
+          height: logoSlotHeight,
+          display: 'flex',
+          flex: `0 0 ${logoSlotWidth}px`,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Box
+          component="img"
+          data-testid="tenant-brand-logo"
+          src={logoUrl!}
+          alt=""
+          loading="eager"
+          fetchPriority="high"
+          sx={{
+            display: 'block',
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+          }}
+        />
+      </Box>
+    </Box>
+  ) : undefined;
 
   return (
     <ProductMark
@@ -62,46 +101,7 @@ export function BrandLockup({ variant = 'full', label, description, sx }: BrandL
         event.preventDefault();
         navigate('/');
       }}
-      prefix={
-        showTenantLogoSlot ? (
-          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
-            <Box
-              sx={{
-                width: logoSlotWidth,
-                height: logoSlotHeight,
-                display: 'flex',
-                flex: `0 0 ${logoSlotWidth}px`,
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-              }}
-            >
-              {logoUrl ? (
-                <Box
-                  component="img"
-                  data-testid="tenant-brand-logo"
-                  src={logoUrl}
-                  alt=""
-                  sx={{ display: 'block', maxWidth: 1, maxHeight: 1, objectFit: 'contain' }}
-                />
-              ) : (
-                <Box
-                  aria-hidden="true"
-                  sx={{
-                    width: '72%',
-                    height: '58%',
-                    bgcolor: 'action.hover',
-                    borderRadius: 0.75,
-                  }}
-                />
-              )}
-            </Box>
-            <Box
-              aria-hidden="true"
-              sx={{ width: 1, height: 24, flex: '0 0 1px', bgcolor: 'divider' }}
-            />
-          </Box>
-        ) : undefined
-      }
+      suffix={tenantBrandContext}
       sx={sx}
     />
   );

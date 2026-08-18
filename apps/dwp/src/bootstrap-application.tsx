@@ -5,13 +5,15 @@ import { createRoot, type Root } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 import { I18nProvider } from '@dwp-frontend/shared-i18n';
 import { AuthProvider, useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
-import { getTenantBranding } from '@dwp-frontend/shared-utils/api/tenant-branding-api';
+import { resolveTenantLogoUrl } from '@dwp-frontend/shared-utils/api/tenant-branding-api';
+import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import { DwpDateTimeProvider } from '@dwp-frontend/design-system/enterprise/date-time/date-time-provider';
 import { DwpThemeProvider } from '@dwp-frontend/design-system/appearance';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { Outlet, RouterProvider, createBrowserRouter, type RouteObject } from 'react-router-dom';
 
 import App from './app';
+import { tenantBrandingQueryOptions } from './features/shell/tenant-branding-query';
 import { ErrorBoundary } from './routes/components/error-boundary';
 import { PersonalPreferenceProvider } from './providers/personal-preference-provider';
 
@@ -24,11 +26,8 @@ const defaultTenantAppearance = {
 function ProductThemeProvider({ children }: PropsWithChildren) {
   const auth = useAuth();
   const brandingQuery = useQuery({
-    queryKey: ['tenant-branding'],
-    queryFn: getTenantBranding,
+    ...tenantBrandingQueryOptions,
     enabled: auth.isAuthenticated,
-    staleTime: 10 * 60 * 1000,
-    retry: 1,
   });
   const tenantAppearance = useMemo(
     () => ({
@@ -61,6 +60,25 @@ function registerObservability() {
       ),
     { timeout: 2_000 }
   );
+}
+
+async function prepareAuthenticatedShell(queryClient: QueryClient) {
+  try {
+    const branding = await queryClient.ensureQueryData(tenantBrandingQueryOptions);
+    const logoUrl = resolveTenantLogoUrl(branding);
+    if (logoUrl) {
+      const image = new Image();
+      image.decoding = 'async';
+      image.fetchPriority = 'high';
+      image.src = logoUrl;
+      await Promise.race([
+        image.decode().catch(() => undefined),
+        new Promise<void>((resolve) => window.setTimeout(resolve, 2_000)),
+      ]);
+    }
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 401) throw error;
+  }
 }
 
 export function bootstrapApplication(routes: RouteObject[], applicationId = 'shell') {
@@ -97,7 +115,7 @@ export function bootstrapApplication(routes: RouteObject[], applicationId = 'she
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <I18nProvider>
-          <AuthProvider>
+          <AuthProvider prepareAuthenticatedSession={() => prepareAuthenticatedShell(queryClient)}>
             <ProductThemeProvider>
               <ProductDateTimeProvider>
                 <PersonalPreferenceProvider>

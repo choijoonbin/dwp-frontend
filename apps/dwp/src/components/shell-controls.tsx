@@ -96,7 +96,7 @@ export function WorkspaceMenu() {
   );
 }
 
-export function SearchControl() {
+export function SearchControl({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation('shell');
   const { t: tHome } = useTranslation('home');
   const auth = useAuth();
@@ -147,7 +147,7 @@ export function SearchControl() {
         aria-expanded={open}
         onClick={() => setOpen(true)}
         sx={{
-          width: { md: 184, xl: 208 },
+          width: compact ? 88 : { md: 184, xl: 208 },
           height: 38,
           px: 1.25,
           display: { xs: 'none', md: 'flex' },
@@ -161,11 +161,16 @@ export function SearchControl() {
           textAlign: 'left',
           transition: (theme) => theme.transitions.create(['border-color', 'background-color']),
           '&:hover': { borderColor: 'primary.main', bgcolor: 'action.selected' },
-          '@container dwp-shell-header (max-width: 1120px)': { display: 'none' },
+          '@container dwp-shell-header (max-width: 900px)': compact
+            ? { display: 'none' }
+            : undefined,
+          '@container dwp-shell-header (min-width: 901px) and (max-width: 1120px)': compact
+            ? undefined
+            : { display: 'none' },
         }}
       >
         <Search size={18} strokeWidth={1.8} aria-hidden="true" />
-        <Typography variant="body2" sx={{ flex: 1 }}>
+        <Typography variant="body2" sx={{ flex: 1, display: compact ? 'none' : 'block' }}>
           {t('search.shortPlaceholder')}
         </Typography>
         <Box

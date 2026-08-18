@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import type { RouteObject } from 'react-router-dom';
 
+import { HomeRouteFallback } from '../components/home-loading-skeleton';
 import { AppLayout } from '../layouts/app-layout';
 import { HomeLayout } from '../layouts/home-layout';
 import {
@@ -30,7 +31,7 @@ export const workspaceRoutes: RouteObject[] = [
       {
         index: true,
         element: (
-          <Suspense fallback={routeFallback}>
+          <Suspense fallback={<HomeRouteFallback />}>
             <HomePage />
           </Suspense>
         ),

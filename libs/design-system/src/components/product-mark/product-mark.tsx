@@ -11,6 +11,7 @@ export type ProductMarkProps = Omit<BoxProps<'a'>, 'component' | 'prefix'> & {
   label?: string;
   description?: ReactNode;
   prefix?: ReactNode;
+  suffix?: ReactNode;
 };
 
 export function ProductMark({
@@ -18,6 +19,7 @@ export function ProductMark({
   label = 'Digital Workplace',
   description,
   prefix,
+  suffix,
   href = '/',
   sx,
   ...props
@@ -98,6 +100,7 @@ export function ProductMark({
           )}
         </Box>
       )}
+      {suffix}
     </Box>
   );
 }

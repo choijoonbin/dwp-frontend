@@ -54,19 +54,25 @@ function AuthProbe() {
   return null;
 }
 
-async function mountAuthProvider() {
+async function renderAuthProvider(
+  prepareAuthenticatedSession?: (user: MeResponse) => Promise<void>
+) {
   container = document.createElement('div');
   document.body.appendChild(container);
   root = createRoot(container);
   await act(async () => {
     root?.render(
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
+        <AuthProvider prepareAuthenticatedSession={prepareAuthenticatedSession}>
           <AuthProbe />
         </AuthProvider>
       </QueryClientProvider>
     );
   });
+}
+
+async function mountAuthProvider() {
+  await renderAuthProvider();
   await vi.waitFor(() => expect(currentAuth?.isAuthenticated).toBe(true));
 }
 
@@ -111,6 +117,27 @@ describe('authenticated client lifecycle', () => {
     expect(usePermissionsStore.getState().permissions).toEqual([]);
     expect(usePermissionsStore.getState().isLoaded).toBe(false);
     expect(currentAuth?.isAuthenticated).toBe(false);
+  });
+
+  it('waits for application session preparation before exposing an authenticated user', async () => {
+    let releasePreparation: () => void = () => undefined;
+    const preparationGate = new Promise<void>((resolve) => {
+      releasePreparation = resolve;
+    });
+    const prepareAuthenticatedSession = vi.fn(() => preparationGate);
+
+    await renderAuthProvider(prepareAuthenticatedSession);
+    await vi.waitFor(() => expect(prepareAuthenticatedSession).toHaveBeenCalledWith(member));
+
+    expect(currentAuth?.isLoading).toBe(true);
+    expect(currentAuth?.isAuthenticated).toBe(false);
+    expect(usePermissionsStore.getState().isLoaded).toBe(false);
+
+    await act(async () => releasePreparation());
+    await vi.waitFor(() => expect(currentAuth?.isAuthenticated).toBe(true));
+
+    expect(currentAuth?.isLoading).toBe(false);
+    expect(usePermissionsStore.getState().isLoaded).toBe(true);
   });
 
   it('clears the previous identity cache when a verified session changes user', async () => {
