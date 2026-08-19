@@ -36,6 +36,7 @@
   },
   "units": { "people": " people" },
   "features": {
+    "ACCESSIBLE": "Accessible",
     "DISPLAY": "Display",
     "HYBRID": "Hybrid meeting",
     "RECORDING": "Recording",

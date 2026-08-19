@@ -43,6 +43,7 @@
     "people": "명"
   },
   "features": {
+    "ACCESSIBLE": "접근성 지원",
     "DISPLAY": "디스플레이",
     "HYBRID": "하이브리드 회의",
     "RECORDING": "녹화",
