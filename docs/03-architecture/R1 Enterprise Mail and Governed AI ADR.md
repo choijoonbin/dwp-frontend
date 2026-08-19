@@ -74,12 +74,14 @@ HCM, Work 등 대상 앱에서 다시 확인한다.
 | `mail_provider_connections` | 공급사, 도메인, Secret Reference, 상태와 동기화 건강도    |
 | `mail_accounts`             | 사용자·공유 메일 계정 Projection과 불투명 Provider cursor |
 | `mail_folders`              | 표준·사용자 폴더 Projection                               |
+| `mail_thread_folders`       | 한 대화의 Inbox·Sent 등 다중 폴더 멤버십                  |
 | `mail_shared_inboxes`       | 공유 주소, 목적, 응답 목표와 수명주기                     |
 | `mail_shared_inbox_members` | 공유함 단위 구성원과 역할                                 |
 | `mail_threads`              | 검색·분류·담당·Snooze를 위한 대화 Projection              |
 | `mail_messages`             | 공급사 메시지의 안전한 본문·첨부 메타데이터 Projection    |
 | `mail_internal_comments`    | 외부 발신자에게 노출되지 않는 팀 협업                     |
 | `mail_action_proposals`     | 근거와 권한을 가진 사람 승인형 AI 제안                    |
+| `mail_delivery_outbox`      | lease·재시도·멱등 키·Provider receipt를 가진 발송 큐       |
 | `mail_domain_events`        | 재시도 가능한 Transactional Outbox                        |
 | `mail_audit_events`         | 테넌트·행위자·상관관계가 있는 변경 증거                   |
 
@@ -97,7 +99,9 @@ flowchart LR
     M --> O["Transactional outbox"]
     O --> W["Notification / search / agent consumers"]
     U["User send command"] --> I["Idempotent command"]
-    I --> A
+    I --> D["Durable delivery outbox"]
+    D --> R["Lease and retry worker"]
+    R --> A
 ```
 
 - Graph change notification + delta, Gmail push + history, NAVER WORKS polling cursor, JMAP state,
@@ -106,6 +110,11 @@ flowchart LR
   동기화한다.
 - 발송은 사용자 idempotency key와 Provider message reference를 함께 보관하여 중복 전송을
   막는다.
+- 신규 작성·회신·초안 발송의 재요청은 영속 idempotency key로 원 결과를 반환한다. Worker는
+  `FOR UPDATE SKIP LOCKED` lease와 제한된 재시도를 사용하고 Provider acceptance 이후에만
+  `SENT`를 표시한다.
+- 회신은 Provider thread reference를 유지한다. 대화는 단일 primary folder와 별개로 다중
+  folder membership을 보관하므로 같은 스레드를 Inbox와 Sent에서 모두 조회할 수 있다.
 - 첨부 원문은 향후 악성코드 검사와 Object Storage 격리 후 제공한다. R1 씨드는 메타데이터만
   사용한다.
 
@@ -175,7 +184,8 @@ AI 처리는 다음 세 계층으로 분리한다. `Insight`는 요약·긴급�
 SKAX 전체 구성원에게 DWP Sandbox 개인 계정을 생성하고, 공유 메일함·대화·메시지·내부
 댓글·실행 제안을 DB 씨드로 제공한다. 프론트에는 Mock 배열을 두지 않는다.
 
-외부 공급자 연결 정보, 정책 UI, Provider-neutral Port는 구현되어 있다. 실제 Microsoft,
+외부 공급자 연결 정보, 정책 UI, Provider-neutral Port와 Runtime Adapter Registry는 구현되어
+있다. 관리 화면과 서버는 지원 계약과 배포된 실행 어댑터를 구분한다. 실제 Microsoft,
 Google, NAVER 또는 회사 서버 전송은 고객 테넌트의 OAuth App 등록, callback URL,
 Secret Store, 도메인 검증과 관리자 동의가 있어야 활성화한다. 자격증명 없이 연결을 정상으로
 표시하거나 외부 발송 성공을 가장하지 않는다.
@@ -197,6 +207,10 @@ Secret Store, 도메인 검증과 관리자 동의가 있어야 활성화한다.
 - [Missive team inboxes](https://missiveapp.com/docs/core-features/team-spaces/team-inboxes/)
 - [Microsoft Graph change notifications](https://learn.microsoft.com/en-us/graph/outlook-change-notifications-overview)
 - [Gmail synchronization](https://developers.google.com/workspace/gmail/api/guides/sync)
+- [Gmail sending](https://developers.google.com/workspace/gmail/api/guides/sending)
+- [Gmail push notifications](https://developers.google.com/workspace/gmail/api/guides/push)
+- [Microsoft Graph delta query](https://learn.microsoft.com/en-us/graph/delta-query-overview)
+- [JMAP Mail RFC 8621](https://www.rfc-editor.org/info/rfc8621/)
 - [NAVER WORKS Mail API](https://developers.worksmobile.com/kr/docs/mail)
 - [Microsoft Copilot in Outlook](https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook)
 - [Microsoft Copilot meeting agenda](https://support.microsoft.com/en-US/Outlook/copilot-outlook/create-a-meeting-agenda-with-copilot-in-outlook)

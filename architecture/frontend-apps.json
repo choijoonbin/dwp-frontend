@@ -11,7 +11,7 @@
   "applications": [
     {
       "id": "workspace",
-      "features": ["home", "work-hub"],
+      "features": ["home", "work-hub", "dwaion"],
       "routePrefixes": ["/", "/work", "/ask", "/activity", "/apps"],
       "backendServices": ["platform"],
       "deployment": "independent"

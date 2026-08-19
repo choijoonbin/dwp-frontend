@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Archive,
@@ -7,18 +7,22 @@ import {
   MailOpen,
   MessageSquareText,
   Paperclip,
+  RotateCcw,
   Send,
   ShieldAlert,
   Star,
+  UserRoundCheck,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
   addMailComment,
   applyMailThreadAction,
+  assignMailThread,
   decideMailProposal,
   getMailThread,
   replyToMailThread,
+  retryMailDelivery,
   snoozeMailThread,
   useAuth,
   useToast,
@@ -29,6 +33,7 @@ import {
   ConfirmDialog,
   FormField,
   GuidedEmptyState,
+  SelectField,
 } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
@@ -61,6 +66,7 @@ export function MailThreadDetailPane({
   const queryClient = useQueryClient();
   const [reply, setReply] = useState('');
   const [comment, setComment] = useState('');
+  const [assigneeId, setAssigneeId] = useState<number | ''>('');
   const [proposalToAccept, setProposalToAccept] = useState<MailActionProposal | null>(null);
   const query = useQuery({
     queryKey: ['mail', 'thread', threadId],
@@ -68,7 +74,18 @@ export function MailThreadDetailPane({
     enabled: Boolean(threadId),
     staleTime: 15_000,
     retry: 1,
+    refetchInterval: (mailQuery) => {
+      const detail = mailQuery.state.data;
+      return detail?.messages.some((message) =>
+        ['QUEUED', 'SENDING', 'RETRYING'].includes(message.deliveryState)
+      )
+        ? 1_500
+        : false;
+    },
   });
+  useEffect(() => {
+    setAssigneeId(query.data?.thread.assignedUserId ?? '');
+  }, [query.data?.thread.assignedUserId, query.data?.thread.threadId]);
   const refresh = async (thread: MailThread) => {
     onUpdated?.(thread);
     await queryClient.invalidateQueries({ queryKey: ['mail'] });
@@ -115,6 +132,33 @@ export function MailThreadDetailPane({
       toast.success(t('thread.commentAdded'));
     },
     onError: () => toast.error(t('thread.commentError')),
+  });
+  const assignmentMutation = useMutation({
+    mutationFn: () => {
+      const member = query.data?.sharedInboxMembers.find((item) => item.userId === assigneeId);
+      if (!member || !query.data) throw new Error('Shared inbox assignee is required.');
+      return assignMailThread(
+        threadId!,
+        member.userId,
+        member.displayName,
+        query.data.thread.version
+      );
+    },
+    onSuccess: async (detail) => {
+      queryClient.setQueryData(['mail', 'thread', threadId], detail);
+      await refresh(detail.thread);
+      toast.success(t('thread.assignmentSaved'));
+    },
+    onError: () => toast.error(t('thread.assignmentError')),
+  });
+  const retryMutation = useMutation({
+    mutationFn: (messageId: string) => retryMailDelivery(threadId!, messageId),
+    onSuccess: async (detail) => {
+      queryClient.setQueryData(['mail', 'thread', threadId], detail);
+      await refresh(detail.thread);
+      toast.success(t('delivery.retryQueued'));
+    },
+    onError: () => toast.error(t('delivery.retryError')),
   });
   const proposalMutation = useMutation({
     mutationFn: ({
@@ -260,6 +304,47 @@ export function MailThreadDetailPane({
           )}
         </Stack>
 
+        {thread.sharedInboxId && detail.sharedInboxMembers.length > 0 && (
+          <Box
+            sx={{
+              mt: 2,
+              p: 1.5,
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: 1,
+              bgcolor: 'background.paper',
+            }}
+          >
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={1}
+              alignItems={{ xs: 'stretch', sm: 'center' }}
+            >
+              <UserRoundCheck size={18} color="var(--dwp-product-accent)" />
+              <SelectField<number>
+                size="small"
+                label={t('thread.assignee')}
+                value={assigneeId}
+                placeholder={t('thread.assigneePlaceholder')}
+                options={detail.sharedInboxMembers.map((member) => ({
+                  value: member.userId,
+                  label: `${member.displayName} · ${member.emailAddress}`,
+                }))}
+                sx={{ flex: 1 }}
+                onValueChange={setAssigneeId}
+              />
+              <ActionButton
+                intent="secondary"
+                disabled={!assigneeId || assigneeId === thread.assignedUserId}
+                loading={assignmentMutation.isPending}
+                onClick={() => assignmentMutation.mutate()}
+              >
+                {t('thread.assign')}
+              </ActionButton>
+            </Stack>
+          </Box>
+        )}
+
         <Stack spacing={1.5} sx={{ mt: 2.5 }}>
           {detail.messages.map((message) => {
             const outgoing = message.direction === 'OUTBOUND' || message.direction === 'DRAFT';
@@ -306,6 +391,39 @@ export function MailThreadDetailPane({
                     <Typography variant="caption" fontWeight={650}>
                       {String(message.attachments[0]?.name ?? t('thread.attachment'))}
                     </Typography>
+                  </Stack>
+                )}
+                {outgoing && (
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    justifyContent="flex-end"
+                    alignItems="center"
+                    sx={{ mt: 1.5 }}
+                  >
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      color={
+                        message.deliveryState === 'FAILED'
+                          ? 'error'
+                          : message.deliveryState === 'SENT'
+                            ? 'success'
+                            : 'default'
+                      }
+                      label={t(`delivery.state.${message.deliveryState}`)}
+                    />
+                    {message.deliveryState === 'FAILED' && (
+                      <ActionButton
+                        intent="quiet"
+                        size="small"
+                        startIcon={<RotateCcw size={14} />}
+                        loading={retryMutation.isPending}
+                        onClick={() => retryMutation.mutate(message.messageId)}
+                      >
+                        {t('delivery.retry')}
+                      </ActionButton>
+                    )}
                   </Stack>
                 )}
               </Box>

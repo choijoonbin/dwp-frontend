@@ -118,7 +118,10 @@ export function MailAdminOverview() {
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(4, minmax(0, 1fr))' },
+              gridTemplateColumns: {
+                xs: '1fr 1fr',
+                lg: 'repeat(3, minmax(0, 1fr))',
+              },
               border: 1,
               borderColor: 'divider',
               borderRadius: 1,
@@ -150,6 +153,18 @@ export function MailAdminOverview() {
               value={data.pendingAiProposals}
               detail={t('admin.metrics.proposalsDetail')}
               tone="#A73549"
+            />
+            <MailMetric
+              label={t('admin.metrics.delivery')}
+              value={data.queuedDeliveries}
+              detail={t('admin.metrics.deliveryDetail')}
+              tone="#5267A8"
+            />
+            <MailMetric
+              label={t('admin.metrics.failedDelivery')}
+              value={data.failedDeliveries}
+              detail={t('admin.metrics.failedDeliveryDetail')}
+              tone={data.failedDeliveries ? '#A73549' : '#17805F'}
             />
           </Box>
 
@@ -266,6 +281,9 @@ export function MailAdminConnections() {
   const [mailDomain, setMailDomain] = useState('');
   const [credentialRef, setCredentialRef] = useState('');
   const [state, setState] = useState<MailConnectionState>('CONFIGURATION_REQUIRED');
+  const descriptor = query.data?.providerCatalog.find(
+    (provider) => provider.providerType === editing?.providerType
+  );
   const mutation = useMutation({
     mutationFn: () =>
       updateMailConnection(editing!.connectionId, {
@@ -341,6 +359,20 @@ export function MailAdminConnections() {
                       .map((value) => t(`capability.${value}`, { defaultValue: value }))
                       .join(' · ')}
                   </Typography>
+                  {(() => {
+                    const runtime = query.data.providerCatalog.find(
+                      (provider) => provider.providerType === connection.providerType
+                    );
+                    return runtime ? (
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        color={runtime.runtimeState === 'AVAILABLE' ? 'success' : 'warning'}
+                        label={t(`connection.runtime.${runtime.runtimeState}`)}
+                        sx={{ mt: 0.75 }}
+                      />
+                    ) : null;
+                  })()}
                 </Box>
                 <ActionButton
                   intent="secondary"
@@ -395,11 +427,24 @@ export function MailAdminConnections() {
                 value: 'CONFIGURATION_REQUIRED',
                 label: t('connection.state.CONFIGURATION_REQUIRED'),
               },
-              { value: 'ACTIVE', label: t('connection.state.ACTIVE') },
+              {
+                value: 'ACTIVE',
+                label: t('connection.state.ACTIVE'),
+                disabled: descriptor?.runtimeState !== 'AVAILABLE',
+              },
               { value: 'SUSPENDED', label: t('connection.state.SUSPENDED') },
             ]}
             onValueChange={(value) => value && setState(value)}
           />
+          {descriptor && (
+            <Alert severity={descriptor.runtimeState === 'AVAILABLE' ? 'success' : 'info'}>
+              {descriptor.runtimeState === 'AVAILABLE'
+                ? t('admin.connections.runtimeAvailable', {
+                    version: descriptor.adapterVersion ?? '',
+                  })
+                : t('admin.connections.runtimeRequired')}
+            </Alert>
+          )}
         </Stack>
       </FormDialog>
     </MailAdminFrame>

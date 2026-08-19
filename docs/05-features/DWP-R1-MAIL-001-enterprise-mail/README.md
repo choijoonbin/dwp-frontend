@@ -10,12 +10,13 @@
 - 메일 홈: 읽지 않음, 긴급, 회신 필요, 집중 큐, 실행 제안, 공유함 흐름
 - Split Inbox: 우선, 회신 필요, 담당, 업데이트 분류와 서버 검색
 - 메일 처리: 읽음, 중요 표시, Snooze, 보관, 회신, 신규 작성
+- 발송 신뢰성: 영속 Delivery Outbox, lease worker, 지수 재시도, 실패 재처리, 멱등 응답
 - 임시 보관함: 서버 저장, 이어 쓰기, 재저장, 발송 전환
-- 대화형 본문: 외부 발신자 경고, 첨부 메타데이터, 분류 등급
+- 대화형 본문: 외부 발신자 경고, 첨부 메타데이터, 분류 등급, 받은·보낸 메일 다중 소속
 - 팀 협업: 공유함 구성원 경계, 담당자, 내부 댓글, 응답 목표
 - 키보드 경험: `Cmd/Ctrl+K`, `/`, `C`, `E`와 명령 팔레트
 - 관리자: 연결 상태, Provider 설정, 공유함 SLA, 보안·AI 정책
-- 공급사 계약: Microsoft Graph, Gmail, NAVER WORKS, JMAP, IMAP/SMTP
+- 공급사 계약: Microsoft Graph, Gmail, NAVER WORKS, JMAP, IMAP/SMTP와 배포 상태 분리
 - AI 확장: 회신, 일정, 휴가, 업무, 긴급 알림의 근거 기반·사람 승인형 제안
 - 다국어·반응형: 한국어·영어, Desktop 2열, Mobile 단계형 탐색
 
@@ -41,6 +42,8 @@
 7. AI 제안 수락은 대상 앱 권한을 재검증하며 자동 실행은 DB와 Agent 계약에서 차단한다.
 8. Agent와 Platform의 독립 액션 카탈로그가 대상 리소스·권한·경로·최소 위험도를 이중 검증한다.
 9. AI 액션은 버전 1 계약과 액션별 필수 payload를 사용하며, 미지원 버전·불완전 payload·만료된 제안은 거부한다.
+10. 계약만 등록된 외부 공급자는 Runtime Adapter가 배포되기 전 활성화할 수 없다.
+11. 동일 idempotency key의 신규 작성·회신·초안 발송 재요청은 기존 결과를 반환한다.
 
 ## 검증 시나리오
 
@@ -48,12 +51,13 @@
 2. 읽음·중요·Snooze·보관 변경이 version 증가와 감사 이벤트를 만든다.
 3. 새 메일과 회신 재시도가 같은 idempotency key로 중복 메시지를 만들지 않는다.
 4. 초안을 수정·재저장한 뒤 발송하면 Drafts에서 Sent로 이동한다.
-5. 공유함 비구성원은 상세·댓글·담당 변경이 거부된다.
-6. 공유함 담당자로 비구성원을 지정하면 서버가 거부한다.
-7. 외부 연결은 Secret Reference 없이 활성화되지 않는다.
-8. `MAIL_ADMIN`이 아닌 사용자의 연결·정책 변경은 403이다.
-9. 일정 권한이 없는 사용자는 일정 제안을 수락할 수 없다.
-10. Desktop과 Mobile에서 목록·상세·Dialog의 중첩 및 가로 overflow가 없다.
+5. 동일 대화의 회신은 원 스레드에 추가되고 Inbox와 Sent 양쪽에서 조회된다.
+6. 공유함 비구성원은 상세·댓글·담당 변경이 거부된다.
+7. 공유함 담당자로 비구성원을 지정하면 서버가 거부한다.
+8. 외부 연결은 Secret Reference와 배포된 Runtime Adapter 없이 활성화되지 않는다.
+9. `MAIL_ADMIN`이 아닌 사용자의 연결·정책 변경은 403이다.
+10. 일정 권한이 없는 사용자는 일정 제안을 수락할 수 없다.
+11. Desktop과 Mobile에서 목록·상세·Dialog의 중첩 및 가로 overflow가 없다.
 
 ## 데이터베이스 이력
 
@@ -64,6 +68,8 @@
 - Platform `V125`: 공유함 대화·담당자·내부 협업 댓글 완성
 - Platform `V128`: AI 액션 계약 버전 고정과 기존 제안 호환 보강
 - Platform `V140`: 근거·확인·권한·경로·만료 DB 불변식과 롤링 계약 버전 보강
+- Platform `V141`: lease 기반 발송 Outbox, 상태·재시도·Provider receipt 불변식
+- Platform `V142`: 대화별 다중 폴더 멤버십과 Inbox·Sent 동시 조회
 - Auth `V60`: `APP.MAIL`, `ADMIN.MAIL`, `MAIL_ADMIN`, SKAX 위임 그룹
 
 ## 외부 준비가 필요한 범위
@@ -71,3 +77,5 @@
 실제 Microsoft, Google, NAVER WORKS 또는 회사 메일 송수신은 고객 OAuth App, 관리자
 동의, callback URL, Secret Store와 도메인 검증이 준비된 뒤 각 `MailConnectorPort`
 어댑터를 활성화한다. 로컬은 동일한 도메인 계약을 사용하는 DWP Sandbox로 기능을 검증한다.
+관리 화면은 계약 지원 여부와 실제 Runtime Adapter 배포 여부를 별도로 표시하며, 준비되지 않은
+연결을 정상 또는 활성 상태로 가장하지 않는다.

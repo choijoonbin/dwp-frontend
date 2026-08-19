@@ -5008,6 +5008,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/mail/threads/{threadId}/messages/{messageId}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_retryDelivery"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/mail/threads/{threadId}/replies": {
         parameters: {
             query?: never;
@@ -11377,6 +11393,8 @@ export interface components {
             connections?: components["schemas"]["platform_ConnectionSummary"][];
             /** Format: int32 */
             degradedConnections?: number;
+            /** Format: int32 */
+            failedDeliveries?: number;
             /** Format: date-time */
             generatedAt?: string;
             /** Format: int32 */
@@ -11387,6 +11405,8 @@ export interface components {
             personalAccounts?: number;
             policy?: components["schemas"]["platform_TenantPolicy"];
             providerCatalog?: components["schemas"]["platform_ProviderDescriptor"][];
+            /** Format: int32 */
+            queuedDeliveries?: number;
             /** Format: int32 */
             sharedAccounts?: number;
             sharedInboxes?: components["schemas"]["platform_SharedInboxSummary"][];
@@ -14153,12 +14173,17 @@ export interface components {
             version?: number;
         };
         platform_Message: {
+            /** Format: date-time */
+            acceptedAt?: string;
             attachments?: {
                 [key: string]: unknown;
             }[];
             body?: string;
             bodyFormat?: string;
+            /** @enum {string} */
+            deliveryState?: "RECEIVED" | "DRAFT" | "QUEUED" | "SENDING" | "RETRYING" | "SENT" | "FAILED";
             direction?: string;
+            lastDeliveryError?: string;
             /** Format: uuid */
             messageId?: string;
             recipients?: {
@@ -14547,6 +14572,7 @@ export interface components {
             version: number;
         };
         platform_ProviderDescriptor: {
+            adapterVersion?: string;
             authenticationMode?: string;
             capabilities?: string[];
             name?: string;
@@ -14554,6 +14580,8 @@ export interface components {
             /** @enum {string} */
             providerType?: "DWP_SANDBOX" | "MICROSOFT_GRAPH" | "GOOGLE_GMAIL" | "NAVER_WORKS" | "JMAP" | "IMAP_SMTP";
             pushSupported?: boolean;
+            /** @enum {string} */
+            runtimeState?: "AVAILABLE" | "DEPLOYMENT_REQUIRED";
             tenantWideSupported?: boolean;
         };
         platform_ProvisionTenantRequest: {
@@ -15067,6 +15095,13 @@ export interface components {
             /** @enum {string} */
             status?: "AVAILABLE" | "FORBIDDEN" | "UNAVAILABLE";
         };
+        platform_SharedInboxMember: {
+            displayName?: string;
+            emailAddress?: string;
+            memberRole?: string;
+            /** Format: int64 */
+            userId?: number;
+        };
         platform_SharedInboxPulse: {
             address?: string;
             name?: string;
@@ -15221,6 +15256,7 @@ export interface components {
             internalComments?: components["schemas"]["platform_InternalComment"][];
             messages?: components["schemas"]["platform_Message"][];
             proposals?: components["schemas"]["platform_ActionProposal"][];
+            sharedInboxMembers?: components["schemas"]["platform_SharedInboxMember"][];
             thread?: components["schemas"]["platform_ThreadSummary"];
         };
         platform_ThreadPage: {
@@ -27221,6 +27257,33 @@ export interface operations {
                 "application/json": components["schemas"]["platform_DraftUpdateRequest"];
             };
         };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
+    platform_retryDelivery: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                threadId: string;
+                messageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {

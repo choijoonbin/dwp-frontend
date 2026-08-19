@@ -88,6 +88,9 @@
     "loadError": "메일 목록을 불러오지 못했습니다.",
     "total": "메일 {{count}}건",
     "syncReady": "동기화 준비됨",
+    "page": "{{current}} / {{total}} 페이지",
+    "previousPage": "이전 페이지",
+    "nextPage": "다음 페이지",
     "inbox": {
       "eyebrow": "Split Inbox",
       "title": "받은 메일",
@@ -130,6 +133,11 @@
     "loadError": "메일 내용을 불러오지 못했습니다.",
     "unread": "읽지 않은 메일",
     "assignedTo": "{{name}} 담당",
+    "assignee": "담당자",
+    "assigneePlaceholder": "공유함 구성원 선택",
+    "assign": "배정",
+    "assignmentSaved": "공유 메일 담당자를 배정했습니다.",
+    "assignmentError": "담당자를 배정하지 못했습니다. 새로고침 후 다시 시도하세요.",
     "markRead": "읽음으로 표시",
     "markUnread": "읽지 않음으로 표시",
     "star": "중요 표시",
@@ -151,9 +159,23 @@
     "replyPlaceholder": "답변을 작성하세요",
     "replyIdentity": "{{name}} 이름으로 회신합니다.",
     "sendReply": "회신 보내기",
-    "replySent": "회신을 보냈습니다.",
+    "replySent": "회신을 안전한 발송 대기열에 등록했습니다.",
     "replyError": "회신을 보내지 못했습니다.",
     "actionError": "메일 상태를 변경하지 못했습니다. 새로고침 후 다시 시도해 주세요."
+  },
+  "delivery": {
+    "state": {
+      "RECEIVED": "수신됨",
+      "DRAFT": "작성 중",
+      "QUEUED": "발송 대기",
+      "SENDING": "발송 중",
+      "RETRYING": "재시도 대기",
+      "SENT": "발송 완료",
+      "FAILED": "발송 실패"
+    },
+    "retry": "다시 보내기",
+    "retryQueued": "동일 메일을 중복 없이 다시 발송하도록 등록했습니다.",
+    "retryError": "메일 재발송을 등록하지 못했습니다."
   },
   "classification": {
     "PUBLIC": "공개",
@@ -188,7 +210,7 @@
     "send": "보내기",
     "sending": "보내는 중",
     "saveDraft": "임시 저장",
-    "sent": "메일을 보냈습니다.",
+    "sent": "메일을 안전한 발송 대기열에 등록했습니다.",
     "saved": "임시 보관함에 저장했습니다.",
     "error": "메일을 저장하거나 보내지 못했습니다."
   },
@@ -198,7 +220,7 @@
     "heading": "메일 이어 쓰기",
     "description": "받는 사람과 내용을 확인한 뒤 다시 저장하거나 바로 발송합니다.",
     "saved": "초안을 업데이트했습니다.",
-    "sent": "초안을 메일로 보냈습니다.",
+    "sent": "초안을 안전한 발송 대기열에 등록했습니다.",
     "error": "초안을 업데이트하지 못했습니다. 새로고침 후 다시 시도해 주세요."
   },
   "command": {
@@ -243,6 +265,10 @@
       "SYNCING": "동기화 중",
       "DEGRADED": "점검 필요",
       "SUSPENDED": "중지"
+    },
+    "runtime": {
+      "AVAILABLE": "어댑터 사용 가능",
+      "DEPLOYMENT_REQUIRED": "런타임 어댑터 배포 필요"
     }
   },
   "capability": {
@@ -269,7 +295,11 @@
       "shared": "공유함 처리 중",
       "sharedDetail": "담당자의 응답을 기다리는 대화",
       "proposals": "AI 제안",
-      "proposalsDetail": "사용자의 결정을 기다리는 제안"
+      "proposalsDetail": "사용자의 결정을 기다리는 제안",
+      "delivery": "발송 대기",
+      "deliveryDetail": "공급자 전달을 처리 중인 메일",
+      "failedDelivery": "발송 실패",
+      "failedDeliveryDetail": "관리 또는 사용자 재시도가 필요한 메일"
     },
     "overview": {
       "eyebrow": "메일 운영 관제",
@@ -295,6 +325,8 @@
       "domainPlaceholder": "company.example",
       "credentialRef": "보안 저장소 참조",
       "credentialRefHelp": "예: vault://tenant/mail/provider. 실제 비밀값은 입력하지 마세요.",
+      "runtimeAvailable": "런타임 어댑터 {{version}} 사용 가능",
+      "runtimeRequired": "공급자 계약만 준비되어 있습니다. 검증된 런타임 어댑터를 배포하기 전에는 활성화할 수 없습니다.",
       "state": "연결 상태",
       "saved": "메일 연결 설정을 저장했습니다.",
       "saveError": "메일 연결 설정을 저장하지 못했습니다."

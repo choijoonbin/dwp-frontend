@@ -88,6 +88,9 @@
     "loadError": "The mail list could not be loaded.",
     "total": "{{count}} messages",
     "syncReady": "Sync ready",
+    "page": "Page {{current}} of {{total}}",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
     "inbox": {
       "eyebrow": "Split Inbox",
       "title": "Inbox",
@@ -130,6 +133,11 @@
     "loadError": "The conversation could not be loaded.",
     "unread": "Unread message",
     "assignedTo": "Assigned to {{name}}",
+    "assignee": "Assignee",
+    "assigneePlaceholder": "Select a shared inbox member",
+    "assign": "Assign",
+    "assignmentSaved": "The shared mail owner was assigned.",
+    "assignmentError": "The owner could not be assigned. Refresh and try again.",
     "markRead": "Mark as read",
     "markUnread": "Mark as unread",
     "star": "Star",
@@ -151,9 +159,23 @@
     "replyPlaceholder": "Write a response",
     "replyIdentity": "Replying as {{name}}.",
     "sendReply": "Send reply",
-    "replySent": "The reply was sent.",
+    "replySent": "The reply was added to the governed delivery queue.",
     "replyError": "The reply could not be sent.",
     "actionError": "The message state could not be changed. Refresh and try again."
+  },
+  "delivery": {
+    "state": {
+      "RECEIVED": "Received",
+      "DRAFT": "Draft",
+      "QUEUED": "Queued",
+      "SENDING": "Sending",
+      "RETRYING": "Retry scheduled",
+      "SENT": "Sent",
+      "FAILED": "Delivery failed"
+    },
+    "retry": "Retry delivery",
+    "retryQueued": "The same message was queued for an idempotent delivery retry.",
+    "retryError": "The delivery retry could not be queued."
   },
   "classification": {
     "PUBLIC": "Public",
@@ -188,7 +210,7 @@
     "send": "Send",
     "sending": "Sending",
     "saveDraft": "Save draft",
-    "sent": "The message was sent.",
+    "sent": "The message was added to the governed delivery queue.",
     "saved": "The message was saved to drafts.",
     "error": "The message could not be saved or sent."
   },
@@ -198,7 +220,7 @@
     "heading": "Continue writing",
     "description": "Review the recipient and message, then save it again or send it now.",
     "saved": "The draft was updated.",
-    "sent": "The draft was sent as a message.",
+    "sent": "The draft was added to the governed delivery queue.",
     "error": "The draft could not be updated. Refresh and try again."
   },
   "command": {
@@ -243,6 +265,10 @@
       "SYNCING": "Syncing",
       "DEGRADED": "Needs attention",
       "SUSPENDED": "Suspended"
+    },
+    "runtime": {
+      "AVAILABLE": "Adapter available",
+      "DEPLOYMENT_REQUIRED": "Runtime adapter deployment required"
     }
   },
   "capability": {
@@ -269,7 +295,11 @@
       "shared": "Shared inbox open",
       "sharedDetail": "Conversations waiting for an owner response",
       "proposals": "AI proposals",
-      "proposalsDetail": "Proposals waiting for user decisions"
+      "proposalsDetail": "Proposals waiting for user decisions",
+      "delivery": "Delivery queue",
+      "deliveryDetail": "Messages currently being handed to providers",
+      "failedDelivery": "Delivery failures",
+      "failedDeliveryDetail": "Messages requiring an administrator or user retry"
     },
     "overview": {
       "eyebrow": "Mail operations control",
@@ -295,6 +325,8 @@
       "domainPlaceholder": "company.example",
       "credentialRef": "Secret-store reference",
       "credentialRefHelp": "For example, vault://tenant/mail/provider. Do not enter a secret value.",
+      "runtimeAvailable": "Runtime adapter {{version}} is available",
+      "runtimeRequired": "Only the provider contract is prepared. Activation is blocked until a verified runtime adapter is deployed.",
       "state": "Connection state",
       "saved": "The mail connection was saved.",
       "saveError": "The mail connection could not be saved."

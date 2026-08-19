@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Command, MailCheck, MailPlus, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Command, MailCheck, MailPlus, Search } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -39,6 +39,7 @@ import type { MailThread, MailTriageLane } from '@dwp-frontend/shared-utils';
 type MailboxMode = 'inbox' | 'sent' | 'drafts' | 'shared';
 
 const LANES: readonly MailTriageLane[] = ['PRIORITY', 'NEEDS_REPLY', 'ASSIGNED', 'UPDATES'];
+const PAGE_SIZE = 30;
 
 export function MailInbox({ mode }: { mode: MailboxMode }) {
   const { t } = useTranslation('mail');
@@ -48,6 +49,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const [lane, setLane] = useState<MailTriageLane>(mode === 'shared' ? 'ASSIGNED' : 'PRIORITY');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(0);
   const [commandOpen, setCommandOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement | null>(null);
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
@@ -56,16 +58,17 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const folder = mode === 'sent' ? 'SENT' : mode === 'drafts' ? 'DRAFTS' : 'INBOX';
   const activeLane = mode === 'inbox' || mode === 'shared' ? lane : undefined;
   const query = useQuery({
-    queryKey: ['mail', 'threads', mode, activeLane, debouncedSearch],
+    queryKey: ['mail', 'threads', mode, activeLane, debouncedSearch, page],
     queryFn: () =>
       getMailThreads({
         lane: activeLane,
         folder,
         sharedOnly: mode === 'shared',
         query: debouncedSearch,
-        page: 0,
-        pageSize: 50,
+        page,
+        pageSize: PAGE_SIZE,
       }),
+    placeholderData: (previous) => previous,
     staleTime: 20_000,
     retry: 1,
   });
@@ -89,12 +92,21 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   });
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => setDebouncedSearch(search.trim()), 250);
+    const timeout = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+      setPage(0);
+    }, 250);
     return () => window.clearTimeout(timeout);
   }, [search]);
 
   useEffect(() => {
-    if (!desktopSplitView || selectedId || !query.data?.items.length) return;
+    setPage(0);
+    setLane(mode === 'shared' ? 'ASSIGNED' : 'PRIORITY');
+  }, [mode]);
+
+  useEffect(() => {
+    if (!desktopSplitView || !query.data?.items.length) return;
+    if (selectedId && query.data.items.some((item) => item.threadId === selectedId)) return;
     const next = new URLSearchParams(params);
     next.set('thread', query.data.items[0]!.threadId);
     setParams(next, { replace: true });
@@ -160,6 +172,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     }),
     [mode, t]
   );
+  const pageCount = Math.max(1, Math.ceil((query.data?.total ?? 0) / PAGE_SIZE));
 
   return (
     <PageCanvas topInset="compact">
@@ -224,7 +237,10 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
             {(mode === 'inbox' || mode === 'shared') && (
               <Tabs
                 value={lane}
-                onChange={(_event, value: MailTriageLane) => setLane(value)}
+                onChange={(_event, value: MailTriageLane) => {
+                  setLane(value);
+                  setPage(0);
+                }}
                 variant="scrollable"
                 scrollButtons={false}
                 sx={{ mt: 1, minHeight: 34, '& .MuiTab-root': { minHeight: 34, px: 1.25 } }}
@@ -276,9 +292,35 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
             <Typography variant="caption" color="text.secondary">
               {t('mailbox.total', { count: query.data?.total ?? 0 })}
             </Typography>
-            <Stack direction="row" spacing={0.5} alignItems="center" color="text.secondary">
-              <MailCheck size={14} />
-              <Typography variant="caption">{t('mailbox.syncReady')}</Typography>
+            <Stack direction="row" spacing={0.25} alignItems="center">
+              {pageCount > 1 ? (
+                <>
+                  <ActionIconButton
+                    size="small"
+                    label={t('mailbox.previousPage')}
+                    disabled={page === 0}
+                    onClick={() => setPage((current) => Math.max(0, current - 1))}
+                  >
+                    <ChevronLeft size={16} />
+                  </ActionIconButton>
+                  <Typography variant="caption" color="text.secondary" sx={{ minWidth: 48 }}>
+                    {t('mailbox.page', { current: page + 1, total: pageCount })}
+                  </Typography>
+                  <ActionIconButton
+                    size="small"
+                    label={t('mailbox.nextPage')}
+                    disabled={page + 1 >= pageCount}
+                    onClick={() => setPage((current) => Math.min(pageCount - 1, current + 1))}
+                  >
+                    <ChevronRight size={16} />
+                  </ActionIconButton>
+                </>
+              ) : (
+                <Stack direction="row" spacing={0.5} alignItems="center" color="text.secondary">
+                  <MailCheck size={14} />
+                  <Typography variant="caption">{t('mailbox.syncReady')}</Typography>
+                </Stack>
+              )}
             </Stack>
           </Stack>
         </Box>

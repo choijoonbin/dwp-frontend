@@ -19,6 +19,14 @@ export type MailProposalType =
   | 'CREATE_TASK'
   | 'ESCALATE_NOTIFICATION';
 export type MailProposalStatus = 'PROPOSED' | 'ACCEPTED' | 'DISMISSED' | 'EXPIRED' | 'EXECUTED';
+export type MailDeliveryState =
+  | 'RECEIVED'
+  | 'DRAFT'
+  | 'QUEUED'
+  | 'SENDING'
+  | 'RETRYING'
+  | 'SENT'
+  | 'FAILED';
 
 export type MailAccount = {
   accountId: string;
@@ -69,6 +77,9 @@ export type MailMessage = {
   body: string;
   attachments: Array<Record<string, unknown>>;
   sentAt: string;
+  deliveryState: MailDeliveryState;
+  acceptedAt?: string | null;
+  lastDeliveryError?: string | null;
 };
 
 export type MailInternalComment = {
@@ -104,6 +115,14 @@ export type MailThreadDetail = {
   messages: MailMessage[];
   internalComments: MailInternalComment[];
   proposals: MailActionProposal[];
+  sharedInboxMembers: MailSharedInboxMember[];
+};
+
+export type MailSharedInboxMember = {
+  userId: number;
+  displayName: string;
+  emailAddress: string;
+  memberRole: 'MEMBER' | 'MANAGER';
 };
 
 export type MailSharedInboxPulse = {
@@ -187,6 +206,8 @@ export type MailProviderDescriptor = {
   capabilities: string[];
   pushSupported: boolean;
   tenantWideSupported: boolean;
+  runtimeState: 'AVAILABLE' | 'DEPLOYMENT_REQUIRED';
+  adapterVersion?: string | null;
 };
 
 export type MailAdminOverview = {
@@ -196,6 +217,8 @@ export type MailAdminOverview = {
   degradedConnections: number;
   openSharedThreads: number;
   pendingAiProposals: number;
+  queuedDeliveries: number;
+  failedDeliveries: number;
   policy: MailTenantPolicy;
   connections: MailConnection[];
   sharedInboxes: MailSharedInbox[];
@@ -312,6 +335,17 @@ export async function replyToMailThread(
     body,
     idempotencyKey,
   });
+  return response.data.data;
+}
+
+export async function retryMailDelivery(
+  threadId: string,
+  messageId: string
+): Promise<MailThreadDetail> {
+  const response = await axiosInstance.post<ApiResponse<MailThreadDetail>>(
+    `/api/platform/v1/mail/threads/${encodeURIComponent(threadId)}/messages/${encodeURIComponent(messageId)}/retry`,
+    {}
+  );
   return response.data.data;
 }
 

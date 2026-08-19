@@ -1,0 +1,327 @@
+import AxeBuilder from '@axe-core/playwright';
+import { expect, test, type Page, type Route } from '@playwright/test';
+
+import { mockShellSession } from './support/shell-session';
+
+const MEMBER_PERMISSIONS = [
+  {
+    resourceType: 'APP',
+    resourceKey: 'APP.MAIL',
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  },
+  {
+    resourceType: 'APP',
+    resourceKey: 'APP.MAIL',
+    permissionCode: 'UPDATE',
+    effect: 'ALLOW' as const,
+  },
+];
+
+function success(data: unknown) {
+  return JSON.stringify({ status: 'SUCCESS', message: 'OK', success: true, data });
+}
+
+function fulfill(route: Route, data: unknown) {
+  return route.fulfill({ contentType: 'application/json', body: success(data) });
+}
+
+function thread(id: string, options: { shared?: boolean; subject?: string } = {}) {
+  return {
+    threadId: id,
+    accountId: '10000000-0000-0000-0000-000000000001',
+    accountName: options.shared ? 'People Help' : 'Mina Kim',
+    folderType: 'INBOX',
+    sharedInboxId: options.shared ? '20000000-0000-0000-0000-000000000001' : null,
+    sharedInboxName: options.shared ? 'People Help' : null,
+    subject: options.subject ?? 'Customer launch review',
+    preview: 'Please confirm the launch review before the customer meeting.',
+    participants: [{ name: 'Alex Park', email: 'alex.park@example.com' }],
+    latestMessageAt: '2026-08-19T08:30:00Z',
+    unread: true,
+    starred: false,
+    importance: 'HIGH',
+    triageLane: options.shared ? 'ASSIGNED' : 'PRIORITY',
+    workflowState: 'OPEN',
+    snoozedUntil: null,
+    assignedUserId: options.shared ? 42 : null,
+    assignedName: options.shared ? 'Mina Kim' : null,
+    attachments: false,
+    externalSender: true,
+    classification: 'CONFIDENTIAL',
+    messageCount: 2,
+    version: 3,
+  };
+}
+
+function detail(item: ReturnType<typeof thread>, deliveryState = 'FAILED') {
+  return {
+    thread: item,
+    messages: [
+      {
+        messageId: '30000000-0000-0000-0000-000000000001',
+        senderEmail: 'alex.park@example.com',
+        senderName: 'Alex Park',
+        recipients: [{ name: 'Mina Kim', email: 'mina.kim@sk.com', type: 'TO' }],
+        direction: 'INBOUND',
+        bodyFormat: 'TEXT',
+        body: 'Please confirm the launch review.',
+        attachments: [],
+        sentAt: '2026-08-19T08:00:00Z',
+        deliveryState: 'RECEIVED',
+        acceptedAt: null,
+        lastDeliveryError: null,
+      },
+      {
+        messageId: '30000000-0000-0000-0000-000000000002',
+        senderEmail: 'mina.kim@sk.com',
+        senderName: 'Mina Kim',
+        recipients: [{ name: 'Alex Park', email: 'alex.park@example.com', type: 'TO' }],
+        direction: 'OUTBOUND',
+        bodyFormat: 'TEXT',
+        body: 'I will confirm the final review shortly.',
+        attachments: [],
+        sentAt: '2026-08-19T08:15:00Z',
+        deliveryState,
+        acceptedAt: null,
+        lastDeliveryError: deliveryState === 'FAILED' ? 'PROVIDER_UNAVAILABLE' : null,
+      },
+    ],
+    internalComments: [],
+    proposals: [],
+    sharedInboxMembers: item.sharedInboxId
+      ? [
+          {
+            userId: 42,
+            displayName: 'Mina Kim',
+            emailAddress: 'mina.kim@sk.com',
+            memberRole: 'MANAGER',
+          },
+          {
+            userId: 43,
+            displayName: 'Jin Lee',
+            emailAddress: 'jin.lee@sk.com',
+            memberRole: 'MEMBER',
+          },
+        ]
+      : [],
+  };
+}
+
+async function mockMailMember(page: Page) {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'en',
+    displayName: 'Mina Kim',
+    email: 'mina.kim@sk.com',
+    permissions: MEMBER_PERMISSIONS,
+  });
+}
+
+test('mail home exposes work signals without serious accessibility defects', async ({ page }) => {
+  await mockMailMember(page);
+  await page.route('**/api/platform/v1/mail/home', (route) =>
+    fulfill(route, {
+      accounts: [],
+      metrics: { unread: 6, urgent: 1, needsReply: 2, assigned: 1, snoozed: 0, activeProposals: 0 },
+      focusQueue: [thread('40000000-0000-0000-0000-000000000001')],
+      proposals: [],
+      sharedInboxes: [
+        {
+          sharedInboxId: '20000000-0000-0000-0000-000000000001',
+          name: 'People Help',
+          address: 'people@sk.com',
+          openCount: 4,
+          unassignedCount: 1,
+          overdueCount: 0,
+          serviceTargetMinutes: 240,
+        },
+      ],
+      generatedAt: '2026-08-19T09:00:00Z',
+    })
+  );
+
+  await page.goto('/mail/home');
+  await expect(page.getByRole('heading', { name: 'Focus queue' })).toBeVisible();
+  await expect(page.getByText('Customer launch review')).toBeVisible();
+
+  const accessibility = await new AxeBuilder({ page }).include('main').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const overflow = await page.evaluate(() =>
+    document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+  expect(overflow).toBeLessThanOrEqual(1);
+});
+
+test('mailbox pagination, shared ownership, and failed delivery retry are complete', async ({
+  page,
+}) => {
+  await mockMailMember(page);
+  const first = thread('40000000-0000-0000-0000-000000000001', {
+    subject: 'First page request',
+  });
+  const second = thread('40000000-0000-0000-0000-000000000002', {
+    subject: 'Second page request',
+  });
+  const shared = thread('40000000-0000-0000-0000-000000000003', {
+    shared: true,
+    subject: 'People policy question',
+  });
+  let retried = false;
+  let assignedToJin = false;
+  await page.route('**/api/platform/v1/mail/threads?*', (route) => {
+    const url = new URL(route.request().url());
+    if (url.searchParams.get('sharedOnly') === 'true') {
+      return fulfill(route, { items: [shared], total: 1, page: 0, pageSize: 30 });
+    }
+    const pageNumber = Number(url.searchParams.get('page') ?? '0');
+    return fulfill(route, {
+      items: pageNumber === 0 ? [first] : [second],
+      total: 31,
+      page: pageNumber,
+      pageSize: 30,
+    });
+  });
+  await page.route('**/api/platform/v1/mail/threads/*/messages/*/retry', (route) => {
+    retried = true;
+    return fulfill(route, detail(shared, 'QUEUED'));
+  });
+  await page.route('**/api/platform/v1/mail/threads/*/assignment', async (route) => {
+    expect((await route.request().postDataJSON()).assignedUserId).toBe(43);
+    assignedToJin = true;
+    return fulfill(route, {
+      ...detail({ ...shared, assignedUserId: 43, assignedName: 'Jin Lee', version: 4 }),
+    });
+  });
+  await page.route('**/api/platform/v1/mail/threads/*', (route) => {
+    const id = route.request().url().split('/').at(-1);
+    const item =
+      id === second.threadId
+        ? second
+        : id === shared.threadId
+          ? assignedToJin
+            ? { ...shared, assignedUserId: 43, assignedName: 'Jin Lee', version: 4 }
+            : shared
+          : first;
+    return fulfill(route, detail(item, retried && id === shared.threadId ? 'QUEUED' : 'FAILED'));
+  });
+
+  await page.goto('/mail/inbox');
+  const mobile = (page.viewportSize()?.width ?? 1280) < 1200;
+  if (mobile) {
+    await page.getByRole('button', { name: /First page request/ }).click();
+  }
+  await expect(page.getByRole('heading', { name: 'First page request' })).toBeVisible();
+  if (mobile) {
+    await page.getByRole('button', { name: 'Back' }).click();
+  }
+  await page.getByRole('button', { name: 'Next page' }).click();
+  if (mobile) {
+    await expect(page.getByText('Page 2 of 2')).toBeVisible();
+    await page.getByRole('button', { name: /Second page request/ }).click();
+  }
+  await expect(page.getByRole('heading', { name: 'Second page request' })).toBeVisible();
+  if (!mobile) {
+    await expect(page.getByText('Page 2 of 2')).toBeVisible();
+  }
+
+  await page.goto(`/mail/shared?thread=${shared.threadId}`);
+  await expect(page.getByText('Delivery failed')).toBeVisible();
+  await page.getByRole('button', { name: 'Retry delivery' }).click();
+  await expect(page.getByText('Queued', { exact: true })).toBeVisible();
+
+  await page.getByLabel('Assignee').click();
+  await page.getByRole('option', { name: /Jin Lee/ }).click();
+  await page.getByRole('button', { name: 'Assign', exact: true }).click();
+  await expect(page.getByText('Assigned to Jin Lee')).toBeVisible();
+});
+
+test('mail administrators see contract readiness separately from deployed adapters', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'MAIL_ADMIN'], {
+    locale: 'en',
+    displayName: 'Mail Admin',
+    permissions: [
+      ...MEMBER_PERMISSIONS,
+      {
+        resourceType: 'ADMIN',
+        resourceKey: 'ADMIN.MAIL',
+        permissionCode: 'VIEW',
+        effect: 'ALLOW',
+      },
+      {
+        resourceType: 'ADMIN',
+        resourceKey: 'ADMIN.MAIL',
+        permissionCode: 'MANAGE',
+        effect: 'ALLOW',
+      },
+    ],
+  });
+  await page.route('**/api/platform/v1/admin/mail/overview', (route) =>
+    fulfill(route, {
+      personalAccounts: 21,
+      sharedAccounts: 2,
+      activeConnections: 1,
+      degradedConnections: 0,
+      openSharedThreads: 4,
+      pendingAiProposals: 10,
+      queuedDeliveries: 0,
+      failedDeliveries: 0,
+      policy: {
+        externalSenderBanner: true,
+        blockRemoteImages: true,
+        allowSharedInboxes: true,
+        aiAssistanceEnabled: true,
+        aiCrossAppActionsEnabled: true,
+        aiAutoExecuteEnabled: false,
+        retentionDays: 365,
+        maximumAttachmentMb: 25,
+        version: 1,
+      },
+      connections: [
+        {
+          connectionId: '50000000-0000-0000-0000-000000000001',
+          connectionKey: 'microsoft-graph',
+          displayName: 'Microsoft 365',
+          providerType: 'MICROSOFT_GRAPH',
+          authenticationMode: 'OAUTH2',
+          mailDomain: null,
+          state: 'CONFIGURATION_REQUIRED',
+          capabilities: ['READ', 'SEND'],
+          credentialConfigured: false,
+          lastSynchronizedAt: null,
+          lastErrorCode: null,
+          version: 0,
+        },
+      ],
+      sharedInboxes: [],
+      providerCatalog: [
+        {
+          providerType: 'MICROSOFT_GRAPH',
+          name: 'Microsoft 365',
+          protocol: 'Microsoft Graph',
+          authenticationMode: 'OAuth 2.0',
+          capabilities: ['READ', 'SEND'],
+          pushSupported: true,
+          tenantWideSupported: true,
+          runtimeState: 'DEPLOYMENT_REQUIRED',
+          adapterVersion: null,
+        },
+      ],
+      generatedAt: '2026-08-19T09:00:00Z',
+    })
+  );
+
+  await page.goto('/mail/admin/connections');
+  await expect(page.getByText('Runtime adapter deployment required')).toBeVisible();
+  await page.getByRole('button', { name: 'Configure' }).click();
+  await expect(page.getByText(/Activation is blocked/)).toBeVisible();
+  await page.getByLabel('Connection state').click();
+  await expect(page.getByRole('option', { name: 'Active' })).toHaveAttribute('aria-disabled', 'true');
+});
