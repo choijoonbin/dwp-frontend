@@ -104,7 +104,7 @@
         "description": "일정, 집중 시간, 참석 응답 및 업무 공간 예약"
       },
       "ref-app-mail": {
-        "name": "메일과 일정",
+        "name": "메일",
         "shortName": "메일",
         "description": "메시지, 회의 및 후속 조치"
       },
@@ -112,6 +112,11 @@
         "name": "협업",
         "shortName": "협업",
         "description": "채팅, 채널 및 회의"
+      },
+      "dwp-spaces": {
+        "name": "Space",
+        "shortName": "Space",
+        "description": "팀, 지식, 앱과 AI가 목적별로 모이는 정책 기반 협업 공간"
       },
       "ref-app-service": {
         "name": "서비스 센터",

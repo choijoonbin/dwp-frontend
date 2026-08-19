@@ -1,6 +1,6 @@
 {
   "shell": {
-    "title": "Provider Control Plane",
+    "title": "프로바이더 제어 영역",
     "productName": "Digital Workplace",
     "operatorWorkspace": "프로바이더 운영",
     "globalScope": "글로벌 딜리버리 범위",
@@ -27,7 +27,7 @@
     }
   },
   "page": {
-    "breadcrumb": "Provider Control Plane",
+    "breadcrumb": "프로바이더 제어 영역",
     "overview": {
       "title": "운영 지휘 센터",
       "description": "전체 고객 환경의 상태, 위험 및 우선 조치를 통합 통제합니다."
@@ -69,7 +69,7 @@
       "description": "고권한 작업, 변경, 접근 및 결과를 상관관계 단위로 조사합니다."
     }
   },
-  "loading": "Provider Control Plane 불러오는 중",
+  "loading": "프로바이더 제어 영역 불러오는 중",
   "notAvailable": "정보 없음",
   "actions": {
     "cancel": "취소",
@@ -198,22 +198,22 @@
       "pending": "승인 대기",
       "pendingDetail": "작성자와 다른 승인자가 판정해야 합니다.",
       "running": "진행 중 롤아웃",
-      "runningDetail": "활성 또는 관찰 중단 상태의 Revision입니다."
+      "runningDetail": "활성 또는 관찰 중단 상태의 리비전입니다."
     },
     "inventory": {
-      "title": "롤아웃 Revision",
+      "title": "롤아웃 리비전",
       "description": "초안부터 승인, 단계 진행, 중단과 복구까지 불변 이력을 추적합니다."
     },
-    "gridLabel": "기능 롤아웃 Revision",
+    "gridLabel": "기능 롤아웃 리비전",
     "columns": {
-      "rollout": "기능 및 Revision",
+      "rollout": "기능 및 리비전",
       "strategy": "전개 방식",
       "stage": "현재 단계",
       "state": "상태",
       "updated": "최근 이정표"
     },
     "empty": {
-      "title": "아직 롤아웃 Revision이 없습니다",
+      "title": "아직 롤아웃 리비전이 없습니다",
       "description": "등록된 기능 플래그를 선택해 대상, 단계, 관찰 기준을 갖춘 초안을 만드십시오."
     },
     "actions": {
@@ -236,7 +236,7 @@
       "secretHint": "비밀값은 secret:// 참조만 허용됩니다."
     },
     "createRollout": {
-      "title": "롤아웃 Revision 설계",
+      "title": "롤아웃 리비전 설계",
       "action": "초안 생성",
       "guidance": "이 작업은 내부 평가 제어면만 변경합니다. 실제 배포 실행과 고객 통지는 D-13 승인 전까지 수행되지 않습니다.",
       "stageHint": "오름차순 백분율을 쉼표로 구분하고 마지막은 100이어야 합니다.",
@@ -275,12 +275,12 @@
       "percentages": "노출률은 0보다 크고 100 이하인 숫자여야 합니다."
     },
     "stageName": "단계 {{index}} · {{percentage}}%",
-    "revision": "Revision {{revision}}",
-    "revisionIdentity": "{{key}} · Revision {{revision}}",
+    "revision": "리비전 {{revision}}",
+    "revisionIdentity": "{{key}} · 리비전 {{revision}}",
     "requester": "요청자 #{{id}}",
     "approver": "승인자 #{{id}}",
     "externalLocked": "외부 실행 잠금",
-    "stagePlan": "단계 및 건강 Gate",
+    "stagePlan": "단계 및 건강 게이트",
     "observation": "최소 {{minutes}}분",
     "stageExposure": "{{percentage}}퍼센트 노출",
     "activeStage": "현재 {{name}}에서 {{percentage}}%를 결정적으로 평가하고 있습니다.",
@@ -289,7 +289,7 @@
     "actionDialog": {
       "submit": {
         "title": "독립 승인 요청",
-        "description": "제출 후에는 다른 승인자가 Revision과 단계 기준을 검토해야 합니다."
+        "description": "제출 후에는 다른 승인자가 리비전과 단계 기준을 검토해야 합니다."
       },
       "approve": {
         "title": "롤아웃 승인",
@@ -297,7 +297,7 @@
       },
       "reject": {
         "title": "롤아웃 거절",
-        "description": "거절 사유는 Revision 감사 이력에 영구 보존됩니다."
+        "description": "거절 사유는 리비전 감사 이력에 영구 보존됩니다."
       },
       "activate": {
         "title": "첫 단계 시작",
@@ -312,12 +312,12 @@
         "description": "중단된 현재 단계의 관찰을 다시 시작합니다."
       },
       "advance": {
-        "title": "건강 Gate 검토 및 승격",
-        "description": "관찰 결과가 설정된 Gate와 최소 시간 조건을 충족할 때만 다음 단계로 이동합니다."
+        "title": "건강 게이트 검토 및 승격",
+        "description": "관찰 결과가 설정된 게이트와 최소 시간 조건을 충족할 때만 다음 단계로 이동합니다."
       },
       "rollback": {
         "title": "이전 값 복구",
-        "description": "현재 Revision을 종료하고 이전 유효 값 또는 기본값을 새 복구 Revision으로 기록합니다."
+        "description": "현재 리비전을 종료하고 이전 유효 값 또는 기본값을 새 복구 리비전으로 기록합니다."
       }
     },
     "evaluation": {
@@ -326,10 +326,10 @@
       "action": "평가",
       "result": "{{tenant}}은 값 {{value}}을(를) 받습니다. 버킷 {{bucket}}, 현재 노출률 {{exposure}}%입니다.",
       "reasons": {
-        "DEFAULT": "활성 Revision이 없어 기본값을 사용합니다",
+        "DEFAULT": "활성 리비전이 없어 기본값을 사용합니다",
         "TARGET_MISS": "대상 조건에 포함되지 않아 기본값을 사용합니다",
         "PERCENTAGE_EXCLUDED": "대상이지만 현재 노출률 밖이라 기본값을 사용합니다",
-        "ROLLOUT_MATCH": "활성 Rollout 값이 적용됩니다"
+        "ROLLOUT_MATCH": "활성 롤아웃 값이 적용됩니다"
       }
     }
   },
@@ -1292,7 +1292,7 @@
       "enforcement": "강제 적용"
     },
     "visibility": {
-      "ADMIN_ONLY": "Provider 운영자 전용",
+      "ADMIN_ONLY": "프로바이더 운영자 전용",
       "RUNTIME": "허용된 런타임 소비자 조회 가능"
     },
     "enforcementSummary": "{{bindings}}개 중 {{enforced}}개 검증",
@@ -1328,7 +1328,7 @@
     "databaseSummary": "테이블 {{tables}} · 컬럼 {{columns}} · 문서화 {{documentation}}%",
     "allDatabases": "전체 데이터 자산",
     "globalScope": "서비스 경계 전체",
-    "providerOwned": "Provider 통제 범위",
+    "providerOwned": "프로바이더 통제 범위",
     "refresh": "원본 DB 다시 스캔",
     "refreshCompleted": "네 데이터베이스의 메타데이터를 다시 스캔했습니다.",
     "generatedAt": "마지막 스캔 {{value}}",
@@ -1410,7 +1410,7 @@
         "recommendation": "중복 행과 하위 계약을 확인한 뒤 기본키를 추가하세요."
       },
       "MISSING_DOCUMENTATION": {
-        "description": "원본 카탈로그와 Provider 주석에 업무 설명이 없습니다.",
+        "description": "원본 카탈로그와 프로바이더 주석에 업무 설명이 없습니다.",
         "recommendation": "다음 검토 전까지 목적, 소유권, 보존기간과 테넌트 경계를 문서화하세요."
       },
       "TIMEZONE_AMBIGUITY": {
@@ -1426,7 +1426,7 @@
         "recommendation": "대표 제약조건 하나를 유지하고 중복 항목은 버전 마이그레이션으로 제거하세요."
       },
       "ANNOTATION_DRIFT": {
-        "description": "Provider 주석에 등록된 자산이 실시간 원본 카탈로그에서 발견되지 않았습니다.",
+        "description": "프로바이더 주석에 등록된 자산이 실시간 원본 카탈로그에서 발견되지 않았습니다.",
         "recommendation": "원본 연결과 이름 변경 매핑을 확인하거나 오래된 주석을 폐기하세요."
       },
       "LINEAGE_DRIFT": {
@@ -1448,17 +1448,17 @@
       "evidence": "근거"
     },
     "policy": {
-      "revision": "Revision {{revision}}",
-      "revisionIdentity": "{{key}} · Revision {{revision}}",
+      "revision": "리비전 {{revision}}",
+      "revisionIdentity": "{{key}} · 리비전 {{revision}}",
       "guidance": "정책은 버전이 있는 통제 계약입니다. 게시 전에 최신 영향 미리보기와 작성자와 다른 운영자의 승인이 필요합니다.",
       "title": "데이터 정책 통제",
       "description": "실시간 카탈로그 근거를 기준으로 분류, 최소수집, 리전, 보존, 삭제, 법적 보존, 제한 필드와 테넌트 격리 통제를 정의합니다.",
       "completed": "정책 작업을 완료하고 통제 원장을 갱신했습니다.",
-      "emptySelection": "정책 Revision을 선택하면 규칙, 영향 근거와 승인 상태를 확인할 수 있습니다.",
+      "emptySelection": "정책 리비전을 선택하면 규칙, 영향 근거와 승인 상태를 확인할 수 있습니다.",
       "editor": {
         "policyTitle": "데이터 정책 등록",
-        "revisionTitle": "정책 Revision 생성",
-        "guidance": "정책 식별자와 범위는 Revision 간 유지됩니다. 런타임 강제는 별도 외부 통합 게이트가 승인될 때까지 비활성 상태입니다.",
+        "revisionTitle": "정책 리비전 생성",
+        "guidance": "정책 식별자와 범위는 리비전 간 유지됩니다. 런타임 강제는 별도 외부 통합 게이트가 승인될 때까지 비활성 상태입니다.",
         "keyHint": "변하지 않는 영문 소문자 키, 예: privacy.customer-retention"
       },
       "fields": {
@@ -1484,7 +1484,7 @@
         "scopeRef": "카탈로그 범위",
         "ownerService": "소유 서비스",
         "rule": "버전 정책 규칙",
-        "justification": "Revision 변경 사유",
+        "justification": "리비전 변경 사유",
         "reason": "판정 또는 작업 사유"
       },
       "types": {
@@ -1514,11 +1514,11 @@
       },
       "actions": {
         "createPolicy": "정책 등록",
-        "createRevision": "Revision 생성",
+        "createRevision": "리비전 생성",
         "preview": "영향 미리보기",
         "submit": "승인 요청",
-        "approve": "Revision 승인",
-        "reject": "Revision 거절",
+        "approve": "리비전 승인",
+        "reject": "리비전 거절",
         "publish": "정책 게시",
         "rollback": "롤백 준비"
       },
@@ -1529,22 +1529,22 @@
         },
         "submit": {
           "title": "독립 승인 요청",
-          "description": "Revision이 변경 불가능한 상태가 되며 작성자는 직접 승인할 수 없습니다."
+          "description": "리비전이 변경 불가능한 상태가 되며 작성자는 직접 승인할 수 없습니다."
         },
         "approve": {
-          "title": "정책 Revision 승인",
+          "title": "정책 리비전 승인",
           "description": "범위, 차단 사유, 경고와 롤백 기대사항을 독립적으로 검토했는지 확인하십시오."
         },
         "reject": {
-          "title": "정책 Revision 거절",
+          "title": "정책 리비전 거절",
           "description": "정책 소유자가 조치할 수 있는 구체적인 거절 사유를 기록하십시오."
         },
         "publish": {
           "title": "승인 정책 게시",
-          "description": "이 Revision을 활성 통제 계약으로 만들고 이전 Revision을 대체합니다."
+          "description": "이 리비전을 활성 통제 계약으로 만들고 이전 리비전을 대체합니다."
         },
         "rollback": {
-          "title": "롤백 Revision 준비",
+          "title": "롤백 리비전 준비",
           "description": "롤백은 이전 활성 규칙으로 새 초안을 만들며 미리보기와 승인 절차를 우회하지 않습니다."
         }
       },
@@ -1567,7 +1567,7 @@
           "ACTIVE_LEGAL_HOLD": "활성 법적 보존 조치가 이 범위의 보존 또는 삭제를 차단합니다: {{detail}}"
         }
       },
-      "history": "Revision 이력",
+      "history": "리비전 이력",
       "empty": {
         "title": "아직 통제되는 데이터 정책이 없습니다",
         "description": "실시간 카탈로그 범위를 기준으로 첫 정책을 등록하십시오. 게시하려면 영향 근거와 독립 승인이 필요합니다."

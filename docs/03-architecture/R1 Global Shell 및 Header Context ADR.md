@@ -2,7 +2,8 @@
 
 - 상태: Accepted
 - 적용일: 2026-08-13
-- 대상: Personal Home, Business App, Product Area, Tenant Control Center, Provider Control Plane
+- 대상: Personal Home, Business App, Product Area, Enterprise Space, Tenant Control Center,
+  Provider Control Plane
 
 ## 1. 결정 배경
 
@@ -38,14 +39,15 @@ Application Context를 Page 제목으로 대체하지 않는다. Header는 Route
 
 ## 3. Shell 계약
 
-| Shell                    | Product identity         | Header context         | Workspace                            | Navigation width |
-| ------------------------ | ------------------------ | ---------------------- | ------------------------------------ | ---------------- |
-| Personal Home            | Tenant Logo + DWP Lockup | 없음                   | 표시                                 | 없음             |
-| Business App             | DWP Lockup               | 현재 앱                | 표시                                 | 248 / 72px Rail  |
-| HR Product               | DWP Lockup               | HR                     | 표시                                 | 248px            |
-| Tenant Control Center    | 관리 센터 Lockup         | 관리 센터              | 표시                                 | 272px            |
-| Provider Control Plane   | Provider Lockup          | Provider Control Plane | 미표시                               | 272px            |
-| Provider Support Session | 관리 센터 Lockup         | 관리 센터              | Header Workspace 대신 Support Banner | 272px            |
+| Shell                    | Product identity         | Header context         | Work Context                     | Navigation width |
+| ------------------------ | ------------------------ | ---------------------- | -------------------------------- | ---------------- |
+| Personal Home            | Tenant Logo + DWP Lockup | 없음                   | 내 작업, Space 이동 가능         | 없음             |
+| Business App             | DWP Lockup               | 현재 앱                | 내 작업 또는 지원되는 활성 Space | 248 / 72px Rail  |
+| HR Product               | DWP Lockup               | HR                     | 내 작업 또는 지원되는 활성 Space | 248px            |
+| Enterprise Space         | DWP Lockup               | Space                  | 현재 Space                       | 248 / 72px Rail  |
+| Tenant Control Center    | 관리 센터 Lockup         | 관리 센터              | 고정 Tenant Scope                | 272px            |
+| Provider Control Plane   | Provider Lockup          | Provider Control Plane | 미표시                           | 272px            |
+| Provider Support Session | 관리 센터 Lockup         | 관리 센터              | Work Context 대신 Support Banner | 272px            |
 
 - Tenant Logo는 개인 Home의 공동 Brand 영역에서만 표시한다. 업무·관리 Sidebar에는 고객사
   Logo를 반복하지 않아 현재 Product와 Tenant Scope를 혼동시키지 않는다.
@@ -61,7 +63,7 @@ Desktop은 다음 순서를 고정한다.
 
 1. Navigation Toggle
 2. Application Context
-3. Workspace 또는 승인된 Support Context
+3. Work Context(`내 작업` 또는 활성 Space) 또는 승인된 Support Context
 4. Flexible Space
 5. Global Search
 6. Full Screen
@@ -69,7 +71,7 @@ Desktop은 다음 순서를 고정한다.
 8. Account Identity와 Avatar
 
 Mobile은 `Menu → Application Context → Flexible Space → Search → Notification → Account`를
-사용한다. Workspace와 Full Screen은 공간이 좁을 때 감추되 Account, Search,
+사용한다. Work Context와 Full Screen은 공간이 좁을 때 감추되 Account, Search,
 Notification과 현재 앱 Context는 유지한다. Global Utility 위치는 Route마다 바꾸지 않는다.
 
 Page 전용 생성·저장·내보내기·필터 명령은 Global Header에 넣지 않고 Page Header 또는
@@ -77,12 +79,14 @@ Page 전용 생성·저장·내보내기·필터 명령은 Global Header에 넣�
 
 Account Identity는 이름과 Avatar를 항상 유지하고, 두 번째 줄은 HR 직책을 우선 표시한다.
 직책이 없는 계정은 권한 역할을 대체 표시한다. Account Panel에서는 Email, 직책, 현재
-권한 역할과 Workspace를 서로 다른 정보로 분리해 권한과 인사 정보를 혼동하지 않는다.
+권한 역할과 Work Context를 서로 다른 정보로 분리해 권한과 인사 정보를 혼동하지 않는다.
 
 ## 5. 구현 계약
 
-- `ShellHeader`가 AppBar, Context, Workspace와 Global Utility 순서를 단독 소유한다.
-- `shellRegistry`가 Route별 Scope, Brand Mode, Workspace 노출, Context, Navigation Width와
+- `ShellHeader`가 AppBar, Application Context, Work Context와 Global Utility 순서를 단독
+  소유한다.
+- `shellRegistry`가 Route별 Scope, Brand Mode, Work Context 노출, Application Context,
+  Navigation Width와
   Header Surface를 소유하며 Layout은 Registry 밖에서 이 값을 재정의하지 않는다.
 - Layout은 `context`, `desktopOffset`, `navigation`, `scope`만 전달한다.
 - 현재 앱 이름은 Runtime Navigation Registry의 현재 Route Label을 우선하고, Registry를
@@ -95,9 +99,24 @@ Account Identity는 이름과 Avatar를 항상 유지하고, 두 번째 줄은 H
   Navigation을 단계적으로 축약한다. 인증·개인설정 Hydration 동안에는 같은 Registry 치수를
   사용하는 `ShellBootScreen`으로 Layout Shift를 억제한다.
 
-## 6. 검증 Gate
+## 6. Enterprise Space 확장 계약
 
-- Home, Business, HR, Admin, Provider의 Header Context·Workspace·Utility 순서
+- `Tenant`는 회사의 보안·계약·데이터 격리 경계이고, `Digital Workplace`는 Tenant의 DWP
+  전체 제품 경험이다.
+- `내 작업`은 여러 앱과 Space의 개인 업무를 모으는 가상 Context이며 Membership Entity가
+  아니다.
+- `Space`는 목적, Owner, Membership, Policy와 수명주기를 가진 Tenant 내부 Context다.
+- Work Context Selector는 권한을 부여하지 않는다. 선택 후 Server가 App Entitlement,
+  Space Membership, 원본 ACL과 Object Policy를 다시 평가한다.
+- App Registry는 `NONE`, `TENANT`, `SPACE_OPTIONAL`, `SPACE_REQUIRED` 중 하나의 Context
+  Capability를 선언한다. 지원하지 않는 앱은 활성 Space ID를 받지 않는다.
+- Tenant Control Center는 일반 사용자의 Space Switcher를 사용하지 않고 고정 Tenant Scope와
+  관리 대상 Space Deep Link를 구분한다.
+- 세부 Domain·권한·수명주기는 `R2 Enterprise Space Platform ADR.md`를 따른다.
+
+## 7. 검증 Gate
+
+- Home, Business, HR, Space, Admin, Provider의 Application Context·Work Context·Utility 순서
 - 1920px Expanded/Compact Reflow와 1280px·390px Responsive Layout
 - 한국어·영어의 긴 Context Label Truncation과 Tooltip/Accessible Name
 - Keyboard Focus, Drawer Open/Close, Home Link, Search Dialog와 Account Menu

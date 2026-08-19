@@ -490,7 +490,7 @@
     },
     "apps": {
       "ref-app-mail": {
-        "name": "메일과 일정",
+        "name": "메일",
         "description": "메시지, 일정 및 회의 작업",
         "owner": "워크플레이스 플랫폼",
         "lastUsed": "8분 전"

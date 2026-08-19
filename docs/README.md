@@ -31,6 +31,7 @@
 - `02-research/DWP 전자결재 글로벌 벤치마크 및 제품 방향 2026-08-14.md`
 - `02-research/DWP HCM 글로벌 벤치마크 및 제품 방향 2026-08-14.md`
 - `02-research/DWP 캘린더 글로벌 벤치마크 및 제품 설계 2026-08-14.md`
+- `02-research/DWP Space 글로벌 벤치마크 및 제품 방향 2026-08-18.md`
 - `06-delivery/DWP 최종 실행 백로그 및 출시 조건 2026-08-12.md`: 현행 실행 Backlog SSOT
 - `03-architecture/R0 기반 의사결정.md`
 - `03-architecture/R0 플랫폼 통합 및 Agent Runtime ADR.md`
@@ -50,6 +51,8 @@
 - `03-architecture/R1 Employee Services and Service Request Orchestration ADR.md`
 - `03-architecture/R1 Enterprise Approval Decision Hub ADR.md`
 - `03-architecture/R1 Enterprise Calendar Scheduling ADR.md`
+- `03-architecture/R1 Enterprise Mail and Governed AI ADR.md`
+- `03-architecture/R2 Enterprise Space Platform ADR.md`
 - `04-design-system/DWP UI Foundation 전략.md`
 - `04-design-system/DWP Premium Experience Direction.md`
 - `04-design-system/DWP Product Experience Rules.md`
@@ -75,6 +78,8 @@
 - `05-features/DWP-R1-APR-001-enterprise-approval-decision-hub/`
 - `05-features/DWP-R1-HR-001-role-aware-hcm/`
 - `05-features/DWP-R1-CAL-001-enterprise-calendar/`
+- `05-features/DWP-R1-MAIL-001-enterprise-mail/`
+- `05-features/DWP-R2-SPC-001-enterprise-spaces/`
 - `06-delivery/디자인 파트너 선정 및 Pilot Charter.md`
 - `06-delivery/R0 C1 Productivity Connector 준비 체크리스트.md`
 - `06-delivery/로컬 권한별 로그인 검증 계정.md`

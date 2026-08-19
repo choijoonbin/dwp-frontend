@@ -13,6 +13,7 @@
     "groups": {
       "experience": "사용자 경험",
       "services": "서비스 운영",
+      "spaces": "Space 운영",
       "identity": "ID 및 접근 권한",
       "platform": "플랫폼 설정",
       "integrations": "연계 및 자동화",
@@ -45,8 +46,8 @@
         "description": "조직 관리 기본값에 대한 구성원의 업무 예외 요청을 근거와 영향에 따라 검토합니다."
       },
       "localization": {
-        "label": "다국어 Studio",
-        "title": "다국어 Studio",
+        "label": "다국어 스튜디오",
+        "title": "다국어 스튜디오",
         "description": "테넌트 번역을 품질 근거와 함께 작성·검토·승인·게시·복원합니다."
       },
       "service-catalog": {
@@ -58,6 +59,41 @@
         "label": "요청 운영",
         "title": "서비스 요청 운영",
         "description": "테넌트 서비스 요청을 분류·배정·처리하고 SLA와 전체 이력을 통제합니다."
+      },
+      "space-overview": {
+        "label": "운영 개요",
+        "title": "Space 운영 센터",
+        "description": "테넌트 Space 포트폴리오의 위험, 요청, 준법 검토와 수명주기를 지휘합니다."
+      },
+      "space-directory": {
+        "label": "Space 디렉터리",
+        "title": "Space 포트폴리오",
+        "description": "전체 Space의 목적, 공개 범위, 데이터 등급, 구성원과 활동 상태를 탐색합니다."
+      },
+      "space-requests": {
+        "label": "생성 요청",
+        "title": "Space 생성 거버넌스",
+        "description": "정책 평가 결과와 업무 근거를 검토해 Space 생성을 승인하거나 반려합니다."
+      },
+      "space-templates": {
+        "label": "템플릿",
+        "title": "Space 템플릿 스튜디오",
+        "description": "목적별 생성 정책, 기본 공개 범위, 데이터 등급과 앱 구성을 버전으로 관리합니다."
+      },
+      "space-content-reviews": {
+        "label": "콘텐츠 검토",
+        "title": "Space 콘텐츠 준법 검토",
+        "description": "관리형 게시물의 데이터 등급과 근거를 독립적으로 검토하고 게시 결정을 기록합니다."
+      },
+      "space-lifecycle": {
+        "label": "수명주기 검토",
+        "title": "Space 수명주기 및 접근 검토",
+        "description": "유휴 Space, 권한과 보존 의무를 주기적으로 인증하고 후속 조치를 통제합니다."
+      },
+      "space-operations": {
+        "label": "운영 정합성",
+        "title": "Space 운영 정합성",
+        "description": "멤버십과 중앙 권한 상태를 조정하고 만료·소유권·수명주기 드리프트를 복구합니다."
       },
       "access": {
         "label": "접근 제어",
@@ -100,8 +136,8 @@
         "description": "SCIM 자격증명과 계정 수명주기 자동 프로비저닝을 관리합니다."
       },
       "catalog": {
-        "label": "Catalog 탐색",
-        "title": "Catalog 탐색",
+        "label": "카탈로그 탐색",
+        "title": "카탈로그 탐색",
         "description": "테넌트 및 제품 자산의 소유권, 의존성, 권한과 변경 영향을 탐색합니다."
       },
       "reference-data": {
@@ -158,6 +194,267 @@
         "label": "홈 구성 정책",
         "title": "홈 구성 정책",
         "description": "관리형 홈 영역과 구성원 개인 위젯의 편집 경계를 통제합니다."
+      }
+    }
+  },
+  "spaces": {
+    "common": {
+      "loadError": "Space 운영 데이터를 불러오지 못했습니다.",
+      "unknownRequester": "요청자 정보 없음"
+    },
+    "metrics": {
+      "activeSpaces": "활성 Space",
+      "restrictedSpaces": "제한 등급 Space",
+      "pendingRequests": "생성 승인 대기",
+      "pendingReviews": "게시 검토 대기",
+      "overdueLifecycle": "기한 초과 검토",
+      "activeMemberships": "활성 멤버십"
+    },
+    "overview": {
+      "metricsLabel": "Space 운영 핵심 지표",
+      "priorityTitle": "우선 검토 대기열",
+      "priorityDescription": "위험도와 대기 시간을 기준으로 먼저 판단할 생성 요청입니다.",
+      "postureTitle": "거버넌스 상태",
+      "postureDescription": "준법·수명주기·데이터 경계에서 관리자가 확인해야 할 현재 신호입니다."
+    },
+    "actions": {
+      "openQueue": "대기열 열기",
+      "openSpace": "Space 열기",
+      "review": "검토",
+      "approve": "승인",
+      "reject": "반려",
+      "publish": "게시 승인",
+      "newTemplate": "새 템플릿",
+      "recordDecision": "결정 기록"
+    },
+    "columns": {
+      "space": "Space",
+      "purpose": "목적",
+      "visibility": "공개 범위",
+      "classification": "데이터 등급",
+      "members": "접근 주체",
+      "activity": "최근 활동",
+      "requester": "요청자",
+      "template": "템플릿",
+      "risk": "위험도",
+      "status": "상태",
+      "requestedAt": "요청 일시",
+      "content": "콘텐츠",
+      "strategy": "검토 전략",
+      "reviewType": "검토 유형",
+      "dueAt": "기한",
+      "recommendation": "결정"
+    },
+    "purpose": {
+      "PROJECT": "프로젝트",
+      "COMMUNITY": "커뮤니티",
+      "OPERATIONS": "운영",
+      "KNOWLEDGE": "지식",
+      "LEADERSHIP": "리더십"
+    },
+    "decision": {
+      "note": "결정 근거",
+      "noteHelp": "후속 감사와 요청자 안내에 사용할 구체적인 근거를 5자 이상 입력하세요.",
+      "saved": "결정을 기록했습니다.",
+      "error": "결정을 처리하지 못했습니다. 최신 상태를 확인하세요."
+    },
+    "directory": {
+      "title": "테넌트 Space 포트폴리오",
+      "description": "목적, 공개 범위와 데이터 경계를 기준으로 전체 Space를 탐색합니다.",
+      "search": "Space 검색",
+      "tableLabel": "테넌트 Space 포트폴리오"
+    },
+    "requests": {
+      "title": "생성 요청 대기열",
+      "description": "자동화할 수 없는 고위험 요청만 사람이 근거를 검토합니다.",
+      "tableLabel": "Space 생성 요청",
+      "decisionDescription": "목적, 대상, 공개 범위와 정책 판정 근거를 확인한 뒤 책임 있는 결정을 기록하세요."
+    },
+    "templates": {
+      "title": "Space 템플릿 포트폴리오",
+      "description": "표준 시작 방식을 버전과 게시 상태로 관리합니다.",
+      "createTitle": "Space 템플릿 만들기",
+      "editTitle": "Space 템플릿 수정",
+      "key": "템플릿 키",
+      "purpose": "목적 유형",
+      "nameKo": "한국어 이름",
+      "nameEn": "영어 이름",
+      "descriptionKo": "한국어 설명",
+      "descriptionEn": "영어 설명",
+      "creationMode": "생성 정책",
+      "icon": "아이콘 키",
+      "accent": "강조 색상",
+      "defaultApps": "기본 앱 키",
+      "defaultAppsHelp": "쉼표로 구분해 입력합니다. 테넌트 허용 앱만 실제 연결됩니다.",
+      "saved": "Space 템플릿을 저장했습니다.",
+      "error": "템플릿을 저장하지 못했습니다. 키와 최신 버전을 확인하세요."
+    },
+    "content": {
+      "title": "콘텐츠 준법 검토 대기열",
+      "description": "관리형 게시 정책과 데이터 등급에 따라 제출된 콘텐츠를 독립적으로 검토합니다.",
+      "tableLabel": "Space 콘텐츠 게시 검토",
+      "decisionDescription": "데이터 등급, 대상 범위와 콘텐츠 근거를 확인한 뒤 게시 또는 반려 결정을 기록하세요."
+    },
+    "lifecycle": {
+      "title": "수명주기 및 접근 인증",
+      "description": "활동, 접근과 보존 의무를 근거로 Space 유지·보관·삭제 대기·권한 검토를 결정합니다.",
+      "tableLabel": "Space 수명주기 검토",
+      "decisionTitle": "수명주기 결정 기록",
+      "decisionDescription": "삭제는 즉시 실행되지 않고 삭제 대기 상태로 전환되어 보존·법적 보류 정책을 다시 검증합니다.",
+      "saved": "수명주기 결정을 기록했습니다.",
+      "types": {
+        "ACTIVITY": "활동 상태",
+        "ACCESS": "접근 권한",
+        "RETENTION": "보존 의무"
+      },
+      "recommendations": {
+        "KEEP": "유지",
+        "ARCHIVE": "보관",
+        "DELETE": "삭제 대기",
+        "REVIEW_ACCESS": "권한 재검토"
+      }
+    },
+    "operations": {
+      "health": {
+        "healthy": "Space 제어면이 정상 상태입니다.",
+        "attention": "운영 정합성 확인이 필요합니다.",
+        "connected": "중앙 ID 거버넌스 연결과 자동 조정이 활성화되어 있습니다.",
+        "notConfigured": "중앙 ID 거버넌스 연결 정보가 없어 권한 전달이 중지되어 있습니다."
+      },
+      "actions": {
+        "reconcile": "지금 조정",
+        "retry": "권한 전달 재시도",
+        "inspect": "증적 확인",
+        "close": "닫기",
+        "assignOwner": "소유자 지정",
+        "openLifecycle": "수명주기 검토 열기",
+        "openDelivery": "권한 전달 상태 보기"
+      },
+      "metrics": {
+        "label": "Space 운영 정합성 핵심 지표",
+        "queued": "전달 대기",
+        "dead": "처리 중단",
+        "findings": "미해결 이슈",
+        "ownerless": "소유자 없음",
+        "overdue": "기한 초과 검토",
+        "synchronized": "24시간 내 동기화"
+      },
+      "findings": {
+        "title": "주의가 필요한 운영 신호",
+        "description": "자동 조정만으로 해결되지 않은 소유권, 권한과 수명주기 문제입니다.",
+        "detailTitle": "운영 이슈 증적",
+        "detailDescription": "탐지 근거와 권장 복구 경로를 확인합니다.",
+        "evidenceTitle": "탐지 근거",
+        "detectionTitle": "탐지 이력",
+        "firstDetected": "최초 탐지 {{value}}",
+        "lastDetected": "최근 확인 {{value}}",
+        "recommendedAction": "권장 조치",
+        "emptyTitle": "미해결 운영 이슈가 없습니다.",
+        "emptyDetail": "원하는 멤버십 상태와 중앙 권한 상태가 일치합니다.",
+        "evidence": {
+          "spaceKey": "Space 키",
+          "spaceName": "Space 이름",
+          "reviewType": "검토 유형",
+          "dueAt": "처리 기한",
+          "permissionCode": "권한",
+          "deliveryState": "전달 상태",
+          "attemptCount": "시도 횟수",
+          "lastError": "최근 오류",
+          "pendingRevocations": "미완료 회수"
+        },
+        "types": {
+          "OWNERLESS_SPACE": {
+            "title": "유효한 Space 소유자가 없습니다.",
+            "detail": "관리 책임자를 지정하기 전까지 고위험 변경을 제한해야 합니다.",
+            "action": "활성 구성원 중 책임자를 소유자로 지정한 뒤 운영 상태를 다시 조정하세요."
+          },
+          "ENTITLEMENT_DELIVERY": {
+            "title": "중앙 권한 전달이 반복 실패했습니다.",
+            "detail": "ID 거버넌스 연결과 대상 주체를 확인한 뒤 재시도하세요.",
+            "action": "오류 증적과 주체 식별자를 확인하고 중단된 전달 건을 재시도하세요."
+          },
+          "EXPIRED_MEMBERSHIP": {
+            "title": "만료 멤버십 권한 회수가 지연되고 있습니다.",
+            "detail": "접근 종료 시점과 중앙 권한 회수 상태를 확인하세요.",
+            "action": "회수 대기 권한을 확인하고 중앙 IAG 전달 실패 건을 복구하세요."
+          },
+          "LIFECYCLE_REVIEW": {
+            "title": "수명주기 검토 기한이 지났습니다.",
+            "detail": "활동, 접근 또는 보존 근거를 검토하고 결정을 기록하세요.",
+            "action": "수명주기 대기열에서 유지, 보관, 삭제 대기 또는 접근 재검토 결정을 기록하세요."
+          }
+        }
+      },
+      "severity": {
+        "INFO": "정보",
+        "WARNING": "주의",
+        "HIGH": "높음",
+        "CRITICAL": "매우 높음"
+      },
+      "runs": {
+        "title": "최근 조정 실행",
+        "description": "원하는 상태 계산과 드리프트 탐지의 실행 근거입니다.",
+        "trigger": {
+          "SCHEDULED": "정기 자동 조정",
+          "MANUAL": "관리자 수동 조정",
+          "RECOVERY": "장애 복구 조정"
+        },
+        "state": {
+          "RUNNING": "실행 중",
+          "SUCCEEDED": "완료",
+          "FAILED": "실패"
+        },
+        "result": "권한 {{planned}}건 계획 · 멤버십 {{expired}}건 만료 · 이슈 {{findings}}건"
+      },
+      "deliveries": {
+        "title": "중앙 권한 전달 상태",
+        "description": "Space 역할에서 계산한 최소 권한이 중앙 IAG에 전달된 상태입니다.",
+        "tableLabel": "Space 중앙 권한 전달 상태"
+      },
+      "columns": {
+        "target": "대상",
+        "permission": "권한",
+        "desired": "원하는 상태",
+        "delivery": "전달 상태",
+        "attempts": "시도",
+        "synchronizedAt": "마지막 동기화",
+        "actions": "작업"
+      },
+      "desired": {
+        "GRANTED": "부여",
+        "REVOKED": "회수"
+      },
+      "delivery": {
+        "PENDING": "대기 중",
+        "IN_PROGRESS": "처리 중",
+        "SUCCEEDED": "동기화됨",
+        "RETRY": "재시도 예정",
+        "DEAD": "처리 중단"
+      },
+      "messages": {
+        "reconciled": "Space 운영 상태를 다시 조정했습니다.",
+        "retryQueued": "권한 전달을 다시 대기열에 넣었습니다.",
+        "error": "운영 조정 작업을 완료하지 못했습니다."
+      },
+      "ownerRecovery": {
+        "title": "책임 소유자 복구",
+        "description": "{{space}}의 운영 책임을 맡을 활성 구성원을 지정합니다. 이 작업은 감사 증적과 중앙 권한 동기화 이력을 남깁니다.",
+        "search": "활성 구성원 찾기",
+        "searchPlaceholder": "이름, 이메일 또는 조직을 2자 이상 입력",
+        "searchHelp": "현재 테넌트의 활성 구성원만 복구 소유자로 지정할 수 있습니다.",
+        "searching": "활성 구성원을 확인하고 있습니다.",
+        "searchError": "구성원 디렉터리를 불러오지 못했습니다.",
+        "noResults": "조건에 맞는 활성 구성원이 없습니다.",
+        "selected": "{{name}}님을 책임 소유자로 지정합니다.",
+        "reason": "복구 사유",
+        "reasonHelp": "소유자 부재 원인과 이 구성원이 적절한 근거를 10자 이상 기록하세요.",
+        "submit": "소유권 복구",
+        "submitting": "소유권 복구 중",
+        "success": "책임 소유자를 지정하고 중앙 권한 조정을 시작했습니다.",
+        "error": "소유권을 복구하지 못했습니다. 대상 구성원과 최신 Space 상태를 확인하세요."
+      },
+      "common": {
+        "notAvailable": "아직 없음"
       }
     }
   },
@@ -307,7 +604,7 @@
       "user": "사용자",
       "state": "동의 상태",
       "scopes": "실제 부여 범위",
-      "tokenExpiry": "Access Token 만료",
+      "tokenExpiry": "액세스 토큰 만료",
       "lastSync": "마지막 성공",
       "userId": "사용자 {{id}}",
       "empty": "아직 동의 연결을 완료한 사용자가 없습니다."
@@ -538,11 +835,11 @@
       "apps": "등록 앱",
       "active": "활성 영역",
       "personal": "개인화 경계",
-      "personalValue": "사용자별"
+      "personalValue": "관리자 통제"
     },
     "policy": {
-      "title": "테넌트 기본값과 개인 설정을 분리합니다",
-      "description": "관리자는 영역, 다국어 명칭, 앱의 기본 위치를 게시합니다. 사용자는 자신에게 부여된 앱만 이동·폴더화·숨김 처리할 수 있으며 이 작업으로 권한이나 다른 사용자의 홈은 변경되지 않습니다."
+      "title": "업무 도구는 테넌트 관리형 영역입니다",
+      "description": "관리자가 영역, 다국어 명칭과 앱 배치를 게시합니다. 구성원은 권한이 부여된 앱만 실행할 수 있으며 홈의 그룹, 순서 또는 노출 정책을 변경할 수 없습니다."
     },
     "groups": {
       "title": "홈 영역 체계",
@@ -1209,7 +1506,7 @@
       },
       "detail": {
         "HEALTHY": "선택 범위에서 서버 오류 없이 지연 임계치가 정상 범위입니다.",
-        "ATTENTION": "서버 오류 {{errors}}건, 오류율 {{rate}}%, p95 {{latency}}를 라우트와 Trace 순서로 검토하십시오.",
+        "ATTENTION": "서버 오류 {{errors}}건, 오류율 {{rate}}%, p95 {{latency}}를 라우트와 추적 순서로 검토하십시오.",
         "CRITICAL": "오류율 또는 꼬리 지연 임계치를 초과했습니다. 영향 라우트를 격리하고 감사 증적을 보존하십시오."
       },
       "errors": "서버 오류 {{count}}",
@@ -1226,7 +1523,7 @@
       "method": "메서드",
       "allMethods": "전체 메서드",
       "outcome": "처리 결과",
-      "searchPlaceholder": "라우트, 상관관계 ID 또는 Trace ID 검색",
+      "searchPlaceholder": "라우트, 상관관계 ID 또는 추적 ID 검색",
       "search": "검색 적용",
       "autoRefresh": "자동 새로고침",
       "refresh": "API 관측 데이터 새로고침"
@@ -1314,7 +1611,7 @@
         "service": "서비스",
         "latency": "지연",
         "actor": "수행자",
-        "trace": "Trace"
+        "trace": "추적"
       }
     },
     "detail": {
@@ -1323,9 +1620,9 @@
       "loading": "요청 추적 정보 불러오는 중",
       "loadError": "요청 추적 정보를 불러오지 못했습니다.",
       "copyCorrelation": "상관관계 ID 복사",
-      "copyTrace": "Trace ID 복사",
+      "copyTrace": "추적 ID 복사",
       "openAuditEvidence": "상관관계 감사 증적 열기",
-      "traceTitle": "Trace 홉",
+      "traceTitle": "추적 홉",
       "fields": {
         "service": "서비스",
         "instance": "인스턴스",
@@ -1336,7 +1633,7 @@
         "client": "클라이언트 계열",
         "error": "오류 유형",
         "correlation": "상관관계 ID",
-        "trace": "Trace ID"
+        "trace": "추적 ID"
       }
     }
   },
@@ -1440,7 +1737,7 @@
       "sourceService": "수집 서비스",
       "actor": "수행자 식별정보",
       "clear": "필터 초기화",
-      "searchPlaceholder": "활동, 대상, 수행자, 상관관계 또는 Trace 검색",
+      "searchPlaceholder": "활동, 대상, 수행자, 상관관계 또는 추적 검색",
       "apply": "필터 적용"
     },
     "savedSearches": {
@@ -1575,7 +1872,7 @@
       "retention": "보존 등급",
       "traceability": "추적 정보",
       "correlation": "상관관계 ID",
-      "trace": "Trace ID",
+      "trace": "추적 ID",
       "eventId": "이벤트 ID",
       "hash": "레코드 해시",
       "change": "변경 증적",
@@ -2202,100 +2499,6 @@
       "SYSTEM": "시스템",
       "CUSTOM": "사용자 정의"
     },
-    "systemRoles": {
-      "ADMIN": {
-        "name": "관리자",
-        "description": "플랫폼 전반의 기본 관리 권한을 수행합니다."
-      },
-      "PLATFORM_ADMIN": {
-        "name": "플랫폼 관리자",
-        "description": "테넌트의 플랫폼 구성과 공통 서비스를 관리합니다."
-      },
-      "TENANT_ADMIN": {
-        "name": "테넌트 관리자",
-        "description": "고객사 테넌트의 사용자, 정책 및 운영 설정을 관리합니다."
-      },
-      "WORKSPACE_MEMBER": {
-        "name": "워크스페이스 구성원",
-        "description": "인증된 구성원에게 부여되는 비특권 기본 역할입니다."
-      },
-      "HR_ADMIN": {
-        "name": "HR 관리자",
-        "description": "인사 데이터와 조직 정보를 관리합니다."
-      },
-      "PEOPLE_ADMIN": {
-        "name": "인사 서비스 관리자",
-        "description": "구성원 디렉터리와 인사 서비스 운영을 관리합니다."
-      },
-      "AUDITOR": {
-        "name": "감사 조사자",
-        "description": "테넌트 감사 증적을 조회하고 조사하며 내보냅니다."
-      },
-      "AUDIT_ADMIN": {
-        "name": "감사 관리자",
-        "description": "감사 증적, 정책, 무결성 및 연동을 관리합니다."
-      },
-      "IDENTITY_ADMIN": {
-        "name": "ID 관리자",
-        "description": "특권 역할 정책과 분리하여 구성원, 그룹 및 프로비저닝을 관리합니다."
-      },
-      "APP_CATALOG_ADMIN": {
-        "name": "앱 카탈로그 관리자",
-        "description": "앱 소유권과 범위형 앱 관리 책임 위임을 통제합니다."
-      },
-      "COMMUNICATIONS_EDITOR": {
-        "name": "사내 소식 편집자",
-        "description": "게시 권한 없이 구성원 소식의 초안을 작성하고 편집합니다."
-      },
-      "COMMUNICATIONS_PUBLISHER": {
-        "name": "사내 소식 게시 책임자",
-        "description": "대상과 게시 정책을 검토한 뒤 소식을 게시하고 수명주기를 관리합니다."
-      },
-      "SERVICE_CATALOG_MANAGER": {
-        "name": "서비스 카탈로그 관리자",
-        "description": "직원 서비스 정의, 신청 양식, 담당 조직과 SLA 정책을 관리합니다."
-      },
-      "SERVICE_AGENT": {
-        "name": "서비스 처리 담당자",
-        "description": "직원 서비스 요청을 분류·배정·처리하고 근거와 이력을 기록합니다."
-      },
-      "PROVIDER_ADMIN": {
-        "name": "프로바이더 관리자",
-        "description": "격리된 프로바이더 제어 영역을 운영합니다."
-      },
-      "PROVIDER_OPERATOR": {
-        "name": "프로바이더 운영자",
-        "description": "프로바이더 서비스 환경의 일상 운영을 수행합니다."
-      },
-      "PROVIDER_SUPPORT": {
-        "name": "프로바이더 지원 담당자",
-        "description": "승인된 기간 동안 제한된 고객 지원 작업을 수행합니다."
-      },
-      "PROVIDER_AUDITOR": {
-        "name": "프로바이더 감사자",
-        "description": "프로바이더 제어 영역의 감사 정보를 읽기 전용으로 조회합니다."
-      },
-      "PROVIDER_TENANT_PROVISIONER": {
-        "name": "프로바이더 테넌트 개통 담당자",
-        "description": "고객 테넌트의 기반을 생성하고 개통 작업을 수행합니다."
-      },
-      "PROVIDER_ENTITLEMENT_ADMIN": {
-        "name": "프로바이더 구독 권한 관리자",
-        "description": "고객 데이터 접근 없이 계약 기반 구독 권한을 관리합니다."
-      },
-      "PROVIDER_CHANGE_APPROVER": {
-        "name": "프로바이더 변경 승인자",
-        "description": "고위험 프로바이더 변경을 요청자와 독립적으로 승인합니다."
-      },
-      "PROVIDER_RELEASE_APPROVER": {
-        "name": "프로바이더 릴리스 승인자",
-        "description": "운영 릴리스와 기능 롤아웃을 실행 담당자와 독립적으로 승인합니다."
-      },
-      "PROVIDER_DATA_APPROVER": {
-        "name": "프로바이더 데이터 정책 승인자",
-        "description": "데이터 정책의 수명주기 변경을 작성자와 독립적으로 승인합니다."
-      }
-    },
     "tabs": {
       "label": "역할 거버넌스 보기",
       "roles": "역할 및 리소스",
@@ -2512,7 +2715,7 @@
     }
   },
   "catalog": {
-    "loadError": "Catalog를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.",
+    "loadError": "카탈로그를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.",
     "search": "자산, 참조 또는 소유자 검색",
     "allKinds": "모든 자산 유형",
     "metrics": {
@@ -2528,14 +2731,14 @@
       "orphansDetail": "관계가 탐지되지 않은 자산"
     },
     "views": {
-      "label": "Catalog 보기",
+      "label": "카탈로그 보기",
       "graph": "관계 그래프",
       "inventory": "자산 인벤토리",
       "assurance": "보증 검토"
     },
     "actions": {
-      "refresh": "Catalog 새로고침",
-      "clearFocus": "전체 Catalog 보기",
+      "refresh": "카탈로그 새로고침",
+      "clearFocus": "전체 카탈로그 보기",
       "addRelation": "관계 선언",
       "retireRelation": "명시 관계 종료"
     },
@@ -2553,9 +2756,9 @@
     "kinds": {
       "REFERENCE_SET": "기준정보",
       "APP": "애플리케이션",
-      "CONNECTOR": "Connector 정의",
-      "CONNECTOR_INSTANCE": "Connector 인스턴스",
-      "AGENT": "Agent",
+      "CONNECTOR": "커넥터 정의",
+      "CONNECTOR_INSTANCE": "커넥터 인스턴스",
+      "AGENT": "에이전트",
       "TOOL": "도구",
       "POLICY": "정책",
       "API": "API 계약",
@@ -2566,16 +2769,16 @@
       "PERMISSION": "권한"
     },
     "graph": {
-      "all": "전체 관리 Catalog를 표시합니다",
+      "all": "전체 관리 카탈로그를 표시합니다",
       "focused": "{{name}} 주변 의존성을 표시합니다",
       "depth": "관계 탐색 깊이",
       "global": "제품 전역",
       "orphan": "고립",
-      "empty": "현재 보기에 해당하는 Catalog 관계가 없습니다.",
+      "empty": "현재 보기에 해당하는 카탈로그 관계가 없습니다.",
       "truncated": "개요에는 연결도가 높은 핵심 자산을 표시합니다. 전체 주변 관계는 인벤토리에서 자산을 선택해 확인하세요."
     },
     "inspector": {
-      "title": "Catalog 상세",
+      "title": "카탈로그 상세",
       "select": "자산을 선택하면 소유권, 연결 관계와 변경 영향을 확인할 수 있습니다.",
       "revision": "리비전"
     },
@@ -2585,7 +2788,7 @@
       "CRITICAL": "핵심"
     },
     "relation": {
-      "dialogTitle": "Catalog 관계 선언",
+      "dialogTitle": "카탈로그 관계 선언",
       "source": "출발 자산",
       "target": "대상 자산",
       "type": "관계",
@@ -2623,23 +2826,23 @@
       }
     },
     "assurance": {
-      "contextLabel": "Catalog 보증 검토 범위",
-      "title": "Catalog 보증 검토",
+      "contextLabel": "카탈로그 보증 검토 범위",
+      "title": "카탈로그 보증 검토",
       "description": "버전이 고정된 판정 규칙으로 소유자 누락, 고립 자산과 폐기 영향을 탐지합니다.",
       "ruleVersion": "{{key}} v{{version}}",
-      "queueLabel": "Catalog 보증 Finding",
-      "partialFailure": "보증 Finding을 일시적으로 불러오지 못했습니다. 관계 그래프와 자산 인벤토리는 계속 사용할 수 있습니다.",
+      "queueLabel": "카탈로그 보증 발견사항",
+      "partialFailure": "보증 발견사항을 일시적으로 불러오지 못했습니다. 관계 그래프와 자산 인벤토리는 계속 사용할 수 있습니다.",
       "actions": {
-        "evaluate": "Catalog 평가",
-        "evaluating": "Catalog 평가 중",
+        "evaluate": "카탈로그 평가",
+        "evaluating": "카탈로그 평가 중",
         "review": "검토",
         "recordDisposition": "처분 기록"
       },
       "metrics": {
-        "label": "Catalog 보증 신호",
-        "open": "열린 Finding",
+        "label": "카탈로그 보증 신호",
+        "open": "열린 발견사항",
         "openDetail": "소유자 검토 필요",
-        "critical": "심각 Finding",
+        "critical": "심각 발견사항",
         "criticalDetail": "폐기 검토 차단",
         "owner": "소유자 누락",
         "ownerDetail": "책임 소유자 없음",
@@ -2647,14 +2850,14 @@
         "deprecationDetail": "활성 직접 소비처"
       },
       "columns": {
-        "asset": "자산 및 Finding",
+        "asset": "자산 및 발견사항",
         "severity": "심각도",
         "state": "처분 상태",
         "detected": "최근 탐지"
       },
       "findings": {
         "OWNER_MISSING": "책임 소유자가 없습니다",
-        "ORPHAN_ASSET": "Catalog 관계가 관찰되지 않았습니다",
+        "ORPHAN_ASSET": "카탈로그 관계가 관찰되지 않았습니다",
         "DEPRECATION_IMPACT": "폐기 대상 자산을 사용 중인 소비처가 있습니다"
       },
       "states": {
@@ -2665,13 +2868,13 @@
         "RESOLVED": "해결됨"
       },
       "inspector": {
-        "title": "Finding 근거",
-        "select": "Finding을 선택해 판정 규칙, 신호와 근거 해시를 검토하세요.",
+        "title": "발견사항 근거",
+        "select": "발견사항을 선택해 판정 규칙, 신호와 근거 해시를 검토하세요.",
         "hash": "근거 SHA-256: {{hash}}",
         "disposition": "기록된 처분: {{reason}}"
       },
       "disposition": {
-        "title": "Finding 처분 기록",
+        "title": "발견사항 처분 기록",
         "description": "{{entity}}에 대한 통제된 결정을 기록합니다.",
         "decision": "결정",
         "reason": "결정 사유",
@@ -2681,22 +2884,22 @@
         "submit": "결정 기록",
         "submitting": "결정 기록 중",
         "guidance": {
-          "ACKNOWLEDGED": "Finding을 활성 상태로 유지하고 후속 조치를 담당자에게 배정합니다.",
+          "ACKNOWLEDGED": "발견사항을 활성 상태로 유지하고 후속 조치를 담당자에게 배정합니다.",
           "FALSE_POSITIVE": "권위 있는 근거로 탐지 신호가 잘못됐음을 확인한 경우에만 사용합니다.",
           "ACCEPTED_RISK": "책임 소유자와 승인된 위험 수용 근거를 기록합니다.",
           "RESOLVED": "소유권, 관계 또는 수명주기 문제가 실제로 수정된 경우 사용합니다."
         }
       },
       "toasts": {
-        "evaluated": "Catalog 보증 평가를 완료했습니다.",
-        "dispositionSaved": "Finding 처분을 기록했습니다.",
-        "error": "Catalog 보증 작업을 완료하지 못했습니다."
+        "evaluated": "카탈로그 보증 평가를 완료했습니다.",
+        "dispositionSaved": "발견사항 처분을 기록했습니다.",
+        "error": "카탈로그 보증 작업을 완료하지 못했습니다."
       }
     },
     "toasts": {
-      "saved": "Catalog 관계를 저장했습니다.",
-      "retired": "Catalog 관계를 종료했습니다.",
-      "error": "Catalog 관계를 변경하지 못했습니다."
+      "saved": "카탈로그 관계를 저장했습니다.",
+      "retired": "카탈로그 관계를 종료했습니다.",
+      "error": "카탈로그 관계를 변경하지 못했습니다."
     }
   },
   "navigationManager": {
@@ -3329,12 +3532,12 @@
     },
     "preview": {
       "title": "영향 미리보기",
-      "description": "현재 소유 뷰와 version을 snapshot으로 고정하고 실행 직전에 다시 검증합니다.",
+      "description": "현재 소유 뷰와 버전을 스냅샷으로 고정하고 실행 직전에 다시 검증합니다.",
       "emptyTitle": "아직 평가한 승계 계획이 없습니다",
       "emptyDescription": "왼쪽에서 근거와 처리 방식을 입력한 뒤 영향 미리보기를 실행하세요.",
       "summary": "{{count}}개 뷰에 ‘{{disposition}}’ 처리가 적용됩니다.",
       "evaluatedAt": "평가 {{value}}",
-      "fingerprint": "Snapshot {{value}}…",
+      "fingerprint": "스냅샷 {{value}}…",
       "confirmHelp": "입력이나 소유 상태가 바뀌면 이 미리보기는 무효화되고 실행이 거부됩니다.",
       "gridLabel": "관리권 변경 대상 저장 뷰"
     },
@@ -3498,7 +3701,7 @@
       "STANDARD": "표준 승인 접근",
       "BREAK_GLASS": "비상 접근"
     },
-    "backToProvider": "Provider Control Plane으로 돌아가기",
+    "backToProvider": "프로바이더 제어 영역으로 돌아가기",
     "exit": "지원 모드 종료",
     "exitReason": "프로바이더 운영자가 테넌트 지원 모드를 종료함",
     "exited": "지원 세션을 종료했습니다.",

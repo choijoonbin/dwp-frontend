@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   getProviderCommandCenter,
   getProviderReliabilityControl,
@@ -107,7 +107,7 @@ function DistributionList({ items, color }: { items: ProviderMetric[]; color: st
               fontWeight={750}
               sx={{ fontVariantNumeric: 'tabular-nums' }}
             >
-              {item.count.toLocaleString()}
+              {formatNumber(item.count)}
             </Typography>
           </Stack>
           <Box
@@ -348,7 +348,7 @@ export function ProviderOverview() {
       >
         <SignalMetric
           label={t('command.signals.estate')}
-          value={`${data.estate.activeTenants.toLocaleString()} / ${data.estate.tenants.toLocaleString()}`}
+          value={`${formatNumber(data.estate.activeTenants)} / ${formatNumber(data.estate.tenants)}`}
           detail={t('command.signals.estateDetail', { count: data.estate.organizations })}
           icon={<Building2 size={18} />}
           tone={tenantReadiness === 100 ? 'success' : 'warning'}
@@ -361,7 +361,7 @@ export function ProviderOverview() {
         />
         <SignalMetric
           label={t('command.signals.services')}
-          value={`${serviceTotals.healthy.toLocaleString()} / ${serviceTotals.total.toLocaleString()}`}
+          value={`${formatNumber(serviceTotals.healthy)} / ${formatNumber(serviceTotals.total)}`}
           detail={t('command.signals.servicesDetail', {
             exceptions: serviceTotals.degraded + serviceTotals.failed,
           })}
@@ -376,7 +376,7 @@ export function ProviderOverview() {
         />
         <SignalMetric
           label={t('command.signals.customerImpact')}
-          value={data.activeIncidents.toLocaleString()}
+          value={formatNumber(data.activeIncidents)}
           detail={t('command.signals.customerImpactDetail', { count: serviceTotals.impactSignals })}
           icon={<AlertTriangle size={18} />}
           tone={data.activeIncidents ? 'error' : 'success'}
@@ -385,7 +385,7 @@ export function ProviderOverview() {
         />
         <SignalMetric
           label={t('command.signals.controlLoad')}
-          value={data.estate.openOperations.toLocaleString()}
+          value={formatNumber(data.estate.openOperations)}
           detail={t('command.signals.controlLoadDetail', {
             support: data.estate.activeSupportSessions,
             objectives: objectiveRisk,

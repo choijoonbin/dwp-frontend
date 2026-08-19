@@ -12,7 +12,7 @@ import {
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useRoleDisplay } from '@dwp-frontend/shared-i18n';
 import { ActionButton, FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
@@ -70,13 +70,15 @@ function ActivationDialog({
   onSubmit: (durationMinutes: number, justification: string, ticketReference?: string) => void;
 }) {
   const { t } = useTranslation('account');
+  const displayRole = useRoleDisplay();
+  const roleName = eligibility ? displayRole(eligibility.roleCode, eligibility.roleName).name : '';
   const [duration, setDuration] = useState('60');
   const [ticket, setTicket] = useState('');
   const [justification, setJustification] = useState('');
   return (
     <FormDialog
       open={Boolean(eligibility)}
-      title={t('security.privileged.activateTitle', { role: eligibility?.roleName })}
+      title={t('security.privileged.activateTitle', { role: roleName })}
       description={t('security.privileged.activateDescription')}
       cancelLabel={t('security.actions.cancel')}
       submitLabel={t('security.privileged.activate')}
@@ -131,11 +133,13 @@ function RevokeDialog({
   onSubmit: (reason: string) => void;
 }) {
   const { t } = useTranslation('account');
+  const displayRole = useRoleDisplay();
+  const roleName = request ? displayRole(request.roleCode, request.roleName).name : '';
   const [reason, setReason] = useState('');
   return (
     <FormDialog
       open={Boolean(request)}
-      title={t('security.privileged.revokeTitle', { role: request?.roleName })}
+      title={t('security.privileged.revokeTitle', { role: roleName })}
       description={t('security.privileged.revokeDescription')}
       cancelLabel={t('security.actions.cancel')}
       submitLabel={
@@ -165,6 +169,7 @@ function RevokeDialog({
 
 export function MyPrivilegedAccess() {
   const { t } = useTranslation('account');
+  const displayRole = useRoleDisplay();
   const auth = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
@@ -291,6 +296,7 @@ export function MyPrivilegedAccess() {
         >
           {(eligibilities.data ?? []).map((eligibility) => {
             const request = requestsByEligibility.get(eligibility.eligibilityId);
+            const roleName = displayRole(eligibility.roleCode, eligibility.roleName).name;
             return (
               <Box
                 key={eligibility.eligibilityId}
@@ -304,7 +310,7 @@ export function MyPrivilegedAccess() {
               >
                 <Box sx={{ minWidth: 0 }}>
                   <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-                    <Typography variant="subtitle2">{eligibility.roleName}</Typography>
+                    <Typography variant="subtitle2">{roleName}</Typography>
                     <Chip
                       size="small"
                       variant="outlined"

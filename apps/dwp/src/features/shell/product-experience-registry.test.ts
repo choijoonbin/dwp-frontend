@@ -7,12 +7,10 @@ import {
 
 describe('product experience registry', () => {
   it('gives each operational app a distinct domain concept and visual signature', () => {
-    expect(
-      new Set(Object.values(productExperienceRegistry).map((profile) => profile.concept)).size
-    ).toBe(3);
-    expect(
-      new Set(Object.values(productExperienceRegistry).map((profile) => profile.accent)).size
-    ).toBe(3);
+    const profiles = Object.values(productExperienceRegistry);
+
+    expect(new Set(profiles.map((profile) => profile.concept)).size).toBe(profiles.length);
+    expect(new Set(profiles.map((profile) => profile.accent)).size).toBe(profiles.length);
   });
 
   it('keeps HCM comfortable and people-centered', () => {

@@ -191,7 +191,7 @@
     "saveConflict": "다른 세션에서 HR 홈이 변경되었습니다. 최신 구성을 불러왔으니 다시 확인한 후 편집해 주세요.",
     "saveError": "HR 홈 구성을 저장하지 못했습니다. 최신 구성을 다시 확인해 주세요.",
     "error": {
-      "description": "홈 집계를 불러오지 못했습니다. 다시 시도해도 계속되면 People 서비스 연결 상태를 확인해 주세요."
+      "description": "홈 집계를 불러오지 못했습니다. 다시 시도해도 계속되면 인사 서비스 연결 상태를 확인해 주세요."
     },
     "widgets": {
       "quick-actions": {
@@ -471,12 +471,12 @@
     },
     "rhythm": {
       "personal": {
-        "eyebrow": "DWP PEOPLE RHYTHM",
+        "eyebrow": "개인 업무 리듬",
         "title": "나의 HR 흐름",
         "meta": "단순 수치가 아니라 이번 주 처리 단계와 다음 인사 이벤트를 연결해 보여줍니다."
       },
       "team": {
-        "eyebrow": "MANAGER RHYTHM",
+        "eyebrow": "관리자 업무 리듬",
         "title": "내 팀의 결정 흐름",
         "meta": "현재 보고 관계 기준의 근태·휴가 승인과 팀 구성을 분리해 확인합니다.",
         "time": "근태 승인 대기",
@@ -487,7 +487,7 @@
         "peopleDetail": "현재 유효한 보고 관계 기준"
       },
       "operations": {
-        "eyebrow": "WORKFORCE RHYTHM",
+        "eyebrow": "인사 운영 리듬",
         "title": "인력 운영 흐름",
         "meta": "인력 규모, 데이터 품질과 원천 최신성을 같은 운영 범위에서 확인합니다.",
         "workforce": "활성 인력",

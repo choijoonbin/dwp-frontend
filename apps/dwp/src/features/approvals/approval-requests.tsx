@@ -13,6 +13,7 @@ import {
   Undo2,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 import { ActionButton, DatePickerField, FormDialog, FormField } from '@dwp-frontend/design-system';
 import {
   createApprovalRequest,
@@ -567,7 +568,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
                   <StatusChip status={request.status} />
                 </TableCell>
                 <TableCell>
-                  {request.dueAt ? new Date(request.dueAt).toLocaleDateString() : '-'}
+                  {request.dueAt ? formatDate(request.dueAt, { dateStyle: 'medium' }) : '-'}
                 </TableCell>
                 <TableCell align="right">
                   {request.status === 'DRAFT' && (

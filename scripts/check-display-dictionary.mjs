@@ -40,6 +40,39 @@ function listFiles(directory) {
   });
 }
 
+function registeredStringArray(file, declarationName) {
+  const source = fs.readFileSync(file, 'utf8');
+  const sourceFile = ts.createSourceFile(
+    file,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS
+  );
+  const values = [];
+
+  function visit(node) {
+    if (
+      ts.isVariableDeclaration(node) &&
+      node.name.getText(sourceFile) === declarationName &&
+      node.initializer
+    ) {
+      const expression = ts.isAsExpression(node.initializer)
+        ? node.initializer.expression
+        : node.initializer;
+      if (ts.isArrayLiteralExpression(expression)) {
+        expression.elements.forEach((element) => {
+          if (ts.isStringLiteral(element)) values.push(element.text);
+        });
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return values;
+}
+
 function dictionaryKey(code) {
   return code
     .trim()
@@ -57,6 +90,15 @@ const dictionaries = new Map([
   ['en', loadDictionary('en')],
   ['ko', loadDictionary('ko')],
 ]);
+
+const registeredDomains = registeredStringArray(
+  path.join(root, 'libs/shared-i18n/src/lib/display-dictionary.ts'),
+  'DISPLAY_DOMAINS'
+).sort();
+const systemRoleCodes = registeredStringArray(
+  path.join(root, 'libs/shared-i18n/src/lib/role-display.ts'),
+  'SYSTEM_ROLE_CODES'
+);
 
 function propertyDomain(node) {
   if (ts.isPropertyAccessExpression(node)) return propertyDomains.get(node.name.text);
@@ -261,10 +303,26 @@ function checkFile(file) {
 }
 
 for (const [locale, dictionary] of dictionaries) {
+  const dictionaryDomains = Object.keys(dictionary)
+    .filter((domain) => domain !== 'empty' && domain !== 'unmapped')
+    .sort();
+  if (JSON.stringify(dictionaryDomains) !== JSON.stringify(registeredDomains)) {
+    issues.push(
+      `${locale}/display domains (${dictionaryDomains.join(', ')}) do not match DISPLAY_DOMAINS (${registeredDomains.join(', ')})`
+    );
+  }
   for (const [domain, entries] of Object.entries(dictionary)) {
     if (domain === 'empty' || domain === 'unmapped') continue;
     if (!entries || typeof entries !== 'object' || !Object.keys(entries).length) {
       issues.push(`${locale}/display domain ${domain} is empty`);
+    }
+  }
+  for (const roleCode of systemRoleCodes) {
+    for (const domain of ['roleNames', 'roleDescriptions']) {
+      const value = dictionary[domain]?.[roleCode];
+      if (typeof value !== 'string' || !value.trim()) {
+        issues.push(`${locale}/display missing ${domain}.${roleCode}`);
+      }
     }
   }
 }

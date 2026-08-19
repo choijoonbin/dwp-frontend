@@ -24,6 +24,37 @@ async function expectNoAutomaticAccessibilityViolations(page: Page) {
   expect(summary).toEqual([]);
 }
 
+async function mockAuthenticatedAdminSession(page: Page) {
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          userId: 1,
+          displayName: 'Admin',
+          jobTitle: 'Platform administrator',
+          email: 'admin@dwp.local',
+          tenantId: 1,
+          tenantCode: 'default',
+          roles: ['ADMIN'],
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/permissions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: DEFAULT_APP_PERMISSIONS,
+      }),
+    })
+  );
+}
+
 test.beforeEach(async ({ page }) => {
   let personalPreference = {
     schemaVersion: 2 as const,
@@ -54,18 +85,17 @@ test.beforeEach(async ({ page }) => {
     updatedAt: null as string | null,
   };
   let homePreference = {
-    schemaVersion: 2,
+    schemaVersion: 4,
     surfaceKey: 'workspace-home',
     customized: false,
     layout: {
       appLayout: null,
       presentation: 'balanced' as const,
       widgets: [
-        { widgetKey: 'announcements', visible: true, size: 'full' },
-        { widgetKey: 'daily-brief', visible: true, size: 'medium' },
+        { widgetKey: 'activity', visible: true, size: 'quarter' },
         { widgetKey: 'focus', visible: true, size: 'medium' },
-        { widgetKey: 'schedule', visible: true, size: 'medium' },
-        { widgetKey: 'activity', visible: true, size: 'medium' },
+        { widgetKey: 'schedule', visible: true, size: 'quarter' },
+        { widgetKey: 'daily-brief', visible: true, size: 'full' },
       ],
     },
     version: 0,
@@ -86,6 +116,19 @@ test.beforeEach(async ({ page }) => {
           backgroundPosition: 'CENTER',
           overlayOpacity: 18,
           backgroundUrl: null,
+          compositionPolicy: {
+            schemaVersion: 1,
+            personalCustomizationEnabled: true,
+            governedZones: [
+              {
+                zoneKey: 'announcements',
+                placement: 'CANVAS',
+                visible: true,
+                size: 'compact',
+                sortOrder: 20,
+              },
+            ],
+          },
           version: 0,
         },
       }),
@@ -106,7 +149,7 @@ test.beforeEach(async ({ page }) => {
       new URL(route.request().url()).pathname.split('/').pop()!
     );
     const values: Record<string, string[]> = {
-      'PLATFORM.HOME_WIDGET': ['announcements', 'daily-brief', 'focus', 'schedule', 'activity'],
+      'PLATFORM.HOME_WIDGET': ['command-rail', 'activity', 'focus', 'schedule', 'daily-brief'],
       'PLATFORM.PREFERENCE.COLOR_MODE': ['system', 'light', 'dark'],
       'PLATFORM.PREFERENCE.DENSITY': ['compact', 'standard', 'comfortable'],
     };
@@ -163,13 +206,39 @@ test.beforeEach(async ({ page }) => {
         layout: {
           appLayout: null,
           presentation: 'balanced',
-          widgets: homePreference.layout.widgets.map((widget) => ({ ...widget, visible: true })),
+          widgets: [
+            { widgetKey: 'activity', visible: true, size: 'quarter' },
+            { widgetKey: 'focus', visible: true, size: 'medium' },
+            { widgetKey: 'schedule', visible: true, size: 'quarter' },
+            { widgetKey: 'daily-brief', visible: true, size: 'full' },
+          ],
         },
         version: 0,
         updatedAt: null,
       };
     } else {
       const body = request.postDataJSON() as { layout: typeof homePreference.layout };
+      const allowedSizes: Record<string, readonly string[]> = {
+        'command-rail': ['large', 'full'],
+        'daily-brief': ['large', 'full'],
+        focus: ['quarter', 'compact', 'medium', 'large', 'full'],
+        schedule: ['fifth', 'quarter', 'compact', 'medium'],
+        activity: ['fifth', 'quarter', 'compact', 'medium'],
+      };
+      const invalidWidget = body.layout.widgets.find(
+        (widget) => !allowedSizes[widget.widgetKey]?.includes(widget.size)
+      );
+      if (invalidWidget) {
+        await route.fulfill({
+          status: 400,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'ERROR',
+            message: `Widget size is not allowed: ${invalidWidget.widgetKey}/${invalidWidget.size}`,
+          }),
+        });
+        return;
+      }
       const nextVersion = homePreference.customized ? homePreference.version + 1 : 0;
       homePreference = {
         ...homePreference,
@@ -366,6 +435,134 @@ test('unauthenticated users see the login shell without business navigation', as
   await expectNoAutomaticAccessibilityViolations(page);
 });
 
+test('local sign-in stays on the login surface until tenant branding is ready', async ({
+  page,
+}) => {
+  let authenticated = false;
+  let signalBrandingRequest = () => undefined;
+  let releaseBranding = () => undefined;
+  const brandingRequested = new Promise<void>((resolve) => {
+    signalBrandingRequest = resolve;
+  });
+  const brandingGate = new Promise<void>((resolve) => {
+    releaseBranding = resolve;
+  });
+
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill(
+      authenticated
+        ? {
+            contentType: 'application/json',
+            body: JSON.stringify({
+              status: 'SUCCESS',
+              message: 'OK',
+              data: {
+                userId: 1,
+                displayName: 'Admin',
+                jobTitle: 'Platform administrator',
+                email: 'admin@dwp.local',
+                tenantId: 1,
+                tenantCode: 'default',
+                roles: ['ADMIN'],
+              },
+            }),
+          }
+        : {
+            status: 401,
+            contentType: 'application/json',
+            body: JSON.stringify({ status: 'ERROR', errorCode: 'UNAUTHORIZED' }),
+          }
+    )
+  );
+  await page.route('**/api/auth/permissions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: DEFAULT_APP_PERMISSIONS,
+      }),
+    })
+  );
+  await page.route('**/api/auth/policy', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: {
+          tenantId: 1,
+          defaultLoginType: 'LOCAL',
+          allowedLoginTypes: ['LOCAL'],
+          localLoginEnabled: true,
+          ssoLoginEnabled: false,
+          requireMfa: false,
+        },
+      }),
+    })
+  );
+  await page.route('**/api/auth/login', (route) => {
+    authenticated = true;
+    return route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: {} }),
+    });
+  });
+  await page.unroute('**/api/platform/v1/tenant-branding');
+  await page.route('**/api/platform/v1/tenant-branding', async (route) => {
+    signalBrandingRequest();
+    await brandingGate;
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: { organizationName: 'SK AX', logoUrl: null, version: 1 },
+      }),
+    });
+  });
+
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/sign-in/);
+  await page.evaluate(() => {
+    const state = window as typeof window & {
+      __dwpShellBootObserved?: boolean;
+      __dwpShellBootObserver?: MutationObserver;
+    };
+    state.__dwpShellBootObserved = false;
+    state.__dwpShellBootObserver = new MutationObserver(() => {
+      if (document.querySelector('[data-testid="shell-boot-screen"]')) {
+        state.__dwpShellBootObserved = true;
+      }
+    });
+    state.__dwpShellBootObserver.observe(document.body, { childList: true, subtree: true });
+  });
+
+  await page.getByRole('textbox', { name: /^Work email/ }).fill('admin@dwp.local');
+  await page.getByRole('textbox', { name: /^Password/ }).fill('access-policy-test');
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await brandingRequested;
+
+  await expect(page).toHaveURL(/\/sign-in/);
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+  await expect(page.getByTestId('shell-boot-screen')).toHaveCount(0);
+  await expect(page.getByTestId('home-header')).toHaveCount(0);
+
+  releaseBranding();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByTestId('home-header')).toBeVisible();
+  expect(
+    await page.evaluate(() => {
+      const state = window as typeof window & {
+        __dwpShellBootObserved?: boolean;
+        __dwpShellBootObserver?: MutationObserver;
+      };
+      state.__dwpShellBootObserver?.disconnect();
+      return state.__dwpShellBootObserved;
+    })
+  ).toBe(false);
+});
+
 test('tenant policy promotes the configured SSO provider without hiding local access', async ({
   page,
 }) => {
@@ -514,6 +711,7 @@ test('authenticated users enter a personal home before the business shell', asyn
 
   await page.goto('/');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('dwp.accessToken'))).toBeNull();
+  await expect(page.getByTestId('home-header').locator('nav')).toHaveCount(0);
   if (testInfo.project.name === 'mobile') {
     await expect(page.getByRole('button', { name: 'Select workspace' })).toHaveCount(0);
   } else {
@@ -588,7 +786,11 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(page.getByRole('dialog', { name: 'Search DWP' })).toBeVisible();
   await page.getByRole('button', { name: 'Close search' }).click();
 
-  await page.getByRole('button', { name: 'Open Work' }).click();
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: 'Open priority in Work' }).click();
+  } else {
+    await page.getByRole('button', { name: 'Open Work' }).click();
+  }
   await expect(page).toHaveURL(/\/work/);
   const businessSidebar =
     testInfo.project.name === 'mobile'
@@ -755,7 +957,11 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(
     page.getByRole('heading', { name: 'Admin님, 다시 오신 것을 환영합니다' })
   ).toBeVisible();
-  await page.getByRole('button', { name: '업무 열기', exact: true }).click();
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: '업무에서 우선 항목 열기', exact: true }).click();
+  } else {
+    await page.getByRole('button', { name: '업무 열기', exact: true }).click();
+  }
   await expect(page.getByRole('heading', { name: '업무', level: 1 })).toBeVisible();
   await page.goto('/admin/identity/access');
   await expect(page.getByRole('heading', { name: '사용자 접근 권한', level: 1 })).toBeVisible();
@@ -784,7 +990,7 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(page.locator('html')).not.toHaveAttribute('data-dwp-transition');
 });
 
-test('tenant branding does not shift the home header while the logo loads', async ({
+test('home mounts its final logo-bearing header only after tenant branding resolves', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile', 'Desktop header geometry is verified here.');
@@ -821,63 +1027,117 @@ test('tenant branding does not shift the home header while the logo loads', asyn
   await page.route('**/assets/brand/dwp-mark.svg', (route) =>
     route.fulfill({ contentType: 'image/svg+xml', path: 'public/assets/brand/dwp-mark.svg' })
   );
-  await page.route('**/api/auth/me', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: {
-          userId: 1,
-          displayName: 'Admin',
-          jobTitle: 'Platform administrator',
-          email: 'admin@dwp.local',
-          tenantId: 1,
-          tenantCode: 'default',
-          roles: ['ADMIN'],
-        },
-      }),
-    })
-  );
-  await page.route('**/api/auth/permissions', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({
-        status: 'SUCCESS',
-        message: 'OK',
-        data: DEFAULT_APP_PERMISSIONS,
-      }),
-    })
-  );
+  await mockAuthenticatedAdminSession(page);
   await page.goto('/');
   await brandingRequested;
-  const header = page.getByTestId('home-header');
-  const productLabel = header.getByText('Digital Workplace', { exact: true });
-  const workspaceMenu = header.getByRole('button', { name: 'Select workspace' });
-  await expect(productLabel).toBeVisible();
-  await expect(workspaceMenu).toBeVisible();
-  const before = {
-    product: await productLabel.boundingBox(),
-    workspace: await workspaceMenu.boundingBox(),
-  };
+  await expect(page.getByTestId('shell-boot-screen')).toBeVisible();
+  await expect(page.getByTestId('home-header')).toHaveCount(0);
 
   releaseBranding();
+  const header = page.getByTestId('home-header');
   const brand = header.getByRole('link', { name: 'SK AX Digital Workplace home' });
   const tenantLogo = brand.getByTestId('tenant-brand-logo');
+  await expect(page.getByTestId('shell-boot-screen')).toHaveCount(0);
   await expect(brand).toBeVisible();
   await expect(tenantLogo).toBeVisible();
-  const after = {
-    product: await productLabel.boundingBox(),
-    workspace: await workspaceMenu.boundingBox(),
-    brand: await brand.boundingBox(),
-    tenantLogo: await tenantLogo.boundingBox(),
-  };
+  await expect(header.getByText('Digital Workplace', { exact: true })).toBeVisible();
+  await expect(header.getByRole('button', { name: 'Select workspace' })).toBeVisible();
+  expect((await tenantLogo.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(38);
+});
 
-  expect(after.product?.x).toBeCloseTo(before.product?.x ?? 0, 1);
-  expect(after.workspace?.x).toBeCloseTo(before.workspace?.x ?? 0, 1);
-  expect(after.brand?.x ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(24);
-  expect(after.tenantLogo?.x).toBeCloseTo(after.brand?.x ?? 0, 1);
-  expect(after.tenantLogo?.height ?? 0).toBeGreaterThanOrEqual(38);
+test('home never exposes an optional-logo placeholder when tenant branding has no logo', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'Desktop header hydration is verified here.');
+  await page.setViewportSize({ width: 1920, height: 1080 });
+
+  let signalBrandingRequest = () => undefined;
+  let releaseBranding = () => undefined;
+  const brandingRequested = new Promise<void>((resolve) => {
+    signalBrandingRequest = resolve;
+  });
+  const brandingGate = new Promise<void>((resolve) => {
+    releaseBranding = resolve;
+  });
+
+  await page.unroute('**/api/platform/v1/tenant-branding');
+  await page.route('**/api/platform/v1/tenant-branding', async (route) => {
+    signalBrandingRequest();
+    await brandingGate;
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: { organizationName: 'SK AX', logoUrl: null, version: 1 },
+      }),
+    });
+  });
+  await mockAuthenticatedAdminSession(page);
+
+  await page.goto('/');
+  await brandingRequested;
+  await expect(page.getByTestId('shell-boot-screen')).toBeVisible();
+  await expect(page.getByTestId('home-header')).toHaveCount(0);
+
+  releaseBranding();
+  const header = page.getByTestId('home-header');
+  const brand = header.getByRole('link', { name: 'SK AX Digital Workplace home' });
+  await expect(page.getByTestId('shell-boot-screen')).toHaveCount(0);
+  await expect(brand).toBeVisible();
+  await expect(brand.getByTestId('tenant-brand-logo')).toHaveCount(0);
+  await expect(header.getByText('Digital Workplace', { exact: true })).toBeVisible();
+  await expect(header.getByRole('button', { name: 'Select workspace' })).toBeVisible();
+});
+
+test('workspace widget surfaces use the governed responsive visual gap', async ({
+  page,
+}, testInfo) => {
+  if (testInfo.project.name !== 'mobile') {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+  }
+  await mockAuthenticatedAdminSession(page);
+  await page.goto('/');
+
+  const activity = page.locator(
+    '[data-workspace-widget="activity"] [data-workspace-widget-content] > section'
+  );
+  const focus = page.locator(
+    '[data-workspace-widget="focus"] [data-workspace-widget-content] > section'
+  );
+  const schedule = page.locator(
+    '[data-workspace-widget="schedule"] [data-workspace-widget-content] > section'
+  );
+  const dailyBrief = page.locator(
+    '[data-workspace-widget="daily-brief"] [data-workspace-widget-content] > section'
+  );
+  await expect(activity).toBeVisible();
+  await expect(focus).toBeVisible();
+  await expect(schedule).toBeVisible();
+  await expect(dailyBrief).toBeVisible();
+
+  const [activityBox, focusBox, scheduleBox, dailyBriefBox] = await Promise.all([
+    activity.boundingBox(),
+    focus.boundingBox(),
+    schedule.boundingBox(),
+    dailyBrief.boundingBox(),
+  ]);
+  expect(activityBox).not.toBeNull();
+  expect(focusBox).not.toBeNull();
+  expect(scheduleBox).not.toBeNull();
+  expect(dailyBriefBox).not.toBeNull();
+  if (!activityBox || !focusBox || !scheduleBox || !dailyBriefBox) return;
+
+  if (testInfo.project.name === 'mobile') {
+    expect(focusBox.y - (activityBox.y + activityBox.height)).toBeCloseTo(16, 0);
+    expect(scheduleBox.y - (focusBox.y + focusBox.height)).toBeCloseTo(16, 0);
+    expect(dailyBriefBox.y - (scheduleBox.y + scheduleBox.height)).toBeCloseTo(16, 0);
+    return;
+  }
+
+  expect(focusBox.x - (activityBox.x + activityBox.width)).toBeCloseTo(24, 0);
+  expect(scheduleBox.x - (focusBox.x + focusBox.width)).toBeCloseTo(24, 0);
+  expect(dailyBriefBox.y - (activityBox.y + activityBox.height)).toBeCloseTo(24, 0);
 });
 
 test('compact navigation reflows the desktop workspace canvas', async ({ page }, testInfo) => {
@@ -991,6 +1251,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   const openWorkButton = page.getByRole('button', { name: 'Open Work' });
   await expect(openWorkButton).toBeVisible();
   await expect(page.getByRole('button', { name: 'Open Administration' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Edit home' })).toBeEnabled();
 
   await openWorkButton.scrollIntoViewIfNeeded();
   const openWorkBounds = await openWorkButton.boundingBox();
@@ -1035,10 +1296,120 @@ test('personal home launcher can create, rename, persist, and reset folders', as
       });
     expect(iconMotion.animationName).not.toBe('none');
     expect(iconMotion.iterationCount).toBe('infinite');
+
+    const editingWorkButton = page.getByRole('button', { name: 'Move Work', exact: true });
+    const editingWorkItem = editingWorkButton.locator('..');
+    const removeWorkButton = editingWorkItem.getByRole('button', {
+      name: 'Remove Work from home',
+    });
+    await expect(removeWorkButton).toHaveAttribute('data-launchpad-remove-control', 'minus');
+    const editControlGeometry = await editingWorkItem.evaluate((item) => {
+      const frame = item.querySelector<HTMLElement>('[data-launchpad-edit-frame]');
+      const glyph = item.querySelector<HTMLElement>('[data-launchpad-glyph]');
+      const removeControl = item.querySelector<HTMLElement>('[data-launchpad-remove-control]');
+      if (!frame || !glyph || !removeControl) return null;
+
+      const frameBounds = frame.getBoundingClientRect();
+      const removeBounds = removeControl.getBoundingClientRect();
+      const glyphTop = frame.clientTop + glyph.offsetTop;
+      const glyphLeft = frame.clientLeft + glyph.offsetLeft;
+      return {
+        frame: [frame.offsetWidth, frame.offsetHeight],
+        glyphInsets: [
+          glyphTop,
+          frame.offsetWidth - glyphLeft - glyph.offsetWidth,
+          frame.offsetHeight - glyphTop - glyph.offsetHeight,
+          glyphLeft,
+        ],
+        removeOverlapsTopLeft:
+          removeBounds.top < frameBounds.top && removeBounds.left < frameBounds.left,
+        removeCenterDeltaX: Math.round(
+          removeBounds.left + removeBounds.width / 2 - frameBounds.left
+        ),
+      };
+    });
+    expect(editControlGeometry).toEqual({
+      frame: [60, 60],
+      glyphInsets: [4, 4, 4, 4],
+      removeOverlapsTopLeft: true,
+      removeCenterDeltaX: 0,
+    });
   } finally {
     await page.mouse.up();
   }
   await expect(page.getByRole('dialog', { name: 'Create folder' })).toHaveCount(0);
+
+  const activityButton = page.getByRole('button', { name: 'Move Activity', exact: true });
+  const activityBounds = await activityButton.boundingBox();
+  const askFrameBounds = await page.locator('[data-folder-target="dwp-ask"]').boundingBox();
+  expect(activityBounds).not.toBeNull();
+  expect(askFrameBounds).not.toBeNull();
+  await page.mouse.move(
+    (activityBounds?.x ?? 0) + (activityBounds?.width ?? 0) / 2,
+    (activityBounds?.y ?? 0) + (activityBounds?.height ?? 0) / 2
+  );
+  await page.mouse.down();
+  await page.mouse.move((askFrameBounds?.x ?? 0) - 2, (askFrameBounds?.y ?? 0) + 30, {
+    steps: 12,
+  });
+  await page.mouse.up();
+  await expect(page.getByRole('dialog', { name: 'Create folder' })).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page
+        .getByRole('list', { name: 'Start work apps' })
+        .locator('[data-launchpad-item]')
+        .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
+    )
+    .toEqual(['dwp-work', 'dwp-activity', 'dwp-ask']);
+  await page.getByRole('button', { name: 'Reset to default', exact: true }).click();
+
+  const serviceButton = page.getByRole('button', { name: 'Move Services', exact: true });
+  const serviceBounds = await serviceButton.boundingBox();
+  const mailFrameBounds = await page.locator('[data-folder-target="ref-app-mail"]').boundingBox();
+  expect(serviceBounds).not.toBeNull();
+  expect(mailFrameBounds).not.toBeNull();
+  await page.mouse.move(
+    (serviceBounds?.x ?? 0) + (serviceBounds?.width ?? 0) / 2,
+    (serviceBounds?.y ?? 0) + (serviceBounds?.height ?? 0) / 2
+  );
+  await page.mouse.down();
+  await page.mouse.move((mailFrameBounds?.x ?? 0) - 2, (mailFrameBounds?.y ?? 0) + 30, {
+    steps: 12,
+  });
+
+  const serviceDropPreview = page.locator(
+    '[data-launchpad-item="ref-app-service"][data-launchpad-drop-preview="true"]'
+  );
+  await expect(serviceDropPreview).toHaveAttribute('data-launchpad-group-id', 'connect');
+  await expect
+    .poll(() =>
+      page
+        .getByRole('list', { name: 'Connect apps' })
+        .locator('[data-launchpad-item]')
+        .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
+    )
+    .toEqual(['dwp-communications', 'ref-app-service', 'ref-app-mail', 'ref-app-collaboration']);
+  await expect
+    .poll(() =>
+      page
+        .getByRole('list', { name: 'People & services apps' })
+        .locator('[data-launchpad-item]')
+        .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
+    )
+    .toEqual(['ref-app-people']);
+  await page.mouse.up();
+  await expect(page.getByRole('dialog', { name: 'Create folder' })).toHaveCount(0);
+  await expect(serviceDropPreview).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page
+        .getByRole('list', { name: 'Connect apps' })
+        .locator('[data-launchpad-item]')
+        .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
+    )
+    .toEqual(['dwp-communications', 'ref-app-service', 'ref-app-mail', 'ref-app-collaboration']);
+  await page.getByRole('button', { name: 'Reset to default', exact: true }).click();
 
   const createStartWorkFolder = async () => {
     const workButton = page.getByRole('button', { name: 'Move Work', exact: true });
@@ -1059,7 +1430,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
       (askTargetBounds?.y ?? 0) + (askTargetBounds?.height ?? 0) / 2,
       { steps: 12 }
     );
-    await page.waitForTimeout(150);
+    await page.waitForTimeout(300);
     await page.mouse.up();
     const createDialog = page.getByRole('dialog', { name: 'Create folder' });
     await expect(createDialog.getByRole('textbox', { name: 'Folder name' })).toHaveValue(
@@ -1130,7 +1501,8 @@ test('personal home launcher can create, rename, persist, and reset folders', as
 
 test('personal home widgets persist user choices and restore governed defaults', async ({
   page,
-}) => {
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'The compact mobile home omits widget editing.');
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -1161,9 +1533,51 @@ test('personal home widgets persist user choices and restore governed defaults',
 
   await page.goto('/');
   await page.getByRole('button', { name: 'Edit home' }).click();
-  await expect(page.getByRole('img', { name: 'Widget locked by your organization' })).toBeVisible();
+  await expect(page.getByText(/Announcements.*Widget locked by your organization/)).toBeVisible();
+  await expect(page.locator('[data-workspace-widget="announcements"]')).toHaveAttribute(
+    'data-workspace-widget-policy',
+    'GOVERNED'
+  );
+  const activityWidget = page.locator('[data-workspace-widget="activity"]');
+  const activityFootprint = activityWidget.locator('[data-widget-footprint-trigger]');
+  await expect(activityFootprint).toHaveAttribute('aria-label', 'Select Live activity widget size');
+  await expect(activityFootprint).toHaveAttribute('data-widget-footprint-trigger', 'quarter');
+  await activityFootprint.click();
+  const footprintPicker = page.getByRole('dialog', { name: 'Live activity widget size' });
+  await expect(footprintPicker.locator('[data-widget-footprint-option]')).toHaveCount(4);
+  await expect
+    .poll(() =>
+      footprintPicker
+        .locator('[data-widget-footprint-option]')
+        .evaluateAll((options) =>
+          options.map((option) => option.getAttribute('data-widget-footprint-option'))
+        )
+    )
+    .toEqual(['fifth', 'quarter', 'compact', 'medium']);
+  await footprintPicker.getByRole('button', { name: 'Fit 5 widgets per row' }).click();
+  await expect(activityFootprint).toHaveAttribute('data-widget-footprint-trigger', 'fifth');
+  await page.keyboard.press('Escape');
+  await expect(footprintPicker).toHaveCount(0);
   await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
+  const savedPreference = page.waitForRequest(
+    (request) =>
+      request.method() === 'PUT' &&
+      new URL(request.url()).pathname === '/api/platform/v1/home-preferences'
+  );
   await page.getByRole('button', { name: 'Save', exact: true }).click();
+  const savedLayout = (
+    (await savedPreference).postDataJSON() as {
+      layout: { widgets: Array<{ widgetKey: string; size: string }> };
+    }
+  ).layout;
+  expect(savedLayout.widgets.map((widget) => widget.widgetKey)).toEqual([
+    'command-rail',
+    'activity',
+    'focus',
+    'schedule',
+    'daily-brief',
+  ]);
+  expect(savedLayout.widgets.find((widget) => widget.widgetKey === 'activity')?.size).toBe('fifth');
   await expect(page.getByRole('heading', { name: 'Live activity' })).toHaveCount(0);
 
   await page.reload();
@@ -1174,9 +1588,95 @@ test('personal home widgets persist user choices and restore governed defaults',
   await expect(page.getByRole('heading', { name: 'Live activity' })).toBeVisible();
 });
 
+test('widget drag exposes an exact destination footprint before the layout changes', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'The compact mobile home omits widget editing.');
+  await page.setViewportSize({ width: 1920, height: 1440 });
+  await mockAuthenticatedAdminSession(page);
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Edit home' }).click();
+
+  const scheduleWidget = page.locator('[data-workspace-widget="schedule"]');
+  const activityWidget = page.locator('[data-workspace-widget="activity"]');
+  const scheduleHandle = scheduleWidget.getByRole('button', {
+    name: 'Move Schedule widget',
+    exact: true,
+  });
+  const [scheduleBounds, activityBounds, handleBounds] = await Promise.all([
+    scheduleWidget.boundingBox(),
+    activityWidget.boundingBox(),
+    scheduleHandle.boundingBox(),
+  ]);
+  expect(scheduleBounds).not.toBeNull();
+  expect(activityBounds).not.toBeNull();
+  expect(handleBounds).not.toBeNull();
+  if (!scheduleBounds || !activityBounds || !handleBounds) return;
+
+  await page.mouse.move(
+    handleBounds.x + handleBounds.width / 2,
+    handleBounds.y + handleBounds.height / 2
+  );
+  await page.mouse.down();
+  try {
+    await page.mouse.move(
+      activityBounds.x + activityBounds.width / 2,
+      activityBounds.y + activityBounds.height / 2,
+      { steps: 14 }
+    );
+
+    await expect(scheduleWidget).toHaveAttribute('data-widget-drop-preview', 'true');
+    await expect(scheduleWidget.locator('[data-widget-drop-slot]')).toBeVisible();
+    await expect(page.locator('[data-widget-drag-overlay]')).toBeVisible();
+    await expect
+      .poll(async () => {
+        const [preview, displaced] = await Promise.all([
+          scheduleWidget.boundingBox(),
+          activityWidget.boundingBox(),
+        ]);
+        if (!preview || !displaced) return Number.POSITIVE_INFINITY;
+        const overlapWidth = Math.max(
+          0,
+          Math.min(preview.x + preview.width, displaced.x + displaced.width) -
+            Math.max(preview.x, displaced.x)
+        );
+        const overlapHeight = Math.max(
+          0,
+          Math.min(preview.y + preview.height, displaced.y + displaced.height) -
+            Math.max(preview.y, displaced.y)
+        );
+        return overlapWidth * overlapHeight;
+      })
+      .toBe(0);
+
+    const previewBounds = await scheduleWidget.boundingBox();
+    expect(previewBounds).not.toBeNull();
+    if (!previewBounds) return;
+    expect(previewBounds.width).toBeCloseTo(scheduleBounds.width, 0);
+    expect(previewBounds.height).toBeCloseTo(scheduleBounds.height, 0);
+    expect(previewBounds.x).toBeCloseTo(activityBounds.x, 0);
+    expect(previewBounds.y).toBeCloseTo(activityBounds.y, 0);
+  } finally {
+    await page.mouse.up();
+  }
+
+  await expect(scheduleWidget).not.toHaveAttribute('data-widget-drop-preview', 'true');
+  await expect(page.locator('[data-widget-drag-overlay]')).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page
+        .locator('[data-workspace-widget-policy="PERSONAL"]')
+        .evaluateAll((widgets) =>
+          widgets.map((widget) => widget.getAttribute('data-workspace-widget'))
+        )
+    )
+    .toEqual(['command-rail', 'schedule', 'activity', 'focus', 'daily-brief']);
+});
+
 test('personal home launcher only exposes explicitly entitled apps when app permissions exist', async ({
   page,
-}) => {
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'The compact mobile home omits the launchpad.');
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       contentType: 'application/json',
@@ -1292,7 +1792,7 @@ test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
-  await page.getByRole('button', { name: /Approve software access request/ }).click();
+  await page.getByRole('button', { name: 'Open priority in Work' }).click();
   await expect(page).toHaveURL(/\/work\?item=WK-1042/);
   await expect(page.getByRole('heading', { name: 'Work', exact: true })).toBeVisible();
   await expect(page.getByRole('grid', { name: 'Work queue' })).toBeVisible();

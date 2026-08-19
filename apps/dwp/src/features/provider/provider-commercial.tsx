@@ -17,6 +17,7 @@ import {
   X,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   createProviderSubscriptionRenewal,
   decideProviderSubscriptionRenewal,
@@ -729,7 +730,6 @@ export function ProviderCommercial() {
           {t('commercial.renewals.partialFailure')}
         </Alert>
       )}
-
       <Box
         sx={{
           display: 'grid',
@@ -739,28 +739,28 @@ export function ProviderCommercial() {
       >
         <SignalMetric
           label={t('commercial.metrics.expiring')}
-          value={commercial.data.expiringSubscriptions.toLocaleString()}
+          value={formatNumber(commercial.data.expiringSubscriptions)}
           detail={t('commercial.metrics.expiringDetail')}
           icon={<CalendarClock size={18} />}
           tone={commercial.data.expiringSubscriptions ? 'warning' : 'success'}
         />
         <SignalMetric
           label={t('commercial.metrics.pendingApproval')}
-          value={pendingCount.toLocaleString()}
+          value={formatNumber(pendingCount)}
           detail={t('commercial.metrics.pendingApprovalDetail')}
           icon={<FileClock size={18} />}
           tone={pendingCount ? 'warning' : 'success'}
         />
         <SignalMetric
           label={t('commercial.metrics.entitlementChanges')}
-          value={entitlementChangeCount.toLocaleString()}
+          value={formatNumber(entitlementChangeCount)}
           detail={t('commercial.metrics.entitlementChangesDetail')}
           icon={<GitCompareArrows size={18} />}
           tone={entitlementChangeCount ? 'info' : 'neutral'}
         />
         <SignalMetric
           label={t('commercial.metrics.manualActions')}
-          value={manualActionCount.toLocaleString()}
+          value={formatNumber(manualActionCount)}
           detail={t('commercial.metrics.manualActionsDetail')}
           icon={<CircleAlert size={18} />}
           tone={manualActionCount ? 'error' : 'success'}

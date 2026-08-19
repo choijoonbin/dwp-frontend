@@ -122,6 +122,7 @@ export function CalendarSchedule() {
   const [createState, setCreateState] = useState<{ start: string; type: CalendarEventType } | null>(
     null
   );
+  const requestedEventId = searchParams.get('event');
   const language = i18n.resolvedLanguage ?? i18n.language;
   const range = useMemo(() => rangeFor(view, cursor), [cursor, view]);
   const eventsQuery = useQuery({
@@ -155,6 +156,23 @@ export function CalendarSchedule() {
     setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams]);
 
+  useEffect(() => {
+    if (!requestedEventId || !eventsQuery.data) return;
+    const requestedEvent = eventsQuery.data.find((event) => event.eventId === requestedEventId);
+    if (!requestedEvent) return;
+    setSelected((current) =>
+      current?.eventId === requestedEvent.eventId ? current : requestedEvent
+    );
+  }, [eventsQuery.data, requestedEventId]);
+
+  const clearEventSelection = () => {
+    setSelected(null);
+    if (!requestedEventId) return;
+    const next = new URLSearchParams(searchParams);
+    next.delete('event');
+    setSearchParams(next, { replace: true });
+  };
+
   const respondMutation = useMutation({
     mutationFn: ({
       eventId,
@@ -173,7 +191,7 @@ export function CalendarSchedule() {
   const cancelMutation = useMutation({
     mutationFn: (event: CalendarEvent) => cancelCalendarEvent(event.eventId, event.version),
     onSuccess: async () => {
-      setSelected(null);
+      clearEventSelection();
       setCancelling(null);
       await queryClient.invalidateQueries({ queryKey: ['calendar'] });
       toast.success(t('event.cancelled'));
@@ -684,10 +702,10 @@ export function CalendarSchedule() {
             ? selected.organizerPersonPublicId === auth.user?.personPublicId
             : selected?.organizerUserId === auth.user?.userId
         }
-        onClose={() => setSelected(null)}
+        onClose={clearEventSelection}
         onEdit={() => {
           setEditing(selected);
-          setSelected(null);
+          clearEventSelection();
         }}
         onCancel={() => selected && setCancelling(selected)}
         onRespond={(response) => selected && respond(selected, response)}

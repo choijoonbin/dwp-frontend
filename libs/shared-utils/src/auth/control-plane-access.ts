@@ -15,6 +15,10 @@ export const TENANT_CONTROL_PLANE_ROLES = [
   'SERVICE_AGENT',
   'HR_ADMIN',
   'PEOPLE_ADMIN',
+  'SPACE_GOVERNANCE_ADMIN',
+  'SPACE_TEMPLATE_ADMIN',
+  'SPACE_COMPLIANCE_REVIEWER',
+  'SPACE_ACCESS_REVIEWER',
 ] as const;
 
 export const WORKFORCE_OPERATIONS_ROLES = ['ADMIN', 'HR_ADMIN', 'PEOPLE_ADMIN'] as const;
@@ -84,6 +88,10 @@ export function resolvePrimaryAuthorityRole(
     'COMMUNICATIONS_EDITOR',
     'SERVICE_CATALOG_MANAGER',
     'SERVICE_AGENT',
+    'SPACE_GOVERNANCE_ADMIN',
+    'SPACE_TEMPLATE_ADMIN',
+    'SPACE_COMPLIANCE_REVIEWER',
+    'SPACE_ACCESS_REVIEWER',
   ];
   const tenantRole = priority.find((role) => roles.includes(role));
   if (tenantRole) return tenantRole;

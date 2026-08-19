@@ -110,7 +110,7 @@
         "description": "Schedules, focus time, responses, and workplace bookings"
       },
       "ref-app-mail": {
-        "name": "Mail & calendar",
+        "name": "Mail",
         "shortName": "Mail",
         "description": "Messages, meetings, and follow-ups"
       },
@@ -118,6 +118,11 @@
         "name": "Collaboration",
         "shortName": "Collab",
         "description": "Chat, channels, and meetings"
+      },
+      "dwp-spaces": {
+        "name": "Spaces",
+        "shortName": "Spaces",
+        "description": "Policy-governed places where teams, knowledge, apps, and AI come together"
       },
       "ref-app-service": {
         "name": "Services",

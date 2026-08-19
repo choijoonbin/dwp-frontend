@@ -1,0 +1,345 @@
+{
+  "shell": {
+    "tenantFallback": "워크스페이스",
+    "backToHome": "워크스페이스로 돌아가기",
+    "openNavigation": "메일 탐색 열기",
+    "mail": {
+      "name": "메일",
+      "context": "업무 커뮤니케이션",
+      "navigationLabel": "메일 탐색"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "mail": {
+        "start": "시작",
+        "mailbox": "메일함",
+        "collaboration": "협업",
+        "settings": "개인 설정",
+        "admin": "메일 운영"
+      }
+    },
+    "items": {
+      "mail": {
+        "home": { "label": "메일 홈" },
+        "inbox": { "label": "받은 메일" },
+        "sent": { "label": "보낸 메일" },
+        "drafts": { "label": "임시 보관함" },
+        "shared": { "label": "공유 메일함" },
+        "accounts": { "label": "연결된 계정" },
+        "admin-overview": { "label": "운영 현황" },
+        "admin-connections": { "label": "메일 연결" },
+        "admin-shared-inboxes": { "label": "공유함 운영" },
+        "admin-policies": { "label": "보안 및 AI 정책" }
+      }
+    }
+  },
+  "actions": {
+    "back": "뒤로",
+    "cancel": "취소",
+    "compose": "새 메일",
+    "refresh": "새로고침",
+    "retry": "다시 시도",
+    "save": "저장",
+    "saving": "저장 중"
+  },
+  "home": {
+    "eyebrow": "오늘의 메일 신호",
+    "greetingMorning": "좋은 아침입니다",
+    "greetingAfternoon": "좋은 오후입니다",
+    "greetingEvening": "편안한 저녁입니다",
+    "member": "구성원",
+    "title": "{{name}}님, {{greeting}}",
+    "description": "도착 순서가 아니라 업무 영향과 다음 행동을 기준으로 메일을 정리했습니다.",
+    "signalSummary": "메일 신호 요약",
+    "loadError": "메일 업무 신호를 불러오지 못했습니다.",
+    "metrics": {
+      "unread": "읽지 않음",
+      "unreadDetail": "아직 확인하지 않은 대화",
+      "urgent": "긴급",
+      "urgentDetail": "오늘 대응이 필요한 메일",
+      "needsReply": "회신 필요",
+      "needsReplyDetail": "답변을 기다리는 대화",
+      "assistant": "실행 제안",
+      "assistantDetail": "검토 후 진행할 수 있는 제안"
+    },
+    "focus": {
+      "title": "집중 큐",
+      "description": "우선순위, 회신 기한과 담당 상태를 함께 반영했습니다.",
+      "openInbox": "전체 메일함",
+      "emptyTitle": "지금 처리할 메일이 없습니다",
+      "emptyDescription": "새로운 우선 메일이 도착하면 이곳에 표시됩니다."
+    },
+    "assistant": {
+      "title": "업무 실행 제안",
+      "description": "메일 근거와 필요한 권한을 확인한 뒤 직접 승인합니다.",
+      "emptyTitle": "검토할 실행 제안이 없습니다",
+      "emptyDescription": "AI가 업무 행동을 발견해도 사용자 승인 전에는 어떤 시스템도 변경하지 않습니다."
+    },
+    "shared": {
+      "title": "공유 메일함 흐름",
+      "description": "담당자가 함께 처리하는 메일의 응답 상태를 확인합니다.",
+      "open": "처리 중 {{count}}건",
+      "overdue": "기한 초과 {{count}}건"
+    }
+  },
+  "mailbox": {
+    "search": "보낸 사람, 제목 또는 내용 검색",
+    "loadError": "메일 목록을 불러오지 못했습니다.",
+    "total": "메일 {{count}}건",
+    "syncReady": "동기화 준비됨",
+    "inbox": {
+      "eyebrow": "Split Inbox",
+      "title": "받은 메일",
+      "description": "중요도와 필요한 행동을 기준으로 나눈 메일을 빠르게 처리합니다.",
+      "emptyTitle": "이 구역에 메일이 없습니다",
+      "emptyDescription": "분류 조건에 맞는 새 메일이 도착하면 여기에 표시됩니다."
+    },
+    "sent": {
+      "eyebrow": "발신 기록",
+      "title": "보낸 메일",
+      "description": "전송한 대화와 후속 회신 상태를 한곳에서 확인합니다.",
+      "emptyTitle": "보낸 메일이 없습니다",
+      "emptyDescription": "새 메일을 보내면 발신 기록이 여기에 남습니다."
+    },
+    "drafts": {
+      "eyebrow": "작성 중",
+      "title": "임시 보관함",
+      "description": "완성되지 않은 메일을 이어서 작성하고 발송합니다.",
+      "emptyTitle": "작성 중인 메일이 없습니다",
+      "emptyDescription": "작성 화면에서 임시 저장한 메일이 여기에 표시됩니다."
+    },
+    "shared": {
+      "eyebrow": "Team Inbox",
+      "title": "공유 메일함",
+      "description": "팀 문의를 배정하고 내부 의견을 나누며 중복 응답을 방지합니다.",
+      "emptyTitle": "공유 메일이 없습니다",
+      "emptyDescription": "소속된 공유 메일함의 대화가 여기에 표시됩니다."
+    }
+  },
+  "lane": {
+    "PRIORITY": "우선",
+    "NEEDS_REPLY": "회신 필요",
+    "ASSIGNED": "담당",
+    "UPDATES": "업데이트",
+    "NEWSLETTERS": "뉴스레터"
+  },
+  "thread": {
+    "selectTitle": "메일을 선택하세요",
+    "selectDescription": "왼쪽 목록에서 대화를 선택하면 본문과 다음 행동이 표시됩니다.",
+    "loadError": "메일 내용을 불러오지 못했습니다.",
+    "unread": "읽지 않은 메일",
+    "assignedTo": "{{name}} 담당",
+    "markRead": "읽음으로 표시",
+    "markUnread": "읽지 않음으로 표시",
+    "star": "중요 표시",
+    "unstar": "중요 표시 해제",
+    "snooze": "나중에 다시 알림",
+    "snoozed": "메일을 잠시 미뤘습니다.",
+    "archive": "보관",
+    "externalSender": "조직 외부에서 보낸 메일입니다. 링크와 첨부파일을 열기 전에 발신자를 확인하세요.",
+    "attachment": "첨부파일",
+    "proposals": "이 메일에서 발견한 다음 행동",
+    "internalComments": "내부 협업",
+    "internalCommentsDescription": "이 의견은 외부 발신자에게 전송되지 않습니다.",
+    "teamOnly": "팀 전용",
+    "addComment": "팀 의견 추가",
+    "comment": "등록",
+    "commentAdded": "내부 의견을 등록했습니다.",
+    "commentError": "내부 의견을 등록하지 못했습니다.",
+    "reply": "회신",
+    "replyPlaceholder": "답변을 작성하세요",
+    "replyIdentity": "{{name}} 이름으로 회신합니다.",
+    "sendReply": "회신 보내기",
+    "replySent": "회신을 보냈습니다.",
+    "replyError": "회신을 보내지 못했습니다.",
+    "actionError": "메일 상태를 변경하지 못했습니다. 새로고침 후 다시 시도해 주세요."
+  },
+  "classification": {
+    "PUBLIC": "공개",
+    "INTERNAL": "사내",
+    "CONFIDENTIAL": "대외비",
+    "RESTRICTED": "제한"
+  },
+  "proposal": {
+    "assistant": "DWP 실행 제안",
+    "confidence": "신뢰도 {{value}}%",
+    "risk": {
+      "LOW": "낮은 위험",
+      "MEDIUM": "주의 필요",
+      "HIGH": "중요 확인"
+    },
+    "review": "검토하고 진행",
+    "dismiss": "숨기기",
+    "confirmTitle": "실행 제안 확인",
+    "confirmDescription": "{{summary}} 실제 업무 시스템 변경 전에도 해당 앱에서 최종 내용을 확인합니다.",
+    "confirm": "제안 수락",
+    "confirming": "기록 중",
+    "accepted": "제안을 수락했습니다. 최종 내용을 확인해 주세요.",
+    "dismissed": "제안을 숨겼습니다.",
+    "error": "실행 제안 상태를 변경하지 못했습니다."
+  },
+  "compose": {
+    "title": "새 메일",
+    "description": "업무 맥락이 분명하도록 받는 사람, 제목과 내용을 확인합니다.",
+    "to": "받는 사람 이메일",
+    "subject": "제목",
+    "body": "내용",
+    "send": "보내기",
+    "sending": "보내는 중",
+    "saveDraft": "임시 저장",
+    "sent": "메일을 보냈습니다.",
+    "saved": "임시 보관함에 저장했습니다.",
+    "error": "메일을 저장하거나 보내지 못했습니다."
+  },
+  "draft": {
+    "title": "임시 보관함",
+    "status": "작성 중",
+    "heading": "메일 이어 쓰기",
+    "description": "받는 사람과 내용을 확인한 뒤 다시 저장하거나 바로 발송합니다.",
+    "saved": "초안을 업데이트했습니다.",
+    "sent": "초안을 메일로 보냈습니다.",
+    "error": "초안을 업데이트하지 못했습니다. 새로고침 후 다시 시도해 주세요."
+  },
+  "command": {
+    "open": "메일 명령 열기",
+    "placeholder": "메일 명령 검색",
+    "noResults": "일치하는 메일 명령이 없습니다.",
+    "items": {
+      "compose": "새 메일 작성",
+      "focus-search": "메일 검색",
+      "show-priority": "우선 메일 보기",
+      "show-needs-reply": "회신 필요 메일 보기",
+      "mark-read": "선택한 메일 읽음 처리",
+      "star": "선택한 메일 중요 표시",
+      "snooze": "선택한 메일 나중에 알림",
+      "archive": "선택한 메일 보관"
+    }
+  },
+  "accounts": {
+    "eyebrow": "개인 메일 환경",
+    "title": "연결된 계정",
+    "description": "내게 배정된 개인 및 공유 메일 계정의 연결 상태를 확인합니다.",
+    "default": "기본 계정",
+    "shared": "공유 계정",
+    "ready": "사용 가능",
+    "governed": "자격증명과 테넌트 연결은 메일 관리자가 보안 저장소와 조직 정책을 통해 관리합니다.",
+    "loadError": "연결된 메일 계정을 불러오지 못했습니다.",
+    "emptyTitle": "연결된 메일 계정이 없습니다",
+    "emptyDescription": "메일 관리자가 계정을 배정하면 이곳에서 상태를 확인할 수 있습니다."
+  },
+  "provider": {
+    "DWP_SANDBOX": "DWP 개발 메일",
+    "MICROSOFT_GRAPH": "Microsoft 365",
+    "GOOGLE_GMAIL": "Google Workspace",
+    "NAVER_WORKS": "NAVER WORKS",
+    "JMAP": "JMAP",
+    "IMAP_SMTP": "IMAP / SMTP"
+  },
+  "connection": {
+    "state": {
+      "ACTIVE": "활성",
+      "CONFIGURATION_REQUIRED": "설정 필요",
+      "SYNCING": "동기화 중",
+      "DEGRADED": "점검 필요",
+      "SUSPENDED": "중지"
+    }
+  },
+  "capability": {
+    "READ": "읽기",
+    "SEND": "발송",
+    "THREADS": "대화형 스레드",
+    "DELTA_SYNC": "증분 동기화",
+    "HISTORY_SYNC": "변경 이력 동기화",
+    "PUSH": "푸시 알림",
+    "CALENDAR_CONTEXT": "일정 맥락",
+    "LABELS": "라벨",
+    "FOLDERS": "폴더",
+    "IDLE": "실시간 대기",
+    "SHARED_INBOX": "공유 메일함",
+    "COMMENTS": "내부 댓글"
+  },
+  "admin": {
+    "loadError": "메일 운영 정보를 불러오지 못했습니다.",
+    "metrics": {
+      "accounts": "개인 계정",
+      "accountsDetail": "SKAX 구성원에게 배정된 계정",
+      "connections": "활성 연결",
+      "connectionsDetail": "현재 정상 동작 중인 공급자",
+      "shared": "공유함 처리 중",
+      "sharedDetail": "담당자의 응답을 기다리는 대화",
+      "proposals": "AI 제안",
+      "proposalsDetail": "사용자의 결정을 기다리는 제안"
+    },
+    "overview": {
+      "eyebrow": "메일 운영 관제",
+      "title": "운영 현황",
+      "description": "개인 메일을 열람하지 않고 연결, 공유함 서비스 수준과 정책 상태를 관리합니다.",
+      "connectionHealth": "공급자 연결 상태",
+      "connectionHealthDescription": "프로토콜별 연결 준비와 동기화 상태입니다.",
+      "controlPosture": "통제 상태",
+      "controlPostureDescription": "보안과 AI 실행 경계의 핵심 정책입니다.",
+      "externalBanner": "외부 발신자 경고 사용",
+      "retention": "보존 기간 {{count}}일",
+      "aiApproval": "AI 자동 실행 차단 및 사용자 승인"
+    },
+    "connections": {
+      "eyebrow": "Provider Adapter",
+      "title": "메일 연결",
+      "description": "Microsoft, Google, NAVER WORKS와 표준 회사 메일 서버 연결을 일관된 계약으로 관리합니다.",
+      "configure": "연결 설정",
+      "dialogTitle": "메일 연결 설정",
+      "dialogDescription": "비밀값 대신 외부 보안 저장소의 참조만 등록합니다.",
+      "displayName": "연결 이름",
+      "domain": "메일 도메인",
+      "domainPlaceholder": "company.example",
+      "credentialRef": "보안 저장소 참조",
+      "credentialRefHelp": "예: vault://tenant/mail/provider. 실제 비밀값은 입력하지 마세요.",
+      "state": "연결 상태",
+      "saved": "메일 연결 설정을 저장했습니다.",
+      "saveError": "메일 연결 설정을 저장하지 못했습니다."
+    },
+    "shared": {
+      "eyebrow": "Team Inbox Operations",
+      "title": "공유함 운영",
+      "description": "팀 메일의 담당 현황과 서비스 목표 초과를 개인 메일 내용 없이 확인합니다.",
+      "open": "처리 중",
+      "overdue": "기한 초과",
+      "target": "응답 목표",
+      "minutes": "{{count}}분",
+      "configure": "운영 설정",
+      "dialogTitle": "공유 메일함 운영 설정",
+      "dialogDescription": "표시 정보와 응답 목표, 운영 상태를 테넌트 정책에 맞게 관리합니다.",
+      "displayName": "공유 메일함 이름",
+      "purpose": "운영 목적",
+      "serviceTarget": "응답 목표(분)",
+      "state": "운영 상태",
+      "stateActive": "운영 중",
+      "stateArchived": "보관됨",
+      "saved": "공유 메일함 운영 설정을 저장했습니다.",
+      "saveError": "공유 메일함 운영 설정을 저장하지 못했습니다.",
+      "emptyTitle": "운영 중인 공유 메일함이 없습니다",
+      "emptyDescription": "공유 메일함을 연결하면 서비스 상태가 여기에 표시됩니다."
+    },
+    "policies": {
+      "eyebrow": "Security & AI Guardrails",
+      "title": "보안 및 AI 정책",
+      "description": "외부 콘텐츠, 보존 기간과 AI가 제안할 수 있는 업무 범위를 테넌트 단위로 통제합니다.",
+      "externalBanner": "외부 발신자 경고",
+      "externalBannerDescription": "조직 외부 메일에 명확한 경고를 표시합니다.",
+      "remoteImages": "원격 이미지 기본 차단",
+      "remoteImagesDescription": "추적 픽셀과 신뢰하지 않는 외부 이미지를 자동으로 불러오지 않습니다.",
+      "sharedInboxes": "공유 메일함 허용",
+      "sharedInboxesDescription": "업무 팀이 담당자와 내부 의견을 함께 운영할 수 있습니다.",
+      "aiAssistance": "AI 메일 지원",
+      "aiAssistanceDescription": "근거가 있는 요약, 분류와 회신 초안 제안을 허용합니다.",
+      "crossApp": "교차 앱 실행 제안",
+      "crossAppDescription": "일정, 휴가와 업무 제안을 만들되 사용자가 최종 승인합니다.",
+      "retentionDays": "메일 데이터 보존 일수",
+      "attachmentMb": "최대 첨부파일 크기(MB)",
+      "humanApproval": "AI 자동 실행은 시스템에서 강제로 비활성화되어 있습니다. 모든 교차 앱 행동은 사용자 확인과 대상 앱의 권한 검사를 거칩니다.",
+      "saved": "메일 정책을 저장했습니다.",
+      "saveError": "메일 정책을 저장하지 못했습니다."
+    }
+  }
+}

@@ -19,6 +19,7 @@ export type HomeAppIconKey =
   | 'knowledge'
   | 'legacy'
   | 'mail'
+  | 'spaces'
   | 'hcm'
   | 'hris'
   | 'people'
@@ -174,14 +175,14 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   },
   {
     id: 'ref-app-mail',
-    name: 'Mail & calendar',
+    name: 'Mail',
     shortName: 'Mail',
-    description: 'Messages, meetings, and follow-ups',
+    description: 'Priority mail, replies, shared inboxes, and governed follow-ups',
     groupId: 'connect',
-    route: '/apps?app=ref-app-mail',
+    route: '/mail/home',
     iconKey: 'mail',
-    tone: '#1769AA',
-    resourceKey: 'APP.MAIL_CALENDAR',
+    tone: '#176B63',
+    resourceKey: 'APP.MAIL',
     badge: '6',
   },
   {
@@ -195,6 +196,17 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     tone: '#C04B5C',
     resourceKey: 'APP.COLLABORATION',
     badge: '3',
+  },
+  {
+    id: 'dwp-spaces',
+    name: 'Spaces',
+    shortName: 'Spaces',
+    description: 'Purpose-built collaboration spaces for teams, knowledge, apps, and governed AI',
+    groupId: 'connect',
+    route: '/spaces/home',
+    iconKey: 'spaces',
+    tone: '#315B7A',
+    resourceKey: 'APP.SPACES',
   },
   {
     id: 'ref-app-service',

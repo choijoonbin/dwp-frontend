@@ -48,7 +48,7 @@ import {
   OperationalKpiStrip,
   SelectField,
 } from '@dwp-frontend/design-system';
-import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -114,7 +114,7 @@ function StateChip({ state }: { state: string }) {
 }
 
 function formatInstant(value?: string | null): string {
-  return value ? new Date(value).toLocaleString() : '-';
+  return value ? formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }) : '-';
 }
 
 export function HrisOperationsWorkbench() {

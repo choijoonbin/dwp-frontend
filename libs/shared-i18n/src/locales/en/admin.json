@@ -13,6 +13,7 @@
     "groups": {
       "experience": "Experience",
       "services": "Service operations",
+      "spaces": "Space operations",
       "identity": "Identity & access",
       "platform": "Platform setup",
       "integrations": "Integrations & automation",
@@ -63,6 +64,41 @@
         "label": "Request operations",
         "title": "Service request operations",
         "description": "Triage, assign, and resolve tenant requests with controlled SLAs and a complete history."
+      },
+      "space-overview": {
+        "label": "Operations overview",
+        "title": "Space operations center",
+        "description": "Direct portfolio risk, creation requests, compliance reviews, and lifecycle work."
+      },
+      "space-directory": {
+        "label": "Space directory",
+        "title": "Space portfolio",
+        "description": "Explore purpose, visibility, classification, membership, and activity across every space."
+      },
+      "space-requests": {
+        "label": "Creation requests",
+        "title": "Space creation governance",
+        "description": "Review policy outcomes and business evidence before approving or rejecting creation."
+      },
+      "space-templates": {
+        "label": "Templates",
+        "title": "Space template studio",
+        "description": "Version purpose-specific creation policy, visibility, classification, and app defaults."
+      },
+      "space-content-reviews": {
+        "label": "Content reviews",
+        "title": "Space content compliance",
+        "description": "Independently review managed publications and record accountable release decisions."
+      },
+      "space-lifecycle": {
+        "label": "Lifecycle reviews",
+        "title": "Space lifecycle and access reviews",
+        "description": "Certify inactive spaces, access, and retention obligations with controlled follow-up."
+      },
+      "space-operations": {
+        "label": "Operational integrity",
+        "title": "Space operational integrity",
+        "description": "Reconcile memberships with central access and recover ownership, expiry, and lifecycle drift."
       },
       "access": {
         "label": "Access control",
@@ -158,6 +194,267 @@
         "label": "Evidence governance",
         "title": "Evidence governance",
         "description": "Govern the evidence lifecycle, collection coverage, exports, and cryptographic integrity."
+      }
+    }
+  },
+  "spaces": {
+    "common": {
+      "loadError": "We could not load Space operations data.",
+      "unknownRequester": "Unknown requester"
+    },
+    "metrics": {
+      "activeSpaces": "Active spaces",
+      "restrictedSpaces": "Restricted spaces",
+      "pendingRequests": "Creation approvals",
+      "pendingReviews": "Publication reviews",
+      "overdueLifecycle": "Overdue reviews",
+      "activeMemberships": "Active memberships"
+    },
+    "overview": {
+      "metricsLabel": "Space operations metrics",
+      "priorityTitle": "Priority review queue",
+      "priorityDescription": "Creation requests prioritized by risk and time waiting.",
+      "postureTitle": "Governance posture",
+      "postureDescription": "Current signals requiring attention across compliance, lifecycle, and data boundaries."
+    },
+    "actions": {
+      "openQueue": "Open queue",
+      "openSpace": "Open space",
+      "review": "Review",
+      "approve": "Approve",
+      "reject": "Reject",
+      "publish": "Approve publication",
+      "newTemplate": "New template",
+      "recordDecision": "Record decision"
+    },
+    "columns": {
+      "space": "Space",
+      "purpose": "Purpose",
+      "visibility": "Visibility",
+      "classification": "Classification",
+      "members": "Access subjects",
+      "activity": "Latest activity",
+      "requester": "Requester",
+      "template": "Template",
+      "risk": "Risk",
+      "status": "Status",
+      "requestedAt": "Requested",
+      "content": "Content",
+      "strategy": "Review strategy",
+      "reviewType": "Review type",
+      "dueAt": "Due",
+      "recommendation": "Decision"
+    },
+    "purpose": {
+      "PROJECT": "Project",
+      "COMMUNITY": "Community",
+      "OPERATIONS": "Operations",
+      "KNOWLEDGE": "Knowledge",
+      "LEADERSHIP": "Leadership"
+    },
+    "decision": {
+      "note": "Decision rationale",
+      "noteHelp": "Enter at least five characters of specific evidence for audit and requester communication.",
+      "saved": "Decision recorded.",
+      "error": "We could not process the decision. Check the latest state."
+    },
+    "directory": {
+      "title": "Tenant Space portfolio",
+      "description": "Explore every space by purpose, visibility, and data boundary.",
+      "search": "Search spaces",
+      "tableLabel": "Tenant Space portfolio"
+    },
+    "requests": {
+      "title": "Creation request queue",
+      "description": "People review only high-risk requests that policy cannot safely automate.",
+      "tableLabel": "Space creation requests",
+      "decisionDescription": "Review purpose, audience, visibility, and policy evidence before recording an accountable decision."
+    },
+    "templates": {
+      "title": "Space template portfolio",
+      "description": "Manage standard starting points with versioned publication states.",
+      "createTitle": "Create Space template",
+      "editTitle": "Edit Space template",
+      "key": "Template key",
+      "purpose": "Purpose type",
+      "nameKo": "Korean name",
+      "nameEn": "English name",
+      "descriptionKo": "Korean description",
+      "descriptionEn": "English description",
+      "creationMode": "Creation policy",
+      "icon": "Icon key",
+      "accent": "Accent color",
+      "defaultApps": "Default app keys",
+      "defaultAppsHelp": "Separate values with commas. Only tenant-approved apps are connected.",
+      "saved": "Space template saved.",
+      "error": "We could not save the template. Check the key and latest version."
+    },
+    "content": {
+      "title": "Content compliance queue",
+      "description": "Independently review content submitted under managed publication policy and data classification.",
+      "tableLabel": "Space content publication reviews",
+      "decisionDescription": "Review classification, audience, and content evidence before approving or rejecting publication."
+    },
+    "lifecycle": {
+      "title": "Lifecycle and access certification",
+      "description": "Use activity, access, and retention evidence to keep, archive, queue deletion, or review access.",
+      "tableLabel": "Space lifecycle reviews",
+      "decisionTitle": "Record lifecycle decision",
+      "decisionDescription": "Deletion is queued rather than executed immediately so retention and legal-hold policy can be revalidated.",
+      "saved": "Lifecycle decision recorded.",
+      "types": {
+        "ACTIVITY": "Activity posture",
+        "ACCESS": "Access rights",
+        "RETENTION": "Retention obligation"
+      },
+      "recommendations": {
+        "KEEP": "Keep",
+        "ARCHIVE": "Archive",
+        "DELETE": "Queue deletion",
+        "REVIEW_ACCESS": "Review access"
+      }
+    },
+    "operations": {
+      "health": {
+        "healthy": "The Space control plane is healthy.",
+        "attention": "Operational integrity needs attention.",
+        "connected": "Central identity governance delivery and automatic reconciliation are active.",
+        "notConfigured": "Central identity governance credentials are missing, so entitlement delivery is paused."
+      },
+      "actions": {
+        "reconcile": "Reconcile now",
+        "retry": "Retry entitlement delivery",
+        "inspect": "Inspect evidence",
+        "close": "Close",
+        "assignOwner": "Assign owner",
+        "openLifecycle": "Open lifecycle review",
+        "openDelivery": "View entitlement delivery"
+      },
+      "metrics": {
+        "label": "Space operational integrity metrics",
+        "queued": "Queued deliveries",
+        "dead": "Dead letters",
+        "findings": "Open findings",
+        "ownerless": "Ownerless spaces",
+        "overdue": "Overdue reviews",
+        "synchronized": "Synced in 24 hours"
+      },
+      "findings": {
+        "title": "Operational signals needing attention",
+        "description": "Ownership, entitlement, and lifecycle issues that automation could not fully resolve.",
+        "detailTitle": "Operational finding evidence",
+        "detailDescription": "Review detection evidence and the recommended recovery path.",
+        "evidenceTitle": "Detection evidence",
+        "detectionTitle": "Detection history",
+        "firstDetected": "First detected {{value}}",
+        "lastDetected": "Last confirmed {{value}}",
+        "recommendedAction": "Recommended action",
+        "emptyTitle": "There are no unresolved operational findings.",
+        "emptyDetail": "Desired membership and central access states are aligned.",
+        "evidence": {
+          "spaceKey": "Space key",
+          "spaceName": "Space name",
+          "reviewType": "Review type",
+          "dueAt": "Due at",
+          "permissionCode": "Permission",
+          "deliveryState": "Delivery state",
+          "attemptCount": "Attempts",
+          "lastError": "Latest error",
+          "pendingRevocations": "Pending revocations"
+        },
+        "types": {
+          "OWNERLESS_SPACE": {
+            "title": "The active Space has no effective owner.",
+            "detail": "Assign an accountable owner before allowing high-risk changes.",
+            "action": "Assign an accountable active member as owner, then run reconciliation again."
+          },
+          "ENTITLEMENT_DELIVERY": {
+            "title": "Central entitlement delivery failed repeatedly.",
+            "detail": "Verify the identity connection and target principal, then retry.",
+            "action": "Review the error evidence and principal identifier, then retry the stopped delivery."
+          },
+          "EXPIRED_MEMBERSHIP": {
+            "title": "An expired membership still has pending revocations.",
+            "detail": "Verify the access end time and central revocation state.",
+            "action": "Inspect pending revocations and recover failed central IAG deliveries."
+          },
+          "LIFECYCLE_REVIEW": {
+            "title": "A lifecycle review is overdue.",
+            "detail": "Review activity, access, or retention evidence and record a decision.",
+            "action": "Record a keep, archive, deletion queue, or access-review decision in the lifecycle queue."
+          }
+        }
+      },
+      "severity": {
+        "INFO": "Info",
+        "WARNING": "Warning",
+        "HIGH": "High",
+        "CRITICAL": "Critical"
+      },
+      "runs": {
+        "title": "Recent reconciliation runs",
+        "description": "Execution evidence for desired-state planning and drift detection.",
+        "trigger": {
+          "SCHEDULED": "Scheduled reconciliation",
+          "MANUAL": "Administrator reconciliation",
+          "RECOVERY": "Recovery reconciliation"
+        },
+        "state": {
+          "RUNNING": "Running",
+          "SUCCEEDED": "Completed",
+          "FAILED": "Failed"
+        },
+        "result": "{{planned}} entitlements planned · {{expired}} memberships expired · {{findings}} findings"
+      },
+      "deliveries": {
+        "title": "Central entitlement delivery",
+        "description": "Least-privilege permissions projected from Space roles into central IAG.",
+        "tableLabel": "Space central entitlement delivery state"
+      },
+      "columns": {
+        "target": "Target",
+        "permission": "Permission",
+        "desired": "Desired state",
+        "delivery": "Delivery state",
+        "attempts": "Attempts",
+        "synchronizedAt": "Last synchronized",
+        "actions": "Actions"
+      },
+      "desired": {
+        "GRANTED": "Granted",
+        "REVOKED": "Revoked"
+      },
+      "delivery": {
+        "PENDING": "Pending",
+        "IN_PROGRESS": "In progress",
+        "SUCCEEDED": "Synchronized",
+        "RETRY": "Retry scheduled",
+        "DEAD": "Dead letter"
+      },
+      "messages": {
+        "reconciled": "Space operational state was reconciled.",
+        "retryQueued": "Entitlement delivery was returned to the queue.",
+        "error": "The operational reconciliation could not be completed."
+      },
+      "ownerRecovery": {
+        "title": "Recover accountable ownership",
+        "description": "Assign an active member to own {{space}}. This action records audit evidence and starts central entitlement reconciliation.",
+        "search": "Find an active member",
+        "searchPlaceholder": "Enter at least 2 characters of a name, email, or team",
+        "searchHelp": "Only active members in the current tenant can become a recovery owner.",
+        "searching": "Checking active members.",
+        "searchError": "We could not load the member directory.",
+        "noResults": "No active members match this search.",
+        "selected": "{{name}} will become the accountable owner.",
+        "reason": "Recovery rationale",
+        "reasonHelp": "Record at least 10 characters explaining the ownership gap and why this member is appropriate.",
+        "submit": "Recover ownership",
+        "submitting": "Recovering ownership",
+        "success": "The accountable owner was assigned and central access reconciliation started.",
+        "error": "We could not recover ownership. Check the selected member and latest Space state."
+      },
+      "common": {
+        "notAvailable": "Not yet available"
       }
     }
   },
@@ -602,11 +899,11 @@
       "apps": "Registered apps",
       "active": "Active zones",
       "personal": "Personalization scope",
-      "personalValue": "Per user"
+      "personalValue": "Admin governed"
     },
     "policy": {
-      "title": "Tenant defaults and personal choices stay separate",
-      "description": "Administrators publish zones, localized names, and default app placement. People can only move, folder, or hide apps already granted to them; those choices never change access or another person's home."
+      "title": "Workspace tools are tenant governed",
+      "description": "Administrators publish zones, localized names, and app placement. Members can launch only apps they are entitled to and cannot change home groups, order, or visibility policy."
     },
     "groups": {
       "title": "Home information architecture",
@@ -2265,100 +2562,6 @@
     "roleTypes": {
       "SYSTEM": "System",
       "CUSTOM": "Custom"
-    },
-    "systemRoles": {
-      "ADMIN": {
-        "name": "Administrator",
-        "description": "Provides foundational administration across the platform."
-      },
-      "PLATFORM_ADMIN": {
-        "name": "Platform administrator",
-        "description": "Manages tenant platform configuration and shared services."
-      },
-      "TENANT_ADMIN": {
-        "name": "Tenant administrator",
-        "description": "Manages users, policies, and operational settings for a customer tenant."
-      },
-      "WORKSPACE_MEMBER": {
-        "name": "Workspace member",
-        "description": "Non-privileged baseline role for authenticated workforce members."
-      },
-      "HR_ADMIN": {
-        "name": "HR administrator",
-        "description": "Manages workforce data and organization information."
-      },
-      "PEOPLE_ADMIN": {
-        "name": "People administrator",
-        "description": "Manages the people directory and people-service operations."
-      },
-      "AUDITOR": {
-        "name": "Audit investigator",
-        "description": "Reads, investigates, and exports tenant audit evidence."
-      },
-      "AUDIT_ADMIN": {
-        "name": "Audit administrator",
-        "description": "Manages audit evidence, policy, integrity, and integrations."
-      },
-      "IDENTITY_ADMIN": {
-        "name": "Identity administrator",
-        "description": "Manages workforce identities, groups, and provisioning separately from privileged role policy."
-      },
-      "APP_CATALOG_ADMIN": {
-        "name": "Application catalog administrator",
-        "description": "Governs application ownership and scoped administrative delegation."
-      },
-      "COMMUNICATIONS_EDITOR": {
-        "name": "Communications editor",
-        "description": "Authors and maintains employee communications without publication authority."
-      },
-      "COMMUNICATIONS_PUBLISHER": {
-        "name": "Communications publisher",
-        "description": "Reviews audiences and delivery policy, then publishes and governs newsroom content."
-      },
-      "SERVICE_CATALOG_MANAGER": {
-        "name": "Service catalog manager",
-        "description": "Manages employee service definitions, intake forms, owning teams, and SLA policies."
-      },
-      "SERVICE_AGENT": {
-        "name": "Service agent",
-        "description": "Triages, assigns, and resolves employee service requests with accountable evidence."
-      },
-      "PROVIDER_ADMIN": {
-        "name": "Provider administrator",
-        "description": "Operates the isolated provider control plane."
-      },
-      "PROVIDER_OPERATOR": {
-        "name": "Provider operator",
-        "description": "Performs day-to-day operations across the provider estate."
-      },
-      "PROVIDER_SUPPORT": {
-        "name": "Provider support",
-        "description": "Performs limited customer support operations for an approved period."
-      },
-      "PROVIDER_AUDITOR": {
-        "name": "Provider auditor",
-        "description": "Reviews provider control-plane audit information with read-only access."
-      },
-      "PROVIDER_TENANT_PROVISIONER": {
-        "name": "Provider tenant provisioner",
-        "description": "Creates and activates customer tenant foundations."
-      },
-      "PROVIDER_ENTITLEMENT_ADMIN": {
-        "name": "Provider entitlement administrator",
-        "description": "Manages contract-backed tenant entitlements without customer data access."
-      },
-      "PROVIDER_CHANGE_APPROVER": {
-        "name": "Provider change approver",
-        "description": "Approves high-risk provider changes independently from the requester."
-      },
-      "PROVIDER_RELEASE_APPROVER": {
-        "name": "Provider release approver",
-        "description": "Approves production releases and feature rollouts independently from operators."
-      },
-      "PROVIDER_DATA_APPROVER": {
-        "name": "Provider data policy approver",
-        "description": "Approves data-policy lifecycle changes independently from policy authors."
-      }
     },
     "tabs": {
       "label": "Role governance views",

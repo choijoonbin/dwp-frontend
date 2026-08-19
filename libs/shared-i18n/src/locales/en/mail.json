@@ -1,0 +1,345 @@
+{
+  "shell": {
+    "tenantFallback": "Workspace",
+    "backToHome": "Back to workspace",
+    "openNavigation": "Open mail navigation",
+    "mail": {
+      "name": "Mail",
+      "context": "Work communication",
+      "navigationLabel": "Mail navigation"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "mail": {
+        "start": "Start",
+        "mailbox": "Mailboxes",
+        "collaboration": "Collaboration",
+        "settings": "Personal settings",
+        "admin": "Mail operations"
+      }
+    },
+    "items": {
+      "mail": {
+        "home": { "label": "Mail home" },
+        "inbox": { "label": "Inbox" },
+        "sent": { "label": "Sent" },
+        "drafts": { "label": "Drafts" },
+        "shared": { "label": "Shared inboxes" },
+        "accounts": { "label": "Connected accounts" },
+        "admin-overview": { "label": "Operations overview" },
+        "admin-connections": { "label": "Mail connections" },
+        "admin-shared-inboxes": { "label": "Shared inbox operations" },
+        "admin-policies": { "label": "Security and AI policies" }
+      }
+    }
+  },
+  "actions": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "compose": "New message",
+    "refresh": "Refresh",
+    "retry": "Try again",
+    "save": "Save",
+    "saving": "Saving"
+  },
+  "home": {
+    "eyebrow": "Today's mail signals",
+    "greetingMorning": "good morning",
+    "greetingAfternoon": "good afternoon",
+    "greetingEvening": "good evening",
+    "member": "Member",
+    "title": "{{name}}, {{greeting}}",
+    "description": "Mail is organized by business impact and next action rather than arrival order.",
+    "signalSummary": "Mail signal summary",
+    "loadError": "Mail work signals could not be loaded.",
+    "metrics": {
+      "unread": "Unread",
+      "unreadDetail": "Conversations not yet reviewed",
+      "urgent": "Urgent",
+      "urgentDetail": "Messages requiring action today",
+      "needsReply": "Needs reply",
+      "needsReplyDetail": "Conversations waiting for an answer",
+      "assistant": "Action proposals",
+      "assistantDetail": "Suggestions ready for review"
+    },
+    "focus": {
+      "title": "Focus queue",
+      "description": "Priority, response timing, and ownership are evaluated together.",
+      "openInbox": "Open inbox",
+      "emptyTitle": "Nothing needs attention now",
+      "emptyDescription": "New priority mail will appear here."
+    },
+    "assistant": {
+      "title": "Work action proposals",
+      "description": "Review evidence and required access before approving an action.",
+      "emptyTitle": "No action proposals to review",
+      "emptyDescription": "AI never changes a business system before user approval."
+    },
+    "shared": {
+      "title": "Shared inbox flow",
+      "description": "Monitor response health for mail handled by a team.",
+      "open": "{{count}} open",
+      "overdue": "{{count}} overdue"
+    }
+  },
+  "mailbox": {
+    "search": "Search sender, subject, or content",
+    "loadError": "The mail list could not be loaded.",
+    "total": "{{count}} messages",
+    "syncReady": "Sync ready",
+    "inbox": {
+      "eyebrow": "Split Inbox",
+      "title": "Inbox",
+      "description": "Move quickly through mail grouped by importance and required action.",
+      "emptyTitle": "No messages in this section",
+      "emptyDescription": "New mail matching this classification will appear here."
+    },
+    "sent": {
+      "eyebrow": "Outbound history",
+      "title": "Sent",
+      "description": "Review sent conversations and follow-up status in one place.",
+      "emptyTitle": "No sent messages",
+      "emptyDescription": "Messages you send will appear here."
+    },
+    "drafts": {
+      "eyebrow": "In progress",
+      "title": "Drafts",
+      "description": "Continue unfinished messages and send them when ready.",
+      "emptyTitle": "No messages in progress",
+      "emptyDescription": "Messages saved from the composer will appear here."
+    },
+    "shared": {
+      "eyebrow": "Team Inbox",
+      "title": "Shared inboxes",
+      "description": "Assign team requests, discuss privately, and prevent duplicate responses.",
+      "emptyTitle": "No shared mail",
+      "emptyDescription": "Conversations from shared inboxes you belong to will appear here."
+    }
+  },
+  "lane": {
+    "PRIORITY": "Priority",
+    "NEEDS_REPLY": "Needs reply",
+    "ASSIGNED": "Assigned",
+    "UPDATES": "Updates",
+    "NEWSLETTERS": "Newsletters"
+  },
+  "thread": {
+    "selectTitle": "Select a message",
+    "selectDescription": "Choose a conversation to see its content and next actions.",
+    "loadError": "The conversation could not be loaded.",
+    "unread": "Unread message",
+    "assignedTo": "Assigned to {{name}}",
+    "markRead": "Mark as read",
+    "markUnread": "Mark as unread",
+    "star": "Star",
+    "unstar": "Remove star",
+    "snooze": "Remind me later",
+    "snoozed": "The message was snoozed.",
+    "archive": "Archive",
+    "externalSender": "This message came from outside your organization. Verify the sender before opening links or attachments.",
+    "attachment": "Attachment",
+    "proposals": "Next actions found in this message",
+    "internalComments": "Internal collaboration",
+    "internalCommentsDescription": "These comments are never sent to the external sender.",
+    "teamOnly": "Team only",
+    "addComment": "Add a team comment",
+    "comment": "Add",
+    "commentAdded": "The internal comment was added.",
+    "commentError": "The internal comment could not be added.",
+    "reply": "Reply",
+    "replyPlaceholder": "Write a response",
+    "replyIdentity": "Replying as {{name}}.",
+    "sendReply": "Send reply",
+    "replySent": "The reply was sent.",
+    "replyError": "The reply could not be sent.",
+    "actionError": "The message state could not be changed. Refresh and try again."
+  },
+  "classification": {
+    "PUBLIC": "Public",
+    "INTERNAL": "Internal",
+    "CONFIDENTIAL": "Confidential",
+    "RESTRICTED": "Restricted"
+  },
+  "proposal": {
+    "assistant": "DWP action proposal",
+    "confidence": "{{value}}% confidence",
+    "risk": {
+      "LOW": "Low risk",
+      "MEDIUM": "Review needed",
+      "HIGH": "Important check"
+    },
+    "review": "Review and continue",
+    "dismiss": "Dismiss",
+    "confirmTitle": "Confirm action proposal",
+    "confirmDescription": "{{summary}} You will still review final details in the target application before any business record changes.",
+    "confirm": "Accept proposal",
+    "confirming": "Recording",
+    "accepted": "The proposal was accepted. Review the final details.",
+    "dismissed": "The proposal was dismissed.",
+    "error": "The action proposal could not be changed."
+  },
+  "compose": {
+    "title": "New message",
+    "description": "Confirm the recipient, subject, and message so the business context is clear.",
+    "to": "Recipient email",
+    "subject": "Subject",
+    "body": "Message",
+    "send": "Send",
+    "sending": "Sending",
+    "saveDraft": "Save draft",
+    "sent": "The message was sent.",
+    "saved": "The message was saved to drafts.",
+    "error": "The message could not be saved or sent."
+  },
+  "draft": {
+    "title": "Drafts",
+    "status": "In progress",
+    "heading": "Continue writing",
+    "description": "Review the recipient and message, then save it again or send it now.",
+    "saved": "The draft was updated.",
+    "sent": "The draft was sent as a message.",
+    "error": "The draft could not be updated. Refresh and try again."
+  },
+  "command": {
+    "open": "Open mail commands",
+    "placeholder": "Search mail commands",
+    "noResults": "No matching mail commands.",
+    "items": {
+      "compose": "Compose a new message",
+      "focus-search": "Search mail",
+      "show-priority": "Show priority mail",
+      "show-needs-reply": "Show mail needing a reply",
+      "mark-read": "Mark selected message as read",
+      "star": "Star selected message",
+      "snooze": "Snooze selected message",
+      "archive": "Archive selected message"
+    }
+  },
+  "accounts": {
+    "eyebrow": "Personal mail environment",
+    "title": "Connected accounts",
+    "description": "Review personal and shared mail accounts assigned to you.",
+    "default": "Default account",
+    "shared": "Shared account",
+    "ready": "Available",
+    "governed": "Credentials and tenant connections are governed by mail administrators through a secret store and organization policy.",
+    "loadError": "Connected mail accounts could not be loaded.",
+    "emptyTitle": "No mail accounts connected",
+    "emptyDescription": "Assigned accounts will appear here after a mail administrator connects them."
+  },
+  "provider": {
+    "DWP_SANDBOX": "DWP development mail",
+    "MICROSOFT_GRAPH": "Microsoft 365",
+    "GOOGLE_GMAIL": "Google Workspace",
+    "NAVER_WORKS": "NAVER WORKS",
+    "JMAP": "JMAP",
+    "IMAP_SMTP": "IMAP / SMTP"
+  },
+  "connection": {
+    "state": {
+      "ACTIVE": "Active",
+      "CONFIGURATION_REQUIRED": "Setup required",
+      "SYNCING": "Syncing",
+      "DEGRADED": "Needs attention",
+      "SUSPENDED": "Suspended"
+    }
+  },
+  "capability": {
+    "READ": "Read",
+    "SEND": "Send",
+    "THREADS": "Conversation threads",
+    "DELTA_SYNC": "Delta sync",
+    "HISTORY_SYNC": "History sync",
+    "PUSH": "Push notifications",
+    "CALENDAR_CONTEXT": "Calendar context",
+    "LABELS": "Labels",
+    "FOLDERS": "Folders",
+    "IDLE": "Realtime idle",
+    "SHARED_INBOX": "Shared inbox",
+    "COMMENTS": "Internal comments"
+  },
+  "admin": {
+    "loadError": "Mail operations data could not be loaded.",
+    "metrics": {
+      "accounts": "Personal accounts",
+      "accountsDetail": "Accounts assigned to SKAX members",
+      "connections": "Active connections",
+      "connectionsDetail": "Providers operating normally",
+      "shared": "Shared inbox open",
+      "sharedDetail": "Conversations waiting for an owner response",
+      "proposals": "AI proposals",
+      "proposalsDetail": "Proposals waiting for user decisions"
+    },
+    "overview": {
+      "eyebrow": "Mail operations control",
+      "title": "Operations overview",
+      "description": "Govern connections, shared inbox service health, and policies without opening personal mail.",
+      "connectionHealth": "Provider connection health",
+      "connectionHealthDescription": "Connection readiness and synchronization by protocol.",
+      "controlPosture": "Control posture",
+      "controlPostureDescription": "Core security and AI action boundaries.",
+      "externalBanner": "External sender warnings enabled",
+      "retention": "{{count}} day retention",
+      "aiApproval": "AI auto-execution blocked with user approval"
+    },
+    "connections": {
+      "eyebrow": "Provider Adapter",
+      "title": "Mail connections",
+      "description": "Manage Microsoft, Google, NAVER WORKS, and standard company mail servers through one contract.",
+      "configure": "Configure",
+      "dialogTitle": "Configure mail connection",
+      "dialogDescription": "Register only a reference to an external secret store, never the secret itself.",
+      "displayName": "Connection name",
+      "domain": "Mail domain",
+      "domainPlaceholder": "company.example",
+      "credentialRef": "Secret-store reference",
+      "credentialRefHelp": "For example, vault://tenant/mail/provider. Do not enter a secret value.",
+      "state": "Connection state",
+      "saved": "The mail connection was saved.",
+      "saveError": "The mail connection could not be saved."
+    },
+    "shared": {
+      "eyebrow": "Team Inbox Operations",
+      "title": "Shared inbox operations",
+      "description": "Monitor ownership and service targets without exposing personal message content.",
+      "open": "Open",
+      "overdue": "Overdue",
+      "target": "Response target",
+      "minutes": "{{count}} min",
+      "configure": "Configure",
+      "dialogTitle": "Configure shared inbox operations",
+      "dialogDescription": "Manage display details, response targets, and lifecycle state under tenant policy.",
+      "displayName": "Shared inbox name",
+      "purpose": "Operating purpose",
+      "serviceTarget": "Response target (minutes)",
+      "state": "Lifecycle state",
+      "stateActive": "Active",
+      "stateArchived": "Archived",
+      "saved": "Shared inbox operations were saved.",
+      "saveError": "Shared inbox operations could not be saved.",
+      "emptyTitle": "No shared inboxes are operating",
+      "emptyDescription": "Connected shared inboxes will appear here."
+    },
+    "policies": {
+      "eyebrow": "Security & AI Guardrails",
+      "title": "Security and AI policies",
+      "description": "Control external content, retention, and the work actions AI may propose at tenant scope.",
+      "externalBanner": "External sender warning",
+      "externalBannerDescription": "Clearly identify mail arriving from outside the organization.",
+      "remoteImages": "Block remote images by default",
+      "remoteImagesDescription": "Do not automatically load tracking pixels or untrusted external images.",
+      "sharedInboxes": "Allow shared inboxes",
+      "sharedInboxesDescription": "Teams can coordinate ownership and private comments.",
+      "aiAssistance": "AI mail assistance",
+      "aiAssistanceDescription": "Allow evidence-backed summaries, triage, and reply draft proposals.",
+      "crossApp": "Cross-app action proposals",
+      "crossAppDescription": "Allow calendar, leave, and task proposals with final user approval.",
+      "retentionDays": "Mail data retention days",
+      "attachmentMb": "Maximum attachment size (MB)",
+      "humanApproval": "AI auto-execution is disabled at the system boundary. Every cross-app action requires user confirmation and target-app authorization.",
+      "saved": "Mail policies were saved.",
+      "saveError": "Mail policies could not be saved."
+    }
+  }
+}

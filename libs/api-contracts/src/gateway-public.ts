@@ -2519,7 +2519,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_5"];
+        get: operations["platform_overview_6"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2903,7 +2903,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_4"];
+        get: operations["platform_overview_5"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2920,7 +2920,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["platform_policy_1"];
-        put: operations["platform_updatePolicy_1"];
+        put: operations["platform_updatePolicy_2"];
         post?: never;
         delete?: never;
         options?: never;
@@ -3095,7 +3095,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_3"];
+        get: operations["platform_overview_4"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3112,7 +3112,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["platform_policy"];
-        put: operations["platform_updatePolicy"];
+        put: operations["platform_updatePolicy_1"];
         post?: never;
         delete?: never;
         options?: never;
@@ -3159,7 +3159,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_2"];
+        get: operations["platform_overview_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3479,7 +3479,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_overview_1"];
+        get: operations["platform_overview_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3690,6 +3690,70 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_submit_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/connections/{connectionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateConnection"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_overview_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updatePolicy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/mail/shared-inboxes/{sharedInboxId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateSharedInbox"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -4503,7 +4567,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_home"];
+        get: operations["platform_home_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4794,6 +4858,182 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_recordFeedback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_home"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_compose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/proposals/{proposalId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_decideProposal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/threads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_threads"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/threads/{threadId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_thread"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/threads/{threadId}/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_action"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/threads/{threadId}/assignment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_assign"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/threads/{threadId}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_comment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/threads/{threadId}/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateDraft_1"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/threads/{threadId}/replies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reply"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/threads/{threadId}/snooze": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_snooze"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6362,6 +6602,438 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["provider_resolve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/access-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_accessRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/content-reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_publicationReviews"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/content-reviews/{reviewId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["space_decidePublication"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/lifecycle": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_lifecycle"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/lifecycle/{lifecycleReviewId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["space_decideLifecycle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_operations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/operations/entitlements/{syncItemId}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["space_retryEntitlement"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/operations/reconcile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["space_reconcile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_overview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_requests_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/requests/{requestId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["space_decideRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/spaces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_spaces_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/spaces/{spaceKey}/owner-recovery": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["space_recoverOwner"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_templates"];
+        put?: never;
+        post: operations["space_createTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/admin/templates/{templateId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["space_updateTemplate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_home"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_requests"];
+        put?: never;
+        post: operations["space_createRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/spaces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_spaces"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/spaces/{spaceKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_space"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/spaces/{spaceKey}/access-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["space_requestAccess"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/spaces/{spaceKey}/content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_content"];
+        put?: never;
+        post: operations["space_createContent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/spaces/{spaceKey}/owner/access-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_ownerAccessRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/spaces/{spaceKey}/owner/access-requests/{requestId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["space_decideAccessRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/spaces/{spaceKey}/owner/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_members"];
+        put?: never;
+        post: operations["space_saveMember"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/spaces/{spaceKey}/owner/members/{membershipId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["space_updateMember"];
+        post?: never;
+        delete: operations["space_revokeMember"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/spaces/{spaceKey}/owner/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["space_updatePolicies"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/spaces/v1/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["space_templates_1"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -7962,6 +8634,7 @@ export interface components {
         };
         auth_GroupMembershipDTO: {
             displayName?: string;
+            groupKey?: string;
             /** Format: uuid */
             groupRef?: string;
         };
@@ -8329,6 +9002,20 @@ export interface components {
             ref?: string;
             type?: string;
         };
+        auth_PrincipalValidationRequest: {
+            /** Format: int64 */
+            actorId: number;
+            principalRef: string;
+            principalType: string;
+        };
+        auth_PrincipalValidationResult: {
+            active?: boolean;
+            canonicalRef?: string;
+            principalType?: string;
+            suppliedRef?: string;
+            /** Format: int64 */
+            tenantId?: number;
+        };
         auth_ProvisionTenantRequest: {
             administratorDisplayName: string;
             /** Format: email */
@@ -8632,6 +9319,7 @@ export interface components {
             principalRef: string;
             principalType: string;
             resourceKey: string;
+            resourceName: string;
             /** Format: date-time */
             validTo?: string;
         };
@@ -10574,6 +11262,47 @@ export interface components {
             workerStatus?: string;
             workerType?: string;
         };
+        platform_AccountSummary: {
+            /** Format: uuid */
+            accountId?: string;
+            accountKind?: string;
+            connectionState?: string;
+            defaultAccount?: boolean;
+            displayName?: string;
+            emailAddress?: string;
+            /** @enum {string} */
+            providerType?: "DWP_SANDBOX" | "MICROSOFT_GRAPH" | "GOOGLE_GMAIL" | "NAVER_WORKS" | "JMAP" | "IMAP_SMTP";
+            synchronizationState?: string;
+        };
+        platform_ActionProposal: {
+            /** Format: int32 */
+            actionContractVersion?: number;
+            confidence?: number;
+            evidence?: {
+                [key: string]: unknown;
+            }[];
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: uuid */
+            proposalId?: string;
+            proposedPayload?: {
+                [key: string]: unknown;
+            };
+            requiredPermissionCode?: string;
+            requiredResourceKey?: string;
+            riskLevel?: string;
+            /** @enum {string} */
+            status?: "PROPOSED" | "ACCEPTED" | "DISMISSED" | "EXPIRED" | "EXECUTED";
+            summary?: string;
+            targetRoute?: string;
+            /** Format: uuid */
+            threadId?: string;
+            title?: string;
+            /** @enum {string} */
+            type?: "DRAFT_REPLY" | "CREATE_CALENDAR_EVENT" | "CREATE_LEAVE_REQUEST" | "CREATE_TASK" | "ESCALATE_NOTIFICATION";
+            /** Format: int64 */
+            version?: number;
+        };
         platform_ActivityEvent: {
             actor?: string;
             actorName?: string;
@@ -10643,22 +11372,24 @@ export interface components {
             version?: number;
         };
         platform_AdminOverview: {
-            /** Format: int64 */
-            activeResources?: number;
-            /** Format: int64 */
-            bookingsThisWeek?: number;
-            /** Format: int64 */
-            conflictedUsers?: number;
-            /** Format: int64 */
-            eventsThisWeek?: number;
+            /** Format: int32 */
+            activeConnections?: number;
+            connections?: components["schemas"]["platform_ConnectionSummary"][];
+            /** Format: int32 */
+            degradedConnections?: number;
             /** Format: date-time */
             generatedAt?: string;
-            /** Format: int64 */
-            pendingBookings?: number;
-            policy?: components["schemas"]["platform_Policy"];
-            resources?: components["schemas"]["platform_ResourceSummary"][];
-            /** Format: int64 */
-            resourcesInMaintenance?: number;
+            /** Format: int32 */
+            openSharedThreads?: number;
+            /** Format: int32 */
+            pendingAiProposals?: number;
+            /** Format: int32 */
+            personalAccounts?: number;
+            policy?: components["schemas"]["platform_TenantPolicy"];
+            providerCatalog?: components["schemas"]["platform_ProviderDescriptor"][];
+            /** Format: int32 */
+            sharedAccounts?: number;
+            sharedInboxes?: components["schemas"]["platform_SharedInboxSummary"][];
         };
         platform_AnnouncementDefinition: {
             /** Format: date-time */
@@ -10783,6 +11514,16 @@ export interface components {
             traceId?: string;
             userAgentFamily?: string;
             userAgentHash?: string;
+        };
+        platform_ApiResponseActionProposal: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ActionProposal"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
         };
         platform_ApiResponseActivityFeed: {
             correlationId?: string;
@@ -11017,6 +11758,16 @@ export interface components {
         platform_ApiResponseConnection: {
             correlationId?: string;
             data?: components["schemas"]["platform_Connection"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseConnectionSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ConnectionSummary"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -11774,6 +12525,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseSharedInboxSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_SharedInboxSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseSyncRun: {
             correlationId?: string;
             data?: components["schemas"]["platform_SyncRun"];
@@ -11787,6 +12548,36 @@ export interface components {
         platform_ApiResponseTenantBrandingResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_TenantBrandingResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseTenantPolicy: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_TenantPolicy"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseThreadDetail: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ThreadDetail"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseThreadPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ThreadPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -11913,6 +12704,13 @@ export interface components {
             /** Format: date-time */
             launchedAt?: string;
         };
+        platform_AssignRequest: {
+            assignedName: string;
+            /** Format: int64 */
+            assignedUserId: number;
+            /** Format: int64 */
+            version: number;
+        };
         platform_AssuranceFinding: {
             /** Format: date-time */
             disposedAt?: string;
@@ -11974,15 +12772,6 @@ export interface components {
             type: "REQUIRED" | "OPTIONAL" | "RESOURCE";
             /** Format: int64 */
             userId?: number;
-        };
-        platform_AttentionItem: {
-            actionPath?: string;
-            description?: string;
-            /** Format: uuid */
-            eventId?: string;
-            key?: string;
-            severity?: string;
-            title?: string;
         };
         platform_AudienceContext: {
             profile?: string;
@@ -12428,6 +13217,10 @@ export interface components {
             /** Format: int32 */
             sortOrder?: number;
         };
+        platform_CommentRequest: {
+            body: string;
+            mentionedUserIds: number[];
+        };
         platform_CommunicationItem: {
             /** Format: date-time */
             acknowledgementDueAt?: string;
@@ -12466,6 +13259,17 @@ export interface components {
             /** Format: int64 */
             ruleVersion?: number;
         };
+        platform_ComposeRequest: {
+            body: string;
+            /** @enum {string} */
+            deliveryMode: "SEND" | "DRAFT";
+            /** Format: uuid */
+            idempotencyKey: string;
+            subject: string;
+            /** Format: email */
+            toEmail: string;
+            toName?: string;
+        };
         platform_ConfigurationCheck: {
             blockingCodes?: string[];
             /** Format: date-time */
@@ -12495,6 +13299,34 @@ export interface components {
             /** @enum {string} */
             providerType?: "MICROSOFT_GRAPH";
             requestedScopes?: string[];
+        };
+        platform_ConnectionSummary: {
+            authenticationMode?: string;
+            capabilities?: string[];
+            /** Format: uuid */
+            connectionId?: string;
+            connectionKey?: string;
+            credentialConfigured?: boolean;
+            displayName?: string;
+            lastErrorCode?: string;
+            /** Format: date-time */
+            lastSynchronizedAt?: string;
+            mailDomain?: string;
+            /** @enum {string} */
+            providerType?: "DWP_SANDBOX" | "MICROSOFT_GRAPH" | "GOOGLE_GMAIL" | "NAVER_WORKS" | "JMAP" | "IMAP_SMTP";
+            /** @enum {string} */
+            state?: "ACTIVE" | "CONFIGURATION_REQUIRED" | "SYNCING" | "DEGRADED" | "SUSPENDED";
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_ConnectionUpdateRequest: {
+            credentialRef?: string;
+            displayName: string;
+            mailDomain?: string;
+            /** @enum {string} */
+            state: "ACTIVE" | "CONFIGURATION_REQUIRED" | "SYNCING" | "DEGRADED" | "SUSPENDED";
+            /** Format: int64 */
+            version: number;
         };
         platform_Connector: {
             /** @enum {string} */
@@ -12672,20 +13504,6 @@ export interface components {
             name: string;
             setKey: string;
         };
-        platform_DayLoad: {
-            /** Format: int32 */
-            conflictCount?: number;
-            /** Format: date */
-            date?: string;
-            /** Format: int32 */
-            eventCount?: number;
-            /** Format: int32 */
-            focusMinutes?: number;
-            /** Format: int32 */
-            loadPercent?: number;
-            /** Format: int32 */
-            meetingMinutes?: number;
-        };
         platform_DecideExceptionRequest: {
             decision: string;
             evidenceRef?: string;
@@ -12748,6 +13566,19 @@ export interface components {
             decision: string;
             evidenceRef?: string;
             reason: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_DraftUpdateRequest: {
+            body: string;
+            /** @enum {string} */
+            deliveryMode: "SEND" | "DRAFT";
+            /** Format: uuid */
+            idempotencyKey: string;
+            subject: string;
+            /** Format: email */
+            toEmail: string;
+            toName?: string;
             /** Format: int64 */
             version: number;
         };
@@ -13147,19 +13978,17 @@ export interface components {
         };
         platform_HomeMetrics: {
             /** Format: int32 */
-            availableRoomCount?: number;
+            activeProposals?: number;
             /** Format: int32 */
-            awaitingResponseCount?: number;
+            assigned?: number;
             /** Format: int32 */
-            conflictCount?: number;
+            needsReply?: number;
             /** Format: int32 */
-            eventCount?: number;
+            snoozed?: number;
             /** Format: int32 */
-            focusMinutes?: number;
+            unread?: number;
             /** Format: int32 */
-            focusTargetMinutes?: number;
-            /** Format: int32 */
-            meetingMinutes?: number;
+            urgent?: number;
         };
         platform_HomeOverviewResponse: {
             activity?: components["schemas"]["platform_SectionActivityFeed"];
@@ -13188,16 +14017,13 @@ export interface components {
             version?: number;
         };
         platform_HomeResponse: {
-            attention?: components["schemas"]["platform_AttentionItem"][];
-            /** Format: date */
-            date?: string;
+            accounts?: components["schemas"]["platform_AccountSummary"][];
+            focusQueue?: components["schemas"]["platform_ThreadSummary"][];
             /** Format: date-time */
             generatedAt?: string;
             metrics?: components["schemas"]["platform_HomeMetrics"];
-            nextEvent?: components["schemas"]["platform_EventSummary"];
-            timeZone?: string;
-            today?: components["schemas"]["platform_EventSummary"][];
-            weekLoad?: components["schemas"]["platform_DayLoad"][];
+            proposals?: components["schemas"]["platform_ActionProposal"][];
+            sharedInboxes?: components["schemas"]["platform_SharedInboxPulse"][];
         };
         platform_ImpactAnalysis: {
             blocked?: boolean;
@@ -13248,6 +14074,17 @@ export interface components {
             verificationStatus?: string;
             /** Format: date-time */
             verifiedAt?: string;
+        };
+        platform_InternalComment: {
+            authorName?: string;
+            /** Format: int64 */
+            authorUserId?: number;
+            body?: string;
+            /** Format: uuid */
+            commentId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            mentionedUserIds?: number[];
         };
         platform_InvestigationSummary: {
             /** Format: int32 */
@@ -13314,6 +14151,23 @@ export interface components {
             ruleId?: string;
             /** Format: int64 */
             version?: number;
+        };
+        platform_Message: {
+            attachments?: {
+                [key: string]: unknown;
+            }[];
+            body?: string;
+            bodyFormat?: string;
+            direction?: string;
+            /** Format: uuid */
+            messageId?: string;
+            recipients?: {
+                [key: string]: unknown;
+            }[];
+            senderEmail?: string;
+            senderName?: string;
+            /** Format: date-time */
+            sentAt?: string;
         };
         platform_OrphanedView: {
             name?: string;
@@ -13462,6 +14316,10 @@ export interface components {
             totalElements?: number;
             /** Format: int32 */
             totalPages?: number;
+        };
+        platform_Participant: {
+            email?: string;
+            name?: string;
         };
         platform_PatchPersonalPreferenceRequest: {
             patch: components["schemas"]["platform_JsonNode"];
@@ -13682,6 +14540,22 @@ export interface components {
             sourceUrl?: string;
             title?: string;
         };
+        platform_ProposalDecisionRequest: {
+            /** @enum {string} */
+            decision: "ACCEPT" | "DISMISS";
+            /** Format: int64 */
+            version: number;
+        };
+        platform_ProviderDescriptor: {
+            authenticationMode?: string;
+            capabilities?: string[];
+            name?: string;
+            protocol?: string;
+            /** @enum {string} */
+            providerType?: "DWP_SANDBOX" | "MICROSOFT_GRAPH" | "GOOGLE_GMAIL" | "NAVER_WORKS" | "JMAP" | "IMAP_SMTP";
+            pushSupported?: boolean;
+            tenantWideSupported?: boolean;
+        };
         platform_ProvisionTenantRequest: {
             dataRegion: string;
             defaultLocale: string;
@@ -13875,6 +14749,11 @@ export interface components {
         };
         platform_ReplaceEntitlementsRequest: {
             entitlementKeys: string[];
+        };
+        platform_ReplyRequest: {
+            body: string;
+            /** Format: uuid */
+            idempotencyKey: string;
         };
         platform_RequestDetail: {
             /** @enum {string} */
@@ -14188,6 +15067,52 @@ export interface components {
             /** @enum {string} */
             status?: "AVAILABLE" | "FORBIDDEN" | "UNAVAILABLE";
         };
+        platform_SharedInboxPulse: {
+            address?: string;
+            name?: string;
+            /** Format: int32 */
+            openCount?: number;
+            /** Format: int32 */
+            overdueCount?: number;
+            /** Format: int32 */
+            serviceTargetMinutes?: number;
+            /** Format: uuid */
+            sharedInboxId?: string;
+            /** Format: int32 */
+            unassignedCount?: number;
+        };
+        platform_SharedInboxSummary: {
+            address?: string;
+            displayName?: string;
+            inboxKey?: string;
+            lifecycleState?: string;
+            /** Format: int32 */
+            openCount?: number;
+            /** Format: int32 */
+            overdueCount?: number;
+            purpose?: string;
+            /** Format: int32 */
+            serviceTargetMinutes?: number;
+            /** Format: uuid */
+            sharedInboxId?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_SharedInboxUpdateRequest: {
+            displayName: string;
+            lifecycleState: string;
+            purpose?: string;
+            /** Format: int32 */
+            serviceTargetMinutes?: number;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_SnoozeRequest: {
+            /** Format: date-time */
+            until: string;
+            /** Format: int64 */
+            version: number;
+        };
         platform_Subject: {
             /** Format: uuid */
             connectorId?: string;
@@ -14258,6 +15183,91 @@ export interface components {
             updatedBy?: number;
             /** Format: int64 */
             version?: number;
+        };
+        platform_TenantPolicy: {
+            aiAssistanceEnabled?: boolean;
+            aiAutoExecuteEnabled?: boolean;
+            aiCrossAppActionsEnabled?: boolean;
+            allowSharedInboxes?: boolean;
+            blockRemoteImages?: boolean;
+            externalSenderBanner?: boolean;
+            /** Format: int32 */
+            maximumAttachmentMb?: number;
+            /** Format: int32 */
+            retentionDays?: number;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_TenantPolicyRequest: {
+            aiAssistanceEnabled?: boolean;
+            aiCrossAppActionsEnabled?: boolean;
+            allowSharedInboxes?: boolean;
+            blockRemoteImages?: boolean;
+            externalSenderBanner?: boolean;
+            /** Format: int32 */
+            maximumAttachmentMb?: number;
+            /** Format: int32 */
+            retentionDays?: number;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_ThreadActionRequest: {
+            /** @enum {string} */
+            action: "MARK_READ" | "MARK_UNREAD" | "STAR" | "UNSTAR" | "ARCHIVE" | "RESTORE" | "COMPLETE" | "REOPEN";
+            /** Format: int64 */
+            version: number;
+        };
+        platform_ThreadDetail: {
+            internalComments?: components["schemas"]["platform_InternalComment"][];
+            messages?: components["schemas"]["platform_Message"][];
+            proposals?: components["schemas"]["platform_ActionProposal"][];
+            thread?: components["schemas"]["platform_ThreadSummary"];
+        };
+        platform_ThreadPage: {
+            items?: components["schemas"]["platform_ThreadSummary"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            total?: number;
+        };
+        platform_ThreadSummary: {
+            /** Format: uuid */
+            accountId?: string;
+            accountName?: string;
+            assignedName?: string;
+            /** Format: int64 */
+            assignedUserId?: number;
+            attachments?: boolean;
+            /** @enum {string} */
+            classification?: "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED";
+            externalSender?: boolean;
+            folderType?: string;
+            /** @enum {string} */
+            importance?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+            /** Format: date-time */
+            latestMessageAt?: string;
+            /** Format: int32 */
+            messageCount?: number;
+            participants?: components["schemas"]["platform_Participant"][];
+            preview?: string;
+            /** Format: uuid */
+            sharedInboxId?: string;
+            sharedInboxName?: string;
+            /** Format: date-time */
+            snoozedUntil?: string;
+            starred?: boolean;
+            subject?: string;
+            /** Format: uuid */
+            threadId?: string;
+            /** @enum {string} */
+            triageLane?: "PRIORITY" | "NEEDS_REPLY" | "ASSIGNED" | "UPDATES" | "NEWSLETTERS";
+            unread?: boolean;
+            /** Format: int64 */
+            version?: number;
+            /** @enum {string} */
+            workflowState?: "OPEN" | "DONE" | "SNOOZED" | "ARCHIVED" | "DRAFT";
         };
         platform_TimelineEvent: {
             /** Format: int64 */
@@ -16215,6 +17225,625 @@ export interface components {
             reason: string;
             /** Format: int64 */
             version?: number;
+        };
+        space_AccessDecision: {
+            decision: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            note: string;
+        };
+        space_AccessRequestSummary: {
+            /** Format: uuid */
+            accessRequestId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            decidedAt?: string;
+            decisionMode?: string;
+            decisionNote?: string;
+            justification?: string;
+            requestedRole?: string;
+            requesterName?: string;
+            /** Format: int64 */
+            requesterUserId?: number;
+            /** Format: uuid */
+            spaceId?: string;
+            spaceKey?: string;
+            spaceNameEn?: string;
+            spaceNameKo?: string;
+            status?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        space_ActivitySummary: {
+            /** Format: uuid */
+            activityId?: string;
+            activityType?: string;
+            actorName?: string;
+            actorType?: string;
+            objectType?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            route?: string;
+            spaceKey?: string;
+            spaceNameEn?: string;
+            spaceNameKo?: string;
+            titleEn?: string;
+            titleKo?: string;
+        };
+        space_AdminMetrics: {
+            /** Format: int32 */
+            activeMemberships?: number;
+            /** Format: int32 */
+            activeSpaces?: number;
+            /** Format: int32 */
+            overdueLifecycleReviews?: number;
+            /** Format: int32 */
+            pendingCreationRequests?: number;
+            /** Format: int32 */
+            pendingPublicationReviews?: number;
+            /** Format: int32 */
+            restrictedSpaces?: number;
+        };
+        space_AdminOverview: {
+            /** Format: date-time */
+            generatedAt?: string;
+            lifecycleQueue?: components["schemas"]["space_LifecycleReviewSummary"][];
+            metrics?: components["schemas"]["space_AdminMetrics"];
+            portfolio?: components["schemas"]["space_SpaceSummary"][];
+            priorityRequests?: components["schemas"]["space_RequestSummary"][];
+            publicationQueue?: components["schemas"]["space_PublicationReviewSummary"][];
+        };
+        space_ApiResponseAccessRequestSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_AccessRequestSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseAdminOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["space_AdminOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseContentSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_ContentSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseHomeResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["space_HomeResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseListAccessRequestSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_AccessRequestSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseListContentSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_ContentSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseListLifecycleReviewSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_LifecycleReviewSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseListMemberSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_MemberSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseListPublicationReviewSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_PublicationReviewSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseListRequestSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_RequestSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseListSpaceSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_SpaceSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseListTemplateSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_TemplateSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseOperationsDashboard: {
+            correlationId?: string;
+            data?: components["schemas"]["space_OperationsDashboard"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseReconciliationRunSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_ReconciliationRunSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseRequestSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_RequestSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseSpaceDetail: {
+            correlationId?: string;
+            data?: components["schemas"]["space_SpaceDetail"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseTemplateSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["space_TemplateSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_ApiResponseVoid: {
+            correlationId?: string;
+            data?: unknown;
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        space_AppBindingSummary: {
+            appKey?: string;
+            /** Format: uuid */
+            bindingId?: string;
+            dataAccessScope?: string;
+            displayNameEn?: string;
+            displayNameKo?: string;
+            iconKey?: string;
+            launchTarget?: string;
+            lifecycleState?: string;
+        };
+        space_ContentSummary: {
+            authorName?: string;
+            /** Format: int64 */
+            authorUserId?: number;
+            /** Format: uuid */
+            contentId?: string;
+            contentType?: string;
+            /** Format: int32 */
+            currentRevision?: number;
+            dataClassification?: string;
+            lifecycleState?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            route?: string;
+            summary?: string;
+            title?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        space_CreateAccessRequest: {
+            justification: string;
+            requestedRole: string;
+        };
+        space_CreateContentRequest: {
+            content: {
+                [key: string]: unknown;
+            };
+            contentType: string;
+            dataClassification: string;
+            summary?: string;
+            title: string;
+        };
+        space_CreateSpaceRequest: {
+            justification: string;
+            requestedKey: string;
+            requestedName: string;
+            requestedSummary: string;
+            requestedVisibility: string;
+            /** Format: uuid */
+            templateId: string;
+        };
+        space_EntitlementSyncSummary: {
+            /** Format: int32 */
+            attemptCount?: number;
+            deliveryState?: string;
+            desiredState?: string;
+            externalState?: string;
+            /** Format: date-time */
+            lastAttemptAt?: string;
+            lastError?: string;
+            /** Format: uuid */
+            membershipId?: string;
+            /** Format: date-time */
+            nextAttemptAt?: string;
+            permissionCode?: string;
+            principalRef?: string;
+            principalType?: string;
+            resourceKey?: string;
+            /** Format: uuid */
+            spaceId?: string;
+            /** Format: uuid */
+            syncItemId?: string;
+            /** Format: date-time */
+            synchronizedAt?: string;
+        };
+        space_HomeMetrics: {
+            /** Format: int32 */
+            discoverableSpaces?: number;
+            /** Format: int32 */
+            mySpaces?: number;
+            /** Format: int32 */
+            pendingRequests?: number;
+            /** Format: int32 */
+            reviewQueue?: number;
+            /** Format: int32 */
+            unreadSignals?: number;
+        };
+        space_HomeResponse: {
+            canAdminister?: boolean;
+            canCreate?: boolean;
+            focusSpaces?: components["schemas"]["space_SpaceSummary"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            insights?: components["schemas"]["space_Insight"][];
+            metrics?: components["schemas"]["space_HomeMetrics"];
+            recentActivity?: components["schemas"]["space_ActivitySummary"][];
+            recommendedTemplates?: components["schemas"]["space_TemplateSummary"][];
+        };
+        space_Insight: {
+            detailEn?: string;
+            detailKo?: string;
+            key?: string;
+            route?: string;
+            titleEn?: string;
+            titleKo?: string;
+            tone?: string;
+        };
+        space_LifecycleDecision: {
+            note: string;
+            recommendation: string;
+        };
+        space_LifecycleReviewSummary: {
+            /** Format: date-time */
+            dueAt?: string;
+            evidence?: {
+                [key: string]: unknown;
+            };
+            /** Format: uuid */
+            lifecycleReviewId?: string;
+            recommendation?: string;
+            reviewType?: string;
+            /** Format: uuid */
+            spaceId?: string;
+            spaceKey?: string;
+            spaceNameEn?: string;
+            spaceNameKo?: string;
+            status?: string;
+        };
+        space_MemberSummary: {
+            lifecycleState?: string;
+            memberRole?: string;
+            /** Format: uuid */
+            membershipId?: string;
+            membershipSource?: string;
+            principalRef?: string;
+            principalType?: string;
+            /** Format: date-time */
+            validFrom?: string;
+            /** Format: date-time */
+            validUntil?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        space_OperationsDashboard: {
+            deliveries?: components["schemas"]["space_EntitlementSyncSummary"][];
+            entitlementProviderConfigured?: boolean;
+            findings?: components["schemas"]["space_ReconciliationFindingSummary"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            metrics?: components["schemas"]["space_OperationsMetrics"];
+            recentRuns?: components["schemas"]["space_ReconciliationRunSummary"][];
+        };
+        space_OperationsMetrics: {
+            /** Format: int32 */
+            deadLetters?: number;
+            /** Format: int32 */
+            highRiskFindings?: number;
+            /** Format: int32 */
+            openFindings?: number;
+            /** Format: int32 */
+            overdueReviews?: number;
+            /** Format: int32 */
+            ownerlessSpaces?: number;
+            /** Format: int32 */
+            queuedDeliveries?: number;
+            /** Format: int32 */
+            synchronizedLast24Hours?: number;
+        };
+        space_PublicationReviewSummary: {
+            /** Format: uuid */
+            contentId?: string;
+            contentTitle?: string;
+            contentType?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            dataClassification?: string;
+            /** Format: uuid */
+            reviewId?: string;
+            reviewerStrategy?: string;
+            /** Format: uuid */
+            spaceId?: string;
+            spaceKey?: string;
+            spaceNameEn?: string;
+            spaceNameKo?: string;
+            status?: string;
+        };
+        space_ReconciliationFindingSummary: {
+            evidence?: {
+                [key: string]: unknown;
+            };
+            /** Format: uuid */
+            findingId?: string;
+            findingType?: string;
+            /** Format: date-time */
+            firstDetectedAt?: string;
+            /** Format: date-time */
+            lastDetectedAt?: string;
+            lifecycleState?: string;
+            /** Format: uuid */
+            membershipId?: string;
+            severity?: string;
+            /** Format: uuid */
+            spaceId?: string;
+            targetRef?: string;
+            targetType?: string;
+            title?: string;
+        };
+        space_ReconciliationRunSummary: {
+            /** Format: date-time */
+            completedAt?: string;
+            /** Format: int32 */
+            expiredCount?: number;
+            /** Format: int32 */
+            findingCount?: number;
+            lifecycleState?: string;
+            /** Format: int32 */
+            plannedCount?: number;
+            /** Format: int64 */
+            requestedBy?: number;
+            /** Format: uuid */
+            runId?: string;
+            /** Format: date-time */
+            startedAt?: string;
+            summary?: {
+                [key: string]: unknown;
+            };
+            triggerType?: string;
+        };
+        space_RecoverOwnerRequest: {
+            /** Format: uuid */
+            personPublicId: string;
+            reason: string;
+        };
+        space_RequestDecision: {
+            decision: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            note: string;
+        };
+        space_RequestSummary: {
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            decidedAt?: string;
+            decisionMode?: string;
+            decisionNote?: string;
+            justification?: string;
+            policyEvidence?: {
+                [key: string]: unknown;
+            };
+            /** Format: uuid */
+            requestId?: string;
+            requestedKey?: string;
+            requestedName?: string;
+            requestedSummary?: string;
+            requestedVisibility?: string;
+            requesterName?: string;
+            /** Format: int64 */
+            requesterUserId?: number;
+            riskLevel?: string;
+            status?: string;
+            /** Format: uuid */
+            templateId?: string;
+            templateNameEn?: string;
+            templateNameKo?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        space_ReviewDecision: {
+            decision: string;
+            note: string;
+        };
+        space_SaveMemberRequest: {
+            memberRole: string;
+            principalRef: string;
+            principalType: string;
+            /** Format: date-time */
+            validUntil?: string;
+        };
+        space_SaveTemplateRequest: {
+            accentToken: string;
+            allowedContentTypes: string[];
+            creationMode: string;
+            defaultApps: string[];
+            defaultDataClassification: string;
+            defaultVisibility: string;
+            descriptionEn: string;
+            descriptionKo: string;
+            /** Format: int64 */
+            expectedVersion?: number;
+            iconKey: string;
+            lifecycleState: string;
+            nameEn: string;
+            nameKo: string;
+            purposeType: string;
+            templateKey: string;
+        };
+        space_SpaceDetail: {
+            activity?: components["schemas"]["space_ActivitySummary"][];
+            aiPolicy?: string;
+            appPolicy?: string;
+            apps?: components["schemas"]["space_AppBindingSummary"][];
+            canContribute?: boolean;
+            canManage?: boolean;
+            canModerate?: boolean;
+            contentPolicy?: string;
+            featuredContent?: components["schemas"]["space_ContentSummary"][];
+            space?: components["schemas"]["space_SpaceSummary"];
+        };
+        space_SpaceSummary: {
+            accentToken?: string;
+            /** Format: int32 */
+            contentCount?: number;
+            coverAssetUrl?: string;
+            dataClassification?: string;
+            iconKey?: string;
+            /** Format: date-time */
+            lastActivityAt?: string;
+            lifecycleState?: string;
+            /** Format: int32 */
+            memberCount?: number;
+            memberRole?: string;
+            nameEn?: string;
+            nameKo?: string;
+            purposeType?: string;
+            /** Format: uuid */
+            spaceId?: string;
+            spaceKey?: string;
+            summaryEn?: string;
+            summaryKo?: string;
+            /** Format: int32 */
+            unreadCount?: number;
+            /** Format: int64 */
+            version?: number;
+            visibility?: string;
+        };
+        space_TemplateSummary: {
+            accentToken?: string;
+            creationMode?: string;
+            /** Format: int32 */
+            currentVersion?: number;
+            defaultDataClassification?: string;
+            defaultVisibility?: string;
+            descriptionEn?: string;
+            descriptionKo?: string;
+            iconKey?: string;
+            lifecycleState?: string;
+            nameEn?: string;
+            nameKo?: string;
+            purposeType?: string;
+            /** Format: uuid */
+            templateId?: string;
+            templateKey?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        space_UpdateMemberRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+            memberRole: string;
+            /** Format: date-time */
+            validUntil?: string;
+        };
+        space_UpdatePolicyRequest: {
+            aiPolicy: string;
+            appPolicy: string;
+            contentPolicy: string;
+            /** Format: int64 */
+            expectedVersion: number;
         };
     };
     responses: never;
@@ -20735,7 +22364,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_5: {
+    platform_overview_6: {
         parameters: {
             query?: {
                 window?: "H1" | "H6" | "H24" | "D7" | "D30";
@@ -21458,7 +23087,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_4: {
+    platform_overview_5: {
         parameters: {
             query?: {
                 window?: "H24" | "D7" | "D30" | "D90";
@@ -21506,7 +23135,7 @@ export interface operations {
             };
         };
     };
-    platform_updatePolicy_1: {
+    platform_updatePolicy_2: {
         parameters: {
             query?: never;
             header: {
@@ -21862,7 +23491,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_3: {
+    platform_overview_4: {
         parameters: {
             query?: never;
             header: {
@@ -21907,7 +23536,7 @@ export interface operations {
             };
         };
     };
-    platform_updatePolicy: {
+    platform_updatePolicy_1: {
         parameters: {
             query?: never;
             header: {
@@ -21995,7 +23624,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_2: {
+    platform_overview_3: {
         parameters: {
             query?: {
                 query?: string;
@@ -22618,7 +24247,7 @@ export interface operations {
             };
         };
     };
-    platform_overview_1: {
+    platform_overview_2: {
         parameters: {
             query?: never;
             header: {
@@ -23013,6 +24642,116 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseRevision"];
+                };
+            };
+        };
+    };
+    platform_updateConnection: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                connectionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ConnectionUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseConnectionSummary"];
+                };
+            };
+        };
+    };
+    platform_overview_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAdminOverview"];
+                };
+            };
+        };
+    };
+    platform_updatePolicy: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_TenantPolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseTenantPolicy"];
+                };
+            };
+        };
+    };
+    platform_updateSharedInbox: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                sharedInboxId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SharedInboxUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseSharedInboxSummary"];
                 };
             };
         };
@@ -24672,7 +26411,7 @@ export interface operations {
             };
         };
     };
-    platform_home: {
+    platform_home_1: {
         parameters: {
             query?: {
                 timeZone?: string;
@@ -25231,6 +26970,325 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseRecommendationFeedbackResponse"];
+                };
+            };
+        };
+    };
+    platform_home: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHomeResponse"];
+                };
+            };
+        };
+    };
+    platform_compose: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ComposeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
+    platform_decideProposal: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-DWP-Permissions"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ProposalDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseActionProposal"];
+                };
+            };
+        };
+    };
+    platform_threads: {
+        parameters: {
+            query?: {
+                lane?: string;
+                state?: string;
+                folder?: string;
+                sharedOnly?: boolean;
+                query?: string;
+                page?: number;
+                pageSize?: number;
+            };
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadPage"];
+                };
+            };
+        };
+    };
+    platform_thread: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+            };
+            path: {
+                threadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
+    platform_action: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                threadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ThreadActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
+    platform_assign: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                threadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_AssignRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
+    platform_comment: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-DWP-Display-Name-B64"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                threadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CommentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
+    platform_updateDraft_1: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                threadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DraftUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
+    platform_reply: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                threadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ReplyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
+                };
+            };
+        };
+    };
+    platform_snooze: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                threadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SnoozeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseThreadDetail"];
                 };
             };
         };
@@ -28030,6 +30088,785 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["provider_ApiResponseSupportSessionContext"];
+                };
+            };
+        };
+    };
+    space_accessRequests: {
+        parameters: {
+            query?: {
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListAccessRequestSummary"];
+                };
+            };
+        };
+    };
+    space_publicationReviews: {
+        parameters: {
+            query?: {
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListPublicationReviewSummary"];
+                };
+            };
+        };
+    };
+    space_decidePublication: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                reviewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_ReviewDecision"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    space_lifecycle: {
+        parameters: {
+            query?: {
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListLifecycleReviewSummary"];
+                };
+            };
+        };
+    };
+    space_decideLifecycle: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                lifecycleReviewId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_LifecycleDecision"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    space_operations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseOperationsDashboard"];
+                };
+            };
+        };
+    };
+    space_retryEntitlement: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                syncItemId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    space_reconcile: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseReconciliationRunSummary"];
+                };
+            };
+        };
+    };
+    space_overview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseAdminOverview"];
+                };
+            };
+        };
+    };
+    space_requests_1: {
+        parameters: {
+            query?: {
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListRequestSummary"];
+                };
+            };
+        };
+    };
+    space_decideRequest: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_RequestDecision"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseRequestSummary"];
+                };
+            };
+        };
+    };
+    space_spaces_1: {
+        parameters: {
+            query?: {
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListSpaceSummary"];
+                };
+            };
+        };
+    };
+    space_recoverOwner: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                spaceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_RecoverOwnerRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListMemberSummary"];
+                };
+            };
+        };
+    };
+    space_templates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListTemplateSummary"];
+                };
+            };
+        };
+    };
+    space_createTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_SaveTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseTemplateSummary"];
+                };
+            };
+        };
+    };
+    space_updateTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_SaveTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseTemplateSummary"];
+                };
+            };
+        };
+    };
+    space_home: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseHomeResponse"];
+                };
+            };
+        };
+    };
+    space_requests: {
+        parameters: {
+            query?: {
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListRequestSummary"];
+                };
+            };
+        };
+    };
+    space_createRequest: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_CreateSpaceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseRequestSummary"];
+                };
+            };
+        };
+    };
+    space_spaces: {
+        parameters: {
+            query?: {
+                scope?: string;
+                q?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListSpaceSummary"];
+                };
+            };
+        };
+    };
+    space_space: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                spaceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseSpaceDetail"];
+                };
+            };
+        };
+    };
+    space_requestAccess: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                spaceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_CreateAccessRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseAccessRequestSummary"];
+                };
+            };
+        };
+    };
+    space_content: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                spaceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListContentSummary"];
+                };
+            };
+        };
+    };
+    space_createContent: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                spaceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_CreateContentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseContentSummary"];
+                };
+            };
+        };
+    };
+    space_ownerAccessRequests: {
+        parameters: {
+            query?: {
+                status?: string;
+            };
+            header?: never;
+            path: {
+                spaceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListAccessRequestSummary"];
+                };
+            };
+        };
+    };
+    space_decideAccessRequest: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                spaceKey: string;
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_AccessDecision"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    space_members: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                spaceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListMemberSummary"];
+                };
+            };
+        };
+    };
+    space_saveMember: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                spaceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_SaveMemberRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListMemberSummary"];
+                };
+            };
+        };
+    };
+    space_updateMember: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                spaceKey: string;
+                membershipId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_UpdateMemberRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListMemberSummary"];
+                };
+            };
+        };
+    };
+    space_revokeMember: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                spaceKey: string;
+                membershipId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListMemberSummary"];
+                };
+            };
+        };
+    };
+    space_updatePolicies: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                spaceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["space_UpdatePolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseSpaceDetail"];
+                };
+            };
+        };
+    };
+    space_templates_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["space_ApiResponseListTemplateSummary"];
                 };
             };
         };

@@ -55,6 +55,41 @@ const ADMIN_CONTENT: Record<AdminView, AdminComponent> = {
       default: module.ServiceOperationsManager,
     }))
   ),
+  'space-overview': lazy(() =>
+    import('./space-admin-page').then((module) => ({
+      default: module.SpaceAdminOverview,
+    }))
+  ),
+  'space-directory': lazy(() =>
+    import('./space-admin-page').then((module) => ({
+      default: module.SpaceAdminDirectory,
+    }))
+  ),
+  'space-requests': lazy(() =>
+    import('./space-admin-page').then((module) => ({
+      default: module.SpaceAdminRequests,
+    }))
+  ),
+  'space-templates': lazy(() =>
+    import('./space-admin-page').then((module) => ({
+      default: module.SpaceAdminTemplates,
+    }))
+  ),
+  'space-content-reviews': lazy(() =>
+    import('./space-admin-page').then((module) => ({
+      default: module.SpaceAdminContentReviews,
+    }))
+  ),
+  'space-lifecycle': lazy(() =>
+    import('./space-admin-page').then((module) => ({
+      default: module.SpaceAdminLifecycle,
+    }))
+  ),
+  'space-operations': lazy(() =>
+    import('./space-operations-page').then((module) => ({
+      default: module.SpaceAdminOperations,
+    }))
+  ),
   announcements: lazy(() =>
     import('./announcement-manager').then((module) => ({ default: module.AnnouncementManager }))
   ),

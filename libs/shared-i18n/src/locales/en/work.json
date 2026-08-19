@@ -504,7 +504,7 @@
     },
     "apps": {
       "ref-app-mail": {
-        "name": "Mail & calendar",
+        "name": "Mail",
         "description": "Messages, calendar, and meeting actions",
         "owner": "Workplace Platform",
         "lastUsed": "8 min ago"

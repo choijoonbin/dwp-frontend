@@ -159,6 +159,75 @@ async function mockAdminSession(page: Page, options: AdminSessionOptions = {}) {
   );
 }
 
+test('tenant administrators govern fixed home zones without owning personal widgets', async ({
+  page,
+}) => {
+  await mockAdminSession(page);
+  await page.route('**/api/platform/v1/admin/home-experience', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope({
+        headline: null,
+        subheadline: null,
+        localizedContent: {},
+        defaultLocale: 'en',
+        backgroundPosition: 'RIGHT',
+        overlayOpacity: 18,
+        backgroundUrl: null,
+        compositionPolicy: {
+          schemaVersion: 1,
+          personalCustomizationEnabled: true,
+          governedZones: [
+            {
+              zoneKey: 'workspace-tools',
+              placement: 'HERO',
+              visible: true,
+              size: 'full',
+              sortOrder: 10,
+            },
+            {
+              zoneKey: 'announcements',
+              placement: 'CANVAS',
+              visible: true,
+              size: 'compact',
+              sortOrder: 20,
+            },
+          ],
+        },
+        version: 8,
+      }),
+    })
+  );
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/admin/experience/home-composition');
+
+  await expect(
+    page.getByRole('heading', { name: 'Home composition policy', level: 2 })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('switch', { name: 'Allow member home personalization' })
+  ).toBeChecked();
+  await expect(page.getByText('Company managed')).toHaveCount(1);
+  await expect(page.getByText('Personal', { exact: true })).toHaveCount(2);
+  await expect(page.getByText('Workspace tools', { exact: true })).toBeVisible();
+  await expect(page.getByText('Command rail', { exact: true })).toBeVisible();
+
+  const accessibility = await new AxeBuilder({ page }).include('main').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
+
+  await page.setViewportSize({ width: 320, height: 720 });
+  const mobileOverflow = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    documentWidth: document.documentElement.scrollWidth,
+  }));
+  expect(mobileOverflow.documentWidth).toBeLessThanOrEqual(mobileOverflow.viewport);
+});
+
 test('tenant administrators monitor API health and inspect a distributed trace', async ({
   page,
 }) => {

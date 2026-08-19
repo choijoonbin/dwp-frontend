@@ -17,7 +17,7 @@ import {
   Unlink,
 } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { formatDate, formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   declareCatalogRelation,
   dispositionCatalogFinding,
@@ -105,7 +105,7 @@ function Metric({ label, value, detail }: { label: string; value: number; detail
         {label}
       </Typography>
       <Typography component="p" variant="h6" fontWeight={760} sx={{ mt: 0.25 }}>
-        {value.toLocaleString()}
+        {formatNumber(value)}
       </Typography>
       <Typography variant="caption" color="text.secondary" noWrap display="block">
         {detail}

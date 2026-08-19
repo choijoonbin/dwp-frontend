@@ -14,7 +14,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   createProviderIncident,
   getProviderOperatorProfile,
@@ -626,7 +626,7 @@ export function ProviderHealth() {
       >
         <SignalMetric
           label={t('health.signals.readiness')}
-          value={`${health.data.healthyInstances.toLocaleString()} / ${health.data.totalInstances.toLocaleString()}`}
+          value={`${formatNumber(health.data.healthyInstances)} / ${formatNumber(health.data.totalInstances)}`}
           detail={t('health.signals.readinessDetail', { exceptions: exceptionInstances })}
           icon={<ServerCog size={18} />}
           tone={
@@ -639,7 +639,7 @@ export function ProviderHealth() {
         />
         <SignalMetric
           label={t('health.signals.customerImpact')}
-          value={health.data.impactedTenants.toLocaleString()}
+          value={formatNumber(health.data.impactedTenants)}
           detail={t('health.signals.customerImpactDetail', { incidents: activeIncidents.length })}
           icon={<Users size={18} />}
           tone={health.data.impactedTenants ? 'error' : 'success'}

@@ -13,6 +13,15 @@ export {
   displayDictionaryKey,
   humanizeDisplayCode,
   resolveDisplayCode,
+  resolveDisplayCodeWithFallback,
   useDisplayDictionary,
   type DisplayDomain,
 } from './lib/display-dictionary';
+export {
+  SYSTEM_ROLE_CODES,
+  resolveRoleDisplayCopy,
+  useRoleDisplay,
+  type RoleDisplayCopy,
+  type RoleDisplaySource,
+  type SystemRoleCode,
+} from './lib/role-display';

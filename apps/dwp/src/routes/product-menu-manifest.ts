@@ -3,12 +3,16 @@ import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
 import { CALENDAR_NAVIGATION } from '../features/calendar/calendar-navigation';
 import { HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
+import { MAIL_NAVIGATION } from '../features/mail/mail-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
+import { SPACE_NAVIGATION } from '../features/spaces/space-navigation';
 
 export type ProductShell =
   | 'workspace'
   | 'calendar'
+  | 'mail'
   | 'approvals'
+  | 'spaces'
   | 'hcm'
   | 'admin'
   | 'provider'
@@ -33,11 +37,25 @@ export const PRODUCT_MENU_ROUTES: readonly ProductMenuRoute[] = [
       shell: 'calendar' as const,
     }))
   ),
+  ...MAIL_NAVIGATION.flatMap((group) =>
+    group.items.map((item) => ({
+      id: `mail.${item.view}`,
+      path: item.path,
+      shell: 'mail' as const,
+    }))
+  ),
   ...APPROVAL_NAVIGATION.flatMap((group) =>
     group.items.map((item) => ({
       id: `approvals.${item.view}`,
       path: item.path,
       shell: 'approvals' as const,
+    }))
+  ),
+  ...SPACE_NAVIGATION.flatMap((group) =>
+    group.items.map((item) => ({
+      id: `spaces.${item.view}`,
+      path: item.path,
+      shell: 'spaces' as const,
     }))
   ),
   ...HCM_NAVIGATION.flatMap((group) =>

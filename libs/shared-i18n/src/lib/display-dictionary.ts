@@ -14,6 +14,10 @@ export const DISPLAY_DOMAINS = [
   'connectorTypes',
   'authModes',
   'assignmentTypes',
+  'roleNames',
+  'roleDescriptions',
+  'roleFamilies',
+  'roleAssignmentClasses',
   'scopeTypes',
   'targetTypes',
   'relationTypes',
@@ -61,6 +65,20 @@ export function resolveDisplayCode(
     console.warn(`[display-dictionary] Unmapped ${domain} code: ${normalized}`);
   }
   return t('unmapped');
+}
+
+export function resolveDisplayCodeWithFallback(
+  t: TFunction<'display'>,
+  domain: DisplayDomain,
+  code: string | null | undefined,
+  fallback: string
+): string {
+  const normalized = code?.trim();
+  if (!normalized) return fallback;
+
+  const key = `${domain}.${displayDictionaryKey(normalized)}`;
+  const translated = t(key, { defaultValue: MISSING_SENTINEL });
+  return translated === MISSING_SENTINEL ? fallback : translated;
 }
 
 export function useDisplayDictionary() {

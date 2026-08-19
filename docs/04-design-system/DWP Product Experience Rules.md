@@ -154,6 +154,16 @@ Archetype을 명시한다.
   12-Column Grid로 묶는다. 초광폭에서 관계가 끊기는 긴 직선을 만들지 않는다.
 - Command Center는 `4/8/12` Column으로 반응하고, 주 Surface와 보조 Surface의 비율을
   명시한다. 단순히 화면을 반으로 나누지 않는다.
+- Personal Widget Canvas는 2·3·4·5분할의 최소공배수인 60단위 논리 Grid를 사용한다.
+  Desktop Footprint는 `12·15·20·30·40·60`, Tablet과 Mobile은 `60`만
+  사용한다. 이 단위는 배치 계산용이며 시각적 60열 Gutter를 만들지 않는다.
+- Widget의 보이는 Surface는 배치용 Wrapper가 아니라 내부 `section`이 소유한다. 표준
+  `balanced` 간격은 Mobile `16px`, Tablet `20px`, Desktop `24px`이며 `focused`는
+  Desktop `16px`, `expressive`는 Desktop `32px`를 사용한다. 가로·세로 간격과 편집
+  Outline은 동일한 중앙 Spacing Policy에서 계산하고 화면별 값으로 덮어쓰지 않는다.
+- Widget 폭 선택은 `작게·보통·넓게` Text Menu가 아니라 실제 점유 비율을 그린 Icon
+  Segmented Control로 제공한다. 모든 Icon에는 `한 줄에 N개` 형식의 Tooltip과 접근성
+  이름을 연결하고, Registry가 선언한 최소·최대 Footprint 밖의 선택지는 노출하지 않는다.
 - Surface Level은 세 단계만 사용한다.
   - `canvas`: 제품 배경
   - `section`: 관련 정보를 묶는 낮은 Tone Surface
@@ -163,6 +173,18 @@ Archetype을 명시한다.
 - 건강한 반복은 압축한다. 예외가 발생하면 해당 Surface가 확장되어 원인과 영향을 보여준다.
 
 ## 8. Color와 데이터 시각화
+
+### Section Header와 아이콘
+
+- 독립적인 Workspace 콘텐츠·Widget Section 제목은 디자인 시스템의 `SectionHeader`만 사용한다.
+  Page Hero, Navigation과 Launchpad의 구성 Label은 이 패턴을 사용하지 않는다.
+- 제목 아이콘은 Lucide 선형 아이콘, `30px` 저채도 Tonal Plate, `17px` Glyph,
+  `1.8px` Stroke로 고정한다. 아이콘을 그대로 노출하거나 개별 테두리·배경·크기를 만들지 않는다.
+- 제목, 아이콘, 우측 Meta와 하단 Divider의 정렬은 각 화면에서 재정의하지 않는다.
+- 같은 계층의 제목 아이콘은 `primary` Tone을 공유한다. 상태·위험·범주 Color는 제목 장식이
+  아니라 Meta, Badge 또는 본문 데이터에만 사용한다.
+- 아이콘은 제목을 중복 낭독하지 않도록 장식 요소로 숨기고, Section은 실제 Heading ID로
+  이름을 갖는다.
 
 ### 역할
 

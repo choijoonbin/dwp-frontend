@@ -82,7 +82,7 @@ type MockHomeSurface = {
     widgets: Array<{
       widgetKey: string;
       visible: boolean;
-      size: 'compact' | 'medium' | 'large' | 'full';
+      size: 'fifth' | 'quarter' | 'compact' | 'medium' | 'large' | 'full';
     }>;
   };
   version: number;
@@ -157,6 +157,16 @@ export const FULL_PRODUCT_PERMISSIONS = [
     ['ADMIN.WORKFORCE_ACCESS', 'MANAGE'],
     ['ADMIN.SAVED_VIEW_CUSTODY', 'VIEW'],
     ['ADMIN.SAVED_VIEW_CUSTODY', 'MANAGE'],
+    ['ADMIN.SPACE_GOVERNANCE', 'VIEW'],
+    ['ADMIN.SPACE_GOVERNANCE', 'MANAGE'],
+    ['ADMIN.SPACE_TEMPLATES', 'VIEW'],
+    ['ADMIN.SPACE_TEMPLATES', 'CREATE'],
+    ['ADMIN.SPACE_TEMPLATES', 'UPDATE'],
+    ['ADMIN.SPACE_TEMPLATES', 'MANAGE'],
+    ['ADMIN.SPACE_COMPLIANCE', 'VIEW'],
+    ['ADMIN.SPACE_COMPLIANCE', 'APPROVE'],
+    ['ADMIN.SPACE_ACCESS_REVIEW', 'VIEW'],
+    ['ADMIN.SPACE_ACCESS_REVIEW', 'APPROVE'],
     ['ADMIN.CALENDAR', 'VIEW'],
     ['ADMIN.CALENDAR', 'CREATE'],
     ['ADMIN.CALENDAR', 'UPDATE'],
@@ -699,6 +709,109 @@ export function fulfillSuccess(route: Route, data: unknown) {
   });
 }
 
+const communicationStory = ({
+  communicationId,
+  title,
+  summary,
+  categoryKey,
+  contentType,
+  publisherName,
+  coverImageUrl,
+  publishedAt,
+  featured = false,
+}: {
+  communicationId: number;
+  title: string;
+  summary: string;
+  categoryKey: string;
+  contentType: 'ANNOUNCEMENT' | 'NEWS' | 'EVENT' | 'POLICY_UPDATE';
+  publisherName: string;
+  coverImageUrl: string;
+  publishedAt: string;
+  featured?: boolean;
+}) => ({
+  communicationId,
+  title,
+  summary,
+  body: summary,
+  severity: 'INFO' as const,
+  contentType,
+  categoryKey,
+  publisherName,
+  coverImageUrl,
+  featured,
+  pinned: false,
+  acknowledgementRequired: false,
+  acknowledgementDueAt: null,
+  dismissible: true,
+  readingMinutes: 3,
+  sourceLocale: 'en',
+  actionLabel: null,
+  actionUrl: null,
+  publishedAt,
+  endsAt: null,
+  readerState: {
+    unread: true,
+    saved: false,
+    acknowledged: false,
+    dismissed: false,
+    openedAt: null,
+    savedAt: null,
+    acknowledgedAt: null,
+  },
+  reactions: { counts: {}, viewerReaction: null, total: 0 },
+});
+
+export const HOME_COMMUNICATIONS_FIXTURE = {
+  featured: communicationStory({
+    communicationId: 4101,
+    title: 'Leadership town hall questions and answers',
+    summary: 'Review the key answers shared during this quarter leadership conversation.',
+    categoryKey: 'LEADERSHIP',
+    contentType: 'ANNOUNCEMENT',
+    publisherName: 'CEO Office',
+    coverImageUrl: '/media/communications/community-day.jpg',
+    publishedAt: '2026-08-13T09:00:00Z',
+    featured: true,
+  }),
+  items: [
+    communicationStory({
+      communicationId: 4104,
+      title: 'A new way to collaborate with colleagues in the AI era',
+      summary:
+        'See how small ideas become measurable workplace improvements through team experiments.',
+      categoryKey: 'INNOVATION',
+      contentType: 'NEWS',
+      publisherName: 'Digital Workplace',
+      coverImageUrl: '/media/communications/innovation-lab.jpg',
+      publishedAt: '2026-08-18T09:00:00Z',
+    }),
+    communicationStory({
+      communicationId: 4103,
+      title: 'Green campus day brings our community together',
+      summary: 'Find the schedule and participation details for this week volunteer program.',
+      categoryKey: 'CULTURE',
+      contentType: 'EVENT',
+      publisherName: 'People & Culture',
+      coverImageUrl: '/media/communications/community-day.jpg',
+      publishedAt: '2026-08-17T09:00:00Z',
+    }),
+    communicationStory({
+      communicationId: 4102,
+      title: 'Security readiness checklist for distributed work',
+      summary:
+        'Complete these practical checks to keep customer and company information protected.',
+      categoryKey: 'SECURITY',
+      contentType: 'POLICY_UPDATE',
+      publisherName: 'Information Security',
+      coverImageUrl: '/media/communications/security-readiness.jpg',
+      publishedAt: '2026-08-16T09:00:00Z',
+    }),
+  ],
+  summary: { total: 4, unread: 4, required: 0, saved: 0 },
+  generatedAt: '2026-08-18T09:10:00Z',
+} as const;
+
 export function createHomeOverviewFixture(roles: readonly string[] = ['WORKSPACE_MEMBER']) {
   const operator = roles.some((role) =>
     ['ADMIN', 'TENANT_ADMIN', 'PLATFORM_ADMIN', 'PROVIDER_ADMIN'].includes(role)
@@ -710,6 +823,19 @@ export function createHomeOverviewFixture(roles: readonly string[] = ['WORKSPACE
     summary: { total: 0, unread: 0, required: 0, saved: 0 },
     generatedAt: '2026-08-14T00:20:00Z',
   };
+  const recommendations = [
+    {
+      key: 'work-due-soon',
+      kind: 'ACTION',
+      priority: 'HIGH',
+      title: 'Review work approaching its deadline',
+      description: 'Your personal work queue contains time-sensitive items.',
+      actionPath: '/work',
+      source: 'DWP_WORKSPACE',
+      evidenceCount: WORKSPACE_QUEUE_FIXTURE.summary.dueSoon,
+      confidence: 'HIGH',
+    },
+  ] as const;
 
   return {
     audience: {
@@ -751,19 +877,14 @@ export function createHomeOverviewFixture(roles: readonly string[] = ['WORKSPACE
       data: WORKSPACE_ACTIVITY_FIXTURE,
       reason: null,
     },
-    recommendations: [
-      {
-        key: 'work-due-soon',
-        kind: 'ACTION',
-        priority: 'HIGH',
-        title: 'Review work approaching its deadline',
-        description: 'Your personal work queue contains time-sensitive items.',
-        actionPath: '/work',
-        source: 'DWP_WORKSPACE',
-        evidenceCount: WORKSPACE_QUEUE_FIXTURE.summary.dueSoon,
-        confidence: 'HIGH',
-      },
-    ],
+    recommendations,
+    recommendationSection: {
+      status: 'AVAILABLE',
+      source: 'DWP_HOME_RECOMMENDATIONS',
+      generatedAt: '2026-08-14T00:20:00Z',
+      data: recommendations,
+      reason: null,
+    },
     generatedAt: '2026-08-14T00:20:00Z',
   } as const;
 }
@@ -844,25 +965,24 @@ export async function mockShellSession(
   let preferenceExceptions: PreferenceExceptionRequest[] = [];
   const defaultHomeSurfaces: Record<MockHomeSurface['surfaceKey'], MockHomeSurface> = {
     'workspace-home': {
-      schemaVersion: 2,
+      schemaVersion: 4,
       surfaceKey: 'workspace-home',
       customized: false,
       layout: {
         appLayout: null,
         presentation: 'balanced',
         widgets: [
-          { widgetKey: 'announcements', visible: true, size: 'full' },
-          { widgetKey: 'daily-brief', visible: true, size: 'medium' },
+          { widgetKey: 'activity', visible: true, size: 'quarter' },
           { widgetKey: 'focus', visible: true, size: 'medium' },
-          { widgetKey: 'schedule', visible: true, size: 'medium' },
-          { widgetKey: 'activity', visible: true, size: 'medium' },
+          { widgetKey: 'schedule', visible: true, size: 'quarter' },
+          { widgetKey: 'daily-brief', visible: true, size: 'full' },
         ],
       },
       version: 0,
       updatedAt: null,
     },
     'hcm-home': {
-      schemaVersion: 2,
+      schemaVersion: 4,
       surfaceKey: 'hcm-home',
       customized: false,
       layout: {
@@ -880,7 +1000,7 @@ export async function mockShellSession(
       updatedAt: null,
     },
     'approval-home': {
-      schemaVersion: 2,
+      schemaVersion: 4,
       surfaceKey: 'approval-home',
       customized: false,
       layout: {
@@ -1410,6 +1530,26 @@ export async function mockShellSession(
         backgroundPosition: 'CENTER',
         overlayOpacity: 18,
         backgroundUrl: null,
+        compositionPolicy: {
+          schemaVersion: 1,
+          personalCustomizationEnabled: true,
+          governedZones: [
+            {
+              zoneKey: 'workspace-tools',
+              placement: 'HERO',
+              visible: true,
+              size: 'full',
+              sortOrder: 10,
+            },
+            {
+              zoneKey: 'announcements',
+              placement: 'CANVAS',
+              visible: true,
+              size: 'compact',
+              sortOrder: 20,
+            },
+          ],
+        },
         version: 0,
       });
     }

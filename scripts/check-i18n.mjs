@@ -48,6 +48,40 @@ function registeredProductLocales() {
   return locales.sort();
 }
 
+function registeredProductNamespaces() {
+  const registryPath = path.join(root, 'libs/shared-i18n/src/lib/i18n.ts');
+  const source = fs.readFileSync(registryPath, 'utf8');
+  const sourceFile = ts.createSourceFile(
+    registryPath,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS
+  );
+  const namespaces = [];
+
+  function visit(node) {
+    if (
+      ts.isVariableDeclaration(node) &&
+      node.name.getText(sourceFile) === 'PRODUCT_NAMESPACES' &&
+      node.initializer
+    ) {
+      const expression = ts.isAsExpression(node.initializer)
+        ? node.initializer.expression
+        : node.initializer;
+      if (ts.isArrayLiteralExpression(expression)) {
+        for (const element of expression.elements) {
+          if (ts.isStringLiteral(element)) namespaces.push(element.text);
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return namespaces.sort();
+}
+
 function listFiles(directory, predicate) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const target = path.join(directory, entry.name);
@@ -130,6 +164,12 @@ function checkBundles() {
     .readdirSync(path.join(localeRoot, baseLocale))
     .filter((file) => file.endsWith('.json'))
     .sort();
+  const registeredNamespaces = registeredProductNamespaces().map((value) => `${value}.json`);
+  if (JSON.stringify(namespaces) !== JSON.stringify(registeredNamespaces)) {
+    issues.push(
+      `product namespace registry (${registeredNamespaces.join(', ')}) does not match locale bundles (${namespaces.join(', ')})`
+    );
+  }
   for (const locale of locales) {
     const localeDirectory = path.join(localeRoot, locale);
     const localeNamespaces = fs
@@ -219,6 +259,12 @@ function checkSourceFile(file) {
 
     if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)) {
       const method = node.expression.name.text;
+      if (['toLocaleString', 'toLocaleDateString', 'toLocaleTimeString'].includes(method)) {
+        report(
+          node,
+          'use @dwp-frontend/shared-i18n formatters instead of calling toLocale* directly'
+        );
+      }
       if (['success', 'error', 'info', 'warning'].includes(method)) {
         const firstArgument = node.arguments[0];
         if (

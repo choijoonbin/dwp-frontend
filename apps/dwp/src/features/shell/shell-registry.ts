@@ -6,6 +6,8 @@ import {
   ContactRound,
   FileCheck2,
   LifeBuoy,
+  Layers3,
+  Mail,
   Newspaper,
   Settings2,
   ShieldCheck,
@@ -24,8 +26,10 @@ export type ShellKey =
   | 'communications'
   | 'services'
   | 'calendar'
+  | 'mail'
   | 'hcm'
   | 'approvals'
+  | 'spaces'
   | 'account'
   | 'admin'
   | 'provider';
@@ -109,6 +113,18 @@ export const shellRegistry = {
     headerSurface: 'solid',
     context: { icon: CalendarDays, labelKey: 'shell.calendar.name' },
   },
+  mail: {
+    key: 'mail',
+    routePrefixes: ['/mail'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: Mail, labelKey: 'shell.mail.name' },
+  },
   hcm: {
     key: 'hcm',
     routePrefixes: ['/hr'],
@@ -132,6 +148,18 @@ export const shellRegistry = {
     headerPosition: 'fixed',
     headerSurface: 'solid',
     context: { icon: FileCheck2, labelKey: 'shell.approvals.name' },
+  },
+  spaces: {
+    key: 'spaces',
+    routePrefixes: ['/spaces'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: Layers3, labelKey: 'shell.spaces.name' },
   },
   account: {
     key: 'account',
@@ -196,7 +224,9 @@ const routeResolutionOrder: readonly ShellKey[] = [
   'admin',
   'account',
   'approvals',
+  'spaces',
   'calendar',
+  'mail',
   'hcm',
   'services',
   'communications',

@@ -36,3 +36,5 @@
 - `DWP-R1-APR-001-enterprise-approval-decision-hub`: 통합 결재함·Workflow·결정 증적·원업무 반영
 - `DWP-R1-HR-001-role-aware-hcm`: 개인·Manager·위임 HR 운영을 분리한 역할 인지 DWP HCM
 - `DWP-R1-CAL-001-enterprise-calendar`: 오늘 중심 일정·가용 시간·자원 예약·위임 운영
+- `DWP-R1-MAIL-001-enterprise-mail`: 행동 중심 메일·공유함 협업·사람 승인형 AI 제안
+- `DWP-R2-SPC-001-enterprise-spaces`: 목적별 사람·콘텐츠·앱·AI를 묶는 통제형 협업 Space

@@ -33,7 +33,7 @@ import {
   GuidedEmptyState,
   OperationalKpiStrip,
 } from '@dwp-frontend/design-system';
-import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -240,7 +240,11 @@ function ConnectorInspector({
                       <StateChip state={event.outcome} />
                     </Stack>
                     <Typography variant="caption" color="text.secondary" display="block">
-                      {event.summary} · {new Date(event.occurredAt).toLocaleString()}
+                      {event.summary} ·{' '}
+                      {formatDate(event.occurredAt, {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
                     </Typography>
                   </Box>
                 ))}
@@ -451,7 +455,9 @@ export function IdentityProvisioningManager() {
         headerName: t('provisioning.scim.columns.lastUsed'),
         width: 180,
         valueGetter: (_value, row) =>
-          row.lastUsedAt ? new Date(row.lastUsedAt).toLocaleString() : t('provisioning.never'),
+          row.lastUsedAt
+            ? formatDate(row.lastUsedAt, { dateStyle: 'medium', timeStyle: 'short' })
+            : t('provisioning.never'),
       },
       {
         field: 'actions',
@@ -539,7 +545,8 @@ export function IdentityProvisioningManager() {
         field: 'occurredAt',
         headerName: t('provisioning.scim.eventColumns.occurredAt'),
         width: 190,
-        valueGetter: (_value, row) => new Date(row.occurredAt).toLocaleString(),
+        valueGetter: (_value, row) =>
+          formatDate(row.occurredAt, { dateStyle: 'medium', timeStyle: 'short' }),
       },
     ],
     [t]

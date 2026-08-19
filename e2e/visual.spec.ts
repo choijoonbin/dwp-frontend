@@ -6,7 +6,11 @@ import {
   mockRuntimeNavigation,
   WORKSPACE_QUEUE_FIXTURE,
 } from './support/runtime-access';
-import { createHomeOverviewFixture, FULL_PRODUCT_PERMISSIONS } from './support/shell-session';
+import {
+  createHomeOverviewFixture,
+  FULL_PRODUCT_PERMISSIONS,
+  HOME_COMMUNICATIONS_FIXTURE,
+} from './support/shell-session';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -42,7 +46,11 @@ async function mockUnauthenticated(page: Page) {
   );
 }
 
-async function mockAuthenticated(page: Page, locale = 'en') {
+async function mockAuthenticated(
+  page: Page,
+  locale = 'en',
+  homeOverview: unknown = createHomeOverviewFixture(['ADMIN'])
+) {
   await mockRuntimeNavigation(page);
   await page.route('**/api/auth/admin/access/privileged/me/**', (route) =>
     route.fulfill({
@@ -121,11 +129,10 @@ async function mockAuthenticated(page: Page, locale = 'en') {
             appLayout: null,
             presentation: 'balanced',
             widgets: [
-              { widgetKey: 'announcements', visible: true, size: 'full' },
-              { widgetKey: 'daily-brief', visible: true, size: 'medium' },
+              { widgetKey: 'activity', visible: true, size: 'quarter' },
               { widgetKey: 'focus', visible: true, size: 'medium' },
-              { widgetKey: 'schedule', visible: true, size: 'medium' },
-              { widgetKey: 'activity', visible: true, size: 'medium' },
+              { widgetKey: 'schedule', visible: true, size: 'quarter' },
+              { widgetKey: 'daily-brief', visible: true, size: 'full' },
             ],
           },
           version: 0,
@@ -165,7 +172,7 @@ async function mockAuthenticated(page: Page, locale = 'en') {
       body: JSON.stringify({
         status: 'SUCCESS',
         message: 'OK',
-        data: createHomeOverviewFixture(['ADMIN']),
+        data: homeOverview,
       }),
     })
   );
@@ -573,6 +580,7 @@ test('administration access grid visual baseline', async ({ page }, testInfo) =>
 });
 
 test('personal home reference visual baseline', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockAuthenticated(page);
   await setAppearance(page, {
     mode: 'light',
@@ -593,7 +601,73 @@ test('personal home reference visual baseline', async ({ page }) => {
   });
 });
 
+test('personal home news and command rail visual baseline', async ({ page }, testInfo) => {
+  await page.setViewportSize(
+    testInfo.project.name === 'mobile' ? { width: 390, height: 844 } : { width: 1920, height: 1080 }
+  );
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const overview = createHomeOverviewFixture(['ADMIN']);
+  await mockAuthenticated(page, 'en', {
+    ...overview,
+    communications: {
+      ...overview.communications,
+      generatedAt: HOME_COMMUNICATIONS_FIXTURE.generatedAt,
+      data: HOME_COMMUNICATIONS_FIXTURE,
+    },
+  });
+  await setAppearance(page, {
+    mode: 'light',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/');
+  await expect(
+    page.getByRole('heading', {
+      name: 'A new way to collaborate with colleagues in the AI era',
+    })
+  ).toBeVisible();
+  await expect(page.getByTestId('home-priority-rail').locator(':scope > div')).toHaveCount(3);
+  await expect(page).toHaveScreenshot('personal-home-news-command.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
+test('personal home tablet reference visual baseline', async ({ page }, testInfo) => {
+  test.skip(
+    testInfo.project.name === 'mobile',
+    'Tablet geometry is covered by the desktop engine.'
+  );
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await mockAuthenticated(page);
+  await setAppearance(page, {
+    mode: 'light',
+    density: 'standard',
+    highContrast: false,
+    reduceMotion: true,
+  });
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Work tools' })).toBeVisible();
+  await expect(
+    page.locator('[data-testid="home-workspace-grid"] [data-workspace-widget]')
+  ).toHaveCount(6);
+  await expect(page).toHaveScreenshot('personal-home-reference-tablet.png', {
+    animations: 'disabled',
+    caret: 'hide',
+    fullPage: true,
+    maxDiffPixelRatio: 0.001,
+  });
+});
+
 test('personal home Korean visual baseline', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockAuthenticated(page, 'ko');
   await setLocale(page, 'ko');
   await setAppearance(page, {
@@ -662,6 +736,7 @@ test('account command panel dark high-contrast visual baseline', async ({ page }
 });
 
 test('personal home dark reference visual baseline', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockAuthenticated(page);
   await setAppearance(page, {
     mode: 'dark',

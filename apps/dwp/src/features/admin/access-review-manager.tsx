@@ -27,7 +27,7 @@ import {
   useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useRoleDisplay } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
   ActionIconButton,
@@ -56,6 +56,7 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
+import { localizedRoleIdentityColumn } from './localized-role-column';
 import { hasFullTenantAdminRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
 import type { GridColDef } from '@mui/x-data-grid';
@@ -329,6 +330,7 @@ function DecisionDialog({
   onDecide: (decision: 'APPROVE' | 'REVOKE', reason: string) => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
+  const displayRole = useRoleDisplay();
   const [decision, setDecision] = useState<'APPROVE' | 'REVOKE'>('APPROVE');
   const [reason, setReason] = useState('');
   const formatEvidenceDate = (value?: string | null) =>
@@ -355,7 +357,7 @@ function DecisionDialog({
               <Box sx={{ minWidth: 0 }}>
                 <Typography variant="subtitle2">{item.subjectDisplayName}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {item.roleName} ({item.roleCode})
+                  {displayRole(item.roleCode, item.roleName).name} ({item.roleCode})
                 </Typography>
               </Box>
               <Stack direction="row" gap={0.5} flexWrap="wrap" justifyContent="flex-end">
@@ -454,6 +456,7 @@ function DecisionDialog({
 
 export function AccessReviewManager() {
   const { t } = useTranslation('admin');
+  const displayRole = useRoleDisplay();
   const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -586,22 +589,7 @@ export function AccessReviewManager() {
           </Stack>
         ),
       },
-      {
-        field: 'roleName',
-        headerName: t('accessReviews.columns.access'),
-        minWidth: 190,
-        flex: 0.9,
-        renderCell: ({ row }) => (
-          <Box sx={{ minWidth: 0 }}>
-            <Typography variant="body2" fontWeight={650} noWrap>
-              {row.roleName}
-            </Typography>
-            <Typography variant="caption" color="text.secondary" noWrap display="block">
-              {row.roleCode}
-            </Typography>
-          </Box>
-        ),
-      },
+      localizedRoleIdentityColumn(t('accessReviews.columns.access'), displayRole, 190, 0.9),
       {
         field: 'accessSourceType',
         headerName: t('accessReviews.columns.source'),
@@ -683,7 +671,7 @@ export function AccessReviewManager() {
           ) : null,
       },
     ],
-    [selectedCampaign?.lifecycleState, t]
+    [displayRole, selectedCampaign?.lifecycleState, t]
   );
 
   if (campaignsQuery.isLoading) {
@@ -977,7 +965,7 @@ export function AccessReviewManager() {
                         <Box sx={{ minWidth: 0 }}>
                           <Typography variant="subtitle2">{item.subjectDisplayName}</Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {item.roleName} ·{' '}
+                            {displayRole(item.roleCode, item.roleName).name} ·{' '}
                             {item.sourceDisplayName ||
                               t(`accessReviews.sources.${item.accessSourceType}`)}
                           </Typography>

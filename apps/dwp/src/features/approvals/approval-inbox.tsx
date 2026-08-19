@@ -229,7 +229,12 @@ export function ApprovalInbox() {
                       ],
                       [
                         t('inbox.due'),
-                        selected.task.dueAt ? new Date(selected.task.dueAt).toLocaleString() : '-',
+                        selected.task.dueAt
+                          ? formatDate(selected.task.dueAt, {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            })
+                          : '-',
                       ],
                     ].map(([label, value]) => (
                       <Box
@@ -411,7 +416,7 @@ function TaskRow({
             icon={<Clock3 size={13} />}
             label={
               task.dueAt
-                ? new Date(task.dueAt).toLocaleTimeString([], {
+                ? formatDate(task.dueAt, {
                     hour: '2-digit',
                     minute: '2-digit',
                   })

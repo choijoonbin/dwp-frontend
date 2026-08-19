@@ -16,7 +16,12 @@ import {
   listIdentityUsers,
   replaceIdentityUserRoles,
 } from '@dwp-frontend/shared-utils';
-import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import {
+  formatDate,
+  resolveSupportedLocale,
+  useDisplayDictionary,
+  useRoleDisplay,
+} from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
   DetailInspector,
@@ -45,8 +50,6 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
-import { resolveRoleDisplayCopy } from './role-display';
-
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
   IdentityEffectiveAccess,
@@ -151,6 +154,8 @@ type RoleDialogProps = {
 
 function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
   const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
+  const roleDisplay = useRoleDisplay();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [justification, setJustification] = useState('');
 
@@ -217,11 +222,11 @@ function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
           {groupedRoles.map(([family, familyRoles]) => (
             <Box key={family} sx={{ mb: 2 }}>
               <Typography variant="overline" color="text.secondary">
-                {t(`access.roleFamilies.${family}`, { defaultValue: family })}
+                {display('roleFamilies', family)}
               </Typography>
               <FormGroup aria-label={t('access.dialog.assignedRoles')}>
                 {familyRoles.map((role) => {
-                  const display = resolveRoleDisplayCopy(role, t);
+                  const roleCopy = roleDisplay(role.code, role.name, role.description);
                   const baseline = role.assignmentClass === 'BASELINE';
                   const activeConflicts = (role.conflictsWith ?? []).filter((code) =>
                     selected.has(code)
@@ -241,19 +246,17 @@ function RoleDialog({ user, roles, busy, onClose, onSave }: RoleDialogProps) {
                           <Box sx={{ minWidth: 0, py: 0.25 }}>
                             <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
                               <Typography variant="body2" fontWeight={700}>
-                                {display.name}
+                                {roleCopy.name}
                               </Typography>
                               <Chip
                                 size="small"
                                 variant="outlined"
-                                label={t(`access.assignmentClasses.${role.assignmentClass}`, {
-                                  defaultValue: role.assignmentClass,
-                                })}
+                                label={display('roleAssignmentClasses', role.assignmentClass)}
                               />
                             </Stack>
                             <Typography variant="caption" color="text.secondary">
                               {role.code}
-                              {display.description ? ` / ${display.description}` : ''}
+                              {roleCopy.description ? ` / ${roleCopy.description}` : ''}
                             </Typography>
                             {conflictBlocked && (
                               <Typography variant="caption" color="warning.main" display="block">
@@ -460,6 +463,11 @@ function AccessAssignmentRow({
   locale: string;
 }) {
   const { t } = useTranslation('admin');
+  const roleDisplay = useRoleDisplay();
+  const roleName = roleDisplay(
+    assignment.roleCode,
+    assignment.roleName || assignment.roleCode
+  ).name;
   const source =
     assignment.sourceType === 'GROUP'
       ? assignment.sourceName || assignment.sourceKey || t('access.sources.group')
@@ -478,7 +486,7 @@ function AccessAssignmentRow({
         <Box sx={{ minWidth: 0 }}>
           <Stack direction="row" alignItems="center" gap={0.75} flexWrap="wrap">
             <Typography variant="body2" fontWeight={700}>
-              {assignment.roleName || assignment.roleCode}
+              {roleName}
             </Typography>
             {assignment.privileged && (
               <Chip

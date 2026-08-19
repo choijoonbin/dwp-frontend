@@ -1,0 +1,306 @@
+{
+  "shell": {
+    "tenantFallback": "Tenant",
+    "backToHome": "Back to home",
+    "openNavigation": "Open Space navigation",
+    "spaces": {
+      "name": "Spaces",
+      "context": "Collaboration spaces",
+      "navigationLabel": "Space navigation"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "spaces": {
+        "overview": "Overview",
+        "portfolio": "My spaces"
+      }
+    },
+    "items": {
+      "spaces": {
+        "home": { "label": "Space home" },
+        "my-spaces": { "label": "My spaces" },
+        "discover": { "label": "Discover" },
+        "requests": { "label": "My requests" }
+      }
+    }
+  },
+  "actions": {
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "create": "Create now",
+    "request": "Request creation",
+    "createSpace": "Create space",
+    "explore": "Explore spaces",
+    "viewAll": "View all",
+    "clear": "Clear search",
+    "backToSpaces": "Back to my spaces",
+    "newContent": "New content",
+    "publish": "Publish",
+    "openApp": "Open app",
+    "savePolicies": "Save policies",
+    "requestAccess": "Request access",
+    "accessPending": "Access under review",
+    "addMember": "Add member",
+    "save": "Save",
+    "revoke": "Revoke",
+    "approve": "Approve",
+    "reject": "Reject"
+  },
+  "home": {
+    "loadError": "We could not load your Space home.",
+    "personFallback": "colleague",
+    "hero": {
+      "trustLabel": "Policy-governed collaboration",
+      "title": "Where {{name}}'s work comes together",
+      "description": "Connect teams, knowledge, apps, and AI in purpose-built spaces and collaborate safely with the right people."
+    },
+    "metrics": {
+      "label": "Space metrics",
+      "mySpaces": "Spaces joined",
+      "discoverable": "Spaces to discover",
+      "unread": "New signals",
+      "requests": "Open requests"
+    },
+    "focus": {
+      "title": "Spaces that need attention",
+      "description": "Prioritized by activity and unread signals."
+    },
+    "activity": {
+      "title": "Space activity",
+      "description": "Recent changes across all spaces you participate in."
+    },
+    "insights": { "title": "Collaboration insights" },
+    "templates": {
+      "title": "Proven ways to start",
+      "description": "Start with policy and structure designed for the purpose."
+    }
+  },
+  "directory": {
+    "MY": {
+      "title": "My spaces",
+      "description": "Manage the spaces you participate in or own.",
+      "emptyTitle": "You have not joined a space yet",
+      "emptyDescription": "Discover an organizational space or request a new one."
+    },
+    "DISCOVER": {
+      "title": "Discover spaces",
+      "description": "Find spaces that are open or available by request across your organization.",
+      "emptyTitle": "No spaces are available to discover",
+      "emptyDescription": "Published spaces will appear here when administrators make them available."
+    },
+    "results": "Space directory",
+    "resultCount": "Number of results",
+    "search": "Search name, purpose, or description",
+    "loadError": "We could not load the spaces.",
+    "emptySearchTitle": "No spaces match your search",
+    "emptySearchDescription": "Use fewer terms or try a different phrase."
+  },
+  "requests": {
+    "title": "Space creation requests",
+    "description": "Track policy decisions, approval status, and decision evidence for your requests.",
+    "loadError": "We could not load your Space requests.",
+    "tableLabel": "My Space creation requests",
+    "columns": {
+      "space": "Space",
+      "template": "Template",
+      "visibility": "Visibility",
+      "risk": "Risk",
+      "status": "Status",
+      "requestedAt": "Requested"
+    },
+    "emptyTitle": "No creation requests",
+    "emptyDescription": "Start a new request when your work needs a governed space."
+  },
+  "create": {
+    "title": "Create a new space",
+    "description": "Choose a purpose-built template and the policy engine will determine the creation path.",
+    "template": "Space template",
+    "templatesError": "We could not load the available templates.",
+    "name": "Space name",
+    "key": "Space key",
+    "keyHelp": "Start with a lowercase letter and use only lowercase letters, numbers, and hyphens.",
+    "summary": "Purpose and expected outcome",
+    "visibility": "Visibility",
+    "justification": "Business need",
+    "justificationHelp": "Give reviewers enough context to assess the purpose and intended audience.",
+    "created": "The space was created under policy.",
+    "submitted": "Your Space creation request was submitted.",
+    "error": "We could not process the Space request.",
+    "policy": {
+      "AUTO": "Low-risk standard spaces are created immediately after policy validation.",
+      "POLICY": "Audience, visibility, and data classification determine the creation path.",
+      "APPROVAL": "Restricted information or broad audiences require administrator approval."
+    }
+  },
+  "creationMode": {
+    "AUTO": "Instant when policy passes",
+    "POLICY": "Policy evaluated",
+    "APPROVAL": "Approval required"
+  },
+  "detail": {
+    "loadError": "We could not load this space.",
+    "contentLoadError": "We could not load the content.",
+    "membersLoadError": "We could not load the members.",
+    "tabsLabel": "Space details",
+    "tabs": {
+      "overview": "Overview",
+      "content": "Content",
+      "people": "Membership",
+      "apps": "Connected apps",
+      "agent": "AI boundary",
+      "owner": "Owner Studio"
+    },
+    "metrics": {
+      "members": "Access subjects",
+      "content": "Content",
+      "unread": "Unread signals",
+      "activity": "Latest activity"
+    },
+    "featuredContent": "Featured content",
+    "recentActivity": "Recent activity",
+    "unknownAuthor": "Unknown author",
+    "noContentTitle": "No content has been published",
+    "noContentDescription": "A member with contribution rights can publish the first item.",
+    "peoplePrivacy": "User and group memberships are available to Space Owners and Moderators.",
+    "appScope": "Data access scope: {{scope}}",
+    "agentTitle": "Space AI grounded in evidence and permissions",
+    "agentDescription": "AI can use only approved content within the member's rights and this Space's data classification. Responses remain attributable and auditable."
+  },
+  "content": {
+    "createTitle": "Create Space content",
+    "createDescription": "Data classification and publication policy determine whether content is published or sent for review.",
+    "type": "Content type",
+    "classification": "Data classification",
+    "title": "Title",
+    "summary": "Content",
+    "reviewHelp": "Confidential or restricted data and managed policies trigger a pre-publication review.",
+    "created": "Content saved.",
+    "error": "We could not save the content.",
+    "types": {
+      "POST": "Post",
+      "PAGE": "Page",
+      "FILE": "File",
+      "LINK": "Link",
+      "CANVAS": "Collaboration canvas",
+      "DECISION": "Decision record",
+      "APP_EMBED": "App content"
+    }
+  },
+  "owner": {
+    "title": "Space operating policies",
+    "description": "Owners manage publication, app connections, and AI boundaries within tenant policy.",
+    "contentPolicy": "Content publication policy",
+    "appPolicy": "App connection policy",
+    "aiPolicy": "AI access policy",
+    "saved": "Space policies saved.",
+    "error": "We could not save the policies. Check the latest version.",
+    "guardrailsTitle": "Operating guardrails",
+    "guardrailsDescription": "Owner rights never bypass tenant security and compliance policy.",
+    "guardrails": {
+      "leastPrivilege": "Members and connected apps receive only the access they need.",
+      "contentEvidence": "Publication, review, and decisions leave auditable evidence.",
+      "lifecycleReview": "Inactive spaces and access are reviewed on a schedule."
+    }
+  },
+  "access": {
+    "title": "Request Space access",
+    "description": "Submit the role and business need; open policy or Owner review will apply.",
+    "requestedRole": "Requested role",
+    "justification": "Participation purpose",
+    "justificationHelp": "Describe the work and required access in at least ten characters.",
+    "joined": "You joined the Space under its open access policy.",
+    "requested": "Your Space access request was submitted.",
+    "decided": "Access decision recorded.",
+    "error": "We could not process the access request.",
+    "approveTitle": "Approve Space access",
+    "rejectTitle": "Reject Space access",
+    "decisionNote": "Decision rationale",
+    "decisionNoteHelp": "Enter at least five characters for requester communication and audit."
+  },
+  "members": {
+    "title": "Membership and roles",
+    "description": "Manage roles and validity using the People directory and identity groups.",
+    "addTitle": "Add Space access subject",
+    "principalType": "Principal type",
+    "searchPeople": "Search name or work email",
+    "groupKey": "Directory group key",
+    "groupKeyHelp": "Enter a group key registered in identity management.",
+    "role": "Space role",
+    "validUntil": "Valid until",
+    "requestsTitle": "Access requests",
+    "requestsDescription": "Review the business need and minimum role before deciding access.",
+    "noRequests": "There are no access requests to review.",
+    "saved": "Space membership saved.",
+    "revoked": "Space membership revoked.",
+    "error": "We could not save the membership.",
+    "lastOwnerError": "The final active Owner cannot be revoked. Assign another Owner first."
+  },
+  "card": {
+    "unread": "Unread Space activity",
+    "members_one": "{{count}} access subject",
+    "members_other": "{{count}} access subjects"
+  },
+  "visibility": {
+    "OPEN": "Organization open",
+    "REQUEST": "Request to join",
+    "PRIVATE": "Private",
+    "HIDDEN": "Hidden"
+  },
+  "classification": {
+    "PUBLIC": "Public",
+    "INTERNAL": "Internal",
+    "CONFIDENTIAL": "Confidential",
+    "RESTRICTED": "Restricted"
+  },
+  "risk": { "LOW": "Low", "MEDIUM": "Medium", "HIGH": "High" },
+  "role": {
+    "VIEWER": "Viewer",
+    "CONTRIBUTOR": "Contributor",
+    "EDITOR": "Editor",
+    "MODERATOR": "Moderator",
+    "OWNER": "Owner",
+    "GUEST": "Guest"
+  },
+  "principal": { "USER": "User", "GROUP": "Group" },
+  "membershipSource": {
+    "DIRECT": "Direct assignment",
+    "GROUP": "Inherited from group",
+    "REQUEST": "Approved request",
+    "PROVISIONING": "Automated provisioning",
+    "TEMPLATE": "Template assignment"
+  },
+  "status": {
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "DRAFT": "Draft",
+    "PENDING": "Pending",
+    "PENDING_APPROVAL": "Pending approval",
+    "IN_REVIEW": "In review",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "PUBLISHED": "Published",
+    "OVERDUE": "Overdue",
+    "ARCHIVED": "Archived",
+    "RESTRICTED": "Restricted",
+    "OPEN": "Open",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled",
+    "RETIRED": "Retired"
+  },
+  "contentPolicy": {
+    "OPEN_PUBLISH": "Contributors publish directly",
+    "OWNER_REVIEW": "Owner review before publication",
+    "COMPLIANCE_REVIEW": "Compliance review before publication"
+  },
+  "appPolicy": {
+    "OWNER_MANAGED": "Owner-managed connection",
+    "OWNER_REVIEW": "Owner review",
+    "ADMIN_REVIEW": "Administrator approval"
+  },
+  "aiPolicy": {
+    "DISABLED": "AI disabled",
+    "MEMBER_SCOPED": "Member permission scope",
+    "RESTRICTED_SCOPED": "Approved restricted scope"
+  }
+}

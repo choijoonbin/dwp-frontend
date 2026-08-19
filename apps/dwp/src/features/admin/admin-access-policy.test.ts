@@ -38,7 +38,7 @@ describe('control plane access policy', () => {
       {
         responsibilityCode: 'APP_OWNER',
         resourceType: 'APP',
-        resourceKey: 'APP.MAIL_CALENDAR',
+        resourceKey: 'APP.MAIL',
         resourceSetId: 'set-1',
         resourceSetKey: 'APP_MAIL_CALENDAR',
       },
@@ -121,6 +121,28 @@ describe('control plane access policy', () => {
       })
     ).toBe(false);
     expect(resolvePrimaryAuthorityRole(['SERVICE_AGENT'])).toBe('SERVICE_AGENT');
+  });
+
+  it('admits Space operating personas while preserving resource-level isolation', () => {
+    const hasPermission = vi.fn(
+      (resource: string, permission = 'VIEW') =>
+        resource === 'ADMIN.SPACE_TEMPLATES' && permission === 'VIEW'
+    );
+    expect(canEnterTenantControlPlane(['SPACE_TEMPLATE_ADMIN'], true)).toBe(true);
+    expect(
+      canAccessAdminNavigationItem(item('space-templates', 'ADMIN.SPACE_TEMPLATES'), {
+        roles: ['SPACE_TEMPLATE_ADMIN'],
+        permissionsLoaded: true,
+        hasPermission,
+      })
+    ).toBe(true);
+    expect(
+      canAccessAdminNavigationItem(item('space-content-reviews', 'ADMIN.SPACE_COMPLIANCE'), {
+        roles: ['SPACE_TEMPLATE_ADMIN'],
+        permissionsLoaded: true,
+        hasPermission,
+      })
+    ).toBe(false);
   });
 
   it('routes workforce governors only to explicitly granted people administration', () => {
@@ -243,7 +265,7 @@ describe('control plane access policy', () => {
           {
             responsibilityCode: 'APP_ACCESS_MANAGER',
             resourceType: 'APP',
-            resourceKey: 'APP.MAIL_CALENDAR',
+            resourceKey: 'APP.MAIL',
             resourceSetId: 'set-1',
             resourceSetKey: 'APP_MAIL_CALENDAR',
           },

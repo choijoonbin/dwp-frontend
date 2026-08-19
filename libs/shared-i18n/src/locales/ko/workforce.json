@@ -824,7 +824,7 @@
         "reason": "업무 사유"
       },
       "decision": {
-        "eyebrow": "DECISION PACK",
+        "eyebrow": "의사결정 패키지",
         "loading": "시나리오의 실행 준비도를 검증하는 중",
         "validate": "근거 다시 검증",
         "summary": "차단 {{blockers}}건 · 검토 {{warnings}}건",
@@ -1257,7 +1257,7 @@
       },
       "create": {
         "title": "HRIS 커넥터 등록",
-        "secretNotice": "Secret Manager 참조만 입력하세요. DWP는 이 제어 정보에 프로바이더 원문 자격증명을 저장하지 않습니다.",
+        "secretNotice": "시크릿 관리자 참조만 입력하세요. DWP는 이 제어 정보에 프로바이더 원문 자격증명을 저장하지 않습니다.",
         "sourceKey": "원천 키",
         "sourceType": "원천 유형",
         "sourceName": "원천 이름",

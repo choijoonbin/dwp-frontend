@@ -29,7 +29,7 @@ import {
   updatePrivilegedAccessPolicy,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { useRoleDisplay } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
   DateTimePickerField,
@@ -52,9 +52,19 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
+import { localizedRoleNameColumn, localizedRoleOptions } from './localized-role-column';
+import {
+  activationModeLabel,
+  assuranceLabel,
+  delegatedActionLabel,
+  displayPrivilegedDate as displayDate,
+  emergencyModeLabel,
+  privilegedAccessError as message,
+  privilegedScopeLabel as scopeLabel,
+  privilegedStatusColor as statusColor,
+} from './privileged-access-display';
 
 import type { GridColDef } from '@mui/x-data-grid';
-import type { TFunction } from 'i18next';
 import type {
   DelegatedAdminScope,
   EmergencyAccessPrincipal,
@@ -65,59 +75,6 @@ import type {
 
 type View = 'requests' | 'eligibilities' | 'policies' | 'boundaries';
 type Decision = 'APPROVE' | 'DENY' | 'REVOKE';
-
-function message(error: unknown, fallback: string) {
-  return error instanceof Error ? error.message : fallback;
-}
-
-function displayDate(value?: string | null) {
-  return value ? formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }) : '-';
-}
-
-function statusColor(state: string) {
-  if (state === 'ACTIVE') return 'success' as const;
-  if (state === 'PENDING_APPROVAL') return 'warning' as const;
-  if (state === 'DENIED' || state === 'REVOKED') return 'error' as const;
-  return 'default' as const;
-}
-
-function scopeLabel(value: string, t: TFunction<'admin'>): string {
-  if (value === 'ORG_UNIT') return t('roleGovernance.scopes.ORG_UNIT');
-  if (value === 'RESOURCE') return t('roleGovernance.scopes.RESOURCE');
-  return t('roleGovernance.scopes.TENANT');
-}
-
-function activationModeLabel(value: string, t: TFunction<'admin'>): string {
-  if (value === 'SELF_SERVICE') return t('privilegedAccess.activationModes.SELF_SERVICE');
-  if (value === 'DISABLED') return t('privilegedAccess.activationModes.DISABLED');
-  return t('privilegedAccess.activationModes.APPROVAL');
-}
-
-function assuranceLabel(value: string, t: TFunction<'admin'>): string {
-  if (value === 'PHISHING_RESISTANT') {
-    return t('privilegedAccess.assurance.PHISHING_RESISTANT');
-  }
-  if (value === 'MFA') return t('privilegedAccess.assurance.MFA');
-  return t('privilegedAccess.assurance.SESSION');
-}
-
-function emergencyModeLabel(value: string, t: TFunction<'admin'>): string {
-  if (value === 'REGISTERED_PRINCIPAL') {
-    return t('privilegedAccess.emergencyModes.REGISTERED_PRINCIPAL');
-  }
-  if (value === 'DUAL_APPROVAL') return t('privilegedAccess.emergencyModes.DUAL_APPROVAL');
-  return t('privilegedAccess.emergencyModes.DISABLED');
-}
-
-function delegatedActionLabel(value: string, t: TFunction<'admin'>): string {
-  if (value === 'ACCESS.ROLE.MANAGE') {
-    return t('privilegedAccess.actionsCatalog.ACCESS.ROLE.MANAGE');
-  }
-  if (value === 'ACCESS.RESOURCE.MANAGE') {
-    return t('privilegedAccess.actionsCatalog.ACCESS.RESOURCE.MANAGE');
-  }
-  return t('privilegedAccess.actionsCatalog.ACCESS.ASSIGNMENT.MANAGE');
-}
 
 function Metric({
   icon: Icon,
@@ -160,13 +117,17 @@ function DecisionDialog({
   onSubmit: (reason: string) => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
+  const displayRole = useRoleDisplay();
+  const roleName = operation
+    ? displayRole(operation.request.roleCode, operation.request.roleName).name
+    : '';
   const [reason, setReason] = useState('');
   return (
     <FormDialog
       open={Boolean(operation)}
       title={t(`privilegedAccess.decision.${operation?.decision ?? 'APPROVE'}.title`)}
       description={t('privilegedAccess.decision.description', {
-        role: operation?.request.roleName,
+        role: roleName,
         person: operation?.request.requesterDisplayName,
       })}
       cancelLabel={t('common.actions.cancel')}
@@ -209,6 +170,8 @@ function PolicyDialog({
   ) => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
+  const displayRole = useRoleDisplay();
+  const roleName = policy ? displayRole(policy.roleCode, policy.roleName).name : '';
   const [activationMode, setActivationMode] = useState(policy?.activationMode ?? 'APPROVAL');
   const [duration, setDuration] = useState(String(policy?.maximumDurationMinutes ?? 120));
   const [assurance, setAssurance] = useState(policy?.assuranceLevel ?? 'MFA');
@@ -221,7 +184,7 @@ function PolicyDialog({
   return (
     <FormDialog
       open={Boolean(policy)}
-      title={t('privilegedAccess.policyDialog.title', { role: policy?.roleName })}
+      title={t('privilegedAccess.policyDialog.title', { role: roleName })}
       description={t('privilegedAccess.policyDialog.description')}
       cancelLabel={t('common.actions.cancel')}
       submitLabel={t('common.actions.save')}
@@ -337,6 +300,7 @@ function EligibilityDialog({
   }) => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
+  const displayRole = useRoleDisplay();
   const [principalType, setPrincipalType] = useState<'USER' | 'GROUP'>('USER');
   const [principalId, setPrincipalId] = useState('');
   const [roleId, setRoleId] = useState('');
@@ -403,9 +367,10 @@ function EligibilityDialog({
           label={t('roleGovernance.fields.role')}
           value={roleId}
           placeholder={t('privilegedAccess.fields.selectRole')}
-          options={policies
-            .filter((policy) => policy.lifecycleState === 'ACTIVE')
-            .map((policy) => ({ value: String(policy.roleId), label: policy.roleName }))}
+          options={localizedRoleOptions(
+            policies.filter((policy) => policy.lifecycleState === 'ACTIVE'),
+            displayRole
+          )}
           onValueChange={(value) => setRoleId(String(value))}
         />
         <SelectField
@@ -565,6 +530,7 @@ function BoundaryDialog({
 
 export function PrivilegedAccessManager() {
   const { t } = useTranslation('admin');
+  const displayRole = useRoleDisplay();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [view, setView] = useState<View>('requests');
@@ -632,7 +598,7 @@ export function PrivilegedAccessManager() {
         minWidth: 180,
         flex: 1,
       },
-      { field: 'roleName', headerName: t('roleGovernance.columns.role'), minWidth: 180, flex: 1 },
+      localizedRoleNameColumn(t('roleGovernance.columns.role'), displayRole, 180),
       {
         field: 'scopeType',
         headerName: t('roleGovernance.columns.scope'),
@@ -701,7 +667,7 @@ export function PrivilegedAccessManager() {
         },
       },
     ],
-    [t]
+    [displayRole, t]
   );
 
   const eligibilityColumns = useMemo<GridColDef<PrivilegedRoleEligibility>[]>(
@@ -712,7 +678,7 @@ export function PrivilegedAccessManager() {
         minWidth: 190,
         flex: 1,
       },
-      { field: 'roleName', headerName: t('roleGovernance.columns.role'), minWidth: 180, flex: 1 },
+      localizedRoleNameColumn(t('roleGovernance.columns.role'), displayRole, 180),
       {
         field: 'scopeType',
         headerName: t('roleGovernance.columns.scope'),
@@ -762,12 +728,12 @@ export function PrivilegedAccessManager() {
             : [],
       },
     ],
-    [run, t]
+    [displayRole, run, t]
   );
 
   const policyColumns = useMemo<GridColDef<PrivilegedAccessPolicy>[]>(
     () => [
-      { field: 'roleName', headerName: t('roleGovernance.columns.role'), minWidth: 200, flex: 1 },
+      localizedRoleNameColumn(t('roleGovernance.columns.role'), displayRole, 200),
       {
         field: 'activationMode',
         headerName: t('privilegedAccess.fields.activationMode'),
@@ -803,7 +769,7 @@ export function PrivilegedAccessManager() {
         ],
       },
     ],
-    [t]
+    [displayRole, t]
   );
 
   if (policies.isLoading || eligibilities.isLoading || requests.isLoading) {

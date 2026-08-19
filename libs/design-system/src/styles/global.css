@@ -1,3 +1,19 @@
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('/assets/fonts/hanken-grotesk-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/assets/fonts/jetbrains-mono-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
 html {
   min-width: 320px;
   height: 100%;

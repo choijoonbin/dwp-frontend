@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   createProviderTenantDomain,
   getProviderDomainChallenge,
@@ -716,7 +717,7 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
         />
         <SignalMetric
           label={t('tenantDetail.signals.entitlements')}
-          value={value.entitlements.length.toLocaleString()}
+          value={formatNumber(value.entitlements.length)}
           detail={t('tenantDetail.signals.entitlementsDetail', {
             schema: value.schemaVersion,
           })}
@@ -724,7 +725,6 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
           tone="info"
         />
       </Box>
-
       <Box sx={{ borderBottom: 1, borderColor: 'divider', overflowX: 'auto' }}>
         <Tabs
           value={tab}

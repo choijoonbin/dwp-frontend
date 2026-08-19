@@ -1,0 +1,17 @@
+{
+  "name": "dwp-spaces",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/product-runtime/src",
+  "tags": ["scope:spaces", "type:product", "runtime:browser", "deployment:independent"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "inputs": ["spacesProduct"],
+      "options": {
+        "command": "node scripts/build-product-app.mjs spaces"
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/spaces"]
+    }
+  }
+}

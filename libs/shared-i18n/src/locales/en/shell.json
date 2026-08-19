@@ -1,5 +1,6 @@
 {
   "brand": {
+    "acronym": "DWP",
     "productName": "Digital Workplace",
     "homeLabel": "Digital Workplace home",
     "tenantHomeLabel": "{{organization}} Digital Workplace home"

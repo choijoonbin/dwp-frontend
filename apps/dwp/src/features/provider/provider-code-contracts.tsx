@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProviderSystemCodeCatalog, getProviderSystemCodeSet } from '@dwp-frontend/shared-utils';
+import { formatNumber, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
   ActionIconButton,
@@ -98,7 +99,7 @@ export function ProviderCodeContracts() {
   const queryClient = useQueryClient();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
-  const locale = i18n.resolvedLanguage ?? i18n.language;
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
   const [query, setQuery] = useState('');
   const [owner, setOwner] = useState(ALL);
   const [level, setLevel] = useState(ALL);
@@ -429,15 +430,15 @@ export function ProviderCodeContracts() {
       >
         <Metric
           label={t('codeContracts.summary.registered')}
-          value={summary.registered.toLocaleString(locale)}
+          value={formatNumber(summary.registered, undefined, locale)}
         />
         <Metric
           label={t('codeContracts.summary.incomplete')}
-          value={summary.incomplete.toLocaleString(locale)}
+          value={formatNumber(summary.incomplete, undefined, locale)}
         />
         <Metric
           label={t('codeContracts.summary.values')}
-          value={summary.values.toLocaleString(locale)}
+          value={formatNumber(summary.values, undefined, locale)}
         />
         <Box sx={{ minWidth: 0, px: { xs: 1.75, md: 2.5 }, py: 1.25 }}>
           <Typography variant="caption" color="text.secondary">

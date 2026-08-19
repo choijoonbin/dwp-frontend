@@ -5,7 +5,7 @@
     "accountFallback": "계정",
     "navigationLabel": "설정 탐색",
     "openNavigation": "설정 탐색 열기",
-    "backToProvider": "Provider Control Plane으로 돌아가기",
+    "backToProvider": "프로바이더 제어 영역으로 돌아가기",
     "backToWorkspace": "워크스페이스로 돌아가기",
     "groups": {
       "account": "계정",

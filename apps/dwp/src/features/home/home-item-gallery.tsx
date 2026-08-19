@@ -4,9 +4,9 @@ import { Plus } from 'lucide-react';
 import { ActionButton, ContentDialog } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
 import { AppGlyph } from './app-glyph';

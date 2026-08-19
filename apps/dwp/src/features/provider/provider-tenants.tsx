@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   executeProviderOperation,
   getProviderEstateOverview,
@@ -559,7 +560,6 @@ export function ProviderTenants() {
           )}
         </Stack>
       </Paper>
-
       <Box
         component="section"
         aria-label={t('tenants.signals.label')}
@@ -575,7 +575,7 @@ export function ProviderTenants() {
       >
         <SignalMetric
           label={t('tenants.metrics.organizations')}
-          value={(estateValue?.organizations ?? 0).toLocaleString()}
+          value={formatNumber(estateValue?.organizations ?? 0)}
           detail={t('tenants.signals.organizationDetail', {
             tenants: estateValue?.tenants ?? 0,
           })}
@@ -584,7 +584,7 @@ export function ProviderTenants() {
         />
         <SignalMetric
           label={t('tenants.metrics.active')}
-          value={(estateValue?.activeTenants ?? 0).toLocaleString()}
+          value={formatNumber(estateValue?.activeTenants ?? 0)}
           detail={t('tenants.signals.activeDetail', { total: estateValue?.tenants ?? 0 })}
           icon={<Server size={18} />}
           tone="success"
@@ -600,16 +600,16 @@ export function ProviderTenants() {
         />
         <SignalMetric
           label={t('tenants.signals.provisioning')}
-          value={(estateValue?.provisioningTenants ?? 0).toLocaleString()}
+          value={formatNumber(estateValue?.provisioningTenants ?? 0)}
           detail={t('tenants.signals.provisioningDetail')}
           icon={<Layers3 size={18} />}
           tone={estateValue?.provisioningTenants ? 'info' : 'neutral'}
         />
         <SignalMetric
           label={t('tenants.metrics.attention')}
-          value={(
+          value={formatNumber(
             (estateValue?.failedTenants ?? 0) + (estateValue?.suspendedTenants ?? 0)
-          ).toLocaleString()}
+          )}
           detail={t('tenants.signals.attentionDetail', {
             failed: estateValue?.failedTenants ?? 0,
             suspended: estateValue?.suspendedTenants ?? 0,

@@ -53,11 +53,23 @@
       "{workspaceRoot}/apps/dwp/src/pages/approvals.tsx",
       "{workspaceRoot}/apps/dwp/src/features/approvals/**/*"
     ],
+    "spacesProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/spaces-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/spaces.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/spaces/**/*"
+    ],
     "calendarProduct": [
       "productRuntime",
       "{workspaceRoot}/apps/dwp/src/routes/calendar-routes.tsx",
       "{workspaceRoot}/apps/dwp/src/pages/calendar.tsx",
       "{workspaceRoot}/apps/dwp/src/features/calendar/**/*"
+    ],
+    "mailProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/mail-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/mail.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/mail/**/*"
     ],
     "communicationsProduct": [
       "productRuntime",
@@ -75,7 +87,7 @@
       "productRuntime",
       "{workspaceRoot}/apps/dwp/src/routes/administration-routes.tsx",
       "{workspaceRoot}/apps/dwp/src/pages/admin.tsx",
-      "{workspaceRoot}/apps/dwp/src/features/{admin,integrations}/**/*"
+      "{workspaceRoot}/apps/dwp/src/features/{admin,integrations,spaces}/**/*"
     ],
     "providerProduct": [
       "productRuntime",

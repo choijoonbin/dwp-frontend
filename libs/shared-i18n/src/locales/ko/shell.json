@@ -2,7 +2,8 @@
   "brand": {
     "productName": "Digital Workplace",
     "homeLabel": "Digital Workplace 홈",
-    "tenantHomeLabel": "{{organization}} Digital Workplace 홈"
+    "tenantHomeLabel": "{{organization}} Digital Workplace 홈",
+    "acronym": "DWP"
   },
   "workspace": {
     "select": "워크스페이스 선택",
@@ -58,10 +59,10 @@
       "organizations": "조직",
       "tenantAudit": "테넌트 감사",
       "tenantCatalog": "테넌트 카탈로그",
-      "providerControl": "Provider Control Plane",
-      "providerTenants": "Provider 테넌트",
-      "providerAudit": "Provider 감사",
-      "providerCatalog": "Provider 데이터 카탈로그",
+      "providerControl": "프로바이더 제어 영역",
+      "providerTenants": "프로바이더 테넌트",
+      "providerAudit": "프로바이더 감사",
+      "providerCatalog": "프로바이더 데이터 카탈로그",
       "ask": "DWP에게 묻기"
     },
     "workTypes": {
@@ -142,7 +143,7 @@
       "administration": "관리 콘솔",
       "administrationDescription": "사용자, 정책 및 시스템 관리",
       "supportAdministrationDescription": "{{tenant}} 승인 범위 지원",
-      "provider": "Provider Control Plane",
+      "provider": "프로바이더 제어 영역",
       "providerDescription": "테넌트 딜리버리 및 변경 작업",
       "logout": "로그아웃"
     }

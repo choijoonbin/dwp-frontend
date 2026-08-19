@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Ban,
   Boxes,
   KeyRound,
   Pencil,
@@ -29,7 +28,7 @@ import {
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
-import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { useDisplayDictionary, useRoleDisplay } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -53,8 +52,8 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
-import { resolveRoleDisplayCopy } from './role-display';
 import { PrivilegedAccessManager } from './privileged-access-manager';
+import { createRoleAssignmentColumns } from './role-assignment-columns';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -62,7 +61,6 @@ import type {
   EffectiveAccess,
   GovernanceResource,
   GovernanceRole,
-  GroupRoleAssignment,
   PermissionEffect,
   PermissionSelection,
 } from '@dwp-frontend/shared-utils';
@@ -184,7 +182,8 @@ function PermissionDialog({
   onSave: (permissions: PermissionSelection[]) => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
-  const roleDisplay = role ? resolveRoleDisplayCopy(role, t) : null;
+  const displayRole = useRoleDisplay();
+  const roleDisplay = role ? displayRole(role.code, role.name, role.description) : null;
   const initial = useMemo(
     () =>
       new Map(
@@ -369,6 +368,7 @@ function ResourceDialog({
 
 function RolesPanel() {
   const { t } = useTranslation('admin');
+  const displayRole = useRoleDisplay();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -409,7 +409,7 @@ function RolesPanel() {
         renderCell: ({ row }) => (
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="body2" fontWeight={700} noWrap>
-              {resolveRoleDisplayCopy(row, t).name}
+              {displayRole(row.code, row.name, row.description).name}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap display="block">
               {row.code} /{' '}
@@ -424,7 +424,8 @@ function RolesPanel() {
         minWidth: 260,
         flex: 1.2,
         valueGetter: (_value, row) =>
-          resolveRoleDisplayCopy(row, t).description || t('roleGovernance.notAvailable'),
+          displayRole(row.code, row.name, row.description).description ||
+          t('roleGovernance.notAvailable'),
       },
       {
         field: 'privileged',
@@ -503,7 +504,7 @@ function RolesPanel() {
         },
       },
     ],
-    [t]
+    [displayRole, t]
   );
 
   if (roles.isLoading || resources.isLoading)
@@ -637,6 +638,7 @@ function AssignmentDialog({
   }) => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
+  const displayRole = useRoleDisplay();
   const groups = useQuery({
     queryKey: ['admin', 'directory', 'groups', 'assignment'],
     queryFn: () => listDirectoryGroups('', 'ACTIVE', 0, 100),
@@ -676,7 +678,7 @@ function AssignmentDialog({
               .filter((role) => role.assignableToGroups && role.status === 'ACTIVE')
               .map((role) => (
                 <MenuItem key={role.roleId} value={role.roleId}>
-                  {resolveRoleDisplayCopy(role, t).name} ({role.code})
+                  {displayRole(role.code, role.name, role.description).name} ({role.code})
                 </MenuItem>
               ))}
           </TextField>
@@ -753,6 +755,7 @@ function AssignmentDialog({
 function AssignmentsPanel() {
   const { t } = useTranslation('admin');
   const display = useDisplayDictionary();
+  const displayRole = useRoleDisplay();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -773,6 +776,16 @@ function AssignmentsPanel() {
     () => new Set((assignableRoles.data ?? []).map((role) => role.code)),
     [assignableRoles.data]
   );
+  const roleNamesByCode = useMemo(
+    () =>
+      new Map(
+        (roles.data ?? []).map((role) => [
+          role.code,
+          displayRole(role.code, role.name, role.description).name,
+        ])
+      ),
+    [displayRole, roles.data]
+  );
   const mutate = useCallback(
     async (action: () => Promise<unknown>, success: string) => {
       setBusy(true);
@@ -788,72 +801,21 @@ function AssignmentsPanel() {
     },
     [queryClient, t, toast]
   );
-  const columns = useMemo<GridColDef<GroupRoleAssignment>[]>(
-    () => [
-      { field: 'groupName', headerName: t('roleGovernance.columns.group'), minWidth: 200, flex: 1 },
-      { field: 'roleCode', headerName: t('roleGovernance.columns.role'), minWidth: 160, flex: 0.8 },
-      {
-        field: 'assignmentType',
-        headerName: t('roleGovernance.columns.assignmentType'),
-        width: 130,
-      },
-      {
-        field: 'scopeType',
-        headerName: t('roleGovernance.columns.scope'),
-        minWidth: 170,
-        flex: 0.7,
-        valueGetter: (_value, row) =>
-          row.scopeRef ? `${row.scopeType} / ${row.scopeRef}` : row.scopeType,
-      },
-      {
-        field: 'validTo',
-        headerName: t('roleGovernance.columns.validTo'),
-        width: 180,
-        valueGetter: (_value, row) =>
-          row.validTo ? new Date(row.validTo).toLocaleString() : t('roleGovernance.noExpiry'),
-      },
-      {
-        field: 'lifecycleState',
-        headerName: t('roleGovernance.columns.status'),
-        width: 120,
-        renderCell: ({ row }) => (
-          <Chip
-            size="small"
-            variant="outlined"
-            color={row.lifecycleState === 'ACTIVE' ? 'success' : 'default'}
-            label={display('states', row.lifecycleState)}
-          />
-        ),
-      },
-      {
-        field: 'actions',
-        headerName: '',
-        width: 64,
-        sortable: false,
-        renderCell: ({ row }) => (
-          <Tooltip title={t('roleGovernance.actions.revoke')}>
-            <span>
-              <IconButton
-                size="small"
-                color="error"
-                disabled={
-                  busy || row.lifecycleState !== 'ACTIVE' || !assignableRoleCodes.has(row.roleCode)
-                }
-                onClick={() =>
-                  void mutate(
-                    () => revokeGroupRoleAssignment(row),
-                    t('roleGovernance.toasts.assignmentRevoked')
-                  )
-                }
-              >
-                <Ban size={16} />
-              </IconButton>
-            </span>
-          </Tooltip>
-        ),
-      },
-    ],
-    [assignableRoleCodes, busy, display, mutate, t]
+  const columns = useMemo(
+    () =>
+      createRoleAssignmentColumns({
+        t,
+        display,
+        roleNamesByCode,
+        assignableRoleCodes,
+        busy,
+        onRevoke: (row) =>
+          void mutate(
+            () => revokeGroupRoleAssignment(row),
+            t('roleGovernance.toasts.assignmentRevoked')
+          ),
+      }),
+    [assignableRoleCodes, busy, display, mutate, roleNamesByCode, t]
   );
   if (assignments.isLoading || roles.isLoading || assignableRoles.isLoading)
     return <ManagementPanelLoading label={t('roleGovernance.loading')} />;

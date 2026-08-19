@@ -11,6 +11,7 @@
 | GET    | `/api/platform/v1/admin/home-experience`                         | Tenant Admin        | 관리 상세 조회                |
 | PUT    | `/api/platform/v1/admin/home-experience`                         | Tenant Admin, CSRF  | Locale 문구·위치·Overlay 게시 |
 | PUT    | `/api/platform/v1/admin/home-experience/launchpad`               | Tenant Admin, CSRF  | Home 영역·기본 App 배치 게시  |
+| PUT    | `/api/platform/v1/admin/home-experience/composition`             | Tenant Admin, CSRF  | 관리형 Zone·개인화 정책 게시  |
 | POST   | `/api/platform/v1/admin/home-experience/background?version={n}`  | Tenant Admin, CSRF  | 이미지 교체                   |
 | POST   | `/api/platform/v1/admin/home-experience/background/reset`        | Tenant Admin, CSRF  | Built-in 기본값 복원          |
 | GET    | `/api/platform/v1/admin/home-experience/revisions`               | Tenant Admin        | 불변 게시 이력                |
@@ -39,15 +40,28 @@
 `customized=false`는 기본값, `customized=true`는 저장된 사용자 설정을 뜻한다. 최초 저장의
 `version`도 `0`일 수 있으므로 Reset 가능 여부는 `customized`로 판단한다.
 
-`GET /home-experience`는 Tenant `launchpadConfiguration`을 함께 반환한다. Runtime은 이 설정을
-App Registry와 결합한 뒤 RBAC Entitlement를 적용하고, 마지막으로 개인 Layout을 조정한다.
+`GET /home-experience`는 Tenant `launchpadConfiguration`과 `compositionPolicy`를 함께 반환한다.
+Runtime은 Launchpad 설정을 App Registry와 결합한 뒤 RBAC Entitlement를 적용한다. 업무 도구는
+PERSONAL Zone이며 사용자는 권한이 부여된 앱만 순서·폴더·숨김으로 구성한다. 이 `appLayout`은
+Preference Schema v4에 저장되지만 권한 부여 자료로 사용하지 않으며, Runtime은 매 조회 시 현재
+App Catalog와 RBAC Entitlement를 먼저 적용한 뒤 저장 배열을 조정한다.
 `PUT /admin/home-experience/launchpad`는 현재 Aggregate `version`을 요구하며 게시 성공 시
 Revision과 Durable Audit Event를 남긴다.
 
+`compositionPolicy`는 `announcements`만 관리형 Zone으로 허용한다. Zone Key, Placement, 허용
+폭은 서버 Registry로 검증하며 알 수 없는 Key와 중복을 거부한다. `workspace-tools`와
+`command-rail`은 개인 구성 Registry에 속한다. 이전 정책 문서에 남은 `workspace-tools` 관리형
+항목은 호환 계층에서 제거한다. `personalCustomizationEnabled=false`일 때 Workspace Home의
+Preference Update와 Reset은 UI 상태와 무관하게 서버에서 `403`으로 거부한다.
+
 `GET /home/overview`는 Work, Calendar, Communications와 Activity를 한 번에 조합하지만
-각 Section은 `AVAILABLE|FORBIDDEN|UNAVAILABLE` 상태를 독립적으로 가진다. 한 원천의 장애나
-권한 거부가 Home 전체 실패로 승격되지 않는다. 응답의 Audience와 Recommendation에는 적용한
-규칙 버전, 노출 사유, 원천, 근거 수와 신뢰도가 포함된다.
+각 Section은 `AVAILABLE|FORBIDDEN|UNAVAILABLE` 상태를 독립적으로 가진다. 추천도
+`recommendationSection`으로 같은 상태 계약을 사용한다. 추천 원천 중 하나라도 사용할 수 있으면
+가용 데이터로 계산하고 부분 장애 사유를 남기며, 모든 추천 원천이 실패하거나 권한 밖이면 각각
+`UNAVAILABLE` 또는 `FORBIDDEN`을 반환한다. 한 원천의 장애나 권한 거부가 Home 전체 실패로
+승격되지 않는다. 응답의 Audience와 Recommendation에는 적용한 규칙 버전, 노출 사유, 원천,
+근거 수와 신뢰도가 포함된다. 순차 배포 기간에는 구버전 소비자를 위해 평면
+`recommendations` 배열을 함께 제공하되 새 소비자는 상태 필드를 우선한다.
 
 추천 피드백 요청은 `feedbackType`만 받는다. 원천과 규칙 버전은 클라이언트 값을 신뢰하지
 않고 서버의 등록된 Recommendation Catalog에서 결정하며, 미등록 Key는 `404`로 거부한다.

@@ -31,9 +31,23 @@
       "deployment": "independent"
     },
     {
+      "id": "spaces",
+      "features": ["spaces"],
+      "routePrefixes": ["/spaces"],
+      "backendServices": ["space", "approval", "auth"],
+      "deployment": "independent"
+    },
+    {
       "id": "calendar",
       "features": ["calendar"],
       "routePrefixes": ["/calendar"],
+      "backendServices": ["platform"],
+      "deployment": "independent"
+    },
+    {
+      "id": "mail",
+      "features": ["mail"],
+      "routePrefixes": ["/mail"],
       "backendServices": ["platform"],
       "deployment": "independent"
     },
@@ -55,7 +69,7 @@
       "id": "administration",
       "features": ["admin", "integrations"],
       "routePrefixes": ["/admin"],
-      "backendServices": ["auth", "people", "platform", "provider"],
+      "backendServices": ["auth", "people", "platform", "provider", "space"],
       "deployment": "independent"
     },
     {

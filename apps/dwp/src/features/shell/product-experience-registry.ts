@@ -1,8 +1,13 @@
-export type ProductExperienceKey = 'hcm' | 'calendar' | 'approvals';
+export type ProductExperienceKey = 'hcm' | 'calendar' | 'approvals' | 'mail' | 'spaces';
 
 export type ProductExperienceProfile = {
   key: ProductExperienceKey;
-  concept: 'people-flow' | 'temporal-flow' | 'decision-flow';
+  concept:
+    | 'people-flow'
+    | 'temporal-flow'
+    | 'decision-flow'
+    | 'communication-flow'
+    | 'collaboration-flow';
   density: 'comfortable' | 'standard';
   accent: string;
   secondary: string;
@@ -35,6 +40,17 @@ export const productExperienceRegistry = {
     sidebar: '#FAFBFD',
     selection: '#E7EFFC',
   },
+  mail: {
+    key: 'mail',
+    concept: 'communication-flow',
+    density: 'standard',
+    accent: '#176B63',
+    secondary: '#C24E63',
+    softSurface: '#E5F3F0',
+    canvas: '#F5F8F8',
+    sidebar: '#FBFCFC',
+    selection: '#E1F0ED',
+  },
   approvals: {
     key: 'approvals',
     concept: 'decision-flow',
@@ -45,6 +61,17 @@ export const productExperienceRegistry = {
     canvas: '#F7F7F5',
     sidebar: '#FCFCFB',
     selection: '#E7EDF2',
+  },
+  spaces: {
+    key: 'spaces',
+    concept: 'collaboration-flow',
+    density: 'comfortable',
+    accent: '#315B7A',
+    secondary: '#C0524F',
+    softSurface: '#E8F0F4',
+    canvas: '#F5F7F7',
+    sidebar: '#FBFCFC',
+    selection: '#E5EDF2',
   },
 } as const satisfies Record<ProductExperienceKey, ProductExperienceProfile>;
 

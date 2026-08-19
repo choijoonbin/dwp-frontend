@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import { useSearchParams } from 'react-router-dom';
 import {
   Check,
@@ -567,21 +567,21 @@ export function ProviderOperations() {
       >
         <SignalMetric
           label={t('operations.metrics.awaitingApproval')}
-          value={pendingApprovals.length.toLocaleString()}
+          value={formatNumber(pendingApprovals.length)}
           detail={t('operations.signals.approvalDetail', { highRisk: highRiskApprovals })}
           icon={<ShieldCheck size={18} />}
           tone={pendingApprovals.length ? 'warning' : 'success'}
         />
         <SignalMetric
           label={t('operations.metrics.running')}
-          value={runningOperations.length.toLocaleString()}
+          value={formatNumber(runningOperations.length)}
           detail={t('operations.signals.runningDetail', { previewed: previewedOperations.length })}
           icon={<Clock3 size={18} />}
           tone={runningOperations.length ? 'info' : 'neutral'}
         />
         <SignalMetric
           label={t('operations.metrics.failed')}
-          value={recoveryOperations.length.toLocaleString()}
+          value={formatNumber(recoveryOperations.length)}
           detail={t('operations.signals.recoveryDetail')}
           icon={<TriangleAlert size={18} />}
           tone={recoveryOperations.length ? 'error' : 'success'}

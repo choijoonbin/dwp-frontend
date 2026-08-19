@@ -21,16 +21,21 @@ import {
   ShieldAlert,
   Network,
   Languages,
-  PanelTop,
+  Layers3,
   LibraryBig,
   LifeBuoy,
   ListChecks,
+  PanelTop,
+  Route,
+  LayoutTemplate,
+  FileCheck2,
+  ServerCog,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
 
 export type AdminSection =
-  'experience' | 'services' | 'identity' | 'platform' | 'integrations' | 'governance';
+  'experience' | 'services' | 'spaces' | 'identity' | 'platform' | 'integrations' | 'governance';
 
 export type AdminView =
   | 'branding'
@@ -50,6 +55,13 @@ export type AdminView =
   | 'provisioning'
   | 'service-catalog'
   | 'service-operations'
+  | 'space-overview'
+  | 'space-directory'
+  | 'space-requests'
+  | 'space-templates'
+  | 'space-content-reviews'
+  | 'space-lifecycle'
+  | 'space-operations'
   | 'catalog'
   | 'navigation'
   | 'reference-data'
@@ -148,6 +160,68 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         path: '/admin/services/service-operations',
         icon: ListChecks,
         requiredResourceKey: 'ADMIN.SERVICE_OPERATIONS',
+        requiredPermissionCode: 'VIEW',
+      },
+    ],
+  },
+  {
+    id: 'spaces',
+    icon: Layers3,
+    items: [
+      {
+        section: 'spaces',
+        view: 'space-overview',
+        path: '/admin/spaces/overview',
+        icon: ChartNoAxesCombined,
+        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'spaces',
+        view: 'space-directory',
+        path: '/admin/spaces/directory',
+        icon: Layers3,
+        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'spaces',
+        view: 'space-requests',
+        path: '/admin/spaces/requests',
+        icon: Route,
+        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'spaces',
+        view: 'space-templates',
+        path: '/admin/spaces/templates',
+        icon: LayoutTemplate,
+        requiredResourceKey: 'ADMIN.SPACE_TEMPLATES',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'spaces',
+        view: 'space-content-reviews',
+        path: '/admin/spaces/content-reviews',
+        icon: FileCheck2,
+        requiredResourceKey: 'ADMIN.SPACE_COMPLIANCE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'spaces',
+        view: 'space-lifecycle',
+        path: '/admin/spaces/lifecycle',
+        icon: ClipboardCheck,
+        requiredResourceKey: 'ADMIN.SPACE_ACCESS_REVIEW',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'spaces',
+        view: 'space-operations',
+        path: '/admin/spaces/operations',
+        icon: ServerCog,
+        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
         requiredPermissionCode: 'VIEW',
       },
     ],
@@ -339,8 +413,10 @@ export function findAdminNavigationItem(
   section: string | undefined,
   view: string | undefined
 ): AdminNavigationItem | undefined {
+  if (!section || !view) return undefined;
+  const requestedPath = `/admin/${section}/${view}`;
   return [...ADMIN_ITEMS, ...LEGACY_ADMIN_ITEMS].find(
-    (item) => item.section === section && item.view === view
+    (item) => item.section === section && item.path === requestedPath
   );
 }
 
