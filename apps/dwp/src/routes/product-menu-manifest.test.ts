@@ -45,7 +45,7 @@ describe('product menu manifest', () => {
   });
 
   it('derives the governed route count from each product navigation source', () => {
-    expect(expectedRouteCount).toBe(120);
+    expect(expectedRouteCount).toBe(124);
     const counts = PRODUCT_MENU_ROUTES.reduce<Record<string, number>>((result, route) => {
       result[route.shell] = (result[route.shell] ?? 0) + 1;
       return result;

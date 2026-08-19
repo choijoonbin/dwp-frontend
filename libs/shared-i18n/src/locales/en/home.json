@@ -110,9 +110,9 @@
         "description": "Schedules, focus time, responses, and workplace bookings"
       },
       "dwp-rooms": {
-        "name": "Rooms",
-        "shortName": "Rooms",
-        "description": "Live availability, booking, attendee invitations, and approvals"
+        "name": "Workplace",
+        "shortName": "Workplace",
+        "description": "Office maps and reservations for rooms, desks, lockers, and workplace resources"
       },
       "ref-app-mail": {
         "name": "Mail",

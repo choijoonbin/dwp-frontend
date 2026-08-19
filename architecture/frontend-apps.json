@@ -47,7 +47,7 @@
     {
       "id": "rooms",
       "features": ["rooms"],
-      "routePrefixes": ["/rooms"],
+      "routePrefixes": ["/workplace", "/rooms"],
       "backendServices": ["platform"],
       "deployment": "independent"
     },

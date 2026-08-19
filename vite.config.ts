@@ -133,7 +133,9 @@ export default defineConfig(({ command, mode }) => {
               {
                 name: 'application-shell',
                 test: (moduleId) =>
-                  !moduleId.includes('/node_modules/') && !moduleId.startsWith('\0'),
+                  (!moduleId.includes('/node_modules/') && !moduleId.startsWith('\0')) ||
+                  moduleId.includes('dynamic_import_helper') ||
+                  moduleId.includes('dynamic-import-helper'),
                 tags: ['$initial'],
                 includeDependenciesRecursively: false,
                 maxSize: 430 * 1024,

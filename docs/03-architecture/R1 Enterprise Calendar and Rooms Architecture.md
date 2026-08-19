@@ -1,5 +1,9 @@
 # R1 Enterprise Calendar and Rooms Architecture
 
+> 2026-08-19 이후 물리 공간 카탈로그·층 지도·좌석/사물함/주차 예약은
+> `R1 Enterprise Workplace and Spatial Booking ADR.md`가 대체한다. 이 문서는 Calendar
+> Scheduling Kernel과 기존 회의실 호환 계약의 근거로 유지한다.
+
 ## 1. 목적
 
 캘린더와 회의실을 단순 조회 화면이 아니라 사용자가 실제로 일정을 만들고 변경하며,
@@ -141,17 +145,17 @@ FullCalendar 공식 React 문서: <https://fullcalendar.io/docs/react>
 표시하지 않는다. 다중 채널 전달은 Notification Platform의 outbox, 사용자 선호, 재시도,
 dead-letter, 감사 계약이 활성화된 뒤 연결한다.
 
-## 9. 의도적으로 가짜 UI를 만들지 않은 기능
+## 9. 단계적으로 활성화하는 기능
 
 다음 항목은 상위 제품의 유효한 기능이지만 현재 백엔드 수명주기와 장치 계약 없이 버튼만
 노출하면 데모 화면이 된다. 구현 전까지 UI에 활성 기능처럼 표시하지 않는다.
 
-- 층별 지도와 좌석/회의실 도면 편집
 - 현장 QR·패널 체크인, 노쇼 감지와 자동 해제
 - 회의실 디스플레이·센서 device fleet 관리
 - 점유율, 노쇼, 에너지·공간 최적화 장기 분석
 - 자동 대체 회의실 추천과 다중 시간대 AI 재계획
 
+층별 지도와 좌석·회의실 도면 편집은 Workplace ADR과 `wp_*` 도메인으로 구현했다. 장치 연동의
 후속 도입 순서는 `CHECK_IN lifecycle -> auto-release worker -> device integration -> analytics`
 이며, 각 단계는 감사 로그와 운영자 override를 먼저 정의한다.
 

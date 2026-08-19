@@ -21,6 +21,7 @@ export * from './api/communication-api';
 export * from './api/service-center-api';
 export * from './api/calendar-api';
 export * from './api/rooms-api';
+export * from './api/workplace-api';
 export * from './api/mail-api';
 export * from './api/people-admin-api';
 export * from './api/hr-api';

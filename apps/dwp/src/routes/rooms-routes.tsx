@@ -14,11 +14,11 @@ const RoomsPage = lazy(() => import('../pages/rooms'));
 
 export const roomsRoutes: RouteObject[] = [
   {
-    path: 'rooms',
+    path: 'workplace',
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <AppRouteGuard resourceKey="APP.ROOMS">
+          <AppRouteGuard resourceKey="APP.WORKPLACE">
             <RoomsLayout />
           </AppRouteGuard>
         </WorkspaceRouteGuard>
@@ -36,4 +36,5 @@ export const roomsRoutes: RouteObject[] = [
       },
     ],
   },
+  { path: 'rooms/*', element: <Navigate to="/workplace/explore" replace /> },
 ];

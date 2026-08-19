@@ -117,7 +117,7 @@ export const shellRegistry = {
   },
   rooms: {
     key: 'rooms',
-    routePrefixes: ['/rooms'],
+    routePrefixes: ['/workplace', '/rooms'],
     scope: 'tenant',
     brandMode: 'product',
     showWorkspace: true,

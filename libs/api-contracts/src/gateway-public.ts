@@ -7344,6 +7344,278 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/admin/workplace/floors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplaceFloors"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/floors/{floorId}/background": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_uploadWorkplaceFloorBackground"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/floors/{floorId}/layout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateWorkplaceLayout"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/floors/{floorId}/resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplaceResources"];
+        put?: never;
+        post: operations["platform_createWorkplaceResource"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/floors/{floorId}/resources/{resourceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateWorkplaceResource"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplaceAdminOverview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplacePolicy"];
+        put: operations["platform_updateWorkplacePolicy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/sites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplaceSites"];
+        put?: never;
+        post: operations["platform_createWorkplaceSite"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/sites/{siteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateWorkplaceSite"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/sites/{siteId}/floors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createWorkplaceFloor"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/sites/{siteId}/floors/{floorId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateWorkplaceFloor"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplaceBookings"];
+        put?: never;
+        post: operations["platform_createWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_cancelWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/check-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_checkInWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_releaseWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/explore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_exploreWorkplace"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/floors/{floorId}/background": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_workplaceFloorBackground"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -18109,6 +18381,346 @@ export interface components {
             generatedAt?: string;
             occupancy?: components["schemas"]["platform_ResourceOccupancy"][];
             rooms?: components["schemas"]["platform_ResourceSummary"][];
+        };
+        platform_ApiResponseListWorkplaceBooking: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceBooking"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceFloor: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceFloor"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceResource: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceResource"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceSite: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceSite"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceAdminOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceAdminOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceBooking: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceBooking"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceExploreResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceExploreResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceFloor: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceFloor"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplacePolicy: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplacePolicy"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceResource: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceResource"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceSite: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceSite"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_BookingRequest: {
+            /** Format: date-time */
+            endsAt: string;
+            purpose?: string;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: date-time */
+            startsAt: string;
+            visibleToColleagues?: boolean;
+        };
+        platform_FloorRequest: {
+            /** Format: int32 */
+            floorNumber?: number;
+            nameEn: string;
+            nameKo: string;
+            /** Format: int32 */
+            planHeight?: number;
+            /** Format: int32 */
+            planWidth?: number;
+            /** @enum {string} */
+            state: "DRAFT" | "ACTIVE" | "CLOSED";
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_LayoutRequest: {
+            resources: components["schemas"]["platform_ResourcePlacement"][];
+        };
+        platform_ResourcePlacement: {
+            heightPercent: number;
+            positionX: number;
+            positionY: number;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: int32 */
+            rotationDegrees?: number;
+            /** Format: int64 */
+            version: number;
+            widthPercent: number;
+        };
+        platform_SiteRequest: {
+            address?: string;
+            code: string;
+            nameEn: string;
+            nameKo: string;
+            /** @enum {string} */
+            state: "ACTIVE" | "MAINTENANCE" | "CLOSED";
+            timeZone: string;
+            /** Format: int32 */
+            totalFloorCount?: number;
+            /** @enum {string} */
+            type: "HEADQUARTERS" | "SHARED_OFFICE" | "SATELLITE" | "CLIENT_SITE";
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkplaceAdminOverview: {
+            /** Format: int64 */
+            activeSites?: number;
+            /** Format: int64 */
+            assignedResources?: number;
+            /** Format: int64 */
+            bookingsThisWeek?: number;
+            /** Format: int64 */
+            checkedInToday?: number;
+            /** Format: int64 */
+            configuredFloors?: number;
+            /** Format: date-time */
+            generatedAt?: string;
+            policy?: components["schemas"]["platform_WorkplacePolicy"];
+            /** Format: int64 */
+            reservableResources?: number;
+            /** Format: int32 */
+            utilizationPercent?: number;
+        };
+        platform_WorkplaceBooking: {
+            /** Format: uuid */
+            bookingId?: string;
+            /** Format: date-time */
+            checkedInAt?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            floorName?: string;
+            purpose?: string;
+            /** Format: date-time */
+            releasedAt?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            resourceName?: string;
+            /** @enum {string} */
+            resourceType?: "ROOM" | "DESK" | "LOCKER" | "PARKING" | "FOCUS_POD" | "PHONE_BOOTH" | "EQUIPMENT";
+            siteName?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            status?: "RESERVED" | "CHECKED_IN" | "RELEASED" | "CANCELLED";
+            /** Format: int64 */
+            version?: number;
+            visibleToColleagues?: boolean;
+        };
+        platform_WorkplaceExploreResponse: {
+            floors?: components["schemas"]["platform_WorkplaceFloor"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            occupancy?: components["schemas"]["platform_WorkplaceOccupancy"][];
+            policy?: components["schemas"]["platform_WorkplacePolicy"];
+            resources?: components["schemas"]["platform_WorkplaceResource"][];
+            selectedFloor?: components["schemas"]["platform_WorkplaceFloor"];
+            sites?: components["schemas"]["platform_WorkplaceSite"][];
+        };
+        platform_WorkplaceFloor: {
+            backgroundAssetPath?: string;
+            /** Format: uuid */
+            floorId?: string;
+            /** Format: int32 */
+            floorNumber?: number;
+            name?: string;
+            nameEn?: string;
+            nameKo?: string;
+            /** Format: int32 */
+            planHeight?: number;
+            /** Format: int32 */
+            planWidth?: number;
+            /** Format: int64 */
+            resourceCount?: number;
+            /** Format: uuid */
+            siteId?: string;
+            siteName?: string;
+            /** @enum {string} */
+            state?: "DRAFT" | "ACTIVE" | "CLOSED";
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkplaceOccupancy: {
+            bookedByDisplayName?: string;
+            /** Format: uuid */
+            bookingId?: string;
+            currentUser?: boolean;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            status?: "RESERVED" | "CHECKED_IN" | "RELEASED" | "CANCELLED";
+        };
+        platform_WorkplacePolicy: {
+            allowAssignedDeskLending?: boolean;
+            allowRecurring?: boolean;
+            /** Format: int32 */
+            autoReleaseMinutes?: number;
+            /** Format: int32 */
+            bookingWindowDays?: number;
+            /** Format: int32 */
+            checkInLeadMinutes?: number;
+            /** Format: int32 */
+            maximumActiveBookings?: number;
+            /** Format: int32 */
+            maximumBookingMinutes?: number;
+            /** Format: int32 */
+            maximumConsecutiveDays?: number;
+            /** Format: int32 */
+            minimumBookingMinutes?: number;
+            requireCheckIn?: boolean;
+            showColleagueNames?: boolean;
+            /** Format: int64 */
+            version?: number;
+            workingDayEnd?: string;
+            workingDayStart?: string;
+        };
+        platform_WorkplaceResource: {
+            accessible?: boolean;
+            approvalRequired?: boolean;
+            assignedDisplayName?: string;
+            /** Format: uuid */
+            assignedPersonPublicId?: string;
+            /** Format: int64 */
+            assignedUserId?: number;
+            /** Format: uuid */
+            calendarResourceId?: string;
+            /** Format: int32 */
+            capacity?: number;
+            code?: string;
+            features?: string[];
+            /** Format: uuid */
+            floorId?: string;
+            heightPercent?: number;
+            /** @enum {string} */
+            mode?: "RESERVABLE" | "DROP_IN" | "ASSIGNED" | "UNAVAILABLE";
+            name?: string;
+            nameEn?: string;
+            nameKo?: string;
+            neighborhood?: string;
+            positionX?: number;
+            positionY?: number;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: int32 */
+            rotationDegrees?: number;
+            /** Format: uuid */
+            siteId?: string;
+            /** @enum {string} */
+            state?: "AVAILABLE" | "MAINTENANCE" | "RETIRED";
+            /** @enum {string} */
+            type?: "ROOM" | "DESK" | "LOCKER" | "PARKING" | "FOCUS_POD" | "PHONE_BOOTH" | "EQUIPMENT";
+            /** Format: int64 */
+            version?: number;
+            widthPercent?: number;
+        };
+        platform_WorkplaceSite: {
+            address?: string;
+            code?: string;
+            /** Format: int64 */
+            configuredFloorCount?: number;
+            name?: string;
+            nameEn?: string;
+            nameKo?: string;
+            /** Format: int64 */
+            resourceCount?: number;
+            /** Format: uuid */
+            siteId?: string;
+            /** @enum {string} */
+            state?: "ACTIVE" | "MAINTENANCE" | "CLOSED";
+            timeZone?: string;
+            /** Format: int32 */
+            totalFloorCount?: number;
+            /** @enum {string} */
+            type?: "HEADQUARTERS" | "SHARED_OFFICE" | "SATELLITE" | "CLIENT_SITE";
+            /** Format: int64 */
+            version?: number;
         };
     };
     responses: never;
@@ -31901,6 +32513,607 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseEventSummary"];
+                };
+            };
+        };
+    };
+    platform_getWorkplaceFloors: {
+        parameters: {
+            query: {
+                siteId: string;
+            };
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceFloor"];
+                };
+            };
+        };
+    };
+    platform_uploadWorkplaceFloorBackground: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloor"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplaceLayout: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_LayoutRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceResource"];
+                };
+            };
+        };
+    };
+    platform_getWorkplaceResources: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "Accept-Language"?: string;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceResource"];
+                };
+            };
+        };
+    };
+    platform_createWorkplaceResource: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ResourceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResource"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplaceResource: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ResourceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResource"];
+                };
+            };
+        };
+    };
+    platform_getWorkplaceAdminOverview: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceAdminOverview"];
+                };
+            };
+        };
+    };
+    platform_getWorkplacePolicy: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicy"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplacePolicy: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicy"];
+                };
+            };
+        };
+    };
+    platform_getWorkplaceSites: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceSite"];
+                };
+            };
+        };
+    };
+    platform_createWorkplaceSite: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SiteRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSite"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplaceSite: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SiteRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSite"];
+                };
+            };
+        };
+    };
+    platform_createWorkplaceFloor: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_FloorRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloor"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplaceFloor: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_FloorRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloor"];
+                };
+            };
+        };
+    };
+    platform_getWorkplaceBookings: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_createWorkplaceBooking: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-DWP-Person-Public-ID"?: string;
+                "X-DWP-Display-Name-B64"?: string;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_BookingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_cancelWorkplaceBooking: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_checkInWorkplaceBooking: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_releaseWorkplaceBooking: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_exploreWorkplace: {
+        parameters: {
+            query: {
+                floorId?: string;
+                from: string;
+                to: string;
+            };
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceExploreResponse"];
+                };
+            };
+        };
+    };
+    platform_workplaceFloorBackground: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
                 };
             };
         };

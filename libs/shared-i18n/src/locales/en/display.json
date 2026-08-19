@@ -149,6 +149,7 @@
     "COMPLETED": "Export artifact completed",
     "EXPIRED": "Export artifact expired",
     "FAILED": "Export processing failed",
+    "RELEASE": "Resource released",
     "RETRY_SCHEDULED": "Export retry scheduled",
     "ACCESS_REVIEW_CAMPAIGN_ACTIVATED": "Access review campaign activated",
     "ACCESS_REVIEW_CAMPAIGN_COMPLETED": "Access review campaign completed",

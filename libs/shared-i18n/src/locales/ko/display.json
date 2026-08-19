@@ -149,6 +149,7 @@
     "COMPLETED": "반출 산출물 완료",
     "EXPIRED": "반출 산출물 만료",
     "FAILED": "반출 처리 실패",
+    "RELEASE": "자원 조기 해제",
     "RETRY_SCHEDULED": "반출 재시도 예약",
     "ACCESS_REVIEW_CAMPAIGN_ACTIVATED": "접근 검토 캠페인 활성화",
     "ACCESS_REVIEW_CAMPAIGN_COMPLETED": "접근 검토 캠페인 완료",
