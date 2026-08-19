@@ -33,8 +33,8 @@ export function MessagingPeople() {
   });
   const directMutation = useMutation({
     mutationFn: createDirectMessagingConversation,
-    onSuccess: (detail) => {
-      navigate(`/messages/direct?conversation=${detail.conversation.conversationId}`);
+    onSuccess: (conversation) => {
+      navigate(`/messages/direct?conversation=${conversation.conversationId}`);
     },
     onError: () => toast.error(t('people.openError')),
   });

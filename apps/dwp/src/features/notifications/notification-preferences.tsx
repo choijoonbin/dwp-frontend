@@ -17,6 +17,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createNotificationIdempotencyKey,
   deleteNotificationSubscriptionRule,
+  getNotificationCapabilities,
   getNotificationDeliveryProfile,
   getNotificationEffectiveSettings,
   putNotificationSubscriptionRule,
@@ -25,7 +26,6 @@ import {
   type NotificationChannel,
   type NotificationDeliveryMode,
   type NotificationDeliveryProfile,
-  type NotificationEffectiveSettings,
   type NotificationTypeSetting,
 } from '@dwp-frontend/shared-utils/api/notification-api';
 import { useToast } from '@dwp-frontend/shared-utils';
@@ -211,12 +211,19 @@ function ManagedChip({ owner }: { owner?: string | null }) {
   );
 }
 
+function UnavailableChannelChip() {
+  const { t } = useTranslation('notifications');
+  return <Chip size="small" variant="outlined" label={t('preferences.channelUnavailable')} />;
+}
+
 function TypeSettingRows({
   app,
   disabled,
   onUpdate,
   onReset,
   busyType,
+  enabledChannels,
+  externalDeliveryEnabled,
 }: {
   app: NotificationAppSetting;
   disabled: boolean;
@@ -226,6 +233,8 @@ function TypeSettingRows({
   ) => void;
   onReset: (setting: NotificationTypeSetting) => void;
   busyType: string | null;
+  enabledChannels: ReadonlySet<NotificationChannel>;
+  externalDeliveryEnabled: boolean;
 }) {
   const { t } = useTranslation('notifications');
   if (app.types.length === 0) {
@@ -282,7 +291,11 @@ function TypeSettingRows({
                 label={t('preferences.deliveryMode')}
                 sx={{ minWidth: 180 }}
               >
-                {(['IMMEDIATE', 'DAILY_DIGEST', 'WEEKLY_DIGEST', 'MUTED'] as const).map((mode) => (
+                {(
+                  externalDeliveryEnabled
+                    ? (['IMMEDIATE', 'DAILY_DIGEST', 'WEEKLY_DIGEST', 'MUTED'] as const)
+                    : (['IMMEDIATE', 'MUTED'] as const)
+                ).map((mode) => (
                   <MenuItem key={mode} value={mode}>
                     {t(`preferences.modes.${mode}`)}
                   </MenuItem>
@@ -305,14 +318,20 @@ function TypeSettingRows({
             {USER_CHANNELS.map((channel) => {
               const value = setting.channels[channel];
               if (!value) return null;
+              const available = enabledChannels.has(channel);
               return (
                 <FormControlLabel
                   key={channel}
                   control={
                     <Switch
                       size="small"
-                      checked={value.effectiveValue}
-                      disabled={disabled || value.managed || busyType === setting.typeKey}
+                      checked={available && value.effectiveValue}
+                      disabled={
+                        disabled ||
+                        !available ||
+                        value.managed ||
+                        busyType === setting.typeKey
+                      }
                       onChange={(event) =>
                         onUpdate(setting, { channel, enabled: event.target.checked })
                       }
@@ -327,6 +346,7 @@ function TypeSettingRows({
                   label={
                     <Stack direction="row" gap={0.5} alignItems="center">
                       <Typography variant="body2">{t(`channels.${channel}`)}</Typography>
+                      {!available && <UnavailableChannelChip />}
                       {value.managed && <ManagedChip owner={value.ownerLabel} />}
                     </Stack>
                   }
@@ -362,6 +382,20 @@ export function NotificationPreferences() {
     staleTime: 30_000,
     retry: 1,
   });
+  const capabilitiesQuery = useQuery({
+    queryKey: notificationQueryKeys.capabilities(),
+    queryFn: ({ signal }) => getNotificationCapabilities(signal),
+    staleTime: 5 * 60_000,
+    retry: 1,
+  });
+  const enabledChannels = useMemo<ReadonlySet<NotificationChannel>>(
+    () => new Set(capabilitiesQuery.data?.enabledChannels ?? ['IN_APP']),
+    [capabilitiesQuery.data?.enabledChannels]
+  );
+  const externalDeliveryEnabled = useMemo(
+    () => [...enabledChannels].some((channel) => channel !== 'IN_APP'),
+    [enabledChannels]
+  );
 
   useEffect(() => {
     if (profileQuery.data) setDraft(profileQuery.data);
@@ -411,26 +445,32 @@ export function NotificationPreferences() {
       setting: NotificationTypeSetting;
       patch: { mode?: NotificationDeliveryMode; channel?: NotificationChannel; enabled?: boolean };
     }) => {
-      if (!setting.ruleId) throw new Error('A persisted subscription rule ID is required.');
       setBusyType(setting.typeKey);
       const channels: Partial<Record<NotificationChannel, boolean>> = {};
       for (const channel of USER_CHANNELS) {
-        const value = setting.channels[channel]?.effectiveValue;
-        if (value !== undefined) channels[channel] = value;
+        const value = setting.channels[channel];
+        if (
+          setting.ruleId &&
+          value?.source === 'USER' &&
+          typeof value.effectiveValue === 'boolean'
+        ) {
+          channels[channel] = value.effectiveValue;
+        }
       }
       if (patch.channel && patch.enabled !== undefined) channels[patch.channel] = patch.enabled;
       return putNotificationSubscriptionRule(
-        setting.ruleId,
+        setting.ruleId ?? crypto.randomUUID(),
         {
           appKey: app.appKey,
           typeKey: setting.typeKey,
           mode: patch.mode ?? setting.mode.effectiveValue,
           channels,
-          expectedVersion: setting.ruleVersion,
+          expectedVersion: setting.ruleVersion ?? undefined,
         },
         createNotificationIdempotencyKey('subscription-rule')
       );
     },
+    onMutate: () => setSaveState('saving'),
     onSuccess: async () => {
       setSaveState('saved');
       await queryClient.invalidateQueries({ queryKey: notificationQueryKeys.effectiveSettings() });
@@ -507,6 +547,11 @@ export function NotificationPreferences() {
           {t('preferences.offline')}
         </Alert>
       )}
+      {!externalDeliveryEnabled && (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          {t('preferences.externalChannelsUnavailable')}
+        </Alert>
+      )}
 
       <PreferenceSection
         title={t('preferences.global.title')}
@@ -516,17 +561,26 @@ export function NotificationPreferences() {
           {USER_CHANNELS.map((channel) => {
             const Icon = CHANNEL_ICON[channel];
             const managed = effectiveQuery.data?.globalChannels[channel];
+            const available = enabledChannels.has(channel);
             return (
               <PreferenceRow
                 key={channel}
                 icon={Icon}
                 title={t(`channels.${channel}`)}
                 description={t(`preferences.global.channelDescription.${channel}`)}
-                meta={managed?.managed ? <ManagedChip owner={managed.ownerLabel} /> : undefined}
+                meta={
+                  !available ? (
+                    <UnavailableChannelChip />
+                  ) : managed?.managed ? (
+                    <ManagedChip owner={managed.ownerLabel} />
+                  ) : undefined
+                }
               >
                 <Switch
-                  checked={draft.channels[channel]}
-                  disabled={!online || profileMutation.isPending || managed?.managed}
+                  checked={available && draft.channels[channel]}
+                  disabled={
+                    !online || !available || profileMutation.isPending || managed?.managed
+                  }
                   onChange={(event) =>
                     saveProfile({
                       ...draft,
@@ -557,7 +611,7 @@ export function NotificationPreferences() {
           >
             <Switch
               checked={draft.quietHours.enabled}
-              disabled={!online || profileMutation.isPending}
+              disabled={!externalDeliveryEnabled || !online || profileMutation.isPending}
               onChange={(event) =>
                 saveProfile({
                   ...draft,
@@ -579,7 +633,12 @@ export function NotificationPreferences() {
                 size="small"
                 label={t('preferences.quiet.start')}
                 value={draft.quietHours.start}
-                disabled={!draft.quietHours.enabled || !online || profileMutation.isPending}
+                disabled={
+                  !externalDeliveryEnabled ||
+                  !draft.quietHours.enabled ||
+                  !online ||
+                  profileMutation.isPending
+                }
                 onValueChange={(value) => {
                   if (!value) return;
                   saveProfile({
@@ -592,7 +651,12 @@ export function NotificationPreferences() {
                 size="small"
                 label={t('preferences.quiet.end')}
                 value={draft.quietHours.end}
-                disabled={!draft.quietHours.enabled || !online || profileMutation.isPending}
+                disabled={
+                  !externalDeliveryEnabled ||
+                  !draft.quietHours.enabled ||
+                  !online ||
+                  profileMutation.isPending
+                }
                 onValueChange={(value) => {
                   if (!value) return;
                   saveProfile({
@@ -611,6 +675,7 @@ export function NotificationPreferences() {
             <ToggleButtonGroup
               size="small"
               value={draft.quietHours.days}
+              disabled={!externalDeliveryEnabled || !online || profileMutation.isPending}
               onChange={(_event, days: number[]) =>
                 saveProfile({ ...draft, quietHours: { ...draft.quietHours, days } })
               }
@@ -641,7 +706,7 @@ export function NotificationPreferences() {
               size="small"
               label={t('preferences.digest.mode')}
               value={draft.digest.mode}
-              disabled={!online || profileMutation.isPending}
+              disabled={!externalDeliveryEnabled || !online || profileMutation.isPending}
               onChange={(event) =>
                 saveProfile({
                   ...draft,
@@ -663,7 +728,12 @@ export function NotificationPreferences() {
               size="small"
               label={t('preferences.digest.time')}
               value={draft.digest.deliveryTime}
-              disabled={draft.digest.mode === 'OFF' || !online || profileMutation.isPending}
+              disabled={
+                !externalDeliveryEnabled ||
+                draft.digest.mode === 'OFF' ||
+                !online ||
+                profileMutation.isPending
+              }
               onValueChange={(value) => {
                 if (!value) return;
                 saveProfile({
@@ -745,6 +815,8 @@ export function NotificationPreferences() {
                     app={selectedApp}
                     disabled={!online}
                     busyType={busyType}
+                    enabledChannels={enabledChannels}
+                    externalDeliveryEnabled={externalDeliveryEnabled}
                     onUpdate={(setting, patch) =>
                       ruleMutation.mutate({ app: selectedApp, setting, patch })
                     }

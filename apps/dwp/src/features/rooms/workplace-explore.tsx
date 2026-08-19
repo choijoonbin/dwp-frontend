@@ -29,7 +29,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 import { RoomBookingDialog } from './room-booking-dialog';
-import { RoomsPageHeading } from './rooms-ui';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
 import { WorkplaceBookingDialog } from './workplace-booking-dialog';
 import {
   workplaceDateBounds,
@@ -70,6 +71,7 @@ function defaultTime() {
 
 export function WorkplaceExplore() {
   const { t } = useTranslation('rooms');
+  const capabilities = useRoomsCapabilities();
   const toast = useToast();
   const theme = useTheme();
   const compact = useMediaQuery(theme.breakpoints.down('md'));
@@ -123,6 +125,13 @@ export function WorkplaceExplore() {
           )
         : [],
     [policy]
+  );
+  const displayedTimeOptions = useMemo(
+    () =>
+      selectableTimes.some((option) => option.value === time)
+        ? selectableTimes
+        : [{ value: time, label: time }, ...selectableTimes],
+    [selectableTimes, time]
   );
   const selectableDurations = useMemo(
     () => (policy ? workplaceDurationOptions(policy) : [30, 60, 90, 120]),
@@ -206,6 +215,13 @@ export function WorkplaceExplore() {
       setInspected(resource);
       return;
     }
+    const canBook =
+      capabilities.canCreateWorkplaceBooking &&
+      (resource.type !== 'ROOM' || capabilities.canCreateRoomBooking);
+    if (!canBook) {
+      setInspected(resource);
+      return;
+    }
     if (
       resource.mode === 'ASSIGNED' &&
       !data?.policy.allowAssignedDeskLending &&
@@ -264,6 +280,10 @@ export function WorkplaceExplore() {
         }
       />
 
+      {capabilities.isLoaded && !capabilities.canCreateWorkplaceBooking && (
+        <RoomsPermissionNotice>{t('permissions.workplaceBookingReadOnly')}</RoomsPermissionNotice>
+      )}
+
       <Box
         sx={{
           border: 1,
@@ -308,7 +328,7 @@ export function WorkplaceExplore() {
             size="small"
             label={t('workplace.explore.time')}
             value={time}
-            options={selectableTimes}
+            options={displayedTimeOptions}
             onValueChange={(value) => setTime(String(value))}
           />
           <SelectField
@@ -532,7 +552,12 @@ export function WorkplaceExplore() {
                 ))}
               </Stack>
             )}
-            <Alert severity="info">{t('workplace.explore.bookingUnavailable')}</Alert>
+            <Alert severity="info">
+              {!capabilities.canCreateWorkplaceBooking ||
+              (inspected.type === 'ROOM' && !capabilities.canCreateRoomBooking)
+                ? t('permissions.workplaceBookingReadOnly')
+                : t('workplace.explore.bookingUnavailable')}
+            </Alert>
             <ActionButton intent="secondary" onClick={() => setInspected(null)}>
               {t('actions.close')}
             </ActionButton>

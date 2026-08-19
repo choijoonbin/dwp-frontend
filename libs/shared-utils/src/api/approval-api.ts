@@ -59,14 +59,24 @@ export type ApprovalTimelineEvent = {
   eventType: string;
   actorType: string;
   actorId?: string | null;
+  actorDisplayName?: string | null;
+  stepName?: string | null;
+  stepSequence?: number | null;
+  delegated?: boolean;
   outcome: string;
   message?: string | null;
   occurredAt: string;
 };
 
+export type ApprovalFormSchema = {
+  schemaVersion: number;
+  fields: ApprovalFormField[];
+};
+
 export type ApprovalTaskDetail = {
   task: ApprovalTask;
   payload: Record<string, unknown>;
+  formSchema?: ApprovalFormSchema;
   timeline: ApprovalTimelineEvent[];
   canClaim: boolean;
   canDecide: boolean;
@@ -99,6 +109,7 @@ export type ApprovalRequestDetail = {
   workflowId: string;
   formId: string;
   payload: Record<string, unknown>;
+  formSchema?: ApprovalFormSchema;
   timeline: ApprovalTimelineEvent[];
 };
 
@@ -227,10 +238,7 @@ export type ApprovalFormField = {
 };
 export type ApprovalFormDetail = {
   form: ApprovalForm;
-  schema: {
-    schemaVersion: number;
-    fields: ApprovalFormField[];
-  };
+  schema: ApprovalFormSchema;
   schemaHash: string;
   routes: ApprovalFormRoute[];
 };

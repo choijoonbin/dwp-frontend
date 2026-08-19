@@ -2,12 +2,21 @@ import { Building2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import type { ReactNode } from 'react';
 import type { CalendarResource } from '@dwp-frontend/shared-utils';
+
+export function RoomsPermissionNotice({ children }: { children: ReactNode }) {
+  return (
+    <Alert severity="info" role="status" data-testid="rooms-permission-notice" sx={{ mb: 2 }}>
+      {children}
+    </Alert>
+  );
+}
 
 export function RoomsPageHeading({
   eyebrow,

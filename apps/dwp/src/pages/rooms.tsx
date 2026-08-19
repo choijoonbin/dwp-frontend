@@ -7,23 +7,30 @@ import { RoomsAdminOperations } from '../features/rooms/rooms-admin-operations';
 import { RoomsAdminPolicies } from '../features/rooms/rooms-admin-policies';
 import { RoomsFind } from '../features/rooms/rooms-find';
 import { WorkplaceAdminLocations } from '../features/rooms/workplace-admin-locations';
+import { WorkplaceAdminGovernance } from '../features/rooms/workplace-admin-governance';
+import { WorkplaceAdminOperations } from '../features/rooms/workplace-admin-operations';
 import { WorkplaceAdminOverview } from '../features/rooms/workplace-admin-overview';
 import { WorkplaceAdminPolicy } from '../features/rooms/workplace-admin-policy';
 import { WorkplaceBookings } from '../features/rooms/workplace-bookings';
 import { WorkplaceExplore } from '../features/rooms/workplace-explore';
-import { findRoomsNavigationItem, ROOMS_DEFAULT_PATH } from '../features/rooms/rooms-navigation';
+import {
+  findFirstAccessibleRoomsPath,
+  findRoomsNavigationItem,
+} from '../features/rooms/rooms-navigation';
 
 export default function RoomsPage() {
   const { pathname } = useLocation();
-  const { hasPermission } = usePermissions();
+  const { hasPermission, isLoaded } = usePermissions();
   const page = findRoomsNavigationItem(pathname);
+  const accessiblePath = findFirstAccessibleRoomsPath(hasPermission);
 
-  if (!page) return <Navigate to={ROOMS_DEFAULT_PATH} replace />;
+  if (!isLoaded) return null;
+  if (!page) return <Navigate to={accessiblePath} replace />;
   if (
     page.requiredResourceKey &&
     !hasPermission(page.requiredResourceKey, page.requiredPermissionCode)
   ) {
-    return <Navigate to={ROOMS_DEFAULT_PATH} replace />;
+    return <Navigate to={accessiblePath} replace />;
   }
 
   const content = {
@@ -32,6 +39,8 @@ export default function RoomsPage() {
     'my-bookings': <WorkplaceBookings />,
     'my-meetings': <RoomBookings />,
     'admin-overview': <WorkplaceAdminOverview />,
+    'admin-operations': <WorkplaceAdminOperations />,
+    'admin-governance': <WorkplaceAdminGovernance />,
     'admin-locations': <WorkplaceAdminLocations />,
     'admin-policy': <WorkplaceAdminPolicy />,
     'admin-room-operations': <RoomsAdminOperations />,

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Building2, Layers3, MapPinned, Pencil, Plus } from 'lucide-react';
+import { Building2, FileStack, Layers3, MapPinned, Pencil, Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import {
   getWorkplaceAdminFloors,
   getWorkplaceAdminResources,
@@ -10,7 +11,6 @@ import {
 import {
   ActionButton,
   ActionIconButton,
-  ConfirmDialog,
   EmptyState,
   PageCanvas,
 } from '@dwp-frontend/design-system';
@@ -30,22 +30,20 @@ import {
   WorkplaceSiteDialog,
 } from './workplace-admin-dialogs';
 import { WorkplaceLayoutEditor } from './workplace-layout-editor';
-import { RoomsPageHeading } from './rooms-ui';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
 
 import type { WorkplaceFloor, WorkplaceResource, WorkplaceSite } from '@dwp-frontend/shared-utils';
 
 export function WorkplaceAdminLocations() {
   const { t } = useTranslation('rooms');
+  const navigate = useNavigate();
+  const capabilities = useRoomsCapabilities();
   const [siteId, setSiteId] = useState<string | null>(null);
   const [floorId, setFloorId] = useState<string | null>(null);
   const [editingSite, setEditingSite] = useState<WorkplaceSite | 'new' | null>(null);
   const [editingFloor, setEditingFloor] = useState<WorkplaceFloor | 'new' | null>(null);
   const [editingResource, setEditingResource] = useState<WorkplaceResource | 'new' | null>(null);
-  const [layoutDirty, setLayoutDirty] = useState(false);
-  const [pendingLocation, setPendingLocation] = useState<{
-    siteId: string;
-    floorId: string | null;
-  } | null>(null);
   const sitesQuery = useQuery({
     queryKey: ['workplace', 'admin', 'sites'],
     queryFn: getWorkplaceAdminSites,
@@ -89,19 +87,8 @@ export function WorkplaceAdminLocations() {
     return { x: 6 + (count % 6) * 12, y: 8 + (Math.floor(count / 6) % 5) * 14 };
   }, [resourcesQuery.data?.length]);
   const requestLocation = (nextSiteId: string, nextFloorId: string | null) => {
-    if (layoutDirty) {
-      setPendingLocation({ siteId: nextSiteId, floorId: nextFloorId });
-      return;
-    }
     setSiteId(nextSiteId);
     setFloorId(nextFloorId);
-  };
-  const discardAndNavigate = () => {
-    if (!pendingLocation) return;
-    setLayoutDirty(false);
-    setFloorId(pendingLocation.floorId);
-    setSiteId(pendingLocation.siteId);
-    setPendingLocation(null);
   };
 
   return (
@@ -111,15 +98,27 @@ export function WorkplaceAdminLocations() {
         title={t('workplace.admin.locations.title')}
         description={t('workplace.admin.locations.description')}
         actions={
-          <ActionButton
-            intent="primary"
-            startIcon={<Plus size={17} />}
-            onClick={() => setEditingSite('new')}
-          >
-            {t('workplace.admin.locations.addSite')}
-          </ActionButton>
+          capabilities.canCreateWorkplaceAdmin ? (
+            <ActionButton
+              intent="primary"
+              startIcon={<Plus size={17} />}
+              onClick={() => setEditingSite('new')}
+            >
+              {t('workplace.admin.locations.addSite')}
+            </ActionButton>
+          ) : null
         }
       />
+
+      {capabilities.isLoaded && !capabilities.canUpdateWorkplaceAdmin && (
+        <RoomsPermissionNotice>
+          {t(
+            capabilities.canCreateWorkplaceAdmin
+              ? 'permissions.adminUpdateRestricted'
+              : 'permissions.adminCatalogReadOnly'
+          )}
+        </RoomsPermissionNotice>
+      )}
 
       {sitesQuery.isError && (
         <Alert
@@ -168,72 +167,87 @@ export function WorkplaceAdminLocations() {
               return (
                 <Box
                   key={site.siteId}
-                  component="button"
-                  type="button"
-                  onClick={() => requestLocation(site.siteId, null)}
                   sx={{
+                    position: 'relative',
                     width: '100%',
-                    minHeight: 78,
-                    p: 1.5,
-                    border: 0,
                     borderBottom: 1,
                     borderColor: 'divider',
                     bgcolor: selected ? 'var(--dwp-product-selection)' : 'transparent',
-                    color: 'text.primary',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    font: 'inherit',
-                    display: 'grid',
-                    gridTemplateColumns: '34px minmax(0, 1fr) 32px',
-                    gap: 1,
-                    alignItems: 'center',
                   }}
                 >
                   <Box
+                    component="button"
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => requestLocation(site.siteId, null)}
                     sx={{
-                      width: 34,
-                      height: 34,
+                      width: '100%',
+                      minHeight: 78,
+                      p: 1.5,
+                      pr: capabilities.canUpdateWorkplaceAdmin ? 6 : 1.5,
+                      border: 0,
+                      bgcolor: 'transparent',
+                      color: 'text.primary',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      font: 'inherit',
                       display: 'grid',
-                      placeItems: 'center',
-                      bgcolor: 'var(--dwp-product-soft)',
-                      color: 'var(--dwp-product-accent)',
+                      gridTemplateColumns: '34px minmax(0, 1fr)',
+                      gap: 1,
+                      alignItems: 'center',
                     }}
                   >
-                    <Building2 size={18} />
-                  </Box>
-                  <Box sx={{ minWidth: 0 }}>
-                    <Stack direction="row" gap={0.6} alignItems="center">
-                      <Typography variant="body2" fontWeight={750} noWrap>
-                        {site.name}
+                    <Box
+                      sx={{
+                        width: 34,
+                        height: 34,
+                        display: 'grid',
+                        placeItems: 'center',
+                        bgcolor: 'var(--dwp-product-soft)',
+                        color: 'var(--dwp-product-accent)',
+                      }}
+                    >
+                      <Building2 size={18} />
+                    </Box>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Stack direction="row" gap={0.6} alignItems="center">
+                        <Typography variant="body2" fontWeight={750} noWrap>
+                          {site.name}
+                        </Typography>
+                        <Chip
+                          size="small"
+                          color={
+                            site.state === 'ACTIVE'
+                              ? 'success'
+                              : site.state === 'MAINTENANCE'
+                                ? 'warning'
+                                : 'default'
+                          }
+                          label={t(`workplace.siteStates.${site.state}`)}
+                          sx={{ height: 20, fontSize: 10 }}
+                        />
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary" noWrap>
+                        {t(`workplace.siteTypes.${site.type}`)} · {site.configuredFloorCount}/
+                        {site.totalFloorCount}
                       </Typography>
-                      <Chip
-                        size="small"
-                        color={
-                          site.state === 'ACTIVE'
-                            ? 'success'
-                            : site.state === 'MAINTENANCE'
-                              ? 'warning'
-                              : 'default'
-                        }
-                        label={t(`workplace.siteStates.${site.state}`)}
-                        sx={{ height: 20, fontSize: 10 }}
-                      />
-                    </Stack>
-                    <Typography variant="caption" color="text.secondary" noWrap>
-                      {t(`workplace.siteTypes.${site.type}`)} · {site.configuredFloorCount}/
-                      {site.totalFloorCount}
-                    </Typography>
+                    </Box>
                   </Box>
-                  <ActionIconButton
-                    size="small"
-                    label={t('actions.edit')}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setEditingSite(site);
-                    }}
-                  >
-                    <Pencil size={15} />
-                  </ActionIconButton>
+                  {capabilities.canUpdateWorkplaceAdmin && (
+                    <ActionIconButton
+                      size="small"
+                      label={t('actions.edit')}
+                      sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        right: 8,
+                        transform: 'translateY(-50%)',
+                      }}
+                      onClick={() => setEditingSite(site)}
+                    >
+                      <Pencil size={15} />
+                    </ActionIconButton>
+                  )}
                 </Box>
               );
             })}
@@ -264,23 +278,25 @@ export function WorkplaceAdminLocations() {
                   </Typography>
                 </Box>
               </Stack>
-              <Stack direction="row" gap={1}>
-                <ActionButton
-                  intent="secondary"
-                  startIcon={<Layers3 size={16} />}
-                  onClick={() => setEditingFloor('new')}
-                >
-                  {t('workplace.admin.locations.addFloor')}
-                </ActionButton>
-                <ActionButton
-                  intent="primary"
-                  startIcon={<Plus size={16} />}
-                  disabled={!selectedFloor}
-                  onClick={() => setEditingResource('new')}
-                >
-                  {t('workplace.admin.locations.addResource')}
-                </ActionButton>
-              </Stack>
+              {capabilities.canCreateWorkplaceAdmin && (
+                <Stack direction="row" gap={1}>
+                  <ActionButton
+                    intent="secondary"
+                    startIcon={<Layers3 size={16} />}
+                    onClick={() => setEditingFloor('new')}
+                  >
+                    {t('workplace.admin.locations.addFloor')}
+                  </ActionButton>
+                  <ActionButton
+                    intent="primary"
+                    startIcon={<Plus size={16} />}
+                    disabled={!selectedFloor}
+                    onClick={() => setEditingResource('new')}
+                  >
+                    {t('workplace.admin.locations.addResource')}
+                  </ActionButton>
+                </Stack>
+              )}
             </Stack>
             {floorsQuery.isError && (
               <Alert
@@ -301,7 +317,7 @@ export function WorkplaceAdminLocations() {
                 sx={{ borderBottom: 1, borderColor: 'divider' }}
               >
                 <Tabs
-                  value={floorId}
+                  value={floorId ?? false}
                   onChange={(_, value: string) => requestLocation(siteId!, value)}
                   variant="scrollable"
                   scrollButtons="auto"
@@ -315,7 +331,7 @@ export function WorkplaceAdminLocations() {
                     />
                   ))}
                 </Tabs>
-                {selectedFloor && (
+                {selectedFloor && capabilities.canUpdateWorkplaceAdmin && (
                   <ActionIconButton
                     sx={{ mr: 1 }}
                     label={t('workplace.admin.locations.editFloor')}
@@ -347,12 +363,31 @@ export function WorkplaceAdminLocations() {
                   {t('workplace.admin.locations.resourceLoadError')}
                 </Alert>
               ) : (
-                <WorkplaceLayoutEditor
-                  floor={selectedFloor}
-                  resources={resourcesQuery.data ?? []}
-                  onEdit={(resource) => setEditingResource(resource)}
-                  onDirtyChange={setLayoutDirty}
-                />
+                <Stack spacing={1.5}>
+                  <Alert
+                    severity="info"
+                    action={
+                      capabilities.canManageWorkplaceAdmin ? (
+                        <ActionButton
+                          intent="primary"
+                          startIcon={<FileStack size={16} />}
+                          onClick={() => navigate('/workplace/admin/governance?area=floorPlans')}
+                        >
+                          {t('workplace.admin.locations.manageRelease')}
+                        </ActionButton>
+                      ) : null
+                    }
+                  >
+                    {t('workplace.admin.locations.governedLayoutNotice')}
+                  </Alert>
+                  <WorkplaceLayoutEditor
+                    floor={selectedFloor}
+                    resources={resourcesQuery.data ?? []}
+                    onEdit={(resource) => setEditingResource(resource)}
+                    editable={false}
+                    showResourceEditActions={capabilities.canUpdateWorkplaceAdmin}
+                  />
+                </Stack>
               )}
             </Box>
           </Box>
@@ -360,32 +395,37 @@ export function WorkplaceAdminLocations() {
       )}
 
       <WorkplaceSiteDialog
-        open={editingSite !== null}
+        open={
+          editingSite !== null &&
+          (editingSite === 'new'
+            ? capabilities.canCreateWorkplaceAdmin
+            : capabilities.canUpdateWorkplaceAdmin)
+        }
         site={editingSite === 'new' ? null : editingSite}
         onClose={() => setEditingSite(null)}
       />
       <WorkplaceFloorDialog
-        open={editingFloor !== null}
+        open={
+          editingFloor !== null &&
+          (editingFloor === 'new'
+            ? capabilities.canCreateWorkplaceAdmin
+            : capabilities.canUpdateWorkplaceAdmin)
+        }
         siteId={siteId ?? ''}
         floor={editingFloor === 'new' ? null : editingFloor}
         onClose={() => setEditingFloor(null)}
       />
       <WorkplaceResourceDialog
-        open={editingResource !== null}
+        open={
+          editingResource !== null &&
+          (editingResource === 'new'
+            ? capabilities.canCreateWorkplaceAdmin
+            : capabilities.canUpdateWorkplaceAdmin)
+        }
         floorId={floorId ?? ''}
         resource={editingResource === 'new' ? null : editingResource}
         defaultPosition={defaultPosition}
         onClose={() => setEditingResource(null)}
-      />
-      <ConfirmDialog
-        open={Boolean(pendingLocation)}
-        title={t('workplace.admin.locations.unsavedTitle')}
-        description={t('workplace.admin.locations.unsavedDescription')}
-        cancelLabel={t('actions.keep')}
-        confirmLabel={t('workplace.admin.locations.discardChanges')}
-        intent="danger"
-        onClose={() => setPendingLocation(null)}
-        onConfirm={discardAndNavigate}
       />
     </PageCanvas>
   );

@@ -25,16 +25,17 @@ import {
   DesktopNavigationToggle,
   useDesktopNavigation,
 } from '../features/shell/desktop-navigation';
+import {
+  canAccessProductAreaNavigationItem,
+  type GovernedProductAreaNavigationItem,
+} from './product-area-permissions';
 
 import type { LucideIcon } from 'lucide-react';
 
-export type ProductAreaNavigationItem = {
+export type ProductAreaNavigationItem = GovernedProductAreaNavigationItem & {
   path: string;
   view: string;
   icon: LucideIcon;
-  requiredResourceKey?: string;
-  requiredPermissionCode?: string;
-  requiredAnyPermissionCodes?: readonly string[];
 };
 
 export type ProductAreaNavigationGroup = {
@@ -44,7 +45,14 @@ export type ProductAreaNavigationGroup = {
 
 type ProductAreaLayoutProps = {
   areaKey:
-    'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'messaging' | 'notifications' | 'spaces';
+    | 'hcm'
+    | 'calendar'
+    | 'rooms'
+    | 'approvals'
+    | 'mail'
+    | 'messaging'
+    | 'notifications'
+    | 'spaces';
   navigation: readonly ProductAreaNavigationGroup[];
   translationNamespace?:
     | 'workforce'
@@ -82,14 +90,7 @@ export function ProductAreaLayout({
   const visibleNavigation = navigation
     .map((group) => ({
       ...group,
-      items: group.items.filter(
-        (item) =>
-          !item.requiredResourceKey ||
-          (item.requiredAnyPermissionCodes?.some((code) =>
-            hasPermission(item.requiredResourceKey!, code)
-          ) ??
-            hasPermission(item.requiredResourceKey, item.requiredPermissionCode))
-      ),
+      items: group.items.filter((item) => canAccessProductAreaNavigationItem(item, hasPermission)),
     }))
     .filter((group) => group.items.length > 0);
 

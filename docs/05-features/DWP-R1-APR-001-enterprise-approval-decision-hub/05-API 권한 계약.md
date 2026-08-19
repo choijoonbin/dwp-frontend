@@ -16,7 +16,7 @@ Inventory는 목표 계약으로, 이 표에 없는 Endpoint는 구현 완료로
 | Method       | Path                                                             | 책임                                          |
 | ------------ | ---------------------------------------------------------------- | --------------------------------------------- |
 | GET          | `/home`                                                          | 사용자 결재 지표·우선 Queue·흐름·인사이트     |
-| GET          | `/tasks`, `/tasks/{taskId}`                                      | 권한·후보가 교차 검증된 결재함과 상세         |
+| GET          | `/tasks?view=INBOX\|DELEGATED\|COMPLETED`, `/tasks/{taskId}`     | 후보 결재함·실제 결정자 완료함과 고정 상세    |
 | POST         | `/tasks/{taskId}/claim`, `/tasks/{taskId}/decisions`             | Claim과 승인·반려·정보 요청                   |
 | GET          | `/requests`, `/requests/{id}`, `/requests/{id}/detail`           | 자신의 초안·상신 문서와 동적 Payload          |
 | POST         | `/requests`                                                      | 게시 Workflow·Form Version을 고정한 초안 생성 |
@@ -33,37 +33,57 @@ Inventory는 목표 계약으로, 이 표에 없는 Endpoint는 구현 완료로
 현재 Command는 CSRF와 Resource Version을 사용한다. 별도 Idempotency-Key 원장, 서명
 Webhook, 원업무 Result Inbox, 재지정·재시도 Command는 Production 확장 Gate다.
 
+`COMPLETED` Task 목록은 현재 배정자나 과거 위임 관계가 아니라 불변 결정 증적의
+`decision_actor_user_id`로만 범위를 정하고 `completed_at` 최신순으로 반환한다. 완료 상세는
+같은 actor에게만 열리며 Claim·승인·반려·보완 액션을 반환하지 않는다.
+
+Task·Request 상세의 Timeline Event는 `actorDisplayName`, `stepName`, `stepSequence`,
+`delegated` Snapshot을 포함한다. 표시 이름은 감사 시점 증적이며 현재 인사정보로 덮어쓰지
+않고, `actorId`는 상관관계 식별자로 별도 유지한다.
+
+Draft 생성·수정은 알려진 Field의 타입과 선택값을 검증하되 필수 업무값 누락을 허용한다.
+Submit은 제목·요약·필수 Field·조건부 경로를 서버에서 다시 검증한다. 보완 답변은 사용자가
+검토한 `expectedVersion`, 답변, 수정 `payload`를 함께 보내며 서버가 고정된 Form Schema를
+재검증하고 새 Payload Version을 생성한다. `/requests/{id}/detail`은 권한이 확인된 고정
+Payload, 요청 당시 `form_version_id`에 고정된 다국어 `formSchema`, append-only Timeline을
+함께 반환한다. `/tasks/{taskId}`도 같은 고정 Schema를 반환하므로 결재자와 요청자의 Field
+라벨이 관리자 변경 이후에도 당시 문서와 일치한다.
+
 `/catalog/forms/{formId}/template`는 게시 양식·동적 필드 Schema와 함께 안전하게 공개할
 수 있는 결재 단계(`key`, 표시명, 후보 역할, `ANY`, 단계 SLA)를 반환한다. 내부 정책식,
 후보 개인 목록과 제한 데이터는 반환하지 않는다. 기안자는 제출 전에 경로를 확인하지만,
 최종 권한 후보와 SoD는 제출 시점에 서버가 다시 계산하고 검증한다.
 
+Frontend 메뉴와 직접 URL Guard는 API와 같은 Resource를 사용한다. `MANAGE`는 해당
+Resource의 상위 권한이며, 새 기안은 `CREATE`와 `UPDATE`를 모두 보유하거나 `MANAGE`여야
+노출된다. Task 조회·Claim·결정은 각각 `VIEW`, `UPDATE`, `APPROVE` Capability로 분리한다.
+
 ## API Inventory
 
-| Method   | Path                                   | 목적                   | Permission                         | Idempotency | Audit          |
-| -------- | -------------------------------------- | ---------------------- | ---------------------------------- | ----------- | -------------- |
-| GET      | `/inbox`                               | 개인·그룹 후보 Queue   | `APPROVAL.TASK:VIEW`               | -           | Read metadata  |
-| GET      | `/tasks/{taskId}`                      | 판단 상세              | `APPROVAL.TASK:VIEW` + candidacy   | -           | Sensitive read |
-| POST     | `/tasks/{taskId}/claim`                | 그룹 Task Claim        | `APPROVAL.TASK:CLAIM`              | 필수        | O              |
-| POST     | `/tasks/{taskId}/release`              | Claim 해제             | `APPROVAL.TASK:CLAIM`              | 필수        | O              |
-| POST     | `/tasks/{taskId}/decisions`            | 승인·반려·보완         | `APPROVAL.TASK:DECIDE` + candidacy | 필수        | O              |
-| POST     | `/tasks/{taskId}/information-requests` | 정보 요청              | `APPROVAL.TASK:REQUEST_INFO`       | 필수        | O              |
-| POST     | `/information-requests/{id}/responses` | 답변                   | 대상 사용자·Requester              | 필수        | O              |
-| POST     | `/tasks/{taskId}/delegate`             | Task 위임              | `APPROVAL.TASK:DELEGATE`           | 필수        | O              |
-| POST     | `/tasks/{taskId}/reassign`             | Task 재지정            | `APPROVAL.OPERATIONS:REASSIGN`     | 필수        | O              |
-| GET      | `/forms`                               | 기안 가능한 Form       | `APPROVAL.REQUEST:CREATE`          | -           | -              |
-| POST     | `/drafts`                              | Draft 생성             | `APPROVAL.REQUEST:CREATE`          | 필수        | O              |
-| PUT      | `/drafts/{requestId}`                  | Draft 저장             | Owner + expected version           | 필수        | O              |
-| POST     | `/drafts/{requestId}/preflight`        | 결재선·정책 검증       | Owner                              | 필수        | O              |
-| POST     | `/drafts/{requestId}/submit`           | 불변 Revision 제출     | Owner                              | 필수        | O              |
-| GET      | `/requests`                            | 자신의 Draft·제출 문서 | `APPROVAL.REQUEST:VIEW`            | -           | -              |
-| GET      | `/requests/{requestId}`                | 요청·Revision·Timeline | Owner·Participant·Scoped Viewer    | -           | Sensitive read |
-| POST     | `/instances/{instanceId}/withdraw`     | 진행 중 회수           | Owner + policy                     | 필수        | O              |
-| GET      | `/instances/{instanceId}/route`        | 결재선과 설명          | Scoped viewer                      | -           | -              |
-| GET/POST | `/delegations`                         | 위임 조회·생성         | `APPROVAL.DELEGATION:MANAGE_SELF`  | POST 필수   | O              |
-| DELETE   | `/delegations/{id}`                    | 예정·활성 위임 종료    | Owner                              | 필수        | O              |
-| POST     | `/source-requests`                     | 업무 앱 승인 요청      | Service identity + source scope    | 필수        | O              |
-| POST     | `/source-results`                      | 원업무 반영 결과       | Service identity + destination     | 필수        | O              |
+| Method   | Path                                   | 목적                   | Permission                             | Idempotency | Audit          |
+| -------- | -------------------------------------- | ---------------------- | -------------------------------------- | ----------- | -------------- |
+| GET      | `/tasks?view=INBOX\|COMPLETED`         | 후보 Queue·개인 처리함 | `ACTION.APPROVAL_TASK:VIEW`            | -           | Read metadata  |
+| GET      | `/tasks/{taskId}`                      | 판단 상세              | `ACTION.APPROVAL_TASK:VIEW` + scope    | -           | Sensitive read |
+| POST     | `/tasks/{taskId}/claim`                | 그룹 Task Claim        | `ACTION.APPROVAL_TASK:UPDATE`          | 필수        | O              |
+| POST     | `/tasks/{taskId}/release`              | Claim 해제             | `APPROVAL.TASK:CLAIM`                  | 필수        | O              |
+| POST     | `/tasks/{taskId}/decisions`            | 승인·반려·보완         | `ACTION.APPROVAL_TASK:APPROVE` + scope | 필수        | O              |
+| POST     | `/tasks/{taskId}/information-requests` | 정보 요청              | `APPROVAL.TASK:REQUEST_INFO`           | 필수        | O              |
+| POST     | `/information-requests/{id}/responses` | 답변                   | 대상 사용자·Requester                  | 필수        | O              |
+| POST     | `/tasks/{taskId}/delegate`             | Task 위임              | `APPROVAL.TASK:DELEGATE`               | 필수        | O              |
+| POST     | `/tasks/{taskId}/reassign`             | Task 재지정            | `APPROVAL.OPERATIONS:REASSIGN`         | 필수        | O              |
+| GET      | `/forms`                               | 기안 가능한 Form       | `APPROVAL.REQUEST:CREATE`              | -           | -              |
+| POST     | `/drafts`                              | Draft 생성             | `APPROVAL.REQUEST:CREATE`              | 필수        | O              |
+| PUT      | `/drafts/{requestId}`                  | Draft 저장             | Owner + expected version               | 필수        | O              |
+| POST     | `/drafts/{requestId}/preflight`        | 결재선·정책 검증       | Owner                                  | 필수        | O              |
+| POST     | `/drafts/{requestId}/submit`           | 불변 Revision 제출     | Owner                                  | 필수        | O              |
+| GET      | `/requests`                            | 자신의 Draft·제출 문서 | `APPROVAL.REQUEST:VIEW`                | -           | -              |
+| GET      | `/requests/{requestId}`                | 요청·Revision·Timeline | Owner·Participant·Scoped Viewer        | -           | Sensitive read |
+| POST     | `/instances/{instanceId}/withdraw`     | 진행 중 회수           | Owner + policy                         | 필수        | O              |
+| GET      | `/instances/{instanceId}/route`        | 결재선과 설명          | Scoped viewer                          | -           | -              |
+| GET/POST | `/delegations`                         | 위임 조회·생성         | `APPROVAL.DELEGATION:MANAGE_SELF`      | POST 필수   | O              |
+| DELETE   | `/delegations/{id}`                    | 예정·활성 위임 종료    | Owner                                  | 필수        | O              |
+| POST     | `/source-requests`                     | 업무 앱 승인 요청      | Service identity + source scope        | 필수        | O              |
+| POST     | `/source-results`                      | 원업무 반영 결과       | Service identity + destination         | 필수        | O              |
 
 ## Admin API
 
@@ -151,6 +171,8 @@ Task 후보와 현재 권한을 교차 평가한 Runtime authority다.
 
 - Audit: actor, represented actor, auth level, tenant, target, revision, workflow/policy
   version, action, reason, result, correlation, source IP·device metadata 최소값
+- Audit category: 요청·Task 업무 사건은 `SYSTEM_EVENT`, 양식·정책·위임·통합 재처리 같은
+  통제 변경은 `ADMIN_CHANGE`로 분리한다.
 - API History: 기존 `sys_api_history` 계약으로 route template, status, latency, trace 기록
 - Trace: Gateway → Approval → Outbox → Domain 결과를 W3C Trace로 연결
 - Metric: queue age, due breach, decision latency, no-candidate, conflict, fulfillment failure,

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalendarClock, FilterX, Search, UsersRound, Video } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -11,7 +11,7 @@ import {
   SelectField,
 } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
-import { getRoomAvailability } from '@dwp-frontend/shared-utils';
+import { getRoomAvailability, getRoomsPolicy } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -26,15 +26,22 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { RoomBookingDialog } from './room-booking-dialog';
-import { roomSlotAvailable, roomSlotOverlaps } from './room-availability-model';
-import { RoomIdentity, RoomsPageHeading, RoomStateChip } from './rooms-ui';
+import {
+  DEFAULT_ROOM_POLICY,
+  roomAvailabilityRange,
+  roomDateBounds,
+  roomDurationOptions,
+  roomLocalDate,
+  roomPolicySlots,
+  roomSlotAvailable,
+  roomSlotOverlaps,
+} from './room-availability-model';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomIdentity, RoomsPageHeading, RoomsPermissionNotice, RoomStateChip } from './rooms-ui';
 
-import type { CalendarResource, RoomOccupancy } from '@dwp-frontend/shared-utils';
+import type { CalendarPolicy, CalendarResource, RoomOccupancy } from '@dwp-frontend/shared-utils';
 
-const START_HOUR = 8;
-const END_HOUR = 20;
 const SLOT_MINUTES = 30;
-const SLOT_COUNT = ((END_HOUR - START_HOUR) * 60) / SLOT_MINUTES;
 
 type BookingSelection = {
   room: CalendarResource;
@@ -42,55 +49,42 @@ type BookingSelection = {
   endsAt: string;
 };
 
-function dateOnly(value = new Date()) {
-  const year = value.getFullYear();
-  const month = String(value.getMonth() + 1).padStart(2, '0');
-  const day = String(value.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function rangeForDate(value: string) {
-  const start = new Date(`${value}T00:00:00`);
-  const end = new Date(start);
-  end.setDate(end.getDate() + 1);
-  return { from: start.toISOString(), to: end.toISOString() };
-}
-
-function slotDate(value: string, index: number) {
-  const start = new Date(`${value}T00:00:00`);
-  start.setHours(START_HOUR, index * SLOT_MINUTES, 0, 0);
-  return start;
-}
-
 function RoomTimeline({
   room,
   date,
   durationMinutes,
+  policy,
   occupancy,
+  canBook,
   onSelect,
 }: {
   room: CalendarResource;
   date: string;
   durationMinutes: number;
+  policy: CalendarPolicy;
   occupancy: readonly RoomOccupancy[];
+  canBook: boolean;
   onSelect: (selection: BookingSelection) => void;
 }) {
   const { t, i18n } = useTranslation('rooms');
-  const slotsNeeded = durationMinutes / SLOT_MINUTES;
+  const slots = roomPolicySlots(date, room.timeZone, durationMinutes, policy, SLOT_MINUTES);
   return (
-    <Box sx={{ minWidth: 720 }}>
+    <Box sx={{ minWidth: Math.max(520, slots.length * 30) }}>
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+        {t('find.resourceTimeZone', { timeZone: room.timeZone })}
+      </Typography>
       <Box
         aria-hidden="true"
-        sx={{ display: 'grid', gridTemplateColumns: `repeat(${SLOT_COUNT}, minmax(28px, 1fr))` }}
+        sx={{ display: 'grid', gridTemplateColumns: `repeat(${slots.length}, minmax(28px, 1fr))` }}
       >
-        {Array.from({ length: SLOT_COUNT }, (_, index) => (
+        {slots.map((slot, index) => (
           <Typography
-            key={index}
+            key={slot.startsAt}
             variant="caption"
             color="text.secondary"
             sx={{ height: 22, pl: 0.4, visibility: index % 4 === 0 ? 'visible' : 'hidden' }}
           >
-            {String(START_HOUR + index / 2).padStart(2, '0')}:00
+            {slot.localTime}
           </Typography>
         ))}
       </Box>
@@ -99,24 +93,23 @@ function RoomTimeline({
         aria-label={t('find.timelineLabel', { room: room.name })}
         sx={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${SLOT_COUNT}, minmax(28px, 1fr))`,
+          gridTemplateColumns: `repeat(${slots.length}, minmax(28px, 1fr))`,
           border: 1,
           borderColor: 'divider',
           borderRadius: 1,
           overflow: 'hidden',
         }}
       >
-        {Array.from({ length: SLOT_COUNT }, (_, index) => {
-          const start = slotDate(date, index);
-          const end = new Date(start.getTime() + durationMinutes * 60_000);
-          const outside = index + slotsNeeded > SLOT_COUNT;
+        {slots.map((slot, index) => {
+          const start = new Date(slot.startsAt);
+          const end = new Date(slot.endsAt);
           const occupied = roomSlotOverlaps(
             start,
             new Date(start.getTime() + SLOT_MINUTES * 60_000),
             occupancy
           );
           const selectable =
-            !outside &&
+            canBook &&
             roomSlotAvailable({
               start,
               end,
@@ -125,18 +118,20 @@ function RoomTimeline({
             });
           const label = formatDate(
             start,
-            { hour: '2-digit', minute: '2-digit' },
+            { hour: '2-digit', minute: '2-digit', timeZone: room.timeZone },
             resolveSupportedLocale(i18n.resolvedLanguage)
           );
           return (
             <Tooltip
-              key={start.toISOString()}
+              key={slot.startsAt}
               title={t(
-                occupied
-                  ? 'find.slotOccupied'
-                  : selectable
-                    ? 'find.slotAvailable'
-                    : 'find.slotUnavailable',
+                !canBook
+                  ? 'permissions.roomBookingReadOnly'
+                  : occupied
+                    ? 'find.slotOccupied'
+                    : selectable
+                      ? 'find.slotAvailable'
+                      : 'find.slotUnavailable',
                 {
                   time: label,
                 }
@@ -151,9 +146,7 @@ function RoomTimeline({
                     room: room.name,
                     time: label,
                   })}
-                  onClick={() =>
-                    onSelect({ room, startsAt: start.toISOString(), endsAt: end.toISOString() })
-                  }
+                  onClick={() => onSelect({ room, startsAt: slot.startsAt, endsAt: slot.endsAt })}
                   sx={{
                     display: 'block',
                     width: '100%',
@@ -161,7 +154,7 @@ function RoomTimeline({
                     minWidth: 0,
                     p: 0,
                     border: 0,
-                    borderRight: index === SLOT_COUNT - 1 ? 0 : 1,
+                    borderRight: index === slots.length - 1 ? 0 : 1,
                     borderColor: 'divider',
                     bgcolor: occupied ? 'warning.light' : 'background.paper',
                     opacity: occupied ? 0.7 : selectable ? 1 : 0.45,
@@ -186,14 +179,16 @@ function RoomTimeline({
 
 export function RoomsFind() {
   const { t } = useTranslation('rooms');
-  const [date, setDate] = useState(dateOnly);
+  const capabilities = useRoomsCapabilities();
+  const [date, setDate] = useState(() => roomLocalDate('UTC'));
   const [search, setSearch] = useState('');
   const [site, setSite] = useState('ALL');
   const [capacity, setCapacity] = useState('0');
-  const [duration, setDuration] = useState(30);
+  const [duration, setDuration] = useState(DEFAULT_ROOM_POLICY.defaultEventMinutes);
   const [feature, setFeature] = useState<string | null>(null);
   const [selection, setSelection] = useState<BookingSelection | null>(null);
-  const range = useMemo(() => rangeForDate(date), [date]);
+  const defaultedTimeZoneRef = useRef(false);
+  const range = useMemo(() => roomAvailabilityRange(date), [date]);
   const availabilityQuery = useQuery({
     queryKey: ['rooms', 'availability', range.from, range.to],
     queryFn: () => getRoomAvailability(range.from, range.to),
@@ -201,9 +196,33 @@ export function RoomsFind() {
     refetchInterval: 60_000,
     retry: 1,
   });
-  const rooms = availabilityQuery.data?.rooms ?? [];
+  const policyQuery = useQuery({
+    queryKey: ['rooms', 'policy'],
+    queryFn: getRoomsPolicy,
+    enabled: capabilities.isLoaded && capabilities.canViewRooms,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const policy = policyQuery.data ?? DEFAULT_ROOM_POLICY;
+  const rooms = useMemo(() => availabilityQuery.data?.rooms ?? [], [availabilityQuery.data?.rooms]);
   const sites = [...new Set(rooms.map((room) => room.site))].sort();
   const features = [...new Set(rooms.flatMap((room) => room.features))].sort();
+  const activeTimeZone =
+    rooms.find((room) => site !== 'ALL' && room.site === site)?.timeZone ??
+    rooms[0]?.timeZone ??
+    'UTC';
+  const durationOptions = useMemo(() => roomDurationOptions(policy), [policy]);
+  const dateBounds = roomDateBounds(activeTimeZone, policy.maximumAdvanceDays);
+  useEffect(() => {
+    if (defaultedTimeZoneRef.current || !rooms[0]) return;
+    defaultedTimeZoneRef.current = true;
+    setDate(roomLocalDate(rooms[0].timeZone, availabilityQuery.data?.generatedAt));
+  }, [availabilityQuery.data?.generatedAt, rooms]);
+  useEffect(() => {
+    if (!durationOptions.includes(duration)) {
+      setDuration(durationOptions[0] ?? policy.defaultEventMinutes);
+    }
+  }, [duration, durationOptions, policy.defaultEventMinutes]);
   const filtered = rooms.filter((room) => {
     const query = search.trim().toLocaleLowerCase();
     return (
@@ -245,6 +264,10 @@ export function RoomsFind() {
         }
       />
 
+      {capabilities.isLoaded && !capabilities.canCreateRoomBooking && (
+        <RoomsPermissionNotice>{t('permissions.roomBookingReadOnly')}</RoomsPermissionNotice>
+      )}
+
       <Box
         sx={{
           bgcolor: 'background.paper',
@@ -284,6 +307,8 @@ export function RoomsFind() {
             size="small"
             label={t('find.dateLabel')}
             value={date}
+            minDate={dateBounds.minDate}
+            maxDate={dateBounds.maxDate}
             onValueChange={(value) => value && setDate(value)}
           />
           <SelectField
@@ -339,7 +364,7 @@ export function RoomsFind() {
             onChange={(_, value: number | null) => value && setDuration(value)}
             aria-label={t('find.durationLabel')}
           >
-            {[30, 60, 90].map((value) => (
+            {durationOptions.map((value) => (
               <ToggleButton key={value} value={value}>
                 {t('find.minutes', { count: value })}
               </ToggleButton>
@@ -430,7 +455,9 @@ export function RoomsFind() {
                   room={room}
                   date={date}
                   durationMinutes={duration}
+                  policy={policy}
                   occupancy={occupancyByRoom.get(room.resourceId) ?? []}
+                  canBook={capabilities.canCreateRoomBooking}
                   onSelect={setSelection}
                 />
               </Box>
@@ -444,6 +471,7 @@ export function RoomsFind() {
         room={selection?.room ?? null}
         initialStart={selection?.startsAt}
         initialEnd={selection?.endsAt}
+        policy={policy}
         onClose={() => setSelection(null)}
       />
     </PageCanvas>

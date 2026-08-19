@@ -8817,6 +8817,9 @@ export interface components {
         approval_RequestDetail: {
             /** Format: uuid */
             formId?: string;
+            formSchema?: {
+                [key: string]: unknown;
+            };
             payload?: {
                 [key: string]: unknown;
             };
@@ -8885,6 +8888,9 @@ export interface components {
         approval_TaskDetail: {
             canClaim?: boolean;
             canDecide?: boolean;
+            formSchema?: {
+                [key: string]: unknown;
+            };
             payload?: {
                 [key: string]: unknown;
             };
@@ -8921,8 +8927,10 @@ export interface components {
             workflowNameKo?: string;
         };
         approval_TimelineEvent: {
+            actorDisplayName?: string;
             actorId?: string;
             actorType?: string;
+            delegated?: boolean;
             /** Format: uuid */
             eventId?: string;
             eventType?: string;
@@ -8930,6 +8938,9 @@ export interface components {
             /** Format: date-time */
             occurredAt?: string;
             outcome?: string;
+            stepName?: string;
+            /** Format: int32 */
+            stepSequence?: number;
         };
         approval_UpdateDraftRequest: {
             /** Format: int64 */
@@ -21317,7 +21328,7 @@ export interface operations {
     approval_tasks: {
         parameters: {
             query?: {
-                view?: string;
+                view?: "INBOX" | "DELEGATED" | "COMPLETED";
                 limit?: number;
             };
             header?: never;

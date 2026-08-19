@@ -74,7 +74,14 @@ import {
 } from './provider-ui';
 
 type RolloutAction =
-  'submit' | 'approve' | 'reject' | 'activate' | 'pause' | 'resume' | 'advance' | 'rollback';
+  | 'submit'
+  | 'approve'
+  | 'reject'
+  | 'activate'
+  | 'pause'
+  | 'resume'
+  | 'advance'
+  | 'rollback';
 
 function parseJson(value: string, label: string): unknown {
   try {

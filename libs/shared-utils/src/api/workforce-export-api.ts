@@ -3,7 +3,9 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 
 export type WorkforceExportDatasetKey =
-  'ORGANIZATION_INTELLIGENCE' | 'WORKFORCE_DIRECTORY' | 'ASSIGNMENT_REGISTER';
+  | 'ORGANIZATION_INTELLIGENCE'
+  | 'WORKFORCE_DIRECTORY'
+  | 'ASSIGNMENT_REGISTER';
 
 export type WorkforceExportState =
   | 'BLOCKED_PENDING_APPROVAL'
@@ -89,7 +91,13 @@ export type WorkforceExportAttempt = {
   attemptEventId: string;
   attemptNumber: number;
   eventType:
-    'BLOCKED' | 'CLAIMED' | 'RETRY_SCHEDULED' | 'FAILED' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
+    | 'BLOCKED'
+    | 'CLAIMED'
+    | 'RETRY_SCHEDULED'
+    | 'FAILED'
+    | 'COMPLETED'
+    | 'CANCELLED'
+    | 'EXPIRED';
   workerReference?: string | null;
   failureCode?: string | null;
   redactedFailureMessage?: string | null;

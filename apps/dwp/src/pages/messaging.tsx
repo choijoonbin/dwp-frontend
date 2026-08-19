@@ -8,6 +8,7 @@ import {
 import { MessagingConversationWorkspace } from '../features/messaging/messaging-conversation-workspace';
 import { MessagingHome } from '../features/messaging/messaging-home';
 import { MessagingPeople } from '../features/messaging/messaging-people';
+import { MessagingSavedItems } from '../features/messaging/messaging-saved-items';
 import {
   findMessagingNavigationItem,
   MESSAGING_DEFAULT_PATH,
@@ -32,7 +33,7 @@ export default function MessagingPage() {
     spaces: <MessagingConversationWorkspace scope="SPACES" />,
     direct: <MessagingConversationWorkspace scope="DIRECT" />,
     people: <MessagingPeople />,
-    later: <MessagingConversationWorkspace scope="FAVORITES" />,
+    later: <MessagingSavedItems />,
     'admin-overview': <MessagingAdminOverview />,
     'admin-policy': <MessagingAdminPolicy />,
   }[page.view];

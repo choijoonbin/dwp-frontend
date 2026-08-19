@@ -2,10 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, Command, MailCheck, MailPlus, Search } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import {
   applyMailThreadAction,
+  dwaionHandoffStrings,
+  dwaionHandoffText,
   getMailThreads,
+  parseDwaionHandoff,
   snoozeMailThread,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -45,6 +48,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const { t } = useTranslation('mail');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const location = useLocation();
   const [params, setParams] = useSearchParams();
   const [lane, setLane] = useState<MailTriageLane>(mode === 'shared' ? 'ASSIGNED' : 'PRIORITY');
   const [search, setSearch] = useState('');
@@ -55,6 +59,9 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const selectedId = params.get('thread');
   const composeOpen = params.get('compose') === 'open';
+  const [dwaionHandoff, setDwaionHandoff] = useState(() =>
+    parseDwaionHandoff(location.state, 'MAIL.DRAFT.CREATE')
+  );
   const folder = mode === 'sent' ? 'SENT' : mode === 'drafts' ? 'DRAFTS' : 'INBOX';
   const activeLane = mode === 'inbox' || mode === 'shared' ? lane : undefined;
   const query = useQuery({
@@ -90,6 +97,11 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     },
     onError: () => toast.error(t('thread.actionError')),
   });
+
+  useEffect(() => {
+    const nextHandoff = parseDwaionHandoff(location.state, 'MAIL.DRAFT.CREATE');
+    if (nextHandoff) setDwaionHandoff(nextHandoff);
+  }, [location.state]);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -144,9 +156,10 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     setParams(next, { replace: true });
   };
   const closeCompose = () => {
+    setDwaionHandoff(null);
     const next = new URLSearchParams(params);
     next.delete('compose');
-    setParams(next, { replace: true });
+    setParams(next, { replace: true, state: null });
   };
   const selectThread = (threadId: string) => {
     const next = new URLSearchParams(params);
@@ -342,6 +355,10 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
 
       <MailComposeDialog
         open={composeOpen}
+        initialToEmail={dwaionHandoffStrings(dwaionHandoff, 'to')[0]}
+        initialSubject={dwaionHandoffText(dwaionHandoff, 'subject') ?? undefined}
+        initialBody={dwaionHandoffText(dwaionHandoff, 'body') ?? undefined}
+        fromDwaion={Boolean(dwaionHandoff)}
         onClose={closeCompose}
         onCompleted={(threadId, deliveryMode) => {
           if (

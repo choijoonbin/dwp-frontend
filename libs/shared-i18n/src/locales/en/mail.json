@@ -204,6 +204,7 @@
   "compose": {
     "title": "New message",
     "description": "Confirm the recipient, subject, and message so the business context is clear.",
+    "dwaionDraftNotice": "This is a review email draft handed off by DWAI·ON. Check the recipients and content; only you can decide to send it.",
     "to": "Recipient email",
     "subject": "Subject",
     "body": "Message",

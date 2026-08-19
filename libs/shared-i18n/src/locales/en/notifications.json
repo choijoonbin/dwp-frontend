@@ -65,6 +65,23 @@
     "SUBSCRIPTION": "From a subscription",
     "MANDATORY_POLICY": "Required by policy"
   },
+  "reasonExplanation": {
+    "DIRECT": "The source app addressed your account directly.",
+    "MENTION": "A colleague mentioned you in related work.",
+    "ROLE": "This was sent because of a role assigned to you.",
+    "ORGANIZATION": "This was sent to your organization.",
+    "SUBSCRIPTION": "This was sent because of a work update you follow.",
+    "MANDATORY_POLICY": "Company policy requires this notification."
+  },
+  "sources": {
+    "approvals": "Approvals",
+    "hcm": "HR",
+    "space": "Space",
+    "spaces": "Space",
+    "messaging": "Messaging",
+    "mail": "Mail",
+    "security": "Security"
+  },
   "views": {
     "PRIORITY": "Priority",
     "ALL": "All",
@@ -95,6 +112,8 @@
     "loadMoreError": "More notifications could not be loaded. You can continue using the current list.",
     "detailErrorTitle": "Details could not be loaded",
     "detailErrorDescription": "The list is still available. Try loading only the details again.",
+    "routeErrorTitle": "The notification center could not be opened",
+    "routeErrorDescription": "Your notification data was not changed. Reload the screen to recover safely.",
     "preferencesErrorTitle": "Notification settings could not be loaded",
     "preferencesErrorDescription": "No settings were changed. Check your connection and try again.",
     "appSettingsErrorTitle": "App settings could not be loaded",
@@ -178,6 +197,7 @@
     "emptyDescription": "Select a notification to review why you received it and open the related work.",
     "whyTitle": "Why did I receive this?",
     "timelineTitle": "Related changes",
+    "notificationReceived": "Notification received",
     "protected": "Protected content",
     "targetState": {
       "DELETED": "The related work was deleted.",
@@ -209,6 +229,8 @@
     "deliveryMode": "Delivery mode",
     "resetToManaged": "Reset to inherited value",
     "channelToggle": "Use {{channel}} for {{type}}",
+    "channelUnavailable": "Connection pending",
+    "externalChannelsUnavailable": "Only DWP in-app notifications are currently enabled. Email, browser and mobile push, and collaboration delivery become available after tenant integration and operational verification.",
     "save": {
       "auto": "Changes save automatically",
       "saving": "Saving",

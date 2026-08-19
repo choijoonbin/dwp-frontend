@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  applyNotificationBulkAction,
   applyNotificationTriage,
   createNotificationIdempotencyKey,
   getNotificationDetail,
@@ -233,7 +234,13 @@ function NotificationDetailPane({
       ) : (
         <Box sx={{ p: { xs: 2, md: 2.5 } }}>
           <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-            <Chip size="small" variant="outlined" label={detail.item.source.appName} />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t(`sources.${detail.item.source.appKey}`, {
+                defaultValue: detail.item.source.appName,
+              })}
+            />
             <Chip
               size="small"
               variant="outlined"
@@ -273,7 +280,9 @@ function NotificationDetailPane({
               {t('detail.whyTitle')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {detail.reasonExplanation}
+              {t(`reasonExplanation.${detail.item.reason.kind}`, {
+                defaultValue: detail.reasonExplanation,
+              })}
             </Typography>
           </Box>
 
@@ -291,7 +300,9 @@ function NotificationDetailPane({
                   >
                     <Stack direction="row" justifyContent="space-between" gap={1}>
                       <Typography variant="body2" fontWeight={700}>
-                        {entry.title}
+                        {entry.title === 'Notification received'
+                          ? t('detail.notificationReceived')
+                          : entry.title}
                       </Typography>
                       <Typography variant="caption" color="text.secondary" whiteSpace="nowrap">
                         {formatDate(entry.occurredAt, {
@@ -348,16 +359,27 @@ export function NotificationCenter({
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(initialNotificationId);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [knownApps, setKnownApps] = useState<Map<string, string>>(new Map());
   const [resynchronizing, setResynchronizing] = useState(false);
   const rowRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const scopeInitializedRef = useRef(false);
+  const lastSummaryChangeVersionRef = useRef<string | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(filters.query.trim()), 250);
     return () => window.clearTimeout(timer);
   }, [filters.query]);
 
-  const queryScope = useMemo(() => ({ view }), [view]);
+  const queryScope = useMemo(
+    () => ({
+      view,
+      query: debouncedQuery || undefined,
+      appKey: filters.appKey || undefined,
+      priority: filters.priority,
+      readState: filters.readState,
+    }),
+    [debouncedQuery, filters.appKey, filters.priority, filters.readState, view]
+  );
   const inboxKey = notificationQueryKeys.inbox(queryScope);
   const inboxQuery = useInfiniteQuery({
     queryKey: inboxKey,
@@ -383,31 +405,40 @@ export function NotificationCenter({
     retry: 1,
   });
 
+  useEffect(() => {
+    const currentVersion = summaryQuery.data?.changeVersion;
+    if (!currentVersion) return;
+    const previousVersion = lastSummaryChangeVersionRef.current;
+    lastSummaryChangeVersionRef.current = currentVersion;
+    if (previousVersion && previousVersion !== currentVersion) {
+      void queryClient.invalidateQueries({ queryKey: notificationQueryKeys.inboxRoot() });
+    }
+  }, [queryClient, summaryQuery.data?.changeVersion]);
+
   const loadedItems = useMemo(
     () => flattenNotificationPages(inboxQuery.data?.pages),
     [inboxQuery.data?.pages]
   );
-  const items = useMemo(() => {
-    const normalizedQuery = debouncedQuery.toLocaleLowerCase();
-    return loadedItems.filter((item) => {
-      if (filters.appKey && item.source.appKey !== filters.appKey) return false;
-      if (filters.priority !== 'ALL' && item.priority !== filters.priority) return false;
-      if (filters.readState === 'READ' && !item.readAt) return false;
-      if (filters.readState === 'UNREAD' && item.readAt) return false;
-      if (!normalizedQuery) return true;
-      return [item.title, item.preview, item.source.appName, item.actorLabel]
-        .filter(Boolean)
-        .some((value) => value?.toLocaleLowerCase().includes(normalizedQuery));
-    });
-  }, [debouncedQuery, filters.appKey, filters.priority, filters.readState, loadedItems]);
+  const items = loadedItems;
   const selectedItem = items.find((item) => item.notificationId === selectedId) ?? null;
   const appOptions = useMemo(
-    () =>
-      [
-        ...new Map(loadedItems.map((item) => [item.source.appKey, item.source.appName])).entries(),
-      ].sort((left, right) => left[1].localeCompare(right[1])),
-    [loadedItems]
+    () => [...knownApps.entries()].sort((left, right) => left[1].localeCompare(right[1])),
+    [knownApps]
   );
+
+  useEffect(() => {
+    if (loadedItems.length === 0) return;
+    setKnownApps((current) => {
+      const next = new Map(current);
+      let changed = false;
+      for (const item of loadedItems) {
+        if (next.get(item.source.appKey) === item.source.appName) continue;
+        next.set(item.source.appKey, item.source.appName);
+        changed = true;
+      }
+      return changed ? next : current;
+    });
+  }, [loadedItems]);
 
   useEffect(() => {
     if (mobile || selectedId || items.length === 0) return;
@@ -481,22 +512,20 @@ export function NotificationCenter({
     mutationFn: async (
       action: Extract<NotificationTriageAction, 'READ' | 'SAVE' | 'SNOOZE' | 'COMPLETE'>
     ) => {
-      const selectedItems = loadedItems.filter((item) => selectedIds.has(item.notificationId));
-      const settled = await Promise.allSettled(
-        selectedItems.map((item) =>
-          applyNotificationTriage(item.notificationId, {
-            action,
-            expectedVersion: item.version,
-            snoozedUntil: action === 'SNOOZE' ? defaultSnoozeTime(4) : undefined,
-            idempotencyKey: createNotificationIdempotencyKey(
-              `center-selection-${action.toLowerCase()}`
-            ),
-          })
-        )
-      );
+      const result = await applyNotificationBulkAction({
+        notificationIds: [...selectedIds],
+        action,
+        snoozedUntil: action === 'SNOOZE' ? defaultSnoozeTime(4) : undefined,
+        idempotencyKey: createNotificationIdempotencyKey(
+          `center-selection-${action.toLowerCase()}`
+        ),
+      });
+      const failed = result.results.filter(
+        (item) => item.outcome !== 'APPLIED' && item.outcome !== 'ALREADY_APPLIED'
+      ).length;
       return {
-        total: settled.length,
-        failed: settled.filter((result) => result.status === 'rejected').length,
+        total: result.results.length,
+        failed,
       };
     },
     onSuccess: async (result) => {
@@ -534,7 +563,11 @@ export function NotificationCenter({
     }
   };
 
-  const handleListKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const previewItem = (item: NotificationItem) => {
+    setSelectedId(item.notificationId);
+  };
+
+  const handleListKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
     const currentIndex = items.findIndex((item) => item.notificationId === selectedId);
@@ -546,7 +579,7 @@ export function NotificationCenter({
     if (next < 0) return;
     const item = items[next];
     if (!item) return;
-    selectItem(item);
+    previewItem(item);
     rowRefs.current[next]?.focus();
   };
 
@@ -715,7 +748,7 @@ export function NotificationCenter({
                   <MenuItem value="">{t('filters.allApps')}</MenuItem>
                   {appOptions.map(([key, label]) => (
                     <MenuItem key={key} value={key}>
-                      {label}
+                      {t(`sources.${key}`, { defaultValue: label })}
                     </MenuItem>
                   ))}
                 </Select>
@@ -793,12 +826,7 @@ export function NotificationCenter({
               </Stack>
             )}
 
-            <Box
-              role="listbox"
-              aria-label={t('center.listLabel')}
-              onKeyDown={handleListKeyDown}
-              sx={{ maxHeight: { md: 680 }, overflowY: 'auto' }}
-            >
+            <Box sx={{ maxHeight: { md: 680 }, overflowY: 'auto' }}>
               {inboxQuery.isLoading ? (
                 <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={7} />
               ) : inboxQuery.isError && !isNotificationCursorResetError(inboxQuery.error) ? (
@@ -823,41 +851,51 @@ export function NotificationCenter({
                 />
               ) : (
                 <>
-                  {items.map((item, index) => (
-                    <Box
-                      key={item.notificationId}
-                      sx={{ display: 'grid', gridTemplateColumns: '40px minmax(0, 1fr)' }}
-                    >
-                      <Box sx={{ display: 'grid', placeItems: 'start center', pt: 1.5 }}>
-                        <Checkbox
-                          size="small"
-                          checked={selectedIds.has(item.notificationId)}
-                          onChange={(event) => {
-                            setSelectedIds((current) => {
-                              const next = new Set(current);
-                              if (event.target.checked) next.add(item.notificationId);
-                              else next.delete(item.notificationId);
-                              return next;
-                            });
+                  <Box
+                    component="ul"
+                    aria-label={t('center.listLabel')}
+                    onKeyDown={handleListKeyDown}
+                    sx={{ p: 0, m: 0, listStyle: 'none' }}
+                  >
+                    {items.map((item, index) => (
+                      <Box
+                        component="li"
+                        key={item.notificationId}
+                        sx={{ display: 'grid', gridTemplateColumns: '40px minmax(0, 1fr)' }}
+                      >
+                        <Box sx={{ display: 'grid', placeItems: 'start center', pt: 1.5 }}>
+                          <Checkbox
+                            size="small"
+                            checked={selectedIds.has(item.notificationId)}
+                            onChange={(event) => {
+                              setSelectedIds((current) => {
+                                const next = new Set(current);
+                                if (event.target.checked) next.add(item.notificationId);
+                                else next.delete(item.notificationId);
+                                return next;
+                              });
+                            }}
+                            inputProps={{
+                              'aria-label': t('bulk.selectItem', { title: item.title }),
+                            }}
+                          />
+                        </Box>
+                        <NotificationItemRow
+                          item={item}
+                          selected={item.notificationId === selectedId}
+                          tabIndex={
+                            item.notificationId === selectedId || (!selectedId && index === 0)
+                              ? 0
+                              : -1
+                          }
+                          rowRef={(element) => {
+                            rowRefs.current[index] = element;
                           }}
-                          inputProps={{ 'aria-label': t('bulk.selectItem', { title: item.title }) }}
+                          onSelect={() => selectItem(item)}
                         />
                       </Box>
-                      <NotificationItemRow
-                        item={item}
-                        selected={item.notificationId === selectedId}
-                        tabIndex={
-                          item.notificationId === selectedId || (!selectedId && index === 0)
-                            ? 0
-                            : -1
-                        }
-                        rowRef={(element) => {
-                          rowRefs.current[index] = element;
-                        }}
-                        onSelect={() => selectItem(item)}
-                      />
-                    </Box>
-                  ))}
+                    ))}
+                  </Box>
                   {inboxQuery.hasNextPage && (
                     <Box sx={{ p: 1.5, display: 'grid', placeItems: 'center' }}>
                       <ActionButton

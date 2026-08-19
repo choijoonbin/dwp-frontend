@@ -4,11 +4,14 @@ import dayjs from 'dayjs';
 import { CalendarPlus, Focus, GripVertical, Info, Layers3 } from 'lucide-react';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   cancelCalendarEvent,
+  dwaionHandoffStrings,
+  dwaionHandoffText,
   getCalendarEvents,
   getCalendars,
+  parseDwaionHandoff,
   respondToCalendarEvent,
   updateCalendarEvent,
   useAuth,
@@ -43,6 +46,9 @@ type CreateState = Readonly<{
   start: string;
   end?: string;
   type: CalendarEventType;
+  title?: string;
+  attendeeEmails?: string[];
+  fromDwaion?: boolean;
 }>;
 
 function initialRange(): CalendarRange {
@@ -91,6 +97,8 @@ export function CalendarSchedule() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const compact = useMediaQuery('(max-width:899.95px)', { noSsr: true });
+  const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [range, setRange] = useState<CalendarRange>(initialRange);
   const [navigateDate, setNavigateDate] = useState(new Date());
@@ -101,6 +109,10 @@ export function CalendarSchedule() {
   const [createState, setCreateState] = useState<CreateState | null>(null);
   const requestedEventId = searchParams.get('event');
   const language = i18n.resolvedLanguage ?? i18n.language;
+  const dwaionHandoff = useMemo(
+    () => parseDwaionHandoff(location.state, 'CALENDAR.EVENT.CREATE'),
+    [location.state]
+  );
 
   const eventsQuery = useQuery({
     queryKey: ['calendar', 'events', range.from, range.to],
@@ -123,15 +135,23 @@ export function CalendarSchedule() {
 
   useEffect(() => {
     const requestedType = searchParams.get('create');
-    if (!requestedType) return;
+    if (!requestedType && !dwaionHandoff) return;
     setCreateState({
-      start: new Date().toISOString(),
+      start: dwaionHandoffText(dwaionHandoff, 'startsAt') ?? new Date().toISOString(),
+      end: dwaionHandoffText(dwaionHandoff, 'endsAt') ?? undefined,
       type: requestedType === 'focus' ? 'FOCUS' : 'MEETING',
+      title: dwaionHandoffText(dwaionHandoff, 'title') ?? undefined,
+      attendeeEmails: dwaionHandoffStrings(dwaionHandoff, 'attendees'),
+      fromDwaion: Boolean(dwaionHandoff),
     });
     const next = new URLSearchParams(searchParams);
     next.delete('create');
-    setSearchParams(next, { replace: true });
-  }, [searchParams, setSearchParams]);
+    const search = next.toString();
+    navigate(
+      { pathname: location.pathname, search: search ? `?${search}` : '' },
+      { replace: true, state: null }
+    );
+  }, [dwaionHandoff, location.pathname, navigate, searchParams]);
 
   useEffect(() => {
     if (!requestedEventId || !eventsQuery.data) return;
@@ -375,6 +395,9 @@ export function CalendarSchedule() {
         initialStart={createState?.start}
         initialEnd={createState?.end}
         initialType={createState?.type}
+        initialTitle={createState?.title}
+        initialAttendeeEmails={createState?.attendeeEmails}
+        fromDwaion={createState?.fromDwaion}
         onClose={() => setCreateState(null)}
       />
       <CalendarEventDialog

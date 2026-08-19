@@ -38,7 +38,9 @@
     "focusSearch": "Search",
     "back": "Back",
     "save": "Save",
-    "saving": "Saving"
+    "saving": "Saving",
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "home": {
     "eyebrow": "DWP Messaging",
@@ -59,8 +61,8 @@
       "spacesDetail": "Connected to your Spaces",
       "direct": "DMs",
       "directDetail": "Direct and small-group conversations",
-      "saved": "Later",
-      "savedDetail": "Conversations to revisit"
+      "saved": "Saved items",
+      "savedDetail": "Messages saved privately for follow-up"
     },
     "priority": {
       "title": "Priority conversations",
@@ -95,17 +97,219 @@
     "selectTitle": "Select a conversation",
     "selectDescription": "Choose a conversation on the left to review messages, members, and policy context.",
     "loadError": "Conversation could not be loaded.",
+    "timeline": "Messages",
+    "history": {
+      "loadOlder": "Load earlier messages",
+      "loading": "Loading earlier messages",
+      "loadError": "Earlier messages could not be loaded. Try again."
+    },
     "noMessagesTitle": "No messages yet",
     "noMessagesDescription": "Send the first message to start the work context.",
+    "composerLabel": "Compose message",
     "composerPlaceholder": "Write a message. Shift+Enter for a new line",
-    "realtimeRest": "Realtime transport will expand to WebSocket next. For now, the thread refreshes after send.",
+    "composerHint": "Press Enter to send, Shift+Enter for a new line.",
+    "typing": {
+      "one": "{{name}} is typing.",
+      "two": "{{first}} and {{second}} are typing.",
+      "many": "{{name}} and {{count}} others are typing."
+    },
     "send": "Send",
+    "sending": "Sending",
+    "composerStatus": {
+      "drafting": "Drafting",
+      "sending": "Sending your message.",
+      "error": "Not sent. Your message has been kept."
+    },
+    "connection": {
+      "idle": "Waiting",
+      "connecting": "Connecting",
+      "live": "Live",
+      "reconnecting": "Reconnecting",
+      "polling": "Auto sync",
+      "offline": "Offline"
+    },
+    "settings": {
+      "open": "Open conversation settings",
+      "title": "Conversation settings",
+      "description": "Manage how this conversation is ordered and notified.",
+      "connectionRequired": "Conversation settings are unavailable in this environment.",
+      "saved": "Conversation settings saved.",
+      "saveError": "Conversation settings could not be saved. Refresh and try again.",
+      "loadError": "Conversation settings could not be loaded.",
+      "favorite": "Favorite",
+      "favoriteDescription": "Show this conversation in Favorites.",
+      "pinned": "Pin to top",
+      "pinnedDescription": "Keep this conversation easy to find at the top.",
+      "notifications": "Notifications",
+      "notificationsDescription": "Choose all messages, mentions only, or mute.",
+      "notificationLevels": {
+        "DEFAULT": "All new messages",
+        "MENTIONS": "Mentions and replies",
+        "MUTE": "Mute"
+      }
+    },
+    "meetingAction": "Meeting",
+    "meetingDialog": {
+      "title": "Conversation meeting",
+      "description": "Check your camera and microphone, then connect with the conversation members.",
+      "loading": "Checking the meeting status.",
+      "unavailable": "Meetings are unavailable in this conversation. Check the tenant meeting policy.",
+      "active": "A meeting is in progress",
+      "ready": "Ready to start a meeting",
+      "start": "Start meeting",
+      "join": "Join meeting",
+      "preparing": "Preparing meeting",
+      "joinLabel": "Join now",
+      "microphone": "Microphone",
+      "camera": "Camera",
+      "displayName": "Display name",
+      "error": "The meeting could not be prepared. Try again shortly.",
+      "live": "Live",
+      "connecting": "Connecting to the secure meeting.",
+      "connectionError": "The meeting connection was interrupted.",
+      "permissionError": "Check your camera or microphone permission.",
+      "disconnected": "You left the meeting.",
+      "endForEveryone": "End meeting for everyone",
+      "ending": "Ending meeting"
+    },
     "me": "Me",
     "deleted": "This message was deleted"
   },
   "message": {
     "me": "Me",
-    "deleted": "This message was deleted"
+    "deleted": "This message was deleted",
+    "edited": "Edited",
+    "reaction": "React",
+    "addReaction": "Add reaction",
+    "addReactionEmoji": "Add {{emoji}} reaction",
+    "removeReaction": "Remove {{emoji}} reaction",
+    "reply": "Reply in thread",
+    "replyCount": "{{count}} replies",
+    "save": "Save for later",
+    "edit": "Edit message",
+    "delete": "Delete message",
+    "connectionRequired": "This action is unavailable in the current environment.",
+    "saveSuccess": "Message saved for later.",
+    "saveError": "Message could not be saved.",
+    "editTitle": "Edit message",
+    "editDescription": "The edit history is retained under the audit policy.",
+    "editLabel": "Message",
+    "editSave": "Save changes",
+    "editSaving": "Saving",
+    "editSuccess": "Message updated.",
+    "editError": "Message could not be updated. Refresh to check for a newer change.",
+    "deleteTitle": "Delete this message?",
+    "deleteDescription": "The body is replaced with a deletion marker while the audit record is retained.",
+    "deleteConfirm": "Delete message",
+    "deleteDeleting": "Deleting",
+    "deleteSuccess": "Message deleted.",
+    "deleteError": "Message could not be deleted. Refresh and try again.",
+    "reactions": {
+      "like": "Like",
+      "done": "Done",
+      "seen": "Looking",
+      "thanks": "Thanks"
+    }
+  },
+  "thread": {
+    "title": "Thread",
+    "close": "Close thread",
+    "originalMessage": "Original message",
+    "replies": "Replies",
+    "replyCount": "{{count}} replies",
+    "empty": "No replies yet. Start the thread with the first reply.",
+    "composerLabel": "Compose thread reply",
+    "composerPlaceholder": "Reply in thread. Shift+Enter for a new line",
+    "loadError": "Thread replies could not be loaded.",
+    "loading": "Loading thread replies."
+  },
+  "saved": {
+    "eyebrow": "Focus queue",
+    "title": "Later",
+    "description": "Keep important messages and return to them without losing their conversation context.",
+    "loadError": "Saved messages could not be loaded.",
+    "emptyTitle": "No saved messages",
+    "emptyDescription": "Select the bookmark action on a message to find it here later.",
+    "openConversation": "Open conversation",
+    "remove": "Remove from saved",
+    "removeSuccess": "Removed from saved messages.",
+    "removeError": "The message could not be removed from saved items.",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "create": {
+    "action": "New conversation",
+    "title": "New group or channel",
+    "description": "Select people to start a private group or work channel.",
+    "typeLabel": "Conversation type",
+    "group": "Group conversation",
+    "channel": "Channel",
+    "groupDescription": "A focused conversation available only to selected members.",
+    "channelDescription": "A private channel for an ongoing topic or team workflow.",
+    "groupName": "Group name",
+    "channelName": "Channel name",
+    "topic": "Topic (optional)",
+    "members": "Members",
+    "membersDescription": "You are included automatically as the owner.",
+    "membersPlaceholder": "Search by name or company email",
+    "submit": "Create conversation",
+    "creating": "Creating",
+    "error": "The conversation could not be created. Check its name and members, then try again."
+  },
+  "members": {
+    "action": "Manage members",
+    "title": "Conversation members",
+    "description": "Manage participants and conversation roles for {{name}}.",
+    "loadError": "Conversation members could not be loaded.",
+    "addTitle": "Add a member",
+    "searchLabel": "Name or company email",
+    "roleLabel": "Initial role",
+    "memberRoleLabel": "Role for {{name}}",
+    "add": "Add",
+    "adding": "Adding",
+    "added": "The member was added.",
+    "listTitle": "Participants",
+    "count": "{{count}} people",
+    "me": "Me",
+    "roleUpdated": "The member role was updated.",
+    "remove": "Remove",
+    "removeLabel": "Remove {{name}}",
+    "removeTitle": "Remove this member?",
+    "removeDescription": "{{name}} will lose access to this conversation and messages since joining.",
+    "removed": "The member was removed.",
+    "leave": "Leave conversation",
+    "leaveTitle": "Leave this conversation?",
+    "leaveDescription": "You will need an owner or moderator invitation to join again.",
+    "left": "You left the conversation.",
+    "leaveError": "You could not leave. Check whether you are the last owner or a synchronized member.",
+    "mutationError": "The member change could not be saved. Refresh and try again.",
+    "updating": "Updating",
+    "roles": {
+      "VIEWER": "Viewer",
+      "MEMBER": "Member",
+      "MODERATOR": "Moderator",
+      "OWNER": "Owner"
+    },
+    "sources": {
+      "DIRECT": "Direct",
+      "SPACE_MIRRORED": "Space synchronized",
+      "SPACE_SCOPED": "Space scoped",
+      "SYSTEM": "System"
+    }
+  },
+  "search": {
+    "open": "Search Messenger",
+    "title": "Messenger search",
+    "placeholder": "Search conversations, messages, or people",
+    "minimum": "Enter at least two characters to search conversations and people you can access.",
+    "loading": "Searching.",
+    "error": "Search results could not be loaded.",
+    "empty": "No matching results.",
+    "groups": {
+      "conversations": "Conversations",
+      "messages": "Messages",
+      "people": "People"
+    }
   },
   "classification": {
     "PUBLIC": "Public",
@@ -115,7 +319,8 @@
   },
   "workspace": {
     "eyebrow": "Conversation workspace",
-    "search": "Search people, Spaces, and conversations",
+    "search": "Search conversation name or topic",
+    "list": "Conversations",
     "loadError": "Conversation list could not be loaded.",
     "emptyTitle": "No matching conversations",
     "emptyDescription": "Try another search or start a new DM.",
@@ -124,8 +329,8 @@
       "description": "Handle DMs, Spaces, and announcements in one place."
     },
     "FAVORITES": {
-      "title": "Later",
-      "description": "Pinned or saved conversations to revisit."
+      "title": "Favorites",
+      "description": "Pinned or frequently revisited conversations."
     },
     "SPACES": {
       "title": "Space conversations",

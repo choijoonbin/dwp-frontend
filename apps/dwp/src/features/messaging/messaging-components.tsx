@@ -1,11 +1,28 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AtSign, Hash, MessageSquareText, ShieldCheck, Sparkles } from 'lucide-react';
+import {
+  AtSign,
+  Bookmark,
+  Hash,
+  MessageSquareReply,
+  MessageSquareText,
+  Pencil,
+  Pin,
+  ShieldCheck,
+  SmilePlus,
+  Star,
+  Trash2,
+} from 'lucide-react';
 import { formatRelativeTime, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { ActionIconButton } from '@dwp-frontend/design-system';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
@@ -17,6 +34,13 @@ import type {
   MessagingPerson,
 } from '@dwp-frontend/shared-utils';
 import type { ReactNode } from 'react';
+
+const QUICK_REACTIONS = [
+  { emoji: '👍', labelKey: 'like' },
+  { emoji: '✅', labelKey: 'done' },
+  { emoji: '👀', labelKey: 'seen' },
+  { emoji: '🙌', labelKey: 'thanks' },
+] as const;
 
 export function messagingInitials(value: string) {
   const normalized = value.trim();
@@ -190,6 +214,16 @@ export function MessagingConversationListItem({
           <Typography variant="body2" fontWeight={conversation.unreadCount ? 850 : 700} noWrap>
             {conversation.name ?? t('conversation.untitled')}
           </Typography>
+          {conversation.pinned && (
+            <Tooltip title={t('conversation.settings.pinned')}>
+              <Pin size={13} fill="currentColor" color="var(--dwp-product-accent)" />
+            </Tooltip>
+          )}
+          {conversation.favorite && (
+            <Tooltip title={t('conversation.settings.favorite')}>
+              <Star size={13} fill="currentColor" color="#B7791F" />
+            </Tooltip>
+          )}
           {conversation.linkedSpaceName && (
             <Chip label={conversation.linkedSpaceName} size="small" sx={{ height: 20 }} />
           )}
@@ -308,12 +342,28 @@ export function MessagingMessageRow({
   message,
   mine,
   onReact,
+  onReply,
+  replyCount = 0,
+  onSave,
+  onEdit,
+  onDelete,
+  compact = false,
 }: {
   message: MessagingMessage;
   mine: boolean;
   onReact: (emoji: string) => void;
+  onReply?: () => void;
+  replyCount?: number;
+  onSave?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  compact?: boolean;
 }) {
   const { t, i18n } = useTranslation('messaging');
+  const [reactionAnchor, setReactionAnchor] = useState<HTMLElement | null>(null);
+  const reactionMenuOpen = Boolean(reactionAnchor);
+  const unavailable = t('message.connectionRequired');
+
   return (
     <Box
       sx={{
@@ -321,7 +371,22 @@ export function MessagingMessageRow({
         gridTemplateColumns: mine ? 'minmax(0, 1fr) auto' : 'auto minmax(0, 1fr)',
         gap: 1.15,
         alignItems: 'start',
-        py: 1.1,
+        py: compact ? 0.85 : 1.1,
+        position: 'relative',
+        '& .dwp-message-actions': {
+          opacity: { xs: 1, md: 0 },
+          transform: { xs: 'none', md: 'translateY(-2px)' },
+          pointerEvents: { xs: 'auto', md: 'none' },
+          transition: 'opacity 140ms ease, transform 140ms ease',
+        },
+        '&:hover .dwp-message-actions, &:focus-within .dwp-message-actions': {
+          opacity: 1,
+          transform: 'none',
+          pointerEvents: 'auto',
+        },
+        '@media (prefers-reduced-motion: reduce)': {
+          '& .dwp-message-actions': { transition: 'none', transform: 'none' },
+        },
       }}
     >
       {!mine && (
@@ -342,6 +407,11 @@ export function MessagingMessageRow({
           <Typography variant="caption" color="text.secondary">
             {messagingRelativeTime(message.createdAt, i18n.resolvedLanguage ?? i18n.language)}
           </Typography>
+          {message.editedAt && !message.deletedAt && (
+            <Typography variant="caption" color="text.secondary">
+              {t('message.edited')}
+            </Typography>
+          )}
         </Stack>
         <Box
           sx={(theme) => ({
@@ -364,29 +434,143 @@ export function MessagingMessageRow({
         <Stack
           direction="row"
           spacing={0.5}
+          flexWrap="wrap"
           sx={{ mt: 0.65, justifyContent: mine ? 'flex-end' : 'flex-start' }}
         >
           {message.reactions.map((reaction) => (
-            <Chip
+            <Tooltip
               key={reaction.emoji}
-              label={`${reaction.emoji} ${reaction.count}`}
-              size="small"
-              color={reaction.mine ? 'primary' : 'default'}
-              variant={reaction.mine ? 'filled' : 'outlined'}
-              sx={{ height: 22 }}
-            />
+              title={t(reaction.mine ? 'message.removeReaction' : 'message.addReactionEmoji', {
+                emoji: reaction.emoji,
+              })}
+            >
+              <Chip
+                component="button"
+                type="button"
+                label={`${reaction.emoji} ${reaction.count}`}
+                size="small"
+                color={reaction.mine ? 'primary' : 'default'}
+                variant={reaction.mine ? 'filled' : 'outlined'}
+                onClick={() => onReact(reaction.emoji)}
+                sx={{ height: 23, cursor: 'pointer' }}
+              />
+            </Tooltip>
           ))}
-          <Chip
-            component="button"
-            type="button"
-            label={<Sparkles size={13} />}
-            size="small"
-            variant="outlined"
-            onClick={() => onReact('👍')}
-            sx={{ height: 22, cursor: 'pointer' }}
-          />
+          {replyCount > 0 && onReply && (
+            <Chip
+              component="button"
+              type="button"
+              label={
+                <Stack direction="row" spacing={0.4} alignItems="center">
+                  <MessageSquareReply size={13} />
+                  <Box component="span">{t('message.replyCount', { count: replyCount })}</Box>
+                </Stack>
+              }
+              size="small"
+              variant="outlined"
+              onClick={onReply}
+              sx={{ height: 23, cursor: 'pointer' }}
+            />
+          )}
         </Stack>
       </Box>
+      {!message.deletedAt && (
+        <Stack
+          className="dwp-message-actions"
+          direction="row"
+          spacing={0.15}
+          sx={{
+            position: 'absolute',
+            top: 2,
+            left: mine ? 0 : 'auto',
+            right: mine ? 'auto' : 0,
+            zIndex: 1,
+            p: 0.25,
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 1,
+            bgcolor: 'background.paper',
+            boxShadow: '0 8px 22px rgba(15, 23, 42, 0.1)',
+          }}
+        >
+          <ActionIconButton
+            label={t('message.addReaction')}
+            onClick={(event) => setReactionAnchor(event.currentTarget)}
+            size="small"
+          >
+            <SmilePlus size={15} />
+          </ActionIconButton>
+          {onReply && (
+            <ActionIconButton label={t('message.reply')} onClick={onReply} size="small">
+              <MessageSquareReply size={15} />
+            </ActionIconButton>
+          )}
+          <ActionIconButton
+            label={t('message.save')}
+            tooltip={onSave ? t('message.save') : unavailable}
+            onClick={onSave}
+            disabled={!onSave}
+            size="small"
+          >
+            <Bookmark size={15} />
+          </ActionIconButton>
+          {mine && (
+            <>
+              <ActionIconButton
+                label={t('message.edit')}
+                tooltip={onEdit ? t('message.edit') : unavailable}
+                onClick={onEdit}
+                disabled={!onEdit}
+                size="small"
+              >
+                <Pencil size={15} />
+              </ActionIconButton>
+              <ActionIconButton
+                label={t('message.delete')}
+                tooltip={onDelete ? t('message.delete') : unavailable}
+                onClick={onDelete}
+                disabled={!onDelete}
+                size="small"
+                intent="danger"
+              >
+                <Trash2 size={15} />
+              </ActionIconButton>
+            </>
+          )}
+          <Menu
+            anchorEl={reactionAnchor}
+            open={reactionMenuOpen}
+            onClose={() => setReactionAnchor(null)}
+            slotProps={{
+              paper: {
+                sx: {
+                  mt: 0.5,
+                  borderRadius: 1,
+                  boxShadow: '0 18px 46px rgba(15, 23, 42, 0.16)',
+                },
+              },
+            }}
+          >
+            {QUICK_REACTIONS.map((reaction) => (
+              <MenuItem
+                key={reaction.emoji}
+                onClick={() => {
+                  onReact(reaction.emoji);
+                  setReactionAnchor(null);
+                }}
+                sx={{ gap: 1.2, minWidth: 154 }}
+              >
+                <Typography component="span" sx={{ fontSize: 18, lineHeight: 1 }}>
+                  {reaction.emoji}
+                </Typography>
+                <Typography variant="body2">
+                  {t(`message.reactions.${reaction.labelKey}`)}
+                </Typography>
+              </MenuItem>
+            ))}
+          </Menu>
+        </Stack>
+      )}
       {mine && (
         <Avatar sx={{ width: 34, height: 34, fontSize: 12, fontWeight: 800 }}>
           {messagingInitials(message.senderName)}

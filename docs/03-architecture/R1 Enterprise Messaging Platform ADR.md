@@ -1,6 +1,6 @@
 # ADR: R1 Enterprise Messaging Platform
 
-- 상태: Proposed, implementation not started
+- 상태: Accepted, R1 core implemented; production scale gates open
 - 기준일: 2026-08-19
 - 기능 ID: `DWP-R1-MSG-001`
 - 영향 대상: Workspace, Space, People, Auth, Notification, Calendar, Agent, Gateway
@@ -14,15 +14,30 @@ DWP는 메신저를 Space나 Platform의 하위 기능이 아닌 독립 Bounded 
 메시지 전송은 다음 원칙을 따른다.
 
 1. REST Command가 현재 권한과 멤버십을 검증한다.
-2. 메시지와 Transactional Outbox를 PostgreSQL에 같은 Transaction으로 영속화한다.
-3. 성공 응답 이후 Kafka가 검색, 실시간, 알림, 감사 Projection을 전달한다.
-4. WebSocket은 저지연 수신과 일시적 Presence·Typing에 사용한다.
-5. 재연결 시 REST Sequence Delta가 유실된 실시간 Event를 복구한다.
+2. 메시지, 대화별 Sequence, durable realtime event를 PostgreSQL의 같은 Transaction에 영속화한다.
+3. 성공 응답 이후 resumable SSE가 현재 Client에 변경 신호를 전달한다.
+4. Redis Pub/Sub은 다중 인스턴스의 wake-up 신호에만 사용하고 장애 시 원장 조회로 복구한다.
+5. 재연결 시 durable event cursor 이후의 Event를 재생해 유실을 복구한다.
 
-Kafka와 Redis를 메시지 원장으로 사용하지 않는다. OpenSearch도 파생 검색 색인이며 조회 결과는
-Messaging Service가 현재 ACL을 다시 확인한다.
+Kafka와 Redis를 메시지 원장으로 사용하지 않는다. 현재 검색은 PostgreSQL에서 ACL을 먼저
+제한하는 R1 구현이며, OpenSearch 도입 후에도 파생 색인 결과를 Messaging Service가 다시
+검증한다.
 
-## 2. 시스템 경계
+### 1.1 구현된 배포 기준선
+
+- `dwp-messaging-server`: REST command/query, PostgreSQL 18, Flyway, durable event log, SSE
+- `dwp-gateway`: 인증된 `/api/messaging/**` 경로 전달
+- `Redis 7.4`: 다중 인스턴스 실시간 wake-up과 일시 신호; 원장 역할 금지
+- `LiveKit 1.12`: Provider 추상화 뒤의 음성·영상 회의, 사전 장치 점검과 권한 토큰
+- `React 19 + TanStack Query`: 3-pane 대화, Thread, Later, 검색, 설정, 반응형 화면
+
+Kafka consumer fanout, 전용 WebSocket Gateway, OpenSearch, Object Storage/Scanner,
+Compliance WORM은 목표 아키텍처다. 해당 운영 Gate를 통과하기 전에는 구현 완료로 간주하지 않는다.
+
+## 2. 목표 시스템 경계
+
+아래 그림은 대규모 운영 Gate 이후의 목표 구성이다. 현재 R1 개발 기준선은 API 안의 resumable
+SSE와 Redis wake-up을 사용하며, Search와 파일 계층은 아직 별도 Deployable로 활성화하지 않았다.
 
 ```mermaid
 flowchart LR
@@ -57,16 +72,17 @@ flowchart LR
 
 ## 3. 배포 경계
 
-R1은 하나의 제품 도메인 안에 두 Deployable을 둔다.
+현재 R1은 핵심 신뢰성을 먼저 검증하기 위해 `dwp-messaging-server` 한 Deployable이 REST와 SSE를
+함께 제공한다. Socket 수와 Presence·Typing 부하가 분리 Gate를 넘으면 같은 제품 도메인 안에
+두 번째 Deployable을 둔다.
 
 - `dwp-messaging-server`: 기존 Java 21, Spring Boot 3.5, JDBC, Flyway, Outbox 패턴을 유지한다.
-- `dwp-messaging-realtime-gateway`: Spring WebFlux와 Reactor Netty로 Socket 수명주기를 독립
-  확장한다.
+- `dwp-messaging-realtime-gateway`(후속 Gate): Spring WebFlux와 Reactor Netty로 Socket
+  수명주기를 독립 확장한다.
 
-기존 DWP Gateway는 인증, Origin, Tenant, Route를 검증하고 WebSocket Upgrade를 전용
-Gateway로 Proxy한다. 주 Gateway에 채팅 Session을 직접 넣어 일반 API 장애 격리 수준을
-낮추지 않는다. 로컬에서는 하나의 `messaging` Profile이나 통합 Dev Command로 두 프로세스를
-함께 올려 개발자의 기동 부담을 늘리지 않는다.
+기존 DWP Gateway는 인증, Origin, Tenant, Route를 검증한다. 전용 Gateway를 도입할 때는
+WebSocket Upgrade를 해당 Deployable로 Proxy하며, 로컬 통합 Dev Command로 함께 기동해
+개발자의 프로세스 수를 늘리지 않는다.
 
 ## 4. 메시지 전송과 복구
 
@@ -75,16 +91,14 @@ sequenceDiagram
     participant U as User Client
     participant A as Messaging API
     participant D as PostgreSQL
-    participant K as Kafka
-    participant R as Realtime Gateway
+    participant R as Durable SSE
     participant V as Recipient Client
     U->>A: POST message + Idempotency-Key
     A->>A: Tenant, App, membership, policy validation
-    A->>D: Message + revision + outbox transaction
+    A->>D: Message + sequence + realtime event transaction
     D-->>A: Durable sequence assigned
     A-->>U: 201 committed message
-    D-->>K: Outbox relay
-    K-->>R: message.created ordered by conversation
+    D-->>R: committed event wake-up
     R-->>V: WebSocket event
     V->>A: Resume after lastSequence when reconnecting
     A-->>V: Missing durable messages
@@ -93,20 +107,22 @@ sequenceDiagram
 - 순서는 Conversation 단위로만 보장한다. 전역 순서를 만들지 않는다.
 - `sequence`는 단조 증가하며 연속일 필요는 없다.
 - Client는 `eventId`, `messageId`, `sequence`로 중복 제거와 재정렬을 수행한다.
-- WebSocket Session Queue는 상한을 둔다. 느린 Client에는 Presence·Typing을 합치거나 버리고,
-  메시지 Event까지 적체되면 Resume Cursor를 기록한 뒤 연결을 닫아 무제한 메모리를 막는다.
+- SSE Session은 timeout과 emitter 정리를 적용한다. 전용 WebSocket Gateway 단계에서는 Session
+  Queue 상한을 두고 느린 Client의 Presence·Typing은 합치거나 버린다.
 - 송신 UI는 Optimistic Pending을 표시하되 REST Commit 응답 전에는 `전송됨`으로 표시하지 않는다.
 
 ## 5. 실시간 Fanout
 
-Kafka Consumer Group은 Event를 한 Gateway Pod에만 전달하므로 그것만으로 전체 Socket에
-Fanout할 수 없다. 다음 구조를 사용한다.
+현재 구현은 다음 구조를 사용한다.
 
-1. Realtime Gateway Group 중 한 Pod가 Conversation Event를 Kafka에서 소비한다.
-2. 소비한 Event를 Redis 7 Sharded Pub/Sub의 `tenant:conversation` Channel에 한 번 게시한다.
-3. 각 Gateway Pod는 자신에게 연결된 사용자가 있는 Channel만 동적으로 구독한다.
-4. Redis Pub/Sub 유실은 허용한다. 메시지는 PostgreSQL에 있고 Client가 Sequence Delta로 복구한다.
-5. Presence와 Typing은 TTL이 있는 일시 Event로만 처리하고 DB·Kafka에 남기지 않는다.
+1. Command Transaction이 `msg_realtime_events`에 본문 없는 변경 Event를 기록한다.
+2. Commit 이후 인스턴스 로컬 Stream과 Redis Pub/Sub에 wake-up 신호를 보낸다.
+3. 각 인스턴스는 신호를 받으면 PostgreSQL의 durable cursor 이후 Event를 읽어 SSE Client에 보낸다.
+4. Redis Pub/Sub 유실과 장애는 허용한다. 원장은 PostgreSQL이며 Client는 cursor로 복구한다.
+5. Presence와 Typing은 TTL이 있는 일시 Event로만 처리하고 Message 원장에 남기지 않는다.
+
+Kafka 기반 파생 처리와 전용 Realtime Gateway를 도입하더라도 Redis에는 wake-up/ephemeral
+신호만 두며, Client 복구 계약은 같은 durable cursor를 유지한다.
 
 WebTransport는 2026년에 최신 Browser에서 사용 가능해졌지만 구형 사내 Browser, Proxy,
 HTTP/3 운영 경로가 아직 변수다. R1은 폭넓게 검증된 WebSocket을 사용하고 Transport Adapter와
@@ -254,9 +270,9 @@ Agent는 DB에 직접 연결하지 않고 현재 사용자와 Conversation ACL�
 - 메시지당 사용자별 복사본 저장: 저장 비용과 일관성 문제가 커서 단일 Conversation 원장 채택
 - 관리자 본문 열람 Console: 내부자 위험과 역할 분리 원칙에 위배되어 제외
 
-## 15. 구현 전 승인 Gate
+## 15. 확정 결정과 남은 운영 Gate
 
-다음 항목을 확정하기 전에는 제품 코드를 시작하지 않는다.
+다음 제품 결정은 확정됐으며 구현 기준으로 사용한다.
 
 1. 제품명 `메신저`, Route `/messages`, Resource `APP.MESSAGING`
 2. R1은 내부 사용자 전용이며 외부 공유 채널은 후속 단계
@@ -265,4 +281,7 @@ Agent는 DB에 직접 연결하지 않고 현재 사용자와 Conversation ACL�
 5. 자체 음성·영상 엔진을 만들지 않고 Calendar/Rooms/Provider에 연결
 6. E2EE가 아닌 KMS 기반 엔터프라이즈 보안을 기본값으로 채택
 7. 관리자와 Compliance 역할 분리
-8. 목표 사용자 수, 동시 연결, Peak Message, 데이터 지역 요구사항
+8. 목표 사용자 수, 동시 연결, Peak Message, 데이터 지역 요구사항은 배포 고객별 Capacity Gate에서 확정
+
+프로덕션 전에는 실제 고객 규모의 부하, TLS/WSS와 TURN, Redis HA, DB PITR, 첨부 Quarantine과
+AV/DLP, Search 장애·복구, 보존·Legal Hold, 감사 Log Redaction을 별도 증적으로 통과해야 한다.

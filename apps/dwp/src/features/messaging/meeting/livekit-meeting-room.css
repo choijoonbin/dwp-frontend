@@ -1,0 +1,60 @@
+.dwp-meeting-room {
+  --lk-bg: #111315;
+  --lk-bg2: #1b1e22;
+  --lk-bg3: #262a30;
+  --lk-bg4: #30353d;
+  --lk-fg: #f7f8fa;
+  --lk-fg2: #cbd0d8;
+  --lk-fg3: #969daa;
+  --lk-accent-fg: #ffffff;
+  --lk-accent-bg: #2962e6;
+  --lk-danger: #d63c3c;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: #111315;
+  color: #f7f8fa;
+}
+
+.dwp-meeting-room .lk-video-conference {
+  height: 100%;
+}
+
+.dwp-meeting-room__header {
+  position: absolute;
+  z-index: 10;
+  top: 12px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  pointer-events: none;
+}
+
+.dwp-meeting-room__header > * {
+  pointer-events: auto;
+}
+
+.dwp-meeting-room__status {
+  position: absolute;
+  z-index: 12;
+  top: 72px;
+  left: 50%;
+  width: min(520px, calc(100% - 32px));
+  transform: translateX(-50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dwp-meeting-room *,
+  .dwp-meeting-room *::before,
+  .dwp-meeting-room *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

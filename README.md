@@ -19,7 +19,7 @@ scripts                  Dependency License 검증 자동화
 
 ## Requirements
 
-- Node.js 20 이상
+- Node.js 24.18 이상, 25 미만 (`.node-version` 기준)
 - Corepack과 Yarn 4.17.1
 - Backend Gateway: `http://localhost:8080`
 

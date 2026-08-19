@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
-import { cancelRoomBooking, getRoomAvailability, getRoomsAdminOverview } from './rooms-api';
+import {
+  cancelRoomBooking,
+  getRoomAvailability,
+  getRoomsAdminOverview,
+  getRoomsPolicy,
+} from './rooms-api';
 
 function jsonResponse(data: unknown): Response {
   return {
@@ -52,6 +57,18 @@ describe('rooms API boundary', () => {
     await expect(getRoomsAdminOverview()).resolves.toEqual(overview);
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/platform/v1/admin/rooms/overview',
+      expect.objectContaining({ method: 'GET', credentials: 'include' })
+    );
+  });
+
+  it('loads the tenant room policy through the member-safe Rooms boundary', async () => {
+    const policy = { workingDayStart: '08:00:00', workingDayEnd: '20:00:00' };
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(policy));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getRoomsPolicy()).resolves.toEqual(policy);
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/platform/v1/rooms/policy',
       expect.objectContaining({ method: 'GET', credentials: 'include' })
     );
   });

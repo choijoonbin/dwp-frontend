@@ -61,7 +61,14 @@ export type SearchableCatalogAsset = {
 };
 
 export type GlobalSearchKind =
-  'app' | 'work' | 'person' | 'organization' | 'audit' | 'tenant' | 'catalog' | 'ask';
+  | 'app'
+  | 'work'
+  | 'person'
+  | 'organization'
+  | 'audit'
+  | 'tenant'
+  | 'catalog'
+  | 'ask';
 
 export type GlobalSearchItem = {
   id: string;

@@ -364,6 +364,18 @@
       "continue": "Open review screen",
       "opening": "Opening",
       "unknownAction": "Owning app task",
+      "review": {
+        "heading": "Draft to hand off",
+        "empty": "No values will be handed off. Enter them in the owning app.",
+        "title": "Title",
+        "schedule": "Schedule",
+        "recipients": "Recipients",
+        "content": "Content",
+        "summary": "Request",
+        "justification": "Business case",
+        "count": "{{count}} people",
+        "characters": "{{count}}-character draft"
+      },
       "risk": {
         "L0": "Read only",
         "L1": "Low risk · review before save",
@@ -399,6 +411,7 @@
       "contextConfiguration": "Configure the read-only Platform context service identity.",
       "modelConfiguration": "Configure an approved model route and managed provider credential. No substitute answer was generated.",
       "permissionRequired": "DWAI·ON question access is not present in the current verified session.",
+      "promptInjectionBlocked": "A pattern attempting to override system instructions or security controls was detected, so no source or model was invoked.",
       "privilegedHandoff": "The request may involve privileged workforce or financial data, so no source was retrieved and no model was invoked.",
       "mutationHandoff": "Changes must be reviewed and approved in the owning application. DWAI·ON did not execute the request.",
       "noSource": "No source available to this user can support the answer.",

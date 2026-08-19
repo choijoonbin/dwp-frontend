@@ -6,10 +6,17 @@ export type ProductivityProviderType = 'MICROSOFT_GRAPH';
 export type ProductivityAuthMode = 'DELEGATED';
 export type ProductivityConnectorLifecycle = 'DRAFT' | 'ACTIVE' | 'SUSPENDED' | 'RETIRED';
 export type ProductivityConnectorHealth =
-  'CONFIGURATION_REQUIRED' | 'HEALTHY' | 'DEGRADED' | 'AUTHENTICATION_REQUIRED' | 'UNAVAILABLE';
+  | 'CONFIGURATION_REQUIRED'
+  | 'HEALTHY'
+  | 'DEGRADED'
+  | 'AUTHENTICATION_REQUIRED'
+  | 'UNAVAILABLE';
 export type ProductivityPolicyState = 'REVIEW_REQUIRED' | 'APPROVED' | 'BLOCKED';
 export type ProductivityConsentState =
-  'NOT_CONNECTED' | 'CONNECTED' | 'REAUTHORIZATION_REQUIRED' | 'REVOKED';
+  | 'NOT_CONNECTED'
+  | 'CONNECTED'
+  | 'REAUTHORIZATION_REQUIRED'
+  | 'REVOKED';
 export type ProductivityResourceKind = 'MAIL' | 'CALENDAR';
 export type ProductivitySyncMode = 'INITIAL' | 'DELTA' | 'RESET';
 export type ProductivitySyncRunState = 'RUNNING' | 'SUCCEEDED' | 'PARTIAL' | 'FAILED' | 'BLOCKED';

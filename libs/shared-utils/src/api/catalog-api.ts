@@ -113,7 +113,11 @@ export type CatalogCompatibilityRule = {
 };
 
 export type CatalogAssuranceFindingState =
-  'OPEN' | 'ACKNOWLEDGED' | 'FALSE_POSITIVE' | 'ACCEPTED_RISK' | 'RESOLVED';
+  | 'OPEN'
+  | 'ACKNOWLEDGED'
+  | 'FALSE_POSITIVE'
+  | 'ACCEPTED_RISK'
+  | 'RESOLVED';
 
 export type CatalogAssuranceFinding = {
   findingId: string;

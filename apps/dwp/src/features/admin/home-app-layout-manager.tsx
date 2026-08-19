@@ -172,8 +172,8 @@ export function HomeAppLayoutManager() {
   const published = experienceQuery.data?.launchpadConfiguration;
   const changed = Boolean(
     draft &&
-    published &&
-    JSON.stringify(draft) !== JSON.stringify(withCatalogPlacements(published, catalog))
+      published &&
+      JSON.stringify(draft) !== JSON.stringify(withCatalogPlacements(published, catalog))
   );
   const groups = useMemo(
     () => [...(draft?.groups ?? [])].sort((left, right) => left.sortOrder - right.sortOrder),

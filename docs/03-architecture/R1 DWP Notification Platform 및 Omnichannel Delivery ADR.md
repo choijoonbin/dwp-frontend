@@ -1,6 +1,6 @@
 # R1 DWP Notification Platform 및 Omnichannel Delivery ADR
 
-> 상태: Final Candidate, 내부 구현 착수 가능; Production 출시는 승인 Gate 충족 필요
+> 상태: Foundation Pilot 구현 완료; Production 출시는 승인 Gate 충족 필요
 >
 > 기준일: 2026-08-19
 >
@@ -27,10 +27,15 @@ DWP의 공통 알림 기능은 단순한 DB 목록이나 Header Popover가 아�
 업무 사실을 전달하고, PostgreSQL은 사용자가 조회·읽음·저장·완료 처리할 수 있는 영속 Inbox와
 정책 증적을 보존한다. Redis와 SSE는 이미 저장된 변화가 있다는 사실만 빠르게 전달한다.
 
-## 2. 현재 상태와 문제
+## 2. 현재 상태와 해결 범위
 
-현재 Header의 `NotificationMenu`는 Badge `2`와 두 건의 문구가 정적으로 선언된 Prototype이다.
-API, 읽음 상태, 개인 설정, 실시간 연결, 재시도, 감사가 없다.
+기존 Header의 정적 Badge·문구 Prototype은 실제 Notification Summary·Inbox 연동으로 교체했다.
+독립 서비스·DB, 읽음·저장·Snooze·완료 상태, 개인 설정, Redis·SSE와 영속 Catch-up, Tenant 운영
+개요·계약·전달 운영 화면이 Direct Recipient In-app Foundation 범위로 구현되어 있다.
+
+Production 범위에서 아직 열지 않은 기능은 외부 Email·Push·Teams·Slack Adapter, 대규모
+조직·Role Audience, 실제 Provider Callback·Suppression과 Production HA·부하·DR 증거다. 이 기능은
+화면에 가짜 성공 상태를 노출하지 않고 Capability가 준비될 때까지 비활성화한다.
 
 반면 재사용할 Foundation은 이미 존재한다.
 

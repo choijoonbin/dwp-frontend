@@ -14,7 +14,20 @@ export function useApprovalExperience() {
   const canViewSignatures = any('ADMIN.APPROVAL_SIGNATURE', ['VIEW', 'MANAGE']);
   const canManageSignatures = hasPermission('ADMIN.APPROVAL_SIGNATURE', 'MANAGE');
   const canAskExpert = hasPermission('APP.ASK', 'VIEW') && hasPermission('APP.APPROVALS', 'VIEW');
+  const canViewTasks = any('ACTION.APPROVAL_TASK', ['VIEW', 'MANAGE']);
+  const canClaimTasks = any('ACTION.APPROVAL_TASK', ['UPDATE', 'MANAGE']);
+  const canDecideTasks = any('ACTION.APPROVAL_TASK', ['APPROVE', 'MANAGE']);
+  const canViewRequests = any('ACTION.APPROVAL_REQUEST', ['VIEW', 'MANAGE']);
+  const canCreateRequests = any('ACTION.APPROVAL_REQUEST', ['CREATE', 'MANAGE']);
+  const canUpdateRequests = any('ACTION.APPROVAL_REQUEST', ['UPDATE', 'MANAGE']);
   return {
+    canViewTasks,
+    canClaimTasks,
+    canDecideTasks,
+    canViewRequests,
+    canCreateRequests,
+    canUpdateRequests,
+    canStartRequests: canCreateRequests && canUpdateRequests,
     canDesign,
     canEditDesign,
     canPublish: hasPermission('ADMIN.APPROVAL_DESIGN', 'APPROVE'),

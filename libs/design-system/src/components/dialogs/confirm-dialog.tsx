@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, type ReactNode } from 'react';
 import { AlertTriangle, CircleHelp } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -20,6 +20,7 @@ export type ConfirmDialogProps = {
   cancelLabel: string;
   confirmLabel: string;
   confirmingLabel?: string;
+  details?: ReactNode;
   onClose: () => void;
   onConfirm: () => void | Promise<void>;
   busy?: boolean;
@@ -33,6 +34,7 @@ export function ConfirmDialog({
   cancelLabel,
   confirmLabel,
   confirmingLabel,
+  details,
   onClose,
   onConfirm,
   busy = false,
@@ -69,6 +71,7 @@ export function ConfirmDialog({
             {description}
           </Typography>
         </Stack>
+        {details ? <Box sx={{ mt: 2 }}>{details}</Box> : null}
       </DialogContent>
       <DialogActions>
         <ActionButton autoFocus intent="quiet" onClick={onClose} disabled={busy}>

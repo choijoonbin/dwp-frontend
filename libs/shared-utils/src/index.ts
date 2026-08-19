@@ -24,6 +24,7 @@ export * from './api/service-center-api';
 export * from './api/calendar-api';
 export * from './api/rooms-api';
 export * from './api/workplace-api';
+export * from './api/workplace-governance-api';
 export * from './api/mail-api';
 export * from './api/messaging-api';
 export * from './api/notification-api';

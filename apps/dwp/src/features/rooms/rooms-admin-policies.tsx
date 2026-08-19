@@ -1,9 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Save, ShieldCheck } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useBlocker } from 'react-router-dom';
 import { getRoomsAdminOverview, updateRoomsPolicy, useToast } from '@dwp-frontend/shared-utils';
-import { ActionButton, FormField, PageCanvas, TimePickerField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ConfirmDialog,
+  FormField,
+  PageCanvas,
+  TimePickerField,
+} from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -13,31 +20,56 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { RoomsPageHeading } from './rooms-ui';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
 
 import type { CalendarPolicy } from '@dwp-frontend/shared-utils';
 
 type NumericPolicyKey =
-  'minimumEventMinutes' | 'maximumEventMinutes' | 'maximumAdvanceDays' | 'defaultBufferMinutes';
+  | 'minimumEventMinutes'
+  | 'maximumEventMinutes'
+  | 'maximumAdvanceDays'
+  | 'defaultBufferMinutes';
 
 export function RoomsAdminPolicies() {
   const { t } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const capabilities = useRoomsCapabilities();
   const [policy, setPolicy] = useState<CalendarPolicy | null>(null);
+  const [baseline, setBaseline] = useState<CalendarPolicy | null>(null);
   const overviewQuery = useQuery({
     queryKey: ['rooms', 'admin', 'overview'],
     queryFn: getRoomsAdminOverview,
     staleTime: 30_000,
     retry: 1,
   });
+  const dirty = Boolean(policy && baseline && JSON.stringify(policy) !== JSON.stringify(baseline));
+  const dirtyRef = useRef(dirty);
+  dirtyRef.current = dirty;
   useEffect(() => {
-    if (overviewQuery.data?.policy) setPolicy(overviewQuery.data.policy);
-  }, [overviewQuery.data?.policy]);
+    if (overviewQuery.data?.policy && !dirtyRef.current) {
+      setPolicy(overviewQuery.data.policy);
+      setBaseline(overviewQuery.data.policy);
+    }
+  }, [dirty, overviewQuery.data?.policy]);
+  const navigationBlocker = useBlocker(dirty);
+  useEffect(() => {
+    if (!dirty) return undefined;
+    const preventUnload = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener('beforeunload', preventUnload);
+    return () => window.removeEventListener('beforeunload', preventUnload);
+  }, [dirty]);
   const mutation = useMutation({
-    mutationFn: (input: CalendarPolicy) => updateRoomsPolicy(input),
+    mutationFn: (input: CalendarPolicy) => {
+      if (!capabilities.canManageRoomsAdmin) {
+        throw new Error(t('permissions.roomAdminPolicyReadOnly'));
+      }
+      return updateRoomsPolicy(input);
+    },
     onSuccess: async (saved) => {
       setPolicy(saved);
+      setBaseline(saved);
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['rooms', 'admin'] }),
         queryClient.invalidateQueries({ queryKey: ['calendar', 'admin'] }),
@@ -50,11 +82,11 @@ export function RoomsAdminPolicies() {
     setPolicy((current) => (current ? { ...current, [key]: Number(value) } : current));
   const valid = Boolean(
     policy &&
-    policy.minimumEventMinutes >= 5 &&
-    policy.maximumEventMinutes >= policy.minimumEventMinutes &&
-    policy.maximumAdvanceDays >= 1 &&
-    policy.defaultBufferMinutes >= 0 &&
-    policy.workingDayStart < policy.workingDayEnd
+      policy.minimumEventMinutes >= 5 &&
+      policy.maximumEventMinutes >= policy.minimumEventMinutes &&
+      policy.maximumAdvanceDays >= 1 &&
+      policy.defaultBufferMinutes >= 0 &&
+      policy.workingDayStart < policy.workingDayEnd
   );
 
   return (
@@ -67,7 +99,7 @@ export function RoomsAdminPolicies() {
           <ActionButton
             intent="primary"
             startIcon={<Save size={17} />}
-            disabled={!valid || mutation.isPending}
+            disabled={!valid || mutation.isPending || !capabilities.canManageRoomsAdmin}
             loading={mutation.isPending}
             loadingLabel={t('actions.saving')}
             onClick={() => policy && mutation.mutate(policy)}
@@ -76,6 +108,9 @@ export function RoomsAdminPolicies() {
           </ActionButton>
         }
       />
+      {capabilities.isLoaded && !capabilities.canManageRoomsAdmin && (
+        <RoomsPermissionNotice>{t('permissions.roomAdminPolicyReadOnly')}</RoomsPermissionNotice>
+      )}
       {overviewQuery.isError ? (
         <Alert
           severity="error"
@@ -119,6 +154,7 @@ export function RoomsAdminPolicies() {
               <TimePickerField
                 label={t('admin.policies.workingStart')}
                 value={policy.workingDayStart}
+                disabled={!capabilities.canManageRoomsAdmin}
                 onValueChange={(value) =>
                   value &&
                   setPolicy((current) =>
@@ -129,6 +165,7 @@ export function RoomsAdminPolicies() {
               <TimePickerField
                 label={t('admin.policies.workingEnd')}
                 value={policy.workingDayEnd}
+                disabled={!capabilities.canManageRoomsAdmin}
                 onValueChange={(value) =>
                   value &&
                   setPolicy((current) => (current ? { ...current, workingDayEnd: value } : current))
@@ -138,6 +175,7 @@ export function RoomsAdminPolicies() {
                 type="number"
                 label={t('admin.policies.advanceDays')}
                 value={String(policy.maximumAdvanceDays)}
+                disabled={!capabilities.canManageRoomsAdmin}
                 onChange={(change) => patchNumber('maximumAdvanceDays', change.target.value)}
                 inputProps={{ min: 1, max: 1095 }}
               />
@@ -145,6 +183,7 @@ export function RoomsAdminPolicies() {
                 type="number"
                 label={t('admin.policies.bufferMinutes')}
                 value={String(policy.defaultBufferMinutes)}
+                disabled={!capabilities.canManageRoomsAdmin}
                 onChange={(change) => patchNumber('defaultBufferMinutes', change.target.value)}
                 inputProps={{ min: 0, max: 120 }}
               />
@@ -152,6 +191,7 @@ export function RoomsAdminPolicies() {
                 type="number"
                 label={t('admin.policies.minimumMinutes')}
                 value={String(policy.minimumEventMinutes)}
+                disabled={!capabilities.canManageRoomsAdmin}
                 onChange={(change) => patchNumber('minimumEventMinutes', change.target.value)}
                 inputProps={{ min: 5, max: 1440 }}
               />
@@ -159,6 +199,7 @@ export function RoomsAdminPolicies() {
                 type="number"
                 label={t('admin.policies.maximumMinutes')}
                 value={String(policy.maximumEventMinutes)}
+                disabled={!capabilities.canManageRoomsAdmin}
                 onChange={(change) => patchNumber('maximumEventMinutes', change.target.value)}
                 inputProps={{ min: 5, max: 1440 }}
               />
@@ -181,6 +222,7 @@ export function RoomsAdminPolicies() {
                 control={
                   <Checkbox
                     checked={policy.enforceMeetingAgenda}
+                    disabled={!capabilities.canManageRoomsAdmin}
                     onChange={(change) =>
                       setPolicy((current) =>
                         current
@@ -196,6 +238,7 @@ export function RoomsAdminPolicies() {
                 control={
                   <Checkbox
                     checked={policy.allowExternalAttendees}
+                    disabled={!capabilities.canManageRoomsAdmin}
                     onChange={(change) =>
                       setPolicy((current) =>
                         current
@@ -211,6 +254,16 @@ export function RoomsAdminPolicies() {
           </Box>
         </Stack>
       )}
+      <ConfirmDialog
+        open={navigationBlocker.state === 'blocked'}
+        title={t('admin.policies.unsavedTitle')}
+        description={t('admin.policies.unsavedDescription')}
+        cancelLabel={t('actions.keep')}
+        confirmLabel={t('admin.policies.discardChanges')}
+        intent="danger"
+        onClose={() => navigationBlocker.reset?.()}
+        onConfirm={() => navigationBlocker.proceed?.()}
+      />
     </PageCanvas>
   );
 }

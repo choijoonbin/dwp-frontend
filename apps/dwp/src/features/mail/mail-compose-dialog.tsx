@@ -5,14 +5,23 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { composeMail, useToast } from '@dwp-frontend/shared-utils';
 import { ActionButton, FormDialog, FormField } from '@dwp-frontend/design-system';
 
+import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 
 export function MailComposeDialog({
   open,
+  initialToEmail = '',
+  initialSubject = '',
+  initialBody = '',
+  fromDwaion = false,
   onClose,
   onCompleted,
 }: {
   open: boolean;
+  initialToEmail?: string;
+  initialSubject?: string;
+  initialBody?: string;
+  fromDwaion?: boolean;
   onClose: () => void;
   onCompleted?: (threadId: string, deliveryMode: 'SEND' | 'DRAFT') => void;
 }) {
@@ -44,12 +53,12 @@ export function MailComposeDialog({
 
   useEffect(() => {
     if (!open) return;
-    setToEmail('');
-    setSubject('');
-    setBody('');
+    setToEmail(initialToEmail);
+    setSubject(initialSubject);
+    setBody(initialBody);
     setMode('SEND');
     idempotencyKey.current = crypto.randomUUID();
-  }, [open]);
+  }, [initialBody, initialSubject, initialToEmail, open]);
 
   const valid = /^\S+@\S+\.\S+$/u.test(toEmail.trim()) && subject.trim() && body.trim();
 
@@ -85,6 +94,7 @@ export function MailComposeDialog({
       }
     >
       <Stack spacing={2}>
+        {fromDwaion && <Alert severity="info">{t('compose.dwaionDraftNotice')}</Alert>}
         <FormField
           required
           type="email"

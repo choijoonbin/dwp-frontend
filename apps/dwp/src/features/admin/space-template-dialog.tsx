@@ -59,9 +59,9 @@ export function TemplateDialog({
     /^[a-z][a-z0-9-]{2,99}$/.test(form.templateKey) &&
     Boolean(
       form.nameKo.trim() &&
-      form.nameEn.trim() &&
-      form.descriptionKo.trim() &&
-      form.descriptionEn.trim()
+        form.nameEn.trim() &&
+        form.descriptionKo.trim() &&
+        form.descriptionEn.trim()
     );
   const patch = (next: Partial<TemplateForm>) => setForm((current) => ({ ...current, ...next }));
   return (

@@ -6,6 +6,7 @@ import {
   findApprovalNavigationItem,
   isApprovalAdminView,
 } from './approval-navigation';
+import { canAccessProductAreaNavigationItem } from '../../layouts/product-area-permissions';
 
 describe('approval product navigation', () => {
   it('keeps personal decisions and administration in explicit groups', () => {
@@ -19,6 +20,7 @@ describe('approval product navigation', () => {
     expect(APPROVAL_DEFAULT_PATH).toBe('/approvals/home');
     expect(decisionViews).toEqual([
       'inbox',
+      'completed',
       'new',
       'drafts',
       'submitted',
@@ -34,7 +36,30 @@ describe('approval product navigation', () => {
 
   it('resolves every governed route without treating similar paths as a match', () => {
     expect(findApprovalNavigationItem('/approvals/inbox')?.view).toBe('inbox');
+    expect(findApprovalNavigationItem('/approvals/completed')?.view).toBe('completed');
     expect(findApprovalNavigationItem('/approvals/admin/workflows')?.view).toBe('workflows');
     expect(findApprovalNavigationItem('/approvals/inbox/other')).toBeUndefined();
+  });
+
+  it('uses the same MANAGE override and all-permission contract as the API boundary', () => {
+    const newRequest = findApprovalNavigationItem('/approvals/requests/new');
+    expect(newRequest).toBeDefined();
+    expect(
+      canAccessProductAreaNavigationItem(
+        newRequest!,
+        (_resourceKey, permissionCode) => permissionCode === 'MANAGE'
+      )
+    ).toBe(true);
+    expect(
+      canAccessProductAreaNavigationItem(
+        newRequest!,
+        (_resourceKey, permissionCode) => permissionCode === 'CREATE'
+      )
+    ).toBe(false);
+    expect(
+      canAccessProductAreaNavigationItem(newRequest!, (_resourceKey, permissionCode) =>
+        ['CREATE', 'UPDATE'].includes(permissionCode ?? '')
+      )
+    ).toBe(true);
   });
 });

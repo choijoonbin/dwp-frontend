@@ -100,6 +100,7 @@
   "event": {
     "createTitle": "새 일정 만들기",
     "createDescription": "사람, 시간과 공간을 한 번에 연결합니다.",
+    "dwaionDraftNotice": "DWAI·ON에서 전달한 검토용 초안입니다. 날짜, 시간, 참석자와 내용을 확인한 뒤 직접 저장해 주세요.",
     "editTitle": "일정 편집",
     "editDescription": "변경 내용은 저장 즉시 참석자 일정에 반영됩니다.",
     "created": "일정을 만들었습니다.",

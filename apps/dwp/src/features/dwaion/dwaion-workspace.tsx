@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react';
 import { PageCanvas } from '@dwp-frontend/design-system';
+import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import {
   askDwpStream,
   getDwaionConversation,
@@ -25,7 +26,11 @@ import { DWAION_APPROVAL_EXPERT_AGENT_KEY, resolveDwaionAgentKey } from './dwaio
 import { DwaionWorkspaceAnswer } from './dwaion-workspace-answer';
 import { DwaionWorkspaceComposer } from './dwaion-workspace-composer';
 import { DwaionWorkspaceContext } from './dwaion-workspace-context';
-import { visibleWorkItems, type DwaionWorkspaceState } from './dwaion-workspace-model';
+import {
+  verifiedConversationId,
+  visibleWorkItems,
+  type DwaionWorkspaceState,
+} from './dwaion-workspace-model';
 import { DwaionWorkspaceStart } from './dwaion-workspace-start';
 import { DwaionActionShelf } from './dwaion-action-shelf';
 import { DwaionCitationDialog } from './dwaion-citation-dialog';
@@ -63,6 +68,7 @@ export function DwaionWorkspace() {
   const requestController = useRef<AbortController | null>(null);
   const unmountAbortTimer = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const autoSubmittedQuery = useRef<string | null>(null);
+  const internalConversationNavigation = useRef<string | null>(null);
   const firstName = auth.user?.displayName?.trim().split(/\s+/)[0];
   const workQueue = useQuery({
     queryKey: ['workspace', 'work-queue'],
@@ -76,6 +82,8 @@ export function DwaionWorkspace() {
     queryFn: () => getDwaionConversation(conversationId!),
     enabled: Boolean(conversationId),
     staleTime: 10_000,
+    retry: (failureCount, error) =>
+      !(error instanceof HttpError && error.status === 404) && failureCount < 1,
   });
   const workItems = useMemo(
     () => visibleWorkItems(workQueue.data?.items ?? []),
@@ -105,7 +113,9 @@ export function DwaionWorkspace() {
             query: normalized,
             locale: i18n.resolvedLanguage || i18n.language || 'en',
             agentKey,
-            conversationId: approvalExpert ? undefined : (conversationId ?? undefined),
+            conversationId: approvalExpert
+              ? undefined
+              : verifiedConversationId(conversationId, conversation.data?.summary.conversationId),
             sourceScopes,
             pageContext: approvalExpert
               ? {
@@ -120,6 +130,7 @@ export function DwaionWorkspace() {
         if (requestSequence.current !== sequence) return;
         setResponse(result);
         if (result.conversationId) {
+          internalConversationNavigation.current = result.conversationId;
           setConversationId(result.conversationId);
           const next = new URLSearchParams(searchParams);
           next.set('conversation', result.conversationId);
@@ -140,6 +151,7 @@ export function DwaionWorkspace() {
     },
     [
       conversationId,
+      conversation.data?.summary.conversationId,
       agentKey,
       approvalExpert,
       i18n.language,
@@ -162,9 +174,34 @@ export function DwaionWorkspace() {
   }, [availableSourceScopes]);
 
   useEffect(() => {
+    if (
+      !conversationId ||
+      !(conversation.error instanceof HttpError) ||
+      conversation.error.status !== 404
+    ) {
+      return;
+    }
+    internalConversationNavigation.current = null;
+    setConversationId(null);
+    const next = new URLSearchParams(searchParams);
+    next.delete('conversation');
+    setSearchParams(next, { replace: true });
+    queryClient.removeQueries({ queryKey: ['dwaion', 'conversation', conversationId] });
+  }, [conversation.error, conversationId, queryClient, searchParams, setSearchParams]);
+
+  useEffect(() => {
     const requestedConversationId = approvalExpert
       ? null
       : searchParams.get('conversation')?.trim() || null;
+    const internalTarget = internalConversationNavigation.current;
+    if (internalTarget && requestedConversationId === internalTarget) {
+      internalConversationNavigation.current = null;
+      if (conversationId !== requestedConversationId) {
+        setConversationId(requestedConversationId);
+      }
+      return;
+    }
+    if (internalTarget && conversationId === internalTarget) return;
     if (requestedConversationId === conversationId) return;
 
     requestSequence.current += 1;
@@ -206,6 +243,7 @@ export function DwaionWorkspace() {
     requestController.current?.abort('new-question');
     requestController.current = null;
     autoSubmittedQuery.current = null;
+    internalConversationNavigation.current = null;
     setSubmittedQuery(null);
     setResponse(null);
     setProgressStage(null);
@@ -221,6 +259,7 @@ export function DwaionWorkspace() {
   const selectConversation = (nextConversationId: string) => {
     requestSequence.current += 1;
     requestController.current?.abort('conversation-changed');
+    internalConversationNavigation.current = null;
     setConversationId(nextConversationId);
     setSubmittedQuery(null);
     setResponse(null);
@@ -390,7 +429,7 @@ export function DwaionWorkspace() {
                   onReset={reset}
                 />
               )}
-              <DwaionActionShelf response={response} />
+              <DwaionActionShelf query={submittedQuery} response={response} />
               <Box sx={{ mt: 3 }}>
                 <DwaionWorkspaceComposer
                   value={draft}

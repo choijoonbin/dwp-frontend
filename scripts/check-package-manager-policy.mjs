@@ -2,6 +2,7 @@ import fs from 'node:fs';
 
 const manifest = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 const expectedManager = 'yarn@4.17.1';
+const minimumNodeVersion = [24, 18, 0];
 const forbiddenArtifacts = [
   'package-lock.json',
   'pnpm-lock.yaml',
@@ -11,6 +12,19 @@ const forbiddenArtifacts = [
 ];
 
 const issues = [];
+const currentNodeVersion = process.versions.node.split('.').map(Number);
+
+const nodeVersionSupported =
+  currentNodeVersion[0] === minimumNodeVersion[0] &&
+  (currentNodeVersion[1] > minimumNodeVersion[1] ||
+    (currentNodeVersion[1] === minimumNodeVersion[1] &&
+      currentNodeVersion[2] >= minimumNodeVersion[2]));
+
+if (!nodeVersionSupported) {
+  issues.push(
+    `Node.js ${minimumNodeVersion.join('.')} 이상, 25 미만이 필요합니다. 현재 버전: ${process.versions.node}`
+  );
+}
 
 if (manifest.packageManager !== expectedManager) {
   issues.push(`package.json packageManager must remain ${expectedManager}.`);

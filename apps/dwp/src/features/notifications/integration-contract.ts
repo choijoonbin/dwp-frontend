@@ -8,6 +8,7 @@ export const NOTIFICATION_I18N_NAMESPACE = 'notifications';
 
 export const notificationQueryKeys = {
   root: ['notifications'] as const,
+  capabilities: () => ['notifications', 'capabilities'] as const,
   summary: () => ['notifications', 'summary'] as const,
   inboxRoot: () => ['notifications', 'inbox'] as const,
   inbox: (scope: Record<string, unknown>) => ['notifications', 'inbox', scope] as const,

@@ -237,35 +237,35 @@ export function AppAccessRequestManager() {
   }));
   const canDecideSelected = Boolean(
     selected &&
-    (auth.user?.resourceRoles ?? []).some(
-      (role) =>
-        role.responsibilityCode === 'APP_ACCESS_APPROVER' &&
-        role.resourceKey === selected.resourceKey
-    ) &&
-    selected.userId !== auth.user?.userId
+      (auth.user?.resourceRoles ?? []).some(
+        (role) =>
+          role.responsibilityCode === 'APP_ACCESS_APPROVER' &&
+          role.resourceKey === selected.resourceKey
+      ) &&
+      selected.userId !== auth.user?.userId
   );
   const hasManagerScope = Boolean(
     selected &&
-    (auth.user?.resourceRoles ?? []).some(
-      (role) =>
-        role.responsibilityCode === 'APP_ACCESS_MANAGER' &&
-        role.resourceKey === selected.resourceKey
-    )
+      (auth.user?.resourceRoles ?? []).some(
+        (role) =>
+          role.responsibilityCode === 'APP_ACCESS_MANAGER' &&
+          role.resourceKey === selected.resourceKey
+      )
   );
   const canFulfillSelected = Boolean(
     selected &&
-    hasManagerScope &&
-    selected.userId !== auth.user?.userId &&
-    selected.decidedBy !== auth.user?.userId &&
-    selected.state === 'APPROVED' &&
-    ['PENDING', 'FAILED'].includes(selected.fulfillmentState)
+      hasManagerScope &&
+      selected.userId !== auth.user?.userId &&
+      selected.decidedBy !== auth.user?.userId &&
+      selected.state === 'APPROVED' &&
+      ['PENDING', 'FAILED'].includes(selected.fulfillmentState)
   );
   const canRevokeSelected = Boolean(
     selected &&
-    hasManagerScope &&
-    selected.userId !== auth.user?.userId &&
-    selected.state === 'APPROVED' &&
-    selected.fulfillmentState === 'SUCCEEDED'
+      hasManagerScope &&
+      selected.userId !== auth.user?.userId &&
+      selected.state === 'APPROVED' &&
+      selected.fulfillmentState === 'SUCCEEDED'
   );
 
   return (

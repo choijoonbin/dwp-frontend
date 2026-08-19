@@ -3,15 +3,31 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 
 export type MailProviderType =
-  'DWP_SANDBOX' | 'MICROSOFT_GRAPH' | 'GOOGLE_GMAIL' | 'NAVER_WORKS' | 'JMAP' | 'IMAP_SMTP';
+  | 'DWP_SANDBOX'
+  | 'MICROSOFT_GRAPH'
+  | 'GOOGLE_GMAIL'
+  | 'NAVER_WORKS'
+  | 'JMAP'
+  | 'IMAP_SMTP';
 export type MailConnectionState =
-  'ACTIVE' | 'CONFIGURATION_REQUIRED' | 'SYNCING' | 'DEGRADED' | 'SUSPENDED';
+  | 'ACTIVE'
+  | 'CONFIGURATION_REQUIRED'
+  | 'SYNCING'
+  | 'DEGRADED'
+  | 'SUSPENDED';
 export type MailTriageLane = 'PRIORITY' | 'NEEDS_REPLY' | 'ASSIGNED' | 'UPDATES' | 'NEWSLETTERS';
 export type MailWorkflowState = 'OPEN' | 'DONE' | 'SNOOZED' | 'ARCHIVED' | 'DRAFT';
 export type MailImportance = 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
 export type MailClassification = 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED';
 export type MailThreadAction =
-  'MARK_READ' | 'MARK_UNREAD' | 'STAR' | 'UNSTAR' | 'ARCHIVE' | 'RESTORE' | 'COMPLETE' | 'REOPEN';
+  | 'MARK_READ'
+  | 'MARK_UNREAD'
+  | 'STAR'
+  | 'UNSTAR'
+  | 'ARCHIVE'
+  | 'RESTORE'
+  | 'COMPLETE'
+  | 'REOPEN';
 export type MailProposalType =
   | 'DRAFT_REPLY'
   | 'CREATE_CALENDAR_EVENT'
@@ -20,7 +36,13 @@ export type MailProposalType =
   | 'ESCALATE_NOTIFICATION';
 export type MailProposalStatus = 'PROPOSED' | 'ACCEPTED' | 'DISMISSED' | 'EXPIRED' | 'EXECUTED';
 export type MailDeliveryState =
-  'RECEIVED' | 'DRAFT' | 'QUEUED' | 'SENDING' | 'RETRYING' | 'SENT' | 'FAILED';
+  | 'RECEIVED'
+  | 'DRAFT'
+  | 'QUEUED'
+  | 'SENDING'
+  | 'RETRYING'
+  | 'SENT'
+  | 'FAILED';
 
 export type MailAccount = {
   accountId: string;

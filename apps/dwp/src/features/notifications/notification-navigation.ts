@@ -1,12 +1,11 @@
-import { Activity, BellRing, Braces, Settings2 } from 'lucide-react';
+import { BellRing } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
 import type { NotificationView } from '@dwp-frontend/shared-utils/api/notification-api';
 
-export type NotificationNavigationSection = 'center' | 'settings' | 'administration';
+export type NotificationNavigationSection = 'center';
 
-export type NotificationNavigationView =
-  'center' | 'settings' | 'admin-overview' | 'admin-contracts' | 'admin-operations';
+export type NotificationNavigationView = 'center';
 
 /**
  * Structurally compatible with ProductAreaNavigationGroup. The host layout can
@@ -55,48 +54,6 @@ export const NOTIFICATION_NAVIGATION: readonly NotificationNavigationGroup[] = [
         path: NOTIFICATION_CENTER_PATH,
         icon: BellRing,
         requiredResourceKey: 'APP.NOTIFICATIONS',
-        requiredPermissionCode: 'VIEW',
-      },
-    ],
-  },
-  {
-    id: 'settings',
-    items: [
-      {
-        section: 'settings',
-        view: 'settings',
-        path: NOTIFICATION_SETTINGS_PATH,
-        icon: Settings2,
-        requiredResourceKey: 'APP.NOTIFICATIONS',
-        requiredPermissionCode: 'VIEW',
-      },
-    ],
-  },
-  {
-    id: 'administration',
-    items: [
-      {
-        section: 'administration',
-        view: 'admin-overview',
-        path: `${NOTIFICATION_ADMIN_BASE_PATH}/overview`,
-        icon: Activity,
-        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'administration',
-        view: 'admin-contracts',
-        path: `${NOTIFICATION_ADMIN_BASE_PATH}/contracts`,
-        icon: Braces,
-        requiredResourceKey: 'ADMIN.NOTIFICATION_CONTRACT',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'administration',
-        view: 'admin-operations',
-        path: `${NOTIFICATION_ADMIN_BASE_PATH}/operations`,
-        icon: Activity,
-        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
         requiredPermissionCode: 'VIEW',
       },
     ],

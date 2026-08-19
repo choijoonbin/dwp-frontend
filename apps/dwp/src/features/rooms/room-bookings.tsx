@@ -23,7 +23,8 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import { RoomBookingDialog } from './room-booking-dialog';
-import { RoomsPageHeading } from './rooms-ui';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
 
 import type { CalendarEvent } from '@dwp-frontend/shared-utils';
 
@@ -44,6 +45,7 @@ function queryRange(filter: BookingFilter) {
 export function RoomBookings() {
   const { t, i18n } = useTranslation('rooms');
   const auth = useAuth();
+  const capabilities = useRoomsCapabilities();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<BookingFilter>('upcoming');
@@ -114,6 +116,9 @@ export function RoomBookings() {
         title={t('my.title')}
         description={t('my.description')}
       />
+      {capabilities.isLoaded && !capabilities.canUpdateRoomBooking && (
+        <RoomsPermissionNotice>{t('permissions.roomUpdateReadOnly')}</RoomsPermissionNotice>
+      )}
       <Box
         sx={{
           bgcolor: 'background.paper',
@@ -224,36 +229,40 @@ export function RoomBookings() {
                     )}
                   </Box>
                   <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                    {!organizer && event.myResponse === 'NEEDS_ACTION' && (
-                      <>
-                        <ActionButton
-                          intent="secondary"
-                          onClick={() => responseMutation.mutate({ event, response: 'DECLINED' })}
-                        >
-                          {t('my.decline')}
-                        </ActionButton>
-                        <ActionButton
-                          intent="primary"
-                          onClick={() => responseMutation.mutate({ event, response: 'ACCEPTED' })}
-                        >
-                          {t('my.accept')}
-                        </ActionButton>
-                      </>
-                    )}
-                    {organizer && event.status !== 'CANCELLED' && (
-                      <>
-                        <ActionButton
-                          intent="secondary"
-                          startIcon={<Pencil size={16} />}
-                          onClick={() => setEditing(event)}
-                        >
-                          {t('actions.edit')}
-                        </ActionButton>
-                        <ActionButton intent="danger" onClick={() => setCancelling(event)}>
-                          {t('actions.cancelBooking')}
-                        </ActionButton>
-                      </>
-                    )}
+                    {capabilities.canUpdateRoomBooking &&
+                      !organizer &&
+                      event.myResponse === 'NEEDS_ACTION' && (
+                        <>
+                          <ActionButton
+                            intent="secondary"
+                            onClick={() => responseMutation.mutate({ event, response: 'DECLINED' })}
+                          >
+                            {t('my.decline')}
+                          </ActionButton>
+                          <ActionButton
+                            intent="primary"
+                            onClick={() => responseMutation.mutate({ event, response: 'ACCEPTED' })}
+                          >
+                            {t('my.accept')}
+                          </ActionButton>
+                        </>
+                      )}
+                    {capabilities.canUpdateRoomBooking &&
+                      organizer &&
+                      event.status !== 'CANCELLED' && (
+                        <>
+                          <ActionButton
+                            intent="secondary"
+                            startIcon={<Pencil size={16} />}
+                            onClick={() => setEditing(event)}
+                          >
+                            {t('actions.edit')}
+                          </ActionButton>
+                          <ActionButton intent="danger" onClick={() => setCancelling(event)}>
+                            {t('actions.cancelBooking')}
+                          </ActionButton>
+                        </>
+                      )}
                   </Stack>
                 </Stack>
                 {index < roomEvents.length - 1 && <Divider sx={{ display: 'none' }} />}

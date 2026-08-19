@@ -9,7 +9,7 @@ import {
 import { getTenantId } from '@dwp-frontend/shared-utils/tenant-util';
 
 const NOTIFICATION_STREAM_URL = '/api/notifications/v1/stream';
-const LIVE_CHANNEL_NAME = 'dwp:notification-live:v1';
+const LIVE_CHANNEL_PREFIX = 'dwp:notification-live:v1';
 const BASE_RETRY_DELAY_MS = 1_000;
 const MAX_RETRY_DELAY_MS = 30_000;
 
@@ -17,6 +17,19 @@ type LiveChannelMessage = {
   kind: 'notification.changed';
   signal: NotificationLiveSignal;
 };
+
+export function notificationLiveChannelName(tenantId: string): string {
+  const normalized = tenantId.trim();
+  if (!normalized) throw new Error('A tenant ID is required for notification live updates.');
+  return `${LIVE_CHANNEL_PREFIX}:${normalized}`;
+}
+
+export function parseNotificationLiveChannelMessage(value: unknown): NotificationLiveSignal | null {
+  if (!value || typeof value !== 'object') return null;
+  const message = value as Partial<LiveChannelMessage>;
+  if (message.kind !== 'notification.changed') return null;
+  return parseNotificationLiveSignal(message.signal);
+}
 
 /**
  * Owns one governed stream per browser profile. The elected tab reconciles SSE
@@ -29,10 +42,11 @@ export function NotificationLiveBridge() {
     if (!isAuthenticated || typeof ReadableStream === 'undefined') return undefined;
 
     const controller = new AbortController();
-    const channel =
-      typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel(LIVE_CHANNEL_NAME);
     const tenantId = getTenantId();
-    const lockName = `${LIVE_CHANNEL_NAME}:${tenantId}`;
+    const channelName = notificationLiveChannelName(tenantId);
+    const channel =
+      typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel(channelName);
+    const lockName = `${channelName}:leader`;
 
     const dispatch = (signal: NotificationLiveSignal) => {
       window.dispatchEvent(new CustomEvent(NOTIFICATION_LIVE_EVENT, { detail: signal }));
@@ -45,9 +59,7 @@ export function NotificationLiveBridge() {
 
     if (channel) {
       channel.onmessage = (event: MessageEvent<unknown>) => {
-        const message = event.data as Partial<LiveChannelMessage> | null;
-        if (message?.kind !== 'notification.changed') return;
-        const signal = parseNotificationLiveSignal(message.signal);
+        const signal = parseNotificationLiveChannelMessage(event.data);
         if (signal) dispatch(signal);
       };
     }

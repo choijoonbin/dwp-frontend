@@ -21,7 +21,9 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import { RoomsPageHeading } from './rooms-ui';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
+import { WorkplaceReleaseWindows } from './workplace-release-windows';
 
 import type { WorkplaceBooking } from '@dwp-frontend/shared-utils';
 
@@ -42,6 +44,7 @@ export function WorkplaceBookings() {
   const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const capabilities = useRoomsCapabilities();
   const [filter, setFilter] = useState<BookingFilter>('upcoming');
   const [confirming, setConfirming] = useState<BookingAction | null>(null);
   const range = useMemo(() => bookingRange(filter), [filter]);
@@ -82,6 +85,9 @@ export function WorkplaceBookings() {
       booking,
       action,
     }: BookingAction | { booking: WorkplaceBooking; action: 'check-in' }) => {
+      if (!capabilities.canUpdateWorkplaceBooking) {
+        throw new Error(t('permissions.workplaceUpdateReadOnly'));
+      }
       if (action === 'check-in') return checkInWorkplaceBooking(booking.bookingId, booking.version);
       if (action === 'release') return releaseWorkplaceBooking(booking.bookingId, booking.version);
       return cancelWorkplaceBooking(booking.bookingId, booking.version);
@@ -101,6 +107,9 @@ export function WorkplaceBookings() {
         title={t('workplace.my.title')}
         description={t('workplace.my.description')}
       />
+      {capabilities.isLoaded && !capabilities.canUpdateWorkplaceBooking && (
+        <RoomsPermissionNotice>{t('permissions.workplaceUpdateReadOnly')}</RoomsPermissionNotice>
+      )}
       <Box
         sx={{ border: 1, borderColor: 'divider', bgcolor: 'background.paper', overflow: 'hidden' }}
       >
@@ -188,7 +197,7 @@ export function WorkplaceBookings() {
                     </Typography>
                   )}
                 </Box>
-                {filter === 'upcoming' && (
+                {filter === 'upcoming' && capabilities.canUpdateWorkplaceBooking && (
                   <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
                     {booking.canCheckIn && (
                       <ActionButton
@@ -224,6 +233,7 @@ export function WorkplaceBookings() {
           );
         })}
       </Box>
+      <WorkplaceReleaseWindows />
       <ConfirmDialog
         open={Boolean(confirming)}
         title={t(

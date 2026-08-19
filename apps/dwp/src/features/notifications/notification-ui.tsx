@@ -203,8 +203,7 @@ export function NotificationItemRow({
     >
       <ButtonBase
         ref={rowRef}
-        role="option"
-        aria-selected={selected}
+        aria-pressed={selected}
         tabIndex={tabIndex}
         data-notification-focus-id={item.notificationId}
         onClick={onSelect}
@@ -299,7 +298,7 @@ export function NotificationItemRow({
               />
             )}
             <Typography variant="caption" color="text.secondary">
-              {item.reason.label || t(`reason.${item.reason.kind}`)}
+              {t(`reason.${item.reason.kind}`, { defaultValue: item.reason.label })}
             </Typography>
             {item.threadCount > 1 && (
               <Typography variant="caption" color="text.secondary">

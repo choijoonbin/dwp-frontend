@@ -1,7 +1,7 @@
 # DWP-R1-CORE-005 Notification Platform
 
 - Owner: Shared Experience Platform
-- 상태: `build-ready`
+- 상태: `foundation-pilot-implemented`
 - Roadmap: R1 Core Foundation
 - 사용자 제품명: `알림 센터`
 - 내부 도메인명: `notification`
@@ -22,23 +22,34 @@
 
 ## 현재 판정
 
-Header의 기존 알림은 정적 Badge와 두 항목만 가진 Prototype이다. 본 Package가 승인되기 전에는
-운영 가능한 알림 기능으로 간주하지 않는다.
+Direct Recipient 기반 In-app Foundation Pilot은 구현되어 실제 로컬 서비스와 데이터로 동작한다.
+Header Badge·Glance, 사용자 알림 센터, 개인 설정, Tenant 운영 개요·계약·전달 운영 화면은 각각의
+권한 경계와 Route로 분리했다. `/notifications`는 더 이상 설정·관리 화면의 링크 모음이 아니며,
+읽음·저장·나중에·완료·검색·필터·일괄 처리·수신 이유를 제공하는 사용자 Attention Center다.
 
 채택 구조는 `Kafka 업무 이벤트 + 전용 PostgreSQL Inbox·Delivery Job 원장 + Redis Live Hint +
 SSE·Version Sync + QoS Channel Adapter`다. PostgreSQL은 읽음·저장·완료·설정·감사 상태를
 보존하지만 앱 간 이벤트 Broker로 사용하지 않는다. Critical·Interactive·Bulk는 독립 실행 용량을
 가지며 Tenant별 Quota와 RLS를 적용한다.
 
-## 내부 Foundation 착수 판정
+## 구현 증거
 
-G0부터 G3까지의 제품·아키텍처·데이터·UX 명세와 최종 재검증이 완료되어 내부
-Foundation 구현을 시작할 수 있다. 구현 순서는 최종 검토서의 Build Sequence를 따르며,
-첫 Pilot Producer는 `결재 요청`, `직접 멘션`, `보안 조치` 세 개 이하로 제한한다.
+- 독립 `dwp-notification-server`, 전용 `dwp_notification` DB, V1-V7 Migration과 Runtime DB Role
+  분리·`FORCE RLS` Guard
+- 결재 Domain Event Kafka Pilot, 안정적 Event·Type Identity, 중복 억제와 논리 Thread 갱신
+- PostgreSQL 영속 Inbox·Summary·Preference·Admin Projection, Keyset Cursor와 낙관적 Version
+- Redis content-free Hint, SSE Catch-up, 30초 REST 동기화 Fallback과 연결 종료 정리
+- `/notifications`, `/account/settings/notifications`, `/admin/notifications/{overview,contracts,operations}`
+  정보구조와 권한 경계
+- In-app Capability만 활성화하고 Email·Web/Mobile Push·Teams·Slack·Quiet Hours·Digest는 Provider와
+  Tenant 운영 검증 전까지 비활성화
+- 브라우저에서 목록·상세·검색·Bulk·자동저장·복원·Admin 계약 조회를 실제 데이터로 검증
+- Frontend route·navigation·realtime·API 테스트, TypeScript·Architecture·i18n 검사 및 Backend
+  Notification 전체 테스트 통과
 
-### 단계별 내부 의존성
+### 남은 단계별 의존성
 
-- Direct Recipient In-app Pilot은 현재 Event Ledger를 사용해 바로 착수할 수 있다.
+- Direct Recipient In-app Pilot은 완료되었으며 현재 Event Ledger와 Gateway를 사용한다.
 - 조직·Role Audience는 People 내부 Target Population Snapshot Contract 완료 전 비활성화한다.
 - Email은 Auth Verified Contact Resolver, 발신 Domain 검증, Provider Callback·Suppression이
   준비되기 전 Sandbox Stub만 사용한다.
@@ -53,6 +64,6 @@ Foundation 구현을 시작할 수 있다. 구현 순서는 최종 검토서의 
 4. 실제 Provider·Credential·발신 Domain 승인과 Sandbox·Failure Drill 증거 확보
 5. Figma·Storybook·Playwright·접근성·부하·보안 증거로 G4 통과
 
-Service, Migration, API와 화면 구현은 아직 시작하지 않았다. 외부 결정 항목은 Interface·Stub·Test
-Harness 구현을 막지 않지만, 실제 Provider 연결과 Production 완료 판정은 G4 증거와 외부
-승인 Gate를 통과한 뒤에만 가능하다.
+Foundation 구현 완료는 Production 출시 완료를 뜻하지 않는다. 실제 외부 Provider 연결,
+People Target Population 기반 대규모 조직·Role Fan-out, Production HA·부하·장애·복구·보안 증거는
+G4와 외부 승인 Gate를 통과한 뒤에만 활성화한다.

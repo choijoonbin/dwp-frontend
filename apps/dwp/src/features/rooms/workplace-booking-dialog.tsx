@@ -19,6 +19,8 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import { validateWorkplaceBookingRange } from './workplace-time-policy';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomsPermissionNotice } from './rooms-ui';
 
 import type {
   WorkplaceBooking,
@@ -58,6 +60,7 @@ export function WorkplaceBookingDialog({
   const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { canCreateWorkplaceBooking } = useRoomsCapabilities();
   const [startsAt, setStartsAt] = useState(initialStart);
   const [endsAt, setEndsAt] = useState(initialEnd);
   const [purpose, setPurpose] = useState('');
@@ -78,6 +81,9 @@ export function WorkplaceBookingDialog({
   const mutation = useMutation({
     mutationFn: () => {
       if (!resource) throw new Error(t('workplace.booking.resourceRequired'));
+      if (!canCreateWorkplaceBooking) {
+        throw new Error(t('permissions.workplaceBookingReadOnly'));
+      }
       return createWorkplaceBooking({
         resourceId: resource.resourceId,
         startsAt,
@@ -104,12 +110,15 @@ export function WorkplaceBookingDialog({
       submitLabel={t('actions.book')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!resource || Boolean(rangeError)}
+      submitDisabled={!resource || Boolean(rangeError) || !canCreateWorkplaceBooking}
       onClose={onClose}
       onSubmit={() => mutation.mutate()}
       maxWidth="sm"
     >
       <Stack spacing={2}>
+        {!canCreateWorkplaceBooking && (
+          <RoomsPermissionNotice>{t('permissions.workplaceBookingReadOnly')}</RoomsPermissionNotice>
+        )}
         {resource && (
           <Box
             sx={{

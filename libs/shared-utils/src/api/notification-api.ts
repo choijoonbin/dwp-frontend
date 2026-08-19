@@ -24,12 +24,36 @@ export type NotificationEntityVersion = NotificationDecimalVersion;
 export type NotificationView = 'PRIORITY' | 'ALL' | 'MENTIONS' | 'SAVED' | 'SNOOZED' | 'DONE';
 export type NotificationPriority = 'URGENT' | 'HIGH' | 'NORMAL' | 'LOW';
 export type NotificationChannel =
-  'IN_APP' | 'EMAIL' | 'WEB_PUSH' | 'MOBILE_PUSH' | 'TEAMS' | 'SLACK';
+  | 'IN_APP'
+  | 'EMAIL'
+  | 'WEB_PUSH'
+  | 'MOBILE_PUSH'
+  | 'TEAMS'
+  | 'SLACK';
+export type NotificationCapabilities = {
+  enabledChannels: NotificationChannel[];
+  unavailableChannels: NotificationChannel[];
+  canonicalStore: 'POSTGRESQL';
+  realtimeTransport: 'SSE_HINT_WITH_DURABLE_SYNC';
+  externalDeliveryState: 'ENABLED' | 'DISABLED';
+  generatedAt: string;
+};
 export type NotificationDeliveryMode = 'IMMEDIATE' | 'DAILY_DIGEST' | 'WEEKLY_DIGEST' | 'MUTED';
 export type NotificationTriageAction =
-  'READ' | 'UNREAD' | 'SAVE' | 'UNSAVE' | 'COMPLETE' | 'RESTORE' | 'SNOOZE';
+  | 'READ'
+  | 'UNREAD'
+  | 'SAVE'
+  | 'UNSAVE'
+  | 'COMPLETE'
+  | 'RESTORE'
+  | 'SNOOZE';
 export type NotificationReasonKind =
-  'DIRECT' | 'MENTION' | 'ROLE' | 'ORGANIZATION' | 'SUBSCRIPTION' | 'MANDATORY_POLICY';
+  | 'DIRECT'
+  | 'MENTION'
+  | 'ROLE'
+  | 'ORGANIZATION'
+  | 'SUBSCRIPTION'
+  | 'MANDATORY_POLICY';
 
 export type NotificationSource = {
   appKey: string;
@@ -288,7 +312,12 @@ export type NotificationAdminOverview = NotificationPartialState & {
 };
 
 export type NotificationContractState =
-  'DRAFT' | 'IN_REVIEW' | 'ACTIVE' | 'DEPRECATED' | 'RETIRED' | 'QUARANTINED';
+  | 'DRAFT'
+  | 'IN_REVIEW'
+  | 'ACTIVE'
+  | 'DEPRECATED'
+  | 'RETIRED'
+  | 'QUARANTINED';
 
 export type NotificationTypeContract = {
   contractId: string;
@@ -439,9 +468,6 @@ const SYNC_RESET_SIGNAL_KEYS = new Set(['errorCode']);
 export function normalizeNotificationDecimalVersion(
   value: unknown
 ): NotificationDecimalVersion | null {
-  if (typeof value === 'number') {
-    return Number.isSafeInteger(value) && value >= 0 ? String(value) : null;
-  }
   if (typeof value !== 'string') return null;
   return DECIMAL_VERSION_PATTERN.test(value) ? value : null;
 }
@@ -501,6 +527,16 @@ export function getNotificationSummary(signal?: AbortSignal): Promise<Notificati
     .then((response) => response.data.data);
 }
 
+export function getNotificationCapabilities(
+  signal?: AbortSignal
+): Promise<NotificationCapabilities> {
+  return axiosInstance
+    .get<ApiResponse<NotificationCapabilities>>(`${NOTIFICATION_API_BASE}/capabilities`, {
+      signal,
+    })
+    .then((response) => response.data.data);
+}
+
 export function getNotificationSync(
   input: NotificationSyncQuery,
   signal?: AbortSignal
@@ -555,10 +591,9 @@ export function getNotificationDetail(
   signal?: AbortSignal
 ): Promise<NotificationDetail> {
   return axiosInstance
-    .get<ApiResponse<NotificationDetail>>(
-      `${NOTIFICATION_API_BASE}/inbox/${encodeURIComponent(notificationId)}`,
-      { signal }
-    )
+    .get<
+      ApiResponse<NotificationDetail>
+    >(`${NOTIFICATION_API_BASE}/inbox/${encodeURIComponent(notificationId)}`, { signal })
     .then((response) => response.data.data);
 }
 
@@ -609,18 +644,14 @@ export function applyNotificationTriage(
     throw new Error('Snooze actions require snoozedUntil.');
   }
   const body = {
-    expectedVersion: requireNotificationDecimalVersion(
-      input.expectedVersion,
-      'expectedVersion'
-    ),
+    expectedVersion: requireNotificationDecimalVersion(input.expectedVersion, 'expectedVersion'),
     ...(input.action === 'SNOOZE' ? { snoozedUntil: input.snoozedUntil } : {}),
   };
   return axiosInstance
-    .post<ApiResponse<NotificationTriageResult>, typeof body>(
-      `${NOTIFICATION_API_BASE}/inbox/${encodeURIComponent(notificationId)}/${ACTION_PATH[input.action]}`,
-      body,
-      { headers: mutationHeaders(input.idempotencyKey) }
-    )
+    .post<
+      ApiResponse<NotificationTriageResult>,
+      typeof body
+    >(`${NOTIFICATION_API_BASE}/inbox/${encodeURIComponent(notificationId)}/${ACTION_PATH[input.action]}`, body, { headers: mutationHeaders(input.idempotencyKey) })
     .then((response) => response.data.data);
 }
 
@@ -645,11 +676,10 @@ export function applyNotificationBulkAction(input: {
     ...(input.action === 'SNOOZE' ? { snoozedUntil: input.snoozedUntil } : {}),
   };
   return axiosInstance
-    .post<ApiResponse<NotificationBulkResult>, typeof body>(
-      `${NOTIFICATION_API_BASE}/inbox/bulk-actions`,
-      body,
-      { headers: mutationHeaders(input.idempotencyKey) }
-    )
+    .post<
+      ApiResponse<NotificationBulkResult>,
+      typeof body
+    >(`${NOTIFICATION_API_BASE}/inbox/bulk-actions`, body, { headers: mutationHeaders(input.idempotencyKey) })
     .then((response) => response.data.data);
 }
 
@@ -672,11 +702,10 @@ export function updateNotificationDeliveryProfile(
     version: requireNotificationDecimalVersion(input.version, 'version'),
   };
   return axiosInstance
-    .put<ApiResponse<NotificationDeliveryProfile>, typeof body>(
-      `${NOTIFICATION_API_BASE}/me/delivery-profile`,
-      body,
-      { headers: mutationHeaders(idempotencyKey) }
-    )
+    .put<
+      ApiResponse<NotificationDeliveryProfile>,
+      typeof body
+    >(`${NOTIFICATION_API_BASE}/me/delivery-profile`, body, { headers: mutationHeaders(idempotencyKey) })
     .then((response) => response.data.data);
 }
 
@@ -684,10 +713,9 @@ export function getNotificationSubscriptionRules(
   signal?: AbortSignal
 ): Promise<NotificationSubscriptionRule[]> {
   return axiosInstance
-    .get<ApiResponse<NotificationSubscriptionRule[]>>(
-      `${NOTIFICATION_API_BASE}/me/subscription-rules`,
-      { signal }
-    )
+    .get<
+      ApiResponse<NotificationSubscriptionRule[]>
+    >(`${NOTIFICATION_API_BASE}/me/subscription-rules`, { signal })
     .then((response) => response.data.data);
 }
 
@@ -695,10 +723,9 @@ export function getNotificationEffectiveSettings(
   signal?: AbortSignal
 ): Promise<NotificationEffectiveSettings> {
   return axiosInstance
-    .get<ApiResponse<NotificationEffectiveSettings>>(
-      `${NOTIFICATION_API_BASE}/me/effective-settings`,
-      { signal }
-    )
+    .get<
+      ApiResponse<NotificationEffectiveSettings>
+    >(`${NOTIFICATION_API_BASE}/me/effective-settings`, { signal })
     .then((response) => response.data.data);
 }
 
@@ -719,11 +746,10 @@ export function putNotificationSubscriptionRule(
         }),
   };
   return axiosInstance
-    .put<ApiResponse<NotificationSubscriptionRule>, typeof body>(
-      `${NOTIFICATION_API_BASE}/me/subscription-rules/${encodeURIComponent(ruleId)}`,
-      body,
-      { headers: mutationHeaders(idempotencyKey) }
-    )
+    .put<
+      ApiResponse<NotificationSubscriptionRule>,
+      typeof body
+    >(`${NOTIFICATION_API_BASE}/me/subscription-rules/${encodeURIComponent(ruleId)}`, body, { headers: mutationHeaders(idempotencyKey) })
     .then((response) => response.data.data);
 }
 
@@ -736,10 +762,9 @@ export function deleteNotificationSubscriptionRule(
     expectedVersion: requireNotificationDecimalVersion(expectedVersion, 'expectedVersion'),
   });
   return axiosInstance
-    .delete<ApiResponse<void>>(
-      `${NOTIFICATION_API_BASE}/me/subscription-rules/${encodeURIComponent(ruleId)}${query}`,
-      { headers: mutationHeaders(idempotencyKey) }
-    )
+    .delete<
+      ApiResponse<void>
+    >(`${NOTIFICATION_API_BASE}/me/subscription-rules/${encodeURIComponent(ruleId)}${query}`, { headers: mutationHeaders(idempotencyKey) })
     .then(() => undefined);
 }
 
@@ -771,10 +796,9 @@ export function getNotificationTypeContracts(
     appKey: input.appKey,
   });
   return axiosInstance
-    .get<ApiResponse<NotificationTypeContractPage>>(
-      `${NOTIFICATION_API_BASE}/admin/types${query}`,
-      { signal }
-    )
+    .get<
+      ApiResponse<NotificationTypeContractPage>
+    >(`${NOTIFICATION_API_BASE}/admin/types${query}`, { signal })
     .then((response) => response.data.data);
 }
 

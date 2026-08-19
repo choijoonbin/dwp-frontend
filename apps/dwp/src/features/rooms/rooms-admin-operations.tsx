@@ -24,7 +24,8 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { RoomIdentity, RoomsPageHeading, RoomStateChip } from './rooms-ui';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomIdentity, RoomsPageHeading, RoomsPermissionNotice, RoomStateChip } from './rooms-ui';
 
 import type { CalendarBooking } from '@dwp-frontend/shared-utils';
 
@@ -34,6 +35,7 @@ export function RoomsAdminOperations() {
   const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const capabilities = useRoomsCapabilities();
   const [decision, setDecision] = useState<Decision | null>(null);
   const [note, setNote] = useState('');
   const overviewQuery = useQuery({
@@ -58,8 +60,12 @@ export function RoomsAdminOperations() {
   );
   const pending = (pendingQuery.data ?? []).filter((booking) => roomIds.has(booking.resourceId));
   const mutation = useMutation({
-    mutationFn: ({ booking, value }: Decision) =>
-      decideRoomBooking(booking.bookingId, value, note.trim(), booking.version),
+    mutationFn: ({ booking, value }: Decision) => {
+      if (!capabilities.canManageRoomsAdmin) {
+        throw new Error(t('permissions.roomAdminOperationsReadOnly'));
+      }
+      return decideRoomBooking(booking.bookingId, value, note.trim(), booking.version);
+    },
     onSuccess: async () => {
       setDecision(null);
       setNote('');
@@ -96,6 +102,11 @@ export function RoomsAdminOperations() {
         title={t('admin.operations.title')}
         description={t('admin.operations.description')}
       />
+      {capabilities.isLoaded && !capabilities.canManageRoomsAdmin && (
+        <RoomsPermissionNotice>
+          {t('permissions.roomAdminOperationsReadOnly')}
+        </RoomsPermissionNotice>
+      )}
       {overviewQuery.isError || pendingQuery.isError ? (
         <Alert
           severity="error"
@@ -214,20 +225,22 @@ export function RoomsAdminOperations() {
                       {booking.organizerName} · {booking.organizerEmail}
                     </Typography>
                   </Box>
-                  <Stack direction="row" gap={1} alignItems="center">
-                    <ActionButton
-                      intent="danger"
-                      onClick={() => setDecision({ booking, value: 'DECLINE' })}
-                    >
-                      {t('admin.operations.decline')}
-                    </ActionButton>
-                    <ActionButton
-                      intent="primary"
-                      onClick={() => setDecision({ booking, value: 'APPROVE' })}
-                    >
-                      {t('admin.operations.approve')}
-                    </ActionButton>
-                  </Stack>
+                  {capabilities.canManageRoomsAdmin && (
+                    <Stack direction="row" gap={1} alignItems="center">
+                      <ActionButton
+                        intent="danger"
+                        onClick={() => setDecision({ booking, value: 'DECLINE' })}
+                      >
+                        {t('admin.operations.decline')}
+                      </ActionButton>
+                      <ActionButton
+                        intent="primary"
+                        onClick={() => setDecision({ booking, value: 'APPROVE' })}
+                      >
+                        {t('admin.operations.approve')}
+                      </ActionButton>
+                    </Stack>
+                  )}
                 </Stack>
               </Box>
             ))
@@ -285,6 +298,7 @@ export function RoomsAdminOperations() {
         submittingLabel={t('actions.saving')}
         submitIntent={decision?.value === 'DECLINE' ? 'danger' : 'primary'}
         busy={mutation.isPending}
+        submitDisabled={!capabilities.canManageRoomsAdmin}
         onClose={() => {
           setDecision(null);
           setNote('');

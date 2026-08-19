@@ -1708,6 +1708,9 @@ export async function mockShellSession(
         generatedAt: '2026-08-19T00:20:00Z',
       });
     }
+    if (path === '/api/platform/v1/rooms/policy') {
+      return fulfillSuccess(route, CALENDAR_ADMIN_FIXTURE.policy);
+    }
     if (path === '/api/platform/v1/rooms/bookings') {
       return fulfillSuccess(
         route,

@@ -682,8 +682,8 @@ export function NavigationManager() {
   );
   const dirty = Boolean(
     draft &&
-    (treeFingerprint(tree) !== treeFingerprint(draft.tree) ||
-      changeSummary !== (draft.changeSummary ?? ''))
+      (treeFingerprint(tree) !== treeFingerprint(draft.tree) ||
+        changeSummary !== (draft.changeSummary ?? ''))
   );
   const validation = draft?.validation ?? workspace.data?.currentValidation;
   const diff = draft?.diff ?? EMPTY_DIFF;

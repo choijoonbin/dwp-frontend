@@ -309,6 +309,7 @@ function outcomeDescription(
     CONTEXT_BROKER_CONFIGURATION_REQUIRED: 'contextConfiguration',
     MODEL_ROUTE_CONFIGURATION_REQUIRED: 'modelConfiguration',
     ASK_PERMISSION_REQUIRED: 'permissionRequired',
+    PROMPT_INJECTION_BLOCKED: 'promptInjectionBlocked',
     PRIVILEGED_DATA_HANDOFF: 'privilegedHandoff',
     MUTATION_REQUIRES_GOVERNED_WORKFLOW: 'mutationHandoff',
     NO_GROUNDED_SOURCE: 'noSource',

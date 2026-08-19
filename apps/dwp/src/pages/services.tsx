@@ -3,29 +3,26 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
   ArrowRight,
-  Building2,
   CalendarDays,
   CheckCircle2,
   Clock3,
   FileClock,
   LifeBuoy,
-  MonitorCog,
   PencilLine,
   Search,
   ShieldCheck,
-  ShoppingBag,
-  Sparkles,
   UsersRound,
-  WalletCards,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   cancelServiceRequest,
   createServiceRequest,
+  dwaionHandoffText,
   getMyServiceRequest,
   getMyServiceRequests,
   getServiceCatalog,
+  parseDwaionHandoff,
   submitServiceDraft,
   updateServiceDraft,
   useToast,
@@ -62,29 +59,13 @@ import Typography from '@mui/material/Typography';
 
 import type {
   ServiceCatalogItem,
-  ServiceCategory,
   ServiceRequestDetail,
   ServiceRequestField,
   ServiceRequestStatus,
   ServiceRequestSummary,
 } from '@dwp-frontend/shared-utils';
-import type { LucideIcon } from 'lucide-react';
 
-const categoryIcons: Record<string, LucideIcon> = {
-  TECHNOLOGY: MonitorCog,
-  PEOPLE: UsersRound,
-  WORKPLACE: Building2,
-  FINANCE: WalletCards,
-  PROCUREMENT: ShoppingBag,
-};
-
-const categoryColors: Record<string, { color: string; background: string }> = {
-  BLUE: { color: '#175CD3', background: '#E9F2FF' },
-  GREEN: { color: '#087A5B', background: '#E7F6F0' },
-  TEAL: { color: '#087A85', background: '#E6F6F7' },
-  AMBER: { color: '#A15C00', background: '#FFF2D8' },
-  CORAL: { color: '#B23A3A', background: '#FDECEC' },
-};
+import { ServiceCatalogCard } from '../features/services/service-catalog-card';
 
 const statusColors: Record<
   ServiceRequestStatus,
@@ -136,10 +117,14 @@ function StatusChip({ status }: { status: ServiceRequestStatus }) {
 function RequestDialog({
   service,
   draft,
+  initialSummary = '',
+  fromDwaion = false,
   onClose,
 }: {
   service: ServiceCatalogItem | null;
   draft?: ServiceRequestDetail | null;
+  initialSummary?: string;
+  fromDwaion?: boolean;
   onClose: () => void;
 }) {
   const { t, i18n } = useTranslation('services');
@@ -161,18 +146,18 @@ function RequestDialog({
       setValues(draft.values);
       setValidationVisible(false);
     } else if (service) {
-      setSummary('');
+      setSummary(initialSummary);
       setValues({});
       setValidationVisible(false);
     }
-  }, [draft, service]);
+  }, [draft, initialSummary, service]);
   const valid = Boolean(
     summary.trim() &&
-    fields.every((field) => {
-      if (!field.required) return true;
-      const value = values[field.key];
-      return value !== undefined && value !== null && value !== '' && value !== false;
-    })
+      fields.every((field) => {
+        if (!field.required) return true;
+        const value = values[field.key];
+        return value !== undefined && value !== null && value !== '' && value !== false;
+      })
   );
   const mutation = useMutation({
     mutationFn: async ({ submit }: { submit: boolean }) => {
@@ -323,6 +308,7 @@ function RequestDialog({
     >
       {open && classification && (
         <Stack gap={2.25}>
+          {fromDwaion && <Alert severity="info">{t('requestDialog.dwaionDraftNotice')}</Alert>}
           <Alert severity="info" icon={<ShieldCheck size={18} />}>
             {t('requestDialog.privacy', {
               classification: t(`classification.${classification}`),
@@ -359,101 +345,21 @@ function RequestDialog({
   );
 }
 
-function ServiceCard({
-  item,
-  category,
-  onRequest,
-}: {
-  item: ServiceCatalogItem;
-  category?: ServiceCategory;
-  onRequest: (item: ServiceCatalogItem) => void;
-}) {
-  const { t } = useTranslation('services');
-  const Icon = categoryIcons[item.categoryKey] ?? LifeBuoy;
-  const tone = categoryColors[category?.tone ?? 'BLUE'] ?? categoryColors.BLUE;
-  return (
-    <Box
-      component="article"
-      sx={{
-        minHeight: 228,
-        p: 2.5,
-        display: 'flex',
-        flexDirection: 'column',
-        border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
-        bgcolor: 'background.paper',
-        transition: 'transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: '0 12px 30px rgba(16, 24, 40, 0.08)',
-          borderColor: 'primary.light',
-        },
-      }}
-    >
-      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={1}>
-        <Box
-          aria-hidden="true"
-          sx={{
-            width: 42,
-            height: 42,
-            display: 'grid',
-            placeItems: 'center',
-            color: tone.color,
-            bgcolor: tone.background,
-            borderRadius: 1,
-          }}
-        >
-          <Icon size={21} strokeWidth={1.8} />
-        </Box>
-        {item.featured && (
-          <Chip
-            size="small"
-            icon={<Sparkles size={13} />}
-            label={t('discover.featuredBadge')}
-            color="primary"
-            variant="outlined"
-          />
-        )}
-      </Stack>
-      <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ mt: 2 }}>
-        {item.name}
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, flex: 1 }}>
-        {item.description}
-      </Typography>
-      <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 2 }}>
-        <Chip
-          size="small"
-          variant="outlined"
-          label={t('discover.estimate', { hours: item.estimatedResolutionHours })}
-        />
-        <Chip
-          size="small"
-          variant="outlined"
-          label={t('discover.classification', {
-            level: t(`classification.${item.dataClassification}`),
-          })}
-        />
-      </Stack>
-      <ActionButton
-        intent="quiet"
-        endIcon={<ArrowRight size={16} />}
-        onClick={() => onRequest(item)}
-        sx={{ alignSelf: 'flex-start', mt: 1.5, px: 0.5 }}
-      >
-        {t('discover.request')}
-      </ActionButton>
-    </Box>
-  );
-}
-
 function DiscoverView() {
   const { t } = useTranslation('services');
+  const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState('');
   const [categoryKey, setCategoryKey] = useState(searchParams.get('category') ?? 'ALL');
   const [requesting, setRequesting] = useState<ServiceCatalogItem | null>(null);
+  const [dwaionSummary, setDwaionSummary] = useState('');
+  const [dwaionCategory, setDwaionCategory] = useState('');
+  const [dwaionDraft, setDwaionDraft] = useState(false);
+  const dwaionHandoff = useMemo(
+    () => parseDwaionHandoff(location.state, 'SERVICE.REQUEST.CREATE'),
+    [location.state]
+  );
   const catalog = useQuery({
     queryKey: ['services', 'catalog'],
     queryFn: getServiceCatalog,
@@ -478,6 +384,26 @@ function DiscoverView() {
     });
   }, [catalog.data?.items, categoryKey, query]);
   const featured = (catalog.data?.items ?? []).filter((item) => item.featured).slice(0, 4);
+
+  useEffect(() => {
+    if (!dwaionHandoff) return;
+    setDwaionSummary(dwaionHandoffText(dwaionHandoff, 'requestSummary') ?? '');
+    setDwaionCategory(dwaionHandoffText(dwaionHandoff, 'serviceCategory') ?? '');
+    setDwaionDraft(true);
+    navigate(
+      { pathname: location.pathname, search: location.search },
+      { replace: true, state: null }
+    );
+  }, [dwaionHandoff, location.pathname, location.search, navigate]);
+
+  useEffect(() => {
+    if (
+      dwaionCategory &&
+      catalog.data?.categories.some((category) => category.categoryKey === dwaionCategory)
+    ) {
+      setCategoryKey(dwaionCategory);
+    }
+  }, [catalog.data?.categories, dwaionCategory]);
 
   useEffect(() => {
     const requestedService = searchParams.get('service');
@@ -553,6 +479,41 @@ function DiscoverView() {
       </Box>
       <PageCanvas>
         <Box sx={{ pt: { xs: 3, md: 4 }, pb: 8 }}>
+          {dwaionDraft && dwaionSummary && (
+            <Alert
+              severity="info"
+              icon={<ShieldCheck size={19} />}
+              action={
+                <ActionButton
+                  intent="quiet"
+                  size="small"
+                  onClick={() => {
+                    setDwaionSummary('');
+                    setDwaionCategory('');
+                    setDwaionDraft(false);
+                  }}
+                >
+                  {t('discover.dwaionDraftDismiss')}
+                </ActionButton>
+              }
+              sx={{ mb: 3, alignItems: 'flex-start' }}
+            >
+              <Typography variant="subtitle2" fontWeight={800}>
+                {t('discover.dwaionDraftTitle')}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.25 }}>
+                {t('discover.dwaionDraftDescription')}
+              </Typography>
+              <Typography
+                component="blockquote"
+                variant="body2"
+                fontWeight={650}
+                sx={{ m: 0, mt: 1, overflowWrap: 'anywhere' }}
+              >
+                {dwaionSummary}
+              </Typography>
+            </Alert>
+          )}
           {catalog.isLoading ? (
             <Box
               sx={{
@@ -592,7 +553,7 @@ function DiscoverView() {
                     }}
                   >
                     {featured.map((item) => (
-                      <ServiceCard
+                      <ServiceCatalogCard
                         key={item.serviceKey}
                         item={item}
                         category={categoryMap.get(item.categoryKey)}
@@ -647,7 +608,7 @@ function DiscoverView() {
                     }}
                   >
                     {filtered.map((item) => (
-                      <ServiceCard
+                      <ServiceCatalogCard
                         key={item.serviceKey}
                         item={item}
                         category={categoryMap.get(item.categoryKey)}
@@ -672,7 +633,17 @@ function DiscoverView() {
           )}
         </Box>
       </PageCanvas>
-      <RequestDialog service={requesting} onClose={() => setRequesting(null)} />
+      <RequestDialog
+        service={requesting}
+        initialSummary={dwaionSummary}
+        fromDwaion={dwaionDraft}
+        onClose={() => {
+          setRequesting(null);
+          setDwaionSummary('');
+          setDwaionCategory('');
+          setDwaionDraft(false);
+        }}
+      />
     </>
   );
 }

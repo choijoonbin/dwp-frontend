@@ -1,6 +1,7 @@
 import {
   Archive,
   BadgeCheck,
+  CheckCircle2,
   ClipboardCheck,
   FileInput,
   FilePenLine,
@@ -21,6 +22,7 @@ import type { ProductAreaNavigationGroup } from '../../layouts/product-area-layo
 export type ApprovalView =
   | 'home'
   | 'inbox'
+  | 'completed'
   | 'new'
   | 'drafts'
   | 'submitted'
@@ -41,6 +43,7 @@ export type ApprovalNavigationItem = {
   requiredResourceKey?: string;
   requiredPermissionCode?: string;
   requiredAnyPermissionCodes?: readonly string[];
+  requiredAllPermissionCodes?: readonly string[];
 };
 
 export const APPROVAL_NAVIGATION = [
@@ -59,11 +62,18 @@ export const APPROVAL_NAVIGATION = [
         requiredPermissionCode: 'VIEW',
       },
       {
+        view: 'completed',
+        path: '/approvals/completed',
+        icon: CheckCircle2,
+        requiredResourceKey: 'ACTION.APPROVAL_TASK',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
         view: 'new',
         path: '/approvals/requests/new',
         icon: FileInput,
         requiredResourceKey: 'ACTION.APPROVAL_REQUEST',
-        requiredPermissionCode: 'CREATE',
+        requiredAllPermissionCodes: ['CREATE', 'UPDATE'],
       },
       {
         view: 'drafts',

@@ -850,6 +850,7 @@ export const APPROVAL_TASK_DETAIL_FIXTURE = {
     expiresOn: '2026-08-12',
     dataScope: 'Tenant-scoped diagnostic events',
   },
+  formSchema: APPROVAL_FORM_DETAIL_FIXTURE.schema,
   timeline: [
     {
       eventId: 'approval-event-001',
@@ -871,6 +872,7 @@ export const APPROVAL_REQUEST_DETAIL_FIXTURE = {
   workflowId: APPROVAL_WORKFLOW_FIXTURE.workflowId,
   formId: APPROVAL_FORM_FIXTURE.formId,
   payload: APPROVAL_TASK_DETAIL_FIXTURE.payload,
+  formSchema: APPROVAL_FORM_DETAIL_FIXTURE.schema,
   timeline: APPROVAL_TASK_DETAIL_FIXTURE.timeline,
 } satisfies ApprovalRequestDetail;
 

@@ -17,6 +17,7 @@ const APPROVAL_MEMBER_PERMISSIONS = [
   },
   ...[
     ['ACTION.APPROVAL_TASK', 'VIEW'],
+    ['ACTION.APPROVAL_TASK', 'UPDATE'],
     ['ACTION.APPROVAL_TASK', 'APPROVE'],
     ['ACTION.APPROVAL_REQUEST', 'VIEW'],
     ['ACTION.APPROVAL_REQUEST', 'CREATE'],
@@ -309,9 +310,7 @@ test('기안자는 게시 양식을 선택하고 제출 전에 단계별 결재�
   expect(accessibility.violations).toEqual([]);
 });
 
-test('기안자는 필수 업무값이 비어 있어도 초안을 저장하고 상신은 할 수 없다', async ({
-  page,
-}) => {
+test('기안자는 필수 업무값이 비어 있어도 초안을 저장하고 상신은 할 수 없다', async ({ page }) => {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'ko',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
@@ -333,13 +332,15 @@ test('기안자는 필수 업무값이 비어 있어도 초안을 저장하고 �
 
   await expect(page).toHaveURL(/\/approvals\/requests\/drafts$/u);
   expect(draftBody).toEqual(
-    expect.objectContaining({ title: '', summary: '', payload: expect.objectContaining({ summary: '' }) })
+    expect.objectContaining({
+      title: '',
+      summary: '',
+      payload: expect.objectContaining({ summary: '' }),
+    })
   );
 });
 
-test('AI 딥링크 대상 결재를 자동 선택하고 후보 업무를 명시적으로 가져온다', async ({
-  page,
-}) => {
+test('AI 딥링크 대상 결재를 자동 선택하고 후보 업무를 명시적으로 가져온다', async ({ page }) => {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'ko',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
@@ -364,6 +365,93 @@ test('AI 딥링크 대상 결재를 자동 선택하고 후보 업무를 명시�
   await page.getByRole('button', { name: '내 업무로 가져오기' }).click();
   await expect(page.getByRole('button', { name: '내 업무로 가져오기' })).toHaveCount(0);
   expect(claimBody).toEqual({ expectedVersion: 3 });
+});
+
+test('내 처리 완료함은 실제 완료 결정 증적을 읽기 전용으로 제공한다', async ({ page }) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  const completedTask = {
+    ...APPROVAL_TASK_DETAIL_FIXTURE.task,
+    status: 'APPROVED' as const,
+    version: 4,
+  };
+  await page.route('**/api/approvals/v1/tasks?view=COMPLETED*', (route) =>
+    fulfillSuccess(route, [completedTask])
+  );
+  await page.route('**/api/approvals/v1/tasks/approval-task-001', (route) =>
+    fulfillSuccess(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      task: completedTask,
+      timeline: APPROVAL_TASK_DETAIL_FIXTURE.timeline.map((event) => ({
+        ...event,
+        actorDisplayName: '박지호',
+        stepName: '보안 검토',
+        stepSequence: 2,
+        delegated: false,
+      })),
+      canClaim: false,
+      canDecide: false,
+    })
+  );
+
+  await page.goto('/approvals/completed');
+
+  await expect(page.getByRole('heading', { name: '내 처리 완료함', level: 1 })).toBeVisible();
+  await expect(page.getByText('실제 결정자 증거를 기준으로 표시')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Customer data access exception' })).toBeVisible();
+  await expect(page.getByText(/2단계 보안 검토 · 박지호/u)).toBeVisible();
+  await expect(page.getByRole('button', { name: '승인' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '반려' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '보완 요청' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '내 업무로 가져오기' })).toHaveCount(0);
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
+});
+
+test('completed decision history is fully localized and read-only in English', async ({ page }) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'en',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  const completedTask = {
+    ...APPROVAL_TASK_DETAIL_FIXTURE.task,
+    status: 'APPROVED' as const,
+    version: 4,
+  };
+  await page.route('**/api/approvals/v1/tasks?view=COMPLETED*', (route) =>
+    fulfillSuccess(route, [completedTask])
+  );
+  await page.route('**/api/approvals/v1/tasks/approval-task-001', (route) =>
+    fulfillSuccess(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      task: completedTask,
+      timeline: APPROVAL_TASK_DETAIL_FIXTURE.timeline.map((event) => ({
+        ...event,
+        actorDisplayName: 'Jihun Park',
+        stepName: 'Security review',
+        stepSequence: 2,
+        delegated: false,
+      })),
+      canClaim: false,
+      canDecide: false,
+    })
+  );
+
+  await page.goto('/approvals/completed');
+
+  await expect(
+    page.getByRole('heading', { name: 'My completed decisions', level: 1 })
+  ).toBeVisible();
+  await expect(page.getByText('Scoped by recorded decision actor')).toBeVisible();
+  await expect(page.getByText(/Step 2 · Security review · Jihun Park/u)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Approve' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Reject' })).toHaveCount(0);
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
 });
 
 test('보완 요청자는 검토한 버전에 답변과 수정 필드를 함께 제출한다', async ({ page }) => {
@@ -401,8 +489,9 @@ test('보완 요청자는 검토한 버전에 답변과 수정 필드를 함께 
     .getByRole('textbox', { name: '보완 답변' })
     .fill('요청하신 업무 사유와 기간을 보완했습니다.');
   await dialog
-    .getByLabel('businessReason')
+    .getByLabel('업무 사유')
     .fill('Production investigation approved for the minimum required support window.');
+  await expect(dialog.getByRole('group', { name: '만료일' })).toBeVisible();
   await dialog.getByRole('button', { name: '답변 제출' }).click();
 
   expect(responseBody).toEqual(

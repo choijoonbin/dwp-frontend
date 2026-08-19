@@ -100,6 +100,7 @@
   "event": {
     "createTitle": "Create a new event",
     "createDescription": "Connect people, time, and place in one step.",
+    "dwaionDraftNotice": "This is a review draft handed off by DWAI·ON. Check the date, time, attendees, and content before saving it yourself.",
     "editTitle": "Edit event",
     "editDescription": "Saved changes are reflected in attendee schedules immediately.",
     "created": "Event created.",

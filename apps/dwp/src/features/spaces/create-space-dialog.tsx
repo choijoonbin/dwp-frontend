@@ -97,10 +97,10 @@ export function CreateSpaceDialog({ open, onClose, initialTemplateId }: CreateSp
   };
   const valid = Boolean(
     templateId &&
-    name.trim().length >= 2 &&
-    SLUG_PATTERN.test(key) &&
-    summary.trim().length >= 10 &&
-    justification.trim().length >= 10
+      name.trim().length >= 2 &&
+      SLUG_PATTERN.test(key) &&
+      summary.trim().length >= 10 &&
+      justification.trim().length >= 10
   );
 
   return (

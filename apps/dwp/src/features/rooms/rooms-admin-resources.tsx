@@ -21,7 +21,8 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { RoomIdentity, RoomsPageHeading, RoomStateChip } from './rooms-ui';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomIdentity, RoomsPageHeading, RoomsPermissionNotice, RoomStateChip } from './rooms-ui';
 
 import type {
   CalendarResource,
@@ -74,10 +75,12 @@ function formFor(resource: CalendarResource | null): FormState {
 function RoomResourceDialog({
   open,
   resource,
+  canSave,
   onClose,
 }: {
   open: boolean;
   resource: CalendarResource | null;
+  canSave: boolean;
   onClose: () => void;
 }) {
   const { t } = useTranslation('rooms');
@@ -95,13 +98,14 @@ function RoomResourceDialog({
     setForm((current) => ({ ...current, [key]: value }));
   const valid = Boolean(
     /^[A-Z0-9][A-Z0-9_-]{2,79}$/u.test(form.code) &&
-    form.nameKo.trim() &&
-    form.nameEn.trim() &&
-    form.site.trim() &&
-    Number(form.capacity) >= 1
+      form.nameKo.trim() &&
+      form.nameEn.trim() &&
+      form.site.trim() &&
+      Number(form.capacity) >= 1
   );
   const mutation = useMutation({
     mutationFn: () => {
+      if (!canSave) throw new Error(t('permissions.roomAdminCatalogReadOnly'));
       const input: CalendarResourceInput = {
         code: form.code,
         nameKo: form.nameKo.trim(),
@@ -139,7 +143,7 @@ function RoomResourceDialog({
       cancelLabel={t('actions.cancel')}
       submitLabel={t('actions.save')}
       submittingLabel={t('actions.saving')}
-      submitDisabled={!valid}
+      submitDisabled={!valid || !canSave}
       busy={mutation.isPending}
       onClose={onClose}
       onSubmit={() => {
@@ -152,6 +156,9 @@ function RoomResourceDialog({
       maxWidth="md"
     >
       <Stack spacing={2}>
+        {!canSave && (
+          <RoomsPermissionNotice>{t('permissions.roomAdminCatalogReadOnly')}</RoomsPermissionNotice>
+        )}
         <Box
           sx={{
             display: 'grid',
@@ -250,6 +257,7 @@ function RoomResourceDialog({
 
 export function RoomsAdminResources() {
   const { t } = useTranslation('rooms');
+  const capabilities = useRoomsCapabilities();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<CalendarResource | null>(null);
   const overviewQuery = useQuery({
@@ -276,11 +284,18 @@ export function RoomsAdminResources() {
         title={t('admin.resources.title')}
         description={t('admin.resources.description')}
         actions={
-          <ActionButton intent="primary" startIcon={<Plus size={17} />} onClick={openCreate}>
-            {t('admin.resources.add')}
-          </ActionButton>
+          capabilities.canCreateRoomsAdmin ? (
+            <ActionButton intent="primary" startIcon={<Plus size={17} />} onClick={openCreate}>
+              {t('admin.resources.add')}
+            </ActionButton>
+          ) : null
         }
       />
+      {capabilities.isLoaded &&
+        !capabilities.canCreateRoomsAdmin &&
+        !capabilities.canUpdateRoomsAdmin && (
+          <RoomsPermissionNotice>{t('permissions.roomAdminCatalogReadOnly')}</RoomsPermissionNotice>
+        )}
       <Box
         sx={{
           bgcolor: 'background.paper',
@@ -323,8 +338,8 @@ export function RoomsAdminResources() {
             icon={<Building2 size={28} />}
             title={t('admin.resources.emptyTitle')}
             description={t('admin.resources.emptyDescription')}
-            actionLabel={t('admin.resources.add')}
-            onAction={openCreate}
+            actionLabel={capabilities.canCreateRoomsAdmin ? t('admin.resources.add') : undefined}
+            onAction={capabilities.canCreateRoomsAdmin ? openCreate : undefined}
           />
         ) : (
           rooms.map((room, index) => (
@@ -359,20 +374,26 @@ export function RoomsAdminResources() {
                   ))}
                 </Stack>
               </Box>
-              <ActionButton
-                intent="secondary"
-                startIcon={<Settings2 size={16} />}
-                onClick={() => openEdit(room)}
-              >
-                {t('actions.manage')}
-              </ActionButton>
+              {capabilities.canUpdateRoomsAdmin && (
+                <ActionButton
+                  intent="secondary"
+                  startIcon={<Settings2 size={16} />}
+                  onClick={() => openEdit(room)}
+                >
+                  {t('actions.manage')}
+                </ActionButton>
+              )}
             </Stack>
           ))
         )}
       </Box>
       <RoomResourceDialog
-        open={dialogOpen}
+        open={
+          dialogOpen &&
+          (editing ? capabilities.canUpdateRoomsAdmin : capabilities.canCreateRoomsAdmin)
+        }
         resource={editing}
+        canSave={editing ? capabilities.canUpdateRoomsAdmin : capabilities.canCreateRoomsAdmin}
         onClose={() => setDialogOpen(false)}
       />
     </PageCanvas>

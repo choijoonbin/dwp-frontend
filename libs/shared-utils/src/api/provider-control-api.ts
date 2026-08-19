@@ -706,7 +706,12 @@ export type ProviderDataAsset = {
   schemaName: string;
   objectName: string;
   objectType:
-    'TABLE' | 'PARTITIONED_TABLE' | 'PARTITION' | 'VIEW' | 'MATERIALIZED_VIEW' | 'SYSTEM_TABLE';
+    | 'TABLE'
+    | 'PARTITIONED_TABLE'
+    | 'PARTITION'
+    | 'VIEW'
+    | 'MATERIALIZED_VIEW'
+    | 'SYSTEM_TABLE';
   parentObjectName?: string | null;
   businessDomain: string;
   ownerService: string;

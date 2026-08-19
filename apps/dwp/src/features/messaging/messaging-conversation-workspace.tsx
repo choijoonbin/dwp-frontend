@@ -1,154 +1,97 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-  ArrowLeft,
-  Command,
-  Hash,
-  MessageSquarePlus,
-  RefreshCw,
-  Search,
-  Send,
-  ShieldCheck,
-} from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
-import {
-  addMessagingReaction,
-  getMessagingConversation,
-  getMessagingConversations,
-  sendMessagingMessage,
-  useAuth,
-  useToast,
-} from '@dwp-frontend/shared-utils';
+import { Command, MessageSquarePlus, RefreshCw } from 'lucide-react';
 import {
   ActionButton,
   ActionIconButton,
-  FormField,
   GuidedEmptyState,
   PageCanvas,
 } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Divider from '@mui/material/Divider';
-import InputAdornment from '@mui/material/InputAdornment';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
-import type { Theme } from '@mui/material/styles';
-import type { MessagingConversation } from '@dwp-frontend/shared-utils';
+import { MessagingConversationContext } from './messaging-conversation-context';
+import { MessagingConversationHeader } from './messaging-conversation-header';
+import { MessagingConversationListPane } from './messaging-conversation-list-pane';
+import { MessagingCreateConversationDialog } from './messaging-create-conversation-dialog';
+import { MessagingMeetingHost } from './messaging-meeting-host';
+import { MessagingMessageDialogs } from './messaging-message-dialogs';
+import { MessagingMembersDialog } from './messaging-members-dialog';
+import { MessagingPageHeading } from './messaging-components';
+import { MessagingSearchPalette } from './messaging-search-palette';
+import { MessagingThreadPanel } from './messaging-thread-panel';
+import { MessagingTimelinePane } from './messaging-timeline-pane';
+import { useMessagingWorkspaceController } from './use-messaging-workspace-controller';
 
-import {
-  ClassificationChip,
-  MessagingConversationListItem,
-  MessagingMessageRow,
-  MessagingPageHeading,
-  MessagingPersonLine,
-} from './messaging-components';
+import type { MessagingScope } from './messaging-workspace-types';
 
-type Scope = 'ALL' | 'FAVORITES' | 'SPACES' | 'DIRECT' | 'CHANNELS';
-
-export function MessagingConversationWorkspace({ scope }: { scope: Scope }) {
-  const { t } = useTranslation('messaging');
-  const auth = useAuth();
-  const toast = useToast();
-  const queryClient = useQueryClient();
-  const [params, setParams] = useSearchParams();
-  const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [draft, setDraft] = useState('');
-  const searchRef = useRef<HTMLInputElement | null>(null);
-  const detailScrollRef = useRef<HTMLDivElement | null>(null);
-  const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
-  const selectedId = params.get('conversation');
-  const conversationsQuery = useQuery({
-    queryKey: ['messaging', 'conversations', scope, debouncedSearch],
-    queryFn: () =>
-      getMessagingConversations({
-        scope,
-        query: debouncedSearch,
-        page: 0,
-        pageSize: 60,
-      }),
-    staleTime: 15_000,
-    retry: 1,
-  });
-  const detailQuery = useQuery({
-    queryKey: ['messaging', 'conversation', selectedId],
-    queryFn: () => getMessagingConversation(selectedId!),
-    enabled: Boolean(selectedId),
-    staleTime: 8_000,
-    retry: 1,
-  });
-  const sendMutation = useMutation({
-    mutationFn: (body: string) =>
-      sendMessagingMessage({
-        conversationId: selectedId!,
-        body,
-        idempotencyKey: crypto.randomUUID(),
-      }),
-    onSuccess: async (detail) => {
-      setDraft('');
-      queryClient.setQueryData(['messaging', 'conversation', selectedId], detail);
-      await queryClient.invalidateQueries({ queryKey: ['messaging', 'conversations'] });
-      requestAnimationFrame(() => {
-        detailScrollRef.current?.scrollTo({ top: detailScrollRef.current.scrollHeight });
-      });
-    },
-    onError: () => toast.error(t('conversation.sendError')),
-  });
-  const reactionMutation = useMutation({
-    mutationFn: (messageId: string) => addMessagingReaction(selectedId!, messageId, '👍'),
-    onSuccess: (detail) => {
-      queryClient.setQueryData(['messaging', 'conversation', selectedId], detail);
-    },
-    onError: () => toast.error(t('conversation.reactionError')),
-  });
-  const selectedConversation = conversationsQuery.data?.items.find(
-    (item) => item.conversationId === selectedId
-  );
-  const detail = detailQuery.data;
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => setDebouncedSearch(search.trim()), 220);
-    return () => window.clearTimeout(timeout);
-  }, [search]);
-
-  useEffect(() => {
-    if (!desktopSplitView || selectedId || !conversationsQuery.data?.items.length) return;
-    const next = new URLSearchParams(params);
-    next.set('conversation', conversationsQuery.data.items[0]!.conversationId);
-    setParams(next, { replace: true });
-  }, [conversationsQuery.data?.items, desktopSplitView, params, selectedId, setParams]);
-
-  useEffect(() => {
-    if (!detail?.messages.length) return;
-    requestAnimationFrame(() => {
-      detailScrollRef.current?.scrollTo({ top: detailScrollRef.current.scrollHeight });
-    });
-  }, [detail?.conversation.conversationId, detail?.messages.length]);
-
-  const title = useMemo(() => t(`workspace.${scope}.title`), [scope, t]);
-  const description = useMemo(() => t(`workspace.${scope}.description`), [scope, t]);
-
-  const selectConversation = (conversation: MessagingConversation) => {
-    const next = new URLSearchParams(params);
-    next.set('conversation', conversation.conversationId);
-    setParams(next, { replace: true });
-  };
-  const clearSelection = () => {
-    const next = new URLSearchParams(params);
-    next.delete('conversation');
-    setParams(next, { replace: true });
-  };
-  const send = () => {
-    const body = draft.trim();
-    if (!body || !selectedId || sendMutation.isPending) return;
-    sendMutation.mutate(body);
-  };
+export function MessagingConversationWorkspace({ scope }: { scope: MessagingScope }) {
+  const workspace = useMessagingWorkspaceController(scope);
+  const {
+    t,
+    auth,
+    title,
+    description,
+    desktopSplitView,
+    selectedId,
+    selectedConversation,
+    search,
+    setSearch,
+    searchRef,
+    detailScrollRef,
+    conversationsQuery,
+    detailQuery,
+    messageHistoryQuery,
+    threadQuery,
+    detail,
+    rootMessages,
+    fallbackReplyCounts,
+    thread,
+    currentMember,
+    meetingLabels,
+    realtimeConnection,
+    typingNames,
+    draft,
+    setDraft,
+    threadDraft,
+    setThreadDraft,
+    meetingDialogOpen,
+    setMeetingDialogOpen,
+    membersDialogOpen,
+    setMembersDialogOpen,
+    createDialogOpen,
+    setCreateDialogOpen,
+    searchPaletteOpen,
+    setSearchPaletteOpen,
+    editingMessage,
+    setEditingMessage,
+    deletingMessage,
+    setDeletingMessage,
+    editBody,
+    setEditBody,
+    sendMutation,
+    threadSendMutation,
+    editMutation,
+    deleteMutation,
+    selectConversation,
+    clearSelection,
+    openConversation,
+    send,
+    retrySend,
+    sendThreadReply,
+    retryThreadReply,
+    toggleReaction,
+    saveMessage,
+    openEditMessage,
+    submitEditMessage,
+    confirmDeleteMessage,
+    loadOlderMessages,
+    markVisibleMessagesRead,
+    refresh,
+    conversationCreated,
+    setThreadRootId,
+  } = workspace;
 
   return (
     <PageCanvas topInset="compact">
@@ -157,21 +100,18 @@ export function MessagingConversationWorkspace({ scope }: { scope: Scope }) {
         title={title}
         description={description}
         actions={
-          <Stack direction="row" spacing={1}>
-            <ActionIconButton
-              label={t('actions.focusSearch')}
-              onClick={() => searchRef.current?.focus()}
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            <ActionButton
+              intent="primary"
+              startIcon={<MessageSquarePlus size={17} />}
+              onClick={() => setCreateDialogOpen(true)}
             >
+              {t('create.action')}
+            </ActionButton>
+            <ActionIconButton label={t('search.open')} onClick={() => setSearchPaletteOpen(true)}>
               <Command size={18} />
             </ActionIconButton>
-            <ActionButton
-              intent="quiet"
-              startIcon={<RefreshCw size={17} />}
-              onClick={() => {
-                conversationsQuery.refetch();
-                detailQuery.refetch();
-              }}
-            >
+            <ActionButton intent="quiet" startIcon={<RefreshCw size={17} />} onClick={refresh}>
               {t('actions.refresh')}
             </ActionButton>
           </Stack>
@@ -186,7 +126,12 @@ export function MessagingConversationWorkspace({ scope }: { scope: Scope }) {
           display: 'grid',
           gridTemplateColumns: {
             xs: '1fr',
-            lg: 'minmax(320px, 380px) minmax(0, 1fr) minmax(300px, 340px)',
+            lg: thread
+              ? 'minmax(0, 1fr) minmax(360px, 420px)'
+              : 'minmax(280px, 320px) minmax(0, 1fr)',
+            xl: thread
+              ? 'minmax(280px, 320px) minmax(0, 1fr) minmax(360px, 420px)'
+              : 'minmax(320px, 380px) minmax(0, 1fr) minmax(300px, 340px)',
           },
           border: 1,
           borderColor: 'divider',
@@ -199,61 +144,32 @@ export function MessagingConversationWorkspace({ scope }: { scope: Scope }) {
           sx={{
             minWidth: 0,
             minHeight: 0,
-            display: { xs: selectedId ? 'none' : 'flex', lg: 'flex' },
-            flexDirection: 'column',
+            display: {
+              xs: selectedId ? 'none' : 'block',
+              lg: thread ? 'none' : 'block',
+              xl: 'block',
+            },
             borderRight: { lg: 1 },
             borderColor: 'divider',
           }}
         >
-          <Box sx={{ px: 1.5, pt: 1.5, pb: 1, borderBottom: 1, borderColor: 'divider' }}>
-            <FormField
-              fullWidth
-              size="small"
-              value={search}
-              placeholder={t('workspace.search')}
-              inputRef={searchRef}
-              onChange={(event) => setSearch(event.target.value)}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search size={17} />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </Box>
-          <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-            {conversationsQuery.isLoading ? (
-              <Box sx={{ p: 1.5 }}>
-                {[0, 1, 2, 3, 4].map((item) => (
-                  <Skeleton key={item} variant="rounded" height={84} sx={{ mb: 1 }} />
-                ))}
-              </Box>
-            ) : conversationsQuery.isError ? (
-              <Alert severity="error" sx={{ m: 1.5 }}>
-                {t('workspace.loadError')}
-              </Alert>
-            ) : conversationsQuery.data?.items.length ? (
-              conversationsQuery.data.items.map((conversation) => (
-                <MessagingConversationListItem
-                  key={conversation.conversationId}
-                  conversation={conversation}
-                  selected={selectedId === conversation.conversationId}
-                  onSelect={() => selectConversation(conversation)}
-                />
-              ))
-            ) : (
-              <Box sx={{ minHeight: 360, display: 'grid', placeItems: 'center', p: 2 }}>
-                <GuidedEmptyState
-                  kind={search ? 'no-results' : 'empty'}
-                  title={t('workspace.emptyTitle')}
-                  description={t('workspace.emptyDescription')}
-                />
-              </Box>
-            )}
-          </Box>
+          <MessagingConversationListPane
+            conversations={conversationsQuery.data?.items ?? []}
+            selectedId={selectedId}
+            search={search}
+            searchInputRef={searchRef}
+            loading={conversationsQuery.isLoading}
+            loadError={conversationsQuery.isError}
+            labels={{
+              search: t('workspace.search'),
+              list: t('workspace.list'),
+              loadError: t('workspace.loadError'),
+              emptyTitle: t('workspace.emptyTitle'),
+              emptyDescription: t('workspace.emptyDescription'),
+            }}
+            onSearchChange={setSearch}
+            onSelect={selectConversation}
+          />
         </Box>
 
         <Box
@@ -261,6 +177,7 @@ export function MessagingConversationWorkspace({ scope }: { scope: Scope }) {
             minWidth: 0,
             minHeight: { xs: selectedId ? 'calc(100dvh - 150px)' : 0, lg: 0 },
             display: { xs: selectedId ? 'grid' : 'none', lg: 'grid' },
+            gridTemplateColumns: 'minmax(0, 1fr)',
             gridTemplateRows: 'auto minmax(0, 1fr) auto',
           }}
         >
@@ -273,7 +190,7 @@ export function MessagingConversationWorkspace({ scope }: { scope: Scope }) {
               />
             </Box>
           ) : detailQuery.isLoading ? (
-            <Box sx={{ p: 2 }}>
+            <Box sx={{ p: 2 }} aria-busy="true">
               <Skeleton variant="rounded" height={74} />
               <Skeleton variant="rounded" height={420} sx={{ mt: 2 }} />
             </Box>
@@ -283,178 +200,176 @@ export function MessagingConversationWorkspace({ scope }: { scope: Scope }) {
             </Alert>
           ) : (
             <>
-              <Stack
-                direction="row"
-                spacing={1.25}
-                alignItems="center"
-                sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
-              >
-                <ActionIconButton
-                  label={t('actions.back')}
-                  onClick={clearSelection}
-                  sx={{ display: { lg: 'none' } }}
-                >
-                  <ArrowLeft size={18} />
-                </ActionIconButton>
-                <Box sx={{ minWidth: 0, flex: 1 }}>
-                  <Stack direction="row" spacing={0.9} alignItems="center" sx={{ minWidth: 0 }}>
-                    {detail.conversation.visibility === 'SPACE' ? (
-                      <Hash size={18} />
-                    ) : (
-                      <MessageSquarePlus size={18} />
-                    )}
-                    <Typography component="h2" variant="h6" fontWeight={850} noWrap>
-                      {detail.conversation.name}
-                    </Typography>
-                    <ClassificationChip classification={detail.conversation.dataClassification} />
-                  </Stack>
-                  <Typography variant="caption" color="text.secondary" noWrap>
-                    {detail.conversation.topic}
-                  </Typography>
-                </Box>
-              </Stack>
-
-              <Box ref={detailScrollRef} sx={{ minHeight: 0, overflowY: 'auto', px: 2, py: 1.25 }}>
-                {detail.messages.length ? (
-                  detail.messages.map((message) => (
-                    <MessagingMessageRow
-                      key={message.messageId}
-                      message={message}
-                      mine={message.senderUserId === auth.user?.userId}
-                      onReact={() => reactionMutation.mutate(message.messageId)}
-                    />
-                  ))
-                ) : (
-                  <Box sx={{ minHeight: 320, display: 'grid', placeItems: 'center' }}>
-                    <GuidedEmptyState
-                      kind="empty"
-                      title={t('conversation.noMessagesTitle')}
-                      description={t('conversation.noMessagesDescription')}
-                    />
-                  </Box>
-                )}
-              </Box>
-
-              <Box
-                sx={{
-                  p: 1.5,
-                  minWidth: 0,
-                  width: '100%',
-                  maxWidth: '100%',
-                  boxSizing: 'border-box',
-                  overflow: 'hidden',
-                  borderTop: 1,
-                  borderColor: 'divider',
-                  bgcolor: 'background.default',
+              <MessagingConversationHeader
+                detail={detail}
+                currentMember={currentMember}
+                connectionState={realtimeConnection.state}
+                labels={{
+                  back: t('actions.back'),
+                  members: t('members.action'),
+                  meeting: t('conversation.meetingAction'),
                 }}
-              >
-                <FormField
-                  fullWidth
-                  multiline
-                  minRows={2}
-                  maxRows={5}
-                  sx={{ maxWidth: '100%' }}
-                  value={draft}
-                  placeholder={t('conversation.composerPlaceholder')}
-                  onChange={(event) => setDraft(event.target.value)}
-                  onKeyDown={(event) => {
-                    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-                      event.preventDefault();
-                      send();
-                    }
-                  }}
-                />
-                <Stack
-                  direction="row"
-                  spacing={1.25}
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={{ mt: 1, minWidth: 0, maxWidth: '100%', overflow: 'hidden' }}
-                >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    noWrap
-                    sx={{
-                      minWidth: 0,
-                      flex: '1 1 auto',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {detail.realtime.state === 'READY_FOR_WEBSOCKET_GATEWAY'
-                      ? t('conversation.realtimeRest')
-                      : detail.realtime.detail}
-                  </Typography>
-                  <ActionButton
-                    intent="primary"
-                    endIcon={
-                      sendMutation.isPending ? <CircularProgress size={15} /> : <Send size={16} />
-                    }
-                    disabled={!draft.trim() || sendMutation.isPending}
-                    onClick={send}
-                    sx={{ minWidth: 108, flexShrink: 0, whiteSpace: 'nowrap' }}
-                  >
-                    {t('conversation.send')}
-                  </ActionButton>
-                </Stack>
-              </Box>
+                onBack={clearSelection}
+                onOpenMembers={() => setMembersDialogOpen(true)}
+                onOpenMeeting={() => setMeetingDialogOpen(true)}
+              />
+              <MessagingTimelinePane
+                messages={rootMessages}
+                currentUserId={auth.user?.userId}
+                replyCounts={fallbackReplyCounts}
+                typingNames={typingNames}
+                scrollRef={detailScrollRef}
+                draft={draft}
+                sending={sendMutation.isPending}
+                sendError={sendMutation.isError}
+                hasOlder={Boolean(messageHistoryQuery.hasNextPage)}
+                loadingOlder={messageHistoryQuery.isFetchingNextPage}
+                olderLoadError={messageHistoryQuery.isFetchNextPageError}
+                labels={{
+                  timeline: t('conversation.timeline'),
+                  loadOlder: t('conversation.history.loadOlder'),
+                  loadingOlder: t('conversation.history.loading'),
+                  olderLoadError: t('conversation.history.loadError'),
+                  emptyTitle: t('conversation.noMessagesTitle'),
+                  emptyDescription: t('conversation.noMessagesDescription'),
+                }}
+                onScroll={markVisibleMessagesRead}
+                onLoadOlder={loadOlderMessages}
+                onDraftChange={(value) => {
+                  if (sendMutation.isError) sendMutation.reset();
+                  setDraft(value);
+                }}
+                onSend={send}
+                onRetrySend={retrySend}
+                onReply={setThreadRootId}
+                onReact={toggleReaction}
+                onSave={saveMessage}
+                onEdit={openEditMessage}
+                onDelete={setDeletingMessage}
+              />
             </>
           )}
         </Box>
 
-        <Box
-          sx={{
-            display: { xs: 'none', lg: 'block' },
-            minWidth: 0,
-            minHeight: 0,
-            overflowY: 'auto',
-            borderLeft: 1,
-            borderColor: 'divider',
-            bgcolor: 'background.default',
-          }}
-        >
-          {detail ? (
-            <Stack spacing={2} sx={{ p: 2 }}>
-              <Box>
-                <Typography variant="overline" color="text.secondary">
-                  {t('context.members')}
-                </Typography>
-                <Stack spacing={1.25} sx={{ mt: 1 }}>
-                  {detail.members.slice(0, 8).map((member) => (
-                    <MessagingPersonLine key={member.userId} person={member} />
-                  ))}
-                </Stack>
-              </Box>
-              <Divider />
-              <Box>
-                <Typography variant="overline" color="text.secondary">
-                  {t('context.governance')}
-                </Typography>
-                <Stack spacing={1} sx={{ mt: 1 }}>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <ShieldCheck size={16} color="var(--dwp-product-accent)" />
-                    <Typography variant="body2" fontWeight={760}>
-                      {t(`classification.${detail.conversation.dataClassification}`)}
-                    </Typography>
-                  </Stack>
-                  <Typography variant="body2" color="text.secondary">
-                    {detail.conversation.linkedSpaceName
-                      ? t('context.spaceLinked', { space: detail.conversation.linkedSpaceName })
-                      : t('context.membershipBound')}
-                  </Typography>
-                </Stack>
-              </Box>
-            </Stack>
-          ) : (
-            <Box sx={{ p: 2 }}>
-              <Typography variant="body2" color="text.secondary">
-                {selectedConversation?.topic ?? t('context.empty')}
-              </Typography>
-            </Box>
-          )}
-        </Box>
+        {thread ? (
+          <Box
+            sx={{
+              display: { xs: 'contents', lg: 'block' },
+              minWidth: 0,
+              minHeight: 0,
+              borderLeft: { lg: 1 },
+              borderColor: 'divider',
+            }}
+          >
+            <MessagingThreadPanel
+              open
+              desktop={desktopSplitView}
+              thread={thread}
+              currentUserId={auth.user?.userId}
+              draft={threadDraft}
+              onDraftChange={(value) => {
+                if (threadSendMutation.isError) threadSendMutation.reset();
+                setThreadDraft(value);
+              }}
+              onSend={sendThreadReply}
+              onRetry={retryThreadReply}
+              isSending={threadSendMutation.isPending}
+              hasError={threadSendMutation.isError}
+              onClose={() => setThreadRootId(null)}
+              onReact={toggleReaction}
+              onSave={saveMessage}
+              onEdit={openEditMessage}
+              onDelete={setDeletingMessage}
+              loading={threadQuery.isLoading}
+              loadError={threadQuery.isError}
+            />
+          </Box>
+        ) : (
+          <Box
+            component="aside"
+            sx={{
+              display: { xs: 'none', xl: 'block' },
+              minWidth: 0,
+              minHeight: 0,
+              overflowY: 'auto',
+              borderLeft: 1,
+              borderColor: 'divider',
+              bgcolor: 'background.default',
+            }}
+          >
+            <MessagingConversationContext
+              detail={detail}
+              fallbackTopic={selectedConversation?.topic}
+              labels={{
+                members: t('context.members'),
+                governance: t('context.governance'),
+                classification: detail
+                  ? t(`classification.${detail.conversation.dataClassification}`)
+                  : '',
+                spaceLinked: detail?.conversation.linkedSpaceName
+                  ? t('context.spaceLinked', { space: detail.conversation.linkedSpaceName })
+                  : '',
+                membershipBound: t('context.membershipBound'),
+                empty: t('context.empty'),
+              }}
+            />
+          </Box>
+        )}
       </Box>
+
+      {selectedId && detail && auth.user ? (
+        <MessagingMeetingHost
+          open={meetingDialogOpen}
+          conversationId={selectedId}
+          conversationName={detail.conversation.name ?? t('conversation.untitled')}
+          displayName={auth.user.displayName ?? auth.user.email}
+          currentUserId={auth.user.userId}
+          canModerateConversation={
+            currentMember?.memberRole === 'OWNER' || currentMember?.memberRole === 'MODERATOR'
+          }
+          labels={meetingLabels}
+          onClose={() => setMeetingDialogOpen(false)}
+        />
+      ) : null}
+      {detail && membersDialogOpen ? (
+        <MessagingMembersDialog
+          open
+          conversation={detail.conversation}
+          onClose={() => setMembersDialogOpen(false)}
+          onLeft={() => {
+            setMembersDialogOpen(false);
+            clearSelection();
+          }}
+        />
+      ) : null}
+      <MessagingCreateConversationDialog
+        open={createDialogOpen}
+        onClose={() => setCreateDialogOpen(false)}
+        onCreated={conversationCreated}
+      />
+      <MessagingSearchPalette
+        open={searchPaletteOpen}
+        onClose={() => setSearchPaletteOpen(false)}
+        onOpenConversation={openConversation}
+      />
+      <MessagingMessageDialogs
+        editingMessage={editingMessage}
+        deletingMessage={deletingMessage}
+        editBody={editBody}
+        editBusy={editMutation.isPending}
+        deleteBusy={deleteMutation.isPending}
+        onEditBodyChange={setEditBody}
+        onCloseEdit={() => {
+          if (editMutation.isPending) return;
+          setEditingMessage(null);
+          setEditBody('');
+        }}
+        onSubmitEdit={submitEditMessage}
+        onCloseDelete={() => {
+          if (!deleteMutation.isPending) setDeletingMessage(null);
+        }}
+        onConfirmDelete={confirmDeleteMessage}
+      />
     </PageCanvas>
   );
 }

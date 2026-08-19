@@ -2,9 +2,11 @@ import {
   Building2,
   CalendarCheck2,
   LayoutDashboard,
+  Network,
   MapPinned,
   MonitorCheck,
   Settings2,
+  ShieldCheck,
   UsersRound,
 } from 'lucide-react';
 
@@ -19,6 +21,8 @@ export type RoomsView =
   | 'my-bookings'
   | 'my-meetings'
   | 'admin-overview'
+  | 'admin-operations'
+  | 'admin-governance'
   | 'admin-locations'
   | 'admin-policy'
   | 'admin-room-operations'
@@ -34,7 +38,13 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
   {
     id: 'booking',
     items: [
-      { view: 'explore', path: '/workplace/explore', icon: MapPinned },
+      {
+        view: 'explore',
+        path: '/workplace/explore',
+        icon: MapPinned,
+        requiredResourceKey: 'APP.WORKPLACE',
+        requiredPermissionCode: 'VIEW',
+      },
       {
         view: 'find-rooms',
         path: '/workplace/rooms',
@@ -42,7 +52,13 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
         requiredResourceKey: 'APP.ROOMS',
         requiredPermissionCode: 'VIEW',
       },
-      { view: 'my-bookings', path: '/workplace/my-bookings', icon: MonitorCheck },
+      {
+        view: 'my-bookings',
+        path: '/workplace/my-bookings',
+        icon: MonitorCheck,
+        requiredResourceKey: 'APP.WORKPLACE',
+        requiredPermissionCode: 'VIEW',
+      },
       {
         view: 'my-meetings',
         path: '/workplace/my-meetings',
@@ -59,6 +75,20 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
         view: 'admin-overview',
         path: '/workplace/admin/overview',
         icon: LayoutDashboard,
+        requiredResourceKey: 'ADMIN.WORKPLACE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        view: 'admin-operations',
+        path: '/workplace/admin/operations',
+        icon: ShieldCheck,
+        requiredResourceKey: 'ADMIN.WORKPLACE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        view: 'admin-governance',
+        path: '/workplace/admin/governance',
+        icon: Network,
         requiredResourceKey: 'ADMIN.WORKPLACE',
         requiredPermissionCode: 'VIEW',
       },
@@ -100,6 +130,23 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
 ] as const satisfies readonly ProductAreaNavigationGroup[];
 
 export const ROOMS_DEFAULT_PATH = '/workplace/explore';
+
+export function findFirstAccessibleRoomsPath(
+  hasPermission: (resourceKey: string, permissionCode: string) => boolean
+) {
+  for (const group of ROOMS_NAVIGATION) {
+    const item = group.items.find(
+      (candidate) =>
+        !candidate.requiredResourceKey ||
+        Boolean(
+          candidate.requiredPermissionCode &&
+            hasPermission(candidate.requiredResourceKey, candidate.requiredPermissionCode)
+        )
+    );
+    if (item) return item.path;
+  }
+  return '/';
+}
 
 export function findRoomsNavigationItem(pathname: string): RoomsNavigationItem | undefined {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;

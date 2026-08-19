@@ -26,7 +26,12 @@ import type {
 import type { LucideIcon } from 'lucide-react';
 
 export type WorkplaceResourceAvailability =
-  'AVAILABLE' | 'OCCUPIED' | 'MINE' | 'ASSIGNED' | 'DROP_IN' | 'UNAVAILABLE';
+  | 'AVAILABLE'
+  | 'OCCUPIED'
+  | 'MINE'
+  | 'ASSIGNED'
+  | 'DROP_IN'
+  | 'UNAVAILABLE';
 
 const RESOURCE_ICONS: Record<WorkplaceResourceType, LucideIcon> = {
   ROOM: UsersRound,
@@ -201,7 +206,6 @@ export function WorkplaceFloorPlan({
               <Box
                 component="button"
                 type="button"
-                aria-disabled={disabled}
                 aria-label={tooltip}
                 aria-pressed={selected}
                 onClick={() => onSelect(resource)}
@@ -281,13 +285,11 @@ export function WorkplaceResourceList({
         const status = workplaceResourceAvailability(resource, occupancy);
         const colors = AVAILABILITY_COLORS[status];
         const Icon = RESOURCE_ICONS[resource.type];
-        const disabled = status === 'OCCUPIED' || status === 'UNAVAILABLE';
         return (
           <Box
             component="button"
             type="button"
             key={resource.resourceId}
-            aria-disabled={disabled}
             onClick={() => onSelect(resource)}
             sx={{
               minHeight: 92,

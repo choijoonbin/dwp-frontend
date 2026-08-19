@@ -3,7 +3,12 @@ import { Activity, Gauge, Lightbulb, ListChecks, Send, TimerReset } from 'lucide
 import type { WorkspaceWidgetDefinition } from '../../components/workspace-composer/workspace-composer-model';
 
 export type ApprovalHomeWidgetKey =
-  'decision-pulse' | 'focus-queue' | 'flow' | 'my-requests' | 'insights' | 'admin-health';
+  | 'decision-pulse'
+  | 'focus-queue'
+  | 'flow'
+  | 'my-requests'
+  | 'insights'
+  | 'admin-health';
 
 export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<ApprovalHomeWidgetKey>[] =
   [

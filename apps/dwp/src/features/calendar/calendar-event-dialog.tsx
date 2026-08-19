@@ -19,6 +19,7 @@ import {
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -41,8 +42,11 @@ type CalendarEventDialogProps = {
   initialStart?: string | null;
   initialEnd?: string | null;
   initialType?: CalendarEventType;
+  initialTitle?: string | null;
   initialResourceId?: string | null;
   initialAttendees?: PersonSummary[];
+  initialAttendeeEmails?: string[];
+  fromDwaion?: boolean;
   onClose: () => void;
   onSaved?: (event: CalendarEvent) => void;
 };
@@ -67,6 +71,7 @@ type AttendeeOption = Pick<PersonSummary, 'personId' | 'displayName' | 'workEmai
 };
 
 const EMPTY_ATTENDEES: PersonSummary[] = [];
+const EMPTY_EMAILS: string[] = [];
 
 function roundToHalfHour(value = new Date()) {
   const next = new Date(value);
@@ -80,14 +85,15 @@ function initialState(
   event?: CalendarEvent | null,
   initialStart?: string | null,
   initialEnd?: string | null,
-  initialType: CalendarEventType = 'MEETING'
+  initialType: CalendarEventType = 'MEETING',
+  initialTitle?: string | null
 ): FormState {
   const start = initialStart ? new Date(initialStart) : roundToHalfHour();
   const end = initialEnd
     ? new Date(initialEnd)
     : new Date(start.getTime() + (initialType === 'FOCUS' ? 90 : 30) * 60_000);
   return {
-    title: event?.title ?? '',
+    title: event?.title ?? initialTitle ?? '',
     description: event?.description ?? '',
     type: event?.type ?? initialType,
     startsAt: event?.startsAt ?? start.toISOString(),
@@ -112,8 +118,11 @@ export function CalendarEventDialog({
   initialStart,
   initialEnd,
   initialType = 'MEETING',
+  initialTitle,
   initialResourceId,
   initialAttendees = EMPTY_ATTENDEES,
+  initialAttendeeEmails = EMPTY_EMAILS,
+  fromDwaion = false,
   onClose,
   onSaved,
 }: CalendarEventDialogProps) {
@@ -121,7 +130,7 @@ export function CalendarEventDialog({
   const toast = useToast();
   const queryClient = useQueryClient();
   const [form, setForm] = useState<FormState>(() =>
-    initialState(event, initialStart, initialEnd, initialType)
+    initialState(event, initialStart, initialEnd, initialType, initialTitle)
   );
   const [attendees, setAttendees] = useState<AttendeeOption[]>([]);
   const [validationVisible, setValidationVisible] = useState(false);
@@ -130,6 +139,7 @@ export function CalendarEventDialog({
     if (!open) return;
     setForm({
       ...initialState(event, initialStart, initialEnd, initialType),
+      title: event?.title ?? initialTitle ?? '',
       resourceId: event?.resource?.resourceId ?? initialResourceId ?? '',
     });
     setAttendees(
@@ -142,10 +152,27 @@ export function CalendarEventDialog({
             workEmail: attendee.email,
             userId: attendee.userId,
           }))
-        : initialAttendees
+        : [
+            ...initialAttendees,
+            ...initialAttendeeEmails.map((email) => ({
+              personId: `email:${email}`,
+              displayName: email,
+              workEmail: email,
+            })),
+          ]
     );
     setValidationVisible(false);
-  }, [event, initialAttendees, initialEnd, initialResourceId, initialStart, initialType, open]);
+  }, [
+    event,
+    initialAttendeeEmails,
+    initialAttendees,
+    initialEnd,
+    initialResourceId,
+    initialStart,
+    initialTitle,
+    initialType,
+    open,
+  ]);
 
   const peopleQuery = useQuery({
     queryKey: ['calendar', 'people-options'],
@@ -275,6 +302,7 @@ export function CalendarEventDialog({
       maxWidth="md"
     >
       <Stack spacing={2.25}>
+        {fromDwaion && <Alert severity="info">{t('event.dwaionDraftNotice')}</Alert>}
         <Box>
           <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ mb: 0.75 }}>
             {t('event.typeLabel')}

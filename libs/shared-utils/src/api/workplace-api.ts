@@ -6,14 +6,26 @@ export type WorkplaceSiteType = 'HEADQUARTERS' | 'SHARED_OFFICE' | 'SATELLITE' |
 export type WorkplaceSiteState = 'ACTIVE' | 'MAINTENANCE' | 'CLOSED';
 export type WorkplaceFloorState = 'DRAFT' | 'ACTIVE' | 'CLOSED';
 export type WorkplaceResourceType =
-  'ROOM' | 'DESK' | 'LOCKER' | 'PARKING' | 'FOCUS_POD' | 'PHONE_BOOTH' | 'EQUIPMENT';
+  | 'ROOM'
+  | 'DESK'
+  | 'LOCKER'
+  | 'PARKING'
+  | 'FOCUS_POD'
+  | 'PHONE_BOOTH'
+  | 'EQUIPMENT';
 export type WorkplaceBookingMode = 'RESERVABLE' | 'DROP_IN' | 'ASSIGNED' | 'UNAVAILABLE';
 export type WorkplaceResourceState = 'AVAILABLE' | 'MAINTENANCE' | 'RETIRED';
 export type WorkplaceBookingStatus =
-  'RESERVED' | 'CHECKED_IN' | 'COMPLETED' | 'NO_SHOW' | 'RELEASED' | 'CANCELLED';
+  | 'RESERVED'
+  | 'CHECKED_IN'
+  | 'COMPLETED'
+  | 'NO_SHOW'
+  | 'RELEASED'
+  | 'CANCELLED';
 
 export type WorkplaceSite = {
   siteId: string;
+  campusId?: string | null;
   code: string;
   name: string;
   nameKo: string;
@@ -97,6 +109,7 @@ export type WorkplacePolicy = {
   autoReleaseMinutes: number;
   allowAssignedDeskLending: boolean;
   showColleagueNames: boolean;
+  bookingRetentionDays: number;
   version: number;
 };
 
@@ -152,6 +165,96 @@ export type WorkplaceBookingInput = {
   visibleToColleagues: boolean;
 };
 
+export type WorkplaceRelocateBookingInput = WorkplaceBookingInput & {
+  reason: string;
+  version: number;
+};
+
+export type WorkplaceReleaseWindowStatus = 'ACTIVE' | 'CANCELLED' | 'EXPIRED';
+
+export type WorkplaceReleaseWindow = {
+  releaseWindowId: string;
+  resourceId: string;
+  resourceName: string;
+  siteName: string;
+  floorName: string;
+  startsAt: string;
+  endsAt: string;
+  note: string | null;
+  status: WorkplaceReleaseWindowStatus;
+  canCancel: boolean;
+  version: number;
+};
+
+export type WorkplaceReleaseWindowInput = {
+  resourceId: string;
+  startsAt: string;
+  endsAt: string;
+  note: string;
+};
+
+export type WorkplaceAssignedResource = {
+  resourceId: string;
+  resourceName: string;
+  resourceType: WorkplaceResourceType;
+  siteName: string;
+  floorName: string;
+  timeZone: string;
+};
+
+export type WorkplaceAdminBooking = {
+  bookingId: string;
+  resourceId: string;
+  resourceName: string;
+  resourceType: WorkplaceResourceType;
+  siteName: string;
+  floorName: string;
+  userId: number;
+  personPublicId: string | null;
+  bookedForDisplayName: string;
+  purpose: string | null;
+  startsAt: string;
+  endsAt: string;
+  status: WorkplaceBookingStatus;
+  visibleToColleagues: boolean;
+  checkedInAt: string | null;
+  releasedAt: string | null;
+  cancelledAt: string | null;
+  legalHold: boolean;
+  personalDataExpiresAt: string;
+  anonymizedAt: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type WorkplaceAdminBookingPage = {
+  content: WorkplaceAdminBooking[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+};
+
+export type WorkplaceAuditEvent = {
+  auditEventId: string;
+  action: string;
+  aggregateType: string;
+  aggregateId: string | null;
+  actorUserId: number;
+  correlationId: string | null;
+  snapshot: Record<string, unknown>;
+  occurredAt: string;
+};
+
+export type WorkplaceAuditEventPage = {
+  content: WorkplaceAuditEvent[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+};
+
 export type WorkplaceSiteInput = Omit<
   WorkplaceSite,
   'siteId' | 'name' | 'configuredFloorCount' | 'resourceCount' | 'version'
@@ -204,13 +307,32 @@ export async function getWorkplaceBookings(from: string, to: string): Promise<Wo
   return response.data.data;
 }
 
+export function createWorkplaceIdempotencyKey(scope = 'booking'): string {
+  const randomId = globalThis.crypto?.randomUUID?.();
+  if (randomId) return `workplace:${scope}:${randomId}`;
+  return `workplace:${scope}:${Date.now().toString(36)}:${Math.random().toString(36).slice(2)}`;
+}
+
 export async function createWorkplaceBooking(
-  input: WorkplaceBookingInput
+  input: WorkplaceBookingInput,
+  idempotencyKey = createWorkplaceIdempotencyKey()
 ): Promise<WorkplaceBooking> {
   const response = await axiosInstance.post<ApiResponse<WorkplaceBooking>, WorkplaceBookingInput>(
     '/api/platform/v1/workplace/bookings',
-    input
+    input,
+    { headers: { 'Idempotency-Key': idempotencyKey } }
   );
+  return response.data.data;
+}
+
+export async function relocateWorkplaceBooking(
+  bookingId: string,
+  input: WorkplaceRelocateBookingInput
+): Promise<WorkplaceBooking> {
+  const response = await axiosInstance.post<
+    ApiResponse<WorkplaceBooking>,
+    WorkplaceRelocateBookingInput
+  >(`/api/platform/v1/workplace/bookings/${encodeURIComponent(bookingId)}/relocate`, input);
   return response.data.data;
 }
 
@@ -232,6 +354,128 @@ export const cancelWorkplaceBooking = (bookingId: string, version: number) =>
   changeBooking(bookingId, 'cancel', version);
 export const releaseWorkplaceBooking = (bookingId: string, version: number) =>
   changeBooking(bookingId, 'release', version);
+
+export async function getWorkplaceReleaseWindows(
+  from: string,
+  to: string
+): Promise<WorkplaceReleaseWindow[]> {
+  const response = await axiosInstance.get<ApiResponse<WorkplaceReleaseWindow[]>>(
+    `/api/platform/v1/workplace/release-windows?${rangeQuery(from, to)}`
+  );
+  return response.data.data;
+}
+
+export async function getWorkplaceAssignedResources(): Promise<WorkplaceAssignedResource[]> {
+  const response = await axiosInstance.get<ApiResponse<WorkplaceAssignedResource[]>>(
+    '/api/platform/v1/workplace/release-windows/eligible-resources'
+  );
+  return response.data.data;
+}
+
+export async function createWorkplaceReleaseWindow(
+  input: WorkplaceReleaseWindowInput,
+  idempotencyKey = createWorkplaceIdempotencyKey('release-window')
+): Promise<WorkplaceReleaseWindow> {
+  const response = await axiosInstance.post<
+    ApiResponse<WorkplaceReleaseWindow>,
+    WorkplaceReleaseWindowInput
+  >('/api/platform/v1/workplace/release-windows', input, {
+    headers: { 'Idempotency-Key': idempotencyKey },
+  });
+  return response.data.data;
+}
+
+export async function cancelWorkplaceReleaseWindow(
+  releaseWindowId: string,
+  version: number
+): Promise<WorkplaceReleaseWindow> {
+  const response = await axiosInstance.post<
+    ApiResponse<WorkplaceReleaseWindow>,
+    { version: number }
+  >(`/api/platform/v1/workplace/release-windows/${encodeURIComponent(releaseWindowId)}/cancel`, {
+    version,
+  });
+  return response.data.data;
+}
+
+function operationQuery(
+  from: string,
+  to: string,
+  filters: Record<string, string | number | null | undefined>
+) {
+  const search = new URLSearchParams({ from, to });
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== '') search.set(key, String(value));
+  });
+  return search.toString();
+}
+
+export async function getWorkplaceAdminBookings(
+  from: string,
+  to: string,
+  filters: {
+    status?: WorkplaceBookingStatus | null;
+    resourceId?: string | null;
+    userId?: number | null;
+    page?: number;
+    size?: number;
+  } = {}
+): Promise<WorkplaceAdminBookingPage> {
+  const response = await axiosInstance.get<ApiResponse<WorkplaceAdminBookingPage>>(
+    `/api/platform/v1/admin/workplace/bookings?${operationQuery(from, to, filters)}`
+  );
+  return response.data.data;
+}
+
+export async function forceCancelWorkplaceBooking(
+  bookingId: string,
+  version: number,
+  reason: string
+): Promise<WorkplaceAdminBooking> {
+  const response = await axiosInstance.put<
+    ApiResponse<WorkplaceAdminBooking>,
+    { version: number; reason: string }
+  >(`/api/platform/v1/admin/workplace/bookings/${encodeURIComponent(bookingId)}/force-cancel`, {
+    version,
+    reason,
+  });
+  return response.data.data;
+}
+
+export async function updateWorkplaceBookingLegalHold(
+  bookingId: string,
+  version: number,
+  legalHold: boolean,
+  reason: string
+): Promise<WorkplaceAdminBooking> {
+  const response = await axiosInstance.put<
+    ApiResponse<WorkplaceAdminBooking>,
+    { version: number; legalHold: boolean; reason: string }
+  >(`/api/platform/v1/admin/workplace/bookings/${encodeURIComponent(bookingId)}/legal-hold`, {
+    version,
+    legalHold,
+    reason,
+  });
+  return response.data.data;
+}
+
+export async function getWorkplaceAuditEvents(
+  from: string,
+  to: string,
+  filters: {
+    action?: string | null;
+    aggregateType?: string | null;
+    aggregateId?: string | null;
+    actorUserId?: number | null;
+    page?: number;
+    size?: number;
+  } = {}
+): Promise<WorkplaceAuditEventPage> {
+  const response = await axiosInstance.get<ApiResponse<WorkplaceAuditEventPage>>(
+    `/api/platform/v1/admin/workplace/audit-events?${operationQuery(from, to, filters)}`
+  );
+  return response.data.data;
+}
 
 export async function getWorkplaceAdminOverview(): Promise<WorkplaceAdminOverview> {
   const response = await axiosInstance.get<ApiResponse<WorkplaceAdminOverview>>(

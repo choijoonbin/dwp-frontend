@@ -1,5 +1,5 @@
 import {
-  Bell,
+  Bookmark,
   CircleGauge,
   Hash,
   House,
@@ -13,7 +13,14 @@ import type { LucideIcon } from 'lucide-react';
 
 export type MessagingSection = 'start' | 'conversations' | 'work' | 'admin';
 export type MessagingView =
-  'home' | 'inbox' | 'spaces' | 'direct' | 'people' | 'later' | 'admin-overview' | 'admin-policy';
+  | 'home'
+  | 'inbox'
+  | 'spaces'
+  | 'direct'
+  | 'people'
+  | 'later'
+  | 'admin-overview'
+  | 'admin-policy';
 
 export type MessagingNavigationItem = {
   section: MessagingSection;
@@ -45,7 +52,7 @@ export const MESSAGING_NAVIGATION: readonly MessagingNavigationGroup[] = [
   },
   {
     id: 'work',
-    items: [{ section: 'work', view: 'later', path: '/messages/later', icon: Bell }],
+    items: [{ section: 'work', view: 'later', path: '/messages/later', icon: Bookmark }],
   },
   {
     id: 'admin',

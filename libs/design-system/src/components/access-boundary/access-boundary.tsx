@@ -2,7 +2,15 @@ import { cloneElement, isValidElement } from 'react';
 import { usePermissions } from '@dwp-frontend/shared-utils';
 
 type PermissionCode =
-  'VIEW' | 'USE' | 'EDIT' | 'APPROVE' | 'EXECUTE' | 'CREATE' | 'UPDATE' | 'DELETE' | 'MANAGE';
+  | 'VIEW'
+  | 'USE'
+  | 'EDIT'
+  | 'APPROVE'
+  | 'EXECUTE'
+  | 'CREATE'
+  | 'UPDATE'
+  | 'DELETE'
+  | 'MANAGE';
 
 export type AccessBoundaryProps = {
   resource: string;

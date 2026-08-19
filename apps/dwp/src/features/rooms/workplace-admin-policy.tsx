@@ -1,9 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Armchair, CalendarRange, Clock3, Save, ShieldCheck, UserRoundCheck } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useBlocker } from 'react-router-dom';
 import { getWorkplacePolicy, updateWorkplacePolicy, useToast } from '@dwp-frontend/shared-utils';
-import { ActionButton, FormField, PageCanvas, TimePickerField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ConfirmDialog,
+  FormField,
+  PageCanvas,
+  TimePickerField,
+} from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -15,7 +22,8 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
-import { RoomsPageHeading } from './rooms-ui';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
 
 import type { WorkplacePolicy } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
@@ -69,6 +77,7 @@ export function WorkplaceAdminPolicy() {
   const { t } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const capabilities = useRoomsCapabilities();
   const query = useQuery({
     queryKey: ['workplace', 'admin', 'policy'],
     queryFn: getWorkplacePolicy,
@@ -76,9 +85,16 @@ export function WorkplaceAdminPolicy() {
     retry: 1,
   });
   const [form, setForm] = useState<WorkplacePolicy | null>(null);
+  const [baseline, setBaseline] = useState<WorkplacePolicy | null>(null);
+  const dirty = Boolean(form && baseline && JSON.stringify(form) !== JSON.stringify(baseline));
+  const dirtyRef = useRef(dirty);
+  dirtyRef.current = dirty;
   useEffect(() => {
-    if (query.data) setForm(query.data);
-  }, [query.data]);
+    if (query.data && !dirtyRef.current) {
+      setForm(query.data);
+      setBaseline(query.data);
+    }
+  }, [dirty, query.data]);
   const patch = <K extends keyof WorkplacePolicy>(key: K, value: WorkplacePolicy[K]) =>
     setForm((current) => (current ? { ...current, [key]: value } : current));
   const patchBookingWindow = (days: number) =>
@@ -91,33 +107,45 @@ export function WorkplaceAdminPolicy() {
           }
         : current
     );
-  const dirty = Boolean(form && query.data && JSON.stringify(form) !== JSON.stringify(query.data));
   const valid = Boolean(
     form &&
-    form.bookingWindowDays >= 1 &&
-    form.bookingWindowDays <= 365 &&
-    form.maximumActiveBookings >= 1 &&
-    form.maximumActiveBookings <= 100 &&
-    form.maximumConsecutiveDays >= 1 &&
-    form.maximumConsecutiveDays <= 31 &&
-    form.maximumConsecutiveDays <= form.bookingWindowDays &&
-    form.minimumBookingMinutes >= 15 &&
-    form.minimumBookingMinutes <= 1440 &&
-    form.maximumBookingMinutes >= form.minimumBookingMinutes &&
-    form.maximumBookingMinutes <= 10080 &&
-    timeInMinutes(form.workingDayStart) < timeInMinutes(form.workingDayEnd) &&
-    form.checkInLeadMinutes >= 0 &&
-    form.checkInLeadMinutes <= 240 &&
-    form.autoReleaseMinutes >= 0 &&
-    form.autoReleaseMinutes <= 240
+      form.bookingWindowDays >= 1 &&
+      form.bookingWindowDays <= 365 &&
+      form.maximumActiveBookings >= 1 &&
+      form.maximumActiveBookings <= 100 &&
+      form.maximumConsecutiveDays >= 1 &&
+      form.maximumConsecutiveDays <= 31 &&
+      form.maximumConsecutiveDays <= form.bookingWindowDays &&
+      form.minimumBookingMinutes >= 15 &&
+      form.minimumBookingMinutes <= 1440 &&
+      form.maximumBookingMinutes >= form.minimumBookingMinutes &&
+      form.maximumBookingMinutes <= 10080 &&
+      timeInMinutes(form.workingDayStart) < timeInMinutes(form.workingDayEnd) &&
+      form.checkInLeadMinutes >= 0 &&
+      form.checkInLeadMinutes <= 240 &&
+      form.autoReleaseMinutes >= 0 &&
+      form.autoReleaseMinutes <= 240 &&
+      form.bookingRetentionDays >= 30 &&
+      form.bookingRetentionDays <= 3650
   );
+  const navigationBlocker = useBlocker(dirty);
+  useEffect(() => {
+    if (!dirty) return undefined;
+    const preventUnload = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener('beforeunload', preventUnload);
+    return () => window.removeEventListener('beforeunload', preventUnload);
+  }, [dirty]);
   const mutation = useMutation({
     mutationFn: () => {
       if (!form) throw new Error(t('workplace.admin.policy.loadError'));
+      if (!capabilities.canManageWorkplaceAdmin) {
+        throw new Error(t('permissions.adminPolicyReadOnly'));
+      }
       return updateWorkplacePolicy(form);
     },
     onSuccess: async (saved) => {
       setForm(saved);
+      setBaseline(saved);
       await queryClient.invalidateQueries({ queryKey: ['workplace'] });
       toast.success(t('workplace.admin.policy.saved'));
     },
@@ -134,7 +162,7 @@ export function WorkplaceAdminPolicy() {
           <ActionButton
             intent="primary"
             startIcon={<Save size={17} />}
-            disabled={!dirty || !valid}
+            disabled={!dirty || !valid || !capabilities.canManageWorkplaceAdmin}
             loading={mutation.isPending}
             loadingLabel={t('actions.saving')}
             onClick={() => mutation.mutate()}
@@ -143,6 +171,9 @@ export function WorkplaceAdminPolicy() {
           </ActionButton>
         }
       />
+      {capabilities.isLoaded && !capabilities.canManageWorkplaceAdmin && (
+        <RoomsPermissionNotice>{t('permissions.adminPolicyReadOnly')}</RoomsPermissionNotice>
+      )}
       {query.isLoading && <Skeleton variant="rectangular" height={560} />}
       {query.isError && (
         <Alert
@@ -171,6 +202,7 @@ export function WorkplaceAdminPolicy() {
             <ToggleButtonGroup
               exclusive
               value={form.bookingWindowDays}
+              disabled={!capabilities.canManageWorkplaceAdmin}
               onChange={(_, value: number | null) => value && patchBookingWindow(value)}
               size="small"
               sx={{ flexWrap: 'wrap' }}
@@ -186,6 +218,7 @@ export function WorkplaceAdminPolicy() {
                 type="number"
                 label={t('workplace.admin.policy.activeLimit')}
                 value={form.maximumActiveBookings}
+                disabled={!capabilities.canManageWorkplaceAdmin}
                 onChange={(event) => patch('maximumActiveBookings', Number(event.target.value))}
                 inputProps={{ min: 1, max: 100 }}
               />
@@ -197,6 +230,7 @@ export function WorkplaceAdminPolicy() {
               control={
                 <Switch
                   checked={form.allowAssignedDeskLending}
+                  disabled={!capabilities.canManageWorkplaceAdmin}
                   onChange={(_, value) => patch('allowAssignedDeskLending', value)}
                 />
               }
@@ -218,17 +252,20 @@ export function WorkplaceAdminPolicy() {
               <TimePickerField
                 label={t('workplace.admin.policy.workingStart')}
                 value={form.workingDayStart}
+                disabled={!capabilities.canManageWorkplaceAdmin}
                 onValueChange={(value) => value && patch('workingDayStart', value)}
               />
               <TimePickerField
                 label={t('workplace.admin.policy.workingEnd')}
                 value={form.workingDayEnd}
+                disabled={!capabilities.canManageWorkplaceAdmin}
                 onValueChange={(value) => value && patch('workingDayEnd', value)}
               />
               <FormField
                 type="number"
                 label={t('workplace.admin.policy.minimumMinutes')}
                 value={form.minimumBookingMinutes}
+                disabled={!capabilities.canManageWorkplaceAdmin}
                 onChange={(event) => patch('minimumBookingMinutes', Number(event.target.value))}
                 inputProps={{ min: 15, max: 1440, step: 15 }}
               />
@@ -236,6 +273,7 @@ export function WorkplaceAdminPolicy() {
                 type="number"
                 label={t('workplace.admin.policy.maximumMinutes')}
                 value={form.maximumBookingMinutes}
+                disabled={!capabilities.canManageWorkplaceAdmin}
                 onChange={(event) => patch('maximumBookingMinutes', Number(event.target.value))}
                 inputProps={{ min: 15, max: 10080, step: 15 }}
               />
@@ -248,6 +286,7 @@ export function WorkplaceAdminPolicy() {
                 control={
                   <Switch
                     checked={form.requireCheckIn}
+                    disabled={!capabilities.canManageWorkplaceAdmin}
                     onChange={(_, value) => patch('requireCheckIn', value)}
                   />
                 }
@@ -262,7 +301,7 @@ export function WorkplaceAdminPolicy() {
               >
                 <FormField
                   type="number"
-                  disabled={!form.requireCheckIn}
+                  disabled={!form.requireCheckIn || !capabilities.canManageWorkplaceAdmin}
                   label={t('workplace.admin.policy.checkInLead')}
                   value={form.checkInLeadMinutes}
                   onChange={(event) => patch('checkInLeadMinutes', Number(event.target.value))}
@@ -270,7 +309,7 @@ export function WorkplaceAdminPolicy() {
                 />
                 <FormField
                   type="number"
-                  disabled={!form.requireCheckIn}
+                  disabled={!form.requireCheckIn || !capabilities.canManageWorkplaceAdmin}
                   label={t('workplace.admin.policy.autoRelease')}
                   value={form.autoReleaseMinutes}
                   onChange={(event) => patch('autoReleaseMinutes', Number(event.target.value))}
@@ -281,20 +320,42 @@ export function WorkplaceAdminPolicy() {
           </PolicySection>
 
           <PolicySection icon={ShieldCheck} title={t('workplace.admin.policy.privacyTitle')}>
-            <Stack>
+            <Stack gap={1.5}>
               <FormControlLabel
                 control={
                   <Switch
                     checked={form.showColleagueNames}
+                    disabled={!capabilities.canManageWorkplaceAdmin}
                     onChange={(_, value) => patch('showColleagueNames', value)}
                   />
                 }
                 label={t('workplace.admin.policy.showNames')}
               />
+              <Box sx={{ maxWidth: 420 }}>
+                <FormField
+                  type="number"
+                  label={t('workplace.admin.policy.bookingRetentionDays')}
+                  value={form.bookingRetentionDays}
+                  disabled={!capabilities.canManageWorkplaceAdmin}
+                  onChange={(event) => patch('bookingRetentionDays', Number(event.target.value))}
+                  supportingText={t('workplace.admin.policy.bookingRetentionDaysHint')}
+                  inputProps={{ min: 30, max: 3650 }}
+                />
+              </Box>
             </Stack>
           </PolicySection>
         </Stack>
       )}
+      <ConfirmDialog
+        open={navigationBlocker.state === 'blocked'}
+        title={t('workplace.admin.policy.unsavedTitle')}
+        description={t('workplace.admin.policy.unsavedDescription')}
+        cancelLabel={t('actions.keep')}
+        confirmLabel={t('workplace.admin.policy.discardChanges')}
+        intent="danger"
+        onClose={() => navigationBlocker.reset?.()}
+        onConfirm={() => navigationBlocker.proceed?.()}
+      />
     </PageCanvas>
   );
 }

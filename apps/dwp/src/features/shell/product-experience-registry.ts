@@ -1,5 +1,12 @@
 export type ProductExperienceKey =
-  'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'messaging' | 'notifications' | 'spaces';
+  | 'hcm'
+  | 'calendar'
+  | 'rooms'
+  | 'approvals'
+  | 'mail'
+  | 'messaging'
+  | 'notifications'
+  | 'spaces';
 
 export type ProductExperienceProfile = {
   key: ProductExperienceKey;

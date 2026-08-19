@@ -312,6 +312,7 @@
       "contextConfiguration": "Configure the read-only work context connection.",
       "modelConfiguration": "Configure an approved model route and managed credential. No substitute answer was generated.",
       "permissionRequired": "This account does not have permission to ask DWAI·ON.",
+      "promptInjectionBlocked": "A pattern attempting to override system instructions or security controls was detected, so no source or model was invoked.",
       "privilegedHandoff": "The request may involve restricted workforce or financial data, so no source or model was invoked.",
       "mutationHandoff": "Changes require review and approval in the owning app. DWAI·ON did not execute the request.",
       "noSource": "No source available to this user can support the answer.",

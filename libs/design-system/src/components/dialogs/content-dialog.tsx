@@ -20,8 +20,12 @@ export type ContentDialogProps = {
   onClose: () => void;
   children: React.ReactNode;
   busy?: boolean;
+  fullScreen?: boolean;
+  hideHeader?: boolean;
   maxWidth?: DialogProps['maxWidth'];
+  titleStart?: React.ReactNode;
   headerContent?: React.ReactNode;
+  contentDividers?: boolean;
   contentSx?: SxProps<Theme>;
   slotProps?: DialogProps['slotProps'];
 };
@@ -34,8 +38,12 @@ export function ContentDialog({
   onClose,
   children,
   busy = false,
+  fullScreen = false,
+  hideHeader = false,
   maxWidth = 'sm',
+  titleStart,
   headerContent,
+  contentDividers = false,
   contentSx,
   slotProps,
 }: ContentDialogProps) {
@@ -45,35 +53,42 @@ export function ContentDialog({
   return (
     <Dialog
       open={open}
+      fullScreen={fullScreen}
       fullWidth
       maxWidth={maxWidth}
-      aria-labelledby={titleId}
-      aria-describedby={description ? descriptionId : undefined}
+      aria-label={hideHeader ? title : undefined}
+      aria-labelledby={hideHeader ? undefined : titleId}
+      aria-describedby={!hideHeader && description ? descriptionId : undefined}
       onClose={busy ? undefined : onClose}
       slotProps={slotProps}
     >
-      <DialogTitle sx={{ minHeight: 72, display: 'flex', alignItems: 'center', gap: 2, pr: 1.5 }}>
-        <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography id={titleId} component="h2" variant="h6">
-            {title}
-          </Typography>
-          {description && (
-            <Typography id={descriptionId} variant="caption" color="text.secondary">
-              {description}
+      {!hideHeader && (
+        <DialogTitle sx={{ minHeight: 72, display: 'flex', alignItems: 'center', gap: 2, pr: 1.5 }}>
+          {titleStart}
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Typography id={titleId} component="h2" variant="h6">
+              {title}
             </Typography>
-          )}
-        </Box>
-        <ActionIconButton
-          label={closeLabel}
-          onClick={onClose}
-          disabled={busy}
-          tooltipPlacement="left"
-        >
-          <X size={19} />
-        </ActionIconButton>
-      </DialogTitle>
+            {description && (
+              <Typography id={descriptionId} variant="caption" color="text.secondary">
+                {description}
+              </Typography>
+            )}
+          </Box>
+          <ActionIconButton
+            label={closeLabel}
+            onClick={onClose}
+            disabled={busy}
+            tooltipPlacement="left"
+          >
+            <X size={19} />
+          </ActionIconButton>
+        </DialogTitle>
+      )}
       {headerContent}
-      <DialogContent sx={contentSx}>{children}</DialogContent>
+      <DialogContent dividers={contentDividers} sx={contentSx}>
+        {children}
+      </DialogContent>
     </Dialog>
   );
 }

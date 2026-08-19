@@ -21,6 +21,7 @@
       "approvals": {
         "home": { "label": "Approval home" },
         "inbox": { "label": "Decision inbox" },
+        "completed": { "label": "My completed decisions" },
         "new": { "label": "New request" },
         "drafts": { "label": "Drafts" },
         "submitted": { "label": "My requests" },
@@ -41,6 +42,11 @@
       "eyebrow": "Approvals / My decisions",
       "title": "Decision inbox",
       "description": "Review business context and evidence together, then make an accountable decision."
+    },
+    "completed": {
+      "eyebrow": "Approvals / My decisions",
+      "title": "My completed decisions",
+      "description": "Review approvals and rejections recorded against your verified user identity."
     },
     "new": {
       "eyebrow": "Approvals / Request",
@@ -284,15 +290,53 @@
       }
     }
   },
+  "completed": {
+    "queue": "My decision history",
+    "queueMeta": "Scoped by recorded decision actor",
+    "loadError": "Your completed decision history could not be loaded.",
+    "empty": "No completed decisions yet",
+    "emptyDescription": "Requests you approve or reject will be recorded here.",
+    "select": "Select a completed decision",
+    "selectDescription": "Review the pinned request data and immutable processing evidence."
+  },
   "events": {
     "REFERENCE_TASK_CREATED": "Reference approval created",
     "DRAFT_CREATED": "Approval draft created",
     "DRAFT_UPDATED": "Approval draft updated",
+    "REQUEST_DRAFTED": "Approval draft created",
+    "REQUEST_DRAFT_UPDATED": "Approval draft updated",
     "REQUEST_CREATED": "Request created",
     "REQUEST_SUBMITTED": "Request submitted",
+    "REQUEST_WITHDRAWN": "Request withdrawn",
+    "TASK_CLAIMED": "Approval task claimed",
     "TASK_APPROVED": "Request approved",
     "TASK_REJECTED": "Request rejected",
-    "TASK_INFO_REQUESTED": "Information requested"
+    "TASK_INFO_REQUESTED": "Information requested",
+    "INFORMATION_REQUESTED": "Information requested",
+    "INFORMATION_RESPONDED": "Information response submitted",
+    "APPROVAL_STEP_STARTED": "Next approval stage started"
+  },
+  "eventDetails": {
+    "REFERENCE_TASK_CREATED": "A reference approval task was created.",
+    "DRAFT_CREATED": "The approval draft was created.",
+    "DRAFT_UPDATED": "The approval draft was updated.",
+    "REQUEST_DRAFTED": "The approval draft was created.",
+    "REQUEST_DRAFT_UPDATED": "The approval draft was updated.",
+    "REQUEST_CREATED": "The approval request was created.",
+    "REQUEST_SUBMITTED": "The approval request was submitted.",
+    "REQUEST_WITHDRAWN": "The approval request was withdrawn.",
+    "TASK_CLAIMED": "A decision maker claimed the approval task.",
+    "APPROVAL_STEP_STARTED": "The next approval stage started."
+  },
+  "actorTypes": {
+    "USER": "User",
+    "SYSTEM": "System",
+    "SERVICE": "Service",
+    "AGENT": "AI agent"
+  },
+  "timelineEvidence": {
+    "step": "Step {{sequence}} · {{name}}",
+    "delegated": "Delegated decision"
   },
   "requests": {
     "created": "Approval request submitted.",
@@ -323,6 +367,7 @@
     "compose": {
       "title": "Compose request",
       "meta": "Uses a published process and form",
+      "dwaionDraftNotice": "This is a review approval draft handed off by DWAI·ON. Check the form, route, and content before saving or submitting it yourself.",
       "editTitle": "Edit approval draft",
       "editMeta": "Review saved content and validate it against the latest published process"
     },

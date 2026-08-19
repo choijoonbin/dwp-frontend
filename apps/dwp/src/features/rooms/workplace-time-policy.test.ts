@@ -11,6 +11,7 @@ import type { WorkplacePolicy } from '@dwp-frontend/shared-utils';
 
 const policy: WorkplacePolicy = {
   bookingWindowDays: 30,
+  bookingRetentionDays: 365,
   maximumActiveBookings: 20,
   minimumBookingMinutes: 30,
   maximumBookingMinutes: 480,

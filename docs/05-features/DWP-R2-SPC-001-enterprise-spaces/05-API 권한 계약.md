@@ -54,7 +54,7 @@
 경우 이 표와 `contracts/openapi/space.json`을 현재 구현 계약으로 우선한다.
 
 | Method | Path                                                                                | 목적                                     | Permission                      | Audit·Evidence                         |
-| ------ | ----------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------- | -------------------------------------- |
+| ------ | ----------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------- | -------------------------------------- | ----------------- |
 | GET    | `/v1/admin/operations`                                                              | 정합성 KPI·발견사항·실행·전달 조회       | `ADMIN.SPACE_GOVERNANCE:VIEW    | MANAGE`                                | Admin read metric |
 | POST   | `/v1/admin/operations/reconcile`                                                    | Desired State 수동 재계산                | `ADMIN.SPACE_GOVERNANCE:MANAGE` | Reconciliation run + Audit             |
 | POST   | `/v1/admin/operations/entitlements/{syncItemId}/retry`                              | Retry·Dead 전달 재대기                   | `ADMIN.SPACE_GOVERNANCE:MANAGE` | Retry audit                            |

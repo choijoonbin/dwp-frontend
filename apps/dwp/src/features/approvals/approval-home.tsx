@@ -223,21 +223,25 @@ export function ApprovalHome() {
                 })}
               </Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.25} sx={{ mt: 2.5 }}>
-                <ActionButton
-                  intent="primary"
-                  startIcon={<FileCheck2 size={17} />}
-                  onClick={() => navigate('/approvals/inbox')}
-                >
-                  {t('actions.reviewInbox')}
-                </ActionButton>
-                <ActionButton
-                  intent="quiet"
-                  startIcon={<FileInputIcon />}
-                  onClick={() => navigate('/approvals/requests/new')}
-                  sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.36)' }}
-                >
-                  {t('actions.newRequest')}
-                </ActionButton>
+                {experience.canViewTasks && (
+                  <ActionButton
+                    intent="primary"
+                    startIcon={<FileCheck2 size={17} />}
+                    onClick={() => navigate('/approvals/inbox')}
+                  >
+                    {t('actions.reviewInbox')}
+                  </ActionButton>
+                )}
+                {experience.canStartRequests && (
+                  <ActionButton
+                    intent="quiet"
+                    startIcon={<FileInputIcon />}
+                    onClick={() => navigate('/approvals/requests/new')}
+                    sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.36)' }}
+                  >
+                    {t('actions.newRequest')}
+                  </ActionButton>
+                )}
                 {experience.canAskExpert && (
                   <ActionButton
                     intent="quiet"
@@ -303,14 +307,16 @@ export function ApprovalHome() {
           title={t('home.widgets.focus-queue.label')}
           meta={t('home.widgets.focus-queue.meta', { count: data.focusQueue.length })}
           action={
-            <ActionButton
-              intent="quiet"
-              size="small"
-              endIcon={<ArrowRight size={15} />}
-              onClick={() => navigate('/approvals/inbox')}
-            >
-              {t('actions.viewAll')}
-            </ActionButton>
+            experience.canViewTasks ? (
+              <ActionButton
+                intent="quiet"
+                size="small"
+                endIcon={<ArrowRight size={15} />}
+                onClick={() => navigate('/approvals/inbox')}
+              >
+                {t('actions.viewAll')}
+              </ActionButton>
+            ) : undefined
           }
         >
           {data.focusQueue.slice(0, 5).map((task) => (
@@ -376,13 +382,15 @@ export function ApprovalHome() {
           title={t('home.widgets.my-requests.label')}
           meta={t('home.widgets.my-requests.description')}
           action={
-            <ActionButton
-              intent="quiet"
-              size="small"
-              onClick={() => navigate('/approvals/requests/submitted')}
-            >
-              {t('actions.viewAll')}
-            </ActionButton>
+            experience.canViewRequests ? (
+              <ActionButton
+                intent="quiet"
+                size="small"
+                onClick={() => navigate('/approvals/requests/submitted')}
+              >
+                {t('actions.viewAll')}
+              </ActionButton>
+            ) : undefined
           }
         >
           {data.recentRequests.slice(0, 4).map((request) => (

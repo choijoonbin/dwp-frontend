@@ -31,13 +31,18 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
+import { ApprovalPayloadData } from './approval-payload-data';
+import {
+  approvalTimelineEventContext,
+  approvalTimelineEventDetail,
+} from './approval-timeline-copy';
 import { ApprovalSurface, PriorityChip, StatusChip, approvalTone } from './approval-ui';
 
 import type { ApprovalTask } from '@dwp-frontend/shared-utils';
 
 type Decision = 'APPROVE' | 'REJECT' | 'REQUEST_INFO';
 
-export function ApprovalInbox() {
+export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED' }) {
   const { t, i18n } = useTranslation('approvals');
   const display = useDisplayDictionary();
   const toast = useToast();
@@ -47,13 +52,18 @@ export function ApprovalInbox() {
   const [selectedId, setSelectedId] = useState<string>();
   const [decision, setDecision] = useState<Decision>();
   const [comment, setComment] = useState('');
+  const queueCopy = view === 'COMPLETED' ? 'completed' : 'inbox';
   const tasks = useQuery({
-    queryKey: ['approvals', 'tasks', 'INBOX'],
-    queryFn: () => getApprovalTasks('INBOX'),
+    queryKey: ['approvals', 'tasks', view],
+    queryFn: () => getApprovalTasks(view),
     staleTime: 20_000,
   });
   useEffect(() => {
-    if (selectedId || !tasks.data?.length) return;
+    if (!tasks.data?.length) {
+      if (selectedId) setSelectedId(undefined);
+      return;
+    }
+    if (selectedId && tasks.data.some((task) => task.taskId === selectedId)) return;
     const requested = tasks.data.find((task) => task.taskId === requestedTaskId);
     setSelectedId(requested?.taskId ?? tasks.data[0].taskId);
   }, [requestedTaskId, selectedId, tasks.data]);
@@ -110,11 +120,11 @@ export function ApprovalInbox() {
         <Box sx={{ px: 2, py: 1.75, borderBottom: 1, borderColor: 'divider' }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Box>
-              <Typography variant="subtitle1" fontWeight={760}>
-                {t('inbox.queue')}
+              <Typography component="h2" variant="subtitle1" fontWeight={760}>
+                {t(`${queueCopy}.queue`)}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {t('inbox.queueMeta')}
+                {t(`${queueCopy}.queueMeta`)}
               </Typography>
             </Box>
             <Chip size="small" label={tasks.data?.length ?? 0} />
@@ -122,7 +132,7 @@ export function ApprovalInbox() {
         </Box>
         {tasks.isError && (
           <Alert severity="error" sx={{ m: 1.5 }}>
-            {t('inbox.loadError')}
+            {t(`${queueCopy}.loadError`)}
           </Alert>
         )}
         <Box sx={{ maxHeight: { lg: 560 }, overflowY: 'auto' }}>
@@ -138,10 +148,10 @@ export function ApprovalInbox() {
             <Box sx={{ px: 3, py: 8, textAlign: 'center' }}>
               <ShieldCheck size={32} color={approvalTone.teal} />
               <Typography variant="subtitle1" sx={{ mt: 1 }}>
-                {t('inbox.empty')}
+                {t(`${queueCopy}.empty`)}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {t('inbox.emptyDescription')}
+                {t(`${queueCopy}.emptyDescription`)}
               </Typography>
             </Box>
           )}
@@ -161,10 +171,10 @@ export function ApprovalInbox() {
             <Box>
               <MessageSquareText size={34} color="#728096" />
               <Typography variant="subtitle1" sx={{ mt: 1 }}>
-                {t('inbox.select')}
+                {t(`${queueCopy}.select`)}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {t('inbox.selectDescription')}
+                {t(`${queueCopy}.selectDescription`)}
               </Typography>
             </Box>
           </Box>
@@ -205,6 +215,7 @@ export function ApprovalInbox() {
                     {t('inbox.risk')}
                   </Typography>
                   <Typography
+                    component="p"
                     variant="h4"
                     color={
                       selected.task.riskScore >= 80
@@ -281,25 +292,10 @@ export function ApprovalInbox() {
                   </Box>
                 </ApprovalSurface>
                 <ApprovalSurface title={t('inbox.requestData')}>
-                  <Box component="dl" sx={{ m: 0, p: 2, display: 'grid', gap: 1 }}>
-                    {Object.entries(selected.payload).map(([key, value]) => (
-                      <Box
-                        key={key}
-                        sx={{
-                          display: 'grid',
-                          gridTemplateColumns: 'minmax(120px, .4fr) 1fr',
-                          gap: 2,
-                        }}
-                      >
-                        <Typography component="dt" variant="caption" color="text.secondary">
-                          {t(`requestFields.${key}`, { defaultValue: key })}
-                        </Typography>
-                        <Typography component="dd" variant="body2" sx={{ m: 0 }}>
-                          {String(value)}
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Box>
+                  <ApprovalPayloadData
+                    payload={selected.payload}
+                    formSchema={selected.formSchema}
+                  />
                 </ApprovalSurface>
               </Stack>
               <ApprovalSurface title={t('inbox.timeline')} meta={t('inbox.timelineMeta')}>
@@ -323,7 +319,8 @@ export function ApprovalInbox() {
                           })}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          {event.message || event.actorType} ·{' '}
+                          {approvalTimelineEventContext(t, event)} ·{' '}
+                          {approvalTimelineEventDetail(t, event)} ·{' '}
                           {formatDate(event.occurredAt, {
                             dateStyle: 'medium',
                             timeStyle: 'short',
@@ -335,61 +332,63 @@ export function ApprovalInbox() {
                 </Stack>
               </ApprovalSurface>
             </Box>
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              justifyContent="flex-end"
-              gap={1}
-              sx={{
-                position: 'sticky',
-                bottom: 0,
-                px: 3,
-                py: 2,
-                borderTop: 1,
-                borderColor: 'divider',
-                bgcolor: 'rgba(255,255,255,0.94)',
-                backdropFilter: 'blur(14px)',
-              }}
-            >
-              {selected.canClaim && (
+            {view === 'INBOX' && (
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="flex-end"
+                gap={1}
+                sx={{
+                  position: 'sticky',
+                  bottom: 0,
+                  px: 3,
+                  py: 2,
+                  borderTop: 1,
+                  borderColor: 'divider',
+                  bgcolor: 'rgba(255,255,255,0.94)',
+                  backdropFilter: 'blur(14px)',
+                }}
+              >
+                {selected.canClaim && (
+                  <ActionButton
+                    intent="secondary"
+                    startIcon={<Hand size={17} />}
+                    loading={claim.isPending}
+                    onClick={() =>
+                      claim.mutate({
+                        taskId: selected.task.taskId,
+                        expectedVersion: selected.task.version,
+                      })
+                    }
+                  >
+                    {t('actions.claim')}
+                  </ActionButton>
+                )}
                 <ActionButton
                   intent="secondary"
-                  startIcon={<Hand size={17} />}
-                  loading={claim.isPending}
-                  onClick={() =>
-                    claim.mutate({
-                      taskId: selected.task.taskId,
-                      expectedVersion: selected.task.version,
-                    })
-                  }
+                  startIcon={<MessageSquareText size={17} />}
+                  disabled={!selected.canDecide}
+                  onClick={() => setDecision('REQUEST_INFO')}
                 >
-                  {t('actions.claim')}
+                  {t('actions.requestInfo')}
                 </ActionButton>
-              )}
-              <ActionButton
-                intent="secondary"
-                startIcon={<MessageSquareText size={17} />}
-                disabled={!selected.canDecide}
-                onClick={() => setDecision('REQUEST_INFO')}
-              >
-                {t('actions.requestInfo')}
-              </ActionButton>
-              <ActionButton
-                intent="danger"
-                startIcon={<X size={17} />}
-                disabled={!selected.canDecide}
-                onClick={() => setDecision('REJECT')}
-              >
-                {t('actions.reject')}
-              </ActionButton>
-              <ActionButton
-                intent="primary"
-                startIcon={<Check size={17} />}
-                disabled={!selected.canDecide}
-                onClick={() => setDecision('APPROVE')}
-              >
-                {t('actions.approve')}
-              </ActionButton>
-            </Stack>
+                <ActionButton
+                  intent="danger"
+                  startIcon={<X size={17} />}
+                  disabled={!selected.canDecide}
+                  onClick={() => setDecision('REJECT')}
+                >
+                  {t('actions.reject')}
+                </ActionButton>
+                <ActionButton
+                  intent="primary"
+                  startIcon={<Check size={17} />}
+                  disabled={!selected.canDecide}
+                  onClick={() => setDecision('APPROVE')}
+                >
+                  {t('actions.approve')}
+                </ActionButton>
+              </Stack>
+            )}
           </Box>
         )}
       </Box>

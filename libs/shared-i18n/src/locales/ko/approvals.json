@@ -17,6 +17,7 @@
       "approvals": {
         "home": { "label": "전자결재 홈" },
         "inbox": { "label": "결재함" },
+        "completed": { "label": "내 처리 완료함" },
         "new": { "label": "새 결재 작성" },
         "drafts": { "label": "임시 저장" },
         "submitted": { "label": "내가 올린 결재" },
@@ -37,6 +38,11 @@
       "eyebrow": "전자결재 / 내 결재",
       "title": "결재함",
       "description": "업무 맥락과 증적을 한 화면에서 검토하고 책임 있는 결정을 내립니다."
+    },
+    "completed": {
+      "eyebrow": "전자결재 / 내 결재",
+      "title": "내 처리 완료함",
+      "description": "내 검증된 사용자 ID로 승인하거나 반려한 결정과 당시 증적을 다시 확인합니다."
     },
     "new": {
       "eyebrow": "전자결재 / 기안",
@@ -274,15 +280,53 @@
       }
     }
   },
+  "completed": {
+    "queue": "내 처리 이력",
+    "queueMeta": "실제 결정자 증거를 기준으로 표시",
+    "loadError": "처리 완료 이력을 불러오지 못했습니다.",
+    "empty": "아직 완료한 결정이 없습니다",
+    "emptyDescription": "직접 승인하거나 반려한 결재가 이곳에 기록됩니다.",
+    "select": "확인할 결정을 선택하세요",
+    "selectDescription": "결정 당시 요청 데이터와 변경 불가능한 처리 이력을 확인할 수 있습니다."
+  },
   "events": {
     "REFERENCE_TASK_CREATED": "참조 결재 생성",
     "DRAFT_CREATED": "결재 초안 생성",
     "DRAFT_UPDATED": "결재 초안 수정",
+    "REQUEST_DRAFTED": "결재 초안 생성",
+    "REQUEST_DRAFT_UPDATED": "결재 초안 수정",
     "REQUEST_CREATED": "결재 작성",
     "REQUEST_SUBMITTED": "결재 상신",
+    "REQUEST_WITHDRAWN": "결재 회수",
+    "TASK_CLAIMED": "결재 업무 가져오기",
     "TASK_APPROVED": "결재 승인",
     "TASK_REJECTED": "결재 반려",
-    "TASK_INFO_REQUESTED": "보완 요청"
+    "TASK_INFO_REQUESTED": "보완 요청",
+    "INFORMATION_REQUESTED": "보완 요청",
+    "INFORMATION_RESPONDED": "보완 답변 제출",
+    "APPROVAL_STEP_STARTED": "다음 결재 단계 시작"
+  },
+  "eventDetails": {
+    "REFERENCE_TASK_CREATED": "참조용 결재 업무가 생성되었습니다.",
+    "DRAFT_CREATED": "결재 초안이 생성되었습니다.",
+    "DRAFT_UPDATED": "결재 초안이 수정되었습니다.",
+    "REQUEST_DRAFTED": "결재 초안이 생성되었습니다.",
+    "REQUEST_DRAFT_UPDATED": "결재 초안이 수정되었습니다.",
+    "REQUEST_CREATED": "결재 문서가 작성되었습니다.",
+    "REQUEST_SUBMITTED": "결재가 상신되었습니다.",
+    "REQUEST_WITHDRAWN": "결재가 요청자에게 회수되었습니다.",
+    "TASK_CLAIMED": "결재 담당자가 업무를 가져왔습니다.",
+    "APPROVAL_STEP_STARTED": "다음 결재 단계가 시작되었습니다."
+  },
+  "actorTypes": {
+    "USER": "사용자",
+    "SYSTEM": "시스템",
+    "SERVICE": "서비스",
+    "AGENT": "AI 에이전트"
+  },
+  "timelineEvidence": {
+    "step": "{{sequence}}단계 {{name}}",
+    "delegated": "대리 처리"
   },
   "requests": {
     "created": "결재를 상신했습니다.",
@@ -313,6 +357,7 @@
     "compose": {
       "title": "결재 기안",
       "meta": "게시된 절차와 양식을 사용합니다",
+      "dwaionDraftNotice": "DWAI·ON에서 전달한 검토용 결재 초안입니다. 양식, 결재선과 내용을 확인한 뒤 임시 저장하거나 직접 상신해 주세요.",
       "editTitle": "임시저장 결재 편집",
       "editMeta": "저장된 내용을 검토하고 최신 게시 절차로 다시 검증합니다"
     },

@@ -4,7 +4,12 @@ import type { LucideIcon } from 'lucide-react';
 
 export type CalendarSection = 'start' | 'plan' | 'insights' | 'admin';
 export type CalendarView =
-  'home' | 'schedule' | 'availability' | 'insights' | 'admin-overview' | 'admin-policies';
+  | 'home'
+  | 'schedule'
+  | 'availability'
+  | 'insights'
+  | 'admin-overview'
+  | 'admin-policies';
 
 export type CalendarNavigationItem = {
   section: CalendarSection;

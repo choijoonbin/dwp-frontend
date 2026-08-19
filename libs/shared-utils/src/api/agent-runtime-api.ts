@@ -17,7 +17,12 @@ export type AskCitationSourceType =
   | 'APPROVAL_FORM'
   | 'APPROVAL_OPERATION';
 export type AskProgressStage =
-  'AUTHORIZING' | 'RETRIEVING' | 'REASONING' | 'VERIFYING' | 'PERSISTING' | 'COMPLETED';
+  | 'AUTHORIZING'
+  | 'RETRIEVING'
+  | 'REASONING'
+  | 'VERIFYING'
+  | 'PERSISTING'
+  | 'COMPLETED';
 
 export type AskPageContext = {
   route: string;

@@ -37,6 +37,13 @@ export async function getRoomAvailability(from: string, to: string): Promise<Roo
   return response.data.data;
 }
 
+export async function getRoomsPolicy(): Promise<CalendarPolicy> {
+  const response = await axiosInstance.get<ApiResponse<CalendarPolicy>>(
+    '/api/platform/v1/rooms/policy'
+  );
+  return response.data.data;
+}
+
 export async function getRoomBookings(from: string, to: string): Promise<CalendarEvent[]> {
   const response = await axiosInstance.get<ApiResponse<CalendarEvent[]>>(
     `/api/platform/v1/rooms/bookings?${rangeQuery(from, to)}`

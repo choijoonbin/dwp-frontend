@@ -25,7 +25,7 @@
         "spaces": { "label": "Space 대화" },
         "direct": { "label": "DM" },
         "people": { "label": "구성원 찾기" },
-        "later": { "label": "나중에 확인" },
+        "later": { "label": "나중에 보기" },
         "admin-overview": { "label": "운영 현황" },
         "admin-policy": { "label": "대화 정책" }
       }
@@ -38,7 +38,9 @@
     "focusSearch": "검색",
     "back": "뒤로",
     "save": "저장",
-    "saving": "저장 중"
+    "saving": "저장 중",
+    "cancel": "취소",
+    "close": "닫기"
   },
   "home": {
     "eyebrow": "DWP 메시징",
@@ -59,8 +61,8 @@
       "spacesDetail": "내가 속한 Space와 연결됨",
       "direct": "DM",
       "directDetail": "직접 대화와 소규모 그룹",
-      "saved": "나중에",
-      "savedDetail": "다시 확인할 대화"
+      "saved": "저장한 항목",
+      "savedDetail": "개인적으로 다시 확인할 메시지"
     },
     "priority": {
       "title": "우선 확인 대화",
@@ -95,17 +97,219 @@
     "selectTitle": "대화를 선택하세요",
     "selectDescription": "왼쪽 목록에서 대화를 선택하면 메시지, 구성원, 정책 맥락을 확인할 수 있습니다.",
     "loadError": "대화 내용을 불러오지 못했습니다.",
+    "timeline": "메시지",
+    "history": {
+      "loadOlder": "이전 메시지 불러오기",
+      "loading": "이전 메시지 불러오는 중",
+      "loadError": "이전 메시지를 불러오지 못했습니다. 다시 시도해 주세요."
+    },
     "noMessagesTitle": "아직 메시지가 없습니다",
     "noMessagesDescription": "첫 메시지를 보내 업무 맥락을 시작하세요.",
+    "composerLabel": "메시지 작성",
     "composerPlaceholder": "메시지를 입력하세요. Shift+Enter로 줄바꿈",
-    "realtimeRest": "실시간 연결은 다음 단계에서 WebSocket으로 확장됩니다. 지금은 전송 후 즉시 갱신합니다.",
+    "composerHint": "Enter로 전송하고 Shift+Enter로 줄바꿈합니다.",
+    "typing": {
+      "one": "{{name}}님이 입력 중입니다.",
+      "two": "{{first}}, {{second}}님이 입력 중입니다.",
+      "many": "{{name}}님 외 {{count}}명이 입력 중입니다."
+    },
     "send": "보내기",
+    "sending": "전송 중",
+    "composerStatus": {
+      "drafting": "작성 중",
+      "sending": "메시지를 전송하고 있습니다.",
+      "error": "전송되지 않았습니다. 내용을 유지했습니다."
+    },
+    "connection": {
+      "idle": "연결 대기",
+      "connecting": "연결 중",
+      "live": "실시간",
+      "reconnecting": "재연결 중",
+      "polling": "자동 동기화",
+      "offline": "오프라인"
+    },
+    "settings": {
+      "open": "대화 설정 열기",
+      "title": "대화 설정",
+      "description": "이 대화의 표시 순서와 알림 방식을 관리합니다.",
+      "connectionRequired": "현재 환경에서는 대화 설정을 변경할 수 없습니다.",
+      "saved": "대화 설정을 저장했습니다.",
+      "saveError": "대화 설정을 저장하지 못했습니다. 최신 값을 확인한 뒤 다시 시도해 주세요.",
+      "loadError": "대화 설정을 불러오지 못했습니다.",
+      "favorite": "즐겨찾기",
+      "favoriteDescription": "즐겨찾기 대화 목록에 표시합니다.",
+      "pinned": "상단 고정",
+      "pinnedDescription": "대화 목록 상단에서 빠르게 찾습니다.",
+      "notifications": "알림 범위",
+      "notificationsDescription": "모든 메시지, 멘션만 또는 알림 끄기를 선택합니다.",
+      "notificationLevels": {
+        "DEFAULT": "모든 새 메시지",
+        "MENTIONS": "멘션 및 답글만",
+        "MUTE": "알림 끄기"
+      }
+    },
+    "meetingAction": "회의",
+    "meetingDialog": {
+      "title": "대화 회의",
+      "description": "카메라와 마이크를 미리 확인한 뒤 대화 구성원과 바로 연결합니다.",
+      "loading": "회의 상태를 확인하고 있습니다.",
+      "unavailable": "이 대화에서는 회의를 사용할 수 없습니다. 테넌트 회의 정책을 확인해 주세요.",
+      "active": "진행 중인 회의가 있습니다",
+      "ready": "회의를 시작할 준비가 되었습니다",
+      "start": "회의 시작",
+      "join": "회의 참여",
+      "preparing": "회의 준비 중",
+      "joinLabel": "지금 참여",
+      "microphone": "마이크",
+      "camera": "카메라",
+      "displayName": "표시 이름",
+      "error": "회의 연결을 준비하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      "live": "진행 중",
+      "connecting": "안전한 회의에 연결하고 있습니다.",
+      "connectionError": "회의 연결이 끊어졌습니다.",
+      "permissionError": "카메라 또는 마이크 권한을 확인해 주세요.",
+      "disconnected": "회의에서 나갔습니다.",
+      "endForEveryone": "모두에게 회의 종료",
+      "ending": "회의 종료 중"
+    },
     "me": "나",
     "deleted": "삭제된 메시지입니다"
   },
   "message": {
     "me": "나",
-    "deleted": "삭제된 메시지입니다"
+    "deleted": "삭제된 메시지입니다",
+    "edited": "수정됨",
+    "reaction": "반응",
+    "addReaction": "반응 추가",
+    "addReactionEmoji": "{{emoji}} 반응 추가",
+    "removeReaction": "{{emoji}} 반응 취소",
+    "reply": "스레드 답글",
+    "replyCount": "답글 {{count}}개",
+    "save": "나중에 저장",
+    "edit": "메시지 수정",
+    "delete": "메시지 삭제",
+    "connectionRequired": "현재 환경에서는 이 기능을 사용할 수 없습니다.",
+    "saveSuccess": "메시지를 나중에 볼 항목에 저장했습니다.",
+    "saveError": "메시지를 저장하지 못했습니다.",
+    "editTitle": "메시지 수정",
+    "editDescription": "수정 이력은 감사 정책에 따라 보존됩니다.",
+    "editLabel": "메시지 내용",
+    "editSave": "수정 저장",
+    "editSaving": "저장 중",
+    "editSuccess": "메시지를 수정했습니다.",
+    "editError": "메시지를 수정하지 못했습니다. 다른 변경이 있었는지 확인해 주세요.",
+    "deleteTitle": "메시지를 삭제할까요?",
+    "deleteDescription": "본문은 삭제 표시로 대체되며 감사 기록은 보존됩니다.",
+    "deleteConfirm": "메시지 삭제",
+    "deleteDeleting": "삭제 중",
+    "deleteSuccess": "메시지를 삭제했습니다.",
+    "deleteError": "메시지를 삭제하지 못했습니다. 다시 불러온 뒤 시도해 주세요.",
+    "reactions": {
+      "like": "좋아요",
+      "done": "확인",
+      "seen": "확인 중",
+      "thanks": "감사"
+    }
+  },
+  "thread": {
+    "title": "스레드",
+    "close": "스레드 닫기",
+    "originalMessage": "원본 메시지",
+    "replies": "답글",
+    "replyCount": "답글 {{count}}개",
+    "empty": "아직 답글이 없습니다. 첫 답글을 남겨보세요.",
+    "composerLabel": "스레드 답글 작성",
+    "composerPlaceholder": "스레드에 답글을 입력하세요. Shift+Enter로 줄바꿈",
+    "loadError": "스레드 답글을 불러오지 못했습니다.",
+    "loading": "스레드 답글을 불러오는 중입니다."
+  },
+  "saved": {
+    "eyebrow": "집중 작업",
+    "title": "나중에 보기",
+    "description": "중요한 메시지를 저장해 두고 맥락을 잃지 않은 채 다시 처리합니다.",
+    "loadError": "저장한 메시지를 불러오지 못했습니다.",
+    "emptyTitle": "저장한 메시지가 없습니다",
+    "emptyDescription": "대화에서 북마크 아이콘을 누르면 이곳에서 다시 확인할 수 있습니다.",
+    "openConversation": "대화 열기",
+    "remove": "저장에서 제거",
+    "removeSuccess": "저장 목록에서 제거했습니다.",
+    "removeError": "저장 목록에서 제거하지 못했습니다.",
+    "previous": "이전",
+    "next": "다음"
+  },
+  "create": {
+    "action": "새 대화",
+    "title": "새 그룹 또는 채널",
+    "description": "구성원을 선택해 비공개 그룹이나 업무 채널을 시작합니다.",
+    "typeLabel": "대화 유형",
+    "group": "그룹 대화",
+    "channel": "채널",
+    "groupDescription": "선택한 구성원만 참여하는 소규모 업무 대화입니다.",
+    "channelDescription": "지속적인 주제와 팀 업무를 위한 비공개 채널입니다.",
+    "groupName": "그룹 이름",
+    "channelName": "채널 이름",
+    "topic": "주제 (선택)",
+    "members": "구성원",
+    "membersDescription": "본인은 자동으로 소유자에 포함됩니다.",
+    "membersPlaceholder": "이름 또는 회사 이메일로 검색",
+    "submit": "대화 만들기",
+    "creating": "만드는 중",
+    "error": "대화를 만들지 못했습니다. 구성원과 이름을 확인한 뒤 다시 시도해 주세요."
+  },
+  "members": {
+    "action": "구성원 관리",
+    "title": "대화 구성원",
+    "description": "{{name}}의 참여자와 대화 권한을 관리합니다.",
+    "loadError": "대화 구성원을 불러오지 못했습니다.",
+    "addTitle": "구성원 추가",
+    "searchLabel": "이름 또는 회사 이메일",
+    "roleLabel": "초기 역할",
+    "memberRoleLabel": "{{name}}의 역할",
+    "add": "추가",
+    "adding": "추가 중",
+    "added": "구성원을 추가했습니다.",
+    "listTitle": "참여 구성원",
+    "count": "{{count}}명",
+    "me": "나",
+    "roleUpdated": "구성원 역할을 변경했습니다.",
+    "remove": "제거",
+    "removeLabel": "{{name}} 제거",
+    "removeTitle": "구성원을 제거할까요?",
+    "removeDescription": "{{name}} 님은 이 대화와 가입 이후 메시지에 더 이상 접근할 수 없습니다.",
+    "removed": "구성원을 제거했습니다.",
+    "leave": "대화 나가기",
+    "leaveTitle": "이 대화에서 나갈까요?",
+    "leaveDescription": "나간 뒤에는 소유자 또는 모더레이터의 초대를 받아야 다시 참여할 수 있습니다.",
+    "left": "대화에서 나갔습니다.",
+    "leaveError": "대화에서 나가지 못했습니다. 마지막 소유자이거나 동기화된 구성원인지 확인해 주세요.",
+    "mutationError": "구성원 변경을 저장하지 못했습니다. 최신 상태를 확인한 뒤 다시 시도해 주세요.",
+    "updating": "변경 중",
+    "roles": {
+      "VIEWER": "열람자",
+      "MEMBER": "구성원",
+      "MODERATOR": "모더레이터",
+      "OWNER": "소유자"
+    },
+    "sources": {
+      "DIRECT": "직접 참여",
+      "SPACE_MIRRORED": "Space 동기화",
+      "SPACE_SCOPED": "Space 범위",
+      "SYSTEM": "시스템"
+    }
+  },
+  "search": {
+    "open": "메신저 전체 검색",
+    "title": "메신저 검색",
+    "placeholder": "대화, 메시지 또는 구성원 검색",
+    "minimum": "두 글자 이상 입력하면 접근 가능한 대화와 구성원을 함께 검색합니다.",
+    "loading": "검색 중입니다.",
+    "error": "검색 결과를 불러오지 못했습니다.",
+    "empty": "일치하는 결과가 없습니다.",
+    "groups": {
+      "conversations": "대화",
+      "messages": "메시지",
+      "people": "구성원"
+    }
   },
   "classification": {
     "PUBLIC": "공개",
@@ -115,7 +319,8 @@
   },
   "workspace": {
     "eyebrow": "대화 작업공간",
-    "search": "사람, Space, 대화 검색",
+    "search": "대화명, 토픽 검색",
+    "list": "대화 목록",
     "loadError": "대화 목록을 불러오지 못했습니다.",
     "emptyTitle": "조건에 맞는 대화가 없습니다",
     "emptyDescription": "검색어를 바꾸거나 새 DM을 시작하세요.",
@@ -124,8 +329,8 @@
       "description": "DM, Space, 공지를 한곳에서 처리합니다."
     },
     "FAVORITES": {
-      "title": "나중에 확인",
-      "description": "고정하거나 다시 확인해야 하는 대화를 모았습니다."
+      "title": "즐겨찾기",
+      "description": "고정하거나 자주 확인하는 대화를 모았습니다."
     },
     "SPACES": {
       "title": "Space 대화",

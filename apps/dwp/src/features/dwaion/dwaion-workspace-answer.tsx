@@ -383,6 +383,7 @@ function outcomeDescription(t: TFunction<'work'>, response: AskDwpResponse): str
     CONTEXT_BROKER_CONFIGURATION_REQUIRED: t('askPage.outcomes.contextConfiguration'),
     MODEL_ROUTE_CONFIGURATION_REQUIRED: t('askPage.outcomes.modelConfiguration'),
     ASK_PERMISSION_REQUIRED: t('askPage.outcomes.permissionRequired'),
+    PROMPT_INJECTION_BLOCKED: t('askPage.outcomes.promptInjectionBlocked'),
     PRIVILEGED_DATA_HANDOFF: t('askPage.outcomes.privilegedHandoff'),
     MUTATION_REQUIRES_GOVERNED_WORKFLOW: t('askPage.outcomes.mutationHandoff'),
     NO_GROUNDED_SOURCE: t('askPage.outcomes.noSource'),

@@ -1,13 +1,11 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ImageUp } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   listPeople,
   saveWorkplaceFloor,
   saveWorkplaceResource,
   saveWorkplaceSite,
-  uploadWorkplaceFloorBackground,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { AutocompleteField, FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
@@ -216,8 +214,6 @@ export function WorkplaceFloorDialog({
   const { t } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [file, setFile] = useState<File | null>(null);
-  const [persistedFloor, setPersistedFloor] = useState<WorkplaceFloor | null>(null);
   const [form, setForm] = useState<WorkplaceFloorInput>({
     floorNumber: 1,
     nameKo: '1층',
@@ -229,8 +225,6 @@ export function WorkplaceFloorDialog({
   });
   useEffect(() => {
     if (!open) return;
-    setFile(null);
-    setPersistedFloor(null);
     setForm(
       floor
         ? {
@@ -256,16 +250,11 @@ export function WorkplaceFloorDialog({
   const patch = <K extends keyof WorkplaceFloorInput>(key: K, value: WorkplaceFloorInput[K]) =>
     setForm((current) => ({ ...current, [key]: value }));
   const mutation = useMutation({
-    mutationFn: async () => {
-      const saved =
-        persistedFloor ??
-        (await saveWorkplaceFloor(siteId, floor?.floorId ?? null, {
-          ...form,
-          version: floor ? form.version : null,
-        }));
-      if (!persistedFloor) setPersistedFloor(saved);
-      return file ? uploadWorkplaceFloorBackground(saved.floorId, saved.version, file) : saved;
-    },
+    mutationFn: () =>
+      saveWorkplaceFloor(siteId, floor?.floorId ?? null, {
+        ...form,
+        version: floor ? form.version : null,
+      }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['workplace'] });
       toast.success(
@@ -350,43 +339,7 @@ export function WorkplaceFloorDialog({
             onValueChange={(value) => patch('state', value as WorkplaceFloorInput['state'])}
           />
         </Box>
-        <Box
-          component="label"
-          sx={{
-            border: 1,
-            borderStyle: 'dashed',
-            borderColor: file ? 'primary.main' : 'divider',
-            p: 2,
-            cursor: 'pointer',
-            display: 'flex',
-            gap: 1.25,
-            alignItems: 'center',
-          }}
-        >
-          <ImageUp size={22} color="var(--dwp-product-accent)" />
-          <Box sx={{ minWidth: 0 }}>
-            <Box sx={{ fontWeight: 700 }}>
-              {file?.name ?? t('workplace.admin.locations.uploadPlan')}
-            </Box>
-            <Box sx={{ color: 'text.secondary', fontSize: 12 }}>
-              {t('workplace.admin.locations.uploadPlanHint')}
-            </Box>
-          </Box>
-          <input
-            hidden
-            type="file"
-            accept="image/png,image/jpeg"
-            onChange={(event) => {
-              const selected = event.target.files?.[0] ?? null;
-              if (selected && selected.size > 10 * 1024 * 1024) {
-                toast.error(t('workplace.admin.locations.planTooLarge'));
-                event.target.value = '';
-                return;
-              }
-              setFile(selected);
-            }}
-          />
-        </Box>
+        <Alert severity="info">{t('workplace.admin.locations.releaseManagedUpload')}</Alert>
       </Stack>
     </FormDialog>
   );

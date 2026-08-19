@@ -5,6 +5,7 @@ import {
   applyNotificationBulkAction,
   applyNotificationTriage,
   getNotificationInbox,
+  getNotificationCapabilities,
   getNotificationTypeContracts,
   parseNotificationLiveSignal,
   updateNotificationDeliveryProfile,
@@ -25,7 +26,7 @@ describe('notification API boundary', () => {
   });
 
   it('builds a bounded keyset inbox query without leaking ALL filters', async () => {
-    const page = { items: [], hasMore: false, changeVersion: 'v1' };
+    const page = { items: [], hasMore: false, changeVersion: '1' };
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse(page));
     vi.stubGlobal('fetch', fetchMock);
 
@@ -46,8 +47,24 @@ describe('notification API boundary', () => {
     );
   });
 
+  it('reads server-owned delivery capabilities instead of assuming omnichannel support', async () => {
+    const capabilities = {
+      enabledChannels: ['IN_APP'],
+      unavailableChannels: ['EMAIL', 'WEB_PUSH', 'MOBILE_PUSH', 'TEAMS', 'SLACK'],
+      canonicalStore: 'POSTGRESQL',
+      realtimeTransport: 'SSE_HINT_WITH_DURABLE_SYNC',
+      externalDeliveryState: 'DISABLED',
+      generatedAt: '2026-08-19T00:00:00Z',
+    };
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(capabilities));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getNotificationCapabilities()).resolves.toEqual(capabilities);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/notifications/v1/capabilities');
+  });
+
   it('sends triage with optimistic version, CSRF, and idempotency headers', async () => {
-    const result = { item: { notificationId: 'notice-1', version: 4 }, changeVersion: 'v4' };
+    const result = { item: { notificationId: 'notice-1', version: '4' }, changeVersion: '4' };
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
@@ -57,7 +74,7 @@ describe('notification API boundary', () => {
     await expect(
       applyNotificationTriage('notice-1', {
         action: 'SNOOZE',
-        expectedVersion: 3,
+        expectedVersion: '3',
         snoozedUntil: '2026-08-19T12:00:00Z',
         idempotencyKey: 'triage:test-1',
       })
@@ -72,7 +89,7 @@ describe('notification API boundary', () => {
       })
     );
     expect(JSON.parse(String(request.body))).toEqual({
-      expectedVersion: 3,
+      expectedVersion: '3',
       snoozedUntil: '2026-08-19T12:00:00Z',
     });
   });
@@ -110,13 +127,13 @@ describe('notification API boundary', () => {
         allowUrgentBypass: true,
       },
       digest: { mode: 'DAILY' as const, deliveryTime: '08:30', dayOfWeek: null },
-      version: 7,
+      version: '7',
       updatedAt: '2026-08-19T01:00:00Z',
     };
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
-      .mockResolvedValueOnce(jsonResponse({ ...profile, version: 8 }));
+      .mockResolvedValueOnce(jsonResponse({ ...profile, version: '8' }));
     vi.stubGlobal('fetch', fetchMock);
 
     await updateNotificationDeliveryProfile(profile, 'profile:test-1');
@@ -150,29 +167,31 @@ describe('notification API boundary', () => {
     const notificationId = '93af7315-2271-462e-a819-3d238a28830f';
     expect(
       parseNotificationLiveSignal({
-        changeVersion: 'signed-v42',
-        counterVersion: 'signed-c42',
+        changeVersion: '42',
+        counterVersion: '84',
         changedIds: [notificationId],
       })
     ).toEqual({
-      changeVersion: 'signed-v42',
-      counterVersion: 'signed-c42',
+      changeVersion: '42',
+      counterVersion: '84',
       changedIds: [notificationId],
     });
     expect(
-      parseNotificationLiveSignal({ changeVersion: 'v1', changedIds: [notificationId] })
-    ).toEqual({ changeVersion: 'v1', changedIds: [notificationId] });
+      parseNotificationLiveSignal({ changeVersion: '1', changedIds: [notificationId] })
+    ).toEqual({ changeVersion: '1', changedIds: [notificationId] });
     expect(
       parseNotificationLiveSignal({
-        changeVersion: 'v1',
-        counterVersion: 'c1',
+        changeVersion: '1',
+        counterVersion: '1',
         changedIds: [notificationId],
         title: 'must not be trusted by the parser',
       })
-    ).toEqual({ changeVersion: 'v1', counterVersion: 'c1', changedIds: [notificationId] });
-    expect(parseNotificationLiveSignal({ changeVersion: 'v2' })).toEqual({
-      changeVersion: 'v2',
+    ).toBeNull();
+    expect(parseNotificationLiveSignal({ changeVersion: '2' })).toEqual({
+      changeVersion: '2',
       changedIds: [],
     });
+    expect(parseNotificationLiveSignal({ changeVersion: 2, changedIds: [] })).toBeNull();
+    expect(parseNotificationLiveSignal({ changeVersion: '-1', changedIds: [] })).toBeNull();
   });
 });

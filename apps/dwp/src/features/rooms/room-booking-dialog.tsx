@@ -22,7 +22,20 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type { CalendarEvent, CalendarResource, PersonSummary } from '@dwp-frontend/shared-utils';
+import {
+  DEFAULT_ROOM_POLICY,
+  roomDefaultRange,
+  validateRoomBookingRange,
+} from './room-availability-model';
+import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomsPermissionNotice } from './rooms-ui';
+
+import type {
+  CalendarEvent,
+  CalendarPolicy,
+  CalendarResource,
+  PersonSummary,
+} from '@dwp-frontend/shared-utils';
 
 type AttendeeOption = Pick<PersonSummary, 'personId' | 'displayName' | 'workEmail'> & {
   userId?: number | null;
@@ -34,16 +47,10 @@ type RoomBookingDialogProps = {
   initialStart?: string | null;
   initialEnd?: string | null;
   event?: CalendarEvent | null;
+  policy?: CalendarPolicy | null;
   onClose: () => void;
   onSaved?: (event: CalendarEvent) => void;
 };
-
-function defaultStart() {
-  const value = new Date();
-  value.setSeconds(0, 0);
-  value.setMinutes(value.getMinutes() < 30 ? 30 : 60);
-  return value;
-}
 
 function errorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
@@ -55,12 +62,16 @@ export function RoomBookingDialog({
   initialStart,
   initialEnd,
   event,
+  policy,
   onClose,
   onSaved,
 }: RoomBookingDialogProps) {
   const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const capabilities = useRoomsCapabilities();
+  const effectivePolicy = policy ?? DEFAULT_ROOM_POLICY;
+  const canSave = event ? capabilities.canUpdateRoomBooking : capabilities.canCreateRoomBooking;
   const [title, setTitle] = useState('');
   const [agenda, setAgenda] = useState('');
   const [startsAt, setStartsAt] = useState('');
@@ -72,12 +83,13 @@ export function RoomBookingDialog({
 
   useEffect(() => {
     if (!open) return;
-    const start = initialStart ? new Date(initialStart) : defaultStart();
-    const end = initialEnd ? new Date(initialEnd) : new Date(start.getTime() + 30 * 60_000);
+    const fallback = room
+      ? roomDefaultRange(room.timeZone, effectivePolicy)
+      : roomDefaultRange('UTC', effectivePolicy);
     setTitle(event?.title ?? '');
     setAgenda(event?.description ?? '');
-    setStartsAt(event?.startsAt ?? start.toISOString());
-    setEndsAt(event?.endsAt ?? end.toISOString());
+    setStartsAt(event?.startsAt ?? initialStart ?? fallback.startsAt);
+    setEndsAt(event?.endsAt ?? initialEnd ?? fallback.endsAt);
     setAttendees(
       event?.attendees.map((attendee) => ({
         personId:
@@ -90,7 +102,7 @@ export function RoomBookingDialog({
     );
     setAttendeeQuery('');
     setShowValidation(false);
-  }, [event, initialEnd, initialStart, open]);
+  }, [effectivePolicy, event, initialEnd, initialStart, open, room]);
 
   const peopleQuery = useQuery({
     queryKey: ['rooms', 'people-options', deferredAttendeeQuery],
@@ -120,12 +132,16 @@ export function RoomBookingDialog({
         values.findIndex((candidate) => candidate.personId === person.personId) === index
     );
   }, [attendees, peopleQuery.data?.items]);
-  const rangeInvalid = !startsAt || !endsAt || Date.parse(endsAt) <= Date.parse(startsAt);
-  const valid = Boolean(room && title.trim() && !rangeInvalid);
+  const rangeError =
+    room && startsAt && endsAt
+      ? validateRoomBookingRange(startsAt, endsAt, room.timeZone, effectivePolicy)
+      : 'invalid';
+  const valid = Boolean(room && title.trim() && !rangeError);
 
   const mutation = useMutation({
     mutationFn: async () => {
       if (!room) throw new Error(t('booking.roomRequired'));
+      if (!canSave) throw new Error(t('permissions.roomBookingReadOnly'));
       const attendeeInput = attendees
         .filter((person) => person.workEmail)
         .map((person) => ({
@@ -181,7 +197,7 @@ export function RoomBookingDialog({
       submitLabel={t(event ? 'actions.save' : 'actions.book')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!valid}
+      submitDisabled={!valid || !canSave}
       onClose={onClose}
       onSubmit={() => {
         if (!valid) {
@@ -193,6 +209,11 @@ export function RoomBookingDialog({
       maxWidth="md"
     >
       <Stack spacing={2.25}>
+        {!canSave && (
+          <RoomsPermissionNotice>
+            {t(event ? 'permissions.roomUpdateReadOnly' : 'permissions.roomBookingReadOnly')}
+          </RoomsPermissionNotice>
+        )}
         {room && (
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
@@ -240,7 +261,9 @@ export function RoomBookingDialog({
               label={t('booking.end')}
               value={endsAt}
               onValueChange={(value) => value && setEndsAt(value)}
-              errorMessage={showValidation && rangeInvalid ? t('booking.rangeError') : undefined}
+              errorMessage={
+                showValidation && rangeError ? t(`booking.rangeErrors.${rangeError}`) : undefined
+              }
             />
           </Box>
         </DwpDateTimeProvider>

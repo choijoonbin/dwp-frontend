@@ -21,33 +21,22 @@ describe('notification navigation contract', () => {
     ).toBe(true);
   });
 
-  it('uses the V68 user and tenant-admin permissions', () => {
+  it('keeps account settings and tenant administration in their owning shells', () => {
     const items = NOTIFICATION_NAVIGATION.flatMap((group) => group.items);
-    expect(items.filter((item) => item.section !== 'administration')).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          requiredResourceKey: 'APP.NOTIFICATIONS',
-          requiredPermissionCode: 'VIEW',
-        }),
-      ])
-    );
-    expect(findNotificationNavigationItem('/admin/notifications/overview/')).toEqual(
+
+    expect(items).toEqual([
       expect.objectContaining({
-        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
+        section: 'center',
+        view: 'center',
+        path: '/notifications',
+        requiredResourceKey: 'APP.NOTIFICATIONS',
         requiredPermissionCode: 'VIEW',
-      })
+      }),
+    ]);
+    expect(findNotificationNavigationItem('/notifications/')).toEqual(
+      expect.objectContaining({ view: 'center' })
     );
-    expect(findNotificationNavigationItem('/admin/notifications/contracts')).toEqual(
-      expect.objectContaining({
-        requiredResourceKey: 'ADMIN.NOTIFICATION_CONTRACT',
-        requiredPermissionCode: 'VIEW',
-      })
-    );
-    expect(findNotificationNavigationItem('/admin/notifications/operations')).toEqual(
-      expect.objectContaining({
-        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
-        requiredPermissionCode: 'VIEW',
-      })
-    );
+    expect(findNotificationNavigationItem('/account/settings/notifications')).toBeUndefined();
+    expect(findNotificationNavigationItem('/admin/notifications/overview')).toBeUndefined();
   });
 });

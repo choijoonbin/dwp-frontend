@@ -306,6 +306,7 @@
       "contextConfiguration": "읽기 전용 업무 컨텍스트 연결을 설정해야 합니다.",
       "modelConfiguration": "승인된 모델 경로와 관리형 인증 정보를 설정해야 합니다. 대체 답변은 생성하지 않았습니다.",
       "permissionRequired": "현재 계정에는 DWAI·ON 질문 권한이 없습니다.",
+      "promptInjectionBlocked": "시스템 지시나 보안 통제를 우회하려는 패턴이 감지되어 출처 조회와 모델 호출을 시작하지 않았습니다.",
       "privilegedHandoff": "제한된 인사 또는 재무 정보가 포함될 수 있어 출처나 모델을 호출하지 않았습니다.",
       "mutationHandoff": "변경 작업은 담당 앱의 검토와 승인을 거쳐야 합니다. DWAI·ON은 요청을 실행하지 않았습니다.",
       "noSource": "현재 사용자가 접근할 수 있는 출처에서 답변 근거를 찾지 못했습니다.",

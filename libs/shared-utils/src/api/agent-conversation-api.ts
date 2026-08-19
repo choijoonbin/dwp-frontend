@@ -4,6 +4,11 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 import type { AgentPlanPreview, AgentRiskTier } from './agent-plan-api';
 import type { AskCitation } from './agent-runtime-api';
+import {
+  DWAION_ACTION_KEYS,
+  type DwaionActionKey,
+  type DwaionHandoffInputValue,
+} from '../dwaion-contract';
 
 export type DwaionConversationSummary = {
   conversationId: string;
@@ -31,7 +36,7 @@ export type DwaionConversation = {
 };
 
 export type WorkplaceAction = {
-  actionKey: string;
+  actionKey: DwaionActionKey;
   title: string;
   description: string;
   mode: 'REDIRECT' | 'APPROVAL_HANDOFF';
@@ -44,6 +49,7 @@ export type WorkplaceAction = {
 
 export type WorkplaceActionPreview = {
   action: WorkplaceAction;
+  reviewedInputs: Record<string, DwaionHandoffInputValue>;
   plan: AgentPlanPreview;
 };
 
@@ -117,10 +123,24 @@ export async function previewWorkplaceAction(
     }
   );
   const value = response.data.data as WorkplaceActionPreview | undefined;
-  if (!value || !isAction(value.action) || !isPlan(value.plan)) {
+  if (
+    !value ||
+    !isAction(value.action) ||
+    !isReviewedInputs(value.reviewedInputs) ||
+    !isPlan(value.plan)
+  ) {
     throw new HttpError('Workplace action preview response is invalid.', 502, response.data);
   }
   return value;
+}
+
+function isReviewedInputs(value: unknown): value is Record<string, DwaionHandoffInputValue> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  return Object.values(value).every(
+    (item) =>
+      typeof item === 'string' ||
+      (Array.isArray(item) && item.every((entry) => typeof entry === 'string'))
+  );
 }
 
 function isSummary(value: unknown): value is DwaionConversationSummary {
@@ -162,6 +182,7 @@ function isAction(value: unknown): value is WorkplaceAction {
   const item = value as Record<string, unknown>;
   return (
     typeof item.actionKey === 'string' &&
+    DWAION_ACTION_KEYS.includes(item.actionKey as DwaionActionKey) &&
     typeof item.title === 'string' &&
     typeof item.description === 'string' &&
     (item.mode === 'REDIRECT' || item.mode === 'APPROVAL_HANDOFF') &&

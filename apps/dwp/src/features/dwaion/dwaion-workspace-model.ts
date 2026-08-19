@@ -8,6 +8,15 @@ export const DWAION_SOURCE_TYPES = ['WORK_ITEM', 'MAIL', 'CALENDAR'] as const;
 
 export type DwaionWorkspaceState = 'idle' | 'loading' | 'ready' | 'error';
 
+export function verifiedConversationId(
+  selectedConversationId: string | null,
+  loadedConversationId: string | undefined
+): string | undefined {
+  return selectedConversationId && selectedConversationId === loadedConversationId
+    ? selectedConversationId
+    : undefined;
+}
+
 export function visibleWorkItems(items: readonly WorkspaceWorkItem[]): WorkspaceWorkItem[] {
   return [...items]
     .sort((left, right) => {
