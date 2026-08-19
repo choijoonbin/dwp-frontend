@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Accessibility,
@@ -12,7 +12,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import {
   getWorkplaceExplore,
-  useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -29,6 +28,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
 import InputAdornment from '@mui/material/InputAdornment';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
@@ -42,6 +42,13 @@ import { useTheme } from '@mui/material/styles';
 import { RoomBookingDialog } from './room-booking-dialog';
 import { RoomsPageHeading } from './rooms-ui';
 import { WorkplaceBookingDialog } from './workplace-booking-dialog';
+import {
+  workplaceDateBounds,
+  workplaceDefaultSelection,
+  workplaceDurationOptions,
+  workplaceRange,
+  workplaceTimeOptions,
+} from './workplace-time-policy';
 import {
   WorkplaceFloorPlan,
   WorkplaceMapLegend,
@@ -72,23 +79,8 @@ function defaultTime() {
   return `${String(Math.min(hour, 19)).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
-function timeOptions() {
-  return Array.from({ length: 24 }, (_, index) => {
-    const total = 8 * 60 + index * 30;
-    const value = `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
-    return { value, label: value };
-  });
-}
-
-function range(date: string, time: string, duration: number) {
-  const start = new Date(`${date}T${time}:00`);
-  const end = new Date(start.getTime() + duration * 60_000);
-  return { from: start.toISOString(), to: end.toISOString() };
-}
-
 export function WorkplaceExplore() {
   const { t } = useTranslation('rooms');
-  const auth = useAuth();
   const toast = useToast();
   const theme = useTheme();
   const compact = useMediaQuery(theme.breakpoints.down('md'));
@@ -102,16 +94,28 @@ export function WorkplaceExplore() {
   const [search, setSearch] = useState('');
   const [view, setView] = useState<ViewMode>('map');
   const [selected, setSelected] = useState<WorkplaceResource | null>(null);
+  const [inspected, setInspected] = useState<WorkplaceResource | null>(null);
   const [room, setRoom] = useState<CalendarResource | null>(null);
-  const selectedRange = useMemo(() => range(date, time, duration), [date, duration, time]);
+  const [siteTimeZone, setSiteTimeZone] = useState(
+    () => Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+  );
+  const defaultedTimeZoneRef = useRef<string | null>(null);
+  const selectedRange = useMemo(() => {
+    try {
+      return workplaceRange(date, time, duration, siteTimeZone);
+    } catch {
+      return null;
+    }
+  }, [date, duration, siteTimeZone, time]);
 
   useEffect(() => {
     if (compact) setView('list');
   }, [compact]);
 
   const query = useQuery({
-    queryKey: ['workplace', 'explore', floorId, selectedRange.from, selectedRange.to],
-    queryFn: () => getWorkplaceExplore(selectedRange.from, selectedRange.to, floorId),
+    queryKey: ['workplace', 'explore', floorId, selectedRange?.from, selectedRange?.to],
+    queryFn: () => getWorkplaceExplore(selectedRange!.from, selectedRange!.to, floorId),
+    enabled: Boolean(selectedRange),
     staleTime: 15_000,
     refetchInterval: 60_000,
     retry: 1,
@@ -119,6 +123,53 @@ export function WorkplaceExplore() {
   const data = query.data;
   const selectedFloor = data?.selectedFloor ?? null;
   const selectedSite = data?.sites.find((site) => site.siteId === selectedFloor?.siteId) ?? null;
+  const policy = data?.policy;
+  const selectableTimes = useMemo(
+    () => policy
+      ? workplaceTimeOptions(
+          policy.workingDayStart,
+          policy.workingDayEnd,
+          policy.minimumBookingMinutes
+        )
+      : [],
+    [policy]
+  );
+  const selectableDurations = useMemo(
+    () => policy ? workplaceDurationOptions(policy) : [30, 60, 90, 120],
+    [policy]
+  );
+  const dateBounds = policy
+    ? workplaceDateBounds(siteTimeZone, policy.bookingWindowDays)
+    : { minDate: null, maxDate: null };
+
+  useEffect(() => {
+    if (selectedSite?.timeZone && selectedSite.timeZone !== siteTimeZone) {
+      setSiteTimeZone(selectedSite.timeZone);
+    }
+  }, [selectedSite?.timeZone, siteTimeZone]);
+
+  useEffect(() => {
+    if (!policy || !selectedSite?.timeZone) return;
+    if (defaultedTimeZoneRef.current === selectedSite.timeZone) return;
+    const selection = workplaceDefaultSelection(
+      selectedSite.timeZone,
+      policy,
+      data?.generatedAt
+    );
+    defaultedTimeZoneRef.current = selectedSite.timeZone;
+    setDate(selection.date);
+    setTime(selection.time);
+  }, [data?.generatedAt, policy, selectedSite?.timeZone]);
+
+  useEffect(() => {
+    if (!policy) return;
+    if (selectableTimes.length && !selectableTimes.some((option) => option.value === time)) {
+      setTime(selectableTimes[0]!.value);
+    }
+    if (!selectableDurations.includes(duration)) {
+      setDuration(selectableDurations[0] ?? policy.minimumBookingMinutes);
+    }
+  }, [duration, policy, selectableDurations, selectableTimes, time]);
   const floors = (data?.floors ?? []).filter((floor) => siteId === 'ALL' || floor.siteId === siteId);
   const features = [...new Set((data?.resources ?? []).flatMap((resource) => resource.features))].sort();
   const typeLabels = Object.fromEntries(
@@ -154,14 +205,21 @@ export function WorkplaceExplore() {
   const chooseSite = (value: string) => {
     setSiteId(value);
     const floor = data?.floors.find((candidate) => value === 'ALL' || candidate.siteId === value);
+    const site = data?.sites.find((candidate) => candidate.siteId === floor?.siteId);
+    if (site?.timeZone) setSiteTimeZone(site.timeZone);
     setFloorId(floor?.floorId ?? null);
   };
   const chooseResource = (resource: WorkplaceResource) => {
+    if (!selectedRange) return;
+    const availability = workplaceResourceAvailability(resource, data?.occupancy ?? []);
+    if (availability === 'OCCUPIED' || availability === 'UNAVAILABLE' || availability === 'MINE') {
+      setInspected(resource);
+      return;
+    }
     if (
       resource.mode === 'ASSIGNED' &&
       !data?.policy.allowAssignedDeskLending &&
-      resource.assignedUserId !== auth.user?.userId &&
-      resource.assignedPersonPublicId !== auth.user?.personPublicId
+      !resource.assignedToCurrentUser
     ) {
       toast.warning(t('workplace.explore.assignedBlocked', { name: resource.assignedDisplayName }));
       return;
@@ -239,20 +297,22 @@ export function WorkplaceExplore() {
             size="small"
             label={t('workplace.explore.date')}
             value={date}
+            minDate={dateBounds.minDate}
+            maxDate={dateBounds.maxDate}
             onValueChange={(value) => value && setDate(value)}
           />
           <SelectField
             size="small"
             label={t('workplace.explore.time')}
             value={time}
-            options={timeOptions()}
+            options={selectableTimes}
             onValueChange={(value) => setTime(String(value))}
           />
           <SelectField
             size="small"
             label={t('workplace.explore.duration')}
             value={String(duration)}
-            options={[30, 60, 90, 120, 240, 480].map((value) => ({
+            options={selectableDurations.map((value) => ({
               value: String(value), label: t('workplace.explore.minutes', { count: value }),
             }))}
             onValueChange={(value) => setDuration(Number(value))}
@@ -354,7 +414,7 @@ export function WorkplaceExplore() {
             planWidth={selectedFloor?.planWidth ?? 1200}
             planHeight={selectedFloor?.planHeight ?? 760}
             backgroundAssetPath={selectedFloor?.backgroundAssetPath}
-            selectedResourceId={selected?.resourceId}
+            selectedResourceId={selected?.resourceId ?? inspected?.resourceId}
             onSelect={chooseResource}
             statusLabels={statusLabels}
             entryLabel={t('workplace.explore.entry')}
@@ -382,17 +442,58 @@ export function WorkplaceExplore() {
         resource={selected}
         siteName={selectedSite?.name ?? ''}
         floorName={selectedFloor?.name ?? ''}
-        initialStart={selectedRange.from}
-        initialEnd={selectedRange.to}
+        initialStart={selectedRange?.from ?? ''}
+        initialEnd={selectedRange?.to ?? ''}
+        siteTimeZone={siteTimeZone}
+        serverNow={data?.generatedAt ?? new Date().toISOString()}
+        policy={policy ?? null}
         onClose={() => setSelected(null)}
       />
       <RoomBookingDialog
         open={Boolean(room)}
         room={room}
-        initialStart={selectedRange.from}
-        initialEnd={selectedRange.to}
+        initialStart={selectedRange?.from ?? ''}
+        initialEnd={selectedRange?.to ?? ''}
         onClose={() => setRoom(null)}
       />
+      <Drawer
+        anchor="right"
+        open={Boolean(inspected)}
+        onClose={() => setInspected(null)}
+        PaperProps={{ sx: { width: { xs: '100%', sm: 420 }, p: 2.5 } }}
+      >
+        {inspected && (
+          <Stack spacing={2}>
+            <Box>
+              <Typography variant="overline" color="text.secondary">
+                {t('workplace.explore.resourceDetails')}
+              </Typography>
+              <Typography component="h2" variant="h5" fontWeight={800}>{inspected.name}</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                {selectedSite?.name} · {selectedFloor?.name} · {inspected.neighborhood}
+              </Typography>
+            </Box>
+            <Divider />
+            <Stack direction="row" gap={1} flexWrap="wrap">
+              <Chip label={typeLabels[inspected.type]} />
+              <Chip
+                variant="outlined"
+                label={statusLabels[workplaceResourceAvailability(inspected, data?.occupancy ?? [])]}
+              />
+              {inspected.accessible && <Chip color="success" label={t('workplace.admin.locations.accessible')} />}
+            </Stack>
+            {inspected.features.length > 0 && (
+              <Stack direction="row" gap={0.75} flexWrap="wrap">
+                {inspected.features.map((value) => <Chip key={value} size="small" variant="outlined" label={value} />)}
+              </Stack>
+            )}
+            <Alert severity="info">{t('workplace.explore.bookingUnavailable')}</Alert>
+            <ActionButton intent="secondary" onClick={() => setInspected(null)}>
+              {t('actions.close')}
+            </ActionButton>
+          </Stack>
+        )}
+      </Drawer>
     </PageCanvas>
   );
 }

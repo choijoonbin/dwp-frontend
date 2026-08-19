@@ -25,7 +25,7 @@ export const roomsRoutes: RouteObject[] = [
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="find" replace /> },
+      { index: true, element: <Navigate to="explore" replace /> },
       {
         path: '*',
         element: (

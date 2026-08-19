@@ -19,7 +19,13 @@ export type WorkplaceResourceType =
   | 'EQUIPMENT';
 export type WorkplaceBookingMode = 'RESERVABLE' | 'DROP_IN' | 'ASSIGNED' | 'UNAVAILABLE';
 export type WorkplaceResourceState = 'AVAILABLE' | 'MAINTENANCE' | 'RETIRED';
-export type WorkplaceBookingStatus = 'RESERVED' | 'CHECKED_IN' | 'RELEASED' | 'CANCELLED';
+export type WorkplaceBookingStatus =
+  | 'RESERVED'
+  | 'CHECKED_IN'
+  | 'COMPLETED'
+  | 'NO_SHOW'
+  | 'RELEASED'
+  | 'CANCELLED';
 
 export type WorkplaceSite = {
   siteId: string;
@@ -75,6 +81,7 @@ export type WorkplaceResource = {
   widthPercent: number;
   heightPercent: number;
   rotationDegrees: number;
+  assignedToCurrentUser: boolean;
   assignedUserId: number | null;
   assignedPersonPublicId: string | null;
   assignedDisplayName: string | null;
@@ -132,6 +139,11 @@ export type WorkplaceBooking = {
   visibleToColleagues: boolean;
   checkedInAt: string | null;
   releasedAt: string | null;
+  canCheckIn: boolean;
+  canCancel: boolean;
+  canRelease: boolean;
+  checkInOpensAt: string;
+  checkInClosesAt: string;
   version: number;
 };
 
@@ -171,7 +183,13 @@ export type WorkplaceFloorInput = Omit<
 > & { version: number | null };
 export type WorkplaceResourceInput = Omit<
   WorkplaceResource,
-  'resourceId' | 'floorId' | 'siteId' | 'calendarResourceId' | 'name' | 'version'
+  | 'resourceId'
+  | 'floorId'
+  | 'siteId'
+  | 'calendarResourceId'
+  | 'name'
+  | 'assignedToCurrentUser'
+  | 'version'
 > & { version: number | null };
 export type WorkplacePlacementInput = Pick<
   WorkplaceResource,

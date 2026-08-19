@@ -10,7 +10,13 @@
     }
   },
   "navigation": {
-    "groups": { "rooms": { "booking": "Space booking", "operations": "Workplace operations" } },
+    "groups": {
+      "rooms": {
+        "booking": "My space booking",
+        "workplaceAdministration": "Workplace administration",
+        "meetingAdministration": "Meeting room administration"
+      }
+    },
     "items": {
       "rooms": {
         "explore": { "label": "Find a space" },
@@ -211,6 +217,7 @@
     },
     "bookingStatus": {
       "RESERVED": "Reserved", "CHECKED_IN": "Checked in",
+      "COMPLETED": "Completed", "NO_SHOW": "No-show",
       "RELEASED": "Released", "CANCELLED": "Cancelled"
     },
     "explore": {
@@ -228,7 +235,9 @@
       "emptyTitle": "No spaces match these filters", "emptyDescription": "Adjust the time, floor, or space type.",
       "refreshing": "Refreshing availability.",
       "assignedBlocked": "{{name}} is assigned and cannot be reserved by another member.",
-      "dropInOnly": "Drop-in spaces can be selected up to 15 minutes before arrival."
+      "dropInOnly": "Drop-in spaces can be selected up to 15 minutes before arrival.",
+      "resourceDetails": "Space details",
+      "bookingUnavailable": "This space cannot be booked for the selected time. Adjust the time or choose another space."
     },
     "booking": {
       "title": "Book a workspace", "description": "Confirm the selected space and booking period.",
@@ -236,6 +245,15 @@
       "purpose": "Purpose", "visible": "Let colleagues see my name and presence",
       "policyNotice": "Company Workplace policy is applied automatically.",
       "autoReleaseNotice": "The space is released after the configured no-show period.",
+      "policySummary": "{{minimum}}-{{maximum}} min · {{start}}-{{end}} · up to {{days}} days ahead",
+      "autoReleaseSummary": "Check-in opens {{lead}} minutes before arrival; no-shows are released {{release}} minutes after start.",
+      "rangeErrors": {
+        "invalid": "Enter a valid start and end time.",
+        "past": "Select a future start time.",
+        "window": "The start time is outside the advance booking window.",
+        "duration": "The duration is outside the company booking policy.",
+        "hours": "The booking must fit within one operating day at this site."
+      },
       "created": "The workspace was booked.",
       "saveError": "The workspace could not be booked. Check the time and booking policy."
     },
@@ -276,9 +294,11 @@
         "resourceDescription": "Manage the space type, booking mode, amenities, assignee, and map position.",
         "code": "Management code", "nameKo": "Korean name", "nameEn": "English name",
         "siteType": "Site type", "address": "Address", "timeZone": "Time zone",
+        "timeZoneHint": "IANA time zone used for local booking hours and reporting.",
         "floorCount": "Total building floors", "floorNumber": "Floor number",
         "planWidth": "Plan width", "planHeight": "Plan height", "state": "Operating state",
         "uploadPlan": "Upload floor plan", "uploadPlanHint": "PNG or JPEG, up to 10 MB. Place resources on the map after upload.",
+        "planTooLarge": "The floor plan must be 10 MB or smaller.",
         "resourceType": "Space type", "bookingMode": "Booking mode", "neighborhood": "Neighborhood",
         "capacity": "Capacity", "features": "Amenities", "featuresHint": "Comma-separated, for example MONITOR, STANDING, ACCESSIBLE",
         "assignee": "Assigned member", "fixedSeatLabel": "Assigned-space label",
@@ -288,6 +308,9 @@
         "resourceCount": "{{count}} resources", "unsavedCount": "{{count}} unsaved",
         "saveLayout": "Save layout", "layoutSaved": "The floor layout was saved.",
         "layoutSaveError": "The layout could not be saved. Refresh and use the latest version.",
+        "unsavedTitle": "Discard unsaved floor-plan changes?",
+        "unsavedDescription": "The resource positions on this floor have not been saved. Leaving now will discard them.",
+        "discardChanges": "Discard changes",
         "zoomIn": "Zoom in", "zoomOut": "Zoom out",
         "keyboardHint": "Move resources by keyboard or pointer. Coordinates are stored as responsive proportions.",
         "siteCreated": "The site was added.", "siteUpdated": "The site was updated.",

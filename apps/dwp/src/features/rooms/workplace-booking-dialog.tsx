@@ -8,6 +8,7 @@ import {
 } from '@dwp-frontend/shared-utils';
 import {
   DateTimePickerField,
+  DwpDateTimeProvider,
   FormDialog,
   FormField,
 } from '@dwp-frontend/design-system';
@@ -20,7 +21,13 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
-import type { WorkplaceBooking, WorkplaceResource } from '@dwp-frontend/shared-utils';
+import { validateWorkplaceBookingRange } from './workplace-time-policy';
+
+import type {
+  WorkplaceBooking,
+  WorkplacePolicy,
+  WorkplaceResource,
+} from '@dwp-frontend/shared-utils';
 
 function errorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
@@ -31,6 +38,9 @@ export function WorkplaceBookingDialog({
   resource,
   siteName,
   floorName,
+  siteTimeZone,
+  serverNow,
+  policy,
   initialStart,
   initialEnd,
   onClose,
@@ -40,12 +50,15 @@ export function WorkplaceBookingDialog({
   resource: WorkplaceResource | null;
   siteName: string;
   floorName: string;
+  siteTimeZone: string;
+  serverNow: string;
+  policy: WorkplacePolicy | null;
   initialStart: string;
   initialEnd: string;
   onClose: () => void;
   onSaved?: (booking: WorkplaceBooking) => void;
 }) {
-  const { t } = useTranslation('rooms');
+  const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
   const [startsAt, setStartsAt] = useState(initialStart);
@@ -61,7 +74,9 @@ export function WorkplaceBookingDialog({
     setVisible(true);
   }, [initialEnd, initialStart, open, resource?.resourceId]);
 
-  const rangeInvalid = !startsAt || !endsAt || Date.parse(endsAt) <= Date.parse(startsAt);
+  const rangeError = !startsAt || !endsAt || !policy
+    ? 'invalid'
+    : validateWorkplaceBookingRange(startsAt, endsAt, siteTimeZone, policy, serverNow);
   const mutation = useMutation({
     mutationFn: () => {
       if (!resource) throw new Error(t('workplace.booking.resourceRequired'));
@@ -91,7 +106,7 @@ export function WorkplaceBookingDialog({
       submitLabel={t('actions.book')}
       submittingLabel={t('actions.saving')}
       busy={mutation.isPending}
-      submitDisabled={!resource || rangeInvalid}
+      submitDisabled={!resource || Boolean(rangeError)}
       onClose={onClose}
       onSubmit={() => mutation.mutate()}
       maxWidth="sm"
@@ -121,21 +136,24 @@ export function WorkplaceBookingDialog({
           </Box>
         )}
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-          <DateTimePickerField
-            required
-            label={t('workplace.booking.start')}
-            value={startsAt}
-            onValueChange={(value) => value && setStartsAt(value)}
-          />
-          <DateTimePickerField
-            required
-            label={t('workplace.booking.end')}
-            value={endsAt}
-            onValueChange={(value) => value && setEndsAt(value)}
-            errorMessage={rangeInvalid ? t('booking.rangeError') : undefined}
-          />
-        </Box>
+        <DwpDateTimeProvider locale={i18n.resolvedLanguage} timeZone={siteTimeZone}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
+            <DateTimePickerField
+              required
+              label={t('workplace.booking.start')}
+              value={startsAt}
+              onValueChange={(value) => value && setStartsAt(value)}
+              supportingText={siteTimeZone}
+            />
+            <DateTimePickerField
+              required
+              label={t('workplace.booking.end')}
+              value={endsAt}
+              onValueChange={(value) => value && setEndsAt(value)}
+              errorMessage={rangeError ? t(`workplace.booking.rangeErrors.${rangeError}`) : undefined}
+            />
+          </Box>
+        </DwpDateTimeProvider>
         <FormField
           label={t('workplace.booking.purpose')}
           value={purpose}
@@ -153,11 +171,28 @@ export function WorkplaceBookingDialog({
         />
         <Alert severity="info" icon={<ShieldCheck size={18} />}>
           <Stack gap={0.35}>
-            <Typography variant="body2">{t('workplace.booking.policyNotice')}</Typography>
-            <Stack direction="row" gap={0.6} alignItems="center">
-              <Clock3 size={14} />
-              <Typography variant="caption">{t('workplace.booking.autoReleaseNotice')}</Typography>
-            </Stack>
+            <Typography variant="body2">
+              {policy
+                ? t('workplace.booking.policySummary', {
+                    minimum: policy.minimumBookingMinutes,
+                    maximum: policy.maximumBookingMinutes,
+                    start: policy.workingDayStart.slice(0, 5),
+                    end: policy.workingDayEnd.slice(0, 5),
+                    days: policy.bookingWindowDays,
+                  })
+                : t('workplace.booking.policyNotice')}
+            </Typography>
+            {policy?.requireCheckIn && (
+              <Stack direction="row" gap={0.6} alignItems="center">
+                <Clock3 size={14} />
+                <Typography variant="caption">
+                  {t('workplace.booking.autoReleaseSummary', {
+                    lead: policy.checkInLeadMinutes,
+                    release: policy.autoReleaseMinutes,
+                  })}
+                </Typography>
+              </Stack>
+            )}
           </Stack>
         </Alert>
       </Stack>

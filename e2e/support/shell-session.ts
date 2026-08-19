@@ -110,6 +110,12 @@ export const FULL_PRODUCT_PERMISSIONS = [
     permissionCode,
     effect: 'ALLOW' as const,
   })),
+  ...['VIEW', 'CREATE', 'UPDATE'].map((permissionCode) => ({
+    resourceType: 'APP',
+    resourceKey: 'APP.WORKPLACE',
+    permissionCode,
+    effect: 'ALLOW' as const,
+  })),
   {
     resourceType: 'APP',
     resourceKey: 'APP.APPROVALS',
@@ -182,6 +188,10 @@ export const FULL_PRODUCT_PERMISSIONS = [
     ['ADMIN.ROOMS', 'CREATE'],
     ['ADMIN.ROOMS', 'UPDATE'],
     ['ADMIN.ROOMS', 'MANAGE'],
+    ['ADMIN.WORKPLACE', 'VIEW'],
+    ['ADMIN.WORKPLACE', 'CREATE'],
+    ['ADMIN.WORKPLACE', 'UPDATE'],
+    ['ADMIN.WORKPLACE', 'MANAGE'],
     ['ADMIN.APPROVAL_DESIGN', 'VIEW'],
     ['ADMIN.APPROVAL_DESIGN', 'CREATE'],
     ['ADMIN.APPROVAL_DESIGN', 'UPDATE'],

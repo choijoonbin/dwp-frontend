@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BellRing, Building2, UsersRound } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -11,6 +11,7 @@ import {
 import {
   AutocompleteMultiField,
   DateTimePickerField,
+  DwpDateTimeProvider,
   FormDialog,
   FormField,
 } from '@dwp-frontend/design-system';
@@ -57,7 +58,7 @@ export function RoomBookingDialog({
   onClose,
   onSaved,
 }: RoomBookingDialogProps) {
-  const { t } = useTranslation('rooms');
+  const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
   const [title, setTitle] = useState('');
@@ -65,7 +66,9 @@ export function RoomBookingDialog({
   const [startsAt, setStartsAt] = useState('');
   const [endsAt, setEndsAt] = useState('');
   const [attendees, setAttendees] = useState<AttendeeOption[]>([]);
+  const [attendeeQuery, setAttendeeQuery] = useState('');
   const [showValidation, setShowValidation] = useState(false);
+  const deferredAttendeeQuery = useDeferredValue(attendeeQuery.trim());
 
   useEffect(() => {
     if (!open) return;
@@ -85,27 +88,37 @@ export function RoomBookingDialog({
         userId: attendee.userId,
       })) ?? []
     );
+    setAttendeeQuery('');
     setShowValidation(false);
   }, [event, initialEnd, initialStart, open]);
 
   const peopleQuery = useQuery({
-    queryKey: ['rooms', 'people-options'],
-    queryFn: () => listPeople({ size: 100, surface: 'directory' }),
+    queryKey: ['rooms', 'people-options', deferredAttendeeQuery],
+    queryFn: () => listPeople({
+      query: deferredAttendeeQuery || undefined,
+      size: 50,
+      surface: 'directory',
+    }),
     enabled: open,
     staleTime: 5 * 60_000,
     retry: 1,
   });
-  const attendeeOptions = useMemo(
-    () =>
-      (peopleQuery.data?.items ?? [])
+  const attendeeOptions = useMemo(() => {
+    const values = [
+      ...attendees,
+      ...(peopleQuery.data?.items ?? [])
         .filter((person) => Boolean(person.workEmail))
         .map<AttendeeOption>((person) => ({
           personId: person.personId,
           displayName: person.displayName,
           workEmail: person.workEmail,
         })),
-    [peopleQuery.data?.items]
-  );
+    ];
+    return values.filter(
+      (person, index) =>
+        values.findIndex((candidate) => candidate.personId === person.personId) === index
+    );
+  }, [attendees, peopleQuery.data?.items]);
   const rangeInvalid = !startsAt || !endsAt || Date.parse(endsAt) <= Date.parse(startsAt);
   const valid = Boolean(room && title.trim() && !rangeInvalid);
 
@@ -130,7 +143,7 @@ export function RoomBookingDialog({
         type: 'MEETING' as const,
         startsAt,
         endsAt,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || room.timeZone,
+        timeZone: room.timeZone,
         allDay: false,
         location: room.name,
         conferenceUrl: null,
@@ -212,21 +225,24 @@ export function RoomBookingDialog({
           errorMessage={showValidation && !title.trim() ? t('booking.subjectRequired') : undefined}
           inputProps={{ maxLength: 240 }}
         />
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-          <DateTimePickerField
-            required
-            label={t('booking.start')}
-            value={startsAt}
-            onValueChange={(value) => value && setStartsAt(value)}
-          />
-          <DateTimePickerField
-            required
-            label={t('booking.end')}
-            value={endsAt}
-            onValueChange={(value) => value && setEndsAt(value)}
-            errorMessage={showValidation && rangeInvalid ? t('booking.rangeError') : undefined}
-          />
-        </Box>
+        <DwpDateTimeProvider locale={i18n.resolvedLanguage} timeZone={room?.timeZone}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+            <DateTimePickerField
+              required
+              label={t('booking.start')}
+              value={startsAt}
+              onValueChange={(value) => value && setStartsAt(value)}
+              supportingText={room?.timeZone}
+            />
+            <DateTimePickerField
+              required
+              label={t('booking.end')}
+              value={endsAt}
+              onValueChange={(value) => value && setEndsAt(value)}
+              errorMessage={showValidation && rangeInvalid ? t('booking.rangeError') : undefined}
+            />
+          </Box>
+        </DwpDateTimeProvider>
         <FormField
           multiline
           minRows={3}
@@ -240,6 +256,10 @@ export function RoomBookingDialog({
           options={attendeeOptions}
           value={attendees}
           onChange={(_, value) => setAttendees(value)}
+          onInputChange={(_, value, reason) => {
+            if (reason === 'input') setAttendeeQuery(value);
+          }}
+          filterOptions={(options) => options}
           loading={peopleQuery.isLoading}
           getOptionLabel={(person) => `${person.displayName} · ${person.workEmail ?? ''}`}
           isOptionEqualToValue={(option, value) => option.personId === value.personId}

@@ -28,6 +28,8 @@ import type { WorkplaceBooking } from '@dwp-frontend/shared-utils';
 type BookingFilter = 'upcoming' | 'past';
 type BookingAction = { booking: WorkplaceBooking; action: 'cancel' | 'release' };
 
+const TERMINAL_BOOKING_STATUSES = ['COMPLETED', 'NO_SHOW', 'CANCELLED', 'RELEASED'] as const;
+
 function bookingRange(filter: BookingFilter) {
   const from = new Date();
   const to = new Date();
@@ -47,14 +49,19 @@ export function WorkplaceBookings() {
     queryKey: ['workplace', 'bookings', range.from, range.to],
     queryFn: () => getWorkplaceBookings(range.from, range.to),
     staleTime: 20_000,
+    refetchInterval: 60_000,
     retry: 1,
   });
   const now = Date.now();
   const bookings = (query.data ?? [])
     .filter((booking) =>
       filter === 'upcoming'
-        ? Date.parse(booking.endsAt) >= now && !['CANCELLED', 'RELEASED'].includes(booking.status)
-        : Date.parse(booking.endsAt) < now || ['CANCELLED', 'RELEASED'].includes(booking.status)
+        ? Date.parse(booking.endsAt) >= now && !TERMINAL_BOOKING_STATUSES.includes(
+            booking.status as (typeof TERMINAL_BOOKING_STATUSES)[number]
+          )
+        : Date.parse(booking.endsAt) < now || TERMINAL_BOOKING_STATUSES.includes(
+            booking.status as (typeof TERMINAL_BOOKING_STATUSES)[number]
+          )
     )
     .sort((left, right) =>
       filter === 'upcoming'
@@ -114,10 +121,6 @@ export function WorkplaceBookings() {
           />
         )}
         {bookings.map((booking, index) => {
-          const canCheckIn =
-            booking.status === 'RESERVED' &&
-            now >= Date.parse(booking.startsAt) - 30 * 60_000 &&
-            now <= Date.parse(booking.startsAt) + 30 * 60_000;
           return (
             <Box
               key={booking.bookingId}
@@ -138,17 +141,17 @@ export function WorkplaceBookings() {
                 </Box>
                 {filter === 'upcoming' && (
                   <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                    {canCheckIn && (
+                    {booking.canCheckIn && (
                       <ActionButton intent="primary" startIcon={<CheckCircle2 size={16} />} onClick={() => changeMutation.mutate({ booking, action: 'check-in' })}>
                         {t('workplace.my.checkIn')}
                       </ActionButton>
                     )}
-                    {booking.status === 'CHECKED_IN' && (
+                    {booking.canRelease && (
                       <ActionButton intent="secondary" startIcon={<LogOut size={16} />} onClick={() => setConfirming({ booking, action: 'release' })}>
                         {t('workplace.my.release')}
                       </ActionButton>
                     )}
-                    {booking.status === 'RESERVED' && (
+                    {booking.canCancel && (
                       <ActionButton intent="danger" startIcon={<XCircle size={16} />} onClick={() => setConfirming({ booking, action: 'cancel' })}>
                         {t('actions.cancelBooking')}
                       </ActionButton>

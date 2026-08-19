@@ -60,18 +60,29 @@ export function WorkplaceAdminPolicy() {
   useEffect(() => { if (query.data) setForm(query.data); }, [query.data]);
   const patch = <K extends keyof WorkplacePolicy>(key: K, value: WorkplacePolicy[K]) =>
     setForm((current) => current ? { ...current, [key]: value } : current);
+  const patchBookingWindow = (days: number) => setForm((current) => current ? {
+    ...current,
+    bookingWindowDays: days,
+    maximumConsecutiveDays: Math.min(current.maximumConsecutiveDays, days),
+  } : current);
   const dirty = Boolean(form && query.data && JSON.stringify(form) !== JSON.stringify(query.data));
   const valid = Boolean(form
     && form.bookingWindowDays >= 1
     && form.bookingWindowDays <= 365
     && form.maximumActiveBookings >= 1
+    && form.maximumActiveBookings <= 100
     && form.maximumConsecutiveDays >= 1
+    && form.maximumConsecutiveDays <= 31
     && form.maximumConsecutiveDays <= form.bookingWindowDays
     && form.minimumBookingMinutes >= 15
+    && form.minimumBookingMinutes <= 1440
     && form.maximumBookingMinutes >= form.minimumBookingMinutes
+    && form.maximumBookingMinutes <= 10080
     && timeInMinutes(form.workingDayStart) < timeInMinutes(form.workingDayEnd)
     && form.checkInLeadMinutes >= 0
-    && form.autoReleaseMinutes >= 0);
+    && form.checkInLeadMinutes <= 240
+    && form.autoReleaseMinutes >= 0
+    && form.autoReleaseMinutes <= 240);
   const mutation = useMutation({
     mutationFn: () => {
       if (!form) throw new Error(t('workplace.admin.policy.loadError'));
@@ -107,15 +118,14 @@ export function WorkplaceAdminPolicy() {
             <ToggleButtonGroup
               exclusive
               value={form.bookingWindowDays}
-              onChange={(_, value: number | null) => value && patch('bookingWindowDays', value)}
+              onChange={(_, value: number | null) => value && patchBookingWindow(value)}
               size="small"
               sx={{ flexWrap: 'wrap' }}
             >
               {[7, 14, 30, 60, 90].map((days) => <ToggleButton key={days} value={days}>{t('workplace.admin.policy.days', { count: days })}</ToggleButton>)}
             </ToggleButtonGroup>
-            <Box sx={{ mt: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 1.5 }}>
+            <Box sx={{ mt: 2, maxWidth: 420 }}>
               <FormField type="number" label={t('workplace.admin.policy.activeLimit')} value={form.maximumActiveBookings} onChange={(event) => patch('maximumActiveBookings', Number(event.target.value))} inputProps={{ min: 1, max: 100 }} />
-              <FormField type="number" label={t('workplace.admin.policy.consecutiveDays')} value={form.maximumConsecutiveDays} onChange={(event) => patch('maximumConsecutiveDays', Number(event.target.value))} inputProps={{ min: 1, max: 31 }} />
             </Box>
           </PolicySection>
 

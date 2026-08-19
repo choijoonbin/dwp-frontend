@@ -206,7 +206,7 @@ export function WorkplaceFloorPlan({
               <Box
                 component="button"
                 type="button"
-                disabled={disabled}
+                aria-disabled={disabled}
                 aria-label={tooltip}
                 aria-pressed={selected}
                 onClick={() => onSelect(resource)}
@@ -224,8 +224,8 @@ export function WorkplaceFloorPlan({
                   bgcolor: colors.fill,
                   color: colors.text,
                   transform: `rotate(${resource.rotationDegrees}deg)`,
-                  cursor: disabled ? 'not-allowed' : 'pointer',
-                  opacity: disabled ? 0.72 : 1,
+                  cursor: 'pointer',
+                  opacity: disabled ? 0.78 : 1,
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -235,9 +235,7 @@ export function WorkplaceFloorPlan({
                   font: 'inherit',
                   boxShadow: selected ? 3 : 0,
                   transition: 'box-shadow 140ms ease, transform 140ms ease',
-                  '&:hover': disabled
-                    ? undefined
-                    : { boxShadow: 3, transform: `rotate(${resource.rotationDegrees}deg) translateY(-2px)` },
+                  '&:hover': { boxShadow: 3, transform: `rotate(${resource.rotationDegrees}deg) translateY(-2px)` },
                   '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.light' },
                 }}
               >
@@ -291,7 +289,7 @@ export function WorkplaceResourceList({
             component="button"
             type="button"
             key={resource.resourceId}
-            disabled={disabled}
+            aria-disabled={disabled}
             onClick={() => onSelect(resource)}
             sx={{
               minHeight: 92,
@@ -301,13 +299,13 @@ export function WorkplaceResourceList({
               borderColor: 'divider',
               bgcolor: 'background.paper',
               color: 'text.primary',
-              cursor: disabled ? 'not-allowed' : 'pointer',
+              cursor: 'pointer',
               display: 'grid',
               gridTemplateColumns: '40px minmax(0, 1fr) auto',
               alignItems: 'center',
               gap: 1.25,
               font: 'inherit',
-              '&:hover': disabled ? undefined : { borderColor: colors.border, bgcolor: colors.fill },
+              '&:hover': { borderColor: colors.border, bgcolor: colors.fill },
               '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.light' },
             }}
           >

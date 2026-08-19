@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ImageUp } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -42,6 +42,11 @@ function errorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
 }
 
+const SUPPORTED_TIME_ZONES = [
+  'UTC',
+  ...Intl.supportedValuesOf('timeZone'),
+].filter((value, index, values) => values.indexOf(value) === index);
+
 export function WorkplaceSiteDialog({
   open,
   site,
@@ -82,7 +87,13 @@ export function WorkplaceSiteDialog({
     },
     onError: (error) => toast.error(errorMessage(error, t('workplace.admin.locations.saveError'))),
   });
-  const valid = /^[A-Z0-9][A-Z0-9_-]{2,79}$/u.test(form.code) && form.nameKo.trim() && form.nameEn.trim();
+  const timeZones = SUPPORTED_TIME_ZONES.includes(form.timeZone)
+    ? SUPPORTED_TIME_ZONES
+    : [form.timeZone, ...SUPPORTED_TIME_ZONES];
+  const valid = /^[A-Z0-9][A-Z0-9_-]{2,79}$/u.test(form.code)
+    && form.nameKo.trim()
+    && form.nameEn.trim()
+    && SUPPORTED_TIME_ZONES.includes(form.timeZone);
   return (
     <FormDialog
       open={open}
@@ -112,7 +123,16 @@ export function WorkplaceSiteDialog({
         </Box>
         <FormField label={t('workplace.admin.locations.address')} value={form.address ?? ''} onChange={(event) => patch('address', event.target.value)} />
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 1.5 }}>
-          <FormField label={t('workplace.admin.locations.timeZone')} value={form.timeZone} onChange={(event) => patch('timeZone', event.target.value)} />
+          <AutocompleteField<string>
+            autoHighlight
+            label={t('workplace.admin.locations.timeZone')}
+            options={timeZones}
+            value={form.timeZone}
+            onChange={(_, value) => {
+              if (value) patch('timeZone', value);
+            }}
+            supportingText={t('workplace.admin.locations.timeZoneHint')}
+          />
           <FormField type="number" label={t('workplace.admin.locations.floorCount')} value={form.totalFloorCount} onChange={(event) => patch('totalFloorCount', Number(event.target.value))} inputProps={{ min: 1, max: 300 }} />
           <SelectField
             label={t('workplace.admin.locations.state')} value={form.state}
@@ -140,6 +160,7 @@ export function WorkplaceFloorDialog({
   const toast = useToast();
   const queryClient = useQueryClient();
   const [file, setFile] = useState<File | null>(null);
+  const [persistedFloor, setPersistedFloor] = useState<WorkplaceFloor | null>(null);
   const [form, setForm] = useState<WorkplaceFloorInput>({
     floorNumber: 1, nameKo: '1층', nameEn: '1F', planWidth: 1200, planHeight: 760,
     state: 'DRAFT', version: 0,
@@ -147,6 +168,7 @@ export function WorkplaceFloorDialog({
   useEffect(() => {
     if (!open) return;
     setFile(null);
+    setPersistedFloor(null);
     setForm(floor
       ? {
           floorNumber: floor.floorNumber, nameKo: floor.nameKo, nameEn: floor.nameEn,
@@ -159,9 +181,10 @@ export function WorkplaceFloorDialog({
     setForm((current) => ({ ...current, [key]: value }));
   const mutation = useMutation({
     mutationFn: async () => {
-      const saved = await saveWorkplaceFloor(siteId, floor?.floorId ?? null, {
+      const saved = persistedFloor ?? await saveWorkplaceFloor(siteId, floor?.floorId ?? null, {
         ...form, version: floor ? form.version : null,
       });
+      if (!persistedFloor) setPersistedFloor(saved);
       return file ? uploadWorkplaceFloorBackground(saved.floorId, saved.version, file) : saved;
     },
     onSuccess: async () => {
@@ -202,7 +225,20 @@ export function WorkplaceFloorDialog({
             <Box sx={{ fontWeight: 700 }}>{file?.name ?? t('workplace.admin.locations.uploadPlan')}</Box>
             <Box sx={{ color: 'text.secondary', fontSize: 12 }}>{t('workplace.admin.locations.uploadPlanHint')}</Box>
           </Box>
-          <input hidden type="file" accept="image/png,image/jpeg" onChange={(event) => setFile(event.target.files?.[0] ?? null)} />
+          <input
+            hidden
+            type="file"
+            accept="image/png,image/jpeg"
+            onChange={(event) => {
+              const selected = event.target.files?.[0] ?? null;
+              if (selected && selected.size > 10 * 1024 * 1024) {
+                toast.error(t('workplace.admin.locations.planTooLarge'));
+                event.target.value = '';
+                return;
+              }
+              setFile(selected);
+            }}
+          />
         </Box>
       </Stack>
     </FormDialog>
@@ -233,6 +269,8 @@ export function WorkplaceResourceDialog({
     assignedPersonPublicId: null, assignedDisplayName: null, version: 0,
   });
   const [features, setFeatures] = useState('');
+  const [personQuery, setPersonQuery] = useState('');
+  const deferredPersonQuery = useDeferredValue(personQuery.trim());
   useEffect(() => {
     if (!open) return;
     const next: WorkplaceResourceInput = resource
@@ -257,12 +295,17 @@ export function WorkplaceResourceDialog({
         };
     setForm(next);
     setFeatures(next.features.join(', '));
+    setPersonQuery('');
   }, [defaultPosition.x, defaultPosition.y, open, resource]);
   const patch = <K extends keyof WorkplaceResourceInput>(key: K, value: WorkplaceResourceInput[K]) =>
     setForm((current) => ({ ...current, [key]: value }));
   const peopleQuery = useQuery({
-    queryKey: ['workplace', 'directory-assignees'],
-    queryFn: () => listPeople({ size: 100, surface: 'directory' }),
+    queryKey: ['workplace', 'directory-assignees', deferredPersonQuery],
+    queryFn: () => listPeople({
+      query: deferredPersonQuery || undefined,
+      size: 50,
+      surface: 'directory',
+    }),
     enabled: open && form.mode === 'ASSIGNED',
     staleTime: 5 * 60_000,
   });
@@ -287,7 +330,8 @@ export function WorkplaceResourceDialog({
     },
     onError: (error) => toast.error(errorMessage(error, t('workplace.admin.locations.saveError'))),
   });
-  const assignedValid = form.mode !== 'ASSIGNED' || Boolean(form.assignedPersonPublicId || form.assignedDisplayName?.trim());
+  const assignedValid = form.mode !== 'ASSIGNED'
+    || Boolean(form.assignedPersonPublicId || form.assignedUserId);
   const valid = /^[A-Z0-9][A-Z0-9_-]{2,79}$/u.test(form.code) && form.nameKo.trim() && form.nameEn.trim() && assignedValid;
   return (
     <FormDialog
@@ -326,15 +370,25 @@ export function WorkplaceResourceDialog({
               options={people}
               value={assignedPerson}
               loading={peopleQuery.isLoading}
+              onInputChange={(_, value, reason) => {
+                if (reason === 'input') setPersonQuery(value);
+              }}
+              filterOptions={(options) => options}
               getOptionLabel={(person) => `${person.displayName} · ${person.organizationName ?? ''}`}
               isOptionEqualToValue={(option, value) => option.personId === value.personId}
               onChange={(_, person) => setForm((current) => ({
                 ...current,
+                assignedUserId: null,
                 assignedPersonPublicId: person?.personId ?? null,
-                assignedDisplayName: person?.displayName ?? current.assignedDisplayName,
+                assignedDisplayName: person?.displayName ?? null,
               }))}
             />
-            <FormField label={t('workplace.admin.locations.fixedSeatLabel')} value={form.assignedDisplayName ?? ''} onChange={(event) => patch('assignedDisplayName', event.target.value)} supportingText={t('workplace.admin.locations.fixedSeatHint')} />
+            <FormField
+              label={t('workplace.admin.locations.fixedSeatLabel')}
+              value={form.assignedDisplayName ?? ''}
+              inputProps={{ readOnly: true }}
+              supportingText={t('workplace.admin.locations.fixedSeatHint')}
+            />
           </Stack>
         )}
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>

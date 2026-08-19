@@ -35,13 +35,25 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
     id: 'booking',
     items: [
       { view: 'explore', path: '/workplace/explore', icon: MapPinned },
-      { view: 'find-rooms', path: '/workplace/rooms', icon: UsersRound },
+      {
+        view: 'find-rooms',
+        path: '/workplace/rooms',
+        icon: UsersRound,
+        requiredResourceKey: 'APP.ROOMS',
+        requiredPermissionCode: 'VIEW',
+      },
       { view: 'my-bookings', path: '/workplace/my-bookings', icon: MonitorCheck },
-      { view: 'my-meetings', path: '/workplace/my-meetings', icon: CalendarCheck2 },
+      {
+        view: 'my-meetings',
+        path: '/workplace/my-meetings',
+        icon: CalendarCheck2,
+        requiredResourceKey: 'APP.ROOMS',
+        requiredPermissionCode: 'VIEW',
+      },
     ],
   },
   {
-    id: 'operations',
+    id: 'workplaceAdministration',
     items: [
       {
         view: 'admin-overview',
@@ -64,18 +76,23 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
         requiredResourceKey: 'ADMIN.WORKPLACE',
         requiredPermissionCode: 'VIEW',
       },
+    ],
+  },
+  {
+    id: 'meetingAdministration',
+    items: [
       {
         view: 'admin-room-operations',
         path: '/workplace/admin/meeting-operations',
         icon: CalendarCheck2,
-        requiredResourceKey: 'ADMIN.WORKPLACE',
+        requiredResourceKey: 'ADMIN.ROOMS',
         requiredPermissionCode: 'VIEW',
       },
       {
         view: 'admin-room-policy',
         path: '/workplace/admin/meeting-policy',
         icon: Settings2,
-        requiredResourceKey: 'ADMIN.WORKPLACE',
+        requiredResourceKey: 'ADMIN.ROOMS',
         requiredPermissionCode: 'VIEW',
       },
     ],

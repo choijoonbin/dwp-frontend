@@ -11,8 +11,13 @@ import {
 } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useBlocker } from 'react-router-dom';
 import { saveWorkplaceLayout, useToast } from '@dwp-frontend/shared-utils';
-import { ActionButton, ActionIconButton } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ActionIconButton,
+  ConfirmDialog,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -91,24 +96,46 @@ export function WorkplaceLayoutEditor({
   floor,
   resources,
   onEdit,
+  onDirtyChange,
 }: {
   floor: WorkplaceFloor;
   resources: readonly WorkplaceResource[];
   onEdit: (resource: WorkplaceResource) => void;
+  onDirtyChange?: (dirty: boolean) => void;
 }) {
   const { t } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
   const canvasRef = useRef<HTMLDivElement | null>(null);
+  const currentFloorIdRef = useRef(floor.floorId);
   const [items, setItems] = useState<WorkplaceResource[]>([...resources]);
   const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [zoom, setZoom] = useState(100);
   useEffect(() => {
-    setItems([...resources]);
-    setDirtyIds(new Set());
-    setSelectedId(null);
-  }, [floor.floorId, resources]);
+    const floorChanged = currentFloorIdRef.current !== floor.floorId;
+    currentFloorIdRef.current = floor.floorId;
+    setItems((current) => {
+      if (floorChanged || dirtyIds.size === 0) return [...resources];
+      const localById = new Map(current.map((resource) => [resource.resourceId, resource]));
+      return resources.map((resource) => {
+        const local = localById.get(resource.resourceId);
+        if (!local || !dirtyIds.has(resource.resourceId)) return resource;
+        return {
+          ...resource,
+          positionX: local.positionX,
+          positionY: local.positionY,
+          widthPercent: local.widthPercent,
+          heightPercent: local.heightPercent,
+          rotationDegrees: local.rotationDegrees,
+        };
+      });
+    });
+    if (floorChanged) {
+      setDirtyIds(new Set());
+      setSelectedId(null);
+    }
+  }, [dirtyIds, floor.floorId, resources]);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor)
@@ -117,6 +144,19 @@ export function WorkplaceLayoutEditor({
     () => items.filter((resource) => dirtyIds.has(resource.resourceId)),
     [dirtyIds, items]
   );
+  const navigationBlocker = useBlocker(dirty.length > 0);
+  useEffect(() => {
+    onDirtyChange?.(dirty.length > 0);
+  }, [dirty.length, onDirtyChange]);
+  useEffect(() => () => onDirtyChange?.(false), [onDirtyChange]);
+  useEffect(() => {
+    if (dirty.length === 0) return undefined;
+    const preventUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+    window.addEventListener('beforeunload', preventUnload);
+    return () => window.removeEventListener('beforeunload', preventUnload);
+  }, [dirty.length]);
   const saveMutation = useMutation({
     mutationFn: () => saveWorkplaceLayout(
       floor.floorId,
@@ -131,8 +171,8 @@ export function WorkplaceLayoutEditor({
       }))
     ),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
       setDirtyIds(new Set());
+      await queryClient.invalidateQueries({ queryKey: ['workplace'] });
       toast.success(t('workplace.admin.locations.layoutSaved'));
     },
     onError: () => toast.error(t('workplace.admin.locations.layoutSaveError')),
@@ -212,6 +252,16 @@ export function WorkplaceLayoutEditor({
       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
         {t('workplace.admin.locations.keyboardHint')}
       </Typography>
+      <ConfirmDialog
+        open={navigationBlocker.state === 'blocked'}
+        title={t('workplace.admin.locations.unsavedTitle')}
+        description={t('workplace.admin.locations.unsavedDescription')}
+        cancelLabel={t('actions.keep')}
+        confirmLabel={t('workplace.admin.locations.discardChanges')}
+        intent="danger"
+        onClose={() => navigationBlocker.reset?.()}
+        onConfirm={() => navigationBlocker.proceed?.()}
+      />
     </Box>
   );
 }

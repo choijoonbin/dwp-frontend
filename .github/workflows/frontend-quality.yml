@@ -87,6 +87,9 @@ jobs:
       - name: Run responsive and accessibility gates
         run: corepack yarn playwright test e2e/responsive-accessibility.spec.ts --project=chromium --workers=1
 
+      - name: Run Workplace booking and administration gates
+        run: corepack yarn playwright test e2e/rooms.spec.ts --project=chromium --workers=1
+
       - name: Run runtime performance gate in isolation
         run: corepack yarn test:performance
 

@@ -4208,6 +4208,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/admin/rooms/bookings/pending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getPendingRoomBookings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/rooms/bookings/{bookingId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_decideRoomBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/rooms/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getRoomsAdminOverview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/rooms/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getRoomsPolicy"];
+        put: operations["platform_updateRoomsPolicy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/rooms/resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createRoomResource"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/rooms/resources/{resourceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateRoomResource"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/admin/saved-view-ownership/orphaned": {
         parameters: {
             query?: never;
@@ -4410,6 +4506,182 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_rollback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/floors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplaceFloors"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/floors/{floorId}/background": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_uploadWorkplaceFloorBackground"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/floors/{floorId}/layout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateWorkplaceLayout"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/floors/{floorId}/resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplaceResources"];
+        put?: never;
+        post: operations["platform_createWorkplaceResource"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/floors/{floorId}/resources/{resourceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateWorkplaceResource"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplaceAdminOverview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplacePolicy"];
+        put: operations["platform_updateWorkplacePolicy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/sites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplaceSites"];
+        put?: never;
+        post: operations["platform_createWorkplaceSite"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/sites/{siteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateWorkplaceSite"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/sites/{siteId}/floors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createWorkplaceFloor"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/sites/{siteId}/floors/{floorId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateWorkplaceFloor"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -5184,6 +5456,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/rooms/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getRoomAvailability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/rooms/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getRoomBookings"];
+        put?: never;
+        post: operations["platform_createRoomBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/rooms/bookings/{eventId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateRoomBooking"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/rooms/bookings/{eventId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_cancelRoomBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/rooms/bookings/{eventId}/response": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_respondToRoomBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/search/audit": {
         parameters: {
             query?: never;
@@ -5320,6 +5672,102 @@ export interface paths {
             cookie?: never;
         };
         get: operations["platform_logo_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getWorkplaceBookings"];
+        put?: never;
+        post: operations["platform_createWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_cancelWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/check-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_checkInWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/bookings/{bookingId}/release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_releaseWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/explore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_exploreWorkplace"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/floors/{floorId}/background": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_workplaceFloorBackground"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7166,454 +7614,6 @@ export interface paths {
         options?: never;
         head?: never;
         patch: operations["auth_patchUser"];
-        trace?: never;
-    };
-    "/api/platform/v1/admin/rooms/bookings/pending": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getPendingRoomBookings"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/rooms/bookings/{bookingId}/decision": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["platform_decideRoomBooking"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/rooms/overview": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getRoomsAdminOverview"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/rooms/policy": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getRoomsPolicy"];
-        put: operations["platform_updateRoomsPolicy"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/rooms/resources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["platform_createRoomResource"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/rooms/resources/{resourceId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["platform_updateRoomResource"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/rooms/availability": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getRoomAvailability"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/rooms/bookings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getRoomBookings"];
-        put?: never;
-        post: operations["platform_createRoomBooking"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/rooms/bookings/{eventId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["platform_updateRoomBooking"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/rooms/bookings/{eventId}/cancel": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["platform_cancelRoomBooking"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/rooms/bookings/{eventId}/response": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["platform_respondToRoomBooking"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/floors": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getWorkplaceFloors"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/floors/{floorId}/background": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["platform_uploadWorkplaceFloorBackground"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/floors/{floorId}/layout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["platform_updateWorkplaceLayout"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/floors/{floorId}/resources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getWorkplaceResources"];
-        put?: never;
-        post: operations["platform_createWorkplaceResource"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/floors/{floorId}/resources/{resourceId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["platform_updateWorkplaceResource"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/overview": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getWorkplaceAdminOverview"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/policy": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getWorkplacePolicy"];
-        put: operations["platform_updateWorkplacePolicy"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/sites": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getWorkplaceSites"];
-        put?: never;
-        post: operations["platform_createWorkplaceSite"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/sites/{siteId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["platform_updateWorkplaceSite"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/sites/{siteId}/floors": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["platform_createWorkplaceFloor"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/admin/workplace/sites/{siteId}/floors/{floorId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["platform_updateWorkplaceFloor"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/workplace/bookings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_getWorkplaceBookings"];
-        put?: never;
-        post: operations["platform_createWorkplaceBooking"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/workplace/bookings/{bookingId}/cancel": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["platform_cancelWorkplaceBooking"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/workplace/bookings/{bookingId}/check-in": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["platform_checkInWorkplaceBooking"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/workplace/bookings/{bookingId}/release": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["platform_releaseWorkplaceBooking"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/workplace/explore": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_exploreWorkplace"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/platform/v1/workplace/floors/{floorId}/background": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["platform_workplaceFloorBackground"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
 }
@@ -12143,6 +12143,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseCalendarAdminOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_CalendarAdminOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseCaseClosureReport: {
             correlationId?: string;
             data?: components["schemas"]["platform_CaseClosureReport"];
@@ -12713,6 +12723,46 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseListWorkplaceBooking: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceBooking"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceFloor: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceFloor"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceResource: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceResource"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceSite: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceSite"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseListWorkspaceApp: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkspaceApp"][];
@@ -12943,6 +12993,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseRoomAvailabilityResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_RoomAvailabilityResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseRuntimeCodeSet: {
             correlationId?: string;
             data?: components["schemas"]["platform_RuntimeCodeSet"];
@@ -13086,6 +13146,76 @@ export interface components {
         platform_ApiResponseWorkQueue: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkQueue"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceAdminOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceAdminOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceBooking: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceBooking"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceExploreResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceExploreResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceFloor: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceFloor"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplacePolicy: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplacePolicy"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceResource: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceResource"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceSite: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceSite"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -13401,6 +13531,16 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_BookingRequest: {
+            /** Format: date-time */
+            endsAt: string;
+            purpose?: string;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: date-time */
+            startsAt: string;
+            visibleToColleagues?: boolean;
+        };
         platform_BookingSummary: {
             /** Format: uuid */
             bookingId?: string;
@@ -13445,6 +13585,24 @@ export interface components {
             revisionId?: number;
             /** Format: int64 */
             sourceVersion?: number;
+        };
+        platform_CalendarAdminOverview: {
+            /** Format: int64 */
+            activeResources?: number;
+            /** Format: int64 */
+            bookingsThisWeek?: number;
+            /** Format: int64 */
+            conflictedUsers?: number;
+            /** Format: int64 */
+            eventsThisWeek?: number;
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: int64 */
+            pendingBookings?: number;
+            policy?: components["schemas"]["platform_Policy"];
+            resources?: components["schemas"]["platform_ResourceSummary"][];
+            /** Format: int64 */
+            resourcesInMaintenance?: number;
         };
         platform_CalendarSummary: {
             /** Format: uuid */
@@ -14336,6 +14494,20 @@ export interface components {
             resolution?: string;
             status?: string;
         };
+        platform_FloorRequest: {
+            /** Format: int32 */
+            floorNumber?: number;
+            nameEn: string;
+            nameKo: string;
+            /** Format: int32 */
+            planHeight?: number;
+            /** Format: int32 */
+            planWidth?: number;
+            /** @enum {string} */
+            state: "DRAFT" | "ACTIVE" | "CLOSED";
+            /** Format: int64 */
+            version?: number;
+        };
         platform_GovernedHomeZone: {
             height?: string;
             placement?: string;
@@ -14582,6 +14754,9 @@ export interface components {
             description?: string;
             label: string;
             locale: string;
+        };
+        platform_LayoutRequest: {
+            resources: components["schemas"]["platform_ResourcePlacement"][];
         };
         platform_LifecycleRequest: {
             /** Format: int64 */
@@ -14861,26 +15036,26 @@ export interface components {
             version?: number;
         };
         platform_PolicyRequest: {
-            allowExternalAttendees?: boolean;
+            allowAssignedDeskLending?: boolean;
+            allowRecurring?: boolean;
             /** Format: int32 */
-            dailyMeetingLimitMinutes?: number;
+            autoReleaseMinutes?: number;
             /** Format: int32 */
-            defaultBufferMinutes?: number;
+            bookingWindowDays?: number;
             /** Format: int32 */
-            defaultEventMinutes?: number;
-            enforceMeetingAgenda?: boolean;
+            checkInLeadMinutes?: number;
             /** Format: int32 */
-            maximumAdvanceDays?: number;
+            maximumActiveBookings?: number;
             /** Format: int32 */
-            maximumEventMinutes?: number;
+            maximumBookingMinutes?: number;
             /** Format: int32 */
-            minimumEventMinutes?: number;
+            maximumConsecutiveDays?: number;
+            /** Format: int32 */
+            minimumBookingMinutes?: number;
+            requireCheckIn?: boolean;
+            showColleagueNames?: boolean;
             /** Format: int64 */
             version: number;
-            /** Format: int32 */
-            weekStart?: number;
-            /** Format: int32 */
-            weeklyFocusTargetMinutes?: number;
             workingDayEnd: string;
             workingDayStart: string;
         };
@@ -15266,23 +15441,56 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_ResourceOccupancy: {
+            bookingStatus?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+        };
+        platform_ResourcePlacement: {
+            heightPercent: number;
+            positionX: number;
+            positionY: number;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: int32 */
+            rotationDegrees?: number;
+            /** Format: int64 */
+            version: number;
+            widthPercent: number;
+        };
         platform_ResourceRequest: {
+            accessible?: boolean;
             approvalRequired?: boolean;
+            assignedDisplayName?: string;
+            /** Format: uuid */
+            assignedPersonPublicId?: string;
+            /** Format: int64 */
+            assignedUserId?: number;
             /** Format: int32 */
             capacity?: number;
             code: string;
             features: string[];
-            floor?: string;
+            heightPercent: number;
+            /** @enum {string} */
+            mode: "RESERVABLE" | "DROP_IN" | "ASSIGNED" | "UNAVAILABLE";
             nameEn: string;
             nameKo: string;
-            site: string;
+            neighborhood?: string;
+            positionX: number;
+            positionY: number;
+            /** Format: int32 */
+            rotationDegrees?: number;
             /** @enum {string} */
             state: "AVAILABLE" | "MAINTENANCE" | "RETIRED";
-            timeZone: string;
             /** @enum {string} */
-            type: "ROOM" | "DESK" | "EQUIPMENT";
+            type: "ROOM" | "DESK" | "LOCKER" | "PARKING" | "FOCUS_POD" | "PHONE_BOOTH" | "EQUIPMENT";
             /** Format: int64 */
             version?: number;
+            widthPercent: number;
         };
         platform_ResourceSummary: {
             approvalRequired?: boolean;
@@ -15369,6 +15577,12 @@ export interface components {
             validation?: components["schemas"]["platform_ValidationReport"];
             /** Format: int64 */
             version?: number;
+        };
+        platform_RoomAvailabilityResponse: {
+            /** Format: date-time */
+            generatedAt?: string;
+            occupancy?: components["schemas"]["platform_ResourceOccupancy"][];
+            rooms?: components["schemas"]["platform_ResourceSummary"][];
         };
         platform_RuntimeCodeSet: {
             codeSetKey?: string;
@@ -15589,6 +15803,21 @@ export interface components {
             serviceTargetMinutes?: number;
             /** Format: int64 */
             version: number;
+        };
+        platform_SiteRequest: {
+            address?: string;
+            code: string;
+            nameEn: string;
+            nameKo: string;
+            /** @enum {string} */
+            state: "ACTIVE" | "MAINTENANCE" | "CLOSED";
+            timeZone: string;
+            /** Format: int32 */
+            totalFloorCount?: number;
+            /** @enum {string} */
+            type: "HEADQUARTERS" | "SHARED_OFFICE" | "SATELLITE" | "CLIENT_SITE";
+            /** Format: int64 */
+            version?: number;
         };
         platform_SnoozeRequest: {
             /** Format: date-time */
@@ -15988,6 +16217,190 @@ export interface components {
             total?: number;
             /** Format: int64 */
             waiting?: number;
+        };
+        platform_WorkplaceAdminOverview: {
+            /** Format: int64 */
+            activeSites?: number;
+            /** Format: int64 */
+            assignedResources?: number;
+            /** Format: int64 */
+            bookingsThisWeek?: number;
+            /** Format: int64 */
+            checkedInToday?: number;
+            /** Format: int64 */
+            configuredFloors?: number;
+            /** Format: date-time */
+            generatedAt?: string;
+            policy?: components["schemas"]["platform_WorkplacePolicy"];
+            /** Format: int64 */
+            reservableResources?: number;
+            /** Format: int32 */
+            utilizationPercent?: number;
+        };
+        platform_WorkplaceBooking: {
+            /** Format: uuid */
+            bookingId?: string;
+            canCancel?: boolean;
+            canCheckIn?: boolean;
+            canRelease?: boolean;
+            /** Format: date-time */
+            checkInClosesAt?: string;
+            /** Format: date-time */
+            checkInOpensAt?: string;
+            /** Format: date-time */
+            checkedInAt?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            floorName?: string;
+            purpose?: string;
+            /** Format: date-time */
+            releasedAt?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            resourceName?: string;
+            /** @enum {string} */
+            resourceType?: "ROOM" | "DESK" | "LOCKER" | "PARKING" | "FOCUS_POD" | "PHONE_BOOTH" | "EQUIPMENT";
+            siteName?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            status?: "RESERVED" | "CHECKED_IN" | "COMPLETED" | "NO_SHOW" | "RELEASED" | "CANCELLED";
+            /** Format: int64 */
+            version?: number;
+            visibleToColleagues?: boolean;
+        };
+        platform_WorkplaceExploreResponse: {
+            floors?: components["schemas"]["platform_WorkplaceFloor"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            occupancy?: components["schemas"]["platform_WorkplaceOccupancy"][];
+            policy?: components["schemas"]["platform_WorkplacePolicy"];
+            resources?: components["schemas"]["platform_WorkplaceResource"][];
+            selectedFloor?: components["schemas"]["platform_WorkplaceFloor"];
+            sites?: components["schemas"]["platform_WorkplaceSite"][];
+        };
+        platform_WorkplaceFloor: {
+            backgroundAssetPath?: string;
+            /** Format: uuid */
+            floorId?: string;
+            /** Format: int32 */
+            floorNumber?: number;
+            name?: string;
+            nameEn?: string;
+            nameKo?: string;
+            /** Format: int32 */
+            planHeight?: number;
+            /** Format: int32 */
+            planWidth?: number;
+            /** Format: int64 */
+            resourceCount?: number;
+            /** Format: uuid */
+            siteId?: string;
+            siteName?: string;
+            /** @enum {string} */
+            state?: "DRAFT" | "ACTIVE" | "CLOSED";
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkplaceOccupancy: {
+            bookedByDisplayName?: string;
+            /** Format: uuid */
+            bookingId?: string;
+            currentUser?: boolean;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            status?: "RESERVED" | "CHECKED_IN" | "COMPLETED" | "NO_SHOW" | "RELEASED" | "CANCELLED";
+        };
+        platform_WorkplacePolicy: {
+            allowAssignedDeskLending?: boolean;
+            allowRecurring?: boolean;
+            /** Format: int32 */
+            autoReleaseMinutes?: number;
+            /** Format: int32 */
+            bookingWindowDays?: number;
+            /** Format: int32 */
+            checkInLeadMinutes?: number;
+            /** Format: int32 */
+            maximumActiveBookings?: number;
+            /** Format: int32 */
+            maximumBookingMinutes?: number;
+            /** Format: int32 */
+            maximumConsecutiveDays?: number;
+            /** Format: int32 */
+            minimumBookingMinutes?: number;
+            requireCheckIn?: boolean;
+            showColleagueNames?: boolean;
+            /** Format: int64 */
+            version?: number;
+            workingDayEnd?: string;
+            workingDayStart?: string;
+        };
+        platform_WorkplaceResource: {
+            accessible?: boolean;
+            approvalRequired?: boolean;
+            assignedDisplayName?: string;
+            /** Format: uuid */
+            assignedPersonPublicId?: string;
+            assignedToCurrentUser?: boolean;
+            /** Format: int64 */
+            assignedUserId?: number;
+            /** Format: uuid */
+            calendarResourceId?: string;
+            /** Format: int32 */
+            capacity?: number;
+            code?: string;
+            features?: string[];
+            /** Format: uuid */
+            floorId?: string;
+            heightPercent?: number;
+            /** @enum {string} */
+            mode?: "RESERVABLE" | "DROP_IN" | "ASSIGNED" | "UNAVAILABLE";
+            name?: string;
+            nameEn?: string;
+            nameKo?: string;
+            neighborhood?: string;
+            positionX?: number;
+            positionY?: number;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: int32 */
+            rotationDegrees?: number;
+            /** Format: uuid */
+            siteId?: string;
+            /** @enum {string} */
+            state?: "AVAILABLE" | "MAINTENANCE" | "RETIRED";
+            /** @enum {string} */
+            type?: "ROOM" | "DESK" | "LOCKER" | "PARKING" | "FOCUS_POD" | "PHONE_BOOTH" | "EQUIPMENT";
+            /** Format: int64 */
+            version?: number;
+            widthPercent?: number;
+        };
+        platform_WorkplaceSite: {
+            address?: string;
+            code?: string;
+            /** Format: int64 */
+            configuredFloorCount?: number;
+            name?: string;
+            nameEn?: string;
+            nameKo?: string;
+            /** Format: int64 */
+            resourceCount?: number;
+            /** Format: uuid */
+            siteId?: string;
+            /** @enum {string} */
+            state?: "ACTIVE" | "MAINTENANCE" | "CLOSED";
+            timeZone?: string;
+            /** Format: int32 */
+            totalFloorCount?: number;
+            /** @enum {string} */
+            type?: "HEADQUARTERS" | "SHARED_OFFICE" | "SATELLITE" | "CLIENT_SITE";
+            /** Format: int64 */
+            version?: number;
         };
         platform_Workspace: {
             currentTree?: components["schemas"]["platform_AdminNode"][];
@@ -18328,399 +18741,6 @@ export interface components {
             contentPolicy: string;
             /** Format: int64 */
             expectedVersion: number;
-        };
-        platform_ApiResponseCalendarAdminOverview: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_CalendarAdminOverview"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseRoomAvailabilityResponse: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_RoomAvailabilityResponse"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_CalendarAdminOverview: {
-            /** Format: int64 */
-            activeResources?: number;
-            /** Format: int64 */
-            bookingsThisWeek?: number;
-            /** Format: int64 */
-            conflictedUsers?: number;
-            /** Format: int64 */
-            eventsThisWeek?: number;
-            /** Format: date-time */
-            generatedAt?: string;
-            /** Format: int64 */
-            pendingBookings?: number;
-            policy?: components["schemas"]["platform_Policy"];
-            resources?: components["schemas"]["platform_ResourceSummary"][];
-            /** Format: int64 */
-            resourcesInMaintenance?: number;
-        };
-        platform_ResourceOccupancy: {
-            bookingStatus?: string;
-            /** Format: date-time */
-            endsAt?: string;
-            /** Format: uuid */
-            resourceId?: string;
-            /** Format: date-time */
-            startsAt?: string;
-        };
-        platform_RoomAvailabilityResponse: {
-            /** Format: date-time */
-            generatedAt?: string;
-            occupancy?: components["schemas"]["platform_ResourceOccupancy"][];
-            rooms?: components["schemas"]["platform_ResourceSummary"][];
-        };
-        platform_ApiResponseListWorkplaceBooking: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplaceBooking"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListWorkplaceFloor: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplaceFloor"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListWorkplaceResource: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplaceResource"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListWorkplaceSite: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplaceSite"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseWorkplaceAdminOverview: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplaceAdminOverview"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseWorkplaceBooking: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplaceBooking"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseWorkplaceExploreResponse: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplaceExploreResponse"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseWorkplaceFloor: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplaceFloor"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseWorkplacePolicy: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplacePolicy"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseWorkplaceResource: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplaceResource"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseWorkplaceSite: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_WorkplaceSite"];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_BookingRequest: {
-            /** Format: date-time */
-            endsAt: string;
-            purpose?: string;
-            /** Format: uuid */
-            resourceId: string;
-            /** Format: date-time */
-            startsAt: string;
-            visibleToColleagues?: boolean;
-        };
-        platform_FloorRequest: {
-            /** Format: int32 */
-            floorNumber?: number;
-            nameEn: string;
-            nameKo: string;
-            /** Format: int32 */
-            planHeight?: number;
-            /** Format: int32 */
-            planWidth?: number;
-            /** @enum {string} */
-            state: "DRAFT" | "ACTIVE" | "CLOSED";
-            /** Format: int64 */
-            version?: number;
-        };
-        platform_LayoutRequest: {
-            resources: components["schemas"]["platform_ResourcePlacement"][];
-        };
-        platform_ResourcePlacement: {
-            heightPercent: number;
-            positionX: number;
-            positionY: number;
-            /** Format: uuid */
-            resourceId: string;
-            /** Format: int32 */
-            rotationDegrees?: number;
-            /** Format: int64 */
-            version: number;
-            widthPercent: number;
-        };
-        platform_SiteRequest: {
-            address?: string;
-            code: string;
-            nameEn: string;
-            nameKo: string;
-            /** @enum {string} */
-            state: "ACTIVE" | "MAINTENANCE" | "CLOSED";
-            timeZone: string;
-            /** Format: int32 */
-            totalFloorCount?: number;
-            /** @enum {string} */
-            type: "HEADQUARTERS" | "SHARED_OFFICE" | "SATELLITE" | "CLIENT_SITE";
-            /** Format: int64 */
-            version?: number;
-        };
-        platform_WorkplaceAdminOverview: {
-            /** Format: int64 */
-            activeSites?: number;
-            /** Format: int64 */
-            assignedResources?: number;
-            /** Format: int64 */
-            bookingsThisWeek?: number;
-            /** Format: int64 */
-            checkedInToday?: number;
-            /** Format: int64 */
-            configuredFloors?: number;
-            /** Format: date-time */
-            generatedAt?: string;
-            policy?: components["schemas"]["platform_WorkplacePolicy"];
-            /** Format: int64 */
-            reservableResources?: number;
-            /** Format: int32 */
-            utilizationPercent?: number;
-        };
-        platform_WorkplaceBooking: {
-            /** Format: uuid */
-            bookingId?: string;
-            /** Format: date-time */
-            checkedInAt?: string;
-            /** Format: date-time */
-            endsAt?: string;
-            floorName?: string;
-            purpose?: string;
-            /** Format: date-time */
-            releasedAt?: string;
-            /** Format: uuid */
-            resourceId?: string;
-            resourceName?: string;
-            /** @enum {string} */
-            resourceType?: "ROOM" | "DESK" | "LOCKER" | "PARKING" | "FOCUS_POD" | "PHONE_BOOTH" | "EQUIPMENT";
-            siteName?: string;
-            /** Format: date-time */
-            startsAt?: string;
-            /** @enum {string} */
-            status?: "RESERVED" | "CHECKED_IN" | "RELEASED" | "CANCELLED";
-            /** Format: int64 */
-            version?: number;
-            visibleToColleagues?: boolean;
-        };
-        platform_WorkplaceExploreResponse: {
-            floors?: components["schemas"]["platform_WorkplaceFloor"][];
-            /** Format: date-time */
-            generatedAt?: string;
-            occupancy?: components["schemas"]["platform_WorkplaceOccupancy"][];
-            policy?: components["schemas"]["platform_WorkplacePolicy"];
-            resources?: components["schemas"]["platform_WorkplaceResource"][];
-            selectedFloor?: components["schemas"]["platform_WorkplaceFloor"];
-            sites?: components["schemas"]["platform_WorkplaceSite"][];
-        };
-        platform_WorkplaceFloor: {
-            backgroundAssetPath?: string;
-            /** Format: uuid */
-            floorId?: string;
-            /** Format: int32 */
-            floorNumber?: number;
-            name?: string;
-            nameEn?: string;
-            nameKo?: string;
-            /** Format: int32 */
-            planHeight?: number;
-            /** Format: int32 */
-            planWidth?: number;
-            /** Format: int64 */
-            resourceCount?: number;
-            /** Format: uuid */
-            siteId?: string;
-            siteName?: string;
-            /** @enum {string} */
-            state?: "DRAFT" | "ACTIVE" | "CLOSED";
-            /** Format: int64 */
-            version?: number;
-        };
-        platform_WorkplaceOccupancy: {
-            bookedByDisplayName?: string;
-            /** Format: uuid */
-            bookingId?: string;
-            currentUser?: boolean;
-            /** Format: date-time */
-            endsAt?: string;
-            /** Format: uuid */
-            resourceId?: string;
-            /** Format: date-time */
-            startsAt?: string;
-            /** @enum {string} */
-            status?: "RESERVED" | "CHECKED_IN" | "RELEASED" | "CANCELLED";
-        };
-        platform_WorkplacePolicy: {
-            allowAssignedDeskLending?: boolean;
-            allowRecurring?: boolean;
-            /** Format: int32 */
-            autoReleaseMinutes?: number;
-            /** Format: int32 */
-            bookingWindowDays?: number;
-            /** Format: int32 */
-            checkInLeadMinutes?: number;
-            /** Format: int32 */
-            maximumActiveBookings?: number;
-            /** Format: int32 */
-            maximumBookingMinutes?: number;
-            /** Format: int32 */
-            maximumConsecutiveDays?: number;
-            /** Format: int32 */
-            minimumBookingMinutes?: number;
-            requireCheckIn?: boolean;
-            showColleagueNames?: boolean;
-            /** Format: int64 */
-            version?: number;
-            workingDayEnd?: string;
-            workingDayStart?: string;
-        };
-        platform_WorkplaceResource: {
-            accessible?: boolean;
-            approvalRequired?: boolean;
-            assignedDisplayName?: string;
-            /** Format: uuid */
-            assignedPersonPublicId?: string;
-            /** Format: int64 */
-            assignedUserId?: number;
-            /** Format: uuid */
-            calendarResourceId?: string;
-            /** Format: int32 */
-            capacity?: number;
-            code?: string;
-            features?: string[];
-            /** Format: uuid */
-            floorId?: string;
-            heightPercent?: number;
-            /** @enum {string} */
-            mode?: "RESERVABLE" | "DROP_IN" | "ASSIGNED" | "UNAVAILABLE";
-            name?: string;
-            nameEn?: string;
-            nameKo?: string;
-            neighborhood?: string;
-            positionX?: number;
-            positionY?: number;
-            /** Format: uuid */
-            resourceId?: string;
-            /** Format: int32 */
-            rotationDegrees?: number;
-            /** Format: uuid */
-            siteId?: string;
-            /** @enum {string} */
-            state?: "AVAILABLE" | "MAINTENANCE" | "RETIRED";
-            /** @enum {string} */
-            type?: "ROOM" | "DESK" | "LOCKER" | "PARKING" | "FOCUS_POD" | "PHONE_BOOTH" | "EQUIPMENT";
-            /** Format: int64 */
-            version?: number;
-            widthPercent?: number;
-        };
-        platform_WorkplaceSite: {
-            address?: string;
-            code?: string;
-            /** Format: int64 */
-            configuredFloorCount?: number;
-            name?: string;
-            nameEn?: string;
-            nameKo?: string;
-            /** Format: int64 */
-            resourceCount?: number;
-            /** Format: uuid */
-            siteId?: string;
-            /** @enum {string} */
-            state?: "ACTIVE" | "MAINTENANCE" | "CLOSED";
-            timeZone?: string;
-            /** Format: int32 */
-            totalFloorCount?: number;
-            /** @enum {string} */
-            type?: "HEADQUARTERS" | "SHARED_OFFICE" | "SATELLITE" | "CLIENT_SITE";
-            /** Format: int64 */
-            version?: number;
         };
     };
     responses: never;
@@ -23049,9 +23069,7 @@ export interface operations {
     platform_list_4: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23071,9 +23089,7 @@ export interface operations {
     platform_create_7: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -23099,9 +23115,7 @@ export interface operations {
     platform_update_7: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -23129,9 +23143,7 @@ export interface operations {
     platform_archive: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -23159,9 +23171,7 @@ export interface operations {
     platform_publish_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -23198,9 +23208,7 @@ export interface operations {
                 cursor?: string;
                 size?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23220,9 +23228,7 @@ export interface operations {
     platform_detail_5: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 historyId: string;
             };
@@ -23251,9 +23257,7 @@ export interface operations {
                 outcome?: string;
                 query?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23275,8 +23279,7 @@ export interface operations {
             query?: {
                 state?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
                 "X-DWP-Resource-Roles"?: string;
                 "Accept-Language"?: string;
@@ -23300,9 +23303,7 @@ export interface operations {
     platform_decide_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Resource-Roles"?: string;
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
@@ -23332,9 +23333,7 @@ export interface operations {
     platform_fulfill: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Resource-Roles"?: string;
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
@@ -23364,9 +23363,7 @@ export interface operations {
     platform_revoke: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Resource-Roles"?: string;
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
@@ -23396,10 +23393,7 @@ export interface operations {
     platform_cases: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23419,11 +23413,7 @@ export interface operations {
     platform_createCase: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23447,11 +23437,7 @@ export interface operations {
     platform_updateCase: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 caseId: string;
             };
@@ -23477,10 +23463,7 @@ export interface operations {
     platform_caseClosureReport: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 caseId: string;
             };
@@ -23502,11 +23485,7 @@ export interface operations {
     platform_ensureCaseClosureReport: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 caseId: string;
             };
@@ -23528,11 +23507,7 @@ export interface operations {
     platform_linkEvent: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 caseId: string;
             };
@@ -23558,11 +23533,7 @@ export interface operations {
     platform_addCaseNote: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 caseId: string;
             };
@@ -23588,11 +23559,7 @@ export interface operations {
     platform_createCaseTask: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 caseId: string;
             };
@@ -23618,11 +23585,7 @@ export interface operations {
     platform_updateCaseTask: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 caseId: string;
                 taskId: string;
@@ -23649,10 +23612,7 @@ export interface operations {
     platform_caseWorkspace: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 caseId: string;
             };
@@ -23681,10 +23641,7 @@ export interface operations {
                 page?: number;
                 size?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23706,10 +23663,7 @@ export interface operations {
             query: {
                 correlationId: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23739,10 +23693,7 @@ export interface operations {
                 page?: number;
                 size?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23762,10 +23713,7 @@ export interface operations {
     platform_event: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 eventId: string;
             };
@@ -23787,11 +23735,7 @@ export interface operations {
     platform_export: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23815,10 +23759,7 @@ export interface operations {
     platform_exportContent: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 exportId: string;
             };
@@ -23842,10 +23783,7 @@ export interface operations {
             query?: {
                 status?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23865,11 +23803,7 @@ export interface operations {
     platform_updateFinding: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 findingId: string;
             };
@@ -23895,10 +23829,7 @@ export interface operations {
     platform_findingContext: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 findingId: string;
             };
@@ -23920,10 +23851,7 @@ export interface operations {
     platform_integrity: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23943,11 +23871,7 @@ export interface operations {
     platform_checkpoint: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23969,10 +23893,7 @@ export interface operations {
             query?: {
                 window?: "H24" | "D7" | "D30" | "D90";
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -23992,10 +23913,7 @@ export interface operations {
     platform_policy_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24015,11 +23933,7 @@ export interface operations {
     platform_updatePolicy_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24043,10 +23957,7 @@ export interface operations {
     platform_policyRevisions: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24066,11 +23977,7 @@ export interface operations {
     platform_createPolicyRevision: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24094,11 +24001,7 @@ export interface operations {
     platform_decidePolicyRevision: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 revisionId: string;
             };
@@ -24124,11 +24027,7 @@ export interface operations {
     platform_publishPolicyRevision: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 revisionId: string;
             };
@@ -24154,11 +24053,7 @@ export interface operations {
     platform_rollbackPolicyRevision: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 revisionId: string;
             };
@@ -24184,11 +24079,7 @@ export interface operations {
     platform_submitPolicyRevision: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 revisionId: string;
             };
@@ -24214,11 +24105,7 @@ export interface operations {
     platform_savedSearches: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24238,11 +24125,7 @@ export interface operations {
     platform_saveSearch: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24266,11 +24149,7 @@ export interface operations {
     platform_deleteSavedSearch: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": string;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 savedSearchId: string;
             };
@@ -24295,9 +24174,7 @@ export interface operations {
                 page?: number;
                 size?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24317,8 +24194,7 @@ export interface operations {
     platform_pendingBookings: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -24340,9 +24216,7 @@ export interface operations {
     platform_decideBooking: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -24371,8 +24245,7 @@ export interface operations {
     platform_overview_4: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -24394,9 +24267,7 @@ export interface operations {
     platform_policy: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24416,9 +24287,7 @@ export interface operations {
     platform_updatePolicy_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -24444,9 +24313,7 @@ export interface operations {
     platform_createResource: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -24473,9 +24340,7 @@ export interface operations {
     platform_updateResource: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -24508,9 +24373,7 @@ export interface operations {
                 kind?: string;
                 lifecycle?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24530,9 +24393,7 @@ export interface operations {
     platform_assurance: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24552,9 +24413,7 @@ export interface operations {
     platform_evaluateAssurance: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -24576,9 +24435,7 @@ export interface operations {
     platform_dispositionFinding: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -24609,9 +24466,7 @@ export interface operations {
                 focusRef?: string;
                 depth?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24634,9 +24489,7 @@ export interface operations {
                 ref: string;
                 operation?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24656,9 +24509,7 @@ export interface operations {
     platform_declare: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -24684,9 +24535,7 @@ export interface operations {
     platform_retire_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -24714,9 +24563,7 @@ export interface operations {
     platform_get_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24736,9 +24583,7 @@ export interface operations {
     platform_update_6: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -24764,9 +24609,7 @@ export interface operations {
     platform_background: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24788,9 +24631,7 @@ export interface operations {
             query: {
                 version: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -24819,9 +24660,7 @@ export interface operations {
     platform_resetBackground: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -24847,9 +24686,7 @@ export interface operations {
     platform_updateComposition: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -24875,9 +24712,7 @@ export interface operations {
     platform_updateLaunchpad: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -24905,9 +24740,7 @@ export interface operations {
             query?: {
                 limit?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24927,9 +24760,7 @@ export interface operations {
     platform_rollback_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -24957,10 +24788,7 @@ export interface operations {
     platform_connectors: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -24980,10 +24808,7 @@ export interface operations {
     platform_create_6: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -25009,10 +24834,7 @@ export interface operations {
     platform_update_5: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25040,10 +24862,7 @@ export interface operations {
     platform_activate_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25071,10 +24890,7 @@ export interface operations {
     platform_configurationCheck: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 connectorId: string;
             };
@@ -25096,10 +24912,7 @@ export interface operations {
     platform_suspend: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25127,10 +24940,7 @@ export interface operations {
     platform_overview_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -25152,10 +24962,7 @@ export interface operations {
             query?: {
                 limit?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -25177,10 +24984,7 @@ export interface operations {
             query?: {
                 limit?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -25200,9 +25004,7 @@ export interface operations {
     platform_workspace_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -25222,9 +25024,7 @@ export interface operations {
     platform_createBundle: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -25250,9 +25050,7 @@ export interface operations {
     platform_createDraft_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25280,9 +25078,7 @@ export interface operations {
     platform_revisions: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 bundleId: string;
             };
@@ -25304,9 +25100,7 @@ export interface operations {
     platform_revision: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 revisionId: string;
             };
@@ -25328,9 +25122,7 @@ export interface operations {
     platform_saveDraft_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25358,9 +25150,7 @@ export interface operations {
     platform_decide_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25388,9 +25178,7 @@ export interface operations {
     platform_diff: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 revisionId: string;
             };
@@ -25412,9 +25200,7 @@ export interface operations {
     platform_preview_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 revisionId: string;
             };
@@ -25436,9 +25222,7 @@ export interface operations {
     platform_publish_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25466,9 +25250,7 @@ export interface operations {
     platform_restore_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25496,9 +25278,7 @@ export interface operations {
     platform_submit_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25526,9 +25306,7 @@ export interface operations {
     platform_updateConnection: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25556,9 +25334,7 @@ export interface operations {
     platform_overview_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -25578,9 +25354,7 @@ export interface operations {
     platform_updatePolicy: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -25606,9 +25380,7 @@ export interface operations {
     platform_updateSharedInbox: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25636,9 +25408,7 @@ export interface operations {
     platform_list_3: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -25658,9 +25428,7 @@ export interface operations {
     platform_create_5: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -25686,9 +25454,7 @@ export interface operations {
     platform_reorder: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -25714,10 +25480,7 @@ export interface operations {
     platform_workspace: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -25737,9 +25500,7 @@ export interface operations {
     platform_createDraft: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -25765,9 +25526,7 @@ export interface operations {
     platform_saveDraft: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25795,9 +25554,7 @@ export interface operations {
     platform_cancel_3: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25825,9 +25582,7 @@ export interface operations {
     platform_publish: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25855,9 +25610,7 @@ export interface operations {
     platform_restore: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25885,9 +25638,7 @@ export interface operations {
     platform_update_4: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25915,9 +25666,7 @@ export interface operations {
     platform_activate_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25945,9 +25694,7 @@ export interface operations {
     platform_retire_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -25977,9 +25724,7 @@ export interface operations {
             query?: {
                 state?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -25999,9 +25744,7 @@ export interface operations {
     platform_decide: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26034,9 +25777,7 @@ export interface operations {
                 page?: number;
                 size?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -26056,9 +25797,7 @@ export interface operations {
     platform_create_4: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -26084,9 +25823,7 @@ export interface operations {
     platform_detail: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 setKey: string;
             };
@@ -26108,9 +25845,7 @@ export interface operations {
     platform_update_8: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26138,9 +25873,7 @@ export interface operations {
     platform_activate: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26171,9 +25904,7 @@ export interface operations {
                 page?: number;
                 size?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 setKey: string;
             };
@@ -26195,9 +25926,7 @@ export interface operations {
     platform_createItem: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26225,9 +25954,7 @@ export interface operations {
     platform_updateItem: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26256,9 +25983,7 @@ export interface operations {
     platform_activateItem: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26287,9 +26012,7 @@ export interface operations {
     platform_retireItem: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26318,9 +26041,7 @@ export interface operations {
     platform_retire: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26354,9 +26075,7 @@ export interface operations {
                 page?: number;
                 size?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -26376,9 +26095,7 @@ export interface operations {
     platform_create_3: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -26404,9 +26121,7 @@ export interface operations {
     platform_detail_3: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 registryType: "APP" | "CONNECTOR" | "AGENT" | "TOOL" | "POLICY" | "API" | "DATA_PRODUCT";
                 entryKey: string;
@@ -26429,9 +26144,7 @@ export interface operations {
     platform_createRevision: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26460,9 +26173,7 @@ export interface operations {
     platform_updateRevision: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26492,9 +26203,7 @@ export interface operations {
     platform_activateRevision: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26524,9 +26233,7 @@ export interface operations {
     platform_retireRevision: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26553,13 +26260,185 @@ export interface operations {
             };
         };
     };
+    platform_getPendingRoomBookings: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListBookingSummary"];
+                };
+            };
+        };
+    };
+    platform_decideRoomBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_BookingDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingSummary"];
+                };
+            };
+        };
+    };
+    platform_getRoomsAdminOverview: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseCalendarAdminOverview"];
+                };
+            };
+        };
+    };
+    platform_getRoomsPolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePolicy"];
+                };
+            };
+        };
+    };
+    platform_updateRoomsPolicy: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePolicy"];
+                };
+            };
+        };
+    };
+    platform_createRoomResource: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ResourceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseResourceSummary"];
+                };
+            };
+        };
+    };
+    platform_updateRoomResource: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ResourceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseResourceSummary"];
+                };
+            };
+        };
+    };
     platform_orphaned: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -26579,10 +26458,7 @@ export interface operations {
     platform_preview: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -26608,10 +26484,7 @@ export interface operations {
             query?: {
                 limit?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -26631,10 +26504,7 @@ export interface operations {
     platform_transfer: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -26660,9 +26530,7 @@ export interface operations {
     platform_catalog: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -26682,9 +26550,7 @@ export interface operations {
     platform_createCatalog: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -26710,9 +26576,7 @@ export interface operations {
     platform_saveCatalog: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26742,9 +26606,7 @@ export interface operations {
             query?: {
                 status?: "DRAFT" | "SUBMITTED" | "TRIAGED" | "IN_PROGRESS" | "AWAITING_REQUESTER" | "RESOLVED" | "CLOSED" | "CANCELLED";
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -26764,9 +26626,7 @@ export interface operations {
     platform_request_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 requestId: string;
             };
@@ -26788,9 +26648,7 @@ export interface operations {
     platform_transition: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -26818,9 +26676,7 @@ export interface operations {
     platform_get_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -26840,9 +26696,7 @@ export interface operations {
     platform_update_3: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -26868,9 +26722,7 @@ export interface operations {
     platform_logo: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -26892,9 +26744,7 @@ export interface operations {
             query: {
                 version: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -26923,9 +26773,7 @@ export interface operations {
     platform_resetLogo: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -26953,9 +26801,7 @@ export interface operations {
             query?: {
                 limit?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -26975,9 +26821,7 @@ export interface operations {
     platform_rollback: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -27002,11 +26846,383 @@ export interface operations {
             };
         };
     };
+    platform_getWorkplaceFloors: {
+        parameters: {
+            query: {
+                siteId: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceFloor"];
+                };
+            };
+        };
+    };
+    platform_uploadWorkplaceFloorBackground: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloor"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplaceLayout: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_LayoutRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceResource"];
+                };
+            };
+        };
+    };
+    platform_getWorkplaceResources: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceResource"];
+                };
+            };
+        };
+    };
+    platform_createWorkplaceResource: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ResourceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResource"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplaceResource: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ResourceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResource"];
+                };
+            };
+        };
+    };
+    platform_getWorkplaceAdminOverview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceAdminOverview"];
+                };
+            };
+        };
+    };
+    platform_getWorkplacePolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicy"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplacePolicy: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicy"];
+                };
+            };
+        };
+    };
+    platform_getWorkplaceSites: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceSite"];
+                };
+            };
+        };
+    };
+    platform_createWorkplaceSite: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SiteRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSite"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplaceSite: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SiteRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSite"];
+                };
+            };
+        };
+    };
+    platform_createWorkplaceFloor: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_FloorRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloor"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplaceFloor: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_FloorRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloor"];
+                };
+            };
+        };
+    };
     platform_list_7: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
             };
             path?: never;
@@ -27028,9 +27244,7 @@ export interface operations {
     platform_recordAction: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
             };
             path: {
@@ -27054,9 +27268,7 @@ export interface operations {
     platform_recordView: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
             };
             path: {
@@ -27086,10 +27298,7 @@ export interface operations {
                 durationMinutes?: number;
                 timeZone?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -27111,10 +27320,7 @@ export interface operations {
     platform_calendars: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -27139,10 +27345,7 @@ export interface operations {
                 from: string;
                 to: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -27164,11 +27367,7 @@ export interface operations {
     platform_create_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
-                "X-DWP-Display-Name-B64"?: string;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -27195,10 +27394,7 @@ export interface operations {
     platform_update_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -27227,10 +27423,7 @@ export interface operations {
     platform_cancel_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -27259,10 +27452,7 @@ export interface operations {
     platform_respond: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -27293,10 +27483,7 @@ export interface operations {
             query?: {
                 timeZone?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -27321,8 +27508,7 @@ export interface operations {
                 from: string;
                 to: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -27370,9 +27556,7 @@ export interface operations {
             query?: {
                 registryType?: "APP" | "CONNECTOR" | "AGENT" | "TOOL" | "POLICY" | "API" | "DATA_PRODUCT";
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -27392,9 +27576,7 @@ export interface operations {
     platform_detail_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 registryType: "APP" | "CONNECTOR" | "AGENT" | "TOOL" | "POLICY" | "API" | "DATA_PRODUCT";
                 entryKey: string;
@@ -27422,9 +27604,7 @@ export interface operations {
                 type?: string;
                 size?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
                 "Accept-Language"?: string;
             };
@@ -27447,9 +27627,7 @@ export interface operations {
     platform_detail_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
                 "Accept-Language"?: string;
             };
@@ -27474,9 +27652,7 @@ export interface operations {
     platform_acknowledge: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
             };
             path: {
@@ -27500,9 +27676,7 @@ export interface operations {
     platform_recordInteraction: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
             };
             path: {
@@ -27527,9 +27701,7 @@ export interface operations {
     platform_updateReaction: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
             };
             path: {
@@ -27557,9 +27729,7 @@ export interface operations {
     platform_updatePreference: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
             };
             path: {
@@ -27587,9 +27757,7 @@ export interface operations {
     platform_get_6: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -27609,9 +27777,7 @@ export interface operations {
     platform_background_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -27631,10 +27797,7 @@ export interface operations {
     platform_get: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -27654,9 +27817,7 @@ export interface operations {
     platform_update_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -27682,9 +27843,7 @@ export interface operations {
     platform_reset_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -27710,10 +27869,7 @@ export interface operations {
     platform_getSurface: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-            };
+            header?: never;
             path: {
                 surfaceKey: string;
             };
@@ -27735,9 +27891,7 @@ export interface operations {
     platform_updateSurface: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -27765,9 +27919,7 @@ export interface operations {
     platform_resetSurface: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -27797,11 +27949,7 @@ export interface operations {
             query?: {
                 timeZone?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
-                "X-DWP-Permissions"?: string;
+            header?: {
                 "X-DWP-Roles"?: string;
                 "Accept-Language"?: string;
             };
@@ -27824,9 +27972,7 @@ export interface operations {
     platform_recordFeedback: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -27854,10 +28000,7 @@ export interface operations {
     platform_home: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -27877,9 +28020,7 @@ export interface operations {
     platform_compose: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -27905,10 +28046,7 @@ export interface operations {
     platform_decideProposal: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions"?: string;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -27944,10 +28082,7 @@ export interface operations {
                 page?: number;
                 pageSize?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -27967,10 +28102,7 @@ export interface operations {
     platform_thread: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-            };
+            header?: never;
             path: {
                 threadId: string;
             };
@@ -27992,9 +28124,7 @@ export interface operations {
     platform_action: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28022,9 +28152,7 @@ export interface operations {
     platform_assign: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28052,10 +28180,7 @@ export interface operations {
     platform_comment: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Display-Name-B64"?: string;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28083,9 +28208,7 @@ export interface operations {
     platform_updateDraft_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28113,9 +28236,7 @@ export interface operations {
     platform_retryDelivery: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28140,9 +28261,7 @@ export interface operations {
     platform_reply: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28170,9 +28289,7 @@ export interface operations {
     platform_snooze: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28202,9 +28319,7 @@ export interface operations {
             query?: {
                 locale?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -28253,10 +28368,7 @@ export interface operations {
     platform_get_3: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -28276,9 +28388,7 @@ export interface operations {
     platform_patch: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -28304,10 +28414,7 @@ export interface operations {
     platform_requests_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -28327,9 +28434,7 @@ export interface operations {
     platform_request: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -28355,9 +28460,7 @@ export interface operations {
     platform_cancel_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28385,9 +28488,7 @@ export interface operations {
     platform_policy_2: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -28407,9 +28508,7 @@ export interface operations {
     platform_reset: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -28437,9 +28536,7 @@ export interface operations {
             query?: {
                 locale?: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path: {
                 setKey: string;
             };
@@ -28458,12 +28555,174 @@ export interface operations {
             };
         };
     };
+    platform_getRoomAvailability: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRoomAvailabilityResponse"];
+                };
+            };
+        };
+    };
+    platform_getRoomBookings: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListEventSummary"];
+                };
+            };
+        };
+    };
+    platform_createRoomBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateEventRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEventSummary"];
+                };
+            };
+        };
+    };
+    platform_updateRoomBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_UpdateEventRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEventSummary"];
+                };
+            };
+        };
+    };
+    platform_cancelRoomBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_respondToRoomBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RespondRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEventSummary"];
+                };
+            };
+        };
+    };
     platform_record: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -28490,8 +28749,7 @@ export interface operations {
     platform_catalog_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -28515,10 +28773,7 @@ export interface operations {
             query?: {
                 status?: "DRAFT" | "SUBMITTED" | "TRIAGED" | "IN_PROGRESS" | "AWAITING_REQUESTER" | "RESOLVED" | "CLOSED" | "CANCELLED";
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -28538,9 +28793,7 @@ export interface operations {
     platform_create_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -28566,10 +28819,7 @@ export interface operations {
     platform_request_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-            };
+            header?: never;
             path: {
                 requestId: string;
             };
@@ -28591,9 +28841,7 @@ export interface operations {
     platform_cancel: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28621,9 +28869,7 @@ export interface operations {
     platform_updateDraft: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28651,9 +28897,7 @@ export interface operations {
     platform_submit: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -28681,9 +28925,7 @@ export interface operations {
     platform_get_4: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -28703,10 +28945,195 @@ export interface operations {
     platform_logo_1: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    platform_getWorkplaceBookings: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
             };
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_createWorkplaceBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_BookingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_cancelWorkplaceBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_checkInWorkplaceBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_releaseWorkplaceBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
+    platform_exploreWorkplace: {
+        parameters: {
+            query: {
+                floorId?: string;
+                from: string;
+                to: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceExploreResponse"];
+                };
+            };
+        };
+    };
+    platform_workplaceFloorBackground: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                floorId: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -28725,10 +29152,7 @@ export interface operations {
     platform_activity: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -28750,10 +29174,7 @@ export interface operations {
     platform_cancelAccessRequest: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -28782,10 +29203,7 @@ export interface operations {
     platform_apps: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -28807,10 +29225,7 @@ export interface operations {
     platform_requestAccess: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -28839,10 +29254,7 @@ export interface operations {
     platform_launch: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -28867,10 +29279,7 @@ export interface operations {
     platform_setPinned: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -28899,10 +29308,7 @@ export interface operations {
     platform_completeAuthorization: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path?: never;
@@ -28928,11 +29334,7 @@ export interface operations {
     platform_connections: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -28952,11 +29354,7 @@ export interface operations {
     platform_beginAuthorization: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path: {
                 connectorId: string;
             };
@@ -28978,10 +29376,7 @@ export interface operations {
     platform_sync: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "X-Correlation-ID"?: string;
             };
             path: {
@@ -29013,11 +29408,7 @@ export interface operations {
                 page?: number;
                 size?: number;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -29039,9 +29430,7 @@ export interface operations {
             query: {
                 surfaceKey: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
                 "X-DWP-Group-Refs"?: string;
             };
@@ -29066,9 +29455,7 @@ export interface operations {
             query: {
                 surfaceKey: string;
             };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
                 "X-DWP-Group-Refs"?: string;
                 "X-Correlation-ID"?: string;
@@ -29096,9 +29483,7 @@ export interface operations {
     platform_update: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
                 "X-DWP-Group-Refs"?: string;
                 "X-Correlation-ID"?: string;
@@ -29128,9 +29513,7 @@ export interface operations {
     platform_delete: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
                 "X-DWP-Group-Refs"?: string;
                 "X-Correlation-ID"?: string;
@@ -29156,9 +29539,7 @@ export interface operations {
     platform_preference: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Roles"?: string;
                 "X-DWP-Group-Refs"?: string;
             };
@@ -29187,9 +29568,7 @@ export interface operations {
     platform_markUsed: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
+            header?: {
                 "X-DWP-Group-Refs"?: string;
             };
             path: {
@@ -29213,10 +29592,7 @@ export interface operations {
     platform_workItems: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -29238,10 +29614,7 @@ export interface operations {
     platform_updateWorkStatuses: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -29268,10 +29641,7 @@ export interface operations {
     platform_updateWorkStatus: {
         parameters: {
             query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Permissions": string;
+            header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
             };
@@ -32145,975 +32515,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["auth_UserResponse"];
-                };
-            };
-        };
-    };
-    platform_getPendingRoomBookings: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "Accept-Language"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListBookingSummary"];
-                };
-            };
-        };
-    };
-    platform_decideRoomBooking: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                bookingId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_BookingDecisionRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseBookingSummary"];
-                };
-            };
-        };
-    };
-    platform_getRoomsAdminOverview: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "Accept-Language"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseCalendarAdminOverview"];
-                };
-            };
-        };
-    };
-    platform_getRoomsPolicy: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponsePolicy"];
-                };
-            };
-        };
-    };
-    platform_updateRoomsPolicy: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-Correlation-ID"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_PolicyRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponsePolicy"];
-                };
-            };
-        };
-    };
-    platform_createRoomResource: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_ResourceRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseResourceSummary"];
-                };
-            };
-        };
-    };
-    platform_updateRoomResource: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                resourceId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_ResourceRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseResourceSummary"];
-                };
-            };
-        };
-    };
-    platform_getRoomAvailability: {
-        parameters: {
-            query: {
-                from: string;
-                to: string;
-            };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "Accept-Language"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseRoomAvailabilityResponse"];
-                };
-            };
-        };
-    };
-    platform_getRoomBookings: {
-        parameters: {
-            query: {
-                from: string;
-                to: string;
-            };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
-                "Accept-Language"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListEventSummary"];
-                };
-            };
-        };
-    };
-    platform_createRoomBooking: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
-                "X-DWP-Display-Name-B64"?: string;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_CreateEventRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseEventSummary"];
-                };
-            };
-        };
-    };
-    platform_updateRoomBooking: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                eventId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_UpdateEventRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseEventSummary"];
-                };
-            };
-        };
-    };
-    platform_cancelRoomBooking: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                eventId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_VersionRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseVoid"];
-                };
-            };
-        };
-    };
-    platform_respondToRoomBooking: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                eventId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_RespondRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseEventSummary"];
-                };
-            };
-        };
-    };
-    platform_getWorkplaceFloors: {
-        parameters: {
-            query: {
-                siteId: string;
-            };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "Accept-Language"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceFloor"];
-                };
-            };
-        };
-    };
-    platform_uploadWorkplaceFloorBackground: {
-        parameters: {
-            query: {
-                version: number;
-            };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                floorId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "multipart/form-data": {
-                    /** Format: binary */
-                    file: string;
-                };
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloor"];
-                };
-            };
-        };
-    };
-    platform_updateWorkplaceLayout: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                floorId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_LayoutRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceResource"];
-                };
-            };
-        };
-    };
-    platform_getWorkplaceResources: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "Accept-Language"?: string;
-            };
-            path: {
-                floorId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceResource"];
-                };
-            };
-        };
-    };
-    platform_createWorkplaceResource: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                floorId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_ResourceRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResource"];
-                };
-            };
-        };
-    };
-    platform_updateWorkplaceResource: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                floorId: string;
-                resourceId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_ResourceRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceResource"];
-                };
-            };
-        };
-    };
-    platform_getWorkplaceAdminOverview: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceAdminOverview"];
-                };
-            };
-        };
-    };
-    platform_getWorkplacePolicy: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicy"];
-                };
-            };
-        };
-    };
-    platform_updateWorkplacePolicy: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-Correlation-ID"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_PolicyRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicy"];
-                };
-            };
-        };
-    };
-    platform_getWorkplaceSites: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "Accept-Language"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceSite"];
-                };
-            };
-        };
-    };
-    platform_createWorkplaceSite: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_SiteRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSite"];
-                };
-            };
-        };
-    };
-    platform_updateWorkplaceSite: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                siteId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_SiteRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSite"];
-                };
-            };
-        };
-    };
-    platform_createWorkplaceFloor: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                siteId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_FloorRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloor"];
-                };
-            };
-        };
-    };
-    platform_updateWorkplaceFloor: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                siteId: string;
-                floorId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_FloorRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloor"];
-                };
-            };
-        };
-    };
-    platform_getWorkplaceBookings: {
-        parameters: {
-            query: {
-                from: string;
-                to: string;
-            };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceBooking"];
-                };
-            };
-        };
-    };
-    platform_createWorkplaceBooking: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "X-DWP-Person-Public-ID"?: string;
-                "X-DWP-Display-Name-B64"?: string;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_BookingRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
-                };
-            };
-        };
-    };
-    platform_cancelWorkplaceBooking: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                bookingId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_VersionRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
-                };
-            };
-        };
-    };
-    platform_checkInWorkplaceBooking: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                bookingId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_VersionRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
-                };
-            };
-        };
-    };
-    platform_releaseWorkplaceBooking: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-                "X-Correlation-ID"?: string;
-            };
-            path: {
-                bookingId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["platform_VersionRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
-                };
-            };
-        };
-    };
-    platform_exploreWorkplace: {
-        parameters: {
-            query: {
-                floorId?: string;
-                from: string;
-                to: string;
-            };
-            header: {
-                "X-DWP-Tenant-ID": number;
-                "X-DWP-User-ID": number;
-                "Accept-Language"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceExploreResponse"];
-                };
-            };
-        };
-    };
-    platform_workplaceFloorBackground: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-DWP-Tenant-ID": number;
-            };
-            path: {
-                floorId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": string;
                 };
             };
         };
