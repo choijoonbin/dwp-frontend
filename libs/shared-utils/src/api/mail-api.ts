@@ -20,13 +20,7 @@ export type MailProposalType =
   | 'ESCALATE_NOTIFICATION';
 export type MailProposalStatus = 'PROPOSED' | 'ACCEPTED' | 'DISMISSED' | 'EXPIRED' | 'EXECUTED';
 export type MailDeliveryState =
-  | 'RECEIVED'
-  | 'DRAFT'
-  | 'QUEUED'
-  | 'SENDING'
-  | 'RETRYING'
-  | 'SENT'
-  | 'FAILED';
+  'RECEIVED' | 'DRAFT' | 'QUEUED' | 'SENDING' | 'RETRYING' | 'SENT' | 'FAILED';
 
 export type MailAccount = {
   accountId: string;

@@ -1,11 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ToastViewport } from '@dwp-frontend/design-system/components/toast-viewport';
 
 import { AuthUnauthorizedHandler } from './components/auth-unauthorized-handler';
+import { NotificationLiveBridge } from './components/notification-live-bridge';
 import { SkipNavigationLink } from './components/skip-navigation-link';
 import { UserLocaleSync } from './components/user-locale-sync';
 import { registerRouteIntentObserver, reportRouteCommit } from './observability/route-performance';
+
+const DwaionGlobalHost = lazy(() =>
+  import('./features/dwaion/dwaion-global-host').then((module) => ({
+    default: module.DwaionGlobalHost,
+  }))
+);
 
 type AppProps = {
   children: React.ReactNode;
@@ -35,8 +42,12 @@ export default function App({ children }: AppProps) {
     <>
       <SkipNavigationLink />
       <AuthUnauthorizedHandler />
+      <NotificationLiveBridge />
       <UserLocaleSync />
       {children}
+      <Suspense fallback={null}>
+        <DwaionGlobalHost />
+      </Suspense>
       <ToastViewport />
     </>
   );

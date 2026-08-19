@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Compass, Grid2X2, Layers3, Plus, Search, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { ActionButton, ActionIconButton, FormField, PageCanvas } from '@dwp-frontend/design-system';
-import { getSpaces, useAuth } from '@dwp-frontend/shared-utils';
+import { getSpaces, useAuth, usePermissions } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -20,6 +20,7 @@ import { SpaceCard } from './space-ui';
 export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
   const { t } = useTranslation('spaces');
   const auth = useAuth();
+  const permissions = usePermissions();
   const [query, setQuery] = useState('');
   const [createOpen, setCreateOpen] = useState(false);
   const deferredQuery = useDeferredValue(query.trim());
@@ -29,6 +30,9 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
     staleTime: 30_000,
   });
   const Icon = scope === 'MY' ? Layers3 : Compass;
+  const canCreate =
+    permissions.hasPermission('ACTION.SPACE_REQUEST', 'CREATE') ||
+    permissions.hasPermission('ACTION.SPACE_REQUEST', 'MANAGE');
 
   return (
     <PageCanvas>
@@ -61,13 +65,15 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
             </Typography>
           </Box>
         </Stack>
-        <ActionButton
-          intent="primary"
-          startIcon={<Plus size={17} />}
-          onClick={() => setCreateOpen(true)}
-        >
-          {t('actions.createSpace')}
-        </ActionButton>
+        {canCreate && (
+          <ActionButton
+            intent="primary"
+            startIcon={<Plus size={17} />}
+            onClick={() => setCreateOpen(true)}
+          >
+            {t('actions.createSpace')}
+          </ActionButton>
+        )}
       </Stack>
 
       <Paper
@@ -131,7 +137,7 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
           sx={{
             mt: 2,
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' },
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' },
             gap: 1.5,
           }}
         >
@@ -147,7 +153,7 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
             gridTemplateColumns: {
               xs: '1fr',
               md: 'repeat(2, minmax(0, 1fr))',
-              xl: 'repeat(3, minmax(0, 1fr))',
+              lg: 'repeat(3, minmax(0, 1fr))',
             },
             gap: 1.5,
           }}

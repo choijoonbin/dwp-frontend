@@ -140,14 +140,126 @@
   },
   "askPage": {
     "header": {
-      "eyebrow": "Enterprise intelligence",
-      "title": "Ask DWP",
-      "description": "Get evidence-bound answers from workplace sources available in your verified scope"
+      "eyebrow": "Permission-aware work AI",
+      "title": "DWAI·ON",
+      "description": "An AI workspace that connects work context with evidence"
+    },
+    "approvalExpert": {
+      "header": {
+        "eyebrow": "Governed approval intelligence",
+        "title": "DWAI·ON Approval Expert"
+      },
+      "welcome": {
+        "eyebrow": "Approval evidence, explained",
+        "title": "{{name}}, review your approval flow with confidence",
+        "titleFallback": "Review your approval flow with confidence",
+        "description": "Understand tasks, requests, forms, SLA exposure, and control evidence within your current approval permissions. Decisions remain human-only."
+      },
+      "modes": {
+        "title": "Start an approval review",
+        "description": "Choose a focused, read-only analysis grounded in live approval records.",
+        "items": {
+          "brief": {
+            "title": "Decision brief",
+            "description": "Prioritize pending decisions by urgency and SLA exposure.",
+            "prompt": "Summarize my pending approval decisions by urgency, due time, and SLA risk with evidence."
+          },
+          "blockers": {
+            "title": "Find flow blockers",
+            "description": "Identify overdue stages and requests waiting for information.",
+            "prompt": "Find approval requests that are blocked, overdue, or waiting for information and explain the next governed action."
+          },
+          "meeting": {
+            "title": "Explain the route",
+            "description": "Explain the current stage, remaining route, and handoff risk.",
+            "prompt": "Explain the current approval route and the remaining decision stages for my active requests."
+          },
+          "access": {
+            "title": "Review controls",
+            "description": "Inspect segregation, evidence, and operational assurance signals.",
+            "prompt": "Explain the approval control and audit evidence currently available to me, including any exceptions."
+          }
+        }
+      }
     },
     "readOnly": "Read only",
+    "permissionScoped": "My access scope",
+    "welcome": {
+      "eyebrow": "AI connected to your work",
+      "title": "{{name}}, what can we solve together?",
+      "titleFallback": "What can we solve together?",
+      "description": "Connect work, mail, and calendar context within your current access and answer with evidence."
+    },
+    "composer": {
+      "placeholder": "Describe what you want to find, compare, or prepare",
+      "scope": "Searches automatically within your access",
+      "send": "Send question",
+      "sendHint": "Enter to send, Shift+Enter for a new line",
+      "cancel": "Stop response"
+    },
+    "modes": {
+      "title": "Start with a work mode",
+      "description": "Choose a focused starting point for the work in front of you.",
+      "items": {
+        "brief": {
+          "title": "Today’s work brief",
+          "description": "Organize what needs attention by deadline and priority.",
+          "prompt": "Summarize what I should handle today by priority and deadline risk."
+        },
+        "blockers": {
+          "title": "Find blockers",
+          "description": "Identify delayed work and the next action it needs.",
+          "prompt": "Find the work currently blocked and the next actions required."
+        },
+        "meeting": {
+          "title": "Prepare for meetings",
+          "description": "Connect scheduled meetings with related work context.",
+          "prompt": "Use today’s meetings and related work to prepare what I need."
+        },
+        "access": {
+          "title": "Check policy and access",
+          "description": "Find the governing evidence and the right request path.",
+          "prompt": "Explain the policy and access path required for this request with evidence."
+        }
+      }
+    },
+    "workContextDescription": "Start from real work you can act on now.",
+    "contextRail": {
+      "label": "DWAI·ON context and verification",
+      "scopeTitle": "Current search scope",
+      "scopeDescription": "Selected automatically by permission",
+      "evidenceTitle": "Verification panel",
+      "evidenceDescription": "Processing status and disclosed evidence",
+      "enabled": "Available",
+      "sources": {
+        "WORK_ITEM": "Your work and approval flow",
+        "MAIL": "Mail available to you",
+        "CALENDAR": "Your calendar and meetings",
+        "APPROVAL_TASK": "Decisions assigned or delegated to you",
+        "APPROVAL_REQUEST": "Approval requests visible to you",
+        "APPROVAL_FORM": "Published approval form catalog",
+        "APPROVAL_OPERATION": "Approval operation and control signals"
+      },
+      "signalsTitle": "Current work signals",
+      "signals": {
+        "total": "Total",
+        "dueSoon": "Due soon",
+        "waiting": "Waiting"
+      },
+      "permissionNote": "Only information allowed for you in each source system is searched.",
+      "confidence": {
+        "HIGH": "High confidence",
+        "MEDIUM": "Medium confidence",
+        "LOW": "Low confidence",
+        "NOT_AVAILABLE": "Confidence unavailable"
+      },
+      "sourceCount": "{{count}} sources evaluated",
+      "noSources": "No source can be disclosed for this run.",
+      "policy": "Processing policy"
+    },
     "questionLabel": "Ask a work question",
     "questionPlaceholder": "Ask about a policy, task, service, or application",
-    "submit": "Ask DWP",
+    "submit": "Ask DWAI·ON",
     "suggested": "Suggested",
     "prompts": {
       "remote": "Can I work remotely next Friday?",
@@ -161,10 +273,10 @@
     "openContext": "Open in Work",
     "runtimeLoadingTitle": "Evaluating your request",
     "runtimeLoadingDescription": "Applying policy, collecting permission-scoped evidence, and validating citations.",
-    "runtimeErrorTitle": "Ask DWP could not evaluate this request",
+    "runtimeErrorTitle": "DWAI·ON could not evaluate this request",
     "runtimeErrorDescription": "No unverified answer was substituted. Check the service connection and try again.",
     "retry": "Try again",
-    "responseStatus": "Ask request status",
+    "responseStatus": "DWAI·ON request status",
     "status": {
       "permission": {
         "label": "Session boundary applied",
@@ -192,28 +304,105 @@
       "ABSTAINED": "Answer withheld",
       "CONFIGURATION_REQUIRED": "Configuration required"
     },
-    "answerHeading": "Governed answer",
+    "answerHeading": "DWAI·ON response",
+    "answerDescription": "Review sources and processing status in the verification panel.",
     "yourQuestion": "Your question",
     "sourcesHeading": "Verified sources ({{count}})",
     "sourceTypes": {
       "WORK_ITEM": "Work item",
       "MAIL": "Mail",
-      "CALENDAR": "Calendar"
+      "CALENDAR": "Calendar",
+      "APPROVAL_TASK": "Decision tasks",
+      "APPROVAL_REQUEST": "Requests",
+      "APPROVAL_FORM": "Forms",
+      "APPROVAL_OPERATION": "Operations"
     },
     "openSource": "Open source: {{title}}",
+    "progress": {
+      "AUTHORIZING": "Checking permission and policy boundaries",
+      "RETRIEVING": "Collecting work evidence you can access",
+      "REASONING": "Connecting evidence into a response",
+      "VERIFYING": "Cross-checking citations and the response",
+      "PERSISTING": "Saving the encrypted conversation record",
+      "COMPLETED": "Verification complete"
+    },
+    "feedback": {
+      "helpful": "Helpful",
+      "notHelpful": "Needs improvement",
+      "recorded": "Your feedback was recorded.",
+      "error": "Your feedback could not be saved."
+    },
+    "history": {
+      "open": "Open conversation history",
+      "title": "Recent conversations",
+      "encrypted": "Conversation content is encrypted and deleted according to retention policy.",
+      "delete": "Delete conversation",
+      "loading": "Loading conversation history.",
+      "empty": "No saved conversations yet.",
+      "transcript": "Conversation transcript",
+      "assistant": "DWAI·ON",
+      "you": "You",
+      "withheld": "The answer was withheld because policy or evidence requirements were not met."
+    },
+    "citationPreview": {
+      "description": "Preview the portion of evidence available under your current access.",
+      "close": "Close evidence preview",
+      "noExcerpt": "No excerpt can be disclosed for this source.",
+      "scope": "Your current access in the source system remains in effect.",
+      "openSource": "Open in source"
+    },
+    "actionsShelf": {
+      "title": "Continue with your work",
+      "description": "DWAI·ON never performs the change directly. It securely hands off to the owning app for review.",
+      "previewError": "The work handoff plan could not be verified.",
+      "handoffComplete": "Review context was handed off to the owning app.",
+      "confirmTitle": "Open the {{action}} review screen?",
+      "confirmDescription": "A read-only plan with {{steps}} steps was verified. You will review any save or submission again in the owning app.",
+      "previewing": "Verifying a secure handoff plan",
+      "previewDescription": "The server is validating permissions, risk tier, and destination.",
+      "cancel": "Cancel",
+      "continue": "Open review screen",
+      "opening": "Opening",
+      "unknownAction": "Owning app task",
+      "risk": {
+        "L0": "Read only",
+        "L1": "Low risk · review before save",
+        "L2": "Medium risk · explicit confirmation required",
+        "L3": "High risk · approval workflow required"
+      },
+      "items": {
+        "calendarEvent": { "title": "Draft calendar event" },
+        "mailDraft": { "title": "Draft email" },
+        "serviceRequest": { "title": "Prepare service request" },
+        "approvalRequest": { "title": "Prepare approval request" }
+      }
+    },
+    "actions": {
+      "newQuestion": "New question",
+      "copy": "Copy response",
+      "copied": "Response copied.",
+      "copyFailed": "Response could not be copied.",
+      "retry": "Run again"
+    },
+    "independentRun": "Conversation context continues, while permissions and evidence are revalidated for every question.",
+    "loadingSteps": {
+      "permission": "Check access boundary",
+      "sources": "Collect evidence",
+      "answer": "Validate response"
+    },
     "outcomes": {
       "configurationTitle": "An administrator must complete the runtime configuration",
       "deniedTitle": "This session does not permit the request",
       "handoffTitle": "Continue in an approved workflow",
       "insufficientTitle": "The available evidence is not sufficient for a reliable answer",
-      "agentRegistryConfiguration": "Activate the DWP Assistant contract in the tenant Agent Registry.",
+      "agentRegistryConfiguration": "Activate the DWAI·ON contract in the tenant Agent Registry.",
       "contextConfiguration": "Configure the read-only Platform context service identity.",
       "modelConfiguration": "Configure an approved model route and managed provider credential. No substitute answer was generated.",
-      "permissionRequired": "Ask DWP access is not present in the current verified session.",
+      "permissionRequired": "DWAI·ON question access is not present in the current verified session.",
       "privilegedHandoff": "The request may involve privileged workforce or financial data, so no source was retrieved and no model was invoked.",
-      "mutationHandoff": "Changes must be reviewed and approved in the owning application. Ask DWP did not execute the request.",
+      "mutationHandoff": "Changes must be reviewed and approved in the owning application. DWAI·ON did not execute the request.",
       "noSource": "No source available to this user can support the answer.",
-      "sourceUnavailable": "An entitled source is temporarily unavailable. Ask DWP withheld the answer.",
+      "sourceUnavailable": "An entitled source is temporarily unavailable. DWAI·ON withheld the answer.",
       "evidenceInsufficient": "The model found no evidence-supported answer and explicitly abstained.",
       "modelRefused": "The model refused or failed the grounding contract, so the answer was withheld.",
       "safeFallback": "The request ended without a verified answer. Review the policy code or try again later."
@@ -509,9 +698,9 @@
         "owner": "Workplace Platform",
         "lastUsed": "8 min ago"
       },
-      "ref-app-collaboration": {
-        "name": "Collaboration",
-        "description": "Chat, channels, and meetings",
+      "dwp-messaging": {
+        "name": "Messenger",
+        "description": "Governed conversations with people, Spaces, and teams",
         "owner": "Workplace Platform",
         "lastUsed": "22 min ago"
       },

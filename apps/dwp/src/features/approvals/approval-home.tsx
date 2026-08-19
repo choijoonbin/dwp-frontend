@@ -12,6 +12,8 @@ import {
   updateHomeSurfacePreference,
   useAuth,
   useToast,
+  DWAION_APPROVAL_EXPERT_AGENT_KEY,
+  dwaionWorkspaceRoute,
 } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
@@ -236,6 +238,20 @@ export function ApprovalHome() {
                 >
                   {t('actions.newRequest')}
                 </ActionButton>
+                {experience.canAskExpert && (
+                  <ActionButton
+                    intent="quiet"
+                    startIcon={<Sparkles size={17} />}
+                    onClick={() =>
+                      navigate(
+                        dwaionWorkspaceRoute(undefined, undefined, DWAION_APPROVAL_EXPERT_AGENT_KEY)
+                      )
+                    }
+                    sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.36)' }}
+                  >
+                    {t('actions.askExpert')}
+                  </ActionButton>
+                )}
               </Stack>
             </Box>
             <Box

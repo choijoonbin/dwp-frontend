@@ -1,19 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Accessibility,
-  Building2,
-  FilterX,
-  Layers3,
-  List,
-  Map,
-  Search,
-} from 'lucide-react';
+import { Accessibility, Building2, FilterX, Layers3, List, Map, Search } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import {
-  getWorkplaceExplore,
-  useToast,
-} from '@dwp-frontend/shared-utils';
+import { getWorkplaceExplore, useToast } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   DatePickerField,
@@ -125,17 +114,18 @@ export function WorkplaceExplore() {
   const selectedSite = data?.sites.find((site) => site.siteId === selectedFloor?.siteId) ?? null;
   const policy = data?.policy;
   const selectableTimes = useMemo(
-    () => policy
-      ? workplaceTimeOptions(
-          policy.workingDayStart,
-          policy.workingDayEnd,
-          policy.minimumBookingMinutes
-        )
-      : [],
+    () =>
+      policy
+        ? workplaceTimeOptions(
+            policy.workingDayStart,
+            policy.workingDayEnd,
+            policy.minimumBookingMinutes
+          )
+        : [],
     [policy]
   );
   const selectableDurations = useMemo(
-    () => policy ? workplaceDurationOptions(policy) : [30, 60, 90, 120],
+    () => (policy ? workplaceDurationOptions(policy) : [30, 60, 90, 120]),
     [policy]
   );
   const dateBounds = policy
@@ -151,11 +141,7 @@ export function WorkplaceExplore() {
   useEffect(() => {
     if (!policy || !selectedSite?.timeZone) return;
     if (defaultedTimeZoneRef.current === selectedSite.timeZone) return;
-    const selection = workplaceDefaultSelection(
-      selectedSite.timeZone,
-      policy,
-      data?.generatedAt
-    );
+    const selection = workplaceDefaultSelection(selectedSite.timeZone, policy, data?.generatedAt);
     defaultedTimeZoneRef.current = selectedSite.timeZone;
     setDate(selection.date);
     setTime(selection.time);
@@ -170,8 +156,12 @@ export function WorkplaceExplore() {
       setDuration(selectableDurations[0] ?? policy.minimumBookingMinutes);
     }
   }, [duration, policy, selectableDurations, selectableTimes, time]);
-  const floors = (data?.floors ?? []).filter((floor) => siteId === 'ALL' || floor.siteId === siteId);
-  const features = [...new Set((data?.resources ?? []).flatMap((resource) => resource.features))].sort();
+  const floors = (data?.floors ?? []).filter(
+    (floor) => siteId === 'ALL' || floor.siteId === siteId
+  );
+  const features = [
+    ...new Set((data?.resources ?? []).flatMap((resource) => resource.features)),
+  ].sort();
   const typeLabels = Object.fromEntries(
     (['ROOM', 'DESK', 'LOCKER', 'PARKING', 'FOCUS_POD', 'PHONE_BOOTH', 'EQUIPMENT'] as const).map(
       (value) => [value, t(`workplace.resourceTypes.${value}`)]
@@ -274,11 +264,22 @@ export function WorkplaceExplore() {
         }
       />
 
-      <Box sx={{ border: 1, borderColor: 'divider', bgcolor: 'background.paper', p: { xs: 1.25, md: 2 } }}>
+      <Box
+        sx={{
+          border: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+          p: { xs: 1.25, md: 2 },
+        }}
+      >
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', xl: '1.3fr repeat(5, minmax(130px, 0.7fr))' },
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: '1fr 1fr',
+              xl: '1.3fr repeat(5, minmax(130px, 0.7fr))',
+            },
             gap: 1.25,
           }}
         >
@@ -289,7 +290,9 @@ export function WorkplaceExplore() {
             onChange={(event) => setSearch(event.target.value)}
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start"><Search size={17} /></InputAdornment>
+                <InputAdornment position="start">
+                  <Search size={17} />
+                </InputAdornment>
               ),
             }}
           />
@@ -313,7 +316,8 @@ export function WorkplaceExplore() {
             label={t('workplace.explore.duration')}
             value={String(duration)}
             options={selectableDurations.map((value) => ({
-              value: String(value), label: t('workplace.explore.minutes', { count: value }),
+              value: String(value),
+              label: t('workplace.explore.minutes', { count: value }),
             }))}
             onValueChange={(value) => setDuration(Number(value))}
           />
@@ -331,7 +335,10 @@ export function WorkplaceExplore() {
             size="small"
             label={t('workplace.explore.floor')}
             value={selectedFloor?.floorId ?? ''}
-            options={floors.map((floor) => ({ value: floor.floorId, label: `${floor.siteName} · ${floor.name}` }))}
+            options={floors.map((floor) => ({
+              value: floor.floorId,
+              label: `${floor.siteName} · ${floor.name}`,
+            }))}
             onValueChange={(value) => setFloorId(String(value))}
           />
         </Box>
@@ -371,23 +378,44 @@ export function WorkplaceExplore() {
             onChange={(_, value: ViewMode | null) => value && setView(value)}
           >
             <Tooltip title={t('workplace.explore.mapView')}>
-              <ToggleButton value="map" aria-label={t('workplace.explore.mapView')}><Map size={17} /></ToggleButton>
+              <ToggleButton value="map" aria-label={t('workplace.explore.mapView')}>
+                <Map size={17} />
+              </ToggleButton>
             </Tooltip>
             <Tooltip title={t('workplace.explore.listView')}>
-              <ToggleButton value="list" aria-label={t('workplace.explore.listView')}><List size={17} /></ToggleButton>
+              <ToggleButton value="list" aria-label={t('workplace.explore.listView')}>
+                <List size={17} />
+              </ToggleButton>
             </Tooltip>
           </ToggleButtonGroup>
         </Stack>
       </Box>
 
-      <Box sx={{ mt: 2, border: 1, borderColor: 'divider', bgcolor: 'background.paper', p: { xs: 1.25, md: 2 } }}>
-        <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" gap={1.25} sx={{ mb: 1.5 }}>
+      <Box
+        sx={{
+          mt: 2,
+          border: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+          p: { xs: 1.25, md: 2 },
+        }}
+      >
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          justifyContent="space-between"
+          gap={1.25}
+          sx={{ mb: 1.5 }}
+        >
           <Stack direction="row" gap={1} alignItems="center">
             <Layers3 size={19} color="var(--dwp-product-accent)" />
             <Box>
-              <Typography variant="h6" fontWeight={750}>{selectedFloor?.siteName ?? t('workplace.explore.floorPlan')}</Typography>
+              <Typography variant="h6" fontWeight={750}>
+                {selectedFloor?.siteName ?? t('workplace.explore.floorPlan')}
+              </Typography>
               <Typography variant="caption" color="text.secondary">
-                {selectedFloor ? `${selectedFloor.name} · ${filtered.length}${t('workplace.explore.resourcesUnit')}` : ''}
+                {selectedFloor
+                  ? `${selectedFloor.name} · ${filtered.length}${t('workplace.explore.resourcesUnit')}`
+                  : ''}
               </Typography>
             </Box>
           </Stack>
@@ -396,7 +424,14 @@ export function WorkplaceExplore() {
 
         {query.isLoading && <Skeleton variant="rectangular" height={460} />}
         {query.isError && (
-          <Alert severity="error" action={<ActionButton intent="secondary" onClick={() => query.refetch()}>{t('actions.retry')}</ActionButton>}>
+          <Alert
+            severity="error"
+            action={
+              <ActionButton intent="secondary" onClick={() => query.refetch()}>
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          >
             {t('workplace.explore.loadError')}
           </Alert>
         )}
@@ -432,7 +467,9 @@ export function WorkplaceExplore() {
         {query.isFetching && !query.isLoading && (
           <Stack direction="row" gap={1} alignItems="center" sx={{ mt: 1 }}>
             <CircularProgress size={14} />
-            <Typography variant="caption" color="text.secondary">{t('workplace.explore.refreshing')}</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t('workplace.explore.refreshing')}
+            </Typography>
           </Stack>
         )}
       </Box>
@@ -468,7 +505,9 @@ export function WorkplaceExplore() {
               <Typography variant="overline" color="text.secondary">
                 {t('workplace.explore.resourceDetails')}
               </Typography>
-              <Typography component="h2" variant="h5" fontWeight={800}>{inspected.name}</Typography>
+              <Typography component="h2" variant="h5" fontWeight={800}>
+                {inspected.name}
+              </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                 {selectedSite?.name} · {selectedFloor?.name} · {inspected.neighborhood}
               </Typography>
@@ -478,13 +517,19 @@ export function WorkplaceExplore() {
               <Chip label={typeLabels[inspected.type]} />
               <Chip
                 variant="outlined"
-                label={statusLabels[workplaceResourceAvailability(inspected, data?.occupancy ?? [])]}
+                label={
+                  statusLabels[workplaceResourceAvailability(inspected, data?.occupancy ?? [])]
+                }
               />
-              {inspected.accessible && <Chip color="success" label={t('workplace.admin.locations.accessible')} />}
+              {inspected.accessible && (
+                <Chip color="success" label={t('workplace.admin.locations.accessible')} />
+              )}
             </Stack>
             {inspected.features.length > 0 && (
               <Stack direction="row" gap={0.75} flexWrap="wrap">
-                {inspected.features.map((value) => <Chip key={value} size="small" variant="outlined" label={value} />)}
+                {inspected.features.map((value) => (
+                  <Chip key={value} size="small" variant="outlined" label={value} />
+                ))}
               </Stack>
             )}
             <Alert severity="info">{t('workplace.explore.bookingUnavailable')}</Alert>

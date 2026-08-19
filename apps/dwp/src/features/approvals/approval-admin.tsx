@@ -6,27 +6,41 @@ import {
   FileStack,
   GitBranch,
   KeyRound,
+  RefreshCcw,
   ShieldCheck,
   TimerReset,
+  TriangleAlert,
 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { SignalMetric } from '@dwp-frontend/design-system';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ActionIconButton, SignalMetric } from '@dwp-frontend/design-system';
+import {
+  formatDate as formatLocalizedDate,
+  resolveSupportedLocale,
+} from '@dwp-frontend/shared-i18n';
 import {
   getApprovalAdminOverview,
   getApprovalOperations,
   getApprovalSignatureProviders,
+  retryApprovalIntegrationDelivery,
 } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { ApprovalFormStudio } from './approval-form-studio';
 import { ApprovalPolicyStudio } from './approval-policy-studio';
 import { ApprovalWorkflowStudio } from './approval-workflow-studio';
 import { ApprovalLinkRow, ApprovalSurface, StatusChip, approvalTone } from './approval-ui';
+import { useApprovalExperience } from './use-approval-experience';
 
 import type { ApprovalView } from './approval-navigation';
 
@@ -123,24 +137,39 @@ function ApprovalAdminOverview() {
           ))}
         </ApprovalSurface>
         <ApprovalSurface title={t('admin.assurance.title')} meta={t('admin.assurance.meta')}>
-          {['identity', 'segregation', 'evidence', 'delivery'].map((item) => (
-            <Stack
-              key={item}
-              direction="row"
-              gap={1.25}
-              sx={{ px: 2, py: 1.6, borderBottom: 1, borderColor: 'divider' }}
-            >
-              <CheckCircle2 size={18} color={approvalTone.teal} />
-              <Box>
-                <Typography variant="body2" fontWeight={740}>
-                  {t(`admin.assurance.${item}.title`)}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {t(`admin.assurance.${item}.detail`)}
-                </Typography>
-              </Box>
-            </Stack>
-          ))}
+          {(data?.assurance ?? []).map((signal) => {
+            const attention = signal.state === 'ATTENTION';
+            const SignalIcon = attention ? TriangleAlert : CheckCircle2;
+            return (
+              <Stack
+                key={signal.key}
+                direction="row"
+                alignItems="flex-start"
+                gap={1.25}
+                sx={{ px: 2, py: 1.6, borderBottom: 1, borderColor: 'divider' }}
+              >
+                <SignalIcon size={18} color={attention ? approvalTone.amber : approvalTone.teal} />
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography variant="body2" fontWeight={740}>
+                    {t(`admin.assurance.${signal.key}.title`)}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {t(`admin.assurance.${signal.key}.detail`)}
+                  </Typography>
+                </Box>
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color={attention ? 'warning' : 'success'}
+                  label={
+                    attention
+                      ? t('admin.assurance.states.attention', { count: signal.exceptions })
+                      : t('admin.assurance.states.enforced')
+                  }
+                />
+              </Stack>
+            );
+          })}
         </ApprovalSurface>
       </Box>
     </Stack>
@@ -149,11 +178,30 @@ function ApprovalAdminOverview() {
 
 function ApprovalOperationsAdmin() {
   const { t, i18n } = useTranslation('approvals');
+  const queryClient = useQueryClient();
+  const { canOperate } = useApprovalExperience();
   const operations = useQuery({
     queryKey: ['approvals', 'admin', 'operations'],
     queryFn: getApprovalOperations,
     refetchInterval: 30_000,
   });
+  const retryDelivery = useMutation({
+    mutationFn: retryApprovalIntegrationDelivery,
+    onSuccess: (data) => {
+      queryClient.setQueryData(['approvals', 'admin', 'operations'], data);
+    },
+  });
+  const formatDate = (value?: string | null) =>
+    value
+      ? formatLocalizedDate(
+          value,
+          {
+            dateStyle: 'short',
+            timeStyle: 'short',
+          },
+          resolveSupportedLocale(i18n.resolvedLanguage, i18n.language)
+        )
+      : t('admin.integrations.notAvailable');
   if (operations.isError) return <ErrorPanel />;
   return (
     <Stack gap={2}>
@@ -193,6 +241,97 @@ function ApprovalOperationsAdmin() {
           />
         ))}
       </ApprovalSurface>
+      <ApprovalSurface
+        title={t('admin.integrations.title')}
+        meta={t('admin.integrations.meta')}
+        action={
+          <Chip
+            size="small"
+            variant="outlined"
+            label={t('admin.integrations.eventCount', {
+              count: operations.data?.integrationDeliveries.length ?? 0,
+            })}
+          />
+        }
+      >
+        {(operations.data?.integrationDeliveries.length ?? 0) === 0 ? (
+          <Typography variant="body2" color="text.secondary" sx={{ px: 2, py: 3 }}>
+            {t('admin.integrations.empty')}
+          </Typography>
+        ) : (
+          <Box sx={{ overflowX: 'auto' }}>
+            <Table size="small" aria-label={t('admin.integrations.title')}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>{t('admin.integrations.columns.event')}</TableCell>
+                  <TableCell>{t('admin.integrations.columns.status')}</TableCell>
+                  <TableCell align="right">{t('admin.integrations.columns.attempts')}</TableCell>
+                  <TableCell>{t('admin.integrations.columns.updated')}</TableCell>
+                  <TableCell>{t('admin.integrations.columns.error')}</TableCell>
+                  <TableCell align="right">{t('admin.integrations.columns.action')}</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {(operations.data?.integrationDeliveries ?? []).map((delivery) => {
+                  const retryable = delivery.status === 'FAILED' || delivery.status === 'DEAD';
+                  return (
+                    <TableRow key={delivery.outboxId} hover>
+                      <TableCell sx={{ minWidth: 220 }}>
+                        <Typography variant="body2" fontWeight={700} noWrap>
+                          {delivery.eventType}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" noWrap>
+                          {delivery.eventId}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <StatusChip status={delivery.status} />
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography variant="body2">
+                          {delivery.attemptCount}
+                          {delivery.manualRetryCount > 0 ? ` + ${delivery.manualRetryCount}` : ''}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                        {formatDate(
+                          delivery.lastRetriedAt ?? delivery.publishedAt ?? delivery.createdAt
+                        )}
+                      </TableCell>
+                      <TableCell sx={{ maxWidth: 360 }}>
+                        <Tooltip title={delivery.lastError ?? ''} placement="top-start">
+                          <Typography variant="body2" color="text.secondary" noWrap>
+                            {delivery.lastError ?? t('admin.integrations.noError')}
+                          </Typography>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell align="right">
+                        <ActionIconButton
+                          label={t('admin.integrations.retry')}
+                          tooltip={
+                            canOperate
+                              ? t('admin.integrations.retry')
+                              : t('admin.integrations.retryRestricted')
+                          }
+                          size="small"
+                          disabled={!canOperate || !retryable}
+                          loading={retryDelivery.isPending}
+                          onClick={() => retryDelivery.mutate(delivery.outboxId)}
+                        >
+                          <RefreshCcw size={16} />
+                        </ActionIconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Box>
+        )}
+      </ApprovalSurface>
+      {retryDelivery.isError ? (
+        <Alert severity="error">{t('admin.integrations.retryError')}</Alert>
+      ) : null}
     </Stack>
   );
 }

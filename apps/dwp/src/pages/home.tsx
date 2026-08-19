@@ -533,7 +533,7 @@ export default function HomePage() {
               ['privacy', '/account/settings?view=privacy'],
               ['terms', '/account/settings?view=terms'],
               ['help', '/services'],
-              ['status', '/status'],
+              ['status', '/apps'],
             ].map(([label, to], index) => (
               <Typography
                 key={label}

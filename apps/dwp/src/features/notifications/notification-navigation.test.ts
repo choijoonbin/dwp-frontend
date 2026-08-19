@@ -1,0 +1,53 @@
+import { describe, expect, it } from 'vitest';
+
+import {
+  NOTIFICATION_CENTER_VIEW_LINKS,
+  NOTIFICATION_NAVIGATION,
+  findNotificationNavigationItem,
+} from './notification-navigation';
+
+describe('notification navigation contract', () => {
+  it('maps the six center views onto the canonical notification route', () => {
+    expect(NOTIFICATION_CENTER_VIEW_LINKS.map((link) => link.view)).toEqual([
+      'PRIORITY',
+      'ALL',
+      'MENTIONS',
+      'SAVED',
+      'SNOOZED',
+      'DONE',
+    ]);
+    expect(
+      NOTIFICATION_CENTER_VIEW_LINKS.every((link) => link.path.startsWith('/notifications'))
+    ).toBe(true);
+  });
+
+  it('uses the V68 user and tenant-admin permissions', () => {
+    const items = NOTIFICATION_NAVIGATION.flatMap((group) => group.items);
+    expect(items.filter((item) => item.section !== 'administration')).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          requiredResourceKey: 'APP.NOTIFICATIONS',
+          requiredPermissionCode: 'VIEW',
+        }),
+      ])
+    );
+    expect(findNotificationNavigationItem('/admin/notifications/overview/')).toEqual(
+      expect.objectContaining({
+        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
+        requiredPermissionCode: 'VIEW',
+      })
+    );
+    expect(findNotificationNavigationItem('/admin/notifications/contracts')).toEqual(
+      expect.objectContaining({
+        requiredResourceKey: 'ADMIN.NOTIFICATION_CONTRACT',
+        requiredPermissionCode: 'VIEW',
+      })
+    );
+    expect(findNotificationNavigationItem('/admin/notifications/operations')).toEqual(
+      expect.objectContaining({
+        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
+        requiredPermissionCode: 'VIEW',
+      })
+    );
+  });
+});

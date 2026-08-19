@@ -13,11 +13,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBlocker } from 'react-router-dom';
 import { saveWorkplaceLayout, useToast } from '@dwp-frontend/shared-utils';
-import {
-  ActionButton,
-  ActionIconButton,
-  ConfirmDialog,
-} from '@dwp-frontend/design-system';
+import { ActionButton, ActionIconButton, ConfirmDialog } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -76,7 +72,9 @@ function DraggableResource({
       }}
     >
       <GripVertical size={15} aria-hidden="true" />
-      <Typography variant="caption" noWrap fontWeight={700}>{resource.code}</Typography>
+      <Typography variant="caption" noWrap fontWeight={700}>
+        {resource.code}
+      </Typography>
       <ActionIconButton
         size="small"
         label={`${resource.name} ${t('actions.edit')}`}
@@ -158,18 +156,19 @@ export function WorkplaceLayoutEditor({
     return () => window.removeEventListener('beforeunload', preventUnload);
   }, [dirty.length]);
   const saveMutation = useMutation({
-    mutationFn: () => saveWorkplaceLayout(
-      floor.floorId,
-      dirty.map((resource) => ({
-        resourceId: resource.resourceId,
-        positionX: resource.positionX,
-        positionY: resource.positionY,
-        widthPercent: resource.widthPercent,
-        heightPercent: resource.heightPercent,
-        rotationDegrees: resource.rotationDegrees,
-        version: resource.version,
-      }))
-    ),
+    mutationFn: () =>
+      saveWorkplaceLayout(
+        floor.floorId,
+        dirty.map((resource) => ({
+          resourceId: resource.resourceId,
+          positionX: resource.positionX,
+          positionY: resource.positionY,
+          widthPercent: resource.widthPercent,
+          heightPercent: resource.heightPercent,
+          rotationDegrees: resource.rotationDegrees,
+          version: resource.version,
+        }))
+      ),
     onSuccess: async () => {
       setDirtyIds(new Set());
       await queryClient.invalidateQueries({ queryKey: ['workplace'] });
@@ -183,28 +182,68 @@ export function WorkplaceLayoutEditor({
     const resource = items.find((candidate) => candidate.resourceId === active.id);
     if (!resource) return;
     const rect = canvas.getBoundingClientRect();
-    const x = clamp(resource.positionX + delta.x / rect.width * 100, 0, 100 - resource.widthPercent);
-    const y = clamp(resource.positionY + delta.y / rect.height * 100, 0, 100 - resource.heightPercent);
-    setItems((current) => current.map((candidate) =>
-      candidate.resourceId === resource.resourceId
-        ? { ...candidate, positionX: Number(x.toFixed(2)), positionY: Number(y.toFixed(2)) }
-        : candidate
-    ));
+    const x = clamp(
+      resource.positionX + (delta.x / rect.width) * 100,
+      0,
+      100 - resource.widthPercent
+    );
+    const y = clamp(
+      resource.positionY + (delta.y / rect.height) * 100,
+      0,
+      100 - resource.heightPercent
+    );
+    setItems((current) =>
+      current.map((candidate) =>
+        candidate.resourceId === resource.resourceId
+          ? { ...candidate, positionX: Number(x.toFixed(2)), positionY: Number(y.toFixed(2)) }
+          : candidate
+      )
+    );
     setDirtyIds((current) => new Set(current).add(resource.resourceId));
     setSelectedId(resource.resourceId);
   };
 
   return (
     <Box>
-      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={1} sx={{ mb: 1 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        gap={1}
+        sx={{ mb: 1 }}
+      >
         <Stack direction="row" gap={1} alignItems="center">
-          <Chip size="small" label={t('workplace.admin.locations.resourceCount', { count: items.length })} />
-          {dirty.length > 0 && <Chip size="small" color="warning" label={t('workplace.admin.locations.unsavedCount', { count: dirty.length })} />}
+          <Chip
+            size="small"
+            label={t('workplace.admin.locations.resourceCount', { count: items.length })}
+          />
+          {dirty.length > 0 && (
+            <Chip
+              size="small"
+              color="warning"
+              label={t('workplace.admin.locations.unsavedCount', { count: dirty.length })}
+            />
+          )}
         </Stack>
         <Stack direction="row" gap={0.5} alignItems="center">
-          <ActionIconButton size="small" label={t('workplace.admin.locations.zoomOut')} disabled={zoom <= 80} onClick={() => setZoom((value) => value - 10)}><Minus size={17} /></ActionIconButton>
-          <Typography variant="caption" sx={{ minWidth: 42, textAlign: 'center' }}>{zoom}%</Typography>
-          <ActionIconButton size="small" label={t('workplace.admin.locations.zoomIn')} disabled={zoom >= 140} onClick={() => setZoom((value) => value + 10)}><Plus size={17} /></ActionIconButton>
+          <ActionIconButton
+            size="small"
+            label={t('workplace.admin.locations.zoomOut')}
+            disabled={zoom <= 80}
+            onClick={() => setZoom((value) => value - 10)}
+          >
+            <Minus size={17} />
+          </ActionIconButton>
+          <Typography variant="caption" sx={{ minWidth: 42, textAlign: 'center' }}>
+            {zoom}%
+          </Typography>
+          <ActionIconButton
+            size="small"
+            label={t('workplace.admin.locations.zoomIn')}
+            disabled={zoom >= 140}
+            onClick={() => setZoom((value) => value + 10)}
+          >
+            <Plus size={17} />
+          </ActionIconButton>
           <ActionButton
             intent="primary"
             startIcon={<Save size={16} />}
@@ -217,7 +256,15 @@ export function WorkplaceLayoutEditor({
           </ActionButton>
         </Stack>
       </Stack>
-      <Box sx={{ overflow: 'auto', border: 1, borderColor: 'divider', bgcolor: 'background.default', p: 1 }}>
+      <Box
+        sx={{
+          overflow: 'auto',
+          border: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.default',
+          p: 1,
+        }}
+      >
         <DndContext sensors={sensors} onDragEnd={onDragEnd}>
           <Box
             ref={canvasRef}

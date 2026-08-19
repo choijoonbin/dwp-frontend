@@ -94,11 +94,12 @@ export function RoomBookingDialog({
 
   const peopleQuery = useQuery({
     queryKey: ['rooms', 'people-options', deferredAttendeeQuery],
-    queryFn: () => listPeople({
-      query: deferredAttendeeQuery || undefined,
-      size: 50,
-      surface: 'directory',
-    }),
+    queryFn: () =>
+      listPeople({
+        query: deferredAttendeeQuery || undefined,
+        size: 50,
+        surface: 'directory',
+      }),
     enabled: open,
     staleTime: 5 * 60_000,
     retry: 1,

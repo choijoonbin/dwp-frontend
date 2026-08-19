@@ -1,0 +1,415 @@
+{
+  "shell": {
+    "tenantFallback": "Workspace",
+    "backToHome": "Back to workspace",
+    "openNavigation": "Open notification navigation",
+    "notifications": {
+      "name": "Notifications",
+      "context": "Notification center",
+      "navigationLabel": "Notification navigation"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "notifications": {
+        "center": "My notifications",
+        "settings": "Personal settings",
+        "administration": "Tenant operations"
+      }
+    },
+    "items": {
+      "notifications": {
+        "center": { "label": "Notification center" },
+        "settings": { "label": "Notification settings" },
+        "admin-overview": { "label": "Operations overview" },
+        "admin-contracts": { "label": "Notification contracts" },
+        "admin-operations": { "label": "Delivery operations" }
+      }
+    }
+  },
+  "actions": {
+    "back": "Back",
+    "complete": "Move to done",
+    "loadMore": "Load more",
+    "markRead": "Mark as read",
+    "markUnread": "Mark as unread",
+    "refresh": "Refresh",
+    "resynchronize": "Resynchronize all",
+    "restore": "Restore to inbox",
+    "retry": "Try again",
+    "save": "Save",
+    "settings": "Notification settings",
+    "snooze": "Remind me later",
+    "snoozeHours": "Remind me in {{count}} hours",
+    "unsave": "Remove from saved"
+  },
+  "channels": {
+    "IN_APP": "In-app",
+    "EMAIL": "Email",
+    "WEB_PUSH": "Browser push",
+    "MOBILE_PUSH": "Mobile push",
+    "TEAMS": "Microsoft Teams",
+    "SLACK": "Slack"
+  },
+  "priority": {
+    "URGENT": "Urgent",
+    "HIGH": "High",
+    "NORMAL": "Normal",
+    "LOW": "Low"
+  },
+  "reason": {
+    "DIRECT": "Assigned directly to you",
+    "MENTION": "Mentioned you",
+    "ROLE": "Sent to your role",
+    "ORGANIZATION": "Sent to your organization",
+    "SUBSCRIPTION": "From a subscription",
+    "MANDATORY_POLICY": "Required by policy"
+  },
+  "views": {
+    "PRIORITY": "Priority",
+    "ALL": "All",
+    "MENTIONS": "Mentions",
+    "SAVED": "Saved",
+    "SNOOZED": "Later",
+    "DONE": "Done"
+  },
+  "states": {
+    "live": "Live connection",
+    "polling": "Syncing periodically",
+    "offline": "You are offline. Showing the last synchronized notifications.",
+    "degraded": "Some delivery paths are delayed.",
+    "partial": "Information from {{count}} sources is temporarily unavailable.",
+    "loading": "Loading notifications",
+    "loadingMore": "Loading more notifications",
+    "loadingDetail": "Loading notification details",
+    "loadingPreferences": "Loading notification settings",
+    "loadingAppSettings": "Loading app notification settings",
+    "loadingAdmin": "Loading notification operations",
+    "loadingContracts": "Loading notification contracts",
+    "loadingOperations": "Loading delivery operations",
+    "resynchronizing": "Resynchronizing all notifications",
+    "syncResetRequired": "The notification synchronization baseline must be reset",
+    "syncResetDescription": "The retained change history is no longer available. Reload the latest summary and first page safely.",
+    "loadErrorTitle": "Notifications could not be loaded",
+    "loadErrorDescription": "Check your connection and try again. Existing notification state was not changed.",
+    "loadMoreError": "More notifications could not be loaded. You can continue using the current list.",
+    "detailErrorTitle": "Details could not be loaded",
+    "detailErrorDescription": "The list is still available. Try loading only the details again.",
+    "preferencesErrorTitle": "Notification settings could not be loaded",
+    "preferencesErrorDescription": "No settings were changed. Check your connection and try again.",
+    "appSettingsErrorTitle": "App settings could not be loaded",
+    "appSettingsErrorDescription": "Global notification settings remain available.",
+    "adminErrorTitle": "Operations could not be loaded",
+    "adminErrorDescription": "Operational data is unavailable. Refresh or try again shortly.",
+    "contractsErrorTitle": "Notification contracts could not be loaded",
+    "contractsErrorDescription": "You can retry without losing the current filters.",
+    "operationsErrorTitle": "Delivery operations could not be loaded",
+    "operationsErrorDescription": "Provider and queue health is unavailable. Try again shortly."
+  },
+  "empty": {
+    "PRIORITY": {
+      "title": "Nothing needs your attention now",
+      "description": "Due dates, direct mentions, and notifications requiring your action will appear here."
+    },
+    "ALL": {
+      "title": "No new notifications",
+      "description": "Changes from your work apps will appear here."
+    },
+    "MENTIONS": {
+      "title": "No new mentions",
+      "description": "Notifications where a colleague mentioned you directly will appear here."
+    },
+    "SAVED": {
+      "title": "No saved notifications",
+      "description": "Save notifications you want to revisit."
+    },
+    "SNOOZED": {
+      "title": "Nothing is scheduled for later",
+      "description": "Snoozed notifications return to your inbox at the time you choose."
+    },
+    "DONE": {
+      "title": "No completed notifications",
+      "description": "Notifications you tidy away can be reviewed and restored here."
+    }
+  },
+  "glance": {
+    "title": "Notifications",
+    "dialogLabel": "Recent notifications",
+    "triggerLabel": "{{actionable}} actionable notifications, {{total}} total unread",
+    "summary": "{{actionable}} actionable · {{total}} total unread",
+    "viewsLabel": "Notification view",
+    "markVisibleRead": "Mark displayed notifications as read",
+    "openSettings": "Open notification settings",
+    "openCenter": "Open notification center",
+    "newItems": "Show {{count}} new notifications"
+  },
+  "item": {
+    "threadCount": "{{count}} related updates",
+    "saved": "Saved"
+  },
+  "center": {
+    "title": "Notification center",
+    "description": "Assess important changes and organize them as read, saved, later, or done.",
+    "viewsLabel": "Notification center views",
+    "searchPlaceholder": "Search title, source, or safe preview",
+    "listLabel": "Notification list"
+  },
+  "filters": {
+    "priority": "Priority filter",
+    "allPriorities": "All priorities",
+    "app": "App filter",
+    "allApps": "All apps",
+    "readState": "Read status filter",
+    "read": {
+      "ALL": "All",
+      "UNREAD": "Unread",
+      "READ": "Read"
+    }
+  },
+  "bulk": {
+    "toolbarLabel": "Selected notification actions",
+    "selected": "{{count}} selected",
+    "selectItem": "Select {{title}}"
+  },
+  "detail": {
+    "title": "Notification details",
+    "regionLabel": "Selected notification details",
+    "emptyTitle": "Select a notification",
+    "emptyDescription": "Select a notification to review why you received it and open the related work.",
+    "whyTitle": "Why did I receive this?",
+    "timelineTitle": "Related changes",
+    "protected": "Protected content",
+    "targetState": {
+      "DELETED": "The related work was deleted.",
+      "EXPIRED": "The related work has expired.",
+      "FORBIDDEN": "You no longer have access to this work.",
+      "AVAILABLE": "The related work is available."
+    }
+  },
+  "feedback": {
+    "READ": "Marked as read.",
+    "UNREAD": "Marked as unread.",
+    "SAVE": "Notification saved.",
+    "UNSAVE": "Removed from saved.",
+    "COMPLETE": "Moved to done.",
+    "RESTORE": "Restored to your inbox.",
+    "SNOOZE": "Moved to later until the selected time.",
+    "triageError": "The notification could not be changed. Refresh its latest state and try again.",
+    "bulkSuccess": "Updated {{count}} notifications.",
+    "bulkPartial": "{{count}} items conflicted with a newer state.",
+    "bulkError": "The selected notifications could not be changed."
+  },
+  "preferences": {
+    "title": "Notification settings",
+    "description": "Manage global defaults and exceptions by app, notification type, and delivery channel.",
+    "offline": "Settings cannot be changed while offline. Try again when you reconnect.",
+    "managed": "Managed",
+    "managedBy": "Managed by {{owner}}",
+    "inheritedFrom": "Applied from: {{source}}",
+    "deliveryMode": "Delivery mode",
+    "resetToManaged": "Reset to inherited value",
+    "channelToggle": "Use {{channel}} for {{type}}",
+    "save": {
+      "auto": "Changes save automatically",
+      "saving": "Saving",
+      "saved": "Saved at {{time}}",
+      "error": "Not saved",
+      "now": "just now"
+    },
+    "sources": {
+      "USER": "My setting",
+      "TENANT_POLICY": "Company policy",
+      "PROVIDER_POLICY": "Provider policy",
+      "SYSTEM_DEFAULT": "System default"
+    },
+    "modes": {
+      "IMMEDIATE": "Immediately",
+      "DAILY_DIGEST": "Daily digest",
+      "WEEKLY_DIGEST": "Weekly digest",
+      "MUTED": "Do not send"
+    },
+    "global": {
+      "title": "Global delivery channels",
+      "description": "Default channels for every app. Managed policy and app exceptions may take precedence.",
+      "channelToggle": "Use {{channel}} globally",
+      "channelDescription": {
+        "IN_APP": "Always available in the DWP notification center.",
+        "EMAIL": "Delivered to your verified company email address.",
+        "WEB_PUSH": "Receive work notifications in approved browsers.",
+        "MOBILE_PUSH": "Send a safe preview to registered mobile devices.",
+        "TEAMS": "Deliver to your connected Microsoft Teams account.",
+        "SLACK": "Deliver to your connected Slack account."
+      }
+    },
+    "quiet": {
+      "title": "Focus hours",
+      "description": "Hold non-urgent external delivery during selected hours while keeping notifications safe in the center.",
+      "enabled": "Use focus hours",
+      "enabledDescription": "Required or approved urgent notifications may bypass this schedule under company policy.",
+      "schedule": "Start and end time",
+      "scheduleDescription": "Current time zone: {{timeZone}}",
+      "start": "Start",
+      "end": "End",
+      "days": "Active days",
+      "daysDescription": "Choose the days when focus hours apply."
+    },
+    "days": {
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday",
+      "7": "Sunday"
+    },
+    "daysShort": {
+      "1": "M",
+      "2": "T",
+      "3": "W",
+      "4": "T",
+      "5": "F",
+      "6": "S",
+      "7": "S"
+    },
+    "digest": {
+      "title": "Digest notifications",
+      "description": "Bundle notifications that do not need immediate attention for delivery at a selected time.",
+      "mode": "Digest schedule",
+      "modeDescription": "App policies requiring immediate delivery may be excluded from digests.",
+      "time": "Delivery time",
+      "modes": {
+        "OFF": "Off",
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly"
+      }
+    },
+    "apps": {
+      "title": "Notifications by app",
+      "description": "Override global settings only for the apps and notification types that need different behavior.",
+      "navigation": "Choose a notification app",
+      "emptyTitle": "No apps to configure",
+      "emptyDescription": "Settings appear after an app you can access sends a notification.",
+      "emptyTypesTitle": "No notification types to configure",
+      "emptyTypesDescription": "This app has no active notification types yet.",
+      "effectivePolicyUnavailable": "The current server does not expose effective policy composition. Only saved personal rules are shown; global settings still apply."
+    },
+    "feedback": {
+      "profileError": "Global notification settings could not be saved.",
+      "ruleError": "App notification settings could not be saved."
+    }
+  },
+  "admin": {
+    "title": "Notification operations",
+    "description": "Manage notification contracts, user impact, delivery health, and operational exceptions for this tenant.",
+    "navigationLabel": "Notification operations navigation",
+    "navigation": {
+      "overview": "Overview",
+      "contracts": "Contracts",
+      "operations": "Delivery operations"
+    },
+    "severity": {
+      "INFO": "Information",
+      "WARNING": "Attention",
+      "CRITICAL": "Urgent action"
+    },
+    "overview": {
+      "metricsLabel": "Notification operations key metrics",
+      "baseline": "Baseline {{value}}",
+      "trendTitle": "Volume and user impact",
+      "trendDescription": "Compare created, actionable, failed, and muted notifications.",
+      "trendTableLabel": "Notification volume and user impact trend",
+      "columns": {
+        "time": "Time",
+        "created": "Created",
+        "actionable": "Actionable",
+        "failed": "Failed",
+        "muted": "Muted"
+      }
+    },
+    "findings": {
+      "title": "Action queue",
+      "description": "Operational exceptions ordered by user impact and risk.",
+      "emptyTitle": "No immediate action required",
+      "emptyDescription": "Contracts, policies, templates, and delivery paths are within their healthy range."
+    },
+    "contracts": {
+      "searchPlaceholder": "Search type, app, or owner",
+      "stateFilter": "Contract state",
+      "allStates": "All states",
+      "emptyTitle": "No notification contracts match",
+      "emptyDescription": "Change the search or state filter.",
+      "detailLabel": "Selected notification contract details",
+      "channels": "Allowed delivery channels",
+      "fields": {
+        "owner": "Owner",
+        "sourceEvent": "Source event",
+        "priority": "Default priority",
+        "schemaVersion": "Schema version",
+        "volume": "Last 24 hours",
+        "updated": "Last updated"
+      }
+    },
+    "contractState": {
+      "DRAFT": "Draft",
+      "IN_REVIEW": "In review",
+      "ACTIVE": "Active",
+      "DEPRECATED": "Deprecated",
+      "RETIRED": "Retired",
+      "QUARANTINED": "Quarantined"
+    },
+    "contractHealth": {
+      "HEALTHY": "Healthy",
+      "ATTENTION": "Needs attention",
+      "BROKEN": "Contract error"
+    },
+    "operations": {
+      "metricsLabel": "Notification delivery key metrics",
+      "retryQueue": "Retry queue",
+      "deadLetter": "DLQ",
+      "unknown": "Unknown outcomes",
+      "lanesTitle": "QoS delivery queues",
+      "lanesDescription": "Review capacity and latency separately for critical, interactive, and bulk delivery.",
+      "lanesTable": "QoS delivery queue health",
+      "providersTitle": "Channel provider health",
+      "providersDescription": "Connect success rate, latency, and circuit state to understand incident impact.",
+      "providersTable": "Channel provider health",
+      "seconds": "{{count}} seconds",
+      "milliseconds": "{{count}} ms",
+      "columns": {
+        "lane": "Queue",
+        "queued": "Queued",
+        "oldest": "Oldest",
+        "throughput": "Per minute",
+        "failureRate": "Failure rate",
+        "state": "State",
+        "provider": "Provider",
+        "channel": "Channel",
+        "successRate": "Success rate",
+        "latency": "p95 latency",
+        "circuit": "Circuit",
+        "checked": "Last checked"
+      }
+    },
+    "lanes": {
+      "CRITICAL": "Critical",
+      "INTERACTIVE": "Interactive",
+      "BULK": "Bulk"
+    },
+    "laneState": {
+      "HEALTHY": "Healthy",
+      "DEGRADED": "Delayed",
+      "PAUSED": "Paused"
+    },
+    "providerState": {
+      "HEALTHY": "Healthy",
+      "DEGRADED": "Degraded",
+      "OUTAGE": "Outage",
+      "DISABLED": "Disabled"
+    },
+    "circuitState": {
+      "CLOSED": "Closed",
+      "HALF_OPEN": "Recovery probe",
+      "OPEN": "Open"
+    }
+  }
+}

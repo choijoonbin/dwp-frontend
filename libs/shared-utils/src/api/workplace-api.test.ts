@@ -1,11 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
-import {
-  createWorkplaceBooking,
-  getWorkplaceExplore,
-  saveWorkplaceLayout,
-} from './workplace-api';
+import { createWorkplaceBooking, getWorkplaceExplore, saveWorkplaceLayout } from './workplace-api';
 
 function jsonResponse(data: unknown): Response {
   return {
@@ -26,11 +22,7 @@ describe('Workplace API boundary', () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse(response));
     vi.stubGlobal('fetch', fetchMock);
 
-    await getWorkplaceExplore(
-      '2026-08-19T00:00:00Z',
-      '2026-08-19T01:00:00Z',
-      'floor/12'
-    );
+    await getWorkplaceExplore('2026-08-19T00:00:00Z', '2026-08-19T01:00:00Z', 'floor/12');
 
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/platform/v1/workplace/explore?from=2026-08-19T00%3A00%3A00Z&to=2026-08-19T01%3A00%3A00Z&floorId=floor%2F12',

@@ -11,9 +11,9 @@ import {
   Settings2,
   ShieldCheck,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ActionButton, FormField, PageCanvas } from '@dwp-frontend/design-system';
+import { ActionButton, EmptyState, FormField, PageCanvas } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   getSpace,
@@ -152,6 +152,13 @@ function MemberList({ spaceKey }: { spaceKey: string }) {
             </Stack>
           </Box>
         ))}
+        {!members.data?.length && (
+          <EmptyState
+            size="compact"
+            title={t('members.noMembersTitle')}
+            description={t('members.noMembersDescription')}
+          />
+        )}
       </Stack>
     </Paper>
   );
@@ -235,7 +242,7 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
       <ActionButton
         intent="quiet"
         startIcon={<ArrowLeft size={16} />}
-        onClick={() => navigate('/spaces/my')}
+        onClick={() => navigate('/spaces/home')}
         sx={{ mb: 1 }}
       >
         {t('actions.backToSpaces')}
@@ -351,7 +358,7 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
                   <Typography variant="caption" color="text.secondary">
                     {t(`detail.metrics.${key}`)}
                   </Typography>
-                  <Typography variant="h5" sx={{ mt: 0.5 }}>
+                  <Typography component="p" variant="h5" sx={{ mt: 0.5 }}>
                     {typeof value === 'number' ? formatNumber(value) : value}
                   </Typography>
                 </Box>
@@ -381,6 +388,13 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
                       </Typography>
                     </Box>
                   ))}
+                  {!data.featuredContent.length && (
+                    <EmptyState
+                      size="compact"
+                      title={t('detail.noFeaturedTitle')}
+                      description={t('detail.noFeaturedDescription')}
+                    />
+                  )}
                 </Stack>
               </Paper>
               <Paper component="section" variant="outlined" sx={{ borderRadius: 1 }}>
@@ -402,6 +416,13 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
                       </Typography>
                     </Box>
                   ))}
+                  {!data.activity.length && (
+                    <EmptyState
+                      size="compact"
+                      title={t('detail.noActivityTitle')}
+                      description={t('detail.noActivityDescription')}
+                    />
+                  )}
                 </Stack>
               </Paper>
             </Box>
@@ -409,7 +430,7 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
         )}
         {visibleTab === 'content' && <ContentList spaceKey={spaceKey} />}
         {visibleTab === 'people' &&
-          (data.canManage ? (
+          (data.canModerate ? (
             <MemberList spaceKey={spaceKey} />
           ) : (
             <Alert severity="info">{t('detail.peoplePrivacy')}</Alert>
@@ -448,19 +469,45 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
                       {language.startsWith('ko') ? app.displayNameKo : app.displayNameEn}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {t('detail.appScope', { scope: app.dataAccessScope })}
+                      {t('detail.appScope', {
+                        scope: t(`dataAccessScope.${app.dataAccessScope}`, {
+                          defaultValue: app.dataAccessScope,
+                        }),
+                      })}
                     </Typography>
-                    <Link
-                      href={app.launchTarget}
-                      underline="hover"
-                      sx={{ mt: 1, display: 'block' }}
-                    >
-                      {t('actions.openApp')}
-                    </Link>
+                    {app.launchTarget.startsWith('/') ? (
+                      <Link
+                        component={RouterLink}
+                        to={app.launchTarget}
+                        underline="hover"
+                        sx={{ mt: 1, display: 'block' }}
+                      >
+                        {t('actions.openApp')}
+                      </Link>
+                    ) : (
+                      <Link
+                        href={app.launchTarget}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        underline="hover"
+                        sx={{ mt: 1, display: 'block' }}
+                      >
+                        {t('actions.openApp')}
+                      </Link>
+                    )}
                   </Box>
                 </Stack>
               </Paper>
             ))}
+            {!data.apps.length && (
+              <Box sx={{ gridColumn: '1 / -1', border: 1, borderColor: 'divider' }}>
+                <EmptyState
+                  size="compact"
+                  title={t('detail.noAppsTitle')}
+                  description={t('detail.noAppsDescription')}
+                />
+              </Box>
+            )}
           </Box>
         )}
         {visibleTab === 'agent' && (

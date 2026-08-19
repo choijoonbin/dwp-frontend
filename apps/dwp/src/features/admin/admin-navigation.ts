@@ -1,5 +1,6 @@
 import {
   Boxes,
+  BellRing,
   AppWindow,
   Building2,
   ChartNoAxesCombined,
@@ -29,13 +30,22 @@ import {
   Route,
   LayoutTemplate,
   FileCheck2,
+  FileCode2,
+  RadioTower,
   ServerCog,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
 
 export type AdminSection =
-  'experience' | 'services' | 'spaces' | 'identity' | 'platform' | 'integrations' | 'governance';
+  | 'experience'
+  | 'services'
+  | 'notifications'
+  | 'spaces'
+  | 'identity'
+  | 'platform'
+  | 'integrations'
+  | 'governance';
 
 export type AdminView =
   | 'branding'
@@ -55,6 +65,9 @@ export type AdminView =
   | 'provisioning'
   | 'service-catalog'
   | 'service-operations'
+  | 'notification-overview'
+  | 'notification-contracts'
+  | 'notification-operations'
   | 'space-overview'
   | 'space-directory'
   | 'space-requests'
@@ -160,6 +173,36 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         path: '/admin/services/service-operations',
         icon: ListChecks,
         requiredResourceKey: 'ADMIN.SERVICE_OPERATIONS',
+        requiredPermissionCode: 'VIEW',
+      },
+    ],
+  },
+  {
+    id: 'notifications',
+    icon: BellRing,
+    items: [
+      {
+        section: 'notifications',
+        view: 'notification-overview',
+        path: '/admin/notifications/overview',
+        icon: BellRing,
+        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'notifications',
+        view: 'notification-contracts',
+        path: '/admin/notifications/contracts',
+        icon: FileCode2,
+        requiredResourceKey: 'ADMIN.NOTIFICATION_CONTRACT',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'notifications',
+        view: 'notification-operations',
+        path: '/admin/notifications/operations',
+        icon: RadioTower,
+        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
         requiredPermissionCode: 'VIEW',
       },
     ],

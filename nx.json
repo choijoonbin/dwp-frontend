@@ -77,6 +77,13 @@
       "{workspaceRoot}/apps/dwp/src/pages/mail.tsx",
       "{workspaceRoot}/apps/dwp/src/features/mail/**/*"
     ],
+    "messagingProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/messaging-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/messaging.tsx",
+      "{workspaceRoot}/apps/dwp/src/layouts/messaging-layout.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/messaging/**/*"
+    ],
     "communicationsProduct": [
       "productRuntime",
       "{workspaceRoot}/apps/dwp/src/routes/communications-routes.tsx",

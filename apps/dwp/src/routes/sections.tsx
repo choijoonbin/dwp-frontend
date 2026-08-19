@@ -7,6 +7,8 @@ import { calendarRoutes } from './calendar-routes';
 import { communicationsRoutes } from './communications-routes';
 import { hcmRoutes } from './hcm-routes';
 import { mailRoutes } from './mail-routes';
+import { messagingRoutes } from './messaging-routes';
+import { notificationRoutes } from './notification-routes';
 import { platformRoutes } from './platform-routes';
 import { providerRoutes } from './provider-routes';
 import { roomsRoutes } from './rooms-routes';
@@ -19,6 +21,8 @@ export const routesSection: RouteObject[] = [
   ...calendarRoutes,
   ...roomsRoutes,
   ...mailRoutes,
+  ...messagingRoutes,
+  ...notificationRoutes,
   ...spacesRoutes,
   ...servicesRoutes,
   ...communicationsRoutes,

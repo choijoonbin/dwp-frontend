@@ -103,9 +103,9 @@ export function SpaceCard({ space }: { space: SpaceSummary }) {
       elevation={0}
       sx={{
         width: 1,
-        minHeight: 220,
+        minHeight: 194,
         display: 'grid',
-        gridTemplateRows: '72px 1fr',
+        gridTemplateRows: '60px 1fr',
         overflow: 'hidden',
         textAlign: 'left',
         alignItems: 'stretch',
@@ -125,7 +125,7 @@ export function SpaceCard({ space }: { space: SpaceSummary }) {
     >
       <Box
         sx={{
-          px: 2,
+          px: 1.75,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -135,7 +135,7 @@ export function SpaceCard({ space }: { space: SpaceSummary }) {
           borderColor: 'divider',
         }}
       >
-        <SpaceGlyph iconKey={space.iconKey} accentToken={space.accentToken} size={40} />
+        <SpaceGlyph iconKey={space.iconKey} accentToken={space.accentToken} size={36} />
         <Stack direction="row" gap={0.75}>
           <Chip
             size="small"
@@ -152,7 +152,7 @@ export function SpaceCard({ space }: { space: SpaceSummary }) {
           )}
         </Stack>
       </Box>
-      <Box sx={{ p: 2, minWidth: 0 }}>
+      <Box sx={{ p: 1.75, minWidth: 0 }}>
         <Typography component="h3" variant="h6" noWrap>
           {label.name}
         </Typography>
@@ -161,7 +161,7 @@ export function SpaceCard({ space }: { space: SpaceSummary }) {
           color="text.secondary"
           sx={{
             mt: 0.65,
-            minHeight: 40,
+            minHeight: 36,
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
@@ -175,7 +175,7 @@ export function SpaceCard({ space }: { space: SpaceSummary }) {
           alignItems="center"
           justifyContent="space-between"
           gap={1}
-          sx={{ mt: 2 }}
+          sx={{ mt: 1.5 }}
         >
           <Stack direction="row" gap={1.25} alignItems="center">
             <Box

@@ -10,10 +10,7 @@ import {
 } from '../features/mail/mail-admin';
 import { MailHome } from '../features/mail/mail-home';
 import { MailInbox } from '../features/mail/mail-inbox';
-import {
-  findMailNavigationItem,
-  MAIL_DEFAULT_PATH,
-} from '../features/mail/mail-navigation';
+import { findMailNavigationItem, MAIL_DEFAULT_PATH } from '../features/mail/mail-navigation';
 
 export default function MailPage() {
   const { pathname } = useLocation();

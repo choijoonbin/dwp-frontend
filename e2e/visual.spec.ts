@@ -843,7 +843,7 @@ test('Work Korean visual baseline', async ({ page }) => {
   });
 });
 
-test('Ask reference visual baseline', async ({ page }) => {
+test('DWAI·ON workspace visual baseline', async ({ page }) => {
   await mockAuthenticated(page);
   await setAppearance(page, {
     mode: 'light',
@@ -852,11 +852,14 @@ test('Ask reference visual baseline', async ({ page }) => {
     reduceMotion: true,
   });
 
-  await page.goto('/ask');
-  await page.getByRole('button', { name: 'Can I work remotely next Friday?' }).click();
-  await expect(page.getByRole('heading', { name: 'Governed answer' })).toBeVisible();
+  await page.goto('/dwaion');
+  await page
+    .getByRole('textbox', { name: 'Ask a work question' })
+    .fill('Can I work remotely next Friday?');
+  await page.getByRole('button', { name: 'Send question' }).click();
+  await expect(page.getByRole('heading', { name: 'DWAI·ON response' })).toBeVisible();
   await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Verified sources (2)' })).toBeVisible();
+  await expect(page.getByText('Verified sources (2)', { exact: true })).toBeVisible();
   await expect(page.getByText('AUD-REF-1042')).toBeVisible();
   await expect(page).toHaveScreenshot('ask-reference.png', {
     animations: 'disabled',

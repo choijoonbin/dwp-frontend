@@ -20,7 +20,7 @@
     "collapse": "Collapse navigation",
     "items": {
       "work": "Work",
-      "ask": "Ask",
+      "ask": "DWAI·ON",
       "activity": "Activity",
       "hcm": "HR",
       "hris": "HR",
@@ -28,6 +28,9 @@
       "workforce": "Workforce management",
       "apps": "Apps"
     }
+  },
+  "messaging": {
+    "name": "Messenger"
   },
   "search": {
     "label": "Search DWP",
@@ -63,7 +66,7 @@
       "providerTenants": "Provider tenants",
       "providerAudit": "Provider audit",
       "providerCatalog": "Provider data catalog",
-      "ask": "Ask DWP"
+      "ask": "DWAI·ON Workspace"
     },
     "workTypes": {
       "Approval": "Approval",
@@ -83,8 +86,8 @@
       "description": "{{type}} / {{count}} people"
     },
     "askQuery": {
-      "title": "Ask DWP: {{query}}",
-      "description": "Prepare a traceable read-only request plan"
+      "title": "Ask DWAI·ON: {{query}}",
+      "description": "Prepare a permission-scoped answer with evidence and sources"
     }
   },
   "notifications": {

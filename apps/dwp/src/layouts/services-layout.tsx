@@ -4,7 +4,8 @@ import { Home, LifeBuoy } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
-import { getMyServiceRequests, useAuth } from '@dwp-frontend/shared-utils';
+import { getMyServiceRequests } from '@dwp-frontend/shared-utils/api/service-center-api';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';

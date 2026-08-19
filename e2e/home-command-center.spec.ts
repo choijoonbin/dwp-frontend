@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
       mode: 'light',
       density: 'standard',
       highContrast: false,
-      reduceMotion: true,
+      reduceMotion: false,
     },
   });
 });
@@ -447,6 +447,118 @@ test('home composer enforces semantic height tokens and releases them on phones'
 
   await page.locator('button[aria-label="Cancel changes"]').click();
   await expect(page.getByRole('button', { name: 'Edit home' })).toBeVisible();
+});
+
+test('home edit mode settles widgets once and honors reduced-motion preferences', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Edit home' }).click();
+
+  const appGlyph = page.locator('[data-launchpad-tile] [data-launchpad-glyph]').first();
+  const personalWidget = page
+    .locator('[data-workspace-widget-policy="PERSONAL"] > [data-workspace-widget-content]')
+    .first();
+  const governedWidget = page
+    .locator('[data-workspace-widget-policy="GOVERNED"] > [data-workspace-widget-content]')
+    .first();
+
+  await expect(appGlyph).toBeVisible();
+  await expect(personalWidget).toBeVisible();
+  const motion = await Promise.all(
+    [appGlyph, personalWidget, governedWidget].map((locator) =>
+      locator.evaluate((node) => {
+        const style = window.getComputedStyle(node);
+        return {
+          name: style.animationName,
+          duration: style.animationDuration,
+          iterationCount: style.animationIterationCount,
+          timingFunction: style.animationTimingFunction,
+        };
+      })
+    )
+  );
+  expect(motion[0]?.name).not.toBe('none');
+  expect(motion[0]?.duration).toBe('0.36s');
+  expect(motion[0]?.iterationCount).toBe('infinite');
+  expect(motion[1]?.name).not.toBe('none');
+  expect(motion[1]?.duration).toBe('0.46s');
+  expect(motion[1]?.iterationCount).toBe('1');
+  expect(motion[1]?.timingFunction).toContain('linear(');
+  expect(motion[2]?.name).toBe('none');
+  expect(
+    await personalWidget.evaluate((node) => {
+      const style = window.getComputedStyle(node.parentElement ?? node, '::after');
+      return {
+        duration: style.animationDuration,
+        iterationCount: style.animationIterationCount,
+      };
+    })
+  ).toEqual({ duration: '0.46s, 2.4s', iterationCount: '1, infinite' });
+
+  await page.waitForTimeout(750);
+  const settledTransforms = await page
+    .locator('[data-workspace-widget-policy="PERSONAL"] > [data-workspace-widget-content]')
+    .evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        content: window.getComputedStyle(node).transform,
+        frame: window.getComputedStyle(node.parentElement ?? node, '::after').transform,
+      }))
+    );
+  expect(settledTransforms).toEqual(
+    Array.from({ length: settledTransforms.length }, () => ({ content: 'none', frame: 'none' }))
+  );
+  const grip = page.locator('[data-workspace-widget-grip]').first();
+  await expect(grip).toBeVisible();
+  expect(
+    await grip.evaluate((node) => {
+      const style = window.getComputedStyle(node);
+      return { duration: style.animationDuration, iterationCount: style.animationIterationCount };
+    })
+  ).toEqual({ duration: '2.4s', iterationCount: 'infinite' });
+
+  await page.locator('html').evaluate((node) => {
+    node.dataset.motion = 'reduced';
+  });
+  await expect
+    .poll(() => appGlyph.evaluate((node) => window.getComputedStyle(node).animationName))
+    .toBe('none');
+  await expect
+    .poll(() => personalWidget.evaluate((node) => window.getComputedStyle(node).animationName))
+    .toBe('none');
+  await expect
+    .poll(() => grip.evaluate((node) => window.getComputedStyle(node).animationName))
+    .toBe('none');
+  await expect
+    .poll(() =>
+      personalWidget.evaluate(
+        (node) => window.getComputedStyle(node.parentElement ?? node, '::after').animationName
+      )
+    )
+    .toBe('none');
+
+  await page.locator('html').evaluate((node) => {
+    node.dataset.motion = 'full';
+  });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect
+    .poll(() => appGlyph.evaluate((node) => window.getComputedStyle(node).animationName))
+    .toBe('none');
+  await expect
+    .poll(() => personalWidget.evaluate((node) => window.getComputedStyle(node).animationName))
+    .toBe('none');
+  await expect
+    .poll(() => grip.evaluate((node) => window.getComputedStyle(node).animationName))
+    .toBe('none');
+  await expect
+    .poll(() =>
+      personalWidget.evaluate(
+        (node) => window.getComputedStyle(node.parentElement ?? node, '::after').animationName
+      )
+    )
+    .toBe('none');
 });
 
 test('pressing and holding a work tool enters personal editing without launching it', async ({

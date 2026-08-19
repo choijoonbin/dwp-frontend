@@ -169,6 +169,9 @@ test('members receive an accessible responsive Space command center', async ({ p
       }),
     })
   );
+  await page.route('**/api/spaces/v1/templates', (route) =>
+    route.fulfill({ contentType: 'application/json', body: envelope([SPACE_TEMPLATE]) })
+  );
 
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/spaces/home');
@@ -180,6 +183,11 @@ test('members receive an accessible responsive Space command center', async ({ p
     '2 access subjects'
   );
   await expect(page.getByRole('heading', { name: 'Collaboration insights' })).toBeVisible();
+
+  await page.getByRole('button', { name: /Expert community/ }).click();
+  await expect(page.getByRole('dialog', { name: 'Create a new space' })).toBeVisible();
+  await expect(page.getByRole('radio', { name: /Expert community/ })).toBeChecked();
+  await page.getByRole('button', { name: 'Cancel' }).click();
 
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
@@ -230,7 +238,8 @@ test('Space control-center routes preserve separation of duties', async ({ page 
     route.fulfill({ contentType: 'application/json', body: envelope([SPACE_TEMPLATE]) })
   );
 
-  await page.goto('/admin/spaces/templates');
+  await page.goto('/admin/spaces');
+  await expect(page).toHaveURL(/\/admin\/spaces\/templates$/);
   await expect(
     page.getByRole('heading', { name: 'Space template studio', level: 1 })
   ).toBeVisible();
@@ -240,6 +249,72 @@ test('Space control-center routes preserve separation of duties', async ({ page 
 
   await page.goto('/admin/spaces/content-reviews');
   await expect(page).toHaveURL(/\/403$/);
+});
+
+test('Space moderators can inspect membership without receiving owner controls', async ({
+  page,
+}) => {
+  await mockSpaceSession(page);
+  await page.route(/\/api\/spaces\/v1\/spaces\/company-square$/, (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope({
+        space: { ...SPACE_SUMMARY, memberRole: 'MODERATOR' },
+        contentPolicy: 'OWNER_REVIEW',
+        appPolicy: 'OWNER_REVIEW',
+        aiPolicy: 'MEMBER_SCOPED',
+        canContribute: true,
+        canModerate: true,
+        canManage: false,
+        featuredContent: [],
+        apps: [
+          {
+            bindingId: 'd1000000-0000-0000-0000-000000000001',
+            appKey: 'CALENDAR',
+            displayNameKo: '캘린더',
+            displayNameEn: 'Calendar',
+            launchTarget: '/calendar/home',
+            iconKey: 'calendar',
+            dataAccessScope: 'SPACE_ONLY',
+            lifecycleState: 'ACTIVE',
+          },
+        ],
+        activity: [],
+      }),
+    })
+  );
+  await page.route(/\/api\/spaces\/v1\/spaces\/company-square\/owner\/members$/, (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: envelope([
+        {
+          membershipId: 'e1000000-0000-0000-0000-000000000001',
+          principalType: 'GROUP',
+          principalRef: 'SKAX_COMMUNICATIONS_EDITORS',
+          memberRole: 'MODERATOR',
+          membershipSource: 'GROUP',
+          lifecycleState: 'ACTIVE',
+          validFrom: '2026-08-18T00:00:00Z',
+          validUntil: null,
+          version: 1,
+        },
+      ]),
+    })
+  );
+  await page.route(/\/api\/spaces\/v1\/access-requests\?status=PENDING$/, (route) =>
+    route.fulfill({ contentType: 'application/json', body: envelope([]) })
+  );
+
+  await page.goto('/spaces/company-square/people');
+  await expect(page.getByText('SKAX_COMMUNICATIONS_EDITORS')).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Owner Studio' })).toHaveCount(0);
+
+  await page.getByRole('tab', { name: 'Connected apps' }).click();
+  await expect(page.getByText('Data access scope: This Space only')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Open app' })).toHaveAttribute(
+    'href',
+    '/calendar/home'
+  );
 });
 
 test('governance admins recover ownerless Spaces through an evidence-bound flow', async ({

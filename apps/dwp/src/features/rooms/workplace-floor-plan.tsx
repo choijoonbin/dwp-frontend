@@ -26,12 +26,7 @@ import type {
 import type { LucideIcon } from 'lucide-react';
 
 export type WorkplaceResourceAvailability =
-  | 'AVAILABLE'
-  | 'OCCUPIED'
-  | 'MINE'
-  | 'ASSIGNED'
-  | 'DROP_IN'
-  | 'UNAVAILABLE';
+  'AVAILABLE' | 'OCCUPIED' | 'MINE' | 'ASSIGNED' | 'DROP_IN' | 'UNAVAILABLE';
 
 const RESOURCE_ICONS: Record<WorkplaceResourceType, LucideIcon> = {
   ROOM: UsersRound,
@@ -235,7 +230,10 @@ export function WorkplaceFloorPlan({
                   font: 'inherit',
                   boxShadow: selected ? 3 : 0,
                   transition: 'box-shadow 140ms ease, transform 140ms ease',
-                  '&:hover': { boxShadow: 3, transform: `rotate(${resource.rotationDegrees}deg) translateY(-2px)` },
+                  '&:hover': {
+                    boxShadow: 3,
+                    transform: `rotate(${resource.rotationDegrees}deg) translateY(-2px)`,
+                  },
                   '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.light' },
                 }}
               >
@@ -328,7 +326,11 @@ export function WorkplaceResourceList({
                 {resource.name}
               </Typography>
               <Typography variant="caption" color="text.secondary" noWrap>
-                {[typeLabels[resource.type], resource.neighborhood, resource.features.slice(0, 2).join(' · ')]
+                {[
+                  typeLabels[resource.type],
+                  resource.neighborhood,
+                  resource.features.slice(0, 2).join(' · '),
+                ]
                   .filter(Boolean)
                   .join(' · ')}
               </Typography>

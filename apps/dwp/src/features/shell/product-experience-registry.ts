@@ -1,4 +1,5 @@
-export type ProductExperienceKey = 'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'spaces';
+export type ProductExperienceKey =
+  'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'messaging' | 'notifications' | 'spaces';
 
 export type ProductExperienceProfile = {
   key: ProductExperienceKey;
@@ -8,7 +9,9 @@ export type ProductExperienceProfile = {
     | 'resource-flow'
     | 'decision-flow'
     | 'communication-flow'
-    | 'collaboration-flow';
+    | 'conversation-flow'
+    | 'collaboration-flow'
+    | 'attention-flow';
   density: 'comfortable' | 'standard';
   accent: string;
   secondary: string;
@@ -62,6 +65,28 @@ export const productExperienceRegistry = {
     canvas: '#F5F8F8',
     sidebar: '#FBFCFC',
     selection: '#E1F0ED',
+  },
+  messaging: {
+    key: 'messaging',
+    concept: 'conversation-flow',
+    density: 'standard',
+    accent: '#2856C7',
+    secondary: '#0F8B8D',
+    softSurface: '#E8F0FF',
+    canvas: '#F6F8FC',
+    sidebar: '#FBFCFF',
+    selection: '#E8EFFD',
+  },
+  notifications: {
+    key: 'notifications',
+    concept: 'attention-flow',
+    density: 'standard',
+    accent: '#245B78',
+    secondary: '#B3533E',
+    softSurface: '#E8F1F4',
+    canvas: '#F5F8F9',
+    sidebar: '#FBFCFC',
+    selection: '#E4EEF2',
   },
   approvals: {
     key: 'approvals',

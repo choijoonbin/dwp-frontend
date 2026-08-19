@@ -56,10 +56,12 @@ export function WorkplaceBookings() {
   const bookings = (query.data ?? [])
     .filter((booking) =>
       filter === 'upcoming'
-        ? Date.parse(booking.endsAt) >= now && !TERMINAL_BOOKING_STATUSES.includes(
+        ? Date.parse(booking.endsAt) >= now &&
+          !TERMINAL_BOOKING_STATUSES.includes(
             booking.status as (typeof TERMINAL_BOOKING_STATUSES)[number]
           )
-        : Date.parse(booking.endsAt) < now || TERMINAL_BOOKING_STATUSES.includes(
+        : Date.parse(booking.endsAt) < now ||
+          TERMINAL_BOOKING_STATUSES.includes(
             booking.status as (typeof TERMINAL_BOOKING_STATUSES)[number]
           )
     )
@@ -76,7 +78,10 @@ export function WorkplaceBookings() {
     );
 
   const changeMutation = useMutation({
-    mutationFn: ({ booking, action }: BookingAction | { booking: WorkplaceBooking; action: 'check-in' }) => {
+    mutationFn: ({
+      booking,
+      action,
+    }: BookingAction | { booking: WorkplaceBooking; action: 'check-in' }) => {
       if (action === 'check-in') return checkInWorkplaceBooking(booking.bookingId, booking.version);
       if (action === 'release') return releaseWorkplaceBooking(booking.bookingId, booking.version);
       return cancelWorkplaceBooking(booking.bookingId, booking.version);
@@ -96,7 +101,9 @@ export function WorkplaceBookings() {
         title={t('workplace.my.title')}
         description={t('workplace.my.description')}
       />
-      <Box sx={{ border: 1, borderColor: 'divider', bgcolor: 'background.paper', overflow: 'hidden' }}>
+      <Box
+        sx={{ border: 1, borderColor: 'divider', bgcolor: 'background.paper', overflow: 'hidden' }}
+      >
         <Tabs
           value={filter}
           onChange={(_, value: BookingFilter) => setFilter(value)}
@@ -106,17 +113,30 @@ export function WorkplaceBookings() {
           <Tab value="past" label={t('my.past')} />
         </Tabs>
         {query.isLoading && (
-          <Stack spacing={1} p={2}>{[0, 1, 2].map((value) => <Skeleton key={value} height={112} />)}</Stack>
+          <Stack spacing={1} p={2}>
+            {[0, 1, 2].map((value) => (
+              <Skeleton key={value} height={112} />
+            ))}
+          </Stack>
         )}
         {query.isError && (
-          <Alert severity="error" action={<ActionButton intent="quiet" onClick={() => query.refetch()}>{t('actions.retry')}</ActionButton>}>
+          <Alert
+            severity="error"
+            action={
+              <ActionButton intent="quiet" onClick={() => query.refetch()}>
+                {t('actions.retry')}
+              </ActionButton>
+            }
+          >
             {t('workplace.my.loadError')}
           </Alert>
         )}
         {!query.isLoading && !query.isError && bookings.length === 0 && (
           <EmptyState
             icon={<CalendarCheck2 size={28} />}
-            title={t(filter === 'upcoming' ? 'workplace.my.emptyUpcoming' : 'workplace.my.emptyPast')}
+            title={t(
+              filter === 'upcoming' ? 'workplace.my.emptyUpcoming' : 'workplace.my.emptyPast'
+            )}
             description={t('workplace.my.emptyDescription')}
           />
         )}
@@ -129,30 +149,71 @@ export function WorkplaceBookings() {
               <Stack direction={{ xs: 'column', lg: 'row' }} justifyContent="space-between" gap={2}>
                 <Box sx={{ minWidth: 0 }}>
                   <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                    <Typography component="h2" variant="subtitle1" fontWeight={800}>{booking.resourceName}</Typography>
-                    <Chip size="small" variant="outlined" label={t(`workplace.resourceTypes.${booking.resourceType}`)} />
-                    <Chip size="small" color={booking.status === 'CHECKED_IN' ? 'success' : 'default'} label={t(`workplace.bookingStatus.${booking.status}`)} />
+                    <Typography component="h2" variant="subtitle1" fontWeight={800}>
+                      {booking.resourceName}
+                    </Typography>
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      label={t(`workplace.resourceTypes.${booking.resourceType}`)}
+                    />
+                    <Chip
+                      size="small"
+                      color={booking.status === 'CHECKED_IN' ? 'success' : 'default'}
+                      label={t(`workplace.bookingStatus.${booking.status}`)}
+                    />
                   </Stack>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} gap={{ xs: 0.6, sm: 2 }} sx={{ mt: 1 }} color="text.secondary">
-                    <Stack direction="row" gap={0.6} alignItems="center"><Clock3 size={15} /><Typography variant="body2">{format(booking.startsAt)} - {format(booking.endsAt)}</Typography></Stack>
-                    <Stack direction="row" gap={0.6} alignItems="center"><MapPin size={15} /><Typography variant="body2">{booking.siteName} · {booking.floorName}</Typography></Stack>
+                  <Stack
+                    direction={{ xs: 'column', sm: 'row' }}
+                    gap={{ xs: 0.6, sm: 2 }}
+                    sx={{ mt: 1 }}
+                    color="text.secondary"
+                  >
+                    <Stack direction="row" gap={0.6} alignItems="center">
+                      <Clock3 size={15} />
+                      <Typography variant="body2">
+                        {format(booking.startsAt)} - {format(booking.endsAt)}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" gap={0.6} alignItems="center">
+                      <MapPin size={15} />
+                      <Typography variant="body2">
+                        {booking.siteName} · {booking.floorName}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                  {booking.purpose && <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>{booking.purpose}</Typography>}
+                  {booking.purpose && (
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      {booking.purpose}
+                    </Typography>
+                  )}
                 </Box>
                 {filter === 'upcoming' && (
                   <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
                     {booking.canCheckIn && (
-                      <ActionButton intent="primary" startIcon={<CheckCircle2 size={16} />} onClick={() => changeMutation.mutate({ booking, action: 'check-in' })}>
+                      <ActionButton
+                        intent="primary"
+                        startIcon={<CheckCircle2 size={16} />}
+                        onClick={() => changeMutation.mutate({ booking, action: 'check-in' })}
+                      >
                         {t('workplace.my.checkIn')}
                       </ActionButton>
                     )}
                     {booking.canRelease && (
-                      <ActionButton intent="secondary" startIcon={<LogOut size={16} />} onClick={() => setConfirming({ booking, action: 'release' })}>
+                      <ActionButton
+                        intent="secondary"
+                        startIcon={<LogOut size={16} />}
+                        onClick={() => setConfirming({ booking, action: 'release' })}
+                      >
                         {t('workplace.my.release')}
                       </ActionButton>
                     )}
                     {booking.canCancel && (
-                      <ActionButton intent="danger" startIcon={<XCircle size={16} />} onClick={() => setConfirming({ booking, action: 'cancel' })}>
+                      <ActionButton
+                        intent="danger"
+                        startIcon={<XCircle size={16} />}
+                        onClick={() => setConfirming({ booking, action: 'cancel' })}
+                      >
                         {t('actions.cancelBooking')}
                       </ActionButton>
                     )}
@@ -165,10 +226,20 @@ export function WorkplaceBookings() {
       </Box>
       <ConfirmDialog
         open={Boolean(confirming)}
-        title={t(confirming?.action === 'release' ? 'workplace.my.releaseTitle' : 'workplace.my.cancelTitle')}
-        description={t(confirming?.action === 'release' ? 'workplace.my.releaseDescription' : 'workplace.my.cancelDescription')}
+        title={t(
+          confirming?.action === 'release'
+            ? 'workplace.my.releaseTitle'
+            : 'workplace.my.cancelTitle'
+        )}
+        description={t(
+          confirming?.action === 'release'
+            ? 'workplace.my.releaseDescription'
+            : 'workplace.my.cancelDescription'
+        )}
         cancelLabel={t('actions.keep')}
-        confirmLabel={t(confirming?.action === 'release' ? 'workplace.my.release' : 'actions.cancelBooking')}
+        confirmLabel={t(
+          confirming?.action === 'release' ? 'workplace.my.release' : 'actions.cancelBooking'
+        )}
         confirmingLabel={t('actions.saving')}
         intent={confirming?.action === 'release' ? 'primary' : 'danger'}
         busy={changeMutation.isPending}

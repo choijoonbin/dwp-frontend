@@ -1,5 +1,9 @@
-import { keyframes } from '@emotion/react';
 import type { SxProps, Theme } from '@mui/material/styles';
+
+import {
+  WORKSPACE_APP_JIGGLE_DURATION_MS,
+  workspaceAppJiggle,
+} from '../../components/workspace-composer/workspace-edit-motion';
 
 export const LAUNCHPAD_TILE_WIDTH = 72;
 export const LAUNCHPAD_TILE_HEIGHT = 84;
@@ -7,12 +11,6 @@ export const LAUNCHPAD_TILE_HEIGHT = 84;
 export function launchpadLabelFontSize(label: string) {
   return label.length > 8 ? '0.625rem' : '0.6875rem';
 }
-
-const appWiggle = keyframes`
-  0% { transform: translate3d(-0.35px, 0, 0) rotate(-1.15deg); }
-  50% { transform: translate3d(0.35px, -0.25px, 0) rotate(1.05deg); }
-  100% { transform: translate3d(-0.2px, 0.2px, 0) rotate(-0.8deg); }
-`;
 
 export function launchpadInteractionFrameSx(editing: boolean): SxProps<Theme> {
   return {
@@ -83,7 +81,9 @@ export function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProp
       transition: (theme) =>
         theme.transitions.create('transform', { duration: theme.transitions.duration.shorter }),
       transformOrigin: 'center',
-      animation: editing ? `${appWiggle} 380ms ease-in-out infinite` : 'none',
+      animation: editing
+        ? `${workspaceAppJiggle} ${WORKSPACE_APP_JIGGLE_DURATION_MS}ms ease-in-out infinite`
+        : 'none',
       animationDelay: editing ? `${motionDelayMs}ms` : '0ms',
       willChange: editing ? 'transform' : 'auto',
     },
@@ -138,6 +138,19 @@ export function launchpadTileSx(editing: boolean, motionDelayMs: number): SxProp
           bgcolor: 'rgba(255,255,255,0.12)',
           borderColor: '#FFFFFF',
         },
+    'html[data-motion="reduced"] &': {
+      transition: 'none',
+      transform: 'none',
+      '& [data-launchpad-glyph]': {
+        animation: 'none',
+        transition: 'none',
+        transform: 'none',
+        willChange: 'auto',
+      },
+      '& [data-launchpad-edit-frame], & [data-launchpad-edit-frame]::after': {
+        transition: 'none',
+      },
+    },
     '@media (prefers-reduced-motion: reduce)': {
       transition: 'none',
       transform: 'none',

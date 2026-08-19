@@ -20,7 +20,7 @@
     "collapse": "탐색 메뉴 접기",
     "items": {
       "work": "업무",
-      "ask": "AI에게 묻기",
+      "ask": "DWAI·ON",
       "activity": "활동",
       "hcm": "인사",
       "hris": "인사",
@@ -28,6 +28,9 @@
       "workforce": "인력 운영",
       "apps": "앱"
     }
+  },
+  "messaging": {
+    "name": "메신저"
   },
   "search": {
     "label": "DWP 검색",
@@ -63,7 +66,7 @@
       "providerTenants": "프로바이더 테넌트",
       "providerAudit": "프로바이더 감사",
       "providerCatalog": "프로바이더 데이터 카탈로그",
-      "ask": "DWP에게 묻기"
+      "ask": "DWAI·ON 워크스페이스"
     },
     "workTypes": {
       "Approval": "승인",
@@ -83,8 +86,8 @@
       "description": "{{type}} / 구성원 {{count}}명"
     },
     "askQuery": {
-      "title": "DWP에 질문: {{query}}",
-      "description": "추적 가능한 읽기 전용 요청 계획을 준비합니다"
+      "title": "DWAI·ON에 질문: {{query}}",
+      "description": "권한 범위의 근거와 출처를 갖춘 답변을 준비합니다"
     }
   },
   "notifications": {

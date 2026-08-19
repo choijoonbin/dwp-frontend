@@ -1,7 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
-import { decideApprovalTask, getApprovalHome, updateApprovalDraft } from './approval-api';
+import {
+  claimApprovalTask,
+  decideApprovalTask,
+  getApprovalHome,
+  respondToApprovalInformationRequest,
+  retryApprovalIntegrationDelivery,
+  updateApprovalDraft,
+} from './approval-api';
 
 function jsonResponse(data: unknown): Response {
   return {
@@ -56,6 +63,23 @@ describe('approval API boundary', () => {
     });
   });
 
+  it('claims a candidate task with optimistic concurrency evidence', async () => {
+    const detail = { task: { taskId: 'task-1', status: 'CLAIMED', version: 4 } };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(detail));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(claimApprovalTask('task-1', 3)).resolves.toEqual(detail);
+
+    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/approvals/v1/tasks/task-1/claim');
+    expect(request.method).toBe('POST');
+    expect(request.headers).toEqual(expect.objectContaining({ 'X-XSRF-TOKEN': 'csrf-token' }));
+    expect(JSON.parse(String(request.body))).toEqual({ expectedVersion: 3 });
+  });
+
   it('updates an owned draft with its optimistic concurrency version', async () => {
     const detail = { request: { requestId: 'request-1', status: 'DRAFT', version: 5 } };
     const fetchMock = vi
@@ -67,6 +91,7 @@ describe('approval API boundary', () => {
     await expect(
       updateApprovalDraft('request-1', {
         workflowId: 'workflow-1',
+        formId: 'form-1',
         title: 'Updated request',
         summary: 'Updated decision context',
         priority: 'HIGH',
@@ -82,5 +107,51 @@ describe('approval API boundary', () => {
     expect(JSON.parse(String(request.body))).toEqual(
       expect.objectContaining({ expectedVersion: 4, priority: 'HIGH' })
     );
+  });
+
+  it('submits an information response with the reviewed payload revision', async () => {
+    const requestSummary = { requestId: 'request-1', status: 'IN_REVIEW', version: 6 };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(requestSummary));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      respondToApprovalInformationRequest(
+        'request-1',
+        'Added the requested evidence.',
+        { summary: 'Updated context', amount: '1250000' },
+        5
+      )
+    ).resolves.toEqual(requestSummary);
+
+    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/approvals/v1/requests/request-1/information-response'
+    );
+    expect(JSON.parse(String(request.body))).toEqual({
+      message: 'Added the requested evidence.',
+      payload: { summary: 'Updated context', amount: '1250000' },
+      expectedVersion: 5,
+    });
+  });
+
+  it('retries an isolated integration event through the governed operator route', async () => {
+    const operations = { generatedAt: '2026-08-19T00:00:00Z', integrationDeliveries: [] };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(operations));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(retryApprovalIntegrationDelivery('outbox-1')).resolves.toEqual(operations);
+
+    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/approvals/v1/admin/operations/events/outbox-1/retry'
+    );
+    expect(request.method).toBe('POST');
+    expect(request.headers).toEqual(expect.objectContaining({ 'X-XSRF-TOKEN': 'csrf-token' }));
   });
 });

@@ -1,5 +1,5 @@
 import { HttpError } from '../http-error';
-import { axiosInstance } from '../axios-instance';
+import { axiosInstance, postEventStream } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 import type { AgentRegistryResolution, AgentRiskTier } from './agent-plan-api';
@@ -8,18 +8,39 @@ export type AskState = 'COMPLETED' | 'ABSTAINED' | 'CONFIGURATION_REQUIRED';
 export type AskPolicyOutcome = 'ALLOW' | 'HANDOFF' | 'DENY';
 export type AskModelRouteState = 'COMPLETED' | 'NOT_INVOKED' | 'CONFIGURATION_REQUIRED' | 'REFUSED';
 export type AskConfidence = 'LOW' | 'MEDIUM' | 'HIGH';
-export type AskCitationSourceType = 'WORK_ITEM' | 'MAIL' | 'CALENDAR';
+export type AskCitationSourceType =
+  | 'WORK_ITEM'
+  | 'MAIL'
+  | 'CALENDAR'
+  | 'APPROVAL_TASK'
+  | 'APPROVAL_REQUEST'
+  | 'APPROVAL_FORM'
+  | 'APPROVAL_OPERATION';
+export type AskProgressStage =
+  'AUTHORIZING' | 'RETRIEVING' | 'REASONING' | 'VERIFYING' | 'PERSISTING' | 'COMPLETED';
+
+export type AskPageContext = {
+  route: string;
+  appKey: string;
+  surface?: string;
+  entityType?: string;
+  entityRef?: string;
+};
 
 export type AskDwpRequest = {
   requestId: string;
   query: string;
   locale: string;
   agentKey?: string;
+  conversationId?: string;
+  sourceScopes?: AskCitationSourceType[];
+  pageContext?: AskPageContext;
 };
 
 export type AskDwpOptions = {
   signal?: AbortSignal;
   timeoutMs?: number;
+  onProgress?: (stage: AskProgressStage) => void;
 };
 
 export type AskPolicyDecision = {
@@ -38,6 +59,7 @@ export type AskCitation = {
   sourceSystem: string;
   route: string | null;
   occurredAt: string | null;
+  excerpt: string | null;
 };
 
 export type AskModelRoute = {
@@ -65,6 +87,9 @@ export type AskDwpResponse = {
   agentRegistry: AgentRegistryResolution;
   statusCode: string;
   completedAt: string;
+  conversationId: string | null;
+  userMessageId: string | null;
+  assistantMessageId: string | null;
 };
 
 const STATES: ReadonlySet<AskState> = new Set(['COMPLETED', 'ABSTAINED', 'CONFIGURATION_REQUIRED']);
@@ -95,11 +120,20 @@ function isCitation(value: unknown): value is AskCitation {
   return (
     typeof citation.sourceId === 'string' &&
     /^src-[0-9]{2}$/.test(citation.sourceId) &&
-    ['WORK_ITEM', 'MAIL', 'CALENDAR'].includes(String(citation.sourceType)) &&
+    [
+      'WORK_ITEM',
+      'MAIL',
+      'CALENDAR',
+      'APPROVAL_TASK',
+      'APPROVAL_REQUEST',
+      'APPROVAL_FORM',
+      'APPROVAL_OPERATION',
+    ].includes(String(citation.sourceType)) &&
     nonEmptyString(citation.title) &&
     nonEmptyString(citation.sourceSystem) &&
     nullableString(citation.route) &&
     nullableString(citation.occurredAt) &&
+    nullableString(citation.excerpt) &&
     (citation.occurredAt === null || !Number.isNaN(Date.parse(citation.occurredAt)))
   );
 }
@@ -175,7 +209,10 @@ function isAskResponse(value: unknown): value is AskDwpResponse {
     !isRegistry(response.agentRegistry) ||
     !nonEmptyString(response.statusCode) ||
     !nonEmptyString(response.completedAt) ||
-    Number.isNaN(Date.parse(response.completedAt))
+    Number.isNaN(Date.parse(response.completedAt)) ||
+    !nullableString(response.conversationId) ||
+    !nullableString(response.userMessageId) ||
+    !nullableString(response.assistantMessageId)
   ) {
     return false;
   }
@@ -208,4 +245,42 @@ export async function askDwp(
     throw new HttpError('Ask runtime response is invalid.', 502, response.data);
   }
   return response.data.data;
+}
+
+export async function askDwpStream(
+  request: AskDwpRequest,
+  options: AskDwpOptions = {}
+): Promise<AskDwpResponse> {
+  let result: AskDwpResponse | null = null;
+  await postEventStream(
+    '/api/agent/v1/ask/stream',
+    { ...request, agentKey: request.agentKey ?? 'DWP_ASSISTANT' },
+    {
+      signal: options.signal,
+      timeoutMs: options.timeoutMs ?? 60_000,
+      onMessage: ({ event, data }) => {
+        const record =
+          typeof data === 'object' && data !== null ? (data as Record<string, unknown>) : null;
+        if (event === 'progress' && record && typeof record.stage === 'string') {
+          options.onProgress?.(record.stage as AskProgressStage);
+          return;
+        }
+        if (event === 'error') {
+          throw new HttpError(
+            typeof record?.code === 'string' ? record.code : 'Ask stream failed.',
+            502,
+            data
+          );
+        }
+        if (event !== 'result' || !record) return;
+        const candidate = record.data;
+        if (!isAskResponse(candidate)) {
+          throw new HttpError('Ask runtime stream response is invalid.', 502, data);
+        }
+        result = candidate;
+      },
+    }
+  );
+  if (!result) throw new HttpError('Ask runtime stream completed without a result.', 502);
+  return result;
 }

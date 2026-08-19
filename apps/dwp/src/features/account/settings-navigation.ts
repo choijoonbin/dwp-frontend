@@ -1,5 +1,6 @@
 import {
   Accessibility,
+  BellRing,
   Building2,
   LayoutDashboard,
   Palette,
@@ -15,6 +16,7 @@ export const settingsSections = [
   'accessibility',
   'language',
   'home',
+  'notifications',
   'managed',
 ] as const;
 
@@ -46,6 +48,7 @@ export const accountNavigationGroups: AccountNavigationGroup[] = [
       { key: 'accessibility', path: '/account/settings/accessibility', icon: Accessibility },
       { key: 'language', path: '/account/settings/language', icon: LanguageIcon },
       { key: 'home', path: '/account/settings/home', icon: LayoutDashboard },
+      { key: 'notifications', path: '/account/settings/notifications', icon: BellRing },
     ],
   },
   {

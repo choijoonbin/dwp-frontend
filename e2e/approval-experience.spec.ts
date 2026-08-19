@@ -2,6 +2,11 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 
 import { mockShellSession } from './support/shell-session';
+import {
+  APPROVAL_REQUEST_DETAIL_FIXTURE,
+  APPROVAL_REQUEST_FIXTURE,
+  APPROVAL_TASK_DETAIL_FIXTURE,
+} from './support/product-area-fixtures';
 
 const APPROVAL_MEMBER_PERMISSIONS = [
   {
@@ -201,7 +206,7 @@ const ADMIN_PERSONAS = [
       ['ADMIN.APPROVAL_DESIGN', 'CREATE'],
       ['ADMIN.APPROVAL_DESIGN', 'UPDATE'],
     ],
-    visible: ['프로세스 설계', '양식 관리'],
+    visible: ['프로세스 설계', '양식 카탈로그'],
     hidden: ['운영 개요', '결재 정책', 'SLA 및 전달 운영', '전자서명 연계'],
     forbiddenPath: '/approvals/admin/operations',
   },
@@ -214,7 +219,7 @@ const ADMIN_PERSONAS = [
       ['ADMIN.APPROVAL_POLICY', 'VIEW'],
       ['ADMIN.APPROVAL_POLICY', 'APPROVE'],
     ],
-    visible: ['프로세스 설계', '양식 관리', '결재 정책'],
+    visible: ['프로세스 설계', '양식 카탈로그', '결재 정책'],
     hidden: ['운영 개요', 'SLA 및 전달 운영', '전자서명 연계'],
     forbiddenPath: '/approvals/admin/operations',
   },
@@ -226,10 +231,221 @@ const ADMIN_PERSONAS = [
       ['ADMIN.APPROVAL_OPERATIONS', 'UPDATE'],
     ],
     visible: ['운영 개요', 'SLA 및 전달 운영'],
-    hidden: ['프로세스 설계', '양식 관리', '결재 정책', '전자서명 연계'],
+    hidden: ['프로세스 설계', '양식 카탈로그', '결재 정책', '전자서명 연계'],
     forbiddenPath: '/approvals/admin/workflows',
   },
 ] as const;
+
+test('양식 설계자는 카테고리와 기본 결재선을 함께 관리하고 새 양식을 시작한다', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'APPROVAL_DESIGNER'], {
+    locale: 'ko',
+    displayName: '양식 설계자',
+    jobTitle: 'Approval designer',
+    permissions: [
+      ...APPROVAL_MEMBER_PERMISSIONS,
+      ...[
+        ['ADMIN.APPROVAL_DESIGN', 'VIEW'],
+        ['ADMIN.APPROVAL_DESIGN', 'CREATE'],
+        ['ADMIN.APPROVAL_DESIGN', 'UPDATE'],
+      ].map(([resourceKey, permissionCode]) => ({
+        resourceType: 'ADMIN',
+        resourceKey,
+        permissionCode,
+        effect: 'ALLOW' as const,
+      })),
+    ],
+  });
+
+  await page.goto('/approvals/admin/forms');
+
+  await expect(page.getByRole('heading', { name: '양식 카탈로그', level: 1 })).toBeVisible();
+  await expect(page.getByText('업무 분류', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: '데이터 접근 예외 신청서', level: 2 })
+  ).toBeVisible();
+  await expect(page.getByText('결재 단계 2개')).toBeVisible();
+  await expect(page.getByText('SECURITY_APPROVER')).toBeVisible();
+
+  await page
+    .getByRole('button', { name: /접근·보안/u })
+    .first()
+    .click();
+  await page.getByRole('button', { name: '접근·보안 카테고리 편집' }).click();
+  await expect(page.getByRole('dialog')).toContainText('양식 카테고리 편집');
+  await expect(page.getByLabel('운영 상태')).toBeVisible();
+  await page.getByRole('dialog').getByRole('button', { name: '취소' }).click();
+
+  await page.getByRole('button', { name: '양식 초안 만들기' }).click();
+  await expect(page.getByRole('dialog')).toContainText('새 결재 양식');
+  await expect(page.getByRole('dialog')).toContainText('기본 결재선');
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
+});
+
+test('기안자는 게시 양식을 선택하고 제출 전에 단계별 결재선을 확인한다', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    displayName: '이서연',
+    jobTitle: 'Executive Strategy Officer',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+
+  await page.goto('/approvals/requests/new');
+  await page.getByLabel('결재 양식').click();
+  await page.getByRole('option', { name: /데이터 접근 예외 신청서/u }).click();
+
+  await expect(page.getByRole('heading', { name: '결재 경로 안내' })).toBeVisible();
+  await expect(page.getByRole('list', { name: '단계별 결재선' })).toContainText('Manager review');
+  await expect(page.getByRole('list', { name: '단계별 결재선' })).toContainText(
+    'SECURITY_APPROVER'
+  );
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
+});
+
+test('기안자는 필수 업무값이 비어 있어도 초안을 저장하고 상신은 할 수 없다', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  let draftBody: Record<string, unknown> | undefined;
+  await page.route('**/api/approvals/v1/requests', async (route) => {
+    if (route.request().method() !== 'POST') return route.fallback();
+    draftBody = route.request().postDataJSON() as Record<string, unknown>;
+    return fulfillSuccess(route, { ...APPROVAL_REQUEST_FIXTURE, status: 'DRAFT', version: 0 });
+  });
+
+  await page.goto('/approvals/requests/new');
+  await page.getByLabel('결재 양식').click();
+  await page.getByRole('option', { name: /데이터 접근 예외 신청서/u }).click();
+
+  await expect(page.getByRole('button', { name: '임시 저장' })).toBeEnabled();
+  await expect(page.getByRole('button', { name: '결재 상신' })).toBeDisabled();
+  await page.getByRole('button', { name: '임시 저장' }).click();
+
+  await expect(page).toHaveURL(/\/approvals\/requests\/drafts$/u);
+  expect(draftBody).toEqual(
+    expect.objectContaining({ title: '', summary: '', payload: expect.objectContaining({ summary: '' }) })
+  );
+});
+
+test('AI 딥링크 대상 결재를 자동 선택하고 후보 업무를 명시적으로 가져온다', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  await page.route('**/api/approvals/v1/tasks/approval-task-001', (route) =>
+    fulfillSuccess(route, { ...APPROVAL_TASK_DETAIL_FIXTURE, canClaim: true, canDecide: false })
+  );
+  let claimBody: Record<string, unknown> | undefined;
+  await page.route('**/api/approvals/v1/tasks/approval-task-001/claim', (route) => {
+    claimBody = route.request().postDataJSON() as Record<string, unknown>;
+    return fulfillSuccess(route, {
+      ...APPROVAL_TASK_DETAIL_FIXTURE,
+      task: { ...APPROVAL_TASK_DETAIL_FIXTURE.task, status: 'CLAIMED', version: 4 },
+      canClaim: false,
+      canDecide: true,
+    });
+  });
+
+  await page.goto('/approvals/inbox?task=approval-task-001');
+
+  await expect(page.getByRole('heading', { name: 'Customer data access exception' })).toBeVisible();
+  await page.getByRole('button', { name: '내 업무로 가져오기' }).click();
+  await expect(page.getByRole('button', { name: '내 업무로 가져오기' })).toHaveCount(0);
+  expect(claimBody).toEqual({ expectedVersion: 3 });
+});
+
+test('보완 요청자는 검토한 버전에 답변과 수정 필드를 함께 제출한다', async ({ page }) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: APPROVAL_MEMBER_PERMISSIONS,
+  });
+  const needsInformation = {
+    ...APPROVAL_REQUEST_FIXTURE,
+    status: 'NEEDS_INFO' as const,
+    latestInformationRequest: '업무 사유와 만료일을 구체화해 주세요.',
+  };
+  await page.route('**/api/approvals/v1/requests?view=NEEDS_INFO', (route) =>
+    fulfillSuccess(route, [needsInformation])
+  );
+  await page.route('**/api/approvals/v1/requests/approval-request-001/detail', (route) =>
+    fulfillSuccess(route, {
+      ...APPROVAL_REQUEST_DETAIL_FIXTURE,
+      request: needsInformation,
+    })
+  );
+  let responseBody: Record<string, unknown> | undefined;
+  await page.route(
+    '**/api/approvals/v1/requests/approval-request-001/information-response',
+    (route) => {
+      responseBody = route.request().postDataJSON() as Record<string, unknown>;
+      return fulfillSuccess(route, { ...needsInformation, status: 'IN_REVIEW', version: 4 });
+    }
+  );
+
+  await page.goto('/approvals/requests/needs-info?request=approval-request-001');
+  await page.getByRole('button', { name: '보완 답변' }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog
+    .getByRole('textbox', { name: '보완 답변' })
+    .fill('요청하신 업무 사유와 기간을 보완했습니다.');
+  await dialog
+    .getByLabel('businessReason')
+    .fill('Production investigation approved for the minimum required support window.');
+  await dialog.getByRole('button', { name: '답변 제출' }).click();
+
+  expect(responseBody).toEqual(
+    expect.objectContaining({
+      expectedVersion: 3,
+      message: '요청하신 업무 사유와 기간을 보완했습니다.',
+      payload: expect.objectContaining({
+        businessReason:
+          'Production investigation approved for the minimum required support window.',
+      }),
+    })
+  );
+});
+
+test('결재 운영자는 격리된 통합 이벤트의 원인을 확인하고 감사 가능한 재처리를 실행한다', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER', 'APPROVAL_OPERATOR'], {
+    locale: 'ko',
+    displayName: '결재 운영자',
+    jobTitle: 'Approval operator',
+    permissions: [
+      ...APPROVAL_MEMBER_PERMISSIONS,
+      ...[
+        ['ADMIN.APPROVAL_OPERATIONS', 'VIEW'],
+        ['ADMIN.APPROVAL_OPERATIONS', 'MANAGE'],
+      ].map(([resourceKey, permissionCode]) => ({
+        resourceType: 'ADMIN',
+        resourceKey,
+        permissionCode,
+        effect: 'ALLOW' as const,
+      })),
+    ],
+  });
+
+  await page.goto('/approvals/admin/operations');
+
+  const deliveryRow = page.getByRole('row', { name: /approval\.request\.approved/u });
+  await expect(deliveryRow).toContainText('실패');
+  await expect(deliveryRow).toContainText('Downstream endpoint returned 503');
+  await deliveryRow.getByRole('button', { name: '이벤트 다시 전달' }).click();
+  await expect(deliveryRow).toContainText('대기');
+});
 
 for (const persona of ADMIN_PERSONAS) {
   test(`전자결재 ${persona.name}는 자신의 관리 메뉴만 보고 금지 URL은 홈으로 복귀한다`, async ({

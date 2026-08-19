@@ -7,6 +7,7 @@ import {
 import {
   APPROVAL_ADMIN_FIXTURE,
   APPROVAL_DELEGATIONS_FIXTURE,
+  APPROVAL_FORM_CATEGORY_FIXTURES,
   APPROVAL_FORM_DETAIL_FIXTURE,
   APPROVAL_FORM_FIXTURE,
   APPROVAL_HOME_FIXTURE,
@@ -1770,6 +1771,17 @@ export async function mockShellSession(
     if (/^\/api\/approvals\/v1\/workflows\/published\/[^/]+\/template$/u.test(path)) {
       return fulfillSuccess(route, {
         workflow: APPROVAL_WORKFLOW_FIXTURE,
+        routeDefinition: APPROVAL_WORKFLOW_DETAIL_FIXTURE.definition,
+        form: APPROVAL_FORM_DETAIL_FIXTURE,
+      });
+    }
+    if (path === '/api/approvals/v1/catalog/forms') {
+      return fulfillSuccess(route, [APPROVAL_FORM_FIXTURE]);
+    }
+    if (/^\/api\/approvals\/v1\/catalog\/forms\/[^/]+\/template$/u.test(path)) {
+      return fulfillSuccess(route, {
+        workflow: APPROVAL_WORKFLOW_FIXTURE,
+        routeDefinition: APPROVAL_WORKFLOW_DETAIL_FIXTURE.definition,
         form: APPROVAL_FORM_DETAIL_FIXTURE,
       });
     }
@@ -1788,11 +1800,25 @@ export async function mockShellSession(
     if (path === '/api/approvals/v1/admin/forms') {
       return fulfillSuccess(route, [APPROVAL_FORM_FIXTURE]);
     }
+    if (path === '/api/approvals/v1/admin/form-categories') {
+      return fulfillSuccess(route, APPROVAL_FORM_CATEGORY_FIXTURES);
+    }
     if (/^\/api\/approvals\/v1\/admin\/forms\/[^/]+$/u.test(path)) {
       return fulfillSuccess(route, APPROVAL_FORM_DETAIL_FIXTURE);
     }
     if (path === '/api/approvals/v1/admin/policies') {
       return fulfillSuccess(route, APPROVAL_POLICIES_FIXTURE);
+    }
+    if (/^\/api\/approvals\/v1\/admin\/policies\/[^/]+\/versions$/u.test(path)) {
+      return fulfillSuccess(route, []);
+    }
+    if (/^\/api\/approvals\/v1\/admin\/operations\/events\/[^/]+\/retry$/u.test(path)) {
+      return fulfillSuccess(route, {
+        ...APPROVAL_OPERATIONS_FIXTURE,
+        integrationDeliveries: APPROVAL_OPERATIONS_FIXTURE.integrationDeliveries.map(
+          (delivery) => ({ ...delivery, status: 'PENDING', manualRetryCount: 1 })
+        ),
+      });
     }
     if (path === '/api/approvals/v1/admin/operations') {
       return fulfillSuccess(route, APPROVAL_OPERATIONS_FIXTURE);
@@ -2842,7 +2868,7 @@ export async function mockShellSession(
       const korean = (url.searchParams.get('locale') ?? locale).toLowerCase().startsWith('ko');
       const apps = [
         ['work', korean ? '업무' : 'Work', '/work', 'APP.WORK'],
-        ['ask', korean ? 'DWP에게 묻기' : 'Ask', '/ask', 'APP.ASK'],
+        ['ask', 'DWAI·ON', '/dwaion', 'APP.ASK'],
         ['activity', korean ? '활동' : 'Activity', '/activity', 'APP.ACTIVITY'],
         ['apps', korean ? '앱' : 'Apps', '/apps', 'APP.APPS'],
       ].map(([navigationKey, label, routePath, resourceKey]) => ({

@@ -25,18 +25,18 @@ DWP의 기존 `회의실` 제품을 **근무 공간(Workplace)** 으로 확장�
 
 2026-08-19 기준 공식 문서에서 확인한 공통 기능을 DWP 기준으로 정규화했다.
 
-| 제품 | 검증한 강점 | DWP 반영 |
-| --- | --- | --- |
-| Microsoft Places | 건물·층 계층, 예약·워크인·지정·사용불가 좌석, 예약 기간·자동 해제 | 공간 계층, 예약 모드, 테넌트 정책 |
-| Robin | 층 지도, 좌석·주차·사물함·Neighborhood·POI, QR/NFC | 통합 자원 모델, 지도·목록 이중 탐색 |
-| Envoy | 부분일 예약, 지정 좌석과 대여, 편의시설·Neighborhood | 지정석 차단, 설비·구역 필터 |
-| Skedda | SVG 지도와 편집 가능한 Hotspot | 정규화 좌표 기반 Layout Editor |
-| Eptura Engage | 회의실·좌석·사물함·주차, 체크인·센서·자동 해제 | 체크인 수명주기와 확장 가능한 자원 유형 |
-| OfficeSpace | CAD/PDF 도면, 지정석·Hoteling, 제한·Heatmap·Wayfinding | 검증된 도면 수집과 분석 확장 경계 |
-| Kadence | 좌석·실·개인실·사물함·부스·주차, 반복 예약 | 공통 예약 Aggregate와 자원 Catalog |
-| WorkInSync | 층 지도, 좌석·회의실·주차·Kiosk·Check-in | 현장 접점 확장 가능한 API 경계 |
-| deskbird | 이미지/SVG 도면, 접근 그룹, 반복·자동 해제·Privacy | 도면 등록, 정책·Privacy 분리 |
-| Joan | 좌석·회의실·장비·주차, 주·월 탐색, QR/NFC·Geolocation | 기간 탐색과 장치 연계 확장점 |
+| 제품             | 검증한 강점                                                       | DWP 반영                                |
+| ---------------- | ----------------------------------------------------------------- | --------------------------------------- |
+| Microsoft Places | 건물·층 계층, 예약·워크인·지정·사용불가 좌석, 예약 기간·자동 해제 | 공간 계층, 예약 모드, 테넌트 정책       |
+| Robin            | 층 지도, 좌석·주차·사물함·Neighborhood·POI, QR/NFC                | 통합 자원 모델, 지도·목록 이중 탐색     |
+| Envoy            | 부분일 예약, 지정 좌석과 대여, 편의시설·Neighborhood              | 지정석 차단, 설비·구역 필터             |
+| Skedda           | SVG 지도와 편집 가능한 Hotspot                                    | 정규화 좌표 기반 Layout Editor          |
+| Eptura Engage    | 회의실·좌석·사물함·주차, 체크인·센서·자동 해제                    | 체크인 수명주기와 확장 가능한 자원 유형 |
+| OfficeSpace      | CAD/PDF 도면, 지정석·Hoteling, 제한·Heatmap·Wayfinding            | 검증된 도면 수집과 분석 확장 경계       |
+| Kadence          | 좌석·실·개인실·사물함·부스·주차, 반복 예약                        | 공통 예약 Aggregate와 자원 Catalog      |
+| WorkInSync       | 층 지도, 좌석·회의실·주차·Kiosk·Check-in                          | 현장 접점 확장 가능한 API 경계          |
+| deskbird         | 이미지/SVG 도면, 접근 그룹, 반복·자동 해제·Privacy                | 도면 등록, 정책·Privacy 분리            |
+| Joan             | 좌석·회의실·장비·주차, 주·월 탐색, QR/NFC·Geolocation             | 기간 탐색과 장치 연계 확장점            |
 
 공식 근거:
 
@@ -70,14 +70,14 @@ Workplace가 소유하는 것은 물리 공간 계층, 층 지도, 예약 정책
 
 ## 4. 데이터 모델
 
-| Aggregate | 핵심 내용 |
-| --- | --- |
-| Site | 테넌트별 본사·공유오피스·위성·고객사 근무지, 주소·시간대·전체 층수 |
-| Floor | 층 번호, 운영 상태, 논리 캔버스 크기, 검증된 도면 Asset |
-| Resource | 유형, 예약 모드, 상태, 수용 인원, 설비, 접근성, 구역, 정규화 좌표·크기·회전 |
-| Policy | 예약 가능 기간, 동시 예약 한도, 최소·최대 시간, 연속일, 근무 시간, 체크인·자동 해제, Privacy |
-| Booking | 사용자, 시간 구간, 목적, 공개 여부, 예약·체크인·해제·취소 수명주기 |
-| Audit | Actor, Correlation ID, 변경 Snapshot을 가진 Append-only 사건 |
+| Aggregate | 핵심 내용                                                                                    |
+| --------- | -------------------------------------------------------------------------------------------- |
+| Site      | 테넌트별 본사·공유오피스·위성·고객사 근무지, 주소·시간대·전체 층수                           |
+| Floor     | 층 번호, 운영 상태, 논리 캔버스 크기, 검증된 도면 Asset                                      |
+| Resource  | 유형, 예약 모드, 상태, 수용 인원, 설비, 접근성, 구역, 정규화 좌표·크기·회전                  |
+| Policy    | 예약 가능 기간, 동시 예약 한도, 최소·최대 시간, 연속일, 근무 시간, 체크인·자동 해제, Privacy |
+| Booking   | 사용자, 시간 구간, 목적, 공개 여부, 예약·체크인·해제·취소 수명주기                           |
+| Audit     | Actor, Correlation ID, 변경 Snapshot을 가진 Append-only 사건                                 |
 
 예약 모드는 `RESERVABLE`, `DROP_IN`, `ASSIGNED`, `UNAVAILABLE`다. 지정석은 기본적으로 지정된
 사용자만 예약할 수 있고, 테넌트가 지정석 공유를 명시적으로 허용한 경우에만 비어 있는 시간대를

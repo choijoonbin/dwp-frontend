@@ -152,8 +152,8 @@ test('mail home exposes work signals without serious accessibility defects', asy
   ).toEqual([]);
 
   await page.setViewportSize({ width: 390, height: 844 });
-  const overflow = await page.evaluate(() =>
-    document.documentElement.scrollWidth - document.documentElement.clientWidth
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
   );
   expect(overflow).toBeLessThanOrEqual(1);
 });
@@ -323,5 +323,8 @@ test('mail administrators see contract readiness separately from deployed adapte
   await page.getByRole('button', { name: 'Configure' }).click();
   await expect(page.getByText(/Activation is blocked/)).toBeVisible();
   await page.getByLabel('Connection state').click();
-  await expect(page.getByRole('option', { name: 'Active' })).toHaveAttribute('aria-disabled', 'true');
+  await expect(page.getByRole('option', { name: 'Active' })).toHaveAttribute(
+    'aria-disabled',
+    'true'
+  );
 });

@@ -1,5 +1,37 @@
 /** Generated from contracts/openapi/gateway-public.json. Do not edit manually. */
 export interface paths {
+    "/api/approvals/v1/admin/form-categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_formCategories"];
+        put?: never;
+        post: operations["approval_createFormCategory"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/form-categories/{categoryId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["approval_updateFormCategory"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/admin/forms": {
         parameters: {
             query?: never;
@@ -9,7 +41,7 @@ export interface paths {
         };
         get: operations["approval_forms"];
         put?: never;
-        post?: never;
+        post: operations["approval_createFormDraft"];
         delete?: never;
         options?: never;
         head?: never;
@@ -48,6 +80,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/admin/forms/{formId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_publishForm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/admin/operations": {
         parameters: {
             query?: never;
@@ -58,6 +106,22 @@ export interface paths {
         get: operations["approval_operations"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/operations/events/{outboxId}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_retryIntegrationDelivery"];
         delete?: never;
         options?: never;
         head?: never;
@@ -105,6 +169,38 @@ export interface paths {
         };
         get?: never;
         put: operations["approval_updatePolicy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/policies/{policyId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_publishPolicy"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/admin/policies/{policyId}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_policyVersions"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -192,6 +288,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/catalog/forms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_formCatalog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/catalog/forms/{formId}/template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_formTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/delegations": {
         parameters: {
             query?: never;
@@ -202,6 +330,38 @@ export interface paths {
         get: operations["approval_delegations"];
         put?: never;
         post: operations["approval_createDelegation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/delegations/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["approval_delegationCandidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/approvals/v1/delegations/{delegationId}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_revokeDelegation"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1451,6 +1611,502 @@ export interface paths {
         put?: never;
         post?: never;
         delete: operations["auth_revoke_1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/admin/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_adminOverview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/admin/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["messaging_updatePolicy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_conversations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_conversation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_sendMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/messages/{messageId}/reactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_addReaction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/messages/{messageId}/reactions/{emoji}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["messaging_removeReaction"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/read-cursor": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_markRead"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/direct-conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_directConversation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_home"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/people": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_people"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_operations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_overview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/admin/types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_types"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_inbox"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/bulk-actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_bulkActions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/{notificationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/{notificationId}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_complete"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/{notificationId}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_read"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/{notificationId}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_restore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/{notificationId}/save": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_save"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/{notificationId}/snooze": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_snooze"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/{notificationId}/unread": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_unread"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/inbox/{notificationId}/unsave": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notification_unsave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/me/delivery-profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_deliveryProfile"];
+        put: operations["notification_updateDeliveryProfile"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/me/effective-settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_effectiveSettings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/me/subscription-rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_subscriptionRules"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/me/subscription-rules/{ruleId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["notification_putSubscriptionRule"];
+        post?: never;
+        delete: operations["notification_deleteSubscriptionRule"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_stream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_summary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/v1/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notification_sync"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -7623,6 +8279,7 @@ export interface components {
         approval_AdminPulse: {
             /** Format: int32 */
             activeRequests?: number;
+            assurance?: components["schemas"]["approval_AssuranceSignal"][];
             /** Format: int32 */
             draftWorkflows?: number;
             /** Format: int32 */
@@ -7662,9 +8319,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        approval_ApiResponseListDelegationCandidate: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_DelegationCandidate"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         approval_ApiResponseListDelegationSummary: {
             correlationId?: string;
             data?: components["schemas"]["approval_DelegationSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseListFormCategorySummary: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_FormCategorySummary"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -7685,6 +8362,16 @@ export interface components {
         approval_ApiResponseListPolicySummary: {
             correlationId?: string;
             data?: components["schemas"]["approval_PolicySummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        approval_ApiResponseListPolicyVersionSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["approval_PolicyVersionSummary"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -7808,6 +8495,12 @@ export interface components {
             /** Format: double */
             slaCompliancePercent?: number;
         };
+        approval_AssuranceSignal: {
+            /** Format: int32 */
+            exceptions?: number;
+            key?: string;
+            state?: string;
+        };
         approval_CreateDelegationRequest: {
             /** Format: int64 */
             delegateUserId: number;
@@ -7819,7 +8512,34 @@ export interface components {
             startsAt: string;
             workflowKey?: string;
         };
+        approval_CreateFormCategoryRequest: {
+            categoryKey: string;
+            descriptionEn?: string;
+            descriptionKo?: string;
+            iconKey: string;
+            nameEn: string;
+            nameKo: string;
+            /** Format: uuid */
+            parentCategoryId?: string;
+            /** Format: int32 */
+            sortOrder: number;
+        };
+        approval_CreateFormDraftRequest: {
+            /** Format: uuid */
+            categoryId: string;
+            /** Format: uuid */
+            defaultWorkflowId: string;
+            descriptionEn: string;
+            descriptionKo: string;
+            fields: components["schemas"]["approval_FormFieldInput"][];
+            formKey: string;
+            nameEn: string;
+            nameKo: string;
+            ownerGroupRef: string;
+        };
         approval_CreateRequest: {
+            /** Format: uuid */
+            formId: string;
             payload?: {
                 [key: string]: unknown;
             };
@@ -7857,13 +8577,27 @@ export interface components {
             /** Format: int64 */
             expectedVersion: number;
         };
+        approval_DelegationCandidate: {
+            displayName?: string;
+            email?: string;
+            jobTitle?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            /** Format: int64 */
+            userId?: number;
+        };
         approval_DelegationSummary: {
+            delegateDisplayName?: string;
+            delegateEmail?: string;
+            /** Format: uuid */
+            delegatePersonPublicId?: string;
             /** Format: int64 */
             delegateUserId?: number;
             /** Format: uuid */
             delegationId?: string;
             /** Format: int64 */
             delegatorUserId?: number;
+            direction?: string;
             /** Format: date-time */
             endsAt?: string;
             lifecycleState?: string;
@@ -7875,8 +8609,28 @@ export interface components {
             version?: number;
             workflowKey?: string;
         };
+        approval_FormCategorySummary: {
+            /** Format: uuid */
+            categoryId?: string;
+            categoryKey?: string;
+            descriptionEn?: string;
+            descriptionKo?: string;
+            /** Format: int32 */
+            formCount?: number;
+            iconKey?: string;
+            lifecycleState?: string;
+            nameEn?: string;
+            nameKo?: string;
+            /** Format: uuid */
+            parentCategoryId?: string;
+            /** Format: int32 */
+            sortOrder?: number;
+            /** Format: int64 */
+            version?: number;
+        };
         approval_FormDetail: {
             form?: components["schemas"]["approval_FormSummary"];
+            routes?: components["schemas"]["approval_FormRouteSummary"][];
             schema?: {
                 [key: string]: unknown;
             };
@@ -7892,19 +8646,49 @@ export interface components {
             required?: boolean;
             type: string;
         };
+        approval_FormRouteSummary: {
+            /** Format: uuid */
+            bindingId?: string;
+            bindingType?: string;
+            /** Format: int32 */
+            priority?: number;
+            /** Format: int32 */
+            slaMinutes?: number;
+            /** Format: uuid */
+            workflowId?: string;
+            workflowKey?: string;
+            workflowLifecycleState?: string;
+            workflowNameEn?: string;
+            workflowNameKo?: string;
+            /** Format: int32 */
+            workflowVersion?: number;
+        };
         approval_FormSummary: {
+            /** Format: uuid */
+            categoryId?: string;
+            categoryKey?: string;
+            categoryNameEn?: string;
+            categoryNameKo?: string;
             /** Format: int32 */
             currentVersion?: number;
+            descriptionEn?: string;
+            descriptionKo?: string;
             /** Format: int32 */
             fieldCount?: number;
             /** Format: uuid */
             formId?: string;
             formKey?: string;
+            formKind?: string;
             lifecycleState?: string;
             nameEn?: string;
             nameKo?: string;
+            ownerGroupRef?: string;
+            /** Format: int32 */
+            routeCount?: number;
             /** Format: date-time */
             updatedAt?: string;
+            /** Format: int64 */
+            usageCount?: number;
             /** Format: int64 */
             version?: number;
         };
@@ -7923,6 +8707,32 @@ export interface components {
             /** Format: int64 */
             expectedVersion: number;
             message: string;
+            payload?: {
+                [key: string]: unknown;
+            };
+        };
+        approval_IntegrationDeliverySummary: {
+            /** Format: int32 */
+            attemptCount?: number;
+            /** Format: date-time */
+            availableAt?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: uuid */
+            eventId?: string;
+            eventType?: string;
+            lastError?: string;
+            /** Format: date-time */
+            lastRetriedAt?: string;
+            /** Format: int32 */
+            manualRetryCount?: number;
+            /** Format: uuid */
+            outboxId?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: uuid */
+            requestId?: string;
+            status?: string;
         };
         approval_OperationSignal: {
             /** Format: int32 */
@@ -7938,6 +8748,7 @@ export interface components {
             breachedTasks?: components["schemas"]["approval_TaskSummary"][];
             /** Format: date-time */
             generatedAt?: string;
+            integrationDeliveries?: components["schemas"]["approval_IntegrationDeliverySummary"][];
             signals?: components["schemas"]["approval_OperationSignal"][];
         };
         approval_PolicySummary: {
@@ -7945,6 +8756,18 @@ export interface components {
             lifecycleState?: string;
             nameEn?: string;
             nameKo?: string;
+            /** Format: date-time */
+            pendingAt?: string;
+            /** Format: int64 */
+            pendingBy?: number;
+            pendingChangeReason?: string;
+            pendingEnforcementMode?: string;
+            pendingLifecycleState?: string;
+            pendingReview?: boolean;
+            pendingRule?: {
+                [key: string]: unknown;
+            };
+            pendingSeverity?: string;
             /** Format: uuid */
             policyId?: string;
             policyKey?: string;
@@ -7956,15 +8779,49 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        approval_PolicyVersionSummary: {
+            changeReason?: string;
+            enforcementMode?: string;
+            lifecycleState?: string;
+            /** Format: uuid */
+            policyVersionId?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int64 */
+            publishedBy?: number;
+            reviewComment?: string;
+            rule?: {
+                [key: string]: unknown;
+            };
+            severity?: string;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: int64 */
+            submittedBy?: number;
+            /** Format: int32 */
+            versionNumber?: number;
+        };
+        approval_PublishFormRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+        };
+        approval_PublishPolicyRequest: {
+            /** Format: int64 */
+            expectedVersion: number;
+            reviewComment: string;
+        };
         approval_PublishWorkflowRequest: {
             /** Format: int64 */
             expectedVersion: number;
         };
         approval_RequestDetail: {
+            /** Format: uuid */
+            formId?: string;
             payload?: {
                 [key: string]: unknown;
             };
             request?: components["schemas"]["approval_RequestSummary"];
+            timeline?: components["schemas"]["approval_TimelineEvent"][];
             /** Format: uuid */
             workflowId?: string;
         };
@@ -7997,6 +8854,9 @@ export interface components {
         };
         approval_RequestTemplate: {
             form?: components["schemas"]["approval_FormDetail"];
+            routeDefinition?: {
+                [key: string]: unknown;
+            };
             workflow?: components["schemas"]["approval_WorkflowSummary"];
         };
         approval_SignatureProviderSummary: {
@@ -8074,6 +8934,8 @@ export interface components {
         approval_UpdateDraftRequest: {
             /** Format: int64 */
             expectedVersion: number;
+            /** Format: uuid */
+            formId: string;
             payload?: {
                 [key: string]: unknown;
             };
@@ -8083,14 +8945,36 @@ export interface components {
             /** Format: uuid */
             workflowId: string;
         };
+        approval_UpdateFormCategoryRequest: {
+            descriptionEn?: string;
+            descriptionKo?: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            iconKey: string;
+            lifecycleState: string;
+            nameEn: string;
+            nameKo: string;
+            /** Format: uuid */
+            parentCategoryId?: string;
+            /** Format: int32 */
+            sortOrder: number;
+        };
         approval_UpdateFormDraftRequest: {
+            /** Format: uuid */
+            categoryId: string;
+            /** Format: uuid */
+            defaultWorkflowId: string;
+            descriptionEn: string;
+            descriptionKo: string;
             /** Format: int64 */
             expectedVersion: number;
             fields: components["schemas"]["approval_FormFieldInput"][];
             nameEn: string;
             nameKo: string;
+            ownerGroupRef: string;
         };
         approval_UpdatePolicyRequest: {
+            changeReason: string;
             enforcementMode: string;
             /** Format: int64 */
             expectedVersion: number;
@@ -8994,6 +9878,20 @@ export interface components {
             /** Format: int64 */
             userId?: number;
         };
+        auth_DirectorySubject: {
+            displayName?: string;
+            email?: string;
+            jobTitle?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            /** Format: uuid */
+            publicId?: string;
+            status?: string;
+            /** Format: int64 */
+            tenantId?: number;
+            /** Format: int64 */
+            userId?: number;
+        };
         auth_EffectiveAccess: {
             /** Format: int64 */
             accessRevision?: number;
@@ -9766,8 +10664,12 @@ export interface components {
         auth_Subject: {
             displayName?: string;
             email?: string;
+            jobTitle?: string;
+            /** Format: uuid */
+            personPublicId?: string;
             /** Format: uuid */
             publicId?: string;
+            roles?: string[];
             status?: string;
             /** Format: int64 */
             tenantId?: number;
@@ -9928,6 +10830,799 @@ export interface components {
             /** Format: email */
             workEmail?: string;
             workerStatus: string;
+        };
+        messaging_AdminMetrics: {
+            /** Format: int32 */
+            activeConversations?: number;
+            /** Format: int32 */
+            activeMembers?: number;
+            /** Format: int32 */
+            restrictedConversations?: number;
+            /** Format: int32 */
+            retainedMessages?: number;
+            /** Format: int32 */
+            spaceLinkedConversations?: number;
+        };
+        messaging_AdminOverview: {
+            /** Format: date-time */
+            generatedAt?: string;
+            governedConversations?: components["schemas"]["messaging_ConversationSummary"][];
+            metrics?: components["schemas"]["messaging_AdminMetrics"];
+            policy?: components["schemas"]["messaging_TenantPolicy"];
+        };
+        messaging_ApiResponseAdminOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_AdminOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseConversationDetail: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ConversationDetail"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseConversationPage: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ConversationPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseHomeResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_HomeResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseListPersonSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_PersonSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseTenantPolicy: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_TenantPolicy"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ConversationDetail: {
+            conversation?: components["schemas"]["messaging_ConversationSummary"];
+            members?: components["schemas"]["messaging_MemberSummary"][];
+            messages?: components["schemas"]["messaging_MessageSummary"][];
+            realtime?: components["schemas"]["messaging_RealtimeStatus"];
+        };
+        messaging_ConversationPage: {
+            items?: components["schemas"]["messaging_ConversationSummary"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            total?: number;
+        };
+        messaging_ConversationSummary: {
+            /** Format: uuid */
+            conversationId?: string;
+            conversationKey?: string;
+            conversationType?: string;
+            dataClassification?: string;
+            favorite?: boolean;
+            lastMessage?: components["schemas"]["messaging_MessageSummary"];
+            /** Format: date-time */
+            lastMessageAt?: string;
+            lifecycleState?: string;
+            linkedSpaceKey?: string;
+            linkedSpaceName?: string;
+            /** Format: int32 */
+            memberCount?: number;
+            name?: string;
+            pinned?: boolean;
+            topic?: string;
+            /** Format: int32 */
+            unreadCount?: number;
+            /** Format: int64 */
+            version?: number;
+            visibility?: string;
+        };
+        messaging_DirectConversationRequest: {
+            /** Format: int64 */
+            targetUserId: number;
+        };
+        messaging_HomeMetrics: {
+            /** Format: int32 */
+            directMessages?: number;
+            /** Format: int32 */
+            mentions?: number;
+            /** Format: int32 */
+            savedItems?: number;
+            /** Format: int32 */
+            spaceChannels?: number;
+            /** Format: int32 */
+            unreadConversations?: number;
+        };
+        messaging_HomeResponse: {
+            /** Format: date-time */
+            generatedAt?: string;
+            metrics?: components["schemas"]["messaging_HomeMetrics"];
+            people?: components["schemas"]["messaging_PersonSummary"][];
+            priority?: components["schemas"]["messaging_ConversationSummary"][];
+            spaces?: components["schemas"]["messaging_ConversationSummary"][];
+        };
+        messaging_MemberSummary: {
+            displayName?: string;
+            emailAddress?: string;
+            favorite?: boolean;
+            jobTitle?: string;
+            /** Format: date-time */
+            lastReadAt?: string;
+            memberRole?: string;
+            membershipSource?: string;
+            notificationLevel?: string;
+            organizationName?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            pinned?: boolean;
+            presenceState?: string;
+            /** Format: int64 */
+            userId?: number;
+        };
+        messaging_MessageSummary: {
+            body?: string;
+            contentType?: string;
+            /** Format: uuid */
+            conversationId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            deletedAt?: string;
+            /** Format: date-time */
+            editedAt?: string;
+            /** Format: uuid */
+            messageId?: string;
+            messageKind?: string;
+            reactions?: components["schemas"]["messaging_ReactionSummary"][];
+            /** Format: uuid */
+            replyToMessageId?: string;
+            senderName?: string;
+            /** Format: uuid */
+            senderPersonPublicId?: string;
+            /** Format: int64 */
+            senderUserId?: number;
+            /** Format: int64 */
+            version?: number;
+        };
+        messaging_PersonSummary: {
+            displayName?: string;
+            emailAddress?: string;
+            jobTitle?: string;
+            organizationName?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            presenceState?: string;
+            /** Format: int64 */
+            userId?: number;
+        };
+        messaging_ReactionRequest: {
+            emoji: string;
+        };
+        messaging_ReactionSummary: {
+            /** Format: int32 */
+            count?: number;
+            emoji?: string;
+            mine?: boolean;
+        };
+        messaging_ReadCursorRequest: {
+            /** Format: uuid */
+            messageId: string;
+        };
+        messaging_RealtimeStatus: {
+            detail?: string;
+            endpoint?: string;
+            mode?: string;
+            state?: string;
+        };
+        messaging_SendMessageRequest: {
+            body: string;
+            /** Format: uuid */
+            idempotencyKey: string;
+            /** Format: uuid */
+            replyToMessageId?: string;
+        };
+        messaging_TenantPolicy: {
+            aiAssistanceEnabled?: boolean;
+            aiAutoExecuteEnabled?: boolean;
+            allowMessageDelete?: boolean;
+            allowMessageEdit?: boolean;
+            directMessagesEnabled?: boolean;
+            /** Format: int32 */
+            maximumAttachmentMb?: number;
+            /** Format: int32 */
+            retentionDays?: number;
+            spaceMessagingEnabled?: boolean;
+            /** Format: int64 */
+            version?: number;
+        };
+        messaging_TenantPolicyRequest: {
+            aiAssistanceEnabled?: boolean;
+            allowMessageDelete?: boolean;
+            allowMessageEdit?: boolean;
+            directMessagesEnabled?: boolean;
+            /** Format: int32 */
+            maximumAttachmentMb?: number;
+            /** Format: int32 */
+            retentionDays?: number;
+            spaceMessagingEnabled?: boolean;
+            /** Format: int64 */
+            version?: number;
+        };
+        notification_ActionResult: {
+            changeVersion?: string;
+            item?: components["schemas"]["notification_InboxItem"];
+            summary?: components["schemas"]["notification_Summary"];
+        };
+        notification_AdminMetric: {
+            /** Format: double */
+            baseline?: number;
+            key?: string;
+            label?: string;
+            state?: string;
+            unit?: string;
+            /** Format: double */
+            value?: number;
+        };
+        notification_AdminOverview: {
+            findings?: components["schemas"]["notification_OperationalFinding"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            message?: string;
+            metrics?: components["schemas"]["notification_AdminMetric"][];
+            partial?: boolean;
+            trend?: components["schemas"]["notification_AdminTrendPoint"][];
+            unavailableSources?: string[];
+        };
+        notification_AdminTrendPoint: {
+            /** Format: int64 */
+            actionable?: number;
+            bucket?: string;
+            /** Format: int64 */
+            created?: number;
+            /** Format: int64 */
+            failed?: number;
+            /** Format: int64 */
+            muted?: number;
+        };
+        notification_ApiResponseActionResult: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_ActionResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseAdminOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_AdminOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseBulkResult: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_BulkResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseDeliveryOperations: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_DeliveryOperations"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseDeliveryProfile: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_DeliveryProfile"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseDetail: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_Detail"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseEffectiveSettings: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_EffectiveSettings"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseInboxPage: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_InboxPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseListSubscriptionRule: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_SubscriptionRule"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseMaterializationResult: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_MaterializationResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseSubscriptionRule: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_SubscriptionRule"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_Summary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseSyncResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_SyncResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseTypeContractPage: {
+            correlationId?: string;
+            data?: components["schemas"]["notification_TypeContractPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_ApiResponseVoid: {
+            correlationId?: string;
+            data?: unknown;
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        notification_BulkActionRequest: {
+            action: string;
+            notificationIds: string[];
+            /** Format: date-time */
+            snoozedUntil?: string;
+        };
+        notification_BulkItemResult: {
+            item?: components["schemas"]["notification_InboxItem"];
+            message?: string;
+            /** Format: uuid */
+            notificationId?: string;
+            outcome?: string;
+        };
+        notification_BulkResult: {
+            changeVersion?: string;
+            results?: components["schemas"]["notification_BulkItemResult"][];
+            summary?: components["schemas"]["notification_Summary"];
+        };
+        notification_DeliveryLane: {
+            /** Format: double */
+            failureRatePercent?: number;
+            lane?: string;
+            /** Format: int64 */
+            oldestAgeSeconds?: number;
+            /** Format: int64 */
+            queued?: number;
+            state?: string;
+            /** Format: double */
+            throughputPerMinute?: number;
+        };
+        notification_DeliveryOperations: {
+            /** Format: int64 */
+            deadLetterQueue?: number;
+            findings?: components["schemas"]["notification_OperationalFinding"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            lanes?: components["schemas"]["notification_DeliveryLane"][];
+            message?: string;
+            partial?: boolean;
+            providers?: components["schemas"]["notification_ProviderHealth"][];
+            /** Format: int64 */
+            retryQueue?: number;
+            unavailableSources?: string[];
+            /** Format: int64 */
+            unknownOutcomes?: number;
+        };
+        notification_DeliveryProfile: {
+            channels: {
+                [key: string]: boolean;
+            };
+            digest: components["schemas"]["notification_Digest"];
+            quietHours: components["schemas"]["notification_QuietHours"];
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        notification_DeliveryProfileUpdate: {
+            channels: {
+                [key: string]: boolean;
+            };
+            digest: components["schemas"]["notification_Digest"];
+            quietHours: components["schemas"]["notification_QuietHours"];
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        notification_Detail: {
+            /** Format: date-time */
+            absoluteOccurredAt?: string;
+            item?: components["schemas"]["notification_InboxItem"];
+            reasonExplanation?: string;
+            targetState?: string;
+            targetStateReason?: string;
+            timeline?: components["schemas"]["notification_TimelineEntry"][];
+        };
+        notification_Digest: {
+            /** Format: int32 */
+            dayOfWeek?: number;
+            deliveryTime: string;
+            mode: string;
+        };
+        notification_DirectMaterializationRequest: {
+            actionRequired?: boolean;
+            actorReference?: string;
+            /** Format: date-time */
+            dueAt?: string;
+            locale?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            reasonCode?: string;
+            recipientUserIds: number[];
+            /** Format: uuid */
+            sourceEventId: string;
+            sourceEventType: string;
+            /** Format: int32 */
+            sourceSchemaVersion?: number;
+            subjectReference?: string;
+            targetReference?: string;
+            threadKey?: string;
+            typeKey: string;
+            variables: {
+                [key: string]: unknown;
+            };
+        };
+        notification_EffectiveSettings: {
+            apps?: components["schemas"]["notification_NotificationAppSetting"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            globalChannels?: {
+                [key: string]: components["schemas"]["notification_ManagedValueBoolean"];
+            };
+            message?: string;
+            partial?: boolean;
+            unavailableSources?: string[];
+        };
+        notification_InboxItem: {
+            actionable?: boolean;
+            actions?: components["schemas"]["notification_NotificationAction"][];
+            actorLabel?: string;
+            /** Format: date-time */
+            completedAt?: string;
+            /** Format: date-time */
+            dueAt?: string;
+            /** Format: date-time */
+            lastActivityAt?: string;
+            /** Format: uuid */
+            notificationId?: string;
+            preview?: string;
+            priority?: string;
+            /** Format: date-time */
+            readAt?: string;
+            reason?: components["schemas"]["notification_NotificationReason"];
+            /** Format: date-time */
+            receivedAt?: string;
+            /** Format: date-time */
+            savedAt?: string;
+            sensitive?: boolean;
+            /** Format: date-time */
+            snoozedUntil?: string;
+            source?: components["schemas"]["notification_NotificationSource"];
+            /** Format: int64 */
+            threadCount?: number;
+            threadKey?: string;
+            title?: string;
+            typeKey?: string;
+            version?: string;
+        };
+        notification_InboxPage: {
+            /** Format: int64 */
+            approximateTotal?: number;
+            changeVersion?: string;
+            hasMore?: boolean;
+            items?: components["schemas"]["notification_InboxItem"][];
+            message?: string;
+            nextCursor?: string;
+            partial?: boolean;
+            unavailableSources?: string[];
+        };
+        notification_ManagedValueBoolean: {
+            effectiveValue?: boolean;
+            exceptionAllowed?: boolean;
+            managed?: boolean;
+            ownerLabel?: string;
+            source?: string;
+        };
+        notification_ManagedValueString: {
+            effectiveValue?: string;
+            exceptionAllowed?: boolean;
+            managed?: boolean;
+            ownerLabel?: string;
+            source?: string;
+        };
+        notification_MaterializationResult: {
+            duplicate?: boolean;
+            /** Format: int64 */
+            highestChangeVersion?: number;
+            /** Format: uuid */
+            intentId?: string;
+            /** Format: uuid */
+            notificationId?: string;
+            /** Format: int32 */
+            recipientCount?: number;
+        };
+        notification_NotificationAction: {
+            actionKey?: string;
+            disabledReason?: string;
+            enabled?: boolean;
+            href?: string;
+            label?: string;
+            primary?: boolean;
+        };
+        notification_NotificationAppSetting: {
+            appKey?: string;
+            appName?: string;
+            iconKey?: string;
+            types?: components["schemas"]["notification_NotificationTypeSetting"][];
+        };
+        notification_NotificationReason: {
+            detail?: string;
+            kind?: string;
+            label?: string;
+        };
+        notification_NotificationSource: {
+            accent?: string;
+            appKey?: string;
+            appName?: string;
+            iconKey?: string;
+        };
+        notification_NotificationTypeSetting: {
+            channels?: {
+                [key: string]: components["schemas"]["notification_ManagedValueBoolean"];
+            };
+            description?: string;
+            mode?: components["schemas"]["notification_ManagedValueString"];
+            /** Format: uuid */
+            ruleId?: string;
+            /** Format: int64 */
+            ruleVersion?: number;
+            typeKey?: string;
+            typeName?: string;
+        };
+        notification_OperationalFinding: {
+            category?: string;
+            /** Format: int64 */
+            count?: number;
+            detail?: string;
+            /** Format: date-time */
+            detectedAt?: string;
+            findingId?: string;
+            href?: string;
+            ownerLabel?: string;
+            severity?: string;
+            title?: string;
+        };
+        notification_ProviderHealth: {
+            channel?: string;
+            circuitState?: string;
+            displayName?: string;
+            /** Format: date-time */
+            lastCheckedAt?: string;
+            /** Format: int64 */
+            p95LatencyMs?: number;
+            providerKey?: string;
+            state?: string;
+            /** Format: double */
+            successRatePercent?: number;
+        };
+        notification_QuietHours: {
+            allowUrgentBypass?: boolean;
+            days: number[];
+            enabled?: boolean;
+            end: string;
+            start: string;
+            timeZone: string;
+        };
+        notification_SnoozeRequest: {
+            /** Format: int64 */
+            expectedVersion?: number;
+            /** Format: date-time */
+            snoozedUntil: string;
+        };
+        notification_SseEmitter: {
+            /** Format: int64 */
+            timeout?: number | null;
+        };
+        notification_SubscriptionRule: {
+            appKey?: string;
+            channels?: {
+                [key: string]: boolean;
+            };
+            mode?: string;
+            /** Format: uuid */
+            ruleId?: string;
+            typeKey?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        notification_SubscriptionRuleUpdate: {
+            appKey: string;
+            channels: {
+                [key: string]: boolean;
+            };
+            /** Format: int64 */
+            expectedVersion?: number;
+            mode: string;
+            typeKey: string;
+        };
+        notification_Summary: {
+            /** Format: int64 */
+            actionableUnread?: number;
+            changeVersion?: string;
+            counterVersion?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            message?: string;
+            partial?: boolean;
+            /** Format: int64 */
+            totalUnread?: number;
+            unavailableSources?: string[];
+            viewCounts?: {
+                [key: string]: number;
+            };
+        };
+        notification_SyncResponse: {
+            changeVersion?: string;
+            changedIds?: string[];
+            counterVersion?: string;
+            deletedIds?: string[];
+            summary?: components["schemas"]["notification_Summary"];
+        };
+        notification_TimelineEntry: {
+            actorLabel?: string;
+            detail?: string;
+            entryId?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            title?: string;
+        };
+        notification_TypeContract: {
+            appKey?: string;
+            appName?: string;
+            channels?: string[];
+            contractHealth?: string;
+            /** Format: uuid */
+            contractId?: string;
+            description?: string;
+            displayName?: string;
+            mandatory?: boolean;
+            ownerLabel?: string;
+            priority?: string;
+            /** Format: int32 */
+            schemaVersion?: number;
+            sourceEventType?: string;
+            state?: string;
+            typeKey?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+            /** Format: int64 */
+            volume24Hours?: number;
+        };
+        notification_TypeContractPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["notification_TypeContract"][];
+            message?: string;
+            nextCursor?: string;
+            partial?: boolean;
+            unavailableSources?: string[];
+        };
+        notification_VersionRequest: {
+            /** Format: int64 */
+            expectedVersion?: number;
         };
         people_AbsenceWorkspace: {
             balances?: components["schemas"]["people_LeaveBalance"][];
@@ -18751,6 +20446,80 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    approval_formCategories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseListFormCategorySummary"];
+                };
+            };
+        };
+    };
+    approval_createFormCategory: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_CreateFormCategoryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseListFormCategorySummary"];
+                };
+            };
+        };
+    };
+    approval_updateFormCategory: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                categoryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_UpdateFormCategoryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseListFormCategorySummary"];
+                };
+            };
+        };
+    };
     approval_forms: {
         parameters: {
             query?: never;
@@ -18767,6 +20536,32 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApiResponseListFormSummary"];
+                };
+            };
+        };
+    };
+    approval_createFormDraft: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_CreateFormDraftRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseFormDetail"];
                 };
             };
         };
@@ -18821,11 +20616,63 @@ export interface operations {
             };
         };
     };
+    approval_publishForm: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_PublishFormRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseFormDetail"];
+                };
+            };
+        };
+    };
     approval_operations: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseOperationsResponse"];
+                };
+            };
+        };
+    };
+    approval_retryIntegrationDelivery: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                outboxId: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -18905,6 +20752,56 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["approval_ApiResponseListPolicySummary"];
+                };
+            };
+        };
+    };
+    approval_publishPolicy: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_PublishPolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseListPolicySummary"];
+                };
+            };
+        };
+    };
+    approval_policyVersions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseListPolicyVersionSummary"];
                 };
             };
         };
@@ -19053,6 +20950,48 @@ export interface operations {
             };
         };
     };
+    approval_formCatalog: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseListFormSummary"];
+                };
+            };
+        };
+    };
+    approval_formTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                formId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseRequestTemplate"];
+                };
+            };
+        };
+    };
     approval_delegations: {
         parameters: {
             query?: never;
@@ -19085,6 +21024,57 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["approval_CreateDelegationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseListDelegationSummary"];
+                };
+            };
+        };
+    };
+    approval_delegationCandidates: {
+        parameters: {
+            query?: {
+                query?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseListDelegationCandidate"];
+                };
+            };
+        };
+    };
+    approval_revokeDelegation: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                delegationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_VersionedActionRequest"];
             };
         };
         responses: {
@@ -21459,6 +23449,822 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["auth_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    messaging_adminOverview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseAdminOverview"];
+                };
+            };
+        };
+    };
+    messaging_updatePolicy: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_TenantPolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseTenantPolicy"];
+                };
+            };
+        };
+    };
+    messaging_conversations: {
+        parameters: {
+            query?: {
+                scope?: string;
+                q?: string;
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationPage"];
+                };
+            };
+        };
+    };
+    messaging_conversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                };
+            };
+        };
+    };
+    messaging_sendMessage: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_SendMessageRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                };
+            };
+        };
+    };
+    messaging_addReaction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+                messageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_ReactionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                };
+            };
+        };
+    };
+    messaging_removeReaction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+                messageId: string;
+                emoji: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                };
+            };
+        };
+    };
+    messaging_markRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_ReadCursorRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                };
+            };
+        };
+    };
+    messaging_directConversation: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_DirectConversationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                };
+            };
+        };
+    };
+    messaging_home: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseHomeResponse"];
+                };
+            };
+        };
+    };
+    messaging_people: {
+        parameters: {
+            query?: {
+                q?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseListPersonSummary"];
+                };
+            };
+        };
+    };
+    notification_operations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseDeliveryOperations"];
+                };
+            };
+        };
+    };
+    notification_overview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseAdminOverview"];
+                };
+            };
+        };
+    };
+    notification_types: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                limit?: number;
+                query?: string;
+                state?: string;
+                appKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseTypeContractPage"];
+                };
+            };
+        };
+    };
+    notification_inbox: {
+        parameters: {
+            query?: {
+                view?: string;
+                limit?: number;
+                cursor?: string;
+                query?: string;
+                appKey?: string;
+                priority?: string;
+                readState?: string;
+                reason?: string;
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseInboxPage"];
+                };
+            };
+        };
+    };
+    notification_bulkActions: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_BulkActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseBulkResult"];
+                };
+            };
+        };
+    };
+    notification_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                notificationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseDetail"];
+                };
+            };
+        };
+    };
+    notification_complete: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                notificationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseActionResult"];
+                };
+            };
+        };
+    };
+    notification_read: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                notificationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseActionResult"];
+                };
+            };
+        };
+    };
+    notification_restore: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                notificationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseActionResult"];
+                };
+            };
+        };
+    };
+    notification_save: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                notificationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseActionResult"];
+                };
+            };
+        };
+    };
+    notification_snooze: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                notificationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_SnoozeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseActionResult"];
+                };
+            };
+        };
+    };
+    notification_unread: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                notificationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseActionResult"];
+                };
+            };
+        };
+    };
+    notification_unsave: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                notificationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseActionResult"];
+                };
+            };
+        };
+    };
+    notification_deliveryProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseDeliveryProfile"];
+                };
+            };
+        };
+    };
+    notification_updateDeliveryProfile: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_DeliveryProfileUpdate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseDeliveryProfile"];
+                };
+            };
+        };
+    };
+    notification_effectiveSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseEffectiveSettings"];
+                };
+            };
+        };
+    };
+    notification_subscriptionRules: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseListSubscriptionRule"];
+                };
+            };
+        };
+    };
+    notification_putSubscriptionRule: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                ruleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["notification_SubscriptionRuleUpdate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseSubscriptionRule"];
+                };
+            };
+        };
+    };
+    notification_deleteSubscriptionRule: {
+        parameters: {
+            query?: {
+                expectedVersion?: number;
+                version?: number;
+            };
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                ruleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    notification_stream: {
+        parameters: {
+            query?: {
+                after?: string;
+            };
+            header?: {
+                "Last-Event-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": components["schemas"]["notification_SseEmitter"];
+                };
+            };
+        };
+    };
+    notification_summary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseSummary"];
+                };
+            };
+        };
+    };
+    notification_sync: {
+        parameters: {
+            query?: {
+                after?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["notification_ApiResponseSyncResponse"];
                 };
             };
         };

@@ -1,0 +1,217 @@
+{
+  "shell": {
+    "tenantFallback": "Workspace",
+    "backToHome": "Back to workspace",
+    "openNavigation": "Open Messenger navigation",
+    "messaging": {
+      "name": "Messenger",
+      "context": "Conversations and collaboration",
+      "navigationLabel": "Messenger menu"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "messaging": {
+        "start": "Start",
+        "conversations": "Conversations",
+        "work": "Work",
+        "admin": "Administration"
+      }
+    },
+    "items": {
+      "messaging": {
+        "home": { "label": "Home" },
+        "inbox": { "label": "Inbox" },
+        "spaces": { "label": "Space conversations" },
+        "direct": { "label": "DMs" },
+        "people": { "label": "Find people" },
+        "later": { "label": "Later" },
+        "admin-overview": { "label": "Operations" },
+        "admin-policy": { "label": "Policy" }
+      }
+    }
+  },
+  "actions": {
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "newDirect": "New DM",
+    "focusSearch": "Search",
+    "back": "Back",
+    "save": "Save",
+    "saving": "Saving"
+  },
+  "home": {
+    "eyebrow": "DWP Messaging",
+    "greetingMorning": "Good morning",
+    "greetingAfternoon": "Hello",
+    "greetingEvening": "Good evening",
+    "member": "member",
+    "title": "{{name}}, your important conversations are ready",
+    "description": "Space, direct messages, announcements, and follow-ups are organized as one work signal.",
+    "signalSummary": "{{unread}} unread, {{mentions}} mentions, {{urgent}} urgent conversations",
+    "loadError": "Messenger home could not be loaded.",
+    "metrics": {
+      "unread": "Unread",
+      "unreadDetail": "Conversations waiting in your flow",
+      "mentions": "Mentions",
+      "mentionsDetail": "Messages asking for you directly",
+      "spaces": "Spaces",
+      "spacesDetail": "Connected to your Spaces",
+      "direct": "DMs",
+      "directDetail": "Direct and small-group conversations",
+      "saved": "Later",
+      "savedDetail": "Conversations to revisit"
+    },
+    "priority": {
+      "title": "Priority conversations",
+      "description": "Sorted by mentions, urgency, and recent activity.",
+      "open": "View all",
+      "emptyTitle": "No conversations need attention",
+      "emptyDescription": "New messages will appear here first."
+    },
+    "spaces": {
+      "title": "Active Spaces",
+      "description": "Conversation status for Spaces you belong to."
+    },
+    "people": {
+      "title": "People to connect with",
+      "description": "Recommended from organization and Space context.",
+      "open": "Open chat"
+    }
+  },
+  "type": {
+    "DIRECT": "DM",
+    "GROUP": "Group",
+    "CHANNEL": "Channel",
+    "ANNOUNCEMENT": "Announcement",
+    "INCIDENT": "Incident",
+    "MEETING": "Meeting"
+  },
+  "conversation": {
+    "untitled": "Untitled conversation",
+    "members": "{{count}} members",
+    "sendError": "Message could not be sent.",
+    "reactionError": "Reaction could not be saved.",
+    "selectTitle": "Select a conversation",
+    "selectDescription": "Choose a conversation on the left to review messages, members, and policy context.",
+    "loadError": "Conversation could not be loaded.",
+    "noMessagesTitle": "No messages yet",
+    "noMessagesDescription": "Send the first message to start the work context.",
+    "composerPlaceholder": "Write a message. Shift+Enter for a new line",
+    "realtimeRest": "Realtime transport will expand to WebSocket next. For now, the thread refreshes after send.",
+    "send": "Send",
+    "me": "Me",
+    "deleted": "This message was deleted"
+  },
+  "message": {
+    "me": "Me",
+    "deleted": "This message was deleted"
+  },
+  "classification": {
+    "PUBLIC": "Public",
+    "INTERNAL": "Internal",
+    "CONFIDENTIAL": "Confidential",
+    "RESTRICTED": "Restricted"
+  },
+  "workspace": {
+    "eyebrow": "Conversation workspace",
+    "search": "Search people, Spaces, and conversations",
+    "loadError": "Conversation list could not be loaded.",
+    "emptyTitle": "No matching conversations",
+    "emptyDescription": "Try another search or start a new DM.",
+    "ALL": {
+      "title": "Inbox",
+      "description": "Handle DMs, Spaces, and announcements in one place."
+    },
+    "FAVORITES": {
+      "title": "Later",
+      "description": "Pinned or saved conversations to revisit."
+    },
+    "SPACES": {
+      "title": "Space conversations",
+      "description": "Channels connected to Spaces you belong to."
+    },
+    "DIRECT": {
+      "title": "DMs",
+      "description": "Start direct and small-group conversations with people."
+    },
+    "CHANNELS": {
+      "title": "Channels",
+      "description": "Browse team and operations channels."
+    }
+  },
+  "context": {
+    "members": "Members",
+    "governance": "Governance",
+    "spaceLinked": "Linked to {{space}} Space.",
+    "membershipBound": "Access follows Space membership.",
+    "empty": "Select a conversation to see members and policy context."
+  },
+  "people": {
+    "eyebrow": "Organization directory",
+    "title": "Find people and start a conversation",
+    "description": "Start secure DMs from the SKAX people directory and presence snapshot.",
+    "search": "Search name, email, or title",
+    "openError": "DM could not be opened.",
+    "loadError": "People could not be loaded.",
+    "message": "Message",
+    "emptyTitle": "No people found",
+    "emptyDescription": "Try a shorter query or another name.",
+    "directoryNote": "People data is synchronized from the HR directory snapshot."
+  },
+  "admin": {
+    "eyebrow": "Messenger administration",
+    "loadError": "Administration data could not be loaded.",
+    "overview": {
+      "title": "Conversation operations",
+      "description": "Review tenant conversations, retention, restricted data, and Space-linked activity."
+    },
+    "metrics": {
+      "conversations": "Active conversations",
+      "conversationsDetail": "All policy-scoped conversations",
+      "spaces": "Space-linked",
+      "spacesDetail": "Membership-governed conversations",
+      "members": "Active members",
+      "membersDetail": "Latest people snapshot",
+      "messages": "Retained messages",
+      "messagesDetail": "Covered by retention policy",
+      "restricted": "Restricted",
+      "restrictedDetail": "Sensitive conversations"
+    },
+    "policy": {
+      "title": "Tenant messaging policy",
+      "description": "Configure DMs, Space conversations, edit/delete rules, AI assistance, and retention.",
+      "saved": "Messaging policy saved.",
+      "saveError": "Messaging policy could not be saved.",
+      "noBypass": "Policy changes are audited and cannot bypass Space membership.",
+      "fields": {
+        "directMessagesEnabled": {
+          "label": "Allow DMs",
+          "description": "Allow one-to-one and small direct conversations."
+        },
+        "spaceMessagingEnabled": {
+          "label": "Allow Space conversations",
+          "description": "Allow channels connected to Space membership."
+        },
+        "allowMessageEdit": {
+          "label": "Allow message editing",
+          "description": "Authors can edit messages within policy boundaries."
+        },
+        "allowMessageDelete": {
+          "label": "Allow message deletion",
+          "description": "User deletion is marked while retained copies follow policy."
+        },
+        "aiAssistanceEnabled": {
+          "label": "Enable AI assistance",
+          "description": "Enable extension points for summary, reply draft, and urgency detection."
+        },
+        "retentionDays": {
+          "label": "Retention days"
+        },
+        "maximumAttachmentMb": {
+          "label": "Maximum attachment size (MB)"
+        }
+      }
+    }
+  }
+}

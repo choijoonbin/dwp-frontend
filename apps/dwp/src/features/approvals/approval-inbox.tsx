@@ -1,10 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, Check, Clock3, MessageSquareText, ShieldCheck, X } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import {
+  AlertTriangle,
+  Check,
+  Clock3,
+  Hand,
+  MessageSquareText,
+  ShieldCheck,
+  X,
+} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionButton, FormDialog, FormField } from '@dwp-frontend/design-system';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
+  claimApprovalTask,
   decideApprovalTask,
   getApprovalTask,
   getApprovalTasks,
@@ -32,6 +42,8 @@ export function ApprovalInbox() {
   const display = useDisplayDictionary();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const requestedTaskId = searchParams.get('task') ?? undefined;
   const [selectedId, setSelectedId] = useState<string>();
   const [decision, setDecision] = useState<Decision>();
   const [comment, setComment] = useState('');
@@ -41,8 +53,10 @@ export function ApprovalInbox() {
     staleTime: 20_000,
   });
   useEffect(() => {
-    if (!selectedId && tasks.data?.[0]) setSelectedId(tasks.data[0].taskId);
-  }, [selectedId, tasks.data]);
+    if (selectedId || !tasks.data?.length) return;
+    const requested = tasks.data.find((task) => task.taskId === requestedTaskId);
+    setSelectedId(requested?.taskId ?? tasks.data[0].taskId);
+  }, [requestedTaskId, selectedId, tasks.data]);
   const detail = useQuery({
     queryKey: ['approvals', 'task', selectedId],
     queryFn: () => getApprovalTask(selectedId!),
@@ -64,6 +78,19 @@ export function ApprovalInbox() {
       toast.success(t('inbox.decisionSaved'));
     },
     onError: () => toast.error(t('inbox.decisionError')),
+  });
+  const claim = useMutation({
+    mutationFn: (input: { taskId: string; expectedVersion: number }) =>
+      claimApprovalTask(input.taskId, input.expectedVersion),
+    onSuccess: async (claimed) => {
+      queryClient.setQueryData(['approvals', 'task', claimed.task.taskId], claimed);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['approvals', 'tasks'] }),
+        queryClient.invalidateQueries({ queryKey: ['approvals', 'home'] }),
+      ]);
+      toast.success(t('inbox.claimed'));
+    },
+    onError: () => toast.error(t('inbox.claimError')),
   });
   const selected = detail.data;
 
@@ -161,7 +188,9 @@ export function ApprovalInbox() {
                     <Chip
                       size="small"
                       variant="outlined"
-                      label={selected.task.dataClassification}
+                      label={t(`classification.${selected.task.dataClassification}`, {
+                        defaultValue: selected.task.dataClassification,
+                      })}
                     />
                   </Stack>
                   <Typography component="h2" variant="h5">
@@ -263,7 +292,7 @@ export function ApprovalInbox() {
                         }}
                       >
                         <Typography component="dt" variant="caption" color="text.secondary">
-                          {key}
+                          {t(`requestFields.${key}`, { defaultValue: key })}
                         </Typography>
                         <Typography component="dd" variant="body2" sx={{ m: 0 }}>
                           {String(value)}
@@ -289,7 +318,9 @@ export function ApprovalInbox() {
                       />
                       <Box>
                         <Typography variant="body2" fontWeight={700}>
-                          {display('auditActions', event.eventType)}
+                          {t(`events.${event.eventType}`, {
+                            defaultValue: display('auditActions', event.eventType),
+                          })}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
                           {event.message || event.actorType} ·{' '}
@@ -319,6 +350,21 @@ export function ApprovalInbox() {
                 backdropFilter: 'blur(14px)',
               }}
             >
+              {selected.canClaim && (
+                <ActionButton
+                  intent="secondary"
+                  startIcon={<Hand size={17} />}
+                  loading={claim.isPending}
+                  onClick={() =>
+                    claim.mutate({
+                      taskId: selected.task.taskId,
+                      expectedVersion: selected.task.version,
+                    })
+                  }
+                >
+                  {t('actions.claim')}
+                </ActionButton>
+              )}
               <ActionButton
                 intent="secondary"
                 startIcon={<MessageSquareText size={17} />}

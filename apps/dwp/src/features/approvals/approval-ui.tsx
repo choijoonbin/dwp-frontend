@@ -113,6 +113,7 @@ export function StatusChip({
 }: {
   status: ApprovalTaskStatus | ApprovalRequestStatus | string;
 }) {
+  const { t } = useTranslation('approvals');
   const normalized = status.toUpperCase();
   const color = ['APPROVED', 'ACTIVE', 'PUBLISHED', 'HEALTHY'].includes(normalized)
     ? 'success'
@@ -122,13 +123,26 @@ export function StatusChip({
         ? 'warning'
         : 'default';
   return (
-    <Chip size="small" variant="outlined" color={color} label={normalized.split('_').join(' ')} />
+    <Chip
+      size="small"
+      variant="outlined"
+      color={color}
+      label={t(`status.${normalized}`, { defaultValue: normalized.split('_').join(' ') })}
+    />
   );
 }
 
 export function PriorityChip({ priority }: { priority: ApprovalPriority }) {
+  const { t } = useTranslation('approvals');
   const color = priority === 'URGENT' ? 'error' : priority === 'HIGH' ? 'warning' : 'default';
-  return <Chip size="small" variant="outlined" color={color} label={priority} />;
+  return (
+    <Chip
+      size="small"
+      variant="outlined"
+      color={color}
+      label={t(`priority.${priority}`, { defaultValue: priority })}
+    />
+  );
 }
 
 export function ApprovalLinkRow({

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyRound, ShieldCheck, SlidersHorizontal } from 'lucide-react';
+import { CheckCircle2, History, KeyRound, ShieldCheck, SlidersHorizontal } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionButton,
@@ -9,7 +9,15 @@ import {
   FormField,
   SelectField,
 } from '@dwp-frontend/design-system';
-import { getApprovalPolicies, updateApprovalPolicy, useToast } from '@dwp-frontend/shared-utils';
+import {
+  getApprovalPolicies,
+  getApprovalPolicyVersions,
+  publishApprovalPolicy,
+  type ApprovalPolicy,
+  updateApprovalPolicy,
+  useToast,
+} from '@dwp-frontend/shared-utils';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -37,6 +45,125 @@ const LIFECYCLE_OPTIONS = ['ACTIVE', 'DISABLED', 'RETIRED'].map((value) => ({
   label: value,
 }));
 
+function PolicyChangeComparison({ policy }: { policy: ApprovalPolicy }) {
+  const { t } = useTranslation('approvals');
+  const pendingRule = policy.pendingRule ?? {};
+  const ruleKeys = Array.from(new Set([...Object.keys(policy.rule), ...Object.keys(pendingRule)]));
+  const rows = [
+    {
+      key: 'enforcement',
+      label: t('admin.studio.enforcement'),
+      current: policy.enforcementMode,
+      proposed: policy.pendingEnforcementMode ?? policy.enforcementMode,
+    },
+    {
+      key: 'severity',
+      label: t('admin.studio.severity'),
+      current: policy.severity,
+      proposed: policy.pendingSeverity ?? policy.severity,
+    },
+    {
+      key: 'lifecycle',
+      label: t('admin.studio.lifecycle'),
+      current: policy.lifecycleState,
+      proposed: policy.pendingLifecycleState ?? policy.lifecycleState,
+    },
+    ...ruleKeys.map((key) => ({
+      key: `rule-${key}`,
+      label: `${t('admin.studio.ruleValue')} · ${key}`,
+      current: policy.rule[key],
+      proposed: Object.hasOwn(pendingRule, key) ? pendingRule[key] : policy.rule[key],
+    })),
+  ];
+  const renderValue = (value: unknown) =>
+    typeof value === 'object' ? JSON.stringify(value) : String(value ?? '—');
+
+  return (
+    <Box
+      role="table"
+      aria-label={t('admin.studio.changeComparison')}
+      sx={{ borderTop: 1, borderColor: 'divider' }}
+    >
+      <Box
+        role="row"
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(150px,0.8fr) minmax(0,1fr) minmax(0,1fr)',
+          gap: 1.5,
+          px: 2,
+          py: 1,
+          bgcolor: 'action.hover',
+          borderBottom: 1,
+          borderColor: 'divider',
+        }}
+      >
+        <Typography role="columnheader" variant="caption" fontWeight={740}>
+          {t('admin.studio.changeField')}
+        </Typography>
+        <Typography role="columnheader" variant="caption" fontWeight={740}>
+          {t('admin.studio.currentValue')}
+        </Typography>
+        <Typography role="columnheader" variant="caption" fontWeight={740}>
+          {t('admin.studio.proposedValue')}
+        </Typography>
+      </Box>
+      {rows.map((row) => {
+        const changed = JSON.stringify(row.current) !== JSON.stringify(row.proposed);
+        return (
+          <Box
+            role="row"
+            key={row.key}
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'minmax(120px,0.8fr) minmax(0,1fr) minmax(0,1fr)',
+                sm: 'minmax(150px,0.8fr) minmax(0,1fr) minmax(0,1fr)',
+              },
+              gap: 1.5,
+              minHeight: 52,
+              px: 2,
+              py: 1.1,
+              alignItems: 'center',
+              borderBottom: 1,
+              borderColor: 'divider',
+              bgcolor: changed ? alpha(approvalTone.amber, 0.06) : 'transparent',
+            }}
+          >
+            <Typography role="cell" variant="body2" fontWeight={680}>
+              {row.label}
+            </Typography>
+            <Typography
+              role="cell"
+              variant="body2"
+              color="text.secondary"
+              sx={{ wordBreak: 'break-word' }}
+            >
+              {renderValue(row.current)}
+            </Typography>
+            <Stack role="cell" direction="row" gap={0.75} alignItems="center" minWidth={0}>
+              <Typography
+                variant="body2"
+                fontWeight={changed ? 720 : 400}
+                sx={{ wordBreak: 'break-word' }}
+              >
+                {renderValue(row.proposed)}
+              </Typography>
+              {changed && (
+                <Chip
+                  size="small"
+                  color="warning"
+                  variant="outlined"
+                  label={t('admin.studio.changed')}
+                />
+              )}
+            </Stack>
+          </Box>
+        );
+      })}
+    </Box>
+  );
+}
+
 export function ApprovalPolicyStudio() {
   const { t, i18n } = useTranslation('approvals');
   const experience = useApprovalExperience();
@@ -48,15 +175,36 @@ export function ApprovalPolicyStudio() {
   const [severity, setSeverity] = useState('HIGH');
   const [state, setState] = useState('ACTIVE');
   const [rules, setRules] = useState<RuleEntry[]>([]);
+  const [changeReason, setChangeReason] = useState('');
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [reviewComment, setReviewComment] = useState('');
   const policies = useQuery({
     queryKey: ['approvals', 'admin', 'policies'],
     queryFn: getApprovalPolicies,
+    staleTime: 30_000,
+  });
+  const versions = useQuery({
+    queryKey: ['approvals', 'admin', 'policies', selectedId, 'versions'],
+    queryFn: () => getApprovalPolicyVersions(selectedId!),
+    enabled: Boolean(selectedId),
     staleTime: 30_000,
   });
   const selected = useMemo(
     () => policies.data?.find((policy) => policy.policyId === selectedId) ?? null,
     [policies.data, selectedId]
   );
+  const publishedVersion = versions.data?.[0]?.versionNumber ?? null;
+  const enumLabel = (group: 'policyTypes' | 'enforcementModes' | 'severities', value: string) =>
+    t(`admin.studio.${group}.${value}`, { defaultValue: value });
+  const evidenceText = (value: string) => {
+    if (value === 'Initial governed policy baseline') {
+      return t('admin.studio.initialPolicyEvidence.change');
+    }
+    if (value === 'Baseline captured during policy governance upgrade') {
+      return t('admin.studio.initialPolicyEvidence.review');
+    }
+    return value;
+  };
   useEffect(() => {
     if (!selectedId && policies.data?.length) setSelectedId(policies.data[0].policyId);
   }, [policies.data, selectedId]);
@@ -68,12 +216,31 @@ export function ApprovalPolicyStudio() {
         severity,
         lifecycleState: state,
         rule: Object.fromEntries(rules.map((entry) => [entry.key, parseRuleValue(entry.value)])),
+        changeReason,
         expectedVersion: selected!.version,
       }),
     onSuccess: (result) => {
       queryClient.setQueryData(['approvals', 'admin', 'policies'], result);
       setEditorOpen(false);
-      toast.success(t('admin.studio.policySaved'));
+      setChangeReason('');
+      toast.success(t('admin.studio.policySubmitted'));
+    },
+    onError: () => toast.error(t('admin.studio.saveConflict')),
+  });
+  const publish = useMutation({
+    mutationFn: () =>
+      publishApprovalPolicy(selected!.policyId, {
+        expectedVersion: selected!.version,
+        reviewComment,
+      }),
+    onSuccess: (result) => {
+      queryClient.setQueryData(['approvals', 'admin', 'policies'], result);
+      queryClient.invalidateQueries({
+        queryKey: ['approvals', 'admin', 'policies', selected!.policyId, 'versions'],
+      });
+      setReviewOpen(false);
+      setReviewComment('');
+      toast.success(t('admin.studio.policyPublished'));
     },
     onError: () => toast.error(t('admin.studio.saveConflict')),
   });
@@ -83,6 +250,7 @@ export function ApprovalPolicyStudio() {
     setSeverity(selected.severity);
     setState(selected.lifecycleState);
     setRules(Object.entries(selected.rule).map(([key, value]) => ({ key, value: String(value) })));
+    setChangeReason('');
     setEditorOpen(true);
   };
 
@@ -135,7 +303,7 @@ export function ApprovalPolicyStudio() {
                       {i18n.resolvedLanguage?.startsWith('ko') ? policy.nameKo : policy.nameEn}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" noWrap>
-                      {policy.policyType}
+                      {enumLabel('policyTypes', policy.policyType)}
                     </Typography>
                   </Box>
                   <StatusChip status={policy.lifecycleState} />
@@ -165,7 +333,7 @@ export function ApprovalPolicyStudio() {
               <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={2}>
                 <Box minWidth={0}>
                   <Typography variant="overline" color="primary.main">
-                    {selected.policyType}
+                    {enumLabel('policyTypes', selected.policyType)}
                   </Typography>
                   <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
                     <Typography component="h2" variant="h5">
@@ -177,15 +345,26 @@ export function ApprovalPolicyStudio() {
                     {selected.policyKey}
                   </Typography>
                 </Box>
-                {experience.canManagePolicies && (
-                  <ActionButton
-                    intent="secondary"
-                    startIcon={<SlidersHorizontal size={17} />}
-                    onClick={openEditor}
-                  >
-                    {t('admin.studio.configurePolicy')}
-                  </ActionButton>
-                )}
+                <Stack direction="row" gap={1} flexWrap="wrap">
+                  {experience.canEditPolicies && (
+                    <ActionButton
+                      intent="secondary"
+                      startIcon={<SlidersHorizontal size={17} />}
+                      onClick={openEditor}
+                    >
+                      {t('admin.studio.configurePolicy')}
+                    </ActionButton>
+                  )}
+                  {selected.pendingReview && experience.canPublishPolicies && (
+                    <ActionButton
+                      intent="primary"
+                      startIcon={<CheckCircle2 size={17} />}
+                      onClick={() => setReviewOpen(true)}
+                    >
+                      {t('admin.studio.reviewAndPublish')}
+                    </ActionButton>
+                  )}
+                </Stack>
               </Stack>
             </Box>
 
@@ -199,9 +378,17 @@ export function ApprovalPolicyStudio() {
               }}
             >
               {[
-                [t('admin.studio.enforcement'), selected.enforcementMode],
-                [t('admin.studio.severity'), selected.severity],
-                [t('admin.studio.policyVersion'), `v${selected.version}`],
+                [
+                  t('admin.studio.enforcement'),
+                  enumLabel('enforcementModes', selected.enforcementMode),
+                ],
+                [t('admin.studio.severity'), enumLabel('severities', selected.severity)],
+                [
+                  t('admin.studio.policyVersion'),
+                  publishedVersion === null
+                    ? t('admin.studio.unpublishedVersion')
+                    : `v${publishedVersion}`,
+                ],
               ].map(([label, value]) => (
                 <Box
                   key={String(label)}
@@ -243,6 +430,84 @@ export function ApprovalPolicyStudio() {
                 ))}
               </Box>
             </ApprovalSurface>
+            {selected.pendingReview && (
+              <ApprovalSurface
+                title={t('admin.studio.pendingTitle')}
+                meta={t('admin.studio.pendingMeta')}
+              >
+                <Stack gap={1.25} sx={{ p: 2 }}>
+                  <Stack direction="row" gap={1} flexWrap="wrap">
+                    <Chip size="small" color="warning" label={selected.pendingEnforcementMode} />
+                    <Chip size="small" variant="outlined" label={selected.pendingSeverity} />
+                    <Chip size="small" variant="outlined" label={selected.pendingLifecycleState} />
+                  </Stack>
+                  <Typography variant="body2">{selected.pendingChangeReason}</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('admin.studio.pendingMaker', { userId: selected.pendingBy })}
+                  </Typography>
+                </Stack>
+                <PolicyChangeComparison policy={selected} />
+              </ApprovalSurface>
+            )}
+            <ApprovalSurface
+              title={t('admin.studio.historyTitle')}
+              meta={t('admin.studio.historyMeta')}
+              action={<History size={17} />}
+            >
+              {(versions.data ?? []).length === 0 ? (
+                <Typography variant="body2" color="text.secondary" sx={{ px: 2, py: 3 }}>
+                  {t('admin.studio.historyEmpty')}
+                </Typography>
+              ) : (
+                <Stack component="ol" sx={{ m: 0, p: 0, listStyle: 'none' }}>
+                  {(versions.data ?? []).slice(0, 8).map((version) => (
+                    <Stack
+                      component="li"
+                      key={version.policyVersionId}
+                      direction={{ xs: 'column', sm: 'row' }}
+                      alignItems={{ sm: 'center' }}
+                      gap={1.25}
+                      sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}
+                    >
+                      <Chip
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                        label={`v${version.versionNumber}`}
+                      />
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="body2" fontWeight={720}>
+                          {evidenceText(version.changeReason)}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {evidenceText(version.reviewComment)}
+                        </Typography>
+                      </Box>
+                      <Stack alignItems={{ sm: 'flex-end' }} gap={0.35}>
+                        <Stack direction="row" gap={0.75}>
+                          <StatusChip status={version.lifecycleState} />
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={enumLabel('enforcementModes', version.enforcementMode)}
+                          />
+                        </Stack>
+                        <Typography variant="caption" color="text.secondary">
+                          {formatDate(
+                            version.publishedAt,
+                            {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            },
+                            resolveSupportedLocale(i18n.resolvedLanguage, i18n.language)
+                          )}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                  ))}
+                </Stack>
+              )}
+            </ApprovalSurface>
             <Alert
               severity={selected.enforcementMode === 'BLOCK' ? 'warning' : 'info'}
               icon={<KeyRound size={18} />}
@@ -260,6 +525,7 @@ export function ApprovalPolicyStudio() {
         submitLabel={t('actions.save')}
         submittingLabel={t('actions.save')}
         busy={save.isPending}
+        submitDisabled={changeReason.trim().length < 10}
         onClose={() => setEditorOpen(false)}
         onSubmit={() => save.mutate()}
         maxWidth="sm"
@@ -316,6 +582,43 @@ export function ApprovalPolicyStudio() {
               />
             </Box>
           ))}
+          <FormField
+            label={t('admin.studio.changeReason')}
+            value={changeReason}
+            onChange={(event) => setChangeReason(event.target.value)}
+            multiline
+            minRows={3}
+            required
+            supportingText={t('admin.studio.changeReasonHelp')}
+          />
+        </Stack>
+      </FormDialog>
+
+      <FormDialog
+        open={reviewOpen}
+        title={t('admin.studio.reviewAndPublish')}
+        cancelLabel={t('actions.cancel')}
+        submitLabel={t('admin.studio.publishPolicy')}
+        submittingLabel={t('admin.studio.publishPolicy')}
+        busy={publish.isPending}
+        submitDisabled={reviewComment.trim().length < 10}
+        onClose={() => setReviewOpen(false)}
+        onSubmit={() => publish.mutate()}
+        maxWidth="md"
+      >
+        <Stack gap={2}>
+          <Alert severity="warning">{t('admin.studio.makerCheckerNotice')}</Alert>
+          <Typography variant="body2">{selected?.pendingChangeReason}</Typography>
+          {selected && <PolicyChangeComparison policy={selected} />}
+          <FormField
+            label={t('admin.studio.reviewComment')}
+            value={reviewComment}
+            onChange={(event) => setReviewComment(event.target.value)}
+            multiline
+            minRows={3}
+            required
+            supportingText={t('admin.studio.reviewCommentHelp')}
+          />
         </Stack>
       </FormDialog>
     </>

@@ -2,30 +2,15 @@ import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 
-export type WorkplaceSiteType =
-  | 'HEADQUARTERS'
-  | 'SHARED_OFFICE'
-  | 'SATELLITE'
-  | 'CLIENT_SITE';
+export type WorkplaceSiteType = 'HEADQUARTERS' | 'SHARED_OFFICE' | 'SATELLITE' | 'CLIENT_SITE';
 export type WorkplaceSiteState = 'ACTIVE' | 'MAINTENANCE' | 'CLOSED';
 export type WorkplaceFloorState = 'DRAFT' | 'ACTIVE' | 'CLOSED';
 export type WorkplaceResourceType =
-  | 'ROOM'
-  | 'DESK'
-  | 'LOCKER'
-  | 'PARKING'
-  | 'FOCUS_POD'
-  | 'PHONE_BOOTH'
-  | 'EQUIPMENT';
+  'ROOM' | 'DESK' | 'LOCKER' | 'PARKING' | 'FOCUS_POD' | 'PHONE_BOOTH' | 'EQUIPMENT';
 export type WorkplaceBookingMode = 'RESERVABLE' | 'DROP_IN' | 'ASSIGNED' | 'UNAVAILABLE';
 export type WorkplaceResourceState = 'AVAILABLE' | 'MAINTENANCE' | 'RETIRED';
 export type WorkplaceBookingStatus =
-  | 'RESERVED'
-  | 'CHECKED_IN'
-  | 'COMPLETED'
-  | 'NO_SHOW'
-  | 'RELEASED'
-  | 'CANCELLED';
+  'RESERVED' | 'CHECKED_IN' | 'COMPLETED' | 'NO_SHOW' | 'RELEASED' | 'CANCELLED';
 
 export type WorkplaceSite = {
   siteId: string;
@@ -173,13 +158,7 @@ export type WorkplaceSiteInput = Omit<
 > & { version: number | null };
 export type WorkplaceFloorInput = Omit<
   WorkplaceFloor,
-  | 'floorId'
-  | 'siteId'
-  | 'siteName'
-  | 'name'
-  | 'resourceCount'
-  | 'backgroundAssetPath'
-  | 'version'
+  'floorId' | 'siteId' | 'siteName' | 'name' | 'resourceCount' | 'backgroundAssetPath' | 'version'
 > & { version: number | null };
 export type WorkplaceResourceInput = Omit<
   WorkplaceResource,
@@ -218,10 +197,7 @@ export async function getWorkplaceExplore(
   return response.data.data;
 }
 
-export async function getWorkplaceBookings(
-  from: string,
-  to: string
-): Promise<WorkplaceBooking[]> {
+export async function getWorkplaceBookings(from: string, to: string): Promise<WorkplaceBooking[]> {
   const response = await axiosInstance.get<ApiResponse<WorkplaceBooking[]>>(
     `/api/platform/v1/workplace/bookings?${rangeQuery(from, to)}`
   );
@@ -358,9 +334,7 @@ export async function getWorkplacePolicy(): Promise<WorkplacePolicy> {
   return response.data.data;
 }
 
-export async function updateWorkplacePolicy(
-  input: WorkplacePolicy
-): Promise<WorkplacePolicy> {
+export async function updateWorkplacePolicy(input: WorkplacePolicy): Promise<WorkplacePolicy> {
   const response = await axiosInstance.put<ApiResponse<WorkplacePolicy>, WorkplacePolicy>(
     '/api/platform/v1/admin/workplace/policy',
     input

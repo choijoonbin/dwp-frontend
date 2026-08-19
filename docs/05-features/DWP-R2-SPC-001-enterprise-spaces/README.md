@@ -14,11 +14,11 @@ Space Owner 위임, 중앙 정책·감사·수명주기를 함께 제공한다.
 
 ## 제품 Surface
 
-| Surface               | 대상                  | 책임                                        |
-| --------------------- | --------------------- | ------------------------------------------- |
-| Space App             | 모든 Entitled 구성원  | My Spaces, Discover, 요청, Space 업무       |
+| Surface               | 대상                  | 책임                                         |
+| --------------------- | --------------------- | -------------------------------------------- |
+| Space App             | 모든 Entitled 구성원  | My Spaces, Discover, 요청, Space 업무        |
 | Space Owner Studio    | Space Owner·Moderator | Owner는 설정·멤버십, Moderator는 콘텐츠 조정 |
-| Tenant Control Center | 위임된 Tenant 관리자  | 정책, Template, 승인, 예외, 감사, 전체 상태 |
+| Tenant Control Center | 위임된 Tenant 관리자  | 정책, Template, 승인, 예외, 감사, 전체 상태  |
 
 Provider Control Plane은 상품 Plan, 기본 Template Pack, Feature Flag, Service Health만
 관리하며 Tenant Content를 기본적으로 열람하지 않는다.

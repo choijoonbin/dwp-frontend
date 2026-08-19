@@ -33,13 +33,7 @@ export type HcmAudience =
   | 'pay-admin'
   | 'talent-admin';
 export type HcmSection =
-  | 'start'
-  | 'personal'
-  | 'organization'
-  | 'team'
-  | 'operate'
-  | 'design'
-  | 'foundation';
+  'start' | 'personal' | 'organization' | 'team' | 'operate' | 'design' | 'foundation';
 export type HcmView =
   | 'home'
   | 'me'

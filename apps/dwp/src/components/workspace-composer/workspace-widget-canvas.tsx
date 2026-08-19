@@ -40,6 +40,17 @@ import {
   workspaceWidgetSpacing,
 } from './workspace-widget-layout-policy';
 import { WorkspaceWidgetFootprintPicker } from './workspace-widget-footprint-picker';
+import {
+  WORKSPACE_WIDGET_READY_PULSE_DURATION_MS,
+  WORKSPACE_WIDGET_JIGGLE_DURATION_MS,
+  WORKSPACE_WIDGET_SETTLE_DURATION_MS,
+  WORKSPACE_WIDGET_SETTLE_FALLBACK_EASING,
+  WORKSPACE_WIDGET_SETTLE_SPRING_EASING,
+  workspaceWidgetJiggle,
+  workspaceWidgetReadyPulse,
+  workspaceWidgetSettle,
+  workspaceWidgetSettleDelayMs,
+} from './workspace-edit-motion';
 
 import type {
   CollisionDetection,
@@ -92,6 +103,7 @@ type SortableWidgetProps<WidgetKey extends string> = {
   onMove: (direction: -1 | 1) => void;
   first: boolean;
   last: boolean;
+  motionDelayMs: number;
   inlineInset: Readonly<{ xs: number; sm: number; lg: number }>;
   children: React.ReactNode;
 };
@@ -151,6 +163,7 @@ function SortableWidget<WidgetKey extends string>({
   onMove,
   first,
   last,
+  motionDelayMs,
   inlineInset,
   children,
 }: SortableWidgetProps<WidgetKey>) {
@@ -172,6 +185,7 @@ function SortableWidget<WidgetKey extends string>({
       data-workspace-widget-height={height}
       data-workspace-widget-policy="PERSONAL"
       data-workspace-widget-surface={definition.surface ?? 'card'}
+      data-workspace-widget-motion={editing ? 'jiggle' : 'idle'}
       data-widget-drop-preview={isDragging ? 'true' : undefined}
       sx={(theme) => ({
         position: 'relative',
@@ -192,15 +206,28 @@ function SortableWidget<WidgetKey extends string>({
         },
         opacity: 1,
         transform: CSS.Transform.toString(dropPreviewTransform),
+        transformOrigin: 'center',
+        animation:
+          editing && !isDragging
+            ? `${workspaceWidgetJiggle} ${WORKSPACE_WIDGET_JIGGLE_DURATION_MS}ms ease-in-out ${-motionDelayMs}ms infinite`
+            : 'none',
         transition,
         zIndex: isDragging ? 4 : 1,
-        willChange: isDragging ? 'transform' : 'auto',
+        willChange:
+          editing && !isDragging ? 'translate, rotate' : isDragging ? 'transform' : 'auto',
         borderRadius: 1,
-        '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
         '& > [data-workspace-widget-content]': {
           opacity: isDragging ? 0 : 1,
           visibility: isDragging ? 'hidden' : 'visible',
           transition: 'opacity 120ms ease',
+          transformOrigin: 'center',
+          animationName: editing && !isDragging ? `${workspaceWidgetSettle}` : 'none',
+          animationDuration:
+            editing && !isDragging ? `${WORKSPACE_WIDGET_SETTLE_DURATION_MS}ms` : '0ms',
+          animationTimingFunction: WORKSPACE_WIDGET_SETTLE_FALLBACK_EASING,
+          animationDelay: editing && !isDragging ? `${motionDelayMs}ms` : '0ms',
+          animationIterationCount: 1,
+          animationFillMode: 'backwards',
         },
         '&::after': editing
           ? {
@@ -230,12 +257,48 @@ function SortableWidget<WidgetKey extends string>({
                     0.18
                   )}`
                 : 'none',
+              transformOrigin: 'center',
+              animation: !isDragging
+                ? `${workspaceWidgetSettle} ${WORKSPACE_WIDGET_SETTLE_DURATION_MS}ms ${WORKSPACE_WIDGET_SETTLE_FALLBACK_EASING} ${motionDelayMs}ms 1 backwards, ${workspaceWidgetReadyPulse} ${WORKSPACE_WIDGET_READY_PULSE_DURATION_MS}ms ease-in-out ${WORKSPACE_WIDGET_SETTLE_DURATION_MS + motionDelayMs}ms infinite`
+                : 'none',
               pointerEvents: 'none',
               zIndex: 5,
               transition:
                 'background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease',
             }
           : undefined,
+        '@supports (animation-timing-function: linear(0, 1))': {
+          '& > [data-workspace-widget-content]': {
+            animationTimingFunction: WORKSPACE_WIDGET_SETTLE_SPRING_EASING,
+          },
+          '&::after': {
+            animationTimingFunction: `${WORKSPACE_WIDGET_SETTLE_SPRING_EASING}, ease-in-out`,
+          },
+        },
+        'html[data-motion="reduced"] &': {
+          animation: 'none',
+          transition: 'none',
+          translate: 'none',
+          rotate: 'none',
+          '& > [data-workspace-widget-content], &::after': {
+            animation: 'none',
+            transition: 'none',
+            transform: 'none',
+            willChange: 'auto',
+          },
+        },
+        '@media (prefers-reduced-motion: reduce)': {
+          animation: 'none',
+          transition: 'none',
+          translate: 'none',
+          rotate: 'none',
+          '& > [data-workspace-widget-content], &::after': {
+            animation: 'none',
+            transition: 'none',
+            transform: 'none',
+            willChange: 'auto',
+          },
+        },
       })}
     >
       <WorkspaceWidgetContent>{children}</WorkspaceWidgetContent>
@@ -649,6 +712,7 @@ export function WorkspaceWidgetCanvas<WidgetKey extends string>({
                 }
                 first={index === 0}
                 last={index === previewVisible.length - 1}
+                motionDelayMs={workspaceWidgetSettleDelayMs(index)}
                 inlineInset={inlineInset}
               >
                 {renderWidget(widget.widgetKey, size, height)}

@@ -33,8 +33,9 @@
     "createSpace": "Space 만들기",
     "explore": "Space 탐색",
     "viewAll": "전체 보기",
+    "useTemplate": "이 템플릿으로 시작",
     "clear": "검색어 지우기",
-    "backToSpaces": "내 Space로 돌아가기",
+    "backToSpaces": "Space 홈으로",
     "newContent": "콘텐츠 작성",
     "publish": "게시",
     "openApp": "앱 열기",
@@ -64,16 +65,25 @@
     },
     "focus": {
       "title": "지금 집중할 Space",
-      "description": "활동과 미확인 신호를 기준으로 우선순위를 정리했습니다."
+      "description": "활동과 미확인 신호를 기준으로 우선순위를 정리했습니다.",
+      "emptyTitle": "지금 확인할 Space가 없습니다",
+      "emptyDescription": "새로운 협업 공간을 탐색하거나 목적에 맞는 Space를 시작하세요."
     },
     "activity": {
       "title": "Space 활동",
-      "description": "참여 중인 Space의 최근 변화를 한 흐름으로 확인합니다."
+      "description": "참여 중인 Space의 최근 변화를 한 흐름으로 확인합니다.",
+      "emptyTitle": "새로운 활동이 없습니다",
+      "emptyDescription": "참여 중인 Space에서 변화가 생기면 이곳에 표시됩니다."
     },
-    "insights": { "title": "협업 인사이트" },
+    "insights": {
+      "title": "협업 인사이트",
+      "empty": "분석할 협업 신호가 아직 충분하지 않습니다."
+    },
     "templates": {
       "title": "검증된 시작 방식",
-      "description": "목적에 맞는 정책과 기본 구성을 갖춘 템플릿으로 시작하세요."
+      "description": "목적에 맞는 정책과 기본 구성을 갖춘 템플릿으로 시작하세요.",
+      "emptyTitle": "사용 가능한 템플릿이 없습니다",
+      "emptyDescription": "관리자가 템플릿을 게시하면 이곳에서 바로 시작할 수 있습니다."
     }
   },
   "directory": {
@@ -149,7 +159,7 @@
       "people": "멤버십",
       "apps": "연결 앱",
       "agent": "AI 경계",
-      "owner": "Owner Studio"
+      "owner": "소유자 관리"
     },
     "metrics": {
       "members": "접근 주체",
@@ -162,7 +172,13 @@
     "unknownAuthor": "작성자 정보 없음",
     "noContentTitle": "게시된 콘텐츠가 없습니다",
     "noContentDescription": "권한이 있는 구성원이 첫 콘텐츠를 작성할 수 있습니다.",
-    "peoplePrivacy": "사용자·그룹 멤버십은 Space Owner와 Moderator에게만 공개됩니다.",
+    "noFeaturedTitle": "선정된 주요 콘텐츠가 없습니다",
+    "noFeaturedDescription": "중요한 지식과 결정을 선정하면 Space 개요에 표시됩니다.",
+    "noActivityTitle": "기록된 활동이 없습니다",
+    "noActivityDescription": "콘텐츠와 멤버십 변화가 생기면 활동 흐름에 기록됩니다.",
+    "noAppsTitle": "연결된 앱이 없습니다",
+    "noAppsDescription": "승인된 업무 앱을 연결하면 Space 맥락 안에서 바로 실행할 수 있습니다.",
+    "peoplePrivacy": "사용자·그룹 멤버십은 Space 소유자와 운영자에게만 공개됩니다.",
     "appScope": "데이터 접근 범위: {{scope}}",
     "agentTitle": "근거와 권한을 따르는 Space AI",
     "agentDescription": "AI는 이 Space의 구성원 권한, 데이터 등급과 승인된 콘텐츠만 사용합니다. 원문 인용과 감사 추적이 가능한 응답만 제공하도록 통제됩니다."
@@ -189,14 +205,14 @@
   },
   "owner": {
     "title": "Space 운영 정책",
-    "description": "Owner는 조직 정책의 허용 범위 안에서 게시, 앱 연결과 AI 사용 경계를 관리합니다.",
+    "description": "소유자는 조직 정책의 허용 범위 안에서 게시, 앱 연결과 AI 사용 경계를 관리합니다.",
     "contentPolicy": "콘텐츠 게시 정책",
     "appPolicy": "앱 연결 정책",
     "aiPolicy": "AI 접근 정책",
     "saved": "Space 정책을 저장했습니다.",
     "error": "정책을 저장하지 못했습니다. 최신 버전을 확인하세요.",
     "guardrailsTitle": "운영 가드레일",
-    "guardrailsDescription": "Owner 권한도 테넌트 보안·준법 정책을 우회할 수 없습니다.",
+    "guardrailsDescription": "소유자 권한도 테넌트 보안·준법 정책을 우회할 수 없습니다.",
     "guardrails": {
       "leastPrivilege": "구성원과 연결 앱에는 필요한 최소 범위만 부여합니다.",
       "contentEvidence": "게시·검토·결정은 감사 가능한 증적으로 남습니다.",
@@ -231,10 +247,16 @@
     "requestsTitle": "참여 요청",
     "requestsDescription": "업무 근거와 최소 역할을 검토해 참여를 결정합니다.",
     "noRequests": "검토할 참여 요청이 없습니다.",
+    "noMembersTitle": "활성 멤버십이 없습니다",
+    "noMembersDescription": "사용자 또는 디렉터리 그룹에 최소 권한을 할당하세요.",
     "saved": "Space 멤버십을 저장했습니다.",
     "revoked": "Space 멤버십을 해지했습니다.",
+    "revokeTitle": "멤버십을 해지하시겠습니까?",
+    "revokeDescription": "{{principal}}의 {{role}} 권한을 해지합니다. 해당 사용자는 즉시 Space 접근 권한을 잃을 수 있습니다.",
+    "revokeConfirm": "멤버십 해지",
+    "revoking": "해지 중",
     "error": "멤버십을 저장하지 못했습니다.",
-    "lastOwnerError": "마지막 활성 Owner는 해지할 수 없습니다. 다른 Owner를 먼저 지정하세요."
+    "lastOwnerError": "마지막 활성 소유자는 해지할 수 없습니다. 다른 소유자를 먼저 지정하세요."
   },
   "card": {
     "unread": "읽지 않은 Space 활동",
@@ -259,7 +281,7 @@
     "CONTRIBUTOR": "기여자",
     "EDITOR": "편집자",
     "MODERATOR": "운영자",
-    "OWNER": "Owner",
+    "OWNER": "소유자",
     "GUEST": "게스트"
   },
   "principal": { "USER": "사용자", "GROUP": "그룹" },
@@ -268,7 +290,13 @@
     "GROUP": "그룹 상속",
     "REQUEST": "가입 승인",
     "PROVISIONING": "자동 프로비저닝",
-    "TEMPLATE": "템플릿 할당"
+    "TEMPLATE": "템플릿 할당",
+    "RECOVERY": "관리자 복구"
+  },
+  "dataAccessScope": {
+    "SPACE_ONLY": "현재 Space만",
+    "TENANT_READ": "테넌트 읽기 범위",
+    "EXPLICIT_RESOURCE": "명시적으로 승인된 리소스"
   },
   "status": {
     "ACTIVE": "활성",
@@ -290,12 +318,12 @@
   },
   "contentPolicy": {
     "OPEN_PUBLISH": "기여자 즉시 게시",
-    "OWNER_REVIEW": "Owner 검토 후 게시",
+    "OWNER_REVIEW": "소유자 검토 후 게시",
     "COMPLIANCE_REVIEW": "준법 검토 후 게시"
   },
   "appPolicy": {
-    "OWNER_MANAGED": "Owner 직접 연결",
-    "OWNER_REVIEW": "Owner 검토",
+    "OWNER_MANAGED": "소유자 직접 연결",
+    "OWNER_REVIEW": "소유자 검토",
     "ADMIN_REVIEW": "관리자 승인"
   },
   "aiPolicy": {

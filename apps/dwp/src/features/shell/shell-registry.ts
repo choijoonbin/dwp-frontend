@@ -1,6 +1,7 @@
 import {
   Activity,
   AppWindow,
+  BellRing,
   BriefcaseBusiness,
   Building2,
   CalendarDays,
@@ -9,6 +10,7 @@ import {
   LifeBuoy,
   Layers3,
   Mail,
+  MessageSquareText,
   Newspaper,
   Settings2,
   ShieldCheck,
@@ -29,6 +31,8 @@ export type ShellKey =
   | 'calendar'
   | 'rooms'
   | 'mail'
+  | 'messaging'
+  | 'notifications'
   | 'hcm'
   | 'approvals'
   | 'spaces'
@@ -70,7 +74,7 @@ export const shellRegistry = {
   },
   workspace: {
     key: 'workspace',
-    routePrefixes: ['/work', '/ask', '/activity', '/apps'],
+    routePrefixes: ['/work', '/dwaion', '/ask', '/activity', '/apps'],
     scope: 'tenant',
     brandMode: 'product',
     showWorkspace: true,
@@ -138,6 +142,30 @@ export const shellRegistry = {
     headerPosition: 'fixed',
     headerSurface: 'solid',
     context: { icon: Mail, labelKey: 'shell.mail.name' },
+  },
+  messaging: {
+    key: 'messaging',
+    routePrefixes: ['/messages'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: MessageSquareText, labelKey: 'shell.messaging.name' },
+  },
+  notifications: {
+    key: 'notifications',
+    routePrefixes: ['/notifications'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: BellRing, labelKey: 'shell.notifications.name' },
   },
   hcm: {
     key: 'hcm',
@@ -224,11 +252,12 @@ export const workspaceNavigationIcons: Readonly<Record<string, LucideIcon>> = {
   workforce: Workflow,
   hcm: ContactRound,
   hris: ContactRound,
+  notifications: BellRing,
 };
 
 export const workspaceCoreContexts = [
   { route: '/work', labelKey: 'navigation.items.work', icon: BriefcaseBusiness },
-  { route: '/ask', labelKey: 'navigation.items.ask', icon: Sparkles },
+  { route: '/dwaion', labelKey: 'navigation.items.ask', icon: Sparkles },
   { route: '/activity', labelKey: 'navigation.items.activity', icon: Activity },
   { route: '/apps', labelKey: 'navigation.items.apps', icon: AppWindow },
 ] as const;
@@ -242,6 +271,8 @@ const routeResolutionOrder: readonly ShellKey[] = [
   'calendar',
   'rooms',
   'mail',
+  'messaging',
+  'notifications',
   'hcm',
   'services',
   'communications',

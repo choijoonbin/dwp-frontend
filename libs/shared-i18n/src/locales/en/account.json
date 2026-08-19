@@ -20,6 +20,7 @@
     "accessibility": "Accessibility",
     "language": "Language & region",
     "home": "Home workspace",
+    "notifications": "Notifications",
     "managed": "Managed settings"
   },
   "sections": {
@@ -46,6 +47,10 @@
       "description": "Organize the apps and information shown on your personal home.",
       "groupTitle": "Personal home",
       "groupDescription": "Open the home editor to arrange apps and widgets."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Manage channels, quiet hours, and per-app delivery rules."
     },
     "managed": {
       "title": "Managed settings",

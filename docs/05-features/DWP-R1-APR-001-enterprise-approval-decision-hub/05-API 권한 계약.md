@@ -23,13 +23,20 @@ Inventory는 목표 계약으로, 이 표에 없는 Endpoint는 구현 완료로
 | PUT          | `/requests/{id}/draft`                                           | Owner·Expected Version 기반 초안 편집         |
 | POST         | `/requests/{id}/submit`                                          | 서버 Form 검증 후 상신                        |
 | POST         | `/requests/{id}/information-response`, `/requests/{id}/withdraw` | 보완 답변과 회수                              |
-| GET          | `/workflows/published`, `/workflows/published/{id}/template`     | 기안 가능한 Workflow·Form 계약                |
+| GET          | `/catalog/forms`, `/catalog/forms/{id}/template`                 | 기안 가능한 Form·결재선·동적 Schema 계약      |
+| GET          | `/workflows/published`, `/workflows/published/{id}/template`     | 이전 Workflow 진입점 호환 계약                |
 | GET/POST     | `/delegations`                                                   | 본인의 기간·Workflow 범위 위임                |
 | GET/POST/PUT | `/admin/workflows/**`, `/admin/forms/**`, `/admin/policies/**`   | 설계·게시 SoD가 적용된 정의 관리              |
+| GET/POST/PUT | `/admin/form-categories/**`                                      | 계층형 양식 분류와 운영 상태 관리             |
 | GET          | `/admin/overview`, `/admin/operations`, `/admin/signatures`      | 권한별 운영·연계 상태 조회                    |
 
 현재 Command는 CSRF와 Resource Version을 사용한다. 별도 Idempotency-Key 원장, 서명
 Webhook, 원업무 Result Inbox, 재지정·재시도 Command는 Production 확장 Gate다.
+
+`/catalog/forms/{formId}/template`는 게시 양식·동적 필드 Schema와 함께 안전하게 공개할
+수 있는 결재 단계(`key`, 표시명, 후보 역할, `ANY`, 단계 SLA)를 반환한다. 내부 정책식,
+후보 개인 목록과 제한 데이터는 반환하지 않는다. 기안자는 제출 전에 경로를 확인하지만,
+최종 권한 후보와 SoD는 제출 시점에 서버가 다시 계산하고 검증한다.
 
 ## API Inventory
 
@@ -60,21 +67,22 @@ Webhook, 원업무 Result Inbox, 재지정·재시도 Command는 Production 확�
 
 ## Admin API
 
-| Method       | Path                              | 목적               | Permission                           |
-| ------------ | --------------------------------- | ------------------ | ------------------------------------ |
-| GET/POST     | `/admin/workflows`                | 목록·Draft 생성    | `APPROVAL.DESIGN:{VIEW,CREATE}`      |
-| PUT          | `/admin/workflows/{id}/draft`     | Draft 편집         | `APPROVAL.DESIGN:UPDATE`             |
-| POST         | `/admin/workflows/{id}/validate`  | Graph·Rule 검증    | `APPROVAL.DESIGN:UPDATE`             |
-| POST         | `/admin/workflows/{id}/publish`   | 독립 검토·게시     | `APPROVAL.DESIGN:PUBLISH`            |
-| GET/POST/PUT | `/admin/forms`                    | Form Library       | `APPROVAL.FORM:{VIEW,CREATE,UPDATE}` |
-| POST         | `/admin/forms/{id}/publish`       | Form 게시          | `APPROVAL.FORM:PUBLISH`              |
-| GET/POST/PUT | `/admin/policies`                 | Routing·SoD·SLA    | `APPROVAL.POLICY:{VIEW,MANAGE}`      |
-| POST         | `/admin/policies/{id}/publish`    | Policy 게시        | `APPROVAL.POLICY:PUBLISH`            |
-| GET          | `/admin/operations`               | 장애·지연 Queue    | `APPROVAL.OPERATIONS:VIEW`           |
-| POST         | `/admin/operations/{id}/retry`    | Fulfillment 재시도 | `APPROVAL.OPERATIONS:RETRY`          |
-| POST         | `/admin/operations/{id}/cancel`   | 통제된 중단        | `APPROVAL.OPERATIONS:CANCEL`         |
-| GET/POST     | `/admin/signature-providers`      | Provider 설정·진단 | `APPROVAL.SIGNATURE:MANAGE`          |
-| POST         | `/webhooks/signatures/{provider}` | 서명 Event 수신    | Provider signature/mTLS              |
+| Method       | Path                              | 목적               | Permission                             |
+| ------------ | --------------------------------- | ------------------ | -------------------------------------- |
+| GET/POST     | `/admin/workflows`                | 목록·Draft 생성    | `APPROVAL.DESIGN:{VIEW,CREATE}`        |
+| PUT          | `/admin/workflows/{id}/draft`     | Draft 편집         | `APPROVAL.DESIGN:UPDATE`               |
+| POST         | `/admin/workflows/{id}/validate`  | Graph·Rule 검증    | `APPROVAL.DESIGN:UPDATE`               |
+| POST         | `/admin/workflows/{id}/publish`   | 독립 검토·게시     | `APPROVAL.DESIGN:PUBLISH`              |
+| GET/POST/PUT | `/admin/form-categories`          | 계층형 Form 분류   | `APPROVAL.DESIGN:{VIEW,CREATE,UPDATE}` |
+| GET/POST/PUT | `/admin/forms`                    | Form Catalog       | `APPROVAL.DESIGN:{VIEW,CREATE,UPDATE}` |
+| POST         | `/admin/forms/{id}/publish`       | Form 게시          | `APPROVAL.FORM:PUBLISH`                |
+| GET/POST/PUT | `/admin/policies`                 | Routing·SoD·SLA    | `APPROVAL.POLICY:{VIEW,MANAGE}`        |
+| POST         | `/admin/policies/{id}/publish`    | Policy 게시        | `APPROVAL.POLICY:PUBLISH`              |
+| GET          | `/admin/operations`               | 장애·지연 Queue    | `APPROVAL.OPERATIONS:VIEW`             |
+| POST         | `/admin/operations/{id}/retry`    | Fulfillment 재시도 | `APPROVAL.OPERATIONS:RETRY`            |
+| POST         | `/admin/operations/{id}/cancel`   | 통제된 중단        | `APPROVAL.OPERATIONS:CANCEL`           |
+| GET/POST     | `/admin/signature-providers`      | Provider 설정·진단 | `APPROVAL.SIGNATURE:MANAGE`            |
+| POST         | `/webhooks/signatures/{provider}` | 서명 Event 수신    | Provider signature/mTLS                |
 
 ## Decision Request
 

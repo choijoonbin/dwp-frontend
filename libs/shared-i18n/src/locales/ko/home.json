@@ -79,14 +79,19 @@
         "description": "우선순위, 승인 및 할 일"
       },
       "dwp-ask": {
-        "name": "DWP에게 묻기",
-        "shortName": "DWP 묻기",
-        "description": "감사 추적이 포함된 읽기 전용 요청 계획"
+        "name": "DWAI·ON 워크스페이스",
+        "shortName": "DWAI·ON",
+        "description": "근거, 출처 및 감사 추적을 갖춘 AI 작업공간"
       },
       "dwp-activity": {
         "name": "활동",
         "shortName": "활동",
         "description": "사람, 시스템 및 에이전트 이벤트"
+      },
+      "dwp-notifications": {
+        "name": "알림 센터",
+        "shortName": "알림",
+        "description": "모든 DWP 앱에서 도착한 조치와 소식을 우선순위에 따라 정리합니다"
       },
       "dwp-approvals": {
         "name": "전자결재",
@@ -113,10 +118,10 @@
         "shortName": "메일",
         "description": "메시지, 회의 및 후속 조치"
       },
-      "ref-app-collaboration": {
-        "name": "협업",
-        "shortName": "협업",
-        "description": "채팅, 채널 및 회의"
+      "dwp-messaging": {
+        "name": "메신저",
+        "shortName": "메시지",
+        "description": "구성원, Space, 팀과 정책 기반 대화를 연결합니다"
       },
       "dwp-spaces": {
         "name": "Space",
@@ -187,6 +192,127 @@
       "name": "폴더 이름",
       "ungroup": "폴더 해제",
       "ungroupLabel": "{{folder}} 폴더 해제"
+    }
+  },
+  "dwaion": {
+    "name": "DWAI·ON",
+    "aiLabel": "AI",
+    "open": "DWAI·ON 열기",
+    "close": "DWAI·ON 닫기",
+    "panelLabel": "DWAI·ON 대화 및 지원 패널",
+    "newQuestion": "새 질문",
+    "expand": "DWAI·ON 워크스페이스에서 열기",
+    "status": {
+      "ready": "정책 경계 적용됨",
+      "thinking": "근거를 확인하는 중"
+    },
+    "greeting": "{{name}}님, 무엇을 함께 해결할까요?",
+    "greetingFallback": "무엇을 함께 해결할까요?",
+    "greetingDescription": "현재 권한 안에서 업무 근거를 찾고 다음 경로를 연결합니다.",
+    "suggestions": {
+      "title": "빠르게 시작하기",
+      "priority": "오늘 가장 먼저 확인해야 할 업무는 무엇인가요?",
+      "policy": "원격 근무 정책을 알려주세요",
+      "access": "소프트웨어 접근은 어디에서 요청하나요?",
+      "blockers": "현재 진행을 막는 업무와 다음 조치는 무엇인가요?",
+      "calendarBrief": "오늘 일정과 준비할 내용을 요약해 주세요",
+      "meetingConflict": "겹치거나 이동이 필요한 일정을 찾아주세요",
+      "meetingPrep": "다음 회의를 위해 준비할 내용을 정리해 주세요",
+      "mailPriority": "우선 답변해야 할 메일을 근거와 함께 알려주세요",
+      "mailFollowup": "후속 조치가 필요한 메일을 찾아주세요",
+      "mailDraft": "현재 맥락을 바탕으로 답장 초안을 준비해 주세요",
+      "approvalPriority": "먼저 검토해야 할 결재와 이유를 알려주세요",
+      "approvalRisk": "결재 전 확인할 위험과 누락 정보를 찾아주세요",
+      "approvalDraft": "새 결재 요청을 준비할 때 필요한 항목을 알려주세요",
+      "serviceFind": "이 요청에 맞는 사내 서비스를 찾아주세요",
+      "serviceStatus": "진행 중인 서비스 요청 상태를 요약해 주세요",
+      "peopleFind": "이 업무의 담당자를 조직 정보에서 찾아주세요",
+      "organization": "관련 조직과 협업 경로를 설명해 주세요"
+    },
+    "progress": {
+      "AUTHORIZING": "권한과 정책 경계를 확인하고 있어요",
+      "RETRIEVING": "접근 가능한 업무 근거를 찾고 있어요",
+      "REASONING": "근거를 연결해 답변을 구성하고 있어요",
+      "VERIFYING": "인용과 답변을 교차 검증하고 있어요",
+      "PERSISTING": "암호화된 대화 기록을 저장하고 있어요",
+      "COMPLETED": "검증을 완료했어요"
+    },
+    "conversationLabel": "DWAI·ON 질문과 답변",
+    "thinking": {
+      "title": "정책과 근거를 확인하고 있어요",
+      "description": "권한 범위의 출처만 수집해 답변을 검증합니다."
+    },
+    "error": "요청을 안전하게 평가하지 못했습니다. 검증되지 않은 답변은 표시하지 않았습니다.",
+    "retry": "다시 시도",
+    "sources": "검토 소스 {{count}}개",
+    "confidence": "신뢰도 {{level}}",
+    "confidenceLevels": {
+      "LOW": "낮음",
+      "MEDIUM": "보통",
+      "HIGH": "높음"
+    },
+    "viewWorkspace": "근거와 출처 자세히 보기",
+    "policy": {
+      "ALLOW": "정책 허용",
+      "HANDOFF": "업무 절차 필요",
+      "DENY": "접근 제한"
+    },
+    "composer": {
+      "label": "DWAI·ON에게 질문하기",
+      "placeholder": "업무, 정책 또는 서비스에 대해 질문하세요",
+      "unavailable": "현재 계정에는 AI 질문 권한이 없습니다",
+      "send": "질문 보내기",
+      "cancel": "응답 생성 중단"
+    },
+    "feedback": {
+      "helpful": "도움이 됐어요",
+      "notHelpful": "개선이 필요해요",
+      "recorded": "의견을 반영했습니다.",
+      "error": "의견을 저장하지 못했습니다."
+    },
+    "governed": "현재 권한과 조직 정책 범위에서 연결합니다.",
+    "tools": {
+      "title": "바로 연결",
+      "guide": {
+        "label": "이용 가이드",
+        "detailTitle": "홈 업무 도구 시작하기",
+        "detailDescription": "처음 사용하는 구성원이 핵심 동작을 약 2분 안에 익힐 수 있는 샘플 가이드입니다.",
+        "steps": {
+          "launch": "앱을 선택해 바로 실행하기",
+          "personalize": "내 홈의 앱과 위젯 구성하기",
+          "explore": "모든 앱과 지원 서비스 탐색하기"
+        },
+        "cta": "전체 서비스 가이드 보기"
+      },
+      "contacts": {
+        "label": "담당자 연락처",
+        "detailTitle": "조직에서 담당자 찾기",
+        "detailDescription": "인사 디렉터리의 조직·직책·업무 정보를 기준으로 담당 구성원을 찾습니다.",
+        "cta": "조직 디렉터리에서 찾기"
+      },
+      "status": {
+        "label": "서비스 상태",
+        "detailTitle": "앱 연결 상태 확인",
+        "detailDescription": "상태를 추정하지 않고 현재 앱 카탈로그에 수집된 연결 및 설정 상태를 확인합니다.",
+        "cta": "앱별 상태 확인하기"
+      }
+    },
+    "outcomes": {
+      "configurationTitle": "관리자가 AI 런타임 설정을 완료해야 합니다",
+      "deniedTitle": "현재 세션에서는 이 요청을 사용할 수 없습니다",
+      "handoffTitle": "승인된 업무 절차에서 계속하세요",
+      "insufficientTitle": "신뢰할 수 있는 답변을 만들 근거가 부족합니다",
+      "agentRegistryConfiguration": "테넌트의 DWAI·ON 에이전트 계약을 활성화해야 합니다.",
+      "contextConfiguration": "읽기 전용 업무 컨텍스트 연결을 설정해야 합니다.",
+      "modelConfiguration": "승인된 모델 경로와 관리형 인증 정보를 설정해야 합니다. 대체 답변은 생성하지 않았습니다.",
+      "permissionRequired": "현재 계정에는 DWAI·ON 질문 권한이 없습니다.",
+      "privilegedHandoff": "제한된 인사 또는 재무 정보가 포함될 수 있어 출처나 모델을 호출하지 않았습니다.",
+      "mutationHandoff": "변경 작업은 담당 앱의 검토와 승인을 거쳐야 합니다. DWAI·ON은 요청을 실행하지 않았습니다.",
+      "noSource": "현재 사용자가 접근할 수 있는 출처에서 답변 근거를 찾지 못했습니다.",
+      "sourceUnavailable": "권한이 있는 출처가 일시적으로 응답하지 않아 답변을 보류했습니다.",
+      "evidenceInsufficient": "근거로 뒷받침할 답변이 부족해 명시적으로 답변을 보류했습니다.",
+      "modelRefused": "모델이 요청을 거부했거나 근거 계약을 충족하지 못해 답변을 보류했습니다.",
+      "safeFallback": "검증된 답변 없이 요청이 종료되었습니다. 잠시 후 다시 시도하세요."
     }
   },
   "editor": {

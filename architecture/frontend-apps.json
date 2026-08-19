@@ -12,7 +12,7 @@
     {
       "id": "workspace",
       "features": ["home", "work-hub", "dwaion"],
-      "routePrefixes": ["/", "/work", "/ask", "/activity", "/apps"],
+      "routePrefixes": ["/", "/work", "/dwaion", "/ask", "/activity", "/apps"],
       "backendServices": ["platform"],
       "deployment": "independent"
     },
@@ -59,6 +59,13 @@
       "deployment": "independent"
     },
     {
+      "id": "messaging",
+      "features": ["messaging"],
+      "routePrefixes": ["/messages"],
+      "backendServices": ["messaging", "space", "auth"],
+      "deployment": "independent"
+    },
+    {
       "id": "communications",
       "features": ["communications"],
       "routePrefixes": ["/communications"],
@@ -94,5 +101,5 @@
       "deployment": "independent"
     }
   ],
-  "platformFeatures": ["auth", "saved-views", "search", "shell"]
+  "platformFeatures": ["auth", "dwaion", "notifications", "saved-views", "search", "shell"]
 }

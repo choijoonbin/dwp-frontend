@@ -22,11 +22,12 @@ import type { SpaceSummary } from '@dwp-frontend/shared-utils';
 type CreateSpaceDialogProps = {
   open: boolean;
   onClose: () => void;
+  initialTemplateId?: string | null;
 };
 
 const SLUG_PATTERN = /^[a-z][a-z0-9-]{2,47}$/;
 
-export function CreateSpaceDialog({ open, onClose }: CreateSpaceDialogProps) {
+export function CreateSpaceDialog({ open, onClose, initialTemplateId }: CreateSpaceDialogProps) {
   const { t, i18n } = useTranslation('spaces');
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -50,10 +51,22 @@ export function CreateSpaceDialog({ open, onClose }: CreateSpaceDialogProps) {
 
   useEffect(() => {
     if (!open || templateId || !templates.data?.length) return;
-    const initial = templates.data[0];
+    const initial =
+      templates.data.find((template) => template.templateId === initialTemplateId) ??
+      templates.data[0];
     setTemplateId(initial.templateId);
     setVisibility(initial.defaultVisibility);
-  }, [open, templateId, templates.data]);
+  }, [initialTemplateId, open, templateId, templates.data]);
+
+  useEffect(() => {
+    if (open) return;
+    setTemplateId('');
+    setName('');
+    setKey('');
+    setSummary('');
+    setJustification('');
+    setVisibility('REQUEST');
+  }, [open]);
 
   const mutation = useMutation({
     mutationFn: () =>

@@ -20,6 +20,7 @@
     "accessibility": "접근성",
     "language": "언어 및 지역",
     "home": "홈 워크스페이스",
+    "notifications": "알림",
     "managed": "관리형 설정"
   },
   "sections": {
@@ -46,6 +47,10 @@
       "description": "개인 홈에 표시할 앱과 정보를 구성합니다.",
       "groupTitle": "개인 홈",
       "groupDescription": "홈 편집기에서 앱과 위젯을 배치할 수 있습니다."
+    },
+    "notifications": {
+      "title": "알림",
+      "description": "알림 채널, 조용한 시간과 앱별 수신 규칙을 관리합니다."
     },
     "managed": {
       "title": "관리형 설정",

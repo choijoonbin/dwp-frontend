@@ -4,7 +4,8 @@ import { Home, Newspaper } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
-import { getCommunicationFeed, useAuth } from '@dwp-frontend/shared-utils';
+import { getCommunicationFeed } from '@dwp-frontend/shared-utils/api/communication-api';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';

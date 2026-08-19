@@ -85,14 +85,19 @@
         "description": "Priorities, approvals, and tasks"
       },
       "dwp-ask": {
-        "name": "Ask DWP",
-        "shortName": "Ask DWP",
-        "description": "Read-only request plans with an audit trace"
+        "name": "DWAI·ON Workspace",
+        "shortName": "DWAI·ON",
+        "description": "AI workspace with evidence, sources, and an audit trace"
       },
       "dwp-activity": {
         "name": "Activity",
         "shortName": "Activity",
         "description": "Human, system, and agent events"
+      },
+      "dwp-notifications": {
+        "name": "Notification center",
+        "shortName": "Notifications",
+        "description": "Triage actionable updates from every DWP application"
       },
       "dwp-approvals": {
         "name": "Approvals",
@@ -119,10 +124,10 @@
         "shortName": "Mail",
         "description": "Messages, meetings, and follow-ups"
       },
-      "ref-app-collaboration": {
-        "name": "Collaboration",
-        "shortName": "Collab",
-        "description": "Chat, channels, and meetings"
+      "dwp-messaging": {
+        "name": "Messenger",
+        "shortName": "Messages",
+        "description": "Governed conversations with people, Spaces, and teams"
       },
       "dwp-spaces": {
         "name": "Spaces",
@@ -193,6 +198,127 @@
       "name": "Folder name",
       "ungroup": "Ungroup folder",
       "ungroupLabel": "Ungroup {{folder}}"
+    }
+  },
+  "dwaion": {
+    "name": "DWAI·ON",
+    "aiLabel": "AI",
+    "open": "Open DWAI·ON",
+    "close": "Close DWAI·ON",
+    "panelLabel": "DWAI·ON conversation and support panel",
+    "newQuestion": "New question",
+    "expand": "Open in DWAI·ON Workspace",
+    "status": {
+      "ready": "Policy boundary active",
+      "thinking": "Checking evidence"
+    },
+    "greeting": "{{name}}, what can we solve together?",
+    "greetingFallback": "What can we solve together?",
+    "greetingDescription": "I find work evidence within your access and connect the right next step.",
+    "suggestions": {
+      "title": "Quick start",
+      "priority": "What should I review first today?",
+      "policy": "What is the remote work policy?",
+      "access": "Where do I request software access?",
+      "blockers": "What is blocked and what should happen next?",
+      "calendarBrief": "Summarize today's schedule and preparation needs",
+      "meetingConflict": "Find schedule conflicts or meetings that should move",
+      "meetingPrep": "Prepare me for my next meeting",
+      "mailPriority": "Which messages need a response first, and why?",
+      "mailFollowup": "Find mail that still needs follow-up",
+      "mailDraft": "Prepare a reply draft from the current context",
+      "approvalPriority": "Which approval should I review first, and why?",
+      "approvalRisk": "Find risks and missing information before approval",
+      "approvalDraft": "What do I need to prepare a new approval request?",
+      "serviceFind": "Find the right internal service for this request",
+      "serviceStatus": "Summarize my active service requests",
+      "peopleFind": "Find the owner for this work in the organization",
+      "organization": "Explain the related organization and collaboration path"
+    },
+    "progress": {
+      "AUTHORIZING": "Checking your access and policy boundary",
+      "RETRIEVING": "Finding work evidence available to you",
+      "REASONING": "Connecting evidence into an answer",
+      "VERIFYING": "Cross-checking citations and claims",
+      "PERSISTING": "Saving the encrypted conversation",
+      "COMPLETED": "Verification complete"
+    },
+    "conversationLabel": "DWAI·ON question and answer",
+    "thinking": {
+      "title": "Checking policy and evidence",
+      "description": "Only sources within your access are collected and validated."
+    },
+    "error": "The request could not be evaluated safely. No unverified answer was shown.",
+    "retry": "Try again",
+    "sources": "{{count}} sources reviewed",
+    "confidence": "{{level}} confidence",
+    "confidenceLevels": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
+    "viewWorkspace": "Review evidence and sources",
+    "policy": {
+      "ALLOW": "Policy allowed",
+      "HANDOFF": "Workflow required",
+      "DENY": "Access restricted"
+    },
+    "composer": {
+      "label": "Ask DWAI·ON",
+      "placeholder": "Ask about work, policy, or a service",
+      "unavailable": "This account does not have AI question access",
+      "send": "Send question",
+      "cancel": "Stop response"
+    },
+    "feedback": {
+      "helpful": "Helpful",
+      "notHelpful": "Needs improvement",
+      "recorded": "Your feedback was recorded.",
+      "error": "Your feedback could not be saved."
+    },
+    "governed": "Connections follow your permissions and organization policies.",
+    "tools": {
+      "title": "Quick links",
+      "guide": {
+        "label": "User guide",
+        "detailTitle": "Get started with home tools",
+        "detailDescription": "A sample guide that helps a new member learn the essential actions in about two minutes.",
+        "steps": {
+          "launch": "Select and launch an app",
+          "personalize": "Arrange apps and widgets on your home",
+          "explore": "Explore every app and support service"
+        },
+        "cta": "View all service guides"
+      },
+      "contacts": {
+        "label": "Contact directory",
+        "detailTitle": "Find the right person",
+        "detailDescription": "Use organization, title, and work information in the people directory to locate an owner.",
+        "cta": "Search the people directory"
+      },
+      "status": {
+        "label": "Service status",
+        "detailTitle": "Review app connectivity",
+        "detailDescription": "Review connection and configuration data collected in the app catalog without inferring system health.",
+        "cta": "Review status by app"
+      }
+    },
+    "outcomes": {
+      "configurationTitle": "An administrator must complete the AI runtime configuration",
+      "deniedTitle": "This session does not permit the request",
+      "handoffTitle": "Continue in an approved workflow",
+      "insufficientTitle": "The available evidence is not sufficient for a reliable answer",
+      "agentRegistryConfiguration": "Activate the tenant DWAI·ON agent contract.",
+      "contextConfiguration": "Configure the read-only work context connection.",
+      "modelConfiguration": "Configure an approved model route and managed credential. No substitute answer was generated.",
+      "permissionRequired": "This account does not have permission to ask DWAI·ON.",
+      "privilegedHandoff": "The request may involve restricted workforce or financial data, so no source or model was invoked.",
+      "mutationHandoff": "Changes require review and approval in the owning app. DWAI·ON did not execute the request.",
+      "noSource": "No source available to this user can support the answer.",
+      "sourceUnavailable": "An entitled source is temporarily unavailable, so the answer was withheld.",
+      "evidenceInsufficient": "There was not enough supporting evidence, so the answer was explicitly withheld.",
+      "modelRefused": "The model refused or failed the grounding contract, so the answer was withheld.",
+      "safeFallback": "The request ended without a verified answer. Try again later."
     }
   },
   "editor": {

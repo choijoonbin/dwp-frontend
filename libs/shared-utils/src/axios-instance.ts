@@ -12,6 +12,17 @@ type RequestConfig = {
   keepalive?: boolean;
 };
 
+export type EventStreamMessage = {
+  event: string;
+  data: unknown;
+};
+
+export type EventStreamConfig = {
+  signal?: AbortSignal;
+  timeoutMs?: number;
+  onMessage: (message: EventStreamMessage) => void;
+};
+
 type CsrfTokenData = {
   token: string;
   headerName: string;
@@ -163,3 +174,91 @@ export const axiosInstance = {
     request<T>('PATCH', url, body, config),
   delete: <T>(url: string, config?: RequestConfig) => request<T>('DELETE', url, undefined, config),
 };
+
+export async function postEventStream<B>(
+  url: string,
+  body: B,
+  config: EventStreamConfig
+): Promise<void> {
+  return streamRequest('POST', url, body, config, true);
+}
+
+export async function getEventStream(url: string, config: EventStreamConfig): Promise<void> {
+  return streamRequest('GET', url, undefined, config, false);
+}
+
+async function streamRequest<B>(
+  method: 'GET' | 'POST',
+  url: string,
+  body: B | undefined,
+  config: EventStreamConfig,
+  allowCsrfRetry: boolean
+): Promise<void> {
+  const headers = buildHeaders(body, { Accept: 'text/event-stream' });
+  if (isMutation(method)) {
+    const csrf = await loadCsrfToken();
+    headers[csrf.headerName] = csrf.token;
+  }
+  const controller = new AbortController();
+  const abortFromCaller = () => controller.abort(config.signal?.reason);
+  if (config.signal?.aborted) abortFromCaller();
+  else config.signal?.addEventListener('abort', abortFromCaller, { once: true });
+  const timeout = config.timeoutMs
+    ? globalThis.setTimeout(() => controller.abort('request-timeout'), config.timeoutMs)
+    : undefined;
+
+  try {
+    const response = await fetch(API_URL + url, {
+      method,
+      headers,
+      credentials: 'include',
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      const payload = await parseBody(response);
+      if (response.status === 403 && payload === undefined && allowCsrfRetry) {
+        resetCsrfToken();
+        return streamRequest(method, url, body, config, false);
+      }
+      if (response.status === 401) unauthorizedHandler?.(response.status);
+      throw new HttpError(
+        `Event stream request failed: ${response.status}`,
+        response.status,
+        payload
+      );
+    }
+    if (!response.body) throw new HttpError('Event stream response body is missing.', 502);
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      buffer += decoder.decode(value, { stream: !done }).replaceAll('\r\n', '\n');
+      const frames = buffer.split('\n\n');
+      buffer = frames.pop() ?? '';
+      frames.filter(Boolean).forEach((frame) => config.onMessage(parseEventFrame(frame)));
+      if (done) break;
+    }
+    if (buffer.trim()) config.onMessage(parseEventFrame(buffer));
+  } finally {
+    if (timeout !== undefined) globalThis.clearTimeout(timeout);
+    config.signal?.removeEventListener('abort', abortFromCaller);
+  }
+}
+
+function parseEventFrame(frame: string): EventStreamMessage {
+  let event = 'message';
+  const data: string[] = [];
+  for (const line of frame.split('\n')) {
+    if (line.startsWith('event:')) event = line.slice(6).trim();
+    if (line.startsWith('data:')) data.push(line.slice(5).trimStart());
+  }
+  const raw = data.join('\n');
+  try {
+    return { event, data: raw ? JSON.parse(raw) : null };
+  } catch {
+    throw new HttpError('Event stream payload is invalid.', 502, raw);
+  }
+}

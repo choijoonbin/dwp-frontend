@@ -84,6 +84,26 @@ function AdminPeopleLegacyRedirect() {
   return <Navigate to="/admin" replace />;
 }
 
+function AdminSectionRedirect() {
+  const auth = useAuth();
+  const { section } = useParams();
+  const { hasPermission, isLoaded } = usePermissions();
+  const roles = auth.user?.roles ?? [];
+  const providerRole = hasProviderControlPlaneRole(roles);
+  const supportContext = useProviderSupportContext(providerRole);
+  if (providerRole && supportContext.isLoading) return <RouteFallback />;
+  const destination = ADMIN_NAVIGATION.find((group) => group.id === section)?.items.find((item) =>
+    canAccessAdminNavigationItem(item, {
+      roles,
+      permissionsLoaded: isLoaded,
+      hasPermission,
+      supportScopes: supportContext.data?.scopes,
+      resourceRoles: auth.user?.resourceRoles,
+    })
+  )?.path;
+  return <Navigate to={destination ?? '/403'} replace />;
+}
+
 export const administrationRoutes: RouteObject[] = [
   {
     path: 'admin',
@@ -97,6 +117,7 @@ export const administrationRoutes: RouteObject[] = [
     children: [
       { index: true, element: <AdminLegacyRedirect /> },
       { path: 'people/:view', element: <AdminPeopleLegacyRedirect /> },
+      { path: ':section', element: <AdminSectionRedirect /> },
       {
         path: ':section/:view',
         element: (

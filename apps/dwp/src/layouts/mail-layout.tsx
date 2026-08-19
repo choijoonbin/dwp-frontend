@@ -3,10 +3,6 @@ import { ProductAreaLayout } from './product-area-layout';
 
 export function MailLayout() {
   return (
-    <ProductAreaLayout
-      areaKey="mail"
-      navigation={MAIL_NAVIGATION}
-      translationNamespace="mail"
-    />
+    <ProductAreaLayout areaKey="mail" navigation={MAIL_NAVIGATION} translationNamespace="mail" />
   );
 }

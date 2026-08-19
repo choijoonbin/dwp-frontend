@@ -6,6 +6,7 @@ import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
 import { CALENDAR_NAVIGATION } from '../features/calendar/calendar-navigation';
 import { HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
 import { MAIL_NAVIGATION } from '../features/mail/mail-navigation';
+import { MESSAGING_NAVIGATION } from '../features/messaging/messaging-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
 import { ROOMS_NAVIGATION } from '../features/rooms/rooms-navigation';
 import { SPACE_NAVIGATION } from '../features/spaces/space-navigation';
@@ -24,6 +25,8 @@ const EXPECTED_SHELL_COUNTS = {
   calendar: navigationItemCount(CALENDAR_NAVIGATION),
   rooms: navigationItemCount(ROOMS_NAVIGATION),
   mail: navigationItemCount(MAIL_NAVIGATION),
+  messaging: navigationItemCount(MESSAGING_NAVIGATION),
+  notifications: 1,
   approvals: navigationItemCount(APPROVAL_NAVIGATION),
   spaces: navigationItemCount(SPACE_NAVIGATION),
   hcm: navigationItemCount(HCM_NAVIGATION),
@@ -45,7 +48,6 @@ describe('product menu manifest', () => {
   });
 
   it('derives the governed route count from each product navigation source', () => {
-    expect(expectedRouteCount).toBe(124);
     const counts = PRODUCT_MENU_ROUTES.reduce<Record<string, number>>((result, route) => {
       result[route.shell] = (result[route.shell] ?? 0) + 1;
       return result;

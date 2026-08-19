@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
-import { askDwp } from './agent-runtime-api';
+import { askDwp, askDwpStream } from './agent-runtime-api';
 
 function jsonResponse(status: number, payload: unknown): Response {
   return {
@@ -9,6 +9,19 @@ function jsonResponse(status: number, payload: unknown): Response {
     status,
     text: async () => JSON.stringify(payload),
   } as Response;
+}
+
+function eventStreamResponse(frames: string[]): Response {
+  const encoder = new TextEncoder();
+  return new Response(
+    new ReadableStream({
+      start(controller) {
+        frames.forEach((frame) => controller.enqueue(encoder.encode(`${frame}\n\n`)));
+        controller.close();
+      },
+    }),
+    { status: 200, headers: { 'Content-Type': 'text/event-stream' } }
+  );
 }
 
 function groundedResponse() {
@@ -28,6 +41,7 @@ function groundedResponse() {
         sourceSystem: 'IT Service',
         route: '/work?item=WK-1042',
         occurredAt: '2026-08-12T01:00:00Z',
+        excerpt: 'Priority high. The request blocks a new team member.',
       },
     ],
     sourceCount: 3,
@@ -57,6 +71,9 @@ function groundedResponse() {
     },
     statusCode: 'ANSWER_GROUNDED',
     completedAt: '2026-08-12T01:00:01Z',
+    conversationId: 'd152ce1c-49ad-43b1-a5ca-dbc7e5117658',
+    userMessageId: '124899e9-c51e-4889-8336-230b92cf5e7c',
+    assistantMessageId: '1466a92f-2a5b-4a5c-a941-eb36a0985e23',
   };
 }
 
@@ -169,5 +186,47 @@ describe('Ask runtime API', () => {
     await expect(
       askDwp({ requestId: 'request-ask-1', query: 'Question', locale: 'en' })
     ).resolves.toMatchObject({ state: 'CONFIGURATION_REQUIRED', answer: null });
+  });
+
+  it('streams governed progress before returning the validated result', async () => {
+    const response = groundedResponse();
+    const progress: string[] = [];
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse(200, { data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(
+        eventStreamResponse([
+          'event: progress\ndata: {"stage":"AUTHORIZING"}',
+          'event: progress\ndata: {"stage":"RETRIEVING"}',
+          `event: result\ndata: ${JSON.stringify({ data: response })}`,
+        ])
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      askDwpStream(
+        {
+          requestId: 'request-ask-1',
+          query: 'What is blocking my work?',
+          locale: 'en',
+          sourceScopes: ['WORK_ITEM'],
+          pageContext: { route: '/work', appKey: 'APP.WORK' },
+        },
+        { onProgress: (stage) => progress.push(stage) }
+      )
+    ).resolves.toEqual(response);
+
+    expect(progress).toEqual(['AUTHORIZING', 'RETRIEVING']);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      '/api/agent/v1/ask/stream',
+      expect.objectContaining({
+        method: 'POST',
+        credentials: 'include',
+        body: expect.stringContaining('"sourceScopes":["WORK_ITEM"]'),
+      })
+    );
   });
 });

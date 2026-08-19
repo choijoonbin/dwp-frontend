@@ -1,0 +1,385 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Bell, CheckCheck, Settings2 } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  applyNotificationTriage,
+  createNotificationIdempotencyKey,
+  getNotificationInbox,
+  getNotificationSummary,
+  isNotificationCursorResetError,
+  type NotificationItem,
+  type NotificationView,
+} from '@dwp-frontend/shared-utils/api/notification-api';
+import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
+import { ActionIconButton } from '@dwp-frontend/design-system/components/actions/action-icon-button';
+import {
+  EmptyState,
+  ErrorState,
+  LoadingState,
+} from '@dwp-frontend/design-system/components/states/state-panels';
+
+import Badge from '@mui/material/Badge';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Popover from '@mui/material/Popover';
+import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
+import { notificationQueryKeys } from './integration-contract';
+import { reconcileGlanceItems } from './notification-model';
+import {
+  NotificationConnectionNotice,
+  NotificationItemRow,
+  NotificationPrimaryAction,
+  NotificationSyncResetNotice,
+} from './notification-ui';
+import {
+  useNotificationLiveUpdates,
+  useNotificationSyncResetSignal,
+  useOnlineStatus,
+} from './use-notification-runtime';
+
+import type { Theme } from '@mui/material/styles';
+
+const GLANCE_LIMIT = 6;
+
+type GlanceState = {
+  visible: NotificationItem[];
+  buffered: NotificationItem[];
+  bufferedCount: number;
+};
+
+const EMPTY_GLANCE: GlanceState = { visible: [], buffered: [], bufferedCount: 0 };
+
+export type NotificationHeaderGlanceProps = {
+  onOpenCenter: (notificationId?: string) => void;
+  onOpenSettings: () => void;
+  disabled?: boolean;
+};
+
+export function NotificationHeaderGlance({
+  onOpenCenter,
+  onOpenSettings,
+  disabled = false,
+}: NotificationHeaderGlanceProps) {
+  const { t } = useTranslation('notifications');
+  const queryClient = useQueryClient();
+  const online = useOnlineStatus();
+  const compact = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const [view, setView] = useState<Extract<NotificationView, 'PRIORITY' | 'ALL'>>('PRIORITY');
+  const [glance, setGlance] = useState<GlanceState>(EMPTY_GLANCE);
+  const [resynchronizing, setResynchronizing] = useState(false);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const open = Boolean(anchor);
+
+  const summaryQuery = useQuery({
+    queryKey: notificationQueryKeys.summary(),
+    queryFn: ({ signal }) => getNotificationSummary(signal),
+    staleTime: 15_000,
+    refetchInterval: online ? 30_000 : false,
+    retry: 1,
+  });
+  const inboxQuery = useQuery({
+    queryKey: notificationQueryKeys.inbox({ surface: 'glance', view }),
+    queryFn: ({ signal }) => getNotificationInbox({ view, limit: GLANCE_LIMIT }, signal),
+    enabled: open,
+    staleTime: 10_000,
+    refetchInterval: open && online ? 15_000 : false,
+    retry: 1,
+  });
+
+  const handleLiveSignal = useCallback(() => {
+    void Promise.all([
+      queryClient.invalidateQueries({ queryKey: notificationQueryKeys.summary() }),
+      queryClient.invalidateQueries({ queryKey: notificationQueryKeys.inboxRoot() }),
+    ]);
+  }, [queryClient]);
+  const connectionState = useNotificationLiveUpdates(handleLiveSignal);
+  const { resetRequired, clearResetRequired } = useNotificationSyncResetSignal();
+
+  useEffect(() => {
+    if (!open) return;
+    setGlance((current) =>
+      reconcileGlanceItems(current.visible, inboxQuery.data?.items ?? [], true, GLANCE_LIMIT)
+    );
+  }, [inboxQuery.data?.items, open]);
+
+  useEffect(() => {
+    if (open) return;
+    setGlance({
+      visible: inboxQuery.data?.items.slice(0, GLANCE_LIMIT) ?? [],
+      buffered: [],
+      bufferedCount: 0,
+    });
+  }, [inboxQuery.data?.items, open]);
+
+  useEffect(() => {
+    setGlance(EMPTY_GLANCE);
+  }, [view]);
+
+  const invalidate = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: notificationQueryKeys.summary() }),
+      queryClient.invalidateQueries({ queryKey: notificationQueryKeys.inboxRoot() }),
+    ]);
+  }, [queryClient]);
+
+  const triageMutation = useMutation({
+    mutationFn: ({ item }: { item: NotificationItem }) =>
+      applyNotificationTriage(item.notificationId, {
+        action: 'READ',
+        expectedVersion: item.version,
+        idempotencyKey: createNotificationIdempotencyKey('glance-read'),
+      }),
+    onSuccess: invalidate,
+  });
+  const readVisibleMutation = useMutation({
+    mutationFn: () =>
+      Promise.all(
+        glance.visible
+          .filter((item) => !item.readAt)
+          .map((item) =>
+            applyNotificationTriage(item.notificationId, {
+              action: 'READ',
+              expectedVersion: item.version,
+              idempotencyKey: createNotificationIdempotencyKey('glance-read-visible'),
+            })
+          )
+      ),
+    onSuccess: invalidate,
+  });
+
+  const cursorResetRequired =
+    resetRequired ||
+    isNotificationCursorResetError(inboxQuery.error) ||
+    isNotificationCursorResetError(summaryQuery.error);
+  const resynchronize = async () => {
+    setResynchronizing(true);
+    try {
+      setGlance(EMPTY_GLANCE);
+      await queryClient.resetQueries({ queryKey: notificationQueryKeys.root });
+      clearResetRequired();
+    } finally {
+      setResynchronizing(false);
+    }
+  };
+
+  const mergeBuffered = () => {
+    const list = listRef.current;
+    const previousHeight = list?.scrollHeight ?? 0;
+    const previousTop = list?.scrollTop ?? 0;
+    const focusedId =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement.dataset.notificationFocusId
+        : undefined;
+    setGlance((current) => ({
+      visible: current.buffered,
+      buffered: [],
+      bufferedCount: 0,
+    }));
+    requestAnimationFrame(() => {
+      if (list) list.scrollTop = previousTop + Math.max(0, list.scrollHeight - previousHeight);
+      if (focusedId) {
+        list
+          ?.querySelector<HTMLElement>(`[data-notification-focus-id="${CSS.escape(focusedId)}"]`)
+          ?.focus();
+      }
+    });
+  };
+
+  const actionableUnread = summaryQuery.data?.actionableUnread ?? 0;
+  const totalUnread = summaryQuery.data?.totalUnread ?? 0;
+  const accessibleLabel = t('glance.triggerLabel', {
+    actionable: actionableUnread,
+    total: totalUnread,
+  });
+  const tabCounts = summaryQuery.data?.viewCounts;
+  const hasUnreadVisible = glance.visible.some((item) => !item.readAt);
+  const partial = summaryQuery.data?.partial || inboxQuery.data?.partial;
+  const unavailableSources = useMemo(
+    () => [
+      ...(summaryQuery.data?.unavailableSources ?? []),
+      ...(inboxQuery.data?.unavailableSources ?? []),
+    ],
+    [inboxQuery.data?.unavailableSources, summaryQuery.data?.unavailableSources]
+  );
+
+  return (
+    <>
+      <ActionIconButton
+        label={accessibleLabel}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        disabled={disabled}
+        onClick={(event) => setAnchor(event.currentTarget)}
+        size="small"
+      >
+        <Badge
+          color="error"
+          badgeContent={Math.min(actionableUnread, 99)}
+          max={99}
+          invisible={actionableUnread === 0}
+        >
+          <Bell size={19} strokeWidth={1.8} />
+        </Badge>
+      </ActionIconButton>
+      <Popover
+        open={open}
+        anchorEl={anchor}
+        onClose={() => setAnchor(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        slotProps={{
+          paper: {
+            role: 'dialog',
+            'aria-label': t('glance.dialogLabel'),
+            sx: {
+              width: compact ? 'calc(100vw - 24px)' : 420,
+              maxWidth: 420,
+              maxHeight: compact ? 'calc(100vh - 96px)' : 640,
+              borderRadius: 1,
+              overflow: 'hidden',
+            },
+          },
+        }}
+      >
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          gap={1}
+          sx={{ px: 1.75, py: 1.25 }}
+        >
+          <Box minWidth={0}>
+            <Typography component="h2" variant="subtitle1" fontWeight={760}>
+              {t('glance.title')}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t('glance.summary', { actionable: actionableUnread, total: totalUnread })}
+            </Typography>
+          </Box>
+          <Stack direction="row" gap={0.25}>
+            <ActionIconButton
+              label={t('glance.markVisibleRead')}
+              disabled={!hasUnreadVisible || readVisibleMutation.isPending || !online}
+              loading={readVisibleMutation.isPending}
+              onClick={() => readVisibleMutation.mutate()}
+              size="small"
+            >
+              <CheckCheck size={18} />
+            </ActionIconButton>
+            <ActionIconButton
+              label={t('glance.openSettings')}
+              onClick={() => {
+                setAnchor(null);
+                onOpenSettings();
+              }}
+              size="small"
+            >
+              <Settings2 size={18} />
+            </ActionIconButton>
+          </Stack>
+        </Stack>
+        <Tabs
+          value={view}
+          onChange={(_event, next: NotificationView) => setView(next as 'PRIORITY' | 'ALL')}
+          variant="fullWidth"
+          aria-label={t('glance.viewsLabel')}
+          sx={{ minHeight: 40, borderTop: 1, borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Tab
+            value="PRIORITY"
+            label={t('views.PRIORITY', { count: tabCounts?.PRIORITY ?? 0 })}
+            sx={{ minHeight: 40 }}
+          />
+          <Tab
+            value="ALL"
+            label={t('views.ALL', { count: tabCounts?.ALL ?? 0 })}
+            sx={{ minHeight: 40 }}
+          />
+        </Tabs>
+        <NotificationConnectionNotice
+          state={connectionState}
+          partial={partial}
+          unavailableSources={unavailableSources}
+        />
+        {cursorResetRequired && (
+          <NotificationSyncResetNotice
+            onResynchronize={() => void resynchronize()}
+            busy={resynchronizing}
+            compact
+          />
+        )}
+        {glance.bufferedCount > 0 && (
+          <Box sx={{ px: 1.5, py: 1, borderBottom: 1, borderColor: 'divider' }}>
+            <ActionButton intent="secondary" size="small" fullWidth onClick={mergeBuffered}>
+              {t('glance.newItems', { count: glance.bufferedCount })}
+            </ActionButton>
+          </Box>
+        )}
+        <Box ref={listRef} role="listbox" sx={{ maxHeight: 440, overflowY: 'auto' }}>
+          {inboxQuery.isLoading && glance.visible.length === 0 ? (
+            <LoadingState
+              label={t('states.loading')}
+              variant="skeleton"
+              skeletonRows={4}
+              size="compact"
+            />
+          ) : inboxQuery.isError &&
+            !isNotificationCursorResetError(inboxQuery.error) &&
+            glance.visible.length === 0 ? (
+            <ErrorState
+              title={t('states.loadErrorTitle')}
+              description={t('states.loadErrorDescription')}
+              retryLabel={t('actions.retry')}
+              onRetry={() => void inboxQuery.refetch()}
+              retrying={inboxQuery.isFetching}
+              size="compact"
+            />
+          ) : glance.visible.length === 0 ? (
+            <EmptyState
+              title={t(`empty.${view}.title`)}
+              description={t(`empty.${view}.description`)}
+              size="compact"
+            />
+          ) : (
+            glance.visible.map((item, index) => (
+              <NotificationItemRow
+                key={item.notificationId}
+                item={item}
+                compact
+                tabIndex={index === 0 ? 0 : -1}
+                onSelect={() => {
+                  if (!item.readAt && !triageMutation.isPending) {
+                    triageMutation.mutate({ item });
+                  }
+                  setAnchor(null);
+                  onOpenCenter(item.notificationId);
+                }}
+                trailing={<NotificationPrimaryAction item={item} />}
+              />
+            ))
+          )}
+        </Box>
+        <Divider />
+        <Box sx={{ p: 1 }}>
+          <ActionButton
+            intent="quiet"
+            fullWidth
+            onClick={() => {
+              setAnchor(null);
+              onOpenCenter();
+            }}
+          >
+            {t('glance.openCenter')}
+          </ActionButton>
+        </Box>
+      </Popover>
+    </>
+  );
+}

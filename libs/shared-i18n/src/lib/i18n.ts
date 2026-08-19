@@ -19,6 +19,8 @@ export const PRODUCT_NAMESPACES = [
   'calendar',
   'rooms',
   'mail',
+  'messaging',
+  'notifications',
   'services',
   'work',
   'account',

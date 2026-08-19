@@ -61,14 +61,7 @@ export type SearchableCatalogAsset = {
 };
 
 export type GlobalSearchKind =
-  | 'app'
-  | 'work'
-  | 'person'
-  | 'organization'
-  | 'audit'
-  | 'tenant'
-  | 'catalog'
-  | 'ask';
+  'app' | 'work' | 'person' | 'organization' | 'audit' | 'tenant' | 'catalog' | 'ask';
 
 export type GlobalSearchItem = {
   id: string;
@@ -87,7 +80,7 @@ export type GlobalSearchTranslate = (
 ) => string;
 
 function askRoute(query: string): string {
-  return '/ask?q=' + encodeURIComponent(query);
+  return '/dwaion?q=' + encodeURIComponent(query);
 }
 
 function normalize(value: string): string {
@@ -283,14 +276,16 @@ export function createAskSearchItem(
   return {
     id: 'ask-current-query',
     kind: 'ask',
-    title: translated(translate, 'search.askQuery.title', `Ask DWP: ${value}`, { query: value }),
+    title: translated(translate, 'search.askQuery.title', `Ask DWAI·ON: ${value}`, {
+      query: value,
+    }),
     description: translated(
       translate,
       'search.askQuery.description',
-      'Prepare a traceable read-only request plan'
+      'Prepare a permission-scoped answer with evidence and sources'
     ),
     route: askRoute(value),
     keywords: [],
-    source: translated(translate, 'search.sources.ask', 'Ask DWP'),
+    source: translated(translate, 'search.sources.ask', 'DWAI·ON'),
   };
 }

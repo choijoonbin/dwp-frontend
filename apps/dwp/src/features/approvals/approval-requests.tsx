@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Braces,
+  Eye,
   FileCheck2,
   FilePlus2,
   GitBranch,
@@ -11,20 +12,21 @@ import {
   Save,
   Send,
   Undo2,
+  X,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import { ActionButton, DatePickerField, FormDialog, FormField } from '@dwp-frontend/design-system';
 import {
   createApprovalRequest,
-  getApprovalRequest,
   getApprovalRequestDetail,
   getApprovalRequests,
-  getPublishedApprovalWorkflowTemplate,
-  getPublishedApprovalWorkflows,
+  getPublishedApprovalFormTemplate,
+  getPublishedApprovalForms,
   respondToApprovalInformationRequest,
   submitApprovalRequest,
   updateApprovalDraft,
+  usePermissions,
   useToast,
   withdrawApprovalRequest,
 } from '@dwp-frontend/shared-utils';
@@ -32,9 +34,13 @@ import {
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
+import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputLabel from '@mui/material/InputLabel';
+import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Select from '@mui/material/Select';
@@ -46,6 +52,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 
 import { ApprovalSurface, PriorityChip, StatusChip } from './approval-ui';
 
@@ -69,12 +76,12 @@ function NewApprovalRequest() {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const draftId = searchParams.get('draft');
-  const workflows = useQuery({
-    queryKey: ['approvals', 'workflows', 'published'],
-    queryFn: getPublishedApprovalWorkflows,
+  const forms = useQuery({
+    queryKey: ['approvals', 'forms', 'published'],
+    queryFn: getPublishedApprovalForms,
     staleTime: 60_000,
   });
-  const [workflowId, setWorkflowId] = useState('');
+  const [formId, setFormId] = useState('');
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [priority, setPriority] = useState<ApprovalPriority>('NORMAL');
@@ -87,14 +94,14 @@ function NewApprovalRequest() {
     staleTime: 0,
   });
   const template = useQuery({
-    queryKey: ['approvals', 'workflows', 'published', workflowId, 'template'],
-    queryFn: () => getPublishedApprovalWorkflowTemplate(workflowId),
-    enabled: Boolean(workflowId),
+    queryKey: ['approvals', 'forms', 'published', formId, 'template'],
+    queryFn: () => getPublishedApprovalFormTemplate(formId),
+    enabled: Boolean(formId),
     staleTime: 60_000,
   });
   useEffect(() => {
     if (!draftId || !draft.data || hydratedDraftId === draftId) return;
-    setWorkflowId(draft.data.workflowId);
+    setFormId(draft.data.formId);
     setTitle(draft.data.request.title);
     setSummary(draft.data.request.summary);
     setPriority(draft.data.request.priority);
@@ -113,10 +120,22 @@ function NewApprovalRequest() {
   const requiredFieldsComplete = fields
     .filter((field) => field.required)
     .every((field) => payloadValues[field.key]?.trim());
+  const requestContextReady =
+    Boolean(formId) &&
+    Boolean(template.data) &&
+    !draft.isLoading &&
+    (!draftId || Boolean(draft.data)) &&
+    !template.isLoading;
+  const submissionReady =
+    requestContextReady &&
+    title.trim().length >= 2 &&
+    summary.trim().length >= 2 &&
+    requiredFieldsComplete;
   const save = useMutation({
     mutationFn: async (intent: 'DRAFT' | 'SUBMIT') => {
       const input = {
-        workflowId,
+        workflowId: template.data!.workflow.workflowId,
+        formId,
         title: title.trim(),
         summary: summary.trim(),
         priority,
@@ -180,18 +199,29 @@ function NewApprovalRequest() {
         >
           {draft.isError && <Alert severity="error">{t('requests.draftLoadError')}</Alert>}
           <FormControl fullWidth required>
-            <InputLabel>{t('requests.fields.workflow')}</InputLabel>
+            <InputLabel id="approval-request-form-label">{t('requests.fields.form')}</InputLabel>
             <Select
-              label={t('requests.fields.workflow')}
-              value={workflowId}
+              id="approval-request-form"
+              labelId="approval-request-form-label"
+              label={t('requests.fields.form')}
+              value={formId}
               onChange={(event) => {
-                setWorkflowId(event.target.value);
+                setFormId(event.target.value);
                 setPayloadValues({});
               }}
             >
-              {(workflows.data ?? []).map((workflow) => (
-                <MenuItem key={workflow.workflowId} value={workflow.workflowId}>
-                  {i18n.resolvedLanguage?.startsWith('ko') ? workflow.nameKo : workflow.nameEn}
+              {(forms.data ?? []).map((form) => (
+                <MenuItem key={form.formId} value={form.formId}>
+                  <Box minWidth={0}>
+                    <Typography variant="body2" fontWeight={720}>
+                      {i18n.resolvedLanguage?.startsWith('ko') ? form.nameKo : form.nameEn}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {i18n.resolvedLanguage?.startsWith('ko')
+                        ? form.categoryNameKo
+                        : form.categoryNameEn}
+                    </Typography>
+                  </Box>
                 </MenuItem>
               ))}
             </Select>
@@ -255,8 +285,12 @@ function NewApprovalRequest() {
             supportingText={t('requests.fields.summaryHelp')}
           />
           <FormControl fullWidth>
-            <InputLabel>{t('requests.fields.priority')}</InputLabel>
+            <InputLabel id="approval-request-priority-label">
+              {t('requests.fields.priority')}
+            </InputLabel>
             <Select
+              id="approval-request-priority"
+              labelId="approval-request-priority-label"
               label={t('requests.fields.priority')}
               value={priority}
               onChange={(event) => setPriority(event.target.value as ApprovalPriority)}
@@ -297,10 +331,13 @@ function NewApprovalRequest() {
                   const setValue = (value: string) =>
                     setPayloadValues((current) => ({ ...current, [field.key]: value }));
                   if (field.type === 'SELECT') {
+                    const labelId = `approval-request-${field.key}-label`;
                     return (
                       <FormControl key={field.key} fullWidth required={field.required}>
-                        <InputLabel>{label}</InputLabel>
+                        <InputLabel id={labelId}>{label}</InputLabel>
                         <Select
+                          id={`approval-request-${field.key}`}
+                          labelId={labelId}
                           label={label}
                           value={payloadValues[field.key] ?? ''}
                           onChange={(event) => setValue(event.target.value)}
@@ -356,13 +393,7 @@ function NewApprovalRequest() {
               startIcon={<Save size={17} />}
               loading={save.isPending && save.variables === 'DRAFT'}
               disabled={
-                !workflowId ||
-                draft.isLoading ||
-                (Boolean(draftId) && !draft.data) ||
-                template.isLoading ||
-                title.trim().length < 2 ||
-                summary.trim().length < 2 ||
-                !requiredFieldsComplete
+                !requestContextReady
               }
               onClick={() => save.mutate('DRAFT')}
             >
@@ -373,15 +404,7 @@ function NewApprovalRequest() {
               intent="primary"
               startIcon={<Send size={17} />}
               loading={save.isPending && save.variables === 'SUBMIT'}
-              disabled={
-                !workflowId ||
-                draft.isLoading ||
-                (Boolean(draftId) && !draft.data) ||
-                template.isLoading ||
-                title.trim().length < 2 ||
-                summary.trim().length < 2 ||
-                !requiredFieldsComplete
-              }
+              disabled={!submissionReady}
             >
               {t('actions.submitRequest')}
             </ActionButton>
@@ -416,12 +439,55 @@ function NewApprovalRequest() {
                   label={template.data.workflow.dataClassification}
                 />
               </Stack>
+              <Box
+                component="ol"
+                aria-label={t('requests.route.steps')}
+                sx={{ m: 0, mt: 0.75, p: 0, listStyle: 'none', display: 'grid', gap: 0.75 }}
+              >
+                {template.data.routeDefinition.steps.map((step, index) => (
+                  <Stack
+                    component="li"
+                    key={step.key}
+                    direction="row"
+                    gap={1}
+                    alignItems="center"
+                    sx={{ minHeight: 50, px: 1.25, border: 1, borderColor: 'divider' }}
+                  >
+                    <Box
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        flex: '0 0 auto',
+                        display: 'grid',
+                        placeItems: 'center',
+                        bgcolor: 'primary.lighter',
+                        color: 'primary.dark',
+                        fontSize: 12,
+                        fontWeight: 800,
+                      }}
+                    >
+                      {index + 1}
+                    </Box>
+                    <Box minWidth={0} flex={1}>
+                      <Typography variant="body2" fontWeight={720} noWrap>
+                        {step.name}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" noWrap display="block">
+                        {t('requests.route.stepMeta', {
+                          role: step.candidateRole,
+                          minutes: step.slaMinutes,
+                        })}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                ))}
+              </Box>
             </Stack>
           </ApprovalSurface>
         )}
         <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 1 }}>
           <FileCheck2 size={27} color="#2856C7" />
-          <Typography variant="subtitle1" fontWeight={760} sx={{ mt: 1.5 }}>
+          <Typography component="p" variant="subtitle1" fontWeight={760} sx={{ mt: 1.5 }}>
             {t('requests.assurance.title')}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
@@ -445,17 +511,56 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   const { t, i18n } = useTranslation('approvals');
   const toast = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const requestedId = searchParams.get('request');
+  const { hasPermission } = usePermissions();
+  const canUpdateRequests =
+    hasPermission('ACTION.APPROVAL_REQUEST', 'UPDATE') ||
+    hasPermission('ACTION.APPROVAL_REQUEST', 'MANAGE');
   const queryClient = useQueryClient();
   const [requestAction, setRequestAction] = useState<{
     kind: 'respond' | 'withdraw';
     request: ApprovalRequest;
   }>();
   const [responseMessage, setResponseMessage] = useState('');
+  const [responsePayload, setResponsePayload] = useState<Record<string, string>>({});
+  const [responseHydratedId, setResponseHydratedId] = useState('');
+  const [detailId, setDetailId] = useState<string>();
   const requests = useQuery({
     queryKey: ['approvals', 'requests', viewMap[view]],
     queryFn: () => getApprovalRequests(viewMap[view]),
     staleTime: 20_000,
   });
+  useEffect(() => {
+    if (!requestedId || detailId || !requests.data?.some((item) => item.requestId === requestedId)) {
+      return;
+    }
+    setDetailId(requestedId);
+  }, [detailId, requestedId, requests.data]);
+  const requestDetail = useQuery({
+    queryKey: ['approvals', 'requests', 'detail-view', detailId],
+    queryFn: () => getApprovalRequestDetail(detailId!),
+    enabled: Boolean(detailId),
+    staleTime: 10_000,
+  });
+  const informationDetail = useQuery({
+    queryKey: ['approvals', 'requests', 'information-response', requestAction?.request.requestId],
+    queryFn: () => getApprovalRequestDetail(requestAction!.request.requestId),
+    enabled: requestAction?.kind === 'respond',
+    staleTime: 0,
+  });
+  useEffect(() => {
+    const detail = informationDetail.data;
+    if (!detail || responseHydratedId === detail.request.requestId) return;
+    setResponsePayload(
+      Object.fromEntries(
+        Object.entries(detail.payload)
+          .filter(([key, value]) => key !== 'createdFrom' && value != null)
+          .map(([key, value]) => [key, String(value)])
+      )
+    );
+    setResponseHydratedId(detail.request.requestId);
+  }, [informationDetail.data, responseHydratedId]);
   const submit = useMutation({
     mutationFn: ({ requestId, version }: { requestId: string; version: number }) =>
       submitApprovalRequest(requestId, version),
@@ -470,18 +575,23 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   });
   const act = useMutation({
     mutationFn: async (action: NonNullable<typeof requestAction>) => {
-      const latest = await getApprovalRequest(action.request.requestId);
-      return action.kind === 'respond'
-        ? respondToApprovalInformationRequest(
-            latest.requestId,
-            responseMessage.trim(),
-            latest.version
-          )
-        : withdrawApprovalRequest(latest.requestId, latest.version);
+      if (action.kind === 'respond') {
+        const reviewed = informationDetail.data;
+        if (!reviewed) throw new Error('Approval information context is not loaded.');
+        return respondToApprovalInformationRequest(
+          reviewed.request.requestId,
+          responseMessage.trim(),
+          responsePayload,
+          reviewed.request.version
+        );
+      }
+      return withdrawApprovalRequest(action.request.requestId, action.request.version);
     },
     onSuccess: async (_result, action) => {
       setRequestAction(undefined);
       setResponseMessage('');
+      setResponsePayload({});
+      setResponseHydratedId('');
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['approvals', 'requests'] }),
         queryClient.invalidateQueries({ queryKey: ['approvals', 'home'] }),
@@ -518,7 +628,12 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
           </TableHead>
           <TableBody>
             {(requests.data ?? []).map((request) => (
-              <TableRow key={request.requestId} hover sx={{ height: 76 }}>
+              <TableRow
+                key={request.requestId}
+                hover
+                selected={requestedId === request.requestId}
+                sx={{ height: 76 }}
+              >
                 <TableCell>
                   <Typography variant="body2" fontWeight={740}>
                     {request.title}
@@ -571,8 +686,18 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
                   {request.dueAt ? formatDate(request.dueAt, { dateStyle: 'medium' }) : '-'}
                 </TableCell>
                 <TableCell align="right">
-                  {request.status === 'DRAFT' && (
-                    <Stack direction="row" gap={0.75} justifyContent="flex-end">
+                  <Stack direction="row" gap={0.75} justifyContent="flex-end" alignItems="center">
+                    <Tooltip title={t('actions.openDetails')}>
+                      <IconButton
+                        size="small"
+                        aria-label={t('actions.openDetails')}
+                        onClick={() => setDetailId(request.requestId)}
+                      >
+                        <Eye size={17} />
+                      </IconButton>
+                    </Tooltip>
+                    {canUpdateRequests && request.status === 'DRAFT' && (
+                      <>
                       <ActionButton
                         intent="secondary"
                         size="small"
@@ -594,28 +719,29 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
                       >
                         {t('actions.submit')}
                       </ActionButton>
-                    </Stack>
-                  )}
-                  {request.status === 'NEEDS_INFO' && (
-                    <ActionButton
-                      intent="primary"
-                      size="small"
-                      startIcon={<MessageSquareReply size={15} />}
-                      onClick={() => setRequestAction({ kind: 'respond', request })}
-                    >
-                      {t('actions.respondInfo')}
-                    </ActionButton>
-                  )}
-                  {['SUBMITTED', 'IN_REVIEW'].includes(request.status) && (
-                    <ActionButton
-                      intent="secondary"
-                      size="small"
-                      startIcon={<Undo2 size={15} />}
-                      onClick={() => setRequestAction({ kind: 'withdraw', request })}
-                    >
-                      {t('actions.withdraw')}
-                    </ActionButton>
-                  )}
+                      </>
+                    )}
+                    {canUpdateRequests && request.status === 'NEEDS_INFO' && (
+                      <ActionButton
+                        intent="primary"
+                        size="small"
+                        startIcon={<MessageSquareReply size={15} />}
+                        onClick={() => setRequestAction({ kind: 'respond', request })}
+                      >
+                        {t('actions.respondInfo')}
+                      </ActionButton>
+                    )}
+                    {canUpdateRequests && ['SUBMITTED', 'IN_REVIEW'].includes(request.status) && (
+                      <ActionButton
+                        intent="secondary"
+                        size="small"
+                        startIcon={<Undo2 size={15} />}
+                        onClick={() => setRequestAction({ kind: 'withdraw', request })}
+                      >
+                        {t('actions.withdraw')}
+                      </ActionButton>
+                    )}
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))}
@@ -643,10 +769,17 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
         submitLabel={t(`requests.dialog.${requestAction?.kind ?? 'respond'}.confirm`)}
         submitIntent={requestAction?.kind === 'withdraw' ? 'danger' : 'primary'}
         busy={act.isPending}
-        submitDisabled={requestAction?.kind === 'respond' && responseMessage.trim().length < 4}
+        submitDisabled={
+          requestAction?.kind === 'respond' &&
+          (responseMessage.trim().length < 4 ||
+            informationDetail.isLoading ||
+            !informationDetail.data)
+        }
         onClose={() => {
           setRequestAction(undefined);
           setResponseMessage('');
+          setResponsePayload({});
+          setResponseHydratedId('');
         }}
         onSubmit={() => requestAction && act.mutate(requestAction)}
       >
@@ -668,12 +801,163 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
               onChange={(event) => setResponseMessage(event.target.value)}
               inputProps={{ maxLength: 2000 }}
             />
+            <Box>
+              <Typography variant="subtitle2">{t('requests.amendmentTitle')}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('requests.amendmentHelp')}
+              </Typography>
+            </Box>
+            {informationDetail.isLoading && (
+              <Typography variant="body2" color="text.secondary">
+                {t('requests.amendmentLoading')}
+              </Typography>
+            )}
+            {informationDetail.isError && (
+              <Alert severity="error">{t('requests.draftLoadError')}</Alert>
+            )}
+            {informationDetail.data && (
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+                  gap: 1.25,
+                }}
+              >
+                {Object.entries(responsePayload).map(([key, value]) => (
+                  <FormField
+                    key={key}
+                    multiline={key === 'summary' || value.length > 120}
+                    minRows={key === 'summary' || value.length > 120 ? 3 : undefined}
+                    label={t(`requestFields.${key}`, { defaultValue: key })}
+                    value={value}
+                    onChange={(event) =>
+                      setResponsePayload((current) => ({
+                        ...current,
+                        [key]: event.target.value,
+                      }))
+                    }
+                  />
+                ))}
+              </Box>
+            )}
           </Stack>
         )}
         {requestAction?.kind === 'withdraw' && (
           <Alert severity="warning">{t('requests.withdrawNotice')}</Alert>
         )}
       </FormDialog>
+      <Drawer
+        anchor="right"
+        open={Boolean(detailId)}
+        onClose={() => setDetailId(undefined)}
+        PaperProps={{ sx: { width: { xs: '100%', sm: 620 }, maxWidth: '100vw' } }}
+      >
+        <Box sx={{ minHeight: '100%', bgcolor: '#FAFBFD' }}>
+          <Stack
+            direction="row"
+            alignItems="flex-start"
+            justifyContent="space-between"
+            gap={2}
+            sx={{ p: 2.5, bgcolor: 'background.paper', borderBottom: 1, borderColor: 'divider' }}
+          >
+            <Box minWidth={0}>
+              <Typography variant="overline" color="primary.main">
+                {t('requests.detail.eyebrow')}
+              </Typography>
+              <Typography component="h2" variant="h5">
+                {requestDetail.data?.request.title ?? t('requests.detail.title')}
+              </Typography>
+              {requestDetail.data && (
+                <Stack direction="row" gap={0.75} alignItems="center" sx={{ mt: 1 }}>
+                  <StatusChip status={requestDetail.data.request.status} />
+                  <Typography variant="caption" color="text.secondary">
+                    {requestDetail.data.request.requestNumber}
+                  </Typography>
+                </Stack>
+              )}
+            </Box>
+            <IconButton aria-label={t('actions.close')} onClick={() => setDetailId(undefined)}>
+              <X size={19} />
+            </IconButton>
+          </Stack>
+          {requestDetail.isLoading && (
+            <Box sx={{ minHeight: 320, display: 'grid', placeItems: 'center' }}>
+              <CircularProgress size={28} />
+            </Box>
+          )}
+          {requestDetail.isError && (
+            <Alert severity="error" sx={{ m: 2 }}>
+              {t('requests.detail.loadError')}
+            </Alert>
+          )}
+          {requestDetail.data && (
+            <Stack gap={2} sx={{ p: 2.5 }}>
+              <ApprovalSurface title={t('requests.detail.context')}>
+                <Stack divider={<Divider flexItem />} sx={{ p: 2 }} gap={1.25}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      {t('requests.fields.summary')}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mt: 0.35 }}>
+                      {requestDetail.data.request.summary}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      {t('requests.columns.workflow')}
+                    </Typography>
+                    <Typography variant="body2" fontWeight={720} sx={{ mt: 0.35 }}>
+                      {i18n.resolvedLanguage?.startsWith('ko')
+                        ? requestDetail.data.request.workflowNameKo
+                        : requestDetail.data.request.workflowNameEn}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </ApprovalSurface>
+              <ApprovalSurface title={t('requests.detail.payload')}>
+                <Box component="dl" sx={{ m: 0, p: 2, display: 'grid', gap: 1.25 }}>
+                  {Object.entries(requestDetail.data.payload)
+                    .filter(([key]) => key !== 'createdFrom')
+                    .map(([key, value]) => (
+                      <Box
+                        key={key}
+                        sx={{ display: 'grid', gridTemplateColumns: 'minmax(130px, .42fr) 1fr', gap: 2 }}
+                      >
+                        <Typography component="dt" variant="caption" color="text.secondary">
+                          {t(`requestFields.${key}`, { defaultValue: key })}
+                        </Typography>
+                        <Typography component="dd" variant="body2" sx={{ m: 0 }}>
+                          {String(value)}
+                        </Typography>
+                      </Box>
+                    ))}
+                </Box>
+              </ApprovalSurface>
+              <ApprovalSurface
+                title={t('requests.detail.timeline')}
+                meta={t('requests.detail.timelineMeta', { count: requestDetail.data.timeline.length })}
+              >
+                <Stack divider={<Divider flexItem />} sx={{ p: 2 }}>
+                  {requestDetail.data.timeline.map((event) => (
+                    <Box key={event.eventId} sx={{ py: 1 }}>
+                      <Typography variant="body2" fontWeight={720}>
+                        {t(`events.${event.eventType}`, { defaultValue: event.eventType })}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {event.message || event.actorType} ·{' '}
+                        {formatDate(event.occurredAt, {
+                          dateStyle: 'medium',
+                          timeStyle: 'short',
+                        })}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Stack>
+              </ApprovalSurface>
+            </Stack>
+          )}
+        </Box>
+      </Drawer>
     </ApprovalSurface>
   );
 }

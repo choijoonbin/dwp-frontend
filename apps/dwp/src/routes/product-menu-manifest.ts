@@ -4,6 +4,7 @@ import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
 import { CALENDAR_NAVIGATION } from '../features/calendar/calendar-navigation';
 import { HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
 import { MAIL_NAVIGATION } from '../features/mail/mail-navigation';
+import { MESSAGING_NAVIGATION } from '../features/messaging/messaging-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
 import { ROOMS_NAVIGATION } from '../features/rooms/rooms-navigation';
 import { SPACE_NAVIGATION } from '../features/spaces/space-navigation';
@@ -13,6 +14,8 @@ export type ProductShell =
   | 'calendar'
   | 'rooms'
   | 'mail'
+  | 'messaging'
+  | 'notifications'
   | 'approvals'
   | 'spaces'
   | 'hcm'
@@ -29,9 +32,10 @@ export type ProductMenuRoute = {
 export const PRODUCT_MENU_ROUTES: readonly ProductMenuRoute[] = [
   { id: 'workspace.home', path: '/', shell: 'workspace' },
   { id: 'workspace.work', path: '/work', shell: 'workspace' },
-  { id: 'workspace.ask', path: '/ask', shell: 'workspace' },
+  { id: 'workspace.ask', path: '/dwaion', shell: 'workspace' },
   { id: 'workspace.activity', path: '/activity', shell: 'workspace' },
   { id: 'workspace.apps', path: '/apps', shell: 'workspace' },
+  { id: 'notifications.center', path: '/notifications', shell: 'notifications' },
   ...CALENDAR_NAVIGATION.flatMap((group) =>
     group.items.map((item) => ({
       id: `calendar.${item.view}`,
@@ -51,6 +55,13 @@ export const PRODUCT_MENU_ROUTES: readonly ProductMenuRoute[] = [
       id: `mail.${item.view}`,
       path: item.path,
       shell: 'mail' as const,
+    }))
+  ),
+  ...MESSAGING_NAVIGATION.flatMap((group) =>
+    group.items.map((item) => ({
+      id: `messaging.${item.view}`,
+      path: item.path,
+      shell: 'messaging' as const,
     }))
   ),
   ...APPROVAL_NAVIGATION.flatMap((group) =>

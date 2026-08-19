@@ -106,7 +106,7 @@ function useAppNavigationModel() {
           navigationKey: 'ask',
           itemType: 'APP',
           label: t('navigation.items.ask'),
-          route: '/ask',
+          route: '/dwaion',
           iconKey: 'ask',
           requiredResourceKey: 'APP.ASK',
           requiredPermissionCode: 'VIEW',

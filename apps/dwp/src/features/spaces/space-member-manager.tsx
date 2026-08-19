@@ -2,7 +2,13 @@ import { useDeferredValue, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Search, UserPlus, UserRoundX, UsersRound } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ActionButton, DatePickerField, FormDialog, FormField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ConfirmDialog,
+  DatePickerField,
+  FormDialog,
+  FormField,
+} from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   decideSpaceAccessRequest,
@@ -326,6 +332,7 @@ export function SpaceMemberManager({ spaceKey }: { spaceKey: string }) {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [addOpen, setAddOpen] = useState(false);
+  const [revokeTarget, setRevokeTarget] = useState<SpaceMember | null>(null);
   const [decision, setDecision] = useState<{
     item: SpaceAccessRequest;
     decision: 'APPROVE' | 'REJECT';
@@ -372,6 +379,7 @@ export function SpaceMemberManager({ spaceKey }: { spaceKey: string }) {
     mutationFn: (member: SpaceMember) => revokeSpaceMember(spaceKey, member.membershipId),
     onSuccess: async () => {
       await invalidate();
+      setRevokeTarget(null);
       toast.success(t('members.revoked'));
     },
     onError: () => toast.error(t('members.lastOwnerError')),
@@ -426,7 +434,7 @@ export function SpaceMemberManager({ spaceKey }: { spaceKey: string }) {
               member={member}
               busy={busy}
               onUpdate={(item, role) => updateMutation.mutate({ member: item, role })}
-              onRevoke={(item) => revokeMutation.mutate(item)}
+              onRevoke={setRevokeTarget}
             />
           ))}
         </Stack>
@@ -473,6 +481,23 @@ export function SpaceMemberManager({ spaceKey }: { spaceKey: string }) {
         busy={busy}
         onClose={() => setAddOpen(false)}
         onSave={(input) => addMutation.mutate(input)}
+      />
+      <ConfirmDialog
+        open={Boolean(revokeTarget)}
+        title={t('members.revokeTitle')}
+        description={t('members.revokeDescription', {
+          principal: revokeTarget?.principalRef ?? '',
+          role: revokeTarget ? t(`role.${revokeTarget.memberRole}`) : '',
+        })}
+        cancelLabel={t('actions.cancel')}
+        confirmLabel={t('members.revokeConfirm')}
+        confirmingLabel={t('members.revoking')}
+        intent="danger"
+        busy={revokeMutation.isPending}
+        onClose={() => setRevokeTarget(null)}
+        onConfirm={() => {
+          if (revokeTarget) revokeMutation.mutate(revokeTarget);
+        }}
       />
       <FormDialog
         open={Boolean(decision)}

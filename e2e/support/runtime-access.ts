@@ -120,11 +120,11 @@ export const WORKSPACE_ACTIVITY_FIXTURE = {
       summary: 'A read-only plan contract and audit trace were generated.',
       objectType: 'PLAN_PREVIEW',
       objectLabel: 'Request plan',
-      source: 'Ask DWP',
+      source: 'DWAI·ON',
       tool: 'Reference planner',
       auditId: 'AUD-WRK-901',
       progress: 100,
-      sourceRoute: '/ask',
+      sourceRoute: '/dwaion',
     },
     {
       id: 'a1000000-0000-0000-0000-000000000002',
@@ -440,7 +440,7 @@ export async function mockRuntimeNavigation(page: Page): Promise<void> {
     const korean = locale.toLowerCase().startsWith('ko');
     const apps = [
       ['work', korean ? '업무' : 'Work', '/work', 'APP.WORK'],
-      ['ask', korean ? 'DWP에게 묻기' : 'Ask', '/ask', 'APP.ASK'],
+      ['ask', 'DWAI·ON', '/dwaion', 'APP.ASK'],
       ['activity', korean ? '활동' : 'Activity', '/activity', 'APP.ACTIVITY'],
       ['apps', korean ? '앱' : 'Apps', '/apps', 'APP.APPS'],
     ].map(([navigationKey, label, routePath, resourceKey]) => ({

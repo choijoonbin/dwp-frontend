@@ -86,7 +86,7 @@ describe('global search model', () => {
   it('returns recommended destinations before a query is entered', () => {
     expect(filterGlobalSearchItems(items, '').map((item) => item.title)).toEqual([
       'Work',
-      'Ask DWP',
+      'DWAI·ON Workspace',
       'Activity',
       'Browse all apps',
     ]);
@@ -94,7 +94,7 @@ describe('global search model', () => {
 
   it('builds an encoded Ask route for unmatched natural language', () => {
     expect(createAskSearchItem('summarize my next meeting').route).toBe(
-      '/ask?q=summarize%20my%20next%20meeting'
+      '/dwaion?q=summarize%20my%20next%20meeting'
     );
   });
 });

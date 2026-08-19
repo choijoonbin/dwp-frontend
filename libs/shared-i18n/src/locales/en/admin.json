@@ -13,6 +13,7 @@
     "groups": {
       "experience": "Experience",
       "services": "Service operations",
+      "notifications": "Notification platform",
       "spaces": "Space operations",
       "identity": "Identity & access",
       "platform": "Platform setup",
@@ -64,6 +65,21 @@
         "label": "Request operations",
         "title": "Service request operations",
         "description": "Triage, assign, and resolve tenant requests with controlled SLAs and a complete history."
+      },
+      "notification-overview": {
+        "label": "Operations overview",
+        "title": "Notification operations overview",
+        "description": "Assess creation, action demand, failures, and notification-noise signals in one operational view."
+      },
+      "notification-contracts": {
+        "label": "Notification contracts",
+        "title": "Notification type contracts",
+        "description": "Validate app event schemas, priority, ownership, channels, and lifecycle state."
+      },
+      "notification-operations": {
+        "label": "Delivery operations",
+        "title": "Notification delivery operations",
+        "description": "Control priority lanes, provider health, retries, dead letters, and unknown delivery outcomes."
       },
       "space-overview": {
         "label": "Operations overview",

@@ -162,11 +162,7 @@ describe('personal home launchpad layout', () => {
       'folder-people-tools',
       'People tools'
     );
-    const expanded = addAppToLaunchpadFolder(
-      grouped,
-      'ref-app-collaboration',
-      'folder-people-tools'
-    );
+    const expanded = addAppToLaunchpadFolder(grouped, 'dwp-messaging', 'folder-people-tools');
     const moved = moveLaunchpadItemToGroup(expanded, 'services', 'systems', 'folder-people-tools');
     const restored = reconcileLaunchpadLayout(moved, HOME_APPS);
 
@@ -180,7 +176,7 @@ describe('personal home launchpad layout', () => {
     expect(restored.groups.systems).toContain('folder-people-tools');
     expect(restored.folders['folder-people-tools']).toMatchObject({
       groupId: 'systems',
-      appIds: ['ref-app-mail', 'ref-app-service', 'ref-app-collaboration'],
+      appIds: ['ref-app-mail', 'ref-app-service', 'dwp-messaging'],
     });
   });
 });

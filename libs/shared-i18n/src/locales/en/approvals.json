@@ -29,7 +29,7 @@
         "delegations": { "label": "Delegations" },
         "admin-overview": { "label": "Operations overview" },
         "workflows": { "label": "Process design" },
-        "forms": { "label": "Forms" },
+        "forms": { "label": "Form catalog" },
         "policies": { "label": "Policies" },
         "operations": { "label": "SLA & delivery" },
         "signatures": { "label": "E-signature providers" }
@@ -84,8 +84,8 @@
     },
     "forms": {
       "eyebrow": "Approvals / Design",
-      "title": "Form management",
-      "description": "Manage business input schemas and data classification by version."
+      "title": "Form catalog",
+      "description": "Design business categories, versioned input schemas, and default routes, then publish through independent review."
     },
     "policies": {
       "eyebrow": "Approvals / Governance",
@@ -157,9 +157,11 @@
     "retry": "Retry",
     "reviewInbox": "Review priority decisions",
     "newRequest": "New request",
+    "askExpert": "Ask approval expert",
     "viewAll": "View all",
     "openOperations": "Open operations",
     "openAdmin": "Open approval administration",
+    "claim": "Claim task",
     "requestInfo": "Request information",
     "reject": "Reject",
     "approve": "Approve",
@@ -171,20 +173,55 @@
     "respondInfo": "Respond",
     "withdraw": "Withdraw",
     "save": "Save",
-    "publish": "Publish"
+    "publish": "Publish",
+    "openDetails": "Open approval details",
+    "close": "Close"
   },
   "priority": { "LOW": "Low", "NORMAL": "Normal", "HIGH": "High", "URGENT": "Urgent" },
+  "classification": {
+    "PUBLIC": "Public",
+    "INTERNAL": "Internal",
+    "CONFIDENTIAL": "Confidential",
+    "RESTRICTED": "Restricted"
+  },
   "status": {
+    "ACTIVE": "Active",
+    "ATTENTION": "Attention required",
+    "COMPLETED": "Completed",
     "PENDING": "Pending",
+    "WAITING": "Waiting for sequence",
     "CLAIMED": "Claimed",
     "SUBMITTED": "Submitted",
     "IN_REVIEW": "In review",
     "NEEDS_INFO": "Needs information",
+    "INFO_REQUESTED": "Awaiting information response",
     "APPROVED": "Approved",
     "REJECTED": "Rejected",
     "DRAFT": "Draft",
     "WITHDRAWN": "Withdrawn",
-    "CANCELLED": "Cancelled"
+    "CANCELLED": "Cancelled",
+    "EXPIRED": "Expired",
+    "PUBLISHED": "Published",
+    "REVOKED": "Revoked",
+    "SKIPPED": "Skipped",
+    "FAILED": "Failed",
+    "DEAD": "Quarantined",
+    "SENDING": "Sending",
+    "HEALTHY": "Healthy",
+    "DEGRADED": "Degraded",
+    "INFORMATIONAL": "Information",
+    "DISABLED": "Disabled",
+    "RETIRED": "Retired",
+    "CONFIGURATION_REQUIRED": "Configuration required"
+  },
+  "requestFields": {
+    "summary": "Request summary",
+    "amount": "Amount",
+    "currency": "Currency",
+    "vendor": "Vendor",
+    "neededBy": "Needed by",
+    "costCenter": "Cost center",
+    "createdFrom": "Request source"
   },
   "insights": {
     "overdue": {
@@ -227,6 +264,8 @@
     "comment": "Decision reason",
     "decisionSaved": "Decision recorded.",
     "decisionError": "The decision could not be recorded.",
+    "claimed": "The approval task is now assigned to you.",
+    "claimError": "The task could not be claimed. Refresh its latest assignment state.",
     "dialog": {
       "APPROVE": {
         "title": "Approve this request?",
@@ -247,6 +286,8 @@
   },
   "events": {
     "REFERENCE_TASK_CREATED": "Reference approval created",
+    "DRAFT_CREATED": "Approval draft created",
+    "DRAFT_UPDATED": "Approval draft updated",
     "REQUEST_CREATED": "Request created",
     "REQUEST_SUBMITTED": "Request submitted",
     "TASK_APPROVED": "Request approved",
@@ -265,6 +306,18 @@
     "loadError": "Approval requests could not be loaded.",
     "templateError": "The published approval form could not be loaded.",
     "draftLoadError": "The draft could not be loaded. Verify ownership and its latest state.",
+    "amendmentTitle": "Amend request content",
+    "amendmentHelp": "Changed fields create a new evidence revision while preserving the prior payload hash.",
+    "amendmentLoading": "Loading the approval data you reviewed.",
+    "detail": {
+      "eyebrow": "Approval trace",
+      "title": "Approval details",
+      "loadError": "Approval details and evidence could not be loaded.",
+      "context": "Request context",
+      "payload": "Pinned request data",
+      "timeline": "Processing timeline",
+      "timelineMeta": "{{count}} evidence events"
+    },
     "empty": "No approvals to show",
     "emptyDescription": "Matching requests will appear here.",
     "compose": {
@@ -274,6 +327,7 @@
       "editMeta": "Review saved content and validate it against the latest published process"
     },
     "fields": {
+      "form": "Approval form",
       "workflow": "Approval process",
       "title": "Title",
       "summary": "Request context",
@@ -294,7 +348,9 @@
     },
     "route": {
       "title": "Approval route",
-      "meta": "Published process version {{count}}"
+      "meta": "Published process version {{count}}",
+      "steps": "Approval route stages",
+      "stepMeta": "{{role}} · {{minutes}} min target"
     },
     "currentStep": "{{current}}/{{total}} · {{name}}",
     "assurance": {
@@ -339,17 +395,42 @@
     "title": "Active delegations",
     "meta": "Time-bound and explicitly scoped authority",
     "add": "Add delegation",
-    "delegateLabel": "Delegated to user {{userId}}",
     "empty": "No active delegation",
     "emptyDescription": "Delegate only the minimum authority needed during an absence.",
     "created": "Delegation created.",
     "createError": "The delegation could not be created.",
-    "dialog": { "title": "Add approval delegation" },
+    "revoked": "The delegation was revoked.",
+    "revokeError": "The delegation could not be revoked.",
+    "dialog": {
+      "title": "Add approval delegation",
+      "description": "Choose a verified member, the minimum approval scope, and a bounded absence period."
+    },
     "fields": {
-      "delegateUserId": "Delegate user ID",
+      "delegate": "Delegate",
+      "delegateHelp": "Search active members in this tenant by name or email.",
+      "scope": "Approval scope",
+      "workflow": "Approval process",
       "startsAt": "Starts at",
       "endsAt": "Ends at",
-      "reason": "Reason"
+      "reason": "Reason",
+      "reasonHelp": "Enter at least 10 characters so the delegation remains reviewable evidence."
+    },
+    "searchHint": "Type at least 2 characters to search",
+    "noCandidates": "No eligible active member was found",
+    "scopes": {
+      "all": "All approval processes",
+      "workflow": "One approval process"
+    },
+    "directions": {
+      "outgoing": "Given",
+      "incoming": "Received"
+    },
+    "receivedFrom": "Received from user {{userId}}",
+    "scopeWorkflow": "Process {{key}}",
+    "revoke": {
+      "title": "Revoke this delegation?",
+      "description": "{{name}} will immediately lose the delegated approval authority. Existing evidence remains available.",
+      "confirm": "Revoke delegation"
     }
   },
   "admin": {
@@ -389,6 +470,10 @@
     "assurance": {
       "title": "Built-in assurance",
       "meta": "Approval runtime guarantees",
+      "states": {
+        "enforced": "Enforced",
+        "attention": "{{count}} exceptions"
+      },
       "identity": {
         "title": "Trust boundary",
         "detail": "Only gateway-verified user and tenant identities are accepted."
@@ -414,8 +499,14 @@
     "studio": {
       "workflowCreated": "The approval process draft was created.",
       "workflowSaved": "The approval process draft was saved.",
+      "formCreated": "The approval form draft was created.",
       "formSaved": "The approval form draft was saved.",
+      "formPublished": "The approval form was published.",
+      "formPublishBlocked": "The form could not be published. Check its published default route and independent review requirements.",
+      "categorySaved": "The form category was saved.",
       "policySaved": "The approval policy was saved.",
+      "policySubmitted": "The policy change was submitted for independent review.",
+      "policyPublished": "The policy passed independent review and was published.",
       "saveError": "The draft could not be saved. Check its key and input values.",
       "saveConflict": "Another user changed this item first. Reload the latest version and try again.",
       "createWorkflow": "New process draft",
@@ -488,21 +579,140 @@
       "optionsHelp": "Enter comma-separated allowed values. Duplicates and extra spaces are removed on save.",
       "removeField": "Remove field",
       "configurePolicy": "Configure policy",
+      "reviewAndPublish": "Review and publish",
+      "publishPolicy": "Publish policy",
       "enforcement": "Enforcement",
       "severity": "Risk severity",
       "lifecycle": "Lifecycle",
       "policyVersion": "Policy version",
+      "unpublishedVersion": "Not published",
+      "policyTypes": {
+        "SEGREGATION_OF_DUTIES": "Separation of duties",
+        "DATA": "Evidence and data",
+        "DECISION": "Decision control",
+        "SLA": "SLA control"
+      },
+      "enforcementModes": {
+        "BLOCK": "Block",
+        "WARN": "Warn",
+        "MONITOR": "Monitor"
+      },
+      "severities": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High",
+        "CRITICAL": "Critical"
+      },
+      "initialPolicyEvidence": {
+        "change": "Initial governed policy baseline",
+        "review": "Baseline captured during policy governance upgrade"
+      },
       "ruleTitle": "Policy rules",
       "ruleMeta": "Structured controls enforced by the server",
       "ruleKey": "Rule key",
       "ruleValue": "Rule value",
-      "policyChangeNotice": "Policy changes apply to new approvals and subsequent evaluations, and every change is retained as audit evidence.",
-      "policyReviewNotice": "BLOCK and CRITICAL changes can immediately affect approval eligibility. Review scope and business impact before saving."
+      "changeReason": "Change reason",
+      "changeReasonHelp": "Record the purpose and impact in at least 10 characters.",
+      "reviewComment": "Review comment",
+      "reviewCommentHelp": "Record the evidence checked and publication decision in at least 10 characters.",
+      "pendingTitle": "Change awaiting publication",
+      "pendingMeta": "This draft has not changed the active runtime policy.",
+      "pendingMaker": "Change requested by user ID {{userId}}",
+      "changeComparison": "Policy change comparison",
+      "changeField": "Control",
+      "currentValue": "Current runtime",
+      "proposedValue": "Proposed publication",
+      "changed": "Changed",
+      "historyTitle": "Publication history",
+      "historyMeta": "Preserves the author, independent reviewer, and enforced rule snapshot.",
+      "historyEmpty": "No publication evidence has been recorded yet.",
+      "makerCheckerNotice": "The change author cannot publish their own draft. Independently verify its rule values and operational impact.",
+      "policyChangeNotice": "Policy drafts affect new approvals and subsequent evaluations only after independent publication, and every stage is retained as audit evidence.",
+      "policyReviewNotice": "BLOCK and CRITICAL changes can affect approval eligibility. Submit the draft so an independent publisher can review scope and business impact."
+    },
+    "formCatalog": {
+      "metrics": {
+        "total": "Total forms",
+        "published": "Published forms",
+        "draft": "Drafts awaiting review",
+        "routed": "Default routes linked"
+      },
+      "categories": {
+        "title": "Business categories",
+        "meta": "Tenant-scoped hierarchical taxonomy",
+        "create": "Add category",
+        "edit": "Edit {{name}} category",
+        "all": "All forms"
+      },
+      "forms": {
+        "title": "Form catalog",
+        "meta": "{{count}} results",
+        "search": "Search name, key, or description",
+        "create": "Create form draft"
+      },
+      "inspector": {
+        "fields": "Input fields",
+        "routes": "Linked routes",
+        "usage": "Requests created",
+        "version": "Current version"
+      },
+      "route": {
+        "title": "Default approval route",
+        "meta": "Published process pinned when a request starts",
+        "missing": "Link a default approval route before publishing this form.",
+        "stepsMeta": "{{count}} approval stages",
+        "previewError": "Approval route stages could not be loaded."
+      },
+      "assurance": {
+        "ready": "Ready for publication",
+        "blocked": "Action required before publication",
+        "readyDetail": "The published default route, versioned schema, and independent publication control are ready.",
+        "blockedDetail": "Link a published default route and have a publisher other than the designer review it."
+      },
+      "editor": {
+        "createTitle": "New approval form",
+        "editTitle": "Edit form draft",
+        "formKey": "Form key",
+        "category": "Business category",
+        "owner": "Form owner role",
+        "defaultRoute": "Default approval route"
+      },
+      "categoryEditor": {
+        "createTitle": "Add form category",
+        "editTitle": "Edit form category",
+        "key": "Category key",
+        "parent": "Parent category",
+        "root": "Top-level category",
+        "icon": "Icon key",
+        "order": "Display order",
+        "status": "Operational status",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
     },
     "policyRule": "Enforced rule",
     "breached": {
       "title": "Overdue decisions",
       "meta": "Items requiring immediate operational action"
+    },
+    "integrations": {
+      "title": "Integration event delivery",
+      "meta": "Track failure causes, delivery attempts, and quarantined events.",
+      "eventCount": "Latest {{count}}",
+      "empty": "There are no integration events to deliver yet.",
+      "notAvailable": "Not available",
+      "noError": "No delivery error",
+      "retry": "Retry event delivery",
+      "retryRestricted": "Approval operator permission is required.",
+      "retryError": "The event could not be retried. Refresh its state and verify your permission.",
+      "columns": {
+        "event": "Event",
+        "status": "Delivery status",
+        "attempts": "Attempts + manual retries",
+        "updated": "Last handled",
+        "error": "Latest error",
+        "action": "Action"
+      }
     },
     "signatures": {
       "gate": "External e-signature activates only after infrastructure gate D-18 is approved. Credentials belong in a secret store, never this database.",

@@ -2,6 +2,7 @@ import type {
   ApprovalAdminPulse,
   ApprovalDelegation,
   ApprovalForm,
+  ApprovalFormCategory,
   ApprovalFormDetail,
   ApprovalHome,
   ApprovalOperations,
@@ -699,7 +700,7 @@ export const APPROVAL_WORKFLOW_DETAIL_FIXTURE = {
       {
         key: 'SECURITY_REVIEW',
         name: 'Security review',
-        mode: 'ALL',
+        mode: 'ANY',
         candidateRole: 'SECURITY_APPROVER',
         slaMinutes: 480,
       },
@@ -712,14 +713,41 @@ export const APPROVAL_WORKFLOW_DETAIL_FIXTURE = {
 export const APPROVAL_FORM_FIXTURE = {
   formId: 'approval-form-data-access',
   formKey: 'DATA_ACCESS_EXCEPTION',
+  categoryId: 'approval-category-access',
+  categoryKey: 'ACCESS',
+  categoryNameKo: '접근·보안',
+  categoryNameEn: 'Access and security',
   nameKo: '데이터 접근 예외 신청서',
   nameEn: 'Data access exception form',
+  descriptionKo: '제한 데이터 접근에 필요한 예외 승인과 만료 조건을 관리합니다.',
+  descriptionEn: 'Governs exception approval and expiry conditions for restricted data access.',
+  ownerGroupRef: 'SECURITY_APPROVER',
+  formKind: 'REQUEST',
   lifecycleState: 'PUBLISHED',
   currentVersion: 3,
   fieldCount: 4,
+  routeCount: 1,
+  usageCount: 7,
   version: 3,
   updatedAt: '2026-08-10T04:00:00Z',
 } as const satisfies ApprovalForm;
+
+export const APPROVAL_FORM_CATEGORY_FIXTURES = [
+  {
+    categoryId: 'approval-category-access',
+    categoryKey: 'ACCESS',
+    parentCategoryId: null,
+    nameKo: '접근·보안',
+    nameEn: 'Access and security',
+    descriptionKo: '권한 요청과 보안 예외를 위한 제한 양식입니다.',
+    descriptionEn: 'Restricted forms for access requests and security exceptions.',
+    iconKey: 'shield-check',
+    sortOrder: 50,
+    lifecycleState: 'ACTIVE',
+    formCount: 1,
+    version: 0,
+  },
+] as const satisfies ApprovalFormCategory[];
 
 export const APPROVAL_FORM_DETAIL_FIXTURE = {
   form: APPROVAL_FORM_FIXTURE,
@@ -752,6 +780,20 @@ export const APPROVAL_FORM_DETAIL_FIXTURE = {
     ],
   },
   schemaHash: 'fixture-form-hash',
+  routes: [
+    {
+      bindingId: 'approval-binding-data-access',
+      workflowId: 'approval-workflow-data-access',
+      workflowKey: 'DATA_ACCESS_EXCEPTION',
+      workflowNameKo: '데이터 접근 예외',
+      workflowNameEn: 'Data access exception',
+      workflowLifecycleState: 'PUBLISHED',
+      workflowVersion: 4,
+      slaMinutes: 480,
+      bindingType: 'DEFAULT',
+      priority: 100,
+    },
+  ],
 } satisfies ApprovalFormDetail;
 
 export const APPROVAL_HOME_FIXTURE = {
@@ -827,7 +869,9 @@ export const APPROVAL_TASK_DETAIL_FIXTURE = {
 export const APPROVAL_REQUEST_DETAIL_FIXTURE = {
   request: APPROVAL_REQUEST_FIXTURE,
   workflowId: APPROVAL_WORKFLOW_FIXTURE.workflowId,
+  formId: APPROVAL_FORM_FIXTURE.formId,
   payload: APPROVAL_TASK_DETAIL_FIXTURE.payload,
+  timeline: APPROVAL_TASK_DETAIL_FIXTURE.timeline,
 } satisfies ApprovalRequestDetail;
 
 export const APPROVAL_POLICIES_FIXTURE = [
@@ -868,6 +912,22 @@ export const APPROVAL_OPERATIONS_FIXTURE = {
     },
   ],
   breachedTasks: [APPROVAL_TASK_FIXTURE],
+  integrationDeliveries: [
+    {
+      outboxId: 'approval-outbox-failed-001',
+      eventId: 'approval-integration-event-001',
+      requestId: APPROVAL_REQUEST_FIXTURE.requestId,
+      eventType: 'approval.request.approved',
+      status: 'FAILED',
+      attemptCount: 3,
+      manualRetryCount: 0,
+      availableAt: '2026-08-11T00:15:00Z',
+      publishedAt: null,
+      lastError: 'Downstream endpoint returned 503',
+      createdAt: '2026-08-11T00:10:00Z',
+      lastRetriedAt: null,
+    },
+  ],
 } satisfies ApprovalOperations;
 
 export const APPROVAL_SIGNATURE_FIXTURES = [

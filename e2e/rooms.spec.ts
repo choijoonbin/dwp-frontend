@@ -148,9 +148,10 @@ async function mockWorkplace(page: Page) {
       return fulfillSuccess(route, [resource]);
     }
     if (path.endsWith('/admin/workplace/policy')) {
-      const value = request.method() === 'PUT'
-        ? { ...request.postDataJSON(), version: policy.version + 1 }
-        : policy;
+      const value =
+        request.method() === 'PUT'
+          ? { ...request.postDataJSON(), version: policy.version + 1 }
+          : policy;
       return fulfillSuccess(route, value);
     }
     return route.fallback();

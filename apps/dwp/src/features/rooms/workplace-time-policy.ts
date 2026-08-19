@@ -2,12 +2,7 @@ import { Temporal } from 'temporal-polyfill';
 
 import type { WorkplacePolicy } from '@dwp-frontend/shared-utils';
 
-export type WorkplaceBookingRangeError =
-  | 'invalid'
-  | 'past'
-  | 'window'
-  | 'duration'
-  | 'hours';
+export type WorkplaceBookingRangeError = 'invalid' | 'past' | 'window' | 'duration' | 'hours';
 
 function minutes(value: string) {
   const [hour = 0, minute = 0] = value.slice(0, 5).split(':').map(Number);
@@ -85,22 +80,10 @@ export function workplaceTimeOptions(
 export function workplaceDurationOptions(policy: WorkplacePolicy) {
   const workingMinutes = minutes(policy.workingDayEnd) - minutes(policy.workingDayStart);
   const maximum = Math.min(policy.maximumBookingMinutes, workingMinutes);
-  return [
-    policy.minimumBookingMinutes,
-    15,
-    30,
-    45,
-    60,
-    90,
-    120,
-    240,
-    480,
-    maximum,
-  ]
-    .filter((value, index, values) =>
-      value >= policy.minimumBookingMinutes &&
-      value <= maximum &&
-      values.indexOf(value) === index
+  return [policy.minimumBookingMinutes, 15, 30, 45, 60, 90, 120, 240, 480, maximum]
+    .filter(
+      (value, index, values) =>
+        value >= policy.minimumBookingMinutes && value <= maximum && values.indexOf(value) === index
     )
     .sort((left, right) => left - right);
 }
@@ -129,14 +112,16 @@ export function validateWorkplaceBookingRange(
     const localStart = start.toZonedDateTimeISO(timeZone);
     const localEnd = end.toZonedDateTimeISO(timeZone);
     const sameDay = localStart.toPlainDate().equals(localEnd.toPlainDate());
-    const startsInHours = Temporal.PlainTime.compare(
-      localStart.toPlainTime(),
-      Temporal.PlainTime.from(policy.workingDayStart)
-    ) >= 0;
-    const endsInHours = Temporal.PlainTime.compare(
-      localEnd.toPlainTime(),
-      Temporal.PlainTime.from(policy.workingDayEnd)
-    ) <= 0;
+    const startsInHours =
+      Temporal.PlainTime.compare(
+        localStart.toPlainTime(),
+        Temporal.PlainTime.from(policy.workingDayStart)
+      ) >= 0;
+    const endsInHours =
+      Temporal.PlainTime.compare(
+        localEnd.toPlainTime(),
+        Temporal.PlainTime.from(policy.workingDayEnd)
+      ) <= 0;
     return sameDay && startsInHours && endsInHours ? null : 'hours';
   } catch {
     return 'invalid';

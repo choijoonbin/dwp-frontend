@@ -389,10 +389,10 @@ export function CalendarAdminResources() {
   const canUpdate = hasPermission('ADMIN.CALENDAR', 'UPDATE');
   const valid = Boolean(
     form.code.match(/^[A-Z0-9][A-Z0-9_-]{2,79}$/) &&
-      form.nameKo.trim() &&
-      form.nameEn.trim() &&
-      form.site.trim() &&
-      form.capacity > 0
+    form.nameKo.trim() &&
+    form.nameEn.trim() &&
+    form.site.trim() &&
+    form.capacity > 0
   );
   const mutation = useMutation({
     mutationFn: () => {
@@ -652,9 +652,9 @@ export function CalendarAdminPolicies() {
   }, [query.data?.policy]);
   const valid = Boolean(
     form &&
-      form.workingDayStart < form.workingDayEnd &&
-      form.minimumEventMinutes <= form.defaultEventMinutes &&
-      form.defaultEventMinutes <= form.maximumEventMinutes
+    form.workingDayStart < form.workingDayEnd &&
+    form.minimumEventMinutes <= form.defaultEventMinutes &&
+    form.defaultEventMinutes <= form.maximumEventMinutes
   );
   const mutation = useMutation({
     mutationFn: () => {

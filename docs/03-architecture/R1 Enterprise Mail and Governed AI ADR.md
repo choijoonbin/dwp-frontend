@@ -81,7 +81,7 @@ HCM, Work 등 대상 앱에서 다시 확인한다.
 | `mail_messages`             | 공급사 메시지의 안전한 본문·첨부 메타데이터 Projection    |
 | `mail_internal_comments`    | 외부 발신자에게 노출되지 않는 팀 협업                     |
 | `mail_action_proposals`     | 근거와 권한을 가진 사람 승인형 AI 제안                    |
-| `mail_delivery_outbox`      | lease·재시도·멱등 키·Provider receipt를 가진 발송 큐       |
+| `mail_delivery_outbox`      | lease·재시도·멱등 키·Provider receipt를 가진 발송 큐      |
 | `mail_domain_events`        | 재시도 가능한 Transactional Outbox                        |
 | `mail_audit_events`         | 테넌트·행위자·상관관계가 있는 변경 증거                   |
 

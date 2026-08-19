@@ -39,12 +39,7 @@ export default function ApprovalsPage() {
       <ApprovalAdmin
         view={
           page.view as
-            | 'admin-overview'
-            | 'workflows'
-            | 'forms'
-            | 'policies'
-            | 'operations'
-            | 'signatures'
+            'admin-overview' | 'workflows' | 'forms' | 'policies' | 'operations' | 'signatures'
         }
       />
     );

@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('Ask DWP persists the governed question in the URL and replays it on reload', async ({
+test('DWAI·ON persists the governed question in the URL and replays it on reload', async ({
   page,
 }) => {
   const questions: string[] = [];
@@ -23,20 +23,36 @@ test('Ask DWP persists the governed question in the URL and replays it on reload
     return fulfillSuccess(route, { ...ASK_RUNTIME_FIXTURE, requestId: request.requestId });
   });
 
-  await page.goto('/ask');
+  await page.goto('/dwaion');
   const prompt = 'Can I work remotely next Friday?';
-  await page.getByRole('button', { name: prompt }).click();
+  await page.getByRole('textbox', { name: 'Ask a work question' }).fill(prompt);
+  await page.getByRole('button', { name: 'Send question' }).click();
 
   await expect(page).toHaveURL(
-    (url) => url.pathname === '/ask' && url.searchParams.get('q') === prompt
+    (url) => url.pathname === '/dwaion' && url.searchParams.get('q') === prompt
   );
-  await expect(page.getByRole('heading', { name: 'Governed answer' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'DWAI·ON response' })).toBeVisible();
   await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
 
   await page.reload();
-  await expect(page.getByRole('textbox', { name: 'Ask a work question' })).toHaveValue(prompt);
   await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
   expect(questions).toEqual([prompt, prompt]);
+});
+
+test('legacy /ask links preserve the question and redirect to the branded workspace URL', async ({
+  page,
+}) => {
+  await page.route('**/api/agent/v1/ask', (route) => {
+    const request = route.request().postDataJSON() as { requestId: string };
+    return fulfillSuccess(route, { ...ASK_RUNTIME_FIXTURE, requestId: request.requestId });
+  });
+
+  const prompt = 'Summarize my urgent work';
+  await page.goto(`/ask?q=${encodeURIComponent(prompt)}`);
+  await expect(page).toHaveURL(
+    (url) => url.pathname === '/dwaion' && url.searchParams.get('q') === prompt
+  );
+  await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
 });
 
 test('Activity exposes truthful operational counts and actionable state filters', async ({

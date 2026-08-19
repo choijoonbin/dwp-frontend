@@ -233,7 +233,7 @@ test('keyboard users can skip the shell and retain focus through SPA navigation'
   await page.keyboard.press('Enter');
   await expect(page.getByTestId('app-main')).toBeFocused();
 
-  await page.getByRole('link', { name: 'Ask', exact: true }).first().click();
-  await expect(page).toHaveURL(/\/ask$/);
+  await page.getByRole('link', { name: 'DWAI·ON', exact: true }).first().click();
+  await expect(page).toHaveURL(/\/dwaion$/);
   await expect(page.getByTestId('app-main')).toBeFocused();
 });

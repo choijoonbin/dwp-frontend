@@ -2,10 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock3, Eye, MapPin, ShieldCheck } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  createWorkplaceBooking,
-  useToast,
-} from '@dwp-frontend/shared-utils';
+import { createWorkplaceBooking, useToast } from '@dwp-frontend/shared-utils';
 import {
   DateTimePickerField,
   DwpDateTimeProvider,
@@ -74,9 +71,10 @@ export function WorkplaceBookingDialog({
     setVisible(true);
   }, [initialEnd, initialStart, open, resource?.resourceId]);
 
-  const rangeError = !startsAt || !endsAt || !policy
-    ? 'invalid'
-    : validateWorkplaceBookingRange(startsAt, endsAt, siteTimeZone, policy, serverNow);
+  const rangeError =
+    !startsAt || !endsAt || !policy
+      ? 'invalid'
+      : validateWorkplaceBookingRange(startsAt, endsAt, siteTimeZone, policy, serverNow);
   const mutation = useMutation({
     mutationFn: () => {
       if (!resource) throw new Error(t('workplace.booking.resourceRequired'));
@@ -137,7 +135,9 @@ export function WorkplaceBookingDialog({
         )}
 
         <DwpDateTimeProvider locale={i18n.resolvedLanguage} timeZone={siteTimeZone}>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
+          <Box
+            sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}
+          >
             <DateTimePickerField
               required
               label={t('workplace.booking.start')}
@@ -150,7 +150,9 @@ export function WorkplaceBookingDialog({
               label={t('workplace.booking.end')}
               value={endsAt}
               onValueChange={(value) => value && setEndsAt(value)}
-              errorMessage={rangeError ? t(`workplace.booking.rangeErrors.${rangeError}`) : undefined}
+              errorMessage={
+                rangeError ? t(`workplace.booking.rangeErrors.${rangeError}`) : undefined
+              }
             />
           </Box>
         </DwpDateTimeProvider>

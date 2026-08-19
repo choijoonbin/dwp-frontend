@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { ActionIconButton } from '@dwp-frontend/design-system/components/actions/action-icon-button';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
-import { useAuth } from '@dwp-frontend/shared-utils';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
 import type { ShellDefinition } from './shell-registry';
 

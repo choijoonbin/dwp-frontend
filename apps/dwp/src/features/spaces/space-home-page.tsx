@@ -12,12 +12,13 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ActionButton, PageCanvas } from '@dwp-frontend/design-system';
+import { ActionButton, EmptyState, PageCanvas } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 import { getSpaceHome, useAuth } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
@@ -55,6 +56,7 @@ export function SpaceHomePage() {
   const auth = useAuth();
   const navigate = useNavigate();
   const [createOpen, setCreateOpen] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const home = useQuery({
     queryKey: ['spaces', 'home', auth.user?.tenantId, auth.user?.userId],
     queryFn: getSpaceHome,
@@ -89,6 +91,10 @@ export function SpaceHomePage() {
     data.metrics.pendingRequests,
   ];
   const metricKeys = ['mySpaces', 'discoverable', 'unread', 'requests'] as const;
+  const openCreate = (templateId?: string) => {
+    setSelectedTemplateId(templateId ?? null);
+    setCreateOpen(true);
+  };
 
   return (
     <PageCanvas>
@@ -147,7 +153,7 @@ export function SpaceHomePage() {
               <ActionButton
                 intent="primary"
                 startIcon={<Plus size={17} />}
-                onClick={() => setCreateOpen(true)}
+                onClick={() => openCreate()}
               >
                 {t('actions.createSpace')}
               </ActionButton>
@@ -210,7 +216,9 @@ export function SpaceHomePage() {
                 <Typography variant="caption" color="text.secondary">
                   {t(`home.metrics.${key}`)}
                 </Typography>
-                <Typography variant="h5">{formatNumber(metricValues[index])}</Typography>
+                <Typography component="p" variant="h5">
+                  {formatNumber(metricValues[index])}
+                </Typography>
               </Box>
             </Box>
           );
@@ -246,7 +254,7 @@ export function SpaceHomePage() {
           gridTemplateColumns: {
             xs: '1fr',
             md: 'repeat(2, minmax(0, 1fr))',
-            xl: 'repeat(3, minmax(0, 1fr))',
+            lg: 'repeat(3, minmax(0, 1fr))',
           },
           gap: 1.5,
         }}
@@ -254,6 +262,17 @@ export function SpaceHomePage() {
         {data.focusSpaces.slice(0, 6).map((space) => (
           <SpaceCard key={space.spaceId} space={space} />
         ))}
+        {!data.focusSpaces.length && (
+          <Box sx={{ gridColumn: '1 / -1', border: 1, borderColor: 'divider' }}>
+            <EmptyState
+              size="compact"
+              title={t('home.focus.emptyTitle')}
+              description={t('home.focus.emptyDescription')}
+              actionLabel={t('actions.explore')}
+              onAction={() => navigate('/spaces/discover')}
+            />
+          </Box>
+        )}
       </Box>
 
       <Box
@@ -300,6 +319,13 @@ export function SpaceHomePage() {
                 </Box>
               );
             })}
+            {!data.recentActivity.length && (
+              <EmptyState
+                size="compact"
+                title={t('home.activity.emptyTitle')}
+                description={t('home.activity.emptyDescription')}
+              />
+            )}
           </Stack>
         </Paper>
 
@@ -332,6 +358,11 @@ export function SpaceHomePage() {
                 </Typography>
               </Box>
             ))}
+            {!data.insights.length && (
+              <Typography variant="body2" sx={{ color: 'rgba(234,242,245,0.68)' }}>
+                {t('home.insights.empty')}
+              </Typography>
+            )}
           </Stack>
         </Paper>
       </Box>
@@ -359,14 +390,24 @@ export function SpaceHomePage() {
               summary: language.startsWith('ko') ? template.descriptionKo : template.descriptionEn,
             };
             return (
-              <Box
+              <ButtonBase
                 key={template.templateId}
+                disabled={!data.canCreate}
+                onClick={() => openCreate(template.templateId)}
                 sx={{
+                  width: 1,
                   minHeight: 140,
                   p: 2,
+                  display: 'block',
+                  textAlign: 'left',
+                  color: 'text.primary',
                   borderRight: { xl: index < 3 ? 1 : 0 },
                   borderBottom: { xs: index < 3 ? 1 : 0, xl: 0 },
                   borderColor: 'divider',
+                  transition: (theme) => theme.transitions.create(['background-color', 'color']),
+                  '&:hover': { bgcolor: 'action.hover' },
+                  '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.light' },
+                  '&.Mui-disabled': { color: 'text.primary' },
                 }}
               >
                 <SpaceGlyph
@@ -380,12 +421,36 @@ export function SpaceHomePage() {
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
                   {label.summary}
                 </Typography>
-              </Box>
+                {data.canCreate && (
+                  <Stack direction="row" alignItems="center" gap={0.5} sx={{ mt: 1.25 }}>
+                    <Typography variant="caption" color="primary.main" fontWeight={750}>
+                      {t('actions.useTemplate')}
+                    </Typography>
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </Stack>
+                )}
+              </ButtonBase>
             );
           })}
+          {!data.recommendedTemplates.length && (
+            <Box sx={{ gridColumn: '1 / -1' }}>
+              <EmptyState
+                size="compact"
+                title={t('home.templates.emptyTitle')}
+                description={t('home.templates.emptyDescription')}
+              />
+            </Box>
+          )}
         </Box>
       </Box>
-      <CreateSpaceDialog open={createOpen} onClose={() => setCreateOpen(false)} />
+      <CreateSpaceDialog
+        open={createOpen}
+        initialTemplateId={selectedTemplateId}
+        onClose={() => {
+          setCreateOpen(false);
+          setSelectedTemplateId(null);
+        }}
+      />
     </PageCanvas>
   );
 }

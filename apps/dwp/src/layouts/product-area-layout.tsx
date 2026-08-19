@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Home } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
-import { useAuth, usePermissions } from '@dwp-frontend/shared-utils';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -42,10 +43,19 @@ export type ProductAreaNavigationGroup = {
 };
 
 type ProductAreaLayoutProps = {
-  areaKey: 'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'spaces';
+  areaKey:
+    'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'messaging' | 'notifications' | 'spaces';
   navigation: readonly ProductAreaNavigationGroup[];
   translationNamespace?:
-    'workforce' | 'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'spaces';
+    | 'workforce'
+    | 'hcm'
+    | 'calendar'
+    | 'rooms'
+    | 'approvals'
+    | 'mail'
+    | 'messaging'
+    | 'notifications'
+    | 'spaces';
 };
 
 export function ProductAreaLayout({
@@ -128,7 +138,9 @@ export function ProductAreaLayout({
             >
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const selected = pathname === item.path;
+                const selected =
+                  pathname === item.path ||
+                  (item.path !== '/' && pathname.startsWith(`${item.path}/`));
                 const label = t(`navigation.items.${areaKey}.${item.view}.label`);
                 return (
                   <Box component="li" key={item.path} sx={{ display: 'block' }}>

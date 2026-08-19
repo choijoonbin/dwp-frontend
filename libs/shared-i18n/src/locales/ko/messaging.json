@@ -1,0 +1,217 @@
+{
+  "shell": {
+    "tenantFallback": "워크스페이스",
+    "backToHome": "워크스페이스로 돌아가기",
+    "openNavigation": "메신저 탐색 열기",
+    "messaging": {
+      "name": "메신저",
+      "context": "대화와 협업",
+      "navigationLabel": "메신저 메뉴"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "messaging": {
+        "start": "시작",
+        "conversations": "대화",
+        "work": "작업",
+        "admin": "관리"
+      }
+    },
+    "items": {
+      "messaging": {
+        "home": { "label": "홈" },
+        "inbox": { "label": "받은 대화" },
+        "spaces": { "label": "Space 대화" },
+        "direct": { "label": "DM" },
+        "people": { "label": "구성원 찾기" },
+        "later": { "label": "나중에 확인" },
+        "admin-overview": { "label": "운영 현황" },
+        "admin-policy": { "label": "대화 정책" }
+      }
+    }
+  },
+  "actions": {
+    "refresh": "새로고침",
+    "retry": "다시 시도",
+    "newDirect": "새 DM",
+    "focusSearch": "검색",
+    "back": "뒤로",
+    "save": "저장",
+    "saving": "저장 중"
+  },
+  "home": {
+    "eyebrow": "DWP 메시징",
+    "greetingMorning": "좋은 아침입니다",
+    "greetingAfternoon": "안녕하세요",
+    "greetingEvening": "좋은 저녁입니다",
+    "member": "구성원",
+    "title": "{{name}}님, 오늘 중요한 대화를 먼저 정리했습니다",
+    "description": "Space, DM, 운영 공지와 후속 조치를 하나의 업무 신호로 모아 보여줍니다.",
+    "signalSummary": "읽지 않은 대화 {{unread}}개, 멘션 {{mentions}}개, 긴급 대화 {{urgent}}개",
+    "loadError": "메신저 홈 정보를 불러오지 못했습니다.",
+    "metrics": {
+      "unread": "읽지 않음",
+      "unreadDetail": "업무 흐름에서 확인해야 할 대화",
+      "mentions": "멘션",
+      "mentionsDetail": "나에게 직접 요청된 메시지",
+      "spaces": "Space 대화",
+      "spacesDetail": "내가 속한 Space와 연결됨",
+      "direct": "DM",
+      "directDetail": "직접 대화와 소규모 그룹",
+      "saved": "나중에",
+      "savedDetail": "다시 확인할 대화"
+    },
+    "priority": {
+      "title": "우선 확인 대화",
+      "description": "멘션, 긴급도, 최근 활동을 기준으로 정렬됩니다.",
+      "open": "전체 보기",
+      "emptyTitle": "지금 확인할 대화가 없습니다",
+      "emptyDescription": "새 메시지가 오면 여기에 먼저 표시됩니다."
+    },
+    "spaces": {
+      "title": "활성 Space",
+      "description": "내가 참여 중인 Space의 대화 상태입니다."
+    },
+    "people": {
+      "title": "오늘 연결할 구성원",
+      "description": "조직도와 Space 참여 정보를 기반으로 추천합니다.",
+      "open": "대화 열기"
+    }
+  },
+  "type": {
+    "DIRECT": "DM",
+    "GROUP": "그룹",
+    "CHANNEL": "채널",
+    "ANNOUNCEMENT": "공지",
+    "INCIDENT": "인시던트",
+    "MEETING": "회의"
+  },
+  "conversation": {
+    "untitled": "제목 없는 대화",
+    "members": "구성원 {{count}}명",
+    "sendError": "메시지를 전송하지 못했습니다.",
+    "reactionError": "반응을 저장하지 못했습니다.",
+    "selectTitle": "대화를 선택하세요",
+    "selectDescription": "왼쪽 목록에서 대화를 선택하면 메시지, 구성원, 정책 맥락을 확인할 수 있습니다.",
+    "loadError": "대화 내용을 불러오지 못했습니다.",
+    "noMessagesTitle": "아직 메시지가 없습니다",
+    "noMessagesDescription": "첫 메시지를 보내 업무 맥락을 시작하세요.",
+    "composerPlaceholder": "메시지를 입력하세요. Shift+Enter로 줄바꿈",
+    "realtimeRest": "실시간 연결은 다음 단계에서 WebSocket으로 확장됩니다. 지금은 전송 후 즉시 갱신합니다.",
+    "send": "보내기",
+    "me": "나",
+    "deleted": "삭제된 메시지입니다"
+  },
+  "message": {
+    "me": "나",
+    "deleted": "삭제된 메시지입니다"
+  },
+  "classification": {
+    "PUBLIC": "공개",
+    "INTERNAL": "내부",
+    "CONFIDENTIAL": "기밀",
+    "RESTRICTED": "제한"
+  },
+  "workspace": {
+    "eyebrow": "대화 작업공간",
+    "search": "사람, Space, 대화 검색",
+    "loadError": "대화 목록을 불러오지 못했습니다.",
+    "emptyTitle": "조건에 맞는 대화가 없습니다",
+    "emptyDescription": "검색어를 바꾸거나 새 DM을 시작하세요.",
+    "ALL": {
+      "title": "받은 대화",
+      "description": "DM, Space, 공지를 한곳에서 처리합니다."
+    },
+    "FAVORITES": {
+      "title": "나중에 확인",
+      "description": "고정하거나 다시 확인해야 하는 대화를 모았습니다."
+    },
+    "SPACES": {
+      "title": "Space 대화",
+      "description": "내가 속한 Space와 연결된 채널입니다."
+    },
+    "DIRECT": {
+      "title": "DM",
+      "description": "구성원과 1:1 또는 소규모 대화를 시작합니다."
+    },
+    "CHANNELS": {
+      "title": "채널",
+      "description": "팀과 운영 채널을 탐색합니다."
+    }
+  },
+  "context": {
+    "members": "구성원",
+    "governance": "거버넌스",
+    "spaceLinked": "{{space}} Space와 연결된 대화입니다.",
+    "membershipBound": "Space 멤버십에 따라 접근 권한이 제한됩니다.",
+    "empty": "대화 맥락을 선택하면 구성원과 정책 정보가 표시됩니다."
+  },
+  "people": {
+    "eyebrow": "조직 디렉터리",
+    "title": "구성원을 찾아 바로 대화하세요",
+    "description": "SKAX 인사 디렉터리와 현재 상태를 기반으로 안전한 DM을 시작합니다.",
+    "search": "이름, 이메일, 직책 검색",
+    "openError": "DM을 열지 못했습니다.",
+    "loadError": "구성원 목록을 불러오지 못했습니다.",
+    "message": "대화",
+    "emptyTitle": "구성원이 없습니다",
+    "emptyDescription": "검색어를 줄이거나 다른 이름으로 찾아보세요.",
+    "directoryNote": "구성원 정보는 인사 디렉터리 스냅샷에서 동기화됩니다."
+  },
+  "admin": {
+    "eyebrow": "메신저 관리",
+    "loadError": "관리 정보를 불러오지 못했습니다.",
+    "overview": {
+      "title": "대화 운영 현황",
+      "description": "테넌트 대화, 보관, 제한 등급, Space 연동 상태를 점검합니다."
+    },
+    "metrics": {
+      "conversations": "활성 대화",
+      "conversationsDetail": "정책 범위의 전체 대화",
+      "spaces": "Space 연동",
+      "spacesDetail": "Space 멤버십 기반 대화",
+      "members": "참여 구성원",
+      "membersDetail": "최근 스냅샷 기준",
+      "messages": "보관 메시지",
+      "messagesDetail": "보존 정책 적용 대상",
+      "restricted": "제한 대화",
+      "restrictedDetail": "민감도 높은 대화"
+    },
+    "policy": {
+      "title": "테넌트 메시징 정책",
+      "description": "DM, Space 대화, 편집/삭제, AI 보조와 보관 정책을 설정합니다.",
+      "saved": "메시징 정책을 저장했습니다.",
+      "saveError": "메시징 정책을 저장하지 못했습니다.",
+      "noBypass": "관리 정책 변경은 감사 이벤트로 기록되며 Space 멤버십을 우회하지 않습니다.",
+      "fields": {
+        "directMessagesEnabled": {
+          "label": "DM 허용",
+          "description": "구성원 간 1:1 및 소규모 직접 대화를 허용합니다."
+        },
+        "spaceMessagingEnabled": {
+          "label": "Space 대화 허용",
+          "description": "Space 멤버십과 연결된 채널 대화를 허용합니다."
+        },
+        "allowMessageEdit": {
+          "label": "메시지 편집 허용",
+          "description": "작성자가 보존 정책 범위 안에서 메시지를 수정할 수 있습니다."
+        },
+        "allowMessageDelete": {
+          "label": "메시지 삭제 허용",
+          "description": "사용자 삭제 표시는 남기되 보관 사본은 정책에 따라 유지합니다."
+        },
+        "aiAssistanceEnabled": {
+          "label": "AI 보조 허용",
+          "description": "요약, 회신 초안, 긴급도 판단을 위한 확장 지점을 활성화합니다."
+        },
+        "retentionDays": {
+          "label": "보관 기간(일)"
+        },
+        "maximumAttachmentMb": {
+          "label": "첨부 최대 용량(MB)"
+        }
+      }
+    }
+  }
+}

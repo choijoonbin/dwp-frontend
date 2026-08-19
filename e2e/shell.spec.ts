@@ -632,7 +632,7 @@ test('tenant policy promotes the configured SSO provider without hiding local ac
     await ssoButton.evaluate((button) =>
       Boolean(
         button.compareDocumentPosition(document.querySelector('form')) &
-          Node.DOCUMENT_POSITION_FOLLOWING
+        Node.DOCUMENT_POSITION_FOLLOWING
       )
     )
   ).toBe(true);
@@ -1364,6 +1364,14 @@ test('personal home launcher can create, rename, persist, and reset folders', as
     .toEqual(['dwp-work', 'dwp-activity', 'dwp-ask']);
   await page.getByRole('button', { name: 'Reset to default', exact: true }).click();
 
+  const initialConnectItemIds = await page
+    .getByRole('list', { name: 'Connect apps' })
+    .locator('[data-launchpad-item]')
+    .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')));
+  const expectedConnectItemIds = [...initialConnectItemIds];
+  const mailIndex = expectedConnectItemIds.indexOf('ref-app-mail');
+  expect(mailIndex).toBeGreaterThanOrEqual(0);
+  expectedConnectItemIds.splice(mailIndex, 0, 'ref-app-service');
   const serviceButton = page.getByRole('button', { name: 'Move Services', exact: true });
   const serviceBounds = await serviceButton.boundingBox();
   const mailFrameBounds = await page.locator('[data-folder-target="ref-app-mail"]').boundingBox();
@@ -1389,7 +1397,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
         .locator('[data-launchpad-item]')
         .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
     )
-    .toEqual(['dwp-communications', 'ref-app-service', 'ref-app-mail', 'ref-app-collaboration']);
+    .toEqual(expectedConnectItemIds);
   await expect
     .poll(() =>
       page
@@ -1408,7 +1416,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
         .locator('[data-launchpad-item]')
         .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
     )
-    .toEqual(['dwp-communications', 'ref-app-service', 'ref-app-mail', 'ref-app-collaboration']);
+    .toEqual(expectedConnectItemIds);
   await page.getByRole('button', { name: 'Reset to default', exact: true }).click();
 
   const createStartWorkFolder = async () => {
@@ -1447,7 +1455,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   await page.getByRole('button', { name: 'Open folder Start work folder' }).click();
   const folderDialog = page.getByRole('dialog', { name: 'Start work folder' });
   await expect(folderDialog.getByRole('button', { name: 'Open Work' })).toBeVisible();
-  await expect(folderDialog.getByRole('button', { name: 'Open Ask DWP' })).toBeVisible();
+  await expect(folderDialog.getByRole('button', { name: 'Open DWAI·ON Workspace' })).toBeVisible();
   await folderDialog.getByRole('button', { name: 'Rename Start work folder' }).click();
   const renameDialog = page.getByRole('dialog', { name: 'Rename folder' });
   await renameDialog.getByRole('textbox', { name: 'Folder name' }).fill('Priority tools');
@@ -1489,7 +1497,9 @@ test('personal home launcher can create, rename, persist, and reset folders', as
 
   await createStartWorkFolder();
   await expect(page.getByRole('button', { name: 'Open folder Start work folder' })).toBeVisible();
-  await expect(page.getByText('Work was placed with Ask DWP.', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('Work was placed with DWAI·ON Workspace.', { exact: true })
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await page.getByRole('button', { name: 'Open folder Start work folder' }).click();
   await page
@@ -1497,6 +1507,97 @@ test('personal home launcher can create, rename, persist, and reset folders', as
     .getByRole('button', { name: 'Open Work' })
     .click();
   await expect(page).toHaveURL(/\/work/);
+});
+
+test('cross-group app drag commits the blank slot shown in the preview', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'Desktop pointer behavior is covered here.');
+
+  await page.setViewportSize({ width: 1920, height: 900 });
+  await mockAuthenticatedAdminSession(page);
+  await page.route('**/api/auth/permissions', (route) =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'SUCCESS',
+        message: 'OK',
+        data: [
+          ...DEFAULT_APP_PERMISSIONS,
+          {
+            resourceType: 'APP',
+            resourceKey: 'APP.CALENDAR',
+            permissionCode: 'VIEW',
+            effect: 'ALLOW',
+          },
+        ],
+      }),
+    })
+  );
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Edit home', exact: true }).click();
+
+  const connectApps = page.getByRole('list', { name: 'Connect apps' });
+  const serviceButton = page.getByRole('button', { name: 'Move Services', exact: true });
+  const initialConnectItems = await connectApps
+    .locator('[data-launchpad-item]')
+    .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')));
+  const blankSlot = await connectApps.evaluate((list) => {
+    const items = Array.from(list.querySelectorAll<HTMLElement>(':scope > [data-launchpad-item]'));
+    const firstItem = items[0];
+    if (!firstItem) return null;
+
+    const listStyle = window.getComputedStyle(list);
+    const columnCount = listStyle.gridTemplateColumns.split(' ').filter(Boolean).length;
+    if (columnCount < 1 || items.length < columnCount) return null;
+
+    const firstBounds = firstItem.getBoundingClientRect();
+    const rowGap = Number.parseFloat(listStyle.rowGap) || 0;
+    const targetIndex = items.length;
+    const targetColumn = targetIndex % columnCount;
+    const targetRow = Math.floor(targetIndex / columnCount);
+    const columnAnchor = items[targetColumn];
+    if (!columnAnchor) return null;
+    const columnBounds = columnAnchor.getBoundingClientRect();
+    return {
+      x: columnBounds.left + columnBounds.width / 2,
+      y: firstBounds.top + firstBounds.height / 2 + targetRow * (firstBounds.height + rowGap),
+    };
+  });
+  const serviceBounds = await serviceButton.boundingBox();
+  expect(blankSlot).not.toBeNull();
+  expect(serviceBounds).not.toBeNull();
+
+  await page.mouse.move(
+    (serviceBounds?.x ?? 0) + (serviceBounds?.width ?? 0) / 2,
+    (serviceBounds?.y ?? 0) + (serviceBounds?.height ?? 0) / 2
+  );
+  await page.mouse.down();
+  try {
+    await page.mouse.move(blankSlot?.x ?? 0, blankSlot?.y ?? 0, { steps: 18 });
+    const previewItems = [...initialConnectItems, 'ref-app-service'];
+    await expect(
+      page.locator('[data-launchpad-item="ref-app-service"][data-launchpad-drop-preview="true"]')
+    ).toHaveAttribute('data-launchpad-group-id', 'connect');
+    await expect
+      .poll(() =>
+        connectApps
+          .locator('[data-launchpad-item]')
+          .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
+      )
+      .toEqual(previewItems);
+  } finally {
+    await page.mouse.up();
+  }
+
+  await expect
+    .poll(() =>
+      connectApps
+        .locator('[data-launchpad-item]')
+        .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
+    )
+    .toEqual([...initialConnectItems, 'ref-app-service']);
+  await expect(page.getByRole('dialog', { name: 'Create folder' })).toHaveCount(0);
 });
 
 test('personal home widgets persist user choices and restore governed defaults', async ({
@@ -1720,7 +1821,7 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
 
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Open Work' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Open Ask DWP' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Open DWAI·ON Workspace' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Open Administration' })).toHaveCount(0);
   await expect(
     page.getByRole('region', { name: 'Work tools' }).getByRole('button', { name: /^Open / })
@@ -1735,7 +1836,7 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
   await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();
   await expect(page.getByText('No apps are available')).toBeVisible();
 
-  await page.goto('/ask');
+  await page.goto('/dwaion');
   await expect(page).toHaveURL(/\/403/);
   await expect(page.getByRole('heading', { name: 'Access denied' })).toBeVisible();
 
@@ -1743,7 +1844,7 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
   await expect(page).toHaveURL(/\/403/);
 });
 
-test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
+test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', async ({
   page,
 }, testInfo) => {
   await page.route('**/api/auth/me', (route) =>
@@ -1775,7 +1876,7 @@ test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
   );
   await mockAskRuntime(page);
 
-  const navigateTo = async (label: 'Work' | 'Ask' | 'Activity' | 'Apps') => {
+  const navigateTo = async (label: 'Work' | 'DWAI·ON' | 'Activity' | 'Apps') => {
     if (testInfo.project.name === 'mobile') {
       await page.getByRole('button', { name: 'Open navigation' }).click();
       await page
@@ -1798,13 +1899,18 @@ test('reference work hub connects Home, Work, Ask, Activity, and Apps', async ({
   await expect(page.getByRole('grid', { name: 'Work queue' })).toBeVisible();
   await expect(page.getByText('WK-1042 / Approval / Owner: You')).toBeVisible();
 
-  await navigateTo('Ask');
-  await expect(page.getByRole('heading', { name: 'Ask DWP' })).toBeVisible();
-  await page.getByRole('button', { name: 'Can I work remotely next Friday?' }).click();
-  await expect(page.getByRole('heading', { name: 'Governed answer' })).toBeVisible();
-  await expect(page.getByText('Verified answer', { exact: true })).toBeVisible();
+  await navigateTo('DWAI·ON');
+  await expect(page.getByRole('heading', { name: 'DWAI·ON', exact: true })).toBeVisible();
+  await page
+    .getByRole('textbox', { name: 'Ask a work question' })
+    .fill('Can I work remotely next Friday?');
+  await page.getByRole('button', { name: 'Send question' }).click();
+  await expect(page.getByRole('heading', { name: 'DWAI·ON response' })).toBeVisible();
+  await expect(
+    page.getByTestId('dwaion-workspace-result').getByText('Verified answer', { exact: true })
+  ).toBeVisible();
   await expect(page.getByText(ASK_RUNTIME_FIXTURE.answer)).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Verified sources (2)' })).toBeVisible();
+  await expect(page.getByText('Verified sources (2)', { exact: true })).toBeVisible();
   await expect(page.getByText('AUD-REF-1042')).toBeVisible();
 
   await navigateTo('Activity');

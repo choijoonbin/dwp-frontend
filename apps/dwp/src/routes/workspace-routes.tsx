@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import type { RouteObject } from 'react-router-dom';
 
@@ -14,7 +15,7 @@ import {
 
 const HomePage = lazy(() => import('../pages/home'));
 const WorkPage = lazy(() => import('../pages/work'));
-const AskPage = lazy(() => import('../pages/ask'));
+const DwaionPage = lazy(() => import('../pages/dwaion'));
 const ActivityPage = lazy(() => import('../pages/activity'));
 const AppsPage = lazy(() => import('../pages/apps'));
 
@@ -58,12 +59,20 @@ export const workspaceRoutes: RouteObject[] = [
         ),
       },
       {
-        path: 'ask',
+        path: 'dwaion',
         element: (
           <AppRouteGuard resourceKey="APP.ASK">
             <Suspense fallback={routeFallback}>
-              <AskPage />
+              <DwaionPage />
             </Suspense>
+          </AppRouteGuard>
+        ),
+      },
+      {
+        path: 'ask',
+        element: (
+          <AppRouteGuard resourceKey="APP.ASK">
+            <LegacyDwaionRedirect />
           </AppRouteGuard>
         ),
       },
@@ -88,3 +97,8 @@ export const workspaceRoutes: RouteObject[] = [
     ],
   },
 ];
+
+function LegacyDwaionRedirect() {
+  const location = useLocation();
+  return <Navigate to={{ pathname: '/dwaion', search: location.search }} replace />;
+}

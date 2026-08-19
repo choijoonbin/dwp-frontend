@@ -301,5 +301,5 @@ Desktop·Tablet·320/390px, Dark·High Contrast, 역할별 메뉴·직접 URL �
 7. Space→Auth 호출은 Service Identity Token, Timeout, Circuit Breaker, Retry 계약을 사용한다.
    Auth는 계정과 Effective Grant의 SoR이며 Space는 Membership Intent의 SoR다.
 
-적용 Migration은 Space V3~V5, Auth V61~V62, Platform V127·V129·V130이다. 외부 IAG,
+적용 Migration은 Space V3~~V5, Auth V61~~V62, Platform V127·V129·V130이다. 외부 IAG,
 Object Storage, KMS, DLP, Connector와 Search ACL Projection은 기존 Release Gate를 유지한다.

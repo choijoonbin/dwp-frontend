@@ -97,7 +97,9 @@ export type ApprovalRequest = {
 export type ApprovalRequestDetail = {
   request: ApprovalRequest;
   workflowId: string;
+  formId: string;
   payload: Record<string, unknown>;
+  timeline: ApprovalTimelineEvent[];
 };
 
 export type ApprovalStageMetric = { stage: string; count: number; atRisk: number };
@@ -116,6 +118,11 @@ export type ApprovalAdminPulse = {
   activeRequests: number;
   overdueTasks: number;
   failedIntegrations: number;
+  assurance: Array<{
+    key: 'identity' | 'segregation' | 'evidence' | 'delivery';
+    state: 'ENFORCED' | 'ATTENTION';
+    exceptions: number;
+  }>;
 };
 export type ApprovalHome = {
   generatedAt: string;
@@ -164,13 +171,49 @@ export type ApprovalWorkflowDetail = {
 export type ApprovalForm = {
   formId: string;
   formKey: string;
+  categoryId: string;
+  categoryKey: string;
+  categoryNameKo: string;
+  categoryNameEn: string;
   nameKo: string;
   nameEn: string;
+  descriptionKo: string;
+  descriptionEn: string;
+  ownerGroupRef?: string | null;
+  formKind: 'REQUEST' | 'DOCUMENT' | 'SIGNATURE';
   lifecycleState: string;
   currentVersion: number;
   fieldCount: number;
+  routeCount: number;
+  usageCount: number;
   version: number;
   updatedAt: string;
+};
+export type ApprovalFormCategory = {
+  categoryId: string;
+  categoryKey: string;
+  parentCategoryId?: string | null;
+  nameKo: string;
+  nameEn: string;
+  descriptionKo: string;
+  descriptionEn: string;
+  iconKey: string;
+  sortOrder: number;
+  lifecycleState: 'ACTIVE' | 'INACTIVE';
+  formCount: number;
+  version: number;
+};
+export type ApprovalFormRoute = {
+  bindingId: string;
+  workflowId: string;
+  workflowKey: string;
+  workflowNameKo: string;
+  workflowNameEn: string;
+  workflowLifecycleState: string;
+  workflowVersion: number;
+  slaMinutes: number;
+  bindingType: 'DEFAULT' | 'CONDITIONAL';
+  priority: number;
 };
 export type ApprovalFormField = {
   key: string;
@@ -189,9 +232,11 @@ export type ApprovalFormDetail = {
     fields: ApprovalFormField[];
   };
   schemaHash: string;
+  routes: ApprovalFormRoute[];
 };
 export type ApprovalRequestTemplate = {
   workflow: ApprovalWorkflow;
+  routeDefinition: ApprovalWorkflowDetail['definition'];
   form: ApprovalFormDetail;
 };
 export type ApprovalPolicy = {
@@ -205,6 +250,28 @@ export type ApprovalPolicy = {
   lifecycleState: string;
   rule: Record<string, unknown>;
   version: number;
+  pendingReview: boolean;
+  pendingEnforcementMode?: string | null;
+  pendingSeverity?: string | null;
+  pendingLifecycleState?: string | null;
+  pendingRule: Record<string, unknown>;
+  pendingChangeReason?: string | null;
+  pendingBy?: number | null;
+  pendingAt?: string | null;
+};
+export type ApprovalPolicyVersion = {
+  policyVersionId: string;
+  versionNumber: number;
+  enforcementMode: string;
+  severity: string;
+  lifecycleState: string;
+  rule: Record<string, unknown>;
+  changeReason: string;
+  submittedBy?: number | null;
+  submittedAt?: string | null;
+  publishedBy?: number | null;
+  publishedAt: string;
+  reviewComment: string;
 };
 export type ApprovalOperationSignal = {
   key: string;
@@ -219,6 +286,21 @@ export type ApprovalOperations = {
   generatedAt: string;
   signals: ApprovalOperationSignal[];
   breachedTasks: ApprovalTask[];
+  integrationDeliveries: ApprovalIntegrationDelivery[];
+};
+export type ApprovalIntegrationDelivery = {
+  outboxId: string;
+  eventId: string;
+  requestId?: string | null;
+  eventType: string;
+  status: string;
+  attemptCount: number;
+  manualRetryCount: number;
+  availableAt: string;
+  publishedAt?: string | null;
+  lastError?: string | null;
+  createdAt: string;
+  lastRetriedAt?: string | null;
 };
 export type ApprovalSignatureProvider = {
   providerId: string;
@@ -235,6 +317,9 @@ export type ApprovalDelegation = {
   delegationId: string;
   delegatorUserId: number;
   delegateUserId: number;
+  delegatePersonPublicId?: string | null;
+  delegateDisplayName: string;
+  delegateEmail?: string | null;
   scopeType: 'ALL' | 'WORKFLOW';
   workflowKey?: string | null;
   startsAt: string;
@@ -242,6 +327,14 @@ export type ApprovalDelegation = {
   lifecycleState: string;
   reason: string;
   version: number;
+  direction: 'OUTGOING' | 'INCOMING';
+};
+export type ApprovalDelegationCandidate = {
+  userId: number;
+  personPublicId?: string | null;
+  displayName: string;
+  email?: string | null;
+  jobTitle?: string | null;
 };
 
 const base = '/api/approvals/v1';
@@ -260,6 +353,16 @@ export async function getApprovalTask(taskId: string): Promise<ApprovalTaskDetai
   const response = await axiosInstance.get<ApiResponse<ApprovalTaskDetail>>(
     `${base}/tasks/${taskId}`
   );
+  return response.data.data;
+}
+export async function claimApprovalTask(
+  taskId: string,
+  expectedVersion: number
+): Promise<ApprovalTaskDetail> {
+  const response = await axiosInstance.post<
+    ApiResponse<ApprovalTaskDetail>,
+    { expectedVersion: number }
+  >(`${base}/tasks/${taskId}/claim`, { expectedVersion });
   return response.data.data;
 }
 export async function decideApprovalTask(
@@ -296,6 +399,7 @@ export async function getApprovalRequestDetail(requestId: string): Promise<Appro
 }
 export async function createApprovalRequest(input: {
   workflowId: string;
+  formId: string;
   title: string;
   summary: string;
   priority: ApprovalPriority;
@@ -311,6 +415,7 @@ export async function updateApprovalDraft(
   requestId: string,
   input: {
     workflowId: string;
+    formId: string;
     title: string;
     summary: string;
     priority: ApprovalPriority;
@@ -337,12 +442,13 @@ export async function submitApprovalRequest(
 export async function respondToApprovalInformationRequest(
   requestId: string,
   message: string,
+  payload: Record<string, unknown>,
   expectedVersion: number
 ): Promise<ApprovalRequest> {
   const response = await axiosInstance.post<
     ApiResponse<ApprovalRequest>,
-    { message: string; expectedVersion: number }
-  >(`${base}/requests/${requestId}/information-response`, { message, expectedVersion });
+    { message: string; payload: Record<string, unknown>; expectedVersion: number }
+  >(`${base}/requests/${requestId}/information-response`, { message, payload, expectedVersion });
   return response.data.data;
 }
 export async function withdrawApprovalRequest(
@@ -369,9 +475,31 @@ export async function getPublishedApprovalWorkflowTemplate(
   );
   return response.data.data;
 }
+export async function getPublishedApprovalForms(): Promise<ApprovalForm[]> {
+  const response = await axiosInstance.get<ApiResponse<ApprovalForm[]>>(`${base}/catalog/forms`);
+  return response.data.data;
+}
+export async function getPublishedApprovalFormTemplate(
+  formId: string
+): Promise<ApprovalRequestTemplate> {
+  const response = await axiosInstance.get<ApiResponse<ApprovalRequestTemplate>>(
+    `${base}/catalog/forms/${formId}/template`
+  );
+  return response.data.data;
+}
 export async function getApprovalDelegations(): Promise<ApprovalDelegation[]> {
   const response = await axiosInstance.get<ApiResponse<ApprovalDelegation[]>>(
     `${base}/delegations`
+  );
+  return response.data.data;
+}
+export async function searchApprovalDelegationCandidates(
+  query: string,
+  limit = 10
+): Promise<ApprovalDelegationCandidate[]> {
+  const search = new URLSearchParams({ query: query.trim(), limit: String(limit) });
+  const response = await axiosInstance.get<ApiResponse<ApprovalDelegationCandidate[]>>(
+    `${base}/delegations/candidates?${search.toString()}`
   );
   return response.data.data;
 }
@@ -387,6 +515,16 @@ export async function createApprovalDelegation(input: {
     `${base}/delegations`,
     input
   );
+  return response.data.data;
+}
+export async function revokeApprovalDelegation(
+  delegationId: string,
+  expectedVersion: number
+): Promise<ApprovalDelegation[]> {
+  const response = await axiosInstance.post<
+    ApiResponse<ApprovalDelegation[]>,
+    { expectedVersion: number }
+  >(`${base}/delegations/${delegationId}/revoke`, { expectedVersion });
   return response.data.data;
 }
 export async function getApprovalAdminOverview(): Promise<ApprovalAdminPulse> {
@@ -451,6 +589,46 @@ export async function getApprovalForms(): Promise<ApprovalForm[]> {
   const response = await axiosInstance.get<ApiResponse<ApprovalForm[]>>(`${base}/admin/forms`);
   return response.data.data;
 }
+export async function getApprovalFormCategories(): Promise<ApprovalFormCategory[]> {
+  const response = await axiosInstance.get<ApiResponse<ApprovalFormCategory[]>>(
+    `${base}/admin/form-categories`
+  );
+  return response.data.data;
+}
+export type ApprovalFormCategoryInput = {
+  parentCategoryId?: string | null;
+  nameKo: string;
+  nameEn: string;
+  descriptionKo: string;
+  descriptionEn: string;
+  iconKey: string;
+  sortOrder: number;
+};
+export async function createApprovalFormCategory(
+  input: ApprovalFormCategoryInput & { categoryKey: string }
+): Promise<ApprovalFormCategory[]> {
+  const response = await axiosInstance.post<
+    ApiResponse<ApprovalFormCategory[]>,
+    ApprovalFormCategoryInput & { categoryKey: string }
+  >(`${base}/admin/form-categories`, input);
+  return response.data.data;
+}
+export async function updateApprovalFormCategory(
+  categoryId: string,
+  input: ApprovalFormCategoryInput & {
+    lifecycleState: 'ACTIVE' | 'INACTIVE';
+    expectedVersion: number;
+  }
+): Promise<ApprovalFormCategory[]> {
+  const response = await axiosInstance.put<
+    ApiResponse<ApprovalFormCategory[]>,
+    ApprovalFormCategoryInput & {
+      lifecycleState: 'ACTIVE' | 'INACTIVE';
+      expectedVersion: number;
+    }
+  >(`${base}/admin/form-categories/${categoryId}`, input);
+  return response.data.data;
+}
 export async function getApprovalForm(formId: string): Promise<ApprovalFormDetail> {
   const response = await axiosInstance.get<ApiResponse<ApprovalFormDetail>>(
     `${base}/admin/forms/${formId}`
@@ -460,8 +638,13 @@ export async function getApprovalForm(formId: string): Promise<ApprovalFormDetai
 export async function updateApprovalFormDraft(
   formId: string,
   input: {
+    categoryId: string;
     nameKo: string;
     nameEn: string;
+    descriptionKo: string;
+    descriptionEn: string;
+    ownerGroupRef: string;
+    defaultWorkflowId: string;
     fields: ApprovalFormField[];
     expectedVersion: number;
   }
@@ -469,12 +652,46 @@ export async function updateApprovalFormDraft(
   const response = await axiosInstance.put<
     ApiResponse<ApprovalFormDetail>,
     {
+      categoryId: string;
       nameKo: string;
       nameEn: string;
+      descriptionKo: string;
+      descriptionEn: string;
+      ownerGroupRef: string;
+      defaultWorkflowId: string;
       fields: ApprovalFormField[];
       expectedVersion: number;
     }
   >(`${base}/admin/forms/${formId}/draft`, input);
+  return response.data.data;
+}
+export type ApprovalFormDraftInput = {
+  categoryId: string;
+  nameKo: string;
+  nameEn: string;
+  descriptionKo: string;
+  descriptionEn: string;
+  ownerGroupRef: string;
+  defaultWorkflowId: string;
+  fields: ApprovalFormField[];
+};
+export async function createApprovalFormDraft(
+  input: ApprovalFormDraftInput & { formKey: string }
+): Promise<ApprovalFormDetail> {
+  const response = await axiosInstance.post<
+    ApiResponse<ApprovalFormDetail>,
+    ApprovalFormDraftInput & { formKey: string }
+  >(`${base}/admin/forms`, input);
+  return response.data.data;
+}
+export async function publishApprovalForm(
+  formId: string,
+  expectedVersion: number
+): Promise<ApprovalFormDetail> {
+  const response = await axiosInstance.post<
+    ApiResponse<ApprovalFormDetail>,
+    { expectedVersion: number }
+  >(`${base}/admin/forms/${formId}/publish`, { expectedVersion });
   return response.data.data;
 }
 export async function getApprovalPolicies(): Promise<ApprovalPolicy[]> {
@@ -488,6 +705,7 @@ export async function updateApprovalPolicy(
     severity: string;
     lifecycleState: string;
     rule: Record<string, unknown>;
+    changeReason: string;
     expectedVersion: number;
   }
 ): Promise<ApprovalPolicy[]> {
@@ -498,14 +716,42 @@ export async function updateApprovalPolicy(
       severity: string;
       lifecycleState: string;
       rule: Record<string, unknown>;
+      changeReason: string;
       expectedVersion: number;
     }
   >(`${base}/admin/policies/${policyId}`, input);
   return response.data.data;
 }
+export async function publishApprovalPolicy(
+  policyId: string,
+  input: { expectedVersion: number; reviewComment: string }
+): Promise<ApprovalPolicy[]> {
+  const response = await axiosInstance.post<
+    ApiResponse<ApprovalPolicy[]>,
+    { expectedVersion: number; reviewComment: string }
+  >(`${base}/admin/policies/${policyId}/publish`, input);
+  return response.data.data;
+}
+export async function getApprovalPolicyVersions(
+  policyId: string
+): Promise<ApprovalPolicyVersion[]> {
+  const response = await axiosInstance.get<ApiResponse<ApprovalPolicyVersion[]>>(
+    `${base}/admin/policies/${policyId}/versions`
+  );
+  return response.data.data;
+}
 export async function getApprovalOperations(): Promise<ApprovalOperations> {
   const response = await axiosInstance.get<ApiResponse<ApprovalOperations>>(
     `${base}/admin/operations`
+  );
+  return response.data.data;
+}
+export async function retryApprovalIntegrationDelivery(
+  outboxId: string
+): Promise<ApprovalOperations> {
+  const response = await axiosInstance.post<ApiResponse<ApprovalOperations>, undefined>(
+    `${base}/admin/operations/events/${outboxId}/retry`,
+    undefined
   );
   return response.data.data;
 }

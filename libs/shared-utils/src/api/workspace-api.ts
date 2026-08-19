@@ -66,12 +66,7 @@ export type WorkspaceActivityFeed = {
 };
 
 export type WorkspaceAppCategory =
-  | 'productivity'
-  | 'service'
-  | 'people'
-  | 'knowledge'
-  | 'business'
-  | 'legacy';
+  'productivity' | 'service' | 'people' | 'knowledge' | 'business' | 'legacy';
 export type WorkspaceAppLaunchMode = 'Native' | 'SSO' | 'Deep link';
 export type WorkspaceAppHealth = 'healthy' | 'managed' | 'attention' | 'configuration-required';
 export type WorkspaceAppAccessState =
@@ -101,13 +96,7 @@ export type WorkspaceApp = {
   accessState: WorkspaceAppAccessState;
   accessRequestId?: string | null;
   accessRequestState?:
-    | 'PENDING'
-    | 'APPROVED'
-    | 'REJECTED'
-    | 'CANCELLED'
-    | 'EXPIRED'
-    | 'REVOKED'
-    | null;
+    'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED' | 'REVOKED' | null;
   accessRequestUpdatedAt?: string | null;
   accessRequestVersion?: number | null;
 };

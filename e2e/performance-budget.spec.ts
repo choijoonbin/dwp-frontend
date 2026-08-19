@@ -46,8 +46,8 @@ test('authenticated shell and SPA transitions stay within the runtime budget', a
   );
   expect(initialCls).toBeLessThanOrEqual(budgets.cumulativeLayoutShift);
 
-  await page.getByRole('link', { name: 'Ask', exact: true }).first().click();
-  await expect(page).toHaveURL(/\/ask$/);
+  await page.getByRole('link', { name: 'DWAI·ON', exact: true }).first().click();
+  await expect(page).toHaveURL(/\/dwaion$/);
   await expect
     .poll(() =>
       page.evaluate(

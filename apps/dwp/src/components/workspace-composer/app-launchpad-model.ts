@@ -19,6 +19,8 @@ export type HomeAppIconKey =
   | 'knowledge'
   | 'legacy'
   | 'mail'
+  | 'messaging'
+  | 'notifications'
   | 'rooms'
   | 'spaces'
   | 'hcm'
@@ -120,11 +122,11 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   },
   {
     id: 'dwp-ask',
-    name: 'Ask DWP',
-    shortName: 'Ask DWP',
-    description: 'Read-only request plans with an audit trace',
+    name: 'DWAI·ON Workspace',
+    shortName: 'DWAI·ON',
+    description: 'AI workspace with evidence, sources, and an audit trace',
     groupId: 'work',
-    route: '/ask',
+    route: '/dwaion',
     iconKey: 'ask',
     tone: '#7A4FC4',
     resourceKey: 'APP.ASK',
@@ -140,6 +142,17 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     tone: '#087E8B',
     resourceKey: 'APP.ACTIVITY',
     badge: '2',
+  },
+  {
+    id: 'dwp-notifications',
+    name: 'Notification center',
+    shortName: 'Notifications',
+    description: 'Triage actionable updates from every DWP application',
+    groupId: 'work',
+    route: '/notifications',
+    iconKey: 'notifications',
+    tone: '#2F5E8A',
+    resourceKey: 'APP.NOTIFICATIONS',
   },
   {
     id: 'dwp-approvals',
@@ -198,15 +211,15 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     badge: '6',
   },
   {
-    id: 'ref-app-collaboration',
-    name: 'Collaboration',
-    shortName: 'Collab',
-    description: 'Chat, channels, and meetings',
+    id: 'dwp-messaging',
+    name: 'Messenger',
+    shortName: 'Messages',
+    description: 'Chat with people, Space members, and teams in governed work context',
     groupId: 'connect',
-    route: '/apps?app=ref-app-collaboration',
-    iconKey: 'collaboration',
-    tone: '#C04B5C',
-    resourceKey: 'APP.COLLABORATION',
+    route: '/messages/home',
+    iconKey: 'messaging',
+    tone: '#2856C7',
+    resourceKey: 'APP.MESSAGING',
     badge: '3',
   },
   {

@@ -438,7 +438,7 @@ export function SpaceAdminOperations() {
         spaceName={
           typeof ownerRecoveryFinding?.evidence.spaceName === 'string'
             ? ownerRecoveryFinding.evidence.spaceName
-            : ownerRecoveryFinding?.targetRef ?? ''
+            : (ownerRecoveryFinding?.targetRef ?? '')
         }
         busy={recoverOwner.isPending}
         onClose={() => setOwnerRecoveryFinding(null)}

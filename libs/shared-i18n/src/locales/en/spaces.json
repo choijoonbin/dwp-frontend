@@ -33,8 +33,9 @@
     "createSpace": "Create space",
     "explore": "Explore spaces",
     "viewAll": "View all",
+    "useTemplate": "Start with this template",
     "clear": "Clear search",
-    "backToSpaces": "Back to my spaces",
+    "backToSpaces": "Back to Space home",
     "newContent": "New content",
     "publish": "Publish",
     "openApp": "Open app",
@@ -64,16 +65,25 @@
     },
     "focus": {
       "title": "Spaces that need attention",
-      "description": "Prioritized by activity and unread signals."
+      "description": "Prioritized by activity and unread signals.",
+      "emptyTitle": "No spaces need your attention",
+      "emptyDescription": "Discover a collaboration space or start one for a new purpose."
     },
     "activity": {
       "title": "Space activity",
-      "description": "Recent changes across all spaces you participate in."
+      "description": "Recent changes across all spaces you participate in.",
+      "emptyTitle": "No new activity",
+      "emptyDescription": "Changes from the spaces you participate in will appear here."
     },
-    "insights": { "title": "Collaboration insights" },
+    "insights": {
+      "title": "Collaboration insights",
+      "empty": "There are not enough collaboration signals to analyze yet."
+    },
     "templates": {
       "title": "Proven ways to start",
-      "description": "Start with policy and structure designed for the purpose."
+      "description": "Start with policy and structure designed for the purpose.",
+      "emptyTitle": "No templates are available",
+      "emptyDescription": "Published templates will appear here when an administrator makes them available."
     }
   },
   "directory": {
@@ -162,6 +172,12 @@
     "unknownAuthor": "Unknown author",
     "noContentTitle": "No content has been published",
     "noContentDescription": "A member with contribution rights can publish the first item.",
+    "noFeaturedTitle": "No featured content yet",
+    "noFeaturedDescription": "Curated knowledge and decisions will appear in the Space overview.",
+    "noActivityTitle": "No activity recorded",
+    "noActivityDescription": "Content and membership changes will be recorded in this activity stream.",
+    "noAppsTitle": "No apps are connected",
+    "noAppsDescription": "Connect an approved work app to launch it with the Space context.",
     "peoplePrivacy": "User and group memberships are available to Space Owners and Moderators.",
     "appScope": "Data access scope: {{scope}}",
     "agentTitle": "Space AI grounded in evidence and permissions",
@@ -231,8 +247,14 @@
     "requestsTitle": "Access requests",
     "requestsDescription": "Review the business need and minimum role before deciding access.",
     "noRequests": "There are no access requests to review.",
+    "noMembersTitle": "No active memberships",
+    "noMembersDescription": "Assign minimum access to a user or directory group.",
     "saved": "Space membership saved.",
     "revoked": "Space membership revoked.",
+    "revokeTitle": "Revoke this membership?",
+    "revokeDescription": "Revoke {{principal}}'s {{role}} role. This subject may lose Space access immediately.",
+    "revokeConfirm": "Revoke membership",
+    "revoking": "Revoking",
     "error": "We could not save the membership.",
     "lastOwnerError": "The final active Owner cannot be revoked. Assign another Owner first."
   },
@@ -268,7 +290,13 @@
     "GROUP": "Inherited from group",
     "REQUEST": "Approved request",
     "PROVISIONING": "Automated provisioning",
-    "TEMPLATE": "Template assignment"
+    "TEMPLATE": "Template assignment",
+    "RECOVERY": "Administrator recovery"
+  },
+  "dataAccessScope": {
+    "SPACE_ONLY": "This Space only",
+    "TENANT_READ": "Tenant read scope",
+    "EXPLICIT_RESOURCE": "Explicitly approved resources"
   },
   "status": {
     "ACTIVE": "Active",

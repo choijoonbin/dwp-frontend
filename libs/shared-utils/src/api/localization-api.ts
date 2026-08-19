@@ -3,12 +3,7 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 
 export type LocalizationRevisionState =
-  | 'DRAFT'
-  | 'IN_REVIEW'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'PUBLISHED'
-  | 'SUPERSEDED';
+  'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED' | 'PUBLISHED' | 'SUPERSEDED';
 
 export type LocalizationBundleSummary = {
   bundleId: string;

@@ -40,22 +40,7 @@ export const launchpadCollisionDetection: CollisionDetection = (args) => {
   const groupTarget = pointerCollisions.find((collision) =>
     String(collision.id).startsWith(GROUP_TARGET_PREFIX)
   );
-  if (!groupTarget) return closestCenter(args);
-
-  const targetGroupId = groupTarget.data?.droppableContainer.data.current?.groupId;
-  const targetGroupItems = args.droppableContainers.filter((container) => {
-    const id = String(container.id);
-    return (
-      container.id !== args.active.id &&
-      container.data.current?.groupId === targetGroupId &&
-      !id.startsWith(GROUP_TARGET_PREFIX) &&
-      !id.startsWith(FOLDER_TARGET_PREFIX)
-    );
-  });
-
-  const nearestItem = closestCenter({
-    ...args,
-    droppableContainers: targetGroupItems,
-  })[0];
-  return nearestItem ? [nearestItem] : [groupTarget];
+  // A pointer inside the group but outside an item is an intentional empty-slot drop.
+  // Returning a nearby item here makes the committed order disagree with the preview.
+  return groupTarget ? [groupTarget] : closestCenter(args);
 };

@@ -13,6 +13,7 @@
     "groups": {
       "experience": "사용자 경험",
       "services": "서비스 운영",
+      "notifications": "알림 플랫폼",
       "spaces": "Space 운영",
       "identity": "ID 및 접근 권한",
       "platform": "플랫폼 설정",
@@ -59,6 +60,21 @@
         "label": "요청 운영",
         "title": "서비스 요청 운영",
         "description": "테넌트 서비스 요청을 분류·배정·처리하고 SLA와 전체 이력을 통제합니다."
+      },
+      "notification-overview": {
+        "label": "운영 개요",
+        "title": "알림 운영 개요",
+        "description": "알림 생성, 조치 필요, 실패와 과다 알림 신호를 함께 보고 우선 운영 조치를 판단합니다."
+      },
+      "notification-contracts": {
+        "label": "알림 계약",
+        "title": "알림 유형 계약",
+        "description": "앱별 이벤트 스키마, 우선순위, 소유자, 채널과 수명주기 상태를 검증합니다."
+      },
+      "notification-operations": {
+        "label": "전달 운영",
+        "title": "알림 전달 운영",
+        "description": "우선순위 Lane, Provider 상태, 재시도·DLQ와 불확실한 전달 결과를 통제합니다."
       },
       "space-overview": {
         "label": "운영 개요",

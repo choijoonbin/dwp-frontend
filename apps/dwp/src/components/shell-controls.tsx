@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bell, ChevronDown, Clock3, Maximize2, Minimize2, Search, ShieldCheck } from 'lucide-react';
+import { ChevronDown, Maximize2, Minimize2, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { GlyphSurface } from '@dwp-frontend/design-system/components/glyph-surface';
 import { WORKSPACE_NAME } from '@dwp-frontend/shared-utils/env';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
@@ -13,11 +14,8 @@ import {
 
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
-import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
-import Popover from '@mui/material/Popover';
 import MenuItem from '@mui/material/MenuItem';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
@@ -28,6 +26,7 @@ import {
   isAppEntitled,
   localizeHomeApps,
 } from '../components/workspace-composer/app-launchpad-model';
+import { NotificationHeaderGlance } from '../features/notifications/notification-header-glance';
 
 const GlobalSearchDialog = lazy(() =>
   import('../features/search/global-search-dialog').then((module) => ({
@@ -298,72 +297,15 @@ export function FullscreenControl() {
 }
 
 export function NotificationMenu() {
-  const { t } = useTranslation('shell');
-  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-
+  const navigate = useNavigate();
   return (
-    <>
-      <Tooltip title={t('notifications.label')} slotProps={{ popper: { disablePortal: true } }}>
-        <IconButton
-          aria-label={t('notifications.label')}
-          onClick={(event) => setAnchor(event.currentTarget)}
-        >
-          <Badge color="error" badgeContent={2} max={9}>
-            <Bell size={20} strokeWidth={1.8} />
-          </Badge>
-        </IconButton>
-      </Tooltip>
-      <Popover
-        anchorEl={anchor}
-        open={Boolean(anchor)}
-        onClose={() => setAnchor(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        slotProps={{ paper: { sx: { width: { xs: 320, sm: 380 }, mt: 1 } } }}
-      >
-        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography component="h2" variant="subtitle1">
-            {t('notifications.label')}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {t('notifications.newCount', { count: 2 })}
-          </Typography>
-        </Box>
-        <Divider />
-        <ButtonBase
-          onClick={() => setAnchor(null)}
-          sx={{ width: 1, p: 2, alignItems: 'flex-start', gap: 1.5, textAlign: 'left' }}
-        >
-          <Box sx={{ color: 'warning.main', mt: 0.25 }}>
-            <Clock3 size={18} aria-hidden="true" />
-          </Box>
-          <Box>
-            <Typography component="p" variant="subtitle2">
-              {t('notifications.approval.title')}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t('notifications.approval.description')}
-            </Typography>
-          </Box>
-        </ButtonBase>
-        <Divider />
-        <ButtonBase
-          onClick={() => setAnchor(null)}
-          sx={{ width: 1, p: 2, alignItems: 'flex-start', gap: 1.5, textAlign: 'left' }}
-        >
-          <Box sx={{ color: 'success.main', mt: 0.25 }}>
-            <ShieldCheck size={18} aria-hidden="true" />
-          </Box>
-          <Box>
-            <Typography component="p" variant="subtitle2">
-              {t('notifications.policy.title')}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t('notifications.policy.description', { count: 4 })}
-            </Typography>
-          </Box>
-        </ButtonBase>
-      </Popover>
-    </>
+    <NotificationHeaderGlance
+      onOpenCenter={(notificationId) =>
+        navigate(
+          notificationId ? `/notifications/${encodeURIComponent(notificationId)}` : '/notifications'
+        )
+      }
+      onOpenSettings={() => navigate('/account/settings/notifications')}
+    />
   );
 }

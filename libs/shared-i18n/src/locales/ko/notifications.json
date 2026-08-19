@@ -1,0 +1,415 @@
+{
+  "shell": {
+    "tenantFallback": "워크스페이스",
+    "backToHome": "워크스페이스로 돌아가기",
+    "openNavigation": "알림 탐색 열기",
+    "notifications": {
+      "name": "알림",
+      "context": "알림 센터",
+      "navigationLabel": "알림 탐색"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "notifications": {
+        "center": "내 알림",
+        "settings": "개인 설정",
+        "administration": "테넌트 운영"
+      }
+    },
+    "items": {
+      "notifications": {
+        "center": { "label": "알림 센터" },
+        "settings": { "label": "알림 설정" },
+        "admin-overview": { "label": "운영 개요" },
+        "admin-contracts": { "label": "알림 계약" },
+        "admin-operations": { "label": "전달 운영" }
+      }
+    }
+  },
+  "actions": {
+    "back": "뒤로",
+    "complete": "완료로 이동",
+    "loadMore": "더 불러오기",
+    "markRead": "읽음으로 표시",
+    "markUnread": "안 읽음으로 표시",
+    "refresh": "새로 고침",
+    "resynchronize": "전체 다시 동기화",
+    "restore": "받은 알림으로 복원",
+    "retry": "다시 시도",
+    "save": "저장",
+    "settings": "알림 설정",
+    "snooze": "나중에 알림",
+    "snoozeHours": "{{count}}시간 후 다시 알림",
+    "unsave": "저장 해제"
+  },
+  "channels": {
+    "IN_APP": "앱 내 알림",
+    "EMAIL": "이메일",
+    "WEB_PUSH": "브라우저 푸시",
+    "MOBILE_PUSH": "모바일 푸시",
+    "TEAMS": "Microsoft Teams",
+    "SLACK": "Slack"
+  },
+  "priority": {
+    "URGENT": "긴급",
+    "HIGH": "높음",
+    "NORMAL": "보통",
+    "LOW": "낮음"
+  },
+  "reason": {
+    "DIRECT": "나에게 직접 지정됨",
+    "MENTION": "나를 멘션함",
+    "ROLE": "담당 역할에 포함됨",
+    "ORGANIZATION": "소속 조직에 전달됨",
+    "SUBSCRIPTION": "구독 중인 소식",
+    "MANDATORY_POLICY": "필수 정책 알림"
+  },
+  "views": {
+    "PRIORITY": "우선",
+    "ALL": "전체",
+    "MENTIONS": "멘션",
+    "SAVED": "저장됨",
+    "SNOOZED": "나중에",
+    "DONE": "완료"
+  },
+  "states": {
+    "live": "실시간 연결됨",
+    "polling": "주기적으로 동기화 중",
+    "offline": "오프라인입니다. 마지막으로 동기화된 알림을 표시합니다.",
+    "degraded": "일부 전달 경로가 지연되고 있습니다.",
+    "partial": "일부 소스 {{count}}곳의 정보를 가져오지 못했습니다.",
+    "loading": "알림을 불러오는 중",
+    "loadingMore": "추가 알림을 불러오는 중",
+    "loadingDetail": "알림 상세를 불러오는 중",
+    "loadingPreferences": "알림 설정을 불러오는 중",
+    "loadingAppSettings": "앱별 알림 설정을 불러오는 중",
+    "loadingAdmin": "알림 운영 상태를 불러오는 중",
+    "loadingContracts": "알림 계약을 불러오는 중",
+    "loadingOperations": "전달 운영 상태를 불러오는 중",
+    "resynchronizing": "전체 알림을 다시 동기화하는 중",
+    "syncResetRequired": "알림 동기화 기준을 다시 설정해야 합니다",
+    "syncResetDescription": "보존 기간이 지난 변경 이력 대신 최신 요약과 첫 페이지부터 안전하게 다시 불러옵니다.",
+    "loadErrorTitle": "알림을 불러오지 못했습니다",
+    "loadErrorDescription": "연결을 확인한 뒤 다시 시도해 주세요. 기존 알림 상태는 변경되지 않았습니다.",
+    "loadMoreError": "추가 알림을 불러오지 못했습니다. 현재 목록은 계속 사용할 수 있습니다.",
+    "detailErrorTitle": "상세 정보를 불러오지 못했습니다",
+    "detailErrorDescription": "목록은 계속 사용할 수 있습니다. 잠시 후 상세 정보만 다시 시도해 주세요.",
+    "preferencesErrorTitle": "알림 설정을 불러오지 못했습니다",
+    "preferencesErrorDescription": "설정을 변경하지 않았습니다. 연결을 확인한 뒤 다시 시도해 주세요.",
+    "appSettingsErrorTitle": "앱별 설정을 불러오지 못했습니다",
+    "appSettingsErrorDescription": "전역 알림 설정은 계속 사용할 수 있습니다.",
+    "adminErrorTitle": "운영 상태를 불러오지 못했습니다",
+    "adminErrorDescription": "운영 데이터에 연결할 수 없습니다. 새로 고침하거나 잠시 후 다시 시도해 주세요.",
+    "contractsErrorTitle": "알림 계약을 불러오지 못했습니다",
+    "contractsErrorDescription": "현재 필터를 유지한 채 다시 시도할 수 있습니다.",
+    "operationsErrorTitle": "전달 운영 정보를 불러오지 못했습니다",
+    "operationsErrorDescription": "Provider와 Queue 상태를 확인할 수 없습니다. 잠시 후 다시 시도해 주세요."
+  },
+  "empty": {
+    "PRIORITY": {
+      "title": "지금 확인할 우선 알림이 없습니다",
+      "description": "기한, 직접 멘션, 내 조치가 필요한 알림이 생기면 여기에 표시됩니다."
+    },
+    "ALL": {
+      "title": "새 알림이 없습니다",
+      "description": "업무 앱에서 새로운 변화가 생기면 이곳에서 확인할 수 있습니다."
+    },
+    "MENTIONS": {
+      "title": "새 멘션이 없습니다",
+      "description": "동료가 나를 직접 언급한 알림이 여기에 모입니다."
+    },
+    "SAVED": {
+      "title": "저장한 알림이 없습니다",
+      "description": "나중에 다시 확인할 알림을 저장해 두세요."
+    },
+    "SNOOZED": {
+      "title": "나중으로 미룬 알림이 없습니다",
+      "description": "정한 시간이 되면 받은 알림으로 자동 복귀합니다."
+    },
+    "DONE": {
+      "title": "완료한 알림이 없습니다",
+      "description": "정리한 알림을 이곳에서 확인하고 복원할 수 있습니다."
+    }
+  },
+  "glance": {
+    "title": "알림",
+    "dialogLabel": "최근 알림",
+    "triggerLabel": "조치 필요 알림 {{actionable}}건, 전체 새 알림 {{total}}건",
+    "summary": "조치 필요 {{actionable}} · 전체 새 알림 {{total}}",
+    "viewsLabel": "알림 보기",
+    "markVisibleRead": "표시된 알림을 모두 읽음으로 표시",
+    "openSettings": "알림 설정 열기",
+    "openCenter": "알림 센터 열기",
+    "newItems": "새 알림 {{count}}개 보기"
+  },
+  "item": {
+    "threadCount": "관련 업데이트 {{count}}건",
+    "saved": "저장됨"
+  },
+  "center": {
+    "title": "알림 센터",
+    "description": "중요한 변화를 판단하고 읽음, 저장, 나중에, 완료 상태로 정리합니다.",
+    "viewsLabel": "알림 센터 보기",
+    "searchPlaceholder": "제목, 소스 또는 안전한 미리보기 검색",
+    "listLabel": "알림 목록"
+  },
+  "filters": {
+    "priority": "우선순위 필터",
+    "allPriorities": "모든 우선순위",
+    "app": "앱 필터",
+    "allApps": "모든 앱",
+    "readState": "읽음 상태 필터",
+    "read": {
+      "ALL": "전체",
+      "UNREAD": "안 읽음",
+      "READ": "읽음"
+    }
+  },
+  "bulk": {
+    "toolbarLabel": "선택한 알림 작업",
+    "selected": "{{count}}개 선택됨",
+    "selectItem": "{{title}} 선택"
+  },
+  "detail": {
+    "title": "알림 상세",
+    "regionLabel": "선택한 알림 상세",
+    "emptyTitle": "알림을 선택하세요",
+    "emptyDescription": "목록에서 알림을 선택하면 수신 이유와 관련 업무를 확인할 수 있습니다.",
+    "whyTitle": "왜 이 알림을 받았나요?",
+    "timelineTitle": "관련 변화",
+    "protected": "보호된 내용",
+    "targetState": {
+      "DELETED": "연결된 업무가 삭제되었습니다.",
+      "EXPIRED": "연결된 업무가 만료되었습니다.",
+      "FORBIDDEN": "현재 이 업무를 열 권한이 없습니다.",
+      "AVAILABLE": "연결된 업무를 열 수 있습니다."
+    }
+  },
+  "feedback": {
+    "READ": "읽음으로 표시했습니다.",
+    "UNREAD": "안 읽음으로 표시했습니다.",
+    "SAVE": "알림을 저장했습니다.",
+    "UNSAVE": "저장을 해제했습니다.",
+    "COMPLETE": "완료로 이동했습니다.",
+    "RESTORE": "받은 알림으로 복원했습니다.",
+    "SNOOZE": "정한 시간까지 나중에 알림으로 이동했습니다.",
+    "triageError": "알림 상태를 변경하지 못했습니다. 최신 상태를 확인한 뒤 다시 시도해 주세요.",
+    "bulkSuccess": "알림 {{count}}개의 상태를 변경했습니다.",
+    "bulkPartial": "일부 항목 {{count}}개가 최신 상태와 충돌했습니다.",
+    "bulkError": "선택한 알림의 상태를 변경하지 못했습니다."
+  },
+  "preferences": {
+    "title": "알림 설정",
+    "description": "전역 설정을 기준으로 앱, 알림 유형, 전달 채널별 예외를 관리합니다.",
+    "offline": "오프라인에서는 설정을 변경할 수 없습니다. 연결되면 다시 시도해 주세요.",
+    "managed": "관리됨",
+    "managedBy": "{{owner}}에서 관리",
+    "inheritedFrom": "적용 기준: {{source}}",
+    "deliveryMode": "전달 방식",
+    "resetToManaged": "상속값으로 되돌리기",
+    "channelToggle": "{{type}}의 {{channel}} 사용 설정",
+    "save": {
+      "auto": "변경 사항 자동 저장",
+      "saving": "저장 중",
+      "saved": "{{time}} 저장됨",
+      "error": "저장하지 못함",
+      "now": "방금"
+    },
+    "sources": {
+      "USER": "내 설정",
+      "TENANT_POLICY": "회사 정책",
+      "PROVIDER_POLICY": "Provider 정책",
+      "SYSTEM_DEFAULT": "시스템 기본값"
+    },
+    "modes": {
+      "IMMEDIATE": "즉시",
+      "DAILY_DIGEST": "일간 요약",
+      "WEEKLY_DIGEST": "주간 요약",
+      "MUTED": "받지 않음"
+    },
+    "global": {
+      "title": "전역 전달 채널",
+      "description": "모든 앱에 적용할 기본 전달 채널입니다. 관리 정책과 앱별 예외가 우선할 수 있습니다.",
+      "channelToggle": "{{channel}} 전역 사용 설정",
+      "channelDescription": {
+        "IN_APP": "DWP 알림 센터에서 항상 확인합니다.",
+        "EMAIL": "검증된 회사 이메일 주소로 전달합니다.",
+        "WEB_PUSH": "허용한 브라우저에서 업무 알림을 받습니다.",
+        "MOBILE_PUSH": "등록된 모바일 기기에 안전한 미리보기를 보냅니다.",
+        "TEAMS": "연결된 Microsoft Teams 계정으로 전달합니다.",
+        "SLACK": "연결된 Slack 계정으로 전달합니다."
+      }
+    },
+    "quiet": {
+      "title": "집중 시간",
+      "description": "정한 시간에는 비긴급 외부 채널 전달을 보류하고 알림 센터에 안전하게 보관합니다.",
+      "enabled": "집중 시간 사용",
+      "enabledDescription": "필수 또는 승인된 긴급 알림은 회사 정책에 따라 예외가 될 수 있습니다.",
+      "schedule": "시작 및 종료 시간",
+      "scheduleDescription": "현재 시간대: {{timeZone}}",
+      "start": "시작",
+      "end": "종료",
+      "days": "적용 요일",
+      "daysDescription": "집중 시간을 적용할 요일을 선택합니다."
+    },
+    "days": {
+      "1": "월요일",
+      "2": "화요일",
+      "3": "수요일",
+      "4": "목요일",
+      "5": "금요일",
+      "6": "토요일",
+      "7": "일요일"
+    },
+    "daysShort": {
+      "1": "월",
+      "2": "화",
+      "3": "수",
+      "4": "목",
+      "5": "금",
+      "6": "토",
+      "7": "일"
+    },
+    "digest": {
+      "title": "요약 알림",
+      "description": "즉시 확인하지 않아도 되는 알림을 정한 시간에 묶어서 받습니다.",
+      "mode": "요약 주기",
+      "modeDescription": "앱별 즉시 전달 정책이 있는 알림은 요약에서 제외될 수 있습니다.",
+      "time": "전달 시각",
+      "modes": {
+        "OFF": "사용 안 함",
+        "DAILY": "매일",
+        "WEEKLY": "매주"
+      }
+    },
+    "apps": {
+      "title": "앱별 알림",
+      "description": "전역 설정에서 필요한 앱과 알림 유형만 다르게 구성합니다.",
+      "navigation": "알림 앱 선택",
+      "emptyTitle": "설정할 앱이 없습니다",
+      "emptyDescription": "사용 권한이 있는 앱에서 알림을 보내면 여기에 설정이 표시됩니다.",
+      "emptyTypesTitle": "설정할 알림 유형이 없습니다",
+      "emptyTypesDescription": "이 앱에서 활성화한 알림 유형이 아직 없습니다.",
+      "effectivePolicyUnavailable": "현재 서버는 유효 정책 합성 API를 제공하지 않아 저장된 개인 규칙만 표시합니다. 전역 설정은 계속 적용됩니다."
+    },
+    "feedback": {
+      "profileError": "전역 알림 설정을 저장하지 못했습니다.",
+      "ruleError": "앱별 알림 설정을 저장하지 못했습니다."
+    }
+  },
+  "admin": {
+    "title": "알림 운영",
+    "description": "현재 Tenant의 알림 계약, 사용자 영향, 전달 상태와 운영 예외를 관리합니다.",
+    "navigationLabel": "알림 운영 메뉴",
+    "navigation": {
+      "overview": "운영 개요",
+      "contracts": "알림 계약",
+      "operations": "전달 운영"
+    },
+    "severity": {
+      "INFO": "정보",
+      "WARNING": "주의",
+      "CRITICAL": "긴급 조치"
+    },
+    "overview": {
+      "metricsLabel": "알림 운영 핵심 지표",
+      "baseline": "기준 {{value}}",
+      "trendTitle": "발생과 사용자 영향",
+      "trendDescription": "생성량과 함께 조치 필요, 실패, 음소거 추이를 비교합니다.",
+      "trendTableLabel": "알림 발생과 사용자 영향 추이",
+      "columns": {
+        "time": "시간",
+        "created": "생성",
+        "actionable": "조치 필요",
+        "failed": "실패",
+        "muted": "음소거"
+      }
+    },
+    "findings": {
+      "title": "조치 대기열",
+      "description": "사용자 영향과 위험도 순으로 정렬된 운영 예외입니다.",
+      "emptyTitle": "즉시 조치할 항목이 없습니다",
+      "emptyDescription": "계약, 정책, 템플릿과 전달 경로가 정상 범위에 있습니다."
+    },
+    "contracts": {
+      "searchPlaceholder": "알림 유형, 앱 또는 소유자 검색",
+      "stateFilter": "계약 상태",
+      "allStates": "모든 상태",
+      "emptyTitle": "조건에 맞는 알림 계약이 없습니다",
+      "emptyDescription": "검색어나 상태 필터를 변경해 보세요.",
+      "detailLabel": "선택한 알림 계약 상세",
+      "channels": "허용 전달 채널",
+      "fields": {
+        "owner": "소유자",
+        "sourceEvent": "원천 이벤트",
+        "priority": "기본 우선순위",
+        "schemaVersion": "스키마 버전",
+        "volume": "최근 24시간",
+        "updated": "최종 변경"
+      }
+    },
+    "contractState": {
+      "DRAFT": "초안",
+      "IN_REVIEW": "검토 중",
+      "ACTIVE": "활성",
+      "DEPRECATED": "사용 중단 예정",
+      "RETIRED": "종료",
+      "QUARANTINED": "격리"
+    },
+    "contractHealth": {
+      "HEALTHY": "정상",
+      "ATTENTION": "확인 필요",
+      "BROKEN": "계약 오류"
+    },
+    "operations": {
+      "metricsLabel": "알림 전달 운영 핵심 지표",
+      "retryQueue": "재시도 대기",
+      "deadLetter": "DLQ",
+      "unknown": "결과 불명",
+      "lanesTitle": "QoS 전달 대기열",
+      "lanesDescription": "긴급, 상호작용, 대량 알림의 용량과 지연을 분리해 확인합니다.",
+      "lanesTable": "QoS 전달 대기열 상태",
+      "providersTitle": "채널 Provider 상태",
+      "providersDescription": "성공률, 지연, Circuit 상태를 연결해 장애 영향을 확인합니다.",
+      "providersTable": "채널 Provider 상태",
+      "seconds": "{{count}}초",
+      "milliseconds": "{{count}}ms",
+      "columns": {
+        "lane": "대기열",
+        "queued": "대기",
+        "oldest": "최장 대기",
+        "throughput": "분당 처리",
+        "failureRate": "실패율",
+        "state": "상태",
+        "provider": "Provider",
+        "channel": "채널",
+        "successRate": "성공률",
+        "latency": "p95 지연",
+        "circuit": "Circuit",
+        "checked": "최종 확인"
+      }
+    },
+    "lanes": {
+      "CRITICAL": "긴급",
+      "INTERACTIVE": "상호작용",
+      "BULK": "대량"
+    },
+    "laneState": {
+      "HEALTHY": "정상",
+      "DEGRADED": "지연",
+      "PAUSED": "중지"
+    },
+    "providerState": {
+      "HEALTHY": "정상",
+      "DEGRADED": "성능 저하",
+      "OUTAGE": "장애",
+      "DISABLED": "비활성"
+    },
+    "circuitState": {
+      "CLOSED": "정상",
+      "HALF_OPEN": "복구 확인",
+      "OPEN": "차단"
+    }
+  }
+}

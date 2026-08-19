@@ -31,6 +31,7 @@
 - `DWP-R1-ADM-008-localization-studio`: 번역 Draft·독립 검토·게시·복원 Studio
 - `DWP-R1-CORE-003-account-preferences`: 개인 설정과 Tenant 관리 정책·예외
 - `DWP-R1-CORE-004-governed-sharing-export`: Team View 소유권과 통제형 Workforce 반출
+- `DWP-R1-CORE-005-notification-platform`: Event 기반 알림 센터·개인 설정·정책·Omnichannel 전달
 - `DWP-R1-COM-001-enterprise-communications`: 대상화 소식·필수 확인·게시 거버넌스
 - `DWP-R1-SVC-001-employee-services`: 구성원 서비스 Catalog·Request·SLA 운영
 - `DWP-R1-APR-001-enterprise-approval-decision-hub`: 통합 결재함·Workflow·결정 증적·원업무 반영

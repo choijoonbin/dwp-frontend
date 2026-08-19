@@ -55,6 +55,21 @@ const ADMIN_CONTENT: Record<AdminView, AdminComponent> = {
       default: module.ServiceOperationsManager,
     }))
   ),
+  'notification-overview': lazy(() =>
+    import('../../components/notification-admin-surfaces').then((module) => ({
+      default: module.NotificationAdminOverviewPage,
+    }))
+  ),
+  'notification-contracts': lazy(() =>
+    import('../../components/notification-admin-surfaces').then((module) => ({
+      default: module.NotificationTypeCatalogPage,
+    }))
+  ),
+  'notification-operations': lazy(() =>
+    import('../../components/notification-admin-surfaces').then((module) => ({
+      default: module.NotificationDeliveryOperationsPage,
+    }))
+  ),
   'space-overview': lazy(() =>
     import('./space-admin-page').then((module) => ({
       default: module.SpaceAdminOverview,

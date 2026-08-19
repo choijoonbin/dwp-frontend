@@ -48,32 +48,34 @@ describe('Workplace site time policy', () => {
   });
 
   it('chooses the next slot in the selected site time zone', () => {
-    expect(workplaceDefaultSelection(
-      'Asia/Seoul',
-      policy,
-      '2026-08-19T00:00:00Z'
-    )).toEqual({ date: '2026-08-19', time: '09:30' });
-    expect(workplaceDefaultSelection(
-      'America/New_York',
-      policy,
-      '2026-08-19T02:00:00Z'
-    )).toEqual({ date: '2026-08-19', time: '08:00' });
+    expect(workplaceDefaultSelection('Asia/Seoul', policy, '2026-08-19T00:00:00Z')).toEqual({
+      date: '2026-08-19',
+      time: '09:30',
+    });
+    expect(workplaceDefaultSelection('America/New_York', policy, '2026-08-19T02:00:00Z')).toEqual({
+      date: '2026-08-19',
+      time: '08:00',
+    });
   });
 
   it('validates duration and site-local working hours', () => {
-    expect(validateWorkplaceBookingRange(
-      '2026-08-19T00:00:00Z',
-      '2026-08-19T01:00:00Z',
-      'Asia/Seoul',
-      policy,
-      '2026-08-18T00:00:00Z'
-    )).toBeNull();
-    expect(validateWorkplaceBookingRange(
-      '2026-08-19T11:30:00Z',
-      '2026-08-19T12:30:00Z',
-      'Asia/Seoul',
-      policy,
-      '2026-08-18T00:00:00Z'
-    )).toBe('hours');
+    expect(
+      validateWorkplaceBookingRange(
+        '2026-08-19T00:00:00Z',
+        '2026-08-19T01:00:00Z',
+        'Asia/Seoul',
+        policy,
+        '2026-08-18T00:00:00Z'
+      )
+    ).toBeNull();
+    expect(
+      validateWorkplaceBookingRange(
+        '2026-08-19T11:30:00Z',
+        '2026-08-19T12:30:00Z',
+        'Asia/Seoul',
+        policy,
+        '2026-08-18T00:00:00Z'
+      )
+    ).toBe('hours');
   });
 });
