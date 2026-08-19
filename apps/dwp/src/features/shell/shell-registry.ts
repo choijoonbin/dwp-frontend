@@ -2,6 +2,7 @@ import {
   Activity,
   AppWindow,
   BriefcaseBusiness,
+  Building2,
   CalendarDays,
   ContactRound,
   FileCheck2,
@@ -26,6 +27,7 @@ export type ShellKey =
   | 'communications'
   | 'services'
   | 'calendar'
+  | 'rooms'
   | 'mail'
   | 'hcm'
   | 'approvals'
@@ -112,6 +114,18 @@ export const shellRegistry = {
     headerPosition: 'fixed',
     headerSurface: 'solid',
     context: { icon: CalendarDays, labelKey: 'shell.calendar.name' },
+  },
+  rooms: {
+    key: 'rooms',
+    routePrefixes: ['/rooms'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: Building2, labelKey: 'shell.rooms.name' },
   },
   mail: {
     key: 'mail',
@@ -226,6 +240,7 @@ const routeResolutionOrder: readonly ShellKey[] = [
   'approvals',
   'spaces',
   'calendar',
+  'rooms',
   'mail',
   'hcm',
   'services',

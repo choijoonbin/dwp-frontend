@@ -7,17 +7,15 @@ import {
 } from './calendar-navigation';
 
 describe('calendar product navigation', () => {
-  it('keeps user and delegated administration destinations in one product shell', () => {
+  it('keeps schedule administration in calendar and delegates room inventory to Rooms', () => {
     const items = CALENDAR_NAVIGATION.flatMap((group) => group.items);
 
     expect(items.map((item) => item.view)).toEqual([
       'home',
       'schedule',
       'availability',
-      'resources',
       'insights',
       'admin-overview',
-      'admin-resources',
       'admin-policies',
     ]);
     expect(

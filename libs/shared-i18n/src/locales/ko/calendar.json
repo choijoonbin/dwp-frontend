@@ -14,7 +14,6 @@
       "calendar": {
         "start": "시작",
         "plan": "나의 일정",
-        "spaces": "공간",
         "insights": "인사이트",
         "admin": "운영 관리"
       }
@@ -24,10 +23,8 @@
         "home": { "label": "오늘" },
         "schedule": { "label": "일정" },
         "availability": { "label": "가용 시간 찾기" },
-        "resources": { "label": "공간 및 자원" },
         "insights": { "label": "시간 인사이트" },
         "admin-overview": { "label": "운영 현황" },
-        "admin-resources": { "label": "공간 운영" },
         "admin-policies": { "label": "일정 정책" }
       }
     }
@@ -179,6 +176,11 @@
     "description": "주·월·목록 보기를 오가며 충돌과 빈 시간을 함께 확인합니다.",
     "views": { "week": "주", "month": "월", "agenda": "목록" },
     "myCalendars": "표시할 캘린더",
+    "loading": "일정 불러오는 중",
+    "dragHint": "빈 시간을 드래그해 만들고, 내가 만든 단일 일정은 끌어서 이동하거나 가장자리를 조절할 수 있습니다.",
+    "recurrenceMoveHint": "반복 일정은 전체·이번 일정 범위 선택이 필요하므로 상세 편집에서 변경합니다.",
+    "moveSuccess": "일정 시간을 변경했습니다.",
+    "moveError": "일정 시간을 변경하지 못해 원래 위치로 되돌렸습니다.",
     "addAt": "{{date}} {{hour}}시에 일정 추가",
     "loadError": "일정을 불러오지 못했습니다.",
     "noEvents": "이 기간에는 일정이 없습니다",

@@ -45,6 +45,13 @@
       "deployment": "independent"
     },
     {
+      "id": "rooms",
+      "features": ["rooms"],
+      "routePrefixes": ["/rooms"],
+      "backendServices": ["platform"],
+      "deployment": "independent"
+    },
+    {
       "id": "mail",
       "features": ["mail"],
       "routePrefixes": ["/mail"],

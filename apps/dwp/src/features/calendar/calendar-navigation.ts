@@ -1,26 +1,10 @@
-import {
-  BarChart3,
-  Building2,
-  CalendarClock,
-  CalendarDays,
-  Gauge,
-  House,
-  Settings2,
-  UsersRound,
-} from 'lucide-react';
+import { BarChart3, CalendarDays, Gauge, House, Settings2, UsersRound } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
 
-export type CalendarSection = 'start' | 'plan' | 'spaces' | 'insights' | 'admin';
+export type CalendarSection = 'start' | 'plan' | 'insights' | 'admin';
 export type CalendarView =
-  | 'home'
-  | 'schedule'
-  | 'availability'
-  | 'resources'
-  | 'insights'
-  | 'admin-overview'
-  | 'admin-resources'
-  | 'admin-policies';
+  'home' | 'schedule' | 'availability' | 'insights' | 'admin-overview' | 'admin-policies';
 
 export type CalendarNavigationItem = {
   section: CalendarSection;
@@ -59,17 +43,6 @@ export const CALENDAR_NAVIGATION: readonly CalendarNavigationGroup[] = [
     ],
   },
   {
-    id: 'spaces',
-    items: [
-      {
-        section: 'spaces',
-        view: 'resources',
-        path: '/calendar/resources',
-        icon: Building2,
-      },
-    ],
-  },
-  {
     id: 'insights',
     items: [
       {
@@ -88,14 +61,6 @@ export const CALENDAR_NAVIGATION: readonly CalendarNavigationGroup[] = [
         view: 'admin-overview',
         path: '/calendar/admin/overview',
         icon: Gauge,
-        requiredResourceKey: 'ADMIN.CALENDAR',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'admin',
-        view: 'admin-resources',
-        path: '/calendar/admin/resources',
-        icon: CalendarClock,
         requiredResourceKey: 'ADMIN.CALENDAR',
         requiredPermissionCode: 'VIEW',
       },

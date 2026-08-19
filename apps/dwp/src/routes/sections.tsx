@@ -9,6 +9,7 @@ import { hcmRoutes } from './hcm-routes';
 import { mailRoutes } from './mail-routes';
 import { platformRoutes } from './platform-routes';
 import { providerRoutes } from './provider-routes';
+import { roomsRoutes } from './rooms-routes';
 import { servicesRoutes } from './services-routes';
 import { spacesRoutes } from './spaces-routes';
 import { workspaceRoutes } from './workspace-routes';
@@ -16,6 +17,7 @@ import { workspaceRoutes } from './workspace-routes';
 export const routesSection: RouteObject[] = [
   ...approvalsRoutes,
   ...calendarRoutes,
+  ...roomsRoutes,
   ...mailRoutes,
   ...spacesRoutes,
   ...servicesRoutes,

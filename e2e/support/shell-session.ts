@@ -35,6 +35,7 @@ import {
   HR_SERVICE_REQUESTS_FIXTURE,
   HR_TALENT_FIXTURE,
   HR_TIME_FIXTURE,
+  ROOM_BOOKING_EVENT_FIXTURE,
   hrDomainOperationsFixture,
 } from './product-area-fixtures';
 
@@ -103,6 +104,12 @@ export const FULL_PRODUCT_PERMISSIONS = [
     permissionCode: 'VIEW',
     effect: 'ALLOW' as const,
   },
+  ...['VIEW', 'CREATE', 'UPDATE'].map((permissionCode) => ({
+    resourceType: 'APP',
+    resourceKey: 'APP.ROOMS',
+    permissionCode,
+    effect: 'ALLOW' as const,
+  })),
   {
     resourceType: 'APP',
     resourceKey: 'APP.APPROVALS',
@@ -171,6 +178,10 @@ export const FULL_PRODUCT_PERMISSIONS = [
     ['ADMIN.CALENDAR', 'CREATE'],
     ['ADMIN.CALENDAR', 'UPDATE'],
     ['ADMIN.CALENDAR', 'MANAGE'],
+    ['ADMIN.ROOMS', 'VIEW'],
+    ['ADMIN.ROOMS', 'CREATE'],
+    ['ADMIN.ROOMS', 'UPDATE'],
+    ['ADMIN.ROOMS', 'MANAGE'],
     ['ADMIN.APPROVAL_DESIGN', 'VIEW'],
     ['ADMIN.APPROVAL_DESIGN', 'CREATE'],
     ['ADMIN.APPROVAL_DESIGN', 'UPDATE'],
@@ -1646,7 +1657,25 @@ export async function mockShellSession(
       return fulfillSuccess(route, CALENDAR_SUMMARIES_FIXTURE);
     }
     if (path === '/api/platform/v1/calendar/events') {
-      return fulfillSuccess(route, [CALENDAR_EVENT_FIXTURE, CALENDAR_FOCUS_FIXTURE]);
+      return fulfillSuccess(
+        route,
+        request.method() === 'GET'
+          ? [CALENDAR_EVENT_FIXTURE, CALENDAR_FOCUS_FIXTURE]
+          : CALENDAR_EVENT_FIXTURE
+      );
+    }
+    if (/^\/api\/platform\/v1\/calendar\/events\/[^/]+$/u.test(path)) {
+      const body = request.postDataJSON() as Record<string, unknown> | null;
+      const source = path.includes(CALENDAR_FOCUS_FIXTURE.eventId)
+        ? CALENDAR_FOCUS_FIXTURE
+        : CALENDAR_EVENT_FIXTURE;
+      return fulfillSuccess(route, { ...source, ...(body ?? {}), version: source.version + 1 });
+    }
+    if (/^\/api\/platform\/v1\/calendar\/events\/[^/]+\/response$/u.test(path)) {
+      return fulfillSuccess(route, CALENDAR_EVENT_FIXTURE);
+    }
+    if (/^\/api\/platform\/v1\/calendar\/events\/[^/]+\/cancel$/u.test(path)) {
+      return fulfillSuccess(route, null);
     }
     if (path === '/api/platform/v1/calendar/resources') {
       return fulfillSuccess(route, CALENDAR_RESOURCES_FIXTURE);
@@ -1654,11 +1683,58 @@ export async function mockShellSession(
     if (path === '/api/platform/v1/calendar/availability') {
       return fulfillSuccess(route, CALENDAR_AVAILABILITY_FIXTURE);
     }
+    if (path === '/api/platform/v1/rooms/availability') {
+      return fulfillSuccess(route, {
+        rooms: CALENDAR_RESOURCES_FIXTURE.filter((resource) => resource.type === 'ROOM'),
+        occupancy: [
+          {
+            resourceId: CALENDAR_RESOURCES_FIXTURE[0].resourceId,
+            startsAt: ROOM_BOOKING_EVENT_FIXTURE.startsAt,
+            endsAt: ROOM_BOOKING_EVENT_FIXTURE.endsAt,
+            bookingStatus: 'CONFIRMED',
+          },
+        ],
+        generatedAt: '2026-08-19T00:20:00Z',
+      });
+    }
+    if (path === '/api/platform/v1/rooms/bookings') {
+      return fulfillSuccess(
+        route,
+        request.method() === 'GET' ? [ROOM_BOOKING_EVENT_FIXTURE] : ROOM_BOOKING_EVENT_FIXTURE
+      );
+    }
+    if (/^\/api\/platform\/v1\/rooms\/bookings\/[^/]+$/u.test(path)) {
+      return fulfillSuccess(route, ROOM_BOOKING_EVENT_FIXTURE);
+    }
+    if (/^\/api\/platform\/v1\/rooms\/bookings\/[^/]+\/(response|cancel)$/u.test(path)) {
+      return fulfillSuccess(route, path.endsWith('/cancel') ? null : ROOM_BOOKING_EVENT_FIXTURE);
+    }
     if (path === '/api/platform/v1/admin/calendar/overview') {
       return fulfillSuccess(route, CALENDAR_ADMIN_FIXTURE);
     }
     if (path === '/api/platform/v1/admin/calendar/bookings/pending') {
       return fulfillSuccess(route, CALENDAR_BOOKINGS_FIXTURE);
+    }
+    if (path === '/api/platform/v1/admin/rooms/overview') {
+      return fulfillSuccess(route, {
+        ...CALENDAR_ADMIN_FIXTURE,
+        resources: CALENDAR_RESOURCES_FIXTURE.filter((resource) => resource.type === 'ROOM'),
+      });
+    }
+    if (path === '/api/platform/v1/admin/rooms/bookings/pending') {
+      return fulfillSuccess(route, CALENDAR_BOOKINGS_FIXTURE);
+    }
+    if (path === '/api/platform/v1/admin/rooms/policy') {
+      return fulfillSuccess(route, CALENDAR_ADMIN_FIXTURE.policy);
+    }
+    if (path === '/api/platform/v1/admin/rooms/resources') {
+      return fulfillSuccess(route, CALENDAR_RESOURCES_FIXTURE[0]);
+    }
+    if (/^\/api\/platform\/v1\/admin\/rooms\/resources\/[^/]+$/u.test(path)) {
+      return fulfillSuccess(route, CALENDAR_RESOURCES_FIXTURE[0]);
+    }
+    if (/^\/api\/platform\/v1\/admin\/rooms\/bookings\/[^/]+\/decision$/u.test(path)) {
+      return fulfillSuccess(route, CALENDAR_BOOKINGS_FIXTURE[0]);
     }
     if (path === '/api/approvals/v1/home') {
       return fulfillSuccess(route, APPROVAL_HOME_FIXTURE);

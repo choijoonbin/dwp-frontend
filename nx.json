@@ -65,6 +65,12 @@
       "{workspaceRoot}/apps/dwp/src/pages/calendar.tsx",
       "{workspaceRoot}/apps/dwp/src/features/calendar/**/*"
     ],
+    "roomsProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/rooms-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/rooms.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/rooms/**/*"
+    ],
     "mailProduct": [
       "productRuntime",
       "{workspaceRoot}/apps/dwp/src/routes/mail-routes.tsx",

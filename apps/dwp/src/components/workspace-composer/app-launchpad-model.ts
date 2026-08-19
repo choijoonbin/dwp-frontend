@@ -19,6 +19,7 @@ export type HomeAppIconKey =
   | 'knowledge'
   | 'legacy'
   | 'mail'
+  | 'rooms'
   | 'spaces'
   | 'hcm'
   | 'hris'
@@ -172,6 +173,17 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     iconKey: 'calendar',
     tone: '#0F766E',
     resourceKey: 'APP.CALENDAR',
+  },
+  {
+    id: 'dwp-rooms',
+    name: 'Rooms',
+    shortName: 'Rooms',
+    description: 'Live room availability, booking, invitations, and operations',
+    groupId: 'connect',
+    route: '/rooms/find',
+    iconKey: 'rooms',
+    tone: '#176F6A',
+    resourceKey: 'APP.ROOMS',
   },
   {
     id: 'ref-app-mail',

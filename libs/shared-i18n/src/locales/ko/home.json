@@ -103,6 +103,11 @@
         "shortName": "캘린더",
         "description": "일정, 집중 시간, 참석 응답 및 업무 공간 예약"
       },
+      "dwp-rooms": {
+        "name": "회의실",
+        "shortName": "회의실",
+        "description": "실시간 가용성, 예약, 참석자 초대 및 운영 승인"
+      },
       "ref-app-mail": {
         "name": "메일",
         "shortName": "메일",

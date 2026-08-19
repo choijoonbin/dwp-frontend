@@ -425,6 +425,7 @@ __metadata:
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.0"
     "@eslint/js": "npm:^9.23.0"
+    "@fullcalendar/react": "npm:7.0.2"
     "@mui/material": "npm:^7.3.11"
     "@mui/system": "npm:^7.3.11"
     "@mui/x-data-grid": "npm:^9.11.0"
@@ -459,6 +460,7 @@ __metadata:
     react-i18next: "npm:^17.0.11"
     react-router-dom: "npm:^7.18.2"
     storybook: "npm:^10.5.7"
+    temporal-polyfill: "npm:^1.0.1"
     typescript: "npm:^6.0.3"
     typescript-eslint: "npm:^8.67.0"
     vite: "npm:^8.2.1"
@@ -985,6 +987,39 @@ __metadata:
   version: 0.2.12
   resolution: "@floating-ui/utils@npm:0.2.12"
   checksum: 10c0/bb910b90d56991a62011afaf5f8e0c4b7fb6dab69403f4dd17fbd6eb25560b28d533dff9791f270b4f459852e9006a1077b5d73cbedb5e34d9424afc6a828314
+  languageName: node
+  linkType: hard
+
+"@full-ui/headless-calendar@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@full-ui/headless-calendar@npm:7.0.2"
+  peerDependencies:
+    temporal-polyfill: ^1.0.1
+  checksum: 10c0/53650711eb335db3a96e49a0a75cc2b40a837f37b1f9a8c3bca7e4d65b3ec08807dc62b227e6f952c287deb9275d86a199a4989266f6f0994688ccf78010de64
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/core@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@fullcalendar/core@npm:7.0.2"
+  peerDependencies:
+    "@full-ui/headless-calendar": 7.0.2
+    temporal-polyfill: ^1.0.1
+  checksum: 10c0/7950877fea512e130d6785876bc6820bd48d067a813199438d664b522313abd68a828f2e9c8531041c7066618b5d8c05234952c6eb817694cc14737e4af2e27b
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/react@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@fullcalendar/react@npm:7.0.2"
+  dependencies:
+    "@full-ui/headless-calendar": "npm:7.0.2"
+    "@fullcalendar/core": "npm:7.0.2"
+  peerDependencies:
+    react: ^17 || ^18 || ^19
+    react-dom: ^17 || ^18 || ^19
+    temporal-polyfill: ^1.0.1
+  checksum: 10c0/606210344547a2098b2c6fb4d076012fef4f1dd77831e5937405a6f5f941e7a71fb1665430e99676c2bff08faef856e1dbd3ed431feac5deb26351ad8c468ea8
   languageName: node
   linkType: hard
 
@@ -7366,6 +7401,30 @@ __metadata:
     minizlib: "npm:^3.1.0"
     yallist: "npm:^5.0.0"
   checksum: 10c0/1311f6be85a8157ac4c9147bae43e13923d2a1aae15e4aa1bd5239e4e03d2cf53cfe103dde7f35832fbb4c938b042856bc8e9a0afd29abd05e2d1608788c4fea
+  languageName: node
+  linkType: hard
+
+"temporal-polyfill@npm:^1.0.1":
+  version: 1.0.4
+  resolution: "temporal-polyfill@npm:1.0.4"
+  dependencies:
+    temporal-spec: "npm:1.0.1"
+    temporal-utils: "npm:1.0.2"
+  checksum: 10c0/b93905805462090e94069841bfa99d162aaec07766a2fa4a8aed28159e3c3296c03a3224b5c6ea14cc65890f299094b21d1702ee6d3cd15cdaae967c22809b33
+  languageName: node
+  linkType: hard
+
+"temporal-spec@npm:1.0.1":
+  version: 1.0.1
+  resolution: "temporal-spec@npm:1.0.1"
+  checksum: 10c0/99f6bfe4a8e59cd0664d0e97706798a1e10d42b1b682da9b60778a4cb9a23362da01ea3d83a674ef426ed743bbab835e2e3d1acea5d2d4a9eabe33863237b014
+  languageName: node
+  linkType: hard
+
+"temporal-utils@npm:1.0.2":
+  version: 1.0.2
+  resolution: "temporal-utils@npm:1.0.2"
+  checksum: 10c0/062cacb33662e4e2547e1ebea98e994d3835d98bf528744256714cd0c4219d43ffd526a500bbce12392468f802a01de058885e8d73453c11ed7ca67fa6e327fb
   languageName: node
   linkType: hard
 

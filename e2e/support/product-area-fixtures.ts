@@ -488,6 +488,20 @@ export const CALENDAR_RESOURCES_FIXTURE = [
   },
 ] as const satisfies readonly CalendarResource[];
 
+export const ROOM_BOOKING_EVENT_FIXTURE = {
+  ...CALENDAR_EVENT_FIXTURE,
+  eventId: 'room-booking-focus-08',
+  title: 'Enterprise room booking review',
+  description: 'Review the room booking workflow and operating policy.',
+  startsAt: '2026-08-19T05:00:00Z',
+  endsAt: '2026-08-19T06:00:00Z',
+  location: CALENDAR_RESOURCES_FIXTURE[0].name,
+  conferenceUrl: null,
+  recurrence: 'NONE',
+  resource: CALENDAR_RESOURCES_FIXTURE[0],
+  version: 1,
+} as const satisfies CalendarEvent;
+
 export const CALENDAR_SUMMARIES_FIXTURE = [
   {
     calendarId: 'calendar-personal',

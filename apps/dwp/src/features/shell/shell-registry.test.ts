@@ -11,6 +11,7 @@ describe('global shell registry', () => {
     expect(resolveShellKey('/hr/directory')).toBe('hcm');
     expect(resolveShellKey('/hr/design/organization')).toBe('hcm');
     expect(resolveShellKey('/calendar/availability')).toBe('calendar');
+    expect(resolveShellKey('/rooms/find')).toBe('rooms');
     expect(resolveShellKey('/account/settings')).toBe('account');
     expect(resolveShellKey('/admin/platform/reference-data')).toBe('admin');
     expect(resolveShellKey('/provider/data-governance')).toBe('provider');

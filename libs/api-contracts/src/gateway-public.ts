@@ -7168,6 +7168,182 @@ export interface paths {
         patch: operations["auth_patchUser"];
         trace?: never;
     };
+    "/api/platform/v1/admin/rooms/bookings/pending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getPendingRoomBookings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/rooms/bookings/{bookingId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_decideRoomBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/rooms/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getRoomsAdminOverview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/rooms/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getRoomsPolicy"];
+        put: operations["platform_updateRoomsPolicy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/rooms/resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createRoomResource"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/rooms/resources/{resourceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateRoomResource"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/rooms/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getRoomAvailability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/rooms/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getRoomBookings"];
+        put?: never;
+        post: operations["platform_createRoomBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/rooms/bookings/{eventId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateRoomBooking"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/rooms/bookings/{eventId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_cancelRoomBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/rooms/bookings/{eventId}/response": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_respondToRoomBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -17881,6 +18057,59 @@ export interface components {
             /** Format: int64 */
             expectedVersion: number;
         };
+        platform_ApiResponseCalendarAdminOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_CalendarAdminOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseRoomAvailabilityResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_RoomAvailabilityResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_CalendarAdminOverview: {
+            /** Format: int64 */
+            activeResources?: number;
+            /** Format: int64 */
+            bookingsThisWeek?: number;
+            /** Format: int64 */
+            conflictedUsers?: number;
+            /** Format: int64 */
+            eventsThisWeek?: number;
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: int64 */
+            pendingBookings?: number;
+            policy?: components["schemas"]["platform_Policy"];
+            resources?: components["schemas"]["platform_ResourceSummary"][];
+            /** Format: int64 */
+            resourcesInMaintenance?: number;
+        };
+        platform_ResourceOccupancy: {
+            bookingStatus?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+        };
+        platform_RoomAvailabilityResponse: {
+            /** Format: date-time */
+            generatedAt?: string;
+            occupancy?: components["schemas"]["platform_ResourceOccupancy"][];
+            rooms?: components["schemas"]["platform_ResourceSummary"][];
+        };
     };
     responses: never;
     parameters: never;
@@ -23545,7 +23774,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseAdminOverview"];
+                    "*/*": components["schemas"]["platform_ApiResponseCalendarAdminOverview"];
                 };
             };
         };
@@ -31304,6 +31533,374 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["auth_UserResponse"];
+                };
+            };
+        };
+    };
+    platform_getPendingRoomBookings: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListBookingSummary"];
+                };
+            };
+        };
+    };
+    platform_decideRoomBooking: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_BookingDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingSummary"];
+                };
+            };
+        };
+    };
+    platform_getRoomsAdminOverview: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseCalendarAdminOverview"];
+                };
+            };
+        };
+    };
+    platform_getRoomsPolicy: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePolicy"];
+                };
+            };
+        };
+    };
+    platform_updateRoomsPolicy: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePolicy"];
+                };
+            };
+        };
+    };
+    platform_createRoomResource: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ResourceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseResourceSummary"];
+                };
+            };
+        };
+    };
+    platform_updateRoomResource: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ResourceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseResourceSummary"];
+                };
+            };
+        };
+    };
+    platform_getRoomAvailability: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseRoomAvailabilityResponse"];
+                };
+            };
+        };
+    };
+    platform_getRoomBookings: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-DWP-Person-Public-ID"?: string;
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListEventSummary"];
+                };
+            };
+        };
+    };
+    platform_createRoomBooking: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-DWP-Person-Public-ID"?: string;
+                "X-DWP-Display-Name-B64"?: string;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateEventRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEventSummary"];
+                };
+            };
+        };
+    };
+    platform_updateRoomBooking: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-DWP-Person-Public-ID"?: string;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_UpdateEventRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEventSummary"];
+                };
+            };
+        };
+    };
+    platform_cancelRoomBooking: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-DWP-Person-Public-ID"?: string;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    platform_respondToRoomBooking: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": number;
+                "X-DWP-User-ID": number;
+                "X-DWP-Person-Public-ID"?: string;
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RespondRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEventSummary"];
                 };
             };
         };

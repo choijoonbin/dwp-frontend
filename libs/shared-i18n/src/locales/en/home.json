@@ -109,6 +109,11 @@
         "shortName": "Calendar",
         "description": "Schedules, focus time, responses, and workplace bookings"
       },
+      "dwp-rooms": {
+        "name": "Rooms",
+        "shortName": "Rooms",
+        "description": "Live availability, booking, attendee invitations, and approvals"
+      },
       "ref-app-mail": {
         "name": "Mail",
         "shortName": "Mail",

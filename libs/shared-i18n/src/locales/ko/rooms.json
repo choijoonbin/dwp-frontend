@@ -1,0 +1,199 @@
+{
+  "shell": {
+    "tenantFallback": "회사",
+    "openNavigation": "회의실 메뉴 열기",
+    "backToHome": "개인 홈으로 돌아가기",
+    "rooms": {
+      "name": "회의실",
+      "context": "공간 가용성과 예약을 연결하는 워크스페이스",
+      "navigationLabel": "회의실 탐색"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "rooms": {
+        "booking": "예약",
+        "operations": "운영 관리"
+      }
+    },
+    "items": {
+      "rooms": {
+        "find": { "label": "회의실 찾기" },
+        "my-bookings": { "label": "내 예약" },
+        "admin-operations": { "label": "운영 현황" },
+        "admin-resources": { "label": "회의실 관리" },
+        "admin-policies": { "label": "예약 정책" }
+      }
+    }
+  },
+  "actions": {
+    "resetFilters": "필터 초기화",
+    "retry": "다시 시도",
+    "cancel": "취소",
+    "book": "예약",
+    "save": "저장",
+    "saving": "저장 중",
+    "edit": "편집",
+    "cancelBooking": "예약 취소",
+    "keep": "유지",
+    "cancelling": "취소 중",
+    "manage": "관리"
+  },
+  "units": {
+    "people": "명"
+  },
+  "features": {
+    "DISPLAY": "디스플레이",
+    "HYBRID": "하이브리드 회의",
+    "RECORDING": "녹화",
+    "VIDEO": "화상 회의",
+    "WHITEBOARD": "화이트보드"
+  },
+  "find": {
+    "eyebrow": "실시간 공간",
+    "title": "회의실 찾기",
+    "description": "위치, 수용 인원과 설비를 기준으로 가용 시간을 확인하고 바로 예약합니다.",
+    "searchLabel": "회의실 또는 설비 검색",
+    "dateLabel": "날짜",
+    "siteLabel": "사업장",
+    "allSites": "전체 사업장",
+    "capacityLabel": "최소 수용 인원",
+    "capacityOption": "{{count}}명 이상",
+    "any": "전체",
+    "durationLabel": "예약 시간",
+    "minutes": "{{count}}분",
+    "timelineLabel": "{{room}} 가용 시간",
+    "slotOccupied": "{{time}} 예약됨",
+    "slotAvailable": "{{time}} 예약 가능",
+    "slotUnavailable": "{{time}} 선택 불가",
+    "bookSlot": "{{room}} {{time}} 예약",
+    "unavailableSlot": "{{room}} {{time}} 예약 불가",
+    "loading": "회의실 가용성 갱신 중",
+    "loadError": "회의실 가용성을 불러오지 못했습니다.",
+    "results": "가용 시간표",
+    "resultCount": "{{count}}개 회의실",
+    "emptyTitle": "조건에 맞는 회의실이 없습니다",
+    "emptyDescription": "위치, 인원 또는 설비 필터를 조정해 주세요."
+  },
+  "booking": {
+    "createTitle": "회의실 예약",
+    "editTitle": "회의실 예약 변경",
+    "description": "시간과 참석자를 확정하면 일정 및 초대 응답에 함께 반영됩니다.",
+    "roomRequired": "회의실을 선택해 주세요.",
+    "subject": "회의 제목",
+    "subjectRequired": "회의 제목을 입력해 주세요.",
+    "start": "시작",
+    "end": "종료",
+    "rangeError": "종료 시간은 시작 시간보다 늦어야 합니다.",
+    "agenda": "안건",
+    "attendees": "참석자",
+    "attendeesPlaceholder": "이름 또는 이메일 검색",
+    "invitationNotice": "참석자에게 캘린더 초대와 응답 요청이 전송됩니다.",
+    "approval": "운영자 승인 필요",
+    "created": "회의실을 예약했습니다.",
+    "updated": "회의실 예약을 변경했습니다.",
+    "saveError": "회의실 예약을 저장하지 못했습니다. 다른 예약과 시간이 겹치는지 확인해 주세요."
+  },
+  "my": {
+    "eyebrow": "나의 공간 일정",
+    "title": "내 회의실 예약",
+    "description": "내가 주최하거나 초대받은 회의실 일정을 확인하고 변경·응답합니다.",
+    "upcoming": "예정",
+    "past": "지난 예약",
+    "loadError": "회의실 예약을 불러오지 못했습니다.",
+    "emptyUpcoming": "예정된 회의실 예약이 없습니다",
+    "emptyPast": "지난 회의실 예약이 없습니다",
+    "emptyDescription": "회의실 찾기에서 필요한 공간과 시간을 선택할 수 있습니다.",
+    "organizer": "주최",
+    "invited": "초대됨",
+    "approvalRequired": "승인 필요",
+    "cancelledState": "취소됨",
+    "attendeeCount": "참석자 {{count}}명",
+    "accept": "수락",
+    "decline": "거절",
+    "responseSaved": "참석 응답을 저장했습니다.",
+    "responseError": "참석 응답을 저장하지 못했습니다.",
+    "cancelTitle": "회의실 예약을 취소할까요?",
+    "cancelDescription": "연결된 일정과 회의실 예약이 취소되며 참석자 일정에도 반영됩니다.",
+    "cancelled": "회의실 예약을 취소했습니다.",
+    "cancelError": "회의실 예약을 취소하지 못했습니다."
+  },
+  "admin": {
+    "operations": {
+      "eyebrow": "공간 운영",
+      "title": "회의실 운영 현황",
+      "description": "예약 승인, 가용 자원과 유지보수 상태를 한 화면에서 처리합니다.",
+      "loadError": "회의실 운영 정보를 불러오지 못했습니다.",
+      "metrics": {
+        "active": "운영 중",
+        "pending": "승인 대기",
+        "maintenance": "유지보수",
+        "bookings": "이번 주 예약"
+      },
+      "pendingTitle": "승인 대기 예약",
+      "noPending": "승인 대기 예약이 없습니다",
+      "noPendingDescription": "새 승인 요청이 접수되면 이곳에 표시됩니다.",
+      "healthTitle": "회의실 상태",
+      "approve": "승인",
+      "decline": "반려",
+      "approveTitle": "예약을 승인할까요?",
+      "declineTitle": "예약을 반려할까요?",
+      "note": "운영 메모",
+      "decisionSaved": "예약 결정을 저장했습니다.",
+      "decisionError": "예약 결정을 저장하지 못했습니다."
+    },
+    "resources": {
+      "eyebrow": "자원 카탈로그",
+      "title": "회의실 관리",
+      "description": "회사가 제공하는 회의실의 위치, 수용 인원, 설비와 운영 상태를 관리합니다.",
+      "add": "회의실 등록",
+      "inventory": "회의실 인벤토리",
+      "count": "{{count}}개",
+      "loadError": "회의실 인벤토리를 불러오지 못했습니다.",
+      "emptyTitle": "등록된 회의실이 없습니다",
+      "emptyDescription": "첫 회의실을 등록해 예약 서비스를 시작하세요.",
+      "approval": "승인형",
+      "createTitle": "회의실 등록",
+      "editTitle": "회의실 편집",
+      "dialogDescription": "예약 검색과 충돌 검증에 사용되는 자원 정보를 입력합니다.",
+      "code": "자원 코드",
+      "codeError": "영문 대문자, 숫자, 밑줄 또는 하이픈으로 3자 이상 입력해 주세요.",
+      "nameKo": "한글 이름",
+      "nameEn": "영문 이름",
+      "site": "사업장",
+      "floor": "층",
+      "capacity": "수용 인원",
+      "features": "설비",
+      "featuresHint": "쉼표로 구분합니다. 예: VIDEO, WHITEBOARD",
+      "state": "운영 상태",
+      "timeZone": "시간대",
+      "approvalRequired": "예약 시 운영자 승인을 받습니다",
+      "states": {
+        "AVAILABLE": "운영 중",
+        "MAINTENANCE": "유지보수",
+        "RETIRED": "운영 종료"
+      },
+      "created": "회의실을 등록했습니다.",
+      "updated": "회의실 정보를 변경했습니다.",
+      "saveError": "회의실 정보를 저장하지 못했습니다."
+    },
+    "policies": {
+      "eyebrow": "예약 거버넌스",
+      "title": "회의실 예약 정책",
+      "description": "예약 가능 시간, 기간과 회의 운영 원칙을 회사 정책으로 적용합니다.",
+      "loadError": "예약 정책을 불러오지 못했습니다.",
+      "bookingWindowTitle": "예약 시간과 범위",
+      "workingStart": "운영 시작",
+      "workingEnd": "운영 종료",
+      "advanceDays": "최대 사전 예약 일수",
+      "bufferMinutes": "예약 간 기본 완충 시간(분)",
+      "minimumMinutes": "최소 예약 시간(분)",
+      "maximumMinutes": "최대 예약 시간(분)",
+      "governanceTitle": "회의 운영 원칙",
+      "enforceAgenda": "회의 예약 시 안건 입력을 필수로 합니다",
+      "allowExternal": "외부 참석자 초대를 허용합니다",
+      "saved": "회의실 예약 정책을 저장했습니다.",
+      "saveError": "회의실 예약 정책을 저장하지 못했습니다."
+    }
+  }
+}

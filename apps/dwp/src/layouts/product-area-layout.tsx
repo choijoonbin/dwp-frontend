@@ -42,9 +42,10 @@ export type ProductAreaNavigationGroup = {
 };
 
 type ProductAreaLayoutProps = {
-  areaKey: 'hcm' | 'calendar' | 'approvals' | 'mail' | 'spaces';
+  areaKey: 'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'spaces';
   navigation: readonly ProductAreaNavigationGroup[];
-  translationNamespace?: 'workforce' | 'hcm' | 'calendar' | 'approvals' | 'mail' | 'spaces';
+  translationNamespace?:
+    'workforce' | 'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'spaces';
 };
 
 export function ProductAreaLayout({

@@ -5,11 +5,13 @@ import { CALENDAR_NAVIGATION } from '../features/calendar/calendar-navigation';
 import { HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
 import { MAIL_NAVIGATION } from '../features/mail/mail-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
+import { ROOMS_NAVIGATION } from '../features/rooms/rooms-navigation';
 import { SPACE_NAVIGATION } from '../features/spaces/space-navigation';
 
 export type ProductShell =
   | 'workspace'
   | 'calendar'
+  | 'rooms'
   | 'mail'
   | 'approvals'
   | 'spaces'
@@ -35,6 +37,13 @@ export const PRODUCT_MENU_ROUTES: readonly ProductMenuRoute[] = [
       id: `calendar.${item.view}`,
       path: item.path,
       shell: 'calendar' as const,
+    }))
+  ),
+  ...ROOMS_NAVIGATION.flatMap((group) =>
+    group.items.map((item) => ({
+      id: `rooms.${item.view}`,
+      path: item.path,
+      shell: 'rooms' as const,
     }))
   ),
   ...MAIL_NAVIGATION.flatMap((group) =>

@@ -37,6 +37,7 @@ export const homeAppIconByKey: Record<HomeAppIconKey, LucideIcon> = {
   knowledge: BookOpen,
   legacy: MonitorCog,
   mail: Mail,
+  rooms: Building2,
   spaces: Layers3,
   hcm: ContactRound,
   hris: ContactRound,

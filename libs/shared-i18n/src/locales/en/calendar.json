@@ -14,7 +14,6 @@
       "calendar": {
         "start": "Start",
         "plan": "My schedule",
-        "spaces": "Spaces",
         "insights": "Insights",
         "admin": "Operations"
       }
@@ -24,10 +23,8 @@
         "home": { "label": "Today" },
         "schedule": { "label": "Schedule" },
         "availability": { "label": "Find availability" },
-        "resources": { "label": "Spaces & resources" },
         "insights": { "label": "Time insights" },
         "admin-overview": { "label": "Operations overview" },
-        "admin-resources": { "label": "Space operations" },
         "admin-policies": { "label": "Calendar policy" }
       }
     }
@@ -179,6 +176,11 @@
     "description": "Move between week, month, and agenda views while keeping conflicts and open time visible.",
     "views": { "week": "Week", "month": "Month", "agenda": "Agenda" },
     "myCalendars": "Visible calendars",
+    "loading": "Loading schedule",
+    "dragHint": "Drag across open time to create an event. Drag or resize one-off events that you organize.",
+    "recurrenceMoveHint": "Recurring events require an occurrence scope and are changed from the detail editor.",
+    "moveSuccess": "The event time was updated.",
+    "moveError": "The event could not be updated and was returned to its original time.",
     "addAt": "Add an event at {{hour}} on {{date}}",
     "loadError": "The schedule could not be loaded.",
     "noEvents": "There are no events in this period",

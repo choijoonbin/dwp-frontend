@@ -1,10 +1,11 @@
-export type ProductExperienceKey = 'hcm' | 'calendar' | 'approvals' | 'mail' | 'spaces';
+export type ProductExperienceKey = 'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'spaces';
 
 export type ProductExperienceProfile = {
   key: ProductExperienceKey;
   concept:
     | 'people-flow'
     | 'temporal-flow'
+    | 'resource-flow'
     | 'decision-flow'
     | 'communication-flow'
     | 'collaboration-flow';
@@ -39,6 +40,17 @@ export const productExperienceRegistry = {
     canvas: '#F5F7FB',
     sidebar: '#FAFBFD',
     selection: '#E7EFFC',
+  },
+  rooms: {
+    key: 'rooms',
+    concept: 'resource-flow',
+    density: 'standard',
+    accent: '#176F6A',
+    secondary: '#B24F5E',
+    softSurface: '#E5F3F0',
+    canvas: '#F5F8F8',
+    sidebar: '#FBFCFC',
+    selection: '#E1F0ED',
   },
   mail: {
     key: 'mail',
