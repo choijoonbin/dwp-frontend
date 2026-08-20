@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "release": "R1-pilot",
-  "asOf": "2026-08-14",
+  "asOf": "2026-08-20",
   "status": "BLOCKED_EXTERNAL_EVIDENCE",
   "qualityGates": [
     {
@@ -74,9 +74,19 @@
       "summary": "Audit workload identity, KMS or HSM, WORM, SIEM, RLS, and alerting",
       "evidence": [
         "docs/03-architecture/R0 Contract Spike 2 - Service Trust and Plan Integrity.md",
-        "../dwp-backend/dwp-core/src/main/java/com/dwp/core/audit/AuditOutboxRecorder.java"
+        "../dwp-backend/dwp-core/src/main/java/com/dwp/core/audit/AuditOutboxRecorder.java",
+        "../dwp-backend/docs/architecture/cryptographic-key-and-secret-management-policy.md"
       ],
-      "blockers": ["KMS_HSM", "WORM_STORE", "SIEM", "DATABASE_RLS_POLICY"]
+      "blockers": [
+        "R3-02-KMS",
+        "MANAGED_KEY_PROVIDER",
+        "WORKLOAD_IDENTITY",
+        "KMS_HSM",
+        "WORM_STORE",
+        "SIEM",
+        "DATABASE_RLS_POLICY",
+        "KEY_LIFECYCLE_AND_RECOVERY_EVIDENCE"
+      ]
     },
     {
       "id": "R3-03",
