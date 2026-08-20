@@ -6,22 +6,11 @@ export type WorkplaceSiteType = 'HEADQUARTERS' | 'SHARED_OFFICE' | 'SATELLITE' |
 export type WorkplaceSiteState = 'ACTIVE' | 'MAINTENANCE' | 'CLOSED';
 export type WorkplaceFloorState = 'DRAFT' | 'ACTIVE' | 'CLOSED';
 export type WorkplaceResourceType =
-  | 'ROOM'
-  | 'DESK'
-  | 'LOCKER'
-  | 'PARKING'
-  | 'FOCUS_POD'
-  | 'PHONE_BOOTH'
-  | 'EQUIPMENT';
+  'ROOM' | 'DESK' | 'LOCKER' | 'PARKING' | 'FOCUS_POD' | 'PHONE_BOOTH' | 'EQUIPMENT';
 export type WorkplaceBookingMode = 'RESERVABLE' | 'DROP_IN' | 'ASSIGNED' | 'UNAVAILABLE';
 export type WorkplaceResourceState = 'AVAILABLE' | 'MAINTENANCE' | 'RETIRED';
 export type WorkplaceBookingStatus =
-  | 'RESERVED'
-  | 'CHECKED_IN'
-  | 'COMPLETED'
-  | 'NO_SHOW'
-  | 'RELEASED'
-  | 'CANCELLED';
+  'RESERVED' | 'CHECKED_IN' | 'COMPLETED' | 'NO_SHOW' | 'RELEASED' | 'CANCELLED';
 
 export type WorkplaceSite = {
   siteId: string;

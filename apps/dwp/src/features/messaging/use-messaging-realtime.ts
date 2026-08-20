@@ -9,12 +9,7 @@ const MAX_RETRY_DELAY_MS = 30_000;
 const TYPING_REFRESH_MS = 5_000;
 
 export type MessagingConnectionState =
-  | 'idle'
-  | 'connecting'
-  | 'live'
-  | 'reconnecting'
-  | 'polling'
-  | 'offline';
+  'idle' | 'connecting' | 'live' | 'reconnecting' | 'polling' | 'offline';
 
 export function resolveMessagingTransport(
   realtime?: MessagingRealtimeStatus | null

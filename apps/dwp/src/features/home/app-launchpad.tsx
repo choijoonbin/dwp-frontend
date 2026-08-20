@@ -376,8 +376,7 @@ function AppTile({
             onKeyDown={
               editing
                 ? (activatorListeners?.onKeyDown as
-                    | React.KeyboardEventHandler<HTMLButtonElement>
-                    | undefined)
+                    React.KeyboardEventHandler<HTMLButtonElement> | undefined)
                 : undefined
             }
             onContextMenu={(event) => event.preventDefault()}
@@ -543,8 +542,7 @@ function FolderTile({
             onKeyDown={
               editing
                 ? (activatorListeners?.onKeyDown as
-                    | React.KeyboardEventHandler<HTMLButtonElement>
-                    | undefined)
+                    React.KeyboardEventHandler<HTMLButtonElement> | undefined)
                 : undefined
             }
             onContextMenu={(event) => event.preventDefault()}

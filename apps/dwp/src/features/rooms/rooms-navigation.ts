@@ -140,7 +140,7 @@ export function findFirstAccessibleRoomsPath(
         !candidate.requiredResourceKey ||
         Boolean(
           candidate.requiredPermissionCode &&
-            hasPermission(candidate.requiredResourceKey, candidate.requiredPermissionCode)
+          hasPermission(candidate.requiredResourceKey, candidate.requiredPermissionCode)
         )
     );
     if (item) return item.path;

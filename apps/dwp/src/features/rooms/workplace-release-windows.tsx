@@ -83,8 +83,8 @@ export function WorkplaceReleaseWindows() {
     resources.find((resource) => resource.resourceId === resourceId) ?? resources[0] ?? null;
   const valid = Boolean(
     selectedResource &&
-      Date.parse(endsAt) > Date.parse(startsAt) &&
-      Date.parse(startsAt) > Date.now()
+    Date.parse(endsAt) > Date.parse(startsAt) &&
+    Date.parse(startsAt) > Date.now()
   );
   const format = (value: string) =>
     formatDate(

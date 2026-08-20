@@ -26,10 +26,7 @@ import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
 import type { CalendarPolicy } from '@dwp-frontend/shared-utils';
 
 type NumericPolicyKey =
-  | 'minimumEventMinutes'
-  | 'maximumEventMinutes'
-  | 'maximumAdvanceDays'
-  | 'defaultBufferMinutes';
+  'minimumEventMinutes' | 'maximumEventMinutes' | 'maximumAdvanceDays' | 'defaultBufferMinutes';
 
 export function RoomsAdminPolicies() {
   const { t } = useTranslation('rooms');
@@ -82,11 +79,11 @@ export function RoomsAdminPolicies() {
     setPolicy((current) => (current ? { ...current, [key]: Number(value) } : current));
   const valid = Boolean(
     policy &&
-      policy.minimumEventMinutes >= 5 &&
-      policy.maximumEventMinutes >= policy.minimumEventMinutes &&
-      policy.maximumAdvanceDays >= 1 &&
-      policy.defaultBufferMinutes >= 0 &&
-      policy.workingDayStart < policy.workingDayEnd
+    policy.minimumEventMinutes >= 5 &&
+    policy.maximumEventMinutes >= policy.minimumEventMinutes &&
+    policy.maximumAdvanceDays >= 1 &&
+    policy.defaultBufferMinutes >= 0 &&
+    policy.workingDayStart < policy.workingDayEnd
   );
 
   return (

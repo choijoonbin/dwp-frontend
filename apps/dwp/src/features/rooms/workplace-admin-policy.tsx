@@ -109,24 +109,24 @@ export function WorkplaceAdminPolicy() {
     );
   const valid = Boolean(
     form &&
-      form.bookingWindowDays >= 1 &&
-      form.bookingWindowDays <= 365 &&
-      form.maximumActiveBookings >= 1 &&
-      form.maximumActiveBookings <= 100 &&
-      form.maximumConsecutiveDays >= 1 &&
-      form.maximumConsecutiveDays <= 31 &&
-      form.maximumConsecutiveDays <= form.bookingWindowDays &&
-      form.minimumBookingMinutes >= 15 &&
-      form.minimumBookingMinutes <= 1440 &&
-      form.maximumBookingMinutes >= form.minimumBookingMinutes &&
-      form.maximumBookingMinutes <= 10080 &&
-      timeInMinutes(form.workingDayStart) < timeInMinutes(form.workingDayEnd) &&
-      form.checkInLeadMinutes >= 0 &&
-      form.checkInLeadMinutes <= 240 &&
-      form.autoReleaseMinutes >= 0 &&
-      form.autoReleaseMinutes <= 240 &&
-      form.bookingRetentionDays >= 30 &&
-      form.bookingRetentionDays <= 3650
+    form.bookingWindowDays >= 1 &&
+    form.bookingWindowDays <= 365 &&
+    form.maximumActiveBookings >= 1 &&
+    form.maximumActiveBookings <= 100 &&
+    form.maximumConsecutiveDays >= 1 &&
+    form.maximumConsecutiveDays <= 31 &&
+    form.maximumConsecutiveDays <= form.bookingWindowDays &&
+    form.minimumBookingMinutes >= 15 &&
+    form.minimumBookingMinutes <= 1440 &&
+    form.maximumBookingMinutes >= form.minimumBookingMinutes &&
+    form.maximumBookingMinutes <= 10080 &&
+    timeInMinutes(form.workingDayStart) < timeInMinutes(form.workingDayEnd) &&
+    form.checkInLeadMinutes >= 0 &&
+    form.checkInLeadMinutes <= 240 &&
+    form.autoReleaseMinutes >= 0 &&
+    form.autoReleaseMinutes <= 240 &&
+    form.bookingRetentionDays >= 30 &&
+    form.bookingRetentionDays <= 3650
   );
   const navigationBlocker = useBlocker(dirty);
   useEffect(() => {

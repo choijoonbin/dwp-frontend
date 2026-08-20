@@ -6,12 +6,7 @@ export type SystemCodeConfigurationLevel = 'SYSTEM' | 'EXTENSIBLE' | 'USER';
 export type SystemCodeRuntimeVisibility = 'ADMIN_ONLY' | 'RUNTIME';
 
 export type SystemCodeContractKind =
-  | 'REFERENCE'
-  | 'STATE_MACHINE'
-  | 'SECURITY'
-  | 'PROTOCOL'
-  | 'OBSERVABILITY'
-  | 'REGISTRY_META';
+  'REFERENCE' | 'STATE_MACHINE' | 'SECURITY' | 'PROTOCOL' | 'OBSERVABILITY' | 'REGISTRY_META';
 
 export type SystemCodeValue = {
   code: string;

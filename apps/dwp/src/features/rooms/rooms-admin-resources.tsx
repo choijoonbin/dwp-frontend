@@ -98,10 +98,10 @@ function RoomResourceDialog({
     setForm((current) => ({ ...current, [key]: value }));
   const valid = Boolean(
     /^[A-Z0-9][A-Z0-9_-]{2,79}$/u.test(form.code) &&
-      form.nameKo.trim() &&
-      form.nameEn.trim() &&
-      form.site.trim() &&
-      Number(form.capacity) >= 1
+    form.nameKo.trim() &&
+    form.nameEn.trim() &&
+    form.site.trim() &&
+    Number(form.capacity) >= 1
   );
   const mutation = useMutation({
     mutationFn: () => {

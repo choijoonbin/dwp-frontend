@@ -53,15 +53,15 @@
 아래 경로가 2026-08-19 OpenAPI 실행 기준이다. 위 Inventory의 장기 Target 경로와 이름이 다른
 경우 이 표와 `contracts/openapi/space.json`을 현재 구현 계약으로 우선한다.
 
-| Method | Path                                                                                | 목적                                     | Permission                      | Audit·Evidence                         |
+| Method | Path | 목적 | Permission | Audit·Evidence |
 | ------ | ----------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------- | -------------------------------------- | ----------------- |
-| GET    | `/v1/admin/operations`                                                              | 정합성 KPI·발견사항·실행·전달 조회       | `ADMIN.SPACE_GOVERNANCE:VIEW    | MANAGE`                                | Admin read metric |
-| POST   | `/v1/admin/operations/reconcile`                                                    | Desired State 수동 재계산                | `ADMIN.SPACE_GOVERNANCE:MANAGE` | Reconciliation run + Audit             |
-| POST   | `/v1/admin/operations/entitlements/{syncItemId}/retry`                              | Retry·Dead 전달 재대기                   | `ADMIN.SPACE_GOVERNANCE:MANAGE` | Retry audit                            |
-| GET    | `/v1/admin/spaces?q=`                                                               | 삭제되지 않은 Tenant Space Metadata 검색 | `ADMIN.SPACE_GOVERNANCE:VIEW    | MANAGE`                                | Content 미포함    |
-| POST   | `/v1/admin/spaces/{spaceKey}/owner-recovery`                                        | 소유자 없는 Space 책임자 복구            | `ADMIN.SPACE_GOVERNANCE:MANAGE` | Reason + Policy + Audit + Recovery run |
-| POST   | `/internal/identity/v1/tenants/{tenantId}/space-entitlements/principal-validations` | 활성·동일 Tenant Principal 검증          | Space Service Identity          | Auth read evidence                     |
-| PUT    | `/internal/identity/v1/tenants/{tenantId}/space-entitlements/{sourceRef}`           | Membership Desired Grant 동기화          | Space Service Identity          | Identity grant audit                   |
+| GET | `/v1/admin/operations` | 정합성 KPI·발견사항·실행·전달 조회 | `ADMIN.SPACE_GOVERNANCE:VIEW    | MANAGE` | Admin read metric |
+| POST | `/v1/admin/operations/reconcile` | Desired State 수동 재계산 | `ADMIN.SPACE_GOVERNANCE:MANAGE` | Reconciliation run + Audit |
+| POST | `/v1/admin/operations/entitlements/{syncItemId}/retry` | Retry·Dead 전달 재대기 | `ADMIN.SPACE_GOVERNANCE:MANAGE` | Retry audit |
+| GET | `/v1/admin/spaces?q=` | 삭제되지 않은 Tenant Space Metadata 검색 | `ADMIN.SPACE_GOVERNANCE:VIEW    | MANAGE` | Content 미포함 |
+| POST | `/v1/admin/spaces/{spaceKey}/owner-recovery` | 소유자 없는 Space 책임자 복구 | `ADMIN.SPACE_GOVERNANCE:MANAGE` | Reason + Policy + Audit + Recovery run |
+| POST | `/internal/identity/v1/tenants/{tenantId}/space-entitlements/principal-validations` | 활성·동일 Tenant Principal 검증 | Space Service Identity | Auth read evidence |
+| PUT | `/internal/identity/v1/tenants/{tenantId}/space-entitlements/{sourceRef}` | Membership Desired Grant 동기화 | Space Service Identity | Identity grant audit |
 
 소유자 복구 Request는 `personPublicId`와 10~1000자의 `reason`을 요구한다. 활성 Owner가 이미
 있으면 `409`, 주체가 비활성·미존재·타 Tenant이면 `400`, 관리 책임이 없으면 `403`이다.

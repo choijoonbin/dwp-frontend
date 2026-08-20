@@ -5,11 +5,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 export type WorkplaceGovernanceTab =
-  | 'hierarchy'
-  | 'access'
-  | 'policy'
-  | 'floorPlans'
-  | 'delegation';
+  'hierarchy' | 'access' | 'policy' | 'floorPlans' | 'delegation';
 
 export const WORKPLACE_GOVERNANCE_TABS = [
   'hierarchy',

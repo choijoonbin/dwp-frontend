@@ -45,14 +45,7 @@ export type ProductAreaNavigationGroup = {
 
 type ProductAreaLayoutProps = {
   areaKey:
-    | 'hcm'
-    | 'calendar'
-    | 'rooms'
-    | 'approvals'
-    | 'mail'
-    | 'messaging'
-    | 'notifications'
-    | 'spaces';
+    'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'messaging' | 'notifications' | 'spaces';
   navigation: readonly ProductAreaNavigationGroup[];
   translationNamespace?:
     | 'workforce'

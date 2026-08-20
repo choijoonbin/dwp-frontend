@@ -153,11 +153,11 @@ function RequestDialog({
   }, [draft, initialSummary, service]);
   const valid = Boolean(
     summary.trim() &&
-      fields.every((field) => {
-        if (!field.required) return true;
-        const value = values[field.key];
-        return value !== undefined && value !== null && value !== '' && value !== false;
-      })
+    fields.every((field) => {
+      if (!field.required) return true;
+      const value = values[field.key];
+      return value !== undefined && value !== null && value !== '' && value !== false;
+    })
   );
   const mutation = useMutation({
     mutationFn: async ({ submit }: { submit: boolean }) => {

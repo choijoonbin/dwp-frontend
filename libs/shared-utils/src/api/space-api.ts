@@ -248,10 +248,7 @@ export type SpaceOperationsDashboard = {
     spaceId?: string | null;
     membershipId?: string | null;
     findingType:
-      | 'OWNERLESS_SPACE'
-      | 'ENTITLEMENT_DELIVERY'
-      | 'EXPIRED_MEMBERSHIP'
-      | 'LIFECYCLE_REVIEW';
+      'OWNERLESS_SPACE' | 'ENTITLEMENT_DELIVERY' | 'EXPIRED_MEMBERSHIP' | 'LIFECYCLE_REVIEW';
     severity: 'INFO' | 'WARNING' | 'HIGH' | 'CRITICAL';
     lifecycleState: 'OPEN' | 'ACKNOWLEDGED' | 'RESOLVED';
     targetType: string;

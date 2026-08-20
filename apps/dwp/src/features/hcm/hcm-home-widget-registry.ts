@@ -3,11 +3,7 @@ import { Activity, ContactRound, LayoutGrid, UserRoundCheck, UsersRound } from '
 import type { WorkspaceWidgetDefinition } from '../../components/workspace-composer/workspace-composer-model';
 
 export type HcmHomeWidgetKey =
-  | 'quick-actions'
-  | 'people-signals'
-  | 'profile'
-  | 'team'
-  | 'operations';
+  'quick-actions' | 'people-signals' | 'profile' | 'team' | 'operations';
 
 export const HCM_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<HcmHomeWidgetKey>[] = [
   {

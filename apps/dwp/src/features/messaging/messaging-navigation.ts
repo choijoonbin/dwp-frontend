@@ -13,14 +13,7 @@ import type { LucideIcon } from 'lucide-react';
 
 export type MessagingSection = 'start' | 'conversations' | 'work' | 'admin';
 export type MessagingView =
-  | 'home'
-  | 'inbox'
-  | 'spaces'
-  | 'direct'
-  | 'people'
-  | 'later'
-  | 'admin-overview'
-  | 'admin-policy';
+  'home' | 'inbox' | 'spaces' | 'direct' | 'people' | 'later' | 'admin-overview' | 'admin-policy';
 
 export type MessagingNavigationItem = {
   section: MessagingSection;

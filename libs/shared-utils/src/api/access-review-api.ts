@@ -7,10 +7,7 @@ export type AccessReviewReviewerStrategy = 'TENANT_ADMIN' | 'NAMED_REVIEWER';
 export type AccessReviewLifecycle = 'DRAFT' | 'ACTIVE' | 'COMPLETED';
 export type AccessReviewDecision = 'PENDING' | 'APPROVE' | 'REVOKE';
 export type AccessReviewRemediationState =
-  | 'NOT_REQUIRED'
-  | 'PENDING'
-  | 'APPLIED'
-  | 'MANUAL_REQUIRED';
+  'NOT_REQUIRED' | 'PENDING' | 'APPLIED' | 'MANUAL_REQUIRED';
 
 export type AccessReviewCampaign = {
   campaignId: string;

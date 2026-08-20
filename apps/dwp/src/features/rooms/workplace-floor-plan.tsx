@@ -26,12 +26,7 @@ import type {
 import type { LucideIcon } from 'lucide-react';
 
 export type WorkplaceResourceAvailability =
-  | 'AVAILABLE'
-  | 'OCCUPIED'
-  | 'MINE'
-  | 'ASSIGNED'
-  | 'DROP_IN'
-  | 'UNAVAILABLE';
+  'AVAILABLE' | 'OCCUPIED' | 'MINE' | 'ASSIGNED' | 'DROP_IN' | 'UNAVAILABLE';
 
 const RESOURCE_ICONS: Record<WorkplaceResourceType, LucideIcon> = {
   ROOM: UsersRound,

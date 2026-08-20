@@ -203,8 +203,8 @@ export function TenantBrandingManager() {
     () =>
       Boolean(
         branding &&
-          (organizationName.trim() !== (branding.organizationName ?? '') ||
-            safeAccent(accentColor) !== safeAccent(branding.accentColor))
+        (organizationName.trim() !== (branding.organizationName ?? '') ||
+          safeAccent(accentColor) !== safeAccent(branding.accentColor))
       ),
     [accentColor, branding, organizationName]
   );
