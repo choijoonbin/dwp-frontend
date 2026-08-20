@@ -15,8 +15,6 @@ import {
   Settings2,
   ShieldCheck,
   Sparkles,
-  UsersRound,
-  Workflow,
 } from 'lucide-react';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation';
 
@@ -25,7 +23,10 @@ import type { LucideIcon } from 'lucide-react';
 export type ShellScope = 'home' | 'tenant' | 'provider' | 'support';
 export type ShellKey =
   | 'home'
-  | 'workspace'
+  | 'catalog'
+  | 'work'
+  | 'activity'
+  | 'dwaion'
   | 'communications'
   | 'services'
   | 'calendar'
@@ -72,9 +73,20 @@ export const shellRegistry = {
     headerPosition: 'sticky',
     headerSurface: 'glass',
   },
-  workspace: {
-    key: 'workspace',
-    routePrefixes: ['/work', '/dwaion', '/ask', '/activity', '/apps'],
+  catalog: {
+    key: 'catalog',
+    routePrefixes: ['/apps'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: 0,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: AppWindow, labelKey: 'navigation.items.apps' },
+  },
+  work: {
+    key: 'work',
+    routePrefixes: ['/work'],
     scope: 'tenant',
     brandMode: 'product',
     showWorkspace: true,
@@ -82,6 +94,31 @@ export const shellRegistry = {
     compactNavigationWidth: foundationTokens.layout.navigationCompact,
     headerPosition: 'fixed',
     headerSurface: 'solid',
+    context: { icon: BriefcaseBusiness, labelKey: 'shell.work.name' },
+  },
+  activity: {
+    key: 'activity',
+    routePrefixes: ['/activity'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: Activity, labelKey: 'shell.activity.name' },
+  },
+  dwaion: {
+    key: 'dwaion',
+    routePrefixes: ['/dwaion', '/ask'],
+    scope: 'tenant',
+    brandMode: 'product',
+    showWorkspace: true,
+    desktopNavigationWidth: navigationExpanded,
+    compactNavigationWidth: foundationTokens.layout.navigationCompact,
+    headerPosition: 'fixed',
+    headerSurface: 'solid',
+    context: { icon: Sparkles, labelKey: 'shell.dwaion.name' },
   },
   communications: {
     key: 'communications',
@@ -243,29 +280,11 @@ export const shellRegistry = {
 
 export const shellHeaderHeight = foundationTokens.layout.headerHeight;
 
-export const workspaceNavigationIcons: Readonly<Record<string, LucideIcon>> = {
-  activity: Activity,
-  apps: AppWindow,
-  ask: Sparkles,
-  work: BriefcaseBusiness,
-  people: UsersRound,
-  workforce: Workflow,
-  hcm: ContactRound,
-  hris: ContactRound,
-  notifications: BellRing,
-};
-
-export const workspaceCoreContexts = [
-  { route: '/work', labelKey: 'navigation.items.work', icon: BriefcaseBusiness },
-  { route: '/dwaion', labelKey: 'navigation.items.ask', icon: Sparkles },
-  { route: '/activity', labelKey: 'navigation.items.activity', icon: Activity },
-  { route: '/apps', labelKey: 'navigation.items.apps', icon: AppWindow },
-] as const;
-
 const routeResolutionOrder: readonly ShellKey[] = [
   'provider',
   'admin',
   'account',
+  'dwaion',
   'approvals',
   'spaces',
   'calendar',
@@ -276,7 +295,9 @@ const routeResolutionOrder: readonly ShellKey[] = [
   'hcm',
   'services',
   'communications',
-  'workspace',
+  'work',
+  'activity',
+  'catalog',
   'home',
 ];
 

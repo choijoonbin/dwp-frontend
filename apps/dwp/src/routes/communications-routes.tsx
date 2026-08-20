@@ -6,11 +6,27 @@ import { CommunicationsLayout } from '../layouts/communications-layout';
 import {
   AppRouteGuard,
   authenticationFallback,
+  ProductRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
 
 const CommunicationsPage = lazy(() => import('../pages/communications'));
+const CommunicationsHome = lazy(() =>
+  import('../features/communications/communications-home').then((module) => ({
+    default: module.CommunicationsHome,
+  }))
+);
+const CommunicationsAdminContent = lazy(() =>
+  import('../features/communications/communications-admin-content').then((module) => ({
+    default: module.CommunicationsAdminContent,
+  }))
+);
+
+const COMMUNICATIONS_SUPPORT_SCOPES = [
+  'TENANT_CONFIGURATION_READ',
+  'TENANT_CONFIGURATION_WRITE',
+] as const;
 
 export const communicationsRoutes: RouteObject[] = [
   {
@@ -18,28 +34,58 @@ export const communicationsRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <AppRouteGuard resourceKey="APP.COMMUNICATIONS">
+          <AppRouteGuard
+            resourceKey="APP.COMMUNICATIONS"
+            requiredAnySupportScopes={COMMUNICATIONS_SUPPORT_SCOPES}
+          >
             <CommunicationsLayout />
           </AppRouteGuard>
         </WorkspaceRouteGuard>
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="for-you" replace /> },
+      { index: true, element: <Navigate to="home" replace /> },
+      {
+        path: 'home',
+        element: (
+          <AppRouteGuard resourceKey="APP.COMMUNICATIONS">
+            <Suspense fallback={routeFallback}>
+              <CommunicationsHome />
+            </Suspense>
+          </AppRouteGuard>
+        ),
+      },
+      {
+        path: 'admin/content',
+        element: (
+          <ProductRouteGuard
+            resourceKey="ADMIN.COMMUNICATIONS"
+            requiredAnySupportScopes={COMMUNICATIONS_SUPPORT_SCOPES}
+          >
+            <Suspense fallback={routeFallback}>
+              <CommunicationsAdminContent />
+            </Suspense>
+          </ProductRouteGuard>
+        ),
+      },
       {
         path: ':view',
         element: (
-          <Suspense fallback={routeFallback}>
-            <CommunicationsPage />
-          </Suspense>
+          <AppRouteGuard resourceKey="APP.COMMUNICATIONS">
+            <Suspense fallback={routeFallback}>
+              <CommunicationsPage />
+            </Suspense>
+          </AppRouteGuard>
         ),
       },
       {
         path: ':view/:storyId',
         element: (
-          <Suspense fallback={routeFallback}>
-            <CommunicationsPage />
-          </Suspense>
+          <AppRouteGuard resourceKey="APP.COMMUNICATIONS">
+            <Suspense fallback={routeFallback}>
+              <CommunicationsPage />
+            </Suspense>
+          </AppRouteGuard>
         ),
       },
     ],

@@ -3,11 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { findAdminNavigationItem } from './admin-navigation';
 
 describe('admin navigation route resolution', () => {
-  it('resolves a concise route segment to its namespaced Space view', () => {
-    expect(findAdminNavigationItem('spaces', 'overview')?.view).toBe('space-overview');
-    expect(findAdminNavigationItem('spaces', 'content-reviews')?.view).toBe(
-      'space-content-reviews'
-    );
+  it('does not duplicate product-owned operations in the control center', () => {
+    expect(findAdminNavigationItem('spaces', 'overview')).toBeUndefined();
+    expect(findAdminNavigationItem('services', 'service-catalog')).toBeUndefined();
+    expect(findAdminNavigationItem('notifications', 'overview')).toBeUndefined();
   });
 
   it('keeps existing routes with matching view identifiers stable', () => {
@@ -16,6 +15,6 @@ describe('admin navigation route resolution', () => {
   });
 
   it('rejects unknown route combinations', () => {
-    expect(findAdminNavigationItem('spaces', 'unknown')).toBeUndefined();
+    expect(findAdminNavigationItem('platform', 'unknown')).toBeUndefined();
   });
 });

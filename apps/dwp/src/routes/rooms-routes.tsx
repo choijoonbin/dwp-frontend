@@ -25,7 +25,7 @@ export const roomsRoutes: RouteObject[] = [
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="explore" replace /> },
+      { index: true, element: <Navigate to="home" replace /> },
       {
         path: '*',
         element: (
@@ -36,5 +36,5 @@ export const roomsRoutes: RouteObject[] = [
       },
     ],
   },
-  { path: 'rooms/*', element: <Navigate to="/workplace/explore" replace /> },
+  { path: 'rooms/*', element: <Navigate to="/workplace/home" replace /> },
 ];

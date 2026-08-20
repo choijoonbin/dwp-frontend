@@ -1,8 +1,12 @@
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { isAppResourceEntitled, useAuth, usePermissions } from '@dwp-frontend/shared-utils';
+import {
+  dwaionWorkspaceRoute,
+  isAppResourceEntitled,
+  useAuth,
+  usePermissions,
+} from '@dwp-frontend/shared-utils';
 
-import { dwaionWorkspaceRoute } from './dwaion-contract';
 import { DwaionLauncher } from './dwaion-launcher';
 import { resolveDwaionSurfaceContext } from './dwaion-page-context';
 

@@ -19,7 +19,7 @@ export function ShellBootScreen({
   pathname = typeof window === 'undefined' ? '/' : window.location.pathname,
 }: ShellBootScreenProps) {
   const { t } = useTranslation('common');
-  const shellKey = resolveShellKey(pathname) ?? 'workspace';
+  const shellKey = resolveShellKey(pathname) ?? 'home';
   const shell = shellRegistry[shellKey];
   const sidebarWidth = shell.desktopNavigationWidth;
   const hasSidebar = sidebarWidth > 0;
@@ -59,7 +59,7 @@ export function ShellBootScreen({
           }}
         >
           <Box sx={{ height: shellHeaderHeight, px: 2, display: 'flex', alignItems: 'center' }}>
-            <ProductMark compact={shellKey === 'workspace'} />
+            <ProductMark compact={shellKey === 'catalog'} />
           </Box>
           <Box sx={{ px: 2, py: 2, display: 'grid', gap: 1.25 }}>
             {[72, 86, 64, 78].map((width) => (

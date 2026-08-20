@@ -11,15 +11,54 @@
   },
   "navigation": {
     "groups": {
-      "discover": "발견",
-      "library": "내 라이브러리"
+      "communications": {
+        "overview": "개요",
+        "discover": "발견",
+        "library": "내 라이브러리",
+        "administration": "소식 운영"
+      }
     },
     "items": {
-      "for-you": "나를 위한 소식",
-      "all": "전체 소식",
-      "required": "필수 확인",
-      "saved": "저장한 소식"
+      "communications": {
+        "home": { "label": "소식 홈" },
+        "for-you": { "label": "나를 위한 소식" },
+        "all": { "label": "전체 소식" },
+        "required": { "label": "필수 확인" },
+        "saved": { "label": "저장한 소식" },
+        "admin-content": { "label": "콘텐츠 및 게시" }
+      }
     }
+  },
+  "productHome": {
+    "eyebrow": "사내 커뮤니케이션",
+    "title": "알아야 할 소식부터 먼저 확인하세요",
+    "description": "내 역할과 조직에 맞는 공지, 정책, 행사와 필수 확인 항목을 한 흐름으로 정리합니다.",
+    "live": "최신 피드",
+    "loading": "맞춤 소식을 정리하는 중",
+    "errorTitle": "소식 홈을 불러오지 못했습니다",
+    "errorDescription": "연결을 확인한 뒤 다시 시도해 주세요. 읽음 및 확인 상태는 변경되지 않았습니다.",
+    "summaryLabel": "소식 요약",
+    "metrics": {
+      "unread": "읽지 않음",
+      "unreadDetail": "새로 도착한 소식",
+      "required": "필수 확인",
+      "requiredDetail": "내 확인이 필요한 항목",
+      "saved": "저장됨",
+      "savedDetail": "나중에 다시 볼 소식",
+      "total": "전체 소식",
+      "totalDetail": "현재 열람 가능한 범위"
+    },
+    "latestTitle": "지금 알아야 할 소식",
+    "latestDescription": "필수 여부와 최신성을 기준으로 먼저 확인할 항목입니다.",
+    "openFeed": "맞춤 피드 열기",
+    "open": "읽기",
+    "emptyTitle": "새로 확인할 소식이 없습니다",
+    "emptyDescription": "새 공지나 정책 업데이트가 게시되면 이곳에 표시됩니다."
+  },
+  "administration": {
+    "eyebrow": "소식 운영",
+    "contentTitle": "콘텐츠 및 게시 관리",
+    "contentDescription": "조직 공지의 작성, 검토, 게시와 보존 수명주기를 한 제품 안에서 관리합니다."
   },
   "page": {
     "eyebrow": "{{tenant}} 뉴스룸",

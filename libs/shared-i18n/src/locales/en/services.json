@@ -5,19 +5,70 @@
     "tenantFallback": "My organization",
     "navigationLabel": "Services navigation",
     "openNavigation": "Open services navigation",
-    "backToHome": "Back to workspace"
+    "backToHome": "Back to workspace",
+    "services": {
+      "name": "Service Center",
+      "context": "Employee services and request operations",
+      "navigationLabel": "Service Center navigation"
+    }
   },
   "navigation": {
     "groups": {
-      "discover": "Services",
-      "services": "Services",
-      "requests": "My requests"
+      "services": {
+        "overview": "Overview",
+        "discover": "Use services",
+        "administration": "Service administration"
+      }
     },
     "items": {
-      "discover": "Discover services",
-      "my": "Active requests",
-      "drafts": "Drafts"
+      "services": {
+        "home": { "label": "Service home" },
+        "discover": { "label": "Find services" },
+        "my": { "label": "Active requests" },
+        "drafts": { "label": "Drafts" },
+        "admin-catalog": { "label": "Service catalog" },
+        "admin-operations": { "label": "Request operations" }
+      }
     }
+  },
+  "productHome": {
+    "eyebrow": "Employee services",
+    "title": "Keep support and request progress in one place",
+    "description": "Organize frequently used services, active requests, and items awaiting your response around the work at hand.",
+    "live": "Live request state",
+    "loading": "Preparing your service overview",
+    "errorTitle": "Service home could not be loaded",
+    "errorDescription": "The catalog and request state are unavailable. Try again shortly.",
+    "retry": "Try again",
+    "summaryLabel": "Service usage summary",
+    "metrics": {
+      "services": "Available services",
+      "servicesDetail": "Active catalog entries",
+      "active": "In progress",
+      "activeDetail": "Requests not yet closed",
+      "waiting": "Waiting for you",
+      "waitingDetail": "Requests needing your response",
+      "drafts": "Drafts",
+      "draftsDetail": "Requests not yet submitted"
+    },
+    "activeTitle": "Active requests",
+    "activeDescription": "Review recently changed requests and their next state.",
+    "openRequests": "View all requests",
+    "featuredTitle": "Frequently used services",
+    "featuredDescription": "Start with services recommended by your organization.",
+    "discover": "Find all",
+    "open": "View details",
+    "emptyActiveTitle": "No active requests",
+    "emptyActiveDescription": "Submitted requests and their handling flow will appear here.",
+    "emptyFeaturedTitle": "No featured services",
+    "emptyFeaturedDescription": "Browse the full catalog to find the support you need."
+  },
+  "administration": {
+    "eyebrow": "Service administration",
+    "catalogTitle": "Service catalog",
+    "catalogDescription": "Manage service definitions, request forms, SLAs, and data classification inside the product.",
+    "operationsTitle": "Request operations",
+    "operationsDescription": "Triage, assign, and responsibly progress submitted requests."
   },
   "discover": {
     "eyebrow": "Employee service hub",

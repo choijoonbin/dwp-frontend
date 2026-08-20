@@ -1,6 +1,5 @@
 import {
   Boxes,
-  BellRing,
   AppWindow,
   Building2,
   ChartNoAxesCombined,
@@ -11,7 +10,6 @@ import {
   Image,
   LayoutGrid,
   KeyRound,
-  Megaphone,
   PlugZap,
   ScrollText,
   SearchCheck,
@@ -22,37 +20,19 @@ import {
   ShieldAlert,
   Network,
   Languages,
-  Layers3,
   LibraryBig,
-  LifeBuoy,
-  ListChecks,
   PanelTop,
-  Route,
-  LayoutTemplate,
-  FileCheck2,
-  FileCode2,
-  RadioTower,
-  ServerCog,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
 
-export type AdminSection =
-  | 'experience'
-  | 'services'
-  | 'notifications'
-  | 'spaces'
-  | 'identity'
-  | 'platform'
-  | 'integrations'
-  | 'governance';
+export type AdminSection = 'experience' | 'identity' | 'platform' | 'integrations' | 'governance';
 
 export type AdminView =
   | 'branding'
   | 'home-experience'
   | 'home-composition'
   | 'home-apps'
-  | 'announcements'
   | 'preference-exceptions'
   | 'localization'
   | 'access'
@@ -63,18 +43,6 @@ export type AdminView =
   | 'workforce-access'
   | 'saved-view-custody'
   | 'provisioning'
-  | 'service-catalog'
-  | 'service-operations'
-  | 'notification-overview'
-  | 'notification-contracts'
-  | 'notification-operations'
-  | 'space-overview'
-  | 'space-directory'
-  | 'space-requests'
-  | 'space-templates'
-  | 'space-content-reviews'
-  | 'space-lifecycle'
-  | 'space-operations'
   | 'catalog'
   | 'navigation'
   | 'reference-data'
@@ -135,14 +103,6 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
       },
       {
         section: 'experience',
-        view: 'announcements',
-        path: '/admin/experience/announcements',
-        icon: Megaphone,
-        requiredResourceKey: 'ADMIN.COMMUNICATIONS',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'experience',
         view: 'preference-exceptions',
         path: '/admin/experience/preference-exceptions',
         icon: SlidersHorizontal,
@@ -152,120 +112,6 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'localization',
         path: '/admin/experience/localization',
         icon: Languages,
-      },
-    ],
-  },
-  {
-    id: 'services',
-    icon: LifeBuoy,
-    items: [
-      {
-        section: 'services',
-        view: 'service-catalog',
-        path: '/admin/services/service-catalog',
-        icon: LifeBuoy,
-        requiredResourceKey: 'ADMIN.SERVICE_CATALOG',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'services',
-        view: 'service-operations',
-        path: '/admin/services/service-operations',
-        icon: ListChecks,
-        requiredResourceKey: 'ADMIN.SERVICE_OPERATIONS',
-        requiredPermissionCode: 'VIEW',
-      },
-    ],
-  },
-  {
-    id: 'notifications',
-    icon: BellRing,
-    items: [
-      {
-        section: 'notifications',
-        view: 'notification-overview',
-        path: '/admin/notifications/overview',
-        icon: BellRing,
-        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'notifications',
-        view: 'notification-contracts',
-        path: '/admin/notifications/contracts',
-        icon: FileCode2,
-        requiredResourceKey: 'ADMIN.NOTIFICATION_CONTRACT',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'notifications',
-        view: 'notification-operations',
-        path: '/admin/notifications/operations',
-        icon: RadioTower,
-        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
-        requiredPermissionCode: 'VIEW',
-      },
-    ],
-  },
-  {
-    id: 'spaces',
-    icon: Layers3,
-    items: [
-      {
-        section: 'spaces',
-        view: 'space-overview',
-        path: '/admin/spaces/overview',
-        icon: ChartNoAxesCombined,
-        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'spaces',
-        view: 'space-directory',
-        path: '/admin/spaces/directory',
-        icon: Layers3,
-        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'spaces',
-        view: 'space-requests',
-        path: '/admin/spaces/requests',
-        icon: Route,
-        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'spaces',
-        view: 'space-templates',
-        path: '/admin/spaces/templates',
-        icon: LayoutTemplate,
-        requiredResourceKey: 'ADMIN.SPACE_TEMPLATES',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'spaces',
-        view: 'space-content-reviews',
-        path: '/admin/spaces/content-reviews',
-        icon: FileCheck2,
-        requiredResourceKey: 'ADMIN.SPACE_COMPLIANCE',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'spaces',
-        view: 'space-lifecycle',
-        path: '/admin/spaces/lifecycle',
-        icon: ClipboardCheck,
-        requiredResourceKey: 'ADMIN.SPACE_ACCESS_REVIEW',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        section: 'spaces',
-        view: 'space-operations',
-        path: '/admin/spaces/operations',
-        icon: ServerCog,
-        requiredResourceKey: 'ADMIN.SPACE_GOVERNANCE',
-        requiredPermissionCode: 'VIEW',
       },
     ],
   },

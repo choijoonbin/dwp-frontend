@@ -13,7 +13,8 @@
     "groups": {
       "spaces": {
         "overview": "Overview",
-        "portfolio": "My spaces"
+        "portfolio": "My spaces",
+        "administration": "Space administration"
       }
     },
     "items": {
@@ -21,8 +22,46 @@
         "home": { "label": "Space home" },
         "my-spaces": { "label": "My spaces" },
         "discover": { "label": "Discover" },
-        "requests": { "label": "My requests" }
+        "requests": { "label": "My requests" },
+        "admin-overview": { "label": "Operations overview" },
+        "admin-directory": { "label": "Space directory" },
+        "admin-requests": { "label": "Creation requests" },
+        "admin-templates": { "label": "Templates" },
+        "admin-content-reviews": { "label": "Content reviews" },
+        "admin-lifecycle": { "label": "Lifecycle reviews" },
+        "admin-operations": { "label": "Recovery and operations" }
       }
+    }
+  },
+  "administration": {
+    "eyebrow": "Space administration",
+    "overview": {
+      "title": "Operations overview",
+      "description": "Review scale, requests, reviews, and policy exceptions across Spaces."
+    },
+    "directory": {
+      "title": "Space directory",
+      "description": "Manage organizational Spaces, owners, visibility, and operating state."
+    },
+    "requests": {
+      "title": "Space creation requests",
+      "description": "Review purpose, ownership, and policy fit for new collaboration spaces."
+    },
+    "templates": {
+      "title": "Space templates",
+      "description": "Manage proven structures, baseline policies, and reusable starting configurations."
+    },
+    "contentReviews": {
+      "title": "Content reviews",
+      "description": "Review policy, visibility, and sensitive-data risk before publication."
+    },
+    "lifecycle": {
+      "title": "Lifecycle reviews",
+      "description": "Decide whether to retain or retire Spaces based on ownership, activity, and retention rules."
+    },
+    "operations": {
+      "title": "Recovery and operations",
+      "description": "Recover entitlement synchronization, orphaned ownership, and operational failures through auditable procedures."
     }
   },
   "actions": {

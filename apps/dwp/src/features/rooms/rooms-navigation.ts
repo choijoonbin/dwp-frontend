@@ -1,6 +1,7 @@
 import {
   Building2,
   CalendarCheck2,
+  House,
   LayoutDashboard,
   Network,
   MapPinned,
@@ -16,6 +17,7 @@ import type {
 } from '../../layouts/product-area-layout';
 
 export type RoomsView =
+  | 'home'
   | 'explore'
   | 'find-rooms'
   | 'my-bookings'
@@ -38,6 +40,13 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
   {
     id: 'booking',
     items: [
+      {
+        view: 'home',
+        path: '/workplace/home',
+        icon: House,
+        requiredResourceKey: 'APP.WORKPLACE',
+        requiredPermissionCode: 'VIEW',
+      },
       {
         view: 'explore',
         path: '/workplace/explore',
@@ -129,7 +138,7 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
   },
 ] as const satisfies readonly ProductAreaNavigationGroup[];
 
-export const ROOMS_DEFAULT_PATH = '/workplace/explore';
+export const ROOMS_DEFAULT_PATH = '/workplace/home';
 
 export function findFirstAccessibleRoomsPath(
   hasPermission: (resourceKey: string, permissionCode: string) => boolean

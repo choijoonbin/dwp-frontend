@@ -11,15 +11,54 @@
   },
   "navigation": {
     "groups": {
-      "discover": "Discover",
-      "library": "My library"
+      "communications": {
+        "overview": "Overview",
+        "discover": "Discover",
+        "library": "My library",
+        "administration": "Communications administration"
+      }
     },
     "items": {
-      "for-you": "For you",
-      "all": "All stories",
-      "required": "Required",
-      "saved": "Saved"
+      "communications": {
+        "home": { "label": "Communications home" },
+        "for-you": { "label": "For you" },
+        "all": { "label": "All stories" },
+        "required": { "label": "Required" },
+        "saved": { "label": "Saved" },
+        "admin-content": { "label": "Content and publishing" }
+      }
     }
+  },
+  "productHome": {
+    "eyebrow": "Internal communications",
+    "title": "See what matters before the rest",
+    "description": "Bring role-aware announcements, policies, events, and required acknowledgements into one clear flow.",
+    "live": "Current feed",
+    "loading": "Preparing your communications briefing",
+    "errorTitle": "Communications home could not be loaded",
+    "errorDescription": "Check the connection and try again. Read and acknowledgement state has not changed.",
+    "summaryLabel": "Communications summary",
+    "metrics": {
+      "unread": "Unread",
+      "unreadDetail": "New stories for you",
+      "required": "Required",
+      "requiredDetail": "Items awaiting acknowledgement",
+      "saved": "Saved",
+      "savedDetail": "Stories kept for later",
+      "total": "All stories",
+      "totalDetail": "Your current access scope"
+    },
+    "latestTitle": "What to know now",
+    "latestDescription": "The latest and required items to review first.",
+    "openFeed": "Open your feed",
+    "open": "Read",
+    "emptyTitle": "Nothing new to review",
+    "emptyDescription": "New announcements and policy updates will appear here."
+  },
+  "administration": {
+    "eyebrow": "Communications administration",
+    "contentTitle": "Content and publishing",
+    "contentDescription": "Manage drafting, review, publishing, and retention of organization communications inside the product."
   },
   "page": {
     "eyebrow": "{{tenant}} newsroom",

@@ -21,19 +21,27 @@ describe('notification navigation contract', () => {
     ).toBe(true);
   });
 
-  it('keeps account settings and tenant administration in their owning shells', () => {
+  it('keeps user settings and governed administration inside the product shell', () => {
     const items = NOTIFICATION_NAVIGATION.flatMap((group) => group.items);
 
-    expect(items).toEqual([
-      expect.objectContaining({
-        section: 'center',
-        view: 'center',
-        path: '/notifications',
-        requiredResourceKey: 'APP.NOTIFICATIONS',
-        requiredPermissionCode: 'VIEW',
-      }),
-    ]);
-    expect(findNotificationNavigationItem('/notifications/')).toEqual(
+    expect(items).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ view: 'home', path: '/notifications/home' }),
+        expect.objectContaining({
+          view: 'center',
+          path: '/notifications/center',
+          requiredResourceKey: 'APP.NOTIFICATIONS',
+          requiredPermissionCode: 'VIEW',
+        }),
+        expect.objectContaining({ view: 'settings', path: '/notifications/settings' }),
+        expect.objectContaining({
+          view: 'admin-overview',
+          path: '/notifications/admin/overview',
+          requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
+        }),
+      ])
+    );
+    expect(findNotificationNavigationItem('/notifications/center/')).toEqual(
       expect.objectContaining({ view: 'center' })
     );
     expect(findNotificationNavigationItem('/account/settings/notifications')).toBeUndefined();

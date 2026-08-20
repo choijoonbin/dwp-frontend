@@ -19,6 +19,7 @@
     },
     "items": {
       "rooms": {
+        "home": { "label": "Workplace home" },
         "explore": { "label": "Find a space" },
         "find-rooms": { "label": "Find a room" },
         "my-bookings": { "label": "My space bookings" },
@@ -222,6 +223,34 @@
     }
   },
   "workplace": {
+    "home": {
+      "eyebrow": "Today's workplace",
+      "title": "See bookings and available spaces at a glance",
+      "description": "Review upcoming bookings, check-in actions, and resources available now before work begins.",
+      "live": "Live availability",
+      "loading": "Preparing your workplace overview",
+      "errorTitle": "Workplace home could not be loaded",
+      "errorDescription": "Availability and booking information are unavailable. Try again shortly.",
+      "summaryLabel": "Workplace summary",
+      "metrics": {
+        "sites": "Active sites",
+        "sitesDetail": "Locations available to you",
+        "available": "Available now",
+        "availableDetail": "Resources free for this time",
+        "bookings": "Upcoming bookings",
+        "bookingsDetail": "Active bookings in the next 7 days",
+        "checkIn": "Check in",
+        "checkInDetail": "Bookings ready for arrival"
+      },
+      "upcomingTitle": "Upcoming workplace schedule",
+      "upcomingDescription": "Review your nearest bookings and check-in times first.",
+      "findSpace": "Find a space",
+      "openBookings": "View all bookings",
+      "checkInReady": "Check-in ready",
+      "open": "Review",
+      "emptyTitle": "No upcoming workplace bookings",
+      "emptyDescription": "Choose a location and time from Find a space."
+    },
     "resourceTypes": {
       "ROOM": "Meeting room",
       "DESK": "Desk",

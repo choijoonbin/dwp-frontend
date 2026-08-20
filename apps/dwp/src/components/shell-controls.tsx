@@ -302,7 +302,9 @@ export function NotificationMenu() {
     <NotificationHeaderGlance
       onOpenCenter={(notificationId) =>
         navigate(
-          notificationId ? `/notifications/${encodeURIComponent(notificationId)}` : '/notifications'
+          notificationId
+            ? `/notifications/center/${encodeURIComponent(notificationId)}`
+            : '/notifications/center'
         )
       }
       onOpenSettings={() => navigate('/account/settings/notifications')}

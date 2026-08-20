@@ -5,9 +5,14 @@ import { resolveShellKey, shellRegistry } from './shell-registry';
 describe('global shell registry', () => {
   it('resolves every product route to one explicit shell contract', () => {
     expect(resolveShellKey('/')).toBe('home');
-    expect(resolveShellKey('/work/queue')).toBe('workspace');
+    expect(resolveShellKey('/apps')).toBe('catalog');
+    expect(resolveShellKey('/work/queue')).toBe('work');
     expect(resolveShellKey('/communications/for-you')).toBe('communications');
+    expect(resolveShellKey('/communications/admin/content')).toBe('communications');
     expect(resolveShellKey('/services/discover')).toBe('services');
+    expect(resolveShellKey('/services/admin/catalog')).toBe('services');
+    expect(resolveShellKey('/work/home')).toBe('work');
+    expect(resolveShellKey('/activity/timeline')).toBe('activity');
     expect(resolveShellKey('/hr/directory')).toBe('hcm');
     expect(resolveShellKey('/hr/design/organization')).toBe('hcm');
     expect(resolveShellKey('/calendar/availability')).toBe('calendar');
@@ -27,17 +32,17 @@ describe('global shell registry', () => {
   });
 
   it('reserves the wider navigation only for control-plane shells', () => {
-    expect(shellRegistry.workspace.desktopNavigationWidth).toBeLessThan(
+    expect(shellRegistry.work.desktopNavigationWidth).toBeLessThan(
       shellRegistry.admin.desktopNavigationWidth
     );
     expect(shellRegistry.hcm.desktopNavigationWidth).toBe(
-      shellRegistry.workspace.desktopNavigationWidth
+      shellRegistry.work.desktopNavigationWidth
     );
     expect(shellRegistry.communications.desktopNavigationWidth).toBe(
-      shellRegistry.workspace.desktopNavigationWidth
+      shellRegistry.work.desktopNavigationWidth
     );
     expect(shellRegistry.services.desktopNavigationWidth).toBe(
-      shellRegistry.workspace.desktopNavigationWidth
+      shellRegistry.work.desktopNavigationWidth
     );
     expect(shellRegistry.provider.desktopNavigationWidth).toBe(
       shellRegistry.admin.desktopNavigationWidth

@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { PageCanvas } from '@dwp-frontend/design-system/components/page-canvas/page-canvas';
 import { ErrorState } from '@dwp-frontend/design-system/components/states/state-panels';
-import { Navigate, useRouteError } from 'react-router-dom';
+import { Navigate, useParams, useRouteError } from 'react-router-dom';
 
 import { NotificationLayout } from '../layouts/notification-layout';
 import {
   AppRouteGuard,
   authenticationFallback,
+  ProductRouteGuard,
   routeFallback,
   WorkspaceRouteGuard,
 } from './route-support';
@@ -16,12 +17,44 @@ import {
 import type { RouteObject } from 'react-router-dom';
 
 const NotificationsPage = lazy(() => import('../pages/notifications'));
+const NotificationHome = lazy(() =>
+  import('../features/notifications/notification-home').then((module) => ({
+    default: module.NotificationHome,
+  }))
+);
+const NotificationSettingsPage = lazy(() =>
+  import('../features/notifications/notification-product-pages').then((module) => ({
+    default: module.NotificationSettingsPage,
+  }))
+);
+const NotificationAdminOverview = lazy(() =>
+  import('../features/notifications/notification-product-pages').then((module) => ({
+    default: module.NotificationAdminOverview,
+  }))
+);
+const NotificationAdminContracts = lazy(() =>
+  import('../features/notifications/notification-product-pages').then((module) => ({
+    default: module.NotificationAdminContracts,
+  }))
+);
+const NotificationAdminOperations = lazy(() =>
+  import('../features/notifications/notification-product-pages').then((module) => ({
+    default: module.NotificationAdminOperations,
+  }))
+);
 
 function NotificationPageRoute() {
   return (
     <Suspense fallback={routeFallback}>
       <NotificationsPage />
     </Suspense>
+  );
+}
+
+function LegacyNotificationDetailRedirect() {
+  const { notificationId } = useParams();
+  return (
+    <Navigate to={`/notifications/center/${encodeURIComponent(notificationId ?? '')}`} replace />
   );
 }
 
@@ -63,17 +96,66 @@ export const notificationRoutes: RouteObject[] = [
       </AuthGuard>
     ),
     children: [
+      { index: true, element: <Navigate to="home" replace /> },
       {
-        index: true,
+        path: 'home',
+        element: (
+          <Suspense fallback={routeFallback}>
+            <NotificationHome />
+          </Suspense>
+        ),
+        errorElement: <NotificationRouteError />,
+      },
+      {
+        path: 'center',
         element: <NotificationPageRoute />,
         errorElement: <NotificationRouteError />,
       },
       {
-        path: ':notificationId',
+        path: 'center/:notificationId',
         element: <NotificationPageRoute />,
         errorElement: <NotificationRouteError />,
       },
-      { path: '*', element: <Navigate to="/notifications" replace /> },
+      {
+        path: 'settings',
+        element: (
+          <Suspense fallback={routeFallback}>
+            <NotificationSettingsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'admin/overview',
+        element: (
+          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_OPERATIONS">
+            <Suspense fallback={routeFallback}>
+              <NotificationAdminOverview />
+            </Suspense>
+          </ProductRouteGuard>
+        ),
+      },
+      {
+        path: 'admin/contracts',
+        element: (
+          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_CONTRACT">
+            <Suspense fallback={routeFallback}>
+              <NotificationAdminContracts />
+            </Suspense>
+          </ProductRouteGuard>
+        ),
+      },
+      {
+        path: 'admin/operations',
+        element: (
+          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_OPERATIONS">
+            <Suspense fallback={routeFallback}>
+              <NotificationAdminOperations />
+            </Suspense>
+          </ProductRouteGuard>
+        ),
+      },
+      { path: ':notificationId', element: <LegacyNotificationDetailRedirect /> },
+      { path: '*', element: <Navigate to="/notifications/home" replace /> },
     ],
   },
 ];

@@ -82,7 +82,7 @@ describe('control plane access policy', () => {
     );
     expect(canEnterTenantControlPlane(['COMMUNICATIONS_EDITOR'], true)).toBe(true);
     expect(
-      canAccessAdminNavigationItem(item('announcements', 'ADMIN.COMMUNICATIONS'), {
+      canAccessAdminNavigationItem(item('branding', 'ADMIN.COMMUNICATIONS'), {
         roles: ['COMMUNICATIONS_EDITOR'],
         permissionsLoaded: true,
         hasPermission,
@@ -107,14 +107,14 @@ describe('control plane access policy', () => {
     );
     expect(canEnterTenantControlPlane(['SERVICE_CATALOG_MANAGER'], true)).toBe(true);
     expect(
-      canAccessAdminNavigationItem(item('service-catalog', 'ADMIN.SERVICE_CATALOG'), {
+      canAccessAdminNavigationItem(item('branding', 'ADMIN.SERVICE_CATALOG'), {
         roles: ['SERVICE_CATALOG_MANAGER'],
         permissionsLoaded: true,
         hasPermission: catalogPermission,
       })
     ).toBe(true);
     expect(
-      canAccessAdminNavigationItem(item('service-operations', 'ADMIN.SERVICE_OPERATIONS'), {
+      canAccessAdminNavigationItem(item('home-apps', 'ADMIN.SERVICE_OPERATIONS'), {
         roles: ['SERVICE_CATALOG_MANAGER'],
         permissionsLoaded: true,
         hasPermission: catalogPermission,
@@ -130,14 +130,14 @@ describe('control plane access policy', () => {
     );
     expect(canEnterTenantControlPlane(['SPACE_TEMPLATE_ADMIN'], true)).toBe(true);
     expect(
-      canAccessAdminNavigationItem(item('space-templates', 'ADMIN.SPACE_TEMPLATES'), {
+      canAccessAdminNavigationItem(item('branding', 'ADMIN.SPACE_TEMPLATES'), {
         roles: ['SPACE_TEMPLATE_ADMIN'],
         permissionsLoaded: true,
         hasPermission,
       })
     ).toBe(true);
     expect(
-      canAccessAdminNavigationItem(item('space-content-reviews', 'ADMIN.SPACE_COMPLIANCE'), {
+      canAccessAdminNavigationItem(item('home-apps', 'ADMIN.SPACE_COMPLIANCE'), {
         roles: ['SPACE_TEMPLATE_ADMIN'],
         permissionsLoaded: true,
         hasPermission,

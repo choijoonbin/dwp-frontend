@@ -1,32 +1,42 @@
-import { Bookmark, CircleAlert, Newspaper, Sparkles } from 'lucide-react';
+import { Bookmark, CircleAlert, House, Megaphone, Newspaper, Sparkles } from 'lucide-react';
 
-import type { LucideIcon } from 'lucide-react';
-import type { CommunicationFeedScope } from '@dwp-frontend/shared-utils';
+import type { ProductAreaNavigationGroup } from '../../layouts/product-area-layout';
 
-export type CommunicationsNavigationItem = {
-  id: CommunicationFeedScope;
-  path: string;
-  icon: LucideIcon;
-};
+export type CommunicationsView =
+  'home' | 'for-you' | 'all' | 'required' | 'saved' | 'admin-content';
 
-export type CommunicationsNavigationGroup = {
-  id: 'discover' | 'library';
-  items: readonly CommunicationsNavigationItem[];
-};
-
-export const COMMUNICATIONS_NAVIGATION: readonly CommunicationsNavigationGroup[] = [
+export const COMMUNICATIONS_NAVIGATION = [
+  {
+    id: 'overview',
+    items: [{ view: 'home', path: '/communications/home', icon: House }],
+  },
   {
     id: 'discover',
     items: [
-      { id: 'for-you', path: '/communications/for-you', icon: Sparkles },
-      { id: 'all', path: '/communications/all', icon: Newspaper },
+      { view: 'for-you', path: '/communications/for-you', icon: Sparkles },
+      { view: 'all', path: '/communications/all', icon: Newspaper },
     ],
   },
   {
     id: 'library',
     items: [
-      { id: 'required', path: '/communications/required', icon: CircleAlert },
-      { id: 'saved', path: '/communications/saved', icon: Bookmark },
+      { view: 'required', path: '/communications/required', icon: CircleAlert },
+      { view: 'saved', path: '/communications/saved', icon: Bookmark },
     ],
   },
-] as const;
+  {
+    id: 'administration',
+    items: [
+      {
+        view: 'admin-content',
+        path: '/communications/admin/content',
+        icon: Megaphone,
+        requiredResourceKey: 'ADMIN.COMMUNICATIONS',
+        requiredPermissionCode: 'VIEW',
+        requiredAnySupportScopes: ['TENANT_CONFIGURATION_READ', 'TENANT_CONFIGURATION_WRITE'],
+      },
+    ],
+  },
+] as const satisfies readonly ProductAreaNavigationGroup[];
+
+export const COMMUNICATIONS_DEFAULT_PATH = '/communications/home';

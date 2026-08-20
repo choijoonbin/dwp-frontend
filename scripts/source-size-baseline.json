@@ -6,7 +6,6 @@
   "apps/dwp/src/features/home/app-launchpad.tsx": 1487,
   "apps/dwp/src/features/hcm/hcm-home.tsx": 1600,
   "apps/dwp/src/features/admin/reference-data-manager.tsx": 1347,
-  "apps/dwp/src/features/admin/announcement-manager.tsx": 1291,
   "apps/dwp/src/features/admin/catalog-explorer.tsx": 1277,
   "apps/dwp/src/features/workforce/hris-operations-workbench.tsx": 1229,
   "apps/dwp/src/features/admin/navigation-studio-manager.tsx": 1181,

@@ -19,6 +19,7 @@
     },
     "items": {
       "rooms": {
+        "home": { "label": "근무 공간 홈" },
         "explore": { "label": "공간 찾기" },
         "find-rooms": { "label": "회의실 찾기" },
         "my-bookings": { "label": "내 공간 예약" },
@@ -228,6 +229,34 @@
     }
   },
   "workplace": {
+    "home": {
+      "eyebrow": "오늘의 근무 공간",
+      "title": "예약과 가용 공간을 한눈에 확인하세요",
+      "description": "다가오는 공간 예약, 체크인 필요 항목과 지금 사용할 수 있는 자원을 업무 시작 전에 정리합니다.",
+      "live": "실시간 가용성",
+      "loading": "근무 공간 현황을 정리하는 중",
+      "errorTitle": "근무 공간 홈을 불러오지 못했습니다",
+      "errorDescription": "가용 공간과 예약 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      "summaryLabel": "근무 공간 요약",
+      "metrics": {
+        "sites": "운영 사업장",
+        "sitesDetail": "현재 접근 가능한 위치",
+        "available": "지금 이용 가능",
+        "availableDetail": "선택 시간의 가용 자원",
+        "bookings": "다가오는 예약",
+        "bookingsDetail": "향후 7일 내 활성 예약",
+        "checkIn": "체크인 필요",
+        "checkInDetail": "입실 확인 가능한 예약"
+      },
+      "upcomingTitle": "다가오는 공간 일정",
+      "upcomingDescription": "가까운 예약과 체크인 시점을 먼저 확인합니다.",
+      "findSpace": "공간 찾기",
+      "openBookings": "전체 예약 보기",
+      "checkInReady": "체크인 가능",
+      "open": "확인",
+      "emptyTitle": "다가오는 공간 예약이 없습니다",
+      "emptyDescription": "공간 찾기에서 필요한 위치와 시간을 예약할 수 있습니다."
+    },
     "resourceTypes": {
       "ROOM": "회의실",
       "DESK": "좌석",

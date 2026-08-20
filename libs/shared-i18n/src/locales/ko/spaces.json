@@ -13,7 +13,8 @@
     "groups": {
       "spaces": {
         "overview": "개요",
-        "portfolio": "내 Space"
+        "portfolio": "내 Space",
+        "administration": "Space 운영"
       }
     },
     "items": {
@@ -21,8 +22,46 @@
         "home": { "label": "Space 홈" },
         "my-spaces": { "label": "내 Space" },
         "discover": { "label": "Space 탐색" },
-        "requests": { "label": "내 요청" }
+        "requests": { "label": "내 요청" },
+        "admin-overview": { "label": "운영 현황" },
+        "admin-directory": { "label": "Space 디렉터리" },
+        "admin-requests": { "label": "생성 요청" },
+        "admin-templates": { "label": "템플릿" },
+        "admin-content-reviews": { "label": "콘텐츠 검토" },
+        "admin-lifecycle": { "label": "수명주기 검토" },
+        "admin-operations": { "label": "복구 및 운영" }
       }
+    }
+  },
+  "administration": {
+    "eyebrow": "Space 운영",
+    "overview": {
+      "title": "운영 현황",
+      "description": "Space 규모, 요청, 검토와 정책 예외를 한 흐름에서 확인합니다."
+    },
+    "directory": {
+      "title": "Space 디렉터리",
+      "description": "조직의 Space와 소유자, 공개 범위와 운영 상태를 관리합니다."
+    },
+    "requests": {
+      "title": "Space 생성 요청",
+      "description": "새 협업 공간의 목적, 소유권과 정책 적합성을 검토합니다."
+    },
+    "templates": {
+      "title": "Space 템플릿",
+      "description": "검증된 구조, 기본 정책과 시작 구성을 재사용 가능한 템플릿으로 관리합니다."
+    },
+    "contentReviews": {
+      "title": "콘텐츠 검토",
+      "description": "게시 전 콘텐츠의 정책, 공개 범위와 민감정보 위험을 검토합니다."
+    },
+    "lifecycle": {
+      "title": "수명주기 검토",
+      "description": "소유권, 사용 상태와 보존 기준에 따라 Space 유지 또는 종료를 결정합니다."
+    },
+    "operations": {
+      "title": "복구 및 운영",
+      "description": "권한 동기화, 고아 소유권과 운영 실패를 감사 가능한 절차로 복구합니다."
     }
   },
   "actions": {

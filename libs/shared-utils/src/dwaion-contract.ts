@@ -1,6 +1,7 @@
 export const DWAION_AGENT_KEY = 'DWP_ASSISTANT';
 export const DWAION_APPROVAL_EXPERT_AGENT_KEY = 'DWP_APPROVAL_EXPERT';
-export const DWAION_WORKSPACE_PATH = '/dwaion';
+export const DWAION_PRODUCT_PATH = '/dwaion';
+export const DWAION_WORKSPACE_PATH = '/dwaion/new';
 export const DWAION_LEGACY_PATH = '/ask';
 export const DWAION_HANDOFF_TTL_MS = 15 * 60 * 1000;
 
@@ -59,11 +60,13 @@ export function dwaionWorkspaceRoute(
 ): string {
   const params = new URLSearchParams();
   const normalizedConversationId = conversationId?.trim();
-  if (normalizedConversationId) params.set('conversation', normalizedConversationId);
-  else if (query?.trim()) params.set('q', query.trim());
+  if (!normalizedConversationId && query?.trim()) params.set('q', query.trim());
   if (agentKey !== DWAION_AGENT_KEY) params.set('agent', agentKey);
   const search = params.toString();
-  return search ? `${DWAION_WORKSPACE_PATH}?${search}` : DWAION_WORKSPACE_PATH;
+  const path = normalizedConversationId
+    ? `${DWAION_PRODUCT_PATH}/conversations/${encodeURIComponent(normalizedConversationId)}`
+    : DWAION_WORKSPACE_PATH;
+  return search ? `${path}?${search}` : path;
 }
 
 export function createDwaionHandoff(

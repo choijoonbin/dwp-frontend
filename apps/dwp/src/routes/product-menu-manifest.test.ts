@@ -1,15 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
 import { accountNavigationGroups } from '../features/account/settings-navigation';
+import { ACTIVITY_NAVIGATION } from '../features/activity/activity-navigation';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
 import { CALENDAR_NAVIGATION } from '../features/calendar/calendar-navigation';
+import { COMMUNICATIONS_NAVIGATION } from '../features/communications/communications-navigation';
+import { DWAION_NAVIGATION } from '../features/dwaion/dwaion-navigation';
 import { HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
 import { MAIL_NAVIGATION } from '../features/mail/mail-navigation';
 import { MESSAGING_NAVIGATION } from '../features/messaging/messaging-navigation';
+import { NOTIFICATION_NAVIGATION } from '../features/notifications/notification-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
 import { ROOMS_NAVIGATION } from '../features/rooms/rooms-navigation';
+import { SERVICES_NAVIGATION } from '../features/services/services-navigation';
 import { SPACE_NAVIGATION } from '../features/spaces/space-navigation';
+import { WORK_NAVIGATION } from '../features/work/work-navigation';
 
 import { PRODUCT_MENU_ROUTES } from './product-menu-manifest';
 
@@ -21,12 +27,18 @@ function navigationItemCount(groups: readonly { items: readonly unknown[] }[]) {
 }
 
 const EXPECTED_SHELL_COUNTS = {
-  workspace: 5,
+  home: 1,
+  catalog: 1,
+  work: navigationItemCount(WORK_NAVIGATION),
+  activity: navigationItemCount(ACTIVITY_NAVIGATION),
+  dwaion: navigationItemCount(DWAION_NAVIGATION),
+  communications: navigationItemCount(COMMUNICATIONS_NAVIGATION),
+  services: navigationItemCount(SERVICES_NAVIGATION),
   calendar: navigationItemCount(CALENDAR_NAVIGATION),
   rooms: navigationItemCount(ROOMS_NAVIGATION),
   mail: navigationItemCount(MAIL_NAVIGATION),
   messaging: navigationItemCount(MESSAGING_NAVIGATION),
-  notifications: 1,
+  notifications: navigationItemCount(NOTIFICATION_NAVIGATION),
   approvals: navigationItemCount(APPROVAL_NAVIGATION),
   spaces: navigationItemCount(SPACE_NAVIGATION),
   hcm: navigationItemCount(HCM_NAVIGATION),

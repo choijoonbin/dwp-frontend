@@ -11,7 +11,6 @@ const SUPPORT_CONFIGURATION_VIEWS = new Set<AdminView>([
   'branding',
   'home-experience',
   'home-composition',
-  'announcements',
 ]);
 
 type PermissionLookup = (resourceKey: string, permissionCode?: string) => boolean;

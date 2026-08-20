@@ -9,7 +9,7 @@ import { UserLocaleSync } from './components/user-locale-sync';
 import { registerRouteIntentObserver, reportRouteCommit } from './observability/route-performance';
 
 const DwaionGlobalHost = lazy(() =>
-  import('./features/dwaion/dwaion-global-host').then((module) => ({
+  import('./components/dwaion-assistant/dwaion-global-host').then((module) => ({
     default: module.DwaionGlobalHost,
   }))
 );

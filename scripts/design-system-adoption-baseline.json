@@ -20,15 +20,6 @@
       "IconButton": 2,
       "TextField": 1
     },
-    "apps/dwp/src/features/admin/announcement-manager.tsx": {
-      "Dialog": 1,
-      "DialogTitle": 1,
-      "IconButton": 4,
-      "DialogContent": 1,
-      "TextField": 7,
-      "DialogActions": 1,
-      "Button": 3
-    },
     "apps/dwp/src/features/admin/api-monitoring.tsx": {
       "IconButton": 4,
       "TextField": 4,

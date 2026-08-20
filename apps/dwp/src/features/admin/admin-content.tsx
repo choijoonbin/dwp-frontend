@@ -45,69 +45,6 @@ const ADMIN_CONTENT: Record<AdminView, AdminComponent> = {
       default: module.IdentityProvisioningManager,
     }))
   ),
-  'service-catalog': lazy(() =>
-    import('./service-catalog-manager').then((module) => ({
-      default: module.ServiceCatalogManager,
-    }))
-  ),
-  'service-operations': lazy(() =>
-    import('./service-operations-manager').then((module) => ({
-      default: module.ServiceOperationsManager,
-    }))
-  ),
-  'notification-overview': lazy(() =>
-    import('../../components/notification-admin-surfaces').then((module) => ({
-      default: module.NotificationAdminOverviewPage,
-    }))
-  ),
-  'notification-contracts': lazy(() =>
-    import('../../components/notification-admin-surfaces').then((module) => ({
-      default: module.NotificationTypeCatalogPage,
-    }))
-  ),
-  'notification-operations': lazy(() =>
-    import('../../components/notification-admin-surfaces').then((module) => ({
-      default: module.NotificationDeliveryOperationsPage,
-    }))
-  ),
-  'space-overview': lazy(() =>
-    import('./space-admin-page').then((module) => ({
-      default: module.SpaceAdminOverview,
-    }))
-  ),
-  'space-directory': lazy(() =>
-    import('./space-admin-page').then((module) => ({
-      default: module.SpaceAdminDirectory,
-    }))
-  ),
-  'space-requests': lazy(() =>
-    import('./space-admin-page').then((module) => ({
-      default: module.SpaceAdminRequests,
-    }))
-  ),
-  'space-templates': lazy(() =>
-    import('./space-admin-page').then((module) => ({
-      default: module.SpaceAdminTemplates,
-    }))
-  ),
-  'space-content-reviews': lazy(() =>
-    import('./space-admin-page').then((module) => ({
-      default: module.SpaceAdminContentReviews,
-    }))
-  ),
-  'space-lifecycle': lazy(() =>
-    import('./space-admin-page').then((module) => ({
-      default: module.SpaceAdminLifecycle,
-    }))
-  ),
-  'space-operations': lazy(() =>
-    import('./space-operations-page').then((module) => ({
-      default: module.SpaceAdminOperations,
-    }))
-  ),
-  announcements: lazy(() =>
-    import('./announcement-manager').then((module) => ({ default: module.AnnouncementManager }))
-  ),
   'preference-exceptions': lazy(() =>
     import('./preference-exception-manager').then((module) => ({
       default: module.PreferenceExceptionManager,

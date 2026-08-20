@@ -212,21 +212,21 @@ export function SpaceAdminOverview() {
             label: t('admin:spaces.metrics.pendingRequests'),
             value: formatNumber(data.metrics.pendingCreationRequests),
             tone: data.metrics.pendingCreationRequests ? 'warning' : 'neutral',
-            onSelect: () => navigate('/admin/spaces/requests'),
+            onSelect: () => navigate('/spaces/admin/requests'),
           },
           {
             key: 'publication',
             label: t('admin:spaces.metrics.pendingReviews'),
             value: formatNumber(data.metrics.pendingPublicationReviews),
             tone: data.metrics.pendingPublicationReviews ? 'warning' : 'neutral',
-            onSelect: () => navigate('/admin/spaces/content-reviews'),
+            onSelect: () => navigate('/spaces/admin/content-reviews'),
           },
           {
             key: 'overdue',
             label: t('admin:spaces.metrics.overdueLifecycle'),
             value: formatNumber(data.metrics.overdueLifecycleReviews),
             tone: data.metrics.overdueLifecycleReviews ? 'critical' : 'neutral',
-            onSelect: () => navigate('/admin/spaces/lifecycle'),
+            onSelect: () => navigate('/spaces/admin/lifecycle'),
           },
           {
             key: 'memberships',
@@ -257,7 +257,7 @@ export function SpaceAdminOverview() {
             <ActionButton
               intent="quiet"
               endIcon={<ArrowRight size={16} />}
-              onClick={() => navigate('/admin/spaces/requests')}
+              onClick={() => navigate('/spaces/admin/requests')}
             >
               {t('admin:spaces.actions.openQueue')}
             </ActionButton>

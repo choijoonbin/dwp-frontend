@@ -11,9 +11,16 @@
   "applications": [
     {
       "id": "workspace",
-      "features": ["home", "work-hub", "dwaion"],
-      "routePrefixes": ["/", "/work", "/dwaion", "/ask", "/activity", "/apps"],
+      "features": ["home", "work-hub", "work", "activity"],
+      "routePrefixes": ["/", "/work", "/activity", "/apps"],
       "backendServices": ["platform"],
+      "deployment": "independent"
+    },
+    {
+      "id": "dwaion",
+      "features": ["dwaion"],
+      "routePrefixes": ["/dwaion", "/ask"],
+      "backendServices": ["agent", "platform"],
       "deployment": "independent"
     },
     {
@@ -101,5 +108,5 @@
       "deployment": "independent"
     }
   ],
-  "platformFeatures": ["auth", "dwaion", "notifications", "saved-views", "search", "shell"]
+  "platformFeatures": ["auth", "notifications", "saved-views", "search", "shell"]
 }

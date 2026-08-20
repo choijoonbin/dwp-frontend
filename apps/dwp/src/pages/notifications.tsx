@@ -23,7 +23,7 @@ export default function NotificationsPage() {
       key={`${initialView}:${notificationId ?? ''}`}
       initialView={initialView}
       initialNotificationId={notificationId ? decodeURIComponent(notificationId) : null}
-      onOpenSettings={() => navigate('/account/settings/notifications')}
+      onOpenSettings={() => navigate('/notifications/settings')}
       onOpenTarget={(href) => navigate(href)}
     />
   );

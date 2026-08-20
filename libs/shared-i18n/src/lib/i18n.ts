@@ -82,7 +82,7 @@ export function initI18n() {
     });
 
   const lang = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
-  if (typeof document?.documentElement !== 'undefined') {
+  if (typeof document !== 'undefined') {
     document.documentElement.lang = lang;
     document.documentElement.dir = i18n.dir(lang);
   }
@@ -90,7 +90,7 @@ export function initI18n() {
   i18n.on('languageChanged', (lng: string) => {
     const resolved = resolveSupportedLocale(lng);
     writeLocalePreference(resolved);
-    if (typeof document?.documentElement !== 'undefined') {
+    if (typeof document !== 'undefined') {
       document.documentElement.lang = resolved;
       document.documentElement.dir = i18n.dir(resolved);
     }

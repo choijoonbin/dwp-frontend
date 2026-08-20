@@ -1,16 +1,28 @@
 import { accountNavigationGroups } from '../features/account/settings-navigation';
+import { ACTIVITY_NAVIGATION } from '../features/activity/activity-navigation';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
 import { CALENDAR_NAVIGATION } from '../features/calendar/calendar-navigation';
+import { COMMUNICATIONS_NAVIGATION } from '../features/communications/communications-navigation';
+import { DWAION_NAVIGATION } from '../features/dwaion/dwaion-navigation';
 import { HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
 import { MAIL_NAVIGATION } from '../features/mail/mail-navigation';
 import { MESSAGING_NAVIGATION } from '../features/messaging/messaging-navigation';
+import { NOTIFICATION_NAVIGATION } from '../features/notifications/notification-navigation';
 import { PROVIDER_NAVIGATION } from '../features/provider/provider-navigation';
 import { ROOMS_NAVIGATION } from '../features/rooms/rooms-navigation';
+import { SERVICES_NAVIGATION } from '../features/services/services-navigation';
 import { SPACE_NAVIGATION } from '../features/spaces/space-navigation';
+import { WORK_NAVIGATION } from '../features/work/work-navigation';
 
 export type ProductShell =
-  | 'workspace'
+  | 'home'
+  | 'catalog'
+  | 'work'
+  | 'activity'
+  | 'dwaion'
+  | 'communications'
+  | 'services'
   | 'calendar'
   | 'rooms'
   | 'mail'
@@ -30,12 +42,50 @@ export type ProductMenuRoute = {
 };
 
 export const PRODUCT_MENU_ROUTES: readonly ProductMenuRoute[] = [
-  { id: 'workspace.home', path: '/', shell: 'workspace' },
-  { id: 'workspace.work', path: '/work', shell: 'workspace' },
-  { id: 'workspace.ask', path: '/dwaion', shell: 'workspace' },
-  { id: 'workspace.activity', path: '/activity', shell: 'workspace' },
-  { id: 'workspace.apps', path: '/apps', shell: 'workspace' },
-  { id: 'notifications.center', path: '/notifications', shell: 'notifications' },
+  { id: 'home.personal', path: '/', shell: 'home' },
+  { id: 'catalog.apps', path: '/apps', shell: 'catalog' },
+  ...WORK_NAVIGATION.flatMap((group) =>
+    group.items.map((item) => ({
+      id: `work.${item.view}`,
+      path: item.path,
+      shell: 'work' as const,
+    }))
+  ),
+  ...ACTIVITY_NAVIGATION.flatMap((group) =>
+    group.items.map((item) => ({
+      id: `activity.${item.view}`,
+      path: item.path,
+      shell: 'activity' as const,
+    }))
+  ),
+  ...DWAION_NAVIGATION.flatMap((group) =>
+    group.items.map((item) => ({
+      id: `dwaion.${item.view}`,
+      path: item.path,
+      shell: 'dwaion' as const,
+    }))
+  ),
+  ...COMMUNICATIONS_NAVIGATION.flatMap((group) =>
+    group.items.map((item) => ({
+      id: `communications.${item.view}`,
+      path: item.path,
+      shell: 'communications' as const,
+    }))
+  ),
+  ...SERVICES_NAVIGATION.flatMap((group) =>
+    group.items.map((item) => ({
+      id: `services.${item.view}`,
+      path: item.path,
+      shell: 'services' as const,
+    }))
+  ),
+  ...NOTIFICATION_NAVIGATION.flatMap((group) =>
+    group.items.map((item) => ({
+      id: `notifications.${item.view}`,
+      path: item.path,
+      shell: 'notifications' as const,
+    }))
+  ),
   ...CALENDAR_NAVIGATION.flatMap((group) =>
     group.items.map((item) => ({
       id: `calendar.${item.view}`,

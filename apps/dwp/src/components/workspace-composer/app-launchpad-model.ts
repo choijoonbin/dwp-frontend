@@ -149,7 +149,7 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
     shortName: 'Notifications',
     description: 'Triage actionable updates from every DWP application',
     groupId: 'work',
-    route: '/notifications',
+    route: '/notifications/home',
     iconKey: 'notifications',
     tone: '#2F5E8A',
     resourceKey: 'APP.NOTIFICATIONS',

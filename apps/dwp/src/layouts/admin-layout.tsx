@@ -1,23 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Home, LifeBuoy, X } from 'lucide-react';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
-import { formatDate } from '@dwp-frontend/shared-i18n';
-import {
-  revokeProviderSupportSession,
-  type ProviderSupportSessionContext,
-} from '@dwp-frontend/shared-utils/api/provider-control-api';
+import { ChevronDown, Home, LifeBuoy } from 'lucide-react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
-import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
@@ -27,6 +19,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import Tooltip from '@mui/material/Tooltip';
 
 import { BrandLockup } from '../components/brand-lockup';
+import { ProviderSupportBanner } from '../components/provider-support-banner';
 import { ShellHeader } from '../components/shell-header';
 import {
   ADMIN_NAVIGATION,
@@ -34,10 +27,7 @@ import {
   type AdminSection,
 } from '../features/admin/admin-navigation';
 import { canAccessAdminNavigationItem } from '../features/admin/admin-access-policy';
-import {
-  providerSupportContextQueryKey,
-  useProviderSupportContext,
-} from '@dwp-frontend/shared-utils/auth/provider-support-context';
+import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 import {
   DesktopNavigationToggle,
@@ -236,79 +226,6 @@ function AdminNavigation({ compact = false, onNavigate, supportScopes }: AdminNa
   );
 }
 
-function SupportAccessBanner({ context }: { context: ProviderSupportSessionContext }) {
-  const { t } = useTranslation('admin');
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const toast = useToast();
-  const [exiting, setExiting] = useState(false);
-
-  const exit = async () => {
-    if (exiting) return;
-    setExiting(true);
-    try {
-      await revokeProviderSupportSession(context, t('supportMode.exitReason'));
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: providerSupportContextQueryKey }),
-        queryClient.invalidateQueries({ queryKey: ['provider', 'support'] }),
-      ]);
-      toast.success(t('supportMode.exited'));
-      navigate('/provider/support');
-    } catch {
-      toast.error(t('supportMode.exitFailed'));
-      setExiting(false);
-    }
-  };
-
-  return (
-    <Box
-      role="status"
-      sx={{
-        px: { xs: 2, md: 3 },
-        py: 1,
-        display: 'flex',
-        alignItems: { xs: 'flex-start', sm: 'center' },
-        flexWrap: 'wrap',
-        gap: 1,
-        bgcolor: 'warning.light',
-        color: 'warning.contrastText',
-        borderBottom: 1,
-        borderColor: 'warning.main',
-      }}
-    >
-      <LifeBuoy size={18} strokeWidth={1.9} aria-hidden="true" />
-      <Box sx={{ minWidth: 180, flex: 1 }}>
-        <Typography variant="subtitle2">
-          {t('supportMode.title', { tenant: context.tenantName })}
-        </Typography>
-        <Typography variant="caption" sx={{ display: 'block', opacity: 0.86 }}>
-          {t('supportMode.expires', {
-            value: formatDate(context.expiresAt, {
-              dateStyle: 'medium',
-              timeStyle: 'short',
-            }),
-          })}
-        </Typography>
-      </Box>
-      <Chip
-        size="small"
-        variant="outlined"
-        label={t(`supportMode.accessMode.${context.accessMode}`)}
-        color={context.accessMode === 'BREAK_GLASS' ? 'error' : 'default'}
-      />
-      <Button
-        size="small"
-        color="inherit"
-        startIcon={<X size={16} />}
-        disabled={exiting}
-        onClick={() => void exit()}
-      >
-        {t('supportMode.exit')}
-      </Button>
-    </Box>
-  );
-}
-
 export function AdminLayout() {
   const { t } = useTranslation('admin');
   const shell = shellRegistry.admin;
@@ -482,7 +399,7 @@ export function AdminLayout() {
           transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >
-        {supportContext.data && <SupportAccessBanner context={supportContext.data} />}
+        {supportContext.data && <ProviderSupportBanner context={supportContext.data} />}
         <Outlet />
       </Box>
     </Box>

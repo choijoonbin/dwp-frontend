@@ -19,7 +19,13 @@ import {
 import { canAccessAdminNavigationItem } from '../features/admin/admin-access-policy';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { AdminLayout } from '../layouts/admin-layout';
-import { authenticationFallback, RouteFallback, routeFallback } from './route-support';
+import {
+  authenticationFallback,
+  ProductRouteGuard,
+  RouteFallback,
+  routeFallback,
+  WorkspaceRouteGuard,
+} from './route-support';
 
 const AdminPage = lazy(() => import('../pages/admin'));
 
@@ -104,7 +110,100 @@ function AdminSectionRedirect() {
   return <Navigate to={destination ?? '/403'} replace />;
 }
 
+function productAdminLegacyRedirect(
+  path: string,
+  destination: string,
+  resourceKey: string,
+  requiredAnySupportScopes: readonly string[] = []
+): RouteObject {
+  return {
+    path,
+    element: (
+      <AuthGuard fallback={authenticationFallback}>
+        <WorkspaceRouteGuard>
+          <ProductRouteGuard
+            resourceKey={resourceKey}
+            requiredAnySupportScopes={requiredAnySupportScopes}
+          >
+            <Navigate to={destination} replace />
+          </ProductRouteGuard>
+        </WorkspaceRouteGuard>
+      </AuthGuard>
+    ),
+  };
+}
+
+const productAdminLegacyRoutes: RouteObject[] = [
+  productAdminLegacyRedirect(
+    'admin/experience/announcements',
+    '/communications/admin/content',
+    'ADMIN.COMMUNICATIONS',
+    ['TENANT_CONFIGURATION_READ', 'TENANT_CONFIGURATION_WRITE']
+  ),
+  productAdminLegacyRedirect(
+    'admin/services/service-catalog',
+    '/services/admin/catalog',
+    'ADMIN.SERVICE_CATALOG'
+  ),
+  productAdminLegacyRedirect(
+    'admin/services/service-operations',
+    '/services/admin/operations',
+    'ADMIN.SERVICE_OPERATIONS'
+  ),
+  productAdminLegacyRedirect(
+    'admin/notifications/overview',
+    '/notifications/admin/overview',
+    'ADMIN.NOTIFICATION_OPERATIONS'
+  ),
+  productAdminLegacyRedirect(
+    'admin/notifications/contracts',
+    '/notifications/admin/contracts',
+    'ADMIN.NOTIFICATION_CONTRACT'
+  ),
+  productAdminLegacyRedirect(
+    'admin/notifications/operations',
+    '/notifications/admin/operations',
+    'ADMIN.NOTIFICATION_OPERATIONS'
+  ),
+  productAdminLegacyRedirect(
+    'admin/spaces/overview',
+    '/spaces/admin/overview',
+    'ADMIN.SPACE_GOVERNANCE'
+  ),
+  productAdminLegacyRedirect(
+    'admin/spaces/directory',
+    '/spaces/admin/directory',
+    'ADMIN.SPACE_GOVERNANCE'
+  ),
+  productAdminLegacyRedirect(
+    'admin/spaces/requests',
+    '/spaces/admin/requests',
+    'ADMIN.SPACE_GOVERNANCE'
+  ),
+  productAdminLegacyRedirect(
+    'admin/spaces/templates',
+    '/spaces/admin/templates',
+    'ADMIN.SPACE_TEMPLATES'
+  ),
+  productAdminLegacyRedirect(
+    'admin/spaces/content-reviews',
+    '/spaces/admin/content-reviews',
+    'ADMIN.SPACE_COMPLIANCE'
+  ),
+  productAdminLegacyRedirect(
+    'admin/spaces/lifecycle',
+    '/spaces/admin/lifecycle',
+    'ADMIN.SPACE_ACCESS_REVIEW'
+  ),
+  productAdminLegacyRedirect(
+    'admin/spaces/operations',
+    '/spaces/admin/operations',
+    'ADMIN.SPACE_GOVERNANCE'
+  ),
+];
+
 export const administrationRoutes: RouteObject[] = [
+  ...productAdminLegacyRoutes,
   {
     path: 'admin',
     element: (

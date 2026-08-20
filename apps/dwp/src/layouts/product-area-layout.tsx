@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Home } from 'lucide-react';
+import { Home, LifeBuoy } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { hasProviderControlPlaneRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
 import Box from '@mui/material/Box';
@@ -18,6 +20,7 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { BrandLockup } from '../components/brand-lockup';
+import { ProviderSupportBanner } from '../components/provider-support-banner';
 import { ShellHeader } from '../components/shell-header';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 import { getProductExperienceProfile } from '../features/shell/product-experience-registry';
@@ -25,30 +28,35 @@ import {
   DesktopNavigationToggle,
   useDesktopNavigation,
 } from '../features/shell/desktop-navigation';
-import {
-  canAccessProductAreaNavigationItem,
-  type GovernedProductAreaNavigationItem,
-} from './product-area-permissions';
+import type {
+  ProductNavigationGroup as ProductAreaNavigationGroup,
+  ProductNavigationItem as ProductAreaNavigationItem,
+} from '../components/product-manifest';
+import { canAccessProductAreaNavigationItem } from './product-area-permissions';
 
-import type { LucideIcon } from 'lucide-react';
-
-export type ProductAreaNavigationItem = GovernedProductAreaNavigationItem & {
-  path: string;
-  view: string;
-  icon: LucideIcon;
-};
-
-export type ProductAreaNavigationGroup = {
-  id: string;
-  items: readonly ProductAreaNavigationItem[];
-};
+export type { ProductAreaNavigationGroup, ProductAreaNavigationItem };
 
 type ProductAreaLayoutProps = {
   areaKey:
-    'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'messaging' | 'notifications' | 'spaces';
+    | 'dwaion'
+    | 'work'
+    | 'activity'
+    | 'communications'
+    | 'services'
+    | 'hcm'
+    | 'calendar'
+    | 'rooms'
+    | 'approvals'
+    | 'mail'
+    | 'messaging'
+    | 'notifications'
+    | 'spaces';
   navigation: readonly ProductAreaNavigationGroup[];
   translationNamespace?:
     | 'workforce'
+    | 'work'
+    | 'communications'
+    | 'services'
     | 'hcm'
     | 'calendar'
     | 'rooms'
@@ -65,10 +73,13 @@ export function ProductAreaLayout({
   translationNamespace = 'workforce',
 }: ProductAreaLayoutProps) {
   const { t } = useTranslation(translationNamespace);
+  const { t: tAdmin } = useTranslation('admin');
   const shell = shellRegistry[areaKey];
   const productExperience = getProductExperienceProfile(areaKey);
   const AreaIcon = shell.context.icon;
   const auth = useAuth();
+  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
+  const supportContext = useProviderSupportContext(providerRole);
   const { hasPermission } = usePermissions();
   const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -79,11 +90,17 @@ export function ProductAreaLayout({
     sidebarWidth,
     toggle: toggleDesktopNavigation,
   } = useDesktopNavigation(shell);
-  const tenantName = auth.user?.tenantName || auth.user?.tenantCode || t('shell.tenantFallback');
+  const tenantName =
+    supportContext.data?.tenantName ||
+    auth.user?.tenantName ||
+    auth.user?.tenantCode ||
+    t('shell.tenantFallback');
   const visibleNavigation = navigation
     .map((group) => ({
       ...group,
-      items: group.items.filter((item) => canAccessProductAreaNavigationItem(item, hasPermission)),
+      items: group.items.filter((item) =>
+        canAccessProductAreaNavigationItem(item, hasPermission, supportContext.data?.scopes)
+      ),
     }))
     .filter((group) => group.items.length > 0);
 
@@ -193,14 +210,35 @@ export function ProductAreaLayout({
         ))}
       </Box>
       <Box sx={{ p: compactNavigation ? 1 : 1.5, borderTop: 1, borderColor: 'divider' }}>
-        <Tooltip title={compactNavigation ? t('shell.backToHome') : ''} placement="right">
+        <Tooltip
+          title={
+            compactNavigation
+              ? supportContext.data
+                ? tAdmin('supportMode.backToProvider')
+                : t('shell.backToHome')
+              : ''
+          }
+          placement="right"
+        >
           <ActionButton
             component={NavLink}
-            to="/"
+            to={supportContext.data ? '/provider/support' : '/'}
             fullWidth
             intent="quiet"
-            aria-label={compactNavigation ? t('shell.backToHome') : undefined}
-            startIcon={<Home size={17} strokeWidth={1.8} />}
+            aria-label={
+              compactNavigation
+                ? supportContext.data
+                  ? tAdmin('supportMode.backToProvider')
+                  : t('shell.backToHome')
+                : undefined
+            }
+            startIcon={
+              supportContext.data ? (
+                <LifeBuoy size={17} strokeWidth={1.8} />
+              ) : (
+                <Home size={17} strokeWidth={1.8} />
+              )
+            }
             onClick={onNavigate}
             sx={{
               justifyContent: compactNavigation ? 'center' : 'flex-start',
@@ -209,7 +247,8 @@ export function ProductAreaLayout({
               '& .MuiButton-startIcon': { m: compactNavigation ? 0 : undefined },
             }}
           >
-            {!compactNavigation && t('shell.backToHome')}
+            {!compactNavigation &&
+              (supportContext.data ? tAdmin('supportMode.backToProvider') : t('shell.backToHome'))}
           </ActionButton>
         </Tooltip>
       </Box>
@@ -292,7 +331,7 @@ export function ProductAreaLayout({
       <ShellHeader
         testId={`${areaKey}-header`}
         shellKey={shell.key}
-        scope={shell.scope}
+        scope={supportContext.data ? 'support' : shell.scope}
         desktopOffset={desktopOffset}
         context={{ icon: AreaIcon, label: t(`shell.${areaKey}.name`) }}
         navigation={{
@@ -308,7 +347,7 @@ export function ProductAreaLayout({
             />
           ) : undefined
         }
-        showWorkspace={shell.showWorkspace}
+        showWorkspace={shell.showWorkspace && !supportContext.data}
       />
       <Box
         component="main"
@@ -326,6 +365,7 @@ export function ProductAreaLayout({
           transition: (theme) => theme.transitions.create(['width', 'margin-left']),
         }}
       >
+        {supportContext.data && <ProviderSupportBanner context={supportContext.data} />}
         <Outlet />
       </Box>
     </Box>

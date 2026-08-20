@@ -12,6 +12,7 @@
   "navigation": {
     "groups": {
       "notifications": {
+        "overview": "Overview",
         "center": "My notifications",
         "settings": "Personal settings",
         "administration": "Tenant operations"
@@ -19,6 +20,7 @@
     },
     "items": {
       "notifications": {
+        "home": { "label": "Notifications home" },
         "center": { "label": "Notification center" },
         "settings": { "label": "Notification settings" },
         "admin-overview": { "label": "Operations overview" },
@@ -26,6 +28,37 @@
         "admin-operations": { "label": "Delivery operations" }
       }
     }
+  },
+  "home": {
+    "eyebrow": "Attention hub",
+    "title": "Focus on the changes that need a response",
+    "description": "Organize notifications from work apps by priority, mention, and actionability so the next action is clear.",
+    "live": "Live synchronization",
+    "loading": "Preparing priority notifications",
+    "errorTitle": "Notifications home could not be loaded",
+    "errorDescription": "Check the connection and try again. Existing notification state has not changed.",
+    "summaryLabel": "Notification summary",
+    "metrics": {
+      "actionable": "Action required",
+      "actionableDetail": "Unread actionable items",
+      "unread": "Unread",
+      "unreadDetail": "All new notifications",
+      "mentions": "Mentions",
+      "mentionsDetail": "Items that mention you",
+      "later": "Later",
+      "laterDetail": "Items scheduled to return"
+    },
+    "priorityTitle": "Review first",
+    "priorityDescription": "Ordered by due date, direct assignment, and work impact.",
+    "openCenter": "Open notification center",
+    "open": "Review",
+    "emptyTitle": "No priority notifications",
+    "emptyDescription": "New actionable items will appear here."
+  },
+  "settings": {
+    "eyebrow": "Personal notification settings",
+    "title": "Notification delivery",
+    "description": "Manage channels, quiet hours, and app rules within your organization policy."
   },
   "actions": {
     "back": "Back",
@@ -328,6 +361,21 @@
       "overview": "Overview",
       "contracts": "Contracts",
       "operations": "Delivery operations"
+    },
+    "product": {
+      "eyebrow": "Notification administration",
+      "overview": {
+        "title": "Operations overview",
+        "description": "Review user impact, contract health, and operational exceptions requiring action."
+      },
+      "contracts": {
+        "title": "Notification contracts",
+        "description": "Manage source events, priority, channels, and schema lifecycle."
+      },
+      "operations": {
+        "title": "Delivery operations",
+        "description": "Observe delivery queues, provider health, retries, and failure isolation."
+      }
     },
     "severity": {
       "INFO": "Information",

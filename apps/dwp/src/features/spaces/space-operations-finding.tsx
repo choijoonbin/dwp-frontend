@@ -120,7 +120,7 @@ export function SpaceFindingDrawer({
   const spaceKey = typeof finding.evidence.spaceKey === 'string' ? finding.evidence.spaceKey : null;
   const actionPath =
     finding.findingType === 'LIFECYCLE_REVIEW'
-      ? '/admin/spaces/lifecycle'
+      ? '/spaces/admin/lifecycle'
       : '#space-entitlement-deliveries';
   const actionLabel =
     finding.findingType === 'OWNERLESS_SPACE'

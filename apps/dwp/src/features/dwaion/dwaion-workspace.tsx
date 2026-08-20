@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react';
 import { PageCanvas } from '@dwp-frontend/design-system';
@@ -22,7 +22,11 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { DWAION_APPROVAL_EXPERT_AGENT_KEY, resolveDwaionAgentKey } from './dwaion-contract';
+import {
+  DWAION_APPROVAL_EXPERT_AGENT_KEY,
+  dwaionWorkspaceRoute,
+  resolveDwaionAgentKey,
+} from './dwaion-contract';
 import { DwaionWorkspaceAnswer } from './dwaion-workspace-answer';
 import { DwaionWorkspaceComposer } from './dwaion-workspace-composer';
 import { DwaionWorkspaceContext } from './dwaion-workspace-context';
@@ -33,7 +37,7 @@ import {
 } from './dwaion-workspace-model';
 import { DwaionWorkspaceStart } from './dwaion-workspace-start';
 import { DwaionActionShelf } from './dwaion-action-shelf';
-import { DwaionCitationDialog } from './dwaion-citation-dialog';
+import { DwaionCitationDialog } from '../../components/dwaion-assistant/dwaion-citation-dialog';
 import { DwaionConversationMenu } from './dwaion-conversation-menu';
 import { DwaionConversationTranscript } from './dwaion-conversation-transcript';
 
@@ -41,6 +45,7 @@ export function DwaionWorkspace() {
   const { t, i18n } = useTranslation('work');
   const auth = useAuth();
   const navigate = useNavigate();
+  const { conversationId: routeConversationId } = useParams<{ conversationId: string }>();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const agentKey = resolveDwaionAgentKey(searchParams.get('agent'));
@@ -55,7 +60,7 @@ export function DwaionWorkspace() {
   const initialQuery = searchParams.get('q')?.trim() ?? '';
   const initialConversationId = approvalExpert
     ? null
-    : searchParams.get('conversation')?.trim() || null;
+    : routeConversationId?.trim() || searchParams.get('conversation')?.trim() || null;
   const [draft, setDraft] = useState(initialQuery);
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
   const [response, setResponse] = useState<AskDwpResponse | null>(null);
@@ -123,7 +128,13 @@ export function DwaionWorkspace() {
                   appKey: 'APP.APPROVALS',
                   surface: 'approval-expert',
                 }
-              : { route: '/dwaion', appKey: 'APP.ASK', surface: 'workspace' },
+              : {
+                  route: conversationId
+                    ? `/dwaion/conversations/${encodeURIComponent(conversationId)}`
+                    : '/dwaion/new',
+                  appKey: 'APP.ASK',
+                  surface: 'workspace',
+                },
           },
           { signal: controller.signal, onProgress: setProgressStage }
         );
@@ -132,10 +143,9 @@ export function DwaionWorkspace() {
         if (result.conversationId) {
           internalConversationNavigation.current = result.conversationId;
           setConversationId(result.conversationId);
-          const next = new URLSearchParams(searchParams);
-          next.set('conversation', result.conversationId);
-          next.delete('q');
-          setSearchParams(next, { replace: true });
+          navigate(dwaionWorkspaceRoute(undefined, result.conversationId, agentKey), {
+            replace: true,
+          });
           await queryClient.invalidateQueries({
             queryKey: ['dwaion', 'conversation', result.conversationId],
           });
@@ -156,9 +166,8 @@ export function DwaionWorkspace() {
       approvalExpert,
       i18n.language,
       i18n.resolvedLanguage,
+      navigate,
       queryClient,
-      searchParams,
-      setSearchParams,
       sourceScopes,
     ]
   );
@@ -183,16 +192,14 @@ export function DwaionWorkspace() {
     }
     internalConversationNavigation.current = null;
     setConversationId(null);
-    const next = new URLSearchParams(searchParams);
-    next.delete('conversation');
-    setSearchParams(next, { replace: true });
+    navigate(dwaionWorkspaceRoute(undefined, undefined, agentKey), { replace: true });
     queryClient.removeQueries({ queryKey: ['dwaion', 'conversation', conversationId] });
-  }, [conversation.error, conversationId, queryClient, searchParams, setSearchParams]);
+  }, [agentKey, conversation.error, conversationId, navigate, queryClient]);
 
   useEffect(() => {
     const requestedConversationId = approvalExpert
       ? null
-      : searchParams.get('conversation')?.trim() || null;
+      : routeConversationId?.trim() || searchParams.get('conversation')?.trim() || null;
     const internalTarget = internalConversationNavigation.current;
     if (internalTarget && requestedConversationId === internalTarget) {
       internalConversationNavigation.current = null;
@@ -213,7 +220,7 @@ export function DwaionWorkspace() {
     setProgressStage(null);
     setDraft('');
     setState('idle');
-  }, [approvalExpert, conversationId, searchParams]);
+  }, [approvalExpert, conversationId, routeConversationId, searchParams]);
 
   useEffect(() => {
     if (unmountAbortTimer.current !== null) {
@@ -250,10 +257,7 @@ export function DwaionWorkspace() {
     setConversationId(null);
     setDraft('');
     setState('idle');
-    const next = new URLSearchParams(searchParams);
-    next.delete('q');
-    next.delete('conversation');
-    setSearchParams(next, { replace: true });
+    navigate(dwaionWorkspaceRoute(undefined, undefined, agentKey), { replace: true });
   };
 
   const selectConversation = (nextConversationId: string) => {
@@ -265,10 +269,7 @@ export function DwaionWorkspace() {
     setResponse(null);
     setState('idle');
     setDraft('');
-    const next = new URLSearchParams(searchParams);
-    next.set('conversation', nextConversationId);
-    next.delete('q');
-    setSearchParams(next, { replace: true });
+    navigate(dwaionWorkspaceRoute(undefined, nextConversationId, agentKey));
   };
 
   const cancelRequest = () => {

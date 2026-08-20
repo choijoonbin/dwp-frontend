@@ -8,11 +8,19 @@ function matchedLeaf(pathname: string) {
 }
 
 describe('notification route contract', () => {
-  it('renders the notification center at the product root', () => {
+  it('redirects the product root to its dedicated home', () => {
     expect(matchedLeaf('/notifications')?.index).toBe(true);
+    expect(matchedLeaf('/notifications/home')?.path).toBe('home');
   });
 
-  it('renders notification details as first-level deep links', () => {
+  it('keeps the center and detail routes inside the product shell', () => {
+    expect(matchedLeaf('/notifications/center')?.path).toBe('center');
+    expect(matchedLeaf('/notifications/center/notification-42')?.path).toBe(
+      'center/:notificationId'
+    );
+  });
+
+  it('preserves first-level detail links as compatibility redirects', () => {
     expect(matchedLeaf('/notifications/notification-42')?.path).toBe(':notificationId');
   });
 

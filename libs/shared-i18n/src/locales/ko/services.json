@@ -5,19 +5,70 @@
     "tenantFallback": "내 조직",
     "navigationLabel": "서비스 센터 탐색",
     "openNavigation": "서비스 탐색 열기",
-    "backToHome": "워크스페이스로 돌아가기"
+    "backToHome": "워크스페이스로 돌아가기",
+    "services": {
+      "name": "서비스 센터",
+      "context": "직원 서비스와 요청 처리",
+      "navigationLabel": "서비스 센터 탐색"
+    }
   },
   "navigation": {
     "groups": {
-      "discover": "서비스 이용",
-      "services": "서비스",
-      "requests": "나의 요청"
+      "services": {
+        "overview": "개요",
+        "discover": "서비스 이용",
+        "administration": "서비스 운영"
+      }
     },
     "items": {
-      "discover": "서비스 찾기",
-      "my": "진행 중인 요청",
-      "drafts": "임시 저장"
+      "services": {
+        "home": { "label": "서비스 홈" },
+        "discover": { "label": "서비스 찾기" },
+        "my": { "label": "진행 중인 요청" },
+        "drafts": { "label": "임시 저장" },
+        "admin-catalog": { "label": "서비스 카탈로그" },
+        "admin-operations": { "label": "요청 운영" }
+      }
     }
+  },
+  "productHome": {
+    "eyebrow": "직원 서비스",
+    "title": "필요한 지원과 진행 상태를 한곳에서 확인하세요",
+    "description": "자주 쓰는 서비스, 처리 중인 요청과 내 응답이 필요한 항목을 업무 흐름에 맞춰 정리합니다.",
+    "live": "실시간 요청 상태",
+    "loading": "서비스 현황을 정리하는 중",
+    "errorTitle": "서비스 홈을 불러오지 못했습니다",
+    "errorDescription": "카탈로그와 요청 상태를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    "retry": "다시 시도",
+    "summaryLabel": "서비스 이용 요약",
+    "metrics": {
+      "services": "이용 가능 서비스",
+      "servicesDetail": "현재 활성 카탈로그",
+      "active": "진행 중",
+      "activeDetail": "종료 전 요청",
+      "waiting": "내 응답 필요",
+      "waitingDetail": "처리를 위해 답변할 요청",
+      "drafts": "임시 저장",
+      "draftsDetail": "아직 제출하지 않은 요청"
+    },
+    "activeTitle": "진행 중인 요청",
+    "activeDescription": "최근 변경된 요청과 다음 상태를 먼저 확인합니다.",
+    "openRequests": "전체 요청 보기",
+    "featuredTitle": "자주 찾는 서비스",
+    "featuredDescription": "조직에서 추천한 서비스로 바로 요청을 시작합니다.",
+    "discover": "전체 찾기",
+    "open": "상세 보기",
+    "emptyActiveTitle": "진행 중인 요청이 없습니다",
+    "emptyActiveDescription": "새 요청을 제출하면 처리 흐름이 이곳에 표시됩니다.",
+    "emptyFeaturedTitle": "추천 서비스가 없습니다",
+    "emptyFeaturedDescription": "전체 카탈로그에서 필요한 서비스를 찾아보세요."
+  },
+  "administration": {
+    "eyebrow": "서비스 운영",
+    "catalogTitle": "서비스 카탈로그",
+    "catalogDescription": "서비스 정의, 요청 양식, SLA와 데이터 분류를 제품 안에서 관리합니다.",
+    "operationsTitle": "요청 운영",
+    "operationsDescription": "접수된 요청의 분류, 담당 배정과 처리 상태를 책임 있게 운영합니다."
   },
   "discover": {
     "eyebrow": "직원 서비스 허브",

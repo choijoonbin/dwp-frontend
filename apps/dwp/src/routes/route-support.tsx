@@ -29,22 +29,84 @@ export function WorkspaceRouteGuard({ children }: { children: React.ReactNode })
   const supportContext = useProviderSupportContext(providerRole);
   if (providerRole && supportContext.isLoading) return <RouteFallback />;
   if (!providerRole) return children;
-  return supportContext.data ? (
-    <Navigate to="/admin" replace />
-  ) : (
-    <Navigate to="/provider" replace />
-  );
+  return supportContext.data ? children : <Navigate to="/provider" replace />;
 }
 
 export function AppRouteGuard({
   resourceKey,
+  requiredAnySupportScopes = [],
   children,
 }: {
   resourceKey: string;
+  requiredAnySupportScopes?: readonly string[];
   children: React.ReactNode;
 }) {
-  const { permissions } = usePermissions();
+  const auth = useAuth();
+  const { permissions, isLoaded } = usePermissions();
+  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
+  const supportContext = useProviderSupportContext(providerRole);
+  if (!isLoaded || (providerRole && supportContext.isLoading)) return <RouteFallback />;
+  if (providerRole) {
+    const supportSession = supportContext.data;
+    if (!supportSession) return <Navigate to="/provider" replace />;
+    return requiredAnySupportScopes.some((scope) => supportSession.scopes.includes(scope)) ? (
+      children
+    ) : (
+      <Navigate to="/403" replace />
+    );
+  }
   return isAppResourceEntitled(resourceKey, permissions) ? (
+    children
+  ) : (
+    <Navigate to="/403" replace />
+  );
+}
+
+export function ProductRouteGuard({
+  resourceKey,
+  permissionCode = 'VIEW',
+  requiredAnySupportScopes = [],
+  children,
+}: {
+  resourceKey: string;
+  permissionCode?: string;
+  requiredAnySupportScopes?: readonly string[];
+  children: React.ReactNode;
+}) {
+  const auth = useAuth();
+  const { hasPermission, isLoaded } = usePermissions();
+  const providerRole = hasProviderControlPlaneRole(auth.user?.roles ?? []);
+  const supportContext = useProviderSupportContext(providerRole);
+  if (!isLoaded || (providerRole && supportContext.isLoading)) return <RouteFallback />;
+  if (providerRole) {
+    const supportSession = supportContext.data;
+    if (!supportSession) return <Navigate to="/provider" replace />;
+    return requiredAnySupportScopes.some((scope) => supportSession.scopes.includes(scope)) ? (
+      children
+    ) : (
+      <Navigate to="/403" replace />
+    );
+  }
+  return hasPermission(resourceKey, permissionCode) || hasPermission(resourceKey, 'MANAGE') ? (
+    children
+  ) : (
+    <Navigate to="/403" replace />
+  );
+}
+
+export function ProductAnyRouteGuard({
+  authorities,
+  children,
+}: {
+  authorities: readonly { resourceKey: string; permissionCode: string }[];
+  children: React.ReactNode;
+}) {
+  const { hasPermission, isLoaded } = usePermissions();
+  if (!isLoaded) return <RouteFallback />;
+  return authorities.some(
+    ({ resourceKey, permissionCode }) =>
+      hasPermission(resourceKey, permissionCode) || hasPermission(resourceKey, 'MANAGE')
+  ) ? (
     children
   ) : (
     <Navigate to="/403" replace />

@@ -9,6 +9,7 @@ export * from './api/auth-api';
 export * from './api/agent-plan-api';
 export * from './api/agent-runtime-api';
 export * from './api/agent-conversation-api';
+export * from './api/agent-admin-api';
 export * from './api/identity-admin-api';
 export * from './api/directory-admin-api';
 export * from './api/platform-admin-api';

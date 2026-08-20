@@ -70,6 +70,7 @@ export type HcmNavigationItem = {
   requiredResourceKey?: string;
   requiredPermissionCode?: string;
   requiredAnyPermissionCodes?: readonly string[];
+  requiredAnySupportScopes?: readonly string[];
 };
 
 export type HcmNavigationGroup = {
@@ -80,7 +81,16 @@ export type HcmNavigationGroup = {
 export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
   {
     id: 'start',
-    items: [{ section: 'start', view: 'home', path: '/hr/home', icon: House, audience: 'all' }],
+    items: [
+      {
+        section: 'start',
+        view: 'home',
+        path: '/hr/home',
+        icon: House,
+        audience: 'all',
+        requiredAnySupportScopes: ['WORKFORCE_READ'],
+      },
+    ],
   },
   {
     id: 'personal',
@@ -129,6 +139,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         path: '/hr/directory',
         icon: UsersRound,
         audience: 'all',
+        requiredAnySupportScopes: ['WORKFORCE_READ'],
       },
       {
         section: 'organization',
@@ -136,6 +147,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         path: '/hr/organization',
         icon: Network,
         audience: 'all',
+        requiredAnySupportScopes: ['WORKFORCE_READ'],
       },
     ],
   },
@@ -174,6 +186,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         path: '/hr/operations',
         icon: Gauge,
         audience: 'operator',
+        requiredAnySupportScopes: ['WORKFORCE_READ'],
       },
       {
         section: 'operate',
@@ -226,6 +239,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         path: '/hr/operations/people',
         icon: BriefcaseBusiness,
         audience: 'operator',
+        requiredAnySupportScopes: ['WORKFORCE_READ'],
       },
       {
         section: 'operate',
@@ -233,6 +247,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         path: '/hr/operations/assignments',
         icon: ClipboardList,
         audience: 'operator',
+        requiredAnySupportScopes: ['WORKFORCE_READ'],
       },
     ],
   },
@@ -245,6 +260,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         path: '/hr/design/organization',
         icon: GitBranch,
         audience: 'operator',
+        requiredAnySupportScopes: ['WORKFORCE_READ'],
       },
     ],
   },
@@ -282,7 +298,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
   },
 ];
 
-export const HCM_DEFAULT_PATH = '/hr/home';
+export { HCM_DEFAULT_PATH, mapLegacyHrPath } from './hcm-legacy-paths';
 
 export function visibleHcmNavigation(access: {
   isManager: boolean;
@@ -312,22 +328,4 @@ export function visibleHcmNavigation(access: {
 export function findHcmNavigationItem(pathname: string): HcmNavigationItem | undefined {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
   return HCM_NAVIGATION.flatMap((group) => group.items).find((item) => item.path === normalized);
-}
-
-export function mapLegacyHrPath(pathname: string): string {
-  const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
-  const explicitRoutes: Record<string, string> = {
-    '/people': HCM_DEFAULT_PATH,
-    '/people/directory': '/hr/directory',
-    '/people/organization': '/hr/organization',
-    '/workforce': '/hr/operations',
-    '/workforce/overview': '/hr/operations',
-    '/workforce/people': '/hr/operations/people',
-    '/workforce/assignments': '/hr/operations/assignments',
-    '/workforce/organization': '/hr/design/organization',
-    '/workforce/reference-data': '/hr/data/reference',
-    '/workforce/data-operations': '/hr/data/integrations',
-    '/workforce/exports': '/hr/data/exports',
-  };
-  return explicitRoutes[normalized] ?? normalized;
 }

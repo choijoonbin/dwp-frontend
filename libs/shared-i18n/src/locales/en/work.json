@@ -1,4 +1,428 @@
 {
+  "shell": {
+    "tenantFallback": "Company",
+    "openNavigation": "Open DWAI·ON navigation",
+    "backToHome": "Back to personal home",
+    "dwaion": {
+      "name": "DWAI·ON",
+      "context": "Permission-aware work AI",
+      "navigationLabel": "DWAI·ON navigation"
+    },
+    "work": {
+      "name": "Work",
+      "context": "Unified work execution",
+      "navigationLabel": "Work navigation"
+    },
+    "activity": {
+      "name": "Activity",
+      "context": "Accountable work signals",
+      "navigationLabel": "Activity navigation"
+    }
+  },
+  "navigation": {
+    "groups": {
+      "dwaion": {
+        "start": "Start",
+        "conversations": "Conversations",
+        "discover": "Discover",
+        "admin": "Operations"
+      },
+      "work": {
+        "start": "Home",
+        "work": "My work"
+      },
+      "activity": {
+        "start": "Home",
+        "monitor": "Activity monitoring"
+      }
+    },
+    "items": {
+      "dwaion": {
+        "home": { "label": "DWAI·ON home" },
+        "new": { "label": "New conversation" },
+        "conversations": { "label": "My conversations" },
+        "agents": { "label": "Specialized agents" },
+        "actions": { "label": "Work actions and connections" },
+        "admin-overview": { "label": "Operations overview" },
+        "admin-agents": { "label": "Agent and publishing management" },
+        "admin-sources": { "label": "Data sources and connectors" },
+        "admin-actions": { "label": "Actions and execution access" },
+        "admin-safety": { "label": "Policy and safety controls" },
+        "admin-evaluation": { "label": "Response quality and evaluation" },
+        "admin-audit": { "label": "Data retention and audit" }
+      },
+      "work": {
+        "home": { "label": "Work home" },
+        "queue": { "label": "Unified work queue" }
+      },
+      "activity": {
+        "home": { "label": "Activity home" },
+        "timeline": { "label": "Activity timeline" }
+      }
+    }
+  },
+  "dwaionHome": {
+    "eyebrow": "My work intelligence",
+    "title": "{{name}}, what can we solve together?",
+    "member": "Team member",
+    "description": "Get evidence-backed answers from the work and information you can access, with a review before any action.",
+    "permissionBoundary": "Current permissions and source policies apply",
+    "askTitle": "Ask from your work context",
+    "askDescription": "Connect work, mail, calendar, and approval context to get grounded answers.",
+    "signalSummary": "DWAI·ON work signal summary",
+    "partialLoadError": "Some work signals could not be loaded. The information shown is from sources that were verified successfully.",
+    "metrics": {
+      "priorityWork": "Due soon",
+      "priorityWorkDetail": "From your current work queue",
+      "conversations": "Conversations",
+      "conversationsDetail": "Your securely stored history",
+      "agents": "Available agents",
+      "agentsDetail": "Published and permission filtered",
+      "actions": "Reviewable actions",
+      "actionsDetail": "Only after your confirmation"
+    },
+    "work": {
+      "title": "Work to review first",
+      "description": "Prioritized using deadline and progress signals.",
+      "open": "Open work queue",
+      "emptyTitle": "There is no priority work right now",
+      "emptyDescription": "New work will appear here ordered by impact and deadline."
+    },
+    "recent": {
+      "title": "Recent conversations",
+      "description": "Continue from context you reviewed earlier.",
+      "open": "View all",
+      "emptyTitle": "There are no conversations yet",
+      "emptyDescription": "Start your first question to create a secure conversation history.",
+      "start": "Start conversation"
+    },
+    "agents": {
+      "title": "Specialized agents",
+      "description": "Specialized agents allowed for your current role.",
+      "open": "View agents",
+      "start": "Start"
+    }
+  },
+  "dwaionConversations": {
+    "title": "My conversations",
+    "description": "Continue DWAI·ON conversations created within your permission scope.",
+    "new": "New conversation",
+    "searchLabel": "Search conversations",
+    "searchPlaceholder": "Search by conversation title",
+    "loadError": "Conversation history could not be loaded. Try again shortly.",
+    "meta": "{{count}} messages · {{date}}",
+    "delete": "Delete",
+    "emptyTitle": "There are no conversations yet",
+    "emptyDescription": "Start a new conversation and continue it securely from here.",
+    "noResultsTitle": "No results found",
+    "noResultsDescription": "Try a different search term.",
+    "deleteTitle": "Delete this conversation?",
+    "deleteDescription": "This conversation and its messages cannot be recovered.",
+    "cancel": "Cancel",
+    "confirmDelete": "Delete",
+    "deleting": "Deleting"
+  },
+  "dwaionAgents": {
+    "title": "Specialized agents",
+    "description": "Only agents published in the operations registry and allowed for the current user are shown.",
+    "loadError": "The agent catalog could not be loaded.",
+    "version": "Version {{version}} · revision {{revision}}",
+    "start": "Start conversation",
+    "emptyTitle": "No agents are available",
+    "emptyDescription": "Check publication state and the current user's app permissions."
+  },
+  "dwaionActions": {
+    "eyebrow": "Safe work execution",
+    "title": "Work actions and connections",
+    "description": "Review work prepared by DWAI·ON in the owning application's review screen before execution.",
+    "reviewBoundary": "DWAI·ON never applies changes directly. Every mutation requires final user confirmation in the owning application.",
+    "loadError": "Available work actions could not be loaded.",
+    "catalogLabel": "Available work action catalog",
+    "permission": "Required permission: {{permission}}",
+    "open": "Open review screen",
+    "emptyTitle": "No work actions are currently available",
+    "emptyDescription": "Actions appear here when the owning app permission and tenant action policy are enabled."
+  },
+  "dwaionAdmin": {
+    "shared": {
+      "governance": "DWAI·ON governance",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving",
+      "create": "Create",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "required": "Required",
+      "blocked": "Blocked",
+      "reason": "Change reason",
+      "reasonError": "Enter at least 10 characters for the change reason.",
+      "version": "Policy version {{version}}"
+    },
+    "overview": {
+      "title": "DWAI·ON operations overview",
+      "description": "Review recent execution quality, policy decisions, and adoption signals as tenant aggregates without conversation content.",
+      "loadError": "DWAI·ON operations metrics could not be loaded.",
+      "summaryLabel": "DWAI·ON operations summary",
+      "runs": "Total runs",
+      "period": "Last {{count}} days",
+      "completionRate": "Completion rate",
+      "failed": "{{count}} failed",
+      "activeUsers": "Active users",
+      "permissionScoped": "Anonymous aggregate",
+      "conversations": "Active conversations",
+      "contentHidden": "Content hidden",
+      "scopeNotice": "Operations metrics provide only tenant-level minimum aggregates. Questions, answers, conversation titles, and personal identifiers are never queried or decrypted.",
+      "policy": {
+        "title": "Policy decisions",
+        "description": "Read allowance, review handoff, and denial outcomes",
+        "allowed": "Allowed",
+        "handoff": "User review handoff",
+        "denied": "Denied"
+      },
+      "answer": {
+        "title": "Answer quality state",
+        "description": "Grounded responses and safe stop signals",
+        "grounded": "Grounded completion",
+        "abstained": "Safe abstention",
+        "configuration": "Configuration required"
+      },
+      "performance": {
+        "title": "Runtime efficiency",
+        "description": "Aggregate performance for the recent period",
+        "latency": "Average response time",
+        "tokens": "Total tokens"
+      },
+      "feedback": {
+        "title": "User feedback",
+        "description": "Ratings aggregated without message content",
+        "positiveRate": "Positive rate",
+        "positive": "Helpful",
+        "negative": "Needs improvement"
+      }
+    },
+    "agents": {
+      "title": "Agent and publishing management",
+      "description": "Manage specialized agent definitions and revisions, and publish only validated versions.",
+      "saved": "The agent definition was saved.",
+      "activated": "The selected revision was published.",
+      "retired": "The agent was retired.",
+      "error": "The agent registry request could not be completed.",
+      "create": "New agent",
+      "edit": "Edit",
+      "newRevision": "New revision",
+      "activate": "Publish",
+      "retire": "Retire",
+      "lifecycleNotice": "Draft authoring and publication permissions are separated. Only published versions appear in the user catalog, and every state transition is audited.",
+      "tableLabel": "DWAI·ON agent registry",
+      "columns": {
+        "name": "Agent",
+        "key": "Key",
+        "state": "State",
+        "revision": "Revision",
+        "version": "Contract version",
+        "risk": "Risk tier",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "create": {
+          "title": "Create agent",
+          "description": "Create a new agent definition in draft state."
+        },
+        "edit": {
+          "title": "Edit agent",
+          "description": "Update metadata for the current draft definition."
+        },
+        "revision": {
+          "title": "Create revision",
+          "description": "Create a new draft without changing the published version."
+        }
+      },
+      "fields": {
+        "key": "Agent key",
+        "name": "Display name",
+        "description": "Description",
+        "owner": "Owning team",
+        "risk": "Risk tier",
+        "version": "Contract version"
+      }
+    },
+    "sources": {
+      "title": "Data sources and connectors",
+      "description": "Manage allowed source systems and source-permission synchronization as tenant policy.",
+      "saved": "The data source policy was saved.",
+      "error": "The data source policy request could not be completed.",
+      "secretBoundary": "Connector credentials are never stored in this screen or policy store. Only a secret-store reference ID may be linked.",
+      "tableLabel": "DWAI·ON data source policies",
+      "edit": "Edit policy",
+      "dialogTitle": "Edit data source policy",
+      "columns": {
+        "source": "Data source",
+        "provider": "Provider",
+        "classification": "Classification",
+        "access": "Access mode",
+        "state": "Connection state",
+        "enabled": "Policy"
+      },
+      "fields": {
+        "enabled": "Enable this data source",
+        "access": "Access enforcement",
+        "classification": "Data classification",
+        "connector": "Secret-store reference ID",
+        "connectorHelp": "Do not enter passwords, tokens, or certificates directly."
+      },
+      "sourceNames": {
+        "WORK_ITEM": "Work",
+        "MAIL": "Mail",
+        "CALENDAR": "Calendar",
+        "APPROVAL_TASK": "Approval tasks",
+        "APPROVAL_REQUEST": "Approval requests",
+        "APPROVAL_FORM": "Approval forms",
+        "APPROVAL_OPERATION": "Approval operations"
+      }
+    },
+    "actions": {
+      "title": "Actions and execution access",
+      "description": "Manage mutations DWAI·ON may prepare and the confirmation policy applied before execution.",
+      "saved": "The action policy was saved.",
+      "error": "The action policy request could not be completed.",
+      "executionBoundary": "The source application makes the final authorization decision. DWAI·ON only provides a reviewable draft and a handoff to that application.",
+      "tableLabel": "DWAI·ON action policies",
+      "edit": "Edit policy",
+      "dialogTitle": "Edit action policy",
+      "confirmationLocked": "Final user confirmation is a locked safety boundary and cannot be disabled.",
+      "columns": {
+        "action": "Action",
+        "key": "Key",
+        "permission": "Source permission",
+        "risk": "Risk tier",
+        "policy": "Execution policy",
+        "enabled": "State"
+      },
+      "fields": {
+        "enabled": "Enable action",
+        "policy": "Execution policy",
+        "confirmation": "Final user confirmation"
+      }
+    },
+    "safety": {
+      "title": "Policy and safety controls",
+      "description": "Manage tenant AI safety boundaries and tool and source limits as versioned policy.",
+      "saved": "The safety policy was saved.",
+      "error": "The safety policy request could not be completed.",
+      "lockedBoundary": "Prompt injection blocking, privilege escalation prevention, mutation confirmation, and citations are locked platform minimums.",
+      "prompt": {
+        "title": "Block prompt injection",
+        "description": "Prevent user or retrieved-document instructions from bypassing system policy."
+      },
+      "privileged": {
+        "title": "Block privilege escalation",
+        "description": "Deny data and tool access beyond the current user's permissions."
+      },
+      "mutation": {
+        "title": "Require mutation confirmation",
+        "description": "Require review before external state changes such as sending mail or creating events."
+      },
+      "citations": {
+        "title": "Require evidence and citations",
+        "description": "Show source evidence and the applied access scope for work answers."
+      },
+      "web": {
+        "title": "Public web search",
+        "description": "Public web search outside verified enterprise sources is blocked by default."
+      },
+      "maxSources": "Maximum data sources per request",
+      "maxTools": "Maximum tool calls per request"
+    },
+    "evaluation": {
+      "title": "Response quality and evaluation",
+      "description": "Validate quality and configuration before and after agent changes with encrypted repeatable evaluation sets.",
+      "create": "Create evaluation set",
+      "error": "Evaluation data could not be processed.",
+      "dataBoundary": "Evaluation prompts and expectations are encrypted at rest, and only active sets are used for operational comparison.",
+      "tableLabel": "DWAI·ON evaluation sets",
+      "detailLabel": "Selected evaluation set details",
+      "emptyTitle": "There are no evaluation sets",
+      "emptyDescription": "Create the first repeatable set with representative work questions.",
+      "noDescription": "No description",
+      "addCase": "Add evaluation case",
+      "run": "Run evaluation",
+      "activate": "Activate set",
+      "termCount": "{{count}} expected terms",
+      "noCasesTitle": "There are no evaluation cases",
+      "noCasesDescription": "Add a real work question and the minimum expected terms.",
+      "runResult": "Latest run result",
+      "passed": "{{count}} passed",
+      "failed": "{{count}} failed",
+      "configuration": "{{count}} configuration required",
+      "latency": "{{count}} ms",
+      "outcomes": {
+        "PASS": "Passed",
+        "FAIL": "Failed",
+        "CONFIGURATION_REQUIRED": "Configuration required"
+      },
+      "setDialogTitle": "Create evaluation set",
+      "caseDialogTitle": "Add evaluation case",
+      "columns": {
+        "name": "Evaluation set",
+        "state": "State",
+        "cases": "Cases",
+        "passRate": "Pass rate",
+        "lastRun": "Latest run"
+      },
+      "fields": {
+        "name": "Set name",
+        "description": "Description",
+        "locale": "Locale",
+        "caseName": "Case name",
+        "prompt": "Evaluation prompt",
+        "expectedTerms": "Expected terms",
+        "expectedTermsHelp": "Enter minimum expected terms separated by commas.",
+        "sources": "Allowed data sources"
+      }
+    },
+    "audit": {
+      "title": "Data retention and audit",
+      "description": "Review retention policy and DWAI·ON governance changes in a single evidence flow.",
+      "export": "Export CSV",
+      "error": "Audit history could not be loaded.",
+      "searchLabel": "Search audit history",
+      "searchPlaceholder": "Event, target, actor, or reason",
+      "categoryLabel": "Audit category",
+      "search": "Search",
+      "tableLabel": "Immutable DWAI·ON audit history",
+      "appendOnly": "Audit history is append-only and cannot be edited or deleted.",
+      "columns": {
+        "time": "Occurred at",
+        "category": "Category",
+        "event": "Event",
+        "target": "Target",
+        "actor": "Actor",
+        "reason": "Reason",
+        "correlation": "Correlation ID"
+      }
+    },
+    "retention": {
+      "title": "Retention and privacy boundary",
+      "description": "Manage tenant conversation retention and legal hold with version and audit evidence.",
+      "loadError": "The retention policy could not be loaded.",
+      "saveError": "The policy could not be saved. Reload the latest version and try again.",
+      "saved": "The retention policy was saved with audit evidence.",
+      "policyTitle": "Tenant retention policy",
+      "policyDescription": "Conversation content remains encrypted and is retained only for the configured period.",
+      "daysLabel": "Retention period (days)",
+      "daysHelp": "Choose a value from 30 through 3,650 days.",
+      "daysError": "Retention must be between 30 and 3,650 days.",
+      "legalHoldLabel": "Enable legal hold",
+      "legalHoldHelp": "Stops expiry cleanup and user deletion. MANAGE permission is required.",
+      "reasonLabel": "Change reason",
+      "reasonHelp": "Enter a business reason an auditor can understand.",
+      "reasonError": "Enter at least 10 characters for the change reason.",
+      "version": "Current policy version {{version}}",
+      "save": "Save policy",
+      "saving": "Saving",
+      "auditNotice": "Every change is recorded as immutable evidence with previous values, new values, actor, and correlation ID."
+    }
+  },
   "labels": {
     "priority": { "high": "High", "medium": "Medium", "low": "Low" },
     "actor": { "agent": "Agent", "person": "Person", "system": "System" },
@@ -13,6 +437,58 @@
   "shared": {
     "referenceMode": "Reference mode",
     "live": "Live"
+  },
+  "workHome": {
+    "eyebrow": "Today's work flow",
+    "title": "Work home",
+    "description": "Review the work that needs attention now, ordered by deadline, progress, and impact.",
+    "live": "Work status synchronized",
+    "loading": "Preparing your work home",
+    "errorTitle": "Work home could not be loaded",
+    "errorDescription": "Check the unified work service connection and try again.",
+    "summaryLabel": "Today's work summary",
+    "metrics": {
+      "total": "Active work",
+      "totalDetail": "From the current unified queue",
+      "due": "Due soon",
+      "dueDetail": "Work to review first",
+      "progress": "In progress",
+      "progressDetail": "Work currently being handled",
+      "waiting": "Awaiting input",
+      "waitingDetail": "Response or material required"
+    },
+    "priorityTitle": "Work to handle first",
+    "priorityDescription": "Prioritized using both impact and deadline signals.",
+    "openQueue": "Open unified work queue",
+    "open": "Open",
+    "emptyTitle": "There is no work requiring immediate attention",
+    "emptyDescription": "New assignments will appear here in priority order."
+  },
+  "activityHome": {
+    "eyebrow": "Workspace observability",
+    "title": "Activity home",
+    "description": "Summarize recent signals and exceptions from people, systems, and agents.",
+    "live": "Receiving activity signals",
+    "loading": "Preparing activity home",
+    "errorTitle": "Activity home could not be loaded",
+    "errorDescription": "Check the activity event service connection and try again.",
+    "summaryLabel": "Activity state summary",
+    "metrics": {
+      "total": "Recent signals",
+      "totalDetail": "Events within your permission scope",
+      "running": "Running",
+      "runningDetail": "Activities currently in progress",
+      "input": "Needs attention",
+      "inputDetail": "Waiting for user input",
+      "blocked": "Policy blocked",
+      "blockedDetail": "Exceptions requiring review"
+    },
+    "recentTitle": "Recent activity",
+    "recentDescription": "The latest accountable work signals.",
+    "openTimeline": "Open full timeline",
+    "open": "Open",
+    "emptyTitle": "There is no recent activity",
+    "emptyDescription": "Work activity will be recorded safely here when it occurs."
   },
   "workPage": {
     "header": {

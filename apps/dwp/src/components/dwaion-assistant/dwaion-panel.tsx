@@ -15,7 +15,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { DWAION_AGENT_KEY } from './dwaion-contract';
+import { DWAION_AGENT_KEY } from '@dwp-frontend/shared-utils';
 import { DwaionCitationDialog } from './dwaion-citation-dialog';
 import { DwaionPanelComposer } from './dwaion-panel-composer';
 import { DwaionPanelHeader } from './dwaion-panel-header';

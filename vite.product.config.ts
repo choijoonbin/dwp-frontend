@@ -13,6 +13,7 @@ if (!productId || !/^[a-z][a-z0-9-]*$/.test(productId)) {
 
 const routeExports: Record<string, [string, string]> = {
   workspace: ['workspace-routes.tsx', 'workspaceRoutes'],
+  dwaion: ['dwaion-routes.tsx', 'dwaionRoutes'],
   hcm: ['hcm-routes.tsx', 'hcmRoutes'],
   approvals: ['approvals-routes.tsx', 'approvalsRoutes'],
   spaces: ['spaces-routes.tsx', 'spacesRoutes'],
@@ -45,7 +46,8 @@ if (!product && productId !== 'platform-shell') {
 }
 const allowedFeatures = new Set([...architecture.platformFeatures, ...(product?.features ?? [])]);
 const allowedPages: Record<string, string[]> = {
-  workspace: ['home.tsx', 'work.tsx', 'ask.tsx', 'activity.tsx', 'apps.tsx'],
+  workspace: ['home.tsx', 'work.tsx', 'activity.tsx', 'apps.tsx'],
+  dwaion: ['dwaion.tsx'],
   hcm: ['hcm.tsx'],
   approvals: ['approvals.tsx'],
   spaces: ['spaces.tsx'],

@@ -11,11 +11,13 @@ import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions'
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { Navigate, useLocation, type RouteObject } from 'react-router-dom';
 
-import { mapLegacyHrPath } from '../features/hcm/hcm-navigation';
-import { HcmLayout } from '../layouts/hcm-layout';
+import { mapLegacyHrPath } from '../features/hcm/hcm-legacy-paths';
 import { authenticationFallback, RouteFallback, routeFallback } from './route-support';
 
 const HcmPage = lazy(() => import('../pages/hcm'));
+const HcmLayout = lazy(() =>
+  import('../layouts/hcm-layout').then((module) => ({ default: module.HcmLayout }))
+);
 
 function HcmRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
@@ -44,7 +46,9 @@ export const hcmRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <HcmRouteGuard>
-          <HcmLayout />
+          <Suspense fallback={routeFallback}>
+            <HcmLayout />
+          </Suspense>
         </HcmRouteGuard>
       </AuthGuard>
     ),

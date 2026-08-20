@@ -38,8 +38,15 @@
     "workspaceProduct": [
       "productRuntime",
       "{workspaceRoot}/apps/dwp/src/routes/workspace-routes.tsx",
-      "{workspaceRoot}/apps/dwp/src/pages/{home,work,ask,activity,apps}.tsx",
-      "{workspaceRoot}/apps/dwp/src/features/{home,work-hub}/**/*"
+      "{workspaceRoot}/apps/dwp/src/pages/{home,work,activity,apps}.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/{home,work-hub,work,activity}/**/*"
+    ],
+    "dwaionProduct": [
+      "productRuntime",
+      "{workspaceRoot}/apps/dwp/src/routes/dwaion-routes.tsx",
+      "{workspaceRoot}/apps/dwp/src/pages/dwaion.tsx",
+      "{workspaceRoot}/apps/dwp/src/layouts/dwaion-layout.tsx",
+      "{workspaceRoot}/apps/dwp/src/features/dwaion/**/*"
     ],
     "hcmProduct": [
       "productRuntime",

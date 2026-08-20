@@ -13,6 +13,7 @@ import { WorkplaceAdminOverview } from '../features/rooms/workplace-admin-overvi
 import { WorkplaceAdminPolicy } from '../features/rooms/workplace-admin-policy';
 import { WorkplaceBookings } from '../features/rooms/workplace-bookings';
 import { WorkplaceExplore } from '../features/rooms/workplace-explore';
+import { WorkplaceHome } from '../features/rooms/workplace-home';
 import {
   findFirstAccessibleRoomsPath,
   findRoomsNavigationItem,
@@ -34,6 +35,7 @@ export default function RoomsPage() {
   }
 
   const content = {
+    home: <WorkplaceHome />,
     explore: <WorkplaceExplore />,
     'find-rooms': <RoomsFind />,
     'my-bookings': <WorkplaceBookings />,

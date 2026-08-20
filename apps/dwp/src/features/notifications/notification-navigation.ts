@@ -1,27 +1,21 @@
-import { BellRing } from 'lucide-react';
+import { BellRing, FileCode2, House, RadioTower, Settings2, ShieldCheck } from 'lucide-react';
 
-import type { LucideIcon } from 'lucide-react';
+import type {
+  ProductAreaNavigationGroup,
+  ProductAreaNavigationItem,
+} from '../../layouts/product-area-layout';
 import type { NotificationView } from '@dwp-frontend/shared-utils/api/notification-api';
 
-export type NotificationNavigationSection = 'center';
+export type NotificationNavigationView =
+  'home' | 'center' | 'settings' | 'admin-overview' | 'admin-contracts' | 'admin-operations';
 
-export type NotificationNavigationView = 'center';
+export type NotificationNavigationSection = 'overview' | 'center' | 'administration';
 
-/**
- * Structurally compatible with ProductAreaNavigationGroup. The host layout can
- * consume this model without introducing a layout dependency into the feature.
- */
-export type NotificationNavigationItem = {
-  section: NotificationNavigationSection;
+export type NotificationNavigationItem = ProductAreaNavigationItem & {
   view: NotificationNavigationView;
-  path: string;
-  icon: LucideIcon;
-  requiredResourceKey?: string;
-  requiredPermissionCode?: string;
-  requiredAnyPermissionCodes?: readonly string[];
 };
 
-export type NotificationNavigationGroup = {
+export type NotificationNavigationGroup = ProductAreaNavigationGroup & {
   id: NotificationNavigationSection;
   items: readonly NotificationNavigationItem[];
 };
@@ -31,9 +25,10 @@ export type NotificationCenterViewLink = {
   path: string;
 };
 
-export const NOTIFICATION_CENTER_PATH = '/notifications';
-export const NOTIFICATION_SETTINGS_PATH = '/account/settings/notifications';
-export const NOTIFICATION_ADMIN_BASE_PATH = '/admin/notifications';
+export const NOTIFICATION_HOME_PATH = '/notifications/home';
+export const NOTIFICATION_CENTER_PATH = '/notifications/center';
+export const NOTIFICATION_SETTINGS_PATH = '/notifications/settings';
+export const NOTIFICATION_ADMIN_BASE_PATH = '/notifications/admin';
 
 export const NOTIFICATION_CENTER_VIEW_LINKS: readonly NotificationCenterViewLink[] = [
   { view: 'PRIORITY', path: `${NOTIFICATION_CENTER_PATH}?view=priority` },
@@ -46,25 +41,59 @@ export const NOTIFICATION_CENTER_VIEW_LINKS: readonly NotificationCenterViewLink
 
 export const NOTIFICATION_NAVIGATION: readonly NotificationNavigationGroup[] = [
   {
+    id: 'overview',
+    items: [{ view: 'home', path: NOTIFICATION_HOME_PATH, icon: House }],
+  },
+  {
     id: 'center',
     items: [
       {
-        section: 'center',
         view: 'center',
         path: NOTIFICATION_CENTER_PATH,
         icon: BellRing,
         requiredResourceKey: 'APP.NOTIFICATIONS',
         requiredPermissionCode: 'VIEW',
       },
+      {
+        view: 'settings',
+        path: NOTIFICATION_SETTINGS_PATH,
+        icon: Settings2,
+        requiredResourceKey: 'APP.NOTIFICATIONS',
+        requiredPermissionCode: 'VIEW',
+      },
+    ],
+  },
+  {
+    id: 'administration',
+    items: [
+      {
+        view: 'admin-overview',
+        path: `${NOTIFICATION_ADMIN_BASE_PATH}/overview`,
+        icon: ShieldCheck,
+        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        view: 'admin-contracts',
+        path: `${NOTIFICATION_ADMIN_BASE_PATH}/contracts`,
+        icon: FileCode2,
+        requiredResourceKey: 'ADMIN.NOTIFICATION_CONTRACT',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        view: 'admin-operations',
+        path: `${NOTIFICATION_ADMIN_BASE_PATH}/operations`,
+        icon: RadioTower,
+        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
+        requiredPermissionCode: 'VIEW',
+      },
     ],
   },
 ] as const;
 
-export const NOTIFICATION_DEFAULT_PATH = NOTIFICATION_CENTER_PATH;
+export const NOTIFICATION_DEFAULT_PATH = NOTIFICATION_HOME_PATH;
 
-export function findNotificationNavigationItem(
-  pathname: string
-): NotificationNavigationItem | undefined {
+export function findNotificationNavigationItem(pathname: string) {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
   return NOTIFICATION_NAVIGATION.flatMap((group) => group.items).find(
     (item) => item.path === normalized

@@ -1,9 +1,26 @@
 export type ProductExperienceKey =
-  'hcm' | 'calendar' | 'rooms' | 'approvals' | 'mail' | 'messaging' | 'notifications' | 'spaces';
+  | 'dwaion'
+  | 'work'
+  | 'activity'
+  | 'communications'
+  | 'services'
+  | 'hcm'
+  | 'calendar'
+  | 'rooms'
+  | 'approvals'
+  | 'mail'
+  | 'messaging'
+  | 'notifications'
+  | 'spaces';
 
 export type ProductExperienceProfile = {
   key: ProductExperienceKey;
   concept:
+    | 'intelligence-flow'
+    | 'execution-flow'
+    | 'signal-flow'
+    | 'broadcast-flow'
+    | 'service-flow'
     | 'people-flow'
     | 'temporal-flow'
     | 'resource-flow'
@@ -22,6 +39,61 @@ export type ProductExperienceProfile = {
 };
 
 export const productExperienceRegistry = {
+  dwaion: {
+    key: 'dwaion',
+    concept: 'intelligence-flow',
+    density: 'comfortable',
+    accent: '#1557D5',
+    secondary: '#008F7A',
+    softSurface: '#EAF1FF',
+    canvas: '#F5F7FB',
+    sidebar: '#FBFCFF',
+    selection: '#E6EEFC',
+  },
+  work: {
+    key: 'work',
+    concept: 'execution-flow',
+    density: 'standard',
+    accent: '#285C9E',
+    secondary: '#0C847C',
+    softSurface: '#E7F0FA',
+    canvas: '#F5F7FA',
+    sidebar: '#FBFCFD',
+    selection: '#E5EDF7',
+  },
+  activity: {
+    key: 'activity',
+    concept: 'signal-flow',
+    density: 'standard',
+    accent: '#176E78',
+    secondary: '#B65449',
+    softSurface: '#E4F1F2',
+    canvas: '#F5F8F8',
+    sidebar: '#FBFCFC',
+    selection: '#E2EFF0',
+  },
+  communications: {
+    key: 'communications',
+    concept: 'broadcast-flow',
+    density: 'comfortable',
+    accent: '#A83E57',
+    secondary: '#16756E',
+    softSurface: '#F7E9ED',
+    canvas: '#F8F7F8',
+    sidebar: '#FDFBFC',
+    selection: '#F4E5EA',
+  },
+  services: {
+    key: 'services',
+    concept: 'service-flow',
+    density: 'comfortable',
+    accent: '#176F66',
+    secondary: '#B64D58',
+    softSurface: '#E5F2EF',
+    canvas: '#F5F8F7',
+    sidebar: '#FBFCFC',
+    selection: '#E1EFEC',
+  },
   hcm: {
     key: 'hcm',
     concept: 'people-flow',
