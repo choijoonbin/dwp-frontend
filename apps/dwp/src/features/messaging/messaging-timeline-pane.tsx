@@ -10,6 +10,7 @@ import { MessagingMessageRow } from './messaging-components';
 import { MessagingTypingIndicator } from './messaging-typing-indicator';
 
 import type { MessagingMessage } from '@dwp-frontend/shared-utils';
+import type { MessagingAttachmentQueue } from './use-messaging-attachment-queue';
 import type { RefObject, UIEventHandler } from 'react';
 
 type MessagingTimelinePaneProps = {
@@ -21,6 +22,7 @@ type MessagingTimelinePaneProps = {
   draft: string;
   sending: boolean;
   sendError: boolean;
+  attachmentQueue: MessagingAttachmentQueue;
   hasOlder: boolean;
   loadingOlder: boolean;
   olderLoadError: boolean;
@@ -53,6 +55,7 @@ export function MessagingTimelinePane({
   draft,
   sending,
   sendError,
+  attachmentQueue,
   hasOlder,
   loadingOlder,
   olderLoadError,
@@ -161,6 +164,11 @@ export function MessagingTimelinePane({
           onRetry={onRetrySend}
           isSending={sending}
           hasError={sendError}
+          attachments={attachmentQueue.items}
+          attachmentBusy={attachmentQueue.busy}
+          onAttachFiles={attachmentQueue.addFiles}
+          onRetryAttachment={attachmentQueue.retry}
+          onRemoveAttachment={attachmentQueue.remove}
         />
       </Box>
     </>

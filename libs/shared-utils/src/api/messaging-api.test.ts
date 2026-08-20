@@ -3,8 +3,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetCsrfToken } from '../axios-instance';
 import {
   addMessagingConversationMember,
+  createMessagingAttachmentDownload,
+  createMessagingAttachmentUpload,
   createMessagingConversation,
   deleteMessagingMessage,
+  discardMessagingAttachment,
   getMessagingConversationMembers,
   getMessagingMessages,
   getMessagingThread,
@@ -19,6 +22,7 @@ import {
   updateMessagingConversationMemberRole,
   updateMessagingMessage,
   unsaveMessagingMessage,
+  uploadMessagingAttachmentContent,
 } from './messaging-api';
 
 function jsonResponse(data: unknown): Response {
@@ -49,6 +53,7 @@ describe('messaging API boundary', () => {
         body: 'Thread reply',
         replyToMessageId: 'message-root',
         idempotencyKey: 'idempotency-1',
+        attachmentIds: ['attachment-1'],
       })
     ).resolves.toEqual(message);
 
@@ -60,7 +65,69 @@ describe('messaging API boundary', () => {
       body: 'Thread reply',
       replyToMessageId: 'message-root',
       idempotencyKey: 'idempotency-1',
+      attachmentIds: ['attachment-1'],
     });
+  });
+
+  it('keeps attachment upload and download tokens behind governed API helpers', async () => {
+    const uploadSession = {
+      attachment: { attachmentId: 'attachment-1', status: 'QUARANTINED' },
+      uploadUrl:
+        '/api/messaging/v1/conversations/conversation-1/attachments/attachment-1/content?token=upload-token',
+      expiresAt: '2026-08-20T01:00:00Z',
+    };
+    const clean = { attachmentId: 'attachment-1', status: 'CLEAN' };
+    const grant = {
+      attachmentId: 'attachment-1',
+      filename: 'report.pdf',
+      downloadUrl:
+        '/api/messaging/v1/conversations/conversation-1/attachments/attachment-1/content?downloadToken=download-token',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(uploadSession))
+      .mockResolvedValueOnce(jsonResponse(clean))
+      .mockResolvedValueOnce(jsonResponse(grant));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      createMessagingAttachmentUpload({
+        conversationId: 'conversation-1',
+        filename: 'report.pdf',
+        contentType: 'application/pdf',
+        sizeBytes: 6,
+        idempotencyKey: 'upload-command-1',
+      })
+    ).resolves.toEqual(uploadSession);
+    const content = new Blob(['report'], { type: 'application/pdf' });
+    await expect(
+      uploadMessagingAttachmentContent(uploadSession.uploadUrl, content)
+    ).resolves.toEqual(clean);
+    await expect(
+      createMessagingAttachmentDownload('conversation-1', 'attachment-1')
+    ).resolves.toEqual(grant);
+
+    expect((fetchMock.mock.calls[2]?.[1] as RequestInit).body).toBe(content);
+    expect(fetchMock.mock.calls[3]?.[0]).toBe(
+      '/api/messaging/v1/conversations/conversation-1/attachments/attachment-1/download-grants'
+    );
+  });
+
+  it('discards an unattached upload through its conversation scope', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(null));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      discardMessagingAttachment('conversation 1', 'attachment/1')
+    ).resolves.toBeUndefined();
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/messaging/v1/conversations/conversation%201/attachments/attachment%2F1'
+    );
+    expect((fetchMock.mock.calls[1]?.[1] as RequestInit).method).toBe('DELETE');
   });
 
   it('normalizes typed SSE events without trusting unstructured payloads', () => {

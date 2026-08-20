@@ -1657,7 +1657,7 @@ export interface paths {
         };
         get: operations["messaging_conversations"];
         put?: never;
-        post?: never;
+        post: operations["messaging_createConversation"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1680,7 +1680,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/messaging/v1/conversations/{conversationId}/messages": {
+    "/api/messaging/v1/conversations/{conversationId}/attachments/uploads": {
         parameters: {
             query?: never;
             header?: never;
@@ -1689,8 +1689,232 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        post: operations["messaging_createUpload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/attachments/{attachmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_metadata"];
+        put?: never;
+        post?: never;
+        delete: operations["messaging_discard"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/attachments/{attachmentId}/content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_download"];
+        put: operations["messaging_upload"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/attachments/{attachmentId}/download-grants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_downloadGrant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/leave": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_leave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/meetings/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_capabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/meetings/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_current"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/meetings/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_end"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/meetings/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_start"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/meetings/token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_token"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_members"];
+        put?: never;
+        post: operations["messaging_addMember"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/members/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["messaging_removeMember"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/members/{userId}/role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["messaging_updateMemberRole"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_messages"];
+        put?: never;
         post: operations["messaging_sendMessage"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/messages/{messageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["messaging_updateMessage"];
+        post?: never;
+        delete: operations["messaging_deleteMessage"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1728,6 +1952,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/messaging/v1/conversations/{conversationId}/messages/{messageId}/saved": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_saveMessage"];
+        delete: operations["messaging_unsaveMessage"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/messages/{rootMessageId}/replies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_thread"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/messaging/v1/conversations/{conversationId}/read-cursor": {
         parameters: {
             query?: never;
@@ -1738,6 +1994,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["messaging_markRead"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_conversationSettings"];
+        put: operations["messaging_updateConversationSettings"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/typing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_typing"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1784,6 +2072,54 @@ export interface paths {
             cookie?: never;
         };
         get: operations["messaging_people"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/saved-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_savedItems"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_stream"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3081,7 +3417,7 @@ export interface paths {
         };
         get: operations["platform_list_4"];
         put?: never;
-        post: operations["platform_create_7"];
+        post: operations["platform_create_8"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4057,7 +4393,7 @@ export interface paths {
         };
         get: operations["platform_connectors"];
         put?: never;
-        post: operations["platform_create_6"];
+        post: operations["platform_create_7"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4425,7 +4761,7 @@ export interface paths {
         };
         get: operations["platform_list_3"];
         put?: never;
-        post: operations["platform_create_5"];
+        post: operations["platform_create_6"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4505,7 +4841,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_cancel_3"];
+        post: operations["platform_cancel_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4633,7 +4969,7 @@ export interface paths {
         };
         get: operations["platform_list_2"];
         put?: never;
-        post: operations["platform_create_4"];
+        post: operations["platform_create_5"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4777,7 +5113,7 @@ export interface paths {
         };
         get: operations["platform_list_1"];
         put?: never;
-        post: operations["platform_create_3"];
+        post: operations["platform_create_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5168,6 +5504,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/admin/workplace/audit-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_workplaceAuditEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_searchWorkplaceBookings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/bookings/{bookingId}/force-cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_forceCancelWorkplaceBooking"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/bookings/{bookingId}/legal-hold": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateWorkplaceLegalHold"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/admin/workplace/floors": {
         parameters: {
             query?: never;
@@ -5241,6 +5641,374 @@ export interface paths {
         };
         get?: never;
         put: operations["platform_updateWorkplaceResource"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/campuses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_campuses"];
+        put?: never;
+        post: operations["platform_createCampus"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/campuses/{campusId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateCampus"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/delegated-admin-scopes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_delegatedScopes"];
+        put?: never;
+        post: operations["platform_createDelegatedScope"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/delegated-admin-scopes/effective": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_effectiveDelegatedScopes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/delegated-admin-scopes/{delegationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateDelegatedScope"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateFloorPlanRevision"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_publishFloorPlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_restoreFloorPlanRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_submitFloorPlanReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/snapshot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_floorPlanRevisionSnapshot"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/floors/{floorId}/floor-plan-revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_floorPlanRevisions"];
+        put?: never;
+        post: operations["platform_createFloorPlanRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/floors/{floorId}/projection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_publishedProjection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/floors/{floorId}/zones": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_zones"];
+        put?: never;
+        post: operations["platform_createZone"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/floors/{floorId}/zones/{zoneId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateZone"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/policy-overrides": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_policyOverrides"];
+        put?: never;
+        post: operations["platform_createPolicyOverride"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/policy-overrides/{overrideId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updatePolicyOverride"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/policy-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_policyPreview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/sites/{siteId}/access-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_accessPreview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/sites/{siteId}/access-rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_accessRules"];
+        put?: never;
+        post: operations["platform_createAccessRule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/sites/{siteId}/access-rules/{ruleId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateAccessRule"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/sites/{siteId}/campus": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_assignSiteCampus"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/zones/{zoneId}/sections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_sections"];
+        put?: never;
+        post: operations["platform_createSection"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/workplace/governance/zones/{zoneId}/sections/{sectionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateSection"];
         post?: never;
         delete?: never;
         options?: never;
@@ -5433,7 +6201,7 @@ export interface paths {
         };
         get: operations["platform_events"];
         put?: never;
-        post: operations["platform_create_2"];
+        post: operations["platform_create_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5465,7 +6233,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_cancel_2"];
+        post: operations["platform_cancel_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6057,7 +6825,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_cancel_1"];
+        post: operations["platform_cancel_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6192,6 +6960,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/rooms/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getRoomPolicy"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/search/audit": {
         parameters: {
             query?: never;
@@ -6233,7 +7017,7 @@ export interface paths {
         };
         get: operations["platform_requests"];
         put?: never;
-        post: operations["platform_create_1"];
+        post: operations["platform_create_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6265,7 +7049,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_cancel"];
+        post: operations["platform_cancel_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6400,6 +7184,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/workplace/bookings/{bookingId}/relocate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_relocateWorkplaceBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/workplace/explore": {
         parameters: {
             query?: never;
@@ -6426,6 +7226,54 @@ export interface paths {
         get: operations["platform_workplaceFloorBackground"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/release-windows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_ownedWindows"];
+        put?: never;
+        post: operations["platform_create_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/release-windows/eligible-resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_assignedResources"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/workplace/release-windows/{releaseWindowId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_cancel"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10842,6 +11690,14 @@ export interface components {
             workEmail?: string;
             workerStatus: string;
         };
+        messaging_AddConversationMemberRequest: {
+            /** Format: int64 */
+            conversationVersion?: number;
+            /** @enum {string} */
+            role: "VIEWER" | "MEMBER" | "MODERATOR" | "OWNER";
+            /** Format: int64 */
+            userId?: number;
+        };
         messaging_AdminMetrics: {
             /** Format: int32 */
             activeConversations?: number;
@@ -10871,9 +11727,49 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        messaging_ApiResponseAttachmentSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_AttachmentSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseCapabilityResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_CapabilityResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseConversationCreationResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ConversationCreationResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         messaging_ApiResponseConversationDetail: {
             correlationId?: string;
             data?: components["schemas"]["messaging_ConversationDetail"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseConversationMembersResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ConversationMembersResponse"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -10891,9 +11787,59 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        messaging_ApiResponseConversationSettings: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ConversationSettings"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseConversationSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ConversationSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseCurrentMeetingResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_CurrentMeetingResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseDownloadGrant: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_DownloadGrant"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         messaging_ApiResponseHomeResponse: {
             correlationId?: string;
             data?: components["schemas"]["messaging_HomeResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseJoinTokenResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_JoinTokenResponse"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -10911,6 +11857,86 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        messaging_ApiResponseMembershipMutationResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_MembershipMutationResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseMessagePage: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_MessagePage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseMessageSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_MessageSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseReadCursorResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ReadCursorResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseSavedItemPage: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_SavedItemPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseSavedItemSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_SavedItemSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseSearchResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_SearchResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseSessionResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_SessionResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         messaging_ApiResponseTenantPolicy: {
             correlationId?: string;
             data?: components["schemas"]["messaging_TenantPolicy"];
@@ -10921,11 +11947,78 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        messaging_ApiResponseThreadResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ThreadResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseUploadSession: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_UploadSession"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseVoid: {
+            correlationId?: string;
+            data?: unknown;
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_AttachmentSummary: {
+            /** Format: uuid */
+            attachmentId?: string;
+            contentType?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            filename?: string;
+            rejectionReason?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            status?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        messaging_CapabilityResponse: {
+            audio?: boolean;
+            available?: boolean;
+            participantList?: boolean;
+            provider?: string;
+            screenShare?: boolean;
+            /** Format: int32 */
+            tokenTtlSeconds?: number;
+            unavailableReason?: string;
+            video?: boolean;
+        };
+        messaging_ConversationCreationResponse: {
+            conversation?: components["schemas"]["messaging_ConversationSummary"];
+            idempotentReplay?: boolean;
+        };
         messaging_ConversationDetail: {
             conversation?: components["schemas"]["messaging_ConversationSummary"];
             members?: components["schemas"]["messaging_MemberSummary"][];
             messages?: components["schemas"]["messaging_MessageSummary"][];
             realtime?: components["schemas"]["messaging_RealtimeStatus"];
+        };
+        messaging_ConversationMembersResponse: {
+            /** Format: uuid */
+            conversationId?: string;
+            conversationType?: string;
+            /** Format: int64 */
+            conversationVersion?: number;
+            members?: components["schemas"]["messaging_ManagedMemberSummary"][];
         };
         messaging_ConversationPage: {
             items?: components["schemas"]["messaging_ConversationSummary"][];
@@ -10935,6 +12028,30 @@ export interface components {
             pageSize?: number;
             /** Format: int64 */
             total?: number;
+        };
+        messaging_ConversationSearchResult: {
+            /** Format: uuid */
+            conversationId?: string;
+            conversationType?: string;
+            name?: string;
+            resultType?: string;
+            snippet?: string;
+        };
+        messaging_ConversationSettings: {
+            /** Format: uuid */
+            conversationId?: string;
+            favorite?: boolean;
+            notificationLevel?: string;
+            pinned?: boolean;
+            /** Format: int64 */
+            version?: number;
+        };
+        messaging_ConversationSettingsRequest: {
+            favorite?: boolean;
+            notificationLevel: string;
+            pinned?: boolean;
+            /** Format: int64 */
+            version?: number;
         };
         messaging_ConversationSummary: {
             /** Format: uuid */
@@ -10960,9 +12077,39 @@ export interface components {
             version?: number;
             visibility?: string;
         };
+        messaging_CreateConversationRequest: {
+            idempotencyKey: string;
+            memberUserIds: number[];
+            name: string;
+            topic?: string;
+            /** @enum {string} */
+            type: "GROUP" | "CHANNEL";
+        };
+        messaging_CreateUploadRequest: {
+            contentType: string;
+            filename: string;
+            /** Format: uuid */
+            idempotencyKey: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+        };
+        messaging_CurrentMeetingResponse: {
+            session?: components["schemas"]["messaging_SessionResponse"];
+        };
         messaging_DirectConversationRequest: {
             /** Format: int64 */
             targetUserId: number;
+        };
+        messaging_DownloadGrant: {
+            /** Format: uuid */
+            attachmentId?: string;
+            contentType?: string;
+            downloadUrl?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            filename?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
         };
         messaging_HomeMetrics: {
             /** Format: int32 */
@@ -10984,25 +12131,70 @@ export interface components {
             priority?: components["schemas"]["messaging_ConversationSummary"][];
             spaces?: components["schemas"]["messaging_ConversationSummary"][];
         };
-        messaging_MemberSummary: {
+        messaging_JoinTokenResponse: {
+            /** Format: date-time */
+            expiresAt?: string;
+            participantToken?: string;
+            provider?: string;
+            serverUrl?: string;
+            /** Format: uuid */
+            sessionId?: string;
+        };
+        messaging_LeaveConversationRequest: {
+            /** Format: int64 */
+            version?: number;
+        };
+        messaging_ManagedMemberSummary: {
             displayName?: string;
             emailAddress?: string;
-            favorite?: boolean;
+            /** Format: int64 */
+            historyStartSequence?: number;
             jobTitle?: string;
-            /** Format: date-time */
-            lastReadAt?: string;
-            memberRole?: string;
             membershipSource?: string;
-            notificationLevel?: string;
+            /** Format: date-time */
+            membershipStartedAt?: string;
             organizationName?: string;
             /** Format: uuid */
             personPublicId?: string;
-            pinned?: boolean;
-            presenceState?: string;
+            role?: string;
+            /** Format: int64 */
+            userId?: number;
+            /** Format: int64 */
+            version?: number;
+        };
+        messaging_MemberSummary: {
+            displayName?: string;
+            emailAddress?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            role?: string;
             /** Format: int64 */
             userId?: number;
         };
+        messaging_MembershipMutationResponse: {
+            idempotentReplay?: boolean;
+            membership?: components["schemas"]["messaging_ConversationMembersResponse"];
+        };
+        messaging_MessagePage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["messaging_MessageSummary"][];
+            /** Format: int64 */
+            nextBeforeSequence?: number;
+        };
+        messaging_MessageSearchResult: {
+            /** Format: uuid */
+            conversationId?: string;
+            conversationName?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: uuid */
+            messageId?: string;
+            resultType?: string;
+            senderName?: string;
+            snippet?: string;
+        };
         messaging_MessageSummary: {
+            attachments?: components["schemas"]["messaging_AttachmentSummary"][];
             body?: string;
             contentType?: string;
             /** Format: uuid */
@@ -11017,15 +12209,32 @@ export interface components {
             messageId?: string;
             messageKind?: string;
             reactions?: components["schemas"]["messaging_ReactionSummary"][];
+            /** Format: int32 */
+            replyCount?: number;
             /** Format: uuid */
             replyToMessageId?: string;
+            rootPreview?: components["schemas"]["messaging_ThreadRootPreview"];
             senderName?: string;
             /** Format: uuid */
             senderPersonPublicId?: string;
             /** Format: int64 */
             senderUserId?: number;
             /** Format: int64 */
+            sequence?: number;
+            /** Format: int64 */
             version?: number;
+        };
+        messaging_PersonSearchResult: {
+            displayName?: string;
+            emailAddress?: string;
+            jobTitle?: string;
+            organizationName?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            presenceState?: string;
+            resultType?: string;
+            /** Format: int64 */
+            userId?: number;
         };
         messaging_PersonSummary: {
             displayName?: string;
@@ -11051,18 +12260,83 @@ export interface components {
             /** Format: uuid */
             messageId: string;
         };
+        messaging_ReadCursorResponse: {
+            /** Format: uuid */
+            conversationId?: string;
+            /** Format: date-time */
+            lastReadAt?: string;
+            /** Format: uuid */
+            lastReadMessageId?: string;
+            /** Format: int64 */
+            lastReadSequence?: number;
+            /** Format: int64 */
+            version?: number;
+        };
         messaging_RealtimeStatus: {
             detail?: string;
             endpoint?: string;
             mode?: string;
             state?: string;
         };
+        messaging_SavedItemPage: {
+            items?: components["schemas"]["messaging_SavedItemSummary"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            total?: number;
+        };
+        messaging_SavedItemSummary: {
+            conversationName?: string;
+            conversationType?: string;
+            message?: components["schemas"]["messaging_MessageSummary"];
+            /** Format: date-time */
+            savedAt?: string;
+        };
+        messaging_SearchGroups: {
+            conversations?: components["schemas"]["messaging_ConversationSearchResult"][];
+            messages?: components["schemas"]["messaging_MessageSearchResult"][];
+            people?: components["schemas"]["messaging_PersonSearchResult"][];
+        };
+        messaging_SearchResponse: {
+            backend?: string;
+            /** Format: int32 */
+            limit?: number;
+            query?: string;
+            results?: components["schemas"]["messaging_SearchGroups"];
+            /** Format: int32 */
+            total?: number;
+        };
         messaging_SendMessageRequest: {
+            attachmentIds?: string[];
             body: string;
             /** Format: uuid */
             idempotencyKey: string;
             /** Format: uuid */
             replyToMessageId?: string;
+        };
+        messaging_SessionResponse: {
+            /** Format: uuid */
+            conversationId?: string;
+            /** Format: date-time */
+            endedAt?: string;
+            /** Format: int64 */
+            endedBy?: number;
+            lifecycleState?: string;
+            provider?: string;
+            /** Format: uuid */
+            sessionId?: string;
+            /** Format: date-time */
+            startedAt?: string;
+            /** Format: int64 */
+            startedBy?: number;
+            /** Format: int64 */
+            version?: number;
+        };
+        messaging_SseEmitter: {
+            /** Format: int64 */
+            timeout?: number | null;
         };
         messaging_TenantPolicy: {
             aiAssistanceEnabled?: boolean;
@@ -11090,6 +12364,42 @@ export interface components {
             spaceMessagingEnabled?: boolean;
             /** Format: int64 */
             version?: number;
+        };
+        messaging_ThreadResponse: {
+            replies?: components["schemas"]["messaging_MessageSummary"][];
+            root?: components["schemas"]["messaging_MessageSummary"];
+            /** Format: int64 */
+            total?: number;
+        };
+        messaging_ThreadRootPreview: {
+            body?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            deletedAt?: string;
+            /** Format: uuid */
+            messageId?: string;
+            senderName?: string;
+        };
+        messaging_TypingRequest: {
+            started: boolean;
+        };
+        messaging_UpdateConversationMemberRoleRequest: {
+            /** @enum {string} */
+            role: "VIEWER" | "MEMBER" | "MODERATOR" | "OWNER";
+            /** Format: int64 */
+            version?: number;
+        };
+        messaging_UpdateMessageRequest: {
+            body: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        messaging_UploadSession: {
+            attachment?: components["schemas"]["messaging_AttachmentSummary"];
+            /** Format: date-time */
+            expiresAt?: string;
+            uploadUrl?: string;
         };
         notification_ActionResult: {
             changeVersion?: string;
@@ -13999,6 +15309,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseEffectivePolicyPreview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EffectivePolicyPreview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseEvent: {
             correlationId?: string;
             data?: components["schemas"]["platform_Event"];
@@ -14062,6 +15382,26 @@ export interface components {
         platform_ApiResponseFindingContext: {
             correlationId?: string;
             data?: components["schemas"]["platform_FindingContext"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseFloorPlanProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_FloorPlanProjection"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseFloorPlanRevisionSnapshot: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_FloorPlanRevisionSnapshot"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -14189,6 +15529,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseListAssignedResource: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_AssignedResource"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseListAuditCase: {
             correlationId?: string;
             data?: components["schemas"]["platform_AuditCase"][];
@@ -14242,6 +15592,16 @@ export interface components {
         platform_ApiResponseListConnector: {
             correlationId?: string;
             data?: components["schemas"]["platform_Connector"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListEffectiveDelegatedScope: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EffectiveDelegatedScope"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -14322,6 +15682,16 @@ export interface components {
         platform_ApiResponseListPreferenceExceptionRequest: {
             correlationId?: string;
             data?: components["schemas"]["platform_PreferenceExceptionRequest"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListReleaseWindow: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ReleaseWindow"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -14439,9 +15809,69 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseListWorkplaceDelegatedAdminScope: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceDelegatedAdminScope"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseListWorkplaceFloor: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplaceFloor"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceFloorPlanRevision: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceFloorPlanRevision"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceGovernanceCampus: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceGovernanceCampus"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceGovernanceSection: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceGovernanceSection"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceGovernanceZone: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceGovernanceZone"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplacePolicyOverride: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplacePolicyOverride"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -14462,6 +15892,16 @@ export interface components {
         platform_ApiResponseListWorkplaceSite: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplaceSite"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListWorkplaceSiteAccessRule: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceSiteAccessRule"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -14659,6 +16099,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseReleaseWindow: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ReleaseWindow"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseRequestDetail: {
             correlationId?: string;
             data?: components["schemas"]["platform_RequestDetail"];
@@ -14769,6 +16219,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseSiteAccessDecision: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_SiteAccessDecision"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseSiteCampusAssignment: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_SiteCampusAssignment"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseSyncRun: {
             correlationId?: string;
             data?: components["schemas"]["platform_SyncRun"];
@@ -14859,6 +16329,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseWorkplaceAdminBooking: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceAdminBooking"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceAdminBookingPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceAdminBookingPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseWorkplaceAdminOverview: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplaceAdminOverview"];
@@ -14869,9 +16359,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseWorkplaceAuditEventPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceAuditEventPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseWorkplaceBooking: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplaceBooking"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceDelegatedAdminScope: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceDelegatedAdminScope"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -14899,9 +16409,59 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseWorkplaceFloorPlanRevision: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceFloorPlanRevision"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceGovernanceCampus: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceGovernanceCampus"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceGovernanceSection: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceGovernanceSection"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceGovernanceZone: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceGovernanceZone"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseWorkplacePolicy: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplacePolicy"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplacePolicyOverride: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplacePolicyOverride"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -14922,6 +16482,16 @@ export interface components {
         platform_ApiResponseWorkplaceSite: {
             correlationId?: string;
             data?: components["schemas"]["platform_WorkplaceSite"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseWorkplaceSiteAccessRule: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_WorkplaceSiteAccessRule"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -15014,6 +16584,19 @@ export interface components {
             assignedUserId: number;
             /** Format: int64 */
             version: number;
+        };
+        platform_AssignedResource: {
+            /** Format: uuid */
+            floorId?: string;
+            floorName?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            resourceName?: string;
+            resourceType?: string;
+            /** Format: uuid */
+            siteId?: string;
+            siteName?: string;
+            timeZone?: string;
         };
         platform_AssuranceFinding: {
             /** Format: date-time */
@@ -15320,6 +16903,15 @@ export interface components {
             /** @enum {string} */
             type?: "PERSONAL" | "TEAM" | "RESOURCE" | "SYSTEM";
             visibility?: string;
+        };
+        platform_CampusRequest: {
+            code: string;
+            nameEn: string;
+            nameKo: string;
+            /** @enum {string} */
+            state: "ACTIVE" | "MAINTENANCE" | "CLOSED";
+            /** Format: int64 */
+            version?: number;
         };
         platform_CaseActivity: {
             /** Format: uuid */
@@ -15790,6 +17382,11 @@ export interface components {
             requestedUntil?: string;
             requestedValue: components["schemas"]["platform_JsonNode"];
         };
+        platform_CreateFloorPlanRevisionRequest: {
+            /** Format: uuid */
+            basedOnRevisionId?: string;
+            changeSummary: string;
+        };
         platform_CreateItemRequest: {
             code: string;
             labels: components["schemas"]["platform_LocalizedLabelRequest"][];
@@ -15859,6 +17456,29 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_DelegatedAdminScopeRequest: {
+            /** Format: uuid */
+            delegateGroupRef?: string;
+            /** @enum {string} */
+            delegateType: "USER" | "GROUP_REF";
+            /** Format: int64 */
+            delegateUserId?: number;
+            /** Format: uuid */
+            managedGroupRef?: string;
+            permissions: ("CATALOG_VIEW" | "CATALOG_MANAGE" | "ACCESS_MANAGE" | "POLICY_MANAGE" | "FLOOR_PLAN_MANAGE" | "DELEGATION_VIEW")[];
+            /** @enum {string} */
+            scopeType: "SITE" | "GROUP_REF";
+            /** Format: uuid */
+            siteId?: string;
+            /** @enum {string} */
+            state: "ACTIVE" | "REVOKED";
+            /** Format: date-time */
+            validFrom?: string;
+            /** Format: date-time */
+            validUntil?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         platform_Diff: {
             /** Format: int64 */
             added?: number;
@@ -15913,6 +17533,30 @@ export interface components {
             toName?: string;
             /** Format: int64 */
             version: number;
+        };
+        platform_EffectiveDelegatedScope: {
+            /** Format: uuid */
+            delegationId?: string;
+            permissions?: ("CATALOG_VIEW" | "CATALOG_MANAGE" | "ACCESS_MANAGE" | "POLICY_MANAGE" | "FLOOR_PLAN_MANAGE" | "DELEGATION_VIEW")[];
+            /** Format: uuid */
+            scopeId?: string;
+            /** @enum {string} */
+            scopeType?: "SITE" | "GROUP_REF";
+            /** Format: date-time */
+            validUntil?: string;
+        };
+        platform_EffectivePolicyPreview: {
+            appliedOverrideIds?: string[];
+            effectivePolicy?: components["schemas"]["platform_JsonNode"];
+            fieldSources?: {
+                [key: string]: components["schemas"]["platform_PolicyFieldSource"];
+            };
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: uuid */
+            targetScopeId?: string;
+            /** @enum {string} */
+            targetScopeType?: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
         };
         platform_Entity: {
             description?: string;
@@ -16199,6 +17843,59 @@ export interface components {
             caseId?: string;
             resolution?: string;
             status?: string;
+        };
+        platform_FloorPlanPlacementRequest: {
+            heightPercent: number;
+            metadata: components["schemas"]["platform_JsonNode"];
+            positionX: number;
+            positionY: number;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: int64 */
+            resourceVersion: number;
+            /** Format: int32 */
+            rotationDegrees?: number;
+            /** Format: uuid */
+            sectionId?: string;
+            widthPercent: number;
+            /** Format: uuid */
+            zoneId: string;
+        };
+        platform_FloorPlanProjection: {
+            backgroundAssetPath?: string;
+            /** Format: uuid */
+            floorId?: string;
+            placements?: components["schemas"]["platform_WorkplaceFloorPlanPlacement"][];
+            /** Format: int32 */
+            planHeight?: number;
+            /** Format: int32 */
+            planWidth?: number;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: uuid */
+            publishedRevisionId?: string;
+            /** Format: int64 */
+            revisionNumber?: number;
+        };
+        platform_FloorPlanRevisionSnapshot: {
+            placements?: components["schemas"]["platform_WorkplaceFloorPlanPlacement"][];
+            revision?: components["schemas"]["platform_WorkplaceFloorPlanRevision"];
+        };
+        platform_FloorPlanSnapshotRequest: {
+            backgroundAssetKey?: string;
+            backgroundAssetPath?: string;
+            backgroundContentType?: string;
+            backgroundSha256?: string;
+            /** Format: int64 */
+            backgroundSizeBytes?: number;
+            changeSummary: string;
+            placements: components["schemas"]["platform_FloorPlanPlacementRequest"][];
+            /** Format: int32 */
+            planHeight?: number;
+            /** Format: int32 */
+            planWidth?: number;
+            /** Format: int64 */
+            version: number;
         };
         platform_FloorRequest: {
             /** Format: int32 */
@@ -16741,11 +18438,34 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_PolicyFieldSource: {
+            /** Format: uuid */
+            policyOverrideId?: string;
+            /** Format: uuid */
+            scopeId?: string;
+            /** @enum {string} */
+            scopeType?: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_PolicyOverrideRequest: {
+            policyPatch: components["schemas"]["platform_JsonNode"];
+            /** Format: uuid */
+            scopeId?: string;
+            /** @enum {string} */
+            scopeType: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+            /** @enum {string} */
+            state: "ACTIVE" | "INACTIVE";
+            /** Format: int64 */
+            version?: number;
+        };
         platform_PolicyRequest: {
             allowAssignedDeskLending?: boolean;
             allowRecurring?: boolean;
             /** Format: int32 */
             autoReleaseMinutes?: number;
+            /** Format: int32 */
+            bookingRetentionDays?: number;
             /** Format: int32 */
             bookingWindowDays?: number;
             /** Format: int32 */
@@ -17091,6 +18811,24 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_ReleaseWindow: {
+            canCancel?: boolean;
+            /** Format: date-time */
+            endsAt?: string;
+            floorName?: string;
+            note?: string;
+            /** Format: uuid */
+            releaseWindowId?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            resourceName?: string;
+            siteName?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            status?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         platform_ReorderItem: {
             /** Format: int64 */
             navigationItemId: number;
@@ -17284,6 +19022,11 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_RevisionTransitionRequest: {
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
         platform_RoomAvailabilityResponse: {
             /** Format: date-time */
             generatedAt?: string;
@@ -17454,6 +19197,16 @@ export interface components {
             /** @enum {string} */
             status?: "AVAILABLE" | "FORBIDDEN" | "UNAVAILABLE";
         };
+        platform_SectionRequest: {
+            boundary: components["schemas"]["platform_JsonNode"];
+            code: string;
+            nameEn: string;
+            nameKo: string;
+            /** @enum {string} */
+            state: "ACTIVE" | "MAINTENANCE" | "CLOSED";
+            /** Format: int64 */
+            version?: number;
+        };
         platform_SectionWorkQueue: {
             data?: components["schemas"]["platform_WorkQueue"];
             /** Format: date-time */
@@ -17509,6 +19262,53 @@ export interface components {
             serviceTargetMinutes?: number;
             /** Format: int64 */
             version: number;
+        };
+        platform_SiteAccessDecision: {
+            allowed?: boolean;
+            decision?: string;
+            /** Format: date-time */
+            evaluatedAt?: string;
+            matchedRuleIds?: string[];
+            /** @enum {string} */
+            requestedPermission?: "VIEW" | "BOOK" | "MANAGE";
+            /** Format: uuid */
+            siteId?: string;
+            /** Format: int64 */
+            userId?: number;
+        };
+        platform_SiteAccessRuleRequest: {
+            /** @enum {string} */
+            effect: "ALLOW" | "DENY";
+            /** @enum {string} */
+            permission: "VIEW" | "BOOK" | "MANAGE";
+            /** @enum {string} */
+            state: "ACTIVE" | "INACTIVE";
+            /** Format: uuid */
+            subjectGroupRef?: string;
+            /** @enum {string} */
+            subjectType: "USER" | "GROUP_REF";
+            /** Format: int64 */
+            subjectUserId?: number;
+            /** Format: date-time */
+            validFrom?: string;
+            /** Format: date-time */
+            validUntil?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_SiteCampusAssignment: {
+            /** Format: uuid */
+            campusId?: string;
+            /** Format: uuid */
+            siteId?: string;
+            /** Format: int64 */
+            siteVersion?: number;
+        };
+        platform_SiteCampusAssignmentRequest: {
+            /** Format: uuid */
+            campusId: string;
+            /** Format: int64 */
+            siteVersion: number;
         };
         platform_SiteRequest: {
             address?: string;
@@ -17924,6 +19724,58 @@ export interface components {
             /** Format: int64 */
             waiting?: number;
         };
+        platform_WorkplaceAdminBooking: {
+            /** Format: date-time */
+            anonymizedAt?: string;
+            bookedForDisplayName?: string;
+            /** Format: uuid */
+            bookingId?: string;
+            /** Format: date-time */
+            cancelledAt?: string;
+            /** Format: date-time */
+            checkedInAt?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            floorName?: string;
+            legalHold?: boolean;
+            /** Format: uuid */
+            personPublicId?: string;
+            /** Format: date-time */
+            personalDataExpiresAt?: string;
+            purpose?: string;
+            /** Format: date-time */
+            releasedAt?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            resourceName?: string;
+            /** @enum {string} */
+            resourceType?: "ROOM" | "DESK" | "LOCKER" | "PARKING" | "FOCUS_POD" | "PHONE_BOOTH" | "EQUIPMENT";
+            siteName?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            status?: "RESERVED" | "CHECKED_IN" | "COMPLETED" | "NO_SHOW" | "RELEASED" | "CANCELLED";
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            userId?: number;
+            /** Format: int64 */
+            version?: number;
+            visibleToColleagues?: boolean;
+        };
+        platform_WorkplaceAdminBookingPage: {
+            content?: components["schemas"]["platform_WorkplaceAdminBooking"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
         platform_WorkplaceAdminOverview: {
             /** Format: int64 */
             activeSites?: number;
@@ -17942,6 +19794,31 @@ export interface components {
             reservableResources?: number;
             /** Format: int32 */
             utilizationPercent?: number;
+        };
+        platform_WorkplaceAuditEvent: {
+            action?: string;
+            /** Format: int64 */
+            actorUserId?: number;
+            /** Format: uuid */
+            aggregateId?: string;
+            aggregateType?: string;
+            /** Format: uuid */
+            auditEventId?: string;
+            correlationId?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            snapshot?: components["schemas"]["platform_JsonNode"];
+        };
+        platform_WorkplaceAuditEventPage: {
+            content?: components["schemas"]["platform_WorkplaceAuditEvent"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
         };
         platform_WorkplaceBooking: {
             /** Format: uuid */
@@ -17974,6 +19851,31 @@ export interface components {
             /** Format: int64 */
             version?: number;
             visibleToColleagues?: boolean;
+        };
+        platform_WorkplaceDelegatedAdminScope: {
+            /** Format: uuid */
+            delegateGroupRef?: string;
+            /** @enum {string} */
+            delegateType?: "USER" | "GROUP_REF";
+            /** Format: int64 */
+            delegateUserId?: number;
+            /** Format: uuid */
+            delegationId?: string;
+            /** Format: uuid */
+            managedGroupRef?: string;
+            permissions?: ("CATALOG_VIEW" | "CATALOG_MANAGE" | "ACCESS_MANAGE" | "POLICY_MANAGE" | "FLOOR_PLAN_MANAGE" | "DELEGATION_VIEW")[];
+            /** @enum {string} */
+            scopeType?: "SITE" | "GROUP_REF";
+            /** Format: uuid */
+            siteId?: string;
+            /** @enum {string} */
+            state?: "ACTIVE" | "REVOKED";
+            /** Format: date-time */
+            validFrom?: string;
+            /** Format: date-time */
+            validUntil?: string;
+            /** Format: int64 */
+            version?: number;
         };
         platform_WorkplaceExploreResponse: {
             floors?: components["schemas"]["platform_WorkplaceFloor"][];
@@ -18008,6 +19910,127 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_WorkplaceFloorPlanPlacement: {
+            heightPercent?: number;
+            metadata?: components["schemas"]["platform_JsonNode"];
+            /** Format: uuid */
+            placementId?: string;
+            positionX?: number;
+            positionY?: number;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: int64 */
+            resourceVersion?: number;
+            /** Format: int32 */
+            rotationDegrees?: number;
+            /** Format: uuid */
+            sectionId?: string;
+            /** Format: int64 */
+            version?: number;
+            widthPercent?: number;
+            /** Format: uuid */
+            zoneId?: string;
+        };
+        platform_WorkplaceFloorPlanRevision: {
+            backgroundAssetKey?: string;
+            backgroundAssetPath?: string;
+            backgroundContentType?: string;
+            backgroundSha256?: string;
+            /** Format: int64 */
+            backgroundSizeBytes?: number;
+            /** Format: uuid */
+            basedOnRevisionId?: string;
+            changeSummary?: string;
+            contentHash?: string;
+            /** Format: uuid */
+            floorId?: string;
+            /** Format: int32 */
+            placementCount?: number;
+            /** Format: int32 */
+            planHeight?: number;
+            /** Format: int32 */
+            planWidth?: number;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int64 */
+            publishedBy?: number;
+            /** Format: uuid */
+            restoreSourceRevisionId?: string;
+            /** Format: uuid */
+            revisionId?: string;
+            /** Format: int64 */
+            revisionNumber?: number;
+            /** @enum {string} */
+            state?: "DRAFT" | "REVIEW" | "PUBLISHED" | "ARCHIVED";
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: int64 */
+            submittedBy?: number;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkplaceForceCancelBookingRequest: {
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_WorkplaceGovernanceCampus: {
+            /** Format: int64 */
+            buildingCount?: number;
+            /** Format: uuid */
+            campusId?: string;
+            code?: string;
+            nameEn?: string;
+            nameKo?: string;
+            /** @enum {string} */
+            state?: "ACTIVE" | "MAINTENANCE" | "CLOSED";
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkplaceGovernanceSection: {
+            boundary?: components["schemas"]["platform_JsonNode"];
+            code?: string;
+            /** Format: uuid */
+            floorId?: string;
+            nameEn?: string;
+            nameKo?: string;
+            /** Format: int64 */
+            resourceCount?: number;
+            /** Format: uuid */
+            sectionId?: string;
+            /** @enum {string} */
+            state?: "ACTIVE" | "MAINTENANCE" | "CLOSED";
+            /** Format: int64 */
+            version?: number;
+            /** Format: uuid */
+            zoneId?: string;
+        };
+        platform_WorkplaceGovernanceZone: {
+            boundary?: components["schemas"]["platform_JsonNode"];
+            code?: string;
+            /** Format: uuid */
+            floorId?: string;
+            nameEn?: string;
+            nameKo?: string;
+            /** Format: int64 */
+            resourceCount?: number;
+            /** Format: int64 */
+            sectionCount?: number;
+            /** @enum {string} */
+            state?: "ACTIVE" | "MAINTENANCE" | "CLOSED";
+            /** @enum {string} */
+            type?: "GENERAL" | "WORK_AREA" | "COLLABORATION" | "QUIET" | "SERVICE" | "RESTRICTED";
+            /** Format: int64 */
+            version?: number;
+            /** Format: uuid */
+            zoneId?: string;
+        };
+        platform_WorkplaceLegalHoldRequest: {
+            legalHold?: boolean;
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
         platform_WorkplaceOccupancy: {
             bookedByDisplayName?: string;
             /** Format: uuid */
@@ -18028,6 +20051,8 @@ export interface components {
             /** Format: int32 */
             autoReleaseMinutes?: number;
             /** Format: int32 */
+            bookingRetentionDays?: number;
+            /** Format: int32 */
             bookingWindowDays?: number;
             /** Format: int32 */
             checkInLeadMinutes?: number;
@@ -18045,6 +20070,30 @@ export interface components {
             version?: number;
             workingDayEnd?: string;
             workingDayStart?: string;
+        };
+        platform_WorkplacePolicyOverride: {
+            /** Format: uuid */
+            policyOverrideId?: string;
+            policyPatch?: components["schemas"]["platform_JsonNode"];
+            /** Format: uuid */
+            scopeId?: string;
+            /** @enum {string} */
+            scopeType?: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+            /** @enum {string} */
+            state?: "ACTIVE" | "INACTIVE";
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkplaceRelocateBookingRequest: {
+            /** Format: date-time */
+            endsAt: string;
+            reason?: string;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: date-time */
+            startsAt: string;
+            /** Format: int64 */
+            version: number;
         };
         platform_WorkplaceResource: {
             accessible?: boolean;
@@ -18088,6 +20137,8 @@ export interface components {
         };
         platform_WorkplaceSite: {
             address?: string;
+            /** Format: uuid */
+            campusId?: string;
             code?: string;
             /** Format: int64 */
             configuredFloorCount?: number;
@@ -18105,6 +20156,30 @@ export interface components {
             totalFloorCount?: number;
             /** @enum {string} */
             type?: "HEADQUARTERS" | "SHARED_OFFICE" | "SATELLITE" | "CLIENT_SITE";
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkplaceSiteAccessRule: {
+            /** Format: uuid */
+            accessRuleId?: string;
+            /** @enum {string} */
+            effect?: "ALLOW" | "DENY";
+            /** @enum {string} */
+            permission?: "VIEW" | "BOOK" | "MANAGE";
+            /** Format: uuid */
+            siteId?: string;
+            /** @enum {string} */
+            state?: "ACTIVE" | "INACTIVE";
+            /** Format: uuid */
+            subjectGroupRef?: string;
+            /** @enum {string} */
+            subjectType?: "USER" | "GROUP_REF";
+            /** Format: int64 */
+            subjectUserId?: number;
+            /** Format: date-time */
+            validFrom?: string;
+            /** Format: date-time */
+            validUntil?: string;
             /** Format: int64 */
             version?: number;
         };
@@ -18139,6 +20214,18 @@ export interface components {
             owner?: string;
             pinned?: boolean;
             resourceKey?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_ZoneRequest: {
+            boundary: components["schemas"]["platform_JsonNode"];
+            code: string;
+            nameEn: string;
+            nameKo: string;
+            /** @enum {string} */
+            state: "ACTIVE" | "MAINTENANCE" | "CLOSED";
+            /** @enum {string} */
+            type: "GENERAL" | "WORK_AREA" | "COLLABORATION" | "QUIET" | "SERVICE" | "RESTRICTED";
             /** Format: int64 */
             version?: number;
         };
@@ -23535,6 +25622,30 @@ export interface operations {
             };
         };
     };
+    messaging_createConversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_CreateConversationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationCreationResponse"];
+                };
+            };
+        };
+    };
     messaging_conversation: {
         parameters: {
             query?: never;
@@ -23553,6 +25664,440 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                };
+            };
+        };
+    };
+    messaging_createUpload: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_CreateUploadRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseUploadSession"];
+                };
+            };
+        };
+    };
+    messaging_metadata: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseAttachmentSummary"];
+                };
+            };
+        };
+    };
+    messaging_discard: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    messaging_download: {
+        parameters: {
+            query: {
+                downloadToken: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    messaging_upload: {
+        parameters: {
+            query: {
+                token: string;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/octet-stream": string;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseAttachmentSummary"];
+                };
+            };
+        };
+    };
+    messaging_downloadGrant: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseDownloadGrant"];
+                };
+            };
+        };
+    };
+    messaging_leave: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_LeaveConversationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseMembershipMutationResponse"];
+                };
+            };
+        };
+    };
+    messaging_capabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseCapabilityResponse"];
+                };
+            };
+        };
+    };
+    messaging_current: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseCurrentMeetingResponse"];
+                };
+            };
+        };
+    };
+    messaging_end: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseSessionResponse"];
+                };
+            };
+        };
+    };
+    messaging_start: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseSessionResponse"];
+                };
+            };
+        };
+    };
+    messaging_token: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseJoinTokenResponse"];
+                };
+            };
+        };
+    };
+    messaging_members: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationMembersResponse"];
+                };
+            };
+        };
+    };
+    messaging_addMember: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_AddConversationMemberRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseMembershipMutationResponse"];
+                };
+            };
+        };
+    };
+    messaging_removeMember: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseMembershipMutationResponse"];
+                };
+            };
+        };
+    };
+    messaging_updateMemberRole: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_UpdateConversationMemberRoleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseMembershipMutationResponse"];
+                };
+            };
+        };
+    };
+    messaging_messages: {
+        parameters: {
+            query?: {
+                beforeSequence?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseMessagePage"];
                 };
             };
         };
@@ -23580,7 +26125,63 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                    "*/*": components["schemas"]["messaging_ApiResponseMessageSummary"];
+                };
+            };
+        };
+    };
+    messaging_updateMessage: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+                messageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_UpdateMessageRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseMessageSummary"];
+                };
+            };
+        };
+    };
+    messaging_deleteMessage: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+                messageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseMessageSummary"];
                 };
             };
         };
@@ -23607,7 +26208,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                    "*/*": components["schemas"]["messaging_ApiResponseMessageSummary"];
                 };
             };
         };
@@ -23631,7 +26232,78 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                    "*/*": components["schemas"]["messaging_ApiResponseMessageSummary"];
+                };
+            };
+        };
+    };
+    messaging_saveMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+                messageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseSavedItemSummary"];
+                };
+            };
+        };
+    };
+    messaging_unsaveMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+                messageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    messaging_thread: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                conversationId: string;
+                rootMessageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseThreadResponse"];
                 };
             };
         };
@@ -23657,8 +26329,80 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                    "*/*": components["schemas"]["messaging_ApiResponseReadCursorResponse"];
                 };
+            };
+        };
+    };
+    messaging_conversationSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationSettings"];
+                };
+            };
+        };
+    };
+    messaging_updateConversationSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_ConversationSettingsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationSettings"];
+                };
+            };
+        };
+    };
+    messaging_typing: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_TypingRequest"];
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -23683,7 +26427,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["messaging_ApiResponseConversationDetail"];
+                    "*/*": components["schemas"]["messaging_ApiResponseConversationSummary"];
                 };
             };
         };
@@ -23727,6 +26471,77 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["messaging_ApiResponseListPersonSummary"];
+                };
+            };
+        };
+    };
+    messaging_savedItems: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseSavedItemPage"];
+                };
+            };
+        };
+    };
+    messaging_search: {
+        parameters: {
+            query: {
+                q: string;
+                types?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseSearchResponse"];
+                };
+            };
+        };
+    };
+    messaging_stream: {
+        parameters: {
+            query?: {
+                after?: string;
+            };
+            header?: {
+                "Last-Event-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": components["schemas"]["messaging_SseEmitter"];
                 };
             };
         };
@@ -25903,7 +28718,7 @@ export interface operations {
             };
         };
     };
-    platform_create_7: {
+    platform_create_8: {
         parameters: {
             query?: never;
             header?: {
@@ -27622,7 +30437,7 @@ export interface operations {
             };
         };
     };
-    platform_create_6: {
+    platform_create_7: {
         parameters: {
             query?: never;
             header?: {
@@ -28242,7 +31057,7 @@ export interface operations {
             };
         };
     };
-    platform_create_5: {
+    platform_create_6: {
         parameters: {
             query?: never;
             header?: {
@@ -28368,7 +31183,7 @@ export interface operations {
             };
         };
     };
-    platform_cancel_3: {
+    platform_cancel_4: {
         parameters: {
             query?: never;
             header?: {
@@ -28611,7 +31426,7 @@ export interface operations {
             };
         };
     };
-    platform_create_4: {
+    platform_create_5: {
         parameters: {
             query?: never;
             header?: {
@@ -28909,7 +31724,7 @@ export interface operations {
             };
         };
     };
-    platform_create_3: {
+    platform_create_4: {
         parameters: {
             query?: never;
             header?: {
@@ -29663,6 +32478,123 @@ export interface operations {
             };
         };
     };
+    platform_workplaceAuditEvents: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                action?: string;
+                aggregateType?: string;
+                aggregateId?: string;
+                actorUserId?: number;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceAuditEventPage"];
+                };
+            };
+        };
+    };
+    platform_searchWorkplaceBookings: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                status?: "RESERVED" | "CHECKED_IN" | "COMPLETED" | "NO_SHOW" | "RELEASED" | "CANCELLED";
+                resourceId?: string;
+                userId?: number;
+                page?: number;
+                size?: number;
+            };
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceAdminBookingPage"];
+                };
+            };
+        };
+    };
+    platform_forceCancelWorkplaceBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkplaceForceCancelBookingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceAdminBooking"];
+                };
+            };
+        };
+    };
+    platform_updateWorkplaceLegalHold: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkplaceLegalHoldRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceAdminBooking"];
+                };
+            };
+        };
+    };
     platform_getWorkplaceFloors: {
         parameters: {
             query: {
@@ -29829,6 +32761,770 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseWorkplaceResource"];
+                };
+            };
+        };
+    };
+    platform_campuses: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceGovernanceCampus"];
+                };
+            };
+        };
+    };
+    platform_createCampus: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CampusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceGovernanceCampus"];
+                };
+            };
+        };
+    };
+    platform_updateCampus: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                campusId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CampusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceGovernanceCampus"];
+                };
+            };
+        };
+    };
+    platform_delegatedScopes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceDelegatedAdminScope"];
+                };
+            };
+        };
+    };
+    platform_createDelegatedScope: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DelegatedAdminScopeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceDelegatedAdminScope"];
+                };
+            };
+        };
+    };
+    platform_effectiveDelegatedScopes: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-DWP-Group-Refs"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListEffectiveDelegatedScope"];
+                };
+            };
+        };
+    };
+    platform_updateDelegatedScope: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                delegationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_DelegatedAdminScopeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceDelegatedAdminScope"];
+                };
+            };
+        };
+    };
+    platform_updateFloorPlanRevision: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_FloorPlanSnapshotRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloorPlanRevision"];
+                };
+            };
+        };
+    };
+    platform_publishFloorPlan: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RevisionTransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloorPlanRevision"];
+                };
+            };
+        };
+    };
+    platform_restoreFloorPlanRevision: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RevisionTransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloorPlanRevision"];
+                };
+            };
+        };
+    };
+    platform_submitFloorPlanReview: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RevisionTransitionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloorPlanRevision"];
+                };
+            };
+        };
+    };
+    platform_floorPlanRevisionSnapshot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                revisionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseFloorPlanRevisionSnapshot"];
+                };
+            };
+        };
+    };
+    platform_floorPlanRevisions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceFloorPlanRevision"];
+                };
+            };
+        };
+    };
+    platform_createFloorPlanRevision: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateFloorPlanRevisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceFloorPlanRevision"];
+                };
+            };
+        };
+    };
+    platform_publishedProjection: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseFloorPlanProjection"];
+                };
+            };
+        };
+    };
+    platform_zones: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceGovernanceZone"];
+                };
+            };
+        };
+    };
+    platform_createZone: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ZoneRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceGovernanceZone"];
+                };
+            };
+        };
+    };
+    platform_updateZone: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                floorId: string;
+                zoneId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ZoneRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceGovernanceZone"];
+                };
+            };
+        };
+    };
+    platform_policyOverrides: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplacePolicyOverride"];
+                };
+            };
+        };
+    };
+    platform_createPolicyOverride: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PolicyOverrideRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicyOverride"];
+                };
+            };
+        };
+    };
+    platform_updatePolicyOverride: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                overrideId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_PolicyOverrideRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplacePolicyOverride"];
+                };
+            };
+        };
+    };
+    platform_policyPreview: {
+        parameters: {
+            query: {
+                scopeType: "TENANT" | "CAMPUS" | "SITE" | "FLOOR" | "ZONE" | "RESOURCE";
+                scopeId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEffectivePolicyPreview"];
+                };
+            };
+        };
+    };
+    platform_accessPreview: {
+        parameters: {
+            query: {
+                permission: "VIEW" | "BOOK" | "MANAGE";
+            };
+            header?: {
+                "X-DWP-Group-Refs"?: string;
+            };
+            path: {
+                siteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseSiteAccessDecision"];
+                };
+            };
+        };
+    };
+    platform_accessRules: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                siteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceSiteAccessRule"];
+                };
+            };
+        };
+    };
+    platform_createAccessRule: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SiteAccessRuleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSiteAccessRule"];
+                };
+            };
+        };
+    };
+    platform_updateAccessRule: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+                ruleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SiteAccessRuleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceSiteAccessRule"];
+                };
+            };
+        };
+    };
+    platform_assignSiteCampus: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                siteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SiteCampusAssignmentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseSiteCampusAssignment"];
+                };
+            };
+        };
+    };
+    platform_sections: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                zoneId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListWorkplaceGovernanceSection"];
+                };
+            };
+        };
+    };
+    platform_createSection: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                zoneId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SectionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceGovernanceSection"];
+                };
+            };
+        };
+    };
+    platform_updateSection: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                zoneId: string;
+                sectionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SectionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceGovernanceSection"];
                 };
             };
         };
@@ -30181,7 +33877,7 @@ export interface operations {
             };
         };
     };
-    platform_create_2: {
+    platform_create_3: {
         parameters: {
             query?: never;
             header?: {
@@ -30237,7 +33933,7 @@ export interface operations {
             };
         };
     };
-    platform_cancel_2: {
+    platform_cancel_3: {
         parameters: {
             query?: never;
             header?: {
@@ -31274,7 +34970,7 @@ export interface operations {
             };
         };
     };
-    platform_cancel_1: {
+    platform_cancel_2: {
         parameters: {
             query?: never;
             header?: {
@@ -31536,6 +35232,26 @@ export interface operations {
             };
         };
     };
+    platform_getRoomPolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePolicy"];
+                };
+            };
+        };
+    };
     platform_record: {
         parameters: {
             query?: never;
@@ -31607,7 +35323,7 @@ export interface operations {
             };
         };
     };
-    platform_create_1: {
+    platform_create_2: {
         parameters: {
             query?: never;
             header?: {
@@ -31655,7 +35371,7 @@ export interface operations {
             };
         };
     };
-    platform_cancel: {
+    platform_cancel_1: {
         parameters: {
             query?: never;
             header?: {
@@ -31810,6 +35526,8 @@ export interface operations {
             header?: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
+                "Idempotency-Key"?: string;
+                "X-DWP-Group-Refs"?: string;
             };
             path?: never;
             cookie?: never;
@@ -31918,6 +35636,36 @@ export interface operations {
             };
         };
     };
+    platform_relocateWorkplaceBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+                "X-DWP-Group-Refs"?: string;
+            };
+            path: {
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_WorkplaceRelocateBookingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkplaceBooking"];
+                };
+            };
+        };
+    };
     platform_exploreWorkplace: {
         parameters: {
             query: {
@@ -31926,6 +35674,7 @@ export interface operations {
                 to: string;
             };
             header?: {
+                "X-DWP-Group-Refs"?: string;
                 "Accept-Language"?: string;
             };
             path?: never;
@@ -31962,6 +35711,112 @@ export interface operations {
                 };
                 content: {
                     "*/*": string;
+                };
+            };
+        };
+    };
+    platform_ownedWindows: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListReleaseWindow"];
+                };
+            };
+        };
+    };
+    platform_create_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+                "Idempotency-Key"?: string;
+                "X-DWP-Group-Refs"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseReleaseWindow"];
+                };
+            };
+        };
+    };
+    platform_assignedResources: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-DWP-Group-Refs"?: string;
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListAssignedResource"];
+                };
+            };
+        };
+    };
+    platform_cancel: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                releaseWindowId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseReleaseWindow"];
                 };
             };
         };

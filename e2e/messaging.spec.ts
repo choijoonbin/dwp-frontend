@@ -5,6 +5,7 @@ import { mockShellSession } from './support/shell-session';
 import type {
   MessagingConversation,
   MessagingConversationDetail,
+  MessagingAttachment,
   MessagingMember,
   MessagingMemberRole,
   MessagingMessage,
@@ -52,6 +53,7 @@ type SendRequest = {
   body: string;
   replyToMessageId?: string | null;
   idempotencyKey: string;
+  attachmentIds: string[];
 };
 
 type CreateRequest = {
@@ -74,7 +76,10 @@ type MessagingFixtureState = {
   deletedMessageIds: string[];
   memberRoleRequests: Array<{ userId: number; role: MessagingMemberRole; version: number }>;
   managedMemberRole: MessagingMemberRole;
+  attachments: Map<string, MessagingAttachment>;
+  uploadedAttachmentIds: string[];
   nextMessage: number;
+  nextAttachment: number;
   nextConversation: number;
 };
 
@@ -101,6 +106,7 @@ function message(input: Partial<MessagingMessage> & Pick<MessagingMessage, 'mess
     sequence: 1,
     version: 1,
     reactions: [],
+    attachments: [],
     replyCount: 0,
     rootPreview: null,
     ...input,
@@ -164,7 +170,10 @@ function createFixtureState(): MessagingFixtureState {
     deletedMessageIds: [],
     memberRoleRequests: [],
     managedMemberRole: 'MEMBER',
+    attachments: new Map(),
+    uploadedAttachmentIds: [],
     nextMessage: 10,
+    nextAttachment: 1,
     nextConversation: 2,
   };
 }
@@ -490,6 +499,74 @@ async function mockMessaging(page: Page): Promise<MessagingFixtureState> {
       return fulfill(route, { session: null });
     }
 
+    const createAttachment = path.match(
+      /^\/api\/messaging\/v1\/conversations\/([^/]+)\/attachments\/uploads$/u
+    );
+    if (createAttachment && method === 'POST') {
+      const conversationId = decodeURIComponent(createAttachment[1]!);
+      const payload = request.postDataJSON() as {
+        filename: string;
+        contentType: string;
+        sizeBytes: number;
+      };
+      const attachmentId = `73000000-0000-0000-0000-${String(state.nextAttachment++).padStart(12, '0')}`;
+      const attachment: MessagingAttachment = {
+        attachmentId,
+        filename: payload.filename,
+        contentType: payload.contentType,
+        sizeBytes: payload.sizeBytes,
+        status: 'QUARANTINED',
+        rejectionReason: null,
+        createdAt: '2026-08-19T09:05:00Z',
+        version: 1,
+      };
+      state.attachments.set(attachmentId, attachment);
+      return fulfill(route, {
+        attachment,
+        uploadUrl: `/api/messaging/v1/conversations/${conversationId}/attachments/${attachmentId}/content?token=upload-token`,
+        expiresAt: '2026-08-19T09:15:00Z',
+      });
+    }
+
+    const attachmentContent = path.match(
+      /^\/api\/messaging\/v1\/conversations\/([^/]+)\/attachments\/([^/]+)\/content$/u
+    );
+    if (attachmentContent && method === 'PUT') {
+      const attachmentId = decodeURIComponent(attachmentContent[2]!);
+      const current = state.attachments.get(attachmentId);
+      if (!current) return fulfill(route, null, 404);
+      const clean = { ...current, status: 'CLEAN' as const, version: current.version + 2 };
+      state.attachments.set(attachmentId, clean);
+      state.uploadedAttachmentIds.push(attachmentId);
+      return fulfill(route, clean);
+    }
+    if (attachmentContent && method === 'GET' && url.searchParams.has('downloadToken')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'text/plain',
+        headers: { 'Content-Disposition': 'attachment; filename="launch-notes.txt"' },
+        body: 'security-reviewed attachment',
+      });
+    }
+
+    const attachmentDownload = path.match(
+      /^\/api\/messaging\/v1\/conversations\/([^/]+)\/attachments\/([^/]+)\/download-grants$/u
+    );
+    if (attachmentDownload && method === 'POST') {
+      const conversationId = decodeURIComponent(attachmentDownload[1]!);
+      const attachmentId = decodeURIComponent(attachmentDownload[2]!);
+      const attachment = state.attachments.get(attachmentId);
+      if (!attachment) return fulfill(route, null, 404);
+      return fulfill(route, {
+        attachmentId,
+        filename: attachment.filename,
+        contentType: attachment.contentType,
+        sizeBytes: attachment.sizeBytes,
+        downloadUrl: `/api/messaging/v1/conversations/${conversationId}/attachments/${attachmentId}/content?downloadToken=download-token`,
+        expiresAt: '2026-08-19T09:16:00Z',
+      });
+    }
+
     const thread = path.match(
       /^\/api\/messaging\/v1\/conversations\/([^/]+)\/messages\/([^/]+)\/replies$/u
     );
@@ -567,6 +644,9 @@ async function mockMessaging(page: Page): Promise<MessagingFixtureState> {
         replyToMessageId: payload.replyToMessageId ?? null,
         sequence: state.nextMessage,
         createdAt: `2026-08-19T09:${String(state.nextMessage).padStart(2, '0')}:00Z`,
+        attachments: (payload.attachmentIds ?? [])
+          .map((attachmentId) => state.attachments.get(attachmentId))
+          .filter((attachment): attachment is MessagingAttachment => Boolean(attachment)),
       });
       if (payload.replyToMessageId) {
         const replies = state.replies.get(payload.replyToMessageId) ?? [];
@@ -687,6 +767,40 @@ test('composer sends with Enter, preserves Shift+Enter, and ignores Enter during
   await composer.fill('Korean composition complete');
   await composer.press('Enter');
   await expect.poll(() => state.sentRequests.at(-1)?.body).toBe('Korean composition complete');
+});
+
+test('security-scanned attachments are delivered with the message and downloaded through a grant', async ({
+  page,
+}) => {
+  const state = await mockMessaging(page);
+  await openConversation(page);
+
+  await page.getByRole('button', { name: 'Attach file' }).click();
+  await page
+    .locator('input[type="file"]')
+    .first()
+    .setInputFiles({
+      name: 'launch-notes.txt',
+      mimeType: 'text/plain',
+      buffer: Buffer.from('security-reviewed attachment'),
+    });
+
+  await expect(page.getByText(/Ready to attach$/u)).toBeVisible();
+  await expect.poll(() => state.uploadedAttachmentIds).toHaveLength(1);
+
+  const composer = page.getByRole('textbox', { name: 'Compose message' });
+  await composer.fill('Please review the attached launch notes.');
+  await composer.press('Enter');
+
+  await expect
+    .poll(() => state.sentRequests.at(-1)?.attachmentIds)
+    .toEqual([state.uploadedAttachmentIds[0]]);
+  const downloadButton = page.getByRole('button', { name: 'Download launch-notes.txt' });
+  await expect(downloadButton).toBeVisible();
+  const downloadPromise = page.waitForEvent('download');
+  await downloadButton.click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('launch-notes.txt');
 });
 
 test('message actions expose labelled reactions, thread replies, save, edit, delete, and meeting entry', async ({

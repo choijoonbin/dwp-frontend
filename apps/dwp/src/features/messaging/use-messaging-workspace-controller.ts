@@ -33,6 +33,7 @@ import {
   useMessagingRealtime,
   useMessagingTypingPublisher,
 } from './use-messaging-realtime';
+import { useMessagingAttachmentQueue } from './use-messaging-attachment-queue';
 
 import type { Theme } from '@mui/material/styles';
 import type {
@@ -77,6 +78,8 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const threadSendAttemptRef = useRef<MessagingSendMutationInput | null>(null);
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const selectedId = params.get('conversation');
+  const mainAttachmentQueue = useMessagingAttachmentQueue(selectedId);
+  const threadAttachmentQueue = useMessagingAttachmentQueue(selectedId);
 
   const conversationsQuery = useQuery({
     queryKey: ['messaging', 'conversations', scope, debouncedSearch],
@@ -129,9 +132,11 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
         conversationId: selectedId!,
         body: input.body,
         idempotencyKey: input.idempotencyKey,
+        attachmentIds: input.attachmentIds,
       }),
     onSuccess: async (message) => {
       setDraft('');
+      mainAttachmentQueue.clear();
       mainSendAttemptRef.current = null;
       queryClient.setQueryData<MessagingConversationDetail>(
         ['messaging', 'conversation', message.conversationId],
@@ -162,9 +167,11 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
         body: input.body,
         replyToMessageId: input.replyToMessageId,
         idempotencyKey: input.idempotencyKey,
+        attachmentIds: input.attachmentIds,
       }),
     onSuccess: async (message) => {
       setThreadDraft('');
+      threadAttachmentQueue.clear();
       threadSendAttemptRef.current = null;
       queryClient.setQueryData<MessagingConversationDetail>(
         ['messaging', 'conversation', message.conversationId],
@@ -434,10 +441,11 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   };
   const send = () => {
     const body = draft.trim();
-    if (!body || !selectedId || sendMutation.isPending) return;
+    if (!body || !selectedId || sendMutation.isPending || mainAttachmentQueue.busy) return;
     const input = {
       body,
       idempotencyKey: crypto.randomUUID(),
+      attachmentIds: mainAttachmentQueue.readyIds,
     } satisfies MessagingSendMutationInput;
     mainSendAttemptRef.current = input;
     sendMutation.mutate(input);
@@ -448,11 +456,20 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   };
   const sendThreadReply = () => {
     const body = threadDraft.trim();
-    if (!body || !selectedId || !thread?.root.messageId || threadSendMutation.isPending) return;
+    if (
+      !body ||
+      !selectedId ||
+      !thread?.root.messageId ||
+      threadSendMutation.isPending ||
+      threadAttachmentQueue.busy
+    ) {
+      return;
+    }
     const input = {
       body,
       replyToMessageId: thread.root.messageId,
       idempotencyKey: crypto.randomUUID(),
+      attachmentIds: threadAttachmentQueue.readyIds,
     } satisfies MessagingSendMutationInput;
     threadSendAttemptRef.current = input;
     threadSendMutation.mutate(input);
@@ -530,8 +547,10 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     typingNames,
     draft,
     setDraft,
+    mainAttachmentQueue,
     threadDraft,
     setThreadDraft,
+    threadAttachmentQueue,
     meetingDialogOpen,
     setMeetingDialogOpen,
     membersDialogOpen,

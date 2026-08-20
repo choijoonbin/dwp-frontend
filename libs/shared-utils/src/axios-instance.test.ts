@@ -158,6 +158,32 @@ describe('axiosInstance browser session contract', () => {
     expect(request.headers).toEqual(expect.objectContaining({ 'X-XSRF-TOKEN': 'csrf-token' }));
   });
 
+  it('sends Blob mutations without JSON serialization', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse(200, {
+          data: { token: 'csrf-token', headerName: 'X-XSRF-TOKEN' },
+        })
+      )
+      .mockResolvedValueOnce(jsonResponse(200, { data: { status: 'CLEAN' } }));
+    vi.stubGlobal('fetch', fetchMock);
+    const content = new Blob(['report'], { type: 'application/pdf' });
+
+    await axiosInstance.put('/api/messaging/upload', content, {
+      headers: { 'Content-Type': 'application/octet-stream' },
+    });
+
+    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(request.body).toBe(content);
+    expect(request.headers).toEqual(
+      expect.objectContaining({
+        'Content-Type': 'application/octet-stream',
+        'X-XSRF-TOKEN': 'csrf-token',
+      })
+    );
+  });
+
   it('returns binary downloads as Blob without text parsing', async () => {
     const download = new Blob(['audit-export'], { type: 'text/csv' });
     const fetchMock = vi.fn().mockResolvedValue({

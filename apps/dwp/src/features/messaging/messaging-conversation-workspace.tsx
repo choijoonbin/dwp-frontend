@@ -54,8 +54,10 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     typingNames,
     draft,
     setDraft,
+    mainAttachmentQueue,
     threadDraft,
     setThreadDraft,
+    threadAttachmentQueue,
     meetingDialogOpen,
     setMeetingDialogOpen,
     membersDialogOpen,
@@ -222,6 +224,7 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
                 draft={draft}
                 sending={sendMutation.isPending}
                 sendError={sendMutation.isError}
+                attachmentQueue={mainAttachmentQueue}
                 hasOlder={Boolean(messageHistoryQuery.hasNextPage)}
                 loadingOlder={messageHistoryQuery.isFetchingNextPage}
                 olderLoadError={messageHistoryQuery.isFetchNextPageError}
@@ -275,6 +278,7 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
               onRetry={retryThreadReply}
               isSending={threadSendMutation.isPending}
               hasError={threadSendMutation.isError}
+              attachmentQueue={threadAttachmentQueue}
               onClose={() => setThreadRootId(null)}
               onReact={toggleReaction}
               onSave={saveMessage}

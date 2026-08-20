@@ -8,6 +8,7 @@ import {
   saveWorkplaceGovernanceAccessRule,
   saveWorkplaceGovernancePolicyOverride,
   submitWorkplaceGovernanceFloorPlanReview,
+  uploadWorkplaceGovernanceFloorPlanBackground,
 } from './workplace-governance-api';
 
 function jsonResponse(data: unknown): Response {
@@ -121,5 +122,31 @@ describe('Workplace governance API boundary', () => {
       '/api/platform/v1/admin/workplace/governance/floor-plan-revisions/revision%2F1/snapshot',
       expect.objectContaining({ method: 'GET', credentials: 'include' })
     );
+  });
+
+  it('uploads immutable draft media with an observed revision version', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ revisionId: 'revision-1', version: 8 }));
+    vi.stubGlobal('fetch', fetchMock);
+    const file = new File([new Uint8Array([1, 2, 3])], 'floor plan.png', {
+      type: 'image/png',
+    });
+
+    await uploadWorkplaceGovernanceFloorPlanBackground(
+      'revision/1',
+      7,
+      'Updated evacuation routes',
+      file
+    );
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/platform/v1/admin/workplace/governance/floor-plan-revisions/revision%2F1/background?version=7&changeSummary=Updated+evacuation+routes'
+    );
+    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(request.method).toBe('POST');
+    expect(request.body).toBeInstanceOf(FormData);
+    expect((request.body as FormData).get('file')).toBe(file);
   });
 });

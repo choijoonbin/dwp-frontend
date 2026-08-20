@@ -291,10 +291,9 @@ function TypeSettingRows({
                 label={t('preferences.deliveryMode')}
                 sx={{ minWidth: 180 }}
               >
-                {(
-                  externalDeliveryEnabled
-                    ? (['IMMEDIATE', 'DAILY_DIGEST', 'WEEKLY_DIGEST', 'MUTED'] as const)
-                    : (['IMMEDIATE', 'MUTED'] as const)
+                {(externalDeliveryEnabled
+                  ? (['IMMEDIATE', 'DAILY_DIGEST', 'WEEKLY_DIGEST', 'MUTED'] as const)
+                  : (['IMMEDIATE', 'MUTED'] as const)
                 ).map((mode) => (
                   <MenuItem key={mode} value={mode}>
                     {t(`preferences.modes.${mode}`)}
@@ -327,10 +326,7 @@ function TypeSettingRows({
                       size="small"
                       checked={available && value.effectiveValue}
                       disabled={
-                        disabled ||
-                        !available ||
-                        value.managed ||
-                        busyType === setting.typeKey
+                        disabled || !available || value.managed || busyType === setting.typeKey
                       }
                       onChange={(event) =>
                         onUpdate(setting, { channel, enabled: event.target.checked })
@@ -578,9 +574,7 @@ export function NotificationPreferences() {
               >
                 <Switch
                   checked={available && draft.channels[channel]}
-                  disabled={
-                    !online || !available || profileMutation.isPending || managed?.managed
-                  }
+                  disabled={!online || !available || profileMutation.isPending || managed?.managed}
                   onChange={(event) =>
                     saveProfile({
                       ...draft,

@@ -48,13 +48,22 @@ function buildHeaders(body: unknown, extra?: Record<string, string>): Record<str
     'X-Tenant-ID': getTenantId(),
     ...extra,
   };
-  if (body !== undefined && !isFormData(body)) headers['Content-Type'] = 'application/json';
+  if (body !== undefined && !isFormData(body) && !isBlob(body)) {
+    headers['Content-Type'] = 'application/json';
+  }
+  if (isBlob(body) && !headers['Content-Type']) {
+    headers['Content-Type'] = body.type || 'application/octet-stream';
+  }
   headers['Accept-Language'] = resolveRequestLocale();
   return headers;
 }
 
 function isFormData(value: unknown): value is FormData {
   return typeof FormData !== 'undefined' && value instanceof FormData;
+}
+
+function isBlob(value: unknown): value is Blob {
+  return typeof Blob !== 'undefined' && value instanceof Blob;
 }
 
 function isMutation(method: string): boolean {
@@ -133,7 +142,12 @@ async function request<T>(
       method,
       headers,
       credentials: 'include',
-      body: body === undefined ? undefined : isFormData(body) ? body : JSON.stringify(body),
+      body:
+        body === undefined
+          ? undefined
+          : isFormData(body) || isBlob(body)
+            ? body
+            : JSON.stringify(body),
       signal: controller?.signal,
       keepalive: config.keepalive,
     });

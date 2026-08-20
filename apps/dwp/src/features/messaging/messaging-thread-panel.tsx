@@ -16,6 +16,7 @@ import { MessagingComposer } from './messaging-composer';
 import { MessagingMessageRow } from './messaging-components';
 
 import type { MessagingThread } from './messaging-model';
+import type { MessagingAttachmentQueue } from './use-messaging-attachment-queue';
 
 export function MessagingThreadPanel({
   open,
@@ -28,6 +29,7 @@ export function MessagingThreadPanel({
   onRetry,
   isSending,
   hasError,
+  attachmentQueue,
   onClose,
   onReact,
   onSave,
@@ -46,6 +48,7 @@ export function MessagingThreadPanel({
   onRetry: () => void;
   isSending: boolean;
   hasError: boolean;
+  attachmentQueue: MessagingAttachmentQueue;
   onClose: () => void;
   onReact: (messageId: string, emoji: string, remove: boolean) => void;
   onSave: (message: MessagingThread['root']) => void;
@@ -73,10 +76,14 @@ export function MessagingThreadPanel({
       aria-label={t('thread.title')}
       sx={{
         width: desktop ? 1 : { xs: '100vw', sm: 440 },
+        maxWidth: '100vw',
         height: 1,
         minHeight: 0,
+        minWidth: 0,
         display: 'grid',
         gridTemplateRows: 'auto minmax(0, 1fr) auto',
+        boxSizing: 'border-box',
+        overflowX: 'hidden',
         bgcolor: 'background.paper',
       }}
     >
@@ -100,7 +107,10 @@ export function MessagingThreadPanel({
         </ActionIconButton>
       </Stack>
 
-      <Box ref={scrollRef} sx={{ minHeight: 0, overflowY: 'auto', px: 1.5, py: 1 }}>
+      <Box
+        ref={scrollRef}
+        sx={{ minWidth: 0, minHeight: 0, overflowX: 'hidden', overflowY: 'auto', px: 1.5, py: 1 }}
+      >
         <Typography variant="overline" color="text.secondary">
           {t('thread.originalMessage')}
         </Typography>
@@ -161,6 +171,9 @@ export function MessagingThreadPanel({
       <Box
         sx={{
           p: 1.5,
+          minWidth: 0,
+          boxSizing: 'border-box',
+          overflow: 'hidden',
           borderTop: 1,
           borderColor: 'divider',
           bgcolor: 'background.default',
@@ -177,6 +190,11 @@ export function MessagingThreadPanel({
           hasError={hasError}
           placeholder={t('thread.composerPlaceholder')}
           ariaLabel={t('thread.composerLabel')}
+          attachments={attachmentQueue.items}
+          attachmentBusy={attachmentQueue.busy}
+          onAttachFiles={attachmentQueue.addFiles}
+          onRetryAttachment={attachmentQueue.retry}
+          onRemoveAttachment={attachmentQueue.remove}
         />
       </Box>
     </Box>
@@ -191,7 +209,7 @@ export function MessagingThreadPanel({
       onClose={onClose}
       transitionDuration={reducedMotion ? 0 : undefined}
       ModalProps={{ keepMounted: true }}
-      slotProps={{ paper: { sx: { maxWidth: 1 } } }}
+      slotProps={{ paper: { sx: { width: 1, maxWidth: 1, overflowX: 'hidden' } } }}
     >
       {content}
     </Drawer>

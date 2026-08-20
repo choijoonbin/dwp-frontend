@@ -126,7 +126,9 @@ test('알림 센터는 사용자 작업과 관리 경계를 분리하고 반응�
   await page.goto('/notifications');
 
   await expect(page.getByRole('heading', { name: '알림 센터', level: 1 })).toBeVisible();
-  await expect(page.getByRole('button', { name: /클라우드 운영 예산 승인이 필요합니다/ })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /클라우드 운영 예산 승인이 필요합니다/ })
+  ).toBeVisible();
   await expect(page.getByText('운영 개요', { exact: true })).toHaveCount(0);
   await expect(page.getByText('알림 계약', { exact: true })).toHaveCount(0);
   await expect(page.getByText('전달 운영', { exact: true })).toHaveCount(0);
@@ -136,7 +138,9 @@ test('알림 센터는 사용자 작업과 관리 경계를 분리하고 반응�
     await page.getByRole('button', { name: /클라우드 운영 예산 승인이 필요합니다/ }).click();
     await expect(page.getByRole('heading', { name: '알림 상세', level: 2 })).toBeVisible();
     await page.getByRole('button', { name: '뒤로' }).click();
-    await expect(page.getByRole('textbox', { name: '제목, 소스 또는 안전한 미리보기 검색' })).toBeVisible();
+    await expect(
+      page.getByRole('textbox', { name: '제목, 소스 또는 안전한 미리보기 검색' })
+    ).toBeVisible();
   } else {
     await expect(page.getByRole('heading', { name: '알림 상세', level: 2 })).toBeVisible();
   }

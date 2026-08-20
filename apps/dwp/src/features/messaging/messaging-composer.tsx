@@ -1,6 +1,6 @@
 import { useId, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RotateCcw, Send } from 'lucide-react';
+import { Paperclip, RotateCcw, Send } from 'lucide-react';
 import { ActionButton, FormField } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
@@ -9,7 +9,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { MessagingAttachmentDrafts } from './messaging-attachment-drafts';
 import { shouldSendMessagingMessage } from './messaging-model';
+import { MESSAGING_ATTACHMENT_ACCEPT } from './use-messaging-attachment-queue';
+
+import type { MessagingAttachmentDraft } from './use-messaging-attachment-queue';
 
 export function MessagingComposer({
   value,
@@ -22,6 +26,11 @@ export function MessagingComposer({
   compact = false,
   placeholder,
   ariaLabel,
+  attachments,
+  attachmentBusy,
+  onAttachFiles,
+  onRetryAttachment,
+  onRemoveAttachment,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -33,18 +42,31 @@ export function MessagingComposer({
   compact?: boolean;
   placeholder?: string;
   ariaLabel?: string;
+  attachments: MessagingAttachmentDraft[];
+  attachmentBusy: boolean;
+  onAttachFiles: (files: File[]) => void;
+  onRetryAttachment: (localId: string) => void;
+  onRemoveAttachment: (localId: string) => void;
 }) {
   const { t } = useTranslation('messaging');
   const statusId = useId();
   const composingRef = useRef(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const drafting = Boolean(value.trim());
+  const attachmentFailed = attachments.some(
+    (attachment) => attachment.state === 'ERROR' || attachment.state === 'REJECTED'
+  );
   const status = hasError
     ? t('conversation.composerStatus.error')
-    : isSending
-      ? t('conversation.composerStatus.sending')
-      : drafting
-        ? t('conversation.composerStatus.drafting')
-        : t('conversation.composerHint');
+    : attachmentBusy
+      ? t('conversation.attachments.uploading')
+      : attachmentFailed
+        ? t('conversation.attachments.reviewFailed')
+        : isSending
+          ? t('conversation.composerStatus.sending')
+          : drafting
+            ? t('conversation.composerStatus.drafting')
+            : t('conversation.composerHint');
 
   return (
     <Stack spacing={1} sx={{ minWidth: 0 }}>
@@ -103,6 +125,19 @@ export function MessagingComposer({
         }}
         sx={{ maxWidth: '100%' }}
       />
+      <MessagingAttachmentDrafts
+        items={attachments}
+        labels={{
+          uploading: t('conversation.attachments.uploading'),
+          ready: t('conversation.attachments.ready'),
+          rejected: t('conversation.attachments.rejected'),
+          error: t('conversation.attachments.error'),
+          retry: t('conversation.attachments.retry'),
+          remove: t('conversation.attachments.remove'),
+        }}
+        onRetry={onRetryAttachment}
+        onRemove={onRemoveAttachment}
+      />
       <Stack
         direction="row"
         spacing={1.25}
@@ -110,38 +145,62 @@ export function MessagingComposer({
         alignItems="center"
         sx={{ minWidth: 0 }}
       >
-        <Stack
-          id={statusId}
-          direction="row"
-          spacing={0.7}
-          alignItems="center"
-          aria-live="polite"
-          sx={{ minWidth: 0 }}
-        >
-          <Box
-            aria-hidden="true"
-            sx={{
-              width: 6,
-              height: 6,
-              flexShrink: 0,
-              borderRadius: '50%',
-              bgcolor: hasError
-                ? 'error.main'
-                : isSending
-                  ? 'warning.main'
-                  : drafting
-                    ? 'success.main'
-                    : 'text.disabled',
+        <Stack direction="row" spacing={0.75} alignItems="center" sx={{ minWidth: 0 }}>
+          <input
+            ref={fileInputRef}
+            type="file"
+            hidden
+            multiple
+            accept={MESSAGING_ATTACHMENT_ACCEPT}
+            onChange={(event) => {
+              onAttachFiles(Array.from(event.target.files ?? []));
+              event.target.value = '';
             }}
           />
-          <Typography variant="caption" color="text.secondary" noWrap>
-            {status}
-          </Typography>
+          <ActionButton
+            intent="quiet"
+            size="small"
+            startIcon={<Paperclip size={15} />}
+            disabled={isSending || attachments.length >= 10}
+            onClick={() => fileInputRef.current?.click()}
+            sx={{ minWidth: 0, flexShrink: 0 }}
+          >
+            {t('conversation.attachments.add')}
+          </ActionButton>
+          <Stack
+            id={statusId}
+            direction="row"
+            spacing={0.7}
+            alignItems="center"
+            aria-live="polite"
+            sx={{ minWidth: 0 }}
+          >
+            <Box
+              aria-hidden="true"
+              sx={{
+                width: 6,
+                height: 6,
+                flexShrink: 0,
+                borderRadius: '50%',
+                bgcolor:
+                  hasError || attachmentFailed
+                    ? 'error.main'
+                    : isSending || attachmentBusy
+                      ? 'warning.main'
+                      : drafting
+                        ? 'success.main'
+                        : 'text.disabled',
+              }}
+            />
+            <Typography variant="caption" color="text.secondary" noWrap>
+              {status}
+            </Typography>
+          </Stack>
         </Stack>
         <ActionButton
           intent="primary"
           endIcon={isSending ? <CircularProgress size={15} /> : <Send size={16} />}
-          disabled={!drafting || isSending}
+          disabled={!drafting || isSending || attachmentBusy}
           onClick={onSend}
           sx={{ minWidth: compact ? 92 : 108, flexShrink: 0, whiteSpace: 'nowrap' }}
         >

@@ -1,8 +1,8 @@
-# DWP Frontend Starter
+# DWP Frontend
 
-새 DWP 프로젝트를 시작하기 위한 React 애플리케이션 셸입니다. 안전한 로그인,
-Global Shell, DWP Work Hub Reference와 Tenant Admin Control Plane을 포함하며 기존
-업무 시스템의 메뉴와 기능 모듈은 포함하지 않습니다.
+DWP 제품의 React 애플리케이션 Workspace입니다. 안전한 로그인, 개인 Home, Global Shell,
+Tenant·Provider 관리 영역과 People, Approval, Space, Calendar, Workplace, Messaging,
+Notification 등 현재 제품 기준선의 기능 모듈을 포함합니다.
 
 ## Structure
 
@@ -14,7 +14,7 @@ libs/shared-utils        인증·Platform API, 세션, 권한과 HTTP 기반
 docs                     제품·설계·아키텍처·기능·Delivery 계약
 e2e                      앱 Journey·접근성·시각 회귀 테스트
 e2e-storybook            공통 Component 상호작용·접근성·시각 회귀 테스트
-scripts                  Dependency License 검증 자동화
+scripts                  아키텍처·다국어·소스 크기·번들·라이선스·출시 Gate 자동화
 ```
 
 ## Requirements

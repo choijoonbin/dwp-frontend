@@ -10,4 +10,5 @@ export type MessagingSendMutationInput = {
   body: string;
   replyToMessageId?: string;
   idempotencyKey: string;
+  attachmentIds: string[];
 };

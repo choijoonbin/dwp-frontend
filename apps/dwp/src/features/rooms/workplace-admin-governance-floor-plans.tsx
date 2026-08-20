@@ -1,6 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArchiveRestore, CheckCheck, FilePlus2, FileStack, Pencil, Send, X } from 'lucide-react';
+import {
+  ArchiveRestore,
+  CheckCheck,
+  FilePlus2,
+  FileStack,
+  ImageUp,
+  Pencil,
+  Send,
+  Upload,
+  X,
+} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createWorkplaceGovernanceFloorPlanRevision,
@@ -15,6 +25,7 @@ import {
   restoreWorkplaceGovernanceFloorPlanRevision,
   submitWorkplaceGovernanceFloorPlanReview,
   updateWorkplaceGovernanceFloorPlanRevision,
+  uploadWorkplaceGovernanceFloorPlanBackground,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -82,20 +93,19 @@ export function WorkplaceAdminGovernanceFloorPlans({
   const [basedOnRevisionId, setBasedOnRevisionId] = useState('');
   const [changeSummary, setChangeSummary] = useState('');
   const [editingRevisionId, setEditingRevisionId] = useState('');
-  const [draftDirty, setDraftDirty] = useState(false);
+  const [layoutDirty, setLayoutDirty] = useState(false);
+  const [backgroundFile, setBackgroundFile] = useState<File | null>(null);
+  const [backgroundSummary, setBackgroundSummary] = useState('');
+  const backgroundInputRef = useRef<HTMLInputElement>(null);
   const [pendingDraftExit, setPendingDraftExit] = useState<DraftExitIntent | null>(null);
   const [transition, setTransition] = useState<{
     revision: WorkplaceGovernanceFloorPlanRevision;
     action: TransitionAction;
   } | null>(null);
   const [reason, setReason] = useState('');
-  const handleDraftDirty = useCallback(
-    (dirty: boolean) => {
-      setDraftDirty(dirty);
-      onDirtyChange?.(dirty);
-    },
-    [onDirtyChange]
-  );
+  const draftDirty = layoutDirty || Boolean(backgroundFile);
+  const handleDraftDirty = useCallback((dirty: boolean) => setLayoutDirty(dirty), []);
+  useEffect(() => onDirtyChange?.(draftDirty), [draftDirty, onDirtyChange]);
   const sitesQuery = useQuery({
     queryKey: ['workplace', 'admin', 'sites'],
     queryFn: getWorkplaceAdminSites,
@@ -119,6 +129,12 @@ export function WorkplaceAdminGovernanceFloorPlans({
     else if (!floors.some((floor) => floor.floorId === floorId)) setFloorId(floors[0].floorId);
   }, [floorId, floors]);
   useEffect(() => setEditingRevisionId(''), [floorId]);
+  useEffect(() => {
+    setLayoutDirty(false);
+    setBackgroundFile(null);
+    setBackgroundSummary('');
+    if (backgroundInputRef.current) backgroundInputRef.current.value = '';
+  }, [editingRevisionId]);
   const revisionsQuery = useQuery({
     queryKey: ['workplace', 'governance', 'floor-plan-revisions', floorId],
     queryFn: () => getWorkplaceGovernanceFloorPlanRevisions(floorId),
@@ -159,6 +175,14 @@ export function WorkplaceAdminGovernanceFloorPlans({
   const restorable = revisions.filter(
     (revision) => revision.state === 'PUBLISHED' || revision.state === 'ARCHIVED'
   );
+  const snapshot = snapshotQuery.data;
+  const backgroundFileError = backgroundFile
+    ? !['image/png', 'image/jpeg'].includes(backgroundFile.type)
+      ? t('workplace.admin.governance.floorPlans.backgroundInvalidType')
+      : backgroundFile.size > 10 * 1024 * 1024
+        ? t('workplace.admin.governance.floorPlans.backgroundTooLarge')
+        : null
+    : null;
 
   const createMutation = useMutation({
     mutationFn: () => {
@@ -216,6 +240,40 @@ export function WorkplaceAdminGovernanceFloorPlans({
     },
     onError: () => toast.error(t('workplace.admin.governance.common.saveError')),
   });
+  const backgroundMutation = useMutation({
+    mutationFn: () => {
+      if (
+        !canManage ||
+        !snapshot ||
+        snapshot.revision.state !== 'DRAFT' ||
+        !backgroundFile ||
+        backgroundFileError ||
+        !backgroundSummary.trim() ||
+        layoutDirty
+      ) {
+        throw new Error('Invalid floor-plan background upload');
+      }
+      return uploadWorkplaceGovernanceFloorPlanBackground(
+        snapshot.revision.revisionId,
+        snapshot.revision.version,
+        backgroundSummary.trim(),
+        backgroundFile
+      );
+    },
+    onSuccess: async () => {
+      setBackgroundFile(null);
+      setBackgroundSummary('');
+      if (backgroundInputRef.current) backgroundInputRef.current.value = '';
+      await Promise.all([
+        snapshotQuery.refetch(),
+        queryClient.invalidateQueries({
+          queryKey: ['workplace', 'governance', 'floor-plan-revisions', floorId],
+        }),
+      ]);
+      toast.success(t('workplace.admin.governance.floorPlans.backgroundUploaded'));
+    },
+    onError: () => toast.error(t('workplace.admin.governance.floorPlans.backgroundUploadError')),
+  });
 
   if (sitesQuery.isLoading) return <GovernanceLoading rows={6} />;
   if (sitesQuery.isError) return <GovernanceQueryError retry={() => void sitesQuery.refetch()} />;
@@ -225,7 +283,6 @@ export function WorkplaceAdminGovernanceFloorPlans({
       ? formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }, locale)
       : t('workplace.admin.governance.common.notAvailable');
 
-  const snapshot = snapshotQuery.data;
   const selectedFloor = floors.find((floor) => floor.floorId === floorId) ?? null;
   const placementByResource = new Map(
     (snapshot?.placements ?? []).map((placement) => [placement.resourceId, placement])
@@ -284,7 +341,9 @@ export function WorkplaceAdminGovernanceFloorPlans({
     });
   };
   const applyDraftExit = (intent: DraftExitIntent) => {
-    handleDraftDirty(false);
+    setLayoutDirty(false);
+    setBackgroundFile(null);
+    setBackgroundSummary('');
     if (intent.type === 'CLOSE') {
       setEditingRevisionId('');
       return;
@@ -531,6 +590,93 @@ export function WorkplaceAdminGovernanceFloorPlans({
             />
           ) : draftFloor && snapshot ? (
             <Box sx={{ p: 1.5 }}>
+              <Stack
+                spacing={1.25}
+                sx={{ mb: 1.5, pb: 1.5, borderBottom: 1, borderColor: 'divider' }}
+              >
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  alignItems={{ sm: 'center' }}
+                  justifyContent="space-between"
+                  gap={1}
+                >
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight={800}>
+                      {t('workplace.admin.governance.floorPlans.backgroundTitle')}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {snapshot.revision.backgroundAssetPath
+                        ? t('workplace.admin.governance.floorPlans.backgroundCurrent')
+                        : t('workplace.admin.governance.floorPlans.backgroundEmpty')}
+                    </Typography>
+                  </Box>
+                  <input
+                    ref={backgroundInputRef}
+                    hidden
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    aria-label={t('workplace.admin.governance.floorPlans.backgroundInput')}
+                    disabled={!canManage || layoutDirty || backgroundMutation.isPending}
+                    onChange={(event) => {
+                      const selected = event.target.files?.[0] ?? null;
+                      setBackgroundFile(selected);
+                      if (selected && !backgroundSummary.trim()) {
+                        setBackgroundSummary(
+                          t('workplace.admin.governance.floorPlans.backgroundDefaultSummary')
+                        );
+                      }
+                    }}
+                  />
+                  <Stack direction="row" gap={0.75} flexWrap="wrap">
+                    <ActionButton
+                      intent="secondary"
+                      startIcon={<ImageUp size={16} />}
+                      disabled={!canManage || layoutDirty || backgroundMutation.isPending}
+                      onClick={() => backgroundInputRef.current?.click()}
+                    >
+                      {t('workplace.admin.governance.floorPlans.chooseBackground')}
+                    </ActionButton>
+                    {backgroundFile ? (
+                      <ActionButton
+                        intent="primary"
+                        startIcon={<Upload size={16} />}
+                        disabled={
+                          Boolean(backgroundFileError) ||
+                          !backgroundSummary.trim() ||
+                          layoutDirty ||
+                          backgroundMutation.isPending
+                        }
+                        onClick={() => backgroundMutation.mutate()}
+                      >
+                        {t('workplace.admin.governance.floorPlans.uploadBackground')}
+                      </ActionButton>
+                    ) : null}
+                  </Stack>
+                </Stack>
+                {layoutDirty ? (
+                  <Alert severity="warning">
+                    {t('workplace.admin.governance.floorPlans.saveLayoutBeforeBackground')}
+                  </Alert>
+                ) : null}
+                {backgroundFile ? (
+                  <Stack spacing={1}>
+                    <Typography variant="caption" color="text.secondary">
+                      {backgroundFile.name} ·{' '}
+                      {t('workplace.admin.governance.floorPlans.backgroundFileSize', {
+                        size: (backgroundFile.size / 1024 / 1024).toFixed(2),
+                      })}
+                    </Typography>
+                    <FormField
+                      required
+                      label={t('workplace.admin.governance.floorPlans.backgroundChangeSummary')}
+                      value={backgroundSummary}
+                      inputProps={{ maxLength: 500 }}
+                      errorMessage={backgroundFileError ?? undefined}
+                      onChange={(event) => setBackgroundSummary(event.target.value)}
+                    />
+                  </Stack>
+                ) : null}
+              </Stack>
               {!zonesQuery.data?.length ? (
                 <Alert severity="warning" sx={{ mb: 1 }}>
                   {t('workplace.admin.governance.floorPlans.zoneRequired')}

@@ -7,23 +7,13 @@ const BASE = '/api/platform/v1/admin/workplace/governance';
 export type WorkplaceGovernanceCampusState = 'ACTIVE' | 'MAINTENANCE' | 'CLOSED';
 export type WorkplaceGovernanceSpatialState = 'ACTIVE' | 'MAINTENANCE' | 'CLOSED';
 export type WorkplaceGovernanceZoneType =
-  | 'GENERAL'
-  | 'WORK_AREA'
-  | 'COLLABORATION'
-  | 'QUIET'
-  | 'SERVICE'
-  | 'RESTRICTED';
+  'GENERAL' | 'WORK_AREA' | 'COLLABORATION' | 'QUIET' | 'SERVICE' | 'RESTRICTED';
 export type WorkplaceGovernanceRuleState = 'ACTIVE' | 'INACTIVE';
 export type WorkplaceGovernanceAccessSubjectType = 'USER' | 'GROUP_REF';
 export type WorkplaceGovernanceAccessPermission = 'VIEW' | 'BOOK' | 'MANAGE';
 export type WorkplaceGovernanceAccessEffect = 'ALLOW' | 'DENY';
 export type WorkplaceGovernancePolicyScopeType =
-  | 'TENANT'
-  | 'CAMPUS'
-  | 'SITE'
-  | 'FLOOR'
-  | 'ZONE'
-  | 'RESOURCE';
+  'TENANT' | 'CAMPUS' | 'SITE' | 'FLOOR' | 'ZONE' | 'RESOURCE';
 export type WorkplaceGovernanceRevisionState = 'DRAFT' | 'REVIEW' | 'PUBLISHED' | 'ARCHIVED';
 export type WorkplaceGovernanceDelegateType = 'USER' | 'GROUP_REF';
 export type WorkplaceGovernanceDelegatedScopeType = 'SITE' | 'GROUP_REF';
@@ -466,6 +456,22 @@ export async function updateWorkplaceGovernanceFloorPlanRevision(
     ApiResponse<WorkplaceGovernanceFloorPlanRevision>,
     WorkplaceGovernanceFloorPlanSnapshotInput
   >(`${BASE}/floor-plan-revisions/${id(revisionId)}`, input);
+  return response.data.data;
+}
+
+export async function uploadWorkplaceGovernanceFloorPlanBackground(
+  revisionId: string,
+  version: number,
+  changeSummary: string,
+  file: File
+) {
+  const form = new FormData();
+  form.set('file', file);
+  const query = new URLSearchParams({ version: String(version), changeSummary });
+  const response = await axiosInstance.post<
+    ApiResponse<WorkplaceGovernanceFloorPlanRevision>,
+    FormData
+  >(`${BASE}/floor-plan-revisions/${id(revisionId)}/background?${query.toString()}`, form);
   return response.data.data;
 }
 

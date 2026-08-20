@@ -120,6 +120,17 @@
       "sending": "Sending your message.",
       "error": "Not sent. Your message has been kept."
     },
+    "attachments": {
+      "add": "Attach file",
+      "uploading": "Security scan in progress",
+      "ready": "Ready to attach",
+      "rejected": "Blocked by security policy",
+      "error": "Upload failed",
+      "reviewFailed": "Review the failed or blocked attachment.",
+      "retry": "Retry upload",
+      "remove": "Remove attachment",
+      "limit": "You can attach up to {{count}} files to one message."
+    },
     "connection": {
       "idle": "Waiting",
       "connecting": "Connecting",
@@ -204,6 +215,10 @@
     "deleteDeleting": "Deleting",
     "deleteSuccess": "Message deleted.",
     "deleteError": "Message could not be deleted. Refresh and try again.",
+    "attachments": {
+      "download": "Download {{filename}}",
+      "downloadError": "The attachment could not be downloaded securely. Try again."
+    },
     "reactions": {
       "like": "Like",
       "done": "Done",

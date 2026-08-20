@@ -218,6 +218,8 @@ function booking(overrides: Record<string, unknown> = {}) {
 async function mockWorkplace(page: Page) {
   let draftPlacements = [{ ...placement }];
   let draftVersion = draftRevision.version;
+  let draftBackgroundAssetPath: string | null = null;
+  let draftBackgroundAssetKey: string | null = null;
   await page.route('**/api/platform/v1/workplace/**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
@@ -309,8 +311,36 @@ async function mockWorkplace(page: Page) {
       )
     ) {
       return fulfillSuccess(route, {
-        revision: { ...draftRevision, version: draftVersion },
+        revision: {
+          ...draftRevision,
+          version: draftVersion,
+          backgroundAssetPath: draftBackgroundAssetPath,
+          backgroundAssetKey: draftBackgroundAssetKey,
+          backgroundContentType: draftBackgroundAssetKey ? 'image/png' : null,
+          backgroundSizeBytes: draftBackgroundAssetKey ? 68 : null,
+          backgroundSha256: draftBackgroundAssetKey ? 'a'.repeat(64) : null,
+        },
         placements: draftPlacements,
+      });
+    }
+    if (
+      path.endsWith(
+        `/admin/workplace/governance/floor-plan-revisions/${draftRevision.revisionId}/background`
+      ) &&
+      request.method() === 'POST'
+    ) {
+      draftVersion += 1;
+      draftBackgroundAssetPath =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+      draftBackgroundAssetKey = `900018/workplace/floor-plan-revisions/${draftRevision.revisionId}/plan.png`;
+      return fulfillSuccess(route, {
+        ...draftRevision,
+        version: draftVersion,
+        backgroundAssetPath: draftBackgroundAssetPath,
+        backgroundAssetKey: draftBackgroundAssetKey,
+        backgroundContentType: 'image/png',
+        backgroundSizeBytes: 68,
+        backgroundSha256: 'a'.repeat(64),
       });
     }
     if (
@@ -509,6 +539,19 @@ test('workplace governance remains complete on mobile and resumes persisted floo
   ).toBeVisible();
   await expect(page.getByTestId('workplace-layout-editor')).toBeVisible();
 
+  await page.getByLabel('Floor-plan background image file').setInputFiles({
+    name: 'floor-plan.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+      'base64'
+    ),
+  });
+  await page.getByRole('button', { name: 'Upload to draft' }).click();
+  await expect(
+    page.getByText('The verified background image was attached to the floor-plan draft.')
+  ).toBeVisible();
+
   await page.getByRole('button', { name: 'Add to layout' }).click();
   const placedResource = page.getByTestId(`layout-resource-${resource.resourceId}`);
   const bounds = await placedResource.boundingBox();
@@ -521,8 +564,10 @@ test('workplace governance remains complete on mobile and resumes persisted floo
     });
     await page.mouse.up();
   }
+  await placedResource.click({ force: true });
   const horizontalPosition = page.getByLabel('Horizontal position (%)');
-  await expect(horizontalPosition).not.toHaveValue(String(resource.positionX));
+  await horizontalPosition.fill('36');
+  await expect(horizontalPosition).toHaveValue('36');
   const persistedHorizontalPosition = await horizontalPosition.inputValue();
   await expect(page.getByText('2 unsaved')).toBeVisible();
 

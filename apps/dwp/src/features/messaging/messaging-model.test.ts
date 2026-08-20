@@ -24,6 +24,7 @@ function message(messageId: string, replyToMessageId: string | null = null): Mes
     createdAt: '2026-08-19T00:00:00Z',
     version: 1,
     reactions: [],
+    attachments: [],
   };
 }
 

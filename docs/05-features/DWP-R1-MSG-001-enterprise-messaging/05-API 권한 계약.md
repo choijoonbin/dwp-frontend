@@ -12,29 +12,33 @@
 
 ## 2. 구성원 REST API
 
-| Method            | Path                                    | 목적                                          |
-| ----------------- | --------------------------------------- | --------------------------------------------- |
-| `GET`             | `/home`                                 | 주의 필요, 이어서 보기, Space 대화 Projection |
-| `GET`             | `/activity`                             | Mention, Reply, Reaction, Action Event        |
-| `GET`             | `/conversations`                        | 접근 가능한 대화 Cursor 목록                  |
-| `POST`            | `/conversations`                        | Group·Channel 생성                            |
-| `POST`            | `/direct-conversations`                 | Person ID 기반 1:1 조회 또는 생성             |
-| `GET`             | `/conversations/{id}`                   | Header, 정책, Membership 요약                 |
-| `PATCH`           | `/conversations/{id}`                   | Owner가 이름·주제·정책 변경                   |
-| `GET`             | `/conversations/{id}/messages`          | `beforeSequence`, `afterSequence` History     |
-| `POST`            | `/conversations/{id}/messages`          | Durable Message 전송                          |
-| `PATCH`           | `/messages/{messageId}`                 | 내 메시지 수정, `If-Match` 필수               |
-| `DELETE`          | `/messages/{messageId}`                 | 정책 기반 사용자 삭제                         |
-| `PUT`             | `/messages/{messageId}/reactions/{key}` | Reaction 추가                                 |
-| `DELETE`          | `/messages/{messageId}/reactions/{key}` | Reaction 제거                                 |
-| `PUT`             | `/conversations/{id}/read-cursor`       | 마지막 읽은 Sequence 전진                     |
-| `GET/PUT`         | `/conversations/{id}/draft`             | 개인 Draft 동기화                             |
-| `POST`            | `/scheduled-messages`                   | 예약 발송                                     |
-| `GET/POST/DELETE` | `/saved-items`                          | Later와 Reminder                              |
-| `GET`             | `/search`                               | ACL 적용 메시지·파일·대화 검색                |
-| `POST`            | `/attachments/upload-intents`           | Quarantine Upload Intent                      |
-| `POST`            | `/attachments/{id}/complete`            | Upload 완료·Scan 요청                         |
-| `POST`            | `/realtime-tickets`                     | 일회용 WebSocket Ticket                       |
+| Method            | Path                                                             | 목적                                          |
+| ----------------- | ---------------------------------------------------------------- | --------------------------------------------- |
+| `GET`             | `/home`                                                          | 주의 필요, 이어서 보기, Space 대화 Projection |
+| `GET`             | `/activity`                                                      | Mention, Reply, Reaction, Action Event        |
+| `GET`             | `/conversations`                                                 | 접근 가능한 대화 Cursor 목록                  |
+| `POST`            | `/conversations`                                                 | Group·Channel 생성                            |
+| `POST`            | `/direct-conversations`                                          | Person ID 기반 1:1 조회 또는 생성             |
+| `GET`             | `/conversations/{id}`                                            | Header, 정책, Membership 요약                 |
+| `PATCH`           | `/conversations/{id}`                                            | Owner가 이름·주제·정책 변경                   |
+| `GET`             | `/conversations/{id}/messages`                                   | `beforeSequence`, `afterSequence` History     |
+| `POST`            | `/conversations/{id}/messages`                                   | Durable Message 전송                          |
+| `PATCH`           | `/messages/{messageId}`                                          | 내 메시지 수정, `If-Match` 필수               |
+| `DELETE`          | `/messages/{messageId}`                                          | 정책 기반 사용자 삭제                         |
+| `PUT`             | `/messages/{messageId}/reactions/{key}`                          | Reaction 추가                                 |
+| `DELETE`          | `/messages/{messageId}/reactions/{key}`                          | Reaction 제거                                 |
+| `PUT`             | `/conversations/{id}/read-cursor`                                | 마지막 읽은 Sequence 전진                     |
+| `GET/PUT`         | `/conversations/{id}/draft`                                      | 개인 Draft 동기화                             |
+| `POST`            | `/scheduled-messages`                                            | 예약 발송                                     |
+| `GET/POST/DELETE` | `/saved-items`                                                   | Later와 Reminder                              |
+| `GET`             | `/search`                                                        | ACL 적용 메시지·파일·대화 검색                |
+| `POST`            | `/conversations/{id}/attachments/uploads`                        | 격리 업로드 세션과 10분 단일 사용 Token 발급  |
+| `PUT`             | `/conversations/{id}/attachments/{attachmentId}/content`         | Binary 업로드와 동기 검사 실행                |
+| `GET`             | `/conversations/{id}/attachments/{attachmentId}`                 | 검사 상태와 안전한 Metadata 조회              |
+| `DELETE`          | `/conversations/{id}/attachments/{attachmentId}`                 | 전송하지 않은 내 첨부 폐기                    |
+| `POST`            | `/conversations/{id}/attachments/{attachmentId}/download-grants` | 1분 단일 사용 Download Grant 발급             |
+| `GET`             | `/conversations/{id}/attachments/{attachmentId}/content`         | Grant 소비 후 무결성 검증 다운로드            |
+| `POST`            | `/realtime-tickets`                                              | 일회용 WebSocket Ticket                       |
 
 `POST /direct-conversations`는 `personPublicId`만 받고 기존 1:1 Fingerprint가 있으면 같은 대화를
 반환한다. 상대가 없거나 정책상 보이지 않는 경우를 구분해 공격자가 Directory 존재 여부를
@@ -202,3 +206,20 @@ Bot은 사용자 Token을 가장하지 않는 독립 Principal이다. App 설치
 - `If-Match`와 Version으로 Lost Update 차단
 - Forward·Quote·Action Capsule은 대상 대화의 원문 접근 권한을 다시 확인
 - Log, Trace, Metric Label에 Message Body와 Search Query 원문을 넣지 않음
+
+### 첨부파일 전송 계약
+
+- 업로드 생성은 현재 대화 구성원만 가능하며 서버가 Tenant 정책과 배포 환경의 절대 전송 한도 중
+  더 작은 값을 적용한다.
+- 업로드 Token은 10분 동안 한 번만 사용할 수 있다. Token 소비를 DB에서 원자적으로 선점한 뒤
+  Object를 쓰므로 재시도·경합 요청이 먼저 저장된 Object를 덮어쓰거나 삭제하지 못한다.
+- Browser는 `application/octet-stream`과 정확한 `Content-Length`를 전송한다. 길이가 없거나 선언
+  크기와 다르거나 절대 한도를 넘으면 본문을 Controller에 적재하기 전에 거부한다.
+- 파일은 허용 확장자·MIME·Magic Byte·실행 파일·OOXML Archive 구조를 검사한다. 운영 환경은
+  ClamAV 또는 승인된 AV/DLP Adapter를 사용하며 검사 실패는 허용으로 전환하지 않는다.
+- `CLEAN`이면서 메시지에 연결된 첨부만 대화 구성원에게 보인다. 다운로드는 사용자·대화·파일에
+  결합된 1분 단일 사용 Grant를 소비하고 SHA-256을 다시 확인한다.
+- 작성 중 제거하거나 대화 이동으로 버린 첨부는 작성자만 폐기할 수 있다. 만료 Job이 전송되지
+  않은 Object와 오래된 Grant를 재정리한다.
+- 한 메시지에는 중복되지 않은 첨부를 최대 10개까지 연결한다. 파일명은 NFKC 정규화하고 경로
+  문자와 제어 문자를 거부하며 Object Key에 원문 파일명을 넣지 않는다.

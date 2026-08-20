@@ -120,6 +120,17 @@
       "sending": "메시지를 전송하고 있습니다.",
       "error": "전송되지 않았습니다. 내용을 유지했습니다."
     },
+    "attachments": {
+      "add": "파일 첨부",
+      "uploading": "보안 검사 중",
+      "ready": "첨부 준비됨",
+      "rejected": "보안 정책에 의해 차단됨",
+      "error": "업로드 실패",
+      "reviewFailed": "실패하거나 차단된 파일을 확인해 주세요.",
+      "retry": "다시 업로드",
+      "remove": "첨부 제거",
+      "limit": "메시지 하나에 파일을 최대 {{count}}개까지 첨부할 수 있습니다."
+    },
     "connection": {
       "idle": "연결 대기",
       "connecting": "연결 중",
@@ -204,6 +215,10 @@
     "deleteDeleting": "삭제 중",
     "deleteSuccess": "메시지를 삭제했습니다.",
     "deleteError": "메시지를 삭제하지 못했습니다. 다시 불러온 뒤 시도해 주세요.",
+    "attachments": {
+      "download": "{{filename}} 다운로드",
+      "downloadError": "첨부파일을 안전하게 다운로드하지 못했습니다. 다시 시도해 주세요."
+    },
     "reactions": {
       "like": "좋아요",
       "done": "확인",

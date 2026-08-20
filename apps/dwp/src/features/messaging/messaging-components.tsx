@@ -26,6 +26,8 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
+import { MessagingAttachmentList } from './messaging-attachment-list';
+
 import type {
   MessagingConversation,
   MessagingClassification,
@@ -430,6 +432,12 @@ export function MessagingMessageRow({
           <Typography variant="body2" lineHeight={1.68}>
             {message.deletedAt ? t('message.deleted') : message.body}
           </Typography>
+          {!message.deletedAt && (message.attachments?.length ?? 0) > 0 ? (
+            <MessagingAttachmentList
+              conversationId={message.conversationId}
+              attachments={message.attachments}
+            />
+          ) : null}
         </Box>
         <Stack
           direction="row"
