@@ -360,6 +360,21 @@
         "FAIL": "Failed",
         "CONFIGURATION_REQUIRED": "Configuration required"
       },
+      "history": {
+        "title": "Evaluation run history",
+        "description": "Compare runs from the same evaluation set to detect quality regressions.",
+        "export": "Export results",
+        "emptyTitle": "There is no run history yet",
+        "emptyDescription": "Run an active evaluation set to build comparable quality evidence here.",
+        "noModel": "Model not configured",
+        "delta": "{{value}} pp from the previous run",
+        "regressions": "{{improved}} improved · {{regressed}} regressed",
+        "trends": {
+          "IMPROVED": "Improved",
+          "REGRESSED": "Regressed",
+          "STABLE": "Stable"
+        }
+      },
       "setDialogTitle": "Create evaluation set",
       "caseDialogTitle": "Add evaluation case",
       "columns": {

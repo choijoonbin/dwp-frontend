@@ -170,6 +170,9 @@ export type DwaionEvaluationRun = {
   createdAt: string;
   completedAt?: string | null;
 };
+export type DwaionEvaluationRunSummary = Omit<DwaionEvaluationRun, 'results'> & {
+  passRate?: number | null;
+};
 
 export type DwaionGovernanceAuditEvent = {
   eventId: string;
@@ -334,6 +337,37 @@ export async function runDwaionEvaluation(evaluationSetId: string): Promise<Dwai
     Record<string, never>
   >(`/api/agent/v1/admin/evaluations/${encodeURIComponent(evaluationSetId)}/runs`, {});
   return response.data.data;
+}
+
+export async function listDwaionEvaluationRuns(
+  evaluationSetId: string,
+  limit = 20
+): Promise<DwaionEvaluationRunSummary[]> {
+  const response = await axiosInstance.get<ApiResponse<DwaionEvaluationRunSummary[]>>(
+    `/api/agent/v1/admin/evaluations/${encodeURIComponent(evaluationSetId)}/runs?limit=${Math.max(1, Math.min(limit, 50))}`
+  );
+  return response.data.data;
+}
+
+export async function getDwaionEvaluationRun(
+  evaluationSetId: string,
+  evaluationRunId: string
+): Promise<DwaionEvaluationRun> {
+  const response = await axiosInstance.get<ApiResponse<DwaionEvaluationRun>>(
+    `/api/agent/v1/admin/evaluations/${encodeURIComponent(evaluationSetId)}/runs/${encodeURIComponent(evaluationRunId)}`
+  );
+  return response.data.data;
+}
+
+export async function exportDwaionEvaluationRun(
+  evaluationSetId: string,
+  evaluationRunId: string
+): Promise<Blob> {
+  const response = await axiosInstance.get<Blob>(
+    `/api/agent/v1/admin/evaluations/${encodeURIComponent(evaluationSetId)}/runs/${encodeURIComponent(evaluationRunId)}/export`,
+    { responseType: 'blob' }
+  );
+  return response.data;
 }
 
 export async function listDwaionGovernanceAudit(options?: {

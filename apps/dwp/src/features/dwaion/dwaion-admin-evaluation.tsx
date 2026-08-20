@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle2, FlaskConical, Play, Plus, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, Play, Plus, ShieldCheck } from 'lucide-react';
 import {
   ActionButton,
   EnterpriseDataGrid,
@@ -13,11 +13,13 @@ import {
 import {
   addDwaionEvaluationCase,
   createDwaionEvaluationSet,
+  exportDwaionEvaluationRun,
+  getDwaionEvaluationRun,
   getDwaionEvaluationSet,
+  listDwaionEvaluationRuns,
   listDwaionEvaluationSets,
   runDwaionEvaluation,
   transitionDwaionEvaluationSet,
-  type DwaionEvaluationRun,
   type DwaionEvaluationSetSummary,
   type DwaionSourceKey,
   usePermissions,
@@ -35,6 +37,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { DwaionAdminPageHeader } from './dwaion-admin-ui';
+import { DwaionEvaluationHistory } from './dwaion-evaluation-history';
 
 import type { GridColDef } from '@mui/x-data-grid';
 
@@ -75,10 +78,11 @@ export function DwaionAdminEvaluation() {
     hasPermission('ADMIN.DWAION_EVALUATION', 'MANAGE');
   const canManage = hasPermission('ADMIN.DWAION_EVALUATION', 'MANAGE');
   const canExecute = hasPermission('ADMIN.DWAION_EVALUATION', 'EXECUTE') || canManage;
+  const canExport = hasPermission('ADMIN.DWAION_EVALUATION', 'EXPORT') || canManage;
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [setDraft, setSetDraft] = useState<SetDraft | null>(null);
   const [caseDraft, setCaseDraft] = useState<CaseDraft | null>(null);
-  const [run, setRun] = useState<DwaionEvaluationRun | null>(null);
+  const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
   const [reason, setReason] = useState('');
   const sets = useQuery({
     queryKey: ['dwaion', 'admin', 'evaluations'],
@@ -94,10 +98,42 @@ export function DwaionAdminEvaluation() {
     enabled: Boolean(selectedId),
     staleTime: 10_000,
   });
+  const runs = useQuery({
+    queryKey: ['dwaion', 'admin', 'evaluation-runs', selectedId],
+    queryFn: () => listDwaionEvaluationRuns(selectedId!),
+    enabled: Boolean(selectedId),
+    staleTime: 10_000,
+  });
+  useEffect(() => {
+    setSelectedRunId(null);
+  }, [selectedId]);
+  useEffect(() => {
+    if (!selectedRunId && runs.data?.length) {
+      setSelectedRunId(runs.data[0].evaluationRunId);
+    }
+  }, [runs.data, selectedRunId]);
+  const selectedRun = useQuery({
+    queryKey: ['dwaion', 'admin', 'evaluation-run', selectedId, selectedRunId],
+    queryFn: () => getDwaionEvaluationRun(selectedId!, selectedRunId!),
+    enabled: Boolean(selectedId && selectedRunId),
+    staleTime: 30_000,
+  });
+  const baselineRunId = useMemo(() => {
+    const index = runs.data?.findIndex((item) => item.evaluationRunId === selectedRunId) ?? -1;
+    return index >= 0 ? (runs.data?.[index + 1]?.evaluationRunId ?? null) : null;
+  }, [runs.data, selectedRunId]);
+  const baselineRun = useQuery({
+    queryKey: ['dwaion', 'admin', 'evaluation-run', selectedId, baselineRunId],
+    queryFn: () => getDwaionEvaluationRun(selectedId!, baselineRunId!),
+    enabled: Boolean(selectedId && baselineRunId),
+    staleTime: 30_000,
+  });
   const refresh = async (id?: string) => {
     await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'evaluations'] });
     if (id)
       await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'evaluation', id] });
+    if (id)
+      await queryClient.invalidateQueries({ queryKey: ['dwaion', 'admin', 'evaluation-runs', id] });
   };
   const createMutation = useMutation({
     mutationFn: (draft: SetDraft) =>
@@ -143,8 +179,26 @@ export function DwaionAdminEvaluation() {
   const runMutation = useMutation({
     mutationFn: () => runDwaionEvaluation(selectedId!),
     onSuccess: async (result) => {
-      setRun(result);
+      setSelectedRunId(result.evaluationRunId);
+      queryClient.setQueryData(
+        ['dwaion', 'admin', 'evaluation-run', selectedId, result.evaluationRunId],
+        result
+      );
       await refresh(selectedId!);
+    },
+  });
+  const exportMutation = useMutation({
+    mutationFn: () => exportDwaionEvaluationRun(selectedId!, selectedRunId!),
+    onSuccess: (blob) => {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `dwaion-evaluation-${selectedRunId}.csv`;
+      anchor.style.display = 'none';
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
     },
   });
 
@@ -198,7 +252,11 @@ export function DwaionAdminEvaluation() {
     createMutation.isError ||
     caseMutation.isError ||
     lifecycleMutation.isError ||
-    runMutation.isError;
+    runMutation.isError ||
+    runs.isError ||
+    selectedRun.isError ||
+    baselineRun.isError ||
+    exportMutation.isError;
 
   return (
     <PageCanvas>
@@ -230,12 +288,15 @@ export function DwaionAdminEvaluation() {
         sx={{
           mt: 3,
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', xl: 'minmax(440px, .85fr) minmax(520px, 1.15fr)' },
+          gridTemplateColumns: {
+            xs: 'minmax(0, 1fr)',
+            xl: 'minmax(440px, .85fr) minmax(520px, 1.15fr)',
+          },
           gap: 3,
           alignItems: 'start',
         }}
       >
-        <Box sx={{ borderBlock: 1, borderColor: 'divider' }}>
+        <Box sx={{ minWidth: 0, borderBlock: 1, borderColor: 'divider' }}>
           <EnterpriseDataGrid
             ariaLabel={t('dwaionAdmin.evaluation.tableLabel')}
             rows={sets.data ?? []}
@@ -245,12 +306,15 @@ export function DwaionAdminEvaluation() {
             hideFooter
             onRowClick={({ row }) => {
               setSelectedId(row.evaluationSetId);
-              setRun(null);
             }}
             sx={{ border: 0, borderRadius: 0, '& .MuiDataGrid-row': { cursor: 'pointer' } }}
           />
         </Box>
-        <Box component="section" aria-label={t('dwaionAdmin.evaluation.detailLabel')}>
+        <Box
+          component="section"
+          aria-label={t('dwaionAdmin.evaluation.detailLabel')}
+          sx={{ minWidth: 0 }}
+        >
           {!selectedId ? (
             <GuidedEmptyState
               kind="empty"
@@ -292,6 +356,7 @@ export function DwaionAdminEvaluation() {
                         size="small"
                         startIcon={<Play size={15} />}
                         loading={runMutation.isPending}
+                        disabled={runs.data?.some((item) => item.runState === 'RUNNING')}
                         onClick={() => runMutation.mutate()}
                       >
                         {t('dwaionAdmin.evaluation.run')}
@@ -371,7 +436,17 @@ export function DwaionAdminEvaluation() {
                   />
                 )}
               </Box>
-              {run && <EvaluationRunResult run={run} />}
+              <DwaionEvaluationHistory
+                runs={runs.data ?? []}
+                selectedRunId={selectedRunId}
+                run={selectedRun.data}
+                baseline={baselineRun.data}
+                loading={runs.isLoading}
+                canExport={canExport}
+                exporting={exportMutation.isPending}
+                onSelect={setSelectedRunId}
+                onExport={() => exportMutation.mutate()}
+              />
             </Stack>
           ) : null}
         </Box>
@@ -480,68 +555,5 @@ export function DwaionAdminEvaluation() {
         )}
       </FormDialog>
     </PageCanvas>
-  );
-}
-
-function EvaluationRunResult({ run }: { run: DwaionEvaluationRun }) {
-  const { t } = useTranslation('work');
-  return (
-    <Box component="section">
-      <Stack direction="row" spacing={1} alignItems="center">
-        <FlaskConical size={18} color="var(--dwp-product-accent)" />
-        <Typography component="h3" variant="subtitle1" fontWeight={850}>
-          {t('dwaionAdmin.evaluation.runResult')}
-        </Typography>
-        <Chip size="small" variant="outlined" label={run.runState} />
-      </Stack>
-      <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
-        <Chip
-          color="success"
-          variant="outlined"
-          label={t('dwaionAdmin.evaluation.passed', { count: run.passedCount })}
-        />
-        <Chip
-          color="error"
-          variant="outlined"
-          label={t('dwaionAdmin.evaluation.failed', { count: run.failedCount })}
-        />
-        <Chip
-          color="warning"
-          variant="outlined"
-          label={t('dwaionAdmin.evaluation.configuration', {
-            count: run.configurationRequiredCount,
-          })}
-        />
-      </Stack>
-      <Box sx={{ mt: 1.5, borderBlock: 1, borderColor: 'divider' }}>
-        {run.results.map((result, index) => (
-          <Box key={result.evaluationCaseId}>
-            {index > 0 && <Divider />}
-            <Stack direction="row" justifyContent="space-between" gap={2} sx={{ py: 1.2 }}>
-              <Box>
-                <Typography variant="body2" fontWeight={750}>
-                  {result.caseName}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {result.statusCode} ·{' '}
-                  {t('dwaionAdmin.evaluation.latency', { count: result.latencyMs })}
-                </Typography>
-              </Box>
-              <Chip
-                size="small"
-                color={
-                  result.outcome === 'PASS'
-                    ? 'success'
-                    : result.outcome === 'FAIL'
-                      ? 'error'
-                      : 'warning'
-                }
-                label={t(`dwaionAdmin.evaluation.outcomes.${result.outcome}`)}
-              />
-            </Stack>
-          </Box>
-        ))}
-      </Box>
-    </Box>
   );
 }

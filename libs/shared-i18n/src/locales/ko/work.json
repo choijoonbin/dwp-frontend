@@ -360,6 +360,21 @@
         "FAIL": "실패",
         "CONFIGURATION_REQUIRED": "구성 필요"
       },
+      "history": {
+        "title": "평가 실행 이력",
+        "description": "동일한 평가 세트의 실행 결과를 비교해 품질 회귀를 확인합니다.",
+        "export": "결과 내보내기",
+        "emptyTitle": "아직 실행 이력이 없습니다",
+        "emptyDescription": "활성 평가 세트를 실행하면 비교 가능한 품질 증적이 여기에 쌓입니다.",
+        "noModel": "모델 구성 없음",
+        "delta": "직전 실행 대비 {{value}}%p",
+        "regressions": "개선 {{improved}} · 회귀 {{regressed}}",
+        "trends": {
+          "IMPROVED": "개선",
+          "REGRESSED": "회귀",
+          "STABLE": "유지"
+        }
+      },
       "setDialogTitle": "평가 세트 생성",
       "caseDialogTitle": "평가 사례 추가",
       "columns": {

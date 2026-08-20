@@ -36,6 +36,8 @@
 | [Microsoft Copilot Studio security and governance](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/sec-gov-intro) | 환경·데이터·커넥터·감사를 독립된 관리 책임으로 분리                | 운영 메뉴와 권한을 단일 관리자 토글이 아닌 업무별 리소스로 분리 |
 | [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework)                                                                  | AI 위험을 Govern·Map·Measure·Manage 수명주기로 지속 관리           | 정책, 평가, 운영 관측과 감사 증적을 제품 Control Plane에 포함   |
 | [OWASP Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/)                                                 | 도구 권한·기능·자율성을 최소화하고 고영향 동작은 사람 승인을 요구  | 읽기 전용 Preview와 담당 앱의 명시적 최종 실행을 분리           |
+| [Microsoft Copilot Studio evaluation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-agent-evaluation-intro)    | 반복 가능한 평가 세트, 실행 이력과 결과 비교로 변경 회귀를 확인    | 암호화 평가 세트, 실행 이력, 직전 실행 대비 사례별 회귀를 제공  |
+| [Microsoft evaluation results](https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-agent-evaluation-results)         | 실행별 통과율과 세부 결과를 검토하고 품질 변화를 추적              | 통과율 증감과 개선·회귀 사례를 같은 운영 화면에서 검토          |
 
 ## UX 계약
 
@@ -79,6 +81,8 @@
 - `features/dwaion/dwaion-admin-{agents,sources,actions,safety,evaluation,audit}.tsx`:
   에이전트 게시, 데이터 원천, 도구 권한, 안전 정책, 반복 평가, append-only 감사의 분리된
   운영 화면
+- `features/dwaion/dwaion-evaluation-{history,comparison}.tsx|ts`: 평가 실행 이력,
+  직전 실행 대비 통과율·사례별 회귀, 메트릭 전용 증적 내보내기
 - `features/dwaion/dwaion-navigation.ts`: 권한 메타데이터를 포함한 제품 Manifest와 내비게이션 원장
 - `features/dwaion/dwaion-contract.ts`: 내부 에이전트 키와 전체 화면 라우트 계약
 - `features/dwaion/dwaion-workspace*.tsx`: 대화 이력, 시작 모드, 질문 실행, 답변, 출처와 검증 패널
@@ -127,6 +131,13 @@ Provider 지원 세션은 명시적인 Support Scope가 있는 메뉴와 라우�
   역할을 사용한다.
 - 운영 현황은 실행 수, 정책 판정, 답변 상태, 지연, Token, 피드백과 보존 정책의 Tenant
   집계만 제공한다. 질문, 답변, 대화 제목과 사용자 식별 정보는 조회하거나 복호화하지 않는다.
+- 평가 실행은 같은 Tenant·평가 세트에서 한 번만 허용한다. 실행 임대가 만료된 중단 작업은
+  실패로 회수하고 임대를 잃은 이전 실행 결과는 거부한다. 원문 질문·답변을 복제하지 않는
+  결과 메트릭만 이력과 CSV 증적에 남긴다.
+- 평가 이력·상세 조회의 `VIEW`와 증적 내보내기의 `EXPORT`를 분리한다. 스프레드시트에서
+  수식으로 해석될 수 있는 내보내기 셀은 무력화한다.
+- OpenTelemetry GenAI 규격은 전용 저장소로 이전 중이고 Schema URL이 확정되지 않았으므로,
+  현재는 안정된 `X-Correlation-ID` 계약을 유지하고 안정 버전 공개 후 명시적으로 버전을 고정한다.
 
 ## 구현 검증
 
@@ -135,6 +146,8 @@ Provider 지원 세션은 명시적인 Support Scope가 있는 메뉴와 라우�
 - 2026-08-20: `joonbin@sk.com` 위임 운영 메뉴 노출, `hyunwoo.park@sk.com` 메뉴 비노출 및
   운영 URL `/403` 차단 확인
 - 2026-08-20: 390px 모바일에서 가로 overflow와 버튼·링크 텍스트 잘림 없음 확인
+- 2026-08-20: 평가 실행 이력·상세·직전 실행 회귀 비교, `VIEW`와 `EXPORT` 분리,
+  동시 실행 차단과 메트릭 전용 CSV 수식 주입 방어 검증
 
 ## 운영 연동 Gate
 
