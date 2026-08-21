@@ -3,6 +3,22 @@ import { readRegionalPreference } from '@dwp-frontend/shared-utils';
 
 type DateValue = Date | number | string;
 
+const ISO_WEEKDAY: Record<string, number> = {
+  Mon: 1,
+  Tue: 2,
+  Wed: 3,
+  Thu: 4,
+  Fri: 5,
+  Sat: 6,
+  Sun: 7,
+};
+
+export type ZonedClock = {
+  day: number;
+  hour: number;
+  minute: number;
+};
+
 function asDate(value: DateValue): Date {
   return value instanceof Date ? value : new Date(value);
 }
@@ -85,4 +101,25 @@ export function formatList(
   locale = getCurrentLanguage()
 ): string {
   return new Intl.ListFormat(locale, options).format(values);
+}
+
+export function resolveZonedClock(value: DateValue, timeZone: string): ZonedClock | null {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      weekday: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    }).formatToParts(asDate(value));
+    const valueOf = (type: Intl.DateTimeFormatPartTypes) =>
+      parts.find((part) => part.type === type)?.value;
+    const day = ISO_WEEKDAY[valueOf('weekday') ?? ''];
+    const hour = Number(valueOf('hour'));
+    const minute = Number(valueOf('minute'));
+    if (!day || !Number.isInteger(hour) || !Number.isInteger(minute)) return null;
+    return { day, hour, minute };
+  } catch {
+    return null;
+  }
 }

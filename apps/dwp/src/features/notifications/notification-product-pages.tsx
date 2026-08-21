@@ -1,7 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { PageCanvas, ResourcePageHeader } from '@dwp-frontend/design-system';
-
-import Box from '@mui/material/Box';
 
 import { ProductAdminSurface } from '../../components/product-admin-surface';
 import {
@@ -10,29 +7,27 @@ import {
   NotificationTypeCatalogPage,
 } from './notification-admin';
 import { NotificationPreferences } from './notification-preferences';
+import { NotificationPolicyStudio } from './notification-policy-studio';
+import { NotificationTemplateStudio } from './notification-template-studio';
+import { NotificationSuppressionStudio } from './notification-suppression-studio';
 
 export function NotificationSettingsPage() {
-  const { t } = useTranslation('notifications');
-  return (
-    <PageCanvas>
-      <ResourcePageHeader
-        eyebrow={t('settings.eyebrow')}
-        title={t('settings.title')}
-        description={t('settings.description')}
-      />
-      <Box sx={{ mt: 3 }}>
-        <NotificationPreferences />
-      </Box>
-    </PageCanvas>
-  );
+  return <NotificationPreferences />;
 }
 
-function NotificationAdminSurface({ view }: { view: 'overview' | 'contracts' | 'operations' }) {
+function NotificationAdminSurface({
+  view,
+}: {
+  view: 'overview' | 'contracts' | 'policies' | 'templates' | 'operations' | 'suppressions';
+}) {
   const { t } = useTranslation('notifications');
   const content = {
     overview: <NotificationAdminOverviewPage />,
     contracts: <NotificationTypeCatalogPage />,
+    policies: <NotificationPolicyStudio />,
+    templates: <NotificationTemplateStudio />,
     operations: <NotificationDeliveryOperationsPage />,
+    suppressions: <NotificationSuppressionStudio />,
   }[view];
   return (
     <ProductAdminSurface
@@ -53,6 +48,18 @@ export function NotificationAdminContracts() {
   return <NotificationAdminSurface view="contracts" />;
 }
 
+export function NotificationAdminPolicies() {
+  return <NotificationAdminSurface view="policies" />;
+}
+
+export function NotificationAdminTemplates() {
+  return <NotificationAdminSurface view="templates" />;
+}
+
 export function NotificationAdminOperations() {
   return <NotificationAdminSurface view="operations" />;
+}
+
+export function NotificationAdminSuppressions() {
+  return <NotificationAdminSurface view="suppressions" />;
 }

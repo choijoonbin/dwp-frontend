@@ -18,10 +18,13 @@ type LiveChannelMessage = {
   signal: NotificationLiveSignal;
 };
 
-export function notificationLiveChannelName(tenantId: string): string {
-  const normalized = tenantId.trim();
-  if (!normalized) throw new Error('A tenant ID is required for notification live updates.');
-  return `${LIVE_CHANNEL_PREFIX}:${normalized}`;
+export function notificationLiveChannelName(tenantId: string, userId: string | number): string {
+  const normalizedTenantId = tenantId.trim();
+  const normalizedUserId = String(userId).trim();
+  if (!normalizedTenantId || !normalizedUserId) {
+    throw new Error('Tenant and user IDs are required for notification live updates.');
+  }
+  return `${LIVE_CHANNEL_PREFIX}:${normalizedTenantId}:${normalizedUserId}`;
 }
 
 export function parseNotificationLiveChannelMessage(value: unknown): NotificationLiveSignal | null {
@@ -36,14 +39,14 @@ export function parseNotificationLiveChannelMessage(value: unknown): Notificatio
  * version hints and relays content-free signals to the other open tabs.
  */
 export function NotificationLiveBridge() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated || typeof ReadableStream === 'undefined') return undefined;
+    if (!isAuthenticated || !user || typeof ReadableStream === 'undefined') return undefined;
 
     const controller = new AbortController();
     const tenantId = getTenantId();
-    const channelName = notificationLiveChannelName(tenantId);
+    const channelName = notificationLiveChannelName(tenantId, user.userId);
     const channel =
       typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel(channelName);
     const lockName = `${channelName}:leader`;
@@ -107,7 +110,7 @@ export function NotificationLiveBridge() {
       controller.abort();
       channel?.close();
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
   return null;
 }

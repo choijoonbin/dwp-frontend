@@ -33,6 +33,11 @@ describe('buildDwpTheme', () => {
       '&.MuiButton-containedPrimary'?: {
         color?: string;
         backgroundColor?: string;
+        '&.Mui-disabled'?: {
+          color?: string;
+          backgroundColor?: string;
+          boxShadow?: string;
+        };
         '&:hover'?: { backgroundColor?: string };
       };
     };
@@ -40,6 +45,11 @@ describe('buildDwpTheme', () => {
 
     expect(containedPrimary?.color).toBe('#FFFFFF');
     expect(containedPrimary?.backgroundColor).toBe(foundationTokens.color.product.primary);
+    expect(containedPrimary?.['&.Mui-disabled']).toEqual({
+      color: foundationTokens.color.neutral[400],
+      backgroundColor: foundationTokens.color.neutral[100],
+      boxShadow: 'none',
+    });
     expect(containedPrimary?.['&:hover']?.backgroundColor).toBe(
       foundationTokens.color.product.primary
     );

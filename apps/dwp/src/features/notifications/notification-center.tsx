@@ -22,6 +22,7 @@ import {
   applyNotificationTriage,
   createNotificationIdempotencyKey,
   getNotificationDetail,
+  getNotificationDeliveryProfile,
   getNotificationInbox,
   getNotificationSummary,
   isNotificationCursorResetError,
@@ -58,6 +59,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { notificationQueryKeys } from './integration-contract';
+import { notificationArrivalContent } from '../../components/notification-arrival-policy';
 import {
   defaultSnoozeTime,
   flattenNotificationPages,
@@ -136,6 +138,7 @@ function NotificationDetailPane({
 }) {
   const { t } = useTranslation('notifications');
   const [snoozeAnchor, setSnoozeAnchor] = useState<HTMLElement | null>(null);
+  const [sensitiveRevealed, setSensitiveRevealed] = useState(false);
   const detailQuery = useQuery({
     queryKey: notificationQueryKeys.detail(item.notificationId),
     queryFn: ({ signal }) => getNotificationDetail(item.notificationId, signal),
@@ -144,6 +147,10 @@ function NotificationDetailPane({
   });
   const detail = detailQuery.data;
   const primary = (detail?.item ?? item).actions.find((action) => action.primary);
+
+  useEffect(() => {
+    setSensitiveRevealed(false);
+  }, [item.notificationId]);
 
   return (
     <Box component="aside" aria-label={t('detail.regionLabel')} sx={{ minWidth: 0 }}>
@@ -257,85 +264,117 @@ function NotificationDetailPane({
               <Chip size="small" variant="outlined" label={t('detail.protected')} />
             )}
           </Stack>
-          <Typography component="h3" variant="h5" sx={{ mt: 2, overflowWrap: 'anywhere' }}>
-            {detail.item.title}
-          </Typography>
-          {detail.item.preview && (
-            <Typography color="text.secondary" sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
-              {detail.item.preview}
-            </Typography>
-          )}
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1.5 }}>
-            {formatDate(detail.absoluteOccurredAt, { dateStyle: 'long', timeStyle: 'short' })}
-          </Typography>
-
-          {detail.targetState !== 'AVAILABLE' && (
-            <Alert severity="warning" sx={{ mt: 2 }}>
-              {detail.targetStateReason ?? t(`detail.targetState.${detail.targetState}`)}
-            </Alert>
-          )}
-
-          <Box component="section" sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}>
-            <Typography component="h4" variant="subtitle2">
-              {t('detail.whyTitle')}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {t(`reasonExplanation.${detail.item.reason.kind}`, {
-                defaultValue: detail.reasonExplanation,
-              })}
-            </Typography>
-          </Box>
-
-          {detail.timeline.length > 0 && (
-            <Box component="section" sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}>
-              <Typography component="h4" variant="subtitle2">
-                {t('detail.timelineTitle')}
-              </Typography>
-              <Stack component="ol" gap={0} sx={{ p: 0, m: 0, mt: 1, listStyle: 'none' }}>
-                {detail.timeline.map((entry) => (
-                  <Box
-                    component="li"
-                    key={entry.entryId}
-                    sx={{ py: 1.25, borderBottom: 1, borderColor: 'divider' }}
-                  >
-                    <Stack direction="row" justifyContent="space-between" gap={1}>
-                      <Typography variant="body2" fontWeight={700}>
-                        {entry.title === 'Notification received'
-                          ? t('detail.notificationReceived')
-                          : entry.title}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" whiteSpace="nowrap">
-                        {formatDate(entry.occurredAt, {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </Typography>
-                    </Stack>
-                    {entry.detail && (
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                        {entry.detail}
-                      </Typography>
-                    )}
-                  </Box>
-                ))}
+          {detail.item.sensitive && !sensitiveRevealed ? (
+            <Alert severity="info" sx={{ mt: 2 }}>
+              <Stack gap={1.25} alignItems="flex-start">
+                <Typography variant="body2" fontWeight={700}>
+                  {t('arrival.protectedContent')}
+                </Typography>
+                <ActionButton
+                  intent="secondary"
+                  size="small"
+                  onClick={() => setSensitiveRevealed(true)}
+                >
+                  {t('home.open')}
+                </ActionButton>
               </Stack>
-            </Box>
-          )}
+            </Alert>
+          ) : (
+            <>
+              <Typography component="h3" variant="h5" sx={{ mt: 2, overflowWrap: 'anywhere' }}>
+                {detail.item.title}
+              </Typography>
+              {detail.item.preview && (
+                <Typography color="text.secondary" sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
+                  {detail.item.preview}
+                </Typography>
+              )}
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: 'block', mt: 1.5 }}
+              >
+                {formatDate(detail.absoluteOccurredAt, {
+                  dateStyle: 'long',
+                  timeStyle: 'short',
+                })}
+              </Typography>
 
-          {primary?.href && detail.targetState === 'AVAILABLE' && (
-            <ActionButton
-              intent="primary"
-              sx={{ mt: 3 }}
-              onClick={() =>
-                onOpenTarget
-                  ? onOpenTarget(primary.href as string)
-                  : window.location.assign(primary.href as string)
-              }
-            >
-              {primary.label}
-            </ActionButton>
+              {detail.targetState !== 'AVAILABLE' && (
+                <Alert severity="warning" sx={{ mt: 2 }}>
+                  {detail.targetStateReason ?? t(`detail.targetState.${detail.targetState}`)}
+                </Alert>
+              )}
+
+              <Box
+                component="section"
+                sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}
+              >
+                <Typography component="h4" variant="subtitle2">
+                  {t('detail.whyTitle')}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  {t(`reasonExplanation.${detail.item.reason.kind}`, {
+                    defaultValue: detail.reasonExplanation,
+                  })}
+                </Typography>
+              </Box>
+
+              {detail.timeline.length > 0 && (
+                <Box
+                  component="section"
+                  sx={{ mt: 3, pt: 2.5, borderTop: 1, borderColor: 'divider' }}
+                >
+                  <Typography component="h4" variant="subtitle2">
+                    {t('detail.timelineTitle')}
+                  </Typography>
+                  <Stack component="ol" gap={0} sx={{ p: 0, m: 0, mt: 1, listStyle: 'none' }}>
+                    {detail.timeline.map((entry) => (
+                      <Box
+                        component="li"
+                        key={entry.entryId}
+                        sx={{ py: 1.25, borderBottom: 1, borderColor: 'divider' }}
+                      >
+                        <Stack direction="row" justifyContent="space-between" gap={1}>
+                          <Typography variant="body2" fontWeight={700}>
+                            {entry.title === 'Notification received'
+                              ? t('detail.notificationReceived')
+                              : entry.title}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" whiteSpace="nowrap">
+                            {formatDate(entry.occurredAt, {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </Typography>
+                        </Stack>
+                        {entry.detail && (
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                            {entry.detail}
+                          </Typography>
+                        )}
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
+              )}
+
+              {primary?.href && detail.targetState === 'AVAILABLE' && (
+                <ActionButton
+                  intent="primary"
+                  sx={{ mt: 3 }}
+                  onClick={() =>
+                    onOpenTarget
+                      ? onOpenTarget(primary.href as string)
+                      : window.location.assign(primary.href as string)
+                  }
+                >
+                  {primary.label}
+                </ActionButton>
+              )}
+            </>
           )}
         </Box>
       )}
@@ -402,6 +441,12 @@ export function NotificationCenter({
     queryFn: ({ signal }) => getNotificationSummary(signal),
     staleTime: 15_000,
     refetchInterval: online ? 30_000 : false,
+    retry: 1,
+  });
+  const profileQuery = useQuery({
+    queryKey: notificationQueryKeys.preferences(),
+    queryFn: ({ signal }) => getNotificationDeliveryProfile(signal),
+    staleTime: 30_000,
     retry: 1,
   });
 
@@ -857,44 +902,54 @@ export function NotificationCenter({
                     onKeyDown={handleListKeyDown}
                     sx={{ p: 0, m: 0, listStyle: 'none' }}
                   >
-                    {items.map((item, index) => (
-                      <Box
-                        component="li"
-                        key={item.notificationId}
-                        sx={{ display: 'grid', gridTemplateColumns: '40px minmax(0, 1fr)' }}
-                      >
-                        <Box sx={{ display: 'grid', placeItems: 'start center', pt: 1.5 }}>
-                          <Checkbox
-                            size="small"
-                            checked={selectedIds.has(item.notificationId)}
-                            onChange={(event) => {
-                              setSelectedIds((current) => {
-                                const next = new Set(current);
-                                if (event.target.checked) next.add(item.notificationId);
-                                else next.delete(item.notificationId);
-                                return next;
-                              });
+                    {items.map((item, index) => {
+                      const content = notificationArrivalContent(
+                        item,
+                        profileQuery.data,
+                        t('arrival.protectedContent')
+                      );
+                      const concealContext =
+                        item.sensitive || profileQuery.data?.presentation.previewMode === 'HIDDEN';
+                      return (
+                        <Box
+                          component="li"
+                          key={item.notificationId}
+                          sx={{ display: 'grid', gridTemplateColumns: '40px minmax(0, 1fr)' }}
+                        >
+                          <Box sx={{ display: 'grid', placeItems: 'start center', pt: 1.5 }}>
+                            <Checkbox
+                              size="small"
+                              checked={selectedIds.has(item.notificationId)}
+                              onChange={(event) => {
+                                setSelectedIds((current) => {
+                                  const next = new Set(current);
+                                  if (event.target.checked) next.add(item.notificationId);
+                                  else next.delete(item.notificationId);
+                                  return next;
+                                });
+                              }}
+                              inputProps={{
+                                'aria-label': t('bulk.selectItem', { title: content.title }),
+                              }}
+                            />
+                          </Box>
+                          <NotificationItemRow
+                            item={{ ...item, title: content.title, preview: content.preview }}
+                            concealContext={concealContext}
+                            selected={item.notificationId === selectedId}
+                            tabIndex={
+                              item.notificationId === selectedId || (!selectedId && index === 0)
+                                ? 0
+                                : -1
+                            }
+                            rowRef={(element) => {
+                              rowRefs.current[index] = element;
                             }}
-                            inputProps={{
-                              'aria-label': t('bulk.selectItem', { title: item.title }),
-                            }}
+                            onSelect={() => selectItem(item)}
                           />
                         </Box>
-                        <NotificationItemRow
-                          item={item}
-                          selected={item.notificationId === selectedId}
-                          tabIndex={
-                            item.notificationId === selectedId || (!selectedId && index === 0)
-                              ? 0
-                              : -1
-                          }
-                          rowRef={(element) => {
-                            rowRefs.current[index] = element;
-                          }}
-                          onSelect={() => selectItem(item)}
-                        />
-                      </Box>
-                    ))}
+                      );
+                    })}
                   </Box>
                   {inboxQuery.hasNextPage && (
                     <Box sx={{ p: 1.5, display: 'grid', placeItems: 'center' }}>

@@ -147,6 +147,23 @@ export function buildDwpTheme({
             '&.MuiButton-containedPrimary': {
               color: contrastText(primary),
               backgroundColor: primary,
+              '&.Mui-disabled': {
+                color: highContrast
+                  ? dark
+                    ? '#D4D4D4'
+                    : '#333333'
+                  : dark
+                    ? tokens.color.neutral[300]
+                    : tokens.color.neutral[400],
+                backgroundColor: highContrast
+                  ? dark
+                    ? '#333333'
+                    : '#E5E5E5'
+                  : dark
+                    ? tokens.color.neutral[700]
+                    : tokens.color.neutral[100],
+                boxShadow: highContrast ? 'inset 0 0 0 1px currentColor' : 'none',
+              },
               '&:hover': {
                 backgroundColor: primary,
                 boxShadow: `0 0 0 3px ${alpha(primary, highContrast ? 0.34 : 0.18)}`,

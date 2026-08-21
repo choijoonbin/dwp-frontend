@@ -25,7 +25,10 @@
         "settings": { "label": "Notification settings" },
         "admin-overview": { "label": "Operations overview" },
         "admin-contracts": { "label": "Notification contracts" },
-        "admin-operations": { "label": "Delivery operations" }
+        "admin-policies": { "label": "Policy studio" },
+        "admin-templates": { "label": "Template studio" },
+        "admin-operations": { "label": "Delivery operations" },
+        "admin-suppressions": { "label": "Delivery controls" }
       }
     }
   },
@@ -75,6 +78,11 @@
     "snooze": "Remind me later",
     "snoozeHours": "Remind me in {{count}} hours",
     "unsave": "Remove from saved"
+  },
+  "arrival": {
+    "open": "Open related work",
+    "more": "{{count}} more new notifications",
+    "protectedContent": "Protected work notification"
   },
   "channels": {
     "IN_APP": "In-app",
@@ -136,6 +144,8 @@
     "loadingAppSettings": "Loading app notification settings",
     "loadingAdmin": "Loading notification operations",
     "loadingContracts": "Loading notification contracts",
+    "loadingPolicies": "Loading notification policies",
+    "loadingTemplates": "Loading notification templates",
     "loadingOperations": "Loading delivery operations",
     "resynchronizing": "Resynchronizing all notifications",
     "syncResetRequired": "The notification synchronization baseline must be reset",
@@ -155,6 +165,10 @@
     "adminErrorDescription": "Operational data is unavailable. Refresh or try again shortly.",
     "contractsErrorTitle": "Notification contracts could not be loaded",
     "contractsErrorDescription": "You can retry without losing the current filters.",
+    "policiesErrorTitle": "Notification policies could not be loaded",
+    "policiesErrorDescription": "No policy was changed. Check your access and connection, then try again.",
+    "templatesErrorTitle": "Notification templates could not be loaded",
+    "templatesErrorDescription": "No template was changed. Check access and connectivity, then try again.",
     "operationsErrorTitle": "Delivery operations could not be loaded",
     "operationsErrorDescription": "Provider and queue health is unavailable. Try again shortly."
   },
@@ -277,6 +291,25 @@
       "PROVIDER_POLICY": "Provider policy",
       "SYSTEM_DEFAULT": "System default"
     },
+    "mandatory": "Required",
+    "presentation": {
+      "title": "Arrival alerts and privacy",
+      "description": "Control interruption and content exposure separately from durable notification-center storage.",
+      "banner": "Arrival banner",
+      "bannerDescription": "Choose how selectively top-of-screen banners interrupt your current work.",
+      "preview": "Content preview",
+      "previewDescription": "Control the title and body content exposed on shared screens and during screen sharing.",
+      "bannerModes": {
+        "SMART": "Important notifications",
+        "HIGH_PRIORITY_ONLY": "High priority only",
+        "OFF": "Do not show banners"
+      },
+      "previewModes": {
+        "FULL": "Title and preview",
+        "TITLE_ONLY": "Title only",
+        "HIDDEN": "Hide content"
+      }
+    },
     "modes": {
       "IMMEDIATE": "Immediately",
       "DAILY_DIGEST": "Daily digest",
@@ -298,7 +331,7 @@
     },
     "quiet": {
       "title": "Focus hours",
-      "description": "Hold non-urgent external delivery during selected hours while keeping notifications safe in the center.",
+      "description": "Hold non-urgent arrival banners and external delivery while keeping notifications available in the center.",
       "enabled": "Use focus hours",
       "enabledDescription": "Required or approved urgent notifications may bypass this schedule under company policy.",
       "schedule": "Start and end time",
@@ -306,7 +339,11 @@
       "start": "Start",
       "end": "End",
       "days": "Active days",
-      "daysDescription": "Choose the days when focus hours apply."
+      "daysDescription": "Choose the days when focus hours apply.",
+      "urgentBypass": "Allow urgent arrivals",
+      "urgentBypassDescription": "Urgent notifications may show an arrival banner during focus hours. Required company notifications can still be delivered regardless of this setting.",
+      "managedBypass": "Focus-hours exception",
+      "managedBypassDescription": "Company policy requires this notification type to arrive immediately during focus hours."
     },
     "days": {
       "1": "Monday",
@@ -332,6 +369,7 @@
       "mode": "Digest schedule",
       "modeDescription": "App policies requiring immediate delivery may be excluded from digests.",
       "time": "Delivery time",
+      "day": "Delivery day",
       "modes": {
         "OFF": "Off",
         "DAILY": "Daily",
@@ -360,6 +398,8 @@
     "navigation": {
       "overview": "Overview",
       "contracts": "Contracts",
+      "policies": "Policy studio",
+      "templates": "Template studio",
       "operations": "Delivery operations"
     },
     "product": {
@@ -370,11 +410,23 @@
       },
       "contracts": {
         "title": "Notification contracts",
-        "description": "Manage source events, priority, channels, and schema lifecycle."
+        "description": "Review source events, priority, channels, and schema contracts registered by the Provider."
+      },
+      "policies": {
+        "title": "Notification policy studio",
+        "description": "Propose company delivery policy over Provider defaults, preview user impact and risk, then publish through independent approval."
+      },
+      "templates": {
+        "title": "Notification template studio",
+        "description": "Preserve Provider defaults while validating company wording and publishing through independent approval."
       },
       "operations": {
         "title": "Delivery operations",
         "description": "Observe delivery queues, provider health, retries, and failure isolation."
+      },
+      "suppressions": {
+        "title": "Delivery controls",
+        "description": "Operate time-bounded suppressions to contain incidents and prevent unintended delivery."
       }
     },
     "severity": {
@@ -432,11 +484,175 @@
       "ATTENTION": "Needs attention",
       "BROKEN": "Contract error"
     },
+    "policies": {
+      "governanceNotice": "Provider contracts are not edited here. Company policy is published only after a change proposal, impact preview, independent approval, and retained audit evidence.",
+      "reviewQueueTitle": "Pending approval",
+      "reviewQueueDescription": "A reviewer other than the author must verify risk and user impact before publication.",
+      "emptyTitle": "No applicable notification policies",
+      "emptyDescription": "Active notification contracts and default policies appear after the Provider registers them.",
+      "mandatory": "Mandatory",
+      "draft": "Draft",
+      "authoredByMe": "Authored by me",
+      "draftExists": "Awaiting approval",
+      "proposeChange": "Propose change",
+      "reviewAndPublish": "Review and publish",
+      "independentApprovalRequired": "Another approver required",
+      "source": {
+        "PROVIDER_POLICY": "Provider default",
+        "TENANT_POLICY": "Company policy"
+      },
+      "yes": "Yes",
+      "no": "No",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "bypass": "Bypass for urgent",
+      "respectQuietHours": "Respect quiet hours",
+      "userOverridable": "User can change",
+      "managedByTenant": "Managed by company",
+      "providerInheritance": "This value comes from the DWP Provider baseline. Publishing a company draft overrides only this scope.",
+      "channelsTitle": "Channel policy",
+      "channelsTable": "Notification policy channel rules",
+      "columns": {
+        "channel": "Channel",
+        "delivery": "Delivery",
+        "defaultMode": "Default mode",
+        "userControl": "User control",
+        "limit": "Per-window limit"
+      },
+      "mode": {
+        "IMMEDIATE": "Immediate",
+        "DIGEST": "Digest",
+        "MUTED": "Muted"
+      },
+      "digest": {
+        "IMMEDIATE": "Immediate",
+        "DAILY": "Daily digest",
+        "WEEKLY": "Weekly digest"
+      },
+      "fields": {
+        "mandatory": "Mandatory notification",
+        "quietHours": "Quiet hours",
+        "quietHoursBypass": "Urgent notifications bypass quiet hours",
+        "digest": "Default digest cadence",
+        "changeReason": "Change reason",
+        "changeReasonHelp": "Enter at least 10 characters including the user impact and business purpose.",
+        "approvalReason": "Approval evidence",
+        "approvalReasonHelp": "Enter at least 10 characters documenting an independent review of impact and risk."
+      },
+      "editorTitle": "Propose {{scope}} policy change",
+      "editorDescription": "Create a new immutable version from the current effective policy.",
+      "versionLabel": "v{{version}}",
+      "createdVersionLabel": "{{createdAt}} · v{{version}}",
+      "editorGovernanceNotice": "Mandatory notifications must keep immediate in-app delivery and cannot be muted by users. External channels stay locked until identity, bounce, and callback controls are certified.",
+      "certificationRequired": "Connection certification required",
+      "previewImpact": "Preview impact",
+      "previewing": "Calculating impact",
+      "previewTitle": "Policy change impact",
+      "previewDescription": "Review affected notification types, recently observed users, and risk signals before creating a draft.",
+      "createDraft": "Create approval draft",
+      "creatingDraft": "Creating draft",
+      "makerCheckerPreview": "No live policy changes at this step. The draft becomes effective only after another approver publishes it.",
+      "impact": {
+        "types": "Affected notification types",
+        "recipients": "Recipients observed in 30 days",
+        "version": "Proposed version"
+      },
+      "riskTitle": "Risk signals to review",
+      "risk": {
+        "MANDATORY_DELIVERY": "Mandatory delivery",
+        "QUIET_HOURS_BYPASS": "Quiet-hours bypass",
+        "USER_OVERRIDE_RESTRICTED": "User override restricted",
+        "DEFAULT_MUTED": "Muted by default"
+      },
+      "approvalTitle": "Approve {{scope}} policy",
+      "approvalDescription": "As an independent reviewer, verify the purpose, impact scope, and channel constraints.",
+      "makerCheckerApproval": "You cannot approve a version you authored. Approval is retained as audit evidence with the policy version.",
+      "publish": "Publish policy",
+      "publishing": "Publishing",
+      "feedback": {
+        "previewFailed": "Policy impact could not be calculated. Check the version and policy constraints.",
+        "draftCreated": "The policy draft was created and requires independent approval.",
+        "saveFailed": "The policy draft could not be created. Refresh the current version and try again.",
+        "published": "The company notification policy was published.",
+        "publishFailed": "The policy could not be published. Check approval access and the current version."
+      }
+    },
+    "templates": {
+      "governanceNotice": "Provider templates are immutable here. Company templates use validated plain text and allowed variables, then pass preview, draft, independent approval, and retained audit evidence.",
+      "reviewQueueTitle": "Templates awaiting approval",
+      "reviewQueueDescription": "A reviewer other than the author verifies the rendered result and change purpose.",
+      "emptyTitle": "No editable notification templates",
+      "emptyDescription": "Company wording can be managed after the Provider registers an active contract and published template.",
+      "providerDefault": "Provider default",
+      "tenantOverride": "Company version",
+      "draft": "Draft",
+      "authoredByMe": "Authored by me",
+      "effectiveTenantRevision": "Approved company revision r{{revision}} is currently effective.",
+      "effectiveProviderRevision": "The Provider default is effective because no company override is published.",
+      "proposeOverride": "Propose company wording",
+      "openDraftExists": "Awaiting approval",
+      "noVariables": "This template has no replacement variables.",
+      "effectivePreview": "Current user-facing content",
+      "historyTitle": "Revision history",
+      "historyDescription": "Restore prior published wording as a new approval draft without changing existing evidence.",
+      "current": "Current",
+      "proposeRestore": "Propose restore",
+      "state": {
+        "DRAFT": "Awaiting approval",
+        "PUBLISHED": "Published",
+        "RETIRED": "Retired"
+      },
+      "emptyContent": "No content",
+      "reviewAndPublish": "Review and publish",
+      "independentApprovalRequired": "Another approver required",
+      "retireDraft": "Retire draft",
+      "retireReason": "Retire the unapproved notification template draft following an operational request.",
+      "editorTitle": "Propose {{type}} company template",
+      "editorDescription": "Compose user-facing wording within the variables allowed by the Provider contract.",
+      "editorGovernanceNotice": "HTML and undeclared variables are blocked. Only drafts that pass rendered preview validation can enter independent approval.",
+      "validateAndPreview": "Validate and preview",
+      "previewing": "Validating render",
+      "renderedPreview": "Rendered sample",
+      "previewEmptyTitle": "A validated preview is required",
+      "previewEmptyDescription": "Review wording and sample values, then validate the actual user-facing result.",
+      "sampleValueHelp": "Test value used for this variable in the rendered preview.",
+      "changeReasonHelp": "Enter at least 10 characters including user impact and business purpose.",
+      "createDraft": "Create approval draft",
+      "creatingDraft": "Creating draft",
+      "approvalTitle": "Approve company notification template",
+      "approvalDescription": "As an independent reviewer, verify rendering, wording accuracy, and personal-data exposure.",
+      "makerCheckerApproval": "You cannot approve your own draft. Approval evidence and the checksum are retained in the central audit trail.",
+      "proposedPreview": "User-facing content to publish",
+      "publish": "Publish template",
+      "publishing": "Publishing",
+      "approvalReasonHelp": "Enter at least 10 characters documenting review of accuracy, sensitive data, and user impact.",
+      "fields": {
+        "source": "Effective source",
+        "revision": "Effective revision",
+        "approvedAt": "Approved at",
+        "title": "Title template",
+        "preview": "Short preview",
+        "body": "Body template",
+        "actionLabel": "Primary action label",
+        "changeReason": "Change reason",
+        "approvalReason": "Approval evidence"
+      },
+      "feedback": {
+        "previewFailed": "Template validation failed. Check allowed variables and plain-text constraints.",
+        "draftCreated": "The template draft was created and requires independent approval.",
+        "draftFailed": "The template draft could not be created. Refresh the current revision.",
+        "published": "The company notification template was published.",
+        "publishFailed": "The template could not be published. Check approval access and the current revision.",
+        "retired": "The unapproved template draft was retired.",
+        "retireFailed": "The template draft could not be retired. Refresh its current state."
+      }
+    },
     "operations": {
       "metricsLabel": "Notification delivery key metrics",
       "retryQueue": "Retry queue",
       "deadLetter": "DLQ",
       "unknown": "Unknown outcomes",
+      "openCentralAudit": "View notification evidence in central audit",
       "lanesTitle": "QoS delivery queues",
       "lanesDescription": "Review capacity and latency separately for critical, interactive, and bulk delivery.",
       "lanesTable": "QoS delivery queue health",
@@ -458,6 +674,92 @@
         "latency": "p95 latency",
         "circuit": "Circuit",
         "checked": "Last checked"
+      }
+    },
+    "suppressions": {
+      "title": "Temporary delivery suppression",
+      "description": "Pause delivery for an app, notification type, or the entire tenant for a bounded period.",
+      "loading": "Loading delivery controls",
+      "errorTitle": "Delivery controls could not be loaded",
+      "errorDescription": "Check the connection and operations access, then try again.",
+      "create": "Create suppression plan",
+      "revoke": "Revoke now",
+      "governanceNotice": "A delivery suppression can interrupt user work. Impact preview, automatic expiry, an operations reason, and central audit evidence are always required.",
+      "metricsLabel": "Notification delivery control metrics",
+      "metrics": {
+        "active": "Active",
+        "scheduled": "Scheduled",
+        "criticalBlocked": "Critical blocked"
+      },
+      "emptyTitle": "No delivery suppressions are active",
+      "emptyDescription": "All active notification contracts are delivering under their effective policies.",
+      "tableLabel": "Notification delivery suppression history",
+      "columns": {
+        "scope": "Scope",
+        "channel": "Channel",
+        "window": "Window",
+        "critical": "Critical handling",
+        "reason": "Operations reason",
+        "state": "State",
+        "actions": "Actions"
+      },
+      "scope": {
+        "TENANT": "Entire tenant",
+        "APP": "Application",
+        "TYPE": "Notification type"
+      },
+      "state": {
+        "ACTIVE": "Active",
+        "SCHEDULED": "Scheduled",
+        "EXPIRED": "Expired",
+        "REVOKED": "Revoked"
+      },
+      "allChannels": "All channels",
+      "tenantScope": "Current tenant",
+      "criticalBypass": "Critical delivery continues",
+      "criticalBlocked": "Critical delivery blocked",
+      "dialog": {
+        "title": "Delivery suppression plan",
+        "description": "Preview the affected scope and recent volume before applying a bounded control.",
+        "preview": "Preview impact",
+        "activate": "Apply suppression",
+        "processing": "Processing delivery control"
+      },
+      "fields": {
+        "scopeType": "Scope type",
+        "scopeKey": "Target",
+        "channel": "Delivery channel",
+        "criticalBypass": "Continue critical delivery",
+        "startsAt": "Start time",
+        "startsAtHelp": "Leave empty to start immediately after confirmation.",
+        "expiresAt": "Automatic expiry",
+        "reason": "Operations reason",
+        "reasonHelp": "Record an incident, unintended-send ticket, or decision basis using at least 10 characters.",
+        "revokeReason": "Revocation reason"
+      },
+      "preview": {
+        "title": "Expected user impact",
+        "summary": "{{types}} notification types and {{notifications}} deliveries from the last 7 days are in scope, including {{critical}} critical candidates.",
+        "overlap": "This control overlaps {{count}} existing suppression(s) and cannot be applied."
+      },
+      "risk": {
+        "CRITICAL_DELIVERY_BLOCKED": "Critical delivery blocked",
+        "TENANT_WIDE": "Tenant-wide impact",
+        "ALL_CHANNELS": "All channels affected",
+        "EXTERNAL_CHANNEL_DISABLED": "External channel validation pending",
+        "LONG_RUNNING": "Control exceeds 7 days"
+      },
+      "revokeDialog": {
+        "title": "Revoke delivery suppression",
+        "description": "New notification delivery resumes immediately. Record the recovery evidence.",
+        "processing": "Revoking suppression"
+      },
+      "feedback": {
+        "previewFailed": "Impact could not be calculated. Check the scope and expiry time.",
+        "created": "The delivery suppression is active.",
+        "createFailed": "The delivery suppression could not be applied. Check for overlapping controls and refresh.",
+        "revoked": "The delivery suppression was revoked.",
+        "revokeFailed": "The delivery suppression could not be revoked. Refresh its current state."
       }
     },
     "lanes": {

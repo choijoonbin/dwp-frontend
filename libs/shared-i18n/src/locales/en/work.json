@@ -49,6 +49,7 @@
         "admin-actions": { "label": "Actions and execution access" },
         "admin-safety": { "label": "Policy and safety controls" },
         "admin-evaluation": { "label": "Response quality and evaluation" },
+        "admin-gates": { "label": "Operational readiness review" },
         "admin-audit": { "label": "Data retention and audit" }
       },
       "work": {
@@ -393,6 +394,228 @@
         "expectedTerms": "Expected terms",
         "expectedTermsHelp": "Enter minimum expected terms separated by commas.",
         "sources": "Allowed data sources"
+      }
+    },
+    "gates": {
+      "title": "Operational readiness review",
+      "description": "Configure requirements, register evidence, validate, and independently approve each customer environment for go-live.",
+      "saved": "The readiness review item was saved and added to the audit trail.",
+      "error": "The readiness review item could not be processed.",
+      "tableLabel": "DWAI·ON operational readiness review items by customer environment",
+      "environmentTitle": "Target environment",
+      "environmentDescription": "Each environment keeps an independent policy choice and approval record.",
+      "ready": "All required review items are approved. This environment is ready for go-live.",
+      "notReady": "Required review items remain unapproved. Complete evidence and independent approval before go-live.",
+      "recommended": "Recommended",
+      "notSelected": "Policy not selected",
+      "noExpiry": "Not approved",
+      "existingEvidence": "Recent evidence",
+      "separationNotice": "A person who configured or validated an item cannot approve the same item.",
+      "secretBoundary": "Do not enter passwords, API keys, tokens, or certificates. Store only Secret Store, CMDB, and test-result references.",
+      "environments": {
+        "DEVELOPMENT": "Development",
+        "STAGING": "Staging",
+        "PRODUCTION": "Production"
+      },
+      "metrics": {
+        "readiness": "Readiness",
+        "approved": "Approved items",
+        "review": "Awaiting approval",
+        "attention": "Blocked or expired"
+      },
+      "columns": {
+        "gate": "Review item",
+        "category": "Domain",
+        "option": "Applied policy",
+        "status": "Status",
+        "evidence": "Evidence",
+        "expires": "Approval expiry",
+        "actions": "Actions"
+      },
+      "statuses": {
+        "NOT_CONFIGURED": "Not configured",
+        "CONFIGURING": "Configuring",
+        "VALIDATING": "Validating",
+        "READY_FOR_APPROVAL": "Awaiting approval",
+        "APPROVED": "Approved",
+        "BLOCKED": "Blocked",
+        "EXPIRED": "Expired"
+      },
+      "categories": {
+        "AI_RUNTIME": "AI runtime",
+        "CONNECTIVITY": "Network and location",
+        "ACCESS_CONTROL": "Source access",
+        "ASSURANCE": "Evaluation and approval",
+        "DATA_PROTECTION": "Data protection",
+        "OPERATIONS": "Operational resilience"
+      },
+      "actions": {
+        "configure": "Set policy",
+        "reconfigure": "Edit policy",
+        "evidence": "Add evidence",
+        "validate": "Record validation",
+        "decide": "Review approval",
+        "readOnly": "View only"
+      },
+      "workflow": {
+        "title": "Go-live workflow",
+        "configure": "Set policy",
+        "evidence": "Add evidence",
+        "validate": "Record validation",
+        "approve": "Independent approval"
+      },
+      "dialogs": {
+        "CONFIGURE": { "title": "Set operational policy", "submit": "Save policy" },
+        "EVIDENCE": { "title": "Add operational evidence", "submit": "Add evidence" },
+        "VALIDATE": { "title": "Validate operational requirements", "submit": "Record validation" },
+        "DECIDE": { "title": "Approve go-live readiness", "submit": "Save approval decision" }
+      },
+      "fields": {
+        "option": "Customer policy option",
+        "owner": "Policy owner user ID",
+        "ownerHelp": "A separate reviewer gives final approval.",
+        "configurationRef": "Configuration reference",
+        "configurationRefHelp": "Enter only a Secret Store, CMDB, or policy-document identifier.",
+        "notes": "Policy decision notes",
+        "evidenceType": "Evidence type",
+        "evidenceTitle": "Evidence name",
+        "evidenceReference": "Evidence reference",
+        "evidenceReferenceHelp": "An immutable reference to a test run, security review, approval, or runbook.",
+        "validationOutcome": "Validation outcome",
+        "validationSummary": "Validation summary",
+        "decision": "Approval decision",
+        "validDays": "Approval validity (days)"
+      },
+      "validation": { "PASS": "Validation passed", "FAIL": "Validation failed" },
+      "decisions": { "APPROVE": "Approve", "REJECT": "Reject" },
+      "evidenceTypes": {
+        "CONFIGURATION_REFERENCE": "Configuration reference",
+        "TEST_RESULT": "Test result",
+        "SECURITY_REVIEW": "Security review",
+        "LEGAL_APPROVAL": "Legal and privacy approval",
+        "BUSINESS_APPROVAL": "Business-owner approval",
+        "RUNBOOK": "Operations runbook",
+        "OTHER": "Other evidence"
+      },
+      "gateNames": {
+        "MODEL_CREDENTIALS": {
+          "title": "Production model credentials",
+          "description": "Confirm managed identity and secret-reference boundaries."
+        },
+        "MODEL_LIFECYCLE_CAPACITY": {
+          "title": "Model lifecycle and capacity",
+          "description": "Validate GA version, upgrades, quota, and cost limits."
+        },
+        "NETWORK_ISOLATION": {
+          "title": "Network isolation",
+          "description": "Validate private endpoints, DNS, and egress boundaries."
+        },
+        "DATA_PROCESSING_LOCATION": {
+          "title": "Data processing location",
+          "description": "Govern region, data-zone, and transfer approvals."
+        },
+        "SOURCE_CONNECTORS": {
+          "title": "Source-system connectors",
+          "description": "Confirm connection mode, ownership, and least-privilege scopes."
+        },
+        "SOURCE_ACL": {
+          "title": "Source-native ACL",
+          "description": "Verify item access and group-revocation service levels."
+        },
+        "DATA_CLASSIFICATION_DLP": {
+          "title": "Data classification and DLP",
+          "description": "Apply sensitive-data boundaries to indexing, prompts, and output."
+        },
+        "EVALUATION_DATASET": {
+          "title": "Production evaluation dataset",
+          "description": "Manage customer-approved cases across role, language, and risk."
+        },
+        "RELEASE_APPROVAL": {
+          "title": "Evaluation and release approval",
+          "description": "Apply quality thresholds and maker-checker release approval."
+        },
+        "ACTION_APPROVAL": {
+          "title": "AI action approval",
+          "description": "Define user confirmation and independent approval for mutations."
+        },
+        "TENANT_KMS": {
+          "title": "Tenant KMS and keys",
+          "description": "Validate customer keys, versions, rotation, and re-wrapping."
+        },
+        "RETENTION_LEGAL_HOLD": {
+          "title": "Retention and legal hold",
+          "description": "Confirm artifact schedules, holds, and deletion evidence."
+        },
+        "AUDIT_RESILIENCE": {
+          "title": "Audit and operational resilience",
+          "description": "Validate SIEM, runbooks, SLOs, and recovery ownership."
+        }
+      },
+      "options": {
+        "MODEL_CREDENTIALS": {
+          "MANAGED_IDENTITY": "Managed identity",
+          "SECRET_REFERENCE": "Managed secret reference"
+        },
+        "MODEL_LIFECYCLE_CAPACITY": {
+          "PINNED_GA": "Pinned validated GA version",
+          "CONTROLLED_AUTO_UPGRADE": "Controlled automatic upgrade",
+          "PROVISIONED_MANUAL": "Provisioned manual migration"
+        },
+        "NETWORK_ISOLATION": {
+          "PRIVATE_ENDPOINT": "Private endpoint only",
+          "RESTRICTED_PUBLIC": "Restricted public access",
+          "DEVELOPMENT_PUBLIC_ONLY": "Development-only public access"
+        },
+        "DATA_PROCESSING_LOCATION": {
+          "REGIONAL": "Named-region processing",
+          "DATA_ZONE": "Data-zone processing",
+          "GLOBAL_APPROVED": "Approved global processing"
+        },
+        "SOURCE_CONNECTORS": {
+          "SOURCE_NATIVE": "Direct source API",
+          "INDEXED_CONNECTOR": "ACL-aware indexed connector",
+          "HYBRID": "Hybrid connection"
+        },
+        "SOURCE_ACL": {
+          "QUERY_TIME": "Query-time source authorization",
+          "INDEXED_ACL_SYNC": "Item ACL synchronization",
+          "HYBRID": "Sensitivity-based hybrid"
+        },
+        "DATA_CLASSIFICATION_DLP": {
+          "STRICT": "Strict default deny",
+          "STANDARD": "Standard classification",
+          "CUSTOM": "Customer classification"
+        },
+        "EVALUATION_DATASET": {
+          "CUSTOMER_APPROVED": "Customer-approved production set",
+          "ANONYMIZED_PRODUCTION": "Anonymized production set",
+          "SYNTHETIC_DEVELOPMENT_ONLY": "Development-only synthetic set"
+        },
+        "RELEASE_APPROVAL": {
+          "MAKER_CHECKER": "Separated author and approver",
+          "CHANGE_BOARD": "Change-board approval",
+          "AUTOMATED_WITH_EXCEPTION": "Automated gate with exceptions"
+        },
+        "ACTION_APPROVAL": {
+          "USER_CONFIRMATION": "Final user confirmation",
+          "SEPARATE_APPROVAL": "Independent approver",
+          "BLOCKED": "Mutation actions blocked"
+        },
+        "TENANT_KMS": {
+          "CUSTOMER_MANAGED_KEY": "Customer-managed key",
+          "DWP_MANAGED_PER_TENANT": "DWP-managed per-tenant key",
+          "LOCAL_DEVELOPMENT_KEY": "Local development key"
+        },
+        "RETENTION_LEGAL_HOLD": {
+          "CUSTOMER_SCHEDULE": "Customer retention schedule",
+          "REGULATORY_PROFILE": "Regulatory profile",
+          "DWP_DEVELOPMENT_DEFAULT": "DWP development default"
+        },
+        "AUDIT_RESILIENCE": {
+          "CUSTOMER_SIEM": "Customer SIEM",
+          "DWP_OBSERVABILITY": "DWP observability",
+          "HYBRID": "Integrated observability"
+        }
       }
     },
     "audit": {

@@ -68,7 +68,6 @@ import { isSettingsSection } from '../../features/account/settings-navigation';
 import { usePreferredLanguage } from '../../components/use-preferred-language';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
 import { usePersonalPreference } from '../../providers/personal-preference-provider';
-import { NotificationPreferences } from '../../features/notifications/notification-preferences';
 import {
   AutoSaveStatus,
   ExperiencePreview,
@@ -554,7 +553,7 @@ export default function SettingsPage() {
   }
 
   if (section === 'notifications') {
-    return <NotificationPreferences />;
+    return <Navigate to="/notifications/settings" replace />;
   }
 
   return (

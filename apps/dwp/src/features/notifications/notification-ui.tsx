@@ -173,6 +173,7 @@ export function NotificationItemRow({
   compact = false,
   onSelect,
   trailing,
+  concealContext = false,
   tabIndex,
   rowRef,
 }: {
@@ -181,6 +182,7 @@ export function NotificationItemRow({
   compact?: boolean;
   onSelect: () => void;
   trailing?: ReactNode;
+  concealContext?: boolean;
   tabIndex?: number;
   rowRef?: (element: HTMLButtonElement | null) => void;
 }) {
@@ -204,6 +206,7 @@ export function NotificationItemRow({
       <ButtonBase
         ref={rowRef}
         aria-pressed={selected}
+        aria-label={`${t(`filters.read.${unread ? 'UNREAD' : 'READ'}`)}. ${item.title}`}
         tabIndex={tabIndex}
         data-notification-focus-id={item.notificationId}
         onClick={onSelect}
@@ -297,10 +300,12 @@ export function NotificationItemRow({
                 sx={{ height: 22 }}
               />
             )}
-            <Typography variant="caption" color="text.secondary">
-              {t(`reason.${item.reason.kind}`, { defaultValue: item.reason.label })}
-            </Typography>
-            {item.threadCount > 1 && (
+            {!concealContext && (
+              <Typography variant="caption" color="text.secondary">
+                {t(`reason.${item.reason.kind}`, { defaultValue: item.reason.label })}
+              </Typography>
+            )}
+            {!concealContext && item.threadCount > 1 && (
               <Typography variant="caption" color="text.secondary">
                 {t('item.threadCount', { count: item.threadCount })}
               </Typography>

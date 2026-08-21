@@ -37,9 +37,24 @@ const NotificationAdminContracts = lazy(() =>
     default: module.NotificationAdminContracts,
   }))
 );
+const NotificationAdminPolicies = lazy(() =>
+  import('../features/notifications/notification-product-pages').then((module) => ({
+    default: module.NotificationAdminPolicies,
+  }))
+);
 const NotificationAdminOperations = lazy(() =>
   import('../features/notifications/notification-product-pages').then((module) => ({
     default: module.NotificationAdminOperations,
+  }))
+);
+const NotificationAdminTemplates = lazy(() =>
+  import('../features/notifications/notification-product-pages').then((module) => ({
+    default: module.NotificationAdminTemplates,
+  }))
+);
+const NotificationAdminSuppressions = lazy(() =>
+  import('../features/notifications/notification-product-pages').then((module) => ({
+    default: module.NotificationAdminSuppressions,
   }))
 );
 
@@ -145,11 +160,41 @@ export const notificationRoutes: RouteObject[] = [
         ),
       },
       {
+        path: 'admin/policies',
+        element: (
+          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_POLICY">
+            <Suspense fallback={routeFallback}>
+              <NotificationAdminPolicies />
+            </Suspense>
+          </ProductRouteGuard>
+        ),
+      },
+      {
         path: 'admin/operations',
         element: (
           <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_OPERATIONS">
             <Suspense fallback={routeFallback}>
               <NotificationAdminOperations />
+            </Suspense>
+          </ProductRouteGuard>
+        ),
+      },
+      {
+        path: 'admin/templates',
+        element: (
+          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_TEMPLATE">
+            <Suspense fallback={routeFallback}>
+              <NotificationAdminTemplates />
+            </Suspense>
+          </ProductRouteGuard>
+        ),
+      },
+      {
+        path: 'admin/suppressions',
+        element: (
+          <ProductRouteGuard resourceKey="ADMIN.NOTIFICATION_OPERATIONS">
+            <Suspense fallback={routeFallback}>
+              <NotificationAdminSuppressions />
             </Suspense>
           </ProductRouteGuard>
         ),

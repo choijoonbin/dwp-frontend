@@ -72,23 +72,36 @@ data: {"changeVersion":41,"counterVersion":41,"changedIds":["..."]}
 ### 기본 원칙
 
 Producer는 Notification REST API를 직접 호출하지 않고 자신이 소유한 Domain Event를 기존
-`DomainEventRecorder`로 발행한다.
+`DomainEventRecorder`로 발행한다. 직접 수신 알림은 표준 `data.notificationIntents[]` 하위 계약을
+사용하며, Notification Consumer는 등록된 `source → service principal`만 허용한다.
 
 ```json
 {
-  "specversion": "1.0",
+  "specVersion": "1.0",
   "id": "uuid",
-  "source": "dwp-approval-server",
-  "type": "dwp.approval.requested",
+  "source": "urn:dwp:approval",
+  "type": "approval.request.requested.v1",
   "time": "2026-08-19T01:00:00Z",
-  "tenantid": "tenant-public-id",
-  "subject": "approval/request-public-id",
-  "dataschema": "urn:dwp:approval:requested:v1",
+  "tenantId": 1,
+  "aggregateType": "APPROVAL_REQUEST",
+  "aggregateId": "request-public-id",
+  "aggregateSequence": 7,
+  "schemaVersion": 1,
+  "correlationId": "correlation-id",
   "data": {
     "requestId": "public-id",
-    "actorId": "public-id",
-    "assigneeIds": ["public-id"],
-    "dueAt": "2026-08-20T01:00:00Z"
+    "notificationIntents": [
+      {
+        "typeKey": "APPROVAL.REQUEST_SUBMITTED",
+        "recipientUserIds": [900018],
+        "threadKey": "approval:request-public-id",
+        "reasonCode": "ASSIGNEE",
+        "targetReference": "/work/approvals/request-public-id",
+        "dueAt": "2026-08-20T01:00:00Z",
+        "actionRequired": true,
+        "variables": { "requestTitle": "구매 요청" }
+      }
+    ]
   }
 }
 ```
@@ -100,6 +113,10 @@ Producer는 Notification REST API를 직접 호출하지 않고 자신이 소유
 - Aggregate Sequence, Correlation, Causation, Trace와 Schema Version을 보존한다.
 - Legacy Adapter용 REST Intake가 필요하면 Service Principal, 승인 Contract ID, Idempotency Key,
   제한된 Audience와 Schema Validation을 강제하며 임의 문구 API는 제공하지 않는다.
+- 앱은 Trigger·직접 수신자·수신 사유·분류등급·Deep Link를 소유한다. Platform은 Locale Template,
+  Provider·Tenant·User Policy, 채널, Quiet Hours, Digest, Dedupe, SSE와 전달 운영을 소유한다.
+- 메신저는 `DIRECT_MESSAGE`, `CHANNEL_MESSAGE`, `MENTION`, `THREAD_REPLY` 유형을 사용한다.
+  그룹 일반 메시지는 대화 설정이 `ALL`인 사용자에게만 가며 `DEFAULT`는 멘션·답글 중심이다.
 
 ## External Channel·Callback Contract
 
@@ -119,31 +136,61 @@ Producer는 Notification REST API를 직접 호출하지 않고 자신이 소유
 
 ## Admin API
 
-| Prefix                    | 권한                        | 주요 기능                                           |
-| ------------------------- | --------------------------- | --------------------------------------------------- |
-| `/admin/types`            | `NOTIFICATION.CONTRACT.*`   | Draft, Validate, Review, Activate, Deprecate        |
-| `/admin/templates`        | `NOTIFICATION.TEMPLATE.*`   | Locale Revision, Preview, Review, Publish, Rollback |
-| `/admin/policies`         | `NOTIFICATION.POLICY.*`     | Effective Diff, Simulation, Approval, Publish       |
-| `/admin/providers`        | `NOTIFICATION.PROVIDER.*`   | Health, Endpoint Config Ref, Test, Circuit Breaker  |
-| `/admin/operations`       | `NOTIFICATION.OPERATIONS.*` | Lag, Queue, Failure, DLQ, Replay Preview·Execute    |
-| `/admin/suppressions`     | `NOTIFICATION.OPERATIONS.*` | Bounce·Complaint·Endpoint Suppression 검토·해제     |
-| `/admin/audit`            | `NOTIFICATION.AUDIT.READ`   | Contract·Policy·Replay·Delivery Evidence            |
-| `/provider/notifications` | Provider Role               | Fleet, Quota, Global Package, Incident Control      |
+| Prefix                    | 권한                                   | 주요 기능                                           | 상태                          |
+| ------------------------- | -------------------------------------- | --------------------------------------------------- | ----------------------------- |
+| `/v1/admin/types`         | `ADMIN.NOTIFICATION_CONTRACT:*`        | Draft, Validate, Review, Activate, Deprecate        | 구현                          |
+| `/v1/admin/templates`     | `ADMIN.NOTIFICATION_TEMPLATE:*`        | Locale Revision, Preview, Review, Publish, Rollback | 구현                          |
+| `/v1/admin/policies`      | `ADMIN.NOTIFICATION_POLICY:*`          | Effective, 영향 Preview, Draft, 독립 Publish        | 구현                          |
+| `/v1/admin/operations`    | `ADMIN.NOTIFICATION_OPERATIONS:*`      | Lag, Queue, Failure, 전달 증적                      | In-app Pilot 구현             |
+| `/v1/admin/suppressions`  | `ADMIN.NOTIFICATION_OPERATIONS:*`      | 영향 Preview, 기간 제한 전달 억제, 즉시 해제        | 구현                          |
+| `/api/audit/v1/events`    | `ADMIN.AUDIT_VIEW:VIEW`                | 중앙 Contract·Policy·Template·운영 증적 조회        | 구현                          |
+| `/v1/admin/providers`     | `ADMIN.NOTIFICATION_OPERATIONS:*`      | Health, Endpoint Config Ref, Test, Circuit Breaker  | 외부 Provider 결정 후         |
+| `/provider/notifications` | Provider 전용 Control Plane Permission | Fleet, Quota, Global Package, Incident Control      | Production Control Plane Gate |
 
 Provider Secret 원문은 API로 반환하지 않고 Secret Manager Reference와 검증 상태만 제공한다.
+마지막 두 Prefix는 목표 계약이며 현재 Tenant API에 존재하는 것처럼 표시하지 않는다. 실제 외부
+Provider·Fleet 명령은 Credential, Callback, Support Visibility, Capacity와 HA 결정이 승인된 뒤
+Provider Control Plane에서 별도 권한과 API로 구현한다.
 
 ## 권한 Matrix
 
-| Resource       | User                 | Template Editor | Policy Approver | Operator  | Auditor   | Provider Operator |
-| -------------- | -------------------- | --------------- | --------------- | --------- | --------- | ----------------- |
-| 본인 Inbox     | R/W                  | R/W own         | R/W own         | R/W own   | R/W own   | R/W own           |
-| 타인 본문      | 없음                 | 없음            | 없음            | 기본 없음 | 기본 없음 | 없음              |
-| Type Contract  | R active             | R               | Approve 일부    | R         | R         | Global package    |
-| Template       | R effective          | Draft           | Publish         | R         | R         | Global package    |
-| Tenant Policy  | Effective만          | R               | W·Publish       | R         | R         | Metadata          |
-| Queue·Provider | 본인 Delivery Health | 없음            | R summary       | W         | R         | Fleet W           |
-| Replay         | 없음                 | 없음            | 승인            | Execute   | R         | Provider scope    |
-| Audit          | 본인 설정 변경       | 본인 변경       | Scope 변경      | 운영 변경 | R         | Provider metadata |
+| Resource      | User                | Policy Author  | Policy Approver | Template Editor | Template Approver | Operator              | Central Auditor | Provider Operator |
+| ------------- | ------------------- | -------------- | --------------- | --------------- | ----------------- | --------------------- | --------------- | ----------------- |
+| 본인 Inbox    | R/W                 | R/W own        | R/W own         | R/W own         | R/W own           | R/W own               | R/W own         | R/W own           |
+| 타인 본문     | 없음                | 없음           | 없음            | 없음            | 없음              | 기본 없음             | 기본 없음       | 없음              |
+| Type Contract | R active            | R              | R               | R               | R                 | R                     | R               | Global package    |
+| Template      | R effective         | R              | R               | Preview·Draft   | 독립 Publish      | R                     | Evidence R      | Global package    |
+| Tenant Policy | Effective만         | Preview·Draft  | 독립 Publish    | R               | R                 | R                     | Evidence R      | Redacted metadata |
+| 전달 운영     | 본인 상태           | R summary      | R summary       | 없음            | R summary         | Queue·억제 W          | Evidence R      | Fleet W           |
+| 전달 억제     | 없음                | 없음           | 없음            | 없음            | 없음              | Preview·Create·Revoke | Evidence R      | Provider scope    |
+| Audit         | 본인 설정 변경 근거 | 변경 근거 기록 | 승인 근거 기록  | 변경 근거 기록  | 승인 근거 기록    | 운영 근거 기록        | 중앙 조회       | Provider metadata |
+
+`TENANT_ADMIN`은 정책·Template 초안 작성 권한을 가질 수 있지만 Provider Contract 소유, 자기 Draft 승인,
+Queue·억제 Mutation을 암묵적으로 얻지 않는다. `NOTIFICATION_POLICY_APPROVER`와
+`NOTIFICATION_TEMPLATE_APPROVER`는 각각 다른 변경 유형만 독립 Publish하고 작성 역할과 충돌한다.
+`NOTIFICATION_OPERATOR`는 정책·Template Publish 없이 전달 억제와 운영 Command만 수행한다.
+제품 내부 `ADMIN.NOTIFICATION_AUDIT` 저장소·메뉴는 사용하지 않으며 감사자는 중앙
+`ADMIN.AUDIT_VIEW`로 상관관계 ID와 `notification.*` Event를 조회한다.
+
+## 설정 책임과 우선순위
+
+| 설정 계층          | 소유자                        | 설정 예시                                                                | 변경 통제                           |
+| ------------------ | ----------------------------- | ------------------------------------------------------------------------ | ----------------------------------- |
+| 사용자 표시        | 본인                          | Banner `SMART/HIGH_PRIORITY_ONLY/OFF`, Preview `FULL/TITLE_ONLY/HIDDEN`  | 자동 저장·낙관적 Version            |
+| 사용자 전달        | 본인                          | Channel, Quiet Hours·Timezone·요일, Urgent 우회, Daily·Weekly Digest     | 관리 정책보다 낮은 우선순위         |
+| App·Type 구독      | 본인                          | 즉시·Digest·Mute, Channel별 예외                                         | Mandatory·Managed 항목 잠금         |
+| 앱 Context         | 앱 소유자                     | 메신저 대화 `DEFAULT/ALL/MENTIONS/MUTE`, 활성 대화 중 화면 알림 억제     | 등록 Contract 안에서만 허용         |
+| Tenant 정책        | 작성자 + 독립 정책 승인자     | Mandatory, Quiet bypass, Digest, Channel 강제·사용자 변경 허용·빈도 제한 | 영향 Preview 후 불변 Revision 게시  |
+| Tenant Template    | Editor + 독립 Template 승인자 | Locale별 제목·본문·선택 Action, 허용 변수                                | 검증 Preview·Checksum·불변 Revision |
+| Tenant 전달 통제   | Notification Operator         | Tenant/App/Type·Channel별 임시 억제, 긴급 우회, 자동 만료                | 영향 Preview·Idempotency·감사       |
+| Provider 안전 정책 | Provider Operator             | Global Contract Package, Channel Capability, Fleet Quota, Incident Guard | Tenant 화면과 분리된 Control Plane  |
+
+실제 합성 순서는 `법무·보안 필수 > Provider > Tenant > Type 기본값 > 사용자 > 앱 Context > 현재 Focus`
+다. UI는 저장한 개인 값뿐 아니라 `effectiveValue`, `source`, `managed`, `ownerLabel`을 함께 표시한다.
+
+현재 구현된 설정 Surface는 사용자 `/notifications/settings`, Tenant 정책·Template·전달 통제,
+중앙 감사다. Provider 안전 정책은 합성 순위와 권한 경계까지 고정했지만, Fleet API와 외부 Adapter
+활성화는 Production Gate가 해결되기 전에 Tenant 설정이나 임시 Feature Toggle로 대체하지 않는다.
 
 지원 목적으로 사용자 본문이 필요하면 기존 Provider Support Session Contract, 사유, 대상 Tenant,
 TTL과 Audit을 사용한다. Notification 전용 우회 Role을 만들지 않는다.

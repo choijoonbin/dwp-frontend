@@ -430,6 +430,7 @@
     "SERVICE": "Service",
     "SITE": "Site",
     "TENANT": "Tenant",
+    "TYPE": "Type",
     "WORKFLOW": "Workflow"
   },
   "targetTypes": {

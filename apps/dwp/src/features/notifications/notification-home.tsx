@@ -13,7 +13,11 @@ import {
   ResourcePageHeader,
 } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
-import { getNotificationInbox, getNotificationSummary } from '@dwp-frontend/shared-utils';
+import {
+  getNotificationDeliveryProfile,
+  getNotificationInbox,
+  getNotificationSummary,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -21,16 +25,19 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { notificationArrivalContent } from '../../components/notification-arrival-policy';
+
 export function NotificationHome() {
   const { t } = useTranslation('notifications');
   const query = useQuery({
     queryKey: ['notifications', 'home'],
     queryFn: async () => {
-      const [summary, inbox] = await Promise.all([
+      const [summary, inbox, profile] = await Promise.all([
         getNotificationSummary(),
         getNotificationInbox({ view: 'PRIORITY', limit: 6 }),
+        getNotificationDeliveryProfile(),
       ]);
-      return { summary, inbox };
+      return { summary, inbox, profile };
     },
     staleTime: 15_000,
     refetchInterval: 30_000,
@@ -75,7 +82,7 @@ export function NotificationHome() {
       </PageCanvas>
     );
 
-  const { summary, inbox } = query.data;
+  const { summary, inbox, profile } = query.data;
   return (
     <PageCanvas>
       {header}
@@ -140,6 +147,11 @@ export function NotificationHome() {
           {inbox.items.length ? (
             inbox.items.map((item, index) => {
               const ItemIcon = item.reason.kind === 'MENTION' ? MessageSquareText : CircleAlert;
+              const content = notificationArrivalContent(
+                item,
+                profile,
+                t('arrival.protectedContent')
+              );
               return (
                 <Box key={item.notificationId}>
                   {index > 0 && <Divider />}
@@ -168,7 +180,7 @@ export function NotificationHome() {
                       </Box>
                       <Box minWidth={0}>
                         <Typography variant="body2" fontWeight={800}>
-                          {item.title}
+                          {content.title}
                         </Typography>
                         <Typography
                           variant="caption"
@@ -176,7 +188,7 @@ export function NotificationHome() {
                           component="p"
                           sx={{ mt: 0.3 }}
                         >
-                          {item.preview || item.source.appName}
+                          {content.preview || item.source.appName}
                         </Typography>
                       </Box>
                     </Stack>

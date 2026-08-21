@@ -7,7 +7,14 @@ export {
   PRODUCT_DEFAULT_LOCALE,
   type SupportedLocale,
 } from './lib/locales';
-export { formatDate, formatList, formatNumber, formatRelativeTime } from './lib/formatters';
+export {
+  formatDate,
+  formatList,
+  formatNumber,
+  formatRelativeTime,
+  resolveZonedClock,
+  type ZonedClock,
+} from './lib/formatters';
 export {
   DISPLAY_DOMAINS,
   displayDictionaryKey,

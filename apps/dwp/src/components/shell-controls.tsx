@@ -307,7 +307,7 @@ export function NotificationMenu() {
             : '/notifications/center'
         )
       }
-      onOpenSettings={() => navigate('/account/settings/notifications')}
+      onOpenSettings={() => navigate('/notifications/settings')}
     />
   );
 }

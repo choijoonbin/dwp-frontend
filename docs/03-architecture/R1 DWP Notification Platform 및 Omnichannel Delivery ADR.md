@@ -1,8 +1,8 @@
 # R1 DWP Notification Platform 및 Omnichannel Delivery ADR
 
-> 상태: Foundation Pilot 구현 완료; Production 출시는 승인 Gate 충족 필요
+> 상태: In-app Foundation·메신저 통합·개인 설정·Tenant 거버넌스·운영 통제 구현 완료; Production 출시는 승인 Gate 충족 필요
 >
-> 기준일: 2026-08-19
+> 기준일: 2026-08-21
 >
 > 적용 저장소: `dwp-frontend`, `dwp-backend`
 
@@ -31,10 +31,39 @@ DWP의 공통 알림 기능은 단순한 DB 목록이나 Header Popover가 아�
 
 기존 Header의 정적 Badge·문구 Prototype은 실제 Notification Summary·Inbox 연동으로 교체했다.
 독립 서비스·DB, 읽음·저장·Snooze·완료 상태, 개인 설정, Redis·SSE와 영속 Catch-up, Tenant 운영
-개요·계약·전달 운영 화면이 Direct Recipient In-app Foundation 범위로 구현되어 있다.
+개요·계약·전달 운영 화면이 Direct Recipient In-app Foundation 범위로 구현되어 있다. 표준
+`data.notificationIntents[]` Consumer와 Producer Allowlist를 추가했고, 메신저는 업무 저장과 같은
+Transaction의 Outbox를 통해 1:1 메시지·그룹 구독·멘션·답글을 발행한다. Tenant 정책은 영향도
+Preview, 불변 Draft, 작성자와 승인자 분리, Publish 이력과 실제 Runtime 우선순위까지 연결했다.
+개인 설정은 표시 Privacy, 실시간 Banner, Channel, Quiet Hours, Digest, App·Type Override를
+하나의 `/notifications/settings`에서 자동 저장하며 관리형 값과 잠금 사유를 함께 표시한다.
+Tenant 운영자는 영향 Preview 후 최대 31일의 Tenant·App·Type·Channel 전달 억제를 만들고 즉시
+해제할 수 있다. Materializer는 억제·긴급 우회·정책 빈도 제한을 실제 수신자 생성 전에 적용하고,
+운영 변경은 중앙 감사 원장으로 전달한다. Delivery Outbox는 Lease, Backoff·Jitter, 최대 시도,
+Dead 상태와 보존 정리를 갖춘 Tenant-keyset Relay로 실행된다.
+
+### 2.1 DWP 앱 온보딩 계약
+
+향후 앱이 알림 인프라를 매번 새로 설계하거나 Notification DB를 직접 호출하지 않는다. 공통 계약은
+다음처럼 책임을 고정한다.
+
+| 책임            | 업무 앱                                      | Notification Platform                       |
+| --------------- | -------------------------------------------- | ------------------------------------------- |
+| 언제 알릴지     | 업무 상태 전이와 사용자 가치 판단            | 계약에 없는 Event는 Fail Closed             |
+| 누구에게 알릴지 | 직접 수신자·멘션·담당자 의미론               | 정책·구독·Tenant 제약 합성                  |
+| 무엇을 연결할지 | 권한 재검사되는 내부 Deep Link와 안전한 변수 | Locale Template·민감정보 Preview 정책       |
+| 어떻게 전달할지 | 관여하지 않음                                | Inbox·SSE·Digest·외부 채널·재시도·중복 제거 |
+| 운영·감사       | Event·Correlation·Aggregate Sequence         | Materialize·정책·전달·Replay 증적           |
+
+앱 온보딩은 `typeKey`, Source Event Schema, 수신 사유, 분류등급, Deep Link, Owner, 기본 중요도를
+등록하고 Contract Test를 통과하는 작업이다. 앱별 임의 발송 API, 자유 형식 HTML, 별도 알림 Table은
+허용하지 않는다. 메신저의 대화 단위 설정처럼 업무 의미가 필요한 설정은 앱이 소유하고, Global·App·
+Type·Channel 정책과 Quiet Hours·Digest는 Notification Platform이 소유한다.
 
 Production 범위에서 아직 열지 않은 기능은 외부 Email·Push·Teams·Slack Adapter, 대규모
-조직·Role Audience, 실제 Provider Callback·Suppression과 Production HA·부하·DR 증거다. 이 기능은
+조직·Role Audience, 실제 외부 Provider Callback·Bounce/Complaint Suppression과 Production
+HA·부하·DR 증거다. Tenant의 기간 제한 전달 억제는 구현됐지만 외부 Provider 수신 거부 목록과
+Callback 처리는 Provider 선정 전까지 활성화하지 않는다. 이 기능은
 화면에 가짜 성공 상태를 노출하지 않고 Capability가 준비될 때까지 비활성화한다.
 
 반면 재사용할 Foundation은 이미 존재한다.
@@ -251,6 +280,7 @@ Watermark, Cardinality Limit과 재개 Cursor를 가진 내부 Target Population
   > App Notification Type 기본값
   > 사용자 Global Delivery Profile
   > 사용자 App·Type별 예외
+  > 앱 소유 Context 예외(예: 메신저 대화 설정)
   > 현재 Focus·Quiet Hours·Presence
 ```
 
@@ -260,6 +290,9 @@ Watermark, Cardinality Limit과 재개 Cursor를 가진 내부 Target Population
 - 동일 Event를 In-app, Email, Bot Message로 중복 노출하지 않도록 Channel Arbitration을 적용한다.
 - 사용자 개인 설정 JSONB에는 UI 기본값만 둘 수 있다. App·Type·Channel별 구독과 Quiet Hours는
   조회·정책 합성이 필요한 정규화 Table로 분리한다.
+- 메신저 대화 설정은 `DEFAULT / ALL / MENTIONS / MUTE`를 제공한다. `DEFAULT`는 1:1 전체와 그룹
+  멘션·답글을 따르는 주의력 보호 기본값이며, `ALL`은 사용자가 명시적으로 모든 그룹 메시지를
+  구독한 경우에만 적용한다. 같은 사용자가 멘션·답글 대상이면 우선순위가 높은 한 건만 만든다.
 
 ## 9. 보안과 개인정보
 
@@ -333,14 +366,18 @@ Global Unique·Saved Retention이 필요한 `ntf_user_notifications`는 초기�
 
 ## 12. 운영 Surface
 
-| Surface                    | 대상              | 핵심 기능                                                             |
-| -------------------------- | ----------------- | --------------------------------------------------------------------- |
-| Header Notification Glance | 모든 사용자       | 최신 우선 알림, Badge, 읽음, 알림 센터 이동                           |
-| 알림 센터                  | 모든 사용자       | Action Required, Mentions, Saved, Done, Filter, Bulk Triage           |
-| 계정 설정 > 알림           | 모든 사용자       | Channel, Quiet Hours, Digest, App·Type별 설정, 관리형 정책 설명       |
-| Tenant Admin > 알림 운영   | 위임 관리자       | Type Catalog, Policy, Template, Provider, Suppression, 운영·감사      |
-| Provider Control Plane     | Provider Operator | Tenant Fleet 상태, Broker Lag, Provider 장애, Quota·Cost, Kill Switch |
-| Producer Contract Portal   | App Owner         | Event·Type 등록, Schema 호환성, Template Preview, Sandbox Test        |
+| Surface                     | 대상               | 핵심 기능                                                                     |
+| --------------------------- | ------------------ | ----------------------------------------------------------------------------- |
+| Header Notification Glance  | 모든 사용자        | 최신 우선 알림, Badge, 읽음, 알림 센터 이동                                   |
+| 알림 센터                   | 모든 사용자        | Action Required, Mentions, Saved, Done, Filter, Bulk Triage                   |
+| `/notifications/settings`   | 모든 사용자        | 표시·Privacy, Channel, Quiet Hours, Digest, App·Type별 설정, 관리형 정책 설명 |
+| Tenant Admin > 알림 정책    | Tenant 정책 작성자 | Effective Diff, 영향 Preview, Draft 작성, 관리형 설정 설명                    |
+| Tenant Admin > 알림 승인    | 독립 정책 승인자   | Draft 검토, 작성자 분리 Publish·기각, Mandatory·Quiet Bypass 승인             |
+| Tenant Admin > 전달 운영    | 알림 운영 조회자   | Queue·Provider 상태, 실패·지연과 중앙 감사 연결                               |
+| Tenant Admin > 전달 통제    | 알림 운영자        | 영향 Preview, 기간 제한 Tenant·App·Type·Channel 억제와 즉시 해제              |
+| Central Audit Control Plane | 독립 감사자        | Contract·Template·Policy·억제·Replay·지원 접근 증적                           |
+| Provider Control Plane      | Provider Operator  | Tenant Fleet 상태, Broker Lag, Provider 장애, Quota·Cost, Kill Switch         |
+| Producer Contract Portal    | App Owner          | Event·Type 등록, Schema 호환성, Template Preview, Sandbox Test                |
 
 Tenant Admin과 Provider Control Plane은 같은 화면에 Scope Switch로 합치지 않는다.
 
@@ -348,14 +385,19 @@ Tenant Admin과 Provider Control Plane은 같은 화면에 Scope Switch로 합�
 
 1. **Foundation**: 서비스·DB·Gateway, Contract Registry, Kafka Consumer, Direct Recipient Inbox
    Projection, Version Sync REST·SSE, Header Badge, 알림 센터 기본 Triage, Tenant RLS
-2. **Preference and Governance**: Quiet Hours·Digest·Type Override, Tenant Policy, Template Studio,
-   Code Contract, Audit·DLQ·Replay Console
+2. **Preference and Governance**: Quiet Hours·Digest·Type Override, Tenant Policy Studio,
+   작성자·승인자 분리, Code Contract, Template·Audit·DLQ·Replay Console
 3. **Omnichannel**: Email, Web Push, Mobile Push, Teams·Slack Adapter, Channel Arbitration,
    QoS Dispatch, Provider Health·Quota
 4. **Scale and Intelligence**: 대규모 Broadcast Mode, Noise Recommendation, Focus Digest,
    Capacity 기반 Partition·Shard 확장
 
 각 단계는 독립적으로 Migration, Contract Test, Load Test, Failure Drill과 Rollback을 가진다.
+현재 1단계와 2단계의 In-app, 개인 설정, 정책·Template 분리 승인, 전달 억제·빈도 Admission,
+Outbox Relay·보존 Extension, 중앙 감사 연계 범위는 구현했다. 외부 채널 실행이 필요한 설정은
+Capability가 비활성인 동안 저장·성공으로 가장하지 않고 읽기 전용으로 유지한다. Provider Fleet
+API·Adapter Configuration·Global Kill Switch는 Tenant Route에 임시로 넣지 않고
+`D-NTF-02~09`의 운영·보안 결정 후 Provider Control Plane에 구현한다.
 
 ## 14. 금지 결정
 

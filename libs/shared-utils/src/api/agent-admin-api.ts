@@ -193,6 +193,88 @@ export type DwaionGovernanceAuditPage = {
   totalPages: number;
 };
 
+export type DwaionGateEnvironment = 'DEVELOPMENT' | 'STAGING' | 'PRODUCTION';
+export type DwaionGateCategory =
+  'AI_RUNTIME' | 'CONNECTIVITY' | 'ACCESS_CONTROL' | 'ASSURANCE' | 'DATA_PROTECTION' | 'OPERATIONS';
+export type DwaionGateKey =
+  | 'MODEL_CREDENTIALS'
+  | 'MODEL_LIFECYCLE_CAPACITY'
+  | 'NETWORK_ISOLATION'
+  | 'DATA_PROCESSING_LOCATION'
+  | 'SOURCE_CONNECTORS'
+  | 'SOURCE_ACL'
+  | 'DATA_CLASSIFICATION_DLP'
+  | 'EVALUATION_DATASET'
+  | 'RELEASE_APPROVAL'
+  | 'ACTION_APPROVAL'
+  | 'TENANT_KMS'
+  | 'RETENTION_LEGAL_HOLD'
+  | 'AUDIT_RESILIENCE';
+export type DwaionGateStatus =
+  | 'NOT_CONFIGURED'
+  | 'CONFIGURING'
+  | 'VALIDATING'
+  | 'READY_FOR_APPROVAL'
+  | 'APPROVED'
+  | 'BLOCKED'
+  | 'EXPIRED';
+export type DwaionGateEvidenceType =
+  | 'CONFIGURATION_REFERENCE'
+  | 'TEST_RESULT'
+  | 'SECURITY_REVIEW'
+  | 'LEGAL_APPROVAL'
+  | 'BUSINESS_APPROVAL'
+  | 'RUNBOOK'
+  | 'OTHER';
+export type DwaionOperationalGate = {
+  gateKey: DwaionGateKey;
+  category: DwaionGateCategory;
+  externalOwner: string;
+  deliveryCritical: boolean;
+  selectedOption?: string | null;
+  options: { code: string; recommended: boolean }[];
+  requiredEvidenceTypes: DwaionGateEvidenceType[];
+  status: DwaionGateStatus;
+  ownerUserId?: string | null;
+  configurationRef?: string | null;
+  notes?: string | null;
+  validationSummary?: string | null;
+  lastConfiguredBy?: string | null;
+  lastValidatedBy?: string | null;
+  approvedBy?: string | null;
+  evidenceCount: number;
+  policyVersion: number;
+  effectiveAt?: string | null;
+  expiresAt?: string | null;
+  updatedAt: string;
+};
+export type DwaionOperationalGateEvidence = {
+  evidenceId: string;
+  evidenceType: DwaionGateEvidenceType;
+  title: string;
+  reference: string;
+  checksumSha256?: string | null;
+  notes?: string | null;
+  createdBy: string;
+  createdAt: string;
+};
+export type DwaionOperationalGateDetail = {
+  gate: DwaionOperationalGate;
+  evidence: DwaionOperationalGateEvidence[];
+};
+export type DwaionOperationalGatePortfolio = {
+  environment: DwaionGateEnvironment;
+  totalCount: number;
+  requiredCount: number;
+  approvedCount: number;
+  readyForApprovalCount: number;
+  blockedCount: number;
+  expiredCount: number;
+  completionPercent: number;
+  deliveryReady: boolean;
+  gates: DwaionOperationalGate[];
+};
+
 export async function getDwaionOperationsOverview(
   periodDays = 30
 ): Promise<DwaionOperationsOverview> {
@@ -400,4 +482,105 @@ export async function exportDwaionGovernanceAudit(options?: {
     responseType: 'blob',
   });
   return response.data;
+}
+
+export async function getDwaionOperationalGatePortfolio(
+  environment: DwaionGateEnvironment
+): Promise<DwaionOperationalGatePortfolio> {
+  const response = await axiosInstance.get<ApiResponse<DwaionOperationalGatePortfolio>>(
+    `/api/agent/v1/admin/gates?environment=${environment}`
+  );
+  return response.data.data;
+}
+
+export async function getDwaionOperationalGate(
+  gateKey: DwaionGateKey,
+  environment: DwaionGateEnvironment
+): Promise<DwaionOperationalGateDetail> {
+  const response = await axiosInstance.get<ApiResponse<DwaionOperationalGateDetail>>(
+    `/api/agent/v1/admin/gates/${encodeURIComponent(gateKey)}?environment=${environment}`
+  );
+  return response.data.data;
+}
+
+export async function configureDwaionOperationalGate(
+  gateKey: DwaionGateKey,
+  environment: DwaionGateEnvironment,
+  request: {
+    selectedOption: string;
+    ownerUserId: string;
+    configurationRef?: string;
+    notes?: string;
+    expectedVersion: number;
+    changeReason: string;
+  }
+): Promise<DwaionOperationalGateDetail> {
+  const response = await axiosInstance.patch<
+    ApiResponse<DwaionOperationalGateDetail>,
+    typeof request
+  >(`/api/agent/v1/admin/gates/${encodeURIComponent(gateKey)}?environment=${environment}`, request);
+  return response.data.data;
+}
+
+export async function addDwaionOperationalGateEvidence(
+  gateKey: DwaionGateKey,
+  environment: DwaionGateEnvironment,
+  request: {
+    evidenceType: DwaionGateEvidenceType;
+    title: string;
+    reference: string;
+    checksumSha256?: string;
+    notes?: string;
+    expectedVersion: number;
+    changeReason: string;
+  }
+): Promise<DwaionOperationalGateDetail> {
+  const response = await axiosInstance.post<
+    ApiResponse<DwaionOperationalGateDetail>,
+    typeof request
+  >(
+    `/api/agent/v1/admin/gates/${encodeURIComponent(gateKey)}/evidence?environment=${environment}`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function validateDwaionOperationalGate(
+  gateKey: DwaionGateKey,
+  environment: DwaionGateEnvironment,
+  request: {
+    outcome: 'PASS' | 'FAIL';
+    validationSummary: string;
+    expectedVersion: number;
+    changeReason: string;
+  }
+): Promise<DwaionOperationalGateDetail> {
+  const response = await axiosInstance.post<
+    ApiResponse<DwaionOperationalGateDetail>,
+    typeof request
+  >(
+    `/api/agent/v1/admin/gates/${encodeURIComponent(gateKey)}/validation?environment=${environment}`,
+    request
+  );
+  return response.data.data;
+}
+
+export async function decideDwaionOperationalGate(
+  gateKey: DwaionGateKey,
+  environment: DwaionGateEnvironment,
+  request: {
+    decision: 'APPROVE' | 'REJECT';
+    validDays: number;
+    expectedVersion: number;
+    changeReason: string;
+  }
+): Promise<DwaionOperationalGateDetail> {
+  const response = await axiosInstance.post<
+    ApiResponse<DwaionOperationalGateDetail>,
+    typeof request
+  >(
+    `/api/agent/v1/admin/gates/${encodeURIComponent(gateKey)}/decision?environment=${environment}`,
+    request
+  );
+  return response.data.data;
 }

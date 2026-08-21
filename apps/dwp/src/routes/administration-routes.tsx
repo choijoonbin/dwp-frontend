@@ -161,6 +161,11 @@ const productAdminLegacyRoutes: RouteObject[] = [
     'ADMIN.NOTIFICATION_CONTRACT'
   ),
   productAdminLegacyRedirect(
+    'admin/notifications/policies',
+    '/notifications/admin/policies',
+    'ADMIN.NOTIFICATION_POLICY'
+  ),
+  productAdminLegacyRedirect(
     'admin/notifications/operations',
     '/notifications/admin/operations',
     'ADMIN.NOTIFICATION_OPERATIONS'

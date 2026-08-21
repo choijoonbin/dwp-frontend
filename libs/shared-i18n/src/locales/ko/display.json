@@ -347,6 +347,7 @@
     "SERVICE": "서비스",
     "SITE": "사업장",
     "TENANT": "테넌트",
+    "TYPE": "유형",
     "WORKFLOW": "워크플로"
   },
   "targetTypes": {

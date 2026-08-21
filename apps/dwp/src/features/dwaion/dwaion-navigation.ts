@@ -5,6 +5,7 @@ import {
   FlaskConical,
   History,
   House,
+  ListChecks,
   MessageSquarePlus,
   ScrollText,
   ShieldAlert,
@@ -85,6 +86,13 @@ export const DWAION_NAVIGATION = [
         view: 'admin-evaluation',
         icon: FlaskConical,
         requiredResourceKey: 'ADMIN.DWAION_EVALUATION',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        path: '/dwaion/admin/gates',
+        view: 'admin-gates',
+        icon: ListChecks,
+        requiredResourceKey: 'ADMIN.DWAION_GATES',
         requiredPermissionCode: 'VIEW',
       },
       {

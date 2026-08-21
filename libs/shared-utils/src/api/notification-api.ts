@@ -201,17 +201,23 @@ export type NotificationDigest = {
   dayOfWeek?: number | null;
 };
 
+export type NotificationPresentation = {
+  bannerMode: 'SMART' | 'HIGH_PRIORITY_ONLY' | 'OFF';
+  previewMode: 'FULL' | 'TITLE_ONLY' | 'HIDDEN';
+};
+
 export type NotificationDeliveryProfile = {
   channels: Record<NotificationChannel, boolean>;
   quietHours: NotificationQuietHours;
   digest: NotificationDigest;
+  presentation: NotificationPresentation;
   version: NotificationEntityVersion;
   updatedAt: string;
 };
 
 export type NotificationDeliveryProfileUpdate = Pick<
   NotificationDeliveryProfile,
-  'channels' | 'quietHours' | 'digest' | 'version'
+  'channels' | 'quietHours' | 'digest' | 'presentation' | 'version'
 >;
 
 export type NotificationManagedValue<T> = {
@@ -228,6 +234,8 @@ export type NotificationTypeSetting = {
   description?: string | null;
   mode: NotificationManagedValue<NotificationDeliveryMode>;
   channels: Partial<Record<NotificationChannel, NotificationManagedValue<boolean>>>;
+  mandatory: boolean;
+  quietHoursBypass: boolean;
   ruleId?: string | null;
   ruleVersion?: NotificationEntityVersion | null;
 };
@@ -257,101 +265,6 @@ export type NotificationSubscriptionRule = NotificationSubscriptionRuleInput & {
   ruleId: string;
   version: NotificationEntityVersion;
   updatedAt: string;
-};
-
-export type NotificationAdminMetric = {
-  key: string;
-  label: string;
-  value: number;
-  unit?: string | null;
-  baseline?: number | null;
-  state: 'HEALTHY' | 'ATTENTION' | 'CRITICAL' | 'UNKNOWN';
-};
-
-export type NotificationAdminTrendPoint = {
-  bucket: string;
-  created: number;
-  actionable: number;
-  failed: number;
-  muted: number;
-};
-
-export type NotificationOperationalFinding = {
-  findingId: string;
-  category: 'CONTRACT' | 'POLICY' | 'TEMPLATE' | 'DELIVERY' | 'NOISE' | 'SECURITY';
-  severity: 'INFO' | 'WARNING' | 'CRITICAL';
-  title: string;
-  detail: string;
-  count: number;
-  ownerLabel?: string | null;
-  detectedAt: string;
-  href?: string | null;
-};
-
-export type NotificationAdminOverview = NotificationPartialState & {
-  generatedAt: string;
-  metrics: NotificationAdminMetric[];
-  trend: NotificationAdminTrendPoint[];
-  findings: NotificationOperationalFinding[];
-};
-
-export type NotificationContractState =
-  'DRAFT' | 'IN_REVIEW' | 'ACTIVE' | 'DEPRECATED' | 'RETIRED' | 'QUARANTINED';
-
-export type NotificationTypeContract = {
-  contractId: string;
-  typeKey: string;
-  displayName: string;
-  description?: string | null;
-  appKey: string;
-  appName: string;
-  ownerLabel: string;
-  sourceEventType: string;
-  priority: NotificationPriority;
-  channels: NotificationChannel[];
-  mandatory: boolean;
-  state: NotificationContractState;
-  contractHealth: 'HEALTHY' | 'ATTENTION' | 'BROKEN';
-  volume24Hours: number;
-  schemaVersion: number;
-  version: NotificationEntityVersion;
-  updatedAt: string;
-};
-
-export type NotificationTypeContractPage = NotificationPartialState & {
-  items: NotificationTypeContract[];
-  nextCursor?: string | null;
-  hasMore: boolean;
-};
-
-export type NotificationDeliveryLane = {
-  lane: 'CRITICAL' | 'INTERACTIVE' | 'BULK';
-  queued: number;
-  oldestAgeSeconds: number;
-  throughputPerMinute: number;
-  failureRatePercent: number;
-  state: 'HEALTHY' | 'DEGRADED' | 'PAUSED';
-};
-
-export type NotificationProviderHealth = {
-  providerKey: string;
-  displayName: string;
-  channel: NotificationChannel;
-  state: 'HEALTHY' | 'DEGRADED' | 'OUTAGE' | 'DISABLED';
-  successRatePercent: number;
-  p95LatencyMs: number;
-  circuitState: 'CLOSED' | 'HALF_OPEN' | 'OPEN';
-  lastCheckedAt: string;
-};
-
-export type NotificationDeliveryOperations = NotificationPartialState & {
-  generatedAt: string;
-  lanes: NotificationDeliveryLane[];
-  providers: NotificationProviderHealth[];
-  retryQueue: number;
-  deadLetterQueue: number;
-  unknownOutcomes: number;
-  findings: NotificationOperationalFinding[];
 };
 
 export type NotificationUnavailableCapability = keyof typeof NOTIFICATION_API_CAPABILITIES;
@@ -755,47 +668,4 @@ export function deleteNotificationSubscriptionRule(
     .then(() => undefined);
 }
 
-export function getNotificationAdminOverview(
-  signal?: AbortSignal
-): Promise<NotificationAdminOverview> {
-  return axiosInstance
-    .get<ApiResponse<NotificationAdminOverview>>(`${NOTIFICATION_API_BASE}/admin/overview`, {
-      signal,
-    })
-    .then((response) => response.data.data);
-}
-
-export function getNotificationTypeContracts(
-  input: {
-    cursor?: string | null;
-    limit?: number;
-    query?: string;
-    state?: string;
-    appKey?: string;
-  },
-  signal?: AbortSignal
-): Promise<NotificationTypeContractPage> {
-  const query = queryString({
-    cursor: input.cursor,
-    limit: boundedLimit(input.limit, 40),
-    query: input.query?.trim(),
-    state: input.state,
-    appKey: input.appKey,
-  });
-  return axiosInstance
-    .get<ApiResponse<NotificationTypeContractPage>>(
-      `${NOTIFICATION_API_BASE}/admin/types${query}`,
-      { signal }
-    )
-    .then((response) => response.data.data);
-}
-
-export function getNotificationDeliveryOperations(
-  signal?: AbortSignal
-): Promise<NotificationDeliveryOperations> {
-  return axiosInstance
-    .get<ApiResponse<NotificationDeliveryOperations>>(`${NOTIFICATION_API_BASE}/admin/operations`, {
-      signal,
-    })
-    .then((response) => response.data.data);
-}
+export * from './notification-admin-api';

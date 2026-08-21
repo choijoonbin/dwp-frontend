@@ -7,6 +7,10 @@ import {
   getNotificationInbox,
   getNotificationCapabilities,
   getNotificationTypeContracts,
+  createNotificationTemplateDraft,
+  createNotificationSuppression,
+  publishNotificationTemplate,
+  previewNotificationSuppression,
   parseNotificationLiveSignal,
   updateNotificationDeliveryProfile,
 } from './notification-api';
@@ -127,6 +131,7 @@ describe('notification API boundary', () => {
         allowUrgentBypass: true,
       },
       digest: { mode: 'DAILY' as const, deliveryTime: '08:30', dayOfWeek: null },
+      presentation: { bannerMode: 'SMART' as const, previewMode: 'TITLE_ONLY' as const },
       version: '7',
       updatedAt: '2026-08-19T01:00:00Z',
     };
@@ -160,6 +165,87 @@ describe('notification API boundary', () => {
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
       '/api/notifications/v1/admin/types?cursor=opaque%2B%2F%3D&limit=40&query=security+notice&state=ACTIVE'
+    );
+  });
+
+  it('uses immutable template draft and independent publish endpoints', async () => {
+    const revisionId = '93af7315-2271-462e-a819-3d238a28830f';
+    const typeVersionId = 'e9802f96-423d-4b34-8e42-b87287a37c19';
+    const draft = {
+      revisionId,
+      typeVersionId,
+      typeKey: 'MESSAGING.DIRECT_MESSAGE',
+      appKey: 'messaging',
+      channel: 'IN_APP',
+      locale: 'ko-KR',
+      state: 'DRAFT',
+      revision: 1,
+      version: '1',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(draft))
+      .mockResolvedValueOnce(jsonResponse({ ...draft, state: 'PUBLISHED' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await createNotificationTemplateDraft(
+      {
+        typeVersionId,
+        channel: 'IN_APP',
+        locale: 'ko-KR',
+        title: '{{senderName}}님의 메시지',
+        preview: '{{messagePreview}}',
+        body: '{{messagePreview}}',
+        actionLabel: '대화 열기',
+        changeReason: '회사 표현 기준에 맞춘 메시지 문구입니다.',
+        expectedVersion: '0',
+      },
+      'template-draft:test-1'
+    );
+    await publishNotificationTemplate(
+      revisionId,
+      { expectedVersion: '1', reason: '표현 정확성과 개인정보 노출을 검토했습니다.' },
+      'template-publish:test-1'
+    );
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/notifications/v1/admin/templates/drafts');
+    expect(fetchMock.mock.calls[2]?.[0]).toBe(
+      `/api/notifications/v1/admin/templates/${revisionId}/publish`
+    );
+    expect((fetchMock.mock.calls[1]?.[1] as RequestInit).headers).toEqual(
+      expect.objectContaining({ 'Idempotency-Key': 'template-draft:test-1' })
+    );
+    expect((fetchMock.mock.calls[2]?.[1] as RequestInit).headers).toEqual(
+      expect.objectContaining({ 'Idempotency-Key': 'template-publish:test-1' })
+    );
+  });
+
+  it('previews governed delivery suppression before the idempotent mutation', async () => {
+    const input = {
+      scopeType: 'APP' as const,
+      scopeKey: 'messaging',
+      channel: 'IN_APP' as const,
+      startsAt: null,
+      expiresAt: '2026-08-19T12:00:00Z',
+      criticalBypass: true,
+      reason: 'Incident INC-2047 is producing duplicate direct-message events.',
+    };
+    const preview = { ...input, affectedTypeCount: 3, observedNotifications7Days: 240 };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(preview))
+      .mockResolvedValueOnce(jsonResponse({ ...input, suppressionId: 'suppression-1' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await previewNotificationSuppression(input);
+    await createNotificationSuppression(input, 'suppression:test-1');
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/notifications/v1/admin/suppressions/preview');
+    expect(fetchMock.mock.calls[2]?.[0]).toBe('/api/notifications/v1/admin/suppressions');
+    expect((fetchMock.mock.calls[2]?.[1] as RequestInit).headers).toEqual(
+      expect.objectContaining({ 'Idempotency-Key': 'suppression:test-1' })
     );
   });
 

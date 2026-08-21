@@ -139,7 +139,7 @@ export function MessagingConversationSettings({
                   onValueChange={(value) => {
                     if (value) updateSettings({ notificationLevel: value });
                   }}
-                  options={(['DEFAULT', 'MENTIONS', 'MUTE'] as const).map((value) => ({
+                  options={(['DEFAULT', 'ALL', 'MENTIONS', 'MUTE'] as const).map((value) => ({
                     value,
                     label: t(`conversation.settings.notificationLevels.${value}`),
                   }))}

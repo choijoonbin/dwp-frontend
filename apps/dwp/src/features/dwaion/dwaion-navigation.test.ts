@@ -20,7 +20,7 @@ describe('DWAI-ON product manifest', () => {
       (group) => group.id === 'admin'
     )?.items;
 
-    expect(administration).toHaveLength(7);
+    expect(administration).toHaveLength(8);
     expect(
       administration?.map((item) => ({
         view: item.view,
@@ -33,6 +33,7 @@ describe('DWAI-ON product manifest', () => {
       { view: 'admin-actions', resourceKey: 'ADMIN.DWAION_ACTIONS' },
       { view: 'admin-safety', resourceKey: 'ADMIN.DWAION_SAFETY' },
       { view: 'admin-evaluation', resourceKey: 'ADMIN.DWAION_EVALUATION' },
+      { view: 'admin-gates', resourceKey: 'ADMIN.DWAION_GATES' },
       { view: 'admin-audit', resourceKey: undefined },
     ]);
 

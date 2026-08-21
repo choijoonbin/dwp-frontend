@@ -6,10 +6,12 @@ import {
   ChevronRight,
   FileCode2,
   RadioTower,
+  ScrollText,
   Search,
   ShieldCheck,
 } from 'lucide-react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import {
   getNotificationAdminOverview,
   getNotificationDeliveryOperations,
@@ -31,6 +33,7 @@ import {
   PageCanvas,
 } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
+import { usePermissions } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -588,7 +591,10 @@ export function NotificationDeliveryOperationsPage({
   onOpenFinding?: (finding: NotificationOperationalFinding) => void;
 }) {
   const { t } = useTranslation('notifications');
+  const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
   const online = useOnlineStatus();
+  const canViewCentralAudit = hasPermission('ADMIN.AUDIT_VIEW', 'VIEW');
   const query = useQuery({
     queryKey: notificationQueryKeys.adminOperations(),
     queryFn: ({ signal }) => getNotificationDeliveryOperations(signal),
@@ -626,7 +632,25 @@ export function NotificationDeliveryOperationsPage({
   const data = query.data;
   return (
     <Stack gap={3}>
-      <Stack direction="row" justifyContent="flex-end">
+      <Stack
+        direction={{ xs: 'column-reverse', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        gap={1}
+      >
+        {canViewCentralAudit ? (
+          <ActionButton
+            intent="secondary"
+            startIcon={<ScrollText size={17} />}
+            onClick={() =>
+              navigate('/admin/governance/audit-events?mode=events&query=notification.')
+            }
+          >
+            {t('admin.operations.openCentralAudit')}
+          </ActionButton>
+        ) : (
+          <Box />
+        )}
         <LiveStatus
           state={
             !online ? 'stale' : data.partial ? 'degraded' : query.isFetching ? 'syncing' : 'live'

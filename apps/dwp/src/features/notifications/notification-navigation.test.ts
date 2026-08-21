@@ -39,6 +39,21 @@ describe('notification navigation contract', () => {
           path: '/notifications/admin/overview',
           requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
         }),
+        expect.objectContaining({
+          view: 'admin-policies',
+          path: '/notifications/admin/policies',
+          requiredResourceKey: 'ADMIN.NOTIFICATION_POLICY',
+        }),
+        expect.objectContaining({
+          view: 'admin-templates',
+          path: '/notifications/admin/templates',
+          requiredResourceKey: 'ADMIN.NOTIFICATION_TEMPLATE',
+        }),
+        expect.objectContaining({
+          view: 'admin-suppressions',
+          path: '/notifications/admin/suppressions',
+          requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
+        }),
       ])
     );
     expect(findNotificationNavigationItem('/notifications/center/')).toEqual(

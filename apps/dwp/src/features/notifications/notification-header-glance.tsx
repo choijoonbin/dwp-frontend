@@ -6,6 +6,7 @@ import {
   applyNotificationTriage,
   createNotificationIdempotencyKey,
   getNotificationInbox,
+  getNotificationDeliveryProfile,
   getNotificationSummary,
   isNotificationCursorResetError,
   type NotificationItem,
@@ -31,6 +32,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { notificationQueryKeys } from './integration-contract';
 import { reconcileGlanceItems } from './notification-model';
+import { notificationArrivalContent } from '../../components/notification-arrival-policy';
 import {
   NotificationConnectionNotice,
   NotificationItemRow,
@@ -90,6 +92,12 @@ export function NotificationHeaderGlance({
     enabled: open,
     staleTime: 10_000,
     refetchInterval: open && online ? 15_000 : false,
+    retry: 1,
+  });
+  const profileQuery = useQuery({
+    queryKey: notificationQueryKeys.preferences(),
+    queryFn: ({ signal }) => getNotificationDeliveryProfile(signal),
+    staleTime: 30_000,
     retry: 1,
   });
 
@@ -322,7 +330,7 @@ export function NotificationHeaderGlance({
             </ActionButton>
           </Box>
         )}
-        <Box ref={listRef} role="listbox" sx={{ maxHeight: 440, overflowY: 'auto' }}>
+        <Box ref={listRef} sx={{ maxHeight: 440, overflowY: 'auto' }}>
           {inboxQuery.isLoading && glance.visible.length === 0 ? (
             <LoadingState
               label={t('states.loading')}
@@ -348,22 +356,36 @@ export function NotificationHeaderGlance({
               size="compact"
             />
           ) : (
-            glance.visible.map((item, index) => (
-              <NotificationItemRow
-                key={item.notificationId}
-                item={item}
-                compact
-                tabIndex={index === 0 ? 0 : -1}
-                onSelect={() => {
-                  if (!item.readAt && !triageMutation.isPending) {
-                    triageMutation.mutate({ item });
-                  }
-                  setAnchor(null);
-                  onOpenCenter(item.notificationId);
-                }}
-                trailing={<NotificationPrimaryAction item={item} />}
-              />
-            ))
+            <Box component="ul" aria-label={t('glance.dialogLabel')} sx={{ p: 0, m: 0 }}>
+              {glance.visible.map((item) => {
+                const content = notificationArrivalContent(
+                  item,
+                  profileQuery.data,
+                  t('arrival.protectedContent')
+                );
+                const concealContext =
+                  item.sensitive || profileQuery.data?.presentation.previewMode === 'HIDDEN';
+                return (
+                  <Box component="li" key={item.notificationId} sx={{ listStyle: 'none' }}>
+                    <NotificationItemRow
+                      item={{ ...item, title: content.title, preview: content.preview }}
+                      compact
+                      concealContext={concealContext}
+                      onSelect={() => {
+                        if (!item.readAt && !triageMutation.isPending) {
+                          triageMutation.mutate({ item });
+                        }
+                        setAnchor(null);
+                        onOpenCenter(item.notificationId);
+                      }}
+                      trailing={
+                        concealContext ? undefined : <NotificationPrimaryAction item={item} />
+                      }
+                    />
+                  </Box>
+                );
+              })}
+            </Box>
           )}
         </Box>
         <Divider />

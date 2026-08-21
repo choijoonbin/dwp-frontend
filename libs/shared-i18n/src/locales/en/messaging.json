@@ -152,9 +152,10 @@
       "pinned": "Pin to top",
       "pinnedDescription": "Keep this conversation easy to find at the top.",
       "notifications": "Notifications",
-      "notificationsDescription": "Choose all messages, mentions only, or mute.",
+      "notificationsDescription": "Follow the product default or choose all messages, mentions and replies, or mute.",
       "notificationLevels": {
-        "DEFAULT": "All new messages",
+        "DEFAULT": "Product default",
+        "ALL": "All new messages",
         "MENTIONS": "Mentions and replies",
         "MUTE": "Mute"
       }

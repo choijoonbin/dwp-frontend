@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   BellRing,
+  BellDot,
   Building2,
   CalendarClock,
   Check,
@@ -10,7 +11,9 @@ import {
   Mail,
   MessageSquare,
   MoonStar,
+  Eye,
   RotateCcw,
+  ShieldCheck,
   Smartphone,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -37,6 +40,7 @@ import {
   LoadingState,
   PageCanvas,
   TimePickerField,
+  resolveProductTimeZone,
 } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
@@ -57,6 +61,7 @@ import { notificationQueryKeys } from './integration-contract';
 import { USER_CHANNELS } from './notification-model';
 import { NotificationPageHeading } from './notification-ui';
 import { useOnlineStatus } from './use-notification-runtime';
+import { usePersonalPreference } from '../../providers/personal-preference-provider';
 
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -262,6 +267,24 @@ function TypeSettingRows({
                 <Typography component="h4" variant="subtitle2">
                   {setting.typeName}
                 </Typography>
+                {setting.mandatory && (
+                  <Chip
+                    size="small"
+                    color="info"
+                    variant="outlined"
+                    label={t('preferences.mandatory')}
+                  />
+                )}
+                {setting.quietHoursBypass && (
+                  <Tooltip title={t('preferences.quiet.managedBypassDescription')}>
+                    <Chip
+                      size="small"
+                      color="warning"
+                      variant="outlined"
+                      label={t('preferences.quiet.managedBypass')}
+                    />
+                  </Tooltip>
+                )}
                 {setting.mode.managed && <ManagedChip owner={setting.mode.ownerLabel} />}
               </Stack>
               {setting.description && (
@@ -361,10 +384,12 @@ export function NotificationPreferences() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const online = useOnlineStatus();
+  const personalPreference = usePersonalPreference();
   const [draft, setDraft] = useState<NotificationDeliveryProfile | null>(null);
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [selectedAppKey, setSelectedAppKey] = useState<string | null>(null);
   const [busyType, setBusyType] = useState<string | null>(null);
+  const timeZoneSyncAttempt = useRef<string | null>(null);
 
   const profileQuery = useQuery({
     queryKey: notificationQueryKeys.preferences(),
@@ -392,6 +417,15 @@ export function NotificationPreferences() {
     () => [...enabledChannels].some((channel) => channel !== 'IN_APP'),
     [enabledChannels]
   );
+  const effectivePolicyLocked =
+    effectiveQuery.isLoading ||
+    effectiveQuery.isError ||
+    !effectiveQuery.data ||
+    effectiveQuery.data.partial;
+  const scheduleTimeZone = resolveProductTimeZone(
+    personalPreference.preference?.preferences.regional.timeZone,
+    draft?.quietHours.timeZone
+  );
 
   useEffect(() => {
     if (profileQuery.data) setDraft(profileQuery.data);
@@ -409,6 +443,7 @@ export function NotificationPreferences() {
           channels: next.channels,
           quietHours: next.quietHours,
           digest: next.digest,
+          presentation: next.presentation,
           version: next.version,
         },
         createNotificationIdempotencyKey('delivery-profile')
@@ -427,9 +462,32 @@ export function NotificationPreferences() {
   });
 
   const saveProfile = (next: NotificationDeliveryProfile) => {
-    setDraft(next);
-    profileMutation.mutate(next);
+    const synchronized = {
+      ...next,
+      quietHours: { ...next.quietHours, timeZone: scheduleTimeZone },
+    };
+    setDraft(synchronized);
+    profileMutation.mutate(synchronized);
   };
+
+  useEffect(() => {
+    const persisted = profileQuery.data;
+    const syncKey = persisted ? `${persisted.version}:${scheduleTimeZone}` : null;
+    if (
+      !persisted ||
+      !online ||
+      profileMutation.isPending ||
+      persisted.quietHours.timeZone === scheduleTimeZone ||
+      timeZoneSyncAttempt.current === syncKey
+    ) {
+      return;
+    }
+    timeZoneSyncAttempt.current = syncKey;
+    profileMutation.mutate({
+      ...persisted,
+      quietHours: { ...persisted.quietHours, timeZone: scheduleTimeZone },
+    });
+  }, [online, profileMutation, profileQuery.data, scheduleTimeZone]);
 
   const ruleMutation = useMutation({
     mutationFn: ({
@@ -548,6 +606,79 @@ export function NotificationPreferences() {
           {t('preferences.externalChannelsUnavailable')}
         </Alert>
       )}
+      {(effectiveQuery.isError || effectiveQuery.data?.partial) && (
+        <Alert severity="warning" sx={{ mt: 2 }}>
+          {t('preferences.apps.effectivePolicyUnavailable')}
+        </Alert>
+      )}
+
+      <PreferenceSection
+        title={t('preferences.presentation.title')}
+        description={t('preferences.presentation.description')}
+      >
+        <Stack divider={<Divider flexItem />}>
+          <PreferenceRow
+            icon={BellDot}
+            title={t('preferences.presentation.banner')}
+            description={t('preferences.presentation.bannerDescription')}
+          >
+            <FormField
+              select
+              size="small"
+              label={t('preferences.presentation.banner')}
+              value={draft.presentation.bannerMode}
+              disabled={!online || profileMutation.isPending}
+              onChange={(event) =>
+                saveProfile({
+                  ...draft,
+                  presentation: {
+                    ...draft.presentation,
+                    bannerMode: event.target
+                      .value as NotificationDeliveryProfile['presentation']['bannerMode'],
+                  },
+                })
+              }
+              sx={{ minWidth: 190 }}
+            >
+              {(['SMART', 'HIGH_PRIORITY_ONLY', 'OFF'] as const).map((mode) => (
+                <MenuItem key={mode} value={mode}>
+                  {t(`preferences.presentation.bannerModes.${mode}`)}
+                </MenuItem>
+              ))}
+            </FormField>
+          </PreferenceRow>
+          <PreferenceRow
+            icon={Eye}
+            title={t('preferences.presentation.preview')}
+            description={t('preferences.presentation.previewDescription')}
+          >
+            <FormField
+              select
+              size="small"
+              label={t('preferences.presentation.preview')}
+              value={draft.presentation.previewMode}
+              disabled={!online || profileMutation.isPending}
+              onChange={(event) =>
+                saveProfile({
+                  ...draft,
+                  presentation: {
+                    ...draft.presentation,
+                    previewMode: event.target
+                      .value as NotificationDeliveryProfile['presentation']['previewMode'],
+                  },
+                })
+              }
+              sx={{ minWidth: 190 }}
+            >
+              {(['FULL', 'TITLE_ONLY', 'HIDDEN'] as const).map((mode) => (
+                <MenuItem key={mode} value={mode}>
+                  {t(`preferences.presentation.previewModes.${mode}`)}
+                </MenuItem>
+              ))}
+            </FormField>
+          </PreferenceRow>
+        </Stack>
+      </PreferenceSection>
 
       <PreferenceSection
         title={t('preferences.global.title')}
@@ -573,8 +704,14 @@ export function NotificationPreferences() {
                 }
               >
                 <Switch
-                  checked={available && draft.channels[channel]}
-                  disabled={!online || !available || profileMutation.isPending || managed?.managed}
+                  checked={available && (managed?.effectiveValue ?? draft.channels[channel])}
+                  disabled={
+                    !online ||
+                    !available ||
+                    profileMutation.isPending ||
+                    effectivePolicyLocked ||
+                    managed?.managed
+                  }
                   onChange={(event) =>
                     saveProfile({
                       ...draft,
@@ -605,7 +742,7 @@ export function NotificationPreferences() {
           >
             <Switch
               checked={draft.quietHours.enabled}
-              disabled={!externalDeliveryEnabled || !online || profileMutation.isPending}
+              disabled={!online || profileMutation.isPending}
               onChange={(event) =>
                 saveProfile({
                   ...draft,
@@ -619,7 +756,7 @@ export function NotificationPreferences() {
             icon={CalendarClock}
             title={t('preferences.quiet.schedule')}
             description={t('preferences.quiet.scheduleDescription', {
-              timeZone: draft.quietHours.timeZone,
+              timeZone: scheduleTimeZone,
             })}
           >
             <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
@@ -627,12 +764,7 @@ export function NotificationPreferences() {
                 size="small"
                 label={t('preferences.quiet.start')}
                 value={draft.quietHours.start}
-                disabled={
-                  !externalDeliveryEnabled ||
-                  !draft.quietHours.enabled ||
-                  !online ||
-                  profileMutation.isPending
-                }
+                disabled={!draft.quietHours.enabled || !online || profileMutation.isPending}
                 onValueChange={(value) => {
                   if (!value) return;
                   saveProfile({
@@ -645,12 +777,7 @@ export function NotificationPreferences() {
                 size="small"
                 label={t('preferences.quiet.end')}
                 value={draft.quietHours.end}
-                disabled={
-                  !externalDeliveryEnabled ||
-                  !draft.quietHours.enabled ||
-                  !online ||
-                  profileMutation.isPending
-                }
+                disabled={!draft.quietHours.enabled || !online || profileMutation.isPending}
                 onValueChange={(value) => {
                   if (!value) return;
                   saveProfile({
@@ -669,7 +796,7 @@ export function NotificationPreferences() {
             <ToggleButtonGroup
               size="small"
               value={draft.quietHours.days}
-              disabled={!externalDeliveryEnabled || !online || profileMutation.isPending}
+              disabled={!online || profileMutation.isPending}
               onChange={(_event, days: number[]) =>
                 saveProfile({ ...draft, quietHours: { ...draft.quietHours, days } })
               }
@@ -681,6 +808,26 @@ export function NotificationPreferences() {
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
+          </PreferenceRow>
+          <PreferenceRow
+            icon={ShieldCheck}
+            title={t('preferences.quiet.urgentBypass')}
+            description={t('preferences.quiet.urgentBypassDescription')}
+          >
+            <Switch
+              checked={draft.quietHours.allowUrgentBypass}
+              disabled={!online || profileMutation.isPending}
+              onChange={(event) =>
+                saveProfile({
+                  ...draft,
+                  quietHours: {
+                    ...draft.quietHours,
+                    allowUrgentBypass: event.target.checked,
+                  },
+                })
+              }
+              inputProps={{ 'aria-label': t('preferences.quiet.urgentBypass') }}
+            />
           </PreferenceRow>
         </Stack>
       </PreferenceSection>
@@ -707,6 +854,8 @@ export function NotificationPreferences() {
                   digest: {
                     ...draft.digest,
                     mode: event.target.value as NotificationDeliveryProfile['digest']['mode'],
+                    dayOfWeek:
+                      event.target.value === 'WEEKLY' ? (draft.digest.dayOfWeek ?? 1) : null,
                   },
                 })
               }
@@ -736,6 +885,28 @@ export function NotificationPreferences() {
                 });
               }}
             />
+            {draft.digest.mode === 'WEEKLY' && (
+              <FormField
+                select
+                size="small"
+                label={t('preferences.digest.day')}
+                value={draft.digest.dayOfWeek ?? 1}
+                disabled={!externalDeliveryEnabled || !online || profileMutation.isPending}
+                onChange={(event) =>
+                  saveProfile({
+                    ...draft,
+                    digest: { ...draft.digest, dayOfWeek: Number(event.target.value) },
+                  })
+                }
+                sx={{ minWidth: 140 }}
+              >
+                {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+                  <MenuItem key={day} value={day}>
+                    {t(`preferences.days.${day}`)}
+                  </MenuItem>
+                ))}
+              </FormField>
+            )}
           </Stack>
         </PreferenceRow>
       </PreferenceSection>
@@ -807,7 +978,7 @@ export function NotificationPreferences() {
                 {selectedApp && (
                   <TypeSettingRows
                     app={selectedApp}
-                    disabled={!online}
+                    disabled={!online || effectivePolicyLocked}
                     busyType={busyType}
                     enabledChannels={enabledChannels}
                     externalDeliveryEnabled={externalDeliveryEnabled}

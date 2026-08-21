@@ -23,6 +23,10 @@ import { MessagingSearchPalette } from './messaging-search-palette';
 import { MessagingThreadPanel } from './messaging-thread-panel';
 import { MessagingTimelinePane } from './messaging-timeline-pane';
 import { useMessagingWorkspaceController } from './use-messaging-workspace-controller';
+import {
+  notificationContextKeys,
+  useNotificationActiveContexts,
+} from '../../components/notification-active-context';
 
 import type { MessagingScope } from './messaging-workspace-types';
 
@@ -94,6 +98,9 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     conversationCreated,
     setThreadRootId,
   } = workspace;
+  useNotificationActiveContexts([
+    selectedId ? notificationContextKeys.messagingConversation(selectedId) : null,
+  ]);
 
   return (
     <PageCanvas topInset="compact">

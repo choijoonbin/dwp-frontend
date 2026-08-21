@@ -152,9 +152,10 @@
       "pinned": "상단 고정",
       "pinnedDescription": "대화 목록 상단에서 빠르게 찾습니다.",
       "notifications": "알림 범위",
-      "notificationsDescription": "모든 메시지, 멘션만 또는 알림 끄기를 선택합니다.",
+      "notificationsDescription": "제품 기본값을 따르거나 모든 메시지, 멘션·답글 또는 알림 끄기를 선택합니다.",
       "notificationLevels": {
-        "DEFAULT": "모든 새 메시지",
+        "DEFAULT": "제품 기본값",
+        "ALL": "모든 새 메시지",
         "MENTIONS": "멘션 및 답글만",
         "MUTE": "알림 끄기"
       }

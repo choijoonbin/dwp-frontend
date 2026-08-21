@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { defaultRegionalPreference, writeRegionalPreference } from '@dwp-frontend/shared-utils';
 
-import { formatDate, formatNumber, formatRelativeTime } from './formatters';
+import { formatDate, formatNumber, formatRelativeTime, resolveZonedClock } from './formatters';
 
 describe('locale-aware formatters', () => {
   beforeEach(() => {
@@ -39,5 +39,14 @@ describe('locale-aware formatters', () => {
       formatDate('2026-08-12T09:30:00.000Z', { dateStyle: 'short', timeStyle: 'short' }, 'en')
     ).toBe('2026-08-12 09:30');
     expect(formatNumber(1234.5, undefined, 'en')).toBe('1.234,5');
+  });
+
+  it('resolves an ISO weekday and local clock for policy evaluation', () => {
+    expect(resolveZonedClock('2026-08-21T00:30:00.000Z', 'Asia/Seoul')).toEqual({
+      day: 5,
+      hour: 9,
+      minute: 30,
+    });
+    expect(resolveZonedClock('2026-08-21T00:30:00.000Z', 'Invalid/TimeZone')).toBeNull();
   });
 });

@@ -24,6 +24,12 @@ describe('notification route contract', () => {
     expect(matchedLeaf('/notifications/notification-42')?.path).toBe(':notificationId');
   });
 
+  it('exposes tenant policy governance as a dedicated administration route', () => {
+    expect(matchedLeaf('/notifications/admin/policies')?.path).toBe('admin/policies');
+    expect(matchedLeaf('/notifications/admin/templates')?.path).toBe('admin/templates');
+    expect(matchedLeaf('/notifications/admin/suppressions')?.path).toBe('admin/suppressions');
+  });
+
   it('recovers unsupported nested paths through the notification fallback', () => {
     expect(matchedLeaf('/notifications/unsupported/nested')?.path).toBe('*');
   });

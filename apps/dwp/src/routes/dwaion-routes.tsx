@@ -58,6 +58,11 @@ const DwaionAdminEvaluation = lazy(() =>
     default: module.DwaionAdminEvaluation,
   }))
 );
+const DwaionAdminGates = lazy(() =>
+  import('../features/dwaion/dwaion-admin-gates').then((module) => ({
+    default: module.DwaionAdminGates,
+  }))
+);
 const DwaionAdminAudit = lazy(() =>
   import('../features/dwaion/dwaion-admin-audit').then((module) => ({
     default: module.DwaionAdminAudit,
@@ -193,6 +198,16 @@ export const dwaionRoutes: RouteObject[] = [
           <ProductRouteGuard resourceKey="ADMIN.DWAION_EVALUATION">
             <Suspense fallback={routeFallback}>
               <DwaionAdminEvaluation />
+            </Suspense>
+          </ProductRouteGuard>
+        ),
+      },
+      {
+        path: 'admin/gates',
+        element: (
+          <ProductRouteGuard resourceKey="ADMIN.DWAION_GATES">
+            <Suspense fallback={routeFallback}>
+              <DwaionAdminGates />
             </Suspense>
           </ProductRouteGuard>
         ),

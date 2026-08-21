@@ -18,7 +18,10 @@ export const notificationQueryKeys = {
   adminOverview: () => ['notifications', 'admin', 'overview'] as const,
   adminTypes: (scope: Record<string, unknown>) =>
     ['notifications', 'admin', 'types', scope] as const,
+  adminPolicies: () => ['notifications', 'admin', 'policies'] as const,
+  adminTemplates: () => ['notifications', 'admin', 'templates'] as const,
   adminOperations: () => ['notifications', 'admin', 'operations'] as const,
+  adminSuppressions: () => ['notifications', 'admin', 'suppressions'] as const,
 };
 
 /**
@@ -40,7 +43,10 @@ export const notificationFeatureIntegration = {
     preferences: '/notifications/settings',
     tenantAdmin: '/notifications/admin/overview',
     tenantAdminContracts: '/notifications/admin/contracts',
+    tenantAdminPolicies: '/notifications/admin/policies',
+    tenantAdminTemplates: '/notifications/admin/templates',
     tenantAdminOperations: '/notifications/admin/operations',
+    tenantAdminSuppressions: '/notifications/admin/suppressions',
   },
   routePermissions: {
     user: { resourceKey: 'APP.NOTIFICATIONS', permissionCode: 'VIEW' },
@@ -52,6 +58,10 @@ export const notificationFeatureIntegration = {
       resourceKey: 'ADMIN.NOTIFICATION_CONTRACT',
       permissionCode: 'VIEW',
     },
+    tenantPolicies: {
+      resourceKey: 'ADMIN.NOTIFICATION_POLICY',
+      permissionCode: 'VIEW',
+    },
   },
   apiScopes: {
     readSelf: 'NOTIFICATION.INBOX.READ_SELF',
@@ -59,5 +69,8 @@ export const notificationFeatureIntegration = {
     managePreferences: 'NOTIFICATION.PREFERENCE.MANAGE_SELF',
     readTenantOperations: 'NOTIFICATION.OPERATIONS.READ',
     readContracts: 'NOTIFICATION.CONTRACT.READ',
+    manageTenantPolicies: 'NOTIFICATION.POLICY.MANAGE',
+    approveTenantPolicies: 'NOTIFICATION.POLICY.APPROVE',
+    manageDeliverySuppressions: 'NOTIFICATION.OPERATIONS.MANAGE',
   },
 } as const;

@@ -86,7 +86,7 @@ export type MessagingThreadRootPreview = {
 export type MessagingMember = MessagingPerson & {
   memberRole: MessagingMemberRole;
   membershipSource: MessagingMembershipSource;
-  notificationLevel: 'DEFAULT' | 'MENTIONS' | 'MUTE';
+  notificationLevel: 'DEFAULT' | 'ALL' | 'MENTIONS' | 'MUTE';
   favorite: boolean;
   pinned: boolean;
   lastReadMessageId?: string | null;
@@ -290,7 +290,7 @@ export type MessagingSavedItemPage = {
 
 export type MessagingConversationSettings = {
   conversationId: string;
-  notificationLevel: 'DEFAULT' | 'MENTIONS' | 'MUTE';
+  notificationLevel: 'DEFAULT' | 'ALL' | 'MENTIONS' | 'MUTE';
   favorite: boolean;
   pinned: boolean;
   version: number;

@@ -1,4 +1,14 @@
-import { BellRing, FileCode2, House, RadioTower, Settings2, ShieldCheck } from 'lucide-react';
+import {
+  BellRing,
+  CircleStop,
+  FileCode2,
+  House,
+  RadioTower,
+  Settings2,
+  Languages,
+  ShieldCheck,
+  SlidersHorizontal,
+} from 'lucide-react';
 
 import type {
   ProductAreaNavigationGroup,
@@ -7,7 +17,15 @@ import type {
 import type { NotificationView } from '@dwp-frontend/shared-utils/api/notification-api';
 
 export type NotificationNavigationView =
-  'home' | 'center' | 'settings' | 'admin-overview' | 'admin-contracts' | 'admin-operations';
+  | 'home'
+  | 'center'
+  | 'settings'
+  | 'admin-overview'
+  | 'admin-contracts'
+  | 'admin-templates'
+  | 'admin-policies'
+  | 'admin-operations'
+  | 'admin-suppressions';
 
 export type NotificationNavigationSection = 'overview' | 'center' | 'administration';
 
@@ -81,9 +99,30 @@ export const NOTIFICATION_NAVIGATION: readonly NotificationNavigationGroup[] = [
         requiredPermissionCode: 'VIEW',
       },
       {
+        view: 'admin-policies',
+        path: `${NOTIFICATION_ADMIN_BASE_PATH}/policies`,
+        icon: SlidersHorizontal,
+        requiredResourceKey: 'ADMIN.NOTIFICATION_POLICY',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        view: 'admin-templates',
+        path: `${NOTIFICATION_ADMIN_BASE_PATH}/templates`,
+        icon: Languages,
+        requiredResourceKey: 'ADMIN.NOTIFICATION_TEMPLATE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
         view: 'admin-operations',
         path: `${NOTIFICATION_ADMIN_BASE_PATH}/operations`,
         icon: RadioTower,
+        requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        view: 'admin-suppressions',
+        path: `${NOTIFICATION_ADMIN_BASE_PATH}/suppressions`,
+        icon: CircleStop,
         requiredResourceKey: 'ADMIN.NOTIFICATION_OPERATIONS',
         requiredPermissionCode: 'VIEW',
       },
