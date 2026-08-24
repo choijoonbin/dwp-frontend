@@ -6,6 +6,7 @@ import { AuthUnauthorizedHandler } from './components/auth-unauthorized-handler'
 import { SkipNavigationLink } from './components/skip-navigation-link';
 import { UserLocaleSync } from './components/user-locale-sync';
 import { registerRouteIntentObserver, reportRouteCommit } from './observability/route-performance';
+import { ProductSurfaceAuthorityBridge } from './features/shell/product-surface-authority-bridge';
 
 const NotificationRuntimeHost = lazy(() =>
   import('./components/notification-runtime-host').then((module) => ({
@@ -48,7 +49,7 @@ export default function App({ children }: AppProps) {
       <SkipNavigationLink />
       <AuthUnauthorizedHandler />
       <UserLocaleSync />
-      {children}
+      <ProductSurfaceAuthorityBridge>{children}</ProductSurfaceAuthorityBridge>
       <Suspense fallback={null}>
         <NotificationRuntimeHost />
         <DwaionGlobalHost />

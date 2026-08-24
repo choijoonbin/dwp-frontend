@@ -1,6 +1,7 @@
 import { it, vi, expect, describe, afterEach } from 'vitest';
 
 import { axiosInstance, resetCsrfToken, setUnauthorizedHandler } from './axios-instance';
+import { HttpTransportError } from './http-error';
 
 function jsonResponse(status: number, payload: unknown): Response {
   return {
@@ -26,6 +27,34 @@ describe('axiosInstance browser session contract', () => {
     await expect(axiosInstance.get('/api/restricted')).rejects.toMatchObject({ status: 403 });
 
     expect(unauthorized).not.toHaveBeenCalled();
+  });
+
+  it('sends an opaque scope only as the standard query parameter', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(200, { data: [] }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await axiosInstance.get('/api/approvals/v1/admin/workflows?view=active', {
+      contextScopeKey: 'scope-a/b',
+    });
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/approvals/v1/admin/workflows?view=active&contextScopeKey=scope-a%2Fb'
+    );
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(JSON.stringify(request.headers)).not.toContain('scope-a/b');
+  });
+
+  it.each([
+    ['', '/api/example'],
+    [' scope-1', '/api/example'],
+    ['scope-1', '/api/example?contextScopeKey=scope-2'],
+    ['scope-1', '/api/example#fragment'],
+  ])('rejects an ambiguous or malformed product scope', async (contextScopeKey, url) => {
+    vi.stubGlobal('fetch', vi.fn());
+
+    await expect(axiosInstance.get(url, { contextScopeKey })).rejects.toThrowError(
+      'Product surface context scope is invalid.'
+    );
   });
 
   it('uses credentials and adds an in-memory CSRF token to mutations', async () => {
@@ -218,7 +247,8 @@ describe('axiosInstance browser session contract', () => {
     );
     await vi.advanceTimersByTimeAsync(25);
 
-    await expect(request).resolves.toMatchObject({ name: 'AbortError' });
+    await expect(request).resolves.toEqual(expect.any(HttpTransportError));
+    await expect(request).resolves.toMatchObject({ reason: 'TIMEOUT' });
     const init = fetchMock.mock.calls[0]?.[1];
     expect(init?.signal?.aborted).toBe(true);
   });
@@ -243,7 +273,8 @@ describe('axiosInstance browser session contract', () => {
       );
     controller.abort('superseded');
 
-    await expect(request).resolves.toMatchObject({ name: 'AbortError' });
+    await expect(request).resolves.toEqual(expect.any(HttpTransportError));
+    await expect(request).resolves.toMatchObject({ reason: 'ABORT' });
     expect(fetchMock.mock.calls[0]?.[1]?.signal?.aborted).toBe(true);
   });
 });

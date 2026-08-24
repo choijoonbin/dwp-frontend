@@ -37,6 +37,10 @@ import {
   approvalTimelineEventDetail,
 } from './approval-timeline-copy';
 import { ApprovalSurface, PriorityChip, StatusChip, approvalTone } from './approval-ui';
+import {
+  isProductSurfaceOperationCancelledError,
+  useApprovalGovernedMutation,
+} from './use-approval-governed-mutation';
 
 import type { ApprovalTask } from '@dwp-frontend/shared-utils';
 
@@ -73,9 +77,11 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
     enabled: Boolean(selectedId),
     staleTime: 10_000,
   });
+  const runDecision = useApprovalGovernedMutation('route.approvals.work.task-decision.action');
+  const runClaim = useApprovalGovernedMutation('route.approvals.work.task-claim.action');
   const decide = useMutation({
     mutationFn: (input: { decision: Decision; comment?: string; expectedVersion: number }) =>
-      decideApprovalTask(selectedId!, input),
+      runDecision((execution) => decideApprovalTask(selectedId!, input, execution)),
     onSuccess: async () => {
       setDecision(undefined);
       setComment('');
@@ -87,11 +93,12 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
       setSelectedId(undefined);
       toast.success(t('inbox.decisionSaved'));
     },
-    onError: () => toast.error(t('inbox.decisionError')),
+    onError: (error) =>
+      !isProductSurfaceOperationCancelledError(error) && toast.error(t('inbox.decisionError')),
   });
   const claim = useMutation({
     mutationFn: (input: { taskId: string; expectedVersion: number }) =>
-      claimApprovalTask(input.taskId, input.expectedVersion),
+      runClaim((execution) => claimApprovalTask(input.taskId, input.expectedVersion, execution)),
     onSuccess: async (claimed) => {
       queryClient.setQueryData(['approvals', 'task', claimed.task.taskId], claimed);
       await Promise.all([
@@ -100,7 +107,8 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
       ]);
       toast.success(t('inbox.claimed'));
     },
-    onError: () => toast.error(t('inbox.claimError')),
+    onError: (error) =>
+      !isProductSurfaceOperationCancelledError(error) && toast.error(t('inbox.claimError')),
   });
   const selected = detail.data;
 

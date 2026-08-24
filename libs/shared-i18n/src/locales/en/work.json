@@ -670,7 +670,13 @@
       "waiting": "Waiting",
       "completed": "Completed"
     },
-    "type": { "Approval": "Approval", "Task": "Task", "Service": "Service", "Required": "Required" }
+    "type": {
+      "Approval": "Approval",
+      "Task": "Task",
+      "Service": "Service",
+      "Required": "Required",
+      "Review": "Access review"
+    }
   },
   "shared": {
     "referenceMode": "Reference mode",
@@ -811,6 +817,48 @@
       "updating": "Updating selected work",
       "updated": "{{count}} work items were updated.",
       "updateError": "The selected work could not be updated. Refresh the queue and review any version conflicts."
+    },
+    "accessReview": {
+      "title": "Access review",
+      "authorizing": "Checking your current reviewer assignment",
+      "authorizingDecision": "Checking decision permission",
+      "loading": "Loading current access evidence",
+      "subject": "Person",
+      "role": "Access under review",
+      "source": "Assignment source",
+      "sourceTypes": { "DIRECT": "Direct assignment", "GROUP": "Group-derived assignment" },
+      "recommendations": {
+        "KEEP": "Evidence supports keeping this access",
+        "REVIEW": "Review this access carefully",
+        "UNAVAILABLE": "No automated recommendation is available"
+      },
+      "reasons": {
+        "RECENT_ACTIVITY": "Recent account activity was verified.",
+        "PRIVILEGED_ROLE": "This role has privileged capabilities.",
+        "NEVER_SIGNED_IN": "No sign-in activity was found.",
+        "INACTIVE_90_DAYS": "The account has been inactive for at least 90 days.",
+        "EVIDENCE_UNAVAILABLE": "Required evidence could not be verified. Make a manual decision."
+      },
+      "decisions": { "PENDING": "Decision pending", "APPROVE": "Kept", "REVOKE": "Revoked" },
+      "keep": "Keep access",
+      "revoke": "Revoke access",
+      "keepTitle": "Keep this access?",
+      "revokeTitle": "Revoke this access?",
+      "decisionDescription": "Review the evidence and record a business reason. The owner service rechecks assignment and version before applying the decision.",
+      "decisionReason": "Decision reason",
+      "decisionReasonHelp": "Enter at least 10 characters. The reason is retained as audit evidence.",
+      "cancel": "Cancel",
+      "decisionSaved": "The access review decision was recorded.",
+      "decisionError": "The decision could not be saved. Refresh the evidence and try again.",
+      "decisionUnavailable": "This assignment is not currently authorized for a decision.",
+      "notAvailableTitle": "This review item is no longer available",
+      "notAvailableDescription": "It may belong to another reviewer, have been reassigned, or have been revoked. Return to the queue and select an assigned item.",
+      "staleTitle": "The review evidence changed",
+      "staleDescription": "Current evidence and version were reloaded. Review them before submitting again.",
+      "loadErrorTitle": "Access review evidence could not be loaded",
+      "loadErrorDescription": "The owner service did not return verified evidence. Try again shortly.",
+      "authorityUnavailableTitle": "Reviewer authorization could not be verified",
+      "authorityUnavailableDescription": "No review evidence was loaded. Retry when the authorization service is available."
     },
     "noDecisionContext": "No prioritization context is registered for this work item.",
     "noRecommendedNext": "No next step is registered.",
@@ -1252,6 +1300,12 @@
       "connected": "Connected"
     },
     "available": "Available apps",
+    "manage": "Manage",
+    "manageable": {
+      "title": "Apps you manage",
+      "count": "{{count}} management areas",
+      "managementOnly": "Management access · Work access is not required"
+    },
     "appCount": "{{count}} apps",
     "pinned": "Pinned",
     "health": {

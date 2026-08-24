@@ -1,11 +1,27 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth, safeReturnUrl, getOidcCallback } from '@dwp-frontend/shared-utils';
+import {
+  getOidcCallback,
+  safeReturnUrl,
+  signalProductSurfaceStepUpCompletion,
+  useAuth,
+} from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
+
+import type { OidcCallbackResult } from '@dwp-frontend/shared-utils';
+
+export function resolveOidcCallbackDestination(
+  result: OidcCallbackResult,
+  requestedLoginReturnUrl: string | null
+): string {
+  return result.purpose === 'STEP_UP'
+    ? result.returnTo
+    : safeReturnUrl(requestedLoginReturnUrl) || '/';
+}
 
 export default function OidcCallbackPage() {
   const { t } = useTranslation('auth');
@@ -24,7 +40,7 @@ export default function OidcCallbackPage() {
       }
 
       try {
-        await getOidcCallback({
+        const result = await getOidcCallback({
           code,
           state,
           providerKey: searchParams.get('providerKey') || undefined,
@@ -35,7 +51,17 @@ export default function OidcCallbackPage() {
           setErrorKey('sessionUnverified');
           return;
         }
-        navigate(safeReturnUrl(searchParams.get('returnUrl')) || '/', { replace: true });
+        const destination = resolveOidcCallbackDestination(result, searchParams.get('returnUrl'));
+        if (result.purpose === 'STEP_UP') {
+          signalProductSurfaceStepUpCompletion(
+            result.flowId,
+            window.location.origin,
+            window.opener
+          );
+          window.close();
+          if (window.closed) return;
+        }
+        navigate(destination, { replace: true });
       } catch {
         setErrorKey('failed');
       }

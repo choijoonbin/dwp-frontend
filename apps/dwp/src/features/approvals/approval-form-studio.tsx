@@ -39,13 +39,23 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { ApprovalSurface, StatusChip, approvalTone } from './approval-ui';
+import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
+import { approvalFormPublishCommand } from './approval-high-risk-command-model';
 import { CategoryEditorDialog, FormEditorDialog } from './approval-form-catalog-dialogs';
 import {
   buildApprovalFormCategoryTree,
   descendantCategoryIds,
   validApprovalFormFields,
 } from './approval-form-catalog-model';
-import { useApprovalExperience } from './use-approval-experience';
+import {
+  useApprovalExperience,
+  useApprovalManagementRequestScope,
+} from './use-approval-experience';
+import {
+  isProductSurfaceOperationCancelledError,
+  useApprovalGovernedMutation,
+} from './use-approval-governed-mutation';
+import { useApprovalHighRiskCommand } from './use-approval-high-risk-command';
 
 import type { ApprovalForm, ApprovalFormCategory } from '@dwp-frontend/shared-utils';
 import type { CategoryDraft, FormDraft } from './approval-form-catalog-dialogs';
@@ -89,6 +99,7 @@ export function ApprovalFormStudio() {
   const { t, i18n } = useTranslation('approvals');
   const toast = useToast();
   const experience = useApprovalExperience();
+  const requestScope = useApprovalManagementRequestScope();
   const queryClient = useQueryClient();
   const korean = i18n.resolvedLanguage?.startsWith('ko');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -102,23 +113,23 @@ export function ApprovalFormStudio() {
   const [categoryDraft, setCategoryDraft] = useState<CategoryDraft>(emptyCategoryDraft);
 
   const forms = useQuery({
-    queryKey: ['approvals', 'admin', 'forms'],
-    queryFn: getApprovalForms,
+    queryKey: ['approvals', 'admin', 'forms', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getApprovalForms(requestScope.contextScopeKey, signal),
     staleTime: 30_000,
   });
   const categories = useQuery({
-    queryKey: ['approvals', 'admin', 'form-categories'],
-    queryFn: getApprovalFormCategories,
+    queryKey: ['approvals', 'admin', 'form-categories', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getApprovalFormCategories(requestScope.contextScopeKey, signal),
     staleTime: 30_000,
   });
   const workflows = useQuery({
-    queryKey: ['approvals', 'admin', 'workflows'],
-    queryFn: getApprovalWorkflows,
+    queryKey: ['approvals', 'admin', 'workflows', ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getApprovalWorkflows(requestScope.contextScopeKey, signal),
     staleTime: 30_000,
   });
   const detail = useQuery({
-    queryKey: ['approvals', 'admin', 'forms', selectedId],
-    queryFn: () => getApprovalForm(selectedId!),
+    queryKey: ['approvals', 'admin', 'forms', selectedId, ...requestScope.cacheKey],
+    queryFn: ({ signal }) => getApprovalForm(selectedId!, requestScope.contextScopeKey, signal),
     enabled: Boolean(selectedId),
     staleTime: 30_000,
   });
@@ -160,43 +171,64 @@ export function ApprovalFormStudio() {
   };
   const refreshCategories = () =>
     queryClient.invalidateQueries({ queryKey: ['approvals', 'admin', 'form-categories'] });
+  const runCreateForm = useApprovalGovernedMutation('route.approvals.admin.form-create.action');
+  const runUpdateForm = useApprovalGovernedMutation('route.approvals.admin.form-update.action');
+  const runCreateCategory = useApprovalGovernedMutation(
+    'route.approvals.admin.form-category-create.action'
+  );
+  const runUpdateCategory = useApprovalGovernedMutation(
+    'route.approvals.admin.form-category-update.action'
+  );
+  const highRiskPublish = useApprovalHighRiskCommand({
+    operation: 'FORM_PUBLISH',
+    execute: (command, execution) =>
+      publishApprovalForm(command.targetId, command.expectedObjectVersion, execution),
+    onSuccess: async (result) => {
+      await refreshForms(result.form.formId);
+      toast.success(t('admin.studio.formPublished'));
+    },
+    onConflict: async () => {
+      await refreshForms(selectedId ?? undefined);
+    },
+  });
 
   const createForm = useMutation({
-    mutationFn: () => createApprovalFormDraft(formDraft),
+    mutationFn: () => runCreateForm((execution) => createApprovalFormDraft(formDraft, execution)),
     onSuccess: async (result) => {
       await refreshForms(result.form.formId);
       setFormEditorOpen(false);
       toast.success(t('admin.studio.formCreated'));
     },
-    onError: () => toast.error(t('admin.studio.saveError')),
+    onError: (error) =>
+      !isProductSurfaceOperationCancelledError(error) && toast.error(t('admin.studio.saveError')),
   });
   const updateForm = useMutation({
     mutationFn: () =>
-      updateApprovalFormDraft(selectedId!, {
-        categoryId: formDraft.categoryId,
-        nameKo: formDraft.nameKo,
-        nameEn: formDraft.nameEn,
-        descriptionKo: formDraft.descriptionKo,
-        descriptionEn: formDraft.descriptionEn,
-        ownerGroupRef: formDraft.ownerGroupRef,
-        defaultWorkflowId: formDraft.defaultWorkflowId,
-        fields: formDraft.fields,
-        expectedVersion: detail.data!.form.version,
-      }),
+      runUpdateForm((execution) =>
+        updateApprovalFormDraft(
+          selectedId!,
+          {
+            categoryId: formDraft.categoryId,
+            nameKo: formDraft.nameKo,
+            nameEn: formDraft.nameEn,
+            descriptionKo: formDraft.descriptionKo,
+            descriptionEn: formDraft.descriptionEn,
+            ownerGroupRef: formDraft.ownerGroupRef,
+            defaultWorkflowId: formDraft.defaultWorkflowId,
+            fields: formDraft.fields,
+            expectedVersion: detail.data!.form.version,
+          },
+          execution
+        )
+      ),
     onSuccess: async (result) => {
       await refreshForms(result.form.formId);
       setFormEditorOpen(false);
       toast.success(t('admin.studio.formSaved'));
     },
-    onError: () => toast.error(t('admin.studio.saveConflict')),
-  });
-  const publishForm = useMutation({
-    mutationFn: () => publishApprovalForm(selectedId!, detail.data!.form.version),
-    onSuccess: async (result) => {
-      await refreshForms(result.form.formId);
-      toast.success(t('admin.studio.formPublished'));
-    },
-    onError: () => toast.error(t('admin.studio.formPublishBlocked')),
+    onError: (error) =>
+      !isProductSurfaceOperationCancelledError(error) &&
+      toast.error(t('admin.studio.saveConflict')),
   });
   const saveCategory = useMutation({
     mutationFn: () => {
@@ -210,19 +242,32 @@ export function ApprovalFormStudio() {
         sortOrder: categoryDraft.sortOrder,
       };
       return editingCategory
-        ? updateApprovalFormCategory(editingCategory.categoryId, {
-            ...input,
-            lifecycleState: categoryDraft.lifecycleState,
-            expectedVersion: editingCategory.version,
-          })
-        : createApprovalFormCategory({ ...input, categoryKey: categoryDraft.categoryKey });
+        ? runUpdateCategory((execution) =>
+            updateApprovalFormCategory(
+              editingCategory.categoryId,
+              {
+                ...input,
+                lifecycleState: categoryDraft.lifecycleState,
+                expectedVersion: editingCategory.version,
+              },
+              execution
+            )
+          )
+        : runCreateCategory((execution) =>
+            createApprovalFormCategory(
+              { ...input, categoryKey: categoryDraft.categoryKey },
+              execution
+            )
+          );
     },
     onSuccess: async () => {
       await refreshCategories();
       setCategoryEditorOpen(false);
       toast.success(t('admin.studio.categorySaved'));
     },
-    onError: () => toast.error(t('admin.studio.saveConflict')),
+    onError: (error) =>
+      !isProductSurfaceOperationCancelledError(error) &&
+      toast.error(t('admin.studio.saveConflict')),
   });
 
   const openCreateForm = () => {
@@ -435,9 +480,13 @@ export function ApprovalFormStudio() {
             locale={i18n.resolvedLanguage}
             canEdit={experience.canEditDesign}
             canPublish={experience.canPublish}
-            publishing={publishForm.isPending}
+            publishing={highRiskPublish.controller.busy}
             onEdit={openEditForm}
-            onPublish={() => publishForm.mutate()}
+            onPublish={() =>
+              void highRiskPublish.begin(
+                approvalFormPublishCommand(detail.data.form.formId, detail.data.form.version)
+              )
+            }
           />
         ) : null}
       </Box>
@@ -467,6 +516,7 @@ export function ApprovalFormStudio() {
         onClose={() => setCategoryEditorOpen(false)}
         onSave={() => saveCategory.mutate()}
       />
+      <ApprovalHighRiskCommandDialog controller={highRiskPublish.controller} />
     </>
   );
 }
@@ -649,12 +699,21 @@ function FormInspector({
   onPublish: () => void;
 }) {
   const { t } = useTranslation('approvals');
+  const requestScope = useApprovalManagementRequestScope();
   const form = detail.form;
   const korean = locale?.startsWith('ko');
   const route = detail.routes.find((item) => item.bindingType === 'DEFAULT');
   const routeDetail = useQuery({
-    queryKey: ['approvals', 'admin', 'workflows', route?.workflowId, 'route-preview'],
-    queryFn: () => getApprovalWorkflow(route!.workflowId),
+    queryKey: [
+      'approvals',
+      'admin',
+      'workflows',
+      route?.workflowId,
+      'route-preview',
+      ...requestScope.cacheKey,
+    ],
+    queryFn: ({ signal }) =>
+      getApprovalWorkflow(route!.workflowId, requestScope.contextScopeKey, signal),
     enabled: Boolean(route?.workflowId),
     staleTime: 30_000,
   });

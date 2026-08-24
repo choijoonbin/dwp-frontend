@@ -3,12 +3,16 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetCsrfToken } from '../axios-instance';
 import {
   claimApprovalTask,
+  createApprovalDelegation,
   decideApprovalTask,
   getApprovalHome,
+  getApprovalWorkflows,
   respondToApprovalInformationRequest,
   retryApprovalIntegrationDelivery,
   updateApprovalDraft,
 } from './approval-api';
+
+const legacy = { mode: 'LEGACY_COMPATIBILITY', rolloutState: '100' } as const;
 
 function jsonResponse(data: unknown): Response {
   return {
@@ -37,6 +41,24 @@ describe('approval API boundary', () => {
     );
   });
 
+  it('binds management reads to the selected opaque scope query', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse([]));
+    vi.stubGlobal('fetch', fetchMock);
+    const controller = new AbortController();
+
+    await expect(getApprovalWorkflows('scope-management-a', controller.signal)).resolves.toEqual(
+      []
+    );
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/approvals/v1/admin/workflows?contextScopeKey=scope-management-a'
+    );
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(request.signal).toBeInstanceOf(AbortSignal);
+    expect(request.headers).not.toHaveProperty('X-DWP-Context-Scope');
+    expect(request.headers).not.toHaveProperty('X-DWP-Scope');
+  });
+
   it('sends a versioned decision through the shared CSRF contract', async () => {
     const detail = { task: { taskId: 'task-1', status: 'APPROVED' } };
     const fetchMock = vi
@@ -46,11 +68,15 @@ describe('approval API boundary', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
-      decideApprovalTask('task-1', {
-        decision: 'APPROVE',
-        comment: 'Evidence reviewed',
-        expectedVersion: 3,
-      })
+      decideApprovalTask(
+        'task-1',
+        {
+          decision: 'APPROVE',
+          comment: 'Evidence reviewed',
+          expectedVersion: 3,
+        },
+        legacy
+      )
     ).resolves.toEqual(detail);
 
     const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
@@ -71,7 +97,7 @@ describe('approval API boundary', () => {
       .mockResolvedValueOnce(jsonResponse(detail));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(claimApprovalTask('task-1', 3)).resolves.toEqual(detail);
+    await expect(claimApprovalTask('task-1', 3, legacy)).resolves.toEqual(detail);
 
     const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
     expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/approvals/v1/tasks/task-1/claim');
@@ -89,15 +115,19 @@ describe('approval API boundary', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
-      updateApprovalDraft('request-1', {
-        workflowId: 'workflow-1',
-        formId: 'form-1',
-        title: 'Updated request',
-        summary: 'Updated decision context',
-        priority: 'HIGH',
-        payload: { amount: '1250000', currency: 'KRW' },
-        expectedVersion: 4,
-      })
+      updateApprovalDraft(
+        'request-1',
+        {
+          workflowId: 'workflow-1',
+          formId: 'form-1',
+          title: 'Updated request',
+          summary: 'Updated decision context',
+          priority: 'HIGH',
+          payload: { amount: '1250000', currency: 'KRW' },
+          expectedVersion: 4,
+        },
+        legacy
+      )
     ).resolves.toEqual(detail);
 
     const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
@@ -122,7 +152,8 @@ describe('approval API boundary', () => {
         'request-1',
         'Added the requested evidence.',
         { summary: 'Updated context', amount: '1250000' },
-        5
+        5,
+        legacy
       )
     ).resolves.toEqual(requestSummary);
 
@@ -137,21 +168,135 @@ describe('approval API boundary', () => {
     });
   });
 
-  it('retries an isolated integration event through the governed operator route', async () => {
-    const operations = { generatedAt: '2026-08-19T00:00:00Z', integrationDeliveries: [] };
+  it('creates a workflow delegation with immutable workflowId and never sends workflowKey identity', async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
-      .mockResolvedValueOnce(jsonResponse(operations));
+      .mockResolvedValueOnce(jsonResponse([]));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(retryApprovalIntegrationDelivery('outbox-1')).resolves.toEqual(operations);
+    await expect(
+      createApprovalDelegation(
+        {
+          delegateUserId: 2,
+          scopeType: 'WORKFLOW',
+          workflowId: '22222222-2222-4222-8222-222222222222',
+          startsAt: '2026-08-25T00:00:00.000Z',
+          endsAt: '2026-08-31T00:00:00.000Z',
+          reason: 'Planned coverage for the approval queue.',
+        },
+        legacy
+      )
+    ).resolves.toEqual([]);
 
     const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
-    expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      '/api/approvals/v1/admin/operations/events/outbox-1/retry'
-    );
-    expect(request.method).toBe('POST');
-    expect(request.headers).toEqual(expect.objectContaining({ 'X-XSRF-TOKEN': 'csrf-token' }));
+    expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/approvals/v1/delegations');
+    expect(JSON.parse(String(request.body))).toEqual({
+      delegateUserId: 2,
+      scopeType: 'WORKFLOW',
+      workflowId: '22222222-2222-4222-8222-222222222222',
+      startsAt: '2026-08-25T00:00:00.000Z',
+      endsAt: '2026-08-31T00:00:00.000Z',
+      reason: 'Planned coverage for the approval queue.',
+    });
+    expect(String(request.body)).not.toContain('workflowKey');
+  });
+
+  it.each(['000', '100'] as const)(
+    'keeps rollout %s delivery retry on the bodyless, headerless legacy wire',
+    async (rolloutState) => {
+      const operations = { generatedAt: '2026-08-19T00:00:00Z', integrationDeliveries: [] };
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+        .mockResolvedValueOnce(jsonResponse(operations));
+      vi.stubGlobal('fetch', fetchMock);
+
+      await expect(
+        retryApprovalIntegrationDelivery('outbox-1', 7, {
+          mode: 'LEGACY_COMPATIBILITY',
+          rolloutState,
+        })
+      ).resolves.toEqual(operations);
+
+      const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+      expect(fetchMock.mock.calls[1]?.[0]).toBe(
+        '/api/approvals/v1/admin/operations/events/outbox-1/retry'
+      );
+      expect(request.method).toBe('POST');
+      expect(request.headers).toEqual(expect.objectContaining({ 'X-XSRF-TOKEN': 'csrf-token' }));
+      expect(request.body).toBeUndefined();
+      expect(request.headers).not.toHaveProperty('Content-Type');
+      for (const header of [
+        'X-DWP-Expected-Object-Version',
+        'X-DWP-Expected-Decision-Revision',
+        'X-DWP-Step-Up-Challenge',
+        'Idempotency-Key',
+      ]) {
+        expect(request.headers).not.toHaveProperty(header);
+      }
+    }
+  );
+
+  it.each(['110', '111'] as const)(
+    'binds rollout %s HIGH retry to the selected scope, direct revision, attempt, proof and object version',
+    async (rolloutState) => {
+      const operations = { generatedAt: '2026-08-19T00:00:00Z', integrationDeliveries: [] };
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+        .mockResolvedValueOnce(jsonResponse(operations));
+      vi.stubGlobal('fetch', fetchMock);
+
+      await retryApprovalIntegrationDelivery('outbox-1', 7, {
+        mode: 'SECURE',
+        rolloutState,
+        expectedDecisionRevision: 'direct-action-revision',
+        contextKey: 'context-never-on-wire',
+        contextScopeKey: 'scope-never-on-wire',
+        objectVersion: 7,
+        idempotencyKey: 'stable-attempt-key',
+        stepUp: {
+          challenge: 'signed-step-up-jwt',
+          challengeId: 'challenge-jti-never-on-wire',
+          decisionRevision: 'direct-action-revision',
+          expiresAt: '2026-08-24T01:05:00Z',
+        },
+      });
+
+      const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+      expect(fetchMock.mock.calls[1]?.[0]).toBe(
+        '/api/approvals/v1/admin/operations/events/outbox-1/retry?contextScopeKey=scope-never-on-wire'
+      );
+      expect(request.headers).toEqual(
+        expect.objectContaining({
+          'X-DWP-Expected-Decision-Revision': 'direct-action-revision',
+          'X-DWP-Expected-Object-Version': '7',
+          'X-DWP-Step-Up-Challenge': 'signed-step-up-jwt',
+          'Idempotency-Key': 'stable-attempt-key',
+        })
+      );
+      expect(request.headers).not.toHaveProperty('X-DWP-Context-Scope');
+      expect(request.headers).not.toHaveProperty('X-DWP-Scope');
+      const serialized = JSON.stringify(request.headers);
+      expect(serialized).not.toContain('context-never-on-wire');
+      expect(serialized).not.toContain('scope-never-on-wire');
+      expect(serialized).not.toContain('challenge-jti-never-on-wire');
+      expect(request.body).toBeUndefined();
+      expect(request.headers).not.toHaveProperty('Content-Type');
+    }
+  );
+
+  it('rejects a HIGH retry when the direct version and governed header version drift', async () => {
+    await expect(
+      retryApprovalIntegrationDelivery('outbox-1', 7, {
+        mode: 'SECURE',
+        rolloutState: '111',
+        expectedDecisionRevision: 'direct-action-revision',
+        contextKey: 'context-key',
+        contextScopeKey: 'scope-key',
+        objectVersion: 8,
+      })
+    ).rejects.toThrowError('Approval delivery retry version does not match governed authority.');
   });
 });

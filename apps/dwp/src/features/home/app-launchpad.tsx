@@ -72,6 +72,7 @@ import type {
   LaunchpadFolder,
   LaunchpadLayout,
 } from '../../components/workspace-composer/app-launchpad-model';
+import { AppManagementAction } from './app-management-action';
 
 const LAUNCHPAD_VISIBLE_COLUMNS = 5;
 const LAUNCHPAD_VISIBLE_ROWS = 3;
@@ -126,6 +127,7 @@ type AppLaunchpadProps = {
   editing: boolean;
   reorderable?: boolean;
   onLaunch: (app: HomeAppDefinition) => void;
+  onManage?: (app: HomeAppDefinition) => void;
   onStartEditing?: () => void;
   onLayoutChange: (layout: LaunchpadLayout) => void;
   customizationBusy?: boolean;
@@ -337,6 +339,7 @@ type AppTileProps = {
   previewSlot: boolean;
   suppressLaunch: React.MutableRefObject<boolean>;
   onLaunch: (app: HomeAppDefinition) => void;
+  onManage?: (app: HomeAppDefinition) => void;
   onRemove: (appId: string) => void;
 };
 
@@ -352,6 +355,7 @@ function AppTile({
   previewSlot,
   suppressLaunch,
   onLaunch,
+  onManage,
   onRemove,
 }: AppTileProps) {
   const { t } = useTranslation('home');
@@ -376,7 +380,8 @@ function AppTile({
             onKeyDown={
               editing
                 ? (activatorListeners?.onKeyDown as
-                    React.KeyboardEventHandler<HTMLButtonElement> | undefined)
+                    | React.KeyboardEventHandler<HTMLButtonElement>
+                    | undefined)
                 : undefined
             }
             onContextMenu={(event) => event.preventDefault()}
@@ -384,7 +389,9 @@ function AppTile({
             aria-label={
               editing
                 ? t('launchpad.dragApp', { app: app.name })
-                : t('launchpad.openApp', { app: app.name })
+                : t(app.managementOnly ? 'launchpad.manageApp' : 'launchpad.openApp', {
+                    app: app.name,
+                  })
             }
             onClick={() => {
               if (!editing && !suppressLaunch.current) onLaunch(app);
@@ -466,6 +473,9 @@ function AppTile({
               {app.shortName}
             </Typography>
           </ButtonBase>
+          {!editing && app.managementRoute && onManage && (
+            <AppManagementAction app={app} variant="overlay" onManage={onManage} />
+          )}
           {editing && (
             <Tooltip title={t('launchpad.removeApp')}>
               <Box
@@ -542,7 +552,8 @@ function FolderTile({
             onKeyDown={
               editing
                 ? (activatorListeners?.onKeyDown as
-                    React.KeyboardEventHandler<HTMLButtonElement> | undefined)
+                    | React.KeyboardEventHandler<HTMLButtonElement>
+                    | undefined)
                 : undefined
             }
             onContextMenu={(event) => event.preventDefault()}
@@ -629,6 +640,7 @@ export function AppLaunchpad({
   editing,
   reorderable = true,
   onLaunch,
+  onManage,
   onStartEditing,
   onLayoutChange,
   customizationBusy = false,
@@ -1183,6 +1195,7 @@ export function AppLaunchpad({
                         previewSlot={activeId === itemId && dragPreview?.targetGroupId === group.id}
                         suppressLaunch={suppressLaunch}
                         onLaunch={onLaunch}
+                        onManage={onManage}
                         onRemove={(appId) => onLayoutChange(hideLaunchpadApp(layout, appId))}
                       />
                     ) : null;
@@ -1390,6 +1403,9 @@ export function AppLaunchpad({
                           </Typography>
                         </Box>
                       </ButtonBase>
+                      {!editing && app.managementRoute && onManage && (
+                        <AppManagementAction app={app} variant="inline" onManage={onManage} />
+                      )}
                       {editing && (
                         <Tooltip title={t('launchpad.removeApp')}>
                           <IconButton

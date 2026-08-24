@@ -43,6 +43,11 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { SectionHeading } from '../components/workspace-ui';
 import { GovernedSavedViewControl } from '../components/governed-saved-view-control';
+import { AccessReviewWorkItem } from '../features/work/access-review-work-item';
+import {
+  dispatchWorkspaceWorkItem,
+  selectWorkspaceWorkItem,
+} from '../features/work/work-queue-dispatcher';
 
 import type { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import type {
@@ -127,11 +132,14 @@ export default function WorkPage() {
       return statusMatches && queryMatches;
     });
   }, [filter, items, query]);
-  const selected = items.find((item) => item.id === selectedId) || filteredItems[0];
+  const selected = selectedId ? selectWorkspaceWorkItem(items, selectedId) : filteredItems[0];
+  const selectedDispatch = dispatchWorkspaceWorkItem(selected);
   const selectedBatchItems = useMemo(() => {
     const selectedIds = batchSelection.ids;
-    return items.filter((item) =>
-      batchSelection.type === 'include' ? selectedIds.has(item.id) : !selectedIds.has(item.id)
+    return items.filter(
+      (item) =>
+        item.type !== 'Review' &&
+        (batchSelection.type === 'include' ? selectedIds.has(item.id) : !selectedIds.has(item.id))
     );
   }, [batchSelection, items]);
   const batchLimitExceeded = selectedBatchItems.length > MAX_BATCH_SIZE;
@@ -476,15 +484,17 @@ export default function WorkPage() {
             rows={filteredItems}
             columns={columns}
             getRowId={(row) => row.id}
-            onRowClick={({ row }) =>
-              setSearchParams(mergeFilterSearchParams(searchParams, { item: row.id }), {
+            onRowClick={({ row }) => {
+              const dispatch = dispatchWorkspaceWorkItem(row);
+              const itemRef = dispatch.kind === 'access-review' ? dispatch.workItemRef : row.id;
+              setSearchParams(mergeFilterSearchParams(searchParams, { item: itemRef }), {
                 replace: true,
-              })
-            }
+              });
+            }}
             checkboxSelection
             rowSelectionModel={batchSelection}
             onRowSelectionModelChange={setBatchSelection}
-            isRowSelectable={({ row }) => row.status !== 'completed'}
+            isRowSelectable={({ row }) => row.status !== 'completed' && row.type !== 'Review'}
             columnVisibilityModel={{
               priority: columnPreset === 'operational' && showQueueDetailColumns,
               status: showQueueDetailColumns,
@@ -547,7 +557,47 @@ export default function WorkPage() {
           />
         </Box>
 
-        {selected && (
+        {selectedDispatch.kind === 'access-review' && (
+          <Box
+            component="aside"
+            aria-label={t('workPage.accessReview.title')}
+            sx={{
+              minWidth: 0,
+              mt: { xs: 3, lg: 0 },
+              pt: { xs: 3, lg: 0 },
+              pl: { xs: 0, lg: 3 },
+              borderTop: { xs: 1, lg: 0 },
+              borderLeft: { xs: 0, lg: 1 },
+              borderColor: 'divider',
+            }}
+          >
+            <AccessReviewWorkItem workItemRef={selectedDispatch.workItemRef} />
+          </Box>
+        )}
+
+        {selectedDispatch.kind === 'unavailable' && selectedId && (
+          <Box
+            component="aside"
+            aria-label={t('workPage.accessReview.notAvailableTitle')}
+            sx={{
+              minWidth: 0,
+              mt: { xs: 3, lg: 0 },
+              pt: { xs: 3, lg: 0 },
+              pl: { xs: 0, lg: 3 },
+              borderTop: { xs: 1, lg: 0 },
+              borderLeft: { xs: 0, lg: 1 },
+              borderColor: 'divider',
+            }}
+          >
+            <LocalErrorState
+              title={t('workPage.accessReview.notAvailableTitle')}
+              description={t('workPage.accessReview.notAvailableDescription')}
+              size="page"
+            />
+          </Box>
+        )}
+
+        {selectedDispatch.kind === 'workspace' && (
           <Box
             component="aside"
             aria-labelledby="selected-work-heading"
@@ -567,38 +617,38 @@ export default function WorkPage() {
               title={t('workPage.decisionContext')}
               meta={
                 <Chip
-                  label={t(`labels.status.${selected.status}`)}
-                  color={statusColor[selected.status]}
+                  label={t(`labels.status.${selectedDispatch.item.status}`)}
+                  color={statusColor[selectedDispatch.item.status]}
                   size="small"
                 />
               }
             />
 
             <Typography component="h3" variant="h6" sx={{ mt: 3 }}>
-              {selected.title}
+              {selectedDispatch.item.title}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
               {t('workPage.itemMeta', {
-                id: selected.id,
-                type: t(`labels.type.${selected.type}`),
-                owner: selected.owner,
+                id: selectedDispatch.item.id,
+                type: t(`labels.type.${selectedDispatch.item.type}`),
+                owner: selectedDispatch.item.owner,
               })}
             </Typography>
 
             <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mt: 2 }}>
               <Chip
-                label={t(`labels.priority.${selected.priority}`)}
-                color={priorityColor[selected.priority]}
+                label={t(`labels.priority.${selectedDispatch.item.priority}`)}
+                color={priorityColor[selectedDispatch.item.priority]}
                 size="small"
                 variant="outlined"
               />
               <Chip
                 icon={<Clock3 size={14} />}
-                label={selected.due}
+                label={(selectedDispatch.item as WorkRow).due}
                 size="small"
                 variant="outlined"
               />
-              <Chip label={selected.sourceSystem} size="small" variant="outlined" />
+              <Chip label={selectedDispatch.item.sourceSystem} size="small" variant="outlined" />
             </Box>
 
             <Box
@@ -617,7 +667,7 @@ export default function WorkPage() {
                 </Typography>
               </Box>
               <Typography variant="body2" sx={{ mt: 0.75 }}>
-                {selected.reason || t('workPage.noDecisionContext')}
+                {selectedDispatch.item.reason || t('workPage.noDecisionContext')}
               </Typography>
             </Box>
 
@@ -627,7 +677,7 @@ export default function WorkPage() {
                   {t('workPage.recommendedNext')}
                 </Typography>
                 <Typography variant="body2" sx={{ mt: 0.35 }}>
-                  {selected.recommendedNext || t('workPage.noRecommendedNext')}
+                  {selectedDispatch.item.recommendedNext || t('workPage.noRecommendedNext')}
                 </Typography>
               </Box>
               <Box>
@@ -637,7 +687,7 @@ export default function WorkPage() {
                 <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
                   <UserRound size={16} strokeWidth={1.8} aria-hidden="true" />
                   <Typography variant="body2">
-                    {selected.latestActivity || t('workPage.noLatestActivity')}
+                    {selectedDispatch.item.latestActivity || t('workPage.noLatestActivity')}
                   </Typography>
                 </Box>
               </Box>
@@ -648,7 +698,7 @@ export default function WorkPage() {
               <ActionButton
                 intent="primary"
                 startIcon={
-                  selected.status === 'completed' ? (
+                  selectedDispatch.item.status === 'completed' ? (
                     <CheckCircle2 size={17} aria-hidden="true" />
                   ) : (
                     <CircleAlert size={17} aria-hidden="true" />
@@ -656,26 +706,36 @@ export default function WorkPage() {
                 }
                 disabled={
                   statusMutation.isPending ||
-                  (selected.status === 'completed' && !selected.sourceRoute)
+                  (selectedDispatch.item.status === 'completed' &&
+                    !selectedDispatch.item.sourceRoute)
                 }
                 onClick={() => {
-                  if (selected.status === 'completed') {
-                    if (selected.sourceRoute) navigate(selected.sourceRoute);
+                  if (selectedDispatch.item.status === 'completed') {
+                    if (selectedDispatch.item.sourceRoute)
+                      navigate(selectedDispatch.item.sourceRoute);
                     return;
                   }
-                  statusMutation.mutate({ item: selected, status: 'IN_PROGRESS' });
+                  statusMutation.mutate({
+                    item: selectedDispatch.item as WorkRow,
+                    status: 'IN_PROGRESS',
+                  });
                 }}
               >
-                {selected.status === 'completed'
+                {selectedDispatch.item.status === 'completed'
                   ? t('workPage.viewRecord')
                   : t('workPage.continueWork')}
               </ActionButton>
-              {selected.status !== 'completed' && (
+              {selectedDispatch.item.status !== 'completed' && (
                 <ActionButton
                   intent="secondary"
                   startIcon={<CheckCircle2 size={17} aria-hidden="true" />}
                   disabled={statusMutation.isPending}
-                  onClick={() => statusMutation.mutate({ item: selected, status: 'COMPLETED' })}
+                  onClick={() =>
+                    statusMutation.mutate({
+                      item: selectedDispatch.item as WorkRow,
+                      status: 'COMPLETED',
+                    })
+                  }
                 >
                   {t('workPage.completeWork')}
                 </ActionButton>
@@ -683,8 +743,10 @@ export default function WorkPage() {
               <ActionButton
                 intent="secondary"
                 endIcon={<ArrowUpRight size={16} aria-hidden="true" />}
-                disabled={!selected.sourceRoute}
-                onClick={() => selected.sourceRoute && navigate(selected.sourceRoute)}
+                disabled={!selectedDispatch.item.sourceRoute}
+                onClick={() =>
+                  selectedDispatch.item.sourceRoute && navigate(selectedDispatch.item.sourceRoute)
+                }
               >
                 {t('workPage.openSource')}
               </ActionButton>

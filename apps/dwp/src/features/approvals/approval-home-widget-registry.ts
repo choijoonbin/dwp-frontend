@@ -1,9 +1,13 @@
-import { Activity, Gauge, Lightbulb, ListChecks, Send, TimerReset } from 'lucide-react';
+import { Activity, Gauge, Lightbulb, ListChecks, Send } from 'lucide-react';
 
 import type { WorkspaceWidgetDefinition } from '../../components/workspace-composer/workspace-composer-model';
 
 export type ApprovalHomeWidgetKey =
-  'decision-pulse' | 'focus-queue' | 'flow' | 'my-requests' | 'insights' | 'admin-health';
+  | 'decision-pulse'
+  | 'focus-queue'
+  | 'flow'
+  | 'my-requests'
+  | 'insights';
 
 export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<ApprovalHomeWidgetKey>[] =
   [
@@ -51,15 +55,5 @@ export const APPROVAL_HOME_WIDGET_REGISTRY: readonly WorkspaceWidgetDefinition<A
       allowedSizes: ['compact', 'medium', 'large'],
       defaultHeight: 'standard',
       allowedHeights: ['short', 'standard', 'tall'],
-    },
-    {
-      key: 'admin-health',
-      icon: TimerReset,
-      canHide: true,
-      defaultSize: 'full',
-      allowedSizes: ['large', 'full'],
-      defaultHeight: 'tall',
-      allowedHeights: ['standard', 'tall', 'expanded'],
-      audience: 'operator',
     },
   ];

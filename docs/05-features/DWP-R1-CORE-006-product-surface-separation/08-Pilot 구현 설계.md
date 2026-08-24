@@ -2,8 +2,9 @@
 
 ## 1. 목적
 
-이 문서는 코드를 변경하지 않고, 승인 후 개발자가 별도 제품 방향 판단 없이 Common Contract,
-Technical Canary, Approvals와 HCM을 순서대로 구현하도록 변경 단위와 검증 증거를 고정한다.
+이 문서는 Common Contract, Technical Canary, Approvals와 HCM을 순서대로 구현·승격하도록 변경
+단위와 검증 증거를 고정하는 living blueprint다. W0·W0.5·W1a 기술 구현은 DRAFT/default-off로
+완료했으며 실제 Owner 승인 전에는 활성 Bundle Pointer나 Production Flag를 변경하지 않는다.
 
 ```mermaid
 flowchart LR
@@ -323,11 +324,11 @@ Frontend Router, Auth Migration, Product Filter, Fixture가 별도 Capability·P
 소유하면 Build를 실패시킨다. 파일명의 `v1`은 Contract Schema Family이고 아래 Bundle Version과
 다르다.
 
-| Bundle Key         | Version | Immutable Snapshot                                            | Promotion Gate                       |
-| ------------------ | ------: | ------------------------------------------------------------- | ------------------------------------ |
-| `product-surfaces` |       1 | W0 Registry + Named Reviewer + Communications·Services Canary | Auth V87·V88, Canary OpenAPI/PEP/E2E |
-| `product-surfaces` |       2 | 승인된 Version 1 전체 + Approvals                             | Auth V89, Approvals Contract/E2E     |
-| `product-surfaces` |       3 | 승인된 Version 2 전체 + HCM                                   | Auth V90, HCM Contract/Security/E2E  |
+| Bundle Key         | Version | Immutable Snapshot                                            | Promotion Gate                           |
+| ------------------ | ------: | ------------------------------------------------------------- | ---------------------------------------- |
+| `product-surfaces` |       1 | W0 Registry + Named Reviewer + Communications·Services Canary | Auth V87·V88, Canary OpenAPI/PEP/E2E     |
+| `product-surfaces` |       2 | Version 1 전체 + Approvals                                    | Auth V89·V90·V91, Approvals Contract/E2E |
+| `product-surfaces` |       3 | Version 2 전체 + HCM 계약 Snapshot                            | DRAFT only, HCM Runtime/활성화 없음      |
 
 세 Wave가 다른 `bundleKey`를 만들거나 이전 Version의 Row를 참조해 Cross-bundle 조합하지 않는다. 각
 Version은 직전 승인 Snapshot을 포함하는 완전한 Immutable Snapshot이고 Active Pointer는 같은
@@ -527,7 +528,7 @@ Work `AppRouteGuard`와 Management Guard를 Sibling Route로 둔다. Manifest가
 - 신규 `dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/observability/ProductSurfaceTelemetryServiceTest.java`
 - 신규 `dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/observability/ProductSurfaceTelemetryMaintenanceTest.java`
 - 신규 `dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/observability/ProductSurfaceTelemetryPrivacyContractTest.java`
-- 신규 `dwp-backend/dwp-platform-server/src/main/resources/db/migration/V174__create_product_surface_ux_telemetry.sql`
+- 신규 `dwp-backend/dwp-platform-server/src/main/resources/db/migration/V177__create_product_surface_ux_telemetry.sql`
 - `dwp-backend/contracts/openapi/platform.json`,
   `dwp-backend/contracts/openapi/gateway-public.json`,
   `dwp-frontend/libs/api-contracts/openapi/gateway-public.json`,
@@ -541,6 +542,12 @@ Raw URL, Query, Actor/Person/Object/Scope Key와 자유문자열을 거부한다
 Gateway/Platform이 검증 Session에서 Tenant와 서버 평가 Cohort를 덧붙여 Client Spoofing을 막는다.
 Maintenance가 Daily Rollup 후 Raw 30일, Aggregate 180일을 Purge한다.
 Privacy Owner 승인 전 Production 수집 Flag는 Off다.
+
+수집 차원은 수기 문자열 목록이 아니라 DRAFT v2 Registry에서 생성한 exact projection을 사용한다.
+Startup에서 v2 Registry와 projection checksum, `productKey → surfaceKey → uiRouteId` 소속 관계를
+검증하고 Missing·Corrupt·v3 참조를 Fail-fast한다. 임의·PII 유사 값, Cross-product/Surface Route와
+HCM 차원은 수집 Flag가 Off여도 먼저 거부한다. Maintenance는 Raw 30일·Daily 180일 backlog를
+완전히 drain하고 잠금 실패·정지·재유입을 운영 실패로 노출한다.
 
 Rollout은 기존 Provider Feature Rollout 원장을 재사용하되 Tenant 앱이 Admin Evaluate API를
 직접 호출하지 않는다.
@@ -918,7 +925,7 @@ approvals (Auth + Workspace/Support context)
 현재 UI 호출을 닫기 위해 다음 Cross-service DATA/ACTION도 Version 2 Bundle과 같은 변경에 포함한다.
 
 | Route Contract                                        | Public ↔ Service                                                                                                                                                  | Access/Profile                                                                                                                   |
-| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | `route.approvals.work.home-preference.data`           | `GET /api/platform/v1/home-preferences/surfaces/{surfaceKey}` ↔ `GET /v1/home-preferences/surfaces/{surfaceKey}`, fixed `surfaceKey=approval-home`                | `full-work`: `approvals.work-access.v1`, `SELF`, Approvals+Platform 공동 Owner                                                   |
 | `route.approvals.work.home-preference-update.action`  | `PUT /api/platform/v1/home-preferences/surfaces/{surfaceKey}` ↔ `PUT /v1/home-preferences/surfaces/{surfaceKey}`, fixed `surfaceKey=approval-home`                | `full-work`: `approvals.work-access.v1`, `SELF`, Expected Version                                                                |
 | `route.approvals.admin.forms-workflow-reference.data` | `GET /api/approvals/v1/admin/workflows`, `GET /api/approvals/v1/admin/workflows/{workflowId}` ↔ `GET /v1/admin/workflows`, `GET /v1/admin/workflows/{workflowId}` | `full-management`: `approvals.design.read`; `legacy-oversight`: `approvals.oversight.design.read` + Workflow Metadata Projection |
@@ -965,10 +972,99 @@ Backend 변경 후보:
 - 신규 `dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/security/PlatformRoutePredicateEvaluatorTest.java`
 - 신규 Approval Replay/Route Profile/Projection Contract Test
 
+#### W1a Scoped Duty 전환
+
+W1a의 최소 안전 전환은 기존 Migration을 수정하지 않고 Auth Forward Migration
+`V91__scope_approval_specialist_duties.sql`로 구현한다. V90은 Canonical Resource Set Key
+Normalization만 소유하고 Duty Schema/Seed를 포함하지 않는다.
+
+V91은 다음 Runtime-owned 구조를 추가한다.
+
+- `sys_admin_scoped_duty_catalog`: Duty·Product Root·Permission Resource·Audit Exception·Risk·
+  Lifecycle·Version
+- `sys_admin_scoped_duty_capabilities`: Duty→Canonical Contract→Permission Catalog FK와 Generated
+  Resolved Capability
+- `sys_admin_scoped_duty_conflicts`: 충돌 Pair·SoD Policy·Lifecycle·Version
+- `com_admin_scoped_duty_assignments`: USER/GROUP Principal, Resource Set, 정확한 Responsibility
+  Assignment Link, Source, Validity, Review Due, Request/Approval/Revoke Evidence, Lifecycle과 Version
+- `com_admin_scoped_duty_reviews`: Scope를 입증할 수 없는 Legacy 전문 Role과 모든 Legacy Auditor의
+  Fail-closed Owner Review Queue
+- `auth_effective_scoped_duties`: Active User/Group, Duty, Resource Set Member, 같은 Effective
+  User+Set의 `APP_CONFIG_ADMIN`, Exact Capability와 Evidence Revision의 Server Projection
+
+`ScopedAdminDutyAssignmentService`는 Request→Independent Approve→Revoke Lifecycle과 Expected
+Version CAS를 소유한다. `ScopedAdminDutyEvidenceService`는 Exact Permission과
+`SCOPED_<contract+resolvedCapability hash>@<resourceSetKey>`를 만들고,
+`ProductAuthorizationIdentityEvidenceService`와 `AuthService`는 이를 기존 Evidence에 병합하되
+Explicit DENY 우선순위를 보존한다. `ProductAuthorizationAuthorityAdapter`는 Approvals
+Management에서 Scoped Duty가 없으면 Global 전문 Role/Permission과 Config Responsibility가 있어도
+거부한다.
+
+Audit 외 Duty는 같은 Effective User와 같은 Set의 활성 `APP_CONFIG_ADMIN`을 요구한다. Duty와
+책임의 Direct/Group Source가 달라도 User+Set Intersection으로 결속하며 다른 Principal/Set의
+증거를 조합하지 않는다. Scoped Audit Duty는 독립성 Policy Exception으로 Config와 Global
+`AUDITOR` Role을 요구하지 않지만 Exact Audit Mapping과 Resource Set은 필수다.
+
+Static SoD Overlap은 같은 Set ID 또는 공유 활성 비-Product Child로 계산한다. 서로 다른 Set의
+공통 `APP.APPROVALS` Root만으로는 겹치지 않는다. Assignment와 Group/User/Resource Set Membership·
+상태·Conflict Policy 변경은 Tenant Advisory Lock + Deferred Constraint로 다시 검사하므로 숨은
+Direct/Group 충돌이 Commit되지 않는다. Recovery Auditor는 Event `RS_APPROVALS`와 겹치는 Scoped
+Audit Duty만 사용하고 Originator와 겹치는 Scoped Operator를 제외하며, Audit/Operator의 Canonical
+Grant와 Explicit DENY·Evidence Revision을 Fail Closed로 확인한다.
+
+전환 Truth Table은 다음과 같다.
+
+| Rollout | 실제 인가 Authority                                                                                      | Global Conflict Policy                                             |
+| ------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `000`   | 기존 Role/Permission Compatibility 또는 Exact Scoped Duty(+ non-audit same-set Config); Cross-grant 금지 | 유지                                                               |
+| `100`   | 실제 결정은 000과 동일, v2 Shadow Delta 기록; Scoped Authority의 Exact Action 유지                       | 유지                                                               |
+| `110`   | v2 Context/PEP가 Scoped Duty + Canonical Exact Mapping 필수, UI는 Compatibility Shell                    | 유지하되 Scoped Duty가 Global Role을 요구하지 않아 False Deny 없음 |
+| `111`   | 110 인가 + 분리 Surface UI                                                                               | 동일                                                               |
+
+Global Role Conflict는 Legacy Fallback 제거와 110→000 Rehearsal 완료 전 Retire하지 않는다. Rollback은
+Scoped Assignment/Audit를 삭제하지 않고 000 Compatibility로 되돌린다. Approval Delivery Retry의
+Governed Overload는 Expected Version CAS를 유지하며, Legacy Overload는 Tenant+Outbox+FAILED/DEAD
+상태의 단일 Atomic Update로 version을 증가시켜 Governed→Legacy Rollback 뒤에도 재시도가 막히지 않는다.
+
+#### Approval Non-root DB Compatibility Fence
+
+Approval의 Non-root Management Scope 쓰기와 `110`·`111` 승격은 단순 Migration 적용 여부가 아니라
+Cluster 전체 Binary 호환성 확인 뒤에만 허용한다. 다음 두 Backend Readiness Flag는 모든 환경에서
+기본값 `false`이며 외부 Owner 승인과 운영 확인 없이 변경하지 않는다.
+
+- `dwp.approval.management-scope-cluster-fence-confirmed`
+  (`DWP_APPROVAL_MANAGEMENT_SCOPE_CLUSTER_FENCE_CONFIRMED`)
+- `dwp.approval.management-scope-writes-enabled`
+  (`DWP_APPROVAL_MANAGEMENT_SCOPE_WRITES_ENABLED`)
+
+승격 순서는 모든 신규 Binary Pod가 Non-root Schema/Read/Write Capability를 광고하는지 확인하고,
+Cluster Assertion에서 Old Pod 수가 정확히 `0`인지 검증한 다음
+`management-scope-cluster-fence-confirmed=true`로 전환하는 것이다. 그 뒤
+`dwp.approval.product-authorization-v2-enabled=true`를 먼저 확인하고 마지막으로
+`management-scope-writes-enabled=true`를 적용한다. 이 조건을 모두 충족하기 전에는 Non-root Row를
+생성·변경하지 않고 `110`·`111`로 승격하지 않는다.
+
+DB의 `apr_management_scope_schema_fence.non_root_writes_activated_at` Marker는 배포 증거와 감사용
+상태다. 새 Binary는 Marker가 기록된 뒤 `management-scope-writes-enabled=false`로 기동하면
+Fail Closed하지만, Marker 자체가 Old Binary의 SQL `SELECT`/`UPDATE`를 DB Engine 수준에서 강제로
+차단한다고 간주하지 않는다. 따라서 최초 Non-root Row 생성 이후에는 Old Binary로 Rollback할 수
+없다. 이 시점 이후 `100`은 새 Binary를 유지한 채 Root-safe UI/Runtime으로 되돌리는 호환
+Rollback만 의미하며, Schema와 이미 생성된 Non-root Data는 삭제·역변환하지 않고
+Forward-fix-only로 복구한다. 이 문서 변경은 Fence 계약만 고정하며 외부 승인, Flag 활성화, 실제
+Non-root 쓰기와 `110`·`111` 승격은 수행하지 않는다.
+
 Auth가 서명한 Challenge는 Approval Service가 검증하고 `(challenge_id, nonce)` Unique Ledger
 Insert, Object Version·SoD 재검사와 Publish/Recovery Mutation을 같은 Approval DB Transaction으로
 Commit한다. Legacy `APPROVE/MANAGE` Mapping은 Shadow 단계에서만 비교하고 v2 Route는 Registry의
 PUBLISH/EXECUTE Exact Contract를 사용한다.
+
+Auth OIDC Step-up은 Provider별 exact lowercase closed AMR Mapping을 사용한다. 실제 AMR이
+Provider Allowlist의 Subset이고 `pwd+otp`, `hwk`, `webauthn`, `fido`, `fido2` 또는
+명시 `mfa`를 충족할 때만 원본 Token + Canonical `mfa` + `OIDC_STEP_UP`
+Provenance로 승격한다. 일반 Login의 원본 AMR는 literal `mfa`를 포함해도
+Challenge Authority로 사용하지 않고, `pwd` Only·미지·대소문자 변형·불완전한 Provider
+Mapping은 Fail Closed한다. Production Readiness는 모든 활성 Step-up Provider가 유효한
+강도 조합을 표현하는지 검증한다.
 
 - Approvals Designer, Publisher, Operator와 Auditor의 기존 Effective Allow를 승인된 Legacy→v2
   Mapping과 Shadow Delta로 보존한 뒤 Exact Action으로 전환
@@ -995,6 +1091,19 @@ PUBLISH/EXECUTE Exact Contract를 사용한다.
 - Query Deep Link, Back/Forward, 새 Tab
 - 권한 회수 중 Draft·Mutation
 - Feature Flag Off 시 기존 Canonical URL 유지
+- Scoped Duty same/disjoint/partial-overlap, Direct↔Group 책임 교차 Source, Membership Mutation
+  DB Reject, Concurrent Activation one-wins, Expiry/Revoke와 Legacy Review Queue
+- V91의 11개 Canonical Approvals Management Contract/13개 Duty Association이 Generated v2
+  `resolvedCapabilityCode`와 Exact Match하고 Drift 시 Build 실패
+- 000/100 Scoped-only Exact Action, 110/111 Global Role-only Deny, 110→000 Rollback과 연속
+  Delivery Failure/Legacy Retry의 version 증가
+- Recovery Auditor가 겹치는 Scoped Audit Duty만 사용하고 Originator·겹치는 Operator·Explicit
+  DENY·비정규 Audit/Operator Mapping·Evidence Drift를 Fail Closed하는지 검사
+- OIDC LOGIN `pwd+otp`·literal `mfa`→Continuation, STEP_UP `pwd+otp`·`hwk`→Canonical
+  `mfa` + `OIDC_STEP_UP` Session→실제 Auth RS256 Challenge→Approval 검증,
+  `pwd` Only·Unknown→승격·서명 0
+- Provider accepted AMR Mapping의 Unknown·Case Variant·중복·최소 강도 미충족이
+  Production Readiness를 실패시키는지 검사
 
 Approvals Gate가 통과하기 전 HCM Shell 구현을 시작하지 않는다.
 
@@ -1168,7 +1277,7 @@ hr (Auth + neutral HCM context)
 두 신규 Read Contract의 호출 Owner를 다음처럼 고정한다.
 
 | Consumer / Contract                                                                                                                     | Exact Public ↔ Service Binding                                                                       | Access·Projection                                                                                                    |
-| --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `apps/dwp/src/features/workforce/workforce-overview.tsx` / `route.hcm.operations.overview.page`                                         | `GET /api/people/v1/workforce/operations/overview` ↔ `GET /v1/workforce/operations/overview`         | NORMAL은 허용 Operations Read의 ANY + Target Population; SUPPORT는 `hcm.operations-overview-read.v1`, Read-only Mask |
 | `apps/dwp/src/features/people/organization/organization-chart-manager.tsx` / `route.hcm.management.org-design.page`의 Candidate Binding | `GET /api/people/v1/workforce/organization/candidates` ↔ `GET /v1/workforce/organization/candidates` | `hcm.org-design.read` + Config Scope; Candidate 최소 Projection                                                      |
 
@@ -1215,8 +1324,8 @@ Backend 변경 후보:
 - `dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportDtos.java`
 - `dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportService.java`
 - `dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportRepository.java`
-- 신규 `dwp-backend/dwp-people-server/src/main/resources/db/migration/V44__add_step_up_challenge_replay_ledger.sql`
-- 신규 `dwp-backend/dwp-auth-server/src/main/resources/db/migration/V90__seed_hcm_product_management_capabilities.sql`
+- W1b 승인 후 당시 다음 가용 People Migration으로 Step-up Replay Ledger 추가
+- W1b 승인 후 당시 다음 가용 Auth Migration으로 HCM Product Management Capability Seed 추가
 - `dwp-backend/contracts/openapi/people.json`,
   `dwp-backend/contracts/openapi/gateway-public.json`,
   `dwp-backend/scripts/export-openapi-contracts.py`
@@ -1241,10 +1350,10 @@ Vault/KMS Writer·Credential Version·Redaction·Rollback이 별도 ADR로 승�
 검증하고 Local Replay Ledger Insert·Object Version/SoD/Target Population 재검사·Mutation을 같은
 Transaction으로 Commit한다.
 
-따라서 Auth V90과 `product-surfaces` Version 3에는 `hcm.reference.publish`,
+따라서 현재 DRAFT `product-surfaces` Version 3에는 `hcm.reference.publish`,
 `hcm.integration.rotate-secret`의 Capability Descriptor, Predicate, Route Row, Grant, Challenge와 SoD
-결속이 0개여야 한다. 문서의 예약 이름은 Seed Row가 아니며, DRAFT Bundle을 만들기 전까지
-Canonical YAML에도 넣지 않는다. Connector Create·Update Request Projection은 Client가 보낸
+결속이 0개여야 하며 HCM용 Auth Runtime Migration도 없다. 문서의 예약 이름은 Negative-only
+Contract일 뿐 Seed Row가 아니며 현재 Canonical YAML에도 넣지 않는다. Connector Create·Update Request Projection은 Client가 보낸
 `credentialReference` 생성·교체·삭제를 거부하고 `/sample-import`도 Active Route로 등록하지 않는다.
 
 Export Create Request는 `datasetKey`, `datasetContractVersion`, Target Population Ref,
@@ -1375,9 +1484,10 @@ Management를 Fail Closed하며 Legacy `MANAGE`로 자동 복귀하지 않는다
 | 두 Pilot 동시 구현                  | 원인 분리 불가                   | Approvals → HCM 순차 Gate                        |
 | Unsupported Scoped JIT              | ACTIVE지만 권한 무효 상태        | Activation Fail Closed                           |
 
-## 11. 개발 착수 판정
+## 11. 운영 활성화 판정
 
-다음에 모두 체크되면 `G3-build-ready`로 상태를 변경한다.
+다음은 기술 구현 완료와 별개인 외부 승인 Gate다. 모두 체크되기 전에는 W1a를 Production에서
+활성화하거나 W1b 구현을 시작하지 않는다.
 
 - [ ] 사용자·Product·Security Owner가 ADR, 169개 분류표와 `PS-01`~`PS-11` 승인
 - [ ] Bound Context·Direct Evaluation·Reason Code OpenAPI와 Support/NORMAL Exclusive Mode 승인
@@ -1401,5 +1511,6 @@ Management를 Fail Closed하며 Legacy `MANAGE`로 자동 복귀하지 않는다
 - [ ] Figma 또는 Storybook 핵심 Frame 승인
 - [ ] 3단계 Feature Flag Truth Table·Rollback Rehearsal, Observation·Rollback Owner 지정
 
-위 승인 이후에는 정보 구조를 다시 논의하지 않고 `W0`부터 구현한다. 승인 전에는 코드, Role
-Assignment와 Database Migration을 변경하지 않는다.
+기술 구현은 검증 가능한 DRAFT Migration과 default-off Runtime으로 완료했다. 위 승인 이후에는
+정보 구조를 다시 논의하지 않고 W1a Bundle/Flag 승격 절차만 수행한다. 승인 전에는 운영 Role
+Assignment, Active Pointer와 Production Flag를 변경하지 않는다.

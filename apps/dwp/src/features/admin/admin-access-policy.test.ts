@@ -6,7 +6,7 @@ import {
   resolvePrimaryAuthorityRole,
 } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
-import { canAccessAdminNavigationItem } from './admin-access-policy';
+import { canAccessAdminNavigationItem, canEnterCompanyAdministration } from './admin-access-policy';
 import type { AdminNavigationItem } from './admin-navigation';
 
 const item = (
@@ -23,6 +23,11 @@ const item = (
 });
 
 describe('control plane access policy', () => {
+  it('never opens company administration for an app configuration responsibility alone', () => {
+    expect(canEnterCompanyAdministration(['APP_CONFIG_ADMIN'], true)).toBe(false);
+    expect(canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false)).toBe(false);
+    expect(canEnterCompanyAdministration(['TENANT_ADMIN'], true)).toBe(true);
+  });
   it('recognizes every provider persona exposed by the provider router', () => {
     expect(hasProviderControlPlaneRole(['PROVIDER_OPERATOR'])).toBe(true);
     expect(hasProviderControlPlaneRole(['PROVIDER_SUPPORT'])).toBe(true);
@@ -233,26 +238,22 @@ describe('control plane access policy', () => {
     ).toBe(false);
   });
 
-  it('exposes only the assigned-review surface to a workforce reviewer', () => {
+  it('keeps assigned reviewers out of the tenant administration shell', () => {
     const hasPermission = vi.fn(() => false);
-    const reviewItem = {
-      ...item('access-reviews'),
-      reviewerAccessible: true,
-    };
     expect(
-      canAccessAdminNavigationItem(reviewItem, {
+      canAccessAdminNavigationItem(item('access-reviews'), {
         roles: ['WORKSPACE_MEMBER'],
         permissionsLoaded: true,
         hasPermission,
       })
-    ).toBe(true);
+    ).toBe(false);
     expect(
-      canAccessAdminNavigationItem(reviewItem, {
-        roles: ['PROVIDER_SUPPORT'],
+      canAccessAdminNavigationItem(item('access-reviews'), {
+        roles: ['TENANT_ADMIN'],
         permissionsLoaded: true,
         hasPermission,
       })
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it('uses an explicit authority role instead of a mutable job title', () => {

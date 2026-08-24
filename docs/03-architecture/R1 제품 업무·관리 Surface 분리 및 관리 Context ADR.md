@@ -376,7 +376,8 @@ type GovernedRouteAuthorizationContract = {
   routeContractKey: string;
   navigationContextId: string;
   subject:
-    { type: 'PRODUCT'; productKey: string; surfaceKey: string } | { type: 'GOVERNED_CONTEXT' };
+    | { type: 'PRODUCT'; productKey: string; surfaceKey: string }
+    | { type: 'GOVERNED_CONTEXT' };
   routeKind: 'PAGE' | 'DATA' | 'ACTION';
   sideEffectFree?: boolean;
   uiRouteId?: string;
@@ -565,6 +566,23 @@ Name·Role·Value, Keyboard, Focus, 320 CSS px Reflow와 Status Message 의미�
 Approvals처럼 Designer, Publisher, Operator가 분리된 제품은 하나의 광범위한 App Admin
 Preset으로 합치지 않는다. 책임은 Scope를 제한하고 제품 전문 역할은 행위를 제한한다.
 
+W1a Approvals는 Tenant-wide 전문 Role 문자열을 Scope 증거로 사용하지 않고, 승인된
+`Scoped Specialist Duty Assignment`를 Exact Capability의 독립 Authority Source로 사용한다.
+Duty Assignment는 `USER | GROUP` Principal, 명시적 Resource Set, 유효기간, 검토기한, 요청·승인·
+회수자, 사유, Source와 Object Version을 가진다. Audit Duty를 제외한 모든 전문 Duty는 같은
+Effective User와 같은 Resource Set에 결속된 활성 `APP_CONFIG_ADMIN` 책임을 함께 요구한다.
+Duty와 책임의 Principal Source는 Direct/Group으로 달라도 되지만 서로 다른 사용자나 Resource
+Set의 증거를 조합하지 않는다. `APPROVAL_OPERATIONS_AUDIT`은 독립 감사를 위해
+`APP_CONFIG_ADMIN`을 요구하지 않는 명시적 Policy Exception이지만, 여전히 승인된 Audit Duty와
+정확한 Resource Set·Capability Mapping이 필요하다.
+
+기존 `APPROVAL_DESIGNER`, `APPROVAL_PUBLISHER`, `APPROVAL_OPERATOR`, `AUDITOR` Global Role은
+000/100 Compatibility 경로의 Permission Package와 Migration Provenance로만 유지한다. 신규
+110/111 인가에서는 Global Role이나 Global Permission만으로 전문 Duty를 대신할 수 없고, 반대로
+Scoped Duty는 해당 Contract에 매핑된 Exact Capability만 만든다. Auth의 명시적 `DENY`는 Role,
+Principal Grant와 Scoped Duty의 모든 `ALLOW`보다 우선한다. Scope를 증명할 수 없는 Legacy
+전문 Role, 모든 Legacy Auditor와 충돌 Role 조합은 자동 Grant하지 않고 Owner Review Queue에 둔다.
+
 위임형 Product Management의 기본 허용식은 `활성 Responsibility/Resource Set AND Exact
 Capability`다. Capability Descriptor는 예외만
 `responsibilityRequirement = NOT_REQUIRED | LEGACY_OVERSIGHT`로 명시할 수 있다.
@@ -703,11 +721,34 @@ Union으로 매핑하고 알 수 없는 값은 `AUTHORITY_UNAVAILABLE`로 Fail C
   Tenant·Capability·Scope·Target Type/ID·Expected Object Version·Canonical Method/Path·
   Idempotency Key·Payload Digest·Decision Revision에 결속하고 Domain Commit과 같은
   Transaction에서 소비한다. 정책 누락·Resolver 장애는 Fail Closed한다.
+- Auth는 IdP별 `accepted AMR`를 exact lowercase closed mapping으로 검증한다. 명시된
+  `pwd+otp`, `hwk`, `webauthn`, `fido`, `fido2` 또는 IdP가 직접 반환한 `mfa`만
+  MFA 근거로 승격하며, 실제 AMR은 설정 Allowlist의 Subset이어야 한다. 검증된
+  Step-up은 원본 AMR Token을 보존하고 Canonical `mfa`를 추가해
+  `OIDC_STEP_UP` Provenance와 함께 Session·Challenge에 저장한다. `pwd`만 있는 경우,
+  미지·대소문자 변형 AMR, 불완전한 설정은 Fail Closed하고 Production Readiness를
+  실패시킨다. 일반 OIDC Login의 원본 AMR은 IdP가 literal `mfa`를 반환해도
+  자동 승격하지 않으며, `OIDC_STEP_UP` Provenance + Canonical `mfa`가 모두 없는
+  Session은 Challenge를 서명하지 않고 새 Step-up Continuation으로 전이한다.
 - SoD Policy는 Policy ID, 겹치는 Resource Set·Target과 검사 시점
   `ASSIGNMENT | ACTIVATION | MUTATION`을 명시한다. Designer/Publisher, Operator/Auditor 같은
   충돌은 Tenant 전체 역할명이 아니라 같은 Resource Set·Object·Risk Policy 경계에서 판정한다.
   Assignment Phase는 이벤트가 아닌 겹치는 Resource Set의 충돌 Pair를, Mutation Phase는
   존재하는 Object/Event의 당사자·Version을 각각 독립 Predicate로 검사한다.
+- 서로 다른 Approvals Resource Set은 공통 Product Root `APP.APPROVALS`만 공유한다는 이유로
+  겹친 것으로 보지 않는다. 같은 Resource Set ID이거나, 서로 다른 Set이 같은 활성 비-Product
+  Child `(resourceType, resourceKey)`를 공유하고 Assignment 유효시간이 겹칠 때만 Static SoD
+  Overlap이다. Canonical `RS_APPROVALS`는 Root-only Pilot Scope를 허용하고, 별도 동적 Set은
+  `APP.APPROVALS` Root와 하나 이상의 비-Product Child를 모두 가져야 한다.
+- Duty Assignment와 Group/User/Resource Set Membership·상태·Conflict Policy 변경은 Tenant
+  단위 직렬화와 지연 DB Constraint로 재검사한다. 숨은 Direct/Group 교차 충돌이나 Membership
+  변경으로 새 충돌이 생기면 Transaction 전체를 거부한다. 동일 Pending Assignment의 동시
+  Activation은 Expected Version CAS로 정확히 하나만 성공한다.
+- Recovery Auditor는 Event의 `RS_APPROVALS`와 겹치는 유효한 Scoped Audit Duty에서만 선택하고
+  Originator와 겹치는 Scoped Operator를 제외한다. Audit Duty의 Exact
+  `approvals.audit.operations.read` Mapping과 Operator Evidence의 Exact
+  `approvals.operations.execute` Mapping을 모두 검증한다. Global Auditor Role이나 Global
+  `ALLOW`는 필요하지 않지만 명시적 `DENY`, 증거 Drift, 후보 부재는 Fail Closed한다.
 
 ### 9.4 퇴역·Legacy 권한
 
@@ -855,9 +896,9 @@ Legacy Policy로 자동 복귀하지 않는다.
 | UI Menu Hide만으로 권한 통제        | 직접 URL·API·Scope 우회 방지 불가                               |
 | Tenant Admin의 전 제품 자동 접근    | 최소 권한, SoD와 기존 독립 권한면 ADR에 위배                    |
 
-## 14. 구현 전 필수 Gate
+## 14. 운영 활성화 및 다음 Wave 필수 Gate
 
-다음이 승인되기 전 Product별 구현을 시작하지 않는다.
+다음이 승인되기 전 DRAFT 구현을 Production에서 활성화하거나 다음 Product Wave를 시작하지 않는다.
 
 1. 본 ADR과 169개 전체 메뉴 분류표 승인
 2. `EffectiveProductSurfaceContext`·Direct Evaluation OpenAPI, 오류 Reason Code와 Invalidation 계약 승인

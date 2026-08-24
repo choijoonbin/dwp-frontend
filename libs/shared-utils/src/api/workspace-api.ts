@@ -4,7 +4,7 @@ import type { ApiResponse } from '../types';
 
 export type WorkspacePriority = 'high' | 'medium' | 'low';
 export type WorkspaceWorkStatus = 'due-soon' | 'in-progress' | 'waiting' | 'completed';
-export type WorkspaceWorkType = 'Approval' | 'Task' | 'Service' | 'Required';
+export type WorkspaceWorkType = 'Approval' | 'Task' | 'Service' | 'Required' | 'Review';
 
 export type WorkspaceWorkItem = {
   workItemId: string;
@@ -66,7 +66,12 @@ export type WorkspaceActivityFeed = {
 };
 
 export type WorkspaceAppCategory =
-  'productivity' | 'service' | 'people' | 'knowledge' | 'business' | 'legacy';
+  | 'productivity'
+  | 'service'
+  | 'people'
+  | 'knowledge'
+  | 'business'
+  | 'legacy';
 export type WorkspaceAppLaunchMode = 'Native' | 'SSO' | 'Deep link';
 export type WorkspaceAppHealth = 'healthy' | 'managed' | 'attention' | 'configuration-required';
 export type WorkspaceAppAccessState =
@@ -96,7 +101,13 @@ export type WorkspaceApp = {
   accessState: WorkspaceAppAccessState;
   accessRequestId?: string | null;
   accessRequestState?:
-    'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED' | 'REVOKED' | null;
+    | 'PENDING'
+    | 'APPROVED'
+    | 'REJECTED'
+    | 'CANCELLED'
+    | 'EXPIRED'
+    | 'REVOKED'
+    | null;
   accessRequestUpdatedAt?: string | null;
   accessRequestVersion?: number | null;
 };
@@ -137,7 +148,7 @@ export type WorkspaceAppLaunch = {
 };
 
 export type RawWorkspaceWorkItem = Omit<WorkspaceWorkItem, 'type' | 'priority' | 'status'> & {
-  type: 'APPROVAL' | 'TASK' | 'SERVICE' | 'REQUIRED';
+  type: 'APPROVAL' | 'TASK' | 'SERVICE' | 'REQUIRED' | 'REVIEW';
   priority: 'HIGH' | 'MEDIUM' | 'LOW';
   status: 'DUE_SOON' | 'IN_PROGRESS' | 'WAITING' | 'COMPLETED';
 };
@@ -166,6 +177,7 @@ const typeMap: Record<RawWorkspaceWorkItem['type'], WorkspaceWorkType> = {
   TASK: 'Task',
   SERVICE: 'Service',
   REQUIRED: 'Required',
+  REVIEW: 'Review',
 };
 
 const priorityMap: Record<RawWorkspaceWorkItem['priority'], WorkspacePriority> = {

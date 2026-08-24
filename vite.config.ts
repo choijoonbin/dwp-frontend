@@ -7,7 +7,13 @@ import { defineConfig, loadEnv } from 'vite';
 
 const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.join(workspaceRoot, 'apps/dwp');
-const developmentPort = 4200;
+const configuredDevelopmentPort = Number(process.env.DWP_FRONTEND_DEV_PORT ?? 4200);
+const developmentPort =
+  Number.isSafeInteger(configuredDevelopmentPort) &&
+  configuredDevelopmentPort >= 1024 &&
+  configuredDevelopmentPort <= 65_535
+    ? configuredDevelopmentPort
+    : 4200;
 const trustedHttpOrigin = (value: string) => {
   try {
     const url = new URL(value);

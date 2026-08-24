@@ -70,6 +70,82 @@
     "loadFailed": "The requested data could not be loaded.",
     "operationFailed": "The operation could not be completed."
   },
+  "productSurface": {
+    "scopeChooser": {
+      "title": "Select an allowed scope",
+      "description": "Choose one of the scopes returned for your current product responsibility. Data is loaded only after selection."
+    },
+    "expiry": {
+      "warning": "Management access will be revalidated within 5 minutes",
+      "revalidating": "Management access is being revalidated"
+    },
+    "labels": {
+      "work": "Work",
+      "management": "Product management",
+      "scope": "Scope",
+      "readOnly": "Read only",
+      "revalidateAt": "Access revalidates {{time}}",
+      "surfaceNavigation": "Product work and management areas"
+    },
+    "actions": {
+      "retry": "Try again",
+      "return": "Return to a safe area",
+      "selectScope": "Select a scope",
+      "requestAccess": "Request access",
+      "returnToWork": "Return to work",
+      "returnToCatalog": "Return to apps"
+    },
+    "feedback": {
+      "operationInProgress": "A change is being sent. Switch scope after it finishes.",
+      "preflightCancelled": "The pending authority check was cancelled before switching scope."
+    },
+    "access": {
+      "appDenied": {
+        "title": "This application is not available",
+        "description": "Your current account does not have the application access required for this work area."
+      },
+      "surfaceDenied": {
+        "title": "This management area is not assigned",
+        "description": "A product responsibility and its exact management capability are required."
+      },
+      "routeDenied": {
+        "title": "This page is outside your access",
+        "description": "You can continue in another area that is included in your current product responsibility."
+      },
+      "scopeSelectionRequired": {
+        "title": "Select the scope to manage",
+        "description": "No default scope was assigned. Product data will remain hidden until you choose an allowed scope."
+      },
+      "scopeInvalid": {
+        "title": "This scope is no longer available",
+        "description": "The previous scope was removed, expired, or does not belong to this session. Select another allowed scope."
+      },
+      "expired": {
+        "title": "This access has expired",
+        "description": "Product data was cleared. Request access again or return to an area that is still available."
+      },
+      "activationRequired": {
+        "title": "Temporary activation is required",
+        "description": "Activate the eligible access before entering this governed management area."
+      },
+      "stepUpRequired": {
+        "title": "Additional verification is required",
+        "description": "Complete the required fresh authentication before continuing this sensitive operation."
+      },
+      "sodConflict": {
+        "title": "This action conflicts with separation of duties",
+        "description": "The current assignment or prior participation prevents this action within the same governed scope."
+      },
+      "supportScopeDenied": {
+        "title": "This support session does not include the area",
+        "description": "Return to the approved support scope. Normal and support access are not combined."
+      },
+      "authorityUnavailable": {
+        "title": "Access cannot be verified right now",
+        "description": "The authority service could not make a safe decision. No cached permission will be used."
+      }
+    }
+  },
   "savedViews": {
     "label": "Saved views",
     "saveCurrent": "Save current view",

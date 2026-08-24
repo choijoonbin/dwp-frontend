@@ -2,11 +2,19 @@ import { describe, expect, it } from 'vitest';
 
 import {
   APPROVAL_DEFAULT_PATH,
+  APPROVAL_MANAGEMENT_NAVIGATION,
   APPROVAL_NAVIGATION,
+  APPROVAL_WORK_NAVIGATION,
   findApprovalNavigationItem,
   isApprovalAdminView,
 } from './approval-navigation';
 import { canAccessProductAreaNavigationItem } from '../../layouts/product-area-permissions';
+
+import type { ProductSurfaceNavigationGroup } from '../../components/product-manifest';
+
+function flattenSurfaceItems(groups: readonly ProductSurfaceNavigationGroup[]) {
+  return groups.flatMap((group) => group.items);
+}
 
 describe('approval product navigation', () => {
   it('keeps personal decisions and administration in explicit groups', () => {
@@ -59,6 +67,23 @@ describe('approval product navigation', () => {
     expect(
       canAccessProductAreaNavigationItem(newRequest!, (_resourceKey, permissionCode) =>
         ['CREATE', 'UPDATE'].includes(permissionCode ?? '')
+      )
+    ).toBe(true);
+  });
+
+  it('keeps legacy MANAGE semantics out of the v2 surface authorization source', () => {
+    const surfaceItems = [
+      ...flattenSurfaceItems(APPROVAL_WORK_NAVIGATION),
+      ...flattenSurfaceItems(APPROVAL_MANAGEMENT_NAVIGATION),
+    ];
+    const serializedAccess = JSON.stringify(surfaceItems.map((item) => item.access));
+
+    expect(surfaceItems).toHaveLength(15);
+    expect(serializedAccess).not.toContain('MANAGE');
+    expect(serializedAccess).not.toContain('ADMIN.APPROVAL');
+    expect(
+      flattenSurfaceItems(APPROVAL_MANAGEMENT_NAVIGATION).every(
+        (item) => item.access.type === 'capability-expression'
       )
     ).toBe(true);
   });

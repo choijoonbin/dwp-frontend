@@ -1,0 +1,438 @@
+{
+  "schemaVersion": 1,
+  "sourceKey": "product-page-routes.v1",
+  "pageRoutes": [
+    {
+      "routeContractKey": "route.approvals.admin.forms.page",
+      "routeId": "approvals.admin.forms",
+      "pattern": "/approvals/admin/forms",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
+      "routeContractKey": "route.approvals.admin.operations.page",
+      "routeId": "approvals.admin.operations",
+      "pattern": "/approvals/admin/operations",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
+      "routeContractKey": "route.approvals.admin.overview.page",
+      "routeId": "approvals.admin.overview",
+      "pattern": "/approvals/admin/overview",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
+      "routeContractKey": "route.approvals.admin.policies.page",
+      "routeId": "approvals.admin.policies",
+      "pattern": "/approvals/admin/policies",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
+      "routeContractKey": "route.approvals.admin.signatures.page",
+      "routeId": "approvals.admin.signatures",
+      "pattern": "/approvals/admin/signatures",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
+      "routeContractKey": "route.approvals.admin.workflows.page",
+      "routeId": "approvals.admin.workflows",
+      "pattern": "/approvals/admin/workflows",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
+      "routeContractKey": "route.approvals.work.completed.page",
+      "routeId": "approvals.work.completed",
+      "pattern": "/approvals/completed",
+      "productId": "approvals",
+      "surfaceId": "approvals.work"
+    },
+    {
+      "routeContractKey": "route.approvals.work.delegations.page",
+      "routeId": "approvals.work.delegations",
+      "pattern": "/approvals/delegations",
+      "productId": "approvals",
+      "surfaceId": "approvals.work"
+    },
+    {
+      "routeContractKey": "route.approvals.work.home.page",
+      "routeId": "approvals.work.home",
+      "pattern": "/approvals/home",
+      "productId": "approvals",
+      "surfaceId": "approvals.work"
+    },
+    {
+      "routeContractKey": "route.approvals.work.inbox.page",
+      "routeId": "approvals.work.inbox",
+      "pattern": "/approvals/inbox",
+      "productId": "approvals",
+      "surfaceId": "approvals.work"
+    },
+    {
+      "routeContractKey": "route.approvals.work.request-archive.page",
+      "routeId": "approvals.work.request-archive",
+      "pattern": "/approvals/requests/archive",
+      "productId": "approvals",
+      "surfaceId": "approvals.work"
+    },
+    {
+      "routeContractKey": "route.approvals.work.request-drafts.page",
+      "routeId": "approvals.work.request-drafts",
+      "pattern": "/approvals/requests/drafts",
+      "productId": "approvals",
+      "surfaceId": "approvals.work"
+    },
+    {
+      "routeContractKey": "route.approvals.work.request-needs-info.page",
+      "routeId": "approvals.work.request-needs-info",
+      "pattern": "/approvals/requests/needs-info",
+      "productId": "approvals",
+      "surfaceId": "approvals.work"
+    },
+    {
+      "routeContractKey": "route.approvals.work.request-new.page",
+      "routeId": "approvals.work.request-new",
+      "pattern": "/approvals/requests/new",
+      "productId": "approvals",
+      "surfaceId": "approvals.work"
+    },
+    {
+      "routeContractKey": "route.approvals.work.request-submitted.page",
+      "routeId": "approvals.work.request-submitted",
+      "pattern": "/approvals/requests/submitted",
+      "productId": "approvals",
+      "surfaceId": "approvals.work"
+    },
+    {
+      "routeContractKey": "route.communications.management.content.page",
+      "routeId": "communications.management.content",
+      "pattern": "/communications/admin/content",
+      "productId": "communications",
+      "surfaceId": "communications.management"
+    },
+    {
+      "routeContractKey": "route.communications.work.all-story.page",
+      "routeId": "communications.work.all-story",
+      "pattern": "/communications/all/:storyId",
+      "productId": "communications",
+      "surfaceId": "communications.work"
+    },
+    {
+      "routeContractKey": "route.communications.work.all.page",
+      "routeId": "communications.work.all",
+      "pattern": "/communications/all",
+      "productId": "communications",
+      "surfaceId": "communications.work"
+    },
+    {
+      "routeContractKey": "route.communications.work.for-you-story.page",
+      "routeId": "communications.work.for-you-story",
+      "pattern": "/communications/for-you/:storyId",
+      "productId": "communications",
+      "surfaceId": "communications.work"
+    },
+    {
+      "routeContractKey": "route.communications.work.for-you.page",
+      "routeId": "communications.work.for-you",
+      "pattern": "/communications/for-you",
+      "productId": "communications",
+      "surfaceId": "communications.work"
+    },
+    {
+      "routeContractKey": "route.communications.work.home.page",
+      "routeId": "communications.work.home",
+      "pattern": "/communications/home",
+      "productId": "communications",
+      "surfaceId": "communications.work"
+    },
+    {
+      "routeContractKey": "route.communications.work.required-story.page",
+      "routeId": "communications.work.required-story",
+      "pattern": "/communications/required/:storyId",
+      "productId": "communications",
+      "surfaceId": "communications.work"
+    },
+    {
+      "routeContractKey": "route.communications.work.required.page",
+      "routeId": "communications.work.required",
+      "pattern": "/communications/required",
+      "productId": "communications",
+      "surfaceId": "communications.work"
+    },
+    {
+      "routeContractKey": "route.communications.work.saved-story.page",
+      "routeId": "communications.work.saved-story",
+      "pattern": "/communications/saved/:storyId",
+      "productId": "communications",
+      "surfaceId": "communications.work"
+    },
+    {
+      "routeContractKey": "route.communications.work.saved.page",
+      "routeId": "communications.work.saved",
+      "pattern": "/communications/saved",
+      "productId": "communications",
+      "surfaceId": "communications.work"
+    },
+    {
+      "routeContractKey": "route.hcm.management.controlled-export.page",
+      "routeId": "hcm.management.controlled-export",
+      "pattern": "/hr/data/exports",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
+      "routeContractKey": "route.hcm.management.integration.page",
+      "routeId": "hcm.management.integration",
+      "pattern": "/hr/data/integrations",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
+      "routeContractKey": "route.hcm.management.org-design.page",
+      "routeId": "hcm.management.org-design",
+      "pattern": "/hr/design/organization",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
+      "routeContractKey": "route.hcm.management.reference.page",
+      "routeId": "hcm.management.reference",
+      "pattern": "/hr/data/reference",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.absence.page",
+      "routeId": "hcm.operations.absence",
+      "pattern": "/hr/operations/absence",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.assignments.page",
+      "routeId": "hcm.operations.assignments",
+      "pattern": "/hr/operations/assignments",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.benefits.page",
+      "routeId": "hcm.operations.benefits",
+      "pattern": "/hr/operations/benefits",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.overview.page",
+      "routeId": "hcm.operations.overview",
+      "pattern": "/hr/operations",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.pay.page",
+      "routeId": "hcm.operations.pay",
+      "pattern": "/hr/operations/pay",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.people.page",
+      "routeId": "hcm.operations.people",
+      "pattern": "/hr/operations/people",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.talent.page",
+      "routeId": "hcm.operations.talent",
+      "pattern": "/hr/operations/talent",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.time.page",
+      "routeId": "hcm.operations.time",
+      "pattern": "/hr/operations/time",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.absence.page",
+      "routeId": "hcm.personal.absence",
+      "pattern": "/hr/absence",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.benefits.page",
+      "routeId": "hcm.personal.benefits",
+      "pattern": "/hr/benefits",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.directory.page",
+      "routeId": "hcm.personal.directory",
+      "pattern": "/hr/directory",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.home.page",
+      "routeId": "hcm.personal.home",
+      "pattern": "/hr/home",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.me.page",
+      "routeId": "hcm.personal.me",
+      "pattern": "/hr/me",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.organization.page",
+      "routeId": "hcm.personal.organization",
+      "pattern": "/hr/organization",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.pay.page",
+      "routeId": "hcm.personal.pay",
+      "pattern": "/hr/pay",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.services.page",
+      "routeId": "hcm.personal.services",
+      "pattern": "/hr/services",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.talent.page",
+      "routeId": "hcm.personal.talent",
+      "pattern": "/hr/talent",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.time.page",
+      "routeId": "hcm.personal.time",
+      "pattern": "/hr/time",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.team.absence.page",
+      "routeId": "hcm.team.absence",
+      "pattern": "/hr/team/absence",
+      "productId": "hcm",
+      "surfaceId": "hcm.team"
+    },
+    {
+      "routeContractKey": "route.hcm.team.home.page",
+      "routeId": "hcm.team.home",
+      "pattern": "/hr/team",
+      "productId": "hcm",
+      "surfaceId": "hcm.team"
+    },
+    {
+      "routeContractKey": "route.hcm.team.time.page",
+      "routeId": "hcm.team.time",
+      "pattern": "/hr/team/time",
+      "productId": "hcm",
+      "surfaceId": "hcm.team"
+    },
+    {
+      "routeContractKey": "route.services.management.catalog.page",
+      "routeId": "services.management.catalog",
+      "pattern": "/services/admin/catalog",
+      "productId": "services",
+      "surfaceId": "services.management"
+    },
+    {
+      "routeContractKey": "route.services.management.operations.page",
+      "routeId": "services.management.operations",
+      "pattern": "/services/admin/operations",
+      "productId": "services",
+      "surfaceId": "services.management"
+    },
+    {
+      "routeContractKey": "route.services.work.discover.page",
+      "routeId": "services.work.discover",
+      "pattern": "/services/discover",
+      "productId": "services",
+      "surfaceId": "services.work"
+    },
+    {
+      "routeContractKey": "route.services.work.draft-detail.page",
+      "routeId": "services.work.draft-detail",
+      "pattern": "/services/drafts/:requestId",
+      "productId": "services",
+      "surfaceId": "services.work"
+    },
+    {
+      "routeContractKey": "route.services.work.drafts.page",
+      "routeId": "services.work.drafts",
+      "pattern": "/services/drafts",
+      "productId": "services",
+      "surfaceId": "services.work"
+    },
+    {
+      "routeContractKey": "route.services.work.home.page",
+      "routeId": "services.work.home",
+      "pattern": "/services/home",
+      "productId": "services",
+      "surfaceId": "services.work"
+    },
+    {
+      "routeContractKey": "route.services.work.my-detail.page",
+      "routeId": "services.work.my-detail",
+      "pattern": "/services/my/:requestId",
+      "productId": "services",
+      "surfaceId": "services.work"
+    },
+    {
+      "routeContractKey": "route.services.work.my.page",
+      "routeId": "services.work.my",
+      "pattern": "/services/my",
+      "productId": "services",
+      "surfaceId": "services.work"
+    }
+  ],
+  "legacyRedirects": [
+    {
+      "redirectId": "communications-management-announcements-v1",
+      "sourcePath": "/admin/experience/announcements",
+      "targetRouteContractKey": "route.communications.management.content.page",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "services-management-catalog-v1",
+      "sourcePath": "/admin/services/service-catalog",
+      "targetRouteContractKey": "route.services.management.catalog.page",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    },
+    {
+      "redirectId": "services-management-operations-v1",
+      "sourcePath": "/admin/services/service-operations",
+      "targetRouteContractKey": "route.services.management.operations.page",
+      "preserveQuery": true,
+      "preserveHash": true,
+      "maxHops": 1
+    }
+  ]
+}

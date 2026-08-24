@@ -145,6 +145,8 @@
       "settingsDescription": "Profile, preferences, and security",
       "administration": "Administration console",
       "administrationDescription": "Users, policy, and system controls",
+      "appManagement": "App management",
+      "appManagementDescription": "Open the management areas assigned to you",
       "supportAdministrationDescription": "Approved support scope for {{tenant}}",
       "provider": "Provider Control Plane",
       "providerDescription": "Tenant delivery and change operations",

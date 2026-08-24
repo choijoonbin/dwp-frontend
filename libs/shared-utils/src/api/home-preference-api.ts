@@ -1,9 +1,12 @@
 import { axiosInstance } from '../axios-instance';
+import { approvalMutationExecutionConfig } from './approval-governed-mutation';
 
+import type { ApprovalMutationExecution } from './approval-governed-mutation';
 import type { ApiResponse } from '../types';
 
 export type HomeWidgetKey = 'command-rail' | 'daily-brief' | 'focus' | 'schedule' | 'activity';
 export type HomeSurfaceKey = 'workspace-home' | 'hcm-home' | 'approval-home' | 'hris-home'; // Compatibility alias accepted by the server during the HCM transition.
+export const APPROVAL_HOME_SURFACE_KEY = 'approval-home' as const;
 export type HomePresentation = 'balanced' | 'expressive' | 'focused';
 export type HomeWidgetSize = 'fifth' | 'quarter' | 'compact' | 'medium' | 'large' | 'full';
 export type HomeWidgetHeight = 'short' | 'standard' | 'tall' | 'expanded';
@@ -87,5 +90,43 @@ export async function resetHomeSurfacePreference<WidgetKey extends string>(
     ApiResponse<HomePreference<WidgetKey>>,
     { version: number }
   >(`/api/platform/v1/home-preferences/surfaces/${surfaceKey}/reset`, { version });
+  return response.data.data;
+}
+
+export function getApprovalHomePreference<WidgetKey extends string>(): Promise<
+  HomePreference<WidgetKey>
+> {
+  return getHomeSurfacePreference<WidgetKey>(APPROVAL_HOME_SURFACE_KEY);
+}
+
+export function updateApprovalHomePreference<WidgetKey extends string>(
+  layout: HomePreferenceLayout<WidgetKey>,
+  version: number,
+  execution: ApprovalMutationExecution
+): Promise<HomePreference<WidgetKey>> {
+  return updateApprovalHomeSurfacePreference(APPROVAL_HOME_SURFACE_KEY, layout, version, execution);
+}
+
+export const APPROVAL_HOME_PREFERENCE_MUTATION_API_CONTRACT = {
+  apiFunction: 'updateApprovalHomePreference',
+  routeContractKey: 'route.approvals.work.home-preference-update.action',
+  method: 'PUT',
+  path: '/api/platform/v1/home-preferences/surfaces/{surfaceKey}',
+} as const;
+
+async function updateApprovalHomeSurfacePreference<WidgetKey extends string>(
+  surfaceKey: typeof APPROVAL_HOME_SURFACE_KEY,
+  layout: HomePreferenceLayout<WidgetKey>,
+  version: number,
+  execution: ApprovalMutationExecution
+): Promise<HomePreference<WidgetKey>> {
+  const response = await axiosInstance.put<
+    ApiResponse<HomePreference<WidgetKey>>,
+    { layout: HomePreferenceLayout<WidgetKey>; version: number }
+  >(
+    `/api/platform/v1/home-preferences/surfaces/${surfaceKey}`,
+    { layout, version },
+    approvalMutationExecutionConfig(execution)
+  );
   return response.data.data;
 }

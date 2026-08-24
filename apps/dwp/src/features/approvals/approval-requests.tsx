@@ -33,7 +33,6 @@ import {
   respondToApprovalInformationRequest,
   submitApprovalRequest,
   updateApprovalDraft,
-  usePermissions,
   useToast,
   withdrawApprovalRequest,
 } from '@dwp-frontend/shared-utils';
@@ -58,6 +57,11 @@ import Typography from '@mui/material/Typography';
 
 import { ApprovalSurface, PriorityChip, StatusChip } from './approval-ui';
 import { ApprovalRequestDetailDrawer } from './approval-request-detail-drawer';
+import { useApprovalExperience } from './use-approval-experience';
+import {
+  isProductSurfaceOperationCancelledError,
+  useApprovalGovernedMutation,
+} from './use-approval-governed-mutation';
 
 import type {
   ApprovalFormField,
@@ -160,6 +164,9 @@ function NewApprovalRequest() {
     title.trim().length >= 2 &&
     summary.trim().length >= 2 &&
     requiredFieldsComplete;
+  const runCreate = useApprovalGovernedMutation('route.approvals.work.request-create.action');
+  const runUpdate = useApprovalGovernedMutation('route.approvals.work.request-draft-update.action');
+  const runSubmit = useApprovalGovernedMutation('route.approvals.work.request-submit.action');
   const save = useMutation({
     mutationFn: async (intent: 'DRAFT' | 'SUBMIT') => {
       const input = {
@@ -178,15 +185,23 @@ function NewApprovalRequest() {
       };
       const persisted = draftId
         ? (
-            await updateApprovalDraft(draftId, {
-              ...input,
-              expectedVersion: draft.data!.request.version,
-            })
+            await runUpdate((execution) =>
+              updateApprovalDraft(
+                draftId,
+                {
+                  ...input,
+                  expectedVersion: draft.data!.request.version,
+                },
+                execution
+              )
+            )
           ).request
-        : await createApprovalRequest(input);
+        : await runCreate((execution) => createApprovalRequest(input, execution));
       return intent === 'SUBMIT'
         ? {
-            request: await submitApprovalRequest(persisted.requestId, persisted.version),
+            request: await runSubmit((execution) =>
+              submitApprovalRequest(persisted.requestId, persisted.version, execution)
+            ),
             intent,
           }
         : { request: persisted, intent };
@@ -201,7 +216,8 @@ function NewApprovalRequest() {
         intent === 'SUBMIT' ? '/approvals/requests/submitted' : '/approvals/requests/drafts'
       );
     },
-    onError: () => toast.error(t('requests.createError')),
+    onError: (error) =>
+      !isProductSurfaceOperationCancelledError(error) && toast.error(t('requests.createError')),
   });
 
   return (
@@ -541,10 +557,7 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const requestedId = searchParams.get('request');
-  const { hasPermission } = usePermissions();
-  const canUpdateRequests =
-    hasPermission('ACTION.APPROVAL_REQUEST', 'UPDATE') ||
-    hasPermission('ACTION.APPROVAL_REQUEST', 'MANAGE');
+  const { canUpdateRequests } = useApprovalExperience();
   const queryClient = useQueryClient();
   const [requestAction, setRequestAction] = useState<{
     kind: 'respond' | 'withdraw';
@@ -603,9 +616,14 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
   const responseRequiredFieldsComplete = responseFields
     .filter((field) => field.required)
     .every((field) => responsePayload[field.key]?.trim());
+  const runSubmit = useApprovalGovernedMutation('route.approvals.work.request-submit.action');
+  const runRespond = useApprovalGovernedMutation(
+    'route.approvals.work.request-information-response.action'
+  );
+  const runWithdraw = useApprovalGovernedMutation('route.approvals.work.request-withdraw.action');
   const submit = useMutation({
     mutationFn: ({ requestId, version }: { requestId: string; version: number }) =>
-      submitApprovalRequest(requestId, version),
+      runSubmit((execution) => submitApprovalRequest(requestId, version, execution)),
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['approvals', 'requests'] }),
@@ -613,21 +631,27 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
       ]);
       toast.success(t('requests.submitted'));
     },
-    onError: () => toast.error(t('requests.submitError')),
+    onError: (error) =>
+      !isProductSurfaceOperationCancelledError(error) && toast.error(t('requests.submitError')),
   });
   const act = useMutation({
     mutationFn: async (action: NonNullable<typeof requestAction>) => {
       if (action.kind === 'respond') {
         const reviewed = informationDetail.data;
         if (!reviewed) throw new Error('Approval information context is not loaded.');
-        return respondToApprovalInformationRequest(
-          reviewed.request.requestId,
-          responseMessage.trim(),
-          responsePayload,
-          reviewed.request.version
+        return runRespond((execution) =>
+          respondToApprovalInformationRequest(
+            reviewed.request.requestId,
+            responseMessage.trim(),
+            responsePayload,
+            reviewed.request.version,
+            execution
+          )
         );
       }
-      return withdrawApprovalRequest(action.request.requestId, action.request.version);
+      return runWithdraw((execution) =>
+        withdrawApprovalRequest(action.request.requestId, action.request.version, execution)
+      );
     },
     onSuccess: async (_result, action) => {
       setRequestAction(undefined);
@@ -642,7 +666,8 @@ function ApprovalRequestList({ view }: { view: keyof typeof viewMap }) {
         t(action.kind === 'respond' ? 'requests.informationResponded' : 'requests.withdrawn')
       );
     },
-    onError: () => toast.error(t('requests.actionError')),
+    onError: (error) =>
+      !isProductSurfaceOperationCancelledError(error) && toast.error(t('requests.actionError')),
   });
   if (requests.isError)
     return (

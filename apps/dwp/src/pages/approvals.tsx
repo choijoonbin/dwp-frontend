@@ -17,12 +17,12 @@ import { ApprovalRequests } from '../features/approvals/approval-requests';
 import { ApprovalPageHeader } from '../features/approvals/approval-ui';
 import { canAccessProductAreaNavigationItem } from '../layouts/product-area-permissions';
 
-export default function ApprovalsPage() {
+export default function ApprovalsPage({ governed = false }: { governed?: boolean }) {
   const { pathname } = useLocation();
   const { hasPermission } = usePermissions();
   const page = findApprovalNavigationItem(pathname);
   if (!page) return <Navigate to={APPROVAL_DEFAULT_PATH} replace />;
-  if (!canAccessProductAreaNavigationItem(page, hasPermission))
+  if (!governed && !canAccessProductAreaNavigationItem(page, hasPermission))
     return <Navigate to={APPROVAL_DEFAULT_PATH} replace />;
   if (page.view === 'home') return <ApprovalHome />;
   let content: React.ReactNode;
@@ -34,7 +34,12 @@ export default function ApprovalsPage() {
       <ApprovalAdmin
         view={
           page.view as
-            'admin-overview' | 'workflows' | 'forms' | 'policies' | 'operations' | 'signatures'
+            | 'admin-overview'
+            | 'workflows'
+            | 'forms'
+            | 'policies'
+            | 'operations'
+            | 'signatures'
         }
       />
     );

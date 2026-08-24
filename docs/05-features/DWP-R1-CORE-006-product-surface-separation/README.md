@@ -2,12 +2,12 @@
 
 - Owner: Shared Experience Platform
 - Co-owner: Identity & Access, Approvals, HCM
-- 상태: `design`
-- Gate: `G2 complete / G3 approval pending`
+- 상태: `implementation complete (DRAFT / default-off)`
+- Gate: `G3 technical evidence complete / W1a activation approval pending`
 - Roadmap: R1 Common Experience Foundation
 - Pilot: Approvals `W1a`, HCM `W1b`
 - Technical Canary: Communications·Services `W0.5`
-- 기준일: 2026-08-21
+- 기준일: 2026-08-24
 
 ## 산출물
 
@@ -27,12 +27,13 @@
 ## 현재 판정
 
 공통 IA, Route·Shell·Navigation 계약, Effective Product Surface Context, 권한 실패 상태,
-Approvals/HCM Pilot, Test Matrix와 Rollout·Rollback 기준은 개발 Issue로 분해할 수 있는 수준으로
-완료했다. 아직 코드는 변경하지 않았고 본 문서와 ADR은 사용자 승인 전 `Accepted`로 표시하지
-않는다.
+Technical Canary와 Approvals W1a Runtime, Test Matrix 및 Rollout·Rollback 안전장치를 구현했다.
+권한 Bundle은 모두 `DRAFT`, Feature Flag는 기본 Off이며 Active Pointer는 생성하지 않았다. HCM은
+v3 계약 Snapshot만 생성했고 Runtime W1b는 선행 승인 전 시작하지 않는다. 본 문서와 ADR은 실제
+Product·Security·Privacy 승인 전 `Accepted`로 표시하지 않는다.
 
-G3 착수 전에는 ADR·169개 메뉴표와 ADR `PS-01`~`PS-11` Decision Register를 승인한다. 핵심
-승인 Package는 다음과 같다.
+W1a 운영 활성화 전에는 ADR·169개 메뉴표와 ADR `PS-01`~`PS-11` Decision Register를 실제
+Owner가 승인한다. 핵심 승인 Package는 다음과 같다.
 
 1. Bound `EffectiveProductSurfaceContext`·Direct Evaluation·Capability Registry
 2. Responsibility AND Capability 기본값과 기존 Permission-only 관리자 Migration
@@ -43,16 +44,16 @@ G3 착수 전에는 ADR·169개 메뉴표와 ADR `PS-01`~`PS-11` Decision Regist
 7. Tenant-only JIT, Scope-bound SoD와 Step-up Freshness Policy
 8. Named Reviewer Assigned Work와 UX Telemetry·Privacy 계약
 
-각 항목의 제안 기본값과 Test는 이미 고정되어 있다. Owner 승인 후 별도의 제품 방향 재설계 없이
-구현을 시작할 수 있다.
+각 항목의 제안 기본값, 구현과 Test 증거는 고정되어 있다. Owner 승인 후 별도의 제품 방향 재설계
+없이 DRAFT v2를 승격할 수 있다.
 
 ## 구현 순서
 
 ```text
-W0 공통 계약
-  → W0.5 Communications·Services Technical Canary
-  → W1a Approvals Pilot
-  → W1b HCM Pilot
+W0 공통 계약 [기술 완료]
+  → W0.5 Communications·Services Technical Canary [기술 완료]
+  → W1a Approvals Pilot [기술 완료, 외부 활성화 승인 대기]
+  → W1b HCM Pilot [미착수]
   → W2/W3 전체 제품 Migration
 ```
 

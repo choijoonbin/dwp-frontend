@@ -55,6 +55,17 @@ import {
   restoreLaunchpadApp,
 } from '../components/workspace-composer/app-launchpad-model';
 import { useSystemCodeOptions } from '../components/use-system-code-options';
+import {
+  findGovernedProductEntry,
+  GOVERNED_ENTRY_MANIFESTS,
+  useGovernedProductEntryCatalog,
+} from '../features/shell/product-entry-point-registry';
+import {
+  isProductSurfaceEnforced,
+  resolveCanaryProductFlags,
+  resolveProductSurfaceRolloutMode,
+  useProductSurfaceCanaryAuthority,
+} from '../features/shell/product-surface-canary-runtime';
 
 import type {
   HomePreferenceLayout,
@@ -150,6 +161,8 @@ export default function HomePage() {
       ),
     [homeExperienceQuery.data?.launchpadConfiguration, i18n.language, i18n.resolvedLanguage, t]
   );
+  const surfaceAuthority = useProductSurfaceCanaryAuthority();
+  const governedEntries = useGovernedProductEntryCatalog();
   const entitledApps = useMemo(
     () =>
       launchpadCatalog.apps
@@ -164,12 +177,37 @@ export default function HomePage() {
               }
             : app
         )
-        .filter((app) => isAppEntitled(app, auth.user?.roles ?? [], permissions)),
+        .flatMap((app) => {
+          const manifest = GOVERNED_ENTRY_MANIFESTS.find(
+            (candidate) => candidate.appKey === app.resourceKey
+          );
+          if (!manifest) {
+            return isAppEntitled(app, auth.user?.roles ?? [], permissions) ? [app] : [];
+          }
+          const mode = resolveProductSurfaceRolloutMode(
+            resolveCanaryProductFlags(surfaceAuthority, manifest.id)
+          );
+          if (!isProductSurfaceEnforced(mode) && mode !== 'invalid') {
+            return isAppEntitled(app, auth.user?.roles ?? [], permissions) ? [app] : [];
+          }
+          const entry = findGovernedProductEntry(governedEntries, app.resourceKey);
+          if (!entry || mode === 'invalid') return [];
+          return [
+            {
+              ...app,
+              route: entry.work?.path ?? entry.management?.path ?? app.route,
+              managementRoute: entry.management?.path,
+              managementOnly: !entry.work && Boolean(entry.management),
+            },
+          ];
+        }),
     [
       auth.user?.roles,
       homeOverviewQuery.data?.communications.data?.summary.unread,
       launchpadCatalog.apps,
       permissions,
+      governedEntries,
+      surfaceAuthority,
     ]
   );
   const [draftWidgets, setDraftWidgets] = useState<HomeWidgetPreference[]>(() =>
@@ -361,6 +399,10 @@ export default function HomePage() {
       : '-';
   const runtimeAppById = new Map((workspaceAppsQuery.data ?? []).map((app) => [app.id, app]));
   const launchApp = (app: (typeof entitledApps)[number]) => {
+    if (app.managementOnly && app.managementRoute) {
+      navigate(app.managementRoute);
+      return;
+    }
     const runtimeApp = runtimeAppById.get(app.id);
     if (!runtimeApp) {
       navigate(app.route);
@@ -427,6 +469,7 @@ export default function HomePage() {
             onImageBackground
             onLayoutChange={setDraftAppLayout}
             onLaunch={launchApp}
+            onManage={(app) => app.managementRoute && navigate(app.managementRoute)}
             onStartEditing={personalCustomizationEnabled && !editorOpen ? beginEditing : undefined}
           />
         }

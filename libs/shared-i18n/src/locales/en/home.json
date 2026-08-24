@@ -178,6 +178,7 @@
     "groupFolder": "{{group}} folder",
     "groupApps": "{{group}} apps",
     "openApp": "Open {{app}}",
+    "manageApp": "Manage {{app}}",
     "dragApp": "Move {{app}}",
     "removeApp": "Remove from home",
     "removeAppLabel": "Remove {{app}} from home",

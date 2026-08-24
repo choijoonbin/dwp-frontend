@@ -7,6 +7,16 @@ import {
   APPROVAL_REQUEST_FIXTURE,
   APPROVAL_TASK_DETAIL_FIXTURE,
 } from './support/product-area-fixtures';
+import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
+
+async function mockLegacyApprovalSurface(page: Page) {
+  // This suite protects the rollout-off compatibility experience. Governed
+  // 111 authority and mutation preconditions are exercised by the Pilot and
+  // HIGH command suites, while 000 must keep the established product pages.
+  // Register after mockShellSession so this exact authority route wins over
+  // the shell fixture's final API fallback.
+  await mockApprovalProductSurfaceAuthority(page, { surfaceUi: false });
+}
 
 const APPROVAL_MEMBER_PERMISSIONS = [
   {
@@ -176,6 +186,7 @@ test('전자결재 홈은 사용자에게 우선 판단과 개인 결재 흐름�
     jobTitle: 'Executive Strategy Officer',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
   });
+  await mockLegacyApprovalSurface(page);
   await mockApprovalHome(page);
 
   await page.goto('/approvals/home');
@@ -259,6 +270,7 @@ test('양식 설계자는 카테고리와 기본 결재선을 함께 관리하�
       })),
     ],
   });
+  await mockLegacyApprovalSurface(page);
 
   await page.goto('/approvals/admin/forms');
 
@@ -295,6 +307,7 @@ test('기안자는 게시 양식을 선택하고 제출 전에 단계별 결재�
     jobTitle: 'Executive Strategy Officer',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
   });
+  await mockLegacyApprovalSurface(page);
 
   await page.goto('/approvals/requests/new');
   await page.getByLabel('결재 양식').click();
@@ -315,6 +328,7 @@ test('기안자는 필수 업무값이 비어 있어도 초안을 저장하고 �
     locale: 'ko',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
   });
+  await mockLegacyApprovalSurface(page);
   let draftBody: Record<string, unknown> | undefined;
   await page.route('**/api/approvals/v1/requests', async (route) => {
     if (route.request().method() !== 'POST') return route.fallback();
@@ -345,6 +359,7 @@ test('AI 딥링크 대상 결재를 자동 선택하고 후보 업무를 명시�
     locale: 'ko',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
   });
+  await mockLegacyApprovalSurface(page);
   await page.route('**/api/approvals/v1/tasks/approval-task-001', (route) =>
     fulfillSuccess(route, { ...APPROVAL_TASK_DETAIL_FIXTURE, canClaim: true, canDecide: false })
   );
@@ -372,6 +387,7 @@ test('내 처리 완료함은 실제 완료 결정 증적을 읽기 전용으로
     locale: 'ko',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
   });
+  await mockLegacyApprovalSurface(page);
   const completedTask = {
     ...APPROVAL_TASK_DETAIL_FIXTURE.task,
     status: 'APPROVED' as const,
@@ -416,6 +432,7 @@ test('completed decision history is fully localized and read-only in English', a
     locale: 'en',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
   });
+  await mockLegacyApprovalSurface(page);
   const completedTask = {
     ...APPROVAL_TASK_DETAIL_FIXTURE.task,
     status: 'APPROVED' as const,
@@ -459,6 +476,7 @@ test('보완 요청자는 검토한 버전에 답변과 수정 필드를 함께 
     locale: 'ko',
     permissions: APPROVAL_MEMBER_PERMISSIONS,
   });
+  await mockLegacyApprovalSurface(page);
   const needsInformation = {
     ...APPROVAL_REQUEST_FIXTURE,
     status: 'NEEDS_INFO' as const,
@@ -526,6 +544,15 @@ test('결재 운영자는 격리된 통합 이벤트의 원인을 확인하고 �
       })),
     ],
   });
+  await mockLegacyApprovalSurface(page);
+  let retryWire: { body: string | null; headers: Record<string, string> } | null = null;
+  await page.route('**/api/approvals/v1/admin/operations/events/*/retry', async (route) => {
+    retryWire = {
+      body: route.request().postData(),
+      headers: route.request().headers(),
+    };
+    await route.fallback();
+  });
 
   await page.goto('/approvals/admin/operations');
 
@@ -534,6 +561,16 @@ test('결재 운영자는 격리된 통합 이벤트의 원인을 확인하고 �
   await expect(deliveryRow).toContainText('Downstream endpoint returned 503');
   await deliveryRow.getByRole('button', { name: '이벤트 다시 전달' }).click();
   await expect(deliveryRow).toContainText('대기');
+  expect(retryWire?.body).toBeNull();
+  expect(retryWire?.headers['content-type']).toBeUndefined();
+  for (const header of [
+    'x-dwp-expected-object-version',
+    'x-dwp-expected-decision-revision',
+    'x-dwp-step-up-challenge',
+    'idempotency-key',
+  ]) {
+    expect(retryWire?.headers[header]).toBeUndefined();
+  }
 });
 
 for (const persona of ADMIN_PERSONAS) {
@@ -555,6 +592,7 @@ for (const persona of ADMIN_PERSONAS) {
         })),
       ],
     });
+    await mockLegacyApprovalSurface(page);
     await mockApprovalHome(page);
 
     await page.goto('/approvals/home');

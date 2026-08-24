@@ -1,15 +1,16 @@
 import { API_URL } from './env';
-import { HttpError } from './http-error';
+import { HttpError, HttpTransportError } from './http-error';
 import { getTenantId } from './tenant-util';
 import { resolveRequestLocale } from './locale-preference';
 
-type AxiosLikeResponse<T> = { data: T };
+type AxiosLikeResponse<T> = { data: T; headers?: Headers };
 type RequestConfig = {
   headers?: Record<string, string>;
   responseType?: 'json' | 'blob';
   timeoutMs?: number;
   signal?: AbortSignal;
   keepalive?: boolean;
+  contextScopeKey?: string;
 };
 
 export type EventStreamMessage = {
@@ -70,6 +71,29 @@ function isMutation(method: string): boolean {
   return !['GET', 'HEAD', 'OPTIONS'].includes(method);
 }
 
+function hasControlCharacter(value: string): boolean {
+  return Array.from(value).some((character) => {
+    const codePoint = character.codePointAt(0) ?? 0;
+    return codePoint <= 31 || codePoint === 127;
+  });
+}
+
+function withContextScope(url: string, contextScopeKey?: string): string {
+  if (contextScopeKey === undefined) return url;
+  if (
+    !contextScopeKey ||
+    contextScopeKey !== contextScopeKey.trim() ||
+    contextScopeKey.length > 500 ||
+    hasControlCharacter(contextScopeKey) ||
+    /(?:^|[?&])contextScopeKey(?:=|&|$)/u.test(url) ||
+    url.includes('#')
+  ) {
+    throw new Error('Product surface context scope is invalid.');
+  }
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}contextScopeKey=${encodeURIComponent(contextScopeKey)}`;
+}
+
 async function parseBody(response: Response, responseType: 'json' | 'blob' = 'json') {
   if (response.status === 204) return undefined;
   if (responseType === 'blob') return response.blob();
@@ -123,6 +147,7 @@ async function request<T>(
   allowCsrfRetry = true
 ): Promise<AxiosLikeResponse<T>> {
   const headers = buildHeaders(body, config.headers);
+  const scopedUrl = withContextScope(url, config.contextScopeKey);
   if (isMutation(method)) {
     const csrf = await loadCsrfToken(config.keepalive);
     headers[csrf.headerName] = csrf.token;
@@ -132,25 +157,36 @@ async function request<T>(
   const abortFromCaller = () => controller?.abort(config.signal?.reason);
   if (config.signal?.aborted) abortFromCaller();
   else config.signal?.addEventListener('abort', abortFromCaller, { once: true });
+  let timedOut = false;
   const timeout =
     controller && config.timeoutMs
-      ? globalThis.setTimeout(() => controller.abort('request-timeout'), config.timeoutMs)
+      ? globalThis.setTimeout(() => {
+          timedOut = true;
+          controller.abort('request-timeout');
+        }, config.timeoutMs)
       : undefined;
   let response: Response;
   try {
-    response = await fetch(API_URL + url, {
-      method,
-      headers,
-      credentials: 'include',
-      body:
-        body === undefined
-          ? undefined
-          : isFormData(body) || isBlob(body)
-            ? body
-            : JSON.stringify(body),
-      signal: controller?.signal,
-      keepalive: config.keepalive,
-    });
+    try {
+      response = await fetch(API_URL + scopedUrl, {
+        method,
+        headers,
+        credentials: 'include',
+        body:
+          body === undefined
+            ? undefined
+            : isFormData(body) || isBlob(body)
+              ? body
+              : JSON.stringify(body),
+        signal: controller?.signal,
+        keepalive: config.keepalive,
+      });
+    } catch (cause) {
+      throw new HttpTransportError(
+        timedOut ? 'TIMEOUT' : controller?.signal.aborted ? 'ABORT' : 'NETWORK',
+        cause
+      );
+    }
   } finally {
     if (timeout !== undefined) globalThis.clearTimeout(timeout);
     config.signal?.removeEventListener('abort', abortFromCaller);
@@ -175,7 +211,7 @@ async function request<T>(
     throw new HttpError(message, response.status, payload);
   }
 
-  return { data: payload as T };
+  return { data: payload as T, headers: response.headers };
 }
 
 export const axiosInstance = {

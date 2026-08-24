@@ -3,7 +3,9 @@ import {
   WORKSPACE_ACTIVITY_FIXTURE,
   WORKSPACE_APPS_FIXTURE,
   WORKSPACE_QUEUE_FIXTURE,
+  mockShellNotificationRuntime,
 } from './runtime-access';
+import { mockLegacyProductSurfaceAuthority } from './product-surface-authority';
 import {
   APPROVAL_ADMIN_FIXTURE,
   APPROVAL_DELEGATIONS_FIXTURE,
@@ -916,6 +918,8 @@ export async function mockShellSession(
   roles: string[],
   options: ShellSessionOptions = {}
 ) {
+  await mockLegacyProductSurfaceAuthority(page);
+  await mockShellNotificationRuntime(page);
   const provider = roles.some((role) => role.startsWith('PROVIDER_'));
   const locale = options.locale ?? 'en';
   const appearance = options.appearance ?? {

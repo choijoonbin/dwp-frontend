@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, Clock3, FileCheck2, PencilRuler, ShieldAlert, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ActionButton, PageCanvas, SignalMetric } from '@dwp-frontend/design-system';
+import { ActionButton, PageCanvas } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   HttpError,
   getApprovalHome,
-  getHomeSurfacePreference,
-  updateHomeSurfacePreference,
+  getApprovalHomePreference,
+  updateApprovalHomePreference,
   useAuth,
   useToast,
   DWAION_APPROVAL_EXPERT_AGENT_KEY,
@@ -36,6 +36,7 @@ import {
 import { WorkspaceWidgetCanvas } from '../../components/workspace-composer/workspace-widget-canvas';
 import { WorkspaceWidgetGallery } from '../../components/workspace-composer/workspace-widget-gallery';
 import { APPROVAL_HOME_WIDGET_REGISTRY } from './approval-home-widget-registry';
+import { approvalInsightFallback } from './approval-insight-copy';
 import {
   ApprovalLinkRow,
   ApprovalSurface,
@@ -44,6 +45,10 @@ import {
   approvalTone,
 } from './approval-ui';
 import { useApprovalExperience } from './use-approval-experience';
+import {
+  isProductSurfaceOperationCancelledError,
+  useApprovalGovernedMutation,
+} from './use-approval-governed-mutation';
 
 import type { ApprovalHomeWidgetKey } from './approval-home-widget-registry';
 import type {
@@ -68,7 +73,7 @@ function LoadingHome() {
 }
 
 export function ApprovalHome() {
-  const { t } = useTranslation('approvals');
+  const { t, i18n } = useTranslation('approvals');
   const auth = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
@@ -97,7 +102,7 @@ export function ApprovalHome() {
   });
   const preference = useQuery({
     queryKey: ['home-preference', 'approval-home', auth.user?.tenantId, auth.user?.userId],
-    queryFn: () => getHomeSurfacePreference<ApprovalHomeWidgetKey>('approval-home'),
+    queryFn: () => getApprovalHomePreference<ApprovalHomeWidgetKey>(),
     staleTime: 5 * 60_000,
     retry: 1,
   });
@@ -111,14 +116,6 @@ export function ApprovalHome() {
   const hiddenWidgetKeys = activeWidgets
     .filter((widget) => !widget.visible && registry.some((item) => item.key === widget.widgetKey))
     .map((widget) => widget.widgetKey);
-  const adminLandingPath = experience.canViewOperations
-    ? '/approvals/admin/overview'
-    : experience.canDesign
-      ? '/approvals/admin/workflows'
-      : experience.canViewPolicies
-        ? '/approvals/admin/policies'
-        : '/approvals/admin/signatures';
-
   useEffect(() => {
     if (editing) return;
     setDraftWidgets(persistedWidgets);
@@ -130,12 +127,17 @@ export function ApprovalHome() {
     setGalleryOpen(false);
     setBaseVersion(null);
   };
+  const runPreferenceUpdate = useApprovalGovernedMutation(
+    'route.approvals.work.home-preference-update.action'
+  );
   const mutation = useMutation({
     mutationFn: (layout: HomePreferenceLayout<ApprovalHomeWidgetKey>) =>
-      updateHomeSurfacePreference(
-        'approval-home',
-        layout,
-        baseVersion ?? preference.data?.version ?? 0
+      runPreferenceUpdate((execution) =>
+        updateApprovalHomePreference(
+          layout,
+          baseVersion ?? preference.data?.version ?? 0,
+          execution
+        )
       ),
     onSuccess: (next) => {
       queryClient.setQueryData(
@@ -146,6 +148,7 @@ export function ApprovalHome() {
       toast.success(t('home.saved'));
     },
     onError: async (error) => {
+      if (isProductSurfaceOperationCancelledError(error)) return;
       if (error instanceof HttpError && error.status === 409) await preference.refetch();
       closeEditor();
       toast.error(
@@ -413,14 +416,15 @@ export function ApprovalHome() {
           ))}
         </ApprovalSurface>
       );
-    if (key === 'insights')
-      return (
-        <ApprovalSurface
-          title={t('home.widgets.insights.label')}
-          meta={t('home.widgets.insights.description')}
-        >
-          <Stack gap={1.25} sx={{ p: 2 }}>
-            {data.insights.map((insight) => (
+    return (
+      <ApprovalSurface
+        title={t('home.widgets.insights.label')}
+        meta={t('home.widgets.insights.description')}
+      >
+        <Stack gap={1.25} sx={{ p: 2 }}>
+          {data.insights.map((insight) => {
+            const fallback = approvalInsightFallback(insight, i18n.resolvedLanguage);
+            return (
               <ButtonBase
                 key={insight.key}
                 onClick={() => navigate(insight.route)}
@@ -442,60 +446,16 @@ export function ApprovalHome() {
                 />
                 <Box>
                   <Typography variant="body2" fontWeight={750}>
-                    {t(`insights.${insight.key}.title`, { defaultValue: insight.titleKo })}
+                    {t(`insights.${insight.key}.title`, { defaultValue: fallback.title })}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {t(`insights.${insight.key}.detail`, { defaultValue: insight.detailKo })}
+                    {t(`insights.${insight.key}.detail`, { defaultValue: fallback.detail })}
                   </Typography>
                 </Box>
               </ButtonBase>
-            ))}
-          </Stack>
-        </ApprovalSurface>
-      );
-    const pulse = data.adminPulse;
-    return (
-      <ApprovalSurface
-        title={t('home.widgets.admin-health.label')}
-        meta={t('home.widgets.admin-health.description')}
-        action={
-          <ActionButton
-            intent="quiet"
-            size="small"
-            endIcon={<ArrowRight size={15} />}
-            onClick={() => navigate(adminLandingPath)}
-          >
-            {t('actions.openAdmin')}
-          </ActionButton>
-        }
-      >
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(5, 1fr)' },
-          }}
-        >
-          {[
-            [t('admin.publishedWorkflows'), pulse?.publishedWorkflows ?? 0],
-            [t('admin.draftWorkflows'), pulse?.draftWorkflows ?? 0],
-            [t('admin.activeRequests'), pulse?.activeRequests ?? 0],
-            [t('admin.overdueTasks'), pulse?.overdueTasks ?? 0],
-            [t('admin.failedIntegrations'), pulse?.failedIntegrations ?? 0],
-          ].map(([label, value], index) => (
-            <Box
-              key={String(label)}
-              sx={{ p: 2, borderRight: index < 4 ? 1 : 0, borderColor: 'divider' }}
-            >
-              <SignalMetric
-                label={String(label)}
-                value={String(value)}
-                detail={t('home.widgets.admin-health.metricDetail')}
-                icon={<ShieldAlert size={17} />}
-                tone={Number(value) > 0 && index > 2 ? 'warning' : 'neutral'}
-              />
-            </Box>
-          ))}
-        </Box>
+            );
+          })}
+        </Stack>
       </ApprovalSurface>
     );
   };

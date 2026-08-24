@@ -42,6 +42,9 @@ export type HomeAppDefinition = {
   resourceKey: string;
   badge?: string;
   requiredRoles?: readonly string[];
+  /** Server-derived Pilot entry. Never populate from a raw MANAGE permission fallback. */
+  managementRoute?: string;
+  managementOnly?: boolean;
 };
 
 export type HomeAppGroup = {

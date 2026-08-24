@@ -145,6 +145,8 @@
       "settingsDescription": "프로필, 환경설정 및 보안",
       "administration": "관리 콘솔",
       "administrationDescription": "사용자, 정책 및 시스템 관리",
+      "appManagement": "앱 관리",
+      "appManagementDescription": "내게 지정된 앱 관리 영역 열기",
       "supportAdministrationDescription": "{{tenant}} 승인 범위 지원",
       "provider": "프로바이더 제어 영역",
       "providerDescription": "테넌트 딜리버리 및 변경 작업",

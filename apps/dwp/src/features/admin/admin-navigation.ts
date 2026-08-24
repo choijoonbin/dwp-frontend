@@ -62,7 +62,6 @@ export type AdminNavigationItem = {
   icon: LucideIcon;
   requiredResourceKey?: string;
   requiredPermissionCode?: string;
-  reviewerAccessible?: boolean;
   requiredResponsibilityCodes?: readonly string[];
 };
 
@@ -161,7 +160,6 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'access-reviews',
         path: '/admin/identity/access-reviews',
         icon: ClipboardCheck,
-        reviewerAccessible: true,
       },
       {
         section: 'identity',

@@ -12,6 +12,10 @@
       "navigationLabel": "서비스 센터 탐색"
     }
   },
+  "surfaces": {
+    "work": "구성원 서비스",
+    "management": "서비스 관리"
+  },
   "navigation": {
     "groups": {
       "services": {

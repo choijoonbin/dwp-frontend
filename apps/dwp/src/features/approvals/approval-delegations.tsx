@@ -18,7 +18,6 @@ import {
   getPublishedApprovalWorkflows,
   revokeApprovalDelegation,
   searchApprovalDelegationCandidates,
-  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 
@@ -29,25 +28,34 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { ApprovalSurface, StatusChip, approvalTone } from './approval-ui';
+import {
+  buildApprovalDelegationCreateInput,
+  buildApprovalDelegationWorkflowReference,
+  buildApprovalDelegationWorkflowOptions,
+} from './approval-delegation-model';
+import { useApprovalExperience } from './use-approval-experience';
+import {
+  isProductSurfaceOperationCancelledError,
+  useApprovalGovernedMutation,
+} from './use-approval-governed-mutation';
 
 import type { ApprovalDelegation, ApprovalDelegationCandidate } from '@dwp-frontend/shared-utils';
 
 export function ApprovalDelegations() {
   const { t, i18n } = useTranslation('approvals');
-  const { hasPermission } = usePermissions();
+  const { canManageDelegations: canManage } = useApprovalExperience();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [candidateQuery, setCandidateQuery] = useState('');
   const [selected, setSelected] = useState<ApprovalDelegationCandidate | null>(null);
   const [scopeType, setScopeType] = useState<'ALL' | 'WORKFLOW'>('ALL');
-  const [workflowKey, setWorkflowKey] = useState('');
+  const [workflowId, setWorkflowId] = useState('');
   const [reason, setReason] = useState('');
   const [startsAt, setStartsAt] = useState(() => new Date().toISOString());
   const [endsAt, setEndsAt] = useState(() => new Date(Date.now() + 7 * 86400000).toISOString());
   const [revoking, setRevoking] = useState<ApprovalDelegation | null>(null);
   const deferredCandidateQuery = useDeferredValue(candidateQuery.trim());
-  const canManage = hasPermission('ACTION.APPROVAL_DELEGATION', 'MANAGE');
   const delegations = useQuery({
     queryKey: ['approvals', 'delegations'],
     queryFn: getApprovalDelegations,
@@ -66,56 +74,61 @@ export function ApprovalDelegations() {
     staleTime: 60_000,
   });
   const workflowOptions = useMemo(
-    () =>
-      (workflows.data ?? []).map((workflow) => ({
-        value: workflow.workflowKey,
-        label: i18n.resolvedLanguage?.startsWith('ko') ? workflow.nameKo : workflow.nameEn,
-      })),
+    () => buildApprovalDelegationWorkflowOptions(workflows.data ?? [], i18n.resolvedLanguage),
     [i18n.resolvedLanguage, workflows.data]
   );
+  const runCreate = useApprovalGovernedMutation('route.approvals.work.delegation-create.action');
+  const runRevoke = useApprovalGovernedMutation('route.approvals.work.delegation-revoke.action');
 
   const closeEditor = () => {
     setOpen(false);
     setCandidateQuery('');
     setSelected(null);
     setScopeType('ALL');
-    setWorkflowKey('');
+    setWorkflowId('');
     setReason('');
   };
   const create = useMutation({
     mutationFn: () => {
       if (!selected) throw new Error('Delegation candidate is required.');
-      return createApprovalDelegation({
+      const input = buildApprovalDelegationCreateInput({
         delegateUserId: selected.userId,
         scopeType,
-        workflowKey: scopeType === 'WORKFLOW' ? workflowKey : undefined,
+        workflowId,
         startsAt: new Date(startsAt).toISOString(),
         endsAt: new Date(endsAt).toISOString(),
         reason: reason.trim(),
       });
+      if (!input) throw new Error('Delegation workflow identity is required.');
+      return runCreate((execution) => createApprovalDelegation(input, execution));
     },
     onSuccess: (next) => {
       queryClient.setQueryData(['approvals', 'delegations'], next);
       closeEditor();
       toast.success(t('delegations.created'));
     },
-    onError: () => toast.error(t('delegations.createError')),
+    onError: (error) =>
+      !isProductSurfaceOperationCancelledError(error) && toast.error(t('delegations.createError')),
   });
   const revoke = useMutation({
     mutationFn: (delegation: ApprovalDelegation) =>
-      revokeApprovalDelegation(delegation.delegationId, delegation.version),
+      runRevoke((execution) =>
+        revokeApprovalDelegation(delegation.delegationId, delegation.version, execution)
+      ),
     onSuccess: (next) => {
       queryClient.setQueryData(['approvals', 'delegations'], next);
       setRevoking(null);
       toast.success(t('delegations.revoked'));
     },
-    onError: () => toast.error(t('delegations.revokeError')),
+    onError: (error) =>
+      !isProductSurfaceOperationCancelledError(error) && toast.error(t('delegations.revokeError')),
   });
+  const selectedWorkflowAvailable = workflowOptions.some((option) => option.value === workflowId);
   const valid =
     selected !== null &&
     reason.trim().length >= 10 &&
     new Date(endsAt) > new Date(startsAt) &&
-    (scopeType === 'ALL' || Boolean(workflowKey));
+    (scopeType === 'ALL' || selectedWorkflowAvailable);
 
   return (
     <ApprovalSurface
@@ -206,9 +219,9 @@ export function ApprovalDelegations() {
               <SelectField
                 required
                 label={t('delegations.fields.workflow')}
-                value={workflowKey}
+                value={workflowId}
                 options={workflowOptions}
-                onValueChange={(value) => setWorkflowKey(value ?? '')}
+                onValueChange={(value) => setWorkflowId(value ?? '')}
               />
             ) : (
               <Box />
@@ -267,6 +280,7 @@ function DelegationRow({
 }) {
   const { t } = useTranslation('approvals');
   const incoming = delegation.direction === 'INCOMING';
+  const workflowReference = buildApprovalDelegationWorkflowReference(delegation);
   return (
     <Stack
       direction={{ xs: 'column', sm: 'row' }}
@@ -311,11 +325,26 @@ function DelegationRow({
           <Typography variant="body2" sx={{ mt: 0.35 }}>
             {delegation.reason}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {delegation.scopeType === 'ALL'
-              ? t('delegations.scopes.all')
-              : t('delegations.scopeWorkflow', { key: delegation.workflowKey })}
-          </Typography>
+          <Stack direction="row" gap={0.75} alignItems="center" useFlexGap flexWrap="wrap">
+            <Typography variant="caption" color="text.secondary">
+              {delegation.scopeType === 'ALL'
+                ? t('delegations.scopes.all')
+                : workflowReference.displayKey
+                  ? t('delegations.scopeWorkflow', { key: workflowReference.displayKey })
+                  : t('delegations.scopeWorkflowUnavailable')}
+            </Typography>
+            {delegation.scopeType === 'WORKFLOW' && workflowReference.workflowId ? (
+              <Chip
+                size="small"
+                variant="outlined"
+                label={`ID ${workflowReference.compactWorkflowId}`}
+                title={workflowReference.workflowId}
+                aria-label={t('delegations.workflowIdentity', {
+                  id: workflowReference.workflowId,
+                })}
+              />
+            ) : null}
+          </Stack>
         </Box>
       </Stack>
       {canRevoke && delegation.lifecycleState === 'ACTIVE' ? (

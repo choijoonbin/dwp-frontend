@@ -28,6 +28,7 @@ import type { SxProps, Theme } from '@mui/material/styles';
 export type ShellHeaderContext = {
   icon: LucideIcon;
   label: string;
+  detail?: string;
 };
 
 type ShellHeaderProps = {
@@ -175,15 +176,29 @@ export function ShellHeader({
             >
               <ContextIcon size={18} strokeWidth={1.8} />
             </Box>
-            <Typography
-              component="span"
-              variant="subtitle2"
-              title={context.label}
-              noWrap
-              sx={{ minWidth: 0 }}
-            >
-              {context.label}
-            </Typography>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography
+                component="span"
+                variant="subtitle2"
+                title={context.label}
+                noWrap
+                sx={{ display: 'block', minWidth: 0 }}
+              >
+                {context.label}
+              </Typography>
+              {context.detail && (
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="text.secondary"
+                  title={context.detail}
+                  noWrap
+                  sx={{ display: 'block', minWidth: 0, lineHeight: 1.15 }}
+                >
+                  {context.detail}
+                </Typography>
+              )}
+            </Box>
           </Box>
         )}
 

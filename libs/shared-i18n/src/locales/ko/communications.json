@@ -9,6 +9,10 @@
       "navigationLabel": "소식 탐색"
     }
   },
+  "surfaces": {
+    "work": "구성원 소식",
+    "management": "소식 관리"
+  },
   "navigation": {
     "groups": {
       "communications": {

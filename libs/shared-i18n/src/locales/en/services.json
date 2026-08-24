@@ -12,6 +12,10 @@
       "navigationLabel": "Service Center navigation"
     }
   },
+  "surfaces": {
+    "work": "Employee services",
+    "management": "Service management"
+  },
   "navigation": {
     "groups": {
       "services": {
