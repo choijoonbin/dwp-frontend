@@ -4,6 +4,12 @@
 - 최종 검증: 2026-08-14
 - 적용 범위: Auth, Platform, Provider, Gateway, DWP Frontend
 
+> UI 투영 후속 검토(2026-08-21):
+> [제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)은
+> 본 ADR의 독립 권한면을 Product Work와 Product Management의 Route·Shell·Navigation에
+> 투영한다. Surface는 새 권한 계층이 아니며 본 ADR의 Responsibility, Scope, SoD와 서버 재검증
+> 경계를 변경하지 않는다.
+
 ## 1. 결정 요약
 
 DWP의 권한은 `프로바이더 > 회사 관리자 > 앱 관리자 > 구성원`처럼 권한이 자동

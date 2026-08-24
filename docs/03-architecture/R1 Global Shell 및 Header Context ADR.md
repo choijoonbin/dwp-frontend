@@ -5,6 +5,13 @@
 - 대상: Personal Home, Business App, Product Area, Enterprise Space, Tenant Control Center,
   Provider Control Plane
 
+> 후속 개정 검토(2026-08-21):
+> [제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)이
+> 승인되면 Business App 안에 `Product Management` Shell Profile을 추가한다. 동일 Product
+> Brand를 유지하되 Work와 Management의 Header Context, Navigation Collection, Scope와 복귀
+> 동작을 분리한다. 이 확장은 기존 Global Utility 순서와 Shell Registry 소유 원칙을 바꾸지
+> 않는다.
+
 ## 1. 결정 배경
 
 DWP에는 홈, 일반 업무, HR, 테넌트 관리, 프로바이더 운영처럼 성격이 다른

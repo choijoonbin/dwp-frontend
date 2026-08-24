@@ -6,6 +6,13 @@
 >
 > 적용 저장소: `dwp-frontend`, `dwp-backend`
 
+> 후속 개정 검토(2026-08-21):
+> [제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)이
+> 승인되면 본 ADR의 단일 HCM Product·URL·Backend 권한 경계는 유지하되, 권한을 한 Sidebar에
+> 합집합으로 누적하는 1절·3절의 Navigation 표현은 `나`, `내 팀`, `HR 운영`, `HCM 관리`의
+> Route-derived Surface Navigation으로 대체한다. 권한은 보이는 메뉴 수가 아니라 접근 가능한
+> Surface와 Target Population으로 누적된다.
+
 ## 1. 결정
 
 DWP는 임직원이 인사 경험을 찾을 때 `구성원`, `People`, `Workforce`라는 별도 제품을
