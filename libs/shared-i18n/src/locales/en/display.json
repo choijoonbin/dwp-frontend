@@ -150,6 +150,7 @@
     "TENANT_LIFECYCLE": "Tenant lifecycle"
   },
   "auditActions": {
+    "APPLY": "Applied",
     "APPROVE": "Approved",
     "BLOCKED": "Export processing blocked",
     "CANCELLED": "Export request cancelled",
@@ -158,6 +159,7 @@
     "EXPIRED": "Export artifact expired",
     "FAILED": "Export processing failed",
     "PUBLISH": "Publish",
+    "REVOKE": "Revoked",
     "RELEASE": "Resource released",
     "RETRY_SCHEDULED": "Export retry scheduled",
     "SNOOZE": "Notification snoozed",

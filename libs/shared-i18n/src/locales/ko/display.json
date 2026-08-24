@@ -150,6 +150,7 @@
     "TENANT_LIFECYCLE": "테넌트 수명주기"
   },
   "auditActions": {
+    "APPLY": "적용",
     "APPROVE": "승인",
     "BLOCKED": "반출 처리 차단",
     "CANCELLED": "반출 요청 취소",
@@ -158,6 +159,7 @@
     "EXPIRED": "반출 산출물 만료",
     "FAILED": "반출 처리 실패",
     "PUBLISH": "발행",
+    "REVOKE": "회수",
     "RELEASE": "자원 조기 해제",
     "RETRY_SCHEDULED": "반출 재시도 예약",
     "SNOOZE": "알림 다시 보기 예약",

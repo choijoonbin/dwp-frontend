@@ -19,6 +19,8 @@ export type ZonedClock = {
   minute: number;
 };
 
+export type ZonedDateKey = string;
+
 function asDate(value: DateValue): Date {
   return value instanceof Date ? value : new Date(value);
 }
@@ -119,6 +121,25 @@ export function resolveZonedClock(value: DateValue, timeZone: string): ZonedCloc
     const minute = Number(valueOf('minute'));
     if (!day || !Number.isInteger(hour) || !Number.isInteger(minute)) return null;
     return { day, hour, minute };
+  } catch {
+    return null;
+  }
+}
+
+export function resolveZonedDateKey(value: DateValue, timeZone: string): ZonedDateKey | null {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(asDate(value));
+    const valueOf = (type: Intl.DateTimeFormatPartTypes) =>
+      parts.find((part) => part.type === type)?.value;
+    const year = valueOf('year');
+    const month = valueOf('month');
+    const day = valueOf('day');
+    return year && month && day ? `${year}-${month}-${day}` : null;
   } catch {
     return null;
   }

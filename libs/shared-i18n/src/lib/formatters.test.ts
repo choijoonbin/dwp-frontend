@@ -1,7 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { defaultRegionalPreference, writeRegionalPreference } from '@dwp-frontend/shared-utils';
 
-import { formatDate, formatNumber, formatRelativeTime, resolveZonedClock } from './formatters';
+import {
+  formatDate,
+  formatNumber,
+  formatRelativeTime,
+  resolveZonedClock,
+  resolveZonedDateKey,
+} from './formatters';
 
 describe('locale-aware formatters', () => {
   beforeEach(() => {
@@ -48,5 +54,13 @@ describe('locale-aware formatters', () => {
       minute: 30,
     });
     expect(resolveZonedClock('2026-08-21T00:30:00.000Z', 'Invalid/TimeZone')).toBeNull();
+  });
+
+  it('resolves an ISO date key for the supplied IANA time zone', () => {
+    expect(resolveZonedDateKey('2026-08-24T15:30:00.000Z', 'Asia/Seoul')).toBe('2026-08-25');
+    expect(resolveZonedDateKey('2026-08-24T15:30:00.000Z', 'America/Los_Angeles')).toBe(
+      '2026-08-24'
+    );
+    expect(resolveZonedDateKey('2026-08-24T15:30:00.000Z', 'Invalid/TimeZone')).toBeNull();
   });
 });

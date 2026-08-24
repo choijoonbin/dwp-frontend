@@ -12,7 +12,9 @@ export {
   formatList,
   formatNumber,
   formatRelativeTime,
+  resolveZonedDateKey,
   resolveZonedClock,
+  type ZonedDateKey,
   type ZonedClock,
 } from './lib/formatters';
 export {

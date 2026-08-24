@@ -13,6 +13,7 @@ import {
   BadgeCheck,
   ChevronRight,
   FileCheck2,
+  FileSearch2,
   ScanSearch,
   Settings2,
   ShieldCheck,
@@ -53,7 +54,6 @@ export function DwaionAdminGates() {
     hasPermission('ADMIN.DWAION_GATES', 'CREATE') || hasPermission('ADMIN.DWAION_GATES', 'MANAGE');
   const canApprove =
     hasPermission('ADMIN.DWAION_GATES', 'APPROVE') || hasPermission('ADMIN.DWAION_GATES', 'MANAGE');
-  const hasWriteAction = canUpdate || canCreate || canApprove;
   const query = useQuery({
     queryKey: ['dwaion', 'admin', 'gates', environment],
     queryFn: () => getDwaionOperationalGatePortfolio(environment),
@@ -145,11 +145,20 @@ export function DwaionAdminGates() {
       {
         field: 'actions',
         headerName: t('dwaionAdmin.gates.columns.actions'),
-        width: 330,
+        width: 430,
         sortable: false,
         filterable: false,
         renderCell: ({ row }) => (
           <Stack direction="row" spacing={0.25}>
+            <ActionButton
+              intent="quiet"
+              size="small"
+              startIcon={<FileSearch2 size={15} />}
+              onClick={() => setAction({ kind: 'REVIEW', gate: row })}
+              sx={{ minWidth: 'auto', px: 1 }}
+            >
+              {t('dwaionAdmin.gates.actions.review')}
+            </ActionButton>
             {canUpdate && (
               <ActionButton
                 intent={row.selectedOption ? 'quiet' : 'secondary'}
@@ -165,30 +174,30 @@ export function DwaionAdminGates() {
                 )}
               </ActionButton>
             )}
-            {canCreate && row.selectedOption && row.status !== 'EXPIRED' && (
-              <ActionButton
-                intent="quiet"
-                size="small"
-                startIcon={<FileCheck2 size={15} />}
-                onClick={() => setAction({ kind: 'EVIDENCE', gate: row })}
-                sx={{ minWidth: 'auto', px: 1 }}
-              >
-                {t('dwaionAdmin.gates.actions.evidence')}
-              </ActionButton>
-            )}
-            {canUpdate &&
+            {canCreate &&
               row.selectedOption &&
-              ['CONFIGURING', 'VALIDATING', 'BLOCKED'].includes(row.status) && (
+              ['CONFIGURING', 'BLOCKED', 'READY_FOR_APPROVAL'].includes(row.status) && (
                 <ActionButton
-                  intent="secondary"
+                  intent="quiet"
                   size="small"
-                  startIcon={<ScanSearch size={15} />}
-                  onClick={() => setAction({ kind: 'VALIDATE', gate: row })}
+                  startIcon={<FileCheck2 size={15} />}
+                  onClick={() => setAction({ kind: 'EVIDENCE', gate: row })}
                   sx={{ minWidth: 'auto', px: 1 }}
                 >
-                  {t('dwaionAdmin.gates.actions.validate')}
+                  {t('dwaionAdmin.gates.actions.evidence')}
                 </ActionButton>
               )}
+            {canUpdate && row.selectedOption && ['CONFIGURING', 'BLOCKED'].includes(row.status) && (
+              <ActionButton
+                intent="secondary"
+                size="small"
+                startIcon={<ScanSearch size={15} />}
+                onClick={() => setAction({ kind: 'VALIDATE', gate: row })}
+                sx={{ minWidth: 'auto', px: 1 }}
+              >
+                {t('dwaionAdmin.gates.actions.validate')}
+              </ActionButton>
+            )}
             {canApprove && row.status === 'READY_FOR_APPROVAL' && (
               <ActionButton
                 intent="primary"
@@ -200,16 +209,11 @@ export function DwaionAdminGates() {
                 {t('dwaionAdmin.gates.actions.decide')}
               </ActionButton>
             )}
-            {!hasWriteAction && (
-              <Typography variant="caption" color="text.secondary">
-                {t('dwaionAdmin.gates.actions.readOnly')}
-              </Typography>
-            )}
           </Stack>
         ),
       },
     ],
-    [canApprove, canCreate, canUpdate, hasWriteAction, t]
+    [canApprove, canCreate, canUpdate, t]
   );
 
   const portfolio = query.data;

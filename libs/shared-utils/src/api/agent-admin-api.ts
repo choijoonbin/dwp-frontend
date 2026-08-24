@@ -1,5 +1,7 @@
 import { axiosInstance } from '../axios-instance';
+import { HttpError } from '../http-error';
 
+import type { AgentComponents } from '@dwp-frontend/api-contracts';
 import type { ApiResponse } from '../types';
 
 export type DwaionRetentionPolicy = {
@@ -193,87 +195,94 @@ export type DwaionGovernanceAuditPage = {
   totalPages: number;
 };
 
-export type DwaionGateEnvironment = 'DEVELOPMENT' | 'STAGING' | 'PRODUCTION';
-export type DwaionGateCategory =
-  'AI_RUNTIME' | 'CONNECTIVITY' | 'ACCESS_CONTROL' | 'ASSURANCE' | 'DATA_PROTECTION' | 'OPERATIONS';
-export type DwaionGateKey =
-  | 'MODEL_CREDENTIALS'
-  | 'MODEL_LIFECYCLE_CAPACITY'
-  | 'NETWORK_ISOLATION'
-  | 'DATA_PROCESSING_LOCATION'
-  | 'SOURCE_CONNECTORS'
-  | 'SOURCE_ACL'
-  | 'DATA_CLASSIFICATION_DLP'
-  | 'EVALUATION_DATASET'
-  | 'RELEASE_APPROVAL'
-  | 'ACTION_APPROVAL'
-  | 'TENANT_KMS'
-  | 'RETENTION_LEGAL_HOLD'
-  | 'AUDIT_RESILIENCE';
-export type DwaionGateStatus =
-  | 'NOT_CONFIGURED'
-  | 'CONFIGURING'
-  | 'VALIDATING'
-  | 'READY_FOR_APPROVAL'
-  | 'APPROVED'
-  | 'BLOCKED'
-  | 'EXPIRED';
-export type DwaionGateEvidenceType =
-  | 'CONFIGURATION_REFERENCE'
-  | 'TEST_RESULT'
-  | 'SECURITY_REVIEW'
-  | 'LEGAL_APPROVAL'
-  | 'BUSINESS_APPROVAL'
-  | 'RUNBOOK'
-  | 'OTHER';
-export type DwaionOperationalGate = {
-  gateKey: DwaionGateKey;
-  category: DwaionGateCategory;
-  externalOwner: string;
-  deliveryCritical: boolean;
-  selectedOption?: string | null;
-  options: { code: string; recommended: boolean }[];
-  requiredEvidenceTypes: DwaionGateEvidenceType[];
-  status: DwaionGateStatus;
-  ownerUserId?: string | null;
-  configurationRef?: string | null;
-  notes?: string | null;
-  validationSummary?: string | null;
-  lastConfiguredBy?: string | null;
-  lastValidatedBy?: string | null;
-  approvedBy?: string | null;
-  evidenceCount: number;
-  policyVersion: number;
-  effectiveAt?: string | null;
-  expiresAt?: string | null;
-  updatedAt: string;
+type AgentSchemas = AgentComponents['schemas'];
+export type DwaionGateEnvironment = AgentSchemas['GateEnvironment'];
+export type DwaionGateCategory = AgentSchemas['GateCategory'];
+export type DwaionGateKey = AgentSchemas['OperationalGateKey'];
+export type DwaionGateStatus = AgentSchemas['GateStatus'];
+export type DwaionGateEvidenceType = AgentSchemas['GateEvidenceType'];
+export type DwaionGateApprovalEligibilityReason = AgentSchemas['GateApprovalEligibilityReason'];
+export type DwaionGateActorRole = AgentSchemas['GateActorRole'];
+export type DwaionOperationalGate = AgentSchemas['OperationalGateSummary'];
+export type DwaionOperationalGateEvidence = AgentSchemas['OperationalGateEvidence'];
+export type DwaionOperationalGateApprovalEligibility =
+  AgentSchemas['OperationalGateApprovalEligibility'];
+export type DwaionOperationalGateAuditEvent = AgentSchemas['OperationalGateAuditEvent'];
+export type DwaionOperationalGateDetail = AgentSchemas['OperationalGateDetail'];
+export type DwaionOperationalGateProblemCode =
+  | AgentSchemas['OperationalGateProblemCode']
+  | 'GATE_UNKNOWN';
+export type DwaionOperationalGateProblem = {
+  code: DwaionOperationalGateProblemCode;
+  status: number;
+  detail: string;
+  correlationId?: string;
+  context: Record<string, string | string[]>;
 };
-export type DwaionOperationalGateEvidence = {
-  evidenceId: string;
-  evidenceType: DwaionGateEvidenceType;
-  title: string;
-  reference: string;
-  checksumSha256?: string | null;
-  notes?: string | null;
-  createdBy: string;
-  createdAt: string;
-};
-export type DwaionOperationalGateDetail = {
-  gate: DwaionOperationalGate;
-  evidence: DwaionOperationalGateEvidence[];
-};
-export type DwaionOperationalGatePortfolio = {
-  environment: DwaionGateEnvironment;
-  totalCount: number;
-  requiredCount: number;
-  approvedCount: number;
-  readyForApprovalCount: number;
-  blockedCount: number;
-  expiredCount: number;
-  completionPercent: number;
-  deliveryReady: boolean;
-  gates: DwaionOperationalGate[];
-};
+export type DwaionOperationalGatePortfolio = AgentSchemas['OperationalGatePortfolio'];
+
+export function toDwaionOperationalGateProblem(error: unknown): DwaionOperationalGateProblem {
+  if (!(error instanceof HttpError)) {
+    return {
+      code: 'GATE_UNKNOWN',
+      status: 500,
+      detail: error instanceof Error ? error.message : 'Unknown operational gate failure.',
+      context: {},
+    };
+  }
+  const envelope = asGateProblemEnvelope(error.details);
+  if (!envelope) {
+    return {
+      code: 'GATE_UNKNOWN',
+      status: error.status,
+      detail: error.message,
+      context: {},
+    };
+  }
+  return {
+    code: isGateProblemCode(envelope.code) ? envelope.code : 'GATE_UNKNOWN',
+    status: typeof envelope.status === 'number' ? envelope.status : error.status,
+    detail: typeof envelope.detail === 'string' ? envelope.detail : error.message,
+    correlationId: typeof envelope.correlationId === 'string' ? envelope.correlationId : undefined,
+    context: isGateProblemContext(envelope.context) ? envelope.context : {},
+  };
+}
+
+function asGateProblemEnvelope(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object') return null;
+  const envelope = value as Record<string, unknown>;
+  if (typeof envelope.code === 'string') return envelope;
+  return envelope.detail && typeof envelope.detail === 'object'
+    ? (envelope.detail as Record<string, unknown>)
+    : null;
+}
+
+function isGateProblemCode(value: unknown): value is DwaionOperationalGateProblemCode {
+  return (
+    typeof value === 'string' &&
+    [
+      'GATE_PERMISSION_DENIED',
+      'GATE_NOT_FOUND',
+      'GATE_VERSION_CONFLICT',
+      'GATE_INVALID_TRANSITION',
+      'GATE_REQUIRED_EVIDENCE_MISSING',
+      'GATE_SEPARATION_OF_DUTY',
+      'GATE_STORE_UNAVAILABLE',
+    ].includes(value)
+  );
+}
+
+function isGateProblemContext(value: unknown): value is Record<string, string | string[]> {
+  return Boolean(
+    value &&
+    typeof value === 'object' &&
+    Object.values(value).every(
+      (item) =>
+        typeof item === 'string' ||
+        (Array.isArray(item) && item.every((nested) => typeof nested === 'string'))
+    )
+  );
+}
 
 export async function getDwaionOperationsOverview(
   periodDays = 30

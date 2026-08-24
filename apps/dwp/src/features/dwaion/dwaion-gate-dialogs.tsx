@@ -7,6 +7,7 @@ import {
   configureDwaionOperationalGate,
   decideDwaionOperationalGate,
   getDwaionOperationalGate,
+  toDwaionOperationalGateProblem,
   validateDwaionOperationalGate,
   type DwaionGateEnvironment,
   type DwaionGateEvidenceType,
@@ -15,15 +16,14 @@ import {
 } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { DwaionGateReview } from './dwaion-gate-review';
 import { gateOptionLabel, gateTitle } from './dwaion-gate-ui';
 
-export type GateDialogKind = 'CONFIGURE' | 'EVIDENCE' | 'VALIDATE' | 'DECIDE';
+export type GateDialogKind = 'REVIEW' | 'CONFIGURE' | 'EVIDENCE' | 'VALIDATE' | 'DECIDE';
 export type GateDialogAction = { kind: GateDialogKind; gate: DwaionOperationalGate } | null;
 
 type Props = {
@@ -82,21 +82,23 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
   const detailQuery = useQuery({
     queryKey: ['dwaion', 'admin', 'gates', environment, gate?.gateKey],
     queryFn: () => getDwaionOperationalGate(gate!.gateKey, environment),
-    enabled: Boolean(gate && action?.kind === 'EVIDENCE'),
-    staleTime: 10_000,
+    enabled: Boolean(gate && action?.kind !== 'CONFIGURE'),
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   const mutation = useMutation({
     mutationFn: async () => {
       if (!action) throw new Error('Operational gate action is not selected.');
       const current = action.gate;
+      const expectedVersion = detailQuery.data?.gate.policyVersion ?? current.policyVersion;
       if (action.kind === 'CONFIGURE') {
         return configureDwaionOperationalGate(current.gateKey, environment, {
           selectedOption,
           ownerUserId: ownerUserId.trim(),
           configurationRef: configurationRef.trim() || undefined,
           notes: notes.trim() || undefined,
-          expectedVersion: current.policyVersion,
+          expectedVersion,
           changeReason: changeReason.trim(),
         });
       }
@@ -105,7 +107,7 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
           evidenceType,
           title: evidenceTitle.trim(),
           reference: evidenceReference.trim(),
-          expectedVersion: current.policyVersion,
+          expectedVersion,
           changeReason: changeReason.trim(),
         });
       }
@@ -113,14 +115,17 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
         return validateDwaionOperationalGate(current.gateKey, environment, {
           outcome: validationOutcome,
           validationSummary: validationSummary.trim(),
-          expectedVersion: current.policyVersion,
+          expectedVersion,
           changeReason: changeReason.trim(),
         });
+      }
+      if (action.kind !== 'DECIDE') {
+        throw new Error('Read-only gate review cannot submit a mutation.');
       }
       return decideDwaionOperationalGate(current.gateKey, environment, {
         decision,
         validDays: Math.max(1, Math.min(Number(validDays) || 365, 730)),
-        expectedVersion: current.policyVersion,
+        expectedVersion,
         changeReason: changeReason.trim(),
       });
     },
@@ -145,33 +150,56 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
     value,
     label: t(`dwaionAdmin.gates.evidenceTypes.${value}`),
   }));
+  const approvalEligible = detailQuery.data?.approvalEligibility.eligible ?? false;
   const invalid =
     !gate ||
-    changeReason.trim().length < 10 ||
+    (action?.kind !== 'REVIEW' && changeReason.trim().length < 10) ||
     (action?.kind === 'CONFIGURE' && (!selectedOption || !ownerUserId.trim())) ||
     (action?.kind === 'EVIDENCE' &&
       (evidenceTitle.trim().length < 2 || evidenceReference.trim().length < 3)) ||
-    (action?.kind === 'VALIDATE' && validationSummary.trim().length < 10);
+    (action?.kind === 'VALIDATE' && validationSummary.trim().length < 10) ||
+    (action?.kind === 'DECIDE' && !approvalEligible);
+  const problem = mutation.isError ? toDwaionOperationalGateProblem(mutation.error) : null;
 
   return (
     <FormDialog
       open={Boolean(action)}
       title={action ? t(`dwaionAdmin.gates.dialogs.${action.kind}.title`) : ''}
       description={gate ? gateTitle(t, gate.gateKey) : undefined}
-      cancelLabel={t('dwaionAdmin.shared.cancel')}
-      submitLabel={action ? t(`dwaionAdmin.gates.dialogs.${action.kind}.submit`) : ''}
+      cancelLabel={
+        action?.kind === 'REVIEW'
+          ? t('dwaionAdmin.gates.review.close')
+          : t('dwaionAdmin.shared.cancel')
+      }
+      submitLabel={
+        action && action.kind !== 'REVIEW'
+          ? t(`dwaionAdmin.gates.dialogs.${action.kind}.submit`)
+          : ''
+      }
       submittingLabel={t('dwaionAdmin.shared.saving')}
       busy={mutation.isPending}
       submitDisabled={invalid}
+      showSubmit={action?.kind !== 'REVIEW'}
       onClose={onClose}
       onSubmit={() => mutation.mutate()}
-      maxWidth="sm"
+      maxWidth={action?.kind === 'REVIEW' || action?.kind === 'DECIDE' ? 'md' : 'sm'}
     >
       <Stack spacing={2.25}>
-        {mutation.isError && <Alert severity="error">{t('dwaionAdmin.gates.error')}</Alert>}
+        {problem && (
+          <Alert severity="error">
+            {t(`dwaionAdmin.gates.errors.${problem.code}`, {
+              defaultValue: t('dwaionAdmin.gates.error'),
+            })}
+            {problem.correlationId ? ` (${problem.correlationId})` : ''}
+          </Alert>
+        )}
         {gate && (
           <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
-            <Chip size="small" variant="outlined" label={environment} />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t(`dwaionAdmin.gates.environments.${environment}`)}
+            />
             {gate.requiredEvidenceTypes.map((item) => (
               <Chip
                 key={item}
@@ -181,6 +209,13 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
               />
             ))}
           </Stack>
+        )}
+        {action && ['REVIEW', 'VALIDATE', 'DECIDE'].includes(action.kind) && (
+          <DwaionGateReview
+            detail={detailQuery.data}
+            loading={detailQuery.isLoading}
+            error={detailQuery.isError}
+          />
         )}
         {action?.kind === 'CONFIGURE' && (
           <>
@@ -213,6 +248,9 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
         )}
         {action?.kind === 'EVIDENCE' && (
           <>
+            {action.gate.status === 'READY_FOR_APPROVAL' && (
+              <Alert severity="info">{t('dwaionAdmin.gates.evidenceChangeNotice')}</Alert>
+            )}
             <SelectField<DwaionGateEvidenceType>
               label={t('dwaionAdmin.gates.fields.evidenceType')}
               value={evidenceType}
@@ -230,26 +268,6 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
               onChange={(event) => setEvidenceReference(event.target.value)}
               supportingText={t('dwaionAdmin.gates.fields.evidenceReferenceHelp')}
             />
-            {detailQuery.data?.evidence.length ? (
-              <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 1.5 }}>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                  {t('dwaionAdmin.gates.existingEvidence')}
-                </Typography>
-                <Stack divider={<Divider flexItem />}>
-                  {detailQuery.data.evidence.slice(0, 4).map((item) => (
-                    <Box key={item.evidenceId} sx={{ py: 1 }}>
-                      <Typography variant="body2" fontWeight={650}>
-                        {item.title}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {t(`dwaionAdmin.gates.evidenceTypes.${item.evidenceType}`)} ·{' '}
-                        {item.reference}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Stack>
-              </Box>
-            ) : null}
           </>
         )}
         {action?.kind === 'VALIDATE' && (
@@ -274,7 +292,6 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
         )}
         {action?.kind === 'DECIDE' && (
           <>
-            <Alert severity="warning">{t('dwaionAdmin.gates.separationNotice')}</Alert>
             <SelectField<'APPROVE' | 'REJECT'>
               label={t('dwaionAdmin.gates.fields.decision')}
               value={decision}
@@ -295,21 +312,32 @@ export function DwaionGateDialogHost({ action, environment, onClose, onCompleted
             )}
           </>
         )}
-        <FormField
-          label={t('dwaionAdmin.shared.reason')}
-          value={changeReason}
-          multiline
-          minRows={3}
-          onChange={(event) => setChangeReason(event.target.value)}
-          errorMessage={
-            changeReason && changeReason.trim().length < 10
-              ? t('dwaionAdmin.shared.reasonError')
-              : undefined
-          }
-        />
-        <Typography variant="caption" color="text.secondary">
-          {t('dwaionAdmin.gates.secretBoundary')}
-        </Typography>
+        {action?.kind === 'EVIDENCE' && (
+          <DwaionGateReview
+            detail={detailQuery.data}
+            loading={detailQuery.isLoading}
+            error={detailQuery.isError}
+          />
+        )}
+        {action?.kind !== 'REVIEW' && (
+          <>
+            <FormField
+              label={t('dwaionAdmin.shared.reason')}
+              value={changeReason}
+              multiline
+              minRows={3}
+              onChange={(event) => setChangeReason(event.target.value)}
+              errorMessage={
+                changeReason && changeReason.trim().length < 10
+                  ? t('dwaionAdmin.shared.reasonError')
+                  : undefined
+              }
+            />
+            <Typography variant="caption" color="text.secondary">
+              {t('dwaionAdmin.gates.secretBoundary')}
+            </Typography>
+          </>
+        )}
       </Stack>
     </FormDialog>
   );

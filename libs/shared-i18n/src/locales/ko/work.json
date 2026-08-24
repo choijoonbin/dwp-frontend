@@ -411,6 +411,7 @@
       "noExpiry": "승인 전",
       "existingEvidence": "최근 등록 증빙",
       "separationNotice": "항목을 설정하거나 검증한 담당자는 동일 항목을 승인할 수 없습니다.",
+      "evidenceChangeNotice": "승인 대기 중인 증빙을 변경하면 기존 검증은 무효화되며 다시 검증해야 합니다.",
       "secretBoundary": "비밀번호, API Key, Token 또는 인증서 원문은 저장하지 않습니다. Secret Store·CMDB·테스트 결과의 참조만 입력하세요.",
       "environments": {
         "DEVELOPMENT": "개발",
@@ -435,7 +436,6 @@
       "statuses": {
         "NOT_CONFIGURED": "미설정",
         "CONFIGURING": "구성 중",
-        "VALIDATING": "검증 중",
         "READY_FOR_APPROVAL": "승인 대기",
         "APPROVED": "승인",
         "BLOCKED": "차단",
@@ -450,6 +450,7 @@
         "OPERATIONS": "운영 복원력"
       },
       "actions": {
+        "review": "상세 검토",
         "configure": "정책 설정",
         "reconfigure": "정책 수정",
         "evidence": "증빙 등록",
@@ -465,10 +466,58 @@
         "approve": "독립 승인"
       },
       "dialogs": {
+        "REVIEW": { "title": "운영 전환 검토", "submit": "" },
         "CONFIGURE": { "title": "운영 정책 설정", "submit": "정책 저장" },
         "EVIDENCE": { "title": "운영 증빙 등록", "submit": "증빙 등록" },
         "VALIDATE": { "title": "운영 요건 검증", "submit": "검증 기록" },
         "DECIDE": { "title": "운영 전환 승인", "submit": "승인 결정 저장" }
+      },
+      "review": {
+        "close": "닫기",
+        "loading": "운영 전환 검토 정보를 불러오는 중",
+        "loadError": "검토 근거를 불러오지 못했습니다. 새로 고친 후 다시 시도하세요.",
+        "policyTitle": "정책과 검증 결과",
+        "status": "현재 상태",
+        "policy": "적용 정책",
+        "owner": "정책 소유자",
+        "configurationRef": "구성 참조",
+        "validationSummary": "검증 요약",
+        "revision": "검토 기준 버전",
+        "revisionValue": "구성 {{configuration}} · 정책 {{policy}}",
+        "none": "등록되지 않음",
+        "notValidated": "검증 전",
+        "evidenceTitle": "현재 구성 리비전의 증빙",
+        "missingEvidence": "누락된 필수 증빙: {{evidence}}",
+        "noEvidence": "현재 구성 리비전에 등록된 증빙이 없습니다.",
+        "auditTitle": "변경 및 승인 이력",
+        "noAudit": "기록된 변경 이력이 없습니다.",
+        "approval": {
+          "eligible": "현재 사용자는 모든 근거를 검토한 후 독립 승인 결정을 내릴 수 있습니다.",
+          "separation": "현재 사용자는 이 항목의 {{role}}이므로 승인할 수 없습니다. 독립 승인자에게 검토를 요청하세요.",
+          "notReady": "검증이 통과되어 승인 대기 상태가 되면 독립 승인 여부를 판정합니다."
+        },
+        "actorRoles": {
+          "OWNER": "정책 소유자",
+          "CONFIGURATOR": "구성 담당자",
+          "VALIDATOR": "검증 담당자"
+        },
+        "auditEvents": {
+          "configured": "운영 정책 설정",
+          "evidence-added": "증빙 등록",
+          "validated": "운영 요건 검증",
+          "approved": "운영 전환 승인",
+          "rejected": "운영 전환 반려"
+        }
+      },
+      "errors": {
+        "GATE_PERMISSION_DENIED": "이 작업에 필요한 운영 전환 검증 권한이 없습니다.",
+        "GATE_NOT_FOUND": "검토 항목을 찾을 수 없습니다. 목록을 새로 고치세요.",
+        "GATE_VERSION_CONFLICT": "다른 사용자가 항목을 변경했습니다. 최신 정보를 다시 불러온 후 진행하세요.",
+        "GATE_INVALID_TRANSITION": "현재 상태에서는 이 작업을 수행할 수 없습니다. 상세 검토에서 상태를 확인하세요.",
+        "GATE_REQUIRED_EVIDENCE_MISSING": "필수 증빙이 모두 등록되지 않아 검증을 통과할 수 없습니다.",
+        "GATE_SEPARATION_OF_DUTY": "구성·검증 담당자는 같은 항목을 승인할 수 없습니다. 독립 승인자가 필요합니다.",
+        "GATE_STORE_UNAVAILABLE": "운영 전환 검증 저장소에 연결할 수 없습니다. 잠시 후 다시 시도하세요.",
+        "GATE_UNKNOWN": "운영 전환 검증 정보를 처리하지 못했습니다."
       },
       "fields": {
         "option": "고객 적용 정책",

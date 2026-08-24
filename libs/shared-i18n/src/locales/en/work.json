@@ -411,6 +411,7 @@
       "noExpiry": "Not approved",
       "existingEvidence": "Recent evidence",
       "separationNotice": "A person who configured or validated an item cannot approve the same item.",
+      "evidenceChangeNotice": "Changing evidence while approval is pending invalidates the prior validation and requires revalidation.",
       "secretBoundary": "Do not enter passwords, API keys, tokens, or certificates. Store only Secret Store, CMDB, and test-result references.",
       "environments": {
         "DEVELOPMENT": "Development",
@@ -435,7 +436,6 @@
       "statuses": {
         "NOT_CONFIGURED": "Not configured",
         "CONFIGURING": "Configuring",
-        "VALIDATING": "Validating",
         "READY_FOR_APPROVAL": "Awaiting approval",
         "APPROVED": "Approved",
         "BLOCKED": "Blocked",
@@ -450,6 +450,7 @@
         "OPERATIONS": "Operational resilience"
       },
       "actions": {
+        "review": "Review details",
         "configure": "Set policy",
         "reconfigure": "Edit policy",
         "evidence": "Add evidence",
@@ -465,10 +466,58 @@
         "approve": "Independent approval"
       },
       "dialogs": {
+        "REVIEW": { "title": "Review go-live readiness", "submit": "" },
         "CONFIGURE": { "title": "Set operational policy", "submit": "Save policy" },
         "EVIDENCE": { "title": "Add operational evidence", "submit": "Add evidence" },
         "VALIDATE": { "title": "Validate operational requirements", "submit": "Record validation" },
         "DECIDE": { "title": "Approve go-live readiness", "submit": "Save approval decision" }
+      },
+      "review": {
+        "close": "Close",
+        "loading": "Loading operational readiness evidence",
+        "loadError": "Review evidence could not be loaded. Refresh and try again.",
+        "policyTitle": "Policy and validation result",
+        "status": "Current status",
+        "policy": "Applied policy",
+        "owner": "Policy owner",
+        "configurationRef": "Configuration reference",
+        "validationSummary": "Validation summary",
+        "revision": "Review baseline",
+        "revisionValue": "Configuration {{configuration}} · policy {{policy}}",
+        "none": "Not registered",
+        "notValidated": "Not validated",
+        "evidenceTitle": "Evidence for the current configuration revision",
+        "missingEvidence": "Missing required evidence: {{evidence}}",
+        "noEvidence": "No evidence is registered for the current configuration revision.",
+        "auditTitle": "Change and approval history",
+        "noAudit": "No change history has been recorded.",
+        "approval": {
+          "eligible": "You may make an independent decision after reviewing all evidence.",
+          "separation": "You cannot approve because you are the {{role}} for this item. Ask an independent approver to review it.",
+          "notReady": "Independent approval eligibility is evaluated after validation passes."
+        },
+        "actorRoles": {
+          "OWNER": "policy owner",
+          "CONFIGURATOR": "configurator",
+          "VALIDATOR": "validator"
+        },
+        "auditEvents": {
+          "configured": "Operational policy configured",
+          "evidence-added": "Evidence registered",
+          "validated": "Operational requirement validated",
+          "approved": "Go-live readiness approved",
+          "rejected": "Go-live readiness rejected"
+        }
+      },
+      "errors": {
+        "GATE_PERMISSION_DENIED": "You do not have permission to perform this readiness action.",
+        "GATE_NOT_FOUND": "The review item was not found. Refresh the list.",
+        "GATE_VERSION_CONFLICT": "Another user changed this item. Reload the latest version before continuing.",
+        "GATE_INVALID_TRANSITION": "This action is not available in the current state. Review the item details.",
+        "GATE_REQUIRED_EVIDENCE_MISSING": "Validation cannot pass until all required evidence is registered.",
+        "GATE_SEPARATION_OF_DUTY": "A configurator or validator cannot approve the same item. An independent approver is required.",
+        "GATE_STORE_UNAVAILABLE": "The readiness store is unavailable. Try again shortly.",
+        "GATE_UNKNOWN": "The readiness review item could not be processed."
       },
       "fields": {
         "option": "Customer policy option",
